@@ -8706,3 +8706,6 @@
 | `CYCLE-20261110-5E89` | `2026-11-10T01:19:18.345Z` | `medialab/xan` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`395e962c...`) |
 | `CYCLE-20261110-5KCP` | `2026-11-10T01:19:26.281Z` | `unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule 498` | Yes (`cab7f7b7...`) |
 | `CYCLE-20261110-5MAB` | `2026-11-10T01:19:28.787Z` | `sigstore/cosign` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`a83186ef...`) |
+| `CYCLE-20261110-Y38Y` | `2026-11-10T01:41:37.138Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`3759605d...`) |
+| `CYCLE-20261110-Y5HI` | `2026-11-10T01:41:40.038Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`dc78c196...`) |
+| `CYCLE-20261110-4AWG` | `2026-11-10T01:46:26.992Z` | `restatedev/restate` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b6bbb39e...`) |

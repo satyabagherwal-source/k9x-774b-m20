@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261108-CYTD",
-    "timestamp": "2026-11-08T04:09:48.865Z",
-    "repository": "RecursiveSI/flint",
-    "learningId": "learn-huggingface-recursivesi-flint",
-    "contentHash": "b1215a7c4bcd40867fc2d5be0ff3f6fb17a3f0128de0dedab983aace68bf7158",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-D8AA",
-    "timestamp": "2026-11-08T04:10:01.138Z",
-    "repository": "TableProApp/TablePro",
-    "learningId": "learn-github-tableproapp-tablepro",
-    "contentHash": "7e9adbf97599ebdef0576a3b0d86e0859d74a128d1416b0192045ad626f6f349",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-P75C",
-    "timestamp": "2026-11-08T04:19:19.536Z",
-    "repository": "XHToken/Spark-X2.6-4B",
-    "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b",
-    "contentHash": "466081a950bb911afa7d322bf9618f59be5a17350a8c14f43618816663458ae3",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261108-PDGX",
     "timestamp": "2026-11-08T04:19:27.729Z",
     "repository": "crossplane/crossplane",
@@ -7490,6 +7445,51 @@
     "repository": "sigstore/cosign",
     "learningId": "learn-github-sigstore-cosign",
     "contentHash": "a83186ef43d430c2e28fdb97364dbf9b91ac62c82a6eaf1df72bacbefdf4ec61",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261110-Y38Y",
+    "timestamp": "2026-11-10T01:41:37.138Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "3759605db1e1f0a147d25aa1902e3078da07016cfdb474b0f8b8d7989243e617",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261110-Y5HI",
+    "timestamp": "2026-11-10T01:41:40.038Z",
+    "repository": "tursodatabase/turso",
+    "learningId": "learn-github-tursodatabase-turso",
+    "contentHash": "dc78c1965f15695513c4dd9ce3383048f310a57c406f3d27aa7d3af80556d22a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261110-4AWG",
+    "timestamp": "2026-11-10T01:46:26.992Z",
+    "repository": "restatedev/restate",
+    "learningId": "learn-github-restatedev-restate",
+    "contentHash": "b6bbb39efa479d5f36287371e8001c0b0c262efa736e57e2dd747c2b9fc8cf52",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

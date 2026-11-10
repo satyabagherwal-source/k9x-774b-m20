@@ -8715,3 +8715,6 @@ Every entry in this ledger must capture:
 | `learn-github-medialab-xan` | `https://github.com/medialab/xan` | `6849efff` | Multi-dimensional audit evidence | 2026-11-10T01:19:18.349Z |
 | `learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf` | `https://huggingface.co/unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-10T01:19:26.284Z |
 | `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `c8a4781a` | Multi-dimensional audit evidence | 2026-11-10T01:19:28.791Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `51e49a9a` | Multi-dimensional audit evidence | 2026-11-10T01:41:37.141Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `a7ce4ee0` | Multi-dimensional audit evidence | 2026-11-10T01:41:40.042Z |
+| `learn-github-restatedev-restate` | `https://github.com/restatedev/restate` | `4733a867` | Multi-dimensional audit evidence | 2026-11-10T01:46:26.995Z |

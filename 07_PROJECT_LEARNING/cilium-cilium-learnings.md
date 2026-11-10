@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `e9799367`  
+> **Source Version**: `51e49a9a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T16:26:05.237Z  
+> **Timestamp**: 2026-11-10T01:41:35.920Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T16:26:05.230Z  
+> **Harvest Timestamp**: 2026-11-10T01:41:34.598Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25804 stars
+- **Stars / Engagement**: 25806 stars
 
 ---
 
@@ -1264,8 +1264,10 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
   **Post-Mortem & Fix Analysis**:
   > /test
 
-- **Issue #49918** (2026-11-09): **chore(deps): update dependency cilium/cilium-cli to v0.20.2 (v1.19)**
-  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [cilium/cilium-cli](https://redirect.github.com/cilium/cilium-cli) |  | patch | `v0.20.1` → `v0.20.2` | | [cilium/cilium-cli](https://redirect.github.com/cilium/cilium-cli) | action | patch | `v0.20.1` → `v0.20.2` |  ---  ### Release Notes  <details> <summary>cilium/cilium-cli</summary>  ### [`v0.20.2`](https://redirect.github.com/cilium/cilium-cli/releases/tag/v0.20.2)  [Compare Source](https://redirect.github.com/cilium/cilium-cli/compare/v0.20.1...v0.20.2)  ## Summary of Changes  **Minor Changes:**  - cilium-cli: Apply labels to all new test namespaces ([cilium/cilium#49190](https://redirect.github.com/cilium/cilium/issues/49190), [@&#8203;darox](https://redirect.github.com/darox)) - cilium-cli: fall back to WebSocket when a proxy rejects the SPDY upgrade ([cilium/cilium#49229](https://redirect.github.com/cilium/cilium/issues/49229), [@&#8203;epb-644](https://redirect.github.com/epb-644))  **Bugfixes:**  - Fixes error when passing times of 60s or more to cilium connectivity perf and throws an explicit error on fractional seconds. ([cilium/cilium#48965](https://redirect.github.com/cilium/cilium/issues/48965), [@&#8203;Arleee1](https://redirect.github.com/Arleee1))  **CI Changes:**  - cilium-cli/connectivity: remove unused client-egress-to-echo-port-range manifest ([cilium/cilium#49676](https://redirect.github.com/cilium/cilium/issues/49676), [@&#8203;tklauser](https://redirect.
+- **Issue #49919** (2026-11-09): **cilium-cli: restore v2alpha1 BGP deprecation log exception**
+  *Symptoms*: The log exception for the v2alpha1 BGP deprecation warnings was removed in #49329. However, cilium-cli from main is also used in the upgrade/downgrade tests of older stable branches. There, v1.17 agents and operator run against v1.18 CRDs, which mark v2alpha1 as deprecated, so the apiserver warnings make the no-errors-in-logs check fail. This broke ci-e2e-upgrade on the v1.18 branch (seen in #49903).  Restore the exception. It can be removed once v1.20, the last release serving v2alpha1 BGP resources, is out of support.  Fixes: 64f76d337c40 ("k8s: drop v2alpha1 version from BGP CRDs")  
+  **Post-Mortem & Fix Analysis**:
+  > /test
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1282,289 +1284,36 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e9799367` (2026-11-05)
-**Commit Message**: maps/lxcmap: use map registry for cilium_lxc map
+### Incident Patch 1: `21c11924` (2026-10-28)
+**Commit Message**: policy: fix mapstate entry equality check condition ordering
 
-Using the map registry we obtain some advantages:
-* we handle the `BPF_F_NO_PREALLOC` flag at load time instead of compile
-time.
-* if in the future we allow to change dimension of the map at load time
-everything is already in place.
+This commit fixes a minor performance issue in policy mapstate entry
+euqality check due to condition ordering.
+When checking mapstate entry equality, first process rule metadata unique
+handle to short circuit early.
 
-Signed-off-by: Andrea Terzolo <[REDACTED_EMAIL]>
+Signed-off-by: Deepesh Pathak <[REDACTED_EMAIL]>
 
-**File**: `bpf/lib/eps.h` (modified, +2/-2)
+**File**: `pkg/policy/mapstate.go` (modified, +1/-1)
 ```diff
-@@ -52,8 +52,8 @@ struct {
- 	__type(key, struct endpoint_key);
- 	__type(value, struct endpoint_info);
- 	__uint(pinning, LIBBPF_PIN_BY_NAME);
--	__uint(max_entries, ENDPOINTS_MAP_SIZE);
--	__uint(map_flags, CONDITIONAL_PREALLOC | BPF_F_RDONLY_PROG_COND);
-+	__uint(max_entries, 65536);
-+	__uint(map_flags, BPF_F_RDONLY_PROG_COND);
- } cilium_lxc __section_maps_btf;
+@@ -861,7 +861,7 @@ func (ms mapState) String() (res string) {
  
- static __always_inline __maybe_unused const struct endpoint_info *
-```
-
-**File**: `bpf/node_config.h` (modified, +1/-2)
-```diff
-@@ -27,7 +27,6 @@
- #define LB4_REVERSE_NAT_SK_MAP_SIZE 262144
- 
- #define LB_MAGLEV_LUT_SIZE 32749
--#define ENDPOINTS_MAP_SIZE 65536
- #define METRICS_MAP_SIZE 65536
- #define CILIUM_LB_REV_NAT_MAP_MAX_ENTRIES	65536
- #define CILIUM_LB_SERVICE_MAP_MAX_ENTRIES	65536
-@@ -42,7 +41,7 @@
- #define EGRESS_POLICY_MAP_SIZE 16384
- #define L2_RESPONDER_MAP4_SIZE 4096
- #define L2_RESPONDER_MAP6_SIZE 4096
--#define POLICY_PROG_MAP_SIZE ENDPOINTS_MAP_SIZE
-+#define POLICY_PROG_MAP_SIZE 65536
- #define CILIUM_IPV4_FRAG_MAP_MAX_ENTRIES 8192
- #define CILIUM_IPV6_FRAG_MAP_MAX_ENTRIES 8192
- 
-```
-
-**File**: `daemon/infraendpoints/infra_ip_allocation_test.go` (modified, +0/-1)
-```diff
-@@ -404,7 +404,6 @@ func Test_getCiliumHostIPsFromFile(t *testing.T) {
- #define HOST_ID 1
- #define WORLD_ID 2
- #define CILIUM_LB_MAP_MAX_ENTRIES 65536
--#define ENDPOINTS_MAP_SIZE 65535
- #define LPM_MAP_SIZE 16384
- #define POLICY_MAP_SIZE 16384
- #define IPCACHE_MAP_SIZE 512000
-```
-
-**File**: `pkg/datapath/linux/config/config.go` (modified, +0/-2)
-```diff
-@@ -28,7 +28,6 @@ import (
- 	ipcachemap "github.com/cilium/cilium/pkg/maps/ipcache"
- 	"github.com/cilium/cilium/pkg/maps/l2respondermap"
- 	"github.com/cilium/cilium/pkg/maps/l2v6respondermap"
--	"github.com/cilium/cilium/pkg/maps/lxcmap"
- 	"github.com/cilium/cilium/pkg/maps/metricsmap"
- 	"github.com/cilium/cilium/pkg/maps/nodemap"
- 	"github.com/cilium/cilium/pkg/maps/policymap"
-@@ -164,7 +163,6 @@ func (h *HeaderfileWriter) writeNodeConfig(w io.Writer, cfg *config.Config, with
- 	cDefinesMap["CILIUM_LB_MAGLEV_MAP_MAX_ENTRIES"] = fmt.Sprintf("%d", cfg.LBConfig.LBMaglevMapEntries)
- 	cDefinesMap["CILIUM_LB_SKIP_MAP_MAX_ENTRIES"] = fmt.Sprintf("%d", lbmaps.SkipLBMapMaxEntries)
- 
--	cDefinesMap["ENDPOINTS_MAP_SIZE"] = fmt.Sprintf("%d", lxcmap.MaxEntries)
- 	cDefinesMap["METRICS_MAP_SIZE"] = fmt.Sprintf("%d", metricsmap.MaxEntries)
- 	cDefinesMap["IPCACHE_MAP_SIZE"] = fmt.Sprintf("%d", ipcachemap.MaxEntries)
- 	cDefinesMap["NODE_MAP_SIZE"] = fmt.Sprintf("%d", h.nodeMap.Size())
-```
-
-**File**: `pkg/datapath/maps/maps_generated.go` (modified, +1/-1)
-```diff
-@@ -727,7 +727,7 @@ func newCiliumLXCSpec(btf *btf.Spec) *ebpf.MapSpec {
- 		ValueSize:  48,
- 		Value:      anyTypeByName(btf, "endpoint_info"),
- 		MaxEntries: 65536,
--		Flags:      unix.BPF_F_NO_PREALLOC | unix.BPF_F_RDONLY_PROG,
-+		Flags:      unix.BPF_F_RDONLY_PROG,
- 		Pinning:    ebpf.PinByName,
- 	}
- }
-```
-
-**File**: `pkg/maps/lxcmap/cell.go` (modified, +29/-2)
-```diff
-@@ -7,8 +7,10 @@ import (
- 	"fmt"
- 
- 	"github.com/cilium/hive/cell"
-+	"golang.org/x/sys/unix"
- 
- 	"github.com/cilium/cilium/pkg/bpf"
-+	mapregistry "github.com/cilium/cilium/pkg/maps/registry"
- 	"github.com/cilium/cilium/pkg/metrics"
- 	"github.com/cilium/cilium/pkg/option"
- )
-@@ -19,13 +21,26 @@ var Cell = cell.Module(
- 	"eBPF map which manages all local endpoints",
- 
- 	cell.Provide(newLXCMap),
-+	cell.Invoke(configure),
- )
- 
--func newLXCMap(lifecycle cell.Lifecycle, registry *metrics.Registry) bpf.MapOut[Map] {
--	lxcMap := newMap(registry)
-+func newLXCMap(
-+	lifecycle cell.Lifecycle,
-+	metrics *metrics.Registry,
-+	reg *mapregistry.MapRegistry,
-+) bpf.MapOut[Map] {
-+	lxcMap := &lxcMap{}
- 
- 	lifecycle.Append(cell.Hook{
- 		OnStart: func(context cell.HookContext) error {
-+			var err error
-+			lxcMap.bpfMap, err = bpf.NewMapFromRegistry(reg, mapName, &EndpointKey{}, &EndpointInfo{})
-+			if err != nil {
-+				return fmt.Errorf("create LXC map from registry: %w", err)
-+			}
-+			lxcMap.bpfMap.WithCache().WithPressureMetric(metrics).
-+				WithEvents(option.Config.GetEventBufferConfig(mapName))
-+
- 			if err := lxcMap.init(); err != nil {
- 				return fmt.Errorf("failed to init lxc map: %w", err)
- 			}
-@@ -47,3 +62,15 @@ func newLXCMap(lifecycle cell.Lifecycle, registry *metrics.Registry) bpf.MapOut[
- 
- 	return bpf.NewMapOut(Map(lxcMap))
- }
-+
-+func configure(reg *mapregistry.MapRegistry) error {
-+	flags := uint32(unix.BPF_F_RDONLY_PROG)
-+	if !option.Config.PreAllocateMaps {
-+		flags |= unix.BPF_F_NO_PREALLOC
-+	}
-+
-+	return reg.Modify(mapName, func(m *mapregistry.MapSpecPatch) {
-+		m.Flags = flags
-+		m.MaxEntries = uint32(MaxEntries)
-+	})
-+}
-```
-
-**File**: `pkg/maps/lxcmap/lxcmap.go` (modified, +0/-19)
-```diff
-@@ -8,15 +8,10 @@ import (
- 	"log/slog"
- 	"net/netip"
- 
--	"github.com/cilium/ebpf"
--	"golang.org/x/sys/unix"
--
- 	"github.com/cilium/cilium/pkg/bpf"
- 	eptypes "github.com/cilium/cilium/pkg/endpoint/types"
- 	"github.com/cilium/cilium/pkg/identity"
- 	"github.com/cilium/cilium/pkg/mac"
--	"github.com/cilium/cilium/pkg/metrics"
--	"github.com/cilium/cilium/pkg/option"
- )
- 
- const (
-@@ -55,20 +50,6 @@ type lxcMap struct {
- 	bpfMap *bpf.Map
+ // Equal returns true of two entries are equal.
+ func (e mapStateEntry) Equal(o mapStateEntry) bool {
+-	return e.equivalent(o) && e.derivedFromRules == o.derivedFromRules
++	return e.derivedFromRules == o.derivedFromRules && e.equivalent(o)
  }
  
--func newMap(registry *metrics.Registry) *lxcMap {
--	return &lxcMap{
--		bpfMap: bpf.NewMap(mapName,
--			ebpf.Hash,
--			&EndpointKey{},
--			&EndpointInfo{},
--			MaxEntries,
--			unix.BPF_F_RDONLY_PROG,
--		).
--			WithCache().WithPressureMetric(registry).
--			WithEvents(option.Config.GetEventBufferConfig(mapName)),
--	}
--}
--
- // OpenMap opens the pre-initialized LXC map for access.
- // This should only be used from components which aren't capable of using hive - mainly the cilium-dbg.
- // It needs to initialized beforehand via the Cilium Agent.
-```
-
----
-
-### Incident Patch 2: `e4c31528` (2026-11-04)
-**Commit Message**: datapath: remove some unneeded `__maybe_unused` from `bpf_lxc.c`
-
-Signed-off-by: Leonardo Di Giovanna <[REDACTED_EMAIL]>
-
-**File**: `bpf/bpf_lxc.c` (modified, +8/-8)
-```diff
-@@ -766,7 +766,7 @@ ipv6_forward_to_destination(struct __ctx_buff *ctx, struct ipv6hdr *ip6,
- 		}
- 	}
- 
--pass_to_stack: __maybe_unused
-+pass_to_stack:
- 	/* See IPv4 path for comments. */
- 	if (!CONFIG(enable_bpf_routing) && from_l7lb &&
- 	    ctx_get_ifindex(ctx) != CONFIG(cilium_host_ifindex))
-@@ -800,7 +800,7 @@ static __always_inline int handle_ipv6_from_lxc(struct __ctx_buff *ctx, __u32 *d
- 		.reason = TRACE_REASON_UNKNOWN,
- 		.monitor = 0,
- 	};
--	bool __maybe_unused skip_tunnel = false;
-+	bool skip_tunnel = false;
- 	bool hairpin_flow = false;
- 	enum ct_status ct_status;
- 	__u8 policy_match_type = POLICY_MATCH_NONE;
-@@ -1084,7 +1084,7 @@ ipv4_forward_to_destination(struct __ctx_buff *ctx, struct iphdr *ip4,
- 			    struct trace_ctx *trace,
- 			    __s8 *ext_err)
- {
--	struct remote_endpoint_info __maybe_unused fake_info = {0};
-+	struct remote_endpoint_info fake_info = {0};
- 	int ret;
- 
- 	if (CONFIG(srv6_cfg).enable) {
-@@ -1293,7 +1293,7 @@ ipv4_forward_to_destination(struct __ctx_buff *ctx, struct iphdr *ip4,
- 		}
- 	}
- 
--pass_to_stack: __maybe_unused
-+pass_to_stack:
- 	/* With per-endpoint routes, the `cil_lxc_policy_egress` will be
- 	 * tail called from cil_to_container for packets sent by a L7 LB.
- 	 * In case of a local backend, we execute this code already from the
-@@ -1332,7 +1332,7 @@ static __always_inline int handle_ipv4_from_lxc(struct __ctx_buff *ctx, __u32 *d
- 		.reason = TRACE_REASON_UNKNOWN,
- 		.monitor = 0,
- 	};
--	bool __maybe_unused skip_tunnel = false;
-+	bool skip_tunnel = false;
- 	bool hairpin_flow = false; /* endpoint wants to access itself via service IP */
- 	__u8 policy_match_type = POLICY_MATCH_NONE;
- 	struct ct_buffer4 *ct_buffer;
-@@ -1569,7 +1569,7 @@ TAIL_CT_LOOKUP4(CILIUM_CALL_IPV4_CT_EGRESS, tail_ipv4_ct_egress, CT_EGRESS,
- 		CILIUM_CALL_IPV4_FROM_LXC_CONT, tail_handle_ipv4_cont)
- 
- static __always_inline int __tail_handle_ipv4(struct __ctx_buff *ctx,
--					      __s8 *ext_err __maybe_unused)
-+					      __s8 *ext_err)
- {
- 	void *data, *data_end;
- 	struct iphdr *ip4;
-@@ -1764,7 +1764,7 @@ ipv6_policy(struct __ctx_buff *ctx, struct ipv6hdr *ip6, __u32 src_label,
- 	union v6addr orig_sip __align_stack_8;
- 	__u8 policy_match_type = POLICY_MATCH_NONE;
- 	__u8 audited = 0;
--	__maybe_unused union v6addr loopback_addr;
-+	union v6addr loopback_addr;
- 	__u32 cookie = 0;
- 
- 	ipv6_addr_copy(&orig_sip, (union v6addr *)&ip6->saddr);
-@@ -2411,7 +2411,7 @@ int cil_lxc_policy(struct __ctx_buff *ctx)
-  * a L7 LB.
-  */
- __section_entry
--int cil_lxc_policy_egress(struct __ctx_buff *ctx __maybe_unused)
-+int cil_lxc_policy_egress(struct __ctx_buff *ctx)
- {
- 	if (!CONFIG(enable_l7_lb))
- 		return CTX_ACT_OK;
+ // equivalent returns true if two entries have the same policy effect,
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #49923** (2026-11-09): v1.19 Backports 2026-11-09 (@pippolo84)
+- **PR #49919** (2026-11-09): cilium-cli: restore v2alpha1 BGP deprecation log exception (@martonra)
 - **PR #49918** (2026-11-09): chore(deps): update dependency cilium/cilium-cli to v0.20.2 (v1.19) (@cilium-renovate[bot])
+- **PR #49916** (2026-11-09): network driver: support mlx5 RX queue preparation (@aarcamp)
 - **PR #49910** (2026-11-08): chore(deps): update github/codeql-action action to v4.39.2 (v1.20) (@cilium-renovate[bot])
 - **PR #49908** (2026-11-08): chore(deps): update ghcr.io/renovatebot/renovate docker tag to v44.222.4 (main) (@cilium-renovate[bot])
-- **PR #49907** (2026-11-08): chore(deps): update ghcr.io/renovatebot/renovate docker tag to v44.222.3 (main) (@cilium-renovate[bot])
-- **PR #49906** (2026-11-08): chore(deps): update dependency cilium/cilium-cli to v0.20.2 (v1.20) (@cilium-renovate[bot])
 
 ---
 
@@ -1584,30 +1333,28 @@ Signed-off-by: Leonardo Di Giovanna <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. maps/lxcmap: use map registry for cilium_lxc map
+## X. policy: fix mapstate entry equality check condition ordering
 
 **RULE**:
-When implementing operations in `bpf/lib/eps.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/policy/mapstate.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e9799367`: maps/lxcmap: use map registry for cilium_lxc map. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `21c11924`: policy: fix mapstate entry equality check condition ordering. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `bpf/lib/eps.h`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/policy/mapstate.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	__uint(max_entries, 65536);
-	__uint(map_flags, BPF_F_RDONLY_PROG_COND);
+	return e.derivedFromRules == o.derivedFromRules && e.equivalent(o)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	__uint(max_entries, ENDPOINTS_MAP_SIZE);
-	__uint(map_flags, CONDITIONAL_PREALLOC | BPF_F_RDONLY_PROG_COND);
+	return e.equivalent(o) && e.derivedFromRules == o.derivedFromRules
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e9799367` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `21c11924` are properly handled with clean fallback behavior.

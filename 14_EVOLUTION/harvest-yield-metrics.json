@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-10T01:19:28.796Z",
-  "total_cycles_completed": 8671,
-  "total_learnings_persisted": 8671,
-  "total_rules_promoted": 8513,
+  "last_updated": "2026-11-10T01:46:27.001Z",
+  "total_cycles_completed": 8674,
+  "total_learnings_persisted": 8674,
+  "total_rules_promoted": 8516,
   "history": [
-    {
-      "timestamp": "2026-11-09T04:27:42.183Z",
-      "repository": "Ontos-AI/knowhere",
-      "learningId": "learn-github-ontos-ai-knowhere",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T04:42:17.720Z",
-      "repository": "tauri-apps/tauri",
-      "learningId": "learn-github-tauri-apps-tauri",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T04:42:19.285Z",
-      "repository": "Bingsu/adetailer",
-      "learningId": "learn-huggingface-bingsu-adetailer",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T04:49:29.597Z",
       "repository": "lilylilith/QI_2.1_AnyAngle",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-10T01:19:28.796Z",
       "repository": "sigstore/cosign",
       "learningId": "learn-github-sigstore-cosign",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-10T01:41:37.147Z",
+      "repository": "cilium/cilium",
+      "learningId": "learn-github-cilium-cilium",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-10T01:41:40.046Z",
+      "repository": "tursodatabase/turso",
+      "learningId": "learn-github-tursodatabase-turso",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-10T01:46:27.001Z",
+      "repository": "restatedev/restate",
+      "learningId": "learn-github-restatedev-restate",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

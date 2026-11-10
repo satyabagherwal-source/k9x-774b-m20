@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/restatedev-restate-learnings.md`  
 > **Source**: github ([https://github.com/restatedev/restate](https://github.com/restatedev/restate))  
-> **Source Version**: `211a106f`  
+> **Source Version**: `4733a867`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T06:10:04.133Z  
+> **Timestamp**: 2026-11-10T01:46:25.396Z  
 > **Learning ID**: `learn-github-restatedev-restate`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/restatedev-restate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/restatedev/restate](https://github.com/restatedev/restate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T06:05:01.719Z  
+> **Harvest Timestamp**: 2026-11-10T01:41:23.170Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Restate is the platform for building resilient applications that tolerate all infrastructure faults w/o the need for a PhD.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4671 stars
+- **Stars / Engagement**: 4684 stars
 
 ---
 
@@ -1634,521 +1634,41 @@ async fn list(env: &CliEnv, opts: &List) -> Result<()> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ef0d6719` (2026-11-05)
-**Commit Message**: [ci] Let PR docker builds reuse a dependency layer warmed on main (#5753)
+### Incident Patch 1: `edcaf8be` (2026-11-09)
+**Commit Message**: [Bifrost] Let read stream counters wrap the same way in every build
 
-* [ci] Let PR docker builds reuse a dependency layer warmed on main
+records_read and bytes_read used plain additions, which wrap in release
+builds and panic on overflow in debug and test builds. They now wrap at
+2^64 in every build, like the partitions' byte offsets. A stream would
+need to read 16 EiB to get there, so this only makes the behavior
+explicit.
 
-PR docker builds use the release-lite profile, so they can't reuse the
-release-profile deps layer that main caches. In the last 3 days, 40 of 55 PR
-docker jobs rebuilt all ~807 dependencies (7.5 min) and then spent 7-13 min
-exporting the 5 GB layer into the PR's own cache scope, which other PRs can't
-read. Median PR docker job: 23.6 min when deps were rebuilt, 10.9 min when
-they were restored.
-
-- Add a main-only `docker-pr-cache` job that builds just the `builder`
-  stage with the PR build args and exports it to the cache. PRs now only
-  read the cache (`cacheReadOnly`).
-- Give each non-release profile its own BuildKit cache scope, so the
-  release and release-lite builds on main don't overwrite each other's
-  cache index.
-- Key the sccache cache on the profile, and add a restore-keys fallback so a
-  Cargo.lock change starts from the previous cache. Today release and
-  release-lite share one key, and PRs often restore release objects they
-  can't use.
-- Add a concurrency group to CI: a new push to a PR cancels the older run.
-  It also colla
-
-**File**: `.github/workflows/ci.yml` (modified, +29/-0)
+**File**: `crates/bifrost/src/read_stream.rs` (modified, +5/-3)
 ```diff
-@@ -17,6 +17,15 @@ on:
-       # Keep CI on existing maintenance branches during the naming transition.
-       - release-*
+@@ -527,9 +527,11 @@ impl Stream for LogReadStream {
+                                     // record and fast-forward.
+                                     continue;
+                                 }
+-                                *this.records_read += 1;
+-                                *this.bytes_read +=
+-                                    data_record.encoded_body_size().unwrap_or_default() as u64;
++                                // Wrap at 2^64 the same way in every build.
++                                *this.records_read = this.records_read.wrapping_add(1);
++                                *this.bytes_read = this.bytes_read.wrapping_add(
++                                    data_record.encoded_body_size().unwrap_or_default() as u64,
++                                );
+                             }
  
-+# One run per PR: a new push cancels the older run. Some pushes also start two
-+# `pull_request` runs for the same commit at once; this keeps only one of them.
-+# Other events get a unique group, so they never wait on or cancel each other.
-+# `github.workflow` is the caller's name when Release calls this workflow, which keeps
-+# that run from cancelling the PR's own CI run.
-+concurrency:
-+  group: ci-${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}
-+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
-+
- jobs:
-   workspace-hack-check:
-     name: Check workspace-hack
-@@ -160,6 +169,26 @@ jobs:
-       features: metadata-api
-       # faster-linking profile for PRs; main and release builds keep `release` (and its image tags)
-       profile: ${{ github.event_name == 'pull_request' && 'release-lite' || 'release' }}
-+      # A PR's cache entries land in that PR's own scope, which other PRs can't read, and
-+      # exporting the dependency layer took 7-13 minutes. `docker-pr-cache` below warms it from main.
-+      cacheReadOnly: ${{ github.event_name == 'pull_request' }}
-+
-+  docker-pr-cache:
-+    name: Warm PR docker build cache
-+    # PR docker builds only read the build cache. This builds their dependency layer on
-+    # main so PRs can restore it instead of rebuilding ~800 crates.
-+    # The inputs must match the PR build of the `docker` job above, or the layer's
-+    # cache key won't match.
-+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-+    permissions:
-+      contents: read
-+      packages: write
-+    uses: ./.github/workflows/docker.yml
-+    with:
-+      cacheOnly: true
-+      platforms: linux/amd64
-+      features: metadata-api
-+      profile: release-lite
- 
-   sdk-java:
-     name: Run SDK-Java integration tests
-```
-
-**File**: `.github/workflows/docker.yml` (modified, +33/-8)
-```diff
-@@ -52,6 +52,16 @@ on:
-         required: false
-         default: "restate-server"
-         type: string
-+      cacheOnly:
-+        description: "only build the dependency (builder) stage to warm the build cache; no image is pushed"
-+        required: false
-+        default: false
-+        type: boolean
-+      cacheReadOnly:
-+        description: "read the build cache but don't export to it (always the case for manually dispatched runs)"
-+        required: false
-+        default: false
-+        type: boolean
- 
-   workflow_dispatch:
-     inputs:
-@@ -146,14 +156,21 @@ jobs:
-           driver-opts: |
-             network=host
- 
-+      # Objects are only reusable within one profile, so key on it. The restore-keys
-+      # fallback lets a Cargo.lock change start from the previous cache instead of an
-+      # empty one. The builder stage doesn't use sccache, so cache-only builds skip it.
-       - name: Cache sccache
-         id: cache
-+        if: ${{ !inputs.cacheOnly }}
-         uses: WarpBuilds/cache@v1.4.13
-         with:
-           path: sccache-cache
--          key: ${{ runner.os }}-sccache-${{ hashFiles('**/Cargo.lock') }}
-+          key: ${{ runner.os }}-sccache-${{ inputs.profile }}-${{ hashFiles('**/Cargo.lock') }}
-+          restore-keys: |
-+            ${{ runner.os }}-sccache-${{ inputs.profile }}-
- 
-       - name: Inject sccache-cache into Docker
-+        if: ${{ !inputs.cacheOnly }}
-         uses: reproducible-containers/buildkit-cache-dance@v3.1.2
-         with:
-           cache-map: |
-@@ -283,10 +300,13 @@ jobs:
-           file: "docker/Dockerfile"
-           # push if we aren't uploading as a tarball, or if this is main'
-           tags: ${{ steps.meta.outputs.tags }}
-+          # cache-only builds stop at the builder stage and export nothing but the cache
-+          target: ${{ inputs.cacheOnly && 'builder' || '' }}
-           # push if we aren't uploading as a tarball, or if this is main
-           outputs: |
--            ${{ (inputs.uploadImageAsTarball == '' || github.ref == 'refs/heads/main') && 'type=registry' || '' }}
--            ${{ inputs.uploadImageAsTarball != '' && 'type=oci,dest=restate.tar' || '' }}
-+            ${{ inputs.cacheOnly && 'type=cacheonly' || '' }}
-+            ${{ !inputs.cacheOnly && (inputs.uploadImageAsTarball == '' || github.ref == 'refs/heads/main') && 'type=registry' || '' }}
-+            ${{ !inputs.cacheOnly && inputs.uploadImageAsTarball != '' && 'type=oci,dest=restate.tar' || '' }}
-           labels: |
-             ${{ steps.meta.outputs.labels }}
-             org.opencontainers.image.version=${{ steps.image-version.outputs.version }}
-@@ -295,8 +315,8 @@ jobs:
-           annotations: |
-             index:org.opencontainers.image.version=${{ steps.image-version.outputs.version }}
-             manifest:org.opencontainers.image.version=${{ steps.image-version.outputs.version }}
--          # on main, always push both platforms, otherwise use platform input
--          platforms: ${{ github.ref == 'refs/heads/main' && 'linux/arm64,linux/amd64' || (inputs.platforms || 'linux/arm64,linux/amd64') }}
-+          # on main, always push both platforms (unless only warming the cache), otherwise use platform input
-+          platforms: ${{ github.ref == 'refs/heads/main' && !inputs.cacheOnly && 'linux/arm64,linux/amd64' || (inputs.platforms || 'linux/arm64,linux/amd64') }}
-           network: host
-           build-args: |
-             CARGO_PROFILE=${{ inputs.profile }}
-@@ -305,9 +325,14 @@ jobs:
-             RESTATE_FEATURES=${{ inputs.features || '' }}
-           secrets: |
-             parca=${{ secrets.PARCA_TOKEN }}
--          cache-from: type=gha,url=http://127.0.0.1:49160/,version=1
--          # don't cache parca builds, they're too big
--          cache-to: ${{ !inputs.parca && 'type=gha,url=http://127.0.0.1:49160/,mode=max,version=1' || '' }}
-+          # One cache scope per profile, so builds of different profiles on the same ref don't
-+          # overwrite each other's cache index. `release` keeps the default scope.
-+          cache-from: type=gha,url=http://127.0.0.1:49160/,version=1,scope=${{ inputs.profile == 'release' && 'buildkit' || format('buildkit-{0}', inputs.profile) }}
-+          # Don't cache parca builds, they're too big. Manual runs only read the cache: they
-+          # mostly build feature branches, whose cache scope nothing else reads, and the export
-+          # can take as long as the build. The check also covers callers that were
-+          # dispatched manually, since a reusable workflow sees its caller's event.
-+          cache-to: ${{ !inputs.parca && !inputs.cacheReadOnly && github.event_name != 'workflow_dispatch' && format('type=gha,url=http://127.0.0.1:49160/,mode=max,version=1,scope={0}', inputs.profile == 'release' && 'buildkit' || format('buildkit-{0}', inputs.profile)) || '' }}
- 
-       - name: Upload docker image tar as artifact
-         if: ${{ inputs.uploadImageAsTarball != '' }}
-```
-
-**File**: `docs/dev/build-and-ci.md` (modified, +11/-2)
-```diff
-@@ -123,6 +123,7 @@ Triggered on: PRs, pushes to `main`, `release/*`, and `hotfix/*` branches, and a
- | `workspace-hack-check` | warp-ubuntu-latest-x64-4x | Verifies `cargo-hakari` workspace-hack is up to date |
- | `build-and-test` | warp-ubuntu-latest-x64-16x | Runs `just verify` (lint + test + doctest) |
- | `docker` | warp-ubuntu-latest-x64-16x | Builds Docker image, uploads as tarball artifact |
-+| `docker-pr-cache` | warp-ubuntu-latest-x64-16x | Main pushes only. Builds the `release-lite` dependency layer (the `builder` stage) that PR `docker` builds restore from the cache |
- 
- **Integration Tests** (run after docker build):
- 
-@@ -137,6 +138,8 @@ Triggered on: PRs, pushes to `main`, `release/*`, and `hotfix/*` branches, and a
- 
- Experimental feature tests (`e2e-vqueues`, `e2e-experimental-kafka-ingestion`, etc.) run with `continue-on-error: true` and don't block merges.
- 
-+A new push to a PR cancels that PR's CI run that is still in progress.
-+
- ### Docker Image Artifact Flow
- 
- Integration tests need a Docker image of the Restate server built from the PR/commit being tested. This is handled through GitHub Actions artifacts:
-@@ -198,11 +201,17 @@ A **reusable workflow** called by this repo and many others in the restatedev or
- - `pushToDockerHub`: Push to Docker Hub in addition to GHCR
- - `profile`: Select which Cargo profile to build
- - `runnerSize`: Select a `16x` or `32x` runner; `auto` uses `32x` for Parca builds and `16x` otherwise
-+- `cacheOnly`: Only build the `builder` stage (dependencies) and export it to the build cache. No image is built or pushed
-+- `cacheReadOnly`: Read the build cache without exporting to it
-+
-+`cacheOnly` and `cacheReadOnly` can only be set through `workflow_call`. `workflow_dispatch` is at GitHub's 10-input limit.
- 
- **Build optimizations:**
--- Uses `sccache` with WarpBuild cache
-+- Uses `sccache` with WarpBuild cache, keyed by Cargo profile and `Cargo.lock`
- - Multi-platform builds via Docker Buildx
--- Caches layers via WarpBuild's GHA cache proxy
-+- Caches layers via WarpBuild's GHA cache proxy. Each Cargo profile has its own cache scope. `release` uses the default `buildkit` scope, and other profiles use `buildkit-<profile>`
-+- PRs build with `release-lite` and only read the layer cache. `docker-pr-cache` keeps their dependency layer warm on `main`
-+- Manually dispatched runs only read the layer cache. That includes CI runs started by hand, since `docker.yml` sees its caller's event. Parca builds don't export it either
- 
- ### Release Workflow (`release.yml`)
- 
-```
-
----
-
-### Incident Patch 2: `a7fa881a` (2026-11-05)
-**Commit Message**: [Build] Emit only line tables for workspace crates in dev and release-lite
-
-Full debuginfo for workspace crates is mostly the type names of generic and async
-code: about 90% of their object files (92% of `restate-cli`'s). It costs codegen and
-link time and fills `target/`. Dependencies already used `line-tables-only`.
-
-Backtraces and flamegraphs keep files and lines. To inspect variables in a debugger,
-build with `CARGO_PROFILE_DEV_DEBUG=full` (documented in `docs/dev/debug.md`); that
-only affects workspace crates.
-
-`release-lite`, the profile for perf iteration, gets the same setting: flamegraphs only
-need line tables (`CARGO_PROFILE_RELEASE_LITE_DEBUG=full` restores full).
-
-CI builds PR Docker images with `release-lite`. Those builds generated full debuginfo for
-the workspace crates and then discarded it: only the binaries go into the image, and
-`split-debuginfo = "unpacked"` keeps that debuginfo in the build's object files. They now
-skip that work; the images keep the line tables they had. The dependency layer warmed on
-main is unaffected, since dependencies already used line tables.
-
-`release`, `release-debug` and `dist` are unchanged.
-
-## Measured on main, fresh target directo
-
-**File**: `Cargo.toml` (modified, +12/-4)
-```diff
-@@ -334,18 +334,26 @@ inherits = "release"
- lto = "off"
- codegen-units = 256
- split-debuginfo = "unpacked"
--debug = true
-+# Line tables are enough for flamegraphs; see `profile.dev`. For full debuginfo in the
-+# workspace crates, build with `CARGO_PROFILE_RELEASE_LITE_DEBUG=full`.
-+debug = "line-tables-only"
- 
- [profile.dev]
- panic = "unwind"
- split-debuginfo = "unpacked"
-+# Line tables only: enough for file and line in backtraces and flamegraphs. Full debuginfo
-+# is mostly the type names of generic and async code, makes up about 90% of our object
-+# files, and slows down codegen and linking. To inspect variables in a debugger, build
-+# with `CARGO_PROFILE_DEV_DEBUG=full` (see docs/dev/debug.md).
-+debug = "line-tables-only"
- 
-+# Third-party dependencies keep line tables only, also when
-+# `CARGO_PROFILE_RELEASE_LITE_DEBUG=full` restores full debuginfo for the workspace crates.
- [profile.release-lite.package."*"]
- debug = "line-tables-only"
- 
--# Reduce debug info for third-party dependencies to speed up linking.
--# Keeps full debuginfo for workspace crates (useful for debugging our code)
--# while only emitting line tables for deps (sufficient for backtraces/flamegraphs).
-+# Third-party dependencies keep line tables only, also when `CARGO_PROFILE_DEV_DEBUG=full`
-+# restores full debuginfo for the workspace crates.
- [profile.dev.package."*"]
- debug = "line-tables-only"
- 
-```
-
-**File**: `docs/dev/debug.md` (modified, +14/-0)
-```diff
-@@ -9,6 +9,20 @@ Suggested tools include:
- * A Rust debugger (e.g. Clion)
- * Wireshark for analyzing the network
- 
-+## Debug info
-+
-+Dev and test builds only emit line tables: backtraces and profiles show files and lines,
-+but a debugger can't show variables or types. To debug with full debug info for the
-+workspace crates, build with:
-+
-+```shell
-+CARGO_PROFILE_DEV_DEBUG=full cargo build
-+```
-+
-+In an IDE, set the same environment variable in the run or debug configuration. The first
-+build after switching recompiles the workspace crates. The `release-lite` profile also uses
-+line tables; use `CARGO_PROFILE_RELEASE_LITE_DEBUG=full` there.
-+
- ## Setting up Wireshark
- 
- 1. Make sure you have Wireshark set up for sniffing packets on localhost. On Linux, this usually requires root privileges.
-```
-
----
-
-### Incident Patch 3: `7273ab07` (2026-11-05)
-**Commit Message**: [Build] Stop compiling workspace-hack a second time for build scripts
-
-Every build compiled the whole `workspace-hack` twice: once for the crates
-themselves and once more for build scripts and proc macros. Two things caused
-it, and either one alone still pulls everything in:
-
-- The three proc-macro crates depended on `restate-workspace-hack`, and proc
-  macros are built for the host.
-- Hakari copied all 146 hoisted dependencies into `[build-dependencies]`, which
-  `workspace-hack/build.rs` then compiles.
-
-## Changes
-- Exclude `codederror-derive`, `restate-core-derive` and
-  `restate-encoding-derive` from hakari, so they no longer depend on
-  `restate-workspace-hack`.
-- Set `unify-target-host = "unify-if-both"`: `[build-dependencies]` now lists
-  only the 44 dependencies that are really built for both sides.
-- `AGENTS.md`: new proc-macro crates must be excluded the same way.
-
-## Cold `cargo check` (default members, same machine)
-
-| | Before | After |
-|---|---|---|
-| Wall time | 144 s | 128 s |
-| CPU time | 1176 s | 889 s |
-| Fully compiled crates | 770 | 446 |
-| Target directory | 6.0 GB | 4.4 GB |
-
-Wall time is bounded by the build scripts of C dependencies (`openssl-sys`,
-`krb5-sr
-
-**File**: `.config/hakari.toml` (modified, +13/-1)
-```diff
-@@ -8,6 +8,11 @@ workspace-hack-line-style = "workspace-dotted"
- dep-format-version = "4"
- resolver = "2"
- 
-+# Only unify features for dependencies that are built for both build scripts/proc macros and
-+# the target. The default replicates every hoisted dependency into `[build-dependencies]`, which
-+# compiles the whole workspace-hack a second time for build scripts.
-+unify-target-host = "unify-if-both"
-+
- # Add triples corresponding to platforms commonly used by developers here.
- # https://doc.rust-lang.org/rustc/platform-support.html
- platforms = [
-@@ -19,7 +24,14 @@ platforms = [
- # exact-versions = true
- 
- [traversal-excludes]
--workspace-members = ["service-protocol-wireshark-dissector"]
-+# Proc-macro crates are built for the host. If they depended on workspace-hack, every build would
-+# compile the whole workspace-hack a second time for them, so keep every proc-macro crate here.
-+workspace-members = [
-+    "service-protocol-wireshark-dissector",
-+    "codederror-derive",
-+    "restate-core-derive",
-+    "restate-encoding-derive",
-+]
- third-party = [
-     # excluded to avoid pulling in feature="test-util" by default for non-test builds
-     { name = "tokio" },
-```
-
-**File**: `AGENTS.md` (modified, +1/-0)
-```diff
-@@ -65,6 +65,7 @@ After making code changes, always run the following validation steps before comm
- 4. **Lint check** (if you modified Rust files): Run `cargo clippy --all-features --all-targets --workspace -- -D warnings` to check for lint warnings.
- 5. **Deny check** (if you modified Cargo.toml or Cargo.lock): Run `cargo deny --all-features check` to check for license and security issues.
- 6. If you are making changes to Cargo.toml files, make sure to also regenerate workspace-hack (cargo hakari generate)
-+7. When adding a proc-macro crate (`proc-macro = true`) to the workspace, add it to `[traversal-excludes] workspace-members` in `.config/hakari.toml` and run `cargo hakari manage-deps` so it doesn't depend on `restate-workspace-hack`. Proc macros are built for the host; depending on workspace-hack makes every build compile the whole workspace-hack a second time.
- 
- When renaming or changing trait methods, function signatures, or public APIs, search the entire codebase
- for all usages to ensure they are all updated consistently. Use `grep`, `rg`, or similar tools to find all
-```
-
-**File**: `Cargo.lock` (modified, +1/-3)
-```diff
-@@ -1862,7 +1862,6 @@ version = "0.1.0"
- dependencies = [
-  "proc-macro2",
-  "quote",
-- "restate-workspace-hack",
-  "syn 3.0.6",
- ]
- 
-@@ -7807,7 +7806,6 @@ version = "0.1.0"
- dependencies = [
-  "proc-macro2",
-  "quote",
-- "restate-workspace-hack",
-  "syn 3.0.6",
- ]
- 
-@@ -7884,7 +7882,6 @@ name = "restate-encoding-derive"
- version = "0.1.0"
- dependencies = [
-  "quote",
-- "restate-workspace-hack",
-  "syn 3.0.6",
- ]
- 
-@@ -9362,6 +9359,7 @@ dependencies = [
-  "num-traits",
-  "once_cell",
-  "petgraph",
-+ "portable-atomic",
-  "pprof_util",
-  "proc-macro2",
-  "prost",
-```
-
-**File**: `crates/codederror/derive/Cargo.toml` (modified, +0/-2)
-```diff
-@@ -15,7 +15,5 @@ proc-macro2 = { workspace = true }
- quote = { workspace = true }
- syn = { workspace = true }
- 
--restate-workspace-hack = { workspace = true }
--
- [lints]
- workspace = true
-```
-
-**File**: `crates/core/derive/Cargo.toml` (modified, +0/-2)
-```diff
-@@ -15,7 +15,5 @@ proc-macro2 = { workspace = true }
- quote = { workspace = true }
- syn = { workspace = true, features = ["full"] }
- 
--restate-workspace-hack = { workspace = true }
--
- [lints]
- workspace = true
-```
-
-**File**: `crates/encoding/derive/Cargo.toml` (modified, +0/-2)
-```diff
-@@ -14,7 +14,5 @@ proc-macro = true
- quote = {workspace = true}
- syn = { workspace = true, features = ["full", "extra-traits"] }
- 
--restate-workspace-hack = { workspace = true }
--
- [lints]
- workspace = true
-```
-
-**File**: `workspace-hack/Cargo.toml` (modified, +4/-122)
-```diff
-@@ -95,6 +95,7 @@ num-integer = { version = "0.1", features = ["i128"] }
- num-traits = { version = "0.2", features = ["i128", "libm"] }
- once_cell = { version = "1", features = ["critical-section"] }
- petgraph = { version = "0.8" }
-+portable-atomic = { version = "1" }
- proc-macro2 = { version = "1" }
- prost = { version = "0.14" }
- prost-types = { version = "0.14" }
-@@ -151,145 +152,50 @@ zlib-rs = { version = "0.6", default-features = false, features = ["std"] }
- zstd-sys = { version = "2", features = ["experimental", "std"] }
- 
- [build-dependencies]
--adaptive-timeout = { version = "0.0.1-alpha.4", features = ["schemars", "serde", "sync", "tokio"] }
--ahash = { version = "0.8", features = ["serde"] }
--arrayvec = { version = "0.7" }
--arrow = { version = "59", features = ["canonical_extension_types", "chrono-tz", "prettyprint"] }
--arrow-array = { version = "59", default-features = false, features = ["chrono-tz"] }
--arrow-cast = { version = "59", default-features = false, features = ["prettyprint"] }
--arrow-ipc = { version = "59", features = ["lz4", "zstd"] }
--arrow-schema = { version = "59", default-features = false, features = ["canonical_extension_types"] }
--aws-config = { version = "1", features = ["behavior-version-latest"] }
--aws-credential-types = { version = "1", default-features = false, features = ["hardcoded-credentials", "test-util"] }
--aws-lc-rs = { version = "1", features = ["prebuilt-nasm"] }
--aws-lc-sys = { version = "0.47", default-features = false, features = ["prebuilt-nasm"] }
--aws-runtime = { version = "1", default-features = false, features = ["event-stream"] }
--aws-sdk-sts = { version = "1", default-features = false, features = ["behavior-version-latest", "default-https-client", "rt-tokio"] }
--aws-sigv4 = { version = "1", features = ["sign-eventstream"] }
--aws-smithy-http = { version = "0.64", default-features = false, features = ["event-stream"] }
--aws-smithy-types = { version = "1", default-features = false, features = ["byte-stream-poll-next", "rt-tokio", "test-util"] }
--axum = { version = "0.8", default-features = false, features = ["http1", "http2", "json", "query", "tokio"] }
--bilrost = { version = "0.1016", default-features = false, features = ["auto-optimize", "bytestring", "derive", "smallvec", "std"] }
--block-buffer = { version = "0.12", default-features = false, features = ["zeroize"] }
- bytes = { version = "1", features = ["serde"] }
--bytestring = { version = "1", default-features = false, features = ["serde"] }
--chrono = { version = "0.4", features = ["serde"] }
--clap = { version = "4", default-features = false, features = ["color", "derive", "env", "error-context", "help", "std", "suggestions", "usage", "wrap_help"] }
--clap_builder = { version = "4", default-features = false, features = ["color", "env", "std", "suggestions", "usage", "wrap_help"] }
--compact_str = { version = "0.10", default-features = false, features = ["bytes", "serde", "std"] }
--crc32fast = { version = "1" }
--criterion = { version = "0.8", features = ["async_tokio"] }
--crossbeam-epoch = { version = "0.9" }
--crossbeam-utils = { version = "0.8" }
--dashmap = { version = "6", default-features = false, features = ["inline"] }
- deranged = { version = "0.5", features = ["serde"] }
--derive_more = { version = "2", features = ["add", "add_assign", "as_ref", "debug", "deref", "deref_mut", "display", "from", "from_str", "index", "index_mut", "into", "into_iterator", "is_variant", "try_from", "try_unwrap"] }
- derive_more-impl = { version = "2", features = ["add", "add_assign", "as_ref", "debug", "deref", "deref_mut", "display", "from", "from_str", "index", "index_mut", "into", "into_iterator", "is_variant", "try_from", "try_unwrap"] }
--digest-93f6ce9d446188ac = { package = "digest", version = "0.10", features = ["mac", "std"] }
--digest-a6292c17cd707f01 = { package = "digest", version = "0.11", features = ["alloc", "mac", "oid", "zeroize"] }
- displaydoc = { version = "0.2" }
- either = { version = "1", features = ["use_std"] }
--enum-map = { version = "3", features = ["serde"] }
--event-listener = { version = "5" }
--flate2 = { version = "1", features = ["zlib-rs"] }
- foldhash = { version = "0.2" }
--form_urlencoded = { version = "1" }
--futures-channel = { version = "0.3", features = ["sink"] }
--futures-core = { version = "0.3" }
--futures-executor = { version = "0.3" }
--futures-sink = { version = "0.3" }
--futures-util = { version = "0.3", features = ["channel", "io", "sink"] }
--gardal = { version = "0.0.1-alpha.9", features = ["async"] }
--getrandom-468e82937335b1c9 = { package = "getrandom", version = "0.3", default-features = false, features = ["std"] }
--getrandom-6f8ce4dd05d13bba = { package = "getrandom", version = "0.2", default-features = false, features = ["js"] }
--half = { version = "2", default-features = false, features = ["num-traits"] }
- hashbrown-3575ec1268b04181 = { package = "hashbrown", version = "0.15" }
--hashbrown-582f2526e08bb6a0 = { package = "hashbrown", version = "0.14", default-features = false, feature
+                             update_shared_state(&this);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5777** (2026-11-06): [restatectl] Add drop-stale-stores, dry runs and replica checks for drops (@AhmedSoliman)
-- **PR #5776** (2026-11-06): [partition-store][types] Add disk_usage and latest_configuration_version (@AhmedSoliman)
-- **PR #5774** (2026-11-06): [Restate UI] Update to v1.1.4 (@restatedev-web-ui[bot])
-- **PR #5773** (2026-11-06): [worker] Avoid restarting partition processors during node shutdown (@AhmedSoliman)
-- **PR #5769** (2026-11-05): [Build] Emit only line tables for workspace crates in dev and release-lite (@AhmedSoliman)
-- **PR #5767** (2026-11-05): [Build] Stop compiling workspace-hack a second time for build scripts (@AhmedSoliman)
+- **PR #5792** (2026-11-09): [restatectl] Show who reads each log and how many bytes per second (@AhmedSoliman)
+- **PR #5791** (2026-11-09): [Bifrost] Let read stream counters wrap the same way in every build (@AhmedSoliman)
+- **PR #5790** (2026-11-09): [Bifrost] Let read stream owners name their streams and show their role (@AhmedSoliman)
+- **PR #5788** (2026-11-09): [Bifrost] Count the records and bytes each read stream delivers (@AhmedSoliman)
+- **PR #5787** (2026-11-09): [worker] Let max-command-batch-bytes bound the committed write batch (@AhmedSoliman)
+- **PR #5786** (2026-11-09): [worker] Add a histogram of partition processor write batch sizes (@AhmedSoliman)
 
 ---
 
@@ -2168,47 +1688,34 @@ Wall time is bounded by the build scripts of C dependencies (`openssl-sys`,
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [ci] Let PR docker builds reuse a dependency layer warmed on main (#5753)
+## X. [Bifrost] Let read stream counters wrap the same way in every build
 
 **RULE**:
-When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in restatedev/restate. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/bifrost/src/read_stream.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in restatedev/restate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ef0d6719`: [ci] Let PR docker builds reuse a dependency layer warmed on main (#5753). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `edcaf8be`: [Bifrost] Let read stream counters wrap the same way in every build. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/bifrost/src/read_stream.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# One run per PR: a new push cancels the older run. Some pushes also start two
-# `pull_request` runs for the same commit at once; this keeps only one of them.
-# Other events get a unique group, so they never wait on or cancel each other.
-# `github.workflow` is the caller's name when Release calls this workflow, which keeps
-# that run from cancelling the PR's own CI run.
-concurrency:
-  group: ci-${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
-
-      # A PR's cache entries land in that PR's own scope, which other PRs can't read, and
-      # exporting the dependency layer took 7-13 minutes. `docker-pr-cache` below warms it from main.
-      cacheReadOnly: ${{ github.event_name == 'pull_request' }}
-
-  docker-pr-cache:
-    name: Warm PR docker build cache
-    # PR docker builds only read the build cache. This builds their dependency layer on
-    # main so PRs can restore it instead of rebuilding ~800 crates.
-    # The inputs must match the PR build of the `docker` job above, or the layer's
-    # cache key won't match.
-    if: github.event_name == 'push' && github.ref 
+                                // Wrap at 2^64 the same way in every build.
+                                *this.records_read = this.records_read.wrapping_add(1);
+                                *this.bytes_read = this.bytes_read.wrapping_add(
+                                    data_record.encoded_body_size().unwrap_or_default() as u64,
+                                );
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+                                *this.records_read += 1;
+                                *this.bytes_read +=
+                                    data_record.encoded_body_size().unwrap_or_default() as u64;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ef0d6719` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `edcaf8be` are properly handled with clean fallback behavior.

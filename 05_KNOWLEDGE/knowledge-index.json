@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-10T01:19:28.679Z",
+  "last_updated": "2026-11-10T01:46:26.862Z",
   "total_verified_learnings": 1245,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7644,8 +7644,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "e9799367",
-      "content_hash": "ffd2ccd36238b11fd650bfb973f5f56aae1720951ff5dfc59d31bacbbe3d8bd6",
+      "source_version": "51e49a9a",
+      "content_hash": "3759605db1e1f0a147d25aa1902e3078da07016cfdb474b0f8b8d7989243e617",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -7687,6 +7687,11 @@
         {
           "number": null,
           "title": "maps/lxcmap: use map registry for cilium_lxc map",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "policy: fix mapstate entry equality check condition ordering",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -7935,7 +7940,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T16:26:06.603Z",
+      "verified_at": "2026-11-10T01:41:37.031Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -54610,14 +54615,19 @@
       "slug": "restatedev-restate",
       "platform": "github",
       "source_url": "https://github.com/restatedev/restate",
-      "source_version": "211a106f",
-      "content_hash": "165932617dd5e7730d82691f14b5bbdc5ac03bae25b6db1e675f4705efe0aba1",
+      "source_version": "4733a867",
+      "content_hash": "b6bbb39efa479d5f36287371e8001c0b0c262efa736e57e2dd747c2b9fc8cf52",
       "dossier_path": "07_PROJECT_LEARNING/restatedev-restate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/restatedev-restate-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "[ci] Let PR docker builds reuse a dependency layer warmed on main (#5753)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "[Bifrost] Let read stream counters wrap the same way in every build",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -54701,7 +54711,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T06:10:05.226Z",
+      "verified_at": "2026-11-10T01:46:26.841Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -63426,13 +63436,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "slug": "tursodatabase-turso",
+      "slug": "tursodatabase-limbo",
       "platform": "github",
-      "source_url": "https://github.com/tursodatabase/turso",
-      "source_version": "e520c28d",
-      "content_hash": "f6dc6dc203d13148508d15ff23cada894aa83df7d5a2a7634b083748d4580918",
-      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_version": "a7ce4ee0",
+      "content_hash": "dc78c1965f15695513c4dd9ce3383048f310a57c406f3d27aa7d3af80556d22a",
+      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
       "promoted_rules": [
         {
           "number": null,
@@ -63452,6 +63462,11 @@
         {
           "number": null,
           "title": "Merge 'core/storage: Ensure b-tree pages do not have overflow cells before use'",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge 'ci: add nightly steps for checkpoint_n_rows and overflow_scan_benchmark'",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -63605,7 +63620,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T01:26:25.108Z",
+      "verified_at": "2026-11-10T01:41:39.931Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

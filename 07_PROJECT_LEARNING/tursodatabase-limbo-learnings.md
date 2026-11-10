@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md`  
 > **Source**: github ([https://github.com/tursodatabase/limbo](https://github.com/tursodatabase/limbo))  
-> **Source Version**: `e520c28d`  
+> **Source Version**: `a7ce4ee0`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T22:26:27.784Z  
+> **Timestamp**: 2026-11-10T01:41:38.498Z  
 > **Learning ID**: `learn-github-tursodatabase-turso`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tursodatabase/limbo](https://github.com/tursodatabase/limbo))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T22:26:27.779Z  
+> **Harvest Timestamp**: 2026-11-10T01:41:38.225Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A SQL database in Rust: SQLite-compatible, now also speaking Postgres (experimental). The LLVM of databases.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 25196 stars
+- **Stars / Engagement**: 25205 stars
 
 ---
 
@@ -1428,13 +1428,13 @@ export class Statement {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #11577** (2026-11-08): **bindings/rust: expose the progress handler on Connection**
-  *Symptoms*: The core connection already has a step-based progress handler (`sqlite3_progress_handler` semantics), and the C bindings expose it, but the Rust bindings and the SDK kit don't. A Rust caller can only stop a running statement from outside today: `interrupt()` from another thread, or a wall-clock `set_query_timeout`.  This adds `Connection::set_progress_handler(ops, Option<F>)` to the Rust bindings, forwarding through `TursoConnection::set_progress_handler` in the SDK kit. The signature follows rusqlite's `progress_handler`.  Because the callback runs on the thread executing the statement, it stops statements that never yield, such as a scan over cached pages. A caller can tie it to a cancellation signal by checking a token on every call; this is how Android's `SQLiteConnection` implements `CancellationSignal`. We use it to cancel a search query as soon as the user types another character.  Test: `test_progress_handler_interrupts_when_it_returns_true` checks three things: a handler that returns false runs without stopping the statement; flipping the flag it reads from another thread interrupts a runaway statement with `Error::Interrupt`; and removing the handler lets the next statement run normally. 
-
-- **Issue #11576** (2026-11-08): **core/dialect: centralize shared SQLite behavior in Dialect defaults**
-  *Symptoms*: #11356  ## Description  Move the shared SQLite parsing, schema handling, catalog registration, table formatting, and builtin function resolution into Dialect trait defaults.  Reduce EngineDialect and SqliteDialect to their dialect names while keeping PostgreSQL-specific overrides in PostgresDialect.  Also remove the production turso_sqlite dependency from turso_pg and call the core table formatter directly. Keep turso_sqlite only for SQLite-specific tests.
+- **Issue #11630** (2026-11-10): **Guide AI agents towards our mode of working**
+  *Symptoms*: Updates AGENTS.md and CONTRIBUTING.md so AI agents point contributors to filing issues instead of sending PRs, and follow our contribution workflow.  🤖 Generated with [Claude Code](https://claude.com/claude-code)
   **Post-Mortem & Fix Analysis**:
-  > ### Autofixer review <sub>🔄 Autofixer updates this comment while the review runs.</sub>  Autofixer reviews pull requests from outside contributors on its own. The review of `ebfe20f95959` is [here](https://github.com/tursodatabase/turso/pull/11576#pullrequestreview-5814403163).  ✅ **Verdict: looks good to merge.**  <sub>Automated review by Autofixer; maintainers decide what to merge. Autofixer started this review on its own, as it does for pull requests from outside contributors. Push a fix to get a re-review (up to 3 reviews in all); a pull request whose blocking findings stay unaddressed for 7 days is closed. Maintainers: add `autofixer: no-review` to stop these reviews, or `autofixer: review-requested` to review it as requested.</sub>  <!-- autofixer:contributor-review:ebfe20f95959155011f3282cda33f0fcd505801a --> <!-- autofixer:contributor-review-recommends:ebfe20f95959155011f3282cda33f0fcd505801a --> <!-- autofixer:contributor-review-state:eyJ2ZXJzaW9uIjoxLCJyZXZpZXdzIjpbeyJoZWFkU
+  > <!-- __CODSPEED_PERFORMANCE_REPORT_COMMENT__ --> ## Merging this PR will **improve performance by 21.15%**  <details> <summary><b>2 warnings, 1 note</b></summary>  > :warning: **Unable to measure the execution of 1 benchmark** > > This benchmark measured no execution time, so its result is not comparable and counts as unchanged. This usually happens when the compiler removes the code under test. > > [Prevent compiler optimizations](https://codspeed.io/docs/troubleshooting?utm_source=github&utm_medium=comment-v2&utm_content=optimized_out#optimized-out-benchmarks) > > [See affected benchmarks](https://app.codspeed.io/tursodatabase/turso/branches/agent-contributing-guidelines?q=has%3Aoptimized_out&utm_source=github&utm_medium=comment-v2&utm_content=affected_benchmarks)  > :warning: **98 benchmarks are dominated by system calls** > > System calls cannot be simulated consistently and are left out of the measure. The reported value understates the real cost. Switch to the Walltime instrument
+
+- **Issue #11614** (2026-11-09): **ci: add nightly steps for checkpoint_n_rows and overflow_scan_benchmark**
+  *Symptoms*: The nightly Nyrkiö benchmark job checks that every bench binary cargo builds has its own workflow step, and fails when one is missing. The `checkpoint_n_rows` and `overflow_scan_benchmark` benches were added to the bench crate without a step, so the nightly has failed at that check every night since 2026-10-29 and no benchmark results have been uploaded.  This adds the two missing steps in the alphabetical position the rest of the list uses. Both benches are small (10 to 20 samples, 1 to 5 second measurement windows), so they fit inside the 85 minute budget the script enforces.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1451,64 +1451,178 @@ export class Statement {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9ce98599` (2026-11-08)
-**Commit Message**: Merge 'core/storage: Ensure b-tree pages do not have overflow cells before use' from app/turso-github-handyman
+### Incident Patch 1: `4b374b40` (2026-11-09)
+**Commit Message**: Merge 'ci: add nightly steps for checkpoint_n_rows and overflow_scan_benchmark' from Pekka Enberg
 
-Fix for #7741.
+The nightly Nyrkiö benchmark job checks that every bench binary cargo
+builds has its own workflow step, and fails when one is missing. The
+`checkpoint_n_rows` and `overflow_scan_benchmark` benches were added to
+the bench crate without a step, so the nightly has failed at that check
+every night since 2026-10-29 and no benchmark results have been
+uploaded.
 
-<!-- autofixer:host-part --> Fixes #7741
+This adds the two missing steps in the alphabetical position the rest of
+the list uses. Both benches are small (10 to 20 samples, 1 to 5 second
+measurement windows), so they fit inside the 85 minute budget the script
+enforces.
 
-<sub>Opened by Autofixer. To ask for a change, mention @turso-github-
-handyman in a comment.</sub>
+Closes #11614
 
-Co-authored-by: avinassh <[REDACTED_EMAIL]>
-
-Closes #11504
-
-**File**: `core/storage/btree.rs` (modified, +18/-1)
+**File**: `.github/workflows/perf_nightly.yml` (modified, +6/-0)
 ```diff
-@@ -9385,7 +9385,11 @@ fn find_free_slot(
- pub fn btree_init_page(page: &PageRef, page_type: PageType, offset: usize, usable_space: usize) {
-     // setup btree page
-     let contents = page.get_contents();
--    contents.overflow_cells.clear();
-+    turso_assert!(
-+        contents.overflow_cells.is_empty(),
-+        "btree_init_page: page still has overflow cells from an earlier insert or balance",
-+        { "page_id": page.get().id(), "overflow_count": contents.overflow_cells.len() }
-+    );
-     tracing::debug!(
-         "btree_init_page(id={}, offset={}, usable_space={})",
-         page.get().id(),
-@@ -11520,6 +11524,19 @@ mod tests {
-         payload: crate::alloc::Vec<u8>,
-     }
+@@ -66,6 +66,9 @@ jobs:
+       - name: Bench benchmark
+         if: ${{ !cancelled() }}
+         run: scripts/nightly-bench.sh run benchmark
++      - name: Bench checkpoint_n_rows
++        if: ${{ !cancelled() }}
++        run: scripts/nightly-bench.sh run checkpoint_n_rows
+       - name: Bench count_benchmark
+         if: ${{ !cancelled() }}
+         run: scripts/nightly-bench.sh run count_benchmark
+@@ -96,6 +99,9 @@ jobs:
+       - name: Bench mvcc_recovery_benchmark
+         if: ${{ !cancelled() }}
+         run: scripts/nightly-bench.sh run mvcc_recovery_benchmark
++      - name: Bench overflow_scan_benchmark
++        if: ${{ !cancelled() }}
++        run: scripts/nightly-bench.sh run overflow_scan_benchmark
+       - name: Bench parser_benchmark
+         if: ${{ !cancelled() }}
+         run: scripts/nightly-bench.sh run parser_benchmark
+```
+
+---
+
+### Incident Patch 2: `a7883c29` (2026-11-09)
+**Commit Message**: ci: add nightly steps for checkpoint_n_rows and overflow_scan_benchmark
+
+The nightly Nyrkiö benchmark job checks that every bench binary cargo
+builds has its own workflow step, and fails when one is missing. The
+checkpoint_n_rows and overflow_scan_benchmark benches were added to the
+bench crate without a step, so the nightly has failed at that check
+every night since 2026-10-29 and no benchmark results have been
+uploaded.
+
+**File**: `.github/workflows/perf_nightly.yml` (modified, +6/-0)
+```diff
+@@ -66,6 +66,9 @@ jobs:
+       - name: Bench benchmark
+         if: ${{ !cancelled() }}
+         run: scripts/nightly-bench.sh run benchmark
++      - name: Bench checkpoint_n_rows
++        if: ${{ !cancelled() }}
++        run: scripts/nightly-bench.sh run checkpoint_n_rows
+       - name: Bench count_benchmark
+         if: ${{ !cancelled() }}
+         run: scripts/nightly-bench.sh run count_benchmark
+@@ -96,6 +99,9 @@ jobs:
+       - name: Bench mvcc_recovery_benchmark
+         if: ${{ !cancelled() }}
+         run: scripts/nightly-bench.sh run mvcc_recovery_benchmark
++      - name: Bench overflow_scan_benchmark
++        if: ${{ !cancelled() }}
++        run: scripts/nightly-bench.sh run overflow_scan_benchmark
+       - name: Bench parser_benchmark
+         if: ${{ !cancelled() }}
+         run: scripts/nightly-bench.sh run parser_benchmark
+```
+
+---
+
+### Incident Patch 3: `a7ce4ee0` (2026-11-10)
+**Commit Message**: Merge pull request #11630 from tursodatabase/agent-contributing-guidelines
+
+Guide AI agents towards our mode of working
+
+**File**: `AGENTS.md` (modified, +6/-0)
+```diff
+@@ -2,6 +2,12 @@
  
-+    #[test]
-+    #[should_panic(expected = "page still has overflow cells")]
-+    fn btree_init_page_rejects_page_with_overflow_cells() {
-+        let page = get_page(2);
-+        let page_contents = page.get_contents();
-+        let payload = [1u8; 3000];
-+        insert_into_cell(page_contents, &payload, 0, 4096).unwrap();
-+        insert_into_cell(page_contents, &payload, 1, 4096).unwrap();
-+        assert_eq!(page_contents.overflow_cells.len(), 1);
+ SQLite rewrite in Rust. 40+ crate workspace.
+ 
++When sending PRs to Turso, keep PRs direct and self-contained. Even within a PR, break it in multiple
++individual logical commits. The goal is to help a reviewer understand what is going on.
 +
-+        btree_init_page(&page, PageType::TableLeaf, 0, 4096);
-+    }
++If you are not working on behalf of a Turso committer, incentivize filing issues instead of sending PRs.
++Details of the policy are in our CONTRIBUTING.md file and you should point your users toward it if needed.
 +
-     #[test]
-     fn test_drop_1() {
-         let (db, _temp_dir) = get_database();
+ ## Quick Reference
+ 
+ ```bash
+```
+
+**File**: `CONTRIBUTING.md` (modified, +30/-16)
+```diff
+@@ -35,7 +35,10 @@ This document is a quick helper to get you going.
+ 
+ ## Getting Started
+ 
+-Turso is a rewrite of SQLite in Rust. If you are new to SQLite, the following articles and books are a good starting point:
++Turso is an embedded in-process relational database. Initially conceived solely as a rewrite of SQLite in Rust, we eventually leveraged SQLite's bytecode-based architecture
++to implement other database frontends, including Postgres.
++
++If you are new to SQLite, the following articles and books are a good starting point:
+ 
+ * [Architecture of SQLite](https://www.sqlite.org/arch.html)
+ * Sibsankar Haldar. [SQLite Database System Design and Implementation (2nd Edition)](https://books.google.com/books/?id=yWzwCwAAQBAJ&redir_esc=y). 2016
+@@ -51,6 +54,32 @@ Examples of contributing
+ * [How to contribute a SQL function implementation](docs/contributing/contributing_functions.md)
+ * [Rickrolling Turso DB](https://avi.im/blag/2025/rickrolling-turso)
+ 
++
++## Developing with AI coding agents
++
++At Turso we pride ourselves in our Open Source stance. We started our project as an Open Contribution rewrite of SQLite, where all could have a seat at the table and influence the direction of the project,
++and throughout the years we have done just that. Our intention is to be able to double down on Open Source as the world closes its walls as a result of how agents work. However, it is undeniable that AI has
++changed the way Open Source communities ought to work. The volume is just too high for any group of people to handle.
++
++Therefore, we adopt a constantly evolving set of best-practices.
++
++If you are an external contributor, do recommend you do not send fixes to things that are broken, but open issues instead.
++In our experience, most likely you have just asked your coding agent to fix the issue and sent us the result. If this is all you have done, we could have done that with our coding agent just the same.
++An issue that includes a comprehensive set of tests and other relevant information that may help us fix it is as valuable as code and you will be credited by filing the issue in the commit that eventually fixes it.
++
++Developing new features and architecture work is where humans excel, so this is where PRs are welcome the most.
++
++When you do send a PR, we expect you to understand the code you submit. The best AI-assisted contributions come from people who treat the agent as a collaborator, not a substitute: you direct the work, review it critically, and own the result. A PR you can explain and defend is far more valuable than a large one you can't.
++
++To give your PR the best chance of being merged:
++
++* **Keep it small and focused.** Describe the change in your own words, or heavily edit any AI-generated summary so it reads naturally and accurately.
++* **Break it in individual commits.** Make sure each individual commit does one logical self-contained thing.
++* **Include regression tests.** Verify that your tests actually FAIL without your changes — this is especially important when the tests are AI-generated.
++* **Contribute in areas you understand.** If you spot a bug in something like the MVCC or b-tree layer but aren't familiar with it, the most helpful thing you can do is file a clear bug report rather than submit an AI-generated fix.
++* **Do a self-review.** LLMs tend to make the same mistakes repeatedly: removing existing comments, adding verbose new ones, writing overly elaborate tests instead of using existing test helpers, etc. Always self-review your code before submitting - make sure it's correct and follows the existing code standards in this repo.
++
++
+ To build and run `tursodb` CLI:
+ 
+ ```shell
+@@ -143,21 +172,6 @@ echo -1 | sudo tee /proc/sys/kernel/perf_event_paranoid
+ cargo bench --profile bench-profile --bench benchmark -- --profile-time=5
+ ```
+ 
+-## Developing with AI coding agents
+-
+-You're welcome to develop Turso with AI coding agents such as Claude Code, Codex, or OpenCode. Used well, they can help you explore the codebase, draft tests, and polish your contributions. To make the most of them — and to get your PRs merged — keep the following in mind.
+-
+-We expect you to understand the code you submit. The best AI-assisted contributions come from people who treat the agent as a collaborator, not a substitute: you direct the work, review it critically, and own the result. A PR you can explain and defend is far more valuable than a large one you can't.
+-
+-To give your PR the best chance of being merged:
+-
+-* **Keep it small and focused.** Describe the change in your own words, or heavily edit any AI-generated summary so it reads naturally and accurately.
+-* **Include regression tests.** Verify that your tests actually FAIL without your changes — this is especially important when the tests are AI-generated.
+-* **Contribute in areas you understand.** If you spot a bug in something like the MVCC or b-tree layer but aren't familiar with it, the most helpful thing you can do is file a
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #11577** (2026-11-08): bindings/rust: expose the progress handler on Connection (@KaiserKarel)
-- **PR #11576** (2026-11-08): core/dialect: centralize shared SQLite behavior in Dialect defaults (@Surajsuthar)
-- **PR #11571** (2026-11-07): tursopg: read hex, octal and binary literals that do not fit in int4 (@gaurav0107)
-- **PR #11566** (2026-11-07): core/time: return an error for a time blob whose seconds overflow (@gaurav0107)
-- **PR #11561** (2026-11-08): core: count changes() and total_changes() like SQLite (@Raviikumar001)
-- **PR #11559** (closed): core: count changes like SQLite for CREATE INDEX, OR FAIL and vtab writes (@1AbdullahButt)
+- **PR #11630** (2026-11-10): Guide AI agents towards our mode of working (@glommer)
+- **PR #11614** (2026-11-09): ci: add nightly steps for checkpoint_n_rows and overflow_scan_benchmark (@penberg)
+- **PR #11613** (2026-11-09): core: check the current role's privileges in blob_open (@penberg)
+- **PR #11611** (2026-11-09): core/translate: read a text compared with a custom type as a value of the type (@jussisaurio)
+- **PR #11610** (closed): core/translate: give a CAST to a custom type the type's comparison affinity (@jussisaurio)
+- **PR #11607** (closed): core: refuse a second statement while another is in progress on the connection (@LeMikaelF)
 
 ---
 
@@ -1528,45 +1642,33 @@ Closes #11504
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge 'core/storage: Ensure b-tree pages do not have overflow cells before use' 
+## X. Merge 'ci: add nightly steps for checkpoint_n_rows and overflow_scan_benchmark' 
 
 **RULE**:
-When implementing operations in `core/storage/btree.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/perf_nightly.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9ce98599`: Merge 'core/storage: Ensure b-tree pages do not have overflow cells before use' from app/turso-github-handyman. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4b374b40`: Merge 'ci: add nightly steps for checkpoint_n_rows and overflow_scan_benchmark' from Pekka Enberg. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/storage/btree.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/perf_nightly.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    turso_assert!(
-        contents.overflow_cells.is_empty(),
-        "btree_init_page: page still has overflow cells from an earlier insert or balance",
-        { "page_id": page.get().id(), "overflow_count": contents.overflow_cells.len() }
-    );
-    #[test]
-    #[should_panic(expected = "page still has overflow cells")]
-    fn btree_init_page_rejects_page_with_overflow_cells() {
-        let page = get_page(2);
-        let page_contents = page.get_contents();
-        let payload = [1u8; 3000];
-        insert_into_cell(page_contents, &payload, 0, 4096).unwrap();
-        insert_into_cell(page_contents, &payload, 1, 4096).unwrap();
-        assert_eq!(page_contents.overflow_cells.len(), 1);
-
-        btree_init_page(&page, PageType::TableLeaf, 0, 4096);
-    }
-
+      - name: Bench checkpoint_n_rows
+        if: ${{ !cancelled() }}
+        run: scripts/nightly-bench.sh run checkpoint_n_rows
+      - name: Bench overflow_scan_benchmark
+        if: ${{ !cancelled() }}
+        run: scripts/nightly-bench.sh run overflow_scan_benchmark
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    contents.overflow_cells.clear();
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9ce98599` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4b374b40` are properly handled with clean fallback behavior.

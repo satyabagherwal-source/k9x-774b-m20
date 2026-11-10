@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "e9799367",
+    "sourceVersion": "51e49a9a",
     "license": "Apache-2.0",
-    "contentHash": "ffd2ccd36238b11fd650bfb973f5f56aae1720951ff5dfc59d31bacbbe3d8bd6",
-    "lastHarvestedAt": "2026-11-09T16:26:06.740Z",
+    "contentHash": "3759605db1e1f0a147d25aa1902e3078da07016cfdb474b0f8b8d7989243e617",
+    "lastHarvestedAt": "2026-11-10T01:41:37.141Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -6263,10 +6263,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/limbo",
-    "sourceVersion": "e520c28d",
+    "sourceVersion": "a7ce4ee0",
     "license": "MIT",
-    "contentHash": "2abfe730cb94e9f9b4bc8aa6ac6ae3671f0318351658312a441e481d38a2d163",
-    "lastHarvestedAt": "2026-11-08T22:26:29.151Z",
+    "contentHash": "dc78c1965f15695513c4dd9ce3383048f310a57c406f3d27aa7d3af80556d22a",
+    "lastHarvestedAt": "2026-11-10T01:41:40.042Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "carbon-design-system-carbon": {
@@ -6983,10 +6983,10 @@
     "repository": "restatedev/restate",
     "platform": "github",
     "sourceUrl": "https://github.com/restatedev/restate",
-    "sourceVersion": "211a106f",
+    "sourceVersion": "4733a867",
     "license": "NOASSERTION",
-    "contentHash": "165932617dd5e7730d82691f14b5bbdc5ac03bae25b6db1e675f4705efe0aba1",
-    "lastHarvestedAt": "2026-11-07T06:10:05.380Z",
+    "contentHash": "b6bbb39efa479d5f36287371e8001c0b0c262efa736e57e2dd747c2b9fc8cf52",
+    "lastHarvestedAt": "2026-11-10T01:46:26.995Z",
     "learningId": "learn-github-restatedev-restate"
   },
   "kong-kubernetes-ingress-controller": {
