@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-10T01:02:32.914Z",
+  "last_updated": "2026-11-10T01:19:28.800Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5406,14 +5406,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sigstore-cosign",
-      "content_hash": "6846630146a1eb52233962545c2c44cc06d9663db265454c9191877c36d4a2a6",
-      "verified_at": "2026-11-05T03:46:32.632Z",
+      "content_hash": "a83186ef43d430c2e28fdb97364dbf9b91ac62c82a6eaf1df72bacbefdf4ec61",
+      "verified_at": "2026-11-10T01:19:28.799Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T03:46:32.632Z"
+      "last_updated": "2026-11-10T01:19:28.799Z"
     },
     "LLPhant/LLPhant": {
       "repository": "LLPhant/LLPhant",
@@ -10431,14 +10431,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-medialab-xan",
-      "content_hash": "4c04f7bc1de36cd70eea897eef0705d309a7e2854e95e88a6b49e3ed857d7dca",
-      "verified_at": "2026-11-08T18:11:20.818Z",
+      "content_hash": "395e962cacc5ca78f4e439c6559907388025a52ea4de9661c880b459477fe6df",
+      "verified_at": "2026-11-10T01:19:18.366Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T18:11:20.818Z"
+      "last_updated": "2026-11-10T01:19:18.366Z"
     },
     "onejs/one": {
       "repository": "onejs/one",
@@ -17241,14 +17241,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf",
-      "content_hash": "d238bb557c44e115e1392290800e08f76ae0261a823b775e0f11c0c3d6614ad6",
-      "verified_at": "2026-11-05T21:32:57.207Z",
+      "content_hash": "cab7f7b77e9e1802b8c390ad3a60fedfbf1586a6c372a3251f2212cbecaf2a69",
+      "verified_at": "2026-11-10T01:19:26.299Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T21:32:57.207Z"
+      "last_updated": "2026-11-10T01:19:26.299Z"
     },
     "liketrek/TREK": {
       "repository": "liketrek/TREK",

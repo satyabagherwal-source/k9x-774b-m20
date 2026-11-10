@@ -3523,10 +3523,10 @@
     "repository": "sigstore/cosign",
     "platform": "github",
     "sourceUrl": "https://github.com/sigstore/cosign",
-    "sourceVersion": "92514f9f",
+    "sourceVersion": "c8a4781a",
     "license": "Apache-2.0",
-    "contentHash": "6846630146a1eb52233962545c2c44cc06d9663db265454c9191877c36d4a2a6",
-    "lastHarvestedAt": "2026-11-05T03:46:32.619Z",
+    "contentHash": "a83186ef43d430c2e28fdb97364dbf9b91ac62c82a6eaf1df72bacbefdf4ec61",
+    "lastHarvestedAt": "2026-11-10T01:19:28.791Z",
     "learningId": "learn-github-sigstore-cosign"
   },
   "llphant-llphant": {
@@ -6913,10 +6913,10 @@
     "repository": "medialab/xan",
     "platform": "github",
     "sourceUrl": "https://github.com/medialab/xan",
-    "sourceVersion": "01ce2b3a",
+    "sourceVersion": "6849efff",
     "license": "Unlicense",
-    "contentHash": "4c04f7bc1de36cd70eea897eef0705d309a7e2854e95e88a6b49e3ed857d7dca",
-    "lastHarvestedAt": "2026-11-08T18:11:20.808Z",
+    "contentHash": "395e962cacc5ca78f4e439c6559907388025a52ea4de9661c880b459477fe6df",
+    "lastHarvestedAt": "2026-11-10T01:19:18.349Z",
     "learningId": "learn-github-medialab-xan"
   },
   "onejs-one": {
@@ -11465,8 +11465,8 @@
     "sourceUrl": "https://huggingface.co/unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
     "sourceVersion": "hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf",
     "license": "Open-Source",
-    "contentHash": "d238bb557c44e115e1392290800e08f76ae0261a823b775e0f11c0c3d6614ad6",
-    "lastHarvestedAt": "2026-11-05T21:32:57.199Z",
+    "contentHash": "cab7f7b77e9e1802b8c390ad3a60fedfbf1586a6c372a3251f2212cbecaf2a69",
+    "lastHarvestedAt": "2026-11-10T01:19:26.284Z",
     "learningId": "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf"
   },
   "liketrek-trek": {

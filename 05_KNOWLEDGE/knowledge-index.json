@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-10T01:02:32.797Z",
+  "last_updated": "2026-11-10T01:19:28.679Z",
   "total_verified_learnings": 1245,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -42998,8 +42998,8 @@
       "slug": "medialab-xan",
       "platform": "github",
       "source_url": "https://github.com/medialab/xan",
-      "source_version": "01ce2b3a",
-      "content_hash": "4c04f7bc1de36cd70eea897eef0705d309a7e2854e95e88a6b49e3ed857d7dca",
+      "source_version": "6849efff",
+      "content_hash": "395e962cacc5ca78f4e439c6559907388025a52ea4de9661c880b459477fe6df",
       "dossier_path": "07_PROJECT_LEARNING/medialab-xan-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/medialab-xan-learnings.md",
       "promoted_rules": [
@@ -43011,6 +43011,11 @@
         {
           "number": null,
           "title": "Fixing quadratic perf issue wrt variadic args",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Fixing xan bivar coordinate system",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -43054,7 +43059,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T18:11:20.691Z",
+      "verified_at": "2026-11-10T01:19:18.204Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -57559,11 +57564,16 @@
       "slug": "sigstore-cosign",
       "platform": "github",
       "source_url": "https://github.com/sigstore/cosign",
-      "source_version": "92514f9f",
-      "content_hash": "6846630146a1eb52233962545c2c44cc06d9663db265454c9191877c36d4a2a6",
+      "source_version": "c8a4781a",
+      "content_hash": "a83186ef43d430c2e28fdb97364dbf9b91ac62c82a6eaf1df72bacbefdf4ec61",
       "dossier_path": "07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Verify blobs exclusively via sigstore-go (#5087)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1851,
           "title": "include annotations in implied payload for offline verify",
@@ -57645,7 +57655,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T03:46:32.548Z",
+      "verified_at": "2026-11-10T01:19:28.657Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -85533,14 +85543,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 498,
       "title": "Tokenizer-Model Alignment Invariant",
-      "source_url": "https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct",
-      "source_version": "hf-meta-llama-meta-llama-3-8b-instruct",
+      "source_url": "https://huggingface.co/unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
+      "source_version": "hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-08T23:12:44.313Z"
+      "verified_at": "2026-11-10T01:19:26.132Z"
     },
     "rule-499": {
       "learning_id": "rule-499",
@@ -161841,10 +161851,20 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
       "source_version": "hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf",
-      "content_hash": "d238bb557c44e115e1392290800e08f76ae0261a823b775e0f11c0c3d6614ad6",
+      "content_hash": "cab7f7b77e9e1802b8c390ad3a60fedfbf1586a6c372a3251f2212cbecaf2a69",
       "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Quantization Precision-Memory Trade-off Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": 498,
+          "title": "Tokenizer-Model Alignment Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
         {
           "number": 5509,
           "title": "Quantization-Aware Tool-Call Integrity",
@@ -161871,7 +161891,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T21:32:57.070Z",
+      "verified_at": "2026-11-10T01:19:26.132Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

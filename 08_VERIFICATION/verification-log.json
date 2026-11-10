@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261108-V706",
-    "timestamp": "2026-11-08T03:55:59.670Z",
-    "repository": "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
-    "learningId": "learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16",
-    "contentHash": "50a2eea29e6358285abe6c690207df367733135f6ee2e01478343406e661ceba",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-44OW",
-    "timestamp": "2026-11-08T04:02:56.576Z",
-    "repository": "orcarouter/OrcaCyber-Nano-1.0",
-    "learningId": "learn-huggingface-orcarouter-orcacyber-nano-1-0",
-    "contentHash": "e893f517507b56d07579012730a4aa509af81c3b30ed926e942774bfedfd4bdb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-48TO",
-    "timestamp": "2026-11-08T04:03:01.932Z",
-    "repository": "tursodatabase/turso",
-    "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "2ea3285f4ea72e8727d664752e8730581e5b4cea0b42be753af5a16130016f8f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261108-CYTD",
     "timestamp": "2026-11-08T04:09:48.865Z",
     "repository": "RecursiveSI/flint",
@@ -7492,6 +7447,51 @@
     "contentHash": "fc86cf2cbceb74a5546b1cc63d7176b7ace351d4f7972db57b70c366c581f8ef",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261110-5E89",
+    "timestamp": "2026-11-10T01:19:18.345Z",
+    "repository": "medialab/xan",
+    "learningId": "learn-github-medialab-xan",
+    "contentHash": "395e962cacc5ca78f4e439c6559907388025a52ea4de9661c880b459477fe6df",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261110-5KCP",
+    "timestamp": "2026-11-10T01:19:26.281Z",
+    "repository": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
+    "learningId": "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf",
+    "contentHash": "cab7f7b77e9e1802b8c390ad3a60fedfbf1586a6c372a3251f2212cbecaf2a69",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261110-5MAB",
+    "timestamp": "2026-11-10T01:19:28.787Z",
+    "repository": "sigstore/cosign",
+    "learningId": "learn-github-sigstore-cosign",
+    "contentHash": "a83186ef43d430c2e28fdb97364dbf9b91ac62c82a6eaf1df72bacbefdf4ec61",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

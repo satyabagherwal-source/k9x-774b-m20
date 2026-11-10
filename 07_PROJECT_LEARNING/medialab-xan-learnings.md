@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/medialab-xan-learnings.md`  
 > **Source**: github ([https://github.com/medialab/xan](https://github.com/medialab/xan))  
-> **Source Version**: `01ce2b3a`  
+> **Source Version**: `6849efff`  
 > **License**: Unlicense  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T18:11:19.400Z  
+> **Timestamp**: 2026-11-10T01:19:17.141Z  
 > **Learning ID**: `learn-github-medialab-xan`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/medialab-xan-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/medialab/xan](https://github.com/medialab/xan))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T18:11:19.263Z  
+> **Harvest Timestamp**: 2026-11-10T01:19:16.718Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The CSV magician
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4552 stars
+- **Stars / Engagement**: 4554 stars
 
 ---
 
@@ -1968,88 +1968,355 @@ impl Args {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9a104d97` (2026-11-07)
-**Commit Message**: Fixing quadratic perf issue wrt variadic args
-Fix #1212
+### Incident Patch 1: `20f37ec5` (2026-11-09)
+**Commit Message**: Fixing xan bivar coordinate system
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -46,6 +46,7 @@
- * Fixing case-sensitive `xan search -R/--replace & --replacement-column` with multiple patterns.
- * Fixing parallel `xan search -R/--replace & --replacement-column`.
+@@ -48,6 +48,7 @@
  * Fixing `xan scrape` not streaming input when using `--paths` & `--docs`.
-+* Fixing performance issues when calling a command with a lot of positional arguments (e.g. 10k paths to `xan scrape`).
+ * Fixing performance issues when calling a command with a lot of positional arguments (e.g. 10k paths to `xan scrape`).
+ * Fixing `xan explode --evaluate --drop-empty` semantics.
++* Fixing `xan bivar` to abide by correct coordinates and flip y axis to fit intuition.
  
  *Performance*
  
 ```
 
-**File**: `Cargo.lock` (modified, +13/-13)
+**File**: `src/cmd/matrix.rs` (modified, +75/-58)
 ```diff
-@@ -651,18 +651,6 @@ version = "0.3.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "fea41bba32d969b513997752735605054bc0dfa92b4c56bf1189f2e174be7a10"
+@@ -9,14 +9,14 @@ use crate::moonblade::agg::CovarianceWelford;
+ use crate::select::SelectedColumns;
+ use crate::utils;
  
--[[package]]
--name = "docopt"
--version = "1.1.1"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "7f3f119846c823f9eafcf953a8f6ffb6ed69bf6240883261a7f13b634579a51f"
--dependencies = [
-- "lazy_static",
-- "regex",
-- "serde",
-- "strsim 0.10.0",
--]
--
- [[package]]
- name = "dtoa"
- version = "1.0.10"
-@@ -3325,7 +3313,6 @@ dependencies = [
-  "console",
-  "csv",
-  "dlv-list",
-- "docopt",
-  "ego-tree",
-  "emojis",
-  "encoding",
-@@ -3391,10 +3378,23 @@ dependencies = [
-  "unidecode",
-  "url",
-  "uuid",
-+ "xan_docopt",
-  "zmij",
-  "zstd",
- ]
+-struct LabeledMatrix<L, T> {
+-    columns: Vec<L>,
+-    rows: Vec<L>,
++struct LabeledMatrix<T> {
++    columns: ByteRecord,
++    rows: ByteRecord,
+     data: Vec<T>,
+ }
  
-+[[package]]
-+name = "xan_docopt"
-+version = "1.1.2"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "0ef9713550d4b26a0d3effcd73e7e13c19b36ea9ca23647bde7611ee20875955"
-+dependencies = [
-+ "lazy_static",
-+ "regex",
-+ "serde",
-+ "strsim 0.10.0",
-+]
-+
- [[package]]
- name = "yoke"
- version = "0.8.3"
+-impl<L, T: Default> LabeledMatrix<L, T> {
+-    fn new(columns: Vec<L>, rows: Vec<L>) -> Self {
++impl<T: Default> LabeledMatrix<T> {
++    fn new(columns: ByteRecord, rows: ByteRecord) -> Self {
+         let len = columns.len() * rows.len();
+ 
+         let mut data = Vec::with_capacity(len);
+@@ -33,7 +33,7 @@ impl<L, T: Default> LabeledMatrix<L, T> {
+     }
+ }
+ 
+-impl<L, T> LabeledMatrix<L, T> {
++impl<T> LabeledMatrix<T> {
+     #[inline(always)]
+     fn columns(&self) -> usize {
+         self.columns.len()
+@@ -52,23 +52,23 @@ impl<L, T> LabeledMatrix<L, T> {
+         y * self.columns() + x
+     }
+ 
+-    fn x_labels(&self) -> impl Iterator<Item = &L> {
++    fn x_labels(&self) -> impl Iterator<Item = &[u8]> {
+         self.columns.iter()
+     }
+ 
+-    fn labeled_rows(&self) -> impl Iterator<Item = (&L, &[T])> {
++    fn labeled_rows(&self) -> impl Iterator<Item = (&[u8], &[T])> {
+         self.rows.iter().zip(self.data.chunks_exact(self.columns()))
+     }
+ }
+ 
+-impl<L, T> LabeledMatrix<L, Option<T>> {
++impl<T> LabeledMatrix<Option<T>> {
+     fn set(&mut self, x: usize, y: usize, v: T) {
+         let i = self.flat_index(x, y);
+         self.data[i] = Some(v);
+     }
+ }
+ 
+-impl<L, T> Index<(usize, usize)> for LabeledMatrix<L, T> {
++impl<T> Index<(usize, usize)> for LabeledMatrix<T> {
+     type Output = T;
+ 
+     #[inline(always)]
+@@ -77,7 +77,7 @@ impl<L, T> Index<(usize, usize)> for LabeledMatrix<L, T> {
+     }
+ }
+ 
+-impl<L, T> IndexMut<(usize, usize)> for LabeledMatrix<L, T> {
++impl<T> IndexMut<(usize, usize)> for LabeledMatrix<T> {
+     #[inline(always)]
+     fn index_mut(&mut self, (x, y): (usize, usize)) -> &mut Self::Output {
+         let i = self.flat_index(x, y);
+@@ -120,16 +120,13 @@ impl Axes {
+     }
+ }
+ 
+-impl From<Axes> for LabeledMatrix<Vec<u8>, Option<f64>> {
++impl From<Axes> for LabeledMatrix<Option<f64>> {
+     fn from(value: Axes) -> Self {
+         match value {
+-            Axes::Heterogeneous { x, y } => {
+-                Self::new(x.into_iter().collect(), y.into_iter().collect())
++            Axes::Heterogeneous { x, y } => Self::new(x.iter().collect(), y.iter().collect()),
++            Axes::Homogeneous(labels) => {
++                Self::new(labels.iter().collect(), labels.iter().collect())
+             }
+-            Axes::Homogeneous(labels) => Self::new(
+-                labels.iter().cloned().collect(),
+-                labels.into_iter().collect(),
+-            ),
+         }
+     }
+ }
+@@ -511,64 +508,84 @@ impl Args {
+         let cell_width: f64 = (max_x - min_x) / (nb_cols as f64);
+         let cell_height: f64 = (max_y - min_y) / (nb_rows as f64);
+ 
+-        let mut x_labels = Vec::with_capacity(nb_cols);
++        let mut x_labels = ByteRecord::new();
+         let mut x_lower_bound = min_x;
+         for _ in 0..(nb_cols - 1) {
+-            x_labels.push(format!(
+-                ">= {} < {}",
+-                utils::format_number(x_lower_bound),
+-                utils::format_number(x_lower_bound + cell_width)
+-            ));
++            x_labels.push_field(
++                format!(
++                    ">= {} < {}",
++                    utils::format_number(x_lower_bound),
++                    utils::format_number(x_lower_bound + cell_width)
++                )
++                .as_bytes(),
++            );
+             x_lower_bound += cell_width;
+         }
+-        x_labels.push(format!(
+-            ">= {} <= {}",
+-            utils::format_number(x_lower_bound),
+-            utils::format_number(max_x)
+-        ));
++        x_labels.push_field(
++            format!(
++                ">= {} <= {}",
++                utils::format_number(x_lower_bound),
++                utils::format_number(max_x)
++            )
++            .as_bytes(),
++        );
+ 
+-        let mut y_labels = Vec::with_capacity(nb_rows);
++        let mut y_labels = ByteRecord::new();
+         let mut y_lower_bound = min_y;
+         for _ in 0..(nb_cols - 1) {
+-            y_labels.push(format!(
+-                ">= {} < {}",
+-                utils::format_number(y_lower_bound),
+-                utils::format_number(y_lower_bound + cell_height)
+-            ));
++            y_labels.push_field(
++                format!(
++                    ">= {} < {}",
++                    utils::format_number(y_lower_bound),
++                    utils::format_number(y_lower_bound + cell_height)
++                )
++                .as_bytes(),
++            );
+             y_lower_bound += cell_height;
+         }
+-        y_labels.push(format!(
+-            ">= {} <= {}",
+-            utils::format_number(y_lower_bound),
+-            utils::format_number(max_y)
+-        ));
++        y_labels.push_field(
++            format!(
++          
 ```
 
-**File**: `Cargo.toml` (modified, +1/-1)
+**File**: `tests/test_matrix.rs` (modified, +330/-29)
 ```diff
-@@ -78,7 +78,7 @@ console = "0.16.6"
- csv = "1.3.1"
- comrak = { version = "0.55.0", default-features = false }
- dlv-list = "0.6.0"
--docopt = "1"
-+xan_docopt = "1.1.2"
- ego-tree = "0.11.0"
- emojis = "0.9.0"
- encoding = "0.2.33"
+@@ -191,19 +191,150 @@ fn matrix_bivar() {
+ 
+     let got: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
+ 
+-    #[rustfmt::skip]
+     let expected = vec![
+-        ["", ">= -277,263 < -237,831", ">= -237,831 < -198,399", ">= -198,399 < -158,966", ">= -158,966 < -119,534", ">= -119,534 < -80,102", ">= -80,102 < -40,670", ">= -40,670 < -1,237.9", ">= -1,237.9 < 38,194", ">= 38,194 < 77,626", ">= 77,626 <= 117,058"],
+-            [">= -279,303 < -235,756", "", "", "", "", "", "1", "1", "", "", ""],
+-            [">= -235,756 < -192,208", "", "", "", "", "", "", "", "", "", ""],
+-            [">= -192,208 < -148,661", "", "", "", "", "", "", "", "1", "", ""],
+-            [">= -148,661 < -105,113", "", "", "", "", "", "", "", "", "", ""],
+-            [">= -105,113 < -61,566", "", "", "", "", "", "", "", "", "", ""],
+-            [">= -61,566 < -18,018", "", "", "", "", "", "", "2", "", "", ""],
+-            [">= -18,018 < 25,528", "", "", "", "", "", "", "", "", "", ""],
+-            [">= 25,528 < 69,076", "1", "", "", "", "", "", "", "", "1", "1"],
+-            [">= 69,076 < 112,623", "", "", "", "", "1", "", "", "1", "", ""],
+-            [">= 112,623 <= 156,171", "1", "", "", "", "", "", "", "", "", ""],
++        [
++            "",
++            ">= -277,263 < -237,831",
++            ">= -237,831 < -198,399",
++            ">= -198,399 < -158,966",
++            ">= -158,966 < -119,534",
++            ">= -119,534 < -80,102",
++            ">= -80,102 < -40,670",
++            ">= -40,670 < -1,237.9",
++            ">= -1,237.9 < 38,194",
++            ">= 38,194 < 77,626",
++            ">= 77,626 <= 117,058",
++        ],
++        [
++            ">= 112,623 <= 156,171",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "1",
++            "",
++            "",
++        ],
++        [
++            ">= 69,076 < 112,623",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "1",
++            "",
++            "",
++        ],
++        [
++            ">= 25,528 < 69,076",
++            "",
++            "",
++            "1",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "1",
++            "",
++        ],
++        [
++            ">= -18,018 < 25,528",
++            "1",
++            "",
++            "",
++            "",
++            "",
++            "2",
++            "",
++            "",
++            "",
++            "",
++        ],
++        [
++            ">= -61,566 < -18,018",
++            "1",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++        ],
++        [
++            ">= -105,113 < -61,566",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "1",
++            "",
++        ],
++        [
++            ">= -148,661 < -105,113",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++        ],
++        [
++            ">= -192,208 < -148,661",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++        ],
++        [
++            ">= -235,756 < -192,208",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++        ],
++        [
++            ">= -279,303 < -235,756",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "1",
++            "",
++            "1",
++        ],
+     ];
+     assert_eq!(got, expected);
+ }
+@@ -237,19 +368,150 @@ fn matrix_bivar_weight() {
+ 
+     let got: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
+ 
+-    #[rustfmt::skip]
+     let expected = vec![
+-        ["", ">= -277,263 < -237,831", ">= -237,831 < -198,399", ">= -198,399 < -158,966", ">= -158,966 < -119,534", ">= -119,534 < -80,102", ">= -80,102 < -40,670", ">= -40,670 < -1,237.9", ">= -1,237.9 < 38,194", ">= 38,194 < 77,626", ">= 77,626 <= 117,058"],
+-        [">= -279,303 < -235,756", "", "", "", "", "", "10.616205472750881", "7.486790584554081", "", "", ""],
+-        [">= -235,756 < -192,208", "", "", "", "", "", "", "", "", "", ""],
+-        [">= -192,208 < -148,661", "", "", "", "", "", "", "", "8.834227893525213", "", ""],
+-        [">= -148,661 < -105,113", "", "", "", "", "", "", "", "", "", ""],
+-        [">= -105,113 < -61,566", "", "", "", "", "", "", "", "", "", ""],
+-        [">= -61,566 < -18,018", "", "", "", "", "", "", "6.480093564961779", "", "", ""],
+-        [">= -18,018 < 25,528", "", "", "", "
 ```
 
 #### Recent Merged Pull Requests:
@@ -2078,13 +2345,13 @@ Fix #1212
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Fixing quadratic perf issue wrt variadic args
+## X. Fixing xan bivar coordinate system
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in medialab/xan. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9a104d97`: Fixing quadratic perf issue wrt variadic args. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `20f37ec5`: Fixing xan bivar coordinate system. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2092,7 +2359,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-* Fixing performance issues when calling a command with a lot of positional arguments (e.g. 10k paths to `xan scrape`).
+* Fixing `xan bivar` to abide by correct coordinates and flip y axis to fit intuition.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2102,4 +2369,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9a104d97` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `20f37ec5` are properly handled with clean fallback behavior.

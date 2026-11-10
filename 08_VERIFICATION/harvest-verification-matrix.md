@@ -8703,3 +8703,6 @@
 | `CYCLE-20261110-GB04` | `2026-11-10T00:59:47.764Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e72a6f8e...`) |
 | `CYCLE-20261110-GE04` | `2026-11-10T00:59:51.652Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`bff4ca5a...`) |
 | `CYCLE-20261110-JUEY` | `2026-11-10T01:02:32.890Z` | `topgrade-rs/topgrade` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`fc86cf2c...`) |
+| `CYCLE-20261110-5E89` | `2026-11-10T01:19:18.345Z` | `medialab/xan` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`395e962c...`) |
+| `CYCLE-20261110-5KCP` | `2026-11-10T01:19:26.281Z` | `unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule 498` | Yes (`cab7f7b7...`) |
+| `CYCLE-20261110-5MAB` | `2026-11-10T01:19:28.787Z` | `sigstore/cosign` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`a83186ef...`) |

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-10T01:02:32.910Z",
-  "total_cycles_completed": 8668,
-  "total_learnings_persisted": 8668,
-  "total_rules_promoted": 8509,
+  "last_updated": "2026-11-10T01:19:28.796Z",
+  "total_cycles_completed": 8671,
+  "total_learnings_persisted": 8671,
+  "total_rules_promoted": 8513,
   "history": [
-    {
-      "timestamp": "2026-11-09T04:20:08.716Z",
-      "repository": "zeronsh/zeron",
-      "learningId": "learn-github-zeronsh-zeron",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T04:27:27.895Z",
-      "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
-      "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T04:27:35.334Z",
-      "repository": "software-mansion/react-native-screens",
-      "learningId": "learn-github-software-mansion-react-native-screens",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T04:27:42.183Z",
       "repository": "Ontos-AI/knowhere",
@@ -1403,6 +1382,27 @@
       "repository": "topgrade-rs/topgrade",
       "learningId": "learn-github-topgrade-rs-topgrade",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-10T01:19:18.363Z",
+      "repository": "medialab/xan",
+      "learningId": "learn-github-medialab-xan",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-10T01:19:26.295Z",
+      "repository": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
+      "learningId": "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-10T01:19:28.796Z",
+      "repository": "sigstore/cosign",
+      "learningId": "learn-github-sigstore-cosign",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

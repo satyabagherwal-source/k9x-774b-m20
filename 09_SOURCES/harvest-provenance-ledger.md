@@ -8712,3 +8712,6 @@ Every entry in this ledger must capture:
 | `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `6bd1e65d` | Multi-dimensional audit evidence | 2026-11-10T00:59:47.769Z |
 | `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `f51f86e5` | Multi-dimensional audit evidence | 2026-11-10T00:59:51.656Z |
 | `learn-github-topgrade-rs-topgrade` | `https://github.com/topgrade-rs/topgrade` | `c26ade9a` | Multi-dimensional audit evidence | 2026-11-10T01:02:32.904Z |
+| `learn-github-medialab-xan` | `https://github.com/medialab/xan` | `6849efff` | Multi-dimensional audit evidence | 2026-11-10T01:19:18.349Z |
+| `learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf` | `https://huggingface.co/unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-10T01:19:26.284Z |
+| `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `c8a4781a` | Multi-dimensional audit evidence | 2026-11-10T01:19:28.791Z |
