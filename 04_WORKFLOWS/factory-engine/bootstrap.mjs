@@ -29,6 +29,7 @@ import { scaffoldProject } from './scaffold.mjs';
 import { setupGitRepository } from './git-manager.mjs';
 import { runComprehensiveVerification } from './verifier.mjs';
 import { generateEnvironmentReadyCertificate, updateProjectState } from './state-manager.mjs';
+import { executeProjectFactoryCli } from './project-factory-cli.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -52,6 +53,12 @@ const skipInstall = args.includes('--skip-install');
 const skipGit = args.includes('--skip-git');
 const createGhRepo = args.includes('--create-gh-repo');
 const gitRemote = getArg('--git-remote', null);
+
+// PAC-004 Phase 1C.3: Direct Product Construction CLI Dispatch
+if (args.includes('--construct') || args.includes('--build-product')) {
+  await executeProjectFactoryCli(args);
+  process.exit(0);
+}
 
 async function runBootstrap() {
   console.log(`\n============================================================`);

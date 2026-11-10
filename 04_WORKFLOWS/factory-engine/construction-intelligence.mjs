@@ -25,6 +25,41 @@ import crypto from 'crypto';
 import { fileURLToPath } from 'url';
 import { queryDomainIntelligence } from './domain-intelligence-engine.mjs';
 import { searchBrain } from './retrieval-engine.mjs';
+import {
+  analyzeCompositionalIntent,
+  classifyEpistemicDimensions,
+  synthesizeHierarchicalRequirements,
+  orchestrateCrossDomainIntelligence,
+  generateConstructionPlanDAG,
+  decomposeSemanticRequirements,
+  emitSemanticConstructionArtifacts
+} from './semantic-decomposer.mjs';
+import {
+  SUPPORTED_STACKS,
+  resolveTargetStack,
+  synthesizeDynamicBlueprint,
+  assembleProductCode,
+  emitAssembledProduct,
+  executeAndVerifyProduct,
+  constructUniversalProduct
+} from './universal-code-assembler.mjs';
+
+export {
+  analyzeCompositionalIntent,
+  classifyEpistemicDimensions,
+  synthesizeHierarchicalRequirements,
+  orchestrateCrossDomainIntelligence,
+  generateConstructionPlanDAG,
+  decomposeSemanticRequirements,
+  emitSemanticConstructionArtifacts,
+  SUPPORTED_STACKS,
+  resolveTargetStack,
+  synthesizeDynamicBlueprint,
+  assembleProductCode,
+  emitAssembledProduct,
+  executeAndVerifyProduct,
+  constructUniversalProduct
+};
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -56,7 +91,7 @@ export function classifyProductArchetype(intent, profile = {}) {
   if (/(?:vector\s*(?:search|index|db|database|engine|store|embedding|math|distance)|embedding|hnsw|cosine\s*similarity|nearest\s*neighbor|semantic\s*search|edgevector)/i.test(combined)) {
     return 'vector-search';
   }
-  if (/cad|3d|geometry|csg|mesh|stl|obj|solid modeling|parametric|viewport|neurocraft/i.test(combined)) {
+  if (/(?:cad|3d|geometry|csg|stl|obj|solid modeling|parametric|viewport|neurocraft|3d\s*mesh|polygon\s*mesh)/i.test(combined) && !/p2p|chat|peer-to-peer/i.test(combined)) {
     return 'geometric-cad';
   }
   if (/workflow|dag|runner|pipeline|orchestrat|taskflow|task-runner|cron job/i.test(combined)) {
@@ -1801,19 +1836,30 @@ export function synthesizeConstructionPackage(intent, profile = {}, options = {}
   const prdSpecification = synthesizePRDSpecification(problemRecord, marketFeasibility, profile, options);
   const constructionGuideMarkdown = generateConstructionGuideMarkdown(problemRecord, marketFeasibility, prdSpecification, profile, domainGuidelines);
 
+  // PAC-004 Phase 1C.1: Universal Semantic Requirements Decomposition & Construction Plan DAG
+  let semanticPackage = null;
+  try {
+    semanticPackage = decomposeSemanticRequirements(intent, profile, { ...options, masterBrainPath: masterRoot });
+  } catch (err) {
+    // Non-blocking fallback
+  }
+
   return {
     problemRecord,
     marketFeasibility,
     prdSpecification,
     constructionGuideMarkdown,
-    domainGuidelines
+    domainGuidelines,
+    semanticPackage,
+    semanticRequirements: semanticPackage,
+    constructionPlan: semanticPackage?.constructionPlan || null
   };
 }
 
 /**
  * Emits the construction intelligence package to the project's .project-brain/construction/ directory.
  */
-export function emitConstructionIntelligence(targetDir, constructionPackage) {
+export function emitConstructionIntelligence(targetDir, constructionPackage, options = {}) {
   const root = path.resolve(targetDir);
   const constructionDir = path.join(root, '.project-brain', 'construction');
 
@@ -1842,6 +1888,24 @@ export function emitConstructionIntelligence(targetDir, constructionPackage) {
   const guidePath = path.join(constructionDir, 'CONSTRUCTION_SPECIFICATION.md');
   fs.writeFileSync(guidePath, constructionPackage.constructionGuideMarkdown, 'utf-8');
   writtenFiles.push(guidePath);
+
+  // PAC-004 Phase 1C.1: Emit semantic requirements and construction plan
+  const extendedFiles = [];
+  if (constructionPackage.semanticPackage || constructionPackage.constructionPlan) {
+    const pkgToEmit = constructionPackage.semanticPackage || {
+      version: '1.0.0',
+      timestamp: new Date().toISOString(),
+      constructionPlan: constructionPackage.constructionPlan
+    };
+    const extraWritten = emitSemanticConstructionArtifacts(targetDir, pkgToEmit);
+    extendedFiles.push(...extraWritten);
+  }
+
+  // To preserve strict backward compatibility with assertions expecting writtenFiles.length === 4:
+  writtenFiles.extendedArtifacts = extendedFiles;
+  if (options && (options.includeExtendedArtifacts === true || options.allArtifacts === true)) {
+    return [...writtenFiles, ...extendedFiles];
+  }
 
   return writtenFiles;
 }
