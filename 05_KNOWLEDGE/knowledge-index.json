@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-10T06:05:22.163Z",
+  "last_updated": "2026-11-10T06:12:51.499Z",
   "total_verified_learnings": 1246,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -65811,14 +65811,19 @@
       "slug": "weaviate-weaviate",
       "platform": "github",
       "source_url": "https://github.com/weaviate/weaviate",
-      "source_version": "85bd085e",
-      "content_hash": "9ed9dff244455fa871e87a3ea78cf6f03068da1c9eee178801100825bae6430f",
+      "source_version": "6498ec79",
+      "content_hash": "7446a3dd617fd9c1fd3ed40e5d7705b4038a3e6a7917a44c4fa5c46538bdb820",
       "dossier_path": "07_PROJECT_LEARNING/weaviate-weaviate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/weaviate-weaviate-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "security(deps): bump golang.org/x/net to v0.62.0",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "use NEON instead of SVE dot product on 128-bit SVE cores (Neoverse V2) (#13779)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -65862,7 +65867,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T21:21:14.360Z",
+      "verified_at": "2026-11-10T06:12:51.475Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

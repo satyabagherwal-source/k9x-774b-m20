@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/weaviate-weaviate-learnings.md`  
 > **Source**: github ([https://github.com/weaviate/weaviate](https://github.com/weaviate/weaviate))  
-> **Source Version**: `85bd085e`  
+> **Source Version**: `6498ec79`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T21:21:12.680Z  
+> **Timestamp**: 2026-11-10T06:12:50.254Z  
 > **Learning ID**: `learn-github-weaviate-weaviate`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/weaviate-weaviate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/weaviate/weaviate](https://github.com/weaviate/weaviate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T21:21:12.425Z  
+> **Harvest Timestamp**: 2026-11-10T06:12:48.341Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Weaviate is an open-source vector database that stores both objects and vectors, allowing for the combination of vector search with structured filtering with the fault tolerance and scalability of a cloud-native database​.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: pyproject.toml, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 16940 stars
+- **Stars / Engagement**: 16945 stars
 
 ---
 
@@ -1732,177 +1732,12 @@ func (s *State) SetGraphQLIfCurrent(gql graphql.GraphQL, gen uint64) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `39bf2b1b` (2026-11-06)
-**Commit Message**: security(deps): bump golang.org/x/net to v0.62.0
+### Incident Patch 1: `6498ec79` (2026-11-10)
+**Commit Message**: fix: use NEON instead of SVE dot product on 128-bit SVE cores (Neoverse V2) (#13779)
 
-**File**: `go.mod` (modified, +1/-1)
+**File**: `adapters/repos/db/vector/hnsw/distancer/asm/sve_arm64.go` (added, +17/-0)
 ```diff
-@@ -98,7 +98,7 @@ require (
- 	go.opentelemetry.io/otel/sdk v1.44.0
- 	go.opentelemetry.io/otel/trace v1.44.0
- 	go.uber.org/automaxprocs v1.6.0
--	golang.org/x/net v0.61.0
-+	golang.org/x/net v0.62.0
- 	golang.org/x/oauth2 v0.36.0
- 	golang.org/x/sync v0.24.0
- 	golang.org/x/sys v0.49.0
-```
-
-**File**: `go.sum` (modified, +2/-2)
-```diff
-@@ -802,8 +802,8 @@ golang.org/x/net v0.0.0-20220722155237-a158d28d115b/go.mod h1:XRhObCWvk6IyKnWLug
- golang.org/x/net v0.1.0/go.mod h1:Cx3nUiGt4eDBEyega/BKRp+/AlGL8hYe7U9odMt2Cco=
- golang.org/x/net v0.6.0/go.mod h1:2Tu9+aMcznHK/AK1HMvgo6xiTLG5rD5rZLDS+rp2Bjs=
- golang.org/x/net v0.10.0/go.mod h1:0qNGK6F8kojg2nk9dLZ2mShWaEBan6FAoqfSigmmuDg=
--golang.org/x/net v0.61.0 h1:RR+6j/BTBCrggOLugxa+66R8FvoN6MHlzDlZIbN9YFw=
--golang.org/x/net v0.61.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
-+golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
-+golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
- golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be/go.mod h1:N/0e6XlmueqKjAGxoOufVs8QHGRruUQn6yWY3a++T0U=
- golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
- golang.org/x/oauth2 v0.36.0 h1:peZ/1z27fi9hUOFCAZaHyrpWG5lwe0RJEEEeH0ThlIs=
-```
-
-**File**: `test/acceptance_with_go_client/go.mod` (modified, +1/-1)
-```diff
-@@ -222,7 +222,7 @@ require (
- 	go.yaml.in/yaml/v3 v3.0.5 // indirect
- 	golang.org/x/crypto v0.58.0 // indirect
- 	golang.org/x/mod v0.41.0 // indirect
--	golang.org/x/net v0.61.0 // indirect
-+	golang.org/x/net v0.62.0 // indirect
- 	golang.org/x/oauth2 v0.36.0 // indirect
- 	golang.org/x/sys v0.49.0 // indirect
- 	golang.org/x/text v0.43.0 // indirect
-```
-
-**File**: `test/acceptance_with_go_client/go.sum` (modified, +2/-2)
-```diff
-@@ -628,8 +628,8 @@ golang.org/x/net v0.0.0-20220722155237-a158d28d115b/go.mod h1:XRhObCWvk6IyKnWLug
- golang.org/x/net v0.1.0/go.mod h1:Cx3nUiGt4eDBEyega/BKRp+/AlGL8hYe7U9odMt2Cco=
- golang.org/x/net v0.6.0/go.mod h1:2Tu9+aMcznHK/AK1HMvgo6xiTLG5rD5rZLDS+rp2Bjs=
- golang.org/x/net v0.10.0/go.mod h1:0qNGK6F8kojg2nk9dLZ2mShWaEBan6FAoqfSigmmuDg=
--golang.org/x/net v0.61.0 h1:RR+6j/BTBCrggOLugxa+66R8FvoN6MHlzDlZIbN9YFw=
--golang.org/x/net v0.61.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
-+golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
-+golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
- golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
- golang.org/x/oauth2 v0.36.0 h1:peZ/1z27fi9hUOFCAZaHyrpWG5lwe0RJEEEeH0ThlIs=
- golang.org/x/oauth2 v0.36.0/go.mod h1:YDBUJMTkDnJS+A4BP4eZBjCqtokkg1hODuPjwiGPO7Q=
-```
-
-**File**: `test/benchmark_bm25/go.mod` (modified, +1/-1)
-```diff
-@@ -97,7 +97,7 @@ require (
- 	go.yaml.in/yaml/v2 v2.4.3 // indirect
- 	go.yaml.in/yaml/v3 v3.0.5 // indirect
- 	golang.org/x/mod v0.41.0 // indirect
--	golang.org/x/net v0.61.0 // indirect
-+	golang.org/x/net v0.62.0 // indirect
- 	golang.org/x/oauth2 v0.36.0 // indirect
- 	golang.org/x/sync v0.24.0 // indirect
- 	golang.org/x/sys v0.49.0 // indirect
-```
-
-**File**: `test/benchmark_bm25/go.sum` (modified, +2/-2)
-```diff
-@@ -334,8 +334,8 @@ golang.org/x/net v0.0.0-20190108225652-1e06a53dbb7e/go.mod h1:mL1N/T3taQHkDXs73r
- golang.org/x/net v0.0.0-20190404232315-eb5bcb51f2a3/go.mod h1:t9HGtf8HONx5eT2rtn7q6eTqICYqUVnKs3thJo3Qplg=
- golang.org/x/net v0.0.0-20190613194153-d28f0bde5980/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
- golang.org/x/net v0.0.0-20200625001655-4c5254603344/go.mod h1:/O7V0waA8r7cgGh81Ro3o1hOxt32SMVPicZroKQ2sZA=
--golang.org/x/net v0.61.0 h1:RR+6j/BTBCrggOLugxa+66R8FvoN6MHlzDlZIbN9YFw=
--golang.org/x/net v0.61.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
-+golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
-+golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
- golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
- golang.org/x/oauth2 v0.36.0 h1:peZ/1z27fi9hUOFCAZaHyrpWG5lwe0RJEEEeH0ThlIs=
- golang.org/x/oauth2 v0.36.0/go.mod h1:YDBUJMTkDnJS+A4BP4eZBjCqtokkg1hODuPjwiGPO7Q=
-```
-
----
-
-### Incident Patch 2: `c59cf436` (2026-11-05)
-**Commit Message**: Merge pull request #13796 from weaviate/fix/backup-dedupe-default-budget
-
-backup: lower the dedupe convergence default to 15s and make it configurable
-
-**File**: `adapters/handlers/rest/configure_api.go` (modified, +5/-1)
-```diff
-@@ -1741,7 +1741,11 @@ func startBackupScheduler(appState *state.State) *backup.Scheduler {
- 	dedupeMode := dedupeModeFor(appState.ServerConfig.Config)
- 	logUnlicensedDedupe(appState.Logger, dedupeMode)
- 	dedupePlanner, err := dedupePlannerFor(dedupeMode, func() (backup.DedupePlanner, error) {
--		p, err := backupdedupe.New(backupdedupe.Config{Checkpointer: appState.DB, Logger: appState.Logger})
-+		p, err := backupdedupe.New(backupdedupe.Config{
-+			Checkpointer:  appState.DB,
-+			Logger:        appState.Logger,
-+			DefaultBudget: appState.ServerConfig.Config.Backup.DedupeConvergenceTimeout.Get,
-+		})
- 		if err != nil {
- 			return nil, err
- 		}
-```
-
-**File**: `adapters/handlers/rest/embedded_spec.go` (modified, +4/-4)
-```diff
-@@ -8337,9 +8337,9 @@ func init() {
-           "type": "string"
-         },
-         "dedupeConvergenceTimeoutSeconds": {
--          "description": "How long the coordinator waits for replica convergence proof before shards fall back to being archived by every replica. Only used when dedupeReplicas is set. The wait happens synchronously inside the backup creation request, which blocks for roughly 10 seconds plus up to this timeout; size client timeouts accordingly.",
-+          "description": "How long the coordinator waits for replica convergence proof before shards fall back to being archived by every replica. Only used when dedupeReplicas is set. When omitted, BACKUP_DEDUPE_CONVERGENCE_TIMEOUT applies (15 seconds unless configured). The wait happens synchronously inside the backup creation request, which blocks for roughly 10 seconds plus up to this timeout; size client timeouts accordingly.",
-           "type": "integer",
--          "default": 60,
-+          "default": 15,
-           "maximum": 600,
-           "minimum": 1,
-           "x-nullable": false
-@@ -21176,9 +21176,9 @@ func init() {
-           "type": "string"
-         },
-         "dedupeConvergenceTimeoutSeconds": {
--          "description": "How long the coordinator waits for replica convergence proof before shards fall back to being archived by every replica. Only used when dedupeReplicas is set. The wait happens synchronously inside the backup creation request, which blocks for roughly 10 seconds plus up to this timeout; size client timeouts accordingly.",
-+          "description": "How long the coordinator waits for replica convergence proof before shards fall back to being archived by every replica. Only used when dedupeReplicas is set. When omitted, BACKUP_DEDUPE_CONVERGENCE_TIMEOUT applies (15 seconds unless configured). The wait happens synchronously inside the backup creation request, which blocks for roughly 10 seconds plus up to this timeout; size client timeouts accordingly.",
-           "type": "integer",
--          "default": 60,
-+          "default": 15,
-           "maximum": 600,
-           "minimum": 1,
-           "x-nullable": false
-```
-
-**File**: `entities/models/backup_config.go` (modified, +1/-1)
-```diff
-@@ -52,7 +52,7 @@ type BackupConfig struct {
- 	// Path or key within the bucket.
- 	Path string `json:"Path,omitempty"`
- 
--	// How long the coordinator waits for replica convergence proof before shards fall back to being archived by every replica. Only used when dedupeReplicas is set. The wait happens synchronously inside the backup creation request, which blocks for roughly 10 seconds plus up to this timeout; size client timeouts accordingly.
-+	// How long the coordinator waits for replica convergence proof before shards fall back to being archived by every replica. Only used when dedupeReplicas is set. When omitted, BACKUP_DEDUPE_CONVERGENCE_TIMEOUT applies (15 seconds unless configured). The wait happens synchronously inside the backup creation request, which blocks for roughly 10 seconds plus up to this timeout; size client timeouts accordingly.
- 	// Maximum: 600
- 	// Minimum: 1
- 	DedupeConvergenceTimeoutSeconds int64 `json:"dedupeConvergenceTimeoutSeconds,omitempty"`
-```
-
-**File**: `openapi-specs/schema.json` (modified, +2/-2)
-```diff
-@@ -2264,9 +2264,9 @@
-           "x-nullable": false
-         },
-         "dedupeConvergenceTimeoutSeconds": {
--          "description": "How long the coordinator waits for replica convergence proof before shards fall back to being archived by every replica. Only used when dedupeReplicas is set. The wait happens synchronously inside the backup creation request, which blocks for roughly 10 seconds plus up to this timeout; size client timeouts accordingly.",
-+          "description": "How long the coordinator waits for replica convergence proof before shards fall back to being archived by every replica. Only used when dedupeReplicas is set. When omitted, BACKUP_DEDUPE_CONVERGENCE_TIMEOUT applies (15 seconds unless configured). The wait happens synchronously inside the backup creation request, which blocks for roughly 10 seconds plus up to this timeout; size client timeouts accordingly.",
-           "type": "integer",
--          "default": 60,
-+          "default": 15,
-           "minimum": 1,
-           "maximum": 600,
-           "x-nullable": false
-```
-
-**File**: `test/acceptance/backup_dedupe_replicas/dedupe_default_budget_test.go` (added, +83/-0)
-```diff
-@@ -0,0 +1,83 @@
+@@ -0,0 +1,17 @@
 +//                           _       _
 +// __      _____  __ ___   ___  __ _| |_ ___
 +// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
@@ -1914,417 +1749,958 @@ backup: lower the dedupe convergence default to 15s and make it configurable
 +//  CONTACT: hello@weaviate.io
 +//
 +
-+package backup_dedupe_replicas_test
++package asm
++
++// SVEVectorLengthBytes returns the SVE vector length of the host in bytes
++// (16 on Neoverse V2, 32 on Neoverse V1), read with RDVL. It executes an SVE
++// instruction, so it must only be called when cpu.ARM64.HasSVE is true.
++func SVEVectorLengthBytes() int
+```
+
+**File**: `adapters/repos/db/vector/hnsw/distancer/asm/sve_arm64.s` (added, +9/-0)
+```diff
+@@ -0,0 +1,9 @@
++//go:build arm64
++
++#include "textflag.h"
++
++// func SVEVectorLengthBytes() int
++TEXT ·SVEVectorLengthBytes(SB), NOSPLIT, $0-8
++	WORD $0x04bf5020 // rdvl x0, #1
++	MOVD R0, ret+0(FP)
++	RET
+```
+
+**File**: `adapters/repos/db/vector/hnsw/distancer/asm/sve_arm64_test.go` (added, +31/-0)
+```diff
+@@ -0,0 +1,31 @@
++//                           _       _
++// __      _____  __ ___   ___  __ _| |_ ___
++// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
++//  \ V  V /  __/ (_| |\ V /| | (_| | ||  __/
++//   \_/\_/ \___|\__,_| \_/ |_|\__,_|\__\___|
++//
++//  Copyright © 2016 - 2026 Weaviate B.V. All rights reserved.
++//
++//  CONTACT: hello@weaviate.io
++//
++
++package asm
 +
 +import (
-+	"context"
-+	"fmt"
-+	"io"
 +	"testing"
-+	"time"
 +
-+	"github.com/stretchr/testify/assert"
 +	"github.com/stretchr/testify/require"
-+
-+	"github.com/weaviate/weaviate/entities/models"
-+	"github.com/weaviate/weaviate/test/docker"
-+	"github.com/weaviate/weaviate/test/helper"
++	"golang.org/x/sys/cpu"
 +)
 +
-+func TestBackupDedupeDefaultBudget(t *testing.T) {
-+	const className = "DefaultBudgetArticles"
-+	cases := []struct {
-+		name          string
-+		env           string
-+		requestBudget int64
-+		wantBudget    string
-+	}{
-+		{name: "built-in default", wantBudget: "15s"},
-+		{name: "env sets the default", env: "7s", wantBudget: "7s"},
-+		{name: "request overrides the env default", env: "7s", requestBudget: 9, wantBudget: "9s"},
++func TestSVEVectorLengthBytes(t *testing.T) {
++	if !cpu.ARM64.HasSVE {
++		t.Skip("SVE not supported by this CPU")
 +	}
-+	for i, tc := range cases {
-+		t.Run(tc.name, func(t *testing.T) {
-+			ctx := context.Background()
-+			builder := docker.New().
-+				WithBackendFilesystem().
-+				WithWeaviate().
-+				WithWeaviateEnv("BACKUP_DEDUPE_ENABLED", "true").
-+				WithWeaviateLicense()
-+			if tc.env != "" {
-+				builder = builder.WithWeaviateEnv("BACKUP_DEDUPE_CONVERGENCE_TIMEOUT", tc.env)
-+			}
-+			compose, err := builder.Start(ctx)
-+			require.NoError(t, err)
-+			defer func() {
-+				require.NoError(t, compose.Terminate(ctx))
-+			}()
-+
-+			helper.SetupClient(compose.GetWeaviate().URI())
-+			defer helper.ResetClient()
-+			helper.CreateClass(t, &models.Class{Class: className, Vectorizer: "none"})
-+
-+			cfg := helper.DefaultBackupConfig()
-+			cfg.DedupeReplicas = true
-+			cfg.DedupeConvergenceTimeoutSeconds = tc.requestBudget
-+			backupID := fmt.Sprintf("default-budget-%d", i)
-+			resp, err := helper.CreateBackup(t, cfg, className, "filesystem", backupID)
-+			require.NoError(t, err)
-+			require.NotNil(t, resp.Payload)
-+
-+			needle := fmt.Sprintf(`"budget":"%s"`, tc.wantBudget)
-+			require.EventuallyWithT(t, func(ct *assert.CollectT) {
-+				logs, err := compose.GetWeaviate().Container().Logs(ctx)
-+				require.NoError(ct, err)
-+				buf, err := io.ReadAll(logs)
-+				if cerr := logs.Close(); cerr != nil {
-+					t.Logf("close logs: %v", cerr)
-+				}
-+				require.NoError(ct, err)
-+				require.Contains(ct, string(buf), needle)
-+			}, time.Minute, time.Second)
-+		})
-+	}
++	vl := SVEVectorLengthBytes()
++	// The architecture allows 128..2048 bits in 128-bit steps; every shipped
++	// core uses a power of two (16 on Neoverse V2, 32 on Neoverse V1).
++	require.GreaterOrEqual(t, vl, 16)
++	require.LessOrEqual(t, vl, 256)
++	require.Zero(t, vl%16)
 +}
 ```
 
-**File**: `usecases/config/config_handler.go` (modified, +13/-0)
+**File**: `adapters/repos/db/vector/hnsw/distancer/dot_product_arm64.go` (modified, +7/-3)
 ```diff
-@@ -857,6 +857,15 @@ const DefaultBackupSplitFileSize = 50 * 1024 * 1024 * 1024 // 50GB
- // DefaultBackupMaxIndividualFiles is the default number of files per shard targeted to get their own chunk
- const DefaultBackupMaxIndividualFiles = 100
+@@ -17,11 +17,15 @@ import (
+ )
  
-+const (
-+	// DefaultBackupDedupeConvergenceTimeout keeps planning, with its 10s cutoff lead and hard-stop slack, under the server's default 60s write timeout.
-+	DefaultBackupDedupeConvergenceTimeout = 15 * time.Second
-+	// MinBackupDedupeConvergenceTimeout mirrors the API minimum of dedupeConvergenceTimeoutSeconds.
-+	MinBackupDedupeConvergenceTimeout = time.Second
-+	// MaxBackupDedupeConvergenceTimeout mirrors the API maximum of dedupeConvergenceTimeoutSeconds.
-+	MaxBackupDedupeConvergenceTimeout = 600 * time.Second
-+)
-+
- // Backup contains backup-related configuration
- type Backup struct {
- 	MinChunkSize    int64 `json:"min_chunk_size" yaml:"min_chunk_size"`
-@@ -871,6 +880,10 @@ type Backup struct {
- 	// Env: BACKUP_MAX_INDIVIDUAL_FILES, runtime config: backup_max_individual_files.
- 	MaxIndividualFiles *runtime.DynamicValue[int] `json:"max_individual_files" yaml:"max_individual_files"`
- 
-+	// DedupeConvergenceTimeout bounds a dedupeReplicas create's convergence wait when the request sets none.
-+	// Env: BACKUP_DEDUPE_CONVERGENCE_TIMEOUT, runtime config: backup_dedupe_convergence_timeout.
-+	DedupeConvergenceTimeout *runtime.DynamicValue[time.Duration] `json:"dedupe_convergence_timeout" yaml:"dedupe_convergence_timeout"`
-+
- 	// SkipAccessCheck disables the write+delete probe the backup client runs on
- 	// initialize, deferring write/permission errors to backup time. Use it for
- 	// least-privilege credentials that can write but lack DeleteObject.
-```
-
-**File**: `usecases/config/environment.go` (modified, +14/-0)
-```diff
-@@ -830,6 +830,13 @@ func FromEnv(config *Config) error {
- 		return err
- 	}
- 
-+	if err := parser.ParseDynamicDurationWithValidation("BACKUP_DEDUPE_CONVERGENCE_TIMEOUT",
-+		DefaultBackupDedupeConvergenceTimeout,
-+		validateBackupDedupeConvergenceTimeout,
-+		func(val *configRuntime.DynamicValue[time.Duration]) { config.Backup.DedupeConvergenceTimeout = val }); err != nil {
-+		return err
-+	}
-+
- 	if entcfg.Enabled(os.Getenv("BACKUP_SKIP_ACCESS_CHECK")) {
- 		config.Backup.SkipAccessCheck = true
- 	}
-@@ -2627,3 +2634,10 @@ func validateBackupGCSConnPool(val int, setting string) error {
- 	}
- 	return nil
- }
-+
-+func validateBackupDedupeConvergenceTimeout(val time.Duration) error {
-+	if val < MinBackupDedupeConvergenceTimeout || val > MaxBackupDedupeConvergenceTimeout {
-+		return fmt.Errorf("duration between %s and %s expected, got %s", MinBackupDedupeConvergenceTimeout, MaxBackupDedupeConvergenceTimeout, val)
-+	}
-+	return nil
-+}
-```
-
-**File**: `usecases/config/environment_test.go` (modified, +36/-0)
-```diff
-@@ -3099,3 +3099,39 @@ func TestEnvironmentReindexVectorDimensions(t *testing.T) {
- 		})
+ func init() {
++	// The SVE dot kernel pays off only with 256-bit vectors (Neoverse V1,
++	// Graviton3). With 128-bit SVE (Neoverse V2: Axion, Graviton4) it is 2.3x
++	// slower than the NEON kernel at 1536 dims, so the vector length decides.
++	// L2 (l2_arm64.go) keeps SVE whenever present: there the SVE kernel is
++	// faster than the NEON one on both cores.
+ 	if cpu.ARM64.HasASIMD {
+-		if cpu.ARM64.HasSVE {
++		dotProductImplementation = asm.Dot_Neon
++		if cpu.ARM64.HasSVE && asm.SVEVectorLengthBytes() >= 32 {
+ 			dotProductImplementation = asm.Dot_SVE
+-		} else {
+-			dotProductImplementation = asm.Dot_Neon
+ 		}
  	}
  }
-+
-+func TestEnvironmentBackupDedupeConvergenceTimeout(t *testing.T) {
-+	tests := []struct {
-+		name     string
-+		value    string
-+		expected time.Duration
-+		wantErr  bool
-+	}{
-+		{name: "unset uses the default", value: "", expected: DefaultBackupDedupeConvergenceTimeout},
-+		{name: "valid value is parsed", value: "30s", expected: 30 * time.Second},
-+		{name: "API minimum is accepted", value: "1s", expected: time.Second},
-+		{name: "API maximum is accepted", value: "600s", expected: 600 * time.Second},
-+		{name: "below the API minimum is rejected", value: "500ms", wantErr: true},
-+		{name: "above the API maximum is rejected", value: "601s", wantErr: true},
-+		{name: "zero is rejected", value: "0s", wantErr: true},
-+		{name: "negative is rejected", value: "-5s", wantErr: true},
-+		{name: "unitless is rejected", value: "15", wantErr: true},
-+		{name: "non-duration is rejected", value: "soon", wantErr: true},
-+	}
-+
-+	for _, tc := range tests {
-+		t.Run(tc.name, func(t *testing.T) {
-+			t.Setenv("BACKUP_DEDUPE_CONVERGENCE_TIMEOUT", tc.value)
-+
-+			conf := Config{}
-+			err := FromEnv(&conf)
-+			if tc.wantErr {
-+				require.Error(t, err)
-+				assert.Contains(t, err.Error(), "BACKUP_DEDUPE_CONVERGENCE_TIMEOUT")
-+				return
-+			}
-+			require.NoError(t, err)
-+			assert.Equal(t, tc.expected, conf.Backup.DedupeConvergenceTimeout.Get())
-+		})
-+	}
-+}
 ```
 
 ---
 
-### Incident Patch 3: `d5e5f81b` (2026-11-05)
-**Commit Message**: Merge pull request #13794 from weaviate/fix/backup-dedupe-random-tie-break
+### Incident Patch 2: `88b51fed` (2026-11-09)
+**Commit Message**: Merge pull request #13827 from weaviate/fix/hnsw-commitlog-close-on-shutdown
 
-backup: break dedupe designation ties at random
+Close the hnsw commit log on shutdown
 
-**File**: `wl/backupdedupe/planner.go` (modified, +36/-9)
+**File**: `adapters/repos/db/shard_hnsw_commitlog_descriptors_test.go` (added, +172/-0)
 ```diff
-@@ -17,6 +17,7 @@ import (
- 	"context"
- 	"errors"
- 	"fmt"
-+	"math/rand/v2"
- 	"reflect"
- 	"slices"
- 	"sort"
-@@ -94,6 +95,7 @@ type Planner struct {
- 	convergenceBudget time.Duration
- 	planningSlack     time.Duration
- 	cleanupTimeout    time.Duration
-+	pickTie           func(n int) int
- }
- 
- // New returns a Planner, or an error instead of a Planner that would panic on its first call.
-@@ -112,6 +114,7 @@ func New(cfg Config) (*Planner, error) {
- 		convergenceBudget: orDefault(cfg.ConvergenceBudget, _DefaultDedupeConvergenceBudget),
- 		planningSlack:     orDefault(cfg.PlanningSlack, _DedupePlanningSlack),
- 		cleanupTimeout:    orDefault(cfg.CleanupTimeout, _DedupeCleanupTimeout),
-+		pickTie:           rand.IntN,
- 	}, nil
- }
- 
-@@ -299,7 +302,7 @@ func (p *Planner) PlanDesignatedShards(ctx context.Context, classes []string, bu
- 	}
- 	sort.Strings(classNames)
- 	for _, class := range classNames {
--		designations, sticky := assignDesignations(converged[class], loads, participants, preferred[class])
-+		designations, sticky := assignDesignations(converged[class], loads, participants, preferred[class], p.pickTie)
- 		plan.Designations[class] = designations
- 		p.log.WithField("action", backup.OpCreate).WithField("class", class).
- 			WithField("designated", len(designations)).
-@@ -752,9 +755,9 @@ func missingReplicasAtCutoff(entries []replica.AsyncCheckpointNodeStatus, replic
- 	return missing
- }
- 
--// assignDesignations picks one archiving node per shard: an eligible preferred (base) designee outranks balance since only it can skip unchanged files, the rest go least-loaded (lexicographic ties, loads shared across classes).
-+// assignDesignations picks one archiving node per shard: an eligible preferred (base) designee outranks balance since only it can skip unchanged files, the rest go least-loaded (random ties, loads shared across classes).
- // Shards with fewer than two participant replicas get no designation: naming a non-participant would orphan the shard, and a lone participant gains nothing.
--func assignDesignations(shardReplicas map[string][]string, loads map[string]int, participants map[string]struct{}, preferred map[string]string) (map[string]string, int) {
-+func assignDesignations(shardReplicas map[string][]string, loads map[string]int, participants map[string]struct{}, preferred map[string]string, pick func(n int) int) (map[string]string, int) {
- 	shards := make([]string, 0, len(shardReplicas))
- 	for shard := range shardReplicas {
- 		shards = append(shards, shard)
-@@ -796,18 +799,42 @@ func assignDesignations(shardReplicas map[string][]string, loads map[string]int,
- 		if _, done := out[shard]; done {
- 			continue
- 		}
--		best := nodes[0]
--		for _, node := range nodes[1:] {
--			if loads[node] < loads[best] {
--				best = node
--			}
--		}
-+		best := leastLoaded(nodes, loads, pick)
- 		loads[best]++
- 		out[shard] = best
- 	}
- 	return out, sticky
- }
- 
-+// leastLoaded returns the node with the lowest load, consulting pick only when several share it.
-+func leastLoaded(nodes []string, loads map[string]int, pick func(n int) int) string {
-+	minLoad, tied := loads[nodes[0]], 1
-+	for _, node := range nodes[1:] {
-+		switch load := loads[node]; {
-+		case load < minLoad:
-+			minLoad, tied = load, 1
-+		case load == minLoad:
-+			tied++
+@@ -0,0 +1,172 @@
++//                           _       _
++// __      _____  __ ___   ___  __ _| |_ ___
++// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
++//  \ V  V /  __/ (_| |\ V /| | (_| | ||  __/
++//   \_/\_/ \___|\__,_| \_/ |_|\__,_|\__\___|
++//
++//  Copyright © 2016 - 2026 Weaviate B.V. All rights reserved.
++//
++//  CONTACT: hello@weaviate.io
++//
++
++package db
++
++import (
++	"context"
++	"io/fs"
++	"os"
++	"path/filepath"
++	"runtime/debug"
++	"strconv"
++	"strings"
++	"syscall"
++	"testing"
++
++	"github.com/go-openapi/strfmt"
++	"github.com/google/uuid"
++	"github.com/stretchr/testify/require"
++
++	"github.com/weaviate/weaviate/entities/models"
++	"github.com/weaviate/weaviate/entities/schema"
++	schemaConfig "github.com/weaviate/weaviate/entities/schema/config"
++	"github.com/weaviate/weaviate/entities/storobj"
++	enthnsw "github.com/weaviate/weaviate/entities/vectorindex/hnsw"
++	"github.com/weaviate/weaviate/usecases/monitoring"
++)
++
++type fileIdentity struct {
++	dev uint64
++	ino uint64
++}
++
++// collectCommitLogFiles adds the identity of every file under an hnsw commit log directory below root to seen, and returns how many such directories exist.
++func collectCommitLogFiles(t *testing.T, root string, seen map[fileIdentity]struct{}) int {
++	t.Helper()
++
++	dirs := 0
++	err := filepath.WalkDir(root, func(path string, d fs.DirEntry, err error) error {
++		if err != nil {
++			return err
 +		}
-+	}
-+	skip := 0
-+	if tied > 1 {
-+		skip = pick(tied)
-+	}
-+	var best string
-+	for _, node := range nodes {
-+		if loads[node] != minLoad {
++		if d.IsDir() {
++			if strings.HasSuffix(d.Name(), ".hnsw.commitlog.d") {
++				dirs++
++			}
++			return nil
++		}
++		if !strings.HasSuffix(filepath.Dir(path), ".hnsw.commitlog.d") {
++			return nil
++		}
++		info, err := os.Stat(path)
++		if err != nil {
++			return err
++		}
++		st := info.Sys().(*syscall.Stat_t)
++		seen[fileIdentity{dev: uint64(st.Dev), ino: st.Ino}] = struct{}{}
++		return nil
++	})
++	require.NoError(t, err)
++	return dirs
++}
++
++// descriptorsOnFiles counts this process's descriptors whose device and inode are in files, deleted files included.
++func descriptorsOnFiles(t *testing.T, files map[fileIdentity]struct{}) int {
++	t.Helper()
++
++	entries, err := os.ReadDir("/dev/fd")
++	require.NoError(t, err)
++
++	count := 0
++	for _, entry := range entries {
++		fd, err := strconv.Atoi(entry.Name())
++		if err != nil {
 +			continue
 +		}
-+		best = node
-+		if skip == 0 {
-+			break
++		var st syscall.Stat_t
++		// ReadDir closed the descriptor it listed /dev/fd through, so Fstat fails on it
++		if err := syscall.Fstat(fd, &st); err != nil {
++			continue
 +		}
-+		skip--
++		if _, ok := files[fileIdentity{dev: uint64(st.Dev), ino: st.Ino}]; ok {
++			count++
++		}
 +	}
-+	return best
++	return count
 +}
 +
- func uniqueNonEmpty(nodes []string) map[string]struct{} {
- 	set := make(map[string]struct{}, len(nodes))
- 	for _, n := range nodes {
++func TestShardShutdownReleasesHnswCommitLogs(t *testing.T) {
++	previous := debug.SetGCPercent(-1)
++	t.Cleanup(func() { debug.SetGCPercent(previous) })
++
++	ctx := context.Background()
++	const (
++		className = "HnswCommitLogDescriptors"
++		cycles    = 5
++		objects   = 5
++	)
++	class := &models.Class{
++		Class: className,
++		Properties: []*models.Property{{
++			Name:     "location",
++			DataType: schema.DataTypeGeoCoordinates.PropString(),
++		}},
++	}
++	shard, index := testShardWithSettings(t, ctx, class, nil, false, false, func(i *Index) {
++		i.vectorIndexUserConfigs = map[string]schemaConfig.VectorIndexConfig{
++			"first":  enthnsw.NewDefaultUserConfig(),
++			"second": enthnsw.NewDefaultUserConfig(),
++		}
++	})
++	s, ok := shard.(*Shard)
++	require.True(t, ok)
++
++	for i := range objects {
++		lat, lon := float32(48+i), float32(11+i)
++		require.NoError(t, s.PutObject(ctx, &storobj.Object{
++			MarshallerVersion: 1,
++			Object: models.Object{
++				ID:         strfmt.UUID(uuid.NewString()),
++				Class:      className,
++				Properties: map[string]interface{}{"location": &models.GeoCoordinates{Latitude: &lat, Longitude: &lon}},
++			},
++			Vectors: map[string][]float32{
++				"first":  {float32(i), 1, 2},
++				"second": {1, float32(i), 2},
++			},
++		}))
++	}
++
++	shardPath := s.path()
++	seen := map[fileIdentity]struct{}{}
++	for cycle := range cycles {
++		current := map[fileIdentity]struct{}{}
++		require.Equal(t, 3, collectCommitLogFiles(t, shardPath, current),
++			"cycle %d: expected one commit log per named vector and one for the geo property", cycle)
++		require.Equal(t, 3, descriptorsOnFiles(t, current),
++			"cycle %d: a loaded shard keeps one commit log open per hnsw index", cycle)
++		for file := range current {
++			seen[file] = struct{}{}
++		}
++
++		require.NoError(t, s.Shutdown(ctx))
++		require.Zero(t, descriptorsOnFiles(t, seen), "cycle %d: shutdown left hnsw commit logs open", cycle)
++
++		var err error
++		s, err = NewShard(ctx, nil, s.Name(), index, class, index.centralJobQueue, index.scheduler,
++			index.shardReindexer, false, index.bitmapBufPool, monitoring.ShardRegistrationEager)
++		require.NoError(t, err)
++
++		for _, target := range []string{"first", "second"} {
++			vectorIndex, release, ok := s.AcquireVectorIndex(target)
++			require.True(t, ok)
++			for docID := range uint64(objects) {
++				require.True(t, vectorIndex.ContainsDoc(docID), "cycle %d: %s lost doc %d", cycle, target, docID)
++			}
++			release()
++		}
++	}
++
++	collec
 ```
 
-**File**: `wl/backupdedupe/planner_test.go` (modified, +264/-8)
+**File**: `adapters/repos/db/vector/geo/geo_shutdown_test.go` (added, +139/-0)
 ```diff
-@@ -14,6 +14,7 @@ package backupdedupe
- import (
- 	"context"
- 	"fmt"
-+	"math/rand/v2"
- 	"slices"
- 	"strings"
- 	"sync"
-@@ -237,7 +238,7 @@ func (f *fakeCheckpointer) GetAsyncCheckpointNodeStatuses(ctx context.Context, c
- 	return out, nil
- }
- 
--func newTestPlanner(f *fakeCheckpointer) *Planner {
-+func newRandomTiePlanner(f *fakeCheckpointer) *Planner {
- 	logger, _ := test.NewNullLogger()
- 	p, err := New(Config{
- 		Checkpointer:      f,
-@@ -254,6 +255,16 @@ func newTestPlanner(f *fakeCheckpointer) *Planner {
- 	return p
- }
- 
-+func newTestPlanner(f *fakeCheckpointer) *Planner {
-+	p := newRandomTiePlanner(f)
-+	p.pickTie = firstTie
-+	return p
+@@ -0,0 +1,139 @@
++//                           _       _
++// __      _____  __ ___   ___  __ _| |_ ___
++// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
++//  \ V  V /  __/ (_| |\ V /| | (_| | ||  __/
++//   \_/\_/ \___|\__,_| \_/ |_|\__,_|\__\___|
++//
++//  Copyright © 2016 - 2026 Weaviate B.V. All rights reserved.
++//
++//  CONTACT: hello@weaviate.io
++//
++
++package geo
++
++import (
++	"context"
++	"os"
++	"path/filepath"
++	"runtime/debug"
++	"strconv"
++	"syscall"
++	"testing"
++
++	logrustest "github.com/sirupsen/logrus/hooks/test"
++	"github.com/stretchr/testify/require"
++
++	"github.com/weaviate/weaviate/entities/cyclemanager"
++	"github.com/weaviate/weaviate/entities/filters"
++	"github.com/weaviate/weaviate/entities/models"
++	"github.com/weaviate/weaviate/usecases/memwatch"
++)
++
++// descriptorsOnDir counts this process's descriptors on the regular files in dir, matched by device and inode.
++func descriptorsOnDir(t *testing.T, dir string) int {
++	t.Helper()
++
++	type fileID struct {
++		dev uint64
++		ino uint64
++	}
++	files := map[fileID]struct{}{}
++	entries, err := os.ReadDir(dir)
++	require.NoError(t, err)
++	for _, entry := range entries {
++		if entry.IsDir() {
++			continue
++		}
++		info, err := os.Stat(filepath.Join(dir, entry.Name()))
++		require.NoError(t, err)
++		st := info.Sys().(*syscall.Stat_t)
++		files[fileID{dev: uint64(st.Dev), ino: st.Ino}] = struct{}{}
++	}
++
++	fds, err := os.ReadDir("/dev/fd")
++	require.NoError(t, err)
++	count := 0
++	for _, entry := range fds {
++		fd, err := strconv.Atoi(entry.Name())
++		if err != nil {
++			continue
++		}
++		var st syscall.Stat_t
++		// ReadDir closed the descriptor it listed /dev/fd through, so Fstat fails on it
++		if err := syscall.Fstat(fd, &st); err != nil {
++			continue
++		}
++		if _, ok := files[fileID{dev: uint64(st.Dev), ino: st.Ino}]; ok {
++			count++
++		}
++	}
++	return count
 +}
 +
-+func firstTie(int) int { return 0 }
++func newPersistedGeoIndex(t *testing.T, rootPath string, elements []models.GeoCoordinates) *Index {
++	t.Helper()
 +
-+func lastTie(n int) int { return n - 1 }
++	nullLogger, _ := logrustest.NewNullLogger()
++	index, err := NewIndex(Config{
++		AllocChecker: memwatch.NewDummyMonitor(),
++		ID:           "geo-shutdown",
++		CoordinatesForID: func(ctx context.Context, id uint64) (*models.GeoCoordinates, error) {
++			return &elements[id], nil
++		},
++		RootPath: rootPath,
++		Logger:   nullLogger,
++	}, cyclemanager.NewCallbackGroupNoop(), cyclemanager.NewCallbackGroupNoop())
++	require.NoError(t, err)
++	index.PostStartup(context.Background())
++	return index
++}
 +
- func newWideFakeCheckpointer(n int, delay time.Duration) (*fakeCheckpointer, []string) {
- 	f := newFakeCheckpointer()
- 	f.callDelay = delay
-@@ -345,23 +356,23 @@ func TestAssignDesignations(t *testing.T) {
- 
- 	all := parts("n1", "n2", "n3", "n9")
- 	loads := map[string]int{}
--	got, sticky := assignDesignations(shardReplicas, loads, all, nil)
-+	got, sticky := assignDesignations(shardReplicas, loads, all, nil, firstTie)
- 	assert.Zero(t, sticky)
- 	assert.Equal(t, map[string]string{"s1": "n1", "s2": "n2", "s3": "n1", "s4": "n3"}, got)
- 	assert.Equal(t, map[string]int{"n1": 2, "n2": 1, "n3": 1}, loads)
- 
--	again, _ := assignDesignations(shardReplicas, map[string]int{}, all, nil)
-+	again, _ := assignDesignations(shardReplicas, map[string]int{}, all, nil, firstTie)
- 	assert.Equal(t, got, again)
- 
--	crossClass, _ := assignDesignations(map[string][]string{"t1": {"n1", "n9"}}, loads, all, nil)
-+	crossClass, _ := assignDesignations(map[string][]string{"t1": {"n1", "n9"}}, loads, all, nil, firstTie)
- 	assert.Equal(t, map[string]string{"t1": "n9"}, crossClass)
- 
--	onlyParticipants, _ := assignDesignations(map[string][]string{"u1": {"n1", "n2", "x"}, "u2": {"n1", "x"}}, map[string]int{"n1": 9}, parts("n1", "n2"), nil)
-+	onlyParticipants, _ := assignDesignations(map[string][]string{"u1": {"n1", "n2", "x"}, "u2": {"n1", "x"}}, map[string]int{"n1": 9}, parts("n1", "n2"), nil, firstTie)
- 	assert.Equal(t, map[string]string{"u1": "n2"}, onlyParticipants)
- 
- 	t.Run("preferred designee outranks load and seeds it", func(t *testing.T) {
- 		loads := map[string]int{"n1": 9}
--		got, sticky := assignDesignations(shardReplicas, loads, all, map[string]string{"s1": "n1", "s2": "n1"})
-+		got, sticky := assignDesignations(shardReplicas, loads, all, map[string]string{"s1": "n1", "s2": "n1"}, firstTie)
- 		assert.Equal(t, 2, sticky)
- 		assert.Equal(t, map[string]string{"s1": "n1", "s2": "n1", "s3": "n2", "s4": "n3"}, got)
- 		assert.Equal(t, map[string]int{"n1": 11, "n2": 1, "n3": 1}, loads)
-@@ -371,19 +382,212 @@ func TestAssignDesignations(t *testing.T) {
- 		got, sticky := assignDesignations(
- 			map[string][]string{"s1": {"n1", "n2", "n3"}, "s2": {"n1", "n2"}, "lone": {"n1", "x"}},
- 			map[string]int{}, parts("n1", "n2"),
--			map[string]string{"s1": "n3", "s2": "ghost", "lone": "n1"})
-+			map[string]string{"s1": "n3", "s2": "ghost", "lone": "n1"}, firstTie)
- 		assert.Zero(t, sticky)
- 		assert.Equal(t, map[string]string{"s1": "n1", "s2": "n2"}, got)
- 	})
- 
- 	t.Run("tenant-named shards stick", func(t *testing.T) {
- 		reps := map[string][]string{"tenant-a": {"n1", "n2"}, "tenant-b": {"n1", "n2"}}
--		got, sticky := assignDesignations(reps, map[string]int{}, parts("n1", "n2"), map[string]string{"tenant-b": "n2"})
-+		got, sticky := assignDesignations(reps, map[string]int{}, parts("n1", "n2"), map[string]string{"tenant-b": "n2"}, firstTie)
- 		assert.Equal(t, 1, sticky)
- 		assert.Equal(t, map[string]string{"tenant-a": "n1", "tenant-b": "n2"}, got)
- 	})
- }
- 
-+func TestAssignDesignationsTieBreak(t *testing.T) {
-+	rf3 := []string{"n3", "n1", "n2"}
-+	fourShards := map[string][]string{"s1": rf3, "s2": rf3, "s3": rf3, "s4": rf3}
++func TestGeoIndexShutdownReleasesCommitLog(t *testing.T) {
++	elements := []models.GeoCoordinates{
++		{Latitude: ptFloat32(48.13743), Longitude: ptFloat32(11.57549)},
++		{Latitude: ptFloat32(48.78232), Longitude: ptFloat32(9.17702)},
++		{Latitude: ptFloat32(52.52000), Longitude: ptFloat32(13.40500)},
++	}
 +
 +	tests := []struct {
-+		name          string
-+		shardReplicas map[string][]string
-+		loads         map[string]int
-+		participants  map[string]struct{}
-+		preferred     map[string]string
-+		pick          func(int) int
-+		want          map[string]string
-+		wantSticky    int
-+		wantPicks     []int
-+		wantLoads     map[string]int
++		name      string
++		flushed   int
++		unflushed int
 +	}{
-+		{
-+			name:          "first tie follows name order and skips the forced shard",
-+			shardReplicas: fourShards,
-+			loads:         map[string]int{},
-+			participants:  parts("n1", "n2", "n3"),
-+			pick:          firstTie,
-+			want:          map[string]string{"s1": "n1", "s2": "n2", "s3": "n3", "s4": "n1"},
-+			wantPicks:     []int{3, 2, 3},
-+			wantLoads:     map[string]int{"n1": 2, "n2": 1, "n3": 1},
-+		},
-+		{
-+			name:          "last tie follows pick rather than name order",
-+			shardReplicas: fourShards,
-+			loads:         map[string]int{},
-+			participants:  parts("n1", "n2", "n3"),
-+			pick:          lastTie,
-+			want:          map[string]string{"s1": "n3", "s2": "n2", "s3": "n1", "s4": "n3"},
-+			wantPicks:     []int{3, 2, 3},
-+			wantLoads:     map[string]int{"n1": 1, "n2"
++		{name: "nothing added"},
++		{name: "all adds flushed", flushed: 3},
++		{name: "adds after the last flush", flushed: 1, unflushed: 2},
++	}
++
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			previous := debug.SetGCPercent(-1)
++			t.Cleanup(func() { debug.SetGCPercent(previous) })
++			ctx := context.Background()
++			root := t.TempDir()
++			dir := filepath.Join(root, "geo-shutdown.hnsw.commitlog.d")
++
++			index := newPersistedGeoIndex(t, root, elements)
++			for i := range tt.flushed {
++				require.NoError(t, index.Add(ctx, uint64(i), &elements[i]))
++			}
++			require.NoError(t, index.Flush())
++			for i := tt.flushed; i < tt.flushed+tt.unflushed; i++ {
++				require.NoError(t, index.Add(ctx, uint64(i), &elements[i]))
++			}
++			require.Equal(t, 1, descriptorsOnDir(t, dir))
++
++			require.NoError(t, index.Shutdown(ctx))
++			require.Zero(t, descriptorsOnDir(t, dir), "geo index shutdown left its commit log open")
++
++			reloaded := newPersistedGeoIndex(t, root, elements)
++			ids, err := reloaded.WithinRange(ctx, filters.GeoRange{
++				GeoCoordinates: &models.GeoCoordinates{Latitude: ptFloat32(50), Longitude: ptFloat32(11)},
++				Distance:       2_000_000,
++			})
++			require.NoError(t, err)
++			require.Len(t, ids, tt.flushed+tt.unflushed, "geo entries are missing after reload")
++			require.NoError(t, reloaded.Shutdown(ctx))
++		})
++	}
++}
+```
+
+**File**: `adapters/repos/db/vector/hnsw/commit_logger.go` (modified, +94/-22)
+```diff
+@@ -27,11 +27,15 @@ import (
+ 	"github.com/weaviate/weaviate/adapters/repos/db/vector/hnsw/compact"
+ 	"github.com/weaviate/weaviate/adapters/repos/db/vector/multivector"
+ 	"github.com/weaviate/weaviate/entities/cyclemanager"
++	"github.com/weaviate/weaviate/entities/errorcompounder"
+ 	"github.com/weaviate/weaviate/entities/vectorindex/compression"
+ )
+ 
+ const defaultCommitLogSize = 500 * 1024 * 1024
+ 
++// ErrCommitLogClosed is returned by every write once Shutdown or Drop closed the commit log.
++var ErrCommitLogClosed = errors.New("hnsw commit log is closed")
++
+ type hnswCommitLogger struct {
+ 	// protect against concurrent attempts to write in the underlying file or
+ 	// buffer
+@@ -47,6 +51,8 @@ type hnswCommitLogger struct {
+ 	currentFileName string
+ 	currentWriter   *bufio.Writer
+ 	walWriter       *compact.WALWriter
++	closed          bool
++	closeErr        error // first flush/close result, returned by every later close
+ 
+ 	// Compaction (replaces condensor + combiner)
+ 	compactor *compact.Compactor
+@@ -347,34 +353,49 @@ func (l *hnswCommitLogger) AddPQCompression(data compression.PQData) error {
+ 	l.Lock()
+ 	defer l.Unlock()
+ 
++	if l.closed {
++		return ErrCommitLogClosed
++	}
+ 	return l.walWriter.WriteAddPQ(&data)
+ }
+ 
+ func (l *hnswCommitLogger) AddSQCompression(data compression.SQData) error {
+ 	l.Lock()
+ 	defer l.Unlock()
+ 
++	if l.closed {
++		return ErrCommitLogClosed
++	}
+ 	return l.walWriter.WriteAddSQ(&data)
+ }
+ 
+ func (l *hnswCommitLogger) AddRQCompression(data compression.RQData) error {
+ 	l.Lock()
+ 	defer l.Unlock()
+ 
++	if l.closed {
++		return ErrCommitLogClosed
++	}
+ 	return l.walWriter.WriteAddRQ(&data)
+ }
+ 
+ func (l *hnswCommitLogger) AddMuvera(data multivector.MuveraData) error {
+ 	l.Lock()
+ 	defer l.Unlock()
+ 
++	if l.closed {
++		return ErrCommitLogClosed
++	}
+ 	return l.walWriter.WriteAddMuvera(&data)
+ }
+ 
+ func (l *hnswCommitLogger) AddBRQCompression(data compression.BRQData) error {
+ 	l.Lock()
+ 	defer l.Unlock()
+ 
++	if l.closed {
++		return ErrCommitLogClosed
++	}
+ 	return l.walWriter.WriteAddBRQ(&data)
+ }
+ 
+@@ -383,76 +404,115 @@ func (l *hnswCommitLogger) AddNode(id uint64, level uint16) error {
+ 	l.Lock()
+ 	defer l.Unlock()
+ 
++	if l.closed {
++		return ErrCommitLogClosed
++	}
+ 	return l.walWriter.WriteAddNode(id, level)
+ }
+ 
+ func (l *hnswCommitLogger) SetEntryPointWithMaxLayer(id uint64, level int) error {
+ 	l.Lock()
+ 	defer l.Unlock()
+ 
++	if l.closed {
++		return ErrCommitLogClosed
++	}
+ 	return l.walWriter.WriteSetEntryPointMaxLevel(id, uint16(level))
+ }
+ 
+ func (l *hnswCommitLogger) ReplaceLinksAtLevel(nodeid uint64, level int, targets []uint64) error {
+ 	l.Lock()
+ 	defer l.Unlock()
+ 
++	if l.closed {
++		return ErrCommitLogClosed
++	}
+ 	return l.walWriter.WriteReplaceLinksAtLevel(nodeid, uint16(level), targets)
+ }
+ 
+ func (l *hnswCommitLogger) AddLinkAtLevel(nodeid uint64, level int, target uint64) error {
+ 	l.Lock()
+ 	defer l.Unlock()
+ 
++	if l.closed {
++		return ErrCommitLogClosed
++	}
+ 	return l.walWriter.WriteAddLinkAtLevel(nodeid, uint16(level), target)
+ }
+ 
+ func (l *hnswCommitLogger) AddTombstone(nodeid uint64) error {
+ 	l.Lock()
+ 	defer l.Unlock()
+ 
++	if l.closed {
++		return ErrCommitLogClosed
++	}
+ 	return l.walWriter.WriteAddTombstone(nodeid)
+ }
+ 
+ func (l *hnswCommitLogger) RemoveTombstone(nodeid uint64) error {
+ 	l.Lock()
+ 	defer l.Unlock()
+ 
++	if l.closed {
++		return ErrCommitLogClosed
++	}
+ 	return l.walWriter.WriteRemoveTombstone(nodeid)
+ }
+ 
+ func (l *hnswCommitLogger) ClearLinks(nodeid uint64) error {
+ 	l.Lock()
+ 	defer l.Unlock()
+ 
++	if l.closed {
++		return ErrCommitLogClosed
++	}
+ 	return l.walWriter.WriteClearLinks(nodeid)
+ }
+ 
+ func (l *hnswCommitLogger) ClearLinksAtLevel(nodeid uint64, level uint16) error {
+ 	l.Lock()
+ 	defer l.Unlock()
+ 
++	if l.closed {
++		return ErrCommitLogClosed
++	}
+ 	return l.walWriter.WriteClearLinksAtLevel(nodeid, level)
+ }
+ 
+ func (l *hnswCommitLogger) DeleteNode(nodeid uint64) error {
+ 	l.Lock()
+ 	defer l.Unlock()
+ 
++	if l.closed {
++		return ErrCommitLogClosed
++	}
+ 	return l.walWriter.WriteDeleteNode(nodeid)
+ }
+ 
+ func (l *hnswCommitLogger) Reset() error {
+ 	l.Lock()
+ 	defer l.Unlock()
+ 
++	if l.closed {
++		return ErrCommitLogClosed
++	}
+ 	return l.walWriter.WriteResetIndex()
+ }
+ 
+-// Shutdown waits for ongoing maintenance processes to stop, then cancels their
+-// scheduling. The caller can be sure that state on disk is immutable after
+-// calling Shutdown().
++// Shutdown stops the maintenance cycles, then flushes and closes the active file once (every later call reports that result); later writes fail with ErrCommitLogClosed.
+ func (l *hnswCommitLogger) Shutdown(ctx context.Context) error {
++	// drain before locking (an in-flight switchCommitLogs takes l.Mutex), and close even if the drain failed
++	unregisterErr := l.unregisterMaintenance(ctx)
++	closeErr := l.close()
++
++	ec := errorcompounder.New()
++	ec.Add(unregisterErr)
++	ec.Add(closeErr)
++	return ec.ToError()
++}
++
++func (l *hnswCommitLogger) unregisterMaintenance(ctx context.Context) error {
+ 	if l.
+```
+
+**File**: `adapters/repos/db/vector/hnsw/commit_logger_shutdown_test.go` (added, +529/-0)
+```diff
+@@ -0,0 +1,529 @@
++//                           _       _
++// __      _____  __ ___   ___  __ _| |_ ___
++// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
++//  \ V  V /  __/ (_| |\ V /| | (_| | ||  __/
++//   \_/\_/ \___|\__,_| \_/ |_|\__,_|\__\___|
++//
++//  Copyright © 2016 - 2026 Weaviate B.V. All rights reserved.
++//
++//  CONTACT: hello@weaviate.io
++//
++
++package hnsw
++
++import (
++	"context"
++	"errors"
++	"io"
++	"os"
++	"path/filepath"
++	"runtime/debug"
++	"strconv"
++	"sync"
++	"syscall"
++	"testing"
++
++	"github.com/sirupsen/logrus/hooks/test"
++	"github.com/stretchr/testify/require"
++
++	"github.com/weaviate/weaviate/adapters/repos/db/lsmkv"
++	"github.com/weaviate/weaviate/adapters/repos/db/vector/common"
++	"github.com/weaviate/weaviate/adapters/repos/db/vector/hnsw/compact"
++	"github.com/weaviate/weaviate/adapters/repos/db/vector/hnsw/distancer"
++	"github.com/weaviate/weaviate/adapters/repos/db/vector/multivector"
++	"github.com/weaviate/weaviate/adapters/repos/db/vector/testinghelpers"
++	"github.com/weaviate/weaviate/entities/cyclemanager"
++	"github.com/weaviate/weaviate/entities/vectorindex/compression"
++	ent "github.com/weaviate/weaviate/entities/vectorindex/hnsw"
++	"github.com/weaviate/weaviate/usecases/memwatch"
++)
++
++// disableGC keeps the *os.File finalizer from closing a leaked descriptor mid-test.
++func disableGC(t *testing.T) {
++	t.Helper()
++	previous := debug.SetGCPercent(-1)
++	t.Cleanup(func() { debug.SetGCPercent(previous) })
++}
++
++// openDescriptorCount returns how many of this process's file descriptors
++// refer to the file at filePath, matched by device and inode.
++func openDescriptorCount(t *testing.T, filePath string) int {
++	t.Helper()
++
++	info, err := os.Stat(filePath)
++	require.NoError(t, err)
++	want := info.Sys().(*syscall.Stat_t)
++
++	entries, err := os.ReadDir("/dev/fd")
++	require.NoError(t, err)
++
++	count := 0
++	for _, entry := range entries {
++		fd, err := strconv.Atoi(entry.Name())
++		if err != nil {
++			continue
++		}
++		var got syscall.Stat_t
++		// ReadDir closed the descriptor it listed /dev/fd through, so Fstat fails on it
++		if err := syscall.Fstat(fd, &got); err != nil {
++			continue
++		}
++		if got.Dev == want.Dev && got.Ino == want.Ino {
++			count++
++		}
++	}
++	return count
++}
++
++// commitLogDescriptorCount sums the descriptors held on every file in a commit log directory.
++func commitLogDescriptorCount(t *testing.T, dir string) int {
++	t.Helper()
++
++	entries, err := os.ReadDir(dir)
++	require.NoError(t, err)
++
++	count := 0
++	for _, entry := range entries {
++		if entry.IsDir() {
++			continue
++		}
++		count += openDescriptorCount(t, filepath.Join(dir, entry.Name()))
++	}
++	return count
++}
++
++func readCommits(t *testing.T, filePath string) []compact.Commit {
++	t.Helper()
++
++	f, err := os.Open(filePath)
++	require.NoError(t, err)
++	defer f.Close()
++
++	reader := compact.NewWALCommitReader(f, logger)
++	var commits []compact.Commit
++	for {
++		c, err := reader.ReadNextCommit()
++		if errors.Is(err, io.EOF) {
++			return commits
++		}
++		require.NoError(t, err)
++		commits = append(commits, c)
++	}
++}
++
++func hasTombstoneCommit(commits []compact.Commit, id uint64) bool {
++	for _, c := range commits {
++		if tc, ok := c.(*compact.AddTombstoneCommit); ok && tc.ID == id {
++			return true
++		}
++	}
++	return false
++}
++
++func newShutdownTestCommitLogger(t *testing.T, rootPath string) *hnswCommitLogger {
++	t.Helper()
++
++	nullLogger, _ := test.NewNullLogger()
++	cl, err := NewCommitLogger(rootPath, "shutdown", nullLogger, cyclemanager.NewCallbackGroupNoop())
++	require.NoError(t, err)
++	cl.InitMaintenance()
++	return cl
++}
++
++func TestCommitLoggerShutdownReleasesFile(t *testing.T) {
++	tests := []struct {
++		name       string
++		flushed    []uint64
++		unflushed  []uint64
++		shutdowns  int
++		wantOnDisk []uint64
++	}{
++		{name: "empty log", shutdowns: 1},
++		{name: "flushed records", flushed: []uint64{1, 2}, shutdowns: 1, wantOnDisk: []uint64{1, 2}},
++		{name: "record appended after the last flush", flushed: []uint64{1}, unflushed: []uint64{2}, shutdowns: 1, wantOnDisk: []uint64{1, 2}},
++		{name: "never flushed", unflushed: []uint64{3}, shutdowns: 1, wantOnDisk: []uint64{3}},
++		{name: "shutdown twice", flushed: []uint64{1}, unflushed: []uint64{2}, shutdowns: 2, wantOnDisk: []uint64{1, 2}},
++	}
++
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			disableGC(t)
++			cl := newShutdownTestCommitLogger(t, t.TempDir())
++			filePath := cl.ActiveFilePath()
++
++			for _, id := range tt.flushed {
++				require.NoError(t, cl.AddTombstone(id))
++			}
++			require.NoError(t, cl.Flush())
++			for _, id := range tt.unflushed {
++				require.NoError(t, cl.AddTombstone(id))
++			}
++			require.Equal(t, 1, openDescriptorCount(t, filePath))
++
++			for range tt.shutdowns {
++				require.NoError(t, cl.Shutdown(context.Background()))
++			}
++
++			commits := readCommits(t, filePath)
++			for _, id := range tt.wantOnDisk {
++				require.True(t, hasTombstoneCommit(commits, id), "tombstone %d is not on disk after shutdown", id)
++			}
+
+```
+
+**File**: `adapters/repos/db/vector/hnsw/index.go` (modified, +2/-1)
+```diff
+@@ -848,8 +848,9 @@ func (h *hnsw) Shutdown(ctx context.Context) error {
+ 	h.compressWg.Wait()
+ 
+ 	ec := errorcompounder.New()
+-	ec.AddWrapf(h.commitLog.Shutdown(ctx), "shutdown commit log")
++	// a tombstone cleanup cycle writes to the commit log, so it stops before the log closes
+ 	ec.AddWrapf(h.tombstoneCleanupCallbackCtrl.Unregister(ctx), "unregister tombstone cleanup cycle")
++	ec.AddWrapf(h.commitLog.Shutdown(ctx), "shutdown commit log")
+ 
+ 	// release the vectors even if the steps above failed, otherwise a failed
+ 	// teardown keeps the whole cache in memory
+```
+
+---
+
+### Incident Patch 3: `d0a4096d` (2026-11-09)
+**Commit Message**: build(go.mod): upgrade to latest weaviate-go-client
+
+It includes a patch for kin-openapi v0.139.0
+
+**File**: `test/acceptance_with_go_client/go.mod` (modified, +13/-11)
+```diff
+@@ -13,7 +13,7 @@ require (
+ 	github.com/tailor-platform/graphql v0.6.0
+ 	github.com/weaviate/weaviate v1.38.16-0.20260915093746-7ecf175277a5
+ 	github.com/weaviate/weaviate-go-client/v5 v5.7.4-0.20260915114333-a2d4b0937103
+-	github.com/weaviate/weaviate-go-client/v6 v6.0.0
++	github.com/weaviate/weaviate-go-client/v6 v6.0.1-0.20261106163925-cb72b08ef2cb
+ 	golang.org/x/sync v0.24.0
+ 	google.golang.org/grpc v1.85.0
+ )
+@@ -22,7 +22,7 @@ require (
+ 	cel.dev/expr v0.25.3 // indirect
+ 	cloud.google.com/go v0.123.0 // indirect
+ 	cloud.google.com/go/auth v0.24.1-0.20261001053825-dbc26066f70a // indirect
+-	cloud.google.com/go/auth/oauth2adapt v0.3.0 // indirect
++	cloud.google.com/go/auth/oauth2adapt v0.3.1 // indirect
+ 	cloud.google.com/go/compute/metadata v0.10.0 // indirect
+ 	cloud.google.com/go/iam v1.14.0 // indirect
+ 	cloud.google.com/go/monitoring v1.30.0 // indirect
+@@ -79,15 +79,15 @@ require (
+ 	github.com/dlclark/regexp2 v1.12.0 // indirect
+ 	github.com/docker/go-connections v0.7.0 // indirect
+ 	github.com/docker/go-units v0.5.0 // indirect
+-	github.com/dprotaso/go-yit v0.0.0-20220510233725-9ba8df137936 // indirect
++	github.com/dprotaso/go-yit v0.0.0-20261106020759-d8881214a0db // indirect
+ 	github.com/dustin/go-humanize v1.0.1 // indirect
+ 	github.com/ebitengine/purego v0.10.1 // indirect
+ 	github.com/envoyproxy/go-control-plane/envoy v1.39.1-0.20260819172001-e6e3fd93e4be // indirect
+ 	github.com/envoyproxy/protoc-gen-validate v1.3.3 // indirect
+ 	github.com/fatih/camelcase v1.0.0 // indirect
+ 	github.com/fatih/color v1.19.0 // indirect
+ 	github.com/felixge/httpsnoop v1.1.0 // indirect
+-	github.com/getkin/kin-openapi v0.139.0 // indirect
++	github.com/getkin/kin-openapi v0.153.0 // indirect
+ 	github.com/getsentry/sentry-go v0.30.0 // indirect
+ 	github.com/go-jose/go-jose/v4 v4.1.6 // indirect
+ 	github.com/go-logr/logr v1.4.4 // indirect
+@@ -168,10 +168,10 @@ require (
+ 	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826 // indirect
+ 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
+ 	github.com/netresearch/go-cron v0.15.1 // indirect
+-	github.com/oapi-codegen/oapi-codegen/v2 v2.7.0 // indirect
++	github.com/oapi-codegen/oapi-codegen/v2 v2.8.2 // indirect
+ 	github.com/oapi-codegen/runtime v1.8.0 // indirect
+-	github.com/oasdiff/yaml v0.1.0 // indirect
+-	github.com/oasdiff/yaml3 v0.0.13 // indirect
++	github.com/oasdiff/yaml v0.1.3 // indirect
++	github.com/oasdiff/yaml3 v0.0.16 // indirect
+ 	github.com/oklog/ulid v1.3.1 // indirect
+ 	github.com/opencontainers/go-digest v1.0.0 // indirect
+ 	github.com/opencontainers/image-spec v1.1.1 // indirect
+@@ -191,8 +191,9 @@ require (
+ 	github.com/shirou/gopsutil/v4 v4.26.6 // indirect
+ 	github.com/sirupsen/logrus v1.9.4 // indirect
+ 	github.com/spaolacci/murmur3 v1.1.0 // indirect
+-	github.com/speakeasy-api/jsonpath v0.6.3 // indirect
+-	github.com/speakeasy-api/openapi v1.23.0 // indirect
++	github.com/speakeasy-api/jsonpath v0.7.0 // indirect
++	github.com/speakeasy-api/openapi v1.26.3 // indirect
++	github.com/speakeasy-api/yaml-jsonpath v0.0.0-20261016002013-07e5f48e6d17 // indirect
+ 	github.com/spf13/cast v1.7.1 // indirect
+ 	github.com/spiffe/go-spiffe/v2 v2.8.1 // indirect
+ 	github.com/stretchr/objx v0.5.3 // indirect
+@@ -232,6 +233,7 @@ require (
+ 	go.uber.org/mock v0.4.0 // indirect
+ 	go.yaml.in/yaml/v2 v2.4.3 // indirect
+ 	go.yaml.in/yaml/v3 v3.0.6 // indirect
++	go.yaml.in/yaml/v4 v4.0.0 // indirect
+ 	golang.org/x/crypto v0.58.0 // indirect
+ 	golang.org/x/mod v0.42.0 // indirect
+ 	golang.org/x/net v0.62.0 // indirect
+@@ -241,10 +243,10 @@ require (
+ 	golang.org/x/time v0.16.0 // indirect
+ 	golang.org/x/tools v0.52.0 // indirect
+ 	gonum.org/v1/gonum v0.17.0 // indirect
+-	google.golang.org/api v0.310.0 // indirect
++	google.golang.org/api v0.311.0 // indirect
+ 	google.golang.org/genproto v0.0.0-20261012220534-4341edf3f941 // indirect
+ 	google.golang.org/genproto/googleapis/api v0.0.0-20261012220534-4341edf3f941 // indirect
+-	google.golang.org/genproto/googleapis/rpc v0.0.0-20261026165753-2ffab32bce7e // indirect
++	google.golang.org/genproto/googleapis/rpc v0.0.0-20261104224025-d1e00e9f33ab // indirect
+ 	google.golang.org/protobuf v1.36.12 // indirect
+ 	gopkg.in/ini.v1 v1.67.2 // indirect
+ 	gopkg.in/yaml.v3 v3.0.1 // indirect
+```
+
+**File**: `test/acceptance_with_go_client/go.sum` (modified, +28/-0)
+```diff
+@@ -7,6 +7,8 @@ cloud.google.com/go/auth v0.24.1-0.20261001053825-dbc26066f70a h1:jW1ZLFy9oa5ai8
+ cloud.google.com/go/auth v0.24.1-0.20261001053825-dbc26066f70a/go.mod h1:1dmBXa9xfBvBr39ZnDUDkaaA91ccq9CcqENDgJA4d7c=
+ cloud.google.com/go/auth/oauth2adapt v0.3.0 h1:FY8oSZpCYoUNv6QxVODuMjQz4IlSOVeiQtZ08vLPz88=
+ cloud.google.com/go/auth/oauth2adapt v0.3.0/go.mod h1:7+2uCm7++XFO+/lN06c2HXpDXb/NMNn2/UwyBPbTnkk=
++cloud.google.com/go/auth/oauth2adapt v0.3.1 h1:BKLDdbWS7pafd820dsyFDF6fPEzIGqr7ny6hbTzCCgE=
++cloud.google.com/go/auth/oauth2adapt v0.3.1/go.mod h1:B1nM4FJDxoDqAt3PXFG4IflUoQ5kvWAOOM3R+5wAszg=
+ cloud.google.com/go/compute/metadata v0.10.0 h1:pyKMUQSwchgkIBBJGdILqQbs/BNJXqwSA7Ej6LAvvtY=
+ cloud.google.com/go/compute/metadata v0.10.0/go.mod h1:rGFHRrIif570kSibjFTMbt6/4/tzgJWFGI/HVol4GIk=
+ cloud.google.com/go/iam v1.14.0 h1:YRIB1/4xxwJ+NfI6RQr1WaOoHHeV0MizJEj940nBXJA=
+@@ -160,6 +162,8 @@ github.com/docker/go-units v0.5.0/go.mod h1:fgPhTUdO+D/Jk86RDLlptpiXQzgHJF7gydDD
+ github.com/dprotaso/go-yit v0.0.0-20191028211022-135eb7262960/go.mod h1:9HQzr9D/0PGwMEbC3d5AB7oi67+h4TsQqItC1GVYG58=
+ github.com/dprotaso/go-yit v0.0.0-20220510233725-9ba8df137936 h1:PRxIJD8XjimM5aTknUK9w6DHLDox2r2M3DI4i2pnd3w=
+ github.com/dprotaso/go-yit v0.0.0-20220510233725-9ba8df137936/go.mod h1:ttYvX5qlB+mlV1okblJqcSMtR4c52UKxDiX9GRBS8+Q=
++github.com/dprotaso/go-yit v0.0.0-20261106020759-d8881214a0db h1:rNdTo++1l+oAwsaXq3nrpx9x76ykK8lI5681box+IdM=
++github.com/dprotaso/go-yit v0.0.0-20261106020759-d8881214a0db/go.mod h1:qe1JbzSST2V+zxO4R8tYvEeYoyhY1PJgKN0emwaq6/s=
+ github.com/dustin/go-humanize v1.0.1 h1:GzkhY7T5VNhEkwH0PVJgjz+fX1rhBrR7pRT3mDkpeCY=
+ github.com/dustin/go-humanize v1.0.1/go.mod h1:Mu1zIs6XwVuF/gI1OepvI0qD18qycQx+mFykh5fBlto=
+ github.com/ebitengine/purego v0.10.1 h1:dewVBCBT2GaMu1SrNTYxQhgQBethzfhiwvZiLGP/qyY=
+@@ -185,8 +189,11 @@ github.com/fsnotify/fsnotify v1.4.7/go.mod h1:jwhsz4b93w/PPRr/qN1Yymfu8t87LnFCMo
+ github.com/fsnotify/fsnotify v1.4.9/go.mod h1:znqG4EE+3YCdAaPaxE2ZRY/06pZUdp0tY4IgpuI1SZQ=
+ github.com/fsnotify/fsnotify v1.5.4 h1:jRbGcIw6P2Meqdwuo0H1p6JVLbL5DHKAKlYndzMwVZI=
+ github.com/fsnotify/fsnotify v1.5.4/go.mod h1:OVB6XrOHzAwXMpEM7uPOzcehqUV2UqJxmVXmkdnm1bU=
++github.com/fsnotify/fsnotify v1.9.0 h1:2Ml+OJNzbYCTzsxtv8vKSFD9PbJjmhYF14k/jKC7S9k=
+ github.com/getkin/kin-openapi v0.139.0 h1:pBFXcZJFwz9J1X64jzxlOoNgFm+TF7kNrs9+HJVN6Ic=
+ github.com/getkin/kin-openapi v0.139.0/go.mod h1:NGxPfE4PwS/TRXEbyx2RrxDFPZvxcWw31Tw8XXjPZLs=
++github.com/getkin/kin-openapi v0.153.0 h1:Qo4qWW+Pj8o90LUTE6MDyG5TJAtWnfvrcWOBcWg7eBw=
++github.com/getkin/kin-openapi v0.153.0/go.mod h1:mEZ6Ip3gyqPDokUsJsttZhv3r46/NeH3tGwrFUMcoSE=
+ github.com/getsentry/sentry-go v0.30.0 h1:lWUwDnY7sKHaVIoZ9wYqRHJ5iEmoc0pqcRqFkosKzBo=
+ github.com/getsentry/sentry-go v0.30.0/go.mod h1:WU9B9/1/sHDqeV8T+3VwwbjeR5MSXs/6aqG3mqZrezA=
+ github.com/go-errors/errors v1.4.2 h1:J6MZopCL4uSllY1OfXM374weqZFFItUbrImctkmUxIA=
+@@ -456,12 +463,18 @@ github.com/nxadm/tail v1.4.11 h1:8feyoE3OzPrcshW5/MJ4sGESc5cqmGkGCWlco4l0bqY=
+ github.com/nxadm/tail v1.4.11/go.mod h1:OTaG3NK980DZzxbRq6lEuzgU+mug70nY11sMd4JXXHc=
+ github.com/oapi-codegen/oapi-codegen/v2 v2.7.0 h1:/8daqIYZfwnsHEAZdHUu9m0D5LA+5DoJCP7zLlT5Cs0=
+ github.com/oapi-codegen/oapi-codegen/v2 v2.7.0/go.mod h1:qzFy6iuobJw/hD1aRILee4G87/ShmhR0xYCwcUtZMCw=
++github.com/oapi-codegen/oapi-codegen/v2 v2.8.2 h1:68UGCFId8tysEuz1jqDgem0Lnz0d6T+73br+KwH/W6k=
++github.com/oapi-codegen/oapi-codegen/v2 v2.8.2/go.mod h1:yae2TI9IYB5vxQ35gFrpXh9L5H1eJv4MAUK1jumGMTo=
+ github.com/oapi-codegen/runtime v1.8.0 h1:RJzEgQSJQADEPaG1cYuSCKYai/cCVRE2xnkrqhJs/3c=
+ github.com/oapi-codegen/runtime v1.8.0/go.mod h1:GwV7hC2hviaMzj+ITfHVRESK5J2W/GefVwIND/bMGvU=
+ github.com/oasdiff/yaml v0.1.0 h1:0bqZjfKc/8S9urj4JuwepX41WX9EoA6ifhU3SV06cXg=
+ github.com/oasdiff/yaml v0.1.0/go.mod h1:kOlRmMdL2X3vucLCEQO5u61SU22RysnfXvcttrZA1O0=
++github.com/oasdiff/yaml v0.1.3 h1:TdwO8e1G1F+bN++LzHj6IWExcuqMjQ1xK8KRYWTffWE=
++github.com/oasdiff/yaml v0.1.3/go.mod h1:vxzaFi+b+l+FWC/2NZMm+yD4DzyzwPCwaeLj1x1XfMg=
+ github.com/oasdiff/yaml3 v0.0.13 h1:06svmvOHOVBqF81+sY2EUScvUI/iS/vl2VIeUUxZQwg=
+ github.com/oasdiff/yaml3 v0.0.13/go.mod h1:y5+oSEHCPT/DGrS++Wc/479ERge0zTFxaF8PbGKcg2o=
++github.com/oasdiff/yaml3 v0.0.16 h1:NlDF/1oIOhmOvrEb9eH6Sbuubp3gZNS4A+MKST5/p0Q=
++github.com/oasdiff/yaml3 v0.0.16/go.mod h1:csto2xfDjYccdUn/yw/bPjj/cYTdp6HtFA0J4TWG+gg=
+ github.com/oklog/ulid v1.3.1 h1:EGfNDEx6MqHz8B3uNV6QAib1UR2Lm97sHi3ocA6ESJ4=
+ github.com/oklog/ulid v1.3.1/go.mod h1:CirwcVhetQ6Lv90oh/F+FBtV6XMibvdAFo93nm5qn4U=
+ github.com/onsi/ginkgo v1.6.0/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+WWjE=
+@@ -478,6 +491,7 @@ github.com/onsi/gomega v1.17.0/go.mod h1:HnhC7FXeEQY45zxNK3PPoIUhzk/80Xly9PcubAl
+ github.com/onsi/gomega v1.19.0/go.mod h1:LY+I3pBVzYsTBU1AnDwOSxaYi9WoWiqgwooUqq9yPro=
+ github.com/onsi/gomega v1.27.1 h1:rfztXRbg6nv/5f+Raen9RcGoSecHIFgBBLQK3Wdj754=
+ github.com/onsi/gomega v1.27.1/go.mod h1:aHX5xOykVYzWOV4WqQy0sy8BQptgukenXpCXfadcIAw=
++github.com/onsi/gomega v1.44.0 h1:eAiGl3Pw5
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #13812** (2026-11-06): Merge stable/v1.40 into main (@antas-marcin)
-- **PR #13811** (2026-11-06): Merge stable/v1.39 into stable/v1.40 (@antas-marcin)
-- **PR #13810** (closed): security(deps): bump golang.org/x/net to v0.62.0 (@abdelr)
-- **PR #13808** (2026-11-06): Merge stable/v1.38 into stable/v1.39 (@antas-marcin)
-- **PR #13806** (2026-11-06): security(deps): bump golang.org/x/net to v0.62.0 (@antas-marcin)
-- **PR #13798** (closed): test(reindex): pin correct filters after a restart between a replica's swap and the schema flip (@etiennedi)
+- **PR #13829** (2026-11-09): Merge stable/v1.38 into stable/v1.39 (@antas-marcin)
+- **PR #13827** (2026-11-09): Close the hnsw commit log on shutdown (@jeroiraz)
+- **PR #13823** (2026-11-09): Require a wildcard to grant a role pattern that uses regex syntax (@dirkkul)
+- **PR #13822** (2026-11-09): fix: flaky test delete entrypoint (@trengrj)
+- **PR #13821** (2026-11-09): vector index update: scan the stored vectors of one named vector (@asdine)
+- **PR #13819** (2026-11-09): cluster: register schema guards before RAFT replay (@etiennedi)
 
 ---
 
@@ -2344,28 +2720,44 @@ backup: break dedupe designation ties at random
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. security(deps): bump golang.org/x/net to v0.62.0
+## X. use NEON instead of SVE dot product on 128-bit SVE cores (Neoverse V2) (#13779)
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in weaviate/weaviate. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `adapters/repos/db/vector/hnsw/distancer/asm/sve_arm64.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in weaviate/weaviate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `39bf2b1b`: security(deps): bump golang.org/x/net to v0.62.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6498ec79`: use NEON instead of SVE dot product on 128-bit SVE cores (Neoverse V2) (#13779). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `adapters/repos/db/vector/hnsw/distancer/asm/sve_arm64.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	golang.org/x/net v0.62.0
+//                           _       _
+// __      _____  __ ___   ___  __ _| |_ ___
+// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
+//  \ V  V /  __/ (_| |\ V /| | (_| | ||  __/
+//   \_/\_/ \___|\__,_| \_/ |_|\__,_|\__\___|
+//
+//  Copyright © 2016 - 2026 Weaviate B.V. All rights reserved.
+//
+//  CONTACT: hello@weaviate.io
+//
+
+package asm
+
+// SVEVectorLengthBytes returns the SVE vector length of the host in bytes
+// (16 on Neoverse V2, 32 on Neoverse V1), read with RDVL. It executes an SVE
+// instruction, so it must only be called when cpu.ARM64.HasSVE is true.
+func SVEVectorLengthBytes() int
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	golang.org/x/net v0.61.0
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `39bf2b1b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6498ec79` are properly handled with clean fallback behavior.

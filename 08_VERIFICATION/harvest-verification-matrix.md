@@ -8745,3 +8745,4 @@
 | `CYCLE-20261110-TBOW` | `2026-11-10T05:21:51.728Z` | `agent-of-empires/agent-of-empires` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`86a55c70...`) |
 | `CYCLE-20261110-TG0R` | `2026-11-10T05:21:57.339Z` | `gocd/gocd` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`197e4103...`) |
 | `CYCLE-20261110-D9ZM` | `2026-11-10T06:05:22.258Z` | `VideoRebirthAI/hyperflow-h3-flash` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`5a57b913...`) |
+| `CYCLE-20261110-MWP8` | `2026-11-10T06:12:51.596Z` | `weaviate/weaviate` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7446a3dd...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-10T06:05:22.282Z",
+  "last_updated": "2026-11-10T06:12:51.620Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -10341,14 +10341,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-weaviate-weaviate",
-      "content_hash": "9ed9dff244455fa871e87a3ea78cf6f03068da1c9eee178801100825bae6430f",
-      "verified_at": "2026-11-06T21:21:14.497Z",
+      "content_hash": "7446a3dd617fd9c1fd3ed40e5d7705b4038a3e6a7917a44c4fa5c46538bdb820",
+      "verified_at": "2026-11-10T06:12:51.619Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T21:21:14.497Z"
+      "last_updated": "2026-11-10T06:12:51.619Z"
     },
     "topgrade-rs/topgrade": {
       "repository": "topgrade-rs/topgrade",

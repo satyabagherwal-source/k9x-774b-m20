@@ -8754,3 +8754,4 @@ Every entry in this ledger must capture:
 | `learn-github-agent-of-empires-agent-of-empires` | `https://github.com/agent-of-empires/agent-of-empires` | `ff0a5e36` | Multi-dimensional audit evidence | 2026-11-10T05:21:51.732Z |
 | `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `cba01064` | Multi-dimensional audit evidence | 2026-11-10T05:21:57.343Z |
 | `learn-huggingface-videorebirthai-hyperflow-h3-flash` | `https://huggingface.co/VideoRebirthAI/hyperflow-h3-flash` | `hf-videore` | Multi-dimensional audit evidence | 2026-11-10T06:05:22.262Z |
+| `learn-github-weaviate-weaviate` | `https://github.com/weaviate/weaviate` | `6498ec79` | Multi-dimensional audit evidence | 2026-11-10T06:12:51.600Z |

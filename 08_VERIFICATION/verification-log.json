@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261108-F7DG",
-    "timestamp": "2026-11-08T06:59:30.964Z",
-    "repository": "mtkennerly/ludusavi",
-    "learningId": "learn-github-mtkennerly-ludusavi",
-    "contentHash": "40571b44662b0a90599490c008dc35f09822c2df93b5f379fba46ff019999365",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261108-FFXA",
     "timestamp": "2026-11-08T06:59:42.046Z",
     "repository": "LiquidAI/LFM3-1.7B",
@@ -7492,6 +7477,21 @@
     "contentHash": "5a57b913598e6c3e80704e0df5b663a5e62da022f5587c55dae2eb154f4d742a",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261110-MWP8",
+    "timestamp": "2026-11-10T06:12:51.596Z",
+    "repository": "weaviate/weaviate",
+    "learningId": "learn-github-weaviate-weaviate",
+    "contentHash": "7446a3dd617fd9c1fd3ed40e5d7705b4038a3e6a7917a44c4fa5c46538bdb820",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
