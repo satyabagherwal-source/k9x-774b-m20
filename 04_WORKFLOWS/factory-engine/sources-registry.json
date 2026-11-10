@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-10T05:14:27.700Z",
-    "lastVerified": "2026-11-10T05:14:27.700Z",
+    "lastChecked": "2026-11-10T05:21:59.916Z",
+    "lastVerified": "2026-11-10T05:21:59.916Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -257,8 +257,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-10T04:51:51.523Z",
-    "lastVerified": "2026-11-10T04:51:51.523Z",
+    "lastChecked": "2026-11-10T05:21:58.210Z",
+    "lastVerified": "2026-11-10T05:21:58.210Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -747,9 +747,9 @@
   "hashicorp-boundary": {
     "name": "boundary",
     "officialUrl": "https://github.com/hashicorp/boundary",
-    "lastChecked": "2026-11-09T22:27:02.589Z",
+    "lastChecked": "2026-11-10T05:21:53.173Z",
     "revisionIdentifier": "eeb38a1a",
-    "lastVerified": "2026-11-09T22:27:02.589Z"
+    "lastVerified": "2026-11-10T05:21:53.173Z"
   },
   "qdrant-qdrant": {
     "name": "qdrant",
@@ -833,8 +833,8 @@
     "officialUrl": "https://github.com/topoteretes/cognee",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-09T00:31:19.299Z",
-    "lastVerified": "2026-11-09T00:31:19.299Z",
+    "lastChecked": "2026-11-10T05:21:55.629Z",
+    "lastVerified": "2026-11-10T05:21:55.629Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-topoteretes-cognee",
@@ -5728,9 +5728,9 @@
   "apsl-react-native-keyboard-aware-scroll-view": {
     "name": "react-native-keyboard-aware-scroll-view",
     "officialUrl": "https://github.com/APSL/react-native-keyboard-aware-scroll-view",
-    "lastChecked": "2026-11-07T05:58:08.257Z",
+    "lastChecked": "2026-11-10T05:21:48.108Z",
     "revisionIdentifier": "9eee405f",
-    "lastVerified": "2026-11-07T05:58:08.257Z"
+    "lastVerified": "2026-11-10T05:21:48.108Z"
   },
   "meshery-meshery": {
     "name": "meshery/meshery",
@@ -5926,22 +5926,21 @@
     "lastVerified": "2026-11-07T06:24:19.280Z"
   },
   "gocd-gocd": {
-    "name": "gocd",
+    "name": "gocd/gocd",
     "officialUrl": "https://github.com/gocd/gocd",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-09T01:26:13.968Z",
-    "lastVerified": "2026-11-09T01:26:13.968Z",
+    "lastChecked": "2026-11-10T05:21:54.675Z",
+    "lastVerified": "2026-11-10T05:21:54.675Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gocd-gocd",
-    "contentHash": "857fcc76c1660f813949b68fdb4f44e3d93ccf04c9cbc015e83a6ab2d1260eeb",
+    "contentHash": "197e4103c65da590216a02206945b16f2618fd5a303bff2d0cc3c9e4f3c27a65",
     "promotedRulesCount": 1,
     "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "c52feb8b"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-openbmb-minicpm-ocr-1.0": {
     "name": "openbmb/MiniCPM-OCR-1.0",
@@ -8325,14 +8324,14 @@
     "officialUrl": "https://github.com/agent-of-empires/agent-of-empires",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T20:38:40.161Z",
-    "lastVerified": "2026-11-08T20:38:40.161Z",
+    "lastChecked": "2026-11-10T05:21:46.673Z",
+    "lastVerified": "2026-11-10T05:21:46.673Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-agent-of-empires-agent-of-empires",
-    "contentHash": "311e6279b4d62f2641087da216a6f6364e3adedf93196b70a9c11169de507907",
+    "contentHash": "86a55c7090fab300960f474ce3f977d3692ab9c248c0dec58e14a2e5f8dfb0b6",
     "promotedRulesCount": 1,
-    "recentFixesCount": 14,
+    "recentFixesCount": 13,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10027,9 +10026,9 @@
   "seobserver-crawlobserver": {
     "name": "crawlobserver",
     "officialUrl": "https://github.com/SEObserver/crawlobserver",
-    "lastChecked": "2026-11-05T23:16:59.604Z",
+    "lastChecked": "2026-11-10T05:21:45.604Z",
     "revisionIdentifier": "64b6a78344",
-    "lastVerified": "2026-11-05T23:16:59.604Z"
+    "lastVerified": "2026-11-10T05:21:45.604Z"
   },
   "productdevbook-port-killer": {
     "name": "port-killer",

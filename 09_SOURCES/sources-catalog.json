@@ -5163,10 +5163,10 @@
     "repository": "gocd/gocd",
     "platform": "github",
     "sourceUrl": "https://github.com/gocd/gocd",
-    "sourceVersion": "c52feb8b",
+    "sourceVersion": "cba01064",
     "license": "Apache-2.0",
-    "contentHash": "857fcc76c1660f813949b68fdb4f44e3d93ccf04c9cbc015e83a6ab2d1260eeb",
-    "lastHarvestedAt": "2026-11-07T02:15:09.771Z",
+    "contentHash": "197e4103c65da590216a02206945b16f2618fd5a303bff2d0cc3c9e4f3c27a65",
+    "lastHarvestedAt": "2026-11-10T05:21:57.343Z",
     "learningId": "learn-github-gocd-gocd"
   },
   "citusdata-citus": {
@@ -7443,10 +7443,10 @@
     "repository": "agent-of-empires/agent-of-empires",
     "platform": "github",
     "sourceUrl": "https://github.com/agent-of-empires/agent-of-empires",
-    "sourceVersion": "16c57ac4",
+    "sourceVersion": "ff0a5e36",
     "license": "MIT",
-    "contentHash": "311e6279b4d62f2641087da216a6f6364e3adedf93196b70a9c11169de507907",
-    "lastHarvestedAt": "2026-11-08T20:38:41.579Z",
+    "contentHash": "86a55c7090fab300960f474ce3f977d3692ab9c248c0dec58e14a2e5f8dfb0b6",
+    "lastHarvestedAt": "2026-11-10T05:21:51.732Z",
     "learningId": "learn-github-agent-of-empires-agent-of-empires"
   },
   "nativescript-nativescript": {

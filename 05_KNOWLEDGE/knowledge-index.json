@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-10T05:14:25.004Z",
+  "last_updated": "2026-11-10T05:21:57.204Z",
   "total_verified_learnings": 1245,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -954,8 +954,8 @@
       "slug": "agent-of-empires-agent-of-empires",
       "platform": "github",
       "source_url": "https://github.com/agent-of-empires/agent-of-empires",
-      "source_version": "16c57ac4",
-      "content_hash": "311e6279b4d62f2641087da216a6f6364e3adedf93196b70a9c11169de507907",
+      "source_version": "ff0a5e36",
+      "content_hash": "86a55c7090fab300960f474ce3f977d3692ab9c248c0dec58e14a2e5f8dfb0b6",
       "dossier_path": "07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
       "promoted_rules": [
@@ -967,6 +967,11 @@
         {
           "number": null,
           "title": "daemon): honor configured services during autostart (#5283)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "tui): lock Yolo in the new-session dialog for the agent each view runs (#5412)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -1050,7 +1055,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T20:38:41.461Z",
+      "verified_at": "2026-11-10T05:21:51.556Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -17093,14 +17098,19 @@
       "slug": "gocd-gocd",
       "platform": "github",
       "source_url": "https://github.com/gocd/gocd",
-      "source_version": "c52feb8b",
-      "content_hash": "857fcc76c1660f813949b68fdb4f44e3d93ccf04c9cbc015e83a6ab2d1260eeb",
+      "source_version": "cba01064",
+      "content_hash": "197e4103c65da590216a02206945b16f2618fd5a303bff2d0cc3c9e4f3c27a65",
       "dossier_path": "07_PROJECT_LEARNING/gocd-gocd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gocd-gocd-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "build(deps-ui): bump filesize in /server/src/main/webapp/WEB-INF/rails (#14724)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "build(deps-ui-dev): bump sass-embedded (#14726)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -17169,7 +17179,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T02:15:09.636Z",
+      "verified_at": "2026-11-10T05:21:57.174Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

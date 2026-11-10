@@ -8742,3 +8742,5 @@
 | `CYCLE-20261110-JKGQ` | `2026-11-10T05:14:16.538Z` | `bahdotsh/wrkflw` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4bcc131d...`) |
 | `CYCLE-20261110-JO2I` | `2026-11-10T05:14:21.210Z` | `lingodotdev/lingo.dev` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c4b3a761...`) |
 | `CYCLE-20261110-JR2Y` | `2026-11-10T05:14:25.114Z` | `AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6485, Rule null` | Yes (`0d0447c5...`) |
+| `CYCLE-20261110-TBOW` | `2026-11-10T05:21:51.728Z` | `agent-of-empires/agent-of-empires` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`86a55c70...`) |
+| `CYCLE-20261110-TG0R` | `2026-11-10T05:21:57.339Z` | `gocd/gocd` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`197e4103...`) |
