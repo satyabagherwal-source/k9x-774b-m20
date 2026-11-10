@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261108-VQ00",
-    "timestamp": "2026-11-08T03:28:24.672Z",
-    "repository": "lodestones/MOSS-Image-SFT-8-steps-dmd",
-    "learningId": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd",
-    "contentHash": "7a5c7c064839f6a451842a18e4f68e26eed512532d84aebcaa3b41bee92ec28c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261108-56ZW",
     "timestamp": "2026-11-08T03:35:46.604Z",
     "repository": "momenbasel/PureMac",
@@ -7492,6 +7477,21 @@
     "contentHash": "92fe3126c4bda76281396026a2b2de25c97d86c5d8955ee1499824c22b34b5f6",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261110-T4MU",
+    "timestamp": "2026-11-10T00:13:46.806Z",
+    "repository": "RediSearch/RediSearch",
+    "learningId": "learn-github-redisearch-redisearch",
+    "contentHash": "71a906d828d40ab8d38bae761aad27d958055531dc2a98be31f0de0687570566",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

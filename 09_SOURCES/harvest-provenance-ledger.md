@@ -8702,3 +8702,4 @@ Every entry in this ledger must capture:
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `c31273fc` | Multi-dimensional audit evidence | 2026-11-09T23:40:51.430Z |
 | `learn-github-dalance-procs` | `https://github.com/dalance/procs` | `7ffb8c4f` | Multi-dimensional audit evidence | 2026-11-09T23:45:25.468Z |
 | `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `fd579905` | Multi-dimensional audit evidence | 2026-11-09T23:52:49.239Z |
+| `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `b4f97b06` | Multi-dimensional audit evidence | 2026-11-10T00:13:46.810Z |

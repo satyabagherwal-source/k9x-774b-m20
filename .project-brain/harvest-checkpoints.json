@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-09T23:52:49.260Z",
+  "last_updated": "2026-11-10T00:13:46.830Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9156,14 +9156,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-redisearch-redisearch",
-      "content_hash": "03a557d8da695d666ed9ca566f666f4c4d76c35e1fc5288a088aceb9106c7e99",
-      "verified_at": "2026-11-08T21:33:35.897Z",
+      "content_hash": "71a906d828d40ab8d38bae761aad27d958055531dc2a98be31f0de0687570566",
+      "verified_at": "2026-11-10T00:13:46.830Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T21:33:35.897Z"
+      "last_updated": "2026-11-10T00:13:46.830Z"
     },
     "taiga-family/taiga-ui": {
       "repository": "taiga-family/taiga-ui",

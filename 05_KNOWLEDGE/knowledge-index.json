@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-09T23:52:49.135Z",
+  "last_updated": "2026-11-10T00:13:46.708Z",
   "total_verified_learnings": 1245,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -54313,8 +54313,8 @@
       "slug": "redisearch-redisearch",
       "platform": "github",
       "source_url": "https://github.com/RediSearch/RediSearch",
-      "source_version": "9fff58aa",
-      "content_hash": "03a557d8da695d666ed9ca566f666f4c4d76c35e1fc5288a088aceb9106c7e99",
+      "source_version": "b4f97b06",
+      "content_hash": "71a906d828d40ab8d38bae761aad27d958055531dc2a98be31f0de0687570566",
       "dossier_path": "07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
       "promoted_rules": [
@@ -54327,6 +54327,21 @@
           "number": null,
           "title": "[MOD-19959] Fix memory leak when a JSON multi-value doc fails to index (#11927)",
           "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Zero-Allocation Cooperative Memory Checkpointing for Long-Running Computations",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Strict Pointer Provenance Across Foreign Function Interface (FFI) Boundaries",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Safe Floating-Point Integral Conversions Without Undefined Behavior",
+          "status": "WITHHELD_CONDITIONAL_PASS"
         },
         {
           "number": 2157,
@@ -54404,7 +54419,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T21:33:35.760Z",
+      "verified_at": "2026-11-10T00:13:46.682Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

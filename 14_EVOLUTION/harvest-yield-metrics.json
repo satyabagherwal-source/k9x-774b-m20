@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T23:52:49.246Z",
-  "total_cycles_completed": 8658,
-  "total_learnings_persisted": 8658,
-  "total_rules_promoted": 8496,
+  "last_updated": "2026-11-10T00:13:46.826Z",
+  "total_cycles_completed": 8659,
+  "total_learnings_persisted": 8659,
+  "total_rules_promoted": 8499,
   "history": [
-    {
-      "timestamp": "2026-11-09T03:42:53.650Z",
-      "repository": "paradedb/paradedb",
-      "learningId": "learn-github-paradedb-paradedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T03:50:06.736Z",
       "repository": "Qwen/Qwen3-8B",
@@ -1403,6 +1396,13 @@
       "repository": "genkit-ai/genkit",
       "learningId": "learn-github-genkit-ai-genkit",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-10T00:13:46.826Z",
+      "repository": "RediSearch/RediSearch",
+      "learningId": "learn-github-redisearch-redisearch",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
