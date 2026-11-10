@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-10T00:31:59.785Z",
+  "last_updated": "2026-11-10T00:45:09.664Z",
   "total_verified_learnings": 1245,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -10192,8 +10192,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "c31273fc",
-      "content_hash": "dbb844c1d572d61d03c4ba0c64784de1cf0d573f0a500f0c6d8bf4a1e41344c0",
+      "source_version": "a503d190",
+      "content_hash": "cdc50c6452279d8455c6ba482e2824d19227d1ce5fc1575a57db7444cb6a7b34",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -10280,6 +10280,11 @@
         {
           "number": null,
           "title": "docs(changelog): measured jsonschema 0.61 validate speedup",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "deps): cite qsv PR numbers in the patch comments",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -10633,7 +10638,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T23:40:51.265Z",
+      "verified_at": "2026-11-10T00:45:09.647Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -11692,8 +11697,8 @@
       "slug": "domcyrus-rustnet",
       "platform": "github",
       "source_url": "https://github.com/domcyrus/rustnet",
-      "source_version": "6448181d",
-      "content_hash": "2a6a636d9768dd6eb2e9f5d41b972b41571716214b8f1be9df3c806129bce06e",
+      "source_version": "218e16d5",
+      "content_hash": "0739449e85ad2fe5e8ca7bcf9381ab66eeaff603928fde1d57fcfe638da5a7b8",
       "dossier_path": "07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
       "promoted_rules": [
@@ -11716,6 +11721,11 @@
           "number": null,
           "title": "Layer 3 Wire Accounting Over Capture Slice Truncation",
           "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "deps): bump the rust-dependencies group with 2 updates (#724)",
+          "status": "WITHHELD_REJECT"
         },
         {
           "number": 2257,
@@ -11773,7 +11783,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T17:51:55.220Z",
+      "verified_at": "2026-11-10T00:44:55.137Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -12308,8 +12318,8 @@
       "slug": "duckdb-duckdb",
       "platform": "github",
       "source_url": "https://github.com/duckdb/duckdb",
-      "source_version": "45c50f87",
-      "content_hash": "30eb9530b11a5cca65c03f262e078d839aa10b47c72eeaade39944a94d457f53",
+      "source_version": "23221edf",
+      "content_hash": "4b6af69b1a862c7b3fa9dc4114bdbdef847c192cf3c6dc546c53674b4e26c75b",
       "dossier_path": "07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
       "promoted_rules": [
@@ -12326,6 +12336,11 @@
         {
           "number": null,
           "title": "CI: build wasm_threads extensions on PRs, like wasm_eh",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "dangling segment node link when appending a segment runs out of memory (#28583)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -12414,7 +12429,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T22:01:01.731Z",
+      "verified_at": "2026-11-10T00:45:08.780Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

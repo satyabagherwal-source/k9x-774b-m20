@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/duckdb-duckdb-learnings.md`  
 > **Source**: github ([https://github.com/duckdb/duckdb](https://github.com/duckdb/duckdb))  
-> **Source Version**: `45c50f87`  
+> **Source Version**: `23221edf`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T22:01:00.634Z  
+> **Timestamp**: 2026-11-10T00:45:07.616Z  
 > **Learning ID**: `learn-github-duckdb-duckdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/duckdb-duckdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/duckdb/duckdb](https://github.com/duckdb/duckdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T22:01:00.629Z  
+> **Harvest Timestamp**: 2026-11-10T00:45:07.366Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: DuckDB is a high-performance analytical database system
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 42925 stars
+- **Stars / Engagement**: 42950 stars
 
 ---
 
@@ -2004,11 +2004,15 @@ struct ModeState {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #28548** (2026-11-08): **Green CI supergroup**
-  *Symptoms*: Integration branch merging the four fixes needed to get `main` CI green again, so they can be validated together in one run:  - #28495 — glue and unity_catalog no longer compile after the `LazyMultiFileList` `Context` change (breaks the cloud and rust extension groups on every PR) - #28505 — ASan heap-buffer-overflow in the row id Bloom filter, seen as `osx / OSX Debug` aborting on a random test since Nov 6 - #28509 — `windows / Windows (32 Bit)` out of memory in `unnest_string_constant_reference.test`, plus CTE fixture loads timing out - #28546 — Wasm extensions link against `vcpkg_installed/wasm32-emscripten/` while wasm_threads now uses the `wasm32-emscripten-threads` triplet; also re-enables wasm_threads on PRs  Merging this merges the four PRs above. Plus a commit on top fixing up #28509 new test (needed added to skip list).  Thanks @Robinho-MR, @h4nsmuller and @kevintruong for the fixes.
+- **Issue #28601** (2026-11-09): **Parse schema-qualified table functions named describe, summarize, show, pivot or unpivot**
+  *Symptoms*: Table macros in a schema can no longer be called when their name is a reserved keyword: `SELECT * FROM g.describe('a')`, and the same with `summarize`, `show`, `pivot` or `unpivot`, fails on 2.0 with "Parser Error: syntax error at or near "("", while v1.5 accepts it. Creating the macro still works, and quoting the name (`g."describe"('a')`) is the only way to call it.  The PEG grammar reads the name of a table function as a `TableFunctionName`, which rejects reserved keywords, also after a qualification. Scalar function calls already allow a reserved keyword after a qualification (`CatalogReservedSchemaFunctionName`).  This adds the same rule for table functions, `CatalogReservedSchemaTableFunctionName`, so a reserved keyword can name a table function after a catalog or schema qualification. Unqualified names are unchanged. The generated parser files are regenerated with `scripts/parser/build_grammar.sh`.  This is a v2.0 regression, could it get the `backport v2.0-cyanoptera` label? 
+  **Post-Mortem & Fix Analysis**:
+  > Thanks!
 
-- **Issue #28546** (2026-11-08): **Link Wasm extensions against vcpkg_installed/${VCPKG_TARGET_TRIPLET}, on main**
-  *Symptoms*: Equivalent to https://github.com/duckdb/duckdb/pull/28545, but on `main`.
+- **Issue #28600** (2026-11-09): **Keep the DECIMAL type of a windowed sum in the window self-join rewrite**
+  *Symptoms*: A windowed `sum` over a DECIMAL fails at planning time with "INTERNAL Error: Failed to bind column reference "s" [39.1]: inequal types (DECIMAL(38,2) != HUGEINT)" when the query also has a filter that references several bindings, for example:  ```sql CREATE TABLE t AS SELECT i % 7 AS k, (i % 50 + 1)::DECIMAL(12,2) AS d FROM range(1000) t(i); SELECT (SELECT max(s) FROM (SELECT sum(d) OVER (PARTITION BY k) AS s FROM t)),        (SELECT count(*) FROM range(10) r(x) WHERE x = 3 OR x IN (SELECT 1)); ```  Such a filter makes the filter statistics pass run statistics propagation before the window self-join rewrite. Propagating the window's statistics specializes the DECIMAL sum into `sum_no_overflow`, which returns a HUGEINT, while the window expression stays DECIMAL(38,2). `TranslateAggregate` took the type of the aggregate it builds from that function.  This gives the aggregate the type of the window expression it replaces, as a regular aggregate keeps its type when statistics propagation swaps in `sum_no_overflow`.  This is a v2.0 regression, could it get the `backport v2.0-cyanoptera` label? 
+  **Post-Mortem & Fix Analysis**:
+  > Thanks!
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2025,329 +2029,264 @@ struct ModeState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8c5ba7fe` (2026-11-08)
-**Commit Message**: CI: build wasm_threads extensions on PRs, like wasm_eh
+### Incident Patch 1: `8f203aed` (2026-11-09)
+**Commit Message**: Fix dangling segment node link when appending a segment runs out of memory (#28583)
 
-wasm_threads was limited to dispatched runs while the wasm_threads vcpkg
-triplet settled. Now that the extensions link against
-vcpkg_installed/${VCPKG_TARGET_TRIPLET}, let wasm_threads follow the same
-rules as wasm_eh: built on pushes, dispatched runs and PRs that touch
-extensions, skipped only on PRs without extension changes.
+`tools/shell/tests/test_address_space_limit.py` (300 MB case) flakes
+with a SIGSEGV on CI, e.g.
+https://github.com/duckdb/duckdb/actions/runs/42591764034/job/129078685582
+and run 42588548027. This also happens on `main`.
 
-**File**: `.github/workflows/Main.yml` (modified, +3/-7)
+## Cause
+
+`SegmentTree::AppendSegmentInternal` pointed the previous node's `next`
+at the new node *before* `nodes.push_back(...)`. If `push_back` throws
+(out of memory while growing the vector), the new node is destroyed but
+the previous node keeps a dangling `next`. The failed `CREATE TABLE AS`
+then rolls back, and `LocalTableStorage::Rollback` -> `CommitDropTable`
+-> `ColumnData::VisitBlockIds` walks the `next` chain into freed memory.
+
+## Fix
+
+Add the node to `nodes` first, and only then link the previous node to
+it.
+
+## Testing
+
+Reproduced on `main` under `RLIMIT_AS` of 298-310 MB (4 CPUs, many
+parallel runs): ~4 SIGSEGVs per ~7200 runs, with the backtrace above.
+With this change: 0 in 7200 runs. The existing shell test covers the
+scenario; the failure is a low-probability race against the memory
+limit, so I did not add a new deterministic test.
+
+Note: I also hit a rarer, sepa
+
+**File**: `src/include/duckdb/storage/table/segment_tree.hpp` (modified, +5/-3)
 ```diff
-@@ -205,18 +205,14 @@ jobs:
-             --runners '${{ steps.runners.outputs.runners }}' \
-             --runner-provider '${{ steps.runners.outputs.runner_provider }}'
- 
--          # Wasm extensions: wasm_eh everywhere, wasm_threads only on dispatched (nightly) runs, never wasm_mvp
--          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
--            wasm_exclude_archs="wasm_mvp"
--          else
--            wasm_exclude_archs="wasm_mvp;wasm_threads"
--          fi
-+          # Wasm extensions: wasm_eh and wasm_threads everywhere, never wasm_mvp
-+          wasm_exclude_archs="wasm_mvp"
-           if [[ "${{ github.event_name }}" != "pull_request" ]]; then
-             extra_exclude_archs="$wasm_exclude_archs"
-           elif [[ "${{ steps.changed.outputs.extensions_any_changed }}" == "true" ]]; then
-             extra_exclude_archs="$wasm_exclude_archs;osx_amd64"
-           else
--            extra_exclude_archs="$wasm_exclude_archs;windows_arm64;osx_amd64;wasm_eh"
-+            extra_exclude_archs="$wasm_exclude_archs;windows_arm64;osx_amd64;wasm_eh;wasm_threads"
-           fi
-           if [[ -n "$INPUT_EXCLUDE_ARCHS" ]]; then
-             extra_exclude_archs="${extra_exclude_archs:+$extra_exclude_archs;}$INPUT_EXCLUDE_ARCHS"
+@@ -482,10 +482,12 @@ class SegmentTree {
+ 		D_ASSERT(segment);
+ 		// add the node to the list of nodes
+ 		auto node = make_uniq<SegmentNode<T>>(row_start, std::move(segment), nodes.size());
+-		if (!nodes.empty()) {
+-			nodes.back()->SetNext(*node);
+-		}
++		auto &new_node = *node;
++		optional_ptr<SegmentNode<T>> previous_node = nodes.empty() ? nullptr : nodes.back().get();
+ 		nodes.push_back(std::move(node));
++		if (previous_node) {
++			previous_node->SetNext(new_node);
++		}
+ 	}
+ 	void AppendSegmentInternal(SegmentLock &l, shared_ptr<T> segment) const {
+ 		idx_t row_start;
 ```
 
 ---
 
-### Incident Patch 2: `56b3e781` (2026-11-08)
-**Commit Message**: Merge PR #28546 (CI: build wasm_threads extensions on PRs, like wasm_eh)
+### Incident Patch 2: `c93ae535` (2026-11-09)
+**Commit Message**: Keep the window type when the window self-join rewrite builds its aggregate
 
-**File**: `.github/config/extensions/excel.cmake` (modified, +1/-0)
-```diff
-@@ -3,4 +3,5 @@ duckdb_extension_load(excel
-     GIT_URL https://github.com/duckdb/duckdb-excel
-     GIT_TAG 81bb84b115b97cc4edec4827714cac80da0127e1
-     INCLUDE_DIR src/excel/include
-+    APPLY_PATCHES
-     )
-```
+When a filter references several bindings, statistics propagation runs before the window self-join
+rewrite and can specialize the window's aggregate, e.g. the sum of a DECIMAL to sum_no_overflow,
+which returns a HUGEINT. The rewrite took the aggregate's type from that function, so planning
+failed with "Failed to bind column reference ... inequal types (DECIMAL(38,2) != HUGEINT)".
 
-**File**: `.github/patches/extensions/avro/0002-link-vcpkg-target-triplet-libs.patch` (added, +13/-0)
-```diff
-@@ -0,0 +1,13 @@
-+diff --git a/CMakeLists.txt b/CMakeLists.txt
-+index 8aefff8..f23de3c 100644
-+--- a/CMakeLists.txt
-++++ b/CMakeLists.txt
-+@@ -14,7 +14,7 @@ if (EMSCRIPTEN)
-+   # _LINKED_LIBS influences only Wasm compilation
-+   # it's unclear why this is needed, but somehow global symbols aren't properly exported otherwise
-+   # this solves by basically re-linking (at the moment the Wasm binary is actually produced)
-+-  set (DUCKDB_EXTENSION_AVRO_LINKED_LIBS "../../vcpkg_installed/wasm32-emscripten/lib/lib*.a")
-++  set (DUCKDB_EXTENSION_AVRO_LINKED_LIBS "../../vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/lib*.a")
-+ endif()
-+ 
-+ # Disable avro-c examples, tests, docs
-```
+Give the aggregate the type of the window expression it replaces.
 
-**File**: `.github/patches/extensions/excel/0001-link-vcpkg-target-triplet-libs.patch` (added, +13/-0)
+**File**: `src/optimizer/window_self_join.cpp` (modified, +2/-0)
 ```diff
-@@ -0,0 +1,13 @@
-+diff --git a/CMakeLists.txt b/CMakeLists.txt
-+index 981de80..d5bbeb7 100644
-+--- a/CMakeLists.txt
-++++ b/CMakeLists.txt
-+@@ -9,7 +9,7 @@ if (EMSCRIPTEN)
-+   # _LINKED_LIBS influences only Wasm compilation
-+   # it's unclear why this is needed, but avoid globals to be incorrectly not linked-in
-+   # this solves by basically re-linking (at the moment the Wasm binary is actually produced)
-+-  set (DUCKDB_EXTENSION_EXCEL_LINKED_LIBS "../../vcpkg_installed/wasm32-emscripten/lib/lib*.a")
-++  set (DUCKDB_EXTENSION_EXCEL_LINKED_LIBS "../../vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/lib*.a")
-+ endif()
-+ 
-+ # Dependencies from VCPKG
-```
-
-**File**: `.github/patches/extensions/iceberg/0003-link-vcpkg-target-triplet-libs.patch` (added, +13/-0)
-```diff
-@@ -0,0 +1,13 @@
-+diff --git a/CMakeLists.txt b/CMakeLists.txt
-+index 332f43f..de71fd5 100644
-+--- a/CMakeLists.txt
-++++ b/CMakeLists.txt
-+@@ -45,7 +45,7 @@ set(PARAMETERS "-warnings")
-+ 
-+ if(EMSCRIPTEN)
-+   set(DUCKDB_EXTENSION_ICEBERG_LINKED_LIBS
-+-      "../../vcpkg_installed/wasm32-emscripten/lib/liblzma.a;../../vcpkg_installed/wasm32-emscripten/lib/libroaring.a;../../vcpkg_installed/wasm32-emscripten/lib/libsnappy.a;../../vcpkg_installed/wasm32-emscripten/lib/libz.a;../../vcpkg_installed/wasm32-emscripten/lib/libjansson.a;../../third_party/mbedtls/libduckdb_mbedtls.a"
-++      "../../vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/liblzma.a;../../vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/libroaring.a;../../vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/libsnappy.a;../../vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/libz.a;../../vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/libjansson.a;../../third_party/mbedtls/libduckdb_mbedtls.a"
-+   )
-+ endif()
-+ 
-```
-
-**File**: `.github/patches/extensions/spatial/0018-link-vcpkg-target-triplet-libs.patch` (added, +13/-0)
-```diff
-@@ -0,0 +1,13 @@
-+diff --git a/CMakeLists.txt b/CMakeLists.txt
-+index 778726b..a6db5d1 100644
-+--- a/CMakeLists.txt
-++++ b/CMakeLists.txt
-+@@ -14,7 +14,7 @@ if(EMSCRIPTEN)
-+   # exported otherwise this solves by basically re-linking (at the moment the
-+   # Wasm binary is actually produced)
-+   set(DUCKDB_EXTENSION_SPATIAL_LINKED_LIBS
-+-      "../../vcpkg_installed/wasm32-emscripten/lib/lib*.a")
-++      "../../vcpkg_installed/${VCPKG_TARGET_TRIPLET}/lib/lib*.a")
-+ endif()
-+ 
-+ project(${TARGET_NAME})
-```
-
-**File**: `.github/workflows/Main.yml` (modified, +3/-7)
-```diff
-@@ -205,18 +205,14 @@ jobs:
-             --runners '${{ steps.runners.outputs.runners }}' \
-             --runner-provider '${{ steps.runners.outputs.runner_provider }}'
+@@ -105,6 +105,8 @@ static unique_ptr<Expression> TranslateAggregate(ClientContext &client, const Bo
+ 	const auto aggr_ordered = (agg_func.GetOrderDependent() == AggregateOrderDependent::ORDER_DEPENDENT);
+ 	auto result = make_uniq<BoundAggregateExpression>(std::move(agg_func), std::move(children), std::move(filter),
+ 	                                                  std::move(bind_info), aggr_type);
++	// statistics propagation may already have specialized the function, e.g. sum_no_overflow returns a HUGEINT
++	result->SetReturnType(w_expr.GetReturnType());
  
--          # Wasm extensions: wasm_eh everywhere, wasm_threads only on dispatched (nightly) runs, never wasm_mvp
--          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
--            wasm_exclude_archs="wasm_mvp"
--          else
--            wasm_exclude_archs="wasm_mvp;wasm_threads"
--          fi
-+          # Wasm extensions: wasm_eh and wasm_threads everywhere, never wasm_mvp
-+          wasm_exclude_archs="wasm_mvp"
-           if [[ "${{ github.event_name }}" != "pull_request" ]]; then
-             extra_exclude_archs="$wasm_exclude_archs"
-           elif [[ "${{ steps.changed.outputs.extensions_any_changed }}" == "true" ]]; then
-             extra_exclude_archs="$wasm_exclude_archs;osx_amd64"
-           else
--            extra_exclude_archs="$wasm_exclude_archs;windows_arm64;osx_amd64;wasm_eh"
-+            extra_exclude_archs="$wasm_exclude_archs;windows_arm64;osx_amd64;wasm_eh;wasm_threads"
-           fi
-           if [[ -n "$INPUT_EXCLUDE_ARCHS" ]]; then
-             extra_exclude_archs="${extra_exclude_archs:+$extra_exclude_archs;}$INPUT_EXCLUDE_ARCHS"
+ 	if (!aggr_ordered) {
+ 		//	ORDER BY is a NOP, so drop it.
+```
+
+**File**: `test/sql/optimizer/test_window_self_join.test` (modified, +10/-0)
+```diff
+@@ -484,3 +484,13 @@ ORDER BY i LIMIT 2;
+ ----
+ 0	[2, 0, 3, 1]
+ 1	[2, 0, 3, 1]
++
++# a filter on two bindings runs statistics propagation first, which turns the DECIMAL sum into sum_no_overflow (HUGEINT)
++statement ok
++CREATE TABLE decimals AS SELECT i % 7 AS k, (i % 50 + 1)::DECIMAL(12,2) AS d FROM range(1000) t(i);
++
++query II
++SELECT (SELECT max(s) FROM (SELECT sum(d) OVER (PARTITION BY k) AS s FROM decimals)),
++       (SELECT count(*) FROM range(10) r(x) WHERE x = 3 OR x IN (SELECT 1));
++----
++3664.00	2
 ```
 
 ---
 
-### Incident Patch 3: `a662f034` (2026-11-06)
-**Commit Message**: Keep regression fixtures within CI resource budgets
+### Incident Patch 3: `d6bf1469` (2026-11-09)
+**Commit Message**: Implement select for uncompressed fixed-size segments (#28492)
 
-**File**: `test/sql/cte/materialized/cte_runtime_filter_modes.test` (modified, +10/-3)
+Implements the `select` compression function for uncompressed fixed-size
+segments (all fixed-width numeric types, INTERVAL, LIST offsets): a
+plain gather of the selected rows from the segment, instead of the
+per-row-run scan fallback.
+
+Tests: `test/sql/storage/compression/select_fixed_size.test`
+(TINYINT..HUGEINT, UBIGINT, DOUBLE, FLOAT, NULLs, selections at vector
+boundaries); `test/sql/storage/compression/*` passes.
+
+## Speed-ups (RelWithDebInfo, 1 thread, min of 5 runs, loaded shared box
+so +-10%)
+
+Sparse UPDATE of an uncompressed column on 2M rows, with the base-row
+fetch of duckdb/duckdb#28206 applied on top of main (without `select` vs
+with):
+
+| UPDATE ... WHERE id % N = 0 | no select | select | change |
+|---|---:|---:|---:|
+| `i` INT, N=2 | 0.095s | 0.082s | -14% |
+| `d` DOUBLE, N=2 | 0.162s | 0.142s | -12% |
+| `b` BIGINT, N=2 | 0.101s | 0.084s | -17% |
+| `i` INT, N=8 | 0.044s | 0.038s | -14% |
+| `i` INT, N=64 | 0.033s | 0.032s | same |
+| `i` INT, N=4 (isolated, 7 runs) | 0.201s | 0.202s | same |
+
+(In a sequence of updates of the same column, one N=4 measurement was
+slower with select; re-measured in isolation i
+
+**File**: `src/storage/compression/fixed_size_uncompressed.cpp` (modified, +26/-6)
 ```diff
-@@ -2,9 +2,6 @@
- # description: Complete runtime OR filters work with streaming CTEs and fall back when publication is cyclic
- # group: [materialized]
+@@ -186,6 +186,24 @@ void FixedSizeScan(ColumnSegment &segment, ColumnScanState &state, idx_t scan_co
+ 	FlatVector::SetData(result, data_ptr_cast(const_cast<T *>(source_data.data())), count_t(scan_count));
+ }
  
--statement ok
--SET max_execution_time=10000;
--
- statement ok
- SET threads=1;
- 
-@@ -26,6 +23,10 @@ CREATE TABLE b AS SELECT * FROM (VALUES (1),(3)) t(k);
- statement ok
- CREATE TABLE c AS SELECT * FROM (VALUES (3),(5)) t(k);
- 
-+# Bound CTE execution without timing the fixture loads.
-+statement ok
-+SET max_execution_time=10000;
++//===--------------------------------------------------------------------===//
++// Select
++//===--------------------------------------------------------------------===//
++template <class T>
++void FixedSizeSelect(ColumnSegment &segment, ColumnScanState &state, idx_t vector_count, Vector &result,
++                     const SelectionVector &sel, idx_t sel_count, idx_t result_offset, ScanVectorType scan_type) {
++	auto &scan_state = state.scan_state->Cast<FixedSizeScanState>();
++	auto start = state.GetPositionInSegment();
 +
- # Both consumers stream the same filtered input, including their overlapping key.
- query II
- WITH p AS MATERIALIZED (SELECT * FROM facts)
-@@ -85,9 +86,15 @@ SELECT (SELECT sum(length(payload)) FROM p JOIN b USING(k)),
- 128	50000
- 
- # Large source estimates also impose depth-first build ordering in release builds.
-+statement ok
-+SET max_execution_time=0;
++	auto source_data = scan_state.reader.GetArraySlice<T>(0, start, vector_count);
 +
- statement ok
- CREATE TABLE large_facts AS SELECT i AS k FROM range(600000) t(i);
- 
-+statement ok
-+SET max_execution_time=10000;
++	result.SetVectorType(VectorType::FLAT_VECTOR);
++	auto result_data = FlatVector::GetDataMutable<T>(result) + result_offset;
++	for (idx_t i = 0; i < sel_count; i++) {
++		result_data[i] = source_data[sel.get_index(i)];
++	}
++}
 +
- query II
- WITH p AS MATERIALIZED (SELECT * FROM large_facts)
- SELECT (SELECT count(*) FROM (
+ //===--------------------------------------------------------------------===//
+ // Append
+ //===--------------------------------------------------------------------===//
+@@ -265,12 +283,14 @@ idx_t FixedSizeFinalizeAppend(ColumnSegment &segment, BaseStatistics &stats) {
+ //===--------------------------------------------------------------------===//
+ template <class T, class APPENDER = StandardFixedSizeAppend>
+ CompressionFunction FixedSizeGetFunction(PhysicalType data_type) {
+-	return CompressionFunction(CompressionType::COMPRESSION_UNCOMPRESSED, data_type, FixedSizeInitAnalyze,
+-	                           FixedSizeAnalyze, FixedSizeFinalAnalyze<T>, UncompressedFunctions::InitCompression,
+-	                           UncompressedFunctions::Compress, UncompressedFunctions::FinalizeCompress,
+-	                           FixedSizeInitScan, FixedSizeScan<T>, FixedSizeScanPartial<T>,
+-	                           UncompressedFunctions::EmptySkip, nullptr, FixedSizeInitAppend,
+-	                           FixedSizeAppend<T, APPENDER>, FixedSizeFinalizeAppend<T>);
++	auto function =
++	    CompressionFunction(CompressionType::COMPRESSION_UNCOMPRESSED, data_type, FixedSizeInitAnalyze,
++	                        FixedSizeAnalyze, FixedSizeFinalAnalyze<T>, UncompressedFunctions::InitCompression,
++	                        UncompressedFunctions::Compress, UncompressedFunctions::FinalizeCompress, FixedSizeInitScan,
++	                        FixedSizeScan<T>, FixedSizeScanPartial<T>, UncompressedFunctions::EmptySkip, nullptr,
++	                        FixedSizeInitAppend, FixedSizeAppend<T, APPENDER>, FixedSizeFinalizeAppend<T>);
++	function.select = FixedSizeSelect<T>;
++	return function;
+ }
+ 
+ CompressionFunction FixedSizeUncompressed::GetFunction(PhysicalType data_type) {
 ```
 
-**File**: `test/sql/cte/materialized/cte_runtime_filter_sibling_dependencies.test` (modified, +28/-6)
+**File**: `src/storage/table/standard_column_data.cpp` (modified, +7/-0)
 ```diff
-@@ -2,12 +2,6 @@
- # description: Small CTE filter producers finalize independently of sibling builds
- # group: [materialized]
- 
--# The bulk loads exceed the non-termination bound at tiny vector sizes
--require vector_size 2048
--
--statement ok
--SET max_execution_time=10000;
--
- statement ok
- SET disabled_optimizers='cte_filter_pusher';
- 
-@@ -23,6 +17,10 @@ CREATE TABLE b AS SELECT i AS g FROM range(100,300) t(i);
- statement ok
- CREATE TABLE c AS SELECT i AS g FROM range(500,700) t(i);
- 
-+# Bound CTE execution without timing the fixture loads.
-+statement ok
-+SET max_execution_time=10000;
-+
- statement ok
- PREPARE consumers AS
- WITH p AS MATERIALIZED (SELECT d.g,sum(f.v) v FROM facts f JOIN dates d USING(k) GROUP BY d.g)
-@@ -82,17 +80,29 @@ EXECUTE consumers;
- statement ok
- RESET debug_force_external;
- 
-+statement ok
-+SET max_execution_time=0;
-+
- statement ok
- DELETE FROM b;
- 
-+statement ok
-+SET max_execution_time=10000;
-+
- query II
- EXECUTE consumers;
- ----
- NULL	NULL
- 
-+statement ok
-+SET max_execution_time=0;
-+
- statement ok
- INSERT INTO b SELECT i FROM range(120,140) t(i);
- 
-+statement ok
-+SET max_execution_time=10000;
-+
- query II
- EXECUTE consumers;
- ----
-@@ -105,6 +115,9 @@ SET memory_limit='512MB';
- statement ok
- SET disabled_optimizers='cte_filter_pusher,build_side_probe_side';
- 
-+statement ok
-+SET max_execution_time=0;
-+
- statement ok
- CREATE OR REPLACE TABLE facts AS SELECT i%200000 AS k,i AS v FROM range(400000) t(i);
- 
-@@ -117,6 +130,9 @@ CREATE OR REPLACE TABLE b AS SELECT 100100+i AS g FROM range(200) t(i);
- statement ok
- CREATE OR REPLACE TABLE c AS SELECT i AS g FROM range(100500,100700) t(i);
- 
-+statement ok
-+SET max_execution_time=10000;
-+
- query II
- EXPLAIN (ANALYZE, FORMAT JSON)
- WITH p AS MATERIALIZED (SELECT d.g,sum(f.v) v FROM facts f JOIN dates d USING(k) GROUP BY d.g)
-@@ -126,9 +142,15 @@ JOIN (SELECT p.* FROM p JOIN c USING(g)) y ON x.g=y.g-400;
- ----
- analyzed_plan	<REGEX>:(?s).*"Table": "[^"]*[.]dates"(?:[^}]*"Dynamic Filters": "[^"]* OR [^"]*"[^}]*},\s*"intermediate_rows": (?:[4-9][0-9]{2}|[1-9][0-9]{3,4}|1[0-9]{5}),|(?:,\s*"(?:Type|Projections|Estimated Cardinality)":\s*(?:"[^"]*"|\[[^]]*\]))+\s*},\s*"intermediate_rows": 200000,).*
- 
-+statement ok
-+SET max_execution_time=0;
-+
- statement ok
- INSERT INTO b SELECT 100100+i%200 FROM range(999800) t(i);
- 
-+statement ok
-+SET max_execution_time=10000;
-+
- # At one million rows the producer retains its sibling coordination waits.
- query II
- WITH p AS MATERIALIZED (SELECT d.g,sum(f.v) v FROM facts f JOIN dates d USING(k) GROUP BY d.g)
+@@ -119,6 +119,13 @@ void StandardColumnData::Select(TransactionData transaction, idx_t vector_index,
+ 		ColumnData::Select(transaction, vector_index, state, result, sel, sel_count);
+ 		return;
+ 	}
++	// a scan references uncompressed data without copying it: slicing beats gathering unless few rows are selected
++	static constexpr idx_t UNCOMPRESSED_SELECT_DENSITY = 5;
++	if (compression->type == CompressionType::COMPRESSION_UNCOMPRESSED &&
++	    sel_count * UNCOMPRESSED_SELECT_DENSITY > target_count) {
++		ColumnData::Select(transaction, vector_index, state, result, sel, sel_count);
++		return;
++	}
+ 	SelectVector(state, result, target_count, sel, sel_count, scan_type);
+ 	validity->SelectVector(state.child_states[0], result, target_count, sel, sel_count, scan_type);
+ }
 ```
 
-**File**: `test/sql/unnest/unnest_string_constant_reference.test` (modified, +5/-4)
+**File**: `test/sql/storage/compression/select_fixed_size.test` (added, +50/-0)
 ```diff
-@@ -5,9 +5,10 @@
- # the scan gives dictionary and FSST vectors only from segments of the default block size
- require block_size 262144
- 
--# a long string, a non-ASCII one, an inlined one, an empty one and NULL, each repeated over three output chunks
-+# Overflow strings, an inlined string, an empty string and NULL, each repeated over three output chunks.
-+# Keep both overflow strings above the 4096-byte storage threshold without exhausting 32-bit memory.
- statement ok
--CREATE TABLE strs AS SELECT * FROM (VALUES (1, repeat('ab', 50000)), (2, repeat('é', 30000)), (3, 'short'), (4, ''), (5, NULL)) t(id, s);
-+CREATE TABLE strs AS SELECT * FROM (VALUES (1, repeat('ab', 3415)), (2, repeat('é', 2049)), (3, 'short'), (4, ''), (5, NULL)) t(id, s);
- 
- # stored in a table, so the strings outlive the chunks of the query
- statement ok
-@@ -43,8 +44,8 @@ SELECT id, count(*), count(DISTINCT s), sum(length(s))
- FROM (SELECT id, s, u FROM strs, LATERAL unnest(range(5000 + id * 0)) t(u) ORDER BY u, id)
- GROUP BY id ORDER BY id;
- ----
--1	5000	1	500000000
--2	5000	1	150000000
-+1	5000	1	34150000
-+2	5000	1	10245000
- 3	5000	1	25000
- 4	5000	1	0
- 5	5000	0	NULL
+@@ -0,0 +1,50 @@
++# name: test/sql/storage/compression/select_fixed_size.test
++# description: Select on uncompressed fixed-size segments
++# group: [compression]
++
++require vector_size 2048
++
++statement ok
++ATTACH '{TEST_DIR}/select_fixed_size.db' AS db;
++
++statement ok
++SET threads=1;
++
++statement ok
++CREATE MACRO expected(i) AS CASE WHEN i % 13 = 0 THEN NULL ELSE hash(i) % 1000003 END;
++
++foreach type TINYINT SMALLINT INTEGER BIGINT HUGEINT UBIGINT DOUBLE FLOAT
++
++statement ok
++CREATE TABLE db.t_{type}(id INTEGER, g2 TINYINT, g7 TINYINT, g97 TINYINT, g1000 SMALLINT, v {type} USING COMPRESSION uncompressed);
++
++statement ok
++INSERT INTO db.t_{type} SELECT i, hash(i*3)%2, hash(i*11)%7, hash(i*13)%97, hash(i*17)%1000, (expected(i) % 100)::{type} FROM range(100000) t(i);
++
++endloop
++
++statement ok
++CHECKPOINT db;
++
++foreach type TINYINT SMALLINT INTEGER BIGINT HUGEINT UBIGINT DOUBLE FLOAT
++
++query I
++SELECT bool_and(compression='Uncompressed') FROM pragma_storage_info('db.t_{type}') WHERE column_name='v' AND segment_type != 'VALIDITY';
++----
++true
++
++foreach col g2 g7 g97 g1000
++
++query I
++SELECT count(*) > 0 AND bool_and(v IS NOT DISTINCT FROM (expected(id) % 100)::{type}) FROM db.t_{type} WHERE {col} = 0;
++----
++true
++
++endloop
++
++query I
++SELECT count(*) = 8 AND bool_and(v IS NOT DISTINCT FROM (expected(id) % 100)::{type}) FROM db.t_{type} WHERE id IN (0, 1, 2047, 2048, 4095, 50000, 99998, 99999);
++----
++true
++
++endloop
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #28548** (2026-11-08): Green CI supergroup (@carlopi)
-- **PR #28546** (2026-11-08): Link Wasm extensions against vcpkg_installed/${VCPKG_TARGET_TRIPLET}, on main (@carlopi)
-- **PR #28545** (2026-11-08): Link Wasm extensions against vcpkg_installed/${VCPKG_TARGET_TRIPLET}, on cyanoptera (@carlopi)
-- **PR #28516** (closed): Truncate TIMESTAMPTZ_NS to microsecond precision for non-constant time_bucket widths (#28287) (@alitrack)
-- **PR #28509** (2026-11-08): Avoid fixture OOMs and setup timeouts in CI (@kevintruong)
-- **PR #28505** (2026-11-08): Pass the full vector count to the row id filter so a Bloom filter under a selection does not overrun its hash buffer (@h4nsmuller)
+- **PR #28601** (2026-11-09): Parse schema-qualified table functions named describe, summarize, show, pivot or unpivot (@ywelsch)
+- **PR #28600** (2026-11-09): Keep the DECIMAL type of a windowed sum in the window self-join rewrite (@ywelsch)
+- **PR #28595** (2026-11-09): Refresh search path after 'require' in SQLLogic tests (@Flogex)
+- **PR #28593** (2026-11-09): Push single-side conjuncts of non-inner join conditions with subqueries (@kryonix)
+- **PR #28584** (2026-11-09): Pass `.shell` command lines to the system shell verbatim (@Dtenwolde)
+- **PR #28583** (2026-11-09): Fix dangling segment node link when appending a segment runs out of memory (@Robinho-MR)
 
 ---
 
@@ -2367,36 +2306,34 @@ extensions, skipped only on PRs without extension changes.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. CI: build wasm_threads extensions on PRs, like wasm_eh
+## X. dangling segment node link when appending a segment runs out of memory (#28583)
 
 **RULE**:
-When implementing operations in `.github/workflows/Main.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duckdb/duckdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/include/duckdb/storage/table/segment_tree.hpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duckdb/duckdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8c5ba7fe`: CI: build wasm_threads extensions on PRs, like wasm_eh. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8f203aed`: dangling segment node link when appending a segment runs out of memory (#28583). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/Main.yml`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/include/duckdb/storage/table/segment_tree.hpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-          # Wasm extensions: wasm_eh and wasm_threads everywhere, never wasm_mvp
-          wasm_exclude_archs="wasm_mvp"
-            extra_exclude_archs="$wasm_exclude_archs;windows_arm64;osx_amd64;wasm_eh;wasm_threads"
+		auto &new_node = *node;
+		optional_ptr<SegmentNode<T>> previous_node = nodes.empty() ? nullptr : nodes.back().get();
+		if (previous_node) {
+			previous_node->SetNext(new_node);
+		}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-          # Wasm extensions: wasm_eh everywhere, wasm_threads only on dispatched (nightly) runs, never wasm_mvp
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            wasm_exclude_archs="wasm_mvp"
-          else
-            wasm_exclude_archs="wasm_mvp;wasm_threads"
-          fi
-            extra_exclude_archs="$wasm_exclude_archs;windows_arm64;osx_amd64;wasm_eh"
+		if (!nodes.empty()) {
+			nodes.back()->SetNext(*node);
+		}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8c5ba7fe` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8f203aed` are properly handled with clean fallback behavior.

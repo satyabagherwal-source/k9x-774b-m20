@@ -8705,3 +8705,6 @@ Every entry in this ledger must capture:
 | `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `b4f97b06` | Multi-dimensional audit evidence | 2026-11-10T00:13:46.810Z |
 | `learn-github-zarf-dev-zarf` | `https://github.com/zarf-dev/zarf` | `328d1d31` | Multi-dimensional audit evidence | 2026-11-10T00:31:56.207Z |
 | `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `77157716` | Multi-dimensional audit evidence | 2026-11-10T00:31:59.909Z |
+| `learn-github-domcyrus-rustnet` | `https://github.com/domcyrus/rustnet` | `218e16d5` | Multi-dimensional audit evidence | 2026-11-10T00:44:55.254Z |
+| `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `23221edf` | Multi-dimensional audit evidence | 2026-11-10T00:45:08.919Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `a503d190` | Multi-dimensional audit evidence | 2026-11-10T00:45:09.739Z |

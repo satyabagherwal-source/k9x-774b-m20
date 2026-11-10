@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-10T00:31:59.923Z",
-  "total_cycles_completed": 8661,
-  "total_learnings_persisted": 8661,
-  "total_rules_promoted": 8500,
+  "last_updated": "2026-11-10T00:45:09.744Z",
+  "total_cycles_completed": 8664,
+  "total_learnings_persisted": 8664,
+  "total_rules_promoted": 8503,
   "history": [
-    {
-      "timestamp": "2026-11-09T04:00:49.476Z",
-      "repository": "infiniflow/infinity",
-      "learningId": "learn-github-infiniflow-infinity",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T04:00:51.546Z",
-      "repository": "google/vit-base-patch16-224",
-      "learningId": "learn-huggingface-google-vit-base-patch16-224",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T04:10:26.100Z",
-      "repository": "Kuddev/pebrel",
-      "learningId": "learn-github-kuddev-pebrel",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T04:10:28.562Z",
       "repository": "wcandillon/react-native-skia",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-10T00:31:59.923Z",
       "repository": "dragonflydb/dragonfly",
       "learningId": "learn-github-dragonflydb-dragonfly",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-10T00:44:55.259Z",
+      "repository": "domcyrus/rustnet",
+      "learningId": "learn-github-domcyrus-rustnet",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-10T00:45:08.924Z",
+      "repository": "duckdb/duckdb",
+      "learningId": "learn-github-duckdb-duckdb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-10T00:45:09.744Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

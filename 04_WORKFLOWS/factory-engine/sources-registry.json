@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-10T00:32:02.495Z",
-    "lastVerified": "2026-11-10T00:32:02.495Z",
+    "lastChecked": "2026-11-10T00:45:12.328Z",
+    "lastVerified": "2026-11-10T00:45:12.328Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -258,12 +258,12 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T23:35:47.571Z",
-    "lastVerified": "2026-11-09T23:35:47.571Z",
+    "lastChecked": "2026-11-10T00:45:08.084Z",
+    "lastVerified": "2026-11-10T00:45:08.084Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "dbb844c1d572d61d03c4ba0c64784de1cf0d573f0a500f0c6d8bf4a1e41344c0",
+    "contentHash": "cdc50c6452279d8455c6ba482e2824d19227d1ce5fc1575a57db7444cb6a7b34",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -1735,9 +1735,9 @@
   "nexus-xyz-nexus-zkvm": {
     "name": "nexus-zkvm",
     "officialUrl": "https://github.com/nexus-xyz/nexus-zkvm",
-    "lastChecked": "2026-11-09T16:04:20.833Z",
+    "lastChecked": "2026-11-10T00:44:58.469Z",
     "revisionIdentifier": "f2ad1265",
-    "lastVerified": "2026-11-09T16:04:20.833Z"
+    "lastVerified": "2026-11-10T00:44:58.469Z"
   },
   "seaql-sea-orm": {
     "name": "SeaQL/sea-orm",
@@ -4647,9 +4647,9 @@
   "akveo-kittentricks": {
     "name": "kittenTricks",
     "officialUrl": "https://github.com/akveo/kittenTricks",
-    "lastChecked": "2026-11-07T03:41:44.896Z",
+    "lastChecked": "2026-11-10T00:44:53.533Z",
     "revisionIdentifier": "e9d81da3",
-    "lastVerified": "2026-11-07T03:41:44.896Z"
+    "lastVerified": "2026-11-10T00:44:53.533Z"
   },
   "kubeshop-botkube": {
     "name": "botkube",
@@ -4872,9 +4872,9 @@
   "gocrane-crane": {
     "name": "crane",
     "officialUrl": "https://github.com/gocrane/crane",
-    "lastChecked": "2026-11-08T22:59:31.684Z",
+    "lastChecked": "2026-11-10T00:44:56.129Z",
     "revisionIdentifier": "2b0ddae8",
-    "lastVerified": "2026-11-08T22:59:31.684Z"
+    "lastVerified": "2026-11-10T00:44:56.129Z"
   },
   "malisper-pgrust": {
     "name": "pgrust",
@@ -7345,14 +7345,14 @@
     "officialUrl": "https://github.com/domcyrus/rustnet",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T17:49:18.428Z",
-    "lastVerified": "2026-11-08T17:49:18.428Z",
+    "lastChecked": "2026-11-10T00:44:52.841Z",
+    "lastVerified": "2026-11-10T00:44:52.841Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-domcyrus-rustnet",
-    "contentHash": "2a6a636d9768dd6eb2e9f5d41b972b41571716214b8f1be9df3c806129bce06e",
-    "promotedRulesCount": 3,
-    "recentFixesCount": 1,
+    "contentHash": "0739449e85ad2fe5e8ca7bcf9381ab66eeaff603928fde1d57fcfe638da5a7b8",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7741,14 +7741,14 @@
     "officialUrl": "https://github.com/duckdb/duckdb",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-08T22:01:00.629Z",
-    "lastVerified": "2026-11-08T22:01:00.629Z",
+    "lastChecked": "2026-11-10T00:45:07.366Z",
+    "lastVerified": "2026-11-10T00:45:07.366Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-duckdb-duckdb",
-    "contentHash": "30eb9530b11a5cca65c03f262e078d839aa10b47c72eeaade39944a94d457f53",
+    "contentHash": "4b6af69b1a862c7b3fa9dc4114bdbdef847c192cf3c6dc546c53674b4e26c75b",
     "promotedRulesCount": 1,
-    "recentFixesCount": 5,
+    "recentFixesCount": 9,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9737,9 +9737,9 @@
   "bourd-dev-seo-skills": {
     "name": "seo-skills",
     "officialUrl": "https://github.com/bourd-dev/seo-skills",
-    "lastChecked": "2026-11-05T20:06:35.937Z",
+    "lastChecked": "2026-11-10T00:44:51.050Z",
     "revisionIdentifier": "4b0005f6e6",
-    "lastVerified": "2026-11-05T20:06:35.937Z"
+    "lastVerified": "2026-11-10T00:44:51.050Z"
   },
   "gitliveapp-firebase-kotlin-sdk": {
     "name": "GitLiveApp/firebase-kotlin-sdk",

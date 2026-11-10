@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `c31273fc`  
+> **Source Version**: `a503d190`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T23:40:49.406Z  
+> **Timestamp**: 2026-11-10T00:45:08.387Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T23:35:47.571Z  
+> **Harvest Timestamp**: 2026-11-10T00:45:08.084Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2203,79 +2203,64 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c31273fc` (2026-11-09)
-**Commit Message**: docs(changelog): measured jsonschema 0.61 validate speedup
-
-Replace "qsv hasn't measured these" with release-build numbers on the
-1M-row NYC 311 sample (0.61.0 vs 0.60.2, same tree, hyperfine 10 runs):
-3.7-4.0% fewer instructions with every row valid, 2.6-2.7% with one error
-per row; 2-3% faster with --jobs 1, no measurable wall-clock change at the
-default thread count. Outputs were identical across versions.
+### Incident Patch 1: `a503d190` (2026-11-10)
+**Commit Message**: chore(deps): cite qsv PR numbers in the patch comments
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `CHANGELOG.md` (modified, +1/-1)
+**File**: `Cargo.toml` (modified, +7/-6)
 ```diff
-@@ -39,7 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
-   - **Numeric keywords judge whole floats past 2^53 correctly** ([jsonschema#1825](https://github.com/Stranger6667/jsonschema/issues/1825)). A float equal to an integer bound past 2^53 was converted to the wrong integer, so `exclusiveMinimum` admitted the bound itself and `const` rejected it.
-   - **`.` in `pattern` and `patternProperties` no longer matches `\r`, U+2028 or U+2029**, so a value containing one of these line terminators can now fail a pattern it passed before.
-   - **Schema fixes:** `oneOf`/`anyOf` no longer reject valid rows when a branch's `$ref` sits under an `$id`, and `$ref` pointers through a numeric key (`#/responses/200`) now resolve the references under their target.
--  - Validation is also faster. jsonschema reports up to 40% with `serde_json`'s `preserve_order` (which qsv enables), and `is_valid` (the per-row check) up to 14% faster on small instances. qsv hasn't measured these.
-+  - Validation is slightly faster. On the 1M-row NYC 311 sample (release build; a 41-property schema with type, length, enum and range checks), `validate` executes 3.7–4.0% fewer instructions when every row is valid, and 2.6–2.7% fewer with one error per row. That makes it 2–3% faster with `--jobs 1`, with no measurable wall-clock change at the default thread count. Upstream's larger figures (up to 40% with `preserve_order`) are best cases for the validation call itself; these are end-to-end results on this file.
- - **`profile --validate --no-projection` warns that `--validate` is ignored**. `--validate` checks the projection block, so with `--no-projection` it ran nothing (neither the schema check nor the `qsv validate` pass) and exited 0 without a word, even with `--strict`. To check the file alone, run `qsv validate`.
- - **`profile`: an `--initial-context` override that cannot be applied is reported, not silently dropped** ([#5025](https://github.com/dathere/qsv/pull/5025), fixes [#4991](https://github.com/dathere/qsv/issues/4991)). Before, the run exited 0, passed `--strict`, and left no trace of the missing value. Each such override now gets a Required `projection_warnings` entry (on stderr with `--no-projection`) naming the key and the reason, and fails `--strict`:
-   - a key that is not a JSON Pointer (doesn't start with `/`);
-```
-
----
-
-### Incident Patch 2: `27fd4b25` (2026-11-09)
-**Commit Message**: chore(deps): cite upstream PRs in the fork-patch comments
-
-Name the upstream PR each [patch] fork waits on, so the next audit is a
-one-step lookup: csvlens YS-L/csvlens#213 (and #196/#202 merged but
-unreleased, release ETA in #206), csvs_convert kindly/csvs_convert#23,
-whatlang greyblake/whatlang-rs#154, spreadsheet-ods
-thscharler/spreadsheet-ods#77, and compact_bytes' big-endian fix
-ParkMyCar/compact_bytes#12. Comments only; Cargo.lock is unchanged.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `Cargo.toml` (modified, +8/-2)
-```diff
-@@ -560,13 +560,17 @@ csv-index = { git = "https://github.com/dathere/rust-csv", branch = "qsv-tuned"
- # csv-core = { path = "../rust-csv/csv-core" }
- # csv-index = { path = "../rust-csv/csv-index" }
+@@ -537,18 +537,19 @@ serial_test = { version = "4.0", features = ["file_locks"] }
  
--# use our patched fork of csvlens until our PR is merged
-+# use our patched fork of csvlens until our PR is merged and released
-+# https://github.com/YS-L/csvlens/pull/213 (arrow 60, clap-cargo 0.19). #196 and #202 are merged
-+# but unreleased since 0.15.1; release ETA asked in https://github.com/YS-L/csvlens/issues/206
- csvlens = { git = "https://github.com/jqnatividad/csvlens", branch = "deps-bump-2026-11" }
- 
- # use our patched fork of csvs_convert to bump dependencies until our PR is merged
-+# https://github.com/kindly/csvs_convert/pull/23 (qsv-stats instead of streaming-stats, zip 9)
- csvs_convert = { git = "https://github.com/jqnatividad/csvs_convert", branch = "replace-streaming-stats-redux", optional = true }
- 
- # use our patched fork of whatlang to bump hashbrown until our PR is merged
-+# https://github.com/greyblake/whatlang-rs/pull/154 (hashbrown 0.16)
- whatlang = { git = "https://github.com/jqnatividad/whatlang-rs", branch = "bump-hashbrown-to-16" }
+ [patch.crates-io]
+ # polars-readstat-rs depends on these directly; redirect them onto the same git polars
+-# revision qsv pins, otherwise a second, incompatible polars tree resolves from crates.io.
++# revision qsv pins, otherwise a second, incompatible polars tree resolves from crates.io. (#5021)
+ polars-core  = { git = "https://github.com/pola-rs/polars", rev = "a598c51f216fca7406330be6e88961eb18c71af3" }
+ polars-arrow = { git = "https://github.com/pola-rs/polars", rev = "a598c51f216fca7406330be6e88961eb18c71af3" }
+ # Polars (since py-2.0.0) calls HashTable::prefetch_{get,insert}, which exist only in its
+ # hashbrown fork (https://github.com/rust-lang/hashbrown/pull/727). Polars' own workspace
+ # [patch] doesn't propagate to dependents, so mirror it here; keep the rev in sync with the
+ # [patch.crates-io] section of the pinned polars rev's Cargo.toml. Drop once #727 is released.
++# (added in qsv #4760)
+ hashbrown = { git = "https://github.com/pola-rs/hashbrown", rev = "d76a6f81abd8f388676aff15068236a8d21c7e1a" }
+ # Luau 0.745 (luau0-src 0.23.0) needs an mlua-sys newer than the released 0.13.0, which caps the
+ # bytecode version Luau 0.744+ emits and requires luau0-src 0.22. mlua main supports it
+ # (mlua-rs/mlua@a0ad453, "Bump Luau to 0.745"); its mlua-sys and mlua_derive come from the same
+-# checkout. Drop once an mlua release contains a0ad453.
++# checkout. Drop once an mlua release contains a0ad453. (#5026)
+ mlua = { git = "https://github.com/mlua-rs/mlua", rev = "a0ad4535fc72ba89967a931c5be57b162b5f0f3f" }
+ # use our tweaked fork of csv crate
+ # the csv crate underpins a lot of qsv's functionality, so every perf tweak helps
+@@ -575,7 +576,7 @@ whatlang = { git = "https://github.com/jqnatividad/whatlang-rs", branch = "bump-
  
  # plotly.rs 0.15.0 release-prep branch (plotly/plotly.rs#442: full plotly.js 3.7 trace coverage)
-@@ -575,10 +579,12 @@ whatlang = { git = "https://github.com/jqnatividad/whatlang-rs", branch = "bump-
+ # until 0.15.0 is on crates.io. This rev also moves plotly_static's build-dep to
+-# webdriver-downloader 0.18 (zip 9; every zip 8.x is yanked).
++# webdriver-downloader 0.18 (zip 9; every zip 8.x is yanked). (#5027)
  plotly = { git = "https://github.com/dathere/plotly", rev = "d43be3786c32ab2790a6c0e927ee39d2bb99704c" }
  
  # use our patched fork until our PR is merged with bumped deps and quick-xml RUSTSEC fixes
-+# https://github.com/thscharler/spreadsheet-ods/pull/77
- spreadsheet-ods = { git = "https://github.com/jqnatividad/spreadsheet-ods", branch = "deps-bump-202607" }
+@@ -584,8 +585,8 @@ spreadsheet-ods = { git = "https://github.com/jqnatividad/spreadsheet-ods", bran
  
  # compact_bytes 0.2.1 + Ord/From<&[u8]>/Borrow<[u8]>, serde, edition 2024, and the
--# CompactBytesSlice::into_boxed_slice fix (upstream ParkMyCar/compact_bytes#11).
-+# CompactBytesSlice::into_boxed_slice fix (upstream ParkMyCar/compact_bytes#11), and the
-+# big-endian heap-tag fix (ParkMyCar/compact_bytes#12).
- # Pulled in by qsv-stats' ByteKey (0.57+). Same version as upstream, so crates.io
+ # CompactBytesSlice::into_boxed_slice fix (upstream ParkMyCar/compact_bytes#11), and the
+-# big-endian heap-tag fix (ParkMyCar/compact_bytes#12).
+-# Pulled in by qsv-stats' ByteKey (0.57+). Same version as upstream, so crates.io
++# big-endian heap-tag fix (ParkMyCar/compact_bytes#12; qsv #5015).
++# Pulled in by qsv-stats' ByteKey (0.57+; qsv #5011). Same version as upstream, so crates.io
  # builds (`cargo install qsv`) use upstream 0.2.1; the hot paths are identical.
  compact_bytes = { git = "https://github.com/jqnatividad/compact_bytes", branch = "main" }
+ 
+@@ -612,7 +613,7 @@ compact_bytes = { git = "https://github.com/jqnatividad/compact_bytes", branch =
+ #     (e.g. py-1.19.0:52ea381 to indicate that we are Python Polars 1.19.0,
+ #      and the commit hash 52ea381)
+ # ================================
+-# QSV_POLARS_REV=py-2.1.0:a598c51
++# QSV_POLARS_REV=py-2.1.0:a598c51 (#5021)
+ # polars = { git = "https://github.com/pola-rs/polars", tag = "py-2.1.0", optional = true }
+ polars = { git = "https://github.com/pola-rs/polars", rev = "a598c51f216fca7406330be6e88961eb18c71af3", optional = true }
+ 
 ```
 
 #### Recent Merged Pull Requests:
@@ -2304,28 +2289,39 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(changelog): measured jsonschema 0.61 validate speedup
+## X. deps): cite qsv PR numbers in the patch comments
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c31273fc`: docs(changelog): measured jsonschema 0.61 validate speedup. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a503d190`: deps): cite qsv PR numbers in the patch comments. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  - Validation is slightly faster. On the 1M-row NYC 311 sample (release build; a 41-property schema with type, length, enum and range checks), `validate` executes 3.7–4.0% fewer instructions when every row is valid, and 2.6–2.7% fewer with one error per row. That makes it 2–3% faster with `--jobs 1`, with no measurable wall-clock change at the default thread count. Upstream's larger figures (up to 40% with `preserve_order`) are best cases for the validation call itself; these are end-to-end results on this file.
+# revision qsv pins, otherwise a second, incompatible polars tree resolves from crates.io. (#5021)
+# (added in qsv #4760)
+# checkout. Drop once an mlua release contains a0ad453. (#5026)
+# webdriver-downloader 0.18 (zip 9; every zip 8.x is yanked). (#5027)
+# big-endian heap-tag fix (ParkMyCar/compact_bytes#12; qsv #5015).
+# Pulled in by qsv-stats' ByteKey (0.57+; qsv #5011). Same version as upstream, so crates.io
+# QSV_POLARS_REV=py-2.1.0:a598c51 (#5021)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-  - Validation is also faster. jsonschema reports up to 40% with `serde_json`'s `preserve_order` (which qsv enables), and `is_valid` (the per-row check) up to 14% faster on small instances. qsv hasn't measured these.
+# revision qsv pins, otherwise a second, incompatible polars tree resolves from crates.io.
+# checkout. Drop once an mlua release contains a0ad453.
+# webdriver-downloader 0.18 (zip 9; every zip 8.x is yanked).
+# big-endian heap-tag fix (ParkMyCar/compact_bytes#12).
+# Pulled in by qsv-stats' ByteKey (0.57+). Same version as upstream, so crates.io
+# QSV_POLARS_REV=py-2.1.0:a598c51
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c31273fc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a503d190` are properly handled with clean fallback behavior.
