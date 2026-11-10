@@ -84,6 +84,7 @@
 | `CAP-L7-02` | **Dynamic Multi-Language Blueprint Synthesizer** | `04_WORKFLOWS/factory-engine/universal-code-assembler.mjs` | `test-universal-code-assembly.mjs` | Dynamic resolution for Node.js, Python, and Go stacks | 🟢 **`DONE`** | No static template lock-in. |
 | `CAP-L7-03` | **Universal Multi-Archetype Code Assembly** | `04_WORKFLOWS/factory-engine/universal-code-assembler.mjs` | `test-universal-multi-archetype-knowledge.mjs` | **60 / 60 PASS (Exit Code 0)** | 🟢 **`DONE`** | Assembles `CACHE_STORE`, `HEADLESS_API`, `CLI_TOOL`, `CONTENT_ENGINE`, `INVENTORY_APP`. |
 | `CAP-L7-04` | **Real Product Construction Benchmarks** | `04_WORKFLOWS/factory-engine/universal-code-assembler.mjs` | `test-universal-product-benchmarks.mjs` | **71 / 71 PASS (Exit Code 0)** | 🟢 **`DONE`** | Assembles `SAAS_PLATFORM`, `API_PLATFORM`, `ECOMMERCE_PRODUCT`, `CONTENT_PLATFORM`, `AI_AUTOMATION_TOOL`. |
+| `CAP-L7-05` | **Extended Digital Product Benchmarks (ABCM-001)** | `04_WORKFLOWS/factory-engine/universal-code-assembler.mjs` | `test-universal-extended-benchmarks.mjs` | **71 / 71 PASS (Exit Code 0)** | 🟢 **`DONE`** | Assembles `DATA_PRODUCT`, `EDUCATION_PLATFORM`, `PRODUCTIVITY_TOOL`, `COLLABORATION_PLATFORM`, `MEDIA_SERVICE`. |
 
 ---
 

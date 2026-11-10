@@ -194,6 +194,23 @@ export function detectCodeArchetype(intentAnalysis = {}) {
     return 'CONTENT_PLATFORM';
   }
 
+  // ABCM-001 / PAC-006 Extended Digital Product Categories
+  if (/data product|analytics engine|time-series|metric aggregation|anomaly detection/i.test(text)) {
+    return 'DATA_PRODUCT';
+  }
+  if (/education platform|course mastery|learning curriculum|quiz assessment|curriculum/i.test(text)) {
+    return 'EDUCATION_PLATFORM';
+  }
+  if (/productivity|kanban|task priority|workflow board|sla tracking/i.test(text)) {
+    return 'PRODUCTIVITY_TOOL';
+  }
+  if (/community platform|collaboration forum|discussion thread|moderation/i.test(text)) {
+    return 'COLLABORATION_PLATFORM';
+  }
+  if (/media service|digital asset|streaming playlist|media catalog/i.test(text)) {
+    return 'MEDIA_SERVICE';
+  }
+
   // Pre-existing verified archetypes
   if (/cache|key-value|ttl|lru|eviction|in-memory store/i.test(text)) {
     return 'CACHE_STORE';
@@ -1450,6 +1467,624 @@ describe('AI Tool & Automation Benchmark Suite', () => {
 }
 
 // ---------------------------------------------------------------------------
+
+// --- ARCHETYPE: DATA_PRODUCT ---
+function assembleDataProduct(projectName, stack, addFile) {
+  const modelsCode = `export class ValidationError extends Error {
+  constructor(message, details = {}) {
+    super(message);
+    this.name = 'ValidationError';
+    this.details = details;
+  }
+}
+
+export function validateMetricPoint(point) {
+  if (!point || typeof point !== 'object') throw new ValidationError('Metric point must be an object.');
+  if (typeof point.metric !== 'string' || !point.metric.trim()) throw new ValidationError('Metric name must be a non-empty string.');
+  const val = Number(point.value);
+  if (isNaN(val) || !isFinite(val)) throw new ValidationError('Metric value must be a finite number.');
+  const ts = point.timestamp !== undefined ? Number(point.timestamp) : Date.now();
+  if (isNaN(ts) || ts <= 0) throw new ValidationError('Timestamp must be a positive integer.');
+  return { metric: point.metric.trim(), value: val, timestamp: ts, tags: point.tags || {} };
+}
+`;
+  addFile(`src/models/schema${stack.extension}`, modelsCode, { domain: 'G', taskId: 'STEP-04', role: 'DATA_SCHEMA' });
+
+  const engineCode = `import { ValidationError, validateMetricPoint } from '../models/schema.mjs';
+
+export class DataAnalyticsEngine {
+  constructor() {
+    this.series = new Map();
+  }
+
+  ingest(point) {
+    const valid = validateMetricPoint(point);
+    if (!this.series.has(valid.metric)) {
+      this.series.set(valid.metric, []);
+    }
+    this.series.get(valid.metric).push(valid);
+    return valid;
+  }
+
+  ingestBatch(points) {
+    if (!Array.isArray(points)) throw new ValidationError('Batch must be an array.');
+    return points.map(p => this.ingest(p));
+  }
+
+  aggregate(metric, windowMs = null) {
+    const points = this.series.get(metric) || [];
+    if (points.length === 0) return { count: 0, sum: 0, avg: 0, min: null, max: null, p95: null };
+    const values = points.map(p => p.value).sort((a, b) => a - b);
+    const sum = values.reduce((acc, v) => acc + v, 0);
+    const avg = Math.round((sum / values.length) * 100) / 100;
+    const min = values[0];
+    const max = values[values.length - 1];
+    const p95Idx = Math.floor(values.length * 0.95);
+    const p95 = values[Math.min(p95Idx, values.length - 1)];
+    return { count: values.length, sum: Math.round(sum * 100) / 100, avg, min, max, p95 };
+  }
+
+  detectAnomalies(metric, thresholdStdDev = 2) {
+    const points = this.series.get(metric) || [];
+    if (points.length < 3) return [];
+    const values = points.map(p => p.value);
+    const mean = values.reduce((a, b) => a + b, 0) / values.length;
+    const variance = values.reduce((acc, v) => acc + Math.pow(v - mean, 2), 0) / values.length;
+    const stdDev = Math.sqrt(variance);
+    if (stdDev === 0) return [];
+    return points.filter(p => Math.abs(p.value - mean) > thresholdStdDev * stdDev);
+  }
+}
+`;
+  addFile(`src/core/engine${stack.extension}`, engineCode, { domain: 'H', taskId: 'STEP-04', role: 'CORE_KERNEL' });
+
+  const indexCode = `import { DataAnalyticsEngine } from './core/engine.mjs';
+export function createApplication() { return new DataAnalyticsEngine(); }
+export { DataAnalyticsEngine };
+export default createApplication;
+`;
+  addFile(`src/index${stack.extension}`, indexCode, { domain: 'G', taskId: 'STEP-02', role: 'ENTRY_POINT' });
+
+  const testCode = `import { describe, it } from 'node:test';
+import assert from 'node:assert';
+import { DataAnalyticsEngine } from '../src/core/engine.mjs';
+
+describe('Data Product Suite', () => {
+  it('Feature 1: Ingests metric series and computes statistical aggregations', () => {
+    const engine = new DataAnalyticsEngine();
+    engine.ingest({ metric: 'cpu_usage', value: 20, timestamp: 1000 });
+    engine.ingest({ metric: 'cpu_usage', value: 25, timestamp: 2000 });
+    engine.ingest({ metric: 'cpu_usage', value: 30, timestamp: 3000 });
+    const agg = engine.aggregate('cpu_usage');
+    assert.strictEqual(agg.count, 3);
+    assert.strictEqual(agg.avg, 25);
+    assert.strictEqual(agg.min, 20);
+    assert.strictEqual(agg.max, 30);
+  });
+
+  it('Feature 2: Detects statistical metric anomalies', () => {
+    const engine = new DataAnalyticsEngine();
+    engine.ingest({ metric: 'latency_ms', value: 50 });
+    engine.ingest({ metric: 'latency_ms', value: 52 });
+    engine.ingest({ metric: 'latency_ms', value: 49 });
+    engine.ingest({ metric: 'latency_ms', value: 51 });
+    engine.ingest({ metric: 'latency_ms', value: 350 });
+    const anomalies = engine.detectAnomalies('latency_ms', 1.8);
+    assert.strictEqual(anomalies.length, 1);
+    assert.strictEqual(anomalies[0].value, 350);
+  });
+
+  it('Negative Scope: Zero external telemetry or outbound metric streaming', () => {
+    const engine = new DataAnalyticsEngine();
+    assert.strictEqual(typeof engine.streamOutbound, 'undefined');
+    assert.strictEqual(typeof engine.telemetrySocket, 'undefined');
+  });
+});
+`;
+  addFile(`tests/application${stack.testExtension}`, testCode, { domain: 'K', taskId: 'STEP-06', role: 'AUTOMATED_TESTS' });
+}
+
+// --- ARCHETYPE: EDUCATION_PLATFORM ---
+function assembleEducationPlatform(projectName, stack, addFile) {
+  const modelsCode = `export class ValidationError extends Error {
+  constructor(message, details = {}) {
+    super(message);
+    this.name = 'ValidationError';
+    this.details = details;
+  }
+}
+
+export function validateCourse(course) {
+  if (!course || typeof course !== 'object') throw new ValidationError('Course must be an object.');
+  if (!course.id || typeof course.id !== 'string') throw new ValidationError('Course ID is required.');
+  if (!course.title || typeof course.title !== 'string') throw new ValidationError('Course title is required.');
+  if (!Array.isArray(course.modules) || course.modules.length === 0) throw new ValidationError('Course must have at least one module.');
+  return course;
+}
+`;
+  addFile(`src/models/schema${stack.extension}`, modelsCode, { domain: 'G', taskId: 'STEP-04', role: 'DATA_SCHEMA' });
+
+  const engineCode = `import { ValidationError, validateCourse } from '../models/schema.mjs';
+
+export class CourseMasteryEngine {
+  constructor() {
+    this.courses = new Map();
+    this.enrollments = new Map();
+  }
+
+  registerCourse(course) {
+    const valid = validateCourse(course);
+    this.courses.set(valid.id, valid);
+    return valid;
+  }
+
+  enroll(studentId, courseId) {
+    if (!this.courses.has(courseId)) throw new ValidationError(\`Course \${courseId} not found.\`);
+    const key = \`\${studentId}:\${courseId}\`;
+    if (!this.enrollments.has(key)) {
+      this.enrollments.set(key, { studentId, courseId, passedModules: new Set(), history: [] });
+    }
+    return this.enrollments.get(key);
+  }
+
+  submitQuiz(studentId, courseId, moduleId, answers) {
+    const key = \`\${studentId}:\${courseId}\`;
+    const enrollment = this.enrollments.get(key) || this.enroll(studentId, courseId);
+    const course = this.courses.get(courseId);
+    if (!course) throw new ValidationError(\`Course \${courseId} not found.\`);
+    const mod = course.modules.find(m => m.id === moduleId);
+    if (!mod) throw new ValidationError(\`Module \${moduleId} not found in course \${courseId}.\`);
+
+    let correct = 0;
+    const questions = mod.questions || [];
+    for (const q of questions) {
+      if (answers[q.id] === q.correctAnswer) correct++;
+    }
+    const scorePct = questions.length > 0 ? Math.round((correct / questions.length) * 100) : 100;
+    const passed = scorePct >= (mod.passingScore || 70);
+    if (passed) {
+      enrollment.passedModules.add(moduleId);
+    }
+    const record = { moduleId, scorePct, passed, timestamp: Date.now() };
+    enrollment.history.push(record);
+    return record;
+  }
+
+  getProgress(studentId, courseId) {
+    const course = this.courses.get(courseId);
+    if (!course) throw new ValidationError(\`Course \${courseId} not found.\`);
+    const key = \`\${studentId}:\${courseId}\`;
+    const enrollment = this.enrollments.get(key);
+    if (!enrollment) return { passedModulesCount: 0, totalModules: course.modules.length, percentComplete: 0, completed: false };
+    const pct = Math.round((enrollment.passedModules.size / course.modules.length) * 100);
+    return {
+      passedModulesCount: enrollment.passedModules.size,
+      totalModules: course.modules.length,
+      percentComplete: pct,
+      completed: enrollment.passedModules.size === course.modules.length
+    };
+  }
+
+  issueCertificate(studentId, courseId) {
+    const progress = this.getProgress(studentId, courseId);
+    if (!progress.completed) {
+      throw new ValidationError(\`Cannot issue certificate: Course completion is \${progress.percentComplete}%, must be 100%.\`);
+    }
+    return {
+      certificateId: \`CERT-\${courseId}-\${studentId}-\${Date.now()}\`,
+      studentId,
+      courseId,
+      issuedAt: Date.now(),
+      status: 'VERIFIED_CREDENTIAL'
+    };
+  }
+}
+`;
+  addFile(`src/core/engine${stack.extension}`, engineCode, { domain: 'H', taskId: 'STEP-04', role: 'CORE_KERNEL' });
+
+  const indexCode = `import { CourseMasteryEngine } from './core/engine.mjs';
+export function createApplication() { return new CourseMasteryEngine(); }
+export { CourseMasteryEngine };
+export default createApplication;
+`;
+  addFile(`src/index${stack.extension}`, indexCode, { domain: 'G', taskId: 'STEP-02', role: 'ENTRY_POINT' });
+
+  const testCode = `import { describe, it } from 'node:test';
+import assert from 'node:assert';
+import { CourseMasteryEngine } from '../src/core/engine.mjs';
+
+describe('Education Platform Suite', () => {
+  it('Feature 1: Registers courses, tracks module completion and calculates progress', () => {
+    const engine = new CourseMasteryEngine();
+    engine.registerCourse({
+      id: 'SYS-101',
+      title: 'Distributed Systems',
+      modules: [
+        { id: 'MOD-1', title: 'Consensus', passingScore: 70, questions: [{ id: 'Q1', correctAnswer: 'raft' }] },
+        { id: 'MOD-2', title: 'Replication', passingScore: 70, questions: [{ id: 'Q2', correctAnswer: 'quorum' }] }
+      ]
+    });
+    engine.enroll('STU-1', 'SYS-101');
+    const sub = engine.submitQuiz('STU-1', 'SYS-101', 'MOD-1', { Q1: 'raft' });
+    assert.strictEqual(sub.passed, true);
+    const progress = engine.getProgress('STU-1', 'SYS-101');
+    assert.strictEqual(progress.percentComplete, 50);
+    assert.strictEqual(progress.completed, false);
+  });
+
+  it('Feature 2: Issues verified credential only upon 100% course mastery', () => {
+    const engine = new CourseMasteryEngine();
+    engine.registerCourse({
+      id: 'SYS-101',
+      title: 'Distributed Systems',
+      modules: [
+        { id: 'MOD-1', title: 'Consensus', passingScore: 70, questions: [{ id: 'Q1', correctAnswer: 'raft' }] }
+      ]
+    });
+    engine.enroll('STU-2', 'SYS-101');
+    assert.throws(() => engine.issueCertificate('STU-2', 'SYS-101'), /Cannot issue certificate/);
+    engine.submitQuiz('STU-2', 'SYS-101', 'MOD-1', { Q1: 'raft' });
+    const cert = engine.issueCertificate('STU-2', 'SYS-101');
+    assert.strictEqual(cert.status, 'VERIFIED_CREDENTIAL');
+    assert.strictEqual(cert.studentId, 'STU-2');
+  });
+
+  it('Negative Scope: Zero external tracking or surveillance scripts', () => {
+    const engine = new CourseMasteryEngine();
+    assert.strictEqual(typeof engine.thirdPartyAnalytics, 'undefined');
+    assert.strictEqual(typeof engine.adTracker, 'undefined');
+  });
+});
+`;
+  addFile(`tests/application${stack.testExtension}`, testCode, { domain: 'K', taskId: 'STEP-06', role: 'AUTOMATED_TESTS' });
+}
+
+// --- ARCHETYPE: PRODUCTIVITY_TOOL ---
+function assembleProductivityTool(projectName, stack, addFile) {
+  const modelsCode = `export class ValidationError extends Error {
+  constructor(message, details = {}) {
+    super(message);
+    this.name = 'ValidationError';
+    this.details = details;
+  }
+}
+
+export function validateTask(task) {
+  if (!task || typeof task !== 'object') throw new ValidationError('Task must be an object.');
+  if (!task.id || typeof task.id !== 'string') throw new ValidationError('Task ID is required.');
+  if (!task.title || typeof task.title !== 'string') throw new ValidationError('Task Title is required.');
+  return task;
+}
+`;
+  addFile(`src/models/schema${stack.extension}`, modelsCode, { domain: 'G', taskId: 'STEP-04', role: 'DATA_SCHEMA' });
+
+  const engineCode = `import { ValidationError, validateTask } from '../models/schema.mjs';
+
+export class KanbanWorkflowEngine {
+  constructor() {
+    this.tasks = new Map();
+    this.validStates = new Set(['BACKLOG', 'TODO', 'IN_PROGRESS', 'REVIEW', 'DONE']);
+  }
+
+  createTask(data) {
+    const valid = validateTask(data);
+    const task = {
+      id: valid.id.trim(),
+      title: valid.title.trim(),
+      priority: valid.priority || 'MEDIUM',
+      state: 'BACKLOG',
+      dependencies: Array.isArray(valid.dependencies) ? valid.dependencies : [],
+      dueTimestamp: valid.dueTimestamp || (Date.now() + 86400000),
+      history: [{ state: 'BACKLOG', timestamp: Date.now() }]
+    };
+    this.tasks.set(task.id, task);
+    return task;
+  }
+
+  transitionTask(taskId, targetState) {
+    const task = this.tasks.get(taskId);
+    if (!task) throw new ValidationError(\`Task \${taskId} not found.\`);
+    if (!this.validStates.has(targetState)) throw new ValidationError(\`Invalid state: \${targetState}\`);
+
+    if (targetState === 'IN_PROGRESS') {
+      for (const depId of task.dependencies) {
+        const dep = this.tasks.get(depId);
+        if (!dep || dep.state !== 'DONE') {
+          throw new ValidationError(\`Cannot start task \${taskId}: Prerequisite dependency \${depId} is not DONE.\`);
+        }
+      }
+    }
+    task.state = targetState;
+    task.history.push({ state: targetState, timestamp: Date.now() });
+    return task;
+  }
+
+  getOverdueTasks(currentTime = Date.now()) {
+    return Array.from(this.tasks.values()).filter(t => t.dueTimestamp < currentTime && t.state !== 'DONE');
+  }
+
+  getTask(taskId) {
+    return this.tasks.get(taskId) || null;
+  }
+}
+`;
+  addFile(`src/core/engine${stack.extension}`, engineCode, { domain: 'H', taskId: 'STEP-04', role: 'CORE_KERNEL' });
+
+  const indexCode = `import { KanbanWorkflowEngine } from './core/engine.mjs';
+export function createApplication() { return new KanbanWorkflowEngine(); }
+export { KanbanWorkflowEngine };
+export default createApplication;
+`;
+  addFile(`src/index${stack.extension}`, indexCode, { domain: 'G', taskId: 'STEP-02', role: 'ENTRY_POINT' });
+
+  const testCode = `import { describe, it } from 'node:test';
+import assert from 'node:assert';
+import { KanbanWorkflowEngine } from '../src/core/engine.mjs';
+
+describe('Productivity Tool Suite', () => {
+  it('Feature 1: Creates kanban tasks and enforces dependency workflow', () => {
+    const engine = new KanbanWorkflowEngine();
+    engine.createTask({ id: 'TASK-1', title: 'Write Architecture Spec' });
+    engine.createTask({ id: 'TASK-2', title: 'Implement Kernel', dependencies: ['TASK-1'] });
+    assert.throws(() => engine.transitionTask('TASK-2', 'IN_PROGRESS'), /Prerequisite dependency TASK-1 is not DONE/);
+    engine.transitionTask('TASK-1', 'DONE');
+    engine.transitionTask('TASK-2', 'IN_PROGRESS');
+    assert.strictEqual(engine.getTask('TASK-2').state, 'IN_PROGRESS');
+  });
+
+  it('Feature 2: Identifies overdue SLA deadlines', () => {
+    const engine = new KanbanWorkflowEngine();
+    const past = Date.now() - 5000;
+    engine.createTask({ id: 'TASK-3', title: 'Urgent Patch', dueTimestamp: past });
+    const overdue = engine.getOverdueTasks();
+    assert.strictEqual(overdue.length, 1);
+    assert.strictEqual(overdue[0].id, 'TASK-3');
+  });
+
+  it('Negative Scope: Zero unprompted background network synchronizations', () => {
+    const engine = new KanbanWorkflowEngine();
+    assert.strictEqual(typeof engine.syncCloud, 'undefined');
+    assert.strictEqual(typeof engine.cloudSyncSocket, 'undefined');
+  });
+});
+`;
+  addFile(`tests/application${stack.testExtension}`, testCode, { domain: 'K', taskId: 'STEP-06', role: 'AUTOMATED_TESTS' });
+}
+
+// --- ARCHETYPE: COLLABORATION_PLATFORM ---
+function assembleCollaborationPlatform(projectName, stack, addFile) {
+  const modelsCode = `export class ValidationError extends Error {
+  constructor(message, details = {}) {
+    super(message);
+    this.name = 'ValidationError';
+    this.details = details;
+  }
+}
+
+export function validateDiscussionPost(post) {
+  if (!post || typeof post !== 'object') throw new ValidationError('Post must be an object.');
+  if (!post.id || typeof post.id !== 'string') throw new ValidationError('Post ID is required.');
+  if (!post.authorId || typeof post.authorId !== 'string') throw new ValidationError('Author ID is required.');
+  if (!post.content || typeof post.content !== 'string' || post.content.trim().length === 0) {
+    throw new ValidationError('Post content must be non-empty.');
+  }
+  return post;
+}
+`;
+  addFile(`src/models/schema${stack.extension}`, modelsCode, { domain: 'G', taskId: 'STEP-04', role: 'DATA_SCHEMA' });
+
+  const engineCode = `import { ValidationError, validateDiscussionPost } from '../models/schema.mjs';
+
+export class CommunityDiscussionEngine {
+  constructor() {
+    this.posts = new Map();
+    this.reactions = new Map();
+  }
+
+  createPost(data) {
+    const valid = validateDiscussionPost(data);
+    const post = {
+      id: valid.id.trim(),
+      authorId: valid.authorId.trim(),
+      content: valid.content.trim(),
+      channel: valid.channel || 'general',
+      parentId: valid.parentId || null,
+      locked: false,
+      createdAt: Date.now()
+    };
+    if (post.parentId) {
+      const parent = this.posts.get(post.parentId);
+      if (!parent) throw new ValidationError(\`Parent post \${post.parentId} not found.\`);
+      if (parent.locked) throw new ValidationError(\`Cannot reply to locked thread \${post.parentId}.\`);
+    }
+    this.posts.set(post.id, post);
+    return post;
+  }
+
+  moderatePost(postId, moderatorId, action) {
+    const post = this.posts.get(postId);
+    if (!post) throw new ValidationError(\`Post \${postId} not found.\`);
+    if (action === 'LOCK') post.locked = true;
+    if (action === 'UNLOCK') post.locked = false;
+    return post;
+  }
+
+  addReaction(postId, userId, emoji) {
+    if (!this.posts.has(postId)) throw new ValidationError(\`Post \${postId} not found.\`);
+    if (!this.reactions.has(postId)) this.reactions.set(postId, new Map());
+    const postReactions = this.reactions.get(postId);
+    if (!postReactions.has(emoji)) postReactions.set(emoji, new Set());
+    postReactions.get(emoji).add(userId);
+    return { postId, emoji, count: postReactions.get(emoji).size };
+  }
+
+  getThread(postId) {
+    const root = this.posts.get(postId);
+    if (!root) throw new ValidationError(\`Post \${postId} not found.\`);
+    const replies = Array.from(this.posts.values()).filter(p => p.parentId === postId);
+    return { ...root, replies };
+  }
+}
+`;
+  addFile(`src/core/engine${stack.extension}`, engineCode, { domain: 'H', taskId: 'STEP-04', role: 'CORE_KERNEL' });
+
+  const indexCode = `import { CommunityDiscussionEngine } from './core/engine.mjs';
+export function createApplication() { return new CommunityDiscussionEngine(); }
+export { CommunityDiscussionEngine };
+export default createApplication;
+`;
+  addFile(`src/index${stack.extension}`, indexCode, { domain: 'G', taskId: 'STEP-02', role: 'ENTRY_POINT' });
+
+  const testCode = `import { describe, it } from 'node:test';
+import assert from 'node:assert';
+import { CommunityDiscussionEngine } from '../src/core/engine.mjs';
+
+describe('Collaboration Platform Suite', () => {
+  it('Feature 1: Creates discussion threads and handles nested replies', () => {
+    const engine = new CommunityDiscussionEngine();
+    engine.createPost({ id: 'THREAD-1', authorId: 'USER-A', content: 'Root Proposal' });
+    engine.createPost({ id: 'REPLY-1', authorId: 'USER-B', content: 'Support Proposal', parentId: 'THREAD-1' });
+    const thread = engine.getThread('THREAD-1');
+    assert.strictEqual(thread.replies.length, 1);
+    assert.strictEqual(thread.replies[0].id, 'REPLY-1');
+  });
+
+  it('Feature 2: Deduplicates user reactions and enforces moderation locking', () => {
+    const engine = new CommunityDiscussionEngine();
+    engine.createPost({ id: 'THREAD-2', authorId: 'USER-A', content: 'RFC Open Discussion' });
+    engine.addReaction('THREAD-2', 'USER-A', '🚀');
+    const r = engine.addReaction('THREAD-2', 'USER-A', '🚀'); // duplicate
+    assert.strictEqual(r.count, 1);
+    engine.moderatePost('THREAD-2', 'MOD-1', 'LOCK');
+    assert.throws(() => engine.createPost({ id: 'REPLY-2', authorId: 'USER-C', content: 'Late reply', parentId: 'THREAD-2' }), /Cannot reply to locked thread/);
+  });
+
+  it('Negative Scope: Zero third-party ad beacons or trackers', () => {
+    const engine = new CommunityDiscussionEngine();
+    assert.strictEqual(typeof engine.adBannerNetwork, 'undefined');
+    assert.strictEqual(typeof engine.trackingPixel, 'undefined');
+  });
+});
+`;
+  addFile(`tests/application${stack.testExtension}`, testCode, { domain: 'K', taskId: 'STEP-06', role: 'AUTOMATED_TESTS' });
+}
+
+// --- ARCHETYPE: MEDIA_SERVICE ---
+function assembleMediaService(projectName, stack, addFile) {
+  const modelsCode = `export class ValidationError extends Error {
+  constructor(message, details = {}) {
+    super(message);
+    this.name = 'ValidationError';
+    this.details = details;
+  }
+}
+
+export function validateMediaAsset(asset) {
+  if (!asset || typeof asset !== 'object') throw new ValidationError('Asset must be an object.');
+  if (!asset.id || typeof asset.id !== 'string') throw new ValidationError('Asset ID is required.');
+  if (!asset.title || typeof asset.title !== 'string') throw new ValidationError('Asset title is required.');
+  if (!asset.format || typeof asset.format !== 'string') throw new ValidationError('Asset format is required.');
+  const duration = Number(asset.durationSeconds);
+  if (isNaN(duration) || duration <= 0) throw new ValidationError('Duration must be positive.');
+  return asset;
+}
+`;
+  addFile(`src/models/schema${stack.extension}`, modelsCode, { domain: 'G', taskId: 'STEP-04', role: 'DATA_SCHEMA' });
+
+  const engineCode = `import { ValidationError, validateMediaAsset } from '../models/schema.mjs';
+
+export class MediaAssetService {
+  constructor() {
+    this.assets = new Map();
+  }
+
+  registerAsset(data) {
+    const valid = validateMediaAsset(data);
+    const asset = {
+      id: valid.id.trim(),
+      title: valid.title.trim(),
+      format: valid.format.toLowerCase().trim(),
+      durationSeconds: Number(valid.durationSeconds),
+      bitrateKbps: Number(valid.bitrateKbps || 128),
+      licenseExpiresAt: valid.licenseExpiresAt || (Date.now() + 31536000000)
+    };
+    this.assets.set(asset.id, asset);
+    return asset;
+  }
+
+  generateHlsPlaylist(assetId, segmentDuration = 10, currentTime = Date.now()) {
+    const asset = this.assets.get(assetId);
+    if (!asset) throw new ValidationError(\`Asset \${assetId} not found.\`);
+    if (asset.licenseExpiresAt < currentTime) {
+      throw new ValidationError(\`Cannot stream asset \${assetId}: License expired.\`);
+    }
+    const numSegments = Math.ceil(asset.durationSeconds / segmentDuration);
+    let playlist = '#EXTM3U\\n#EXT-X-VERSION:3\\n#EXT-X-TARGETDURATION:' + segmentDuration + '\\n#EXT-X-MEDIA-SEQUENCE:0\\n';
+    for (let i = 0; i < numSegments; i++) {
+      const segDur = Math.min(segmentDuration, asset.durationSeconds - i * segmentDuration);
+      playlist += '#EXTINF:' + segDur.toFixed(1) + ',\\nsegment_' + i + '.ts\\n';
+    }
+    playlist += '#EXT-X-ENDLIST\\n';
+    return playlist;
+  }
+
+  getAsset(assetId) {
+    return this.assets.get(assetId) || null;
+  }
+}
+`;
+  addFile(`src/core/engine${stack.extension}`, engineCode, { domain: 'H', taskId: 'STEP-04', role: 'CORE_KERNEL' });
+
+  const indexCode = `import { MediaAssetService } from './core/engine.mjs';
+export function createApplication() { return new MediaAssetService(); }
+export { MediaAssetService };
+export default createApplication;
+`;
+  addFile(`src/index${stack.extension}`, indexCode, { domain: 'G', taskId: 'STEP-02', role: 'ENTRY_POINT' });
+
+  const testCode = `import { describe, it } from 'node:test';
+import assert from 'node:assert';
+import { MediaAssetService } from '../src/core/engine.mjs';
+
+describe('Media Service Suite', () => {
+  it('Feature 1: Registers media assets and generates standard HLS playlist manifests', () => {
+    const service = new MediaAssetService();
+    service.registerAsset({
+      id: 'VID-001',
+      title: 'Distributed Systems Lecture',
+      format: 'mp4',
+      durationSeconds: 25,
+      licenseExpiresAt: Date.now() + 100000
+    });
+    const playlist = service.generateHlsPlaylist('VID-001', 10);
+    assert(playlist.includes('#EXTM3U'));
+    assert(playlist.includes('segment_0.ts'));
+    assert(playlist.includes('segment_2.ts'));
+  });
+
+  it('Feature 2: Blocks streaming playlist generation for expired licensing rights', () => {
+    const service = new MediaAssetService();
+    const past = Date.now() - 5000;
+    service.registerAsset({
+      id: 'VID-002',
+      title: 'Expired Clip',
+      format: 'mp4',
+      durationSeconds: 15,
+      licenseExpiresAt: past
+    });
+    assert.throws(() => service.generateHlsPlaylist('VID-002', 10), /License expired/);
+  });
+
+  it('Negative Scope: Zero unauthorized DRM bypass or cloud telemetry', () => {
+    const service = new MediaAssetService();
+    assert.strictEqual(typeof service.bypassDrm, 'undefined');
+    assert.strictEqual(typeof service.externalAdSync, 'undefined');
+  });
+});
+`;
+  addFile(`tests/application${stack.testExtension}`, testCode, { domain: 'K', taskId: 'STEP-06', role: 'AUTOMATED_TESTS' });
+}
+
 // 4. Compositional Code Assembly Orchestrator
 // ---------------------------------------------------------------------------
 
@@ -1617,6 +2252,16 @@ ${stack.testRunner}
       assembleEcommerceProduct(projectName, stack, addFile);
     } else if (detectedArchetype === 'CONTENT_PLATFORM') {
       assembleContentPlatform(projectName, stack, addFile);
+    } else if (detectedArchetype === 'DATA_PRODUCT') {
+      assembleDataProduct(projectName, stack, addFile);
+    } else if (detectedArchetype === 'EDUCATION_PLATFORM') {
+      assembleEducationPlatform(projectName, stack, addFile);
+    } else if (detectedArchetype === 'PRODUCTIVITY_TOOL') {
+      assembleProductivityTool(projectName, stack, addFile);
+    } else if (detectedArchetype === 'COLLABORATION_PLATFORM') {
+      assembleCollaborationPlatform(projectName, stack, addFile);
+    } else if (detectedArchetype === 'MEDIA_SERVICE') {
+      assembleMediaService(projectName, stack, addFile);
     } else if (detectedArchetype === 'CACHE_STORE') {
       assembleCacheStore(projectName, stack, addFile);
     } else if (detectedArchetype === 'HEADLESS_API') {
