@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-gesture-handler-learnings.md`  
 > **Source**: github ([https://github.com/software-mansion/react-native-gesture-handler](https://github.com/software-mansion/react-native-gesture-handler))  
-> **Source Version**: `474bdf2c`  
+> **Source Version**: `ba126f38`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T04:10:27.279Z  
+> **Timestamp**: 2026-11-10T01:58:24.354Z  
 > **Learning ID**: `learn-github-software-mansion-react-native-gesture-handler`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-gesture-handler-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/software-mansion/react-native-gesture-handler](https://github.com/software-mansion/react-native-gesture-handler))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T04:10:27.265Z  
+> **Harvest Timestamp**: 2026-11-10T01:58:24.348Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Declarative API exposing platform native touch and gesture system to React Native.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 6803 stars
+- **Stars / Engagement**: 6804 stars
 
 ---
 
@@ -1388,248 +1388,119 @@ class LongPressGestureHandler(context: Context) : GestureHandler() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `474bdf2c` (2026-11-06)
-**Commit Message**: Update compatibility table for release 3.5.0 (#4676)
+### Incident Patch 1: `7de893dc` (2026-11-09)
+**Commit Message**: [iOS] Fix callback crashes from detached gesture recognizers (#4679)
 
 ## Description
 
-This PR updates compatibility table for release 3.5.0
+Fixes a rare crash during native screen detachment on iOS:
 
-## Test plan
+```text
+Tag should be defined when dispatching an event
+```
 
-Read docs 🤓
+This crash may occur one in hundreds of times when navigation removes a
+gesture-containing screen from its window while its React component
+remains mounted. This detachment still triggers gesture-handler cleanup.
 
-**File**: `packages/react-native-gesture-handler/compatibility.json` (modified, +3/-0)
+> When dismissing screen with gesture (or a native back button), the
+native screen will be removed before React component unmount. If it
+still remains (not unmounted yet in that short time), it will trigger
+crash. So it occurs very rarely, I've reproduced it multiple times by
+torture testing the hover gesture.
+
+<details>
+  <summary>Crash Log 1</summary>
+
+```
+0   APP.debug.dylib                    0x000000010f0c7f60 -[RNGestureHandler handleGesture:inState:fromManualStateChange:] + 320
+1   APP.debug.dylib                    0x000000010f0c7aec -[RNGestureHandler handleGesture:fromReset:fromManualStateChange:] + 860
+2   APP.debug.dylib                    0x000000010f0c7750 -[RNGestureHandler handleGesture:fromReset:] + 84
+3   APP.debug.dylib                    0x000000010
+
+**File**: `packages/react-native-gesture-handler/apple/RNGestureHandler.mm` (modified, +6/-0)
 ```diff
-@@ -1,4 +1,7 @@
- {
-+  "3.5.x": {
-+    "react-native": ["0.85", "0.86", "0.87", "0.88"]
-+  },
-   "3.4.x": {
-     "react-native": ["0.85", "0.86", "0.87", "0.88"]
-   },
+@@ -410,6 +410,12 @@ - (void)handleGesture:(UIGestureRecognizer *)recognizer
+     return;
+   }
+ 
++  // UIKit can invoke the action synchronously during removeGestureRecognizer:, after clearing view.
++  // unbindFromView already finalizes the gesture while attached, therefore we can ignore the stale callback.
++  if (recognizer.view == nil) {
++    return;
++  }
++
+   RNGHUIView *view = [self chooseViewForInteraction:recognizer];
+ 
+   // it may happen that the gesture recognizer is reset after it's been unbound from the view,
 ```
 
 ---
 
-### Incident Patch 2: `29270cb9` (2026-11-05)
-**Commit Message**: [Web] Check only the handlers recorded for the same pointer (#4672)
+### Incident Patch 2: `ba126f38` (2026-11-09)
+**Commit Message**: Bump brace-expansion from 1.1.18 to 1.1.21 in /packages/docs-gesture-handler (#4684)
 
-## Description
+Bumps [brace-expansion](https://github.com/juliangruber/brace-expansion)
+from 1.1.18 to 1.1.21.
+<details>
+<summary>Commits</summary>
+<ul>
+<li><a
+href="https://github.com/juliangruber/brace-expansion/commit/8e81e187b6e9c6c723d16c042657c00acefc2483"><code>8e81e18</code></a>
+1.1.21</li>
+<li><a
+href="https://github.com/juliangruber/brace-expansion/commit/ffdfa3e3806bed17c0874b8f1439b084de354a7e"><code>ffdfa3e</code></a>
+Merge commit from fork</li>
+<li><a
+href="https://github.com/juliangruber/brace-expansion/commit/c6513ad31e08edb56dc414a629e39cba724b7548"><code>c6513ad</code></a>
+1.1.20</li>
+<li><a
+href="https://github.com/juliangruber/brace-expansion/commit/1efee7c397c191da6287a78ec19512476a966a7b"><code>1efee7c</code></a>
+Merge commit from fork</li>
+<li><a
+href="https://github.com/juliangruber/brace-expansion/commit/a34340a053abb475cc226aeb3f71887018e71bd0"><code>a34340a</code></a>
+1.1.19</li>
+<li><a
+href="https://github.com/juliangruber/brace-expansion/commit/0bcbfc0a5928c3073d48f42999d1ce4fc1c42fbc"><code>0bcbfc0</code></a>
+Merge commit from fork</li>
+<li>See full diff in <a
+href="https://github.c
 
-On web, a `Manual` gesture that is never finished stays in `BEGAN` after
-the finger lifts, and from then on every RNGH button on the page is
-dead: `Touchable`, `Pressable`, `RectButton`, inside or outside the
-detector. The same happens with a finger resting elsewhere on the screen
-while another taps a button (#4627 on Android).
-
-Since #4127 a button asks, when it is recorded, whether it may begin
-given the handlers already recorded, and refuses any that is not
-simultaneous with it, not on its own view and not a hover. The
-orchestrator passed its whole `gestureHandlers` list, which also holds
-handlers from other pointers and handlers left in `BEGAN` with no
-pointers at all, so the button was cancelled before it began.
-
-`recordHandlerIfNotPresent` now takes the pointer being recorded and
-passes only the handlers already tracking it. Every handler adds the
-pointer to its tracker before recording itself and `pointerdown` bubbles
-deepest-first, so those are exactly the handlers under the button on
-this press. The call from `HoverGestureHandler` has no pointer and
-passes an empty list. `PointerTracker` g
-
-**File**: `packages/react-native-gesture-handler/src/web/handlers/GestureHandler.ts` (modified, +4/-1)
+**File**: `packages/docs-gesture-handler/yarn.lock` (modified, +6/-6)
 ```diff
-@@ -340,7 +340,10 @@ export default abstract class GestureHandler implements IGestureHandler {
-   //
+@@ -4961,17 +4961,17 @@ boxen@^7.0.0:
+     wrap-ansi "^8.1.0"
  
-   protected onPointerDown(event: AdaptedEvent): void {
--    GestureHandlerOrchestrator.instance.recordHandlerIfNotPresent(this);
-+    GestureHandlerOrchestrator.instance.recordHandlerIfNotPresent(
-+      this,
-+      event.pointerId
-+    );
-     this._pointerType = event.pointerType;
+ brace-expansion@^1.1.7:
+-  version "1.1.18"
+-  resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-1.1.18.tgz#3ce74d89885136be1535341f8c3d4425c29a5cab"
+-  integrity sha512-Edep/X9fGqVNmzKBVsDYIOtD+z1tuezV70LBjdCst9Tqu76lsnvRiZ6oTic1n+/BIwX6QDGAO94PN4N2SADvtw==
++  version "1.1.21"
++  resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-1.1.21.tgz#edf4fab5c64d051aea5a8def49aba1c7522279f3"
++  integrity sha512-9zeA+KLZNNzglF2TPKRQEDyx6Yby7daAkuy8MiPzpXPsYDWi/DRM8jmwUDxokQjYqBpv5DgPiwD4h4ZZSy1Ujw==
+   dependencies:
+     balanced-match "^1.0.0"
+     concat-map "0.0.1"
  
-     if (this.pointerType === PointerType.TOUCH) {
-```
-
-**File**: `packages/react-native-gesture-handler/src/web/handlers/__tests__/GestureHandler.test.ts` (modified, +97/-0)
-```diff
-@@ -231,6 +231,103 @@ describe('GestureHandlerOrchestrator idle handlers', () => {
-   });
- });
- 
-+describe('GestureHandlerOrchestrator recorded handlers passed to a new one', () => {
-+  // Mimics a button: refuses to begin next to any handler it was told about.
-+  class ExclusiveTestGestureHandler extends TestGestureHandler {
-+    public override shouldBeginWithRecordedHandlers(
-+      recorded: IGestureHandler[]
-+    ): boolean {
-+      return recorded.length === 0;
-+    }
-+  }
-+
-+  const delegate = {
-+    onEnabledChange: jest.fn(),
-+    onCancel: jest.fn(),
-+    reset: jest.fn(),
-+  } as unknown as GestureHandlerDelegate<unknown, IGestureHandler>;
-+
-+  const pointerDown = (pointerId: number): AdaptedEvent => ({
-+    x: 10,
-+    y: 10,
-+    offsetX: 10,
-+    offsetY: 10,
-+    pointerId,
-+    eventType: EventTypes.DOWN,
-+    pointerType: PointerType.TOUCH,
-+    time: 0,
-+  });
-+
-+  function setup() {
-+    const other = new TestGestureHandler(delegate);
-+    const button = new ExclusiveTestGestureHandler(delegate);
-+    other.setGestureConfig({ enabled: true });
-+    button.setGestureConfig({ enabled: true });
-+    other.sendEvent = jest.fn();
-+    button.sendEvent = jest.fn();
-+    const cancel = jest.spyOn(button, 'cancel');
-+
-+    return { other, button, cancel };
-+  }
-+
-+  afterEach(() => {
-+    (
-+      GestureHandlerOrchestrator.instance as unknown as {
-+        gestureHandlers: IGestureHandler[];
-+      }
-+    ).gestureHandlers = [];
-+  });
-+
-+  test('a handler left in BEGAN with no pointers does not block a new one', () => {
-+    const { other, button, cancel } = setup();
-+
-+    other.tracker.addToTracker(pointerDown(1));
-+    GestureHandlerOrchestrator.instance.recordHandlerIfNotPresent(other, 1);
-+    other.begin();
-+    other.tracker.removeFromTracker(1);
-+
-+    button.tracker.addToTracker(pointerDown(1));
-+    GestureHandlerOrchestrator.instance.recordHandlerIfNotPresent(button, 1);
-+
-+    expect(cancel).not.toHaveBeenCalled();
-+  });
-+
-+  test('a handler tracking another pointer does not block a new one', () => {
-+    const { other, button, cancel } = setup();
-+
-+    other.tracker.addToTracker(pointerDown(1));
-+    GestureHandlerOrchestrator.instance.recordHandlerIfNotPresent(other, 1);
-+
-+    button.tracker.addToTracker(pointerDown(2));
-+    GestureHandlerOrchestrator.instance.recordHandlerIfNotPresent(button, 2);
-+
-+    expect(cancel).not.toHaveBeenCalled();
-+  });
-+
-+  test('a handler tracking the same pointer is passed to the new one', () => {
-+    const { other, button, cancel } = setup();
-+
-+    other.tracker.addToTracker(pointerDown(1));
-+    GestureHandlerOrchestrator.instance.recordHandlerIfNotPresent(other, 1);
-+
-+    button.tracker.addToTracker(pointerDown(1));
-+    GestureHandlerOrchestrator.instance.recordHandlerIfNotPresent(button, 1);
-+
-+    expect(cancel).toHaveBeenCalledTimes(1);
-+  });
-+
-+  test('recording without a pointer passes no handlers', () => {
-+    const { other, button, cancel } = setup();
-+
-+    other.tracker.addToTracker(pointerDown(1));
-+    GestureHandlerOrchestrator.instance.recordHandlerIfNotPresent(other, 1);
-+
-+    GestureHandlerOrchestrator.instance.recordHandlerIfNotPresent(button);
-+
-+    expect(cancel).not.toHaveBeenCalled();
-+  });
-+});
-+
- describe('GestureHandler web touch events', () => {
-   afterEach(() => {
-     (
-```
-
-**File**: `packages/react-native-gesture-handler/src/web/tools/GestureHandlerOrchestrator.ts` (modified, +14/-2)
-```diff
-@@ -291,7 +291,10 @@ export default class GestureHandlerOrchestrator {
-     }
-   }
- 
--  public recordHandlerIfNotPresent(handler: IGestureHandler): void {
-+  public recordHandlerIfNotPresent(
-+    handler: IGestureHandler,
-+    pointerId?: number
-+  ): void {
-     this.dropIdleHandlers();
- 
-     if (this.isHandlerRecorded(handler)) {
-@@ -302,7 +305,16 @@ export default class GestureHandlerOrchestrator {
-     handler.awaiting = false;
-     handler.activationIndex = Number.MAX_SAFE_INTEGER;
- 
--    if (!handler.shouldBeginWithRecordedHandlers(this.gestureHandlers)) {
-+    // Only handlers recorded for the same pointer (they already track it) may
-+    // block this one
-+    const recorded =
-+      pointerId === undefined
-+        ? []
-+        : this.gestureHandlers.filter((other) =>
-+            other.tracker.isTrackingPointer(pointerId)
-+          );
-+
-+    if (!handler.shouldBeginWithRecordedHandlers(recorded)) {
-       handler.cancel();
-     }
- 
-```
-
-**File**: `packages/react-native-gesture-handler/src/web/tools/PointerTracker.ts` (modified, +6/-2)
-```diff
-@@ -32,8 +32,12 @@ export default class PointerTracker {
-     }
-   }
- 
-+  public isTrackingPointer(pointerId: number): boolean {
-+    return this.trackedPointers.has(pointerId);
-+  }
-+
-   public addToTracker(event: AdaptedEvent): void {
--    if (this.trackedPointers.has(event.pointerId)) {
-+    if (this.isTrackingPointer(event.pointerId)) {
-       return;
-     }
- 
-@@ -121,7 +125,7 @@ export default class PointerTracker {
-   }
- 
-   public getVelocityAt(pointerId: number, time: number) {
--    if (!this.trackedPointers.has(pointerId)) {
-+    if (!this.isTrackingPointer(pointerId)) {
-       return null;
-     }
+ brace-expansion@^2.0.1, brace-expansion@^2.0.2:
+-  version "2.1.4"
+-  resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-2.1.4.tgz#589dab11c0018d0366be64cd8bf12c8dbecc8326"
+-  integrity sha512-hGfVzPxthbf3+2yjg/RBs60cB0FhqBS/zvdV/4wn4/BmN0bNMMHPc4V/BbFieqf1TKAGGAHnY4eSjajCl0f2Xg==
++  version "2.1.7"
++  resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-2.1.7.tgz#14ea3836731823bb24740225ea43b941b436f9d1"
++  integrity sha512-uZbew1NqdmPDTMJ8ah1y+b+9QEJrfkXFk3RcTQw3X0jW/xRUvFKsg1CfQdSYGdTbXZWExtU3J3ccxtnfw1Fi0g==
+   dependencies:
+     balanced-match "^1.0.0"
  
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4676** (2026-11-06): Update compatibility table for release 3.5.0 (@m-bert)
-- **PR #4672** (2026-11-05): [Web] Check only the handlers recorded for the same pointer (@m-bert)
-- **PR #4671** (2026-11-05): [iOS] Don't delay touch-up delivery under a Manual gesture (@m-bert)
-- **PR #4668** (2026-11-05): Add `Begin`, `Deactivate` and `Finalize` event types for v3 gestures (@m-bert)
-- **PR #4667** (closed): [Android] Pan with the mouse wheel when `enableTrackpadTwoFingerGesture` is set (@sashrika)
-- **PR #4665** (2026-11-04): [iOS] Skip `accessibilityElementsHidden` children when inferring button label (@m-bert)
+- **PR #4684** (2026-11-09): Bump brace-expansion from 1.1.18 to 1.1.21 in /packages/docs-gesture-handler (@dependabot[bot])
+- **PR #4683** (2026-11-09): Restore the scroll responder claim for `ScrollView` with `keyboardShouldPersistTaps="handled"` (@m-bert)
+- **PR #4682** (2026-11-09): [Web] Skip config updates for a dropped handler (@chocky335)
+- **PR #4681** (2026-11-09): [Web] Track velocity separately for each pointer (@ChandraChaan)
+- **PR #4679** (2026-11-09): [iOS] Fix callback crashes from detached gesture recognizers (@theeket)
+- **PR #4678** (2026-11-09): Bump example apps to React Native 0.88.1 (@m-bert)
 
 ---
 
@@ -1649,23 +1520,26 @@ passes an empty list. `PointerTracker` g
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update compatibility table for release 3.5.0 (#4676)
+## X. [iOS] Fix callback crashes from detached gesture recognizers (#4679)
 
 **RULE**:
-When implementing operations in `packages/react-native-gesture-handler/compatibility.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-gesture-handler. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/react-native-gesture-handler/apple/RNGestureHandler.mm`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-gesture-handler. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `474bdf2c`: Update compatibility table for release 3.5.0 (#4676). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7de893dc`: [iOS] Fix callback crashes from detached gesture recognizers (#4679). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native-gesture-handler/compatibility.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native-gesture-handler/apple/RNGestureHandler.mm`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  "3.5.x": {
-    "react-native": ["0.85", "0.86", "0.87", "0.88"]
-  },
+  // UIKit can invoke the action synchronously during removeGestureRecognizer:, after clearing view.
+  // unbindFromView already finalizes the gesture while attached, therefore we can ignore the stale callback.
+  if (recognizer.view == nil) {
+    return;
+  }
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1675,4 +1549,4 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `474bdf2c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7de893dc` are properly handled with clean fallback behavior.

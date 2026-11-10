@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/jhspetersson-fselect-learnings.md`  
 > **Source**: github ([https://github.com/jhspetersson/fselect](https://github.com/jhspetersson/fselect))  
-> **Source Version**: `9bba3273`  
+> **Source Version**: `fea3c1b1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T06:17:42.098Z  
+> **Timestamp**: 2026-11-10T01:58:21.191Z  
 > **Learning ID**: `learn-github-jhspetersson-fselect`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/jhspetersson-fselect-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/jhspetersson/fselect](https://github.com/jhspetersson/fselect))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T06:17:40.605Z  
+> **Harvest Timestamp**: 2026-11-10T01:58:20.334Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Find files with SQL-like queries
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 4475 stars
+- **Stars / Engagement**: 4474 stars
 
 ---
 
@@ -1460,161 +1460,295 @@ mod test {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9bba3273` (2026-11-06)
-**Commit Message**: improve and fix subqueries parsing
+### Incident Patch 1: `5f214bd3` (2026-11-06)
+**Commit Message**: changelog for subquery parsing fixes
 
-**File**: `src/lexer.rs` (modified, +9/-10)
+**File**: `CHANGELOG.md` (modified, +5/-0)
 ```diff
-@@ -189,12 +189,7 @@ impl Lexer {
-         } else {
-             self.state = LexerState::new();
-         }
--        // The nested parse consumed the subquery's closing parenthesis while
--        // this state was saved, so the restored depth still counts the
--        // opening one; the parser re-injects a synthetic Close that never
--        // passes through here.
--        self.state.paren_depth = self.state.paren_depth.saturating_sub(1);
--        self.sync_scopes();
-+        self.note_lexeme(&Some(Lexeme::Close));
-     }
+@@ -6,9 +6,14 @@
  
-     fn current_scope(&self) -> Vec<usize> {
-@@ -445,12 +440,18 @@ impl Lexer {
-             let scope = self.current_scope();
-             self.root_aliases.push((alias.to_ascii_lowercase(), scope));
-         }
-+        self.note_lexeme(&lexeme);
-+
-+        lexeme
-+    }
-+
-+    fn note_lexeme(&mut self, lexeme: &Option<Lexeme>) {
-         self.state.after_value_end = match lexeme {
--            Some(Lexeme::RawString(ref s)) => !s.eq_ignore_ascii_case("as"),
-+            Some(Lexeme::RawString(s)) => !s.eq_ignore_ascii_case("as"),
-             Some(Lexeme::String(_)) | Some(Lexeme::Close) | Some(Lexeme::CurlyClose) => true,
-             _ => false,
-         };
--        self.state.after_as = matches!(lexeme, Some(Lexeme::RawString(ref s)) if s.eq_ignore_ascii_case("as"));
-+        self.state.after_as = matches!(lexeme, Some(Lexeme::RawString(s)) if s.eq_ignore_ascii_case("as"));
-         self.state.possible_search_root = matches!(lexeme, Some(Lexeme::From))
-                 || (matches!(lexeme, Some(Lexeme::Comma)) && self.state.clause == Clause::Roots);
-         self.state.in_value_set = matches!(lexeme, Some(Lexeme::CurlyOpen))
-@@ -471,8 +472,6 @@ impl Lexer {
-         self.state.after_value_start = matches!(lexeme, Some(Lexeme::Comma)) && self.state.in_where();
-         self.state.after_not = matches!(lexeme, Some(Lexeme::Not));
-         self.state.after_arithmetic = matches!(lexeme, Some(Lexeme::ArithmeticOperator(_)));
--
--        lexeme
-     }
+ - Matroska and WebM metadata is behind the `mkv` build feature, enabled by default.
+ - The `update-notifications` build feature is no longer enabled by default.
++- Column aliases are no longer accepted after `WHERE` and `HAVING` conditions
  
-     fn word_operator_follows(&self) -> bool {
+ ### Fixed
+ 
++- Unterminated or mismatched subquery parentheses are rejected instead of silently closed
++- Operators such as `IN` and `BETWEEN` work after a subquery in the `SELECT` list
++- A correlated subquery in a grouped query may only read grouping columns of the outer row
++- `INTO` inside a subquery is rejected with a clear message
+ - `NOT IN` no longer accepts a row when the list or subquery contains a NULL member and nothing matches
+ - Numeric functions such as `ABS`, `GREATEST` and `HEX` read the byte count of `fsize` instead of its formatted text
+ 
 ```
 
-**File**: `src/parser.rs` (modified, +143/-32)
+---
+
+### Incident Patch 2: `41272962` (2026-11-06)
+**Commit Message**: write missing typed values as JSON null
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -44,6 +44,7 @@ pub struct Parser<'a> {
-     select_aliases: Vec<Expr>,
-     declared_aliases: Vec<Expr>,
-     nested: bool,
-+    exhausted: bool,
+@@ -14,6 +14,7 @@
+ - Subquery columns are named after their query in output headers and error messages instead of a hash
+ - `DISTINCT` is rejected with a hint instead of being read as a column named "distinct"
+ - A doubled quote inside a quoted string (`'it''s'`) is a literal quote
++- Missing numeric, date and boolean values are written as `null` in JSON output
+ 
+ ### Fixed
+ 
+```
+
+**File**: `src/output/json.rs` (modified, +19/-3)
+```diff
+@@ -9,7 +9,7 @@ pub struct JsonFormatter {
+     /// Column values in the order they were emitted. Stored as a `Vec` rather
+     /// than a map so we preserve the user's SELECT column order and so we can
+     /// disambiguate duplicate column names below.
+-    row: Vec<(String, String)>,
++    row: Vec<(String, Option<String>)>,
  }
  
- impl <'a> Parser<'a> {
-@@ -62,6 +63,7 @@ impl <'a> Parser<'a> {
-             select_aliases: vec![],
-             declared_aliases: vec![],
-             nested: false,
-+            exhausted: false,
-         }
+ impl ResultsFormatter for JsonFormatter {
+@@ -22,7 +22,12 @@ impl ResultsFormatter for JsonFormatter {
      }
  
-@@ -421,20 +423,8 @@ impl <'a> Parser<'a> {
-                             // surrender the paren back and stop parsing roots.
-                             match self.next_lexeme() {
-                                 Some(Lexeme::Select) => {
--                                    self.lexer.push_state();
--                                    let mut sub_parser = Parser::nested(self.lexer);
--                                    let sub_query = sub_parser.parse(self.debug)?;
--                                    self.lexer.pop_state();
--                                    if curly {
--                                        self.push_lexeme(Lexeme::CurlyClose);
--                                    } else {
--                                        self.push_lexeme(Lexeme::Close);
--                                    }
--                                    let close_lexeme = self.next_lexeme();
--                                    let expected_close = if curly { Lexeme::CurlyClose } else { Lexeme::Close };
--                                    if close_lexeme != Some(expected_close) {
--                                        return Err(String::from("Unmatched parenthesis in FROM subselect"));
--                                    }
-+                                    let sub_query = self.parse_subquery(curly)?;
-+                                    self.next_lexeme();
-                                     subquery_root = Some(sub_query);
-                                     mode = RootParsingMode::Root;
-                                 }
-@@ -753,7 +743,10 @@ impl <'a> Parser<'a> {
-                         self.fold_by_weight(operands, LogicalOp::Or).map(Some)
-                     };
- 
--                    if let Ok(Some(ref mut result)) = result {
-+                    if let Ok(Some(ref mut result)) = result
-+                        && !self.roots_parsed
-+                        && self.args_depth == 0
-+                    {
-                         if let Some(Lexeme::RawString(ref s)) = self.next_lexeme() {
-                             if s.to_lowercase() == "as" {
-                                 match self.next_lexeme() {
-@@ -1197,17 +1190,35 @@ impl <'a> Parser<'a> {
-         }
-     }
- 
-+    fn parse_subquery(&mut self, curly: bool) -> Result<Query, String> {
-+        self.lexer.push_state();
-+        let mut parser = Parser::nested(self.lexer);
-+        let parsed = parser.parse(self.debug);
-+        let terminator = if parser.exhausted { None } else { parser.lexemes.last().cloned() };
-+        self.lexer.pop_state();
-+        let query = parsed?;
-+        let expected = if curly { Lexeme::CurlyClose } else { Lexeme::Close };
-+        match terminator {
-+            Some(ref lexeme) if *lexeme == expected => {}
-+            Some(Lexeme::Close) | Some(Lexeme::CurlyClose) => {
-+                return Err(String::from("Mismatched parenthesis in subquery"));
-+            }
-+            Some(Lexeme::RawString(s)) | Some(Lexeme::String(s)) | Some(Lexeme::Operator(s)) | Some(Lexeme::ArithmeticOperator(s)) => {
-+                return Err(format!("Unexpected token in subquery: {}", s));
-+            }
-+            Some(_) => return Err(String::from("Expected closing parenthesis after subquery")),
-+            None => return Err(String::from("Unmatched parenthesis in subquery")),
-+        }
-+        self.push_lexeme(expected);
-+        Ok(query)
+     fn format_element(&mut self, name: &str, record: &str, _is_last: bool) -> Option<String> {
+-        self.row.push((name.to_owned(), record.to_owned()));
++        self.row.push((name.to_owned(), Some(record.to_owned())));
++        None
 +    }
 +
-     fn parse_list(&mut self) -> Result<Expr, String> {
-         match self.next_lexeme() {
-             Some(Lexeme::Open) => {
-                 let result = {
-                     if let Some(Lexeme::Select) = self.next_lexeme() {
--                        self.lexer.push_state();
--                        let mut parser = Parser::nested(self.lexer);
--                        let query = parser.parse(self.debug)?;
--                        self.lexer.pop_state();
--                        self.push_lexeme(Lexeme::Close);
--                        Expr::subquery(query)
-+                        Expr::subquery(self.parse_subquery(false)?)
++    fn format_null(&mut self, name: &str, _is_last: bool) -> Option<String> {
++        self.row.push((name.to_owned(), None));
+         None
+     }
+ 
+@@ -48,7 +53,10 @@ impl ResultsFormatter for JsonFormatter {
+             emitted.insert(resolved.clone());
+             out.push_str(&serde_json::to_string(&resolved).unwrap_or_else(|_| "\"\"".to_string()));
+             out.push(':');
+-            out.push_str(&serde_json::to_string(value).unwrap_or_else(|_| "\"\"".to_string()));
++            match value {
++                Some(value) => out.push_str(&serde_json::to_string(value).unwrap_or_else(|_| "\"\"".to_string())),
++                None => out.push_str("null"),
++            }
+         }
+         out.push('}');
+         self.row.clear();
+@@ -81,6 +89,14 @@ mod test {
+         );
+     }
+ 
++    #[test]
++    fn null_values_are_emitted_as_json_null() {
++        let mut f = JsonFormatter::default();
++        f.format_element("name", "a.txt", false);
++        f.format_null("width", true);
++        assert_eq!(f.row_ended().unwrap(), r#"{"name":"a.txt","width":null}"#);
++    }
++
+     #[test]
+     fn duplicate_column_names_are_suffixed() {
+         // Duplicate column names within one row must produce a *valid* JSON
+```
+
+**File**: `src/output/mod.rs` (modified, +12/-6)
+```diff
+@@ -16,6 +16,10 @@ pub trait ResultsFormatter {
+     fn row_started(&mut self) -> Option<String>;
+     fn format_element(&mut self, name: &str, record: &str, is_last: bool) -> Option<String>;
+     fn row_ended(&mut self) -> Option<String>;
++
++    fn format_null(&mut self, name: &str, is_last: bool) -> Option<String> {
++        self.format_element(name, "", is_last)
++    }
+     fn footer(&mut self) -> Option<String>;
+ 
+     fn row_separator(&self) -> Option<String> {
+@@ -53,12 +57,12 @@ impl ResultsWriter {
+     pub fn write_row(
+         &mut self,
+         writer: &mut dyn Write,
+-        values: Vec<(String, String)>,
++        values: Vec<(String, Option<String>)>,
+     ) -> std::io::Result<()> {
+         self.write_row_start(writer)?;
+         let len = values.len();
+         for (pos, (name, value)) in values.iter().enumerate() {
+-            self.write_row_item(writer, name, value, pos == len - 1)?;
++            self.write_row_item(writer, name, value.as_deref(), pos == len - 1)?;
+         }
+         self.write_row_end(writer)
+     }
+@@ -78,12 +82,14 @@ impl ResultsWriter {
+         &mut self,
+         writer: &mut dyn Write,
+         name: &str,
+-        value: &str,
++        value: Option<&str>,
+         is_last: bool,
+     ) -> std::io::Result<()> {
+-        self.formatter
+-            .format_element(name, value, is_last)
+-            .map_or(Ok(()), |value| write!(writer, "{}", value))
++        let formatted = match value {
++            Some(value) => self.formatter.format_element(name, value, is_last),
++            None => self.formatter.format_null(name, is_last),
++        };
++        formatted.map_or(Ok(()), |value| write!(writer, "{}", value))
+     }
+ 
+     fn write_row_end(&mut self, writer: &mut dyn Write) -> std::io::Result<()> {
+```
+
+**File**: `src/searcher.rs` (modified, +22/-18)
+```diff
+@@ -353,7 +353,7 @@ struct PendingRow {
+     root_path: PathBuf,
+     file_info: Option<FileInfo>,
+     follow_symlinks: bool,
+-    items: Vec<(String, String)>,
++    items: Vec<(String, Option<String>)>,
+     values: HashMap<String, Variant>,
+     deferred: Vec<usize>,
+     first_value: Option<Variant>,
+@@ -938,7 +938,7 @@ impl<'a> Searcher<'a> {
+                     })
+                     .collect();
+ 
+-                let mut grouped_results: TopN<Criteria<String>, (Vec<(String, String)>, Option<Variant>)> =
++                let mut grouped_results: TopN<Criteria<String>, (Vec<(String, Option<String>)>, Option<Variant>)> =
+                     if self.query.limit > 0 {
+                         TopN::new(self.query.limit.saturating_add(self.query.offset))
                      } else {
-                         self.drop_lexeme();
-                         let mut result = Expr::new();
-@@ -1226,12 +1237,7 @@ impl <'a> Parser<'a> {
-             Some(Lexeme::CurlyOpen) => {
-                 let result = {
-                     if let Some(Lexeme::Select) = self.next_lexeme() {
--                        self.lexer.push_state();
--                        let mut parser = Parser::nested(self.lexer);
--                        let query = parser.parse(self.debug)?;
--                        self.lexer.pop_state();
--                        self.pus
+@@ -967,12 +967,12 @@ impl<'a> Searcher<'a> {
+                         }
+                     }
+                     self.bind_aggregate_aliases(&aliases, &mut row, false)?;
+-                    let mut items: Vec<(String, String)> = Vec::new();
++                    let mut items: Vec<(String, Option<String>)> = Vec::new();
+                     let mut first_value = None;
+                     for (index, column_expr) in self.query.fields.iter().enumerate() {
+                         let value = self.get_column_expr_value(&mut row, column_expr)?;
+                         first_value = first_value.or_else(|| self.first_column_value(index, &value));
+-                        items.push((column_expr.column_name(), value.to_string()));
++                        items.push((column_expr.column_name(), Self::rendered(column_expr, &value)));
+                     }
+                     if self.root_depth_column
+                         && let Some((own_path, root_depth, member_index)) = &group_acc.representative
+@@ -983,7 +983,7 @@ impl<'a> Searcher<'a> {
+                     for (index, ordering_expr) in sorting_indices.iter().zip(self.query.ordering_fields.iter()) {
+                         let value = match index {
+                             Some(index) => row.values.get(&ordering_expr.cache_key()).cloned().unwrap_or_else(|| {
+-                                Variant::from_string(&items.get(*index).map(|item| item.1.clone()).unwrap_or_default())
++                                Variant::from_string(&items.get(*index).and_then(|item| item.1.clone()).unwrap_or_default())
+                             }),
+                             None => self.get_column_expr_value(&mut row, ordering_expr)?,
+                         };
+@@ -1016,7 +1016,7 @@ impl<'a> Searcher<'a> {
+                 drop(stdout);
+             } else {
+                 let mut buf = WritableBuffer::new();
+-                let mut items: Vec<(String, String)> = Vec::new();
++                let mut items: Vec<(String, Option<String>)> = Vec::new();
+ 
+                 let accumulators = std::mem::take(&mut self.accumulators);
+                 let empty_acc = function::GroupAccumulator::default();
+@@ -1042,7 +1042,7 @@ impl<'a> Searcher<'a> {
+                     for (index, column_expr) in self.query.fields.iter().enumerate() {
+                         let value = self.get_column_expr_value(&mut row, column_expr)?;
+                         first_value = first_value.or_else(|| self.first_column_value(index, &value));
+-                        items.push((column_expr.column_name(), value.to_string()));
++                        items.push((column_expr.column_name(), Self::rendered(column_expr, &value)));
+                     }
+                     if self.root_depth_column
+                         && let Some((own_path, root_depth, member_index)) = &ungrouped_acc.representative
+@@ -1184,13 +1184,17 @@ impl<'a> Searcher<'a> {
+         (own_path, self.root_depth_of(root_path), member_index)
+     }
+ 
+-    fn push_subquery_identity(items: &mut Vec<(String, String)>, own_path: &str, root_depth: usize, member_index: Option<usize>) {
+-        items.push((String::new(), Self::encode_identity_path(own_path)));
++    fn push_subquery_identity(items: &mut Vec<(String, Option<String>)>, own_path: &str, root_depth: usize, member_index: Option<usize>) {
++        items.push((String::new(), Some(Self::encode_identity_path(own_path))));
+         let depth = match member_index {
+             Some(index) => format!("{root_depth}@{index}"),
+             None => root_depth.to_string(),
+         };
+-        items.push((String::new(), depth));
++        items.push((String::new(), Some(depth)));
++    }
++
++    fn rendered(column: &Expr, value: &Variant) -> Option<String> {
++        (!Self::is_null_operand(column, value)).then(|| value.to_string())
+     }
+ 
+     /// The canonical root joined with the path beneath it as traversed, so a
+@@ -2287,7 +2291,7 @@ impl<'a> Searcher<'a> {
+         entry: &DirEntry,
+         pending: &PendingRow,
+         values: &mut HashMap<String, Variant>,
+-        items: &mut [(String, String)],
++        items: &mut [(String, Option<String>)],
+     ) -> Result<Option<Varian
+```
+
+---
+
+### Incident Patch 3: `4a135356` (2026-11-06)
+**Commit Message**: fix EXISTS with doubly parenthesized subquery
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -14,6 +14,7 @@
+ - Operators such as `IN` and `BETWEEN` work after a subquery in the `SELECT` list
+ - A correlated subquery in a grouped query may only read grouping columns of the outer row
+ - `INTO` inside a subquery is rejected with a clear message
++- `EXISTS` with a doubly parenthesized subquery evaluates the subquery instead of being always true
+ - `NOT IN` no longer accepts a row when the list or subquery contains a NULL member and nothing matches
+ - Numeric functions such as `ABS`, `GREATEST` and `HEX` read the byte count of `fsize` instead of its formatted text
+ 
+```
+
+**File**: `src/parser.rs` (modified, +17/-1)
+```diff
+@@ -921,11 +921,16 @@ impl <'a> Parser<'a> {
+                 )?))
+             }
+             Some(Lexeme::Operator(s)) if s.as_str() == "in" || s.as_str() == "exists" || s.as_str() == "notin" || s.as_str() == "notexists" => {
+-                let list = self.parse_list()?;
++                let mut list = self.parse_list()?;
+                 // Like SQL: IN requires a single-column subquery, while
+                 // EXISTS accepts any column list.
+                 if s.as_str() == "in" || s.as_str() == "notin" {
+                     Self::ensure_single_column_subquery(&list, "IN")?;
++                } else if let Some(args) = list.args.as_ref()
++                    && let [only] = args.as_slice()
++                    && only.subquery.is_some()
++                {
++                    list = only.clone();
+                 }
+                 let op = Op::from_with_not(&s, not)
+                     .ok_or_else(|| format!("Unknown operator: {}", s))?;
+@@ -3340,6 +3345,17 @@ mod tests {
+         }
+     }
+ 
++    #[test]
++    fn doubly_parenthesized_exists_subquery_is_unwrapped() {
++        let expr = parse_where("select name from /test where exists ((select name from /test2 where size > 1))");
++        assert_eq!(expr.op, Some(Op::Exists));
++        let right = expr.right.as_ref().unwrap();
++        assert!(right.args.is_none() && right.subquery.is_some(), "{right:?}");
++        let expr = parse_where("select name from /test where not exists ((select name from /test2))");
++        assert_eq!(expr.op, Some(Op::NotExists));
++        assert!(expr.right.as_ref().unwrap().subquery.is_some());
++    }
++
+     #[test]
+     fn implicit_limit_applies_to_constant_select() {
+         let query = "select 123 from /test";
 ```
 
 #### Recent Merged Pull Requests:
@@ -1643,45 +1777,32 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. improve and fix subqueries parsing
+## X. changelog for subquery parsing fixes
 
 **RULE**:
-When implementing operations in `src/lexer.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jhspetersson/fselect. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jhspetersson/fselect. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9bba3273`: improve and fix subqueries parsing. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5f214bd3`: changelog for subquery parsing fixes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/lexer.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        self.note_lexeme(&Some(Lexeme::Close));
-        self.note_lexeme(&lexeme);
-
-        lexeme
-    }
-
-    fn note_lexeme(&mut self, lexeme: &Option<Lexeme>) {
-            Some(Lexeme::RawString(s)) => !s.eq_ignore_ascii_case("as"),
-        self.state.after_as = matches!(lexeme, Some(Lexeme::RawString(s)) if s.eq_ignore_ascii_case("as"));
+- Column aliases are no longer accepted after `WHERE` and `HAVING` conditions
+- Unterminated or mismatched subquery parentheses are rejected instead of silently closed
+- Operators such as `IN` and `BETWEEN` work after a subquery in the `SELECT` list
+- A correlated subquery in a grouped query may only read grouping columns of the outer row
+- `INTO` inside a subquery is rejected with a clear message
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        // The nested parse consumed the subquery's closing parenthesis while
-        // this state was saved, so the restored depth still counts the
-        // opening one; the parser re-injects a synthetic Close that never
-        // passes through here.
-        self.state.paren_depth = self.state.paren_depth.saturating_sub(1);
-        self.sync_scopes();
-            Some(Lexeme::RawString(ref s)) => !s.eq_ignore_ascii_case("as"),
-        self.state.after_as = matches!(lexeme, Some(Lexeme::RawString(ref s)) if s.eq_ignore_ascii_case("as"));
-
-        lexeme
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9bba3273` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5f214bd3` are properly handled with clean fallback behavior.

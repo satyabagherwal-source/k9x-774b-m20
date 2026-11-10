@@ -8709,3 +8709,9 @@
 | `CYCLE-20261110-Y38Y` | `2026-11-10T01:41:37.138Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`3759605d...`) |
 | `CYCLE-20261110-Y5HI` | `2026-11-10T01:41:40.038Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`dc78c196...`) |
 | `CYCLE-20261110-4AWG` | `2026-11-10T01:46:26.992Z` | `restatedev/restate` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b6bbb39e...`) |
+| `CYCLE-20261110-JMXC` | `2026-11-10T01:58:22.416Z` | `jhspetersson/fselect` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f2bfad2d...`) |
+| `CYCLE-20261110-JPMX` | `2026-11-10T01:58:25.929Z` | `software-mansion/react-native-gesture-handler` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`6fccda01...`) |
+| `CYCLE-20261110-JV0Q` | `2026-11-10T01:58:32.906Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`3ecdfe00...`) |
+| `CYCLE-20261110-JV6Z` | `2026-11-10T01:58:33.131Z` | `openyurtio/openyurt` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4491deaf...`) |
+| `CYCLE-20261110-JXXO` | `2026-11-10T01:58:36.684Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4875724b...`) |
+| `CYCLE-20261110-JZ0D` | `2026-11-10T01:58:38.077Z` | `Open-Source-Legal/OpenContracts` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`14044445...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-10T01:46:26.862Z",
+  "last_updated": "2026-11-10T01:58:37.990Z",
   "total_verified_learnings": 1245,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -10207,8 +10207,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "a503d190",
-      "content_hash": "cdc50c6452279d8455c6ba482e2824d19227d1ce5fc1575a57db7444cb6a7b34",
+      "source_version": "e00b7fde",
+      "content_hash": "4875724b8dc32f12a4ad25700e9fac4071f534326a0da5a1cbb9e5d6b5ef760a",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -10300,6 +10300,11 @@
         {
           "number": null,
           "title": "deps): cite qsv PR numbers in the patch comments",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "deps): note the compact_bytes big-endian caveat for crates.io builds",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -10653,7 +10658,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-10T00:45:09.647Z",
+      "verified_at": "2026-11-10T01:58:36.570Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37238,8 +37243,8 @@
       "slug": "jhspetersson-fselect",
       "platform": "github",
       "source_url": "https://github.com/jhspetersson/fselect",
-      "source_version": "9bba3273",
-      "content_hash": "9a31a02f94899d09636190e4a301b0de52aebbc4927c61b84169076a3828da22",
+      "source_version": "fea3c1b1",
+      "content_hash": "f2bfad2dbea05e4376b54be15b984f6617e618e3d1c7bb97f44c46e9cae3d0bb",
       "dossier_path": "07_PROJECT_LEARNING/jhspetersson-fselect-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/jhspetersson-fselect-learnings.md",
       "promoted_rules": [
@@ -37269,6 +37274,11 @@
           "status": "WITHHELD_REJECT"
         },
         {
+          "number": null,
+          "title": "changelog for subquery parsing fixes",
+          "status": "WITHHELD_REJECT"
+        },
+        {
           "number": 3567,
           "title": "found regressions",
           "status": "PROMOTED_AND_VERIFIED"
@@ -37284,7 +37294,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T06:17:43.365Z",
+      "verified_at": "2026-11-10T01:58:22.301Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49644,11 +49654,16 @@
       "slug": "open-source-legal-opencontracts",
       "platform": "github",
       "source_url": "https://github.com/Open-Source-Legal/OpenContracts",
-      "source_version": "fab192a5",
-      "content_hash": "6db2667646451f2e6a918d1d164e74a98833136cd80787abf38fab2f6c376d33",
+      "source_version": "01dd8500",
+      "content_hash": "1404444574df573324d42d48c3f3091b7f4b7d2af00f40b9f111fb15e85617ed",
       "dossier_path": "07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "deps): bump react-window from 2.2.3 to 2.5.3 in /frontend (#2527)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2199,
           "title": "production chat handshake timeout and Apollo warnings (#2451)",
@@ -49677,7 +49692,7 @@
       "historical_learning_ids": [
         "learn-github-open-source-legal-opencontracts-mv0ds8j9"
       ],
-      "verified_at": "2026-11-04T19:09:00.809Z",
+      "verified_at": "2026-11-10T01:58:37.969Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -50118,11 +50133,16 @@
       "slug": "openyurtio-openyurt",
       "platform": "github",
       "source_url": "https://github.com/openyurtio/openyurt",
-      "source_version": "9a5a72ec",
-      "content_hash": "695f2c26ada4bfa993c2beedf04763e794e4f06a4dce66556be1cef13ed1f642",
+      "source_version": "bfaf2f37",
+      "content_hash": "4491deafb264fb0fe67524d1beb33e830430d17350c55137dbe6655a078bfecf",
       "dossier_path": "07_PROJECT_LEARNING/openyurtio-openyurt-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/openyurtio-openyurt-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "raven): 限制证书自动审批的申请者身份 (#2858)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1978,
           "title": "data race on ek.file and ek.count between sync and compress goroutines (#2631)",
@@ -50139,7 +50159,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T13:13:42.919Z",
+      "verified_at": "2026-11-10T01:58:33.005Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -52487,8 +52507,8 @@
       "slug": "projectdiscovery-nuclei",
       "platform": "github",
       "source_url": "https://github.com/projectdiscovery/nuclei",
-      "source_version": "0505091a",
-      "content_hash": "9971903d80d5d6e8f64b4be438ee37489752cef737823e84b1d9555392955f88",
+      "source_version": "3fdb5996",
+      "content_hash": "3ecdfe00e8740b5f6f37c04fccb2362203e8437324cb2e17a7491cb0f85b9d70",
       "dossier_path": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "promoted_rules": [
@@ -52530,6 +52550,11 @@
         {
           "number": null,
           "title": "Merge pull request #8082 from furious-05/fix/mssql-fastdialer",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #8079 from projectdiscovery/security-context/refresh",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -52668,7 +52693,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T16:33:36.039Z",
+      "verified_at": "2026-11-10T01:58:32.756Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58550,14 +58575,19 @@
       "slug": "software-mansion-react-native-gesture-handler",
       "platform": "github",
       "source_url": "https://github.com/software-mansion/react-native-gesture-handler",
-      "source_version": "474bdf2c",
-      "content_hash": "db9c051f9117114257b71e94e3f7bc4b553d71d6b55c7ce3b5907213603a194b",
+      "source_version": "ba126f38",
+      "content_hash": "6fccda01d8b60ef6bac6482ab9690b7b37721ff6e7d593d3fba40fda11cad76a",
       "dossier_path": "07_PROJECT_LEARNING/software-mansion-react-native-gesture-handler-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/software-mansion-react-native-gesture-handler-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Update compatibility table for release 3.5.0 (#4676)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "[iOS] Fix callback crashes from detached gesture recognizers (#4679)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -58596,7 +58626,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T04:10:29.022Z",
+      "verified_at": "2026-11-10T01:58:25.821Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

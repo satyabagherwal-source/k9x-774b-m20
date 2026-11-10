@@ -8718,3 +8718,9 @@ Every entry in this ledger must capture:
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `51e49a9a` | Multi-dimensional audit evidence | 2026-11-10T01:41:37.141Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `a7ce4ee0` | Multi-dimensional audit evidence | 2026-11-10T01:41:40.042Z |
 | `learn-github-restatedev-restate` | `https://github.com/restatedev/restate` | `4733a867` | Multi-dimensional audit evidence | 2026-11-10T01:46:26.995Z |
+| `learn-github-jhspetersson-fselect` | `https://github.com/jhspetersson/fselect` | `fea3c1b1` | Multi-dimensional audit evidence | 2026-11-10T01:58:22.420Z |
+| `learn-github-software-mansion-react-native-gesture-handler` | `https://github.com/software-mansion/react-native-gesture-handler` | `ba126f38` | Multi-dimensional audit evidence | 2026-11-10T01:58:25.932Z |
+| `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `3fdb5996` | Multi-dimensional audit evidence | 2026-11-10T01:58:32.909Z |
+| `learn-github-openyurtio-openyurt` | `https://github.com/openyurtio/openyurt` | `bfaf2f37` | Multi-dimensional audit evidence | 2026-11-10T01:58:33.134Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `e00b7fde` | Multi-dimensional audit evidence | 2026-11-10T01:58:36.688Z |
+| `learn-github-open-source-legal-opencontracts` | `https://github.com/Open-Source-Legal/OpenContracts` | `01dd8500` | Multi-dimensional audit evidence | 2026-11-10T01:58:38.080Z |

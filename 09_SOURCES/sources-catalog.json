@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "a503d190",
+    "sourceVersion": "e00b7fde",
     "license": "NOASSERTION",
-    "contentHash": "cdc50c6452279d8455c6ba482e2824d19227d1ce5fc1575a57db7444cb6a7b34",
-    "lastHarvestedAt": "2026-11-10T00:45:09.739Z",
+    "contentHash": "4875724b8dc32f12a4ad25700e9fac4071f534326a0da5a1cbb9e5d6b5ef760a",
+    "lastHarvestedAt": "2026-11-10T01:58:36.688Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -3453,10 +3453,10 @@
     "repository": "projectdiscovery/nuclei",
     "platform": "github",
     "sourceUrl": "https://github.com/projectdiscovery/nuclei",
-    "sourceVersion": "0505091a",
+    "sourceVersion": "3fdb5996",
     "license": "MIT",
-    "contentHash": "9971903d80d5d6e8f64b4be438ee37489752cef737823e84b1d9555392955f88",
-    "lastHarvestedAt": "2026-11-09T16:33:36.188Z",
+    "contentHash": "3ecdfe00e8740b5f6f37c04fccb2362203e8437324cb2e17a7491cb0f85b9d70",
+    "lastHarvestedAt": "2026-11-10T01:58:32.909Z",
     "learningId": "learn-github-projectdiscovery-nuclei"
   },
   "okteto-okteto": {
@@ -4563,10 +4563,10 @@
     "repository": "openyurtio/openyurt",
     "platform": "github",
     "sourceUrl": "https://github.com/openyurtio/openyurt",
-    "sourceVersion": "9a5a72ec",
+    "sourceVersion": "bfaf2f37",
     "license": "Apache-2.0",
-    "contentHash": "695f2c26ada4bfa993c2beedf04763e794e4f06a4dce66556be1cef13ed1f642",
-    "lastHarvestedAt": "2026-11-05T13:13:43.003Z",
+    "contentHash": "4491deafb264fb0fe67524d1beb33e830430d17350c55137dbe6655a078bfecf",
+    "lastHarvestedAt": "2026-11-10T01:58:33.134Z",
     "learningId": "learn-github-openyurtio-openyurt"
   },
   "slatedb-slatedb": {
@@ -4793,10 +4793,10 @@
     "repository": "software-mansion/react-native-gesture-handler",
     "platform": "github",
     "sourceUrl": "https://github.com/software-mansion/react-native-gesture-handler",
-    "sourceVersion": "474bdf2c",
+    "sourceVersion": "ba126f38",
     "license": "MIT",
-    "contentHash": "db9c051f9117114257b71e94e3f7bc4b553d71d6b55c7ce3b5907213603a194b",
-    "lastHarvestedAt": "2026-11-07T04:10:29.139Z",
+    "contentHash": "6fccda01d8b60ef6bac6482ab9690b7b37721ff6e7d593d3fba40fda11cad76a",
+    "lastHarvestedAt": "2026-11-10T01:58:25.932Z",
     "learningId": "learn-github-software-mansion-react-native-gesture-handler"
   },
   "aws-aws-cdk": {
@@ -6323,10 +6323,10 @@
     "repository": "Open-Source-Legal/OpenContracts",
     "platform": "github",
     "sourceUrl": "https://github.com/Open-Source-Legal/OpenContracts",
-    "sourceVersion": "fab192a5",
+    "sourceVersion": "01dd8500",
     "license": "MIT",
-    "contentHash": "6db2667646451f2e6a918d1d164e74a98833136cd80787abf38fab2f6c376d33",
-    "lastHarvestedAt": "2026-11-04T19:09:00.936Z",
+    "contentHash": "1404444574df573324d42d48c3f3091b7f4b7d2af00f40b9f111fb15e85617ed",
+    "lastHarvestedAt": "2026-11-10T01:58:38.080Z",
     "learningId": "learn-github-open-source-legal-opencontracts"
   },
   "fastapi-fastapi": {
@@ -7013,10 +7013,10 @@
     "repository": "jhspetersson/fselect",
     "platform": "github",
     "sourceUrl": "https://github.com/jhspetersson/fselect",
-    "sourceVersion": "9bba3273",
+    "sourceVersion": "fea3c1b1",
     "license": "Apache-2.0",
-    "contentHash": "9a31a02f94899d09636190e4a301b0de52aebbc4927c61b84169076a3828da22",
-    "lastHarvestedAt": "2026-11-07T06:17:43.481Z",
+    "contentHash": "f2bfad2dbea05e4376b54be15b984f6617e618e3d1c7bb97f44c46e9cae3d0bb",
+    "lastHarvestedAt": "2026-11-10T01:58:22.420Z",
     "learningId": "learn-github-jhspetersson-fselect"
   },
   "mikepenz-aboutlibraries": {

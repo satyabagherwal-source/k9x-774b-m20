@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/openyurtio-openyurt-learnings.md`  
 > **Source**: github ([https://github.com/openyurtio/openyurt](https://github.com/openyurtio/openyurt))  
-> **Source Version**: `9a5a72ec`  
+> **Source Version**: `bfaf2f37`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T13:13:42.410Z  
+> **Timestamp**: 2026-11-10T01:58:31.340Z  
 > **Learning ID**: `learn-github-openyurtio-openyurt`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/openyurtio-openyurt-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/openyurtio/openyurt](https://github.com/openyurtio/openyurt))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T13:13:42.404Z  
+> **Harvest Timestamp**: 2026-11-10T01:58:31.334Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: OpenYurt - Extending your native Kubernetes to edge(project under CNCF)
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 2008 stars
+- **Stars / Engagement**: 2009 stars
 
 ---
 
@@ -1282,11 +1282,14 @@ func GetMatchingTolerations(taints []v1.Taint, tolerations []v1.Toleration) (boo
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2846** (2026-11-05): **fix(yurthub): update service env in init containers in serviceenvupdater filter**
-  *Symptoms*: #### What type of PR is this? /kind bug  #### What this PR does / why we need it:  The `serviceenvupdater` filter rewrites `KUBERNETES_SERVICE_HOST` and `KUBERNETES_SERVICE_PORT` so that pods on edge nodes reach kube-apiserver through YurtHub. It only handled `pod.Spec.Containers`, so init containers kept the original kube-apiserver address. After a pod restart on a disconnected edge node, those init containers cannot reach kube-apiserver and the pod does not start.  This PR applies the same env rewrite to `pod.Spec.InitContainers`. The per-container loop moves into a `mutateContainersEnv` helper that runs for both lists. A new test case covers a pod with an init container.  #### Which issue(s) this PR fixes: Fixes #2845 #### Special notes for your reviewer:  The new test case fails on master (init container env is unchanged) and passes with this change:  ``` go test ./pkg/yurthub/filter/serviceenvupdater/ -v ```  #### Does this PR introduce a user-facing change? ```release-note YurtHub serviceenvupdater filter now also updates KUBERNETES_SERVICE_HOST and KUBERNETES_SERVICE_PORT in init containers. ```  #### other Note 
+- **Issue #2859** (2026-11-09): **Fix CSR approver unit-test failures**
+  *Symptoms*: The `unit-tests` job failed because coordinator CSRs were not recognized, administrator-submitted node serving CSRs could be approved, and v1beta1 conversion dropped requester identity.  - **Approval rules:** Recognize coordinator CSRs only when their certificate template and requesting service account match. Require node serving CSR usernames to match the certificate’s node identity. - **API conversion:** Preserve requester usernames when converting between v1 and v1beta1 CSRs. - **Regression coverage:** Test valid coordinator and node requests, unauthorized requesters, and both API versions.  ```go if csr.Spec.Username != x509cr.Subject.CommonName {     return false } ```
 
-- **Issue #2845** (2026-11-05): **[BUG] serviceenvupdater filter does not update KUBERNETES_SERVICE_HOST/PORT in init containers**
-  *Symptoms*: **What happened**:  The YurtHub `serviceenvupdater` filter rewrites explicitly set `KUBERNETES_SERVICE_HOST` and `KUBERNETES_SERVICE_PORT` env vars so that pods on edge nodes reach kube-apiserver through YurtHub (see #2158). `mutatePodEnv` only iterates over `pod.Spec.Containers`. Env vars set on `pod.Spec.InitContainers` keep their original values.  Admission webhooks that inject the public kube-apiserver address usually set it on init containers as well. Those init containers then talk to kube-apiserver directly instead of through YurtHub. When an edge node is disconnected from the cloud and the pod restarts (for example after a node reboot), the init containers run again, cannot reach kube-apiserver, and the pod never starts.  **What you expected to happen**:  The filter updates `KUBERNETES_SERVICE_HOST` and `KUBERNETES_SERVICE_PORT` in init containers the same way it does for regular containers.  **How to reproduce it (as minimally and precisely as possible)**:  1. Enable the `serviceenvupdater` filter (enabled by default for kubelet pod requests). 2. Create a pod on an edge node with an init container that sets `KUBERNETES_SERVICE_HOST=some-host` and `KUBERNETES_SERVICE_PORT=1234`. 3. Get the pod through YurtHub: the regular container env is rewritten to the YurtHub address, the init container env still shows `some-host:1234`.  Unit level: call `Filter` on a pod whose `Spec.InitContainers[0].Env` contains both variables; the values are unchanged.  **Anything else we need
+- **Issue #2858** (2026-11-09): **fix(raven): 限制证书自动审批的申请者身份**
+  *Symptoms*: 在通用审批路径前保护 Raven 证书 CN，防止未授权申请者或跨模板匹配获得批准，并保留 v1beta1 申请者信息。补充双版本安全回归测试。  <!--  Thanks for sending a pull request!  Here are some tips for you: https://github.com/openyurtio/openyurt/blob/master/CONTRIBUTING.md  -->  #### What type of PR is this? > /kind enhancement   --> ```release-note None ```  
+  **Post-Mortem & Fix Analysis**:
+  > ## [![Quality Gate Passed](https://sonarsource.github.io/sonarcloud-github-static-resources/v2/checks/QualityGateBadge/qg-passed-20px.png 'Quality Gate Passed')](https://sonarcloud.io/dashboard?id=openyurtio_openyurt&pullRequest=2858) **Quality Gate passed**   Issues   ![](https://sonarsource.github.io/sonarcloud-github-static-resources/v2/common/passed-16px.png '') [0 New issues](https://sonarcloud.io/project/issues?id=openyurtio_openyurt&pullRequest=2858&issueStatuses=OPEN,CONFIRMED&sinceLeakPeriod=true)   ![](https://sonarsource.github.io/sonarcloud-github-static-resources/v2/common/accepted-16px.png '') [0 Accepted issues](https://sonarcloud.io/project/issues?id=openyurtio_openyurt&pullRequest=2858&issueStatuses=ACCEPTED)  Measures   ![](https://sonarsource.github.io/sonarcloud-github-static-resources/v2/common/passed-16px.png '') [0 Security Hotspots](https://sonarcloud.io/project/security_hotspots?id=openyurtio_openyurt&pullRequest=2858&issueStatuses=OPEN,CONFIRMED&sinceLeakPerio
+  > ## [Codecov](https://app.codecov.io/gh/openyurtio/openyurt/pull/2858?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=openyurtio) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 46.67%. Comparing base ([`9a5a72e`](https://app.codecov.io/gh/openyurtio/openyurt/commit/9a5a72ec69bea7d5893699a8f315aff772b34a8d?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=openyurtio)) to head ([`7f4430d`](https://app.codecov.io/gh/openyurtio/openyurt/commit/7f4430dad89cb84fceb4181416dbecdad9a0a5c7?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=openyurtio)). :warning: Report is 3 commits behind head on master.  <details><summary>Additional details and impacted files</summary>    ```diff @@            Coverage Diff          
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1303,128 +1306,353 @@ func GetMatchingTolerations(taints []v1.Taint, tolerations []v1.Toleration) (boo
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5901c7dc` (2026-11-05)
-**Commit Message**: build(deps): bump ossf/scorecard-action from 2.4.4 to 2.5.0 (#2839)
+### Incident Patch 1: `bfaf2f37` (2026-11-09)
+**Commit Message**: fix(raven): 限制证书自动审批的申请者身份 (#2858)
 
-Bumps [ossf/scorecard-action](https://github.com/ossf/scorecard-action) from 2.4.4 to 2.5.0.
-- [Release notes](https://github.com/ossf/scorecard-action/releases)
-- [Changelog](https://github.com/ossf/scorecard-action/blob/main/RELEASE.md)
-- [Commits](https://github.com/ossf/scorecard-action/compare/2d1146689b8cda280b9bc96326124645441f03bc...fa7117db83c52d787ae5a89f350999701505d78e)
+在通用审批路径前保护 Raven 证书 CN，防止未授权申请者或跨模板匹配获得批准，并保留 v1beta1 申请者信息。补充双版本安全回归测试。
 
----
-updated-dependencies:
-- dependency-name: ossf/scorecard-action
-  dependency-version: 2.5.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
+Co-authored-by: bingchang.tbc <[REDACTED_EMAIL]>
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `.github/workflows/sonarcloud.yaml` (modified, +1/-1)
+**File**: `pkg/yurtmanager/controller/csrapprover/csr_approver_controller.go` (modified, +57/-2)
 ```diff
-@@ -34,7 +34,7 @@ jobs:
-           persist-credentials: false
+@@ -45,6 +45,11 @@ import (
+ 	"github.com/openyurtio/openyurt/pkg/yurttunnel/constants"
+ )
  
-       - name: "Run analysis"
--        uses: ossf/scorecard-action@2d1146689b8cda280b9bc96326124645441f03bc # v2.4.4
-+        uses: ossf/scorecard-action@fa7117db83c52d787ae5a89f350999701505d78e # v2.5.0
-         with:
-           results_file: results.sarif
-           results_format: sarif
++const (
++	ravenAgentUsername        = "system:serviceaccount:kube-system:raven-agent-account"
++	ravenServerCertCommonName = "system:node:tunnel-proxy-server"
++)
++
+ var (
+ 	csrV1Resource = certificatesv1.SchemeGroupVersion.WithResource("certificatesigningrequests")
+ 
+@@ -60,6 +65,21 @@ var (
+ 		string(certificatesv1.UsageKeyEncipherment),
+ 		string(certificatesv1.UsageServerAuth))
+ 
++	ravenRecognizers = map[string]csrRecognizer{
++		constants.YurtTunnelProxyClientCSRCN: {
++			recognize:  isYurtTunnelProxyClientCert,
++			successMsg: "Auto approving tunnel-server proxy client certificate",
++		},
++		constants.YurtTunnelAgentCSRCN: {
++			recognize:  isYurtTunnelAgentCert,
++			successMsg: "Auto approving tunnel-agent client certificate",
++		},
++		ravenServerCertCommonName: {
++			recognize:  isYurtTLSServerCert,
++			successMsg: "Auto approving openyurt tls server certificate",
++		},
++	}
++
+ 	recognizers = []csrRecognizer{
+ 		{
+ 			recognize:  isYurtHubNodeCert,
+@@ -221,6 +241,21 @@ func isYurtCSR(csr *certificatesv1.CertificateSigningRequest) (bool, string) {
+ 		return false, successMsg
+ 	}
+ 
++	// Reserve Raven identities before generic recognizers to prevent approval through another template.
++	if r, protected := ravenRecognizers[x509cr.Subject.CommonName]; protected {
++		if csr.Spec.Username != ravenAgentUsername {
++			klog.InfoS("Leaving Raven CSR pending: unauthorized requester",
++				"csr", csr.Name, "commonName", x509cr.Subject.CommonName, "username", csr.Spec.Username)
++			return false, ""
++		}
++		if !r.recognize(csr, x509cr) {
++			klog.InfoS("Leaving Raven CSR pending: certificate template mismatch",
++				"csr", csr.Name, "commonName", x509cr.Subject.CommonName, "username", csr.Spec.Username)
++			return false, ""
++		}
++		return true, r.successMsg
++	}
++
+ 	for _, r := range recognizers {
+ 		if r.recognize(csr, x509cr) {
+ 			successMsg = r.successMsg
+@@ -252,12 +287,22 @@ func v1Csr2v1beta1Csr(csr *certificatesv1.CertificateSigningRequest) *certificat
+ 			Request:    csr.Spec.Request,
+ 			SignerName: &csr.Spec.SignerName,
+ 			Usages:     make([]certificatesv1beta1.KeyUsage, 0),
++			Username:   csr.Spec.Username,
++			UID:        csr.Spec.UID,
++			Groups:     csr.Spec.Groups,
+ 		},
+ 		Status: certificatesv1beta1.CertificateSigningRequestStatus{
+ 			Conditions: make([]certificatesv1beta1.CertificateSigningRequestCondition, 0),
+ 		},
+ 	}
+ 
++	if csr.Spec.Extra != nil {
++		v1beata1Csr.Spec.Extra = make(map[string]certificatesv1beta1.ExtraValue, len(csr.Spec.Extra))
++		for key, value := range csr.Spec.Extra {
++			v1beata1Csr.Spec.Extra[key] = certificatesv1beta1.ExtraValue(value)
++		}
++	}
++
+ 	for _, usage := range csr.Spec.Usages {
+ 		v1beata1Csr.Spec.Usages = append(v1beata1Csr.Spec.Usages, certificatesv1beta1.KeyUsage(usage))
+ 	}
+@@ -283,14 +328,24 @@ func v1beta1Csr2v1Csr(csr *certificatesv1beta1.CertificateSigningRequest) *certi
+ 	v1Csr := &certificatesv1.CertificateSigningRequest{
+ 		ObjectMeta: csr.ObjectMeta,
+ 		Spec: certificatesv1.CertificateSigningRequestSpec{
+-			Request: csr.Spec.Request,
+-			Usages:  make([]certificatesv1.KeyUsage, 0),
++			Request:  csr.Spec.Request,
++			Usages:   make([]certificatesv1.KeyUsage, 0),
++			Username: csr.Spec.Username,
++			UID:      csr.Spec.UID,
++			Groups:   csr.Spec.Groups,
+ 		},
+ 		Status: certificatesv1.CertificateSigningRequestStatus{
+ 			Conditions: make([]certificatesv1.CertificateSigningRequestCondition, 0),
+ 		},
+ 	}
+ 
++	if csr.Spec.Extra != nil {
++		v1Csr.Spec.Extra = make(map[string]certificatesv1.ExtraValue, len(csr.Spec.Extra))
++		for key, value := range csr.Spec.Extra {
++			v1Csr.Spec.Extra[key] = certificatesv1.ExtraValue(value)
++		}
++	}
++
+ 	if csr.Spec.SignerName != nil {
+ 		v1Csr.Spec.SignerName = *csr.Spec.SignerName
+ 	}
 ```
 
----
-
-### Incident Patch 2: `a38d2aa9` (2026-11-05)
-**Commit Message**: build(deps): bump github/codeql-action from 4.38.2 to 4.39.1 (#2842)
-
-Bumps [github/codeql-action](https://github.com/github/codeql-action) from 4.38.2 to 4.39.1.
-- [Release notes](https://github.com/github/codeql-action/releases)
-- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/github/codeql-action/compare/v4.38.2...v4.39.1)
-
----
-updated-dependencies:
-- dependency-name: github/codeql-action
-  dependency-version: 4.39.1
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `.github/workflows/sonarcloud.yaml` (modified, +1/-1)
+**File**: `pkg/yurtmanager/controller/csrapprover/csr_approver_controller_test.go` (modified, +466/-2)
 ```diff
-@@ -48,6 +48,6 @@ jobs:
-           retention-days: 5
+@@ -24,6 +24,7 @@ import (
+ 	"crypto/x509"
+ 	"crypto/x509/pkix"
+ 	"encoding/pem"
++	"fmt"
+ 	"net"
+ 	"reflect"
+ 	"testing"
+@@ -41,6 +42,7 @@ import (
+ 	"k8s.io/klog/v2"
+ 	"sigs.k8s.io/controller-runtime/pkg/client"
+ 	fakeclient "sigs.k8s.io/controller-runtime/pkg/client/fake"
++	"sigs.k8s.io/controller-runtime/pkg/client/interceptor"
+ 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
  
-       - name: "Upload to code-scanning"
--        uses: github/codeql-action/upload-sarif@v4.38.2
-+        uses: github/codeql-action/upload-sarif@v4.39.1
-         with:
-           sarif_file: results.sarif
-```
-
-**File**: `.github/workflows/trivy-scan.yml` (modified, +1/-1)
-```diff
-@@ -44,7 +44,7 @@ jobs:
-           output: 'trivy-results.sarif'
- 
-       - name: Upload Trivy scan results to GitHub Security
--        uses: github/codeql-action/upload-sarif@v4.38.2
-+        uses: github/codeql-action/upload-sarif@v4.39.1
-         if: always()
-         with:
-           sarif_file: 'trivy-results.sarif'
-```
-
----
-
-### Incident Patch 3: `9a5a72ec` (2026-11-05)
-**Commit Message**: docs: fix unmarshaler typos (#2658)
-
-This PR fixes a typo in the traffic reuse proposal and in the bootstraptoken API where unmarshal was spelled with an extra 'l'.
-
-Signed-off-by: [REDACTED_EMAIL]
-
-Signed-off-by: [REDACTED_EMAIL]
-
-**File**: `docs/proposals/20240529-node-level-traffic-reuse-capability.md` (modified, +1/-1)
-```diff
-@@ -63,7 +63,7 @@ type Interface interface {
- 	Watch(ctx context.Context, key string, opts ListOptions) (watch.Interface, error)
- 
- 
--	// GetList unmarshalls objects found at key into a *List api object (an object
-+	// GetList unmarshals objects found at key into a *List api object (an object
- 	// that satisfies runtime.IsList definition).
- 	// If 'opts.Recursive' is false, 'key' is used as an exact match. If `opts.Recursive'
- 	// is true, 'key' is used as a prefix.
-```
-
-**File**: `pkg/util/kubernetes/kubeadm/app/apis/bootstraptoken/v1/utils.go` (modified, +1/-1)
-```diff
-@@ -35,7 +35,7 @@ func (bts BootstrapTokenString) MarshalJSON() ([]byte, error) {
- 	return []byte(fmt.Sprintf(`"%s"`, bts.String())), nil
+ 	"github.com/openyurtio/openyurt/pkg/yurthub/certificate/token"
+@@ -210,13 +212,14 @@ func TestReconcile(t *testing.T) {
+ 				},
+ 			},
+ 		},
+-		"yurt-tunnel-server related proxy client certificate request": {
++		"raven proxy user certificate request": {
+ 			obj: &certificatesv1.CertificateSigningRequest{
+ 				ObjectMeta: metav1.ObjectMeta{
+ 					Name:      "tunnel-server-proxy-client-csr",
+ 					Namespace: "default",
+ 				},
+ 				Spec: certificatesv1.CertificateSigningRequestSpec{
++					Username:   "system:serviceaccount:kube-system:raven-agent-account",
+ 					SignerName: certificatesv1.KubeAPIServerClientSignerName,
+ 					Usages: []certificatesv1.KeyUsage{
+ 						certificatesv1.UsageDigitalSignature,
+@@ -235,6 +238,7 @@ func TestReconcile(t *testing.T) {
+ 					Namespace: "default",
+ 				},
+ 				Spec: certificatesv1.CertificateSigningRequestSpec{
++					Username:   "system:serviceaccount:kube-system:raven-agent-account",
+ 					SignerName: certificatesv1.KubeAPIServerClientSignerName,
+ 					Usages: []certificatesv1.KeyUsage{
+ 						certificatesv1.UsageDigitalSignature,
+@@ -256,13 +260,14 @@ func TestReconcile(t *testing.T) {
+ 				},
+ 			},
+ 		},
+-		"yurt-tunnel-agent related certificate request": {
++		"raven proxy client certificate request": {
+ 			obj: &certificatesv1.CertificateSigningRequest{
+ 				ObjectMeta: metav1.ObjectMeta{
+ 					Name:      "tunnel-agent-client-csr",
+ 					Namespace: "default",
+ 				},
+ 				Spec: certificatesv1.CertificateSigningRequestSpec{
++					Username:   "system:serviceaccount:kube-system:raven-agent-account",
+ 					SignerName: certificatesv1.KubeAPIServerClientSignerName,
+ 					Usages: []certificatesv1.KeyUsage{
+ 						certificatesv1.UsageDigitalSignature,
+@@ -281,6 +286,7 @@ func TestReconcile(t *testing.T) {
+ 					Namespace: "default",
+ 				},
+ 				Spec: certificatesv1.CertificateSigningRequestSpec{
++					Username:   "system:serviceaccount:kube-system:raven-agent-account",
+ 					SignerName: certificatesv1.KubeAPIServerClientSignerName,
+ 					Usages: []certificatesv1.KeyUsage{
+ 						certificatesv1.UsageDigitalSignature,
+@@ -573,6 +579,289 @@ func TestReconcile(t *testing.T) {
+ 	}
  }
  
--// UnmarshalJSON implements the json.Unmarshaller interface.
-+// UnmarshalJSON implements the json.Unmarshaler interface.
- func (bts *BootstrapTokenString) UnmarshalJSON(b []byte) error {
- 	// If the token is represented as "", just return quickly without an error
- 	if len(b) == 0 {
++func TestReconcileRavenCSRRequester(t *testing.T) {
++	requesters := []struct {
++		name         string
++		username     string
++		wantApproved bool
++	}{
++		{"raven serviceaccount", "system:serviceaccount:kube-system:raven-agent-account", true},
++		{"wrong namespace", "system:serviceaccount:default:raven-agent-account", false},
++		{"wrong serviceaccount", "system:serviceaccount:kube-system:other-agent", false},
++		{"username suffix", "system:serviceaccount:kube-system:raven-agent-account-extra", false},
++		{"missing identity", "", false},
++		{"certificate subject is not requester", "tunnel-agent-client", false},
++		{"legacy tunnel agent", "system:serviceaccount:kube-system:yurt-tunnel-agent", false},
++		{"legacy tunnel server", "system:serviceaccount:kube-system:yurt-tunnel-server", false},
++		{"admin has no exemption", "kubernetes-admin", false},
++	}
++	for _, commonName := range []string{
++		"tunnel-agent-client", "tunnel-proxy-client", "system:node:tunnel-proxy-server",
++	} {
++		t.Run(commonName, func(t *testing.T) {
++			csr := newRavenCSR(t, commonName)
++			for _, requester := range requesters {
++				t.Run(requester.name, func(t *testing.T) {
++					request := csr.DeepCopy()
++					request.Spec.Username = requester.username
++					// Groups and other requester metadata must not substitute for username.
++					request.Spec.UID = "test-serviceaccount-uid"
++					request.Spec.Groups = []string{"system:serviceaccounts:kube-system", "system:authenticated"}
++					request.Spec.Extra = map[string]certificatesv1.ExtraValue{
++						"authentication.kubernetes.io/pod-name": {"raven-agent-test"},
++					}
++					for _, v1Supported := range []bool{true, false} {
++						t.Run(fmt.Sprintf("v1Supported=%t", v1Supported), func(t *testing.T) {
++							assertCSRReconcile(t, request, v1Supported, requester.wantApproved)
++						})
++					}
++				})
++			}
++		})
++	}
++}
++
++func TestRavenCSRTemplates(t *testing.T) {
++	testcases := []struct {
++		name         string
++		mutate       func(*certificatesv1.CertificateSigningRequest, *x509.CertificateRequest)
++		wantApproved bool
++	}{
++		{"valid template", func(_ *certificatesv1.CertificateSigningRequest, _ *x509.CertificateRequest) {}, true},
++		{"DNS SAN only", func(_ *certificatesv1.CertificateSigningRequest, req *x509.CertificateRequest) {
++			req.IPAddresses = nil
++		}, true},
++		{"IP SAN only", func(_ *certificatesv1.CertificateSigningRequest, req *x509.CertificateRequest) {
++			req.DNSNames = nil
++		},
+```
+
+---
+
+### Incident Patch 2: `e1c26885` (2026-11-09)
+**Commit Message**: build(deps): bump github.com/go-errors/errors from 1.4.2 to 1.5.1 (#2832)
+
+Bumps [github.com/go-errors/errors](https://github.com/go-errors/errors) from 1.4.2 to 1.5.1.
+- [Release notes](https://github.com/go-errors/errors/releases)
+- [Commits](https://github.com/go-errors/errors/compare/v1.4.2...v1.5.1)
+
+---
+updated-dependencies:
+- dependency-name: github.com/go-errors/errors
+  dependency-version: 1.5.1
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `go.mod` (modified, +1/-1)
+```diff
+@@ -59,7 +59,7 @@ require (
+ require (
+ 	github.com/MakeNowJust/heredoc v1.0.0 // indirect
+ 	github.com/exponent-io/jsonpath v0.0.0-20210407135951-1de76d718b3f // indirect
+-	github.com/go-errors/errors v1.4.2
++	github.com/go-errors/errors v1.5.1
+ 	github.com/google/btree v1.1.3 // indirect
+ 	github.com/gregjones/httpcache v0.0.0-20190611155906-901d90724c79 // indirect
+ 	github.com/liggitt/tabwriter v0.0.0-20181228230101-89fcab3d43de // indirect
+```
+
+**File**: `go.sum` (modified, +2/-2)
+```diff
+@@ -755,8 +755,8 @@ github.com/gkampitakis/go-diff v1.3.2 h1:Qyn0J9XJSDTgnsgHRdz9Zp24RaJeKMUHg2+PDZZ
+ github.com/gkampitakis/go-diff v1.3.2/go.mod h1:LLgOrpqleQe26cte8s36HTWcTmMEur6OPYerdAAS9tk=
+ github.com/gkampitakis/go-snaps v0.5.15 h1:amyJrvM1D33cPHwVrjo9jQxX8g/7E2wYdZ+01KS3zGE=
+ github.com/gkampitakis/go-snaps v0.5.15/go.mod h1:HNpx/9GoKisdhw9AFOBT1N7DBs9DiHo/hGheFGBZ+mc=
+-github.com/go-errors/errors v1.4.2 h1:J6MZopCL4uSllY1OfXM374weqZFFItUbrImctkmUxIA=
+-github.com/go-errors/errors v1.4.2/go.mod h1:sIVyrIiJhuEF+Pj9Ebtd6P/rEYROXFi3BopGUQ5a5Og=
++github.com/go-errors/errors v1.5.1 h1:ZwEMSLRCapFLflTpT7NKaAc7ukJ8ZPEjzlxt8rPN8bk=
++github.com/go-errors/errors v1.5.1/go.mod h1:sIVyrIiJhuEF+Pj9Ebtd6P/rEYROXFi3BopGUQ5a5Og=
+ github.com/go-fonts/dejavu v0.1.0/go.mod h1:4Wt4I4OU2Nq9asgDCteaAaWZOV24E+0/Pwo0gppep4g=
+ github.com/go-fonts/latin-modern v0.2.0/go.mod h1:rQVLdDMK+mK1xscDwsqM5J8U2jrRa3T0ecnM9pNujks=
+ github.com/go-fonts/liberation v0.1.1/go.mod h1:K6qoJYypsmfVjWg8KOVDQhLc8UDgIK2HYqyqAO9z7GY=
+```
+
+---
+
+### Incident Patch 3: `75c6bdfd` (2026-11-09)
+**Commit Message**: build(deps): bump github.com/spf13/pflag from 1.0.6 to 1.0.10 (#2833)
+
+Bumps [github.com/spf13/pflag](https://github.com/spf13/pflag) from 1.0.6 to 1.0.10.
+- [Release notes](https://github.com/spf13/pflag/releases)
+- [Commits](https://github.com/spf13/pflag/compare/v1.0.6...v1.0.10)
+
+---
+updated-dependencies:
+- dependency-name: github.com/spf13/pflag
+  dependency-version: 1.0.10
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `go.mod` (modified, +1/-1)
+```diff
+@@ -27,7 +27,7 @@ require (
+ 	github.com/projectcalico/api v0.0.0-20240708202104-e3f70b269c2c
+ 	github.com/prometheus/client_golang v1.22.0
+ 	github.com/spf13/cobra v1.9.1
+-	github.com/spf13/pflag v1.0.6
++	github.com/spf13/pflag v1.0.10
+ 	github.com/stretchr/testify v1.11.1
+ 	github.com/vishvananda/netlink v1.3.1
+ 	golang.org/x/net v0.56.0
+```
+
+**File**: `go.sum` (modified, +2/-1)
+```diff
+@@ -1172,8 +1172,9 @@ github.com/spf13/cobra v1.9.1 h1:CXSaggrXdbHK9CF+8ywj8Amf7PBRmPCOJugH954Nnlo=
+ github.com/spf13/cobra v1.9.1/go.mod h1:nDyEzZ8ogv936Cinf6g1RU9MRY64Ir93oCnqb9wxYW0=
+ github.com/spf13/pflag v0.0.0-20170130214245-9ff6c6923cff/go.mod h1:DYY7MBk1bdzusC3SYhjObp+wFpr4gzcvqqNjLnInEg4=
+ github.com/spf13/pflag v1.0.5/go.mod h1:McXfInJRrz4CZXVZOBLb0bTZqETkiAhM9Iw0y3An2Bg=
+-github.com/spf13/pflag v1.0.6 h1:jFzHGLGAlb3ruxLB8MhbI6A8+AQX/2eW4qeyNZXNp2o=
+ github.com/spf13/pflag v1.0.6/go.mod h1:McXfInJRrz4CZXVZOBLb0bTZqETkiAhM9Iw0y3An2Bg=
++github.com/spf13/pflag v1.0.10 h1:4EBh2KAYBwaONj6b2Ye1GiHfwjqyROoF4RwYO+vPwFk=
++github.com/spf13/pflag v1.0.10/go.mod h1:McXfInJRrz4CZXVZOBLb0bTZqETkiAhM9Iw0y3An2Bg=
+ github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
+ github.com/stretchr/objx v0.1.1/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
+ github.com/stretchr/objx v0.4.0/go.mod h1:YvHI0jy2hoMjB+UWwv71VJQ9isScKT/TqJzVSSt89Yw=
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2859** (closed): Fix CSR approver unit-test failures (@Copilot)
+- **PR #2858** (2026-11-09): fix(raven): 限制证书自动审批的申请者身份 (@zyjhtangtang)
 - **PR #2846** (2026-11-05): fix(yurthub): update service env in init containers in serviceenvupdater filter (@RaphaelFakhri)
 - **PR #2844** (2026-11-05): feat(claude): add openyurt-deploy skill for cluster deployment (@Jonny-ee)
 - **PR #2842** (2026-11-05): build(deps): bump github/codeql-action from 4.38.2 to 4.39.1 (@dependabot[bot])
 - **PR #2840** (closed): build(deps): bump github/codeql-action from 4.38.2 to 4.39.0 (@dependabot[bot])
-- **PR #2839** (2026-11-05): build(deps): bump ossf/scorecard-action from 2.4.4 to 2.5.0 (@dependabot[bot])
-- **PR #2836** (closed): build(deps): bump github/codeql-action from 4.38.2 to 4.38.3 (@dependabot[bot])
 
 ---
 
@@ -1444,28 +1672,58 @@ Signed-off-by: [REDACTED_EMAIL]
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump ossf/scorecard-action from 2.4.4 to 2.5.0 (#2839)
+## X. raven): 限制证书自动审批的申请者身份 (#2858)
 
 **RULE**:
-When implementing operations in `.github/workflows/sonarcloud.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in openyurtio/openyurt. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/yurtmanager/controller/csrapprover/csr_approver_controller.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in openyurtio/openyurt. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5901c7dc`: build(deps): bump ossf/scorecard-action from 2.4.4 to 2.5.0 (#2839). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bfaf2f37`: raven): 限制证书自动审批的申请者身份 (#2858). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/sonarcloud.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/yurtmanager/controller/csrapprover/csr_approver_controller.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        uses: ossf/scorecard-action@fa7117db83c52d787ae5a89f350999701505d78e # v2.5.0
+const (
+	ravenAgentUsername        = "system:serviceaccount:kube-system:raven-agent-account"
+	ravenServerCertCommonName = "system:node:tunnel-proxy-server"
+)
+
+	ravenRecognizers = map[string]csrRecognizer{
+		constants.YurtTunnelProxyClientCSRCN: {
+			recognize:  isYurtTunnelProxyClientCert,
+			successMsg: "Auto approving tunnel-server proxy client certificate",
+		},
+		constants.YurtTunnelAgentCSRCN: {
+			recognize:  isYurtTunnelAgentCert,
+			successMsg: "Auto approving tunnel-agent client certificate",
+		},
+		ravenServerCertCommonName: {
+			recognize:  isYurtTLSServerCert,
+			successMsg: "Auto approving openyurt tls server certificate",
+		},
+	}
+
+	// Reserve Raven identities before generic recognizers to prevent approval through another template.
+	if r, protected := ravenRecognizers[x509cr.Subject.CommonName]; protected {
+		if csr.Spec.Username != ravenAgentUsername {
+			klog.InfoS("Leaving Raven CSR pending: unauthorized requester",
+				"csr", csr.Name, "commonName", x509cr.Subject.CommonName, "username", csr.Spec.Username)
+			return false, ""
+		}
+		if !r.recognize(csr, x509cr) {
+			klog.InfoS("Leaving Raven CSR pending: certificate template mismatch",
+				"csr", csr.Name, "commonNa
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-        uses: ossf/scorecard-action@2d1146689b8cda280b9bc96326124645441f03bc # v2.4.4
+			Request: csr.Spec.Request,
+			Usages:  make([]certificatesv1.KeyUsage, 0),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5901c7dc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bfaf2f37` are properly handled with clean fallback behavior.

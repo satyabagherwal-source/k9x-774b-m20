@@ -1,52 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-10T01:46:27.001Z",
-  "total_cycles_completed": 8674,
-  "total_learnings_persisted": 8674,
-  "total_rules_promoted": 8516,
+  "last_updated": "2026-11-10T01:58:38.085Z",
+  "total_cycles_completed": 8680,
+  "total_learnings_persisted": 8680,
+  "total_rules_promoted": 8522,
   "history": [
-    {
-      "timestamp": "2026-11-09T04:49:29.597Z",
-      "repository": "lilylilith/QI_2.1_AnyAngle",
-      "learningId": "learn-huggingface-lilylilith-qi_2-1_anyangle",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T04:49:31.716Z",
-      "repository": "1jehuang/jcode",
-      "learningId": "learn-github-1jehuang-jcode",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T04:49:38.566Z",
-      "repository": "electron/electron",
-      "learningId": "learn-github-electron-electron",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T04:59:35.480Z",
-      "repository": "heymrun/heym",
-      "learningId": "learn-github-heymrun-heym",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T04:59:36.851Z",
-      "repository": "BAAI/bge-large-en-v1.5",
-      "learningId": "learn-huggingface-baai-bge-large-en-v1-5",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T05:07:03.543Z",
-      "repository": "zai-org/GLM-5.3",
-      "learningId": "learn-huggingface-zai-org-glm-5-3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T05:07:09.014Z",
       "repository": "iliyami/MacSai",
@@ -1402,6 +1360,48 @@
       "timestamp": "2026-11-10T01:46:27.001Z",
       "repository": "restatedev/restate",
       "learningId": "learn-github-restatedev-restate",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-10T01:58:22.425Z",
+      "repository": "jhspetersson/fselect",
+      "learningId": "learn-github-jhspetersson-fselect",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-10T01:58:25.937Z",
+      "repository": "software-mansion/react-native-gesture-handler",
+      "learningId": "learn-github-software-mansion-react-native-gesture-handler",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-10T01:58:32.915Z",
+      "repository": "projectdiscovery/nuclei",
+      "learningId": "learn-github-projectdiscovery-nuclei",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-10T01:58:33.139Z",
+      "repository": "openyurtio/openyurt",
+      "learningId": "learn-github-openyurtio-openyurt",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-10T01:58:36.693Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-10T01:58:38.085Z",
+      "repository": "Open-Source-Legal/OpenContracts",
+      "learningId": "learn-github-open-source-legal-opencontracts",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

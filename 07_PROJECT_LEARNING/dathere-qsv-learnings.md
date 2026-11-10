@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `a503d190`  
+> **Source Version**: `e00b7fde`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-10T00:45:08.387Z  
+> **Timestamp**: 2026-11-10T01:58:35.090Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-10T00:45:08.084Z  
+> **Harvest Timestamp**: 2026-11-10T01:58:35.084Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2203,64 +2203,24 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a503d190` (2026-11-10)
-**Commit Message**: chore(deps): cite qsv PR numbers in the patch comments
+### Incident Patch 1: `e00b7fde` (2026-11-10)
+**Commit Message**: chore(deps): note the compact_bytes big-endian caveat for crates.io builds
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `Cargo.toml` (modified, +7/-6)
+**File**: `Cargo.toml` (modified, +3/-1)
 ```diff
-@@ -537,18 +537,19 @@ serial_test = { version = "4.0", features = ["file_locks"] }
- 
- [patch.crates-io]
- # polars-readstat-rs depends on these directly; redirect them onto the same git polars
--# revision qsv pins, otherwise a second, incompatible polars tree resolves from crates.io.
-+# revision qsv pins, otherwise a second, incompatible polars tree resolves from crates.io. (#5021)
- polars-core  = { git = "https://github.com/pola-rs/polars", rev = "a598c51f216fca7406330be6e88961eb18c71af3" }
- polars-arrow = { git = "https://github.com/pola-rs/polars", rev = "a598c51f216fca7406330be6e88961eb18c71af3" }
- # Polars (since py-2.0.0) calls HashTable::prefetch_{get,insert}, which exist only in its
- # hashbrown fork (https://github.com/rust-lang/hashbrown/pull/727). Polars' own workspace
- # [patch] doesn't propagate to dependents, so mirror it here; keep the rev in sync with the
- # [patch.crates-io] section of the pinned polars rev's Cargo.toml. Drop once #727 is released.
-+# (added in qsv #4760)
- hashbrown = { git = "https://github.com/pola-rs/hashbrown", rev = "d76a6f81abd8f388676aff15068236a8d21c7e1a" }
- # Luau 0.745 (luau0-src 0.23.0) needs an mlua-sys newer than the released 0.13.0, which caps the
- # bytecode version Luau 0.744+ emits and requires luau0-src 0.22. mlua main supports it
- # (mlua-rs/mlua@a0ad453, "Bump Luau to 0.745"); its mlua-sys and mlua_derive come from the same
--# checkout. Drop once an mlua release contains a0ad453.
-+# checkout. Drop once an mlua release contains a0ad453. (#5026)
- mlua = { git = "https://github.com/mlua-rs/mlua", rev = "a0ad4535fc72ba89967a931c5be57b162b5f0f3f" }
- # use our tweaked fork of csv crate
- # the csv crate underpins a lot of qsv's functionality, so every perf tweak helps
-@@ -575,7 +576,7 @@ whatlang = { git = "https://github.com/jqnatividad/whatlang-rs", branch = "bump-
- 
- # plotly.rs 0.15.0 release-prep branch (plotly/plotly.rs#442: full plotly.js 3.7 trace coverage)
- # until 0.15.0 is on crates.io. This rev also moves plotly_static's build-dep to
--# webdriver-downloader 0.18 (zip 9; every zip 8.x is yanked).
-+# webdriver-downloader 0.18 (zip 9; every zip 8.x is yanked). (#5027)
- plotly = { git = "https://github.com/dathere/plotly", rev = "d43be3786c32ab2790a6c0e927ee39d2bb99704c" }
- 
- # use our patched fork until our PR is merged with bumped deps and quick-xml RUSTSEC fixes
-@@ -584,8 +585,8 @@ spreadsheet-ods = { git = "https://github.com/jqnatividad/spreadsheet-ods", bran
- 
- # compact_bytes 0.2.1 + Ord/From<&[u8]>/Borrow<[u8]>, serde, edition 2024, and the
+@@ -587,7 +587,9 @@ spreadsheet-ods = { git = "https://github.com/jqnatividad/spreadsheet-ods", bran
  # CompactBytesSlice::into_boxed_slice fix (upstream ParkMyCar/compact_bytes#11), and the
--# big-endian heap-tag fix (ParkMyCar/compact_bytes#12).
--# Pulled in by qsv-stats' ByteKey (0.57+). Same version as upstream, so crates.io
-+# big-endian heap-tag fix (ParkMyCar/compact_bytes#12; qsv #5015).
-+# Pulled in by qsv-stats' ByteKey (0.57+; qsv #5011). Same version as upstream, so crates.io
- # builds (`cargo install qsv`) use upstream 0.2.1; the hot paths are identical.
+ # big-endian heap-tag fix (ParkMyCar/compact_bytes#12; qsv #5015).
+ # Pulled in by qsv-stats' ByteKey (0.57+; qsv #5011). Same version as upstream, so crates.io
+-# builds (`cargo install qsv`) use upstream 0.2.1; the hot paths are identical.
++# builds (`cargo install qsv`) use upstream 0.2.1; the hot paths are identical. CAVEAT: on
++# big-endian targets (s390x, ppc64) upstream 0.2.1 still has the heap-tag bug (#12): a heap value
++# whose cap/len low byte is >= 0x80 is misread as inline (out-of-bounds read). Build from git there.
  compact_bytes = { git = "https://github.com/jqnatividad/compact_bytes", branch = "main" }
  
-@@ -612,7 +613,7 @@ compact_bytes = { git = "https://github.com/jqnatividad/compact_bytes", branch =
- #     (e.g. py-1.19.0:52ea381 to indicate that we are Python Polars 1.19.0,
- #      and the commit hash 52ea381)
- # ================================
--# QSV_POLARS_REV=py-2.1.0:a598c51
-+# QSV_POLARS_REV=py-2.1.0:a598c51 (#5021)
- # polars = { git = "https://github.com/pola-rs/polars", tag = "py-2.1.0", optional = true }
- polars = { git = "https://github.com/pola-rs/polars", rev = "a598c51f216fca7406330be6e88961eb18c71af3", optional = true }
- 
+ # Polars has a much higher release tempo for its Python bindings compared
 ```
 
 #### Recent Merged Pull Requests:
@@ -2289,13 +2249,13 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): cite qsv PR numbers in the patch comments
+## X. deps): note the compact_bytes big-endian caveat for crates.io builds
 
 **RULE**:
 When implementing operations in `Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a503d190`: deps): cite qsv PR numbers in the patch comments. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e00b7fde`: deps): note the compact_bytes big-endian caveat for crates.io builds. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.toml`.
@@ -2303,25 +2263,16 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# revision qsv pins, otherwise a second, incompatible polars tree resolves from crates.io. (#5021)
-# (added in qsv #4760)
-# checkout. Drop once an mlua release contains a0ad453. (#5026)
-# webdriver-downloader 0.18 (zip 9; every zip 8.x is yanked). (#5027)
-# big-endian heap-tag fix (ParkMyCar/compact_bytes#12; qsv #5015).
-# Pulled in by qsv-stats' ByteKey (0.57+; qsv #5011). Same version as upstream, so crates.io
-# QSV_POLARS_REV=py-2.1.0:a598c51 (#5021)
+# builds (`cargo install qsv`) use upstream 0.2.1; the hot paths are identical. CAVEAT: on
+# big-endian targets (s390x, ppc64) upstream 0.2.1 still has the heap-tag bug (#12): a heap value
+# whose cap/len low byte is >= 0x80 is misread as inline (out-of-bounds read). Build from git there.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-# revision qsv pins, otherwise a second, incompatible polars tree resolves from crates.io.
-# checkout. Drop once an mlua release contains a0ad453.
-# webdriver-downloader 0.18 (zip 9; every zip 8.x is yanked).
-# big-endian heap-tag fix (ParkMyCar/compact_bytes#12).
-# Pulled in by qsv-stats' ByteKey (0.57+). Same version as upstream, so crates.io
-# QSV_POLARS_REV=py-2.1.0:a598c51
+# builds (`cargo install qsv`) use upstream 0.2.1; the hot paths are identical.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a503d190` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e00b7fde` are properly handled with clean fallback behavior.
