@@ -24,6 +24,7 @@
 
 import fs from 'fs';
 import path from 'path';
+import os from 'os';
 import { fileURLToPath } from 'url';
 import { performance } from 'perf_hooks';
 
@@ -38,7 +39,9 @@ import {
   getRetrievalPaths,
   computeDossierDirHash,
   computeSourceFilesHash,
-  buildSearchIndex
+  buildSearchIndex,
+  normalizeCachedDocuments,
+  TEMPLATE_HEADING_REGEX
 } from './retrieval-engine.mjs';
 
 import { recallConstructionDomainGuidelines } from './construction-intelligence.mjs';
@@ -430,6 +433,191 @@ try {
     assert(guidelines.H !== undefined, 'Domain H guidelines present');
   });
 
+  // ---------------------------------------------------------------------------
+  // TEST CASE 16: PAC-004 Phase 1B.2.1 Fix A — indexingStatus Preservation
+  // ---------------------------------------------------------------------------
+  runTestCase('Fix A: indexingStatus propagation across extraction, parsing, and retrieval', () => {
+    const hexstrikeFile = '07_PROJECT_LEARNING/0x4m4-hexstrike-ai-learnings.md';
+
+    // 16.1 extractDossierChunksFromFile: truncated dossier reports PARTIAL on array and chunks
+    const chunksPartial = extractDossierChunksFromFile(hexstrikeFile, { maxChunksPerFile: 5 });
+    assert(chunksPartial.indexingStatus === 'PARTIAL', 'Truncated extraction reports PARTIAL on chunk array');
+    assert(chunksPartial.length === 5, 'Truncated extraction limits chunks to requested max');
+    assert(chunksPartial.every(c => c.indexingStatus === 'PARTIAL'), 'Every chunk in truncated extraction inherits PARTIAL status');
+    assert(chunksPartial.every(c => typeof c.rawHeading === 'string' && c.rawHeading.length > 0), 'Every chunk has rawHeading preserved');
+
+    // 16.2 extractDossierChunksFromFile: fully indexed dossier reports COMPLETE
+    const chunksComplete = extractDossierChunksFromFile(hexstrikeFile, { maxChunksPerFile: 60 });
+    assert(chunksComplete.indexingStatus === 'COMPLETE', 'Non-truncated extraction reports COMPLETE on chunk array');
+    assert(chunksComplete.every(c => c.indexingStatus === 'COMPLETE'), 'Every chunk in complete extraction inherits COMPLETE status');
+
+    // 16.3 parseDossierChunks: preserves PARTIAL if any file is truncated
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'indexing-status-test-'));
+    try {
+      const learningDir = path.join(tmpDir, '07_PROJECT_LEARNING');
+      fs.mkdirSync(learningDir, { recursive: true });
+
+      // Create a small multi-section dossier that exceeds maxChunksPerFile: 2
+      const multiSection = [
+        '## 1. Context & Overview',
+        'Section 1 content with adequate body text for chunk extraction.',
+        '### Section 2',
+        'Section 2 content with adequate body text for chunk extraction.',
+        '### Section 3',
+        'Section 3 content with adequate body text for chunk extraction.'
+      ].join('\n\n');
+      fs.writeFileSync(path.join(learningDir, 'test-truncated-learnings.md'), multiSection);
+
+      const parsedDocs = parseDossierChunks({ brainRoot: tmpDir, learningDir }, { maxChunksPerFile: 2 });
+      assert(parsedDocs.length === 2, 'parseDossierChunks correctly bounded by maxChunksPerFile');
+      assert(parsedDocs.every(d => d.indexingStatus === 'PARTIAL'), 'All documents from truncated dossier preserve PARTIAL indexingStatus');
+
+      // 16.4 Verify missing status falls back to UNKNOWN, never silently converting to COMPLETE
+      const mockDocNoStatus = { category: 'CUSTOM_UNKNOWN', occurrenceCount: 1 };
+      const fallbackStatus = mockDocNoStatus.indexingStatus || 'UNKNOWN';
+      assert(fallbackStatus === 'UNKNOWN', 'Missing indexingStatus falls back to UNKNOWN, never COMPLETE');
+    } finally {
+      fs.rmSync(tmpDir, { recursive: true, force: true });
+    }
+
+    // 16.5 searchBrain and retrieveKnowledge preserve indexingStatus
+    const res = searchBrain('ModernVisualEngine');
+    assert(res.results.length > 0, 'searchBrain finds ModernVisualEngine');
+    assert(res.results[0].indexingStatus === 'COMPLETE', 'searchBrain top result preserves genuine COMPLETE indexingStatus');
+
+    const rk = retrieveKnowledge('ModernVisualEngine', { maxTokens: 1000 });
+    assert(rk.items.length > 0, 'retrieveKnowledge finds ModernVisualEngine');
+    assert(rk.items[0].indexingStatus === 'COMPLETE', 'retrieveKnowledge item preserves genuine COMPLETE indexingStatus');
+
+    // 16.6 Legacy cached document normalization via production normalizeCachedDocuments
+    const rawLegacyDocs = [
+      { id: 'chunk-1', category: 'HARVESTED_DOSSIER_CHUNK', title: 'chunk-1', occurrenceCount: 1 },
+      { id: 'chunk-2', category: 'HARVESTED_DOSSIER_CHUNK', title: 'chunk-2', occurrenceCount: 1492 },
+      { id: 'chunk-3', category: 'HARVESTED_DOSSIER_CHUNK', title: 'chunk-3', indexingStatus: 'COMPLETE', occurrenceCount: 1 },
+      { id: 'chunk-4', category: 'HARVESTED_DOSSIER_CHUNK', title: 'chunk-4', indexingStatus: 'PARTIAL', occurrenceCount: 1 },
+      { id: 'chunk-5', category: 'HARVESTED_DOSSIER_CHUNK', title: 'chunk-5', indexingStatus: 'UNKNOWN', occurrenceCount: 1 },
+      { id: 'rule-1', category: 'CORE_OPERATING_RULE', title: 'Rule 1' }
+    ];
+
+    const docs = normalizeCachedDocuments(rawLegacyDocs);
+
+    // 1. Legacy HARVESTED_DOSSIER_CHUNK without indexingStatus becomes UNKNOWN
+    const d1 = docs.find(d => d.id === 'chunk-1');
+    assert(d1 && d1.indexingStatus === 'UNKNOWN', 'Legacy HARVESTED_DOSSIER_CHUNK without indexingStatus normalized to UNKNOWN');
+
+    // 2. occurrenceCount = 1 does NOT produce COMPLETE
+    assert(d1 && d1.indexingStatus !== 'COMPLETE', 'occurrenceCount = 1 does NOT produce COMPLETE on legacy cache');
+
+    // 3. occurrenceCount = 1492 does NOT produce PARTIAL
+    const d2 = docs.find(d => d.id === 'chunk-2');
+    assert(d2 && d2.indexingStatus === 'UNKNOWN', 'occurrenceCount = 1492 does NOT produce PARTIAL on legacy cache (normalized to UNKNOWN)');
+
+    // 4. Existing genuine COMPLETE remains COMPLETE
+    const d3 = docs.find(d => d.id === 'chunk-3');
+    assert(d3 && d3.indexingStatus === 'COMPLETE', 'Existing genuine COMPLETE remains COMPLETE in cache normalization');
+
+    // 5. Existing genuine PARTIAL remains PARTIAL
+    const d4 = docs.find(d => d.id === 'chunk-4');
+    assert(d4 && d4.indexingStatus === 'PARTIAL', 'Existing genuine PARTIAL remains PARTIAL in cache normalization');
+
+    // 6. Existing genuine UNKNOWN remains UNKNOWN
+    const d5 = docs.find(d => d.id === 'chunk-5');
+    assert(d5 && d5.indexingStatus === 'UNKNOWN', 'Existing genuine UNKNOWN remains UNKNOWN in cache normalization');
+
+    // 7. Canonical rules without indexingStatus receive COMPLETE
+    const r1 = docs.find(d => d.id === 'rule-1');
+    assert(r1 && r1.indexingStatus === 'COMPLETE', 'Canonical rule without indexingStatus receives COMPLETE');
+  });
+
+  // ---------------------------------------------------------------------------
+  // TEST CASE 17: PAC-004 Phase 1B.2.1 Fix B — Template Title Detection & Source Independence
+  // ---------------------------------------------------------------------------
+  runTestCase('Fix B: Template title detection across repo slugs and source independence integrity', () => {
+    // 17.1 Template heading detection regardless of repository slug prefix
+    const testCases = [
+      { heading: '2. Multi-Dimensional 8-Axis Investigation & Real Code Patches', slug: 'repo-alpha', expectedTemplate: true },
+      { heading: '1. Context & Architectural Overview', slug: 'my-service', expectedTemplate: true },
+      { heading: 'D1: Architecture & Structural Boundaries', slug: 'cool-app', expectedTemplate: true },
+      { heading: 'D8: Forensic Bug Fixes & Real Production Code Patches', slug: 'backend-api', expectedTemplate: true },
+      { heading: '3. Empirical Evidence & Compliance Certification', slug: 'org-tool', expectedTemplate: true },
+      { heading: '4. Promotion & Integration Status', slug: 'infra-agent', expectedTemplate: true },
+      { heading: 'Core Architecture', slug: 'minimal-repo', expectedTemplate: true },
+      { heading: 'Incident Patches', slug: 'patch-repo', expectedTemplate: true },
+      { heading: 'Core Architecture Module: parser.ts', slug: 'repo-alpha', expectedTemplate: false },
+      { heading: 'Incident Patch 3: `d2d9befc` (2025-09-09)', slug: 'hexstrike-ai', expectedTemplate: false },
+      { heading: 'Custom Algorithm Implementation', slug: 'math-lib', expectedTemplate: false }
+    ];
+
+    for (const tc of testCases) {
+      const isTemplate = TEMPLATE_HEADING_REGEX.test(tc.heading);
+      assert(isTemplate === tc.expectedTemplate, `Template heading detection accurate for: "${tc.heading}" (Expected: ${tc.expectedTemplate}, Got: ${isTemplate})`);
+    }
+
+    // 17.2 Multi-repo boilerplate occurring 2-10 times vs repeated substantive claims
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'source-indep-test-'));
+    try {
+      const learningDir = path.join(tmpDir, '07_PROJECT_LEARNING');
+      fs.mkdirSync(learningDir, { recursive: true });
+
+      const boilerBody = 'Standard boilerplate 8-axis investigation framework text for testing.';
+      const sharedSubstantiveBody = 'Unique algorithm implementation for distributed hash ring routing and partition rebalancing.';
+      const singleSourceBody = 'Single source forensic incident patch fixing memory leak in websocket stream.';
+
+      // 3 repos containing template boilerplate and shared non-boilerplate
+      fs.writeFileSync(path.join(learningDir, 'repo-alpha-learnings.md'),
+        '## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches\n\n' + boilerBody +
+        '\n\n### Core Architecture Module: router.ts\n\n' + sharedSubstantiveBody +
+        '\n\n### Incident Patch 1: `a1b2c3d4`\n\n' + singleSourceBody);
+
+      fs.writeFileSync(path.join(learningDir, 'repo-beta-learnings.md'),
+        '## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches\n\n' + boilerBody +
+        '\n\n### Core Architecture Module: router.ts\n\n' + sharedSubstantiveBody);
+
+      fs.writeFileSync(path.join(learningDir, 'repo-gamma-learnings.md'),
+        '## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches\n\n' + boilerBody +
+        '\n\n### Core Architecture Module: router.ts\n\n' + sharedSubstantiveBody);
+
+      const docs = parseDossierChunks({ brainRoot: tmpDir, learningDir });
+      assert(docs.length === 3, 'parseDossierChunks yields 3 distinct content chunks');
+
+      // 17.3 Repeated template boilerplate occurring 3 times (within 2-10 range)
+      const boilerDoc = docs.find(d => d.sourceIndependence === 'BOILERPLATE');
+      assert(boilerDoc !== undefined, 'Boilerplate document identified');
+      assert(boilerDoc.occurrenceCount === 3, 'Boilerplate occurs in 3 repos');
+      assert(boilerDoc.isBoilerplate === true, 'Boilerplate flagged as isBoilerplate: true');
+      assert(boilerDoc.isIndependentCorroboration === false, 'Boilerplate isIndependentCorroboration is strictly false');
+      assert(boilerDoc.independentCorroborationCount === 0, 'Boilerplate independentCorroborationCount is 0');
+      assert(boilerDoc.sourceIndependence === 'BOILERPLATE', 'sourceIndependence marked BOILERPLATE');
+
+      // 17.4 Repeated substantive non-boilerplate occurring 3 times (within 2-10 range)
+      // Epistemic integrity: count > 1 does NOT imply independent corroboration!
+      const sharedDoc = docs.find(d => d.sourceIndependence === 'UNKNOWN');
+      assert(sharedDoc !== undefined, 'Shared substantive document identified with UNKNOWN independence');
+      assert(sharedDoc.occurrenceCount === 3, 'Shared document occurs in 3 repos');
+      assert(sharedDoc.isBoilerplate === false, 'Shared substantive document has isBoilerplate: false');
+      assert(sharedDoc.isIndependentCorroboration === false, 'Shared document isIndependentCorroboration is strictly false (no count inference)');
+      assert(sharedDoc.independentCorroborationCount === 0, 'Shared document independentCorroborationCount is 0');
+      assert(sharedDoc.sourceIndependence === 'UNKNOWN', 'sourceIndependence marked UNKNOWN');
+
+      // 17.5 Single-source substantive finding occurring 1 time
+      const singleDoc = docs.find(d => d.sourceIndependence === 'SINGLE_SOURCE');
+      assert(singleDoc !== undefined, 'Single-source document identified');
+      assert(singleDoc.occurrenceCount === 1, 'Single-source document occurs in 1 repo');
+      assert(singleDoc.isBoilerplate === false, 'Single-source document has isBoilerplate: false');
+      assert(singleDoc.isIndependentCorroboration === false, 'Single-source document isIndependentCorroboration is false');
+      assert(singleDoc.sourceIndependence === 'SINGLE_SOURCE', 'sourceIndependence marked SINGLE_SOURCE');
+
+      // 17.6 Backward compatibility checks
+      for (const d of docs) {
+        assert(typeof d.occurrenceCount === 'number', 'doc has numeric occurrenceCount');
+        assert(Array.isArray(d.sourceOccurrences) && d.sourceOccurrences.length === d.occurrenceCount, 'doc has matching sourceOccurrences array');
+        assert(Array.isArray(d.corroborationSources), 'doc has corroborationSources array');
+      }
+    } finally {
+      fs.rmSync(tmpDir, { recursive: true, force: true });
+    }
+  });
+
 } catch (topErr) {
   console.error('Fatal test runner failure:', topErr);
 }
@@ -453,7 +641,7 @@ console.log(`Test Cases: ${passedTestCases}/${totalTestCases} Passed (${totalTes
 console.log(`Assertions: ${passedAssertions}/${totalAssertions} Passed (${failedAssertions} Failed)`);
 
 if (passedTestCases === totalTestCases && failedAssertions === 0) {
-  console.log('🎉 ALL 15 RIGOROUS ADVERSARIAL TEST CASES AND ALL ASSERTIONS PASSED PERFECTLY!\n');
+  console.log('🎉 ALL 17 RIGOROUS ADVERSARIAL TEST CASES AND ALL ASSERTIONS PASSED PERFECTLY!\n');
   process.exit(0);
 } else {
   console.error('❌ SOME TESTS FAILED.\n');

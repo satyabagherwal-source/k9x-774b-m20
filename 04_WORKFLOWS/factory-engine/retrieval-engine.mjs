@@ -59,6 +59,9 @@ const STOPWORDS = new Set([
   'when', 'where', 'which', 'while', 'who', 'whom', 'why', 'will', 'with', 'won', 'would', 'you', 'your'
 ]);
 
+// Generic dossier template headings that repeat across project dossiers
+export const TEMPLATE_HEADING_REGEX = /^(##?\s*\d+\.\s*(Context|Multi-Dimensional|Empirical|Promotion|Forensic|Candidate|Net-New|8-Axis)|(###?\s*)?D\d+:|(###?\s*)?Incident Patches?$|(###?\s*)?Core Architecture$|\d+\.\s*(Context|Multi-Dimensional|Empirical|Promotion|Forensic|Candidate|Net-New|8-Axis)|Multi-Dimensional 8-Axis Investigation)/i;
+
 // In-Memory Index Cache
 let _inMemoryIndex = null;
 let _inMemoryHash = null;
@@ -135,7 +138,7 @@ export function computeSourceFilesHash(customRoot = null, forceFresh = false) {
       for (const f of skills) {
         hash.update(fs.statSync(path.join(p.skillsDir, f)).mtimeMs.toString());
       }
-    } catch (e) {}
+    } catch (e) { }
   }
   return hash.digest('hex');
 }
@@ -360,7 +363,7 @@ function recoverItemsFromRawJson(raw) {
     try {
       const parsed = JSON.parse(objStr);
       items[key] = parsed;
-    } catch (e) {}
+    } catch (e) { }
   }
 
   // 2. Fallback only if regex found 0 items
@@ -376,7 +379,7 @@ function recoverItemsFromRawJson(raw) {
           ambiguities: duplicateKeysInConflict
         };
       }
-    } catch (e) {}
+    } catch (e) { }
   }
 
   return {
@@ -408,7 +411,7 @@ export function parseKnowledgeIndex(customPathsOrRoot = null) {
         const recovery = recoverItemsFromRawJson(raw);
         items = recovery.items || {};
       }
-    } catch (err) {}
+    } catch (err) { }
   }
 
   // Ensure all dossiers in 07_PROJECT_LEARNING are covered even if index had unmerged conflicts
@@ -443,7 +446,7 @@ export function parseKnowledgeIndex(customPathsOrRoot = null) {
           existingSlugs.add(f);
         }
       }
-    } catch (e) {}
+    } catch (e) { }
   }
 
   const selected = Object.values(items);
@@ -696,7 +699,12 @@ export function extractDossierChunksFromFile(filePath, options = {}) {
     }
   }
 
-  chunks.indexingStatus = isTruncated ? 'PARTIAL' : 'COMPLETE';
+  const fileIndexingStatus = isTruncated ? 'PARTIAL' : 'COMPLETE';
+  for (const chunk of chunks) {
+    chunk.indexingStatus = fileIndexingStatus;
+    chunk.rawHeading = chunk.title;
+  }
+  chunks.indexingStatus = fileIndexingStatus;
   return chunks;
 }
 
@@ -750,6 +758,9 @@ export function parseDossierChunks(customPathsOrRoot = null, options = {}) {
           existing.corroborationSources.push(f);
         }
         existing.occurrenceCount = existing.sourceOccurrences.length;
+        if (c.indexingStatus === 'PARTIAL' || fileChunks.indexingStatus === 'PARTIAL') {
+          existing.indexingStatus = 'PARTIAL';
+        }
         continue;
       }
 
@@ -761,6 +772,8 @@ export function parseDossierChunks(customPathsOrRoot = null, options = {}) {
         id: chunkId,
         slug,
         title,
+        headingTitle: c.title,
+        rawHeading: c.title,
         category: 'HARVESTED_DOSSIER_CHUNK',
         sourceTier: 'FORENSIC_DOSSIER',
         epistemicState: 'EXTRACTED',
@@ -777,6 +790,8 @@ export function parseDossierChunks(customPathsOrRoot = null, options = {}) {
         isBoilerplate: false,
         isIndependentCorroboration: false,
         independentCorroborationCount: 0,
+        sourceIndependence: 'SINGLE_SOURCE',
+        indexingStatus: c.indexingStatus || fileChunks.indexingStatus || 'UNKNOWN',
         tokens: tokenize(`${slug} ${c.title} ${cleanBody}`)
       };
 
@@ -785,27 +800,34 @@ export function parseDossierChunks(customPathsOrRoot = null, options = {}) {
     }
   }
 
-  // Evaluate Occurrence vs Independent Corroboration
+  // Evaluate Occurrence vs Independent Corroboration & Template Boilerplate
   for (const doc of docs) {
     const count = doc.occurrenceCount || doc.sourceOccurrences.length;
     doc.occurrenceCount = count;
 
     // Detect generic template boilerplate vs substantive technical claim
-    const isTemplateTitle = /^(##?\s*\d+\.\s*(Context|Multi-Dimensional|Empirical|Promotion|Forensic)|###?\s*D\d+:|###?\s*Incident Patch|###?\s*Core Architecture)/i.test(doc.title);
+    // Inspect actual heading rather than slug-prefixed display title
+    const headingToCheck = doc.rawHeading || doc.headingTitle || (doc.title ? doc.title.replace(/^[^—]+—\s*/, '').trim() : '');
+    const isTemplateHeading = TEMPLATE_HEADING_REGEX.test(headingToCheck) || TEMPLATE_HEADING_REGEX.test(doc.title);
     const isRepetitiveOccurrences = count > 10;
 
-    if (isTemplateTitle || isRepetitiveOccurrences) {
+    if (isTemplateHeading || isRepetitiveOccurrences) {
       doc.isBoilerplate = true;
       doc.isIndependentCorroboration = false;
       doc.independentCorroborationCount = 0;
+      doc.sourceIndependence = 'BOILERPLATE';
     } else if (count > 1) {
+      // Do not infer source independence from occurrence count alone
+      // Represent as UNKNOWN independence rather than claiming independent corroboration
       doc.isBoilerplate = false;
-      doc.isIndependentCorroboration = true;
-      doc.independentCorroborationCount = count;
+      doc.isIndependentCorroboration = false;
+      doc.independentCorroborationCount = 0;
+      doc.sourceIndependence = 'UNKNOWN';
     } else {
       doc.isBoilerplate = false;
       doc.isIndependentCorroboration = false;
       doc.independentCorroborationCount = 0;
+      doc.sourceIndependence = 'SINGLE_SOURCE';
     }
   }
 
@@ -956,20 +978,20 @@ function scheduleCachePersistence(indexPackage, p, cacheKey, options = {}) {
         await fs.promises.rename(tmpFile, p.cacheIndexFile);
       } catch (renameErr) {
         if (fs.existsSync(p.cacheIndexFile)) {
-          try { fs.unlinkSync(p.cacheIndexFile); } catch (uErr) {}
+          try { fs.unlinkSync(p.cacheIndexFile); } catch (uErr) { }
         }
         try {
           await fs.promises.rename(tmpFile, p.cacheIndexFile);
         } catch (r2Err) {
           try {
             await fs.promises.copyFile(tmpFile, p.cacheIndexFile);
-            try { await fs.promises.unlink(tmpFile); } catch (u2Err) {}
+            try { await fs.promises.unlink(tmpFile); } catch (u2Err) { }
           } catch (cErr) {
             await new Promise(res => setTimeout(res, 50));
             try {
               await fs.promises.copyFile(tmpFile, p.cacheIndexFile);
-              try { await fs.promises.unlink(tmpFile); } catch (u3Err) {}
-            } catch (c2Err) {}
+              try { await fs.promises.unlink(tmpFile); } catch (u3Err) { }
+            } catch (c2Err) { }
           }
         }
       }
@@ -1003,7 +1025,7 @@ function scheduleCachePersistence(indexPackage, p, cacheKey, options = {}) {
     } catch (err) {
       try {
         if (fs.existsSync(tmpFile)) fs.unlinkSync(tmpFile);
-      } catch (cleanErr) {}
+      } catch (cleanErr) { }
 
       state.status = 'failed';
       state.error = err;
@@ -1052,15 +1074,15 @@ function scheduleCachePersistence(indexPackage, p, cacheKey, options = {}) {
         fs.renameSync(tmpFile, p.cacheIndexFile);
       } catch (renameErr) {
         if (fs.existsSync(p.cacheIndexFile)) {
-          try { fs.unlinkSync(p.cacheIndexFile); } catch (uErr) {}
+          try { fs.unlinkSync(p.cacheIndexFile); } catch (uErr) { }
         }
         try {
           fs.renameSync(tmpFile, p.cacheIndexFile);
         } catch (r2Err) {
           try {
             fs.copyFileSync(tmpFile, p.cacheIndexFile);
-            try { fs.unlinkSync(tmpFile); } catch (u2Err) {}
-          } catch (cErr) {}
+            try { fs.unlinkSync(tmpFile); } catch (u2Err) { }
+          } catch (cErr) { }
         }
       }
       const diskWriteMs = performance.now() - tDiskStart;
@@ -1091,7 +1113,7 @@ function scheduleCachePersistence(indexPackage, p, cacheKey, options = {}) {
     } catch (err) {
       try {
         if (fs.existsSync(tmpFile)) fs.unlinkSync(tmpFile);
-      } catch (cleanErr) {}
+      } catch (cleanErr) { }
 
       state.status = 'failed';
       state.error = err;
@@ -1104,7 +1126,7 @@ function scheduleCachePersistence(indexPackage, p, cacheKey, options = {}) {
 
   // Non-blocking async persistence scheduled via setImmediate
   setImmediate(() => {
-    executePersistence().catch(() => {});
+    executePersistence().catch(() => { });
   });
 
   return promise;
@@ -1143,7 +1165,7 @@ export function getCachePersistenceStatus(customRoot = null) {
           payloadSizeBytes: stat.size
         }
       };
-    } catch (e) {}
+    } catch (e) { }
   }
 
   return {
@@ -1206,6 +1228,49 @@ export async function waitForCachePersistence(customRoot = null, timeoutMs = 150
 }
 
 /**
+ * Normalizes legacy cached documents by backfilling indexingStatus and sourceIndependence
+ * @param {Array<object>} documents - Document array from cached index
+ * @returns {Array<object>} Normalized document array
+ */
+export function normalizeCachedDocuments(documents) {
+  if (!Array.isArray(documents)) return [];
+  for (const doc of documents) {
+    if (!doc.indexingStatus) {
+      if (doc.category === 'CORE_OPERATING_RULE' || doc.category === 'ENGINEERING_PATTERN' || doc.category === 'SKILL' || doc.category === 'CAPABILITY' || doc.category === 'DOMAIN_INTELLIGENCE') {
+        doc.indexingStatus = 'COMPLETE';
+      } else if (doc.category === 'HARVESTED_DOSSIER_CHUNK') {
+        doc.indexingStatus = 'UNKNOWN';
+      } else {
+        doc.indexingStatus = 'UNKNOWN';
+      }
+    }
+
+    if (!doc.sourceIndependence) {
+      const headingToCheck = doc.rawHeading || doc.headingTitle || (doc.title ? doc.title.replace(/^[^—]+—\s*/, '').trim() : '');
+      const isTemplateHeading = TEMPLATE_HEADING_REGEX.test(headingToCheck) || TEMPLATE_HEADING_REGEX.test(doc.title);
+
+      if (isTemplateHeading || doc.occurrenceCount > 10) {
+        doc.isBoilerplate = true;
+        doc.isIndependentCorroboration = false;
+        doc.independentCorroborationCount = 0;
+        doc.sourceIndependence = 'BOILERPLATE';
+      } else if (doc.occurrenceCount > 1) {
+        doc.isBoilerplate = false;
+        doc.isIndependentCorroboration = false;
+        doc.independentCorroborationCount = 0;
+        doc.sourceIndependence = 'UNKNOWN';
+      } else {
+        doc.isBoilerplate = false;
+        doc.isIndependentCorroboration = false;
+        doc.independentCorroborationCount = 0;
+        doc.sourceIndependence = 'SINGLE_SOURCE';
+      }
+    }
+  }
+  return documents;
+}
+
+/**
  * Builds the complete BM25 & Lexical Inverted Index
  */
 export function buildSearchIndex(forceRebuild = false, customRoot = null, options = {}) {
@@ -1234,6 +1299,9 @@ export function buildSearchIndex(forceRebuild = false, customRoot = null, option
       const raw = fs.readFileSync(p.cacheIndexFile, 'utf-8');
       const cached = JSON.parse(raw);
       if (cached && cached.sourceHash === currentHash && Array.isArray(cached.documents) && cached.invertedIndex) {
+        // Enforce Fix A (indexingStatus) and Fix B (template detection/source independence) on cached docs
+        normalizeCachedDocuments(cached.documents);
+
         _indexCacheByRoot.set(cacheKey, cached);
         if (isDefaultRoot) {
           _inMemoryIndex = cached;
@@ -1246,7 +1314,7 @@ export function buildSearchIndex(forceRebuild = false, customRoot = null, option
       try {
         const corruptBackup = `${p.cacheIndexFile}.corrupt.${Date.now()}`;
         fs.renameSync(p.cacheIndexFile, corruptBackup);
-      } catch (rmErr) {}
+      } catch (rmErr) { }
       // Fall through to rebuild
     }
   }
@@ -1317,11 +1385,22 @@ export function buildSearchIndex(forceRebuild = false, customRoot = null, option
       confidenceType = 'HEURISTIC_CATEGORY_WEIGHT';
     }
 
+    let indexingStatus = doc.indexingStatus;
+    if (!indexingStatus) {
+      if (doc.category === 'CORE_OPERATING_RULE' || doc.category === 'ENGINEERING_PATTERN' || doc.category === 'SKILL' || doc.category === 'CAPABILITY' || doc.category === 'DOMAIN_INTELLIGENCE') {
+        indexingStatus = 'COMPLETE';
+      } else {
+        indexingStatus = 'UNKNOWN';
+      }
+    }
+
     docMetadata.push({
       id: doc.id,
       ruleNumber: resolvedRuleNum,
       rule_number: resolvedRuleNum,
       title: doc.title,
+      headingTitle: doc.headingTitle || null,
+      rawHeading: doc.rawHeading || null,
       category: doc.category,
       sourceTier,
       epistemicState,
@@ -1345,6 +1424,8 @@ export function buildSearchIndex(forceRebuild = false, customRoot = null, option
       isBoilerplate: doc.isBoilerplate ?? false,
       isIndependentCorroboration: doc.isIndependentCorroboration ?? false,
       independentCorroborationCount: doc.independentCorroborationCount ?? 0,
+      sourceIndependence: doc.sourceIndependence || (doc.isBoilerplate ? 'BOILERPLATE' : (doc.occurrenceCount > 1 ? 'UNKNOWN' : 'SINGLE_SOURCE')),
+      indexingStatus,
       docLength: docLen
     });
   }
@@ -1572,7 +1653,8 @@ export function searchBrain(query, options = {}) {
       isBoilerplate: doc.isBoilerplate ?? false,
       isIndependentCorroboration: doc.isIndependentCorroboration ?? false,
       independentCorroborationCount: doc.independentCorroborationCount ?? 0,
-      indexingStatus: doc.indexingStatus || 'COMPLETE',
+      sourceIndependence: doc.sourceIndependence || (doc.isBoilerplate ? 'BOILERPLATE' : (doc.occurrenceCount > 1 ? 'UNKNOWN' : 'SINGLE_SOURCE')),
+      indexingStatus: doc.indexingStatus || 'UNKNOWN',
       matchedTerms
     };
   });
@@ -1642,8 +1724,8 @@ export function retrieveKnowledge(query, options = {}) {
 
   const promptBlock = packedEntries.length > 0
     ? `\n<!-- === AI-BUILDER-BRAIN RETRIEVED INTELLIGENCE (${budgetedResults.length} ITEMS | ~${currentTokens} TOKENS) === -->\n` +
-      packedEntries.join('\n\n---\n\n') +
-      `\n<!-- === END RETRIEVED INTELLIGENCE === -->\n`
+    packedEntries.join('\n\n---\n\n') +
+    `\n<!-- === END RETRIEVED INTELLIGENCE === -->\n`
     : '';
 
   return {
@@ -1674,7 +1756,8 @@ export function retrieveKnowledge(query, options = {}) {
       isBoilerplate: r.isBoilerplate ?? false,
       isIndependentCorroboration: r.isIndependentCorroboration ?? false,
       independentCorroborationCount: r.independentCorroborationCount ?? 0,
-      indexingStatus: r.indexingStatus || 'COMPLETE'
+      sourceIndependence: r.sourceIndependence || (r.isBoilerplate ? 'BOILERPLATE' : (r.occurrenceCount > 1 ? 'UNKNOWN' : 'SINGLE_SOURCE')),
+      indexingStatus: r.indexingStatus || 'UNKNOWN'
     }))
   };
 }
