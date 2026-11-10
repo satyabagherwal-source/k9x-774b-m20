@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md`  
 > **Source**: github ([https://github.com/ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse))  
-> **Source Version**: `c847f42e`  
+> **Source Version**: `f51f86e5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T22:10:52.143Z  
+> **Timestamp**: 2026-11-10T00:59:49.816Z  
 > **Learning ID**: `learn-github-clickhouse-clickhouse`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T22:10:52.137Z  
+> **Harvest Timestamp**: 2026-11-10T00:59:49.068Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ClickHouse® is a real-time analytics database management system
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 50825 stars
+- **Stars / Engagement**: 50837 stars
 
 ---
 
@@ -1317,11 +1317,11 @@ private:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #129895** (2026-11-09): **Column alias shadows a named-collection key in table function arguments: `Required keys (database, db) are not specified`**
+  *Symptoms*: ### Company or project name  _(left empty)_  ### Describe what's wrong  When a query has a column alias with the same name as a key of a named-collection override in a table function, the key is lost. `postgresql(pg, database = 'd', table = 't')` fails with `Required keys (database, db) are not specified` as soon as the same `SELECT` has an expression aliased `database`. The analyzer seems to resolve the identifier `database` in the `key = value` argument to the alias, so the pair is no longer read as a key.  The synonym `db = 'd'` works, and so does the same query without the alias. An alias `table` did not break the `table` key in our tests.  ### Does it reproduce on the most recent release?  Yes. It reproduces on 26.10.3.7 and on `clickhouse/clickhouse-server:head` 26.11.1.1560, with `enable_analyzer` 1 and 0.  ### How to reproduce  Server config, `config.d/collection.xml`:  ```xml <clickhouse>     <named_collections>         <pg>             <host>localhost</host>             <port>5432</port>             <user>u</user>             <password>p</password>         </pg>     </named_collections> </clickhouse> ```  No PostgreSQL is needed: a correct call reaches the connection attempt and fails there with code 614. The broken call fails earlier, at key validation, with code 36.  ```sql -- Code 614 (connection), as expected: the key is read SELECT 1 FROM postgresql(pg, database = 'd', table = 't');  -- Code 36: Required keys (database, db) are not specified SELECT 'd' AS datab
+
 - **Issue #129586** (2026-11-07): **toDecimalString(Decimal, 0) leaves a trailing decimal point when the scale is above 0**
   *Symptoms*: ### Describe what's wrong  `toDecimalString(x, 0)` on a `Decimal` with a scale above 0 returns the whole part followed by a bare `.`, for example `1.` instead of `1`. The same call on an integer, a `Float`, or a `Decimal` with scale 0 returns no point. The documentation says the result has exactly the specified number of fractional digits, so with 0 there should be no point.  ### Does it reproduce on the most recent release?  Yes. Reproduces on master, version 26.11.1.1436.  ### How to reproduce  ```sql SELECT     toDecimalString(toDecimal32(1.2, 1), 0),     toDecimalString(toDecimal32(1.5, 1), 0),     toDecimalString(toDecimal32(-1.2, 1), 0),     toDecimalString(toDecimal64(-0.4, 1), 0),     toDecimalString(toDecimal32(5, 0), 0),     toDecimalString(1.5, 0); ```  Output on 26.11.1.1436:  ``` 1.	2.	-1.	-0.	5	2 ```  It happens for every `Decimal` width (`Decimal32`, `Decimal64`, `Decimal128`, `Decimal256`).  ### Expected behavior  ``` 1	2	-1	-0	5	2 ```  The `-0` for `-0.4` is a separate question. `toDecimalString(-0.4, 0)` on a `Float` also returns `-0`, so it is left as is here.  ### Additional context  In `src/IO/WriteHelpers.h`, `writeText(Decimal<T>, ...)` rounds the value to `fractional_length` digits and sets `rounded_scale = fractional_length`, which is 0 here. The check that decides whether to write the fractional part still tests the original `scale` instead of `rounded_scale`, so `writeDecimalFractional` is called with zero digits and writes only the point.   <!-- ch
-
-- **Issue #129521** (2026-11-06): **A `DataLakeCatalog` (Iceberg REST) catalog that returns an empty namespace entry aborts the ClickHouse server with `LOGICAL_ERROR`**
-  *Symptoms*: :detective: When a `DataLakeCatalog` database with `catalog_type = 'rest'` lists namespaces, `RestCatalog::parseNamespaces` throws `LOGICAL_ERROR` if any entry in the catalog's `namespaces` array is an empty array:  ```cpp // src/Databases/DataLake/RestCatalog.cpp:1519-1521 auto current_namespace_array = namespaces_object->get(static_cast<int>(i)).extract<Poco::JSON::Array::Ptr>(); if (current_namespace_array->size() == 0)     throw DB::Exception(DB::ErrorCodes::LOGICAL_ERROR, "Expected namespace array to be non-empty"); ```  `LOGICAL_ERROR` aborts debug and sanitizer builds (and is a critical error on release). The catalog HTTP endpoint is an external, often untrusted input, so a malformed or malicious REST catalog can crash the server with a one-line response. `SHOW TABLES`, and any operation that lists namespaces, triggers it.  **How to reproduce**  Point a `DataLakeCatalog` at any REST catalog whose `GET /v1/namespaces` returns an entry that is an empty array, e.g.:  ```json {"namespaces": [["good_ns"], []]} ```  ```sql CREATE DATABASE c ENGINE = DataLakeCatalog('http://<rest-catalog>/v1') SETTINGS catalog_type = 'rest', warehouse = 's3://wh', storage_endpoint = 'http://<minio>/wh';  SHOW TABLES FROM c; -- <Fatal> : Logical error: 'Expected namespace array to be non-empty'.  -> server aborts (debug/sanitizer) ```  Reproduced deterministically (2/2) on master `26.11.1.1406` against a mock REST catalog returning `{"namespaces": [[""], [], ["a", ""]]}`.  **Root cause / fix**
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1338,980 +1338,389 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1aaec54f` (2026-11-08)
-**Commit Message**: Merge pull request #112650 from ClickHouse/fix-with-fill-bounds-out-of-column-type-range
+### Incident Patch 1: `01d88bca` (2026-11-09)
+**Commit Message**: Merge pull request #129914 from nihalzp/fix-volume-jbod-round-robin-race
 
-Reject WITH FILL bounds that do not fit the ORDER BY column type
+Fix concurrent round-robin reservations on a `JBOD` volume failing while another disk has room
 
-**File**: `src/Core/SortDescription.h` (modified, +7/-0)
+**File**: `src/Disks/VolumeJBOD.cpp` (modified, +23/-10)
 ```diff
-@@ -37,6 +37,13 @@ struct FillColumnDescription
-     std::optional<IntervalKind> step_kind;
-     Field fill_staleness;   /// Default = Null - should not be considered
-     std::optional<IntervalKind> staleness_kind;
-+    DataTypePtr fill_column_type;
-+    /// The inclusive range of the values a fill column of `fill_column_type` can hold - the range of the storage
-+    /// type intersected with the calendar window for `Date32`/`DateTime64` - precomputed once so that the per-row
-+    /// representability check is two comparisons. Null bounds mean the type is not checked (see
-+    /// `fillRepresentableRangeOfColumnType`).
-+    Field fill_representable_min;
-+    Field fill_representable_max;
- 
-     using StepFunction = std::function<void(Field &, Int64 jumps_count)>;
-     StepFunction step_func;
+@@ -99,9 +99,8 @@ DiskPtr VolumeJBOD::getDisk(size_t /* index */) const
+     {
+         case VolumeLoadBalancing::ROUND_ROBIN:
+         {
+-            size_t start_from = last_used.fetch_add(1u, std::memory_order_acq_rel);
+-            size_t index = start_from % disks.size();
+-            return disks[index];
++            const size_t turn = last_used.fetch_add(1u, std::memory_order_acq_rel);
++            return disks[turn % disks.size()];
+         }
+         case VolumeLoadBalancing::LEAST_USED:
+         {
+@@ -152,15 +151,29 @@ ReservationPtr VolumeJBOD::reserveImpl(UInt64 bytes, const std::optional<Reserva
+     {
+         case VolumeLoadBalancing::ROUND_ROBIN:
+         {
+-            size_t disks_num = disks.size();
+-            for (size_t i = 0; i < disks_num; ++i)
++            /// Every attempt takes the next turn, like a reservation of its own, so that concurrent
++            /// reservations spread over the disks in the order of their turns. When other threads take turns
++            /// between two attempts, the turn of a reservation can fall on a disk it has already tried. It
++            /// then takes one of the disks it has not tried, picked by the round of the turn so that such
++            /// attempts spread over them evenly. So a reservation tries every disk once.
++            const size_t disks_num = disks.size();
++            const size_t first_disk = last_used.fetch_add(1u, std::memory_order_acq_rel) % disks_num;
++            if (ReservationPtr reservation = try_reserve(disks[first_disk]))
++                return reservation;
++
++            /// The first attempt cannot fall on a tried disk, so the untried disks are tracked only after it
++            /// fails, and a reservation that succeeds at once copies nothing.
++            Disks untried = disks;
++            untried.erase(untried.begin() + first_disk);
++            while (!untried.empty())
+             {
+-                size_t start_from = last_used.fetch_add(1u, std::memory_order_acq_rel);
+-                size_t index = start_from % disks_num;
+-
+-                ReservationPtr reservation = try_reserve(disks[index]);
+-                if (reservation)
++                const size_t turn = last_used.fetch_add(1u, std::memory_order_acq_rel);
++                auto disk = std::ranges::find(untried, disks[turn % disks_num]);
++                if (disk == untried.end())
++                    disk = untried.begin() + (turn / disks_num) % untried.size();
++                if (ReservationPtr reservation = try_reserve(*disk))
+                     return reservation;
++                untried.erase(disk);
+             }
+             return {};
+         }
 ```
 
-**File**: `src/Interpreters/FillingRow.cpp` (modified, +274/-2)
+**File**: `src/Disks/VolumeJBOD.h` (modified, +1/-1)
 ```diff
-@@ -1,16 +1,27 @@
+@@ -95,7 +95,7 @@ class VolumeJBOD : public IVolume
+     };
+ 
+     mutable std::mutex mutex;
+-    /// Index of last used disk, for load_balancing=round_robin
++    /// The next turn of load_balancing=round_robin: turn `t` goes to the disk `disks[t % disks.size()]`
+     mutable std::atomic<size_t> last_used = 0;
+     /// Disks with their unreserved space, in no particular order, for load_balancing=least_used
+     mutable std::vector<DiskWithSize> disks_with_size TSA_GUARDED_BY(mutex);
+```
+
+**File**: `src/Disks/tests/gtest_volume_jbod_round_robin.cpp` (added, +133/-0)
+```diff
+@@ -0,0 +1,133 @@
++#include <Disks/VolumeJBOD.h>
++#include <Disks/tests/gtest_disk.h>
++
++#include <gtest/gtest.h>
++
 +#include <algorithm>
- #include <cstddef>
-+#include <limits>
++#include <atomic>
++#include <latch>
 +#include <optional>
- 
- #include <Columns/IColumn.h>
-+#include <DataTypes/DataTypeDateTime64.h>
-+#include <DataTypes/DataTypesNumber.h>
- #include <IO/Operators.h>
- #include <Interpreters/FillingRow.h>
- #include <Common/FieldAccurateComparison.h>
-+#include <Common/FieldVisitorToString.h>
- #include <Common/Logger.h>
- #include <Common/logger_useful.h>
- 
- 
- namespace DB
- {
- 
-+namespace ErrorCodes
++#include <thread>
++
++using namespace DB;
++
++namespace
 +{
-+    extern const int INVALID_WITH_FILL_EXPRESSION;
-+}
 +
- constexpr static bool debug_logging_enabled = false;
- 
- template <class... Args>
-@@ -37,11 +48,102 @@ bool equals(const Field & lhs, const Field & rhs)
-     return accurateEquals(lhs, rhs);
- }
- 
-+bool fillValueFitsColumnType(const Field & value, const IDataType & type)
++/// A disk without room. Its first reservation pauses until `resume`, so that a test can let other
++/// reservations take turns between the first attempt of a reservation and its next one. It does not reserve
++/// through `DiskLocal`, whose global reservation mutex would block the other disks during the pause.
++class FullDisk : public DiskLocal
 +{
-+    const auto [min, max] = fillRepresentableRangeOfColumnType(type);
++public:
++    using DiskLocal::DiskLocal;
++    using DiskLocal::reserve;
 +
-+    /// Null bounds - a type whose every value is representable (or saturates instead of wrapping around,
-+    /// like Float and Decimal), nothing to check.
-+    if (min.isNull())
-+        return true;
-+
-+    return !accurateLess(value, min) && !accurateLess(max, value);
-+}
-+
-+std::pair<Field, Field> fillRepresentableRangeOfColumnType(const IDataType & type)
-+{
-+    WhichDataType which(type);
-+
-+    if (which.isDate())
-+        return {Field(static_cast<UInt64>(0)), Field(static_cast<UInt64>(std::numeric_limits<UInt16>::max()))};
-+
-+    if (which.isDateTime())
-+        return {Field(static_cast<UInt64>(0)), Field(static_cast<UInt64>(std::numeric_limits<UInt32>::max()))};
-+
-+    if (which.isDate32())
-+        return {Field(static_cast<Int64>(DATE_LUT_MIN_EXTEND_DAY_NUM)), Field(static_cast<Int64>(DATE_LUT_MAX_EXTEND_DAY_NUM))};
-+
-+    if (which.isDateTime64())
++    ReservationPtr reserve(UInt64 /* bytes */) override
 +    {
-+        /// For Date32 and DateTime64 the boundaries of the representable calendar lie strictly inside the range of
-+        /// the storage type, and the values between the two are invalid: nothing else produces them (conversions
-+        /// clamp at the calendar boundary) and the serializers render them as the clamped boundary date.
-+        /// The calendar clamps in the local civil calendar of the column's time zone (the local year is clamped to
-+        /// [0000, 9999], see e.g. DateLUTImpl::addYearsOutOfRange), so the boundary expressed in raw ticks is
-+        /// shifted by the UTC offset of the time zone, and the last representable time point has all its
-+        /// sub-second digits set. For a high enough scale the calendar window in ticks is wider than the Int64
-+        /// storage of the column, so the window is clamped to the storage range.
-+        const auto & date_time_type = static_cast<const DataTypeDateTime64 &>(type);
-+        const auto & time_zone = date_time_type.getTimeZone();
-+        const UInt32 scale = date_time_type.getScale();
-+        const Int64 max_seconds = time_zone.makeDateTime(DATE_LUT_MAX_REPRESENTABLE_YEAR, 12, 31, 23, 59, 59);
-+        const Int64 min_seconds = time_zone.makeDateTime(DATE_LUT_MIN_REPRESENTABLE_YEAR, 1, 1, 0, 0, 0);
-+        const Int128 scale_multiplier = DecimalUtils::scaleMultiplier<Int128>(scale);
-+        const Int128 max_ticks = std::min(
-+            static_cast<Int128>(max_seconds) * scale_multiplier + (scale_multiplier - 1),
-+            static_cast<Int128>(std::numeric_limits<Int64>::max()));
-+        const Int128 min_ticks = std::max(
-+            static_cast<Int128>(min_seconds) * scale_multiplier,
-+            static_cast<Int128>(std::numeric_limits<Int64>::min()));
-+        return {
-+            Field(DecimalField<Decimal64>(static_cast<Int64>(min_ticks), scale)),
-+            Field(DecimalField<Decimal64>(static_cast<Int64>(max_ticks), scale))};
++        if (first_reservation.exchange(false))
++        {
++            paused.count_down();
++            resumed.wait();
++        }
++        return {};
 +    }
 +
-+    if (isInteger(type))
++    void waitUntilPaused() { paused.wait(); }
++
++    void resume() { resumed.count_down(); }
++
++private:
++    std::atomic<bool> first_reservation = true;
++    std::latch paused{1};
++    std::latch resumed{1};
++};
++
++class VolumeJBODRoundRobin : public testing::Test
++{
++protected:
++    /// Creates a round-robin volume of `disks_num` disks, of which disk 0 has no room.
++    void createVolume(size_t disks_num)
 +    {
-+        switch (which.idx)
++        /// The full disk uses the directory of a disk made by `createDisk`, which `destroyDisk` removes.
++        created_disks.push_back(createDisk("full"));
++        full_disk = std::make_shared<FullDisk>("full", created_disks.back()->getPath());
++        disks.push_back(full_disk);
++        for (size_t i = 1; i < disks_num; ++i)
 +        {
-+            case TypeIndex::UInt8:
-+                return {Field(static_cast<UInt64>(0)), Field(static_cast<UInt64>(std::numeric_limits<UInt8>::max()))};
-+            case TypeIndex::UInt16:
-+                return {Field(static_cast<UInt64>(0)), Field(static_cast<UInt64>(std::numeric_limits<UInt16>::max()))};
-+            case TypeIndex::UInt32:
-+                return {Field(static_cast<UInt64>(0)), Field(static_cast<UInt64>(std::numeric_limits<UInt32>::max()))};
-+            case TypeIndex::UInt64:
-+                return {Field(static_cast<UInt64>(0)), Field(std::numeric_limits<UInt64>::max())};
-+            case TypeIndex::UInt128:
-+                return {Field(static_cast<UInt128>(0)), Field(std::numeric_limits<UInt128>::max())};
-+            case TypeIndex::UInt256:
-+                return {Field(static_cast<UInt256>(0)), Field(std::numeric_limits<UInt256>::max())};
-+            case TypeIndex::Int8:
-+                return {Field(static_cast<Int64>(std::numeric_limits<Int8>::min())), Field(static_cast<Int64>(std::numeric_limits<Int8>::max()))};
-+            case TypeIndex::Int16:
-+                return {Field(static_cast<Int64>(std::numeric_limits<Int16>::min())), Field(s
-```
-
-**File**: `src/Interpreters/FillingRow.h` (modified, +23/-0)
-```diff
-@@ -9,6 +9,16 @@ namespace DB
- bool less(const Field & lhs, const Field & rhs, int direction);
- bool equals(const Field & lhs, const Field & rhs);
- 
-+/// Whether `value` is a valid value of a fill column of type `type`: it fits the range of the storage type and,
-+/// for the calendar-backed `Date32` and `DateTime64`, the representable calendar window as well. Types that
-+/// saturate instead of wrapping around (`Float`, `Decimal`) are not checked and always pass.
-+bool fillValueFitsColumnType(const Field & value, const IDataType & type);
++            created_disks.push_back(createDisk());
++            disks.push_back(created_disks.back());
++        }
++        volume = std::make_shared<VolumeJBOD>(
++            "volume",
++            disks,
++            /* max_data_part_size_= */ 0,
++            /* are_merges_avoided_= */ false,
++            /* perform_ttl_move_on_insert_= */ false,
++            VolumeLoadBalancing::ROUND_ROBIN,
++            /* least_used_ttl_ms_= */ 0);
++    }
 +
-+/// The inclusive `[min, max]` range that `fillValueFitsColumnType` checks against, as `Field`s comparable with
-+/// the values the filling generates, so that the per-generated-value check does not have to redo the type
-+/// dispatch. Null bounds mean the type is not checked and every value passes.
-+std::pair<Field, Field> fillRepresentableRangeOfColumnType(const IDataType & type);
++    void TearDown() override
++    {
++        volume.reset();
++        disks.clear();
++        full_disk.reset();
++        for (auto & disk : created_disks)
++            destroyDisk(disk);
++    }
 +
- /** Helps to implement modifier WITH FILL for ORDER BY clause.
-  *  Stores row as array of fields and provides functions to generate next row for filling gaps and for comparing rows.
-  *  Used in FillingTransform.
-@@ -18,6 +28,9 @@ class FillingRow
-     /// finds last value <= to
-     Field doLongJump(const FillColumnDescription & descr, size_t column_ind, const Field & to);
- 
-+    void checkGeneratedValueFitsColumnType(const Field & value, size_t column_ind) const;
-+    void checkFillingTowardsConstraintFitsColumnType(size_t column_ind);
++    /// The position of the disk of `reservation` in the volume, or nothing without a reservation.
++    std::optional<size_t> diskOf(const ReservationPtr & reservation) const
++    {
++        if (!reservation)
++            return {};
++        return std::ranges::find(disks, reservation->getDisk()) - disks.begin();
++    }
 +
-     bool hasSomeConstraints(size_t pos) const;
-     bool isConstraintsSatisfied(size_t pos) const;
- 
-@@ -38,6 +51,12 @@ class FillingRow
-     void initUsingTo(size_t from_pos = 0);
-     void updateConstraintsWithStalenessRow(const Columns& base_row, size_t row_ind);
- 
-+    /// Throws when filling from the current row towards a constraint past the range of a column type would
-+    /// generate a value the column cannot hold. The per-value check in `next` rejects such a value too, but only
-+    /// after generating every value up to the boundary of the type - 2^32 rows for `DateTime` - so this is checked
-+    /// up front once the anchor of the filling is known.
-+    void checkFillingTowardsConstraintsFitsColumnTypes();
++    /// Reservation A takes the first turn, which falls on the full disk, and pauses in its attempt there.
++    /// Then `others_num` reservations take the next turns, each on the disk of its turn, and A goes on.
++    /// Returns the position of the disk that A takes.
++    std::optional<size_t> reserveAroundPausedReservation(size_t others_num)
++    {
++        ReservationPtr paused_reservation;
++        std::thread paused_thread([&] { paused_reservation = volume->reserve(1); });
++        full_disk->waitUntilPaused();
++        for (size_t turn = 1; turn <= others_num; ++turn)
++            EXPECT_EQ(diskOf(volume->reserve(1)), turn % disks.size());
++        full_disk->resume();
++        paused_thread.join();
++        return diskOf(paused_reservation);
++    }
 +
-     Field & operator[](size_t index) { return row[index]; }
-     const Field & operator[](size_t index) const { return row[index]; }
-     size_t size() const { return row.size(); }
-@@ -55,6 +74,10 @@ class FillingRow
- private:
-     Row row;
-     Row constraints;
-+    /// The value and the constraint of each column whose walk towards its constraint in `next` was last checked
-+    /// by `checkFillingTowardsConstraintFitsColumnType`, so that the check runs once per walk, not once per step.
-+    Row checked_walk_cursor;
-+    Row checked_walk_constraint;
-     SortDescription sort_description;
- };
- 
-```
-
-**File**: `src/Processors/Transforms/FillingTransform.cpp` (modified, +480/-12)
-```diff
-@@ -13,12 +13,17 @@
- #include <DataTypes/DataTypeNullable.h>
- #include <Functions/FunctionDateOrDateTimeAddInterval.h>
- #include <Functions/IFunction.h>
-+#include <Common/FieldAccurateComparison.h>
- #include <Common/FieldVisitorScale.h>
- #include <Common/FieldVisitorSum.h>
- #include <Common/FieldVisitorToString.h>
- #include <Common/logger_useful.h>
- #include <IO/Operators.h>
- #include <base/arithmeticOverflow.h>
-+#include <algorithm>
-+#include <limits>
-+#include <optional>
-+#include <tuple>
- 
- 
- namespace DB
-@@ -61,32 +66,184 @@ Block FillingTransform::transformHeader(Block header, const SortDescription & so
-     return header;
- }
- 
--/// Multiply through UInt64 so the result wraps by construction (FillingRow::doLongJump relies on
--/// well-defined wraparound to detect the overflowed jump). A signed Int64 multiply is UB on overflow.
--static Int64 mulStepWrapping(Int64 step, Int64 jumps_count)
-+/** Returns `value + step * jumps_count * unit_length`, computed exactly in Int128, so that an intermediate product
-+  * that does not fit Int64 is not mistaken for a result that does not fit it: an opposite-signed `value` can bring the
-+  * sum back into range. Past 2^65 units the number of units is clamped, which keeps the result out of the range of
-+  * Int64 in the direction of the step whatever `value` is, and keeps the product with `unit_length` within Int128.
-+  * `unit_length` is positive and below 2^42 (an hour in nanoseconds is 3.6 * 10^12).
-+  */
-+static Int128 addStepExact(Int64 value, Int64 step, Int64 jumps_count, Int64 unit_length)
- {
--    return static_cast<Int64>(static_cast<UInt64>(step) * static_cast<UInt64>(jumps_count));
-+    static constexpr Int128 max_units = static_cast<Int128>(1) << 65;
-+    const Int128 units = std::clamp(static_cast<Int128>(step) * jumps_count, -max_units, max_units);
-+    return value + units * unit_length;
++    std::shared_ptr<FullDisk> full_disk;
++    Disks created_disks;
++    Disks disks;
++    VolumePtr volume;
++};
++
 +}
 +
-+/// `addStepExact` saturated to the range of Int64. A saturated result lies past the range of the column in the
-+/// direction of the step, which holds for every column type using it (`Date`, `Date32`, `DateTime`): none of them
-+/// can hold the boundaries of Int64.
-+static Int64 addStepSaturating(Int64 value, Int64 step, Int64 jumps_count, Int64 unit_length)
++TEST_F(VolumeJBODRoundRobin, NextAttemptTakesNextTurn)
 +{
-+    const Int128 res = addStepExact(value, step, jumps_count, unit_length);
-+    if (res > std::numeric_limits<Int64>::max())
-+        return std::numeric_limits<Int64>::max();
-+    if (res < std::numeric_limits<Int64>::min())
-+        return std::numeric_limits<Int64>::min();
-+    return static_cast<Int64>(res);
++    /// A takes turn 0 on the full disk, and B takes turn 1 and disk 1. The next attempt of A takes turn 2 and
++    /// disk 2, as a reservation of its own would, so that disk 1 does not take both reservations.
++    createVolume(3);
++    EXPECT_EQ(reserveAroundPausedReservation(1), 2u);
 +}
 +
-+/** Wraps the ticks a step over DateTime64 lands on into a field. A result past the Int64 storage of the column is
-+  * kept exactly in a wider `Decimal128` of the same scale instead of being saturated to the boundary of Int64: at
-+  * scale 9 that boundary (`2262-04-11 23:47:16.854775807`) is itself a valid value of the column, so a saturated
-+  * exclusive bound (e.g. of `STALENESS`) would exclude it, and a saturated step would land on it. Such a field only
-+  * takes part in comparisons: `FillingRow` stops the filling at it or rejects it as a value the column cannot hold.
-+  */
-+static Field dateTime64StepResult(Int128 ticks, UInt32 scale)
++TEST_F(VolumeJBODRoundRobin, TurnOnTriedDiskTakesUntriedDisk)
 +{
-+    if (ticks >= std::numeric_limits<Int64>::min() && ticks <= std::numeric_limits<Int64>::max())
-+        return DecimalField<DateTime64>(DateTime64(static_cast<Int64>(ticks)), scale);
-+    return DecimalField<Decimal128>(Decimal128(ticks), scale);
++    /// A takes turn 0 on the full disk, and B takes turn 1 and disk 1. Turn 2 of A falls on the full disk
++    /// again, which A has already tried, so A takes the disk it has not tried yet.
++    createVolume(2);
++    EXPECT_EQ(reserveAroundPausedReservation(1), 1u);
 +}
 +
-+/** The calendar arithmetic of `Date` and `DateTime` returns the column's own storage type (`UInt16` / `UInt32`), so a
-+  * step whose result does not fit it wraps around: `toDateTime('2100-01-01', 'UTC') + INTERVAL 10 YEAR` lands in
-+  * 1973, and a step longer than the span of the type (`INTERVAL 150 YEAR` over `DateTime`) even wraps forward, to a
-+  * value that is still ahead of the current one. Redo such a step in the wider calendar of `Date32` (day numbers)
-+  * or `DateTime64(0)` (whole seconds), which agrees with the narrow one wherever the result fits, and return the
-+  * result when it does not fit the storage type, so that the sequence stays monotonic: a border within the range of
-+  * the type stops the filling there, and `FillingRow` rejects a value the column cannot hold instead of writing a
-+  * wrapped-around one. Kinds whose result is not of the storage type (e.g. an hour step over `Date`) are left as is.
-+  */
-+template <typename Impl, typename T>
-+static std::optional<Int64> calendarStepOutOfStorageType(T value, Int64 delta, const DateLUTImpl & date_lut, const DateLUTImpl & utc_time_zone)
++TEST_F(VolumeJBODRoundRobin, RoundOfTurnPicksUntriedDisk)
 +{
-+    using NativeResult = decltype(Impl::execute(value, delta, date_lut, utc_time_zone, UInt16{}));
-+
-+    Int64 result = 0;
-+    if constexpr (std::is_same_v<T, UInt16> && std::is_same_v<NativeResult, UInt16>)
-+        result = Impl::execute(static_cast<Int32>(value), delta, date_lut, utc_time_zone, 0);
-+    else if constexpr (std::is_same_v<T, UInt32> && std::is_same_v<NativeResult, UInt32>)
++    /// A takes turn 0 on the full disk, and B and C take turns 1 and 2. Turn 3 of A falls on the full disk
++    /// again. It is in round 1, so A takes the second of its untried disks 1 and 2.
++    createVolume(3);
++    EXPECT_EQ(reserveAroundPausedReservation(2), 2u);
++}
 ```
 
-**File**: `tests/queries/0_stateless/04657_with_fill_bounds_out_of_column_type_range.reference` (added, +181/-0)
+**File**: `tests/integration/test_tmp_policy/test.py` (modified, +36/-0)
 ```diff
-@@ -0,0 +1,181 @@
-+out of range bounds are rejected
-+the exclusive TO bound may be one step outside of the range
-+256	0	255
-+129	-128	0
-+1	5	5
-+a TO bound out of range is fine when STEP stops before it
-+87	0	255
-+87	-128	127
-+[5,250]
-+without FROM the query is rejected only when the fill actually wraps
-+84	5	254
-+25	-125	-5
-+[5]
-+0
-+0
-+STALENESS caps the sequence before TO, so the TO bound is not rejected
-+20	5	24
-+20	-24	-5
-+7	5	23
-+[250,251,252,253,254]
-+[250]
-+an INTERVAL step over Date and DateTime is rejected when it leaves the column type before reaching a TO out of range in the fill direction
-+['1970-01-01','2070-01-01']
-+['1970-01-01 00:00:00','2020-01-01 00:00:00','2070-01-01 00:00:00']
-+2	1970-03-05	2070-03-05
-+51	1970-01-01	2020-01-01
-+1	2020-01-01	2020-01-01
-+1	2020-01-01	2020-01-01
-+3	2026-03-05	2028-03-05
-+an INTERVAL step clamps at the calendar boundary of Date32 and DateTime64, so any TO is accepted
-+1	9999-12-31	9999-12-31
-+1	9999-06-01	9999-06-01
-+2	0000-06-01	0001-06-01
-+1	9999-06-01 00:00:00	9999-06-01 00:00:00
-+1	9999-06-01 00:00:00.123	9999-06-01 00:00:00.123
-+2	0000-06-01 00:00:00	0001-06-01 00:00:00
-+9	2000-01-01 00:00:00	9999-01-01 00:00:00
-+2	9998-06-01 00:00:00	9999-06-01 00:00:00
-+1
-+7	2020-01-01	2026-01-01
-+4	2020-01-01 00:00:00	2020-01-04 00:00:00
-+3	2026-03-05	2028-03-05
-+bounds between the calendar boundary and the storage boundary of Date32 and DateTime64 are invalid
-+2	0000-01-01 00:00:00	2000-01-01 00:00:00
-+100	2000-01-01 00:00:00	9999-12-31 23:59:59
-+2
-+1
-+2
-+3
-+a numeric step over DateTime64 must not generate ticks beyond the calendar
-+1	9999-12-31 23:59:58	9999-12-31 23:59:58
-+1	0000-01-01 00:00:01	0000-01-01 00:00:01
-+1	9999-12-31 23:59:59.998	9999-12-31 23:59:59.998
-+1	9999-12-31 23:59:58	9999-12-31 23:59:58
-+1	9999-12-31 23:59:58	9999-12-31 23:59:58
-+1	9999-12-31 23:59:59.998	9999-12-31 23:59:59.998
-+1	9999-12-31 23:59:58	9999-12-31 23:59:58
-+an INTERVAL step that stagnates at the calendar boundary before an in-range TO stops there
-+1	9999-06-01 00:00:00	9999-06-01 00:00:00
-+3	9995-06-01 00:00:00	9999-06-01 00:00:00
-+3	2000-01-01	9999-12-01
-+10	9990-01-01 00:00:00	9999-01-01 00:00:00
-+1	9998-06-01 00:00:00	9998-06-01 00:00:00
-+5
-+an INTERVAL step that would leave the column type before an in-range TO stops at TO
-+['2106-01-01 00:00:00']
-+['2000-01-01 00:00:00','2050-01-01 00:00:00','2100-01-01 00:00:00']
-+['2100-01-01 00:00:00']
-+['1970-01-01 00:00:00']
-+['1970-01-01 00:00:00']
-+['2148-01-01']
-+4	2106-01-01 00:00:00	2106-01-04 00:00:00
-+['1970-01-01 00:00:00']
-+['1970-01-01 00:00:00']
-+['1970-01-01 02:46:40']
-+a numeric step that overflows the Int64 arithmetic carrier stops at TO
-+[9223372036854775806]
-+[-9223372036854775807]
-+[9223372036854775800,9223372036854775805]
-+[9223372036854775806,9223372036854775807]
-+a generated value out of range of the column type is rejected at runtime
-+[11,14,17,20,23,26,29,32,35,38,41,44,47,50,53,56,59,62,65,68,71,74,77,80,83,86,89,92,95,98,101,104,107,110,113,116,119,122,125,128,131,134,137,140,143,146,149,152,155,158,161,164,167,170,173,176,179,182,185,188,191,194,197,200,203,206,209,212,215,218,221,224,227,230,233,236,239,242,245,248,251,254]
-+[127]
-+a fill towards a STALENESS border out of range of the column type is rejected
-+10	9999-12-31 23:59:58
-+10	2020-01-01 00:00:09
-+in-range filling is unchanged
-+[1,2,3,4,5,6,7,8,9]
-+[-1,-2,-3,-4,-5,-6,-7]
-+4	2025-12-30	2026-01-02
-+7	2020-01-01	2026-01-01
-+4	2025-12-30	2026-01-02
-+20	2020-06-16 00:00:00	2020-06-16 09:30:00
-+[5,5.25,5.5,5.75]
-+DISTINCT in order over a filled stream
-+256
-+256
-+NaN and infinity in a float fill column stay accepted
-+1	nan
-+2	0
-+3	100
-+1	inf
-+2	0
-+3	100
-+0
-+1
-+5
-+nan
-+1e300
-+the runtime check covers a trailing fill column as well
-+162	254
-+a fixed-length INTERVAL step over DateTime64 saturates at the boundary of the storage type
-+2262-04-11 23:47:14.000000000
-+2262-04-11 23:47:15.000000000
-+2262-04-11 23:47:16.000000000
-+2262-04-11 23:47:14.000000000
-+1700-01-01 00:00:00.000000000
-+1700-01-01 00:00:01.000000000
-+2262-04-11 23:47:14.000000000
-+2262-04-11 23:47:15.000000000
-+an INTERVAL step finer than the scale of DateTime64 is converted to whole ticks of the column
-+2000-01-01 00:00:00.00
-+2000-01-01 00:00:00.01
-+2000-01-01 00:00:00.02
-+2000-01-01 00:00:00.03
-+2000-01-01 00:00:00.04
-+2000-01-01 00:00:00
-+2000-01-01 00:00:01
-+2000-01-01 00:00:02
-+a step whose ticks overflow Int64 but whose result fits is not saturated
-+1700-01-01 00:00:00.000000000
-+2080-04-06 21:20:00.000000000
-+2200-01-01 00:00:00.000000000
-+1819-09-27 02:40:00.000000000
-+1700-01-01 00:00:00.000000000
-+1800-01-01 00:00:00.000000000
-+1890-02-18 10:40:00.000000000
-+2080-04-06 21:20:00.000000000
-+a calendar step does not wrap around before it is compared
-+1700-01-01 00:00:00.000000000
-+1
-+1
-+a numeric step truncated to zero ticks does not advance
-+9999-12-31 23:59:58.00
-+a quarter step whose number of months overflows Int64 does not wrap around
-+['2000-01-01 00:00:00']
-+['2001-01-01 00:00:00']
+@@ -77,6 +77,42 @@ def test_multiple_local_disk_distinct():
+     )
+ 
+ 
++def test_multiple_local_disk_full_disk():
++    # With `disk1` nearly full, every spill of the external sort reserves its bytes on `disk2`. The threshold
++    # of the external sort is split among the 16 sorting threads: 32 KiB each, less than a block, so every
++    # thread spills every block it sorts. The threads reserve at the same time, and a reservation must try
++    # every disk of the volume even when the other threads reserve between its attempts.
++    filler = "/test_tmp_policy_disk1/filler"
++    node_local.exec_in_container(
++        [
++            "bash",
++            "-c",
++            f"fallocate -l $(( $(df --output=avail -B1 /test_tmp_policy_disk1 | tail -1) - 8192 )) {filler}",
++        ]
++    )
++    try:
++        query_id = str(uuid.uuid4())
++        settings = {
++            "max_threads": 16,
++            "max_threads_min_free_memory_per_thread": 0,
++            "max_block_size": 8192,
++            "max_bytes_ratio_before_external_sort": 0,
++            "max_bytes_before_external_sort": 1 << 19,
++        }
++        node_local.query(
++            "SELECT number FROM numbers_mt(2000000) ORDER BY number DESC FORMAT Null",
++            settings=settings,
++            query_id=query_id,
++        )
++        node_local.query("SYSTEM FLUSH LOGS query_log")
++        assert node_local.query(
++            "SELECT ProfileEvents['ExternalSortWritePart'] > 100 "
++            f"FROM system.query_log WHERE query_id = '{query_id}' AND type = 'QueryFinish'"
++        ) == "1\n"
++    finally:
++        node_local.exec_in_container(["rm", "-f", filler])
 +
-```
-
-**File**: `tests/queries/0_stateless/04657_with_fill_bounds_out_of_column_type_range.sql` (added, +401/-0)
-```diff
-@@ -0,0 +1,401 @@
-+-- WITH FILL bound values that do not fit the type of the ORDER BY column used to be silently truncated when the
-+-- generated values were written into the column, so the filled stream wrapped around and was not sorted anymore,
-+-- while the query plan kept claiming it was. DISTINCT in order then deduplicated within wrong ranges.
-+-- A fill with FROM generates the same sequence for any data, so it is checked up front; a fill anchored at a data
-+-- value is checked value by value as it is generated.
 +
-+SELECT 'out of range bounds are rejected';
-+
-+SELECT * FROM (SELECT 5 AS x ORDER BY x ASC WITH FILL FROM 1 TO 1025) FORMAT Null; -- { serverError INVALID_WITH_FILL_EXPRESSION }
-+SELECT * FROM (SELECT toUInt8(5) AS x ORDER BY x ASC WITH FILL FROM 1000 TO 1010) FORMAT Null; -- { serverError INVALID_WITH_FILL_EXPRESSION }
-+SELECT * FROM (SELECT toUInt8(5) AS x ORDER BY x DESC WITH FILL FROM 300 TO 250) FORMAT Null; -- { serverError INVALID_WITH_FILL_EXPRESSION }
-+SELECT * FROM (SELECT toInt8(5) AS x ORDER BY x ASC WITH FILL FROM 120 TO 140) FORMAT Null; -- { serverError INVALID_WITH_FILL_EXPRESSION }
-+SELECT * FROM (SELECT toDate(0) AS d ORDER BY d ASC WITH FILL FROM 0 TO 100000) FORMAT Null; -- { serverError INVALID_WITH_FILL_EXPRESSION }
-+SELECT * FROM (SELECT toDate32('2020-01-01') AS d ORDER BY d ASC WITH FILL FROM 0 TO 3000000000) FORMAT Null; -- { serverError INVALID_WITH_FILL_EXPRESSION }
-+SELECT * FROM (SELECT toDateTime(5, 'UTC') AS t ORDER BY t ASC WITH FILL FROM 0 TO 4294967297) FORMAT Null; -- { serverError INVALID_WITH_FILL_EXPRESSION }
-+SELECT * FROM (SELECT toUInt8(5) AS x ORDER BY x ASC WITH FILL FROM 0 TO 260 STEP 3) FORMAT Null; -- { serverError INVALID_WITH_FILL_EXPRESSION }
-+
-+SELECT 'the exclusive TO bound may be one step outside of the range';
-+
-+SELECT count(), min(x), max(x) FROM (SELECT toUInt8(5) AS x ORDER BY x ASC WITH FILL FROM 0 TO 256);
-+SELECT count(), min(x), max(x) FROM (SELECT toInt8(-5) AS x ORDER BY x DESC WITH FILL FROM 0 TO -129);
-+SELECT count(), min(x), max(x) FROM (SELECT toUInt8(5) AS x ORDER BY x ASC WITH FILL TO 0);
-+
-+SELECT 'a TO bound out of range is fine when STEP stops before it';
-+
-+SELECT count(), min(x), max(x) FROM (SELECT toUInt8(5) AS x ORDER BY x ASC WITH FILL FROM 0 TO 257 STEP 3);
-+SELECT count(), min(x), max(x) FROM (SELECT toInt8(5) AS x ORDER BY x DESC WITH FILL FROM 127 TO -130 STEP -3);
-+SELECT groupArray(x) FROM (SELECT toUInt8(5) AS x ORDER BY x ASC WITH FILL FROM 250 TO 300 STEP 100);
-+SELECT * FROM (SELECT toInt8(5) AS x ORDER BY x DESC WITH FILL FROM 127 TO -130 STEP -4) FORMAT Null; -- { serverError INVALID_WITH_FILL_EXPRESSION }
-+
-+SELECT 'without FROM the query is rejected only when the fill actually wraps';
-+
-+-- The sequence is anchored at a data value, so which values are generated is known only at execution time:
-+-- from 5 this fill stops at 254, while from 6 it would reach 256.
-+SELECT count(), min(x), max(x) FROM (SELECT toUInt8(5) AS x ORDER BY x ASC WITH FILL TO 257 STEP 3);
-+SELECT count(), min(x), max(x) FROM (SELECT toInt8(-5) AS x ORDER BY x DESC WITH FILL TO -130 STEP -5);
-+-- A step so large that filling generates nothing at all is fine too.
-+SELECT groupArray(x) FROM (SELECT toUInt8(5) AS x ORDER BY x ASC WITH FILL TO 1000 STEP 5000);
-+-- The last generated value always lands within one step before TO, so these wrap from every possible anchor...
-+SELECT * FROM (SELECT toUInt8(5) AS x ORDER BY x ASC WITH FILL TO 1025) FORMAT Null; -- { serverError INVALID_WITH_FILL_EXPRESSION }
-+SELECT * FROM (SELECT toUInt8(5) AS x ORDER BY x ASC WITH FILL TO 1000 STEP 3) FORMAT Null; -- { serverError INVALID_WITH_FILL_EXPRESSION }
-+SELECT * FROM (SELECT toInt8(-5) AS x ORDER BY x DESC WITH FILL TO -300 STEP -5) FORMAT Null; -- { serverError INVALID_WITH_FILL_EXPRESSION }
-+-- ...but without any anchor nothing is generated at all, so nothing wraps and the bound is harmless.
-+SELECT count() FROM (SELECT x FROM (SELECT toUInt8(1) AS x WHERE 0) ORDER BY x WITH FILL TO 1025);
-+SELECT count() FROM (SELECT d FROM (SELECT toDate(0) AS d WHERE 0) ORDER BY d WITH FILL TO 70000 STEP INTERVAL 100 YEAR);
-+-- With FROM the sequence is generated even without data, so an empty input does not help.
-+SELECT count() FROM (SELECT x FROM (SELECT toUInt8(1) AS x WHERE 0) ORDER BY x WITH FILL FROM 0 TO 1025); -- { serverError INVALID_WITH_FILL_EXPRESSION }
-+
-+SELECT 'STALENESS caps the sequence before TO, so the TO bound is not rejected';
-+
-+-- STALENESS is allowed only without FROM, and it replaces TO as the effective bound whenever it comes first,
-+-- so the sequence stops at the last data value plus the staleness and stays far below an out of range TO.
-+SELECT count(), min(x), max(x) FROM (SELECT toUInt8(5) AS x ORDER BY x ASC WITH FILL TO 1025 STALENESS 20);
-+SELECT count(), min(x), max(x) FROM (SELECT toInt8(-5) AS x ORDER BY x DESC WITH FILL TO -300 STALENESS -20);
-+SELECT count(), min(x), max(x) FROM (SELECT toUInt8(5) AS x ORDER BY x ASC W
-```
-
-**File**: `tests/queries/0_stateless/05045_with_fill_serialized_query_plan.reference` (modified, +1/-0)
-```diff
-@@ -23,6 +23,7 @@
- 3
- 2
- 1
-+0
- -- FROM 0 TO 6 INTERPOLATE, two shards
- 0	1
- 1	10
+ def test_remote_disk():
+     query = "SELECT count(ignore(*)) FROM (SELECT * FROM system.numbers LIMIT 1e7) GROUP BY number"
+     settings = {
 ```
 
 ---
 
-### Incident Patch 2: `0034fb32` (2026-11-08)
-**Commit Message**: Merge pull request #129971 from groeneai/groeneai/correlated-subquery-null-outer-value
+### Incident Patch 2: `a353af14` (2026-11-09)
+**Commit Message**: Merge pull request #128049 from groeneai/fix-join-using-kv-storage-join-use-nulls
 
-Fix correlated scalar and EXISTS subqueries ignoring the rows produced for a NULL outer value
+Fix JOIN USING onto a key-value table with join_use_nulls casting the right key twice
 
-**File**: `src/Planner/PlannerCorrelatedSubqueries.cpp` (modified, +15/-4)
+**File**: `src/Processors/QueryPlan/JoinStepLogical.cpp` (modified, +16/-0)
 ```diff
-@@ -199,6 +199,9 @@ struct DecorrelationContext
-     /// Whether the optimizer will turn the referenced input subplan into an in-memory ChunkBuffer.
-     /// Decided once here (see decorrelateQueryPlan); buildLogicalJoin uses it to pick the join kind.
-     bool uses_in_memory_buffer = false;
-+    /// Whether the correlated columns of the decorrelated plan may come from the distinct outer values, where `NULL`
-+    /// is a value. Otherwise they are equal inner columns, which the retained `equals` filter never lets be `NULL`.
-+    bool uses_correlated_domain = false;
- };
- 
- /// How to convert an equivalent column to exactly the correlated column type.
-@@ -415,6 +418,7 @@ bool referencedInputUsesInMemoryBuffer(const DecorrelationContext & context)
- QueryPlan buildCorrelatedDomainPlan(DecorrelationContext & context)
- {
-     context.uses_in_memory_buffer = referencedInputUsesInMemoryBuffer(context);
-+    context.uses_correlated_domain = true;
-     context.query_plan.addStep(std::make_unique<CommonSubplanStep>(context.query_plan.getCurrentHeader()));
- 
-     auto buffer_header = std::make_shared<Block>();
-@@ -1601,7 +1605,8 @@ QueryPlan buildLogicalJoin(
-     QueryPlan input_stream_plan,
-     QueryPlan decorrelated_plan,
-     const CorrelatedSubquery & correlated_subquery,
--    bool uses_in_memory_buffer
-+    bool uses_in_memory_buffer,
-+    bool uses_correlated_domain
- )
- {
-     auto lhs_plan_header = decorrelated_plan.getCurrentHeader();
-@@ -1664,7 +1669,11 @@ QueryPlan buildLogicalJoin(
-         std::vector<JoinActionRef> eq_arguments;
-         eq_arguments.push_back(join_expression_actions.findNode(get_lhs_column_name(column_name), /* is_input= */ true));
-         eq_arguments.push_back(join_expression_actions.findNode(get_rhs_column_name(column_name), /* is_input= */ true));
--        auto eq_node = JoinActionRef::transform(eq_arguments, JoinActionRef::AddFunction(JoinConditionOperator::Equals));
-+        /// A `NULL` domain value has its own evaluation of the subquery, which must match the outer rows with `NULL`.
-+        auto key_operator = uses_correlated_domain && isNullableOrLowCardinalityNullable(eq_arguments.front().getType())
-+            ? JoinConditionOperator::NullSafeEquals
-+            : JoinConditionOperator::Equals;
-+        auto eq_node = JoinActionRef::transform(eq_arguments, JoinActionRef::AddFunction(key_operator));
-         predicates.push_back(std::move(eq_node));
-     }
- 
-@@ -1856,7 +1865,8 @@ void buildQueryPlanForCorrelatedSubquery(
-                 std::move(context.query_plan),
-                 std::move(decorrelated_plan),
-                 correlated_subquery,
--                context.uses_in_memory_buffer);
-+                context.uses_in_memory_buffer,
-+                context.uses_correlated_domain);
-             break;
-         }
-         case CorrelatedSubqueryKind::EXISTS:
-@@ -1906,7 +1916,8 @@ void buildQueryPlanForCorrelatedSubquery(
-                 std::move(context.query_plan),
-                 std::move(decorrelated_plan),
-                 correlated_subquery,
--                context.uses_in_memory_buffer);
-+                context.uses_in_memory_buffer,
-+                context.uses_correlated_domain);
-             break;
-         }
-         case CorrelatedSubqueryKind::LATERAL_JOIN:
+@@ -2350,6 +2350,22 @@ static QueryPlanNode buildPhysicalJoinImpl(
+         {
+             if (right_nullable_from_prepared_storage && JoinActionRef(action, expression_actions).fromRight())
+             {
++                if (prepared_join_storage.storage_key_value)
++                {
++                    /// The whole action is merged into the right-side DAG below, so the DAG gets only its inputs.
++                    std::stack<const ActionsDAG::Node *> stack;
++                    stack.push(action);
++                    while (!stack.empty())
++                    {
++                        const auto * node = stack.top();
++                        stack.pop();
++                        if (node->type == ActionsDAG::ActionType::INPUT)
++                            used_expressions.emplace_back(node, expression_actions);
++                        for (const auto * child : node->children)
++                            stack.push(child);
++                    }
++                    continue;
++                }
+                 /// x (Alias) -> toNullable(x) -> x (Input)
+                 action = action->children.at(0)->children.at(0);
+                 /// toNullable(x) -> x (Input)
 ```
 
-**File**: `tests/queries/0_stateless/04053_correlated_subquery_group_by_use_nulls.reference` (modified, +3/-3)
+**File**: `tests/queries/0_stateless/05453_join_using_key_value_storage_join_use_nulls.reference` (added, +20/-0)
 ```diff
-@@ -86,17 +86,17 @@
- 3	5	3
- 4	5	4
- 5	5	5
--\N	\N
-+\N	0
- 0	0
- 1	0
- 2	0
- 3	3
--\N	\N
-+\N	0
- 0	100
- 1	0
- 2	0
- 3	3
--\N	\N
-+\N	(NULL,NULL)
- 0	(0,0)
- 1	(1,0)
- 2	(2,0)
+@@ -0,0 +1,20 @@
++1	Nullable(Int64)
++2	Nullable(Int64)
++3	Nullable(Int64)
++5	Nullable(Int64)
++1	1	Nullable(Int64)	a
++2	2	Nullable(Int64)	b
++5	\N	Nullable(Int64)	\N
++a	Nullable(String)
++b	Nullable(String)
++c	Nullable(String)
++x	Nullable(String)
++a	a	Nullable(String)	1
++b	b	Nullable(String)	2
++x	\N	Nullable(String)	\N
++a	a	Nullable(String)	1
++b	b	Nullable(String)	2
++x	\N	Nullable(String)	\N
++a	a	Nullable(String)	1
++b	b	Nullable(String)	2
++x	\N	Nullable(String)	\N
 ```
 
-**File**: `tests/queries/0_stateless/04370_distinct_combinator_correlated_subquery_group_by_use_nulls.reference` (modified, +1/-1)
+**File**: `tests/queries/0_stateless/05453_join_using_key_value_storage_join_use_nulls.sql` (added, +36/-0)
 ```diff
-@@ -7,7 +7,7 @@
- 0	1
- 1	1
- 2	1
--\N	\N
-+\N	0
- 0	0
- 1	1
- 2	2
-```
-
-**File**: `tests/queries/0_stateless/04516_correlated_subquery_return_type_group_by_use_nulls.reference` (modified, +1/-1)
-```diff
-@@ -19,7 +19,7 @@
- 7	(7)
- 8	(8)
- 9	(9)
--\N	\N
-+\N	(NULL)
- 0	0
- 1	1
- 2	2
-```
-
-**File**: `tests/queries/0_stateless/05567_correlated_subquery_null_outer_value.reference` (added, +63/-0)
-```diff
-@@ -0,0 +1,63 @@
-+-- { echo }
+@@ -0,0 +1,36 @@
++-- Tags: use-rocksdb
++-- JOIN USING with join_use_nulls onto a key-value table whose USING column type differs from the left one.
 +
-+-- Scalar subqueries
-+SELECT d.c2, (SELECT count() FROM n_t n WHERE d.c2 IS NOT NULL OR d.c2 IS NULL) FROM d_t d ORDER BY d.c2 NULLS LAST;
-+1	1
-+\N	1
-+SELECT d.c2, (SELECT sum(n.x) FROM n_t n WHERE d.c2 IS NOT NULL OR d.c2 IS NULL), (SELECT groupArray(n.x) FROM n_t n WHERE d.c2 IS NOT NULL OR d.c2 IS NULL), (SELECT any(n.x) FROM n_t n WHERE d.c2 IS NOT NULL OR d.c2 IS NULL) FROM d_t d ORDER BY d.c2 NULLS LAST;
-+1	7	[7]	7
-+\N	7	[7]	7
-+SELECT d.c2, (SELECT groupArray(n.x) FROM n_t n WHERE d.c2 IS NULL) FROM d_t d ORDER BY d.c2 NULLS LAST;
-+1	[]
-+\N	[7]
-+SELECT d.c2, (SELECT n.x FROM n_t n WHERE d.c2 IS NULL) FROM d_t d ORDER BY d.c2 NULLS LAST;
-+1	\N
-+\N	7
-+-- EXISTS in the projection
-+SELECT r.v, EXISTS (SELECT 1 FROM values('a Nullable(Int32)', (NULL), (1)) t WHERE isNotDistinctFrom(t.a, r.v)) FROM values('v Nullable(Int32)', (NULL), (1), (2)) r ORDER BY r.v NULLS LAST;
-+1	1
-+2	0
-+\N	1
-+SELECT r.v, EXISTS (SELECT 1 FROM values('a Nullable(Int32)', (NULL), (1)) t WHERE r.v IS NULL) FROM values('v Nullable(Int32)', (NULL), (1), (2)) r ORDER BY r.v NULLS LAST;
-+1	0
-+2	0
-+\N	1
-+-- [NOT] EXISTS in WHERE
-+SELECT d.c2 FROM d_t d WHERE EXISTS (SELECT 1 FROM n_t n WHERE d.c2 IS NULL) ORDER BY d.c2 NULLS LAST;
-+\N
-+SELECT d.c2 FROM d_t d WHERE NOT EXISTS (SELECT 1 FROM n_t n WHERE d.c2 IS NULL) ORDER BY d.c2 NULLS LAST;
-+1
-+-- `NULL = NULL` is not true, so the NULL row has no match here
-+SELECT r.v, EXISTS (SELECT 1 FROM values('a Nullable(Int32)', (NULL), (1)) t WHERE t.a = r.v) FROM values('v Nullable(Int32)', (NULL), (1), (2)) r ORDER BY r.v NULLS LAST SETTINGS correlated_subqueries_substitute_equivalent_expressions = 1;
-+1	1
-+2	0
-+\N	0
-+SELECT r.v, EXISTS (SELECT 1 FROM values('a Nullable(Int32)', (NULL), (1)) t WHERE t.a = r.v) FROM values('v Nullable(Int32)', (NULL), (1), (2)) r ORDER BY r.v NULLS LAST SETTINGS correlated_subqueries_substitute_equivalent_expressions = 0;
-+1	1
-+2	0
-+\N	0
-+-- Type wrappers and several correlated columns
-+SELECT r.v, (SELECT groupArray(n.x) FROM n_t n WHERE r.v IS NULL) FROM values('v LowCardinality(Nullable(String))', ('a'), (NULL)) r ORDER BY r.v NULLS LAST;
-+a	[]
-+\N	[7]
-+SELECT r.v, (SELECT groupArray(n.x) FROM n_t n WHERE r.v IS NULL) FROM (SELECT NULL AS v) r;
-+\N	[7]
-+SELECT m.a, m.b, (SELECT groupArray(n.x) FROM n_t n WHERE m.a IS NULL AND m.b > 0) FROM m_t m ORDER BY m.a NULLS LAST, m.b;
-+1	1	[]
-+\N	0	[]
-+\N	1	[7]
-+-- Join layouts and algorithms
-+SELECT d.c2, (SELECT groupArray(n.x) FROM n_t n WHERE d.c2 IS NULL) FROM d_t d ORDER BY d.c2 NULLS LAST SETTINGS correlated_subqueries_default_join_kind = 'left', correlated_subqueries_use_in_memory_buffer = 0;
-+1	[]
-+\N	[7]
-+SELECT d.c2, (SELECT groupArray(n.x) FROM n_t n WHERE d.c2 IS NULL) FROM d_t d ORDER BY d.c2 NULLS LAST SETTINGS correlated_subqueries_default_join_kind = 'left', correlated_subqueries_use_in_memory_buffer = 0, join_algorithm = 'partial_merge';
-+1	[]
-+\N	[7]
-+SELECT d.c2, (SELECT groupArray(n.x) FROM n_t n WHERE d.c2 IS NULL) FROM d_t d ORDER BY d.c2 NULLS LAST SETTINGS correlated_subqueries_default_join_kind = 'left', correlated_subqueries_use_in_memory_buffer = 0, join_algorithm = 'full_sorting_merge';
-+1	[]
-+\N	[7]
-+-- The substituted equality keeps a plain key; the evaluation over the outer values compares null-safely
-+SELECT countIf(explain ILIKE '%Join conditions:%IS NULL%') FROM (EXPLAIN SELECT r.v, EXISTS (SELECT 1 FROM values('a Nullable(Int32)', (NULL), (1)) t WHERE t.a = r.v) FROM values('v Nullable(Int32)', (NULL), (1), (2)) r SETTINGS correlated_subqueries_substitute_equivalent_expressions = 1, explain_query_plan_default = 'pretty', query_plan_join_swap_table = 'false', query_plan_optimize_join_order_randomize = 0, join_algorithm = 'hash', correlated_subqueries_default_join_kind = 'right', correlated_subqueries_use_in_memory_buffer = 1);
-+0
-+SELECT countIf(explain ILIKE '%Join conditions:%IS NULL%') > 0 FROM (EXPLAIN SELECT r.v, EXISTS (SELECT 1 FROM values('a Nullable(Int32)', (NULL), (1)) t WHERE t.a = r.v) FROM values('v Nullable(Int32)', (NULL), (1), (2)) r SETTINGS correlated_subqueries_substitute_equivalent_expressions = 0, explain_query_plan_default = 'pretty', query_plan_join_swap_table = 'false', query_plan_optimize_join_order_randomize = 0, join_algorithm = 'hash', correlated_subqueries_default_join_kind = 'right', correlated_subqueries_use_in_memory_buffer = 1);
-+1
-```
-
-**File**: `tests/queries/0_stateless/05567_correlated_subquery_null_outer_value.sql` (added, +53/-0)
-```diff
-@@ -0,0 +1,53 @@
-+-- An outer row whose correlated column is NULL must get the result of the correlated subquery evaluated for NULL
-+-- (https://github.com/ClickHouse/ClickHouse/issues/112576).
++SET allow_suspicious_low_cardinality_types = 1;
++SET join_use_nulls = 1;
 +
-+DROP TABLE IF EXISTS d_t;
-+DROP TABLE IF EXISTS n_t;
-+DROP TABLE IF EXISTS m_t;
++DROP TABLE IF EXISTS l_i64;
++DROP TABLE IF EXISTS l_str;
++DROP TABLE IF EXISTS r_u32;
++DROP TABLE IF EXISTS r_str;
++DROP TABLE IF EXISTS r_str_mt;
 +
-+CREATE TABLE d_t (c2 Nullable(Int32)) ENGINE = Memory;
-+CREATE TABLE n_t (x Nullable(Int32)) ENGINE = Memory;
-+CREATE TABLE m_t (a Nullable(Int32), b Int32) ENGINE = Memory;
-+INSERT INTO d_t VALUES (1), (NULL);
-+INSERT INTO n_t VALUES (7);
-+INSERT INTO m_t VALUES (NULL, 1), (NULL, 0), (1, 1);
++CREATE TABLE l_i64 (k Int64) ENGINE = Memory;
++INSERT INTO l_i64 VALUES (1), (2), (5);
++CREATE TABLE l_str (k String) ENGINE = Memory;
++INSERT INTO l_str VALUES ('a'), ('b'), ('x');
 +
-+-- { echo }
++CREATE TABLE r_u32 (k LowCardinality(UInt32), v String) ENGINE = EmbeddedRocksDB PRIMARY KEY k;
++INSERT INTO r_u32 VALUES (1, 'a'), (2, 'b'), (3, 'c');
++CREATE TABLE r_str (k LowCardinality(String), v UInt32) ENGINE = EmbeddedRocksDB PRIMARY KEY k;
++INSERT INTO r_str VALUES ('a', 1), ('b', 2), ('c', 3);
++CREATE TABLE r_str_mt (k LowCardinality(String), v UInt32) ENGINE = MergeTree ORDER BY k;
++INSERT INTO r_str_mt VALUES ('a', 1), ('b', 2), ('c', 3);
 +
-+-- Scalar subqueries
-+SELECT d.c2, (SELECT count() FROM n_t n WHERE d.c2 IS NOT NULL OR d.c2 IS NULL) FROM d_t d ORDER BY d.c2 NULLS LAST;
-+SELECT d.c2, (SELECT sum(n.x) FROM n_t n WHERE d.c2 IS NOT NULL OR d.c2 IS NULL), (SELECT groupArray(n.x) FROM n_t n WHERE d.c2 IS NOT NULL OR d.c2 IS NULL), (SELECT any(n.x) FROM n_t n WHERE d.c2 IS NOT NULL OR d.c2 IS NULL) FROM d_t d ORDER BY d.c2 NULLS LAST;
-+SELECT d.c2, (SELECT groupArray(n.x) FROM n_t n WHERE d.c2 IS NULL) FROM d_t d ORDER BY d.c2 NULLS LAST;
-+SELECT d.c2, (SELECT n.x FROM n_t n WHERE d.c2 IS NULL) FROM d_t d ORDER BY d.c2 NULLS LAST;
++SELECT k, toTypeName(k) FROM l_i64 FULL JOIN r_u32 USING (k) ORDER BY k SETTINGS join_algorithm = 'hash';
++SELECT k, r.k, toTypeName(r.k), r.v FROM l_i64 AS l LEFT JOIN r_u32 AS r USING (k) ORDER BY k SETTINGS join_algorithm = 'hash';
++SELECT k, toTypeName(k) FROM l_str FULL JOIN r_str USING (k) ORDER BY k SETTINGS join_algorithm = 'hash';
++SELECT k, r.k, toTypeName(r.k), r.v FROM l_str AS l LEFT JOIN r_str AS r USING (k) ORDER BY k SETTINGS join_algorithm = 'hash';
++SELECT k, r.k, toTypeName(r.k), r.v FROM l_str AS l LEFT JOIN r_str AS r USING (k) ORDER BY k SETTINGS join_algorithm = 'direct';
++SELECT k, r.k, toTypeName(r.k), r.v FROM l_str AS l LEFT JOIN r_str_mt AS r USING (k) ORDER BY k SETTINGS join_algorithm = 'direct';
 +
-+-- EXISTS in the projection
-+SELECT r.v, EXISTS (SELECT 1 FROM values('a Nullable(Int32)', (NULL), (1)) t WHERE isNotDistinctFrom(t.a, r.v)) FROM values('v Nullable(Int32)', (NULL), (1), (2)) r ORDER BY r.v NULLS LAST;
-+SELECT r.v, EXISTS (SELECT 1 FROM values('a Nullable(Int32)', (NULL), (1)) t WHERE r.v IS NULL) FROM values('v Nullable(Int32)', (NULL), (1), (2)) r ORDER BY r.v NULLS LAST;
-+
-+-- [NOT] EXISTS in WHERE
-+SELECT d.c2 FROM d_t d WHERE EXISTS (SELECT 1 FROM n_t n WHERE d.c2 IS NULL) ORDER BY d.c2 NULLS LAST;
-+SELECT d.c2 FROM d_t d WHERE NOT EXISTS (SELECT 1 FROM n_t n WHERE d.c2 IS NULL) ORDER BY d.c2 NULLS LAST;
-+
-+-- `NULL = NULL` is not true, so the NULL row has no match here
-+SELECT r.v, EXISTS (SELECT 1 FROM values('a Nullable(Int32)', (NULL), (1)) t WHERE t.a = r.v) FROM values('v Nullable(Int32)', (NULL), (1), (2)) r ORDER BY r.v NULLS LAST SETTINGS correlated_subqueries_substitute_equivalent_expressions = 1;
-+SELECT r.v, EXISTS (SELECT 1 FROM values('a Nullable(Int32)', (NULL), (1)) t WHERE t.a = r.v) FROM values('v Nullable(Int32)', (NULL), (1), (2)) r ORDER BY r.v NULLS LAST SETTINGS correlated_subqueries_substitute_equivalent_expressions = 0;
-+
-+-- Type wrappers and several correlated columns
-+SELECT r.v, (SELECT groupArray(n.x) FROM n_t n WHERE r.v IS NULL) FROM values('v LowCardinality(Nullable(String))', ('a'), (NULL)) r ORDER BY r.v NULLS LAST;
-+SELECT r.v, (SELECT groupArray(n.x) FROM n_t n WHERE r.v IS NULL) FROM (SELECT NULL AS v) r;
-+SELECT m.a, m.b, (SELECT groupArray(n.x) FROM n_t n WHERE m.a IS NULL AND m.b > 0) FROM m_t m ORDER BY m.a NULLS LAST, m.b;
-+
-+-- Join layouts and algorithms
-+SELECT d.c2, (SELECT groupArray(n.x) FROM n_t n WHERE d.c2 IS NULL) FROM d_t d ORDER BY d.c2 NULLS LAST SETTINGS correlated_subqueries_default_join_kind = 'left', correlated_subqueries_use_in_memory_buffer = 0;
-+SELECT d.c2, (SELECT groupArray(n.x) FROM n_t n WHERE d.c2 IS NULL) FROM d_t d ORDER BY d.c2 NULLS LAST SETTINGS correlated_subqueries_default_join_kind = 'left', correlated_subqueries_use_in_memory_buffer = 0, join_algorithm = 'partial_merge';
-+SELECT d.c2, (SELECT groupArray(n.x) FROM n_t n WHERE d.c2 IS NULL) FROM d_t d ORDER BY d.c2 NULLS LAST SETTINGS correlated_subqueries_default_join_kind = 'left', correlated_subqueries_use_in_memory_buffer = 0, join_algorithm = 'full_sorting_merge';
-+
-+-- The substituted equality keeps a plain key; the evaluation over the outer values compares null-safely
-+SELECT countIf(explain ILIKE '%Join conditions:%IS NULL%') FROM (EXPLAIN SELECT r.v, EXISTS (SELECT 1 FROM values('a Nullable(Int32)', (NULL), (1)) t WHERE t.a = r.v) FROM values('v Nullable(Int32)', (NULL), (1), (2)) r SETTINGS correlated_subqueries_substitute_equivalent_expressions = 1, explain_query_plan_default = 'pretty', query_plan_join_swap_table = 'false', query_plan_optimize_join_order_randomize = 0, join_algorithm = 'hash', correlated_subqueries_default_join_kind = 'right', correlated_subqueries_use_in_memory_buffer = 1);
-+SELECT countIf(explain ILIKE '%Join conditions:%IS NULL%') > 0 FROM (EXPLAIN SELECT r.v, EXISTS (SELECT 1 FROM values('a Nullable(Int32)', (NULL), (1)) t WHERE t.a = r.v) FROM values('v Nullable(Int32)', (NULL), (1), (2)) r SETTINGS correlated_subqueries_substitute_equivalent_expressions = 0, explain_query_plan_default = 'pretty', query_plan_join_swap_table = 'false', query_plan_optimize_join_order_randomize = 0, join_algorithm = 'hash', correlated_subqueries_default_join_kind = 'right', correlated_subqueries_use_in_memory_buffer = 1);
-+
-+-- { echoOff }
-+
-+DROP TABLE d_t;
-+DROP TABLE n_t;
-+DROP TABLE m_t;
++DROP TABLE l_i64;
++DROP TABLE l_str;
++DROP TABLE r_u32;
++DROP TABLE r_str;
++DROP TABLE r_str_mt;
 ```
 
 ---
 
-### Incident Patch 3: `6ba1cd98` (2026-11-08)
-**Commit Message**: Merge pull request #130108 from groeneai/iceberg-equality-delete-null-key
+### Incident Patch 3: `286dc10e` (2026-11-09)
+**Commit Message**: Merge pull request #129869 from lazerg/fix/issue-129829-test-tags-docs
 
-Fix Iceberg equality deletes dropping rows whose equality key is NULL
+Docs: remove obsolete `no-backward-compatibility-check` tag from the testing guide
 
-**File**: `src/Storages/ObjectStorage/DataLakes/Iceberg/IcebergMetadata.cpp` (modified, +3/-2)
+**File**: `docs/resources/develop-contribute/contribute/tests.mdx` (modified, +1/-1)
 ```diff
-@@ -2152,8 +2152,9 @@ void IcebergMetadata::addDeleteTransformers(
-                 = std::make_unique<FunctionToOverloadResolverAdaptor>(std::make_shared<FunctionTuple>());
-             const ActionsDAG::Node * in_lhs_arg
-                 = left_columns.size() == 1 ? left_columns.front() : &dag.addFunction(func_tuple_builder, std::move(left_columns), {});
--            /// we got the NOT IN function
--            auto func_not_in = FunctionFactory::instance().get("notIn", nullptr);
-+            /// Iceberg compares equality-delete keys null-safely: a NULL key matches only a NULL delete value.
-+            /// The set above keeps NULLs (transform_null_in), and `notNullIn` looks NULL keys up in it.
-+            auto func_not_in = FunctionFactory::instance().get("notNullIn", nullptr);
-             const auto & not_in_node = dag.addFunction(func_not_in, {in_lhs_arg, in_rhs_arg}, "notInResult");
-             dag.getOutputs().push_back(&not_in_node);
-             LOG_DEBUG(log, "Use expression {} in equality deletes", dag.dumpDAG());
-```
-
-**File**: `tests/queries/0_stateless/05570_iceberg_equality_delete_null_key.reference` (added, +8/-0)
-```diff
-@@ -0,0 +1,8 @@
-+\N	toy	Ghost	t
-+3	\N	Grizzly	t
-+1	marsupial	Koala	t
-+4	bear	Kodiak	t
-+\N	\N	Phantom	t
-+5
-+Ghost
-+Phantom
-```
-
-**File**: `tests/queries/0_stateless/05570_iceberg_equality_delete_null_key.sh` (added, +23/-0)
-```diff
-@@ -0,0 +1,23 @@
-+#!/usr/bin/env bash
-+# Tags: no-fasttest, no-replicated-database
-+# Tag no-replicated-database: IcebergLocal is non-replicated.
-+
-+# Iceberg equality deletes compare keys null-safely: "A null value in a delete column matches a row
-+# if the row's value is null, equivalent to col IS NULL". Rows with a NULL key must survive a delete
-+# file without NULLs, and a NULL in a delete file must delete only NULL keys.
-+# The fixture is described in data_minio/deletes_db/README.md (`eq_deletes_null_key_table`).
-+
-+CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-+# shellcheck source=../shell_config.sh
-+. "$CUR_DIR"/../shell_config.sh
-+
-+LAKE_DIR="${CLICKHOUSE_USER_FILES_UNIQUE}/eq_deletes_null_key_table"
-+rm -rf "${CLICKHOUSE_USER_FILES_UNIQUE}"
-+mkdir -p "${CLICKHOUSE_USER_FILES_UNIQUE}"
-+cp -r "${CUR_DIR}/data_minio/deletes_db/eq_deletes_null_key_table" "${LAKE_DIR}"
-+
-+${CLICKHOUSE_CLIENT} --query "SELECT id, category, name, tag FROM icebergLocal('${LAKE_DIR}/') ORDER BY name"
-+${CLICKHOUSE_CLIENT} --query "SELECT count() FROM icebergLocal('${LAKE_DIR}/')"
-+${CLICKHOUSE_CLIENT} --query "SELECT name FROM icebergLocal('${LAKE_DIR}/') WHERE id IS NULL ORDER BY name"
-+
-+rm -rf "${CLICKHOUSE_USER_FILES_UNIQUE}"
-```
-
-**File**: `tests/queries/0_stateless/data_minio/deletes_db/README.md` (modified, +120/-0)
-```diff
-@@ -285,3 +285,123 @@ spark.stop()
+@@ -245,7 +245,7 @@ List of available tags:
+ | `no-release` | Disables tests in Release builds ||
+ | `no-darwin` | Disables test on macOS (Darwin) | Test relies on Linux-specific features such as distributed queries, `procfs`, or HTTP server |
  
- The resulting `/out/warehouse/default/eq_deletes_required_table` directory is copied here
- as is, except for the `.*.crc` files.
-+
-+## How is `eq_deletes_null_key_table` generated?
-+
-+The table has four optional columns `id INT, category STRING, name STRING, tag STRING` and one
-+Parquet data file:
-+
-+| id | category | name | tag |
-+|---|---|---|---|
-+| 1 | marsupial | Koala | t |
-+| 2 | toy | Teddy | t |
-+| 3 | NULL | Grizzly | t |
-+| 4 | NULL | Polar | t |
-+| 4 | bear | Kodiak | t |
-+| NULL | toy | Ghost | t |
-+| NULL | NULL | Phantom | t |
-+| 5 | toy | Doomed | NULL |
-+
-+Three Parquet equality delete files follow, one commit each: on `id` deleting `id = 2` (Teddy), on
-+`(id, category)` deleting `(4, NULL)` (Polar only), and on `tag` deleting `tag = NULL` (Doomed). The
-+Iceberg Java reader returns Ghost, Grizzly, Koala, Kodiak and Phantom.
-+
-+Generated with the Iceberg Java API (`iceberg-spark-runtime-4.1_2.13-1.11.0`) through the PySpark JVM
-+gateway (Spark SQL cannot write equality deletes):
-+
-+``` python
-+import glob
-+import os
-+
-+from pyspark.sql import SparkSession
-+
-+WAREHOUSE = "/tmp/iceberg_warehouse"
-+TABLE = "eq_deletes_null_key_table"
-+
-+jar = glob.glob(os.path.expanduser("~/.ivy2.5.2/jars/org.apache.iceberg_iceberg-spark-runtime-4.1_2.13-1.11.0.jar"))[0]
-+spark = SparkSession.builder.master("local[1]").config("spark.jars", jar).getOrCreate()
-+jvm = spark._jvm
-+gateway = spark.sparkContext._gateway
-+ice = jvm.org.apache.iceberg
-+NestedField = getattr(ice.types, "Types$NestedField")
-+IntegerType = getattr(ice.types, "Types$IntegerType")
-+StringType = getattr(ice.types, "Types$StringType")
-+PARQUET = getattr(ice.FileFormat, "PARQUET")
-+
-+catalog = ice.hadoop.HadoopCatalog(spark._jsc.hadoopConfiguration(), WAREHOUSE)
-+names = gateway.new_array(jvm.String, 2)
-+names[0] = "default"
-+names[1] = TABLE
-+ident = ice.catalog.TableIdentifier.of(names)
-+
-+fields = jvm.java.util.ArrayList()
-+fields.add(NestedField.optional(1, "id", IntegerType.get()))
-+fields.add(NestedField.optional(2, "category", StringType.get()))
-+fields.add(NestedField.optional(3, "name", StringType.get()))
-+fields.add(NestedField.optional(4, "tag", StringType.get()))
-+props = jvm.java.util.HashMap()
-+props.put("format-version", "2")
-+table = catalog.createTable(ident, ice.Schema(fields), ice.PartitionSpec.unpartitioned(), props)
-+
-+
-+def out(name):
-+    path = table.locationProvider().newDataLocation(name)
-+    return ice.encryption.EncryptedFiles.plainAsEncryptedOutput(table.io().newOutputFile(path))
-+
-+
-+rows = [
-+    (1, "marsupial", "Koala", "t"),
-+    (2, "toy", "Teddy", "t"),
-+    (3, None, "Grizzly", "t"),
-+    (4, None, "Polar", "t"),
-+    (4, "bear", "Kodiak", "t"),
-+    (None, "toy", "Ghost", "t"),
-+    (None, None, "Phantom", "t"),
-+    (5, "toy", "Doomed", None),
-+]
-+data_writer = ice.data.GenericAppenderFactory(table.schema(), table.spec()).newDataWriter(out("data-0.parquet"), PARQUET, None)
-+for i, c, n, t in rows:
-+    record = ice.data.GenericRecord.create(table.schema())
-+    record.setField("id", i)
-+    record.setField("category", c)
-+    record.setField("name", n)
-+    record.setField("tag", t)
-+    data_writer.write(record)
-+data_writer.close()
-+table.newAppend().appendFile(data_writer.toDataFile()).commit()
-+
-+# One RowDelta commit per equality delete file: (equality columns, file name, delete rows).
-+deletes = [
-+    (["id"], "eq-delete-id.parquet", [{"id": 2}]),
-+    (["id", "category"], "eq-delete-id-category.parquet", [{"id": 4, "category": None}]),
-+    (["tag"], "eq-delete-tag-null.parquet", [{"tag": None}]),
-+]
-+for cols, file_name, delete_rows in deletes:
-+    table.refresh()
-+    col_list = jvm.java.util.ArrayList()
-+    for c in cols:
-+        col_list.add(c)
-+    delete_schema = table.schema().select(col_list)
-+    equality_ids = gateway.new_array(jvm.int, len(cols))
-+    for k, c in enumerate(cols):
-+        equality_ids[k] = table.schema().findField(c).fieldId()
-+    factory = ice.data.GenericAppenderFactory(table.schema(), table.spec(), equality_ids, delete_schema, None)
-+    writer = factory.newEqDeleteWriter(out(file_name), PARQUET, None)
-+    for delete_row in delete_rows:
-+        record = ice.data.GenericRecord.create(delete_schema)
-+        for k, v in delete_row.items():
-+            record.setField(k, v)
-+        writer.write(record)
-+    writer.close()
-+    table.newRowDelta().addDeletes(writer.toDeleteFile()).commit()
-+
-+# The rows the Iceberg Java reader returns after applying the deletes (the test reference).
-+it = ice.data.IcebergGenerics.read(catalog.loadTable(ident)).build().iterator()
-+while it.hasNext():
-+    r = it.next()
-+    print(r.getField("id"), r.getField("category"), r.getField("name"), r.getField("tag"))
-+spark.stop()
-+```
-+
-+The resulting `/tmp/iceberg_warehouse/default/eq_deletes_null_key_table` directory is copied here
-+as is, except for the `.*.crc` files.
-```
-
-**File**: `tests/queries/0_stateless/data_minio/deletes_db/eq_deletes_null_key_table/metadata/v1.metadata.json` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+{"format-version":2,"table-uuid":"c3d08e22-715d-4f33-a48d-2fcc16f0f65b","location":"/tmp/iceberg_warehouse/default/eq_deletes_null_key_table","last-sequence-number":0,"last-updated-ms":1794127071723,"last-column-id":4,"current-schema-id":0,"schemas":[{"type":"struct","schema-id":0,"fields":[{"id":1,"name":"id","required":false,"type":"int"},{"id":2,"name":"category","required":false,"type":"string"},{"id":3,"name":"name","required":false,"type":"string"},{"id":4,"name":"tag","required":false,"type":"string"}]}],"default-spec-id":0,"partition-specs":[{"spec-id":0,"fields":[]}],"last-partition-id":999,"default-sort-order-id":0,"sort-orders":[{"order-id":0,"fields":[]}],"properties":{"write.parquet.compression-codec":"zstd"},"current-snapshot-id":-1,"refs":{},"snapshots":[],"statistics":[],"partition-statistics":[],"snapshot-log":[],"metadata-log":[]}
-\ No newline at end of file
-```
-
-**File**: `tests/queries/0_stateless/data_minio/deletes_db/eq_deletes_null_key_table/metadata/v2.metadata.json` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+{"format-version":2,"table-uuid":"c3d08e22-715d-4f33-a48d-2fcc16f0f65b","location":"/tmp/iceberg_warehouse/default/eq_deletes_null_key_table","last-sequence-number":1,"last-updated-ms":1794127072483,"last-column-id":4,"current-schema-id":0,"schemas":[{"type":"struct","schema-id":0,"fields":[{"id":1,"name":"id","required":false,"type":"int"},{"id":2,"name":"category","required":false,"type":"string"},{"id":3,"name":"name","required":false,"type":"string"},{"id":4,"name":"tag","required":false,"type":"string"}]}],"default-spec-id":0,"partition-specs":[{"spec-id":0,"fields":[]}],"last-partition-id":999,"default-sort-order-id":0,"sort-orders":[{"order-id":0,"fields":[]}],"properties":{"write.parquet.compression-codec":"zstd"},"current-snapshot-id":5223466979151337498,"refs":{"main":{"snapshot-id":5223466979151337498,"type":"branch"}},"snapshots":[{"sequence-number":1,"snapshot-id":5223466979151337498,"timestamp-ms":1794127072475,"summary":{"operation":"append","manifests-created":"1","manifests-kept":"0","manifests-replaced":"0","added-data-files":"1","added-records":"8","added-files-size":"1332","changed-partition-count":"1","total-records":"8","total-files-size":"1332","total-data-files":"1","total-delete-files":"0","total-position-deletes":"0","total-equality-deletes":"0","iceberg-version":"Apache Iceberg 1.11.0 (commit 6976e020b894f6a6777704df2b8c4458cb291ae9)"},"manifest-list":"/tmp/iceberg_warehouse/default/eq_deletes_null_key_table/metadata/snap-5223466979151337498-1-b479b8a3-a3a2-48cf-8f6c-f1186a88fecf.avro","schema-id":0}],"statistics":[],"partition-statistics":[],"snapshot-log":[{"timestamp-ms":1794127072475,"snapshot-id":5223466979151337498}],"metadata-log":[{"timestamp-ms":1794127071723,"metadata-file":"/tmp/iceberg_warehouse/default/eq_deletes_null_key_table/metadata/v1.metadata.json"}]}
-\ No newline at end of file
-```
-
-**File**: `tests/queries/0_stateless/data_minio/deletes_db/eq_deletes_null_key_table/metadata/v3.metadata.json` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+{"format-version":2,"table-uuid":"c3d08e22-715d-4f33-a48d-2fcc16f0f65b","location":"/tmp/iceberg_warehouse/default/eq_deletes_null_key_table","last-sequence-number":2,"last-updated-ms":1794127072659,"last-column-id":4,"current-schema-id":0,"schemas":[{"type":"struct","schema-id":0,"fields":[{"id":1,"name":"id","required":false,"type":"int"},{"id":2,"name":"category","required":false,"type":"string"},{"id":3,"name":"name","required":false,"type":"string"},{"id":4,"name":"tag","required":false,"type":"string"}]}],"default-spec-id":0,"partition-specs":[{"spec-id":0,"fields":[]}],"last-partition-id":999,"default-sort-order-id":0,"sort-orders":[{"order-id":0,"fields":[]}],"properties":{"write.parquet.compression-codec":"zstd"},"current-snapshot-id":4441976820507217000,"refs":{"main":{"snapshot-id":4441976820507217000,"type":"branch"}},"snapshots":[{"sequence-number":1,"snapshot-id":5223466979151337498,"timestamp-ms":1794127072475,"summary":{"operation":"append","manifests-created":"1","manifests-kept":"0","manifests-replaced":"0","added-data-files":"1","added-records":"8","added-files-size":"1332","changed-partition-count":"1","total-records":"8","total-files-size":"1332","total-data-files":"1","total-delete-files":"0","total-position-deletes":"0","total-equality-deletes":"0","iceberg-version":"Apache Iceberg 1.11.0 (commit 6976e020b894f6a6777704df2b8c4458cb291ae9)"},"manifest-list":"/tmp/iceberg_warehouse/default/eq_deletes_null_key_table/metadata/snap-5223466979151337498-1-b479b8a3-a3a2-48cf-8f6c-f1186a88fecf.avro","schema-id":0},{"sequence-number":2,"snapshot-id":4441976820507217000,"parent-snapshot-id":5223466979151337498,"timestamp-ms":1794127072659,"summary":{"operation":"delete","manifests-created":"1","manifests-kept":"1","manifests-replaced":"0","added-equality-delete-files":"1","added-delete-files":"1","added-files-size":"455","added-equality-deletes":"1","changed-partition-count":"1","total-records":"8","total-files-size":"1787","total-data-files":"1","total-delete-files":"1","total-position-deletes":"0","total-equality-deletes":"1","iceberg-version":"Apache Iceberg 1.11.0 (commit 6976e020b894f6a6777704df2b8c4458cb291ae9)"},"manifest-list":"/tmp/iceberg_warehouse/default/eq_deletes_null_key_table/metadata/snap-4441976820507217000-1-3210d438-3e3c-45ad-87bc-9227e3b42b3e.avro","schema-id":0}],"statistics":[],"partition-statistics":[],"snapshot-log":[{"timestamp-ms":1794127072475,"snapshot-id":5223466979151337498},{"timestamp-ms":1794127072659,"snapshot-id":4441976820507217000}],"metadata-log":[{"timestamp-ms":1794127071723,"metadata-file":"/tmp/iceberg_warehouse/default/eq_deletes_null_key_table/metadata/v1.metadata.json"},{"timestamp-ms":1794127072483,"metadata-file":"/tmp/iceberg_warehouse/default/eq_deletes_null_key_table/metadata/v2.metadata.json"}]}
-\ No newline at end of file
-```
-
-**File**: `tests/queries/0_stateless/data_minio/deletes_db/eq_deletes_null_key_table/metadata/v4.metadata.json` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+{"format-version":2,"table-uuid":"c3d08e22-715d-4f33-a48d-2fcc16f0f65b","location":"/tmp/iceberg_warehouse/default/eq_deletes_null_key_table","last-sequence-number":3,"last-updated-ms":1794127072797,"last-column-id":4,"current-schema-id":0,"schemas":[{"type":"struct","schema-id":0,"fields":[{"id":1,"name":"id","required":false,"type":"int"},{"id":2,"name":"category","required":false,"type":"string"},{"id":3,"name":"name","required":false,"type":"string"},{"id":4,"name":"tag","required":false,"type":"string"}]}],"default-spec-id":0,"partition-specs":[{"spec-id":0,"fields":[]}],"last-partition-id":999,"default-sort-order-id":0,"sort-orders":[{"order-id":0,"fields":[]}],"properties":{"write.parquet.compression-codec":"zstd"},"current-snapshot-id":7381694820472045609,"refs":{"main":{"snapshot-id":7381694820472045609,"type":"branch"}},"snapshots":[{"sequence-number":1,"snapshot-id":5223466979151337498,"timestamp-ms":1794127072475,"summary":{"operation":"append","manifests-created":"1","manifests-kept":"0","manifests-replaced":"0","added-data-files":"1","added-records":"8","added-files-size":"1332","changed-partition-count":"1","total-records":"8","total-files-size":"1332","total-data-files":"1","total-delete-files":"0","total-position-deletes":"0","total-equality-deletes":"0","iceberg-version":"Apache Iceberg 1.11.0 (commit 6976e020b894f6a6777704df2b8c4458cb291ae9)"},"manifest-list":"/tmp/iceberg_warehouse/default/eq_deletes_null_key_table/metadata/snap-5223466979151337498-1-b479b8a3-a3a2-48cf-8f6c-f1186a88fecf.avro","schema-id":0},{"sequence-number":2,"snapshot-id":4441976820507217000,"parent-snapshot-id":5223466979151337498,"timestamp-ms":1794127072659,"summary":{"operation":"delete","manifests-created":"1","manifests-kept":"1","manifests-replaced":"0","added-equality-delete-files":"1","added-delete-files":"1","added-files-size":"455","added-equality-deletes":"1","changed-partition-count":"1","total-records":"8","total-files-size":"1787","total-data-files":"1","total-delete-files":"1","total-position-deletes":"0","total-equality-deletes":"1","iceberg-version":"Apache Iceberg 1.11.0 (commit 6976e020b894f6a6777704df2b8c4458cb291ae9)"},"manifest-list":"/tmp/iceberg_warehouse/default/eq_deletes_null_key_table/metadata/snap-4441976820507217000-1-3210d438-3e3c-45ad-87bc-9227e3b42b3e.avro","schema-id":0},{"sequence-number":3,"snapshot-id":7381694820472045609,"parent-snapshot-id":4441976820507217000,"timestamp-ms":1794127072797,"summary":{"operation":"delete","manifests-created":"1","manifests-kept":"2","manifests-replaced":"0","added-equality-delete-files":"1","added-delete-files":"1","added-files-size":"684","added-equality-deletes":"1","changed-partition-count":"1","total-records":"8","total-files-size":"2471","total-data-files":"1","total-delete-files":"2","total-position-deletes":"0","total-equality-deletes":"2","iceberg-version":"Apache Iceberg 1.11.0 (commit 6976e020b894f6a6777704df2b8c4458cb291ae9)"},"manifest-list":"/tmp/iceberg_warehouse/default/eq_deletes_null_key_table/metadata/snap-7381694820472045609-1-d7235c14-eef5-4fa4-a20c-7ba335a0967d.avro","schema-id":0}],"statistics":[],"partition-statistics":[],"snapshot-log":[{"timestamp-ms":1794127072475,"snapshot-id":5223466979151337498},{"timestamp-ms":1794127072659,"snapshot-id":4441976820507217000},{"timestamp-ms":1794127072797,"snapshot-id":7381694820472045609}],"metadata-log":[{"timestamp-ms":1794127071723,"metadata-file":"/tmp/iceberg_warehouse/default/eq_deletes_null_key_table/metadata/v1.metadata.json"},{"timestamp-ms":1794127072483,"metadata-file":"/tmp/iceberg_warehouse/default/eq_deletes_null_key_table/metadata/v2.metadata.json"},{"timestamp-ms":1794127072659,"metadata-file":"/tmp/iceberg_warehouse/default/eq_deletes_null_key_table/metadata/v3.metadata.json"}]}
-\ No newline at end of file
+-The following options are also supported: `no-polymorphic-parts`, `no-random-settings`, `no-random-merge-tree-settings`, `no-backward-compatibility-check`, `no-cpu-x86_64`, `no-cpu-aarch64`, `no-cpu-ppc64le`, `no-s3-storage`.
++The following options are also supported: `no-polymorphic-parts`, `no-random-settings`, `no-random-merge-tree-settings`, `no-cpu-x86_64`, `no-cpu-aarch64`, `no-cpu-ppc64le`, `no-s3-storage`.
+ 
+ In addition to above settings, you can use `USE_*` flags from `system.build_options` to define usage of particular ClickHouse features.
+ For example, if your test uses a MySQL table, you should add a tag `use-mysql`.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #130204** (2026-11-08): Backport #125901 to 26.8: Start executor threads for CPU slots granted after the request (@robot-clickhouse-ci-2)
-- **PR #130190** (2026-11-08): Backport #127478 to 26.9: Bump jemalloc for the fiber-safe TLS rework (upstream solution) (@azat)
-- **PR #130188** (2026-11-08): Backport #127478 to 26.8: Bump jemalloc for the fiber-safe TLS rework (upstream solution) (@azat)
-- **PR #130187** (2026-11-08): Backport #127478 to 26.10: Bump jemalloc for the fiber-safe TLS rework (upstream solution) (@azat)
-- **PR #130181** (2026-11-08): Upgrade check: download previous-release packages from packages.clickhouse.com when GitHub cannot serve them (@groeneai)
-- **PR #130175** (2026-11-08): Fix flaky `test_load_balancing_default` (@alexey-milovidov)
+- **PR #130387** (2026-11-10): Backport #125026 to 26.10: Log a lost Iceberg metadata commit race at Debug, not Error (@robot-clickhouse-ci-1)
+- **PR #130361** (2026-11-09): Backport #126952 to 26.10: Fix lightweight `UPDATE` skipping rows fetched during the `update_sequential_consistency` wait (@robot-clickhouse)
+- **PR #130360** (2026-11-09): Backport #126952 to 26.9: Fix lightweight `UPDATE` skipping rows fetched during the `update_sequential_consistency` wait (@robot-clickhouse)
+- **PR #130359** (2026-11-09): Backport #129529 to 26.3: Fix unbounded JIT memory growth with distinct literals (@robot-clickhouse)
+- **PR #130356** (2026-11-09): Backport #127625 to 26.10: Speed up merging large `uniqExact` states: grow the Robin Hood hash set before the merge (@robot-clickhouse)
+- **PR #130352** (2026-11-09): Backport #130171 to 26.10: Cast an ORC list, map or struct requested as another type instead of reading default values (@robot-ch-test-poll3)
 
 ---
 
@@ -2331,34 +1740,53 @@ Fix Iceberg equality deletes dropping rows whose equality key is NULL
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #112650 from ClickHouse/fix-with-fill-bounds-out-of-column-ty
+## X. Merge pull request #129914 from nihalzp/fix-volume-jbod-round-robin-race
 
 **RULE**:
-When implementing operations in `src/Core/SortDescription.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/Disks/VolumeJBOD.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1aaec54f`: Merge pull request #112650 from ClickHouse/fix-with-fill-bounds-out-of-column-type-range. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `01d88bca`: Merge pull request #129914 from nihalzp/fix-volume-jbod-round-robin-race. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/Core/SortDescription.h`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/Disks/VolumeJBOD.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-    DataTypePtr fill_column_type;
-    /// The inclusive range of the values a fill column of `fill_column_type` can hold - the range of the storage
-    /// type intersected with the calendar window for `Date32`/`DateTime64` - precomputed once so that the per-row
-    /// representability check is two comparisons. Null bounds mean the type is not checked (see
-    /// `fillRepresentableRangeOfColumnType`).
-    Field fill_representable_min;
-    Field fill_representable_max;
+            const size_t turn = last_used.fetch_add(1u, std::memory_order_acq_rel);
+            return disks[turn % disks.size()];
+            /// Every attempt takes the next turn, like a reservation of its own, so that concurrent
+            /// reservations spread over the disks in the order of their turns. When other threads take turns
+            /// between two attempts, the turn of a reservation can fall on a disk it has already tried. It
+            /// then takes one of the disks it has not tried, picked by the round of the turn so that such
+            /// attempts spread over them evenly. So a reservation tries every disk once.
+            const size_t disks_num = disks.size();
+            const size_t first_disk = last_used.fetch_add(1u, std::memory_order_acq_rel) % disks_num;
+            if (ReservationPtr reservation = try_reserve(disks[first_disk]))
+                return reservation;
+
+            /// The first attempt cannot fall on a tried disk, so the untried disks are tracked only after it
+            /// fails, and a reservation that succeeds at once copies nothing.
+            Disks untried = disks;
+            untried.erase(untried.begin() + first_disk);
+     
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+            size_t start_from = last_used.fetch_add(1u, std::memory_order_acq_rel);
+            size_t index = start_from % disks.size();
+            return disks[index];
+            size_t disks_num = disks.size();
+            for (size_t i = 0; i < disks_num; ++i)
+                size_t start_from = last_used.fetch_add(1u, std::memory_order_acq_rel);
+                size_t index = start_from % disks_num;
+
+                ReservationPtr reservation = try_reserve(disks[index]);
+                if (reservation)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1aaec54f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `01d88bca` are properly handled with clean fallback behavior.

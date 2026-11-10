@@ -8708,3 +8708,7 @@ Every entry in this ledger must capture:
 | `learn-github-domcyrus-rustnet` | `https://github.com/domcyrus/rustnet` | `218e16d5` | Multi-dimensional audit evidence | 2026-11-10T00:44:55.254Z |
 | `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `23221edf` | Multi-dimensional audit evidence | 2026-11-10T00:45:08.919Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `a503d190` | Multi-dimensional audit evidence | 2026-11-10T00:45:09.739Z |
+| `learn-github-clastix-kamaji` | `https://github.com/clastix/kamaji` | `af5ad885` | Multi-dimensional audit evidence | 2026-11-10T00:59:44.738Z |
+| `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `6bd1e65d` | Multi-dimensional audit evidence | 2026-11-10T00:59:47.769Z |
+| `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `f51f86e5` | Multi-dimensional audit evidence | 2026-11-10T00:59:51.656Z |
+| `learn-github-topgrade-rs-topgrade` | `https://github.com/topgrade-rs/topgrade` | `c26ade9a` | Multi-dimensional audit evidence | 2026-11-10T01:02:32.904Z |

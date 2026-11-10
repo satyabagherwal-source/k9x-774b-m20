@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261108-F2SH",
-    "timestamp": "2026-11-08T03:43:27.713Z",
-    "repository": "chroma-core/chroma",
-    "learningId": "learn-github-chroma-core-chroma",
-    "contentHash": "a9912ebdaaa07be4ccb8807c5c76a21480a5fdb7dc23b8442acecf68a9b6cc48",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-H5ZY",
-    "timestamp": "2026-11-08T03:45:05.182Z",
-    "repository": "lodestones/Kromoss",
-    "learningId": "learn-huggingface-lodestones-kromoss",
-    "contentHash": "f23353bdbe11efecbb7747f6c710a16bb8e0574a52a126fdbdab558a72311c30",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-T7F0",
-    "timestamp": "2026-11-08T03:54:26.892Z",
-    "repository": "clockworklabs/SpacetimeDB",
-    "learningId": "learn-github-clockworklabs-spacetimedb",
-    "contentHash": "906b8732807c4ef15e6d347cb7b3ad1f8e35a7b0d4ec41ad92afdd890c8b780d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-T7XF",
-    "timestamp": "2026-11-08T03:54:27.555Z",
-    "repository": "Bitterbot-AI/bitterbot-desktop",
-    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "0123a2ae2b8e5ea1fded844d866b0574e850c3bccba5b0984298d872bd6b5f0c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261108-V706",
     "timestamp": "2026-11-08T03:55:59.670Z",
     "repository": "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
@@ -7492,6 +7432,66 @@
     "contentHash": "cdc50c6452279d8455c6ba482e2824d19227d1ce5fc1575a57db7444cb6a7b34",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261110-G8NY",
+    "timestamp": "2026-11-10T00:59:44.734Z",
+    "repository": "clastix/kamaji",
+    "learningId": "learn-github-clastix-kamaji",
+    "contentHash": "3b19e3cc17f4d134094fc5f731ca0099a68870e5041dc28f65a29745ca902a29",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261110-GB04",
+    "timestamp": "2026-11-10T00:59:47.764Z",
+    "repository": "zama-ai/tfhe-rs",
+    "learningId": "learn-github-zama-ai-tfhe-rs",
+    "contentHash": "e72a6f8e19c4173d8fe672797cbd534df5fb1da758a8d12d6d5cd22fa9bc1a0e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261110-GE04",
+    "timestamp": "2026-11-10T00:59:51.652Z",
+    "repository": "ClickHouse/ClickHouse",
+    "learningId": "learn-github-clickhouse-clickhouse",
+    "contentHash": "bff4ca5ada9f6aef85074b5289b4698beba50a00c4576e7d080b48ce76522e6e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261110-JUEY",
+    "timestamp": "2026-11-10T01:02:32.890Z",
+    "repository": "topgrade-rs/topgrade",
+    "learningId": "learn-github-topgrade-rs-topgrade",
+    "contentHash": "fc86cf2cbceb74a5546b1cc63d7176b7ace351d4f7972db57b70c366c581f8ef",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

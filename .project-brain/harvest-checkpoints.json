@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-10T00:45:09.747Z",
+  "last_updated": "2026-11-10T01:02:32.914Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5046,14 +5046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zama-ai-tfhe-rs",
-      "content_hash": "e0db7c78c83baac7a01a00db46388be63a78bdf647d92e757f6e0d9779c38a9a",
-      "verified_at": "2026-11-09T16:11:05.818Z",
+      "content_hash": "e72a6f8e19c4173d8fe672797cbd534df5fb1da758a8d12d6d5cd22fa9bc1a0e",
+      "verified_at": "2026-11-10T00:59:47.779Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T16:11:05.818Z"
+      "last_updated": "2026-11-10T00:59:47.779Z"
     },
     "doobidoo/mcp-memory-service": {
       "repository": "doobidoo/mcp-memory-service",
@@ -6291,14 +6291,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clastix-kamaji",
-      "content_hash": "5f422a81bde5a51f13052cdd8d0c9cc6314b380dd19d5ff9614375f5eaf92e93",
-      "verified_at": "2026-11-06T21:45:06.681Z",
+      "content_hash": "3b19e3cc17f4d134094fc5f731ca0099a68870e5041dc28f65a29745ca902a29",
+      "verified_at": "2026-11-10T00:59:44.755Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T21:45:06.681Z"
+      "last_updated": "2026-11-10T00:59:44.755Z"
     },
     "gluesql/gluesql": {
       "repository": "gluesql/gluesql",
@@ -9231,14 +9231,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clickhouse-clickhouse",
-      "content_hash": "0bdebd2459787d3fc6d4272e0252896dd275692372fa8ca49b8b0da997e11a42",
-      "verified_at": "2026-11-08T22:10:53.661Z",
+      "content_hash": "bff4ca5ada9f6aef85074b5289b4698beba50a00c4576e7d080b48ce76522e6e",
+      "verified_at": "2026-11-10T00:59:51.665Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T22:10:53.661Z"
+      "last_updated": "2026-11-10T00:59:51.665Z"
     },
     "dockview/dockview": {
       "repository": "dockview/dockview",
@@ -10356,14 +10356,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-topgrade-rs-topgrade",
-      "content_hash": "bca4a4dd81e7919695e0da2618b99854951540804e54f362c07d207bf8e3210a",
-      "verified_at": "2026-11-08T17:59:05.546Z",
+      "content_hash": "fc86cf2cbceb74a5546b1cc63d7176b7ace351d4f7972db57b70c366c581f8ef",
+      "verified_at": "2026-11-10T01:02:32.914Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T17:59:05.546Z"
+      "last_updated": "2026-11-10T01:02:32.914Z"
     },
     "lucide-icons/lucide": {
       "repository": "lucide-icons/lucide",

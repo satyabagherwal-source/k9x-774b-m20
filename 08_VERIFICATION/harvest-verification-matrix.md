@@ -8699,3 +8699,7 @@
 | `CYCLE-20261110-X6C3` | `2026-11-10T00:44:55.251Z` | `domcyrus/rustnet` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0739449e...`) |
 | `CYCLE-20261110-XGVP` | `2026-11-10T00:45:08.917Z` | `duckdb/duckdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4b6af69b...`) |
 | `CYCLE-20261110-XHIG` | `2026-11-10T00:45:09.736Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`cdc50c64...`) |
+| `CYCLE-20261110-G8NY` | `2026-11-10T00:59:44.734Z` | `clastix/kamaji` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`3b19e3cc...`) |
+| `CYCLE-20261110-GB04` | `2026-11-10T00:59:47.764Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e72a6f8e...`) |
+| `CYCLE-20261110-GE04` | `2026-11-10T00:59:51.652Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`bff4ca5a...`) |
+| `CYCLE-20261110-JUEY` | `2026-11-10T01:02:32.890Z` | `topgrade-rs/topgrade` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`fc86cf2c...`) |

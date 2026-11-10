@@ -3283,10 +3283,10 @@
     "repository": "zama-ai/tfhe-rs",
     "platform": "github",
     "sourceUrl": "https://github.com/zama-ai/tfhe-rs",
-    "sourceVersion": "fabb1cf8",
+    "sourceVersion": "6bd1e65d",
     "license": "NOASSERTION",
-    "contentHash": "e0db7c78c83baac7a01a00db46388be63a78bdf647d92e757f6e0d9779c38a9a",
-    "lastHarvestedAt": "2026-11-09T16:11:05.812Z",
+    "contentHash": "e72a6f8e19c4173d8fe672797cbd534df5fb1da758a8d12d6d5cd22fa9bc1a0e",
+    "lastHarvestedAt": "2026-11-10T00:59:47.769Z",
     "learningId": "learn-github-zama-ai-tfhe-rs"
   },
   "doobidoo-mcp-memory-service": {
@@ -4113,10 +4113,10 @@
     "repository": "clastix/kamaji",
     "platform": "github",
     "sourceUrl": "https://github.com/clastix/kamaji",
-    "sourceVersion": "c24c2e37",
+    "sourceVersion": "af5ad885",
     "license": "Apache-2.0",
-    "contentHash": "5f422a81bde5a51f13052cdd8d0c9cc6314b380dd19d5ff9614375f5eaf92e93",
-    "lastHarvestedAt": "2026-11-06T21:45:06.672Z",
+    "contentHash": "3b19e3cc17f4d134094fc5f731ca0099a68870e5041dc28f65a29745ca902a29",
+    "lastHarvestedAt": "2026-11-10T00:59:44.738Z",
     "learningId": "learn-github-clastix-kamaji"
   },
   "gluesql-gluesql": {
@@ -6073,10 +6073,10 @@
     "repository": "ClickHouse/ClickHouse",
     "platform": "github",
     "sourceUrl": "https://github.com/ClickHouse/ClickHouse",
-    "sourceVersion": "c847f42e",
+    "sourceVersion": "f51f86e5",
     "license": "Apache-2.0",
-    "contentHash": "0bdebd2459787d3fc6d4272e0252896dd275692372fa8ca49b8b0da997e11a42",
-    "lastHarvestedAt": "2026-11-08T22:10:53.653Z",
+    "contentHash": "bff4ca5ada9f6aef85074b5289b4698beba50a00c4576e7d080b48ce76522e6e",
+    "lastHarvestedAt": "2026-11-10T00:59:51.656Z",
     "learningId": "learn-github-clickhouse-clickhouse"
   },
   "dockview-dockview": {
@@ -6863,10 +6863,10 @@
     "repository": "topgrade-rs/topgrade",
     "platform": "github",
     "sourceUrl": "https://github.com/topgrade-rs/topgrade",
-    "sourceVersion": "03070c56",
+    "sourceVersion": "c26ade9a",
     "license": "GPL-3.0",
-    "contentHash": "bca4a4dd81e7919695e0da2618b99854951540804e54f362c07d207bf8e3210a",
-    "lastHarvestedAt": "2026-11-08T17:59:05.536Z",
+    "contentHash": "fc86cf2cbceb74a5546b1cc63d7176b7ace351d4f7972db57b70c366c581f8ef",
+    "lastHarvestedAt": "2026-11-10T01:02:32.904Z",
     "learningId": "learn-github-topgrade-rs-topgrade"
   },
   "lucide-icons-lucide": {

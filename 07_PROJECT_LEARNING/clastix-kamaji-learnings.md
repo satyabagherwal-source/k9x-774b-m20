@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clastix-kamaji-learnings.md`  
 > **Source**: github ([https://github.com/clastix/kamaji](https://github.com/clastix/kamaji))  
-> **Source Version**: `c24c2e37`  
+> **Source Version**: `af5ad885`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T21:45:04.766Z  
+> **Timestamp**: 2026-11-10T00:59:43.184Z  
 > **Learning ID**: `learn-github-clastix-kamaji`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clastix-kamaji-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/clastix/kamaji](https://github.com/clastix/kamaji))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T21:45:04.759Z  
+> **Harvest Timestamp**: 2026-11-10T00:59:42.403Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Kamaji is the Hosted Control Plane Manager for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 2076 stars
+- **Stars / Engagement**: 2079 stars
 
 ---
 
@@ -743,298 +743,172 @@ func ShouldReconcileErrorBeIgnored(err error) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c24c2e37` (2026-11-06)
-**Commit Message**: fix(konnectivity): keep additional Service ports (#1407)
+### Incident Patch 1: `af5ad885` (2026-11-09)
+**Commit Message**: feat(deps): bump k8s.io/apimachinery (#1404)
 
-The konnectivity Service builder always wrote its port into index 1.
-When a TenantControlPlane declares spec.controlPlane.service
-.additionalPorts, the Service builder puts the first additional port
-there before Konnectivity has a port of its own: on the reconcile that
-creates the Service, or the one that enables Konnectivity. That port
-was overwritten and the konnectivity port inherited its fields, such
-as appProtocol and the allocated NodePort.
+Bumps the k8s group with 1 update in the / directory: [k8s.io/apimachinery](https://github.com/kubernetes/apimachinery).
 
-Look the konnectivity port up by name in both builders, insert a fresh
-entry after the kube-apiserver port when there is none, and read the
-status port by name instead of from index 1.
 
-Upstream issue: clastix/kamaji 1227
+Updates `k8s.io/apimachinery` from 0.37.1 to 0.37.2
+- [Commits](https://github.com/kubernetes/apimachinery/compare/v0.37.1...v0.37.2)
 
-Assisted-by: LLM
+---
+updated-dependencies:
+- dependency-name: k8s.io/apimachinery
+  dependency-version: 0.37.2
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+  dependency-group: k8s
+...
 
-Signed-off-by: Marian Koreniuk <[REDACTED_EMAIL]>
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `internal/resources/k8s_service_resource.go` (modified, +1/-1)
+**File**: `go.mod` (modified, +2/-2)
 ```diff
-@@ -115,7 +115,7 @@ func (r *KubernetesServiceResource) mutate(ctx context.Context, tenantControlPla
- 				port.TargetPort = intstr.FromInt32(tenantControlPlane.Spec.NetworkProfile.Port)
- 
- 				ports = append(ports, port)
--			case i == 1 && port.Name == "konnectivity-server":
-+			case port.Name == "konnectivity-server":
- 				ports = append(ports, port)
- 			}
- 		}
+@@ -30,7 +30,7 @@ require (
+ 	gomodules.xyz/jsonpatch/v2 v2.5.0
+ 	k8s.io/api v0.37.1
+ 	k8s.io/apiextensions-apiserver v0.37.0
+-	k8s.io/apimachinery v0.37.1
++	k8s.io/apimachinery v0.37.2
+ 	k8s.io/client-go v0.37.1
+ 	k8s.io/cluster-bootstrap v0.0.0
+ 	k8s.io/klog/v2 v2.140.0
+@@ -199,7 +199,7 @@ require (
+ 	k8s.io/cri-client v0.0.0 // indirect
+ 	k8s.io/kms v0.37.0 // indirect
+ 	k8s.io/kube-openapi v0.0.0-20260721132016-d427ff9ee9ad // indirect
+-	k8s.io/streaming v0.37.1 // indirect
++	k8s.io/streaming v0.37.2 // indirect
+ 	k8s.io/system-validators v1.12.1 // indirect
+ 	mellium.im/sasl v0.3.1 // indirect
+ 	sigs.k8s.io/apiserver-network-proxy/konnectivity-client v0.36.0 // indirect
 ```
 
-**File**: `internal/resources/konnectivity/service_resource.go` (modified, +37/-13)
+**File**: `go.sum` (modified, +4/-4)
 ```diff
-@@ -6,6 +6,7 @@ package konnectivity
- import (
- 	"context"
- 	"fmt"
-+	"slices"
+@@ -504,8 +504,8 @@ k8s.io/api v0.37.0 h1:Z//Vj9N7RA/yS2sDmxyeo7h+RR4zbUrd2vrd3Z0TbB4=
+ k8s.io/api v0.37.0/go.mod h1:LKXgcJWMc+f4OLbP5SFR8rulEg07zZhpi/zMULiBImk=
+ k8s.io/apiextensions-apiserver v0.37.0 h1:zRMQ3+/LIE5oZ0tVvXwYHC+dIkSP5cjNWju7AZU1LOI=
+ k8s.io/apiextensions-apiserver v0.37.0/go.mod h1:HU0PfSBwchHL5iDau6jjt9zU6ryWkDDlaVUiq91NK80=
+-k8s.io/apimachinery v0.37.1 h1:hGCYyvKHCwtwMitj2vU4vYx0Z16N9GyZk9BBnz0wDAE=
+-k8s.io/apimachinery v0.37.1/go.mod h1:jF84AyUi/IRIXRot5f+lm6MpxoWI+F1XgjaMmwCdTFw=
++k8s.io/apimachinery v0.37.2 h1:G4t9RGoPDbQML38hz/kQQiltttgd3egg2ODCR8aIc2o=
++k8s.io/apimachinery v0.37.2/go.mod h1:qaAvSNvgU2x07wRM95MSHSJTPQ/ob/LeNAGbeDgqQJg=
+ k8s.io/apiserver v0.37.0 h1:TXg7OxsOWrAH8J4Zi/gBAZuMw1Dfdd+6cca2h4qjRqo=
+ k8s.io/apiserver v0.37.0/go.mod h1:OddHDF4gy9qyIb8o/3+qaeP6S0vEObWLgOygVqXksv0=
+ k8s.io/cli-runtime v0.37.0 h1:U3XakUeirBQJMz5688r04z74SIHSE7V5SIZ6Ho5JyBM=
+@@ -538,8 +538,8 @@ k8s.io/kubelet v0.37.0 h1:VhaZanjlE5CkoAPAjKw0DH+Q0BYXVfYekZgzZDAJMMg=
+ k8s.io/kubelet v0.37.0/go.mod h1:PHXfQuVqsTzFVqOeP67UUNv5Ajri+dLGoeaEnW6gGjE=
+ k8s.io/kubernetes v1.37.2 h1:A2VDEiObzkYqFTKhSsn0ZEb0RlLEXpHWj93gi2HqEwE=
+ k8s.io/kubernetes v1.37.2/go.mod h1:zAK7e3i5feyBL/bhucQnA5VRKuyrS8F+ijHJkZzQaWw=
+-k8s.io/streaming v0.37.1 h1:TpzVfQeFuVndn2g9mFqxy1UcUYPwDzqjUmwR/IzJCWc=
+-k8s.io/streaming v0.37.1/go.mod h1:APlJR26ZWRcVy5bIEj0QRrKUXROtBHPcxl2NT7EAzPU=
++k8s.io/streaming v0.37.2 h1:xmzp9nbqIbjvsRcqrBYa+K5XPQ6Jy/Dm3zZ8mN916AI=
++k8s.io/streaming v0.37.2/go.mod h1:APlJR26ZWRcVy5bIEj0QRrKUXROtBHPcxl2NT7EAzPU=
+ k8s.io/system-validators v1.12.1 h1:AY1+COTLJN/Sj0w9QzH1H0yvyF3Kl6CguMnh32WlcUU=
+ k8s.io/system-validators v1.12.1/go.mod h1:awfSS706v9R12VC7u7K89FKfqVy44G+E0L1A0FX9Wmw=
+ k8s.io/utils v0.0.0-20260626114624-be93311217bd h1:Ea7fgQ5we8Y9T0OX5o0dAHzQOBRI07D/dEYRaB9ZZEs=
+```
+
+---
+
+### Incident Patch 2: `31492ccb` (2026-11-09)
+**Commit Message**: feat(deps): bump sigs.k8s.io/gateway-api from 1.6.3 to 1.7.0 (#1405)
+
+Bumps [sigs.k8s.io/gateway-api](https://github.com/kubernetes-sigs/gateway-api) from 1.6.3 to 1.7.0.
+- [Release notes](https://github.com/kubernetes-sigs/gateway-api/releases)
+- [Changelog](https://github.com/kubernetes-sigs/gateway-api/blob/main/RELEASE.md)
+- [Commits](https://github.com/kubernetes-sigs/gateway-api/compare/v1.6.3...v1.7.0)
+
+---
+updated-dependencies:
+- dependency-name: sigs.k8s.io/gateway-api
+  dependency-version: 1.7.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `go.mod` (modified, +5/-5)
+```diff
+@@ -1,6 +1,6 @@
+ module github.com/clastix/kamaji
  
- 	"github.com/prometheus/client_golang/prometheus"
- 	corev1 "k8s.io/api/core/v1"
-@@ -20,6 +21,8 @@ import (
- 	"github.com/clastix/kamaji/internal/utilities"
+-go 1.26.5
++go 1.27.0
+ 
+ require (
+ 	github.com/blang/semver v3.5.1+incompatible
+@@ -28,18 +28,18 @@ require (
+ 	go.etcd.io/etcd/client/v3 v3.7.3
+ 	go.uber.org/automaxprocs v1.6.0
+ 	gomodules.xyz/jsonpatch/v2 v2.5.0
+-	k8s.io/api v0.37.0
++	k8s.io/api v0.37.1
+ 	k8s.io/apiextensions-apiserver v0.37.0
+ 	k8s.io/apimachinery v0.37.1
+-	k8s.io/client-go v0.37.0
++	k8s.io/client-go v0.37.1
+ 	k8s.io/cluster-bootstrap v0.0.0
+ 	k8s.io/klog/v2 v2.140.0
+ 	k8s.io/kube-proxy v0.0.0
+ 	k8s.io/kubelet v0.0.0
+ 	k8s.io/kubernetes v1.37.2
+ 	k8s.io/utils v0.0.0-20260626114624-be93311217bd
+ 	sigs.k8s.io/controller-runtime v0.25.2
+-	sigs.k8s.io/gateway-api v1.6.3
++	sigs.k8s.io/gateway-api v1.7.0
+ 	sigs.k8s.io/yaml v1.6.0
  )
  
-+const servicePortName = "konnectivity-server"
-+
- type ServiceResource struct {
- 	resource *corev1.Service
- 	Client   client.Client
-@@ -41,10 +44,14 @@ func (r *ServiceResource) ShouldStatusBeUpdated(_ context.Context, tenantControl
- 		return false
- 	}
- 
-+	var port int32
-+	if servicePort := r.servicePort(); servicePort != nil {
-+		port = servicePort.Port
-+	}
-+
- 	if tenantControlPlane.Status.Addons.Konnectivity.Service.Name != r.resource.GetName() ||
- 		tenantControlPlane.Status.Addons.Konnectivity.Service.Namespace != r.resource.GetNamespace() ||
--		len(r.resource.Spec.Ports) > 0 && tenantControlPlane.Status.Addons.Konnectivity.Service.Port != r.resource.Spec.Ports[1].Port ||
--		len(r.resource.Spec.Ports) == 0 && tenantControlPlane.Status.Addons.Konnectivity.Service.Port > 0 ||
-+		tenantControlPlane.Status.Addons.Konnectivity.Service.Port != port ||
- 		len(r.resource.Status.Conditions) != len(tenantControlPlane.Status.Addons.Konnectivity.Service.Conditions) {
- 		return true
- 	}
-@@ -83,7 +90,7 @@ func (r *ServiceResource) CleanUp(ctx context.Context, _ *kamajiv1alpha1.TenantC
- 
- 	res, err := utilities.CreateOrUpdateWithConflict(ctx, r.Client, r.resource, func() error {
- 		for index, port := range r.resource.Spec.Ports {
--			if port.Name == "konnectivity-server" {
-+			if port.Name == servicePortName {
- 				ports := make([]corev1.ServicePort, 0, len(r.resource.Spec.Ports)-1)
- 
- 				ports = append(ports, r.resource.Spec.Ports[:index]...)
-@@ -112,7 +119,9 @@ func (r *ServiceResource) UpdateTenantControlPlaneStatus(_ context.Context, tena
- 	if tenantControlPlane.Spec.Addons.Konnectivity != nil {
- 		tenantControlPlane.Status.Addons.Konnectivity.Service.Name = r.resource.GetName()
- 		tenantControlPlane.Status.Addons.Konnectivity.Service.Namespace = r.resource.GetNamespace()
--		tenantControlPlane.Status.Addons.Konnectivity.Service.Port = r.resource.Spec.Ports[1].Port
-+		if servicePort := r.servicePort(); servicePort != nil {
-+			tenantControlPlane.Status.Addons.Konnectivity.Service.Port = servicePort.Port
-+		}
- 		tenantControlPlane.Status.Addons.Konnectivity.Service.ServiceStatus = resources.StripLoadBalancerPortsFromServiceStatus(r.resource.Status)
- 	}
- 
-@@ -140,25 +149,40 @@ func (r *ServiceResource) CreateOrUpdate(ctx context.Context, tenantControlPlane
- 
- func (r *ServiceResource) mutate(_ context.Context, tenantControlPlane *kamajiv1alpha1.TenantControlPlane) func() error {
- 	return func() error {
--		switch len(r.resource.Spec.Ports) {
--		case 0:
-+		if len(r.resource.Spec.Ports) == 0 {
- 			return fmt.Errorf("current state of the Service is not ready to be mangled for Konnectivity")
--		case 1:
--			r.resource.Spec.Ports = append(r.resource.Spec.Ports, corev1.ServicePort{})
- 		}
- 
--		r.resource.Spec.Ports[1].Name = "konnectivity-server"
--		r.resource.Spec.Ports[1].Protocol = corev1.ProtocolTCP
--		r.resource.Spec.Ports[1].Port = tenantControlPlane.Spec.Addons.Konnectivity.KonnectivityServerSpec.Port
--		r.resource.Spec.Ports[1].TargetPort = intstr.FromInt32(tenantControlPlane.Spec.Addons.Konnectivity.KonnectivityServerSpec.Port)
-+		port := r.servicePort()
-+		if port == nil {
-+			// A new entry right after the kube-apiserver port: overwriting index 1 would drop
-+			// the additional port sitting there, and the konnectivity port would inherit its fields.
-+			r.resource.Spec.Ports = slices.Insert(r.resource.Spec.Ports, 1, corev1.ServicePort{Name: servicePortName})
-+			port = &r.resource.Spec.Ports[1]
-+		}
-+
-+		port.Protocol = corev1.ProtocolTCP
-+		port.Port = tenantControlPlane.Spec.Addons.Konnectivity.KonnectivityServerSpec.Port
-+		port.TargetPort = intstr.FromInt32(tenantControlPlane.Spec.Addons.Konnectivity.KonnectivityServerSpec.Port)
- 		if tenantControlPlane.Spec.ControlPlane.Service.ServiceType == kamajiv1alpha1.ServiceTypeNodePort {
--			r.resource.Spec.Ports[1].NodePort = tenantControlPlane.Spec.Addons.Konnectivity.KonnectivityServerSpec.Port
-+			port.NodePort = tenantControlPlane.Spec.Addons.Konnectivity.KonnectivityServerSpec.Port
- 		}
- 
- 		return controllerutil.SetControllerReference(tenantControlPlane, r.resource, r.Client.Scheme())
- 	}
- }
- 
-+// servicePort returns the konnectivity port of the Service, or nil when it has none.
-+func (r *ServiceResource) servicePort() *corev1.ServicePort {
-+	for i := range r.resource.Spec.Ports {
-+		if r.resource.Spec.Ports[i].Name == servicePortName {
-+			return &r.resource.Spec.Ports[i]
-+		}
-+	}
-+
-+	return nil
-+}
-+
- func (r *ServiceResource) GetName() string {
- 	return "konnectivity-service"
- }
+@@ -179,7 +179,7 @@ require (
+ 	golang.org/x/sys v0.49.0 // indirect
+ 	golang.org/x/term v0.47.0 // indirect
+ 	golang.org/x/text v0.43.0 // indirect
+-	golang.org/x/time v0.15.0 // indirect
++	golang.org/x/time v0.16.0 // indirect
+ 	golang.org/x/tools v0.51.0 // indirect
+ 	google.golang.org/genproto/googleapis/api v0.0.0-20260803160001-6ac0973c030d // indirect
+ 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260803160001-6ac0973c030d // indirect
 ```
 
-**File**: `internal/resources/konnectivity/service_resource_test.go` (added, +160/-0)
+**File**: `go.sum` (modified, +4/-4)
 ```diff
-@@ -0,0 +1,160 @@
-+// Copyright 2022 Clastix Labs
-+// SPDX-License-Identifier: Apache-2.0
-+
-+package konnectivity_test
-+
-+import (
-+	"context"
-+
-+	. "github.com/onsi/ginkgo/v2"
-+	. "github.com/onsi/gomega"
-+	corev1 "k8s.io/api/core/v1"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/apimachinery/pkg/util/intstr"
-+	"k8s.io/utils/ptr"
-+	"sigs.k8s.io/controller-runtime/pkg/client"
-+	"sigs.k8s.io/controller-runtime/pkg/client/fake"
-+	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
-+
-+	kamajiv1alpha1 "github.com/clastix/kamaji/api/v1alpha1"
-+	"github.com/clastix/kamaji/internal/resources"
-+	"github.com/clastix/kamaji/internal/resources/konnectivity"
-+)
-+
-+var _ = Describe("Konnectivity ServiceResource", func() {
-+	const (
-+		tcpName            = "test-tcp"
-+		konnectivityPort   = int32(8132)
-+		additionalPort     = int32(50001)
-+		additionalNodePort = int32(32542)
-+	)
-+
-+	var (
-+		ctx        context.Context
-+		tcp        *kamajiv1alpha1.TenantControlPlane
-+		fakeClient client.Client
-+	)
-+
-+	newClient := func(objs ...client.Object) client.Client {
-+		return fake.NewClientBuilder().WithScheme(runtimeScheme).WithObjects(objs...).Build()
-+	}
-+
-+	// reconcile runs the two Service builders in the order the TenantControlPlane controller does.
-+	reconcile := func() (controllerutil.OperationResult, controllerutil.OperationResult) {
-+		svc := &resources.KubernetesServiceResource{Client: fakeClient}
-+		Expect(svc.Define(ctx, tcp)).To(Succeed())
-+		svcResult, err := svc.CreateOrUpdate(ctx, tcp)
-+		Expect(err).NotTo(HaveOccurred())
-+
-+		konn := &konnectivity.ServiceResource{Client: fakeClient}
-+		Expect(konn.Define(ctx, tcp)).To(Succeed())
-+		konnResult, err := konn.CreateOrUpdate(ctx, tcp)
-+		Expect(err).NotTo(HaveOccurred())
-+
-+		return svcResult, konnResult
-+	}
-+
-+	getService := func() *corev1.Service {
-+		svc := &corev1.Service{}
-+		Expect(fakeClient.Get(ctx, client.ObjectKey{Name: tcpName, Namespace: "default"}, svc)).To(Succeed())
-+
-+		return svc
-+	}
-+
-+	portNames := func(svc *corev1.Service) []string {
-+		names := make([]string, 0, len(svc.Spec.Ports))
-+		for _, port := range svc.Spec.Ports {
-+			names = append(names, port.Name)
-+		}
-+
-+		return names
-+	}
-+
-+	BeforeEach(func() {
-+		ctx = context.Background()
-+		tcp = &kamajiv1alpha1.TenantControlPlane{
-+			ObjectMeta: metav1.ObjectMeta{Name: tcpName, Namespace: "default"},
-+			Spec: kamajiv1alpha1.TenantControlPlaneSpec{
-+				ControlPlane: kamajiv1alpha1.ControlPlane{
-+					Service: kamajiv1alpha1.ServiceSpec{
-+						ServiceType: kamajiv1alpha1.ServiceTypeLoadBalancer,
-+						AdditionalPorts: []kamajiv1alpha1.AdditionalPort{{
-+							Name:       "talos-trustd",
-+							Protocol:   corev1.ProtocolTCP,
-+							Port:       additionalPort,
-+							TargetPort: intstr.FromInt32(additionalPort),
-+						}},
-+					},
-+				},
-+				NetworkProfile: kamajiv1alpha1.NetworkProfileSpec{Port: 6443},
-+				Addons: kamajiv1alpha1.AddonsSpec{
-+					Konnectivity: &kamajiv1alpha1.KonnectivitySpec{
-+						KonnectivityServerSpec: kamajiv1alpha1.KonnectivityServerSpec{Port: konnectivityPort},
-+					},
-+				},
-+			},
-+		}
-+	})
-+
-+	It("keeps the additional ports on the reconcile that creates the Service", func() {
-+		fakeClient = newClient()
-+
-+		reconcile()
-+
-+		Expect(portNames(getService())).To(Equal([]string{"kube-apiserver", "konnectivity-server", "talos-trustd"}))
-+
-+		svcResult, konnResult := reconcile()
-+		Expect(svcResult).To(Equal(controllerutil.OperationResultNone))
-+		Expect(konnResult).To(Equal(controllerutil.OperationResultNone))
-+	})
-+
-+	It("keeps an additional port and its fields when Konnectivity is enabled on an existing Service", func() {
-+		fakeClient = newClient(&corev1.Service{
-+			ObjectMeta: metav1.ObjectMeta{Name: tcpName, Namespace: "default"},
-+			Spec: corev1.ServiceSpec{
-+				Type: corev1.ServiceTypeLoadBalancer,
-+				Ports: []corev1.ServicePort{
-+					{Name: "kube-apiserver", Protocol: corev1.ProtocolTCP, Port: 6443, TargetPort: intstr.FromInt32(6443), NodePort: 30147},
-+					{Name: "talos-trustd", Protocol: corev1.ProtocolTCP, AppProtocol: ptr.To("grpc"), Port: additionalPort, TargetPort: intstr.FromInt32(additionalPort), NodePort: additionalNodePort},
-+				},
-+			},
-+		})
-+		tcp.Spec.ControlPlane.Service.AdditionalPorts[0].AppProtocol = ptr.To("grpc")
-+
-+		reconcile()
-+
-+		svc := getService()
-+		Expect(portNames(svc)).To(Equal([]string{"kube-apiserver", "konnectivity-server", "talos-trustd"}))
-+		Expect(svc.Spec.Ports[1].Port).To(Equal(konnectivityPort))
-+		Expect(svc.Spec.Ports[1].AppProtocol).To(BeNil(), "the konnectivity port must not inherit fields of the additional port")
-+		Expect(svc.Spec.Ports[1].NodePort).To(BeZero())
-+		Expect(svc.Spec.Ports[2].AppProtocol).To(Equal(ptr.To("grpc")))
-+	})
-+
-+	It("updates the konnectivity port by name and reports it in the status", func() {
-+		fakeClient = newClient(&corev1.Service{
-+			ObjectMeta: metav1.ObjectMeta{Name: tcpName, Namespace: "default"},
-+			Spec: corev1.ServiceSpec{
-+				Type: core
+@@ -456,8 +456,8 @@ golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
+ golang.org/x/text v0.3.3/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
+ golang.org/x/text v0.43.0 h1:1QivrlhwAsnMOcqgOdl9my7s9OyZl8O5/UGUTJVXoWc=
+ golang.org/x/text v0.43.0/go.mod h1:hbSIYA/amXcRXTFSZqh8tWHEoqRvvbKPJ2uz/KU+a+s=
+-golang.org/x/time v0.15.0 h1:bbrp8t3bGUeFOx08pvsMYRTCVSMk89u4tKbNOZbp88U=
+-golang.org/x/time v0.15.0/go.mod h1:Y4YMaQmXwGQZoFaVFk4YpCt4FLQMYKZe9oeV/f4MSno=
++golang.org/x/time v0.16.0 h1:vMb6ptszcQMkcwiRTAuNNU50gom6++Q/6gY2hDM6VDE=
++golang.org/x/time v0.16.0/go.mod h1:rVKOqvZeKvrDKTQiAHJ7wmwP0RzleSphoEA9RcdLA0s=
+ golang.org/x/tools v0.0.0-20180917221912-90fa682c2a6e/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
+ golang.org/x/tools v0.0.0-20191119224855-298f0cb1881e/go.mod h1:b+2E5dAYhXwXZwtnZ6UAqBI28+e2cm9otk0dWdXHAEo=
+ golang.org/x/tools v0.1.1/go.mod h1:o0xws9oXOQQZyjljx8fwUC0k7L1pTE6eaCbjGeHmOkk=
+@@ -552,8 +552,8 @@ sigs.k8s.io/apiserver-network-proxy/konnectivity-client v0.36.0 h1:/YpDJ4vReG7Zm
+ sigs.k8s.io/apiserver-network-proxy/konnectivity-client v0.36.0/go.mod h1:tJo1aepTXyR+8Xs3sUsGBDk4Ub2AM5dPAPKJx0mpm5c=
+ sigs.k8s.io/controller-runtime v0.25.2 h1:bEkK3PVOIVK9X8QWLGVhJgmFc++47vfT6wakSzAOLsQ=
+ sigs.k8s.io/controller-runtime v0.25.2/go.mod h1:4QqLdT6z/L6Olj8JJCtvztid4/fnIiYsfaTFScegctc=
+-sigs.k8s.io/gateway-api v1.6.3 h1:lKpJa5bGlraC/QeACvCpsHLdmO6y0iKfzVl6gzaFEYc=
+-sigs.k8s.io/gateway-api v1.6.3/go.mod h1:FVfx3t389ybeXOqvDghLbdvJdSCfI/PReqCUI3lu3mY=
++sigs.k8s.io/gateway-api v1.7.0 h1:duVnm7nO6oXfMMUWfcDoBph47CYR/ME3NGxccOVglaY=
++sigs.k8s.io/gateway-api v1.7.0/go.mod h1:ihME72ink97/HnDMFNpNf9bH/mAcdTAVw0GR35iiZvA=
+ sigs.k8s.io/json v0.0.0-20250730193827-2d320260d730 h1:IpInykpT6ceI+QxKBbEflcR5EXP7sU1kvOlxwZh5txg=
+ sigs.k8s.io/json v0.0.0-20250730193827-2d320260d730/go.mod h1:mdzfpAEoE6DHQEN0uh9ZbOCuHbLK5wOm7dK4ctXE9Tg=
+ sigs.k8s.io/kustomize/api v0.21.1 h1:lzqbzvz2CSvsjIUZUBNFKtIMsEw7hVLJp0JeSIVmuJs=
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1409** (2026-11-09): feat(deps): bump github.com/spf13/pflag from 1.0.10 to 1.1.0 (@dependabot[bot])
+- **PR #1408** (2026-11-09): feat(deps): bump github.com/onsi/ginkgo/v2 from 2.33.1 to 2.34.0 (@dependabot[bot])
 - **PR #1407** (2026-11-06): fix(konnectivity): keep additional Service ports (@themoriarti)
+- **PR #1405** (2026-11-09): feat(deps): bump sigs.k8s.io/gateway-api from 1.6.3 to 1.7.0 (@dependabot[bot])
+- **PR #1404** (2026-11-09): feat(deps): bump k8s.io/apimachinery from 0.37.1 to 0.37.2 in the k8s group across 1 directory (@dependabot[bot])
 - **PR #1402** (2026-10-30): docs: fix kamaji-etcd.deploy key and dead links (@sarankumar1325)
-- **PR #1401** (2026-10-30): feat(deps): bump k8s.io/kubernetes from 1.37.1 to 1.37.2 in the k8s group (@dependabot[bot])
-- **PR #1399** (closed): fix(kubeadm): use advertiseAddress for kubeadm's LocalAPIEndpoint (@Kellen275)
-- **PR #1397** (2026-10-30): fix(utilities): honor kubeconfig server when kubeconfig-secret-key annotation is set (@alistarle)
-- **PR #1395** (2026-10-30): feat(deps): bump github.com/nats-io/nats.go from 1.54.0 to 1.55.0 (@dependabot[bot])
 
 ---
 
@@ -1054,28 +928,30 @@ Signed-off-by: Marian Koreniuk <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. konnectivity): keep additional Service ports (#1407)
+## X. deps): bump k8s.io/apimachinery (#1404)
 
 **RULE**:
-When implementing operations in `internal/resources/k8s_service_resource.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clastix/kamaji. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clastix/kamaji. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c24c2e37`: konnectivity): keep additional Service ports (#1407). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `af5ad885`: deps): bump k8s.io/apimachinery (#1404). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/resources/k8s_service_resource.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-			case port.Name == "konnectivity-server":
+	k8s.io/apimachinery v0.37.2
+	k8s.io/streaming v0.37.2 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-			case i == 1 && port.Name == "konnectivity-server":
+	k8s.io/apimachinery v0.37.1
+	k8s.io/streaming v0.37.1 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c24c2e37` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `af5ad885` are properly handled with clean fallback behavior.

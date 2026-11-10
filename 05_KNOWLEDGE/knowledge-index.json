@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-10T00:45:09.664Z",
+  "last_updated": "2026-11-10T01:02:32.797Z",
   "total_verified_learnings": 1245,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8050,14 +8050,19 @@
       "slug": "clastix-kamaji",
       "platform": "github",
       "source_url": "https://github.com/clastix/kamaji",
-      "source_version": "c24c2e37",
-      "content_hash": "5f422a81bde5a51f13052cdd8d0c9cc6314b380dd19d5ff9614375f5eaf92e93",
+      "source_version": "af5ad885",
+      "content_hash": "3b19e3cc17f4d134094fc5f731ca0099a68870e5041dc28f65a29745ca902a29",
       "dossier_path": "07_PROJECT_LEARNING/clastix-kamaji-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clastix-kamaji-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "konnectivity): keep additional Service ports (#1407)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "deps): bump k8s.io/apimachinery (#1404)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -8106,7 +8111,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T21:45:06.541Z",
+      "verified_at": "2026-11-10T00:59:44.598Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -8186,8 +8191,8 @@
       "slug": "clickhouse-clickhouse",
       "platform": "github",
       "source_url": "https://github.com/ClickHouse/ClickHouse",
-      "source_version": "c847f42e",
-      "content_hash": "0bdebd2459787d3fc6d4272e0252896dd275692372fa8ca49b8b0da997e11a42",
+      "source_version": "f51f86e5",
+      "content_hash": "bff4ca5ada9f6aef85074b5289b4698beba50a00c4576e7d080b48ce76522e6e",
       "dossier_path": "07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
       "promoted_rules": [
@@ -8204,6 +8209,11 @@
         {
           "number": null,
           "title": "Merge pull request #112650 from ClickHouse/fix-with-fill-bounds-out-of-column-ty",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #129914 from nihalzp/fix-volume-jbod-round-robin-race",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -8312,7 +8322,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T22:10:53.501Z",
+      "verified_at": "2026-11-10T00:59:51.519Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -62410,8 +62420,8 @@
       "slug": "topgrade-rs-topgrade",
       "platform": "github",
       "source_url": "https://github.com/topgrade-rs/topgrade",
-      "source_version": "03070c56",
-      "content_hash": "bca4a4dd81e7919695e0da2618b99854951540804e54f362c07d207bf8e3210a",
+      "source_version": "c26ade9a",
+      "content_hash": "fc86cf2cbceb74a5546b1cc63d7176b7ace351d4f7972db57b70c366c581f8ef",
       "dossier_path": "07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md",
       "promoted_rules": [
@@ -62424,6 +62434,21 @@
           "number": null,
           "title": "tailscale): gate Tailscale step to Windows and macOS (#2500)",
           "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Shell Script Parameterization via Argument Injection",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Shim Non-Functional Fallback and Multi-Candidate Search",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Cross-Subsystem Packaging Ownership Mutual Exclusion",
+          "status": "WITHHELD_CONDITIONAL_PASS"
         },
         {
           "number": 2264,
@@ -62491,7 +62516,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T17:59:05.405Z",
+      "verified_at": "2026-11-10T01:02:32.761Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -67399,8 +67424,8 @@
       "slug": "zama-ai-tfhe-rs",
       "platform": "github",
       "source_url": "https://github.com/zama-ai/tfhe-rs",
-      "source_version": "fabb1cf8",
-      "content_hash": "e0db7c78c83baac7a01a00db46388be63a78bdf647d92e757f6e0d9779c38a9a",
+      "source_version": "6bd1e65d",
+      "content_hash": "e72a6f8e19c4173d8fe672797cbd534df5fb1da758a8d12d6d5cd22fa9bc1a0e",
       "dossier_path": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "promoted_rules": [
@@ -67412,6 +67437,11 @@
         {
           "number": null,
           "title": "hpu): adds in hputil ability to dump the fw trace with command hputil -f $i fw-t",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "integer): encrypted shift/rotate on narrow amounts",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -67510,7 +67540,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T16:11:05.695Z",
+      "verified_at": "2026-11-10T00:59:47.597Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
