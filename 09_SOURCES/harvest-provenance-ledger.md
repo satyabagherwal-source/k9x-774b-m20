@@ -8748,3 +8748,6 @@ Every entry in this ledger must capture:
 | `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `7c78aabb` | Multi-dimensional audit evidence | 2026-11-10T04:59:19.484Z |
 | `learn-huggingface-pyannote-speaker-diarization-3-1` | `https://huggingface.co/pyannote/speaker-diarization-3.1` | `hf-pyannot` | Multi-dimensional audit evidence | 2026-11-10T04:59:26.605Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `6bc0c3f1` | Multi-dimensional audit evidence | 2026-11-10T05:06:35.844Z |
+| `learn-github-bahdotsh-wrkflw` | `https://github.com/bahdotsh/wrkflw` | `bcd6c848` | Multi-dimensional audit evidence | 2026-11-10T05:14:16.542Z |
+| `learn-github-lingodotdev-lingo-dev` | `https://github.com/lingodotdev/lingo.dev` | `fbc666cf` | Multi-dimensional audit evidence | 2026-11-10T05:14:21.214Z |
+| `learn-huggingface-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf` | `https://huggingface.co/AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF` | `hf-atomicc` | Multi-dimensional audit evidence | 2026-11-10T05:14:25.118Z |

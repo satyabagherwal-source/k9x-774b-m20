@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-10T05:06:35.861Z",
+  "last_updated": "2026-11-10T05:14:25.129Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8616,14 +8616,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lingodotdev-lingo-dev",
-      "content_hash": "76f6566eb3b3a580ff5514c1ae74685fba1642f4f3fb854d47a285d1afcc3ddd",
-      "verified_at": "2026-11-07T05:50:52.969Z",
+      "content_hash": "c4b3a7614263b8bf4e20a5048c0a6757426cc36f6359576fb25323601baddd17",
+      "verified_at": "2026-11-10T05:14:21.223Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T05:50:52.969Z"
+      "last_updated": "2026-11-10T05:14:21.223Z"
     },
     "StarTrail-org/LEANN": {
       "repository": "StarTrail-org/LEANN",
@@ -11166,14 +11166,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bahdotsh-wrkflw",
-      "content_hash": "494054b53e017103cb470ba119cd0d93a85e8cf92de3e5c00238008199354f10",
-      "verified_at": "2026-11-07T19:37:17.908Z",
+      "content_hash": "4bcc131da93ccae4640244361e05ce2bb7c390e2a3f72a41ca15fb5e49733974",
+      "verified_at": "2026-11-10T05:14:16.562Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T19:37:17.908Z"
+      "last_updated": "2026-11-10T05:14:16.562Z"
     },
     "jordanbaird/Ice": {
       "repository": "jordanbaird/Ice",
@@ -17706,14 +17706,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf",
-      "content_hash": "c90639fecb1d7afa082197405a8e7eab3fb5f23b653e7755ae601484de4a3f4c",
-      "verified_at": "2026-11-05T23:09:39.997Z",
+      "content_hash": "0d0447c552f48fca69249a15d12e545edc5d7086f530bdef831b8cba641edd4d",
+      "verified_at": "2026-11-10T05:14:25.128Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T23:09:39.997Z"
+      "last_updated": "2026-11-10T05:14:25.128Z"
     },
     "alfa546/Crawler": {
       "repository": "alfa546/Crawler",

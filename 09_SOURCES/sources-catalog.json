@@ -5663,10 +5663,10 @@
     "repository": "lingodotdev/lingo.dev",
     "platform": "github",
     "sourceUrl": "https://github.com/lingodotdev/lingo.dev",
-    "sourceVersion": "348b2064",
+    "sourceVersion": "fbc666cf",
     "license": "Apache-2.0",
-    "contentHash": "76f6566eb3b3a580ff5514c1ae74685fba1642f4f3fb854d47a285d1afcc3ddd",
-    "lastHarvestedAt": "2026-11-07T05:50:52.953Z",
+    "contentHash": "c4b3a7614263b8bf4e20a5048c0a6757426cc36f6359576fb25323601baddd17",
+    "lastHarvestedAt": "2026-11-10T05:14:21.214Z",
     "learningId": "learn-github-lingodotdev-lingo-dev"
   },
   "startrail-org-leann": {
@@ -7413,10 +7413,10 @@
     "repository": "bahdotsh/wrkflw",
     "platform": "github",
     "sourceUrl": "https://github.com/bahdotsh/wrkflw",
-    "sourceVersion": "553ecf53",
+    "sourceVersion": "bcd6c848",
     "license": "MIT",
-    "contentHash": "494054b53e017103cb470ba119cd0d93a85e8cf92de3e5c00238008199354f10",
-    "lastHarvestedAt": "2026-11-07T19:37:17.902Z",
+    "contentHash": "4bcc131da93ccae4640244361e05ce2bb7c390e2a3f72a41ca15fb5e49733974",
+    "lastHarvestedAt": "2026-11-10T05:14:16.542Z",
     "learningId": "learn-github-bahdotsh-wrkflw"
   },
   "jordanbaird-ice": {
@@ -11765,8 +11765,8 @@
     "sourceUrl": "https://huggingface.co/AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
     "sourceVersion": "hf-atomicchat-deepseek-v4.1-flash-1017-uncensored-gsq-rco-gguf",
     "license": "Open-Source",
-    "contentHash": "c90639fecb1d7afa082197405a8e7eab3fb5f23b653e7755ae601484de4a3f4c",
-    "lastHarvestedAt": "2026-11-05T23:09:39.979Z",
+    "contentHash": "0d0447c552f48fca69249a15d12e545edc5d7086f530bdef831b8cba641edd4d",
+    "lastHarvestedAt": "2026-11-10T05:14:25.118Z",
     "learningId": "learn-huggingface-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf"
   },
   "alfa546-crawler": {

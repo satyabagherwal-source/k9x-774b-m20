@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-10T05:06:38.395Z",
-    "lastVerified": "2026-11-10T05:06:38.395Z",
+    "lastChecked": "2026-11-10T05:14:27.700Z",
+    "lastVerified": "2026-11-10T05:14:27.700Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -155,8 +155,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-10T04:44:31.260Z",
-    "lastVerified": "2026-11-10T04:44:31.260Z",
+    "lastChecked": "2026-11-10T05:14:24.720Z",
+    "lastVerified": "2026-11-10T05:14:24.720Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -639,12 +639,12 @@
     "revisionIdentifier": "763f4021"
   },
   "nolabs-ai-nono": {
-    "name": "nolabs-ai/nono",
+    "name": "nono",
     "officialUrl": "https://github.com/nolabs-ai/nono",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T22:14:56.882Z",
-    "lastVerified": "2026-11-09T22:14:56.882Z",
+    "lastChecked": "2026-11-10T05:14:19.715Z",
+    "lastVerified": "2026-11-10T05:14:19.715Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nolabs-ai-nono",
@@ -653,7 +653,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "bac14d41"
   },
   "vectifyai-pageindex": {
     "name": "PageIndex",
@@ -753,9 +754,9 @@
   "qdrant-qdrant": {
     "name": "qdrant",
     "officialUrl": "https://github.com/qdrant/qdrant",
-    "lastChecked": "2026-11-09T00:23:02.059Z",
+    "lastChecked": "2026-11-10T05:14:22.357Z",
     "revisionIdentifier": "222b2e44",
-    "lastVerified": "2026-11-09T00:23:02.059Z"
+    "lastVerified": "2026-11-10T05:14:22.357Z"
   },
   "hf-black-forest-labs-flux.1-dev": {
     "name": "black-forest-labs/FLUX.1-dev",
@@ -5644,14 +5645,14 @@
     "officialUrl": "https://github.com/lingodotdev/lingo.dev",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-07T05:50:51.188Z",
-    "lastVerified": "2026-11-07T05:50:51.188Z",
+    "lastChecked": "2026-11-10T05:14:18.861Z",
+    "lastVerified": "2026-11-10T05:14:18.861Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-lingodotdev-lingo-dev",
-    "contentHash": "76f6566eb3b3a580ff5514c1ae74685fba1642f4f3fb854d47a285d1afcc3ddd",
+    "contentHash": "c4b3a7614263b8bf4e20a5048c0a6757426cc36f6359576fb25323601baddd17",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5889,9 +5890,9 @@
   "orange-cyberdefense-goad": {
     "name": "GOAD",
     "officialUrl": "https://github.com/Orange-Cyberdefense/GOAD",
-    "lastChecked": "2026-11-09T01:19:21.080Z",
+    "lastChecked": "2026-11-10T05:14:17.291Z",
     "revisionIdentifier": "74af01eb",
-    "lastVerified": "2026-11-09T01:19:21.080Z"
+    "lastVerified": "2026-11-10T05:14:17.291Z"
   },
   "cockroachdb-cockroach": {
     "name": "cockroach",
@@ -8245,22 +8246,21 @@
     "revisionIdentifier": "c9780062"
   },
   "bahdotsh-wrkflw": {
-    "name": "wrkflw",
+    "name": "bahdotsh/wrkflw",
     "officialUrl": "https://github.com/bahdotsh/wrkflw",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T20:31:11.246Z",
-    "lastVerified": "2026-11-08T20:31:11.246Z",
+    "lastChecked": "2026-11-10T05:14:13.625Z",
+    "lastVerified": "2026-11-10T05:14:13.625Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bahdotsh-wrkflw",
-    "contentHash": "494054b53e017103cb470ba119cd0d93a85e8cf92de3e5c00238008199354f10",
+    "contentHash": "4bcc131da93ccae4640244361e05ce2bb7c390e2a3f72a41ca15fb5e49733974",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "553ecf53"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-autotrust-gev-26b-decide-nvfp4": {
     "name": "autotrust/GEV-26B-Decide-NVFP4",
@@ -13768,12 +13768,12 @@
     "officialUrl": "https://huggingface.co/AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-05T23:09:24.687Z",
-    "lastVerified": "2026-11-05T23:09:24.687Z",
+    "lastChecked": "2026-11-10T05:14:12.367Z",
+    "lastVerified": "2026-11-10T05:14:12.367Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf",
-    "contentHash": "c90639fecb1d7afa082197405a8e7eab3fb5f23b653e7755ae601484de4a3f4c",
+    "contentHash": "0d0447c552f48fca69249a15d12e545edc5d7086f530bdef831b8cba641edd4d",
     "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

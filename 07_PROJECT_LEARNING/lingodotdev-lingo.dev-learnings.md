@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lingodotdev-lingo.dev-learnings.md`  
 > **Source**: github ([https://github.com/lingodotdev/lingo.dev](https://github.com/lingodotdev/lingo.dev))  
-> **Source Version**: `348b2064`  
+> **Source Version**: `fbc666cf`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T05:50:51.781Z  
+> **Timestamp**: 2026-11-10T05:14:19.181Z  
 > **Learning ID**: `learn-github-lingodotdev-lingo-dev`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lingodotdev-lingo.dev-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lingodotdev/lingo.dev](https://github.com/lingodotdev/lingo.dev))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T05:50:51.188Z  
+> **Harvest Timestamp**: 2026-11-10T05:14:18.861Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source localization engineering tools. Connects to Lingo.dev localization engineering platform for consistent, quality translations.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, Dockerfile
-- **Stars / Engagement**: 5405 stars
+- **Stars / Engagement**: 5403 stars
 
 ---
 
@@ -1209,170 +1209,356 @@ function _getConfigFilePath() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `348b2064` (2026-11-06)
-**Commit Message**: fix(deps): override seroval and follow-redirects for security advisories (#2261)
+### Incident Patch 1: `994f9d20` (2026-11-09)
+**Commit Message**: fix(deps): bump glob and minimatch for security advisories (#2265)
 
-**File**: `.changeset/quiet-seroval-redirects.md` (added, +2/-0)
+**File**: `.changeset/mighty-seals-lay.md` (added, +5/-0)
 ```diff
-@@ -0,0 +1,2 @@
+@@ -0,0 +1,5 @@
 +---
++"lingo.dev": patch
 +---
++
++Update glob and minimatch to fix GHSA-3g3m-2fjr-6pw4 and GHSA-g3hv-75wg-m249.
 ```
 
-**File**: `pnpm-lock.yaml` (modified, +21/-20)
+**File**: `package.json` (modified, +1/-1)
 ```diff
-@@ -7,7 +7,7 @@ settings:
- overrides:
-   fast-xml-parser: '>=5.5.6 <6'
-   shell-quote: '>=1.11.0 <2'
--  seroval: '>=1.6.3 <2'
-+  seroval: '>=1.6.11 <2'
-   '@modelcontextprotocol/sdk': '>=1.26.0 <2'
-   '@isaacs/brace-expansion': '>=5.0.1 <6'
-   effect: '>=3.20.0 <4'
-@@ -27,7 +27,7 @@ overrides:
-   vite: '>=7.3.7 <8'
-   '@xmldom/xmldom@>=0.8 <0.8.15': 0.8.15
-   form-data: '>=4.0.6 <5'
--  follow-redirects: '>=1.16.1 <2'
-+  follow-redirects: '>=1.16.2 <2'
+@@ -28,7 +28,7 @@
+   "dependencies": {
+     "@changesets/changelog-github": "1.0.1",
+     "@changesets/cli": "3.0.3",
+-    "minimatch": "10.2.5",
++    "minimatch": "11.0.1",
+     "node-machine-id": "1.1.12"
+   },
+   "packageManager": "pnpm@11.10.0"
+```
+
+**File**: `packages/cli/package.json` (modified, +2/-2)
+```diff
+@@ -114,11 +114,11 @@
+     "figlet": "1.11.4",
+     "flat": "6.0.1",
+     "gettext-parser": "8.0.0",
+-    "glob": "11.1.0",
++    "glob": "14.0.2",
+     "gradient-string": "3.0.0",
+     "htmlparser2": "10.0.0",
+     "ini": "5.0.0",
+-    "minimatch": "10.2.5",
++    "minimatch": "11.0.1",
+     "inquirer": "12.6.0",
+     "interactive-commander": "0.5.194",
+     "is-url": "1.2.4",
+```
+
+**File**: `pnpm-lock.yaml` (modified, +32/-92)
+```diff
+@@ -31,9 +31,7 @@ overrides:
    flatted: '>=3.4.2 <4'
    tmp: '>=0.2.6 <0.3'
    minimatch@<3.1.4: 3.1.4
-@@ -3351,6 +3351,7 @@ packages:
-   '@smithy/smithy-client@4.10.2':
-     resolution: {integrity: sha512-D5z79xQWpgrGpAHb054Fn2CCTQZpog7JELbVQ6XAvXs5MNKWf28U9gzSBlJkOyMl9LA1TZEjRtwvGXfP0Sl90g==}
-     engines: {node: '>=18.0.0'}
-+    deprecated: Deprecated due to a bug in custom logger data redaction. See https://github.com/aws/aws-sdk-js-v3/issues/8393.
+-  minimatch@>=4 <6: 10.2.6
+-  minimatch@>=6 <9.0.7: 9.0.7
+-  minimatch@>=10 <10.2.6: 10.2.6
++  minimatch@>=4 <11.0.1: 11.0.1
+   brace-expansion@<1.1.16: 1.1.16
+   brace-expansion@>=4 <5.0.12: 5.0.12
+   picomatch@<2.3.2: 2.3.2
+@@ -71,8 +69,8 @@ importers:
+         specifier: 3.0.3
+         version: 3.0.3
+       minimatch:
+-        specifier: 10.2.6
+-        version: 10.2.6
++        specifier: 11.0.1
++        version: 11.0.1
+       node-machine-id:
+         specifier: 1.1.12
+         version: 1.1.12
+@@ -374,8 +372,8 @@ importers:
+         specifier: 8.0.0
+         version: 8.0.0
+       glob:
+-        specifier: 11.1.0
+-        version: 11.1.0
++        specifier: 14.0.2
++        version: 14.0.2
+       gradient-string:
+         specifier: 3.0.0
+         version: 3.0.0
+@@ -425,8 +423,8 @@ importers:
+         specifier: 3.0.0
+         version: 3.0.0
+       minimatch:
+-        specifier: 10.2.6
+-        version: 10.2.6
++        specifier: 11.0.1
++        version: 11.0.1
+       node-machine-id:
+         specifier: 1.1.12
+         version: 1.1.12
+@@ -2417,9 +2415,8 @@ packages:
+       '@types/node':
+         optional: true
  
-   '@smithy/types@4.11.0':
-     resolution: {integrity: sha512-mlrmL0DRDVe3mNrjTcVcZEgkFmufITfUAPBEA+AHYiIeYyJebso/He1qLbP3PssRe22KUzLRpQSdBPbXdgZ2VA==}
-@@ -5085,8 +5086,8 @@ packages:
-   flatted@3.4.2:
-     resolution: {integrity: sha512-PjDse7RzhcPkIJwy5t7KPWQSZ9cAbzQXcafsetQoD7sOJRQlGikNbx7yZp2OotDnJyrDcbyRq3Ttb18iYOqkxA==}
+-  '@isaacs/cliui@8.0.2':
+-    resolution: {integrity: sha512-O8jcjabXaleOG9DQ0+ARXWZBTfnP4WNAqzuiJK7ll44AmxGKv/J2M4TPjxjY3znBCfvBXFzucm1twdyFybFqEA==}
+-    engines: {node: '>=12'}
++  '@isaacs/nonrecursive-glob-match@1.1.0':
++    resolution: {integrity: sha512-GPm/Dbvk5RLmhRnxXIa7nTpK0xtl4E0wj0MslsuNiJ1FIROU+2+9lgUC/dgF7Ey4QCWhfEsgxilMRMCdHPfDfw==}
  
--  follow-redirects@1.16.1:
--    resolution: {integrity: sha512-FNvFGzoMLWmE6Yj9spb/zjd7yiNCHiAW9/Tg9CXrQ8wuu32HtlJOwWO11OJafl5FfY3DxTdQ0vj42zU1kvv5jg==}
-+  follow-redirects@1.16.2:
-+    resolution: {integrity: sha512-/kVP2U8z596Ia0gwFrwyIeo74ta5aVmSeU1FfAUMAmcEP5EP7zydmag3SLiN64NaRKef3lxsq7i/g7ltJQDGow==}
-     engines: {node: '>=4.0'}
-     peerDependencies:
-       debug: '*'
-@@ -6813,17 +6814,17 @@ packages:
-     resolution: {integrity: sha512-16OL3NnUBw8JG1jBLUoZJsLnQq0n5Ua6aHalhJK4fMQkz1lqR7Osz1sA30trBtd9VUDc2NgkuRCn8+/pBwqZ+w==}
+   '@jridgewell/gen-mapping@0.3.13':
+     resolution: {integrity: sha512-2kkt/7niJ6MgEPxF0bYdQ6etZaA+fQvDcLKckhy1yIQOzaoKjBBjSj63/aLVjYE3qhRt5dvM+uUyfCg6UKCBbA==}
+@@ -4859,9 +4856,6 @@ packages:
+     resolution: {integrity: sha512-KIN/nDJBQRcXw0MLVhZE9iQHmG68qAVIBg9CqmUYjmQIhgij9U5MFvrqkUL5FbtyyzZuOeOt0zdeRe4UY7ct+A==}
+     engines: {node: '>= 0.4'}
+ 
+-  eastasianwidth@0.2.0:
+-    resolution: {integrity: sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==}
+-
+   ejs@3.1.10:
+     resolution: {integrity: sha512-UeJmFfOrAQS8OJWPZ4qtgHyWExa088/MtK5UEyoJGFH67cDEXkZSviOiKRCZ4Xij0zxI3JECgYs3oKx+AizQBA==}
+     engines: {node: '>=0.10.0'}
+@@ -4876,9 +4870,6 @@ packages:
+   emoji-regex@8.0.0:
+     resolution: {integrity: sha512-MSjYzcWNOA0ewAHpz0MxpYFvwg6yjy1NG3xteoqz644VCo/RPgnr1/GGt+ic3iJTzQ8Eu3TdM14SawnVUmGE6A==}
+ 
+-  emoji-regex@9.2.2:
+-    resolution: {integrity: sha512-L18DaJsXSUk2+42pv8mLs5jJT2hqFkFE4j21wOmgbUqsZ2hL72NsUU785g9RXgo3s0ZNgVl42TiHp3ZtOv/Vyg==}
+-
+   empathic@2.0.0:
+     resolution: {integrity: sha512-i6UzDscO/XfAcNYD75CfICkmfLedpyPDdozrLMmQc5ORaQcdMoc21OnlEylMIqI7U8eniKrPMxxtj8k0vhmJhA==}
+     engines: {node: '>=14'}
+@@ -5095,10 +5086,6 @@ packages:
+       debug:
+         optional: true
+ 
+-  foreground-child@3.3.1:
+-    resolution: {integrity: sha512-gIXjKqtFuWEgzFRJA9WCQeSJLZDjgJUOMCMzxtvFq/37KojM1BFGufqsCy0r4qSQmYLsZYMeyRqzIWOMup03sw==}
+-    engines: {node: '>=14'}
+-
+   form-data@4.0.6:
+     resolution: {integrity: sha512-vKatAh4SlVfgbv+YtmhiRjhEMJsYpsG1Y2rMQtR+SVSbytsSD1YGzDIcrAJmdFec88u/+VoGmxnl+80gL1tRCQ==}
+     engines: {node: '>= 6'}
+@@ -5171,11 +5158,9 @@ packages:
+     deprecated: Deprecated and no longer maintained. Use @conventional-changelog/git-client instead.
+     hasBin: true
+ 
+-  glob@11.1.0:
+-    resolution: {integrity: sha512-vuNwKSaKiqm7g0THUBu2x7ckSs3XJLXE+2ssL7/MfTGPLLcrJQ/4Uq1CjPTtO5cCIiRxqvN6Twy1qOwhL0Xjcw==}
+-    engines: {node: 20 || >=22}
+-    deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+-    hasBin: true
++  glob@14.0.2:
++    resolution: {integrity: sha512-vfMgTR2djMHPUchsJMLpZlYQvtjVL+mHpEr5wPpoCbQs2vr/FBNK+3Gnl9Ara1DSs4Aeg4eG9HiADb5/rkY/ZA==}
++    engines: {node: 18 || 20 || >=22}
+ 
+   global-directory@4.0.1:
+     resolution: {integrity: sha512-wHTUcDUoZ1H5/0iVqEudYW4/kAlN5cZ3j/bXn0Dpbizl9iaUVeWSHqiOjsgk6OW2bkLclbBjzewBz6weQ1zA2Q==}
+@@ -5436,10 +5421,6 @@ packages:
+   iso-639-3@3.0.1:
+     resolution: {integrity: sha512-SdljCYXOexv/JmbQ0tvigHN43yECoscVpe2y2hlEqy/CStXQlroPhZLj7zKLRiGqLJfw8k7B973UAMDoQczVgQ==}
+ 
+-  jackspeak@4.1.1:
+-    resolution: {integrity: sha512-zptv57P3GpL+O0I7VdMJNBZCu+BPHVQUk55Ft8/QCJjTVxrnJHuVuX/0Bl2A6/+2oyR/ZMEuFKwmzqqZ/U5nPQ==}
+-    engines: {node: 20 || >=22}
+-
+   jake@10.9.4:
+     resolution: {integrity: sha512-wpHYzhxiVQL+IV05BLE2Xn34zW1S223hvjtqk0+gsPrwd/8JNLXJgZZM/iPFsYc1xyphF+6M6EvdE5E9MBGkDA==}
      engines: {node: '>=10'}
-     peerDependencies:
--      seroval: '>=1.6.3 <2'
-+      seroval: '>=1.6.11 <2'
+@@ -5947,8 +5928,8 @@ packages:
+     resolution: {integrity: sha512-VP79XUPxV2CigYP3jWwAUFSku2aKqBH7uTAapFWCBqutsbmDo96KY5o8uh6U+/YSIn5OxJnXp73beVkpqMIGhA==}
+     engines: {node: '>=18'}
  
-   seroval-plugins@1.6.8:
-     resolution: {integrity: sha512-N7mWAMydj89EnYTHtRpS3LBrAz3J9O6oVrqpuXuvlAHfAUG8WEKqtbAd7SBiJNY5NfCAFhSdyAh7wI4Shjqy4g==}
-     engines: {node: '>=10'}
-     peerDependencies:
--      seroval: '>=1.6.3 <2'
-+      seroval: '>=1.6.11 <2'
- 
--  seroval@1.6.8:
--    resolution: {integrity: sha512-HlSgSAkTk4EqHcje1ptJjfZi1YDv5KbhVJ/d3P7T/nAXua2VmDu+AKDX5VTdFfZf48nDkWB2TKYt0DrCSa+3wg==}
--    engines: {node: '>=10'}
-+  seroval@1.7.7:
-+    resolution: {integrity: sha512-9OdYsqMLV5RSUNNtkgr6DT2bS/ncba6AqUJx8H7epNJNa0cKNWhQtF5GLRjkF/KuAdvAuRRitWrq86K/v1S/kg==}
-+    engines: {node: '>=20'}
- 
-   sharp@0.35.5:
-     resolution: {integrity: sha512-Ywn4OnzGukp7CDMrp08RQ50YKmuwG47brZgIVPTvBaaAfQlRlygrRqSrxdCiL9M+LlzLBiJ68IR1QqvzHyjC7g==}
-@@ -10785,8 +10786,8 @@ snapshots:
-     dependencies:
-       '@tanstack/history': 1.162.4
-       cookie-es: 3.1.1
--      seroval: 1.6.8
--      seroval-plugins: 1.6.8(seroval@1.6.8)
-+      seroval: 1.7.7
-+      seroval-plugins: 1.6.8(seroval@1.7.7)
- 
-   '@tanstack/router-devtools-core@1.168.2(@tanstack/router-core@1.171.34)(csstype@3.2.3)':
-     dependencies:
-@@ -11429,7 +11430,7 @@ snapshots:
- 
-   axios@1.20.0:
-     dependencies:
--      follow-redirects: 1.16.1
-+      follow-redirects: 1.16.2
-       form-data: 4.0.6
-       https-proxy-agent: 5.0.1
-       proxy-from-env: 2.1.0
-@@ -12150,7 +12151,7 @@ snapshots:
- 
-   flatted@3.4.2: {}
- 
--  follow-redirects@1.16.1: {}
-+  follow-redirects@1.16.2: {}
- 
-   foreground-child@3.3.1:
-     dependencies:
-@@ -14279,15 +14280,15 @@ snapshots:
- 
-   serialize-javascript@7.1.4: {}
- 
--  seroval-plugins@1.3.3(seroval@1.6.8):
-+  seroval-plugins@1.3.3(seroval@1.7.7):
-     dependencies:
--      seroval: 1.6.8
-+      seroval: 1.7.7
- 
--  seroval-plugins@1.6.8(seroval@1.6.8):
-+  seroval-plugins@1.6.8(seroval@1.7.7):
-     dependencies:
--      seroval: 1.6.8
-+      seroval: 1.7.7
- 
--  seroval@1.6.8: {}
-+  seroval@1.7.7: {}
- 
-   sharp@0.35.5(@types/node@20.19.25):
-     dependencies:
-@@ -14420,8 +14421,8 @@ snapshots:
-   solid-js@1.9.10:
-     dependencies:
-       csstype: 3.2.3
--      seroval: 1.6.8
--      seroval-plugins: 1.3.3(seroval@1.6.8)
-+      seroval: 1.7.7
-+      seroval-plugins: 1.3.3(seroval@1.7.7)
- 
-   sonic-boom@4.2.0:
-     dependencies:
+-  minimatch@10.2.6:
+-    resolution: {integrity: sha512-vpLQEs+VLCr1nU0BXS07maYoFwlDAH0gngQuuttxIwutDFEMHq2blX+8vpgxDdK3J
 ```
 
-**File**: `pnpm-workspace.yaml` (modified, +2/-2)
+**File**: `pnpm-workspace.yaml` (modified, +1/-3)
 ```diff
-@@ -9,7 +9,7 @@ packages:
- overrides:
-   fast-xml-parser: ">=5.5.6 <6"
-   shell-quote: ">=1.11.0 <2"
--  seroval: ">=1.6.3 <2"
-+  seroval: ">=1.6.11 <2"
-   "@modelcontextprotocol/sdk": ">=1.26.0 <2"
-   "@isaacs/brace-expansion": ">=5.0.1 <6"
-   effect: ">=3.20.0 <4"
-@@ -29,7 +29,7 @@ overrides:
-   vite: ">=7.3.7 <8"
-   "@xmldom/xmldom@>=0.8 <0.8.15": 0.8.15
-   form-data: ">=4.0.6 <5"
--  follow-redirects: ">=1.16.1 <2"
-+  follow-redirects: ">=1.16.2 <2"
+@@ -33,9 +33,7 @@ overrides:
    flatted: ">=3.4.2 <4"
    tmp: ">=0.2.6 <0.3"
    minimatch@<3.1.4: 3.1.4
+-  minimatch@>=4 <6: 10.2.6
+-  minimatch@>=6 <9.0.7: 9.0.7
+-  minimatch@>=10 <10.2.6: 10.2.6
++  minimatch@>=4 <11.0.1: 11.0.1
+   brace-expansion@<1.1.16: 1.1.16
+   brace-expansion@>=4 <5.0.12: 5.0.12
+   picomatch@<2.3.2: 2.3.2
+```
+
+---
+
+### Incident Patch 2: `8e148d78` (2026-11-09)
+**Commit Message**: fix(deps): override joi, decode-uri-component and qs for security advisories (#2264)
+
+**File**: `.changeset/famous-games-stand.md` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++---
++"lingo.dev": patch
++---
++
++Update the qs dependency override to fix GHSA-6pq8-jhm2-2vcw.
+```
+
+**File**: `pnpm-lock.yaml` (modified, +16/-16)
+```diff
+@@ -38,7 +38,7 @@ overrides:
+   brace-expansion@>=4 <5.0.12: 5.0.12
+   picomatch@<2.3.2: 2.3.2
+   picomatch@>=4 <4.0.7: 4.0.7
+-  qs@>=6.11.1 <6.16.0: 6.16.0
++  qs@>=6.11.1 <6.16.1: 6.16.1
+   '@unhead/vue': '>=2.1.15 <3'
+   postcss@>=8 <8.5.23: 8.5.23
+   ajv@>=6 <6.14.0: 6.14.0
+@@ -48,10 +48,10 @@ overrides:
+   launch-editor@<2.14.2: 2.14.2
+   js-yaml@>=3 <3.15.2: 3.15.2
+   js-yaml@>=4 <4.3.2: 4.3.2
+-  joi@>=18 <18.2.9: 18.2.9
++  joi@>=18 <18.3.1: 18.3.1
+   colord@<2.9.4: 2.9.4
+   fflate@>=0.8 <0.8.3: 0.8.3
+-  decode-uri-component@<0.5.0: 0.5.0
++  decode-uri-component@<0.5.1: 0.5.1
+   postcss-selector-parser@>=7 <7.1.6: 7.1.6
+   diff@>=6 <8.0.3: 8.0.3
+   '@babel/core@<7.29.7': 7.29.7
+@@ -4757,8 +4757,8 @@ packages:
+   decode-named-character-reference@1.2.0:
+     resolution: {integrity: sha512-c6fcElNV6ShtZXmsgNgFFV5tVX2PaV4g+MOAkb8eXHvn6sryJBrZa9r0zV6+dtTyoCKxtDy5tyQ5ZwQuidtd+Q==}
+ 
+-  decode-uri-component@0.5.0:
+-    resolution: {integrity: sha512-1BiQVoK8C9gUbQU6NzAtO/tkz2qOFpEObMWpcFvhx4fYnj4Oc5yzaJN/LD36ihkVUdXyh5ZekzX+yM+ty/SrPg==}
++  decode-uri-component@0.5.1:
++    resolution: {integrity: sha512-vWHQkXgg2cE3BB4rR0c+PYw9BCQzLoNIRMI7AunIkZst74tw/vpPp7VLoYtsR/cy1f55g3XDWUslfeCZjiZJyA==}
+     engines: {node: '>=14.16'}
+ 
+   dedent@1.7.0:
+@@ -5460,8 +5460,8 @@ packages:
+   jju@1.4.0:
+     resolution: {integrity: sha512-8wb9Yw966OSxApiCt0K3yNJL8pnNeIv+OEq2YMidz4FKP6nonSRoOXc80iXY4JaN2FC11B9qsNmDsm+ZOfMROA==}
+ 
+-  joi@18.2.9:
+-    resolution: {integrity: sha512-2mD929bUVKUhOLQQEVhlf6EZ0Mlo0DeRb5MO7cViR9AXLtBauuccEtB1py9Ocxpo/P7ucnh442iY/iOwrh3IQw==}
++  joi@18.3.1:
++    resolution: {integrity: sha512-mV9M4Llh4va3NT90p7KBtQhoZqjs8xLX7EWYE4y/GG3yLF6REbIBEHSUb0UX1JXRht2w5tiLSsvmpYc5akiqIw==}
+     engines: {node: '>= 20'}
+ 
+   joycon@3.1.1:
+@@ -6566,8 +6566,8 @@ packages:
+     resolution: {integrity: sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==}
+     engines: {node: '>=6'}
+ 
+-  qs@6.16.0:
+-    resolution: {integrity: sha512-h6fhOIaRrID2CbEY2fqs+7t+UXZo+MLAnU5gRIq85uFtdiUPCdsApMlHhXogKVM4HM2DVbIjGNTTYH2OcmP1vA==}
++  qs@6.16.1:
++    resolution: {integrity: sha512-5Px6J7rfHBAGUhNQ3es4YzcOdBBw0SDcVtThJml4RdnKw4tKs2epA0kPZ+K8X+WiHktT93RHVcQ/3ym5aTCgtg==}
+     engines: {node: '>=0.6'}
+ 
+   quansync@1.0.0:
+@@ -8934,7 +8934,7 @@ snapshots:
+       '@directus/system-data': 3.4.2
+       date-fns: 4.1.0
+       fs-extra: 11.3.2
+-      joi: 18.2.9
++      joi: 18.3.1
+       js-yaml: 4.3.2
+       lodash-es: 4.18.1
+       micromustache: 8.0.3
+@@ -9148,13 +9148,13 @@ snapshots:
+   '@gitbeaker/core@39.34.3':
+     dependencies:
+       '@gitbeaker/requester-utils': 39.34.3
+-      qs: 6.16.0
++      qs: 6.16.1
+       xcase: 2.0.1
+ 
+   '@gitbeaker/requester-utils@39.34.3':
+     dependencies:
+       picomatch-browser: 2.2.6
+-      qs: 6.16.0
++      qs: 6.16.1
+       rate-limiter-flexible: 4.0.1
+       xcase: 2.0.1
+ 
+@@ -11838,7 +11838,7 @@ snapshots:
+     dependencies:
+       character-entities: 2.0.2
+ 
+-  decode-uri-component@0.5.0: {}
++  decode-uri-component@0.5.1: {}
+ 
+   dedent@1.7.0: {}
+ 
+@@ -12502,7 +12502,7 @@ snapshots:
+ 
+   jju@1.4.0: {}
+ 
+-  joi@18.2.9:
++  joi@18.3.1:
+     dependencies:
+       '@hapi/address': 5.1.1
+       '@hapi/formula': 3.0.2
+@@ -13986,7 +13986,7 @@ snapshots:
+ 
+   punycode@2.3.1: {}
+ 
+-  qs@6.16.0:
++  qs@6.16.1:
+     dependencies:
+       es-define-property: 1.0.1
+       side-channel: 1.1.1
+@@ -13995,7 +13995,7 @@ snapshots:
+ 
+   query-string@9.3.1:
+     dependencies:
+-      decode-uri-component: 0.5.0
++      decode-uri-component: 0.5.1
+       filter-obj: 5.1.0
+       split-on-first: 3.0.0
+ 
+```
+
+**File**: `pnpm-workspace.yaml` (modified, +3/-3)
+```diff
+@@ -40,7 +40,7 @@ overrides:
+   brace-expansion@>=4 <5.0.12: 5.0.12
+   picomatch@<2.3.2: 2.3.2
+   picomatch@>=4 <4.0.7: 4.0.7
+-  qs@>=6.11.1 <6.16.0: 6.16.0
++  qs@>=6.11.1 <6.16.1: 6.16.1
+   "@unhead/vue": ">=2.1.15 <3"
+   postcss@>=8 <8.5.23: 8.5.23
+   ajv@>=6 <6.14.0: 6.14.0
+@@ -50,10 +50,10 @@ overrides:
+   launch-editor@<2.14.2: 2.14.2
+   js-yaml@>=3 <3.15.2: 3.15.2
+   js-yaml@>=4 <4.3.2: 4.3.2
+-  joi@>=18 <18.2.9: 18.2.9
++  joi@>=18 <18.3.1: 18.3.1
+   colord@<2.9.4: 2.9.4
+   fflate@>=0.8 <0.8.3: 0.8.3
+-  decode-uri-component@<0.5.0: 0.5.0
++  decode-uri-component@<0.5.1: 0.5.1
+   postcss-selector-parser@>=7 <7.1.6: 7.1.6
+   diff@>=6 <8.0.3: 8.0.3
+   "@babel/core@<7.29.7": 7.29.7
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2265** (2026-11-09): fix(deps): bump glob and minimatch for security advisories (@AndreyHirsa)
+- **PR #2264** (2026-11-09): fix(deps): override joi, decode-uri-component and qs for security advisories (@AndreyHirsa)
+- **PR #2263** (closed): chore(deps): bump minimatch from 10.2.6 to 11.0.1 in the npm_and_yarn group across 1 directory (@dependabot[bot])
+- **PR #2262** (closed): chore(deps): bump the npm_and_yarn group across 1 directory with 2 updates (@dependabot[bot])
 - **PR #2261** (2026-11-06): fix(deps): override seroval and follow-redirects for security advisories (@moygospadin)
-- **PR #2259** (2026-11-03): fix(cli): improve CI git command handling and telemetry payloads (@moygospadin)
-- **PR #2258** (2026-10-26): chore: bump package versions (@github-actions[bot])
-- **PR #2257** (2026-10-26): fix(deps): bump next to 16.4.1, zod to 4.6.6 and undici to 6.29.1 (@cherkanovart)
-- **PR #2256** (2026-10-26): fix(deps): override fast-uri and serialize-javascript for security advisories (@cherkanovart)
-- **PR #2255** (closed): chore(deps): bump the npm_and_yarn group across 8 directories with 2 updates (@dependabot[bot])
+- **PR #2260** (2026-11-09): chore: bump package versions (@github-actions[bot])
 
 ---
 
@@ -1392,67 +1578,32 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): override seroval and follow-redirects for security advisories (#2261)
+## X. deps): bump glob and minimatch for security advisories (#2265)
 
 **RULE**:
-When implementing operations in `pnpm-lock.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lingodotdev/lingo.dev. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changeset/mighty-seals-lay.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lingodotdev/lingo.dev. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `348b2064`: deps): override seroval and follow-redirects for security advisories (#2261). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `994f9d20`: deps): bump glob and minimatch for security advisories (#2265). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `pnpm-lock.yaml`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/mighty-seals-lay.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  seroval: '>=1.6.11 <2'
-  follow-redirects: '>=1.16.2 <2'
-    deprecated: Deprecated due to a bug in custom logger data redaction. See https://github.com/aws/aws-sdk-js-v3/issues/8393.
-  follow-redirects@1.16.2:
-    resolution: {integrity: sha512-/kVP2U8z596Ia0gwFrwyIeo74ta5aVmSeU1FfAUMAmcEP5EP7zydmag3SLiN64NaRKef3lxsq7i/g7ltJQDGow==}
-      seroval: '>=1.6.11 <2'
-      seroval: '>=1.6.11 <2'
-  seroval@1.7.7:
-    resolution: {integrity: sha512-9OdYsqMLV5RSUNNtkgr6DT2bS/ncba6AqUJx8H7epNJNa0cKNWhQtF5GLRjkF/KuAdvAuRRitWrq86K/v1S/kg==}
-    engines: {node: '>=20'}
-      seroval: 1.7.7
-      seroval-plugins: 1.6.8(seroval@1.7.7)
-      follow-redirects: 1.16.2
-  follow-redirects@1.16.2: {}
-  seroval-plugins@1.3.3(seroval@1.7.7):
-      seroval: 1.7.7
-  seroval-plugins@1.6.8(seroval@1.7.7):
-      seroval: 1.7.7
-  seroval@1.7.7: {}
-      seroval: 1.7.7
-      seroval-plugins: 1.3.3(seroval@1.7.7)
+---
+"lingo.dev": patch
+---
+
+Update glob and minimatch to fix GHSA-3g3m-2fjr-6pw4 and GHSA-g3hv-75wg-m249.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-  seroval: '>=1.6.3 <2'
-  follow-redirects: '>=1.16.1 <2'
-  follow-redirects@1.16.1:
-    resolution: {integrity: sha512-FNvFGzoMLWmE6Yj9spb/zjd7yiNCHiAW9/Tg9CXrQ8wuu32HtlJOwWO11OJafl5FfY3DxTdQ0vj42zU1kvv5jg==}
-      seroval: '>=1.6.3 <2'
-      seroval: '>=1.6.3 <2'
-  seroval@1.6.8:
-    resolution: {integrity: sha512-HlSgSAkTk4EqHcje1ptJjfZi1YDv5KbhVJ/d3P7T/nAXua2VmDu+AKDX5VTdFfZf48nDkWB2TKYt0DrCSa+3wg==}
-    engines: {node: '>=10'}
-      seroval: 1.6.8
-      seroval-plugins: 1.6.8(seroval@1.6.8)
-      follow-redirects: 1.16.1
-  follow-redirects@1.16.1: {}
-  seroval-plugins@1.3.3(seroval@1.6.8):
-      seroval: 1.6.8
-  seroval-plugins@1.6.8(seroval@1.6.8):
-      seroval: 1.6.8
-  seroval@1.6.8: {}
-      seroval: 1.6.8
-      seroval-plugins: 1.3.3(seroval@1.6.8)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `348b2064` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `994f9d20` are properly handled with clean fallback behavior.

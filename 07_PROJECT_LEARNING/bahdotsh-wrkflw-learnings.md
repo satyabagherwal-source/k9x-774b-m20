@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md`  
 > **Source**: github ([https://github.com/bahdotsh/wrkflw](https://github.com/bahdotsh/wrkflw))  
-> **Source Version**: `553ecf53`  
+> **Source Version**: `bcd6c848`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T19:37:16.756Z  
+> **Timestamp**: 2026-11-10T05:14:14.986Z  
 > **Learning ID**: `learn-github-bahdotsh-wrkflw`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/bahdotsh/wrkflw](https://github.com/bahdotsh/wrkflw))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T19:37:14.063Z  
+> **Harvest Timestamp**: 2026-11-10T05:14:13.625Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Validate and Run GitHub Actions locally.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3340 stars
+- **Stars / Engagement**: 3339 stars
 
 ---
 
@@ -212,9 +212,8 @@ pub async fn execute_workflow(
     let is_gitlab = is_gitlab_pipeline(workflow_path);
 
     if is_gitlab {
-        return acceleration::without_run_state(execute_gitlab_pipeline(
-            workflow_path,
-            config.clone(),
+        return crate::vm_memory::with_run_pool(acceleration::without_run_state(
+            execute_gitlab_pipeline(workflow_path, config.clone()),
         ))
         .await;
     }
@@ -227,13 +226,14 @@ pub async fn execute_workflow(
         root,
     )
     .map_err(ExecutionError::Execution)?;
-    acceleration::with_run_state(
+    // Each run gets its own job pool, sized once its runtime is known.
+    crate::vm_memory::with_run_pool(acceleration::with_run_state(
         std::sync::Arc::new(state),
         crate::workspace::with_workflow_file(
             workflow_path,
             Box::pin(execute_github_workflow(workflow_path, config.clone())),
         ),
-    )
+    ))
     .await
 }
 
@@ -293,6 +293,7 @@ async fn execute_github_workflow(
         &config.kubernetes,
     )?;
     config.runtime_type = effective_runtime;
+    crate::vm_memory::check(vm_cli(&config.runtime_type)).await;
     warn_if_overrides_unused(&config);
 
     // Create a temporary workspace directory
@@ -430,11 +431,7 @@ async fn execute_github_workflow(
 /// the aggregate, as on GitHub: `failure` if any combination failed, otherwise
 /// `success` if any succeeded, otherwise `skipped`.
 fn record_job_results(
-    job_results: &[JobResult],
-    all_job_outputs: &mut HashMap<String, HashMap<String, String>>,
-    all_job_results: &mut HashMap<String, String>,
-) {
-    let mut aggregate: HashMap<&str, &JobStatus> = HashMap::
+    job_results: &[JobR
 ```
 
 ### Core Architecture Module: `crates/ui/src/app/state.rs`
@@ -2197,11 +2194,11 @@ impl ResultStore {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #166** (2026-11-09): **fix: make local verdicts match what GitHub would say**
+  *Symptoms*: ## Why  I checked wrkflw against GitHub on wrkflw's own CI history. It was fast: emulation took 73–93 s on a Mac, where GitHub took 160–269 s. It was not trustworthy:  | Finding | Effect | |---|---| | wrkflw agreed with GitHub on 2 of 6 commits | false passes and false failures | | `gate` on a feature branch or detached HEAD ran 0 workflows and passed | push "verified" with nothing checked | | Running from a git worktree lost `.git` | every git step failed, masking real failures | | Docker Desktop's 8 GB VM killed the linker | a failure GitHub's 16 GB runner never sees | | itsdangerous planned 6 matrix legs, GitHub ran 7 | `include` semantics differed | | `runs-on: ${{ matrix.os \|\| 'ubuntu-latest' }}` | windows and macOS legs were not flagged as unverified | | Workflows without `name:` failed to parse | | | Reused jobs looked like ordinary passes | | | Digests had colour codes, `thiserror` as an error line, duplicated legs and a canned cargo hint | |  ## What changes  - **Verdicts.** `run_finished` and `gate` gain `verdict`: `verified`, `partial`, or `nothing_checked`. The gate's `passed` is false when nothing ran. It still exits 0 then, so pushes that no CI covers aren't blocked. - **Gate event fallback.** Without `--event`, a workflow a push doesn't fire is checked as a `pull_request` into the default branch. Each workflow entry says which `event` and `base_branch` it was checked as. - **Matrix `include`** follows GitHub's documented rules. The documented example and itsd
+
 - **Issue #165** (2026-11-06): **Make wrkflw a trustworthy feedback loop for agents**
   *Symptoms*: I ran wrkflw the way a coding agent does: through the JSON CLI and the MCP server, on a probe repo. These are the problems that turned up, and how this PR fixes each one.  ## Problems found  1. **False passes on OS matrices.** In a matrix over `[ubuntu-latest, macos-latest, windows-latest]`, a step gated on `runner.os == 'Windows'` that runs `exit 1` was reported as `success` on every leg, in both the CLI and MCP output. Locally those labels run as Linux (or as the host under emulation), so that step never ran. Nothing said so. 2. **`gate` sent agents to the wrong run.** `gate --format json` printed text. The recovery AGENTS.md documented, `runs failure latest`, reads the newest run. That's whichever workflow the gate ran last, which can be one that passed, so the agent got `failures: []` after a failed gate. 3. **The MCP server had no fast path.** There was no `gate` tool, and `run_workflow` couldn't reuse earlier passing results. MCP job results also dropped `repeated_from`. 4. **No live output.** In JSON mode a step's output only arrived when the step ended, so an agent couldn't tell a slow step from a hung one. 5. **Nothing flagged before a run.** `plan` didn't warn that some jobs would run as a different OS.  ## Commits  - **`feat(executor)`: flag jobs that ran as another OS than `runs-on` asked.** The engine compares the OS that `runs-on` names with the `runner.os` the job actually saw. On a mismatch it logs a warning, adds `runner: {requested, ran_as}` to `job_finished
-
-- **Issue #164** (2026-11-06): **fix: address the review of #163**
-  *Symptoms*: ## Summary  Fixes the findings from the principal review of #163. That review asked for changes on three points: kept workspaces trusted a directory the job can write to, the log redactor had gaps, and the TUI's event-driven job state was wrong for batched matrix legs and skipped jobs. This PR fixes those and nearly all the other findings. Each commit covers one area and passes fmt and clippy on its own.  ### Checkout sync and workspaces - **Symlinks are never followed.** A step that replaced a directory or `.git` in its kept workspace with a symlink made the next checkout prune the link's target on the host. A symlink at a file made the copy write through it. The sync now removes whatever non-directory sits where a directory belongs, and never trusts a symlink as an up-to-date copy. - **Tracked files always reach the workspace**, as in a clone, even where `.gitignore` or the user's global excludes match them. The tracked set comes from `git ls-files`. Untracked files inside an ignored directory stay out. Without `git`, the old rules apply. - **Hidden files the repository deleted are removed** when git tracked them at the last sync. Untracked tool state such as `.pytest_cache` still stays. - **`.git/config` is mirrored without `core.hooksPath`, `core.fsmonitor` and `core.worktree`**, which would run host programs or point outside the workspace. - **Callers of one reusable workflow get their own workspaces.** The key includes the calling job; other keys are unchanged, so exist
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2218,1103 +2215,432 @@ impl ResultStore {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5b933c78` (2026-11-06)
-**Commit Message**: fix: address the review of #163 (#164)
+### Incident Patch 1: `bcd6c848` (2026-11-09)
+**Commit Message**: fix: make local verdicts match what GitHub would say (#166)
 
-* fix(executor): make checkout sync safe against a workspace the job wrote to
+* fix: make local verdicts match what GitHub would say
 
-A kept workspace is writable by the job's steps, and the next sync trusted
-what it found there.
+A benchmark of wrkflw against its own GitHub CI history found it agreed on
+2 of 6 commits, and that the gate passed on feature branches having run
+nothing. This fixes each cause it found.
 
-- Never follow a symlink at the destination. A step that replaced a
-  directory (or `.git`) with a link made the next sync prune the link's
-  target on the host; a link at a file made the copy write through it.
-- Bring every tracked file into the workspace, as git does, even where an
-  ignore rule (or the user's global excludes) matches it. Untracked files
-  inside an ignored directory stay out.
-- Remove hidden files the repository deleted, when git tracked them at the
-  last sync. Untracked tool state such as `.pytest_cache` still stays.
-- Mirror `.git/config` without `core.hooksPath`, `core.fsmonitor` and
-  `core.worktree`, which run host programs or point outside the workspace.
-- Make `WRKFLW_WORKSPACES_DIR` absolute, so a relative value works as a
-  bind mount source and `wrkflw clean` cleans the same place from anywhere.
-- Report an unreadable workspaces directory from `clean` instead of saying
-  nothing was there.
-- Key the workspaces of a reusable workflow's jobs
+- run_finished and the gate gain a verdict: verified, partial (jobs ran as
+  another OS) or nothing_checked. The gate's `passed` is false when no job
+  ran, and text mode no longer prints a plain pass for either case.
+- Without --event, the gate checks a workflow a push doesn't fire as a
+  pull request into the default branch, so feature-branch CI is checked.
+- Matrix include follows GitHub's rules: entries merge into every original
+  combination whose matrix values they keep, and never into combinations
+  another include created. itsdangerous now plans 7 legs, as GitHub runs.
+- A runs-on expression that reads only matrix is evaluated per leg, so
+  `${{ matrix.os || 'ubuntu-latest' }}` no longer hides unverified legs.
+- A checkout from a git worktree gets a real .git directory, on its branch.
+  Worktree runs used to fail on every step that ran git.
+- Docker and Podman runs warn whe
 
-**File**: `AGENTS.md` (modified, +3/-1)
+**File**: `AGENTS.md` (modified, +16/-4)
 ```diff
-@@ -39,7 +39,9 @@ Run `wrkflw gate`. It runs what a push would run, reusing jobs that already pass
- 
- `step_finished.output` holds the last 64 KiB of a step's output, delivered when the step ends. Output is not streamed while a step runs.
- 
--`clean` prints `{"removed": n, "bytes": n, "in_use": n, "failed": [{"path": "...", "error": "..."}]}`: workspaces removed, the bytes they held, workspaces left because a run holds them, and workspaces that could not be removed. It exits 1 when `failed` is not empty, after cleaning the rest.
-+`clean` prints `{"schema_version": 1, "type": "clean", "removed": n, "bytes": n, "in_use": n, "failed": [{"path": "...", "error": "..."}]}`: workspaces removed, the bytes they held, workspaces left because a run holds them, and workspaces that could not be removed. It exits 1 when `failed` is not empty, after cleaning the rest.
-+
-+A job that does not run, because of its `if:`, a failed `needs` job, fail-fast, a GitLab rule or `gate: false`, still gets `job_started` and `job_finished`, with `status` `skipped` and `duration_ms` 0.
- 
- A `job_finished` with `repeated_from` is a matrix leg that did not run, because locally it would only have repeated the named leg. Its `status` is that leg's and its `duration_ms` is 0. Pass `--every-matrix-leg` to run every leg.
- 
-```
-
-**File**: `README.md` (modified, +6/-5)
-```diff
-@@ -168,21 +168,22 @@ export WRKFLW_PLATFORM=ubuntu-latest=catthehacker/ubuntu:act-latest
- Two defaults make a rerun cheaper than a hosted runner's cold start. Both work the same for any language or toolchain.
- 
- - **Each GitHub Actions job keeps its workspace.** GitLab pipelines still start each run in an empty workspace. Checkout syncs the source files into it, and leaves alone anything the repository ignores, such as build output, `node_modules` or a virtualenv. The second run of a build is therefore incremental. Unchanged files keep their timestamps, and files deleted from the repository are deleted from the workspace too. Workspaces live under your cache directory in `wrkflw/workspaces` (`~/Library/Caches` on macOS, `~/.cache` on Linux), one per repository, workflow file and job. Set `WRKFLW_WORKSPACES_DIR` to keep them somewhere else, such as a larger disk. `--fresh-workspace` or `WRKFLW_FRESH_WORKSPACE=1` gives every job an empty workspace, as a hosted runner does.
--- **Matrix legs that only pick a runner run once.** Locally, `runs-on: ${{ matrix.os }}` maps every OS to the same image. If a leg differs from another only in values that `runs-on` reads, and the two would run in the same image, that leg reports the other's result instead of repeating it. Its history record and its `job_finished` event carry `repeated_from` with the leg it repeats. A leg whose steps read the value, or which runs in a different image (see `--platform`), still runs. `--every-matrix-leg` or `WRKFLW_EVERY_MATRIX_LEG=1` runs them all.
-+- **Matrix legs that only pick a runner run once.** Locally, `runs-on: ${{ matrix.os }}` maps every OS to the same image. If a leg differs from another only in values that `runs-on` reads, and the two would run in the same image, that leg reports the other's result instead of repeating it. Its history record and its `job_finished` event carry `repeated_from` with the leg it repeats. A leg whose workflow reads the value, or which runs in a different image (see `--platform`), still runs. Only the workflow file is read: a script that reads `$MATRIX_OS` from a file of its own isn't seen, so pass `--every-matrix-leg` for such a job. `--every-matrix-leg` or `WRKFLW_EVERY_MATRIX_LEG=1` runs them all.
- 
- What a kept workspace means in practice:
- 
--- In a git repository, checkout follows git's ignore rules: every `.gitignore` in the tree, `.git/info/exclude` and your global excludes file. Tracked dotfiles such as `.cargo/config.toml` are synced. Hidden files a tool leaves in the workspace, such as `.pytest_cache`, are kept. Outside a git repository, most hidden files are skipped.
--- `.git` is mirrored so `git describe` and `git diff` work. Its objects are hard-linked where the cache directory shares a filesystem with the repository, so they take no extra space. Git never rewrites an object in place, so the links are safe, but a step that changes file permissions under `.git/objects` changes them in your repository too. Hooks are left out, as in a fresh clone.
-+- In a git repository, checkout brings every file git tracks, even one an ignore rule matches, as a clone would. Untracked files follow git's ignore rules: every `.gitignore` in the tree, `.git/info/exclude` and your global excludes file. Tracked dotfiles such as `.cargo/config.toml` are synced, and removed once the repository deletes them. Hidden files a tool leaves in the workspace, such as `.pytest_cache`, are kept. wrkflw records what git tracked at each checkout in a file beside the workspace, never by running git in the workspace, whose `.git` a step can change. Outside a git repository, or without `git` installed, only the ignore rules apply, and most hidden files are skipped.
-+- Checkout never follows a symlink a step left in the workspace. A link where the repository has a file or directory is replaced, so a step can't make the next checkout write or delete outside the workspace.
-+- `.git` is mirrored so `git describe` and `git diff` work. Its objects are hard-linked where the cache directory shares a filesystem with the repository, so they take no extra space. Git never rewrites an object in place, so the links are safe for git itself. A step that writes into `.git/objects` directly, or changes permissions or owners there, changes those files in your repository too, since a hard link is the same file. Hooks are left out, as in a fresh clone, and so are the `core.hooksPath`, `core.fsmonitor` and `core.worktree` settings and any `include` or `includeIf` section, which would run programs from your machine, point outside the workspace or read another config file.
- - A job that never runs `actions/checkout` finds whatever its last run left behind, not an empty directory. The run log says when a job reuses its workspace.
- - Files a step writes, including credentials such as `.npmrc` or a kubeconfig, stay in the workspace until the next run overwrites them or you clean it. Use `--fresh-workspace` for jobs where that matters.
- - If the cache dir
-```
-
-**File**: `crates/executor/src/checkout_sync.rs` (modified, +642/-46)
-```diff
-@@ -66,7 +66,8 @@ pub(crate) fn copy_directory_contents(from: &Path, to: &Path) -> Result<(), Exec
-             return Ok(());
-         }
-     }
--    copy_directory_contents_with_gitignore(from, to, &SyncRules::for_root(from, to)?, &[])?;
-+    let rules = SyncRules::for_root(from, to)?;
-+    copy_directory_contents_with_gitignore(from, to, &rules, &[], false)?;
-     // A checkout is a git repository, and steps run `git describe`, `git
-     // diff` and the like. A `.git` file (a worktree or submodule) points at a
-     // host path a container can't see, so only a directory is mirrored.
-@@ -76,11 +77,172 @@ pub(crate) fn copy_directory_contents(from: &Path, to: &Path) -> Result<(), Exec
-         // not run the developer's. Objects are never changed once written,
-         // so they are hard-linked where the filesystem allows instead of
-         // copied into every job's workspace.
--        mirror_directory(&git_dir, &to.join(".git"), false, &["hooks"], &["objects"])?;
-+        //
-+        // The config is written separately, without the settings that make
-+        // git run a host program (`core.hooksPath`, `core.fsmonitor`) or
-+        // point outside the workspace (`core.worktree`).
-+        let to_git = to.join(".git");
-+        mirror_directory(&git_dir, &to_git, false, &["hooks", "config"], &["objects"])?;
-+        write_sanitized_git_config(&git_dir.join("config"), &to_git.join("config"))?;
-     }
-+    rules.record_tracked();
-     Ok(())
- }
- 
-+/// Settings of `.git/config` a checkout leaves out: each makes git run a
-+/// program from the developer's machine, or read a path only it has.
-+const UNSAFE_GIT_CONFIG_KEYS: &[&str] = &["hookspath", "fsmonitor", "worktree"];
-+
-+/// Sections a checkout leaves out whole: `include` and `includeIf` pull in
-+/// another config file from the developer's machine, which may set any of
-+/// [`UNSAFE_GIT_CONFIG_KEYS`].
-+const UNSAFE_GIT_CONFIG_SECTIONS: &[&str] = &["include", "includeif"];
-+
-+/// Copy the git config at `from` to `to`, as [`sanitized_git_config`] keeps it.
-+fn write_sanitized_git_config(from: &Path, to: &Path) -> Result<(), ExecutionError> {
-+    let Ok(config) = std::fs::read_to_string(from) else {
-+        return Ok(());
-+    };
-+    // The mirror has removed `to` already, since it skips `config`; a step
-+    // can't have put anything there since. Removed again all the same, so
-+    // the write never goes through a link.
-+    if to.symlink_metadata().is_ok() {
-+        remove_entry(to).map_err(|e| {
-+            ExecutionError::Execution(format!("Failed to replace {}: {}", to.display(), e))
-+        })?;
-+    }
-+    std::fs::write(to, sanitized_git_config(&config))
-+        .map_err(|e| ExecutionError::Execution(format!("Failed to write git config: {}", e)))
-+}
-+
-+/// `config` without [`UNSAFE_GIT_CONFIG_KEYS`] in any section, and without
-+/// any entry of [`UNSAFE_GIT_CONFIG_SECTIONS`]. Keys match in any case. A
-+/// value continued onto the next line with a backslash is dropped or kept
-+/// whole, and a section header that shares a line with a dropped entry
-+/// stays.
-+fn sanitized_git_config(config: &str) -> String {
-+    let mut out = String::with_capacity(config.len());
-+    let mut section = String::new();
-+    // Set while a value continues onto the next line: whether it is being
-+    // dropped, and whether the line ended inside quotes.
-+    let mut continued: Option<(bool, bool)> = None;
-+    for line in config.split_inclusive('\n') {
-+        let body = line.trim_end_matches(['\n', '\r']);
-+        if let Some((dropping, in_quote)) = continued {
-+            continued = value_continues(body, in_quote).map(|q| (dropping, q));
-+            if !dropping {
-+                out.push_str(line);
-+            }
-+            continue;
-+        }
-+        let trimmed = body.trim_start();
-+        let (header, entry) = match trimmed.strip_prefix('[').and(header_end(trimmed)) {
-+            Some(end) => {
-+                section = section_name(&trimmed[..end]);
-+                (Some(&trimmed[..end]), trimmed[end..].trim_start())
-+            }
-+            None => (None, trimmed),
-+        };
-+        let key = entry
-+            .split(|c: char| c == '=' || c.is_whitespace())
-+            .next()
-+            .unwrap_or("")
-+            .to_ascii_lowercase();
-+        let comment = key.is_empty() || key.starts_with(['#', ';']);
-+        let drop = !comment
-+            && (UNSAFE_GIT_CONFIG_KEYS.contains(&key.as_str())
-+                || UNSAFE_GIT_CONFIG_SECTIONS.contains(&section.as_str()));
-+        if !comment {
-+            continued = value_continues(entry, false).map(|q| (drop, q));
-+        }
-+        match (drop, header) {
-+            (false, _) => out.push_str(line),
-+            (true, Some(header)) => {
-+                out.push_str(header);
-+                out.push('\n');
-+            }
-+            (true, None) => {}
-+        }
-+    }
-+    out
-+}
-+
-+/// The length of the section header `line` starts with, closing bracket
-+/// inc
-```
-
-**File**: `crates/executor/src/docker.rs` (modified, +32/-11)
-```diff
-@@ -1016,8 +1016,17 @@ impl DockerRuntime {
-         // Convert command vector to Vec<String>
-         let cmd_vec: Vec<String> = cmd.iter().map(|&s| s.to_string()).collect();
- 
--        wrkflw_logging::debug(&format!("Running command in Docker: {:?}", cmd_vec));
--        wrkflw_logging::debug(&format!("Environment: {:?}", env));
-+        wrkflw_logging::debug(&format!(
-+            "Running command in Docker: {}",
-+            crate::log_redaction::args_for_log(&cmd_vec)
-+        ));
-+        wrkflw_logging::debug(&format!(
-+            "Environment variables: {}",
-+            crate::log_redaction::env_names_for_log(
-+                env.iter()
-+                    .map(|var| var.split_once('=').map_or(var.as_str(), |(k, _)| k))
-+            )
-+        ));
-         wrkflw_logging::debug(&format!("Working directory: {}", working_dir.display()));
- 
-         // Determine platform-specific configurations
-@@ -1139,26 +1148,35 @@ impl DockerRuntime {
-                         break;
-                     }
-                 };
--                let (text, into) = match log {
-+                use wrkflw_runtime::live_output::Stream;
-+                let (stream, text, into) = match log {
-                     bollard::container::LogOutput::StdOut { message } => {
--                        (stdout_text.push(&message), &mut stdout)
-+                        (Stream::Stdout, stdout_text.push(&message), &mut stdout)
-                     }
-                     bollard::container::LogOutput::StdErr { message } => {
--                        (stderr_text.push(&message), &mut stderr)
-+                        (Stream::Stderr, stderr_text.push(&message), &mut stderr)
-                     }
-                     _ => continue,
-                 };
-                 if let Some(tap) = &tap {
--                    tap.send(&text);
-+                    tap.send(stream, &text);
-                 }
-                 into.push_str(&text);
-             }
--            for (text, into) in [
--                (stdout_text.finish(), &mut stdout),
--                (stderr_text.finish(), &mut stderr),
-+            for (stream, text, into) in [
-+                (
-+                    wrkflw_runtime::live_output::Stream::Stdout,
-+                    stdout_text.finish(),
-+                    &mut stdout,
-+                ),
-+                (
-+                    wrkflw_runtime::live_output::Stream::Stderr,
-+                    stderr_text.finish(),
-+                    &mut stderr,
-+                ),
-             ] {
-                 if let Some(tap) = &tap {
--                    tap.send(&text);
-+                    tap.send(stream, &text);
-                 }
-                 into.push_str(&text);
-             }
-@@ -1220,7 +1238,10 @@ impl DockerRuntime {
-                 "Docker command failed with exit code: {}",
-                 exit_code
-             ));
--            wrkflw_logging::debug(&format!("Failed command: {:?}", cmd));
-+            wrkflw_logging::debug(&format!(
-+                "Failed command: {}",
-+                crate::log_redaction::args_for_log(cmd)
-+            ));
-             wrkflw_logging::debug(&format!("Working directory: {}", working_dir.display()));
-             wrkflw_logging::debug(&format!("STDERR: {}", stderr));
-         }
-```
-
-**File**: `crates/executor/src/engine.rs` (modified, +107/-41)
-```diff
-@@ -39,6 +39,9 @@ pub async fn execute_workflow(
-     workflow_path: &Path,
-     config: ExecutionConfig,
- ) -> Result<ExecutionResult, ExecutionError> {
-+    // Held until the run ends; values it registers stay masked in the
-+    // logs until the next run starts.
-+    let _log_scope = crate::log_redaction::begin_run();
-     wrkflw_logging::info(&format!("Executing workflow: {}", workflow_path.display()));
-     wrkflw_logging::info(&format!("Runtime: {:?}", config.runtime_type));
- 
-@@ -379,7 +382,7 @@ async fn execute_gitlab_pipeline(
-                     .flatten()
-                     .map(|job_name| {
-                         let logs = format!("Skipped: workflow:rules: {}", reason);
--                        JobResult::skipped(job_name.clone(), job_name, logs)
-+                        JobResult::skipped(job_name.clone(), job_name, logs).announced()
-                     })
-                     .collect(),
-                 failure_details: None,
-@@ -433,9 +436,8 @@ async fn execute_gitlab_pipeline(
-     // `--variable` values are often credentials, and they are never stored
-     // on purpose, so they can't be left to reach the step logs either.
-     secret_masker.add_secrets(config.variables.values().cloned());
--    // The log masker is process-wide and permanent, so it only takes the
--    // variables that look like credentials; `BRANCH=main` must not turn
--    // every later "main" in the logs into `***`.
-+    // The log masker only takes the variables that look like credentials;
-+    // `BRANCH=main` must not turn every "main" in the run's logs into `***`.
-     crate::log_redaction::register_variables(&config.variables);
- 
-     // Create artifact store for this pipeline run
-@@ -474,11 +476,10 @@ async fn execute_gitlab_pipeline(
-                 job_name,
-                 reason
-             ));
--            results.push(JobResult::skipped(
--                job_name.clone(),
--                job_name,
--                format!("Skipped: {}", reason),
--            ));
-+            results.push(
-+                JobResult::skipped(job_name.clone(), job_name, format!("Skipped: {}", reason))
-+                    .announced(),
-+            );
-         }
-         if job_batch.is_empty() {
-             continue;
-@@ -1194,6 +1195,26 @@ impl JobResult {
-         }
-     }
- 
-+    /// `self`, a skipped job, after telling the run's observers it was
-+    /// skipped. A skipped job runs no step, so without this the event
-+    /// stream never mentions it, and a live view would show it as waiting
-+    /// until the run's result arrives.
-+    pub(crate) fn announced(self) -> Self {
-+        crate::events::emit(|| crate::events::ExecutionEvent::JobStarted {
-+            job: self.name.clone(),
-+            canonical_name: self.canonical_name.clone(),
-+        });
-+        crate::events::emit(|| crate::events::ExecutionEvent::JobFinished {
-+            job: self.name.clone(),
-+            status: self.status.clone(),
-+            failure_allowed: self.failure_allowed,
-+            duration_ms: 0,
-+            logs: self.logs.clone(),
-+            repeated_from: self.repeated_from.clone(),
-+        });
-+        self
-+    }
-+
-     /// A job that failed before any of its steps ran. The reason is carried on a
-     /// failed step because failure summaries are built from failed steps.
-     fn failed_before_steps(
-@@ -2614,7 +2635,7 @@ async fn execute_job_with_matrix(
-                 job_name,
-                 reason
-             ));
--            return Ok(vec![JobResult::skipped(job_name, job_name, "")]);
-+            return Ok(vec![JobResult::skipped(job_name, job_name, "").announced()]);
-         }
-     }
- 
-@@ -2678,7 +2699,9 @@ async fn execute_job_with_matrix(
-                 job_name,
-                 reason
-             ));
--            return Ok(vec![JobResult::skipped(job_name, job_name, reason)]);
-+            return Ok(vec![
-+                JobResult::skipped(job_name, job_name, reason).announced()
-+            ]);
-         }
-         acceleration::Decision::Run { key } => key,
-     };
-@@ -3083,11 +3106,11 @@ async fn execute_matrix_combinations(
-             for combination in chunk {
-                 let combination_name =
-                     wrkflw_matrix::format_combination_name(ctx.job_name, combination);
--                results.push(JobResult::skipped(
-+                results.push(JobResult::announced(JobResult::skipped(
-                     combination_name,
-                     ctx.job_name,
-                     "Job skipped due to previous matrix job failure",
--                ));
-+                )));
-             }
-             continue;
-         }
-@@ -3151,36 +3174,38 @@ async fn execute_matrix_combinations(
-         return Ok(results);
-     }
-     // Back in matrix order, with each repeat taking its original's result.
--    // Every leg ran or was skipped by fail-fast, so each name has a result;
--    // one going missing is a bug to surface, not a leg to drop quietly.
--    let by_name: HashMap<Str
-```
-
-**File**: `crates/executor/src/events.rs` (modified, +3/-0)
-```diff
-@@ -60,6 +60,9 @@ pub enum ExecutionEvent {
- }
- 
- /// Receives events on the executor's task, so it must not block for long.
-+/// Live output events also arrive from the threads reading a step's pipes,
-+/// under a lock that keeps lines in order: an observer that blocks there
-+/// stalls both pipes, and with them the step's process.
- pub trait ExecutionObserver: Send + Sync {
-     fn on_event(&self, event: &ExecutionEvent);
- 
-```
-
-**File**: `crates/executor/src/kubernetes/mod.rs` (modified, +4/-1)
-```diff
-@@ -932,7 +932,10 @@ impl KubernetesRuntime {
-             },
-         );
- 
--        wrkflw_logging::debug(&format!("Command: {:?}", cmd));
-+        wrkflw_logging::debug(&format!(
-+            "Command: {}",
-+            crate::log_redaction::args_for_log(cmd)
-+        ));
-         wrkflw_logging::debug(&format!("Working directory: {}", working_dir.display()));
- 
-         // Armed before the pod exists: cancellation can land inside `create`.
-```
-
-**File**: `crates/executor/src/lib.rs` (modified, +1/-0)
-```diff
-@@ -38,3 +38,4 @@ pub use events::{
-     STDERR_HEADER, STDOUT_HEADER,
- };
- pub use kubernetes::{parse_key_value as parse_k8s_key_value, KubernetesConfig};
-+pub use log_redaction::{begin_run as begin_log_scope, RunScope as LogScope};
-```
-
----
-
-### Incident Patch 2: `79bc82b1` (2026-11-06)
-**Commit Message**: feat: secret-safe logs, incremental local reruns, live step output and a retro TUI (#163)
-
-* fix(ui): stop secrets reaching logs and polish the TUI
-
-Secrets: every log message now passes through a process-wide masker that
-the executor feeds with each secret a run resolves, and the emulation
-runtime logs environment variable names only. Before, secret values were
-printed in plaintext by `--verbose` and shown in the TUI Logs tab.
-
-Fixes:
-- `r` runs every checked workflow, else the highlighted one; Enter no
-  longer ticks checkboxes
-- lists stop at the ends; Home/End jump on Workflows, DAG, Execution, Runs
-- "Trigger filter" card renamed "Diff filter"; tab 6 is "Setup" with the
-  runtime picker on top
-- drop stale "Press Enter to start" and `--verbose` hints
-- one-cell ◼ replaces ⛔ for interrupted runs, with a width test
-- Execution header labels its start time and duration
-- Tweaks and Help open as centred modals over a muted backdrop
-
-Character:
-- Logs tab tells the run as a story from executor events (`o` for raw);
-  debug lines hidden unless `--verbose`
-- Workflows preview shows the last recorded run
-- DAG shows stage and job times and marks the critical path
-
-* feat: incremental 
-
-**File**: `.cargo/config.toml` (added, +7/-0)
-```diff
-@@ -0,0 +1,7 @@
-+# Tests run real jobs, and jobs keep their workspace under the user's cache
-+# directory by default. Tests must neither leave workspaces there nor see
-+# each other's, so every job they run, in process or through the built
-+# binary, starts in an empty one. An existing WRKFLW_FRESH_WORKSPACE wins,
-+# so `WRKFLW_FRESH_WORKSPACE=0 cargo run -- run ...` keeps workspaces.
-+[env]
-+WRKFLW_FRESH_WORKSPACE = "1"
-```
-
-**File**: `AGENTS.md` (modified, +5/-1)
-```diff
-@@ -34,11 +34,15 @@ Run `wrkflw gate`. It runs what a push would run, reusing jobs that already pass
- | Command | stdout |
- | --- | --- |
- | `run`, `watch`, `runs replay` | One object per line: `run_started`, `job_started`, `step_started`, `step_finished`, `job_finished`, `run_finished`. `watch` adds `watch_started` and `watch_cycle`. |
--| `validate`, `list`, `plan`, `runs ...` | One object. |
-+| `validate`, `list`, `plan`, `runs ...`, `clean` | One object. |
- | Any error | `{"type": "error", "message": "..."}`, exit 1. |
- 
- `step_finished.output` holds the last 64 KiB of a step's output, delivered when the step ends. Output is not streamed while a step runs.
- 
-+`clean` prints `{"removed": n, "bytes": n, "in_use": n, "failed": [{"path": "...", "error": "..."}]}`: workspaces removed, the bytes they held, workspaces left because a run holds them, and workspaces that could not be removed. It exits 1 when `failed` is not empty, after cleaning the rest.
-+
-+A `job_finished` with `repeated_from` is a matrix leg that did not run, because locally it would only have repeated the named leg. Its `status` is that leg's and its `duration_ms` is 0. Pass `--every-matrix-leg` to run every leg.
-+
- `failures` has one entry per distinct failure, not per failed job, so count `jobs` on `run_finished` instead. `also_failed_in` lists matrix legs where the same step failed with the same exit code and output, ignoring durations, and `command` is the first leg's script. `error_lines` holds lines above `output_tail` that look like errors. `note` warns about the run itself, such as `--from-step` having skipped earlier steps.
- 
- Workspace paths in step output are relative, so `tests/test_app.py` means that file in your repository.
-```
-
-**File**: `Cargo.lock` (modified, +1/-0)
-```diff
-@@ -4638,6 +4638,7 @@ dependencies = [
-  "serde",
-  "serde_json",
-  "serde_yaml",
-+ "tempfile",
-  "terminal-colorsaurus",
-  "tokio",
-  "unicode-width",
-```
-
-**File**: `Cargo.toml` (modified, +2/-0)
-```diff
-@@ -5,6 +5,8 @@ resolver = "2"
- [workspace.package]
- version = "0.8.0"
- edition = "2021"
-+# `std::fs::File::try_lock` guards kept job workspaces.
-+rust-version = "1.89"
- description = "A GitHub Actions workflow validator and executor"
- documentation = "https://github.com/bahdotsh/wrkflw"
- homepage = "https://github.com/bahdotsh/wrkflw"
-```
-
-**File**: `README.md` (modified, +30/-8)
-```diff
-@@ -11,7 +11,7 @@ A command-line tool for validating and executing GitHub Actions workflows locall
- 
- ## Features
- 
--- **TUI interface** — interactive terminal UI with Workflows, Execution, DAG, Logs, Trigger, Secrets, Runs, and Help tabs
-+- **TUI interface** — interactive terminal UI with Workflows, Run (jobs, graph and log views), History, Dispatch and Setup tabs, plus a Help overlay
- - **Workflow validation** — syntax checks, structural validation, and composite action input cross-checking with CI/CD-friendly exit codes
- - **Local execution** — Docker, Podman, emulation, or sandboxed **secure emulation** (no containers)
- - **Kubernetes execution** — run each step as a pod in your own cluster, with node selectors and GPU resource requests
-@@ -163,6 +163,27 @@ export WRKFLW_PLATFORM=ubuntu-latest=catthehacker/ubuntu:act-latest
- - Runtimes from `actions/setup-*` are installed on top of your image, so the image must be Debian or Ubuntu based for those jobs.
- - `--platform` replaces `WRKFLW_PLATFORM` entirely when both are set. It has no effect in emulation mode.
- 
-+### Faster local reruns
-+
-+Two defaults make a rerun cheaper than a hosted runner's cold start. Both work the same for any language or toolchain.
-+
-+- **Each GitHub Actions job keeps its workspace.** GitLab pipelines still start each run in an empty workspace. Checkout syncs the source files into it, and leaves alone anything the repository ignores, such as build output, `node_modules` or a virtualenv. The second run of a build is therefore incremental. Unchanged files keep their timestamps, and files deleted from the repository are deleted from the workspace too. Workspaces live under your cache directory in `wrkflw/workspaces` (`~/Library/Caches` on macOS, `~/.cache` on Linux), one per repository, workflow file and job. Set `WRKFLW_WORKSPACES_DIR` to keep them somewhere else, such as a larger disk. `--fresh-workspace` or `WRKFLW_FRESH_WORKSPACE=1` gives every job an empty workspace, as a hosted runner does.
-+- **Matrix legs that only pick a runner run once.** Locally, `runs-on: ${{ matrix.os }}` maps every OS to the same image. If a leg differs from another only in values that `runs-on` reads, and the two would run in the same image, that leg reports the other's result instead of repeating it. Its history record and its `job_finished` event carry `repeated_from` with the leg it repeats. A leg whose steps read the value, or which runs in a different image (see `--platform`), still runs. `--every-matrix-leg` or `WRKFLW_EVERY_MATRIX_LEG=1` runs them all.
-+
-+What a kept workspace means in practice:
-+
-+- In a git repository, checkout follows git's ignore rules: every `.gitignore` in the tree, `.git/info/exclude` and your global excludes file. Tracked dotfiles such as `.cargo/config.toml` are synced. Hidden files a tool leaves in the workspace, such as `.pytest_cache`, are kept. Outside a git repository, most hidden files are skipped.
-+- `.git` is mirrored so `git describe` and `git diff` work. Its objects are hard-linked where the cache directory shares a filesystem with the repository, so they take no extra space. Git never rewrites an object in place, so the links are safe, but a step that changes file permissions under `.git/objects` changes them in your repository too. Hooks are left out, as in a fresh clone.
-+- A job that never runs `actions/checkout` finds whatever its last run left behind, not an empty directory. The run log says when a job reuses its workspace.
-+- Files a step writes, including credentials such as `.npmrc` or a kubeconfig, stay in the workspace until the next run overwrites them or you clean it. Use `--fresh-workspace` for jobs where that matters.
-+- If the cache directory is inside the directory you run from, as when you run from your home directory, checkout leaves the workspaces out.
-+- `wrkflw clean` removes every kept workspace no run is using and says how much space it freed. It leaves each job's small lock file, so a run starting at the same moment still has the workspace to itself. Deleting the directory by hand is also safe; each job then starts cold once.
-+- `cargo test` in this repository sets `WRKFLW_FRESH_WORKSPACE=1` through `.cargo/config.toml`, so tests never keep workspaces. The same applies to `cargo run`; set `WRKFLW_FRESH_WORKSPACE=0` to try kept workspaces from a source build.
-+
-+While a step runs, the TUI shows what it prints: the Run tab's Output pane shows the full output, and the Log story shows its last lines. Error, warning and notice annotations appear as `Error: …` lines, as on GitHub. Other workflow commands are hidden, and every line is masked before it is shown. A progress bar that redraws its line with carriage returns shows as one line in its latest state.
-+
-+wrkflw's own log, shown in the TUI and with `--verbose`, masks every secret, every `::add-mask::` value, and each `--variable` value whose name suggests a credential (`TOKEN`, `SECRET`, `PASSWORD`, `KEY` and the like) or that is 16 chara
-```
-
-**File**: `crates/evaluator/Cargo.toml` (modified, +1/-0)
-```diff
-@@ -2,6 +2,7 @@
- name = "wrkflw-evaluator"
- version = "0.8.0"
- edition.workspace = true
-+rust-version.workspace = true
- description = "Workflow evaluation functionality for wrkflw execution engine"
- license.workspace = true
- documentation.workspace = true
-```
-
-**File**: `crates/executor/Cargo.toml` (modified, +1/-0)
-```diff
-@@ -2,6 +2,7 @@
- name = "wrkflw-executor"
- version = "0.8.0"
- edition.workspace = true
-+rust-version.workspace = true
- description = "Workflow execution engine for wrkflw"
- license.workspace = true
- documentation.workspace = true
-```
-
-**File**: `crates/executor/src/acceleration.rs` (modified, +52/-5)
-```diff
-@@ -405,6 +405,12 @@ pub(crate) struct KeyInput<'a> {
- /// The fingerprint a stored result is filed under. `None` if the job can't be
- /// serialized, which leaves it running as normal.
- pub(crate) fn job_key(input: &KeyInput<'_>) -> Option<String> {
-+    job_key_with(input, crate::run_options::every_matrix_leg())
-+}
-+
-+/// [`job_key`], with `every_matrix_leg` saying whether matrix legs that
-+/// would repeat another leg still run.
-+fn job_key_with(input: &KeyInput<'_>, every_matrix_leg: bool) -> Option<String> {
-     let lookup = input.lookup;
-     let inputs = match input.patterns {
-         None => input.tree.digest.clone(),
-@@ -428,6 +434,14 @@ pub(crate) fn job_key(input: &KeyInput<'_>) -> Option<String> {
-         "arch": std::env::consts::ARCH,
-         "inputs": inputs,
-     });
-+    // A matrix result stored by default may hold legs that were folded into
-+    // another leg and never ran, so it can't stand in for a run of every leg.
-+    // Only that mode changes the key, so stored and shared results from a
-+    // default run keep their keys.
-+    let mut document = document;
-+    if every_matrix_leg && lookup.job.matrix_config().is_some() {
-+        document["every_matrix_leg"] = serde_json::json!(true);
-+    }
-     let text = serde_json::to_string(&canonical(document)).ok()?;
-     Some(hex(&Sha256::digest(text.as_bytes())))
- }
-@@ -867,6 +881,16 @@ mod tests {
-         wf: &WorkflowDefinition,
-         tree: &TreeHashes,
-         paths: Option<Vec<String>>,
-+    ) -> String {
-+        key_for_mode(job_def, wf, tree, paths, false)
-+    }
-+
-+    fn key_for_mode(
-+        job_def: &Job,
-+        wf: &WorkflowDefinition,
-+        tree: &TreeHashes,
-+        paths: Option<Vec<String>>,
-+        every_matrix_leg: bool,
-     ) -> String {
-         let hints = JobHints {
-             paths,
-@@ -886,14 +910,37 @@ mod tests {
-             needs_results: &empty_results,
-             partial: false,
-         };
--        job_key(&KeyInput {
--            lookup: &lookup,
--            tree: &Tree::new(tree.clone()).unwrap(),
--            patterns: patterns.as_deref(),
--        })
-+        job_key_with(
-+            &KeyInput {
-+                lookup: &lookup,
-+                tree: &Tree::new(tree.clone()).unwrap(),
-+                patterns: patterns.as_deref(),
-+            },
-+            every_matrix_leg,
-+        )
-         .unwrap()
-     }
- 
-+    #[test]
-+    fn running_every_matrix_leg_does_not_reuse_a_folded_result() {
-+        let dir = repo();
-+        let wf = workflow();
-+        let tree = hash_tree(dir.path()).unwrap();
-+        let matrix = job(
-+            "runs-on: ${{ matrix.os }}\nstrategy:\n  matrix:\n    os: [a, b]\nsteps:\n  - run: make\n",
-+        );
-+        assert_ne!(
-+            key_for_mode(&matrix, &wf, &tree, None, false),
-+            key_for_mode(&matrix, &wf, &tree, None, true)
-+        );
-+        // A job without a matrix has nothing to fold, so its key is shared.
-+        let plain = job("steps:\n  - run: make\n");
-+        assert_eq!(
-+            key_for_mode(&plain, &wf, &tree, None, false),
-+            key_for_mode(&plain, &wf, &tree, None, true)
-+        );
-+    }
-+
-     #[test]
-     fn the_key_changes_with_a_source_file_but_not_an_ignored_one() {
-         let dir = repo();
-```
-
----
-
-### Incident Patch 3: `553ecf53` (2026-11-06)
-**Commit Message**: Make wrkflw a trustworthy feedback loop for agents (#165)
-
-* feat(executor): flag jobs that ran as another OS than runs-on asked
-
-A matrix over [ubuntu-latest, macos-latest, windows-latest] passes
-locally even when a step gated on runner.os == 'Windows' would fail
-on GitHub. Locally every one of those labels runs as Linux, or as
-the host under emulation, so the Windows-only step never runs and
-the leg reports success. An agent reads that as "CI will pass".
-
-It won't.
-
-Not running those legs is fine; there's nothing else we could do
-with them here. Pretending they were checked is not.
-
-Compare the OS each job's runs-on names with the runner.os the job
-actually sees. When they differ, log a warning, put runner:
-{requested, ran_as} on the job, and list it in a new
-run_finished.unverified array. Folded and reused matrix legs get
-the same treatment, since their result stands in for a leg that
-never ran as the OS it asked for. Jobs with container:, labels
-mapped with --platform, and labels that name no OS are left alone:
-we can't judge those, and guessing is just noise.
-
-While at it, run_finished.jobs now carries repeated_from. It was
-dropped there before, so MCP clients never saw it.
-
-*
-
-**File**: `AGENTS.md` (modified, +8/-6)
-```diff
-@@ -5,10 +5,11 @@ wrkflw validates and runs GitHub Actions and GitLab CI workflows locally. Use it
- ## Loop
- 
- 1. After editing YAML, run `wrkflw --format json validate`.
--2. Run `wrkflw --format json plan <file>` to see job order, matrix legs and whether a trigger fires.
-+2. Run `wrkflw --format json plan <file>` to see job order, matrix legs, whether a trigger fires, and under `unverified` which jobs would run as another OS than `runs-on` asks for. Pass the `--runtime` you will run with.
+@@ -9,7 +9,7 @@ wrkflw validates and runs GitHub Actions and GitLab CI workflows locally. Use it
  3. Run `wrkflw --format json run <file> --intent "why you are running this"`.
  4. On failure, read the `failure` object in the final `run_finished` line. Don't rerun to see the error again.
  5. For earlier runs, use `wrkflw runs list`, `runs failure <id>` and `runs logs <id> --step <name>`.
-+6. Before calling a pass done, check `unverified` on `run_finished`. A job listed there asked for another OS in `runs-on` than it ran as, such as `windows-latest` run as Linux, so steps gated on `runner.os` and OS-specific behaviour were not checked. Say so instead of claiming CI will pass.
+-6. Before calling a pass done, check `unverified` on `run_finished`. A job listed there asked for another OS in `runs-on` than it ran as, such as `windows-latest` run as Linux, so steps gated on `runner.os` and OS-specific behaviour were not checked. Say so instead of claiming CI will pass.
++6. Before calling a pass done, read `verdict` on `run_finished`, not only `status`. `verified` means every job that ran did so as the OS its `runs-on` asked for. `partial` means some didn't: they are listed under `unverified`, such as `windows-latest` run as Linux, so steps gated on `runner.os` and OS-specific behaviour were not checked. `nothing_checked` means it passed because no job ran. Say which, instead of claiming CI will pass.
  
  Prefer the MCP server if your client supports MCP. `wrkflw mcp install` registers it with Claude Code, Codex, Cursor, Windsurf, VS Code, Gemini CLI, opencode, Claude Desktop, GitHub Copilot CLI, Grok Build, Kiro CLI, pi and Zed. Pass a name, such as `wrkflw mcp install codex`, for one agent, and `--dry-run` to see the change first. By hand:
  
-@@ -18,7 +19,7 @@ Prefer the MCP server if your client supports MCP. `wrkflw mcp install` register
+@@ -19,7 +19,17 @@ Prefer the MCP server if your client supports MCP. `wrkflw mcp install` register
  
  ## Before pushing
  
--Run `wrkflw gate`. It runs what a push would run, reusing jobs that already passed on the same files, and exits 1 if anything fails. Add `--reuse-results` to `wrkflw run` to get the same reuse while iterating. A reused job reports one `Reuse result` step and an unaffected job one `Not affected` step, so their output isn't there to read. See "Spending less on CI" in the README for `.wrkflw/affected.yml`.
-+Run `wrkflw --format json gate`, or the MCP `gate` tool. It runs what a push would run, reusing jobs that already passed on the same files, and exits 1 if anything fails. It prints one `gate` object: `passed`, `failed` (paths), `unverified` (with `workflow`), `uncommitted_changes`, and per workflow its `status`, `run_id`, `jobs` and `failure` digest. Add `--reuse-results` to `wrkflw run`, or `reuse_results` to the MCP `run_workflow`, to get the same reuse while iterating. A reused job reports one `Reuse result` step and an unaffected job one `Not affected` step, so their output isn't there to read. See "Spending less on CI" in the README for `.wrkflw/affected.yml`.
- 
- ## Simulating events
- 
-@@ -33,16 +34,18 @@ Run `wrkflw gate`. It runs what a push would run, reusing jobs that already pass
- 
- | Command | stdout |
- | --- | --- |
--| `run`, `watch`, `runs replay` | One object per line: `run_started`, `job_started`, `step_started`, `step_finished`, `job_finished`, `run_finished`. `watch` adds `watch_started` and `watch_cycle`. |
--| `validate`, `list`, `plan`, `runs ...`, `clean` | One object. |
-+| `run`, `watch`, `runs replay` | One object per line: `run_started`, `job_started`, `step_started`, `step_output` (with `--stream-output`), `step_finished`, `job_finished`, `run_finished`. `watch` adds `watch_started` and `watch_cycle`. |
-+| `validate`, `list`, `plan`, `runs ...`, `clean`, `gate` | One object. |
- | Any error | `{"type": "error", "message": "..."}`, exit 1. |
- 
--`step_finished.output` holds the last 64 KiB of a step's output, delivered when the step ends. Output is not streamed while a step runs.
-+`step_finished.output` holds the last 64 KiB of a step's output, delivered when the step ends. To follow a long step before it ends, add `--stream-output` to `run`: it adds `step_output` lines, `{job, step, index, lines}`, as the step prints, masked like the rest. Without it no `step_output` lines are printed.
- 
- `clean` prints `{"schema_version": 1, "type": "clean", "removed": n, "bytes": n, "in_use": n, "failed": [{"path": "...", "error": "..."}]}`: workspaces removed, the bytes they held, workspaces left because a run holds them, and workspaces that could not be removed. It exits 1 when `failed` is not empty, after cleaning the rest.
- 
- A job that does not run, because of its `if:`, a failed `needs` job, fail-fast, a GitLab rule or `gate: false`, still gets `job_started` and `job_finished`, with `status` `skipped` and `duration_ms` 0.
- 
-+`run_finished` has `unverified`, a list of `{job, requested, ran_as, reason}` for jobs that ran as another OS than `runs-on` asked for, empty when there are none. The same job's `job_finished` and its `run_finished.jobs` entry carry `runner: {requested, ran_as}`.
+-Run `wrkflw --format json gate`, or the MCP `gate` tool. It runs what a push would run, reusing jobs that already passed on the same files, and exits 1 if anything fails. It prints one `gate` object: `passed`, `failed` (paths), `unverified` (with `workflow`), `uncommitted_changes`, and per workflow its `status`, `run_id`, `jobs` and `failure` digest. Add `--reuse-results` to `wrkflw run`, or `reuse_results` to the MCP `run_workflow`, to get the same reuse while iterating. A reused job reports one `Reuse result` step and an unaffected job one `Not affected` step, so their output isn't there to read. See "Spending less on CI" in the README for `.wrkflw/affected.yml`.
++Run `wrkflw --format json gate`, or the MCP `gate` tool. It runs what CI would run for your push, reusing jobs that already passed on the same files, and exits 1 if anything fails.
 +
- A `job_finished` with `repeated_from` is a matrix leg that did not run, because locally it would only have repeated the named leg. Its `status` is that leg's and its `duration_ms` is 0. Pass `--every-matrix-leg` to run every leg.
- 
- `failures` has one entry per distinct failure, not per fai
++Without `--event`, each workflow is checked as a push. On a branch other than the default one, a workflow that runs no job for a push, because it doesn't fire or every job is skipped, such as CI that runs on pushes to `main` and on pull requests, is checked again as a pull request into the default branch (`origin/HEAD`, else `main` or `master`). Pass `--base-branch` for another target, or `--event` to check one event only.
++
++It prints one `gate` object: `verdict`, `passed`, `failed` (paths), `unverified` (with `workflow`), `uncommitted_changes`, and per workflow its `status`, `verdict`, the `event` (and `base_branch`) it was checked as, `run_id`, `jobs` and `failure` digest. A workflow checked as a pull request because the push ran no job has `fell_back_from`: the push's `event`, `run_id` and `skip_reason`. `verdict` is `verified`, `partial` (passed, with jobs under `unverified`), `nothing_checked` (no job ran for any workflow) or `failed`. `passed` is true only when something ran and nothing failed. A gate that checked nothing exits 0, so a push that no CI runs for isn't blocked, and prints a warning on stderr. In text mode a `partial` gate says so in its summary line instead of the plain `gate passed`.
++
++Add `--reuse-results` to `wrkflw run`, or `reuse_results` to the MCP `run_workflow`, to get the same reuse while iterating. A job that didn't run because an earlier result stands has `reused` on its `job_finished` and `run_finished.jobs` entry: `stored` for a pass reused under the same fingerprint, `unaffected` for a job `--affected` found no change for. Its recorded run keeps one `Reuse result` or `Not affected` step, so its output isn't there to read. See "Spending less on CI" in the README for `.wrkflw/affected.yml`.
++
++## Checking wrkflw against GitHub
++
++`wrkflw compare <run id or URL>` runs a workflow locally as a finished GitHub Actions run did, for the same event, and lists each job's result on both sides. The working tree must be the commit the run tested: check it out first, in a worktree if you like. It prints one `compare` object: `agree`, `disagreements`, `basis` (`jobs` when jobs were paired by name, `run` when only the run's result could be compared, `none` when nothing could), a `problem` saying why the comparison says less than a per-job one would, the GitHub run, the local run's `status` and `verdict`, and per job `github_name`, `local_name`, `github`, `local`, `agree` (`null` when GitHub cancelled or skipped it before running) and a `note` on why they may differ, such as a job r
 ```
 
-**File**: `README.md` (modified, +1/-1)
+**File**: `BREAKING_CHANGES.md` (modified, +26/-0)
 ```diff
-@@ -44,7 +44,7 @@ A command-line tool for validating and executing GitHub Actions workflows locall
- - Service settings that reach the host — a service's `volumes:` can only name a volume, not a host path, and its `options:` only take flags that shape the service container itself, such as `--health-cmd`, `--user`, `--tmpfs` and `-e NAME=value`. Anything else, such as `--privileged` or `-v`, fails the job.
- - Services that listen on the same port — services share the job container's network, as they do on a GitHub runner, so two Postgres services can't both have 5432. wrkflw refuses two services whose `ports:` name the same container port, and warns about two services of one image.
- - A job with `services:` runs its steps in one container with them, which needs `sh` and `env` in the job's image. Files a step leaves outside the workspace are there for the next step, and `--preserve-containers-on-failure` doesn't keep that container.
--- Windows and macOS runners — `runs-on: windows-*` / `macos-*` is silently mapped to a container image (macOS → a Linux image, Windows → a Windows container that won't run on Linux/macOS hosts). In container runtimes `${{ runner.os }}` is `Linux` and `runner.temp` and the other runner paths are Linux paths, even for a Windows image, so a job on a Windows container sees the wrong values. In emulation `runner.os` is the host OS.
-+- Windows and macOS runners — `runs-on: windows-*` / `macos-*` is silently mapped to a container image (macOS → a Linux image, Windows → a Windows container that won't run on Linux/macOS hosts). In container runtimes `${{ runner.os }}` is `Linux` and `runner.temp` and the other runner paths are Linux paths, even for a Windows image, so a job on a Windows container sees the wrong values. In emulation `runner.os` is the host OS. Every job whose `runs-on` names another OS than it ran as is listed under `unverified` in `run_finished` and in the `gate` result, logged as a warning, and marked on the job's line in the TUI, because its pass says nothing about OS-specific steps. `wrkflw plan` lists the same jobs before a run.
- - `working-directory` outside the workspace — it must stay inside the workspace, so `${{ runner.temp }}/build` fails the step instead of running there.
+@@ -1,5 +1,31 @@
+ # Breaking Changes
  
- ## Installation
++## `wrkflw gate` checks pull request workflows, and fails when it checked nothing (unreleased)
++
++Without `--event`, the gate used to check every workflow as a push. On a feature branch, CI that only runs on pushes to `main` and on pull requests was skipped, and the gate passed with nothing run. Now a workflow that runs no job for a push, because it doesn't fire or every job is skipped by `if:`, is checked again as a pull request into the default branch, or into `--base-branch`. Pass `--event push` for the old behaviour.
++
++The gate's JSON gains `verdict`, and each workflow gains the `event` and `base_branch` it was checked as. `passed` is false when no job ran for any workflow, with `verdict: "nothing_checked"`. The exit code is still 0 then, so a push no CI runs for isn't blocked. A script that read `passed: true` as "safe to push" now sees `false` in that case. The gate's JSON hasn't been in a release, so `schema_version` stays 1: read `verdict` to tell why `passed` is false. A workflow checked as a pull request after the push ran no job carries `fell_back_from`, with the push's `event`, `run_id` and `skip_reason`.
++
++## `run_finished` says how much a pass proves (unreleased)
++
++`run_finished` gains `verdict`: `verified`, `partial`, `nothing_checked`, `failed`, `error`, `skipped` or `interrupted`. `status` is unchanged. In text mode, a pass with jobs that ran as another OS, or with no job run, no longer prints the plain success line.
++
++A job that didn't run because an earlier result stands has `reused` on `job_finished` and in `run_finished.jobs`, `stored` or `unaffected`. Failure digests gain an optional `cause`, `out_of_memory` when the output says memory ran out or `killed` for a SIGKILL without a stated reason, and a matrix leg that repeated a failed leg is listed under the original's `also_failed_in` instead of as a failure of its own. `error_lines` and `output_tail` no longer hold terminal colour codes, and `error_lines` only keeps lines with a whole error word that isn't a count of zero.
++
++The canned "Common causes for cargo command failures" text is gone from failed cargo steps. It blamed the code for failures that came from the machine.
++
++## Matrix `include` follows GitHub's rules (unreleased)
++
++An `include` entry is now added to every original combination whose matrix values it doesn't overwrite, and becomes a combination of its own only when it fits none. Entries are never merged into combinations an earlier `include` created. An entry with only new keys used to become a combination of its own, and now adds its keys to every combination. A workflow planned with fewer or different legs than GitHub runs now gets the same ones.
++
++## Docker and Podman runs limit parallel jobs on a small VM (unreleased)
++
++When the Docker Desktop or Podman VM has less than 14 GB of memory, a run warns and runs at most one job or matrix leg per 4 GB at a time, counting every job of the run together. Runs can take longer there. A Docker or Podman daemon on Linux without a VM is warned about but keeps its parallelism. Set `WRKFLW_MAX_PARALLEL_JOBS` to choose the limit on either.
++
++## Smaller schema changes (unreleased)
++
++A workflow without `name:` is named by its path, such as `.github/workflows/ci.yml`. It used to fail to parse. `strategy:` no longer needs a `matrix`. A top-level `cache-mode`, `deployment` on an `environment`, the `code-quality` permission, an empty env value and an expression in `timeout-minutes` are accepted. An expression timeout runs under the default timeout.
++
+ ## An explicit `--runtime docker` or `--runtime podman` no longer falls back to the host (unreleased)
+ 
+ If Docker or Podman didn't answer within about a second, for example while Docker Desktop woke from Resource Saver, an explicit `--runtime docker` or `--runtime podman` ran every step on this machine and reported success. The TUI did the same after its runtime probe. Now the availability check waits longer, and a runtime you named that doesn't answer fails the run with a message saying what to start.
 ```
 
-**File**: `crates/executor/src/engine.rs` (modified, +69/-13)
+**File**: `Cargo.lock` (modified, +2/-0)
 ```diff
-@@ -1042,7 +1042,7 @@ impl RuntimeType {
-         RuntimeType::Kubernetes,
-     ];
+@@ -4474,6 +4474,7 @@ dependencies = [
+  "serde_json",
+  "serde_yaml",
+  "thiserror 1.0.69",
++ "tokio",
+  "wrkflw-logging",
+  "wrkflw-models",
+ ]
+@@ -4551,6 +4552,7 @@ dependencies = [
+  "chrono",
+  "dirs",
+  "nix 0.27.1",
++ "regex",
+  "serde",
+  "serde_json",
+  "tempfile",
+```
+
+**File**: `README.md` (modified, +14/-1)
+```diff
+@@ -213,7 +213,10 @@ See [BREAKING_CHANGES.md](BREAKING_CHANGES.md) for full migration notes.
+ All of this is opt-in. Without these flags a run behaves as it always has.
  
--    fn runs_in_container(&self) -> bool {
-+    pub(crate) fn runs_in_container(&self) -> bool {
-         Self::CONTAINER_RUNTIMES.contains(self)
-     }
+ ```bash
+-# Check everything a push would run, reusing what already passed
++# Check everything CI would run for this push, reusing what already passed.
++# On a feature branch, a workflow a push doesn't fire is checked as a pull
++# request into the default branch. The result says how much the pass proves:
++# verified, partial (some jobs ran as another OS) or nothing_checked.
+ wrkflw gate
  
-@@ -2684,10 +2684,47 @@ async fn execute_job_with_matrix(
-                 acceleration::mark_executed(job_name);
-             }
-             let (note, step) = (why.note(), why.step());
-+            // A reused leg still ran as another OS when it passed, so it is
-+            // reported the same way. Its matrix values come from its name.
-+            let legs: Vec<MatrixCombination> = job
-+                .matrix_config()
-+                .and_then(|config| {
-+                    resolve_matrix_expressions(
-+                        config,
-+                        env_context,
-+                        user_env,
-+                        &needs_ctx,
-+                        &needs_res,
-+                    )
-+                    .and_then(|resolved| wrkflw_matrix::expand_matrix(&resolved))
-+                    .ok()
-+                })
-+                .unwrap_or_default();
-             return Ok(jobs
-                 .into_iter()
-                 .map(|stored| {
--                    announce_reused(&stored, &note);
-+                    let matrix = legs
-+                        .iter()
-+                        .find(|leg| {
-+                            wrkflw_matrix::format_combination_name(job_name, leg) == stored.name
-+                        })
-+                        .map(|leg| &leg.values);
-+                    if matrix.is_none() && job.matrix_config().is_some() {
-+                        // Without its values `runs-on: ${{ matrix.os }}` can't
-+                        // be judged, and silence would read as verified.
-+                        wrkflw_logging::warning(&format!(
-+                            "Reused job '{}' matches no leg of the matrix, so whether it \
-+                             ran as the OS runs-on asks for wasn't checked",
-+                            stored.name
-+                        ));
-+                    }
-+                    let runner = crate::runner_fidelity::substitution(
-+                        job,
-+                        matrix,
-+                        env_context,
-+                        platform_overrides,
-+                    );
-+                    announce_reused(&stored, &note, runner.as_ref());
-                     JobResult::reused(stored, step, &note)
-                 })
-                 .collect());
-@@ -2815,11 +2852,16 @@ async fn execute_job_with_matrix(
+ # Run it on every push (an existing hook is left alone). The hook keeps the
+@@ -365,10 +368,20 @@ wrkflw runs replay latest
+ # Resume a job at a step
+ wrkflw run .github/workflows/ci.yml --job test --from-step "Run tests"
+ 
++# Run a workflow as a finished GitHub run did, and list where the results differ.
++# Check out the commit that run tested first.
++wrkflw compare https://github.com/OWNER/REPO/actions/runs/123456789
++
+ # Serve all of this over the Model Context Protocol
+ wrkflw mcp serve
+ ```
+ 
++Every `run_finished`, and the gate result, carries a `verdict`. `verified` means every job ran as the OS it asked for. `partial` means some jobs ran as another OS and are listed under `unverified`. `nothing_checked` means no job ran, so the pass proves nothing. A failure digest names a likely `cause`: `out_of_memory` when the output says memory ran out, or `killed` when a process got SIGKILL without a stated reason.
++
++Docker Desktop and Podman machines often have half the 16 GB of a GitHub runner, and a Rust or C++ link can be killed there although it passes in CI. wrkflw warns when the VM has less than 14 GB and runs at most one job or matrix leg per 4 GB at a time, counting every job of the run together. On Linux without a VM it only warns. Set `WRKFLW_MAX_PARALLEL_JOBS` to choose the limit.
++
++`scripts/conformance/plan_corpus.sh` plans the last finished run of every workflow in a list of public repositories, and compares the number of jobs with what GitHub ran. It needs `gh` and `jq`, and runs nothing.
++
+ Register the MCP server with every coding agent installed on this machine, or name the ones you want. Running it again changes nothing, and an entry that launches a different command is left alone unless you pass `--force`.
+ 
+ ```bash
+```
+
+**File**: `crates/executor/src/acceleration.rs` (modified, +8/-0)
+```diff
+@@ -638,6 +638,14 @@ pub(crate) enum Reused {
  }
  
- /// Report a job that won't run, the way a run job reports itself.
--fn announce_reused(stored: &acceleration::StoredJob, note: &str) {
-+fn announce_reused(
-+    stored: &acceleration::StoredJob,
-+    note: &str,
-+    runner: Option<&crate::runner_fidelity::RunnerSubstitution>,
-+) {
-     crate::events::emit(|| crate::events::ExecutionEvent::JobStarted {
-         job: stored.name.clone(),
-         canonical_name: stored.canonical_name.clone(),
-     });
-+    crate::runner_fidelity::announce(&stored.name, runner);
-     crate::events::emit(|| crate::events::ExecutionEvent::JobFinished {
-         job: stored.name.clone(),
-         status: JobStatus::Success,
-@@ -2934,6 +2976,11 @@ async fn execute_job(ctx: JobExecutionContext<'_>) -> Result<JobResult, Executio
- 
-     let mut loop_state = StepLoopState::new(ctx.job_name, ctx.job_name)
-         .with_job_context(job_dir.path(), ctx.services.missing_secrets);
-+    crate::runner_fidelity::announce(
-+        ctx.job_name,
-+        crate::runner_fidelity::substitution(job, None, &job_env, ctx.services.platform_overrides)
-+            .as_ref(),
-+    );
-     let pending_cache_saves = std::sync::Mutex::new(Vec::<PendingCacheSave>::new());
- 
-     let job_deadline = tokio::time::Instant::now() + job_timeout;
-@@ -3205,7 +3252,13 @@ async fn execute_matrix_combinations(
-                     Some(&combination.values),
-                 );
-                 let name = wrkflw_matrix::format_combination_name(ctx.job_name, combination);
--                repeated_leg(&name, &results[position[original]], &image)
-+                let runner = crate::runner_fidelity::substitution(
-+                    ctx.job_template,
-+                    Some(&combination.values),
-+                    ctx.env_context,
-+                    ctx.services.platform_overrides,
-+                );
-+                repeated_leg(&name, &results[position[original]], &image, runner.as_ref())
-             }
-         });
-     }
-@@ -3309,6 +3362,16 @@ async fn execute_matrix_job(
- 
-     let mut loop_state = StepLoopState::new(&matrix_job_name, job_name)
-         .with_job_context(job_dir.path(), services.missing_secrets);
-+    crate::runner_fidelity::announce(
-+        &matrix_job_name,
-+        crate::runner_fidelity::substitution(
-+            job_template,
-+            Some(&combination.values),
-+            &job_env,
-+            services.platform_overrides,
-+ 
+ impl Reused {
++    /// How reports name the reason: `stored` or `unaffected`.
++    pub(crate) fn kind(&self) -> &'static str {
++        match self {
++            Reused::Unaffected => "unaffected",
++            Reused::Stored { .. } => "stored",
++        }
++    }
++
+     /// The one step reports show for the job.
+     pub(crate) fn step(&self) -> &'static str {
+         match self {
 ```
 
-**File**: `crates/executor/src/environment.rs` (modified, +1/-1)
+**File**: `crates/executor/src/checkout_sync.rs` (modified, +279/-16)
 ```diff
-@@ -381,7 +381,7 @@ fn get_current_ref() -> String {
+@@ -69,26 +69,135 @@ pub(crate) fn copy_directory_contents(from: &Path, to: &Path) -> Result<(), Exec
+     let rules = SyncRules::for_root(from, to)?;
+     copy_directory_contents_with_gitignore(from, to, &rules, &[], false)?;
+     // A checkout is a git repository, and steps run `git describe`, `git
+-    // diff` and the like. A `.git` file (a worktree or submodule) points at a
+-    // host path a container can't see, so only a directory is mirrored.
+-    let git_dir = from.join(".git");
+-    if git_dir.is_dir() && !git_dir.is_symlink() {
+-        // Hooks stay out: a clone has none, and a step that commits must
+-        // not run the developer's. Objects are never changed once written,
+-        // so they are hard-linked where the filesystem allows instead of
+-        // copied into every job's workspace.
+-        //
+-        // The config is written separately, without the settings that make
+-        // git run a host program (`core.hooksPath`, `core.fsmonitor`) or
+-        // point outside the workspace (`core.worktree`).
+-        let to_git = to.join(".git");
+-        mirror_directory(&git_dir, &to_git, false, &["hooks", "config"], &["objects"])?;
+-        write_sanitized_git_config(&git_dir.join("config"), &to_git.join("config"))?;
+-    }
++    // diff` and the like. Without one they fail here and pass on GitHub, and
++    // a test runner that stops at the first failure hides every real one.
++    mirror_git_dir(from, &to.join(".git"))?;
+     rules.record_tracked();
+     Ok(())
+ }
+ 
++/// Where the repository at `root` keeps its git data: the directory that
++/// holds this checkout's own HEAD and index, and the one that holds the
++/// objects and refs. They are the same for a plain clone.
++///
++/// A `.git` file says where the data is, as in a worktree (`git worktree
++/// add`), which agents use to work on several branches at once, or in a
++/// submodule. A worktree's own directory names the shared one in its
++/// `commondir` file.
++#[derive(Debug, PartialEq)]
++struct GitDirs {
++    own: PathBuf,
++    common: PathBuf,
++}
++
++fn git_dirs(root: &Path) -> Option<GitDirs> {
++    let dot_git = root.join(".git");
++    let meta = dot_git.symlink_metadata().ok()?;
++    if meta.is_dir() {
++        return Some(GitDirs {
++            own: dot_git.clone(),
++            common: dot_git,
++        });
++    }
++    if !meta.is_file() {
++        return None;
++    }
++    let text = std::fs::read_to_string(&dot_git).ok()?;
++    let pointer = text
++        .lines()
++        .find_map(|line| line.strip_prefix("gitdir:"))?
++        .trim();
++    let own = root.join(pointer);
++    let own = own.canonicalize().ok().filter(|dir| dir.is_dir())?;
++    let common = match std::fs::read_to_string(own.join("commondir")) {
++        Ok(relative) => own.join(relative.trim()).canonicalize().ok()?,
++        Err(_) => own.clone(),
++    };
++    Some(GitDirs { own, common })
++}
++
++/// Bring `to_git` up to date with the git data of the repository at `root`,
++/// as a real directory a container can see, whether `root` has a `.git`
++/// directory or a `.git` file pointing elsewhere.
++fn mirror_git_dir(root: &Path, to_git: &Path) -> Result<(), ExecutionError> {
++    let dot_git = root.join(".git");
++    if dot_git.is_symlink() || !dot_git.exists() {
++        return Ok(());
++    }
++    let Some(dirs) = git_dirs(root) else {
++        wrkflw_logging::warning(&format!(
++            "{} doesn't point at git data wrkflw can read, so the job's workspace is not \
++             a git repository: steps that run git will fail here though they pass on GitHub",
++            dot_git.display()
++        ));
++        return Ok(());
++    };
++    // Hooks stay out: a clone has none, and a step that commits must not
++    // run the developer's. Objects are never changed once written, so they
++    // are hard-linked where the filesystem allows instead of copied into
++    // every job's workspace. Other worktrees' state stays out too.
++    //
++    // The config is written separately, without the settings that make git
++    // run a host program (`core.hooksPath`, `core.fsmonitor`) or point
++    // outside the workspace (`core.worktree`).
++    //
++    // For a worktree, only what git shares between worktrees comes from the
++    // common directory. The rest of it, such as `HEAD`, `index`, `ORIG_HEAD`
++    // or a `MERGE_HEAD` left by a merge in progress, is the main checkout's
++    // own state, and would make the job's checkout look mid-merge.
++    let mut skip: Vec<String> = ["hooks", "config", "worktrees"].map(String::from).to_vec();
++    if dirs.own != dirs.common {
++        let entries = std::fs::read_dir(&dirs.common).map_err(|e| {
++            ExecutionError::Execution(format!("Failed to read {}: {e}", dirs.common.display()))
++        })?;
++        skip.extend(
++            entries
++                .flatten()
++                .map(|entry| entry.file_name().to_string_lossy().into_owned())
++                .filter(|name| !SHARED_GIT_ENTRIES.contains(&name.as_str())
+```
+
+**File**: `crates/executor/src/engine.rs` (modified, +41/-47)
+```diff
+@@ -49,9 +49,8 @@ pub async fn execute_workflow(
+     let is_gitlab = is_gitlab_pipeline(workflow_path);
+ 
+     if is_gitlab {
+-        return acceleration::without_run_state(execute_gitlab_pipeline(
+-            workflow_path,
+-            config.clone(),
++        return crate::vm_memory::with_run_pool(acceleration::without_run_state(
++            execute_gitlab_pipeline(workflow_path, config.clone()),
+         ))
+         .await;
+     }
+@@ -64,13 +63,14 @@ pub async fn execute_workflow(
+         root,
+     )
+     .map_err(ExecutionError::Execution)?;
+-    acceleration::with_run_state(
++    // Each run gets its own job pool, sized once its runtime is known.
++    crate::vm_memory::with_run_pool(acceleration::with_run_state(
+         std::sync::Arc::new(state),
+         crate::workspace::with_workflow_file(
+             workflow_path,
+             Box::pin(execute_github_workflow(workflow_path, config.clone())),
+         ),
+-    )
++    ))
+     .await
+ }
+ 
+@@ -130,6 +130,7 @@ async fn execute_github_workflow(
+         &config.kubernetes,
+     )?;
+     config.runtime_type = effective_runtime;
++    crate::vm_memory::check(vm_cli(&config.runtime_type)).await;
+     warn_if_overrides_unused(&config);
+ 
+     // Create a temporary workspace directory
+@@ -397,6 +398,7 @@ async fn execute_gitlab_pipeline(
+         &config.kubernetes,
+     )?;
+     config.runtime_type = effective_runtime;
++    crate::vm_memory::check(vm_cli(&config.runtime_type)).await;
+     warn_if_overrides_unused(&config);
+ 
+     // Create a temporary workspace directory
+@@ -953,6 +955,15 @@ fn emulation_runtime() -> (Box<dyn ContainerRuntime>, RuntimeType) {
      )
  }
  
--fn get_runner_os() -> String {
-+pub(crate) fn get_runner_os() -> String {
-     match std::env::consts::OS {
-         "macos" => "macOS".to_string(),
-         "linux" => "Linux".to_string(),
-```
-
-**File**: `crates/executor/src/events.rs` (modified, +7/-0)
-```diff
-@@ -47,6 +47,13 @@ pub enum ExecutionEvent {
-         /// Variables this step exported through `GITHUB_ENV`.
-         env_set: Vec<(String, String)>,
-     },
-+    /// The job asked for one OS in `runs-on` and ran as another, so a pass
-+    /// says nothing about OS-specific steps. Sent after `JobStarted`.
-+    RunnerSubstituted {
-+        job: String,
-+        requested: String,
-+        ran_as: String,
-+    },
-     JobFinished {
-         job: String,
-         status: JobStatus,
-```
-
-**File**: `crates/executor/src/lib.rs` (modified, +2/-0)
-```diff
-@@ -22,6 +22,7 @@ pub(crate) mod log_redaction;
- pub(crate) mod matrix_fold;
- pub mod podman;
- pub mod run_options;
-+pub mod runner_fidelity;
- pub mod substitution;
- pub(crate) mod workflow_commands;
- pub mod workspace;
-@@ -39,3 +40,4 @@ pub use events::{
- };
- pub use kubernetes::{parse_key_value as parse_k8s_key_value, KubernetesConfig};
- pub use log_redaction::{begin_run as begin_log_scope, RunScope as LogScope};
-+pub use runner_fidelity::RunnerSubstitution;
-```
-
-**File**: `crates/executor/src/matrix_fold.rs` (modified, +8/-2)
-```diff
-@@ -117,7 +117,12 @@ fn reads_matrix_keys(body: &str, keys: &[String]) -> bool {
++/// The CLI whose VM a run's jobs share memory in, for [`crate::vm_memory`].
++fn vm_cli(runtime: &RuntimeType) -> Option<&'static str> {
++    match runtime {
++        RuntimeType::Docker => Some("docker"),
++        RuntimeType::Podman => Some("podman"),
++        _ => None,
++    }
++}
++
+ /// Set up the runtime to run on. `Auto` falls back to emulation when no
+ /// container runtime answers. An explicit Docker or Podman request never
+ /// does: emulation runs steps on this machine, which is not what someone who
+@@ -1211,6 +1222,7 @@ impl JobResult {
+             duration_ms: 0,
+             logs: self.logs.clone(),
+             repeated_from: self.repeated_from.clone(),
++            reused: None,
+         });
+         self
+     }
+@@ -2558,6 +2570,9 @@ async fn execute_job_batch(
+     // and per-job state (needs context, secrets). JobServices is constructed
+     // per-job inside execute_job_with_matrix after resolving secrets.
  
- /// The result of a leg that wasn't run because it would only repeat
- /// `original`, reported under its own name.
--pub(crate) fn repeated_leg(name: &str, original: &JobResult, image: &str) -> JobResult {
-+pub(crate) fn repeated_leg(
-+    name: &str,
-+    original: &JobResult,
-+    image: &str,
-+    runner: Option<&crate::runner_fidelity::RunnerSubstitution>,
-+) -> JobResult {
-     let why = format!(
-         "since both run in {} and the job reads nothing else that differs. Pass \
-          --every-matrix-leg to run it anyway.",
-@@ -137,6 +142,7 @@ pub(crate) fn repeated_leg(name: &str, original: &JobResult, image: &str) -> Job
-         job: name.to_string(),
-         canonical_name: original.canonical_name.clone(),
-     });
-+    crate::runner_fidelity::announce(name, runner);
-     crate::events::emit(|| crate::events::ExecutionEvent::JobFinished {
-         job: name.to_string(),
-         status: original.status.clone(),
-@@ -266,7 +272,7 @@ mod tests {
-             from_step: None,
-         };
-         let twin = crate::events::with_run_hooks(hooks, async {
--            repeated_leg("build (os: b)", &original, "ubuntu")
-+            repeated_leg("build (os: b)", &original, "ubuntu", None)
-         })
-         .await;
-         assert_eq!(twin.name, "build (os: b)");
++    // All at once: each job, or each leg of a matrix job, waits for a place
++    // in `vm_memory`'s pool before its steps run, so the VM's memory limit
++    // holds across jobs and legs together.
+     let result_arrays = future::join_all(futures).await;
+ 
+     // Flatten the results from all jobs and their matrix combinations
+@@ -2683,7 +2698,7 @@ async fn execute_job_with_matrix(
+             if matches!(why, acceleration::Reused::Stored { .. }) {
+                 acceleration::mark_executed(job_name);
+             }
+-            let (note, step) = (why.note(), why.step());
++            let (note, step, kind) = (why.note(), why.step(), why.kind());
+             // A reused leg still ran as another OS when it passed, so it is
+             // reported the same way. Its matrix values come from its name.
+             let legs: Vec<MatrixCombination> = job
+@@ -2724,7 +2739,7 @@ async fn execute_job_with_matrix(
+                         env_context,
+                         platform_overrides,
+                     );
+-                    announce_reused(&stored, &note, runner.as_ref());
++                    announce_reused(&stored, &note, kind, runner.as_ref());
+                     JobResult::reused(stored, step, &note)
+                 })
+                 .collect());
+@@ -2787,11 +2802,13 @@ async fn execute_job_with_matrix(
+             combinations.len()
+         ));
+ 
+-        // Set maximum parallel jobs
+-        let max_parallel = job.max_parallel().unwrap_or_else(|| {
+-            // If not specified, use a reasonable default based on CPU cores
+-            std::cmp::max(1, num_cpus::get())
+-        });
++        // The matrix's own limit, or the CPU count. The VM's memory limit
++        // is applied per leg, in `execute_matrix_job`, from the pool every
++        // job of the run shares.
++        let max_parallel = job
++            .max_parallel()
++            .unwrap_or_else(|| std::cmp::max(1, num_cpus::get()))
++            .max(1);
+ 
+         let services = JobServices {
+             secret_manager,
+@@ -2855,6 +2872,7 @@ async fn execute_job_with_matrix(
+ fn announce_reused(
+     stored: &acceleration::StoredJob,
+     note: &str,
++    kind: &str,
+     runner: Option<&crate::runner_fidelity::RunnerSubstitution>,
+ ) {
+     crate::events::emit(|| crate::events::ExecutionEvent::JobStarted {
+@@ -2869,6 +2887,7 @@ fn announce_reused(
+         duration_ms: 
 ```
 
-**File**: `crates/executor/src/runner_fidelity.rs` (added, +315/-0)
+**File**: `crates/executor/src/events.rs` (modified, +4/-0)
 ```diff
-@@ -0,0 +1,315 @@
-+//! Jobs that asked for one OS and ran on another.
-+//!
-+//! Locally `windows-latest` and `macos-latest` run in a Linux image, and
-+//! emulation runs every job on the host. Such a job can pass here and fail on
-+//! GitHub, since steps gated on `runner.os` and anything OS-specific were
-+//! never exercised. Each one is reported, so a pass isn't read as proof.
-+
-+use crate::engine::RuntimeType;
-+use crate::events::{emit, ExecutionEvent};
-+use serde::{Deserialize, Serialize};
-+use serde_yaml::Value;
-+use std::collections::HashMap;
-+use wrkflw_parser::workflow::Job;
-+
-+/// The OS a job asked for, and the one it ran as. Run records store it as is.
-+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-+pub struct RunnerSubstitution {
-+    /// The `runs-on` label that named the OS, with matrix values filled in.
-+    pub requested: String,
-+    /// `runner.os` as the job saw it.
-+    pub ran_as: String,
-+}
-+
-+impl RunnerSubstitution {
-+    /// Why a pass of this job doesn't stand for GitHub's.
-+    pub fn reason(&self) -> String {
-+        format!(
-+            "runs-on asked for {}, but the job ran as {}: steps gated on runner.os \
-+             and OS-specific behaviour were not checked",
-+            self.requested, self.ran_as
-+        )
-+    }
-+
-+    /// `job`'s entry in an `unverified` list, as `run_finished`, `gate` and
-+    /// `plan` all report it.
-+    pub fn unverified_entry(&self, job: &str) -> serde_json::Value {
-+        serde_json::json!({
-+            "job": job,
-+            "requested": self.requested,
-+            "ran_as": self.ran_as,
-+            "reason": self.reason(),
-+        })
-+    }
-+}
-+
-+/// `runner.os` as a job sees it under `runtime`: Linux in a container,
-+/// the host's OS otherwise. `Auto` is resolved first, as a run does.
-+///
-+/// Resolving `Auto` probes Docker and Podman, which can take seconds. The
-+/// answer is only needed to judge the OSes in `requested`: with none it
-+/// goes unused, and on a Linux host it is Linux either way, so then nothing
-+/// is probed.
-+pub fn runner_os_for(runtime: RuntimeType, requested: &[&str]) -> String {
-+    let host = crate::environment::get_runner_os();
-+    if runtime == RuntimeType::Auto && (requested.is_empty() || host == "Linux") {
-+        return host;
-+    }
-+    if crate::engine::detect_runtime(runtime).runs_in_container() {
-+        "Linux".to_string()
-+    } else {
-+        host
-+    }
-+}
-+
-+/// `runs-on` labels with `${{ matrix.* }}` filled in. The engine maps
-+/// labels to images from these too, so the label judged here is the one
-+/// that picked the job's image.
-+pub(crate) fn runs_on_labels(
-+    runs_on: &Option<Vec<String>>,
-+    matrix: Option<&HashMap<String, Value>>,
-+) -> Vec<String> {
-+    runs_on
-+        .iter()
-+        .flatten()
-+        .map(|label| match matrix {
-+            Some(values) => crate::substitution::preprocess_command(label, values),
-+            None => label.clone(),
-+        })
-+        .collect()
-+}
-+
-+/// The image the user mapped one of `labels` to with `--platform`, trying
-+/// the labels in order.
-+pub(crate) fn mapped_image<'a>(
-+    labels: &[String],
-+    platform_overrides: &'a HashMap<String, String>,
-+) -> Option<&'a String> {
-+    labels
-+        .iter()
-+        .find_map(|label| platform_overrides.get(&label.trim().to_ascii_lowercase()))
-+}
-+
-+/// The OS a job's `runs-on` names, before knowing what it runs as.
-+#[derive(Debug, Clone, PartialEq, Eq)]
-+pub struct RequestedOs {
-+    /// The label that named it, with matrix values filled in.
-+    pub label: String,
-+    /// The OS, as `runner.os` spells it.
-+    pub os: &'static str,
-+}
-+
-+impl RequestedOs {
-+    /// The substitution when the job runs as `ran_as`, if that's another OS.
-+    pub fn ran_as(&self, ran_as: &str) -> Option<RunnerSubstitution> {
-+        (!self.os.eq_ignore_ascii_case(ran_as)).then(|| RunnerSubstitution {
-+            requested: self.label.clone(),
-+            ran_as: ran_as.to_string(),
-+        })
-+    }
-+}
-+
-+/// The OS `job` asks for, if it can be judged.
-+///
-+/// A job with `container:` runs on Linux on GitHub too, and a label the user
-+/// mapped to an image with `--platform` is taken as their choice. Labels that
-+/// name no OS, such as a custom self-hosted label, can't be judged.
-+pub fn requested_os(
-+    job: &Job,
-+    matrix: Option<&HashMap<String, Value>>,
-+    platform_overrides: &HashMap<String, String>,
-+) -> Option<RequestedOs> {
-+    if job.container.as_ref().is_some_and(|c| !c.image.is_empty()) {
-+        return None;
-+    }
-+    let labels = runs_on_labels(&job.runs_on, matrix);
-+    if mapped_image(&labels, platform_overrides).is_some() {
-+        return None;
-+    }
-+    labels.iter().find_map(|label| {
-+        label_os(label).map(|os| RequestedOs {
-+            label: label.trim().to_string(),
-+            os,
-+        })
-+    })
-+}
-+
-+/// The substitution for `job`, if its `runs-on` names an OS other than the
-+/// one in `env`'s `RUNNER_OS`.
-+pub(crate
+@@ -63,6 +63,10 @@ pub enum ExecutionEvent {
+         /// Set when this matrix leg did not run because it would only have
+         /// repeated the named leg; `status` is that leg's.
+         repeated_from: Option<String>,
++        /// Set when the job did not run because an earlier result stands:
++        /// `stored` for a pass reused with `--reuse-results`, `unaffected`
++        /// for a job `--affected` found no change for.
++        reused: Option<String>,
+     },
+ }
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #166** (2026-11-09): fix: make local verdicts match what GitHub would say (@bahdotsh)
 - **PR #165** (2026-11-06): Make wrkflw a trustworthy feedback loop for agents (@bahdotsh)
 - **PR #164** (2026-11-06): fix: address the review of #163 (@bahdotsh)
 - **PR #163** (2026-11-06): feat: secret-safe logs, incremental local reruns, live step output and a retro TUI (@bahdotsh)
 - **PR #162** (2026-11-04): feat(ui): upgrade to ratatui 0.30 and redesign the TUI (@bahdotsh)
 - **PR #161** (2026-11-04): docs: bring the docs up to date with everything since v0.8.0 (@bahdotsh)
-- **PR #160** (2026-11-04): feat(mcp): register with Copilot CLI, Grok, Kiro, pi and Zed (@bahdotsh)
 
 ---
 
@@ -3334,13 +2660,13 @@ dropped there before, so MCP clients never saw it.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. address the review of #163 (#164)
+## X. make local verdicts match what GitHub would say (#166)
 
 **RULE**:
 When implementing operations in `AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bahdotsh/wrkflw. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5b933c78`: address the review of #163 (#164). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bcd6c848`: make local verdicts match what GitHub would say (#166). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `AGENTS.md`.
@@ -3348,16 +2674,20 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-`clean` prints `{"schema_version": 1, "type": "clean", "removed": n, "bytes": n, "in_use": n, "failed": [{"path": "...", "error": "..."}]}`: workspaces removed, the bytes they held, workspaces left because a run holds them, and workspaces that could not be removed. It exits 1 when `failed` is not empty, after cleaning the rest.
+6. Before calling a pass done, read `verdict` on `run_finished`, not only `status`. `verified` means every job that ran did so as the OS its `runs-on` asked for. `partial` means some didn't: they are listed under `unverified`, such as `windows-latest` run as Linux, so steps gated on `runner.os` and OS-specific behaviour were not checked. `nothing_checked` means it passed because no job ran. Say which, instead of claiming CI will pass.
+Run `wrkflw --format json gate`, or the MCP `gate` tool. It runs what CI would run for your push, reusing jobs that already passed on the same files, and exits 1 if anything fails.
 
-A job that does not run, because of its `if:`, a failed `needs` job, fail-fast, a GitLab rule or `gate: false`, still gets `job_started` and `job_finished`, with `status` `skipped` and `duration_ms` 0.
+Without `--event`, each workflow is checked as a push. On a branch other than the default one, a workflow that runs no job for a push, because it doesn't fire or every job is skipped, such as CI that runs on pushes to `main` and on pull requests, is checked again as a pull request into the default branch (`origin/HEAD`, else `main` or `master`). Pass `--base-branch` for another target, or `--event` to check one event only.
+
+It prints one `gate` object: `verdict`, `passed`, `failed` (paths), `unverified` (with `workflow`), `uncommitted_changes`, and per workflow its `status
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-`clean` prints `{"removed": n, "bytes": n, "in_use": n, "failed": [{"path": "...", "error": "..."}]}`: workspaces removed, the bytes they held, workspaces left because a run holds them, and workspaces that could not be removed. It exits 1 when `failed` is not empty, after cleaning the rest.
+6. Before calling a pass done, check `unverified` on `run_finished`. A job listed there asked for another OS in `runs-on` than it ran as, such as `windows-latest` run as Linux, so steps gated on `runner.os` and OS-specific behaviour were not checked. Say so instead of claiming CI will pass.
+Run `wrkflw --format json gate`, or the MCP `gate` tool. It runs what a push would run, reusing jobs that already passed on the same files, and exits 1 if anything fails. It prints one `gate` object: `passed`, `failed` (paths), `unverified` (with `workflow`), `uncommitted_changes`, and per workflow its `status`, `run_id`, `jobs` and `failure` digest. Add `--reuse-results` to `wrkflw run`, or `reuse_results` to the MCP `run_workflow`, to get the same reuse while iterating. A reused job reports one `Reuse result` step and an unaffected job one `Not affected` step, so their output isn't there to read. See "Spending less on CI" in the README for `.wrkflw/affected.yml`.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5b933c78` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bcd6c848` are properly handled with clean fallback behavior.

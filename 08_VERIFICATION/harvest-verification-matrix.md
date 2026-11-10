@@ -8739,3 +8739,6 @@
 | `CYCLE-20261110-0CAG` | `2026-11-10T04:59:19.480Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e3df3a0a...`) |
 | `CYCLE-20261110-0HS8` | `2026-11-10T04:59:26.600Z` | `pyannote/speaker-diarization-3.1` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`10fe6053...`) |
 | `CYCLE-20261110-9OZL` | `2026-11-10T05:06:35.841Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3556` | Yes (`97d03cef...`) |
+| `CYCLE-20261110-JKGQ` | `2026-11-10T05:14:16.538Z` | `bahdotsh/wrkflw` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4bcc131d...`) |
+| `CYCLE-20261110-JO2I` | `2026-11-10T05:14:21.210Z` | `lingodotdev/lingo.dev` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c4b3a761...`) |
+| `CYCLE-20261110-JR2Y` | `2026-11-10T05:14:25.114Z` | `AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6485, Rule null` | Yes (`0d0447c5...`) |

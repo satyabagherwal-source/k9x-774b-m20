@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-10T05:06:35.756Z",
+  "last_updated": "2026-11-10T05:14:25.004Z",
   "total_verified_learnings": 1245,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4891,14 +4891,19 @@
       "slug": "bahdotsh-wrkflw",
       "platform": "github",
       "source_url": "https://github.com/bahdotsh/wrkflw",
-      "source_version": "553ecf53",
-      "content_hash": "494054b53e017103cb470ba119cd0d93a85e8cf92de3e5c00238008199354f10",
+      "source_version": "bcd6c848",
+      "content_hash": "4bcc131da93ccae4640244361e05ce2bb7c390e2a3f72a41ca15fb5e49733974",
       "dossier_path": "07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "address the review of #163 (#164)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "make local verdicts match what GitHub would say (#166)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -4932,7 +4937,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T19:37:17.814Z",
+      "verified_at": "2026-11-10T05:14:16.395Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40987,14 +40992,19 @@
       "slug": "lingodotdev-lingo.dev",
       "platform": "github",
       "source_url": "https://github.com/lingodotdev/lingo.dev",
-      "source_version": "348b2064",
-      "content_hash": "76f6566eb3b3a580ff5514c1ae74685fba1642f4f3fb854d47a285d1afcc3ddd",
+      "source_version": "fbc666cf",
+      "content_hash": "c4b3a7614263b8bf4e20a5048c0a6757426cc36f6359576fb25323601baddd17",
       "dossier_path": "07_PROJECT_LEARNING/lingodotdev-lingo.dev-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lingodotdev-lingo.dev-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "deps): override seroval and follow-redirects for security advisories (#2261)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "deps): bump glob and minimatch for security advisories (#2265)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -41028,7 +41038,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T05:50:52.879Z",
+      "verified_at": "2026-11-10T05:14:21.064Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -177125,7 +177135,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
       "source_version": "hf-atomicchat-deepseek-v4.1-flash-1017-uncensored-gsq-rco-gguf",
-      "content_hash": "c90639fecb1d7afa082197405a8e7eab3fb5f23b653e7755ae601484de4a3f4c",
+      "content_hash": "0d0447c552f48fca69249a15d12e545edc5d7086f530bdef831b8cba641edd4d",
       "dossier_path": "07_PROJECT_LEARNING/hf-atomicchat-deepseek-v4.1-flash-1017-uncensored-gsq-rco-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-atomicchat-deepseek-v4.1-flash-1017-uncensored-gsq-rco-gguf-learnings.md",
       "promoted_rules": [
@@ -177140,9 +177150,14 @@
           "status": "WITHHELD_CONDITIONAL_PASS"
         },
         {
+          "number": null,
+          "title": "MoE Memory Hierarchy Decoupling",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
           "number": 6485,
           "title": "Surgical Tensor Replacement Invariant",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 6487,
@@ -177155,7 +177170,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T23:09:39.857Z",
+      "verified_at": "2026-11-10T05:14:24.968Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -177176,7 +177191,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-02T21:30:10.412Z"
+      "verified_at": "2026-11-10T05:14:24.968Z"
     },
     "rule-6487": {
       "learning_id": "rule-6487",
