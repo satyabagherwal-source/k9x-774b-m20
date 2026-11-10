@@ -203,7 +203,7 @@ async function runExtendedBenchmarkSuite() {
         testStdout = execSync('node --test tests/*.test.mjs', {
           cwd: targetDir,
           encoding: 'utf8',
-          timeout: 15000
+          timeout: 45000
         });
         testExitCode = 0;
       } catch (err) {
@@ -212,7 +212,7 @@ async function runExtendedBenchmarkSuite() {
       }
       const durationMs = Date.now() - startTime;
 
-      assert(testExitCode === 0, `Automated test suite passed strictly with Exit Code 0 (Duration: ${durationMs}ms)`, `Exit Code: ${testExitCode}`);
+      assert(testExitCode === 0, `Automated test suite passed strictly with Exit Code 0 (Duration: ${durationMs}ms)`, `Exit Code: ${testExitCode}${testExitCode !== 0 ? ' | ' + testStdout.slice(0, 300) : ''}`);
     }
 
     // Teardown

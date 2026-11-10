@@ -1,0 +1,2544 @@
+{
+  "version": "1.0.0",
+  "description": "AI-Builder-Brain Canonical Universal Professional Intelligence Registry (Disciplines A through Z)",
+  "last_updated": "2026-11-10T17:27:49.846Z",
+  "governing_axiom": "AI THINKS. BRAIN STORES AND SUPPLIES INTELLIGENCE DATA. TOOLS EXECUTE. PRODUCTS DELIVER OUTCOMES.",
+  "total_disciplines": 26,
+  "disciplines": {
+    "A": {
+      "code": "A",
+      "name": "Product, Business, Strategy and Management",
+      "primary_domain": "B",
+      "secondary_domains": [
+        "C",
+        "A"
+      ],
+      "description": "Conception, product-market fit, unit economics, roadmaps, and stakeholder alignment.",
+      "subdomains": [
+        "Product Management",
+        "Product Strategy",
+        "Business Model Design",
+        "Pricing & Monetization",
+        "Executive Leadership"
+      ],
+      "roles": [
+        {
+          "role_id": "ROLE-A-PRINCIPAL-PM",
+          "role_title": "Principal Product Manager",
+          "purpose": "Defines product vision, validates market viability, sets measurable OKRs, and prioritizes feature roadmaps.",
+          "responsibilities": [
+            "Formulate comprehensive PRDs with functional requirements and non-goals",
+            "Conduct customer discovery interviews and quantitative cohort analysis",
+            "Coordinate multidisciplinary delivery milestones across engineering and design",
+            "Establish quantitative success metrics (CAC, LTV, Retention, Daily Active Users)"
+          ],
+          "required_knowledge": [
+            "Lean Product Playbook and Jobs-to-be-Done (JTBD) theory",
+            "SaaS unit economics (ARPU, Churn, Magic Number, Net Revenue Retention)",
+            "Product Analytics (Mixpanel, Amplitude, Funnel analysis, Cohort retention)"
+          ],
+          "skills": {
+            "technical": [
+              "SQL for product analytics",
+              "API contract inspection",
+              "Figma wireframe review",
+              "Telemetry schema design"
+            ],
+            "nontechnical": [
+              "Executive communication",
+              "Empathetic stakeholder negotiation",
+              "Cross-functional prioritization"
+            ]
+          },
+          "tools_and_technologies": [
+            "Jira",
+            "Linear",
+            "Amplitude",
+            "Notion",
+            "Mixpanel",
+            "Figma"
+          ],
+          "decision_frameworks": [
+            "RICE Prioritization (Reach, Impact, Confidence, Effort)",
+            "Kano Model (Must-haves vs Delighters vs Linear features)",
+            "Cost of Delay & Opportunity Cost Matrix"
+          ],
+          "deliverables": [
+            "Product Requirements Document (PRD)",
+            "Feature Roadmap",
+            "KPI Dashboard Specification",
+            "Release Notes"
+          ],
+          "collaboration_interfaces": {
+            "inputs_from": [
+              "User/Customer (Feedback)",
+              "Market Researcher (TAM/SAM analysis)",
+              "Engineering Lead (Effort estimation)"
+            ],
+            "outputs_to": [
+              "Design Lead (UX specs)",
+              "Engineering Lead (Technical PRD)",
+              "Marketing Lead (GTM brief)"
+            ]
+          },
+          "failure_modes": [
+            "Feature factory anti-pattern (shipping output over business outcomes)",
+            "Analysis paralysis",
+            "Vanity metric bias"
+          ],
+          "security_privacy_considerations": [
+            "Data minimization in analytics tracking",
+            "GDPR/CCPA user consent compliance in funnels"
+          ],
+          "verification_procedures": [
+            "A/B test statistical significance review",
+            "Feature adoption telemetry auditing",
+            "Post-launch retro verification"
+          ],
+          "quality_criteria": [
+            "Zero scope ambiguity",
+            "100% traceability to user pain points",
+            "Measurable hypothesis statement"
+          ],
+          "confidence_status": "KNOWLEDGE_VALIDATED"
+        }
+      ]
+    },
+    "B": {
+      "code": "B",
+      "name": "Frontend, Backend and Full-Stack Engineering",
+      "primary_domain": "H",
+      "secondary_domains": [
+        "G",
+        "L"
+      ],
+      "description": "Implementation of high-performance web applications, serverless/container backends, and state machines.",
+      "subdomains": [
+        "Modern Frontend",
+        "API Server Development",
+        "State Management",
+        "Full-Stack Integration",
+        "Server-Side Rendering"
+      ],
+      "roles": [
+        {
+          "role_id": "ROLE-B-STAFF-FULLSTACK-ENG",
+          "role_title": "Staff Full-Stack Software Engineer",
+          "purpose": "Architects and constructs maintainable, performant, and type-safe frontend and backend application surfaces.",
+          "responsibilities": [
+            "Build responsive, accessible user interfaces with deterministic state",
+            "Implement RESTful/GraphQL backend services with database transactional integrity",
+            "Enforce strict boundary contracts between presentation, domain, and data layers",
+            "Optimize web vitals (LCP, FID, CLS) and API p99 latency"
+          ],
+          "required_knowledge": [
+            "Modern JavaScript/TypeScript (ESM, async/await, Web Workers)",
+            "Component lifecycle and DOM reconciliation algorithms",
+            "HTTP/2, HTTP/3, WebSockets, and Server-Sent Events",
+            "Node.js runtime internals and V8 event loop mechanics"
+          ],
+          "skills": {
+            "technical": [
+              "TypeScript",
+              "React/Next.js/Astro",
+              "Node.js/Hono/Fastify",
+              "SQL/Prisma/Drizzle",
+              "Tailwind CSS"
+            ],
+            "nontechnical": [
+              "Technical mentoring",
+              "Architectural RFC writing",
+              "Defect root cause analysis"
+            ]
+          },
+          "tools_and_technologies": [
+            "Node.js",
+            "Vite",
+            "PostgreSQL",
+            "Redis",
+            "Docker",
+            "Git"
+          ],
+          "decision_frameworks": [
+            "Server-Side vs Client-Side Rendering trade-off matrix",
+            "Optimistic UI vs Pessimistic Locking state model",
+            "BFF (Backend-For-Frontend) vs Unified GraphQL Gateway"
+          ],
+          "deliverables": [
+            "Production source code repository",
+            "Component libraries",
+            "API route controllers",
+            "Unit and integration test suites"
+          ],
+          "collaboration_interfaces": {
+            "inputs_from": [
+              "UI/UX Designer (Design tokens & Figma specs)",
+              "Architect (System topology)",
+              "Product Manager (PRD user stories)"
+            ],
+            "outputs_to": [
+              "QA Engineer (Testable builds)",
+              "DevOps Engineer (Dockerfile & env specs)",
+              "Frontend Consumer (Client SDK)"
+            ]
+          },
+          "failure_modes": [
+            "Prop drilling and state desynchronization",
+            "N+1 database query waterfall",
+            "Memory leaks in long-lived event listeners"
+          ],
+          "security_privacy_considerations": [
+            "Strict Content Security Policy (CSP)",
+            "XSS sanitization",
+            "CSRF protection",
+            "Secure httpOnly cookies"
+          ],
+          "verification_procedures": [
+            "Automated test execution with exit code 0",
+            "Lighthouse web vitals audit >= 90",
+            "ESLint/TypeCheck 0 errors"
+          ],
+          "quality_criteria": [
+            "100% type safety",
+            "Sub-100ms API response latency",
+            "Zero unhandled promise rejections"
+          ],
+          "confidence_status": "KNOWLEDGE_VALIDATED"
+        }
+      ]
+    },
+    "C": {
+      "code": "C",
+      "name": "Mobile, Desktop, Web and Application Engineering",
+      "primary_domain": "H",
+      "secondary_domains": [
+        "C",
+        "F"
+      ],
+      "description": "Native and cross-platform client development for iOS, Android, macOS, Windows, Linux, and desktop environments.",
+      "subdomains": [
+        "iOS Native (Swift)",
+        "Android Native (Kotlin)",
+        "Cross-Platform (Flutter/React Native)",
+        "Desktop Native (Electron/Tauri/Rust)"
+      ],
+      "roles": [
+        {
+          "role_id": "ROLE-C-CROSSPLATFORM-APP-LEAD",
+          "role_title": "Lead Mobile & Desktop Application Engineer",
+          "purpose": "Delivers native-feeling client software with offline persistence, hardware integration, and battery efficiency.",
+          "responsibilities": [
+            "Develop modular client architecture supporting cross-platform compilation",
+            "Implement offline-first local datastores with background sync reconciliation",
+            "Handle platform lifecycle events (sleep, wake, memory pressure, orientation)",
+            "Manage app store submission criteria and sandbox entitlement permissions"
+          ],
+          "required_knowledge": [
+            "Native OS application lifecycle (Android Activity/Fragment, iOS UIApplication)",
+            "Local persistence (SQLite, Room, CoreData, WatermelonDB)",
+            "IPC bridge protocols and memory safety in desktop shells (Tauri/Electron)"
+          ],
+          "skills": {
+            "technical": [
+              "Swift/Kotlin",
+              "React Native/Flutter",
+              "Rust/Tauri",
+              "SQLite",
+              "Platform IPC"
+            ],
+            "nontechnical": [
+              "App store review dispute resolution",
+              "Hardware constraint trade-offs"
+            ]
+          },
+          "tools_and_technologies": [
+            "Xcode",
+            "Android Studio",
+            "Cocoapods",
+            "Gradle",
+            "Tauri CLI",
+            "Fastlane"
+          ],
+          "decision_frameworks": [
+            "Native vs Hybrid vs PWA evaluation matrix",
+            "Local-First SQLite vs Cloud-First Cache sync strategy",
+            "Foreground Execution vs WorkManager background scheduling"
+          ],
+          "deliverables": [
+            "Mobile application binary (IPA/APK/AAB)",
+            "Desktop installers (MSI/DMG/Deb)",
+            "Platform entitlement manifests"
+          ],
+          "collaboration_interfaces": {
+            "inputs_from": [
+              "UI/UX Designer (Mobile HIG/Material specs)",
+              "Backend Engineer (Sync endpoints)"
+            ],
+            "outputs_to": [
+              "QA Engineer (TestFlight/Firebase builds)",
+              "Product Manager (Store release metrics)"
+            ]
+          },
+          "failure_modes": [
+            "Main thread UI jank from blocking I/O",
+            "Battery drain from unconstrained background polling",
+            "Orphaned SQLite locks"
+          ],
+          "security_privacy_considerations": [
+            "Hardware Keychain/Keystore secure enclave storage",
+            "Certificate pinning",
+            "Biometric authentication"
+          ],
+          "verification_procedures": [
+            "60fps rendering frame drop test",
+            "Offline flight-mode persistence smoke test",
+            "Memory leak heap profile audit"
+          ],
+          "quality_criteria": [
+            "Zero crash-on-launch",
+            "Cold start time < 800ms",
+            "Zero plaintext credentials on disk"
+          ],
+          "confidence_status": "KNOWLEDGE_VALIDATED"
+        }
+      ]
+    },
+    "D": {
+      "code": "D",
+      "name": "Systems, OS, Kernel, Compiler and Embedded Engineering",
+      "primary_domain": "G",
+      "secondary_domains": [
+        "H",
+        "K"
+      ],
+      "description": "Low-level hardware abstraction, operating systems, microkernels, memory management, linkers, and language runtimes.",
+      "subdomains": [
+        "Kernel & Driver Development",
+        "Virtual Memory & Schedulers",
+        "Compiler & Linker Toolchains",
+        "Embedded Firmware & RTOS"
+      ],
+      "roles": [
+        {
+          "role_id": "ROLE-D-SYSTEMS-KERNEL-ARCHITECT",
+          "role_title": "Principal Systems & Kernel Engineer",
+          "purpose": "Designs deterministic, resource-bounded systems software operating directly above bare-metal hardware or microkernels.",
+          "responsibilities": [
+            "Engineer memory paging, MMU mapping, and zero-copy IPC mechanisms",
+            "Write deterministic task schedulers avoiding priority inversion and deadlocks",
+            "Implement platform drivers with robust interrupt service routines (ISR)",
+            "Construct optimizing compiler passes, AST lowerings, and bytecode runtimes"
+          ],
+          "required_knowledge": [
+            "x86_64 and ARM64 instruction set architectures (ISA)",
+            "Virtual memory management (TLB, page tables, cache line alignment)",
+            "Lock-free data structures (compare-and-swap, RCU, hazard pointers)",
+            "POSIX system calls, eBPF, and kernel safety invariants"
+          ],
+          "skills": {
+            "technical": [
+              "Rust/C/C++",
+              "Assembly (NASM/GAS)",
+              "LLVM/Clang internals",
+              "GDB/Valgrind/QEMU",
+              "eBPF"
+            ],
+            "nontechnical": [
+              "Formal verification rigor",
+              "System autopsy discipline"
+            ]
+          },
+          "tools_and_technologies": [
+            "GCC",
+            "LLVM",
+            "QEMU",
+            "Valgrind",
+            "Perf",
+            "Linux Kernel",
+            "Zephyr RTOS"
+          ],
+          "decision_frameworks": [
+            "Microkernel vs Monolithic architecture trade-off",
+            "Cooperative vs Preemptive scheduling evaluation",
+            "Static allocation vs Bounded heap pool in safety-critical code"
+          ],
+          "deliverables": [
+            "Bootloader / Microkernel binary",
+            "Device driver HAL modules",
+            "System call specification",
+            "Compiler backend target"
+          ],
+          "collaboration_interfaces": {
+            "inputs_from": [
+              "Hardware Architect (Datasheets & memory maps)",
+              "Security Engineer (Threat model)"
+            ],
+            "outputs_to": [
+              "Application Engineer (System runtime ABI)",
+              "QA Engineer (Sanitizer test harness)"
+            ]
+          },
+          "failure_modes": [
+            "Page fault panics",
+            "Deadlocks from unranked mutex acquisition",
+            "Cache thrashing from unaligned structs"
+          ],
+          "security_privacy_considerations": [
+            "Kernel address space layout randomization (KASLR)",
+            "Stack smashing protection (SSP)",
+            "W^X memory policy"
+          ],
+          "verification_procedures": [
+            "AddressSanitizer / ThreadSanitizer 0-warning audit",
+            "QEMU bare-metal boot smoke test",
+            "Fault injection stress harness"
+          ],
+          "quality_criteria": [
+            "Deterministic memory consumption",
+            "Zero memory leaks",
+            "Microsecond-bounded interrupt latency"
+          ],
+          "confidence_status": "KNOWLEDGE_VALIDATED"
+        }
+      ]
+    },
+    "E": {
+      "code": "E",
+      "name": "Software Architecture and Distributed Systems",
+      "primary_domain": "G",
+      "secondary_domains": [
+        "F",
+        "L"
+      ],
+      "description": "High-level system topology, microservices, consensus protocols, fault tolerance, and eventual consistency.",
+      "subdomains": [
+        "Distributed Consensus",
+        "Event-Driven Architecture",
+        "Service Mesh & RPC",
+        "Resilience Engineering",
+        "Domain-Driven Design (DDD)"
+      ],
+      "roles": [
+        {
+          "role_id": "ROLE-E-DISTRIBUTED-SYSTEMS-ARCHITECT",
+          "role_title": "Staff Distributed Systems Architect",
+          "purpose": "Guarantees scalability, partition tolerance, and high availability across distributed nodes and bounded contexts.",
+          "responsibilities": [
+            "Deconstruct monolithic systems into loosely coupled bounded contexts",
+            "Design distributed transactions using Saga patterns and outbox patterns",
+            "Select appropriate consensus and replication algorithms (Raft, Paxos, Quorums)",
+            "Enforce strict idempotency and backpressure across asynchronous event pipelines"
+          ],
+          "required_knowledge": [
+            "CAP Theorem, PACELC Theorem, and distributed consistency models",
+            "Distributed consensus protocols (Raft state machines, leader election)",
+            "Event sourcing and Command Query Responsibility Segregation (CQRS)",
+            "Idempotent consumers and exactly-once processing semantics"
+          ],
+          "skills": {
+            "technical": [
+              "Go/Java/Rust",
+              "gRPC/Protocol Buffers",
+              "Apache Kafka/NATS",
+              "Distributed Tracing (OpenTelemetry)",
+              "Kubernetes"
+            ],
+            "nontechnical": [
+              "Architectural decision record (ADR) authoring",
+              "Cross-team consensus building"
+            ]
+          },
+          "tools_and_technologies": [
+            "Kafka",
+            "gRPC",
+            "Envoy",
+            "Consul",
+            "OpenTelemetry",
+            "Jaeger",
+            "CockroachDB"
+          ],
+          "decision_frameworks": [
+            "Sync (gRPC) vs Async (Event-Driven) communication selection",
+            "Strong Consistency vs Eventual Consistency trade-off",
+            "Choreography vs Orchestration Saga pattern evaluation"
+          ],
+          "deliverables": [
+            "System Architecture Blueprint",
+            "Architectural Decision Records (ADRs)",
+            "Data flow DAG",
+            "Disaster recovery topology"
+          ],
+          "collaboration_interfaces": {
+            "inputs_from": [
+              "Product Manager (SLA / RPO / RTO targets)",
+              "Security Architect (Network trust boundaries)"
+            ],
+            "outputs_to": [
+              "Full-Stack Engineers (Service interface contracts)",
+              "DevOps/SRE (Infrastructure topologies)"
+            ]
+          },
+          "failure_modes": [
+            "Split-brain scenarios during network partitions",
+            "Cascading failures from missing circuit breakers",
+            "Dual-write data corruption"
+          ],
+          "security_privacy_considerations": [
+            "Mutual TLS (mTLS) zero-trust service communication",
+            "Encrypted-at-rest token passing",
+            "IAM role least-privilege"
+          ],
+          "verification_procedures": [
+            "Jepsen consistency testing",
+            "Chaos engineering network partition injection",
+            "Distributed trace latency waterfall analysis"
+          ],
+          "quality_criteria": [
+            "Zero data loss under single-node failure",
+            "Sub-50ms inter-service RPC latency",
+            "Deterministic compensating rollback"
+          ],
+          "confidence_status": "KNOWLEDGE_VALIDATED"
+        }
+      ]
+    },
+    "F": {
+      "code": "F",
+      "name": "Database, Storage, Networking and Infrastructure",
+      "primary_domain": "G",
+      "secondary_domains": [
+        "L",
+        "H"
+      ],
+      "description": "Relational & NoSQL datastores, caching tiers, query optimization, indexing strategies, and packet networking.",
+      "subdomains": [
+        "Relational Datastores",
+        "LSM-Tree / Key-Value Stores",
+        "Vector & Search Indexes",
+        "Cache Strategies",
+        "Network Protocols"
+      ],
+      "roles": [
+        {
+          "role_id": "ROLE-F-PRINCIPAL-DATASTORE-ENGINEER",
+          "role_title": "Principal Datastore & Infrastructure Engineer",
+          "purpose": "Guarantees ACID transactions, sub-millisecond retrieval, and zero-data-loss durability at scale.",
+          "responsibilities": [
+            "Design normalized schemas and denormalized read-optimized projections",
+            "Construct indexing strategies (B-Tree, GiST, GIN, HNSW vector search)",
+            "Implement multi-tier caching (LRU, write-through, cache-aside) with TTLs",
+            "Tune query plans, prevent sequential table scans, and manage connection pools"
+          ],
+          "required_knowledge": [
+            "Write-Ahead Logging (WAL) and crash-recovery checkpoints",
+            "ACID transaction isolation levels (Read Committed vs Serializable)",
+            "Vector index mechanics (IVFFlat, HNSW cosine/dot product distance)",
+            "TCP socket buffers, flow control, and HTTP connection multiplexing"
+          ],
+          "skills": {
+            "technical": [
+              "PostgreSQL",
+              "Redis/KeyDB",
+              "ClickHouse",
+              "LanceDB/pgvector",
+              "SQL Query Plan Profiling"
+            ],
+            "nontechnical": [
+              "Data modeling rigor",
+              "Post-mortem disaster recovery analysis"
+            ]
+          },
+          "tools_and_technologies": [
+            "PostgreSQL",
+            "Redis",
+            "pg_stat_statements",
+            "Pgbouncer",
+            "ClickHouse",
+            "Wireshark"
+          ],
+          "decision_frameworks": [
+            "B-Tree vs LSM-Tree storage engine selection for write/read balance",
+            "Optimistic Concurrency Control vs Pessimistic Row Locking",
+            "Sharding vs Read-Replicas scaling decision matrix"
+          ],
+          "deliverables": [
+            "Database Schema DDL & Migrations",
+            "Indexing Strategy Document",
+            "Query Execution Benchmark Report",
+            "Backup & WAL Archival Policy"
+          ],
+          "collaboration_interfaces": {
+            "inputs_from": [
+              "Application Engineers (Query patterns)",
+              "Architect (Data volume & retention needs)"
+            ],
+            "outputs_to": [
+              "DevOps/SRE (Database cluster provisioning)",
+              "Security Engineer (Encryption-at-rest specs)"
+            ]
+          },
+          "failure_modes": [
+            "Lock contention deadlocks",
+            "Connection pool starvation",
+            "Index bloat causing severe query degradation"
+          ],
+          "security_privacy_considerations": [
+            "Row-Level Security (RLS) policies",
+            "Transparent Data Encryption (TDE)",
+            "Pii field-level encryption with AES-256"
+          ],
+          "verification_procedures": [
+            "EXPLAIN ANALYZE execution plan audit",
+            "pgbench high-concurrency stress test",
+            "Point-in-Time Recovery (PITR) restore proof"
+          ],
+          "quality_criteria": [
+            "100% query index coverage",
+            "Zero unindexed foreign keys",
+            "Zero data corruption after forced kill -9"
+          ],
+          "confidence_status": "KNOWLEDGE_VALIDATED"
+        }
+      ]
+    },
+    "G": {
+      "code": "G",
+      "name": "UI/UX, Interaction and Product Design",
+      "primary_domain": "F",
+      "secondary_domains": [
+        "A",
+        "H"
+      ],
+      "description": "Human-centered interfaces, user flows, information architecture, design systems, and usability heuristics.",
+      "subdomains": [
+        "User Research & Personas",
+        "Information Architecture",
+        "Wireframing & Prototyping",
+        "Design Systems & Tokens",
+        "Interaction Micro-animations"
+      ],
+      "roles": [
+        {
+          "role_id": "ROLE-G-LEAD-PRODUCT-DESIGNER",
+          "role_title": "Lead Product & Interaction Designer",
+          "purpose": "Transforms complex domain workflows into intuitive, elegant, accessible, and delightful digital experiences.",
+          "responsibilities": [
+            "Map end-to-end user journeys and state transition wireframes",
+            "Establish coherent design token hierarchies (typography, spacing, elevation, color)",
+            "Conduct usability testing and prototype validation with real target users",
+            "Ensure full compliance with WCAG 2.1 AA accessibility standards"
+          ],
+          "required_knowledge": [
+            "Nielsen Norman 10 Usability Heuristics",
+            "Gestalt Principles of visual perception",
+            "Fitts's Law and Hick's Law in interactive ergonomics",
+            "WCAG 2.1 AA contrast ratios, focus indicators, and screen reader affordances"
+          ],
+          "skills": {
+            "technical": [
+              "Figma / Penpot",
+              "Design Token JSON specs",
+              "CSS layout (Flexbox/Grid)",
+              "Prototyping tools"
+            ],
+            "nontechnical": [
+              "Empathetic user interviewing",
+              "Design critique facilitation",
+              "Design-to-code translation"
+            ]
+          },
+          "tools_and_technologies": [
+            "Figma",
+            "Penpot",
+            "Tokens Studio",
+            "Storybook",
+            "Stark Accessibility Plugin"
+          ],
+          "decision_frameworks": [
+            "Progressive Disclosure vs Immediate Visibility evaluation",
+            "Modal vs Drawer vs Inline state transition matrix",
+            "Information Density vs Visual Breathing Room balance"
+          ],
+          "deliverables": [
+            "Design Token JSON Schema",
+            "Figma Component Library",
+            "Interactive Prototype",
+            "UX Flow Diagrams"
+          ],
+          "collaboration_interfaces": {
+            "inputs_from": [
+              "Product Manager (User personas & requirements)",
+              "Frontend Engineer (Technical constraints)"
+            ],
+            "outputs_to": [
+              "Frontend Engineers (Pixel-perfect specs & tokens)",
+              "QA Engineer (Visual regression baselines)"
+            ]
+          },
+          "failure_modes": [
+            "Mystery meat navigation",
+            "Over-reliance on subtle color distinctions alone",
+            "Cognitive overload from complex forms"
+          ],
+          "security_privacy_considerations": [
+            "Clear consent UI for sensitive data capture",
+            "Preventing deceptive dark patterns"
+          ],
+          "verification_procedures": [
+            "Automated color contrast ratio scanner",
+            "Keyboard-only tab order navigation audit",
+            "Usability task completion rate benchmark"
+          ],
+          "quality_criteria": [
+            "100% WCAG AA contrast compliance",
+            "Sub-3 click task completion paths",
+            "Consistent token inheritance across all components"
+          ],
+          "confidence_status": "KNOWLEDGE_VALIDATED"
+        }
+      ]
+    },
+    "H": {
+      "code": "H",
+      "name": "Graphic Design, Digital Art, Illustration and Animation",
+      "primary_domain": "E",
+      "secondary_domains": [
+        "F",
+        "I"
+      ],
+      "description": "Visual identity, iconography, vector illustration, branding, motion design, and marketing collateral.",
+      "subdomains": [
+        "Brand Identity & Logo Design",
+        "Vector Iconography",
+        "Digital Illustration",
+        "Motion Design & Lottie",
+        "Marketing Visual Assets"
+      ],
+      "roles": [
+        {
+          "role_id": "ROLE-H-CREATIVE-BRAND-DIRECTOR",
+          "role_title": "Creative Brand & Visual Director",
+          "purpose": "Shapes memorable visual identity, brand voice, vector assets, and expressive animation language.",
+          "responsibilities": [
+            "Develop distinctive brand guidelines, logomarks, and visual palettes",
+            "Create crisp, scalable SVG icon systems adhering to a unified grid",
+            "Craft lightweight vector micro-animations (Lottie/CSS keyframes)",
+            "Produce high-impact landing page hero graphics and marketing collateral"
+          ],
+          "required_knowledge": [
+            "Color theory, harmonious chromatic relationships, and emotional psychology",
+            "Vector Bezier mathematics and SVG optimization paths",
+            "12 Basic Principles of Animation (Disney/Thomas & Johnston in UI microcopy)",
+            "Print vs Digital gamut spaces (sRGB, Display P3, CMYK)"
+          ],
+          "skills": {
+            "technical": [
+              "Adobe Illustrator / Inkscape",
+              "After Effects / Rive / Lottie",
+              "SVG Hand-optimization",
+              "Blender basics"
+            ],
+            "nontechnical": [
+              "Creative storytelling",
+              "Art direction critique",
+              "Brand moodboard curation"
+            ]
+          },
+          "tools_and_technologies": [
+            "Illustrator",
+            "Affinity Designer",
+            "Rive",
+            "LottieFiles",
+            "SVGO",
+            "Figma"
+          ],
+          "decision_frameworks": [
+            "SVG Code Inlining vs Sprite Sheet vs Icon Font performance matrix",
+            "Expressive Brand Personality vs Functional Neutrality balance",
+            "CSS Animation vs Lottie Runtime performance footprint"
+          ],
+          "deliverables": [
+            "Brand Style Guide",
+            "SVG Icon System (24px/16px grids)",
+            "Lottie Micro-animations",
+            "Vector Hero Illustrations"
+          ],
+          "collaboration_interfaces": {
+            "inputs_from": [
+              "Product Manager (Brand positioning statement)",
+              "UI Designer (Layout slots)"
+            ],
+            "outputs_to": [
+              "Frontend Engineers (Optimized SVG & animation assets)",
+              "Marketing (Social media kits)"
+            ]
+          },
+          "failure_modes": [
+            "Bloated unoptimized SVG paths with metadata junk",
+            "Distracting animations that cause vestibular motion sickness",
+            "Inconsistent icon stroke weights"
+          ],
+          "security_privacy_considerations": [
+            "Sanitizing embedded scripts in untrusted SVG uploads (SVG XSS prevention)"
+          ],
+          "verification_procedures": [
+            "SVGO file-size reduction audit",
+            "Pre-renders prefers-reduced-motion media query check",
+            "Visual rendering consistency across WebKit/Blink"
+          ],
+          "quality_criteria": [
+            "Icons adhere strictly to 24px grid",
+            "SVGs zero embedded base64 raster blobs",
+            "Animations strictly adhere to prefers-reduced-motion"
+          ],
+          "confidence_status": "KNOWLEDGE_VALIDATED"
+        }
+      ]
+    },
+    "I": {
+      "code": "I",
+      "name": "2D/3D Graphics, Rendering, Physics and Simulation",
+      "primary_domain": "H",
+      "secondary_domains": [
+        "I",
+        "K"
+      ],
+      "description": "WebGL, WebGPU, shader programming (GLSL/WGSL), 3D asset pipelines, physics engines, and spatial simulation.",
+      "subdomains": [
+        "Shader Programming (GLSL/WGSL)",
+        "WebGPU/WebGL Pipelines",
+        "3D Scene Graphs (Three.js/Babylon)",
+        "Rigid-Body Physics Engines",
+        "Spatial Audio & VR/AR"
+      ],
+      "roles": [
+        {
+          "role_id": "ROLE-I-GRAPHICS-ENGINEER",
+          "role_title": "Staff Graphics & Simulation Engineer",
+          "purpose": "Builds interactive 3D viewports, procedural particle engines, and GPU-accelerated spatial simulations.",
+          "responsibilities": [
+            "Write custom vertex, fragment, and compute shaders (GLSL/WGSL)",
+            "Manage GPU buffer lifecycles, VBOs, and draw call batching",
+            "Integrate deterministic rigid-body and collision physics engines (Rapier/Cannon)",
+            "Optimize rendering passes to sustain stable 60/120 FPS on resource-constrained devices"
+          ],
+          "required_knowledge": [
+            "Linear algebra (quaternions, transformation matrices, vector dot/cross products)",
+            "GPU rendering pipeline (rasterization, depth testing, blending, post-processing)",
+            "WebGPU compute pipelines and shader binding groups",
+            "3D file format specifications (glTF 2.0, USDZ, DRACO compression)"
+          ],
+          "skills": {
+            "technical": [
+              "Three.js",
+              "WebGPU / WebGL2",
+              "GLSL / WGSL",
+              "Rapier Physics",
+              "glTF Optimization"
+            ],
+            "nontechnical": [
+              "Visual fidelity debugging",
+              "Performance profiling"
+            ]
+          },
+          "tools_and_technologies": [
+            "Three.js",
+            "glTF-Transform",
+            "Blender",
+            "Spector.js WebGL Inspector",
+            "WebGPU Inspector"
+          ],
+          "decision_frameworks": [
+            "Forward Rendering vs Deferred Shading vs Clustered Lighting evaluation",
+            "Compute Shader vs CPU Worker physics simulation trade-off",
+            "LOD (Level of Detail) mesh swapping thresholds"
+          ],
+          "deliverables": [
+            "3D Canvas Viewport Component",
+            "Custom GLSL/WGSL Shaders",
+            "Compressed glTF Asset Pipeline",
+            "Physics Simulation Harness"
+          ],
+          "collaboration_interfaces": {
+            "inputs_from": [
+              "3D Artist (Raw Blender models)",
+              "UI Designer (Overlay interface bounds)"
+            ],
+            "outputs_to": [
+              "Frontend Engineers (Integrated Canvas viewports)",
+              "QA Engineer (FPS telemetry logs)"
+            ]
+          },
+          "failure_modes": [
+            "VRAM leaks from un-disposed textures and geometries",
+            "Z-fighting from poor near/far plane clipping",
+            "Shader compilation freeze on main thread"
+          ],
+          "security_privacy_considerations": [
+            "GPU fingerprinting mitigation",
+            "Preventing WebGL context crashes (DoS)"
+          ],
+          "verification_procedures": [
+            "Stable 60 FPS benchmark under 5,000 active scene instances",
+            "VRAM memory leak cycle test",
+            "Spector.js draw-call minimization audit (<50 calls/frame)"
+          ],
+          "quality_criteria": [
+            "Zero memory leak over 1 hour continuous render",
+            "Zero shader compilation warnings",
+            "Assets compressed with KTX2 / Draco"
+          ],
+          "confidence_status": "KNOWLEDGE_VALIDATED"
+        }
+      ]
+    },
+    "J": {
+      "code": "J",
+      "name": "Game Design, Game Development and Game AI",
+      "primary_domain": "H",
+      "secondary_domains": [
+        "E",
+        "K"
+      ],
+      "description": "Game mechanics, gameplay loops, balance mathematics, level design, behavior trees, and procedural generation.",
+      "subdomains": [
+        "Gameplay Mechanics & Systems",
+        "Game Mathematics & Balance",
+        "Game AI & Behavior Trees",
+        "Level Design & Pacing",
+        "Sound Effects & Audio Feedback"
+      ],
+      "roles": [
+        {
+          "role_id": "ROLE-J-LEAD-GAME-DESIGNER",
+          "role_title": "Lead Game Designer & Systems Engineer",
+          "purpose": "Creates engaging, balanced game systems, feedback loops, and intelligent non-player characters (NPCs).",
+          "responsibilities": [
+            "Formulate core game loop mechanics (Action $\\to$ Reward $\\to$ Progression)",
+            "Model economy and stat progression in mathematical balance sheets",
+            "Implement NPC decision making via Behavior Trees, Utility AI, or GOAP",
+            "Design spatial level geometry with dynamic pacing and challenge curves"
+          ],
+          "required_knowledge": [
+            "Game state machine architectures (tick rate, interpolation, fixed timestep)",
+            "Behavior Trees (selectors, sequences, decorators, blackboards)",
+            "Pathfinding algorithms (A*, NavMesh generation, jump-point search)",
+            "Game balance probability and economic sink/faucet dynamics"
+          ],
+          "skills": {
+            "technical": [
+              "Phaser / Pixi.js / Godot",
+              "Behavior Tree implementations",
+              "A* Pathfinding",
+              "Web Audio API synthesizers"
+            ],
+            "nontechnical": [
+              "Player empathy",
+              "Playtesting facilitation",
+              "Pacing analysis"
+            ]
+          },
+          "tools_and_technologies": [
+            "Godot",
+            "Phaser.js",
+            "Pixi.js",
+            "Tiled Map Editor",
+            "Howler.js"
+          ],
+          "decision_frameworks": [
+            "Fixed Timestep vs Variable Delta Time game loop selection",
+            "Finite State Machine vs Behavior Tree AI architecture",
+            "Client-Authoritative vs Server-Authoritative state synchronization"
+          ],
+          "deliverables": [
+            "Game Design Document (GDD)",
+            "Mathematical Balance Spreadsheet",
+            "Behavior Tree Logic Specifications",
+            "Playable Game Loop Engine"
+          ],
+          "collaboration_interfaces": {
+            "inputs_from": [
+              "Creative Writer (Lore & narrative)",
+              "2D/3D Artist (Sprites & models)"
+            ],
+            "outputs_to": [
+              "Sound Designer (SFX trigger cues)",
+              "QA Engineer (Playtest edge cases)"
+            ]
+          },
+          "failure_modes": [
+            "Dominant strategy exploits making other choices obsolete",
+            "Unfair difficulty spikes",
+            "Desynchronized physics tick causing clipping"
+          ],
+          "security_privacy_considerations": [
+            "Server-side validation of player movement and item transactions (Anti-cheat)"
+          ],
+          "verification_procedures": [
+            "Monte Carlo 10,000-match balance simulation",
+            "A* pathfinding stress test with 100 concurrent agents",
+            "Input latency benchmarking"
+          ],
+          "quality_criteria": [
+            "Deterministic game loop state",
+            "Zero soft-lock scenarios in levels",
+            "Input response latency < 16ms"
+          ],
+          "confidence_status": "KNOWLEDGE_VALIDATED"
+        }
+      ]
+    },
+    "K": {
+      "code": "K",
+      "name": "Mathematics, Statistics, Algorithms and Scientific Computing",
+      "primary_domain": "D",
+      "secondary_domains": [
+        "H",
+        "K"
+      ],
+      "description": "Computational geometry, statistical modeling, optimization algorithms, numerical analysis, and discrete mathematics.",
+      "subdomains": [
+        "Linear Algebra & Matrix Math",
+        "Statistical Modeling & Probability",
+        "Graph Theory & Combinatorics",
+        "Numerical Optimization",
+        "Computational Geometry"
+      ],
+      "roles": [
+        {
+          "role_id": "ROLE-K-ALGORITHM-RESEARCH-SCIENTIST",
+          "role_title": "Principal Algorithm & Optimization Scientist",
+          "purpose": "Formulates mathematically rigorous algorithms, statistical estimators, and high-performance numerical kernels.",
+          "responsibilities": [
+            "Prove asymptotic time ($O$) and space complexities of core algorithms",
+            "Implement numerical methods (Gaussian elimination, gradient descent, Monte Carlo)",
+            "Formulate computational geometry algorithms (Convex Hull, Voronoi, Delaunay)",
+            "Analyze floating-point numerical stability and prevent precision underflow/overflow"
+          ],
+          "required_knowledge": [
+            "IEEE 754 floating-point standard and catastrophic cancellation avoidance",
+            "Graph theory (DAGs, topological sorting, strongly connected components)",
+            "Combinatorial optimization (Dynamic programming, branch-and-bound)",
+            "Bayesian inference and hypothesis testing ($p$-values, confidence intervals)"
+          ],
+          "skills": {
+            "technical": [
+              "Python/NumPy/SciPy",
+              "C++/Rust SIMD",
+              "Julia",
+              "Linear Algebra",
+              "Symbolic Math (SymPy)"
+            ],
+            "nontechnical": [
+              "Formal mathematical writing",
+              "Peer review rigor"
+            ]
+          },
+          "tools_and_technologies": [
+            "NumPy",
+            "SciPy",
+            "SymPy",
+            "Eigen",
+            "BLAS/LAPACK",
+            "Jupyter"
+          ],
+          "decision_frameworks": [
+            "Exact vs Heuristic / Approximation algorithm selection",
+            "Sparse Matrix vs Dense Matrix memory representation",
+            "Fixed-Point vs Double-Precision floating point trade-off"
+          ],
+          "deliverables": [
+            "Mathematical Proofs Document",
+            "Optimized Algorithm Kernel",
+            "Complexity Benchmark Report",
+            "Reference Mathematical Test Harness"
+          ],
+          "collaboration_interfaces": {
+            "inputs_from": [
+              "Domain Scientist (Physical/Economic models)",
+              "Systems Engineer (Hardware capabilities)"
+            ],
+            "outputs_to": [
+              "Software Engineers (C-ABI algorithm bindings)",
+              "Data Engineers (Analytical estimators)"
+            ]
+          },
+          "failure_modes": [
+            "Floating point NaN propagation",
+            "Combinatorial state space explosion ($O(2^n)$)",
+            "Matrix condition number instability"
+          ],
+          "security_privacy_considerations": [
+            "Constant-time algorithms for cryptographic operations to prevent timing attacks"
+          ],
+          "verification_procedures": [
+            "Formal property-based testing (QuickCheck/Hypothesis)",
+            "Numerical convergence error bound verification",
+            "Asymptotic complexity benchmark suite"
+          ],
+          "quality_criteria": [
+            "Proven $O(N \\log N)$ or better scalability",
+            "Numerical relative error < $10^{-7}$",
+            "Zero uncaught NaN / Inf values"
+          ],
+          "confidence_status": "KNOWLEDGE_VALIDATED"
+        }
+      ]
+    },
+    "L": {
+      "code": "L",
+      "name": "Data Engineering, Data Science and Analytics",
+      "primary_domain": "D",
+      "secondary_domains": [
+        "H",
+        "F"
+      ],
+      "description": "ETL/ELT pipelines, columnar data formats, streaming dataflow, feature stores, and business intelligence.",
+      "subdomains": [
+        "Data Lakehouse Architecture",
+        "Streaming Pipelines (Flink/Kafka)",
+        "Columnar Storage (Parquet/Arrow)",
+        "Analytical Modeling (dbt/SQL)",
+        "Predictive Feature Stores"
+      ],
+      "roles": [
+        {
+          "role_id": "ROLE-L-STAFF-DATA-ENGINEER",
+          "role_title": "Staff Data Platform Engineer",
+          "purpose": "Builds robust, scalable, zero-data-loss streaming and batch data pipelines powering analytics and machine learning.",
+          "responsibilities": [
+            "Design idempotent batch and real-time streaming ETL/ELT pipelines",
+            "Implement dimensional data warehouse models (Star schema, Kimball methodology)",
+            "Manage schema evolution and data quality contracts with Great Expectations",
+            "Optimize Apache Parquet / Arrow columnar layouts for analytical query efficiency"
+          ],
+          "required_knowledge": [
+            "Distributed data processing (MapReduce, Spark, DuckDB internals)",
+            "Columnar compression formats (Snappy, Zstandard, dictionary encoding)",
+            "Data warehouse topologies (Snowflake, BigQuery, ClickHouse)",
+            "Data mesh principles and domain-oriented data ownership"
+          ],
+          "skills": {
+            "technical": [
+              "SQL",
+              "Python/PySpark",
+              "DuckDB",
+              "dbt",
+              "Apache Arrow",
+              "Kafka"
+            ],
+            "nontechnical": [
+              "Data governance facilitation",
+              "SLA negotiation"
+            ]
+          },
+          "tools_and_technologies": [
+            "DuckDB",
+            "Apache Arrow",
+            "dbt",
+            "Airflow",
+            "Kafka",
+            "ClickHouse"
+          ],
+          "decision_frameworks": [
+            "Batch vs Micro-Batch vs Streaming processing selection",
+            "ELT (In-Warehouse Transformation) vs ETL (Pre-load transformation)",
+            "Row-based (Postgres) vs Column-based (ClickHouse/DuckDB) analytical engine"
+          ],
+          "deliverables": [
+            "Data Pipeline DAG Specification",
+            "Data Quality Contracts",
+            "Dimensional Data Model DDL",
+            "Automated Analytical Marts"
+          ],
+          "collaboration_interfaces": {
+            "inputs_from": [
+              "Backend Engineers (Operational database CDC)",
+              "Product Managers (KPI definitions)"
+            ],
+            "outputs_to": [
+              "Data Scientists (Clean feature datasets)",
+              "Business Stakeholders (BI dashboards)"
+            ]
+          },
+          "failure_modes": [
+            "Silent data drift and schema mismatch",
+            "Duplicate events from non-idempotent retries",
+            "Pipeline backpressure backlog overflow"
+          ],
+          "security_privacy_considerations": [
+            "PII pseudonymization and tokenization",
+            "Data retention lifecycle and GDPR right-to-be-forgotten deletion"
+          ],
+          "verification_procedures": [
+            "Great Expectations data contract test suite",
+            "Data reconciliation audit (source count === target count)",
+            "Pipeline recovery from simulated crash test"
+          ],
+          "quality_criteria": [
+            "100% pipeline idempotency",
+            "Data freshness within SLA (< 15 mins)",
+            "Zero unhandled schema drift failures"
+          ],
+          "confidence_status": "KNOWLEDGE_VALIDATED"
+        }
+      ]
+    },
+    "M": {
+      "code": "M",
+      "name": "Artificial Intelligence, Machine Learning and LLM Engineering",
+      "primary_domain": "H",
+      "secondary_domains": [
+        "D",
+        "G"
+      ],
+      "description": "Foundation models, RAG pipelines, fine-tuning, embeddings, vector databases, prompt engineering, and model evaluation.",
+      "subdomains": [
+        "LLM Orchestration & Agents",
+        "Retrieval-Augmented Generation (RAG)",
+        "Model Fine-Tuning & Quantization",
+        "Embedding & Vector Retrieval",
+        "MLOps & Evaluation (Evals)"
+      ],
+      "roles": [
+        {
+          "role_id": "ROLE-M-PRINCIPAL-AI-ENGINEER",
+          "role_title": "Principal AI & LLM Systems Engineer",
+          "purpose": "Architects production-grade AI agent systems, deterministic RAG pipelines, and rigorous model evaluation harnesses.",
+          "responsibilities": [
+            "Design hybrid BM25 and vector retrieval pipelines with rerankers",
+            "Construct robust prompt templates with structured JSON output enforcement",
+            "Build automated LLM evaluation suites (faithfulness, hallucination, latency)",
+            "Implement safety guardrails blocking prompt injection and jailbreak attacks"
+          ],
+          "required_knowledge": [
+            "Transformer architecture internals (attention mechanisms, tokenization)",
+            "Vector embeddings, semantic distance metrics, and chunking strategies",
+            "RAG optimization (Hybrid search, Contextual compression, Reciprocal Rank Fusion)",
+            "Quantization methods (GGUF, AWQ, FP8) and inference runtimes (vLLM, Ollama)"
+          ],
+          "skills": {
+            "technical": [
+              "Python",
+              "TypeScript",
+              "LangChain/LlamaIndex internals",
+              "HuggingFace",
+              "Ollama",
+              "Vector DBs"
+            ],
+            "nontechnical": [
+              "AI ethics governance",
+              "Hallucination risk management"
+            ]
+          },
+          "tools_and_technologies": [
+            "Ollama",
+            "vLLM",
+            "Hugging Face Hub",
+            "LanceDB",
+            "Chroma",
+            "Ragas"
+          ],
+          "decision_frameworks": [
+            "RAG vs Fine-Tuning vs Prompt Engineering selection matrix",
+            "Cloud Frontier Models vs Local Compact Models cost/latency trade-off",
+            "Deterministic Schemas vs Open-Ended Generation evaluation"
+          ],
+          "deliverables": [
+            "RAG Pipeline Architecture",
+            "System Prompt Envelopes",
+            "Automated Evals Test Suite",
+            "Prompt Injection Defense Layer"
+          ],
+          "collaboration_interfaces": {
+            "inputs_from": [
+              "Domain Experts (Authoritative knowledge sources)",
+              "Product Manager (AI feature specifications)"
+            ],
+            "outputs_to": [
+              "Application Engineers (AI API endpoints)",
+              "Security Engineer (Safety guardrail reports)"
+            ]
+          },
+          "failure_modes": [
+            "Model hallucination represented as truth",
+            "Context window overflow truncation",
+            "Prompt injection exposing internal prompts"
+          ],
+          "security_privacy_considerations": [
+            "Zero user PII transmission to third-party model providers",
+            "Deterministic output guardrails"
+          ],
+          "verification_procedures": [
+            "Ragas automated evaluation benchmark (Faithfulness >= 0.90)",
+            "Adversarial prompt injection red-team test",
+            "Embedding recall accuracy benchmark"
+          ],
+          "quality_criteria": [
+            "100% structured JSON compliance",
+            "Zero hallucinated API calls",
+            "Sub-20ms local embedding retrieval"
+          ],
+          "confidence_status": "KNOWLEDGE_VALIDATED"
+        }
+      ]
+    },
+    "N": {
+      "code": "N",
+      "name": "Robotics, Automation and Intelligent Systems",
+      "primary_domain": "H",
+      "secondary_domains": [
+        "L",
+        "K"
+      ],
+      "description": "Hardware control, actuator kinematics, sensor fusion, headless automations, and robotic process orchestration.",
+      "subdomains": [
+        "Sensor Fusion (IMU/LiDAR/Camera)",
+        "Actuator Kinematics & PID Control",
+        "Robotic Middleware (ROS 2)",
+        "Headless Process Automation"
+      ],
+      "roles": [
+        {
+          "role_id": "ROLE-N-ROBOTICS-AUTOMATION-LEAD",
+          "role_title": "Lead Robotics & Automation Engineer",
+          "purpose": "Bridges physical actuators, sensors, and autonomous software workflows with real-time feedback loops.",
+          "responsibilities": [
+            "Implement closed-loop PID controllers for physical actuators and motors",
+            "Fuse noisy sensor telemetry using Extended Kalman Filters (EKF)",
+            "Design fail-safe emergency stop (E-Stop) hardware and software interlocks",
+            "Construct reliable headless automation scripts for industrial processes"
+          ],
+          "required_knowledge": [
+            "Control theory (PID tuning, state-space representation, stability criteria)",
+            "Kinematics and dynamics (forward/inverse kinematics, Jacobian matrices)",
+            "CAN bus, I2C, SPI, and industrial serial protocols",
+            "Fail-safe architectural design for human-collaborative physical spaces"
+          ],
+          "skills": {
+            "technical": [
+              "C++/Python",
+              "ROS 2",
+              "Kalman Filters",
+              "PID Control",
+              "MicroPython"
+            ],
+            "nontechnical": [
+              "Physical safety mindset",
+              "Hardware debugging patience"
+            ]
+          },
+          "tools_and_technologies": [
+            "ROS 2",
+            "Gazebo",
+            "FreeRTOS",
+            "Arduino / ESP32",
+            "CANalyzer"
+          ],
+          "decision_frameworks": [
+            "Centralized vs Distributed microcontroller architecture",
+            "Software E-Stop vs Hardware Relay Interlock safety selection",
+            "Edge Computing vs Cloud Telemetry latency trade-off"
+          ],
+          "deliverables": [
+            "Actuator Control Loop Engine",
+            "Sensor Fusion Filter Module",
+            "Hardware Interlock Safety Protocol",
+            "Automation Sequence DAG"
+          ],
+          "collaboration_interfaces": {
+            "inputs_from": [
+              "Mechanical Engineer (CAD & gear ratios)",
+              "Electrical Engineer (Pinouts & voltage limits)"
+            ],
+            "outputs_to": [
+              "Software Engineers (High-level robot API)",
+              "Safety Officer (Compliance documentation)"
+            ]
+          },
+          "failure_modes": [
+            "PID windup causing actuator over-travel",
+            "Sensor drift causing dead-reckoning divergence",
+            "Unchecked communication timeouts"
+          ],
+          "security_privacy_considerations": [
+            "Cryptographic authentication on CAN bus networks to prevent remote actuator spoofing"
+          ],
+          "verification_procedures": [
+            "Gazebo physics simulation smoke test",
+            "Hardware E-Stop response time < 5ms verification",
+            "Sensor noise rejection benchmark"
+          ],
+          "quality_criteria": [
+            "Zero overshoot on critical position control",
+            "Sub-5ms safety interlock cut-off",
+            "Deterministic 100Hz control loop"
+          ],
+          "confidence_status": "KNOWLEDGE_VALIDATED"
+        }
+      ]
+    },
+    "O": {
+      "code": "O",
+      "name": "Content Strategy, Technical Writing, Editing and Storytelling",
+      "primary_domain": "I",
+      "secondary_domains": [
+        "E",
+        "A"
+      ],
+      "description": "Documentation systems, API references, narrative framing, microcopy, content modeling, and technical translation.",
+      "subdomains": [
+        "API Documentation & Specs",
+        "Information Architecture & Taxonomy",
+        "Technical Writing & Guides",
+        "UX Microcopy & Tone of Voice",
+        "Content Modeling"
+      ],
+      "roles": [
+        {
+          "role_id": "ROLE-O-STAFF-TECH-WRITER",
+          "role_title": "Staff Technical Writer & Content Architect",
+          "purpose": "Crafts crystal-clear, accurate, developer-focused documentation, API guides, and user onboarding narratives.",
+          "responsibilities": [
+            "Author interactive OpenAPI 3.1 specifications and developer guides",
+            "Structure documentation information architecture with logical learning curves",
+            "Formulate comprehensive troubleshooting matrices and defect autopsies",
+            "Enforce consistent microcopy, voice, and terminology across all interfaces"
+          ],
+          "required_knowledge": [
+            "Docs-as-Code methodologies (Markdown, MDX, Git versioning, CI testing)",
+            "OpenAPI / Swagger 3.x specifications and JSON Schema",
+            "Readability metrics (Flesch-Kincaid grade level, Hemingway clarity)",
+            "Diataxis documentation framework (Tutorials, How-To Guides, Reference, Explanation)"
+          ],
+          "skills": {
+            "technical": [
+              "Markdown/MDX",
+              "OpenAPI/JSON Schema",
+              "Static Site Generators (Starlight/Docusaurus)",
+              "Git"
+            ],
+            "nontechnical": [
+              "Simplifying complex concepts",
+              "Empathetic beginner perspective",
+              "Meticulous editorial review"
+            ]
+          },
+          "tools_and_technologies": [
+            "Astro Starlight",
+            "Docusaurus",
+            "Vale Linter",
+            "Redocly",
+            "Mermaid.js"
+          ],
+          "decision_frameworks": [
+            "Diataxis 4-way document classification matrix",
+            "Comprehensive Reference vs Quick-Start Guide prioritization",
+            "Interactive Playground vs Static Code Snippet evaluation"
+          ],
+          "deliverables": [
+            "Developer Documentation Portal",
+            "OpenAPI Specification File",
+            "User Quickstart Guide",
+            "Terminology Style Guide"
+          ],
+          "collaboration_interfaces": {
+            "inputs_from": [
+              "Software Engineers (API implementations & code comments)",
+              "Product Manager (User journeys)"
+            ],
+            "outputs_to": [
+              "Frontend Engineers (Docs site build)",
+              "End Users (Public docs portal)"
+            ]
+          },
+          "failure_modes": [
+            "Out-of-date documentation causing developer confusion",
+            "Jargon-heavy explanations alienating beginners",
+            "Broken code samples in docs"
+          ],
+          "security_privacy_considerations": [
+            "Ensuring documentation code samples never leak real API keys, production tokens, or customer PII"
+          ],
+          "verification_procedures": [
+            "Automated Vale prose linting (0 warnings)",
+            "Automated code sample test runner in CI",
+            "Dead link checker (0 broken links)"
+          ],
+          "quality_criteria": [
+            "100% code samples tested and executable",
+            "Flesch-Kincaid readability score <= Grade 8",
+            "Zero undocumented API endpoints"
+          ],
+          "confidence_status": "KNOWLEDGE_VALIDATED"
+        }
+      ]
+    },
+    "P": {
+      "code": "P",
+      "name": "Psychology, Sociology, Human Behaviour and Human-Computer Interaction",
+      "primary_domain": "A",
+      "secondary_domains": [
+        "F",
+        "B"
+      ],
+      "description": "Cognitive load theory, behavioral economics, habit loops, social dynamics, and ethical human-centered incentives.",
+      "subdomains": [
+        "Cognitive Ergonomics",
+        "Behavioral Economics & Nudges",
+        "Social Interaction Dynamics",
+        "Ethical Persuasion & Anti-Deception",
+        "Accessibility Psychology"
+      ],
+      "roles": [
+        {
+          "role_id": "ROLE-P-BEHAVIORAL-HCI-RESEARCHER",
+          "role_title": "Staff Behavioral Scientist & Cognitive Ergonomist",
+          "purpose": "Applies cognitive psychology and behavioral science to minimize mental effort and foster positive user outcomes.",
+          "responsibilities": [
+            "Audit digital interfaces for cognitive overload and split-attention effects",
+            "Design ethical incentive architectures and feedback loops aligned with user well-being",
+            "Analyze habit formation and motivation mechanics using Self-Determination Theory",
+            "Eliminate deceptive dark patterns and manipulative friction"
+          ],
+          "required_knowledge": [
+            "Cognitive Load Theory (Intrinsic, Extraneous, and Germane load)",
+            "Behavioral Economics (Loss aversion, Default bias, Endowment effect)",
+            "Self-Determination Theory (Autonomy, Competence, and Relatedness)",
+            "B.J. Fogg Behavior Model ($B = MAP$: Motivation, Ability, Prompt)"
+          ],
+          "skills": {
+            "technical": [
+              "Qualitative & quantitative research methods",
+              "Eye-tracking / Heatmap analysis",
+              "Statistical survey modeling"
+            ],
+            "nontechnical": [
+              "Ethical empathy",
+              "Cross-cultural behavioural analysis",
+              "Deep psychological interviewing"
+            ]
+          },
+          "tools_and_technologies": [
+            "Hotjar",
+            "Optimal Workshop",
+            "R / SPSS",
+            "Qualtrics",
+            "Dovetail"
+          ],
+          "decision_frameworks": [
+            "Cognitive Friction vs Intentional Desirable Difficulty matrix",
+            "Ethical Nudge vs Coercive Dark Pattern classification test",
+            "Intrinsic Value vs Extrinsic Reward sustainability model"
+          ],
+          "deliverables": [
+            "Cognitive Load Audit Report",
+            "Ethical Nudge Architecture Document",
+            "User Mental Model Mapping",
+            "Behavioral Friction Assessment"
+          ],
+          "collaboration_interfaces": {
+            "inputs_from": [
+              "Product Manager (Target user goals)",
+              "UI/UX Designer (Wireframes)"
+            ],
+            "outputs_to": [
+              "UI Designer (Cognitive reduction recommendations)",
+              "Leadership (Ethical design guidelines)"
+            ]
+          },
+          "failure_modes": [
+            "Manufactured addiction loops harming user mental health",
+            "Over-simplification that patronizes expert power-users"
+          ],
+          "security_privacy_considerations": [
+            "Informed consent clarity",
+            "Zero psychological exploitation of vulnerable user segments"
+          ],
+          "verification_procedures": [
+            "Cognitive throughput benchmark",
+            "System Usability Scale (SUS) score >= 85",
+            "Dark pattern zero-tolerance audit"
+          ],
+          "quality_criteria": [
+            "Zero dark patterns detected",
+            "Cognitive task steps minimized to theoretical minimum",
+            "SUS score >= 85"
+          ],
+          "confidence_status": "KNOWLEDGE_VALIDATED"
+        }
+      ]
+    },
+    "Q": {
+      "code": "Q",
+      "name": "Research, Scientific Methods and Knowledge Engineering",
+      "primary_domain": "D",
+      "secondary_domains": [
+        "K",
+        "M"
+      ],
+      "description": "Literature synthesis, empirical corroboration, hypothesis testing, ontology modeling, and falsification rigor.",
+      "subdomains": [
+        "Empirical Literature Review",
+        "Ontology & Knowledge Graph Modeling",
+        "Hypothesis Falsification",
+        "Scientific Benchmark Design",
+        "Provenance Tracking"
+      ],
+      "roles": [
+        {
+          "role_id": "ROLE-Q-PRINCIPAL-KNOWLEDGE-ENGINEER",
+          "role_title": "Principal Knowledge Engineer & Scientific Methodologist",
+          "purpose": "Ensures system intelligence is grounded in empirical truth, verifiable citations, formal ontologies, and reproducibility.",
+          "responsibilities": [
+            "Synthesize peer-reviewed scientific literature into actionable engineering invariants",
+            "Construct formal knowledge graphs with semantic relationships and entity linking",
+            "Enforce strict falsification criteria ($EXTRACTED \\neq LEARNED \\neq VERIFIED$)",
+            "Track complete cryptographic provenance from raw sources to canonical rules"
+          ],
+          "required_knowledge": [
+            "Epistemology and Popperian falsification criteria",
+            "Knowledge Representation (RDF, OWL, JSON-LD, Property Graphs)",
+            "Systematic literature review methodologies (PRISMA framework)",
+            "Cryptographic hashing for content provenance and tamper detection"
+          ],
+          "skills": {
+            "technical": [
+              "SPARQL",
+              "Neo4j / Graphology",
+              "JSON-LD / RDF",
+              "Python citation parsers",
+              "Semantic search"
+            ],
+            "nontechnical": [
+              "Scientific skepticism",
+              "Methodological rigor",
+              "Epistemic clarity"
+            ]
+          },
+          "tools_and_technologies": [
+            "Neo4j",
+            "Protégé",
+            "Zotero",
+            "Semantic Scholar API",
+            "Graphviz"
+          ],
+          "decision_frameworks": [
+            "Empirical Evidence Hierarchy (Randomized Trial > Empirical Benchmark > Expert Claim)",
+            "Single-Source vs Multi-Source Corroboration threshold matrix",
+            "Canonical Promotion vs Staged-for-Review gating rules"
+          ],
+          "deliverables": [
+            "Scientific Knowledge Synthesis Dossier",
+            "Formal Ontology Schema",
+            "Provenance Ledger",
+            "Empirical Verification Matrix"
+          ],
+          "collaboration_interfaces": {
+            "inputs_from": [
+              "External Sources (Papers, Standards, Repositories)",
+              "Engineers (Empirical benchmark data)"
+            ],
+            "outputs_to": [
+              "AI Models (Validated knowledge graph data)",
+              "Architects (Governing engineering rules)"
+            ]
+          },
+          "failure_modes": [
+            "Accepting speculative vendor marketing claims as verified truth",
+            "Circular self-referential validation",
+            "Citation amnesia"
+          ],
+          "security_privacy_considerations": [
+            "License verification of extracted knowledge",
+            "Zero inclusion of proprietary or leaked trade secrets"
+          ],
+          "verification_procedures": [
+            "Cryptographic SHA-256 provenance hash check",
+            "Multi-source independent corroboration check (>=2 sources)",
+            "Reproducibility replication test"
+          ],
+          "quality_criteria": [
+            "100% of canonical rules backed by reproducible evidence",
+            "Zero uncorroborated single-source claims in core",
+            "Deterministic graph traversal"
+          ],
+          "confidence_status": "KNOWLEDGE_VALIDATED"
+        }
+      ]
+    },
+    "R": {
+      "code": "R",
+      "name": "Cybersecurity, Privacy and Safety Engineering",
+      "primary_domain": "K",
+      "secondary_domains": [
+        "L",
+        "G"
+      ],
+      "description": "Threat modeling, zero-trust architecture, cryptography, vulnerability management, and defensive engineering.",
+      "subdomains": [
+        "Threat Modeling (STRIDE)",
+        "Cryptography & Key Management",
+        "Application Security (AppSec)",
+        "Zero-Trust Architecture",
+        "Penetration Testing & Red-Teaming"
+      ],
+      "roles": [
+        {
+          "role_id": "ROLE-R-PRINCIPAL-SECURITY-ARCHITECT",
+          "role_title": "Principal Cybersecurity & Privacy Architect",
+          "purpose": "Guarantees confidentiality, integrity, availability, and user privacy against sophisticated threat actors.",
+          "responsibilities": [
+            "Conduct comprehensive STRIDE threat modeling on system architectures",
+            "Enforce military-grade cryptographic standards (AES-256-GCM, Argon2, TLS 1.3)",
+            "Implement zero-trust network policies and mandatory authentication boundaries",
+            "Audit codebases for OWASP Top 10 vulnerabilities (SQLi, XSS, SSRF, IDOR)"
+          ],
+          "required_knowledge": [
+            "Applied Cryptography (Symmetric, Asymmetric, PBKDF2/Argon2, timing attacks)",
+            "OWASP Top 10 and CWE/SANS Top 25 vulnerability classifications",
+            "Zero-Trust Network Access (ZTNA) and least-privilege RBAC/ABAC models",
+            "Privacy by Design principles and data residency regulations"
+          ],
+          "skills": {
+            "technical": [
+              "Burp Suite",
+              "Semgrep / Snyk",
+              "OpenSSL / libsodium",
+              "Wireshark",
+              "Linux Security Modules"
+            ],
+            "nontechnical": [
+              "Paranoid adversarial mindset",
+              "Risk mitigation trade-offs",
+              "Security policy authoring"
+            ]
+          },
+          "tools_and_technologies": [
+            "Semgrep",
+            "Trivy",
+            "OWASP ZAP",
+            "HashiCorp Vault",
+            "GnuPG",
+            "OpenSSL"
+          ],
+          "decision_frameworks": [
+            "STRIDE Threat Modeling evaluation matrix",
+            "Defense-in-Depth layered barrier model",
+            "Fail-Closed vs Fail-Open security default policy"
+          ],
+          "deliverables": [
+            "STRIDE Threat Model Document",
+            "Security Architecture Blueprint",
+            "Vulnerability Assessment Report",
+            "Cryptographic Key Management Policy"
+          ],
+          "collaboration_interfaces": {
+            "inputs_from": [
+              "Software Architects (Component topologies)",
+              "DevOps Engineers (Cloud infrastructure manifests)"
+            ],
+            "outputs_to": [
+              "Software Engineers (Remediation guidelines)",
+              "Leadership (Residual risk assessments)"
+            ]
+          },
+          "failure_modes": [
+            "Hardcoding secrets or private keys in Git",
+            "Roll-your-own-crypto vulnerabilities",
+            "Over-permissive wildcard IAM policies"
+          ],
+          "security_privacy_considerations": [
+            "Zero plaintext secrets on disk or logs",
+            "Strict forward secrecy in transit",
+            "Constant-time string comparison"
+          ],
+          "verification_procedures": [
+            "Automated SAST scan with 0 critical/high findings",
+            "Tampered ciphertext authentication rejection test",
+            "Penetration test boundary validation"
+          ],
+          "quality_criteria": [
+            "Zero known CVEs in dependencies",
+            "100% of endpoints require authenticated authorization",
+            "Secrets 100% isolated in memory"
+          ],
+          "confidence_status": "KNOWLEDGE_VALIDATED"
+        }
+      ]
+    },
+    "S": {
+      "code": "S",
+      "name": "QA, Testing, Reliability and Performance Engineering",
+      "primary_domain": "K",
+      "secondary_domains": [
+        "H",
+        "L"
+      ],
+      "description": "Automated test pyramids, contract testing, chaos engineering, load benchmarking, and defect root-cause autopsies.",
+      "subdomains": [
+        "Test Pyramid Automation",
+        "Contract & Integration Testing",
+        "Load & Stress Benchmarking",
+        "Chaos & Resilience Injection",
+        "Defect Root-Cause Autopsies"
+      ],
+      "roles": [
+        {
+          "role_id": "ROLE-S-STAFF-RELIABILITY-QA-LEAD",
+          "role_title": "Staff QA & Reliability Systems Engineer",
+          "purpose": "Guarantees software correctness, prevents regressions, and verifies non-functional reliability under extreme stress.",
+          "responsibilities": [
+            "Design automated test pyramids (Unit, Component, Integration, End-to-End)",
+            "Enforce strict negative testing asserting that prohibited behaviors fail cleanly",
+            "Execute high-throughput load and stress benchmarks measuring p50/p95/p99 latencies",
+            "Conduct comprehensive defect post-mortems and formulate anti-regression tests"
+          ],
+          "required_knowledge": [
+            "Test Pyramid theory and testing trade-offs",
+            "Property-based testing and boundary-value fuzzing",
+            "Chaos engineering principles and failure injection methodologies",
+            "Statistical performance profiling and latency distribution analysis"
+          ],
+          "skills": {
+            "technical": [
+              "Playwright",
+              "k6 / Locust",
+              "Vitest / Node.js test runner",
+              "Chaos Mesh",
+              "Git Bisect"
+            ],
+            "nontechnical": [
+              "Tenacious curiosity for finding edge cases",
+              "Objective empirical reporting"
+            ]
+          },
+          "tools_and_technologies": [
+            "Playwright",
+            "k6",
+            "Vitest",
+            "Artillery",
+            "Allure Reports",
+            "Postman"
+          ],
+          "decision_frameworks": [
+            "Shift-Left vs Shift-Right testing allocation matrix",
+            "Mocking vs Sandboxed Real-Instance integration strategy",
+            "Flaky Test Quarantine & Remediation SLA framework"
+          ],
+          "deliverables": [
+            "Automated Test Suite",
+            "Performance Benchmark Report",
+            "Defect Autopsy Ledger",
+            "Test Coverage & Flakiness Audit"
+          ],
+          "collaboration_interfaces": {
+            "inputs_from": [
+              "Software Engineers (Feature implementations)",
+              "Product Manager (Acceptance criteria)"
+            ],
+            "outputs_to": [
+              "Release Manager (Go/No-Go signoff)",
+              "Engineers (Reproducible bug reproductions)"
+            ]
+          },
+          "failure_modes": [
+            "Testing implementation details instead of user-visible contracts",
+            "Ignoring flaky tests",
+            "Zero negative assertion coverage"
+          ],
+          "security_privacy_considerations": [
+            "Synthetic sanitized test data preventing real PII leakage into test environments"
+          ],
+          "verification_procedures": [
+            "100% automated test execution with Exit Code 0 in clean sandbox",
+            "k6 load test maintaining p95 < 200ms at 10x traffic",
+            "Mutation testing score >= 80%"
+          ],
+          "quality_criteria": [
+            "100% test pass rate",
+            "Zero unhandled exceptions",
+            "Deterministic test execution duration"
+          ],
+          "confidence_status": "KNOWLEDGE_VALIDATED"
+        }
+      ]
+    },
+    "T": {
+      "code": "T",
+      "name": "DevOps, SRE, Cloud and Deployment Operations",
+      "primary_domain": "L",
+      "secondary_domains": [
+        "K",
+        "G"
+      ],
+      "description": "Infrastructure-as-Code, CI/CD pipelines, container orchestration, observability, incident response, and disaster recovery.",
+      "subdomains": [
+        "Infrastructure-as-Code (Terraform)",
+        "CI/CD Pipeline Automation",
+        "Kubernetes & Container Runtimes",
+        "Observability (Prometheus/Grafana)",
+        "Site Reliability & Disaster Recovery"
+      ],
+      "roles": [
+        {
+          "role_id": "ROLE-T-PRINCIPAL-SRE",
+          "role_title": "Principal Site Reliability & Cloud Architect",
+          "purpose": "Guarantees 99.99% system availability, automated zero-downtime deployments, and instantaneous disaster recovery.",
+          "responsibilities": [
+            "Construct declarative Infrastructure-as-Code (Terraform/OpenTofu)",
+            "Implement automated blue/green and canary deployment CI/CD pipelines",
+            "Build end-to-end observability stacks (Metrics, Logs, Traces, Alerts)",
+            "Architect automated backup, WAL replication, and disaster recovery systems"
+          ],
+          "required_knowledge": [
+            "Google Site Reliability Engineering (SRE) principles (SLO, SLA, SLI, Error Budgets)",
+            "Containerization internals (Namespaces, cgroups, OCI specifications)",
+            "Cloud architecture (AWS, GCP, Azure, Bare-Metal Linux)",
+            "Incident command protocols and automated runbook execution"
+          ],
+          "skills": {
+            "technical": [
+              "Docker",
+              "Kubernetes",
+              "Terraform",
+              "GitHub Actions",
+              "Prometheus / Grafana",
+              "Bash / Linux"
+            ],
+            "nontechnical": [
+              "High-stress incident calm",
+              "Blameless post-mortem culture",
+              "Operational discipline"
+            ]
+          },
+          "tools_and_technologies": [
+            "Terraform",
+            "Docker",
+            "Kubernetes",
+            "GitHub Actions",
+            "Prometheus",
+            "Grafana",
+            "Ansible"
+          ],
+          "decision_frameworks": [
+            "Serverless vs Containerized vs Bare-Metal infrastructure evaluation",
+            "Blue/Green vs Canary vs Rolling deployment strategy",
+            "Multi-Region Active-Active vs Active-Passive DR cost/complexity matrix"
+          ],
+          "deliverables": [
+            "Infrastructure-as-Code Manifests",
+            "CI/CD Pipeline YAML",
+            "Monitoring Dashboards & Alert Rules",
+            "Disaster Recovery Runbook"
+          ],
+          "collaboration_interfaces": {
+            "inputs_from": [
+              "Software Engineers (Application build artifacts)",
+              "Security Architect (Network firewall rules)"
+            ],
+            "outputs_to": [
+              "Entire Engineering Team (Continuous deployment platform)",
+              "Executive Team (System availability SLA reports)"
+            ]
+          },
+          "failure_modes": [
+            "Manual unversioned server changes (Configuration drift)",
+            "Unmonitored disk space fill-up",
+            "Single Point of Failure (SPOF) in networking"
+          ],
+          "security_privacy_considerations": [
+            "Immutable infrastructure",
+            "Zero SSH keys on production nodes",
+            "Automated secrets injection at runtime"
+          ],
+          "verification_procedures": [
+            "Automated isolated disaster recovery restore proof",
+            "Canary rollout rollback trigger verification",
+            "Prometheus metric alert firing smoke test"
+          ],
+          "quality_criteria": [
+            "Four Golden Signals (Latency, Traffic, Errors, Saturation) monitored",
+            "Zero-downtime deployment verified",
+            "RTO < 15 mins, RPO < 1 min"
+          ],
+          "confidence_status": "KNOWLEDGE_VALIDATED"
+        }
+      ]
+    },
+    "U": {
+      "code": "U",
+      "name": "SEO, ASO, Marketing, Growth and Distribution",
+      "primary_domain": "J",
+      "secondary_domains": [
+        "C",
+        "I"
+      ],
+      "description": "Search engine discoverability, structured data (JSON-LD), App Store optimization, virality loops, and marketing funnels.",
+      "subdomains": [
+        "Technical SEO & Core Web Vitals",
+        "Structured Data & Schema.org (JSON-LD)",
+        "App Store Optimization (ASO)",
+        "Product-Led Growth (PLG)",
+        "Viral Loops & Attribution"
+      ],
+      "roles": [
+        {
+          "role_id": "ROLE-U-GROWTH-DISTRIBUTION-DIRECTOR",
+          "role_title": "Director of Growth & Technical Distribution",
+          "purpose": "Maximizes organic discoverability, search engine indexing, viral user acquisition, and distribution conversion.",
+          "responsibilities": [
+            "Implement technical SEO foundations (Semantic HTML, XML Sitemaps, Robots.txt, Canonical tags)",
+            "Inject rich Schema.org JSON-LD structured data for Google Rich Snippets",
+            "Design product-led growth (PLG) viral loops and frictionless referral mechanics",
+            "Optimize mobile app store listings (ASO keywords, screenshots, localized descriptions)"
+          ],
+          "required_knowledge": [
+            "Google Search Ranking Systems (PageRank, Helpful Content System, Core Updates)",
+            "Schema.org specifications (Article, SoftwareApplication, Product, FAQPage)",
+            "Core Web Vitals impact on organic search ranking",
+            "Viral coefficient ($K$-factor) and cohort acquisition loops"
+          ],
+          "skills": {
+            "technical": [
+              "Schema.org JSON-LD",
+              "XML Sitemaps",
+              "Google Search Console",
+              "Ahrefs/SEMrush",
+              "HTML Meta Tags"
+            ],
+            "nontechnical": [
+              "Consumer psychology",
+              "Compelling copywriting",
+              "Growth experiment design"
+            ]
+          },
+          "tools_and_technologies": [
+            "Google Search Console",
+            "Ahrefs",
+            "Screaming Frog",
+            "Rich Results Test",
+            "AppsFlyer"
+          ],
+          "decision_frameworks": [
+            "Programmatic SEO vs Editorial Content strategy",
+            "Gated Content vs Open Indexable Content acquisition trade-off",
+            "Paid Acquisition vs Organic Inbound flywheel prioritization"
+          ],
+          "deliverables": [
+            "Technical SEO Audit & Implementation",
+            "Schema.org JSON-LD Manifest",
+            "XML Sitemap & Robots.txt",
+            "Growth Experiment Matrix"
+          ],
+          "collaboration_interfaces": {
+            "inputs_from": [
+              "Content Writer (Articles & guides)",
+              "Frontend Engineer (HTML rendering pipeline)"
+            ],
+            "outputs_to": [
+              "Product Manager (Acquisition funnels)",
+              "Leadership (Organic traffic growth reports)"
+            ]
+          },
+          "failure_modes": [
+            "Keyword stuffing triggering search engine penalties",
+            "Duplicate content without canonical tags",
+            "Slow JavaScript rendering blocking crawlers"
+          ],
+          "security_privacy_considerations": [
+            "Privacy-preserving analytics without invasive third-party cookie trackers"
+          ],
+          "verification_procedures": [
+            "Google Rich Results validation pass with 0 errors",
+            "XML sitemap validation test",
+            "Zero canonical URL loop verification"
+          ],
+          "quality_criteria": [
+            "100% pages have valid JSON-LD and OpenGraph tags",
+            "Zero 404 broken links in sitemap",
+            "Perfect mobile-friendly score"
+          ],
+          "confidence_status": "KNOWLEDGE_VALIDATED"
+        }
+      ]
+    },
+    "V": {
+      "code": "V",
+      "name": "Accessibility, Localization and Internationalization",
+      "primary_domain": "A",
+      "secondary_domains": [
+        "F",
+        "I"
+      ],
+      "description": "WCAG compliance, screen reader support, keyboard navigation, RTL layout support, and multi-language translation.",
+      "subdomains": [
+        "WCAG 2.1 / 2.2 AA Compliance",
+        "Assistive Technology (Screen Readers)",
+        "Internationalization (i18n)",
+        "Localization (l10n)",
+        "Right-to-Left (RTL) Layouts"
+      ],
+      "roles": [
+        {
+          "role_id": "ROLE-V-GLOBAL-ACCESSIBILITY-LEAD",
+          "role_title": "Staff Accessibility (a11y) & Internationalization (i18n) Lead",
+          "purpose": "Ensures products are universally accessible to people of all abilities and seamlessly localized across languages and cultures.",
+          "responsibilities": [
+            "Enforce strict WCAG 2.2 AA accessibility standards across all components",
+            "Implement full ARIA affordances, semantic HTML landmarks, and focus management",
+            "Architect i18n key-value localization frameworks supporting dynamic pluralization",
+            "Support bidirectional layout engines (LTR and RTL Arabic/Hebrew)"
+          ],
+          "required_knowledge": [
+            "W3C WAI-ARIA 1.2 authoring practices and landmark roles",
+            "Screen reader operation (NVDA, VoiceOver, JAWS)",
+            "Unicode CLDR (Common Locale Data Repository) standards and ICU message formatting",
+            "International legal accessibility requirements (Section 508, European Accessibility Act)"
+          ],
+          "skills": {
+            "technical": [
+              "WAI-ARIA",
+              "i18next / FormatJS",
+              "CSS Logical Properties",
+              "Axe-core",
+              "Screen Readers"
+            ],
+            "nontechnical": [
+              "Disability empathy",
+              "Cross-cultural sensitivity",
+              "Legal compliance advocacy"
+            ]
+          },
+          "tools_and_technologies": [
+            "Axe-core",
+            "Lighthouse",
+            "VoiceOver",
+            "NVDA",
+            "i18next",
+            "Crowdin"
+          ],
+          "decision_frameworks": [
+            "Native HTML Semantics vs Custom ARIA Widget decision rule",
+            "Pseudo-Localization vs Production Translation testing strategy",
+            "CSS Logical Properties vs Directional CSS override architecture"
+          ],
+          "deliverables": [
+            "Accessibility Conformance Report (VPAT)",
+            "i18n Localization Architecture",
+            "RTL Layout Test Suite",
+            "Screen Reader Navigation Spec"
+          ],
+          "collaboration_interfaces": {
+            "inputs_from": [
+              "UI Designer (Color palettes & layout grids)",
+              "Content Writer (Translatable text keys)"
+            ],
+            "outputs_to": [
+              "Frontend Engineers (ARIA attributes & i18n configs)",
+              "QA Engineer (Accessibility test suites)"
+            ]
+          },
+          "failure_modes": [
+            "Trapping keyboard focus in inaccessible modals",
+            "Hardcoding strings preventing translation",
+            "Relying on color alone to convey meaning"
+          ],
+          "security_privacy_considerations": [
+            "Preventing XSS injections through localized translation strings"
+          ],
+          "verification_procedures": [
+            "Axe-core automated automated test with 0 violations",
+            "Full VoiceOver / NVDA screen reader walkthrough",
+            "Pseudo-localization string overflow smoke test"
+          ],
+          "quality_criteria": [
+            "100% WCAG 2.2 AA compliant",
+            "Zero untranslated string leaks in UI",
+            "Full keyboard navigation with visible focus ring"
+          ],
+          "confidence_status": "KNOWLEDGE_VALIDATED"
+        }
+      ]
+    },
+    "W": {
+      "code": "W",
+      "name": "Legal, Licensing, Compliance and Regulatory Expertise",
+      "primary_domain": "C",
+      "secondary_domains": [
+        "A",
+        "K"
+      ],
+      "description": "Open-source licensing, terms of service, privacy policies, GDPR/HIPAA compliance, intellectual property, and export control.",
+      "subdomains": [
+        "Open-Source License Governance",
+        "Data Privacy Regulations (GDPR/CCPA)",
+        "Healthcare & Financial Compliance (HIPAA/PCI-DSS)",
+        "Terms of Service & IP Law",
+        "AI Ethics & Copyright"
+      ],
+      "roles": [
+        {
+          "role_id": "ROLE-W-CHIEF-COMPLIANCE-COUNSEL",
+          "role_title": "Principal Technology Compliance & Licensing Counsel",
+          "purpose": "Protects the enterprise and users from legal liability, regulatory sanctions, copyright infringement, and license contamination.",
+          "responsibilities": [
+            "Audit software dependencies for viral copyleft license contamination (GPL in proprietary code)",
+            "Draft enforceable Terms of Service, End User License Agreements (EULA), and Privacy Policies",
+            "Ensure strict compliance with data sovereignty regulations (GDPR, CCPA, HIPAA, SOC 2)",
+            "Evaluate legal implications of AI model training data, output copyright, and intellectual property"
+          ],
+          "required_knowledge": [
+            "SPDX license classifications (Permissive: MIT/Apache-2.0 vs Copyleft: GPL/AGPL)",
+            "GDPR Article 17 (Right to Erasure) and Article 25 (Data Protection by Design)",
+            "HIPAA Security Rule administrative, physical, and technical safeguards",
+            "SOC 2 Trust Services Criteria (Security, Availability, Confidentiality, Privacy)"
+          ],
+          "skills": {
+            "technical": [
+              "FOSSA / Snyk License Scanners",
+              "SPDX SBOM (Software Bill of Materials) tools",
+              "Regulatory mapping"
+            ],
+            "nontechnical": [
+              "Contractual precision",
+              "Regulatory risk management",
+              "Executive counsel"
+            ]
+          },
+          "tools_and_technologies": [
+            "FOSSA",
+            "LicenseFinder",
+            "OneTrust",
+            "Vanta",
+            "SPDX Tools"
+          ],
+          "decision_frameworks": [
+            "Permissive vs Copyleft vs Commercial license compatibility matrix",
+            "Self-Hosted vs Cloud Vendor HIPAA Business Associate Agreement (BAA) evaluation",
+            "Opt-In vs Opt-Out data consent regulatory compliance determination"
+          ],
+          "deliverables": [
+            "Software Bill of Materials (SBOM) & License Audit",
+            "Privacy Policy & Terms of Service",
+            "Regulatory Compliance Matrix (GDPR/HIPAA)",
+            "IP Risk Assessment"
+          ],
+          "collaboration_interfaces": {
+            "inputs_from": [
+              "Software Engineers (Dependency trees & third-party code)",
+              "Product Manager (User data flows)"
+            ],
+            "outputs_to": [
+              "Executive Leadership (Legal risk clearance)",
+              "End Users (Legal agreements & consent banners)"
+            ]
+          },
+          "failure_modes": [
+            "Inadvertently linking AGPL code into proprietary SaaS backends",
+            "Ambiguous privacy policies violating consumer protection laws",
+            "Storing unencrypted health data violating HIPAA"
+          ],
+          "security_privacy_considerations": [
+            "Enforcing mandatory data encryption and audit logging to satisfy legal discovery"
+          ],
+          "verification_procedures": [
+            "Automated SPDX license scan verifying 0 prohibited copyleft licenses",
+            "GDPR compliance checklist audit",
+            "SOC 2 evidence collection validation"
+          ],
+          "quality_criteria": [
+            "100% of dependencies have approved permissive licenses",
+            "Clear, unambiguous privacy policies",
+            "Zero regulatory non-compliance flags"
+          ],
+          "confidence_status": "KNOWLEDGE_VALIDATED"
+        }
+      ]
+    },
+    "X": {
+      "code": "X",
+      "name": "Customer Experience, Support and Community Management",
+      "primary_domain": "A",
+      "secondary_domains": [
+        "M",
+        "I"
+      ],
+      "description": "User onboarding, feedback synthesis, customer support workflows, community engagement, and defect advocacy.",
+      "subdomains": [
+        "Customer Support Operations",
+        "User Onboarding & Activation",
+        "Feedback Loop & Defect Escalation",
+        "Developer Community Management",
+        "Knowledge Base & Self-Service"
+      ],
+      "roles": [
+        {
+          "role_id": "ROLE-X-HEAD-CUSTOMER-EXPERIENCE",
+          "role_title": "Head of Customer Experience & Community Advocacy",
+          "purpose": "Champions the user voice, closes the feedback loop between real users and product engineering, and drives high CSAT.",
+          "responsibilities": [
+            "Design empathetic, fast-resolution customer support ticket workflows",
+            "Synthesize customer bug reports and feature requests into actionable defect autopsies",
+            "Foster active, supportive developer communities on Discord, Discourse, and GitHub",
+            "Build self-service troubleshooting knowledge bases reducing support ticket volume"
+          ],
+          "required_knowledge": [
+            "Customer Satisfaction (CSAT) and Net Promoter Score (NPS) methodologies",
+            "Zendesk / Intercom support ticketing and SLA escalations",
+            "Community moderation best practices and code of conduct enforcement",
+            "Defect reproduction methodologies and issue escalation workflows"
+          ],
+          "skills": {
+            "technical": [
+              "Zendesk/Intercom",
+              "GitHub Issues management",
+              "Discourse/Discord",
+              "Bug reproduction"
+            ],
+            "nontechnical": [
+              "Deep empathy",
+              "Conflict de-escalation",
+              "User advocacy in engineering meetings"
+            ]
+          },
+          "tools_and_technologies": [
+            "Zendesk",
+            "Intercom",
+            "Discourse",
+            "Discord",
+            "GitHub Issues",
+            "Canny"
+          ],
+          "decision_frameworks": [
+            "Self-Service Knowledge Base vs Human Agent escalation matrix",
+            "Severity 1 Critical Bug vs Feature Request triage framework",
+            "Community Code of Conduct moderation escalation ladder"
+          ],
+          "deliverables": [
+            "Customer Support SLA & Escalation Playbook",
+            "Community Guidelines & Moderation Policy",
+            "Weekly Customer Feedback & Defect Digest",
+            "Troubleshooting FAQ Matrix"
+          ],
+          "collaboration_interfaces": {
+            "inputs_from": [
+              "End Users (Trouble tickets & feedback)",
+              "Community Members (Bug reports)"
+            ],
+            "outputs_to": [
+              "Engineering Lead (Verified defect reports with reproduction steps)",
+              "Product Manager (User sentiment trends)"
+            ]
+          },
+          "failure_modes": [
+            "Ignoring user frustration until public backlash",
+            "Treating bug reports defensively rather than as learning gifts",
+            "Toxic community culture without moderation"
+          ],
+          "security_privacy_considerations": [
+            "Sanitizing customer secrets, passwords, and PII from support tickets and logs"
+          ],
+          "verification_procedures": [
+            "Support ticket First Response Time (FRT) < 1 hour benchmark",
+            "CSAT score >= 90% audit",
+            "Defect reproduction fidelity review"
+          ],
+          "quality_criteria": [
+            "Average resolution time within SLA",
+            "CSAT >= 90%",
+            "100% of verified bugs have reproducible tickets"
+          ],
+          "confidence_status": "KNOWLEDGE_VALIDATED"
+        }
+      ]
+    },
+    "Y": {
+      "code": "Y",
+      "name": "Industry-Specific Domain Expertise",
+      "primary_domain": "D",
+      "secondary_domains": [
+        "C",
+        "B"
+      ],
+      "description": "Vertical-specific constraints and business science (FinTech, HealthTech, EdTech, E-Commerce, LegalTech, Logistics).",
+      "subdomains": [
+        "FinTech (Ledgers, Banking, Payments)",
+        "HealthTech (EHR, HIPAA, Telemedicine)",
+        "Logistics & Supply Chain",
+        "EdTech & Learning Sciences",
+        "E-Commerce Retail Systems"
+      ],
+      "roles": [
+        {
+          "role_id": "ROLE-Y-VERTICAL-DOMAIN-SPECIALIST",
+          "role_title": "Principal Vertical Domain & Industry Specialist",
+          "purpose": "Injects deep, battle-tested industry-specific business logic, standards, and regulatory nuances into product specifications.",
+          "responsibilities": [
+            "Translate complex industry regulations (e.g. ISO 20022 banking, HL7/FHIR healthcare) into software requirements",
+            "Prevent domain-specific catastrophe traps (e.g. double-entry ledger imbalance, healthcare audit trails)",
+            "Verify that workflows reflect actual day-to-day practitioner workflows rather than naive assumptions",
+            "Validate industry-specific nomenclature and operational calculations"
+          ],
+          "required_knowledge": [
+            "Double-entry bookkeeping and financial reconciliation invariants",
+            "Healthcare interoperability standards (HL7, FHIR, DICOM)",
+            "Supply chain inventory tracking (FIFO/LIFO, deadhead mileage, bill of materials)",
+            "Industry-specific standard operating procedures (SOPs)"
+          ],
+          "skills": {
+            "technical": [
+              "Industry standards (FHIR, ISO 20022, FIX protocol)",
+              "Financial ledger modeling",
+              "Domain workflow auditing"
+            ],
+            "nontechnical": [
+              "Industry practitioner credibility",
+              "Translating jargon into engineering specs"
+            ]
+          },
+          "tools_and_technologies": [
+            "FHIR Server",
+            "FIX Protocol Analyzer",
+            "Double-Entry Accounting Engines",
+            "ERP Systems"
+          ],
+          "decision_frameworks": [
+            "Industry Standard Protocol vs Custom Proprietary API selection",
+            "Strict Compliance Invariant vs User Convenience trade-off",
+            "Audit-Trail Immutability vs Data Deletion regulatory reconcile"
+          ],
+          "deliverables": [
+            "Industry Compliance & Invariant Specification",
+            "Domain Workflow State Machine",
+            "Domain Verification Test Plan",
+            "Industry Standard Interface Mapping"
+          ],
+          "collaboration_interfaces": {
+            "inputs_from": [
+              "Industry Regulators & Practitioners",
+              "Enterprise Clients"
+            ],
+            "outputs_to": [
+              "Product Manager (Domain requirements)",
+              "Software Engineers (Business logic invariants)"
+            ]
+          },
+          "failure_modes": [
+            "Financial systems using floating-point math causing rounding penny leaks",
+            "Health systems failing to track clinical audit provenance"
+          ],
+          "security_privacy_considerations": [
+            "Complying strictly with vertical data residency and patient/financial confidentiality rules"
+          ],
+          "verification_procedures": [
+            "Zero-penny financial ledger reconciliation test",
+            "FHIR patient resource schema validation",
+            "Chain-of-custody audit log verification"
+          ],
+          "quality_criteria": [
+            "100% compliant with governing industry protocols",
+            "Zero financial rounding discrepancies",
+            "Strict immutable audit logging"
+          ],
+          "confidence_status": "KNOWLEDGE_VALIDATED"
+        }
+      ]
+    },
+    "Z": {
+      "code": "Z",
+      "name": "Emerging and Yet-To-Be-Discovered Disciplines",
+      "primary_domain": "M",
+      "secondary_domains": [
+        "D",
+        "Q"
+      ],
+      "description": "Extensible meta-framework for assimilating future professional disciplines, neurotechnology, quantum computing, and synthetic biology.",
+      "subdomains": [
+        "Quantum Computing & Algorithms",
+        "Brain-Computer Interfaces (BCI)",
+        "Synthetic Biology & Bio-Computing",
+        "Autonomous Multi-Agent Sociology",
+        "Meta-Discipline Integration"
+      ],
+      "roles": [
+        {
+          "role_id": "ROLE-Z-EMERGING-TECH-EXPLORER",
+          "role_title": "Staff Emerging Technology & Meta-Discipline Explorer",
+          "purpose": "Anticipates, catalogs, and assimilates frontier disciplines and future engineering paradigms into AI-Builder-Brain.",
+          "responsibilities": [
+            "Monitor frontier breakthroughs across quantum algorithms, neural interfaces, and autonomous agent sociology",
+            "Formulate extensible capability schemas for nascent disciplines without breaking canonical 13-domain stability",
+            "Design prototype sandboxes for emerging technology experimentation",
+            "Synthesize cross-disciplinary paradigms combining biology, hardware, and synthetic cognitive agents"
+          ],
+          "required_knowledge": [
+            "Quantum computing principles (qubits, superposition, Qiskit/Cirq)",
+            "Neurotechnology data streams (EEG, BCI signal processing)",
+            "Multi-agent emergent behavior and decentralized game theory",
+            "Futures studies and technological forecasting methodologies"
+          ],
+          "skills": {
+            "technical": [
+              "Qiskit",
+              "Signal Processing",
+              "Agent-Based Simulation (NetLogo/Mesa)",
+              "Frontier API experimentation"
+            ],
+            "nontechnical": [
+              "Intellectual curiosity",
+              "Discipline synthesis",
+              "Visionary architectural extrapolation"
+            ]
+          },
+          "tools_and_technologies": [
+            "Qiskit",
+            "Cirq",
+            "OpenBCI",
+            "Mesa",
+            "arXiv API"
+          ],
+          "decision_frameworks": [
+            "Nascent Breakthrough vs Overhyped Gimmick evaluation filter",
+            "Assimilation into Existing Domain vs Spawning Subdiscipline criterion",
+            "Experimentation Sandbox vs Canonical Core isolation barrier"
+          ],
+          "deliverables": [
+            "Emerging Discipline Capability Proposal",
+            "Frontier Sandbox Prototype",
+            "Multi-Agent Sociological Interaction Model",
+            "Futures Technology Radar"
+          ],
+          "collaboration_interfaces": {
+            "inputs_from": [
+              "Academic Preprints & Frontier Labs",
+              "Experimental Prototype Results"
+            ],
+            "outputs_to": [
+              "Master Brain Core (New capability proposals)",
+              "Architects (Horizon technology roadmaps)"
+            ]
+          },
+          "failure_modes": [
+            "Prematurely promoting unverified sci-fi concepts into canonical engineering truth",
+            "Ignoring practical physics constraints"
+          ],
+          "security_privacy_considerations": [
+            "Cognitive liberty, neural data privacy, and autonomous agent safety guardrails"
+          ],
+          "verification_procedures": [
+            "Quantum circuit simulation test",
+            "Agent-based simulation stability test",
+            "Peer-corroboration verification"
+          ],
+          "quality_criteria": [
+            "Strictly separated from canonical core until empirically verified",
+            "Clear falsification bounds",
+            "Extensible schema compatibility"
+          ],
+          "confidence_status": "KNOWLEDGE_VALIDATED"
+        }
+      ]
+    }
+  }
+}
