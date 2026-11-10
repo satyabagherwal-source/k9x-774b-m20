@@ -4803,10 +4803,10 @@
     "repository": "aws/aws-cdk",
     "platform": "github",
     "sourceUrl": "https://github.com/aws/aws-cdk",
-    "sourceVersion": "28ed047e",
+    "sourceVersion": "8a8b12fc",
     "license": "Apache-2.0",
-    "contentHash": "d2cc3a7b26296f4abf5bbec7ed42daf76e561f8dcd983192c6eba327f50c7924",
-    "lastHarvestedAt": "2026-11-06T22:56:05.349Z",
+    "contentHash": "96fec4b5c1f124ce23952f0a6209f3e9ae510b9898c19ff52808e71bacb3cde0",
+    "lastHarvestedAt": "2026-11-10T03:04:38.488Z",
     "learningId": "learn-github-aws-aws-cdk"
   },
   "cockroachdb-cockroach": {
@@ -6423,10 +6423,10 @@
     "repository": "meilisearch/meilisearch",
     "platform": "github",
     "sourceUrl": "https://github.com/meilisearch/meilisearch",
-    "sourceVersion": "c18c8197",
+    "sourceVersion": "8c7bfcfa",
     "license": "NOASSERTION",
-    "contentHash": "d7d6eae4278a14ff9566766ae741e8b156a05cf69af06ae393381634d6a2b446",
-    "lastHarvestedAt": "2026-11-04T19:48:11.167Z",
+    "contentHash": "943f67d848fdb9df7650c9bcf04ca9d6aed2c0a574d6252ab45041fe28157a58",
+    "lastHarvestedAt": "2026-11-10T02:59:42.402Z",
     "learningId": "learn-github-meilisearch-meilisearch"
   },
   "pacocoursey-cmdk": {

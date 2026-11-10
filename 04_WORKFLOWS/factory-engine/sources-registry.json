@@ -1,11 +1,11 @@
 {
   "rustls-rustls": {
-    "name": "rustls/rustls",
+    "name": "rustls",
     "officialUrl": "https://github.com/rustls/rustls",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T17:44:02.738Z",
-    "lastVerified": "2026-11-09T17:44:02.738Z",
+    "lastChecked": "2026-11-10T02:59:31.826Z",
+    "lastVerified": "2026-11-10T02:59:31.826Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustls-rustls",
@@ -14,7 +14,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "e7506724"
   },
   "tanstack-router": {
     "name": "TanStack/router",
@@ -38,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-10T02:44:06.153Z",
-    "lastVerified": "2026-11-10T02:44:06.153Z",
+    "lastChecked": "2026-11-10T03:04:41.079Z",
+    "lastVerified": "2026-11-10T03:04:41.079Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -235,22 +236,21 @@
     "lastVerified": "2026-11-09T18:11:13.906Z"
   },
   "meilisearch-meilisearch": {
-    "name": "meilisearch",
+    "name": "meilisearch/meilisearch",
     "officialUrl": "https://github.com/meilisearch/meilisearch",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T23:29:09.772Z",
-    "lastVerified": "2026-11-08T23:29:09.772Z",
+    "lastChecked": "2026-11-10T02:59:39.433Z",
+    "lastVerified": "2026-11-10T02:59:39.433Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-meilisearch-meilisearch",
-    "contentHash": "d7d6eae4278a14ff9566766ae741e8b156a05cf69af06ae393381634d6a2b446",
+    "contentHash": "943f67d848fdb9df7650c9bcf04ca9d6aed2c0a574d6252ab45041fe28157a58",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "c18c8197"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "dathere-qsv": {
     "name": "qsv",
@@ -367,9 +367,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-10T02:06:45.992Z",
+    "lastChecked": "2026-11-10T02:59:36.747Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-10T02:06:45.992Z"
+    "lastVerified": "2026-11-10T02:59:36.747Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -5267,9 +5267,9 @@
   "jpush-aurora-imui": {
     "name": "aurora-imui",
     "officialUrl": "https://github.com/jpush/aurora-imui",
-    "lastChecked": "2026-11-07T04:51:38.956Z",
+    "lastChecked": "2026-11-10T02:59:26.732Z",
     "revisionIdentifier": "fb74b792",
-    "lastVerified": "2026-11-07T04:51:38.956Z"
+    "lastVerified": "2026-11-10T02:59:26.732Z"
   },
   "aquasecurity-trivy": {
     "name": "aquasecurity/trivy",
@@ -5469,22 +5469,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "aws-aws-cdk": {
-    "name": "aws-cdk",
+    "name": "aws/aws-cdk",
     "officialUrl": "https://github.com/aws/aws-cdk",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-09T00:22:56.904Z",
-    "lastVerified": "2026-11-09T00:22:56.904Z",
+    "lastChecked": "2026-11-10T02:59:34.992Z",
+    "lastVerified": "2026-11-10T02:59:34.992Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aws-aws-cdk",
-    "contentHash": "d2cc3a7b26296f4abf5bbec7ed42daf76e561f8dcd983192c6eba327f50c7924",
+    "contentHash": "96fec4b5c1f124ce23952f0a6209f3e9ae510b9898c19ff52808e71bacb3cde0",
     "promotedRulesCount": 1,
-    "recentFixesCount": 7,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "28ed047e"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "gluesql-gluesql": {
     "name": "gluesql/gluesql",
@@ -7940,9 +7939,9 @@
   "ouch-org-ouch": {
     "name": "ouch",
     "officialUrl": "https://github.com/ouch-org/ouch",
-    "lastChecked": "2026-11-08T19:30:54.295Z",
+    "lastChecked": "2026-11-10T02:59:21.813Z",
     "revisionIdentifier": "6df14b05",
-    "lastVerified": "2026-11-08T19:30:54.295Z"
+    "lastVerified": "2026-11-10T02:59:21.813Z"
   },
   "hf-canberkkkkkk-ema-lightning": {
     "name": "canberkkkkkk/ema-lightning",
@@ -9927,9 +9926,9 @@
   "turbopress-x-seo-auditing-software": {
     "name": "seo-auditing-software",
     "officialUrl": "https://github.com/TurboPress-X/seo-auditing-software",
-    "lastChecked": "2026-11-05T22:25:00.962Z",
+    "lastChecked": "2026-11-10T02:59:24.129Z",
     "revisionIdentifier": "68d4a606db",
-    "lastVerified": "2026-11-05T22:25:00.962Z"
+    "lastVerified": "2026-11-10T02:59:24.129Z"
   },
   "ivanvorobei-swiftui": {
     "name": "SwiftUI",

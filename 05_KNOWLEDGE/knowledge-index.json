@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-10T02:44:03.437Z",
+  "last_updated": "2026-11-10T03:04:38.391Z",
   "total_verified_learnings": 1245,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4710,14 +4710,19 @@
       "slug": "aws-aws-cdk",
       "platform": "github",
       "source_url": "https://github.com/aws/aws-cdk",
-      "source_version": "28ed047e",
-      "content_hash": "d2cc3a7b26296f4abf5bbec7ed42daf76e561f8dcd983192c6eba327f50c7924",
+      "source_version": "8a8b12fc",
+      "content_hash": "96fec4b5c1f124ce23952f0a6209f3e9ae510b9898c19ff52808e71bacb3cde0",
       "dossier_path": "07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "security-guardian): parse the cfn-guard report with an XML parser (#39510)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "security-guardian): accept extra named fixtures in the rule fixture test (#39657",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -4796,7 +4801,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T22:56:05.208Z",
+      "verified_at": "2026-11-10T03:04:38.375Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43212,11 +43217,16 @@
       "slug": "meilisearch-meilisearch",
       "platform": "github",
       "source_url": "https://github.com/meilisearch/meilisearch",
-      "source_version": "c18c8197",
-      "content_hash": "d7d6eae4278a14ff9566766ae741e8b156a05cf69af06ae393381634d6a2b446",
+      "source_version": "8c7bfcfa",
+      "content_hash": "943f67d848fdb9df7650c9bcf04ca9d6aed2c0a574d6252ab45041fe28157a58",
       "dossier_path": "07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Merge pull request #6725 from meilisearch/remove-dbg-and-check-for-them",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2207,
           "title": "Merge pull request #6673 from meilisearch/avoid-panic-in-highlighting",
@@ -43268,7 +43278,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T19:48:11.099Z",
+      "verified_at": "2026-11-10T02:59:42.301Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
