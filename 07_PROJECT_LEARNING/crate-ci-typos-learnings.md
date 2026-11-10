@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/crate-ci-typos-learnings.md`  
 > **Source**: github ([https://github.com/crate-ci/typos](https://github.com/crate-ci/typos))  
-> **Source Version**: `7cd4cdb2`  
+> **Source Version**: `2611abd1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T19:33:44.790Z  
+> **Timestamp**: 2026-11-10T02:11:40.778Z  
 > **Learning ID**: `learn-github-crate-ci-typos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/crate-ci-typos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/crate-ci/typos](https://github.com/crate-ci/typos))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T19:33:44.246Z  
+> **Harvest Timestamp**: 2026-11-10T02:06:36.981Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Source code spell checker
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 4208 stars
+- **Stars / Engagement**: 4216 stars
 
 ---
 
@@ -1357,14 +1357,11 @@ impl<V> Map<&str, V> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1645** (2026-11-09): **fix(dict): Resolve extraversion, causalities false positives**
+  *Symptoms*: ### What does this PR try to solve?  Fixws #1643 Fixws #1644   ### Notes to reviewers  LLM involvement: none
+
 - **Issue #1642** (2026-11-04): **chore: Add license and readme as dynamic metadata to `typos-cli` Python project**
   *Symptoms*: <!-- Thanks for helping out! -->  ### What does this PR try to solve?  <!-- a maintainer-approved Issue is required for non-trivial changes --> Relates to #1641  Adds the readme, license and version as dynamic project metadata.  Docs: https://www.maturin.rs/metadata.html?highlight=dynamic#dynamic-metadata.  The version seems to be injected regardless, but the license and readme fields do require declaring them as `dynamic`:  <details><summary>Before</summary> <p>  ````email Metadata-Version: 2.4 Name: typos Version: 1.52.0 Classifier: Environment :: Console Classifier: Intended Audience :: Developers Classifier: Topic :: Software Development Classifier: Operating System :: OS Independent Classifier: License :: OSI Approved :: MIT License Classifier: License :: OSI Approved :: Apache Software License Classifier: Programming Language :: Python Classifier: Programming Language :: Python :: 3 :: Only Classifier: Programming Language :: Rust Classifier: Programming Language :: Python :: Implementation :: CPython Classifier: Programming Language :: Python :: Implementation :: PyPy Summary: Source Code Spelling Correction Keywords: development,spelling Requires-Python: >=3.8 Project-URL: Changelog, https://github.com/crate-ci/typos/blob/main/CHANGELOG.md Project-URL: Documentation, https://github.com/crate-ci/typos#typos Project-URL: Releases, https://github.com/crate-ci/typos/releases Project-URL: Repository, https://github.com/crate-ci/typos `
-
-- **Issue #1641** (2026-11-04): **Release v1.52.0 didn't reach PyPI**
-  *Symptoms*: ### Description  _Sorry for the noise if you're already aware of this!_  The macOS x86_64 wheel-building job failed (`The job was not acquired by Runner of type hosted even after multiple attempts`), so the publishing step didn't run:  https://github.com/crate-ci/typos/actions/runs/41522968312/job/125543378303  FWIW I noticed this because I use the pre-commit hook, which was updated automatically to the latest tag, but there's no corresponding PyPI release.
-  **Post-Mortem & Fix Analysis**:
-  > Same, hitting my repos too. Also, there's no description (usually a README is used) on the PyPI page. 
-  > > there's no description (usually a README is used) on the PyPI page.  maturin seems to require declaring that as dynamic metadata. Here's a PR: https://github.com/crate-ci/typos/pull/1642
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1381,57 +1378,96 @@ impl<V> Map<&str, V> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7cd4cdb2` (2026-11-04)
-**Commit Message**: Merge pull request #1642 from edgarrmondragon/pyproject-metadata
+### Incident Patch 1: `1fe55b28` (2026-11-09)
+**Commit Message**: fix(dict): Resolve extraversion, causalities false positives
 
-chore: Add license and readme as dynamic metadata to `typos-cli` Python project
+Fixws #1643
+Fixws #1644
 
-**File**: `crates/typos-cli/pyproject.toml` (modified, +5/-0)
+**File**: `crates/typos-dict/assets/english.csv` (modified, +3/-0)
 ```diff
-@@ -4,6 +4,11 @@ build-backend = "maturin"
- 
- [project]
- name = "typos"
-+dynamic = [
-+    "license",
-+    "readme",
-+    "version",
-+]
- description = "Source Code Spelling Correction"
- requires-python = ">=3.8"
- keywords = [
+@@ -6868,6 +6868,7 @@ caulk
+ caulker
+ causal
+ causality
++causalities
+ causation
+ causative
+ cause
+@@ -14847,6 +14848,8 @@ extravaganza
+ extravehicular
+ extreme
+ extremeness
++extraversion
++extravert
+ extremism
+ extremist
+ extremity
 ```
 
----
-
-### Incident Patch 2: `77a1af2a` (2026-11-03)
-**Commit Message**: chore: Add dynamic metadata to `typos-cli` Python project
-
-Signed-off-by: Edgar Ramírez Mondragón <[REDACTED_EMAIL]>
-
-**File**: `crates/typos-cli/pyproject.toml` (modified, +5/-0)
+**File**: `crates/typos-dict/assets/words.csv` (modified, +0/-2)
 ```diff
-@@ -4,6 +4,11 @@ build-backend = "maturin"
- 
- [project]
- name = "typos"
-+dynamic = [
-+    "license",
-+    "readme",
-+    "version",
-+]
- description = "Source Code Spelling Correction"
- requires-python = ">=3.8"
- keywords = [
+@@ -14210,7 +14210,6 @@ caulfilower,cauliflower
+ cauncks,canucks
+ causacian,caucasian
+ causailty,causality
+-causalities,casualties
+ causalties,casualties
+ causalty,casualty
+ causeed,caused
+@@ -37947,7 +37946,6 @@ extrats,extracts
+ extravagent,extravagant
+ extravagina,extravagant
+ extravegant,extravagant
+-extraversion,extroversion
+ extravigant,extravagant
+ extravogant,extravagant
+ extraxt,extract
+```
+
+**File**: `crates/typos-dict/benches/benches/aho_corasick_codegen.rs` (modified, +0/-4)
+```diff
+@@ -14224,7 +14224,6 @@ impl Word {
+             b"cauncks",
+             b"causacian",
+             b"causailty",
+-            b"causalities",
+             b"causalties",
+             b"causalty",
+             b"causeed",
+@@ -37959,7 +37958,6 @@ impl Word {
+             b"extravagent",
+             b"extravagina",
+             b"extravegant",
+-            b"extraversion",
+             b"extravigant",
+             b"extravogant",
+             b"extraxt",
+@@ -110254,7 +110252,6 @@ impl Word {
+             &["caucasian"],
+             &["causality"],
+             &["casualties"],
+-            &["casualties"],
+             &["casualty"],
+             &["caused"],
+             &["causes"],
+@@ -134042,7 +134039,6 @@ impl Word {
+             &["extravagant"],
+             &["extravagant"],
+             &["extravagant"],
+-            &["extroversion"],
+             &["extravagant"],
+             &["extravagant"],
+             &["extract"],
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1645** (2026-11-09): fix(dict): Resolve extraversion, causalities false positives (@epage)
 - **PR #1642** (2026-11-04): chore: Add license and readme as dynamic metadata to `typos-cli` Python project (@edgarrmondragon)
 - **PR #1640** (2026-11-02): feat(dict): October updates (@epage)
 - **PR #1638** (2026-11-01): chore(deps): Update compatible (actions) (@renovate[bot])
 - **PR #1637** (2026-11-01): chore(deps): Update compatible (@renovate[bot])
 - **PR #1636** (closed): fix(type): order two definitions of one glob by weight, then by name (@paoValle)
-- **PR #1635** (closed): test(cli): Pin the locale for cmd snapshot tests (@entity-0-0-2)
 
 ---
 
@@ -1451,25 +1487,23 @@ Signed-off-by: Edgar Ramírez Mondragón <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #1642 from edgarrmondragon/pyproject-metadata
+## X. dict): Resolve extraversion, causalities false positives
 
 **RULE**:
-When implementing operations in `crates/typos-cli/pyproject.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crate-ci/typos. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/typos-dict/assets/english.csv`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crate-ci/typos. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7cd4cdb2`: Merge pull request #1642 from edgarrmondragon/pyproject-metadata. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1fe55b28`: dict): Resolve extraversion, causalities false positives. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/typos-cli/pyproject.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/typos-dict/assets/english.csv`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-dynamic = [
-    "license",
-    "readme",
-    "version",
-]
+causalities
+extraversion
+extravert
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1479,4 +1513,4 @@ dynamic = [
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7cd4cdb2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1fe55b28` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-10T01:58:38.089Z",
+  "last_updated": "2026-11-10T02:11:46.003Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2198,14 +2198,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tickernelz-opencode-mem",
-      "content_hash": "a5369f969d79759d5a6afd2e8c3f2cb77bff10dbdb25a2df7f1db1d7aaf503d3",
-      "verified_at": "2026-11-06T15:27:36.301Z",
+      "content_hash": "f7aba3b01d51cfb849e01036a99f6465b5200b752b026f92d54eb5854ff58f49",
+      "verified_at": "2026-11-10T02:06:49.135Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T15:27:36.301Z"
+      "last_updated": "2026-11-10T02:06:49.135Z"
     },
     "autotrust/JEV-35B-NVFP4": {
       "repository": "autotrust/JEV-35B-NVFP4",
@@ -7041,14 +7041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-hashicorp-terraform",
-      "content_hash": "27efc8937d397b31f12dff83559d0fdee934b57339c6ed526011c1b94ec30d9a",
-      "verified_at": "2026-11-06T22:13:51.848Z",
+      "content_hash": "7f3f17ba8fe8899f7bff21e933b7ab8c5afc729e6a15d848deb43e334817be16",
+      "verified_at": "2026-11-10T02:11:46.002Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T22:13:51.848Z"
+      "last_updated": "2026-11-10T02:11:46.002Z"
     },
     "TaKO8Ki/gobang": {
       "repository": "TaKO8Ki/gobang",
@@ -10656,14 +10656,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crate-ci-typos",
-      "content_hash": "9cad7fd3f8220b52ac933b1a3afa9193ebffd37268d2bbe63b41d8fa4391fe00",
-      "verified_at": "2026-11-04T19:33:45.642Z",
+      "content_hash": "3aa09cfcb12ae48f4eaac4161a35172de4be87ecd2334a51ecc368a99e9057b3",
+      "verified_at": "2026-11-10T02:11:42.773Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T19:33:45.642Z"
+      "last_updated": "2026-11-10T02:11:42.773Z"
     },
     "emberstack/kubernetes-reflector": {
       "repository": "emberstack/kubernetes-reflector",

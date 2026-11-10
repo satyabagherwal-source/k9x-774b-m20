@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-10T01:58:37.990Z",
+  "last_updated": "2026-11-10T02:11:45.879Z",
   "total_verified_learnings": 1245,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -9170,11 +9170,16 @@
       "slug": "crate-ci-typos",
       "platform": "github",
       "source_url": "https://github.com/crate-ci/typos",
-      "source_version": "7cd4cdb2",
-      "content_hash": "9cad7fd3f8220b52ac933b1a3afa9193ebffd37268d2bbe63b41d8fa4391fe00",
+      "source_version": "2611abd1",
+      "content_hash": "3aa09cfcb12ae48f4eaac4161a35172de4be87ecd2334a51ecc368a99e9057b3",
       "dossier_path": "07_PROJECT_LEARNING/crate-ci-typos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crate-ci-typos-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "dict): Resolve extraversion, causalities false positives",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2326,
           "title": "Zero-Allocation String Case Mutation and UTF-8 Boundary Guard",
@@ -9201,7 +9206,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T19:33:45.500Z",
+      "verified_at": "2026-11-10T02:11:42.615Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -18784,14 +18789,19 @@
       "slug": "hashicorp-terraform",
       "platform": "github",
       "source_url": "https://github.com/hashicorp/terraform",
-      "source_version": "aa716fca",
-      "content_hash": "27efc8937d397b31f12dff83559d0fdee934b57339c6ed526011c1b94ec30d9a",
+      "source_version": "03b4f662",
+      "content_hash": "7f3f17ba8fe8899f7bff21e933b7ab8c5afc729e6a15d848deb43e334817be16",
       "dossier_path": "07_PROJECT_LEARNING/hashicorp-terraform-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hashicorp-terraform-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Update .changes/v1.17/BUG FIXES-20261106-082655.yaml",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "command/state pull: Refactor to use views (#39493)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -18870,7 +18880,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T22:13:51.709Z",
+      "verified_at": "2026-11-10T02:11:45.844Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -75043,14 +75053,19 @@
       "slug": "tickernelz-opencode-mem",
       "platform": "github",
       "source_url": "https://github.com/tickernelz/opencode-mem",
-      "source_version": "6c5828f3",
-      "content_hash": "a5369f969d79759d5a6afd2e8c3f2cb77bff10dbdb25a2df7f1db1d7aaf503d3",
+      "source_version": "040b27f4",
+      "content_hash": "f7aba3b01d51cfb849e01036a99f6465b5200b752b026f92d54eb5854ff58f49",
       "dossier_path": "07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "config): deprecate unused profile limits (#498)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "ai): add Standard Compute memory provider preset (#502)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -75124,7 +75139,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T15:27:36.187Z",
+      "verified_at": "2026-11-10T02:06:48.967Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

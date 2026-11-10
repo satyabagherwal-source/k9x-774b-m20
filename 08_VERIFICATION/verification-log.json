@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261108-7XDR",
-    "timestamp": "2026-11-08T04:33:53.343Z",
-    "repository": "jacklandrin/OnlySwitch",
-    "learningId": "learn-github-jacklandrin-onlyswitch",
-    "contentHash": "10fd17ab2d50d6f64c90216ac89b45a940d8d7c167265e0e8dd3aa7061951668",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-7ZU1",
-    "timestamp": "2026-11-08T04:33:56.521Z",
-    "repository": "Qwen/Qwen3-14B",
-    "learningId": "learn-huggingface-qwen-qwen3-14b",
-    "contentHash": "756c9a6f36fe88877e4f93c64ba0d388af999bd4a6b8e34ef3d83eac85ecd86b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-IZIG",
-    "timestamp": "2026-11-08T04:42:29.320Z",
-    "repository": "Comfy-Org/Z-Image-Turbo",
-    "learningId": "learn-huggingface-comfy-org-z-image-turbo",
-    "contentHash": "0f869480fdc3ab1e946b21e88ccd7d45aaf2f9e2e1fd4590bbb5a7287689ea80",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261108-YZGU",
     "timestamp": "2026-11-08T04:54:55.758Z",
     "repository": "unsloth/flint-GGUF",
@@ -7490,6 +7445,51 @@
     "repository": "Open-Source-Legal/OpenContracts",
     "learningId": "learn-github-open-source-legal-opencontracts",
     "contentHash": "1404444574df573324d42d48c3f3091b7f4b7d2af00f40b9f111fb15e85617ed",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261110-UHWH",
+    "timestamp": "2026-11-10T02:06:49.121Z",
+    "repository": "tickernelz/opencode-mem",
+    "learningId": "learn-github-tickernelz-opencode-mem",
+    "contentHash": "f7aba3b01d51cfb849e01036a99f6465b5200b752b026f92d54eb5854ff58f49",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261110-0SH3",
+    "timestamp": "2026-11-10T02:11:42.759Z",
+    "repository": "crate-ci/typos",
+    "learningId": "learn-github-crate-ci-typos",
+    "contentHash": "3aa09cfcb12ae48f4eaac4161a35172de4be87ecd2334a51ecc368a99e9057b3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261110-0UYS",
+    "timestamp": "2026-11-10T02:11:45.988Z",
+    "repository": "hashicorp/terraform",
+    "learningId": "learn-github-hashicorp-terraform",
+    "contentHash": "7f3f17ba8fe8899f7bff21e933b7ab8c5afc729e6a15d848deb43e334817be16",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

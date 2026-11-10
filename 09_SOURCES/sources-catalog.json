@@ -1413,10 +1413,10 @@
     "repository": "tickernelz/opencode-mem",
     "platform": "github",
     "sourceUrl": "https://github.com/tickernelz/opencode-mem",
-    "sourceVersion": "6c5828f3",
+    "sourceVersion": "040b27f4",
     "license": "MIT",
-    "contentHash": "a5369f969d79759d5a6afd2e8c3f2cb77bff10dbdb25a2df7f1db1d7aaf503d3",
-    "lastHarvestedAt": "2026-11-06T15:27:36.291Z",
+    "contentHash": "f7aba3b01d51cfb849e01036a99f6465b5200b752b026f92d54eb5854ff58f49",
+    "lastHarvestedAt": "2026-11-10T02:06:49.125Z",
     "learningId": "learn-github-tickernelz-opencode-mem"
   },
   "hf-autotrust-jev-35b-nvfp4": {
@@ -4613,10 +4613,10 @@
     "repository": "hashicorp/terraform",
     "platform": "github",
     "sourceUrl": "https://github.com/hashicorp/terraform",
-    "sourceVersion": "aa716fca",
+    "sourceVersion": "03b4f662",
     "license": "NOASSERTION",
-    "contentHash": "27efc8937d397b31f12dff83559d0fdee934b57339c6ed526011c1b94ec30d9a",
-    "lastHarvestedAt": "2026-11-06T22:13:51.830Z",
+    "contentHash": "7f3f17ba8fe8899f7bff21e933b7ab8c5afc729e6a15d848deb43e334817be16",
+    "lastHarvestedAt": "2026-11-10T02:11:45.992Z",
     "learningId": "learn-github-hashicorp-terraform"
   },
   "tako8ki-gobang": {
@@ -7073,10 +7073,10 @@
     "repository": "crate-ci/typos",
     "platform": "github",
     "sourceUrl": "https://github.com/crate-ci/typos",
-    "sourceVersion": "7cd4cdb2",
+    "sourceVersion": "2611abd1",
     "license": "Apache-2.0",
-    "contentHash": "9cad7fd3f8220b52ac933b1a3afa9193ebffd37268d2bbe63b41d8fa4391fe00",
-    "lastHarvestedAt": "2026-11-04T19:33:45.625Z",
+    "contentHash": "3aa09cfcb12ae48f4eaac4161a35172de4be87ecd2334a51ecc368a99e9057b3",
+    "lastHarvestedAt": "2026-11-10T02:11:42.763Z",
     "learningId": "learn-github-crate-ci-typos"
   },
   "emberstack-kubernetes-reflector": {

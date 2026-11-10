@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-10T01:58:40.674Z",
-    "lastVerified": "2026-11-10T01:58:40.674Z",
+    "lastChecked": "2026-11-10T02:11:48.568Z",
+    "lastVerified": "2026-11-10T02:11:48.568Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -367,9 +367,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-10T00:59:46.797Z",
+    "lastChecked": "2026-11-10T02:06:45.992Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-10T00:59:46.797Z"
+    "lastVerified": "2026-11-10T02:06:45.992Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -2203,8 +2203,8 @@
     "officialUrl": "https://github.com/trufflesecurity/trufflehog",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-09T16:40:23.853Z",
-    "lastVerified": "2026-11-09T16:40:23.853Z",
+    "lastChecked": "2026-11-10T02:06:41.051Z",
+    "lastVerified": "2026-11-10T02:06:41.051Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trufflesecurity-trufflehog",
@@ -4995,9 +4995,9 @@
   "react-native-device-info-react-native-device-info": {
     "name": "react-native-device-info",
     "officialUrl": "https://github.com/react-native-device-info/react-native-device-info",
-    "lastChecked": "2026-11-07T04:22:21.897Z",
+    "lastChecked": "2026-11-10T02:06:36.009Z",
     "revisionIdentifier": "06a9ed6d",
-    "lastVerified": "2026-11-07T04:22:21.897Z"
+    "lastVerified": "2026-11-10T02:06:36.009Z"
   },
   "nitrictech-nitric": {
     "name": "nitric",
@@ -5207,22 +5207,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "hashicorp-terraform": {
-    "name": "terraform",
+    "name": "hashicorp/terraform",
     "officialUrl": "https://github.com/hashicorp/terraform",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-08T23:43:39.217Z",
-    "lastVerified": "2026-11-08T23:43:39.217Z",
+    "lastChecked": "2026-11-10T02:06:42.154Z",
+    "lastVerified": "2026-11-10T02:06:42.154Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-hashicorp-terraform",
-    "contentHash": "27efc8937d397b31f12dff83559d0fdee934b57339c6ed526011c1b94ec30d9a",
+    "contentHash": "7f3f17ba8fe8899f7bff21e933b7ab8c5afc729e6a15d848deb43e334817be16",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "aa716fca"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "vlcn-io-cr-sqlite": {
     "name": "cr-sqlite",
@@ -7749,22 +7748,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "crate-ci-typos": {
-    "name": "typos",
+    "name": "crate-ci/typos",
     "officialUrl": "https://github.com/crate-ci/typos",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T18:34:47.598Z",
-    "lastVerified": "2026-11-08T18:34:47.598Z",
+    "lastChecked": "2026-11-10T02:06:36.981Z",
+    "lastVerified": "2026-11-10T02:06:36.981Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-crate-ci-typos",
-    "contentHash": "9cad7fd3f8220b52ac933b1a3afa9193ebffd37268d2bbe63b41d8fa4391fe00",
+    "contentHash": "3aa09cfcb12ae48f4eaac4161a35172de4be87ecd2334a51ecc368a99e9057b3",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "7cd4cdb2"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-autotrust-jev-27b-vl": {
     "name": "autotrust/JEV-27B-VL",
@@ -8033,22 +8031,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "tickernelz-opencode-mem": {
-    "name": "opencode-mem",
+    "name": "tickernelz/opencode-mem",
     "officialUrl": "https://github.com/tickernelz/opencode-mem",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-08T22:52:39.837Z",
-    "lastVerified": "2026-11-08T22:52:39.837Z",
+    "lastChecked": "2026-11-10T02:06:46.963Z",
+    "lastVerified": "2026-11-10T02:06:46.963Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tickernelz-opencode-mem",
-    "contentHash": "a5369f969d79759d5a6afd2e8c3f2cb77bff10dbdb25a2df7f1db1d7aaf503d3",
+    "contentHash": "f7aba3b01d51cfb849e01036a99f6465b5200b752b026f92d54eb5854ff58f49",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "6c5828f3"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "str4d-rage": {
     "name": "rage",
@@ -9814,9 +9811,9 @@
   "sarfrz-novacrawl": {
     "name": "NovaCrawl",
     "officialUrl": "https://github.com/SArfrz/NovaCrawl",
-    "lastChecked": "2026-11-05T21:54:26.954Z",
+    "lastChecked": "2026-11-10T02:06:33.479Z",
     "revisionIdentifier": "68c95079df",
-    "lastVerified": "2026-11-05T21:54:26.954Z"
+    "lastVerified": "2026-11-10T02:06:33.479Z"
   },
   "zacharee-bifrost": {
     "name": "Bifrost",

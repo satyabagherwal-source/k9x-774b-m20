@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md`  
 > **Source**: github ([https://github.com/tickernelz/opencode-mem](https://github.com/tickernelz/opencode-mem))  
-> **Source Version**: `6c5828f3`  
+> **Source Version**: `040b27f4`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T15:27:35.091Z  
+> **Timestamp**: 2026-11-10T02:06:47.559Z  
 > **Learning ID**: `learn-github-tickernelz-opencode-mem`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tickernelz/opencode-mem](https://github.com/tickernelz/opencode-mem))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T15:27:33.674Z  
+> **Harvest Timestamp**: 2026-11-10T02:06:46.963Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: OpenCode plugin that gives coding agents persistent memory using local vector database
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 1828 stars
+- **Stars / Engagement**: 1844 stars
 
 ---
 
@@ -1017,1218 +1017,333 @@ export function removeFromSet<T>(set: Set<T>, value: T): Set<T> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4a008093` (2026-11-06)
-**Commit Message**: fix(config): deprecate unused profile limits (#498)
+### Incident Patch 1: `e856a02e` (2026-11-09)
+**Commit Message**: feat(ai): add Standard Compute memory provider preset (#502)
 
-Stop advertising legacy no-op settings in generated and example config,
-retain backward-compatible parsing, and document the live injection limits.
-Add regression coverage for templates, legacy files and profile rendering.
+* feat(ai): add Standard Compute memory provider preset
 
-Fixes #492
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `README.md` (modified, +2/-0)
+* fix(ai): resolve preset defaults into runtime CONFIG
+
+Key-only preset configs were marked ready but left memoryModel/memoryApiUrl
+undefined, so auto-capture, dreaming, and profile learning skipped the
+external channel. Materialize shared preset defaults during config build.
+
+---------
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: EyJunge1 <[REDACTED_EMAIL]>
+
+**File**: `.github/i18n/README.ar.md` (modified, +7/-1)
 ```diff
-@@ -316,6 +316,8 @@ Commonly tuned top-level options:
- | `showAutoCaptureToasts` / `showUserProfileToasts` / `showErrorToasts` | `true`                          | Toasts for auto-capture, profile updates and errors.                                                                            |
- | `autoUpdate`                                                          | `true`                          | Clear OpenCode's cached install when a newer npm release is available.                                                          |
+@@ -632,6 +632,12 @@ memory({ mode: "import", inputPath: "./memories.json" });
+   "memoryApiKey": "env://CLOUDGPU_API_KEY",
+   ```
+   عند اختيار هذا المزود، تُرسل مطالبات الالتقاط التلقائي / الملف، واستجابات النموذج، وسياق المحادثة ذي الصلة إلى `https://cloudgpu.app`.
++- `standardcompute`: إعداد مسبق لـ OpenAI-compatible Chat Completions لـ [Standard Compute](https://standardcompute.com). `memoryApiUrl` و`memoryModel` اختياريان — الافتراضي `https://api.stdcmpt.com/v1` و`StandardCompute`. إذا حُذف `memoryApiKey`، يُستخدم `STANDARDCOMPUTE_API_KEY` من البيئة (أنشئ مفتاحًا من https://standardcompute.com/dashboard؛ توثيق API: https://docs.standardcompute.com). مثال:
++  ```jsonc
++  "memoryProvider": "standardcompute",
++  "memoryApiKey": "env://STANDARDCOMPUTE_API_KEY",
++  ```
++  عند اختيار هذا المزود، تُرسل مطالبات الالتقاط التلقائي / الملف، واستجابات النموذج، وسياق المحادثة ذي الصلة إلى `https://api.stdcmpt.com`.
  
-+Profile context limits are set by `userProfileInjectPreferences` (default `5`), `userProfileInjectPatterns` (`5`), and `userProfileInjectWorkflows` (`3`). These control how many items are injected into the LLM conversation, not how many are displayed in the web UI. The legacy `maxProfileItems`, `userProfileDisplayPreferences`, `userProfileDisplayPatterns`, and `userProfileDisplayWorkflows` options are deprecated and have no effect. Existing config files still load, but you can remove these four keys.
-+
- ### Markdown vault backend (`memoryBackend`)
+ استكشاف الأخطاء:
  
- By default memories live only in Turso under `storagePath`. Optionally set a **generic Markdown folder** as the source of truth (Obsidian/Raneto-compatible plain `.md` files — not an Obsidian-specific integration):
+@@ -675,7 +681,7 @@ memory({ mode: "import", inputPath: "./memories.json" });
+ - إذا أبلغ الالتقاط التلقائي أن مزودًا غير متصل، أكّد اسم المزود بـ `opencode providers list` وأعد ذلك المزود في opencode أولًا.
+ - إذا أعاد وكيل أو مزود مخصص نصًا عاديًا بدل مخرجات منظمة/أدوات، اختر نموذجًا/مزودًا آخر أو استخدم أحد أوضاع المزود اليدوية أعلاه.
+ - للنماذج التي ترفض `temperature`، أضف `"memoryTemperature": false` عند استخدام إعداد API اليدوي.
+-- للنماذج التي ترفض استدعاءات الأدوات المفروضة (`tool_choice: "required"`، مثل بعض أوضاع التفكير)، أضف `"forceToolChoice": false` عند استخدام `openai-chat` / `orcarouter` / `atlas-cloud` / `cheaper-inference` / `api-route` / `runcrate` / `cloudgpu`.
++- للنماذج التي ترفض استدعاءات الأدوات المفروضة (`tool_choice: "required"`، مثل بعض أوضاع التفكير)، أضف `"forceToolChoice": false` عند استخدام `openai-chat` / `orcarouter` / `atlas-cloud` / `cheaper-inference` / `api-route` / `runcrate` / `cloudgpu` / `standardcompute`.
+ - لـ `opencodeProvider` / `opencodeModel` (مثل DeepSeek V4 thinking)، ما زال OpenCode يرسل `tool_choice` مفروضًا للمخرجات المنظمة. يعطّل opencode-mem التفكير على الوكيل الداخلي `opencode-mem-structured` (ويعيده في `chat.params` بعد دمج المتغير) حتى يكتمل الالتقاط التلقائي وتعلّم الملف. وكيل الدردشة التفاعلي لديك دون تغيير. إذا فشل الالتقاط ما زال بخطأ تفكير/`tool_choice`، اختر نموذجًا غير تفكير لـ `opencodeModel` أو أعد رجوعًا يدويًا كاملًا (`memoryModel` + `memoryApiUrl`).
+ - **`opencode-claude-auth` / Claude Code:** يستخدم الالتقاط التلقائي OpenCode مع مزودك `anthropic` المصادق. غالبًا ما يتكرر `format: json_schema` المفروض مع Claude-auth، لذا يستخدم opencode-mem مسار **نص-JSON** يحافظ على المصادقة لـ `opencodeProvider: "anthropic"` (بدون أدوات `StructuredOutput` مفروضة؛ تُحلَّل الرد بـ Zod). ما زال مراقب الخطوات يجهض الجلسات الداخلية الجامحة بعد خطوتين. إذا فشل الالتقاط ما زال، أعد رجوع Anthropic بمفتاح API يدوي كامل (`memoryProvider: "anthropic"` + `memoryModel` + `memoryApiUrl` + `memoryApiKey`) — لا يمكن إعادة استخدام Claude Pro/Max OAuth خارج OpenCode.
+ - **المنصات غير المدعومة:** Intel Mac (`darwin/x64`) غير مدعوم — `@tursodatabase/database` وإصدارات `onnxruntime-node` الثابتة (المثبّت `1.31.1`) لا توفّر ربطًا أصليًا لـ x64. استخدم Apple Silicon أو Linux أو Windows، أو نقطة نهاية تضمين بعيدة عبر `embeddingApiUrl` + `embeddingApiKey`. MLX غير مدعوم.
 ```
 
-**File**: `opencode-mem.example.jsonc` (modified, +0/-12)
+**File**: `.github/i18n/README.de.md` (modified, +7/-1)
 ```diff
-@@ -428,15 +428,6 @@
-   // Days before inactive items (all types) are eligible for removal
-   "userProfileStaleDays": 2,
+@@ -634,6 +634,12 @@ Manuelle `memoryProvider`-Modi:
+   "memoryApiKey": "env://CLOUDGPU_API_KEY",
+   ```
+   Wenn dieser Provider gewählt ist, werden Auto-Capture- / Profil-Prompts, Modellantworten und relevanter Gesprächskontext an `https://cloudgpu.app` übertragen.
++- `standardcompute`: OpenAI-kompatibles Chat-Completions-Preset für [Standard Compute](https://standardcompute.com). `memoryApiUrl` und `memoryModel` sind optional — sie defaulten auf `https://api.stdcmpt.com/v1` und `StandardCompute`. Fehlt `memoryApiKey`, wird `STANDARDCOMPUTE_API_KEY` aus der Umgebung verwendet (Key erstellen unter https://standardcompute.com/dashboard; API-Doku: https://docs.standardcompute.com). Beispiel:
++  ```jsonc
++  "memoryProvider": "standardcompute",
++  "memoryApiKey": "env://STANDARDCOMPUTE_API_KEY",
++  ```
++  Wenn dieser Provider gewählt ist, werden Auto-Capture- / Profil-Prompts, Modellantworten und relevanter Gesprächskontext an `https://api.stdcmpt.com` übertragen.
  
--  // Number of preferences shown in UI
--  "userProfileDisplayPreferences": 20,
+ Fehlerbehebung:
+ 
+@@ -677,7 +683,7 @@ Fehlerbehebung:
+ - Meldet Auto-Capture, dass ein Provider nicht verbunden ist, den Provider-Namen mit `opencode providers list` bestätigen und diesen Provider zuerst in opencode konfigurieren.
+ - Gibt ein Proxy oder Custom-Provider Klartext statt strukturierter/Tool-Ausgabe zurück, ein anderes Modell/einen anderen Provider wählen oder einen der manuellen Provider-Modi oben nutzen.
+ - Für Modelle, die `temperature` ablehnen, bei manueller API-Konfiguration `"memoryTemperature": false` hinzufügen.
+-- Für Modelle, die erzwungene Tool-Calls ablehnen (`tool_choice: "required"`, z. B. manche Thinking-Modi), bei `openai-chat` / `orcarouter` / `atlas-cloud` / `cheaper-inference` / `api-route` / `runcrate` / `cloudgpu` `"forceToolChoice": false` hinzufügen.
++- Für Modelle, die erzwungene Tool-Calls ablehnen (`tool_choice: "required"`, z. B. manche Thinking-Modi), bei `openai-chat` / `orcarouter` / `atlas-cloud` / `cheaper-inference` / `api-route` / `runcrate` / `cloudgpu` / `standardcompute` `"forceToolChoice": false` hinzufügen.
+ - Bei `opencodeProvider` / `opencodeModel` (z. B. DeepSeek V4 Thinking) sendet OpenCode weiterhin erzwungenes `tool_choice` für strukturierte Ausgabe. opencode-mem deaktiviert Thinking auf dem internen Agenten `opencode-mem-structured` (und wendet das in `chat.params` nach Variant-Merge erneut an), damit Auto-Capture und Profil-Lernen abschließen können. Dein interaktiver Chat-Agent bleibt unverändert. Scheitert Capture weiterhin mit einem Thinking-/`tool_choice`-Fehler, für `opencodeModel` ein Non-Thinking-Modell wählen oder einen vollständigen manuellen Fallback konfigurieren (`memoryModel` + `memoryApiUrl`).
+ - **`opencode-claude-auth` / Claude Code:** Auto-Capture nutzt OpenCode mit deinem authentifizierten `anthropic`-Provider. Erzwungenes `format: json_schema` loopt oft mit Claude-Auth, daher nutzt opencode-mem einen Auth-erhaltenden **Text-JSON**-Pfad für `opencodeProvider: "anthropic"` (keine erzwungenen `StructuredOutput`-Tools; Antwort wird mit Zod geparst). Ein Step-Watchdog bricht runaway interne Sitzungen nach 2 Schritten weiterhin ab. Scheitert Capture weiterhin, einen vollständigen manuellen Anthropic-API-Key-Fallback konfigurieren (`memoryProvider: "anthropic"` + `memoryModel` + `memoryApiUrl` + `memoryApiKey`) — Claude Pro/Max OAuth lässt sich außerhalb von OpenCode nicht wiederverwenden.
+ - **Nicht unterstützte Plattformen:** Intel Mac (`darwin/x64`) wird nicht unterstützt — `@tursodatabase/database` und feste `onnxruntime-node`-Releases (gepinnt `1.31.1`) liefern kein natives x64-Binding. Apple Silicon, Linux oder Windows nutzen, oder einen Remote-Embedding-Endpoint über `embeddingApiUrl` + `embeddingApiKey`. MLX wird nicht unterstützt.
+```
+
+**File**: `.github/i18n/README.nl.md` (modified, +7/-1)
+```diff
+@@ -638,6 +638,12 @@ Handmatige `memoryProvider`-modi:
+   "memoryApiKey": "env://CLOUDGPU_API_KEY",
+   ```
+   Wanneer deze provider is geselecteerd, worden auto-capture- / profielprompts, modelantwoorden en relevante conversatiecontext verzonden naar `https://cloudgpu.app`.
++- `standardcompute`: OpenAI-compatibel Chat Completions-preset voor [Standard Compute](https://standardcompute.com). `memoryApiUrl` en `memoryModel` zijn optioneel — ze defaulten naar `https://api.stdcmpt.com/v1` en `StandardCompute`. Als `memoryApiKey` wordt weggelaten, wordt `STANDARDCOMPUTE_API_KEY` uit de omgeving gebruikt (maak een key aan via https://standardcompute.com/dashboard; API-docs: https://docs.standardcompute.com). Voorbeeld:
++  ```jsonc
++  "memoryProvider": "standardcompute",
++  "memoryApiKey": "env://STANDARDCOMPUTE_API_KEY",
++  ```
++  Wanneer deze provider is geselecteerd, worden auto-capture- / profielprompts, modelantwoorden en relevante conversatiecontext verzonden naar `https://api.stdcmpt.com`.
+ 
+ Probleemoplossing:
+ 
+@@ -681,7 +687,7 @@ Probleemoplossing:
+ - Als auto-capture meldt dat een provider niet verbonden is, bevestig de providernaam met `opencode providers list` en configureer die provider eerst in opencode.
+ - Als een proxy of custom provider platte tekst teruggeeft in plaats van structured/tool-output, kies een ander model/provider of gebruik een van de handmatige providermodi hierboven.
+ - Voor modellen die `temperature` weigeren, voeg `"memoryTemperature": false` toe bij handmatige API-configuratie.
+-- Voor modellen die geforceerde tool calls weigeren (`tool_choice: "required"`, bijv. sommige thinking-modi), voeg `"forceToolChoice": false` toe bij `openai-chat` / `orcarouter` / `atlas-cloud` / `cheaper-inference` / `api-route` / `runcrate` / `cloudgpu`.
++- Voor modellen die geforceerde tool calls weigeren (`tool_choice: "required"`, bijv. sommige thinking-modi), voeg `"forceToolChoice": false` toe bij `openai-chat` / `orcarouter` / `atlas-cloud` / `cheaper-inference` / `api-route` / `runcrate` / `cloudgpu` / `standardcompute`.
+ - Voor `opencodeProvider` / `opencodeModel` (bijv. DeepSeek V4 thinking) stuurt OpenCode nog steeds geforceerde `tool_choice` voor structured output. opencode-mem schakelt thinking uit op de interne `opencode-mem-structured`-agent (en past dat opnieuw toe in `chat.params` na variant-merge) zodat auto-capture en profiel-leren kunnen voltooien. Je interactieve chatagent blijft ongewijzigd. Als capture nog steeds faalt met een thinking/`tool_choice`-fout, kies een non-thinking model voor `opencodeModel` of configureer een complete handmatige fallback (`memoryModel` + `memoryApiUrl`).
+ - **`opencode-claude-auth` / Claude Code:** auto-capture gebruikt OpenCode met je geauthenticeerde `anthropic`-provider. Geforceerde `format: json_schema` loopt vaak vast met Claude-auth, dus opencode-mem gebruikt een auth-behoudend **text-JSON**-pad voor `opencodeProvider: "anthropic"` (geen geforceerde `StructuredOutput`-tools; antwoord wordt met Zod geparsed). Een step-watchdog breekt runaway interne sessies nog steeds af na 2 stappen. Als capture nog steeds faalt, configureer een complete handmatige Anthropic API-key-fallback (`memoryProvider: "anthropic"` + `memoryModel` + `memoryApiUrl` + `memoryApiKey`) — Claude Pro/Max OAuth kan niet buiten OpenCode worden hergebruikt.
+ - **Niet-ondersteunde platforms:** Intel Mac (`darwin/x64`) wordt niet ondersteund — `@tursodatabase/database` en vaste `onnxruntime-node`-releases (vastgezet `1.31.1`) leveren geen x64 native binding. Gebruik Apple Silicon, Linux of Windows, of een remote embedding-endpoint via `embeddingApiUrl` + `embeddingApiKey`. MLX wordt niet ondersteund.
+```
+
+**File**: `.github/i18n/README.tr.md` (modified, +7/-1)
+```diff
+@@ -636,6 +636,12 @@ Manuel `memoryProvider` modları:
+   "memoryApiKey": "env://CLOUDGPU_API_KEY",
+   ```
+   Bu sağlayıcı seçildiğinde otomatik yakalama / profil prompt’ları, model yanıtları ve ilgili konuşma bağlamı `https://cloudgpu.app` adresine iletilir.
++- `standardcompute`: [Standard Compute](https://standardcompute.com) için OpenAI uyumlu Chat Completions ön ayarı. `memoryApiUrl` ve `memoryModel` isteğe bağlıdır — varsayılanları `https://api.stdcmpt.com/v1` ve `StandardCompute`’tir. `memoryApiKey` atlanırsa ortamdan `STANDARDCOMPUTE_API_KEY` kullanılır (anahtar oluşturma: https://standardcompute.com/dashboard; API belgeleri: https://docs.standardcompute.com). Örnek:
++  ```jsonc
++  "memoryProvider": "standardcompute",
++  "memoryApiKey": "env://STANDARDCOMPUTE_API_KEY",
++  ```
++  Bu sağlayıcı seçildiğinde otomatik yakalama / profil prompt’ları, model yanıtları ve ilgili konuşma bağlamı `https://api.stdcmpt.com` adresine iletilir.
+ 
+ Sorun giderme:
+ 
+@@ -682,7 +688,7 @@ Sorun giderme:
+ - Otomatik yakalama bir sağlayıcının bağlı olmadığını bildirirse, sağlayıcı adını `opencode providers list` ile doğrulayın ve önce o sağlayıcıyı opencode’da yapılandırın.
+ - Bir proxy veya özel sağlayıcı yapılandırılmış/araç çıktısı yerine düz metin döndürürse, başka bir model/sağlayıcı seçin veya yukarıdaki manuel sağlayıcı modlarından birini kullanın.
+ - `temperature` reddeden modeller için manuel API yapılandırması kullanırken `"memoryTemperature": false` ekleyin.
+-- Zorlanmış araç çağrılarını (`tool_choice: "required"`, örn. bazı düşünme modları) reddeden modeller için `openai-chat` / `orcarouter` / `atlas-cloud` / `cheaper-inference` / `api-route` / `runcrate` / `cloudgpu` kullanırken `"forceToolChoice": false` ekleyin.
++- Zorlanmış araç çağrılarını (`tool_choice: "required"`, örn. bazı düşünme modları) reddeden modeller için `openai-chat` / `orcarouter` / `atlas-cloud` / `cheaper-inference` / `api-route` / `runcrate` / `cloudgpu` / `standardcompute` kullanırken `"forceToolChoice": false` ekleyin.
+ - `opencodeProvider` / `opencodeModel` için (örn. DeepSeek V4 thinking), OpenCode yapılandırılmış çıktı için hâlâ zorlanmış `tool_choice` gönderir. opencode-mem dahili `opencode-mem-structured` ajanında düşünmeyi devre dışı bırakır (ve varyant birleştirmesinden sonra bunu `chat.params` içinde yeniden uygular); böylece otomatik yakalama ve profil öğrenme tamamlanabilir. Etkileşimli sohbet ajanınız değişmez. Yakalama hâlâ bir thinking/`tool_choice` hatasıyla başarısız olursa, `opencodeModel` için düşünmeyen bir model seçin veya eksiksiz bir manuel yedek yapılandırın (`memoryModel` + `memoryApiUrl`).
+ - **`opencode-claude-auth` / Claude Code:** otomatik yakalama, kimlik doğrulanmış `anthropic` sağlayıcınızla OpenCode kullanır. Zorlanmış `format: json_schema` Claude-auth ile sık sık döngüye girer; bu nedenle opencode-mem `opencodeProvider: "anthropic"` için kimlik doğrulamayı koruyan bir **metin-JSON** yolu kullanır (zorlanmış `StructuredOutput` araçları yok; yanıt Zod ile ayrıştırılır). Bir adım watchdog’u hâlâ 2 adımdan sonra kaçak dahili oturumları iptal eder. Yakalama hâlâ başarısız olursa, eksiksiz bir manuel Anthropic API anahtarı yedeği yapılandırın (`memoryProvider: "anthropic"` + `memoryModel` + `memoryApiUrl` + `memoryApiKey`) — Claude Pro/Max OAuth OpenCode dışında yeniden kullanılamaz.
+ - **Desteklenmeyen platformlar:** Intel Mac (`darwin/x64`) desteklenmez — `@tursodatabase/database` ve sabit `onnxruntime-node` sürümleri (sabitlenmiş `1.31.1`) x64 yerel bağlayıcı yayınlamaz. Apple Silicon, Linux veya Windows kullanın; ya da `embeddingApiUrl` + `embeddingApiKey` ile uzak bir embedding uç noktası. MLX desteklenmez.
+```
+
+**File**: `.github/i18n/README.zh.md` (modified, +7/-1)
+```diff
+@@ -607,6 +607,12 @@ memory({ mode: "import", inputPath: "./memories.json" });
+   "memoryApiKey": "env://CLOUDGPU_API_KEY",
+   ```
+   选择此提供商时，自动捕获 / 画像提示、模型响应与相关对话上下文会传输到 `https://cloudgpu.app`。
++- `standardcompute`：面向 [Standard Compute](https://standardcompute.com) 的 OpenAI 兼容 Chat Completions 预设。`memoryApiUrl` 与 `memoryModel` 可选 — 它们默认为 `https://api.stdcmpt.com/v1` 与 `StandardCompute`。若省略 `memoryApiKey`，则使用环境中的 `STANDARDCOMPUTE_API_KEY`（在 https://standardcompute.com/dashboard 创建密钥；API 文档：https://docs.standardcompute.com）。示例：
++  ```jsonc
++  "memoryProvider": "standardcompute",
++  "memoryApiKey": "env://STANDARDCOMPUTE_API_KEY",
++  ```
++  选择此提供商时，自动捕获 / 画像提示、模型响应与相关对话上下文会传输到 `https://api.stdcmpt.com`。
+ 
+ 故障排除：
+ 
+@@ -619,7 +625,7 @@ memory({ mode: "import", inputPath: "./memories.json" });
+ - 若自动捕获报告提供商未连接，请用 `opencode providers list` 确认提供商名称，并先在 opencode 中配置该提供商。
+ - 若代理或自定义提供商返回纯文本而非结构化/工具输出，请选择另一模型/提供商，或使用上方手动提供商模式之一。
+ - 对于拒绝 `temperature` 的模型，在使用手动 API 配置时添加 `"memoryTemperature": false`。
+-- 对于拒绝强制工具调用（`tool_choice: "required"`，例如某些思考模式）的模型，在使用 `openai-chat` / `orcarouter` / `atlas-cloud` / `cheaper-inference` / `api-route` / `runcrate` / `cloudgpu` 时添加 `"forceToolChoice": false`。
++- 对于拒绝强制工具调用（`tool_choice: "required"`，例如某些思考模式）的模型，在使用 `openai-chat` / `orcarouter` / `atlas-cloud` / `cheaper-inference` / `api-route` / `runcrate` / `cloudgpu` / `standardcompute` 时添加 `"forceToolChoice": false`。
+ - 对于 `opencodeProvider` / `opencodeModel`（例如 DeepSeek V4 thinking），OpenCode 仍会为结构化输出发送强制的 `tool_choice`。opencode-mem 在内部 `opencode-mem-structured` 代理上禁用思考（并在变体合并后在 `chat.params` 中重新应用），以便自动捕获与画像学习可以完成。你的交互式聊天代理不变。若捕获仍因 thinking/`tool_choice` 错误失败，请为 `opencodeModel` 选择非思考模型，或配置完整的手动回退（`memoryModel` + `memoryApiUrl`）。
+ - **`opencode-claude-auth` / Claude Code：** 自动捕获使用带有你已认证 `anthropic` 提供商的 OpenCode。强制的 `format: json_schema` 常与 Claude-auth 循环，因此 opencode-mem 对 `opencodeProvider: "anthropic"` 使用保留认证的 **text-JSON** 路径（无强制 `StructuredOutput` 工具；用 Zod 解析回复）。步骤看门狗仍会在 2 步后中止失控的内部会话。若捕获仍失败，请配置完整的手动 Anthropic API 密钥回退（`memoryProvider: "anthropic"` + `memoryModel` + `memoryApiUrl` + `memoryApiKey`）— Claude Pro/Max OAuth 无法在 OpenCode 外重用。
+ - **不支持的平台：** 不支持 Intel Mac（`darwin/x64`） — `@tursodatabase/database` 与固定版本的 `onnxruntime-node` 发行版（固定 `1.31.1`）不提供 x64 原生绑定。请使用 Apple Silicon、Linux 或 Windows，或通过 `embeddingApiUrl` + `embeddingApiKey` 使用远程嵌入端点。不支持 MLX。
+```
+
+**File**: `README.md` (modified, +7/-1)
+```diff
+@@ -695,6 +695,12 @@ Manual `memoryProvider` modes:
+   "memoryApiKey": "env://CLOUDGPU_API_KEY",
+   ```
+   When this provider is selected, auto-capture / profile prompts, model responses, and relevant conversation context are transmitted to `https://cloudgpu.app`.
++- `standardcompute`: OpenAI-compatible Chat Completions preset for [Standard Compute](https://standardcompute.com). `memoryApiUrl` and `memoryModel` are optional — they default to `https://api.stdcmpt.com/v1` and `StandardCompute`. If `memoryApiKey` is omitted, `STANDARDCOMPUTE_API_KEY` from the environment is used (create a key at https://standardcompute.com/dashboard; API docs: https://docs.standardcompute.com). Example:
++  ```jsonc
++  "memoryProvider": "standardcompute",
++  "memoryApiKey": "env://STANDARDCOMPUTE_API_KEY",
++  ```
++  When this provider is selected, auto-capture / profile prompts, model responses, and relevant conversation context are transmitted to `https://api.stdcmpt.com`.
+ 
+ Troubleshooting:
+ 
+@@ -738,7 +744,7 @@ Troubleshooting:
+ - If auto-capture reports that a provider is not connected, confirm the provider name with `opencode providers list` and configure that provider in opencode first.
+ - If a proxy or custom provider returns plain text instead of structured/tool output, choose another model/provider or use one of the manual provider modes above.
+ - For models that reject `temperature`, add `"memoryTemperature": false` when using manual API configuration.
+-- For models that reject forced tool calls (`tool_choice: "required"`, e.g. some thinking modes), add `"forceToolChoice": false` when using `openai-chat` / `orcarouter` / `atlas-cloud` / `cheaper-inference` / `api-route` / `runcrate` / `cloudgpu`.
++- For models that reject forced tool calls (`tool_choice: "required"`, e.g. some thinking modes), add `"forceToolChoice": false` when using `openai-chat` / `orcarouter` / `atlas-cloud` / `cheaper-inference` / `api-route` / `runcrate` / `cloudgpu` / `standardcompute`.
+ - For `opencodeProvider` / `opencodeModel` (e.g. DeepSeek V4 thinking), OpenCode still sends forced `tool_choice` for structured output. opencode-mem disables thinking on the internal `opencode-mem-structured` agent (and re-applies that in `chat.params` after variant merge) so auto-capture and profile learning can complete. Your interactive chat agent is unchanged. If capture still fails with a thinking/`tool_choice` error, pick a non-thinking model for `opencodeModel` or configure a complete manual fallback (`memoryModel` + `memoryApiUrl`).
+ - **`opencode-claude-auth` / Claude Code:** auto-capture uses OpenCode with your authenticated `anthropic` provider. Forced `format: json_schema` often loops with Claude-auth, so opencode-mem uses an auth-preserving **text-JSON** path for `opencodeProvider: "anthropic"` (no forced `StructuredOutput` tools; reply is parsed with Zod). A step watchdog still aborts runaway internal sessions after 2 steps. If capture still fails, configure a complete manual Anthropic API-key fallback (`memoryProvider: "anthropic"` + `memoryModel` + `memoryApiUrl` + `memoryApiKey`) — Claude Pro/Max OAuth cannot be reused outside OpenCode.
+ - **Unsupported platforms:** Intel Mac (`darwin/x64`) is not supported — `@tursodatabase/database` and fixed `onnxruntime-node` releases (pinned `1.31.1`) ship no x64 native binding. Use Apple Silicon, Linux, or Windows, or a remote embedding endpoint via `embeddingApiUrl` + `embeddingApiKey`. MLX is not supported.
+```
+
+**File**: `opencode-mem.example.jsonc` (modified, +12/-2)
+```diff
+@@ -221,7 +221,7 @@
+   // Faster opencode failover: also lower "opencodeTimeoutMs" (default 90000).
+   // "autoCaptureProviderOrder": "external-first",
+ 
+-  // Provider type: "api-route" | "atlas-cloud" | "cheaper-inference" | "openai-chat" | "openai-responses" | "anthropic" | "minimax" | "orcarouter" | "runcrate" | "cloudgpu"
++  // Provider type: "api-route" | "atlas-cloud" | "cheaper-inference" | "openai-chat" | "openai-responses" | "anthropic" | "minimax" | "orcarouter" | "runcrate" | "cloudgpu" | "standardcompute"
+   // Note: "openai-chat" is a generic OpenAI API-compatible mode.
+   // Any service that follows the OpenAI Chat Completions API can use it via custom "memoryApiUrl".
+   "memoryProvider": "openai-chat",
+@@ -331,6 +331,16 @@
+   //   // conversation context are sent to cloudgpu.app.
+   //   // "memoryModel": "deepseek-v4.1-flash"
+ 
++  // Standard Compute (OpenAI-compatible Chat Completions preset, with session support):
++  //   "memoryProvider": "standardcompute"
++  //   "memoryApiKey": "env://STANDARDCOMPUTE_API_KEY"
++  //   // memoryApiUrl and memoryModel are optional — they default to
++  //   // https://api.stdcmpt.com/v1 and "StandardCompute".
++  //   // Create a key at https://standardcompute.com/dashboard (docs: https://docs.standardcompute.com).
++  //   // When selected, auto-capture/profile prompts, responses, and relevant
++  //   // conversation context are sent to api.stdcmpt.com.
++  //   // "memoryModel": "StandardCompute"
++
+   // Groq (OpenAI-compatible, use openai-chat provider):
+   //   "memoryProvider": "openai-chat"
+   //   "memoryModel": "llama-3.3-70b-versatile"
+@@ -359,7 +369,7 @@
+   // Set to false and add "memoryTemperature": false in config when using such models
+   "memoryTemperature": 0.3,
+ 
+-  // Force tool calls on openai-chat / orcarouter / atlas-cloud / cheaper-inference / api-route / runcrate / cloudgpu (tool_choice: "required"). Default true.
++  // Force tool calls on openai-chat / orcarouter / atlas-cloud / cheaper-inference / api-route / runcrate / cloudgpu / standardcompute (tool_choice: "required"). Default true.
+   // Some thinking/reasoning models reject forced tool choice — set false to fall back to "auto":
+   // "forceToolChoice": false,
+ 
+```
+
+**File**: `src/config.ts` (modified, +43/-20)
+```diff
+@@ -4,6 +4,10 @@ import { homedir } from "node:os";
+ import { stripJsoncComments } from "./services/jsonc.js";
+ import { resolveSecretValue } from "./services/secret-resolver.js";
+ import { isPlaceholderApiKey } from "./services/ai/api-key-placeholder.js";
++import {
++  isMemoryProviderPreset,
++  resolveMemoryProviderPresetDefaults,
++} from "./services/ai/memory-provider-presets.js";
+ import { getDefaultInjectionMarkers } from "./services/injected-prompt-filter.js";
+ 
+ const CONFIG_DIR = join(homedir(), ".config", "opencode");
+@@ -112,7 +116,8 @@ interface OpenCodeMemConfig {
+     | "minimax"
+     | "orcarouter"
+     | "runcrate"
+-    | "cloudgpu";
++    | "cloudgpu"
++    | "standardcompute";
+   memoryModel?: string;
+   memoryApiUrl?: string;
+   memoryApiKey?: string;
+@@ -325,7 +330,8 @@ const DEFAULTS: Required<
+     | "minimax"
+     | "orcarouter"
+     | "runcrate"
+-    | "cloudgpu";
++    | "cloudgpu"
++    | "standardcompute";
+   memoryTemperature?: number | false;
+   forceToolChoice?: boolean;
+   memoryExtraParams?: Record<string, unknown>;
+@@ -651,7 +657,7 @@ const CONFIG_TEMPLATE = `{
+   // "updateOnCaptureSimilarityThreshold": 0.75,
+   // "updateOnCaptureMaxCandidates": 5,
+   
+-  // Provider type: "api-route" | "atlas-cloud" | "cheaper-inference" | "openai-chat" | "openai-responses" | "anthropic" | "minimax" | "orcarouter" | "runcrate" | "cloudgpu"
++  // Provider type: "api-route" | "atlas-cloud" | "cheaper-inference" | "openai-chat" | "openai-responses" | "anthropic" | "minimax" | "orcarouter" | "runcrate" | "cloudgpu" | "standardcompute"
+   // Note: "openai-chat" is a generic OpenAI API-compatible mode.
+   // Any service that follows the OpenAI Chat Completions API can use it via custom "memoryApiUrl".
+   "memoryProvider": "openai-chat",
+@@ -761,6 +767,16 @@ const CONFIG_TEMPLATE = `{
+   //   // conversation context are sent to cloudgpu.app.
+   //   // "memoryModel": "deepseek-v4.1-flash"
+ 
++  // Standard Compute (OpenAI-compatible Chat Completions preset, with session support):
++  //   "memoryProvider": "standardcompute"
++  //   "memoryApiKey": "env://STANDARDCOMPUTE_API_KEY"
++  //   // memoryApiUrl and memoryModel are optional — they default to
++  //   // https://api.stdcmpt.com/v1 and "StandardCompute".
++  //   // Create a key at https://standardcompute.com/dashboard (docs: https://docs.standardcompute.com).
++  //   // When selected, auto-capture/profile prompts, responses, and relevant
++  //   // conversation context are sent to api.stdcmpt.com.
++  //   // "memoryModel": "StandardCompute"
++
+   // Groq (OpenAI-compatible, use openai-chat provider):
+   //   "memoryProvider": "openai-chat"
+   //   "memoryModel": "llama-3.3-70b-versatile"
+@@ -796,7 +812,7 @@ const CONFIG_TEMPLATE = `{
+   // Set to false and add "memoryTemperature": false in config when using such models
+   "memoryTemperature": 0.3,
+ 
+-  // Force tool calls on openai-chat / orcarouter / atlas-cloud / cheaper-inference / api-route / runcrate / cloudgpu (tool_choice: "required"). Default true.
++  // Force tool calls on openai-chat / orcarouter / atlas-cloud / cheaper-inference / api-route / runcrate / cloudgpu / standardcompute (tool_choice: "required"). Default true.
+   // Some thinking/reasoning models reject forced tool choice — set false to fall back to "auto":
+   // "forceToolChoice": false,
+ 
+@@ -1274,7 +1290,8 @@ function buildConfig(fileConfig: OpenCodeMemConfig) {
+     | "minimax"
+     | "orcarouter"
+     | "runcrate"
+-    | "cloudgpu";
++    | "cloudgpu"
++    | "standardcompute";
+   const memoryApiKey =
+     resolveSecretValue(fileConfig.memoryApiKey) ??
+     (memoryProvider === "atlas-cloud"
+@@ -1287,7 +1304,19 @@ function buildConfig(fileConfig: OpenCodeMemConfig) {
+             ? process.env.RUNCRATE_API_KEY
+             : memoryProvider === "cloudgpu"
+               ? process.env.CLOUDGPU_API_KEY
+-              : undefined);
++              : memoryProvider === "standardcompute"
++                ? process.env.STANDARDCOMPUTE_API_KEY
++                : undefined);
++  // Preset providers advertise optional memoryModel / memoryApiUrl in docs and
++  // factory code, but auto-capture / dreaming / profile learning gate on the
++  // resolved CONFIG fields. Fill preset defaults here so key-only configs work.
++  const presetDefaults = resolveMemoryProviderPresetDefaults(memoryProvider);
++  const memoryModel =
++    (typeof fileConfig.memoryModel === "string" ? fileConfig.memoryModel.trim() : "") ||
++    presetDefaults?.model;
++  const memoryApiUrl =
++    (typeof fileConfig.memoryApiUrl === "string" ? fileConfig.memoryApiUrl.trim() : "") ||
++    presetDefaults?.apiUrl;
+   const embeddingModel = fileConfig.embeddingModel ?? DEFAULTS.embeddingModel;
+   const embeddingPreset = getEmbeddingModelPreset(embeddingModel);
+   const embeddingDimensions =
+@@ -1382,8 +1411,8 @@ function buildConfig(fileConfig: OpenCodeMemConfig) {
+       fileConfig.updateOnCaptureMaxCandidates
+     ),
+     memoryProvider,
+-    memoryModel: fileConfig.memoryModel,
 -
--  // Number of patterns shown in UI
--  "userProfileDisplayPatterns": 15,
--
--  // Number of workflows shown in UI
--  "userProfileDisplayWorkflows": 10,
--
-   // Number of preferences injected into LLM conversation context
-   // Keep this small — the strongest signals are enough; more dilute LLM attention
-   "userProfileInjectPreferences": 5,
-@@ -487,9 +478,6 @@
-   // Maximum number of memories to return in search results
-   "maxMemories": 10,
- 
--  // Maximum profile items considered for injection / ranking
--  "maxProfileItems": 5,
--
-   // Prefix for user/project container tags
-   "containerTagPrefix": "opencode",
- 
-```
-
-**File**: `src/config.ts` (modified, +28/-9)
-```diff
-@@ -72,6 +72,10 @@ interface OpenCodeMemConfig {
-   embeddingIdleTimeoutMs?: number;
-   similarityThreshold?: number;
-   maxMemories?: number;
-+  /**
-+   * @deprecated No effect. Use userProfileInjectPreferences, userProfileInjectPatterns,
-+   * and userProfileInjectWorkflows to limit injected profile context.
-+   */
-   maxProfileItems?: number;
-   injectProfile?: boolean;
-   containerTagPrefix?: string;
-@@ -151,8 +155,17 @@ interface OpenCodeMemConfig {
-   deduplicationSimilarityThreshold?: number;
-   userProfileAnalysisInterval?: number;
-   userProfileMaxContextBytes?: number;
-+  /**
-+   * @deprecated No effect on the UI. Use userProfileInjectPreferences for LLM context only.
-+   */
-   userProfileDisplayPreferences?: number;
-+  /**
-+   * @deprecated No effect on the UI. Use userProfileInjectPatterns for LLM context only.
-+   */
-   userProfileDisplayPatterns?: number;
-+  /**
-+   * @deprecated No effect on the UI. Use userProfileInjectWorkflows for LLM context only.
-+   */
-   userProfileDisplayWorkflows?: number;
-   userProfileStaleDays?: number;
-   userProfileInjectPreferences?: number;
-@@ -339,6 +352,7 @@ const DEFAULTS: Required<
-   embeddingIdleTimeoutMs: 0,
-   similarityThreshold: 0.6,
-   maxMemories: 10,
-+  // Deprecated compatibility value; not used for profile selection.
-   maxProfileItems: 5,
-   injectProfile: true,
-   containerTagPrefix: "opencode",
-@@ -362,6 +376,7 @@ const DEFAULTS: Required<
-   deduplicationSimilarityThreshold: 0.9,
-   userProfileAnalysisInterval: 10,
-   userProfileMaxContextBytes: 32768,
-+  // Deprecated compatibility values; not used by the UI.
-   userProfileDisplayPreferences: 20,
-   userProfileDisplayPatterns: 15,
-   userProfileDisplayWorkflows: 10,
-@@ -845,15 +860,6 @@ const CONFIG_TEMPLATE = `{
-   // Days before inactive items (all types) are eligible for removal
-   "userProfileStaleDays": 2,
- 
--  // Number of preferences shown in UI
--  "userProfileDisplayPreferences": 20,
--  
--  // Number of patterns shown in UI
--  "userProfileDisplayPatterns": 15,
--  
--  // Number of workflows shown in UI
--  "userProfileDisplayWorkflows": 10,
--  
-   // Number of preferences injected into LLM conversation context
-   // Keep this small — the strongest signals are enough; more dilute LLM attention
-   "userProfileInjectPreferences": 5,
-@@ -1345,6 +1351,10 @@ function buildConfig(fileConfig: OpenCodeMemConfig) {
-       : undefined,
-     similarityThreshold: fileConfig.similarityThreshold ?? DEFAULTS.similarityThreshold,
-     maxMemories: fileConfig.maxMemories ?? DEFAULTS.maxMemories,
-+    /**
-+     * @deprecated No effect. Use userProfileInjectPreferences, userProfileInjectPatterns,
-+     * and userProfileInjectWorkflows to limit injected profile context.
-+     */
-     maxProfileItems: fileConfig.maxProfileItems ?? DEFAULTS.maxProfileItems,
-     injectProfile: fileConfig.injectProfile ?? DEFAULTS.injectProfile,
-     containerTagPrefix: fileConfig.containerTagPrefix ?? DEFAULTS.containerTagPrefix,
-@@ -1407,10 +1417,19 @@ function buildConfig(fileConfig: OpenCodeMemConfig) {
-       fileConfig.userProfileAnalysisInterval ?? DEFAULTS.userProfileAnalysisInterval,
-     userProfileMaxContextBytes:
-       fileConfig.userProfileMaxContextBytes ?? DEFAULTS.userProfileMaxContextBytes,
-+    /**
-+     * @deprecated No effect on the UI. Use userProfileInjectPreferences for LLM context only.
-+     */
-     userProfileDisplayPreferences:
-       fileConfig.userProfileDisplayPreferences ?? DEFAULTS.userProfileDisplayPreferences,
-+    /**
-+     * @deprecated No effect on the UI. Use userProfileInjectPatterns for LLM context only.
-+     */
-     userProfileDisplayPatterns:
-       fileConfig.userProfileDisplayPatterns ?? DEFAULTS.userProfileDisplayPatterns,
-+    /**
-+     * @deprecated No effect on the UI. Use userProfileInjectWorkflows for LLM context only.
-+     */
-     userProfileDisplayWorkflows:
-       fileConfig.userProfileDisplayWorkflows ?? DEFAULTS.userProfileDisplayWorkflows,
-     userProfileInjectPreferences:
-```
-
-**File**: `tests/profile-config-deprecation.test.ts` (added, +124/-0)
-```diff
-@@ -0,0 +1,124 @@
-+import { afterEach, describe, expect, it } from "bun:test";
-+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
-+import { tmpdir } from "node:os";
-+import { join } from "node:path";
-+import { stripJsoncComments } from "../src/services/jsonc.js";
-+
-+const tempDirs: string[] = [];
-+const legacyKeys = [
-+  "maxProfileItems",
-+  "userProfileDisplayPreferences",
-+  "userProfileDisplayPatterns",
-+  "userProfileDisplayWorkflows",
-+];
-+const injectionDefaults = {
-+  userProfileInjectPreferences: 5,
-+  userProfileInjectPatterns: 5,
-+  userProfileInjectWorkflows: 3,
-+};
-+
-+afterEach(() => {
-+  for (const dir of tempDirs.splice(0)) rmSync(dir, { recursive: true, force: true });
-+});
-+
-+function loadProfileConfig(settings?: Record<string, number>) {
-+  const home = mkdtempSync(join(tmpdir(), "opencode-mem-profile-config-"));
-+  tempDirs.push(home);
-+  const configDir = join(home, ".config", "opencode");
-+  const configPath = join(configDir, "opencode-mem.jsonc");
-+  if (settings) {
-+    mkdirSync(configDir, { recursive: true });
-+    writeFileSync(configPath, JSON.stringify(settings));
-+  }
-+  const configUrl = new URL("../src/config.ts", import.meta.url).href;
-+  const managerUrl = new URL(
-+    "../src/services/user-profile/user-profile-manager.ts",
-+    import.meta.url
-+  ).href;
-+  const contextUrl = new URL("../src/services/user-profile/profile-context.ts", import.meta.url)
-+    .href;
-+  const loggerUrl = new URL("../src/services/logger.ts", import.meta.url).href;
-+  const scriptPath = join(home, "scenario.mjs");
-+  writeFileSync(
-+    scriptPath,
-+    `import { mock } from "bun:test";
-+const { CONFIG } = await import(${JSON.stringify(configUrl)});
-+const items = (kind) => Array.from({ length: 8 }, (_, i) => ({
-+  category: kind + i, description: kind + i, confidence: 0.9,
-+  frequency: 1, lastSeen: Date.now(),
-+}));
-+mock.module(${JSON.stringify(managerUrl)}, () => ({ userProfileManager: {
-+  getActiveProfile: async () => ({ profileData: JSON.stringify({
-+    preferences: items("preference"), patterns: items("pattern"), workflows: items("workflow"),
-+  }) }),
-+} }));
-+mock.module(${JSON.stringify(loggerUrl)}, () => ({ log: () => {} }));
-+const { getUserProfileContext } = await import(${JSON.stringify(contextUrl)});
-+console.log(JSON.stringify({ config: CONFIG, context: await getUserProfileContext("fixture") }));`
-+  );
-+  const result = Bun.spawnSync([process.execPath, "run", scriptPath], {
-+    cwd: home,
-+    env: { ...process.env, HOME: home, USERPROFILE: home },
-+    stdout: "pipe",
-+    stderr: "pipe",
-+  });
-+  if (result.exitCode !== 0) throw new Error(result.stderr.toString());
-+  const output = JSON.parse(result.stdout.toString().trim().split("\n").at(-1)!) as {
-+    config: Record<string, number>;
-+    context: string;
-+  };
-+  return { ...output, file: readFileSync(configPath, "utf8") };
-+}
-+
-+function expectInjectionCounts(
-+  context: string,
-+  preferences: number,
-+  patterns: number,
-+  workflows: number
-+) {
-+  expect(context.match(/^- \[preference/gm) ?? []).toHaveLength(preferences);
-+  expect(context.match(/^- \[pattern/gm) ?? []).toHaveLength(patterns);
-+  expect(context.match(/^- workflow/gm) ?? []).toHaveLength(workflows);
-+}
-+
-+describe("deprecated profile configuration", () => {
-+  it("omits no-op options from newly generated config and retains injection defaults", () => {
-+    const { file, config, context } = loadProfileConfig();
-+    const template = JSON.parse(stripJsoncComments(file));
-+    for (const key of legacyKeys) expect(template).not.toHaveProperty(key);
-+    expect(template).toMatchObject(injectionDefaults);
-+    expect(config).toMatchObject(injectionDefaults);
-+    expectInjectionCounts(context, 5, 5, 3);
-+  });
-+
-+  it("omits no-op options from the example config and retains injection defaults", () => {
-+    const example = JSON.parse(
-+      stripJsoncComments(
-+        readFileSync(new URL("../opencode-mem.example.jsonc", import.meta.url), "utf8")
-+      )
-+    );
-+    for (const key of legacyKeys) expect(example).not.toHaveProperty(key);
-+    expect(example).toMatchObject(injectionDefaults);
-+  });
-+
-+  it("keeps existing legacy settings without rewriting files or changing injection", () => {
-+    const settings = Object.fromEntries(legacyKeys.map((key) => [key, 1]));
-+    const { config, file, context } = loadProfileConfig(settings);
-+    expect(config).toMatchObject(settings);
-+    expect(file).toBe(JSON.stringify(settings));
-+    expect(config).toMatchObject(injectionDefaults);
-+    expectInjectionCounts(context, 5, 5, 3);
-+  });
-+
-+  it("uses the live injection limits independently of legacy settings", () => {
-+    const settings = {
-+      ...Object.fromEntries(legacyKeys.map((key) => [key, 99])),
-+      userProfileInjectPreferences: 2,
-+      userProfileInjectPatterns: 3,
-+      userProfileInjectWorkflows: 1,
-+    };
-+    const { config, context } = loadProfileConfig(settings);
-+    expect(config).toMatchObjec
-```
-
----
-
-### Incident Patch 2: `ffc484cd` (2026-11-06)
-**Commit Message**: fix(dreaming): allow manual runs when disabled and add LLM fallback (#499)
-
-Keep dreaming.enabled as a scheduler-only gate so the Dream button works
-in manual-only mode, and recover empty OpenCode structured output via a
-variant-less retry plus the external memoryModel channel like auto-capture.
-
-Refs: #491 #493
-
-**File**: `README.md` (modified, +7/-4)
-```diff
-@@ -404,13 +404,16 @@ memories. Prefixes stay opt-in by default.
- 
- Opt-in background pass that finds **related** memories (via `dreaming.relatedThreshold`,
- default `0.75`, independent of `deduplicationSimilarityThreshold`), asks the configured
--`opencodeProvider` / `opencodeModel` to `merge`, `update`, `supersede`, `keep`, or `flag`
-+`opencodeProvider` / `opencodeModel` (with `memoryModel` / `memoryApiUrl` as fallback,
-+same channel order as auto-capture) to `merge`, `update`, `supersede`, `keep`, or `flag`
- contradictions, and soft-deletes superseded rows into recoverable trash. Pinned memories
- are never touched. Set `dreaming.crossProject: true` (or `memory.defaultScope:
- "all-projects"`) to group across project tags; user-scope stays separate. Configure under
--`dreaming` in `opencode-mem.jsonc` (`enabled` default `false`). The web UI exposes
--**Trash** (restore) and **Dream** (manual run). Soft-deleted rows are hard-purged after
--`dreaming.trashRetentionDays` during normal cleanup.
-+`dreaming` in `opencode-mem.jsonc`. `dreaming.enabled` (default `false`) gates only the
-+scheduled background run — the web UI **Dream** button and `POST /api/dreaming/run` still
-+work when it is false (manual-only mode). Soft-deleted rows are hard-purged after
-+`dreaming.trashRetentionDays` during normal cleanup. The web UI also exposes **Trash**
-+(restore).
- 
- ### Choosing / configuring embeddings
- 
-```
-
-**File**: `src/config.ts` (modified, +4/-0)
-```diff
-@@ -257,6 +257,8 @@ interface OpenCodeMemConfig {
-   /**
-    * Opt-in background memory consolidation ("dreaming"): merge near-duplicate
-    * memories via the configured LLM and soft-delete superseded rows into trash.
-+   * `enabled` controls only the scheduled background pass; the web UI / API
-+   * manual trigger still runs when false.
-    */
-   dreaming?: {
-     enabled?: boolean;
-@@ -941,6 +943,8 @@ const CONFIG_TEMPLATE = `{
- 
-   // Opt-in background consolidation: merge/update/supersede related memories
-   // via the configured LLM and soft-delete superseded rows into trash.
-+  // "enabled" gates only the scheduler; the Dream button / POST /api/dreaming/run
-+  // still work when false (manual-only mode).
-   "dreaming": {
-     "enabled": false,
-     "intervalHours": 24,
-```
-
-**File**: `src/services/api-handlers.ts` (modified, +2/-6)
-```diff
-@@ -1057,12 +1057,8 @@ export async function handleRunDreaming(
-   >
- > {
-   try {
--    if (!CONFIG.dreaming.enabled) {
--      return {
--        success: false,
--        error: "Dreaming is disabled. Set dreaming.enabled to true in opencode-mem.jsonc.",
--      };
--    }
-+    // Manual runs are always allowed. `dreaming.enabled` only gates the
-+    // background scheduler (see DreamingService.shouldRun / maybeRun).
-     const { dreamingService } = await import("./dreaming-service.js");
-     const result = await dreamingService.run(directory);
-     return { success: true, data: result };
-```
-
-**File**: `src/services/dreaming-service.ts` (modified, +179/-16)
-```diff
-@@ -127,6 +127,172 @@ const dreamingActionSchema = z.object({
-   reason: z.string().optional(),
- });
- 
-+type DreamingAction = z.infer<typeof dreamingActionSchema>;
-+type DreamingChannel = "opencode" | "external";
-+
-+const DREAMING_SYSTEM_PROMPT =
-+  "You are a careful memory consolidation assistant. Return only structured JSON.";
-+
-+const dreamingToolSchema = {
-+  type: "function" as const,
-+  function: {
-+    name: "consolidate_memories",
-+    description: "Decide how to consolidate a related memory group",
-+    parameters: {
-+      type: "object",
-+      properties: {
-+        action: {
-+          type: "string",
-+          enum: ["merge", "update", "supersede", "keep", "flag"],
-+        },
-+        content: { type: "string" },
-+        keepId: { type: "string" },
-+        dropIds: { type: "array", items: { type: "string" } },
-+        reason: { type: "string" },
-+      },
-+      required: ["action"],
-+    },
-+  },
-+};
-+
-+function isOpencodeDreamingConfigured(): boolean {
-+  return Boolean(CONFIG.opencodeProvider && CONFIG.opencodeModel && getV2Client());
-+}
-+
-+function isExternalDreamingConfigured(): boolean {
-+  return Boolean(CONFIG.memoryModel && CONFIG.memoryApiUrl);
-+}
-+
-+function isDreamingChannelConfigured(channel: DreamingChannel): boolean {
-+  return channel === "opencode" ? isOpencodeDreamingConfigured() : isExternalDreamingConfigured();
-+}
-+
-+function dreamingChannelOrder(): DreamingChannel[] {
-+  const order = CONFIG.autoCaptureProviderOrder ?? "opencode-first";
-+  return order === "external-first" ? ["external", "opencode"] : ["opencode", "external"];
-+}
-+
-+function isEmptyStructuredOutputError(error: unknown): boolean {
-+  const message = error instanceof Error ? error.message : String(error);
-+  return /no structured output/i.test(message);
-+}
-+
-+function parseDreamingAction(data: unknown): DreamingAction {
-+  const parsed = dreamingActionSchema.safeParse(data);
-+  if (!parsed.success) {
-+    throw new Error(`dreaming: invalid consolidation decision (${parsed.error.message})`);
-+  }
-+  return parsed.data;
-+}
-+
-+function channelLabel(channel: DreamingChannel): string {
-+  if (channel === "opencode") {
-+    const variant = CONFIG.opencodeVariant ? ` variant=${CONFIG.opencodeVariant}` : "";
-+    return `opencode ${CONFIG.opencodeProvider}/${CONFIG.opencodeModel}${variant}`;
-+  }
-+  return `external ${CONFIG.memoryProvider}/${CONFIG.memoryModel}`;
-+}
-+
-+async function decideViaOpencode(
-+  group: DreamingNearDupGroup,
-+  directory: string | undefined,
-+  omitVariant: boolean
-+): Promise<DreamingAction> {
-+  const { generateStructuredOutput } = await import("./ai/opencode-provider.js");
-+  const v2Client = getV2Client();
-+  if (!v2Client || !CONFIG.opencodeProvider || !CONFIG.opencodeModel) {
-+    throw new Error("dreaming_provider_unavailable");
-+  }
-+
-+  const useVariant = !omitVariant && Boolean(CONFIG.opencodeVariant);
-+  return generateStructuredOutput({
-+    client: v2Client,
-+    providerID: CONFIG.opencodeProvider,
-+    modelID: CONFIG.opencodeModel,
-+    ...(useVariant ? { variant: CONFIG.opencodeVariant } : {}),
-+    systemPrompt: DREAMING_SYSTEM_PROMPT,
-+    userPrompt: buildMergePrompt(group),
-+    schema: dreamingActionSchema,
-+    directory,
-+  });
-+}
-+
-+async function decideViaExternal(group: DreamingNearDupGroup): Promise<DreamingAction> {
-+  if (!CONFIG.memoryModel || !CONFIG.memoryApiUrl) {
-+    throw new Error("dreaming_provider_unavailable");
-+  }
-+
-+  const { AIProviderFactory } = await import("./ai/ai-provider-factory.js");
-+  const { buildMemoryProviderConfig } = await import("./ai/provider-config.js");
-+  const providerConfig = buildMemoryProviderConfig(CONFIG, {
-+    maxIterations: 1,
-+    iterationTimeout: 60_000,
-+  });
-+  const provider = AIProviderFactory.createProvider(CONFIG.memoryProvider, providerConfig);
-+  const sessionId = `dreaming-${group.representative.id}`;
-+  const result = await provider.executeToolCall(
-+    DREAMING_SYSTEM_PROMPT,
-+    `${buildMergePrompt(group)}\n\nCall the consolidate_memories tool with your decision.`,
-+    dreamingToolSchema,
-+    sessionId
-+  );
-+
-+  if (!result.success || !result.data) {
-+    throw new Error(result.error || "dreaming: external provider returned no decision");
-+  }
-+  return parseDreamingAction(result.data);
-+}
-+
-+/**
-+ * Resolve a consolidation decision for one group. Tries configured channels in
-+ * auto-capture order. On empty OpenCode structured output, retries once without
-+ * `opencodeVariant`, then falls through to the other channel when configured.
-+ */
-+export async function decideDreamingAction(
-+  group: DreamingNearDupGroup,
-+  directory?: string
-+): Promise<DreamingAction> {
-+  const channels = dreamingChannelOrder();
-+  let lastError: unknown;
-+
-+  for (let i = 0; i < channels.length; i++) {
-+    const channel = channels[i]!;
-+    if (!isDreamingChannelConfigured(channel)) continue;
-+
-+    try {
-+      if (channel === "opencode") {
-+        try {
-+          return await decideViaOpencode(group, dire
-```
-
-**File**: `tests/dreaming-run.test.ts` (modified, +224/-8)
-```diff
-@@ -52,13 +52,21 @@ function runFixture(scriptBody: string): {
- }
- 
- describe("dreaming run API mapping", () => {
--  function apiMappingFixture(runError: string): string {
-+  function apiMappingFixture(opts: {
-+    runError?: string;
-+    runResult?: Record<string, number>;
-+    dreamingEnabled?: boolean;
-+  }): string {
-     const storageDir = mkdtempSync(join(tmpdir(), "dream-api-map-"));
-     tempDirs.push(storageDir);
-     const promptManagerUrl = new URL(
-       "../src/services/user-prompt/user-prompt-manager.js",
-       import.meta.url
-     ).href;
-+    const enabled = opts.dreamingEnabled !== false;
-+    const runImpl = opts.runError
-+      ? `async () => { throw new Error(${JSON.stringify(opts.runError)}); }`
-+      : `async () => (${JSON.stringify(opts.runResult ?? { groupsConsidered: 0, groupsMerged: 0, groupsSkipped: 0, groupsFailed: 0, groupsFlagged: 0, memoriesSoftDeleted: 0 })})`;
-     return `
- import { mock } from "bun:test";
- import { mkdirSync } from "node:fs";
-@@ -67,7 +75,7 @@ const storagePath = ${JSON.stringify(storageDir)};
- mkdirSync(storagePath, { recursive: true });
- 
- mock.module(${JSON.stringify(configUrl)}, () => ({
--  CONFIG: { storagePath, dreaming: { enabled: true } },
-+  CONFIG: { storagePath, dreaming: { enabled: ${enabled} } },
- }));
- mock.module(${JSON.stringify(loggerUrl)}, () => ({
-   log: () => {},
-@@ -79,10 +87,8 @@ mock.module(${JSON.stringify(promptManagerUrl)}, () => ({
- }));
- mock.module(${JSON.stringify(dreamingServiceUrl)}, () => ({
-   dreamingService: {
--    run: async () => {
--      throw new Error(${JSON.stringify(runError)});
--    },
--    getStatus: () => ({ isRunning: true }),
-+    run: ${runImpl},
-+    getStatus: () => ({ isRunning: false, enabled: ${enabled} }),
-   },
- }));
- 
-@@ -93,18 +99,47 @@ console.log(JSON.stringify(out));
-   }
- 
-   it("maps concurrent runs to already_running", () => {
--    const result = runFixture(apiMappingFixture("Dreaming already running"));
-+    const result = runFixture(apiMappingFixture({ runError: "Dreaming already running" }));
-     expect(result.stderr).toBe("");
-     expect(result.exitCode).toBe(0);
-     expect(result.parsed).toEqual({ success: false, error: "already_running" });
-   });
- 
-   it("maps missing provider to dreaming_provider_unavailable", () => {
--    const result = runFixture(apiMappingFixture("dreaming_provider_unavailable"));
-+    const result = runFixture(apiMappingFixture({ runError: "dreaming_provider_unavailable" }));
-     expect(result.stderr).toBe("");
-     expect(result.exitCode).toBe(0);
-     expect(result.parsed).toEqual({ success: false, error: "dreaming_provider_unavailable" });
-   });
-+
-+  it("allows manual run when dreaming.enabled is false (issue #491)", () => {
-+    const result = runFixture(
-+      apiMappingFixture({
-+        dreamingEnabled: false,
-+        runResult: {
-+          groupsConsidered: 1,
-+          groupsMerged: 1,
-+          groupsSkipped: 0,
-+          groupsFailed: 0,
-+          groupsFlagged: 0,
-+          memoriesSoftDeleted: 1,
-+        },
-+      })
-+    );
-+    expect(result.stderr).toBe("");
-+    expect(result.exitCode).toBe(0);
-+    expect(result.parsed).toEqual({
-+      success: true,
-+      data: {
-+        groupsConsidered: 1,
-+        groupsMerged: 1,
-+        groupsSkipped: 0,
-+        groupsFailed: 0,
-+        groupsFlagged: 0,
-+        memoriesSoftDeleted: 1,
-+      },
-+    });
-+  });
- });
- 
- describe("dreaming service groupsFailed", () => {
-@@ -234,6 +269,187 @@ console.log(JSON.stringify({ out, state }));
-     expect(parsed.state).toBeNull();
-   });
- 
-+  it("falls back to external API when opencode returns empty structured output (issue #493)", () => {
-+    const storageDir = mkdtempSync(join(tmpdir(), "dream-fallback-"));
-+    tempDirs.push(storageDir);
-+    const factoryUrl = new URL("../src/services/ai/ai-provider-factory.js", import.meta.url).href;
-+    const providerConfigUrl = new URL("../src/services/ai/provider-config.js", import.meta.url)
-+      .href;
-+    const result = runFixture(`
-+import { mock } from "bun:test";
-+
-+mock.module(${JSON.stringify(configUrl)}, () => ({
-+  CONFIG: {
-+    storagePath: ${JSON.stringify(storageDir)},
-+    opencodeProvider: "deepseek",
-+    opencodeModel: "deepseek-flash",
-+    opencodeVariant: "low",
-+    memoryProvider: "openai-chat",
-+    memoryModel: "deepseek-flash",
-+    memoryApiUrl: "https://example.test/v1",
-+    autoCaptureProviderOrder: "opencode-first",
-+    dreaming: {
-+      enabled: true,
-+      maxGroupsPerRun: 5,
-+      relatedThreshold: 0.5,
-+      crossProject: false,
-+      trashRetentionDays: 30,
-+      intervalHours: 24,
-+    },
-+    memory: { defaultScope: "project" },
-+  },
-+}));
-+mock.module(${JSON.stringify(loggerUrl)}, () => ({
-+  log: () => {},
-+  safeLog: () => {},
-+  serializeError: (e) => ({ error: String(e) }),
-+}));
-+
-+const calls = [];
-+mock.module(${JSON.stringify(opencodeProviderUrl)}, () => ({
-+  getV2Client: () => ({ session: {} }),
-+  generateStructuredOutput: async (opts) => {
-```
-
----
-
-### Incident Patch 3: `6aea3d8d` (2026-11-06)
-**Commit Message**: fix: preserve capture links in the timeline and markdown vault (#497)
-
-**File**: `README.md` (modified, +4/-0)
-```diff
-@@ -272,6 +272,8 @@ If you have chatted for a while and still see the message, check that auto-captu
- 
- Open `http://127.0.0.1:4747` to browse the memory–prompt timeline, inspect captures, and manage the user profile. The UI has five views: **Project memories** (`/project-memories`), **User profile** (`/user-profile`), **Skill library** (`/skill-library`), **Markdown vault** (`/markdown-vault`) and **Stats** (`/stats`). Change the port with `webServerPort`, or set `webServerEnabled: false` to run without the web UI. If you bind the server beyond loopback, see [Web UI HTTP Basic Auth](#web-ui-http-basic-auth).
- 
-+The timeline shows each memory and prompt once. If several capture prompts refer to one memory, its current prompt is paired with it when available on the page; earlier prompts remain visible as separate entries.
-+
- ## Usage Examples
- 
- ```typescript
-@@ -325,6 +327,8 @@ By default memories live only in Turso under `storagePath`. Optionally set a **g
- }
- ```
- 
-+Plugin-created vault files preserve capture provenance (`promptId`, `sessionID`, and `captureTimestamp`) so reindexing can restore those fields. Legacy files without them retain any corresponding metadata already in the index. Provenance already missing from both the file and the index cannot be recovered automatically.
-+
- | Key             | Default      | What it does                                                                                                                                       |
- | --------------- | ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------- |
- | `memoryBackend` | `"database"` | `"database"` keeps content in Turso. `"markdown"` uses all `.md` files under `markdownPath` as source of truth.                                    |
-```
-
-**File**: `src/services/client.ts` (modified, +5/-5)
-```diff
-@@ -17,6 +17,7 @@ import type { MemoryType } from "../types/index.js";
- import type { MemoryListFilters, MemoryRecord } from "./turso/types.js";
- import { isMarkdownBackend, writeMemoryMarkdownFile } from "./markdown/backend.js";
- import { pluginMemoryRelPath } from "./markdown/vault.js";
-+import { readCaptureMetadata } from "./markdown/document.js";
- 
- export type MemoryScope = "project" | "all-projects";
- 
-@@ -263,6 +264,7 @@ export class LocalMemoryClient {
-             updatedAt: now,
-             source: typeof dynamicMetadata.source === "string" ? dynamicMetadata.source : "manual",
-             title: displayName,
-+            ...readCaptureMetadata(dynamicMetadata),
-           });
-           dynamicMetadata.markdownRelPath = pluginMemoryRelPath(id);
-           if (!dynamicMetadata.source) dynamicMetadata.source = "manual";
-@@ -374,6 +376,7 @@ export class LocalMemoryClient {
-           updatedAt,
-           source: typeof existingMeta.source === "string" ? existingMeta.source : "api",
-           title: existingMemory.display_name ? String(existingMemory.display_name) : undefined,
-+          ...readCaptureMetadata(existingMeta),
-         });
-         existingMeta.markdownRelPath = pluginMemoryRelPath(id);
-       }
-@@ -406,11 +409,8 @@ export class LocalMemoryClient {
-             Number(existingMemory.created_at),
-             updatedAt,
-             metadataJson,
--            existingMemory.session_id
--              ? String(existingMemory.session_id)
--              : parseSessionIdFromMetadata(
--                  existingMemory.metadata ? String(existingMemory.metadata) : null
--                ),
-+            parseSessionIdFromMetadata(metadataJson) ??
-+              (existingMemory.session_id ? String(existingMemory.session_id) : null),
-             existingMemory.display_name ? String(existingMemory.display_name) : null,
-             existingMemory.user_name ? String(existingMemory.user_name) : null,
-             existingMemory.user_email ? String(existingMemory.user_email) : null,
-```
-
-**File**: `src/services/markdown/backend.ts` (modified, +5/-2)
-```diff
-@@ -1,7 +1,7 @@
- import { mkdirSync } from "node:fs";
- import { CONFIG } from "../../config.js";
- import { log } from "../logger.js";
--import { packMemoryMarkdown } from "./document.js";
-+import { packMemoryMarkdown, type MemoryCaptureMetadata } from "./document.js";
- import {
-   getLastReconcileAt,
-   listVaultIndexEntries,
-@@ -18,7 +18,7 @@ import {
- } from "./vault.js";
- import { markdownVaultWatcher } from "./watcher.js";
- 
--export interface MarkdownMemoryWriteInput {
-+export interface MarkdownMemoryWriteInput extends MemoryCaptureMetadata {
-   id: string;
-   content: string;
-   type?: string;
-@@ -63,6 +63,9 @@ export function writeMemoryMarkdownFile(input: MarkdownMemoryWriteInput): string
-     updatedAt: input.updatedAt,
-     source: input.source,
-     title: input.title,
-+    promptId: input.promptId,
-+    sessionID: input.sessionID,
-+    captureTimestamp: input.captureTimestamp,
-   });
-   markdownVaultWatcher.noteSelfWrite(relPath);
-   writeVaultFile(root, relPath, markdown);
-```
-
-**File**: `src/services/markdown/document.ts` (modified, +36/-3)
-```diff
-@@ -1,7 +1,30 @@
- import { createHash } from "node:crypto";
- import { basename } from "node:path";
- 
--export interface MemoryMarkdownFrontmatter {
-+export interface MemoryCaptureMetadata {
-+  promptId?: string;
-+  sessionID?: string;
-+  captureTimestamp?: number;
-+}
-+
-+/** Only persist well-formed capture provenance; other metadata stays in the index. */
-+export function readCaptureMetadata(input: Record<string, unknown>): MemoryCaptureMetadata {
-+  const capture: MemoryCaptureMetadata = {};
-+  for (const key of ["promptId", "sessionID"] as const) {
-+    const value = input[key];
-+    if (typeof value === "string" && value.trim()) capture[key] = value;
-+  }
-+  if (
-+    typeof input.captureTimestamp === "number" &&
-+    Number.isFinite(input.captureTimestamp) &&
-+    input.captureTimestamp >= 0
-+  ) {
-+    capture.captureTimestamp = input.captureTimestamp;
-+  }
-+  return capture;
-+}
-+
-+export interface MemoryMarkdownFrontmatter extends MemoryCaptureMetadata {
-   id?: string;
-   type?: string;
-   tags?: string[];
-@@ -20,7 +43,7 @@ export interface ParsedMemoryMarkdown {
-   hasFrontmatter: boolean;
- }
- 
--export interface PackMemoryMarkdownInput {
-+export interface PackMemoryMarkdownInput extends MemoryCaptureMetadata {
-   id: string;
-   content: string;
-   type?: string;
-@@ -98,6 +121,12 @@ export function packMemoryMarkdown(input: PackMemoryMarkdownInput): string {
-   if (input.updatedAt !== undefined) lines.push(`updatedAt: ${input.updatedAt}`);
-   if (input.source) lines.push(`source: ${yamlScalar(input.source)}`);
-   if (input.title) lines.push(`title: ${yamlScalar(input.title)}`);
-+  const capture = readCaptureMetadata({ ...input });
-+  if (capture.promptId) lines.push(`promptId: ${yamlScalar(capture.promptId)}`);
-+  if (capture.sessionID) lines.push(`sessionID: ${yamlScalar(capture.sessionID)}`);
-+  if (capture.captureTimestamp !== undefined) {
-+    lines.push(`captureTimestamp: ${capture.captureTimestamp}`);
-+  }
-   lines.push("---", "", input.content);
-   return lines.join("\n");
- }
-@@ -131,7 +160,11 @@ export function parseMemoryMarkdown(raw: string): ParsedMemoryMarkdown {
-       continue;
-     }
-     const parsed = parseYamlScalar(valueRaw);
--    frontmatter[key] = parsed;
-+    if (key === "promptId" || key === "sessionID" || key === "captureTimestamp") {
-+      Object.assign(frontmatter, readCaptureMetadata({ [key]: parsed }));
-+    } else {
-+      frontmatter[key] = parsed;
-+    }
-   }
- 
-   return {
-```
-
-**File**: `src/services/markdown/reconcile.ts` (modified, +30/-4)
-```diff
-@@ -12,6 +12,7 @@ import {
-   contentHash,
-   markdownIdFromRelPath,
-   parseMemoryMarkdown,
-+  readCaptureMetadata,
-   titleFromRelPath,
- } from "./document.js";
- import {
-@@ -50,7 +51,10 @@ export function getLastReconcileAt(): number | null {
- function parseMetadata(value: unknown): Record<string, unknown> {
-   if (!value || typeof value !== "string") return {};
-   try {
--    return JSON.parse(value) as Record<string, unknown>;
-+    const parsed: unknown = JSON.parse(value);
-+    return parsed && typeof parsed === "object" && !Array.isArray(parsed)
-+      ? (parsed as Record<string, unknown>)
-+      : {};
-   } catch {
-     return {};
-   }
-@@ -107,11 +111,11 @@ async function upsertFromFile(
- 
-   const hash = contentHash(raw);
-   const existing = await findMemoryAcrossShards(id);
-+  const existingMetadata = parseMetadata(existing?.row.metadata);
-   if (existing) {
--    const meta = parseMetadata(existing.row.metadata);
-     if (
--      meta.markdownContentHash === hash &&
--      meta.markdownRelPath === file.relPath &&
-+      existingMetadata.markdownContentHash === hash &&
-+      existingMetadata.markdownRelPath === file.relPath &&
-       String(existing.row.content) === content
-     ) {
-       return "unchanged";
-@@ -149,7 +153,15 @@ async function upsertFromFile(
-     });
-   }
- 
-+  // Legacy vault files omit capture fields. Keep their surviving provenance and
-+  // other index-only metadata; validated file values take precedence when present.
-+  const capture = {
-+    ...readCaptureMetadata(existingMetadata),
-+    ...readCaptureMetadata(fm),
-+  };
-   const metadata = JSON.stringify({
-+    ...existingMetadata,
-+    ...capture,
-     source,
-     markdownRelPath: file.relPath,
-     markdownContentHash: hash,
-@@ -168,7 +180,18 @@ async function upsertFromFile(
-     createdAt,
-     updatedAt,
-     metadata,
-+    sessionId:
-+      capture.sessionID ??
-+      (typeof existing?.row.session_id === "string" ? existing.row.session_id : undefined),
-     displayName: title,
-+    userName: typeof existing?.row.user_name === "string" ? existing.row.user_name : undefined,
-+    userEmail: typeof existing?.row.user_email === "string" ? existing.row.user_email : undefined,
-+    projectPath:
-+      typeof existing?.row.project_path === "string" ? existing.row.project_path : undefined,
-+    projectName:
-+      typeof existing?.row.project_name === "string" ? existing.row.project_name : undefined,
-+    gitRepoUrl:
-+      typeof existing?.row.git_repo_url === "string" ? existing.row.git_repo_url : undefined,
-   };
- 
-   const { scope, hash: scopeHash } = extractScopeFromContainerTag(containerTag);
-@@ -190,6 +213,9 @@ async function upsertFromFile(
-       await tursoShardManager.decrementVectorCount(shard.id);
-     }
-     await tursoVectorSearch.insertVector(db, record);
-+    if (Number(existing?.row.is_pinned) === 1) {
-+      await tursoVectorSearch.pinMemory(db, id);
-+    }
-     await tursoShardManager.incrementVectorCount(shard.id);
-   });
- 
-```
-
-**File**: `tests/group-memories.test.ts` (added, +232/-0)
-```diff
-@@ -0,0 +1,232 @@
-+import { describe, expect, test } from "bun:test";
-+import { deleteSelectedMemories } from "../web/src/lib/bulk-delete";
-+import { groupMemories, partitionPinnedGroups } from "../web/src/lib/group-memories";
-+import type { MemoryGroup, MemoryItem } from "../src/shared/api";
-+
-+function memory(id: string, linkedPromptId?: string, extra: Partial<MemoryItem> = {}): MemoryItem {
-+  return {
-+    id,
-+    type: "memory",
-+    content: id,
-+    createdAt: "2026-01-01T00:00:00Z",
-+    linkedPromptId,
-+    ...extra,
-+  };
-+}
-+
-+function prompt(id: string, linkedMemoryId?: string, extra: Partial<MemoryItem> = {}): MemoryItem {
-+  return {
-+    id,
-+    type: "prompt",
-+    content: id,
-+    createdAt: "2026-01-01T00:00:00Z",
-+    linkedMemoryId,
-+    ...extra,
-+  };
-+}
-+
-+function permutations<T>(items: T[]): T[][] {
-+  if (items.length === 0) return [[]];
-+  return items.flatMap((item, index) =>
-+    permutations(items.filter((_, i) => i !== index)).map((rest) => [item, ...rest])
-+  );
-+}
-+
-+function keys(groups: MemoryGroup[]): string[] {
-+  return groups.map((group) => (group.isPair ? group.memory.id : group.item.id));
-+}
-+
-+function expectPartition(items: MemoryItem[]): MemoryGroup[] {
-+  const groups = groupMemories(items);
-+  const members = groups.flatMap((group) =>
-+    group.isPair ? [group.memory.id, group.prompt.id] : [group.item.id]
-+  );
-+  expect(members.toSorted()).toEqual([...new Set(items.map((item) => item.id))].toSorted());
-+  expect(new Set(keys(groups)).size).toBe(groups.length);
-+  for (const group of groups) {
-+    if (group.isPair) {
-+      expect(group.memory.type).toBe("memory");
-+      expect(group.prompt.type).toBe("prompt");
-+    }
-+  }
-+  return groups;
-+}
-+
-+describe("groupMemories", () => {
-+  test("handles an empty page", () => {
-+    expect(groupMemories([])).toEqual([]);
-+  });
-+
-+  test("keeps an ordinary bidirectional pair in either input order", () => {
-+    const items = [memory("mem_1", "prompt_1"), prompt("prompt_1", "mem_1")];
-+    for (const order of permutations(items)) {
-+      expect(expectPartition(order)).toEqual([
-+        { isPair: true, memory: items[0], prompt: items[1] },
-+      ]);
-+    }
-+  });
-+
-+  test("prefers the current capture prompt and keeps older prompts visible in every order", () => {
-+    const currentMemory = memory("mem_1", "prompt_new");
-+    const oldPrompt = prompt("prompt_old", "mem_1");
-+    const newPrompt = prompt("prompt_new", "mem_1");
-+    for (const order of permutations([currentMemory, oldPrompt, newPrompt])) {
-+      const groups = expectPartition(order);
-+      expect(groups).toContainEqual({ isPair: true, memory: currentMemory, prompt: newPrompt });
-+      expect(groups).toContainEqual({ isPair: false, type: "prompt", item: oldPrompt });
-+      expect(new Set(keys(groups))).toEqual(new Set(["mem_1", "prompt_old"]));
-+    }
-+  });
-+
-+  test("pairs a prompt backlink even when a memory without promptId appears first", () => {
-+    const items = [memory("mem_1"), prompt("prompt_1", "mem_1")];
-+    for (const order of permutations(items)) {
-+      expect(expectPartition(order)).toEqual([
-+        { isPair: true, memory: items[0], prompt: items[1] },
-+      ]);
-+    }
-+  });
-+
-+  test("pairs a memory forward link even when an unlinked prompt appears first", () => {
-+    const items = [memory("mem_1", "prompt_1"), prompt("prompt_1")];
-+    for (const order of permutations(items)) {
-+      expect(expectPartition(order)).toEqual([
-+        { isPair: true, memory: items[0], prompt: items[1] },
-+      ]);
-+    }
-+  });
-+
-+  test("uses a prompt at most once when two memories claim it", () => {
-+    for (const order of permutations([
-+      memory("mem_1", "prompt_1"),
-+      memory("mem_2", "prompt_1"),
-+      prompt("prompt_1"),
-+    ])) {
-+      expect(expectPartition(order)).toHaveLength(2);
-+    }
-+  });
-+
-+  test("preserves every item when several prompts claim a memory without a backlink", () => {
-+    for (const order of permutations([
-+      memory("mem_1"),
-+      prompt("prompt_1", "mem_1"),
-+      prompt("prompt_2", "mem_1"),
-+    ])) {
-+      expect(expectPartition(order)).toHaveLength(2);
-+    }
-+  });
-+
-+  test("handles all page subsets without requiring linked items on that page", () => {
-+    const items = [
-+      memory("mem_1", "prompt_new"),
-+      prompt("prompt_old", "mem_1"),
-+      prompt("prompt_new", "mem_1"),
-+    ];
-+    for (let mask = 0; mask < 1 << items.length; mask++) {
-+      for (const order of permutations(items.filter((_, index) => mask & (1 << index)))) {
-+        expectPartition(order);
-+      }
-+    }
-+  });
-+
-+  test("uses an available older prompt when the current prompt is outside the page", () => {
-+    const m = memory("mem_1", "prompt_new_off_page");
-+    const p = prompt("prompt_old", "mem_1");
-+    for (const order of permutations([m, p])) {
-+      expect(expectPartition(order)).toEqual([{ isPair: true, memory: m, prompt: p }]);
-+    }
-+  });
-+
-+  test("grouped bulk selection doe
-```
-
-**File**: `tests/markdown-capture-metadata.test.ts` (added, +273/-0)
-```diff
-@@ -0,0 +1,273 @@
-+import { describe, expect, it } from "bun:test";
-+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
-+import { tmpdir } from "node:os";
-+import { join } from "node:path";
-+
-+const source = (path: string) => JSON.stringify(new URL(`../src/${path}`, import.meta.url).href);
-+
-+// Isolate real client/DB integration from the suite's process-wide module mocks.
-+function scenario(body: string): void {
-+  const baseDir = mkdtempSync(join(tmpdir(), "markdown-capture-metadata-"));
-+  try {
-+    const script = join(baseDir, "scenario.mjs");
-+    writeFileSync(
-+      script,
-+      `
-+import assert from "node:assert/strict";
-+import { readFileSync, writeFileSync } from "node:fs";
-+import { join } from "node:path";
-+const baseDir = ${JSON.stringify(baseDir)};
-+const { CONFIG } = await import(${source("config.js")});
-+CONFIG.storagePath = join(baseDir, "storage");
-+CONFIG.embeddingDimensions = 2;
-+CONFIG.containerTagPrefix = "opencode";
-+CONFIG.memoryBackend = "markdown";
-+CONFIG.markdownPath = join(baseDir, "vault");
-+const { embeddingService } = await import(${source("services/embedding.js")});
-+embeddingService.warmup = async () => {};
-+embeddingService.clearCache = () => {};
-+embeddingService.embedWithTimeout = async () => new Float32Array([1, 0]);
-+const { memoryClient } = await import(${source("services/client.js")});
-+const { tursoConnectionManager } = await import(${source("services/turso/connection-manager.js")});
-+const { tursoShardManager } = await import(${source("services/turso/shard-manager.js")});
-+const { tursoVectorSearch } = await import(${source("services/turso/vector-search.js")});
-+const { closeTursoAndInvalidateCaches } = await import(${source("services/turso/lifecycle.js")});
-+const { reconcileMarkdownVault, reindexVaultFile } = await import(${source("services/markdown/reconcile.js")});
-+const { parseMemoryMarkdown } = await import(${source("services/markdown/document.js")});
-+const { applyUpdateOnCaptureDecision } = await import(${source("services/update-on-capture.js")});
-+const tag = "opencode_project_abcdef1234567890";
-+const initialCapture = { promptId: "prompt_initial", sessionID: "session_initial", captureTimestamp: 1234 };
-+const auxiliary = {
-+  userName: "Synthetic User", userEmail: "synthetic@example.invalid", projectPath: "/synthetic/project",
-+  projectName: "Synthetic Project", gitRepoUrl: "https://example.invalid/project.git"
-+};
-+async function addCapture() {
-+  const added = await memoryClient.addMemory("Initial captured fact", tag, {
-+    source: "auto-capture", type: "fact", ...initialCapture, ...auxiliary,
-+    customProvenance: { importedFrom: "synthetic" }, updatedByCapture: true
-+  });
-+  assert.equal(added.success, true, JSON.stringify(added));
-+  return added.id;
-+}
-+async function indexed(id) {
-+  const shards = await tursoShardManager.getAllShards("project", "");
-+  for (const shard of shards) {
-+    const db = await tursoConnectionManager.getConnection(shard.dbPath);
-+    const row = await tursoVectorSearch.getMemoryById(db, id);
-+    if (row) return { row, db, metadata: JSON.parse(String(row.metadata)) };
-+  }
-+  throw new Error("Missing indexed memory: " + id);
-+}
-+function filePath(id) { return join(CONFIG.markdownPath, id + ".md"); }
-+function assertCapture(value, capture) {
-+  for (const [key, expected] of Object.entries(capture)) assert.equal(value[key], expected, key);
-+}
-+function assertAuxiliary(row) {
-+  assert.equal(row.user_name, auxiliary.userName);
-+  assert.equal(row.user_email, auxiliary.userEmail);
-+  assert.equal(row.project_path, auxiliary.projectPath);
-+  assert.equal(row.project_name, auxiliary.projectName);
-+  assert.equal(row.git_repo_url, auxiliary.gitRepoUrl);
-+  assert.equal(Number(row.is_pinned), 1);
-+  assert.equal(row.deleted_at, null);
-+}
-+try {
-+  ${body}
-+} finally {
-+  await closeTursoAndInvalidateCaches();
-+}
-+`
-+    );
-+    const result = Bun.spawnSync({
-+      cmd: [process.execPath, script],
-+      stdout: "pipe",
-+      stderr: "pipe",
-+      timeout: 20_000,
-+    });
-+    expect(result.exitCode, Buffer.from(result.stderr).toString()).toBe(0);
-+  } finally {
-+    rmSync(baseDir, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
-+  }
-+}
-+
-+describe("markdown capture metadata", () => {
-+  it("preserves capture provenance and index-only state through writes and reconciliation", () => {
-+    scenario(String.raw`
-+const id = await addCapture();
-+let file = parseMemoryMarkdown(readFileSync(filePath(id), "utf8"));
-+assertCapture(file.frontmatter, initialCapture);
-+assert.equal(file.frontmatter.customProvenance, undefined);
-+let current = await indexed(id);
-+await tursoVectorSearch.pinMemory(current.db, id);
-+const first = await reconcileMarkdownVault();
-+assert.equal(first.upserted, 1);
-+assert.deepEqual(first.errors, []);
-+current = await indexed(id);
-+assertCapture(current.metadata, initialCapture);
-+assert.equal(current.row.session_id, initialCapture.sessionID);
-+assert.deepEqual(current.me
-```
-
-**File**: `tests/markdown-document.test.ts` (modified, +35/-0)
-```diff
-@@ -3,6 +3,7 @@ import {
-   contentHash,
-   markdownIdFromRelPath,
-   packMemoryMarkdown,
-+  readCaptureMetadata,
-   parseMemoryMarkdown,
-   titleFromRelPath,
- } from "../src/services/markdown/document.js";
-@@ -38,6 +39,40 @@ describe("markdown document pack/parse", () => {
-     expect(parsed.body.trim()).toBe("Remember to use bun test");
-   });
- 
-+  it("roundtrips capture provenance with escaped ids and a zero timestamp", () => {
-+    const capture = {
-+      promptId: 'prompt_"quoted":id',
-+      sessionID: "session_with\nnewline",
-+      captureTimestamp: 0,
-+    };
-+    const parsed = parseMemoryMarkdown(
-+      packMemoryMarkdown({ id: "mem_capture", content: "Captured fact", ...capture })
-+    );
-+    expect(readCaptureMetadata(parsed.frontmatter)).toEqual(capture);
-+  });
-+
-+  it("rejects malformed capture fields instead of coercing them into links", () => {
-+    const raw = `---
-+id: "mem_capture"
-+promptId: 123
-+sessionID: false
-+captureTimestamp: "123"
-+---
-+
-+Captured fact
-+`;
-+    const parsed = parseMemoryMarkdown(raw);
-+    expect(parsed.frontmatter.promptId).toBeUndefined();
-+    expect(parsed.frontmatter.sessionID).toBeUndefined();
-+    expect(parsed.frontmatter.captureTimestamp).toBeUndefined();
-+    for (const captureTimestamp of [-1, NaN, Infinity]) {
-+      expect(readCaptureMetadata({ promptId: " ", sessionID: "", captureTimestamp })).toEqual({});
-+    }
-+    expect(
-+      packMemoryMarkdown({ id: "mem_capture", content: "Captured fact", captureTimestamp: NaN })
-+    ).not.toContain("captureTimestamp:");
-+  });
-+
-   it("parses foreign wiki pages without our id", () => {
-     const raw = `---
- title: "Raneto Page"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #504** (2026-11-09): chore(release): release v2.42.0 (@EyJunge1)
+- **PR #503** (2026-11-09): chore(deps): bump the minor-and-patch group across 2 directories with 11 updates (@dependabot[bot])
+- **PR #502** (2026-11-09): feat(ai): add Standard Compute memory provider preset (@henrikdukefoss)
 - **PR #500** (2026-11-06): chore(release): release v2.41.1 (@EyJunge1)
 - **PR #499** (2026-11-06): fix(dreaming): allow manual runs when disabled and add LLM fallback (@EyJunge1)
 - **PR #498** (2026-11-06): fix(config): deprecate unused profile limits (@Phototonic)
-- **PR #497** (2026-11-06): fix: preserve capture links in the timeline and markdown vault (@Phototonic)
-- **PR #496** (2026-11-06): fix(markdown): preserve index when vault inventory is unsafe (@Phototonic)
-- **PR #490** (closed): feat(recall): explore file-aware automatic recall (@Phototonic)
 
 ---
 
@@ -2248,29 +1363,34 @@ Refs: #491 #493
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. config): deprecate unused profile limits (#498)
+## X. ai): add Standard Compute memory provider preset (#502)
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tickernelz/opencode-mem. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/i18n/README.ar.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tickernelz/opencode-mem. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4a008093`: config): deprecate unused profile limits (#498). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e856a02e`: ai): add Standard Compute memory provider preset (#502). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/i18n/README.ar.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-Profile context limits are set by `userProfileInjectPreferences` (default `5`), `userProfileInjectPatterns` (`5`), and `userProfileInjectWorkflows` (`3`). These control how many items are injected into the LLM conversation, not how many are displayed in the web UI. The legacy `maxProfileItems`, `userProfileDisplayPreferences`, `userProfileDisplayPatterns`, and `userProfileDisplayWorkflows` options are deprecated and have no effect. Existing config files still load, but you can remove these four keys.
-
+- `standardcompute`: إعداد مسبق لـ OpenAI-compatible Chat Completions لـ [Standard Compute](https://standardcompute.com). `memoryApiUrl` و`memoryModel` اختياريان — الافتراضي `https://api.stdcmpt.com/v1` و`StandardCompute`. إذا حُذف `memoryApiKey`، يُستخدم `STANDARDCOMPUTE_API_KEY` من البيئة (أنشئ مفتاحًا من https://standardcompute.com/dashboard؛ توثيق API: https://docs.standardcompute.com). مثال:
+  ```jsonc
+  "memoryProvider": "standardcompute",
+  "memoryApiKey": "env://STANDARDCOMPUTE_API_KEY",
+  ```
+  عند اختيار هذا المزود، تُرسل مطالبات الالتقاط التلقائي / الملف، واستجابات النموذج، وسياق المحادثة ذي الصلة إلى `https://api.stdcmpt.com`.
+- للنماذج التي ترفض استدعاءات الأدوات المفروضة (`tool_choice: "required"`، مثل بعض أوضاع التفكير)، أضف `"forceToolChoice": false` عند استخدام `openai-chat` / `orcarouter` / `atlas-cloud` / `cheaper-inference` / `api-route` / `runcrate` / `cloudgpu` / `standardcompute`.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+- للنماذج التي ترفض استدعاءات الأدوات المفروضة (`tool_choice: "required"`، مثل بعض أوضاع التفكير)، أضف `"forceToolChoice": false` عند استخدام `openai-chat` / `orcarouter` / `atlas-cloud` / `cheaper-inference` / `api-route` / `runcrate` / `cloudgpu`.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4a008093` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e856a02e` are properly handled with clean fallback behavior.

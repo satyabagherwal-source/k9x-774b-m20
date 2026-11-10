@@ -8724,3 +8724,6 @@ Every entry in this ledger must capture:
 | `learn-github-openyurtio-openyurt` | `https://github.com/openyurtio/openyurt` | `bfaf2f37` | Multi-dimensional audit evidence | 2026-11-10T01:58:33.134Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `e00b7fde` | Multi-dimensional audit evidence | 2026-11-10T01:58:36.688Z |
 | `learn-github-open-source-legal-opencontracts` | `https://github.com/Open-Source-Legal/OpenContracts` | `01dd8500` | Multi-dimensional audit evidence | 2026-11-10T01:58:38.080Z |
+| `learn-github-tickernelz-opencode-mem` | `https://github.com/tickernelz/opencode-mem` | `040b27f4` | Multi-dimensional audit evidence | 2026-11-10T02:06:49.125Z |
+| `learn-github-crate-ci-typos` | `https://github.com/crate-ci/typos` | `2611abd1` | Multi-dimensional audit evidence | 2026-11-10T02:11:42.763Z |
+| `learn-github-hashicorp-terraform` | `https://github.com/hashicorp/terraform` | `03b4f662` | Multi-dimensional audit evidence | 2026-11-10T02:11:45.992Z |
