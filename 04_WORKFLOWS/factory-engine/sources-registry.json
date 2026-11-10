@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-10T04:37:09.835Z",
-    "lastVerified": "2026-11-10T04:37:09.835Z",
+    "lastChecked": "2026-11-10T04:44:32.461Z",
+    "lastVerified": "2026-11-10T04:44:32.461Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -155,8 +155,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-10T02:31:47.117Z",
-    "lastVerified": "2026-11-10T02:31:47.117Z",
+    "lastChecked": "2026-11-10T04:44:31.260Z",
+    "lastVerified": "2026-11-10T04:44:31.260Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -231,9 +231,9 @@
   "microsoft-security-101": {
     "name": "Security-101",
     "officialUrl": "https://github.com/microsoft/Security-101",
-    "lastChecked": "2026-11-09T18:11:13.906Z",
+    "lastChecked": "2026-11-10T04:44:26.177Z",
     "revisionIdentifier": "b0a31ff7",
-    "lastVerified": "2026-11-09T18:11:13.906Z"
+    "lastVerified": "2026-11-10T04:44:26.177Z"
   },
   "meilisearch-meilisearch": {
     "name": "meilisearch/meilisearch",
@@ -439,12 +439,12 @@
     "revisionIdentifier": "fea58ae4"
   },
   "run-llama-llama_index": {
-    "name": "run-llama/llama_index",
+    "name": "llama_index",
     "officialUrl": "https://github.com/run-llama/llama_index",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-08T23:43:48.549Z",
-    "lastVerified": "2026-11-08T23:43:48.549Z",
+    "lastChecked": "2026-11-10T04:44:28.714Z",
+    "lastVerified": "2026-11-10T04:44:28.714Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-run-llama-llama_index",
@@ -453,7 +453,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "fe107aab"
   },
   "nucleoidai-nucleoid": {
     "name": "NucleoidAI/Nucleoid",
@@ -5387,9 +5388,9 @@
   "react-native-modal-react-native-modal": {
     "name": "react-native-modal",
     "officialUrl": "https://github.com/react-native-modal/react-native-modal",
-    "lastChecked": "2026-11-07T05:16:36.643Z",
+    "lastChecked": "2026-11-10T04:44:21.194Z",
     "revisionIdentifier": "3e413c4c",
-    "lastVerified": "2026-11-07T05:16:36.643Z"
+    "lastVerified": "2026-11-10T04:44:21.194Z"
   },
   "saltstack-salt": {
     "name": "salt",
@@ -5589,22 +5590,21 @@
     "lastVerified": "2026-11-07T05:44:16.289Z"
   },
   "encoredev-encore": {
-    "name": "encore",
+    "name": "encoredev/encore",
     "officialUrl": "https://github.com/encoredev/encore",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-09T00:39:11.698Z",
-    "lastVerified": "2026-11-09T00:39:11.698Z",
+    "lastChecked": "2026-11-10T04:44:26.792Z",
+    "lastVerified": "2026-11-10T04:44:26.792Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-encoredev-encore",
-    "contentHash": "521469c7f91f901a2f9b4e582706a08f7441ae90f9289b014fbcf1bfe58d1d16",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 0,
+    "contentHash": "057cd7a8b6cc2b30c6a8f9b441b1ec03dcfecd5dc641d4585571f7e4c887bb82",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "12053961"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "skytable-skytable": {
     "name": "skytable",
@@ -8044,9 +8044,9 @@
   "str4d-rage": {
     "name": "rage",
     "officialUrl": "https://github.com/str4d/rage",
-    "lastChecked": "2026-11-08T19:45:11.534Z",
+    "lastChecked": "2026-11-10T04:44:16.193Z",
     "revisionIdentifier": "b5b68c4f",
-    "lastVerified": "2026-11-08T19:45:11.534Z"
+    "lastVerified": "2026-11-10T04:44:16.193Z"
   },
   "hf-autotrust-glm5.3-flash-e224-dgx-spark": {
     "name": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
@@ -9953,9 +9953,9 @@
   "iaincollins-structured-data-testing-tool": {
     "name": "structured-data-testing-tool",
     "officialUrl": "https://github.com/iaincollins/structured-data-testing-tool",
-    "lastChecked": "2026-11-05T22:40:01.667Z",
+    "lastChecked": "2026-11-10T04:44:18.707Z",
     "revisionIdentifier": "8300079044",
-    "lastVerified": "2026-11-05T22:40:01.667Z"
+    "lastVerified": "2026-11-10T04:44:18.707Z"
   },
   "maziyarpanahi-openmed": {
     "name": "maziyarpanahi/openmed",

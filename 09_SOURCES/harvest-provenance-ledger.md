@@ -8740,3 +8740,4 @@ Every entry in this ledger must capture:
 | `learn-github-meilisearch-meilisearch` | `https://github.com/meilisearch/meilisearch` | `8c7bfcfa` | Multi-dimensional audit evidence | 2026-11-10T02:59:42.402Z |
 | `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `8a8b12fc` | Multi-dimensional audit evidence | 2026-11-10T03:04:38.488Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `db8874b1` | Multi-dimensional audit evidence | 2026-11-10T04:37:07.239Z |
+| `learn-github-encoredev-encore` | `https://github.com/encoredev/encore` | `2f05e83e` | Multi-dimensional audit evidence | 2026-11-10T04:44:29.864Z |

@@ -4903,10 +4903,10 @@
     "repository": "encoredev/encore",
     "platform": "github",
     "sourceUrl": "https://github.com/encoredev/encore",
-    "sourceVersion": "12053961",
+    "sourceVersion": "2f05e83e",
     "license": "MPL-2.0",
-    "contentHash": "521469c7f91f901a2f9b4e582706a08f7441ae90f9289b014fbcf1bfe58d1d16",
-    "lastHarvestedAt": "2026-11-06T23:12:03.080Z",
+    "contentHash": "057cd7a8b6cc2b30c6a8f9b441b1ec03dcfecd5dc641d4585571f7e4c887bb82",
+    "lastHarvestedAt": "2026-11-10T04:44:29.864Z",
     "learningId": "learn-github-encoredev-encore"
   },
   "rqlite-rqlite": {
