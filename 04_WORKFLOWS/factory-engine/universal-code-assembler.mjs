@@ -678,7 +678,7 @@ export default createApplication;
 import assert from 'node:assert';
 import { InventorySalesEngine } from '../src/core/engine.mjs';
 
-describe('Inventory App Suite', () => {
+describe('Inventory & Sales Management Suite', () => {
   it('Feature 1: Manages inventory and processes sale', () => {
     const engine = new InventorySalesEngine();
     engine.upsertItem({ id: 'SKU-1', name: 'Item 1', quantity: 10, unitPrice: 5.00 });

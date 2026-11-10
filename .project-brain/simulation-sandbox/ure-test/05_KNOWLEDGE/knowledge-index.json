@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-10T13:39:17.292Z",
+  "last_updated": "2026-11-10T15:56:42.753Z",
   "total_verified_learnings": 1,
   "total_promoted_rules": 0,
   "items": {
@@ -13,7 +13,7 @@
       "platform": "local",
       "source_url": "C:\\AI-Builder-Brain\\.project-brain\\simulation-sandbox\\ure-fixture-repo",
       "source_version": "master",
-      "content_hash": "a1e81011bd7daf38195541a690008552c843b85cdadbaa969f1f3113f52c406b",
+      "content_hash": "79c6bb7e26c43c8e4edd6e9a21c9b1b262572914c9f6a30b25f744a5687bf0d5",
       "dossier_path": "07_PROJECT_LEARNING/ure-microtelemetry-service-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ure-microtelemetry-service-learnings.md",
       "promoted_rules": [
@@ -33,7 +33,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-10T13:39:17.292Z",
+      "verified_at": "2026-11-10T15:56:42.752Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
