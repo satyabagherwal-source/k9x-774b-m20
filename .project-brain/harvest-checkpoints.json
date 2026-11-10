@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-10T02:31:53.317Z",
+  "last_updated": "2026-11-10T02:44:03.557Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "cc1d85085b24a7ee3c499e2ff580c0cb896328e2c96a759c797eb6b3766b2905",
-      "verified_at": "2026-11-09T23:07:30.099Z",
+      "content_hash": "c3b77b140ed9f2e6bf3d0612ccbe0701e009555f8d2c51a9511101f237af8318",
+      "verified_at": "2026-11-10T02:43:58.306Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T23:07:30.099Z"
+      "last_updated": "2026-11-10T02:43:58.306Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -8076,14 +8076,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-czy0729-bangumi",
-      "content_hash": "cd7d2da5ee315444e71bae030ec0b3e3d3c79d7f999403ce37f4b0b034b5dc75",
-      "verified_at": "2026-11-07T04:44:24.003Z",
+      "content_hash": "53cc0984fa2f3cb19f80818e47135b91b5eb308068ebcf02773f91e85cada8d8",
+      "verified_at": "2026-11-10T02:43:56.861Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T04:44:24.003Z"
+      "last_updated": "2026-11-10T02:43:56.861Z"
     },
     "aquasecurity/tfsec": {
       "repository": "aquasecurity/tfsec",
@@ -9801,14 +9801,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mintplex-labs-anything-llm",
-      "content_hash": "b2458236289285caaa5319704d05bc3e89ed41a1202342972c3e3cd2f8e2605c",
-      "verified_at": "2026-11-06T19:09:51.061Z",
+      "content_hash": "ac64b1969812ac6466c57f592f8cc2edbe120373665ce21e519a75b7ee60999d",
+      "verified_at": "2026-11-10T02:44:03.556Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T19:09:51.061Z"
+      "last_updated": "2026-11-10T02:44:03.556Z"
     },
     "shadcn-ui/taxonomy": {
       "repository": "shadcn-ui/taxonomy",

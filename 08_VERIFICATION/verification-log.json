@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261108-3FTW",
-    "timestamp": "2026-11-08T05:26:23.204Z",
-    "repository": "vanniktech/gradle-maven-publish-plugin",
-    "learningId": "learn-github-vanniktech-gradle-maven-publish-plugin",
-    "contentHash": "7ff321e4a8813ce37cdacfc40e576e631a83ee1378f49d45ed44c2fb6c63ffd8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-3N0H",
-    "timestamp": "2026-11-08T05:26:32.513Z",
-    "repository": "KRAFTON/Raon-1-mini-preview",
-    "learningId": "learn-huggingface-krafton-raon-1-mini-preview",
-    "contentHash": "a0906b4ed07a729953dca2d12df92a8c3564b24adf1ca39bfa907162af3229ce",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-C6O4",
-    "timestamp": "2026-11-08T05:33:11.236Z",
-    "repository": "GitLiveApp/firebase-kotlin-sdk",
-    "learningId": "learn-github-gitliveapp-firebase-kotlin-sdk",
-    "contentHash": "3fb75e5e0bce41cc08de5850c3c5190ff7f16558a16911103d8b14e1f87803a1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261108-C8WA",
     "timestamp": "2026-11-08T05:33:14.122Z",
     "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF",
@@ -7490,6 +7445,51 @@
     "repository": "volcengine/OpenViking",
     "learningId": "learn-github-volcengine-openviking",
     "contentHash": "018e53a38bc5e584be924df1fad0806524961859820546a5dd0296c11eda6361",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261110-68TI",
+    "timestamp": "2026-11-10T02:43:56.838Z",
+    "repository": "czy0729/Bangumi",
+    "learningId": "learn-github-czy0729-bangumi",
+    "contentHash": "53cc0984fa2f3cb19f80818e47135b91b5eb308068ebcf02773f91e85cada8d8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261110-69XT",
+    "timestamp": "2026-11-10T02:43:58.289Z",
+    "repository": "aleo-labs-protocol/snarkOS",
+    "learningId": "learn-github-aleo-labs-protocol-snarkos",
+    "contentHash": "c3b77b140ed9f2e6bf3d0612ccbe0701e009555f8d2c51a9511101f237af8318",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261110-6DZQ",
+    "timestamp": "2026-11-10T02:44:03.542Z",
+    "repository": "Mintplex-Labs/anything-llm",
+    "learningId": "learn-github-mintplex-labs-anything-llm",
+    "contentHash": "ac64b1969812ac6466c57f592f8cc2edbe120373665ce21e519a75b7ee60999d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

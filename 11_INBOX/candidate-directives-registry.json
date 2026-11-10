@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-10T00:31:56.213Z",
+  "last_updated": "2026-11-10T02:43:58.300Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4391,6 +4391,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-zarf-dev-zarf"
+    },
+    {
+      "id": "CD-69Y4",
+      "directive_title": "Move the v1-to-v2 migration guide into the repository and link to it",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "aleo-labs-protocol/snarkOS",
+      "source_commit": "5c7d169f",
+      "date_staged": "2026-11-10",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-aleo-labs-protocol-snarkos"
     }
   ]
 }

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md`  
 > **Source**: github ([https://github.com/Mintplex-Labs/anything-llm](https://github.com/Mintplex-Labs/anything-llm))  
-> **Source Version**: `308b2766`  
+> **Source Version**: `ace9dad3`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T19:09:49.213Z  
+> **Timestamp**: 2026-11-10T02:44:01.719Z  
 > **Learning ID**: `learn-github-mintplex-labs-anything-llm`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Mintplex-Labs/anything-llm](https://github.com/Mintplex-Labs/anything-llm))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T19:09:48.942Z  
+> **Harvest Timestamp**: 2026-11-10T02:44:01.443Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Stop renting your intelligence. Own it with AnythingLLM. Everything you need for a powerful local-first agent experience 
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 68006 stars
+- **Stars / Engagement**: 68117 stars
 
 ---
 
@@ -1288,11 +1288,11 @@ module.exports = {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #7039** (2026-11-09): **[BUG]: division by zero panic in lance-encoding during RAG queries**
+  *Symptoms*: ### How are you running AnythingLLM?  Docker (remote machine)  ### What happened?  When attempting to query the vector database (RAG) with certain documents, the backend service crashes with a `division by zero` panic. This occurs because the underlying `lance-encoding` library (version `0.22.0`) fails to handle normalization for vectors with a zero length.  The following logs were captured from the `anythingllm` container: ```text [192.168.1.106] thread 'tokio-runtime-worker' panicked at /home/build_user/.cargo/registry/src/index.crates.io-6f17d22bba15001f/lance-encoding-0.22.0/src/data.rs:425:9: [192.168.1.106] attempt to divide by zero [192.168.1.106] thread 'tokio-runtime-worker' panicked at /home/build_user/.cargo/registry/src/index.crates.io-6f17d22bba15001f/lance-encoding-0.22.0/src/decoder.rs:1489:65: [192.168.1.106] called `Result::unwrap()` on an `Err` value: JoinError::Panic(Id(158), "attempt to divide by zero", ...) ```  **Root Cause Analysis:** The crash is caused by a known bug in the `lance-encoding` crate version `0.22.0`. Specifically, the normalization logic does not check for zero-length vectors before performing division, leading to a panic when the query vector is empty or improperly formatted.  This issue is documented in the **LanceDB** project, which provides the `lance-encoding` crate: - **Issue Report:** https://github.com/lancedb/lancedb/issues/3026 - **Fix Pull Request:** https://github.com/lancedb/lancedb/pull/3613  The fix was implemented in the 
+
 - **Issue #6951** (2026-11-02): **Browser extension API keys keep working after the owner is demoted to the default role**
   *Symptoms*: ### Bug  In multi-user mode, only admins and managers can create browser extension API keys. If an admin or manager with a key is later demoted to the `default` role, the key keeps working. They can still use the extension's `upload-content` and `embed-content` endpoints for workspaces they belong to, even though their normal session can no longer do this.  `validBrowserExtensionApiKey` checks that the key's owner exists and is not suspended. It does not check the owner's role.  Deleting or suspending a user already disables their keys. Deleting removes them through the database cascade, and the middleware rejects keys whose owner is suspended. Only a role change leaves them working.  ### Steps to reproduce 1. In multi-user mode, create a manager and add them to a workspace. 2. As the manager, create a browser extension API key. 3. As an admin, change the manager's role to `default`. 4. Use the key to call `POST /api/browser-extension/embed-content` for that workspace. The call succeeds.  ### Expected The key stops working once its owner no longer has a role that is allowed to create keys. 
-
-- **Issue #6854** (2026-10-27): **[BUG]: OpenAI fallback model gpt-4.1-nano was shut down**
-  *Symptoms*: ### How are you running AnythingLLM?  All versions  ### What happened?  `gpt-4.1-nano` and `gpt-4` were shut down on October 23, 2026 (https://developers.openai.com/api/docs/deprecations). `gpt-4.1-nano` is still the fallback model when no OpenAI model is set, for both chat and agents:  - `server/models/systemSettings.js` - `server/utils/AiProviders/openAi/index.js` - `server/utils/agents/aibitat/providers/openai.js` - `server/utils/agents/ephemeral.js` - `server/utils/agents/index.js` (2 places) - `# OPEN_MODEL_PREF` in `server/.env.example` and `docker/.env.example`  OpenAI's listed replacement is `gpt-5.6-luna`. The generic OpenAI agent provider also defaults to `gpt-4.1-nano` in `server/utils/agents/aibitat/providers/genericOpenAi.js`.  ### Are there known steps to reproduce?  Select OpenAI as the LLM provider without picking a model, then send a chat or run an agent. The request goes out with `gpt-4.1-nano`, which OpenAI no longer serves.  ### LLM Provider & Model (if applicable)  OpenAI / `gpt-4.1-nano` (default fallback)  ### Embedder Provider & Model (if applicable)  _No response_ 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1309,359 +1309,440 @@ module.exports = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `44b1d514` (2026-11-06)
-**Commit Message**: fix: keep non-Latin path text in single-link scrape titles (#7025)
+### Incident Patch 1: `194b8f03` (2026-11-09)
+**Commit Message**: fix: bump lancedb to 0.30.0 and reject empty vectors before insert (#7093)
 
-The single-link scraper titled a page slugify(host + path) + ".html".
-slugify deletes every character it has no transliteration for, so pages
-under Chinese, Japanese, Korean, Thai, Hebrew or Hindi paths all got the
-same title, e.g. "zh.wikipedia.org_wiki_.html" for every zh.wikipedia
-article. Query strings were dropped too.
+* fix: bump lancedb to 0.30.0 and reject empty vectors before insert
 
-Build the default title the way the bulk link scraper already does:
-the decoded host and path plus the query string, unslugified. The url
-and the file name are unchanged.
+Rows with an empty vector made LanceDB 0.15.0 create a table with a
+0-dimension vector column. Every later read of that table panicked in
+lance-encoding (data.rs: attempt to divide by zero), which can take down
+the backend.
 
-Co-authored-by: Sean Hatfield <[REDACTED_EMAIL]>
+- Bump @lancedb/lancedb 0.15.0 -> 0.30.0 (still supports Node >= 18). It
+  refuses to create a 0-dim table, and a panic on an existing one comes
+  back as a catchable JS error.
+- LanceDb.updateOrCreateCollection now rejects any row with a missing or
+  empty vector, covering both fresh embeds and the vector cache.
 
-**File**: `collector/__tests__/processLink/convert/generic.test.js` (modified, +24/-0)
+Refs #7039
+
+* remove comment in lance updateOrCreateCollection
+
+* fix: use import attributes in verifyPackageVersions for Node 22+
+
+Node 22 removed the 'assert' import syntax, so the check failed to parse
+on the workflow's Node 24 runner.
+
+**File**: `extras/scripts/verifyPackageVersions.mjs` (modified, +2/-2)
 ```diff
-@@ -269,6 +269,30 @@ describe("scrapeGenericUrl", () => {
-       expect(data.docAuthor).toBe("no author found");
-       expect(data.pageContent).toBe(PAGE);
-     });
-+
-+    it("keeps non-Latin path text and the query string in the default title", async () => {
-+      mockFetch();
-+      writeToServerDocuments.mockImplementation(({ data }) => data);
-+
-+      for (const link of [
-+        "https://example.com/wiki/%E5%8C%97%E4%BA%AC",
-+        "https://example.com/wiki/%E4%B8%8A%E6%B5%B7",
-+        "https://example.com/wiki/%EC%84%9C%EC%9A%B8",
-+        "https://example.com/item?id=1",
-+        "https://example.com/item?id=2",
-+      ])
-+        await scrapeGenericUrl({ link, captureAs: "html" });
-+
-+      expect(
-+        writeToServerDocuments.mock.calls.map(([{ data }]) => data.title)
-+      ).toEqual([
-+        "example.com_wiki_北京.html",
-+        "example.com_wiki_上海.html",
-+        "example.com_wiki_서울.html",
-+        "example.com_item?id=1.html",
-+        "example.com_item?id=2.html",
-+      ]);
-+    });
-   });
+@@ -1,5 +1,5 @@
+-import serverPackageJson from '../../server/package.json' assert { type: 'json' };
+-import collectorPackageJson from '../../collector/package.json' assert { type: 'json' };
++import serverPackageJson from '../../server/package.json' with { type: 'json' };
++import collectorPackageJson from '../../collector/package.json' with { type: 'json' };
+ const { dependencies: serverDependencies } = serverPackageJson;
+ const { dependencies: collectorDependencies } = collectorPackageJson;
  
-   describe("delegation by content type", () => {
 ```
 
-**File**: `collector/processLink/convert/generic.js` (modified, +1/-1)
+**File**: `server/package.json` (modified, +1/-1)
 ```diff
-@@ -92,7 +92,7 @@ async function scrapeGenericUrl({
-   const data = {
-     id: v4(),
-     url: "file://" + slugify(filename) + ".html",
--    title: metadata.title || slugify(filename) + ".html",
-+    title: metadata.title || `${filename}${url.search}.html`,
-     docAuthor: metadata.docAuthor || "no author found",
-     description: metadata.description || "No description found.",
-     docSource: metadata.docSource || "URL link uploaded by the user.",
+@@ -24,7 +24,7 @@
+     "@breejs/later": "4.2.0",
+     "@datastax/astra-db-ts": "^0.1.3",
+     "@ladjs/graceful": "^3.2.2",
+-    "@lancedb/lancedb": "0.15.0",
++    "@lancedb/lancedb": "0.30.0",
+     "@langchain/anthropic": "0.1.16",
+     "@langchain/community": "0.0.53",
+     "@langchain/core": "0.1.61",
+```
+
+**File**: `server/utils/vectorDbProviders/lance/index.js` (modified, +5/-0)
+```diff
+@@ -253,6 +253,11 @@ class LanceDb extends VectorDatabase {
+    * @returns
+    */
+   async updateOrCreateCollection(client, data = [], namespace) {
++    if (data.some((record) => !record.vector?.length))
++      throw new Error(
++        "Embedder returned an empty vector for one or more chunks. Check your embedding provider and model, then try again."
++      );
++
+     const hasNamespace = await this.hasNamespace(namespace);
+     if (hasNamespace) {
+       const collection = await client.openTable(namespace);
+```
+
+**File**: `server/yarn.lock` (modified, +46/-52)
+```diff
+@@ -671,61 +671,55 @@
+     lil-http-terminator "^1.2.2"
+     p-is-promise "3"
+ 
+-"@lancedb/lancedb-darwin-arm64@0.15.0":
+-  version "0.15.0"
+-  resolved "https://registry.npmjs.org/@lancedb/lancedb-darwin-arm64/-/lancedb-darwin-arm64-0.15.0.tgz"
+-  integrity sha512-e6eiS1dUdSx3G3JXFEn5bk6I26GR7UM2QwQ1YMrTsg7IvGDqKmXc/s5j4jpJH0mzm7rwqh+OAILPIjr7DoUCDA==
+-
+-"@lancedb/lancedb-darwin-x64@0.15.0":
+-  version "0.15.0"
+-  resolved "https://registry.yarnpkg.com/@lancedb/lancedb-darwin-x64/-/lancedb-darwin-x64-0.15.0.tgz#ea54f35732ac6b0858f23ef361c4c8021c5df8cd"
+-  integrity sha512-kEgigrqKf954egDbUdIp86tjVfFmTCTcq2Hydw/WLc+LI++46aeT2MsJv0CQpkNFMfh/T2G18FsDYLKH0zTaow==
+-
+-"@lancedb/lancedb-linux-arm64-gnu@0.15.0":
+-  version "0.15.0"
+-  resolved "https://registry.yarnpkg.com/@lancedb/lancedb-linux-arm64-gnu/-/lancedb-linux-arm64-gnu-0.15.0.tgz#81e3b4f8a64566cf24d8d5a166cf05a0f497612e"
+-  integrity sha512-TnpbBT9kaSYQqastJ+S5jm4S5ZYBx18X8PHQ1ic3yMIdPTjCWauj+owDovOpiXK9ucjmi/FnUp8bKNxGnlqmEg==
+-
+-"@lancedb/lancedb-linux-arm64-musl@0.15.0":
+-  version "0.15.0"
+-  resolved "https://registry.yarnpkg.com/@lancedb/lancedb-linux-arm64-musl/-/lancedb-linux-arm64-musl-0.15.0.tgz#de46e61d0bf1fa3c4bbf015d83e8b2689b3e3bc0"
+-  integrity sha512-fe8LnC9YKbLgEJiLQhyVj+xz1d1RgWKs+rLSYPxaD3xQBo3kMC94Esq+xfrdNkSFvPgchRTvBA9jDYJjJL8rcg==
+-
+-"@lancedb/lancedb-linux-x64-gnu@0.15.0":
+-  version "0.15.0"
+-  resolved "https://registry.yarnpkg.com/@lancedb/lancedb-linux-x64-gnu/-/lancedb-linux-x64-gnu-0.15.0.tgz#5e4ddce1b8cae80fdac9c24cc3d755a13a524292"
+-  integrity sha512-0lKEc3M06ax3RozBbxHuNN9qWqhJUiKDnRC3ttsbmo4VrOUBvAO3fKoaRkjZhAA8q4+EdhZnCaQZezsk60f7Ag==
+-
+-"@lancedb/lancedb-linux-x64-musl@0.15.0":
+-  version "0.15.0"
+-  resolved "https://registry.yarnpkg.com/@lancedb/lancedb-linux-x64-musl/-/lancedb-linux-x64-musl-0.15.0.tgz#d33bf662ebef2881c9256e7ad4cb1b0f6a91685f"
+-  integrity sha512-ls+ikV7vWyVnqVT7bMmuqfGCwVR5JzPIfJ5iZ4rkjU4iTIQRpY7u/cTe9rGKt/+psliji8x6PPZHpfdGXHmleQ==
+-
+-"@lancedb/lancedb-win32-arm64-msvc@0.15.0":
+-  version "0.15.0"
+-  resolved "https://registry.yarnpkg.com/@lancedb/lancedb-win32-arm64-msvc/-/lancedb-win32-arm64-msvc-0.15.0.tgz#6704025bf968bf82c49c565d1aab816ad3dc5baf"
+-  integrity sha512-C30A+nDaJ4jhjN76hRcp28Eq+G48SR9wO3i1zGm0ZAEcRV1t9O1fAp6g18IPT65Qyu/hXJBgBdVHtent+qg9Ng==
+-
+-"@lancedb/lancedb-win32-x64-msvc@0.15.0":
+-  version "0.15.0"
+-  resolved "https://registry.yarnpkg.com/@lancedb/lancedb-win32-x64-msvc/-/lancedb-win32-x64-msvc-0.15.0.tgz#aa9b6516d75652b71cfbbff52ffc6e645268caa4"
+-  integrity sha512-amXzIAxqrHyp+c9TpIDI8ze1uCqWC6HXQIoXkoMQrBXoUUo8tJORH2yGAsa3TSgjZDDjg0HPA33dYLhOLk1m8g==
+-
+-"@lancedb/lancedb@0.15.0":
+-  version "0.15.0"
+-  resolved "https://registry.npmjs.org/@lancedb/lancedb/-/lancedb-0.15.0.tgz"
+-  integrity sha512-qm3GXLA17/nFGUwrOEuFNW0Qg2gvCtp+yAs6qoCM6vftIreqzp8d4Hio6eG/YojS9XqPnR2q+zIeIFy12Ywvxg==
++"@lancedb/lancedb-darwin-arm64@0.30.0":
++  version "0.30.0"
++  resolved "https://registry.yarnpkg.com/@lancedb/lancedb-darwin-arm64/-/lancedb-darwin-arm64-0.30.0.tgz#861ae7809a4c1df9c52ba47e9f08884555bdc2a8"
++  integrity sha512-x6dmsjRIv0xumELYnFAEfyFDxqcO/n4rHYCJvC27RbRez0UmbByi6OMTgbSoSTatrQSPRCL7JJSa5pwNeawnIg==
++
++"@lancedb/lancedb-linux-arm64-gnu@0.30.0":
++  version "0.30.0"
++  resolved "https://registry.yarnpkg.com/@lancedb/lancedb-linux-arm64-gnu/-/lancedb-linux-arm64-gnu-0.30.0.tgz#d78f5a0255b2aa3c1d81fa622e41e12724074b63"
++  integrity sha512-CWUex7hRNiLkXFeTQlUGPyy5VktbXoUmQdZuiVCETZ6ggljEC7c7Qvzu2ge+jEZML+UE7tXL2lVC3klRFGczng==
++
++"@lancedb/lancedb-linux-arm64-musl@0.30.0":
++  version "0.30.0"
++  resolved "https://registry.yarnpkg.com/@lancedb/lancedb-linux-arm64-musl/-/lancedb-linux-arm64-musl-0.30.0.tgz#0b9f71e92df1eafb6f34f25f99ffeb8b955c4464"
++  integrity sha512-2MHmAS4tKePNVbwfgDrjCFj6BVuAgXlL2c9iWk7TfcwL+jcSxo52LFx03O0+ArpVCF2sI6aoDqZaQNre5zMniQ==
++
++"@lancedb/lancedb-linux-x64-gnu@0.30.0":
++  version "0.30.0"
++  resolved "https://registry.yarnpkg.com/@lancedb/lancedb-linux-x64-gnu/-/lancedb-linux-x64-gnu-0.30.0.tgz#1b0b5cb3ecf5b1db350ebcf18445165fcb7320eb"
++  integrity sha512-0OpDNxsDE4OXD+PIFd7KdE42xhYIE+fZL+jCm1v3dTug4UEhumWBuSgbUIBP7t0yJZHwh62/QivVh/V1cPB2Bg==
++
++"@lancedb/lancedb-linux-x64-musl@0.30.0":
++  version "0.30.0"
++  resolved "https://registry.yarnpkg.com/@lancedb/lancedb-linux-x64-musl/-/lancedb-linux-x64-musl-0.30.0.tgz#b3d0fd9d76a610d7ec292ae1fcced0d6f999c08c"
++  integrity sha512-4Bq7VngQt+lyxIcu79EN8nYJs8gvUnrIT6I/t2MSlpG/BXWHZG2A+PRii1Zq4GCUlRTTG+RlieCv8CBGSPm8bw==
++
++"@lancedb/lancedb-win32-arm64-msvc@0.30.0":
++  version "0.30.0"
++  resolved "https://registry.yarnpkg.com/@lancedb/lancedb-win32-arm64-msvc/-/lancedb-win32-arm64-msvc-0.30.0.tgz#8e522af8d36cd9d16a4fae3483ed80602725e02c"
++  integrity sha512-N2DQg2XBWZirn5jS6kRJUxF679t3sKcIxBwP9zY4Idq5OVLAj0yfLueWIKhYxv8en7pBFYWdgw5j9dTS7XajyQ==
++
++"@lancedb/lancedb-win32-x64-msvc@0.30.0":
++  version "0.30.0"
++  resolved "https://registry.yarnpkg.com/@lancedb/lancedb-win32-x64-msvc/-/lancedb-win32-x64-msvc-0
 ```
 
 ---
 
-### Incident Patch 2: `308b2766` (2026-11-06)
-**Commit Message**: fix(mcp): scan saved servers after an individual start (#7042)
+### Incident Patch 2: `ace9dad3` (2026-11-09)
+**Commit Message**: fix: cap concurrent Paperless-ngx document downloads (#7096)
 
-**File**: `server/__tests__/endpoints/api/mcpServers.test.js` (modified, +94/-0)
+* fix: cap concurrent Paperless-ngx document downloads
+
+Downloading every document at once with Promise.all exhausted the
+Paperless-ngx Postgres connection pool on larger instances, so most
+downloads returned 500 and were silently dropped. Downloads now run
+through a fixed pool of workers on the shared loader, and documents
+that fail to download are logged by ID.
+
+Fixes #7094
+
+* fix: time out and retry Paperless-ngx document downloads
+
+A stalled download held one of the pool's workers forever, and a single
+transient failure dropped the document from the import. Each download now
+times out after 120s, and network errors, timeouts, 429s and 5xx responses
+are retried twice with a 1s then 3s delay.
+
+**File**: `collector/__tests__/extensions/resync/paperless.resync.test.js` (modified, +17/-5)
 ```diff
-@@ -550,6 +550,12 @@ describe("Developer API /v1/mcp-servers", () => {
-         expect(stop.json).toEqual({ success: true, error: null });
-         expect(MCPHypervisor._instance.mcps.live).toBeUndefined();
+@@ -82,7 +82,10 @@ describe("resyncPaperlessNgx", () => {
+     expect(fetchMock).toHaveBeenCalledTimes(1);
+     expect(fetchMock).toHaveBeenCalledWith(
+       "https://paperless.example.com/api/documents/123/download/",
+-      { headers: { Authorization: `Token ${API_TOKEN}` } }
++      expect.objectContaining({
++        headers: { Authorization: `Token ${API_TOKEN}` },
++        signal: expect.any(AbortSignal),
++      })
+     );
+     expect(status).toHaveBeenCalledWith(200);
+     expect(json).toHaveBeenCalledWith({
+@@ -103,7 +106,10 @@ describe("resyncPaperlessNgx", () => {
  
-+        const listed = await call("GET", "/v1/mcp-servers");
-+        expect(listed.status).toBe(200);
-+        expect(listed.json.servers).toMatchObject([
-+          { name: "live", running: false, tools: [] },
-+        ]);
-+
-         const start = await call("POST", "/v1/mcp-servers/live/toggle");
-         expect(start.json).toEqual({ success: true, error: null });
-         expect(MCPHypervisor._instance.mcps.live).toBeDefined();
-@@ -567,6 +573,94 @@ describe("Developer API /v1/mcp-servers", () => {
+     expect(fetchMock).toHaveBeenCalledWith(
+       "https://my.domain.com/paperless/api/documents/123/download/",
+-      { headers: { Authorization: `Token ${API_TOKEN}` } }
++      expect.objectContaining({
++        headers: { Authorization: `Token ${API_TOKEN}` },
++        signal: expect.any(AbortSignal),
++      })
+     );
+     expect(json).toHaveBeenCalledWith({
+       success: true,
+@@ -150,7 +156,10 @@ describe("resyncPaperlessNgx", () => {
+     expect(json).toHaveBeenCalledWith({ success: false, content: null });
    });
  
-   describe("GET /v1/mcp-servers and POST /v1/mcp-servers/reload", () => {
-+    it("boots existing servers when adding a server is the first MCP operation", async () => {
-+      const sse = await startSSETestServer();
-+      const url = `http://localhost:${sse.address().port}`;
+-  test("a network level failure is reported as an unsuccessful resync", async () => {
++  test("a network level failure is retried, then reported as an unsuccessful resync", async () => {
++    // Skip the real backoff delays between attempts
++    jest.spyOn(global, "setTimeout").mockImplementation((fn) => fn());
++    jest.spyOn(console, "warn").mockImplementation(() => {});
+     fetchMock.mockRejectedValue(
+       new Error("ECONNREFUSED paperless.example.com")
+     );
+@@ -162,7 +171,7 @@ describe("resyncPaperlessNgx", () => {
+ 
+     await handler({ chunkSource }, response);
+ 
+-    expect(fetchMock).toHaveBeenCalledTimes(1);
++    expect(fetchMock).toHaveBeenCalledTimes(3);
+     expect(json).toHaveBeenCalledWith({ success: false, content: null });
+   });
+ 
+@@ -182,7 +191,10 @@ describe("resyncPaperlessNgx", () => {
+ 
+     expect(fetchMock).toHaveBeenCalledWith(
+       "https://paperless.example.com/api/documents//download/",
+-      { headers: { Authorization: `Token ${API_TOKEN}` } }
++      expect.objectContaining({
++        headers: { Authorization: `Token ${API_TOKEN}` },
++        signal: expect.any(AbortSignal),
++      })
+     );
+     expect(json).toHaveBeenCalledWith({ success: false, content: null });
+   });
+```
+
+**File**: `collector/utils/extensions/PaperlessNgx/PaperlessNgxLoader/index.js` (modified, +86/-14)
+```diff
+@@ -2,6 +2,10 @@ const { htmlToText } = require("html-to-text");
+ const pdf = require("pdf-parse");
+ 
+ class PaperlessNgxLoader {
++  maxConcurrentDownloads = 5;
++  downloadTimeoutMs = 120_000;
++  downloadRetryDelaysMs = [1_000, 3_000];
 +
-+      try {
-+        writeConfig({ existing: { url }, disabled: { url, ...NO_START } });
-+        const added = await call("POST", "/v1/mcp-servers/new", {
-+          body: { name: "added", config: { url } },
-+        });
-+        expect(added.status).toBe(200);
-+        expect(added.json.running).toBe(true);
-+        const layer = new MCPCompatibilityLayer();
-+        const addedClient = layer.mcps.added;
-+
-+        const listed = await call("GET", "/v1/mcp-servers");
-+        expect(listed.status).toBe(200);
-+        const servers = Object.fromEntries(
-+          listed.json.servers.map((server) => [server.name, server])
+   constructor({ baseUrl, apiToken }) {
+     const url = new URL(baseUrl);
+     this.baseUrl = `${url.origin}${url.pathname.replace(/\/+$/, "")}`;
+@@ -73,12 +77,18 @@ class PaperlessNgxLoader {
+         })`
+       );
+ 
+-      const documentsWithContent = await Promise.all(
+-        documents.map(async (doc) => {
+-          const content = await this.fetchDocumentContent(doc.id);
+-          return { ...doc, content };
+-        })
++      const documentsWithContent = await this.fetchAllDocumentContent(
++        documents
+       );
++      const failedIds = documentsWithContent
++        .filter((doc) => !doc.content)
++        .map((doc) => doc.id);
++      if (failedIds.length)
++        console.warn(
++          `Could not fetch content for ${failedIds.length} of ${
++            documents.length
++          } Paperless-ngx documents: ${failedIds.join(", ")}`
 +        );
-+        expect(servers).toMatchObject({
-+          added: { running: true },
-+          existing: { running: true },
-+          disabled: { running: false, tools: [] },
-+        });
-+        expect(layer.mcps.added).toBe(addedClient);
-+        expect((await layer.activeMCPServers()).sort()).toEqual([
-+          "@@mcp_added",
-+          "@@mcp_existing",
-+        ]);
-+      } finally {
-+        MCPHypervisor._instance?.pruneMCPServers();
-+        await closeServer(sse);
-+      }
-+    });
-+
-+    it("shares the initial scan across concurrent list and agent discovery", async () => {
-+      const sse = await startSSETestServer();
-+      let createTransport;
-+      try {
-+        writeConfig({
-+          live: { url: `http://localhost:${sse.address().port}` },
-+        });
-+        const layer = new MCPCompatibilityLayer();
-+        createTransport = jest.spyOn(layer, "createHttpTransport");
-+
-+        const [servers, active] = await Promise.all([
-+          layer.servers(),
-+          layer.activeMCPServers(),
-+        ]);
-+
-+        expect(servers).toMatchObject([{ name: "live", running: true }]);
-+        expect(active).toEqual(["@@mcp_live"]);
-+        expect(createTransport).toHaveBeenCalledTimes(1);
-+      } finally {
-+        // Also close any transport that a duplicate startup overwrote.
-+        for (const { value } of createTransport?.mock.results ?? [])
-+          await value?.close();
-+        MCPHypervisor._instance?.pruneMCPServers();
-+        await closeServer(sse);
-+      }
-+    });
-+
-+    it("allows a later list to retry when no server could start", async () => {
-+      const sse = await startSSETestServer();
-+      try {
-+        writeConfig({
-+          live: { url: `http://localhost:${sse.address().port}` },
-+        });
-+        const layer = new MCPCompatibilityLayer();
-+        jest.spyOn(layer, "createHttpTransport").mockImplementationOnce(() => {
-+          throw new Error("MCP endpoint temporarily unavailable");
-+        });
-+
-+        const failed = await call("GET", "/v1/mcp-servers");
-+        expect(failed.json.servers).toMatchObject([
-+          { name: "live", running: false },
-+        ]);
-+
-+        const recovered = await call("GET", "/v1/mcp-servers");
-+        expect(recovered.json.servers).toMatchObject([
-+          { name: "live", running: true },
-+        ]);
-+      } finally {
-+        MCPHypervisor._instance?.pruneMCPServers();
-+        await closeServer(sse);
-+      }
-+    });
-+
-     it("returns an empty list with no servers configured", async () => {
-       const res = await call("GET", "/v1/mcp-servers");
-       expect(res.status).toBe(200);
-```
-
-**File**: `server/__tests__/utils/MCP/index.test.js` (modified, +1/-1)
-```diff
-@@ -160,7 +160,7 @@ describe("MCPCompatibilityLayer.servers", () => {
-     mcpLayer = new MCPCompatibilityLayer();
  
-     // Simulate a server that connected at boot but has since died - its
--    // ping() rejects. bootMCPServers() skips booting since mcps is populated.
-+    // ping() rejects.
-     mcpLayer.mcps = {
-       "dead-server": {
-         ping: () => Promise.reject(new Error("fetch failed")),
-```
-
-**File**: `server/utils/MCP/hypervisor/index.js` (modified, +22/-6)
-```diff
-@@ -55,6 +55,8 @@ class MCPHypervisor {
-    * @type { { [key: string]: {status: 'success' | 'failed', message: string} } }
-    */
-   mcpLoadingResults = {};
-+  #booted = false;
-+  #bootPromise = null;
- 
-   constructor() {
-     if (MCPHypervisor._instance) return MCPHypervisor._instance;
-@@ -265,6 +267,8 @@ class MCPHypervisor {
-    * and will also apply changes to the config file if any where made.
-    */
-   async reloadMCPServers() {
-+    // Let an in-flight scan finish before replacing its clients and results.
-+    while (this.#bootPromise) await this.#bootPromise.catch(() => {});
-     this.pruneMCPServers();
-     await this.bootMCPServers();
-   }
-@@ -333,6 +337,7 @@ class MCPHypervisor {
-     this.mcpLoadingResults[name] = {
-       status: "failed",
-       message: `Server was stopped manually by the administrator.`,
-+      manuallyStopped: true,
-     };
-     return true;
-   }
-@@ -359,6 +364,7 @@ class MCPHypervisor {
-     }
-     this.mcps = {};
-     this.mcpLoadingResults = {};
-+    this.#booted = false;
+       return documentsWithContent.filter((doc) => !!doc.content);
+     } catch (error) {
+@@ -89,21 +99,84 @@ class PaperlessNgxLoader {
    }
  
    /**
-@@ -560,18 +566,27 @@ class MCPHypervisor {
-   }
- 
-   /**
--   * Boot the MCP servers according to the server definitions.
--   * This function will skip booting MCP servers if they are already running.
-+   * Scan the MCP server definitions and allow retry if no server could start.
-    * @returns { Promise<{ [key: string]: {status: string, message: string} }> } The results of the boot process.
-    */
-   async bootMCPServers() {
--    if (Object.keys(this.mcps).length > 0) {
--      this.log("MCP Servers already running, skipping boot.");
--      return this.mcpLoadingResults;
--    }
-+    if (this.#booted) return this.mcpLoadingResults;
-+    this.#bootPromise ??= this.#bootConfiguredMCPServers().finally(() => {
-+      this.#bootPromise = null;
-+    });
-+    return this.#bootPromise;
+-   * Fetches the content of a document from Paperless-ngx
++   * Fetches the content of every document with at most `maxConcurrentDownloads`
++   * requests in flight, since each download holds a database connection on the
++   * Paperless-ngx side and an unbounded burst exhausts its Postgres pool.
++   * @param {{[key: string]: any, id: number}[]} documents
++   * @returns {Promise<{[key: string]: any, content: string}[]>} In input order
++   */
++  async fetchAllDocumentContent(documents) {
++    const results = new Array(documents.length);
++    let next = 0;
++    const worker = async () => {
++      while (next < documents.length) {
++        const index = next++;
++        const doc = documents[index];
++        results[index] = {
++          ...doc,
++          content: await this.fetchDocumentContent(doc.id),
++        };
++      }
++    };
++
++    const workerCount = Math.min(this.maxConcurrentDownloads, documents.length);
++    await Promise.all(Array.from({ length: workerCount }, worker));
++    return results;
 +  }
- 
-+  async #bootConfiguredMCPServers() {
-     const serverDefinitions = this.mcpServerConfigs;
-     for (const { name, server } of serverDefinitions) {
-+      // Preserve servers already started or explicitly stopped through the API.
-+      if (
-+        Object.hasOwn(this.mcps, name) ||
-+        this.mcpLoadingResults[name]?.manuallyStopped
-+      )
-+        continue;
 +
-       if (
-         server.anythingllm?.hasOwnProperty("autoStart") &&
-         server.anythingllm.autoStart === false
-@@ -616,6 +631,7 @@ class MCPHypervisor {
-     }
++  /**
++   * Fetches the content of a document from Paperless-ngx, retrying network
++   * errors, timeouts, 429s and 5xx responses with a growing delay.
+    * @param {string} documentId - The ID of the document to fetch
+-   * @returns {Promise<string>} The content of the document
++   * @returns {Promise<string>} The content of the document, or "" on failure
+    */
+   async fetchDocumentContent(documentId) {
++    for (let attempt = 0; ; attempt++) {
++      try {
++        return await this.downloadDocumentContent(documentId);
++      } catch (error) {
++        if (error.retryable && attempt < this.downloadRetryDelaysMs.length) {
++          const delay = this.downloadRetryDelaysMs[attempt];
++          console.warn(
++            `Retrying document ${documentId} in ${delay}ms: ${error.message}`
++          );
++          await new Promise((resolve) => setTimeout(resolve, delay));
++          continue;
++        }
++
++        console.error(
++          `Failed to fetch content for document ${documentId}:`,
++          error
++        );
++        return "";
++      }
++    }
++  }
++
++  /**
++   * A single download attempt. Throws on failure, with `retryable` set when
++   * another attempt could succeed.
++   * @param {string} documentId
++   * @returns {Promise<string>}
++   */
++  async downloadDocumentContent(documentId) {
+     try {
+       const response = await fetch(
+         `${this.baseUrl}/api/documents/${documentId}/download/`,
+         {
+           headers: this.baseHeaders,
++          // Also bounds reading the body, so a stalled transfer frees its worker
++          signal: AbortSignal.timeout(this.downloadTimeoutMs),
+         }
+       );
  
-     const runningServers = Object.keys(this.mcps);
-+    this.#booted = runningServers.length > 0;
-     this.log(
-       `Successfully started ${runningServers.length} MCP servers:`,
-       runningServers
+-      if (!response.ok)
+-        throw new Error(`Failed to fetch document content: ${response.status}`);
++      if (!response.ok) {
++        const error = new Error(
++          `Failed to fetch document content: ${response.status}`
++        );
++        error.retryable = response.status === 429 || response.status >= 500;
++        throw error;
++      }
+ 
+       // The media type without parameters such as `; charset=utf-8`
+       const contentType = response.headers
+@@ -126,11 +199,10 @@ class PaperlessNgxLoader {
+           return await response.text();
+       }
+     } catch (error) {
+-      console.error(
+-        `Failed to fetch content for document ${documentId}:`,
+-        error
+-      );
+-      return "";
++      // Network failures and timeouts reject from fetch or the body read
++      // rather than producing a status code
++      if (error.retryable === undefined) error.retryable = true;
++      throw error;
+     }
+   }
+ 
 ```
 
 ---
 
-### Incident Patch 3: `3082e52b` (2026-11-06)
-**Commit Message**: fix: preserve literal data prefixes in OpenAI chat streams (#7015)
+### Incident Patch 3: `45c0c538` (2026-11-09)
+**Commit Message**: fix: ignore stale thread history responses when switching threads (#7070)
 
-* fix: preserve literal data prefixes in OpenAI chat streams
+* fix: ignore stale thread history responses in WorkspaceChat
 
-* test: tidy openaiCompatible test imports and trailing newline
+* drop unreachable cancelled check in sync branch
+
+* remove comment
 
 ---------
 
+Co-authored-by: Sean Hatfield <[REDACTED_EMAIL]>
 Co-authored-by: Timothy Carambat <[REDACTED_EMAIL]>
 
-**File**: `server/__tests__/utils/chats/openaiCompatible.test.js` (modified, +29/-1)
+**File**: `frontend/src/components/WorkspaceChat/index.jsx` (modified, +8/-0)
 ```diff
-@@ -3,6 +3,7 @@ const { OpenAICompatibleChat } = require('../../../utils/chats/openaiCompatible'
- const { WorkspaceChats } = require('../../../models/workspaceChats');
- const { getVectorDbClass, getLLMProvider, resolveProviderConnector } = require('../../../utils/helpers');
- const { extractTextContent, extractAttachments } = require('../../../endpoints/api/openai/helpers');
-+const { handleDefaultStreamResponseV2 } = require('../../../utils/helpers/chat/responses');
+@@ -61,6 +61,8 @@ export default function WorkspaceChat({ loading, workspace }) {
+   }
  
- // Mock dependencies
- jest.mock('../../../models/workspaceChats');
-@@ -249,5 +250,32 @@ describe('OpenAICompatibleChat', () => {
-         })
-       );
-     });
+   useEffect(() => {
++    let cancelled = false;
 +
-+    test('should preserve literal data: prefixes in streamed text', async () => {
-+      const upstream = (async function* () {
-+        yield { choices: [{ delta: { content: 'before ' }, finish_reason: null }] };
-+        yield { choices: [{ delta: { content: 'data: value' }, finish_reason: null }] };
-+        yield { choices: [{ delta: { content: ' after' }, finish_reason: null }] };
-+        yield { choices: [{ delta: {}, finish_reason: 'stop' }] };
-+      })();
-+      upstream.endMeasurement = jest.fn();
-+      mockLLMConnector.streamGetChatCompletion.mockResolvedValue(upstream);
-+      mockLLMConnector.handleStream.mockImplementation(handleDefaultStreamResponseV2);
+     async function getHistory() {
+       if (loading) return;
+       if (!workspace?.slug) {
+@@ -72,6 +74,8 @@ export default function WorkspaceChat({ loading, workspace }) {
+         ? await Workspace.threads.chatHistory(workspace.slug, threadSlug)
+         : await Workspace.chatHistory(workspace.slug);
+ 
++      if (cancelled) return;
 +
-+      await OpenAICompatibleChat.streamChat({
-+        workspace: mockWorkspace,
-+        response: mockResponse,
-+        prompt: 'Show a YAML data field.',
-+        systemPrompt: 'You are a helpful assistant',
-+      });
+       setLoaded({
+         key: `${workspace.slug}:${threadSlug ?? "default"}`,
+         workspace,
+@@ -80,6 +84,10 @@ export default function WorkspaceChat({ loading, workspace }) {
+       });
+     }
+     getHistory();
 +
-+      const choices = mockResponse.write.mock.calls.map(
-+        ([frame]) => JSON.parse(frame.slice('data: '.length)).choices[0]
-+      );
-+      expect(choices.map(({ delta }) => delta.content).join('')).toBe(
-+        'before data: value after'
-+      );
-+      expect(choices.at(-1).finish_reason).toBe('stop');
-+    });
-   });
--});
-\ No newline at end of file
-+});
-```
-
-**File**: `server/utils/chats/openaiCompatible.js` (modified, +1/-1)
-```diff
-@@ -309,7 +309,7 @@ async function streamChat({
-   const responseInterceptor = new PassThrough({});
-   responseInterceptor.on("data", (chunk) => {
-     try {
--      const originalData = JSON.parse(chunk.toString().split("data: ")[1]);
-+      const originalData = JSON.parse(chunk.toString().replace(/^data: /, ""));
-       const modified = formatJSON(originalData, {
-         chunked: true,
-         model: workspace.slug,
++    return () => {
++      cancelled = true;
++    };
+   }, [workspace, loading, threadSlug]);
+ 
+   const hasPendingMessage = !!sessionStorage.getItem(PENDING_HOME_MESSAGE);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7047** (closed): using @agent in openapiCompatible (@devsick)
-- **PR #7042** (2026-11-06): fix(mcp): scan saved servers after an individual start (@Max-Reisinger)
-- **PR #7038** (2026-11-06): Forward user and workspace identity to MCP servers (@timothycarambat)
-- **PR #7037** (2026-11-06): feat: developer API endpoints for MCP server management (@timothycarambat)
-- **PR #7036** (2026-11-06): Allow editing prompt after aborting response (@shatfield4)
-- **PR #7035** (2026-11-06): fix: match model router hour ranges that span midnight (@MohammadHijjawi97)
+- **PR #7096** (2026-11-09): fix: cap concurrent Paperless-ngx document downloads (@timothycarambat)
+- **PR #7095** (2026-11-09): fix: escape double quotes in Telegram link hrefs (@timothycarambat)
+- **PR #7093** (2026-11-09): fix: bump lancedb to 0.30.0 and reject empty vectors before insert (@timothycarambat)
+- **PR #7091** (2026-11-09): feat: live elapsed timer while the model is thinking (@timothycarambat)
+- **PR #7090** (2026-11-09): docs: remove unsupported "all" target from push notification JSDoc (@timothycarambat)
+- **PR #7089** (2026-11-09): fix: show agent skill settings button on mobile (@timothycarambat)
 
 ---
 
@@ -1681,51 +1762,30 @@ Co-authored-by: Timothy Carambat <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. keep non-Latin path text in single-link scrape titles (#7025)
+## X. bump lancedb to 0.30.0 and reject empty vectors before insert (#7093)
 
 **RULE**:
-When implementing operations in `collector/__tests__/processLink/convert/generic.test.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Mintplex-Labs/anything-llm. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `extras/scripts/verifyPackageVersions.mjs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Mintplex-Labs/anything-llm. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `44b1d514`: keep non-Latin path text in single-link scrape titles (#7025). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `194b8f03`: bump lancedb to 0.30.0 and reject empty vectors before insert (#7093). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `collector/__tests__/processLink/convert/generic.test.js`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `extras/scripts/verifyPackageVersions.mjs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-
-    it("keeps non-Latin path text and the query string in the default title", async () => {
-      mockFetch();
-      writeToServerDocuments.mockImplementation(({ data }) => data);
-
-      for (const link of [
-        "https://example.com/wiki/%E5%8C%97%E4%BA%AC",
-        "https://example.com/wiki/%E4%B8%8A%E6%B5%B7",
-        "https://example.com/wiki/%EC%84%9C%EC%9A%B8",
-        "https://example.com/item?id=1",
-        "https://example.com/item?id=2",
-      ])
-        await scrapeGenericUrl({ link, captureAs: "html" });
-
-      expect(
-        writeToServerDocuments.mock.calls.map(([{ data }]) => data.title)
-      ).toEqual([
-        "example.com_wiki_北京.html",
-        "example.com_wiki_上海.html",
-        "example.com_wiki_서울.html",
-        "example.com_item?id=1.html",
-        "example.com_item?id=2.html",
-      ]);
-    });
+import serverPackageJson from '../../server/package.json' with { type: 'json' };
+import collectorPackageJson from '../../collector/package.json' with { type: 'json' };
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+import serverPackageJson from '../../server/package.json' assert { type: 'json' };
+import collectorPackageJson from '../../collector/package.json' assert { type: 'json' };
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `44b1d514` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `194b8f03` are properly handled with clean fallback behavior.

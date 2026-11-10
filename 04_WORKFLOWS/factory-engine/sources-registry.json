@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-10T02:31:55.921Z",
-    "lastVerified": "2026-11-10T02:31:55.921Z",
+    "lastChecked": "2026-11-10T02:44:06.153Z",
+    "lastVerified": "2026-11-10T02:44:06.153Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -133,22 +133,21 @@
     "revisionIdentifier": "51c1838b"
   },
   "mintplex-labs-anything-llm": {
-    "name": "anything-llm",
+    "name": "Mintplex-Labs/anything-llm",
     "officialUrl": "https://github.com/Mintplex-Labs/anything-llm",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-08T23:20:02.872Z",
-    "lastVerified": "2026-11-08T23:20:02.872Z",
+    "lastChecked": "2026-11-10T02:44:01.443Z",
+    "lastVerified": "2026-11-10T02:44:01.443Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mintplex-labs-anything-llm",
-    "contentHash": "b2458236289285caaa5319704d05bc3e89ed41a1202342972c3e3cd2f8e2605c",
+    "contentHash": "ac64b1969812ac6466c57f592f8cc2edbe120373665ce21e519a75b7ee60999d",
     "promotedRulesCount": 1,
-    "recentFixesCount": 8,
+    "recentFixesCount": 19,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "308b2766"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "bitterbot-ai-bitterbot-desktop": {
     "name": "bitterbot-desktop",
@@ -254,12 +253,12 @@
     "revisionIdentifier": "c18c8197"
   },
   "dathere-qsv": {
-    "name": "dathere/qsv",
+    "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-10T01:58:35.084Z",
-    "lastVerified": "2026-11-10T01:58:35.084Z",
+    "lastChecked": "2026-11-10T02:43:58.328Z",
+    "lastVerified": "2026-11-10T02:43:58.328Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -268,7 +267,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "e00b7fde"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -2459,22 +2459,21 @@
     "revisionIdentifier": "b1a36daf"
   },
   "aleo-labs-protocol-snarkos": {
-    "name": "snarkOS",
+    "name": "aleo-labs-protocol/snarkOS",
     "officialUrl": "https://github.com/aleo-labs-protocol/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T17:34:57.774Z",
-    "lastVerified": "2026-11-09T17:34:57.774Z",
+    "lastChecked": "2026-11-10T02:43:57.699Z",
+    "lastVerified": "2026-11-10T02:43:57.699Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "b3c2809d029c22cacd86f3618d002191303b72219c7d63e4b15ff38ab80079df",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "contentHash": "c3b77b140ed9f2e6bf3d0612ccbe0701e009555f8d2c51a9511101f237af8318",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "0d7daaab"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "databendlabs-databend": {
     "name": "databendlabs/databend",
@@ -5194,12 +5193,12 @@
     "officialUrl": "https://github.com/czy0729/Bangumi",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-07T04:44:22.361Z",
-    "lastVerified": "2026-11-07T04:44:22.361Z",
+    "lastChecked": "2026-11-10T02:43:54.103Z",
+    "lastVerified": "2026-11-10T02:43:54.103Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-czy0729-bangumi",
-    "contentHash": "cd7d2da5ee315444e71bae030ec0b3e3d3c79d7f999403ce37f4b0b034b5dc75",
+    "contentHash": "53cc0984fa2f3cb19f80818e47135b91b5eb308068ebcf02773f91e85cada8d8",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -5398,8 +5397,8 @@
     "officialUrl": "https://github.com/saltstack/salt",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-09T00:13:26.237Z",
-    "lastVerified": "2026-11-09T00:13:26.237Z",
+    "lastChecked": "2026-11-10T02:43:51.025Z",
+    "lastVerified": "2026-11-10T02:43:51.025Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-saltstack-salt",
@@ -9904,9 +9903,9 @@
   "booltools-booltools-seo-crawler": {
     "name": "booltools-seo-crawler",
     "officialUrl": "https://github.com/booltools/booltools-seo-crawler",
-    "lastChecked": "2026-11-05T22:15:56.990Z",
+    "lastChecked": "2026-11-10T02:43:45.742Z",
     "revisionIdentifier": "e5394ed024",
-    "lastVerified": "2026-11-05T22:15:56.990Z"
+    "lastVerified": "2026-11-10T02:43:45.742Z"
   },
   "modelcontextprotocol-kotlin-sdk": {
     "name": "modelcontextprotocol/kotlin-sdk",
@@ -14003,12 +14002,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "matthart1983-netwatch": {
-    "name": "matthart1983/netwatch",
+    "name": "netwatch",
     "officialUrl": "https://github.com/matthart1983/netwatch",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T19:07:04.367Z",
-    "lastVerified": "2026-11-08T19:07:04.367Z",
+    "lastChecked": "2026-11-10T02:43:43.207Z",
+    "lastVerified": "2026-11-10T02:43:43.207Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-matthart1983-netwatch",
@@ -14017,7 +14016,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "81275065"
   },
   "hf-prunaai-p-h3-image-comfy": {
     "name": "PrunaAI/P-H3-Image-Comfy",

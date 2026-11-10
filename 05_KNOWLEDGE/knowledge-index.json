@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-10T02:31:53.198Z",
+  "last_updated": "2026-11-10T02:44:03.437Z",
   "total_verified_learnings": 1245,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -9616,14 +9616,19 @@
       "slug": "czy0729-bangumi",
       "platform": "github",
       "source_url": "https://github.com/czy0729/Bangumi",
-      "source_version": "0dc93c3a",
-      "content_hash": "cd7d2da5ee315444e71bae030ec0b3e3d3c79d7f999403ce37f4b0b034b5dc75",
+      "source_version": "79c411ba",
+      "content_hash": "53cc0984fa2f3cb19f80818e47135b91b5eb308068ebcf02773f91e85cada8d8",
       "dossier_path": "07_PROJECT_LEARNING/czy0729-bangumi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/czy0729-bangumi-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "- [iOS] 升级到 Expo SDK 58（React Native 0.88），适配相关 API 变更",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "- [条目] 板块布局支持按条目单独调整, 并可随设置上传/下载",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -9667,7 +9672,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T04:44:23.865Z",
+      "verified_at": "2026-11-10T02:43:56.708Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44952,14 +44957,19 @@
       "slug": "mintplex-labs-anything-llm",
       "platform": "github",
       "source_url": "https://github.com/Mintplex-Labs/anything-llm",
-      "source_version": "308b2766",
-      "content_hash": "b2458236289285caaa5319704d05bc3e89ed41a1202342972c3e3cd2f8e2605c",
+      "source_version": "ace9dad3",
+      "content_hash": "ac64b1969812ac6466c57f592f8cc2edbe120373665ce21e519a75b7ee60999d",
       "dossier_path": "07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "keep non-Latin path text in single-link scrape titles (#7025)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "bump lancedb to 0.30.0 and reject empty vectors before insert (#7093)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -45043,7 +45053,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T19:09:50.924Z",
+      "verified_at": "2026-11-10T02:44:03.412Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -77266,13 +77276,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "provablehq-snarkos",
+      "slug": "aleo-labs-protocol-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/ProvableHQ/snarkOS",
-      "source_version": "16f3ce5c",
-      "content_hash": "cc1d85085b24a7ee3c499e2ff580c0cb896328e2c96a759c797eb6b3766b2905",
-      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_version": "5c7d169f",
+      "content_hash": "c3b77b140ed9f2e6bf3d0612ccbe0701e009555f8d2c51a9511101f237af8318",
+      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": null,
@@ -77470,7 +77480,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T23:07:29.930Z",
+      "verified_at": "2026-11-10T02:43:58.143Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

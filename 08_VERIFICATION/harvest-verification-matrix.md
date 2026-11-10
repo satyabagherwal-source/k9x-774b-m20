@@ -8725,3 +8725,6 @@
 | `CYCLE-20261110-QOKD` | `2026-11-10T02:31:50.749Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`39f2d45f...`) |
 | `CYCLE-20261110-QOKH` | `2026-11-10T02:31:50.753Z` | `zvec-ai/zvec-grep` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`468b09f4...`) |
 | `CYCLE-20261110-QQJ7` | `2026-11-10T02:31:53.299Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`018e53a3...`) |
+| `CYCLE-20261110-68TI` | `2026-11-10T02:43:56.838Z` | `czy0729/Bangumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`53cc0984...`) |
+| `CYCLE-20261110-69XT` | `2026-11-10T02:43:58.289Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md` | Yes (`c3b77b14...`) |
+| `CYCLE-20261110-6DZQ` | `2026-11-10T02:44:03.542Z` | `Mintplex-Labs/anything-llm` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ac64b196...`) |

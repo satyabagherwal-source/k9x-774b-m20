@@ -8734,3 +8734,6 @@ Every entry in this ledger must capture:
 | `learn-github-zvec-ai-zvec-grep` | `https://github.com/zvec-ai/zvec-grep` | `e06ff066` | Multi-dimensional audit evidence | 2026-11-10T02:31:50.759Z |
 | `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `71457b66` | Multi-dimensional audit evidence | 2026-11-10T02:31:50.769Z |
 | `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `36354fa6` | Multi-dimensional audit evidence | 2026-11-10T02:31:53.303Z |
+| `learn-github-czy0729-bangumi` | `https://github.com/czy0729/Bangumi` | `79c411ba` | Multi-dimensional audit evidence | 2026-11-10T02:43:56.843Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `5c7d169f` | Multi-dimensional audit evidence | 2026-11-10T02:43:58.293Z |
+| `learn-github-mintplex-labs-anything-llm` | `https://github.com/Mintplex-Labs/anything-llm` | `ace9dad3` | Multi-dimensional audit evidence | 2026-11-10T02:44:03.546Z |

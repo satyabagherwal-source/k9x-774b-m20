@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-10T02:31:53.310Z",
-  "total_cycles_completed": 8690,
-  "total_learnings_persisted": 8690,
-  "total_rules_promoted": 8534,
+  "last_updated": "2026-11-10T02:44:03.553Z",
+  "total_cycles_completed": 8693,
+  "total_learnings_persisted": 8693,
+  "total_rules_promoted": 8536,
   "history": [
-    {
-      "timestamp": "2026-11-09T05:52:50.346Z",
-      "repository": "lioensky/VCPToolBox",
-      "learningId": "learn-github-lioensky-vcptoolbox",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T06:00:14.915Z",
-      "repository": "makecindy/cindy",
-      "learningId": "learn-github-makecindy-cindy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T06:05:21.811Z",
-      "repository": "google/embeddinggemma-2",
-      "learningId": "learn-huggingface-google-embeddinggemma-2",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T06:32:27.538Z",
       "repository": "canberkkkkkk/ema-lightning",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-10T02:31:53.310Z",
       "repository": "volcengine/OpenViking",
       "learningId": "learn-github-volcengine-openviking",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-10T02:43:56.849Z",
+      "repository": "czy0729/Bangumi",
+      "learningId": "learn-github-czy0729-bangumi",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-10T02:43:58.303Z",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "learningId": "learn-github-aleo-labs-protocol-snarkos",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-10T02:44:03.553Z",
+      "repository": "Mintplex-Labs/anything-llm",
+      "learningId": "learn-github-mintplex-labs-anything-llm",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
