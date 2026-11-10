@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `ca27cf88`  
+> **Source Version**: `db8874b1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T21:27:04.207Z  
+> **Timestamp**: 2026-11-10T04:37:05.800Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T21:27:04.196Z  
+> **Harvest Timestamp**: 2026-11-10T04:37:01.215Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: World Model 🌱🐋🌍
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 771 stars
+- **Stars / Engagement**: 770 stars
 
 ---
 
@@ -1629,657 +1629,144 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ca27cf88` (2026-11-09)
-**Commit Message**: NUC 101 Exact-Depth Reasoning Selections
+### Incident Patch 1: `db8874b1` (2026-11-10)
+**Commit Message**: Draft NUC 102 Implicit Receiver Properties
 
-Rejected: the every-test-passes hard criterion failed.
+Category: Syntax enhancement, drawn uniformly at random (index 0 of the
+five eligible categories in NUC 1's registry, p = 1/5, no redraw) for a
+continuous /nuc-proposal cycle, so token comparison is required.
 
-Independent cargo test --no-fail-fast returned 2887 passed, 1 failed and 25
-retained ignores. The existing protected property_selectors audit at
-tests/property_selectors.rs:888:9 rejects the new selector-bearing case outside
-its fixed accepted title whitelist. No expectation or canonical case was
-weakened to make the candidate pass.
+Requested change: in the value of an assignment to a property, a dot that
+begins an operand and is followed by a property name reads that property
+of the assigned object, so `$Order.total = .price * .qty` is
+`$Order.total = $Order.price * $Order.qty`. The receiver is the target
+without its last property; the forms are `=`, `:=` and the compound and
+logical compound assignments. Only inputs that raised
+SyntaxError("Unexpected '.'") change: selector arguments, `is`
+assignments, variable targets and member access keep their readings.
 
-Build all targets, warning-denied Clippy and formatting passed. All 1047 pinned
-accepted/original-counterpart sources replayed, and all 2894 accepted entries
-across 113 runners remain. The required continuous Reasoning token comparison
-ran and passed: 3 less, 1044 same, 0 more. The core decision was Accepted; the
-independent overall decision was Rejected because the full suite failed.
+This allocation changes only the Draft and its two index rows.
 
-The evaluator separately demonstrated an E0004 downstream exhaustive-match
-break from the proposed public Expr variant. Advisory evidence is unscored
-without a rubric; strategy learning is not configured.
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01AJtz8h87ALvMLUftuXJ8mn
 
-Record only rejection documentation and the two index entries. The frozen
-implementation, tests, executable documents, grammar, datasets and exports
-remain isolated and ar
-
-**File**: `docs/nuc-0000.md` (modified, +2/-2)
+**File**: `docs/nuc-0000.md` (modified, +2/-0)
 ```diff
-@@ -133,7 +133,7 @@ Created: 31-Jul-2026
- | [82](nuc-0082.md) | Depth-Limited Reasoning Selections | Accepted |
- | [83](nuc-0083.md) | Hypothetical Difference Selections | Accepted |
- | [88](nuc-0088.md) | Derivation Path Selections | Accepted |
--| [101](nuc-0101.md) | Exact-Depth Reasoning Selections | Draft |
-+| [101](nuc-0101.md) | Exact-Depth Reasoning Selections | Rejected: existing selector-case audit fails |
- 
- ### Language compatibility
- 
-@@ -256,7 +256,7 @@ Created: 31-Jul-2026
- | [98](nuc-0098.md) | Every Quantifiers, Class References and Predicate Sentences | Standards Track | Syntax enhancement | Accepted |
- | [99](nuc-0099.md) | SQL-Style Inequality | Standards Track | Language compatibility | Rejected: full suite fails 14 corpus-count assertions |
- | [100](nuc-0100.md) | Reactive Cotangent | Standards Track | Utility enhancement | Accepted |
--| [101](nuc-0101.md) | Exact-Depth Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
-+| [101](nuc-0101.md) | Exact-Depth Reasoning Selections | Standards Track | Reasoning enhancement | Rejected: existing selector-case audit fails |
- 
- ## Copyright
- 
-```
-
-**File**: `docs/nuc-0101.md` (modified, +234/-20)
-```diff
-@@ -4,7 +4,7 @@
- NUC: 101
- Title: Exact-Depth Reasoning Selections
- Author: GitHub Copilot <223556219+Copilot@users.noreply.github.com>
--Status: Draft
-+Status: Rejected
- Type: Standards Track
- Category: Reasoning enhancement
- Created: 09-Nov-2026
-@@ -24,8 +24,14 @@ Requires: 1, 48, 82
- - This continuous Reasoning enhancement requires pre-executed accepted-syntax
-   counterparts, independent per-case lexer-token comparison and every hard
-   build, test and backward-compatibility criterion.
--- This pushed Draft allocates the number only. It records no implementation,
--  evaluation result, performance claim or acceptance decision.
-+- The isolated prototype reuses the accepted ranked selection and bounded
-+  walks. The required caller-owned Rust improvement pass completed with
-+  justified no change; the rejected implementation remains isolated.
-+- **Rejected:** the full test suite fails the existing
-+  `property_selectors::the_appended_cases_use_selectors_and_run_every_assertion`
-+  expectation at `tests/property_selectors.rs:888:9`. The new selector-bearing
-+  case is outside that test's accepted title whitelist. Passing the core
-+  evaluator and token policy does not satisfy the every-test-passes criterion.
- 
- ## Motivation
- 
-@@ -42,41 +48,249 @@ Requires: 1, 48, 82
- 
- ## Rationale
- 
--Pending preparation by the fresh proposal agent against the pinned allocation.
-+- Exact equality selects a layer; `depth` remains the inclusive radius.
-+  Reuse its shortest distances rather than traversal discovery order, so a
-+  shortcut into a node keeps that node in its nearer layer.
-+- Preserve the typed `Ranked` selection, its parallel distance vector and
-+  last walking direction. Equality uses the existing retaining helper;
-+  neither a new provenance graph nor an extra output field is needed.
-+- Use a separate argument-bearing AST variant rather than changing the
-+  fields of accepted `Expr::Depth` or extending argument-free `Stage`.
-+  Existing calls named `atDepth` do not become stages.
-+- Keep `depth`'s evaluation, observations, strict validation, snapshots,
-+  deferral and shadowing. A new numeric conversion, coercing helper or
-+  special case for distance zero would give the two stages different rules.
-+- This is a Reasoning enhancement because it selects a graph-query layer,
-+  not a cross-language alias or a new runtime-category feature. The caller's
-+  confirmed draw and continuous mode remain unchanged.
- 
- ## Specification
- 
--Pending implementation and synchronization with the authoritative specification.
--Use shortest distances, including nonempty paths for `affects`, zero distances
--for unwalked references and `model`, and retained distances across filters.
--Preserve all source observations, including excluded steps. Validate the
--distance after selecting the source; defer and skip later stages when it is
--unknown. Keep ordinary names and all accepted diagnostics outside the new form.
-+This is the rejected prototype's proposed contract, not accepted behavior.
-+Its specification, grammar, reference, datasets and exports remain isolated.
-+
-+- Retain exactly the steps at `DISTANCE`, with their order and `node`,
-+  `holds`, `rule`, `state` and `from` unchanged. The distance is the shortest
-+  path from the latest walk's input, not the first-discovered path.
-+- `why` includes its inputs at 0. `affects` uses nonempty paths, including
-+  paths between multiple inputs, so its zero layer is empty. Unwalked
-+  references and unwalked model members are at 0.
-+- State, radius, exact-layer, path and hypothetical-difference filters
-+  preserve distances and direction. A later walking stage resets both from
-+  its own input. All source value and structural observations survive,
-+  including observations of excluded steps.
-+- Evaluate the source first, then evaluate the distance once at its stage,
-+  retaining its effects and dependencies. Reuse `depth`'s non-negative
-+  integer number validation, including negative zero and saturating
-+  conversion for large finite integers. A distance beyond every layer
-+  selects nothing.
-+- `null` or undefined makes the reasoning expression undefined, stored as
-+  `null` in declarations. Do not execute later stages or evaluate their
-+  arguments. Quantifiers, member reads and method reads defer as for `depth`.
-+- Check operation bindings before source selection, as for accepted
-+  argument-bearing stages. Local/parameter, state-variable, function and
-+  class bindings named `atDepth` shadow it. A binding added after a standing
-+  selection affects its next evaluation; a failed refresh rolls back its
-+  triggering statement.
-+- Recognize only the identifier `atDepth` immediately after `|>`, followed
-+  by a `(` token and one full expression ending in `)`. Whitespace is
-+  allowed; a logical newline between the name and `(` is not. Preserve the
-+  parser's existing nesting, chain and adjacent-statement boundaries.
-+- Add no runtime lexer keyword, prefix form or general-call lowering.
-+  O
-```
-
----
-
-### Incident Patch 2: `315b645e` (2026-11-09)
-**Commit Message**: NUC 98 Every Quantifiers, Class References and Predicate Sentences
-
-Accepted under the user-requested basis of the automatic acceptance rule.
-`every` now spells the quantifier word `all` and the class reference `$`,
-and the statement `$Class is WORD` states `$Class.WORD = true`. So
-`every v in xs: v > 0` is `all v in xs: v > 0`, `every Human.mortal = true`
-is `$Human.mortal = true`, and `every Human is mortal` and
-`$Human is mortal` both say that every Human is mortal. Class names stay
-exact: `every human` reads `$human`.
-
-The user accepted three compatibility breaks in advance:
-- `every NAME in` inputs, which raised a SyntaxError; the one assertion
-  pinning that error in tests/quantifiers.rs moves to the quantifier
-  reading.
-- `every` directly followed by a name where an operand begins, which
-  juxtaposed two statements or items, as in `every Human = 4` after
-  `every = 3`.
-- `$Class is WORD` ending its line statement, which ran as the three
-  statements `$Class`, `is` and `WORD` and raised ReferenceError.
-
-Hard criteria:
-- No compile errors: cargo build --all-targets, cargo clippy --all-targets
-  -- -D warnings, cargo fmt --check and rustdoc with -D warnings pass in
-  the indep
-
-**File**: `README.md` (modified, +24/-0)
-```diff
-@@ -2112,6 +2112,30 @@ assert(cheap, ["pen"])
-   enclosing function. See the
-   [root contract](nucleoid.spec.md#list-comprehensions).
- 
-+## Every and predicate sentences
-+
-+**Every states a class-level claim as it is said**
-+
-+```nuc
-+class Human(name: str):
-+    this.name = name
-+every Human is mortal
-+every Human.legs is 2
-+socrates = Human("Socrates")
-+assert([socrates.mortal, socrates.legs], [true, 2])
-+assert(every h in Human: h.mortal, true)
-+```
-+
-+- [NUC 98](docs/nuc-0098.md) reads `every Human` as the class reference
-+  `$Human`, so `every Human.legs is 2` is the class-level rule
-+  `$Human.legs = 2`, and `every h in Human: h.mortal` as the quantifier
-+  `all h in Human: h.mortal`.
-+- The statement `every Human is mortal`, like `$Human is mortal`, states
-+  `$Human.mortal = true` for every instance, and `why` reports it as that
-+  rule. Elsewhere `every` stays an ordinary name, so `xs.every(...)` and a
-+  variable named `every` work as before. See the
-+  [root contract](nucleoid.spec.md#every-quantifiers-class-references-and-predicate-sentences).
-+
- ## Benchmark
- 
- This is the comparation our sample order app in Nucleoid IDE against MySQL and Postgres with using Express.js and Sequelize libraries.
-```
-
-**File**: `dataset/nucleoid.spec.jsonl` (modified, +5/-0)
-```diff
-@@ -719,3 +719,8 @@
- {"id":"spec-0719","description":"Nucleoid writes comprehensions wherever a list may start","code":"stock = [3, 0, 7, 2]\ndef doubled(values):\n    return [value * 2 for value in values]\ndef count(values) => values.length\nsummary = {low: [qty for qty in stock if qty < 3], total: count([qty for qty of stock if qty > 0])}\nnote = `restock ${[qty + 10 for qty in stock if qty == 0]}`\nassert(doubled(stock), [6, 0, 14, 4])\nassert(summary, {low: [0, 2], total: 3})\nassert(note, \"restock 10\")\nstatus = [qty for qty in stock if qty > 5].length > 0 ? \"order\" : \"wait\"\nassert(status, \"order\")\nif [qty for qty in stock if qty > 9].length == 0:\n    quiet = true\nassert(quiet, true)\n[qty - 1 for qty in stock if qty > 1]","return":"[2,6,1]"}
- {"id":"spec-0720","description":"Nucleoid keeps comprehensions identical to their map and filter spellings","code":"stock = [3, 0, 7]\nlimit = 1\nlisted = [qty * 2 for qty in stock if qty > limit]\nspelled = stock.filter(qty => qty > limit).map(qty => qty * 2)\nplain = [qty + 1 for qty of stock]\nassert(listed, spelled)\nassert(plain, stock.map(qty => qty + 1))\nassert((why listed).map(step -> step.rule), [\"listed = stock.filter(function()).map(function())\", \"stock = [3,0,7]\", \"limit = 1\"])\nassert((why plain).map(step -> step.rule), [\"plain = stock.map(function())\", \"stock = [3,0,7]\"])\nassert((affects limit).map(step -> step.node), [\"listed\", \"spelled\"])\ntry:\n    limit = 5\n    assert(listed, [14])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert([listed, spelled], [[6, 14], [6, 14]])\nlisted","return":"[6,14]"}
- {"id":"spec-0721","description":"Nucleoid keeps cotangents reactive","code":"angle = 0\nratio = Math.cot(angle)\nassert(ratio, Number.POSITIVE_INFINITY)\nangle = 1\nassert(ratio, 1 / Math.tan(1))\nangle = -0\nassert(ratio, Number.NEGATIVE_INFINITY)\nangle = -1\nassert(ratio, 1 / Math.tan(-1))\nangle = Number.NaN\nassert(Number.isNaN(ratio), true)\nangle = 0.5\nassert(ratio, 1 / Math.tan(0.5))","return":null}
-+{"id":"spec-0722","description":"Nucleoid states class predicates with is","code":"class Human(name: str):\n    this.name = name\nplato = Human(\"Plato\")\nevery Human is mortal\nsocrates = Human(\"Socrates\")\nassert([plato.mortal, socrates.mortal], [true, true])\n$Human is wise\nassert(socrates.wise, true)\nassert((why socrates.mortal)[0].rule, \"$Human.mortal = true\")\nmortal = false\nassert(socrates.mortal, true)\nplato.mortal = false\nassert([plato.mortal, socrates.mortal], [false, true])\nsocrates.mortal","return":"true"}
-+{"id":"spec-0723","description":"Nucleoid spells class references with every","code":"class Order(total):\n    this.total = total\nevery Order.big = every Order.total > 10\nif every Order.total > 100:\n    every Order.vip = true\nsmall = Order(5)\nlarge = Order(200)\nassert([small.big, large.big], [false, true])\nassert([small.vip, large.vip], [null, true])\nsmall.total = 50\nassert(small.big, true)\nevery Order.tier is \"gold\"\nassert(large.tier, \"gold\")\nsmall.big","return":"true"}
-+{"id":"spec-0724","description":"Nucleoid quantifies with every as with all","code":"class Check\nready = every check in Check: check.passed\nassert(ready, true)\nfirst = Check()\nfirst.passed = true\nsecond = Check()\nassert(ready, false)\nsecond.passed = true\nassert(ready, true)\nscores = [3, 4]\nassert(every score in scores: score > 2, all score in scores: score > 2)\nassert(every score in scores: score > 3, false)\nassert((every score in scores: score > 2) ? \"pass\" : \"fail\", \"pass\")\nready","return":"true"}
-+{"id":"spec-0725","description":"Nucleoid keeps every an ordinary name where no name follows it","code":"every = [1, 2]\ntotal = every.length\nassert(total, 2)\nassert(every.every(v => v > 0), true)\npairs = {every: 3, other: every[0]}\nassert(pairs, {every: 3, other: 1})\ndef count(every) => every + 1\nassert(count(4), 5)\nevery is [5]\nassert(total, 1)\nassert(every n in every: n > 4, true)\nevery","return":"[5]"}
-+{"id":"spec-0726","description":"Nucleoid keeps other is statements on a class reference","code":"class Order(total):\n    this.total = total\norder = Order(20)\n$Order.size is big\nassert(order.size, \"big\")\ntry:\n    $Order is 5\ncatch error:\n    assert(error, ReferenceError(\"is is not defined\"))\nassert(order.big, null)\n$Order is big\nassert(order.big, true)\norder.size","return":"\"big\""}
-```
-
-**File**: `docs/README.md` (modified, +37/-1)
-```diff
-@@ -383,6 +383,11 @@ qty = 5
- - A word assignment renders as `a is good` in graph keys and in `why` and
-   `affects`; every other one renders as its `=` spelling. Malformed values
-   report the errors of their `=` spellings.
-+- A class reference without a property is not a target, so `$Order is 5`
-+  keeps its accepted reading, but `$Human is mortal` with exactly one name
-+  after `is` is the predicate sentence of
-+  [NUC 98](nuc-0098.md), which states `$Human.mortal = true`; see
-+  [Class-Level Rules](#6-class-level-rules).
- 
- ```
- status is OPEN
-@@ -1286,6 +1291,29 @@ $Human.mortal = true
- ```
- 
- - Every `Human` has `mortal` `true`.
-+- [NUC 98](nuc-0098.md) spells `$Name` as `every Name` wherever an operand
-+  begins, so `every Human.mortal = true` and
-+  `every Order.big = every Order.total > 10` are class-level rules. Names
-+  stay exact: `every human` is `$human`. `every Name in` begins a
-+  [quantifier](#quantifiers) instead, and `every is ...` and `every Name:`
-+  outside a header keep their accepted readings, as does `every` at the top
-+  level of a template interpolation.
-+- The statement `$Human is mortal`, or `every Human is mortal`, states
-+  `$Human.mortal = true` and renders as it. It needs exactly one name after
-+  `is`, followed by the end of the line, a `;`, the end of a block or of
-+  the input, `else` or `catch`. `$Order is 5`, `$Human is "mortal"`,
-+  `$Human is not mortal` and `$Human is mortal x = 1` keep their accepted
-+  readings as juxtaposed statements, and `$Human.kind is mortal` still
-+  stores the word `"mortal"`.
-+
-+```
-+class Human(name: str):
-+    this.name = name
-+
-+every Human is mortal
-+```
-+
-+- This states the same rule as the program above.
- 
- ### Conditionals, order, and overriding
- 
-@@ -2340,7 +2368,7 @@ doubled = prices.map(p => p * rate)
- open = Task.filter(t => not t.done).length
- ```
- 
--- `all t in Task: t.done` and `any t in Task: t.done` state the claims of `every` and `some` directly, and they nest; see [Quantifiers](#quantifiers).
-+- `all t in Task: t.done`, its spelling `every t in Task: t.done`, and `any t in Task: t.done` state the claims of `every` and `some` directly, and they nest; see [Quantifiers](#quantifiers).
- 
- - Regular expressions support `.test(...)` and may be used in any condition.
- 
-@@ -3694,6 +3722,10 @@ ready
-   `Name.all()`, the `.any(callback)` alias, variables, functions, keys and
-   parameters. At the top level of a template interpolation a quantifier needs
-   parentheses: `` `${(all v in xs: v)}` ``.
-+- [NUC 98](nuc-0098.md) adds `every NAME in COLLECTION: CONDITION` as a
-+  spelling of `all NAME in COLLECTION: CONDITION`. It builds the same node,
-+  renders as `(all ...)` and pairs its colon in header scans as `all` does.
-+  `every` stays an ordinary name elsewhere, including `xs.every(callback)`.
- - The authoritative contract is the
-   [quantifiers](../nucleoid.spec.md#quantifiers) section.
- 
-@@ -3925,6 +3957,9 @@ name = a; name = b                     several statements on one line
- name: type                             declaration without value -- rejected
- name.property = expression             property assignment
- $Type.property = expression            class-level rule
-+every Type.property = expression       the same class-level rule; every Type is $Type (NUC 98)
-+$Type is word                          predicate sentence: $Type.word = true (NUC 98)
-+every Type is word                     the same predicate sentence (NUC 98)
- delete name                            remove a variable, property, or instance
- 
- class Name                             empty type declaration
-@@ -4082,6 +4117,7 @@ reference |> why |> path(target)      how target reaches the reference (NUC 88)
- reference |> affects |> path(target)  what the reference moves on its way to target (NUC 88)
- selection |> path(target)             steps on a dependency path to target (NUC 88)
- all name in collection: condition     true when the condition holds for every member (NUC 62)
-+every name in collection: condition   the same quantifier as all (NUC 98)
- any name in collection: condition     true when the condition holds for some member (NUC 62)
- (all name in collection: condition)   parenthesize to combine with what follows (NUC 62)
- suppose premise: suite                run premise and suite, then roll both back (NUC 65)
-```
-
-**File**: `docs/examples.md` (modified, +33/-0)
-```diff
-@@ -3611,6 +3611,39 @@ assert(diagonal.ratio, 1 / Math.tan(-1))
-   infinities, ignored-extra dependencies, the supplied-Undefined gate and
-   inherited live-null/parameter deferral remain as for existing Math calls.
- 
-+## Every and predicate sentences
-+
-+**Every keeps a fleet's rules stated as claims about every truck**
-+
-+```nuc
-+class Truck(name, load, limit):
-+    this.name = name
-+    this.load = load
-+    this.limit = limit
-+every Truck is registered
-+every Truck.overloaded = every Truck.load > every Truck.limit
-+if every Truck.overloaded:
-+    every Truck.status = "hold"
-+else:
-+    every Truck.status = "go"
-+north = Truck("north", 8, 10)
-+south = Truck("south", 12, 10)
-+assert([north.status, south.status], ["go", "hold"])
-+assert(every truck in Truck: truck.registered, true)
-+south.load = 9
-+safe = every truck in Truck: not truck.overloaded
-+[south.status, safe]
-+# return: ["go",true]
-+```
-+
-+- `every Truck is registered` states `$Truck.registered = true`, and
-+  `every Truck` stands for `$Truck` in the other rules, so each truck is
-+  registered, knows whether it is overloaded and takes its status from that.
-+- `every truck in Truck: not truck.overloaded` is the quantifier
-+  `all truck in Truck: not truck.overloaded`. Lightening `south` releases it
-+  and makes the fleet safe. See [NUC 98](nuc-0098.md) and the
-+  [root contract](../nucleoid.spec.md#every-quantifiers-class-references-and-predicate-sentences).
-+
- ## Copyright
- 
- Copyright 2020 Nucleoid
-```
-
-**File**: `docs/nuc-0000.md` (modified, +2/-2)
-```diff
-@@ -63,7 +63,7 @@ Created: 31-Jul-2026
- | [95](nuc-0095.md) | Item Words | Accepted |
+@@ -64,6 +64,7 @@ Created: 31-Jul-2026
  | [96](nuc-0096.md) | At Variables | Accepted |
  | [97](nuc-0097.md) | In and Not In Membership Tests | Draft |
--| [98](nuc-0098.md) | Every Quantifiers, Class References and Predicate Sentences | Draft |
-+| [98](nuc-0098.md) | Every Quantifiers, Class References and Predicate Sentences | Accepted |
+ | [98](nuc-0098.md) | Every Quantifiers, Class References and Predicate Sentences | Accepted |
++| [102](nuc-0102.md) | Implicit Receiver Properties | Draft |
  
  ### Runtime features
  
-@@ -253,7 +253,7 @@ Created: 31-Jul-2026
- | [95](nuc-0095.md) | Item Words | Standards Track | Syntax enhancement | Accepted |
- | [96](nuc-0096.md) | At Variables | Standards Track | Syntax enhancement | Accepted |
- | [97](nuc-0097.md) | In and Not In Membership Tests | Standards Track | Syntax enhancement | Draft |
--| [98](nuc-0098.md) | Every Quantifiers, Class References and Predicate Sentences | Standards Track | Syntax enhancement | Draft |
-+| [98](nuc-0098.md) | Every Quantifiers, Class References and Predicate Sentences | Standards Track | Syntax enhancement | Accepted |
+@@ -257,6 +258,7 @@ Created: 31-Jul-2026
  | [99](nuc-0099.md) | SQL-Style Inequality | Standards Track | Language compatibility | Rejected: full suite fails 14 corpus-count assertions |
  | [100](nuc-0100.md) | Reactive Cotangent | Standards Track | Utility enhancement | Accepted |
- | [101](nuc-0101.md) | Exact-Depth Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
+ | [101](nuc-0101.md) | Exact-Depth Reasoning Selections | Standards Track | Reasoning enhancement | Rejected: existing selector-case audit fails |
++| [102](nuc-0102.md) | Implicit Receiver Properties | Standards Track | Syntax enhancement | Draft |
+ 
+ ## Copyright
+ 
 ```
 
-**File**: `docs/nuc-0098.md` (modified, +771/-24)
+**File**: `docs/nuc-0102.md` (added, +94/-0)
 ```diff
-@@ -4,7 +4,7 @@
- NUC: 98
- Title: Every Quantifiers, Class References and Predicate Sentences
- Author: Can Mingir <canmingir@gmail.com>
--Status: Draft
-+Status: Accepted
- Type: Standards Track
- Category: Syntax enhancement
- Created: 09-Nov-2026
-@@ -13,15 +13,19 @@ Requires: 62, 93
- 
- ## Abstract
- 
--- Adds three spellings of universal claims, each read as an accepted form:
-+- Adds three spellings of universal claims. Each builds the syntax tree of an
-+  accepted form, so its evaluation, dependencies, errors and rendering are
-+  that form's:
-   - `every NAME in COLLECTION: CONDITION` is the quantifier
--    `all NAME in COLLECTION: CONDITION` of [NUC 62](nuc-0062.md).
--  - `every NAME`, where an operand can begin, is the class reference
--    `$NAME`, so `every Human.mortal = true` is `$Human.mortal = true`.
--  - The statement `$Class is WORD`, whose value is one word, sets the
--    property `WORD` to `true` for every instance, as `$Class.WORD = true`
--    does. So `$Human is mortal` and `every Human is mortal` both say that
--    every Human is mortal.
-+    `all NAME in COLLECTION: CONDITION` of [NUC 62](nuc-0062.md). It builds
-+    the `all` node and renders as `(all NAME in COLLECTION:CONDITION)`.
-+  - `every NAME`, where an operand begins, is the class reference `$NAME`,
-+    so `every Human.mortal = true` is `$Human.mortal = true`.
-+  - The statement `$Class is WORD`, whose value is exactly one name that
-+    ends the line statement, is `$Class.WORD = true`, the rule that every
-+    instance has `WORD` `true`. So `$Human is mortal` and
-+    `every Human is mortal` both say that every Human is mortal, and render
-+    as `$Human.mortal=true`.
- - The class-level rule of the Socrates example then reads as it is said:
- 
- ```
-@@ -38,23 +42,43 @@ assert(every h in Human: h.mortal, true)
- - Class names stay exact and case-sensitive: `every Human` reads `$Human`,
-   and `every human` reads `$human`.
- - Everywhere else `every` keeps every accepted reading, including the list
--  query `xs.every(...)`, a variable, function or property named `every`, and
--  `every` followed by anything but a name. A variable named `every` does not
--  disable the new forms.
-+  query `xs.every(...)`, a variable, function, parameter, property, key or
-+  label named `every`, and `every` followed by anything but a name. Three
-+  readings with a following name are kept too: `every is ...`, the `is`
-+  assignment or comparison of a variable named `every`; `every NAME:`
-+  outside a header, where `NAME:` begins the next comma-free property or a
-+  colon statement; and the top level of a template interpolation. A variable
-+  named `every` does not disable the new forms.
-+- No token, keyword, syntax-tree variant, error type or message, option or
-+  flag is added, and no public item is added or removed. The authoritative
-+  contract is
-+  [Every quantifiers, class references and predicate sentences](../nucleoid.spec.md#every-quantifiers-class-references-and-predicate-sentences).
- - The user accepted three compatibility breaks in advance, each limited to
-   the inputs it names:
--  - `ok = every v in xs: v` raised `SyntaxError("Unexpected keyword 'in'")`
--    at line 1, column 17, which `tests/quantifiers.rs` pins. That assertion
--    moves to the quantifier reading.
--  - Where an operand can begin, the name `every` directly followed by a name
-+  - Inputs where the name `every`, a binder name and `in` follow each other
-+    where an operand begins, outside the top level of a template
-+    interpolation, raised a `SyntaxError`, usually
-+    `Unexpected keyword 'in'`. They now read as `all`. The one assertion
-+    that pinned such an error, `ok = every v in xs: v` in
-+    `tests/quantifiers.rs`, moves to the quantifier reading.
-+  - Where an operand begins, the name `every` directly followed by a name
-     ended one statement or item, and the name began the next. So after
-     `every = 3`, `every Human = 4` ran as `every` and `Human = 4`. Those
--    inputs now read `$NAME`.
--  - `$Class is WORD` ran as the three statements `$Class`, `is` and `WORD`,
--    so `$Human is mortal` raised `ReferenceError("is is not defined")` at
--    its `is`. It now states the predicate.
-+    inputs now read `$NAME`, and `every Human = 4` raises
-+    `SyntaxError("Cannot assign to $Human")` when it runs.
-+  - Statement-level `$Class is WORD` that ends its line statement ran as the
-+    three statements `$Class`, `is` and `WORD`, so `$Human is mortal` raised
-+    `ReferenceError("is is not defined")` at its `is`. It now states the
-+    predicate. The same words followed by more of the line, as in
-+    `$Human is mortal x = 1`, keep their accepted reading.
- - Any other change to an accepted parse, behavior, output or pinned test
-   still fails backward compatibility.
-+- **Accepted** under the user-requested basis of the automatic acceptance
-+  rule: the frozen candidate meets every hard criterion, with the three
-+  breaks above and no other. The independent evaluator's overall
-```
-
-**File**: `docs/nucleoid.g4` (modified, +53/-2)
-```diff
-@@ -122,6 +122,7 @@ statement
-     | supposeStmt
-     | valueAssignment
-     | isAssignment
-+    | predicateSentence
-     | expression                        // Stmt::Assign or Stmt::Expression
-     ;
- 
-@@ -195,6 +196,29 @@ isAssignment
-     : path IS expression                // Stmt::Assign, as path = expression
-     ;
- 
-+/*
-+ * Predicate-sentence contract (NUC 98):
-+ * - The leading expression is a class reference without a property: a
-+ *   CLASS_REF or an everyClass, possibly grouped in parentheses. A path
-+ *   with a member or version is an isAssignment instead.
-+ * - IS and one name token follow it, and the token after the name is
-+ *   NEWLINE, ';', DEDENT, '}', EOF, ELSE or CATCH, so the accepted grammar
-+ *   read 'CLASS_REF', 'IS' and 'name' as three one-token statements. Any
-+ *   other token after the name, including the start of another statement
-+ *   on the same line, keeps the accepted reading.
-+ * - It builds the tree of 'CLASS_REF DOT name ASSIGN TRUE' and renders as
-+ *   it; the name is the property, never a word.
-+ */
-+predicateSentence
-+    : classReference IS name            // Stmt::Assign, as $Class.name = true
-+    ;
+@@ -0,0 +1,94 @@
++# NUC 102 -- Implicit Receiver Properties
 +
-+classReference
-+    : CLASS_REF
-+    | everyClass
-+    | LPAREN classReference RPAREN
-+    ;
++```
++NUC: 102
++Title: Implicit Receiver Properties
++Author: Can Mingir <canmingir@gmail.com>
++Status: Draft
++Type: Standards Track
++Category: Syntax enhancement
++Created: 09-Nov-2026
++Requires: 13, 26, 64, 66, 79, 98
++```
 +
- // Only at a statement boundary; require NEWLINE, ';', DEDENT, '}', EOF,
- // 'else' or 'catch' after the value. At most 128 targets are accepted.
- destructuring
-@@ -382,7 +406,8 @@ methodDecl
-  *   'is:', 'stated name:' and 'derived name:' keep that interpretation.
-  * - A Python conditional is tentative and needs 'else' directly after its
-  *   condition. It is disabled in interpolation and comprehension sources.
-- * - Interpolation also disables quantifiers, noun queries and lambdas.
-+ * - Interpolation also disables quantifiers, every class references, noun
-+ *   queries and lambdas.
-  *   Object values retain 'lambda name:' as a property/declaration boundary
-  *   when that boundary has the accepted reading.
-  */
-@@ -536,6 +561,7 @@ selector
- primary
-     : atVariable
-     | quantified
-+    | everyClass
-     | name arrow arrowBody
-     | lambdaExpression
-     | parameters arrow arrowBody
-@@ -598,8 +624,24 @@ arrowBody
-     | expression
-     ;
- 
-+// EVERY builds the ALL node and renders as 'all' (NUC 98).
- quantified
--    : (ALL | ANY) name IN clauseExpression COLON expression
-+    : (ALL | EVERY | ANY) name IN clauseExpression COLON expression
-+    ;
++## Abstract
 +
-+/*
-+ * Every-class contract (NUC 98):
-+ * - EVERY and the name token after it, where an operand begins outside the
-+ *   top level of an interpolation, build Expr::ClassRef(name), the tree of
-+ *   the CLASS_REF '$name'. A block comment may stand between them; NEWLINE
-+ *   outside parentheses and brackets separates them.
-+ * - Not when IN follows the name, which is quantified; not when the name is
-+ *   IS, so 'every is v' stays an isAssignment or comparison of the name
-+ *   'every'; and not when COLON follows the name outside a clause, so the
-+ *   name keeps starting the next comma-free property or colon statement.
-+ */
-+everyClass
-+    : EVERY name                        // Expr::ClassRef
-     ;
- 
- lambdaExpression
-@@ -676,6 +718,7 @@ enumName
-     | EXTENDS
-     | IS
-     | ALL
-+    | EVERY
-     | ANY
-     | SUM
-     | MAX
-@@ -757,6 +800,7 @@ SUPPOSE          : 'suppose';
- LAMBDA           : 'lambda';
- IS               : 'is';
- ALL              : 'all';
-+EVERY            : 'every';
- ANY              : 'any';
- SUM              : 'sum';
- MAX              : 'max';
-@@ -919,6 +963,9 @@ fragment REGEX_CHAR
-  * p is [A, {k: B}, X(n=C)] -> p = [Word(A), {k: Word(B)}, X(n=Word(C))].
-  * p is @a + 2              -> p = a + 2, the tree of p is (a) + 2.
-  * p is [@A, B]             -> p = [A, Word(B)].
-+ * every n in s: c          -> all n in s: c.
-+ * every C                  -> $C.
-+ * $C is w                  -> $C.w = true, also spelled every C is w.
-  * new X(...)               -> X(...).
-  * for xs:                  -> iteration with the item name "it".
-  * catch without a name     -> the binding "error".
-@@ -946,4 +993,8 @@ fragment REGEX_CHAR
-  * parser\is_assignment.rs and parser\precedence.rs, their rejection in
-  * parser\expression.rs and parser\comprehension.rs and the 'lambda' header
-  * colon in parser\statement.rs.
-+ * Every quantifiers, class references and predicate sentences:
-+ * Quantifier::starting in src\lang\ast\mod.rs, everyClass in
-+ * parser\primary.rs and predicateSentence in parser\predicate.rs, which
-+ * parser\statement.rs consults after an expression statement's head.
-  */
-```
-
-**File**: `nucleoid.spec.md` (modified, +235/-6)
-```diff
-@@ -3283,7 +3283,9 @@ statement positions; caught values and transaction recovery are unchanged.
-   positions. In an object value, `is` directly followed by `:` stays the next
-   comma-free property key.
- - Everywhere else, apart from the statements of
--  [Is assignments](#is-assignments), `is` keeps its accepted reading as a
-+  [Is assignments](#is-assignments) and the predicate sentences of
-+  [Every quantifiers, class references and predicate sentences](#every-quantifiers-class-references-and-predicate-sentences),
-+  `is` keeps its accepted reading as a
-   name that begins the next juxtaposed statement: expression statements,
-   assignment, destructuring
-   and `:=` values, `return`, `throw` and `delete` operands, the operand before
-@@ -3364,7 +3366,11 @@ statement positions; caught values and transaction recovery are unchanged.
- - A leading expression that `:=` rejects also keeps the accepted reading:
-   `f() is 5`, `1 is 2`, `a[0] is 1`, `this is 5`, `$Order is 5`,
-   `a + b is 5`, `a = b is c` and `x => x is 5` are juxtaposed statements as
--  before, and destructuring declarations are unchanged. A statement that
-+  before, and destructuring declarations are unchanged. The one exception is
-+  a class reference without a property followed by `is` and one name, the
-+  predicate sentence of
-+  [Every quantifiers, class references and predicate sentences](#every-quantifiers-class-references-and-predicate-sentences):
-+  `$Human is mortal` states `$Human.mortal = true`. A statement that
-   begins with `why`, `affects`, `stated` or `derived` followed by `is` keeps
-   its accepted reading as a reasoning selection of the name `is`, so those
-   variables are assigned with `=`.
-@@ -3789,8 +3795,9 @@ statement positions; caught values and transaction recovery are unchanged.
- - [NUC 62](docs/nuc-0062.md) adds the quantified expressions
-   `all NAME in COLLECTION: CONDITION` and `any NAME in COLLECTION: CONDITION`.
-   No keyword or lexer token is added. A quantifier starts only where the name
--  `all` or `any`, a binder name and the existing `in` keyword follow each
--  other. Everywhere else `all` and `any` keep every accepted reading:
-+  `all`, `every` or `any`, a binder name and the existing `in` keyword follow
-+  each other; `every` spells `all`. Everywhere else `all` and `any` keep every
-+  accepted reading:
-   variables, functions and calls, `Name.all()` and the `.any(callback)` list
-   alias, object keys and values, parameters, loop variables and typed
-   declarations. A variable named `all` or `any` does not disable quantifiers,
-@@ -3864,8 +3871,8 @@ statement positions; caught values and transaction recovery are unchanged.
-   [NUC 49](docs/nuc-0049.md), `else if` and `elif if` headers, and the indented
-   direct alternatives `else any v in xs: v > 2` of
-   [NUC 43](docs/nuc-0043.md). In direct-alternative and native REPL header
--  scans, a top-level quantifier's colon pairs with its `all` or `any` prefix,
--  as a conditional's colon pairs with its `?`.
-+  scans, a top-level quantifier's colon pairs with its `all`, `every` or
-+  `any` prefix, as a conditional's colon pairs with its `?`.
- - At the top level of a template interpolation, whose trailing tokens are
-   ignored, a quantifier is not recognized, so `` `${all v in xs: v}` `` still
-   renders the variable `all`; parenthesize it, as in
-@@ -3882,6 +3889,141 @@ statement positions; caught values and transaction recovery are unchanged.
-   `Nucleoid quantifies over class instances with all and any` through
-   `Nucleoid rolls back failed quantifier updates` specify the executable
-   behavior.
-+- `every` is a third prefix that spells `all`, as
-+  [Every quantifiers, class references and predicate sentences](#every-quantifiers-class-references-and-predicate-sentences)
-+  describes.
++- In the value of an assignment to a property, a `.` that begins an operand
++  and is followed by a property name reads that property of the assigned
++  object, its receiver:
++  - `$Order.total = .price * .qty` is
++    `$Order.total = $Order.price * $Order.qty`.
++  - `box.area = .width * .height` is `box.area = box.width * box.height`.
++  - `this.area = .w * .h` in a constructor is
++    `this.area = this.w * this.h`.
++- The receiver is the target without its last property, a plain dotted path
++  rooted in a name, `$Class`, `every Class`, `this` or `self`. In
++  `order.customer.label = .first`, `.first` reads `order.customer.first`.
++- The assignment forms are `=`, `:=`, the compound assignments `+=`, `-=`,
++  `*=`, `**=`, `/=` and `%=`, and the logical compound assignments `&&=` and
++  `||=`.
++- The read continues as member access does, so `.a.b`, `.a[0]`, `.a()` and
++  `.a@first` read `RECEIVER.a.b`, `RECEIVER.a[0]`, `RECEIVER.a()` and
++  `RECEIVER.a@first`, in every operand position of the value: operands of
++  operators, conditional expressions, list items, object values, indexes,
++  lambda bodies and template interpolations.
++- The parser builds the member expression `RECEIVER.name`, so evaluation,
++  dependencies, class-level rules, `why`, `affects`, graph keys and rollback
++  are those of the spelling written out.
++- Only inputs that were errors change. Each such dot raised
++  `SyntaxError("Unexpected '.'")` at the accepted revision. Every accepted
++  reading stays:
++  - An argument that begins with a dot is still a selector of
++    [NUC 79](nuc-0079.md), or its accepted error.
++  - `is` assignments keep their readings: `$Obj.h is .h * 2` runs as the two
++    statements `$Obj.h` and `is.h * 2`.
++  - A variable target, a statement start, a condition and every other place
++    without a property target keep their accepted errors, which accepted
++    tests pin, such as `x = .a`.
++  - A dot after an operand is member access, as in `x .a`.
 +
-+## Every quantifiers, class references and predicate sentences
++## Motivation
 +
-+- [NUC 98](docs/nuc-0098.md) adds three spellings of universal claims. Each
-+  builds the syntax tree of an accepted form, so its results, dependencies,
-+  errors and rendering are that form's. No token, keyword, syntax-tree
-+  variant, error type or message, option or flag is added, and `every` stays
-+  an ordinary identifier.
-+- **Every quantifiers.** `every NAME in COLLECTION: CONDITION` is the
-+  quantifier `all NAME in COLLECTION: CONDITION` of
-+  [Quantifiers](#quantifiers). It starts only where the name `every`, a
-+  binder name and the keyword `in` follow each other, wherever `all` starts
-+  one, and it builds the `all` node, rendered as
-+  `(all NAME in COLLECTION:CONDITION)`. So it evaluates, nests, depends,
-+  validates class-level rules, rolls back and reports diagnostics as `all`
-+  does, and `every v in xs: v > 0` and `all v in xs: v > 0` are one standing
-+  rule. Statement headers take it, and the direct-alternative and REPL header
-+  scans pair its colon with its `every` as they pair it with `all`. At the
-+  top level of a template interpolation it is not recognized, as `all` is
-+  not, so `` `${ever
++- World models state an object's properties in terms of its other
++  properties: `$Order.total = $Order.price * $Order.qty`,
++  `this.area = this.w * this.h`. The target already names the object, yet
++  every read repeats it.
++- In the ARC instruction datasets, 40 of the 89 class-level rules read their
++  own class, 61 times in all, such as
++  `$Obj.height is $Obj.height@first * 3 / 2` and
++  `$Obj.x is canvas_width - $Obj.x@first - $Obj.width`.
++- Each repetition costs tokens to generate and to read back. `.price` is two
++  lexer tokens and `$Order.price` three, and a nested receiver saves more:
++  `.first` against `order.customer.first` saves three tokens per read.
++- A repeated receiver is also a place to mistype. In
++  `$Order.total = $Ordr.price * $Order.qty` one copy names another class.
++- Prior art: Visual Basic's `With` blocks read `.Name` of the object they
++  name, Pascal's `with` statement reads fields of its record, Swift's
++  implicit member expressions write `.red` for a member of the type in
++  context, and Kotlin's scope functions make the receiver implicit.
++- [NUC 79](nuc-0079.md) gave a leading dot a meaning only in argument
++  lists and left it an error everywhere else, so an assignment value is free
++  to read the receiver with it.
++
++## Rationale
++
++- Pending: the proposer completes this section.
++
++## Specification
++
++- Pending: the proposer completes this section.
++
++## Errors
++
++- Pending: the proposer completes this section.
++
++## Reference Implementation
++
++- Pending: the proposer completes this section.
++
++## Copyright
++
++Copyright 2020 Nucleoid
++
++This document is licensed under the Apache License, Version 2.0. See
++[LICENSE](../LICENSE) for the full text.
 ```
 
 #### Recent Merged Pull Requests:
@@ -2308,13 +1795,13 @@ Hard criteria:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. NUC 101 Exact-Depth Reasoning Selections
+## X. Draft NUC 102 Implicit Receiver Properties
 
 **RULE**:
 When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ca27cf88`: NUC 101 Exact-Depth Reasoning Selections. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `db8874b1`: Draft NUC 102 Implicit Receiver Properties. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
@@ -2322,16 +1809,15 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| [101](nuc-0101.md) | Exact-Depth Reasoning Selections | Rejected: existing selector-case audit fails |
-| [101](nuc-0101.md) | Exact-Depth Reasoning Selections | Standards Track | Reasoning enhancement | Rejected: existing selector-case audit fails |
+| [102](nuc-0102.md) | Implicit Receiver Properties | Draft |
+| [102](nuc-0102.md) | Implicit Receiver Properties | Standards Track | Syntax enhancement | Draft |
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-| [101](nuc-0101.md) | Exact-Depth Reasoning Selections | Draft |
-| [101](nuc-0101.md) | Exact-Depth Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ca27cf88` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `db8874b1` are properly handled with clean fallback behavior.

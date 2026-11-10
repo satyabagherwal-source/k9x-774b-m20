@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-10T03:04:38.391Z",
+  "last_updated": "2026-11-10T04:37:07.134Z",
   "total_verified_learnings": 1245,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -47956,8 +47956,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "ca27cf88",
-      "content_hash": "5f87bc84a465bfcc1842a0afa0a4fd86095aa591a0351d06f653547643d10d61",
+      "source_version": "db8874b1",
+      "content_hash": "23d7363bdfee3c0ab265462f6bdf87b0c9b065ad1253ae5600cd370df7a58594",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -48119,6 +48119,11 @@
         {
           "number": null,
           "title": "NUC 101 Exact-Depth Reasoning Selections",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Draft NUC 102 Implicit Receiver Properties",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -48412,7 +48417,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T21:27:05.609Z",
+      "verified_at": "2026-11-10T04:37:07.108Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

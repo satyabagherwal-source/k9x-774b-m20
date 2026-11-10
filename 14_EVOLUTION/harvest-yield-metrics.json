@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-10T03:04:38.498Z",
-  "total_cycles_completed": 8695,
-  "total_learnings_persisted": 8695,
-  "total_rules_promoted": 8538,
+  "last_updated": "2026-11-10T04:37:07.245Z",
+  "total_cycles_completed": 8696,
+  "total_learnings_persisted": 8696,
+  "total_rules_promoted": 8539,
   "history": [
-    {
-      "timestamp": "2026-11-09T06:38:54.301Z",
-      "repository": "GitoxideLabs/gitoxide",
-      "learningId": "learn-github-gitoxidelabs-gitoxide",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T06:45:55.439Z",
       "repository": "kirillzyusko/react-native-keyboard-controller",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-10T03:04:38.498Z",
       "repository": "aws/aws-cdk",
       "learningId": "learn-github-aws-aws-cdk",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-10T04:37:07.245Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
