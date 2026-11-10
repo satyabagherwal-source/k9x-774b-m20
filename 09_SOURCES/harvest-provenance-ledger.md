@@ -8727,3 +8727,6 @@ Every entry in this ledger must capture:
 | `learn-github-tickernelz-opencode-mem` | `https://github.com/tickernelz/opencode-mem` | `040b27f4` | Multi-dimensional audit evidence | 2026-11-10T02:06:49.125Z |
 | `learn-github-crate-ci-typos` | `https://github.com/crate-ci/typos` | `2611abd1` | Multi-dimensional audit evidence | 2026-11-10T02:11:42.763Z |
 | `learn-github-hashicorp-terraform` | `https://github.com/hashicorp/terraform` | `03b4f662` | Multi-dimensional audit evidence | 2026-11-10T02:11:45.992Z |
+| `learn-huggingface-mistralai-mistral-large-4-1t-a52b` | `https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B` | `hf-mistral` | Multi-dimensional audit evidence | 2026-11-10T02:19:53.263Z |
+| `learn-github-aquasecurity-trivy` | `https://github.com/aquasecurity/trivy` | `10ab0f82` | Multi-dimensional audit evidence | 2026-11-10T02:24:08.666Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `d566ac8a` | Multi-dimensional audit evidence | 2026-11-10T02:24:10.883Z |

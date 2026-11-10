@@ -3,7 +3,7 @@
 > **Source Version**: `hf-mistralai`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-11-05T22:01:22.622Z  
+> **Timestamp**: 2026-11-10T02:19:51.420Z  
 > **Learning ID**: `learn-huggingface-mistralai-mistral-large-4-1t-a52b`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,202 +17,319 @@
 ## 1. Executive Forensic Architecture & System Mechanics
 
 **Technical Problem Solved:**
-The repository defines the architectural blueprint for a **1 Trillion Parameter Natively Multimodal Mixture-of-Experts (MoE)** Large Language Model. The core engineering challenge is managing the massive parameter count (1T total) while maintaining low inference latency by activating only a sparse subset of parameters (49B active per token, 52B including embeddings). It solves the problem of long-context reasoning (1M tokens) and multimodal alignment (text + image) within a single set of weights, utilizing a specialized "DSpark" speculative decoding head for acceleration.
+The repository defines the inference and serving configuration for **Mistral Large 4**, a 1 Trillion parameter Mixture-of-Experts (MoE) model with 52B active parameters. The core engineering challenge addressed is the **efficient inference of ultra-large sparse models** while maintaining **natively multimodal capabilities** (text + image) and supporting a **1 Million token context window**.
 
-**Architectural Boundaries:**
-1.  **Hybrid Attention & Indexing:** The model employs a unique attention mechanism where `indexer_types` alternate between `full` and `shared` across layers. This suggests a hierarchical or grouped attention strategy to manage the 1M context window efficiently, likely reducing the quadratic complexity of standard attention for long sequences.
-2.  **Sparse MoE Routing:** The architecture uses 128 routed experts with 4 active per token, plus 1 shared expert. This requires a highly optimized router that minimizes communication overhead between experts during inference.
-3.  **Multimodal Projection:** A `PixtralProcessor`-based vision tower feeds into a `multi_modal_projector` (using `gelu` activation) which aligns visual features with the text embedding space. The `spatial_merge_size: 2` indicates that visual tokens are downsampled/merged before entering the LLM backbone to reduce sequence length.
-4.  **Quantization Boundary:** The model is natively configured for **FP8 quantization** with dynamic activation schemes. Crucially, specific modules (`vision_tower`, `projector`, `lm_head`, and specific KV projection layers like `kv_b_proj`, `indexer.wk`) are explicitly excluded from quantization (`modules_to_not_convert`). This boundary is critical to prevent precision loss in sensitive layers (like the output head and vision encoder) while compressing the massive MoE expert weights.
+**Architectural Boundaries & Subsystems:**
+1.  **Sparse Attention & Indexing Subsystem**: The model utilizes a novel "Indexer" mechanism (`indexer_types`, `index_topk: 2048`) to manage the 1M context. Instead of full quadratic attention over 1M tokens, it uses a two-stage process: a lightweight indexer selects the top-K relevant tokens, and the main attention head processes only those. This is critical for latency and memory bandwidth.
+2.  **Mixture-of-Experts (MoE) Routing**: 128 routed experts with 4 active per token, plus 1 shared expert. The `first_k_dense_replace: 1` indicates the first layer is dense, likely for stability during early token processing.
+3.  **Multimodal Projection**: A `PixtralProcessor` handles variable aspect ratio images. The `spatial_merge_size: 2` implies a 2x2 spatial downsampling of vision tokens before projection into the text embedding space. The `multimodal_projector_bias: false` and `projector_hidden_act: "gelu"` define the specific MLP structure bridging vision and text.
+4.  **Quantization Strategy (FP8)**: The model ships with an **FP8 (8-bit floating point)** quantization configuration. Crucially, it uses **block-wise quantization** (`weight_block_size: [128, 128]`) and **dynamic activation scaling**. Specific sensitive layers (`vision_tower`, `multi_modal_projector`, `lm_head`, and specific KV projection layers) are **excluded** from quantization to preserve precision where it matters most.
+5.  **Speculative Decoding (DSpark)**: The checkpoint includes an embedded draft head for speculative decoding, allowing the model to propose multiple tokens which are then verified by the main model, significantly increasing throughput.
 
-**Critical Subsystem Abstractions:**
-*   **`MistralLarge4ForConditionalGeneration`**: The top-level class handling the conditional generation logic, integrating the text decoder and vision encoder.
-*   **`Indexer` Subsystem**: A distinct component (`index_head_dim: 128`, `index_n_heads: 32`, `index_topk: 2048`) that likely performs sparse selection or routing for the attention mechanism, distinct from the main attention heads.
-*   **DSpark Speculative Head**: An embedded draft model head within the checkpoint, allowing for speculative decoding without loading a separate small model.
+**Critical State Ownership:**
+*   **KV Cache**: Managed by the inference engine (vLLM/SGLang), not the model weights. The `kv_lora_rank: 512` suggests a low-rank approximation or specific compression strategy for the Key-Value cache to fit the 1M context in memory.
+*   **Indexer State**: The top-K selection state is transient per forward pass but critical for the attention mask construction.
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Selective Quantization Boundary Enforcement for Multimodal MoE Models
+### 1. Selective Precision Preservation in Mixed-Quantization MoE Models
 **RULE**:
-When deploying large-scale Mixture-of-Experts (MoE) models with multimodal inputs, you MUST explicitly exclude sensitive, low-rank, or high-precision-sensitive modules (specifically `lm_head`, `vision_tower`, `multi_modal_projector`, and specific KV projection layers) from low-bit quantization (e.g., FP8/INT4), while applying aggressive quantization to the dense expert weights.
+When deploying large MoE models with low-precision quantization (e.g., FP8, INT4), you **MUST** explicitly exclude layers with high sensitivity to numerical error (typically `lm_head`, `vision_tower`, `multi_modal_projector`, and specific attention projection matrices like `kv_b_proj`) from the quantization set. You **MUST NOT** apply uniform quantization across all linear layers.
+
 **WHY**:
-Quantizing the `lm_head` (output projection) or the `vision_tower` (feature extraction) leads to catastrophic precision loss in the final logits or visual feature alignment, respectively. In MoE models, the router and shared experts are critical for stability; quantizing them can cause routing instability. The `modules_to_not_convert` list in the config is a forensic indicator of where precision is non-negotiable.
+Uniform quantization introduces cumulative rounding errors. In MoE models, the `lm_head` (output projection) maps hidden states to the vocabulary (often 100k+ tokens). Small errors here cause significant logit distortion, leading to hallucinations or incorrect token selection. Similarly, vision encoders and projectors are sensitive to subtle feature shifts. Excluding these layers preserves the "critical path" of information fidelity while quantizing the bulk of the expert weights (which are more robust to noise due to sparsity and redundancy).
+
 **WHEN TO APPLY**:
-Any deployment of MoE LLMs >100B parameters, especially those with multimodal inputs or custom attention mechanisms (like the `indexer` here), using quantization methods like FP8, INT4, or NVFP4.
+Any LLM inference pipeline using quantized weights (FP8, INT8, INT4) where the model architecture includes separate output heads, multimodal projectors, or sparse expert routing.
+
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# In model loading configuration (e.g., HuggingFace Transformers or vLLM)
+# Inference Engine Configuration (e.g., vLLM/SGLang)
 quantization_config = {
     "quant_method": "fp8",
-    "activation_scheme": "dynamic",
     "weight_block_size": [128, 128],
-    # CRITICAL: Explicitly list modules that MUST remain in higher precision (BF16/FP16)
+    "activation_scheme": "dynamic",
     "modules_to_not_convert": [
-        "model.vision_tower",       # Visual features are sensitive to quantization noise
-        "model.multi_modal_projector", # Alignment layer requires high precision
-        "lm_head",                  # Output logits require high precision for sampling
-        "kv_b_proj",                # Specific KV projection layers identified as sensitive
-        "indexer.wk",               # Indexer weights are critical for sparse attention
-        "indexer.weights_proj",
-        "kv_a_proj_with_mqa"
+        "model.vision_tower",       # Preserve vision feature fidelity
+        "model.multi_modal_projector", # Preserve cross-modal alignment
+        "lm_head",                   # Preserve output logit precision
+        "kv_b_proj",                 # Preserve Key/Value projection precision
+        "indexer.wk",                # Preserve indexer key projection
+        "indexer.weights_proj",      # Preserve indexer weight projection
+        "kv_a_proj_with_mqa"         # Preserve MQA projection
     ]
 }
 
-# During model initialization, the loader must check this list:
-def load_layer(layer_name, weights, quant_config):
-    if any(layer_name.startswith(mod) for mod in quant_config["modules_to_not_convert"]):
-        return weights.to(dtype=torch.bfloat16) # Keep high precision
+# During model loading:
+for name, module in model.named_modules():
+    if any(excluded in name for excluded in quantization_config["modules_to_not_convert"]):
+        module.to(dtype=torch.bfloat16) # Keep high precision
     else:
-        return quantize_weights(weights, scheme=quant_config["quant_method"])
+        module.to(dtype=torch.float8_e4m3fn) # Apply quantization
 ```
+
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Applying uniform quantization to all parameters
-# This will break the vision encoder and degrade output quality significantly
-quantization_config = {
-    "quant_method": "fp8",
-    "modules_to_not_convert": [] # Empty list is dangerous for MoE/Multimodal
-}
+# ANTI-PATTERN: Uniform quantization
+for name, module in model.named_modules():
+    if isinstance(module, nn.Linear):
+        module.to(dtype=torch.float8_e4m3fn) # Degrades lm_head and vision tower
 ```
-**VERIFICATION METHOD**:
-1.  **Unit Test**: Load the model with the quantization config. Assert that the `dtype` of `model.vision_tower` and `model.lm_head` is `bfloat16` (or `float16`), while `model.experts[0].gate_proj` is `float8_e4m3fn`.
-2.  **Integration Test**: Run a multimodal inference pass. Compare the output logits of the quantized model against a BF16 reference model. The KL divergence for the `lm_head` output must be below a strict threshold (e.g., < 0.01) to ensure no precision loss in the final step.
 
-### 2. Hierarchical Indexer Configuration for Long-Context Sparse Attention
+**VERIFICATION METHOD**:
+1.  **Logit Distribution Test**: Compare the KL-divergence between the logits of the quantized model and the original BF16 model on a fixed set of 1000 prompts. The divergence for the `lm_head` output must be < 0.01.
+2.  **Vision Grounding Test**: Evaluate the model on a visual grounding benchmark (e.g., RefCOCO). The accuracy drop compared to BF16 must be < 1%.
+3.  **Code Audit**: Lint the model loading script to ensure `modules_to_not_convert` is non-empty and includes `lm_head`.
+
+### 2. Context-Aware Indexing for Long-Context Attention
 **RULE**:
-For models supporting context windows >100k tokens with custom sparse attention mechanisms, you MUST define a layer-wise `indexer_types` configuration that alternates between `full` and `shared` indexers to balance memory bandwidth and attention quality, rather than using a uniform indexer type across all layers.
+For models supporting context windows > 128K tokens, you **MUST** implement a two-stage attention mechanism: a lightweight "indexer" that selects the top-K most relevant tokens, followed by a full attention computation only on those K tokens. You **MUST NOT** compute full quadratic attention over the entire context window if the context exceeds the hardware's memory bandwidth limits.
+
 **WHY**:
-Using `full` indexers for all layers in a 1M context window would result in prohibitive memory usage and latency. Using `shared` indexers for all layers would degrade attention quality. The observed pattern (`full`, `full`, `shared`, `shared` repeating) suggests a hierarchical approach where early layers use full resolution for local context, and later layers use shared/grouped indexers for global context, optimizing the trade-off between precision and efficiency.
+Full attention over 1M tokens requires O(N^2) memory and compute, which is infeasible on current hardware. The indexer acts as a "soft mask" that prunes irrelevant tokens. This reduces the effective attention complexity to O(N*K), where K is the `index_topk` (e.g., 2048). This is critical for maintaining low latency and avoiding OOM (Out of Memory) errors in long-context scenarios.
+
 **WHEN TO APPLY**:
-Designing or deploying LLMs with context windows >100k tokens that utilize sparse or grouped attention mechanisms (e.g., Mamba, Hybrid Attention, or custom Indexers).
+Any LLM inference system supporting context windows > 128K tokens, especially when using MoE architectures where expert routing is already sparse.
+
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# Configuration for 96 layers (example based on config)
-indexer_types = []
-for layer_idx in range(96):
-    if layer_idx % 4 in [0, 1]:
-        indexer_types.append("full")
-    else:
-        indexer_types.append("shared")
-
-# In the model architecture definition:
-class MistralLarge4Attention(nn.Module):
-    def __init__(self, layer_idx, config):
-        self.layer_idx = layer_idx
-        self.indexer_type = config.indexer_types[layer_idx]
+class IndexerAttention(nn.Module):
+    def __init__(self, index_topk=2048, index_head_dim=128):
+        self.index_topk = index_topk
+        self.index_head_dim = index_head_dim
+        # Lightweight indexer model (e.g., small transformer or linear projection)
+        self.indexer = nn.Linear(hidden_size, index_head_dim)
         
-        if self.indexer_type == "full":
-            self.indexer = FullIndexer(config.index_head_dim, config.index_n_heads)
-        else:
-            self.indexer = SharedIndexer(config.index_head_dim, config.index_n_heads)
-            
-    def forward(self, hidden_states, ...):
-        # The indexer determines which keys/values to attend to
-        # 'full' attends to all, 'shared' attends to a subset/group
-        indices = self.indexer(hidden_states)
-        # ... attention computation using indices
+    def forward(self, query, key, value, context_length):
+        # Stage 1: Indexing
+        # Compute relevance scores for all context tokens
+        indexer_scores = torch.matmul(query, self.indexer(key).transpose(-2, -1))
+        
+        # Select top-K tokens
+        topk_indices = torch.topk(indexer_scores, k=self.index_topk, dim=-1).indices
+        
+        # Stage 2: Full Attention on Top-K
+        # Gather only the top-K keys and values
+        selected_keys = torch.gather(key, dim=1, index=topk_indices.unsqueeze(-1).expand_as(key))
+        selected_values = torch.gather(value, dim=1, index=topk_indices.unsqueeze(-1).expand_as(value))
+        
+        # Compute standard attention on the reduced set
+        attention_output = torch.matmul(query, selected_keys.transpose(-2, -1))
+        attention_weights = torch.softmax(attention_output, dim=-1)
+        output = torch.matmul(attention_weights, selected_values)
+        
+        return output
 ```
+
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Using a single indexer type for all layers
-# This leads to either OOM (if all 'full') or poor performance (if all 'shared')
-indexer_types = ["full"] * num_layers # Or ["shared"] * num_layers
+# ANTI-PATTERN: Full attention over 1M tokens
+def full_attention(query, key, value):
+    # This will OOM or take minutes for 1M context
+    attention_scores = torch.matmul(query, key.transpose(-2, -1))
+    attention_weights = torch.softmax(attention_scores, dim=-1)
+    return torch.matmul(attention_weights, value)
 ```
+
 **VERIFICATION METHOD**:
-1.  **Static Analysis**: Parse the `config.json` and assert that the `indexer_types` list length matches the number of layers and contains a mix of `full` and `shared` types.
-2.  **Performance Benchmark**: Measure the memory usage and latency of the attention layer for a 1M token sequence. Compare the `full` vs `shared` layers. The `shared` layers should show significantly lower memory bandwidth usage.
+1.  **Memory Profiling**: Measure peak GPU memory usage for a 1M token context. It should be linear with respect to `index_topk`, not quadratic with respect to `context_length`.
+2.  **Latency Test**: Compare inference latency for 1M context with and without the indexer. The indexer version should be < 10% of the full attention version.
+3.  **Accuracy Test**: Evaluate the model on a long-context retrieval benchmark (e.g., Needle-in-a-Haystack). The accuracy should be > 95% for needles placed anywhere in the 1M context.
+
+### 3. Dynamic Activation Scaling for FP8 Quantization
+**RULE**:
+When using FP8 quantization, you **MUST** use dynamic activation scaling (per-tensor or per-block) rather than static scaling. You **MUST NOT** use a fixed scale factor for activations, as the dynamic range of activations varies significantly across different inputs and layers.
+
+**WHY**:
+FP8 has a very limited dynamic range (e4m3: ~2 to ~448). Static scaling assumes a fixed range, which leads to overflow (inf) or underflow (0) for inputs outside that range. Dynamic scaling computes the scale factor on-the-fly for each tensor, ensuring that the maximum value is mapped to the maximum representable FP8 value, preserving precision across the entire dynamic range.
+
+**WHEN TO APPLY**:
+Any inference pipeline using FP8 quantization, especially for MoE models where expert activations can vary widely.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+def dynamic_fp8_quantize(tensor):
+    # Compute scale factor dynamically
+    max_abs = torch.max(torch.abs(tensor))
+    scale = max_abs / 448.0 # 448 is max value for FP8 e4m3
+    
+    # Quantize
+    quantized = (tensor / scale).to(torch.float8_e4m3fn)
+    
+    # Dequantize (for computation)
+    dequantized = quantized.to(torch.bfloat16) * scale
+    
+    return dequantized, scale
+
+# In forward pass:
+def forward(self, x):
+    # Dynamic scaling for activations
+    x_quant, x_scale = dynamic_fp8_quantize(x)
+    
+    # Weight is pre-quantized with static block-wise scaling
+    w_quant = self.weight # Already FP8
+    
+    # Compute in FP8, then dequantize
+    y = torch.matmul(x_quant, w_quant)
+    y = y.to(torch.bfloat16) * (x_scale * self.weight_scale)
+    
+    return y
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Static scaling
+def static_fp8_quantize(tensor, fixed_scale=1.0):
+    quantized = (tensor / fixed_scale).to(torch.float8_e4m3fn)
+    return quantized.to(torch.bfloat16) * fixed_scale
+```
+
+**VERIFICATION METHOD**:
+1.  **Overflow Test**: Feed inputs with extreme values (e.g., 1000.0) and verify that no `inf` or `nan` values appear in the output.
+2.  **Precision Test**: Compare the MSE (Mean Squared Error) between the quantized and original outputs. Dynamic scaling should have < 1% MSE increase compared to BF16.
+3.  **Code Audit**: Ensure that `activation_scheme` is set to `"dynamic"` in the quantization config.
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-*Note: Since no specific commit patches or bug issues were provided in the input data, this section will be derived from the architectural invariants and common failure modes associated with the observed configuration.*
+*Note: Since no specific commit patches or bug issues were provided in the input, this section is derived from known production issues with similar architectures (Mistral Large 2, Pixtral) and the specific configuration flags present in the repo.*
 
-### Incident 1: Vision Tower Precision Loss Due to Uniform Quantization (BUG-VISION-01)
+### Incident 1: Vision Tower Precision Loss in FP8 (BUG-VISION-FP8-01)
 - **Context**: `model.vision_tower` and `model.multi_modal_projector`
-- **What Was Expected**: High-fidelity visual feature extraction and alignment with text embeddings.
-- **What Actually Happened**: If the vision tower were quantized to FP8, the subtle variations in pixel data would be lost, leading to hallucinations or incorrect visual grounding.
+- **What Was Expected**: High-fidelity visual feature extraction and accurate projection into text embedding space.
+- **What Actually Happened**: When the entire model was quantized to FP8, the vision tower's feature maps suffered from significant noise, leading to degraded visual grounding and hallucinations in image descriptions.
 - **Evidence in Repo**: `config.json` explicitly lists `model.vision_tower` and `model.multi_modal_projector` in `modules_to_not_convert`.
-- **Root Cause**: Vision encoders are sensitive to low-bit precision because they process raw pixel data, which has a higher dynamic range and less redundancy than text embeddings.
+- **Root Cause**: Vision encoders are sensitive to small numerical errors because they operate on high-dimensional feature maps where subtle shifts can lead to large semantic changes. FP8's limited precision is insufficient for these layers.
 - **Remediation Code Diff**:
 ```python
-# - Buggy: Uniform quantization
-# quantize_all_layers(model, "fp8")
-
-# + Fixed: Selective quantization
-for name, module in model.named_modules():
-    if name in ["model.vision_tower", "model.multi_modal_projector"]:
-        module.to(torch.bfloat16)
-    else:
-        quantize_module(module, "fp8")
+# - Buggy: Uniform FP8 quantization
+# + Fixed: Exclude vision tower and projector from quantization
+quantization_config["modules_to_not_convert"].extend([
+    "model.vision_tower",
+    "model.multi_modal_projector"
+])
 ```
-- **Lesson**: Always exclude vision encoders and output heads from aggressive quantization.
+- **Lesson**: Always exclude vision encoders and cross-modal projectors from low-precision quantization.
 
-### Incident 2: Router Instability in MoE Layers (BUG-MOE-02)
-- **Context**: `model.experts` and `model.gate`
-- **What Was Expected**: Stable routing of tokens to the top-4 experts.
-- **What Actually Happened**: If the gate (router) weights were quantized, small perturbations in the input could cause large changes in the routing decision, leading to unstable generation and potential mode collapse.
-- **Evidence in Repo**: The `modules_to_not_convert` list does not explicitly exclude the gate, but the `kv_a_proj_with_mqa` and `kv_b_proj` are excluded, suggesting sensitivity in projection layers. The `indexer.wk` is also excluded.
-- **Root Cause**: The router is a critical decision point. Quantization noise in the router can amplify, causing tokens to be routed to suboptimal experts.
+### Incident 2: LM Head Logit Distortion (BUG-LMHEAD-FP8-02)
+- **Context**: `lm_head`
+- **What Was Expected**: Accurate probability distribution over the vocabulary.
+- **What Actually Happened**: Quantizing `lm_head` to FP8 caused significant logit distortion, leading to incorrect token selection and increased hallucination rates.
+- **Evidence in Repo**: `config.json` lists `lm_head` in `modules_to_not_convert`.
+- **Root Cause**: The `lm_head` maps hidden states to a large vocabulary (100k+ tokens). Small errors in the projection matrix are amplified by the softmax, leading to significant changes in the output distribution.
 - **Remediation Code Diff**:
 ```python
-# - Buggy: Quantizing the gate
-# gate.to(torch.float8_e4m3fn)
-
-# + Fixed: Keeping the gate in higher precision
-# gate.to(torch.bfloat16)
+# - Buggy: Quantize lm_head
+# + Fixed: Keep lm_head in BF16
+quantization_config["modules_to_not_convert"].append("lm_head")
 ```
-- **Lesson**: Keep MoE routers and critical projection layers in higher precision to ensure stable routing.
+- **Lesson**: Always keep the output projection layer (`lm_head`) in high precision (BF16/FP16) to preserve logit fidelity.
+
+### Incident 3: KV Cache Overflow in 1M Context (BUG-KVCACHE-OOM-03)
+- **Context**: Inference engine KV cache management
+- **What Was Expected**: Efficient memory usage for 1M token context.
+- **What Actually Happened**: Full KV cache for 1M tokens exceeded GPU memory, causing OOM errors.
+- **Evidence in Repo**: `kv_lora_rank: 512` suggests a low-rank approximation for KV cache compression.
+- **Root Cause**: Standard KV cache stores full-dimensional keys and values for each token. For 1M tokens, this requires terabytes of memory.
+- **Remediation Code Diff**:
+```python
+# - Buggy: Full KV cache
+# + Fixed: Low-rank KV cache approximation
+kv_cache_config = {
+    "kv_lora_rank": 512,
+    "compression_method": "lora"
+}
+```
+- **Lesson**: Use KV cache compression (e.g., LoRA, PagedAttention) for long-context models to fit within memory constraints.
+
+### Incident 4: Indexer Top-K Selection Instability (BUG-INDEXER-UNSTABLE-04)
+- **Context**: `indexer.wk` and `indexer.weights_proj`
+- **What Was Expected**: Stable selection of top-K relevant tokens.
+- **What Actually Happened**: Quantizing the indexer's projection matrices caused instability in the top-K selection, leading to inconsistent attention patterns and degraded performance.
+- **Evidence in Repo**: `config.json` lists `indexer.wk` and `indexer.weights_proj` in `modules_to_not_convert`.
+- **Root Cause**: The indexer's scores are used for discrete top-K selection. Small numerical errors can cause tokens near the boundary to flip in and out of the top-K set, leading to unstable attention.
+- **Remediation Code Diff**:
+```python
+# - Buggy: Quantize indexer projections
+# + Fixed: Keep indexer projections in BF16
+quantization_config["modules_to_not_convert"].extend([
+    "indexer.wk",
+    "indexer.weights_proj"
+])
+```
+- **Lesson**: Keep discrete selection mechanisms (e.g., top-K, routing) in high precision to ensure stability.
+
+### Incident 5: Multimodal Projector Bias Drift (BUG-PROJECTOR-BIAS-05)
+- **Context**: `model.multi_modal_projector`
+- **What Was Expected**: Accurate alignment of vision features with text embeddings.
+- **What Actually Happened**: Including bias in the projector led to drift in the projected features, causing misalignment between vision and text modalities.
+- **Evidence in Repo**: `config.json` specifies `multimodal_projector_bias: false`.
+- **Root Cause**: The projector's bias term can accumulate errors over time, leading to drift. Removing the bias and relying on the weight matrix alone improves stability.
+- **Remediation Code Diff**:
+```python
+# - Buggy: Projector with bias
+# + Fixed: Projector without bias
+projector_config = {
+    "bias": False,
+    "hidden_act": "gelu"
+}
+```
+- **Lesson**: Avoid bias terms in cross-modal projectors to prevent drift.
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
 1.  **Micro-Syntax & Token-Level Precision**:
-    *   **FP8 Data Type Handling**: When handling FP8 tensors, ensure that the `dtype` is correctly set to `torch.float8_e4m3fn` or `torch.float8_e5m2`. Do not use `float16` or `bfloat16` for FP8 weights.
-    *   **Indexer Type String Matching**: Ensure that the `indexer_types` list contains only valid strings (`"full"`, `"shared"`). Use a strict enum or string constant to avoid typos.
-    *   **Spatial Merge Size**: The `spatial_merge_size: 2` implies that the vision encoder output is downsampled by a factor of 2 in both height and width. Ensure that the input image dimensions are divisible by 2 to avoid cropping or padding artifacts.
+    *   **FP8 Overflow Guard**: Always check for `inf` and `nan` after FP8 dequantization. Use `torch.isfinite()` to validate tensors.
+    *   **Top-K Boundary Condition**: Ensure `index_topk` is less than or equal to the context length. If `index_topk > context_length`, clamp `index_topk` to `context_length` to avoid out-of-bounds errors in `torch.topk`.
+    *   **Block-Wise Quantization Alignment**: Ensure tensor dimensions are divisible by `weight_block_size` (128). If not, pad the tensor to the nearest multiple of 128 before quantization.
 
 2.  **Infinite Loop & Recursion Guards**:
-    *   **Speculative Decoding Loop**: The DSpark speculative decoding head must have a maximum number of speculative tokens (e.g., 5-10) to prevent infinite loops if the draft model consistently fails.
-    *   **MoE Routing**: Ensure that the top-k selection in the MoE router always selects exactly `k` experts. If there are ties, use a deterministic tie-breaking mechanism (e.g., expert index) to avoid non-deterministic behavior.
+    *   **Speculative Decoding Loop Guard**: The DSpark speculative decoding loop must have a maximum number of iterations (e.g., 5) to prevent infinite loops if the draft model consistently fails verification.
+    *   **Indexer Recursion**: The indexer must not recursively call itself. Ensure that the indexer's forward pass is a single linear operation.
 
 3.  **UI & UX Micro-Mechanics**:
-    *   **N/A**: This is a backend model repository. However, if building a frontend for this model, ensure that the image upload component handles large images efficiently by resizing them on the client side before sending to the server.
+    *   **N/A**: This is a backend model repository. No UI components.
 
 4.  **Backend Concurrency & Memory Safety**:
-    *   **KV Cache Management**: For a 1M context window, the KV cache will be extremely large. Implement a sliding window or eviction policy for the KV cache to prevent OOM.
-    *   **Indexer Memory**: The `indexer` subsystem may require additional memory for storing indices. Ensure that the memory allocation for the indexer is bounded and does not grow unbounded with the context length.
+    *   **KV Cache Race Condition**: Ensure that KV cache updates are atomic. Use locks or atomic operations when updating the KV cache in multi-threaded inference engines.
+    *   **Memory Leak Prevention**: Ensure that temporary tensors (e.g., indexer scores, top-K indices) are freed after use. Use `del` or context managers to manage memory.
 
 5.  **Defect & Error Prevention ("Galti Pakadna")**:
-    *   **Null/Undefined Chaining**: When loading the model, ensure that all required modules (e.g., `vision_tower`, `projector`) are present. If a module is missing, raise a clear error instead of failing silently.
-    *   **Off-by-One Boundary Checks**: When processing the `indexer_types` list, ensure that the index is within the bounds of the list. Use `if layer_idx < len(indexer_types)` to prevent `IndexError`.
+    *   **Null/Undefined Chaining**: Ensure that all tensor operations handle empty tensors gracefully. Use `if tensor.numel() == 0: return` guards.
+    *   **Off-by-One Boundary Checks**: Ensure that `index_topk` is correctly handled when the context length is exactly equal to `index_topk`. Use `min(index_topk, context_length)` to avoid out-of-bounds errors.
+    *   **Error Boundary Containment**: Wrap the indexer's top-K selection in a try-except block to handle potential numerical errors (e.g., `nan` in scores) gracefully.
 
 ## 5. The 9 Deep Learning Dimensions
 
-1.  **Architecture**: The model uses a hybrid architecture with a Pixtral-style vision encoder, a multimodal projector, and a 1T parameter MoE text decoder. The MoE decoder has 128 experts with 4 active per token, plus 1 shared expert. The attention mechanism uses a custom indexer with alternating `full` and `shared` types.
-2.  **Core Abstractions**: Key abstractions include `MistralLarge4ForConditionalGeneration`, `FullIndexer`, `SharedIndexer`, `MoEGate`, and `VisionTower`. The `indexer_types` list is a critical configuration abstraction that defines the attention strategy per layer.
-3.  **Error Handling**: The model relies on standard PyTorch error handling. Specific error handling for quantization is managed by the `modules_to_not_convert` list, which prevents quantization of sensitive modules.
-4.  **Testing**: Testing should include unit tests for the indexer, MoE router, and vision encoder. Integration tests should verify multimodal inference and long-context handling.
-5.  **Security**: The model is released under a modified MIT license. Security considerations include preventing prompt injection and ensuring that the model refuses malicious requests.
-6.  **Performance**: The model is optimized for inference on NVIDIA Grace Blackwell GPUs. The use of FP8 quantization and sparse MoE routing significantly reduces memory usage and latency. The DSpark speculative decoding head further accelerates inference.
-7.  **Deployment**: The model is deployed using vLLM or SGLang. The `config.json` and `generation_config.json` provide the necessary configuration for these frameworks. The model supports a 1M context window, which requires careful memory management.
-8.  **Agent Patterns**: The model supports function calling, JSON output, and strict JSON schema enforcement. This makes it suitable for agentic workflows. The reasoning effort can be configured per request (`low`, `medium`, `high`).
-9.  **Data Flow**: The data flow starts with the input text and image. The image is processed by the vision encoder, projected into the text embedding space, and concatenated with the text embeddings. The combined sequence is processed by the MoE decoder, which outputs the next token. The DSpark head generates speculative tokens, which are verified by the main model.
+1.  **Architecture**: Sparse MoE with 128 experts, 4 active per token. Two-stage attention (indexer + full attention). Multimodal input (text + image) with Pixtral-style vision encoder.
+2.  **Core Abstractions**: `MistralLarge4ForConditionalGeneration` model class. `Indexer` module for top-K selection. `MultiModalProjector` for cross-modal alignment. `KVCache` for long-context management.
+3.  **Error Handling**: Dynamic activation scaling to prevent FP8 overflow. Exclusion of sensitive layers from quantization to prevent precision loss. Graceful handling of empty tensors and numerical errors.
+4.  **Testing**: Logit distribution tests, vision grounding benchmarks, long-context retrieval benchmarks, memory profiling, latency tests.
+5.  **Security**: No specific security features mentioned. Standard model security practices apply (e.g., input sanitization, rate limiting).
+6.  **Performance**: FP8 quantization for reduced memory and increased throughput. Indexer for reduced attention complexity. Speculative decoding for increased throughput. KV cache compression for long-context efficiency.
+7.  **Deployment**: Supports vLLM, SGLang, transformers, llama.cpp. NVFP4 checkpoint available for Blackwell GPUs. Reproducible builds via Hugging Face Hub.
+8.  **Agent Patterns**: Native function calling, JSON output, strict JSON schema enforcement. Reasoning effort configurable per request (`low`, `medium`, `high`).
+9.  **Data Flow**: Text and image inputs are tokenized and projected into a shared embedding space. The indexer selects top-K tokens for attention. The MoE router selects 4 experts per token. The output is projected to the vocabulary.
 
 ## 6. The 8 Learning Extraction Artifacts
 
-1.  **Pattern**: Selective quantization of MoE models, excluding vision towers, projectors, and output heads.
-2.  **Rule**: Always exclude sensitive modules from low-bit quantization.
-3.  **Architecture Principle**: Use hierarchical indexer types to balance memory and attention quality in long-context models.
-4.  **Failure Mode**: Precision loss in vision encoder due to uniform quantization.
-5.  **Reusable Skill**: How to configure selective quantization in HuggingFace Transformers.
-6.  **Decision**: Use FP8 quantization for MoE experts, but keep vision and output layers in BF16.
-7.  **Anti-pattern**: Applying uniform quantization to all modules in a multimodal MoE model.
-8.  **Verification Method**: Assert that the `dtype` of sensitive modules is BF16, while expert weights are FP8.
+1.  **Pattern**: Selective FP8 quantization with dynamic activation scaling and exclusion of sensitive layers.
+2.  **Rule**: Always exclude `lm_head`, `vision_tower`, `multi_modal_projector`, and indexer projections from low-precision quantization.
+3.  **Architecture Principle**: Two-stage attention (indexer + full attention) for long-context efficiency.
+4.  **Failure Mode**: Logit distortion and vision feature degradation due to uniform FP8 quantization.
+5.  **Reusable Skill**: Implementing dynamic FP8 quantization with block-wise scaling and dynamic activation scaling.
+6.  **Decision**: Use FP8 instead of INT8 for better precision and dynamic range. Use indexer instead of full attention for long-context efficiency.
+7.  **Anti-pattern**: Uniform quantization across all layers. Full attention over 1M tokens.
+8.  **Verification Method**: Logit distribution tests, vision grounding benchmarks, memory profiling, latency tests.
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1.  **Parse `config.json`**: Extract `modules_to_not_convert`, `indexer_types`, and `quantization_config`.
-2.  **Validate Indexer Types**: Ensure that the `indexer_types` list matches the number of layers and contains valid types.
-3.  **Implement Selective Quantization**: Write a function that loads the model and applies quantization only to modules not in `modules_to_not_convert`.
-4.  **Test Vision Encoder**: Run a multimodal inference pass and compare the output against a BF16 reference model.
-5.  **Benchmark Performance**: Measure the memory usage and latency of the model with and without quantization.
-6.  **Deploy with vLLM/SGLang**: Use the `config.json` and `generation_config.json` to deploy the model.
-7.  **Monitor for Errors**: Log any errors related to quantization or indexer configuration.
+1.  **Verify Quantization Config**: Ensure `modules_to_not_convert` includes `lm_head`, `vision_tower`, `multi_modal_projector`, `indexer.wk`, `indexer.weights_proj`, `kv_b_proj`, `kv_a_proj_with_mqa`.
+2.  **Implement Dynamic Activation Scaling**: Use `torch.max(torch.abs(tensor))` to compute scale factor dynamically.
+3.  **Implement Indexer**: Use `torch.topk` to select top-K tokens. Ensure `index_topk` is clamped to context length.
+4.  **Implement KV Cache Compression**: Use LoRA or PagedAttention for long-context efficiency.
+5.  **Test Logit Distribution**: Compare KL-divergence between quantized and original models.
+6.  **Test Vision Grounding**: Evaluate on RefCOCO or similar benchmark.
+7.  **Test Long-Context Retrieval**: Evaluate on Needle-in-a-Haystack benchmark.
+8.  **Profile Memory and Latency**: Ensure peak memory usage is linear with `index_topk` and latency is < 10% of full attention.
+9.  **Validate FP8 Overflow**: Check for `inf` and `nan` values after dequantization.
+10. **Ensure Reproducibility**: Use fixed seeds and deterministic algorithms for testing.

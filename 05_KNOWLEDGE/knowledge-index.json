@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-10T02:11:45.879Z",
+  "last_updated": "2026-11-10T02:24:10.776Z",
   "total_verified_learnings": 1245,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3166,14 +3166,19 @@
       "slug": "aquasecurity-trivy",
       "platform": "github",
       "source_url": "https://github.com/aquasecurity/trivy",
-      "source_version": "c22582a1",
-      "content_hash": "35762a72430b22b1beb1ae32b41b97ba821e44380232b272df7eab5123c1b895",
+      "source_version": "10ab0f82",
+      "content_hash": "9f1702e06efb34de652df61210adada5a84d77f3ec4de44cdb1d38834428a3f7",
       "dossier_path": "07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "echo): support Echo NuGet package scanning (#11456)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "docs(python): add pylock.toml row to language coverage index (#11584)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -3257,7 +3262,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T22:21:16.858Z",
+      "verified_at": "2026-11-10T02:24:08.534Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -60818,8 +60823,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "2c663f0d",
-      "content_hash": "280c16e9480891249d5ed279f6bfac3d40903788afe55b60f771e33095bf0ce6",
+      "source_version": "d566ac8a",
+      "content_hash": "fc7ee5d8ef63eab4fdac6c4c4cf4bf9513d4aa25e2e90e98d80ab52db0c4bef0",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -60856,6 +60861,11 @@
         {
           "number": null,
           "title": "wgengine/magicsock: retry UDP reads on EADDRNOTAVAIL",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "ipn/ipnlocal, feature/acme: fix ts_omit_serve build with acme",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -61054,7 +61064,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T17:00:09.453Z",
+      "verified_at": "2026-11-10T02:24:10.750Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -162100,7 +162110,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B",
       "source_version": "hf-mistralai-mistral-large-4-1t-a52b",
-      "content_hash": "e30c53cb047686863efb0e34f4b4bd34b9b07e646b83f69392b401e6d7183bfc",
+      "content_hash": "e7c29efdf68fc4ad91dbbbb1c70e4cc06b892a553295066738532bb3faa4df56",
       "dossier_path": "07_PROJECT_LEARNING/hf-mistralai-mistral-large-4-1t-a52b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-mistralai-mistral-large-4-1t-a52b-learnings.md",
       "promoted_rules": [
@@ -162112,6 +162122,21 @@
         {
           "number": null,
           "title": "Hierarchical Indexer Configuration for Long-Context Sparse Attention",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Selective Precision Preservation in Mixed-Quantization MoE Models",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Context-Aware Indexing for Long-Context Attention",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Dynamic Activation Scaling for FP8 Quantization",
           "status": "WITHHELD_CONDITIONAL_PASS"
         },
         {
@@ -162150,7 +162175,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T22:01:24.719Z",
+      "verified_at": "2026-11-10T02:19:53.139Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -8718,3 +8718,6 @@
 | `CYCLE-20261110-UHWH` | `2026-11-10T02:06:49.121Z` | `tickernelz/opencode-mem` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f7aba3b0...`) |
 | `CYCLE-20261110-0SH3` | `2026-11-10T02:11:42.759Z` | `crate-ci/typos` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`3aa09cfc...`) |
 | `CYCLE-20261110-0UYS` | `2026-11-10T02:11:45.988Z` | `hashicorp/terraform` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7f3f17ba...`) |
+| `CYCLE-20261110-BAY3` | `2026-11-10T02:19:53.259Z` | `mistralai/Mistral-Large-4-1T-A52B` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`e7c29efd...`) |
+| `CYCLE-20261110-GS0M` | `2026-11-10T02:24:08.662Z` | `aquasecurity/trivy` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9f1702e0...`) |
+| `CYCLE-20261110-GTQ7` | `2026-11-10T02:24:10.879Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`fc7ee5d8...`) |

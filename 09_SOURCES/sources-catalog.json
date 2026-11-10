@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "2c663f0d",
+    "sourceVersion": "d566ac8a",
     "license": "BSD-3-Clause",
-    "contentHash": "280c16e9480891249d5ed279f6bfac3d40903788afe55b60f771e33095bf0ce6",
-    "lastHarvestedAt": "2026-11-09T17:00:09.585Z",
+    "contentHash": "fc7ee5d8ef63eab4fdac6c4c4cf4bf9513d4aa25e2e90e98d80ab52db0c4bef0",
+    "lastHarvestedAt": "2026-11-10T02:24:10.883Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -4663,10 +4663,10 @@
     "repository": "aquasecurity/trivy",
     "platform": "github",
     "sourceUrl": "https://github.com/aquasecurity/trivy",
-    "sourceVersion": "c22582a1",
+    "sourceVersion": "10ab0f82",
     "license": "Apache-2.0",
-    "contentHash": "35762a72430b22b1beb1ae32b41b97ba821e44380232b272df7eab5123c1b895",
-    "lastHarvestedAt": "2026-11-06T22:21:16.977Z",
+    "contentHash": "9f1702e06efb34de652df61210adada5a84d77f3ec4de44cdb1d38834428a3f7",
+    "lastHarvestedAt": "2026-11-10T02:24:08.666Z",
     "learningId": "learn-github-aquasecurity-trivy"
   },
   "sfu-db-connector-x": {
@@ -11485,8 +11485,8 @@
     "sourceUrl": "https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B",
     "sourceVersion": "hf-mistralai-mistral-large-4-1t-a52b",
     "license": "Open-Source",
-    "contentHash": "e30c53cb047686863efb0e34f4b4bd34b9b07e646b83f69392b401e6d7183bfc",
-    "lastHarvestedAt": "2026-11-05T22:01:24.802Z",
+    "contentHash": "e7c29efdf68fc4ad91dbbbb1c70e4cc06b892a553295066738532bb3faa4df56",
+    "lastHarvestedAt": "2026-11-10T02:19:53.263Z",
     "learningId": "learn-huggingface-mistralai-mistral-large-4-1t-a52b"
   },
   "jakeschincariol-arena-skill": {

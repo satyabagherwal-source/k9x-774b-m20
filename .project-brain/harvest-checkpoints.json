@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-10T02:11:46.003Z",
+  "last_updated": "2026-11-10T02:24:10.893Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5496,14 +5496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tailscale-tailscale",
-      "content_hash": "280c16e9480891249d5ed279f6bfac3d40903788afe55b60f771e33095bf0ce6",
-      "verified_at": "2026-11-09T17:00:09.604Z",
+      "content_hash": "fc7ee5d8ef63eab4fdac6c4c4cf4bf9513d4aa25e2e90e98d80ab52db0c4bef0",
+      "verified_at": "2026-11-10T02:24:10.892Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T17:00:09.604Z"
+      "last_updated": "2026-11-10T02:24:10.892Z"
     },
     "dingodb/dingo": {
       "repository": "dingodb/dingo",
@@ -7116,14 +7116,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aquasecurity-trivy",
-      "content_hash": "35762a72430b22b1beb1ae32b41b97ba821e44380232b272df7eab5123c1b895",
-      "verified_at": "2026-11-06T22:21:16.987Z",
+      "content_hash": "9f1702e06efb34de652df61210adada5a84d77f3ec4de44cdb1d38834428a3f7",
+      "verified_at": "2026-11-10T02:24:08.675Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T22:21:16.987Z"
+      "last_updated": "2026-11-10T02:24:08.675Z"
     },
     "sfu-db/connector-x": {
       "repository": "sfu-db/connector-x",
@@ -17271,14 +17271,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-mistralai-mistral-large-4-1t-a52b",
-      "content_hash": "e30c53cb047686863efb0e34f4b4bd34b9b07e646b83f69392b401e6d7183bfc",
-      "verified_at": "2026-11-05T22:01:24.809Z",
+      "content_hash": "e7c29efdf68fc4ad91dbbbb1c70e4cc06b892a553295066738532bb3faa4df56",
+      "verified_at": "2026-11-10T02:19:53.282Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T22:01:24.809Z"
+      "last_updated": "2026-11-10T02:19:53.282Z"
     },
     "Jakeschincariol/arena-skill": {
       "repository": "Jakeschincariol/arena-skill",
