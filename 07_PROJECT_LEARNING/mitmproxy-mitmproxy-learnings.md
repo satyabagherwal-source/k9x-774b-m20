@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md`  
 > **Source**: github ([https://github.com/mitmproxy/mitmproxy](https://github.com/mitmproxy/mitmproxy))  
-> **Source Version**: `992052ee`  
+> **Source Version**: `80e1ef5e`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T00:48:50.861Z  
+> **Timestamp**: 2026-11-10T02:31:48.302Z  
 > **Learning ID**: `learn-github-mitmproxy-mitmproxy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mitmproxy/mitmproxy](https://github.com/mitmproxy/mitmproxy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T00:48:50.855Z  
+> **Harvest Timestamp**: 2026-11-10T02:31:47.659Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An interactive TLS-capable intercepting HTTP proxy for penetration testers and software developers.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 46644 stars
+- **Stars / Engagement**: 46771 stars
 
 ---
 
@@ -1308,11 +1308,11 @@ class QuicStartServerHook(commands.StartHook):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #8584** (2026-11-09): **docs: fix links that go to a 404 on docs.mitmproxy.org**
+  *Symptoms*: https://docs.mitmproxy.org/ and https://docs.mitmproxy.org/en/stable/ both return 404 right now. Three places link there:  - the Docs link in the header of every docs page (docs/src/layouts/_default/baseof.html) - the Docker Hub README - docs/README.md  I pointed all three at https://docs.mitmproxy.org/stable/, which is what the mitmproxy.org navbar already uses. Checked each URL with curl before and after.
+
 - **Issue #8568** (2026-11-04): **Fix Windows CI**
   *Symptoms*: 
-
-- **Issue #8558** (2026-11-03): **build(deps): bump the github-actions group with 5 updates**
-  *Symptoms*: Bumps the github-actions group with 5 updates:  | Package | From | To | | --- | --- | --- | | [actions/setup-node](https://github.com/actions/setup-node) | `7.0.0` | `7.1.0` | | [apple-actions/import-codesign-certs](https://github.com/apple-actions/import-codesign-certs) | `7.0.0` | `7.1.0` | | [actions/upload-artifact](https://github.com/actions/upload-artifact) | `7.0.1` | `7.0.2` | | [actions/download-artifact](https://github.com/actions/download-artifact) | `8.0.1` | `8.0.2` | | [docker/login-action](https://github.com/docker/login-action) | `4.6.0` | `4.7.0` |  Updates `actions/setup-node` from 7.0.0 to 7.1.0 <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/actions/setup-node/releases">actions/setup-node's releases</a>.</em></p> <blockquote> <h2>v7.1.0</h2> <h2>What's Changed</h2> <h3>Enhancements:</h3> <ul> <li>Add support for mise.toml file by <a href="https://github.com/gperdomor"><code>@​gperdomor</code></a> in <a href="https://redirect.github.com/actions/setup-node/pull/1421">actions/setup-node#1421</a></li> <li>Support absolute paths in node-version-file by <a href="https://github.com/v-mahabaleshwars"><code>@​v-mahabaleshwars</code></a> in <a href="https://redirect.github.com/actions/setup-node/pull/1633">actions/setup-node#1633</a></li> </ul> <h3>Bug fixes:</h3> <ul> <li>Add Node version validation and manifest fetch retry by <a href="https://github.com/v-jitenderpalsingh"><code>@​v-jitenderpalsingh</code></a> in <a href=
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1329,76 +1329,59 @@ class QuicStartServerHook(commands.StartHook):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `992052ee` (2026-11-04)
-**Commit Message**: Fix Windows CI (#8568)
+### Incident Patch 1: `80e1ef5e` (2026-11-09)
+**Commit Message**: docs: fix links that go to a 404 on docs.mitmproxy.org (#8584)
 
-fix Windows CI
+docs: point links to docs.mitmproxy.org/stable/
 
-**File**: `test/mitmproxy/addons/test_tlsconfig.py` (modified, +21/-15)
+The bare https://docs.mitmproxy.org/ and the old /en/stable/ path both
+return 404, including the Docs link in the docs site header.
+
+**File**: `docs/README.md` (modified, +1/-1)
 ```diff
-@@ -361,32 +361,38 @@ def test_quic_start_client(self, tdata):
-             ),
-         ],
-     )
--    def test_emudhra(self, opts, trusted_root):
-+    def test_emudhra(self, opts, trusted_root, tmp_path):
-+        ca_file = tmp_path / "root.pem"
-+        ca_file.write_text(trusted_root)
-+
-         ta = tlsconfig.TlsConfig()
-         with taddons.context(ta) as tctx:
--            tctx.configure(ta, **opts)
-+            tctx.configure(
-+                ta,
-+                ssl_verify_upstream_trusted_ca=str(ca_file),
-+                **opts,
-+            )
-             ctx = _ctx(tctx.options)
-             ctx.client.sni = "example.mitmproxy.org"
+@@ -1,6 +1,6 @@
+ # Mitmproxy Documentation
  
-             tls_start = tls.TlsData(ctx.client, context=ctx)
-             ta.tls_start_client(tls_start)
-             tssl_server = tls_start.ssl_conn
+-This directory houses the mitmproxy documentation available at <https://docs.mitmproxy.org/>.
++This directory houses the mitmproxy documentation available at <https://docs.mitmproxy.org/stable/>.
  
--            tssl_client = test_tls.SSLTest()
--            tssl_client.ctx = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
--            tssl_client.ctx.verify_mode = ssl.CERT_REQUIRED
--            tssl_client.ctx.check_hostname = True
--            tssl_client.ctx.load_verify_locations(cadata=trusted_root)
--            tssl_client.obj = tssl_client.ctx.wrap_bio(
--                tssl_client.inc,
--                tssl_client.out,
--                server_side=False,
--                server_hostname="example.mitmproxy.org",
--            )
-+            ctx.server.address = ("example.mitmproxy.org", 443)
-+            tls_start_server = tls.TlsData(ctx.server, context=ctx)
-+            ta.tls_start_server(tls_start_server)
-+            tssl_client = tls_start_server.ssl_conn
-+
-             assert self.do_handshake(tssl_client, tssl_server)
--            assert tssl_client.obj.getpeercert()["subjectAltName"] == (
--                ("DNS", "example.mitmproxy.org"),
-+            san = (
-+                tssl_client.get_peer_certificate()
-+                .to_cryptography()
-+                .extensions.get_extension_for_class(x509.SubjectAlternativeName)
-             )
-+            assert san.value.get_values_for_type(x509.DNSName) == [
-+                "example.mitmproxy.org"
-+            ]
+ ## Prerequisites
  
-             quic_tls_start = quic.QuicTlsData(ctx.client, context=ctx)
-             ta.quic_start_client(quic_tls_start)
+```
+
+**File**: `docs/src/layouts/_default/baseof.html` (modified, +1/-1)
+```diff
+@@ -36,7 +36,7 @@
+             <img src='{{ (resources.Get "logo-navbar.png").RelPermalink }}' alt="mitmproxy logo" width="123" height="28">
+         </a>
+         <a class="hide-mobile" href="https://mitmproxy.org/posts/">Blog</a>
+-        <a class="hide-mobile" href="https://docs.mitmproxy.org/">Docs</a>
++        <a class="hide-mobile" href="https://docs.mitmproxy.org/stable/">Docs</a>
+         <a class="hide-mobile" href="https://mitmproxy.org/publications/">Publications</a>
+         <span style="flex-grow: 1"></span>
+         <input type="search" id="search" placeholder="Search">
+```
+
+**File**: `release/docker/DockerHub-README.md` (modified, +1/-1)
+```diff
+@@ -48,7 +48,7 @@ Proxy server listening at http://*:8080
+ ```
+ 
+ If `~/.mitmproxy/mitmproxy-ca.pem` is present in the container, mitmproxy will assume uid and gid from the file owner.
+-For further details, please consult the mitmproxy [documentation](https://docs.mitmproxy.org/en/stable/).
++For further details, please consult the mitmproxy [documentation](https://docs.mitmproxy.org/stable/).
+ 
+ ## Tags
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8584** (2026-11-09): docs: fix links that go to a 404 on docs.mitmproxy.org (@Kernel-Hunter)
 - **PR #8568** (2026-11-04): Fix Windows CI (@mhils)
 - **PR #8558** (2026-11-03): build(deps): bump the github-actions group with 5 updates (@dependabot[bot])
 - **PR #8557** (2026-11-03): build(deps): update urwid requirement from <=4.0.13,>=2.6.14 to >=2.6.14,<=4.2.5 (@dependabot[bot])
 - **PR #8556** (2026-11-03): build(deps-dev): bump ruff from 0.16.9 to 0.17.2 (@dependabot[bot])
 - **PR #8554** (2026-11-03): build(deps): update asgiref requirement from <=3.12.1,>=3.2.10 to >=3.2.10,<=3.13.0 (@dependabot[bot])
-- **PR #8553** (2026-11-03): build(deps-dev): bump awscli from 1.46.1 to 1.46.2 in the deploy group (@dependabot[bot])
 
 ---
 
@@ -1418,62 +1401,28 @@ fix Windows CI
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Windows CI (#8568)
+## X. docs: fix links that go to a 404 on docs.mitmproxy.org (#8584)
 
 **RULE**:
-When implementing operations in `test/mitmproxy/addons/test_tlsconfig.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mitmproxy/mitmproxy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mitmproxy/mitmproxy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `992052ee`: Windows CI (#8568). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `80e1ef5e`: docs: fix links that go to a 404 on docs.mitmproxy.org (#8584). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `test/mitmproxy/addons/test_tlsconfig.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-    def test_emudhra(self, opts, trusted_root, tmp_path):
-        ca_file = tmp_path / "root.pem"
-        ca_file.write_text(trusted_root)
-
-            tctx.configure(
-                ta,
-                ssl_verify_upstream_trusted_ca=str(ca_file),
-                **opts,
-            )
-            ctx.server.address = ("example.mitmproxy.org", 443)
-            tls_start_server = tls.TlsData(ctx.server, context=ctx)
-            ta.tls_start_server(tls_start_server)
-            tssl_client = tls_start_server.ssl_conn
-
-            san = (
-                tssl_client.get_peer_certificate()
-                .to_cryptography()
-                .extensions.get_extension_for_class(x509.SubjectAlternativeName)
-            assert san.value.get_values_for_type(x509.DNSName) == [
-                "example.mitmproxy.org"
-            ]
+This directory houses the mitmproxy documentation available at <https://docs.mitmproxy.org/stable/>.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-    def test_emudhra(self, opts, trusted_root):
-            tctx.configure(ta, **opts)
-            tssl_client = test_tls.SSLTest()
-            tssl_client.ctx = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
-            tssl_client.ctx.verify_mode = ssl.CERT_REQUIRED
-            tssl_client.ctx.check_hostname = True
-            tssl_client.ctx.load_verify_locations(cadata=trusted_root)
-            tssl_client.obj = tssl_client.ctx.wrap_bio(
-                tssl_client.inc,
-                tssl_client.out,
-                server_side=False,
-                server_hostname="example.mitmproxy.org",
-            )
-            assert tssl_client.obj.getpeercert()["subjectAltName"] == (
-                ("DNS", "example.mitmproxy.org"),
+This directory houses the mitmproxy documentation available at <https://docs.mitmproxy.org/>.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `992052ee` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `80e1ef5e` are properly handled with clean fallback behavior.

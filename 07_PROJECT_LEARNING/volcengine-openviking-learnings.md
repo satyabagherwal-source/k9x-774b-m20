@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source**: github ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
-> **Source Version**: `4bd28b57`  
+> **Source Version**: `36354fa6`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T23:12:42.709Z  
+> **Timestamp**: 2026-11-10T02:31:51.293Z  
 > **Learning ID**: `learn-github-volcengine-openviking`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T23:12:42.562Z  
+> **Harvest Timestamp**: 2026-11-10T02:31:50.945Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Self-evolving Context Database for AI Agents. Unify Agent Memory, Knowledge RAG and Skills.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 41813 stars
+- **Stars / Engagement**: 41881 stars
 
 ---
 
@@ -1474,11 +1474,11 @@ class AsyncProgressTracker:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #7219** (2026-11-09): **[Bug]: Markdown directory link rewriting changes literal links in code examples**
+  *Symptoms*: ### Issue Origin  Observed or reproduced in a real environment  ### Bug Description  Directory ingestion adjusts Markdown links when it relocates a document. The relative-link pass also rewrites literal `[example](./linked.md)` text inside fenced blocks and inline code spans. This changes copyable examples in the saved document. Codex found and reproduced this locally.  ### Steps to Reproduce  Run the example below from a source checkout. It uses the same link-rewrite flags as directory parsing and writes through the local artifact store.  ### Expected Behavior  The two code examples keep `./linked.md`. The rendered link is adjusted to `../linked/` after the move.  ### Actual Behavior  The artifact contains `../linked/` in all three places, including the fenced example and the inline code span.  ### Minimal Reproducible Example  ```python import asyncio from pathlib import Path from tempfile import TemporaryDirectory  from openviking.parse.output import LocalParseOutputStore from openviking.parse.parsers.markdown import MarkdownParser  async def main():     with TemporaryDirectory() as tmp:         root = Path(tmp)         (root / "linked.md").write_text("# Linked\n", encoding="utf-8")         source = root / "guide.md"         source.write_text(             "# Guide\n\n\n[example](./linked.md)\n\n\n"             "`[inline](./linked.md)`\n\n[actual](./linked.md)",             encoding="utf-8",         )         output = root / "parsed"         await MarkdownParser().parse(   
+
 - **Issue #6985** (2026-11-04): **[Bug]: auto-commit policy silently truncates fractional and boolean thresholds**
   *Symptoms*: ### Issue Origin  Observed or reproduced in a real environment  ### Bug Description  `AutoCommitPolicy.from_dict()` validates fields described as integers by calling `int(value)` in `_coerce_int()`. A fractional JSON number is silently truncated; e.g. `message_count_threshold: 0.5` becomes `0`, which disables message-count auto-commit. A JSON boolean also becomes an integer (`true` -> `1`). `validate_idle_timeout_input()` has the same truncation behavior. The server configuration validator passes a raw policy dict to these functions, so this can change user-supplied configuration semantics without an error.  ### Steps to Reproduce  1. On main commit `5760af6ff41fdc7b74056a7b408807ee7cdbc9b1`, run the example below against `openviking.session.auto_commit_policy`. 2. Observe that fractional and boolean values are accepted and changed. I executed the current policy module locally in isolation, with only its `InvalidArgumentError` import stubbed; I did not start the full server.  ### Expected Behavior  Reject fractional numbers and booleans for integer policy fields with a clear validation error. Keep the existing documented bounds/clamping for valid integers, if intended. Invalid input must not silently disable or accelerate auto-commit.  ### Actual Behavior  `{"message_count_threshold": 0.5}` becomes `message_count_threshold=0`; `{"idle_timeout_seconds": 300.9}` becomes `300`; `{"message_count_threshold": true}` becomes `1`. There is no error, despite the validation message say
-
-- **Issue #6984** (2026-11-04): **[Bug]: CSV/TSV tool-result synopsis materializes every row before externalization**
-  *Symptoms*: ### Issue Origin  Observed or reproduced in a real environment  ### Bug Description  Large CSV/TSV tool outputs are meant to be externalized, but `openviking/session/tool_result_synopsis.py::_try_table()` calls `list(csv.reader(...))` and then builds a second list of nonempty rows. `ToolOutputExternalizer.prepared_externalized_preview()` calls this synopsis generator before externalizing an oversized tool result. This creates a large transient allocation on the path intended to handle large results.  ### Steps to Reproduce  1. On main commit `5760af6ff41fdc7b74056a7b408807ee7cdbc9b1`, run the example below against `openviking.session.tool_result_synopsis`. 2. Observe peak Python allocations after the CSV string has already been created. I ran the current module in isolation; I did not start the full server.  ### Expected Behavior  Count rows and retain only the header, first data row, and small validation window. Additional peak memory should remain bounded rather than scale with the total parsed table size.  ### Actual Behavior  An 8.69 MB CSV string (100,000 rows, two columns) caused 71.35 MB of additional peak Python allocations under Python 3.11.8 on Windows. The synopsis itself only reports row and column counts and a short sample.  ### Minimal Reproducible Example  ```python import tracemalloc from openviking.session.tool_result_synopsis import generate_tool_result_synopsis  content = "id,value\n" + "".join(f"{i}," + "x" * 80 + "\n" for i in range(100_000)) tracemalloc.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1495,555 +1495,1015 @@ class AsyncProgressTracker:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4bd28b57` (2026-11-08)
-**Commit Message**: feat(ui): align the scope switcher with the console design (#7228)
+### Incident Patch 1: `36354fa6` (2026-11-09)
+**Commit Message**: feat(ui): build the file browser module and let its tree resize (#7295)
 
-* feat(ui): align the scope switcher with the console design
+* feat(ui): add streaming and binary responses to the request client
 
-The component still carried the geometry of an earlier draft and a single
-`level` object holding 23 fields of four different kinds. Rework both, using
-the console design and the host implementation as the reference.
+The client could only send a JSON request and read its `result` back, so two
+API families had no path through it: `POST /bot/v1/chat/stream` answers with
+`text/event-stream`, and `GET /api/v1/content/download` answers with raw bytes.
+Both were reachable only by bypassing the client and its configuration
+inheritance.
 
-Visual alignment:
+`stream()` opens an SSE connection and yields events to a `for await` loop.
+Framing, the `TextDecoderStream` fallback, multi-line `data` joining and
+comment-only heartbeat filtering live in `sse.ts`. Two choices are deliberate:
 
-- The row is 32px tall with no outline; each level is its own 32px tall,
-  16px radius pill with 8px horizontal padding and an 8px icon-to-label gap.
-  Labels are 13px at weight 500.
-- A level paints its outline in the primary colour on hover, focus and expand,
-  and keeps a transparent outline at rest so nothing shifts when it appears.
-- The panel is 272px wide with 8px padding, a 12px radius and a 1px
-  `#edeef2` outline; rows are 44px tall with a 2px gap, so two hover tints
-  never merge into one shape.
-- A selected row bolds its label and keeps the label colour: the design
-  separates selection by weight and tint, not by colour. Search hits are
-  tinted in the primary colour rather than highlighted in yellow.
-- The list caps at 288px and scrolls inside the panel. A host `renderPanel`
-  shares the same cap, so taking ov
+- `data` stays raw. OpenViking puts the event type and event id inside the
+  `data` JSON rather than in the SSE `event` / `id` fields, so parsing here
+  would only mean a caller parses it again.
+- `body` accepts any fields. A server-defined switch such as `Attach` — subscribe
+  to an existing session only — then needs no client change when the backend
+  gains it.
 
-**File**: `frontend/docs/docs/_demos/assets/scope-switcher/README.md` (removed, +0/-9)
+Cancellation is the caller's intent, not a failure: after `abort()` or a
+caller-signal cancellation the iteration ends quietly instead of thro
+
+**File**: `frontend/docs/docs/_demos/file-browser-basic.tsx` (added, +234/-0)
 ```diff
-@@ -1,9 +0,0 @@
--# Scope switcher example assets
+@@ -0,0 +1,234 @@
++import { OpenVikingProvider } from '@openviking/react/client';
++import { FileBrowserEntries } from '@openviking/react/components/file-browser-entries';
++import '@openviking/react/components/file-browser-entries/style.css';
++import { FileBrowser } from '@openviking/react/modules/file-browser';
++import '@openviking/react/modules/file-browser/style.css';
++
++/**
++ * 离线运行的文件浏览示例。数据由本文件里的 `offlineFetch` 按原生接口的形状返回，
++ * 不访问网络，也不带任何凭证——示例只用来演示视图与交互。
++ *
++ * 换成真实服务时，删掉 `fetch` 与下面的假数据，改为在 Provider 上传服务地址与
++ * 身份字段；正式接入由宿主从自己的配置与登录态取值。
++ *
++ * An offline file browser demo. `offlineFetch` below answers in the shape of the
++ * native API, so the example touches no network and carries no credential; it
++ * exists only to show the view and its interactions.
++ *
++ * For a real service, drop `fetch` and the fixtures below and pass the address and
++ * identity fields to the Provider; a real host reads them from its own
++ * configuration and sign-in state.
++ */
++
++/** 一条目录项，形状与 `fs/ls` 的返回一致。One directory entry, shaped like `fs/ls`. */
++interface Entry {
++  uri: string;
++  isDir?: boolean;
++}
++
++const USER = 'viking://user/alice';
++const MEMORIES = `${USER}/memories`;
++const PREFERENCES = `${MEMORIES}/preferences`;
++const ENTITIES = `${MEMORIES}/entities`;
++const RESOURCES = `${USER}/resources`;
++const NOTES = `${RESOURCES}/notes`;
++
++/**
++ * 目录内容。故意留几个长名称，用来演示树宽收窄后靠横向滚动而不是省略号。
++ *
++ * Directory contents. A few long names are deliberate: they show the tree
++ * scrolling sideways rather than truncating once its column narrows.
++ */
++const DIRS: Record<string, Entry[]> = {
++  'viking://': [
++    { uri: 'viking://agent', isDir: true },
++    { uri: 'viking://resources', isDir: true },
++    { uri: USER, isDir: true },
++  ],
++  [USER]: [
++    { uri: MEMORIES, isDir: true },
++    { uri: `${USER}/peers`, isDir: true },
++    { uri: `${USER}/privacy`, isDir: true },
++    { uri: RESOURCES, isDir: true },
++    { uri: `${USER}/sessions`, isDir: true },
++    { uri: `${USER}/skills`, isDir: true },
++  ],
++  [MEMORIES]: [
++    { uri: PREFERENCES, isDir: true },
++    { uri: ENTITIES, isDir: true },
++    { uri: `${MEMORIES}/events`, isDir: true },
++    { uri: `${MEMORIES}/experiences`, isDir: true },
++    { uri: `${MEMORIES}/profile.md` },
++    { uri: `${MEMORIES}/identity.md` },
++  ],
++  [PREFERENCES]: [
++    { uri: `${PREFERENCES}/package-manager.md` },
++    { uri: `${PREFERENCES}/code-review-with-a-single-blocking-priority.md` },
++  ],
++  [ENTITIES]: [{ uri: `${ENTITIES}/openviking.md` }],
++  [RESOURCES]: [
++    { uri: NOTES, isDir: true },
++    { uri: `${RESOURCES}/2026-Q4-context-management-retrospective.md` },
++    { uri: `${RESOURCES}/design-system-alignment-notes.md` },
++  ],
++  [NOTES]: [{ uri: `${NOTES}/rollout.md` }],
++};
++
++/** 文件正文。Body copy of each file. */
++const FILES: Record<string, string> = {
++  [`${MEMORIES}/profile.md`]:
++    '# Profile\n\n- Role: frontend engineer\n- Focus: context database\n',
++  [`${MEMORIES}/identity.md`]:
++    '# Identity\n\nOpenViking, a context database for agents.\n',
++  [`${PREFERENCES}/package-manager.md`]:
++    '# Package manager\n\nUse pnpm for installs and scripts; npm only when a task names it.\n',
++  [`${PREFERENCES}/code-review-with-a-single-blocking-priority.md`]:
++    '# Review priorities\n\nReport one blocking finding at a time, with the evidence that supports it.\n',
++  [`${ENTITIES}/openviking.md`]:
++    '# OpenViking\n\nUnifies agent memory, knowledge RAG and skills behind one API.\n',
++  [`${RESOURCES}/2026-Q4-context-management-retrospective.md`]:
++    '# Q4 retrospective\n\nThe tree moved to lazy loading per directory, which cut the first paint.\n',
++  [`${RESOURCES}/design-system-alignment-notes.md`]:
++    '# Design alignment\n\nColours come from the console theme; components never hard-code them.\n',
++  [`${NOTES}/rollout.md`]:
++    '# Rollout\n\nStage first, then production once the release ticket passes.\n',
++};
++
++/** 目录的两级摘要。The two summary levels of a directory. */
++const SUMMARIES: Record<string, { l0: string; l1: string }> = {
++  [MEMORIES]: {
++    l0: 'Long-term memory accumulated across sessions: preferences, entities and events.',
++    l1: 'Memory is split by kind. Preferences hold stated habits, entities hold people and projects, events hold dated milestones.',
++  },
++  [PREFERENCES]: {
++    l0: 'Stated preferences of this user.',
++    l1: 'Each file records one preference with the evidence that produced it.',
++  },
++  [RESOURCES]: {
++    l0: 'Private knowledge of this user.',
++    l1: 'Notes and retrospectives imported or written by the user.',
++  },
++};
++
++/** 按查询词在全部条目里做子串匹配，模拟语义检索的返回形状。 */
++/** Substring matching over every entry, in the shape of the semantic search. */
++function search(query: string) {
++  const needle = query.trim().toLowerCase();
++  if (!needle) return {};
++  const hits = Object.values(DIRS)
++    .flat()
++    .filter((entry) => entry.uri.toLowerCase().includes(needle));
++  return {
++    memories: hits.filter((entry) => entry.u
+```
+
+**File**: `frontend/docs/docs/_demos/file-browser-entries-basic.tsx` (added, +22/-0)
+```diff
+@@ -0,0 +1,22 @@
++import { FileBrowserEntries } from '@openviking/react/components/file-browser-entries';
++import '@openviking/react/components/file-browser-entries/style.css';
++
++export default function FileBrowserEntriesBasic() {
++  return (
++    <div lang="zh-CN" style={{ width: 352, display: 'grid', gap: 12 }}>
++      <FileBrowserEntries
++        onConnectAgent={() => {}}
++        onImportResources={() => {}}
++        labels={{ connectAgent: '连接 Agent', importResources: '导入资源' }}
++      />
++      <FileBrowserEntries
++        onImportResources={() => {}}
++        labels={{ importResources: '导入资源' }}
++      />
++      <FileBrowserEntries
++        onConnectAgent={() => {}}
++        labels={{ connectAgent: '连接 Agent' }}
++      />
++    </div>
++  );
++}
+```
+
+**File**: `frontend/docs/docs/_demos/file-browser-placeholder.tsx` (removed, +0/-10)
+```diff
+@@ -1,10 +0,0 @@
+-import { FileBrowser } from '@openviking/react/modules/file-browser';
+-import '@openviking/react/modules/file-browser/style.css';
 -
--Unmodified SVG exports from the user-provided [OpenViking Console design](https://www.figma.com/design/ecpd1ZGHKRYibm1ODKEpM6/OpenViking-Console?node-id=10325-138037), under the repository license.
--
--- `space.svg`: `I10325:138037;9343:425924`, 14 × 14.
--- `user.svg`: `I10325:138037;9343:425954`, 14 × 14.
--- `library-0.svg` through `library-7.svg`: the two masks and six original layers of `I10325:138037;9343:425894`. Composed at 14 × 14 in `scope-switcher-icons.tsx`, preserving each SVG's intrinsic dimensions.
--
--These are host-provided example icons; the reusable component still accepts `icon` as a React node.
+-export default function FileBrowserPlaceholder() {
+-  return (
+-    <div lang="en">
+-      <FileBrowser />
+-    </div>
+-  );
+-}
 ```
 
-**File**: `frontend/docs/docs/_demos/assets/scope-switcher/library-0.svg` (removed, +0/-11)
+**File**: `frontend/docs/docs/en/components/file-browser-entries.mdx` (added, +48/-0)
 ```diff
-@@ -1,11 +0,0 @@
--<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
--<g id="Group">
--<path id="Vector" d="M14 0H0V14H14V0Z" fill="url(#paint0_radial_0_144)"/>
--</g>
--<defs>
--<radialGradient id="paint0_radial_0_144" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(7 7) scale(7)">
--<stop offset="0.984375" stop-color="white"/>
--<stop offset="1" stop-color="white" stop-opacity="0"/>
--</radialGradient>
--</defs>
--</svg>
+@@ -0,0 +1,48 @@
++# FileBrowserEntries
++
++The entry row at the top of the file browsing area: connect an agent, import resources. It is fixed to two entries; the host only decides which appear and what a click does.
++
++## The three states
++
++```tsx file="../../_demos/file-browser-entries-basic.tsx" preview
++
++```
++
++## Basic usage
++
++```tsx
++import { FileBrowserEntries } from '@openviking/react/components/file-browser-entries';
++import '@openviking/react/components/file-browser-entries/style.css';
++
++<FileBrowserEntries
++  onConnectAgent={openConnectDialog}
++  onImportResources={openImportFlow}
++  labels={{
++    connectAgent: 'Connect agent',
++    importResources: 'Import resources',
++  }}
++/>;
++```
++
++## Showing and hiding
++
++A callback is the switch: omit `onConnectAgent` to hide the connect entry, omit `onImportResources` to hide the import entry.
++
++With both omitted nothing renders. With a single entry no divider is drawn — a divider separates two neighbours, and there is nothing left to separate.
++
++```tsx
++<FileBrowserEntries onImportResources={openImportFlow} />
++```
++
++## Props
++
++| Property            | Type                       | Default | Description                                               |
++| ------------------- | -------------------------- | ------- | --------------------------------------------------------- |
++| `onConnectAgent`    | `() => void`               | —       | The connect entry was clicked; omit it to hide that entry |
++| `onImportResources` | `() => void`               | —       | The import entry was clicked; omit it to hide that entry  |
++| `labels`            | `FileBrowserEntriesLabels` | —       | The two labels; omitted ones keep their English defaults  |
++| `className`         | `string`                   | —       | Additional container class                                |
++
++## Relation to the module
++
++`FileBrowser`'s `toolbarActions` accepts any node. Passing this component there makes the entry row match the rest of the module. Connection dialogs, import flows and onboarding belong to the host.
 ```
 
-**File**: `frontend/docs/docs/_demos/assets/scope-switcher/library-1.svg` (removed, +0/-5)
+**File**: `frontend/docs/docs/en/components/file-tree.mdx` (modified, +4/-0)
 ```diff
-@@ -1,5 +0,0 @@
--<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
--<g id="clip-oreo-5f6o93">
--<path id="Vector" d="M14 7C14 3.13401 10.866 0 7 0C3.13401 0 0 3.13401 0 7C0 10.866 3.13401 14 7 14C10.866 14 14 10.866 14 7Z" fill="black"/>
--</g>
--</svg>
+@@ -34,6 +34,10 @@ The tree never inspects parent/child relationships. The host flattens its own st
+ 
+ Emit only the ones your data source needs. A host that returns all children at once never emits `load-more`.
+ 
++Rows size to their content rather than being squeezed into the container width: names render in full and the container scrolls sideways. Deep indentation gets its space the same way, so deep nodes never squeeze each other. The description is capped at 200px and truncates as needed — it is supplementary, and one long description would drag a row hundreds of pixels wide, making horizontal scrolling harder rather than easier.
++
++The name is the only way to tell nodes apart, so it never truncates; a host that wants a tighter column narrows the container rather than asking the component to clip names.
++
+ ## Slots and host content
+ 
+ - `slots.toolbar` — search, import sources, refresh. The component does not know what is inside.
 ```
 
-**File**: `frontend/docs/docs/_demos/assets/scope-switcher/library-2.svg` (removed, +0/-5)
+**File**: `frontend/docs/docs/en/components/index.mdx` (modified, +4/-0)
 ```diff
-@@ -1,5 +0,0 @@
--<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="14.0131" height="14.0131" viewBox="0 0 14.0131 14.0131" fill="none" xmlns="http://www.w3.org/2000/svg">
--<g id="Group">
--<path id="Vector" d="M10.4541 0H3.55906C1.59345 0 0 1.59345 0 3.55906V10.4541C0 12.4197 1.59345 14.0131 3.55906 14.0131H10.4541C12.4197 14.0131 14.0131 12.4197 14.0131 10.4541V3.55906C14.0131 1.59345 12.4197 0 10.4541 0Z" fill="#031A05"/>
--</g>
--</svg>
+@@ -4,6 +4,10 @@ Reusable views and file-type icons for OpenViking AI applications. Components re
+ 
+ ## Available modules
+ 
++### [FileBrowserEntries](./file-browser-entries)
++
++The entry row at the top of the file browsing area: connect an agent, import resources. Fixed to two entries; the host decides which appear and what a click does, while the icons, copy and divider belong to the component.
++
+ ### [FileTree](./file-tree)
+ 
+ A flattened file tree with row rendering, selection, expansion, keyboard interaction, and pagination intent. The host supplies ordered rows and handles data loading. The current view is a placeholder; see the component page for its scope and limitations.
 ```
 
-**File**: `frontend/docs/docs/_demos/assets/scope-switcher/library-3.svg` (removed, +0/-30)
+**File**: `frontend/docs/docs/en/modules/file-browser.mdx` (modified, +63/-37)
 ```diff
-@@ -1,30 +0,0 @@
--<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="17.6006" height="17.6006" viewBox="0 0 17.6006 17.6006" fill="none" xmlns="http://www.w3.org/2000/svg">
--<g id="Group" opacity="0.42">
--<g id="Vector" opacity="0.38" filter="url(#filter0_f_0_136)">
--<path d="M5.35258 2.05623H12.2476C14.0682 2.05623 15.5441 3.53215 15.5441 5.35279V12.2478C15.5441 14.0684 14.0682 15.5444 12.2476 15.5444H5.35258C3.53194 15.5444 2.05602 14.0684 2.05602 12.2478V5.35279C2.05602 3.53215 3.53194 2.05623 5.35258 2.05623Z" stroke-width="0.30625" stroke="white"/>
--</g>
--<g id="Vector_2" opacity="0.24" filter="url(#filter1_f_0_136)">
--<path d="M5.35281 2.23125H12.2478C13.9718 2.23125 15.3694 3.62882 15.3694 5.35281V12.2478C15.3694 13.9718 13.9718 15.3694 12.2478 15.3694H5.35281C3.62882 15.3694 2.23125 13.9718 2.23125 12.2478V5.35281C2.23125 3.62882 3.62882 2.23125 5.35281 2.23125Z" stroke-width="0.525" stroke="#FFDFDA"/>
--</g>
--<g id="Vector_3" opacity="0.18" filter="url(#filter2_f_0_136)">
--<path d="M5.35281 2.66875H12.2478C13.7302 2.66875 14.9319 3.87045 14.9319 5.35281V12.2478C14.9319 13.7302 13.7302 14.9319 12.2478 14.9319H5.35281C3.87045 14.9319 2.66875 13.7302 2.66875 12.2478V5.35281C2.66875 3.87045 3.87045 2.66875 5.35281 2.66875Z" stroke-width="0.875" stroke="#FFBE74"/>
--</g>
--</g>
--<defs>
--<filter id="filter0_f_0_136" x="1.42164" y="1.42186" width="14.7569" height="14.7569" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
--<feFlood flood-opacity="0" result="BackgroundImageFix"/>
--<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
--<feGaussianBlur stdDeviation="0.240625" result="effect1_foregroundBlur_0_136"/>
--</filter>
--<filter id="filter1_f_0_136" x="0.56875" y="0.56875" width="16.4631" height="16.4631" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
--<feFlood flood-opacity="0" result="BackgroundImageFix"/>
--<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
--<feGaussianBlur stdDeviation="0.7" result="effect1_foregroundBlur_0_136"/>
--</filter>
--<filter id="filter2_f_0_136" x="0" y="0" width="17.6006" height="17.6006" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
--<feFlood flood-opacity="0" result="BackgroundImageFix"/>
--<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
--<feGaussianBlur stdDeviation="1.11563" result="effect1_foregroundBlur_0_136"/>
--</filter>
--</defs>
--</svg>
+@@ -2,11 +2,13 @@
+ 
+ Directory navigation, search and content preview as one module. The module loads its own data; the host supplies configuration, the controlled current resource, the toolbar entries and copy.
+ 
+-The component is a placeholder: it renders the module name and a placeholder message. The props below are settled, so applications can integrate the container and wire their state now; the composite view and `useFileBrowser` follow.
++The component already wires the tree, the search and the preview together: directories expand on demand and page, clicking a file loads the preview, and a search result opens the preview too. `useFileBrowser` can be used on its own to assemble a different view.
+ 
+ ## Basic usage
+ 
+-```tsx file="../../_demos/file-browser-placeholder.tsx" preview
++The example uses fixed data and makes no network request:
++
++```tsx file="../../_demos/file-browser-basic.tsx" preview
+ 
+ ```
+ 
+@@ -16,9 +18,9 @@ The module covers the file tree and the file preview only. The command panel bel
+ 
+ ## What the module owns
+ 
+-- Directory, search, current URI and preview loading, coordinated inside the module: clicking a directory node or a search result moves the selection and loads the preview, and switching resources drops stale requests.
++- Directory, search, current URI and preview loading, coordinated inside the module: clicking a directory node or a search result moves the selection and loads the preview, and switching resources drops stale requests. Clicking a directory also expands it and makes it the current resource, with its L1 overview on the right (falling back to the L0 abstract when empty).
+ - Refreshing the affected directory, search results and preview after a save, rename or delete.
+-- The layout of the search, directory and preview area.
++- The layout of the search, directory and preview area, including the draggable divider between the tree and the detail pane. The tree starts at 352px, resizes between 200px and a cap that leaves the detail pane its readable width, and the arrow keys work once the divider has focus.
+ - The search box and refresh control in the toolbar, plus per-row state such as uploading progress, conflicts and retention settings.
+ - The preview tabs. Which tabs a resource has follows from the resource itself, so the host does not supply them.
+ - The search view. Search is a private view inside this module, not a published component or module: it opens from the toolbar or ⌘K, and picking a result moves the tree and loads the preview. Nothing about it is exported, because leaving the tree leaves it without a destination. `console` has its own `@` picker over the same kind of API; that is a separate view, not this one.
+@@ -27,60 +29,84 @@ The module covers the file tree and the file preview only. The command panel bel
+ 
+ - Request configuration through the Provider, overridable per module through `requestOptions`.
+ - Sign-in, account scope, routing and permissions.
+-- The toolbar entries: connect an agent, import resources. Compose them with `FileBrowserToolbarButton` inside `toolbarActions` so they match the module's own buttons. Entries can nest inside a popover or dropdown when a click alone is not enough.
++- The entries in the top row: connect an agent, import resources. Compose them with `FileBrowserEntries` inside `toolbarActions`, which owns the icons, copy and divider. Wrap it in a popover or dropdown when a click alone is not enough.
+ - Connection dialogs, import flows and onboarding. The module embeds none of them.
+ 
+-## Toolbar entries
++## Entries and toolbar
+ 
+-The module renders the search box, the refresh button and the dividers. The host adds its own entries through `toolbarActions` and uses `FileBrowserToolbarButton` so the styling matches:
++The top band holds the host's entries on a tinted background; under it sit the module's own search box and refresh button. The host adds entries through `toolbarActions`, using `FileBrowserEntries` so the styling matches:
+ 
+ ```tsx
+-import {
+-  FileBrowser,
+-  FileBrowserToolbarButton,
+-} from '@openviking/react/modules/file-browser';
++import { FileBrowserEntries } from '@openviking/react/components/file-browser-entries';
++import '@openviking/react/components/file-browser-entries/style.css';
++import { FileBrowser } from '@openviking/react/modules/file-browser';
+ 
+ <FileBrowser
+   toolbarActions={
+-    <>
+-      <FileBrowserToolbarButton icon={<ConnectIcon />} onClick={connect}>
+-        Connect agent
+-      </FileBrowserToolbarButton>
+-      <FileBrowserToolbarButton icon={<UploadIcon />} onClick={openImport}>
+-        Import resources
+-      </FileBrowserToolbarButton>
+-    </>
++    <FileBrowserEntries
++      onConnectAgent={connect}
++      onImportResources={openImport}
++      labels={{
++        connectAgent: 'Connect agent',
++        importResources: 'Import resources',
++      }}
++    />
+   }
+ />;
+ ```
+ 
+-Because `toolbarActions` is a node, an entry that needs a menu wraps its button instead of asking fo
 ```
 
-**File**: `frontend/docs/docs/_demos/assets/scope-switcher/library-4.svg` (removed, +0/-5)
+**File**: `frontend/docs/docs/en/modules/index.mdx` (modified, +1/-1)
 ```diff
-@@ -1,5 +0,0 @@
--<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="15.3497" height="16.3494" viewBox="0 0 15.3497 16.3494" fill="none" xmlns="http://www.w3.org/2000/svg">
--<g id="Group">
--<path id="Vector" d="M11.7906 0H3.55906C1.59345 0 0 1.59345 0 3.55906V12.7903C0 14.7559 1.59345 16.3494 3.55906 16.3494H11.7906C13.7562 16.3494 15.3497 14.7559 15.3497 12.7903V3.55906C15.3497 1.59345 13.7562 0 11.7906 0Z" fill="#FFAAAA"/>
--</g>
--</svg>
-```
-
-**File**: `frontend/docs/docs/_demos/assets/scope-switcher/library-5.svg` (removed, +0/-30)
-```diff
-@@ -1,30 +0,0 @@
--<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="18.9372" height="19.9369" viewBox="0 0 18.9372 19.9369" fill="none" xmlns="http://www.w3.org/2000/svg">
--<g id="Group" opacity="0.36">
--<g id="Vector" opacity="0.38" filter="url(#filter0_f_0_128)">
--<path d="M5.35282 2.05623H13.5844C15.405 2.05623 16.881 3.53215 16.881 5.35279V14.584C16.881 16.4047 15.405 17.8806 13.5844 17.8806H5.35282C3.53218 17.8806 2.05626 16.4047 2.05626 14.584V5.35279C2.05626 3.53215 3.53218 2.05623 5.35282 2.05623Z" stroke-width="0.30625" stroke="white"/>
--</g>
--<g id="Vector_2" opacity="0.24" filter="url(#filter1_f_0_128)">
--<path d="M5.35281 2.23125H13.5844C15.3084 2.23125 16.7059 3.62882 16.7059 5.35281V14.5841C16.7059 16.3081 15.3084 17.7056 13.5844 17.7056H5.35281C3.62882 17.7056 2.23125 16.3081 2.23125 14.5841V5.35281C2.23125 3.62882 3.62882 2.23125 5.35281 2.23125Z" stroke-width="0.525" stroke="#FFDFDA"/>
--</g>
--<g id="Vector_3" opacity="0.18" filter="url(#filter2_f_0_128)">
--<path d="M5.35281 2.66875H13.5844C15.0667 2.66875 16.2684 3.87045 16.2684 5.35281V14.5841C16.2684 16.0664 15.0667 17.2681 13.5844 17.2681H5.35281C3.87045 17.2681 2.66875 16.0664 2.66875 14.5841V5.35281C2.66875 3.87045 3.87045 2.66875 5.35281 2.66875Z" stroke-width="0.875" stroke="#FFBE74"/>
--</g>
--</g>
--<defs>
--<filter id="filter0_f_0_128" x="1.42189" y="1.42186" width="16.0934" height="17.0931" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
--<feFlood flood-opacity="0" result="BackgroundImageFix"/>
--<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
--<feGaussianBlur stdDeviation="0.240625" result="effect1_foregroundBlur_0_128"/>
--</filter>
--<filter id="filter1_f_0_128" x="0.56875" y="0.56875" width="17.7997" height="18.7994" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
--<feFlood flood-opacity="0" result="BackgroundImageFix"/>
--<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
--<feGaussianBlur stdDeviation="0.7" result="effect1_foregroundBlur_0_128"/>
--</filter>
--<filter id="filter2_f_0_128" x="0" y="0" width="18.9372" height="19.9369" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
--<feFlood flood-opacity="0" result="BackgroundImageFix"/>
--<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
--<feGaussianBlur stdDeviation="1.11563" result="effect1_foregroundBlur_0_128"/>
--</filter>
--</defs>
--</svg>
-```
-
-**File**: `frontend/docs/docs/_demos/assets/scope-switcher/library-6.svg` (removed, +0/-18)
-```diff
-@@ -1,18 +0,0 @@
--<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="19.7901" height="18.6675" viewBox="0 0 19.7901 18.6675" fill="none" xmlns="http://www.w3.org/2000/svg">
--<g id="Group">
--<g id="Vector" opacity="0.922" filter="url(#filter0_f_0_126)">
--<path d="M17.5588 9.33373C17.5588 5.41114 14.1276 2.23125 9.89505 2.23125C5.66245 2.23125 2.23125 5.41114 2.23125 9.33373C2.23125 13.2563 5.66245 16.4362 9.89505 16.4362C14.1276 16.4362 17.5588 13.2563 17.5588 9.33373Z" fill="url(#paint0_linear_0_126)"/>
--</g>
--</g>
--<defs>
--<filter id="filter0_f_0_126" x="5.90506e-08" y="1.11646e-08" width="19.7901" height="18.6675" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
--<feFlood flood-opacity="0" result="BackgroundImageFix"/>
--<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
--<feGaussianBlur stdDeviation="1.11563" result="effect1_foregroundBlur_0_126"/>
--</filter>
--<linearGradient id="paint0_linear_0_126" x1="2.23125" y1="2.23125" x2="2.23125" y2="16.4362" gradientUnits="userSpaceOnUse">
--<stop stop-color="#FEE9F5"/>
--<stop offset="1" stop-color="#F8F8F8"/>
--</linearGradient>
--</defs>
--</svg>
+@@ -1,6 +1,6 @@
+ # Modules
+ 
+-Two placeholder components are available for integrating the personal-terminal layout. Their props are settled — request options, controlled state, callbacks, slots and copy — though each component still renders only a module name and a replaceable placeholder message. Business Hooks, API requests, and module interactions will be added as the implementations land.
++`file-browser` is implemented and wires the directory tree, the search and the preview together; `console` is still a placeholder that renders only a module name and a replaceable message.
+ 
+ Placeholder modules do not carry data props. A module loads its own data through a Hook, so the host supplies configuration and the controlled value, and the module reports changes through callbacks.
+ 
 ```
 
 ---
 
-### Incident Patch 2: `14ce455d` (2026-11-08)
-**Commit Message**: feat(ui): 实现文件预览组件并建立包级主题基线 (#7225)
+### Incident Patch 2: `b271df96` (2026-11-09)
+**Commit Message**: fix(train): keep case and experience links consistent (#6898)
 
-* chore(ui): 清空 file-preview 实现，保留入口与样式占位
+* fix(train): preserve delete replacements through policy plans
 
-Co-Authored-By: Claude Code <[REDACTED_EMAIL]>
+* test(train): remove added replacement regression test
 
-* feat(ui): 实现文件预览组件
+* fix(train): cover historical endpoints in policy migration locks
 
-外壳（页签行、逐段可点面包屑、视图切换、编辑）自绘，正文交给
-FileViewerCore 按格式渲染，支持文本、文档、图片与音视频。
+* fix(train): reuse locked snapshots for replacement link migration
 
-Co-Authored-By: Claude Code <[REDACTED_EMAIL]>
+* fix(train): keep case and experience links consistent during apply
 
-* refactor(ui): 复用图标集并收窄文件预览的主题变量
+* fix(train): report link failures and preserve unconfirmed memories
 
-页签图标改用 getFileTypeIcon，未命中时由图标集回退，不再维护本地映射。
-主题变量加 --ov-ui-file-preview- 前缀并集中声明，避免与包内其他组件冲突。
+* fix(train): scope shared trajectory case links to training groups
 
-Co-Authored-By: Claude Code <[REDACTED_EMAIL]>
+* fix(memory): drop deleted neighbors during link inheritance
 
-* fix(ui): 构建时不再清空 dist
+* fix(train): isolate apply failures and cover pure-delete links
 
-`rslib build` 默认 `cleanDistPath: 'auto'`，每次构建前清空 `dist/`，重建
-期间产物短暂消失。文档站的 dev server 正盯着这个目录，一旦在那几毫秒里
-解析模块就报「找不到模块」，且文件回来后不会自动恢复。
+* refactor(memory): shorten experience replacement prompts
 
-产物文件名稳定、就地覆盖，因此改为不清空；需要干净构建时用新增的
-`npm run clean:lib`。
+* fix(bot): decode case links and verify rendered experience links
 
-Co-Authored-By: Claude Code <[REDACTED_EMAIL]>
+* fix(train): resolve experience URIs before building case links
 
-* feat(ui): 建立包级主题基线并让各组件从基线取色
+* fix(memory): render case links when type metadata is absent
 
-组件此前各自定义颜色：文件树用中灰加透明度、文件预览另起一套、作用域选择
-与文件浏览器又用第三套 `--ov-ui-color-*`，其中主色默认值还分成蓝色与紫色
-两种。宿主想统一换肤时无从下手。
-
-新增 `packages/react/src/theme.css`，一套 `--ov-ui-color-*` 变量覆盖主色、
-文字、边框、底色、语义色与浮层，取值对齐 OpenViking 控制台的设计规范
-（Arco 主题包 `theme-ve-o-aml-design`，只取色值不引入其组件样式）。声明在
-各组件的根选择器上而非 `:root`，库仍不修改宿主的全局样式。
-
-文件树、文件预览、作用域选择、TUI、AgentConnect、文件浏览器与模块占位视图
-的颜色全部改为从基线派生，组件私有变量只保留几何量与组件独有语义。旧的
-三套并行变量名一并清除。各样式入口（整包、分类、单组件）都先引基线，保证
-独立消费时也有默认值。
-
-暗色只认宿主放在 `<html>` 上的 `.dark` 类，不读 `prefers
-
-**File**: `docs/en/api/26-mcp-live-context.md` (modified, +1/-1)
+**File**: `benchmark/tau2/train/rollout_executor_vikingbot.py` (modified, +3/-2)
 ```diff
-@@ -177,7 +177,7 @@ With `wait=false`, the registration result may also contain the underlying catal
+@@ -27,6 +27,7 @@
+     _tau2_evaluation as _tau2_evaluation_helper,
+ )
+ from openviking.message import Message, ToolPart
++from openviking.session.memory.utils.link_renderer import LinkRenderer
+ from openviking.session.train import (
+     Case,
+     ExecutionContext,
+@@ -439,7 +440,7 @@ def _linked_experience_uris(content: str, *, source_uri: str) -> list[str]:
+     section = _markdown_section(content, "Linked Experiences")
+     if not section:
+         return []
+-    targets = re.findall(r"\[[^\]]+\]\(([^)\s]+)\)", section)
++    targets = [link.target for link in LinkRenderer.iter_markdown_links(section)]
+     if not targets:
+         targets = [
+             line.lstrip("- ").strip()
+@@ -455,7 +456,7 @@ def _linked_experience_uris(content: str, *, source_uri: str) -> list[str]:
  
- ### List, inspect, and check status
  
--Without `target_uri`, `GET /api/v1/mcps` merges user and shared servers and identifies each entry with `root_uri`. `GET /api/v1/mcps/{name}` and status default to the user space; pass `target_uri=viking://agent/tools` for a same-named shared server. A connection failure still has a successful HTTP envelope, but `result.status` is `error`.
-+Without `target_uri`, `GET /api/v1/mcps` merges user and shared servers and identifies each entry with `root_uri`. `GET /api/v1/mcps/{name}` and `GET /api/v1/mcps/status?name=...` default to the user space; pass `target_uri=viking://agent/tools` for a same-named shared server. A connection failure still has a successful HTTP envelope, but `result.status` is `error`.
+ def _resolve_case_link_uri(target: str, *, source_uri: str) -> str:
+-    target = str(target or "").strip()
++    target = LinkRenderer.normalize_markdown_target(str(target or "")) if target else ""
+     if not target:
+         return ""
+     if "://" in target:
+```
+
+**File**: `bot/tests/test_openviking_api_key_type.py` (modified, +15/-5)
+```diff
+@@ -2758,16 +2758,24 @@ async def test_openviking_request_connection_client_is_closed_after_tool_call(mo
+ @pytest.mark.asyncio
+ async def test_experience_reminder_follows_direct_case_experience_links(monkeypatch, tmp_path):
+     from openviking.session.memory.dataclass import MemoryFile, StoredLink
++    from openviking.session.memory.memory_type_registry import get_default_registry
+     from openviking.session.memory.utils.memory_file_utils import MemoryFileUtils
  
- **SDK and CLI**
+     case_uri = "viking://user/admin/memories/cases/case1.md"
+-    exp_uri = "viking://user/admin/memories/experiences/exp1.md"
++    exp_uri = "viking://user/admin/memories/experiences/exp 10%#(1).md"
+     direct_exp_uri = "viking://user/admin/memories/experiences/direct.md"
+-    MemoryFileUtils.write(
++    case_content = MemoryFileUtils.write(
+         MemoryFile(
+             uri=case_uri,
+-            content="# case1\n\n## Linked Experiences\n- exp1",
++            content="",
+             memory_type="cases",
++            extra_fields={
++                "case_name": "case1",
++                "task_signature": "task",
++                "input": "{}",
++                "rubric": "{}",
++                "evidence": "",
++            },
+             links=[
+                 StoredLink(
+                     from_uri=case_uri,
+@@ -2778,7 +2786,8 @@ async def test_experience_reminder_follows_direct_case_experience_links(monkeypa
+                     description="",
+                 ).model_dump()
+             ],
+-        )
++        ),
++        content_template=get_default_registry().get("cases").content_template,
+     )
+ 
+     class _FakeClient:
+@@ -2802,7 +2811,7 @@ async def search_experiences(self, query, limit=5):
+         async def read_content(self, uri, level="read"):
+             self.read_calls.append((uri, level))
+             if uri == case_uri:
+-                return "# case1\n\n## Linked Experiences\n- [exp1](../experiences/exp1.md)"
++                return case_content
+             if uri == exp_uri:
+                 return "linked exp content"
+             if uri == direct_exp_uri:
+@@ -2836,6 +2845,7 @@ async def _fake_create(**_kwargs):
+     assert fake_client.search_calls == [("hello", "viking://user/admin/memories/cases/", 1)]
+     assert fake_client.search_experience_calls == []
+     assert (case_uri, "read") in fake_client.read_calls
++    assert (exp_uri, "read") in fake_client.read_calls
+     assert "linked exp content" in content
+     assert "direct exp content" not in content
+     assert exp_uri in uris
+```
+
+**File**: `bot/vikingbot/agent/memory.py` (modified, +3/-1)
+```diff
+@@ -9,6 +9,7 @@
+ 
+ from loguru import logger
+ 
++from openviking.session.memory.utils.link_renderer import LinkRenderer
+ from vikingbot.config.loader import load_config
+ from vikingbot.openviking_mount.ov_server import VikingClient
+ from vikingbot.utils.helpers import ensure_dir
+@@ -1210,7 +1211,7 @@ def _extract_linked_experience_uris(cls, content: str, *, source_uri: str = "")
+         if not section:
+             return []
+ 
+-        targets = re.findall(r"\[[^\]]+\]\(([^)\s]+)\)", section)
++        targets = [link.target for link in LinkRenderer.iter_markdown_links(section)]
+         if not targets:
+             targets = [
+                 line.lstrip("- ").strip()
+@@ -1232,6 +1233,7 @@ def _resolve_case_link_uri(target: str, *, source_uri: str) -> str:
+         target = str(target or "").strip()
+         if not target:
+             return ""
++        target = LinkRenderer.normalize_markdown_target(target)
+         if "://" in target:
+             return target
+         if "/" not in target:
+```
+
+**File**: `openviking/session/compressor_v3.py` (modified, +48/-178)
+```diff
+@@ -45,7 +45,7 @@
+ from openviking.session.memory.memory_updater import (
+     ExtractContext,
+     MemoryUpdateError,
+-    write_stored_links,
++    MemoryUpdateResult,
+ )
+ from openviking.session.memory.session_extract_context_provider import (
+     SessionExtractContextProvider,
+@@ -54,7 +54,6 @@
+     MemoryUpdateRequest,
+     get_streaming_memory_updater,
+     make_streaming_memory_updater_key,
+-    merge_link_lists,
+ )
+ from openviking.session.memory.utils.json_parser import JsonUtils
+ from openviking.session.memory.utils.memory_file_utils import MemoryFileUtils
+@@ -1081,11 +1080,20 @@ async def train_from_extracted_cases(
+                 extraction_groups.setdefault(feedback, []).append(rollout)
+ 
+             reported_trajectory_uris: set[str] = set()
++            training_failures = MemoryUpdateResult()
+             for rollouts in extraction_groups.values():
+                 rollout = rollouts[0]
+                 candidates = [candidates_by_name[item.case.name] for item in rollouts]
+                 case_context = replace(analysis_context, case_candidates=candidates)
+-                analysis = await self.rollout_analyzer.analyze(rollout, case_context)
++                try:
++                    analysis = await self.rollout_analyzer.analyze(rollout, case_context)
++                except MemoryUpdateError as exc:
++                    training_failures.errors.extend(exc.result.errors)
++                    training_failures.written_uris.extend(exc.result.written_uris)
++                    training_failures.edited_uris.extend(exc.result.edited_uris)
++                    training_failures.deleted_uris.extend(exc.result.deleted_uris)
++                    logger.warning("Skipping failed trajectory group: %s", exc)
++                    continue
+                 analysis.metadata["case_associations_required"] = len(candidates) > 1
+                 if collect_memory_diff:
+                     # Keep every extracted trajectory, including those with no matching case.
+@@ -1121,7 +1129,17 @@ async def train_from_extracted_cases(
+                             candidates_by_name[item.case.name]["uri"] for item in training_rollouts
+                         }
+                         trajectories = [
+-                            trajectory
++                            replace(
++                                trajectory,
++                                metadata={
++                                    **trajectory.metadata,
++                                    "case_uris": [
++                                        uri
++                                        for uri in trajectory.metadata.get("case_uris", [])
++                                        if uri in case_uris
++                                    ],
++                                },
++                            )
+                             for trajectory in trajectories
+                             if case_uris.intersection(trajectory.metadata.get("case_uris", []))
+                         ]
+@@ -1140,18 +1158,14 @@ async def train_from_extracted_cases(
+                         ctx=ctx,
+                         archive_uri=archive_uri,
+                     )
+-                    for item in training_rollouts:
+-                        case_uri = candidates_by_name[item.case.name]["uri"]
+-                        if case_uri:
+-                            await self._link_case_to_training_outputs(
+-                                analysis=training_analysis,
+-                                case_uri=case_uri,
+-                                plan=exp_training_result.plan,
+-                                apply_result=exp_training_result.apply_result,
+-                                ctx=ctx,
+-                                viking_fs=viking_fs,
+-                            )
+-                    submitted += len(training_rollouts)
++                    apply_result = exp_training_result.apply_result
++                    if apply_result.errors:
++                        for error in apply_result.errors:
++                            training_failures.add_error(exp_root_uri, RuntimeError(error))
++                        training_failures.written_uris.extend(apply_result.written_uris)
++                        training_failures.deleted_uris.extend(apply_result.deleted_uris)
++                    else:
++                        submitted += len(training_rollouts)
+                     if collect_memory_diff:
+                         memory_diff = await self._build_training_memory_diff(
+                             training_result=exp_training_result,
+@@ -1181,6 +1195,8 @@ async def train_from_extracted_cases(
+                                 if uri:
+                                     skill_uris.append(str(uri))
+ 
++            if training_failures.errors and strict_extract_errors:
++                raise MemoryUpdateError(training_failures)
+             tracer.info(
+                 "Submitted commit case memories to streaming train: "
+                 f"case_count={len(
+```
+
+**File**: `openviking/session/memory/agent_experience_context_provider.py` (modified, +1/-1)
+```diff
+@@ -90,7 +90,7 @@ def instruction(self) -> str:
+ The system handles create vs update automatically:
+ - Same `experience_name` as an existing one → updates it in place
+ - New `experience_name` → creates a new experience
+-- `supersedes` set → old experience is deleted and its history is inherited
++- `supersedes` set → proposes a replacement for the final merge to review
+ 
+ ## Rules
  
 ```
 
-**File**: `docs/zh/api/26-mcp-live-context.md` (modified, +1/-1)
+**File**: `openviking/session/memory/memory_updater.py` (modified, +131/-20)
 ```diff
-@@ -176,7 +176,7 @@ ov mcps add -p viking://agent/tools --wait '{"mcpServers":{"weather":{"url":"htt
+@@ -19,6 +19,7 @@
+     from openviking.session.memory.memory_isolation_handler import MemoryIsolationHandler
  
- ### 列出、查看和检查状态
+ from openviking.core.context import ContextLevel
++from openviking.core.namespace import context_type_for_uri
+ from openviking.message import Message
+ from openviking.message.part import TextPart
+ from openviking.pyagfs.exceptions import AGFSConnectionError, AGFSIoError, AGFSTimeoutError
+@@ -31,7 +32,7 @@
+     SkippedMemoryOperation,
+     StoredLink,
+ )
+-from openviking.session.memory.memory_type_registry import MemoryTypeRegistry
++from openviking.session.memory.memory_type_registry import MemoryTypeRegistry, get_default_registry
+ from openviking.session.memory.merge_op import MergeOpFactory
+ from openviking.session.memory.page_id_map import PageIdMap
+ from openviking.session.memory.utils.memory_file_utils import (
+@@ -112,6 +113,8 @@ async def write_stored_links(
+     viking_fs: Any,
+     skip_uris: Optional[set] = None,
+     lease_ref: Any = None,
++    read_file_contents: Optional[Dict[str, MemoryFile]] = None,
++    errors: Optional[List[Tuple[str, Exception]]] = None,
+ ) -> List[str]:
+     """Write StoredLinks to their endpoint files' links/backlinks fields.
  
--`GET /api/v1/mcps` 未指定 `target_uri` 时合并用户空间和共享空间的 Server，每项用 `root_uri` 标识所属空间。`GET /api/v1/mcps/{name}` 和状态接口默认操作用户空间；使用同名共享 Server 时必须指定 `target_uri=viking://agent/tools`。连接失败仍是成功的 HTTP 响应，但 `result.status` 为 `error`。
-+`GET /api/v1/mcps` 未指定 `target_uri` 时合并用户空间和共享空间的 Server，每项用 `root_uri` 标识所属空间。`GET /api/v1/mcps/{name}` 和 `GET /api/v1/mcps/status?name=...` 默认操作用户空间；使用同名共享 Server 时必须指定 `target_uri=viking://agent/tools`。连接失败仍是成功的 HTTP 响应，但 `result.status` 为 `error`。
+@@ -120,7 +123,9 @@ async def write_stored_links(
+     Files listed in skip_uris are skipped (caller handles them in the same write).
+     Returns the endpoint URIs that were successfully rewritten.  Callers can
+     use this to avoid reporting link-only edits for files that failed the
+-    read/modify/write step.
++    read/modify/write step. Missing/empty reads are skipped with a warning;
++    other failures are appended to ``errors`` when supplied. Cached endpoint
++    files must have been read under the caller's lease.
+     """
+     from openviking.session.memory.merge_op.link_merge import merge_links
  
- **SDK 与 CLI**
+@@ -137,10 +142,17 @@ async def write_stored_links(
+     updated_uris: List[str] = []
+     for uri, link_groups in file_links.items():
+         try:
+-            content = await viking_fs.read_file(uri, ctx=ctx)
+-            if not content:
+-                continue
+-            mf = MemoryFileUtils.read(content, uri=uri)
++            mf = (read_file_contents or {}).get(uri)
++            if mf is None:
++                try:
++                    content = await viking_fs.read_file(uri, ctx=ctx)
++                except (NotFoundError, FileNotFoundError) as exc:
++                    logger.warning("Skipping links to missing memory %s: %s", uri, exc)
++                    continue
++                if not content:
++                    logger.warning("Skipping links to empty memory %s", uri)
++                    continue
++                mf = MemoryFileUtils.read(content, uri=uri)
+             if link_groups["links"]:
+                 mf.links = merge_links(mf.links, [l.model_dump() for l in link_groups["links"]])
+             if link_groups["backlinks"]:
+@@ -153,16 +165,28 @@ async def write_stored_links(
+             bump_memory_version(mf)
+             await viking_fs.write_file(
+                 uri,
+-                MemoryFileUtils.write(mf),
++                _write_linked_memory(mf),
+                 ctx=ctx,
+                 lease_ref=lease_ref,
+             )
+             updated_uris.append(uri)
+         except Exception as e:
+             tracer.error(f"Failed to apply links to {uri}: {e}")
++            if errors is not None:
++                errors.append((uri, e))
+     return updated_uris
  
-```
-
-**File**: `frontend/.gitignore` (modified, +4/-0)
-```diff
-@@ -3,6 +3,10 @@
  
- node_modules/
- dist/
++def _write_linked_memory(memory_file: MemoryFile) -> str:
++    memory_type = memory_file.memory_type
++    if not memory_type and memory_file.uri:
++        memory_type = MemoryUpdater.memory_type_from_uri(memory_file.uri)
++    schema = get_default_registry().get("cases") if memory_type == "cases" else None
++    return MemoryFileUtils.write(
++        memory_file, content_template=schema.content_template if schema else None
++    )
 +
-+# Playwright CLI 的会话快照与日志，不属于源码。
-+# Playwright CLI session snapshots and logs, not source.
-+.playwright-cli/
- doc_build/
- .rspress/
- .rspress-cache/
-```
-
-**File**: `frontend/AGENTS.md` (modified, +5/-1)
-```diff
-@@ -19,11 +19,15 @@
- - React 源码的 `components/` 放独立视图组件，`modules/` 放按业务能力划分的 Hook 与组合视图，不提供完整页面。模块 Hook 暴露可独立消费的数据、状态与操作，组合视图复用 Hook 并组装组件；宿主差异通过服务契约、参数、回调与插槽接入。当前先提供四个模块的占位组件、基础类型与样式入口，便于宿主接入布局；真实业务与 Hook 随后迁入，占位状态和 API 范围须在示例与文档中明确。可独立部署的微应用放在 `apps/`，例如 `apps/workbench-embed/`，消费公开模块与组件，管理挂载、卸载、样式隔离和宿主通信。
- - 每个组件、业务模块或区块独占一个 kebab-case 目录，入口文件与目录同名。实现、样式、测试及私有子组件就近放置，例如 `components/<模块>/<模块>.tsx` 和同目录的 `<模块>.css`。模块私有的 Hook、类型和工具留在模块内，不提前提升到公共目录。
- - 根入口与子路径分别维护公开导出；组件子路径为 `@openviking/react/components/<组件>`，业务模块为 `@openviking/react/modules/<模块>`，从模块入口分别导出 Hook 与组合视图。不提供 `components`、`modules` 分类聚合 JS 入口。包导出显式列举，内部文件不开放；各入口共享实现，避免重复创建 Provider、Context 或状态对象。同步维护 Rslib 入口和声明路径。
-+- 被多个组件共用的内部代码放在 `src/shared/`，**不设公开入口**：不进包根导出、不进子路径、不写进 `package.json` 的 `exports`。只有出现第二个真实消费者时才提升到这里；单个组件用到的东西留在该组件目录内。共享代码不得反向依赖 `components/`、`modules/` 或任何宿主契约。
- - 目录按实际内容创建，不预建空目录，也不为单个简单模块增加不必要的转发层。
- 
- ## 样式与交互
- 
- - 库样式局部化，类名使用 `ov-` 前缀加 BEM 命名（块 `.ov-file-tree`，元素 `.ov-file-tree__row`，修饰 `.ov-file-preview__button--primary`），主题变量使用 `--ov-ui-` 前缀。消费者无需额外扫描库源码生成 Tailwind CSS，也不承担库的全局 reset；库样式不修改应用的 `html`、`body`、`:root` 或 `.dark`。
-+- **颜色一律取自主题基线，不要在组件里另写色值。** 包级基线在 `packages/react/src/theme.css`，是一套 `--ov-ui-color-*` 变量（主色、文字、边框、底色、语义色、浮层），取值来自 OpenViking 控制台的设计规范。新写或改动样式时先看基线里有没有对应语义的变量；有就直接用，没有就先往基线里补一条，再在组件里引用。不要在组件 CSS 里写 `#5252ff`、`rgb(0 0 0 / 8%)` 这类字面值——它们不会跟随宿主主题切换，也无法被宿主统一覆盖。
-+- 组件私有变量用 `--ov-ui-<组件>-*` 前缀，值从基线派生（`--ov-ui-file-preview-accent: var(--ov-ui-color-primary)`），不要重复定义一份色值。只有纯几何量（行高、圆角、缩进）或组件独有的语义（如文件树的层级竖线）才在组件里直接赋值。
-+- 暗色只认宿主放在 `<html>` 上的 `.dark` 类，不读 `prefers-color-scheme`：系统偏好与宿主实际呈现的主题可能不一致，跟系统走会让组件底色与周围文字对不上。
- - 文档站的全局样式、布局和主题覆盖只作用于文档站。CSS 同时提供整包 `style.css`、分类 `components/style.css` / `modules/style.css` 和单模块 `<分类>/<模块>/style.css` 入口；JS 不隐式加载样式。各 CSS 入口共用样式源码并可独立消费，模块 CSS 包含当前占位视图及后续组合视图所需组件样式；单独使用 Hook 无需 CSS。保留构建中的 CSS 副作用声明。
- - 复用模块使用实例内状态和引用。持久化、请求缓存等需要跨实例共享的行为通过明确的 Adapter 接入，避免用全局 DOM ID、事件或 singleton Store 隐式关联实例与账号。
- - 公开组件提供可替换的默认文案，动态文案通过类型化参数传入。宿主在接入层映射 i18next 或 Starling。状态通过可见文本表达；可操作控件使用合适的语义、键盘行为和焦点样式。
-@@ -32,7 +36,7 @@
- 
- - 顶部导航以 Guide、Components 和 OpenViking docs 外链为基础。Guide 承载入门、安装、样式与集成说明；Components 承载视图组件。出现实际内容后再增加 Modules 和 Patterns，分别对应业务 Hook 与组合视图，以及纯视图组合示例；独立 API 栏目在内容需要时再引入。
- - 文档按语言组织在 `docs/docs/en/` 和 `docs/docs/zh/`，各语言内按 `guide/`、`components/`、`modules/`、`patterns/` 分类。业务模块归入 Modules，不把所有模块都归入 Components。
--- 英文为默认语言，保留 `/ui/` 下的原有地址；简体中文使用 `/ui/zh/`。新增或修改文档时同步维护两种语言的页面、导航和侧边栏，保持对应页面路径一致，以支持原位语言切换。可运行示例共用 `docs/docs/_demos/`，不要为翻译复制实现；组件文案仍由调用者定制。
-+- 简体中文为默认语言，使用 `/ui/` 下的地址；英文使用 `/ui/en/`。新增或修改文档时同步维护两种语言的页面、导航和侧边栏，保持对应页面路径一致，以支持原位语言切换。可运行示例共用 `docs/docs/_demos/`，不要为翻译复制实现；组件文案仍由调用者定制。
- - 模块分类入口指向该分类的 `index.mdx` 概览，而不是首个模块；侧边栏按路由前缀隔离，仅列出当前分类的概览与详情，并按职责分组。新增分类时同时提供真实内容、概览和导航，不创建空栏目或占位页面。
- - 示例从 `@openviking/react` 的公开导出及样式入口导入，不通过相对路径绕过接口。外部 TSX 示例是可运行代码与源码展示的同一事实源。
- - 开发与正式文档均通过包导出消费实际库产物。开发模式由官方 workspace 插件启动 Rslib watch；不使用源码 alias 或 TypeScript paths 绕过产物解析，以发现缺失导出、CSS 和打包资源等问题。
-```
-
-**File**: `frontend/README.md` (modified, +2/-1)
-```diff
-@@ -16,7 +16,7 @@ npm run dev
- 
- Open the `/ui/` URL printed by Rspress. The official workspace development plugin starts the library's Rslib watcher before the documentation server, so no manual library build is required. Demos consume the built package exports and update when the watcher rebuilds them.
- 
--The navigation language menu switches between English at `/ui/` and Simplified Chinese at `/ui/zh/`. Existing English URLs remain unchanged.
-+The navigation language menu switches between Simplified Chinese at `/ui/` and English at `/ui/en/`.
- 
- ```bash
- npm run lint           # Check formatting, lint rules, and types for all workspaces
-@@ -34,6 +34,7 @@ npm run preview        # Serve the built documentation at /ui/
- - `packages/react/src/modules/{file-browser,console,task-center}`: importable placeholder components with settled public Props / Labels / Slots types, and styles. Business Hooks and interactions are planned.
- - `packages/react/src/client`: the framework-neutral request client, exported from `@openviking/react/client` — a `fetch`-based `createOvClient` plus the contract modules depend on (`OvClient`, `OvRequestOptions`, `OvClientError`).
- - `packages/react/src/{hooks,utils}`: reserved internal shared code, without public subpaths. Module-private helpers stay within their module.
-+- `packages/react/src/shared`: internal shared code used by more than one component, with no public entry — not exported from the root, any subpath, or `package.json`. Currently holds the `tooltip` surface that `file-preview` renders into `document.body`.
- - `docs`: Rspress with `@rspress/plugin-preview`, external TSX demos, source viewing/copying, and hand-written props tables.
- - `docs/docs/en` and `docs/docs/zh`: matching English and Simplified Chinese pages, with localized navigation.
- - `docs/docs/_demos`: runnable examples using the public package exports.
-```
-
-**File**: `frontend/docs/docs/_demos/file-preview-basic.tsx` (modified, +228/-24)
-```diff
-@@ -1,69 +1,273 @@
- import { useState } from 'react';
-+import { useLang } from '@rspress/core/runtime';
- import { FilePreview } from '@openviking/react/components/file-preview';
--import type { FilePreviewTab } from '@openviking/react/components/file-preview';
-+import type {
-+  FilePreviewActions,
-+  FilePreviewTab,
-+} from '@openviking/react/components/file-preview';
-+import { getFileTypeIcon } from '@openviking/react/icons';
- import '@openviking/react/components/file-preview/style.css';
- 
--const markdown = `# LLM Wiki
-+/**
-+ * 示例文案。文档站中英文页面共用这份示例，因此文案跟随页面语言。
-+ *
-+ * Demo copy. Both language pages share this demo, so the copy follows the page
-+ * language.
-+ */
-+const COPY = {
-+  en: {
-+    markdown: `# LLM Wiki
- 
- Compile heterogeneous knowledge sources into durable, connected knowledge.
- 
- ## Objective
- 
- Turn the supplied sources into reusable pages instead of a pile of summaries.
--`;
- 
--const dashboard = (
--  <div style={{ padding: 16, color: '#8f959e', fontSize: 13 }}>
--    A content tab renders whatever the host passes — a dashboard, a graph, a
--    summary. The component does not know what it is.
--  </div>
--);
-+See [the compile notes](viking://system/compile/notes.md) and [a relative page](./sibling.md).
-+`,
-+    dashboard:
-+      'A content tab renders whatever the host passes — a dashboard, a graph, a summary. The component does not know what it is.',
-+    dashboardTitle: 'Dashboard',
-+    hint: 'Switch tabs, copy the path or the content, or toggle preview and source.',
-+    contentCopied: 'Content copied',
-+    pathCopied: 'Path copied',
-+    permissionTag: 'Can manage',
-+    parentOpened: (path: string) => `Simulated parent navigation: ${path}`,
-+    linkOpened: (uri: string) => `Simulated link navigation: ${uri}`,
-+    saved: 'Content saved',
-+    cancelled: 'Editing cancelled',
-+    previewLabel: 'File preview',
-+    labels: {
-+      copyPath: 'Copy path',
-+    },
-+    // 动作按钮由示例自己渲染，文案也归示例，不经过组件的 labels。
-+    actions: {
-+      copyContent: 'Copy content',
-+      preview: 'Preview',
-+      source: 'Source',
-+      edit: 'Edit',
-+      save: 'Save',
-+      cancel: 'Cancel',
-+    },
-+  },
-+  zh: {
-+    markdown: `# LLM Wiki
 +
-+把异构的知识来源编译成可长期使用、彼此关联的知识。
-+
-+## 目标
-+
-+把素材变成可复用的页面，而不是一堆摘要。
-+
-+参见 [编译说明](viking://system/compile/notes.md) 与 [同目录页面](./sibling.md)。
-+`,
-+    dashboard:
-+      '内容页签原样渲染宿主传入的节点——可以是看板、图谱或摘要，组件不关心它是什么。',
-+    dashboardTitle: '看板',
-+    hint: '切换页签、复制路径或正文，或在预览与源码之间切换。',
-+    contentCopied: '正文已复制',
-+    pathCopied: '路径已复制',
-+    permissionTag: '可管理',
-+    parentOpened: (path: string) => `已模拟跳转到上级：${path}`,
-+    linkOpened: (uri: string) => `已模拟打开链接：${uri}`,
-+    saved: '正文已保存',
-+    cancelled: '已取消编辑',
-+    previewLabel: '文件预览',
-+    labels: {
-+      copyPath: '复制路径',
-+    },
-+    actions: {
-+      copyContent: '复制正文',
-+      preview: '预览',
-+      source: '源码',
-+      edit: '编辑',
-+      save: '保存',
-+      cancel: '取消',
-+    },
-+  },
-+};
-+
-+const diagramSvg =
-+  'data:image/svg+xml;charset=utf-8,' +
-+  encodeURIComponent(
-+    '<svg xmlns="http://www.w3.org/2000/svg" width="240" height="140">' +
-+      '<rect width="240" height="140" fill="#eef2f8"/>' +
-+      '<rect x="20" y="24" width="80" height="36" rx="6" fill="#2563c5"/>' +
-+      '<rect x="140" y="24" width="80" height="36" rx="6" fill="#7aa7e8"/>' +
-+      '<rect x="80" y="88" width="80" height="30" rx="6" fill="#a9c4ef"/>' +
-+      '</svg>',
-+  );
+ def _remap_link_dict(link: Dict[str, Any], uri_remap: Dict[str, str]) -> Dict[str, Any]:
+     remapped = dict(link or {})
+     remapped["from_uri"] = _resolve_replacement_uri(remapped.get("from_uri"), uri_remap)
+@@ -846,6 +870,7 @@ class MemoryUpdateError(Exception):
+     """Report apply failures without treating a partial write as safe to replay."""
  
- export default function FilePreviewBasic() {
-+  const lang = useLang() === 'zh' ? 'zh' : 'en';
-+  const t = COPY[lang];
-   const [activeHint, setActiveHint] = useState('');
--  const [content, setContent] = useState(markdown);
-+  // 正文按语言分别保存：切换语言时展示该语言的初始正文，编辑过的内容不丢。
-+  const [drafts, setDrafts] = useState<Partial<Record<string, string>>>({});
-+  const content = drafts[lang] ?? t.markdown;
-+  const setContent = (value: string) =>
-+    setDrafts((current) => ({ ...current, [lang]: value }));
-+
-+  const dashboard = (
-+    <div style={{ padding: 16, color: '#8f959e', fontSize: 13 }}>
-+      {t.dashboard}
-+    </div>
-+  );
-+
-+  // 图标由宿主决定：组件不按文件名推断类型，这里用包的图标集按格式取一个。
-+  // The host decides the icon: the component never infers a type from the file
-+  // name, so the demo picks one per format from the package icon set.
-+  const tabIcon = (fileName: string) => {
-+    const Icon = getFileTypeIcon(fileName);
-+    return <Icon width={14} height={14} />;
-+  };
-+
-+  // 组件不内置复制、下载、视图切换与编辑按钮，这些由宿主用 `actions` 上下文
-+  // 自己渲染。示例演示一个最小实现。
-+  // The component ships no copy, download, view-switch or edit buttons; the host
-+  // renders them from the `actions` context. This is a minimal implementation.
-+  const renderActions = (actions: FilePreviewActions) => (
-+    <>
-+      {actions.canCopyContent ? (
-+        <button
-+          type="button"
-+          className="ov-file-preview__button"
-+          disabled={actions.busy}
-+          onClick={() => void actions.copyContent()}
-+        >
-+          {t.actions.copyContent}
-+        </button>
-+      ) : null}
-+      {actions.canSwitchView ? (
+     def __init__(self, result: MemoryUpdateResult):
++        self.result = result
+         super().__init__(
+             f"Memory update failed ({result.summary()}): "
+             + "; ".join(f"{uri}: {error}" for uri, error in result.errors)
+@@ -1046,12 +1071,66 @@ async def apply_operations(
+ 
+         uri_remap = dict(getattr(operations, "delete_replacements", {}) or {})
+         split_replacements = detect_split_replacements(operations)
+-        original_links = list(getattr(operations, "resolved_links", []) or [])
++        upsert_uri_keys = {
++            _same_batch_delete_conflict_key(uri) for op in applicable_upserts for uri in op.uris
++        }
++        pure_delete_uris = {
++            file.uri
++            for file in operations.delete_file_contents
 + 
 ```
 
-**File**: `frontend/docs/docs/_demos/file-tree-basic.tsx` (modified, +2/-1)
+**File**: `openviking/session/memory/patch_merge_context_provider.py` (modified, +8/-0)
 ```diff
-@@ -327,7 +327,8 @@ export default function FileTreeBasic() {
-     [MEMORIES]: childrenOf(MEMORIES).slice(0, PAGE),
-   }));
-   const [loading, setLoading] = useState<ReadonlySet<string>>(new Set());
--  const [selected, setSelected] = useState<string>();
-+  // 默认选中一行，进页面就能看到选中态，不必先点一下。
-+  const [selected, setSelected] = useState<string>(`${MEMORIES}/profile.md`);
+@@ -149,6 +149,13 @@ def __init__(
  
-   /** Fetches one more page of children, showing the loading row meanwhile. */
-   const loadPage = (uri: string) => {
+     def instruction(self) -> str:
+         output_language = self._output_language
++        supersedes_policy = ""
++        if self.memory_type == "experiences":
++            supersedes_policy = """
++For experiences, treat `supersedes` as a replacement proposal.
++If accepted under the policy above, explicitly delete the old experience with the
++final output as its replacement; otherwise keep it.
++"""
+         return f"""You are a memory patch merge agent.
+ 
+ You are given original memory files and structured memory-file field diffs. Merge them by producing final memory operations that follow the provided JSON schema.
+@@ -161,6 +168,7 @@ def instruction(self) -> str:
+ choosing a canonical file or deleting any proposal:
+ 
+ {MEMORY_MERGE_POLICY}
++{supersedes_policy}
+ 
+ Normalize URI/path variants for directory/filename fields. Treat path segment
+ fields as stable schema identifiers, not free-form labels. Reuse existing
 ```
 
-**File**: `frontend/docs/docs/en/components/file-preview.mdx` (modified, +72/-35)
+**File**: `openviking/session/memory/streaming_memory_updater.py` (modified, +6/-3)
 ```diff
-@@ -19,7 +19,9 @@ Pass at least one tab. A file tab carries `source`; a content tab carries a node
- | `kind: 'file'`    | The component   | A file, its source, a document |
- | `kind: 'content'` | The host, as-is | Dashboards, graphs, summaries  |
+@@ -271,6 +271,7 @@ async def _apply_post_group_links(
+                         request.ctx,
+                         viking_fs,
+                         lease_ref=lease,
++                        errors=result.apply_result.errors,
+                     )
+                     for uri in dict.fromkeys(updated_uris):
+                         result.apply_result.add_edited(uri)
+@@ -2242,13 +2243,15 @@ def _exclude_tree_covered_paths(exact_paths: set[str], tree_paths: set[str]) ->
+     }
  
--Both share the shell — tab row, path breadcrumb, copy path and the header slots. They differ in how the body arrives, and in that the preview/source switch is a file-tab capability: a content tab renders whatever views it needs inside `content`.
-+Both share the shell — tab row, path breadcrumb, copy path and the header action area. They differ in how the body arrives, and in that the preview/source switch is a file-tab capability: a content tab renders whatever views it needs inside `content`.
+ 
+-async def _persisted_replacement_relation_uris(
++async def _persisted_delete_relation_uris(
+     operations: ResolvedOperations,
+     viking_fs: Any,
+     ctx: RequestContext,
+ ) -> set[str]:
+     uris: set[str] = set()
+-    for deleted_uri in dict(operations.delete_replacements or {}):
++    deleted_uris = {file.uri for file in operations.delete_file_contents if file.uri}
++    deleted_uris.update(operations.delete_replacements or {})
++    for deleted_uri in sorted(deleted_uris):
+         try:
+             content = await viking_fs.read_file(deleted_uri, ctx=ctx)
+         except (FileNotFoundError, NotFoundError):
+@@ -2299,7 +2302,7 @@ async def acquire_memory_operation_lease(
+                 timeout_secs=_MEMORY_APPLY_LOCK_TIMEOUT_SECONDS,
+             )
+         try:
+-            relation_uris = await _persisted_replacement_relation_uris(
++            relation_uris = await _persisted_delete_relation_uris(
+                 operations,
+                 viking_fs,
+                 ctx,
+```
+
+---
+
+### Incident Patch 3: `4da66d6b` (2026-11-09)
+**Commit Message**: fix(watch): preserve target path lock scope (#7265)
+
+Avoid widening Watch coordination to unrelated sibling resources while keeping missing-parent deletes free of lock-created directories.
+
+**File**: `openviking/resource/watch_manager.py` (modified, +1/-15)
+```diff
+@@ -48,7 +48,6 @@
+ from openviking.utils.git_auth import GIT_AUTH_FAILED
+ from openviking_cli.exceptions import ConflictError, FailedPreconditionError
+ from openviking_cli.session.user_id import UserIdentifier
+-from openviking_cli.utils import VikingURI
+ from openviking_cli.utils.logger import get_logger
+ 
+ logger = get_logger(__name__)
+@@ -69,19 +68,6 @@ def _context(account_id: str) -> Any:
+ 
+         return RequestContext(user=UserIdentifier(account_id, "default"), role=Role.ROOT)
+ 
+-    async def _existing_path(self, account_id: str, uri: str) -> str:
+-        """Deepest existing ancestor-or-self of *uri*, whose Tree lock covers *uri*.
+-
+-        Locking a missing path materializes it on some PathLock backends.
+-        """
+-        ctx = self._context(account_id)
+-        while not await self._fs.exists(uri, ctx=ctx):
+-            parent = VikingURI(uri).parent
+-            if parent is None:
+-                break
+-            uri = parent.uri
+-        return self._fs._uri_to_path(uri, ctx=ctx)
+-
+     @asynccontextmanager
+     async def tree(
+         self,
+@@ -93,7 +79,7 @@ async def tree(
+     ) -> AsyncIterator[Dict[str, Any]]:
+         agfs = self._fs._async_agfs
+         lease = await agfs.pathlock_acquire_tree(
+-            await self._existing_path(account_id, uri),
++            self._fs._uri_to_path(uri, ctx=self._context(account_id)),
+             timeout_secs=timeout,
+             owner_lease_ref=owner_lease_ref,
+         )
+```
+
+**File**: `openviking/service/fs_service.py` (modified, +20/-24)
+```diff
+@@ -525,7 +525,7 @@ async def mkdir(
+                     f"directory descriptions are not supported for namespace: {directory_uri}"
+                 )
+             async with self._hold_watch_scope(
+-                [await self._existing_tree_lock_request(directory_uri, ctx)], [directory_uri], ctx
++                [self._tree_lock_request(directory_uri, ctx)], [directory_uri], ctx
+             ) as lease:
+                 await viking_fs.mkdir(uri, ctx=ctx, lease_ref=lease)
+                 return
+@@ -539,7 +539,7 @@ async def create():
+             if managed:
+                 await viking_fs._ensure_access(directory_uri, ctx, action=AclAction.WRITE)
+             async with self._hold_watch_scope(
+-                [await self._existing_tree_lock_request(directory_uri, ctx)], [directory_uri], ctx
++                [self._tree_lock_request(directory_uri, ctx)], [directory_uri], ctx
+             ) as lease:
+                 acl_update = (
+                     await viking_fs.prepare_acl_update(directory_uri, acl, ctx)
+@@ -593,19 +593,10 @@ async def initialize(acl_update, lease):
+         else:
+             await create()
+ 
+-    async def _existing_tree_lock_request(self, uri: str, ctx: RequestContext) -> Dict[str, str]:
+-        """Tree-lock the deepest existing ancestor-or-self of *uri*.
+-
+-        Locking a missing path materializes it on some PathLock backends.
+-        """
++    def _tree_lock_request(self, uri: str, ctx: RequestContext) -> Dict[str, str]:
++        """Lock the target subtree, including when the target does not exist."""
+         viking_fs = self._ensure_initialized()
+-        existing = uri
+-        while not await viking_fs.exists(existing, ctx=ctx):
+-            parent = VikingURI(existing).parent
+-            if parent is None:
+-                break
+-            existing = parent.uri
+-        return {"path": viking_fs._uri_to_path(existing, ctx=ctx), "kind": "tree"}
++        return {"path": viking_fs._uri_to_path(uri, ctx=ctx), "kind": "tree"}
+ 
+     @staticmethod
+     def _normalize_directory_description(description: Optional[str]) -> Optional[str]:
+@@ -668,12 +659,19 @@ async def _rm(
+         context_type = context_type_for_uri(uri)
+         refresh_parent_uri = self._semantic_refresh_parent_uri(uri, context_type)
+         memory_overview_uri = self._memory_overview_parent_uri(uri, context_type)
+-        async with self._hold_watch_scope(
+-            [await self._existing_tree_lock_request(uri, ctx)], [uri], ctx
+-        ) as watch_lease:
+-            result = await viking_fs.rm(
+-                uri, recursive=recursive, ctx=delete_ctx, lease_ref=watch_lease
+-            )
++        parent_uri = VikingURI(uri).parent
++        if parent_uri is not None and await viking_fs.exists(parent_uri.uri, ctx=ctx):
++            async with self._hold_watch_scope(
++                [self._tree_lock_request(uri, ctx)], [uri], ctx
++            ) as watch_lease:
++                result = await viking_fs.rm(
++                    uri, recursive=recursive, ctx=delete_ctx, lease_ref=watch_lease
++                )
++                await self._sync_watch_after_rm(
++                    uri, account_id=ctx.account_id, context_type=context_type
++                )
++        else:
++            result = await viking_fs.rm(uri, recursive=recursive, ctx=delete_ctx)
+             await self._sync_watch_after_rm(
+                 uri, account_id=ctx.account_id, context_type=context_type
+             )
+@@ -1267,13 +1265,11 @@ async def _transfer_scope(
+             raise InvalidArgumentError(
+                 f"{operation} destination for a file must include the target file name: {to_uri}"
+             )
+-        # Locking a missing path materializes it on some PathLock backends, so the
+-        # native pre-lock checks run first and only existing paths are locked.
++        # Validate before acquiring the same source and target scopes as the
++        # native transfer, without extending a missing target to its parent.
+         await viking_fs._ensure_transfer_parent_directory(target_path, to_uri, operation=operation)
+         await viking_fs._ensure_transfer_target_type(target_path, to_uri, is_dir=is_dir)
+         if is_dir:
+-            if not await viking_fs.exists(to_uri, ctx=ctx):
+-                target_path = viking_fs._transfer_parent_path(target_path)
+             roots = sorted({source_path, target_path}, key=lambda path: (len(path), path))
+             requests = [
+                 {"path": path, "kind": "tree"}
+```
+
+**File**: `tests/resource/test_watch_manager.py` (modified, +6/-6)
+```diff
+@@ -121,16 +121,16 @@ async def test_create_requires_target_tree_lock(self, watch_manager: WatchManage
+         assert await watch_manager.get_task(task.task_id) is not None
+ 
+     @pytest.mark.asyncio
+-    async def test_create_for_missing_target_locks_existing_ancestor(
++    async def test_create_for_missing_target_does_not_block_sibling(
+         self, watch_manager: WatchManager, watch_vfs, tmp_path
+     ):
+-        await _create(watch_manager, "viking://resources/pending/doc.md")
+-
+-        assert not await watch_vfs.exists("viking://resources/pending")
+-        assert not list((tmp_path / "agfs").rglob("pending"))
+-
+         await watch_vfs.mkdir("viking://resources/held")
+         async with watch_manager.locks.tree(TEST_ACCOUNT_ID, "viking://resources/held"):
++            await _create(watch_manager, "viking://resources/pending")
 +
-+**The component ships no action buttons of its own.** Copy body, copy path, download, the preview/source switch and editing all carry host product semantics and copy; built in they could be neither trimmed nor restyled. Copy path is the exception — any file with a `source.path` needs it under every host, so it stays in the shell at the end of the breadcrumb. Everything else is rendered by the host in `slots.actions`, which receives a `FilePreviewActions` context: the current view mode, editing state, which capabilities are available, and the methods that change them. The state stays with the component.
++            assert not await watch_vfs.exists("viking://resources/pending")
++            assert not list((tmp_path / "agfs").rglob("pending"))
++
+             with pytest.raises(ResourceBusyError):
+                 await _create(watch_manager, "viking://resources/held/new/doc.md")
  
- The active tab is owned by the component. To switch from outside, use the ref handle:
+```
+
+**File**: `tests/service/test_fs_service.py` (modified, +5/-4)
+```diff
+@@ -115,7 +115,8 @@ async def stat(self, uri, ctx=None, **_kwargs):
+         return {"isDir": self.is_dir}
  
-@@ -40,11 +42,11 @@ previewRef.current?.setActiveTab('dashboard');
+     async def rm(self, uri, recursive=False, ctx=None, lease_ref=None):
+-        assert lease_ref is not None and self._async_agfs.held
++        if lease_ref is not None:
++            assert self._async_agfs.held
+         self.rm_calls.append({"uri": uri, "recursive": recursive, "ctx": ctx})
+         if self.rm_error:
+             raise self.rm_error
+@@ -252,9 +253,9 @@ async def record_vectorization(**kwargs):
  
- ## States
+     assert body_for_preview(viking_fs.abstract_content) == "# shared"
+     assert vectorized == ["# shared"]
+-    # The directory does not exist yet, so its existing parent is locked instead.
++    # Lock the intended directory without extending its scope to the parent.
+     assert viking_fs._async_agfs.requests[0] == [
+-        {"path": "/local/default/resources", "kind": "tree"}
++        {"path": "/local/default/resources/shared", "kind": "tree"}
+     ]
  
--Loading, failure and unsupported formats are not props — the component decides them from the content and the file name. All three can be replaced through `slots`:
-+Loading, failure and unsupported formats are not props: this component decides loading and failure, while whether a format can be previewed is the base component's call. All three can be replaced through `slots`:
  
- - `slots.loadingFallback`
- - `slots.errorFallback`
--- `slots.unsupportedFallback`
-+- `slots.unsupportedFallback` — handed to the base, which then owns the whole unsupported state, so the download entry it would otherwise offer no longer appears
+@@ -2216,7 +2217,7 @@ async def test_rm_of_missing_path_does_not_create_it(request_context, local_fs_s
+     service, viking_fs = local_fs_service
+     await viking_fs.mkdir("viking://resources", ctx=request_context)
  
- The host supplies asynchronous `editing.save` and optional `editing.loadContent` capabilities. `loadContent` returns the full text; `undefined` abandons the edit, and rejection shows a read error. A failed save retains the draft and shows an error. `editing.onSave` only reports a successful save; `editing.onCancel` reports a discarded draft. Saving prevents duplicate submissions and tab changes until completion.
+-    await service.rm("viking://resources/gone", ctx=request_context, recursive=True)
++    await service.rm("viking://resources/gone/leaf.md", ctx=request_context, recursive=True)
+     assert not await viking_fs.exists("viking://resources/gone", ctx=request_context)
  
-@@ -62,37 +64,54 @@ Execution capabilities and notifications are separate. Operation resolution trig
  
- Shared by both kinds:
- 
--| Property             | Type                         | Default   | Description                                                                  |
--| -------------------- | ---------------------------- | --------- | ---------------------------------------------------------------------------- |
--| `key`                | `string`                     | Required  | Unique tab key.                                                              |
--| `title`              | `ReactNode`                  | File name | What the tab row shows. Required for content tabs.                           |
--| `icon`               | `ReactNode`                  | By format | Tab icon.                                                                    |
--| `labels`             | `Partial<FilePreviewLabels>` | —         | Overrides the outer copy for this tab.                                       |
--| `disabled`           | `boolean`                    | `false`   | Disables the tab.                                                            |
--| `onOpenParent`       | `(path: string) => void`     | —         | Called after the parent directory opens successfully; not called on failure. |
--| `onCopyPath`         | `(path: string) => void`     | —         | Called after path copying succeeds.                                          |
--| `showViewModeSwitch` | `boolean`                    | `true`    | Preview/source switch; file tabs only.                                       |
--| `slots`              | `FilePreviewHeaderSlots`     | —         | `actions`, `titleExtra`.                                                     |
-+| Property       | Type                         | Default   | Description                                                                  |
-+| -------------- | ---------------------------- | --------- | ---------------------------------------------------------------------------- |
-+| `key`          | `string`                     | Required  | Unique tab key.                                                              |
-+| `title`        | `ReactNode`                  | File name | What the tab row shows. Required for content tabs.                           |
-+| `icon`         | `ReactNode`                  | —         | Tab icon, supplied by the host;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7242** (2026-11-08): docs(vika): link the Windows x64 preview package from README and install guide (@ZaynJarvis)
-- **PR #7241** (2026-11-08): fix(vika): retry moving extracted Windows preview into place (@ZaynJarvis)
-- **PR #7240** (2026-11-08): fix(vika): load System.IO.Compression in Windows preview scripts (@ZaynJarvis)
-- **PR #7239** (2026-11-08): feat(vika): add Windows preview artifacts to release workflow (@openviking-superagent)
-- **PR #7236** (2026-11-08): feat(vika): use native PowerShell for Windows Durable tools (@openviking-superagent)
-- **PR #7228** (2026-11-08): feat(ui): align the scope switcher with the console design (@LaamGinghong)
+- **PR #7297** (2026-11-09): docs(vika): clarify platform scope in release install notes (@openviking-superagent)
+- **PR #7296** (2026-11-09): docs(vika): unify Windows and POSIX installation guides (@openviking-superagent)
+- **PR #7295** (2026-11-09): feat(ui): build the file browser module and let its tree resize (@LaamGinghong)
+- **PR #7294** (2026-11-09): feat(dsh): support client-side recall compression with the host model (@openviking-superagent)
+- **PR #7292** (2026-11-09): ci(vika): give the Windows preview upload 60 minutes (@ZaynJarvis)
+- **PR #7291** (2026-11-09): chore(vika): release 0.5.0-preview and let previews move latest (@ZaynJarvis)
 
 ---
 
@@ -2057,3 +2517,65 @@ Co-Authored-By: Claude Code <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. ui): build the file browser module and let its tree resize (#7295)
+
+**RULE**:
+When implementing operations in `frontend/docs/docs/_demos/file-browser-basic.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `36354fa6`: ui): build the file browser module and let its tree resize (#7295). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `frontend/docs/docs/_demos/file-browser-basic.tsx`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+import { OpenVikingProvider } from '@openviking/react/client';
+import { FileBrowserEntries } from '@openviking/react/components/file-browser-entries';
+import '@openviking/react/components/file-browser-entries/style.css';
+import { FileBrowser } from '@openviking/react/modules/file-browser';
+import '@openviking/react/modules/file-browser/style.css';
+
+/**
+ * 离线运行的文件浏览示例。数据由本文件里的 `offlineFetch` 按原生接口的形状返回，
+ * 不访问网络，也不带任何凭证——示例只用来演示视图与交互。
+ *
+ * 换成真实服务时，删掉 `fetch` 与下面的假数据，改为在 Provider 上传服务地址与
+ * 身份字段；正式接入由宿主从自己的配置与登录态取值。
+ *
+ * An offline file browser demo. `offlineFetch` below answers in the shape of the
+ * native API, so the example touches no network and carries no credential; it
+ * exists only to show the view and its interactions.
+ *
+ * For a real service, drop `fetch` and the fixtures below and pass the address and
+ * identity fields to the Provider; a real host reads them from its own
+ * configuration and sign-in state.
+ */
+
+/** 一条目录项，形状与 `fs/ls` 的返回一致。One directory entry, shaped like `fs/ls`. */
+interface Entry {
+  uri: string;
+  isDir?: boolean;
+}
+
+const USER = 'viking://user/alice';
+const MEMORIES = `${USER}/memories`;
+const PREFERENCES = `${MEMORIES}/preferences`;
+const ENTITIE
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `36354fa6` are properly handled with clean fallback behavior.

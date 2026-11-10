@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pulumi-pulumi-learnings.md`  
 > **Source**: github ([https://github.com/pulumi/pulumi](https://github.com/pulumi/pulumi))  
-> **Source Version**: `6bbe25d6`  
+> **Source Version**: `71457b66`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T03:35:50.016Z  
+> **Timestamp**: 2026-11-10T02:31:48.595Z  
 > **Learning ID**: `learn-github-pulumi-pulumi`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pulumi-pulumi-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pulumi/pulumi](https://github.com/pulumi/pulumi))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T03:35:49.745Z  
+> **Harvest Timestamp**: 2026-11-10T02:31:46.893Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Pulumi - Infrastructure as Code in any programming language 🚀
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 25850 stars
+- **Stars / Engagement**: 25854 stars
 
 ---
 
@@ -1712,94 +1712,722 @@ func marshalVerbatimCheckpointRequest(req apitype.PatchUpdateVerbatimCheckpointR
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0695cf58` (2026-11-06)
-**Commit Message**: Fix panic from PULUMI_OPTION environment variables on typed flags (#25596)
+### Incident Patch 1: `c9c1940d` (2026-11-09)
+**Commit Message**: Update module github.com/klauspost/compress to v1.20.2 [SECURITY] (#25623)
 
-Setting a `PULUMI_OPTION_*` variable for an `int32`, `int64`,
-`duration`, or delimiter flag crashes every command:
+This PR contains the following updates:
 
-    $ PULUMI_OPTION_PARALLEL=1 pulumi version
-    The Pulumi CLI encountered a fatal error. This is a bug!
-    Panic: unexpected CLI type: int32
+| Package | Change |
+[Age](https://docs.renovatebot.com/merge-confidence/) |
+[Confidence](https://docs.renovatebot.com/merge-confidence/) |
+|---|---|---|---|
+|
+[github.com/klauspost/compress](https://redirect.github.com/klauspost/compress)
+| `v1.18.7` → `v1.20.2` |
+![age](https://developer.mend.io/api/mc/badges/age/go/github.com%2fklauspost%2fcompress/v1.20.2?slim=true)
+|
+![confidence](https://developer.mend.io/api/mc/badges/confidence/go/github.com%2fklauspost%2fcompress/v1.18.7/v1.20.2?slim=true)
+|
 
-`declareFlagsAsEnvironmentVariables` walks the whole command tree at
-startup, and its second switch only handled some of the flag types, so
-one variable fails regardless of the command being run.
-`PULUMI_OPTION_PARALLEL` is listed as an example in the environment
-variables docs.
+---
 
-The switch now handles all flag types the CLI defines.
+> [!WARNING]
+> Some dependencies could not be looked up. Check the [Dependency
+Dashboard](../issues/21045) for more information.
 
-**File**: `changelog/pending/cli-fix-20261105-180420.yaml` (added, +4/-0)
+---
+
+### Panic on two-block frames in github.com/klauspost/compress
+[CVE-2026-116591](https://nvd.nist.gov/vuln/detail/CVE-2026-116591) /
+[GHSA-fpmh-frq8-7rj8](https://redirect.github.com/advisories/GHSA-fpmh-frq8-7rj8)
+/ [GO-2026-6865](https://pkg.go.dev/vuln/GO-2026-6865)
+
+<details>
+<summary>More information</summary>
+
+#### Details
+Panic on two-block frames in github.com/klauspost/compress
+
+#### Severity
+Unknown
+
+#### References
+-
+[htt
+
+**File**: `pkg/go.mod` (modified, +1/-1)
+```diff
+@@ -228,7 +228,7 @@ require (
+ 	github.com/iwahbe/helpmakego v0.4.1 // indirect
+ 	github.com/json-iterator/go v1.1.12 // indirect
+ 	github.com/kevinburke/ssh_config v1.6.0 // indirect
+-	github.com/klauspost/compress v1.18.7 // indirect
++	github.com/klauspost/compress v1.20.2 // indirect
+ 	github.com/kylelemons/godebug v1.1.0 // indirect
+ 	github.com/lucasb-eyer/go-colorful v1.4.1 // indirect
+ 	github.com/lufia/plan9stats v0.0.0-20211012122336-39d0f177ccd0 // indirect
+```
+
+**File**: `pkg/go.sum` (modified, +2/-2)
+```diff
+@@ -381,8 +381,8 @@ github.com/keybase/go-keychain v0.0.1/go.mod h1:PdEILRW3i9D8JcdM+FmY6RwkHGnhHxXw
+ github.com/kisielk/errcheck v1.2.0/go.mod h1:/BMXB+zMLi60iA8Vv6Ksmxu/1UDYcXs4uQLJ+jE2L00=
+ github.com/kisielk/errcheck v1.5.0/go.mod h1:pFxgyoBC7bSaBwPgfKdkLd5X25qrDl4LWUI2bnpBCr8=
+ github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
+-github.com/klauspost/compress v1.18.7 h1:aUyZsS4kH3QTKurYhAOwAHxllVPnOthb3vPfnF1Ehjw=
+-github.com/klauspost/compress v1.18.7/go.mod h1:cwPg85FWrGar70rWktvGQj8/hthj3wpl0PGDogxkrSQ=
++github.com/klauspost/compress v1.20.2 h1:v5tiZvm1KGLyg5d5oXdXe3lsSPrbEUiKoXGia//I7Qo=
++github.com/klauspost/compress v1.20.2/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
+ github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORNo=
+ github.com/kr/pretty v0.3.1 h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=
+ github.com/kr/pretty v0.3.1/go.mod h1:hoEshYVHaxMs3cyo3Yncou5ZscifuDolrwPKZanG3xk=
+```
+
+**File**: `sdk/go.mod` (modified, +1/-1)
+```diff
+@@ -52,7 +52,7 @@ require (
+ 	github.com/hashicorp/hcl/v2 v2.22.0
+ 	github.com/iancoleman/strcase v0.2.0
+ 	github.com/iwdgo/sigintwindows v0.2.2
+-	github.com/klauspost/compress v1.18.7
++	github.com/klauspost/compress v1.20.2
+ 	github.com/pgavlin/fx v0.1.6
+ 	github.com/pgavlin/fx/v2 v2.0.12
+ 	github.com/pkg/term v1.1.0
+```
+
+**File**: `sdk/go.sum` (modified, +2/-2)
+```diff
+@@ -147,8 +147,8 @@ github.com/kevinburke/ssh_config v1.6.0/go.mod h1:q2RIzfka+BXARoNexmF9gkxEX7Dmvb
+ github.com/kisielk/errcheck v1.2.0/go.mod h1:/BMXB+zMLi60iA8Vv6Ksmxu/1UDYcXs4uQLJ+jE2L00=
+ github.com/kisielk/errcheck v1.5.0/go.mod h1:pFxgyoBC7bSaBwPgfKdkLd5X25qrDl4LWUI2bnpBCr8=
+ github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
+-github.com/klauspost/compress v1.18.7 h1:aUyZsS4kH3QTKurYhAOwAHxllVPnOthb3vPfnF1Ehjw=
+-github.com/klauspost/compress v1.18.7/go.mod h1:cwPg85FWrGar70rWktvGQj8/hthj3wpl0PGDogxkrSQ=
++github.com/klauspost/compress v1.20.2 h1:v5tiZvm1KGLyg5d5oXdXe3lsSPrbEUiKoXGia//I7Qo=
++github.com/klauspost/compress v1.20.2/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
+ github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORNo=
+ github.com/kr/pretty v0.3.1 h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=
+ github.com/kr/pretty v0.3.1/go.mod h1:hoEshYVHaxMs3cyo3Yncou5ZscifuDolrwPKZanG3xk=
+```
+
+**File**: `sdk/go/auto/test/errors/compilation_error/go/go.mod` (modified, +1/-1)
+```diff
+@@ -50,7 +50,7 @@ require (
+ 	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
+ 	github.com/json-iterator/go v1.1.12 // indirect
+ 	github.com/kevinburke/ssh_config v1.2.0 // indirect
+-	github.com/klauspost/compress v1.18.7 // indirect
++	github.com/klauspost/compress v1.20.2 // indirect
+ 	github.com/klauspost/cpuid/v2 v2.3.0 // indirect
+ 	github.com/lucasb-eyer/go-colorful v1.4.0 // indirect
+ 	github.com/mattn/go-isatty v0.0.22 // indirect
+```
+
+**File**: `sdk/go/auto/test/errors/compilation_error/go/go.sum` (modified, +2/-2)
+```diff
+@@ -119,8 +119,8 @@ github.com/kevinburke/ssh_config v1.2.0/go.mod h1:CT57kijsi8u/K/BOFA39wgDQJ9CxiF
+ github.com/kisielk/errcheck v1.2.0/go.mod h1:/BMXB+zMLi60iA8Vv6Ksmxu/1UDYcXs4uQLJ+jE2L00=
+ github.com/kisielk/errcheck v1.5.0/go.mod h1:pFxgyoBC7bSaBwPgfKdkLd5X25qrDl4LWUI2bnpBCr8=
+ github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
+-github.com/klauspost/compress v1.18.7 h1:aUyZsS4kH3QTKurYhAOwAHxllVPnOthb3vPfnF1Ehjw=
+-github.com/klauspost/compress v1.18.7/go.mod h1:cwPg85FWrGar70rWktvGQj8/hthj3wpl0PGDogxkrSQ=
++github.com/klauspost/compress v1.20.2 h1:v5tiZvm1KGLyg5d5oXdXe3lsSPrbEUiKoXGia//I7Qo=
++github.com/klauspost/compress v1.20.2/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
+ github.com/klauspost/cpuid/v2 v2.3.0 h1:S4CRMLnYUhGeDFDqkGriYKdfoFlDnMtqTiI/sFzhA9Y=
+ github.com/klauspost/cpuid/v2 v2.3.0/go.mod h1:hqwkgyIinND0mEev00jJYCxPNVRVXFQeu1XKlok6oO0=
+ github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORNo=
+```
+
+**File**: `sdk/go/auto/test/errors/conflict_error/go.mod` (modified, +1/-1)
+```diff
+@@ -50,7 +50,7 @@ require (
+ 	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
+ 	github.com/json-iterator/go v1.1.12 // indirect
+ 	github.com/kevinburke/ssh_config v1.2.0 // indirect
+-	github.com/klauspost/compress v1.18.7 // indirect
++	github.com/klauspost/compress v1.20.2 // indirect
+ 	github.com/klauspost/cpuid/v2 v2.3.0 // indirect
+ 	github.com/lucasb-eyer/go-colorful v1.4.0 // indirect
+ 	github.com/mattn/go-isatty v0.0.22 // indirect
+```
+
+**File**: `sdk/go/auto/test/errors/conflict_error/go.sum` (modified, +2/-2)
+```diff
+@@ -119,8 +119,8 @@ github.com/kevinburke/ssh_config v1.2.0/go.mod h1:CT57kijsi8u/K/BOFA39wgDQJ9CxiF
+ github.com/kisielk/errcheck v1.2.0/go.mod h1:/BMXB+zMLi60iA8Vv6Ksmxu/1UDYcXs4uQLJ+jE2L00=
+ github.com/kisielk/errcheck v1.5.0/go.mod h1:pFxgyoBC7bSaBwPgfKdkLd5X25qrDl4LWUI2bnpBCr8=
+ github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
+-github.com/klauspost/compress v1.18.7 h1:aUyZsS4kH3QTKurYhAOwAHxllVPnOthb3vPfnF1Ehjw=
+-github.com/klauspost/compress v1.18.7/go.mod h1:cwPg85FWrGar70rWktvGQj8/hthj3wpl0PGDogxkrSQ=
++github.com/klauspost/compress v1.20.2 h1:v5tiZvm1KGLyg5d5oXdXe3lsSPrbEUiKoXGia//I7Qo=
++github.com/klauspost/compress v1.20.2/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
+ github.com/klauspost/cpuid/v2 v2.3.0 h1:S4CRMLnYUhGeDFDqkGriYKdfoFlDnMtqTiI/sFzhA9Y=
+ github.com/klauspost/cpuid/v2 v2.3.0/go.mod h1:hqwkgyIinND0mEev00jJYCxPNVRVXFQeu1XKlok6oO0=
+ github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORNo=
+```
+
+---
+
+### Incident Patch 2: `b2d6a55d` (2026-11-09)
+**Commit Message**: Fix panic in `pulumi package remove` without a version (#25626)
+
+Fixes #25628
+
+`pulumi package remove <name>` without an `@version` panics with a nil
+pointer dereference, even with `--yes`:
+
+```
+Panic: runtime error: invalid memory address or nil pointer dereference
+github.com/pulumi/pulumi/pkg/v3/cmd/pulumi/packagecmd.newPackageDeleteCmd.func1(...)
+	pkg/cmd/pulumi/packagecmd/package_delete.go:130
+```
+
+The confirmation text and the success message used the version from the
+argument, which is nil when it is omitted. Both now use the version the
+registry resolved, so the command deletes the latest version as its
+usage (`<name>[@<version>]`) describes. The success message now names
+the full package (`source/publisher/name@version`).
+
+Added a test case for a package argument without a version; it panics
+before this change.
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+---------
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `changelog/pending/20261109--cli-package--package-remove-no-version-panic.yaml` (added, +3/-0)
+```diff
+@@ -0,0 +1,3 @@
++component: cli/package
++kind: fix
++body: Fix a panic in `pulumi package remove` when no version is given
+```
+
+**File**: `pkg/cmd/pulumi/packagecmd/package_delete.go` (modified, +3/-3)
+```diff
+@@ -127,7 +127,7 @@ You must have publish permissions for the package to delete it.`,
+ 				colors.SpecAttention, formatPkg(pkg), colors.Reset,
+ 			))
+ 			if err := ui.ConfirmDeletion(
+-				yes, cmdutil.Interactive(), prompt, packageVersion.String(), cmd.ErrOrStderr(), opts,
++				yes, cmdutil.Interactive(), prompt, pkg.Version.String(), cmd.ErrOrStderr(), opts,
+ 			); err != nil {
+ 				return err
+ 			}
+@@ -143,15 +143,15 @@ You must have publish permissions for the package to delete it.`,
+ 
+ 			fmt.Fprintln(cmd.ErrOrStderr(), opts.Color.Colorize(fmt.Sprintf(
+ 				"%sPackage version '%s' has been deleted!%s",
+-				colors.SpecAttention, packageVersion, colors.Reset,
++				colors.SpecAttention, formatPkg(pkg), colors.Reset,
+ 			)))
+ 			return nil
+ 		},
+ 	}
+ 
+ 	constrictor.AttachArguments(cmd, &constrictor.Arguments{
+ 		Arguments: []constrictor.Argument{
+-			{Name: "package", Usage: "<source>/<publisher>/<name>@<version>"},
++			{Name: "package", Usage: "[[<source>/]<publisher>/]<name>[@<version>]"},
+ 		},
+ 		Required: 1,
+ 	})
+```
+
+**File**: `pkg/cmd/pulumi/packagecmd/package_delete_test.go` (modified, +15/-0)
+```diff
+@@ -83,6 +83,21 @@ func TestPackageDeleteCmd_Run(t *testing.T) {
+ 				version:   semver.MustParse("1.0.0"),
+ 			},
+ 		},
++		{
++			name:           "delete without version resolves latest",
++			packageVersion: "private/myorg/my-package",
++			expectedDeleteArg: struct {
++				source    string
++				publisher string
++				name      string
++				version   semver.Version
++			}{
++				source:    "private",
++				publisher: "myorg",
++				name:      "my-package",
++				version:   semver.MustParse("1.0.0"),
++			},
++		},
+ 		{
+ 			name:           "delete fails with backend error",
+ 			packageVersion: "private/myorg/my-package@1.0.0",
+```
+
+---
+
+### Incident Patch 3: `a1b17a9a` (2026-11-09)
+**Commit Message**: Fix circular import in Python SDKs when an object type references a resource in the same module (#25579)
+
+Fixes #25578
+
+## Cause
+
+An object type can have a property that refers to a resource in the same
+module. In this case, the generated `_inputs.py` and `outputs.py` import
+the resource class at the top of the file. The resource module also
+imports `_inputs.py` with `from ._inputs import *`. Thus the two files
+import each other, and the result depends on which file loads first.
+
+## Fix
+
+This change affects only `_inputs.py` and `outputs.py`. It applies only
+to references to a resource in the same package and module.
+
+1. The types file imports the resource module, not the resource class.
+For example, it uses `from . import widget as _widget`. The annotation
+refers to the class through the module, as in `'_widget.Widget'`.
+References to resources in other modules already use this form.
+2. The types file puts these imports at the end of the file, after
+`__all__` and all classes.
+
+The file name logic is unchanged. It still handles the kubernetes20
+CamelCase names, the provider resource, and file names that conflict
+with a child module. Resource modules and function modules do not
+chan
+
+**File**: `changelog/pending/20261105--sdkgen-python--resource-reference-circular-import.yaml` (added, +4/-0)
 ```diff
 @@ -0,0 +1,4 @@
-+component: cli
++component: sdkgen/python
 +kind: fix
-+body: Fix a panic when `PULUMI_OPTION_*` environment variables set `int32`, `int64`, `duration`, or delimiter flags, such as `PULUMI_OPTION_PARALLEL`
-+time: 2026-11-05T18:04:20.831994-08:00
++body: Fix a circular import when an object type references a resource in the same module
++time: 2026-11-05T00:00:00Z
 ```
 
-**File**: `pkg/cmd/pulumi/env_test.go` (modified, +30/-0)
+**File**: `pkg/codegen/python/gen.go` (modified, +51/-12)
 ```diff
-@@ -82,6 +82,36 @@ func TestNumericEnvironmentVariables(t *testing.T) {
- 	require.Equal(t, 2, verbose)
+@@ -123,6 +123,10 @@ type modContext struct {
+ 	extraSourceFiles []string
+ 	isConfig         bool
+ 
++	// typesFile is true while generating _inputs.py or outputs.py. These files import resources
++	// of their own module as modules, at the end of the file, to avoid a circular import.
++	typesFile bool
++
+ 	// Name overrides set in PackageInfo
+ 	modNameOverrides map[string]string // Optional overrides for Pulumi module names
+ 	compatibility    string            // Toggle compatibility mode for a specified target.
+@@ -322,7 +326,12 @@ func (mod *modContext) enumType(enum *schema.EnumType) string {
+ 
+ func (mod *modContext) resourceType(r *schema.ResourceType) string {
+ 	if r.Resource == nil || codegen.PkgEquals(r.Resource.PackageReference, mod.pkg) {
+-		return mod.tokenToResource(r.Token)
++		name := mod.tokenToResource(r.Token)
++		if mod.typesFile && mod.isLocalResource(r) {
++			// importResourceType imports the module of this resource as `_<file>`.
++			return "_" + mod.resourceFileName(r) + "." + name
++		}
++		return name
+ 	}
+ 
+ 	// Is it a provider resource?
+@@ -336,6 +345,13 @@ func (mod *modContext) resourceType(r *schema.ResourceType) string {
+ 	return fmt.Sprintf("%s.%s%s", PyPack(pkg.Namespace(), pkg.Name()), modName, name)
  }
  
-+func TestTypedFlagEnvironmentVariables(t *testing.T) {
-+	tests := []struct {
-+		name  string
-+		env   string
-+		value string
-+		path  []string
-+		flag  string
-+	}{
-+		{"int32", "PULUMI_OPTION_PARALLEL", "3", []string{"up"}, "parallel"},
-+		{"int64", "PULUMI_OPTION_LOOKBACK_DAYS", "7", []string{"org", "usage", "get"}, "lookback-days"},
-+		{"duration", "PULUMI_OPTION_DELAY", "2s", []string{"replay-events"}, "delay"},
-+		{"Delimiter", "PULUMI_OPTION_DELIMITER", ";", []string{"org", "search"}, "delimiter"},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			t.Setenv(tt.env, tt.value)
-+
-+			cmd, cleanup := NewPulumiCmd()
-+			defer cleanup()
-+
-+			sub, _, err := cmd.Find(tt.path)
-+			require.NoError(t, err)
-+
-+			flag := sub.Flag(tt.flag)
-+			require.NotNil(t, flag)
-+			require.Equal(t, tt.value, flag.Value.String())
-+		})
-+	}
++// isLocalResource returns true for a resource that this module imports from a relative path, as in
++// `from .widget import Widget`, and refers to by its bare class name.
++func (mod *modContext) isLocalResource(r *schema.ResourceType) bool {
++	return (r.Resource == nil || codegen.PkgEquals(r.Resource.PackageReference, mod.pkg)) &&
++		!strings.Contains(mod.tokenToResource(r.Token), ".")
 +}
 +
- func TestStringArrayEnvironmentVariables(t *testing.T) {
- 	t.Setenv("PULUMI_OPTION_TARGET", "foo,bar,baz")
+ func (mod *modContext) tokenToResource(tok string) string {
+ 	// token := pkg : module : member
+ 	// module := path/to/module
+@@ -1041,18 +1057,10 @@ func (mod *modContext) importResourceType(r *schema.ResourceType) string {
+ 	if mod.mod == modName || modName == "" {
+ 		// We want a relative import if we're in the same module: from .some_member import SomeMember
+ 		importPath := mod.getRelImportFromRoot(modName)
++		name := mod.resourceFileName(r)
  
+-		name := PyName(tokenToName(r.Token))
+-		if mod.compatibility == kubernetes20 {
+-			// To maintain backward compatibility for kubernetes, the file names
+-			// need to be CamelCase instead of the standard snake_case.
+-			name = tokenToName(r.Token)
+-		}
+-		if r.Resource != nil && r.Resource.IsProvider {
+-			name = "provider"
+-		}
+-		if mod.conflictsWithChildModule(name) {
+-			name = name + "_"
++		if mod.typesFile {
++			return fmt.Sprintf("from %s import %[2]s as _%[2]s", importPath, name)
+ 		}
+ 
+ 		if strings.HasSuffix(importPath, ".") {
+@@ -1070,6 +1078,23 @@ func (mod *modContext) importResourceType(r *schema.ResourceType) string {
+ 	return fmt.Sprintf("from %s import %[2]s as _%[2]s", mod.getRelImportFromRoot(""), components[0])
+ }
+ 
++// resourceFileName returns the name of the file that defines a resource of this package.
++func (mod *modContext) resourceFileName(r *schema.ResourceType) string {
++	name := PyName(tokenToName(r.Token))
++	if mod.compatibility == kubernetes20 {
++		// To maintain backward compatibility for kubernetes, the file names
++		// need to be CamelCase instead of the standard snake_case.
++		name = tokenToName(r.Token)
++	}
++	if r.Resource != nil && r.Resource.IsProvider {
++		name = "provider"
++	}
++	if mod.conflictsWithChildModule(name) {
++		name = name + "_"
++	}
++	return name
++}
++
+ // genConfig emits all config variables in the given module, returning the resulting file.
+ func (mod *modContext) genConfig(variables []*schema.Property) (string, error) {
+ 	w := &bytes.Buffer{}
+@@ -1197,6 +1222,9 @@ func allTypesAreOverlays(types []*schema.ObjectType) bool {
+ }
+ 
+ func (mod *modContext) genTypes(dir string, fs codegen.Fs) error {
++	mod.typesFile = true
++	defer func() { mod.typesFile = false }()
++
+ 	genTypes := func(file string, input bool) error {
+ 		w := &bytes.Buffer{}
+ 
+@@ -1206,6 +1234,8 @@ func (mod *modContext) genTypes(dir string, fs codegen.Fs) error {
+ 		}
+ 
+ 		imports := newImports()
++		// Resource modules of this module import this file, so these imports go at the end of the file.
++		resourceImports := newImports()
+ 		var emitted [][]*schema.Property
+ 		for _, t := range mod.types {
+ 			if t.IsOverlay {
+@@ -1214,6 +1244,11 @@ func (mod *modContext) genTypes(dir string, fs codegen.Fs) error {
+ 			}
+ 			if (input && mod.details(t).inputType) || (!input && mod.details(t).outputType) {
+ 				emitted = append(emitted, t.Properties)
++				codegen.VisitTypeClosure(t.Properties, func(t schema.Type) {
++					if r, ok := t.(*schema.ResourceType); ok && mod.isLocalResource(r) {
++						resourceImports.addResource(mod, r)
++					}
++				})
+ 			}
+ 
+ 			if input && mod.details(t).inputType {
+@@ -1238,6 +1273,7 @@ func (mod *modContext) genTypes(dir string, fs codegen.Fs) error {
+ 		for _, e := range mod.enums {
+ 			imports.addEnum(mod, e)
+ 		}
++		imports.Set = imports.Difference(resourceImports.Set)
+ 
+ 		mod.genHeader(w, true /*needsSDK*/
 ```
 
-**File**: `pkg/cmd/pulumi/pulumi.go` (modified, +1/-1)
+**File**: `pkg/testing/pulumi-test-language/providers/object_ref_provider.go` (added, +156/-0)
 ```diff
-@@ -1146,7 +1146,7 @@ func declareFlagsAsEnvironmentVariables(cmd *cobra.Command) {
- 			for _, v := range csv {
- 				_ = f.Value.Set(v)
- 			}
--		case "string", "int":
-+		case "string", "int", "int32", "int64", "duration", "Delimiter":
- 			_ = f.Value.Set(value)
- 		default:
- 			// Hello! If you're reading this, you've found a new CLI type and we don't
+@@ -0,0 +1,156 @@
++// Copyright 2026, Pulumi Corporation.
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package providers
++
++import (
++	"context"
++	"encoding/json"
++	"fmt"
++
++	"github.com/blang/semver"
++
++	"github.com/pulumi/pulumi/pkg/v3/codegen/schema"
++	"github.com/pulumi/pulumi/pkg/v3/resource/plugin"
++	"github.com/pulumi/pulumi/sdk/v3/go/common/resource"
++)
++
++// ObjectRefProvider has object types that reference a resource of the same module. Each module has a
++// resource with an object-type input, and a second resource that references the first through an object
++// type. In the module "referencingFirst" the referencing resource sorts first, and in the module
++// "referencedFirst" the referenced resource sorts first.
++type ObjectRefProvider struct {
++	plugin.UnimplementedProvider
++}
++
++var _ plugin.Provider = (*ObjectRefProvider)(nil)
++
++var objectRefResources = map[string]bool{
++	"objectref:referencingFirst:Widget": true,
++	"objectref:referencingFirst:Gadget": true,
++	"objectref:referencedFirst:Alpha":   true,
++	"objectref:referencedFirst:Beta":    true,
++}
++
++func (p *ObjectRefProvider) Close() error { return nil }
++
++func (p *ObjectRefProvider) Configure(
++	context.Context, plugin.ConfigureRequest,
++) (plugin.ConfigureResponse, error) {
++	return plugin.ConfigureResponse{}, nil
++}
++
++func (p *ObjectRefProvider) GetPluginInfo(context.Context) (plugin.PluginInfo, error) {
++	ver := semver.MustParse("62.0.0")
++	return plugin.PluginInfo{Version: &ver}, nil
++}
++
++func (p *ObjectRefProvider) GetSchema(
++	context.Context, plugin.GetSchemaRequest,
++) (plugin.GetSchemaResponse, error) {
++	ref := func(token string) schema.PropertySpec {
++		return schema.PropertySpec{TypeSpec: schema.TypeSpec{Ref: token}}
++	}
++	object := func(name, typ string) schema.ComplexTypeSpec {
++		return schema.ComplexTypeSpec{ObjectTypeSpec: schema.ObjectTypeSpec{
++			Type:       "object",
++			Properties: map[string]schema.PropertySpec{name: ref(typ)},
++			Required:   []string{name},
++		}}
++	}
++	res := func(name, typ string) schema.ResourceSpec {
++		return schema.ResourceSpec{
++			ObjectTypeSpec: schema.ObjectTypeSpec{
++				Type:       "object",
++				Properties: map[string]schema.PropertySpec{name: ref(typ)},
++				Required:   []string{name},
++			},
++			InputProperties: map[string]schema.PropertySpec{name: ref(typ)},
++			RequiredInputs:  []string{name},
++		}
++	}
++	settings := schema.ComplexTypeSpec{ObjectTypeSpec: schema.ObjectTypeSpec{
++		Type:       "object",
++		Properties: map[string]schema.PropertySpec{"name": {TypeSpec: schema.TypeSpec{Type: "string"}}},
++		Required:   []string{"name"},
++	}}
++
++	pkg := schema.PackageSpec{
++		Name:    "objectref",
++		Version: "62.0.0",
++		Resources: map[string]schema.ResourceSpec{
++			"objectref:referencingFirst:Widget": res("settings", "#/types/objectref:referencingFirst:WidgetSettings"),
++			"objectref:referencingFirst:Gadget": res("widgetRef", "#/types/objectref:referencingFirst:WidgetRef"),
++			"objectref:referencedFirst:Alpha":   res("settings", "#/types/objectref:referencedFirst:AlphaSettings"),
++			"objectref:referencedFirst:Beta":    res("alphaRef", "#/types/objectref:referencedFirst:AlphaRef"),
++		},
++		Types: map[string]schema.ComplexTypeSpec{
++			"objectref:referencingFirst:WidgetSettings": settings,
++			"objectref:referencingFirst:WidgetRef": object(
++				"widget", "#/resources/objectref:referencingFirst:Widget"),
++			"objectref:referencedFirst:AlphaSettings": settings,
++			"objectref:referencedFirst:AlphaRef": object(
++				"alpha", "#/resources/objectref:referencedFirst:Alpha"),
++		},
++	}
++	jsonBytes, err := json.Marshal(pkg)
++	return plugin.GetSchemaResponse{Schema: jsonBytes}, err
++}
++
++func (p *ObjectRefProvider) CheckConfig(
++	_ context.Context, req plugin.CheckConfigRequest,
++) (plugin.CheckConfigResponse, error) {
++	return plugin.CheckConfigResponse{Properties: req.News}, nil
++}
++
++func (p *ObjectRefProvider) Check(
++	_ context.Context, req plugin.CheckRequest,
++) (plugin.CheckResponse, error) {
++	if !objectRefResources[string(req.URN.Type())] {
++		return plugin.CheckResponse{
++			Failures: makeCheckFailure("", fmt.Sprintf("invalid URN type: %s", req.URN.Type())),
++		}, nil
++	}
++	return plugin.CheckResponse{Properties: req.NewInputs}, nil
++}
++
++func (p *ObjectRefProvider) Create(
++	_ context.Context, req plugin.CreateRequest,
++) (plugin.CreateResponse, error) {
++	if !objectRefResources[string(req.URN.Type())] {
++		return plugin.CreateResponse{Status: resource.Stat
+```
+
+**File**: `pkg/testing/pulumi-test-language/tests/l2_resource_ref_in_object_type.go` (added, +54/-0)
+```diff
+@@ -0,0 +1,54 @@
++// Copyright 2026, Pulumi Corporation.
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package tests
++
++import (
++	"github.com/pulumi/pulumi/pkg/v3/resource/plugin"
++	"github.com/pulumi/pulumi/pkg/v3/testing/pulumi-test-language/providers"
++	"github.com/pulumi/pulumi/sdk/v3/go/common/resource"
++	"github.com/pulumi/pulumi/sdk/v3/go/property"
++	"github.com/stretchr/testify/assert"
++)
++
++func init() {
++	LanguageTests["l2-resource-ref-in-object-type"] = LanguageTest{
++		Providers: []func() plugin.Provider{
++			func() plugin.Provider { return &providers.ObjectRefProvider{} },
++		},
++		Runs: []TestRun{{
++			Assert: func(l *L, res AssertArgs) {
++				RequireStackResource(l, res.Err, res.Changes)
++				RequireSingleResource(l, res.Snap.Resources, "pulumi:providers:objectref")
++
++				for _, c := range []struct{ referenced, referencing, refProp, prop string }{
++					{"widget", "gadget", "widgetRef", "widget"},
++					{"alpha", "beta", "alphaRef", "alpha"},
++				} {
++					referenced := RequireSingleNamedResource(l, res.Snap.Resources, c.referenced)
++					referencing := RequireSingleNamedResource(l, res.Snap.Resources, c.referencing)
++					assert.Equal(l, property.NewMap(map[string]property.Value{
++						"settings": property.New(map[string]property.Value{"name": property.New(c.referenced)}),
++					}), resource.FromResourcePropertyMap(referenced.Inputs))
++
++					ref := resource.FromResourcePropertyValue(
++						resource.MakeCustomResourceReference(referenced.URN, referenced.ID, ""))
++					assert.Equal(l, property.NewMap(map[string]property.Value{
++						c.refProp: property.New(map[string]property.Value{c.prop: ref}),
++					}), resource.FromResourcePropertyMap(referencing.Inputs))
++				}
++			},
++		}},
++	}
++}
+```
+
+**File**: `pkg/testing/pulumi-test-language/tests/testdata/l2-resource-ref-in-object-type/main.pp` (added, +15/-0)
+```diff
+@@ -0,0 +1,15 @@
++resource "widget" "objectref:referencingFirst:Widget" {
++    settings = { name = "widget" }
++}
++
++resource "gadget" "objectref:referencingFirst:Gadget" {
++    widgetRef = { widget = widget }
++}
++
++resource "alpha" "objectref:referencedFirst:Alpha" {
++    settings = { name = "alpha" }
++}
++
++resource "beta" "objectref:referencedFirst:Beta" {
++    alphaRef = { alpha = alpha }
++}
+```
+
+**File**: `sdk/go/pulumi-language-go/testdata/extra-types/projects/l2-resource-ref-in-object-type/Pulumi.yaml` (added, +2/-0)
+```diff
+@@ -0,0 +1,2 @@
++name: l2-resource-ref-in-object-type
++runtime: go
+```
+
+**File**: `sdk/go/pulumi-language-go/testdata/extra-types/projects/l2-resource-ref-in-object-type/go.mod` (added, +12/-0)
+```diff
+@@ -0,0 +1,12 @@
++module l2-resource-ref-in-object-type
++
++go 1.25
++
++require (
++	github.com/pulumi/pulumi/sdk/v3 v3.30.0
++	example.com/pulumi-objectref/sdk/go/v62 v62.0.0
++)
++
++replace example.com/pulumi-objectref/sdk/go/v62 => /ROOT/artifacts/example.com_pulumi-objectref_sdk_go_v62
++
++replace github.com/pulumi/pulumi/sdk/v3 => /ROOT/artifacts/github.com_pulumi_pulumi_sdk_v3
+```
+
+**File**: `sdk/go/pulumi-language-go/testdata/extra-types/projects/l2-resource-ref-in-object-type/main.go` (added, +45/-0)
+```diff
+@@ -0,0 +1,45 @@
++package main
++
++import (
++	"example.com/pulumi-objectref/sdk/go/v62/objectref/referencedfirst"
++	"example.com/pulumi-objectref/sdk/go/v62/objectref/referencingfirst"
++	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
++)
++
++func main() {
++	pulumi.Run(func(ctx *pulumi.Context) error {
++		widget, err := referencingfirst.NewWidget(ctx, "widget", &referencingfirst.WidgetArgs{
++			Settings: &referencingfirst.WidgetSettingsArgs{
++				Name: pulumi.String("widget"),
++			},
++		})
++		if err != nil {
++			return err
++		}
++		_, err = referencingfirst.NewGadget(ctx, "gadget", &referencingfirst.GadgetArgs{
++			WidgetRef: &referencingfirst.WidgetRefArgs{
++				Widget: widget,
++			},
++		})
++		if err != nil {
++			return err
++		}
++		alpha, err := referencedfirst.NewAlpha(ctx, "alpha", &referencedfirst.AlphaArgs{
++			Settings: &referencedfirst.AlphaSettingsArgs{
++				Name: pulumi.String("alpha"),
++			},
++		})
++		if err != nil {
++			return err
++		}
++		_, err = referencedfirst.NewBeta(ctx, "beta", &referencedfirst.BetaArgs{
++			AlphaRef: &referencedfirst.AlphaRefArgs{
++				Alpha: alpha,
++			},
++		})
++		if err != nil {
++			return err
++		}
++		return nil
++	})
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #25627** (2026-11-09): Fix Windows closure test tool resolution (@julienp)
+- **PR #25626** (2026-11-09): Fix panic in `pulumi package remove` without a version (@flostadler)
+- **PR #25623** (2026-11-09): Update module github.com/klauspost/compress to v1.20.2 [SECURITY] (@pulumi-renovate[bot])
+- **PR #25621** (2026-11-09): Continue DIY non-project deprecation (@Frassle)
 - **PR #25612** (2026-11-06): Keep `project new --esc-config` out of the generated Automation API (@rgharris)
 - **PR #25608** (closed): Regenerate automation APIs (@pulumi-bot)
-- **PR #25606** (2026-11-06): Fix download cron (@julienp)
-- **PR #25601** (2026-11-06): Regenerate automation APIs (@pulumi-bot)
-- **PR #25596** (2026-11-06): Fix panic from PULUMI_OPTION environment variables on typed flags (@nelsonfigueroa)
-- **PR #25595** (2026-11-06): Fix first stateful pulumi do command outside a project (@nelsonfigueroa)
 
 ---
 
@@ -1819,31 +2447,28 @@ The switch now handles all flag types the CLI defines.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. panic from PULUMI_OPTION environment variables on typed flags (#25596)
+## X. Update module github.com/klauspost/compress to v1.20.2 [SECURITY] (#25623)
 
 **RULE**:
-When implementing operations in `changelog/pending/cli-fix-20261105-180420.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pulumi/pulumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pulumi/pulumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0695cf58`: panic from PULUMI_OPTION environment variables on typed flags (#25596). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c9c1940d`: Update module github.com/klauspost/compress to v1.20.2 [SECURITY] (#25623). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog/pending/cli-fix-20261105-180420.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-component: cli
-kind: fix
-body: Fix a panic when `PULUMI_OPTION_*` environment variables set `int32`, `int64`, `duration`, or delimiter flags, such as `PULUMI_OPTION_PARALLEL`
-time: 2026-11-05T18:04:20.831994-08:00
+	github.com/klauspost/compress v1.20.2 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	github.com/klauspost/compress v1.18.7 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0695cf58` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c9c1940d` are properly handled with clean fallback behavior.

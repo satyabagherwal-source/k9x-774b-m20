@@ -8730,3 +8730,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-mistralai-mistral-large-4-1t-a52b` | `https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B` | `hf-mistral` | Multi-dimensional audit evidence | 2026-11-10T02:19:53.263Z |
 | `learn-github-aquasecurity-trivy` | `https://github.com/aquasecurity/trivy` | `10ab0f82` | Multi-dimensional audit evidence | 2026-11-10T02:24:08.666Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `d566ac8a` | Multi-dimensional audit evidence | 2026-11-10T02:24:10.883Z |
+| `learn-github-mitmproxy-mitmproxy` | `https://github.com/mitmproxy/mitmproxy` | `80e1ef5e` | Multi-dimensional audit evidence | 2026-11-10T02:31:50.144Z |
+| `learn-github-zvec-ai-zvec-grep` | `https://github.com/zvec-ai/zvec-grep` | `e06ff066` | Multi-dimensional audit evidence | 2026-11-10T02:31:50.759Z |
+| `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `71457b66` | Multi-dimensional audit evidence | 2026-11-10T02:31:50.769Z |
+| `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `36354fa6` | Multi-dimensional audit evidence | 2026-11-10T02:31:53.303Z |

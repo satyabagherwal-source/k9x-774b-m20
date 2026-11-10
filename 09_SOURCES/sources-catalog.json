@@ -1603,10 +1603,10 @@
     "repository": "volcengine/OpenViking",
     "platform": "github",
     "sourceUrl": "https://github.com/volcengine/OpenViking",
-    "sourceVersion": "4bd28b57",
+    "sourceVersion": "36354fa6",
     "license": "AGPL-3.0",
-    "contentHash": "1616cbd63970b75d6ff1851b4fddc9835804dac0050fe3a2062edadf82b09e15",
-    "lastHarvestedAt": "2026-11-08T23:12:42.995Z",
+    "contentHash": "018e53a38bc5e584be924df1fad0806524961859820546a5dd0296c11eda6361",
+    "lastHarvestedAt": "2026-11-10T02:31:53.303Z",
     "learningId": "learn-github-volcengine-openviking"
   },
   "saffsanity-sill": {
@@ -3403,10 +3403,10 @@
     "repository": "mitmproxy/mitmproxy",
     "platform": "github",
     "sourceUrl": "https://github.com/mitmproxy/mitmproxy",
-    "sourceVersion": "992052ee",
+    "sourceVersion": "80e1ef5e",
     "license": "MIT",
-    "contentHash": "dba3bb302761740d5b26f1e4a82c7783c4347788b8850ea45af1a1b1d9519c97",
-    "lastHarvestedAt": "2026-11-05T00:48:51.559Z",
+    "contentHash": "f27ccb9c5b932ded3e636a5ac25a4871d294f0d2b54c191354f14de5fd38bcf0",
+    "lastHarvestedAt": "2026-11-10T02:31:50.144Z",
     "learningId": "learn-github-mitmproxy-mitmproxy"
   },
   "parthsarthi03-raptor": {
@@ -4713,10 +4713,10 @@
     "repository": "pulumi/pulumi",
     "platform": "github",
     "sourceUrl": "https://github.com/pulumi/pulumi",
-    "sourceVersion": "6bbe25d6",
+    "sourceVersion": "71457b66",
     "license": "Apache-2.0",
-    "contentHash": "18b5d4f833096c1e6c099789c026c28e95a27f356b114564dcafc6f36ed8ddc2",
-    "lastHarvestedAt": "2026-11-08T03:35:51.398Z",
+    "contentHash": "39f2d45fd17ac83a43ea09502087419de6bca2bc86cdec1b08e51ff5695788ad",
+    "lastHarvestedAt": "2026-11-10T02:31:50.769Z",
     "learningId": "learn-github-pulumi-pulumi"
   },
   "sqlpage-sqlpage": {
@@ -7133,10 +7133,10 @@
     "repository": "zvec-ai/zvec-grep",
     "platform": "github",
     "sourceUrl": "https://github.com/zvec-ai/zvec-grep",
-    "sourceVersion": "407a3851",
+    "sourceVersion": "e06ff066",
     "license": "Apache-2.0",
-    "contentHash": "14c13ff87ccc13e374893858fedd0f7630224fbb877c49a441f956cbd8d98fe9",
-    "lastHarvestedAt": "2026-11-05T14:05:54.972Z",
+    "contentHash": "468b09f49b88fa5420fb6246c8653568ce8ae2cf95383105da07efe04031c1a6",
+    "lastHarvestedAt": "2026-11-10T02:31:50.759Z",
     "learningId": "learn-github-zvec-ai-zvec-grep"
   },
   "jetbrains-kotlinconf-app": {

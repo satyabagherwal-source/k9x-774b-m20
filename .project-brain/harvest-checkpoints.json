@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-10T02:24:10.893Z",
+  "last_updated": "2026-11-10T02:31:53.317Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2541,14 +2541,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-volcengine-openviking",
-      "content_hash": "1616cbd63970b75d6ff1851b4fddc9835804dac0050fe3a2062edadf82b09e15",
-      "verified_at": "2026-11-08T23:12:43.003Z",
+      "content_hash": "018e53a38bc5e584be924df1fad0806524961859820546a5dd0296c11eda6361",
+      "verified_at": "2026-11-10T02:31:53.315Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T23:12:43.003Z"
+      "last_updated": "2026-11-10T02:31:53.315Z"
     },
     "Saffsanity/sill": {
       "repository": "Saffsanity/sill",
@@ -5226,14 +5226,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mitmproxy-mitmproxy",
-      "content_hash": "dba3bb302761740d5b26f1e4a82c7783c4347788b8850ea45af1a1b1d9519c97",
-      "verified_at": "2026-11-05T00:48:51.568Z",
+      "content_hash": "f27ccb9c5b932ded3e636a5ac25a4871d294f0d2b54c191354f14de5fd38bcf0",
+      "verified_at": "2026-11-10T02:31:50.169Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T00:48:51.568Z"
+      "last_updated": "2026-11-10T02:31:50.169Z"
     },
     "parthsarthi03/raptor": {
       "repository": "parthsarthi03/raptor",
@@ -10746,14 +10746,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zvec-ai-zvec-grep",
-      "content_hash": "14c13ff87ccc13e374893858fedd0f7630224fbb877c49a441f956cbd8d98fe9",
-      "verified_at": "2026-11-05T14:05:54.988Z",
+      "content_hash": "468b09f49b88fa5420fb6246c8653568ce8ae2cf95383105da07efe04031c1a6",
+      "verified_at": "2026-11-10T02:31:50.789Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T14:05:54.988Z"
+      "last_updated": "2026-11-10T02:31:50.789Z"
     },
     "JetBrains/kotlinconf-app": {
       "repository": "JetBrains/kotlinconf-app",

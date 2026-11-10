@@ -8721,3 +8721,7 @@
 | `CYCLE-20261110-BAY3` | `2026-11-10T02:19:53.259Z` | `mistralai/Mistral-Large-4-1T-A52B` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`e7c29efd...`) |
 | `CYCLE-20261110-GS0M` | `2026-11-10T02:24:08.662Z` | `aquasecurity/trivy` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9f1702e0...`) |
 | `CYCLE-20261110-GTQ7` | `2026-11-10T02:24:10.879Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`fc7ee5d8...`) |
+| `CYCLE-20261110-QO3G` | `2026-11-10T02:31:50.140Z` | `mitmproxy/mitmproxy` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f27ccb9c...`) |
+| `CYCLE-20261110-QOKD` | `2026-11-10T02:31:50.749Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`39f2d45f...`) |
+| `CYCLE-20261110-QOKH` | `2026-11-10T02:31:50.753Z` | `zvec-ai/zvec-grep` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`468b09f4...`) |
+| `CYCLE-20261110-QQJ7` | `2026-11-10T02:31:53.299Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`018e53a3...`) |

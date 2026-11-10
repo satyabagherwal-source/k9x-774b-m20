@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261108-SUR5",
-    "timestamp": "2026-11-08T05:18:09.329Z",
-    "repository": "Comfy-Org/Fibo-2.0",
-    "learningId": "learn-huggingface-comfy-org-fibo-2-0",
-    "contentHash": "4bd769bfa6070c46158db477f0d0ba25690e516718c5b7e5f4df52c6be812ea3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-SYMB",
-    "timestamp": "2026-11-08T05:18:14.339Z",
-    "repository": "lancedb/lancedb",
-    "learningId": "learn-github-lancedb-lancedb",
-    "contentHash": "93cd3ef9bb5e4e978f27c1a3b9160fa77f7d1aa19f22edc8a7073427398a75c9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-3CBV",
-    "timestamp": "2026-11-08T05:26:18.667Z",
-    "repository": "mfontanini/presenterm",
-    "learningId": "learn-github-mfontanini-presenterm",
-    "contentHash": "41fadbef9850f3048fd53f421aef67c752730c537ea6bac10d7bea1ee89e1287",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261108-3FTW",
     "timestamp": "2026-11-08T05:26:23.204Z",
     "repository": "vanniktech/gradle-maven-publish-plugin",
@@ -7490,6 +7445,51 @@
     "repository": "tailscale/tailscale",
     "learningId": "learn-github-tailscale-tailscale",
     "contentHash": "fc7ee5d8ef63eab4fdac6c4c4cf4bf9513d4aa25e2e90e98d80ab52db0c4bef0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261110-QO3G",
+    "timestamp": "2026-11-10T02:31:50.140Z",
+    "repository": "mitmproxy/mitmproxy",
+    "learningId": "learn-github-mitmproxy-mitmproxy",
+    "contentHash": "f27ccb9c5b932ded3e636a5ac25a4871d294f0d2b54c191354f14de5fd38bcf0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261110-QOKD",
+    "timestamp": "2026-11-10T02:31:50.749Z",
+    "repository": "pulumi/pulumi",
+    "learningId": "learn-github-pulumi-pulumi",
+    "contentHash": "39f2d45fd17ac83a43ea09502087419de6bca2bc86cdec1b08e51ff5695788ad",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261110-QQJ7",
+    "timestamp": "2026-11-10T02:31:53.299Z",
+    "repository": "volcengine/OpenViking",
+    "learningId": "learn-github-volcengine-openviking",
+    "contentHash": "018e53a38bc5e584be924df1fad0806524961859820546a5dd0296c11eda6361",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
