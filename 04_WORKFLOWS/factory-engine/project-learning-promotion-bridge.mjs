@@ -479,7 +479,7 @@ export function validateProjectLearningCandidate(candidate, verificationProof = 
 /**
  * Checks for duplicates against the domain registry and contradiction against existing rules.
  */
-export function checkDuplicatesAndConflicts(candidate, customRoot = null) {
+export function checkDuplicatesAndConflicts(candidate, customRoot = null, options = {}) {
   const contentHash = crypto.createHash('sha256').update(candidate.universal_invariant).digest('hex');
   const registry = loadDomainRegistry(customRoot);
 
@@ -496,31 +496,53 @@ export function checkDuplicatesAndConflicts(candidate, customRoot = null) {
     }
   }
 
-  // 2. Directive Opposition / Contradiction Check
-  try {
-    const searchRes = searchBrain(candidate.title, { brainRoot: customRoot, topK: 3 });
-    if (searchRes.results && searchRes.results.length > 0) {
-      for (const res of searchRes.results) {
-        const opposition = detectDirectiveOpposition(
-          candidate.universal_invariant,
-          candidate.negative_constraint,
-          res
-        );
-        if (opposition && opposition.opposed) {
-          return {
-            isDuplicate: false,
-            isConflicted: true,
-            stage: KNOWLEDGE_STAGE.CONFLICTED,
-            reason: 'DIRECTIVE_OPPOSITION_DETECTED',
-            opposingRuleId: res.id,
-            opposingRuleTitle: res.title,
-            oppositionDetails: opposition.reason || 'Opposing directive detected.'
-          };
+  // 2. Canonical Domain Registry Directive Opposition Check
+  for (const record of Object.values(registry.records || {})) {
+    const opposition = detectDirectiveOpposition(
+      candidate.universal_invariant,
+      candidate.negative_constraint,
+      record
+    );
+    if (opposition && opposition.opposed) {
+      return {
+        isDuplicate: false,
+        isConflicted: true,
+        stage: KNOWLEDGE_STAGE.CONFLICTED,
+        reason: 'DIRECTIVE_OPPOSITION_DETECTED',
+        opposingRuleId: record.record_id,
+        opposingRuleTitle: record.title,
+        oppositionDetails: opposition.reason || 'Opposing directive detected.'
+      };
+    }
+  }
+
+  // 3. Optional Corpus Search Check (Skipped if options.skipSearch is true to prevent V8 heap exhaustion)
+  if (!options.skipSearch && !options.skipCorpusSearch) {
+    try {
+      const searchRes = searchBrain(candidate.title, { brainRoot: customRoot, topK: 3 });
+      if (searchRes.results && searchRes.results.length > 0) {
+        for (const res of searchRes.results) {
+          const opposition = detectDirectiveOpposition(
+            candidate.universal_invariant,
+            candidate.negative_constraint,
+            res
+          );
+          if (opposition && opposition.opposed) {
+            return {
+              isDuplicate: false,
+              isConflicted: true,
+              stage: KNOWLEDGE_STAGE.CONFLICTED,
+              reason: 'DIRECTIVE_OPPOSITION_DETECTED',
+              opposingRuleId: res.id,
+              opposingRuleTitle: res.title,
+              oppositionDetails: opposition.reason || 'Opposing directive detected.'
+            };
+          }
         }
       }
+    } catch (err) {
+      // Non-fatal search check fallback
     }
-  } catch (err) {
-    // Non-fatal search check fallback
   }
 
   return {
@@ -570,7 +592,7 @@ export function promoteProjectLearningToMasterBrain(candidateInput, verification
   const validCandidate = validation.sanitizedCandidate;
 
   // Step 4: Duplicate & Contradiction Barrier
-  const dupCheck = checkDuplicatesAndConflicts(validCandidate, customRoot);
+  const dupCheck = checkDuplicatesAndConflicts(validCandidate, customRoot, options);
   if (dupCheck.isDuplicate) {
     return {
       success: false,

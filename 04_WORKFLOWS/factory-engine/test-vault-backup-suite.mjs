@@ -206,7 +206,16 @@ async function runTestSuite() {
   // TEST 10: Private Remote Authentication & Visibility Verification
   // ------------------------------------------------------------------
   console.log(`\n[TEST 10] Testing Private Remote Authentication & Visibility...`);
-  const remoteInfoRaw = run('gh repo view satyabagherwal-source/ai-builder-brain-private-vault --json name,isPrivate,visibility');
+  let remoteInfoRaw = '';
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      remoteInfoRaw = run('gh repo view satyabagherwal-source/ai-builder-brain-private-vault --json name,isPrivate,visibility');
+      if (remoteInfoRaw) break;
+    } catch (netErr) {
+      if (attempt === 3) throw netErr;
+      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 1000);
+    }
+  }
   const remoteInfo = JSON.parse(remoteInfoRaw);
   assert(remoteInfo.name === 'ai-builder-brain-private-vault', 'Repository name matches ai-builder-brain-private-vault');
   assert(remoteInfo.isPrivate === true, 'Repository isPrivate is strictly TRUE');

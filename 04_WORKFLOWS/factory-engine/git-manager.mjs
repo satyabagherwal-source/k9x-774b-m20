@@ -138,3 +138,15 @@ export function verifyGitStatus(targetDir) {
     return { isRepo: false, error: err.message };
   }
 }
+
+// Re-export Master Brain Safe Auto-Commit and Central Classification
+export {
+  classifyRepository,
+  REPOSITORY_TYPES,
+  GIT_COMMIT_POLICIES,
+  executeMasterBrainAutoCommit,
+  isPathProtectedOrExcluded,
+  isPathAllowedForAutoCommit,
+  CANONICAL_MASTER_BRAIN_ROOT
+} from './master-brain-auto-commit.mjs';
+
