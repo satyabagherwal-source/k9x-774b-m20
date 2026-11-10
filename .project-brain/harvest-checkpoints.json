@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-10T05:21:57.353Z",
+  "last_updated": "2026-11-10T06:05:22.282Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -18464,6 +18464,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-09T21:59:35.832Z"
+    },
+    "VideoRebirthAI/hyperflow-h3-flash": {
+      "repository": "VideoRebirthAI/hyperflow-h3-flash",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-videorebirthai-hyperflow-h3-flash",
+      "content_hash": "5a57b913598e6c3e80704e0df5b663a5e62da022f5587c55dae2eb154f4d742a",
+      "verified_at": "2026-11-10T06:05:22.281Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-10T06:05:22.281Z"
     }
   },
   "repos": {

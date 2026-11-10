@@ -4978,3 +4978,7 @@ https://github.com/sceneview/sceneview
 # --- Automatically Discovered by AI Scout Engine [2026-11-09T21:55:22.233Z] ---
 # [HUGGINGFACE-AI-MODELS] tencent/Qwen3.8-27B-DSpine-b16 (2914 score) - Verified Hugging Face Model: tencent/Qwen3.8-27B-DSpine-b16 (145 likes, 1464 dow
 https://huggingface.co/tencent/Qwen3.8-27B-DSpine-b16
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-10T06:04:56.535Z] ---
+# [HUGGINGFACE-AI-MODELS] VideoRebirthAI/hyperflow-h3-flash (3380 score) - Verified Hugging Face Model: VideoRebirthAI/hyperflow-h3-flash (138 likes, 64221
+https://huggingface.co/VideoRebirthAI/hyperflow-h3-flash

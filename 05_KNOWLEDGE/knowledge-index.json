@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-10T05:21:57.204Z",
-  "total_verified_learnings": 1245,
+  "last_updated": "2026-11-10T06:05:22.163Z",
+  "total_verified_learnings": 1246,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -190020,6 +190020,49 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-11-09T21:59:35.667Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-videorebirthai-hyperflow-h3-flash": {
+      "learning_id": "learn-huggingface-videorebirthai-hyperflow-h3-flash",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "VideoRebirthAI/hyperflow-h3-flash",
+      "repository": "VideoRebirthAI/hyperflow-h3-flash",
+      "slug": "hf-videorebirthai-hyperflow-h3-flash",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/VideoRebirthAI/hyperflow-h3-flash",
+      "source_version": "hf-videorebirthai-hyperflow-h3-flash",
+      "content_hash": "5a57b913598e6c3e80704e0df5b663a5e62da022f5587c55dae2eb154f4d742a",
+      "dossier_path": "07_PROJECT_LEARNING/hf-videorebirthai-hyperflow-h3-flash-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-videorebirthai-hyperflow-h3-flash-learnings.md",
+      "promoted_rules": [
+        {
+          "number": null,
+          "title": "Quantization-Backend Compatibility Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Few-Step Distillation CFG Removal Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "VRAM Footprint vs. System RAM Offloading Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-10T06:05:22.138Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

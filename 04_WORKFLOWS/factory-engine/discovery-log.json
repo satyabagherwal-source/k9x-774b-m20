@@ -20773,5 +20773,17 @@
     "downloads": 1464,
     "qualityScore": 2914,
     "discoveredAt": "2026-11-09T21:53:13.774Z"
+  },
+  {
+    "name": "VideoRebirthAI/hyperflow-h3-flash",
+    "fullName": "VideoRebirthAI/hyperflow-h3-flash",
+    "url": "https://huggingface.co/VideoRebirthAI/hyperflow-h3-flash",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: VideoRebirthAI/hyperflow-h3-flash (138 likes, 64221 downloads)",
+    "likes": 138,
+    "downloads": 64221,
+    "qualityScore": 3380,
+    "discoveredAt": "2026-11-10T06:02:48.578Z"
   }
 ]

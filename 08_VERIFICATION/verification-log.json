@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261108-44T6",
-    "timestamp": "2026-11-08T06:50:54.426Z",
-    "repository": "ccore/Qwen3.5-4B-3D-Coder",
-    "learningId": "learn-huggingface-ccore-qwen3-5-4b-3d-coder",
-    "contentHash": "929f3f89395a8d286d152014a9521f16712a5cca75b5205b8649a0d16b06c385",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261108-F7DG",
     "timestamp": "2026-11-08T06:59:30.964Z",
     "repository": "mtkennerly/ludusavi",
@@ -7492,6 +7477,21 @@
     "contentHash": "197e4103c65da590216a02206945b16f2618fd5a303bff2d0cc3c9e4f3c27a65",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261110-D9ZM",
+    "timestamp": "2026-11-10T06:05:22.258Z",
+    "repository": "VideoRebirthAI/hyperflow-h3-flash",
+    "learningId": "learn-huggingface-videorebirthai-hyperflow-h3-flash",
+    "contentHash": "5a57b913598e6c3e80704e0df5b663a5e62da022f5587c55dae2eb154f4d742a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

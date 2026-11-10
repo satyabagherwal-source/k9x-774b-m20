@@ -8753,3 +8753,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf` | `https://huggingface.co/AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF` | `hf-atomicc` | Multi-dimensional audit evidence | 2026-11-10T05:14:25.118Z |
 | `learn-github-agent-of-empires-agent-of-empires` | `https://github.com/agent-of-empires/agent-of-empires` | `ff0a5e36` | Multi-dimensional audit evidence | 2026-11-10T05:21:51.732Z |
 | `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `cba01064` | Multi-dimensional audit evidence | 2026-11-10T05:21:57.343Z |
+| `learn-huggingface-videorebirthai-hyperflow-h3-flash` | `https://huggingface.co/VideoRebirthAI/hyperflow-h3-flash` | `hf-videore` | Multi-dimensional audit evidence | 2026-11-10T06:05:22.262Z |

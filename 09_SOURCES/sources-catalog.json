@@ -12268,5 +12268,15 @@
     "contentHash": "c796e23219ff0340379b29b3121cf4a98c4c874fdedfce01cd3b13b2cd4ee1f0",
     "lastHarvestedAt": "2026-11-09T21:59:35.824Z",
     "learningId": "learn-huggingface-tencent-qwen3-8-27b-dspine-b16"
+  },
+  "hf-videorebirthai-hyperflow-h3-flash": {
+    "repository": "VideoRebirthAI/hyperflow-h3-flash",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/VideoRebirthAI/hyperflow-h3-flash",
+    "sourceVersion": "hf-videorebirthai-hyperflow-h3-flash",
+    "license": "Open-Source",
+    "contentHash": "5a57b913598e6c3e80704e0df5b663a5e62da022f5587c55dae2eb154f4d742a",
+    "lastHarvestedAt": "2026-11-10T06:05:22.262Z",
+    "learningId": "learn-huggingface-videorebirthai-hyperflow-h3-flash"
   }
 }
