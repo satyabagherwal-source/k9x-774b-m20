@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-10T00:13:46.708Z",
+  "last_updated": "2026-11-10T00:31:59.785Z",
   "total_verified_learnings": 1245,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -12044,8 +12044,8 @@
       "slug": "dragonflydb-dragonfly",
       "platform": "github",
       "source_url": "https://github.com/dragonflydb/dragonfly",
-      "source_version": "f317962d",
-      "content_hash": "94bff00ad889642b1289db0ca8d2012b1e6a732dc441028e4f334f8e14acff86",
+      "source_version": "77157716",
+      "content_hash": "0b5225805030a68d284dcb74196b72fcc80f06f3b7870cd5fd1c53abd68c86c8",
       "dossier_path": "07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
       "promoted_rules": [
@@ -12062,6 +12062,11 @@
         {
           "number": null,
           "title": "ci): update chart-testing and add Silo download fallback (#8775)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "search): Make alter critical path non-yielding (#8764)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -12160,7 +12165,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T21:47:04.614Z",
+      "verified_at": "2026-11-10T00:31:59.764Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -67507,8 +67512,8 @@
       "slug": "zarf-dev-zarf",
       "platform": "github",
       "source_url": "https://github.com/zarf-dev/zarf",
-      "source_version": "64c34cfc",
-      "content_hash": "3bb1dfefcac2ffd883bc5a6d374ce0a9faf5c4c57072fcf9b4f52aea1996f6d1",
+      "source_version": "328d1d31",
+      "content_hash": "dc9d9b74c2c0379d3890f43eac013e14f7cf7d1e7469de00dc81fd129dd13cbb",
       "dossier_path": "07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
       "promoted_rules": [
@@ -67603,7 +67608,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T22:52:42.477Z",
+      "verified_at": "2026-11-10T00:31:56.088Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

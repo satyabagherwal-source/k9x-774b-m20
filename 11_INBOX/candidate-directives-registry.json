@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-09T23:17:46.574Z",
+  "last_updated": "2026-11-10T00:31:56.213Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4380,6 +4380,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-wcandillon-react-native-skia"
+    },
+    {
+      "id": "CD-GH85",
+      "directive_title": "document deprecation policy and update security.md (#5604)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "zarf-dev/zarf",
+      "source_commit": "328d1d31",
+      "date_staged": "2026-11-10",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-zarf-dev-zarf"
     }
   ]
 }

@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-10T00:13:49.418Z",
-    "lastVerified": "2026-11-10T00:13:49.418Z",
+    "lastChecked": "2026-11-10T00:32:02.495Z",
+    "lastVerified": "2026-11-10T00:32:02.495Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -155,8 +155,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-09T23:17:49.643Z",
-    "lastVerified": "2026-11-09T23:17:49.643Z",
+    "lastChecked": "2026-11-10T00:31:55.805Z",
+    "lastVerified": "2026-11-10T00:31:55.805Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -1641,9 +1641,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-11-09T15:51:31.012Z",
+    "lastChecked": "2026-11-10T00:31:50.860Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-11-09T15:51:31.012Z"
+    "lastVerified": "2026-11-10T00:31:50.860Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -4593,8 +4593,8 @@
     "officialUrl": "https://github.com/midudev/preguntas-entrevista-react",
     "sourceType": "github",
     "technology": "Astro",
-    "lastChecked": "2026-11-07T03:29:31.991Z",
-    "lastVerified": "2026-11-07T03:29:31.991Z",
+    "lastChecked": "2026-11-10T00:31:45.802Z",
+    "lastVerified": "2026-11-10T00:31:45.802Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-midudev-preguntas-entrevista-react",
@@ -4799,14 +4799,14 @@
     "officialUrl": "https://github.com/zarf-dev/zarf",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-08T22:52:40.356Z",
-    "lastVerified": "2026-11-08T22:52:40.356Z",
+    "lastChecked": "2026-11-10T00:31:54.628Z",
+    "lastVerified": "2026-11-10T00:31:54.628Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zarf-dev-zarf",
-    "contentHash": "3bb1dfefcac2ffd883bc5a6d374ce0a9faf5c4c57072fcf9b4f52aea1996f6d1",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "contentHash": "dc9d9b74c2c0379d3890f43eac013e14f7cf7d1e7469de00dc81fd129dd13cbb",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7288,9 +7288,9 @@
   "sachaos-viddy": {
     "name": "viddy",
     "officialUrl": "https://github.com/sachaos/viddy",
-    "lastChecked": "2026-11-08T17:42:28.029Z",
+    "lastChecked": "2026-11-10T00:31:40.828Z",
     "revisionIdentifier": "b56efe08",
-    "lastVerified": "2026-11-08T17:42:28.029Z"
+    "lastVerified": "2026-11-10T00:31:40.828Z"
   },
   "hf-bingsu-adetailer": {
     "name": "Bingsu/adetailer",
@@ -7653,14 +7653,14 @@
     "officialUrl": "https://github.com/dragonflydb/dragonfly",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-08T21:47:02.742Z",
-    "lastVerified": "2026-11-08T21:47:02.742Z",
+    "lastChecked": "2026-11-10T00:31:57.185Z",
+    "lastVerified": "2026-11-10T00:31:57.185Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dragonflydb-dragonfly",
-    "contentHash": "94bff00ad889642b1289db0ca8d2012b1e6a732dc441028e4f334f8e14acff86",
+    "contentHash": "0b5225805030a68d284dcb74196b72fcc80f06f3b7870cd5fd1c53abd68c86c8",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9713,9 +9713,9 @@
   "seo-skills-seo-audit-skill": {
     "name": "seo-audit-skill",
     "officialUrl": "https://github.com/seo-skills/seo-audit-skill",
-    "lastChecked": "2026-11-05T20:00:00.082Z",
+    "lastChecked": "2026-11-10T00:31:43.261Z",
     "revisionIdentifier": "fac4b75f20",
-    "lastVerified": "2026-11-05T20:00:00.082Z"
+    "lastVerified": "2026-11-10T00:31:43.261Z"
   },
   "vanniktech-gradle-maven-publish-plugin": {
     "name": "vanniktech/gradle-maven-publish-plugin",

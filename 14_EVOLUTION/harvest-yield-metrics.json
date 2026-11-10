@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-10T00:13:46.826Z",
-  "total_cycles_completed": 8659,
-  "total_learnings_persisted": 8659,
-  "total_rules_promoted": 8499,
+  "last_updated": "2026-11-10T00:31:59.923Z",
+  "total_cycles_completed": 8661,
+  "total_learnings_persisted": 8661,
+  "total_rules_promoted": 8500,
   "history": [
-    {
-      "timestamp": "2026-11-09T03:50:06.736Z",
-      "repository": "Qwen/Qwen3-8B",
-      "learningId": "learn-huggingface-qwen-qwen3-8b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T04:00:43.696Z",
-      "repository": "sweetpad-dev/sweetpad",
-      "learningId": "learn-github-sweetpad-dev-sweetpad",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T04:00:49.476Z",
       "repository": "infiniflow/infinity",
@@ -1403,6 +1389,20 @@
       "repository": "RediSearch/RediSearch",
       "learningId": "learn-github-redisearch-redisearch",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-10T00:31:56.215Z",
+      "repository": "zarf-dev/zarf",
+      "learningId": "learn-github-zarf-dev-zarf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-10T00:31:59.923Z",
+      "repository": "dragonflydb/dragonfly",
+      "learningId": "learn-github-dragonflydb-dragonfly",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

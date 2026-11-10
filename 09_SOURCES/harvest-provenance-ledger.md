@@ -8703,3 +8703,5 @@ Every entry in this ledger must capture:
 | `learn-github-dalance-procs` | `https://github.com/dalance/procs` | `7ffb8c4f` | Multi-dimensional audit evidence | 2026-11-09T23:45:25.468Z |
 | `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `fd579905` | Multi-dimensional audit evidence | 2026-11-09T23:52:49.239Z |
 | `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `b4f97b06` | Multi-dimensional audit evidence | 2026-11-10T00:13:46.810Z |
+| `learn-github-zarf-dev-zarf` | `https://github.com/zarf-dev/zarf` | `328d1d31` | Multi-dimensional audit evidence | 2026-11-10T00:31:56.207Z |
+| `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `77157716` | Multi-dimensional audit evidence | 2026-11-10T00:31:59.909Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-10T00:13:46.830Z",
+  "last_updated": "2026-11-10T00:31:59.927Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6816,14 +6816,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zarf-dev-zarf",
-      "content_hash": "3bb1dfefcac2ffd883bc5a6d374ce0a9faf5c4c57072fcf9b4f52aea1996f6d1",
-      "verified_at": "2026-11-08T22:52:42.620Z",
+      "content_hash": "dc9d9b74c2c0379d3890f43eac013e14f7cf7d1e7469de00dc81fd129dd13cbb",
+      "verified_at": "2026-11-10T00:31:56.219Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T22:52:42.620Z"
+      "last_updated": "2026-11-10T00:31:56.219Z"
     },
     "vlcn-io/cr-sqlite": {
       "repository": "vlcn-io/cr-sqlite",
@@ -9306,14 +9306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dragonflydb-dragonfly",
-      "content_hash": "94bff00ad889642b1289db0ca8d2012b1e6a732dc441028e4f334f8e14acff86",
-      "verified_at": "2026-11-08T21:47:04.767Z",
+      "content_hash": "0b5225805030a68d284dcb74196b72fcc80f06f3b7870cd5fd1c53abd68c86c8",
+      "verified_at": "2026-11-10T00:31:59.926Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T21:47:04.767Z"
+      "last_updated": "2026-11-10T00:31:59.926Z"
     },
     "danielpetho/fancy": {
       "repository": "danielpetho/fancy",

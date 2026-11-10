@@ -4463,10 +4463,10 @@
     "repository": "zarf-dev/zarf",
     "platform": "github",
     "sourceUrl": "https://github.com/zarf-dev/zarf",
-    "sourceVersion": "64c34cfc",
+    "sourceVersion": "328d1d31",
     "license": "Apache-2.0",
-    "contentHash": "3bb1dfefcac2ffd883bc5a6d374ce0a9faf5c4c57072fcf9b4f52aea1996f6d1",
-    "lastHarvestedAt": "2026-11-08T22:52:42.611Z",
+    "contentHash": "dc9d9b74c2c0379d3890f43eac013e14f7cf7d1e7469de00dc81fd129dd13cbb",
+    "lastHarvestedAt": "2026-11-10T00:31:56.207Z",
     "learningId": "learn-github-zarf-dev-zarf"
   },
   "vlcn-io-cr-sqlite": {
@@ -6123,10 +6123,10 @@
     "repository": "dragonflydb/dragonfly",
     "platform": "github",
     "sourceUrl": "https://github.com/dragonflydb/dragonfly",
-    "sourceVersion": "f317962d",
+    "sourceVersion": "77157716",
     "license": "NOASSERTION",
-    "contentHash": "94bff00ad889642b1289db0ca8d2012b1e6a732dc441028e4f334f8e14acff86",
-    "lastHarvestedAt": "2026-11-08T21:47:04.758Z",
+    "contentHash": "0b5225805030a68d284dcb74196b72fcc80f06f3b7870cd5fd1c53abd68c86c8",
+    "lastHarvestedAt": "2026-11-10T00:31:59.909Z",
     "learningId": "learn-github-dragonflydb-dragonfly"
   },
   "danielpetho-fancy": {

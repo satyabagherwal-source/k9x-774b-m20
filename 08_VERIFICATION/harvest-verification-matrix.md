@@ -8694,3 +8694,5 @@
 | `CYCLE-20261109-SNVC` | `2026-11-09T23:45:25.464Z` | `dalance/procs` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`db5d3570...`) |
 | `CYCLE-20261109-26AB` | `2026-11-09T23:52:49.235Z` | `genkit-ai/genkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`92fe3126...`) |
 | `CYCLE-20261110-T4MU` | `2026-11-10T00:13:46.806Z` | `RediSearch/RediSearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`71a906d8...`) |
+| `CYCLE-20261110-GH7V` | `2026-11-10T00:31:56.203Z` | `zarf-dev/zarf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md` | Yes (`dc9d9b74...`) |
+| `CYCLE-20261110-GK2Q` | `2026-11-10T00:31:59.906Z` | `dragonflydb/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0b522580...`) |

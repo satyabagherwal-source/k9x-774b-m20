@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md`  
 > **Source**: github ([https://github.com/zarf-dev/zarf](https://github.com/zarf-dev/zarf))  
-> **Source Version**: `64c34cfc`  
+> **Source Version**: `328d1d31`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T22:52:40.509Z  
+> **Timestamp**: 2026-11-10T00:31:55.932Z  
 > **Learning ID**: `learn-github-zarf-dev-zarf`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zarf-dev/zarf](https://github.com/zarf-dev/zarf))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T22:52:40.356Z  
+> **Harvest Timestamp**: 2026-11-10T00:31:54.628Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1459,17 +1459,17 @@ func mutateEphemeralContainers(ctx context.Context, cluster *cluster.Cluster, po
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5629** (2026-11-08): **chore(deps): update github.com/klauspost/compress from v1.19.2 to v1.20.3**
-  *Symptoms*: **Description:** indirect dependency v1.19.2 → v1.20.3, newest stable available on 2026-11-07, addressing GO-2026-6865/CVE-2026-116591. Refresh checksums and generated vendor. No application-code or other dependency update.  **Checklist before merging:**   - [x] Test, docs, adr added or updated as needed   - [x] [Contributor Guide Steps](https://github.com/zarf-dev/zarf/blob/main/CONTRIBUTING.md#developer-workflow) followed 
+- **Issue #5634** (2026-11-09): **feat!: create dedicated sign/verify options types**
+  *Symptoms*: ## Description  We know we want to refactor the signing/verify logic soon after v1. This itself is fine as we intend to put the signing package - as it depends heavily on a third-party dependency - as outside of the core support boundary in the deprecation policy.   So deprecating older logic won't be an issue - but we have embedded fields that tie other operations to the signing package via the embedded options types.   This is a quick spike to look at decoupling package operations from the signing types - reduced to only what the CLI supports.   ## Related Issue   ## Checklist before merging  - [x] Test, docs, adr added or updated as needed - [x] [Contributor Guide Steps](https://github.com/zarf-dev/zarf/blob/main/CONTRIBUTING.md#developer-workflow) followed 
   **Post-Mortem & Fix Analysis**:
-  > ### <span aria-hidden="true">👷</span> Deploy request for *zarf-docs* pending review. [Visit the deploys page to approve it](https://app.netlify.com/projects/zarf-docs/deploys)  |  Name | Link | |:-:|------------------------| |<span aria-hidden="true">🔨</span> Latest commit | df3a1ac75c04346edb2cf86b83141a59c319a278 |
-  > ## [Codecov](https://app.codecov.io/gh/zarf-dev/zarf/pull/5629?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=zarf-dev) Report :white_check_mark: All modified and coverable lines are covered by tests. [see 1 file with indirect coverage changes](https://app.codecov.io/gh/zarf-dev/zarf/pull/5629/indirect-changes?src=pr&el=tree-more&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=zarf-dev) <details><summary> :rocket: New features to boost your workflow: </summary>  - :snowflake: [Test Analytics](https://docs.codecov.com/docs/test-analytics): Detect flaky tests, report on failures, and find test suite problems. - :package: [JS Bundle Analysis](https://docs.codecov.com/docs/javascript-bundle-analysis): Save yourself from yourself by tracking and limiting bundle sizes in JS merges. </details>
+  > ### <span aria-hidden="true">✅</span> Deploy Preview for *zarf-docs* canceled.   |  Name | Link | |:-:|------------------------| |<span aria-hidden="true">🔨</span> Latest commit | 8da43af08a9498d5dd6b13214c8d0f38c500e4af | |<span aria-hidden="true">🔍</span> Latest deploy log | https://app.netlify.com/projects/zarf-docs/deploys/6af16920365a011110ab97cf |
+  > ## [Codecov](https://app.codecov.io/gh/zarf-dev/zarf/pull/5634?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=zarf-dev) Report :x: Patch coverage is `74.07407%` with `28 lines` in your changes missing coverage. Please review.  | [Files with missing lines](https://app.codecov.io/gh/zarf-dev/zarf/pull/5634?dropdown=coverage&src=pr&el=tree&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=zarf-dev) | Patch % | Lines | |---|---|---| | [src/cmd/package.go](https://app.codecov.io/gh/zarf-dev/zarf/pull/5634?src=pr&el=tree&filepath=src%2Fcmd%2Fpackage.go&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=zarf-dev#diff-c3JjL2NtZC9wYWNrYWdlLmdv) | 58.62% | [12 Missing :warning: ](https://app.codecov.io/gh/zarf-dev/zarf/pull/5634?src=pr&el=tree&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=zarf-
 
-- **Issue #5625** (2026-11-07): **fix: exclude state authoritative values**
-  *Symptoms*: ## Description  Setting any of the state authoritative values separate from their defaults through package values does not synchronize with zarf state - these should be excluded and we should pursue https://github.com/zarf-dev/proposals/pull/64  ## Related Issue   ## Checklist before merging  - [x] Test, docs, adr added or updated as needed - [x] [Contributor Guide Steps](https://github.com/zarf-dev/zarf/blob/main/CONTRIBUTING.md#developer-workflow) followed 
+- **Issue #5631** (2026-11-09): **feat!: limit v1beta1 init package values chart inputs**
+  *Symptoms*: ## Description  There was a lot that could be set by the v1beta1 package. Including state values which must be set by the CLI, but also things like service names and port numbers that the CLI hardcodes in it's connections. A good amount of these options can be opened up later with more care and attention, however for now I'm limiting it to only the configuration options that we've already exposed in v1alpha1.   As a plus I think inspecting the package definition does make it a bit easier to see what's going on in terms of what each value does (though we need better inspect commands for values eventually)   ## Checklist before merging  - [ ] Test, docs, adr added or updated as needed - [ ] [Contributor Guide Steps](https://github.com/zarf-dev/zarf/blob/main/CONTRIBUTING.md#developer-workflow) followed 
   **Post-Mortem & Fix Analysis**:
-  > ### <span aria-hidden="true">✅</span> Deploy Preview for *zarf-docs* canceled.   |  Name | Link | |:-:|------------------------| |<span aria-hidden="true">🔨</span> Latest commit | 42ed7d40cf3261ac2368635aafe18774a3b236b5 | |<span aria-hidden="true">🔍</span> Latest deploy log | https://app.netlify.com/projects/zarf-docs/deploys/6aeebaea63891c5c03a41ebc |
-  > ## [Codecov](https://app.codecov.io/gh/zarf-dev/zarf/pull/5625?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=zarf-dev) Report :white_check_mark: All modified and coverable lines are covered by tests. <details><summary> :rocket: New features to boost your workflow: </summary>  - :snowflake: [Test Analytics](https://docs.codecov.com/docs/test-analytics): Detect flaky tests, report on failures, and find test suite problems. - :package: [JS Bundle Analysis](https://docs.codecov.com/docs/javascript-bundle-analysis): Save yourself from yourself by tracking and limiting bundle sizes in JS merges. </details>
+  > ### <span aria-hidden="true">✅</span> Deploy Preview for *zarf-docs* canceled.   |  Name | Link | |:-:|------------------------| |<span aria-hidden="true">🔨</span> Latest commit | 7086a69122de8779f5ad3a777690ed95aaad0af4 | |<span aria-hidden="true">🔍</span> Latest deploy log | https://app.netlify.com/projects/zarf-docs/deploys/6af1032377610decf92e588d |
+  > ## [Codecov](https://app.codecov.io/gh/zarf-dev/zarf/pull/5631?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=zarf-dev) Report :white_check_mark: All modified and coverable lines are covered by tests. [see 53 files with indirect coverage changes](https://app.codecov.io/gh/zarf-dev/zarf/pull/5631/indirect-changes?src=pr&el=tree-more&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=zarf-dev) <details><summary> :rocket: New features to boost your workflow: </summary>  - :snowflake: [Test Analytics](https://docs.codecov.com/docs/test-analytics): Detect flaky tests, report on failures, and find test suite problems. - :package: [JS Bundle Analysis](https://docs.codecov.com/docs/javascript-bundle-analysis): Save yourself from yourself by tracking and limiting bundle sizes in JS merges. </details>
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1486,954 +1486,286 @@ func mutateEphemeralContainers(ctx context.Context, cluster *cluster.Cluster, po
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `64c34cfc` (2026-11-08)
-**Commit Message**: chore(deps): update github.com/klauspost/compress from v1.19.2 to v1.20.3 (#5629)
+### Incident Patch 1: `328d1d31` (2026-11-09)
+**Commit Message**: chore: document deprecation policy and update security.md (#5604)
 
-Signed-off-by: dwertent <[REDACTED_EMAIL]>
+Signed-off-by: Brandt Keller <[REDACTED_EMAIL]>
 
-**File**: `go.mod` (modified, +1/-1)
+**File**: `.github/SECURITY.md` (modified, +29/-17)
 ```diff
-@@ -481,7 +481,7 @@ require (
- 	github.com/kastenhq/goversion v0.0.0-20230811215019-93b2f8823953 // indirect
- 	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51 // indirect
- 	github.com/kevinburke/ssh_config v1.2.0 // indirect
--	github.com/klauspost/compress v1.19.2 // indirect
-+	github.com/klauspost/compress v1.20.3 // indirect
- 	github.com/klauspost/pgzip v1.2.6 // indirect
- 	github.com/knqyf263/go-apk-version v0.0.0-20200609155635-041fdbb8563f // indirect
- 	github.com/knqyf263/go-deb-version v0.0.0-20241115132648-6f4aee6ccd23 // indirect
+@@ -1,36 +1,48 @@
+ # Reporting Security Issues
+ 
+-To report a security issue or vulnerability in Zarf, please use the confidential GitHub Security Advisory ["Report a Vulnerability"](https://github.com/zarf-dev/zarf/security/advisories) tab. The Zarf team will send a response indicating the next steps in handling your report. After the initial reply to your report, the team will keep you informed of the progress towards a fix and full announcement, and may ask for additional information or guidance.
++## Report a Vulnerability
+ 
+-### When Should I Report a Vulnerability?
++Report a security issue or vulnerability through GitHub Security Advisories using the confidential [Report a Vulnerability](https://github.com/zarf-dev/zarf/security/advisories) workflow. Do not disclose exploit details publicly before the team has coordinated a fix and disclosure with you.
+ 
+-* You found a vulnerability in the Zarf code.
+-* You found a vulnerability in one of the Zarf dependencies that affects the project that has not been patched yet.
++## What to Include
+ 
+-### When Should I NOT Report a Vulnerability?
++Include the affected Zarf version and deployment environment, the affected package create, deploy, runtime, or state-management path, reproduction steps or a proof of concept, the impact and attack preconditions, and a suggested mitigation if known.
+ 
+-* You found a bug or malfunction in the Zarf code (not security related).
+-* You want to add a feature to Zarf.
++## When to Report a Vulnerability
++
++- You found a vulnerability in Zarf code.
++- You found an unpatched vulnerability in a Zarf dependency that affects the project.
++
++## When Not to Report a Vulnerability
++
++- You found a bug or malfunction that is not security-related.
++- You want to add a feature to Zarf.
++
++Use the [issue tracker](https://github.com/zarf-dev/zarf/issues) for non-security bugs and feature requests.
+ 
+ ## Supported Versions
+ 
+-As Zarf has not yet reached v1.0.0, only the current latest minor release is supported.
++Security fixes are provided for the latest stable minor release of the current major version. Affected users should upgrade to the current supported release. Maintainers MAY provide a backport when operational impact warrants it.
++
++## Disclosure and Remediation Process
++
++1. Maintainers acknowledge the report and assess its impact.
++2. Maintainers coordinate a fix and disclosure with the reporter when appropriate.
++3. Zarf publishes a fixed release, security advisory, and migration guidance as applicable.
++4. Zarf pursues CVE assignment when appropriate. A CVE is not required before a fix is released.
+ 
+ ## Contacting Us
+ 
+-To discuss security related issues, please email the maintainers at zarf-dev-private@googlegroups.com.
++For security discussions that cannot use GitHub Security Advisories, email the maintainers at [zarf-dev-private@googlegroups.com](mailto:zarf-dev-private@googlegroups.com).
++
++## CVE Posture and VEX
+ 
+-## CVE Posture & VEX
++Each Zarf release includes a **VEX (Vulnerability Exploitability eXchange) document** that records the project's assessment of known dependency findings for that release. It is not a substitute for a security advisory, a list of all vulnerabilities, or a guarantee that a finding is non-exploitable in every deployment.
+ 
+-Each Zarf release includes a **VEX (Vulnerability Exploitability eXchange) document**
+-that captures accepted, non-exploitable findings with documented justification.
+-You can use this file to reproduce Zarf's accepted-CVE posture when scanning with
+-[`grype`](https://github.com/anchore/grype):
++Use the VEX document with [`grype`](https://github.com/anchore/grype):
+ 
+ ```bash
+ grype zarf --vex zarf.cli.openvex.json
+ ```
+ 
+-`zarf.cli.openvex.json` is available as a standalone asset on each
+-[GitHub release](https://github.com/zarf-dev/zarf/releases) and is bundled inside the
+-init package.
++`zarf.cli.openvex.json` is available as a standalone asset on each [GitHub release](https://github.com/zarf-dev/zarf/releases) and is bundled inside the init package.
 ```
 
-**File**: `go.sum` (modified, +2/-2)
+**File**: `DEPRECATION_POLICY.md` (added, +78/-0)
 ```diff
-@@ -1143,8 +1143,8 @@ github.com/keybase/go-keychain v0.0.1/go.mod h1:PdEILRW3i9D8JcdM+FmY6RwkHGnhHxXw
- github.com/kisielk/errcheck v1.5.0/go.mod h1:pFxgyoBC7bSaBwPgfKdkLd5X25qrDl4LWUI2bnpBCr8=
- github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
- github.com/klauspost/compress v1.4.1/go.mod h1:RyIbtBH6LamlWaDj8nUwkbUhJ87Yi3uG0guNDohfE1A=
--github.com/klauspost/compress v1.19.2 h1:hMRETovs/pu/dVWN7zIT1PGG8t509MwT6bO7XSi26R8=
--github.com/klauspost/compress v1.19.2/go.mod h1:cwPg85FWrGar70rWktvGQj8/hthj3wpl0PGDogxkrSQ=
-+github.com/klauspost/compress v1.20.3 h1:zWNoFqq/lSuYQRim3dUXlXeA0IqwuZGicdG5ZTfY5j4=
-+github.com/klauspost/compress v1.20.3/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
- github.com/klauspost/cpuid v1.2.0/go.mod h1:Pj4uuM528wm8OyEC2QMXAi2YiTZ96dNQPGgoMS4s3ek=
- github.com/klauspost/cpuid/v2 v2.0.9/go.mod h1:FInQzS24/EEf25PyTYn52gqo7WaD8xa0213Md/qVLRg=
- github.com/klauspost/cpuid/v2 v2.0.10/go.mod h1:g2LTdtYhdyuGPqyWyv7qRAmj1WBqxuObKfj5c0PQa7c=
-```
-
-**File**: `vendor/github.com/klauspost/compress/.gitignore` (modified, +3/-0)
-```diff
-@@ -30,3 +30,6 @@ perf.data.old
- 
- # gdb history
- .gdb_history
+@@ -0,0 +1,78 @@
++# Zarf Deprecation and Compatibility Policy
 +
-+# Silesia corpus, fetched by testdata/fetch_silesia.sh
-+**/testdata/silesia.tar*
-```
-
-**File**: `vendor/github.com/klauspost/compress/AGENTS.md` (added, +104/-0)
-```diff
-@@ -0,0 +1,104 @@
-+# AGENTS.md
++## Scope
 +
-+Guidance for people and coding agents changing this repository. It records
-+conventions and traps learned while working on the decoders and encoders; the
-+README describes the packages themselves.
++Zarf's explicit SemVer compatibility contract is limited to the package lifecycle:
 +
-+## Checks before sending a change
++1. The package definitions accepted by `zarf package create`.
++2. The package artifacts produced by supported `zarf package create` workflows.
++3. The package artifacts accepted by `zarf package deploy`.
++4. The observable deployment and runtime behavior of those artifacts.
++5. Zarf-managed in-cluster and deployed-package state for supported package deployments.
 +
-+- `gofmt`, `go vet ./...` and `go fix -diff ./...` (which should report
-+  nothing). Code written for specific platforms must be vetted for them too:
-+  run `go vet` with `GOOS`/`GOARCH` set to each platform it targets. `go vet`
-+  caches results per package and does not notice edits to files excluded by
-+  build tags; use a fresh `GOCACHE` to confirm a stale-looking error.
-+- `go test ./...` with and without `-tags=noasm` (and `nounsafe` if you
-+  touched `unsafe` code), on every architecture whose assembly changed.
-+- Decoder changes: run the fuzzers CI runs (see `.github/workflows/go.yml`),
-+  also with `-tags=noasm`, `-tags=nounsafe` and `-asan`, for longer than CI
-+  does, and for zstd both `FuzzDecodeAll` and the `NoBMI2` variants.
-+- Raising the Go version in the root `go.mod` breaks the nested modules
-+  (`*/_generate`, `s2/cmd/_s2sx`) until they are updated too. In a `go`
-+  directive, `1.25` sorts before `1.25.0`, so a dependency that needs
-+  `1.25.0` forces the full form.
++A later compatible release in the same supported major version MUST preserve or migrate state written by an earlier supported release so that supported package deployments remain manageable.
 +
-+## Tests
++A package artifact includes the metadata, layout, signatures, and OCI representations required for the supported create and deploy workflows to interoperate.
 +
-+- Put a new test in the existing test file for the code it exercises
-+  (`decoder_test.go` for Reader/DecodeAll behaviour, `seqdec_test.go` for
-+  sequence execution, and so on), and reuse its helpers. Use table tests for
-+  three or more similar cases.
-+- Extend the existing fuzzers (`func Fuzz…`) rather than adding parallel
-+  harnesses; if a new harness supersedes an old one, remove the old one in
-+  the same change.
-+- Prove which path a test or benchmark exercises. A benchmark once ran the
-+  pure-Go sequence decoder instead of the assembly because of how its buffers
-+  were set up. A `panic` planted in the path is a quick check; `println`
-+  output is easy to miss.
-+- `sync.Pool` drops about a quarter of `Put`s under `-race` by design; never
-+  assume `Get` returns the last `Put`.
-+- Don't add tests whose only purpose is to catch someone deliberately undoing
-+  a performance pin (an alignment, say); a comment explaining it is enough.
++The following are outside the explicit SemVer compatibility contract:
 +
-+## Performance claims
++- Every command, flag, output format, and behavior below `zarf tools`.
++- Configuration-file keys, environment variables, hidden flags, cache layouts, temporary files, and undocumented behavior.
++- Logging structure and syntax, including levels, field names, message text, and encoding.
++- Go packages and exported symbols, including `src/pkg/signing`, `src/pkg/oci`, and `src/pkg/zoci`.
++- The implementation, command syntax, flags, defaults, and output of standalone signing, verification, publishing, and pulling commands.
 +
-+- Use real data. The maintainer's corpora are at
-+  https://klauspost.com/files/compress/ (logs, JSON, CSV, serialized data,
-+  tar files); put `.zst` files in `zstd/testdata/benchmark-custom/` and run
-+  `BenchmarkDecoderWithCustomFiles`. Silesia, enwik and generated data are
-+  fine for correctness but are not accepted as evidence for a speed-up.
-+- When a result depends on how the data was compressed, report the levels
-+  separately (for example `SpeedDefault` and `SpeedBestCompression`).
-+- Anchor `-bench` patterns at every level with `$`: `-bench 'BenchmarkFoo$'`
-+  also runs `BenchmarkFooBar` otherwise, which has produced fake gains and
-+  regressions.
-+- Code placement alone moves results by about ±2%. For an A/B, insert
-+  `PCALIGN $64` before every `TEXT` in the `.s` files of *both* builds
-+  (measurement only, not committed).
-+- Build both variants as test binaries up front, then run them in turns: one
-+  short `-count 1` run of each, repeated for ten or more rounds, swapping
-+  which goes first every round (AB, BA, AB, …) so neither build always gets
-+  the warmer or colder slot. Never run all of A and then all of B. Clock
-+  speed, temperature, cache and page-cache state, and background load drift
-+  over a session; alternating spreads that drift over both builds instead of
-+  turning it into a difference between them. Pin to one core, use an
-+  otherwise idle machine, and compare the pooled results with `benchstat`.
-+- Report the number of regressed cases next to the geomean; a small win with
-+  no regressions is a different result from a larger one with some.
-+- No CPU-model-specific code paths or thresholds. A gate for arm64 must be
-+  measured on several Neoverse generations (N1, V1, V2, V3), not one core.
++Code outside this scope remains subject to the project-wide deprecation lifecycle below, but does not receive an independent SemVer support promise from this policy.
 +
-+## Pull requests
++## Major Release Transition Documents
 +
-+- One commit per independent change, with fixups squashed in. Number the
-+  changes in the description as "(1) … (sha)" and name the test file for
-+  each test.
-+- Mention each `#NNN` once in prose; refer back in words.
-+- Don't open many PRs against the same area at once; reviewer time is the
-+  scarce resource.
-+- Keep Go comments short; generator and assembly comments can explain in
-+  detail.
-+- Keep private or company-internal references (internal service names,
-+  private links, chat or agent-session URLs) out of code, commit messages and
-+  PR text.
++A major release MAY introduce a time-bounded legacy compatibility path. The transition document for that major release MUST identify the stable package schema or schemas, the legacy path's support boundary, the required migration, and whether the legacy path belongs to the new major version's stable contract.
 +
-+## Assembly is generated
++## Schema Contract
 +
-+- zstd, huff0 and s2 assembly is generated with [avo](https://github.com/mmcloughlin/avo)
-+  from `zstd/_generate`, `huff0/_generate` and `s2/_generate`. Never edit the
-+  `.s` files by hand: change the generator, run `go generate -v -x` in the
-+  `_generate` directory, and commit the regenerated output. CI's `generate` job
-+  fails if the committed files differ
-```
-
-**File**: `vendor/github.com/klauspost/compress/README.md` (modified, +54/-1)
-```diff
-@@ -6,7 +6,9 @@ This package provides various compression algorithms.
- * [S2](https://github.com/klauspost/compress/tree/master/s2#s2-compression) is a high performance replacement for Snappy.
- * Optimized [deflate](https://godoc.org/github.com/klauspost/compress/flate) packages which can be used as a dropin replacement for [gzip](https://godoc.org/github.com/klauspost/compress/gzip), [zip](https://godoc.org/github.com/klauspost/compress/zip) and [zlib](https://godoc.org/github.com/klauspost/compress/zlib).
- * [snappy](https://github.com/klauspost/compress/tree/master/snappy) is a drop-in replacement for `github.com/golang/snappy` offering better compression and concurrent streams.
-+* [lzw](https://github.com/klauspost/compress/tree/master/lzw) is a drop-in replacement for `compress/lzw` with 1.4-4x faster decompression and 1.1-2.7x faster compression, depending on the data.
- * [huff0](https://github.com/klauspost/compress/tree/master/huff0) and [FSE](https://github.com/klauspost/compress/tree/master/fse) implementations for raw entropy encoding.
-+* [Xpress](https://github.com/klauspost/compress/tree/master/xpress) decompression of the Microsoft XPRESS (MS-XCA) plain LZ77 and LZ77+Huffman formats (the LZ77+Huffman variant is the one used in WIM images and Windows Compact OS / WOF data).
- * [gzhttp](https://github.com/klauspost/compress/tree/master/gzhttp) Provides client and server wrappers for handling gzipped/zstd HTTP requests efficiently.
- * [pgzip](https://github.com/klauspost/pgzip) is a separate package that provides a very fast parallel gzip implementation.
- 
-@@ -27,8 +29,41 @@ Use the links above for more information on each.
- 
- # changelog
- 
-+* Sep 25th, 2026 [1.20.1](https://github.com/klauspost/compress/releases/tag/v1.20.1)
-+	* zstd: Apply reset options to reused frame decoders by @pellared in https://github.com/klauspost/compress/pull/1226
-+	* flate: Report unexpected EOF for truncated Huffman extra bits by @rupayon123 in https://github.com/klauspost/compress/pull/1229
-+	* flate: Avoid FMA in EstimatedBits for portable rounding by @malt3 in https://github.com/klauspost/compress/pull/1224
-+	* gzhttp: Preserve caller request headers in Transport by @jakezwang in https://github.com/klauspost/compress/pull/1225
-+	* gzhttp: Only decompress a request when gzip is the outermost coding by @youdie006 in https://github.com/klauspost/compress/pull/1223
-+	* zstd/huff0: Optimizations by @lizthegrey in https://github.com/klauspost/compress/pull/1203 https://github.com/klauspost/compress/pull/1205 https://github.com/klauspost/compress/pull/1207 https://github.com/klauspost/compress/pull/1204 https://github.com/klauspost/compress/pull/1208 https://github.com/klauspost/compress/pull/1211 https://github.com/klauspost/compress/pull/1209 https://github.com/klauspost/compress/pull/1210
-+	* flate: Speed improvements by @alex in https://github.com/klauspost/compress/pull/1220 https://github.com/klauspost/compress/pull/1218 https://github.com/klauspost/compress/pull/1216 https://github.com/klauspost/compress/pull/1215 https://github.com/klauspost/compress/pull/1214 https://github.com/klauspost/compress/pull/1217
++Schema identifiers and Zarf CLI major versions are independent. A schema suffix such as `beta1` does not determine its support level.
 +
-+* Sep 2nd, 2026 [1.20.0](https://github.com/klauspost/compress/releases/tag/v1.20.0)
-+	* lzw: Add lzw reader/writer in https://github.com/klauspost/compress/pull/1189
-+	* xpress: Add Microsoft XPRESS (MS-XCA) decompression by @MP-GOWTHAM in https://github.com/klauspost/compress/pull/1195
-+	* s2: arm64 assembly encoders by @lizthegrey in https://github.com/klauspost/compress/pull/1187
-+	* zstd, huff0: Improved arm64 assembly by @lizthegrey in https://github.com/klauspost/compress/pull/1175 https://github.com/klauspost/compress/pull/1199 https://github.com/klauspost/compress/pull/1197
-+	* flate: Writer L7-9 with dictionary can emit the dictionary to stream in https://github.com/klauspost/compress/pull/1201
-+	* gzhttp: Limit jitter hash to jitterBuffer bytes by @VedantMadane in https://github.com/klauspost/compress/pull/1192
-+	* s2: Clamp the Go EncodeBetter skip to match the assembly by @lizthegrey in https://github.com/klauspost/compress/pull/1190
-+	* xxhash: Bound input of non-preemptive assembly by @AskAlexSharov in https://github.com/klauspost/compress/pull/1196
++The applicable major release transition document identifies the generally available package schema or schemas. Within that major version, Zarf MUST NOT remove a stable schema field, kind, enumerated value, or documented core behavior, or change it incompatibly. A future incompatible package schema requires a new schema identity. A subsequent major release that changes a stable schema or documented core behavior incompatibly MUST document the migration in release notes and update compatibility coverage for create, deployment and runtime behavior, and managed state.
 +
-+* Aug 6th, 2026 [1.19.2](https://github.com/klauspost/compress/releases/tag/v1.19.2)
-+	* huff0: Add arm64 assembly for Decompress4X/1X by @lizthegrey in https://github.com/klauspost/compress/pull/1172
-+	* zstd: Re-enable unsafe decodeSync memory copies by @lizthegrey in https://github.com/klauspost/compress/pull/1171
-+	* zstd: Fix arm64 asm frame offsets placing locals on the saved LR slot by @lizthegrey in https://github.com/klauspost/compress/pull/1176
-+	* zstd: Avoid racing MaxDecodedSize write on shared dict litEnc by @zanarellidev in https://github.com/klauspost/compress/pull/1182
-+	* zstd: Keep BuildDict recent-offsets positive and loadable by @zanarellidev in https://github.com/klauspost/compress/pull/1184
-+	* zstd: Handle zero-literal 
-```
-
-**File**: `vendor/github.com/klauspost/compress/flate/deflate.go` (modified, +31/-5)
-```diff
-@@ -95,6 +95,11 @@ type advancedState struct {
- 	index     int
- 	hashMatch [maxMatchLength + minMatchLength]uint32
- 
-+	// litBits[i] is the number of bits needed to encode window[index:i]
-+	// as literals, where index is the window index at the start of the
-+	// current deflateLazy call. Only allocated when d.chain > 100 (level 9).
-+	litBits []int32
++A new release MAY add backward-compatible schema capabilities. A package using semantics or an artifact format introduced after an older CLI release MUST record the required minimum CLI version in its build metadata. An older CLI MUST fail before deployment with the requirement and its reason, rather than deploy with unknown or changed behavior.
 +
- 	// Input hash chains
- 	// hashHead[hashValue] contains the largest inputIndex with the specified hash value
- 	// If hashHead[hashValue] is within the current window, then
-@@ -260,6 +265,7 @@ func (d *compressor) fillWindow(b []byte) {
- 	}
- 	// Update window information.
- 	d.windowEnd += n
-+	d.blockStart = d.windowEnd
- 	s.index = n
- }
- 
-@@ -283,7 +289,9 @@ func (d *compressor) findMatch(pos int, prevHead int, lookahead int) (length, of
- 	minIndex := max(pos-windowSize, 0)
- 	offset = 0
- 
--	if d.chain < 100 {
-+	// The gain estimate below needs the tables that deflateLazy only
-+	// generates when d.chain > 100, so the conditions must match.
-+	if d.chain <= 100 {
- 		for i := prevHead; tries > 0; tries-- {
- 			if wEnd == win[i+length] {
- 				n := matchLen(win[i:i+minMatchLook], wPos)
-@@ -311,21 +319,25 @@ func (d *compressor) findMatch(pos int, prevHead int, lookahead int) (length, of
- 	}
- 
- 	// Minimum gain to accept a match.
--	cGain := 4
-+	cGain := int32(4)
- 
- 	// Some like it higher (CSV), some like it lower (JSON)
- 	const baseCost = 3
- 	// Base is 4 bytes at with an additional cost.
- 	// Matches must be better than this.
- 
-+	s := d.state
-+	hashPrev := &s.hashPrev
-+	hashOffset := s.hashOffset
-+	litBits := s.litBits[pos : pos+minMatchLook+1]
++## Deprecation Lifecycle
 +
- 	for i := prevHead; tries > 0; tries-- {
- 		if wEnd == win[i+length] {
- 			n := matchLen(win[i:i+minMatchLook], wPos)
- 			if n > length {
- 				// Calculate gain. Estimate
--				newGain := d.h.bitLengthRaw(wPos[:n]) - int(offsetExtraBits[offsetCode(uint32(pos-i))]) - baseCost - int(lengthExtraBits[lengthCodes[(n-3)&255]])
-+				newGain := litBits[n] - litBits[0] - int32(offsetExtraBits[offsetCode(uint32(pos-i))]) - baseCost - int32(lengthExtraBits[lengthCodes[(n-3)&255]])
- 
--				//fmt.Println("gain:", newGain, "prev:", cGain, "raw:", d.h.bitLengthRaw(wPos[:n]), "this-len:", n, "prev-len:", length)
- 				if newGain > cGain {
- 					length = n
- 					offset = pos - i
-@@ -343,7 +355,7 @@ func (d *compressor) findMatch(pos int, prevHead int, lookahead int) (length, of
- 			// hashPrev[i & windowMask] has already been overwritten, so stop now.
- 			break
- 		}
--		i = int(d.state.hashPrev[i&windowMask]) - d.state.hashOffset
-+		i = int(hashPrev[i&windowMask]) - hashOffset
- 		if i < minIndex {
- 			break
- 		}
-@@ -427,6 +439,20 @@ func (d *compressor) deflateLazy() {
- 			tmp[v]++
- 		}
- 		d.h.generate(tmp[:], 15)
++The following lifecycle applies to deprecated SDK and CLI logic, including logic outside the explicit SemVer contract above.
 +
-+		// Compute the cumulative cost of encoding the window as literals,
-+		// so findMatch can look up the cost of any range in constant time.
-+		if s.litBits == nil {
-+			s.litBits = make([]int32, 2*windowSize+1)
-+		}
-+		codes := d.h.codes[:256]
-+		litBits := s.litBits[s.index : d.windowEnd+1]
-+		total := int32(0)
-+		litBits[0] = 0
-+		for i, v := range d.window[s.index:d.windowEnd] {
-+			total += int32(codes[v].len())
-+			litBits[i+1] = total
-+		}
- 	}
- 
- 	s.maxInsertIndex = d.windowEnd - (minMatchLength - 1)
-```
-
-**File**: `vendor/github.com/klauspost/compress/flate/fast_encoder.go` (modified, +2/-1)
-```diff
-@@ -9,6 +9,7 @@ import (
- 	"fmt"
- 
- 	"github.com/klauspost/compress/internal/le"
-+	"github.com/klauspost/compress/internal/regmask"
- )
- 
- type fastEnc interface {
-@@ -108,7 +109,7 @@ type tableEntryPrev struct {
- // hash7 returns the hash of the lowest 7 bytes of u to fit in a hash table with h bits.
- // Preferably h should be a constant and should always be <64.
- func hash7(u uint64, h uint8) uint32 {
--	return uint32(((u << (64 - 56)) * prime7bytes) >> ((64 - h) & reg8SizeMask64))
-+	return uint32(((u << (64 - 56)) * prime7bytes) >> ((64 - h) & regmask.Shift64ByUint8))
- }
- 
- // hashLen returns a hash of the lowest mls bytes of with length output bits.
-```
-
-**File**: `vendor/github.com/klauspost/compress/flate/huffman_bit_writer.go` (modified, +95/-129)
-```diff
-@@ -32,14 +32,12 @@ const (
- 
- 	// bufferFlushSize indicates the buffer size
- 	// after which bytes are flushed to the writer.
--	// Should preferably be a multiple of 6, since
--	// we accumulate 6 bytes between writes to the buffer.
-+	// Between checks, at most 7 bytes are added to the buffer,
-+	// and writes are done as unconditional 8-byte stores, so the
-+	// buffer must have at least bufferFlushSize+7+8 bytes.
- 	bufferFlushSize = 246
- )
- 
--// Minimum length code that emits bits.
--const lengthExtraBitsMinCode = 8
--
- // The number of extra bits needed by length code X - LENGTH_CODES_START.
- var lengthExtraBits = [32]uint8{
- 	/* 257 */ 0, 0, 0,
-@@ -55,9 +53,6 @@ var lengthBase = [32]uint8{
- 	64, 80, 96, 112, 128, 160, 192, 224, 255,
- }
- 
--// Minimum offset code that emits bits.
--const offsetExtraBitsMinCode = 4
--
- // offset code word extra bits.
- var offsetExtraBits = [32]int8{
- 	0, 0, 0, 0, 1, 1, 2, 2, 3, 3,
-@@ -67,8 +62,24 @@ var offsetExtraBits = [32]int8{
- 	14, 14,
- }
- 
-+// offsetCombined combines the number of extra bits and the base offset
-+// of each offset code in a single table: extra bits in the low 8 bits,
-+// and the base offset (already reduced by baseMatchOffset) in the upper bits.
-+// Entries for the extended window codes 30 and 31 are unused.
- var offsetCombined = [32]uint32{}
- 
-+// lengthCombined combines, for each match length (reduced by
-+// baseMatchLength), the length code (relative to lengthCodesStart) in
-+// bits 0-4, the number of extra bits in bits 5-7 and the value of the
-+// extra bits in bits 8-12.
-+var lengthCombined = func() (t [256]uint32) {
-+	for i := range t {
-+		code := lengthCodes[i]
-+		t[i] = uint32(code) | uint32(lengthExtraBits[code])<<5 | uint32(uint8(i)-lengthBase[code])<<8
-+	}
-+	return t
-+}()
++- **SDK logic** is a Go API or programmatic integration explicitly made available to consumers.
++- **CLI logic** is a user-invoked command, subcommand, flag, or documented CLI behavior, including `zarf tools`.
 +
- func init() {
- 	var offsetBase = [32]uint32{
- 		/* normal deflate */
-@@ -85,7 +96,7 @@ func init() {
- 
- 	for i := range offsetCombined[:] {
- 		// Don't use extended window values...
--		if offsetExtraBits[i] == 0 || offsetBase[i] > 0x006000 {
-+		if offsetBase[i] > 0x006000 {
- 			continue
- 		}
- 		offsetCombined[i] = uint32(offsetExtraBits[i]) | (offsetBase[i] << 8)
-@@ -115,10 +126,14 @@ type huffmanBitWriter struct {
- 	lastHeader      int
- 	// Set between 0 (reused block can be up to 2x the size)
- 	logNewTablePenalty uint
--	bytes              [256 + 8]byte
--	literalFreq        [lengthCodesStart + 32]uint16
--	offsetFreq         [32]uint16
--	codegenFreq        [codegenCodeCount]uint16
++The project MUST retain deprecated SDK logic through at least three subsequent minor releases and deprecated CLI logic through at least six subsequent minor releases. For an item deprecated in `vM.N.0`, the earliest SDK removal release is `vM.(N+4).0` and the earliest CLI removal release is `vM.(N+7).0`. Maintainers MAY extend either window at their discretion.
 +
-+	// bytes must hold at least bufferFlushSize+7+8 bytes (see bufferFlushSize).
-+	// Its size is rounded up to a multiple of 8 to keep the following
-+	// fields aligned, which is measurably faster in writeBlockHuff.
-+	bytes       [(bufferFlushSize + 7 + 8 + 7) &^ 7]byte
-+	literalFreq [lengthCodesStart + 32]uint16
-+	offsetFreq  [32]uint16
-+	codegenFreq [codegenCodeCount]uint16
- 
- 	// codegen must have an extra space for the final symbol.
- 	codegen [literalCount + offsetCodeCount + 1]uint8
-@@ -842,124 +857,75 @@ func (w *huffmanBitWriter) writeTokens(tokens []token, leCodes, oeCodes []hcode)
- 	lengths := leCodes[lengthCodesStart:]
- 	lengths = lengths[:32]
- 
--	// Go 1.16 LOVES having these on stack.
-+	// Keeping these on the stack instead of in w is significantly faster.
- 	bits, nbits, nbytes := w.bits, w.nbits, w.nbytes
- 
--	for _, t := range tokens {
--		if t < 256 {
--			//w.writeCode(lits[t.literal()])
--			c := lits[t]
--			bits |= c.code64() << (nbits & 63)
--			nbits += c.len()
--			if nbits >= 48 {
--				le.Store64(w.bytes[:], nbytes, bits)
--				bits >>= 48
--				nbits -= 48
--				nbytes += 6
--				if nbytes >= bufferFlushSize {
--					if w.err != nil {
--						nbytes = 0
--						return
--					}
--					_, w.err = w.writer.Write(w.bytes[:nbytes])
--					nbytes = 0
--				}
--			}
--			continue
-+	// Flush whole bytes, so that nbits <= 7 when entering the loop below.
-+	le.Store64(w.bytes[:], nbytes, bits)
-+	nbytes += nbits >> 3
-+	bits >>= nbits & 56
-+	nbits &= 7
-+	if nbytes >= bufferFlushSize {
-+		_, w.err = w.writer.Write(w.bytes[:nbytes])
-+		nbytes = 0
-+		if w.err != nil {
-+			return
- 		}
-+	}
- 
--		// Write the length
--		length := t.length()
--		lengthCode := lengthCode(length) & 31
--		if false {
--			w.writeCode(lengths[lengthCode])
--		} else {
--			// inlined
--			c := lengths[lengthCode]
-+	// The loop below flushes whole bytes at the end of every iteration,
-+	// so that nbits <= 7 at the top of every iteration.
-+	// A literal adds at most 15 bits and a match at most
-+	// 15+5+15+13 = 48 bits, so up to three literals or a single match
-+	// can be added to the 64-bit accumulator without an intermediate flush.
-+	// Unconditionally storing 8 bytes and advancing by the number of
-+	// whole bytes avoids a poorly predicted branch per token.
-+	for i := 0; i < len(tokens); i++ {
-+		t := tokens[i]
-+		if t < 256 {
-+			c := lits[t]
- 			bits |= c.code64() << (nbits & 63)
- 			nbits += c.len()
--			if nbits >= 48 {
--				le.Store64(w.bytes[:], nbytes, bits)
--				bits >>= 48
--				nbits -= 48
--				nbytes += 6
--				if nbytes >= bufferFl
++A deprecation MUST identify the affected logic, its replacement or removal rationale, the announcing release, and the earliest removal release. SDK deprecations MUST use Go's `Deprecated:` documentation convention. CLI deprecations MUST issue an actionable warning when used. Release notes MUST describe the migration required before removal.
++
++## Compatibility Directions
++
++### Older supported package on a newer CLI
++
++A later CLI in the same supported major version MUST create and deploy packages using supported schema capabilities and supported artifact representations from earlier releases in that major version.
++
++### Newer package on an older CLI
++
++Zarf does not guarantee that an older CLI can deploy every newer package. When a package depends on a later CLI's schema capability, artifact representation, or runtime behavior, package creation MUST record the minimum required Zarf version and the reason. Package deployment MUST validate that requirement before changing cluster state.
++
++## Signing and OCI Interoperability
++
++Signing and OCI utilities are implementation details, not public Go APIs or stable standalone command interfaces. The artifa
 ```
 
 ---
 
-### Incident Patch 2: `b0ca5a9e` (2026-11-08)
-**Commit Message**: feat: deprecate v1alpha1 packages (#5623)
+### Incident Patch 2: `b3ca0ad4` (2026-11-09)
+**Commit Message**: chore(docs): fixed broken links (#5601)
 
-Signed-off-by: Austin Abro <[REDACTED_EMAIL]>
+Signed-off-by: dwertent <[REDACTED_EMAIL]>
+Signed-off-by: David Wertenteil <[REDACTED_EMAIL]>
+Co-authored-by: Copilot Autofix powered by AI <[REDACTED_EMAIL]>
 
-**File**: `.golangci.yaml` (modified, +5/-0)
+**File**: `README.md` (modified, +1/-1)
 ```diff
-@@ -79,6 +79,11 @@ linters:
-     testifylint:
-       enable-all: true
-   exclusions:
-+    rules:
-+      # Legacy v1alpha1 APIs remain necessary; method-chain diagnostics can span lines.
-+      - linters:
-+          - staticcheck
-+        text: '(?s)SA1019: .* is deprecated: Only supported by deprecated v1alpha1 packages\.'
-     presets:
-       - common-false-positives
-       - legacy
+@@ -36,7 +36,7 @@ Zarf eliminates the [complexity of airgap software delivery](https://www.itopsti
+ - [Publish](https://docs.zarf.dev/commands/zarf_package_publish), [pull](https://docs.zarf.dev/commands/zarf_package_pull), and [deploy](https://docs.zarf.dev/commands/zarf_package_deploy) packages from an [OCI registry](https://opencontainers.org/)
+ - Powerful component lifecycle [actions](https://docs.zarf.dev/ref/actions)
+ - Deploy a new cluster while fully disconnected with [K3s](https://k3s.io/) or into any existing cluster using a [kube config](https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/)
+-- Built-in Git server with [Gitea](https://gitea.io/en-us/)
++- Built-in Git server with [Gitea](https://about.gitea.com/)
+ - Built-in Docker registry
+ - Builtin [K9s Dashboard](https://k9scli.io/) for managing a cluster from the terminal
+ - [Mutating Webhook](adr/0005-mutating-webhook.md) to automatically update Kubernetes pod's image path and pull secrets as well as [Flux Git Repository](https://fluxcd.io/docs/components/source/gitrepositories/) URLs and secret references
 ```
 
-**File**: `netlify.toml` (modified, +1/-1)
+**File**: `SUPPORT.md` (modified, +1/-1)
 ```diff
-@@ -4,7 +4,7 @@
-   publish = "dist/"
+@@ -19,7 +19,7 @@ After an issue is made, this issue can be brought into other channels such as th
  
- [build.environment]
--  NODE_VERSION = "22.12.0"
-+  NODE_VERSION = "26"
  
- [[redirects]]
- from = "/docs/the-zarf-cli/cli-commands/*"
+ ## Sensitive Information Process
+-For issues from those who are unable to post on Github, you may send an email using the following issue template filled out to [zarf-dev-private@googlegroups.com](zarf-dev-private@googlegroups.com)
++For issues from those who are unable to post on Github, you may send an email using the following issue template filled out to [zarf-dev-private@googlegroups.com](mailto:zarf-dev-private@googlegroups.com)
+ 
+ The response time to emails may be delayed  as they are not able to receive community help, so we encourage participation into Github Issues as much as possible.
+ 
 ```
 
-**File**: `src/api/convert/convert.go` (modified, +8/-0)
+**File**: `adr/0005-mutating-webhook.md` (modified, +1/-1)
 ```diff
-@@ -13,6 +13,8 @@ import (
- )
+@@ -8,7 +8,7 @@ Accepted
  
- // PackageFromV1alpha1 converts a v1alpha1 wire package to the normalized model.
-+//
-+// Deprecated: Only supported by deprecated v1alpha1 packages.
- func PackageFromV1alpha1(pkg v1alpha1.ZarfPackage) api.Package {
- 	return internalv1alpha1.PackageFromV1alpha1(pkg)
- }
-@@ -23,6 +25,8 @@ func PackageFromV1beta1(pkg v1beta1.Package) api.Package {
- }
+ ## Context
  
- // PackageToV1alpha1 converts the normalized model to the v1alpha1 wire package.
-+//
-+// Deprecated: Only supported by deprecated v1alpha1 packages.
- func PackageToV1alpha1(pkg api.Package) v1alpha1.ZarfPackage {
- 	return internalv1alpha1.PackageToV1alpha1(pkg)
- }
-@@ -33,11 +37,15 @@ func PackageToV1beta1(pkg api.Package) v1beta1.Package {
- }
+-Currently Zarf leverages [Helm Post Rendering](https://helm.sh/docs/topics/advanced/#post-rendering) to mutate image paths and secrets for K8s to use the internal [Zarf Registry](../packages/zarf-registry/). This works well for simple K8s deployments where Zarf is performing the actual manifest apply but fails when using a secondary gitops tools suchs as [Flux](https://github.com/fluxcd/flux2), [ArgoCD](https://argo-cd.readthedocs.io/en/stable/), etc. At that point, Zarf is unable to provide mutation and it is dependent on the package author to do the mutations themselves using rudimentary templating. Further, this issue also exists when for CRDs that references the [git server](../packages/gitea/). A `zarf prepare` command was added previously to make this less painful, but it still requires additional burden on package authors to do something we are able to prescribe in code.
++Currently Zarf leverages [Helm Post Rendering](https://helm.sh/docs/topics/advanced/#post-rendering) to mutate image paths and secrets for K8s to use the internal [Zarf Registry](../packages/init/v1alpha1/zarf-registry/). This works well for simple K8s deployments where Zarf is performing the actual manifest apply but fails when using a secondary gitops tools suchs as [Flux](https://github.com/fluxcd/flux2), [ArgoCD](https://argo-cd.readthedocs.io/en/stable/), etc. At that point, Zarf is unable to provide mutation and it is dependent on the package author to do the mutations themselves using rudimentary templating. Further, this issue also exists when for CRDs that references the [git server](../packages/init/v1alpha1/gitea/). A `zarf prepare` command was added previously to make this less painful, but it still requires additional burden on package authors to do something we are able to prescribe in code.
  
- // PackageV1alpha1ToV1beta1 converts a v1alpha1 wire package to v1beta1.
-+//
-+// Deprecated: Only supported by deprecated v1alpha1 packages.
- func PackageV1alpha1ToV1beta1(pkg v1alpha1.ZarfPackage) v1beta1.Package {
- 	return PackageToV1beta1(PackageFromV1alpha1(pkg))
- }
+ ## Decision
  
- // PackageV1beta1ToV1alpha1 converts a v1beta1 wire package to v1alpha1.
-+//
-+// Deprecated: Only supported by deprecated v1alpha1 packages.
- func PackageV1beta1ToV1alpha1(pkg v1beta1.Package) v1alpha1.ZarfPackage {
- 	return PackageToV1alpha1(PackageFromV1beta1(pkg))
- }
 ```
 
-**File**: `src/api/package.go` (modified, +46/-24)
+**File**: `packages/README.md` (modified, +2/-2)
 ```diff
-@@ -20,8 +20,9 @@ type Package struct {
- 	Values      Values
- 	Attachments map[string]string
+@@ -8,7 +8,7 @@ The distros package adds optional capabilities for spinning up and tearing down
  
--	// v1alpha1-only fields
-+	// Deprecated: Only supported by deprecated v1alpha1 packages.
- 	Variables []InteractiveVariable
-+	// Deprecated: Only supported by deprecated v1alpha1 packages.
- 	Constants []Constant
+ - [EKS](https://aws.amazon.com/eks/) - Zarf deploys and tears down using the `eksctl` binary under the hood. See how it's done in the EKS package's [`zarf.yaml`](./distros/eks/zarf.yaml) and checkout the [EKS package's config](./distros/eks/eks.yaml) for more information.
  
- 	// Runtime selection provenance is not part of either package wire schema.
-@@ -60,14 +61,20 @@ type PackageMetadata struct {
- 	Annotations              map[string]string
- 	PreventNamespaceOverride bool
+-- [k3s](https://k3s.io/) - Zarf deploys and tears down using the `k3s` service under the hood. See how it's done in the k3s package's [`zarf.yaml`](./distros/k3s/common/zarf.yaml).
++- [k3s](https://k3s.io/) - Zarf deploys and tears down using the `k3s` service under the hood. See how it's done in the k3s package's [`zarf.yaml`](./distros/k3s/zarf.yaml).
  
--	// v1alpha1-only metadata fields.
--	URL           string
--	Image         string
--	YOLO          bool
--	Authors       string
-+	// Deprecated: Only supported by deprecated v1alpha1 packages.
-+	URL string
-+	// Deprecated: Only supported by deprecated v1alpha1 packages.
-+	Image string
-+	// Deprecated: Only supported by deprecated v1alpha1 packages.
-+	YOLO bool
-+	// Deprecated: Only supported by deprecated v1alpha1 packages.
-+	Authors string
-+	// Deprecated: Only supported by deprecated v1alpha1 packages.
- 	Documentation string
--	Source        string
--	Vendor        string
-+	// Deprecated: Only supported by deprecated v1alpha1 packages.
-+	Source string
-+	// Deprecated: Only supported by deprecated v1alpha1 packages.
-+	Vendor string
- }
+ ### eks (used only for testing, not for production)
  
- // BuildData contains build metadata shared across package API versions.
-@@ -87,7 +94,7 @@ type BuildData struct {
- 	ProvenanceFiles     []string
- 	AggregateChecksum   string
+@@ -41,7 +41,7 @@ Run these targets from the repository root. The v1alpha1 component packages and
  
--	// v1alpha1-only build fields.
-+	// Deprecated: Only supported by deprecated v1alpha1 packages.
- 	DifferentialMissing []string
- }
+ ### Gitea
  
-@@ -127,11 +134,16 @@ type Component struct {
- 	StateAccess   []StateAccessKey
- 	Actions       ComponentActions
+-Users who rely heavily on GitOps find it useful to deploy an internal Git repository.  Zarf uses [Gitea](https://gitea.io/en-us/) to provide this functionality.  The Gitea package deploys a Gitea instance to the cluster and configures it to use the credentials in the `private-git-server` secret in the Zarf namespace.
++Users who rely heavily on GitOps find it useful to deploy an internal Git repository.  Zarf uses [Gitea](https://about.gitea.com/) to provide this functionality.  The Gitea package deploys a Gitea instance to the cluster and configures it to use the credentials in the `private-git-server` secret in the Zarf namespace.
  
--	Default        bool
--	Group          string
-+	// Deprecated: Only supported by deprecated v1alpha1 packages.
-+	Default bool
-+	// Deprecated: Only supported by deprecated v1alpha1 packages.
-+	Group string
-+	// Deprecated: Only supported by deprecated v1alpha1 packages.
- 	DataInjections []ZarfDataInjection
--	HealthChecks   []NamespacedObjectKindReference
--	Distros        []string
-+	// Deprecated: Only supported by deprecated v1alpha1 packages.
-+	HealthChecks []NamespacedObjectKindReference
-+	// Deprecated: Only supported by deprecated v1alpha1 packages.
-+	Distros []string
- }
- 
- // Service identifies a Zarf-managed cluster service provided by a component.
-@@ -170,6 +182,8 @@ type ComponentImport struct {
- 
- 	// Name identifies a v1alpha1 imported component. Path and URL are projected onto
- 	// Local and Remote by the v1alpha1 converter.
-+	//
-+	// Deprecated: Only supported by deprecated v1alpha1 packages.
- 	Name string
- }
- 
-@@ -230,6 +244,8 @@ type Chart struct {
- 	Name string
- 	// LegacyVersion is kept for existing v1alpha1 packages so that we can track the chart's archive and values files.
- 	// The version of the chart is separately tracked in OCI source, HelmRepository, or GitSource
-+	//
-+	// Deprecated: Only supported by deprecated v1alpha1 packages.
- 	LegacyVersion        string
- 	Namespace            string
- 	ReleaseName          string
-@@ -245,6 +261,8 @@ type Chart struct {
- 	OCI            *OCISource
- 
- 	// Variables are required to run v1alpha1 chart actions.
-+	//
-+	// Deprecated: Only supported by deprecated v1alpha1 packages.
- 	Variables []ZarfChartVariable
- }
- 
-@@ -306,7 +324,8 @@ type Repository struct {
- 	// LegacyURL retains the original v1alpha1 URL, including an inline ref, so
- 	// repositories retain the directory names used by existing package layouts
- 	// For instance, GitRef can't express ref/tags/v1.0 vs only v1.0
--	// Will be deleted with v1alpha1 is no longer support
-+	//
-+	// Deprecated: Only supported by deprecated v1alpha1 packages.
- 	LegacyURL string
- }
- 
-@@ -423,8 +442,9 @@ type ComponentActions struct {
- 
- // ActionSet contains actions for one package lifecycle operation.
- type ActionSet struct {
--	Defaults  ActionDefaults
--	Before    []Action
-+	Defaults ActionDefaults
-+	Before   []Action
-+	// Deprecated: Only supported by deprecated v1alpha1 packages.
- 	After     []Action
- 	OnSuccess []Action
- 	OnFailure []Action
-@@ -442,13 +462,14 @@ type ActionDefaults struct {
- 
- // Action is a command or wait operation performed during a package lifecycle operation.
- type Action struct {
--	Silent           *bool
--	MaxTotalSeconds  *int
--	Retries          *int
--	Dir              *string
--	Env              []string
--	Cmd              string
--	Shell            *Shell
-+	Silent          *bool
-+	MaxTotalSeconds *int
-+	Retries         *int
-+	Dir             *string
-+	Env             []string
-+	Cmd             string
-+	Shell           *Shell
-+	// Deprecated: Only supported by deprecated v1alpha1 packages.
- 	SetVariables     []Variable
- 	SetValues        []SetValue
- 	Description      string
-@@ -458,7 +479,8 @@ type Action struct {
- 
- // SetValue declares how command output is stored in the package values map.
- type SetValue struct {
--	Key   string
-+	Key string
-+	// Deprecated: Only supported by deprecated v1alpha1 packages.
- 	Value any
- 	Type  S
+ ```bash
+ zarf init --components=git-server
 ```
 
-**File**: `src/api/v1alpha1/component.go` (modified, +20/-0)
+**File**: `site/src/content/docs/contribute/nerd-notes.mdx` (modified, +1/-1)
 ```diff
-@@ -95,6 +95,8 @@ type NamespacedObjectKindReference struct {
- }
+@@ -6,7 +6,7 @@ title: Nerd Notes
+ This page is still being developed. More content will be added soon!
+ :::
  
- // RequiresCluster returns if the component requires a cluster connection to deploy.
-+//
-+// Deprecated: Only supported by deprecated v1alpha1 packages.
- func (c ZarfComponent) RequiresCluster() bool {
- 	hasImages := len(c.Images) > 0
- 	hasImageArchives := len(c.ImageArchives) > 0
-@@ -112,6 +114,8 @@ func (c ZarfComponent) RequiresCluster() bool {
- }
+-Zarf is written entirely in [go](https://go.dev/), except for a single \<1Mib binary for the injector system written in [rust](https://www.rust-lang.org/), so we can fit it in a [configmap](https://kubernetes.io/docs/concepts/configuration/configmap/). All assets are bundled together into a single [zstd](https://facebook.github.io/zstd/) tarball on each `zarf package create` operation. On the airgap / offline side, `zarf package deploy` extracts the various assets and places them on the filesystem or installs them in the cluster, depending on what the zarf package says to do. Some important ideas behind Zarf:
++Zarf is written entirely in [go](https://go.dev/), except for a single \<1Mib binary for the injector system written in [rust](https://www.rust-lang.org/), so we can fit it in a [configmap](https://kubernetes.io/docs/concepts/configuration/configmap/). All assets are bundled together into a single [zstd](https://github.com/facebook/zstd) tarball on each `zarf package create` operation. On the airgap / offline side, `zarf package deploy` extracts the various assets and places them on the filesystem or installs them in the cluster, depending on what the zarf package says to do. Some important ideas behind Zarf:
  
- // IsRequired returns if the component is required or not.
-+//
-+// Deprecated: Only supported by deprecated v1alpha1 packages.
- func (c ZarfComponent) IsRequired() bool {
- 	if c.Required != nil {
- 		return *c.Required
-@@ -121,6 +125,8 @@ func (c ZarfComponent) IsRequired() bool {
- }
- 
- // GetImages returns all images specified in the component, including those from ImageArchives.
-+//
-+// Deprecated: Only supported by deprecated v1alpha1 packages.
- func (c ZarfComponent) GetImages() []string {
- 	images := []string{}
- 
-@@ -142,6 +148,8 @@ var supportedOS = []string{"linux", "darwin", "windows", ""}
- // The supported operating systems are: linux, darwin, windows.
- //
- // An empty string signifies no OS restrictions.
-+//
-+// Deprecated: Only supported by deprecated v1alpha1 packages.
- func SupportedOS() []string {
- 	return supportedOS
- }
-@@ -185,6 +193,8 @@ type ZarfFile struct {
- }
- 
- // IsTemplate returns if the ZarfFile should be templated or not.
-+//
-+// Deprecated: Only supported by deprecated v1alpha1 packages.
- func (f ZarfFile) IsTemplate() bool {
- 	if f.Template != nil {
- 		return *f.Template
-@@ -234,6 +244,8 @@ type ZarfChart struct {
- }
- 
- // ShouldRunSchemaValidation returns if Helm schema validation should be run or not
-+//
-+// Deprecated: Only supported by deprecated v1alpha1 packages.
- func (zc ZarfChart) ShouldRunSchemaValidation() bool {
- 	if zc.SchemaValidation != nil {
- 		return *zc.SchemaValidation
-@@ -242,6 +254,8 @@ func (zc ZarfChart) ShouldRunSchemaValidation() bool {
- }
- 
- // GetServerSideApply returns server side apply with default of "auto" if it is not set
-+//
-+// Deprecated: Only supported by deprecated v1alpha1 packages.
- func (zc ZarfChart) GetServerSideApply() string {
- 	if zc.ServerSideApply == "" {
- 		return "auto"
-@@ -299,6 +313,8 @@ type ZarfManifest struct {
- }
- 
- // GetServerSideApply returns server side apply with default of "auto" if it is not set
-+//
-+// Deprecated: Only supported by deprecated v1alpha1 packages.
- func (m ZarfManifest) GetServerSideApply() string {
- 	if m.ServerSideApply == "" {
- 		return "auto"
-@@ -307,6 +323,8 @@ func (m ZarfManifest) GetServerSideApply() string {
- }
- 
- // IsTemplate returns if the ZarfFile should be templated.
-+//
-+// Deprecated: Only supported by deprecated v1alpha1 packages.
- func (m ZarfManifest) IsTemplate() bool {
- 	if m.Template != nil {
- 		return *m.Template
-@@ -403,6 +421,8 @@ type ZarfComponentAction struct {
- }
- 
- // ShouldTemplate returns if the action cmd should be templated or not.
-+//
-+// Deprecated: Only supported by deprecated v1alpha1 packages.
- func (a ZarfComponentAction) ShouldTemplate() bool {
- 	if a.Template != nil {
- 		return *a.Template
+ - All workloads are installed in the cluster via the [Helm SDK](https://helm.sh/docs/topics/advanced/#go-sdk)
+ - The OCI Registries used are both from [Docker](https://github.com/distribution/distribution)
 ```
 
-**File**: `src/api/v1alpha1/package.go` (modified, +14/-0)
+**File**: `site/src/content/docs/getting-started/understanding.mdx` (modified, +1/-1)
 ```diff
-@@ -2,6 +2,8 @@
- // SPDX-FileCopyrightText: 2021-Present The Zarf Authors
+@@ -41,7 +41,7 @@ For Zarf-specific concepts, see the following pages:
+ ### CLI Basics
  
- // Package v1alpha1 holds the definition of the v1alpha1 Zarf Package
-+//
-+// Deprecated: Only supported by deprecated v1alpha1 packages.
- package v1alpha1
+ - [List of CLI Commands](https://www.codecademy.com/article/command-line-commands)
+-- [How to use the Command Line](https://training.linuxfoundation.org/training/linux-tools-for-software-development-lfd108x/)
++- [How to use the Command Line](https://training.linuxfoundation.org/training/introduction-to-linux/)
  
- import (
-@@ -71,11 +73,15 @@ type ZarfPackage struct {
- }
+ ## Terms Used
  
- // IsInitConfig returns whether a Zarf package is an init config.
-+//
-+// Deprecated: Only supported by deprecated v1alpha1 packages.
- func (pkg ZarfPackage) IsInitConfig() bool {
- 	return pkg.Kind == ZarfInitConfig
- }
- 
- // GetComponent returns the component with the given name, or an error if no such component exists.
-+//
-+// Deprecated: Only supported by deprecated v1alpha1 packages.
- func (pkg ZarfPackage) GetComponent(name string) (ZarfComponent, error) {
- 	for _, component := range pkg.Components {
- 		if component.Name == name {
-@@ -86,6 +92,8 @@ func (pkg ZarfPackage) GetComponent(name string) (ZarfComponent, error) {
- }
- 
- // HasImages returns true if one of the components contains an image.
-+//
-+// Deprecated: Only supported by deprecated v1alpha1 packages.
- func (pkg ZarfPackage) HasImages() bool {
- 	for _, component := range pkg.Components {
- 		if len(component.Images) > 0 || len(component.ImageArchives) > 0 {
-@@ -96,6 +104,8 @@ func (pkg ZarfPackage) HasImages() bool {
- }
- 
- // IsSBOMAble checks if a package has contents that an SBOM can be created on (i.e. images, files, or data injections).
-+//
-+// Deprecated: Only supported by deprecated v1alpha1 packages.
- func (pkg ZarfPackage) IsSBOMAble() bool {
- 	for _, c := range pkg.Components {
- 		if len(c.ImageArchives) > 0 || len(c.Images) > 0 || len(c.Files) > 0 || len(c.DataInjections) > 0 {
-@@ -106,6 +116,8 @@ func (pkg ZarfPackage) IsSBOMAble() bool {
- }
- 
- // AllowsNamespaceOverride returns whether the package allows the namespace to be overridden
-+//
-+// Deprecated: Only supported by deprecated v1alpha1 packages.
- func (pkg ZarfPackage) AllowsNamespaceOverride() bool {
- 	if pkg.Metadata.AllowNamespaceOverride != nil {
- 		return *pkg.Metadata.AllowNamespaceOverride
-@@ -154,6 +166,8 @@ type Constant struct {
- }
- 
- // Validate runs all validation checks on a package constant.
-+//
-+// Deprecated: Only supported by deprecated v1alpha1 packages.
- func (c Constant) Validate() error {
- 	if !regexp.MustCompile(c.Pattern).MatchString(c.Value) {
- 		return fmt.Errorf("provided value for constant %s does not match pattern %s", c.Name, c.Pattern)
 ```
 
-**File**: `src/cmd/dev.go` (modified, +3/-0)
+**File**: `site/src/content/docs/ref/components.mdx` (modified, +2/-2)
 ```diff
-@@ -28,6 +28,7 @@ import (
- 	"github.com/zarf-dev/zarf/src/api/v1beta1"
- 	"github.com/zarf-dev/zarf/src/config"
- 	"github.com/zarf-dev/zarf/src/config/lang"
-+	internalv1alpha1 "github.com/zarf-dev/zarf/src/internal/api/v1alpha1"
- 	"github.com/zarf-dev/zarf/src/internal/checksum"
- 	"github.com/zarf-dev/zarf/src/pkg/archive"
- 	"github.com/zarf-dev/zarf/src/pkg/helpers"
-@@ -241,6 +242,8 @@ func (o *devInspectDefinitionOptions) run(cmd *cobra.Command, args []string) err
- 		return err
- 	}
+@@ -106,7 +106,7 @@ Manifests under the `kustomizations` key can be:
  
-+	internalv1alpha1.WarnIfDeprecated(ctx, definition)
-+
- 	// The definition is printed in the apiVersion it was authored in.
- 	if definition.APIVersion == v1beta1.APIVersion {
- 		pkg := convert.PackageToV1beta1(definition)
+ :::note
+ 
+-Zarf dynamically generates a Helm Chart from the named manifest entries that you specify. This means that any given set of files under a manifest entry will be applied according to [Helm Chart template and manifest install ordering](https://github.com/helm/helm/blob/main/pkg/releaseutil/manifest_sorter.go#L78) and not necessarily in the order that files are declared. If ordering is important, consider moving each file into its own manifest entry in the `manifests` array.
++Zarf dynamically generates a Helm Chart from the named manifest entries that you specify. This means that any given set of files under a manifest entry will be applied according to [Helm Chart template and manifest install ordering](https://github.com/helm/helm/blob/main/pkg/release/v1/util/manifest_sorter.go) and not necessarily in the order that files are declared. If ordering is important, consider moving each file into its own manifest entry in the `manifests` array.
+ 
+ :::
+ 
+@@ -151,7 +151,7 @@ Another way to bring OCI images can into the package is via archives of [OCI lay
+ 
+ An OCI layout can have any number of images, Zarf will pull all images that are listed in the sub-field `imageArchives.images`. If a listed image is not found in the archive then Zarf will error. In order for Zarf to find an image its [descriptor](https://specs.opencontainers.org/image-spec/descriptor/?v=v1.1.1) in the OCI-layout index.json must include the annotation "io.containerd.image.name" or "org.opencontainers.image.ref.name". `docker save` and `podman save` will automatically add at least one of these annotations.
+ 
+-Locally-built images that are not pulled from a public registry should be referenced under the reserved [`.internal`](https://www.icann.org/en/board-activities-and-meetings/materials/approved-resolutions-special-meeting-of-the-icann-board-24-07-2024-en#section2.b) top-level domain (for example `zarf.internal/my-app:1.0.0`). The `.internal` TLD will never resolve on the public internet, which avoids accidentally pulling an unexpected image if a registry reference is mistyped or rewriting fails. `zarf dev lint` emits a warning when an image archive image does not use a `.internal` domain.
++Locally-built images that are not pulled from a public registry should be referenced under the reserved [`.internal`](https://www.icann.org/en/board-activities-and-meetings/materials/approved-resolutions-special-meeting-of-the-icann-board-29-07-2024-en#section2.a) top-level domain (for example `zarf.internal/my-app:1.0.0`). The `.internal` TLD will never resolve on the public internet, which avoids accidentally pulling an unexpected image if a registry reference is mistyped or rewriting fails. `zarf dev lint` emits a warning when an image archive image does not use a `.internal` domain.
+ 
+ 
+ ```yaml
 ```
 
-**File**: `src/cmd/package.go` (modified, +15/-0)
+**File**: `site/src/content/docs/ref/init-package.mdx` (modified, +1/-1)
 ```diff
-@@ -23,6 +23,7 @@ import (
- 	"github.com/spf13/cobra"
- 	"github.com/spf13/pflag"
- 	"github.com/spf13/viper"
-+	internalv1alpha1 "github.com/zarf-dev/zarf/src/internal/api/v1alpha1"
- 	"github.com/zarf-dev/zarf/src/pkg/helpers"
- 	"oras.land/oras-go/v2/registry"
+@@ -260,7 +260,7 @@ The Zarf team maintains some optional components in the default 'init' package.
+ | Components   | Description                                                                                                                                                       |
+ | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+ | k3s          | REQUIRES ROOT (not sudo). Installs a lightweight Kubernetes Cluster on the local host [K3s](https://k3s.io/) and configures it to start up on boot.   |
+-| git-server   | Adds a [GitOps](https://about.gitlab.com/topics/gitops/)-compatible source control service [Gitea](https://gitea.io/en-us/) into the cluster. |
++| git-server   | Adds a [GitOps](https://about.gitlab.com/topics/gitops/)-compatible source control service [Gitea](https://about.gitea.com/) into the cluster. |
  
-@@ -774,6 +775,7 @@ func (o *packageMirrorResourcesOptions) run(cmd *cobra.Command, args []string) (
- 	if err != nil {
- 		return err
- 	}
-+	internalv1alpha1.WarnIfDeprecated(ctx, pkgLayout.Definition())
- 	defer func() {
- 		// Cleanup package files
- 		err = errors.Join(err, pkgLayout.Cleanup())
-@@ -1219,6 +1221,7 @@ func (o *packageInspectSBOMOptions) run(cmd *cobra.Command, args []string) (err
- 	if err != nil {
- 		return fmt.Errorf("unable to load the package: %w", err)
- 	}
-+	internalv1alpha1.WarnIfDeprecated(ctx, pkgLayout.Definition())
+ There are two ways to deploy these optional components. First, you can provide a comma-separated list of components to the `--components` flag, such as `zarf init --components k3s,git-server --confirm`, or, you can choose to exclude the `--components` and `--confirm` flags and respond with a yes (`y`) or no (`n`) for each optional component when interactively prompted.
  
- 	defer func() {
- 		err = errors.Join(err, pkgLayout.Cleanup())
-@@ -1299,6 +1302,7 @@ func (o *packageInspectImagesOptions) run(cmd *cobra.Command, args []string) err
- 	if err != nil {
- 		return fmt.Errorf("unable to load the package: %w", err)
- 	}
-+	internalv1alpha1.WarnIfDeprecated(ctx, pkg)
- 
- 	images := make([]string, 0)
- 	for _, component := range pkg.Components {
-@@ -1373,6 +1377,7 @@ func (o *packageInspectDocumentationOptions) run(cmd *cobra.Command, args []stri
- 	if err != nil {
- 		return fmt.Errorf("unable to load the package: %w", err)
- 	}
-+	internalv1alpha1.WarnIfDeprecated(ctx, pkgLayout.Definition())
- 	defer func() {
- 		err = errors.Join(err, pkgLayout.Cleanup())
- 	}()
-@@ -1438,6 +1443,7 @@ func (o *packageInspectDefinitionOptions) run(cmd *cobra.Command, args []string)
- 	if err != nil {
- 		return fmt.Errorf("unable to load the package: %w", err)
- 	}
-+	internalv1alpha1.WarnIfDeprecated(ctx, pkg)
- 
- 	displayPackage, err := packageForDisplay(pkg)
- 	if err != nil {
-@@ -1526,6 +1532,13 @@ func (o *packageListOptions) run(ctx context.Context, args []string) error {
- 		if err != nil {
- 			return err
- 		}
-+		if pkg.GetAPIVersion() == v1alpha1.APIVersion {
-+			attrs := []any{"package", depPkg.Name}
-+			if depPkg.NamespaceOverride != "" {
-+				attrs = append(attrs, "namespaceOverride", depPkg.NamespaceOverride)
-+			}
-+			logger.From(ctx).Warn(internalv1alpha1.DeprecationWarning, attrs...)
-+		}
- 		packageList = append(packageList, packageListInfo{
- 			Package:           depPkg.Name,
- 			NamespaceOverride: depPkg.NamespaceOverride,
-@@ -2066,6 +2079,7 @@ func (o *packageSignOptions) run(cmd *cobra.Command, args []string) error {
- 	if err != nil {
- 		return fmt.Errorf("failed to load package for signing: %w", err)
- 	}
-+	internalv1alpha1.WarnIfDeprecated(ctx, pkgLayout.Definition())
- 	defer func() {
- 		if cleanupErr := pkgLayout.Cleanup(); cleanupErr != nil {
- 			l.Warn("failed to cleanup package layout", "error", cleanupErr)
-@@ -2184,6 +2198,7 @@ func (o *packageVerifyOptions) run(cmd *cobra.Command, args []string) error {
- 	if err != nil {
- 		return fmt.Errorf("package verification failed: %w", err)
- 	}
-+	internalv1alpha1.WarnIfDeprecated(ctx, pkgLayout.Definition())
- 	defer func() {
- 		if cleanupErr := pkgLayout.Cleanup(); cleanupErr != nil {
- 			l.Warn("failed to cleanup package", "error", cleanupErr)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5634** (closed): feat!: create dedicated sign/verify options types (@brandtkeller)
+- **PR #5631** (2026-11-09): feat!: limit v1beta1 init package values chart inputs (@AustinAbro321)
 - **PR #5629** (2026-11-08): chore(deps): update github.com/klauspost/compress from v1.19.2 to v1.20.3 (@dwertent)
 - **PR #5625** (closed): fix: exclude state authoritative values (@brandtkeller)
+- **PR #5624** (2026-11-09): feat(state)!: remove storageclass and distro (@brandtkeller)
 - **PR #5623** (2026-11-08): feat: deprecate v1alpha1 packages (@AustinAbro321)
-- **PR #5621** (2026-11-08): feat!: error when package secret write fails (@AustinAbro321)
-- **PR #5620** (2026-11-07): chore(deps): update github.com/andybalholm/brotli from v1.2.0 to v1.2.8 (@dwertent)
-- **PR #5619** (2026-11-08): feat!: compress Zarf state (@AustinAbro321)
 
 ---
 
@@ -2453,28 +1785,55 @@ Signed-off-by: Austin Abro <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): update github.com/klauspost/compress from v1.19.2 to v1.20.3 (#5629)
+## X. document deprecation policy and update security.md (#5604)
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zarf-dev/zarf. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/SECURITY.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zarf-dev/zarf. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `64c34cfc`: deps): update github.com/klauspost/compress from v1.19.2 to v1.20.3 (#5629). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `328d1d31`: document deprecation policy and update security.md (#5604). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/SECURITY.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/klauspost/compress v1.20.3 // indirect
+## Report a Vulnerability
+Report a security issue or vulnerability through GitHub Security Advisories using the confidential [Report a Vulnerability](https://github.com/zarf-dev/zarf/security/advisories) workflow. Do not disclose exploit details publicly before the team has coordinated a fix and disclosure with you.
+## What to Include
+Include the affected Zarf version and deployment environment, the affected package create, deploy, runtime, or state-management path, reproduction steps or a proof of concept, the impact and attack preconditions, and a suggested mitigation if known.
+## When to Report a Vulnerability
+
+- You found a vulnerability in Zarf code.
+- You found an unpatched vulnerability in a Zarf dependency that affects the project.
+
+## When Not to Report a Vulnerability
+
+- You found a bug or malfunction that is not security-related.
+- You want to add a feature to Zarf.
+
+Use the [issue tracker](https://github.com/zarf-dev/zarf/issues) for non-security bugs and feature requests.
+Security fixes are provided for the latest stable minor release of the current major version. Affected users should upgrade to the current supported release. Maintainers MAY provide a backport when op
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	github.com/klauspost/compress v1.19.2 // indirect
+To report a security issue or vulnerability in Zarf, please use the confidential GitHub Security Advisory ["Report a Vulnerability"](https://github.com/zarf-dev/zarf/security/advisories) tab. The Zarf team will send a response indicating the next steps in handling your report. After the initial reply to your report, the team will keep you informed of the progress towards a fix and full announcement, and may ask for additional information or guidance.
+### When Should I Report a Vulnerability?
+* You found a vulnerability in the Zarf code.
+* You found a vulnerability in one of the Zarf dependencies that affects the project that has not been patched yet.
+### When Should I NOT Report a Vulnerability?
+* You found a bug or malfunction in the Zarf code (not security related).
+* You want to add a feature to Zarf.
+As Zarf has not yet reached v1.0.0, only the current latest minor release is supported.
+To discuss security related issues, please email the maintainers at zarf-dev-private@googlegroups.com.
+## CVE Posture & VEX
+Each Zarf release includes a **VEX (Vulnerability Exploitability eXchange) document**
+that captures accepted, non-exploitable findings with documented justification.
+You ca
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `64c34cfc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `328d1d31` are properly handled with clean fallback behavior.
