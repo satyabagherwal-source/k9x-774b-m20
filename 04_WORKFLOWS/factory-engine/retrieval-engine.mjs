@@ -13,7 +13,7 @@ import path from 'path';
 import crypto from 'crypto';
 import { fileURLToPath } from 'url';
 import { performance } from 'perf_hooks';
-import { INTELLIGENCE_DOMAINS } from './domain-intelligence-engine.mjs';
+import { INTELLIGENCE_DOMAINS, resolveDomain } from './domain-intelligence-engine.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -78,6 +78,42 @@ export function tokenize(text) {
     .replace(/[^\w\s-]/g, ' ')
     .split(/[\s_]+/)
     .filter(t => t.length > 1 && !STOPWORDS.has(t));
+}
+
+// Precomputed token keyword sets for ultra-fast domain classification (<1ms)
+const _domainKeywordSets = Object.entries(INTELLIGENCE_DOMAINS).map(([l, d]) => ({
+  letter: l,
+  id: d.id,
+  name: d.name,
+  keywords: new Set((d.keywords || []).map(k => k.toLowerCase()))
+}));
+
+/**
+ * Fast in-memory token-based domain classifier for indexing and cache normalization.
+ */
+export function fastClassifyDomain(text, defaultLetter = 'H') {
+  if (!text || typeof text !== 'string') {
+    const d = INTELLIGENCE_DOMAINS[defaultLetter] || INTELLIGENCE_DOMAINS['H'];
+    return { letter: d.letter, id: d.id, name: d.name };
+  }
+  const tokens = tokenize(text);
+  let bestDomain = null;
+  let maxScore = 0;
+  for (const d of _domainKeywordSets) {
+    let score = 0;
+    for (const t of tokens) {
+      if (d.keywords.has(t)) score++;
+    }
+    if (score > maxScore) {
+      maxScore = score;
+      bestDomain = d;
+    }
+  }
+  if (bestDomain && maxScore > 0) {
+    return { letter: bestDomain.letter, id: bestDomain.id, name: bestDomain.name };
+  }
+  const fallback = INTELLIGENCE_DOMAINS[defaultLetter] || INTELLIGENCE_DOMAINS['H'];
+  return { letter: fallback.letter, id: fallback.id, name: fallback.name };
 }
 
 // Dossier Directory Hash Cache to avoid redundant file stats during in-process query bursts
@@ -172,11 +208,15 @@ export function parseEngineeringPatterns(customRoot = null) {
           const whenText = whenLines.join('\n').trim();
           const rawBody = lines.slice(bodyStartIndex, i).join('\n');
           const summary = ruleText ? ruleText.slice(0, 300) : rawBody.slice(0, 300);
+          const resolvedDom = fastClassifyDomain(`${currentRule.title} ${ruleText} ${whyText}`, 'H');
           docs.push({
             id: currentRule.id,
             ruleNumber: currentRule.ruleNumber,
             title: currentRule.title,
             category: 'ENGINEERING_PATTERN',
+            domainLetter: resolvedDom.letter,
+            domainId: resolvedDom.id,
+            domainName: resolvedDom.name,
             filePath: '05_KNOWLEDGE/engineering-patterns.md',
             lineRange: [startLine, i],
             ruleText,
@@ -184,7 +224,7 @@ export function parseEngineeringPatterns(customRoot = null) {
             whenText,
             summary,
             fullContent: `## ${currentRule.ruleNumber}. ${currentRule.title}\n\n${rawBody.trim()}`,
-            tokens: tokenize(`${currentRule.title} ${currentRule.id} ${ruleText} ${whyText} ${whenText}`)
+            tokens: tokenize(`${currentRule.title} ${currentRule.id} ${ruleText} ${whyText} ${whenText} ${resolvedDom.name}`)
           });
         }
         currentRule = {
@@ -234,11 +274,15 @@ export function parseEngineeringPatterns(customRoot = null) {
     const whenText = whenLines.join('\n').trim();
     const rawBody = lines.slice(bodyStartIndex, lines.length).join('\n');
     const summary = ruleText ? ruleText.slice(0, 300) : rawBody.slice(0, 300);
+    const resolvedDom = fastClassifyDomain(`${currentRule.title} ${ruleText} ${whyText}`, 'H');
     docs.push({
       id: currentRule.id,
       ruleNumber: currentRule.ruleNumber,
       title: currentRule.title,
       category: 'ENGINEERING_PATTERN',
+      domainLetter: resolvedDom.letter,
+      domainId: resolvedDom.id,
+      domainName: resolvedDom.name,
       filePath: '05_KNOWLEDGE/engineering-patterns.md',
       lineRange: [startLine, lines.length],
       ruleText,
@@ -246,7 +290,7 @@ export function parseEngineeringPatterns(customRoot = null) {
       whenText,
       summary,
       fullContent: `## ${currentRule.ruleNumber}. ${currentRule.title}\n\n${rawBody.trim()}`,
-      tokens: tokenize(`${currentRule.title} ${currentRule.id} ${ruleText} ${whyText} ${whenText}`)
+      tokens: tokenize(`${currentRule.title} ${currentRule.id} ${ruleText} ${whyText} ${whenText} ${resolvedDom.name}`)
     });
   }
 
@@ -295,17 +339,21 @@ export function parseCoreOperatingRules(customRoot = null) {
 
 function finalizeCoreDoc(meta, rawBody, startLine, endLine) {
   const summary = rawBody.trim().slice(0, 250);
+  const resolvedDom = fastClassifyDomain(`${meta.title} ${rawBody}`, 'G');
   return {
     id: meta.id,
     ruleNumber: meta.ruleNumber,
     title: meta.title,
     category: 'CORE_OPERATING_RULE',
+    domainLetter: resolvedDom.letter,
+    domainId: resolvedDom.id,
+    domainName: resolvedDom.name,
     filePath: '01_CORE/operating-rules.md',
     lineRange: [startLine, endLine],
     ruleText: rawBody.trim(),
     summary,
     fullContent: `## Rule ${meta.ruleNumber} — ${meta.title}\n\n${rawBody.trim()}`,
-    tokens: tokenize(`${meta.title} ${meta.id} ${rawBody}`)
+    tokens: tokenize(`${meta.title} ${meta.id} ${rawBody} ${resolvedDom.name}`)
   };
 }
 
@@ -324,16 +372,20 @@ export function parseSkills(customRoot = null) {
     const titleMatch = content.match(/^#\s+(.+)$/m);
     const title = titleMatch ? titleMatch[1].trim() : f.replace('.md', '');
     const summary = content.slice(0, 350).replace(/^#.*?\n/, '').trim();
+    const resolvedDom = fastClassifyDomain(`${title} ${summary}`, 'H');
 
     docs.push({
       id: `Skill: ${f.replace('.md', '')}`,
       title,
       category: 'SKILL',
+      domainLetter: resolvedDom.letter,
+      domainId: resolvedDom.id,
+      domainName: resolvedDom.name,
       filePath: `03_SKILLS/${f}`,
       lineRange: [1, content.split(/\r?\n/).length],
       summary,
       fullContent: content.trim(),
-      tokens: tokenize(`${title} ${f} ${content}`)
+      tokens: tokenize(`${title} ${f} ${content} ${resolvedDom.name}`)
     });
   }
 
@@ -501,15 +553,19 @@ export function parseCapabilities(customRoot = null) {
     for (const c of caps) {
       const summary = `[${c.status}] ${c.name} (${c.domain}): ${c.purpose}`;
       const fullContent = `## ${c.id} — ${c.name}\n\n- Domain: ${c.domain}\n- Status: ${c.status}\n- Purpose: ${c.purpose}\n- Scope: ${(c.scope?.inScope || []).join('; ')}\n- Rules: ${(c.rulesConstraints || []).join('; ')}\n- Tests: ${(c.testReferences || []).map(t => t.testPath + ' (' + t.status + ')').join(', ')}`;
+      const resolvedDom = resolveDomain(c.domain) || fastClassifyDomain(`${c.name} ${c.purpose}`);
       docs.push({
         id: c.id,
         title: `${c.id}: ${c.name}`,
         category: 'CAPABILITY',
+        domainLetter: resolvedDom.letter,
+        domainId: resolvedDom.id,
+        domainName: resolvedDom.name,
         filePath: '15_METADATA/capability-registry.json',
         lineRange: [1, 100],
         summary,
         fullContent,
-        tokens: tokenize(`${c.id} ${c.name} ${c.domain} ${c.purpose} ${(c.scope?.inScope || []).join(' ')} ${c.status} capability`)
+        tokens: tokenize(`${c.id} ${c.name} ${c.domain} ${c.purpose} ${(c.scope?.inScope || []).join(' ')} ${c.status} capability ${resolvedDom.name}`)
       });
     }
     return docs;
@@ -1266,6 +1322,38 @@ export function normalizeCachedDocuments(documents) {
         doc.sourceIndependence = 'SINGLE_SOURCE';
       }
     }
+
+    // Backfill 13-Domain classification on cached documents if missing
+    if (!doc.domainLetter) {
+      if (doc.category === 'CAPABILITY') {
+        const domainMatch = (doc.fullContent || doc.summary || '').match(/Domain:\s*([a-zA-Z0-9_-]+)/i);
+        const resolved = domainMatch ? resolveDomain(domainMatch[1]) : null;
+        const dom = resolved || fastClassifyDomain(`${doc.title} ${doc.summary}`);
+        doc.domainLetter = dom.letter;
+        doc.domainId = dom.id;
+        doc.domainName = dom.name;
+      } else if (doc.category === 'CORE_OPERATING_RULE') {
+        const dom = fastClassifyDomain(`${doc.title} ${doc.ruleText || ''} ${doc.summary || ''}`, 'G');
+        doc.domainLetter = dom.letter;
+        doc.domainId = dom.id;
+        doc.domainName = dom.name;
+      } else if (doc.category === 'ENGINEERING_PATTERN') {
+        const dom = fastClassifyDomain(`${doc.title} ${doc.ruleText || ''} ${doc.whyText || ''} ${doc.summary || ''}`, 'H');
+        doc.domainLetter = dom.letter;
+        doc.domainId = dom.id;
+        doc.domainName = dom.name;
+      } else if (doc.category === 'SKILL') {
+        const dom = fastClassifyDomain(`${doc.title} ${doc.summary || ''}`, 'H');
+        doc.domainLetter = dom.letter;
+        doc.domainId = dom.id;
+        doc.domainName = dom.name;
+      } else if (doc.category === 'HARVESTED_DOSSIER_CHUNK') {
+        const dom = fastClassifyDomain(`${doc.title} ${doc.summary || ''}`, 'H');
+        doc.domainLetter = dom.letter;
+        doc.domainId = dom.id;
+        doc.domainName = dom.name;
+      }
+    }
   }
   return documents;
 }
@@ -1617,10 +1705,46 @@ export function searchBrain(query, options = {}) {
   // Sort descending by score
   filteredIndices.sort((a, b) => scores[b] - scores[a]);
 
-  const topK = options.topK || 5;
-  const sliced = filteredIndices.slice(0, topK);
+  // Deduplicate near-identical results by title to suppress redundant sub-chunks
+  // Enforce cross-domain diversity if multiple target domains are requested
+  const targetTopK = options.topK || 5;
+  const deduplicatedIndices = [];
+  const seenTitles = new Set();
+  const domainCounts = new Map();
+  const maxPerDomain = (Array.isArray(options.domains) && options.domains.length > 1)
+    ? Math.max(1, Math.floor(targetTopK / 2))
+    : targetTopK;
 
-  const results = sliced.map(docIdx => {
+  for (const idx of filteredIndices) {
+    const doc = index.documents[idx];
+    const normalizedTitle = (doc.title || doc.id).toLowerCase().replace(/\s*\(part\s+\d+\/\d+\)/i, '').trim();
+    const docDomain = doc.domainLetter || 'UNKNOWN';
+    const currentDomainCount = domainCounts.get(docDomain) || 0;
+
+    if (!seenTitles.has(normalizedTitle) && currentDomainCount < maxPerDomain) {
+      seenTitles.add(normalizedTitle);
+      domainCounts.set(docDomain, currentDomainCount + 1);
+      deduplicatedIndices.push(idx);
+      if (deduplicatedIndices.length >= targetTopK) break;
+    }
+  }
+
+  // If diversity cap left slots open, backfill from remaining filtered results
+  if (deduplicatedIndices.length < targetTopK) {
+    for (const idx of filteredIndices) {
+      if (!deduplicatedIndices.includes(idx)) {
+        const doc = index.documents[idx];
+        const normalizedTitle = (doc.title || doc.id).toLowerCase().replace(/\s*\(part\s+\d+\/\d+\)/i, '').trim();
+        if (!seenTitles.has(normalizedTitle)) {
+          seenTitles.add(normalizedTitle);
+          deduplicatedIndices.push(idx);
+          if (deduplicatedIndices.length >= targetTopK) break;
+        }
+      }
+    }
+  }
+
+  const results = deduplicatedIndices.map(docIdx => {
     const doc = index.documents[docIdx];
     const matchedTerms = matchDetails.has(docIdx) ? matchDetails.get(docIdx).map(m => m.term) : [];
     const evidenceExcerpt = extractEvidenceExcerpt(doc.fullContent || doc.summary, matchedTerms);

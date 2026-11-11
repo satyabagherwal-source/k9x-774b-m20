@@ -486,6 +486,36 @@ export function orchestrateCrossDomainIntelligence(intentAnalysis, hierarchicalR
       // Non-blocking fallback
     }
 
+    // Live search against the 63k Knowledge Corpus for this specific domain
+    try {
+      if (options.skipSearch !== true) {
+        const searchRes = searchBrain(intentAnalysis.rawIntent, {
+          brainRoot: root,
+          domain: letter,
+          strictDomain: true,
+          topK: 2
+        });
+        if (searchRes && searchRes.results && searchRes.results.length > 0) {
+          for (const item of searchRes.results) {
+            if (!domainGuidelines.some(g => g.id === item.id)) {
+              domainGuidelines.push({
+                id: item.id,
+                title: item.title,
+                summary: item.summary || item.ruleText || item.evidenceExcerpt || '',
+                tier: item.category === 'CORE_OPERATING_RULE' ? 1 : 2,
+                epistemic_state: item.epistemicState || 'CANONICAL',
+                confidence: item.confidence || 0.90,
+                filePath: item.filePath,
+                lineRange: item.lineRange
+              });
+            }
+          }
+        }
+      }
+    } catch (e) {
+      // Non-blocking fallback
+    }
+
     // Domain-specific contribution specifications
     let domainRequirementSummary = '';
     switch (letter) {

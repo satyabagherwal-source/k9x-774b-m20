@@ -53,99 +53,143 @@ export const INTELLIGENCE_DOMAINS = Object.freeze({
     id: 'human_need',
     name: 'Human & Need Intelligence',
     description: 'Human needs, problems, user personas, friction points, accessibility, and intended outcomes.',
-    keywords: ['need', 'problem', 'user', 'persona', 'pain', 'accessibility', 'friction', 'outcome', 'privacy', 'empathy', 'urgency', 'workflow', 'mental-model']
+    keywords: ['need', 'problem', 'user', 'persona', 'pain', 'painpoint', 'accessibility', 'friction', 'outcome', 'privacy', 'empathy', 'urgency', 'workflow', 'mental-model', 'consent', 'cognition', 'disability']
   },
   B: {
     letter: 'B',
     id: 'product',
     name: 'Product Intelligence',
     description: 'Product definitions, PRD intelligence, MVP scoping, negative scope exclusions, and user stories.',
-    keywords: ['prd', 'product', 'mvp', 'feature', 'scope', 'negative-scope', 'story', 'acceptance-criteria', 'roadmap', 'milestone', 'prioritization']
+    keywords: ['prd', 'product', 'mvp', 'feature', 'scope', 'negative-scope', 'story', 'acceptance-criteria', 'roadmap', 'milestone', 'prioritization', 'backlog', 'specification', 'user-story']
   },
   C: {
     letter: 'C',
     id: 'market_business',
     name: 'Market & Business Intelligence',
     description: 'Competitor landscape, value proposition, pricing, gross margin, hurdle rates, and commercial viability.',
-    keywords: ['market', 'competitor', 'business', 'pricing', 'viability', 'margin', 'monetization', 'value-prop', 'hurdle', 'ltv', 'cac', 'differentiation']
+    keywords: ['market', 'competitor', 'business', 'pricing', 'viability', 'margin', 'monetization', 'value-prop', 'hurdle', 'ltv', 'cac', 'differentiation', 'commercial', 'roi', 'tam', 'revenue']
   },
   D: {
     letter: 'D',
     id: 'research_knowledge',
     name: 'Research & Knowledge Intelligence',
     description: 'Evidence extraction, primary source verification, cross-corroboration, and uncertainty mapping.',
-    keywords: ['research', 'evidence', 'provenance', 'corroboration', 'source', 'citation', 'scientific', 'investigation', 'uncertainty', 'literature']
+    keywords: ['research', 'evidence', 'provenance', 'corroboration', 'source', 'citation', 'scientific', 'investigation', 'uncertainty', 'literature', 'empirical', 'benchmark', 'methodology', 'validity']
   },
   E: {
     letter: 'E',
     id: 'creative',
     name: 'Creative Intelligence',
     description: 'Originality, creative problem solving, aesthetic tone, visual metaphors, and brand uniqueness.',
-    keywords: ['creative', 'originality', 'aesthetic', 'metaphor', 'concept', 'art', 'voice', 'brand', 'uniqueness', 'imagination', 'storytelling']
+    keywords: ['creative', 'originality', 'aesthetic', 'metaphor', 'concept', 'art', 'voice', 'brand', 'uniqueness', 'imagination', 'storytelling', 'narrative', 'tone', 'visual-identity', 'branding']
   },
   F: {
     letter: 'F',
     id: 'design',
     name: 'Design Intelligence',
     description: 'UI/UX design systems, typography, color palettes, responsive layouts, Tailwind tokens, and micro-interactions.',
-    keywords: ['design', 'ui', 'ux', 'tailwind', 'typography', 'color', 'palette', 'layout', 'responsive', 'viewport', 'css', 'oklch', 'theme', 'tokens', 'spacing']
+    keywords: ['design', 'ui', 'ux', 'tailwind', 'typography', 'color', 'palette', 'layout', 'responsive', 'viewport', 'css', 'oklch', 'theme', 'tokens', 'spacing', 'contrast', 'wcag', 'a11y', 'dark-mode', 'wireframe']
   },
   G: {
     letter: 'G',
     id: 'architecture',
     name: 'Architecture Intelligence',
     description: 'System boundaries, modularity, IPC, state management, worker concurrency, and zero-copy bridges.',
-    keywords: ['architecture', 'boundary', 'modular', 'component', 'ipc', 'state', 'concurrency', 'mutex', 'worker', 'data-flow', 'zero-copy', 'coupling', 'dag']
+    keywords: ['architecture', 'boundary', 'modular', 'component', 'ipc', 'state', 'concurrency', 'mutex', 'worker', 'data-flow', 'zero-copy', 'coupling', 'dag', 'saga', 'subtask', 'contract', 'state-machine', 'modularity']
   },
   H: {
     letter: 'H',
     id: 'technical_construction',
     name: 'Technical Construction Intelligence',
     description: 'Executable algorithms, framework idioms, DOM manipulation, client-side canvas/WASM pipelines, and memory safety.',
-    keywords: ['algorithm', 'code', 'javascript', 'typescript', 'astro', 'react', 'wasm', 'canvas', 'dom', 'memory', 'performance', 'stream', 'pipeline', 'parser']
+    keywords: ['algorithm', 'code', 'javascript', 'typescript', 'astro', 'react', 'wasm', 'canvas', 'dom', 'memory', 'performance', 'stream', 'pipeline', 'parser', 'async', 'transpiler', 'runtime', 'buffer', 'compiler', 'memory-leak']
   },
   I: {
     letter: 'I',
     id: 'content_information',
     name: 'Content & Information Intelligence',
     description: 'Information architecture, clear technical writing, micro-copy, educational clarity, and documentation.',
-    keywords: ['content', 'documentation', 'copy', 'information', 'hierarchy', 'writing', 'guide', 'explanation', 'micro-copy', 'manual', 'schema']
+    keywords: ['content', 'documentation', 'copy', 'information', 'hierarchy', 'writing', 'guide', 'explanation', 'micro-copy', 'manual', 'schema', 'readme', 'api-docs', 'technical-writing', 'glossary', 'markdown']
   },
   J: {
     letter: 'J',
     id: 'search_distribution',
     name: 'Search & Distribution Intelligence',
     description: 'Technical SEO, OpenGraph tags, JSON-LD structured data, sitemaps, canonical links, and distribution channels.',
-    keywords: ['seo', 'opengraph', 'json-ld', 'sitemap', 'canonical', 'meta', 'crawl', 'indexation', 'distribution', 'organic', 'search', 'schema-org']
+    keywords: ['seo', 'opengraph', 'json-ld', 'sitemap', 'canonical', 'meta', 'crawl', 'indexation', 'distribution', 'organic', 'search', 'schema-org', 'robots', 'discoverability', 'rss', 'social-card', 'structured-data']
   },
   K: {
     letter: 'K',
     id: 'quality_verification',
     name: 'Quality & Verification Intelligence',
     description: 'Automated test contracts, regression shields, invariant assertions, zero-network probes, and verification barriers.',
-    keywords: ['test', 'verification', 'assertion', 'invariant', 'quality', 'regression', 'e2e', 'unit', 'probe', 'barrier', 'pass', 'audit', 'compliance']
+    keywords: ['test', 'verification', 'assertion', 'invariant', 'quality', 'regression', 'e2e', 'unit', 'probe', 'barrier', 'pass', 'audit', 'compliance', 'fuzzing', 'property-based', 'sandbox-test', 'zero-network', 'exit-code']
   },
   L: {
     letter: 'L',
     id: 'deployment_operations',
     name: 'Deployment & Operations Intelligence',
     description: 'CI/CD workflows, static hosting, edge runtime, disaster recovery vault backups, and health monitoring.',
-    keywords: ['deployment', 'hosting', 'ci-cd', 'vault', 'backup', 'disaster-recovery', 'docker', 'vercel', 'pages', 'monitoring', 'uptime', 'chunking']
+    keywords: ['deployment', 'hosting', 'ci-cd', 'vault', 'backup', 'disaster-recovery', 'docker', 'vercel', 'pages', 'monitoring', 'uptime', 'chunking', 'container', 'healthcheck', 'sre', 'devops', 'zero-downtime']
   },
   M: {
     letter: 'M',
     id: 'feedback_evolution',
     name: 'Feedback & Evolution Intelligence',
     description: 'Forensic defect autopsies, incident logs, continuous learning extraction, and rule promotion pipelines.',
-    keywords: ['feedback', 'learning', 'autopsy', 'incident', 'evolution', 'promotion', 'retrospective', 'harvest', 'adaptation', 'refinement']
+    keywords: ['feedback', 'learning', 'autopsy', 'incident', 'evolution', 'promotion', 'retrospective', 'harvest', 'adaptation', 'refinement', 'telemetry', 'defect', 'drift', 'continuous-improvement', 'post-mortem']
   }
 });
 
-// Domain lookup map for letter or id
+// Domain aliases mapping external subsystem IDs and aliases to canonical 13 domains
+const DOMAIN_ALIASES = {
+  // Capability Registry & Subsystem Domains
+  'accessibility_a11y': 'F',
+  'a11y': 'F',
+  'accessibility': 'F',
+  'software_architecture': 'G',
+  'architecture_system': 'G',
+  'system_architecture': 'G',
+  'security_threat_modeling': 'G',
+  'threat_modeling': 'G',
+  'developer_tools_ides': 'H',
+  'tools_ides': 'H',
+  'operating_systems_system_interfaces': 'H',
+  'content_intelligence_information_architecture': 'I',
+  'information_architecture': 'I',
+  'technical_documentation': 'I',
+  'seo_intelligence': 'J',
+  'seo_distribution': 'J',
+  'search_engine_optimization': 'J',
+  'testing_reliability': 'K',
+  'qa_testing': 'K',
+  'test_automation': 'K',
+  'infrastructure_deployment': 'L',
+  'operations_monitoring_sre': 'L',
+  'devops': 'L',
+  'sre': 'L',
+  'evolution_continuous_improvement': 'M',
+  'continuous_evolution': 'M',
+  'legal_compliance': 'C',
+  'business_model': 'C',
+  'user_research': 'A',
+  'human_factors': 'A',
+  'product_management': 'B',
+  'creative_direction': 'E',
+  'branding': 'E'
+};
+
+// Domain lookup map for letter, id, or alias
 const DOMAIN_LOOKUP = new Map();
 for (const [letter, info] of Object.entries(INTELLIGENCE_DOMAINS)) {
   DOMAIN_LOOKUP.set(letter.toUpperCase(), info);
   DOMAIN_LOOKUP.set(info.id.toLowerCase(), info);
+}
+for (const [alias, targetLetter] of Object.entries(DOMAIN_ALIASES)) {
+  const targetDomain = INTELLIGENCE_DOMAINS[targetLetter];
+  if (targetDomain) {
+    DOMAIN_LOOKUP.set(alias.toLowerCase(), targetDomain);
+  }
 }
 
 /**

@@ -2203,6 +2203,9 @@ This digital product was synthesized by **AI-Builder-Brain** through the rigorou
 ### Invariant Rules Cited & Enforced:
 ${governingRules.map(r => `- **${r.rule} (${r.name})**: ${r.summary}`).join('\n')}
 
+### Live Retrieved Domain Intelligence & Guidelines:
+${activeGuidelines.length > 0 ? activeGuidelines.slice(0, 8).map(g => `- **[Domain ${g.domain}] ${g.id} (${g.title})**: ${g.summary}`).join('\n') : '- *No domain guidelines retrieved*'}
+
 ### Applied Knowledge Domains:
 ${Array.from(activeDomains).sort().map(d => `- **Domain ${d}**: Active construction intelligence guidelines embedded`).join('\n')}
 
