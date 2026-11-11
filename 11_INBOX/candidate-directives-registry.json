@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T06:05:08.699Z",
+  "last_updated": "2026-11-11T08:28:26.583Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4410,6 +4410,33 @@
       "source_repo": "zleap-ai-sag",
       "domain_letter": "M",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-3A2D9B-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-7479A7",
+      "directive_title": "export: Fix consent of former subscribers covering private channels.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-7479A7-export-fix-consent-of-former-subscribers.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-E91DAF",
+      "directive_title": "models): add download User-Agent and IPv4 fallback (#370)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-E91DAF-models-add-download-user-agent-and-ipv4-.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-8AD331",
+      "directive_title": "markdown: Keep the first rendered block at the top (#66467)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zed-industries-zed",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-8AD331-markdown-keep-the-first-rendered-block-a.md",
       "staged_date": "2026-11-11"
     }
   ]

@@ -3283,10 +3283,10 @@
     "repository": "zama-ai/tfhe-rs",
     "platform": "github",
     "sourceUrl": "https://github.com/zama-ai/tfhe-rs",
-    "sourceVersion": "6bd1e65d",
+    "sourceVersion": "dff19644",
     "license": "NOASSERTION",
-    "contentHash": "e72a6f8e19c4173d8fe672797cbd534df5fb1da758a8d12d6d5cd22fa9bc1a0e",
-    "lastHarvestedAt": "2026-11-10T00:59:47.769Z",
+    "contentHash": "4cd111ae3b52589c0d5001c46ec3ab668dc87647602a94b005614093cef55379",
+    "lastHarvestedAt": "2026-11-11T08:22:47.053Z",
     "learningId": "learn-github-zama-ai-tfhe-rs"
   },
   "doobidoo-mcp-memory-service": {
@@ -6243,10 +6243,10 @@
     "repository": "gkd-kit/gkd",
     "platform": "github",
     "sourceUrl": "https://github.com/gkd-kit/gkd",
-    "sourceVersion": "35252cbb",
+    "sourceVersion": "d07357d4",
     "license": "GPL-3.0",
-    "contentHash": "6aeb66a6b36acf948d25a520a0c52d292d7e825e3056ccead385c24111c5460d",
-    "lastHarvestedAt": "2026-11-07T18:57:12.959Z",
+    "contentHash": "6c18f2452d34582e43fd75ef053d0aee423101f64eb604bb12070fb6a9729e40",
+    "lastHarvestedAt": "2026-11-11T08:27:47.280Z",
     "learningId": "learn-github-gkd-kit-gkd"
   },
   "envoyproxy-envoy": {
@@ -7243,10 +7243,10 @@
     "repository": "SeaQL/sea-orm",
     "platform": "github",
     "sourceUrl": "https://github.com/SeaQL/sea-orm",
-    "sourceVersion": "85de02c9",
+    "sourceVersion": "1d4b1380",
     "license": "Apache-2.0",
-    "contentHash": "01cd1a55e1ebf1ce21f4fb4d9fa0fc97d6ea52c778fde226170dcc8f6923afac",
-    "lastHarvestedAt": "2026-11-09T02:01:15.159Z",
+    "contentHash": "61f6c6fe6d82d8ab0bfbb1fafd4fa4a677588d67f5da3507c3a1cebb3be65380",
+    "lastHarvestedAt": "2026-11-11T07:46:26.238Z",
     "learningId": "learn-github-seaql-sea-orm"
   },
   "mobilenativefoundation-store": {
@@ -7293,10 +7293,10 @@
     "repository": "alibaba/zvec",
     "platform": "github",
     "sourceUrl": "https://github.com/alibaba/zvec",
-    "sourceVersion": "b0d0760a",
+    "sourceVersion": "d61530f2",
     "license": "Apache-2.0",
-    "contentHash": "0f7cc7b8a55a30168c92adaec65c00790b1d0c69b5764db75469c791c4b01014",
-    "lastHarvestedAt": "2026-11-09T02:14:46.321Z",
+    "contentHash": "26e7004d155479ecb88f14066bd49789f11c45b433d4e792f9180835f7e73dc3",
+    "lastHarvestedAt": "2026-11-11T08:28:21.333Z",
     "learningId": "learn-github-alibaba-zvec"
   },
   "zenbu-labs-terminal-browser": {
@@ -7643,10 +7643,10 @@
     "repository": "biomejs/biome",
     "platform": "github",
     "sourceUrl": "https://github.com/biomejs/biome",
-    "sourceVersion": "7f971edd",
+    "sourceVersion": "f6cf28e3",
     "license": "Apache-2.0",
-    "contentHash": "0f3a02d2acfabc2f6fab14b2314a645933cd94a2588aa024d31ceeab14941a44",
-    "lastHarvestedAt": "2026-11-08T21:24:36.324Z",
+    "contentHash": "fd859ca2a2c76d59bec10ddd63c6f77df2ee9e4a9a6b43eadfa7361dcd88be80",
+    "lastHarvestedAt": "2026-11-11T07:46:13.492Z",
     "learningId": "learn-github-biomejs-biome"
   },
   "msasikanth-twine": {
@@ -7723,10 +7723,10 @@
     "repository": "oxc-project/oxc",
     "platform": "github",
     "sourceUrl": "https://github.com/oxc-project/oxc",
-    "sourceVersion": "a74b7cdb",
+    "sourceVersion": "523a0639",
     "license": "MIT",
-    "contentHash": "7f61a00fe4fb591cc7f8061e4f4fe8c5fa23777939d6cd83a4468ca08c3d3e5f",
-    "lastHarvestedAt": "2026-11-08T21:33:25.187Z",
+    "contentHash": "322415d5952821ad29b02a72d89a332f93eed589da857c69c4549070be9b4282",
+    "lastHarvestedAt": "2026-11-11T07:58:40.050Z",
     "learningId": "learn-github-oxc-project-oxc"
   },
   "pointfreeco-swift-composable-architecture": {
@@ -7783,10 +7783,10 @@
     "repository": "zed-industries/zed",
     "platform": "github",
     "sourceUrl": "https://github.com/zed-industries/zed",
-    "sourceVersion": "d2a4fb6d",
+    "sourceVersion": "985bbf42",
     "license": "NOASSERTION",
-    "contentHash": "85d6ea3fc03e2d366b5ba62f9e8f5e2f2384fcb921b055e69c5a068c64e725c5",
-    "lastHarvestedAt": "2026-11-08T21:46:52.286Z",
+    "contentHash": "92287886fee3d837c18d74ffcbc845375b7ad2edd31ba3c9077bc6f2358ea7f2",
+    "lastHarvestedAt": "2026-11-11T08:28:08.193Z",
     "learningId": "learn-github-zed-industries-zed"
   },
   "mohamedrejeb-compose-rich-editor": {
@@ -12055,8 +12055,8 @@
     "sourceUrl": "https://huggingface.co/microsoft/Florence-2-base",
     "sourceVersion": "hf-microsoft-florence-2-base",
     "license": "Open-Source",
-    "contentHash": "2ad3a2316303439f6d8876777aaab34661e8c740d8ea85adfd1967c19d30bdb4",
-    "lastHarvestedAt": "2026-11-06T13:27:19.277Z",
+    "contentHash": "3edc255cfadbf304b15e9d9efc027c13436d4859e9cc0c7f339fe3d368308970",
+    "lastHarvestedAt": "2026-11-11T07:45:58.987Z",
     "learningId": "learn-huggingface-microsoft-florence-2-base"
   },
   "hf-webai-official-twil-8b": {

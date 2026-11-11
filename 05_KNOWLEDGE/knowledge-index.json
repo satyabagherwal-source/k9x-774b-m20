@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-11T07:37:55.549Z",
+  "last_updated": "2026-11-11T08:28:21.217Z",
   "total_verified_learnings": 1253,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -1756,8 +1756,8 @@
       "slug": "alibaba-zvec",
       "platform": "github",
       "source_url": "https://github.com/alibaba/zvec",
-      "source_version": "b0d0760a",
-      "content_hash": "0f7cc7b8a55a30168c92adaec65c00790b1d0c69b5764db75469c791c4b01014",
+      "source_version": "d61530f2",
+      "content_hash": "26e7004d155479ecb88f14066bd49789f11c45b433d4e792f9180835f7e73dc3",
       "dossier_path": "07_PROJECT_LEARNING/alibaba-zvec-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/alibaba-zvec-learnings.md",
       "promoted_rules": [
@@ -1769,6 +1769,11 @@
         {
           "number": null,
           "title": "ci(deps): bump actions/setup-java from 6.1.0 to 6.2.0 (#884)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "db): rebuild rotated INT8/INT4 indexes from raw vectors on optimize (#887)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -1837,7 +1842,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T02:14:46.217Z",
+      "verified_at": "2026-11-11T08:28:21.192Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -5404,8 +5409,8 @@
       "slug": "biomejs-biome",
       "platform": "github",
       "source_url": "https://github.com/biomejs/biome",
-      "source_version": "7f971edd",
-      "content_hash": "0f3a02d2acfabc2f6fab14b2314a645933cd94a2588aa024d31ceeab14941a44",
+      "source_version": "f6cf28e3",
+      "content_hash": "fd859ca2a2c76d59bec10ddd63c6f77df2ee9e4a9a6b43eadfa7361dcd88be80",
       "dossier_path": "07_PROJECT_LEARNING/biomejs-biome-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/biomejs-biome-learnings.md",
       "promoted_rules": [
@@ -5427,6 +5432,11 @@
         {
           "number": null,
           "title": "useWhile): detect and fix infinite for loops (#12788)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "format/md): keep table rows in blockquotes aligned (#13035)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -5510,7 +5520,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T21:24:36.247Z",
+      "verified_at": "2026-11-11T07:46:13.352Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -16812,8 +16822,8 @@
       "slug": "gkd-kit-gkd",
       "platform": "github",
       "source_url": "https://github.com/gkd-kit/gkd",
-      "source_version": "35252cbb",
-      "content_hash": "6aeb66a6b36acf948d25a520a0c52d292d7e825e3056ccead385c24111c5460d",
+      "source_version": "d07357d4",
+      "content_hash": "6c18f2452d34582e43fd75ef053d0aee423101f64eb604bb12070fb6a9729e40",
       "dossier_path": "07_PROJECT_LEARNING/gkd-kit-gkd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gkd-kit-gkd-learnings.md",
       "promoted_rules": [
@@ -16821,6 +16831,21 @@
           "number": null,
           "title": "avoid overflow collisions when copying rule groups",
           "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Dual-Phase Diagnostic Retention with Text Interning and Dynamic Budget Overflow",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Guarded Conflated Asynchronous State Recovery Pipeline",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Asynchronous Dual-Observation Surface & Foreground Arbitration",
+          "status": "WITHHELD_CONDITIONAL_PASS"
         },
         {
           "number": 2186,
@@ -16848,7 +16873,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T18:57:12.858Z",
+      "verified_at": "2026-11-11T08:27:47.142Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -50820,8 +50845,8 @@
       "slug": "oxc-project-oxc",
       "platform": "github",
       "source_url": "https://github.com/oxc-project/oxc",
-      "source_version": "a74b7cdb",
-      "content_hash": "7f61a00fe4fb591cc7f8061e4f4fe8c5fa23777939d6cd83a4468ca08c3d3e5f",
+      "source_version": "523a0639",
+      "content_hash": "322415d5952821ad29b02a72d89a332f93eed589da857c69c4549070be9b4282",
       "dossier_path": "07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
       "promoted_rules": [
@@ -50839,6 +50864,21 @@
           "number": null,
           "title": "linter/eslint/no-lone-blocks): report redundant blocks in function bodies (#2904",
           "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Hybrid Concurrency Runtime Bridging Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "CFG Phi-Operand Invariant on Edge Pruning",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Worker Pool Signed 32-bit Integer Overflow & Singleton Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
         },
         {
           "number": 2494,
@@ -50906,7 +50946,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T21:33:25.105Z",
+      "verified_at": "2026-11-11T07:58:39.902Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56598,14 +56638,19 @@
       "slug": "seaql-sea-orm",
       "platform": "github",
       "source_url": "https://github.com/SeaQL/sea-orm",
-      "source_version": "85de02c9",
-      "content_hash": "01cd1a55e1ebf1ce21f4fb4d9fa0fc97d6ea52c778fde226170dcc8f6923afac",
+      "source_version": "1d4b1380",
+      "content_hash": "61f6c6fe6d82d8ab0bfbb1fafd4fa4a677588d67f5da3507c3a1cebb3be65380",
       "dossier_path": "07_PROJECT_LEARNING/seaql-sea-orm-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/seaql-sea-orm-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Regenerate sea-orm-sync (from_json test fixtures)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "a MySQL enum being overwritten when two columns share a name (#3237)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -56644,7 +56689,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T02:01:15.009Z",
+      "verified_at": "2026-11-11T07:46:26.079Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -67639,8 +67684,8 @@
       "slug": "zama-ai-tfhe-rs",
       "platform": "github",
       "source_url": "https://github.com/zama-ai/tfhe-rs",
-      "source_version": "6bd1e65d",
-      "content_hash": "e72a6f8e19c4173d8fe672797cbd534df5fb1da758a8d12d6d5cd22fa9bc1a0e",
+      "source_version": "dff19644",
+      "content_hash": "4cd111ae3b52589c0d5001c46ec3ab668dc87647602a94b005614093cef55379",
       "dossier_path": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "promoted_rules": [
@@ -67658,6 +67703,21 @@
           "number": null,
           "title": "integer): encrypted shift/rotate on narrow amounts",
           "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Dual-Boundary Host-Device Scratch Buffer Synchronization Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Quasi-Reduced Modular Arithmetic Multi-Correction Guard",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "FHE Zero-Knowledge Packed Proof Metadata-Binding Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
         },
         {
           "number": 1820,
@@ -67755,7 +67815,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-10T00:59:47.597Z",
+      "verified_at": "2026-11-11T08:22:46.911Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -67885,8 +67945,8 @@
       "slug": "zed-industries-zed",
       "platform": "github",
       "source_url": "https://github.com/zed-industries/zed",
-      "source_version": "d2a4fb6d",
-      "content_hash": "85d6ea3fc03e2d366b5ba62f9e8f5e2f2384fcb921b055e69c5a068c64e725c5",
+      "source_version": "985bbf42",
+      "content_hash": "92287886fee3d837c18d74ffcbc845375b7ad2edd31ba3c9077bc6f2358ea7f2",
       "dossier_path": "07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
       "promoted_rules": [
@@ -67903,6 +67963,11 @@
         {
           "number": null,
           "title": "tabular_data_preview: Range selection, edge jumps, and page navigation (#65161)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "markdown: Keep the first rendered block at the top (#66467)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -67981,7 +68046,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T21:46:52.152Z",
+      "verified_at": "2026-11-11T08:28:08.040Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -189280,7 +189345,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/microsoft/Florence-2-base",
       "source_version": "hf-microsoft-florence-2-base",
-      "content_hash": "2ad3a2316303439f6d8876777aaab34661e8c740d8ea85adfd1967c19d30bdb4",
+      "content_hash": "3edc255cfadbf304b15e9d9efc027c13436d4859e9cc0c7f339fe3d368308970",
       "dossier_path": "07_PROJECT_LEARNING/hf-microsoft-florence-2-base-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-microsoft-florence-2-base-learnings.md",
       "promoted_rules": [
@@ -189305,7 +189370,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T13:27:19.194Z",
+      "verified_at": "2026-11-11T07:45:58.846Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

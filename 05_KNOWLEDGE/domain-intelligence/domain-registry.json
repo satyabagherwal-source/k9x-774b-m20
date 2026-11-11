@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-11T07:38:16.420Z",
-  "total_records": 33,
+  "last_updated": "2026-11-11T08:29:02.043Z",
+  "total_records": 39,
   "domains": {
     "A": {
       "total": 1,
@@ -11,9 +11,10 @@
       ]
     },
     "B": {
-      "total": 1,
+      "total": 2,
       "record_ids": [
-        "DOM-B-44DC921B"
+        "DOM-B-44DC921B",
+        "DOM-B-1CC83E41"
       ]
     },
     "C": {
@@ -23,7 +24,7 @@
       ]
     },
     "D": {
-      "total": 12,
+      "total": 14,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -36,7 +37,9 @@
         "DOM-D-170AE1CF",
         "DOM-D-12383E4D",
         "DOM-D-06FC3249",
-        "DOM-D-BC0A19F3"
+        "DOM-D-BC0A19F3",
+        "DOM-D-5BF650C7",
+        "DOM-D-C4D2B996"
       ]
     },
     "E": {
@@ -58,7 +61,7 @@
       ]
     },
     "H": {
-      "total": 9,
+      "total": 11,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -68,7 +71,9 @@
         "DOM-H-C2A738D4",
         "DOM-H-1B2AC6F8",
         "DOM-H-0B5C2EE9",
-        "DOM-H-FF5BE5CE"
+        "DOM-H-FF5BE5CE",
+        "DOM-H-A79F59EB",
+        "DOM-H-32FEBC73"
       ]
     },
     "I": {
@@ -85,9 +90,10 @@
       ]
     },
     "K": {
-      "total": 1,
+      "total": 2,
       "record_ids": [
-        "DOM-K-353B93D6"
+        "DOM-K-353B93D6",
+        "DOM-K-76C43650"
       ]
     },
     "L": {
@@ -1362,6 +1368,228 @@
       },
       "confidence": 0.75,
       "created_at": "2026-11-11T07:38:16.418Z"
+    },
+    "DOM-D-5BF650C7": {
+      "record_id": "DOM-D-5BF650C7",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): biomejs/biome",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/biomejs-biome-learnings.md`  \n> **Source**: github ([https://github.com/biomejs/biome](https://github.com/biomejs/biome))  \n> **Source Version**: `f6cf28e3`  \n> **License**: Apache-2.0  \n> **Synthesized By**: zero-clone-structural-synthesizer",
+      "content_hash": "9e3609a88380cb756e33512a47d688f78de297922afb14d23dd47b2d1dc23a7b",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/biomejs-biome-learnings.md`  \n> **Source**: github ([https://github.com/biomejs/biom -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/biomejs-biome-learnings.md`  \n> **Source**: github ([https://github.com/biomejs/biom",
+      "provenance": {
+        "source_uri": "project://biomejs-biome/biomejs-biome-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-11T07:46:31.709Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (biomejs-biome)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of biomejs-biome"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "created_at": "2026-11-11T07:46:47.078Z"
+    },
+    "DOM-D-C4D2B996": {
+      "record_id": "DOM-D-C4D2B996",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): microsoft/Florence-2-base",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-microsoft-florence-2-base-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/microsoft/Florence-2-base](https://huggingface.co/microsoft/Florence-2-base))  \n> **Source Version**: `hf-microsoft`  \n> **License**: Open-Source",
+      "content_hash": "23fb692660b20985fe81de930cb033f2b50412798d89bec18199668a9e301701",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-microsoft-florence-2-base-learnings.md`  \n> **Source**: huggingface ([https://hug -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-microsoft-florence-2-base-learnings.md`  \n> **Source**: huggingface ([https://hug",
+      "provenance": {
+        "source_uri": "project://hf-microsoft-florence-2-base/hf-microsoft-florence-2-base-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-11T07:46:47.082Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-microsoft-florence-2-base)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-microsoft-florence-2-base"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.64,
+      "created_at": "2026-11-11T07:47:08.931Z"
+    },
+    "DOM-H-A79F59EB": {
+      "record_id": "DOM-H-A79F59EB",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "K",
+          "id": "quality_verification",
+          "name": "Quality & Verification Intelligence"
+        }
+      ],
+      "title": "Severed CFG Edge Phi Node Invariant Failure in React Compiler (BUG-OXC-01)",
+      "content": "SSA and CFG mutations must always be parameterized by the local incidence matrix (predecessors/successors), never by global vertex sets.",
+      "content_hash": "954a7bb5f60cd958eb68d7cd09866e1761eae06a4b7ccfdf2ff83092406e3333",
+      "summary": "Conflating basic block existence with edge existence. A block can remain in the CFG while a specific outgoing branch is eliminated. -> SSA and CFG mutations must always be parameterized by the local incidence matrix (predecessors/successors), never by global vertex sets.",
+      "provenance": {
+        "source_uri": "project://oxc-project-oxc/oxc-project-oxc-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-11T07:58:45.132Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (oxc-project-oxc)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit `6e6bd61f`, Issue `#28879`, PR `#29018`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "K"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "created_at": "2026-11-11T07:59:01.644Z"
+    },
+    "DOM-K-76C43650": {
+      "record_id": "DOM-K-76C43650",
+      "domain_letter": "K",
+      "domain_id": "quality_verification",
+      "domain_name": "Quality & Verification Intelligence",
+      "secondary_domains": [],
+      "title": "Type Stripping Regression in Exported Ambient Declarations (BUG-OXC-02)",
+      "content": "Even if an AST node is copied verbatim without mutation, it must traverse the semantic symbol dependency analyzer before codegen.",
+      "content_hash": "7381df260a8c999d91906074d7c9bdc5f19cf95eaf95186053ef9b0976917b22",
+      "summary": "Bypassing semantic graph traversal during optimization or \"no-op\" bypass branches. -> Even if an AST node is copied verbatim without mutation, it must traverse the semantic symbol dependency analyzer before codegen.",
+      "provenance": {
+        "source_uri": "project://oxc-project-oxc/oxc-project-oxc-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-11T07:58:45.133Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (oxc-project-oxc)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit `19b1691a`, Issue `#28976`, PR `#28996`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "created_at": "2026-11-11T07:59:25.571Z"
+    },
+    "DOM-H-32FEBC73": {
+      "record_id": "DOM-H-32FEBC73",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "WASM/JS High-Level API Compact Ciphertext List Proof Serialization Missing Metadata (BUG-TFHE-01)",
+      "content": "WASM boundary interfaces must have automated type-generation pipelines (such as `wasm-bindgen` TypeScript definitions) that prevent out-of-sync parameter signatures across the host/runtime bridge.",
+      "content_hash": "b17bb61a351f4cdd66ecba996bd284cf67748ff6058778070768e8b3aa533dcd",
+      "summary": "The Rust WASM wrapper was updated to accept metadata for Fiat-Shamir transcript binding, but the JavaScript test invocation signatures were  -> WASM boundary interfaces must have automated type-generation pipelines (such as `wasm-bindgen` TypeScript definitions) that prevent out-of-s",
+      "provenance": {
+        "source_uri": "project://zama-ai-tfhe-rs/zama-ai-tfhe-rs-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-11T08:28:26.588Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (zama-ai-tfhe-rs)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit `dff19644`, \"fix(js): pass missing metadata to build_with_proof_packed in test\"."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "created_at": "2026-11-11T08:28:41.356Z"
+    },
+    "DOM-B-1CC83E41": {
+      "record_id": "DOM-B-1CC83E41",
+      "domain_letter": "B",
+      "domain_id": "product",
+      "domain_name": "Product Intelligence",
+      "secondary_domains": [],
+      "title": "C API & High-Level API Signed Division Panic on CUDA Devices (BUG-TFHE-02)",
+      "content": "Heterogeneous backend feature parity must be validated via unified matrix integration tests (`tests/integrations`) that execute all supported operators uniformly across all device backends.",
+      "content_hash": "65f44becdbff1e1d170988c4a30b709cb6fdb0682c2fa28fec6cbda6820f10c6",
+      "summary": "Radix signed division requires non-trivial signed digit extraction, two's-complement negation, and iterative restoring or non-restoring cond -> Heterogeneous backend feature parity must be validated via unified matrix integration tests (`tests/integrations`) that execute all supporte",
+      "provenance": {
+        "source_uri": "project://zama-ai-tfhe-rs/zama-ai-tfhe-rs-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-11T08:28:26.588Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (zama-ai-tfhe-rs)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Closed Issue #2083: \"Signed Division Support on CUDA\"."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "created_at": "2026-11-11T08:29:02.041Z"
     }
   }
 }

@@ -8869,3 +8869,17 @@
 | `CYCLE-20261111-40VR` | `2026-11-11T07:37:49.431Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5097ed16...`) |
 | `CYCLE-20261111-45PA` | `2026-11-11T07:37:55.678Z` | `callstack/agent-device` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8bb0e757...`) |
 | `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T07:38:16.421Z` | `codewhale-hq-codewhale` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-BC0A19F3` [Domain D] | Yes (`446e0ecc...`) |
+| `CYCLE-20261111-EIMF` | `2026-11-11T07:45:58.983Z` | `microsoft/Florence-2-base` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-microsoft-florence-2-base-learnings.md` | Yes (`3edc255c...`) |
+| `CYCLE-20261111-ETTC` | `2026-11-11T07:46:13.488Z` | `biomejs/biome` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`fd859ca2...`) |
+| `CYCLE-20261111-F3NE` | `2026-11-11T07:46:26.234Z` | `SeaQL/sea-orm` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`61f6c6fe...`) |
+| `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T07:46:47.081Z` | `biomejs-biome` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-5BF650C7` [Domain D] | Yes (`9e3609a8...`) |
+| `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T07:47:08.933Z` | `hf-microsoft-florence-2-base` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-C4D2B996` [Domain D] | Yes (`23fb6926...`) |
+| `CYCLE-20261111-UTV2` | `2026-11-11T07:58:40.046Z` | `oxc-project/oxc` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`322415d5...`) |
+| `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T07:59:01.646Z` | `oxc-project-oxc` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-A79F59EB` [Domain H] | Yes (`954a7bb5...`) |
+| `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T07:59:25.573Z` | `oxc-project-oxc` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-76C43650` [Domain K] | Yes (`7381df26...`) |
+| `CYCLE-20261111-PUDL` | `2026-11-11T08:22:47.049Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`4cd111ae...`) |
+| `CYCLE-20261111-WA17` | `2026-11-11T08:27:47.275Z` | `gkd-kit/gkd` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`6c18f245...`) |
+| `CYCLE-20261111-WQ65` | `2026-11-11T08:28:08.189Z` | `zed-industries/zed` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`92287886...`) |
+| `CYCLE-20261111-X0B4` | `2026-11-11T08:28:21.328Z` | `alibaba/zvec` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`26e7004d...`) |
+| `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T08:28:41.359Z` | `zama-ai-tfhe-rs` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-32FEBC73` [Domain H] | Yes (`b17bb61a...`) |
+| `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T08:29:02.044Z` | `zama-ai-tfhe-rs` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-B-1CC83E41` [Domain B] | Yes (`65f44bec...`) |

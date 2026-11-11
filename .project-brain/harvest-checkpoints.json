@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-11T07:37:55.706Z",
+  "last_updated": "2026-11-11T08:28:21.343Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5046,14 +5046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zama-ai-tfhe-rs",
-      "content_hash": "e72a6f8e19c4173d8fe672797cbd534df5fb1da758a8d12d6d5cd22fa9bc1a0e",
-      "verified_at": "2026-11-10T00:59:47.779Z",
+      "content_hash": "4cd111ae3b52589c0d5001c46ec3ab668dc87647602a94b005614093cef55379",
+      "verified_at": "2026-11-11T08:22:47.076Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-10T00:59:47.779Z"
+      "last_updated": "2026-11-11T08:22:47.076Z"
     },
     "doobidoo/mcp-memory-service": {
       "repository": "doobidoo/mcp-memory-service",
@@ -9486,14 +9486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gkd-kit-gkd",
-      "content_hash": "6aeb66a6b36acf948d25a520a0c52d292d7e825e3056ccead385c24111c5460d",
-      "verified_at": "2026-11-07T18:57:12.980Z",
+      "content_hash": "6c18f2452d34582e43fd75ef053d0aee423101f64eb604bb12070fb6a9729e40",
+      "verified_at": "2026-11-11T08:27:47.289Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T18:57:12.980Z"
+      "last_updated": "2026-11-11T08:27:47.289Z"
     },
     "envoyproxy/envoy": {
       "repository": "envoyproxy/envoy",
@@ -10911,14 +10911,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-seaql-sea-orm",
-      "content_hash": "01cd1a55e1ebf1ce21f4fb4d9fa0fc97d6ea52c778fde226170dcc8f6923afac",
-      "verified_at": "2026-11-09T02:01:15.169Z",
+      "content_hash": "61f6c6fe6d82d8ab0bfbb1fafd4fa4a677588d67f5da3507c3a1cebb3be65380",
+      "verified_at": "2026-11-11T07:46:26.260Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T02:01:15.169Z"
+      "last_updated": "2026-11-11T07:46:26.260Z"
     },
     "MobileNativeFoundation/Store": {
       "repository": "MobileNativeFoundation/Store",
@@ -10986,14 +10986,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-alibaba-zvec",
-      "content_hash": "0f7cc7b8a55a30168c92adaec65c00790b1d0c69b5764db75469c791c4b01014",
-      "verified_at": "2026-11-09T02:14:46.336Z",
+      "content_hash": "26e7004d155479ecb88f14066bd49789f11c45b433d4e792f9180835f7e73dc3",
+      "verified_at": "2026-11-11T08:28:21.342Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T02:14:46.336Z"
+      "last_updated": "2026-11-11T08:28:21.342Z"
     },
     "zenbu-labs/terminal-browser": {
       "repository": "zenbu-labs/terminal-browser",
@@ -11511,14 +11511,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-biomejs-biome",
-      "content_hash": "0f3a02d2acfabc2f6fab14b2314a645933cd94a2588aa024d31ceeab14941a44",
-      "verified_at": "2026-11-08T21:24:36.338Z",
+      "content_hash": "fd859ca2a2c76d59bec10ddd63c6f77df2ee9e4a9a6b43eadfa7361dcd88be80",
+      "verified_at": "2026-11-11T07:46:13.522Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T21:24:36.338Z"
+      "last_updated": "2026-11-11T07:46:13.522Z"
     },
     "msasikanth/twine": {
       "repository": "msasikanth/twine",
@@ -11631,14 +11631,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-oxc-project-oxc",
-      "content_hash": "7f61a00fe4fb591cc7f8061e4f4fe8c5fa23777939d6cd83a4468ca08c3d3e5f",
-      "verified_at": "2026-11-08T21:33:25.194Z",
+      "content_hash": "322415d5952821ad29b02a72d89a332f93eed589da857c69c4549070be9b4282",
+      "verified_at": "2026-11-11T07:58:40.074Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T21:33:25.194Z"
+      "last_updated": "2026-11-11T07:58:40.074Z"
     },
     "pointfreeco/swift-composable-architecture": {
       "repository": "pointfreeco/swift-composable-architecture",
@@ -11721,14 +11721,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zed-industries-zed",
-      "content_hash": "85d6ea3fc03e2d366b5ba62f9e8f5e2f2384fcb921b055e69c5a068c64e725c5",
-      "verified_at": "2026-11-08T21:46:52.305Z",
+      "content_hash": "92287886fee3d837c18d74ffcbc845375b7ad2edd31ba3c9077bc6f2358ea7f2",
+      "verified_at": "2026-11-11T08:28:08.225Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T21:46:52.305Z"
+      "last_updated": "2026-11-11T08:28:08.225Z"
     },
     "MohamedRejeb/compose-rich-editor": {
       "repository": "MohamedRejeb/compose-rich-editor",
@@ -18141,14 +18141,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-microsoft-florence-2-base",
-      "content_hash": "2ad3a2316303439f6d8876777aaab34661e8c740d8ea85adfd1967c19d30bdb4",
-      "verified_at": "2026-11-06T13:27:19.299Z",
+      "content_hash": "3edc255cfadbf304b15e9d9efc027c13436d4859e9cc0c7f339fe3d368308970",
+      "verified_at": "2026-11-11T07:45:58.997Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T13:27:19.299Z"
+      "last_updated": "2026-11-11T07:45:58.997Z"
     },
     "webAI-Official/TwIL-8B": {
       "repository": "webAI-Official/TwIL-8B",

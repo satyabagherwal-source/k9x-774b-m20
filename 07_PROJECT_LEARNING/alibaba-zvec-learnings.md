@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/alibaba-zvec-learnings.md`  
 > **Source**: github ([https://github.com/alibaba/zvec](https://github.com/alibaba/zvec))  
-> **Source Version**: `b0d0760a`  
+> **Source Version**: `d61530f2`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T02:14:45.415Z  
+> **Timestamp**: 2026-11-11T08:28:04.706Z  
 > **Learning ID**: `learn-github-alibaba-zvec`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/alibaba-zvec-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/alibaba/zvec](https://github.com/alibaba/zvec))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T02:14:45.411Z  
+> **Harvest Timestamp**: 2026-11-11T08:18:03.487Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A lightweight, lightning-fast, in-process vector database
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 16215 stars
+- **Stars / Engagement**: 16226 stars
 
 ---
 
@@ -1071,11 +1071,11 @@ class HolderCluster {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #886** (2026-11-11): **[Bug]: HNSW + INT8/INT4 + enable_rotate=True returns near-random results after optimize() (regression in 0.8.0)**
+  *Symptoms*: ### Description   On 0.8.0 and 0.8.1, a newly created HNSW index with scalar quantization (INT8 or INT4) and QuantizerParam(enable_rotate=True) returns wrong neighbours after Collection.optimize(). A query with a document's own vector almost never returns that document. Results are correct before optimize, and Flat and IVF indexes with the same settings are correct. On 0.7.0 the same script gives full recall.   HNSW collections built with rotation on 0.7.0, then opened, written to and re-optimized on 0.8.1, keep full recall. Only indexes created on 0.8.x are affected.   The same happens at dim=32 and with INT4. In a 4-dimension example, the exact match scores about 1.0 after optimize (it should be about 0), and the ranking is scrambled.   Also reproduces at scale: SIFT1M (1M × 128, L2), HNSW + INT8 + enable_rotate=True on 0.8.1 gives recall@10 = 0.000 at every ef from 40 to 200, with or without the refiner. Plain INT8 HNSW on the same data is unaffected.    Environment: zvec 0.8.1 from PyPI (cp312 wheel), macOS (Darwin 25.5), Apple Silicon arm64, Python 3.12.   Possibly related: the Turbo quantizer and distance-kernel migration in 0.8.0 (#716, #735, #773).  ### Steps to Reproduce  ```python import random, tempfile, zvec   zvec.init(log_dir=tempfile.mkdtemp())  random.seed(0)  dim, n = 128, 500  vecs = {str(i): [random.gauss(0, 1) for _ in range(dim)] for i in range(n)}   for rotate in (False, True):      ip = zvec.HnswIndexParam(          metric_type=zvec.MetricType.COSINE,  
+
 - **Issue #836** (2026-10-22): **[Bug]:**
   *Symptoms*: ### Description  [zvec_deadlock_bug_report.md](https://github.com/user-attachments/files/33753801/zvec_deadlock_bug_report.md)  ### Steps to Reproduce  ```python import zvec, numpy as np, threading, time  DIM, N, PATH = 768, 20000, "/tmp/zvec_ro_repro"  # 1) create + insert + build index schema = zvec.CollectionSchema(     name="repro",     vectors=zvec.VectorSchema("embedding", zvec.DataType.VECTOR_FP32, DIM), ) col = zvec.create_and_open(PATH, schema) rng = np.random.default_rng(0) for i in range(0, N, 1000):     docs = [         zvec.Doc(id=str(j), vectors={"embedding": rng.standard_normal(DIM).astype("float32")})         for j in range(i, min(i + 1000, N))     ]     col.insert(docs) col.optimize() col.close()  # 2) reopen READ-ONLY and hammer concurrent queries ro = zvec.open(PATH, zvec.CollectionOption(read_only=True, enable_mmap=False)) vq = lambda: zvec.VectorQuery("embedding", vector=rng.standard_normal(DIM).astype("float32"), topk=10)  stop = threading.Event() def worker():     while not stop.is_set():         try:             ro.query(vq(), topk=10)         except Exception:             pass  threads = [threading.Thread(target=worker, daemon=True) for _ in range(32)] [t.start() for t in threads] time.sleep(120)   # in our environment the process deadlocks within seconds~minutes;                   # if it is still alive after 120s the trigger threshold was not reached print("survived") ```  ### Logs / Stack Trace  ```shell  ```  ### Operating System  WSL2  ### Build 
-
-- **Issue #815** (2026-10-21): **[Bug]: read_only=True close() modifies persisted Flat index bytes in v0.7.0**
-  *Symptoms*: ## Description  In zvec 0.7.0, opening a persisted FP32 Flat/COSINE collection with `CollectionOption(read_only=True)` and then calling `close()` changes bytes in its vector-index file.  A snapshot taken immediately after `open()` is unchanged; the snapshot after `close()` differs. There are no queries, inserts, updates, deletes, or flushes between the read-only open and close. This reproduces with only two 4-dimensional vectors; no scalar indexes, FTS, application adapters, or external data are needed.  ## Steps to reproduce  Install the published package with `python -m pip install zvec==0.7.0`, save the following as `repro.py`, and run `python repro.py`.  ```python import hashlib import tempfile import time from pathlib import Path  import zvec   def snapshot(path):     return {str(p.relative_to(path)): p.read_bytes()             for p in path.rglob("*") if p.is_file()}   with tempfile.TemporaryDirectory(prefix="zvec-readonly-") as tmp:     path = Path(tmp) / "collection"     schema = zvec.CollectionSchema(         name="readonly_repro",         vectors=zvec.VectorSchema(             "embedding", zvec.DataType.VECTOR_FP32, 4,             index_param=zvec.FlatIndexParam(metric_type=zvec.MetricType.COSINE),         ),     )     collection = zvec.create_and_open(str(path), schema)     collection.insert([         zvec.Doc(id="a", vectors={"embedding": [1.0, 0.0, 0.0, 0.0]}),         zvec.Doc(id="b", vectors={"embedding": [0.0, 1.0, 0.0, 0.0]}),     ])     collection.flush()   
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1092,32 +1092,288 @@ class HolderCluster {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b0d0760a` (2026-11-09)
-**Commit Message**: ci(deps): bump actions/setup-java from 6.1.0 to 6.2.0 (#884)
+### Incident Patch 1: `d61530f2` (2026-11-11)
+**Commit Message**: fix(db): rebuild rotated INT8/INT4 indexes from raw vectors on optimize (#887)
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/04-android-build.yml` (modified, +1/-1)
+**File**: `python/tests/test_rotated_quantization.py` (added, +97/-0)
 ```diff
-@@ -48,7 +48,7 @@ jobs:
-           max-size: 300M
+@@ -0,0 +1,97 @@
++# Copyright 2025-present the zvec project
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++#     http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++
++"""Optimize must keep rotated INT8/INT4 indexes searchable (issue #886)."""
++
++from __future__ import annotations
++
++import numpy as np
++import pytest
++
++import zvec
++from zvec import (
++    CollectionSchema,
++    Doc,
++    FlatIndexParam,
++    HnswIndexParam,
++    Query,
++    QuantizerParam,
++    VectorSchema,
++)
++from zvec.typing import DataType, MetricType, QuantizeType
++
++DIMENSION = 128
++BATCH = 200
++MIN_HITS = BATCH * 95 // 100
++
++
++def _self_recall(collection, vectors, ids) -> int:
++    hits = 0
++    for i in ids:
++        result = collection.query(Query(field_name="dense", vector=vectors[i]), topk=1)
++        hits += bool(result) and result[0].id == str(i)
++    return hits
++
++
++@pytest.mark.parametrize(
++    "metric", [MetricType.COSINE, MetricType.L2], ids=["cosine", "l2"]
++)
++@pytest.mark.parametrize(
++    "quantize_type", [QuantizeType.INT8, QuantizeType.INT4], ids=["int8", "int4"]
++)
++@pytest.mark.parametrize("index_kind", ["hnsw", "flat"])
++def test_rotated_quantizer_survives_optimize(
++    tmp_path, index_kind, quantize_type, metric
++):
++    zvec.init()
++    rng = np.random.default_rng(886)
++    vectors = rng.standard_normal((BATCH * 2, DIMENSION)).astype(np.float32).tolist()
++
++    index_cls = HnswIndexParam if index_kind == "hnsw" else FlatIndexParam
++    index_param = index_cls(
++        metric_type=metric,
++        quantize_type=quantize_type,
++        quantizer_param=QuantizerParam(enable_rotate=True),
++    )
++    schema = CollectionSchema(
++        name="rotated_quantization",
++        vectors=[
++            VectorSchema(
++                "dense", DataType.VECTOR_FP32, DIMENSION, index_param=index_param
++            )
++        ],
++    )
++    path = str(tmp_path / "collection")
++    collection = zvec.create_and_open(path=path, schema=schema)
++
++    def insert(ids):
++        collection.insert([Doc(id=str(i), vectors={"dense": vectors[i]}) for i in ids])
++
++    first, second = range(BATCH), range(BATCH, BATCH * 2)
++
++    # The first optimize builds the index from one writing segment.
++    insert(first)
++    assert _self_recall(collection, vectors, first) >= MIN_HITS
++    collection.optimize()
++    assert _self_recall(collection, vectors, first) >= MIN_HITS
++
++    # The second optimize merges the indexed segment with a new one.
++    insert(second)
++    collection.optimize()
++    assert _self_recall(collection, vectors, first) >= MIN_HITS
++    assert _self_recall(collection, vectors, second) >= MIN_HITS
++
++    del collection
++    collection = zvec.open(path)
++    assert _self_recall(collection, vectors, range(BATCH * 2)) >= MIN_HITS * 2
+```
+
+**File**: `src/db/index/segment/segment.cc` (modified, +1/-1)
+```diff
+@@ -1737,7 +1737,7 @@ Status SegmentImpl::create_vector_index(
+     // training continue to consume the raw Flat sources.
+     const auto *quantize_sources = &vector_indexers_[column];
+     if (segment_detail::CanReuseInsertTimeQuantizedVectors(
+-            vector_index_params->quantize_type())) {
++            *vector_index_params)) {
+       auto quant_iter = quant_vector_indexers_.find(column);
+       if (quant_iter != quant_vector_indexers_.end() &&
+           !quant_iter->second.empty() &&
+```
+
+**File**: `src/db/index/segment/segment_helper.cc` (modified, +1/-1)
+```diff
+@@ -736,7 +736,7 @@ Status SegmentHelper::ReduceVectorIndex(
+       // raw Flat sources and train again for the merged segment.
+       auto quant_merge_sources =
+           segment_detail::CanReuseInsertTimeQuantizedVectors(
+-              vector_index_params->quantize_type())
++              *vector_index_params)
+               ? collect_merge_indexers(&Segment::get_quant_vector_indexer)
+               : collect_merge_indexers(&Segment::get_vector_indexer);
  
-       - name: Setup Java 17
--        uses: actions/setup-java@v6.1.0
-+        uses: actions/setup-java@v6.2.0
-         with:
-           distribution: temurin
-           java-version: '17'
+```
+
+**File**: `src/db/index/segment/segment_helper.h` (modified, +11/-1)
+```diff
+@@ -43,7 +43,17 @@ inline DataType FlatStorageDataTypeForField(DataType field_data_type,
+ 
+ // These quantizers encode each record independently and therefore produce a
+ // valid quantized index during insert, before optimize sees the full dataset.
+-inline bool CanReuseInsertTimeQuantizedVectors(QuantizeType quantize_type) {
++//
++// Rotated INT8/INT4 records are the exception: every index draws its own
++// random rotation, and the merge copies records whose reformer names match
++// without re-encoding them. Copying them into a new index would pair them with
++// a different rotation, so they are rebuilt from the raw Flat sources.
++inline bool CanReuseInsertTimeQuantizedVectors(
++    const VectorIndexParams &params) {
++  if (params.quantizer_param().enable_rotate()) {
++    return false;
++  }
++  const QuantizeType quantize_type = params.quantize_type();
+   return quantize_type == QuantizeType::FP16 ||
+          quantize_type == QuantizeType::INT8 ||
+          quantize_type == QuantizeType::INT4;
+```
+
+**File**: `tests/db/collection_test.cc` (modified, +101/-0)
+```diff
+@@ -25,6 +25,7 @@
+ #include <memory>
+ #include <mutex>
+ #include <numeric>
++#include <random>
+ #include <string>
+ #include <system_error>
+ #include <thread>
+@@ -3826,6 +3827,106 @@ TEST_F(CollectionTest, Feature_Optimize_MetricType) {
+   func(MetricType::IP, QuantizeType::FP16);
+ }
+ 
++// Regression test for https://github.com/alibaba/zvec/issues/886: every
++// rotated INT8/INT4 index draws its own random rotation, so optimize must not
++// copy insert-time codes into an index that holds a different rotation.
++TEST_F(CollectionTest, Feature_Optimize_RotatedIntegerQuantizer) {
++  constexpr uint32_t kDim = 128;
++  constexpr int kBatch = 200;
++  constexpr int kMinHits = kBatch * 95 / 100;
++  std::mt19937 gen(886);
++  std::normal_distribution<float> dist(0.0f, 1.0f);
++  std::vector<std::vector<float>> vectors(kBatch * 2, std::vector<float>(kDim));
++  for (auto &vector : vectors) {
++    for (auto &value : vector) value = dist(gen);
++  }
++
++  auto func = [&](IndexType index_type, QuantizeType quantize_type,
++                  MetricType metric_type) {
++    SCOPED_TRACE(std::string(magic_enum::enum_name(index_type)) + "/" +
++                 std::string(magic_enum::enum_name(quantize_type)) + "/" +
++                 std::string(magic_enum::enum_name(metric_type)));
++    FileHelper::RemoveDirectory(col_path);
++
++    IndexParams::Ptr index_params;
++    if (index_type == IndexType::HNSW) {
++      index_params = std::make_shared<HnswIndexParams>(
++          metric_type, 16, 200, quantize_type, false, QuantizerParam(true));
++    } else {
++      index_params = std::make_shared<FlatIndexParams>(
++          metric_type, quantize_type, QuantizerParam(true));
++    }
++    CollectionSchema schema("rotate");
++    ASSERT_TRUE(
++        schema
++            .add_field(std::make_shared<FieldSchema>(
++                "dense", DataType::VECTOR_FP32, kDim, false, index_params))
++            .ok());
++    auto created = Collection::CreateAndOpen(col_path, schema, options_);
++    ASSERT_TRUE(created.has_value()) << created.error().message();
++    auto collection = std::move(created).value();
++
++    auto insert = [&](int begin, int end) {
++      std::vector<Doc> docs;
++      for (int i = begin; i < end; ++i) {
++        Doc doc;
++        doc.set_pk(std::to_string(i));
++        doc.set<std::vector<float>>("dense", vectors[i]);
++        docs.push_back(std::move(doc));
++      }
++      auto result = collection->insert(docs);
++      ASSERT_TRUE(result.has_value()) << result.error().message();
++      for (const auto &status : result.value()) {
++        ASSERT_TRUE(status.ok()) << status.message();
++      }
++    };
++    auto self_recall = [&](int begin, int end) {
++      int hits = 0;
++      for (int i = begin; i < end; ++i) {
++        SearchQuery query;
++        query.topk_ = 1;
++        query.target_.field_name_ = "dense";
++        query.target_.set_vector(
++            std::string(reinterpret_cast<const char *>(vectors[i].data()),
++                        vectors[i].size() * sizeof(float)));
++        auto result = collection->query(query);
++        EXPECT_TRUE(result.has_value()) << result.error().message();
++        if (result.has_value() && !result.value().empty() &&
++            result.value()[0]->pk() == std::to_string(i)) {
++          ++hits;
++        }
++      }
++      return hits;
++    };
++
++    // First optimize builds the index from a single writing segment.
++    insert(0, kBatch);
++    ASSERT_GE(self_recall(0, kBatch), kMinHits);
++    ASSERT_TRUE(collection->optimize().ok());
++    EXPECT_GE(self_recall(0, kBatch), kMinHits);
++
++    // Second optimize merges the indexed segment with a new writing segment.
++    insert(kBatch, kBatch * 2);
++    ASSERT_TRUE(collection->optimize().ok());
++    EXPECT_GE(self_recall(0, kBatch), kMinHits);
++    EXPECT_GE(self_recall(kBatch, kBatch * 2), kMinHits);
++
++    // The rebuilt index must keep its own rotation after reopen.
++    collection.reset();
++    auto reopened = Collection::Open(col_path, options_);
++    ASSERT_TRUE(reopened.has_value()) << reopened.error().message();
++    collection = std::move(reopened).value();
++    EXPECT_GE(self_recall(0, kBatch * 2), kMinHits * 2);
++  };
++
++  for (auto index_type : {IndexType::HNSW, IndexType::FLAT}) {
++    for (auto quantize_type : {QuantizeType::INT8, QuantizeType::INT4}) {
++      func(index_type, quantize_type, MetricType::COSINE);
++      func(index_type, quantize_type, MetricType::L2);
++    }
++  }
++}
++
+ TEST_F(CollectionTest, Feature_Optimize_Delete) {
+   int doc_count = 1000;
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #887** (2026-11-11): fix(db): rebuild rotated INT8/INT4 indexes from raw vectors on optimize (@TheAli711)
 - **PR #884** (2026-11-09): ci(deps): bump actions/setup-java from 6.1.0 to 6.2.0 (@dependabot[bot])
 - **PR #882** (2026-11-06): fix(build): add OSS fallbacks for Thrift and Boost downloads (@iaojnh)
 - **PR #880** (2026-11-06): perf(hnsw): reduce optimize memory for fresh graph builds (@iaojnh)
 - **PR #879** (2026-11-05): perf(ivf): reuse stable source vectors during construction (@iaojnh)
 - **PR #877** (2026-11-05): perf: reduce DiskANN PQ training and neighbor storage memory (@iaojnh)
-- **PR #874** (2026-11-06): feat(diskann): support Intel macOS and Windows ARM64 (@iaojnh)
 
 ---
 
@@ -1137,28 +1393,70 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci(deps): bump actions/setup-java from 6.1.0 to 6.2.0 (#884)
+## X. db): rebuild rotated INT8/INT4 indexes from raw vectors on optimize (#887)
 
 **RULE**:
-When implementing operations in `.github/workflows/04-android-build.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in alibaba/zvec. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `python/tests/test_rotated_quantization.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in alibaba/zvec. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b0d0760a`: ci(deps): bump actions/setup-java from 6.1.0 to 6.2.0 (#884). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d61530f2`: db): rebuild rotated INT8/INT4 indexes from raw vectors on optimize (#887). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/04-android-build.yml`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `python/tests/test_rotated_quantization.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-        uses: actions/setup-java@v6.2.0
+# Copyright 2025-present the zvec project
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+"""Optimize must keep rotated INT8/INT4 indexes searchable (issue #886)."""
+
+from __future__ import annotations
+
+import numpy as np
+import pytest
+
+import zvec
+from zvec import (
+    CollectionSchema,
+    Doc,
+    FlatIndexParam,
+    HnswIndexParam,
+    Query,
+    QuantizerParam,
+    VectorSchema,
+)
+from zvec.typing import DataType, MetricType, QuantizeType
+
+DIMENSION = 128
+BATCH = 200
+MIN_HITS = BATCH * 95 // 100
+
+
+def _self_recall(collection, vectors, ids) -> int:
+    hits = 0
+    for i in ids:
+        result = collection.query(Query(field_name="dense", vector=vectors[i]), topk=1)
+        hits += bool(r
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-        uses: actions/setup-java@v6.1.0
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b0d0760a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d61530f2` are properly handled with clean fallback behavior.
