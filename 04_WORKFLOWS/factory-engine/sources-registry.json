@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-11T13:52:33.936Z",
-    "lastVerified": "2026-11-11T13:52:33.936Z",
+    "lastChecked": "2026-11-11T14:09:53.198Z",
+    "lastVerified": "2026-11-11T14:09:53.198Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -456,8 +456,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-11T12:53:26.256Z",
-    "lastVerified": "2026-11-11T12:53:26.256Z",
+    "lastChecked": "2026-11-11T14:09:40.399Z",
+    "lastVerified": "2026-11-11T14:09:40.399Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -620,8 +620,8 @@
     "officialUrl": "https://github.com/open-policy-agent/gatekeeper",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-09T07:20:53.519Z",
-    "lastVerified": "2026-11-09T07:20:53.519Z",
+    "lastChecked": "2026-11-11T14:09:32.916Z",
+    "lastVerified": "2026-11-11T14:09:32.916Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-open-policy-agent-gatekeeper",
@@ -1117,11 +1117,21 @@
     "lastVerified": "2026-11-11T06:04:44.427Z"
   },
   "burntsushi-ripgrep": {
-    "name": "ripgrep",
+    "name": "BurntSushi/ripgrep",
     "officialUrl": "https://github.com/BurntSushi/ripgrep",
-    "lastChecked": "2026-11-09T01:26:06.332Z",
-    "revisionIdentifier": "91f5d22e",
-    "lastVerified": "2026-11-09T01:26:06.332Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-11T14:09:29.368Z",
+    "lastVerified": "2026-11-11T14:09:29.368Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-burntsushi-ripgrep",
+    "contentHash": "c2941fb97d55f727f365befd454cb970f6ee03d494f2acb3573260003df2e6c2",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-meta-llama-llama-3.1-8b-instruct": {
     "name": "meta-llama/Llama-3.1-8B-Instruct",
@@ -1379,8 +1389,8 @@
     "officialUrl": "https://github.com/cryfs/cryfs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-11T07:03:15.670Z",
-    "lastVerified": "2026-11-11T07:03:15.670Z",
+    "lastChecked": "2026-11-11T14:09:35.403Z",
+    "lastVerified": "2026-11-11T14:09:35.403Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cryfs-cryfs",
@@ -3600,9 +3610,9 @@
   "vasu-devs-justhireme": {
     "name": "JustHireMe",
     "officialUrl": "https://github.com/vasu-devs/JustHireMe",
-    "lastChecked": "2026-11-09T06:32:24.905Z",
+    "lastChecked": "2026-11-11T14:09:37.961Z",
     "revisionIdentifier": "accdcdb5",
-    "lastVerified": "2026-11-09T06:32:24.905Z"
+    "lastVerified": "2026-11-11T14:09:37.961Z"
   },
   "ekzhang-bore": {
     "name": "bore",
@@ -7977,11 +7987,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "jetbrains-kotlinconf-app": {
-    "name": "kotlinconf-app",
+    "name": "JetBrains/kotlinconf-app",
     "officialUrl": "https://github.com/JetBrains/kotlinconf-app",
-    "lastChecked": "2026-11-07T21:55:43.173Z",
-    "revisionIdentifier": "907ce238",
-    "lastVerified": "2026-11-07T21:55:43.173Z"
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-11-11T14:09:35.459Z",
+    "lastVerified": "2026-11-11T14:09:35.459Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-jetbrains-kotlinconf-app",
+    "contentHash": "b7585d8a38f94fdb6d3bcb2757790ad199485c985dfe8ba70e4257dfd45f9fe3",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "open-source-legal-opencontracts": {
     "name": "Open-Source-Legal/OpenContracts",
@@ -10566,9 +10586,9 @@
   "berkaycubuk-kitsune": {
     "name": "kitsune",
     "officialUrl": "https://github.com/berkaycubuk/kitsune",
-    "lastChecked": "2026-11-06T20:38:01.977Z",
+    "lastChecked": "2026-11-11T14:09:27.903Z",
     "revisionIdentifier": "616da5b1",
-    "lastVerified": "2026-11-06T20:38:01.977Z"
+    "lastVerified": "2026-11-11T14:09:27.903Z"
   },
   "michaelbull-kotlin-result": {
     "name": "kotlin-result",

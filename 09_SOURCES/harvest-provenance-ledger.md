@@ -8961,3 +8961,5 @@ Every entry in this ledger must capture:
 | `learn-github-nginx-kubernetes-ingress` | `https://github.com/nginx/kubernetes-ingress` | `59dbb784` | Multi-dimensional audit evidence | 2026-11-11T13:29:12.684Z |
 | `learn-dom-d-ba155874` | `project://hf-baidu-ernie-5.5-flash-base` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-baidu-ernie-5.5-flash-base-learnings.md` | 2026-11-11T13:29:30.753Z |
 | `learn-github-necolas-react-native-web` | `https://github.com/necolas/react-native-web` | `dcfd464f` | Multi-dimensional audit evidence | 2026-11-11T13:52:28.807Z |
+| `learn-github-burntsushi-ripgrep` | `https://github.com/BurntSushi/ripgrep` | `178cc027` | Multi-dimensional audit evidence | 2026-11-11T14:09:40.564Z |
+| `learn-github-jetbrains-kotlinconf-app` | `https://github.com/JetBrains/kotlinconf-app` | `ac7b40cc` | Multi-dimensional audit evidence | 2026-11-11T14:09:46.892Z |

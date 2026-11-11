@@ -2463,10 +2463,10 @@
     "repository": "BurntSushi/ripgrep",
     "platform": "github",
     "sourceUrl": "https://github.com/BurntSushi/ripgrep",
-    "sourceVersion": "91f5d22e",
+    "sourceVersion": "178cc027",
     "license": "Unlicense",
-    "contentHash": "24001c43f51c33e1dd15181accb5f89edd4d3c774e9d0872f23976624c8592ba",
-    "lastHarvestedAt": "2026-10-27T21:45:01.312Z",
+    "contentHash": "c2941fb97d55f727f365befd454cb970f6ee03d494f2acb3573260003df2e6c2",
+    "lastHarvestedAt": "2026-11-11T14:09:40.564Z",
     "learningId": "learn-github-burntsushi-ripgrep"
   },
   "cosscom-coss": {
@@ -7143,10 +7143,10 @@
     "repository": "JetBrains/kotlinconf-app",
     "platform": "github",
     "sourceUrl": "https://github.com/JetBrains/kotlinconf-app",
-    "sourceVersion": "907ce238",
+    "sourceVersion": "ac7b40cc",
     "license": "Apache-2.0",
-    "contentHash": "cc9f1177a1ea2fb9c5cbae135fd3f2883913bfbde64f6e46bd8548e9b9ce2ef4",
-    "lastHarvestedAt": "2026-10-20T19:58:43.660Z",
+    "contentHash": "b7585d8a38f94fdb6d3bcb2757790ad199485c985dfe8ba70e4257dfd45f9fe3",
+    "lastHarvestedAt": "2026-11-11T14:09:46.892Z",
     "learningId": "learn-github-jetbrains-kotlinconf-app"
   },
   "zeromicro-go-zero": {

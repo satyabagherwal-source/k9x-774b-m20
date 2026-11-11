@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T13:52:34.069Z",
+  "last_updated": "2026-11-11T14:09:53.309Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4956,6 +4956,33 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-0E8CB4-models-add-download-user-agent-and-ipv4-.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-CF5A12",
+      "directive_title": "ignore: respect custom filters with a maximum file size (#3599)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "burntsushi-ripgrep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-CF5A12-ignore-respect-custom-filters-with-a-max.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-A1BA95",
+      "directive_title": "Use a preview wrapper for preview setup",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "jetbrains-kotlinconf-app",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-A1BA95-use-a-preview-wrapper-for-preview-setup.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-A43B15",
+      "directive_title": "models): add download User-Agent and IPv4 fallback (#370)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-A43B15-models-add-download-user-agent-and-ipv4-.md",
       "staged_date": "2026-11-11"
     }
   ]

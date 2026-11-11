@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-11T13:52:28.676Z",
+  "last_updated": "2026-11-11T14:09:46.769Z",
   "total_verified_learnings": 1255,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6387,11 +6387,16 @@
       "slug": "burntsushi-ripgrep",
       "platform": "github",
       "source_url": "https://github.com/BurntSushi/ripgrep",
-      "source_version": "91f5d22e",
-      "content_hash": "24001c43f51c33e1dd15181accb5f89edd4d3c774e9d0872f23976624c8592ba",
+      "source_version": "178cc027",
+      "content_hash": "c2941fb97d55f727f365befd454cb970f6ee03d494f2acb3573260003df2e6c2",
       "dossier_path": "07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "ignore: respect custom filters with a maximum file size (#3599)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1732,
           "title": "Pre-Spawn Construction Invariant for Worker Threads",
@@ -6413,7 +6418,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T21:45:01.219Z",
+      "verified_at": "2026-11-11T14:09:40.433Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37345,11 +37350,16 @@
       "slug": "jetbrains-kotlinconf-app",
       "platform": "github",
       "source_url": "https://github.com/JetBrains/kotlinconf-app",
-      "source_version": "907ce238",
-      "content_hash": "cc9f1177a1ea2fb9c5cbae135fd3f2883913bfbde64f6e46bd8548e9b9ce2ef4",
+      "source_version": "ac7b40cc",
+      "content_hash": "b7585d8a38f94fdb6d3bcb2757790ad199485c985dfe8ba70e4257dfd45f9fe3",
       "dossier_path": "07_PROJECT_LEARNING/jetbrains-kotlinconf-app-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/jetbrains-kotlinconf-app-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Use a preview wrapper for preview setup",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2352,
           "title": "Pre-Initialization Telemetry Buffering with Bounded Mutex Invariants",
@@ -37376,7 +37386,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T19:58:43.584Z",
+      "verified_at": "2026-11-11T14:09:46.738Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

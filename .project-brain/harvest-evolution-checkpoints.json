@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T13:52:34.070Z",
+  "last_updated": "2026-11-11T14:09:53.311Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-11T13:52:34.067Z",
@@ -8,7 +8,7 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-11T13:52:34.070Z",
+      "processed_at": "2026-11-11T14:09:53.310Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -311,9 +311,19 @@
       "processed_at": "2026-11-11T13:52:34.061Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "burntsushi-ripgrep-learnings.md": {
+      "processed_at": "2026-11-11T14:09:53.300Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "jetbrains-kotlinconf-app-learnings.md": {
+      "processed_at": "2026-11-11T14:09:53.305Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 75,
+  "total_dossiers_evaluated": 78,
   "total_canonical_promoted": 16,
-  "total_staged_for_review": 56
+  "total_staged_for_review": 59
 }

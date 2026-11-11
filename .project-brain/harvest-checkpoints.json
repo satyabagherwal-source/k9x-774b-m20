@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-11T13:52:28.819Z",
+  "last_updated": "2026-11-11T14:09:46.901Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3831,14 +3831,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-burntsushi-ripgrep",
-      "content_hash": "24001c43f51c33e1dd15181accb5f89edd4d3c774e9d0872f23976624c8592ba",
-      "verified_at": "2026-10-27T21:45:01.321Z",
+      "content_hash": "c2941fb97d55f727f365befd454cb970f6ee03d494f2acb3573260003df2e6c2",
+      "verified_at": "2026-11-11T14:09:40.573Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T21:45:01.321Z"
+      "last_updated": "2026-11-11T14:09:40.573Z"
     },
     "cosscom/coss": {
       "repository": "cosscom/coss",
@@ -10761,14 +10761,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-jetbrains-kotlinconf-app",
-      "content_hash": "cc9f1177a1ea2fb9c5cbae135fd3f2883913bfbde64f6e46bd8548e9b9ce2ef4",
-      "verified_at": "2026-10-20T19:58:43.668Z",
+      "content_hash": "b7585d8a38f94fdb6d3bcb2757790ad199485c985dfe8ba70e4257dfd45f9fe3",
+      "verified_at": "2026-11-11T14:09:46.900Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T19:58:43.668Z"
+      "last_updated": "2026-11-11T14:09:46.900Z"
     },
     "zeromicro/go-zero": {
       "repository": "zeromicro/go-zero",

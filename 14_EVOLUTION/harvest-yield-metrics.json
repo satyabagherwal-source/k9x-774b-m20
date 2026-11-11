@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T13:52:28.814Z",
-  "total_cycles_completed": 8797,
-  "total_learnings_persisted": 8797,
-  "total_rules_promoted": 8657,
+  "last_updated": "2026-11-11T14:09:46.897Z",
+  "total_cycles_completed": 8799,
+  "total_learnings_persisted": 8799,
+  "total_rules_promoted": 8659,
   "history": [
-    {
-      "timestamp": "2026-11-09T16:26:07.082Z",
-      "repository": "apple/foundationdb",
-      "learningId": "learn-github-apple-foundationdb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T16:33:28.613Z",
-      "repository": "ntex-rs/ntex",
-      "learningId": "learn-github-ntex-rs-ntex",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T16:33:36.196Z",
       "repository": "projectdiscovery/nuclei",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-11T13:52:28.814Z",
       "repository": "necolas/react-native-web",
       "learningId": "learn-github-necolas-react-native-web",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T14:09:40.570Z",
+      "repository": "BurntSushi/ripgrep",
+      "learningId": "learn-github-burntsushi-ripgrep",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T14:09:46.897Z",
+      "repository": "JetBrains/kotlinconf-app",
+      "learningId": "learn-github-jetbrains-kotlinconf-app",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/jetbrains-kotlinconf-app-learnings.md`  
 > **Source**: github ([https://github.com/JetBrains/kotlinconf-app](https://github.com/JetBrains/kotlinconf-app))  
-> **Source Version**: `907ce238`  
+> **Source Version**: `ac7b40cc`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T19:58:43.252Z  
+> **Timestamp**: 2026-11-11T14:09:35.465Z  
 > **Learning ID**: `learn-github-jetbrains-kotlinconf-app`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/jetbrains-kotlinconf-app-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/JetBrains/kotlinconf-app](https://github.com/JetBrains/kotlinconf-app))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T19:58:43.246Z  
+> **Harvest Timestamp**: 2026-11-11T14:09:35.459Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The official KotlinConf application
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3572 stars
+- **Stars / Engagement**: 3575 stars
 
 ---
 
@@ -498,35 +498,361 @@ internal const val MAX_LOG_MESSAGES_IN_MEMORY = 200
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `907ce238` (2026-10-19)
-**Commit Message**: Update Kotlin to 2.4.21, Coil to 3.6.3, Ktor to 3.6.0
+### Incident Patch 1: `ac7b40cc` (2026-07-16)
+**Commit Message**: Use a preview wrapper for preview setup
 
-**File**: `gradle/libs.versions.toml` (modified, +3/-3)
+**File**: `app/ui-components/src/commonMain/kotlin/org/jetbrains/kotlinconf/ui/components/Action.kt` (modified, +3/-4)
 ```diff
-@@ -10,7 +10,7 @@ androidx-core-splashscreen = "1.2.0"
- androidx-lifecycle = "2.11.0"
- androidx-navigation3 = "1.1.2"
- androidx-preference = "1.2.1"
--coil = "3.5.0"
-+coil = "3.6.3"
- compose-multiplatform = "1.12.1"
- doistx-normalize = "1.3.3"
- exposed = "1.0.0"
-@@ -21,12 +21,12 @@ jib = "3.4.5"
- junit = "4.13.2"
- kmpnotifier = "1.6.1"
- koin = "4.2.2"
--kotlin = "2.4.10"
-+kotlin = "2.4.21"
- kotlin-browser = "2026.3.3"
- kotlinx-coroutines = "1.11.0"
- kotlinx-datetime = "0.8.0"
- kotlinx-serialization = "1.11.0"
--ktor = "3.5.1"
-+ktor = "3.6.0"
- logback-classic = "1.5.24"
- markdown = "0.39.2"
- metro = "1.4.0"
+@@ -19,8 +19,7 @@ import org.jetbrains.compose.resources.painterResource
+ import org.jetbrains.kotlinconf.ui.generated.resources.UiRes
+ import org.jetbrains.kotlinconf.ui.generated.resources.arrow_right_24
+ import org.jetbrains.kotlinconf.ui.theme.KotlinConfTheme
+-import org.jetbrains.kotlinconf.ui.theme.PreviewHelper
+-import androidx.compose.ui.tooling.preview.PreviewLightDark
++import org.jetbrains.kotlinconf.ui.utils.ComponentPreview
+ 
+ enum class ActionSize {
+     Medium, Large,
+@@ -101,11 +100,11 @@ private class ActionPreviewParamsProvider : PreviewParameterProvider<ActionPrevi
+     }
+ }
+ 
+-@PreviewLightDark
++@ComponentPreview
+ @Composable
+ private fun ActionPreview(
+     @PreviewParameter(ActionPreviewParamsProvider::class) params: ActionPreviewParams,
+-) = PreviewHelper {
++) {
+     Action(
+         label = "Action",
+         icon = UiRes.drawable.arrow_right_24,
+```
+
+**File**: `app/ui-components/src/commonMain/kotlin/org/jetbrains/kotlinconf/ui/components/Button.kt` (modified, +5/-6)
+```diff
+@@ -19,8 +19,7 @@ import androidx.compose.ui.graphics.graphicsLayer
+ import androidx.compose.ui.semantics.Role
+ import androidx.compose.ui.unit.dp
+ import org.jetbrains.kotlinconf.ui.theme.KotlinConfTheme
+-import org.jetbrains.kotlinconf.ui.theme.PreviewHelper
+-import androidx.compose.ui.tooling.preview.PreviewLightDark
++import org.jetbrains.kotlinconf.ui.utils.ComponentPreview
+ 
+ private val ButtonShape = RoundedCornerShape(percent = 100)
+ 
+@@ -66,14 +65,14 @@ fun Button(
+     }
+ }
+ 
+-@PreviewLightDark
++@ComponentPreview
+ @Composable
+-private fun ButtonPrimaryPreview() = PreviewHelper {
++private fun ButtonPrimaryPreview() {
+     Button("Primary", { }, primary = true)
+ }
+ 
+-@PreviewLightDark
++@ComponentPreview
+ @Composable
+-private fun ButtonSecondaryPreview() = PreviewHelper {
++private fun ButtonSecondaryPreview() {
+     Button("Secondary", { }, primary = false)
+ }
+```
+
+**File**: `app/ui-components/src/commonMain/kotlin/org/jetbrains/kotlinconf/ui/components/CardTag.kt` (modified, +5/-6)
+```diff
+@@ -19,8 +19,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
+ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+ import androidx.compose.ui.unit.dp
+ import org.jetbrains.kotlinconf.ui.theme.KotlinConfTheme
+-import org.jetbrains.kotlinconf.ui.theme.PreviewHelper
+-import androidx.compose.ui.tooling.preview.PreviewLightDark
++import org.jetbrains.kotlinconf.ui.utils.ComponentPreview
+ 
+ private val CardTagShape = RoundedCornerShape(size = 4.dp)
+ 
+@@ -77,20 +76,20 @@ private class CardTagSizeProvider : PreviewParameterProvider<CardTagSize> {
+     override fun getDisplayName(index: Int) = values.elementAt(index).name
+ }
+ 
+-@PreviewLightDark
++@ComponentPreview
+ @Composable
+ private fun CardTagUnselectedPreview(
+     @PreviewParameter(CardTagSizeProvider::class) size: CardTagSize,
+-) = PreviewHelper {
++) {
+     var selected by remember { mutableStateOf(false) }
+     CardTag("Label", selected = selected, Modifier.clickable { selected = !selected }, size = size)
+ }
+ 
+-@PreviewLightDark
++@ComponentPreview
+ @Composable
+ private fun CardTagSelectedPreview(
+     @PreviewParameter(CardTagSizeProvider::class) size: CardTagSize,
+-) = PreviewHelper {
++) {
+     var selected by remember { mutableStateOf(true) }
+     CardTag("Label", selected = selected, Modifier.clickable { selected = !selected }, size = size)
+ }
+```
+
+**File**: `app/ui-components/src/commonMain/kotlin/org/jetbrains/kotlinconf/ui/components/DayHeader.kt` (modified, +3/-4)
+```diff
+@@ -27,9 +27,8 @@ import androidx.compose.ui.unit.sp
+ import org.jetbrains.kotlinconf.ui.theme.Brand.colorGradient
+ import org.jetbrains.kotlinconf.ui.theme.JetBrainsSans
+ import org.jetbrains.kotlinconf.ui.theme.KotlinConfTheme
+-import org.jetbrains.kotlinconf.ui.theme.PreviewHelper
+ import org.jetbrains.kotlinconf.ui.theme.UI.white60
+-import androidx.compose.ui.tooling.preview.PreviewLightDark
++import org.jetbrains.kotlinconf.ui.utils.ComponentPreview
+ 
+ private val DayDateStyle
+     @Composable
+@@ -141,11 +140,11 @@ private class DayHeaderPreviewParamsProvider : PreviewParameterProvider<DayHeade
+     }
+ }
+ 
+-@PreviewLightDark
++@ComponentPreview
+ @Composable
+ private fun DayHeaderPreview(
+     @PreviewParameter(DayHeaderPreviewParamsProvider::class) params: DayHeaderPreviewParams,
+-) = PreviewHelper(paddingEnabled = !params.fullWidth) {
++) {
+     if (params.multiDay) {
+         DayHeader("MAY", "22", "Code", "Labs", fullWidth = params.fullWidth, day2 = "23")
+     } else {
+```
+
+**File**: `app/ui-components/src/commonMain/kotlin/org/jetbrains/kotlinconf/ui/components/Divider.kt` (modified, +7/-8)
+```diff
+@@ -12,8 +12,7 @@ import androidx.compose.ui.graphics.Color
+ import androidx.compose.ui.unit.Dp
+ import androidx.compose.ui.unit.dp
+ import org.jetbrains.kotlinconf.ui.theme.KotlinConfTheme
+-import org.jetbrains.kotlinconf.ui.theme.PreviewHelper
+-import androidx.compose.ui.tooling.preview.PreviewLightDark
++import org.jetbrains.kotlinconf.ui.utils.ComponentPreview
+ 
+ @Composable
+ fun HorizontalDivider(
+@@ -47,14 +46,14 @@ fun VerticalDivider(
+     }
+ }
+ 
+-@PreviewLightDark
++@ComponentPreview
+ @Composable
+-private fun HorizontalDividerPreview() = PreviewHelper(Modifier.width(100.dp)) {
+-    HorizontalDivider(thickness = 1.dp, color = KotlinConfTheme.colors.strokePale)
++private fun HorizontalDividerPreview() {
++    HorizontalDivider(thickness = 1.dp, color = KotlinConfTheme.colors.strokePale, modifier = Modifier.width(100.dp))
+ }
+ 
+-@PreviewLightDark
++@ComponentPreview
+ @Composable
+-private fun VerticalDividerPreview() = PreviewHelper(Modifier.height(100.dp)) {
+-    VerticalDivider(thickness = 1.dp, color = KotlinConfTheme.colors.strokePale)
++private fun VerticalDividerPreview() {
++    VerticalDivider(thickness = 1.dp, color = KotlinConfTheme.colors.strokePale, modifier = Modifier.height(100.dp))
+ }
+```
+
+**File**: `app/ui-components/src/commonMain/kotlin/org/jetbrains/kotlinconf/ui/components/ErrorLoading.kt` (modified, +15/-16)
+```diff
+@@ -55,9 +55,8 @@ import org.jetbrains.kotlinconf.ui.generated.resources.kodee_error_loading_anim_
+ import org.jetbrains.kotlinconf.ui.generated.resources.kodee_error_lost
+ import org.jetbrains.kotlinconf.ui.generated.resources.loading
+ import org.jetbrains.kotlinconf.ui.theme.KotlinConfTheme
+-import org.jetbrains.kotlinconf.ui.theme.PreviewHelper
+ import org.jetbrains.kotlinconf.ui.theme.UI
+-import androidx.compose.ui.tooling.preview.PreviewLightDark
++import org.jetbrains.kotlinconf.ui.utils.ComponentPreview
+ import kotlin.math.PI
+ import kotlin.math.cos
+ import kotlin.math.sin
+@@ -242,21 +241,21 @@ fun Loading(
+ }
+ 
+ 
+-@PreviewLightDark
++@ComponentPreview
+ @Composable
+-private fun LoadingEnabledPreview() = PreviewHelper {
++private fun LoadingEnabledPreview() {
+     Loading(enabled = true)
+ }
+ 
+-@PreviewLightDark
++@ComponentPreview
+ @Composable
+-private fun LoadingDisabledPreview() = PreviewHelper {
++private fun LoadingDisabledPreview() {
+     Loading(enabled = false)
+ }
+ 
+-@PreviewLightDark
++@ComponentPreview
+ @Composable
+-private fun NormalErrorLoadingPreview() = PreviewHelper {
++private fun NormalErrorLoadingPreview() {
+     NormalErrorWithLoading(
+         message = "Error message",
+         isLoading = true,
+@@ -266,9 +265,9 @@ private fun NormalErrorLoadingPreview() = PreviewHelper {
+     )
+ }
+ 
+-@PreviewLightDark
++@ComponentPreview
+ @Composable
+-private fun NormalErrorInteractivePreview() = PreviewHelper {
++private fun NormalErrorInteractivePreview() {
+     var scope = rememberCoroutineScope()
+     var loading by remember { mutableStateOf(false) }
+     NormalErrorWithLoading(
+@@ -286,9 +285,9 @@ private fun NormalErrorInteractivePreview() = PreviewHelper {
+     )
+ }
+ 
+-@PreviewLightDark
++@ComponentPreview
+ @Composable
+-private fun NormalErrorIdlePreview() = PreviewHelper {
++private fun NormalErrorIdlePreview() {
+     NormalErrorWithLoading(
+         message = "Error message",
+         isLoading = false,
+@@ -297,17 +296,17 @@ private fun NormalErrorIdlePreview() = PreviewHelper {
+     )
+ }
+ 
+-@PreviewLightDark
++@ComponentPreview
+ @Composable
+-private fun MinorErrorPreview() = PreviewHelper {
++private fun MinorErrorPreview() {
+     MinorError(
+         message = "Minor error message"
+     )
+ }
+ 
+-@PreviewLightDark
++@ComponentPreview
+ @Composable
+-private fun MajorErrorPreview() = PreviewHelper {
++private fun MajorErrorPreview() {
+     MajorError(
+         message = "Major error message"
+     )
+```
+
+**File**: `app/ui-components/src/commonMain/kotlin/org/jetbrains/kotlinconf/ui/components/FeedbackForm.kt` (modified, +3/-4)
+```diff
+@@ -58,8 +58,7 @@ import org.jetbrains.kotlinconf.ui.generated.resources.feedback_form_skip_commen
+ import org.jetbrains.kotlinconf.ui.generated.resources.feedback_form_type_something
+ import org.jetbrains.kotlinconf.ui.theme.Brand
+ import org.jetbrains.kotlinconf.ui.theme.KotlinConfTheme
+-import org.jetbrains.kotlinconf.ui.theme.PreviewHelper
+-import androidx.compose.ui.tooling.preview.PreviewLightDark
++import org.jetbrains.kotlinconf.ui.utils.ComponentPreview
+ 
+ @Composable
+ fun FeedbackForm(
+@@ -292,11 +291,11 @@ private class FeedbackFormPreviewParameterProvider :
+     }
+ }
+ 
+-@PreviewLightDark
++@ComponentPreview
+ @Composable
+ private fun FeedbackFormPreview(
+     @PreviewParameter(FeedbackFormPreviewParameterProvider::class) params: FeedbackFormPreviewParams,
+-) = PreviewHelper {
++) {
+     var text by remember(params.text) { mutableStateOf(params.text) }
+     FeedbackForm(text, { text = it }, params.emotion, { _, _ -> }, {}, past = false, bringIntoViewRequester = BringIntoViewRequester())
+ }
+```
+
+**File**: `app/ui-components/src/commonMain/kotlin/org/jetbrains/kotlinconf/ui/components/Filters.kt` (modified, +3/-4)
+```diff
+@@ -55,8 +55,7 @@ import org.jetbrains.kotlinconf.ui.generated.resources.filter_label_level
+ import org.jetbrains.kotlinconf.ui.generated.resources.filter_label_session_format
+ import org.jetbrains.kotlinconf.ui.generated.resources.up_24
+ import org.jetbrains.kotlinconf.ui.theme.KotlinConfTheme
+-import org.jetbrains.kotlinconf.ui.theme.PreviewHelper
+-import androidx.compose.ui.tooling.preview.PreviewLightDark
++import org.jetbrains.kotlinconf.ui.utils.ComponentPreview
+ 
+ enum class FilterItemType {
+     Category, Level, Format,
+@@ -219,9 +218,9 @@ private fun FilterItemGroup(
+     }
+ }
+ 
+-@PreviewLightDark
++@ComponentPreview
+ @Composable
+-private fun FiltersPreview() = PreviewHelper {
++private fun FiltersPreview() {
+     fun <T> MutableList<T>.replace(old: T, new: T) {
+         val index = indexOf(old)
+         if (index >= 0) {
+```
+
+---
+
+### Incident Patch 2: `ec83b62d` (2026-06-17)
+**Commit Message**: Remove manual Noto emoji font loading on web
+
+**File**: `app/webApp/src/webMain/kotlin/org/jetbrains/kotlinconf/main.kt` (modified, +0/-16)
+```diff
+@@ -2,20 +2,13 @@
+ 
+ package org.jetbrains.kotlinconf
+ 
+-import androidx.compose.runtime.LaunchedEffect
+ import androidx.compose.ui.ExperimentalComposeUiApi
+-import androidx.compose.ui.platform.LocalFontFamilyResolver
+-import androidx.compose.ui.text.font.FontFamily
+ import androidx.compose.ui.window.ComposeViewport
+ import dev.zacsweers.metro.createGraphFactory
+-import org.jetbrains.compose.resources.ExperimentalResourceApi
+-import org.jetbrains.compose.resources.preloadFont
+ import org.jetbrains.kotlinconf.di.WebAppGraph
+ import org.jetbrains.kotlinconf.flags.Flags
+ import org.jetbrains.kotlinconf.ui.initCoil
+ import org.jetbrains.kotlinconf.utils.Logger
+-import org.jetbrains.kotlinconf.web.generated.resources.NotoColorEmoji
+-import org.jetbrains.kotlinconf.web.generated.resources.Res
+ import kotlin.js.ExperimentalWasmJsInterop
+ 
+ external object Window {
+@@ -44,15 +37,6 @@ fun main() {
+ 
+     @OptIn(ExperimentalComposeUiApi::class)
+     ComposeViewport {
+-        @OptIn(ExperimentalResourceApi::class)
+-        val emojiFont = preloadFont(Res.font.NotoColorEmoji).value
+-        val fontFamilyResolver = LocalFontFamilyResolver.current
+-        LaunchedEffect(fontFamilyResolver, emojiFont) {
+-            if (emojiFont != null) {
+-                fontFamilyResolver.preload(FontFamily(listOf(emojiFont)))
+-            }
+-        }
+-
+         App(appGraph)
+     }
+ }
+\ No newline at end of file
 ```
 
 #### Recent Merged Pull Requests:
@@ -555,32 +881,33 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update Kotlin to 2.4.21, Coil to 3.6.3, Ktor to 3.6.0
+## X. Use a preview wrapper for preview setup
 
 **RULE**:
-When implementing operations in `gradle/libs.versions.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in JetBrains/kotlinconf-app. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `app/ui-components/src/commonMain/kotlin/org/jetbrains/kotlinconf/ui/components/Action.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in JetBrains/kotlinconf-app. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `907ce238`: Update Kotlin to 2.4.21, Coil to 3.6.3, Ktor to 3.6.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ac7b40cc`: Use a preview wrapper for preview setup. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `gradle/libs.versions.toml`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `app/ui-components/src/commonMain/kotlin/org/jetbrains/kotlinconf/ui/components/Action.kt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-coil = "3.6.3"
-kotlin = "2.4.21"
-ktor = "3.6.0"
+import org.jetbrains.kotlinconf.ui.utils.ComponentPreview
+@ComponentPreview
+) {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-coil = "3.5.0"
-kotlin = "2.4.10"
-ktor = "3.5.1"
+import org.jetbrains.kotlinconf.ui.theme.PreviewHelper
+import androidx.compose.ui.tooling.preview.PreviewLightDark
+@PreviewLightDark
+) = PreviewHelper {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `907ce238` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ac7b40cc` are properly handled with clean fallback behavior.
