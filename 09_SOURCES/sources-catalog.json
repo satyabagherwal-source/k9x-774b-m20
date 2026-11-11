@@ -7813,10 +7813,10 @@
     "repository": "meshtastic/Meshtastic-Android",
     "platform": "github",
     "sourceUrl": "https://github.com/meshtastic/Meshtastic-Android",
-    "sourceVersion": "4b2503d2",
+    "sourceVersion": "157ef222",
     "license": "GPL-3.0",
-    "contentHash": "cd43034dd81d484ba6cae3cddead88a2dad9316941d06e66b4fb2415f5642530",
-    "lastHarvestedAt": "2026-11-08T01:36:02.508Z",
+    "contentHash": "3cf8d6ebc7046004190a026cb68b74492b022e205d58011e3152616644b3a436",
+    "lastHarvestedAt": "2026-11-11T23:57:06.842Z",
     "learningId": "learn-github-meshtastic-meshtastic-android"
   },
   "astral-sh-uv": {

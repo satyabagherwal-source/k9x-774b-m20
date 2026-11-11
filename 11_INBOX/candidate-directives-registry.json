@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T20:23:41.010Z",
+  "last_updated": "2026-11-11T23:57:11.646Z",
   "directives": [
     {
       "id": "CD-001",
@@ -5583,6 +5583,33 @@
       "source_repo": "authzed-spicedb",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-AC816F-postgres-stop-read-only-spicedb-from-wri.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-58B5C2",
+      "directive_title": "test(database): join the DataStore scope before deleting the fixture dir (#8014)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "meshtastic-meshtastic-android",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-58B5C2-test-database-join-the-datastore-scope-b.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-721E77",
+      "directive_title": "models): add download User-Agent and IPv4 fallback (#370)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-721E77-models-add-download-user-agent-and-ipv4-.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-EA034B",
+      "directive_title": "splash screen staying visible after warm start on Android 12+",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-bootsplash",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-EA034B-splash-screen-staying-visible-after-warm.md",
       "staged_date": "2026-11-11"
     }
   ]

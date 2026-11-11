@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-11T20:23:41.024Z",
+  "updated_at": "2026-11-11T23:57:11.661Z",
   "stats": {
-    "total_discovered": 288,
-    "approved_pending_harvest": 257,
+    "total_discovered": 310,
+    "approved_pending_harvest": 277,
     "harvested_count": 0,
-    "rejected_count": 31,
+    "rejected_count": 33,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 262,
+      "COMMUNITY_AND_EXPERT": 284,
       "OFFICIAL_DOCUMENTATION": 14,
       "STANDARDS_AND_SPECIFICATIONS": 11,
       "ENGINEERING_BLOGS": 1
@@ -6134,6 +6134,476 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
         "fileName": "authzed-spicedb-learnings.md"
+      }
+    },
+    "SRC-48E5481F5FA5": {
+      "id": "SRC-48E5481F5FA5",
+      "url": "https://github.com/meshtastic/Meshtastic-Android",
+      "title": "https://github.com/meshtastic/Meshtastic-Android",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T23:57:11.601Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md",
+        "fileName": "meshtastic-meshtastic-android-learnings.md"
+      }
+    },
+    "SRC-E27E4F48D1B7": {
+      "id": "SRC-E27E4F48D1B7",
+      "url": "https://www.gnu.org/licenses",
+      "title": "https://www.gnu.org/licenses",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T23:57:11.603Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md",
+        "fileName": "meshtastic-meshtastic-android-learnings.md"
+      }
+    },
+    "SRC-EC8DFC9A34E1": {
+      "id": "SRC-EC8DFC9A34E1",
+      "url": "https://github.com/meshtastic/Meshtastic-Android/pull/7862",
+      "title": "https://github.com/meshtastic/Meshtastic-Android/pull/7862",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T23:57:11.605Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md",
+        "fileName": "meshtastic-meshtastic-android-learnings.md"
+      }
+    },
+    "SRC-B73C197A993E": {
+      "id": "SRC-B73C197A993E",
+      "url": "https://github.com/user-attachments/assets/29b38237-88ba-4874-b9ce-e6f67481da40",
+      "title": "https://github.com/user-attachments/assets/29b38237-88ba-4874-b9ce-e6f67481da40",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T23:57:11.608Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md",
+        "fileName": "meshtastic-meshtastic-android-learnings.md"
+      }
+    },
+    "SRC-58B7055BBEDE": {
+      "id": "SRC-58B7055BBEDE",
+      "url": "https://github.com/user-attachments/ass",
+      "title": "https://github.com/user-attachments/ass",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T23:57:11.609Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md",
+        "fileName": "meshtastic-meshtastic-android-learnings.md"
+      }
+    },
+    "SRC-58C5C80BA91A": {
+      "id": "SRC-58C5C80BA91A",
+      "url": "https://meshtastic.org/docs/configuration/radio/bluetooth",
+      "title": "https://meshtastic.org/docs/configuration/radio/bluetooth",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T23:57:11.611Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md",
+        "fileName": "meshtastic-meshtastic-android-learnings.md"
+      }
+    },
+    "SRC-EE67FC7B59A7": {
+      "id": "SRC-EE67FC7B59A7",
+      "url": "https://github.com/zvec-ai/zvec-grep",
+      "title": "https://github.com/zvec-ai/zvec-grep",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T23:57:11.618Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
+        "fileName": "zvec-ai-zvec-grep-learnings.md"
+      }
+    },
+    "SRC-B69A26BCC6A1": {
+      "id": "SRC-B69A26BCC6A1",
+      "url": "https://opencode.ai/config.json",
+      "title": "https://opencode.ai/config.json",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T23:57:11.620Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
+        "fileName": "zvec-ai-zvec-grep-learnings.md"
+      }
+    },
+    "SRC-291DF3168CD4": {
+      "id": "SRC-291DF3168CD4",
+      "url": "http://127.0.0.1:7999/mcp",
+      "title": "http://127.0.0.1:7999/mcp",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-11T23:57:11.622Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
+        "fileName": "zvec-ai-zvec-grep-learnings.md"
+      }
+    },
+    "SRC-504C860BEA8B": {
+      "id": "SRC-504C860BEA8B",
+      "url": "https://www.npmjs.com/support",
+      "title": "https://www.npmjs.com/support",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T23:57:11.625Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
+        "fileName": "zvec-ai-zvec-grep-learnings.md"
+      }
+    },
+    "SRC-4BDA6EADCDF9": {
+      "id": "SRC-4BDA6EADCDF9",
+      "url": "https://github.com/Cuiyus/zvec-grep/commit/3e16b1861ad8f8529fe4e70268448217f37d0a6d",
+      "title": "https://github.com/Cuiyus/zvec-grep/commit/3e16b1861ad8f8529fe4e70268448217f37d0a6d",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T23:57:11.626Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
+        "fileName": "zvec-ai-zvec-grep-learnings.md"
+      }
+    },
+    "SRC-AF768C13E1E8": {
+      "id": "SRC-AF768C13E1E8",
+      "url": "https://github.com/Cuiyus/zvec-grep/actions/runs/35558324124",
+      "title": "https://github.com/Cuiyus/zvec-grep/actions/runs/35558324124",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T23:57:11.629Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
+        "fileName": "zvec-ai-zvec-grep-learnings.md"
+      }
+    },
+    "SRC-ED99FC82EBED": {
+      "id": "SRC-ED99FC82EBED",
+      "url": "https://modelscope.cn/models/owner/model",
+      "title": "https://modelscope.cn/models/owner/model",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T23:57:11.631Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
+        "fileName": "zvec-ai-zvec-grep-learnings.md"
+      }
+    },
+    "SRC-506D6A630D28": {
+      "id": "SRC-506D6A630D28",
+      "url": "http://artifact.test:{port",
+      "title": "http://artifact.test:{port",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-11T23:57:11.634Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
+        "fileName": "zvec-ai-zvec-grep-learnings.md"
+      }
+    },
+    "SRC-B81462AA8D34": {
+      "id": "SRC-B81462AA8D34",
+      "url": "https://registry.npmjs.org/$%7Bentry.name.replace(",
+      "title": "https://registry.npmjs.org/$%7Bentry.name.replace(",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T23:57:11.636Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
+        "fileName": "zvec-ai-zvec-grep-learnings.md"
+      }
+    },
+    "SRC-A198448D38D4": {
+      "id": "SRC-A198448D38D4",
+      "url": "https://registry.npmjs.org/@zvec%2fzvec-grep",
+      "title": "https://registry.npmjs.org/@zvec%2fzvec-grep",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T23:57:11.638Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
+        "fileName": "zvec-ai-zvec-grep-learnings.md"
+      }
+    },
+    "SRC-EBF443BBFD93": {
+      "id": "SRC-EBF443BBFD93",
+      "url": "https://registry.npmjs.org/",
+      "title": "https://registry.npmjs.org/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T23:57:11.641Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
+        "fileName": "zvec-ai-zvec-grep-learnings.md"
+      }
+    },
+    "SRC-F9CF257B980D": {
+      "id": "SRC-F9CF257B980D",
+      "url": "https://github.com/zoontek/react-native-bootsplash",
+      "title": "https://github.com/zoontek/react-native-bootsplash",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T23:57:11.648Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zoontek-react-native-bootsplash-learnings.md",
+        "fileName": "zoontek-react-native-bootsplash-learnings.md"
+      }
+    },
+    "SRC-EAA163DCC69F": {
+      "id": "SRC-EAA163DCC69F",
+      "url": "https://github.com/humanwhocodes/humanfs",
+      "title": "https://github.com/humanwhocodes/humanfs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T23:57:11.650Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zoontek-react-native-bootsplash-learnings.md",
+        "fileName": "zoontek-react-native-bootsplash-learnings.md"
+      }
+    },
+    "SRC-FB11C309C970": {
+      "id": "SRC-FB11C309C970",
+      "url": "https://github.com/zoontek/react-native-bootsplash/issues/809",
+      "title": "https://github.com/zoontek/react-native-bootsplash/issues/809",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T23:57:11.652Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zoontek-react-native-bootsplash-learnings.md",
+        "fileName": "zoontek-react-native-bootsplash-learnings.md"
+      }
+    },
+    "SRC-D290EB1AF9D5": {
+      "id": "SRC-D290EB1AF9D5",
+      "url": "https://issuetracker.google.com/issues/242118185",
+      "title": "https://issuetracker.google.com/issues/242118185",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T23:57:11.654Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zoontek-react-native-bootsplash-learnings.md",
+        "fileName": "zoontek-react-native-bootsplash-learnings.md"
+      }
+    },
+    "SRC-A0F0D9277C39": {
+      "id": "SRC-A0F0D9277C39",
+      "url": "https://stackoverflow.com/a/61062773",
+      "title": "https://stackoverflow.com/a/61062773",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T23:57:11.661Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zoontek-react-native-bootsplash-learnings.md",
+        "fileName": "zoontek-react-native-bootsplash-learnings.md"
       }
     }
   }

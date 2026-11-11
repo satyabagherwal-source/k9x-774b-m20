@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-11T20:23:35.776Z",
+  "last_updated": "2026-11-11T23:57:06.710Z",
   "total_verified_learnings": 1255,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -43962,8 +43962,8 @@
       "slug": "meshtastic-meshtastic-android",
       "platform": "github",
       "source_url": "https://github.com/meshtastic/Meshtastic-Android",
-      "source_version": "4b2503d2",
-      "content_hash": "cd43034dd81d484ba6cae3cddead88a2dad9316941d06e66b4fb2415f5642530",
+      "source_version": "157ef222",
+      "content_hash": "3cf8d6ebc7046004190a026cb68b74492b022e205d58011e3152616644b3a436",
       "dossier_path": "07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md",
       "promoted_rules": [
@@ -43981,6 +43981,11 @@
           "number": null,
           "title": "Metric Sentinel Zero vs Real Float Absence Rule",
           "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "test(database): join the DataStore scope before deleting the fixture dir (#8014)",
+          "status": "WITHHELD_REJECT"
         },
         {
           "number": 2517,
@@ -44018,7 +44023,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T01:36:02.396Z",
+      "verified_at": "2026-11-11T23:57:06.689Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

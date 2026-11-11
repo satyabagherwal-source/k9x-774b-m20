@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261108-1FVO",
-    "timestamp": "2026-11-08T21:16:36.900Z",
-    "repository": "codewhale-hq/Codewhale",
-    "learningId": "learn-github-codewhale-hq-codewhale",
-    "contentHash": "11be18443b3612d162e9c77da41e374c0e570a0d1de8c549bd85401b372f68a6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261108-1JUB",
     "timestamp": "2026-11-08T21:16:42.035Z",
     "repository": "hmlongco/Factory",
@@ -7490,6 +7475,21 @@
     "repository": "Orange-OpenSource/hurl",
     "learningId": "learn-github-orange-opensource-hurl",
     "contentHash": "11b5bd09de4a6a03e63883ff86507a1f99d2ed5ac4a88aab47ba89f7df2a651c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261111-3EDZ",
+    "timestamp": "2026-11-11T23:57:06.839Z",
+    "repository": "meshtastic/Meshtastic-Android",
+    "learningId": "learn-github-meshtastic-meshtastic-android",
+    "contentHash": "3cf8d6ebc7046004190a026cb68b74492b022e205d58011e3152616644b3a436",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

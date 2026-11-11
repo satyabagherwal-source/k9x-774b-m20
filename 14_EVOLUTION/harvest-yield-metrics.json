@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T20:23:35.901Z",
-  "total_cycles_completed": 8856,
-  "total_learnings_persisted": 8856,
-  "total_rules_promoted": 8712,
+  "last_updated": "2026-11-11T23:57:06.848Z",
+  "total_cycles_completed": 8857,
+  "total_learnings_persisted": 8857,
+  "total_rules_promoted": 8713,
   "history": [
-    {
-      "timestamp": "2026-11-09T23:45:25.474Z",
-      "repository": "dalance/procs",
-      "learningId": "learn-github-dalance-procs",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T23:52:49.246Z",
       "repository": "genkit-ai/genkit",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-11T20:23:35.901Z",
       "repository": "Orange-OpenSource/hurl",
       "learningId": "learn-github-orange-opensource-hurl",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T23:57:06.848Z",
+      "repository": "meshtastic/Meshtastic-Android",
+      "learningId": "learn-github-meshtastic-meshtastic-android",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

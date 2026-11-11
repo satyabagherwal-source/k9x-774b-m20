@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-11T20:23:40.840Z",
-    "lastVerified": "2026-11-11T20:23:40.840Z",
+    "lastChecked": "2026-11-11T23:57:11.489Z",
+    "lastVerified": "2026-11-11T23:57:11.489Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -365,9 +365,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-11T19:28:26.283Z",
+    "lastChecked": "2026-11-11T23:57:01.337Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-11T19:28:26.283Z"
+    "lastVerified": "2026-11-11T23:57:01.337Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1002,8 +1002,8 @@
     "officialUrl": "https://github.com/bee-san/Ciphey",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-11T12:53:21.208Z",
-    "lastVerified": "2026-11-11T12:53:21.208Z",
+    "lastChecked": "2026-11-11T23:56:56.410Z",
+    "lastVerified": "2026-11-11T23:56:56.410Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bee-san-ciphey",
@@ -2695,8 +2695,8 @@
     "officialUrl": "https://github.com/nats-io/nats.go",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-09T14:12:58.416Z",
-    "lastVerified": "2026-11-09T14:12:58.416Z",
+    "lastChecked": "2026-11-11T23:56:53.954Z",
+    "lastVerified": "2026-11-11T23:56:53.954Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nats-io-nats-go",
@@ -3101,8 +3101,8 @@
     "officialUrl": "https://github.com/asciinema/asciinema",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T05:25:54.734Z",
-    "lastVerified": "2026-11-09T05:25:54.734Z",
+    "lastChecked": "2026-11-11T23:56:46.393Z",
+    "lastVerified": "2026-11-11T23:56:46.393Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-asciinema-asciinema",
@@ -5159,9 +5159,9 @@
   "cozodb-cozo": {
     "name": "cozo",
     "officialUrl": "https://github.com/cozodb/cozo",
-    "lastChecked": "2026-11-09T13:10:04.585Z",
+    "lastChecked": "2026-11-11T23:56:58.812Z",
     "revisionIdentifier": "481af058",
-    "lastVerified": "2026-11-09T13:10:04.585Z"
+    "lastVerified": "2026-11-11T23:56:58.812Z"
   },
   "telemt-telemt": {
     "name": "telemt/telemt",
@@ -9071,14 +9071,14 @@
     "officialUrl": "https://github.com/meshtastic/Meshtastic-Android",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-08T01:33:55.526Z",
-    "lastVerified": "2026-11-08T01:33:55.526Z",
+    "lastChecked": "2026-11-11T23:56:56.869Z",
+    "lastVerified": "2026-11-11T23:56:56.869Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-meshtastic-meshtastic-android",
-    "contentHash": "cd43034dd81d484ba6cae3cddead88a2dad9316941d06e66b4fb2415f5642530",
-    "promotedRulesCount": 3,
-    "recentFixesCount": 1,
+    "contentHash": "3cf8d6ebc7046004190a026cb68b74492b022e205d58011e3152616644b3a436",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -11075,9 +11075,9 @@
   "scrapy-plugins-scrapy-deltafetch": {
     "name": "scrapy-deltafetch",
     "officialUrl": "https://github.com/scrapy-plugins/scrapy-deltafetch",
-    "lastChecked": "2026-11-07T02:14:53.425Z",
+    "lastChecked": "2026-11-11T23:56:48.829Z",
     "revisionIdentifier": "a8caf39d",
-    "lastVerified": "2026-11-07T02:14:53.425Z"
+    "lastVerified": "2026-11-11T23:56:48.829Z"
   },
   "shubham0812-swiftui-animations": {
     "name": "SwiftUI-Animations",
