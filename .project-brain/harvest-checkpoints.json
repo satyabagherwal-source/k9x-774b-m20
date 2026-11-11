@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-11T09:49:21.216Z",
+  "last_updated": "2026-11-11T10:00:21.217Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5496,14 +5496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tailscale-tailscale",
-      "content_hash": "fc7ee5d8ef63eab4fdac6c4c4cf4bf9513d4aa25e2e90e98d80ab52db0c4bef0",
-      "verified_at": "2026-11-10T02:24:10.892Z",
+      "content_hash": "c5442239a9ac65a869ffa3483ccb8b74eb38283021ff52e60e2dd6c15ded8572",
+      "verified_at": "2026-11-11T10:00:21.216Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-10T02:24:10.892Z"
+      "last_updated": "2026-11-11T10:00:21.216Z"
     },
     "dingodb/dingo": {
       "repository": "dingodb/dingo",
@@ -9141,14 +9141,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-juicedata-juicefs",
-      "content_hash": "749187922c045b33bf66d6b6794db6a3fb93bf6c4284cbcb6f186f0569c89872",
-      "verified_at": "2026-11-09T04:10:32.761Z",
+      "content_hash": "4139ce80b1cb7a8d9c1e3b917c4224876c5b1bc119b3278c2a3e14fb56db36db",
+      "verified_at": "2026-11-11T10:00:18.998Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T04:10:32.761Z"
+      "last_updated": "2026-11-11T10:00:18.998Z"
     },
     "RediSearch/RediSearch": {
       "repository": "RediSearch/RediSearch",
@@ -11661,14 +11661,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pola-rs-polars",
-      "content_hash": "5cbb5fd36808299df369f519b91a808f81fc4da014c4a4d67e66268f705523db",
-      "verified_at": "2026-11-08T22:59:29.916Z",
+      "content_hash": "193da855418c131a54986412f34d30d90dff03118f8d58197127efbc5cf67759",
+      "verified_at": "2026-11-11T10:00:09.544Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T22:59:29.916Z"
+      "last_updated": "2026-11-11T10:00:09.544Z"
     },
     "mrkai77/Loop": {
       "repository": "mrkai77/Loop",

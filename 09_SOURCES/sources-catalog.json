@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "d566ac8a",
+    "sourceVersion": "7b2c32b9",
     "license": "BSD-3-Clause",
-    "contentHash": "fc7ee5d8ef63eab4fdac6c4c4cf4bf9513d4aa25e2e90e98d80ab52db0c4bef0",
-    "lastHarvestedAt": "2026-11-10T02:24:10.883Z",
+    "contentHash": "c5442239a9ac65a869ffa3483ccb8b74eb38283021ff52e60e2dd6c15ded8572",
+    "lastHarvestedAt": "2026-11-11T10:00:21.192Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -6013,10 +6013,10 @@
     "repository": "juicedata/juicefs",
     "platform": "github",
     "sourceUrl": "https://github.com/juicedata/juicefs",
-    "sourceVersion": "5fe4ab06",
+    "sourceVersion": "e7b31f31",
     "license": "Apache-2.0",
-    "contentHash": "749187922c045b33bf66d6b6794db6a3fb93bf6c4284cbcb6f186f0569c89872",
-    "lastHarvestedAt": "2026-11-09T04:10:32.752Z",
+    "contentHash": "4139ce80b1cb7a8d9c1e3b917c4224876c5b1bc119b3278c2a3e14fb56db36db",
+    "lastHarvestedAt": "2026-11-11T10:00:18.974Z",
     "learningId": "learn-github-juicedata-juicefs"
   },
   "redisearch-redisearch": {
@@ -7743,10 +7743,10 @@
     "repository": "pola-rs/polars",
     "platform": "github",
     "sourceUrl": "https://github.com/pola-rs/polars",
-    "sourceVersion": "81da1e95",
+    "sourceVersion": "d9e5ab1a",
     "license": "MIT",
-    "contentHash": "5cbb5fd36808299df369f519b91a808f81fc4da014c4a4d67e66268f705523db",
-    "lastHarvestedAt": "2026-11-08T22:59:29.900Z",
+    "contentHash": "193da855418c131a54986412f34d30d90dff03118f8d58197127efbc5cf67759",
+    "lastHarvestedAt": "2026-11-11T10:00:09.529Z",
     "learningId": "learn-github-pola-rs-polars"
   },
   "mrkai77-loop": {

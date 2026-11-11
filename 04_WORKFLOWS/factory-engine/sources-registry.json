@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-11T09:49:26.450Z",
-    "lastVerified": "2026-11-11T09:49:26.450Z",
+    "lastChecked": "2026-11-11T10:00:26.373Z",
+    "lastVerified": "2026-11-11T10:00:26.373Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -368,9 +368,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-11T09:12:21.910Z",
+    "lastChecked": "2026-11-11T10:00:04.024Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-11T09:12:21.910Z"
+    "lastVerified": "2026-11-11T10:00:04.024Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -2308,14 +2308,14 @@
     "officialUrl": "https://github.com/tailscale/tailscale",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-10T02:19:08.007Z",
-    "lastVerified": "2026-11-10T02:19:08.007Z",
+    "lastChecked": "2026-11-11T10:00:05.225Z",
+    "lastVerified": "2026-11-11T10:00:05.225Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "fc7ee5d8ef63eab4fdac6c4c4cf4bf9513d4aa25e2e90e98d80ab52db0c4bef0",
+    "contentHash": "c5442239a9ac65a869ffa3483ccb8b74eb38283021ff52e60e2dd6c15ded8572",
     "promotedRulesCount": 1,
-    "recentFixesCount": 10,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2395,9 +2395,9 @@
   "oceanbase-oceanbase": {
     "name": "oceanbase",
     "officialUrl": "https://github.com/oceanbase/oceanbase",
-    "lastChecked": "2026-11-09T03:21:43.287Z",
+    "lastChecked": "2026-11-11T10:00:01.467Z",
     "revisionIdentifier": "5e8a63d2",
-    "lastVerified": "2026-11-09T03:21:43.287Z"
+    "lastVerified": "2026-11-11T10:00:01.467Z"
   },
   "flox-flox": {
     "name": "flox",
@@ -6840,9 +6840,9 @@
   "resocoder-flutter-tdd-clean-architecture-course": {
     "name": "flutter-tdd-clean-architecture-course",
     "officialUrl": "https://github.com/ResoCoder/flutter-tdd-clean-architecture-course",
-    "lastChecked": "2026-11-07T19:37:13.670Z",
+    "lastChecked": "2026-11-11T09:59:53.857Z",
     "revisionIdentifier": "6c515614",
-    "lastVerified": "2026-11-07T19:37:13.670Z"
+    "lastVerified": "2026-11-11T09:59:53.857Z"
   },
   "someengineering-fixinventory": {
     "name": "fixinventory",
@@ -7067,14 +7067,14 @@
     "officialUrl": "https://github.com/juicedata/juicefs",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-09T04:10:30.892Z",
-    "lastVerified": "2026-11-09T04:10:30.892Z",
+    "lastChecked": "2026-11-11T10:00:02.276Z",
+    "lastVerified": "2026-11-11T10:00:02.276Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-juicedata-juicefs",
-    "contentHash": "749187922c045b33bf66d6b6794db6a3fb93bf6c4284cbcb6f186f0569c89872",
+    "contentHash": "4139ce80b1cb7a8d9c1e3b917c4224876c5b1bc119b3278c2a3e14fb56db36db",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -8892,14 +8892,14 @@
     "officialUrl": "https://github.com/pola-rs/polars",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-08T22:59:28.433Z",
-    "lastVerified": "2026-11-08T22:59:28.433Z",
+    "lastChecked": "2026-11-11T09:59:54.970Z",
+    "lastVerified": "2026-11-11T09:59:54.970Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pola-rs-polars",
-    "contentHash": "5cbb5fd36808299df369f519b91a808f81fc4da014c4a4d67e66268f705523db",
+    "contentHash": "193da855418c131a54986412f34d30d90dff03118f8d58197127efbc5cf67759",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 19,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10267,9 +10267,9 @@
   "pas7-studio-nextjs-sitemap-hreflang": {
     "name": "nextjs-sitemap-hreflang",
     "officialUrl": "https://github.com/pas7-studio/nextjs-sitemap-hreflang",
-    "lastChecked": "2026-11-06T14:25:22.171Z",
+    "lastChecked": "2026-11-11T09:59:51.364Z",
     "revisionIdentifier": "1faa101f3b",
-    "lastVerified": "2026-11-06T14:25:22.171Z"
+    "lastVerified": "2026-11-11T09:59:51.364Z"
   },
   "dimillian-redditos": {
     "name": "RedditOS",

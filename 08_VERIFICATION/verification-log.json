@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261108-UXGC",
-    "timestamp": "2026-11-08T13:15:39.612Z",
-    "repository": "Qwen/Qwen-Image-2.1",
-    "learningId": "learn-huggingface-qwen-qwen-image-2-1",
-    "contentHash": "a4b6fa3c78dcaec7ae5999af54c558782be20f47837951e31dda34c34b325769",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-QOTB",
-    "timestamp": "2026-11-08T13:40:21.407Z",
-    "repository": "NVIDIA/cuda-rust",
-    "learningId": "learn-github-nvidia-cuda-rust",
-    "contentHash": "006c787c11a916246a2c0f91a771f0a3823b354c4b2f3904810593ae7c47901b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-X9RH",
-    "timestamp": "2026-11-08T13:45:28.493Z",
-    "repository": "Contrastive-LM/CLM-v0.1-8B",
-    "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
-    "contentHash": "11979ec87d346050a7d8bb6792925b35d23537ad186a698fa8cacacd3bdc872e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261108-FUWP",
     "timestamp": "2026-11-08T13:59:55.705Z",
     "repository": "rainbow-me/rainbow",
@@ -7490,6 +7445,51 @@
     "repository": "argoproj/argo-workflows",
     "learningId": "learn-github-argoproj-argo-workflows",
     "contentHash": "377a4f99510e18c2cde46b4d38856c9e66f894baad967d766ca54ada2617adc3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261111-72GJ",
+    "timestamp": "2026-11-11T10:00:09.523Z",
+    "repository": "pola-rs/polars",
+    "learningId": "learn-github-pola-rs-polars",
+    "contentHash": "193da855418c131a54986412f34d30d90dff03118f8d58197127efbc5cf67759",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261111-79QX",
+    "timestamp": "2026-11-11T10:00:18.969Z",
+    "repository": "juicedata/juicefs",
+    "learningId": "learn-github-juicedata-juicefs",
+    "contentHash": "4139ce80b1cb7a8d9c1e3b917c4224876c5b1bc119b3278c2a3e14fb56db36db",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261111-7BGK",
+    "timestamp": "2026-11-11T10:00:21.188Z",
+    "repository": "tailscale/tailscale",
+    "learningId": "learn-github-tailscale-tailscale",
+    "contentHash": "c5442239a9ac65a869ffa3483ccb8b74eb38283021ff52e60e2dd6c15ded8572",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

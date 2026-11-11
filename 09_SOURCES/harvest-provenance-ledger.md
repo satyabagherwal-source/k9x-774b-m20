@@ -8910,3 +8910,6 @@ Every entry in this ledger must capture:
 | `learn-github-astral-sh-uv` | `https://github.com/astral-sh/uv` | `f45ea9bd` | Multi-dimensional audit evidence | 2026-11-11T09:49:13.077Z |
 | `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `d48ec29e` | Multi-dimensional audit evidence | 2026-11-11T09:49:21.206Z |
 | `learn-dom-d-cb6ba6df` | `project://trufflesecurity-trufflehog` | `18876676` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md` | 2026-11-11T09:49:41.481Z |
+| `learn-github-pola-rs-polars` | `https://github.com/pola-rs/polars` | `d9e5ab1a` | Multi-dimensional audit evidence | 2026-11-11T10:00:09.529Z |
+| `learn-github-juicedata-juicefs` | `https://github.com/juicedata/juicefs` | `e7b31f31` | Multi-dimensional audit evidence | 2026-11-11T10:00:18.974Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `7b2c32b9` | Multi-dimensional audit evidence | 2026-11-11T10:00:21.192Z |

@@ -8901,3 +8901,6 @@
 | `CYCLE-20261111-SZXS` | `2026-11-11T09:49:13.072Z` | `astral-sh/uv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`627048d3...`) |
 | `CYCLE-20261111-T67M` | `2026-11-11T09:49:21.202Z` | `argoproj/argo-workflows` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`377a4f99...`) |
 | `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T09:49:41.481Z` | `trufflesecurity-trufflehog` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-CB6BA6DF` [Domain D] | Yes (`94c44b74...`) |
+| `CYCLE-20261111-72GJ` | `2026-11-11T10:00:09.523Z` | `pola-rs/polars` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`193da855...`) |
+| `CYCLE-20261111-79QX` | `2026-11-11T10:00:18.969Z` | `juicedata/juicefs` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4139ce80...`) |
+| `CYCLE-20261111-7BGK` | `2026-11-11T10:00:21.188Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c5442239...`) |

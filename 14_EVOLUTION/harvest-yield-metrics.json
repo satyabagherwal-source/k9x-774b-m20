@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T09:49:21.212Z",
-  "total_cycles_completed": 8750,
-  "total_learnings_persisted": 8750,
-  "total_rules_promoted": 8614,
+  "last_updated": "2026-11-11T10:00:21.212Z",
+  "total_cycles_completed": 8753,
+  "total_learnings_persisted": 8753,
+  "total_rules_promoted": 8617,
   "history": [
-    {
-      "timestamp": "2026-11-09T12:29:45.455Z",
-      "repository": "siderolabs/talos",
-      "learningId": "learn-github-siderolabs-talos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T12:42:11.410Z",
-      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
-      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T12:42:12.485Z",
-      "repository": "react-navigation/react-navigation",
-      "learningId": "learn-github-react-navigation-react-navigation",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T12:49:30.124Z",
       "repository": "actix/actix-web",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-11T09:49:21.212Z",
       "repository": "argoproj/argo-workflows",
       "learningId": "learn-github-argoproj-argo-workflows",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T10:00:09.538Z",
+      "repository": "pola-rs/polars",
+      "learningId": "learn-github-pola-rs-polars",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T10:00:18.994Z",
+      "repository": "juicedata/juicefs",
+      "learningId": "learn-github-juicedata-juicefs",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T10:00:21.212Z",
+      "repository": "tailscale/tailscale",
+      "learningId": "learn-github-tailscale-tailscale",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

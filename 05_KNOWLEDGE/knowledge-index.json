@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-11T09:49:21.091Z",
+  "last_updated": "2026-11-11T10:00:21.051Z",
   "total_verified_learnings": 1253,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -37882,8 +37882,8 @@
       "slug": "juicedata-juicefs",
       "platform": "github",
       "source_url": "https://github.com/juicedata/juicefs",
-      "source_version": "5fe4ab06",
-      "content_hash": "749187922c045b33bf66d6b6794db6a3fb93bf6c4284cbcb6f186f0569c89872",
+      "source_version": "e7b31f31",
+      "content_hash": "4139ce80b1cb7a8d9c1e3b917c4224876c5b1bc119b3278c2a3e14fb56db36db",
       "dossier_path": "07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
       "promoted_rules": [
@@ -37900,6 +37900,11 @@
         {
           "number": null,
           "title": "sdk: expose session-timeout in the Java and Python SDKs (#7817)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "utils: fix lost wakeups in Cond (#7820)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -37973,7 +37978,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T04:10:32.633Z",
+      "verified_at": "2026-11-11T10:00:18.821Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -52304,8 +52309,8 @@
       "slug": "pola-rs-polars",
       "platform": "github",
       "source_url": "https://github.com/pola-rs/polars",
-      "source_version": "81da1e95",
-      "content_hash": "5cbb5fd36808299df369f519b91a808f81fc4da014c4a4d67e66268f705523db",
+      "source_version": "d9e5ab1a",
+      "content_hash": "193da855418c131a54986412f34d30d90dff03118f8d58197127efbc5cf67759",
       "dossier_path": "07_PROJECT_LEARNING/pola-rs-polars-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pola-rs-polars-learnings.md",
       "promoted_rules": [
@@ -52322,6 +52327,11 @@
         {
           "number": null,
           "title": "Use a hash join for outer joins on an equality and a condition on one input (#30",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Avoid segfault on environment changes after a cloud scan (#30665)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -52400,7 +52410,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T22:59:29.805Z",
+      "verified_at": "2026-11-11T10:00:09.230Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -61068,8 +61078,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "d566ac8a",
-      "content_hash": "fc7ee5d8ef63eab4fdac6c4c4cf4bf9513d4aa25e2e90e98d80ab52db0c4bef0",
+      "source_version": "7b2c32b9",
+      "content_hash": "c5442239a9ac65a869ffa3483ccb8b74eb38283021ff52e60e2dd6c15ded8572",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -61111,6 +61121,11 @@
         {
           "number": null,
           "title": "ipn/ipnlocal, feature/acme: fix ts_omit_serve build with acme",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "ipn, feature/guivisibility: send incremental gui visibility updates (#22067)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -61309,7 +61324,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-10T02:24:10.750Z",
+      "verified_at": "2026-11-11T10:00:21.005Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

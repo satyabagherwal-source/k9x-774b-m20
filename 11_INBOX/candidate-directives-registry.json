@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T09:49:26.580Z",
+  "last_updated": "2026-11-11T10:00:26.532Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4522,6 +4522,33 @@
       "source_repo": "argoproj-argo-workflows",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-4D40E2-controller-keep-an-ended-node-s-message-.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-6321D9",
+      "directive_title": "Avoid segfault on environment changes after a cloud scan (#30665)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "pola-rs-polars",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-6321D9-avoid-segfault-on-environment-changes-af.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-BA9F9A",
+      "directive_title": "utils: fix lost wakeups in Cond (#7820)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "juicedata-juicefs",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-BA9F9A-utils-fix-lost-wakeups-in-cond-7820-.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-FD0984",
+      "directive_title": "ipn, feature/guivisibility: send incremental gui visibility updates (#22067)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "tailscale-tailscale",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-FD0984-ipn-feature-guivisibility-send-increment.md",
       "staged_date": "2026-11-11"
     }
   ]

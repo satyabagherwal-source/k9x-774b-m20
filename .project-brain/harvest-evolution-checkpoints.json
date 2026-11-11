@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T09:49:41.482Z",
+  "last_updated": "2026-11-11T10:00:26.533Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-11T07:59:25.580Z",
@@ -106,9 +106,24 @@
       "processed_at": "2026-11-11T09:49:41.482Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "pola-rs-polars-learnings.md": {
+      "processed_at": "2026-11-11T10:00:26.511Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "juicedata-juicefs-learnings.md": {
+      "processed_at": "2026-11-11T10:00:26.526Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "tailscale-tailscale-learnings.md": {
+      "processed_at": "2026-11-11T10:00:26.533Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 24,
+  "total_dossiers_evaluated": 27,
   "total_canonical_promoted": 12,
-  "total_staged_for_review": 9
+  "total_staged_for_review": 12
 }
