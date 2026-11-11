@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T17:51:42.083Z",
+  "last_updated": "2026-11-11T18:04:07.389Z",
   "directives": [
     {
       "id": "CD-001",
@@ -5309,6 +5309,33 @@
       "source_repo": "nats-io-nats-server",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-89B0F9--fixed-filestore-metadata-and-new-direct.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-7C0C66",
+      "directive_title": "rustls-aws-lc-rs: reject non-canonical X25519 HPKE recipient keys",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "rustls-rustls",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-7C0C66-rustls-aws-lc-rs-reject-non-canonical-x2.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-787336",
+      "directive_title": "frontend): reject invalid rate limit in WITH options instead of panicking (#2790",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "risingwavelabs-risingwave",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-787336-frontend-reject-invalid-rate-limit-in-wi.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-32633D",
+      "directive_title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-permissions",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-32633D-android-skip-explicit-kotlin-plugin-when.md",
       "staged_date": "2026-11-11"
     }
   ]

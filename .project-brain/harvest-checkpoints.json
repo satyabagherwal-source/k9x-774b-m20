@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-11T17:51:35.462Z",
+  "last_updated": "2026-11-11T18:04:00.063Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4176,14 +4176,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rustls-rustls",
-      "content_hash": "078a5273fb61c07a4bc54ae5f5da45801a64aaff0379acabe2414768ffa37fbf",
-      "verified_at": "2026-11-11T10:26:52.269Z",
+      "content_hash": "6a8c3347f3744d244ba9a632d31c38124da3f6fa79abf3ab83713f62738b1c96",
+      "verified_at": "2026-11-11T18:03:57.498Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T10:26:52.269Z"
+      "last_updated": "2026-11-11T18:03:57.498Z"
     },
     "liyupi/yu-ai-agent": {
       "repository": "liyupi/yu-ai-agent",
@@ -5781,14 +5781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-risingwavelabs-risingwave",
-      "content_hash": "93ac4478492c476e8f54a52c3c4efc0b0435a5840fb7b6fe3327909952863a90",
-      "verified_at": "2026-11-09T10:07:57.082Z",
+      "content_hash": "7a726fbaaa46751e19ba50de611d879e4fe6e70819bbf96ecb168b7fc6a85d01",
+      "verified_at": "2026-11-11T18:04:00.062Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T10:07:57.082Z"
+      "last_updated": "2026-11-11T18:04:00.062Z"
     },
     "mertJF/tailblocks": {
       "repository": "mertJF/tailblocks",

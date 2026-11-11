@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source**: github ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
-> **Source Version**: `51395ef8`  
+> **Source Version**: `26236216`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T10:07:55.246Z  
+> **Timestamp**: 2026-11-11T18:03:48.492Z  
 > **Learning ID**: `learn-github-risingwavelabs-risingwave`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T10:02:54.013Z  
+> **Harvest Timestamp**: 2026-11-11T18:03:48.487Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Event streaming platform for agentic AI. Continuously ingest, transform, and serve event streams in real time, at scale.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9406 stars
+- **Stars / Engagement**: 9410 stars
 
 ---
 
@@ -1077,1028 +1077,773 @@ pub(crate) use def_path_lookup;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `51395ef8` (2026-11-09)
-**Commit Message**: fix(meta): preserve backup and time-travel references during GC (#27744)
+### Incident Patch 1: `c4837fda` (2026-11-09)
+**Commit Message**: fix(frontend): reject invalid rate limit in WITH options instead of panicking (#27900)
 
-Co-authored-by: zwang28 <[REDACTED_EMAIL]>
-
-**File**: `src/meta/src/backup_restore/backup_manager.rs` (modified, +17/-0)
+**File**: `e2e_test/ddl/throttle.slt` (modified, +7/-0)
 ```diff
-@@ -77,6 +77,13 @@ pub struct BackupManager {
-     meta_metrics: Arc<MetaMetrics>,
-     /// (job id, status, message)
-     latest_job_info: ArcSwap<(MetaBackupJobId, BackupJobStatus, String)>,
-+    #[cfg(test)]
-+    pub(crate) snapshot_captured: tokio::sync::Mutex<
-+        Option<(
-+            tokio::sync::oneshot::Sender<()>,
-+            tokio::sync::oneshot::Receiver<()>,
-+        )>,
-+    >,
+@@ -15,6 +15,13 @@ create materialized view mv1 with (backfill_rate_limit = 1000, backfill_rate_lim
+ statement error unexpected options in WITH clause
+ create materialized view mv1 with (backfill_rate_limit = 1000, unknown_field = 2000) as select * from t1;
+ 
++# create with invalid backfill_rate_limit
++statement error `backfill_rate_limit` must be a non-negative integer, but got `abc`
++create materialized view mv1 with (backfill_rate_limit = 'abc') as select * from t1;
++
++statement error `backfill_rate_limit` must be a non-negative integer, but got `-1`
++create materialized view mv1 with (backfill_rate_limit = '-1') as select * from t1;
++
+ statement ok
+ create materialized view mv1 with (backfill_rate_limit = 1000) as select * from t1;
+ 
+```
+
+**File**: `src/frontend/planner_test/src/lib.rs` (modified, +1/-1)
+```diff
+@@ -440,7 +440,7 @@ impl TestCase {
+                     let context = OptimizerContext::new(
+                         HandlerArgs::new(session.clone(), &stmt, sql.clone())?,
+                         explain_options,
+-                    );
++                    )?;
+                     let ret = self.apply_query(&stmt, context.into())?;
+                     if do_check_result {
+                         check_result(self, &ret)?;
+```
+
+**File**: `src/frontend/src/handler/create_index.rs` (modified, +1/-1)
+```diff
+@@ -712,7 +712,7 @@ pub async fn handle_create_index(
+             return Ok(resp);
+         }
+ 
+-        let context = OptimizerContext::from_handler_args(handler_args);
++        let context = OptimizerContext::from_handler_args(handler_args)?;
+         let (plan, index_table, index) = gen_create_index_plan(
+             &session,
+             context.into(),
+```
+
+**File**: `src/frontend/src/handler/create_mv.rs` (modified, +5/-5)
+```diff
+@@ -257,9 +257,9 @@ pub(crate) fn resolve_streaming_job_resource_type(
+     Ok(resource_type)
  }
  
- impl BackupManager {
-@@ -160,6 +167,8 @@ impl BackupManager {
-             metrics: BackupManagerMetrics::default(),
-             meta_metrics,
-             latest_job_info: ArcSwap::from_pointee((0, BackupJobStatus::NotFound, "".into())),
-+            #[cfg(test)]
-+            snapshot_captured: Default::default(),
-         }
-     }
- 
-@@ -356,6 +365,14 @@ impl BackupWorker {
-                 .build(job_id, hummock_version_builder)
-                 .await?;
-             let snapshot = snapshot_builder.finish()?;
-+            #[cfg(test)]
-+            {
-+                let gate = backup_manager_clone.snapshot_captured.lock().await.take();
-+                if let Some((captured, publish)) = gate {
-+                    captured.send(()).unwrap();
-+                    publish.await.unwrap();
-+                }
-+            }
-             backup_manager_clone
-                 .backup_store
-                 .load()
-```
-
-**File**: `src/meta/src/hummock/manager/commit_epoch.rs` (modified, +1/-0)
-```diff
-@@ -123,6 +123,7 @@ impl HummockManager {
-             &mut versioning.current_version,
-             &mut versioning.hummock_version_deltas,
-             &mut versioning.table_change_log,
-+            &self.gc_manager.change_log_retention,
-             self.env.notification_manager(),
-             Some(&self.table_committed_epoch_notifiers),
-             &self.metrics,
-```
-
-**File**: `src/meta/src/hummock/manager/compaction/compaction_group_manager.rs` (modified, +2/-0)
-```diff
-@@ -215,6 +215,7 @@ impl HummockManager {
-             &mut versioning.current_version,
-             &mut versioning.hummock_version_deltas,
-             &mut versioning.table_change_log,
-+            &self.gc_manager.change_log_retention,
-             self.env.notification_manager(),
-             None,
-             &self.metrics,
-@@ -307,6 +308,7 @@ impl HummockManager {
-             &mut versioning.current_version,
-             &mut versioning.hummock_version_deltas,
-             &mut versioning.table_change_log,
-+            &self.gc_manager.change_log_retention,
-             self.env.notification_manager(),
-             None,
-             &self.metrics,
-```
-
-**File**: `src/meta/src/hummock/manager/compaction/compaction_group_schedule/normalize.rs` (modified, +1/-0)
-```diff
-@@ -204,6 +204,7 @@ impl HummockManager {
-                 &mut versioning.current_version,
-                 &mut versioning.hummock_version_deltas,
-                 &mut versioning.table_change_log,
-+                &self.gc_manager.change_log_retention,
-                 self.env.notification_manager(),
-                 None,
-                 &self.metrics,
-```
-
-**File**: `src/meta/src/hummock/manager/compaction/compaction_group_schedule/topology.rs` (modified, +2/-0)
-```diff
-@@ -293,6 +293,7 @@ impl HummockManager {
-             &mut versioning.current_version,
-             &mut versioning.hummock_version_deltas,
-             &mut versioning.table_change_log,
-+            &self.gc_manager.change_log_retention,
-             self.env.notification_manager(),
-             None,
-             &self.metrics,
-@@ -536,6 +537,7 @@ impl HummockManager {
-             &mut versioning.current_version,
-             &mut versioning.hummock_version_deltas,
-             &mut versioning.table_change_log,
-+            &self.gc_manager.change_log_retention,
-             self.env.notification_manager(),
-             None,
-             &self.metrics,
-```
-
-**File**: `src/meta/src/hummock/manager/compaction/mod.rs` (modified, +2/-0)
-```diff
-@@ -376,6 +376,7 @@ impl HummockManager {
-             &mut versioning.current_version,
-             &mut versioning.hummock_version_deltas,
-             &mut versioning.table_change_log,
-+            &self.gc_manager.change_log_retention,
-             self.env.notification_manager(),
-             None,
-             &self.metrics,
-@@ -908,6 +909,7 @@ impl HummockManager {
-             &mut versioning.current_version,
-             &mut versioning.hummock_version_deltas,
-             &mut versioning.table_change_log,
-+            &self.gc_manager.change_log_retention,
-             self.env.notification_manager(),
-             None,
-             &self.metrics,
-```
-
-**File**: `src/meta/src/hummock/manager/context.rs` (modified, +3/-0)
-```diff
-@@ -41,9 +41,11 @@ const GC_HISTORY_QUERY_BATCH_SIZE: usize = 1000;
- 
- /// `HummockVersionSafePoint` prevents hummock versions GE than it from being GC.
- /// It's used by meta node itself to temporarily pin versions.
-+/// It also keeps changelog references removed during its lifetime in a separate tracker.
- pub struct HummockVersionSafePoint {
-     pub id: HummockVersionId,
-     event_sender: HummockManagerEventSender,
-+    _change_log_guard: super::gc::change_log_retention::ChangeLogObjectGuard,
+-fn get_with_options(handler_args: HandlerArgs) -> WithOptions {
+-    let context = OptimizerContext::from_handler_args(handler_args);
+-    context.with_options().clone()
++fn get_with_options(handler_args: HandlerArgs) -> Result<WithOptions> {
++    let context = OptimizerContext::from_handler_args(handler_args)?;
++    Ok(context.with_options().clone())
  }
  
- impl Drop for HummockVersionSafePoint {
-@@ -468,6 +470,7 @@ impl HummockManager {
-         let safe_point = HummockVersionSafePoint {
-             id: versioning.current_version.id,
-             event_sender: self.event_sender.clone(),
-+            _change_log_guard: self.gc_manager.change_log_retention.pin(false),
-         };
-         wl.version_safe_points.push(safe_point.id);
-         trigger_safepoint_stat(&self.metrics, &wl.version_safe_points);
-```
-
-**File**: `src/meta/src/hummock/manager/gc.rs` (modified, +76/-38)
-```diff
-@@ -43,7 +43,12 @@ use crate::hummock::HummockManager;
- use crate::hummock::error::{Error, Result};
- use crate::manager::MetadataManager;
- 
-+pub(super) mod change_log_retention;
-+
-+use change_log_retention::ChangeLogObjectRetention;
-+
- pub(crate) struct GcManager {
-+    pub(super) change_log_retention: ChangeLogObjectRetention,
-     store: ObjectStoreRef,
-     path_prefix: String,
-     use_new_object_prefix_strategy: bool,
-@@ -62,6 +67,7 @@ impl GcManager {
-             path_prefix: path_prefix.to_owned(),
-             use_new_object_prefix_strategy,
-             may_delete_object_ids: Default::default(),
-+            change_log_retention: Default::default(),
-         }
+ pub async fn handle_create_mv_bound(
+@@ -355,7 +355,7 @@ pub(crate) fn gen_create_mv_graph(
+     streaming_job_resource_type::ResourceType,
+     Option<u64>,
+ )> {
+-    let mut with_options = get_with_options(handler_args.clone());
++    let mut with_options = get_with_options(handler_args.clone())?;
+     let refresh_interval_sec = with_options.refresh_interval_sec()?;
+     with_options.remove(MV_REFRESH_INTERVAL_SEC_KEY);
+     let resource_type =
+@@ -369,7 +369,7 @@ pub(crate) fn gen_create_mv_graph(
+         ))));
      }
  
-@@ -234,8 +240,9 @@ impl HummockManager {
-             .read_with_process_name("finalize_objects_to_delete")
-             .await
-             .min_pinned_version_id();
--        let tracked_object_ids: HashSet<HummockObjectId> =
-+        let mut tracked_object_ids: HashSet<HummockObjectId> =
-             versioning.get_tracked_object_ids(min_pinned_version_id);
-+        tracked_object_ids.extend(self.gc_manager.change_log_retention.objects());
-         let to_delete = object_ids
-             .filter(|object_id| !tracked_object_ids.contains(object_id))
-             .collect_vec();
-@@ -335,10 +342,6 @@ impl HummockManager {
-         if object_ids.is_empty() {
-             return Ok(0);
-         }
--        let pinned_by_metadata_backup = match backup_manager.as_ref() {
--            Some(b) => b.list_pinned_object_ids().await,
--            None => HashSet::default(),
--        };
-         // It's crucial to collect_min_uncommitted_object_id (i.e. `min_object_id`) only after LIST object store (i.e. `object_ids`).
-         // Because after getting `min_object_id`, new compute nodes may join and generate new uncommitted objects that are not covered by `min_sst_id`.
-         // By getting `min_object_id` after `object_ids`, it's ensured `object_ids` won't include any objects from those new compute nodes.
-@@ -352,26 +355,42 @@ impl HummockManager {
-         metrics
-             .full_gc_candidate_object_count
-             .observe(candidate_object_number as _);
--        // filter by metadata backup
-+        // Filter the uncommitted-object watermark before scanning references.
-         let object_ids = object_ids
-             .into_iter()
--            .filter(|s| !pinned_by_metadata_backup.contains(&s.as_raw()))
-+            .filter(|id| id.as_raw() < min_object_id)
-             .collect_vec();
--        let after_metadata_backup = object_ids.len();
--        // filter by time travel archive
-+        let after_min_object_id = object_ids.len();
-+        let _change_log_guard = self.gc_manager.change_log_retention.pin(true);
-+        // As in minor GC, exclude version/changelog references before scanning time travel
-+        // and backups. Even if those owners publish after their scans and the live references
-+        // disappear, these objects cannot reenter this batch. No version safe point is needed.
-+        let object_ids = {
-+            let version_pinned = self.get_gc_tracked_object_ids().await;
-+            object_ids
-+                .into_iter()
-+                .filter(|id| !version_pinned.contains(id))
-+                .collect_vec()
-+        };
-+        let after_initial_version = object_ids.len();
-         let filter_by_time_travel_start_time = Instant::now();
--        let object_ids = self
-+        let mut object_ids = self
-             .filter_out_objects_by_time_travel(object_ids.into_iter())
-             .await?;
-         tracing::info!(elapsed = ?filter_by_time_travel_start_time.elapsed(), "filter out objects by time travel in full GC");
-         let after_time_travel = object_ids.len();
--        // filter by object id watermark, i.e. minimum id of uncommitted objects reported by compute nodes.
--        let object_ids = object_ids
--            .into_iter()
--            .filter(|id| id.as_raw() < min_object_id)
--            .collect_vec();
--        let after_min_object_id = object_ids.len();
--        // filter by version
-+        // The batch pin retains changelog references even if a backup publishes after
-+        // this manifest scan and releases its own pin. No backup job lock is needed.
-+        if let Some(backup_manager) = &backup_manager {
-+            let backup_pinned = backup_manager.list_pinned_object_ids().await;
-+            object_ids.retain(|id| !backup_pinned.contains(&id.as_raw()));
-+        }
-+        let after_metadata_backup = object_ids.len();
-+        #[cfg(test)]
-+        retention_tests::pause_gc_retention_handoff(self).await;
-+        // Recheck references and write history under the same versioning read lock so
-+        // commits and compaction reports observe the final deletion decision. Only objects
-+        // that passed time-travel and backup filtering may be recorded in GC history.
-         let after_version = self
-             .finalize_objects_to_delete(object_ids.into_iter())
-             
+-    let context = OptimizerContext::from_handler_args(handler_args);
++    let context = OptimizerContext::from_handler_args(handler_args)?;
+     let has_order_by = !query.order.is_empty();
+     if has_order_by {
+         context.warn_to_user(r#"The ORDER BY clause in the CREATE MATERIALIZED VIEW statement does not guarantee that the rows selected out of this materialized view is returned in this order.
+```
+
+**File**: `src/frontend/src/handler/create_sink.rs` (modified, +2/-2)
+```diff
+@@ -219,9 +219,9 @@ pub async fn gen_sink_plan(
+     let partition_info = get_partition_compute_info(&resolved_with_options).await?;
+ 
+     let context = if let Some(explain_options) = explain_options {
+-        OptimizerContext::new(handler_args.clone(), explain_options)
++        OptimizerContext::new(handler_args.clone(), explain_options)?
+     } else {
+-        OptimizerContext::from_handler_args(handler_args.clone())
++        OptimizerContext::from_handler_args(handler_args.clone())?
+     };
+     let is_auto_schema_change = resolved_with_options
+         .get(AUTO_SCHEMA_CHANGE_KEY)
+```
+
+**File**: `src/frontend/src/handler/create_source.rs` (modified, +2/-2)
+```diff
+@@ -1221,7 +1221,7 @@ pub async fn handle_create_source(
+         return handle_create_cdc_table_source(handler_args, stmt).await;
+     }
+ 
+-    let overwrite_options = OverwriteOptions::new(&mut handler_args);
++    let overwrite_options = OverwriteOptions::new(&mut handler_args)?;
+ 
+     if handler_args.with_options.is_empty() {
+         return Err(RwError::from(InvalidInputSyntax(
+@@ -1556,7 +1556,7 @@ pub(super) fn generate_stream_graph_for_source(
+     handler_args: HandlerArgs,
+     source_catalog: SourceCatalog,
+ ) -> Result<PbStreamFragmentGraph> {
+-    let context = OptimizerContext::from_handler_args(handler_args);
++    let context = OptimizerContext::from_handler_args(handler_args)?;
+     let source_node = LogicalSource::with_catalog(
+         Rc::new(source_catalog),
+         SourceNodeKind::CreateSharedSource,
+```
+
+**File**: `src/frontend/src/handler/create_subscription.rs` (modified, +1/-1)
+```diff
+@@ -86,7 +86,7 @@ pub async fn handle_create_subscription(
+         return Ok(resp);
+     };
+     let subscription_catalog = {
+-        let context = Rc::new(OptimizerContext::from_handler_args(handle_args));
++        let context = Rc::new(OptimizerContext::from_handler_args(handle_args)?);
+         create_subscription_catalog(&session, context, stmt)?
+     };
+ 
+```
+
+**File**: `src/frontend/src/handler/create_table.rs` (modified, +7/-7)
+```diff
+@@ -516,7 +516,7 @@ pub(crate) async fn gen_create_table_plan_with_source(
+     )
+     .await?;
+ 
+-    let overwrite_options = OverwriteOptions::new(&mut handler_args);
++    let overwrite_options = OverwriteOptions::new(&mut handler_args)?;
+     let rate_limit = overwrite_options.source_rate_limit;
+     let source = bind_create_source_or_table_with_connector(
+         handler_args.clone(),
+@@ -538,7 +538,7 @@ pub(crate) async fn gen_create_table_plan_with_source(
+     )
+     .await?;
+ 
+-    let context = OptimizerContext::new(handler_args, explain_options);
++    let context = OptimizerContext::new(handler_args, explain_options)?;
+ 
+     let (plan, table) = gen_table_plan_with_source(
+         context.into(),
+@@ -1056,7 +1056,7 @@ pub(super) async fn handle_create_table_plan(
+             None,
+         ),
+         (None, None) => {
+-            let context = OptimizerContext::new(handler_args, explain_options);
++            let context = OptimizerContext::new(handler_args, explain_options)?;
+             let (plan, table) = gen_create_table_plan(
+                 context,
+                 table_name.clone(),
+@@ -1150,7 +1150,7 @@ pub(super) async fn handle_create_table_plan(
+             reject_pk_filtered_by_debezium_column_filter(&pk_names, &cdc_with_options)?;
+ 
+             let context: OptimizerContextRef =
+-                OptimizerContext::new(handler_args, explain_options).into();
++                OptimizerContext::new(handler_args, explain_options)?.into();
+             let shared_source_id = source.id;
+             let (plan, table) = gen_create_table_plan_for_cdc_table(
+                 context,
+@@ -1704,7 +1704,7 @@ pub async fn create_iceberg_engine_table(
+     source_handler_args.with_options =
+         WithOptions::new(source_with, Default::default(), connection_ref);
+ 
+-    let overwrite_options = OverwriteOptions::new(&mut source_handler_args);
++    let overwrite_options = OverwriteOptions::new(&mut source_handler_args)?;
+     let format_encode = create_source_stmt.format_encode.into_v2_with_warning();
+     let (with_properties, refresh_mode) =
+         bind_connector_props(&source_handler_args, &format_encode, true)?;
+@@ -1934,7 +1934,7 @@ pub async fn generate_stream_graph_for_replace_table(
+             TableJobType::General,
+         ),
+         (None, None) => {
+-            let context = OptimizerContext::from_handler_args(handler_args);
++            let context = OptimizerContext::from_handler_args(handler_args)?;
+             let (plan, table) = gen_create_table_plan(
+                 context,
+                 table_name,
+@@ -1977,7 +1977,7 @@ pub async fn generate_stream_graph_for_replace_table(
+             reject_pk_filtered_by_debezium_column_filter(&pk_names, &cdc_with_options)?;
+ 
+             let context: OptimizerContextRef =
+-                OptimizerContext::new(handler_args, ExplainOptions::default()).into();
++                OptimizerContext::new(handler_args, ExplainOptions::default())?.into();
+             let (plan, table) = gen_create_table_plan_for_cdc_table(
+                 context,
+                 source,
 ```
 
 ---
 
-### Incident Patch 2: `c6c342ab` (2026-11-09)
-**Commit Message**: fix(stream): clean append-only dedup state by watermark (#27359)
+### Incident Patch 2: `0609c3aa` (2026-11-10)
+**Commit Message**: fix(iceberg): let sink coordinator start before pending schema change is committed (#27906)
 
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `e2e_test/streaming/append_only_dedup_state_cleaning.slt` (added, +91/-0)
+**File**: `src/connector/src/connector_common/iceberg/mock_catalog.rs` (modified, +44/-2)
 ```diff
-@@ -0,0 +1,91 @@
-+# Watermark-driven state cleaning of the append-only dedup executor, which serves `DISTINCT ON`
-+# without `ORDER BY`, and `DISTINCT` / `GROUP BY` without aggregates on append-only input.
-+
-+control substitution on
-+
-+statement ok
-+SET RW_IMPLICIT_FLUSH TO true;
-+
-+# With parallel upstream actors, idle actors can delay the merged watermark.
-+statement ok
-+SET streaming_parallelism = 1;
-+
-+statement ok
-+CREATE TABLE t (k INT, ts INT, WATERMARK FOR ts AS ts - 10) APPEND ONLY;
-+
-+# The watermark column is the first dedup column.
-+statement ok
-+CREATE MATERIALIZED VIEW mv_first AS SELECT DISTINCT ON (ts, k) ts, k FROM t;
-+
-+# The watermark column is the second dedup column, and the state table puts it first in the pk.
-+statement ok
-+CREATE MATERIALIZED VIEW mv_second AS SELECT DISTINCT ON (k, ts) k, ts FROM t;
-+
-+let first_tname
-+SELECT name FROM rw_catalog.rw_internal_table_info
-+WHERE job_name = 'mv_first' AND name LIKE '%appendonlydedup%';
-+
-+let second_tname
-+SELECT name FROM rw_catalog.rw_internal_table_info
-+WHERE job_name = 'mv_second' AND name LIKE '%appendonlydedup%';
-+
-+statement ok
-+INSERT INTO t VALUES (1, 1), (2, 2), (1, 1);
-+
-+query II rowsort
-+SELECT t_ts, t_k FROM ${first_tname};
-+----
-+1 1
-+2 2
-+
-+query II rowsort
-+SELECT t_k, t_ts FROM ${second_tname};
-+----
-+1 1
-+2 2
-+
-+# Advance the watermark to 20. Rows below it are cleaned and no longer visible in the state.
-+statement ok
-+INSERT INTO t VALUES (3, 30);
-+
-+query II rowsort retry 30 backoff 1s
-+SELECT t_ts, t_k FROM ${first_tname};
-+----
-+30 3
-+
-+query II rowsort retry 30 backoff 1s
-+SELECT t_k, t_ts FROM ${second_tname};
-+----
-+3 30
-+
-+# The duplicate is dropped, and the row below the watermark is dropped by the watermark filter.
-+statement ok
-+INSERT INTO t VALUES (3, 30), (4, 25), (5, 5);
-+
-+query II rowsort
-+SELECT * FROM mv_first;
-+----
-+1 1
-+2 2
-+25 4
-+30 3
-+
-+query II rowsort
-+SELECT * FROM mv_second;
-+----
-+1 1
-+2 2
-+3 30
-+4 25
-+
-+statement ok
-+DROP MATERIALIZED VIEW mv_first;
-+
-+statement ok
-+DROP MATERIALIZED VIEW mv_second;
-+
-+statement ok
-+DROP TABLE t;
-+
-+statement ok
-+SET streaming_parallelism = default;
-```
-
-**File**: `e2e_test/streaming/append_only_dedup_state_cleaning_recover.slt.serial` (added, +105/-0)
-```diff
-@@ -0,0 +1,105 @@
-+# Duplicates must still be dropped after the append-only dedup state is cleaned by watermark and
-+# the cache is gone, so they are checked against the cleaned state. c1 and c2 count every row their
-+# dedup emits, so a key emitted twice makes them too large.
-+#
-+# Each insert has at most 200 rows, so that the watermark only advances between inserts.
-+
-+control substitution on
-+
-+statement ok
-+SET RW_IMPLICIT_FLUSH TO true;
-+
-+statement ok
-+SET streaming_parallelism = 2;
-+
-+statement ok
-+CREATE TABLE t (k INT, ts INT, WATERMARK FOR ts AS ts - 10) APPEND ONLY;
-+
-+statement ok
-+CREATE MATERIALIZED VIEW c1 AS SELECT count(*) AS cnt FROM (SELECT DISTINCT ON (ts, k) ts, k FROM t);
-+
-+statement ok
-+CREATE MATERIALIZED VIEW c2 AS SELECT count(*) AS cnt FROM (SELECT DISTINCT ON (k, ts) k, ts FROM t);
-+
-+let c1_tname
-+SELECT name FROM rw_catalog.rw_internal_table_info WHERE job_name = 'c1' AND name LIKE '%appendonlydedup%';
-+
-+let c2_tname
-+SELECT name FROM rw_catalog.rw_internal_table_info WHERE job_name = 'c2' AND name LIKE '%appendonlydedup%';
-+
-+# ts 0..29, watermark 19.
-+statement ok
-+INSERT INTO t SELECT k, ts FROM generate_series(0, 9) AS k(k), generate_series(0, 19) AS ts(ts);
-+
-+statement ok
-+INSERT INTO t SELECT k, ts FROM generate_series(0, 9) AS k(k), generate_series(10, 29) AS ts(ts);
-+
-+query II
-+SELECT (SELECT cnt FROM c1), (SELECT cnt FROM c2);
-+----
-+300 300
-+
-+# Only keys at or above the watermark are left, including the ones on it.
-+query II retry 30 backoff 1s
-+SELECT count(*), min(t_ts) FROM ${c1_tname};
-+----
-+110 19
-+
-+query II retry 30 backoff 1s
-+SELECT count(*), min(t_ts) FROM ${c2_tname};
-+----
-+110 19
-+
-+statement ok
-+RECOVER;
-+
-+statement ok
-+WAIT;
-+
-+statement ok
-+SET RW_IMPLICIT_FLUSH TO true;
-+
-+# Duplicates of live keys, starting exactly at the watermark.
-+statement ok
-+INSERT INTO t SELECT k, ts FROM generate_series(0, 9) AS k(k), generate_series(19, 29) AS ts(ts);
-+
-+query II
-+SELECT (SELECT cnt FROM c1), (SELECT cnt FROM c2);
-+----
-+300 300
-+
-+# ts 0..39, watermark 29.
-+statement ok
-+INSERT INTO t SELECT k, ts FROM generate_series(0, 9) AS k(k), generate_series(20, 39) AS ts(ts);
-+
-+query II
-+SELECT (SELECT cnt FROM c1), (SELECT cnt FROM c2);
-+----
-+400 400
-+
-+query I
-+SELECT count(*) FROM (SELECT DISTINCT ts, k FROM t);
-+----
-+400
-+
-+query II retry 30 backoff 1s
-+SELECT count(*), min(t_ts) FROM ${c1_tname};
-+----
-+110 29
-+
-+query II retry 30 backoff 1s
-+SELECT count(*), min(t_ts) FROM ${c2_tname};
-+----
-+110 29
-+
-+statement ok
-+DROP MATERIALIZED VIEW c1;
-+
-+statement ok
-+DROP MATERIALIZED VIEW c2;
-+
-+statement ok
-+DROP TABLE t;
-+
-+statement ok
-+SET streaming_parallelism = default;
-```
-
-**File**: `src/frontend/planner_test/tests/testdata/input/watermark.yaml` (modified, +12/-0)
-```diff
-@@ -177,3 +177,15 @@
-     select * from (select *, row_number() over (partition by v1 order by ts desc) as rn from t) where rn <= 1;
-   expected_outputs:
-   - stream_plan
-+- name: append-only dedup with watermark on the first dedup column
-+  sql: |
-+    create table t (ts timestamp with time zone, v1 int, v2 int, watermark for ts as ts - INTERVAL '1' SECOND) append only;
-+    select distinct on (ts, v1) * from t;
-+  expected_outputs:
-+  - stream_dist_plan
-+- name: append-only dedup with watermark on a non-first dedup column
-+  sql: |
-+    create table t (ts timestamp with time zone, v1 int, v2 int, watermark for ts as ts - INTERVAL '1' SECOND) append only;
-+    select distinct on (v1, ts) * from t;
-+  expected_outputs:
-+  - stream_dist_plan
-```
-
-**File**: `src/frontend/planner_test/tests/testdata/output/nexmark_watermark.yaml` (modified, +2/-2)
-```diff
-@@ -878,13 +878,13 @@
+@@ -41,7 +41,7 @@ mod test_tables {
+         UnboundPartitionSpec,
+     };
+     use iceberg::table::Table;
+-    use iceberg::{NamespaceIdent, Runtime, TableIdent};
++    use iceberg::{NamespaceIdent, Runtime, TableCommit, TableIdent};
+     use parking_lot::Mutex;
  
-     Table 3 { columns: [ $expr6, $expr8, $expr7, _degree, _rw_timestamp ], primary key: [ $0 ASC, $1 ASC, $2 ASC ], value indices: [ 3 ], distribution key: [ 2, 0, 1 ], read pk prefix len hint: 3, clean watermark indices: [0] }
+     use super::MockCatalog;
+@@ -97,6 +97,18 @@ mod test_tables {
+             TABLES.lock().contains_key(ident) || matches!(ident.name(), "updates_v2" | "updates_v3")
+         }
  
--    Table 4 { columns: [ $expr3, $expr4, $expr2, $expr5, _row_id, _rw_timestamp ], primary key: [ $0 ASC, $1 ASC, $2 ASC, $3 ASC ], value indices: [ 0, 1, 2, 3, 4 ], distribution key: [ 0, 1, 2, 3 ], read pk prefix len hint: 4 }
-+    Table 4 { columns: [ $expr3, $expr4, $expr2, $expr5, _row_id, _rw_timestamp ], primary key: [ $2 ASC, $0 ASC, $1 ASC, $3 ASC ], value indices: [ 0, 1, 2, 3, 4 ], distribution key: [ 0, 1, 2, 3 ], read pk prefix len hint: 4, clean watermark indices: [2] }
++        /// Apply a commit to a registered table. Returns the commit back if the table is not
++        /// registered.
++        pub(super) fn update_test_table(
++            commit: TableCommit,
++        ) -> Result<iceberg::Result<Table>, Box<TableCommit>> {
++            let mut tables = TABLES.lock();
++            let Some(table) = tables.get_mut(commit.identifier()) else {
++                return Err(Box::new(commit));
++            };
++            Ok(apply_commit(table, commit))
++        }
++
+         pub(super) fn updates_table(name: &str, version: FormatVersion) -> Table {
+             let schema = Schema::builder()
+                 .with_fields(vec![
+@@ -132,6 +144,30 @@ mod test_tables {
+                 .unwrap()
+         }
+     }
++
++    fn apply_commit(table: &mut Table, mut commit: TableCommit) -> iceberg::Result<Table> {
++        for requirement in commit.take_requirements() {
++            requirement.check(Some(table.metadata()))?;
++        }
++        let mut metadata_builder = table
++            .metadata()
++            .clone()
++            .into_builder(table.metadata_location().map(str::to_owned));
++        for update in commit.take_updates() {
++            metadata_builder = update.apply(metadata_builder)?;
++        }
++        let mut builder = Table::builder()
++            .identifier(table.identifier().clone())
++            .file_io(table.file_io().clone())
++            .runtime(Runtime::try_current().unwrap())
++            .metadata(metadata_builder.build()?.metadata);
++        if let Some(location) = table.metadata_location() {
++            builder = builder.metadata_location(location);
++        }
++        let updated = builder.build()?;
++        *table = updated.clone();
++        Ok(updated)
++    }
+ }
  
-     Table 5 { columns: [ vnode, offset, _rw_timestamp ], primary key: [ $0 ASC ], value indices: [ 1 ], distribution key: [ 0 ], read pk prefix len hint: 1, vnode column idx: 0 }
- 
-     Table 6 { columns: [ partition_id, offset_info, _rw_timestamp ], primary key: [ $0 ASC ], value indices: [ 0, 1 ], distribution key: [], read pk prefix len hint: 1 }
- 
--    Table 7 { columns: [ $expr7, $expr6, $expr8, _row_id, _rw_timestamp ], primary key: [ $0 ASC, $1 ASC, $2 ASC ], value indices: [ 0, 1, 2, 3 ], distribution key: [ 0, 1, 2 ], read pk prefix len hint: 3 }
-+    Table 7 { columns: [ $expr7, $expr6, $expr8, _row_id, _rw_timestamp ], primary key: [ $1 ASC, $0 ASC, $2 ASC ], value indices: [ 0, 1, 2, 3 ], distribution key: [ 0, 1, 2 ], read pk prefix len hint: 3, clean watermark indices: [1] }
- 
-     Table 4294967294 { columns: [ id, name, starttime, $expr5, $expr7, $expr6, $expr8, _rw_timestamp ], primary key: [ $0 ASC, $1 ASC, $2 ASC, $3 ASC ], value indices: [ 0, 1, 2, 3, 4, 5, 6 ], distribution key: [ 0, 1, 2, 3 ], read pk prefix len hint: 4 }
- 
-```
-
-**File**: `src/frontend/planner_test/tests/testdata/output/watermark.yaml` (modified, +78/-0)
-```diff
-@@ -444,3 +444,81 @@
-         └─StreamGroupTopN [append_only] { order: [t.ts DESC], limit: 1, offset: 0, group_key: [t.v1] }
-           └─StreamExchange { dist: HashShard(t.v1) }
-             └─StreamTableScan { table: t, columns: [t.ts, t.v1, t.v2, t._row_id], stream_scan_type: SnapshotBackfill, stream_key: [t._row_id], pk: [_row_id], dist: UpstreamHashShard(t._row_id) }
-+- name: append-only dedup with watermark on the first dedup column
-+  sql: |
-+    create table t (ts timestamp with time zone, v1 int, v2 int, watermark for ts as ts - INTERVAL '1' SECOND) append only;
-+    select distinct on (ts, v1) * from t;
-+  stream_dist_plan: |+
-+    Fragment 0
-+    StreamMaterialize { columns: [ts, v1, v2, t._row_id(hidden)], stream_key: [ts, v1], pk_columns: [ts, v1], pk_conflict: NoCheck, watermark_columns: [ts] }
-+    └── StreamAppendOnlyDedup { dedup_cols: [t.ts, t.v1] } { tables: [ AppendOnlyDedup: 0 ] }
-+        └── StreamExchange Hash([0, 1]) from 1
-+
-+    Fragment 1
-+    StreamTableScan { table: t, columns: [t.ts, t.v1, t.v2, t._row_id], stream_scan_type: SnapshotBackfill, stream_key: [t._row_id], pk: [_row_id], dist: UpstreamHashShard(t._row_id) }
-+    ├── tables: [ StreamScan: 1 ]
-+    ├── Upstream
-+    └── BatchPlanNode
-+
-+    Table 0
-+    ├── columns: [ t_ts, t_v1, t_v2, t__row_id, _rw_timestamp ]
-+    ├── primary key: [ $0 ASC, $1 ASC ]
-+    ├── value indices: [ 0, 1, 2, 3 ]
-+    ├── distribution key: [ 0, 1 ]
-+    ├── read pk prefix len hint: 2
-+    └── clean watermark indices: [0]
-+
-+    Table 1
-+    ├── columns: [ vnode, epoch, row_count, is_epoch_finished, _row_id, _rw_timestamp ]
-+    ├── primary key: [ $0 ASC ]
-+    ├── value indices: [ 1, 2, 3, 4 ]
-+    ├── distribution key: [ 0 ]
-+    ├── read pk prefix len hint: 1
-+    └── vnode column idx: 0
-+
-+    Table 4294967294
-+    ├── columns: [ ts, v1, v2, t._row_id, _rw_timestamp ]
-+    ├── primary key: [ $0 ASC, $1 ASC ]
-+    ├── value indices: [ 0, 1, 2, 3 ]
-+    ├── distribution key: [ 0, 1 ]
-+    └── read pk prefix len hint: 2
-+
-+- name: append-only dedup with watermark on a non-first dedup column
-+  sql: |
-+    create table t (ts timestamp with time zone, v1 int, v2 int, watermark for ts as ts - INTERVAL '1' SECOND) append only;
-+    select distinct on (v1, ts) * from t;
-+  stream_dist_plan: |+
-+    Fragment 0
-+    StreamMaterialize { columns: [ts, v1, v2, t._row_id(hidden)], stream_key: [v1, ts], pk_columns: [v1, ts], pk_conflict: NoCheck, watermark_columns: [ts] }
-+    └── StreamAppendOnlyDedup { dedup_cols: [t.v1, t.ts] } { tables: [ AppendOnlyDedup: 0 ] }
-+        └── StreamExchange Hash([1, 0]) from 1
-+
-+    Fragment 1
-+    StreamTableScan { table: t, columns: [t.ts, t.v1, t.v2, t._row_id], stream_scan_type: SnapshotBackfill, stream_key: [t._row_id], pk: [_row_id], dist: UpstreamHashShard(t._row_id) }
-+    ├── tables: [ StreamScan: 1 ]
-+    ├── Upstream
-+    └── BatchPlanNode
-+
-+    Table 0
-+    ├── columns: [ t_ts, t_v1, t_v2, t__row_id, _rw_timestamp ]
-+    ├── primary key: [ $0 ASC, $1 ASC ]
-+    ├── value indices: [ 0, 1, 2, 3 ]
-+    ├── distribution key: [ 1, 0 ]
-+    ├── read pk prefix len hint: 2
-+    └── clean watermark indices: [0]
-+
-+    Table 1
-+    ├── columns: [ vnode, epoch, row_count, is_epoch_finished, _row_id, _rw_timestamp ]
-+    ├── primary key: [ $0 ASC ]
-+    ├── value indices: [ 1, 2, 3, 4 ]
-+    ├── distribution key: [ 0 ]
-+    ├── read pk prefix len hint: 1
-+    └── vnode column idx: 0
-+
-+    Table 4294967294
-+    ├── columns: [ ts, v1, v2, t._row_id, _rw_timestamp ]
-+    ├── primary key: [ $1 ASC, $0 ASC ]
-+    ├── value indices: [ 0, 1, 2, 3 ]
-+    ├── distribution key: [ 1, 0 ]
-+    └── read pk prefix len hint: 2
-+
-```
-
-**File**: `src/frontend/src/optimizer/plan_node/stream_dedup.rs` (modified, +24/-3)
-```diff
-@@ -50,6 +50,23 @@ impl StreamDedup {
-         StreamDedup { base, core }
+ /// A mock catalog for Iceberg planner and executor tests.
+@@ -364,7 +400,13 @@ impl CatalogV2 for MockCatalog {
      }
  
-+    /// The dedup columns in the pk order of the state table, and the clean watermark column. The
-+    /// first dedup column with a watermark is moved to the front, so that the state is cleaned by a
-+    /// pk-prefix watermark.
-+    fn state_pk_dedup_cols(&self) -> (Vec<usize>, Option<usize>) {
-+        let mut cols = self.core.dedup_cols.clone();
-+        let input_watermark_columns = self.core.input.watermark_columns();
-+        let pos = cols
-+            .iter()
-+            .position(|&idx| input_watermark_columns.contains(idx));
-+        let clean_col = pos.map(|pos| {
-+            let col = cols.remove(pos);
-+            cols.insert(0, col);
-+            col
-+        });
-+        (cols, clean_col)
-+    }
-+
-     pub fn infer_internal_table_catalog(&self) -> TableCatalog {
-         let schema = self.core.schema();
-         let mut builder = TableCatalogBuilder::default();
-@@ -58,9 +75,13 @@ impl StreamDedup {
-             builder.add_column(field);
-         });
+     /// Update a table to the catalog.
+-    async fn update_table(&self, _commit: TableCommit) -> iceberg::Result<Table> {
++    async fn update_table(&self, commit: TableCommit) -> iceberg::Result<Table> {
++        #[cfg(any(test, feature = "test"))]
++        let commit = match Self::update_test_table(commit) {
++            Ok(result) => return result,
++            Err(commit) => *commit,
++        };
++        let _ = commit;
+         todo!()
+     }
  
--        self.core.dedup_cols.iter().for_each(|idx| {
-+        let (dedup_cols, clean_col) = self.state_pk_dedup_cols();
-+        dedup_cols.iter().for_each(|idx| {
-             builder.add_order_column(*idx, OrderType::ascending());
-         });
-+        if let Some(clean_col) = clean_col {
-+            builder.set_clean_watermark_indices(vec![clean_col]);
-+        }
- 
-         let read_prefix_len_hint = builder.get_current_pk_len();
- 
-@@ -96,8 +117,8 @@ impl StreamNode for StreamDedup {
-         PbNodeBody::AppendOnlyDedup(Box::new(DedupNode {
-             state_table: Some(table_catalog.to_internal_table_prost()),
-             dedup_column_indices: self
--                .core
--                .dedup_cols
-+                .state_pk_dedup_cols()
-+                .0
-                 .iter()
-                 .map(|idx| *idx as _)
-                 .collect_vec(),
 ```
 
-**File**: `src/stream/src/executor/dedup/append_only_dedup.rs` (modified, +113/-22)
+**File**: `src/connector/src/sink/iceberg/create_table.rs` (modified, +22/-7)
 ```diff
-@@ -26,11 +26,17 @@ type Cache = ManagedLruCache<OwnedRow, ()>;
- 
- /// [`AppendOnlyDedupExecutor`] drops any message that has duplicate pk columns with previous
- /// messages. It only accepts append-only input, and its output will be append-only as well.
+@@ -65,6 +65,28 @@ impl IcebergOrderKeyField {
+ pub async fn create_and_validate_table_impl(
+     config: &IcebergConfig,
+     param: &SinkParam,
++) -> Result<Table> {
++    let table = create_and_load_table_impl(config, param).await?;
++
++    let sink_schema = param.schema();
++    let iceberg_arrow_schema = schema_to_arrow_schema(table.metadata().current_schema())
++        .map_err(|err| SinkError::Iceberg(anyhow!(err)))?;
++
++    try_matches_arrow_schema(&sink_schema, &iceberg_arrow_schema)
++        .map_err(|err| SinkError::Iceberg(anyhow!(err)))?;
++
++    Ok(table)
++}
++
++/// Creates the table if configured, loads it, and checks table properties that do not depend on
++/// its current schema.
 +///
-+/// Keys below the watermark on the state table's clean watermark column are removed from the
-+/// state, as the watermark guarantees that they never arrive again.
- pub struct AppendOnlyDedupExecutor<S: StateStore> {
-     ctx: ActorContextRef,
- 
-     input: Option<Executor>,
-+    /// Input column indices of the dedup key, in the pk order of the state table.
-     dedup_cols: Vec<usize>,
-+    /// The input column whose watermark cleans the state.
-+    clean_watermark_col: Option<usize>,
-     state_table: StateTable<S>,
-     cache: Cache,
- }
-@@ -46,10 +52,21 @@ impl<S: StateStore> AppendOnlyDedupExecutor<S> {
-     ) -> Self {
-         let metrics_info =
-             MetricsInfo::new(metrics, state_table.table_id(), ctx.id, "AppendOnly Dedup");
-+        // The pk of the state table is the dedup columns, so the clean watermark column maps to
-+        // the input by its position in the pk.
-+        let clean_watermark_col = state_table.clean_watermark_index.map(|idx| {
-+            let pk_pos = state_table
-+                .pk_indices()
-+                .iter()
-+                .position(|&i| i == idx)
-+                .expect("clean watermark column should be a dedup column");
-+            dedup_cols[pk_pos]
-+        });
-         Self {
-             ctx,
-             input: Some(input),
-             dedup_cols,
-+            clean_watermark_col,
-             state_table,
-             cache: Cache::unbounded(watermark_epoch, metrics_info),
++/// Unlike [`create_and_validate_table_impl`], this does not require the current Iceberg schema to
++/// match `param`. During recovery, a durably recorded sink schema change may still need to be
++/// committed before the two schemas match again.
++pub async fn create_and_load_table_impl(
++    config: &IcebergConfig,
++    param: &SinkParam,
+ ) -> Result<Table> {
+     if config.create_table_if_not_exists {
+         create_table_if_not_exists_impl(config, param).await?;
+@@ -86,13 +108,6 @@ pub async fn create_and_validate_table_impl(
          }
-@@ -138,6 +155,9 @@ impl<S: StateStore> AppendOnlyDedupExecutor<S> {
-                 }
+     }
  
-                 Message::Watermark(watermark) => {
-+                    if self.clean_watermark_col == Some(watermark.col_idx) {
-+                        self.state_table.update_watermark(watermark.val.clone());
-+                    }
-                     yield Message::Watermark(watermark);
-                 }
-             }
-@@ -188,47 +208,56 @@ mod tests {
-     use risingwave_common::test_prelude::StreamChunkTestExt;
-     use risingwave_common::util::epoch::test_epoch;
-     use risingwave_common::util::sort_util::OrderType;
-+    use risingwave_hummock_sdk::HummockReadEpoch;
-     use risingwave_storage::memory::MemoryStateStore;
-+    use risingwave_storage::table::batch_table::BatchTable;
- 
-     use super::*;
-     use crate::common::table::test_utils::gen_pbtable;
--    use crate::executor::test_utils::MockSource;
-+    use crate::executor::test_utils::{MessageSender, MockSource, StreamExecutorTestExt};
- 
--    #[tokio::test]
--    async fn test_dedup_executor() {
--        let table_id = TableId::new(1);
--        let column_descs = vec![
-+    const TABLE_ID: TableId = TableId::new(1);
-+
-+    fn column_descs() -> Vec<ColumnDesc> {
-+        vec![
-             ColumnDesc::unnamed(ColumnId::new(0), DataType::Int64),
-             ColumnDesc::unnamed(ColumnId::new(1), DataType::Int64),
--        ];
-+        ]
-+    }
-+
-+    /// A dedup executor on the first column of `(I, I)` rows, with its state in `store`.
-+    async fn create_executor(store: MemoryStateStore) -> (MessageSender, BoxedMessageStream) {
-         let schema = Schema::new(vec![
-             Field::unnamed(DataType::Int64),
-             Field::unnamed(DataType::Int64),
-         ]);
--        let dedup_col_indices = vec![0];
--        let pk_indices = dedup_col_indices.clone();
--        let order_types = vec![OrderType::ascending()];
+-    let sink_schema = param.schema();
+-    let iceberg_arrow_schema = schema_to_arrow_schema(table.metadata().current_schema())
+-        .map_err(|err| SinkError::Iceberg(anyhow!(err)))?;
 -
--        let state_store = MemoryStateStore::new();
-         let state_table = StateTable::from_table_catalog(
--            &gen_pbtable(table_id, column_descs, order_types, pk_indices.clone(), 0),
--            state_store,
-+            &gen_pbtable(
-+                TABLE_ID,
-+                column_descs(),
-+                vec![OrderType::ascending()],
-+                vec![0],
-+                0,
-+            ),
-+            store,
-             None,
-         )
-         .await;
+-    try_matches_arrow_schema(&sink_schema, &iceberg_arrow_schema)
+-        .map_err(|err| SinkError::Iceberg(anyhow!(err)))?;
 -
--        let (mut tx, source) = MockSource::channel();
--        let source = source.into_executor(schema, pk_indices);
--        let mut dedup_executor = AppendOnlyDedupExecutor::new(
-+        let (tx, source) = MockSource::channel();
-+        let executor = AppendOnlyDedupExecutor::new(
-             ActorContext::for_test(123),
--            source,
--            dedup_col_indices,
-+            source.into_executor(schema, vec![0]),
-+            vec![0],
-             state_table,
-             Arc::new(AtomicU64::new(0)),
-             Arc::new(StreamingMetrics::unused()),
--        )
--        .boxed()
--        .execute();
-+        );
-+        (tx, executor.boxed().execute())
-+    }
-+
-+    #[tokio::test]
-+    async fn test_dedup_executor() {
-+        let (mut tx, mut dedup_executor) = create_executor(MemoryStateStore::new()).await;
+     Ok(table)
+ }
  
-         tx.push_barrier(test_epo
 ```
 
-**File**: `src/stream/src/from_proto/append_only_dedup.rs` (modified, +7/-1)
+**File**: `src/connector/src/sink/iceberg/mod.rs` (modified, +9/-1)
 ```diff
-@@ -42,10 +42,16 @@ impl ExecutorBuilder for AppendOnlyDedupExecutorBuilder {
-             .enable_preload_all_rows_by_config(&params.config)
-             .build()
-             .await;
-+        // Unlike the stream key, the dedup columns are in the pk order of the state table.
-+        let dedup_cols = node
-+            .dedup_column_indices
+@@ -152,6 +152,10 @@ impl IcebergSink {
+         create_and_validate_table_impl(&self.config, &self.param).await
+     }
+ 
++    async fn create_and_load_table(&self) -> Result<Table> {
++        create_and_load_table_impl(&self.config, &self.param).await
++    }
++
+     /// Returns `true` if this call created the table, `false` if it already existed.
+     pub async fn create_table_if_not_exists(&self) -> Result<bool> {
+         create_table_if_not_exists_impl(&self.config, &self.param).await
+@@ -424,7 +428,11 @@ impl Sink for IcebergSink {
+         iceberg_compact_stat_sender: Option<UnboundedSender<IcebergSinkCompactionUpdate>>,
+     ) -> Result<SinkCommitCoordinator> {
+         let catalog = self.config.create_catalog().await?;
+-        let table = self.create_and_validate_table().await?;
++        // Do not require the current Iceberg schema to match `self.param` here. During recovery,
++        // `self.param` may already include a sink schema change that is still pending in the meta
++        // store. The coordinator commits that change before it starts writer handles, and writers
++        // validate the table schema against their own params in `begin_epoch`.
++        let table = self.create_and_load_table().await?;
+         let coordinator = IcebergSinkCommitter {
+             catalog,
+             table,
+```
+
+**File**: `src/connector/src/sink/iceberg/test.rs` (modified, +214/-0)
+```diff
+@@ -1253,3 +1253,217 @@ fn test_validate_row_lineage_column_names() {
+     // `<table>._row_id`, which does not collide with the lineage column.
+     validate_row_lineage_column_names(FormatVersion::V3, &columns("t._row_id")).unwrap();
+ }
++
++// Iceberg tables require a native Tokio runtime, which madsim does not provide.
++#[cfg(not(madsim))]
++mod coordinator_recovery {
++    use std::collections::HashMap;
++
++    use iceberg::io::FileIO;
++    use iceberg::spec::{
++        FormatVersion, NestedField, PrimitiveType, Schema as IcebergSchema, SortOrder,
++        TableMetadataBuilder, Type, UnboundPartitionSpec,
++    };
++    use iceberg::table::Table;
++    use iceberg::{NamespaceIdent, Runtime, TableIdent};
++    use risingwave_common::catalog::{ColumnDesc, ColumnId, Field};
++    use risingwave_common::id::SinkId;
++    use risingwave_common::types::DataType;
++    use risingwave_pb::plan_common::PbField;
++    use risingwave_pb::stream_plan::sink_schema_change::Op as PbSinkSchemaChangeOp;
++    use risingwave_pb::stream_plan::{PbSinkAddColumnsOp, PbSinkSchemaChange};
++    use thiserror_ext::AsReport;
++
++    use crate::connector_common::mock_catalog::{MockCatalog, MockTableGuard};
++    use crate::sink::boxed::BoxTwoPhaseCoordinator;
++    use crate::sink::catalog::SinkType;
++    use crate::sink::iceberg::{IcebergConfig, IcebergSink, create_and_validate_table_impl};
++    use crate::sink::{Sink, SinkCommitCoordinator, SinkParam};
++
++    const NAMESPACE: &str = "mock_namespace";
++
++    fn register_table(fields: &[(i32, &str, PrimitiveType)]) -> (String, MockTableGuard) {
++        let name = format!("coordinator_recovery_{}", uuid::Uuid::new_v4().simple());
++        let schema = IcebergSchema::builder()
++            .with_fields(fields.iter().map(|(id, field_name, ty)| {
++                NestedField::optional(*id, *field_name, Type::Primitive(ty.clone())).into()
++            }))
++            .build()
++            .unwrap();
++        let metadata = TableMetadataBuilder::new(
++            schema,
++            UnboundPartitionSpec::builder().build(),
++            SortOrder::unsorted_order(),
++            format!("memory://{name}"),
++            FormatVersion::V2,
++            HashMap::new(),
++        )
++        .unwrap()
++        .build()
++        .unwrap()
++        .metadata;
++        let table = Table::builder()
++            .identifier(TableIdent::new(
++                NamespaceIdent::new(NAMESPACE.to_owned()),
++                name.clone(),
++            ))
++            .file_io(FileIO::new_with_memory())
++            .runtime(Runtime::try_current().unwrap())
++            .metadata(metadata)
++            .build()
++            .unwrap();
++        let guard = MockCatalog::register(table);
++        (name, guard)
++    }
++
++    fn sink_param(table_name: &str, columns: &[(&str, DataType)]) -> SinkParam {
++        SinkParam {
++            sink_id: SinkId::from(1u32),
++            sink_name: "test_sink".to_owned(),
++            properties: [
++                ("connector", "iceberg"),
++                ("type", "append-only"),
++                ("catalog.type", "mock"),
++                ("database.name", NAMESPACE),
++                ("table.name", table_name),
++            ]
++            .into_iter()
++            .map(|(k, v)| (k.to_owned(), v.to_owned()))
++            .collect(),
++            columns: columns
++                .iter()
++                .enumerate()
++                .map(|(i, (name, ty))| {
++                    ColumnDesc::named(*name, ColumnId::new(i as i32 + 1), ty.clone())
++                })
++                .collect(),
++            downstream_pk: None,
++            sink_type: SinkType::AppendOnly,
++            ignore_delete: false,
++            format_desc: None,
++            db_name: "test_db".to_owned(),
++            sink_from_name: "test_table".to_owned(),
++        }
++    }
++
++    fn pb_fields(columns: &[(&str, DataType)]) -> Vec<PbField> {
++        columns
 +            .iter()
-+            .map(|&idx| idx as usize)
-+            .collect();
-         let exec = AppendOnlyDedupExecutor::new(
-             params.actor_context,
-             input,
--            params.info.stream_key.clone(), /* TODO(rc): should change to use `dedup_column_indices`, but need to check backward compatibility */
-+            dedup_cols,
-             state_table,
-             params.watermark_epoch,
-             params.executor_stats.clone(),
++            .map(|(name, ty)| Field::with_name(ty.clone(), *name).to_prost())
++            .collect()
++    }
++
++    fn add_columns_change(
++        original: &[(&str, DataType)],
++        added: &[(&str, DataType)],
++    ) -> PbSinkSchemaChange {
++        PbSinkSchemaChange {
++            original_schema: pb_fields(original),
++            op: Some(PbSinkSchemaChangeOp::AddColumns(PbSinkAddColumnsOp {
++                fields: pb_fields(added),
++            })),
++        }
++    }
++
++    async fn new_two_phase_coordinator(param: &SinkParam) -> BoxTwoPhaseCoordinator {
++        let sink = IcebergSink::try_from(param.clone()).unwrap();
++        match sink.new_coordinator(None).await.unwrap() {
++            SinkCommitCoordinator::TwoPhase(coordinator) => coordinator,
++            SinkCommitCoordinator::SinglePhase(_) => {
++                panic!("an exactly-once iceberg sink should use a two-phase coordinator")
++            }
++        }
++    }
++
++    /// After a sink schema change is persisted and the replace job is finished, recovery builds t
+```
+
+**File**: `src/meta/src/manager/sink_coordination/manager.rs` (modified, +148/-0)
+```diff
+@@ -2102,6 +2102,154 @@ mod tests {
+         assert_eq!(rows[0].3, None);
+     }
+ 
++    /// After a replace job finishes, recovery builds the coordinator from writers that already have
++    /// the new schema, while the schema change can still be pending in the meta store. The pending
++    /// change must be committed before any writer receives its start response, because writers
++    /// validate the sink table against their new schema once they start.
++    #[tokio::test]
++    async fn test_recovered_schema_change_committed_before_writer_start() {
++        let db = prepare_db_backend().await;
++
++        let param = SinkParam {
++            sink_id: SinkId::from(1),
++            sink_name: "test".into(),
++            properties: Default::default(),
++            columns: vec![],
++            downstream_pk: None,
++            sink_type: SinkType::AppendOnly,
++            ignore_delete: false,
++            format_desc: None,
++            db_name: "test".into(),
++            sink_from_name: "test".into(),
++        };
++
++        let epoch1 = 233;
++        let metadata = vec![1u8, 2u8];
++        let schema_change = PbSinkSchemaChange {
++            original_schema: vec![PbField {
++                data_type: Some(PbDataType {
++                    type_name: PbTypeName::Int32 as i32,
++                    ..Default::default()
++                }),
++                name: "col_v1".into(),
++            }],
++            op: Some(SinkSchemachangeOp::AddColumns(PbSinkAddColumnsOp {
++                fields: vec![PbField {
++                    data_type: Some(PbDataType {
++                        type_name: PbTypeName::Varchar as i32,
++                        ..Default::default()
++                    }),
++                    name: "new_col".into(),
++                }],
++            })),
++        };
++        crate::manager::exactly_once_util::persist_pre_commit_metadata(
++            &db,
++            param.sink_id,
++            epoch1,
++            Some(metadata.clone()),
++            Some(&schema_change),
++        )
++        .await
++        .unwrap();
++
++        let all_vnode = (0..VirtualNode::COUNT_FOR_TEST).collect_vec();
++        let mut builder = BitmapBuilder::zeroed(VirtualNode::COUNT_FOR_TEST);
++        for i in all_vnode {
++            builder.set(i, true);
++        }
++        let vnode = builder.finish();
++
++        // Keep the sender alive so that the coordinator keeps waiting for new committed epochs.
++        let epoch_sender = Arc::new(tokio::sync::Mutex::new(None));
++        let mock_subscriber: SinkCommittedEpochSubscriber = Arc::new(move |_sink_id: SinkId| {
++            let (sender, receiver) = unbounded_channel();
++            let epoch_sender = epoch_sender.clone();
++            async move {
++                *epoch_sender.lock().await = Some(sender);
++                Ok((epoch1, receiver))
++            }
++            .boxed()
++        });
++
++        let commits = Arc::new(std::sync::Mutex::new(vec![]));
++        let (manager, (_join_handle, _stop_tx)) =
++            SinkCoordinatorManager::start_worker_with_spawn_worker({
++                let db = db.clone();
++                let commits = commits.clone();
++                move |param, new_writer_rx| {
++                    let db = db.clone();
++                    let metadata = metadata.clone();
++                    let schema_change = schema_change.clone();
++                    let data_commits = commits.clone();
++                    let schema_change_commits = commits.clone();
++                    tokio::spawn({
++                        let subscriber = mock_subscriber.clone();
++                        async move {
++                            CoordinatorWorker::execute_coordinator(
++                                db,
++                                param,
++                                new_writer_rx,
++                                MockTwoPhaseCoordinator::new_coordinator(
++                                    move |_epoch, _metadata_list, _schema_change| {
++                                        Err(SinkError::Coordinator(anyhow!(
++                                            "pre_commit should not be called for a recovered pending epoch"
++                                        )))
++                                    },
++                                    move |epoch, commit_metadata| {
++                                        assert_eq!(epoch, epoch1);
++                                        assert_eq!(commit_metadata, metadata);
++                                        data_commits.lock().unwrap().push("data");
++                                        Ok(())
++                                    },
++                                    move |epoch, committed_schema_change| {
++                                        assert_eq!(epoch, epoch1);
++                                        assert_eq!(committed_schema_change, schema_change);
++                                        let mut commits = schema_change_commits.lock().unwrap();
++           
 ```
 
 ---
 
-### Incident Patch 3: `2e54cbd0` (2026-11-09)
-**Commit Message**: fix(meta): reject a snapshot backfill pending-barrier limit below 2 (#27828)
+### Incident Patch 3: `6c08b672` (2026-11-11)
+**Commit Message**: fix(stream): emit plain deletes and inserts for update pairs in delta join lookup (#27932)
 
-Co-authored-by: Claude Fable 5.1 <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `src/common/src/config/streaming.rs` (modified, +2/-1)
+**File**: `src/stream/src/executor/lookup/impl_.rs` (modified, +6/-1)
 ```diff
-@@ -43,7 +43,8 @@ pub struct StreamingConfig {
-     pub snapshot_backfill_finish_max_lagged_barriers: usize,
+@@ -318,10 +318,15 @@ impl<S: StateStore, SD: ValueRowSerde> LookupExecutor<S, SD> {
+                     );
  
-     /// The multiplier applied to `in_flight_barrier_nums` when limiting pending barriers in a
--    /// snapshot backfill partial graph. A value of 0 is treated as 1.
-+    /// snapshot backfill partial graph. A value of 0 is treated as 1. The resulting limit must
-+    /// be at least 2, so that queued catch-up barriers can still drain.
-     #[serde(default = "default::streaming::snapshot_backfill_barrier_amplification_factor")]
-     pub snapshot_backfill_barrier_amplification_factor: usize,
+                     for (op, row) in ops.iter().zip_eq_debug(chunk.rows()) {
++                        // A `U-`/`U+` pair can match many arrangement rows, which would be
++                        // emitted as `U-` x N followed by `U+` x N. Downstream expects every
++                        // `U-` to be directly followed by its `U+`, so emit plain `-`/`+`
++                        // instead, as the hash join does.
++                        let op = op.normalize_update();
+                         for matched_row in self.lookup_one_row(&row, &metrics).await? {
+                             tracing::debug!(target: "events::stream::lookup::put", "{:?} {:?}", row, matched_row);
  
+-                            if let Some(chunk) = builder.append_row(*op, row, &matched_row) {
++                            if let Some(chunk) = builder.append_row(op, row, &matched_row) {
+                                 yield Message::Chunk(chunk);
+                             }
+                         }
 ```
 
-**File**: `src/config/docs.md` (modified, +1/-1)
+**File**: `src/stream/src/executor/lookup/tests.rs` (modified, +90/-11)
 ```diff
-@@ -362,7 +362,7 @@ This page is automatically generated by `./risedev generate-example-config`
- | actor_runtime_worker_threads_num | The thread number of the streaming actor runtime in the compute node. The default value is decided by `tokio`. | "" |
- | async_stack_trace | Enable async stack tracing through `await-tree` for risectl. | "ReleaseVerbose" |
- | in_flight_barrier_nums | The maximum number of pending barriers in each partial graph. Pending barriers include in-flight, collected but not committed, and currently completing barriers. | 10000 |
--| snapshot_backfill_barrier_amplification_factor | The multiplier applied to `in_flight_barrier_nums` when limiting pending barriers in a snapshot backfill partial graph. A value of 0 is treated as 1. | 1 |
-+| snapshot_backfill_barrier_amplification_factor | The multiplier applied to `in_flight_barrier_nums` when limiting pending barriers in a snapshot backfill partial graph. A value of 0 is treated as 1. The resulting limit must be at least 2, so that queued catch-up barriers can still drain. | 1 |
- | snapshot_backfill_finish_max_lagged_barriers | The maximum number of lagged barriers allowed when merging a snapshot backfill job into the database graph. | 100 |
- | unique_user_stream_errors | Max unique user stream errors per actor | 10 |
- | unsafe_disable_strict_consistency | Disable strict stream consistency checks. | false |
-```
-
-**File**: `src/meta/node/src/lib.rs` (modified, +16/-0)
-```diff
-@@ -31,6 +31,7 @@ use risingwave_common::util::resource_util;
- use risingwave_common::util::tokio_util::sync::CancellationToken;
- use risingwave_common::{GIT_SHA, RW_VERSION};
- use risingwave_common_heap_profiling::HeapProfiler;
-+use risingwave_meta::barrier::snapshot_backfill_max_pending_barrier_num;
- use risingwave_meta::*;
- use risingwave_meta_service::*;
- use risingwave_sqlparser::ast::SqlOptionRedaction;
-@@ -650,4 +651,19 @@ fn validate_config(config: &RwConfig) {
-         tracing::error!(error_msg);
-         panic!("{}", error_msg);
-     }
+@@ -145,21 +145,26 @@ async fn create_arrangement<S: StateStore>(table_id: TableId, store: S) -> Execu
+ /// | -  | 6     | 1    | 3       |
+ /// | b  |       |      | 3 -> 4  |
+ fn create_source() -> Executor {
++    create_source_with_chunks(
++        StreamChunk::from_pretty(
++            " I I
++            + 6 1",
++        ),
++        StreamChunk::from_pretty(
++            " I I
++            - 6 1",
++        ),
++    )
++}
 +
-+    // A snapshot backfill partial graph drains its queued catch-up barriers only when a new
-+    // upstream barrier arrives, and that barrier is queued first, so the queue shrinks by at
-+    // most `limit - 1` per upstream barrier. A limit of 1 could never empty the queue.
-+    if snapshot_backfill_max_pending_barrier_num(
-+        config.streaming.in_flight_barrier_nums,
-+        config
-+            .streaming
-+            .snapshot_backfill_barrier_amplification_factor,
-+    ) < 2
-+    {
-+        let error_msg = "`in_flight_barrier_nums` times `snapshot_backfill_barrier_amplification_factor` must be at least 2";
-+        tracing::error!(error_msg);
-+        panic!("{}", error_msg);
++/// Create a test source with the same schema as [`create_source`], which yields `chunk1` in
++/// epoch 2 and `chunk2` in epoch 3.
++fn create_source_with_chunks(chunk1: StreamChunk, chunk2: StreamChunk) -> Executor {
+     let columns = [
+         ColumnDesc::named("join_column", 1.into(), DataType::Int64),
+         ColumnDesc::named("rowid_column", 2.into(), DataType::Int64),
+     ];
+ 
+-    // Prepare source chunks.
+-    let chunk1 = StreamChunk::from_pretty(
+-        " I I
+-        + 6 1",
+-    );
+-    let chunk2 = StreamChunk::from_pretty(
+-        " I I
+-        - 6 1",
+-    );
+-
+     // Prepare stream executors.
+     let schema = Schema::new(
+         columns
+@@ -183,7 +188,13 @@ async fn next_msg(buffer: &mut Vec<Message>, executor: &mut BoxedMessageStream)
+ }
+ 
+ fn check_chunk_eq(chunk1: &StreamChunk, chunk2: &StreamChunk) {
+-    assert_eq!(format!("{:?}", chunk1), format!("{:?}", chunk2));
++    // The non-alternate `Debug` of `StreamChunk` only prints the cardinality, so compare the
++    // pretty-printed ops and rows instead. Rows matching the same join key come out of a hash set
++    // in the lookup cache, so their order is not deterministic; sort before comparing.
++    assert_eq!(
++        chunk1.clone().sort_rows().to_pretty().to_string(),
++        chunk2.clone().sort_rows().to_pretty().to_string()
++    );
+ }
+ 
+ fn create_storage_table_desc(table_id: TableId) -> risingwave_pb::plan_common::StorageTableDesc {
+@@ -364,3 +375,71 @@ async fn test_lookup_last_epoch() {
+     );
+     check_chunk_eq(chunk2, &expected_chunk2);
+ }
++
++/// An update pair on the stream side that matches several arrangement rows must not be emitted as
++/// `U-` x N followed by `U+` x N, since downstream (e.g. the hash dispatcher) requires each `U-` to
++/// be directly followed by its `U+`. It is emitted as plain deletes and inserts instead.
++#[tokio::test]
++async fn test_lookup_update_matches_multiple_rows() {
++    let table_id = TableId::new(1);
++    let store = prepare_hummock_store(table_id).await;
++    let arrangement = create_arrangement(table_id, store.clone()).await;
++    let stream = create_source_with_chunks(
++        StreamChunk::from_pretty(
++            " I I
++            + 6 1",
++        ),
++        StreamChunk::from_pretty(
++            "  I I
++            U- 6 1
++            U+ 6 2",
++        ),
++    );
++    let info = ExecutorInfo::for_test(
++        Schema::new(vec![
++            Field::with_name(DataType::Int64, "join_column"),
++            Field::with_name(DataType::Int64, "rowid_column"),
++            Field::with_name(DataType::Int64, "rowid_column"),
++            Field::with_name(DataType::Int64, "join_column"),
++        ]),
++        vec![1, 2],
++        "LookupExecutor".to_owned(),
++        0,
++    );
++    let lookup_executor = Box::new(LookupExecutor::new(LookupExecutorParams {
++        ctx: ActorContext::for_test(0),
++        info,
++        arrangement,
++        stream,
++        arrangement_col_descs: arrangement_col_descs(),
++        arrangement_order_rules: arrangement_col_arrange_rules_join_key(),
++        use_current_epoch: true,
++        stream_join_key_indices: vec![0],
++        arrange_join_key_indices: vec![1],
++        column_mapping: vec![2, 3, 0, 1],
++        state_table: create_replicated_state_table(store, table_id).await,
++        watermark_epoch: Arc::new(AtomicU64::new(0)),
++        chunk_size: 1024,
++    }));
++    let mut lookup_executor = lookup_executor.execute();
++
++    let mut msgs = vec![];
++    for _ in 0..5 {
++        next_msg(&mut msgs, &mut lookup_executor).await;
 +    }
- }
-```
-
-**File**: `src/meta/src/barrier/checkpoint/independent_job/creating_job/mod.rs` (modified, +15/-17)
-```diff
-@@ -185,7 +185,10 @@ impl CreatingStreamingJobControl {
-             .opts
-             .snapshot_backfill_finish_max_lagged_barriers;
-         let opts = &partial_graph_manager.control_stream_manager().env.opts;
--        let max_pending_barrier_num = snapshot_backfill_max_pending_barrier_num(opts);
-+        let max_pending_barrier_num = snapshot_backfill_max_pending_barrier_num(
-+            opts.in_flight_barrier_nums,
-+            opts.snapshot_backfill_barrier_amplification_factor,
-+        );
- 
-         let mut job = Self {
-             control: IndependentJobControl::new(independent_job_info),
-@@ -736,7 +739,10 @@ impl CreatingStreamingJobControl {
-             .opts
-             .snapshot_backfill_finish_max_lagged_barriers;
-         let opts = &partial_graph_recoverer.control_stream_manager().env.opts;
--        let max_pending_barrier_num = snapshot_backfill_max_pending_barrier_num(opts);
-+        let max_pending_barrier_num = snapshot_backfill_max_pending_barrier_num(
-+            opts.in_flight_barrier_nums,
-+            opts.snapshot_backfill_barrier_amplification_factor,
-+        );
- 
-         partial_graph_recoverer.recover_graph(
-             partial_graph_id,
-@@ -1105,7 +1111,6 @@ impl CreatingStreamingJobControl {
- #[cfg(test)]
- mod tests {
-     use super::*;
--    use crate::manager::MetaOpts;
- 
-     #[test]
-     fn test_finishing_progress_before_first_checkpoint() {
-@@ -1259,20 +1264,13 @@ mod tests {
- 
-     #[test]
-     fn test_snapshot_backfill_max_pending_barrier_num() {
--        let mut opts = MetaOpts::test(false);
--        opts.in_flight_barrier_nums = 10;
--
--        opts.snapshot_backfill_barrier_amplification_factor = 0;
--        assert_eq!(snapshot_backfill_max_pending_barrier_num(&opts), 10);
--
--        opts.snapshot_backfill_barrier_amplification_factor = 1;
--        assert_eq!(snapshot_backfill_max_pending_barrier_num(&opts), 10);
--
--        opts.snapshot_backfill_barrier_amplification_factor = 10;
--        assert_eq!(snapshot_backfill_max_pending_barrier_num(&opts), 100);
--
--        opts.in_flight_barrier_nums = usize::MAX;
--        assert_eq!(snapshot_backfill_max_pending_barrier_num(&opts), usize::MAX);
-+        assert_eq!(snapshot_backfill_max_pending_barrier_num(10, 0), 10);
-+        assert_eq!(snapshot_backfill_max_pending_barrier_num(10, 1), 10);
-+        assert_eq!(snapshot_backfill_max_pending_barrier_num(10, 10), 100);
-+        assert_eq!(
-+            snapshot_backfill_max_pending_barrier_num(usize::MAX, 10),
-+            usize::MAX
-+        );
-     }
- 
-     #[test]
-```
-
-**File**: `src/meta/src/barrier/checkpoint/independent_job/iceberg_v3_job/mod.rs` (modified, +6/-2)
-```diff
-@@ -378,8 +378,10 @@ impl IcebergV3JobCheckpointControl {
-             Default::default(),
-         );
- 
-+        let opts = &partial_graph_manager.control_stream_manager().env.opts;
-         let max_pending_barrier_num = super::snapshot_backfill_max_pending_barrier_num(
--            &partial_graph_manager.control_stream_manager().env.opts,
-+            opts.in_flight_barrier_nums,
-+            opts.snapshot_backfill_barrier_amplification_factor,
-         );
-         let commit_checkpoint_interval = CommitCheckpointInterval::from_fragment_nodes(
-             fragment_infos.values().map(|fragment| &fragment.nodes),
-@@ -593,8 +595,10 @@ impl IcebergV3JobCheckpointControl {
-             actors_to_create,
-             IcebergV3BarrierStats::new(job_id, snapshot_epoch),
-         )?;
-+        let opts = &partial_graph_recoverer.control_stream_manager().env.opts;
-         let max_pending_barrier_num = super::snapshot_backfill_max_pending_barrier_num(
--            &partial_graph_recoverer.control_stream_manager().env.opts,
-+            opts.in_flight_barrier_nums,
-+            opts.snapshot_backfill_barrier_amplification_factor,
-         );
-         Ok(Self {
-             control,
-```
-
-**File**: `src/meta/src/barrier/checkpoint/independent_job/mod.rs` (modified, +7/-4)
-```diff
-@@ -55,7 +55,6 @@ use crate::barrier::{
-     BackfillOrderState, BackfillProgress, BarrierKind, FragmentBackfillProgress, TracedEpoch,
- };
- use crate::controller::fragment::InflightFragmentInfo;
--use crate::manager::MetaOpts;
- use crate::model::StreamJobActorsToCreate;
- use crate::notification::{CollectionNotifier, NotifierStarter};
- use crate::stream::ExtendedFragmentBackfillOrder;
-@@ -248,9 +247,13 @@ fn add_initial_partial_graph(
-     )
- }
- 
--fn snapshot_backfill_max_pending_barrier_num(opts: &MetaOpts) -> usize {
--    opts.in_flight_barrier_nums
--        .saturating_mul(opts.snapshot_backfill_barrier_amplification_factor.max(1))
-+/// The maximum number of upstream barriers a snapshot backfill partial graph may queue before
-+/// the upstream is back-pressured.
-+pub fn snapshot_backfill_max_pending_barrier_num(
-+    in_flight_barrier_nums: usize,
-+    snapshot_backfill_barrier_amplification_factor: usize,
-+) -> usize {
-+    in_flight_barrier_nums.saturating_mul(snapshot_backfill_barrier_amplification_factor.max(1))
- }
- 
- #[derive(Debug)]
-```
-
-**File**: `src/meta/src/barrier/checkpoint/mod.rs` (modified, +1/-0)
-```diff
-@@ -21,6 +21,7 @@ pub(super) use control::{
-     CheckpointControl, CheckpointControlEvent, DatabaseCheckpointControl,
-     DatabaseCheckpointControlMetrics,
- };
-+pub use independent_job::snapshot_backfill_max_pending_barrier_num;
- pub(crate) use independent_job::{
-     BatchRefreshJobCheckpointControl, BatchRefreshLogicalFragments, BatchRefreshRenderResult,
-     CreatingStreamingJobControl, IcebergV3JobCheckpointControl, IcebergV3RenderResult,
-```
-
-**File**: `src/meta/src/barrier/mod.rs` (modified, +1/-0)
-```diff
-@@ -51,6 +51,7 @@ pub use backfill_order_control::{BackfillNode, BackfillOrderState};
- use risingwave_common::id::JobId;
- use risingwave_pb::ddl_service::PbBackfillType;
- 
-+pub use self::checkpoint::snapshot_backfill_max_pending_barrier_num;
- pub use self::command::{
-     BarrierKind, Command, CreateStreamingJobCommandInfo, CreateStreamingJobType,
-     IcebergPkIndexCompactionOverwrite, IndependentStreamingJobType, ReplaceStreamJobPlan,
++
++    assert_matches!(msgs[0], Message::Barrier(_));
++    assert_matches!(msgs[2], Message::Barrier(_));
++    assert_matches!(msgs[4], Message::Barrier(_));
++
++    // In epoch 3, join key 6 matches rows 2334 and 2335 of the arrangement.
++    let chunk2 = msgs[3].as_chunk().unwrap();
++    let expected_chunk2 = StreamChunk::from_pretty(
++        "    I I I I
++        - 2334 6 6 1
++        - 2335 6 6 1
++        + 2334 6 6 2
++        + 2335 6 6 2",
++    );
++    check_chunk_eq(chunk2, &expected_chunk2);
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #27889** (closed): fix(sink): avoid barrier truncation deadlock when decoupled sink is p… (@hemal9102)
-- **PR #27887** (2026-11-07): fix(connector): never send an empty AppendRows request in BigQuery sink (#27885) (@risingwave-ci)
-- **PR #27886** (2026-11-07): fix(connector): never send an empty AppendRows request in BigQuery sink (#27885) (@risingwave-ci)
-- **PR #27885** (2026-11-07): fix(connector): never send an empty AppendRows request in BigQuery sink (@anlowee)
-- **PR #27879** (closed): fix(sink): avoid barrier truncation deadlock when decoupled sink is paused (@hemal9102)
-- **PR #27876** (2026-11-06): fix(meta): allow large meta snapshot manifests (@wenym1)
+- **PR #27948** (2026-11-11): cherry-pick: fix(meta): keep periodic barrier timer and checkpoint counter untouched by discarded commands (release-3.0) (@anlowee)
+- **PR #27939** (2026-11-11): feat(sink): make Turbopuffer sink a premium feature (@hzxa21)
+- **PR #27938** (closed): Keep barrier timing and checkpoint state unchanged for discarded commands (@Copilot)
+- **PR #27932** (2026-11-11): fix(stream): emit plain deletes and inserts for update pairs in delta join lookup (@chenzl25)
+- **PR #27931** (closed): ci: enable parallel rustc frontend in ci-dev (@chenzl25)
+- **PR #27929** (2026-11-10): perf(storage): binary search SST table boundaries (@Li0k)
 
 ---
 
@@ -2118,37 +1863,27 @@ Co-authored-by: Claude Fable 5.1 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. meta): preserve backup and time-travel references during GC (#27744)
+## X. frontend): reject invalid rate limit in WITH options instead of panicking (#2790
 
 **RULE**:
-When implementing operations in `src/meta/src/backup_restore/backup_manager.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `e2e_test/ddl/throttle.slt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `51395ef8`: meta): preserve backup and time-travel references during GC (#27744). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c4837fda`: frontend): reject invalid rate limit in WITH options instead of panicking (#27900). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/meta/src/backup_restore/backup_manager.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `e2e_test/ddl/throttle.slt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    #[cfg(test)]
-    pub(crate) snapshot_captured: tokio::sync::Mutex<
-        Option<(
-            tokio::sync::oneshot::Sender<()>,
-            tokio::sync::oneshot::Receiver<()>,
-        )>,
-    >,
-            #[cfg(test)]
-            snapshot_captured: Default::default(),
-            #[cfg(test)]
-            {
-                let gate = backup_manager_clone.snapshot_captured.lock().await.take();
-                if let Some((captured, publish)) = gate {
-                    captured.send(()).unwrap();
-                    publish.await.unwrap();
-                }
-            }
+# create with invalid backfill_rate_limit
+statement error `backfill_rate_limit` must be a non-negative integer, but got `abc`
+create materialized view mv1 with (backfill_rate_limit = 'abc') as select * from t1;
+
+statement error `backfill_rate_limit` must be a non-negative integer, but got `-1`
+create materialized view mv1 with (backfill_rate_limit = '-1') as select * from t1;
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2158,4 +1893,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `51395ef8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c4837fda` are properly handled with clean fallback behavior.

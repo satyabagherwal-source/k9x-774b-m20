@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-11T17:51:35.292Z",
+  "last_updated": "2026-11-11T18:03:59.772Z",
   "total_verified_learnings": 1255,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -55469,8 +55469,8 @@
       "slug": "risingwavelabs-risingwave",
       "platform": "github",
       "source_url": "https://github.com/risingwavelabs/risingwave",
-      "source_version": "51395ef8",
-      "content_hash": "93ac4478492c476e8f54a52c3c4efc0b0435a5840fb7b6fe3327909952863a90",
+      "source_version": "26236216",
+      "content_hash": "7a726fbaaa46751e19ba50de611d879e4fe6e70819bbf96ecb168b7fc6a85d01",
       "dossier_path": "07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md",
       "promoted_rules": [
@@ -55487,6 +55487,11 @@
         {
           "number": null,
           "title": "meta): preserve backup and time-travel references during GC (#27744)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "frontend): reject invalid rate limit in WITH options instead of panicking (#2790",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -55570,7 +55575,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T10:07:56.937Z",
+      "verified_at": "2026-11-11T18:03:59.742Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56257,8 +56262,8 @@
       "slug": "rustls-rustls",
       "platform": "github",
       "source_url": "https://github.com/rustls/rustls",
-      "source_version": "c805ecfe",
-      "content_hash": "078a5273fb61c07a4bc54ae5f5da45801a64aaff0379acabe2414768ffa37fbf",
+      "source_version": "f68d6d29",
+      "content_hash": "6a8c3347f3744d244ba9a632d31c38124da3f6fa79abf3ab83713f62738b1c96",
       "dossier_path": "07_PROJECT_LEARNING/rustls-rustls-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rustls-rustls-learnings.md",
       "promoted_rules": [
@@ -56280,6 +56285,11 @@
         {
           "number": null,
           "title": "Reject non-empty legacy_session_id in QUIC ClientHello",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "rustls-aws-lc-rs: reject non-canonical X25519 HPKE recipient keys",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -56388,7 +56398,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T10:26:52.086Z",
+      "verified_at": "2026-11-11T18:03:57.287Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

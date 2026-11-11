@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T17:51:42.158Z",
+  "last_updated": "2026-11-11T18:04:07.392Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-11T16:43:08.691Z",
@@ -43,9 +43,9 @@
       "staged_for_review": 0
     },
     "zoontek-react-native-permissions-learnings.md": {
-      "processed_at": "2026-11-11T07:08:45.496Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 0
+      "processed_at": "2026-11-11T18:04:07.390Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "codewhale-hq-codewhale-learnings.md": {
       "processed_at": "2026-11-11T07:38:16.421Z",
@@ -163,7 +163,7 @@
       "staged_for_review": 1
     },
     "rustls-rustls-learnings.md": {
-      "processed_at": "2026-11-11T10:27:23.217Z",
+      "processed_at": "2026-11-11T18:04:07.354Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -461,9 +461,14 @@
       "processed_at": "2026-11-11T17:51:42.086Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "risingwavelabs-risingwave-learnings.md": {
+      "processed_at": "2026-11-11T18:04:07.382Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 114,
+  "total_dossiers_evaluated": 117,
   "total_canonical_promoted": 17,
-  "total_staged_for_review": 94
+  "total_staged_for_review": 97
 }

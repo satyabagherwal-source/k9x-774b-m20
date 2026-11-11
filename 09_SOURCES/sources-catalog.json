@@ -2693,10 +2693,10 @@
     "repository": "rustls/rustls",
     "platform": "github",
     "sourceUrl": "https://github.com/rustls/rustls",
-    "sourceVersion": "c805ecfe",
+    "sourceVersion": "f68d6d29",
     "license": "NOASSERTION",
-    "contentHash": "078a5273fb61c07a4bc54ae5f5da45801a64aaff0379acabe2414768ffa37fbf",
-    "lastHarvestedAt": "2026-11-11T10:26:52.259Z",
+    "contentHash": "6a8c3347f3744d244ba9a632d31c38124da3f6fa79abf3ab83713f62738b1c96",
+    "lastHarvestedAt": "2026-11-11T18:03:57.490Z",
     "learningId": "learn-github-rustls-rustls"
   },
   "liyupi-yu-ai-agent": {
@@ -3773,10 +3773,10 @@
     "repository": "risingwavelabs/risingwave",
     "platform": "github",
     "sourceUrl": "https://github.com/risingwavelabs/risingwave",
-    "sourceVersion": "51395ef8",
+    "sourceVersion": "26236216",
     "license": "Apache-2.0",
-    "contentHash": "93ac4478492c476e8f54a52c3c4efc0b0435a5840fb7b6fe3327909952863a90",
-    "lastHarvestedAt": "2026-11-09T10:07:57.073Z",
+    "contentHash": "7a726fbaaa46751e19ba50de611d879e4fe6e70819bbf96ecb168b7fc6a85d01",
+    "lastHarvestedAt": "2026-11-11T18:04:00.053Z",
     "learningId": "learn-github-risingwavelabs-risingwave"
   },
   "mertjf-tailblocks": {

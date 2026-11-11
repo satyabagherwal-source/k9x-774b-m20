@@ -4,14 +4,14 @@
     "officialUrl": "https://github.com/rustls/rustls",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-11T10:26:40.556Z",
-    "lastVerified": "2026-11-11T10:26:40.556Z",
+    "lastChecked": "2026-11-11T18:03:45.960Z",
+    "lastVerified": "2026-11-11T18:03:45.960Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustls-rustls",
-    "contentHash": "078a5273fb61c07a4bc54ae5f5da45801a64aaff0379acabe2414768ffa37fbf",
+    "contentHash": "6a8c3347f3744d244ba9a632d31c38124da3f6fa79abf3ab83713f62738b1c96",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-11T17:51:41.946Z",
-    "lastVerified": "2026-11-11T17:51:41.946Z",
+    "lastChecked": "2026-11-11T18:04:07.246Z",
+    "lastVerified": "2026-11-11T18:04:07.246Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -152,8 +152,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-11T16:42:50.382Z",
-    "lastVerified": "2026-11-11T16:42:50.382Z",
+    "lastChecked": "2026-11-11T18:03:43.710Z",
+    "lastVerified": "2026-11-11T18:03:43.710Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -1812,9 +1812,9 @@
   "kubesphere-kubesphere": {
     "name": "kubesphere",
     "officialUrl": "https://github.com/kubesphere/kubesphere",
-    "lastChecked": "2026-11-09T11:49:58.504Z",
+    "lastChecked": "2026-11-11T18:03:36.306Z",
     "revisionIdentifier": "04a29b5c",
-    "lastVerified": "2026-11-09T11:49:58.504Z"
+    "lastVerified": "2026-11-11T18:03:36.306Z"
   },
   "zama-ai-tfhe-rs": {
     "name": "tfhe-rs",
@@ -2332,9 +2332,9 @@
   "sayanarijit-xplr": {
     "name": "xplr",
     "officialUrl": "https://github.com/sayanarijit/xplr",
-    "lastChecked": "2026-11-09T03:42:34.741Z",
+    "lastChecked": "2026-11-11T18:03:28.704Z",
     "revisionIdentifier": "50824d0d",
-    "lastVerified": "2026-11-09T03:42:34.741Z"
+    "lastVerified": "2026-11-11T18:03:28.704Z"
   },
   "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf": {
     "name": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -4473,14 +4473,14 @@
     "officialUrl": "https://github.com/risingwavelabs/risingwave",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T10:02:54.013Z",
-    "lastVerified": "2026-11-09T10:02:54.013Z",
+    "lastChecked": "2026-11-11T18:03:48.487Z",
+    "lastVerified": "2026-11-11T18:03:48.487Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-risingwavelabs-risingwave",
-    "contentHash": "93ac4478492c476e8f54a52c3c4efc0b0435a5840fb7b6fe3327909952863a90",
+    "contentHash": "7a726fbaaa46751e19ba50de611d879e4fe6e70819bbf96ecb168b7fc6a85d01",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 14,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -8611,9 +8611,9 @@
   "louiscad-splitties": {
     "name": "Splitties",
     "officialUrl": "https://github.com/LouisCAD/Splitties",
-    "lastChecked": "2026-11-08T00:15:22.670Z",
+    "lastChecked": "2026-11-11T18:03:33.669Z",
     "revisionIdentifier": "1ed56ba2",
-    "lastVerified": "2026-11-08T00:15:22.670Z"
+    "lastVerified": "2026-11-11T18:03:33.669Z"
   },
   "biomejs-biome": {
     "name": "biomejs/biome",
@@ -10863,9 +10863,9 @@
   "trybyte-app-sitemap-validator": {
     "name": "sitemap-validator",
     "officialUrl": "https://github.com/trybyte-app/sitemap-validator",
-    "lastChecked": "2026-11-06T22:21:06.073Z",
+    "lastChecked": "2026-11-11T18:03:31.196Z",
     "revisionIdentifier": "a7fc287e",
-    "lastVerified": "2026-11-06T22:21:06.073Z"
+    "lastVerified": "2026-11-11T18:03:31.196Z"
   },
   "touchlab-kermit": {
     "name": "Kermit",

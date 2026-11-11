@@ -8995,3 +8995,5 @@ Every entry in this ledger must capture:
 | `learn-github-pixeltable-pixeltable` | `https://github.com/pixeltable/pixeltable` | `df52b4fe` | Multi-dimensional audit evidence | 2026-11-11T17:46:24.885Z |
 | `learn-github-fallow-rs-fallow` | `https://github.com/fallow-rs/fallow` | `7016f77b` | Multi-dimensional audit evidence | 2026-11-11T17:51:16.263Z |
 | `learn-github-nats-io-nats-server` | `https://github.com/nats-io/nats-server` | `0d4956f3` | Multi-dimensional audit evidence | 2026-11-11T17:51:35.443Z |
+| `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `f68d6d29` | Multi-dimensional audit evidence | 2026-11-11T18:03:57.490Z |
+| `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `26236216` | Multi-dimensional audit evidence | 2026-11-11T18:04:00.053Z |

@@ -8986,3 +8986,5 @@
 | `CYCLE-20261111-UODS` | `2026-11-11T17:46:24.880Z` | `pixeltable/pixeltable` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`039f0bb6...`) |
 | `CYCLE-20261111-0X7O` | `2026-11-11T17:51:16.260Z` | `fallow-rs/fallow` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7fffa3d5...`) |
 | `CYCLE-20261111-1C0F` | `2026-11-11T17:51:35.439Z` | `nats-io/nats-server` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8b7ef6f1...`) |
+| `CYCLE-20261111-H8KU` | `2026-11-11T18:03:57.486Z` | `rustls/rustls` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`6a8c3347...`) |
+| `CYCLE-20261111-HAK1` | `2026-11-11T18:04:00.049Z` | `risingwavelabs/risingwave` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7a726fba...`) |
