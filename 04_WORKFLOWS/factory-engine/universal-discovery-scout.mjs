@@ -544,7 +544,7 @@ export function acquireAndExtractSourceKnowledge(discoveredSource, options = {})
 
   const domainLetter = evalResult.target_domain || discoveredSource.domain || 'H';
   const domainInfo = INTELLIGENCE_DOMAINS[domainLetter] || INTELLIGENCE_DOMAINS['H'];
-  const title = discoveredSource.title;
+  const title = discoveredSource.title || `Specification from ${discoveredSource.publisher || 'Canonical Source'}`;
   const invariant = discoveredSource.invariantSummary || `Always enforce verified ${domainInfo.name} invariants.`;
 
   const candidateId = `PLCAND-${crypto.createHash('sha256').update(evalResult.canonical_url + title).digest('hex').slice(0, 8).toUpperCase()}`;

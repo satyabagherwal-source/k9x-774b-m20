@@ -14,6 +14,7 @@ import crypto from 'crypto';
 import { fileURLToPath } from 'url';
 import { performance } from 'perf_hooks';
 import { INTELLIGENCE_DOMAINS, resolveDomain } from './domain-intelligence-engine.mjs';
+import { getExpandedContextForRecords } from './knowledge-relationship-graph.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -1824,9 +1825,24 @@ export function searchBrain(query, options = {}) {
     };
   });
 
+  let graphContext = null;
+  if (options.expandGraph === true && results.length > 0) {
+    try {
+      const seedIds = results.map(r => r.id).filter(Boolean);
+      graphContext = getExpandedContextForRecords(seedIds, {
+        customRoot: options.brainRoot || options.customRoot || null,
+        maxHops: options.graphMaxHops || 1
+      });
+    } catch (graphErr) { }
+  }
+
   return {
     query,
-    results,
+    results: graphContext ? results.map(r => ({
+      ...r,
+      graphRelationships: graphContext.relationshipPaths?.filter(p => p.includes(r.id)) || []
+    })) : results,
+    graphExpandedContext: graphContext,
     totalDocuments: index.totalDocuments,
     matchedCount: filteredIndices.length,
     durationMs: Date.now() - startTime
@@ -2098,10 +2114,29 @@ export function searchBrainDetailed(query, options = {}) {
     limitations.push(`Result set truncated: ${rawResults.length - budgetedResults.length} additional matches omitted due to maxTokens budget (${maxTokens})`);
   }
 
+  // Graph-Aware Knowledge Context Enrichment (System B <-> System C Integration)
+  let graphContext = null;
+  if (options.expandGraph !== false && budgetedResults.length > 0) {
+    try {
+      const seedIds = budgetedResults.map(r => r.id).filter(Boolean);
+      graphContext = getExpandedContextForRecords(seedIds, {
+        customRoot,
+        brainRoot: customRoot,
+        maxHops: options.graphMaxHops || 1
+      });
+    } catch (graphErr) { }
+  }
+
+  const finalResults = graphContext ? budgetedResults.map(r => ({
+    ...r,
+    graphRelationships: graphContext.relationshipPaths?.filter(p => p.includes(r.id)) || []
+  })) : budgetedResults;
+
   return {
     status: 'FOUND',
     query,
-    results: budgetedResults,
+    results: finalResults,
+    graphExpandedContext: graphContext,
     totalDocuments: index.totalDocuments,
     matchedCount,
     durationMs: Date.now() - startTime,

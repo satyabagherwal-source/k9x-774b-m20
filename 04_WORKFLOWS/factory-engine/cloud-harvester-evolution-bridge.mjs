@@ -45,6 +45,10 @@ import {
 
 import { searchBrain } from './retrieval-engine.mjs';
 import { recallConstructionDomainGuidelines } from './construction-intelligence.mjs';
+import {
+  extractDynamicSourceCitations,
+  queueDynamicDiscoveredSource
+} from './dynamic-source-discovery-engine.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -452,6 +456,22 @@ export async function runHarvesterEvolutionCycle(options = {}) {
         promoted_canonical: dReport.promoted_canonical,
         staged_for_review: dReport.staged_for_review
       };
+
+      // Dynamic non-git source discovery from evaluated dossier
+      try {
+        const dText = fs.readFileSync(dPath, 'utf-8');
+        const citations = extractDynamicSourceCitations(dText, { filePath: dPath, fileName: filename });
+        let newDiscoveredCount = 0;
+        for (const cit of citations) {
+          const qRes = queueDynamicDiscoveredSource(cit, { customRoot: root });
+          if (qRes.queued) newDiscoveredCount++;
+        }
+        if (newDiscoveredCount > 0) {
+          console.log(`  🔗 [DYNAMIC DISCOVERY] Discovered & queued ${newDiscoveredCount} external source(s) from ${filename}`);
+        }
+      } catch (discErr) {
+        // Non-fatal citation discovery
+      }
 
       console.log(`  📄 [DOSSIER EVALUATED] ${filename} -> Promoted: ${dReport.promoted_canonical}, Staged: ${dReport.staged_for_review}, Duplicates: ${dReport.duplicates_skipped}`);
     } catch (err) {

@@ -39,6 +39,8 @@ import {
   releaseRegistryLock
 } from './human-approval-authority.mjs';
 
+import { syncRecordToKnowledgeGraph } from './knowledge-relationship-graph.mjs';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const BRAIN_ROOT = path.resolve(__dirname, '..', '..');
@@ -526,6 +528,17 @@ export function persistDomainIntelligenceRecord(record, customRoot = null, authC
         nonce: verifiedToken.nonce,
         promotion_result: 'CANONICAL_PERSISTED'
       }, customRoot);
+    }
+
+    // -----------------------------------------------------------------------
+    // 4. Synchronize with Knowledge Relationship Graph (System B)
+    // -----------------------------------------------------------------------
+    try {
+      if (typeof syncRecordToKnowledgeGraph === 'function') {
+        syncRecordToKnowledgeGraph(record, customRoot);
+      }
+    } catch (graphSyncErr) {
+      console.warn(`[WARN] Knowledge Graph synchronization non-fatal error: ${graphSyncErr.message}`);
     }
 
     return {

@@ -343,7 +343,7 @@ export function classifyProjectLearningCandidate(candidate, options = {}) {
     stage: KNOWLEDGE_STAGE.CANDIDATE,
     primary_domain: primaryDomain,
     secondary_domains: classification.secondaryDomains,
-    classification_confidence: classification.confidence
+    classification_confidence: forced ? Math.max(0.95, classification.confidence) : classification.confidence
   };
 }
 
