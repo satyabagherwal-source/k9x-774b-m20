@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T10:52:42.162Z",
+  "last_updated": "2026-11-11T11:00:52.995Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4702,6 +4702,33 @@
       "source_repo": "microsoft-agent-governance-toolkit",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-A2AA91-deps-dev-update-pydantic-requirement-455.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-9F52E6",
+      "directive_title": "Merge pull request #5053 from rtk-ai/chore/docs-cost-engine-positioning",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "rtk-ai-rtk",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-9F52E6-merge-pull-request-5053-from-rtk-ai-chor.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-AA510E",
+      "directive_title": "history_size/history_count CompletionStats double emitting (#12931)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "temporalio-temporal",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-AA510E-history-size-history-count-completionsta.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-C5ED55",
+      "directive_title": "Merge pull request #532 from Ontos-AI/fix/wangbinqi/nonblocking-progressive-sear",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "ontos-ai-knowhere",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C5ED55-merge-pull-request-532-from-ontos-ai-fix.md",
       "staged_date": "2026-11-11"
     }
   ]

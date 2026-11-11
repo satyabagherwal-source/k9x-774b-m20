@@ -8927,3 +8927,6 @@
 | `CYCLE-20261111-2B3M` | `2026-11-11T10:52:26.674Z` | `opentofu/opentofu` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9159e517...`) |
 | `CYCLE-20261111-2E6J` | `2026-11-11T10:52:30.667Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0ffc8c9a...`) |
 | `CYCLE-20261111-2FOL` | `2026-11-11T10:52:32.613Z` | `crate/crate` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`79f88559...`) |
+| `CYCLE-20261111-COFG` | `2026-11-11T11:00:30.508Z` | `rtk-ai/rtk` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`425d71a0...`) |
+| `CYCLE-20261111-CV3Z` | `2026-11-11T11:00:39.167Z` | `temporalio/temporal` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`de9f9ce4...`) |
+| `CYCLE-20261111-D1L2` | `2026-11-11T11:00:47.558Z` | `Ontos-AI/knowhere` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`884f54ad...`) |

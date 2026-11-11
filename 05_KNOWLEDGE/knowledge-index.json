@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-11T10:52:32.480Z",
+  "last_updated": "2026-11-11T11:00:47.459Z",
   "total_verified_learnings": 1254,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -49520,8 +49520,8 @@
       "slug": "ontos-ai-knowhere",
       "platform": "github",
       "source_url": "https://github.com/Ontos-AI/knowhere",
-      "source_version": "645d62eb",
-      "content_hash": "4f5c4cb05f635f97d0d8846ed82797ad23ea1fa0466dabacd80f76a56a340f50",
+      "source_version": "d2677dfc",
+      "content_hash": "884f54ad9d2596142b4e0cd3601f38a047c11d7580be56b85806a4d39a80da1c",
       "dossier_path": "07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md",
       "promoted_rules": [
@@ -49533,6 +49533,11 @@
         {
           "number": null,
           "title": "ci: ignore false-positive Gitleaks hits from staging OpenSearch fixtures",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #532 from Ontos-AI/fix/wangbinqi/nonblocking-progressive-sear",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -49596,7 +49601,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T04:27:42.055Z",
+      "verified_at": "2026-11-11T11:00:47.443Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -55727,8 +55732,8 @@
       "slug": "rtk-ai-rtk",
       "platform": "github",
       "source_url": "https://github.com/rtk-ai/rtk",
-      "source_version": "08a261a0",
-      "content_hash": "435172c71cdc8f01d87613c9342ba7fe4c372ab5625fe0f29ca421f44e4580f1",
+      "source_version": "8bc263a9",
+      "content_hash": "425d71a040bf3354d255a1b92b8189806e7544b92746083238747cffbf9bdf4a",
       "dossier_path": "07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
       "promoted_rules": [
@@ -55755,6 +55760,11 @@
         {
           "number": null,
           "title": "Path-Anchored Subprocess Tokenization Gate Rule",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #5053 from rtk-ai/chore/docs-cost-engine-positioning",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -55828,7 +55838,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T00:06:14.349Z",
+      "verified_at": "2026-11-11T11:00:30.421Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -61880,8 +61890,8 @@
       "slug": "temporalio-temporal",
       "platform": "github",
       "source_url": "https://github.com/temporalio/temporal",
-      "source_version": "74c71f96",
-      "content_hash": "f59277d5c0d595c3f1a376767ff3bfd998cad714eb4f012bc58e5f17e77186b2",
+      "source_version": "03ecd1d2",
+      "content_hash": "de9f9ce4bbf507a4e42e2c928fd52822dbc746847235e403c18bb1520cf89548",
       "dossier_path": "07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
       "promoted_rules": [
@@ -61904,6 +61914,11 @@
           "number": null,
           "title": "State-Driven History Succession Propagation Invariant",
           "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "history_size/history_count CompletionStats double emitting (#12931)",
+          "status": "WITHHELD_REJECT"
         },
         {
           "number": 2213,
@@ -61986,7 +62001,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T08:49:00.000Z",
+      "verified_at": "2026-11-11T11:00:39.014Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -2293,10 +2293,10 @@
     "repository": "Ontos-AI/knowhere",
     "platform": "github",
     "sourceUrl": "https://github.com/Ontos-AI/knowhere",
-    "sourceVersion": "645d62eb",
+    "sourceVersion": "d2677dfc",
     "license": "Apache-2.0",
-    "contentHash": "4f5c4cb05f635f97d0d8846ed82797ad23ea1fa0466dabacd80f76a56a340f50",
-    "lastHarvestedAt": "2026-11-09T04:27:42.177Z",
+    "contentHash": "884f54ad9d2596142b4e0cd3601f38a047c11d7580be56b85806a4d39a80da1c",
+    "lastHarvestedAt": "2026-11-11T11:00:47.576Z",
     "learningId": "learn-github-ontos-ai-knowhere"
   },
   "bitterbot-ai-bitterbot-desktop": {
@@ -6463,10 +6463,10 @@
     "repository": "temporalio/temporal",
     "platform": "github",
     "sourceUrl": "https://github.com/temporalio/temporal",
-    "sourceVersion": "74c71f96",
+    "sourceVersion": "03ecd1d2",
     "license": "MIT",
-    "contentHash": "f59277d5c0d595c3f1a376767ff3bfd998cad714eb4f012bc58e5f17e77186b2",
-    "lastHarvestedAt": "2026-11-08T08:49:00.220Z",
+    "contentHash": "de9f9ce4bbf507a4e42e2c928fd52822dbc746847235e403c18bb1520cf89548",
+    "lastHarvestedAt": "2026-11-11T11:00:39.189Z",
     "learningId": "learn-github-temporalio-temporal"
   },
   "mintplex-labs-anything-llm": {
@@ -7843,10 +7843,10 @@
     "repository": "rtk-ai/rtk",
     "platform": "github",
     "sourceUrl": "https://github.com/rtk-ai/rtk",
-    "sourceVersion": "08a261a0",
+    "sourceVersion": "8bc263a9",
     "license": "Apache-2.0",
-    "contentHash": "435172c71cdc8f01d87613c9342ba7fe4c372ab5625fe0f29ca421f44e4580f1",
-    "lastHarvestedAt": "2026-11-09T00:06:14.482Z",
+    "contentHash": "425d71a040bf3354d255a1b92b8189806e7544b92746083238747cffbf9bdf4a",
+    "lastHarvestedAt": "2026-11-11T11:00:30.510Z",
     "learningId": "learn-github-rtk-ai-rtk"
   },
   "gao-sun-eul": {

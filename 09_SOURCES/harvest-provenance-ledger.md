@@ -8936,3 +8936,6 @@ Every entry in this ledger must capture:
 | `learn-github-opentofu-opentofu` | `https://github.com/opentofu/opentofu` | `0fb8b8f8` | Multi-dimensional audit evidence | 2026-11-11T10:52:26.678Z |
 | `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `81a399b8` | Multi-dimensional audit evidence | 2026-11-11T10:52:30.672Z |
 | `learn-github-crate-crate` | `https://github.com/crate/crate` | `f7d204bd` | Multi-dimensional audit evidence | 2026-11-11T10:52:32.664Z |
+| `learn-github-rtk-ai-rtk` | `https://github.com/rtk-ai/rtk` | `8bc263a9` | Multi-dimensional audit evidence | 2026-11-11T11:00:30.510Z |
+| `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `03ecd1d2` | Multi-dimensional audit evidence | 2026-11-11T11:00:39.189Z |
+| `learn-github-ontos-ai-knowhere` | `https://github.com/Ontos-AI/knowhere` | `d2677dfc` | Multi-dimensional audit evidence | 2026-11-11T11:00:47.576Z |
