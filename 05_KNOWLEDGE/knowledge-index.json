@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-11T15:27:48.503Z",
+  "last_updated": "2026-11-11T16:11:46.813Z",
   "total_verified_learnings": 1255,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6500,11 +6500,16 @@
       "slug": "cachix-devenv",
       "platform": "github",
       "source_url": "https://github.com/cachix/devenv",
-      "source_version": "9655d320",
-      "content_hash": "83cf89fc9d97ba6884fef5268675ab02282f30ae88b6cc305c1a7413c0b87940",
+      "source_version": "622870a7",
+      "content_hash": "741d6ef28d6f74a994137aba3b08a615b711785e2e2d8a3ba4e27770de558dd9",
       "dossier_path": "07_PROJECT_LEARNING/cachix-devenv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cachix-devenv-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "deps): bump fast-xml-parser from 5.10.1 to 5.12.0 in /docs (#3362)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1763,
           "title": "tasks): wait for cancellation cleanup before scheduler exit (#3256)",
@@ -6566,7 +6571,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T22:52:00.227Z",
+      "verified_at": "2026-11-11T16:11:46.643Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -15553,11 +15558,16 @@
       "slug": "flux-iac-tofu-controller",
       "platform": "github",
       "source_url": "https://github.com/flux-iac/tofu-controller",
-      "source_version": "e2db61bd",
-      "content_hash": "10de6090132bd4c9250deeba65e68b6e00845e1aec99103578a3467c53d8dd0d",
+      "source_version": "a875a4ba",
+      "content_hash": "62d8f0e262c56f36e88b54154965e1b7d18d7e246ba11d7ff633a391eee73733",
       "dossier_path": "07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "add topologySpreadConstraints to runner pods (#1936)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2311,
           "title": "External Metadata Isolation from Persistence Keys",
@@ -15599,7 +15609,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T20:50:54.342Z",
+      "verified_at": "2026-11-11T16:06:51.651Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

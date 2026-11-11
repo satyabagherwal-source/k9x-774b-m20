@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T15:27:53.718Z",
+  "last_updated": "2026-11-11T16:12:24.238Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-11T15:27:53.718Z",
@@ -376,9 +376,24 @@
       "processed_at": "2026-11-11T15:27:53.711Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "cachix-devenv-learnings.md": {
+      "processed_at": "2026-11-11T16:12:24.169Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "tw93-mole-learnings.md": {
+      "processed_at": "2026-11-11T16:12:24.208Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "flux-iac-tofu-controller-learnings.md": {
+      "processed_at": "2026-11-11T16:12:24.238Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 93,
+  "total_dossiers_evaluated": 96,
   "total_canonical_promoted": 16,
-  "total_staged_for_review": 74
+  "total_staged_for_review": 77
 }

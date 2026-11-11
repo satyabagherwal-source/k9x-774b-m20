@@ -8975,3 +8975,6 @@ Every entry in this ledger must capture:
 | `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `90e547c6` | Multi-dimensional audit evidence | 2026-11-11T14:56:51.597Z |
 | `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `35668fa1` | Multi-dimensional audit evidence | 2026-11-11T15:27:24.491Z |
 | `learn-github-arkivanov-decompose` | `https://github.com/arkivanov/Decompose` | `2cc1a4cc` | Multi-dimensional audit evidence | 2026-11-11T15:27:48.615Z |
+| `learn-github-tw93-mole` | `https://github.com/tw93/Mole` | `d9181d3b` | Multi-dimensional audit evidence | 2026-11-11T16:06:52.732Z |
+| `learn-github-flux-iac-tofu-controller` | `https://github.com/flux-iac/tofu-controller` | `a875a4ba` | Multi-dimensional audit evidence | 2026-11-11T16:06:52.811Z |
+| `learn-github-cachix-devenv` | `https://github.com/cachix/devenv` | `622870a7` | Multi-dimensional audit evidence | 2026-11-11T16:11:47.585Z |

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T15:27:48.621Z",
-  "total_cycles_completed": 8811,
-  "total_learnings_persisted": 8811,
-  "total_rules_promoted": 8673,
+  "last_updated": "2026-11-11T16:11:47.634Z",
+  "total_cycles_completed": 8814,
+  "total_learnings_persisted": 8814,
+  "total_rules_promoted": 8676,
   "history": [
-    {
-      "timestamp": "2026-11-09T17:12:38.152Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T17:35:01.914Z",
-      "repository": "skyhook-io/radar",
-      "learningId": "learn-github-skyhook-io-radar",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T17:35:06.091Z",
-      "repository": "burner22/numbat",
-      "learningId": "learn-huggingface-burner22-numbat",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T17:35:08.658Z",
       "repository": "StarRocks/starrocks",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-11T15:27:48.621Z",
       "repository": "arkivanov/Decompose",
       "learningId": "learn-github-arkivanov-decompose",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T16:06:52.781Z",
+      "repository": "tw93/Mole",
+      "learningId": "learn-github-tw93-mole",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T16:06:52.972Z",
+      "repository": "flux-iac/tofu-controller",
+      "learningId": "learn-github-flux-iac-tofu-controller",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T16:11:47.634Z",
+      "repository": "cachix/devenv",
+      "learningId": "learn-github-cachix-devenv",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

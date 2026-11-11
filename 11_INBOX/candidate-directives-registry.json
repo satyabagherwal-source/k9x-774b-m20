@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T15:27:53.717Z",
+  "last_updated": "2026-11-11T16:12:24.228Z",
   "directives": [
     {
       "id": "CD-001",
@@ -5118,6 +5118,33 @@
       "source_repo": "zulip-zulip",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-53B093-export-fix-consent-of-former-subscribers.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-4A04A5",
+      "directive_title": "deps): bump fast-xml-parser from 5.10.1 to 5.12.0 in /docs (#3362)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "cachix-devenv",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-4A04A5-deps-bump-fast-xml-parser-from-5-10-1-to.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-62929A",
+      "directive_title": "clean): prove a LaunchAgent path missing by ENOENT, not by test -e",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "tw93-mole",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-62929A-clean-prove-a-launchagent-path-missing-b.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-40647A",
+      "directive_title": "add topologySpreadConstraints to runner pods (#1936)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "flux-iac-tofu-controller",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-40647A-add-topologyspreadconstraints-to-runner-.md",
       "staged_date": "2026-11-11"
     }
   ]

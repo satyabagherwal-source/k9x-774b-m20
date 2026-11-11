@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-11T15:27:53.578Z",
-    "lastVerified": "2026-11-11T15:27:53.578Z",
+    "lastChecked": "2026-11-11T16:12:23.404Z",
+    "lastVerified": "2026-11-11T16:12:23.404Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -249,12 +249,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dathere-qsv": {
-    "name": "dathere/qsv",
+    "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-11T14:38:44.156Z",
-    "lastVerified": "2026-11-11T14:38:44.156Z",
+    "lastChecked": "2026-11-11T16:05:07.524Z",
+    "lastVerified": "2026-11-11T16:05:07.524Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -263,7 +263,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "84c85c1f"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1165,22 +1166,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "flux-iac-tofu-controller": {
-    "name": "tofu-controller",
+    "name": "flux-iac/tofu-controller",
     "officialUrl": "https://github.com/flux-iac/tofu-controller",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-09T09:09:55.564Z",
-    "lastVerified": "2026-11-09T09:09:55.564Z",
+    "lastChecked": "2026-11-11T16:05:05.493Z",
+    "lastVerified": "2026-11-11T16:05:05.493Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-flux-iac-tofu-controller",
-    "contentHash": "10de6090132bd4c9250deeba65e68b6e00845e1aec99103578a3467c53d8dd0d",
+    "contentHash": "62d8f0e262c56f36e88b54154965e1b7d18d7e246ba11d7ff633a391eee73733",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "e2db61bd"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "provablehq-snarkos": {
     "name": "snarkOS",
@@ -1667,22 +1667,21 @@
     "revisionIdentifier": "f16560b6"
   },
   "cachix-devenv": {
-    "name": "devenv",
+    "name": "cachix/devenv",
     "officialUrl": "https://github.com/cachix/devenv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T02:14:29.312Z",
-    "lastVerified": "2026-11-09T02:14:29.312Z",
+    "lastChecked": "2026-11-11T16:04:56.714Z",
+    "lastVerified": "2026-11-11T16:04:56.714Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cachix-devenv",
-    "contentHash": "83cf89fc9d97ba6884fef5268675ab02282f30ae88b6cc305c1a7413c0b87940",
+    "contentHash": "741d6ef28d6f74a994137aba3b08a615b711785e2e2d8a3ba4e27770de558dd9",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "9655d320"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-prism-ml-ternary-bonsai-2-27b-gguf": {
     "name": "prism-ml/Ternary-Bonsai-2-27B-gguf",
@@ -1906,8 +1905,8 @@
     "officialUrl": "https://github.com/sigstore/cosign",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-11T09:12:16.963Z",
-    "lastVerified": "2026-11-11T09:12:16.963Z",
+    "lastChecked": "2026-11-11T16:05:02.188Z",
+    "lastVerified": "2026-11-11T16:05:02.188Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sigstore-cosign",
@@ -4029,8 +4028,8 @@
     "officialUrl": "https://github.com/SeekStorm/SeekStorm",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T07:32:01.684Z",
-    "lastVerified": "2026-11-09T07:32:01.684Z",
+    "lastChecked": "2026-11-11T16:05:04.633Z",
+    "lastVerified": "2026-11-11T16:05:04.633Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-seekstorm-seekstorm",
@@ -8316,14 +8315,14 @@
     "officialUrl": "https://github.com/tw93/Mole",
     "sourceType": "github",
     "technology": "Shell",
-    "lastChecked": "2026-11-07T22:53:01.323Z",
-    "lastVerified": "2026-11-07T22:53:01.323Z",
+    "lastChecked": "2026-11-11T16:05:02.059Z",
+    "lastVerified": "2026-11-11T16:05:02.059Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tw93-mole",
-    "contentHash": "da4557b3551600f7db25b64a64cf2d30951a9bfb5b88171e5c09a03af6d5d125",
+    "contentHash": "70551f6518a447289db3393a0115b8abe6d52dbbf68d7b4724172950ca5ac3dc",
     "promotedRulesCount": 1,
-    "recentFixesCount": 12,
+    "recentFixesCount": 17,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10715,9 +10714,9 @@
   "nometria-sitemap-generator": {
     "name": "sitemap-generator",
     "officialUrl": "https://github.com/nometria/sitemap-generator",
-    "lastChecked": "2026-11-06T21:20:57.688Z",
+    "lastChecked": "2026-11-11T16:04:54.533Z",
     "revisionIdentifier": "6d8cae81",
-    "lastVerified": "2026-11-06T21:20:57.688Z"
+    "lastVerified": "2026-11-11T16:04:54.533Z"
   },
   "touchlab-droidconkotlin": {
     "name": "DroidconKotlin",
