@@ -4996,3 +4996,9 @@ https://huggingface.co/mradermacher/gemma-4-31B-it-ARA-heretic-GGUF
 # --- Automatically Discovered by AI Scout Engine [2026-11-11T06:23:27.723Z] ---
 # [AI-AGENTS] Marker-Inc-Korea/AutoRAG (3391 score) - Your Personal Librarian Agent. Ask anything on your computer, organize files, re
 https://github.com/Marker-Inc-Korea/AutoRAG
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-11T07:03:00.251Z] ---
+# [HUGGINGFACE-AI-MODELS] ConwayResearch/Underdog-Woof (1520 score) - Verified Hugging Face Model: ConwayResearch/Underdog-Woof (151 likes, 10 downloa
+https://huggingface.co/ConwayResearch/Underdog-Woof
+# [HUGGINGFACE-AI-MODELS] Cactus-Compute/mirage (3360 score) - Verified Hugging Face Model: Cactus-Compute/mirage (136 likes, 12844 downloads)
+https://huggingface.co/Cactus-Compute/mirage

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T06:16:41.049Z",
+  "last_updated": "2026-11-11T07:08:45.496Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-11T06:04:57.291Z",
@@ -31,9 +31,24 @@
       "processed_at": "2026-11-11T06:16:41.048Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-conwayresearch-underdog-woof-learnings.md": {
+      "processed_at": "2026-11-11T07:08:12.078Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 0
+    },
+    "hf-cactus-compute-mirage-learnings.md": {
+      "processed_at": "2026-11-11T07:08:24.912Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "zoontek-react-native-permissions-learnings.md": {
+      "processed_at": "2026-11-11T07:08:45.496Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 6,
-  "total_canonical_promoted": 3,
+  "total_dossiers_evaluated": 9,
+  "total_canonical_promoted": 5,
   "total_staged_for_review": 1
 }

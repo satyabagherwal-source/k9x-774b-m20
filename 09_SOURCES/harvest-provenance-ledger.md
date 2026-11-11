@@ -8867,3 +8867,7 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `e2ade2a2` | Multi-dimensional audit evidence | 2026-11-11T06:33:49.999Z |
 | `learn-dom-h-0b5c2ee9` | `project://react-native-webrtc-react-native-webrtc` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-native-webrtc-react-native-webrtc-learnings.md` | 2026-11-11T06:34:12.030Z |
 | `learn-dom-d-a94752ef` | `project://dnscontrol-dnscontrol` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md` | 2026-11-11T06:34:33.447Z |
+| `learn-huggingface-cactus-compute-mirage` | `https://huggingface.co/Cactus-Compute/mirage` | `hf-cactus-` | Multi-dimensional audit evidence | 2026-11-11T07:03:08.634Z |
+| `learn-huggingface-conwayresearch-underdog-woof` | `https://huggingface.co/ConwayResearch/Underdog-Woof` | `hf-conwayr` | Multi-dimensional audit evidence | 2026-11-11T07:08:07.263Z |
+| `learn-dom-d-170ae1cf` | `project://hf-cactus-compute-mirage` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-cactus-compute-mirage-learnings.md` | 2026-11-11T07:08:24.911Z |
+| `learn-dom-h-ff5be5ce` | `project://zoontek-react-native-permissions` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zoontek-react-native-permissions-learnings.md` | 2026-11-11T07:08:45.496Z |

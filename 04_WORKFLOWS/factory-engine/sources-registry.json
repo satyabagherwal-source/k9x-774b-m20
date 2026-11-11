@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-11T06:33:57.224Z",
-    "lastVerified": "2026-11-11T06:33:57.224Z",
+    "lastChecked": "2026-11-11T07:08:11.970Z",
+    "lastVerified": "2026-11-11T07:08:11.970Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -155,8 +155,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-11T06:04:46.906Z",
-    "lastVerified": "2026-11-11T06:04:46.906Z",
+    "lastChecked": "2026-11-11T07:03:20.665Z",
+    "lastVerified": "2026-11-11T07:03:20.665Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -1383,8 +1383,8 @@
     "officialUrl": "https://github.com/cryfs/cryfs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T23:35:38.667Z",
-    "lastVerified": "2026-11-09T23:35:38.667Z",
+    "lastChecked": "2026-11-11T07:03:15.670Z",
+    "lastVerified": "2026-11-11T07:03:15.670Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cryfs-cryfs",
@@ -1493,9 +1493,9 @@
   "neondatabase-neon": {
     "name": "neon",
     "officialUrl": "https://github.com/neondatabase/neon",
-    "lastChecked": "2026-11-09T01:38:33.199Z",
+    "lastChecked": "2026-11-11T07:03:18.181Z",
     "revisionIdentifier": "fa504217",
-    "lastVerified": "2026-11-09T01:38:33.199Z"
+    "lastVerified": "2026-11-11T07:03:18.181Z"
   },
   "ajeetdsouza-zoxide": {
     "name": "ajeetdsouza/zoxide",
@@ -6152,9 +6152,9 @@
   "tiajinsha-jkvideo": {
     "name": "JKVideo",
     "officialUrl": "https://github.com/tiajinsha/JKVideo",
-    "lastChecked": "2026-11-07T17:57:37.509Z",
+    "lastChecked": "2026-11-11T07:03:10.700Z",
     "revisionIdentifier": "3592d036",
-    "lastVerified": "2026-11-07T17:57:37.509Z"
+    "lastVerified": "2026-11-11T07:03:10.700Z"
   },
   "diggerhq-digger": {
     "name": "digger",
@@ -6389,8 +6389,8 @@
     "officialUrl": "https://github.com/octodns/octodns",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-09T02:14:36.771Z",
-    "lastVerified": "2026-11-09T02:14:36.771Z",
+    "lastChecked": "2026-11-11T07:03:13.193Z",
+    "lastVerified": "2026-11-11T07:03:13.193Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-octodns-octodns",
@@ -14720,6 +14720,40 @@
     "promotedRulesCount": 1,
     "recentFixesCount": 14,
     "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-cactus-compute-mirage": {
+    "name": "Cactus-Compute/mirage",
+    "officialUrl": "https://huggingface.co/Cactus-Compute/mirage",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-11T07:03:08.166Z",
+    "lastVerified": "2026-11-11T07:03:08.166Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-cactus-compute-mirage",
+    "contentHash": "cee3ae7d63ad7be61edc5544a30b3799f1cd4db665512daa9ef8343f2b3c90ac",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-conwayresearch-underdog-woof": {
+    "name": "ConwayResearch/Underdog-Woof",
+    "officialUrl": "https://huggingface.co/ConwayResearch/Underdog-Woof",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-11T07:03:05.693Z",
+    "lastVerified": "2026-11-11T07:03:05.693Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-conwayresearch-underdog-woof",
+    "contentHash": "b106b3ed0cdbaf1f6aeb6dd66314ddcad21374cd6bdda0e7c13c6b91fbab2af4",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   }

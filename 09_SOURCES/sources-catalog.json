@@ -12328,5 +12328,25 @@
     "contentHash": "4a1ed2630cd6ca97ea35a9ccb82e192d6ee17ceda5d7e4d31957c01edae23224",
     "lastHarvestedAt": "2026-11-11T06:23:40.340Z",
     "learningId": "learn-github-marker-inc-korea-autorag"
+  },
+  "hf-cactus-compute-mirage": {
+    "repository": "Cactus-Compute/mirage",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/Cactus-Compute/mirage",
+    "sourceVersion": "hf-cactus-compute-mirage",
+    "license": "Open-Source",
+    "contentHash": "cee3ae7d63ad7be61edc5544a30b3799f1cd4db665512daa9ef8343f2b3c90ac",
+    "lastHarvestedAt": "2026-11-11T07:03:08.634Z",
+    "learningId": "learn-huggingface-cactus-compute-mirage"
+  },
+  "hf-conwayresearch-underdog-woof": {
+    "repository": "ConwayResearch/Underdog-Woof",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/ConwayResearch/Underdog-Woof",
+    "sourceVersion": "hf-conwayresearch-underdog-woof",
+    "license": "Open-Source",
+    "contentHash": "b106b3ed0cdbaf1f6aeb6dd66314ddcad21374cd6bdda0e7c13c6b91fbab2af4",
+    "lastHarvestedAt": "2026-11-11T07:08:07.263Z",
+    "learningId": "learn-huggingface-conwayresearch-underdog-woof"
   }
 }

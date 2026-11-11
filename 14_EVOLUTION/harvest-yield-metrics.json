@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T06:33:50.008Z",
-  "total_cycles_completed": 8724,
-  "total_learnings_persisted": 8724,
-  "total_rules_promoted": 8574,
+  "last_updated": "2026-11-11T07:08:07.281Z",
+  "total_cycles_completed": 8726,
+  "total_learnings_persisted": 8726,
+  "total_rules_promoted": 8577,
   "history": [
-    {
-      "timestamp": "2026-11-09T09:36:32.753Z",
-      "repository": "Phocinae/Phocinae-Largha-150M-v1",
-      "learningId": "learn-huggingface-phocinae-phocinae-largha-150m-v1",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T10:02:56.749Z",
-      "repository": "pingcap/tidb",
-      "learningId": "learn-github-pingcap-tidb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T10:07:45.480Z",
       "repository": "microsoft/FrogNano-4B-2609",
@@ -1403,6 +1389,20 @@
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T07:03:08.639Z",
+      "repository": "Cactus-Compute/mirage",
+      "learningId": "learn-huggingface-cactus-compute-mirage",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T07:08:07.281Z",
+      "repository": "ConwayResearch/Underdog-Woof",
+      "learningId": "learn-huggingface-conwayresearch-underdog-woof",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

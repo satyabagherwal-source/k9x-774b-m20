@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-11T06:33:49.821Z",
-  "total_verified_learnings": 1251,
+  "last_updated": "2026-11-11T07:08:07.142Z",
+  "total_verified_learnings": 1253,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -190271,6 +190271,76 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-11-11T06:23:40.211Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-cactus-compute-mirage": {
+      "learning_id": "learn-huggingface-cactus-compute-mirage",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Cactus-Compute/mirage",
+      "repository": "Cactus-Compute/mirage",
+      "slug": "hf-cactus-compute-mirage",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Cactus-Compute/mirage",
+      "source_version": "hf-cactus-compute-mirage",
+      "content_hash": "cee3ae7d63ad7be61edc5544a30b3799f1cd4db665512daa9ef8343f2b3c90ac",
+      "dossier_path": "07_PROJECT_LEARNING/hf-cactus-compute-mirage-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-cactus-compute-mirage-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-11T07:03:08.509Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-conwayresearch-underdog-woof": {
+      "learning_id": "learn-huggingface-conwayresearch-underdog-woof",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "ConwayResearch/Underdog-Woof",
+      "repository": "ConwayResearch/Underdog-Woof",
+      "slug": "hf-conwayresearch-underdog-woof",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/ConwayResearch/Underdog-Woof",
+      "source_version": "hf-conwayresearch-underdog-woof",
+      "content_hash": "b106b3ed0cdbaf1f6aeb6dd66314ddcad21374cd6bdda0e7c13c6b91fbab2af4",
+      "dossier_path": "07_PROJECT_LEARNING/hf-conwayresearch-underdog-woof-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-conwayresearch-underdog-woof-learnings.md",
+      "promoted_rules": [
+        {
+          "number": null,
+          "title": "Zero-Allocation Strided Buffer Sliding in Pure Array Inference",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Int8 Symmetric Matrix Dequantization Alignment Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Finite Bounds on Acoustic Duration & Autoregressive Synthesis Loops",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-11T07:08:07.111Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

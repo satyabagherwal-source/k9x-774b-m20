@@ -8858,3 +8858,7 @@
 | `CYCLE-20261111-TQCP` | `2026-11-11T06:33:49.993Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`2f9cd8ef...`) |
 | `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T06:34:12.030Z` | `react-native-webrtc-react-native-webrtc` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-0B5C2EE9` [Domain H] | Yes (`077420af...`) |
 | `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T06:34:33.447Z` | `dnscontrol-dnscontrol` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-A94752EF` [Domain D] | Yes (`9cdc3293...`) |
+| `CYCLE-20261111-VFBQ` | `2026-11-11T07:03:08.630Z` | `Cactus-Compute/mirage` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cactus-compute-mirage-learnings.md` | Yes (`cee3ae7d...`) |
+| `CYCLE-20261111-1TQZ` | `2026-11-11T07:08:07.259Z` | `ConwayResearch/Underdog-Woof` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`b106b3ed...`) |
+| `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T07:08:24.911Z` | `hf-cactus-compute-mirage` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-170AE1CF` [Domain D] | Yes (`be786757...`) |
+| `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T07:08:45.496Z` | `zoontek-react-native-permissions` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-FF5BE5CE` [Domain H] | Yes (`639ecd42...`) |
