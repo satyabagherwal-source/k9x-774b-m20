@@ -236,6 +236,42 @@ export function classifyIntelligenceDomain(text, metadata = {}) {
 // ---------------------------------------------------------------------------
 
 /**
+ * Computes an idempotent, normalized semantic content hash for domain intelligence records.
+ * Strips explicitly recognized non-semantic test and trace annotations while preserving
+ * meaningful technical substance, formatting, and domain identity.
+ */
+export function computeNormalizedSemanticHash(domainLetter, title, rawContent) {
+  if (!rawContent || typeof rawContent !== 'string') {
+    throw new Error('INVALID_CONTENT: Content must be a non-empty string.');
+  }
+
+  // 1. Remove only explicitly recognized non-semantic trace token artifacts
+  let cleanContent = rawContent
+    .replace(/\r?\n\r?\n--- \[Trace Token: [^\]]+\]/gi, '')
+    .replace(/\r?\n--- \[Trace Token: [^\]]+\]/gi, '')
+    .replace(/--- \[Trace Token: [^\]]+\]/gi, '')
+    .replace(/\[Trace Token: [^\]]+\]/gi, '')
+    .replace(/\[Token: [^\]]+\]/gi, '');
+
+  // 2. Normalize CRLF to LF
+  cleanContent = cleanContent.replace(/\r\n/g, '\n');
+
+  // 3. Normalize horizontal whitespace runs (spaces and tabs) without collapsing paragraph breaks
+  cleanContent = cleanContent
+    .split('\n')
+    .map(line => line.replace(/[ \t]+/g, ' ').trim())
+    .join('\n')
+    .trim();
+
+  const cleanTitle = String(title || '').trim().toLowerCase();
+  const cleanDomain = String(domainLetter || '').trim().toUpperCase();
+
+  return crypto.createHash('sha256')
+    .update(`${cleanDomain}:${cleanTitle}:${cleanContent}`)
+    .digest('hex');
+}
+
+/**
  * Creates an immutable, structured Domain Intelligence Record with verified provenance and SHA-256 evidence.
  */
 export function createDomainIntelligenceRecord(params = {}) {
@@ -245,9 +281,10 @@ export function createDomainIntelligenceRecord(params = {}) {
   const content = String(params.content || params.ruleText || '').trim();
   if (!content) throw new Error('MISSING_CONTENT: Domain intelligence record requires non-empty content.');
 
-  const contentHash = crypto.createHash('sha256').update(content).digest('hex');
   const classification = classifyIntelligenceDomain(`${title} ${content}`, params);
   const primaryDomain = params.forcedDomain ? (resolveDomain(params.forcedDomain) || classification.primaryDomain) : classification.primaryDomain;
+
+  const contentHash = params.content_hash || computeNormalizedSemanticHash(primaryDomain.letter, title, content);
 
   const recordId = params.id || `DOM-${primaryDomain.letter}-${crypto.randomBytes(4).toString('hex').toUpperCase()}`;
   const now = new Date().toISOString();
@@ -381,9 +418,20 @@ export function persistDomainIntelligenceRecord(record, customRoot = null, authC
 
     const registry = loadDomainRegistry(customRoot);
 
-    // Check for duplicates via content hash
+    // Check for duplicates via content hash or normalized semantic hash
+    const recordSemanticHash = record.content ? computeNormalizedSemanticHash(record.domain_letter, record.title, record.content) : null;
     const existingRecords = Object.values(registry.records);
-    const existingDuplicate = existingRecords.find(r => r.content_hash === record.content_hash);
+    const existingDuplicate = existingRecords.find(r => {
+      if (r.content_hash === record.content_hash) return true;
+      if (recordSemanticHash && r.content) {
+        try {
+          return computeNormalizedSemanticHash(r.domain_letter, r.title, r.content) === recordSemanticHash;
+        } catch (e) {
+          return false;
+        }
+      }
+      return false;
+    });
     if (existingDuplicate) {
       return {
         persisted: false,
