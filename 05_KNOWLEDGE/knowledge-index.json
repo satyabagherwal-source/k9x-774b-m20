@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-11T06:16:20.650Z",
-  "total_verified_learnings": 1250,
+  "last_updated": "2026-11-11T06:24:02.801Z",
+  "total_verified_learnings": 1251,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -8404,14 +8404,19 @@
       "slug": "clockworklabs-spacetimedb",
       "platform": "github",
       "source_url": "https://github.com/clockworklabs/SpacetimeDB",
-      "source_version": "39bf8539",
-      "content_hash": "906b8732807c4ef15e6d347cb7b3ad1f8e35a7b0d4ec41ad92afdd890c8b780d",
+      "source_version": "0b6f11ab",
+      "content_hash": "964032b53bf796845ce1ea234ecd485ff22a3ca03a8eeffbf59a12802c1b4a23",
       "dossier_path": "07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Skip CI builds and tests for docs-only changes (#6515)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "LLM benchmark health-check timeouts and C# references (#6408)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -8510,7 +8515,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T03:54:26.767Z",
+      "verified_at": "2026-11-11T06:24:02.786Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -77346,13 +77351,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "aleo-labs-protocol-snarkos",
+      "slug": "provablehq-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
-      "source_version": "5c7d169f",
-      "content_hash": "c3b77b140ed9f2e6bf3d0612ccbe0701e009555f8d2c51a9511101f237af8318",
-      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_version": "b2bfa52b",
+      "content_hash": "b0109c4562ba474c10413c2fb2763f311c6c82494c5ba28e783a796432c57d3c",
+      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": null,
@@ -77422,6 +77427,11 @@
         {
           "number": null,
           "title": "Merge pull request #4641 from aleo-labs-protocol/feat/fuzz-helpers-feature",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #4661 from aleo-labs-protocol/ci/merge-testnet-into-staging",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -77550,7 +77560,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-10T02:43:58.143Z",
+      "verified_at": "2026-11-11T06:24:00.702Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -190203,6 +190213,39 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-11-11T06:16:20.615Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-marker-inc-korea-autorag": {
+      "learning_id": "learn-github-marker-inc-korea-autorag",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Marker-Inc-Korea/AutoRAG",
+      "repository": "Marker-Inc-Korea/AutoRAG",
+      "slug": "marker-inc-korea-autorag",
+      "platform": "github",
+      "source_url": "https://github.com/Marker-Inc-Korea/AutoRAG",
+      "source_version": "111d035d",
+      "content_hash": "4a1ed2630cd6ca97ea35a9ccb82e192d6ee17ceda5d7e4d31957c01edae23224",
+      "dossier_path": "07_PROJECT_LEARNING/marker-inc-korea-autorag-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/marker-inc-korea-autorag-learnings.md",
+      "promoted_rules": [
+        {
+          "number": null,
+          "title": "calculator): treat a zone abbreviation as a fixed offset, never a daylight-savin",
+          "status": "WITHHELD_REJECT"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-11T06:23:40.211Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

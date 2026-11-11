@@ -8855,3 +8855,8 @@ Every entry in this ledger must capture:
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `85dbb6b4` | Multi-dimensional audit evidence | 2026-11-11T06:13:56.562Z |
 | `learn-huggingface-minimaxai-minimax-h3-image` | `https://huggingface.co/MiniMaxAI/MiniMax-H3-Image` | `hf-minimax` | Multi-dimensional audit evidence | 2026-11-11T06:16:20.764Z |
 | `learn-dom-d-61bbf9fb` | `project://hf-comfy-org-minimax-h3-image` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-image-learnings.md` | 2026-11-11T06:16:41.048Z |
+| `learn-github-marker-inc-korea-autorag` | `https://github.com/Marker-Inc-Korea/AutoRAG` | `111d035d` | Multi-dimensional audit evidence | 2026-11-11T06:23:40.340Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `b2bfa52b` | Multi-dimensional audit evidence | 2026-11-11T06:24:00.804Z |
+| `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `0b6f11ab` | Multi-dimensional audit evidence | 2026-11-11T06:24:02.920Z |
+| `learn-dom-d-dfc8fc98` | `project://marker-inc-korea-autorag` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/marker-inc-korea-autorag-learnings.md` | 2026-11-11T06:24:18.513Z |
+| `learn-dom-d-b5a201fb` | `project://provablehq-snarkos` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/provablehq-snarkos-learnings.md` | 2026-11-11T06:24:35.090Z |

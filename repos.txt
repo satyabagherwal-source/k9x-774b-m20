@@ -4992,3 +4992,7 @@ https://huggingface.co/MiniMaxAI/MiniMax-H3-Image
 https://huggingface.co/Comfy-Org/MiniMax-H3-Image
 # [HUGGINGFACE-AI-MODELS] mradermacher/gemma-4-31B-it-ARA-heretic-GGUF (3840 score) - Verified Hugging Face Model: mradermacher/gemma-4-31B-it-ARA-heretic-GGUF (184 l
 https://huggingface.co/mradermacher/gemma-4-31B-it-ARA-heretic-GGUF
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-11T06:23:27.723Z] ---
+# [AI-AGENTS] Marker-Inc-Korea/AutoRAG (3391 score) - Your Personal Librarian Agent. Ask anything on your computer, organize files, re
+https://github.com/Marker-Inc-Korea/AutoRAG

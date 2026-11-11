@@ -2923,10 +2923,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/ProvableHQ/snarkOS",
-    "sourceVersion": "16f3ce5c",
+    "sourceVersion": "b2bfa52b",
     "license": "Apache-2.0",
-    "contentHash": "cc1d85085b24a7ee3c499e2ff580c0cb896328e2c96a759c797eb6b3766b2905",
-    "lastHarvestedAt": "2026-11-09T23:07:30.086Z",
+    "contentHash": "b0109c4562ba474c10413c2fb2763f311c6c82494c5ba28e783a796432c57d3c",
+    "lastHarvestedAt": "2026-11-11T06:24:00.804Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "vasu-devs-justhireme": {
@@ -7053,10 +7053,10 @@
     "repository": "clockworklabs/SpacetimeDB",
     "platform": "github",
     "sourceUrl": "https://github.com/clockworklabs/SpacetimeDB",
-    "sourceVersion": "39bf8539",
+    "sourceVersion": "0b6f11ab",
     "license": "NOASSERTION",
-    "contentHash": "906b8732807c4ef15e6d347cb7b3ad1f8e35a7b0d4ec41ad92afdd890c8b780d",
-    "lastHarvestedAt": "2026-11-08T03:54:26.896Z",
+    "contentHash": "964032b53bf796845ce1ea234ecd485ff22a3ca03a8eeffbf59a12802c1b4a23",
+    "lastHarvestedAt": "2026-11-11T06:24:02.920Z",
     "learningId": "learn-github-clockworklabs-spacetimedb"
   },
   "apollographql-apollo-kotlin": {
@@ -12318,5 +12318,15 @@
     "contentHash": "3067f4fc6e1384329781816fd7366a4881b04bdd4d6e7af9b1ec0df0902ea975",
     "lastHarvestedAt": "2026-11-11T06:16:20.764Z",
     "learningId": "learn-huggingface-minimaxai-minimax-h3-image"
+  },
+  "marker-inc-korea-autorag": {
+    "repository": "Marker-Inc-Korea/AutoRAG",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Marker-Inc-Korea/AutoRAG",
+    "sourceVersion": "111d035d",
+    "license": "Apache-2.0",
+    "contentHash": "4a1ed2630cd6ca97ea35a9ccb82e192d6ee17ceda5d7e4d31957c01edae23224",
+    "lastHarvestedAt": "2026-11-11T06:23:40.340Z",
+    "learningId": "learn-github-marker-inc-korea-autorag"
   }
 }

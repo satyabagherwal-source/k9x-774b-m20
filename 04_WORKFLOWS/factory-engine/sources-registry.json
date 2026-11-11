@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-11T06:16:25.693Z",
-    "lastVerified": "2026-11-11T06:16:25.693Z",
+    "lastChecked": "2026-11-11T06:24:08.721Z",
+    "lastVerified": "2026-11-11T06:24:08.721Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -367,9 +367,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-10T06:05:17.398Z",
+    "lastChecked": "2026-11-11T06:23:48.094Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-10T06:05:17.398Z"
+    "lastVerified": "2026-11-11T06:23:48.094Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1187,14 +1187,14 @@
     "officialUrl": "https://github.com/ProvableHQ/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T23:07:28.802Z",
-    "lastVerified": "2026-11-09T23:07:28.802Z",
+    "lastChecked": "2026-11-11T06:23:48.609Z",
+    "lastVerified": "2026-11-11T06:23:48.609Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "cc1d85085b24a7ee3c499e2ff580c0cb896328e2c96a759c797eb6b3766b2905",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 1,
+    "contentHash": "b0109c4562ba474c10413c2fb2763f311c6c82494c5ba28e783a796432c57d3c",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1294,22 +1294,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "clockworklabs-spacetimedb": {
-    "name": "SpacetimeDB",
+    "name": "clockworklabs/SpacetimeDB",
     "officialUrl": "https://github.com/clockworklabs/SpacetimeDB",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T01:19:26.246Z",
-    "lastVerified": "2026-11-09T01:19:26.246Z",
+    "lastChecked": "2026-11-11T06:23:50.710Z",
+    "lastVerified": "2026-11-11T06:23:50.710Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-clockworklabs-spacetimedb",
-    "contentHash": "906b8732807c4ef15e6d347cb7b3ad1f8e35a7b0d4ec41ad92afdd890c8b780d",
+    "contentHash": "964032b53bf796845ce1ea234ecd485ff22a3ca03a8eeffbf59a12802c1b4a23",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "39bf8539"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "sharkdp-fd": {
     "name": "fd",
@@ -6013,9 +6012,9 @@
   "rcbyr-keen-slider": {
     "name": "keen-slider",
     "officialUrl": "https://github.com/rcbyr/keen-slider",
-    "lastChecked": "2026-11-07T17:22:25.757Z",
+    "lastChecked": "2026-11-11T06:23:38.157Z",
     "revisionIdentifier": "520c757a",
-    "lastVerified": "2026-11-07T17:22:25.757Z"
+    "lastVerified": "2026-11-11T06:23:38.157Z"
   },
   "aquasecurity-tfsec": {
     "name": "tfsec",
@@ -6227,9 +6226,9 @@
   "decodingai-magazine-llm-twin-course": {
     "name": "llm-twin-course",
     "officialUrl": "https://github.com/decodingai-magazine/llm-twin-course",
-    "lastChecked": "2026-11-09T02:01:02.067Z",
+    "lastChecked": "2026-11-11T06:23:40.705Z",
     "revisionIdentifier": "04e12f37",
-    "lastVerified": "2026-11-09T02:01:02.067Z"
+    "lastVerified": "2026-11-11T06:23:40.705Z"
   },
   "trinodb-trino": {
     "name": "trinodb/trino",
@@ -10103,9 +10102,9 @@
   "chris-c-thomas-oxideseo": {
     "name": "OxideSEO",
     "officialUrl": "https://github.com/chris-c-thomas/OxideSEO",
-    "lastChecked": "2026-11-05T23:55:23.093Z",
+    "lastChecked": "2026-11-11T06:23:35.643Z",
     "revisionIdentifier": "88feb867f5",
-    "lastVerified": "2026-11-05T23:55:23.093Z"
+    "lastVerified": "2026-11-11T06:23:35.643Z"
   },
   "emergetools-pow": {
     "name": "Pow",
@@ -14695,6 +14694,23 @@
     "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "marker-inc-korea-autorag": {
+    "name": "Marker-Inc-Korea/AutoRAG",
+    "officialUrl": "https://github.com/Marker-Inc-Korea/AutoRAG",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-11T06:23:32.582Z",
+    "lastVerified": "2026-11-11T06:23:32.582Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-marker-inc-korea-autorag",
+    "contentHash": "4a1ed2630cd6ca97ea35a9ccb82e192d6ee17ceda5d7e4d31957c01edae23224",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 14,
+    "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   }

@@ -8846,3 +8846,8 @@
 | `CYCLE-20261111-45HQ` | `2026-11-11T06:13:56.558Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c669b856...`) |
 | `CYCLE-20261111-78RC` | `2026-11-11T06:16:20.760Z` | `MiniMaxAI/MiniMax-H3-Image` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`3067f4fc...`) |
 | `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T06:16:41.048Z` | `hf-comfy-org-minimax-h3-image` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-61BBF9FB` [Domain D] | Yes (`d71003fa...`) |
+| `CYCLE-20261111-GNXU` | `2026-11-11T06:23:40.338Z` | `Marker-Inc-Korea/AutoRAG` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4a1ed263...`) |
+| `CYCLE-20261111-H3Q9` | `2026-11-11T06:24:00.801Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b0109c45...`) |
+| `CYCLE-20261111-H5D1` | `2026-11-11T06:24:02.917Z` | `clockworklabs/SpacetimeDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`964032b5...`) |
+| `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T06:24:18.513Z` | `marker-inc-korea-autorag` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-DFC8FC98` [Domain D] | Yes (`fd2340d5...`) |
+| `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T06:24:35.090Z` | `provablehq-snarkos` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-B5A201FB` [Domain D] | Yes (`ceb01dbf...`) |

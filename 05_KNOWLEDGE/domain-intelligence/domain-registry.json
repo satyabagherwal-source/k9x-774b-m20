@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-11T06:16:41.048Z",
-  "total_records": 24,
+  "last_updated": "2026-11-11T06:24:35.089Z",
+  "total_records": 26,
   "domains": {
     "A": {
       "total": 1,
@@ -23,13 +23,15 @@
       ]
     },
     "D": {
-      "total": 5,
+      "total": 7,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
         "DOM-D-ADAD1EE4",
         "DOM-D-0FBA7FA8",
-        "DOM-D-61BBF9FB"
+        "DOM-D-61BBF9FB",
+        "DOM-D-DFC8FC98",
+        "DOM-D-B5A201FB"
       ]
     },
     "E": {
@@ -978,6 +980,88 @@
       },
       "confidence": 0.64,
       "created_at": "2026-11-11T06:16:41.046Z"
+    },
+    "DOM-D-DFC8FC98": {
+      "record_id": "DOM-D-DFC8FC98",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): Marker-Inc-Korea/AutoRAG",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/marker-inc-korea-autorag-learnings.md`  \n> **Source**: github ([https://github.com/Marker-Inc-Korea/AutoRAG](https://github.com/Marker-Inc-Korea/AutoRAG))  \n> **Source Version**: `111d035d`  \n> **License**: Apache-2.0  \n> **Synthesized By**: ze",
+      "content_hash": "fd2340d55591d6507d16acbe0c2be3a5c4a90083a12c01f2bf503761d3131a08",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/marker-inc-korea-autorag-learnings.md`  \n> **Source**: github ([https://github.com/M -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/marker-inc-korea-autorag-learnings.md`  \n> **Source**: github ([https://github.com/M",
+      "provenance": {
+        "source_uri": "project://marker-inc-korea-autorag/marker-inc-korea-autorag-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-11T06:24:08.795Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (marker-inc-korea-autorag)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of marker-inc-korea-autorag"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "created_at": "2026-11-11T06:24:18.512Z"
+    },
+    "DOM-D-B5A201FB": {
+      "record_id": "DOM-D-B5A201FB",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): aleo-labs-protocol/snarkOS",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  \n> **Source**: github ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  \n> **Source Version**: `b2bfa52b`  \n> **License**: Apache-2.0  \n> **Synthesized By**: zero-clone-structura",
+      "content_hash": "ceb01dbfe684aa51aa7c459c5454e0d57c1b41ca76a18a7d9b6a90fe2f1b4f90",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  \n> **Source**: github ([https://github.com/Provabl -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  \n> **Source**: github ([https://github.com/Provabl",
+      "provenance": {
+        "source_uri": "project://provablehq-snarkos/provablehq-snarkos-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-11T06:24:18.514Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (provablehq-snarkos)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of provablehq-snarkos"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "created_at": "2026-11-11T06:24:35.088Z"
     }
   }
 }

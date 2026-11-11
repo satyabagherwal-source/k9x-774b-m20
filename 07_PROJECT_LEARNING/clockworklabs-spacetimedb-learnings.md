@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md`  
 > **Source**: github ([https://github.com/clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB))  
-> **Source Version**: `39bf8539`  
+> **Source Version**: `0b6f11ab`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T03:54:25.391Z  
+> **Timestamp**: 2026-11-11T06:23:50.715Z  
 > **Learning ID**: `learn-github-clockworklabs-spacetimedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T03:54:24.239Z  
+> **Harvest Timestamp**: 2026-11-11T06:23:50.710Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Development at the speed of light
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 25532 stars
+- **Stars / Engagement**: 25538 stars
 
 ---
 
@@ -830,281 +830,446 @@ export type ConnectionState = ManagerConnectionState & {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f53483c3` (2026-11-06)
-**Commit Message**: Skip CI builds and tests for docs-only changes (#6515)
+### Incident Patch 1: `e49c074e` (2026-11-10)
+**Commit Message**: Fix LLM benchmark health-check timeouts and C# references (#6408)
 
 # Description of Changes
 
-This PR skips the build and test jobs in CI, and the private Internal
-Tests run, when a change only touches documentation. Previously only
-Internal Tests skipped anything, and only for changes under `docs/`
-(#4995), so a skills-only PR like #6348 still ran about 50 jobs and 180
-job-minutes over half an hour. Now a shared `detect-docs-only` action
-counts `docs/`, `skills/`, the agent plugins, `.agents/` and root
-Markdown files as docs, except crate READMEs, which `crates/bindings`
-compiles as doc tests, and docs pages that code in `crates/`, `sdks/` or
-`tools/` names by path, such as the chat app tutorial the quickstart
-smoketest builds. The first CI job exposes the result as `skip_tests`,
-and on docs-only changes the build and test jobs skip while the existing
-no-op jobs report the required Smoketests and update-flow checks, the
-same way merge queue reuse already does; Lints, the docs build, the CLI
-docs check and the cheap policy checks still run.
+Lets the LLM benchmark finish full batches, and stops incomplete ones
+from uploading.
+
+- Move blocking scoring and cleanup off the async task, so health checks
+don't time out.
+- Use a fresh server per C# batch and publish references per task. Peak
+memory drops from 10.66 GiB to about 1.7 GiB.
+- Keep running other models after one fails, and never upload an
+incomplete batch.
+- Score any candidate publish failure as a failure unless the
+environment broke. A batch only completes if a known-good module still
+publishes at the end.
+- In schema parity, ignore case and underscores in table names.
+- Fix the prompts for `t_041`, `t_043`, `t_074` and `t_079`.
+
+Compile errors in SDK-generated code now count against the model, even
+when the SDK is at fault.
 
 # API and ABI breaking changes
 
-None. This only changes which CI jobs run, and only for changes where
-every file is documentation that no build or test re
+None.
 
-**File**: `.github/actions/detect-docs-only/action.yml` (added, +68/-0)
+# Rollback safety impact
+
+n/a
+
+# Expected complexity level and risk
+
+1/5. Benchmark tooling only.
+
+# Testing
+
+- [x] Unit tests, lints and CI pass.
+- [x] All 95 C# references pass on Linux: [run
+41154392202](https://github.com/clockworklabs/SpacetimeDB/actions/runs/41154392202).
+- [x] Full `no_context` batch in 
+
+**File**: `.github/workflows/llm-benchmark-periodic.yml` (modified, +14/-2)
 ```diff
-@@ -0,0 +1,68 @@
-+name: Detect docs-only changes
-+description: >-
-+  Report whether every file this event changes is documentation or agent
-+  guidance that no build or test reads: docs/, skills/, the agent plugins,
-+  .agents/, and Markdown files at the repository root. Crate READMEs are not
-+  included, because some are compiled as doc tests, and neither are docs pages
-+  whose code a test builds and runs. Requires a prior checkout.
-+outputs:
-+  docs-only:
-+    description: "'true' if every changed file is documentation, otherwise 'false'."
-+    value: ${{ steps.detect.outputs.docs-only }}
-+runs:
-+  using: composite
-+  steps:
-+    - name: Detect docs-only changes
-+      id: detect
-+      shell: bash
-+      env:
-+        MERGE_GROUP_BASE: ${{ github.event.merge_group.base_sha }}
-+        PUSH_BEFORE: ${{ github.event.before }}
-+      run: |
-+        set -euo pipefail
+@@ -76,6 +76,7 @@ jobs:
+     name: Run benchmarks (${{ matrix.lang }})
+     needs: prepare_matrix
+     runs-on: spacetimedb-linux
++    timeout-minutes: 1440
+     env:
+       CARGO_TARGET_DIR: ${{ github.workspace }}/target
+       TARGET_TRIPLE: x86_64-unknown-linux-gnu
+@@ -180,11 +181,13 @@ jobs:
+           DOTNET_SKIP_FIRST_TIME_EXPERIENCE: "1"
+           MSBUILDDISABLENODEREUSE: "1"
+           DOTNET_CLI_USE_MSBUILD_SERVER: "0"
++          # Bound in-flight provider credit reservations across the three language jobs.
+           LLM_BENCH_CONCURRENCY: "8"
+           LLM_BENCH_RUST_CONCURRENCY: "4"
+-          LLM_BENCH_CSHARP_CONCURRENCY: "2"
+-          LLM_BENCH_ROUTE_CONCURRENCY: ${{ matrix.lang == 'typescript' && '4' || matrix.lang == 'csharp' && '1' || '2' }}
++          LLM_BENCH_CSHARP_CONCURRENCY: "4"
++          LLM_BENCH_ROUTE_CONCURRENCY: "1"
+           LLM_BENCHMARK_REPORT_DIR: ${{ runner.temp }}/llm-benchmark-reports
++          LLM_BENCHMARK_DIAGNOSTICS_DIR: ${{ runner.temp }}/llm-benchmark-diagnostics
+           INPUT_LANGUAGE: ${{ matrix.lang }}
+           INPUT_MODEL_SET: ${{ inputs.model_set || 'website_active' }}
+           INPUT_MODELS: ${{ inputs.models || '' }}
+@@ -271,6 +274,15 @@ jobs:
+           if-no-files-found: ignore
+           retention-days: 14
+ 
++      - name: Upload server diagnostics
++        if: always()
++        uses: actions/upload-artifact@v4
++        with:
++          name: llm-benchmark-diagnostics-${{ matrix.lang }}
++          path: ${{ runner.temp }}/llm-benchmark-diagnostics
++          if-no-files-found: ignore
++          retention-days: 14
 +
-+        # Any doubt about what changed means running every check.
-+        run_everything() {
-+          echo "$1; running all checks."
-+          echo "docs-only=false" >>"$GITHUB_OUTPUT"
-+          exit 0
-+        }
-+
-+        case "${GITHUB_EVENT_NAME}" in
-+          pull_request)
-+            # The checkout is GitHub's merge of the PR into its base, so its first parent is the base.
-+            git fetch --no-tags --quiet --depth=2 origin "${GITHUB_SHA}" || run_everything "Could not fetch the PR merge commit"
-+            base="$(git rev-parse "${GITHUB_SHA}^1")" || run_everything "Could not find the PR's base commit"
-+            ;;
-+          merge_group) base="${MERGE_GROUP_BASE}" ;;
-+          push) base="${PUSH_BEFORE}" ;;
-+          *) base="" ;;
-+        esac
-+
-+        if [[ -z "${base}" || "${base}" =~ ^0+$ ]]; then
-+          run_everything "No base commit to compare against"
-+        fi
-+
-+        git fetch --no-tags --quiet --depth=1 origin "${base}" || run_everything "Could not fetch base commit ${base}"
-+        changed="$(git diff --no-renames --name-only "${base}" "${GITHUB_SHA}")" || run_everything "Could not diff against ${base}"
-+
-+        # Some tests build and run the code in a docs page, such as the quickstart smoketest with the
-+        # chat app tutorial, so a change to one of those pages is a code change. This finds them by
-+        # their full path, so tests should name such pages that way.
-+        tested_pages="$(git grep -h -o -E 'docs/docs/[A-Za-z0-9_./-]+[.]md' -- crates sdks tools || true)"
-+
-+        while IFS= read -r path; do
-+          if [[ -n "${path}" ]] && grep -qxF -- "${path}" <<<"${tested_pages}"; then
-+            run_everything "Tests run the code in ${path}"
-+          fi
-+          case "${path}" in
-+            "" | docs/* | skills/* | codex-plugin/* | .claude-plugin/* | .agents/*) ;;
-+            # Markdown only at the root: crate READMEs can be compiled as doc tests.
-+            */*) run_everything "Changes outside the docs, such as ${path}" ;;
-+            *.md) ;;
-+            *) run_everything "Changes outside the docs, such as ${path}" ;;
-+          esac
-+        done <<<"${changed}"
-+
-+        echo "Every changed file is documentation; skipping builds and tests."
-+        echo "docs-only=true" >>"$GITHUB_OUTPUT"
+   summarize:
+     name: Summarize benchmark analysis
+     if: always()
 ```
 
-**File**: `.github/workflows/ci.yml` (modified, +39/-30)
+**File**: `.github/workflows/llm-benchmark-validate-goldens.yml` (modified, +12/-2)
 ```diff
-@@ -33,10 +33,17 @@ jobs:
-     outputs:
-       # A reused failure also skips fresh jobs; the final step reports that failure on this commit.
-       skip: ${{ steps.compare.outputs.skip == 'true' || steps.reuse.outputs.reused == 'true' }}
-+      # Also true when the change only touches docs. Jobs that check the docs themselves (lints, the
-+      # docs build and the CLI docs check) use `skip` instead, so they still run for docs-only changes.
-+      skip_tests: ${{ steps.compare.outputs.skip == 'true' || steps.reuse.outputs.reused == 'true' || steps.docs.outputs.docs-only == 'true' }}
-     steps:
-       - name: Checkout merge queue commit
-         uses: actions/checkout@v4
- 
-+      - name: Detect docs-only changes
-+        id: docs
-+        uses: ./.github/actions/detect-docs-only
+@@ -27,7 +27,7 @@ concurrency:
+ jobs:
+   validate-goldens:
+     runs-on: spacetimedb-linux
+-    timeout-minutes: 60
++    timeout-minutes: 180
+     env:
+       CARGO_TARGET_DIR: ${{ github.workspace }}/target
+       TARGET_TRIPLE: x86_64-unknown-linux-gnu
+@@ -122,5 +122,15 @@ jobs:
+           MSBUILDDISABLENODEREUSE: "1"
+           DOTNET_CLI_USE_MSBUILD_SERVER: "0"
+           LLM_BENCH_CSHARP_CONCURRENCY: "1"
++          LLM_BENCHMARK_DIAGNOSTICS_DIR: ${{ runner.temp }}/llm-golden-diagnostics
+         run: |
+-          llm_benchmark run --goldens-only --lang ${{ matrix.lang }}
++          llm_benchmark run --goldens-only --lang ${{ matrix.lang }} --dry-run --skip-task-catalog-upload
 +
-       - name: Compare merge queue commit to PR head
-         id: compare
-         env:
-@@ -93,7 +100,7 @@ jobs:
- 
-   upload-build-artifacts-linux:
-     needs: [merge_queue_noop, lints]
--    if: ${{ needs.merge_queue_noop.outputs.skip != 'true' }}
-+    if: ${{ needs.merge_queue_noop.outputs.skip_tests != 'true' }}
-     name: Upload build artifacts (Linux)
-     runs-on: spacetimedb-linux
-     timeout-minutes: 15
-@@ -281,7 +288,7 @@ jobs:
- 
-   upload-build-artifacts-windows:
-     needs: [merge_queue_noop, lints]
--    if: ${{ needs.merge_queue_noop.outputs.skip != 'true' }}
-+    if: ${{ needs.merge_queue_noop.outputs.skip_tests != 'true' }}
-     name: Upload build artifacts (Windows)
-     runs-on: spacetimedb-windows-runner
-     timeout-minutes: 15
-@@ -567,7 +574,7 @@ jobs:
-   # and skipping this check means that the matrix isn't "populated" so the required checks wouldn't be met.
-   smoketests_noop:
-     needs: [merge_queue_noop]
--    if: ${{ needs.merge_queue_noop.outputs.skip == 'true' }}
-+    if: ${{ needs.merge_queue_noop.outputs.skip_tests == 'true' }}
-     name: Smoketests (${{ matrix.name }})
-     strategy:
-       matrix:
-@@ -577,15 +584,15 @@ jobs:
-           - name: Windows 2/4
-           - name: Windows 3/4
-           - name: Windows 4/4
--    # These no-op jobs only preserve required smoketest check names after CI reuse.
-+    # These no-op jobs only preserve required smoketest check names after CI reuse or for docs-only changes.
-     runs-on: spacetimedb-linux-small
-     steps:
--      - name: Skip duplicate merge queue smoketest
--        run: echo "Merge queue commit has the same tree as the PR head; smoketest already ran for the PR."
-+      - name: Skip smoketest
-+        run: echo "Smoketests already ran for an equivalent commit, or the change only touches docs."
- 
-   sdk_test_modules:
-     needs: [merge_queue_noop, lints]
--    if: ${{ needs.merge_queue_noop.outputs.skip != 'true' }}
-+    if: ${{ needs.merge_queue_noop.outputs.skip_tests != 'true' }}
-     name: Build SDK test modules
-     runs-on: spacetimedb-linux
-     timeout-minutes: 15
-@@ -663,7 +670,7 @@ jobs:
- 
-   sdk_test_archives:
-     needs: [merge_queue_noop, lints]
--    if: ${{ needs.merge_queue_noop.outputs.skip != 'true' }}
-+    if: ${{ needs.merge_queue_noop.outputs.skip_tests != 'true' }}
-     name: Build SDK test archives
-     runs-on: spacetimedb-linux
-     timeout-minutes: 15
-@@ -939,20 +946,20 @@ jobs:
- 
-   sdk_tests_noop:
-     needs: [merge_queue_noop]
--    if: ${{ needs.merge_queue_noop.outputs.skip == 'true' }}
-+    if: ${{ needs.merge_queue_noop.outputs.skip_tests == 'true' }}
-     name: SDK Tests (${{ matrix.mode }} ${{ matrix.partition }}/2)
-     strategy:
-       matrix:
-         mode: [native, browser]
-         partition: [1, 2]
-     runs-on: ubuntu-latest
-     steps:
--      - name: Skip duplicate merge queue SDK test
--        run: echo "Merge queue commit has the same tree as the PR head; SDK tests already ran for the PR."
-+      - name: Skip SDK test
-+        run: echo "SDK tests already ran for an equivalent commit, or the change only touches docs."
- 
-   rust_test_build:
-     needs: [merge_queue_noop, lints]
--    if: ${{ needs.merge_queue_noop.outputs.skip != 'true' }}
-+    if: ${{ needs.merge_queue_noop.outputs.skip_tests != 'true' }}
-     name: Test Suite - Rust Build
-     runs-on: spacetimedb-linux
-     timeout-minutes: 15
-@@ -1173,7 +1180,7 @@ jobs:
- 
-   csharp_tests:
-     needs: [merge_queue_noop, lints]
--    if: ${{ needs.merge_queue_noop.outputs.skip != 'true' }}
-+    if: ${{ needs.merge_queue_noop.outputs.skip_tests != 'true' }}
-     name: Test Suite - C#
-     runs-on: spacetimedb-linux
-     timeout-minutes: 10
-@@ -1211,7 +1218,7 @@ jobs:
- 
-   cpp_compile_tests:
-     needs: [merge_queue_noop, lints]
--    if: ${{ needs.merge_queue_noop.outputs.skip != 'true' }}
-+    if: ${{ needs.merge_queue_noop.outputs.skip_tests != 'true' }}
-     name: Test Suite - C++ Compile (${{ matrix.suite }})
-     runs-on: spacetimedb-linux
-     timeout-minutes: 10
-@@ -1266,7 +1273,7 @@ jobs:
-     timeout-minutes: 5
-     steps:
-       - name: Check component results
--        if: ${{ needs.merge_queue_noop.outputs.skip != 'true' }}
-+        if: ${{ needs.merge_
++      - name: Upload server diagnostics
++        if: always()
++        uses: actions/upload-artifact@v4
++        with:
++          name: llm-golden-diagnostics-${{ matrix.lang }}
++          path: ${{ runner.temp }}/llm-golden-diagnostics
++          if-no-files-found: ignore
++          retention-days: 14
 ```
 
-**File**: `.github/workflows/internal-tests.yml` (modified, +6/-11)
+**File**: `codex-plugin/plugins/spacetimedb/skills/csharp-server/SKILL.md` (modified, +10/-5)
 ```diff
-@@ -33,24 +33,19 @@ jobs:
-       TARGET_OWNER: clockworklabs
-       TARGET_REPO: SpacetimeDBPrivate
-     steps:
--      # Required for the path filter check below on non-PR commits (e.g. `master`)
-       - name: Checkout
-         uses: actions/checkout@v4
+@@ -187,15 +187,17 @@ The pattern is `ctx.Db.{Accessor}.{ColumnName}.{Method}(value)` for all indexed
  
--      # Skip the private dispatch entirely when only `docs/` is touched. The job
-+      # Skip the private dispatch entirely for docs-only changes. The job
-       # itself still completes successfully so required-status-check gating is
-       # satisfied without spending private-runner time on a docs-only change.
--      - name: Detect non-docs changes
--        id: filter
--        uses: dorny/paths-filter@v3
--        with:
--          filters: |
--            non_docs:
--              - '!docs/**'
-+      - name: Detect docs-only changes
-+        id: docs
-+        uses: ./.github/actions/detect-docs-only
+ ```csharp
+ [SpacetimeDB.Reducer(ReducerKind.Init)]
+-public static void OnInit(ReducerContext ctx) { ... }
++public static void Init(ReducerContext ctx) { ... }
  
-       - id: dispatch
-         name: Select or trigger tests
--        if: steps.filter.outputs.non_docs == 'true'
-+        if: steps.docs.outputs.docs-only != 'true'
-         env:
-           CARGO_TARGET_DIR: ${{ runner.temp }}/internal-tests-cargo-target
-           GH_TOKEN: ${{ secrets.SPACETIMEDB_PRIVATE_TOKEN }}
-@@ -67,7 +62,7 @@ jobs:
-             -- other-workflows coordinate internal-tests "${args[@]}"
+ [SpacetimeDB.Reducer(ReducerKind.ClientConnected)]
+-public static void OnConnect(ReducerContext ctx) { ... }
++public static void ClientConnected(ReducerContext ctx) { ... }
  
-       - name: Wait for Internal Tests to complete
--        if: steps.filter.outputs.non_docs == 'true'
-+        if: steps.docs.outputs.docs-only != 'true'
-         env:
-           GH_TOKEN: ${{ secrets.SPACETIMEDB_PRIVATE_TOKEN }}
-           RUN_ID: ${{ steps.dispatch.outputs.run_id }}
+ [SpacetimeDB.Reducer(ReducerKind.ClientDisconnected)]
+-public static void OnDisconnect(ReducerContext ctx) { ... }
++public static void ClientDisconnected(ReducerContext ctx) { ... }
+ ```
+ 
++Reducer and procedure method names must not start with `On`, `on`, or `__`; the code generator rejects them (STDB0010), so name lifecycle reducers `ClientConnected`, not `OnConnect`.
++
+ `ctx.ConnectionId` is `ConnectionId?`, including in connection lifecycle reducers. Check or unwrap it before storing it in a non-nullable column or passing it to an index accessor.
+ 
+ ## Views
+@@ -333,7 +335,7 @@ public partial struct TickTimer
+ [SpacetimeDB.Reducer]
+ public static void Tick(ReducerContext ctx, TickTimer timer)
+ {
+-    // timer row is auto-deleted after this reducer runs
++    // a one-time row is deleted after this runs; an interval row stays
+ }
+ 
+ // One-time: fires once at a specific time
+@@ -344,7 +346,7 @@ var at = new ScheduleAt.Interval(TimeSpan.FromSeconds(5));
+ ctx.Db.TickTimer.Insert(new TickTimer { ScheduledId = 0, ScheduledAt = at });
+ ```
+ 
+-Scheduled reducer callbacks use the ordinary `[SpacetimeDB.Reducer]` attribute. There is no `ReducerKind.Scheduled`; the table's `Scheduled` option associates the callback.
++Scheduled reducer callbacks use the ordinary `[SpacetimeDB.Reducer]` attribute. There is no `ReducerKind.Scheduled`; the table's `Scheduled` option associates the callback. To let only the scheduler run a callback, reject calls where `ctx.Sender != ctx.DatabaseIdentity`.
+ 
+ To construct a `ConnectionId` from a 128-bit numeric representation, encode it as exactly 16 little-endian bytes and call `ConnectionId.From(bytes)`. The result is nullable and must be checked before use.
+ 
+@@ -364,6 +366,7 @@ public static ResultValue Inspect(ProcedureContext ctx, string input) =>
+ Outbound HTTP is available through `ctx.Http`; handle its success/error result before using the response. Open short database transactions with `ctx.WithTx`. Perform network I/O before opening the transaction, and keep only database work inside its callback.
+ 
+ ```csharp
++string uri = "https://example.com/data"; // the C# HTTP API takes the URI as a string
+ var result = ctx.Http.Get(uri);
+ var text = result.Match(
+     response => response.Body.ToStringUtf8Lossy(),
+@@ -435,3 +438,5 @@ public partial record Shape : SpacetimeDB.TaggedEnum<(Circle Circle, Rectangle R
+ var a = new Shape.Circle(new Circle { Radius = 10 });
+ var b = new Shape.Rectangle(new Rectangle { Width = 4, Height = 6 });
+ ```
++
++Declare `TaggedEnum` records inside your `Module` class. At file scope, a variant named after its own type, such as `Circle Circle`, fails with CS8910.
+```
+
+**File**: `codex-plugin/plugins/spacetimedb/skills/rust-server/SKILL.md` (modified, +3/-1)
+```diff
+@@ -273,7 +273,7 @@ pub struct TickTimer {
+ 
+ #[spacetimedb::reducer]
+ pub fn tick(ctx: &ReducerContext, timer: TickTimer) {
+-    // timer row is auto-deleted after this reducer runs
++    // a one-time row is deleted after this runs; an interval row stays
+ }
+ 
+ // One-time: fires once at a specific time
+@@ -284,6 +284,8 @@ let at = ScheduleAt::Interval(std::time::Duration::from_secs(5).into());
+ ctx.db.tick_timer().insert(TickTimer { scheduled_id: 0, scheduled_at: at });
+ ```
+ 
++To let only the scheduler run a callback, reject calls where `ctx.sender() != ctx.database_identity()`.
++
+ Construct a connection ID from a numeric representation with `ConnectionId::from_u128(value)`.
+ 
+ ## Inter-Database Calls (Async IDC)
+```
+
+**File**: `codex-plugin/plugins/spacetimedb/skills/typescript-server/SKILL.md` (modified, +3/-1)
+```diff
+@@ -248,7 +248,7 @@ const tickTimer = table({
+ export const tick = spacetimedb.reducer(
+   { onSchedule: tickTimer },
+   { timer: tickTimer.rowType },
+-  (ctx, { timer }) => { /* timer row auto-deleted after this runs */ }
++  (ctx, { timer }) => { /* a one-time row is deleted after this runs; an interval row stays */ }
+ );
+ 
+ // `onSchedule` also works for scheduled procedures whose return type is `t.unit()`.
+@@ -261,6 +261,8 @@ export const tick = spacetimedb.reducer(
+ //   const micros = at.tag === 'time' ? at.value : at.value.microsSinceUnixEpoch;  // bigint
+ ```
+ 
++To let only the scheduler run a callback, reject calls where `!ctx.sender.isEqual(ctx.databaseIdentity)`.
++
+ ## Submodules
+ 
+ Import the library's full module-namespace object, not just its default schema:
+```
+
+**File**: `docs/docs/00200-core-concepts/00200-functions/00300-reducers/00500-lifecycle.md` (modified, +2/-2)
+```diff
+@@ -203,7 +203,7 @@ export const onConnect = spacetimedb.clientConnected((ctx) => {
+ 
+ ```csharp
+ [SpacetimeDB.Reducer(ReducerKind.ClientConnected)]
+-public static void OnConnect(ReducerContext ctx)
++public static void ClientConnected(ReducerContext ctx)
+ {
+     Log.Info($"Client connected: {ctx.Sender}");
+     
+@@ -318,7 +318,7 @@ export const onDisconnect = spacetimedb.clientDisconnected((ctx) => {
+ 
+ ```csharp
+ [SpacetimeDB.Reducer(ReducerKind.ClientDisconnected)]
+-public static void OnDisconnect(ReducerContext ctx)
++public static void ClientDisconnected(ReducerContext ctx)
+ {
+     Log.Info($"Client disconnected: {ctx.Sender}");
+     
+```
+
+**File**: `skills/csharp-server/SKILL.md` (modified, +10/-5)
+```diff
+@@ -187,15 +187,17 @@ The pattern is `ctx.Db.{Accessor}.{ColumnName}.{Method}(value)` for all indexed
+ 
+ ```csharp
+ [SpacetimeDB.Reducer(ReducerKind.Init)]
+-public static void OnInit(ReducerContext ctx) { ... }
++public static void Init(ReducerContext ctx) { ... }
+ 
+ [SpacetimeDB.Reducer(ReducerKind.ClientConnected)]
+-public static void OnConnect(ReducerContext ctx) { ... }
++public static void ClientConnected(ReducerContext ctx) { ... }
+ 
+ [SpacetimeDB.Reducer(ReducerKind.ClientDisconnected)]
+-public static void OnDisconnect(ReducerContext ctx) { ... }
++public static void ClientDisconnected(ReducerContext ctx) { ... }
+ ```
+ 
++Reducer and procedure method names must not start with `On`, `on`, or `__`; the code generator rejects them (STDB0010), so name lifecycle reducers `ClientConnected`, not `OnConnect`.
++
+ `ctx.ConnectionId` is `ConnectionId?`, including in connection lifecycle reducers. Check or unwrap it before storing it in a non-nullable column or passing it to an index accessor.
+ 
+ ## Views
+@@ -333,7 +335,7 @@ public partial struct TickTimer
+ [SpacetimeDB.Reducer]
+ public static void Tick(ReducerContext ctx, TickTimer timer)
+ {
+-    // timer row is auto-deleted after this reducer runs
++    // a one-time row is deleted after this runs; an interval row stays
+ }
+ 
+ // One-time: fires once at a specific time
+@@ -344,7 +346,7 @@ var at = new ScheduleAt.Interval(TimeSpan.FromSeconds(5));
+ ctx.Db.TickTimer.Insert(new TickTimer { ScheduledId = 0, ScheduledAt = at });
+ ```
+ 
+-Scheduled reducer callbacks use the ordinary `[SpacetimeDB.Reducer]` attribute. There is no `ReducerKind.Scheduled`; the table's `Scheduled` option associates the callback.
++Scheduled reducer callbacks use the ordinary `[SpacetimeDB.Reducer]` attribute. There is no `ReducerKind.Scheduled`; the table's `Scheduled` option associates the callback. To let only the scheduler run a callback, reject calls where `ctx.Sender != ctx.DatabaseIdentity`.
+ 
+ To construct a `ConnectionId` from a 128-bit numeric representation, encode it as exactly 16 little-endian bytes and call `ConnectionId.From(bytes)`. The result is nullable and must be checked before use.
+ 
+@@ -364,6 +366,7 @@ public static ResultValue Inspect(ProcedureContext ctx, string input) =>
+ Outbound HTTP is available through `ctx.Http`; handle its success/error result before using the response. Open short database transactions with `ctx.WithTx`. Perform network I/O before opening the transaction, and keep only database work inside its callback.
+ 
+ ```csharp
++string uri = "https://example.com/data"; // the C# HTTP API takes the URI as a string
+ var result = ctx.Http.Get(uri);
+ var text = result.Match(
+     response => response.Body.ToStringUtf8Lossy(),
+@@ -435,3 +438,5 @@ public partial record Shape : SpacetimeDB.TaggedEnum<(Circle Circle, Rectangle R
+ var a = new Shape.Circle(new Circle { Radius = 10 });
+ var b = new Shape.Rectangle(new Rectangle { Width = 4, Height = 6 });
+ ```
++
++Declare `TaggedEnum` records inside your `Module` class. At file scope, a variant named after its own type, such as `Circle Circle`, fails with CS8910.
+```
+
+**File**: `skills/rust-server/SKILL.md` (modified, +3/-1)
+```diff
+@@ -273,7 +273,7 @@ pub struct TickTimer {
+ 
+ #[spacetimedb::reducer]
+ pub fn tick(ctx: &ReducerContext, timer: TickTimer) {
+-    // timer row is auto-deleted after this reducer runs
++    // a one-time row is deleted after this runs; an interval row stays
+ }
+ 
+ // One-time: fires once at a specific time
+@@ -284,6 +284,8 @@ let at = ScheduleAt::Interval(std::time::Duration::from_secs(5).into());
+ ctx.db.tick_timer().insert(TickTimer { scheduled_id: 0, scheduled_at: at });
+ ```
+ 
++To let only the scheduler run a callback, reject calls where `ctx.sender() != ctx.database_identity()`.
++
+ Construct a connection ID from a numeric representation with `ConnectionId::from_u128(value)`.
+ 
+ ## Inter-Database Calls (Async IDC)
+```
+
+---
+
+### Incident Patch 2: `b5debf86` (2026-11-10)
+**Commit Message**: Fix database name publication (#6547)
+
+# Description of Changes
+Already released. Needs to get into master now for future releases.
+
+# API and ABI breaking changes
+Tightens permissions for republishing previously used database names.
+
+# Rollback safety impact
+n/a
+
+# Expected complexity level and risk
+1
+
+# Testing
+Already released. Includes deletion/republish regression coverage.
+[Public CI
+passed](https://github.com/clockworklabs/SpacetimeDB/actions/runs/42266404314).
+
+---------
+
+Co-authored-by: Shubham Mishra <[REDACTED_EMAIL]>
+Co-authored-by: Zeke Foppa <[REDACTED_EMAIL]>
+
+**File**: `crates/client-api/src/routes/database.rs` (modified, +14/-2)
+```diff
+@@ -1411,8 +1411,20 @@ pub async fn publish<S: NodeDelegate + ControlStateDelegate + Authorization>(
+         .map_err(log_and_500)?;
+     match existing.as_ref() {
+         None => {
+-            if matches!(name_or_identity.as_ref(), Some(NameOrIdentity::Identity(_))) {
+-                return Err(bad_request("Cannot create a database at a supplied identity".into()));
++            match name_or_identity.as_ref() {
++                Some(NameOrIdentity::Identity(_)) => {
++                    return Err(bad_request("Cannot create a database at a supplied identity".into()));
++                }
++                Some(NameOrIdentity::Name(name)) if name_to_register.is_none() => {
++                    // Deleted databases retain their name and namespace owner.
++                    // Reusing the identity requires that owner, not merely
++                    // permission to create a new database.
++                    let owner = ctx.lookup_namespace_owner(name.as_ref()).await.map_err(log_and_500)?;
++                    if owner != Some(auth.claims.identity) {
++                        return Err((StatusCode::FORBIDDEN, "Only the name owner can recreate this database").into());
++                    }
++                }
++                Some(NameOrIdentity::Name(_)) | None => {}
+             }
+             allow_creation(&auth)?;
+             ctx.authorize_action(
+```
+
+**File**: `crates/smoketests/tests/cluster/delete_database.rs` (modified, +53/-0)
+```diff
+@@ -90,3 +90,56 @@ fn test_delete_database_yes_skips_confirmation() {
+     let result = test.spacetime(&["logs", "--server", &test.server_url, &name]);
+     assert!(result.is_err(), "expected database to be deleted");
+ }
++
++#[test]
++fn test_deleted_database_name_requires_owner() {
++    let mut test = Smoketest::builder()
++        .precompiled_module("modules-basic")
++        .autopublish(false)
++        .build();
++    test.new_identity().unwrap();
++    let owner_token = test.read_token().unwrap();
++    let name = format!("delete-republish-{}", std::process::id());
++    let previous = test.publish().name(&name).run().unwrap();
++    assert_eq!(
++        test.api_call("DELETE", &format!("/v1/database/{previous}"))
++            .unwrap()
++            .status_code,
++        200
++    );
++    assert_eq!(
++        test.api_call("GET", &format!("/v1/database/{previous}"))
++            .unwrap()
++            .status_code,
++        404
++    );
++    assert_eq!(
++        test.api_call("GET", &format!("/v1/database/{name}/identity"))
++            .unwrap()
++            .status_code,
++        200
++    );
++
++    test.new_identity().unwrap();
++    // Establish that this account can publish, then check the retained reservation.
++    let other = test.publish().run().unwrap();
++    assert_eq!(
++        test.api_call("DELETE", &format!("/v1/database/{other}"))
++            .unwrap()
++            .status_code,
++        200
++    );
++    assert!(test.publish().name(&name).run().is_err());
++    assert_eq!(
++        test.api_call("GET", &format!("/v1/database/{previous}"))
++            .unwrap()
++            .status_code,
++        404
++    );
++
++    test.login_with_token(&owner_token).unwrap();
++    let replacement = test.publish().name(&name).run().unwrap();
++    assert_eq!(replacement, previous);
++    test.call("say_hello", &[]).unwrap();
++    assert!(test.logs(100).unwrap().iter().any(|line| line.contains("World")));
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6548** (2026-11-10): Bump version to 2.16.0 (@rekhoff)
+- **PR #6547** (2026-11-10): Fix database name publication (@bfops)
+- **PR #6532** (2026-11-10): Use tx state blob set for view refresh (@kim)
+- **PR #6528** (2026-11-09): Remove the deprecated write-nuget-config.sh (@cloutiertyler)
 - **PR #6524** (2026-11-06): Document editing data and calling reducers in the Maincloud dashboard (@cloutiertyler)
 - **PR #6516** (closed): [Do not merge] Test docs-only CI skipping from #6515 (@cloutiertyler)
-- **PR #6515** (2026-11-06): Skip CI builds and tests for docs-only changes (@cloutiertyler)
-- **PR #6510** (2026-11-06): Add Security Gremlin to GREMLINS.md (@cloutiertyler)
-- **PR #6508** (closed): Exercise existing Linux and Windows smoketests on staging (testing only) (@jdetter)
-- **PR #6507** (2026-11-06): Fix database identity publish (@Shubham8287)
 
 ---
 
@@ -1124,60 +1289,42 @@ every file is documentation that no build or test re
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Skip CI builds and tests for docs-only changes (#6515)
+## X. LLM benchmark health-check timeouts and C# references (#6408)
 
 **RULE**:
-When implementing operations in `.github/actions/detect-docs-only/action.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/llm-benchmark-periodic.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f53483c3`: Skip CI builds and tests for docs-only changes (#6515). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e49c074e`: LLM benchmark health-check timeouts and C# references (#6408). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/actions/detect-docs-only/action.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/llm-benchmark-periodic.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-name: Detect docs-only changes
-description: >-
-  Report whether every file this event changes is documentation or agent
-  guidance that no build or test reads: docs/, skills/, the agent plugins,
-  .agents/, and Markdown files at the repository root. Crate READMEs are not
-  included, because some are compiled as doc tests, and neither are docs pages
-  whose code a test builds and runs. Requires a prior checkout.
-outputs:
-  docs-only:
-    description: "'true' if every changed file is documentation, otherwise 'false'."
-    value: ${{ steps.detect.outputs.docs-only }}
-runs:
-  using: composite
-  steps:
-    - name: Detect docs-only changes
-      id: detect
-      shell: bash
-      env:
-        MERGE_GROUP_BASE: ${{ github.event.merge_group.base_sha }}
-        PUSH_BEFORE: ${{ github.event.before }}
-      run: |
-        set -euo pipefail
+    timeout-minutes: 1440
+          # Bound in-flight provider credit reservations across the three language jobs.
+          LLM_BENCH_CSHARP_CONCURRENCY: "4"
+          LLM_BENCH_ROUTE_CONCURRENCY: "1"
+          LLM_BENCHMARK_DIAGNOSTICS_DIR: ${{ runner.temp }}/llm-benchmark-diagnostics
+      - name: Upload server diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: llm-benchmark-diagnostics-${{ matrix.lang }}
+          path: ${{ runner.temp }}/llm-benchmark-diagnostics
+          if-no-files-found: ignore
+          retention-days: 14
 
-        # Any doubt about what changed means running every check.
-        run_everything() {
-          echo "$1; running all checks."
-          echo "docs-only=false" >>"$GITHUB_OUTPUT"
-          exit 0
-        }
-
-        case "${GITHUB_EVENT_NAME}" in
-          pull_request)
-            # The checkout is GitHub's merge of the PR into its base, so its fir
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+          LLM_BENCH_CSHARP_CONCURRENCY: "2"
+          LLM_BENCH_ROUTE_CONCURRENCY: ${{ matrix.lang == 'typescript' && '4' || matrix.lang == 'csharp' && '1' || '2' }}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f53483c3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e49c074e` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-11T06:16:20.787Z",
+  "last_updated": "2026-11-11T06:24:02.927Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "c3b77b140ed9f2e6bf3d0612ccbe0701e009555f8d2c51a9511101f237af8318",
-      "verified_at": "2026-11-10T02:43:58.306Z",
+      "content_hash": "b0109c4562ba474c10413c2fb2763f311c6c82494c5ba28e783a796432c57d3c",
+      "verified_at": "2026-11-11T06:24:00.825Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-10T02:43:58.306Z"
+      "last_updated": "2026-11-11T06:24:00.825Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -10626,14 +10626,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clockworklabs-spacetimedb",
-      "content_hash": "906b8732807c4ef15e6d347cb7b3ad1f8e35a7b0d4ec41ad92afdd890c8b780d",
-      "verified_at": "2026-11-08T03:54:26.907Z",
+      "content_hash": "964032b53bf796845ce1ea234ecd485ff22a3ca03a8eeffbf59a12802c1b4a23",
+      "verified_at": "2026-11-11T06:24:02.926Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T03:54:26.907Z"
+      "last_updated": "2026-11-11T06:24:02.926Z"
     },
     "apollographql/apollo-kotlin": {
       "repository": "apollographql/apollo-kotlin",
@@ -18539,6 +18539,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-11T06:16:20.786Z"
+    },
+    "Marker-Inc-Korea/AutoRAG": {
+      "repository": "Marker-Inc-Korea/AutoRAG",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-marker-inc-korea-autorag",
+      "content_hash": "4a1ed2630cd6ca97ea35a9ccb82e192d6ee17ceda5d7e4d31957c01edae23224",
+      "verified_at": "2026-11-11T06:23:40.348Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-11T06:23:40.348Z"
     }
   },
   "repos": {

@@ -20836,5 +20836,20 @@
     "downloads": 42215,
     "qualityScore": 3840,
     "discoveredAt": "2026-11-11T06:11:06.123Z"
+  },
+  {
+    "name": "AutoRAG",
+    "fullName": "Marker-Inc-Korea/AutoRAG",
+    "url": "https://github.com/Marker-Inc-Korea/AutoRAG",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Your Personal Librarian Agent. Ask anything on your computer, organize files, remember important info and files.",
+    "stars": 5652,
+    "forks": 496,
+    "openIssues": 83,
+    "language": "TypeScript",
+    "qualityScore": 3391,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-11T06:19:43.992Z"
   }
 ]
