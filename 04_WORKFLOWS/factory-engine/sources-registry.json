@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-11T16:36:08.692Z",
-    "lastVerified": "2026-11-11T16:36:08.692Z",
+    "lastChecked": "2026-11-11T16:43:08.598Z",
+    "lastVerified": "2026-11-11T16:43:08.598Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -152,8 +152,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-11T15:27:10.018Z",
-    "lastVerified": "2026-11-11T15:27:10.018Z",
+    "lastChecked": "2026-11-11T16:42:50.382Z",
+    "lastVerified": "2026-11-11T16:42:50.382Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -1459,8 +1459,8 @@
     "officialUrl": "https://github.com/zeromicro/go-zero",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-09T10:28:25.448Z",
-    "lastVerified": "2026-11-09T10:28:25.448Z",
+    "lastChecked": "2026-11-11T16:42:42.911Z",
+    "lastVerified": "2026-11-11T16:42:42.911Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zeromicro-go-zero",
@@ -1938,8 +1938,8 @@
     "officialUrl": "https://github.com/Michael-A-Kuykendall/shimmy",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T02:43:47.377Z",
-    "lastVerified": "2026-11-09T02:43:47.377Z",
+    "lastChecked": "2026-11-11T16:42:35.292Z",
+    "lastVerified": "2026-11-11T16:42:35.292Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-michael-a-kuykendall-shimmy",
@@ -2201,12 +2201,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "trufflesecurity-trufflehog": {
-    "name": "trufflesecurity/trufflehog",
+    "name": "trufflehog",
     "officialUrl": "https://github.com/trufflesecurity/trufflehog",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-11T09:49:09.778Z",
-    "lastVerified": "2026-11-11T09:49:09.778Z",
+    "lastChecked": "2026-11-11T16:42:45.432Z",
+    "lastVerified": "2026-11-11T16:42:45.432Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trufflesecurity-trufflehog",
@@ -2215,7 +2215,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "18876676"
   },
   "lancedb-lancedb": {
     "name": "lancedb/lancedb",
@@ -4191,22 +4192,21 @@
     "lastVerified": "2026-11-09T22:34:11.858Z"
   },
   "llphant-llphant": {
-    "name": "LLPhant",
+    "name": "LLPhant/LLPhant",
     "officialUrl": "https://github.com/LLPhant/LLPhant",
     "sourceType": "github",
     "technology": "PHP",
-    "lastChecked": "2026-11-09T08:03:30.177Z",
-    "lastVerified": "2026-11-09T08:03:30.177Z",
+    "lastChecked": "2026-11-11T16:42:52.967Z",
+    "lastVerified": "2026-11-11T16:42:52.967Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-llphant-llphant",
-    "contentHash": "347a34582177a882398ce2c702190bb9c28e908dea32fa660d074ed96c678980",
-    "promotedRulesCount": 3,
-    "recentFixesCount": 3,
+    "contentHash": "b1d1b24a1baf60e395a47982bf2563dc4a388a119674b51783132a7203b3a392",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "1992a18d"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "mufeedvh-code2prompt": {
     "name": "code2prompt",
@@ -8433,11 +8433,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "linkwarden-linkwarden": {
-    "name": "linkwarden",
+    "name": "linkwarden/linkwarden",
     "officialUrl": "https://github.com/linkwarden/linkwarden",
-    "lastChecked": "2026-11-07T23:34:10.014Z",
-    "revisionIdentifier": "eff7c6b7",
-    "lastVerified": "2026-11-07T23:34:10.014Z"
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-11T16:42:45.772Z",
+    "lastVerified": "2026-11-11T16:42:45.772Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-linkwarden-linkwarden",
+    "contentHash": "fba74864324c80e393b68621af4dc7a5a222725ceffd92692f0641ca5c159072",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b": {
     "name": "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
@@ -10764,9 +10774,9 @@
   "gatenlp-ultimate-sitemap-parser": {
     "name": "ultimate-sitemap-parser",
     "officialUrl": "https://github.com/GateNLP/ultimate-sitemap-parser",
-    "lastChecked": "2026-11-06T21:51:52.954Z",
+    "lastChecked": "2026-11-11T16:42:37.799Z",
     "revisionIdentifier": "6ab7704f",
-    "lastVerified": "2026-11-06T21:51:52.954Z"
+    "lastVerified": "2026-11-11T16:42:37.799Z"
   },
   "icerockdev-moko-mvvm": {
     "name": "moko-mvvm",

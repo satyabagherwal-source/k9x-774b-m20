@@ -8975,3 +8975,5 @@
 | `CYCLE-20261111-C38I` | `2026-11-11T16:35:58.434Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`f837496e...`) |
 | `CYCLE-20261111-C445` | `2026-11-11T16:35:59.573Z` | `NativeScript/NativeScript` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f5426070...`) |
 | `CYCLE-20261111-C6QS` | `2026-11-11T16:36:02.980Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7fb28f5c...`) |
+| `CYCLE-20261111-L0YH` | `2026-11-11T16:42:55.385Z` | `linkwarden/linkwarden` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`fba74864...`) |
+| `CYCLE-20261111-L6A6` | `2026-11-11T16:43:02.286Z` | `LLPhant/LLPhant` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b1d1b24a...`) |

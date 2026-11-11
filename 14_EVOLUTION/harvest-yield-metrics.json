@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T16:36:03.006Z",
-  "total_cycles_completed": 8820,
-  "total_learnings_persisted": 8820,
-  "total_rules_promoted": 8681,
+  "last_updated": "2026-11-11T16:43:02.294Z",
+  "total_cycles_completed": 8822,
+  "total_learnings_persisted": 8822,
+  "total_rules_promoted": 8683,
   "history": [
-    {
-      "timestamp": "2026-11-09T17:57:07.626Z",
-      "repository": "OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",
-      "learningId": "learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T18:11:18.649Z",
-      "repository": "PeerDB-io/peerdb",
-      "learningId": "learn-github-peerdb-io-peerdb",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T18:11:21.881Z",
       "repository": "i18next/react-i18next",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-11T16:36:03.006Z",
       "repository": "pingcap/tidb",
       "learningId": "learn-github-pingcap-tidb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T16:42:55.397Z",
+      "repository": "linkwarden/linkwarden",
+      "learningId": "learn-github-linkwarden-linkwarden",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T16:43:02.294Z",
+      "repository": "LLPhant/LLPhant",
+      "learningId": "learn-github-llphant-llphant",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

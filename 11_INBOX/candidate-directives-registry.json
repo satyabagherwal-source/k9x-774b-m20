@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T16:36:08.779Z",
+  "last_updated": "2026-11-11T16:43:08.690Z",
   "directives": [
     {
       "id": "CD-001",
@@ -5210,6 +5210,33 @@
       "source_repo": "pingcap-tidb",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-87E40E-expression-fix-flaky-testgetlock-interna.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-17289F",
+      "directive_title": "Merge pull request #1893 from linkwarden/dev",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "linkwarden-linkwarden",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-17289F-merge-pull-request-1893-from-linkwarden-.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-719853",
+      "directive_title": "Make Anthropic endpoint and API version configurable (#568)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "llphant-llphant",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-719853-make-anthropic-endpoint-and-api-version-.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-F3D791",
+      "directive_title": "export: Fix consent of former subscribers covering private channels.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-F3D791-export-fix-consent-of-former-subscribers.md",
       "staged_date": "2026-11-11"
     }
   ]

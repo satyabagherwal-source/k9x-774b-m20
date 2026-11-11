@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-11T16:36:02.876Z",
+  "last_updated": "2026-11-11T16:43:02.173Z",
   "total_verified_learnings": 1255,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -41479,11 +41479,16 @@
       "slug": "linkwarden-linkwarden",
       "platform": "github",
       "source_url": "https://github.com/linkwarden/linkwarden",
-      "source_version": "eff7c6b7",
-      "content_hash": "25c41a158cd8fec799a7e5a24eec270796aa35280c355ff0aaaf0b00422475e6",
+      "source_version": "24adcc14",
+      "content_hash": "fba74864324c80e393b68621af4dc7a5a222725ceffd92692f0641ca5c159072",
       "dossier_path": "07_PROJECT_LEARNING/linkwarden-linkwarden-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/linkwarden-linkwarden-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Merge pull request #1893 from linkwarden/dev",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2459,
           "title": "mobile): fix \"waiting for connection\" persisting",
@@ -41495,7 +41500,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T01:29:08.554Z",
+      "verified_at": "2026-11-11T16:42:55.253Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41676,8 +41681,8 @@
       "slug": "llphant-llphant",
       "platform": "github",
       "source_url": "https://github.com/LLPhant/LLPhant",
-      "source_version": "1992a18d",
-      "content_hash": "347a34582177a882398ce2c702190bb9c28e908dea32fa660d074ed96c678980",
+      "source_version": "d0a94b30",
+      "content_hash": "b1d1b24a1baf60e395a47982bf2563dc4a388a119674b51783132a7203b3a392",
       "dossier_path": "07_PROJECT_LEARNING/llphant-llphant-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/llphant-llphant-learnings.md",
       "promoted_rules": [
@@ -41695,6 +41700,11 @@
           "number": null,
           "title": "Agent Tool Call Polymorphic Result Normalization Invariant",
           "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Make Anthropic endpoint and API version configurable (#568)",
+          "status": "WITHHELD_REJECT"
         },
         {
           "number": 1852,
@@ -41722,7 +41732,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T12:35:09.162Z",
+      "verified_at": "2026-11-11T16:43:02.156Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

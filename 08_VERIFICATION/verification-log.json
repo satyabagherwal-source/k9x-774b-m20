@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261108-0K1G",
-    "timestamp": "2026-11-08T18:27:57.940Z",
-    "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
-    "contentHash": "11c85175ddff27f7eafaa885478afe97dfffe7fee70c78e052296a052943e8bc",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-EDKV",
-    "timestamp": "2026-11-08T18:38:42.751Z",
-    "repository": "PrunaAI/P-H3-Image-Comfy",
-    "learningId": "learn-huggingface-prunaai-p-h3-image-comfy",
-    "contentHash": "56e4fe3c6a32388e6e0eef561287ab6296f1a3bc05e63d1e66506c977283a3d8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261108-NVGQ",
     "timestamp": "2026-11-08T18:46:05.834Z",
     "repository": "StarRocks/starrocks",
@@ -7490,6 +7460,36 @@
     "repository": "pingcap/tidb",
     "learningId": "learn-github-pingcap-tidb",
     "contentHash": "7fb28f5c0b9f55f7b5fb6dd064669e46eb80c9856b5ad09221b78799b5c7e754",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261111-L0YH",
+    "timestamp": "2026-11-11T16:42:55.385Z",
+    "repository": "linkwarden/linkwarden",
+    "learningId": "learn-github-linkwarden-linkwarden",
+    "contentHash": "fba74864324c80e393b68621af4dc7a5a222725ceffd92692f0641ca5c159072",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261111-L6A6",
+    "timestamp": "2026-11-11T16:43:02.286Z",
+    "repository": "LLPhant/LLPhant",
+    "learningId": "learn-github-llphant-llphant",
+    "contentHash": "b1d1b24a1baf60e395a47982bf2563dc4a388a119674b51783132a7203b3a392",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

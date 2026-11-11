@@ -8984,3 +8984,5 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `b9fd2de0` | Multi-dimensional audit evidence | 2026-11-11T16:35:58.437Z |
 | `learn-github-nativescript-nativescript` | `https://github.com/NativeScript/NativeScript` | `36a88dd6` | Multi-dimensional audit evidence | 2026-11-11T16:35:59.576Z |
 | `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `32a53ec1` | Multi-dimensional audit evidence | 2026-11-11T16:36:02.983Z |
+| `learn-github-linkwarden-linkwarden` | `https://github.com/linkwarden/linkwarden` | `24adcc14` | Multi-dimensional audit evidence | 2026-11-11T16:42:55.391Z |
+| `learn-github-llphant-llphant` | `https://github.com/LLPhant/LLPhant` | `d0a94b30` | Multi-dimensional audit evidence | 2026-11-11T16:43:02.289Z |

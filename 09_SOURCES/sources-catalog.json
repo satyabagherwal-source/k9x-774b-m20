@@ -3533,10 +3533,10 @@
     "repository": "LLPhant/LLPhant",
     "platform": "github",
     "sourceUrl": "https://github.com/LLPhant/LLPhant",
-    "sourceVersion": "1992a18d",
+    "sourceVersion": "d0a94b30",
     "license": "MIT",
-    "contentHash": "347a34582177a882398ce2c702190bb9c28e908dea32fa660d074ed96c678980",
-    "lastHarvestedAt": "2026-11-08T12:35:09.294Z",
+    "contentHash": "b1d1b24a1baf60e395a47982bf2563dc4a388a119674b51783132a7203b3a392",
+    "lastHarvestedAt": "2026-11-11T16:43:02.289Z",
     "learningId": "learn-github-llphant-llphant"
   },
   "ant-design-pro-components": {
@@ -7483,10 +7483,10 @@
     "repository": "linkwarden/linkwarden",
     "platform": "github",
     "sourceUrl": "https://github.com/linkwarden/linkwarden",
-    "sourceVersion": "eff7c6b7",
+    "sourceVersion": "24adcc14",
     "license": "AGPL-3.0",
-    "contentHash": "25c41a158cd8fec799a7e5a24eec270796aa35280c355ff0aaaf0b00422475e6",
-    "lastHarvestedAt": "2026-10-28T01:29:08.650Z",
+    "contentHash": "fba74864324c80e393b68621af4dc7a5a222725ceffd92692f0641ca5c159072",
+    "lastHarvestedAt": "2026-11-11T16:42:55.391Z",
     "learningId": "learn-github-linkwarden-linkwarden"
   },
   "databendlabs-databend": {
