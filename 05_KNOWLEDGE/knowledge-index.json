@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-11T16:11:46.813Z",
+  "last_updated": "2026-11-11T16:20:43.920Z",
   "total_verified_learnings": 1255,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7742,8 +7742,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "073bdd96",
-      "content_hash": "9a4941dcdc4ebaf8f3da50b19a0ea294c30af8149f6a3d3703b0f7361c22fecd",
+      "source_version": "523d26b3",
+      "content_hash": "4d4d8b52e07be09bdd66a42a998265563cf0a75f072b563d8412d7152e94020b",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -7806,6 +7806,11 @@
           "number": null,
           "title": "Strict Pre-Decode Minimum Length Bounds for Variable Binary Streams",
           "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "gha: raise Envoy and LB init timeouts in clustermesh upgrade test",
+          "status": "WITHHELD_REJECT"
         },
         {
           "number": 1827,
@@ -8053,7 +8058,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T09:29:09.492Z",
+      "verified_at": "2026-11-11T16:20:43.891Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -13369,14 +13374,19 @@
       "slug": "emberstack-kubernetes-reflector",
       "platform": "github",
       "source_url": "https://github.com/emberstack/kubernetes-reflector",
-      "source_version": "cf4e7963",
-      "content_hash": "23a637a9f5070f1bb347ef12b421e58c1678b12b10e1bca09c823da988698852",
+      "source_version": "7b0bff2f",
+      "content_hash": "8ccbe2df717164cef86e144049ba8b2d56d6706fc8d0970cec7b7102c3b76ff5",
       "dossier_path": "07_PROJECT_LEARNING/emberstack-kubernetes-reflector-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/emberstack-kubernetes-reflector-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Bump the all-dependencies group with 5 updates (#728)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "build(deps): bump docker/login-action (#729)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -13450,7 +13460,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T19:16:48.579Z",
+      "verified_at": "2026-11-11T16:20:38.288Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -8978,3 +8978,5 @@ Every entry in this ledger must capture:
 | `learn-github-tw93-mole` | `https://github.com/tw93/Mole` | `d9181d3b` | Multi-dimensional audit evidence | 2026-11-11T16:06:52.732Z |
 | `learn-github-flux-iac-tofu-controller` | `https://github.com/flux-iac/tofu-controller` | `a875a4ba` | Multi-dimensional audit evidence | 2026-11-11T16:06:52.811Z |
 | `learn-github-cachix-devenv` | `https://github.com/cachix/devenv` | `622870a7` | Multi-dimensional audit evidence | 2026-11-11T16:11:47.585Z |
+| `learn-github-emberstack-kubernetes-reflector` | `https://github.com/emberstack/kubernetes-reflector` | `7b0bff2f` | Multi-dimensional audit evidence | 2026-11-11T16:20:38.460Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `523d26b3` | Multi-dimensional audit evidence | 2026-11-11T16:20:44.044Z |

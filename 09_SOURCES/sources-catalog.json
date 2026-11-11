@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "073bdd96",
+    "sourceVersion": "523d26b3",
     "license": "Apache-2.0",
-    "contentHash": "9a4941dcdc4ebaf8f3da50b19a0ea294c30af8149f6a3d3703b0f7361c22fecd",
-    "lastHarvestedAt": "2026-11-11T09:29:09.620Z",
+    "contentHash": "4d4d8b52e07be09bdd66a42a998265563cf0a75f072b563d8412d7152e94020b",
+    "lastHarvestedAt": "2026-11-11T16:20:44.044Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -7083,10 +7083,10 @@
     "repository": "emberstack/kubernetes-reflector",
     "platform": "github",
     "sourceUrl": "https://github.com/emberstack/kubernetes-reflector",
-    "sourceVersion": "cf4e7963",
+    "sourceVersion": "7b0bff2f",
     "license": "MIT",
-    "contentHash": "23a637a9f5070f1bb347ef12b421e58c1678b12b10e1bca09c823da988698852",
-    "lastHarvestedAt": "2026-11-07T19:16:48.702Z",
+    "contentHash": "8ccbe2df717164cef86e144049ba8b2d56d6706fc8d0970cec7b7102c3b76ff5",
+    "lastHarvestedAt": "2026-11-11T16:20:38.460Z",
     "learningId": "learn-github-emberstack-kubernetes-reflector"
   },
   "arxanas-git-branchless": {

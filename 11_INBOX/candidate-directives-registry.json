@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T16:12:24.228Z",
+  "last_updated": "2026-11-11T16:20:50.222Z",
   "directives": [
     {
       "id": "CD-001",
@@ -5145,6 +5145,33 @@
       "source_repo": "flux-iac-tofu-controller",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-40647A-add-topologyspreadconstraints-to-runner-.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-3FC069",
+      "directive_title": "build(deps): bump docker/login-action (#729)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "emberstack-kubernetes-reflector",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-3FC069-build-deps-bump-docker-login-action-729-.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-C785FF",
+      "directive_title": "gha: raise Envoy and LB init timeouts in clustermesh upgrade test",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "cilium-cilium",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C785FF-gha-raise-envoy-and-lb-init-timeouts-in-.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-E7035B",
+      "directive_title": "models): add download User-Agent and IPv4 fallback (#370)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-E7035B-models-add-download-user-agent-and-ipv4-.md",
       "staged_date": "2026-11-11"
     }
   ]

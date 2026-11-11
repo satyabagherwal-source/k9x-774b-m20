@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T16:11:47.634Z",
-  "total_cycles_completed": 8814,
-  "total_learnings_persisted": 8814,
-  "total_rules_promoted": 8676,
+  "last_updated": "2026-11-11T16:20:44.067Z",
+  "total_cycles_completed": 8816,
+  "total_learnings_persisted": 8816,
+  "total_rules_promoted": 8678,
   "history": [
-    {
-      "timestamp": "2026-11-09T17:35:08.658Z",
-      "repository": "StarRocks/starrocks",
-      "learningId": "learn-github-starrocks-starrocks",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T17:43:54.523Z",
-      "repository": "u-root/u-root",
-      "learningId": "learn-github-u-root-u-root",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T17:44:04.851Z",
       "repository": "rustls/rustls",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-11T16:11:47.634Z",
       "repository": "cachix/devenv",
       "learningId": "learn-github-cachix-devenv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T16:20:38.469Z",
+      "repository": "emberstack/kubernetes-reflector",
+      "learningId": "learn-github-emberstack-kubernetes-reflector",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T16:20:44.067Z",
+      "repository": "cilium/cilium",
+      "learningId": "learn-github-cilium-cilium",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-11T16:11:47.665Z",
+  "last_updated": "2026-11-11T16:20:44.072Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "9a4941dcdc4ebaf8f3da50b19a0ea294c30af8149f6a3d3703b0f7361c22fecd",
-      "verified_at": "2026-11-11T09:29:09.644Z",
+      "content_hash": "4d4d8b52e07be09bdd66a42a998265563cf0a75f072b563d8412d7152e94020b",
+      "verified_at": "2026-11-11T16:20:44.071Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T09:29:09.644Z"
+      "last_updated": "2026-11-11T16:20:44.071Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",
@@ -10671,14 +10671,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-emberstack-kubernetes-reflector",
-      "content_hash": "23a637a9f5070f1bb347ef12b421e58c1678b12b10e1bca09c823da988698852",
-      "verified_at": "2026-11-07T19:16:48.712Z",
+      "content_hash": "8ccbe2df717164cef86e144049ba8b2d56d6706fc8d0970cec7b7102c3b76ff5",
+      "verified_at": "2026-11-11T16:20:38.473Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T19:16:48.712Z"
+      "last_updated": "2026-11-11T16:20:38.473Z"
     },
     "arxanas/git-branchless": {
       "repository": "arxanas/git-branchless",

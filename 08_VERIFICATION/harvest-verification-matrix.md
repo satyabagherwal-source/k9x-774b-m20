@@ -8969,3 +8969,5 @@
 | `CYCLE-20261111-AO7Y` | `2026-11-11T16:06:52.702Z` | `tw93/Mole` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`70551f65...`) |
 | `CYCLE-20261111-AOA5` | `2026-11-11T16:06:52.781Z` | `flux-iac/tofu-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`62d8f0e2...`) |
 | `CYCLE-20261111-GZQA` | `2026-11-11T16:11:47.554Z` | `cachix/devenv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`741d6ef2...`) |
+| `CYCLE-20261111-SDDK` | `2026-11-11T16:20:38.456Z` | `emberstack/kubernetes-reflector` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8ccbe2df...`) |
+| `CYCLE-20261111-SHOO` | `2026-11-11T16:20:44.040Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4d4d8b52...`) |
