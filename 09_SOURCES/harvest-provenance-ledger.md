@@ -8849,3 +8849,9 @@ Every entry in this ledger must capture:
 | `learn-github-weaviate-weaviate` | `https://github.com/weaviate/weaviate` | `6498ec79` | Multi-dimensional audit evidence | 2026-11-10T06:12:51.600Z |
 | `learn-dom-d-adad1ee4` | `project://zulip-zulip` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zulip-zulip-learnings.md` | 2026-11-11T06:04:57.291Z |
 | `learn-dom-d-0fba7fa8` | `project://zvec-ai-zvec-grep` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md` | 2026-11-11T06:05:08.677Z |
+| `learn-huggingface-comfy-org-minimax-h3-image` | `https://huggingface.co/Comfy-Org/MiniMax-H3-Image` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-11T06:13:25.217Z |
+| `learn-huggingface-mradermacher-gemma-4-31b-it-ara-heretic-gguf` | `https://huggingface.co/mradermacher/gemma-4-31B-it-ARA-heretic-GGUF` | `hf-mraderm` | Multi-dimensional audit evidence | 2026-11-11T06:13:27.802Z |
+| `learn-github-yyjeqhc-webcodex` | `https://github.com/yyjeqhc/webcodex` | `f8228b6a` | Multi-dimensional audit evidence | 2026-11-11T06:13:35.581Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `85dbb6b4` | Multi-dimensional audit evidence | 2026-11-11T06:13:56.562Z |
+| `learn-huggingface-minimaxai-minimax-h3-image` | `https://huggingface.co/MiniMaxAI/MiniMax-H3-Image` | `hf-minimax` | Multi-dimensional audit evidence | 2026-11-11T06:16:20.764Z |
+| `learn-dom-d-61bbf9fb` | `project://hf-comfy-org-minimax-h3-image` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-image-learnings.md` | 2026-11-11T06:16:41.048Z |

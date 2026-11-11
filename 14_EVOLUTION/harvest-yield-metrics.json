@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-10T06:12:51.616Z",
-  "total_cycles_completed": 8711,
-  "total_learnings_persisted": 8711,
-  "total_rules_promoted": 8561,
+  "last_updated": "2026-11-11T06:16:20.783Z",
+  "total_cycles_completed": 8716,
+  "total_learnings_persisted": 8716,
+  "total_rules_promoted": 8566,
   "history": [
-    {
-      "timestamp": "2026-11-09T07:55:22.862Z",
-      "repository": "laurent22/joplin",
-      "learningId": "learn-github-laurent22-joplin",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T07:55:25.959Z",
-      "repository": "gardener/gardener",
-      "learningId": "learn-github-gardener-gardener",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T08:07:23.882Z",
-      "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
-      "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T08:16:28.070Z",
-      "repository": "expo/expo",
-      "learningId": "learn-github-expo-expo",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T08:39:39.726Z",
-      "repository": "dkhamsing/open-source-ios-apps",
-      "learningId": "learn-github-dkhamsing-open-source-ios-apps",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T08:43:55.006Z",
       "repository": "cilium/cilium",
@@ -1403,6 +1368,41 @@
       "repository": "weaviate/weaviate",
       "learningId": "learn-github-weaviate-weaviate",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T06:13:25.225Z",
+      "repository": "Comfy-Org/MiniMax-H3-Image",
+      "learningId": "learn-huggingface-comfy-org-minimax-h3-image",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T06:13:27.808Z",
+      "repository": "mradermacher/gemma-4-31B-it-ARA-heretic-GGUF",
+      "learningId": "learn-huggingface-mradermacher-gemma-4-31b-it-ara-heretic-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T06:13:35.588Z",
+      "repository": "yyjeqhc/webcodex",
+      "learningId": "learn-github-yyjeqhc-webcodex",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T06:13:56.567Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T06:16:20.783Z",
+      "repository": "MiniMaxAI/MiniMax-H3-Image",
+      "learningId": "learn-huggingface-minimaxai-minimax-h3-image",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

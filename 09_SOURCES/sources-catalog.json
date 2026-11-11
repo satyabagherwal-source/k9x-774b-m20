@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "e00b7fde",
+    "sourceVersion": "85dbb6b4",
     "license": "NOASSERTION",
-    "contentHash": "4875724b8dc32f12a4ad25700e9fac4071f534326a0da5a1cbb9e5d6b5ef760a",
-    "lastHarvestedAt": "2026-11-10T01:58:36.688Z",
+    "contentHash": "c669b85653c2b3c598b5bfa900ffd4adf3c4742d7a652f3101fbda47e4a26f7f",
+    "lastHarvestedAt": "2026-11-11T06:13:56.562Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -12278,5 +12278,45 @@
     "contentHash": "5a57b913598e6c3e80704e0df5b663a5e62da022f5587c55dae2eb154f4d742a",
     "lastHarvestedAt": "2026-11-10T06:05:22.262Z",
     "learningId": "learn-huggingface-videorebirthai-hyperflow-h3-flash"
+  },
+  "hf-comfy-org-minimax-h3-image": {
+    "repository": "Comfy-Org/MiniMax-H3-Image",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/Comfy-Org/MiniMax-H3-Image",
+    "sourceVersion": "hf-comfy-org-minimax-h3-image",
+    "license": "Open-Source",
+    "contentHash": "dbf9358cbae02c83578a49f886b99eddc5d06c913e9aa5dd43fce24721f2fc9e",
+    "lastHarvestedAt": "2026-11-11T06:13:25.217Z",
+    "learningId": "learn-huggingface-comfy-org-minimax-h3-image"
+  },
+  "hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf": {
+    "repository": "mradermacher/gemma-4-31B-it-ARA-heretic-GGUF",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/mradermacher/gemma-4-31B-it-ARA-heretic-GGUF",
+    "sourceVersion": "hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf",
+    "license": "Open-Source",
+    "contentHash": "54d27af0af82d7e285a385983afed95f52a4982f77f05bdf8845370b97b98672",
+    "lastHarvestedAt": "2026-11-11T06:13:27.802Z",
+    "learningId": "learn-huggingface-mradermacher-gemma-4-31b-it-ara-heretic-gguf"
+  },
+  "yyjeqhc-webcodex": {
+    "repository": "yyjeqhc/webcodex",
+    "platform": "github",
+    "sourceUrl": "https://github.com/yyjeqhc/webcodex",
+    "sourceVersion": "f8228b6a",
+    "license": "Apache-2.0",
+    "contentHash": "d0ca4f23593c5bd95843a7d308d66d80e6e3c849a7f76659956cc28f7d47f74d",
+    "lastHarvestedAt": "2026-11-11T06:13:35.581Z",
+    "learningId": "learn-github-yyjeqhc-webcodex"
+  },
+  "hf-minimaxai-minimax-h3-image": {
+    "repository": "MiniMaxAI/MiniMax-H3-Image",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/MiniMaxAI/MiniMax-H3-Image",
+    "sourceVersion": "hf-minimaxai-minimax-h3-image",
+    "license": "Open-Source",
+    "contentHash": "3067f4fc6e1384329781816fd7366a4881b04bdd4d6e7af9b1ec0df0902ea975",
+    "lastHarvestedAt": "2026-11-11T06:16:20.764Z",
+    "learningId": "learn-huggingface-minimaxai-minimax-h3-image"
   }
 }

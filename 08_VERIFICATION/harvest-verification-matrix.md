@@ -8840,3 +8840,9 @@
 | `CYCLE-20261110-MWP8` | `2026-11-10T06:12:51.596Z` | `weaviate/weaviate` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7446a3dd...`) |
 | `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T06:04:57.291Z` | `zulip-zulip` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-ADAD1EE4` [Domain D] | Yes (`6d97f4ad...`) |
 | `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T06:05:08.677Z` | `zvec-ai-zvec-grep` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-0FBA7FA8` [Domain D] | Yes (`90151f6d...`) |
+| `CYCLE-20261111-3HB1` | `2026-11-11T06:13:25.213Z` | `Comfy-Org/MiniMax-H3-Image` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-image-learnings.md` | Yes (`dbf9358c...`) |
+| `CYCLE-20261111-3JAT` | `2026-11-11T06:13:27.797Z` | `mradermacher/gemma-4-31B-it-ARA-heretic-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf-learnings.md` | Yes (`54d27af0...`) |
+| `CYCLE-20261111-3PAX` | `2026-11-11T06:13:35.577Z` | `yyjeqhc/webcodex` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`d0ca4f23...`) |
+| `CYCLE-20261111-45HQ` | `2026-11-11T06:13:56.558Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c669b856...`) |
+| `CYCLE-20261111-78RC` | `2026-11-11T06:16:20.760Z` | `MiniMaxAI/MiniMax-H3-Image` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`3067f4fc...`) |
+| `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T06:16:41.048Z` | `hf-comfy-org-minimax-h3-image` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-61BBF9FB` [Domain D] | Yes (`d71003fa...`) |

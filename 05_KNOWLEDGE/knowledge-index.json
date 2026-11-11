@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-10T06:12:51.499Z",
-  "total_verified_learnings": 1246,
+  "last_updated": "2026-11-11T06:16:20.650Z",
+  "total_verified_learnings": 1250,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -10242,8 +10242,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "e00b7fde",
-      "content_hash": "4875724b8dc32f12a4ad25700e9fac4071f534326a0da5a1cbb9e5d6b5ef760a",
+      "source_version": "85dbb6b4",
+      "content_hash": "c669b85653c2b3c598b5bfa900ffd4adf3c4742d7a652f3101fbda47e4a26f7f",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -10340,6 +10340,11 @@
         {
           "number": null,
           "title": "deps): note the compact_bytes big-endian caveat for crates.io builds",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "viz): load map panels in sandboxed frames without allow-same-origin (#5033)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -10693,7 +10698,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-10T01:58:36.570Z",
+      "verified_at": "2026-11-11T06:13:56.378Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -190068,6 +190073,136 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-11-10T06:05:22.138Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-comfy-org-minimax-h3-image": {
+      "learning_id": "learn-huggingface-comfy-org-minimax-h3-image",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Comfy-Org/MiniMax-H3-Image",
+      "repository": "Comfy-Org/MiniMax-H3-Image",
+      "slug": "hf-comfy-org-minimax-h3-image",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Comfy-Org/MiniMax-H3-Image",
+      "source_version": "hf-comfy-org-minimax-h3-image",
+      "content_hash": "dbf9358cbae02c83578a49f886b99eddc5d06c913e9aa5dd43fce24721f2fc9e",
+      "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-image-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-image-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-11T06:13:25.058Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-mradermacher-gemma-4-31b-it-ara-heretic-gguf": {
+      "learning_id": "learn-huggingface-mradermacher-gemma-4-31b-it-ara-heretic-gguf",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "mradermacher/gemma-4-31B-it-ARA-heretic-GGUF",
+      "repository": "mradermacher/gemma-4-31B-it-ARA-heretic-GGUF",
+      "slug": "hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/mradermacher/gemma-4-31B-it-ARA-heretic-GGUF",
+      "source_version": "hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf",
+      "content_hash": "54d27af0af82d7e285a385983afed95f52a4982f77f05bdf8845370b97b98672",
+      "dossier_path": "07_PROJECT_LEARNING/hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-11T06:13:27.630Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-yyjeqhc-webcodex": {
+      "learning_id": "learn-github-yyjeqhc-webcodex",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "yyjeqhc/webcodex",
+      "repository": "yyjeqhc/webcodex",
+      "slug": "yyjeqhc-webcodex",
+      "platform": "github",
+      "source_url": "https://github.com/yyjeqhc/webcodex",
+      "source_version": "f8228b6a",
+      "content_hash": "d0ca4f23593c5bd95843a7d308d66d80e6e3c849a7f76659956cc28f7d47f74d",
+      "dossier_path": "07_PROJECT_LEARNING/yyjeqhc-webcodex-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/yyjeqhc-webcodex-learnings.md",
+      "promoted_rules": [
+        {
+          "number": null,
+          "title": "test(auth): make the blocking-boundary regression fail without hanging (#1399)",
+          "status": "WITHHELD_REJECT"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-11T06:13:35.433Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-minimaxai-minimax-h3-image": {
+      "learning_id": "learn-huggingface-minimaxai-minimax-h3-image",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "MiniMaxAI/MiniMax-H3-Image",
+      "repository": "MiniMaxAI/MiniMax-H3-Image",
+      "slug": "hf-minimaxai-minimax-h3-image",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/MiniMaxAI/MiniMax-H3-Image",
+      "source_version": "hf-minimaxai-minimax-h3-image",
+      "content_hash": "3067f4fc6e1384329781816fd7366a4881b04bdd4d6e7af9b1ec0df0902ea975",
+      "dossier_path": "07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-image-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-image-learnings.md",
+      "promoted_rules": [
+        {
+          "number": null,
+          "title": "Spatial Latent Dimensional Divisibility and Aspect Ratio Bucketing",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Multi-Region API Failover and Asynchronous Task Polling Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "VAE Latent Denormalization and Clamping Invariant",
+          "status": "WITHHELD_CONDITIONAL_PASS"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-11T06:16:20.615Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

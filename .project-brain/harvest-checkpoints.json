@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-10T06:12:51.620Z",
+  "last_updated": "2026-11-11T06:16:20.787Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "4875724b8dc32f12a4ad25700e9fac4071f534326a0da5a1cbb9e5d6b5ef760a",
-      "verified_at": "2026-11-10T01:58:36.696Z",
+      "content_hash": "c669b85653c2b3c598b5bfa900ffd4adf3c4742d7a652f3101fbda47e4a26f7f",
+      "verified_at": "2026-11-11T06:13:56.571Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-10T01:58:36.696Z"
+      "last_updated": "2026-11-11T06:13:56.571Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -18479,6 +18479,66 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-10T06:05:22.281Z"
+    },
+    "Comfy-Org/MiniMax-H3-Image": {
+      "repository": "Comfy-Org/MiniMax-H3-Image",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-comfy-org-minimax-h3-image",
+      "content_hash": "dbf9358cbae02c83578a49f886b99eddc5d06c913e9aa5dd43fce24721f2fc9e",
+      "verified_at": "2026-11-11T06:13:25.228Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-11T06:13:25.228Z"
+    },
+    "mradermacher/gemma-4-31B-it-ARA-heretic-GGUF": {
+      "repository": "mradermacher/gemma-4-31B-it-ARA-heretic-GGUF",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-mradermacher-gemma-4-31b-it-ara-heretic-gguf",
+      "content_hash": "54d27af0af82d7e285a385983afed95f52a4982f77f05bdf8845370b97b98672",
+      "verified_at": "2026-11-11T06:13:27.812Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-11T06:13:27.812Z"
+    },
+    "yyjeqhc/webcodex": {
+      "repository": "yyjeqhc/webcodex",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-yyjeqhc-webcodex",
+      "content_hash": "d0ca4f23593c5bd95843a7d308d66d80e6e3c849a7f76659956cc28f7d47f74d",
+      "verified_at": "2026-11-11T06:13:35.591Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-11T06:13:35.591Z"
+    },
+    "MiniMaxAI/MiniMax-H3-Image": {
+      "repository": "MiniMaxAI/MiniMax-H3-Image",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-minimaxai-minimax-h3-image",
+      "content_hash": "3067f4fc6e1384329781816fd7366a4881b04bdd4d6e7af9b1ec0df0902ea975",
+      "verified_at": "2026-11-11T06:16:20.786Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-11T06:16:20.786Z"
     }
   },
   "repos": {

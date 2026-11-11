@@ -20785,5 +20785,56 @@
     "downloads": 64221,
     "qualityScore": 3380,
     "discoveredAt": "2026-11-10T06:02:48.578Z"
+  },
+  {
+    "name": "webcodex",
+    "fullName": "yyjeqhc/webcodex",
+    "url": "https://github.com/yyjeqhc/webcodex",
+    "type": "github",
+    "domain": "high-perf-systems",
+    "description": "Give cloud AI agents a real development environment on your own machines.",
+    "stars": 2504,
+    "forks": 349,
+    "openIssues": 32,
+    "language": "Rust",
+    "qualityScore": 1671,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-11T06:10:45.955Z"
+  },
+  {
+    "name": "MiniMaxAI/MiniMax-H3-Image",
+    "fullName": "MiniMaxAI/MiniMax-H3-Image",
+    "url": "https://huggingface.co/MiniMaxAI/MiniMax-H3-Image",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: MiniMaxAI/MiniMax-H3-Image (494 likes, 667 downloads)",
+    "likes": 494,
+    "downloads": 667,
+    "qualityScore": 5607,
+    "discoveredAt": "2026-11-11T06:11:06.123Z"
+  },
+  {
+    "name": "Comfy-Org/MiniMax-H3-Image",
+    "fullName": "Comfy-Org/MiniMax-H3-Image",
+    "url": "https://huggingface.co/Comfy-Org/MiniMax-H3-Image",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: Comfy-Org/MiniMax-H3-Image (186 likes, 18 downloads)",
+    "likes": 186,
+    "downloads": 18,
+    "qualityScore": 1878,
+    "discoveredAt": "2026-11-11T06:11:06.123Z"
+  },
+  {
+    "name": "mradermacher/gemma-4-31B-it-ARA-heretic-GGUF",
+    "fullName": "mradermacher/gemma-4-31B-it-ARA-heretic-GGUF",
+    "url": "https://huggingface.co/mradermacher/gemma-4-31B-it-ARA-heretic-GGUF",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: mradermacher/gemma-4-31B-it-ARA-heretic-GGUF (184 likes, 42215 downloads)",
+    "likes": 184,
+    "downloads": 42215,
+    "qualityScore": 3840,
+    "discoveredAt": "2026-11-11T06:11:06.123Z"
   }
 ]

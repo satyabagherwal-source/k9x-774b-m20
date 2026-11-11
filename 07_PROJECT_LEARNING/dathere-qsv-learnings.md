@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `e00b7fde`  
+> **Source Version**: `85dbb6b4`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-10T01:58:35.090Z  
+> **Timestamp**: 2026-11-11T06:13:40.651Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-10T01:58:35.084Z  
+> **Harvest Timestamp**: 2026-11-11T06:13:40.642Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Blazing-fast, Neuro-symbolic Data-Wrangling toolkit
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3820 stars
+- **Stars / Engagement**: 3823 stars
 
 ---
 
@@ -1446,9 +1446,10 @@ performance score with actionable optimization suggestions BEFORE running the qu
 Accepts the same input/SQL arguments as sqlp. Outputs a human-readable performance report
 (default) or JSON (--json). Supports Polars mode (default) and DuckDB mode (--duckdb).
 
+The report shows the query plan (EXPLAIN output from Polars or DuckDB) next to the score.
+
 Scoring factors include:
-  * Query plan analysis (EXPLAIN output from Polars or DuckDB)
-  * Type optimization (column types vs. usage in query)
+  * Type optimization (String columns compared with numbers)
   * Join key cardinality and data distribution
   * Filter selectivity from frequency cache
   * Query anti-pattern detection (SELECT *, missing LIMIT, cartesian joins, etc.)
@@ -1630,9 +1631,12 @@ enum WhereLiteral {
     /// SQL keyword: `TRUE`, `FALSE`, or `NULL`. Stored as upper-case canonical
     /// form so callers can match with `==`.
     Keyword(String),
-    /// Quoted string (already un-escaped) or numeric literal. Compared with
-    /// exact string equality against frequency-cache values.
+    /// Quoted string (already un-escaped). Compared with exact string equality
+    /// against frequency-cache values.
     Value(String),
+    /// Unquoted numeric literal, kept as written. Matched like `Value`; kept apart
+    /// so `score_type_optimization` can flag a String column compared with a number.
+    Number(String),
 }
 
 // ── Cache data per input file ──────────────────────────────────────────────
@@ -1693,13 +1697,7 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
     }
     args.arg_input = inputs;
 
-    if args.arg_input.is_empty() {
-        return fail_incorrectusage_clierror!("No input files provided.");
-    }
-
-    let delim = if let Some(delimiter) = args.flag_delimiter {
-        delimiter.as_byte()
-    } else 
+    if args.ar
 ```
 
 ### Core Architecture Module: `src/llmutil.rs`
@@ -2203,33 +2201,827 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e00b7fde` (2026-11-10)
-**Commit Message**: chore(deps): note the compact_bytes big-endian caveat for crates.io builds
+### Incident Patch 1: `26e9512b` (2026-11-10)
+**Commit Message**: fix(viz): load map panels in sandboxed frames without allow-same-origin (#5033)
+
+* fix(viz): load map panels in sandboxed frames without allow-same-origin
+
+In a sandboxed frame without allow-same-origin (CKAN's recommended Webpage
+view sandbox), the page's window.origin is "null" while location.origin is
+still the URL's, and MapLibre's blob: worker reports "null". The MapLibre
+bundled in plotly.js 3.x drops every page<->worker message whose origin
+differs from its own, so every map panel stayed blank with no error.
+
+Its filter exempts the literal origin "file://". A small Worker wrapper,
+emitted first in plotly_js_block() so it runs before plotly.js creates its
+workers, stamps that origin on every message in both directions. It is inert
+outside opaque-origin, non-file: pages.
+
+Verified in Chrome, Firefox and Safari for region and clustered point maps
+in Data Schematics and viz map: strict sandbox blank -> loaded, with no change
+under no sandbox, allow-same-origin or file://.
+
+Removes the #4947 note shown above each map in such a frame, and regenerates
+the gallery. The wrapper can go once plotly.js bundles MapLibre >= 6.17
+(maplibre-gl-js#8912).
+
+Fixes #4946
+
+Co-Authored-By: Claude 
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -35,6 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+   - **New SQL:** join keys of different numeric types ([#30401](https://github.com/pola-rs/polars/pull/30401)); correlated subqueries with any outer condition, `GROUP BY`, `HAVING`, `LIMIT`, `ANY`/`ALL`, and `LATERAL` derived tables ([#30378](https://github.com/pola-rs/polars/pull/30378), [#30453](https://github.com/pola-rs/polars/pull/30453), [#30466](https://github.com/pola-rs/polars/pull/30466), [#30459](https://github.com/pola-rs/polars/pull/30459), [#30490](https://github.com/pola-rs/polars/pull/30490), [#30467](https://github.com/pola-rs/polars/pull/30467)); `PERCENTILE_CONT`/`PERCENTILE_DISC ... WITHIN GROUP` ([#30442](https://github.com/pola-rs/polars/pull/30442)); non-literal `LIKE` patterns ([#30364](https://github.com/pola-rs/polars/pull/30364), [#30372](https://github.com/pola-rs/polars/pull/30372)); typed numeric/string literals ([#30486](https://github.com/pola-rs/polars/pull/30486)); `LIMIT`/`OFFSET` expressions such as scalar subqueries ([#30425](https://github.com/pola-rs/polars/pull/30425)); repeated unnamed constants ([#30488](https://github.com/pola-rs/polars/pull/30488)); `RANDOM()`, `REPEAT`, `CARDINALITY`, constant `GROUP BY` keys and row values in `IN (subquery)`.
+ 
+ ### Fixed
++- **`viz`: map panels now load in a sandboxed frame without `allow-same-origin`** ([#5033](https://github.com/dathere/qsv/pull/5033), [#4946](https://github.com/dathere/qsv/issues/4946)), such as the CKAN Webpage view the wiki recommends (`sandbox="allow-scripts allow-popups allow-downloads"`). Before, every MapLibre map (`viz map`, `viz choropleth --map`, and the point and region maps in a Data Schematic) stayed blank there with no error. The MapLibre in plotly.js 3.x drops messages between the page and its web worker when their origins differ, and in such a frame the page reports its URL's origin while the worker reports `"null"`. Each page now carries a small `Worker` wrapper that gives those messages the origin MapLibre already accepts for `file://` pages. It only acts in a sandboxed frame that isn't a `file://` page, so maps elsewhere behave as before. Checked in Chrome, Firefox and Safari, for region and clustered point maps. The note added in [#4947](https://github.com/dathere/qsv/pull/4947) above each map in such a frame is gone, since the maps now render. The wrapper can go once plotly.js bundles MapLibre 6.17 or later ([maplibre-gl-js#8912](https://github.com/maplibre/maplibre-gl-js/pull/8912)).
+ - **`validate` is stricter and more correct with jsonschema 0.61.1** (from 0.60.2). Rows that passed before can now fail:
+   - **`format: "date-time"`, `"date"` and `"time"` require a digit wherever RFC 3339 does** ([jsonschema#1829](https://github.com/Stranger6667/jsonschema/issues/1829)). Before, `+`, `,`, `-`, `.` or `/` passed in many digit positions, so `2026-11-0/T10:00:00Z` and `-----11-06T10:00:00Z` were valid date-times.
+   - **Numeric keywords judge whole floats past 2^53 correctly** ([jsonschema#1825](https://github.com/Stranger6667/jsonschema/issues/1825)). A float equal to an integer bound past 2^53 was converted to the wrong integer, so `exclusiveMinimum` admitted the bound itself and `const` rejected it.
+```
+
+**File**: `examples/viz/smart_allegheny_dogs.html` (modified, +5/-25)
+```diff
+@@ -12,6 +12,7 @@
+ <meta charset="utf-8" />
+ <meta name="viewport" content="width=device-width, initial-scale=1" />
+ <title>allegheny_dog_licenses.csv — Data Schematic</title>
++<script>(function(){if(window.origin!=="null"||location.protocol==="file:"||typeof Worker!=="function")return;function qsvStampOrigin(d){if(d&&typeof d==="object"&&typeof d.origin==="string")d.origin="file://"}var W=window.Worker;window.Worker=class extends W{constructor(u,o){super(u,o);this.addEventListener("message",function(e){qsvStampOrigin(e.data)})}postMessage(m,t){qsvStampOrigin(m);return super.postMessage(m,t)}}})();</script>
+ <script src="https://cdn.plot.ly/plotly-3.7.0.min.js" integrity="sha384-l4G4qURPwALv583BKlynU/4LiUx0rk9jcTX58Aq+Jc+jgWb52zeH2geZkSS3UPPs" crossorigin="anonymous"></script>
+ <style>
+   #qsv-credits { font-size: 11px; line-height: 1.6; text-align: center; padding: 10px 16px 12px; color: var(--qsv-geo-meta, #5b6673); }
+@@ -76,7 +77,7 @@ <h1 class="qsv-viz-title">allegheny_dog_licenses.csv — Data Schematic</h1>
+ <tr><td class="qsv-viz-meta-k">Rows:</td><td>50,013 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Preview<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
+ <tr><td class="qsv-viz-meta-k">Columns:</td><td>8</td></tr>
+ <tr><td class="qsv-viz-meta-k">Completeness:</td><td>100.0%</td></tr>
+-<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-02 03:54 UTC</td></tr>
++<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-10 17:57 UTC</td></tr>
+ <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 28.0.0</td></tr>
+ </table>
+ <div class="qsv-viz-grid">
+@@ -501,25 +502,6 @@ <h1 class="qsv-viz-title">allegheny_dog_licenses.csv — Data Schematic</h1>
+     var fl = gd._fullLayout || {};
+     return Object.keys(fl).filter(function (k) { return /^scene\d*$/.test(k); });
+   }
+-  // A sandboxed frame without allow-same-origin gives the page an opaque origin but leaves
+-  // location.origin as the URL's; MapLibre's worker (a blob:null URL) reports "null", and the
+-  // MapLibre bundled with plotly.js 3.x drops every message whose origin differs from its own, so
+-  // the map's tiles never finish loading and the panel stays blank with no error. file:// pages are
+-  // exempt from that check. Say so above each map rather than leave an empty panel unexplained.
+-  function sandboxNotice(gd) {
+-    if (window.origin !== "null" || location.protocol === "file:") return;
+-    var lay = (gd && gd.layout) || {};
+-    if (!Object.keys(lay).some(function (k) { return /^map\d*$/.test(k); })) return;
+-    var host = gd.parentNode;
+-    if (!host || host.querySelector(":scope > .qsv-sandbox-map-note")) return;
+-    var note = document.createElement("div");
+-    note.className = "qsv-sandbox-map-note";
+-    note.setAttribute("role", "note");
+-    note.textContent = "This map can't load inside a sandboxed frame. Open this Data Schematic in its own browser tab to see it.";
+-    note.style.cssText = "margin:4px 0;padding:6px 10px;border:1px solid #d97706;border-radius:6px;" +
+-      "background:#fffbeb;color:#78350f;font:13px/1.4 system-ui,sans-serif";
+-    host.insertBefore(note, gd);
+-  }
+   function installGl3dScrollFix(gd) {
+     if (gd.__qsvGl3dFix || !sceneKeys(gd).length) return;
+     gd.__qsvGl3dFix = true;
+@@ -558,8 +540,6 @@ <h1 class="qsv-viz-title">allegheny_dog_licenses.csv — Data Schematic</h1>
+       // cluster bubbles: repaint plotly's black-by-default count labels and add hover/click-to-zoom
+       // (see installClusterUi). No-op for non-map panels and for maps that never cluster.
+       applyClusterUi(gd);
+-      // map panels in a sandboxed (opaque-origin) frame can't load tiles: explain the blank panel
+-      sandboxNotice(gd);
+       // gl3d panels: stop the WebGL canvas from eating the wheel inline so the page can scroll
+       // (scrollZoom:false suppresses the zoom but not the canvas preventDefault; see above).
+       installGl3dScrollFix(gd);
+@@ -962,7 +942,7 @@ <h1>allegheny_dog_licenses.csv — Data Schematic</h1>
+ <div class="qsv-dict-downloads">
+ <a class="qsv-dict-export" download="allegheny_dog_licenses_csv_data_schematic.schema.json" href="data:application/json;base64,ewogICIkc2NoZW1hIjogImh0dHBzOi8vanNvbi1zY2hlbWEub3JnL2RyYWZ0LzIwMjAtMTIvc2NoZW1hIiwKICAidGl0bGUiOiAiRGF0YSBEaWN0aW9uYXJ5IGZvciBhbGxlZ2hlbnlfZG9nX2xpY2Vuc2VzLmNzdiIsCiAgImRlc2NyaXB0aW9uIjogIlRoaXMgZGF0YXNldCBwcm92aWRlcyBhIGNvbXByZWhlbnNpdmUgcmVnaXN0cnkgb2YgZG9nIGxpY2Vuc2VzLCBlbmNvbXBhc3NpbmcgNTAsMDEzIGluZGl2aWR1YWwgcmVjb3Jkcy4gSXQgZGV0YWlscyBwZXQgY2hhcmFjdGVyaXN0aWNzIHN1Y2ggYXMgYnJlZWQgYW5kIGNvbG9yIGFsb25nc2lkZSBhZG1pbmlzdHJhdGl2ZSBpbmZvcm1hdGlvbiBsaWtlIGxpY2Vuc2UgdHlwZXMsIGVmZmVjdGl2ZSBkYXRlcywgYW5kIG93bmVyIHppcCBjb2Rlcy4gVGhlIGRhdGEgc2Vy
+```
+
+**File**: `examples/viz/smart_cms_medicare.html` (modified, +3/-23)
+```diff
+@@ -11,6 +11,7 @@
+ <meta charset="utf-8" />
+ <meta name="viewport" content="width=device-width, initial-scale=1" />
+ <title>cms_medicare_providers.csv — Data Schematic</title>
++<script>(function(){if(window.origin!=="null"||location.protocol==="file:"||typeof Worker!=="function")return;function qsvStampOrigin(d){if(d&&typeof d==="object"&&typeof d.origin==="string")d.origin="file://"}var W=window.Worker;window.Worker=class extends W{constructor(u,o){super(u,o);this.addEventListener("message",function(e){qsvStampOrigin(e.data)})}postMessage(m,t){qsvStampOrigin(m);return super.postMessage(m,t)}}})();</script>
+ <script src="https://cdn.plot.ly/plotly-3.7.0.min.js" integrity="sha384-l4G4qURPwALv583BKlynU/4LiUx0rk9jcTX58Aq+Jc+jgWb52zeH2geZkSS3UPPs" crossorigin="anonymous"></script>
+ <style>
+   #qsv-credits { font-size: 11px; line-height: 1.6; text-align: center; padding: 10px 16px 12px; color: var(--qsv-geo-meta, #5b6673); }
+@@ -74,7 +75,7 @@ <h1 class="qsv-viz-title">cms_medicare_providers.csv — Data Schematic</h1>
+ <tr><td class="qsv-viz-meta-k">Rows:</td><td>30,007 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Preview<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
+ <tr><td class="qsv-viz-meta-k">Columns:</td><td>4</td></tr>
+ <tr><td class="qsv-viz-meta-k">Completeness:</td><td>97.0%</td></tr>
+-<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-02 03:54 UTC</td></tr>
++<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-10 17:57 UTC</td></tr>
+ <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 28.0.0</td></tr>
+ </table>
+ <div class="qsv-viz-grid">
+@@ -604,25 +605,6 @@ <h1 class="qsv-viz-title">cms_medicare_providers.csv — Data Schematic</h1>
+     var fl = gd._fullLayout || {};
+     return Object.keys(fl).filter(function (k) { return /^scene\d*$/.test(k); });
+   }
+-  // A sandboxed frame without allow-same-origin gives the page an opaque origin but leaves
+-  // location.origin as the URL's; MapLibre's worker (a blob:null URL) reports "null", and the
+-  // MapLibre bundled with plotly.js 3.x drops every message whose origin differs from its own, so
+-  // the map's tiles never finish loading and the panel stays blank with no error. file:// pages are
+-  // exempt from that check. Say so above each map rather than leave an empty panel unexplained.
+-  function sandboxNotice(gd) {
+-    if (window.origin !== "null" || location.protocol === "file:") return;
+-    var lay = (gd && gd.layout) || {};
+-    if (!Object.keys(lay).some(function (k) { return /^map\d*$/.test(k); })) return;
+-    var host = gd.parentNode;
+-    if (!host || host.querySelector(":scope > .qsv-sandbox-map-note")) return;
+-    var note = document.createElement("div");
+-    note.className = "qsv-sandbox-map-note";
+-    note.setAttribute("role", "note");
+-    note.textContent = "This map can't load inside a sandboxed frame. Open this Data Schematic in its own browser tab to see it.";
+-    note.style.cssText = "margin:4px 0;padding:6px 10px;border:1px solid #d97706;border-radius:6px;" +
+-      "background:#fffbeb;color:#78350f;font:13px/1.4 system-ui,sans-serif";
+-    host.insertBefore(note, gd);
+-  }
+   function installGl3dScrollFix(gd) {
+     if (gd.__qsvGl3dFix || !sceneKeys(gd).length) return;
+     gd.__qsvGl3dFix = true;
+@@ -661,8 +643,6 @@ <h1 class="qsv-viz-title">cms_medicare_providers.csv — Data Schematic</h1>
+       // cluster bubbles: repaint plotly's black-by-default count labels and add hover/click-to-zoom
+       // (see installClusterUi). No-op for non-map panels and for maps that never cluster.
+       applyClusterUi(gd);
+-      // map panels in a sandboxed (opaque-origin) frame can't load tiles: explain the blank panel
+-      sandboxNotice(gd);
+       // gl3d panels: stop the WebGL canvas from eating the wheel inline so the page can scroll
+       // (scrollZoom:false suppresses the zoom but not the canvas preventDefault; see above).
+       installGl3dScrollFix(gd);
+@@ -2520,7 +2500,7 @@ <h1 class="qsv-viz-title">cms_medicare_providers.csv — Data Schematic</h1>
+   else setTimeout(init, 0);
+ })();
+ </script>
+-<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"28.0.0","schematic_uuid":"0fceeae7-a01a-4bd0-8306-e1cd7447313a","fingerprint":{"algo":"blake3","digest":"ff0858a992d6fe65ecf8030a5b865c56f2a4305924037e3e82e598ab278e28fa","bytes":1049432},"rows":30007,"viz_args":["--smarter","--preview-threshold","500"],"redacted":[],"pid":null}</script>
++<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"28.0.0","schematic_uuid":"725fb5bb-451d-4491-83c2-bc1e3f4a5fb6","fingerprint":{"algo":"blake3","digest":"ff0858a992d6fe65ecf8030a5b865c56f2a4305924037e3e82e598ab278e28fa","byt
+```
+
+**File**: `examples/viz/smart_cpdb.html` (modified, +3/-23)
+```diff
+@@ -11,6 +11,7 @@
+ <meta charset="utf-8" />
+ <meta name="viewport" content="width=device-width, initial-scale=1" />
+ <title>nyc_capital_projects.csv — Data Schematic</title>
++<script>(function(){if(window.origin!=="null"||location.protocol==="file:"||typeof Worker!=="function")return;function qsvStampOrigin(d){if(d&&typeof d==="object"&&typeof d.origin==="string")d.origin="file://"}var W=window.Worker;window.Worker=class extends W{constructor(u,o){super(u,o);this.addEventListener("message",function(e){qsvStampOrigin(e.data)})}postMessage(m,t){qsvStampOrigin(m);return super.postMessage(m,t)}}})();</script>
+ <script src="https://cdn.plot.ly/plotly-3.7.0.min.js" integrity="sha384-l4G4qURPwALv583BKlynU/4LiUx0rk9jcTX58Aq+Jc+jgWb52zeH2geZkSS3UPPs" crossorigin="anonymous"></script>
+ <style>
+   #qsv-credits { font-size: 11px; line-height: 1.6; text-align: center; padding: 10px 16px 12px; color: var(--qsv-geo-meta, #5b6673); }
+@@ -74,7 +75,7 @@ <h1 class="qsv-viz-title">nyc_capital_projects.csv — Data Schematic</h1>
+ <tr><td class="qsv-viz-meta-k">Rows:</td><td>12,587 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Preview<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
+ <tr><td class="qsv-viz-meta-k">Columns:</td><td>7</td></tr>
+ <tr><td class="qsv-viz-meta-k">Completeness:</td><td>98.8%</td></tr>
+-<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-02 03:54 UTC</td></tr>
++<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-10 17:57 UTC</td></tr>
+ <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 28.0.0</td></tr>
+ </table>
+ <div class="qsv-viz-grid">
+@@ -644,25 +645,6 @@ <h1 class="qsv-viz-title">nyc_capital_projects.csv — Data Schematic</h1>
+     var fl = gd._fullLayout || {};
+     return Object.keys(fl).filter(function (k) { return /^scene\d*$/.test(k); });
+   }
+-  // A sandboxed frame without allow-same-origin gives the page an opaque origin but leaves
+-  // location.origin as the URL's; MapLibre's worker (a blob:null URL) reports "null", and the
+-  // MapLibre bundled with plotly.js 3.x drops every message whose origin differs from its own, so
+-  // the map's tiles never finish loading and the panel stays blank with no error. file:// pages are
+-  // exempt from that check. Say so above each map rather than leave an empty panel unexplained.
+-  function sandboxNotice(gd) {
+-    if (window.origin !== "null" || location.protocol === "file:") return;
+-    var lay = (gd && gd.layout) || {};
+-    if (!Object.keys(lay).some(function (k) { return /^map\d*$/.test(k); })) return;
+-    var host = gd.parentNode;
+-    if (!host || host.querySelector(":scope > .qsv-sandbox-map-note")) return;
+-    var note = document.createElement("div");
+-    note.className = "qsv-sandbox-map-note";
+-    note.setAttribute("role", "note");
+-    note.textContent = "This map can't load inside a sandboxed frame. Open this Data Schematic in its own browser tab to see it.";
+-    note.style.cssText = "margin:4px 0;padding:6px 10px;border:1px solid #d97706;border-radius:6px;" +
+-      "background:#fffbeb;color:#78350f;font:13px/1.4 system-ui,sans-serif";
+-    host.insertBefore(note, gd);
+-  }
+   function installGl3dScrollFix(gd) {
+     if (gd.__qsvGl3dFix || !sceneKeys(gd).length) return;
+     gd.__qsvGl3dFix = true;
+@@ -701,8 +683,6 @@ <h1 class="qsv-viz-title">nyc_capital_projects.csv — Data Schematic</h1>
+       // cluster bubbles: repaint plotly's black-by-default count labels and add hover/click-to-zoom
+       // (see installClusterUi). No-op for non-map panels and for maps that never cluster.
+       applyClusterUi(gd);
+-      // map panels in a sandboxed (opaque-origin) frame can't load tiles: explain the blank panel
+-      sandboxNotice(gd);
+       // gl3d panels: stop the WebGL canvas from eating the wheel inline so the page can scroll
+       // (scrollZoom:false suppresses the zoom but not the canvas preventDefault; see above).
+       installGl3dScrollFix(gd);
+@@ -2560,7 +2540,7 @@ <h1 class="qsv-viz-title">nyc_capital_projects.csv — Data Schematic</h1>
+   else setTimeout(init, 0);
+ })();
+ </script>
+-<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"28.0.0","schematic_uuid":"31bc25f0-3778-4586-ae99-7bb3c940eecd","fingerprint":{"algo":"blake3","digest":"530b533b644037036b22823af6c7b58ff863393c06b3819c37a16ab975e5bfad","bytes":1214414},"rows":12587,"viz_args":["--smarter","--dictionary","nyc_capital_projects_dict.schema.json","--preview-threshold","500"],"redacted":["--dictionary"],"pid":null}</script>
++<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"28.0.0","schematic_uuid":"727cf690-d223-494d-afc4-850afd06e3d1","fingerprint":{"algo":"blake3","digest":"530b533b644
+```
+
+**File**: `examples/viz/smart_dict_sunburst.html` (modified, +3/-23)
+```diff
+@@ -11,6 +11,7 @@
+ <meta charset="utf-8" />
+ <meta name="viewport" content="width=device-width, initial-scale=1" />
+ <title>sales_sample.csv — Data Schematic</title>
++<script>(function(){if(window.origin!=="null"||location.protocol==="file:"||typeof Worker!=="function")return;function qsvStampOrigin(d){if(d&&typeof d==="object"&&typeof d.origin==="string")d.origin="file://"}var W=window.Worker;window.Worker=class extends W{constructor(u,o){super(u,o);this.addEventListener("message",function(e){qsvStampOrigin(e.data)})}postMessage(m,t){qsvStampOrigin(m);return super.postMessage(m,t)}}})();</script>
+ <script src="https://cdn.plot.ly/plotly-3.7.0.min.js" integrity="sha384-l4G4qURPwALv583BKlynU/4LiUx0rk9jcTX58Aq+Jc+jgWb52zeH2geZkSS3UPPs" crossorigin="anonymous"></script>
+ <style>
+   #qsv-credits { font-size: 11px; line-height: 1.6; text-align: center; padding: 10px 16px 12px; color: var(--qsv-geo-meta, #5b6673); }
+@@ -74,7 +75,7 @@ <h1 class="qsv-viz-title">sales_sample.csv — Data Schematic</h1>
+ <tr><td class="qsv-viz-meta-k">Rows:</td><td>500 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Explore<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
+ <tr><td class="qsv-viz-meta-k">Columns:</td><td>13</td></tr>
+ <tr><td class="qsv-viz-meta-k">Completeness:</td><td>100.0%</td></tr>
+-<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-02 03:54 UTC</td></tr>
++<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-10 17:57 UTC</td></tr>
+ <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 28.0.0</td></tr>
+ </table>
+ <div class="qsv-viz-grid">
+@@ -652,25 +653,6 @@ <h1 class="qsv-viz-title">sales_sample.csv — Data Schematic</h1>
+     var fl = gd._fullLayout || {};
+     return Object.keys(fl).filter(function (k) { return /^scene\d*$/.test(k); });
+   }
+-  // A sandboxed frame without allow-same-origin gives the page an opaque origin but leaves
+-  // location.origin as the URL's; MapLibre's worker (a blob:null URL) reports "null", and the
+-  // MapLibre bundled with plotly.js 3.x drops every message whose origin differs from its own, so
+-  // the map's tiles never finish loading and the panel stays blank with no error. file:// pages are
+-  // exempt from that check. Say so above each map rather than leave an empty panel unexplained.
+-  function sandboxNotice(gd) {
+-    if (window.origin !== "null" || location.protocol === "file:") return;
+-    var lay = (gd && gd.layout) || {};
+-    if (!Object.keys(lay).some(function (k) { return /^map\d*$/.test(k); })) return;
+-    var host = gd.parentNode;
+-    if (!host || host.querySelector(":scope > .qsv-sandbox-map-note")) return;
+-    var note = document.createElement("div");
+-    note.className = "qsv-sandbox-map-note";
+-    note.setAttribute("role", "note");
+-    note.textContent = "This map can't load inside a sandboxed frame. Open this Data Schematic in its own browser tab to see it.";
+-    note.style.cssText = "margin:4px 0;padding:6px 10px;border:1px solid #d97706;border-radius:6px;" +
+-      "background:#fffbeb;color:#78350f;font:13px/1.4 system-ui,sans-serif";
+-    host.insertBefore(note, gd);
+-  }
+   function installGl3dScrollFix(gd) {
+     if (gd.__qsvGl3dFix || !sceneKeys(gd).length) return;
+     gd.__qsvGl3dFix = true;
+@@ -709,8 +691,6 @@ <h1 class="qsv-viz-title">sales_sample.csv — Data Schematic</h1>
+       // cluster bubbles: repaint plotly's black-by-default count labels and add hover/click-to-zoom
+       // (see installClusterUi). No-op for non-map panels and for maps that never cluster.
+       applyClusterUi(gd);
+-      // map panels in a sandboxed (opaque-origin) frame can't load tiles: explain the blank panel
+-      sandboxNotice(gd);
+       // gl3d panels: stop the WebGL canvas from eating the wheel inline so the page can scroll
+       // (scrollZoom:false suppresses the zoom but not the canvas preventDefault; see above).
+       installGl3dScrollFix(gd);
+@@ -2568,7 +2548,7 @@ <h1 class="qsv-viz-title">sales_sample.csv — Data Schematic</h1>
+   else setTimeout(init, 0);
+ })();
+ </script>
+-<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"28.0.0","schematic_uuid":"041e5be6-7465-48ac-b25f-c013790e8de8","fingerprint":{"algo":"blake3","digest":"cac5ea21c2a6669d8f3c688d8387b6b812c4633c951a793e96239ed32f1dd372","bytes":39740},"rows":500,"viz_args":["--dictionary","infer","--hierarchy-style","sunburst","--preview-threshold","500"],"redacted":[],"pid":null}</script>
++<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"28.0.0","schematic_uuid":"e913dc71-c4b2-4f71-a23e-b04b6b0e403d","fingerprint":{"algo":"blake3","digest":"cac5ea21c2a6669d8f3c688d8387b6b812c4633c951a793e96239ed32f1dd372","bytes":39740},"r
+```
+
+**File**: `examples/viz/smart_dict_treemap.html` (modified, +3/-23)
+```diff
+@@ -11,6 +11,7 @@
+ <meta charset="utf-8" />
+ <meta name="viewport" content="width=device-width, initial-scale=1" />
+ <title>customer_spend.csv — Data Schematic</title>
++<script>(function(){if(window.origin!=="null"||location.protocol==="file:"||typeof Worker!=="function")return;function qsvStampOrigin(d){if(d&&typeof d==="object"&&typeof d.origin==="string")d.origin="file://"}var W=window.Worker;window.Worker=class extends W{constructor(u,o){super(u,o);this.addEventListener("message",function(e){qsvStampOrigin(e.data)})}postMessage(m,t){qsvStampOrigin(m);return super.postMessage(m,t)}}})();</script>
+ <script src="https://cdn.plot.ly/plotly-3.7.0.min.js" integrity="sha384-l4G4qURPwALv583BKlynU/4LiUx0rk9jcTX58Aq+Jc+jgWb52zeH2geZkSS3UPPs" crossorigin="anonymous"></script>
+ <style>
+   #qsv-credits { font-size: 11px; line-height: 1.6; text-align: center; padding: 10px 16px 12px; color: var(--qsv-geo-meta, #5b6673); }
+@@ -74,7 +75,7 @@ <h1 class="qsv-viz-title">customer_spend.csv — Data Schematic</h1>
+ <tr><td class="qsv-viz-meta-k">Rows:</td><td>300 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Explore<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
+ <tr><td class="qsv-viz-meta-k">Columns:</td><td>5</td></tr>
+ <tr><td class="qsv-viz-meta-k">Completeness:</td><td>100.0%</td></tr>
+-<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-02 03:54 UTC</td></tr>
++<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-10 17:57 UTC</td></tr>
+ <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 28.0.0</td></tr>
+ </table>
+ <div class="qsv-viz-grid">
+@@ -588,25 +589,6 @@ <h1 class="qsv-viz-title">customer_spend.csv — Data Schematic</h1>
+     var fl = gd._fullLayout || {};
+     return Object.keys(fl).filter(function (k) { return /^scene\d*$/.test(k); });
+   }
+-  // A sandboxed frame without allow-same-origin gives the page an opaque origin but leaves
+-  // location.origin as the URL's; MapLibre's worker (a blob:null URL) reports "null", and the
+-  // MapLibre bundled with plotly.js 3.x drops every message whose origin differs from its own, so
+-  // the map's tiles never finish loading and the panel stays blank with no error. file:// pages are
+-  // exempt from that check. Say so above each map rather than leave an empty panel unexplained.
+-  function sandboxNotice(gd) {
+-    if (window.origin !== "null" || location.protocol === "file:") return;
+-    var lay = (gd && gd.layout) || {};
+-    if (!Object.keys(lay).some(function (k) { return /^map\d*$/.test(k); })) return;
+-    var host = gd.parentNode;
+-    if (!host || host.querySelector(":scope > .qsv-sandbox-map-note")) return;
+-    var note = document.createElement("div");
+-    note.className = "qsv-sandbox-map-note";
+-    note.setAttribute("role", "note");
+-    note.textContent = "This map can't load inside a sandboxed frame. Open this Data Schematic in its own browser tab to see it.";
+-    note.style.cssText = "margin:4px 0;padding:6px 10px;border:1px solid #d97706;border-radius:6px;" +
+-      "background:#fffbeb;color:#78350f;font:13px/1.4 system-ui,sans-serif";
+-    host.insertBefore(note, gd);
+-  }
+   function installGl3dScrollFix(gd) {
+     if (gd.__qsvGl3dFix || !sceneKeys(gd).length) return;
+     gd.__qsvGl3dFix = true;
+@@ -645,8 +627,6 @@ <h1 class="qsv-viz-title">customer_spend.csv — Data Schematic</h1>
+       // cluster bubbles: repaint plotly's black-by-default count labels and add hover/click-to-zoom
+       // (see installClusterUi). No-op for non-map panels and for maps that never cluster.
+       applyClusterUi(gd);
+-      // map panels in a sandboxed (opaque-origin) frame can't load tiles: explain the blank panel
+-      sandboxNotice(gd);
+       // gl3d panels: stop the WebGL canvas from eating the wheel inline so the page can scroll
+       // (scrollZoom:false suppresses the zoom but not the canvas preventDefault; see above).
+       installGl3dScrollFix(gd);
+@@ -2504,7 +2484,7 @@ <h1 class="qsv-viz-title">customer_spend.csv — Data Schematic</h1>
+   else setTimeout(init, 0);
+ })();
+ </script>
+-<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"28.0.0","schematic_uuid":"465d3590-54d1-44e6-9c77-48827b22ac92","fingerprint":{"algo":"blake3","digest":"d728107a915fc6a38617a25a28e52cbbe417d1698802bc0b8d9c031bdc731592","bytes":7934},"rows":300,"viz_args":["--dictionary","infer","--preview-threshold","500"],"redacted":[],"pid":null}</script>
++<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"28.0.0","schematic_uuid":"e01f5ee3-1721-4518-acfd-8cb1a071f545","fingerprint":{"algo":"blake3","digest":"d728107a915fc6a38617a25a28e52cbbe417d1698802bc0b8d9c031bdc731592","bytes":7934},"rows":300,"viz_args":["--
+```
+
+**File**: `examples/viz/smart_geo_outliers.html` (modified, +3/-23)
+```diff
+@@ -12,6 +12,7 @@
+ <meta charset="utf-8" />
+ <meta name="viewport" content="width=device-width, initial-scale=1" />
+ <title>delivery_stops.csv — Data Schematic</title>
++<script>(function(){if(window.origin!=="null"||location.protocol==="file:"||typeof Worker!=="function")return;function qsvStampOrigin(d){if(d&&typeof d==="object"&&typeof d.origin==="string")d.origin="file://"}var W=window.Worker;window.Worker=class extends W{constructor(u,o){super(u,o);this.addEventListener("message",function(e){qsvStampOrigin(e.data)})}postMessage(m,t){qsvStampOrigin(m);return super.postMessage(m,t)}}})();</script>
+ <script src="https://cdn.plot.ly/plotly-3.7.0.min.js" integrity="sha384-l4G4qURPwALv583BKlynU/4LiUx0rk9jcTX58Aq+Jc+jgWb52zeH2geZkSS3UPPs" crossorigin="anonymous"></script>
+ <style>
+   #qsv-credits { font-size: 11px; line-height: 1.6; text-align: center; padding: 10px 16px 12px; color: var(--qsv-geo-meta, #5b6673); }
+@@ -75,7 +76,7 @@ <h1 class="qsv-viz-title">delivery_stops.csv — Data Schematic</h1>
+ <tr><td class="qsv-viz-meta-k">Rows:</td><td>200 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Explore<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
+ <tr><td class="qsv-viz-meta-k">Columns:</td><td>10</td></tr>
+ <tr><td class="qsv-viz-meta-k">Completeness:</td><td>100.0%</td></tr>
+-<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-02 03:54 UTC</td></tr>
++<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-10 17:57 UTC</td></tr>
+ <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 28.0.0</td></tr>
+ </table>
+ <div class="qsv-viz-grid">
+@@ -541,25 +542,6 @@ <h1 class="qsv-viz-title">delivery_stops.csv — Data Schematic</h1>
+     var fl = gd._fullLayout || {};
+     return Object.keys(fl).filter(function (k) { return /^scene\d*$/.test(k); });
+   }
+-  // A sandboxed frame without allow-same-origin gives the page an opaque origin but leaves
+-  // location.origin as the URL's; MapLibre's worker (a blob:null URL) reports "null", and the
+-  // MapLibre bundled with plotly.js 3.x drops every message whose origin differs from its own, so
+-  // the map's tiles never finish loading and the panel stays blank with no error. file:// pages are
+-  // exempt from that check. Say so above each map rather than leave an empty panel unexplained.
+-  function sandboxNotice(gd) {
+-    if (window.origin !== "null" || location.protocol === "file:") return;
+-    var lay = (gd && gd.layout) || {};
+-    if (!Object.keys(lay).some(function (k) { return /^map\d*$/.test(k); })) return;
+-    var host = gd.parentNode;
+-    if (!host || host.querySelector(":scope > .qsv-sandbox-map-note")) return;
+-    var note = document.createElement("div");
+-    note.className = "qsv-sandbox-map-note";
+-    note.setAttribute("role", "note");
+-    note.textContent = "This map can't load inside a sandboxed frame. Open this Data Schematic in its own browser tab to see it.";
+-    note.style.cssText = "margin:4px 0;padding:6px 10px;border:1px solid #d97706;border-radius:6px;" +
+-      "background:#fffbeb;color:#78350f;font:13px/1.4 system-ui,sans-serif";
+-    host.insertBefore(note, gd);
+-  }
+   function installGl3dScrollFix(gd) {
+     if (gd.__qsvGl3dFix || !sceneKeys(gd).length) return;
+     gd.__qsvGl3dFix = true;
+@@ -598,8 +580,6 @@ <h1 class="qsv-viz-title">delivery_stops.csv — Data Schematic</h1>
+       // cluster bubbles: repaint plotly's black-by-default count labels and add hover/click-to-zoom
+       // (see installClusterUi). No-op for non-map panels and for maps that never cluster.
+       applyClusterUi(gd);
+-      // map panels in a sandboxed (opaque-origin) frame can't load tiles: explain the blank panel
+-      sandboxNotice(gd);
+       // gl3d panels: stop the WebGL canvas from eating the wheel inline so the page can scroll
+       // (scrollZoom:false suppresses the zoom but not the canvas preventDefault; see above).
+       installGl3dScrollFix(gd);
+@@ -2947,7 +2927,7 @@ <h1 class="qsv-viz-title">delivery_stops.csv — Data Schematic</h1>
+   else setTimeout(init, 0);
+ })();
+ </script>
+-<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"28.0.0","schematic_uuid":"c8890e33-c710-44a7-8826-ff1a1112da13","fingerprint":{"algo":"blake3","digest":"bd40d2c0b40542c2ad595c9f0a698886ccbc046365a02dba66197518f21e286d","bytes":13402},"rows":200,"viz_args":["--preview-threshold","500"],"redacted":[],"pid":null}</script>
++<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"28.0.0","schematic_uuid":"2f5356f3-4071-411c-bae6-650145715e3a","fingerprint":{"algo":"blake3","digest":"bd40d2c0b40542c2ad595c9f0a698886ccbc046365a02dba66197518f21e286d","bytes":13402},"rows":200,"viz_args":["--preview-threshold","
+```
+
+**File**: `examples/viz/smart_geospatial.html` (modified, +3/-23)
+```diff
+@@ -12,6 +12,7 @@
+ <meta charset="utf-8" />
+ <meta name="viewport" content="width=device-width, initial-scale=1" />
+ <title>seismic_events.csv — Data Schematic</title>
++<script>(function(){if(window.origin!=="null"||location.protocol==="file:"||typeof Worker!=="function")return;function qsvStampOrigin(d){if(d&&typeof d==="object"&&typeof d.origin==="string")d.origin="file://"}var W=window.Worker;window.Worker=class extends W{constructor(u,o){super(u,o);this.addEventListener("message",function(e){qsvStampOrigin(e.data)})}postMessage(m,t){qsvStampOrigin(m);return super.postMessage(m,t)}}})();</script>
+ <script src="https://cdn.plot.ly/plotly-3.7.0.min.js" integrity="sha384-l4G4qURPwALv583BKlynU/4LiUx0rk9jcTX58Aq+Jc+jgWb52zeH2geZkSS3UPPs" crossorigin="anonymous"></script>
+ <style>
+   #qsv-credits { font-size: 11px; line-height: 1.6; text-align: center; padding: 10px 16px 12px; color: var(--qsv-geo-meta, #5b6673); }
+@@ -75,7 +76,7 @@ <h1 class="qsv-viz-title">seismic_events.csv — Data Schematic</h1>
+ <tr><td class="qsv-viz-meta-k">Rows:</td><td>417 <a href="#" class="qsv-data-link" onclick="return qsvOpenData()">Explore<svg class="qsv-link-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1.7" y="2.6" width="12.6" height="10.8" rx="1.4"/><path d="M1.7 6.2h12.6M1.7 9.8h12.6M6.2 6.2v7.2M10.2 6.2v7.2"/></svg></a></td></tr>
+ <tr><td class="qsv-viz-meta-k">Columns:</td><td>9</td></tr>
+ <tr><td class="qsv-viz-meta-k">Completeness:</td><td>100.0%</td></tr>
+-<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-02 03:54 UTC</td></tr>
++<tr><td class="qsv-viz-meta-k">Compiled:</td><td>2026-11-10 17:57 UTC</td></tr>
+ <tr><td class="qsv-viz-meta-k">Generated by:</td><td>qsv 28.0.0</td></tr>
+ </table>
+ <div class="qsv-viz-grid">
+@@ -646,25 +647,6 @@ <h1 class="qsv-viz-title">seismic_events.csv — Data Schematic</h1>
+     var fl = gd._fullLayout || {};
+     return Object.keys(fl).filter(function (k) { return /^scene\d*$/.test(k); });
+   }
+-  // A sandboxed frame without allow-same-origin gives the page an opaque origin but leaves
+-  // location.origin as the URL's; MapLibre's worker (a blob:null URL) reports "null", and the
+-  // MapLibre bundled with plotly.js 3.x drops every message whose origin differs from its own, so
+-  // the map's tiles never finish loading and the panel stays blank with no error. file:// pages are
+-  // exempt from that check. Say so above each map rather than leave an empty panel unexplained.
+-  function sandboxNotice(gd) {
+-    if (window.origin !== "null" || location.protocol === "file:") return;
+-    var lay = (gd && gd.layout) || {};
+-    if (!Object.keys(lay).some(function (k) { return /^map\d*$/.test(k); })) return;
+-    var host = gd.parentNode;
+-    if (!host || host.querySelector(":scope > .qsv-sandbox-map-note")) return;
+-    var note = document.createElement("div");
+-    note.className = "qsv-sandbox-map-note";
+-    note.setAttribute("role", "note");
+-    note.textContent = "This map can't load inside a sandboxed frame. Open this Data Schematic in its own browser tab to see it.";
+-    note.style.cssText = "margin:4px 0;padding:6px 10px;border:1px solid #d97706;border-radius:6px;" +
+-      "background:#fffbeb;color:#78350f;font:13px/1.4 system-ui,sans-serif";
+-    host.insertBefore(note, gd);
+-  }
+   function installGl3dScrollFix(gd) {
+     if (gd.__qsvGl3dFix || !sceneKeys(gd).length) return;
+     gd.__qsvGl3dFix = true;
+@@ -703,8 +685,6 @@ <h1 class="qsv-viz-title">seismic_events.csv — Data Schematic</h1>
+       // cluster bubbles: repaint plotly's black-by-default count labels and add hover/click-to-zoom
+       // (see installClusterUi). No-op for non-map panels and for maps that never cluster.
+       applyClusterUi(gd);
+-      // map panels in a sandboxed (opaque-origin) frame can't load tiles: explain the blank panel
+-      sandboxNotice(gd);
+       // gl3d panels: stop the WebGL canvas from eating the wheel inline so the page can scroll
+       // (scrollZoom:false suppresses the zoom but not the canvas preventDefault; see above).
+       installGl3dScrollFix(gd);
+@@ -3052,7 +3032,7 @@ <h1 class="qsv-viz-title">seismic_events.csv — Data Schematic</h1>
+   else setTimeout(init, 0);
+ })();
+ </script>
+-<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"28.0.0","schematic_uuid":"9005c863-d70e-40b4-9572-58161b97bfbb","fingerprint":{"algo":"blake3","digest":"c69ad599b9b476aa759a318cdea769b8332457ac8ae146929b9cbf60d274783b","bytes":24087},"rows":417,"viz_args":["--smarter","--bivariate","--theme","plotly_dark","--grid-cols","3","--geojson","japan_prefectures.geojson","--preview-threshold","500"],"redacted":["--geojson"],"pid":null}</script>
++<script id="qsv-schematic-source" type="application/json">{"schema":1,"qsv_version":"28.0.0","schematic_uuid":"b6c8a8c7-ac82-48dc-8aa1-b08d65af3553","fingerprint":{"algo":"blake3","digest":"c69ad599b
+```
+
+---
+
+### Incident Patch 2: `2b77ff45` (2026-11-10)
+**Commit Message**: fix(scoresql): stop marking down well-formed queries (#5028)
+
+* fix(scoresql): stop marking down well-formed queries
+
+- find join keys when ON starts a line or the keys are unqualified
+- don't count a CTE body as a nested subquery
+- penalize a String column only when compared with a number, or a
+  String/numeric join-key mismatch
+- --duckdb: register inputs as views so table-qualified columns work
+- find the index of any file extension (util::idx_path)
+- drop the plan check for FULL SCAN/TABLE SCAN, which no engine prints
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `Cargo.toml` (modified, +3/-1)
+* fix(scoresql): end ON scans at a subquery's paren; quote odd DuckDB table names
+
+- a join inside a subquery stops at its closing paren, so outer-query
+  columns aren't scored as join keys
+- --duckdb: quote a bare table name that isn't a plain identifier
+  (describegpt substitutes `FROM nyc-311` when scoring)
+- reword the String-vs-number suggestion to what the engines do
+- USAGE: the plan is shown, not scored; regenerate docs/help
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* fix(scoresql): skip ON inside quoted identifiers; drop join-key type check
+
+roborev 6411: the join-key String/numeric check pai
+
+**File**: `CHANGELOG.md` (modified, +10/-0)
 ```diff
-@@ -587,7 +587,9 @@ spreadsheet-ods = { git = "https://github.com/jqnatividad/spreadsheet-ods", bran
- # CompactBytesSlice::into_boxed_slice fix (upstream ParkMyCar/compact_bytes#11), and the
- # big-endian heap-tag fix (ParkMyCar/compact_bytes#12; qsv #5015).
- # Pulled in by qsv-stats' ByteKey (0.57+; qsv #5011). Same version as upstream, so crates.io
--# builds (`cargo install qsv`) use upstream 0.2.1; the hot paths are identical.
-+# builds (`cargo install qsv`) use upstream 0.2.1; the hot paths are identical. CAVEAT: on
-+# big-endian targets (s390x, ppc64) upstream 0.2.1 still has the heap-tag bug (#12): a heap value
-+# whose cap/len low byte is >= 0x80 is misread as inline (out-of-bounds read). Build from git there.
- compact_bytes = { git = "https://github.com/jqnatividad/compact_bytes", branch = "main" }
+@@ -41,6 +41,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+   - **Schema fixes:** `oneOf`/`anyOf` no longer reject valid rows when a branch's `$ref` sits under an `$id`, and `$ref` pointers through a numeric key (`#/responses/200`) now resolve the references under their target.
+   - Validation is slightly faster. On the 1M-row NYC 311 sample (release build; a 41-property schema with type, length, enum and range checks), `validate` executes 3.7–4.0% fewer instructions when every row is valid, and 2.6–2.7% fewer with one error per row. That makes it 2–3% faster with `--jobs 1`, with no measurable wall-clock change at the default thread count. Upstream's larger figures (up to 40% with `preserve_order`) are best cases for the validation call itself; these are end-to-end results on this file.
+   - **Large bounded counts over one character class compile and work** (0.61.1). Patterns such as `^.{0,262144}$` or `[^\p{C}]{1,2048}` are no longer unrolled, so they fit the default `--size-limit`. One such as `^.{0,404600}$` no longer fails with a regex engine error on an empty value once `--size-limit` is raised to compile it. Anchored character-class patterns such as `^[a-z0-9-]+$` are also matched without a regex engine. This needs no change to the schema. These speedups weren't measured on qsv's benchmark file, whose schema has no patterns.
++- **`scoresql` no longer marks down well-formed queries** ([#5028](https://github.com/dathere/qsv/pull/5028)):
++  - **Join keys are found when `ON` starts a line or the keys are unqualified** (`JOIN b\nON a.id = b.id`, `ON id = id2`). Before, such joins were reported as "possible cartesian join" and lost 25 points.
++    A join inside a subquery ends at the subquery's closing parenthesis, so outer-query columns aren't scored as join keys.
++  - **`WHERE` and `ORDER BY` are matched as whole words when collecting their columns.** In `SELECT nowhere FROM w WHERE ...`, the `WHERE` inside `nowhere` was taken for the clause, so no WHERE columns were found and the data-distribution and skew checks skipped them.
++  - **Filter selectivity says when it scored only one of a column's values.** Only a column's first literal is looked up (`status = 'a' OR status = 'b'` checks `'a'`); the detail now notes "has 2 filter values — selectivity estimated from the first value only".
++  - **A CTE body is not a nested subquery.** `WITH c AS (SELECT ...)` lost 2 points with the advice to use a CTE. A subquery inside a CTE still counts.
++  - **A String column is penalized only when the query treats it as a number.** Every String column in a comparison lost 3 points, so `WHERE name = 'Bob'` was told to cast `name`. Now only a String column compared with a numeric literal is penalized.
++  - **`--duckdb` handles column references qualified by a table name** (`SELECT data.id FROM data JOIN ...`). Table names were rewritten to `read_csv_auto(...)` in the SQL text, so DuckDB rejected the query. Each input is now registered as a view under its table name and `_t_N` alias. A bare table name that isn't a plain identifier (`FROM nyc-311`, as `describegpt` writes it when scoring) is quoted for DuckDB, so it still works.
++  - **An index is found for any file extension.** Only `<stem>.csv.idx` was checked, so `data.tsv` was reported as unindexed even after `qsv index data.tsv`. The suggestion to run `qsv index` now says what the index is for: it speeds up building the stats and frequency caches, but Polars and DuckDB don't use it for the query. It is no longer shown for stdin input, which is a temp copy deleted on exit.
++  - The "full table scan in query plan" check is removed. It looked for `FULL SCAN` or `TABLE SCAN`, which neither Polars (`Csv SCAN`) nor DuckDB (`READ_CSV_AUTO`) prints, so it never applied. The plan is still shown in the report, and the USAGE text no longer lists it as a scoring factor.
+ - **`profile --validate --no-projection` warns that `--validate` is ignored**. `--validate` checks the projection block, so with `--no-projection` it ran nothing (neither the schema check nor the `qsv validate` pass) and exited 0 without a word, even with `--strict`. To check the file alone, run `qsv validate`.
+ - **`profile`: an `--initial-context` override that cannot be applied is reported, not silently dropped** ([#5025](https://github.com/dathere/qsv/pull/5025), fixes [#4991](https://github.com/dathere/qsv/issues/4991)). Before, the run exited 0, passed `--strict`, and left no trace of the missing value. Each such override now gets a Required `projection_warnings` entry (on stderr with `--no-projection`) naming the key and the reason, and fails `--strict`:
+   - a key that is not a JSON Pointer (doesn't start with `/`);
+```
+
+**File**: `docs/help/scoresql.md` (modified, +3/-2)
+```diff
+@@ -17,9 +17,10 @@ performance score with actionable optimization suggestions BEFORE running the qu
+ Accepts the same input/SQL arguments as sqlp. Outputs a human-readable performance report
+ (default) or JSON (--json). Supports Polars mode (default) and DuckDB mode (--duckdb).
  
- # Polars has a much higher release tempo for its Python bindings compared
++The report shows the query plan (EXPLAIN output from Polars or DuckDB) next to the score.
++
+ Scoring factors include:  
+-* Query plan analysis (EXPLAIN output from Polars or DuckDB)
+-* Type optimization (column types vs. usage in query)
++* Type optimization (String columns compared with numbers)
+ * Join key cardinality and data distribution
+ * Filter selectivity from frequency cache
+ * Query anti-pattern detection (SELECT *, missing LIMIT, cartesian joins, etc.)
+```
+
+**File**: `src/cmd/scoresql.rs` (modified, +194/-102)
+```diff
+@@ -5,9 +5,10 @@ performance score with actionable optimization suggestions BEFORE running the qu
+ Accepts the same input/SQL arguments as sqlp. Outputs a human-readable performance report
+ (default) or JSON (--json). Supports Polars mode (default) and DuckDB mode (--duckdb).
+ 
++The report shows the query plan (EXPLAIN output from Polars or DuckDB) next to the score.
++
+ Scoring factors include:
+-  * Query plan analysis (EXPLAIN output from Polars or DuckDB)
+-  * Type optimization (column types vs. usage in query)
++  * Type optimization (String columns compared with numbers)
+   * Join key cardinality and data distribution
+   * Filter selectivity from frequency cache
+   * Query anti-pattern detection (SELECT *, missing LIMIT, cartesian joins, etc.)
+@@ -189,9 +190,12 @@ enum WhereLiteral {
+     /// SQL keyword: `TRUE`, `FALSE`, or `NULL`. Stored as upper-case canonical
+     /// form so callers can match with `==`.
+     Keyword(String),
+-    /// Quoted string (already un-escaped) or numeric literal. Compared with
+-    /// exact string equality against frequency-cache values.
++    /// Quoted string (already un-escaped). Compared with exact string equality
++    /// against frequency-cache values.
+     Value(String),
++    /// Unquoted numeric literal, kept as written. Matched like `Value`; kept apart
++    /// so `score_type_optimization` can flag a String column compared with a number.
++    Number(String),
+ }
+ 
+ // ── Cache data per input file ──────────────────────────────────────────────
+@@ -357,13 +361,18 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+     let join_score = score_join_cardinality(&sql_info, &input_caches, &mut suggestions);
+     let filter_score = score_filter_selectivity(&sql_info, &input_caches, &mut suggestions);
+     let dist_score = score_data_distribution(&sql_info, &input_caches, &mut suggestions);
+-    let pattern_score = score_query_patterns(&sql_info, &plan, &mut suggestions);
++    let pattern_score = score_query_patterns(&sql_info, &mut suggestions);
+ 
+-    // Infrastructure suggestions
++    // Infrastructure suggestions. Polars and DuckDB don't read a qsv index; it only lets
++    // `stats`/`frequency` build the caches in parallel. Stdin input is a temp copy that is
++    // deleted on exit, so indexing it would be pointless.
+     for cache in &input_caches {
+-        if !cache.has_index {
++        let is_stdin = stdin_input.as_ref() == Some(&cache.file_path)
++            || crate::config::is_stdin_spool(&cache.file_path);
++        if !cache.has_index && !is_stdin {
+             suggestions.push(format!(
+-                "Run `qsv index {}` to create an index for faster access",
++                "Run `qsv index {}` to speed up building the stats and frequency caches (the \
++                 query itself doesn't use the index)",
+                 cache.file_path.display()
+             ));
+         }
+@@ -502,8 +511,12 @@ fn parse_sql(sql: &str) -> SqlInfo {
+     // Tracks quote state to avoid false positives from string literals
+     // like `WHERE col = '(SELECT ...'`, and checks word boundaries to
+     // avoid matching identifiers like `SELECTIVITY`.
++    //
++    // A paren opened right after `AS` (or `AS [NOT] MATERIALIZED`) is a CTE body
++    // (`WITH c AS (SELECT ...)`): its own SELECT is not a nested subquery, though a
++    // subquery inside it still counts. One flag per open paren tracks that.
+     let has_subquery = {
+-        let mut depth = 0i32;
++        let mut cte_body: Vec<bool> = Vec::new();
+         let mut in_quote = false;
+         let mut found = false;
+         let bytes = upper.as_bytes();
+@@ -519,10 +532,16 @@ fn parse_sql(sql: &str) -> SqlInfo {
+                 continue;
+             }
+             if b == b'(' {
+-                depth += 1;
++                let before = upper[..i].trim_end();
++                let opens_cte = ["AS", "MATERIALIZED"].iter().any(|kw| {
++                    before.strip_suffix(kw).is_some_and(|rest| {
++                        !rest.ends_with(|c: char| c.is_ascii_alphanumeric() || c == '_')
++                    })
++                });
++                cte_body.push(opens_cte);
+             } else if b == b')' {
+-                depth -= 1;
+-            } else if depth > 0
++                cte_body.pop();
++            } else if cte_body.last() == Some(&false)
+                 && b == b'S'
+                 && (i == 0 || (!bytes[i - 1].is_ascii_alphanumeric() && bytes[i - 1] != b'_'))
+                 && bytes.get(i..i + select_bytes.len()) == Some(select_bytes)
+@@ -595,11 +614,16 @@ fn split_on_operators(token: &str) -> Vec<&str> {
+ }
+ 
+ fn extract_columns_after_keyword(sql: &str, keyword: &str) -> Vec<String> {
+-    let upper = sql.to_ascii_uppercase();
+-    let Some(pos) = upper.find(keyword) else {
++    // Match the keyword as whole words, so `WHERE` inside an identifier such as `nowhere`
++    // isn't taken for the clause; `ORDER BY` may span any whitespace.
++    let words: Vec<String> = keyword.split_whitespace().map(regex::esca
+```
+
+**File**: `tests/test_scoresql.rs` (modified, +460/-0)
+```diff
+@@ -770,3 +770,463 @@ fn scoresql_duckdb_sniff_preamble_skips_preamble_lines() {
+     let json: serde_json::Value = serde_json::from_str(&got).unwrap();
+     assert!(json["score"].as_u64().is_some(), "{got}");
+ }
++
++/// Run `scoresql --json` and return the parsed report.
++fn score_json(wrk: &Workdir, args: &[&str]) -> serde_json::Value {
++    let mut cmd = wrk.command("scoresql");
++    cmd.arg("--json").args(args);
++    let got: String = wrk.stdout(&mut cmd);
++    serde_json::from_str(&got).unwrap_or_else(|e| panic!("{e}: {got}"))
++}
++
++/// `(score, detail)` of one scoring-breakdown category.
++fn category(report: &serde_json::Value, name: &str) -> (u64, String) {
++    let b = report["breakdown"]
++        .as_array()
++        .unwrap()
++        .iter()
++        .find(|b| b["category"] == name)
++        .unwrap_or_else(|| panic!("no {name} category in {report}"));
++    (
++        b["score"].as_u64().unwrap(),
++        b["detail"].as_str().unwrap().to_string(),
++    )
++}
++
++#[test]
++fn scoresql_join_on_at_line_start_is_not_cartesian() {
++    let wrk = setup_join("scoresql_join_on_at_line_start_is_not_cartesian");
++    let report = score_json(
++        &wrk,
++        &[
++            "employees.csv",
++            "departments.csv",
++            "SELECT e.name FROM employees e JOIN departments d\nON e.dept_id = d.dept_id LIMIT 5",
++        ],
++    );
++    let (score, detail) = category(&report, "Join cardinality");
++    assert!(!detail.contains("cartesian"), "{detail}");
++    assert!(score > 0, "{report}");
++}
++
++#[test]
++fn scoresql_join_unqualified_keys_are_not_cartesian() {
++    let wrk = setup_join("scoresql_join_unqualified_keys_are_not_cartesian");
++    let report = score_json(
++        &wrk,
++        &[
++            "employees.csv",
++            "departments.csv",
++            "SELECT name FROM employees JOIN (SELECT dept_id AS did, dept_name FROM departments) \
++             t ON dept_id = did LIMIT 5",
++        ],
++    );
++    let (_, detail) = category(&report, "Join cardinality");
++    assert!(!detail.contains("cartesian"), "{detail}");
++    let (_, patterns) = category(&report, "Query patterns");
++    assert!(!patterns.contains("cartesian"), "{patterns}");
++}
++
++#[test]
++fn scoresql_cross_join_without_condition_is_still_cartesian() {
++    let wrk = setup_join("scoresql_cross_join_without_condition_is_still_cartesian");
++    let report = score_json(
++        &wrk,
++        &[
++            "employees.csv",
++            "departments.csv",
++            "SELECT name FROM employees CROSS JOIN departments LIMIT 5",
++        ],
++    );
++    assert_eq!(category(&report, "Join cardinality").0, 0, "{report}");
++}
++
++#[test]
++fn scoresql_cte_is_not_a_nested_subquery() {
++    let wrk = setup("scoresql_cte_is_not_a_nested_subquery");
++    let report = score_json(
++        &wrk,
++        &[
++            "data.csv",
++            "WITH a AS (SELECT id, age FROM data) SELECT id FROM a WHERE age > 30 LIMIT 5",
++        ],
++    );
++    let (_, detail) = category(&report, "Query patterns");
++    assert!(!detail.contains("subquery"), "{detail}");
++}
++
++#[test]
++fn scoresql_subquery_inside_cte_is_still_nested() {
++    let wrk = setup("scoresql_subquery_inside_cte_is_still_nested");
++    let report = score_json(
++        &wrk,
++        &[
++            "data.csv",
++            "WITH a AS (SELECT id FROM data WHERE id IN (SELECT id FROM data WHERE age > 30)) \
++             SELECT id FROM a LIMIT 5",
++        ],
++    );
++    let (_, detail) = category(&report, "Query patterns");
++    assert!(detail.contains("nested subquery"), "{detail}");
++}
++
++#[test]
++fn scoresql_string_column_vs_string_literal_is_not_penalized() {
++    let wrk = setup("scoresql_string_column_vs_string_literal_is_not_penalized");
++    let report = score_json(
++        &wrk,
++        &[
++            "data.csv",
++            "SELECT id FROM data WHERE status = 'active' LIMIT 5",
++        ],
++    );
++    assert_eq!(category(&report, "Type optimization").0, 20, "{report}");
++}
++
++#[test]
++fn scoresql_string_column_vs_number_is_penalized() {
++    let wrk = setup("scoresql_string_column_vs_number_is_penalized");
++    let report = score_json(
++        &wrk,
++        &["data.csv", "SELECT id FROM data WHERE status = 1 LIMIT 5"],
++    );
++    let (score, detail) = category(&report, "Type optimization");
++    assert!(score < 20, "{report}");
++    assert!(
++        detail.contains("data.status compared with a number"),
++        "{detail}"
++    );
++}
++
++#[test]
++fn scoresql_finds_index_of_non_csv_extension() {
++    let wrk = Workdir::new("scoresql_finds_index_of_non_csv_extension");
++    wrk.create_from_string("data.tsv", "id\tname\n1\tAlice\n2\tBob\n3\tCarol\n");
++    let mut index = wrk.command("index");
++    index.arg("data.tsv");
++    wrk.assert_success(&mut index);
++    assert!(wrk.path("data.tsv.idx").exists());
++
++    let report = score_json(&wrk, &["data.tsv", "SELECT id FROM data LIMIT 2"]);
++    assert_eq!(
++        report["cache_status"]["index_missing"],
++ 
+```
+
+---
+
+### Incident Patch 3: `8194f5be` (2026-11-10)
+**Commit Message**: docs(changelog): jsonschema 0.61.1 pattern fixes and speedups
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `CHANGELOG.md` (modified, +2/-1)
+```diff
+@@ -34,12 +34,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+   - **New SQL:** join keys of different numeric types ([#30401](https://github.com/pola-rs/polars/pull/30401)); correlated subqueries with any outer condition, `GROUP BY`, `HAVING`, `LIMIT`, `ANY`/`ALL`, and `LATERAL` derived tables ([#30378](https://github.com/pola-rs/polars/pull/30378), [#30453](https://github.com/pola-rs/polars/pull/30453), [#30466](https://github.com/pola-rs/polars/pull/30466), [#30459](https://github.com/pola-rs/polars/pull/30459), [#30490](https://github.com/pola-rs/polars/pull/30490), [#30467](https://github.com/pola-rs/polars/pull/30467)); `PERCENTILE_CONT`/`PERCENTILE_DISC ... WITHIN GROUP` ([#30442](https://github.com/pola-rs/polars/pull/30442)); non-literal `LIKE` patterns ([#30364](https://github.com/pola-rs/polars/pull/30364), [#30372](https://github.com/pola-rs/polars/pull/30372)); typed numeric/string literals ([#30486](https://github.com/pola-rs/polars/pull/30486)); `LIMIT`/`OFFSET` expressions such as scalar subqueries ([#30425](https://github.com/pola-rs/polars/pull/30425)); repeated unnamed constants ([#30488](https://github.com/pola-rs/polars/pull/30488)); `RANDOM()`, `REPEAT`, `CARDINALITY`, constant `GROUP BY` keys and row values in `IN (subquery)`.
+ 
+ ### Fixed
+-- **`validate` is stricter and more correct with jsonschema 0.61** (from 0.60.2). Rows that passed before can now fail:
++- **`validate` is stricter and more correct with jsonschema 0.61.1** (from 0.60.2). Rows that passed before can now fail:
+   - **`format: "date-time"`, `"date"` and `"time"` require a digit wherever RFC 3339 does** ([jsonschema#1829](https://github.com/Stranger6667/jsonschema/issues/1829)). Before, `+`, `,`, `-`, `.` or `/` passed in many digit positions, so `2026-11-0/T10:00:00Z` and `-----11-06T10:00:00Z` were valid date-times.
+   - **Numeric keywords judge whole floats past 2^53 correctly** ([jsonschema#1825](https://github.com/Stranger6667/jsonschema/issues/1825)). A float equal to an integer bound past 2^53 was converted to the wrong integer, so `exclusiveMinimum` admitted the bound itself and `const` rejected it.
+   - **`.` in `pattern` and `patternProperties` no longer matches `\r`, U+2028 or U+2029**, so a value containing one of these line terminators can now fail a pattern it passed before.
+   - **Schema fixes:** `oneOf`/`anyOf` no longer reject valid rows when a branch's `$ref` sits under an `$id`, and `$ref` pointers through a numeric key (`#/responses/200`) now resolve the references under their target.
+   - Validation is slightly faster. On the 1M-row NYC 311 sample (release build; a 41-property schema with type, length, enum and range checks), `validate` executes 3.7–4.0% fewer instructions when every row is valid, and 2.6–2.7% fewer with one error per row. That makes it 2–3% faster with `--jobs 1`, with no measurable wall-clock change at the default thread count. Upstream's larger figures (up to 40% with `preserve_order`) are best cases for the validation call itself; these are end-to-end results on this file.
++  - **Large bounded counts over one character class compile and work** (0.61.1). Patterns such as `^.{0,262144}$` or `[^\p{C}]{1,2048}` are no longer unrolled, so they fit the default `--size-limit`. One such as `^.{0,404600}$` no longer fails with a regex engine error on an empty value once `--size-limit` is raised to compile it. Anchored character-class patterns such as `^[a-z0-9-]+$` are also matched without a regex engine. This needs no change to the schema. These speedups weren't measured on qsv's benchmark file, whose schema has no patterns.
+ - **`profile --validate --no-projection` warns that `--validate` is ignored**. `--validate` checks the projection block, so with `--no-projection` it ran nothing (neither the schema check nor the `qsv validate` pass) and exited 0 without a word, even with `--strict`. To check the file alone, run `qsv validate`.
+ - **`profile`: an `--initial-context` override that cannot be applied is reported, not silently dropped** ([#5025](https://github.com/dathere/qsv/pull/5025), fixes [#4991](https://github.com/dathere/qsv/issues/4991)). Before, the run exited 0, passed `--strict`, and left no trace of the missing value. Each such override now gets a Required `projection_warnings` entry (on stderr with `--no-projection`) naming the key and the reason, and fails `--strict`:
+   - a key that is not a JSON Pointer (doesn't start with `/`);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5027** (2026-11-09): deps: drop the webdriver-downloader fork patch (0.18.0 is on crates.io) (@jqnatividad)
-- **PR #5026** (2026-11-09): deps: bump Luau to 0.745 via mlua upstream rev a0ad453 (@jqnatividad)
-- **PR #5025** (2026-11-09): fix(profile): report --initial-context overrides that can't be applied; `-` appends (fixes #4991) (@jqnatividad)
-- **PR #5024** (2026-11-09): fix(sqlp): convert types Avro can't write before --format avro (fixes #5020) (@jqnatividad)
-- **PR #5023** (2026-11-09): test(joinp): don't assert the order of tied matches with --maintain-order left (@jqnatividad)
-- **PR #5022** (2026-11-09): deps: bundled SQLite 3.54.1 via rusqlite 0.41 (RUSTSEC-2026-0459) (@jqnatividad)
+- **PR #5035** (2026-11-11): docs(viz): warn that plotly.js 4.x re-blanks sandboxed maps (@jqnatividad)
+- **PR #5034** (2026-11-10): deps: bump Polars to upstream main ff1b37d (@jqnatividad)
+- **PR #5033** (2026-11-10): fix(viz): load map panels in sandboxed frames without allow-same-origin (@jqnatividad)
+- **PR #5032** (2026-11-10): docs(validate): describe SARIF as a general format in the --sarif help (@jqnatividad)
+- **PR #5031** (2026-11-10): feat(validate): add --sarif to write JSON Schema errors as a SARIF 2.1.0 log (@jqnatividad)
+- **PR #5030** (2026-11-10): deps: bump Polars to upstream main a9bce97 (@jqnatividad)
 
 ---
 
@@ -2249,30 +3041,28 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): note the compact_bytes big-endian caveat for crates.io builds
+## X. viz): load map panels in sandboxed frames without allow-same-origin (#5033)
 
 **RULE**:
-When implementing operations in `Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e00b7fde`: deps): note the compact_bytes big-endian caveat for crates.io builds. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `26e9512b`: viz): load map panels in sandboxed frames without allow-same-origin (#5033). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# builds (`cargo install qsv`) use upstream 0.2.1; the hot paths are identical. CAVEAT: on
-# big-endian targets (s390x, ppc64) upstream 0.2.1 still has the heap-tag bug (#12): a heap value
-# whose cap/len low byte is >= 0x80 is misread as inline (out-of-bounds read). Build from git there.
+- **`viz`: map panels now load in a sandboxed frame without `allow-same-origin`** ([#5033](https://github.com/dathere/qsv/pull/5033), [#4946](https://github.com/dathere/qsv/issues/4946)), such as the CKAN Webpage view the wiki recommends (`sandbox="allow-scripts allow-popups allow-downloads"`). Before, every MapLibre map (`viz map`, `viz choropleth --map`, and the point and region maps in a Data Schematic) stayed blank there with no error. The MapLibre in plotly.js 3.x drops messages between the page and its web worker when their origins differ, and in such a frame the page reports its URL's origin while the worker reports `"null"`. Each page now carries a small `Worker` wrapper that gives those messages the origin MapLibre already accepts for `file://` pages. It only acts in a sandboxed frame that isn't a `file://` page, so maps elsewhere behave as before. Checked in Chrome, Firefox and Safari, for region and clustered point maps. The note added in [#4947](https://github.com/dathere/qsv/pull/4947) above each map in such a frame is gone, since the maps now render. The wrapper can go once plotly.js bundles MapLibre 6.17 or later ([maplibre-gl-js#8912](https://github.com/maplibre/map
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-# builds (`cargo install qsv`) use upstream 0.2.1; the hot paths are identical.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e00b7fde` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `26e9512b` are properly handled with clean fallback behavior.
