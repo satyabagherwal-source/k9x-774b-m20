@@ -8961,3 +8961,6 @@
 | `CYCLE-20261111-5PCA` | `2026-11-11T14:39:02.026Z` | `joreilly/PeopleInSpace` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`18f73239...`) |
 | `CYCLE-20261111-64X6` | `2026-11-11T14:39:22.218Z` | `kube-rs/kube` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`1c910471...`) |
 | `CYCLE-20261111-BWLA` | `2026-11-11T14:43:51.358Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule null, Rule null` | Yes (`9b528acf...`) |
+| `CYCLE-20261111-SBZW` | `2026-11-11T14:56:37.820Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0a8e501d...`) |
+| `CYCLE-20261111-SJ5R` | `2026-11-11T14:56:47.103Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`1ff3ee95...`) |
+| `CYCLE-20261111-SMMG` | `2026-11-11T14:56:51.592Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`a9ac9d27...`) |

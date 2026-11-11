@@ -8970,3 +8970,6 @@ Every entry in this ledger must capture:
 | `learn-github-joreilly-peopleinspace` | `https://github.com/joreilly/PeopleInSpace` | `2db46a03` | Multi-dimensional audit evidence | 2026-11-11T14:39:02.030Z |
 | `learn-github-kube-rs-kube` | `https://github.com/kube-rs/kube` | `b970938d` | Multi-dimensional audit evidence | 2026-11-11T14:39:22.223Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `84c85c1f` | Multi-dimensional audit evidence | 2026-11-11T14:43:51.362Z |
+| `learn-github-codewhale-hq-codewhale` | `https://github.com/Hmbown/Codewhale` | `1e2106e6` | Multi-dimensional audit evidence | 2026-11-11T14:56:37.826Z |
+| `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `2fd74173` | Multi-dimensional audit evidence | 2026-11-11T14:56:47.107Z |
+| `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `90e547c6` | Multi-dimensional audit evidence | 2026-11-11T14:56:51.597Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-11T14:43:51.249Z",
+  "last_updated": "2026-11-11T14:56:51.470Z",
   "total_verified_learnings": 1255,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8899,13 +8899,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "slug": "codewhale-hq-codewhale",
+      "slug": "hmbown-codewhale",
       "platform": "github",
-      "source_url": "https://github.com/codewhale-hq/Codewhale",
-      "source_version": "ecfbdbcc",
-      "content_hash": "5097ed16c67a11323aea2322929986d99608c69e858063b36ce5e63e22aa82f8",
-      "dossier_path": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+      "source_url": "https://github.com/Hmbown/Codewhale",
+      "source_version": "1e2106e6",
+      "content_hash": "0a8e501d40fcbdb3aef99f891cc59cb174929fd2286617b2bc2803269201c4f9",
+      "dossier_path": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
       "promoted_rules": [
         {
           "number": null,
@@ -8920,6 +8920,11 @@
         {
           "number": null,
           "title": "web): hanging indent only on single-line install commands; align the wrapped pip",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "receipts): a thread receipt carries tokens only, with no provider-call count (CW",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -9038,7 +9043,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T07:37:49.283Z",
+      "verified_at": "2026-11-11T14:56:37.585Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -16173,8 +16178,8 @@
       "slug": "gardener-gardener",
       "platform": "github",
       "source_url": "https://github.com/gardener/gardener",
-      "source_version": "dab1739d",
-      "content_hash": "f926dad0f6f09f1fc3ad33856b4a318e5fb9b1fa041f8b1663f14324ff6ab5b9",
+      "source_version": "2fd74173",
+      "content_hash": "1ff3ee95dae27ed4f2a242acda64392089735541df2b842a8b9cd5444e5824de",
       "dossier_path": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
       "promoted_rules": [
@@ -16191,6 +16196,11 @@
         {
           "number": null,
           "title": "Update golang.org/x/tools digest to 4f7264d (#16260)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Perses dashboard gauge percentage unit (#16252)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -16304,7 +16314,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T07:55:25.874Z",
+      "verified_at": "2026-11-11T14:56:46.903Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42771,8 +42781,8 @@
       "slug": "matrixorigin-matrixone",
       "platform": "github",
       "source_url": "https://github.com/matrixorigin/matrixone",
-      "source_version": "e2459cc5",
-      "content_hash": "0b3dec38b942ba16a7eebfb0e4b35d1c102c2d271d0c2b4c43db1839e16e1142",
+      "source_version": "90e547c6",
+      "content_hash": "a9ac9d274114f5ef9b23efd9134260c478398bd7cc579b412c77313add87a74d",
       "dossier_path": "07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
       "promoted_rules": [
@@ -42800,6 +42810,11 @@
           "number": null,
           "title": "Distinct Semantic Identity Coercion Invariant",
           "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "disttae): budget transaction workspace batch copies (#32458)",
+          "status": "WITHHELD_REJECT"
         },
         {
           "number": 2559,
@@ -42862,7 +42877,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T07:01:05.793Z",
+      "verified_at": "2026-11-11T14:56:51.443Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

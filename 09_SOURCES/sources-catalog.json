@@ -2603,10 +2603,10 @@
     "repository": "codewhale-hq/Codewhale",
     "platform": "github",
     "sourceUrl": "https://github.com/Hmbown/Codewhale",
-    "sourceVersion": "a2fda9d5",
+    "sourceVersion": "1e2106e6",
     "license": "MIT",
-    "contentHash": "c94837453fdb7f2848813ac39618b6b473db9f961d3061d56a6bf1879e06fe15",
-    "lastHarvestedAt": "2026-11-09T01:53:15.859Z",
+    "contentHash": "0a8e501d40fcbdb3aef99f891cc59cb174929fd2286617b2bc2803269201c4f9",
+    "lastHarvestedAt": "2026-11-11T14:56:37.826Z",
     "learningId": "learn-github-codewhale-hq-codewhale"
   },
   "zulip-zulip": {
@@ -3173,10 +3173,10 @@
     "repository": "matrixorigin/matrixone",
     "platform": "github",
     "sourceUrl": "https://github.com/matrixorigin/matrixone",
-    "sourceVersion": "e2459cc5",
+    "sourceVersion": "90e547c6",
     "license": "Apache-2.0",
-    "contentHash": "0b3dec38b942ba16a7eebfb0e4b35d1c102c2d271d0c2b4c43db1839e16e1142",
-    "lastHarvestedAt": "2026-11-09T07:01:05.924Z",
+    "contentHash": "a9ac9d274114f5ef9b23efd9134260c478398bd7cc579b412c77313add87a74d",
+    "lastHarvestedAt": "2026-11-11T14:56:51.597Z",
     "learningId": "learn-github-matrixorigin-matrixone"
   },
   "fallow-rs-fallow": {
@@ -6893,10 +6893,10 @@
     "repository": "gardener/gardener",
     "platform": "github",
     "sourceUrl": "https://github.com/gardener/gardener",
-    "sourceVersion": "dab1739d",
+    "sourceVersion": "2fd74173",
     "license": "Apache-2.0",
-    "contentHash": "f926dad0f6f09f1fc3ad33856b4a318e5fb9b1fa041f8b1663f14324ff6ab5b9",
-    "lastHarvestedAt": "2026-11-09T07:55:25.955Z",
+    "contentHash": "1ff3ee95dae27ed4f2a242acda64392089735541df2b842a8b9cd5444e5824de",
+    "lastHarvestedAt": "2026-11-11T14:56:47.107Z",
     "learningId": "learn-github-gardener-gardener"
   },
   "nirdiamant-rag_techniques": {

@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-11T14:43:56.608Z",
-    "lastVerified": "2026-11-11T14:43:56.608Z",
+    "lastChecked": "2026-11-11T14:56:57.727Z",
+    "lastVerified": "2026-11-11T14:56:57.727Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -362,9 +362,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-11T13:52:21.133Z",
+    "lastChecked": "2026-11-11T14:56:29.135Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-11T13:52:21.133Z"
+    "lastVerified": "2026-11-11T14:56:29.135Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -909,14 +909,14 @@
     "officialUrl": "https://github.com/gardener/gardener",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-09T07:55:24.699Z",
-    "lastVerified": "2026-11-09T07:55:24.699Z",
+    "lastChecked": "2026-11-11T14:56:28.984Z",
+    "lastVerified": "2026-11-11T14:56:28.984Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gardener-gardener",
-    "contentHash": "f926dad0f6f09f1fc3ad33856b4a318e5fb9b1fa041f8b1663f14324ff6ab5b9",
+    "contentHash": "1ff3ee95dae27ed4f2a242acda64392089735541df2b842a8b9cd5444e5824de",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1420,14 +1420,14 @@
     "officialUrl": "https://github.com/Hmbown/Codewhale",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T01:53:14.932Z",
-    "lastVerified": "2026-11-09T01:53:14.932Z",
+    "lastChecked": "2026-11-11T14:56:22.263Z",
+    "lastVerified": "2026-11-11T14:56:22.263Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-codewhale-hq-codewhale",
-    "contentHash": "c94837453fdb7f2848813ac39618b6b473db9f961d3061d56a6bf1879e06fe15",
+    "contentHash": "0a8e501d40fcbdb3aef99f891cc59cb174929fd2286617b2bc2803269201c4f9",
     "promotedRulesCount": 1,
-    "recentFixesCount": 15,
+    "recentFixesCount": 14,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1643,9 +1643,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-11-11T07:46:05.805Z",
+    "lastChecked": "2026-11-11T14:56:24.151Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-11-11T07:46:05.805Z"
+    "lastVerified": "2026-11-11T14:56:24.151Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -3808,14 +3808,14 @@
     "officialUrl": "https://github.com/matrixorigin/matrixone",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-09T07:01:04.432Z",
-    "lastVerified": "2026-11-09T07:01:04.432Z",
+    "lastChecked": "2026-11-11T14:56:34.317Z",
+    "lastVerified": "2026-11-11T14:56:34.317Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-matrixorigin-matrixone",
-    "contentHash": "0b3dec38b942ba16a7eebfb0e4b35d1c102c2d271d0c2b4c43db1839e16e1142",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 6,
+    "contentHash": "a9ac9d274114f5ef9b23efd9134260c478398bd7cc579b412c77313add87a74d",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 22,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -8160,9 +8160,9 @@
   "mobilenativefoundation-store": {
     "name": "Store",
     "officialUrl": "https://github.com/MobileNativeFoundation/Store",
-    "lastChecked": "2026-11-07T22:23:33.208Z",
+    "lastChecked": "2026-11-11T14:56:19.140Z",
     "revisionIdentifier": "74a5988f",
-    "lastVerified": "2026-11-07T22:23:33.208Z"
+    "lastVerified": "2026-11-11T14:56:19.140Z"
   },
   "volcengine-openviking": {
     "name": "volcengine/OpenViking",
@@ -10661,9 +10661,9 @@
   "4mmar1mtiaz-seo-tools-by-ammar-imtiaz": {
     "name": "SEO-tools-by-Ammar-Imtiaz",
     "officialUrl": "https://github.com/4mmar1mtiaz/SEO-tools-by-Ammar-Imtiaz",
-    "lastChecked": "2026-11-06T20:59:08.288Z",
+    "lastChecked": "2026-11-11T14:56:16.587Z",
     "revisionIdentifier": "7ba4d0e7",
-    "lastVerified": "2026-11-06T20:59:08.288Z"
+    "lastVerified": "2026-11-11T14:56:16.587Z"
   },
   "badoo-reaktive": {
     "name": "Reaktive",

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T14:43:56.747Z",
+  "last_updated": "2026-11-11T14:56:57.873Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-11T13:52:34.067Z",
@@ -351,9 +351,24 @@
       "processed_at": "2026-11-11T14:43:56.746Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hmbown-codewhale-learnings.md": {
+      "processed_at": "2026-11-11T14:56:57.862Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "gardener-gardener-learnings.md": {
+      "processed_at": "2026-11-11T14:56:57.869Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "matrixorigin-matrixone-learnings.md": {
+      "processed_at": "2026-11-11T14:56:57.873Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 84,
+  "total_dossiers_evaluated": 87,
   "total_canonical_promoted": 16,
-  "total_staged_for_review": 65
+  "total_staged_for_review": 68
 }

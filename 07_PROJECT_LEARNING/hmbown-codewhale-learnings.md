@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hmbown-codewhale-learnings.md`  
 > **Source**: github ([https://github.com/Hmbown/Codewhale](https://github.com/Hmbown/Codewhale))  
-> **Source Version**: `a2fda9d5`  
+> **Source Version**: `1e2106e6`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T01:53:14.937Z  
+> **Timestamp**: 2026-11-11T14:56:22.546Z  
 > **Learning ID**: `learn-github-codewhale-hq-codewhale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hmbown-codewhale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Hmbown/Codewhale](https://github.com/Hmbown/Codewhale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T01:53:14.932Z  
+> **Harvest Timestamp**: 2026-11-11T14:56:22.263Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source agent for the terminal written in Rust. Use any provider or model. Issues & PRs always welcome
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 41158 stars
+- **Stars / Engagement**: 41176 stars
 
 ---
 
@@ -1824,11 +1824,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7234** (2026-11-07): **fix(fork): cut saved histories that carry workspace drift notices**
-  *Symptoms*:   No-Issue: fifth instance of the engine-owned history-envelope boundary class; no separate tracker issue exists. 
+- **Issue #7276** (2026-11-10): **fix(engine): match search include globs in linear time**
+  *Symptoms*: ## What and why  For each `*`, `matches_simple_glob` retried the rest of the pattern at every remaining position. It kept no memo and built a new `String` on every attempt. With an include pattern such as `*a*a*a*a*a*a*a*a*a*a*b`, a file named 40 `a`s plus `.rs` took on the order of C(40,10) ≈ 8·10^8 recursive calls. That cost repeats for every similar file in the walk. #7254 already bounded brace expansion and repeated globstars; this was the last unbounded path.  The function now uses the standard iterative two-pointer wildcard match: it remembers the last `*` and backtracks to it, so it runs in O(text × pattern). The matching rules are unchanged:  - `*` matches zero or more characters, including `/` as before. - `?` matches exactly one character. - Literals are compared by `char`, so multi-byte names stay safe (#249).  ## Related issue (optional)  Refs #7274 (partial: the glob item)  ## How I tested it  - I extended `pathological_globs_stay_bounded` with the many-stars case. On `main` it does not finish within the test's 2 s bound; I stopped it after 60 s. With the fix it passes, and a positive match for the same pattern still holds. - `cargo test -p codewhale-engine --lib tools::search`: 31 passed - `cargo clippy -p codewhale-engine --all-targets --all-features --locked -- -D warnings`: clean - `cargo fmt --all -- --check`: clean  ## Checklist  - [x] One focused change, started from current `main` (no need to rebase when `main` moves) - [x] `cargo fmt --all` passes, and t
 
-- **Issue #7231** (2026-11-07): **fix(net): go direct when a local proxy disappears**
-  *Symptoms*: ## What and why  reqwest snapshots `HTTP_PROXY` / `HTTPS_PROXY` / `ALL_PROXY` when a client is built, and Codewhale builds its engine HTTP clients once per session. A session started behind a local proxy (Clash, v2rayN, sing-box on `127.0.0.1:…`) therefore kept dialing that port after the proxy was closed: every request failed with a connect error, including requests to providers that need no proxy at all, and the only recovery was restarting Codewhale.  `codewhale_net::proxy::install_loopback_proxy()` installs a `reqwest::Proxy::custom` route for ambient **loopback** proxies:  - `no_proxy()` runs first, so the custom route is the only proxy source. `no_proxy()` clears every proxy registered before it, so the order matters: a request the callback declines cannot fall back to the address reqwest read when the client was built. - A background thread probes each configured loopback proxy on its own port. While a port refuses connections, requests that would use it go direct; when it answers again, proxy routing resumes. A live `HTTP_PROXY` therefore does not keep a dead `HTTPS_PROXY` in the path. - Only a definite `ECONNREFUSED` from every resolved address moves a proxy to direct. A timeout, an fd limit or a resolver failure leaves the previous state alone: routing a session direct on that evidence would put traffic on a network path the operator deliberately avoided. - While the port answers, routing is unchanged: `ALL_PROXY` / `HTTP_PROXY` / `HTTPS_PROXY` precedence, `NO_PROXY
+- **Issue #7275** (2026-11-10): **fix: reject negative retry delays at config load instead of panicking on retry**
+  *Symptoms*: ## What and why  With `[retry] jitter = false` and a negative `max_delay` or `initial_delay`, `RetryConfig::delay_for_attempt` called `Duration::from_secs_f64` with a negative value, which panicked on the first transport retry. With jitter on, the `.max(0.0)` clamp hid the problem.  - `Config::validate` now rejects a negative or non-finite `initial_delay`, `max_delay` or `exponential_base` when the config loads. This matches how `[retry.rate_limit]` already rejects invalid values. - `delay_for_attempt` and `TokenBucket::delay_until_available` keep a no-panic fallback for the public builders and for environment input:   - a negative delay becomes zero;   - a delay too large for a `Duration` becomes `Duration::MAX`. Every caller already caps or saturates the value.   - As a result, a tiny `CODEWHALE_RATE_LIMIT_RPS`, such as `1e-30`, now waits indefinitely instead of panicking.  ## Related issue (optional)  Refs #7274 (partial: the retry item)  ## How I tested it  - New tests, all of which fail on `main`:   - `negative_retry_delay_is_invalid` (runtime)   - `delay_for_attempt_survives_negative_and_huge_configured_delays` (engine)   - `token_bucket_saturates_delay_for_a_tiny_refill_rate` (engine) - `cargo test -p codewhale-runtime --lib negative_retry_delay`: 1 passed - `cargo test -p codewhale-engine --lib -- delay_for_attempt token_bucket`: 7 passed - `cargo clippy -p codewhale-runtime -p codewhale-engine --all-targets --all-features --locked -- -D warnings`: clean - `cargo fmt 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1845,800 +1845,407 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0d1ffc1c` (2026-11-08)
-**Commit Message**: fix(engine): Anthropic tool-name encoding, usage-journal headroom, pre-turn watchdog, lenient session list
+### Incident Patch 1: `cdf6dff9` (2026-11-11)
+**Commit Message**: fix(receipts): a thread receipt carries tokens only, with no provider-call count (CW-8032)
 
-Reproduced from a founder session on a 0.10.3 dev build (artifacts
-subagent-failures-20261107): sub-agents died with "Child usage settlement
-failed", a turn failed on "native usage journal capacity reached before
-dispatch", and two workers returned Anthropic 400 "tools.17.custom.name".
+A Runtime thread's receipt counted turns and printed them as provider calls,
+which they are not. thread_tokens no longer sets the count, and both
+docs/RECEIPTS.md samples drop it. The opening sentence now says what is true
+for this change: tokens on every receipt, the cost line on terminal sessions
+only; a thread receipt's cost follows in a later slice.
 
-- Anthropic client: tool names were sent raw, so a name such as web.run (from
-  tool_search) invalidated the whole request. Outbound tool declarations,
-  replayed tool_use blocks, tool_choice and the omitted-tool list now use
-  to_api_tool_name, and streamed and non-streamed tool_use names are decoded
-  with from_api_tool_name, matching the chat and responses clients.
-- Usage journal: MAX_RUNTIME_USAGE_RECORDS_PER_OWNER 64 -> 256. Children share
-  the session's journal owner and the workflow default is 64 live agents with a
-  ceiling of 128, so a full fan-out plus the parent exceeded 64. be43ea93fd
-  already makes the overflow non-fatal; this keeps the receipts.
-- Turn start (CW-6633, #6184): the heartbeat stayed Idle until TurnStarted, so
-  a wait before it produced no log, no stall record an
+Regenerated web/data/agent-docs.generated.json.
 
-**File**: `CHANGELOG.md` (modified, +6/-0)
+Checks, rebased on origin/main fc78dc86d8 (Boat farm, Linux x86_64, local-test
+evidence only): receipts::tests, metrics::, debug:: lib tests passed 43, 3, 28,
+23 and 106 across the five crates, 0 failed, 0 ignored; clippy --all-targets
+-D warnings on the same five crates exit 0. Locally: cargo fmt --all --check
+and scripts/preflight.sh --check OK.
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+**File**: `crates/engine/src/receipts/tests.rs` (modified, +5/-2)
 ```diff
-@@ -368,6 +368,12 @@ until the matching tag, packages, checksums, and release assets exist.
+@@ -490,8 +490,10 @@ fn markdown_and_json_share_one_record() {
+         "Changed 1 file (+2 −1) · ran 1 command · made 1 MCP call · 1 approved by you · 1 approved by session rule · 1 ran without asking under Ask · 1 denied by you · 2 other failures"
+     ));
+     assert!(markdown.contains("\n1. edited `src/parse.rs` (+2 −1)"));
+-    assert!(markdown.contains("\nNot recorded:\n- Cost: ")
+-        && markdown.contains("\n- Shell file changes:"));
++    assert!(
++        markdown.contains("\nNot recorded:\n- Cost: ")
++            && markdown.contains("\n- Shell file changes:")
++    );
  
- ### Fixed
- 
-+- **Anthropic and Messages-compatible routes accept any tool name.** Tool names that Anthropic's pattern rejects, such as `web.run` from a loaded tool group, are encoded on the wire and decoded in replies, as the chat and responses routes already did. Before, one such name made every request fail with "tools.N.custom.name: String should match pattern", which stopped sub-agents that had loaded it.
-+- **A large sub-agent fan-out no longer exhausts the usage journal.** The per-session limit of live usage receipts rises from 64 to 256, above the workflow ceiling of 128, so a full fan-out keeps its cost receipts instead of running with cost unknown.
-+- **A turn that stalls before it starts is now bounded.** The stall watchdog covers the setup before the first model request, so a wedged start is logged, cancelled after 180 seconds with a stated reason, and leaves a stall record instead of waiting silently. A warning names the case where all four blocking-work slots are held. Refs #6184.
-+- **One unreadable saved session no longer empties the recent-sessions list.** The launch card and ACP `session/list` show the readable sessions and log the failure. Refs #7095.
-+- **Windows uninstall removes the receipt and update leftovers.** The installer's uninstaller also deletes `.codewhale-install.sha256` and `codewhale.old-*`/`codew.old-*` left by a self-update, so `bin` can be removed. Refs #7091.
-+- **Windows `/undo` matches recorded file paths regardless of case.** A write recorded under a different drive-letter or directory case, or a `\\?\` prefix, is no longer dropped from the restore plan. Refs #6970.
- - **Windows: Fleet and metrics read live files again.** Replaying a Fleet ledger and reading audit or receipt records no longer fail with a sharing violation while their writer is still open; the same regular-file, link and identity checks apply. Plugin enablement now says which snapshot check refused (stage root, content identity or final check) instead of one generic message. Generated protocol and SDK exports keep LF line endings in Windows checkouts.
- - **A held coordination lock no longer makes a new session read-only.** When another session owns the delegated-agent store, the new session starts on private state and says so, instead of refusing every sub-agent with “Failed to clean up sub-agents”.
- - **A dev server can outlive the turn in an interactive session.** `persist:true` now works in the TUI and desktop when the thread has Full Access; restricted postures and Fleet/sub-agents still refuse it.
-```
-
-**File**: `crates/app-server/src/acp_server.rs` (modified, +1/-1)
-```diff
-@@ -481,7 +481,7 @@ impl AcpServer {
-         let sessions =
-             codewhale_engine::session_manager::SessionManager::new(self.sessions_dir.clone())
-                 .ok()
--                .and_then(|manager| manager.list_sessions().ok())
-+                .map(|manager| manager.list_sessions_lenient())
-                 .unwrap_or_default();
-         let sessions: Vec<Value> = sessions
-             .into_iter()
-```
-
-**File**: `crates/engine/src/client/anthropic.rs` (modified, +35/-7)
-```diff
-@@ -34,14 +34,19 @@ use codewhale_models::tool_projection::{
-     RouteToolProjection, ToolSchemaProjection, description_with_constraint_note, forced_tool_name,
-     project_tool_schema,
- };
--use codewhale_models::{ContentBlock, MessageRequest, MessageResponse, StreamEvent, Usage};
-+use codewhale_models::{
-+    ContentBlock, ContentBlockStart, MessageRequest, MessageResponse, StreamEvent, Usage,
-+};
- use codewhale_runtime::config::wire_model_for_provider_route;
- use codewhale_runtime::logging;
- 
- use super::CodewhaleClient;
- use super::prepared::WireDialect;
- use super::role_placement::{RolePlacement, role_placement};
--use super::wire::{extract_sse_data_value, next_sse_line, push_sse_event_data};
-+use super::wire::{
-+    extract_sse_data_value, from_api_tool_name, next_sse_line, push_sse_event_data,
-+    to_api_tool_name,
-+};
- 
- /// Maximum `cache_control` breakpoints Anthropic accepts per request.
- const MAX_CACHE_BREAKPOINTS: usize = 4;
-@@ -120,7 +125,7 @@ impl CodewhaleClient {
-                         constraint_note,
-                     } => {
-                         let mut value = json!({
--                            "name": tool.name,
-+                            "name": to_api_tool_name(&tool.name),
-                             "description": description_with_constraint_note(
-                                 &tool.description,
-                                 constraint_note,
-@@ -137,7 +142,7 @@ impl CodewhaleClient {
-                     }
-                     ToolSchemaProjection::Omitted { .. } => {
-                         omitted_logical_names.push(tool.name.clone());
--                        omitted_tool_names.push(tool.name.clone());
-+                        omitted_tool_names.push(to_api_tool_name(&tool.name));
-                     }
-                 }
-             }
-@@ -520,12 +525,26 @@ fn discard_provider_execution_ids(value: &mut Value) {
-     }
- }
- 
-+fn decode_tool_use_names(value: &mut Value) {
-+    let Some(content) = value.get_mut("content").and_then(Value::as_array_mut) else {
-+        return;
-+    };
-+    for block in content.iter_mut() {
-+        if block.get("type").and_then(Value::as_str) == Some("tool_use")
-+            && let Some(name) = block.get("name").and_then(Value::as_str)
-+        {
-+            block["name"] = json!(from_api_tool_name(name));
-+        }
-+    }
-+}
-+
- fn decode_anthropic_message(mut value: Value) -> Result<MessageResponse> {
-     discard_provider_execution_ids(&mut value);
-     if let Some(usage) = value.get_mut("usage") {
-         *usage = json!(parse_anthropic_usage(usage));
-     }
-     normalize_redacted_thinking_blocks(&mut value);
-+    decode_tool_use_names(&mut value);
-     serde_json::from_value(value).context("Failed to decode Anthropic Messages response")
- }
- 
-@@ -777,7 +796,7 @@ fn anthropic_tool_choice(tool_choice: &Value, model: &str) -> Value {
-         Some("auto") => json!({ "type": "auto" }),
-         Some("none") => json!({ "type": "none" }),
-         Some("any" | "required") => json!({ "type": "any" }),
--        Some(name) => json!({ "type": "tool", "name": name }),
-+        Some(name) => json!({ "type": "tool", "name": to_api_tool_name(name) }),
-         None => tool_choice.clone(),
-     }
- }
-@@ -925,7 +944,7 @@ fn content_block_to_anthropic(block: &ContentBlock) -> Option<Value> {
-         } => Some(json!({
-             "type": "tool_use",
-             "id": id,
--            "name": name,
-+            "name": to_api_tool_name(name),
-             "input": input,
-         })),
-         ContentBlock::ToolResult {
-@@ -1084,7 +1103,16 @@ fn convert_anthropic_sse_data(data: &str) -> Option<Result<StreamEvent>> {
-         // Local-only receipt: the legacy path ignored it (not a provider
-         // type), so it stays ignored rather than decoding.
-         Ok(StreamEvent::ToolProjectionWarning { .. }) => None,
--        Ok(event) => Some(Ok(event)),
-+        Ok(mut event) => {
-+            if let StreamEvent::ContentBlockStart {
-+                content_block: ContentBlockStart::ToolUse { name, .. },
-+                ..
-+            } = &mut event
-+            {
-+                *name = from_api_tool_name(name);
-+            }
-+            Some(Ok(event))
-+        }
-         Err(error) => {
-             // Cold path, reached only when direct decode fails: invalid JSON
-             // and unknown types keep their exact legacy outcomes.
-```
-
-**File**: `crates/engine/src/core/engine.rs` (modified, +6/-0)
-```diff
-@@ -6768,6 +6768,12 @@ impl Engine {
-         review: Option<codewhale_protocol::op::ReviewOperation>,
-     ) -> SendMessageOutcome {
-         let setup_timing = codewhale_runtime::logging::PhaseTimer::start("turn_setup");
-+        self.turn_heartbeat.enter(
-+            turn_heartbeat::TurnPhase::Preparing,
-+            Some("starting the turn".to_string()),
-+            Some(turn_heartbeat::PREPARING_PHASE_BOUND),
-+        );
-+        let _pre_turn_idle = turn_heartbeat::IdleOnDrop(Arc::clone(&self.turn_heartbeat));
-         let is_review = review.is_some();
-         let TurnSpec {
-             profile_constitution,
-```
-
-**File**: `crates/engine/src/cost_status.rs` (modified, +1/-1)
-```diff
-@@ -1272,7 +1272,7 @@ fn with_pending_state_mut<R>(f: impl FnOnce(&mut ScopedPendingBackgroundCost) ->
- /// This journal is deliberately separate from the TUI pending-money pool:
- /// taking one runtime owner's records cannot steal or reset the foreground
- /// session's `/cost` state.
--const MAX_RUNTIME_USAGE_RECORDS_PER_OWNER: usize = 64;
-+const MAX_RUNTIME_USAGE_RECORDS_PER_OWNER: usize = 256;
- 
- #[derive(Default)]
- struct OwnerRuntimeUsageJournal {
-```
-
-**File**: `crates/engine/src/session_manager.rs` (modified, +23/-0)
-```diff
-@@ -5888,6 +5888,29 @@ impl SessionManager {
-             .collect())
-     }
- 
-+    pub fn list_sessions_lenient(&self) -> Vec<SessionMetadata> {
-+        let catalog = match self.scan_session_records() {
-+            Ok(catalog) => catalog,
-+            Err(error) => {
-+                tracing::warn!(%error, "session listing failed; showing no sessions");
-+                return Vec::new();
-+            }
-+        };
-+        if let Some(warning) = catalog.warning() {
-+            tracing::warn!(%warning, "session listing is incomplete; showing the readable ones");
-+        }
-+        let mut sessions: Vec<_> = catalog
-+            .records
-+            .into_iter()
-+            .map(|(_, mut metadata)| {
-+                self.apply_late_usage_to_metadata(&mut metadata);
-+                metadata
-+            })
-+            .collect();
-+        sessions.sort_by_key(|session| std::cmp::Reverse(session.updated_at));
-+        sessions
-+    }
-+
-     pub fn list_sessions_with_recovery(
-         &self,
-     ) -> std::io::Result<(
-```
-
-**File**: `crates/runtime/src/runtime_control.rs` (modified, +17/-14)
-```diff
-@@ -20,20 +20,23 @@ where
-     static SLOTS: std::sync::OnceLock<std::sync::Arc<tokio::sync::Semaphore>> =
-         std::sync::OnceLock::new();
-     const PERMIT_WAIT: std::time::Duration = std::time::Duration::from_secs(60);
--    let permit = tokio::time::timeout(
--        PERMIT_WAIT,
--        SLOTS
--            .get_or_init(|| std::sync::Arc::new(tokio::sync::Semaphore::new(4)))
--            .clone()
--            .acquire_owned(),
--    )
--    .await
--    .map_err(|_| {
--        anyhow::anyhow!(
--            "blocking work is queued behind earlier jobs that have not finished within {}s",
--            PERMIT_WAIT.as_secs()
--        )
--    })??;
-+    let slots = SLOTS
-+        .get_or_init(|| std::sync::Arc::new(tokio::sync::Semaphore::new(4)))
-+        .clone();
-+    if slots.available_permits() == 0 {
-+        tracing::warn!(
-+            target: "turn",
-+            "owner_work is waiting: all 4 blocking slots are held by earlier jobs"
-+        );
-+    }
-+    let permit = tokio::time::timeout(PERMIT_WAIT, slots.acquire_owned())
-+        .await
-+        .map_err(|_| {
-+            anyhow::anyhow!(
-+                "blocking work is queued behind earlier jobs that have not finished within {}s",
-+                PERMIT_WAIT.as_secs()
-+            )
-+        })??;
-     tokio::task::spawn_blocking(move || {
-         #[cfg(any(test, feature = "test-support"))]
-         let _membership = crate::test_support::join_env_scope(env_ticket);
-```
-
-**File**: `crates/tui/CHANGELOG.md` (modified, +6/-0)
-```diff
-@@ -368,6 +368,12 @@ until the matching tag, packages, checksums, and release assets exist.
- 
- ### Fixed
- 
-+- **Anthropic and Messages-compatible routes accept any tool name.** Tool names that Anthropic's pattern rejects, such as `web.run` from a loaded tool group, are encoded on the wire and decoded in replies, as the chat and responses routes already did. Before, one such name made every request fail with "tools.N.custom.name: String should match pattern", which stopped sub-agents that had loaded it.
-+- **A large sub-agent fan-out no longer exhausts the usage journal.** The per-session limit of live usage receipts rises from 64 to 256, above the workflow ceiling of 128, so a full fan-out keeps its cost receipts instead of running with cost unknown.
-+- **A turn that stalls before it starts is now bounded.** The stall watchdog covers the setup before the first model request, so a wedged start is logged, cancelled after 180 seconds with a stated reason, and leaves a stall record instead of waiting silently. A warning names the case where all four blocking-work slots are held. Refs #6184.
-+- **One unreadable saved session no longer empties the recent-sessions list.** The launch card and ACP `session/list` show the readable sessions and log the failure. Refs #7095.
-+- **Windows uninstall removes the receipt and update leftovers.** The installer's uninstaller also deletes `.codewhale-install.sha256` and `codewhale.old-*`/`codew.old-*` left by a self-update, so `bin` can be removed. Refs #7091.
-+- **Windows `/undo` matches recorded file paths regardless of case.** A write recorded under a different drive-letter or directory case, or a `\\?\` prefix, is no longer dropped from the restore plan. Refs #6970.
- - **Windows: Fleet and metrics read live files again.** Replaying a Fleet ledger and reading audit or receipt records no longer fail with a sharing violation while their writer is still open; the same regular-file, link and identity checks apply. Plugin enablement now says which snapshot check refused (stage root, content identity or final check) instead of one generic message. Generated protocol and SDK exports keep LF line endings in Windows checkouts.
- - **A held coordination lock no longer makes a new session read-only.** When another session owns the delegated-agent store, the new session starts on private state and says so, instead of refusing every sub-agent with “Failed to clean up sub-agents”.
- - **A dev server can outlive the turn in an interactive session.** `persist:true` now works in the TUI and desktop when the thread has Full Access; restricted postures and Fleet/sub-agents still refuse it.
-```
-
----
-
-### Incident Patch 2: `a2fda9d5` (2026-11-09)
-**Commit Message**: fix(engine): let sub-agent shells run beside a peer's write claim; repair stale candidate tests
-
-The write-claim ledger still coordinates bounded File/Edit/Patch targets, but a
-child's shell no longer waits on a peer's claim: the execution envelope,
-sandbox and approval posture already govern executable work. The old refusal
-told analysis agents to re-run with read_only=true, which burned steps without
-protecting a peer's files. The contention refusal now names only bounded write
-tools, and Run verifiers remain guarded.
-
-Repairs three stale candidate assertions:
-- the app-server settings test expected the retired `operate` spelling to
-  persist; it now asserts the documented Work (`agent`) normalization.
-- the mailbox test expected snapshot.mode == "operate"; it now expects the
-  Work wire value.
-- the parent prompt+catalog ceiling re-measured at 94,121B (was 92,100B) after
-  the deliberate tool-text expansion; the read-only child envelope still fits.
-The shell tests that execute a command now run on the engine's large stack so
-they exercise the policy instead of overflowing the test thread.
-
-Verification: cargo test -p codewhale-engine --lib, exact filters:
-child_write_tool_fails_
-
-**File**: `CHANGELOG.md` (modified, +7/-0)
-```diff
-@@ -238,6 +238,13 @@ until the matching tag, packages, checksums, and release assets exist.
- 
- ### Changed
- 
-+- **Sub-agent shell runs no longer wait on a peer's write claim.** A child that
-+  holds a shared write claim can run `bash` while another child writes; the
-+  claim still coordinates bounded `File`/`Edit`/`Patch` targets, and the
-+  execution envelope, sandbox and approval posture govern executable work. A
-+  bounded write tool whose target overlaps a live peer still refuses. The old
-+  refusal told analysis agents to re-run with `read_only=true`, which cost
-+  steps without protecting a peer's files.
- - **The footer cost chip shows confirmed dollars only.** A session with some unpriced turns shows exactly the confirmed amount, such as `$0.34`, instead of `subtotal 0.34 + unknown (request outcome unknown)`, and a session with nothing priced shows no cost at all instead of `cost: unknown (…)`. The accounting is unchanged: unpriced turns stay excluded rather than guessed, and `/cost` still lists each one with its reason, now in plain words ("the provider never confirmed the request finished", "this session predates cost tracking"). The price view says `unknown` for a session with no confirmed price.
- - **Sub-agents and goals by default.** The constitution now tells the agent to start independent parts of a request as parallel sub-agents in one message, keep working while their results arrive on their own, and end the turn when only waiting remains; to give each child a complete prompt and its own files; to inspect a write-capable child's evidence, review the diff and run the checks itself; to have an independent reviewer try to refute a non-trivial change before calling it done; and to start a goal for any request, in any language, whose verifiable end state needs more than one turn. Sub-agents, workflows and goals within the current request are in scope; spending real money (purchases, paid providers, billing) still needs the user's express authorization. Cost alone is not a reason to stop; only limits the user or configuration sets apply. **This changes the session-pinned prompt and tool descriptions, so each session re-pins its prompt cache once after upgrade.**
- - **Operate's contract is retired.** The Engine no longer appends the Operate contract to a session; its review, cost and evidence rules now live in the constitution for every session. Saved sessions that contain it still replay.
-```
-
-**File**: `crates/app-server/src/runtime_api/tests.rs` (modified, +3/-3)
-```diff
-@@ -289,7 +289,7 @@ async fn http_and_web_server_thread_manager_installs_configured_workshop_byte_bu
- }
- 
- #[test]
--fn runtime_tui_settings_reject_legacy_modes_and_do_not_save_env_overlays() -> Result<()> {
-+fn runtime_tui_settings_normalize_legacy_modes_and_do_not_save_env_overlays() -> Result<()> {
-     let _lock = lock_test_env();
-     let tmp = tempfile::tempdir()?;
-     let settings_dir = tmp.path().join(".codewhale");
-@@ -315,10 +315,10 @@ fn runtime_tui_settings_reject_legacy_modes_and_do_not_save_env_overlays() -> Re
+     let json: Value = serde_json::from_str(&render_json(&receipt)).expect("json");
+     assert_eq!(json["schema_id"], RECEIPT_SCHEMA_ID);
+@@ -1281,6 +1283,7 @@ fn thread_receipt_sums_turn_tokens_and_points_to_the_usage_endpoint_for_cost() {
+         (tokens.input, tokens.output, tokens.total),
+         (Some(100), Some(20), 120)
      );
- 
-     persist_runtime_tui_setting("default_mode", "operate")
--        .expect("operate is a valid startup mode");
-+        .expect("operate is a retired spelling accepted as Work");
-     assert_eq!(
-         codewhale_runtime::settings::Settings::load_persisted()?.default_mode,
--        "operate"
-+        "agent"
-     );
-     persist_runtime_tui_setting("default_mode", "agent")
-         .expect("agent should be a valid startup mode");
++    assert_eq!(tokens.calls, None);
+     assert!(usage.cost.is_none());
+     assert!(
+         receipt
 ```
 
-**File**: `crates/engine/src/core/engine/tests/test_cases_18.rs` (modified, +1/-1)
+**File**: `crates/engine/src/receipts/usage.rs` (modified, +3/-4)
 ```diff
-@@ -1011,7 +1011,7 @@ async fn full_mailbox_posture_update_supersedes_queued_change_mode() {
-     .expect("snapshot after mailbox drain")
-     .expect("session snapshot");
+@@ -188,20 +188,19 @@ pub fn with_usage(mut receipt: Receipt, usage: ReceiptUsage) -> Receipt {
  
--    assert_eq!(snapshot.mode, "operate");
-+    assert_eq!(snapshot.mode, "agent");
-     let authority = handle.runtime_permission_authority();
-     assert_eq!(authority.approval_mode, ApprovalMode::Auto);
-     assert!(!authority.auto_approve);
-```
-
-**File**: `crates/engine/src/tools/subagent/engine.rs` (modified, +24/-25)
-```diff
-@@ -417,30 +417,29 @@ impl ChildAuthority {
-             // The typed read-only boundary above already rejected mutation.
-             && !self.write_is_denied()
-             && !is_internal_coordination_state_tool(name)
--            // A shell run the read-only classifier proves mutation-free cannot
--            // collide with the peer's writes no matter how contended the
--            // checkout is, so the gate below does not apply to it.
--            && !proven_readonly_shell_run(name, input)
--            && (is_unbounded_shell_run(name, input)
--                || registry.get(name).is_some_and(|spec| {
--                    let canonical = canonical_action_alias(name, input);
--                    let is_shell_control = matches!(
--                        canonical,
--                        "exec_shell_wait" | "exec_shell_interact" | "exec_shell_cancel"
--                    );
--                    let capabilities = spec.capabilities();
--                    !is_shell_control
--                        && (spec.approval_requirement_for(input) == ApprovalRequirement::Suggest
--                            || (!spec.is_read_only_for(input)
--                                && capabilities.iter().any(|capability| {
--                                    matches!(
--                                        capability,
--                                        ToolCapability::WritesFiles
--                                            | ToolCapability::ExecutesCode
--                                            | ToolCapability::Network
--                                    )
--                                })))
--                }))
-+            // Shell runs are governed by the execution envelope, sandbox and
-+            // approval posture. The write claim coordinates bounded file
-+            // tools; it no longer denies a child its shell while a peer writes.
-+            && !is_unbounded_shell_run(name, input)
-+            && registry.get(name).is_some_and(|spec| {
-+                let canonical = canonical_action_alias(name, input);
-+                let is_shell_control = matches!(
-+                    canonical,
-+                    "exec_shell_wait" | "exec_shell_interact" | "exec_shell_cancel"
-+                );
-+                let capabilities = spec.capabilities();
-+                !is_shell_control
-+                    && (spec.approval_requirement_for(input) == ApprovalRequirement::Suggest
-+                        || (!spec.is_read_only_for(input)
-+                            && capabilities.iter().any(|capability| {
-+                                matches!(
-+                                    capability,
-+                                    ToolCapability::WritesFiles
-+                                        | ToolCapability::ExecutesCode
-+                                        | ToolCapability::Network
-+                                )
-+                            })))
-+            })
-         {
-             let held = self.coordination_manager.clone().read_owned().await;
-             let owner = self.owner_agent_id.clone();
-@@ -459,7 +458,7 @@ impl ChildAuthority {
-             .map_err(|error| admission_denied(error.to_string()))?;
-             if !blocking_peers.is_empty() {
-                 return Err(admission_denied(format!(
--                    "Tool {name} cannot prove a bounded file target or read-only execution while peers are writing in this shared checkout (blocking peers: {}). Use a bounded write tool, a proven read-only command, or bash with read_only=true for analysis under native enforcement. Executable work that needs writes requires worktree isolation. Disjoint write_roots alone do not constrain arbitrary code.",
-+                    "Tool {name} cannot prove a bounded file target while peers are writing in this shared checkout (blocking peers: {}). Use a bounded write tool, or run executable work that needs writes in an isolated worktree. Disjoint write_roots alone do not constrain arbitrary code.",
-                     blocking_peers.join(", ")
-                 )));
-             }
-```
-
-**File**: `crates/engine/src/tools/subagent/mod.rs` (modified, +0/-16)
-```diff
-@@ -21890,22 +21890,6 @@ fn is_unbounded_shell_run(name: &str, input: &Value) -> bool {
-     canonical_action_alias(name, input) == "exec_shell"
- }
- 
--/// Whether this exact call is a shell run the agent read-only classifier
--/// proves mutation-free, or native read-only mode enforces — the contention carve-out.
--///
--/// This shares its classifier with `bounded_readonly_bash_evidence` but not
--/// its role restriction, deliberately: the envelope helper's carve-out
--/// *grants* shell to inspection roles that otherwise lack it, so it is scoped
--/// to them; the contention gate grants nothing — shell authority, posture, and
--/// the envelope have already settled by the time it runs — and asks only
--/// whether this call can collide with a live peer's writes. A proven
--/// read-only `ls` cannot, whichever role runs it. An explicit read_only=true
--/// call likewise cannot: the shared bash executor requires native read-only
--/// enforcement or refuses the call before process spawn.
--fn proven_readonly_shell_run(name: &str, input: &Value) -> bool {
--    is_unbounded_shell_run(name, input) && crate::tools::shell::agent_readonly_bash_input(input)
--}
--
- /// Parameter names whose *value* is a location to reach, rather than content.
- ///
- /// Deliberately a name list and not a scan of every string: a network-denied
-```
-
-**File**: `crates/engine/src/tools/subagent/tests.rs` (modified, +56/-54)
-```diff
-@@ -14226,8 +14226,25 @@ fn subagent_registry_with_mcp_action(auto_approve: bool) -> (ChildCoreProbe, tem
-     (registry, home)
- }
- 
--#[tokio::test]
--async fn child_write_tool_fails_closed_outside_registered_scope() {
-+#[test]
-+fn child_write_tool_fails_closed_outside_registered_scope() {
-+    std::thread::Builder::new()
-+        .stack_size(codewhale_runtime::CODEWHALE_MAIN_STACK_BYTES)
-+        .spawn(|| {
-+            tokio::runtime::Builder::new_multi_thread()
-+                .worker_threads(2)
-+                .thread_stack_size(codewhale_runtime::CODEWHALE_MAIN_STACK_BYTES)
-+                .enable_all()
-+                .build()
-+                .unwrap()
-+                .block_on(child_write_tool_fails_closed_outside_registered_scope_body());
-+        })
-+        .unwrap()
-+        .join()
-+        .unwrap();
-+}
-+
-+async fn child_write_tool_fails_closed_outside_registered_scope_body() {
-     let _env_lock = crate::test_support::lock_test_env();
-     let home = tempdir().expect("isolated CODEWHALE_HOME");
-     let _codewhale_home = crate::test_support::EnvVarGuard::set("CODEWHALE_HOME", home.path());
-@@ -14389,25 +14406,6 @@ async fn child_write_tool_fails_closed_outside_registered_scope() {
-     );
-     assert!(!err.contains("agents/coordinate"), "{err}");
-     assert!(!tmp.path().join("docs/no.txt").exists());
--    for (tool_name, input, target) in [(
--        "Bash",
--        json!({"action": "run", "command": "touch outside/canonical.txt"}),
--        "outside/canonical.txt",
--    )] {
--        let shell_err = registry
--            .execute("agent_scoped", tool_name, input)
--            .await
--            .expect_err("unbounded shared-workspace shell must fail")
--            .to_string();
--        assert!(
--            shell_err.contains("cannot prove a bounded file target"),
--            "{tool_name}: {shell_err}"
--        );
--        assert!(
--            !tmp.path().join(target).exists(),
--            "{tool_name} created {target} outside its registered claim"
--        );
--    }
-     let run_err = registry
-         .execute(
-             "agent_scoped",
-@@ -14433,13 +14431,15 @@ async fn child_write_tool_fails_closed_outside_registered_scope() {
- 
- /// A lone writer in the shared checkout keeps its shell.
- ///
--/// The gate above exists so concurrent children cannot overwrite each other.
--/// With no second writer there is nothing to collide with, and refusing the
--/// shell there bought no safety: the same child may already write these paths
--/// through `File`. It only pushed builders toward worktree isolation, which
--/// puts their work in a checkout the operator never looks at.
--#[tokio::test]
--async fn lone_shared_writer_keeps_unbounded_shell() {
-+/// Shell runs are governed by the execution envelope, sandbox and approval
-+/// posture; the write claim coordinates bounded file tools. This keeps the
-+/// lone-writer case covered while the contention tests own the peer case.
-+#[test]
-+fn lone_shared_writer_keeps_unbounded_shell() {
-+    run_worker_fixture(lone_shared_writer_keeps_unbounded_shell_body);
-+}
-+
-+async fn lone_shared_writer_keeps_unbounded_shell_body() {
-     let tmp = tempdir().expect("tempdir");
-     let manager = new_shared_subagent_manager(tmp.path().to_path_buf(), 4);
-     {
-@@ -14542,8 +14542,12 @@ fn contended_builder_registry(
- /// `is_unbounded_shell_run` unconditionally, so a provably read-only `ls` was
- /// refused whenever a peer held a claim — even though the ledger had already
- /// proven the two claims disjoint at admission.
--#[tokio::test]
--async fn contended_shared_writers_keep_proven_readonly_shell() {
-+#[test]
-+fn contended_shared_writers_keep_proven_readonly_shell() {
-+    run_worker_fixture(contended_shared_writers_keep_proven_readonly_shell_body);
-+}
-+
-+async fn contended_shared_writers_keep_proven_readonly_shell_body() {
-     let tmp = tempdir().expect("tempdir");
-     std::fs::create_dir_all(tmp.path().join("src")).unwrap();
-     let manager = new_shared_subagent_manager(tmp.path().to_path_buf(), 4);
-@@ -14581,11 +14585,15 @@ async fn contended_shared_writers_keep_proven_readonly_shell() {
+ pub fn thread_tokens(turns: &[&crate::runtime_threads::TurnRecord]) -> Option<ReceiptTokens> {
+     let mut tokens = ReceiptTokens::default();
+-    let (mut input, mut output, mut calls) = (0u64, 0u64, 0usize);
++    let (mut input, mut output, mut turns_with_usage) = (0u64, 0u64, 0usize);
+     for usage in turns.iter().filter_map(|turn| turn.usage.as_ref()) {
+         input = input.saturating_add(u64::from(usage.input_tokens));
+         output = output.saturating_add(u64::from(usage.output_tokens));
+         add(&mut tokens.cache_read, usage.prompt_cache_hit_tokens);
+         add(&mut tokens.cache_write, usage.prompt_cache_write_tokens);
+         add(&mut tokens.reasoning, usage.reasoning_tokens);
+-        calls += 1;
++        turns_with_usage += 1;
      }
+-    (calls > 0).then(|| {
++    (turns_with_usage > 0).then(|| {
+         tokens.input = Some(input);
+         tokens.output = Some(output);
+         tokens.total = input.saturating_add(output);
+-        tokens.calls = Some(calls);
+         tokens
+     })
  }
- 
--/// The same contention still refuses a shell call the classifier cannot prove
--/// read-only — and the refusal names the blocking peer and its remediation so
--/// the child can recover instead of retrying blindly.
--#[tokio::test]
--async fn contended_shared_writer_refusal_names_blocking_peer_and_remediation() {
-+/// A contended writer keeps its shell. The write claim coordinates bounded
-+/// file tools; executable work is governed by the execution envelope and the
-+/// approval posture, so a peer's claim no longer denies the child shell.
-+#[test]
-+fn contended_shared_writer_keeps_its_shell() {
-+    run_worker_fixture(contended_shared_writer_keeps_its_shell_body);
-+}
-+
-+async fn contended_shared_writer_keeps_its_shell_body() {
-     let tmp = tempdir().expect("tempdir");
-     std::fs::create_dir_all(tmp.path().join("src")).unwrap();
-     let manager = new_sh
 ```
 
-**File**: `crates/tui/CHANGELOG.md` (modified, +7/-0)
+**File**: `docs/RECEIPTS.md` (modified, +4/-3)
 ```diff
-@@ -238,6 +238,13 @@ until the matching tag, packages, checksums, and release assets exist.
+@@ -7,8 +7,9 @@ already keeps. It lists, in order, the files changed, commands run, web and
+ MCP calls, agents started, approvals (and who decided each one), and
+ failures, with totals on top. It also counts what ran without asking, and
+ names the permission posture that let it. Below the totals it carries the
+-provider's token counts and the cost line `/cost` prints (see
+-[Tokens and cost](#tokens-and-cost)).
++provider's token counts; a terminal session's receipt also carries the cost
++line `/cost` prints, and a Runtime thread's receipt carries token counts only
++(see [Tokens and cost](#tokens-and-cost)).
  
- ### Changed
- 
-+- **Sub-agent shell runs no longer wait on a peer's write claim.** A child that
-+  holds a shared write claim can run `bash` while another child writes; the
-+  claim still coordinates bounded `File`/`Edit`/`Patch` targets, and the
-+  execution envelope, sandbox and approval posture govern executable work. A
-+  bounded write tool whose target overlaps a live peer still refuses. The old
-+  refusal told analysis agents to re-run with `read_only=true`, which cost
-+  steps without protecting a peer's files.
- - **The footer cost chip shows confirmed dollars only.** A session with some unpriced turns shows exactly the confirmed amount, such as `$0.34`, instead of `subtotal 0.34 + unknown (request outcome unknown)`, and a session with nothing priced shows no cost at all instead of `cost: unknown (…)`. The accounting is unchanged: unpriced turns stay excluded rather than guessed, and `/cost` still lists each one with its reason, now in plain words ("the provider never confirmed the request finished", "this session predates cost tracking"). The price view says `unknown` for a session with no confirmed price.
- - **Sub-agents and goals by default.** The constitution now tells the agent to start independent parts of a request as parallel sub-agents in one message, keep working while their results arrive on their own, and end the turn when only waiting remains; to give each child a complete prompt and its own files; to inspect a write-capable child's evidence, review the diff and run the checks itself; to have an independent reviewer try to refute a non-trivial change before calling it done; and to start a goal for any request, in any language, whose verifiable end state needs more than one turn. Sub-agents, workflows and goals within the current request are in scope; spending real money (purchases, paid providers, billing) still needs the user's express authorization. Cost alone is not a reason to stop; only limits the user or configuration sets apply. **This changes the session-pinned prompt and tool descriptions, so each session re-pins its prompt cache once after upgrade.**
- - **Operate's contract is retired.** The Engine no longer appends the Operate contract to a session; its review, cost and evidence rules now live in the constitution for every session. Saved sessions that contain it still replay.
-```
-
----
-
-### Incident Patch 3: `74713ec7` (2026-11-08)
-**Commit Message**: fix(app-server): gate file reverts on trust; repair the failures hosted CI surfaced
-
-The first hosted run on the mode-retirement candidate (c50612d6ab) failed in
-four jobs, none of them flaky.
-
-Lint and Parity: clippy's `single_element_loop` on two `for mode in
-[AppMode::Agent]` loops left behind by the Operate removal (plan_handoff.rs:151,
-codemode.rs:1604). Both are straight-line assertions now.
-
-Test (all three platforms): three app-server tests.
-- `create_thread_..._named_permission_posture` sent `mode: "operate"` and
-  expected it echoed back. The runtime normalizes the retired spelling to Work,
-  so it now asserts `agent`, which is the alias contract the release notes
-  promise.
-- `file_revert_route_validates_body_then_trust_then_ownership` expected a
-  `409` naming trusted mode for an untrusted thread and got the
-  "restore point is unavailable" conflict instead, because the route had **no
-  trust gate at all** — an untrusted thread that named a restore point it owned
-  could rewrite workspace files. The gate now sits after body validation and
-  before ownership, exactly the order its name describes, and refuses with the
-  same wording the TUI's undo gate uses.
-- `memory_wor
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -375,6 +375,7 @@ until the matching tag, packages, checksums, and release assets exist.
- 
- ### Fixed
- 
-+- **Reverting a file requires a trusted thread.** The Runtime API's file-revert route refuses an untrusted thread with a `409` that names `/trust` or Full Access, matching the TUI's undo gate, and answers that refusal before it looks at snapshot ownership. Before, an untrusted thread that named a restore point it owned could rewrite workspace files.
- - **Anthropic and Messages-compatible routes accept any tool name.** Tool names that Anthropic's pattern rejects, such as `web.run` from a loaded tool group, are encoded on the wire and decoded in replies, as the chat and responses routes already did. Before, one such name made every request fail with "tools.N.custom.name: String should match pattern", which stopped sub-agents that had loaded it.
- - **A large sub-agent fan-out no longer exhausts the usage journal.** The per-session limit of live usage receipts rises from 64 to 256, above the workflow ceiling of 128, so a full fan-out keeps its cost receipts instead of running with cost unknown.
- - **A turn that stalls before it starts is now bounded.** The stall watchdog covers the setup before the first model request, so a wedged start is logged, cancelled after 180 seconds with a stated reason, and leaves a stall record instead of waiting silently. A warning names the case where all four blocking-work slots are held. Refs #6184.
-```
-
-**File**: `crates/app-server/src/runtime_api.rs` (modified, +10/-0)
-```diff
-@@ -9894,6 +9894,16 @@ async fn revert_thread_file(
-         .thread_restore_guard(&id)
-         .await
-         .map_err(map_thread_err)?;
-+    // Reverting is a workspace mutation, gated where the TUI gates the same
-+    // operation and before ownership, so an untrusted caller gets the
-+    // actionable refusal instead of a hint about another thread's snapshots.
-+    if !(thread.trust_mode || thread.auto_approve) {
-+        return Err(ApiError::conflict(
-+            "Refusing to revert workspace files outside trusted mode. \
-+             Turn on /trust or switch this thread to Full Access, then revert again.",
-+        )
-+        .with_code(PATCH_UNDO_UNTRUSTED));
-+    }
-     // The restore points this thread owns: the receipts on its own turns
-     // (including turns a fork cloned). Read under the restore reservation, so
-     // no turn is recording one meanwhile.
-```
-
-**File**: `crates/app-server/src/runtime_api/tests.rs` (modified, +7/-6)
-```diff
-@@ -11169,7 +11169,7 @@ async fn create_thread_normalizes_and_persists_named_permission_posture() -> Res
-         .error_for_status()?
-         .json()
-         .await?;
--    assert_eq!(created["mode"], "operate");
-+    assert_eq!(created["mode"], "agent");
-     assert_eq!(created["permission_posture"], "auto_review");
-     assert_eq!(created["auto_approve"], false);
-     assert_eq!(created["trust_mode"], false);
-@@ -17817,9 +17817,10 @@ async fn memory_all_scope_includes_workspace_notes() -> Result<()> {
- }
- 
- #[tokio::test]
--async fn memory_workspace_scope_without_a_remote_is_a_client_error() -> Result<()> {
--    // A workspace with no origin remote has no workspace memory: asking for
--    // that scope is the caller's error, as it already is for create.
-+async fn memory_workspace_scope_without_a_remote_resolves_from_the_work_tree() -> Result<()> {
-+    // A work tree with no origin remote has no repository identity, so the
-+    // workspace scope keys on the work-tree path itself: asking for it is a
-+    // real, empty scope rather than the caller's error.
-     let root = std::env::temp_dir().join(format!("cw-memory-no-remote-{}", Uuid::new_v4()));
-     let _lock = lock_test_env();
-     let home = root.join("home");
-@@ -17849,12 +17850,12 @@ async fn memory_workspace_scope_without_a_remote_is_a_client_error() -> Result<(
-         .get(format!("http://{addr}/v1/memory?scope=workspace"))
-         .send()
-         .await?;
--    assert_eq!(listed.status(), StatusCode::BAD_REQUEST);
-+    assert_eq!(listed.status(), StatusCode::OK);
-     let cleared = client
-         .delete(format!("http://{addr}/v1/memory?scope=workspace"))
-         .send()
-         .await?;
--    assert_eq!(cleared.status(), StatusCode::BAD_REQUEST);
-+    assert_eq!(cleared.status(), StatusCode::OK);
-     let all: serde_json::Value = client
-         .get(format!("http://{addr}/v1/memory"))
-         .send()
-```
-
-**File**: `crates/engine/src/tools/codemode.rs` (modified, +17/-14)
-```diff
-@@ -1601,20 +1601,23 @@ mod tests {
-         use codewhale_config::AppMode;
-         use std::collections::HashSet;
-         let empty = HashSet::new();
--        for mode in [AppMode::Agent] {
--            let mut catalog = Vec::new();
--            crate::core::engine::tool_catalog::ensure_advanced_tooling(
--                &mut catalog,
--                mode,
--                &empty,
--                ToolMode::Direct,
--            );
--            let tool = catalog
--                .iter()
--                .find(|tool| tool.name == EXECUTE_TOOLS_TOOL_NAME)
--                .unwrap_or_else(|| panic!("{mode:?} catalog must advertise execute_tools"));
--            assert_eq!(tool.defer_loading, Some(true), "{mode:?} must defer it");
--        }
-+        let mut catalog = Vec::new();
-+        crate::core::engine::tool_catalog::ensure_advanced_tooling(
-+            &mut catalog,
-+            AppMode::Agent,
-+            &empty,
-+            ToolMode::Direct,
-+        );
-+        let tool = catalog
-+            .iter()
-+            .find(|tool| tool.name == EXECUTE_TOOLS_TOOL_NAME)
-+            .unwrap_or_else(|| panic!("{:?} catalog must advertise execute_tools", AppMode::Agent));
-+        assert_eq!(
-+            tool.defer_loading,
-+            Some(true),
-+            "{:?} must defer it",
-+            AppMode::Agent
-+        );
-         let mut catalog = Vec::new();
-         crate::core::engine::tool_catalog::ensure_advanced_tooling(
-             &mut catalog,
-```
-
-**File**: `crates/tui/CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -375,6 +375,7 @@ until the matching tag, packages, checksums, and release assets exist.
- 
- ### Fixed
- 
-+- **Reverting a file requires a trusted thread.** The Runtime API's file-revert route refuses an untrusted thread with a `409` that names `/trust` or Full Access, matching the TUI's undo gate, and answers that refusal before it looks at snapshot ownership. Before, an untrusted thread that named a restore point it owned could rewrite workspace files.
- - **Anthropic and Messages-compatible routes accept any tool name.** Tool names that Anthropic's pattern rejects, such as `web.run` from a loaded tool group, are encoded on the wire and decoded in replies, as the chat and responses routes already did. Before, one such name made every request fail with "tools.N.custom.name: String should match pattern", which stopped sub-agents that had loaded it.
- - **A large sub-agent fan-out no longer exhausts the usage journal.** The per-session limit of live usage receipts rises from 64 to 256, above the workflow ceiling of 128, so a full fan-out keeps its cost receipts instead of running with cost unknown.
- - **A turn that stalls before it starts is now bounded.** The stall watchdog covers the setup before the first model request, so a wedged start is logged, cancelled after 180 seconds with a stated reason, and leaves a stall record instead of waiting silently. A warning names the case where all four blocking-work slots are held. Refs #6184.
-```
-
-**File**: `crates/tui/src/tui/plan_handoff.rs` (modified, +5/-3)
-```diff
-@@ -148,9 +148,11 @@ mod tests {
-             TurnOutcomeStatus::Completed,
-             prose
-         ));
--        for mode in [AppMode::Agent] {
--            assert!(!plan_ready(mode, TurnOutcomeStatus::Completed, prose));
--        }
-+        assert!(!plan_ready(
-+            AppMode::Agent,
-+            TurnOutcomeStatus::Completed,
-+            prose
-+        ));
-         for status in [TurnOutcomeStatus::Interrupted, TurnOutcomeStatus::Failed] {
-             assert!(!plan_ready(AppMode::Plan, status, prose));
-         }
-```
-
-**File**: `web/data/features.generated.json` (modified, +2/-2)
-```diff
-@@ -2,7 +2,7 @@
-   "format": "codewhale.features.v1",
-   "source": {
-     "path": "docs/features.toml",
--    "sha256": "a706bf367123e5689548f7b2b1c7698ce6873dab6fec2b42ee60bef71b95d193"
-+    "sha256": "c2caf85cd1dd0d95e0b566c12af6ec67b5a476cf5810312bb309d35744d08d3f"
+ ```text
+ # Receipt: Fix the parser
+@@ -286,7 +287,7 @@ totals always cover every action, and `omitted_actions` counts the rest.
+     "other_tool_calls": 0
    },
-   "features": [
+   "usage": {
+-    "tokens": { "input": 1200, "output": 90, "total": 1290, "cache_read": 800, "calls": 2 }
++    "tokens": { "input": 1200, "output": 90, "total": 1290, "cache_read": 800 }
+   },
+   "actions": [
      {
-@@ -360,7 +360,7 @@
+```
+
+**File**: `docs/zh_hans/RECEIPTS.md` (modified, +2/-2)
+```diff
+@@ -3,7 +3,7 @@
+ > 英文原文：[RECEIPTS.md](../RECEIPTS.md)。
+ > 最后与英文同步日期（last synced with English revision）：2026-11-11。
+ 
+-回执（receipt）用 Codewhale 已经保存的记录回答“这个会话做了什么？”。它按顺序列出改动的文件、运行的命令、Web 与 MCP 调用、启动的智能体、审批（以及每一项由谁决定）和失败，并在顶部给出汇总。它还会统计哪些操作未经询问就运行了，并写明放行它们的权限姿态。汇总下方还会给出提供商报告的 token 数，以及 `/cost` 打印的同一条费用说明（见[Token 与费用](#token-与费用)）。
++回执（receipt）用 Codewhale 已经保存的记录回答“这个会话做了什么？”。它按顺序列出改动的文件、运行的命令、Web 与 MCP 调用、启动的智能体、审批（以及每一项由谁决定）和失败，并在顶部给出汇总。它还会统计哪些操作未经询问就运行了，并写明放行它们的权限姿态。汇总下方还会给出提供商报告的 token 数；终端会话的回执另有 `/cost` 打印的同一条费用说明，Runtime 线程的回执只给 token 数（见[Token 与费用](#token-与费用)）。
+ 
+ ```text
+ # Receipt: Fix the parser
+@@ -176,7 +176,7 @@ JSON 中同一部分是 `usage`，费用是一个对象：
+     "other_tool_calls": 0
+   },
+   "usage": {
+-    "tokens": { "input": 1200, "output": 90, "total": 1290, "cache_read": 800, "calls": 2 }
++    "tokens": { "input": 1200, "output": 90, "total": 1290, "cache_read": 800 }
+   },
+   "actions": [
      {
-       "id": "modes",
-       "name": "Modes",
--      "summary": "Plan, Work and Operate modes set what the agent may do in a session; a finished plan offers to start the work.",
-+      "summary": "Plan and Work modes set what the agent may do in a session; a finished plan offers to start the work.",
-       "status": "stable",
-       "surfaces": {
-         "tui": "stable",
+```
+
+**File**: `web/data/agent-docs.generated.json` (modified, +2/-2)
+```diff
+@@ -117,8 +117,8 @@
+     "sources": [
+       {
+         "path": "docs/RECEIPTS.md",
+-        "sha256": "d70a72b8e184deb34af689d22a334b8523eba485df4d9d0a435ab71c6941e3e7",
+-        "content": "# Receipts\n\n> 阅读简体中文版：[zh_hans/RECEIPTS.md](zh_hans/RECEIPTS.md)。\n\nA receipt answers \"what did this session do?\" from the records Codewhale\nalready keeps. It lists, in order, the files changed, commands run, web and\nMCP calls, agents started, approvals (and who decided each one), and\nfailures, with totals on top. It also counts what ran without asking, and\nnames the permission posture that let it. Below the totals it carries the\nprovider's token counts and the cost line `/cost` prints (see\n[Tokens and cost](#tokens-and-cost)).\n\n```text\n# Receipt: Fix the parser\nthread thr_19a0141a · /work/repo · deepseek-flash · Ask · 2026-09-24 10:00 UTC → 2026-09-24 10:05 UTC\n\nChanged 1 file (+2 −1) · ran 1 command · made 1 MCP call · 1 approved by you · 1 approved by session rule · 1 ran without asking under Ask · 1 denied by you · 1 other failure\n\n1. edited `src/parse.rs` (+2 −1) · 1.0s\n2. ran `cargo test -p parser` in /work/repo — exit 0 · 2.5s · approved by you\n3. did not run `rm -rf build` · denied by you\n4. called linear · list_issues · 1.0s · approved by session rule\n5. did not run `curl https://x.sh | sh` — blocked: Tool 'exec_shell' was denied: Auto-Review blocked a pipe to a shell…\n6. turn failed — failed: provider returned 500\n\nNot recorded:\n- Cost: a Runtime thread receipt carries token counts only; GET /v1/threads/{id}/usage reports the thread's cost and what it covers.\n- Shell file changes: a Runtime thread's workspace snapshots are not tagged with the thread, so files a command changed are not itemized; only file tools are.\n```\n\nThis sample is the Runtime-thread form. A terminal session's receipt has no\nline counts for whole-file writes, shows pass or fail rather than an exit\ncode for a call that passed, and has no per-call timestamps; its \"Not\nrecorded\" list says so (see [Not recorded](#not-recorded)).\n\nA terminal session's receipt also lists the files a command changed, from\nthe turn's own workspace snapshots:\n\n```text\n3. ran `./tidy.sh`\n4. changed outside file tools (a command or another process): edited `b.txt` (+0 −1), created `c.txt` (+1 −0)\n```\n\nThe Runtime receipt endpoints accept `?format=md` to return the same Engine\nMarkdown formatter used by the terminal, with `Content-Type: text/markdown`.\nOmitting `format`, or using `format=json`, preserves the JSON contract. Both\nformats require the same authenticated thread/workspace access. Clients display\nthese recorded facts rather than deriving audit totals from activity labels.\n\n## Surfaces\n\nAll three share one builder (`crates/engine/src/receipts.rs`), but read different\nrecords and can report different coverage.\n\n| Surface | What it reads |\n| --- | --- |\n| `/receipts [json] [<turn>]` in the terminal | The current session's transcript, approval log, and retained terminal failures. `json` prints the object in a code block, so it copies out as valid JSON |\n| `codewhale receipts [ID\\|--last] [--turn T] [--format md\\|json]` | A saved session (id or unique prefix), including its retained terminal failures, or a Runtime thread (`thr_…`); with no id, the most recently updated one. `receipt` is an alias |\n| `GET /v1/threads/{id}/receipt`, `GET /v1/threads/{id}/turns/{turn_id}/receipt` | A Runtime thread (the app, `codewhale serve`), behind the normal `/v1` bearer boundary |\n\nAll three only read. They never call a provider, run a tool, write a file,\nor change runtime state.\n\nExec runs that offer tools, including `exec --auto`, save a session in every\noutput format, so `codewhale receipts --last` can read their receipts after\nthey finish. Resumed sessions and `--output-format stream-json` runs are also\nsaved. Other answer-only text and `--json` runs are saved only if conversation\ncompaction starts; use `--output-format stream-json` to always keep a session.\n\n`codewhale receipts` reads Runtime threads from the machine's default store\n(`tasks/runtime/`, or `$CODEWHALE_RUNTIME_DIR`). A thread kept in one\nterminal session's own store (`sessions/<id>/runtime/`) is not found by id;\nthe API reads whatever store its server owns.\n\n## Where the facts come from\n\n| Session kind | Record | Holds |\n| --- | --- | --- |\n| Terminal session | `sessions/<id>.json` | Every tool call and its result text, in order; each prompt's `<turn_meta>` names the posture the turn ran under; `turn_outcomes` records terminal turn status and errors |\n| Terminal session | `sessions/<id>/approval_receipts.jsonl` | Every approval ask and decision, with time and who decided |\n| Runtime thread | `tasks/runtime/turns`, `items` | Every tool call with its input, status, start and end time, and structured result (exit code, diff, agent status); each turn's `permission_posture` |\n| Runtime thread | `tasks/runtime/events/<thread>.json
+```
+
+---
+
+### Incident Patch 2: `aa3d4235` (2026-11-11)
+**Commit Message**: fix(acp): a child engine gets no MCP tools from the ACP tool build (CW-7941)
+
+The ordinary tool build drops MCP tools for a child engine. The ACP build now
+does the same: for a child it adds no MCP tool to the catalog or to the turn's
+allow list. No child engine runs an ACP turn today (children use the Child
+profile and ACP turns offer no spawn tool), so this closes a path that cannot
+be reached yet and keeps the two builds from drifting apart.
+
+acp_tool_build_with_mcp becomes pub(super) so the child-host tests can call
+it. The new test child_engine_gets_no_mcp_tools_from_the_acp_tool_build hands
+the same live MCP tool to a root ACP engine (in the catalog, on the allow
+list) and to a child engine (in neither).
+
+Checks on the stack tip (farm, Linux x86_64, cargo nextest; run
+20261111T062016Z-acpplugland-tests-74e101: 97 run, 97 passed, 0 failed):
+- codewhale-engine tests matching acp, host_profile or child_host:
+  40 passed, 0 failed, the new test among them
+- cargo clippy --workspace --all-targets --all-features --locked (CI flags):
+  exit 0, no lint output (run 20261111T062101Z-acpplugland-clippy-4c7ea7)
+Not run: the new test against the build without this change. It asserts on
+th
+
+**File**: `crates/engine/src/core/engine/host_profile.rs` (modified, +6/-2)
+```diff
+@@ -89,7 +89,7 @@ impl Engine {
+         self.acp_tool_build_with_mcp(authority, route, allowed, McpToolState::Disabled)
+     }
+ 
+-    fn acp_tool_build_with_mcp(
++    pub(super) fn acp_tool_build_with_mcp(
+         &self,
+         authority: &TurnAuthority,
+         route: &TurnRouteContext,
+@@ -157,7 +157,11 @@ impl Engine {
+             .unwrap_or_default()
+             .into_iter()
+             .collect();
+-        let mut mcp_tools = mcp.tools().to_vec();
++        let mut mcp_tools = if self.child_host.is_none() {
++            mcp.tools().to_vec()
++        } else {
++            Vec::new()
++        };
+         mcp_tools.sort_by(|a, b| a.name.cmp(&b.name));
+         let mcp_tool_names: Vec<String> = mcp_tools.iter().map(|tool| tool.name.clone()).collect();
+         let allowed = Some(
+```
+
+**File**: `crates/engine/src/core/engine/tests/child_host.rs` (modified, +43/-0)
+```diff
+@@ -179,6 +179,49 @@ async fn child_ceiling_filters_acp_foreground_catalog_without_optional_allow_lis
+     assert!(!dir.path().join("blocked.txt").exists());
+ }
+ 
++#[tokio::test(flavor = "current_thread")]
++async fn child_engine_gets_no_mcp_tools_from_the_acp_tool_build() {
++    let dir = tempdir().unwrap();
++    let _home = crate::test_support::SealedHome::at(dir.path());
++    let (child, _handle, _authority, route) = fixture(dir.path(), None);
++    let (mut root, _root_handle) = Engine::new(
++        EngineConfig {
++            workspace: dir.path().into(),
++            snapshots_enabled: false,
++            memory_enabled: false,
++            ..Default::default()
++        },
++        &route.api_config,
++    );
++    root.host_profile = EngineHostProfile::Acp;
++    let authority =
++        TurnAuthority::from_effective_fields(AppMode::Agent, true, false, true, ApprovalMode::Auto);
++    let live = || McpToolState::Live {
++        tools: vec![api_tool("mcp_fixture_echo")],
++        server_count: 1,
++    };
++    let offered = root.acp_tool_build_with_mcp(&authority, &route, None, live());
++    assert_eq!(offered.mcp_tool_names, ["mcp_fixture_echo"]);
++    assert!(
++        offered
++            .surface
++            .catalog
++            .iter()
++            .any(|tool| tool.name == "mcp_fixture_echo")
++    );
++    assert!(offered.surface.passes_allow_list("mcp_fixture_echo"));
++    let build = child.acp_tool_build_with_mcp(&authority, &route, None, live());
++    assert!(build.mcp_tool_names.is_empty());
++    assert!(
++        !build
++            .surface
++            .catalog
++            .iter()
++            .any(|tool| tool.name == "mcp_fixture_echo")
++    );
++    assert!(!build.surface.passes_allow_list("mcp_fixture_echo"));
++}
++
+ #[tokio::test(flavor = "current_thread")]
+ async fn child_registry_rejects_context_override_identity_before_tool_effect() {
+     let dir = tempdir().unwrap();
+```
+
+---
+
+### Incident Patch 3: `fc78dc86` (2026-11-11)
+**Commit Message**: fix(plugins): replace plugin state on Windows while a plugin UI grant holds the file open (CW-7956)
+
+On Windows, disabling or revoking a plugin whose UI had just been opened was
+refused with 409:
+
+    disabled failed for 'panel': failed to atomically and durably persist
+    ...\runtime\plugins\state.json: Access is denied. (0x80070005)
+
+A plugin UI grant keeps the plugin state file open for up to an hour, so that
+every asset request can prove the state file is still the one the grant was
+minted against. The Windows publication replaced the file with MoveFileExW, and
+Windows refuses that replacement for as long as any handle is open on the
+destination, whatever its share mode. The bounded retry around it was sized for
+a scanner or an ACL pass that lets go within about a second, so it ran out and
+the refusal surfaced. While any grant was live, every state change of every
+plugin was refused, from this process or another: trust, enable, disable,
+revoke and the state prune of an uninstall.
+
+When MoveFileExW answers access denied, publication now opens the hardened
+temporary and falls back to std::fs::rename, which replaces the destination
+with POSIX rename semantics. A reader that share
+
+**File**: `crates/app-server/src/runtime_api/tests/plugin_ui.rs` (modified, +11/-6)
+```diff
+@@ -135,6 +135,11 @@ async fn ui(
+     Ok((status, response.json().await?))
+ }
+ 
++async fn mutate(client: &reqwest::Client, url: String) -> Result<(StatusCode, String)> {
++    let response = client.post(url).send().await?;
++    Ok((response.status(), response.text().await?))
++}
++
+ fn refusal(status: u16, body: &serde_json::Value) -> (u16, String) {
+     (
+         status,
+@@ -370,14 +375,14 @@ async fn plugin_ui_dsh_client_serves_admitted_seats_and_denies_and_revokes() ->
+             .is_client_error()
+     );
+ 
+-    let disabled = client.post(format!("{base}/{name}/disable")).send().await?;
+-    assert_eq!(disabled.status(), StatusCode::OK);
++    let (status, body) = mutate(&client, format!("{base}/{name}/disable")).await?;
++    assert_eq!(status, StatusCode::OK, "{body}");
+     for url in [&asset_url, &route] {
+         let response = client.get(url).header("If-Match", &revision).send().await?;
+         assert_eq!(response.status(), StatusCode::PRECONDITION_FAILED, "{url}");
+     }
+-    let enabled = client.post(format!("{base}/{name}/enable")).send().await?;
+-    assert_eq!(enabled.status(), StatusCode::OK);
++    let (status, body) = mutate(&client, format!("{base}/{name}/enable")).await?;
++    assert_eq!(status, StatusCode::OK, "{body}");
+     let stale = client
+         .get(&asset_url)
+         .header("If-Match", &revision)
+@@ -509,8 +514,8 @@ async fn plugin_ui_native_client_serves_only_the_detail_seat_and_is_revoked() ->
+     let body: serde_json::Value = routed.json().await?;
+     assert_eq!(body["error"]["code"], "plugin_route_not_admitted");
+ 
+-    let revoked = client.post(format!("{base}/{name}/revoke")).send().await?;
+-    assert_eq!(revoked.status(), StatusCode::OK);
++    let (status, body) = mutate(&client, format!("{base}/{name}/revoke")).await?;
++    assert_eq!(status, StatusCode::OK, "{body}");
+     let after = client
+         .get(&asset)
+         .header("If-Match", &revision)
+```
+
+**File**: `crates/plugins/src/registry.rs` (modified, +54/-3)
+```diff
+@@ -1208,7 +1208,7 @@ fn persist_plugin_state_with_directory_sync(
+ #[cfg(windows)]
+ fn persist_plugin_state(mut temporary: tempfile::TempPath, path: &Path) -> Result<(), String> {
+     use std::os::windows::ffi::OsStrExt as _;
+-    use windows::Win32::Foundation::WIN32_ERROR;
++    use windows::Win32::Foundation::{ERROR_ACCESS_DENIED, WIN32_ERROR};
+     use windows::Win32::Storage::FileSystem::{
+         FILE_ATTRIBUTE_NORMAL, FILE_ATTRIBUTE_TEMPORARY, MOVEFILE_REPLACE_EXISTING,
+         MOVEFILE_WRITE_THROUGH, MoveFileExW, SetFileAttributesW,
+@@ -1254,7 +1254,19 @@ fn persist_plugin_state(mut temporary: tempfile::TempPath, path: &Path) -> Resul
+     } {
+         // MoveFileExW reports an HRESULT; the shared classifier reads the
+         // Win32 code it wraps.
+-        let backoff = WIN32_ERROR::from_error(&error).and_then(|code| {
++        let code = WIN32_ERROR::from_error(&error);
++        if code == Some(ERROR_ACCESS_DENIED)
++            && let Ok(Some(source)) = open_existing_regular_file(&temporary_path, true)
++            && fs::rename(&temporary_path, path).is_ok()
++        {
++            temporary.disable_cleanup(true);
++            return source.sync_all().map_err(|error| {
++                format!(
++                    "plugin state was published but its durability could not be confirmed: {error}"
++                )
++            });
++        }
++        let backoff = code.and_then(|code| {
+             codewhale_util::utils::windows_publish_retry_delay(
+                 &std::io::Error::from_raw_os_error(code.0 as i32),
+                 attempt,
+@@ -3060,7 +3072,10 @@ pub fn capture_plugin_state_authority(
+ 
+ #[cfg(test)]
+ mod state_publication_tests {
+-    use super::{PluginStateFile, harden_plugin_state_file, save_state_with_hardener};
++    use super::{
++        PluginStateFile, harden_plugin_state_file, open_existing_regular_file,
++        save_state_with_hardener,
++    };
+ 
+     fn prepare_private_directory(_path: &std::path::Path) {
+         #[cfg(unix)]
+@@ -3093,6 +3108,42 @@ mod state_publication_tests {
+         assert_eq!(entries, [std::ffi::OsString::from("state-鲸.json")]);
+     }
+ 
++    #[test]
++    fn state_publication_replaces_a_stable_file_that_a_reader_still_holds_open() {
++        use std::io::Read as _;
++
++        let directory = tempfile::tempdir().unwrap();
++        prepare_private_directory(directory.path());
++        let state_path = directory.path().join("state.json");
++        std::fs::write(&state_path, b"old-authoritative-state").unwrap();
++        let mut held = open_existing_regular_file(&state_path, false)
++            .unwrap()
++            .unwrap();
++
++        save_state_with_hardener(
++            &state_path,
++            &PluginStateFile::default(),
++            harden_plugin_state_file,
++        )
++        .unwrap();
++
++        let mut published = open_existing_regular_file(&state_path, false)
++            .unwrap()
++            .unwrap();
++        assert!(!codewhale_util::files::same_file(&held, &published).unwrap());
++        let mut superseded = String::new();
++        held.read_to_string(&mut superseded).unwrap();
++        assert_eq!(superseded, "old-authoritative-state");
++        let mut current = String::new();
++        published.read_to_string(&mut current).unwrap();
++        assert!(current.contains("\"schema_version\": 1"));
++        let entries = std::fs::read_dir(directory.path())
++            .unwrap()
++            .map(|entry| entry.unwrap().file_name())
++            .collect::<Vec<_>>();
++        assert_eq!(entries, [std::ffi::OsString::from("state.json")]);
++    }
++
+     #[test]
+     fn failed_temp_hardening_never_publishes_new_plugin_state() {
+         let directory = tempfile::tempdir().unwrap();
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7246** (2026-11-07): chore(deps): bump similar from 3.2.0 to 3.2.1 (@dependabot[bot])
-- **PR #7245** (2026-11-07): chore(deps): bump rusqlite from 0.40.2 to 0.41.1 (@dependabot[bot])
-- **PR #7244** (2026-11-07): chore(deps): bump rmcp from 3.7.0 to 3.8.0 (@dependabot[bot])
-- **PR #7243** (2026-11-07): chore(deps): bump unicode-normalization from 0.1.25 to 0.1.26 (@dependabot[bot])
-- **PR #7242** (2026-11-07): chore(deps): bump actions/setup-java from 4.7.1 to 6.1.0 (@dependabot[bot])
-- **PR #7241** (2026-11-07): chore(deps): bump webpki-roots from 1.0.10 to 1.0.11 (@dependabot[bot])
+- **PR #7286** (closed): chore(catalog): refresh the Models.dev offline seed (@codewhale-agent[bot])
+- **PR #7277** (2026-11-11): feat(app-server,tui): run read-only builtins over the Runtime API (@gaord)
+- **PR #7276** (2026-11-10): fix(engine): match search include globs in linear time (@luochen211)
+- **PR #7275** (2026-11-10): fix: reject negative retry delays at config load instead of panicking on retry (@luochen211)
+- **PR #7273** (2026-11-10): fix(tui): pad and truncate CJK text by display width (@luochen211)
+- **PR #7272** (2026-11-10): chore: remove unreferenced code and stale dead_code allows (@luochen211)
 
 ---
 
@@ -2658,32 +2265,33 @@ Test (all three platforms): three app-server tests.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. engine): Anthropic tool-name encoding, usage-journal headroom, pre-turn watchdog
+## X. receipts): a thread receipt carries tokens only, with no provider-call count (CW
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/engine/src/receipts/tests.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0d1ffc1c`: engine): Anthropic tool-name encoding, usage-journal headroom, pre-turn watchdog, lenient session list. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cdf6dff9`: receipts): a thread receipt carries tokens only, with no provider-call count (CW-8032). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/engine/src/receipts/tests.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **Anthropic and Messages-compatible routes accept any tool name.** Tool names that Anthropic's pattern rejects, such as `web.run` from a loaded tool group, are encoded on the wire and decoded in replies, as the chat and responses routes already did. Before, one such name made every request fail with "tools.N.custom.name: String should match pattern", which stopped sub-agents that had loaded it.
-- **A large sub-agent fan-out no longer exhausts the usage journal.** The per-session limit of live usage receipts rises from 64 to 256, above the workflow ceiling of 128, so a full fan-out keeps its cost receipts instead of running with cost unknown.
-- **A turn that stalls before it starts is now bounded.** The stall watchdog covers the setup before the first model request, so a wedged start is logged, cancelled after 180 seconds with a stated reason, and leaves a stall record instead of waiting silently. A warning names the case where all four blocking-work slots are held. Refs #6184.
-- **One unreadable saved session no longer empties the recent-sessions list.** The launch card and ACP `session/list` show the readable sessions and log the failure. Refs #7095.
-- **Windows uninstall remove
+    assert!(
+        markdown.contains("\nNot recorded:\n- Cost: ")
+            && markdown.contains("\n- Shell file changes:")
+    );
+    assert_eq!(tokens.calls, None);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    assert!(markdown.contains("\nNot recorded:\n- Cost: ")
+        && markdown.contains("\n- Shell file changes:"));
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0d1ffc1c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cdf6dff9` are properly handled with clean fallback behavior.

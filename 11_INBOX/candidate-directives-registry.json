@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T14:43:56.745Z",
+  "last_updated": "2026-11-11T14:56:57.871Z",
   "directives": [
     {
       "id": "CD-001",
@@ -5037,6 +5037,33 @@
       "source_repo": "kube-rs-kube",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-984EAE-bound-watch-startup-with-the-watcher-idl.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-8E0F8F",
+      "directive_title": "receipts): a thread receipt carries tokens only, with no provider-call count (CW",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hmbown-codewhale",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-8E0F8F-receipts-a-thread-receipt-carries-tokens.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-BD76FF",
+      "directive_title": "Perses dashboard gauge percentage unit (#16252)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "gardener-gardener",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-BD76FF-perses-dashboard-gauge-percentage-unit-1.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-03C90D",
+      "directive_title": "disttae): budget transaction workspace batch copies (#32458)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "matrixorigin-matrixone",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-03C90D-disttae-budget-transaction-workspace-bat.md",
       "staged_date": "2026-11-11"
     }
   ]
