@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T16:56:00.340Z",
-  "total_cycles_completed": 8824,
-  "total_learnings_persisted": 8824,
-  "total_rules_promoted": 8684,
+  "last_updated": "2026-11-11T17:13:14.579Z",
+  "total_cycles_completed": 8826,
+  "total_learnings_persisted": 8826,
+  "total_rules_promoted": 8686,
   "history": [
-    {
-      "timestamp": "2026-11-09T18:11:38.259Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T18:16:21.830Z",
-      "repository": "Dicklesworthstone/destructive_command_guard",
-      "learningId": "learn-github-dicklesworthstone-destructive_command_guard",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T21:05:59.404Z",
       "repository": "microsoft/agent-governance-toolkit",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-11T16:56:00.340Z",
       "repository": "metalbear-co/mirrord",
       "learningId": "learn-github-metalbear-co-mirrord",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T17:13:09.827Z",
+      "repository": "unhappychoice/gitlogue",
+      "learningId": "learn-github-unhappychoice-gitlogue",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T17:13:14.579Z",
+      "repository": "microsoft/react-native-windows",
+      "learningId": "learn-github-microsoft-react-native-windows",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

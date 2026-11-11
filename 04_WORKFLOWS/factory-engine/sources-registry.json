@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-11T16:56:05.217Z",
-    "lastVerified": "2026-11-11T16:56:05.217Z",
+    "lastChecked": "2026-11-11T17:13:20.208Z",
+    "lastVerified": "2026-11-11T17:13:20.208Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -363,9 +363,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-11T16:20:27.920Z",
+    "lastChecked": "2026-11-11T17:13:09.550Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-11T16:20:27.920Z"
+    "lastVerified": "2026-11-11T17:13:09.550Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1635,9 +1635,9 @@
   "go-kratos-kratos": {
     "name": "kratos",
     "officialUrl": "https://github.com/go-kratos/kratos",
-    "lastChecked": "2026-11-09T11:16:20.184Z",
+    "lastChecked": "2026-11-11T17:13:02.130Z",
     "revisionIdentifier": "dd0fb7df",
-    "lastVerified": "2026-11-09T11:16:20.184Z"
+    "lastVerified": "2026-11-11T17:13:02.131Z"
   },
   "lunasec-io-lunasec": {
     "name": "lunasec",
@@ -2132,22 +2132,21 @@
     "lastVerified": "2026-11-11T09:27:38.672Z"
   },
   "unhappychoice-gitlogue": {
-    "name": "gitlogue",
+    "name": "unhappychoice/gitlogue",
     "officialUrl": "https://github.com/unhappychoice/gitlogue",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T03:21:30.770Z",
-    "lastVerified": "2026-11-09T03:21:30.770Z",
+    "lastChecked": "2026-11-11T17:12:59.454Z",
+    "lastVerified": "2026-11-11T17:12:59.454Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-unhappychoice-gitlogue",
-    "contentHash": "9a83151b2eab947f9e2bda51ea080f9c00e5e72c05b50ce998cc65ea48edba4d",
+    "contentHash": "3dc7fd1227bb5507f0cbc626f559328e47bd16fb0c9b3c4b1d42a7f884163557",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "195ff5b6"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-fastino-gliner2.5-decide": {
     "name": "fastino/GLiNER2.5-Decide",
@@ -2378,12 +2377,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "mitmproxy-mitmproxy": {
-    "name": "mitmproxy/mitmproxy",
+    "name": "mitmproxy",
     "officialUrl": "https://github.com/mitmproxy/mitmproxy",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-11T10:08:13.045Z",
-    "lastVerified": "2026-11-11T10:08:13.045Z",
+    "lastChecked": "2026-11-11T17:13:04.657Z",
+    "lastVerified": "2026-11-11T17:13:04.657Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mitmproxy-mitmproxy",
@@ -2392,7 +2391,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "af5d1570"
   },
   "oceanbase-oceanbase": {
     "name": "oceanbase",
@@ -4327,9 +4327,9 @@
   "neural-maze-ava-whatsapp-agent-course": {
     "name": "ava-whatsapp-agent-course",
     "officialUrl": "https://github.com/neural-maze/ava-whatsapp-agent-course",
-    "lastChecked": "2026-11-09T09:10:00.553Z",
+    "lastChecked": "2026-11-11T17:13:07.112Z",
     "revisionIdentifier": "338fd687",
-    "lastVerified": "2026-11-09T09:10:00.553Z"
+    "lastVerified": "2026-11-11T17:13:07.112Z"
   },
   "chmln-sd": {
     "name": "sd",
@@ -8520,12 +8520,12 @@
     "officialUrl": "https://github.com/microsoft/react-native-windows",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-07T23:55:20.795Z",
-    "lastVerified": "2026-11-07T23:55:20.795Z",
+    "lastChecked": "2026-11-11T17:13:03.970Z",
+    "lastVerified": "2026-11-11T17:13:03.970Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-react-native-windows",
-    "contentHash": "1c479fb7879cf574de7e3ee1013a050b999eb614a704109e65292682e9984466",
+    "contentHash": "fd0a48d5ccde3a626e875af66de5350e41c75773f80c87536afb207d1bcf7187",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
@@ -10814,9 +10814,9 @@
   "melihandic-deep-in-gsc": {
     "name": "deep-in-gsc",
     "officialUrl": "https://github.com/melihandic/deep-in-gsc",
-    "lastChecked": "2026-11-06T22:06:21.301Z",
+    "lastChecked": "2026-11-11T17:12:57.034Z",
     "revisionIdentifier": "bf8cb859",
-    "lastVerified": "2026-11-06T22:06:21.301Z"
+    "lastVerified": "2026-11-11T17:12:57.034Z"
   },
   "kamgurgul-cpu-info": {
     "name": "kamgurgul/cpu-info",

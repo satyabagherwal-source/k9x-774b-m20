@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-11T16:56:00.345Z",
+  "last_updated": "2026-11-11T17:13:14.582Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4731,14 +4731,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-unhappychoice-gitlogue",
-      "content_hash": "9a83151b2eab947f9e2bda51ea080f9c00e5e72c05b50ce998cc65ea48edba4d",
-      "verified_at": "2026-11-05T22:40:05.019Z",
+      "content_hash": "3dc7fd1227bb5507f0cbc626f559328e47bd16fb0c9b3c4b1d42a7f884163557",
+      "verified_at": "2026-11-11T17:13:09.830Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T22:40:05.019Z"
+      "last_updated": "2026-11-11T17:13:09.830Z"
     },
     "FaridSafi/react-native-gifted-chat": {
       "repository": "FaridSafi/react-native-gifted-chat",
@@ -11346,14 +11346,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-microsoft-react-native-windows",
-      "content_hash": "1c479fb7879cf574de7e3ee1013a050b999eb614a704109e65292682e9984466",
-      "verified_at": "2026-11-07T23:55:22.805Z",
+      "content_hash": "fd0a48d5ccde3a626e875af66de5350e41c75773f80c87536afb207d1bcf7187",
+      "verified_at": "2026-11-11T17:13:14.582Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T23:55:22.805Z"
+      "last_updated": "2026-11-11T17:13:14.582Z"
     },
     "paradedb/paradedb": {
       "repository": "paradedb/paradedb",

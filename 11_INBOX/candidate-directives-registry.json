@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T16:56:20.067Z",
+  "last_updated": "2026-11-11T17:13:20.330Z",
   "directives": [
     {
       "id": "CD-001",
@@ -5255,6 +5255,33 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-26DF2A-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-AC438B",
+      "directive_title": "Merge pull request #260 from unhappychoice/dependabot/cargo/tree-sitter-scala-0.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "unhappychoice-gitlogue",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-AC438B-merge-pull-request-260-from-unhappychoic.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-394739",
+      "directive_title": "GitHub authentication for release source tags (#16592)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "microsoft-react-native-windows",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-394739-github-authentication-for-release-source.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-E785F7",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-E785F7-editor-add-scoped-ios-account-deletion.md",
       "staged_date": "2026-11-11"
     }
   ]

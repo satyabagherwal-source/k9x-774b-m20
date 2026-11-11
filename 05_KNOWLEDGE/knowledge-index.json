@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-11T16:56:00.193Z",
+  "last_updated": "2026-11-11T17:13:14.444Z",
   "total_verified_learnings": 1255,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -44698,14 +44698,19 @@
       "slug": "microsoft-react-native-windows",
       "platform": "github",
       "source_url": "https://github.com/microsoft/react-native-windows",
-      "source_version": "41fef581",
-      "content_hash": "1c479fb7879cf574de7e3ee1013a050b999eb614a704109e65292682e9984466",
+      "source_version": "5ba45344",
+      "content_hash": "fd0a48d5ccde3a626e875af66de5350e41c75773f80c87536afb207d1bcf7187",
       "dossier_path": "07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "crash when rendering zero sized text (#16579)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "GitHub authentication for release source tags (#16592)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -44744,7 +44749,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T23:55:22.686Z",
+      "verified_at": "2026-11-11T17:13:14.414Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -64791,14 +64796,19 @@
       "slug": "unhappychoice-gitlogue",
       "platform": "github",
       "source_url": "https://github.com/unhappychoice/gitlogue",
-      "source_version": "195ff5b6",
-      "content_hash": "9a83151b2eab947f9e2bda51ea080f9c00e5e72c05b50ce998cc65ea48edba4d",
+      "source_version": "b993537c",
+      "content_hash": "3dc7fd1227bb5507f0cbc626f559328e47bd16fb0c9b3c4b1d42a7f884163557",
       "dossier_path": "07_PROJECT_LEARNING/unhappychoice-gitlogue-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/unhappychoice-gitlogue-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Merge pull request #258 from unhappychoice/dependabot/cargo/tree-sitter-scala-0.",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #260 from unhappychoice/dependabot/cargo/tree-sitter-scala-0.",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -64847,7 +64857,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T22:40:04.906Z",
+      "verified_at": "2026-11-11T17:13:09.691Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

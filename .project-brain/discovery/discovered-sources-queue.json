@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-11T16:56:20.077Z",
+  "updated_at": "2026-11-11T17:13:20.328Z",
   "stats": {
-    "total_discovered": 40,
-    "approved_pending_harvest": 27,
+    "total_discovered": 61,
+    "approved_pending_harvest": 48,
     "harvested_count": 0,
     "rejected_count": 13,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 37,
-      "OFFICIAL_DOCUMENTATION": 3
+      "COMMUNITY_AND_EXPERT": 53,
+      "OFFICIAL_DOCUMENTATION": 8
     }
   },
   "sources": {
@@ -802,6 +802,468 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zseven-w-openpencil-learnings.md",
         "fileName": "zseven-w-openpencil-learnings.md"
+      }
+    },
+    "SRC-C52B011A6742": {
+      "id": "SRC-C52B011A6742",
+      "url": "https://github.com/unhappychoice/gitlogue",
+      "title": "https://github.com/unhappychoice/gitlogue",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T17:13:20.309Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/unhappychoice-gitlogue-learnings.md",
+        "fileName": "unhappychoice-gitlogue-learnings.md"
+      }
+    },
+    "SRC-7EEF1F5FB21F": {
+      "id": "SRC-7EEF1F5FB21F",
+      "url": "https://fonts.googleapis.com/css2?family=%24%7BfontFamily.replace%28%2F%5Cs+%2Fg",
+      "title": "https://fonts.googleapis.com/css2?family=%24%7BfontFamily.replace%28%2F%5Cs+%2Fg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T17:13:20.310Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/unhappychoice-gitlogue-learnings.md",
+        "fileName": "unhappychoice-gitlogue-learnings.md"
+      }
+    },
+    "SRC-D291D5066D53": {
+      "id": "SRC-D291D5066D53",
+      "url": "https://github.com/user-attachments/assets/8b36e876-2dcb-48b4-9120-a31a99ba19ff",
+      "title": "https://github.com/user-attachments/assets/8b36e876-2dcb-48b4-9120-a31a99ba19ff",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T17:13:20.311Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/unhappychoice-gitlogue-learnings.md",
+        "fileName": "unhappychoice-gitlogue-learnings.md"
+      }
+    },
+    "SRC-51B988C0C084": {
+      "id": "SRC-51B988C0C084",
+      "url": "https://github.com/user-attachments/assets/076d68fc-6fbc-4e14-a2a6-1e56f796679a",
+      "title": "https://github.com/user-attachments/assets/076d68fc-6fbc-4e14-a2a6-1e56f796679a",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T17:13:20.312Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/unhappychoice-gitlogue-learnings.md",
+        "fileName": "unhappychoice-gitlogue-learnings.md"
+      }
+    },
+    "SRC-44AB58D73CFD": {
+      "id": "SRC-44AB58D73CFD",
+      "url": "https://github.com/user-attachments/assets/2178e63b-fcad-4921-8247-f2c41b7d13dd",
+      "title": "https://github.com/user-attachments/assets/2178e63b-fcad-4921-8247-f2c41b7d13dd",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T17:13:20.312Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/unhappychoice-gitlogue-learnings.md",
+        "fileName": "unhappychoice-gitlogue-learnings.md"
+      }
+    },
+    "SRC-7FE8520A4206": {
+      "id": "SRC-7FE8520A4206",
+      "url": "https://linear.app/unhappychoice/issue/E-688/wrong-words-in-field-displaying-git-actions-commits",
+      "title": "https://linear.app/unhappychoice/issue/E-688/wrong-words-in-field-displaying-git-actions-commits",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T17:13:20.313Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/unhappychoice-gitlogue-learnings.md",
+        "fileName": "unhappychoice-gitlogue-learnings.md"
+      }
+    },
+    "SRC-D2A97A7C0CE0": {
+      "id": "SRC-D2A97A7C0CE0",
+      "url": "https://github.com/rust-lang/crates.io-index",
+      "title": "https://github.com/rust-lang/crates.io-index",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T17:13:20.314Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/unhappychoice-gitlogue-learnings.md",
+        "fileName": "unhappychoice-gitlogue-learnings.md"
+      }
+    },
+    "SRC-C1208CC9314D": {
+      "id": "SRC-C1208CC9314D",
+      "url": "https://github.com/tree-sitter/tree-sitter-scala",
+      "title": "https://github.com/tree-sitter/tree-sitter-scala",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T17:13:20.314Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/unhappychoice-gitlogue-learnings.md",
+        "fileName": "unhappychoice-gitlogue-learnings.md"
+      }
+    },
+    "SRC-1AB4151C878E": {
+      "id": "SRC-1AB4151C878E",
+      "url": "https://github.com/tree-sitter/tree-sitter-scala/releases",
+      "title": "https://github.com/tree-sitter/tree-sitter-scala/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T17:13:20.315Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/unhappychoice-gitlogue-learnings.md",
+        "fileName": "unhappychoice-gitlogue-learnings.md"
+      }
+    },
+    "SRC-DB3E8D3E129D": {
+      "id": "SRC-DB3E8D3E129D",
+      "url": "https://github.com/tree-sitter/tree-sitter-scala/compare/v0.26.7...v0.26.9",
+      "title": "https://github.com/tree-sitter/tree-sitter-scala/compare/v0.26.7...v0.26.9",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T17:13:20.316Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/unhappychoice-gitlogue-learnings.md",
+        "fileName": "unhappychoice-gitlogue-learnings.md"
+      }
+    },
+    "SRC-20B97F2B5566": {
+      "id": "SRC-20B97F2B5566",
+      "url": "https://github.com/microsoft/react-native-windows",
+      "title": "https://github.com/microsoft/react-native-windows",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T17:13:20.321Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md",
+        "fileName": "microsoft-react-native-windows-learnings.md"
+      }
+    },
+    "SRC-49D96D672961": {
+      "id": "SRC-49D96D672961",
+      "url": "https://fburl.com/workplace/4oq3zi07",
+      "title": "https://fburl.com/workplace/4oq3zi07",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T17:13:20.322Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md",
+        "fileName": "microsoft-react-native-windows-learnings.md"
+      }
+    },
+    "SRC-4B1F96EA7D76": {
+      "id": "SRC-4B1F96EA7D76",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/API/UIEvent",
+      "title": "https://developer.mozilla.org/en-US/docs/Web/API/UIEvent",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T17:13:20.323Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md",
+        "fileName": "microsoft-react-native-windows-learnings.md"
+      }
+    },
+    "SRC-C8B985E8A087": {
+      "id": "SRC-C8B985E8A087",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent",
+      "title": "https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T17:13:20.323Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md",
+        "fileName": "microsoft-react-native-windows-learnings.md"
+      }
+    },
+    "SRC-C964CF37276D": {
+      "id": "SRC-C964CF37276D",
+      "url": "https://drafts.csswg.org/cssom-view",
+      "title": "https://drafts.csswg.org/cssom-view",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T17:13:20.324Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md",
+        "fileName": "microsoft-react-native-windows-learnings.md"
+      }
+    },
+    "SRC-6F04819D8CAB": {
+      "id": "SRC-6F04819D8CAB",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/API/PointerEvent",
+      "title": "https://developer.mozilla.org/en-US/docs/Web/API/PointerEvent",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T17:13:20.325Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md",
+        "fileName": "microsoft-react-native-windows-learnings.md"
+      }
+    },
+    "SRC-63ED28B19BBA": {
+      "id": "SRC-63ED28B19BBA",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key",
+      "title": "https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T17:13:20.325Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md",
+        "fileName": "microsoft-react-native-windows-learnings.md"
+      }
+    },
+    "SRC-A68FE00865A2": {
+      "id": "SRC-A68FE00865A2",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/code",
+      "title": "https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/code",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T17:13:20.326Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md",
+        "fileName": "microsoft-react-native-windows-learnings.md"
+      }
+    },
+    "SRC-7E0245E21BD5": {
+      "id": "SRC-7E0245E21BD5",
+      "url": "https://reactnative.dev/docs/backhandler",
+      "title": "https://reactnative.dev/docs/backhandler",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T17:13:20.327Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md",
+        "fileName": "microsoft-react-native-windows-learnings.md"
+      }
+    },
+    "SRC-FD5128E1E54D": {
+      "id": "SRC-FD5128E1E54D",
+      "url": "https://reactnative.dev/docs/dimensions",
+      "title": "https://reactnative.dev/docs/dimensions",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T17:13:20.327Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md",
+        "fileName": "microsoft-react-native-windows-learnings.md"
+      }
+    },
+    "SRC-83067FFCB3D5": {
+      "id": "SRC-83067FFCB3D5",
+      "url": "https://github.com/user-attachments/assets/02d1a173-eac0-4e9d-9335-5c98a37f7e31",
+      "title": "https://github.com/user-attachments/assets/02d1a173-eac0-4e9d-9335-5c98a37f7e31",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T17:13:20.328Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md",
+        "fileName": "microsoft-react-native-windows-learnings.md"
       }
     }
   }

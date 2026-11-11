@@ -8989,3 +8989,5 @@ Every entry in this ledger must capture:
 | `learn-github-goharbor-harbor` | `https://github.com/goharbor/harbor` | `fac9abd1` | Multi-dimensional audit evidence | 2026-11-11T16:55:57.487Z |
 | `learn-github-metalbear-co-mirrord` | `https://github.com/metalbear-co/mirrord` | `f28032b1` | Multi-dimensional audit evidence | 2026-11-11T16:56:00.334Z |
 | `learn-dom-d-62e0908d` | `project://goharbor-harbor` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/goharbor-harbor-learnings.md` | 2026-11-11T16:56:20.049Z |
+| `learn-github-unhappychoice-gitlogue` | `https://github.com/unhappychoice/gitlogue` | `b993537c` | Multi-dimensional audit evidence | 2026-11-11T17:13:09.821Z |
+| `learn-github-microsoft-react-native-windows` | `https://github.com/microsoft/react-native-windows` | `5ba45344` | Multi-dimensional audit evidence | 2026-11-11T17:13:14.562Z |

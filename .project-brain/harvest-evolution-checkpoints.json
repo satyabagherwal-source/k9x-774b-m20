@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T16:56:20.077Z",
+  "last_updated": "2026-11-11T17:13:20.334Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-11T16:43:08.691Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-11T16:56:20.068Z",
+      "processed_at": "2026-11-11T17:13:20.331Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -436,9 +436,19 @@
       "processed_at": "2026-11-11T16:56:20.049Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "unhappychoice-gitlogue-learnings.md": {
+      "processed_at": "2026-11-11T17:13:20.305Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "microsoft-react-native-windows-learnings.md": {
+      "processed_at": "2026-11-11T17:13:20.321Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 108,
+  "total_dossiers_evaluated": 111,
   "total_canonical_promoted": 17,
-  "total_staged_for_review": 88
+  "total_staged_for_review": 91
 }

@@ -3073,10 +3073,10 @@
     "repository": "unhappychoice/gitlogue",
     "platform": "github",
     "sourceUrl": "https://github.com/unhappychoice/gitlogue",
-    "sourceVersion": "195ff5b6",
+    "sourceVersion": "b993537c",
     "license": "ISC",
-    "contentHash": "9a83151b2eab947f9e2bda51ea080f9c00e5e72c05b50ce998cc65ea48edba4d",
-    "lastHarvestedAt": "2026-11-05T22:40:05.011Z",
+    "contentHash": "3dc7fd1227bb5507f0cbc626f559328e47bd16fb0c9b3c4b1d42a7f884163557",
+    "lastHarvestedAt": "2026-11-11T17:13:09.821Z",
     "learningId": "learn-github-unhappychoice-gitlogue"
   },
   "faridsafi-react-native-gifted-chat": {
@@ -7533,10 +7533,10 @@
     "repository": "microsoft/react-native-windows",
     "platform": "github",
     "sourceUrl": "https://github.com/microsoft/react-native-windows",
-    "sourceVersion": "41fef581",
+    "sourceVersion": "5ba45344",
     "license": "NOASSERTION",
-    "contentHash": "1c479fb7879cf574de7e3ee1013a050b999eb614a704109e65292682e9984466",
-    "lastHarvestedAt": "2026-11-07T23:55:22.791Z",
+    "contentHash": "fd0a48d5ccde3a626e875af66de5350e41c75773f80c87536afb207d1bcf7187",
+    "lastHarvestedAt": "2026-11-11T17:13:14.562Z",
     "learningId": "learn-github-microsoft-react-native-windows"
   },
   "paradedb-paradedb": {
