@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "e2ade2a2",
+    "sourceVersion": "b9fd2de0",
     "license": "Apache-2.0",
-    "contentHash": "2f9cd8ef1e743dc75c68653843ad75dc94fedaf6811d98e66184395452896b82",
-    "lastHarvestedAt": "2026-11-11T06:33:49.999Z",
+    "contentHash": "f837496e5a1478d6d5298a1414714e2048238e524961a60956569f9657c85dd5",
+    "lastHarvestedAt": "2026-11-11T16:35:58.437Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -2893,10 +2893,10 @@
     "repository": "FalkorDB/FalkorDB",
     "platform": "github",
     "sourceUrl": "https://github.com/FalkorDB/FalkorDB",
-    "sourceVersion": "56d00c3d",
+    "sourceVersion": "eaa238ef",
     "license": "NOASSERTION",
-    "contentHash": "896e1bd5aed43e548a2afe76de3e5025aa2094d950660a71a7b58b4c566e7bb0",
-    "lastHarvestedAt": "2026-11-09T02:34:38.171Z",
+    "contentHash": "e3a3ada39ca1b020b9ba7be58aad703b0c82f6b4875d5a4de5cd13e35946f7ee",
+    "lastHarvestedAt": "2026-11-11T16:35:51.612Z",
     "learningId": "learn-github-falkordb-falkordb"
   },
   "feathersjs-feathers": {
@@ -7103,10 +7103,10 @@
     "repository": "pingcap/tidb",
     "platform": "github",
     "sourceUrl": "https://github.com/pingcap/tidb",
-    "sourceVersion": "71c0fd6f",
+    "sourceVersion": "32a53ec1",
     "license": "Apache-2.0",
-    "contentHash": "53cf39edf60c6ffd3a1fd7b3302b0474135e7c59025f766f444cdb0c285a9c81",
-    "lastHarvestedAt": "2026-11-09T10:02:56.742Z",
+    "contentHash": "7fb28f5c0b9f55f7b5fb6dd064669e46eb80c9856b5ad09221b78799b5c7e754",
+    "lastHarvestedAt": "2026-11-11T16:36:02.983Z",
     "learningId": "learn-github-pingcap-tidb"
   },
   "neondatabase-neon": {
@@ -7453,10 +7453,10 @@
     "repository": "NativeScript/NativeScript",
     "platform": "github",
     "sourceUrl": "https://github.com/NativeScript/NativeScript",
-    "sourceVersion": "07e84ec5",
+    "sourceVersion": "36a88dd6",
     "license": "MIT",
-    "contentHash": "c129df187d13695d90c57ab7e973c33118084f55a839d7fac4d21257c5365818",
-    "lastHarvestedAt": "2026-11-04T23:06:19.591Z",
+    "contentHash": "f54260707cf7aef4fbca63c6f639eb8bee6ac9d10bdc0924b412991c117d09a1",
+    "lastHarvestedAt": "2026-11-11T16:35:59.576Z",
     "learningId": "learn-github-nativescript-nativescript"
   },
   "oramasearch-orama": {

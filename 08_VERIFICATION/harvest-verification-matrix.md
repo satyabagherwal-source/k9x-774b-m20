@@ -8971,3 +8971,7 @@
 | `CYCLE-20261111-GZQA` | `2026-11-11T16:11:47.554Z` | `cachix/devenv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`741d6ef2...`) |
 | `CYCLE-20261111-SDDK` | `2026-11-11T16:20:38.456Z` | `emberstack/kubernetes-reflector` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8ccbe2df...`) |
 | `CYCLE-20261111-SHOO` | `2026-11-11T16:20:44.040Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4d4d8b52...`) |
+| `CYCLE-20261111-BXYX` | `2026-11-11T16:35:51.609Z` | `FalkorDB/FalkorDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e3a3ada3...`) |
+| `CYCLE-20261111-C38I` | `2026-11-11T16:35:58.434Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`f837496e...`) |
+| `CYCLE-20261111-C445` | `2026-11-11T16:35:59.573Z` | `NativeScript/NativeScript` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f5426070...`) |
+| `CYCLE-20261111-C6QS` | `2026-11-11T16:36:02.980Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7fb28f5c...`) |

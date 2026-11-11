@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/falkordb-falkordb-learnings.md`  
 > **Source**: github ([https://github.com/FalkorDB/FalkorDB](https://github.com/FalkorDB/FalkorDB))  
-> **Source Version**: `56d00c3d`  
+> **Source Version**: `eaa238ef`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T02:34:37.161Z  
+> **Timestamp**: 2026-11-11T16:35:43.507Z  
 > **Learning ID**: `learn-github-falkordb-falkordb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/falkordb-falkordb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/FalkorDB/FalkorDB](https://github.com/FalkorDB/FalkorDB))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T02:34:36.925Z  
+> **Harvest Timestamp**: 2026-11-11T16:35:43.276Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A super fast Graph Database uses GraphBLAS under the hood for its sparse adjacency matrix graph representation. Our goal is to provide the best Knowledge Graph for LLM (GraphRAG).
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 10499 stars
+- **Stars / Engagement**: 10511 stars
 
 ---
 
@@ -1262,492 +1262,1422 @@ print("bgsave status", r.info('persistence')['rdb_last_bgsave_status'])
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8312750b` (2026-11-08)
-**Commit Message**: fix: bound SET/REMOVE property chains and nested FOREACH in the parser (#2900)
+### Incident Patch 1: `874b6d87` (2026-11-11)
+**Commit Message**: fix(module): load on Valkey by repairing environ under RTLD_DEEPBIND (#3494)
 
-* fix: bound SET/REMOVE property chains and nested FOREACH in the parser
+* fix(module): repair environ under RTLD_DEEPBIND so the module loads on Valkey
 
-`SET n.a.a.a... = 1`, `REMOVE n.a.a.a...` and nested `FOREACH` were built
-outside the depth guards added in #2533, so a few kilobytes of either
-overflowed the stack and took the server down. The property chain is now
-charged against MAX_TREE_DEPTH step by step, and a nested FOREACH goes
-through `nested()` like `CALL {}`.
+Valkey dlopen()s modules with RTLD_DEEPBIND. When valkey-server
+copy-relocates environ (e.g. Ubuntu's package), the module and libomp
+bind to libc's original environ, which stays NULL, and libomp
+segfaults in omp_init_lock during GxB_init. Sync the module's environ
+with the executable's before GraphBLAS starts libomp; a no-op on Redis.
 
-Closes #2895
+Closes #3493
 
-Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+Co-authored-by: Copilot App <[REDACTED_EMAIL]>
 
-* fix: charge a SET/REMOVE target's own height even without a property chain (#2900)
+* ci: smoke-test the engine under Ubuntu's valkey-server
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Loads the built module into a real valkey-server, runs queries, an
+index and BGSAVE, and fails on a crash. Ubuntu's package is used
+because it copy-relocates environ; the official valkey images do not
+and would not catch #3493.
 
----------
+Co-authored-by: Copilot App <[REDACTED_EMAIL]>
 
-Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+* fix(module): address review on Valkey environ fix and smoke test
 
-**File**: `graph/src/parser/cypher.rs` (modified, +71/-25)
+- Gate sync_deepbind_environ to Linux; macOS dylibs must not reference
+  environ directly and RTLD_DEEPBIND is glibc-only.
+- valkey-cli -e so server error replies fail the smoke test.
+- Fail if BGSAVE is still in progress after polling.
+
+
+**File**: `graph/src/env_snapshot.rs` (added, +103/-0)
 ```diff
-@@ -3338,18 +3338,8 @@ impl<'a> Parser<'a> {
-         set_items: &mut Vec<SetItem<Arc<String>, Arc<String>>>,
-     ) -> Result<(), String> {
-         loop {
--            let (mut expr, recurse) = self.parse_primary_expr(false)?;
--            if recurse {
--                self.reject_unparenthesized_target(&expr)?;
--                expr = self.parse_expr(false)?;
--                match_token!(self.lexer, RParen);
--                self.expect_property_after_paren()?;
--            }
--            if self.lexer.current()? == Token::Dot {
--                while self.lexer.current()? == Token::Dot {
--                    self.lexer.next();
--                    expr = self.parse_property_lookup(expr)?;
--                }
-+            let (expr, has_properties) = self.parse_update_target()?;
-+            if has_properties {
-                 match_token!(self.lexer, Equal);
-                 let value = Arc::new(self.parse_expr(false)?);
-                 set_items.push(SetItem::Attribute {
-@@ -3389,6 +3379,37 @@ impl<'a> Parser<'a> {
-         }
-     }
- 
-+    /// Parses what a `SET` or `REMOVE` item updates: an expression followed
-+    /// by an optional `.prop.prop...` chain, reporting whether a chain was
-+    /// present.
-+    ///
-+    /// Each lookup wraps the tree before it, so the chain is charged against
-+    /// [`Self::MAX_TREE_DEPTH`] step by step, as the postfix chain in
-+    /// [`Self::parse_expr_inner`] is: otherwise `n.a.a.a...` builds a tree
-+    /// the binder overflows its stack walking, quadratically slowly.
-+    fn parse_update_target(&mut self) -> Result<(DynTree<ExprIR<Arc<String>>>, bool), String> {
-+        let ((mut expr, recurse), child_height) =
-+            self.with_child_height(|s| s.parse_primary_expr(false))?;
-+        let mut height = child_height + Self::PRIMARY_LEVELS;
-+        if recurse {
-+            self.reject_unparenthesized_target(&expr)?;
-+            expr = self.parse_expr(false)?;
-+            height = self.expr_height;
-+            match_token!(self.lexer, RParen);
-+            self.expect_property_after_paren()?;
+@@ -0,0 +1,103 @@
++//! Owned, process-lifetime copies of a C `environ` array.
++//!
++//! The module repairs libc's `environ` when a server loads it with
++//! `RTLD_DEEPBIND` and copy-relocates `environ` (issue #3493); see
++//! `sync_deepbind_environ` in the module crate. The copy lives here, apart
++//! from the loader-specific lookup, so it can be unit-tested on any platform.
++
++use std::ffi::{CStr, c_char};
++
++/// Deep-copy a NULL-terminated `char **` environment and leak the copy.
++///
++/// Both the pointer array and every string are fresh allocations that are
++/// never freed, so the result stays valid whatever later happens to `src`: a
++/// `setenv` that `realloc`s the array, or a `putenv` caller freeing its buffer
++/// after `unsetenv`. A NULL `src` yields an empty environment (a lone NULL).
++///
++/// # Safety
++///
++/// `src` must be NULL or point to a NULL-terminated array of pointers to
++/// NUL-terminated strings, none of which is modified or freed during the call.
++#[must_use]
++pub unsafe fn leak_deep_copy(src: *const *mut c_char) -> *mut *mut c_char {
++    let mut len = 0;
++    // SAFETY: the caller guarantees `src` is NULL or NULL-terminated.
++    while !src.is_null() && unsafe { !(*src.add(len)).is_null() } {
++        len += 1;
++    }
++    let mut copy: Vec<*mut c_char> = Vec::with_capacity(len + 1);
++    for i in 0..len {
++        // SAFETY: `i < len`, so the entry is a non-NULL pointer to a
++        // NUL-terminated string, per the caller's contract.
++        let entry = unsafe { CStr::from_ptr(*src.add(i)) };
++        copy.push(entry.to_owned().into_raw());
++    }
++    copy.push(std::ptr::null_mut());
++    Box::leak(copy.into_boxed_slice()).as_mut_ptr()
++}
++
++#[cfg(test)]
++mod tests {
++    use super::*;
++    use std::ffi::CString;
++
++    /// Read a NULL-terminated `char **` back into owned strings.
++    unsafe fn read(env: *mut *mut c_char) -> Vec<String> {
++        let mut out = Vec::new();
++        let mut i = 0;
++        // SAFETY: `env` came from `leak_deep_copy`, which NULL-terminates it.
++        while unsafe { !(*env.add(i)).is_null() } {
++            out.push(
++                unsafe { CStr::from_ptr(*env.add(i)) }
++                    .to_str()
++                    .unwrap()
++                    .to_owned(),
++            );
++            i += 1;
 +        }
-+        // The target itself may already be too tall, with no lookup to charge.
-+        self.check_depth(height)?;
-+        let has_properties = self.lexer.current()? == Token::Dot;
-+        while self.lexer.current()? == Token::Dot {
-+            self.lexer.next();
-+            expr = self.parse_property_lookup(expr)?;
-+            height += 1;
-+            self.check_depth(height)?;
-+        }
-+        Ok((expr, has_properties))
++        out
 +    }
 +
-     /// A `SET`/`REMOVE` target that opens a nested expression may only open
-     /// it with `(`: an open list literal would otherwise be dropped and its
-     /// first element read as the target, so `SET [n).x = 5` set `n.x`.
-@@ -3434,18 +3455,8 @@ impl<'a> Parser<'a> {
-         remove_items: &mut Vec<QueryExpr<Arc<String>>>,
-     ) -> Result<(), String> {
-         loop {
--            let (mut expr, recurse) = self.parse_primary_expr(false)?;
--            if recurse {
--                self.reject_unparenthesized_target(&expr)?;
--                expr = self.parse_expr(false)?;
--                match_token!(self.lexer, RParen);
--                self.expect_property_after_paren()?;
--            }
--            if self.lexer.current()? == Token::Dot {
--                while self.lexer.current()? == Token::Dot {
--                    self.lexer.next();
--                    expr = self.parse_property_lookup(expr)?;
--                }
-+            let (mut expr, has_properties) = self.parse_update_target()?;
-+            if has_properties {
-                 remove_items.push(Arc::new(expr));
-             } else if self.lexer.current()? == Token::Colon {
-                 expr = tree!(
-@@ -3524,7 +3535,9 @@ impl<'a> Parser<'a> {
-                     ..
-                 } => {
-                     self.lexer.next();
--                    body.push(self.parse_foreach_clause()?);
-+                    // A nested FOREACH recurses like `CALL {}` does, so it is
-+                    // bounded the same way.
-+                    body.push(self.nested(Self::parse_foreach_clause)?);
-                 }
-                 _ => break,
-             }
-@@ -3701,6 +3714,23 @@ mod tests {
-                 "map projection",
-                 format!("MATCH (a) RETURN {}a{{.k}}{}", "[".repeat(n), "]".repeat(n)),
-             ),
-+            // Clauses that build expressions or recurse outside parse_expr.
-+            (
-+                "set property chain",
-+                format!("MATCH (n) SET n{} = 1", ".a".repeat(n)),
-+            ),
-+            (
-+                "remove property chain",
-+                format!("MATCH (n) REMOVE n{}", ".a".repeat(n)),
-+            ),
-+            (
-+                "foreach",
-+                format!(
-+                    "{}CREATE (){}",
-+                    "FOREACH (x IN [1] | ".repeat(n),
-+                    ")".repeat(n)
-+                ),
-+            ),
-         ];
-         // The same nesting an ex
-```
-
-**File**: `tests/test_e2e.py` (modified, +14/-0)
-```diff
-@@ -1863,6 +1863,20 @@ def test_deep_expression_nesting_is_rejected():
-     assert query("RETURN 1").result_set == [[1]]
- 
- 
-+def test_deep_clause_nesting_is_rejected():
-+    # SET/REMOVE property chains and nested FOREACH were built outside the
-+    # expression parser's depth guard, so a few kilobytes of either overflowed
-+    # the stack and took the server down. They must come back as errors.
-+    n = 5000
-+    for q in [
-+        f"MATCH (n) SET n{'.a' * n} = 1",
-+        f"MATCH (n) REMOVE n{'.a' * n}",
-+        f"{'FOREACH (x IN [1] | ' * n}CREATE (){')' * n}",
-+    ]:
-+        query_exception(q, "Query nesting exceeds")
-+        assert query("RETURN 1").result_set == [[1]]
++    #[test]
++    fn null_source_is_empty() {
++        let copy = unsafe { leak_deep_copy(std::ptr::null()) };
++        assert!(unsafe { read(copy) }.is_empty());
++    }
 +
++    #[test]
++    fn empty_source_is_empty() {
++        let src = [std::ptr::null_mut::<c_char>()];
++        let copy = unsafe { leak_deep_copy(src.as_ptr()) };
++        assert!(unsafe { read(copy) }.is_empty());
++    }
 +
- def test_index():
-     res = query(
-         "UNWIND range(1, 100000) AS x CREATE (n:Node {vi: x, vs: tostring(x)})",
-```
-
----
-
-### Incident Patch 2: `3643a301` (2026-11-08)
-**Commit Message**: fix: accept a list or map subscript as a WHERE predicate (#3270)
-
-* fix: accept a list or map subscript as a WHERE predicate
-
-`expr_may_return_boolean` listed `GetElement` with the node kinds that can
-never be boolean, so `WHERE n.flags[0]` failed with "Expected boolean
-predicate". A subscript returns whatever the element is; leave it to the
-runtime type check, as for properties and variables, and as C does.
-
-Closes #3261
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* fix: reject a non-boolean list-comprehension predicate instead of skipping it
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `graph/src/planner/binder.rs` (modified, +4/-3)
-```diff
-@@ -2343,19 +2343,19 @@ impl Binder {
-             // that used to reach the runtime.
-             ExprIR::Case { .. } => true,
- 
--            // Non-boolean: literals, unary arithmetic, subscript, list comprehension
-+            // Non-boolean: literals, unary arithmetic, slice, list comprehension
-             ExprIR::List
-             | ExprIR::Map
-             | ExprIR::MapProjection
-             | ExprIR::Negate
-             | ExprIR::Length
--            | ExprIR::GetElement
-             | ExprIR::GetElements
-             | ExprIR::ListComprehension(_)
-             | ExprIR::PatternComprehension(_)
-             | ExprIR::NestedPlan(_) => false,
- 
--            // Boolean literals, comparisons, predicates, and runtime-typed nodes
-+            // Boolean literals, comparisons, predicates, and runtime-typed
-+            // nodes (a subscript returns whatever the element is)
-             ExprIR::Eq
-             | ExprIR::Neq
-             | ExprIR::Lt
-@@ -2376,6 +2376,7 @@ impl Binder {
-             | ExprIR::Variable(_)
-             | ExprIR::Parameter(_)
-             | ExprIR::Property(_)
-+            | ExprIR::GetElement
-             | ExprIR::ShortestPath(_)
-             | ExprIR::Pattern(_) => true,
- 
-```
-
-**File**: `graph/src/runtime/eval.rs` (modified, +7/-1)
-```diff
-@@ -1075,7 +1075,13 @@ impl<'a> ExprEval<'a> {
-                             row.insert(var, value);
-                             match self.eval_node(&node.child(1), Some(&row), agg_group_key)? {
-                                 Value::Bool(true) => {}
--                                _ => continue,
-+                                Value::Bool(false) | Value::Null => continue,
-+                                value => {
-+                                    return Err(format!(
-+                                        "Type mismatch: expected Boolean but was {}",
-+                                        value.name()
-+                                    ));
-+                                }
-                             }
-                             acc.push(self.eval_node(&node.child(2), Some(&row), agg_group_key)?);
-                         }
-```
-
-**File**: `tests/flow/test_filters.py` (modified, +33/-0)
-```diff
-@@ -262,3 +262,36 @@ def test09_case_value_form_null_subject(self):
-             "MATCH (n:K) RETURN head([CASE n.missing WHEN null THEN 'matched' ELSE 'else' END]) AS v")
-         self.env.assertEqual(columnar.result_set, per_row.result_set)
-         self.env.assertEqual(columnar.result_set, [['else']] * 5)
++    #[test]
++    fn copies_entries_in_order() {
++        let a = CString::new("A=1").unwrap();
++        let b = CString::new("KMP_BLOCKTIME=0").unwrap();
++        let src = [
++            a.as_ptr().cast_mut(),
++            b.as_ptr().cast_mut(),
++            std::ptr::null_mut(),
++        ];
++        let copy = unsafe { leak_deep_copy(src.as_ptr()) };
++        assert_eq!(unsafe { read(copy) }, ["A=1", "KMP_BLOCKTIME=0"]);
++    }
 +
-+    def test10_subscript_as_predicate(self):
-+        # a subscript returns whatever the element is, so it is accepted as a
-+        # predicate and its type is checked at runtime, as in C
-+        # https://github.com/FalkorDB/FalkorDB/issues/3261
-+        g = self.db.select_graph("subscript_predicate")
-+        g.query("CREATE (:N {flags: [true, false]}), (:N {flags: [false]}), (:N)")
-+
-+        for query, expected in [
-+            ("MATCH (n:N) WHERE n.flags[0] RETURN count(n)", [[1]]),
-+            ("MATCH (n:N) WHERE NOT n.flags[0] RETURN count(n)", [[1]]),
-+            ("WITH [true] AS l WHERE true AND l[0] RETURN 1", [[1]]),
-+            ("WITH {a: true} AS m WHERE m['a'] RETURN 1", [[1]]),
-+            ("WITH [null] AS l WHERE l[0] RETURN count(*)", [[0]]),
-+        ]:
-+            self.env.assertEqual(g.query(query).result_set, expected, depth=1)
-+
-+        for query, error in [
-+            # a non-boolean element is a runtime type error
-+            ("WITH [1] AS l WHERE l[0] RETURN 1",
-+             "Type mismatch: expected Boolean but was Integer"),
-+            # a comprehension's predicate is checked the same way, not skipped
-+            ("WITH [[1]] AS lists RETURN [l IN lists WHERE l[0] | l]",
-+             "Type mismatch: expected Boolean but was Integer"),
-+            # a slice is always a list, never a predicate
-+            ("WITH [true] AS l WHERE l[0..1] RETURN 1",
-+             "Expected boolean predicate"),
-+        ]:
-+            try:
-+                g.query(query)
-+                self.env.assertTrue(False, depth=1)
-+            except redis.ResponseError as e:
-+                self.env.assertContains(error, str(e), depth=1)
++    /// The copy owns its strings and array: freeing or overwriting the
++    /// source afterwards (as `unsetenv` + `free` of a `putenv` buffer, or a
++    /// `setenv` realloc, would) must not change what the copy reads.
++    #[test]
++    fn survives_source_being_freed_and_overwritten() {
++        let a = CString::new("PUTENV_OWNED=yes").unwrap().into_raw();
++        let b = CString::new("B=2").unwrap();
++        let mut src = vec![a, b.as_ptr().cast_mut(), std::ptr::null_mut()];
++        let copy = unsafe { leak_deep_copy(src.as_ptr()) };
++        assert_ne!(unsafe { *copy }, a, "strings must be copied, not borrowed");
++        assert_ne!(copy, src.as_mut_ptr(), "the array must be copied");
++        drop(unsafe { CString::from_raw(a) });
++        src[0] = std::ptr::null_mut();
++        drop(src);
++        assert_eq!(unsafe { read(copy) }, ["PUTENV_OWNED=yes", "B=2"]);
++    }
++}
 ```
 
-**File**: `tests/flow/test_reduce.py` (modified, +3/-2)
+**File**: `graph/src/lib.rs` (modified, +2/-0)
 ```diff
-@@ -158,7 +158,8 @@ def test_nested_reduction(self):
-         self.env.assertEqual(self.graph.query(q).result_set, [[1]])
+@@ -66,12 +66,14 @@
+ //! - [`storage`]: Shared storage seam (per-store backend registry; an in-memory
+ //!   backend by default, an alternate backend swapped in by a statically-linked add-on)
+ //! - [`entity_type`]: Node and relationship entity type discriminator
++//! - [`env_snapshot`]: Owned copies of a C `environ` array (Valkey `RTLD_DEEPBIND` repair)
+ //! - [`identifier_limits`]: Maximum accepted length of an identifier
+ //! - [`threadpool`]: Thread pool for parallel query execution
+ //! - [`udf`]: User-defined function registration and dispatch
  
-         # the shadowed form is still a non-boolean expression in a WHERE
--        # clause, so it must be rejected rather than evaluated
-+        # clause, so it must be rejected; the subscript is type-checked at
-+        # runtime, as in C (https://github.com/FalkorDB/FalkorDB/issues/3261)
-         self.graph.query("CREATE (:Node)")
-         q = """MATCH (n)
-                WHERE [x IN [0] | reduce(s=0, x IN [0] | s + reduce(s=0, x IN [0] | s + 1))][0]
-@@ -167,7 +168,7 @@ def test_nested_reduction(self):
-             self.graph.query(q)
-             self.env.assertTrue(False)
-         except ResponseError as e:
--            self.env.assertContains("Expected boolean predicate", str(e))
-+            self.env.assertContains("Type mismatch: expected Boolean but was Integer", str(e))
- 
-         # the server survived and the outer scope is uncorrupted
-         self.env.assertEqual(self.graph.query("RETURN 1").result_set, [[1]])
+ pub mod effects;
+ pub mod entity_type;
++pub mod env_snapshot;
+ pub mod graph;
+ pub mod identifier_limits;
+ pub mod index;
 ```
 
----
-
-### Incident Patch 3: `56d00c3d` (2026-11-08)
-**Commit Message**: fix: parse a chained unary minus such as `RETURN - -5` (#2309) (#3525)
-
-* fix: parse a chained unary minus such as `RETURN - -5` (#2309)
-
-The unary level of the expression parser read one optional `+` and then one
-optional `-`, so any further sign was "Invalid input Dash". It now reads the
-whole run of signs and, as the NOT level does, folds it by parity to one or two
-Negates, so the operand is still type-checked (`- -'a'` is a type mismatch, as
-in C) and `--9223372036854775808` stays i64::MIN.
-
-Parameter values keep C's rule of one sign at most: `CYPHER x=--1` is still
-refused, now by evaluate_param.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* fix: refuse a run of signs in a CYPHER parameter value, as before
-
-parse_expr folds a run of signs to its parity, so the evaluate_param guard
-for a negated negation missed --- and --9223372036854775808. Check the sign
-run in the parameter parser instead, before it is folded.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* fix: apply the legacy sign restriction to every level of a CYPHER parameter
-
-Moves the check from the parameter root into the unary-sign parse, behind a
-flag set while a parameter is parsed as an expressio
-
-**File**: `graph/src/parser/cypher.rs` (modified, +81/-14)
+**File**: `proofs/redis_layer/COVERAGE.tsv` (modified, +13/-11)
 ```diff
-@@ -220,6 +220,10 @@ pub struct Parser<'a> {
-     /// with everything else that decides whether the attempt can succeed.
-     /// See [`Parser::parse_list_literal_or_comprehension`].
-     not_pattern_comprehension: HashSet<PatternComprehensionAttempt>,
-+    /// Set while a `CYPHER` parameter value is parsed as an expression: a sign run
-+    /// is then limited to what the grammar took before runs parsed (`+`, `-` or
-+    /// `+-`), at every nesting level, since the parser folds a run to its parity.
-+    legacy_signs: bool,
+@@ -163,17 +163,19 @@ src/query_session.rs	Gil::acquire	502	PROVEN	QuerySession.gilAcquire: gil_nested
+ src/query_session.rs	Gil::drop	525	PROVEN	QuerySession.gilDrop: gil_stack, gil_out_of_order
+ src/query_session.rs	lock_gil	546	AXIOMATISED	RM_ThreadSafeContextLock/Unlock + FreeThreadSafeContext (Redis API); QuerySession.Ev.gilLock/gilUnlock
+ src/query_session.rs	release_gil	559	AXIOMATISED	RM_ThreadSafeContextLock/Unlock + FreeThreadSafeContext (Redis API); QuerySession.Ev.gilLock/gilUnlock
+-src/module_init.rs	pthread_atfork	91	AXIOMATISED	libc pthread_atfork declaration
+-src/module_init.rs	on_fork_child	118	PROVEN	ModuleInit.forkChildAborts: fork_gc_never_aborts, fork_all_synced
+-src/module_init.rs	graph_init	139	PROVEN	ModuleInit.graphInitArgs (args → apply_module_args; Err ⇒ Status::Err): graphInitArgs_refuses; LoadArgs.rust_c_same_accept; table_defaults_in_range; historical pre3328_* (W4-redis-3 / #3268, fixed by #3328)
+-src/module_init.rs	info_func	423	PROVEN	ModuleInit.infoSections: info_normal
+-src/module_init.rs	on_flush	438	PROVEN	ModuleInit.onFlush: onFlush_id
+-src/module_init.rs	on_shutdown	465	PROVEN	ModuleInit.onShutdown: onShutdown_flusher_first, onShutdown_no_teardown_under_a_left_worker, onShutdown_without_native_index
+-src/module_init.rs	on_role_change	466	PROVEN	ModuleInit.onRoleChange: onRoleChange_promote, onRoleChange_demote
+-src/module_init.rs	enforce_pending_constraints_after_promotion	496	PROVEN	ModuleInit.pendingPerGraph: pending_only_uc
+-src/module_init.rs	on_replica_change	564	PROVEN	ModuleInit.onReplicaChange: onReplicaChange_latches
+-src/module_init.rs	on_loading	576	PROVEN	ModuleInit.onLoading: onLoading_only_end
+-src/module_init.rs	on_keyspace_event	597	PROVEN	ModuleInit.onKeyspace: rename_pair, rename_to_alone, other_event
++src/module_init.rs	pthread_atfork	97	AXIOMATISED	libc pthread_atfork declaration
++src/module_init.rs	on_fork_child	124	PROVEN	ModuleInit.forkChildAborts: fork_gc_never_aborts, fork_all_synced
++src/module_init.rs	sync_deepbind_environ	160	NOT COVERED	Linux-only; not modelled. Bound to ld.so/libc: dlopen(NULL) + dlsym("environ"), then points libc's own environ at graph::env_snapshot::leak_deep_copy of that array. CI reaches only its no-op return; the snapshot path runs only under a valkey-server that copy-relocates environ (#3493).
++graph/src/env_snapshot.rs	leak_deep_copy	22	NOT COVERED	Not modelled. Deep-copies a NULL-terminated char** (array and strings) and leaks it; unit-tested in env_snapshot::tests (NULL, empty, order, source freed after copy)
++src/module_init.rs	graph_init	205	PROVEN	ModuleInit.graphInitArgs (args → apply_module_args; Err ⇒ Status::Err): graphInitArgs_refuses; LoadArgs.rust_c_same_accept; table_defaults_in_range; historical pre3328_* (W4-redis-3 / #3268, fixed by #3328)
++src/module_init.rs	info_func	502	PROVEN	ModuleInit.infoSections: info_normal
++src/module_init.rs	on_flush	517	PROVEN	ModuleInit.onFlush: onFlush_id
++src/module_init.rs	on_shutdown	530	PROVEN	ModuleInit.onShutdown: onShutdown_flusher_first, onShutdown_no_teardown_under_a_left_worker, onShutdown_without_native_index
++src/module_init.rs	on_role_change	554	PROVEN	ModuleInit.onRoleChange: onRoleChange_promote, onRoleChange_demote
++src/module_init.rs	enforce_pending_constraints_after_promotion	584	PROVEN	ModuleInit.pendingPerGraph: pending_only_uc
++src/module_init.rs	on_replica_change	651	PROVEN	ModuleInit.onReplicaChange: onReplicaChange_latches
++src/module_init.rs	on_loading	663	PROVEN	ModuleInit.onLoading: onLoading_only_end
++src/module_init.rs	on_keyspace_event	684	PROVEN	ModuleInit.onKeyspace: rename_pair, rename_to_alone, other_event
+ src/telemetry.rs	truncate	34	PROVEN	Telemetry.truncate: truncate_short, truncate_len, truncate_prefix
+ src/telemetry.rs	truncate_arc	50	PROVEN	Telemetry.truncateArc: truncateArc_eq
+ src/telemetry.rs	stream_name	66	PROVEN	Telemetry.streamName: streamName_key_name, streamName_inj, streamName_nul, stream_same_slot, stream_other_slot
+```
+
+**File**: `src/module_init.rs` (modified, +65/-0)
+```diff
+@@ -141,6 +141,67 @@ unsafe extern "C" fn on_fork_child() {
+     }
  }
  
- /// Where and in what context [`Parser::parse_list_literal_or_comprehension`]
-@@ -283,6 +287,7 @@ impl<'a> Parser<'a> {
-             max_child_height: 0,
-             forbidden_pattern_comprehension: None,
-             not_pattern_comprehension: HashSet::new(),
-+            legacy_signs: false,
-         }
-     }
- 
-@@ -437,7 +442,12 @@ impl<'a> Parser<'a> {
-             return Ok(value);
-         }
-         self.restore_state(state);
--        evaluate_param(&self.parse_expr(false)?.root())
-+        // `parse_expr` folds a run of signs to its parity, so `---1` would come out
-+        // accepted: a parameter keeps the sign grammar it had before runs parsed.
-+        self.legacy_signs = true;
-+        let expr = self.parse_expr(false);
-+        self.legacy_signs = false;
-+        evaluate_param(&expr?.root())
-     }
- 
-     /// Reads a literal: `null`, a boolean, a number, a string, a list, a map,
-@@ -2226,21 +2236,43 @@ impl<'a> Parser<'a> {
-                     }
-                     stack.push((current + 1, None, 0));
-                 } else if current == 9 {
--                    // unary add or subtract
--                    optional_match_token!(self.lexer, Plus);
--                    let is_negate = optional_match_token!(self.lexer, Dash);
--
--                    // Handle integer overflow with negation
--                    if is_negate && let Err(err) = self.lexer.current() {
--                        return Err(err.replace("Integer overflow '", "Integer overflow '-"));
-+                    // unary add or subtract, any run of them: `- -5` is 5
-+                    let mut negate_count = 0;
-+                    let mut plus_count = 0;
-+                    loop {
-+                        match self.lexer.current() {
-+                            Ok(token @ (Token::Plus | Token::Dash))
-+                                if self.legacy_signs
-+                                    && (negate_count > 0
-+                                        || plus_count > 0 && matches!(token, Token::Plus)) =>
-+                            {
-+                                return Err(self
-+                                    .lexer
-+                                    .format_error(&format!("Invalid input {token:?}")));
-+                            }
-+                            Ok(Token::Plus) => plus_count += 1,
-+                            Ok(Token::Dash) => negate_count += 1,
-+                            // Handle integer overflow with negation
-+                            Err(err) if negate_count > 0 => {
-+                                return Err(
-+                                    err.replace("Integer overflow '", "Integer overflow '-")
-+                                );
-+                            }
-+                            _ => break,
-+                        }
-+                        self.lexer.next();
-                     }
- 
--                    let (res, height) = if is_negate {
--                        (Some(tree!(ExprIR::Negate)), 1)
-+                    // Negate type-checks its operand, so `- -x` is not `x`.
-+                    // A longer run still folds, keeping its parity, as NOT's
-+                    // does: to one Negate, or to two the operand is placed under.
-+                    if negate_count == 0 {
-+                        stack.push((current, None, 0));
-                     } else {
--                        (None, 0)
--                    };
--                    stack.push((current, res, height));
-+                        for _ in 0..(2 - negate_count % 2) {
-+                            stack.push((current, Some(tree!(ExprIR::Negate)), 1));
-+                        }
-+                    }
-                     stack.push((current + 1, None, 0));
-                 } else {
-                     // primary expression
-@@ -4024,6 +4056,27 @@ mod tests {
-         }
-     }
- 
-+    // Regression (#2309): a run of signs parsed only its first `+` and `-`, so
-+    // `- -5` was "Invalid input Dash". It folds to one or two Negates by parity.
-+    #[test]
-+    fn chained_unary_signs_parse() {
-+        with_functions();
-+        for query in [
-+            "RETURN - -5",
-+            "RETURN --5",
-+            "RETURN - - -5",
-+            "RETURN -+5",
-+            "RETURN +-+-5",
-+            "RETURN --9223372036854775808",
-+        ] {
-+            assert!(Parser::new(query).parse().is_ok(), "{query}");
++/// Point this module's view of `environ` at a snapshot of the live environment.
++///
++/// Valkey `dlopen`s modules with `RTLD_DEEPBIND`, so the module and its
++/// dependencies (notably libomp) bind `environ` to libc's own definition
++/// before the global scope. When the server executable copy-relocates
++/// `environ` (Ubuntu's valkey-server package does), libc's startup code and
++/// `setenv` only ever update that copy, leaving libc's original NULL. libomp
++/// iterates `environ` directly during its first initialization and segfaults
++/// on the NULL.
++///
++/// When both views are already the same object (Redis, or a valkey-server
++/// without the copy relocation) this is a no-op. Valkey passes
++/// `RTLD_DEEPBIND` only on glibc and FreeBSD (musl ignores it), and macOS
++/// dylibs must not reference `environ` directly. FalkorDB ships only for
++/// Linux and macOS, so the helper exists only on Linux.
++#[cfg(target_os = "linux")]
++unsafe fn sync_deepbind_environ() {
++    unsafe extern "C" {
++        static mut environ: *mut *mut libc::c_char;
++    }
++    unsafe {
++        // `dlopen(NULL)` searches the global scope starting at the executable,
++        // which yields the copy-relocated `environ` that libc keeps updated.
++        let main = libc::dlopen(std::ptr::null(), libc::RTLD_NOW | libc::RTLD_NOLOAD);
++        if main.is_null() {
++            return;
 +        }
-+        let err = Parser::new("RETURN - -99999999999999999999")
-+ 
++        let live = libc::dlsym(main, c"environ".as_ptr()).cast::<*mut *mut libc::c_char>();
++        libc::dlclose(main);
++        let ours = &raw mut environ;
++        if live.is_null() || live == ours {
++            return;
++        }
++        // Install an owned, leaked snapshot rather than aliasing `*live`: the
++        // live array is typically the one glibc's `setenv` allocated, so a
++        // later `setenv` (e.g. libomp registering itself) may `realloc` it and
++        // leave `*ours` dangling. Copy the strings too: a `putenv` caller owns
++        // its buffer and may free it after `unsetenv`, so borrowing it could
++        // leave the snapshot pointing at freed memory.
++        let snapshot = graph::env_snapshot::leak_deep_copy(*live);
++        // The snapshot is a point-in-time view: a later `setenv` updates only
++        // the executable's copy, so code that scans `environ` directly (e.g.
++        // `std::env::vars()`) will not see it. That includes every other
++        // module the server loaded with `RTLD_DEEPBIND`, since they share
++        // libc's `environ`; they saw NULL before, so this is still an
++        // improvement. `getenv`/`std::env::var` go through libc and are
++        // unaffected. libomp only needs it once, at init.
++        //
++        // SAFETY: `ours` points to libc's `char **environ`; this runs on the
++        // main thread during module load. At startup no other thread reads
++        // it. Under a runtime `MODULE LOAD`, a thread of an earlier
++        // DEEPBIND-loaded module could read it concurrently; that is a single
++        // aligned pointer store, so it sees either the old or the new array,
++        // both NULL-terminated. `*live` and its strings are only read here.
++        // The snapshot owns both the pointer array and every string, all
++        // leaked, so it stays valid for the life of the process whatever a
++        // later `setenv`, `putenv` or `unsetenv` does to the live environment.
++        *ours = snapshot;
++    }
++}
++
+ pub fn graph_init(
+     ctx: &Context,
+     args: &[redis_module::RedisString],
+@@ -209,6 +270,10 @@ pub fn graph_init(
+         if RediSearch_SetDefaultScorer(c"TFIDF".as_ptr()) != REDISMODULE_OK as c_int {
+             ctx.log_warning("Failed to set RediSearch default scorer to TFIDF");
+         }
++        // Must run after the `KMP_*` `set_var` calls above and before
++        // GraphBLAS starts libomp, which reads `environ` once at init.
++        #[cfg(target_os = "linux")]
++        sync_deepbind_environ();
+         if let Err(err) = init(
+             RedisModule_Alloc,
+             RedisModule_Calloc,
 ```
 
-**File**: `tests/test_overflow_crashes.py` (modified, +15/-0)
+---
+
+### Incident Patch 2: `7472d6a8` (2026-11-10)
+**Commit Message**: feat(index): CREATE INDEX returns before the index is built; a background builder fills it (#3585)
+
+* fix(threadpool): a bounded shutdown keeps the workers it left behind
+
+`ThreadPool::shutdown_within` detached a worker still running a job when
+the time ran out, so a second call found no workers and reported that
+every one had exited. It now keeps them: a later call waits for them
+again, reports them while their jobs run, and joins them once the jobs
+return.
+
+The index builder (#2355) stops its pool this way at shutdown, and calls
+it again when the pool restarts.
+
+* feat(index): a background builder runs each Building index's batches
+
+The builder runs the indexer batches of every `Building` index, in every
+graph, on a pool of its own (`online_build`). It keeps one chain of turns
+per index, so no two batches ever run on one index, and indexes build side
+by side. A turn takes one batch on a new build version of the published
+one with no lock held, then publishes it through the graph's host with
+`commit_indexer_batch`, which decides how it goes in. The chain goes on
+until the index is `Ready`.
+
+A host registers a `BuildHost` with each graph. `read` gives the
+published version, loaded 
+
+**File**: `graph/src/graph/graph.rs` (modified, +77/-0)
 ```diff
-@@ -80,6 +80,21 @@ def test_unary_minus_normal_values_still_work():
-     assert res.result_set == [[-5, 7, -1.25, None]]
+@@ -4184,13 +4184,23 @@ impl Graph {
+         }
+     }
  
++    /// Whether the planner may answer `label.field` from an index of `index_type`.
++    ///
++    /// Under `index-falkordb` a Range lookup is the native column's alone, and the column is part
++    /// of this version: it serves once its build is done. RediSearch's readiness lives in its
++    /// index map, which every version shares, so it says nothing about this version's column, and
++    /// a version without the column must not plan a lookup it cannot answer.
+     #[must_use]
+     pub fn is_indexed(
+         &self,
+         label: &Arc<String>,
+         field: &Arc<String>,
+         index_type: &IndexType,
+     ) -> bool {
++        #[cfg(feature = "index-falkordb")]
++        if *index_type == IndexType::Range {
++            return self.falkordb_index.is_ready(EntityType::Node, label, field);
++        }
+         self.node_indexer.is_label_indexed(label, field, index_type)
+     }
  
-+def test_chained_unary_minus():
-+    # Regression (#2309): a sign applied to an already-signed operand was
-+    # rejected with "Invalid input Dash". C folds any run of signs.
-+    res = common.g.query(
-+        "RETURN - -5, --5, - - -5, -+5, +-5, ++5, - -1.5, - -NULL")
-+    assert res.result_set == [[5, 5, -5, -5, -5, 5, 1.5, None]]
-+    res = common.g.query("RETURN --9223372036854775808, - - 9223372036854775807")
-+    assert res.result_set == [[-9223372036854775808, 9223372036854775807]]
-+    res = common.g.query("UNWIND [0, 1, 2] AS x WITH x WHERE x > - -1 RETURN x")
-+    assert res.result_set == [[2]]
-+    # Two negations still type-check the operand, as one does.
-+    with pytest.raises(ResponseError, match="Type mismatch"):
-+        common.g.query("RETURN - -'a'")
+@@ -4281,13 +4291,20 @@ impl Graph {
+             .is_some_and(|value| scan_filter.matches(&value))
+     }
+ 
++    /// The relationship counterpart of [`Self::is_indexed`].
+     #[must_use]
+     pub fn is_edge_indexed(
+         &self,
+         label: &Arc<String>,
+         field: &Arc<String>,
+         index_type: &IndexType,
+     ) -> bool {
++        #[cfg(feature = "index-falkordb")]
++        if *index_type == IndexType::Range {
++            return self
++                .falkordb_index
++                .is_ready(EntityType::Relationship, label, field);
++        }
+         self.edge_indexer.is_label_indexed(label, field, index_type)
+     }
+ 
+@@ -4475,15 +4492,75 @@ impl Graph {
+         let mut infos = self.node_indexer.index_info();
+         for info in &mut infos {
+             info.entity_type = String::from("NODE");
++            #[cfg(feature = "index-falkordb")]
++            self.add_native_build(EntityType::Node, info);
+         }
+         let mut edge_infos = self.edge_indexer.index_info();
+         for info in &mut edge_infos {
+             info.entity_type = String::from("RELATIONSHIP");
++            #[cfg(feature = "index-falkordb")]
++            self.add_native_build(EntityType::Relationship, info);
+         }
+         infos.extend(edge_infos);
+         infos
+     }
+ 
++    /// Under `index-falkordb`, `info`'s label is under construction while any of its Range
++    /// attributes' native columns is `Building` in this version: each such column counts as
++    /// pending. The progress shown is the label's build as a whole, out of the label's or type's
++    /// entities, as C shows it: the least any of those columns has read, or what RediSearch has
++    /// populated of another of the label's fields (a fulltext or vector one) if that is less. The
++    /// label's or type's entities are counted once, and only while one of its columns builds.
++    #[cfg(feature = "index-falkordb")]
++    fn add_native_build(
++        &self,
++        entity: EntityType,
++        info: &mut IndexInfo,
++    ) {
++        let mut building: Option<(i32, u64)> = None;
++        for attr in &info.field_order {
++            let range = info
++                .fields
++                .get(attr)
++                .is_some_and(|fields| fields.iter().any(|f| f.ty == IndexType::Range));
++            if range
++                && let Some(read) = self.falkordb_index.building_read(entity, &info.label, attr)
++            {
++                building = Some(
++                    building.map_or((1, read), |(columns, least)| (columns + 1, least.min(read))),
++                );
++            }
++        }
++        let Some((columns, least)) = building else {
++            return;
++        };
++        let total = self.native_build_total(entity, &info.label);
++        let done = least.min(total);
++        // RediSearch reports what it has populated while it has a field pending.
++        info.progress = if info.pending > 0 {
++            done.min(info.progress)
++        } else {
++            done
++        };
++        info.pending += columns;
++        info.total = total;
++    }
 +
++    /// The entities of `label`, or of relationship type `label`: what a build's progress is out of.
++    #[cfg(feature = "index-falkordb")]
++    fn native_build_total(
++        &self,
++        entity: EntityType,
++        label: &Arc<String>,
++    ) -> u64 {
++        match entity {
++            EntityType::Node => self.get_label_matrix(label).map_or(0, |lm| lm.nvals()),
++            EntityType::Relationship => self
++                .get_relationship_matrix(label)
++                .map_or(0, |t| t.edge_count()),
++        }
++    }
 +
- def test_range_normal_values_still_work():
-     res = common.g.query("RETURN range(1, 5)")
-     assert res.result_set == [[[1, 2, 3, 4, 5]]]
+     // ── Constraint management ─────────────────────────────────────────
+ 
+     #[must_use]
+```
+
+**File**: `graph/src/graph/graph/falkordb_index_tests.rs` (modified, +1268/-21)
+```diff
+@@ -2,26 +2,37 @@
+ //! and checks the index column it should have changed. The build's tests drive indexer batches
+ //! between writes.
+ 
+-use super::{Graph, NodeId, RelationshipId};
++use super::{Graph, NodeId, Plan, RelationshipId};
+ use crate::entity_type::EntityType;
+ use crate::graph::mvcc_graph::{CommitError, MvccGraph};
+ use crate::index::Field;
+ use crate::index::falkordb::encode::encode_numeric;
+ use crate::index::falkordb::falkordb_index::{BuildCursor, IndexColumn, IndexKey};
+ use crate::index::falkordb::graph_writes;
++use crate::index::falkordb::online_build::{
++    self, BuildHost, Builder, Job, LocalHost, Sizing, Step,
++};
+ use crate::index::falkordb::versioned::{
+     BuildState, CatchUp, Discarded, IndexId, IndexerCommit, PreparedBatch, REFRESH_COST,
+     VersionedIndex,
+ };
+ use crate::index::index_docs::IndexDocs;
+-use crate::index::{IndexQuery, IndexType};
++use crate::index::{IndexInfo, IndexQuery, IndexType};
++use crate::locks::WriteEscalation;
++use crate::planner::IR;
++use crate::runtime::functions::init_functions;
+ use crate::runtime::orderset::OrderSet;
++use crate::runtime::runtime::Runtime;
+ use crate::runtime::value::Value;
++use orx_tree::{Dfs, NodeRef};
+ use roaring::RoaringTreemap;
+ use rustc_hash::FxHashMap;
+ use std::collections::{BTreeMap, BTreeSet, HashMap};
+ use std::ffi::CString;
+-use std::sync::Arc;
++use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
++use std::sync::{Arc, Weak, mpsc};
++use std::thread;
++use std::time::{Duration, Instant};
+ 
+ /// Run one graph write with its own [`IndexDocs`] and apply its native-index changes straight
+ /// away, the way each write call changed the index before they were batched. Tests that check
+@@ -125,15 +136,13 @@ fn new_version_isolates_the_falkordb_index() {
+     assert_eq!(writer.version, committed.version + 1);
+ }
+ 
+-/// CREATE INDEX builds the column from real graph state: three
+-/// `:Person {age}` nodes, then a range scan returns the right ids in
+-/// `(value, id)` order. The column is built by one indexer batch over every node
+-/// (its `get_label_matrix` → `get_node_attribute_by_idx` reads), so it is
+-/// `Ready` and serves reads when CREATE INDEX returns. Drives the native half of
+-/// `Graph::create_index` directly, bypassing the RediSearch FFI (uninitialised
+-/// in a unit test).
++/// CREATE INDEX leaves the column `Building`, its cursor at the start, for the background builder:
++/// the planner does not use it, and a read that reaches it is told to scan. Once indexer batches
++/// have built it from real graph state (three `:Person {age}` nodes), it is `Ready`, the planner
++/// uses it, and a range scan returns the right ids in `(value, id)` order. Drives the native half
++/// of `Graph::create_index` directly, bypassing the RediSearch FFI (uninitialised in a unit test).
+ #[test]
+-fn create_index_builds_the_column_from_live_nodes() {
++fn create_index_leaves_the_node_column_to_its_batches() {
+     ensure_graphblas();
+     let mut g = Graph::new(64, 64, 10, 1, "t");
+     let label = Arc::new("Person".to_string());
+@@ -166,19 +175,38 @@ fn create_index_builds_the_column_from_live_nodes() {
+     }
+     applied!(g, |w| g.set_nodes_attributes(&attrs, &mut w)).unwrap();
+ 
+-    // Build the index numeric column from the live nodes.
+     graph_writes::create_index(
+         &mut g,
+         &IndexType::Range,
+         EntityType::Node,
+         &label,
+         std::slice::from_ref(&attr),
+     );
++    assert_eq!(
++        cursor(&g, EntityType::Node, &label, &attr),
++        Some(BuildCursor::new(EntityType::Node)),
++        "CREATE INDEX takes no batch"
++    );
++    assert!(
++        !g.is_indexed(&label, &attr, &IndexType::Range),
++        "the planner does not use a Building column"
++    );
++    assert!(
++        matches!(
++            g.falkordb_index
++                .query_numeric(EntityType::Node, &label, &eq(&attr, 20)),
++            Some(Err(_))
++        ),
++        "a read that reaches a Building column scans"
++    );
++
++    assert_eq!(build_to_end(&mut g, 2), 2, "two batches of two nodes");
+     assert_eq!(
+         g.falkordb_index
+             .column_state(EntityType::Node, &label, &attr),
+         Some(BuildState::Ready)
+     );
++    assert!(g.is_indexed(&label, &attr, &IndexType::Range));
+     assert!(
+         matches!(
+             g.falkordb_index
+@@ -242,11 +270,11 @@ fn rdb_load_populate_builds_each_column() {
+     );
+ }
+ 
+-/// The edge counterpart: CREATE INDEX on a relationship type builds its column from the live
+-/// edges, a multi-edge pair included, in one indexer batch dispatched to the edge column, so it is
+-/// `Ready` and serves reads when CREATE INDEX returns, and holds what a one-pass build does.
++/// The edge counterpart: CREATE INDEX on a relationship type leaves its column `Building`, and
++/// indexer batches dispatched to the edge column build it from the live edges, a multi-edge pair
++/// included, into what a one-pass build holds. Until then the planner does not use it.
+ #[test]
+-fn create
+```
+
+**File**: `graph/src/graph/mvcc_graph.rs` (modified, +33/-14)
+```diff
+@@ -72,6 +72,8 @@ use thiserror::Error;
+ 
+ use crate::graph::graph::{Graph, NodeOpError};
+ #[cfg(feature = "index-falkordb")]
++use crate::index::falkordb::online_build;
++#[cfg(feature = "index-falkordb")]
+ use crate::index::falkordb::versioned::{IndexerCommit, PreparedBatch};
+ 
+ /// MVCC coordinator for concurrent graph access.
+@@ -106,17 +108,17 @@ impl MvccGraph {
+         e: u64,
+         cache_size: usize,
+         name: &str,
+-    ) -> Self {
++    ) -> Arc<Self> {
+         Self::from_graph(Graph::new(n, e, cache_size, 0, name))
+     }
+ 
+     /// Create an `MvccGraph` from an already-constructed `Graph`.
+     /// Used by the RDB load path.
+     #[must_use]
+-    pub fn from_graph(graph: Graph) -> Self {
+-        Self {
++    pub fn from_graph(graph: Graph) -> Arc<Self> {
++        Arc::new(Self {
+             graph: ArcSwap::from_pointee(graph),
+-        }
++        })
+     }
+ 
+     /// The published version. Takes no lock.
+@@ -188,10 +190,11 @@ impl MvccGraph {
+     /// A refusal needs no cleanup: nothing was taken, and the refused version
+     /// is dropped.
+     ///
+-    /// Takes `&self`: publishing is a compare-and-swap of the published
++    /// Takes a shared reference: publishing is a compare-and-swap of the published
+     /// pointer. The caller holds the host's global lock, which keeps commits
+     /// apart and the swap out of the way of the host forking (#452); it needs no
+-    /// per-graph lock.
++    /// per-graph lock. It takes the `Arc` the graph lives in so that it can hand each background
++    /// index build it starts a weak handle to it ([`Arc::downgrade`]).
+     ///
+     /// # Errors
+     ///
+@@ -200,12 +203,23 @@ impl MvccGraph {
+     /// a host publishing without the global lock lets that happen),
+     /// [`CommitError::Invalid`] if [`Graph::validate`] refuses it.
+     pub fn commit(
+-        &self,
++        self: &Arc<Self>,
+         mut fork: Graph,
+     ) -> Result<Arc<Graph>, CommitError> {
+         let published = self.graph.load_full();
+         Self::prepare(&published, &mut fork, true)?;
+-        self.publish(&published, Arc::new(fork))
++        // The indexes to build, asked of the version this one replaces before it is replaced.
++        #[cfg(feature = "index-falkordb")]
++        let to_build = fork.indexes_to_build_since(&published);
++        let version = self.publish(&published, Arc::new(fork))?;
++        // Each `Building` index this version brings in, new or created again, starts its build: a
++        // job per generation, started only by the commit that brings it in, so a commit made during
++        // the build, an indexer batch's included, starts nothing.
++        #[cfg(feature = "index-falkordb")]
++        for (id, generation) in to_build {
++            online_build::enqueue(Arc::downgrade(self), id, generation);
++        }
++        Ok(version)
+     }
+ 
+     /// Commit an indexer batch. `prepared` is a build version of a published one
+@@ -220,27 +234,32 @@ impl MvccGraph {
+     ///   `prepared`'s copy, or the batch, without them, is inserted into the published copy. The
+     ///   result goes into a new build version of the published one, which is published
+     ///   ([`Graph::caught_up_onto`]);
++    /// - writers, and catching up would do more than `batch`'s limit allows
++    ///   ([`PreparedBatch::limit_catch_up`]): nothing is published
++    ///   ([`CatchUpTooLarge`](crate::index::falkordb::versioned::Discarded::CatchUpTooLarge)), and
++    ///   the index's next batch starts from its published cursor;
+     /// - `batch`'s index was dropped or created again, or another batch committed on the same
+     ///   index: nothing is published, and the index's next batch starts from its published cursor.
+-    ///   Another batch on the index is a bug in the builder's one chain per index
+-    ///   ([`AnotherBatch`](crate::index::falkordb::versioned::Discarded::AnotherBatch)), which the
+-    ///   caller reports.
++    ///   Another batch on the index is a bug in the builder's one job per generation
++    ///   ([`AnotherBatch`](crate::index::falkordb::versioned::Discarded::AnotherBatch)), which
++    ///   leaves nothing wrong.
+     ///
+     /// The commit changes no graph data and keeps the data version, so it does not make a writer's
+     /// fork stale ([`Self::is_stale`]).
+     ///
+     /// The caller holds the host's global lock, as a writer does to publish; it needs no
+     /// per-graph lock. The fit is made against the published version this commit loads, and the
+-    /// version is published over that one: a batch that writers overtook is caught up, not
+-    /// refused.
++    /// version is published over that one: a batch that writers overtook is caught up, or, if that
++    /// would do more than its limit allows, discarded; it is never refused as stale
++    /// ([`CommitError::Stale`]) for being overtaken.
+     ///
+     /// # Errors
+     ///
+     /// [`CommitError::Invalid`] if [`Graph::validate`] refuses the version, [`CommitError::Stale`]
+     /// if another
+```
+
+**File**: `graph/src/index/falkordb/falkordb_index.rs` (modified, +36/-5)
+```diff
+@@ -318,7 +318,7 @@ impl VersionedIndex for IndexColumn {
+         place: impl Fn(u64) -> Option<BuildCursor>,
+         (removes, adds): &mut (EncodedTuples, EncodedTuples),
+     ) {
+-        if let BuildState::Building { next, written } = state {
++        if let BuildState::Building { next, written, .. } = state {
+             written.by_this_version.extend(log.iter().map(|w| w.id));
+             let next = *next;
+             // A batch reads an entity at or above the cursor when it reaches it, so its
+@@ -640,8 +640,8 @@ impl FalkorDbIndex {
+ 
+     /// Create an empty numeric column in the `Building` state, its cursor at the start, replacing
+     /// any existing one. Indexer batches fill it from the start, live writes keep the part below
+-    /// the cursor current, and reads fall through to RediSearch until the last batch flips it
+-    /// `Ready`.
++    /// the cursor current, and a read it would serve scans instead ([`ScanFilter`]) until the last
++    /// batch flips it `Ready`.
+     pub fn create_building(
+         &mut self,
+         entity: EntityType,
+@@ -768,6 +768,33 @@ impl FalkorDbIndex {
+             .contains_key(&(label.clone(), attr.clone()))
+     }
+ 
++    /// Whether column `(entity, label, attr)` exists and is `Ready`: whether this version's index
++    /// serves reads on it. A `Building` column answers with a [`ScanFilter`] instead.
++    #[must_use]
++    pub fn is_ready(
++        &self,
++        entity: EntityType,
++        label: &Arc<String>,
++        attr: &Arc<String>,
++    ) -> bool {
++        self.entry(entity, label, attr)
++            .is_some_and(|entry| !entry.is_building())
++    }
++
++    /// How many entities column `(entity, label, attr)`'s batches have read
++    /// ([`BuildState::Building`]), or `None` if the column is `Ready` or does not exist.
++    pub(crate) fn building_read(
++        &self,
++        entity: EntityType,
++        label: &Arc<String>,
++        attr: &Arc<String>,
++    ) -> Option<u64> {
++        match self.entry(entity, label, attr)?.state {
++            BuildState::Building { read, .. } => Some(read),
++            BuildState::Ready => None,
++        }
++    }
++
+     /// Ready this version to be published: each index's sets of written entities are settled
+     /// ([`IndexEntry::publish`]).
+     pub(crate) fn publish(&mut self) {
+@@ -988,8 +1015,8 @@ impl FalkorDbIndex {
+         })
+     }
+ 
+-    /// Whether any column is still `Building`.
+-    #[cfg(test)]
++    /// Whether any column is still `Building`. Walks the columns' states without hashing a name,
++    /// so a per-write check that only matters during a build costs next to nothing outside one.
+     #[must_use]
+     pub(crate) fn has_building_columns(&self) -> bool {
+         self.node_columns
+@@ -1185,6 +1212,8 @@ mod tests {
+                 name: (Node, column.clone()),
+                 work: tuples,
+                 next,
++                read: 3,
++                catch_up_limit: None,
+             }
+         };
+         let next = BuildCursor::Node(NodeId::from(3));
+@@ -1704,6 +1733,8 @@ mod tests {
+             name: (Node, (label.clone(), attr.clone())),
+             work,
+             next: Some(BuildCursor::Node(NodeId::from(11))),
++            read: 11,
++            catch_up_limit: None,
+         }));
+         assert_eq!(
+             idx.numeric(Node, &label, &attr)
+```
+
+**File**: `graph/src/index/falkordb/graph_writes.rs` (modified, +16/-14)
+```diff
+@@ -382,17 +382,15 @@ pub fn edges_deleted(
+ 
+ // ---- Index DDL ----
+ 
+-/// CREATE INDEX: build each attribute's column from the live graph, so the index serves reads as
+-/// soon as CREATE INDEX returns. Only a Range index has native columns; any other type does
+-/// nothing.
++/// CREATE INDEX: create each attribute's column `Building`, its cursor at the start, and leave it to
++/// the background builder ([`online_build`](super::online_build)), which the commit that publishes
++/// the column hands it to. Until its last batch flips it `Ready`, the column serves no reads: the
++/// planner does not use it ([`Graph::is_indexed`]), and `db.indexes()` reports the index under
++/// construction. Only a Range index has native columns; any other type does nothing.
+ ///
+-/// Each column is created `Building` and filled by one indexer batch with no limit on its size
+-/// ([`Graph::indexer_prepare`]), which reaches the end and flips it `Ready`. A batch into an empty
+-/// column bulk-builds its tree, so this costs what building the column in one pass does.
+-///
+-/// Built here on the write thread, with the graph borrowed. It is never built through the
+-/// RediSearch populate, which reaches the graph through the `Indexer`'s back-pointer. This index
+-/// is part of the graph version, and keeping that reference out is the point.
++/// The column is never built through the RediSearch populate, which reaches the graph through the
++/// `Indexer`'s back-pointer. This index is part of the graph version, and keeping that reference
++/// out is the point.
+ pub fn create_index(
+     g: &mut Graph,
+     index_type: &IndexType,
+@@ -402,13 +400,15 @@ pub fn create_index(
+ ) {
+     if *index_type == IndexType::Range {
+         for attr in attrs {
+-            build_in_one_batch(g, entity, label, attr);
++            g.falkordb_index.create_building(entity, label, attr);
+         }
+     }
+ }
+ 
+ /// Create column `(entity, label, attr)` `Building`, replacing any column there, and fill it with
+-/// one indexer batch with no limit on its size, which reaches the end and flips it `Ready`.
++/// one indexer batch with no limit on its size, which reaches the end and flips it `Ready`. A batch
++/// into an empty column bulk-builds its tree, so this costs what building the column in one pass
++/// does.
+ fn build_in_one_batch(
+     g: &mut Graph,
+     entity: EntityType,
+@@ -485,8 +485,10 @@ pub(crate) fn entity_tuples(
+ }
+ 
+ /// Index population after an RDB load: build every column that a population snapshot of
+-/// `label` covers, as CREATE INDEX does ([`create_index`]). `fields` maps each attribute to its
+-/// index fields, and an attribute has a native column when one of its fields is a Range field.
++/// `label` covers, before the loaded graph is published, in one indexer batch each. `fields` maps
++/// each attribute to its index fields, and an attribute has a native column when one of its fields
++/// is a Range field. Unlike CREATE INDEX ([`create_index`]), the column is `Ready` when this
++/// returns: the RDB holds no record of which indexes were still building.
+ pub fn populate(
+     g: &mut Graph,
+     entity: EntityType,
+```
+
+**File**: `graph/src/index/falkordb/mod.rs` (modified, +3/-0)
+```diff
+@@ -23,6 +23,9 @@ pub mod graph_writes;
+ #[cfg(feature = "index-falkordb")]
+ pub mod numeric;
+ 
++#[cfg(feature = "index-falkordb")]
++pub mod online_build;
++
+ #[cfg(feature = "index-falkordb")]
+ pub mod pending_writes;
+ 
+```
+
+**File**: `graph/src/index/falkordb/numeric.rs` (modified, +11/-0)
+```diff
+@@ -526,6 +526,17 @@ impl NumericIndex {
+     pub fn tuples(&self) -> Vec<(u64, u64)> {
+         self.tree.range_tuples(0, u64::MAX).collect()
+     }
++
++    /// The column's leaf pages, shared with every version that holds them: for a test of when they
++    /// are freed.
++    #[cfg(test)]
++    pub(crate) fn pages(&self) -> Vec<Arc<[u8]>> {
++        self.tree
++            .leaves()
++            .into_iter()
++            .map(|(_, page)| page)
++            .collect()
++    }
+ }
+ 
+ #[cfg(test)]
+```
+
+**File**: `graph/src/index/falkordb/online_build.rs` (added, +566/-0)
+```diff
+@@ -0,0 +1,566 @@
++//! The background index builder: builds every `Building` index, in every graph, in batches, on a
++//! pool of its own.
++//!
++//! A commit that brings in a `Building` index starts a [`Job`] for it ([`MvccGraph::commit`]). A
++//! job builds one generation of one index ([`IndexEntry::generation`]): it runs one batch on the
++//! pool, and submits itself again while that generation is `Building`, unless the batch's version
++//! was refused ([`Step::Failed`]). An index dropped, or dropped and created again, is another
++//! generation, so its job ends, and the commit that created the new one started a job of its own.
++//! Each generation is started once, so no two jobs build one index. A job holds its graph weakly:
++//! once the graph is gone, so is the job. Nothing here knows about Redis: a batch publishes
++//! through the builder's [`BuildHost`].
++//!
++//! **A batch holds no lock while it reads.** It reads on a new build version of the published one
++//! ([`Graph::new_build_version`]), which only it holds, and then publishes through the host
++//! ([`MvccGraph::commit_indexer_batch`]). What committed meanwhile decides how the batch goes in;
++//! the rules writers and batches follow so that every published version stays correct, in whatever
++//! order they commit, are on [`BuildState`](super::versioned::BuildState). A batch's commit keeps
++//! the data version, so it never makes a writer's fork stale.
++//!
++//! **Stopping.** Only the Redis shutdown handler stops the builder, and only where the server tears
++//! its modules down (`RS_GLOBAL_DTORS`: the sanitizer runs). [`stop`] waits a bounded time for the
++//! pool's workers, since one may be waiting for the GIL, which the shutdown handler holds, and says
++//! whether they all exited: the handler tears GraphBLAS down only then, so a worker left behind may
++//! still free what it holds. A batch checks for the stop before it reads and again once it holds
++//! what publishing needs: after the stop, one that has not started reading does not, and one that
++//! waited to publish publishes nothing. One already reading goes on, inside the stop's wait or
++//! left behind by it. The stop is for good.
++//!
++//! [`IndexEntry::generation`]: super::versioned::IndexEntry::generation
++//! [`MvccGraph::commit`]: crate::graph::mvcc_graph::MvccGraph::commit
++//! [`MvccGraph::commit_indexer_batch`]: crate::graph::mvcc_graph::MvccGraph::commit_indexer_batch
++
++use std::sync::atomic::{AtomicBool, Ordering};
++use std::sync::{Arc, OnceLock, Weak};
++use std::time::Duration;
++
++use super::versioned::{Discarded, IndexId, IndexerCommit, PreparedBatch};
++use crate::graph::graph::Graph;
++use crate::graph::mvcc_graph::{CommitError, MvccGraph};
++use crate::threadpool::ThreadPool;
++#[cfg(test)]
++use parking_lot::{FairMutex, FairMutexGuard, Mutex};
++
++/// What the builder needs of the host its graphs live in: one for every graph, given to the builder
++/// as it starts ([`start`]). The Redis module's takes the GIL; this crate's tests have one of
++/// their own.
++pub trait BuildHost: Send + Sync {
++    /// Run `f`, which publishes a batch, holding what a writer holds to publish a version: the
++    /// host's global lock.
++    fn publish(
++        &self,
++        f: &mut dyn FnMut(),
++    );
++
++    /// Report what an operator should see: a batch whose version was refused, after which its
++    /// index's build stops. The default writes to stderr; the Redis host logs it.
++    fn warn(
++        &self,
++        message: &str,
++    ) {
++        eprintln!("{message}");
++    }
++}
++
++/// The host of this crate's tests, without Redis: its global lock is a mutex of its own, in the
++/// place of the GIL. A writer holds it to commit ([`Self::lock`]), and a batch publishes holding
++/// it. Fair, so that writers committing back to back do not keep a batch out. Only tests use it,
++/// until the crate runs on its own somewhere.
++#[cfg(test)]
++#[derive(Default)]
++pub(crate) struct LocalHost {
++    global: FairMutex<()>,
++}
++
++#[cfg(test)]
++impl LocalHost {
++    /// The global lock, which a writer holds to commit.
++    pub(crate) fn lock(&self) -> FairMutexGuard<'_, ()> {
++        self.global.lock()
++    }
++}
++
++#[cfg(test)]
++impl BuildHost for LocalHost {
++    fn publish(
++        &self,
++        f: &mut dyn FnMut(),
++    ) {
++        let _global = self.lock();
++        f();
++    }
++}
++
++/// How a job sizes its batches ([`Sizing::batch`]).
++///
++/// A build goes in batches, not in one pass, because it runs while writers write. Each batch's
++/// commit catches up, under the host's global lock, on what writers changed in its index while it
++/// read, and holds what it read in memory until then: a batch bounds both. A job's batches grow:
++/// each reads as many entities as the index's batches have read so far, between `floor` and the
++/// job's limit ([`Job::limit`]). With no writers they go 10,000, 10,000, 20,000, 40,000, ...,
++/// doubling, and reach the 4M cap on the 11th, once 5.12M entities are
+```
+
+---
+
+### Incident Patch 3: `2b690221` (2026-11-10)
+**Commit Message**: perf: SAVE no longer re-walks attributes per key or rebuilds edge matrices (#3438)
+
+* perf: SAVE no longer re-walks attributes per key or rebuilds edge matrices (#3433, #3434)
+
+- `AttributeStore::encode_with_range` jumps to the first entity of its
+  slice (`nth_live_id`: binary search on `deleted.rank`) and steps over
+  deleted ids in order, instead of walking from id 0 with a `contains`
+  per id for every virtual key: quadratic in the graph size.
+- The deleted-ids encoder seeks to its start the same way.
+- `Encode for Tensor` writes the committed base directly when no delta
+  is pending and no pair holds several edges, as `VersionedMatrix`
+  already does and as C does, instead of copying every edge out and
+  building a second matrix.
+- `Matrix::encode` unloads a private `dup()` instead of the shared
+  matrix, which read queries may be traversing lock-free during a
+  foreground SAVE / DUMP / GRAPH.COPY (#3434).
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* test: guard the source matrix during encode and the sliced treemap encode
+
+Copilot / cubic review: a Writer holding a shallow clone reads the matrix from
+inside write_buffer (fails when encode unloads the shared matrix i
+
+**File**: `graph/src/graph/attribute_store.rs` (modified, +110/-9)
+```diff
+@@ -1430,15 +1430,27 @@ impl AttributeStore {
+         count: u64,
+         offset: u64,
+     ) {
+-        let mut skipped = 0u64;
+-        let mut encoded = 0u64;
++        if count == 0 {
++            return;
++        }
++        // Seek straight to the `offset`-th live id. Walking from id 0 and skipping
++        // `offset` live ids one by one made a multi-key save quadratic: each of the
++        // ~N / VKEY_MAX_ENTITY_COUNT virtual keys re-walked every id before its
++        // slice, which for a 117M-edge graph was ~90% of a 90 s SAVE.
++        let Some(start) = nth_live_id(deleted, max_id, offset) else {
++            return;
++        };
+ 
+-        for id in 0..=max_id {
+-            if deleted.contains(id) {
+-                continue;
+-            }
+-            if skipped < offset {
+-                skipped += 1;
++        // Deleted ids are visited in order alongside the id walk, rather than
++        // probed with `contains` for every id.
++        let mut deleted_iter = deleted.iter();
++        deleted_iter.advance_to(start);
++        let mut next_deleted = deleted_iter.next();
++
++        let mut encoded = 0u64;
++        for id in start..=max_id {
++            if next_deleted == Some(id) {
++                next_deleted = deleted_iter.next();
+                 continue;
+             }
+ 
+@@ -1462,6 +1474,35 @@ impl AttributeStore {
+     }
+ }
+ 
++/// The `n`-th (0-based) id in `0..=max_id` that is not in `deleted`, or `None`
++/// when there are not that many.
++///
++/// The number of live ids in `0..=x` is `x + 1 - deleted.rank(x)`, which is
++/// monotone in `x`, so the answer is the smallest `x` where it exceeds `n` —
++/// found by binary search in `O(log max_id)` rank queries.
++fn nth_live_id(
++    deleted: &RoaringTreemap,
++    max_id: u64,
++    n: u64,
++) -> Option<u64> {
++    // `rank(x) <= x + 1`, so this neither underflows nor overflows in u128.
++    let live_through = |x: u64| u128::from(x) + 1 - u128::from(deleted.rank(x));
++    let n128 = u128::from(n);
++    if live_through(max_id) <= n128 {
++        return None;
++    }
++    let (mut lo, mut hi) = (n, max_id);
++    while lo < hi {
++        let mid = lo + (hi - lo) / 2;
++        if live_through(mid) > n128 {
++            hi = mid;
++        } else {
++            lo = mid + 1;
++        }
++    }
++    Some(lo)
++}
++
+ impl Decode<19> for AttributeStore {
+     fn decode(_r: &mut dyn Reader) -> Result<Self, String> {
+         unimplemented!("use decode_with_count for AttributeStore")
+@@ -1974,7 +2015,7 @@ mod tests {
+         ops: Vec<Op>,
+     }
+ 
+-    #[derive(Clone)]
++    #[derive(Clone, Debug, PartialEq)]
+     enum Op {
+         Unsigned(u64),
+         Signed(i64),
+@@ -2220,4 +2261,64 @@ mod tests {
+             "only the in-range attribute should have been stored"
+         );
+     }
++
++    /// A store split across virtual keys is encoded one `(count, offset)` slice
++    /// at a time. However the live ids are sliced — deleted ids at the start, in
++    /// runs, at the end, slices wider than what is left — the slices must
++    /// concatenate to exactly the walk over every live id in order.
++    #[test]
++    fn encode_slices_concatenate_to_the_full_walk() {
++        let max_id = 60u64;
++        let deleted: RoaringTreemap = [0u64, 1, 7, 8, 9, 23, 40, 59, 60].into_iter().collect();
++        let mut store = AttributeStore::default();
++        // Every third id has an attribute, so spans and empty entities interleave.
++        let mut data: Vec<(u64, Vec<(u16, Value)>)> = (0..=max_id)
++            .filter(|id| id % 3 == 0 && !deleted.contains(*id))
++            .map(|id| (id, vec![(0, Value::Int(id as i64))]))
++            .collect();
++        store.import_attrs_resolved(&mut data);
++
++        let mut expected = Recorder::default();
++        let live: Vec<u64> = (0..=max_id).filter(|id| !deleted.contains(*id)).collect();
++        for &id in &live {
++            expected.write_unsigned(id);
++            if id % 3 == 0 {
++                expected.write_unsigned(1);
++                expected.write_unsigned(0);
++                Value::Int(id as i64).encode(&mut expected);
++            } else {
++                expected.write_unsigned(0);
++            }
++        }
++
++        let total = live.len() as u64;
++        for slice in [1u64, 2, 5, 13, total, total + 7] {
++            let mut got = Recorder::default();
++            let mut offset = 0;
++            while offset < total {
++                let count = slice.min(total - offset);
++                store.encode_with_range(&mut got, &deleted, max_id, count, offset);
++                offset += count;
++            }
++            assert_eq!(got.ops, expected.ops, "slices of {slice} disagree");
++        }
++
++        // An offset past the last live id writes nothing.
++        let mut past = Recorder::default();
++        store.encode_with_range(&mut past, &deleted, max_id, 5, total);
++        assert!(past.ops.is_empty());
++    }
++
++    #[test]
++    fn nth_live_id_skips_deleted_ids() {
++        let deleted: RoaringT
+```
+
+**File**: `graph/src/graph/graphblas/matrix.rs` (modified, +58/-4)
+```diff
+@@ -529,6 +529,11 @@ impl<T> Encode<19> for Matrix<T> {
+         &self,
+         w: &mut dyn Writer,
+     ) {
++        // Unloading empties the matrix it is applied to, and a foreground SAVE,
++        // DUMP or GRAPH.COPY encodes the published version while read queries
++        // traverse it lock-free. So unload a private copy — a memcpy of the
++        // arrays — and free it with the container, never touching `self`.
++        let copy = self.dup();
+         unsafe {
+             let mut container: MaybeUninit<super::GxB_Container> = MaybeUninit::uninit();
+             let info = GxB_Container_new(container.as_mut_ptr());
+@@ -539,7 +544,7 @@ impl<T> Encode<19> for Matrix<T> {
+             );
+             let container = container.assume_init();
+ 
+-            let info = GxB_unload_Matrix_into_Container(self.inner(), container, null_mut());
++            let info = GxB_unload_Matrix_into_Container(copy.inner(), container, null_mut());
+             debug_assert_eq!(info, GrB_Info::GrB_SUCCESS);
+ 
+             // Write container struct bytes. Its pointer fields are heap
+@@ -568,9 +573,7 @@ impl<T> Encode<19> for Matrix<T> {
+             ManuallyDrop::new(Vector::<bool>::from((*container).i)).encode(w);
+             ManuallyDrop::new(Vector::<bool>::from((*container).b)).encode(w);
+ 
+-            let info = GxB_load_Matrix_from_Container(self.inner(), container, null_mut());
+-            debug_assert_eq!(info, GrB_Info::GrB_SUCCESS);
+-
++            // Frees the copy's arrays with the container; `copy` is left empty.
+             let mut c = container;
+             let info = GxB_Container_free(&raw mut c);
+             debug_assert_eq!(info, GrB_Info::GrB_SUCCESS);
+@@ -2268,4 +2271,55 @@ mod tests {
+         // encoding unloads and reloads the matrix; it must be intact
+         assert_eq!(m.get(1, 2), Some(true));
+     }
++
++    /// A foreground SAVE / DUMP / GRAPH.COPY encodes a matrix that read queries
++    /// share (a shallow clone) while they traverse it. The source must stay
++    /// readable for the whole encode, not only after it returns: a Writer
++    /// holding a clone reads the entries from inside `write_buffer`.
++    #[test]
++    fn source_matrix_stays_readable_while_encoding() {
++        struct ReadsSource {
++            reader: Matrix<bool>,
++            seen: usize,
++        }
++        impl super::Writer for ReadsSource {
++            fn write_unsigned(
++                &mut self,
++                _: u64,
++            ) {
++            }
++            fn write_signed(
++                &mut self,
++                _: i64,
++            ) {
++            }
++            fn write_double(
++                &mut self,
++                _: f64,
++            ) {
++            }
++            fn write_buffer(
++                &mut self,
++                _: &[u8],
++            ) {
++                assert_eq!(self.reader.get(1, 2), Some(true));
++                assert_eq!(self.reader.get(5, 6), Some(true));
++                assert_eq!(self.reader.get(3, 3), None);
++                self.seen += 1;
++            }
++        }
++
++        ensure_init();
++        let mut m = Matrix::<bool>::new(8, 8);
++        m.set(1, 2, true);
++        m.set(5, 6, true);
++        m.wait();
++        let mut w = ReadsSource {
++            reader: m.clone(),
++            seen: 0,
++        };
++        super::Encode::encode(&m, &mut w);
++        assert!(w.seen > 0, "the writer never ran");
++        assert_eq!(m.get(1, 2), Some(true));
++    }
+ }
+```
+
+**File**: `graph/src/graph/graphblas/serialization.rs` (modified, +68/-2)
+```diff
+@@ -184,8 +184,14 @@ impl Encode<19> for RoaringTreemap {
+         offset: u64,
+     ) {
+         let mut buf = Vec::with_capacity(count as usize * 8);
+-        for id in self.iter().skip(offset as usize).take(count as usize) {
+-            buf.extend_from_slice(&id.to_le_bytes());
++        // Seek to the `offset`-th id instead of skipping up to it, so a save split
++        // across many virtual keys does not re-walk every earlier id per key.
++        if let Some(first) = self.select(offset) {
++            let mut iter = self.iter();
++            iter.advance_to(first);
++            for id in iter.take(count as usize) {
++                buf.extend_from_slice(&id.to_le_bytes());
++            }
+         }
+         w.write_buffer(&buf);
+     }
+@@ -266,6 +272,66 @@ mod tests {
+         }
+     }
+ 
++    struct Collect(Vec<u8>);
++
++    impl Writer for Collect {
++        fn write_unsigned(
++            &mut self,
++            _: u64,
++        ) {
++        }
++        fn write_signed(
++            &mut self,
++            _: i64,
++        ) {
++        }
++        fn write_double(
++            &mut self,
++            _: f64,
++        ) {
++        }
++        fn write_buffer(
++            &mut self,
++            d: &[u8],
++        ) {
++            self.0.extend_from_slice(d);
++        }
++    }
++
++    /// A save split across virtual keys encodes the ids in slices; the slices,
++    /// seeked to a nonzero offset, must concatenate to the whole encode, including
++    /// ids spread over several 32-bit buckets and a slice past the end.
++    #[test]
++    fn deleted_entities_slices_concatenate_to_the_full_encode() {
++        let ids = [
++            0u64,
++            3,
++            4,
++            70_000,
++            70_001,
++            1 << 32,
++            (1 << 32) + 9,
++            (3 << 32) + 5,
++            u64::MAX,
++        ];
++        let bitmap: RoaringTreemap = ids.iter().copied().collect();
++        let mut whole = Collect(Vec::new());
++        bitmap.encode(&mut whole);
++        assert_eq!(whole.0.len(), ids.len() * 8);
++        for step in [1u64, 2, 4, 100] {
++            let mut sliced = Collect(Vec::new());
++            let mut offset = 0;
++            while offset < bitmap.len() {
++                bitmap.encode_with_range(&mut sliced, step, offset);
++                offset += step;
++            }
++            assert_eq!(sliced.0, whole.0, "slices of {step}");
++        }
++        let mut past = Collect(Vec::new());
++        bitmap.encode_with_range(&mut past, 5, bitmap.len());
++        assert!(past.0.is_empty());
++    }
++
+     /// `count * 8` used to wrap for a payload count of `2^61`, match an empty
+     /// buffer and index past its end.
+     #[test]
+```
+
+**File**: `graph/src/graph/graphblas/tensor.rs` (modified, +90/-29)
+```diff
+@@ -1482,39 +1482,54 @@ impl Encode<19> for Tensor {
+         // inline state. Single-edge pairs store the edge id directly; multi-edge
+         // pairs (inline value == MULTI_EDGE) store `(edge_count | MSB)` and push
+         // their full id list from `me` into the tensor section below.
+-        let mut f_rows: Vec<u64> = Vec::new();
+-        let mut f_cols: Vec<u64> = Vec::new();
+-        let mut f_vals: Vec<u64> = Vec::new();
++        //
++        // When there is nothing pending in the deltas and no pair holds more than
++        // one edge, the base `m` already *is* that matrix — every value an edge
++        // id with the MSB clear — so it is written as is, the way
++        // `VersionedMatrix::encode` writes its base. Rebuilding it through an
++        // iterator and `build` costs three `u64` per edge in scratch vectors plus
++        // a second matrix (gigabytes, and most of a SAVE, at 10^8 edges).
++        self.wait_fwd();
+         let mut multi: Vec<(u64, u64, Vec<u64>)> = Vec::new();
+-        for (src, dst, inline) in self.fwd_iter(0, u64::MAX) {
+-            f_rows.push(src);
+-            f_cols.push(dst);
+-            if inline == MULTI_EDGE {
+-                let (block, key) = compound_key(src, dst);
+-                let ids: Vec<u64> = self
+-                    .me_block(block)
+-                    .map(|me| me.iter(key, key).map(|(_, id)| id).collect())
+-                    .unwrap_or_default();
+-                f_vals.push(ids.len() as u64 | MSB_MASK);
+-                multi.push((src, dst, ids));
+-            } else {
+-                f_vals.push(inline);
++        if self.dp.nvals() == 0 && self.dm.nvals() == 0 && !self.has_multi_edge() {
++            let empty = Matrix::<u64>::new(nrows, ncols);
++            self.m.encode(w);
++            empty.encode(w); // delta-plus
++            empty.encode(w); // delta-minus
++        } else {
++            let mut f_rows: Vec<u64> = Vec::new();
++            let mut f_cols: Vec<u64> = Vec::new();
++            let mut f_vals: Vec<u64> = Vec::new();
++            for (src, dst, inline) in self.fwd_iter(0, u64::MAX) {
++                f_rows.push(src);
++                f_cols.push(dst);
++                if inline == MULTI_EDGE {
++                    let (block, key) = compound_key(src, dst);
++                    let ids: Vec<u64> = self
++                        .me_block(block)
++                        .map(|me| me.iter(key, key).map(|(_, id)| id).collect())
++                        .unwrap_or_default();
++                    f_vals.push(ids.len() as u64 | MSB_MASK);
++                    multi.push((src, dst, ids));
++                } else {
++                    f_vals.push(inline);
++                }
+             }
+-        }
+ 
+-        // Forward VersionedMatrix layout: base (effective), empty delta-plus,
+-        // empty delta-minus. Folding dp into the base keeps the on-disk form
+-        // canonical and matches what decode expects.
+-        let empty = Matrix::<u64>::new(nrows, ncols);
+-        if f_rows.is_empty() {
+-            empty.encode(w);
+-        } else {
+-            let mut fm = Matrix::<u64>::new(nrows, ncols);
+-            fm.build(&f_rows, &f_cols, &f_vals);
+-            fm.encode(w);
++            // Forward VersionedMatrix layout: base (effective), empty delta-plus,
++            // empty delta-minus. Folding dp into the base keeps the on-disk form
++            // canonical and matches what decode expects.
++            let empty = Matrix::<u64>::new(nrows, ncols);
++            if f_rows.is_empty() {
++                empty.encode(w);
++            } else {
++                let mut fm = Matrix::<u64>::new(nrows, ncols);
++                fm.build(&f_rows, &f_cols, &f_vals);
++                fm.encode(w);
++            }
++            empty.encode(w); // delta-plus
++            empty.encode(w); // delta-minus
+         }
+-        empty.encode(w); // delta-plus
+-        empty.encode(w); // delta-minus
+ 
+         let total = self.edge_count();
+         w.write_unsigned(total);
+@@ -2493,6 +2508,52 @@ mod tests {
+         }
+     }
+ 
++    /// A single-edge tensor with nothing pending in its deltas is written
++    /// straight from its base matrix; one with pending deltas is rebuilt from
++    /// the effective view. Both must decode to the same edges.
++    #[test]
++    fn encode_decode_round_trips_with_and_without_pending_deltas() {
++        ensure_init();
++        let round_trip = |t: &Tensor| {
++            let mut tape = Tape::default();
++            t.encode(&mut tape);
++            let mut back = Tensor::decode(&mut tape).expect("decode");
++            assert!(tape.ops.is_empty(), "decode left part of the stream");
++            back.rebuild_backward();
++            back.wait();
++            back
++        };
++        let edges = |t: &Tensor| {
++            let mut e: Vec<(u64, u64, u64)> = t.fwd_iter(0, u64::MAX).collect();
++            e.sort_unstable();
++            e
++        };
++
++        let t = Tensor::new(16, 16);
++        let mut t = t.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3689** (2026-11-08): chore(deps): bump the cargo-deps group with 2 updates (@dependabot[bot])
-- **PR #3688** (2026-11-08): chore(deps): bump the github-actions group with 3 updates (@dependabot[bot])
-- **PR #3685** (2026-11-06): fix(writer-gate): engage the gate lazily to recover mixed read/write throughput (@swilly22)
-- **PR #3682** (2026-11-05): [6.0] Batch backport (74 commits) (@github-actions[bot])
-- **PR #3673** (closed): feat(index): an edge batch resumes anywhere, and reads exactly its size (@DvirDukhan)
-- **PR #3670** (closed): chore(deps): bump the github-actions-master group with 4 updates (@dependabot[bot])
+- **PR #3758** (closed): ci: count passed, failed and skipped tests per server in the run summary (@dudizimber)
+- **PR #3749** (2026-11-11): refactor(index): the Range column reaches its kind only through RangeKind (@DvirDukhan)
+- **PR #3748** (2026-11-10): proofs: re-line Dup::dup's PROVEN rows instead of axiomatising it (@AviAvni)
+- **PR #3745** (2026-11-10): proofs: re-line #3438's rows so the coverage gate passes on main (@AviAvni)
+- **PR #3736** (2026-11-11): refactor(index): a Range column that answers with a Selection (@AviAvni)
+- **PR #3722** (2026-11-11): test: make four flow tests pass on Valkey as well as Redis (@DvirDukhan)
 
 ---
 
@@ -1767,74 +2697,53 @@ flag set while a parameter is parsed as an expressio
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. bound SET/REMOVE property chains and nested FOREACH in the parser (#2900)
+## X. module): load on Valkey by repairing environ under RTLD_DEEPBIND (#3494)
 
 **RULE**:
-When implementing operations in `graph/src/parser/cypher.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in FalkorDB/FalkorDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `graph/src/env_snapshot.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in FalkorDB/FalkorDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8312750b`: bound SET/REMOVE property chains and nested FOREACH in the parser (#2900). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `874b6d87`: module): load on Valkey by repairing environ under RTLD_DEEPBIND (#3494). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `graph/src/parser/cypher.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `graph/src/env_snapshot.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            let (expr, has_properties) = self.parse_update_target()?;
-            if has_properties {
-    /// Parses what a `SET` or `REMOVE` item updates: an expression followed
-    /// by an optional `.prop.prop...` chain, reporting whether a chain was
-    /// present.
-    ///
-    /// Each lookup wraps the tree before it, so the chain is charged against
-    /// [`Self::MAX_TREE_DEPTH`] step by step, as the postfix chain in
-    /// [`Self::parse_expr_inner`] is: otherwise `n.a.a.a...` builds a tree
-    /// the binder overflows its stack walking, quadratically slowly.
-    fn parse_update_target(&mut self) -> Result<(DynTree<ExprIR<Arc<String>>>, bool), String> {
-        let ((mut expr, recurse), child_height) =
-            self.with_child_height(|s| s.parse_primary_expr(false))?;
-        let mut height = child_height + Self::PRIMARY_LEVELS;
-        if recurse {
-            self.reject_unparenthesized_target(&expr)?;
-            expr = self.parse_expr(false)?;
-            height = self.expr_height;
-            match_token!(self.lexer, RParen);
-            self.expect_property_after_paren()?;
-        }
-        // The target itself may already be too tall, with no lookup to charge.
-  
+//! Owned, process-lifetime copies of a C `environ` array.
+//!
+//! The module repairs libc's `environ` when a server loads it with
+//! `RTLD_DEEPBIND` and copy-relocates `environ` (issue #3493); see
+//! `sync_deepbind_environ` in the module crate. The copy lives here, apart
+//! from the loader-specific lookup, so it can be unit-tested on any platform.
+
+use std::ffi::{CStr, c_char};
+
+/// Deep-copy a NULL-terminated `char **` environment and leak the copy.
+///
+/// Both the pointer array and every string are fresh allocations that are
+/// never freed, so the result stays valid whatever later happens to `src`: a
+/// `setenv` that `realloc`s the array, or a `putenv` caller freeing its buffer
+/// after `unsetenv`. A NULL `src` yields an empty environment (a lone NULL).
+///
+/// # Safety
+///
+/// `src` must be NULL or point to a NULL-terminated array of pointers to
+/// NUL-terminated strings, none of which is modified or freed during the call.
+#[must_use]
+pub unsafe fn leak_deep_copy(src: *const *mut c_char) -> *mut *mut c_char {
+    let mut len = 0;
+    // SAFETY: the caller guarantees `src` is NULL or NULL-terminated.
+    while !src.is_null() && unsafe { !(*src.add(len)).is_null() } {
+   
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-            let (mut expr, recurse) = self.parse_primary_expr(false)?;
-            if recurse {
-                self.reject_unparenthesized_target(&expr)?;
-                expr = self.parse_expr(false)?;
-                match_token!(self.lexer, RParen);
-                self.expect_property_after_paren()?;
-            }
-            if self.lexer.current()? == Token::Dot {
-                while self.lexer.current()? == Token::Dot {
-                    self.lexer.next();
-                    expr = self.parse_property_lookup(expr)?;
-                }
-            let (mut expr, recurse) = self.parse_primary_expr(false)?;
-            if recurse {
-                self.reject_unparenthesized_target(&expr)?;
-                expr = self.parse_expr(false)?;
-                match_token!(self.lexer, RParen);
-                self.expect_property_after_paren()?;
-            }
-            if self.lexer.current()? == Token::Dot {
-                while self.lexer.current()? == Token::Dot {
-                    self.lexer.next();
-                    expr = self.parse_property_lookup(expr)?;
-                }
-                    body.push(self.parse_foreach_clause()?);
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8312750b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `874b6d87` are properly handled with clean fallback behavior.

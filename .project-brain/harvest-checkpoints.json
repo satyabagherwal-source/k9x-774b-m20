@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-11T16:20:44.072Z",
+  "last_updated": "2026-11-11T16:36:03.010Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "2f9cd8ef1e743dc75c68653843ad75dc94fedaf6811d98e66184395452896b82",
-      "verified_at": "2026-11-11T06:33:50.013Z",
+      "content_hash": "f837496e5a1478d6d5298a1414714e2048238e524961a60956569f9657c85dd5",
+      "verified_at": "2026-11-11T16:35:58.451Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T06:33:50.013Z"
+      "last_updated": "2026-11-11T16:35:58.451Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -4476,14 +4476,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-falkordb-falkordb",
-      "content_hash": "896e1bd5aed43e548a2afe76de3e5025aa2094d950660a71a7b58b4c566e7bb0",
-      "verified_at": "2026-11-09T02:34:38.193Z",
+      "content_hash": "e3a3ada39ca1b020b9ba7be58aad703b0c82f6b4875d5a4de5cd13e35946f7ee",
+      "verified_at": "2026-11-11T16:35:51.620Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T02:34:38.193Z"
+      "last_updated": "2026-11-11T16:35:51.620Z"
     },
     "feathersjs/feathers": {
       "repository": "feathersjs/feathers",
@@ -10701,14 +10701,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pingcap-tidb",
-      "content_hash": "53cf39edf60c6ffd3a1fd7b3302b0474135e7c59025f766f444cdb0c285a9c81",
-      "verified_at": "2026-11-09T10:02:56.752Z",
+      "content_hash": "7fb28f5c0b9f55f7b5fb6dd064669e46eb80c9856b5ad09221b78799b5c7e754",
+      "verified_at": "2026-11-11T16:36:03.009Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T10:02:56.752Z"
+      "last_updated": "2026-11-11T16:36:03.009Z"
     },
     "neondatabase/neon": {
       "repository": "neondatabase/neon",
@@ -11226,14 +11226,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nativescript-nativescript",
-      "content_hash": "c129df187d13695d90c57ab7e973c33118084f55a839d7fac4d21257c5365818",
-      "verified_at": "2026-11-04T23:06:19.609Z",
+      "content_hash": "f54260707cf7aef4fbca63c6f639eb8bee6ac9d10bdc0924b412991c117d09a1",
+      "verified_at": "2026-11-11T16:35:59.599Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T23:06:19.609Z"
+      "last_updated": "2026-11-11T16:35:59.599Z"
     },
     "oramasearch/orama": {
       "repository": "oramasearch/orama",

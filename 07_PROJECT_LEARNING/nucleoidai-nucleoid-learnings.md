@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `e2ade2a2`  
+> **Source Version**: `b9fd2de0`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T06:33:26.472Z  
+> **Timestamp**: 2026-11-11T16:35:58.096Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T06:33:26.441Z  
+> **Harvest Timestamp**: 2026-11-11T16:35:58.089Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1212,6 +1212,39 @@ export async function instances({
   return { instances: dataset[0].instances };
 }
 
+export async function synthetize({
+  puzzle_id,
+  only_puzzle_dataset,
+  train_dataset,
+}) {
+  const { dataset } = await llm.generate({
+    puzzle_id,
+    only_puzzle_dataset,
+    messages: [
+      {
+        role: "user",
+        content: `
+          query:
+          ${JSON.stringify(train_dataset)}
+          json_format:
+          {
+            "dataset": [{
+              "input_matrix": <INPUT_MATRIX>,
+              "output_matrix": <OUTPUT_MATRIX>,
+              "instances": [{
+                "input_instance_matrix": <INPUT_INSTANCE_MATRIX>,
+                "output_instance_matrix": <OUTPUT_INSTANCE_MATRIX>
+              }]
+            }]
+          }
+        `,
+      },
+    ],
+  });
+
+  return dataset.map((pair) => ({ ...pair, accuracy: 0.8 }));
+}
+
 export async function value({
   puzzle_id,
   only_puzzle_dataset,
@@ -1419,6 +1452,7 @@ export async function start(
       input_matrix: input,
       output_matrix: output,
       instances: undefined,
+      accuracy: 1,
     })),
     declarations: undefined,
     output_canvas: undefined,
@@ -1448,13 +1482,23 @@ export async function start(
   train_dataset.output_canvas = output_canvas;
 
   for (const dataset of train_dataset.dataset) {
-    const { instances } = await analyzer.instances({
-      puzzle_id,
-      only_puzzle_dataset,
-      train_dataset: { ...train_dataset, dataset: [dataset] },
-    });
+    if (dataset.accuracy === 1) {
+      const { instances } = await analyzer.instances({
+        puzzle_id,
+        only_puzzle_dataset,
+        train_dataset: { ...train_dataset, dataset: [dataset] },
+      });
 
-    dataset.instances = instances;
+      dataset.instances = instances;
+
+      train_dataset.dataset.push(
+        ...(await analyzer.synthetize({
+          puzzle_id,
+          only_puzzle_dataset,
+          train_dataset: { ...train_dataset, dataset: [dataset] },
+        }))
+      );
+    }
 
     for (const instance of dataset.instances) {
       instance.instance_name = `obj${String(instance_index++).padStart(
@@ -1638,647 +1682,585 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e2ade2a2` (2026-11-11)
-**Commit Message**: Draft NUC 105 List and Population Sorting by Key
+### Incident Patch 1: `b9fd2de0` (2026-11-11)
+**Commit Message**: NUC 97 In and Not In Membership Tests
 
-Category: Utility enhancement, drawn uniformly at random (index 2 of the
-five eligible categories in NUC 1's registry, p = 1/5, no redraw) for a
-continuous /nuc-proposal cycle, so token comparison is required.
+Accepted under the user-requested basis of the automatic acceptance rule.
+The continuous /nuc-proposal cycle that allocated this NUC (Syntax
+enhancement, drawn uniformly at random) ended without an outcome and lost
+its candidate. The user resumed the NUC by number, so it was prepared and
+evaluated afresh as a single-proposal request. The frozen candidate meets
+every hard criterion, and the independent evaluator's overall decision is
+Accepted.
 
-Requested change: add the read-only query `sortBy` to ordinary lists and
-class populations. `xs.sortBy(selector)` returns a new list of the items in
-ascending key order, stable on ties, with keys compared as `<` compares
-them (the maxBy/minBy rule) and the selector run once per item. Unlike
-NUC 58's in-place `sort`, it never writes its receiver. A key that cannot
-be compared with itself makes the result undefined. Only calls that raised
-TypeError("<receiver>.sortBy is not a function") change.
+`A in B` and `A not in B` test membership as `B.includes(A)` and
+`!B.includes(A)` for lists, class populations and strings, at the level of
+`<`, `<=`, `>` and `>=`. A null or undefined collection yields undefined in
+both forms, as the collection of a NUC 62 quantifier does; the caller
+confirmed this change from the allocation's TypeError. Any other right
+operand raises TypeError("<collection> is not a collection"). Only inputs
+that were errors at the accepted revision change, and template
+interpolations such as `${x in xs}` keep reading `x`.
 
-This allocation changes only the Draft and its two index rows.
+Hard criteria, checked by the independent evaluator against 6bc0c3f and
+again by the caller on the integrated tree: cargo fmt --check,
+cargo build --all-targets, ca
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01AJtz8h87ALvMLUftuXJ8mn
-
-**File**: `docs/nuc-0000.md` (modified, +2/-0)
+**File**: `README.md` (modified, +25/-0)
 ```diff
-@@ -123,6 +123,7 @@ Created: 31-Jul-2026
- | [84](nuc-0084.md) | List and Population Medians | Accepted |
- | [100](nuc-0100.md) | Reactive Cotangent | Accepted |
- | [103](nuc-0103.md) | Reactive List Flattening | Accepted |
-+| [105](nuc-0105.md) | List and Population Sorting by Key | Draft |
+@@ -2188,6 +2188,31 @@ assert(days, ["mon", "tue", "wed", "thu", "fri"])
+   extends it. See the
+   [root contract](nucleoid.spec.md#reactive-list-flattening).
  
- ### Reasoning enhancement
++## Membership tests
++
++**Membership tests read in the order they are said**
++
++```nuc
++allowed = ["new", "paid"]
++status = "paid"
++open = status in allowed
++closed = status not in allowed
++assert([open, closed], [true, false])
++allowed = ["new"]
++assert([open, closed], [false, true])
++```
++
++- [NUC 97](docs/nuc-0097.md) adds `item in collection` and
++  `item not in collection`, the shorter spellings of
++  `collection.includes(item)` and `!collection.includes(item)` for lists,
++  classes and strings. Both stay live, so changing `allowed` re-evaluates
++  `open` and `closed`.
++- A declaration over a null collection holds `null` until the collection is
++  set, and any other value, such as a number or an object, raises
++  `TypeError("<collection> is not a collection")`. `in` keeps its `for`,
++  comprehension and quantifier readings. See the
++  [root contract](nucleoid.spec.md#membership-tests).
++
+ ## Every and predicate sentences
  
-@@ -263,6 +264,7 @@ Created: 31-Jul-2026
- | [102](nuc-0102.md) | Implicit Receiver Properties | Standards Track | Syntax enhancement | Automatic-Accepted: independent evaluation rejected it because a `while` condition or `suppose` premise in a property value that holds a receiver read and ends in `is NAME: NAME` builds a loop or hypothetical where its written-out spelling runs as separate statements |
- | [103](nuc-0103.md) | Reactive List Flattening | Standards Track | Utility enhancement | Accepted |
- | [104](nuc-0104.md) | Any and All Class References | Standards Track | Syntax enhancement | Accepted |
-+| [105](nuc-0105.md) | List and Population Sorting by Key | Standards Track | Utility enhancement | Draft |
- 
- ## Copyright
- 
+ **Every states a class-level claim as it is said**
 ```
 
-**File**: `docs/nuc-0105.md` (added, +86/-0)
+**File**: `dataset/nucleoid.spec.jsonl` (modified, +10/-5)
 ```diff
-@@ -0,0 +1,86 @@
-+# NUC 105 -- List and Population Sorting by Key
+@@ -737,8 +737,13 @@
+ {"id":"spec-0737","description":"Nucleoid flattens lists in class level rules","code":"class Team(squads):\n    this.squads = squads\n$Team.members = $Team.squads.flat()\nred = Team([[\"ana\", \"bo\"], [\"cy\"]])\nblue = Team([[\"di\"]])\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\"], [\"di\"]])\nred.squads.push([\"ed\"])\nblue.squads = [[\"fay\"], [\"gus\", \"hal\"]]\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\", \"ed\"], [\"fay\", \"gus\", \"hal\"]])\nred.members.length","return":"4"}
+ {"id":"spec-0738","description":"Nucleoid queries the cells of flattened grids","code":"grid = [[1, 0, 2], [0, 3, 2]]\ncells = grid.flat()\ntotal = cells.sum()\ncolors = cells.distinct()\nfilled = cells.count(cell => cell > 0)\nassert([total, colors, filled], [8, [1, 0, 2, 3], 4])\ngrid.push([5, 0, 0])\nassert([total, colors, filled], [13, [1, 0, 2, 3, 5], 5])\ngrid = [[4, 4], [0]]\n[total, colors, filled]","return":"[8,[4,0],2]"}
+ {"id":"spec-0739","description":"Nucleoid rolls back failed flattening updates","code":"rows = [[1, [2]], [3]]\ncells = rows.flat()\ntry:\n    rows.push([4])\n    assert(cells, [1, [2], 3, 4])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert([rows, cells], [[[1, [2]], [3]], [1, [2], 3]])\ntry:\n    cells = rows.flat(2)\n    assert(cells, [1, 2, 3])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nrows.push([[5]])\ncells","return":"[1,[2],3,[5]]"}
+-{"id":"spec-0740","description":"Nucleoid states class predicates with is","code":"class Human(name: str):\n    this.name = name\nplato = Human(\"Plato\")\nevery Human is mortal\nsocrates = Human(\"Socrates\")\nassert([plato.mortal, socrates.mortal], [true, true])\n$Human is wise\nassert(socrates.wise, true)\nassert((why socrates.mortal)[0].rule, \"$Human.mortal = true\")\nmortal = false\nassert(socrates.mortal, true)\nplato.mortal = false\nassert([plato.mortal, socrates.mortal], [false, true])\nsocrates.mortal","return":"true"}
+-{"id":"spec-0741","description":"Nucleoid spells class references with every","code":"class Order(total):\n    this.total = total\nevery Order.big = every Order.total > 10\nif any Order.total > 100:\n    all Order.vip = true\nsmall = Order(5)\nlarge = Order(200)\nassert([small.big, large.big], [false, true])\nassert([small.vip, large.vip], [null, true])\nsmall.total = 50\nassert(small.big, true)\nevery Order.tier is \"gold\"\nassert(large.tier, \"gold\")\nsmall.big","return":"true"}
+-{"id":"spec-0742","description":"Nucleoid quantifies with every as with all","code":"class Check\nready = every check in Check: check.passed\nassert(ready, true)\nfirst = Check()\nfirst.passed = true\nsecond = Check()\nassert(ready, false)\nsecond.passed = true\nassert(ready, true)\nscores = [3, 4]\nassert(every score in scores: score > 2, all score in scores: score > 2)\nassert(every score in scores: score > 3, false)\nassert((every score in scores: score > 2) ? \"pass\" : \"fail\", \"pass\")\nready","return":"true"}
+-{"id":"spec-0743","description":"Nucleoid keeps every an ordinary name where no name follows it","code":"every = [1, 2]\ntotal = every.length\nassert(total, 2)\nassert(every.every(v => v > 0), true)\npairs = {every: 3, other: every[0]}\nassert(pairs, {every: 3, other: 1})\ndef count(every) => every + 1\nassert(count(4), 5)\nevery is [5]\nassert(total, 1)\nassert(every n in every: n > 4, true)\nevery","return":"[5]"}
+-{"id":"spec-0744","description":"Nucleoid keeps other is statements on a class reference","code":"class Order(total):\n    this.total = total\norder = Order(20)\n$Order.size is big\nassert(order.size, \"big\")\ntry:\n    $Order is 5\ncatch error:\n    assert(error, ReferenceError(\"is is not defined\"))\nassert(order.big, null)\n$Order is big\nassert(order.big, true)\norder.size","return":"\"big\""}
++{"id":"spec-0740","description":"Nucleoid tests membership with in and not in","code":"tags = [\"red\", \"blue\"]\nassert(\"red\" in tags, true)\nassert(\"green\" in tags, false)\nassert(\"green\" not in tags, true)\nassert(\"red\" not in tags, false)\nassert([1, 2] in [[1, 2], [3]], true)\nassert({ x: 1 } in [{ x: 1 }, null], true)\nassert(null in [1, null], true)\nassert(Number.NaN in [Number.NaN], false)\nassert(\"ell\" in \"hello\", true)\nassert(1 in \"a1\", true)\nassert(\"\" in \"abc\", true)\nassert(\"z\" not in \"abc\", true)\nclass Seat(row):\n    this.row = row\nfront = Seat(1)\nassert(front in Seat, true)\nassert({ row: 1 } in Seat, false)\nassert({ id: \"front\", row: 1 } in Seat, true)\nassert(front not in Seat, false)\nassert(\"red\" in tags, tags.includes(\"red\"))\nassert(\"green\" not in tags, !tags.includes(\"green\"))\n\"red\" in tags","return":"true"}
++{"id":"spec-0741","description":"Nucleoid keeps membership tests live","code":"tags = [\"red\"]\nknown = \"green\" in tags\nmissing = \"green\" not in tags\nassert([known, missing], [false, true])\ntags.push(\"green\")\nassert([known, missing], [true, false])\ntags
+```
+
+**File**: `docs/README.md` (modified, +53/-0)
+```diff
+@@ -802,6 +802,9 @@ settings.size
+ - Comparison: `==`, `!=`, `<`, `>`, `<=`, `>=`.
+ - Comparison words: `is` and `is not`, spellings of `==` and `!=` with a bare
+   word rule; see [is and is not comparisons](#is-and-is-not-comparisons).
++- Membership: `item in collection` and `item not in collection` for lists,
++  classes and strings, at the level of `<`; see
++  [membership tests](#membership-tests).
+ - Logical: `and` / `&&`, `or` / `||`, `not` / `!`.
+ - Conditional: `condition ? consequent : alternate` or
+   `consequent if condition else alternate`; see below.
+@@ -1018,6 +1021,53 @@ volume
+ 
+ Full detail: [NUC 64](nuc-0064.md).
+ 
++### Membership tests
++
++- `item in collection` tests whether a list, a declared class's instances
++  or a string holds `item`, and `item not in collection` tests that it does
++  not. Over lists, classes and strings they give the results of
++  `collection.includes(item)` and `!collection.includes(item)`: list items
++  and instances match on their contents, as in `assert`, and a string holds
++  the text of `item`, so `"ee" in "green"` is `true`.
++- A null or undefined collection yields undefined in both forms, which a
++  declaration stores as `null`, so a rule over a list that is not yet set
++  waits for it. Any other value, such as a number
++  or an object, raises `TypeError("<collection> is not a collection")`, as a
++  quantifier does, so `"a" in {a: 1}` is an error rather than `undefined`.
++- They stand at the level of `<` and `>`: `x + 1 in xs` adds first,
++  `x in xs and y in ys` tests both, and `not x in xs` is `(not x) in xs`, as
++  `not x < y` is; write `x not in xs` to negate the test.
++- A declaration that uses one stays live: it follows the list, the string
++  or the class's population, and whatever `item` reads.
 +
 +```
-+NUC: 105
-+Title: List and Population Sorting by Key
-+Author: Can Mingir <canmingir@gmail.com>
-+Status: Draft
-+Type: Standards Track
-+Category: Utility enhancement
-+Created: 10-Nov-2026
-+Requires: 58, 77
++palette = ["red", "green"]
++color = "green"
++listed = color in palette
++banned = color not in ["black"]
++assert([listed, banned], [true, true])
++palette = ["red"]
++assert(listed, false)
++assert("ee" in "green", true)
++class Tag
++urgent = Tag()
++assert(urgent in Tag, true)
++listed
 +```
 +
-+## Abstract
++- This is the complete `Nucleoid tests membership with in` program in
++  `tests/reference.md`, without its title and expected-return metadata; it
++  returns `false`.
++- Both forms render as `(item in collection)` and
++  `(item not in collection)`. `in` keeps its loop, comprehension, quantifier
++  and property readings, and at the top level of a template interpolation
++  it stays an ignored token: `` `${x in xs}` `` renders `x`, while
++  `` `${(x in xs)}` `` tests membership. Grammar, errors and edge cases are
++  in the authoritative [membership tests](../nucleoid.spec.md#membership-tests)
++  section.
 +
-+- Adds the read-only list query `sortBy` to ordinary lists and class
-+  populations, the receivers of `maxBy` and `minBy`:
-+  - `xs.sortBy(selector)` returns a new list of the receiver's items in
-+    ascending order of `selector(item)`. Items with equal keys keep their
-+    receiver order, so
-+    `[{n: "b", k: 2}, {n: "a", k: 1}, {n: "c", k: 2}].sortBy(x -> x.k)`
-+    lists `a`, `b`, `c`.
-+  - Keys compare as `<` compares them, the rule of `maxBy` and `minBy`: two
-+    strings as text, and every other pair as numbers.
-+  - The selector runs once for every item, in receiver order, and the items
-+    are returned unchanged, so an instance stays the same instance.
-+- Unlike `sort`, which [NUC 58](nuc-0058.md) makes reorder a writable
-+  receiver in place, `sortBy` never writes its receiver.
-+  `ranked = scores.sortBy(s -> s)` is a standing ordering that follows later
-+  writes of `scores`, while `scores` keeps its own order.
-+- When every key can be compared with itself, `xs.sortBy(f)` is exactly the
-+  list that `xs.map(x -> [f(x), x]).sort((a, b) -> a[0] < b[0] ? -1 : 0).map(p -> p[1])`
-+  returns. A key that cannot be compared with itself makes the result
-+  undefined, as it makes `maxBy` and `minBy` undefined.
-+- Only calls of `sortBy` on lists and class populations change. They raised
-+  `TypeError("<receiver>.sortBy is not a function")` at the accepted
-+  revision. Reading `xs.sortBy` without a call, object properties named
-+  `sortBy`, instance methods named `sortBy` called on an instance, and every
-+  other receiver keep their accepted behavior.
++Full detail: [NUC 97](nuc-0097.md).
 +
-+## Motivation
+ ### Indexing, slicing, and length
+ 
+ - Lists and instance lists index with brackets; the index may be a variable.
+@@ -3976,6 +4026,7 @@ Messages are exact and are part of the observable behaviour of the language.
+ | A supplied `mode` selector that is not a function, including `null`, even on an empty receiver | `mode expects a function` |
+ | Missing or non-function `maxBy` or `minBy` selector, including `null`, even on an empty receiver | `maxBy expects a function` or `minBy expects a function` |
+ | An `all` or `any` quantifier over a value that is neither null nor a list or a declared class's instances | `<collection> is not a collection` |
++| An `in` or `not in` membership test over a value that is neither null nor a list, a string or a declared class's instances | `<collection> is not a collection` |
+ | A `depth` stage limit that is neither `null`, undefined nor a non-negative integer number | `<limit> is not a non-negative integer` |
+ | A two-name `for key, value of source` loop over a value that is not an object | `<source> is not an object` |
+ | A spread entry `...source` whose source is neither an object nor `null` or undefined | `<source> is not an object` |
+@@ -4141,6 +4192,8 @@ flag = (value is not EXACT)            != with the same word rule; bare at state
+ base ** exponent                       exactly Math.pow(base, exponent), right-associative (NUC 64)
+ -x ** 2                                prefix operators apply to the whole power: -(x ** 2) (NUC 64)
+ name **= exponent                      name = name ** (exponent) (NUC 64)
++item in collection                     list, class or string membership at the level of < (NUC 97)
++item not in collection                 its negation; not item in xs is (not item) in xs (NUC 97)
+ 
+ for name of source:                    class/object-list/scalar-string iteration
+ for name in source:                    equivalent explicit iteration
+```
+
+**File**: `docs/examples.md` (modified, +26/-0)
+```diff
+@@ -3697,6 +3697,32 @@ hall.tiles = [["dirt"], ["clean"]]
+   both counts. See [NUC 103](nuc-0103.md) and the
+   [root contract](../nucleoid.spec.md#reactive-list-flattening).
+ 
++## Membership tests
 +
-+- World models rank and order their objects: shapes by size, events by
-+  time, cells from left to right, bids by amount. [NUC 77](nuc-0077.md)'s
-+  `maxBy` and `minBy` pick the extreme item by a key, but a complete ordering
-+  by a key still needs a comparator, such as
-+  `Shape.sort((a, b) -> a.size - b.size)` for numeric keys, or
-+  `(a, b) -> a.name < b.name ? -1 : 0` for text, which reads both keys again
-+  on every comparison.
-+- [NUC 58](nuc-0058.md) makes `sort` reorder a writable receiver in place.
-+  `ranked = scores.sort(comparator)` therefore sorts `scores` itself. Two
-+  standing sorts of one list with different orders re-run each other, so a
-+  later change of that list raises `TypeError("Propagation did not settle")`.
-+  A derived ordering that leaves its list alone has to copy first, as
-+  `ranked = scores.slice().sort(comparator)` does. A read-only query that
-+  derives the order without writing state is the declarative form.
-+- Programmers and language models know key-based sorting from lodash's
-+  `_.sortBy`, Ruby's `sort_by`, Scala's `sortBy`, Kotlin's `sortedBy` and
-+  Python's `sorted(xs, key=f)`, yet `[3, 1, 2].sortBy(x -> x)` raises
-+  `TypeError("[3,1,2].sortBy is not a function")`.
-+- `Shape.sortBy(s -> s.size)` is ten lexer tokens against eighteen for
-+  `Shape.sort((a, b) -> a.size - b.size)`, and it names the key once
-+  instead of spelling a comparator.
++**Membership tests keep an order book's rules live**
 +
-+## Rationale
++```nuc
++class Order(status):
++    this.status = status
++$Order.open = $Order.status in ["new", "paid"]
++if $Order.status not in ["new", "paid"]:
++    $Order.archived = true
++first = Order("new")
++second = Order("shipped")
++assert([first.open, second.open], [true, false])
++assert(second.archived, true)
++first.status = "paid"
++first.open
++# return: true
++```
 +
-+- Pending: the proposer completes this section.
++- `$Order.open = $Order.status in ["new", "paid"]` gives every order its
++  own `open`, and the class-level `if` archives each order whose status is
++  not in that list.
++- Changing `first.status` re-evaluates both rules for that order. See
++  [NUC 97](nuc-0097.md) and the
++  [root contract](../nucleoid.spec.md#membership-tests).
 +
-+## Specification
+ ## Every and predicate sentences
+ 
+ **Every keeps a fleet's rules stated as claims about every truck**
+```
+
+**File**: `docs/nuc-0000.md` (modified, +2/-2)
+```diff
+@@ -62,7 +62,7 @@ Created: 31-Jul-2026
+ | [94](nuc-0094.md) | Opt-In Conditional Words | Accepted |
+ | [95](nuc-0095.md) | Item Words | Accepted |
+ | [96](nuc-0096.md) | At Variables | Accepted |
+-| [97](nuc-0097.md) | In and Not In Membership Tests | Draft |
++| [97](nuc-0097.md) | In and Not In Membership Tests | Accepted |
+ | [98](nuc-0098.md) | Every Quantifiers, Class References and Predicate Sentences | Accepted |
+ | [102](nuc-0102.md) | Implicit Receiver Properties | Automatic-Accepted: independent evaluation rejected it because a `while` condition or `suppose` premise in a property value that holds a receiver read and ends in `is NAME: NAME` builds a loop or hypothetical where its written-out spelling runs as separate statements |
+ | [104](nuc-0104.md) | Any and All Class References | Accepted |
+@@ -256,7 +256,7 @@ Created: 31-Jul-2026
+ | [94](nuc-0094.md) | Opt-In Conditional Words | Standards Track | Syntax enhancement | Accepted |
+ | [95](nuc-0095.md) | Item Words | Standards Track | Syntax enhancement | Accepted |
+ | [96](nuc-0096.md) | At Variables | Standards Track | Syntax enhancement | Accepted |
+-| [97](nuc-0097.md) | In and Not In Membership Tests | Standards Track | Syntax enhancement | Draft |
++| [97](nuc-0097.md) | In and Not In Membership Tests | Standards Track | Syntax enhancement | Accepted |
+ | [98](nuc-0098.md) | Every Quantifiers, Class References and Predicate Sentences | Standards Track | Syntax enhancement | Accepted |
+ | [99](nuc-0099.md) | SQL-Style Inequality | Standards Track | Language compatibility | Rejected: full suite fails 14 corpus-count assertions |
+ | [100](nuc-0100.md) | Reactive Cotangent | Standards Track | Utility enhancement | Accepted |
+```
+
+**File**: `docs/nuc-0097.md` (modified, +616/-8)
+```diff
+@@ -4,7 +4,7 @@
+ NUC: 97
+ Title: In and Not In Membership Tests
+ Author: Can Mingir <canmingir@gmail.com>
+-Status: Draft
++Status: Accepted
+ Type: Standards Track
+ Category: Syntax enhancement
+ Created: 09-Nov-2026
+@@ -19,8 +19,14 @@ Created: 09-Nov-2026
+   whose `includes` tests membership: a list or population holds an item equal
+   to `A` under the deep equality `includes` uses, and a string holds the text
+   of `A`.
+-- Any other right operand raises a `TypeError`, where `includes` returns
+-  `undefined` for an object or `null`. A silent `undefined` would make
++- A null or undefined right operand yields undefined in both forms, which a
++  declaration stores as `null`, as a quantifier over a null collection does:
++  declarations store a pending result as `null`, so a rule over a list that
++  is not yet set waits for it, and `not in` never reads `true` from it.
++- Any other right operand raises
++  `TypeError("<collection> is not a collection")`, the error of a quantifier
++  over a value that is not a collection, where `includes` returns
++  `undefined` for an object. A silent `undefined` would make
+   `"a" not in {a: 1}` read `true`, and no later NUC could change that
+   accepted result, so key membership on objects stays open.
+ - A membership test stands with `<`, `<=`, `>` and `>=`: it binds tighter
+@@ -29,7 +35,21 @@ Created: 09-Nov-2026
+   follows `tags`.
+ - Only inputs that were errors at the accepted revision change. A template
+   interpolation such as `` `${x in xs}` `` keeps ignoring its trailing tokens
+-  and reading `x`, the class of break that rejected [NUC 91](nuc-0091.md).
++  and reading `x`, the class of break that rejected [NUC 91](nuc-0091.md),
++  and so does the public Rust `parse_expression`, so
++  `parse_expression("x in xs")` still returns `x`. The only other inputs
++  whose result it changes are Python-style conditionals whose condition
++  holds a membership test, as NUC 62 and NUC 75 changed it; see
++  [Compatibility](#compatibility).
++- Outside a clause, `in` directly before a collection and `:` keeps its
++  accepted reading, so malformed quantifiers such as `ok = all 1 in xs: v`
++  keep `SyntaxError("Unexpected keyword 'in'")`.
++- The public `BinaryOp` enum gains `In` and `NotIn`, which needs a human
++  SemVer decision; no version is changed. No token or keyword is added, and
++  no error message that a program can reach: only the public Rust function
++  `binary`, which has no runtime, gains a message for the two operators, as
++  [Errors](#errors) lists. The authoritative contract is
++  [Membership tests](../nucleoid.spec.md#membership-tests).
+ 
+ ## Motivation
+ 
+@@ -61,19 +81,607 @@ Created: 09-Nov-2026
+ 
+ ## Rationale
+ 
+-- Pending: the proposer completes this section.
++- **Category and mode.** The confirmed category is Syntax enhancement, from
++  one uniform draw over the five categories that NUC 1 marks eligible for
++  automatic selection, index 0 with probability 1/5 and no redraw, in the
++  continuous cycle that allocated this NUC. The user resumed it by number,
++  so it is a single-proposal, user-requested NUC: token comparison is
++  skipped as `single_proposal`, and the new cases need no accepted-syntax
++  counterparts. Runtime applicability does not apply. No hint was supplied.
++  Strategy learning is `not_configured`, so this trial is unattributed, and
++  advisory usefulness is unscored (`missing_rubric`), not zero.
++- **Two operators, not a lowering to `includes`.** `A in B` builds
++  `Expr::Binary` with the new `BinaryOp::In`, and `A not in B` with
++  `BinaryOp::NotIn`. Every generic path over binary nodes then applies
++  unchanged: dependency walks, `.value` freezing, class-level rule
++  validation and cycle checks, reasoning, the protected-assertion walker and
++  rendering. Rejected:
++  - lowering to the call `B.includes(A)`, which returns `undefined` for an
++    object or `null`, so `!B.includes(A)` reads `true`; it would also share
++    the call's graph key and its dispatch, where a class named `Math` reaches
++    the built-in namespace;
++  - a new `Expr` variant, which every exhaustive match over the public enum
++    would need, while catch-all arms such as the `.value` freezer would
++    silently skip it;
++  - a `negated` flag, which the Rust guidelines replace with a dedicated
++    variant.
++- **The comparison of `includes`.** Lists and populations are searched by
++  `Runtime::holds`, which `includes` now calls too, and strings by
++  `builtins::string_contains`, which the string `includes` query now calls.
++  Both were factored out of the accepted search, so the two spellings
++  cannot drift apart.
++- **Null and undefined collections wait.** The allocation first proposed a
++  `TypeError` for `null` as well. Declarations store a pending result as
++  `null`, so a rule chain such as `$Item.tags = $Item.raw.split(",")`
++  followed by `$Item.hot = "red" in $Item.tags` would fail every instance
++  whose `raw` is not yet set, where `includes` and quantifiers wait. Both
++  for
+```
+
+**File**: `docs/nucleoid.g4` (modified, +29/-2)
+```diff
+@@ -45,6 +45,7 @@ program
+     ;
+ 
+ // parse_expression skips leading separators and ignores trailing tokens.
++// Its top level forms no membership test, as an interpolation's does not.
+ expressionInput
+     : separator* expression remainingTokens EOF
+     ;
+@@ -407,7 +408,8 @@ methodDecl
+  * - A Python conditional is tentative and needs 'else' directly after its
+  *   condition. It is disabled in interpolation and comprehension sources.
+  * - Interpolation also disables quantifiers, spelled class references, noun
+- *   queries and lambdas.
++ *   queries, lambdas and membership tests. The top level of an
++ *   expressionInput disables membership tests only.
+  *   Object values retain 'lambda name:' as a property/declaration boundary
+  *   when that boundary has the accepted reading.
+  */
+@@ -482,8 +484,30 @@ equalityOperator
+     | IS NOT?
+     ;
+ 
++/*
++ * Membership contract (NUC 97):
++ * - IN, and NOT directly followed by IN, after an additive operand build
++ *   BinaryOp::In and BinaryOp::NotIn on the left-associative level of
++ *   LESS, LESS_EQUAL, GREATER and GREATER_EQUAL, sharing its MAX_CHAIN
++ *   operand limit. NOT before an operand stays a prefix, so
++ *   'NOT a IN b' is '(NOT a) IN b'.
++ * - Not at the top level of an interpolation or of an expressionInput,
++ *   whose trailing tokens are ignored: IN stays their first ignored token.
++ * - Not when COLON directly follows the right operand outside a clause:
++ *   such a colon can only close a malformed quantifier, so IN keeps its
++ *   accepted reading and the error "Unexpected keyword 'in'".
++ */
+ relational
+-    : additive ((LESS | LESS_EQUAL | GREATER | GREATER_EQUAL) additive)*
++    : additive (relationalOperator additive)*              // Expr::Binary, left
++    ;
 +
-+- Pending: the proposer completes this section.
++relationalOperator
++    : LESS
++    | LESS_EQUAL
++    | GREATER
++    | GREATER_EQUAL
++    | IN                                                  // BinaryOp::In
++    | NOT IN                                              // BinaryOp::NotIn
+     ;
+ 
+ additive
+@@ -1060,4 +1084,7 @@ fragment REGEX_CHAR
+  * src\lang\ast\parser.rs, receivers set in parser\expression.rs and
+  * parser\statement.rs, reads in parser\primary.rs and parser\postfix.rs, and
+  * the operand-position rule in src\lang\ast\lexer\token.rs.
++ * Membership tests: relationalOperator in parser\precedence.rs, the
++ * expressionInput context in parser.rs and their evaluation in
++ * src\lang\ast\operator.rs.
+  */
+```
+
+**File**: `nucleoid.spec.md` (modified, +254/-0)
+```diff
+@@ -4335,6 +4335,113 @@ statement positions; caught values and transaction recovery are unchanged.
+   `tests/any_all_class_references_cli.rs` and the REPL continuation and
+   terminal unit suites execute the rest.
+ 
++## Membership tests
 +
-+## Errors
-+
-+- Pending: the proposer completes this section.
-+
-+## Reference Implementation
-+
-+- Pending: the proposer completes this section.
-+
-+## Copyright
-+
-+Copyright 2020 Nucleoid
-+
-+This document is licensed under the Apache License, Version 2.0. See
-+[LICENSE](../LICENSE) for the full text.
++- [NUC 97](docs/nuc-0097.md) adds the membership tests `ITEM in COLLECTION`
++  and `ITEM not in COLLECTION`. `not in` is the keyword `not` directly
++  followed by the keyword `in`. No token, keyword, option or flag is added,
++  and no error message that a program can reach.
++- A list, including a reasoning selection such as `why c`, holds `ITEM` when
++  one of its items matches it under the deep equality of `includes`: lists
++  and objects match on their contents, `null` and undefined match each
++  other, and NaN matches nothing. A declared class holds `ITEM` when one of
++  its instances matches it, as `Name.includes(ITEM)` compares: every
++  instance holds its own `id`, so for an instance `front` of `Seat`,
++  `{row: 1} in Seat` is `false` and `{id: "front", row: 1} in Seat` is
++  `true`. A string holds `ITEM` when the text of `ITEM`, as `includes`
++  converts it, occurs in it, so `1 in "a1"` and `"" in "abc"` are `true`.
++- `in` yields `true` when the collection holds `ITEM` and `false`
++  otherwise, and `not in` yields the opposite. Over a list, a declared class
++  and a string, the results and the reads equal those of
++  `COLLECTION.includes(ITEM)` and `!COLLECTION.includes(ITEM)`, apart from
++  their order: `ITEM` is evaluated first, as the left operand of `<` is, so
++  its reads and errors come first. A declared class named `Math`, `Number`,
++  `String` or `Date` holds its instances here too, while its `includes`
++  call reaches the built-in namespace of that name.
++- A null or undefined collection holds nothing that can be known: both
++  forms yield undefined, which a declaration stores as `null`, as a
++  quantifier over a null collection does. A rule over a list or property
++  that is not yet set therefore waits for it, and `not in` never reads
++  `true` from a missing collection.
++- Any other collection raises `TypeError("<collection> is not a collection")`,
++  naming the collection's path or canonical source as a quantifier does: a
++  number, boolean, object, instance, function, date, regular expression or
++  built-in namespace such as `Math`. So `"a" in {a: 1}` and
++  `"a" not in {a: 1}` raise `TypeError("{\"a\":1} is not a collection")`,
++  where `{a: 1}.includes("a")` yields undefined and its negation `true`, and
++  key membership in objects is left to a later proposal.
++- A declaration, `if` rule or class-level rule that uses a membership test
++  depends on what both operands read: the list, the string or the
++  population of the class, and whatever `ITEM` reads, but not the
++  properties of a compared object, as for `includes`. So
++  `known = "green" in tags` re-evaluates when `tags` is reassigned or
++  pushed to, `invited = {id: "ben"} in Guest` when a `Guest` is created or
++  deleted, and `$Order.open = $Order.status in ["new", "paid"]` holds for
++  each instance. `.value` freezes an operand when the declaration is
++  stored, as for every operator. An error propagates through the existing
++  transaction, so a failed standing re-evaluation rolls back the change that
++  triggered it.
++- Both forms stand on the left-associative level of `<`, `<=`, `>` and
++  `>=`, whose chain holds at most 128 of these operators. They bind more
++  tightly than `==`, `!=`, `===`, `!==`, `is`, `is not`, `and`, `&&`, `or`,
++  `||`, `??`, `|>`, the conditional forms and assignment, and more loosely
++  than `+`, `-`, `*`, `/`, `%`, `**` and the prefix operators. So
++  `x + 1 in xs` is `(x + 1) in xs`, `x in xs == true` is
++  `(x in xs) == true`, `a < b in c` is `(a < b) in c`, `a is b in c` is
++  `a is (b in c)`, `x in why c` tests the selection `why c`, and
++  `not x in xs` is `(not x) in xs`, as `not x < y` is `(not x) < y`; write
++  `x not in xs` or `not (x in xs)` to negate the test.
++- They apply wherever the accepted grammar reads a comparison, apart from
++  the two places whose trailing tokens are ignored: the top level of a
++  template interpolation and the top level of the public Rust
++  `parse_expression` input. There `in` stays the first ignored token, so
++  `` `${x in xs}` `` still renders `x`, and `parse_expression("x in xs")`
++  still returns `x`. Parentheses, brackets, braces, arguments and clauses
++  inside them take membership tests, as in `` `${(x in xs)}` ``.
++- Outside a clause, a membership test does not end directly before a `:`.
++  The clauses are statement headers, `suppose` premises, subscript starts,
++  the consequent after `?`, Python-style conditions and quantifier
++  collections, whose top-level `:` belongs to the enclosing construct, so
++  `if x in xs:` and `ready ? x in xs : false` hold membership tests.
++  Anywhere else a colon after the right operand can only close a malformed
++  quantifier, so `in` keeps its accepted reading there:
++  `ok = all 1
 ```
 
 ---
 
-### Incident Patch 2: `8b76c64b` (2026-11-10)
-**Commit Message**: NUC 98 Every Quantifiers, Class References and Predicate Sentences
+### Incident Patch 2: `e1abb147` (2026-11-11)
+**Commit Message**: Synthesize ARC training pairs
 
-Revision 2 of NUC 98, Accepted under the user-requested basis of the
-automatic acceptance rule, in a single-proposal /nuc-proposal request
-(Syntax enhancement): the frozen candidate meets every hard criterion,
-with the compatibility break the user accepted in advance and no other.
-The independent evaluator's overall decision is also Accepted. NUC 98
-keeps its number and its Accepted status.
+Generate and append synthesized training pairs after extracting original instances, label originals and synthesized pairs with accuracy weights, and remove silhouette matrices from visualizer output. Document the new dataset behavior.
 
-Inside an if statement, `every` is no longer a spelling of `$`: lexically
-anywhere in the statement (its condition, the bodies of if, elif and
-else in every spelling, and everything nested there), `every NAME` where
-revision 1 reads `$NAME`, and a predicate sentence such as
-`every Human is mortal`, raise SyntaxError("Use all instead of every
-inside if") at the `every`, so the program does not run. A condition
-reads with `any` and the rule it guards with `all` (NUC 104), as in
-`if any Object.number > 4:` with `all Object.color is red`, and `every`
-stays the spelling of claims made outside if statements. The quantifier
-`every v in xs: v > 0`, `every is ...`, interpolation tops and `every` as
-a name keep their readings everywhere.
-
-**File**: `README.md` (modified, +6/-1)
+**File**: `arc/README.md` (modified, +7/-0)
 ```diff
-@@ -2157,7 +2157,8 @@ assert([a.color, b.color], [null, "red"])
+@@ -2441,6 +2441,13 @@ Native snapshots use `x`, `y`, `width`, `height`, and `orientation`; `tag`
+ replaces `shape` with shortened identifiers such as `l6747`.
+ Matrices already follow the canvas axes; composition does not rotate them.
  
- - [NUC 104](docs/nuc-0104.md) reads `any Object` and `all Object` as the
-   class reference `$Object`, wherever [NUC 98](docs/nuc-0098.md) reads
--  `every Object` as one. So `if any Object.number > 4:` is the class-level
-+  `every Object` as one and inside if statements, where NUC 98 rejects
-+  `every Object`. So `if any Object.number > 4:` is the class-level
-   conditional `if $Object.number > 4:`, and `all Object.color is red` is the
-   rule `$Object.color is red` it guards for each Object over 4.
- - They are spellings, not quantifiers: each instance is tested on its own,
-@@ -2205,6 +2206,10 @@ assert(every h in Human: h.mortal, true)
-   `$Human`, so `every Human.legs is 2` is the class-level rule
-   `$Human.legs = 2`, and `every h in Human: h.mortal` as the quantifier
-   `all h in Human: h.mortal`.
-+- Inside an if statement `every Human` raises
-+  `SyntaxError("Use all instead of every inside if")` before the program
-+  runs, so a condition reads `if any Human.age > 60:` and the rule it guards
-+  `all Human.senior = true`.
- - The statement `every Human is mortal`, like `$Human is mortal`, states
-   `$Human.mortal = true` for every instance, and `why` reports it as that
-   rule. Elsewhere `every` stays an ordinary name, so `xs.every(...)` and a
-```
-
-**File**: `dataset/nucleoid.spec.jsonl` (modified, +1/-1)
-```diff
-@@ -738,7 +738,7 @@
- {"id":"spec-0738","description":"Nucleoid queries the cells of flattened grids","code":"grid = [[1, 0, 2], [0, 3, 2]]\ncells = grid.flat()\ntotal = cells.sum()\ncolors = cells.distinct()\nfilled = cells.count(cell => cell > 0)\nassert([total, colors, filled], [8, [1, 0, 2, 3], 4])\ngrid.push([5, 0, 0])\nassert([total, colors, filled], [13, [1, 0, 2, 3, 5], 5])\ngrid = [[4, 4], [0]]\n[total, colors, filled]","return":"[8,[4,0],2]"}
- {"id":"spec-0739","description":"Nucleoid rolls back failed flattening updates","code":"rows = [[1, [2]], [3]]\ncells = rows.flat()\ntry:\n    rows.push([4])\n    assert(cells, [1, [2], 3, 4])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert([rows, cells], [[[1, [2]], [3]], [1, [2], 3]])\ntry:\n    cells = rows.flat(2)\n    assert(cells, [1, 2, 3])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nrows.push([[5]])\ncells","return":"[1,[2],3,[5]]"}
- {"id":"spec-0740","description":"Nucleoid states class predicates with is","code":"class Human(name: str):\n    this.name = name\nplato = Human(\"Plato\")\nevery Human is mortal\nsocrates = Human(\"Socrates\")\nassert([plato.mortal, socrates.mortal], [true, true])\n$Human is wise\nassert(socrates.wise, true)\nassert((why socrates.mortal)[0].rule, \"$Human.mortal = true\")\nmortal = false\nassert(socrates.mortal, true)\nplato.mortal = false\nassert([plato.mortal, socrates.mortal], [false, true])\nsocrates.mortal","return":"true"}
--{"id":"spec-0741","description":"Nucleoid spells class references with every","code":"class Order(total):\n    this.total = total\nevery Order.big = every Order.total > 10\nif every Order.total > 100:\n    every Order.vip = true\nsmall = Order(5)\nlarge = Order(200)\nassert([small.big, large.big], [false, true])\nassert([small.vip, large.vip], [null, true])\nsmall.total = 50\nassert(small.big, true)\nevery Order.tier is \"gold\"\nassert(large.tier, \"gold\")\nsmall.big","return":"true"}
-+{"id":"spec-0741","description":"Nucleoid spells class references with every","code":"class Order(total):\n    this.total = total\nevery Order.big = every Order.total > 10\nif any Order.total > 100:\n    all Order.vip = true\nsmall = Order(5)\nlarge = Order(200)\nassert([small.big, large.big], [false, true])\nassert([small.vip, large.vip], [null, true])\nsmall.total = 50\nassert(small.big, true)\nevery Order.tier is \"gold\"\nassert(large.tier, \"gold\")\nsmall.big","return":"true"}
- {"id":"spec-0742","description":"Nucleoid quantifies with every as with all","code":"class Check\nready = every check in Check: check.passed\nassert(ready, true)\nfirst = Check()\nfirst.passed = true\nsecond = Check()\nassert(ready, false)\nsecond.passed = true\nassert(ready, true)\nscores = [3, 4]\nassert(every score in scores: score > 2, all score in scores: score > 2)\nassert(every score in scores: score > 3, false)\nassert((every score in scores: score > 2) ? \"pass\" : \"fail\", \"pass\")\nready","return":"true"}
- {"id":"spec-0743","description":"Nucleoid keeps every an ordinary name where no name follows it","code":"every = [1, 2]\ntotal = every.length\nassert(total, 2)\nassert(every.every(v => v > 0), true)\npairs = {every: 3, other: every[0]}\nassert(pairs, {every: 3, other: 1})\ndef count(every) => every + 1\nassert(count(4), 5)\nevery is [5]\nassert(total, 1)\nassert(every n in every: n > 4, true)\nevery","return":"[5]"}
- {"id":"spec-0744","description":"Nucleoid keeps other is statements on a class reference","code":"class Order(total):\n    this.total = total\norder = Order(20)\n$Order.size is big\nassert(order.size, \"big\")\ntry:\n    $Order is 5\ncatch error:\n    assert(error, ReferenceError(\"is is not defined\"))\nassert(order.big, null)\n$Order is big\nassert(order.big, true)\norder.size","return":"\"big\""}
-```
-
-**File**: `docs/README.md` (modified, +27/-16)
-```diff
-@@ -1316,19 +1316,25 @@ $Human.mortal = true
- 
- - Every `Human` has `mortal` `true`.
- - [NUC 98](nuc-0098.md) spells `$Name` as `every Name` wherever an operand
--  begins, so `every Human.mortal = true` and
-+  begins outside an if statement, so `every Human.mortal = true` and
-   `every Order.big = every Order.total > 10` are class-level rules. Names
-   stay exact: `every human` is `$human`. `every Name in` begins a
-   [quantifier](#quantifiers) instead, and `every is ...` and `every Name:`
-   outside a header keep their accepted readings, as does `every` at the top
-   level of a template interpolation.
--- The statement `$Human is mortal`, or `every Human is mortal`, states
--  `$Human.mortal = true` and renders as it. It needs exactly one name after
--  `is`, followed by the end of the line, a `;`, the end of a block or of
--  the input, `else` or `catch`. `$Order is 5`, `$Human is "mortal"`,
--  `$Human is not mortal` and `$Human is mortal x = 1` keep their accepted
--  readings as juxtaposed statements, and `$Human.kind is mortal` still
--  stores the word `"mortal"`.
-+- Inside an if statement, in its condition and in the bodies of its `if`,
-+  `elif` and `else` clauses with everything nested in them, `every Name`
-+  raises `SyntaxError("Use all instead of every inside if")` at its `every`
-+  before the program runs (NUC 98 revision 2). Write `any Name` in the
-+  condition and `all Name` in the body, as below. The quantifier
-+  `every v in xs: v > 0` and the other readings of `every` stay valid there.
-+- The statement `$Human is mortal`, or `every Human is mortal` outside an if
-+  statement, states `$Human.mortal = true` and renders as it. It needs
-+  exactly one name after `is`, followed by the end of the line, a `;`, the
-+  end of a block or of the input, `else` or `catch`. `$Order is 5`,
-+  `$Human is "mortal"`, `$Human is not mortal` and `$Human is mortal x = 1`
-+  keep their accepted readings as juxtaposed statements, and
-+  `$Human.kind is mortal` still stores the word `"mortal"`.
- 
- ```
- class Human(name: str):
-@@ -1339,10 +1345,11 @@ every Human is mortal
- 
- - This states the same rule as the program above.
- - [NUC 104](nuc-0104.md) spells `$Name` as `any Name` and `all Name`
--  wherever `every Name` spells it, so a condition about a class reads with
--  `any` and the rule it guards with `all`. They are spellings of `$Name`,
--  not quantifiers: each instance is tested on its own, so here only `b`
--  turns red, and instances created or changed later follow the rules.
-+  wherever `every Name` spells it and inside if statements too, so a
-+  condition about a class reads with `any` and the rule it guards with
-+  `all`. They are spellings of `$Name`, not quantifiers: each instance is
-+  tested on its own, so here only `b` turns red, and instances created or
-+  changed later follow the rules.
- 
- ```
- class Object(number):
-@@ -3821,8 +3828,11 @@ ready
-   interpolation a quantifier needs parentheses: `` `${(all v in xs: v)}` ``.
- - [NUC 98](nuc-0098.md) adds `every NAME in COLLECTION: CONDITION` as a
-   spelling of `all NAME in COLLECTION: CONDITION`. It builds the same node,
--  renders as `(all ...)` and pairs its colon in header scans as `all` does.
--  `every` stays an ordinary name elsewhere, including `xs.every(callback)`.
-+  renders as `(all ...)` and pairs its colon in header scans as `all` does,
-+  inside if statements too. `every Name` without `in` is the class
-+  reference `$Name` outside if statements and is rejected inside them, where
-+  `any Name` and `all Name` spell it. `every` stays an ordinary name
-+  elsewhere, including `xs.every(callback)`.
- - The authoritative contract is the
-   [quantifiers](../nucleoid.spec.md#quantifiers) section.
- 
-@@ -4056,11 +4066,12 @@ name.property = expression             property assignment
- name.property = .other + 1             .other reads name.other in a property value (NUC 102)
- $Type.property = expression            class-level rule
- $Type.property = .a * .b               $Type.property = $Type.a * $Type.b (NUC 102)
--every Type.property = expression       the same class-level rule; every Type is $Type (NUC 98)
-+every Type.property = expression       the same class-level rule; every Type is $Type outside if (NUC 98)
- $Type is word                          predicate sentence: $Type.word = true (NUC 98)
--every Type is word                     the same predicate sentence (NUC 98)
-+every Type is word                     the same predicate sentence, outside if (NUC 98)
- all Type.property = expression         the same class-level rule; all Type and any Type are $Type (NUC 104)
- if any Type.property > value:          the class-level conditional of $Type, per instance (NUC 104)
-+if every Type.property > value:        every Type inside if -- rejected; use any and all (NUC 98)
- all Type is word                       the same predicate sentence; also any Type is word (NUC 104)
- delete name                            remove a variable, property, or instance
- 
-```
-
-**File**: `docs/examples.md` (modified, +6/-4)
-```diff
-@@ -3708,10 +3708,10 @@ class Truck(name, load, limit):
-     this.limit = limit
- every Truck is registered
- every Truck.overloaded = every Truck.load > every Truck.limit
--if every Truck.overloaded:
--    every Truck.status = "hold"
-+if any Truck.overloaded:
-+    all Truck.status = "hold"
- else:
--    every Truck.status = "go"
-+    all Truck.status = "go"
- north = Truck("north", 8, 10)
- south = Truck("south", 12, 10)
- assert([north.status, south.status], ["go", "hold"])
-@@ -3723,7 +3723,9 @@ safe = every truck in Truck: not truck.overloaded
- ```
- 
- - `every Truck is registered` states `$Truck.registered = true`, and
--  `every Truck` stands for `$Truck` in the other rules, so each truck is
-+  `every Truck` stands for `$Truck` in the overloaded rule. Inside the if
-+  statement `every` is rejected, so its condition reads `any Truck` and both
-+  of its clauses `all Truck`, which stand for `$Truck` too. So each truck is
-   registered, knows whether it is overloaded and takes its status from that.
- - `every truck in Truck: not truck.overloaded` is the quantifier
-   `all truck in Truck: not truck.overloaded`. Lightening `south` releases it
-```
-
-**File**: `docs/nuc-0098.md` (modified, +837/-23)
-```diff
-@@ -8,7 +8,7 @@ Status: Accepted
- Type: Standards Track
- Category: Syntax enhancement
- Created: 09-Nov-2026
--Requires: 62, 93
-+Requires: 62, 93, 104
- ```
- 
- ## Abstract
-@@ -20,7 +20,8 @@ Requires: 62, 93
-     `all NAME in COLLECTION: CONDITION` of [NUC 62](nuc-0062.md). It builds
-     the `all` node and renders as `(all NAME in COLLECTION:CONDITION)`.
-   - `every NAME`, where an operand begins, is the class reference `$NAME`,
--    so `every Human.mortal = true` is `$Human.mortal = true`.
-+    so `every Human.mortal = true` is `$Human.mortal = true`. Since
-+    revision 2 this holds outside if statements only.
-   - The statement `$Class is WORD`, whose value is exactly one name that
-     ends the line statement, is `$Class.WORD = true`, the rule that every
-     instance has `WORD` `true`. So `$Human is mortal` and
-@@ -49,9 +50,9 @@ assert(every h in Human: h.mortal, true)
-   outside a header, where `NAME:` begins the next comma-free property or a
-   colon statement; and the top level of a template interpolation. A variable
-   named `every` does not disable the new forms.
--- No token, keyword, syntax-tree variant, error type or message, option or
--  flag is added, and no public item is added or removed. The authoritative
--  contract is
-+- No token, keyword, syntax-tree variant, error type, option or flag is
-+  added, and no public item is added or removed. Revision 1 adds no error
-+  message; revision 2 adds one. The authoritative contract is
-   [Every quantifiers, class references and predicate sentences](../nucleoid.spec.md#every-quantifiers-class-references-and-predicate-sentences).
- - The user accepted three compatibility breaks in advance, each limited to
-   the inputs it names:
-@@ -79,9 +80,58 @@ assert(every h in Human: h.mortal, true)
-   also Accepted. Token comparison was skipped as `single_proposal`, the rule
-   for a single-proposal request, not a failed check; see
-   [Evaluation](#evaluation).
-+- Revision 2 keeps `every` class references out of if statements, as the
-+  user requested. Lexically anywhere inside an if statement, in its
-+  condition and in the bodies of its `if`, `elif` and `else` clauses with
-+  everything nested in them, `every NAME` where revision 1 reads `$NAME`
-+  raises `SyntaxError("Use all instead of every inside if")` at the line and
-+  column of the `every`, so the program does not run. A predicate sentence
-+  whose subject is spelled `every Class` raises it there too.
-+- A condition then reads with `any` and the rule it guards with `all`, the
-+  spellings of `$NAME` that [NUC 104](nuc-0104.md) adds, and `every` stays
-+  the spelling of claims made outside if statements:
++Right after a training pair's instances are extracted, `analyzer.synthetize`
++asks the LLM for new pairs, each with its `input_matrix`, `output_matrix`, and
++instance matrices, and appends them to the training dataset. Original pairs
++carry `accuracy: 1` and synthesized pairs `accuracy: 0.8`. Synthesized pairs
++keep their instance matrices and are not synthesized again; their instances
++are constructed and evaluated like those of the original pairs.
 +
-+```
-+class Object(number):
-+    this.number = number
-+every Object.label is square
-+if any Object.number > 4:
-+    all Object.color is red
-+a = Object(3)
-+b = Object(7)
-+assert([a.label, b.label], ["square", "square"])
-+assert([a.color, b.color], [null, "red"])
-+```
-+
-+- Only that reading changes. Inside if statements the quantifier
-+  `every v in xs: v > 0`, `every is ...`, `every NAME:` outside a clause,
-+  the top level of a template interpolation, `xs.every(...)` and `every` as
-+  a name keep their readings. Outside if statements, in Python-style
-+  conditionals, `?` conditionals and comprehension filters too, `every NAME`
-+  still reads `$NAME`. The rule decides no parse: a reading that the parser
-+  tries and drops raises nothing.
-+- The user accepted the compatibility break of revision 2 in advance, limited
-+  to the inputs it names: programs whose parse at the accepted revision
-+  reads `every NAME` as a class reference inside an if statement now raise
-+  the error. The two document cases of revision 1 that held the form are
-+  respelled with `any` and `all`, and the existing tests that pinned the
-+  form move to the new reading, as
-+  [Compatibility of revision 2](#compatibility-of-revision-2) lists. Any
-+  other change to an accepted parse, behavior, output or pinned test still
-+  fails backward compatibility.
-+- **Revision 2 outcome: Accepted** on 10-Nov-2026 under the user-requested
-+  basis of the automatic acceptance rule: the frozen candidate meets every
-+  hard criterion, with the break above and no other. The independent
-+  evaluator's overall decision is also Accepted. The core gate's report
-+  decided `rejected` only because of that break, whose two issues are the
-+  replays of the accepted sources of the two respelled cases. Token
-+  comparison was skipped as `single_proposal`, not a failed check; see
-+  [Revision 2](#revision-2) of the Evaluation.
- 
- ## Motivation
- 
-+### Universal claims (revision 1)
-+
- - World models state facts about whole classes. The specification writes
-   its Socrates rule as `$Human.mortal = true` under the comment
-   `# Every human is mortal`: the comment says the rule, and the code spells
-@@ -102,8 +152,27 @@ assert(every h in Human: h.mortal, true)
- - The user requested `every` as a spelling of `all` and of `$`, and
-   `every Human is mortal` as the same st
+ Angles run clockwise from north: `N = 0`, `NE = 45`, `E = 90`, `SE = 135`,
+ `S = 180`, `SW = 225`, `W = 270`, and `NW = 315`. Every instruction dataset
+ gives each input and output state the direction its own shape points, by the
 ```
 
-**File**: `docs/nucleoid.g4` (modified, +21/-2)
+**File**: `arc/src/analyzer.ts` (modified, +33/-0)
 ```diff
-@@ -671,9 +671,19 @@ quantified
-  *   not when COLON follows the name outside a clause, so the name keeps
-  *   starting the next comma-free property or colon statement.
-  * - The three words build the same node; none of them quantifies here.
-+ * - Inside an ifStmt, from its IF to the end of its last body, with every
-+ *   statement, block, function, lambda and class body nested there and the
-+ *   interpolations of its templates, the EVERY alternative is rejected with
-+ *   "Use all instead of every inside if" at the EVERY (NUC 98 revision 2).
-+ *   The other two words are unchanged there. The rule decides no parse: it
-+ *   is checked on the reading the parser keeps, so a tentative
-+ *   destructuring value, whileStmt condition, premise or Python conditional
-+ *   that holds such an EVERY and is dropped, or a parse pass that fails,
-+ *   leaves every decision as before; see the parse-pass contract.
-  */
- spelledClass
--    : (EVERY | ANY | ALL) name          // Expr::ClassRef
-+    : (ANY | ALL) name                  // Expr::ClassRef
-+    | EVERY name                        // Expr::ClassRef, outside an ifStmt only
-     ;
- 
- lambdaExpression
-@@ -971,6 +981,11 @@ fragment REGEX_CHAR
-  * comparisons when the source holds 'is' or a template and with
-  * comprehensions when it holds 'for' or a template. When it fails too, its
-  * error replaces the accepted one only when it lies further into the source.
-+ * Passes run and succeed or fail exactly as without the EVERY rule of the
-+ * spelled-class contract. When the kept pass read an EVERY spelledClass
-+ * inside an ifStmt, the parse fails with that rule's error at the first
-+ * such EVERY instead. When every pass fails, the error chosen above is
-+ * reported, as before.
-  *
-  * Limits:
-  * MAX_NESTING = 64, shared by statement/expression nesting:
-@@ -1002,7 +1017,7 @@ fragment REGEX_CHAR
-  * p is @a + 2              -> p = a + 2, the tree of p is (a) + 2.
-  * p is [@A, B]             -> p = [A, Word(B)].
-  * every n in s: c          -> all n in s: c.
-- * every C, any C, all C    -> $C.
-+ * every C, any C, all C    -> $C; every C inside an ifStmt is an error.
-  * $C is w                  -> $C.w = true, also spelled every C is w,
-  *                             any C is w and all C is w.
-  * o.p = .a + .b            -> o.p = o.a + o.b, in the final parse.
-@@ -1037,6 +1052,10 @@ fragment REGEX_CHAR
-  * Quantifier::starting in src\lang\ast\mod.rs, spelledClass in
-  * parser\primary.rs and predicateSentence in parser\predicate.rs, which
-  * parser\statement.rs consults after an expression statement's head.
-+ * EVERY inside an ifStmt: the ifStmt count in parser\control.rs, the error
-+ * and its passes in src\lang\ast\parser.rs, and the tentative readings that
-+ * keep or drop it in parser\expression.rs, parser\control.rs,
-+ * parser\statement.rs, parser\destructuring.rs and parser\template.rs.
-  * Implicit receivers: parser\receiver.rs, with the final parse in
-  * src\lang\ast\parser.rs, receivers set in parser\expression.rs and
-  * parser\statement.rs, reads in parser\primary.rs and parser\postfix.rs, and
-```
-
-**File**: `nucleoid.spec.md` (modified, +68/-19)
-```diff
-@@ -4080,8 +4080,9 @@ statement positions; caught values and transaction recovery are unchanged.
- - [NUC 98](docs/nuc-0098.md) adds three spellings of universal claims. Each
-   builds the syntax tree of an accepted form, so its results, dependencies,
-   errors and rendering are that form's. No token, keyword, syntax-tree
--  variant, error type or message, option or flag is added, and `every` stays
--  an ordinary identifier.
-+  variant, error type, option or flag is added, and `every` stays an
-+  ordinary identifier. Its revision 2 adds one syntax error message, which
-+  keeps `every` class references out of if statements.
- - **Every quantifiers.** `every NAME in COLLECTION: CONDITION` is the
-   quantifier `all NAME in COLLECTION: CONDITION` of
-   [Quantifiers](#quantifiers). It starts only where the name `every`, a
-@@ -4096,11 +4097,11 @@ statement positions; caught values and transaction recovery are unchanged.
-   not, so `` `${every v in xs: v}` `` reads the variable `every`; parentheses
-   select the quantifier.
- - **Class references.** Where an operand begins, the name `every` directly
--  followed by another name `NAME` is the class reference `$NAME`:
--  `every Human.mortal = true` is `$Human.mortal = true`,
--  `every Order.big = every Order.total > 10` is a class-level rule, and
--  `if every Order.total > 10:` is the class-level conditional
--  `if $Order.total > 10:`. Names stay exact, so `every human` is `$human`.
-+  followed by another name `NAME` is the class reference `$NAME`, except
-+  inside an if statement, as described below:
-+  `every Human.mortal = true` is `$Human.mortal = true`, and
-+  `every Order.big = every Order.total > 10` is a class-level rule. Names
-+  stay exact, so `every human` is `$human`.
-   It builds exactly the tree of `$NAME`, so evaluation, class-level rule
-   validation, dependencies, errors such as
-   `SyntaxError("Cannot assign to $Human")` for `every Human = 4` and the
-@@ -4117,7 +4118,7 @@ statement positions; caught values and transaction recovery are unchanged.
-     a quantifier collection. `NAME:` then begins the next comma-free object
-     property or a colon statement, as in `{k: every x: 1}`, `every x: int`
-     and `every assert: a, b`. In those clauses the colon is the clause's, so
--    `if every Ready:` is `if $Ready:`;
-+    `while every Ready:` is `while $Ready:`;
-   - the top level of a template interpolation, whose trailing tokens are
-     ignored, so `` `${every x}` `` and `` `${1 + every x}` `` read the
-     variable `every`, while `` `${(every Human)}` `` reads `$Human`.
-@@ -4133,12 +4134,48 @@ statement positions; caught values and transaction recovery are unchanged.
- - `parse_expression` reads both forms and still ignores what follows them,
-   so it returns the quantifier for `every v in xs: v` and `$Human` for
-   `every Human` and for `every Human is mortal`.
-+- **Inside if statements.** Lexically anywhere inside an if statement,
-+  where the class-reference rule above reads `every NAME` as `$NAME`, the
-+  parse fails with `SyntaxError("Use all instead of every inside if")` at
-+  the line and column of the first such `every`, so the program does not
-+  run. Inside an
-+  if statement means its condition and the bodies of its `if`, `elif` and
-+  `else` clauses, in every spelling: the colon-free `if` of
-+  [NUC 49](docs/nuc-0049.md), `else if`, `elif if`, the direct alternatives
-+  `else CONDITION` and `elif CONDITION` of [NUC 43](docs/nuc-0043.md) and
-+  inline suites, with every block, statement, function, lambda and class
-+  body nested in them and their parenthesized template interpolations. A
-+  condition reads with `any` and the rule it guards with `all`, the
-+  spellings of [Any and all class references](#any-and-all-class-references),
-+  as in `if any Order.total > 100:` with `all Order.vip = true`. A predicate
-+  sentence whose subject is spelled `every Class` raises the same error
-+  there, as in `if c: every Human is mortal`.
-+- Only that reading changes. Inside if statements the quantifier
-+  `every NAME in COLLECTION: CONDITION`, `every is ...`, `every NAME:`
-+  outside a clause, the top level of a template interpolation,
-+  `xs.every(...)` and `every` as a declared name, parameter, key, label,
-+  loop name or binder keep their readings, and `any NAME`, `all NAME` and
-+  `$NAME` are class references there as everywhere else. Outside if
-+  statements `every NAME` still reads `$NAME`: at the top level, in `while`,
-+  `for`, `suppose` and `try` statements, in function and class bodies that
-+  no if statement holds, and in Python-style conditionals, `?` conditionals
-+  and comprehension filters, which are not if statements. `parse_expression`
-+  parses no if statement around its input, so it still returns `$Human` for
-+  `every Human`.
-+- The error belongs to the reading the parser keeps, and the rule decides
-+  no reading. A reading that the parser tries and abandons raises nothing:
-+  the header it tries for `while every lambda: 1` inside an if
-```
-
-**File**: `src/lang/ast/parser.rs` (modified, +39/-2)
-```diff
-@@ -53,6 +53,8 @@ fn furthest(accepted: Error, retried: Error) -> Error {
-     if further { retried } else { accepted }
+@@ -67,6 +67,39 @@ export async function instances({
+   return { instances: dataset[0].instances };
  }
  
-+const EVERY_INSIDE_IF: &str = "Use all instead of every inside if";
++export async function synthetize({
++  puzzle_id,
++  only_puzzle_dataset,
++  train_dataset,
++}) {
++  const { dataset } = await llm.generate({
++    puzzle_id,
++    only_puzzle_dataset,
++    messages: [
++      {
++        role: "user",
++        content: `
++          query:
++          ${JSON.stringify(train_dataset)}
++          json_format:
++          {
++            "dataset": [{
++              "input_matrix": <INPUT_MATRIX>,
++              "output_matrix": <OUTPUT_MATRIX>,
++              "instances": [{
++                "input_instance_matrix": <INPUT_INSTANCE_MATRIX>,
++                "output_instance_matrix": <OUTPUT_INSTANCE_MATRIX>
++              }]
++            }]
++          }
++        `,
++      },
++    ],
++  });
 +
- /// How deeply expressions and blocks may nest. Recursive descent uses the
- /// stack, so the limit is what keeps a pathological source from overflowing it.
- const MAX_NESTING: usize = 64;
-@@ -126,25 +128,30 @@ struct Parser {
-     at_variables: BTreeMap<usize, Rejection>,
-     suppose_premises: HashMap<(usize, usize), Option<SupposePremise>>,
-     while_conditions: HashMap<(usize, usize), Option<LoopCondition>>,
-+    if_statements: usize,
-+    misplaced_every: Option<Position>,
- }
++  return dataset.map((pair) => ({ ...pair, accuracy: 0.8 }));
++}
++
+ export async function value({
+   puzzle_id,
+   only_puzzle_dataset,
+```
+
+**File**: `arc/src/app.ts` (modified, +17/-6)
+```diff
+@@ -19,6 +19,7 @@ export async function start(
+       input_matrix: input,
+       output_matrix: output,
+       instances: undefined,
++      accuracy: 1,
+     })),
+     declarations: undefined,
+     output_canvas: undefined,
+@@ -48,13 +49,23 @@ export async function start(
+   train_dataset.output_canvas = output_canvas;
  
- /// A qualified Python-style condition and the position after its `else`.
- #[derive(Clone)]
- struct PythonCondition {
-     condition: Expr,
-     end: usize,
-+    misplaced_every: Option<Position>,
- }
+   for (const dataset of train_dataset.dataset) {
+-    const { instances } = await analyzer.instances({
+-      puzzle_id,
+-      only_puzzle_dataset,
+-      train_dataset: { ...train_dataset, dataset: [dataset] },
+-    });
++    if (dataset.accuracy === 1) {
++      const { instances } = await analyzer.instances({
++        puzzle_id,
++        only_puzzle_dataset,
++        train_dataset: { ...train_dataset, dataset: [dataset] },
++      });
  
- #[derive(Clone)]
- struct SupposePremise {
-     premise: Expr,
-     end: usize,
-+    misplaced_every: Option<Position>,
- }
- 
- #[derive(Clone)]
- struct LoopCondition {
-     condition: Expr,
-     colon: usize,
-+    misplaced_every: Option<Position>,
- }
- 
- #[derive(Clone, Copy)]
-@@ -201,6 +208,8 @@ impl Parser {
-             at_variables: BTreeMap::new(),
-             suppose_premises: HashMap::new(),
-             while_conditions: HashMap::new(),
-+            if_statements: 0,
-+            misplaced_every: None,
-         }
-     }
- 
-@@ -210,7 +219,7 @@ impl Parser {
- 
-     fn attempt<T>(&mut self, parse: impl Fn(&mut Self) -> Result<T>) -> Result<T> {
-         let accepted = match self.attempt_accepted(&parse) {
--            Ok(parsed) => return Ok(parsed),
-+            Ok(parsed) => return self.settle(parsed),
-             Err(error) => error,
-         };
-         if !self.mentions_receivers() && !self.mentions_templates() {
-@@ -228,7 +237,8 @@ impl Parser {
-             dots: Dots::Receivers,
-             ..Parser::new(std::mem::take(&mut self.tokens))
-         };
--        parse(self).map_err(|reread| furthest(accepted, reread))
-+        let parsed = parse(self).map_err(|reread| furthest(accepted, reread))?;
-+        self.settle(parsed)
-     }
- 
-     fn attempt_accepted<T>(&mut self, parse: &impl Fn(&mut Self) -> Result<T>) -> Result<T> {
-@@ -259,6 +269,33 @@ impl Parser {
-         parse(self).map_err(|retried| furthest(accepted, retried))
-     }
- 
-+    fn settle<T>(&self, parsed: T) -> Result<T> {
-+        debug_assert_eq!(self.if_statements, 0);
-+        match self.misplaced_every {
-+            Some(position) => Err(Error::syntax(EVERY_INSIDE_IF).at(position)),
-+            None => Ok(parsed),
-+        }
+-    dataset.instances = instances;
++      dataset.instances = instances;
++
++      train_dataset.dataset.push(
++        ...(await analyzer.synthetize({
++          puzzle_id,
++          only_puzzle_dataset,
++          train_dataset: { ...train_dataset, dataset: [dataset] },
++        }))
++      );
 +    }
-+
-+    fn tentatively<T>(&mut self, parse: impl FnOnce(&mut Self) -> T) -> (T, Option<Position>) {
-+        let outer = self.misplaced_every.take();
-+        let if_statements = self.if_statements;
-+        let parsed = parse(self);
-+        debug_assert!(self.if_statements >= if_statements);
-+        self.if_statements = if_statements;
-+        (parsed, std::mem::replace(&mut self.misplaced_every, outer))
-+    }
-+
-+    fn adopt(&mut self, misplaced_every: Option<Position>) {
-+        self.misplaced_every = self.misplaced_every.or(misplaced_every);
-+    }
-+
-+    fn misplace_every(&mut self) {
-+        if self.misplaced_every.is_none() {
-+            self.misplaced_every = Some(self.here());
-+        }
-+    }
-+
-     fn mentions_comprehensions(&self) -> bool {
-         self.tokens.iter().any(|spanned| {
-             matches!(
+ 
+     for (const instance of dataset.instances) {
+       instance.instance_name = `obj${String(instance_index++).padStart(
+```
+
+**File**: `arc/src/visualizer.ts` (modified, +0/-6)
+```diff
+@@ -236,12 +236,6 @@ export async function output_instance_matrix({
+                 output_instance_matrix: Matrix.crop(
+                   instance.output_instance_matrix
+                 ),
+-                input_silhouette_matrix: Matrix.silhouette(
+-                  Matrix.crop(instance.input_instance_matrix)
+-                ),
+-                output_silhouette_matrix: Matrix.silhouette(
+-                  Matrix.crop(instance.output_instance_matrix)
+-                ),
+               })),
+             })),
+           })}
 ```
 
 #### Recent Merged Pull Requests:
@@ -2307,22 +2289,45 @@ a name keep their readings everywhere.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Draft NUC 105 List and Population Sorting by Key
+## X. NUC 97 In and Not In Membership Tests
 
 **RULE**:
-When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e2ade2a2`: Draft NUC 105 List and Population Sorting by Key. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b9fd2de0`: NUC 97 In and Not In Membership Tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| [105](nuc-0105.md) | List and Population Sorting by Key | Draft |
-| [105](nuc-0105.md) | List and Population Sorting by Key | Standards Track | Utility enhancement | Draft |
+## Membership tests
+
+**Membership tests read in the order they are said**
+
+```nuc
+allowed = ["new", "paid"]
+status = "paid"
+open = status in allowed
+closed = status not in allowed
+assert([open, closed], [true, false])
+allowed = ["new"]
+assert([open, closed], [false, true])
+```
+
+- [NUC 97](docs/nuc-0097.md) adds `item in collection` and
+  `item not in collection`, the shorter spellings of
+  `collection.includes(item)` and `!collection.includes(item)` for lists,
+  classes and strings. Both stay live, so changing `allowed` re-evaluates
+  `open` and `closed`.
+- A declaration over a null collection holds `null` until the collection is
+  set, and any other value, such as a number or an object, raises
+  `TypeError("<collection> is not a collection")`. `in` keeps its `for`,
+  comprehension and quantifier readings. See the
+  [root contract](nucleoid.spec.md#membership-tests).
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2332,4 +2337,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e2ade2a2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b9fd2de0` are properly handled with clean fallback behavior.

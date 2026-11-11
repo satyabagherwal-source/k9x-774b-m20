@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-11T16:20:43.920Z",
+  "last_updated": "2026-11-11T16:36:02.876Z",
   "total_verified_learnings": 1255,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -14699,14 +14699,19 @@
       "slug": "falkordb-falkordb",
       "platform": "github",
       "source_url": "https://github.com/FalkorDB/FalkorDB",
-      "source_version": "56d00c3d",
-      "content_hash": "896e1bd5aed43e548a2afe76de3e5025aa2094d950660a71a7b58b4c566e7bb0",
+      "source_version": "eaa238ef",
+      "content_hash": "e3a3ada39ca1b020b9ba7be58aad703b0c82f6b4875d5a4de5cd13e35946f7ee",
       "dossier_path": "07_PROJECT_LEARNING/falkordb-falkordb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/falkordb-falkordb-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "bound SET/REMOVE property chains and nested FOREACH in the parser (#2900)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "module): load on Valkey by repairing environ under RTLD_DEEPBIND (#3494)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -14770,7 +14775,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T02:34:38.097Z",
+      "verified_at": "2026-11-11T16:35:51.487Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46754,11 +46759,16 @@
       "slug": "nativescript-nativescript",
       "platform": "github",
       "source_url": "https://github.com/NativeScript/NativeScript",
-      "source_version": "07e84ec5",
-      "content_hash": "c129df187d13695d90c57ab7e973c33118084f55a839d7fac4d21257c5365818",
+      "source_version": "36a88dd6",
+      "content_hash": "f54260707cf7aef4fbca63c6f639eb8bee6ac9d10bdc0924b412991c117d09a1",
       "dossier_path": "07_PROJECT_LEARNING/nativescript-nativescript-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nativescript-nativescript-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "webpack,vite): keep ns: builtin module imports for the runtime (#11626) [skip ci",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2454,
           "title": "vite): Android release bundles keep the class names the binding generator reads",
@@ -46790,7 +46800,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-04T23:06:19.475Z",
+      "verified_at": "2026-11-11T16:35:59.448Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48294,8 +48304,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "e2ade2a2",
-      "content_hash": "2f9cd8ef1e743dc75c68653843ad75dc94fedaf6811d98e66184395452896b82",
+      "source_version": "b9fd2de0",
+      "content_hash": "f837496e5a1478d6d5298a1414714e2048238e524961a60956569f9657c85dd5",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -48760,7 +48770,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T06:33:49.770Z",
+      "verified_at": "2026-11-11T16:35:58.279Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -52066,8 +52076,8 @@
       "slug": "pingcap-tidb",
       "platform": "github",
       "source_url": "https://github.com/pingcap/tidb",
-      "source_version": "71c0fd6f",
-      "content_hash": "53cf39edf60c6ffd3a1fd7b3302b0474135e7c59025f766f444cdb0c285a9c81",
+      "source_version": "32a53ec1",
+      "content_hash": "7fb28f5c0b9f55f7b5fb6dd064669e46eb80c9856b5ad09221b78799b5c7e754",
       "dossier_path": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "promoted_rules": [
@@ -52089,6 +52099,11 @@
         {
           "number": null,
           "title": "build: drop third-party BEP upload from CI test targets (#72843)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "expression: fix flaky TestGetLock internal session check (#72941)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -52187,7 +52202,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T10:02:56.617Z",
+      "verified_at": "2026-11-11T16:36:02.859Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

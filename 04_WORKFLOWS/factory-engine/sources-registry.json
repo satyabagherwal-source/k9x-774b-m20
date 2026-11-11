@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-11T16:20:50.081Z",
-    "lastVerified": "2026-11-11T16:20:50.081Z",
+    "lastChecked": "2026-11-11T16:36:08.692Z",
+    "lastVerified": "2026-11-11T16:36:08.692Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -452,22 +452,21 @@
     "revisionIdentifier": "fe107aab"
   },
   "nucleoidai-nucleoid": {
-    "name": "Nucleoid",
+    "name": "NucleoidAI/Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-11T15:09:01.580Z",
-    "lastVerified": "2026-11-11T15:09:01.580Z",
+    "lastChecked": "2026-11-11T16:35:58.089Z",
+    "lastVerified": "2026-11-11T16:35:58.089Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "2f9cd8ef1e743dc75c68653843ad75dc94fedaf6811d98e66184395452896b82",
-    "promotedRulesCount": 1,
+    "contentHash": "f837496e5a1478d6d5298a1414714e2048238e524961a60956569f9657c85dd5",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "e2ade2a2"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -1367,14 +1366,14 @@
     "officialUrl": "https://github.com/pingcap/tidb",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-09T10:02:49.345Z",
-    "lastVerified": "2026-11-09T10:02:49.345Z",
+    "lastChecked": "2026-11-11T16:35:52.581Z",
+    "lastVerified": "2026-11-11T16:35:52.581Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pingcap-tidb",
-    "contentHash": "53cf39edf60c6ffd3a1fd7b3302b0474135e7c59025f766f444cdb0c285a9c81",
+    "contentHash": "7fb28f5c0b9f55f7b5fb6dd064669e46eb80c9856b5ad09221b78799b5c7e754",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 10,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1846,14 +1845,14 @@
     "officialUrl": "https://github.com/FalkorDB/FalkorDB",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-09T02:34:36.925Z",
-    "lastVerified": "2026-11-09T02:34:36.925Z",
+    "lastChecked": "2026-11-11T16:35:43.276Z",
+    "lastVerified": "2026-11-11T16:35:43.276Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-falkordb-falkordb",
-    "contentHash": "896e1bd5aed43e548a2afe76de3e5025aa2094d950660a71a7b58b4c566e7bb0",
+    "contentHash": "e3a3ada39ca1b020b9ba7be58aad703b0c82f6b4875d5a4de5cd13e35946f7ee",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2108,12 +2107,12 @@
     "revisionIdentifier": "cedaeca8"
   },
   "projectdiscovery-nuclei": {
-    "name": "projectdiscovery/nuclei",
+    "name": "nuclei",
     "officialUrl": "https://github.com/projectdiscovery/nuclei",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-11T09:39:44.826Z",
-    "lastVerified": "2026-11-11T09:39:44.826Z",
+    "lastChecked": "2026-11-11T16:35:47.694Z",
+    "lastVerified": "2026-11-11T16:35:47.694Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectdiscovery-nuclei",
@@ -2122,7 +2121,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "b2ea1489"
   },
   "zilliztech-claude-context": {
     "name": "claude-context",
@@ -4137,9 +4137,9 @@
   "parthsarthi03-raptor": {
     "name": "raptor",
     "officialUrl": "https://github.com/parthsarthi03/raptor",
-    "lastChecked": "2026-11-09T07:55:25.079Z",
+    "lastChecked": "2026-11-11T16:35:50.113Z",
     "revisionIdentifier": "7da1d48a",
-    "lastVerified": "2026-11-09T07:55:25.079Z"
+    "lastVerified": "2026-11-11T16:35:50.113Z"
   },
   "svenstaro-miniserve": {
     "name": "miniserve",
@@ -8392,22 +8392,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "nativescript-nativescript": {
-    "name": "NativeScript",
+    "name": "NativeScript/NativeScript",
     "officialUrl": "https://github.com/NativeScript/NativeScript",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-07T23:18:03.156Z",
-    "lastVerified": "2026-11-07T23:18:03.156Z",
+    "lastChecked": "2026-11-11T16:35:49.184Z",
+    "lastVerified": "2026-11-11T16:35:49.184Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nativescript-nativescript",
-    "contentHash": "c129df187d13695d90c57ab7e973c33118084f55a839d7fac4d21257c5365818",
+    "contentHash": "f54260707cf7aef4fbca63c6f639eb8bee6ac9d10bdc0924b412991c117d09a1",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "07e84ec5"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "atanunq-viu": {
     "name": "viu",
@@ -10741,9 +10740,9 @@
   "sundios-seo-dashboard": {
     "name": "SEO-Dashboard",
     "officialUrl": "https://github.com/sundios/SEO-Dashboard",
-    "lastChecked": "2026-11-06T21:44:55.532Z",
+    "lastChecked": "2026-11-11T16:35:40.070Z",
     "revisionIdentifier": "8ca76eb6",
-    "lastVerified": "2026-11-06T21:44:55.532Z"
+    "lastVerified": "2026-11-11T16:35:40.070Z"
   },
   "mikepenz-multiplatform-markdown-renderer": {
     "name": "mikepenz/multiplatform-markdown-renderer",

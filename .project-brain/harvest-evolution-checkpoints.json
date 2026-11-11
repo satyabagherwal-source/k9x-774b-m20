@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T16:20:50.224Z",
+  "last_updated": "2026-11-11T16:36:08.780Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-11T15:27:53.718Z",
@@ -401,9 +401,24 @@
       "processed_at": "2026-11-11T16:20:50.217Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "falkordb-falkordb-learnings.md": {
+      "processed_at": "2026-11-11T16:36:08.770Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "nativescript-nativescript-learnings.md": {
+      "processed_at": "2026-11-11T16:36:08.777Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "pingcap-tidb-learnings.md": {
+      "processed_at": "2026-11-11T16:36:08.779Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 99,
+  "total_dossiers_evaluated": 102,
   "total_canonical_promoted": 16,
-  "total_staged_for_review": 80
+  "total_staged_for_review": 83
 }
