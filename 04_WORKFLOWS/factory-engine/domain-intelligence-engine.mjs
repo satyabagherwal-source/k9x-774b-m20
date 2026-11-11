@@ -464,7 +464,7 @@ export function persistDomainIntelligenceRecord(record, customRoot = null, authC
 
     // Check for duplicates via content hash or normalized semantic hash
     const recordSemanticHash = record.content ? computeNormalizedSemanticHash(record.domain_letter, record.title, record.content) : null;
-    const existingRecords = Object.values(registry.records);
+    const existingRecords = Object.values(registry.records || {});
     const existingDuplicate = existingRecords.find(r => {
       if (r.content_hash === record.content_hash) return true;
       if (recordSemanticHash && r.content) {

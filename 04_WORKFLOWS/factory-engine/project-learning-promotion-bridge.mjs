@@ -302,15 +302,21 @@ function normalizeStructuredCandidate(obj, options = {}) {
     candidate_id: candidateId,
     stage: KNOWLEDGE_STAGE.EXTRACTED,
     project_name: obj.project_name || options.projectName || 'active-project',
-    source_file: obj.source_file || 'project://learning',
-    source_version: obj.source_version || '1.0.0',
-    observed_at: obj.observed_at || new Date().toISOString(),
+    source_file: obj.source_file || (obj.source_provenance?.source_uri ? obj.source_provenance.source_uri : 'project://learning'),
+    source_version: obj.source_version || obj.source_provenance?.source_version || '1.0.0',
+    observed_at: obj.observed_at || obj.source_provenance?.observed_at || new Date().toISOString(),
     title: String(obj.title || 'Untitled Project Learning').trim(),
-    problem_statement: String(obj.problem_statement || obj.problem || '').trim(),
+    problem_statement: String(obj.problem_statement || obj.problem || obj.why || '').trim(),
     universal_invariant: String(obj.universal_invariant || obj.invariant || obj.lesson || '').trim(),
     project_specific_facts: String(obj.project_specific_facts || obj.project_facts || '').trim(),
     negative_constraint: String(obj.negative_constraint || 'Avoid identified anti-pattern').trim(),
-    forcedDomain: obj.forcedDomain || null
+    forcedDomain: obj.forcedDomain || null,
+    source_provenance: obj.source_provenance || null,
+    why: obj.why || null,
+    when_to_apply: obj.when_to_apply || null,
+    verified_implementation_pattern: obj.verified_implementation_pattern || null,
+    verification_method: obj.verification_method || null,
+    evidence: obj.evidence || null
   };
 }
 
@@ -703,19 +709,27 @@ export function promoteProjectLearningToMasterBrain(candidateInput, verification
   }
 
   // Step 5: Construct Canonical Domain Intelligence Record
+  const sourceUri = validCandidate.source_provenance?.source_uri ||
+    (validCandidate.source_file ? `project://${validCandidate.project_name}/${path.basename(validCandidate.source_file)}` : 'internal://AI-Builder-Brain');
+  const authorOrEntity = validCandidate.source_provenance?.source_name ||
+    `AI-Builder-Brain Project Learning (${validCandidate.project_name || 'Universal'})`;
+  const summaryText = validCandidate.problem_statement
+    ? `${validCandidate.problem_statement.slice(0, 140)} -> ${validCandidate.universal_invariant.slice(0, 140)}`
+    : `${(validCandidate.why || validCandidate.title).slice(0, 140)} -> ${validCandidate.universal_invariant.slice(0, 140)}`;
+
   const domainRecord = createDomainIntelligenceRecord({
     title: validCandidate.title,
     content: validCandidate.universal_invariant,
     forcedDomain: validCandidate.primary_domain.letter,
-    summary: `${validCandidate.problem_statement.slice(0, 140)} -> ${validCandidate.universal_invariant.slice(0, 140)}`,
-    source_uri: `project://${validCandidate.project_name}/${path.basename(validCandidate.source_file)}`,
-    source_version: validCandidate.source_version || '1.0.0',
-    observed_at: validCandidate.observed_at,
-    author_or_entity: `AI-Builder-Brain Project Learning (${validCandidate.project_name})`,
-    license: 'Proprietary-Universal',
-    evidence_type: validCandidate.verification_evidence.evidence_type,
-    verification_status: validCandidate.verification_evidence.verification_status,
-    verification_reference: validCandidate.verification_evidence.test_suite,
+    summary: summaryText,
+    source_uri: sourceUri,
+    source_version: validCandidate.source_provenance?.source_version || validCandidate.source_version || '1.0.0',
+    observed_at: validCandidate.source_provenance?.observed_at || validCandidate.observed_at || new Date().toISOString(),
+    author_or_entity: authorOrEntity,
+    license: validCandidate.source_provenance?.license || 'Proprietary-Universal',
+    evidence_type: validCandidate.verification_evidence?.evidence_type || 'AUTHORITATIVE_SOURCE_SPECIFICATION',
+    verification_status: validCandidate.verification_evidence?.verification_status || 'EMPIRICAL_CANONICAL',
+    verification_reference: validCandidate.verification_evidence?.test_suite || null,
     blueprints: options.blueprints || ['universal', 'astro-tailwind-v4']
   });
 

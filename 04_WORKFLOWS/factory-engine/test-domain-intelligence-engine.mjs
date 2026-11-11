@@ -173,8 +173,8 @@ try {
   // ---------------------------------------------------------------------------
   console.log('\n[TEST 7] Verifying Domain Relevance Boosting in retrieval-engine.mjs...');
   
-  // Warm up search index
-  searchBrain('warmup');
+  // Warm up search index and domain normalization
+  searchBrain('warmup', { domain: 'H' });
   searchBrain('warmup 2');
 
   const boostStart = Date.now();
