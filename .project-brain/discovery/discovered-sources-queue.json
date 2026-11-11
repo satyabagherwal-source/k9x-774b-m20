@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-11T19:46:38.257Z",
+  "updated_at": "2026-11-11T19:53:51.736Z",
   "stats": {
-    "total_discovered": 255,
-    "approved_pending_harvest": 227,
+    "total_discovered": 264,
+    "approved_pending_harvest": 235,
     "harvested_count": 0,
-    "rejected_count": 28,
+    "rejected_count": 29,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 233,
+      "COMMUNITY_AND_EXPERT": 242,
       "OFFICIAL_DOCUMENTATION": 10,
       "STANDARDS_AND_SPECIFICATIONS": 11,
       "ENGINEERING_BLOGS": 1
@@ -5429,6 +5429,197 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/typedb-typedb-learnings.md",
         "fileName": "typedb-typedb-learnings.md"
+      }
+    },
+    "SRC-AE0FBAD10FA2": {
+      "id": "SRC-AE0FBAD10FA2",
+      "url": "https://github.com/SimonSchubert/LinuxCommandLibrary",
+      "title": "https://github.com/SimonSchubert/LinuxCommandLibrary",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:53:51.700Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/simonschubert-linuxcommandlibrary-learnings.md",
+        "fileName": "simonschubert-linuxcommandlibrary-learnings.md"
+      }
+    },
+    "SRC-D9E2C42E4C78": {
+      "id": "SRC-D9E2C42E4C78",
+      "url": "https://linuxcommandlibrary.com/man",
+      "title": "https://linuxcommandlibrary.com/man",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:53:51.702Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/simonschubert-linuxcommandlibrary-learnings.md",
+        "fileName": "simonschubert-linuxcommandlibrary-learnings.md"
+      }
+    },
+    "SRC-66DFEEEDABF1": {
+      "id": "SRC-66DFEEEDABF1",
+      "url": "https://",
+      "title": "https://",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:53:51.704Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/simonschubert-linuxcommandlibrary-learnings.md",
+        "fileName": "simonschubert-linuxcommandlibrary-learnings.md"
+      }
+    },
+    "SRC-E82EB857F133": {
+      "id": "SRC-E82EB857F133",
+      "url": "https://github.com/user-attachments/assets/4c426ce2-24e9-4d3b-88a2-c6d6e8b147a9",
+      "title": "https://github.com/user-attachments/assets/4c426ce2-24e9-4d3b-88a2-c6d6e8b147a9",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:53:51.706Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/simonschubert-linuxcommandlibrary-learnings.md",
+        "fileName": "simonschubert-linuxcommandlibrary-learnings.md"
+      }
+    },
+    "SRC-4AF8FEDFFD17": {
+      "id": "SRC-4AF8FEDFFD17",
+      "url": "https://linuxcommandlibrary.com/tips",
+      "title": "https://linuxcommandlibrary.com/tips",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:53:51.708Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/simonschubert-linuxcommandlibrary-learnings.md",
+        "fileName": "simonschubert-linuxcommandlibrary-learnings.md"
+      }
+    },
+    "SRC-E6EAF876ACB8": {
+      "id": "SRC-E6EAF876ACB8",
+      "url": "https://en.wikipedia.org/wiki/File-system_permissions",
+      "title": "https://en.wikipedia.org/wiki/File-system_permissions",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:53:51.709Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/simonschubert-linuxcommandlibrary-learnings.md",
+        "fileName": "simonschubert-linuxcommandlibrary-learnings.md"
+      }
+    },
+    "SRC-D01C81DD2434": {
+      "id": "SRC-D01C81DD2434",
+      "url": "https://github.com/zulip/zulip",
+      "title": "https://github.com/zulip/zulip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:53:51.732Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zulip-zulip-learnings.md",
+        "fileName": "zulip-zulip-learnings.md"
+      }
+    },
+    "SRC-4F01BC040BFA": {
+      "id": "SRC-4F01BC040BFA",
+      "url": "https://zulip.com/help/view-zulip-version",
+      "title": "https://zulip.com/help/view-zulip-version",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:53:51.734Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zulip-zulip-learnings.md",
+        "fileName": "zulip-zulip-learnings.md"
+      }
+    },
+    "SRC-C11D0691D788": {
+      "id": "SRC-C11D0691D788",
+      "url": "http://{realm.host/",
+      "title": "http://{realm.host/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-11T19:53:51.736Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zulip-zulip-learnings.md",
+        "fileName": "zulip-zulip-learnings.md"
       }
     }
   }

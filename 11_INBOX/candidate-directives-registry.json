@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T19:46:38.226Z",
+  "last_updated": "2026-11-11T19:53:51.730Z",
   "directives": [
     {
       "id": "CD-001",
@@ -5529,6 +5529,33 @@
       "source_repo": "typedb-typedb",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-933D5B-prepare-release-3-15-0-rc0-8055-.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-0359E8",
+      "directive_title": "Auto-fix: lintFix and refresh Paparazzi screenshots [skip ci]",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "simonschubert-linuxcommandlibrary",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0359E8-auto-fix-lintfix-and-refresh-paparazzi-s.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-B51DB4",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-B51DB4-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-C4BF9F",
+      "directive_title": "export: Fix consent of former subscribers covering private channels.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C4BF9F-export-fix-consent-of-former-subscribers.md",
       "staged_date": "2026-11-11"
     }
   ]

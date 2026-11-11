@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-11T19:46:38.056Z",
-    "lastVerified": "2026-11-11T19:46:38.056Z",
+    "lastChecked": "2026-11-11T19:53:51.589Z",
+    "lastVerified": "2026-11-11T19:53:51.589Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -153,8 +153,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-11T18:54:56.940Z",
-    "lastVerified": "2026-11-11T18:54:56.940Z",
+    "lastChecked": "2026-11-11T19:53:39.976Z",
+    "lastVerified": "2026-11-11T19:53:39.976Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -808,8 +808,8 @@
     "officialUrl": "https://github.com/DefGuard/defguard",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-11T12:03:21.812Z",
-    "lastVerified": "2026-11-11T12:03:21.812Z",
+    "lastChecked": "2026-11-11T19:53:35.074Z",
+    "lastVerified": "2026-11-11T19:53:35.074Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-defguard-defguard",
@@ -2553,9 +2553,9 @@
   "alexellis-k3sup": {
     "name": "k3sup",
     "officialUrl": "https://github.com/alexellis/k3sup",
-    "lastChecked": "2026-11-09T13:46:48.062Z",
+    "lastChecked": "2026-11-11T19:53:32.462Z",
     "revisionIdentifier": "07ee3911",
-    "lastVerified": "2026-11-09T13:46:48.062Z"
+    "lastVerified": "2026-11-11T19:53:32.462Z"
   },
   "paradedb-paradedb": {
     "name": "paradedb/paradedb",
@@ -2958,9 +2958,9 @@
   "rigellute-spotify-tui": {
     "name": "spotify-tui",
     "officialUrl": "https://github.com/Rigellute/spotify-tui",
-    "lastChecked": "2026-11-09T05:06:59.480Z",
+    "lastChecked": "2026-11-11T19:53:25.021Z",
     "revisionIdentifier": "c4dcf6b9",
-    "lastVerified": "2026-11-09T05:06:59.480Z"
+    "lastVerified": "2026-11-11T19:53:25.021Z"
   },
   "hf-akatz-ai-minimax-h3-character-swap-lora": {
     "name": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
@@ -5017,9 +5017,9 @@
   "qovery-replibyte": {
     "name": "Replibyte",
     "officialUrl": "https://github.com/Qovery/Replibyte",
-    "lastChecked": "2026-11-09T12:42:13.750Z",
+    "lastChecked": "2026-11-11T19:53:37.494Z",
     "revisionIdentifier": "5504db91",
-    "lastVerified": "2026-11-09T12:42:13.750Z"
+    "lastVerified": "2026-11-11T19:53:37.494Z"
   },
   "grpc-grpc-rust": {
     "name": "grpc-rust",
@@ -8970,14 +8970,14 @@
     "officialUrl": "https://github.com/SimonSchubert/LinuxCommandLibrary",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-08T01:17:41.449Z",
-    "lastVerified": "2026-11-08T01:17:41.449Z",
+    "lastChecked": "2026-11-11T19:53:36.221Z",
+    "lastVerified": "2026-11-11T19:53:36.221Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-simonschubert-linuxcommandlibrary",
-    "contentHash": "153a2bafee48d314e18e57c8a3f4ffa3bb41aa336826ac3bfa5aae3360aadfe3",
+    "contentHash": "cb94dc1e1a0f35afe6d32520600e7538b546d7c14e64264a50205874a6c80736",
     "promotedRulesCount": 1,
-    "recentFixesCount": 5,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -11038,9 +11038,9 @@
   "scrapy-plugins-scrapy-splash": {
     "name": "scrapy-splash",
     "officialUrl": "https://github.com/scrapy-plugins/scrapy-splash",
-    "lastChecked": "2026-11-06T23:40:02.614Z",
+    "lastChecked": "2026-11-11T19:53:27.481Z",
     "revisionIdentifier": "72a87882",
-    "lastVerified": "2026-11-06T23:40:02.614Z"
+    "lastVerified": "2026-11-11T19:53:27.481Z"
   },
   "oblador-hush": {
     "name": "hush",

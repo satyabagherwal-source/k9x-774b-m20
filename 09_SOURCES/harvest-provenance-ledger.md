@@ -9019,3 +9019,4 @@ Every entry in this ledger must capture:
 | `learn-github-1jehuang-jcode` | `https://github.com/1jehuang/jcode` | `02152f3a` | Multi-dimensional audit evidence | 2026-11-11T19:46:17.194Z |
 | `learn-github-mrkai77-loop` | `https://github.com/mrkai77/Loop` | `b041fcbb` | Multi-dimensional audit evidence | 2026-11-11T19:46:23.705Z |
 | `learn-github-typedb-typedb` | `https://github.com/typedb/typedb` | `a99f0e28` | Multi-dimensional audit evidence | 2026-11-11T19:46:32.235Z |
+| `learn-github-simonschubert-linuxcommandlibrary` | `https://github.com/SimonSchubert/LinuxCommandLibrary` | `026a4532` | Multi-dimensional audit evidence | 2026-11-11T19:53:46.579Z |

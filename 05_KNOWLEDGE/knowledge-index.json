@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-11T19:46:32.115Z",
+  "last_updated": "2026-11-11T19:53:46.468Z",
   "total_verified_learnings": 1255,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -58478,14 +58478,19 @@
       "slug": "simonschubert-linuxcommandlibrary",
       "platform": "github",
       "source_url": "https://github.com/SimonSchubert/LinuxCommandLibrary",
-      "source_version": "bf7f6dc2",
-      "content_hash": "153a2bafee48d314e18e57c8a3f4ffa3bb41aa336826ac3bfa5aae3360aadfe3",
+      "source_version": "026a4532",
+      "content_hash": "cb94dc1e1a0f35afe6d32520600e7538b546d7c14e64264a50205874a6c80736",
       "dossier_path": "07_PROJECT_LEARNING/simonschubert-linuxcommandlibrary-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/simonschubert-linuxcommandlibrary-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Merge pull request #133 from mvanhorn/fix/131-commands-tab-default-detail",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Auto-fix: lintFix and refresh Paparazzi screenshots [skip ci]",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -58524,7 +58529,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T01:17:54.812Z",
+      "verified_at": "2026-11-11T19:53:46.446Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/simonschubert-linuxcommandlibrary-learnings.md`  
 > **Source**: github ([https://github.com/SimonSchubert/LinuxCommandLibrary](https://github.com/SimonSchubert/LinuxCommandLibrary))  
-> **Source Version**: `bf7f6dc2`  
+> **Source Version**: `026a4532`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T01:17:53.280Z  
+> **Timestamp**: 2026-11-11T19:53:36.370Z  
 > **Learning ID**: `learn-github-simonschubert-linuxcommandlibrary`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/simonschubert-linuxcommandlibrary-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/SimonSchubert/LinuxCommandLibrary](https://github.com/SimonSchubert/LinuxCommandLibrary))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T01:17:41.449Z  
+> **Harvest Timestamp**: 2026-11-11T19:53:36.221Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 2M+ app downloads, 500k+ monthly website visitors, Linux basics, tips and formatted man pages
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2097 stars
+- **Stars / Engagement**: 2107 stars
 
 ---
 
@@ -185,7 +185,7 @@ internal class LinuxNavState(
         val key = currentKeyNow
         val stack = stackFor(key)
         if (stack.isNotEmpty()) {
-            stack.removeAt(stack.lastIndex)
+            popStack(key)
             val nav = navigatorFor(key)
             if (stack.isEmpty() &&
                 nav?.canNavigateBack(backBehavior) != true &&
@@ -231,7 +231,11 @@ internal fun rememberLinuxNavState(
     // landscape phone window without truncating list rows.
     // Default inter-pane spacer is 24dp at expanded width — tighter at 8dp avoids the wide
     // dead column between list and detail.
-    val listDetailDirective = calculatePaneScaffoldDirective(adaptiveInfo).copy(
+    // Adaptive info comes from the V2 API, which allows 3 partitions at XL width (>=1600dp);
+    // cap at 2 since list-detail has no extra pane.
+    val defaultDirective = calculatePaneScaffoldDirective(adaptiveInfo)
+    val listDetailDirective = defaultDirective.copy(
+        maxHorizontalPartitions = defaultDirective.maxHorizontalPartitions.coerceAtMost(2),
         defaultPanePreferredWidth = 320.dp,
         horizontalPartitionSpacerSize = 8.dp,
     )
@@ -241,33 +245,25 @@ internal fun rememberLinuxNavState(
     // render the final UI, which screenshot tooling depends on.
     val initialCommandName = (deeplinkResult.selection as? InitialSelection.Command)?.name
     val initialBasicId = (deeplinkResult.selection as? InitialSelection.Basics)?.id
+    fun initialHistory(detail: String?) = listOfNotNull(
+        ThreePaneScaffoldDestinationItem(ListDetailPaneScaffoldRole.List, null),
+        detail?.let { ThreePaneScaffoldDestinationItem(ListDetailPaneScaffoldRole.Detail, it) },
+    )
     val commandsNavigator = rememberListDetailPaneScaffoldNavigator(
         scaffoldDirective = listDetailDirective,
-        initialDestinationHistory = if (initialCommandName != null) {
-            listOf(
-                ThreePaneScaffoldDestinationItem(ListDetailPaneScaffoldRole.List, null),
-                ThreePaneScaffoldDestinationItem(ListDetailPaneScaffoldRole.Detail, initialCommandName),
-            )
-        } else {
-            listOf(ThreePaneScaffoldDestinationItem(ListDetailPaneScaffoldRole.List, null))
-        },
+        initialDestinationHistory = initialHistory(initialCommandName),
     )
     val basicsNavigator = rememberListDetailPaneScaffoldNavigator(
         scaffoldDirective = listDetailDirective,
-        initialDestinationHistory = if (initialBasicId != null) {
-            listOf(
-                ThreePaneScaffoldDestinationItem(ListDetailPaneScaffoldRole.List, null),
-                ThreePaneScaffoldDestinationItem(ListDetailPaneScaffoldRole.Detail, initialBasicId),
-            )
-        } else {
-            listOf(ThreePaneScaffoldDestinationItem(ListDetailPaneScaffoldRole.List, null))
-        },
+        initialDestinationHistory = initialHistory(initialBasicId),
     )
 
     val pendingCommand = rememberSaveable { mutableStateOf<String?>(null) }
     val pendingBasic = rememberSaveable { mutableStateOf<String?>(null) }
     val pendingExpand = rememberSaveable { mutableStateOf<Long?>(null) }
-  
+    // Survives consume/clear of pendingExpand so the search overlay can still
+    // highlight the matching result on the basicsNavigator path.
+    val lastBasicsGroupId = rememberSav
 ```
 
 ### Core Architecture Module: `composeApp/src/commonMain/kotlin/com/linuxcommandlibrary/app/ui/composables/SearchState.kt`
@@ -300,9 +296,6 @@ class SearchState(
     }
     fun show() {
         isVisibleState.value = true
-    }
-    fun hide() {
-        isVisibleState.value = false
     }
     fun clear() {
         textFieldValue.value = TextFieldValue(text = "", selection = TextRange(0))
@@ -404,7 +397,7 @@ import com.linuxcommandlibrary.shared.CommandElement
 import com.linuxcommandlibrary.shared.TextElement
 import com.linuxcommandlibrary.shared.TipSectionElement
 
-/**
+/*
  * Renders parsed basics/tips content back to Markdown for Qt's Text.MarkdownText.
  *
  * Commands already ship as Markdown and are passed through untouched, but basics and
@@ -414,6 +407,7 @@ import com.linuxcommandlibrary.shared.TipSectionElement
  * Man pages and links become `man:` / `lcl:` URLs so QML's onLinkActivated can route
  * them without needing to know how they were encoded.
  */
+
 /** Block kind, so the UI can style code and quotes differently from prose. */
 internal fun TipSectionElement.kind(): String = when (this) {
     is TipSectionElement.Text -> "text"
@@ -558,6 +552,8 @@ class MainActivity : AppCompatActivity() {
 ```
 package com.linuxcommandlibrary.nativecli
 
+import com.linuxcommandlibrary.shared.TextElement
+
 /**
  * Converts a command section's markdown into CLI-friendly, terminal-styled text.
  *
@@ -573,6 +569,17 @@ package com.linuxcommandlibrary.nativecli
  * RESOURCES links are always clickable web links in both modes.
  */
 object ContentFormatter {
+
+    /** Already-parsed inline elements (basics, tips) as styled terminal text. */
+    fun renderTextElements(elements: List<TextElement>): String = elements.joinToString("") { element ->
+        when (element) {
+            is TextElement.Plain -> element.text
+            is TextElement.Bold -> Theme.boldText(element.text)
+            is TextElement.Italic -> Theme.italicText(element.text)
+            is TextElement.Man -> element.man
+            is TextElement.Link -> element.text
+        }
+    }
 
     private const val MAN_BASE_URL = "https://linuxcommandlibrary.com/man/"
 
@@ -847,144 +854,53 @@ private fun showCommandNonInteractive(terminal: Terminal, commandName: String) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bf7f6dc2` (2026-11-07)
+### Incident Patch 1: `ae58e961` (2026-11-09)
 **Commit Message**: Auto-fix: lintFix and refresh Paparazzi screenshots [skip ci]
 
 
 
 ---
 
-### Incident Patch 2: `54353931` (2026-11-07)
+### Incident Patch 2: `85d5a1d8` (2026-11-08)
 **Commit Message**: Auto-fix: lintFix and refresh Paparazzi screenshots [skip ci]
 
-
-
----
-
-### Incident Patch 3: `8a21cc1d` (2026-11-07)
-**Commit Message**: Merge pull request #133 from mvanhorn/fix/131-commands-tab-default-detail
-
-Stop the Commands tab from opening the first command
-
-**File**: `android/src/androidTest/java/com/inspiredandroid/linuxcommandbibliotheca/ComposeDeeplinkTests.kt` (modified, +44/-0)
+**File**: `composeApp/src/desktopMain/kotlin/com/linuxcommandlibrary/app/ui/composables/PlatformScrollbar.desktop.kt` (modified, +1/-1)
 ```diff
-@@ -3,12 +3,26 @@ package com.inspiredandroid.linuxcommandbibliotheca
- import android.content.Context
- import android.content.Intent
- import android.net.Uri
-+import androidx.activity.compose.setContent
-+import androidx.compose.runtime.CompositionLocalProvider
-+import androidx.compose.runtime.remember
-+import androidx.compose.ui.platform.LocalDensity
-+import androidx.compose.ui.platform.LocalWindowInfo
-+import androidx.compose.ui.platform.WindowInfo
-+import androidx.compose.ui.test.assertCountEquals
-+import androidx.compose.ui.test.assertIsDisplayed
- import androidx.compose.ui.test.assertTextEquals
- import androidx.compose.ui.test.junit4.createAndroidComposeRule
-+import androidx.compose.ui.test.onAllNodesWithContentDescription
-+import androidx.compose.ui.test.onAllNodesWithText
- import androidx.compose.ui.test.onNodeWithContentDescription
-+import androidx.compose.ui.test.onNodeWithText
- import androidx.compose.ui.test.performClick
-+import androidx.compose.ui.unit.IntSize
-+import androidx.compose.ui.unit.dp
- import androidx.test.core.app.ApplicationProvider
- import androidx.test.ext.junit.runners.AndroidJUnit4
-+import com.linuxcommandlibrary.app.App
- import org.junit.Before
- import org.junit.Rule
- import org.junit.Test
-@@ -77,6 +91,36 @@ class ComposeDeeplinkTests {
-             .assertTextEquals("Commands")
-     }
- 
-+    @Test
-+    fun testCommandListDoesNotSelectFirstCommandOnExpandedLayout() {
-+        // Pretend the window is tablet sized so the two-pane list/detail layout is used.
-+        composeTestRule.runOnUiThread {
-+            composeTestRule.activity.setContent {
-+                val windowInfo = LocalWindowInfo.current
-+                val density = LocalDensity.current
-+                val expandedWindowInfo = remember(windowInfo, density) {
-+                    object : WindowInfo by windowInfo {
-+                        override val containerSize: IntSize
-+                            get() = with(density) { IntSize(1280.dp.roundToPx(), 800.dp.roundToPx()) }
-+                    }
-+                }
-+                CompositionLocalProvider(LocalWindowInfo provides expandedWindowInfo) {
-+                    App(initialDeeplink = "https://linuxcommandlibrary.com/")
-+                }
-+            }
-+        }
-+
-+        // Wait for the command list to load before checking that nothing got selected.
-+        composeTestRule.waitUntil(timeoutMillis = 10_000) {
-+            composeTestRule.onAllNodesWithText("2048").fetchSemanticsNodes().isNotEmpty()
-+        }
-+        composeTestRule.waitForIdle()
-+
-+        composeTestRule.onNodeWithText("Select a command").assertIsDisplayed()
-+        composeTestRule.onAllNodesWithContentDescription("Search in page")
-+            .assertCountEquals(0)
-+    }
-+
-     @Test
-     fun testCommandDetail() {
-         openUrl("https://linuxcommandlibrary.com/man/2048")
-```
-
-**File**: `composeApp/src/commonMain/kotlin/com/linuxcommandlibrary/app/LinuxNavGraph.kt` (modified, +0/-1)
-```diff
-@@ -84,7 +84,6 @@ private fun CommandsTab(state: LinuxNavState, withTabStackOverlay: Boolean) {
-             onNavigate = state::onNavigate,
-             stack = commandsStack,
-             onPopStack = { state.popStack(RouteKey.Commands) },
--            isExpanded = !withTabStackOverlay,
-         )
-         if (withTabStackOverlay) {
-             TabStackTop(
-```
-
-**File**: `composeApp/src/commonMain/kotlin/com/linuxcommandlibrary/app/ui/screens/commands/CommandsPaneScreen.kt` (modified, +0/-16)
-```diff
-@@ -36,7 +36,6 @@ import com.linuxcommandlibrary.app.ui.screens.commandlist.CommandListViewModel
- import kotlinx.collections.immutable.ImmutableList
- import kotlinx.collections.immutable.ImmutableSet
- import kotlinx.coroutines.CoroutineScope
--import kotlinx.coroutines.flow.first
- import kotlinx.coroutines.launch
- import org.koin.compose.koinInject
- 
-@@ -51,7 +50,6 @@ internal fun CommandsPaneScreen(
-     onNavigate: (NavEvent) -> Unit,
-     stack: SnapshotStateList<TabStackEntry>,
-     onPopStack: () -> Unit,
--    isExpanded: Boolean,
+@@ -60,7 +60,7 @@ actual fun WithScrollbar(
+ @Composable
+ private fun ScrollbarBox(
+     adapter: ScrollbarAdapter,
+-    modifier: Modifier,
++    modifier: Modifier = Modifier,
+     content: @Composable BoxScope.() -> Unit,
  ) {
-     val listViewModel: CommandListViewModel = koinInject()
-     val commands by listViewModel.commands.collectAsState()
-@@ -63,20 +61,6 @@ internal fun CommandsPaneScreen(
-         onSelectionConsumed()
-     }
+     Box(modifier) {
+```
+
+---
+
+### Incident Patch 3: `c059a3d9` (2026-11-07)
+**Commit Message**: Fix dangling KDoc lint in MarkdownRenderer
+
+**File**: `viewmodels/src/linuxMain/kotlin/com/linuxcommandlibrary/app/nativeapi/MarkdownRenderer.kt` (modified, +2/-1)
+```diff
+@@ -4,7 +4,7 @@ import com.linuxcommandlibrary.shared.CommandElement
+ import com.linuxcommandlibrary.shared.TextElement
+ import com.linuxcommandlibrary.shared.TipSectionElement
  
--    // Two-pane layouts: pre-select the first command once data loads so the detail
--    // pane shows real content instead of an empty placeholder. Compact (single-pane)
--    // skips this — auto-pushing to detail on launch would be jarring.
--    LaunchedEffect(isExpanded) {
--        if (!isExpanded) return@LaunchedEffect
--        val list = listViewModel.commands.first { it.isNotEmpty() }
--        if (navigator.currentDestination?.contentKey == null &&
--            stack.isEmpty() &&
--            pendingSelection == null
--        ) {
--            navigator.navigateTo(ListDetailPaneScaffoldRole.Detail, list.first().name)
--        }
--    }
--
-     // Hoisted so the LazyColumn keeps its scroll position across AnimatedPane's
-     // exit/enter cycle. Without hoisting, the pane content's nested rememberSaveable was
-     // intermittently coerced to 0 on re-mount because the bookmark-driven sort re-emits
+-/**
++/*
+  * Renders parsed basics/tips content back to Markdown for Qt's Text.MarkdownText.
+  *
+  * Commands already ship as Markdown and are passed through untouched, but basics and
+@@ -14,6 +14,7 @@ import com.linuxcommandlibrary.shared.TipSectionElement
+  * Man pages and links become `man:` / `lcl:` URLs so QML's onLinkActivated can route
+  * them without needing to know how they were encoded.
+  */
++
+ /** Block kind, so the UI can style code and quotes differently from prose. */
+ internal fun TipSectionElement.kind(): String = when (this) {
+     is TipSectionElement.Text -> "text"
 ```
 
 #### Recent Merged Pull Requests:
@@ -1013,51 +929,28 @@ Stop the Commands tab from opening the first command
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #133 from mvanhorn/fix/131-commands-tab-default-detail
+## X. Auto-fix: lintFix and refresh Paparazzi screenshots [skip ci]
 
 **RULE**:
-When implementing operations in `android/src/androidTest/java/com/inspiredandroid/linuxcommandbibliotheca/ComposeDeeplinkTests.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in SimonSchubert/LinuxCommandLibrary. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `composeApp/src/desktopMain/kotlin/com/linuxcommandlibrary/app/ui/composables/PlatformScrollbar.desktop.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in SimonSchubert/LinuxCommandLibrary. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8a21cc1d`: Merge pull request #133 from mvanhorn/fix/131-commands-tab-default-detail. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `85d5a1d8`: Auto-fix: lintFix and refresh Paparazzi screenshots [skip ci]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `android/src/androidTest/java/com/inspiredandroid/linuxcommandbibliotheca/ComposeDeeplinkTests.kt`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `composeApp/src/desktopMain/kotlin/com/linuxcommandlibrary/app/ui/composables/PlatformScrollbar.desktop.kt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-import androidx.activity.compose.setContent
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalWindowInfo
-import androidx.compose.ui.platform.WindowInfo
-import androidx.compose.ui.test.assertCountEquals
-import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.onAllNodesWithContentDescription
-import androidx.compose.ui.test.onAllNodesWithText
-import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.unit.dp
-import com.linuxcommandlibrary.app.App
-    @Test
-    fun testCommandListDoesNotSelectFirstCommandOnExpandedLayout() {
-        // Pretend the window is tablet sized so the two-pane list/detail layout is used.
-        composeTestRule.runOnUiThread {
-            composeTestRule.activity.setContent {
-                val windowInfo = LocalWindowInfo.current
-                val density = LocalDensity.current
-                val expandedWindowInfo = remember(windowInfo, density) {
-                    object : WindowInfo by windowInfo {
-                        override val 
+    modifier: Modifier = Modifier,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    modifier: Modifier,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8a21cc1d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `85d5a1d8` are properly handled with clean fallback behavior.

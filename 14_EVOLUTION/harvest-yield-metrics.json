@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T19:46:32.242Z",
-  "total_cycles_completed": 8852,
-  "total_learnings_persisted": 8852,
-  "total_rules_promoted": 8708,
+  "last_updated": "2026-11-11T19:53:46.598Z",
+  "total_cycles_completed": 8853,
+  "total_learnings_persisted": 8853,
+  "total_rules_promoted": 8709,
   "history": [
-    {
-      "timestamp": "2026-11-09T23:17:52.996Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T23:17:55.269Z",
       "repository": "vespa-engine/vespa",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-11T19:46:32.242Z",
       "repository": "typedb/typedb",
       "learningId": "learn-github-typedb-typedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T19:53:46.598Z",
+      "repository": "SimonSchubert/LinuxCommandLibrary",
+      "learningId": "learn-github-simonschubert-linuxcommandlibrary",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

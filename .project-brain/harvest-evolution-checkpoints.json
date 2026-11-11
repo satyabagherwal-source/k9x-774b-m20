@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T19:46:38.258Z",
+  "last_updated": "2026-11-11T19:53:51.737Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-11T16:43:08.691Z",
+      "processed_at": "2026-11-11T19:53:51.731Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-11T18:28:55.912Z",
+      "processed_at": "2026-11-11T19:53:51.716Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -561,9 +561,14 @@
       "processed_at": "2026-11-11T19:46:38.227Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "simonschubert-linuxcommandlibrary-learnings.md": {
+      "processed_at": "2026-11-11T19:53:51.695Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 138,
+  "total_dossiers_evaluated": 141,
   "total_canonical_promoted": 19,
-  "total_staged_for_review": 116
+  "total_staged_for_review": 119
 }
