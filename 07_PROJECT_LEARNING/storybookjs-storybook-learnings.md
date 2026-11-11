@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/storybookjs-storybook-learnings.md`  
 > **Source**: github ([https://github.com/storybookjs/storybook](https://github.com/storybookjs/storybook))  
-> **Source Version**: `8bddc82a`  
+> **Source Version**: `44ea08ae`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T00:02:53.736Z  
+> **Timestamp**: 2026-11-09T07:20:58.305Z  
 > **Learning ID**: `learn-github-storybookjs-storybook`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/storybookjs-storybook-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/storybookjs/storybook](https://github.com/storybookjs/storybook))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T00:02:53.730Z  
+> **Harvest Timestamp**: 2026-11-09T07:20:54.537Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Storybook is the industry standard workshop for building, documenting, and testing UI components in isolation
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 91463 stars
+- **Stars / Engagement**: 91496 stars
 
 ---
 
@@ -555,11 +555,11 @@ export function isRecord(value: unknown): value is Record<string, unknown> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #37230** (2026-11-07): **Sidebar: Count only stories in the composed Storybook indicator**
+  *Symptoms*: Closes #21503  ## What I did  The globe popover on a composed Storybook ref says "Explore N components and M stories", but M counted every `docs` entry (attached autodocs and unattached MDX pages) as a story. It also counted `test` entries, which are children of a story, not stories.  `RefIndicator` now counts index entries with `type === 'story' && subtype !== 'test'`. This is the same check `find-story-ids.ts` uses. Comparing against `'test'` instead of `=== 'story'` keeps refs built with older Storybook versions, which have no `subtype`, counted correctly. I also renamed `leafCount` to `storyCount`, since it no longer counts every leaf.  I used Claude Code to help investigate and write the test story. I reviewed and understand all the changes.  ## Checklist for Contributors  ### Testing  #### The changes in this PR are covered in the following automated tests:  - [x] stories - [ ] unit tests - [ ] integration tests - [ ] end-to-end tests  Added `Sidebar/Refs` → `IndicatorCountsOnlyStories`. Its ref index has 1 component with attached docs, 2 stories (one without `subtype`, like refs from older versions), 1 test, and 1 unattached docs page. It opens the indicator and expects "Explore 1 components and 2 stories". It fails on `next` (which shows 5 stories) and passes with this change.  #### Manual testing  1. `cd code && yarn storybook:ui` 2. Open **Sidebar → Refs → Indicator Counts Only Stories** 3. Click the globe icon next to "This has docs and tests" 4. The popover reads 
+
 - **Issue #37204** (2026-11-05): **Svelte: Clearer indexing errors for files without defineMeta, and print each error once**
   *Symptoms*: Closes #  <!-- If your PR is related to an issue, provide the number(s) above; if it resolves multiple issues, be sure to break them up (e.g. "closes #1000, closes #1001"). -->  <!--  Thank you for contributing to Storybook! Please submit all PRs to the `next` branch unless they are specific to the current release. Storybook maintainers cherry-pick bug and documentation fixes into the `main` branch as part of the release process, so you shouldn't need to worry about this. For additional guidance: https://storybook.js.org/docs/contribute  -->  ## What I did  Resolves [SB-2222](https://linear.app/chromaui/issue/SB-2222/svelte-csf-clearer-parser-errors-for-files-without-definemeta-and).  ### The problem  When a Svelte project upgrades to Storybook 11, its stories files that do not use `defineMeta` yet (for example files in the removed legacy syntax) make `storybook dev` and `storybook build` fail. The output had four problems:  1. **The advice does not fix the file.** Errors `0003` ("does not import defineMeta") and `0001` ("does not have a module context") tell the user to import `defineMeta` or to add a module script. A file without `defineMeta` needs more: a `<script module>` that calls `defineMeta()` and uses the `Story` component that it returns. 2. **Each file prints the full message.** Each failing file prints the same ~17-line block, with only the path changed. A project with many unmigrated files, such as [brave/leo](https://github.com/brave/leo), gets about 1,100 lines
-
-- **Issue #37199** (2026-11-05): **Core: Stop a late ack error clobbering resolved static-load state in the story**
-  *Symptoms*: Closes #  <!-- If your PR is related to an issue, provide the number(s) above; if it resolves multiple issues, be sure to break them up (e.g. "closes #1000, closes #1001"). -->  ## What I did  `internal-storybook-e2e` intermittently fails `open-service-sync.spec.ts` › *"static load resolves entries from the live server in dev"*. The story shows `No runtime acknowledged remote command "…computeUnbacked"` where the test expects `"static-load:unbacked"`, and it keeps showing it through all three retries.  **Cause.** The static-load story's `beforeEach` wrote one `unbackedStatus` field from two places: the subscription wrote the value, and `loaded().catch` wrote the error. A remote command is best-effort: the server can execute it and broadcast state even after the acknowledgement times out. When the rejection arrived after the value, it overwrote it, and nothing ever wrote the value back.  `975667ae97f` fixed the same race in `OpenServiceDemoPanel`, which works out the status on every render and prefers the value. The story was left as it was, and the e2e test checks the **story**, so the race was still there.  **Change.** The story now stores the value and the error separately and picks between them when it renders, as the panel does: `unbacked != null ? JSON.stringify(unbacked) : (unbackedError ?? 'pending')`. Every write is unconditional, so arrival order no longer matters:  | Situation | Renders | |---|---| | Nothing loaded yet | `pending` | | Dev: value arrives, error befor
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -576,412 +576,527 @@ export function isRecord(value: unknown): value is Record<string, unknown> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fb339536` (2026-11-05)
-**Commit Message**: Build: Declare node types where node built-ins are used
+### Incident Patch 1: `44ea08ae` (2026-11-06)
+**Commit Message**: Merge pull request #37133 from yngvebn/fix/angular-vite-vitest-compiler-setup
 
-`typescript-validation` has failed on `next` since f6d12ac3ddd: 182 of its 197
-errors are TS2591 "Cannot find name 'process'/'node:x'" across thirteen
-packages with nothing in common. TypeScript's own message names the fix —
-"add 'node' to the types field in your tsconfig" — but the interesting part is
-why it only started saying so on November 4.
+Angular-Vite: Evaluate @angular/compiler once per page under Vitest
 
-Automatic @types inclusion yields nothing in this repo. Tracing addon-links
-produces zero type-reference-directive resolutions across 4,303 traced
-lookups, and the 95 that addon-docs produces all originate inside dependency
-.d.ts files (react-colorful references 'react'). So these packages never
-resolved @types/node by discovery. They were handed node globals by a
-transitive `/// <reference types="node" />` that some dependency happened to
-carry, and the dependency churn between e4ec60736 and f6d12ac3ddd — 17 commits
-touching yarn.lock — took it away. The tree was never the problem: on the
-executor @types/node is present, populated, version 22.19.15, one of 99 real
-(non-symlink) directories under the root node_modules/@types.
-
-So this is the dependency that was always implied and ne
-
-**File**: `code/addons/links/src/utils.test.ts` (modified, +4/-2)
+**File**: `code/frameworks/angular-vite/build-config.ts` (modified, +5/-0)
 ```diff
-@@ -10,8 +10,10 @@ import { hrefTo, hrefToSync, linkTo } from './utils.ts';
- vi.mock('storybook/preview-api');
- vi.mock('@storybook/global', () => ({
-   global: {
--    document: global.document,
--    window: global,
-+    // globalThis, not `global`: this suite runs in happy-dom, and the only reason the Node spelling
-+    // ever compiled here was an @types/node reference this package picked up through a dependency.
-+    document: globalThis.document,
-+    window: globalThis,
-   },
- }));
- 
+@@ -27,6 +27,11 @@ const config: BuildEntries = {
+         entryPoint: './src/client/docs/config.ts',
+         dts: false,
+       },
++      {
++        exportEntries: ['./internal/vitest-compiler-setup'],
++        entryPoint: './src/client/vitest-compiler-setup.ts',
++        dts: false,
++      },
+     ],
+     node: [
+       {
 ```
 
-**File**: `code/addons/themes/tsconfig.json` (modified, +1/-1)
+**File**: `code/frameworks/angular-vite/package.json` (modified, +1/-0)
 ```diff
-@@ -1,5 +1,5 @@
- {
-   "extends": "../../tsconfig.json",
--  "compilerOptions": {},
-+  "compilerOptions": { "types": ["node"] },
-   "include": ["src/**/*"]
- }
+@@ -37,6 +37,7 @@
+     "./client/docs/config": "./dist/client/docs/config.js",
+     "./client/preview-prod": "./dist/client/preview-prod.js",
+     "./internal/docgen-worker": "./dist/docgen/docgen-worker.js",
++    "./internal/vitest-compiler-setup": "./dist/client/vitest-compiler-setup.js",
+     "./node": {
+       "types": "./dist/node/index.d.ts",
+       "code": "./src/node/index.ts",
 ```
 
-**File**: `code/frameworks/ember/tsconfig.json` (modified, +1/-1)
+**File**: `code/frameworks/angular-vite/src/client/vitest-compiler-setup.ts` (added, +6/-0)
 ```diff
-@@ -1,5 +1,5 @@
- {
-   "extends": "../../tsconfig.json",
--  "compilerOptions": {},
-+  "compilerOptions": { "types": ["node"] },
-   "include": ["src/**/*"]
- }
+@@ -0,0 +1,6 @@
++// Keep this wrapper; don't register the bare `@angular/compiler` specifier as a setup file instead.
++// Vitest re-imports setup files under a fresh `?browserv=` URL before every test file, so a bare
++// specifier re-evaluated the whole compiler per test file, and with `browser.isolate: false` the
++// page kept every copy. Importing it from here keeps the compiler's own URL stable, so it is
++// evaluated once per page.
++import '@angular/compiler';
 ```
 
-**File**: `code/frameworks/react-webpack5/tsconfig.json` (modified, +1/-1)
+**File**: `code/frameworks/angular-vite/src/node/vitest.test.ts` (modified, +35/-0)
 ```diff
-@@ -1,5 +1,5 @@
- {
-   "extends": "../../tsconfig.json",
--  "compilerOptions": {},
-+  "compilerOptions": { "types": ["node"] },
-   "include": ["src/**/*"]
- }
-```
-
-**File**: `code/lib/angular-cm/tsconfig.json` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- {
-   "extends": "../../tsconfig.json",
--  "compilerOptions": {},
-+  "compilerOptions": { "types": ["node"] },
-   "include": ["src/**/*"],
-   // Fixtures import @angular/core, which this package deliberately does not depend on; the tests
-   // compile them with their own TS programs instead.
-```
-
-**File**: `code/lib/core-webpack/tsconfig.json` (modified, +1/-1)
-```diff
-@@ -1,5 +1,5 @@
- {
-   "extends": "../../tsconfig.json",
--  "compilerOptions": {},
-+  "compilerOptions": { "types": ["node"] },
-   "include": ["src/**/*"]
- }
-```
-
-**File**: `code/lib/create-storybook/tsconfig.json` (modified, +1/-0)
-```diff
-@@ -1,6 +1,7 @@
- {
-   "extends": "../../tsconfig.json",
-   "compilerOptions": {
-+    "types": ["node"],
-     "moduleResolution": "bundler",
-     "module": "ES2022"
-   },
-```
-
-**File**: `code/presets/react-webpack/tsconfig.json` (modified, +1/-1)
-```diff
-@@ -1,5 +1,5 @@
- {
-   "extends": "../../tsconfig.json",
--  "compilerOptions": {},
-+  "compilerOptions": { "types": ["node"] },
-   "include": ["src/**/*"]
- }
-```
-
----
-
-### Incident Patch 2: `f8b075b8` (2026-11-05)
-**Commit Message**: Build: Declare node types in every package that imports Node built-ins
-
-TypeScript 6 changed the default of `types` to `[]`, so @types packages are
-no longer included unless listed. The repo moved to 6.0.3 on 2026-05-29 and
-from then on every package using Node built-ins compiled only because some
-dependency's declarations carried `/// <reference types="node" />` — for the
-core `storybook` package, the one in vite/dist/node/index.d.ts. Thirteen
-packages lost theirs in the November 4 lockfile churn (fixed in #37201); this
-declares node types for the rest so none depends on that accident.
-
-- `"types": ["node"]` in 22 more code packages, in addon-vitest (which listed
-  only "vitest"), and in agent-eval.
-- `@types/node` in devDependencies of the 15 packages that relied on the root
-  hoist for it.
-- Drops a comment from #37201 in the addon-links test.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `agent-eval/tsconfig.json` (modified, +1/-0)
-```diff
-@@ -21,6 +21,7 @@
-     "skipLibCheck": true,
-     "strict": true,
-     "target": "es2022",
-+    "types": ["node"],
-     "verbatimModuleSyntax": true
-   },
-   "include": [
-```
-
-**File**: `code/addons/docs/package.json` (modified, +1/-0)
-```diff
-@@ -97,6 +97,7 @@
-     "@mdx-js/mdx": "^3.0.0",
-     "@rollup/pluginutils": "^5.0.2",
-     "@types/color-convert": "^2.0.0",
-+    "@types/node": "^22.19.1",
-     "@types/react": "^18.0.0 || ^19.0.0",
-     "color-convert": "^2.0.1",
-     "es-toolkit": "^1.43.0",
-```
-
-**File**: `code/addons/docs/tsconfig.json` (modified, +1/-1)
-```diff
-@@ -1,5 +1,5 @@
- {
-   "extends": "../../tsconfig.json",
--  "compilerOptions": {},
-+  "compilerOptions": { "types": ["node"] },
-   "include": ["src/**/*"]
- }
-```
-
-**File**: `code/addons/links/src/utils.test.ts` (modified, +0/-2)
-```diff
-@@ -10,8 +10,6 @@ import { hrefTo, hrefToSync, linkTo } from './utils.ts';
- vi.mock('storybook/preview-api');
- vi.mock('@storybook/global', () => ({
-   global: {
--    // globalThis, not `global`: this suite runs in happy-dom, and the only reason the Node spelling
--    // ever compiled here was an @types/node reference this package picked up through a dependency.
-     document: globalThis.document,
-     window: globalThis,
-   },
-```
-
-**File**: `code/addons/mcp/package.json` (modified, +1/-0)
-```diff
-@@ -44,6 +44,7 @@
-   "devDependencies": {
-     "@storybook/addon-a11y": "workspace:*",
-     "@storybook/addon-vitest": "workspace:*",
-+    "@types/node": "^22.19.1",
-     "storybook": "workspace:*",
-     "typescript": "^6.0.3"
-   },
-```
-
-**File**: `code/addons/mcp/tsconfig.json` (modified, +1/-0)
-```diff
-@@ -1,5 +1,6 @@
- {
-   "extends": ["../../tsconfig.json"],
-+  "compilerOptions": { "types": ["node"] },
-   "include": ["src/**/*", "**/*.ts"],
-   "exclude": ["dist"]
- }
-```
-
-**File**: `code/addons/themes/package.json` (modified, +1/-0)
-```diff
-@@ -61,6 +61,7 @@
-   },
-   "devDependencies": {
-     "@storybook/icons": "^2.0.2",
-+    "@types/node": "^22.19.1",
-     "react": "^18.2.0",
-     "react-dom": "^18.2.0",
-     "typescript": "^6.0.3"
-```
-
-**File**: `code/addons/vitest/tsconfig.json` (modified, +1/-1)
-```diff
-@@ -2,7 +2,7 @@
-   "extends": "../../tsconfig.json",
-   "compilerOptions": {
-     "rootDir": "../../../",
--    "types": ["vitest"],
-+    "types": ["node", "vitest"],
-     "strict": true
-   },
-   "include": ["src/**/*", "./typings.d.ts"]
-```
-
----
-
-### Incident Patch 3: `6ab1337e` (2026-11-05)
-**Commit Message**: Merge pull request #37068 from storybookjs/fix/windows-unit-tests-dg-2427917
-
-Core: Stabilize Windows unit tests (file-lock stale window, vue3 meta + dist-contract timeouts)
-
-**File**: `code/core/src/test/dist-contract.test.ts` (modified, +15/-7)
-```diff
-@@ -10,6 +10,9 @@ const TYPESCRIPT = createRequire(import.meta.url).resolve('typescript/bin/tsc');
- const TYPESCRIPT_5 = createRequire(import.meta.url).resolve('typescript-5/bin/tsc');
- const DTS_BUILT = existsSync(DTS_ARTIFACT);
- const REPOSITORY_ROOT = join(import.meta.dirname, '../../../..');
-+// Compiling the public API surface with tsc takes 30s+ on loaded Windows CI
-+// runners, so use a fixed generous timeout instead of the 10s Vitest default.
-+const compileTimeoutMs = 90_000;
- const TSC_OPTIONS = [
-   '--module',
-   'Node16',
-@@ -88,13 +91,18 @@ describe('storybook/test declaration contract', () => {
-         cwd: REPOSITORY_ROOT,
-         stdio: 'pipe',
-       });
--    }
-+    },
-+    compileTimeoutMs
-   );
- 
--  it.runIf(DTS_BUILT)('compiles the public test API consumer fixture with TypeScript 5.9.3', () => {
--    execFileSync(process.execPath, [TYPESCRIPT_5, ...TSC_OPTIONS], {
--      cwd: REPOSITORY_ROOT,
--      stdio: 'pipe',
--    });
--  });
-+  it.runIf(DTS_BUILT)(
-+    'compiles the public test API consumer fixture with TypeScript 5.9.3',
-+    () => {
-+      execFileSync(process.execPath, [TYPESCRIPT_5, ...TSC_OPTIONS], {
-+        cwd: REPOSITORY_ROOT,
-+        stdio: 'pipe',
-+      });
-+    },
-+    compileTimeoutMs
-+  );
- });
-```
-
-**File**: `code/core/src/theming/dist-contract.test.ts` (modified, +5/-2)
-```diff
-@@ -13,6 +13,9 @@ const CONSUMER_FIXTURE = join(import.meta.dirname, '__testfixtures__/typescript-
- const TYPESCRIPT = createRequire(import.meta.url).resolve('typescript/bin/tsc');
- const TYPESCRIPT_5 = createRequire(import.meta.url).resolve('typescript-5/bin/tsc');
- const REPOSITORY_ROOT = join(import.meta.dirname, '../../../..');
-+// Compiling the theming API surface with tsc takes 30s+ on loaded Windows CI
-+// runners, so use a fixed generous timeout instead of the 10s Vitest default.
-+const compileTimeoutMs = 90_000;
- 
- // A dev compile writes the JS bundle and skips declarations. CI builds both before the suite.
- const JS_BUILT = existsSync(CREATE_JS);
-@@ -121,7 +124,7 @@ describe('published theming entries', () => {
-         stdio: 'pipe',
-       });
-     },
--    30_000
-+    compileTimeoutMs
-   );
- 
-   it.runIf(DTS_BUILT)(
-@@ -132,6 +135,6 @@ describe('published theming entries', () => {
-         stdio: 'pipe',
-       });
-     },
--    30_000
-+    compileTimeoutMs
-   );
- });
-```
-
-**File**: `code/lib/docgen-harness/src/vue3/vue3-component-meta-baselines.test.ts` (modified, +18/-6)
-```diff
-@@ -235,14 +235,26 @@ const runComponentMetaFixture = async (
-   expect(snippetFilesOnDisk).toEqual(expectedSnippetFiles);
- };
- 
-+// The first extraction per fixture can outrun the 10s default on a loaded CI runner,
-+// mirroring the explicit limits the angular baselines already carry.
-+const fixtureTimeoutMs = 30_000;
+@@ -1,3 +1,5 @@
++import { readFileSync } from 'node:fs';
 +
- describe('vue3 vue-component-meta baselines', () => {
--  it.each(fixtureCases)('%s', async (fixtureCase) => {
--    await runComponentMetaFixture(fixtureCase, '__testfixtures__', checker);
--  });
-+  it.each(fixtureCases)(
-+    '%s',
-+    async (fixtureCase) => {
-+      await runComponentMetaFixture(fixtureCase, '__testfixtures__', checker);
-+    },
-+    fixtureTimeoutMs
-+  );
- });
+ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
  
- describe('vue3 vue-component-meta baselines — tsx components', () => {
--  it.each(tsxFixtureCases)('%s', async (fixtureCase) => {
--    await runComponentMetaFixture(fixtureCase, '__tsx-testfixtures__', tsxChecker);
--  });
-+  it.each(tsxFixtureCases)(
-+    '%s',
-+    async (fixtureCase) => {
-+      await runComponentMetaFixture(fixtureCase, '__tsx-testfixtures__', tsxChecker);
-+    },
-+    fixtureTimeoutMs
-+  );
- });
+ import { logger } from 'storybook/internal/node-logger';
+@@ -18,6 +20,7 @@ describe('storybookAngularVitest', () => {
+ 
+   afterEach(() => {
+     delete process.env[ENV_KEY];
++    vi.doUnmock('@angular/compiler');
+   });
+ 
+   it('sets the env var to the serialized options and returns the named plugin', () => {
+@@ -67,6 +70,38 @@ describe('storybookAngularVitest', () => {
+     expect(process.env[ENV_KEY]).toBeUndefined();
+   });
+ 
++  it('registers the compiler wrapper as a setup file, not the bare @angular/compiler specifier', () => {
++    const config = (storybookAngularVitest().config as () => { test: { setupFiles: string[] } })();
++
++    // See src/client/vitest-compiler-setup.ts for why it must not be the bare specifier.
++    expect(config.test.setupFiles).toEqual([
++      '@storybook/angular-vite/internal/vitest-compiler-setup',
++    ]);
++  });
++
++  it('maps the setup specifier to the built compiler wrapper', () => {
++    const pkg = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf8'));
++
++    expect(pkg.exports['./internal/vitest-compiler-setup']).toBe(
++      './dist/client/vitest-compiler-setup.js'
++    );
++  });
++
++  it('evaluates @angular/compiler once when the setup file is re-imported under fresh URLs', async () => {
++    let evaluations = 0;
++    vi.doMock('@angular/compiler', () => {
++      evaluations++;
++      return {};
++    });
++    const wrapperUrl = new URL('../client/vitest-compiler-setup.ts', import.meta.url).href;
++
++    // The way Vitest's browser tester re-imports setup files.
++    await import(/* @vite-ignore */ `${wrapperUrl}?browserv=1`);
++    await import(/* @vite-ignore */ `${wrapperUrl}?browserv=2`);
++
++    expect(evaluations).toBe(1);
++  });
++
+   it('exports storybookAngularVitest as a function (export contract)', () => {
+     expect(typeof storybookAngularVitest).toBe('function');
+   });
 ```
 
-**File**: `code/renderers/react/src/dist-contract.test.ts` (modified, +5/-2)
+**File**: `code/frameworks/angular-vite/src/node/vitest.ts` (modified, +6/-4)
 ```diff
-@@ -13,6 +13,9 @@ const TYPESCRIPT = createRequire(import.meta.url).resolve('typescript/bin/tsc');
- const TYPESCRIPT_5 = createRequire(import.meta.url).resolve('typescript-5/bin/tsc');
- const DTS_BUILT = DTS_ARTIFACTS.every(existsSync);
- const REPOSITORY_ROOT = join(import.meta.dirname, '../../../..');
-+// Compiling the full declaration surface with tsc takes 30s+ on loaded Windows
-+// CI runners, so use a fixed generous timeout instead of the 10s default.
-+const compileTimeoutMs = 90_000;
- const TSC_OPTIONS = [
-   '--module',
-   'Node16',
-@@ -42,7 +45,7 @@ describe('React declaration contract', () => {
-         stdio: 'pipe',
-       });
-     },
--    30_000
-+    compileTimeoutMs
-   );
+@@ -35,10 +35,12 @@ export const findNodeModulesRoots = (startDir: string): string[] => {
+  * anything compiles a component. Under Vitest, addon-vitest's setup file imports the project
+  * annotations early — and on Angular toolchains where the linker no longer AOT-processes libraries
+  * like `@angular/common` (PlatformLocation), they fall back to JIT at that point. Importing
+- * `@angular/compiler` as a `setupFiles` entry runs early enough (a preview annotation does not), and
+- * the bare specifier resolves via Node so the framework needs no extra package export.
++ * `@angular/compiler` as a `setupFiles` entry runs early enough (a preview annotation does not).
++ *
++ * The entry is a wrapper module rather than the bare specifier, so the compiler is evaluated once
++ * per page; `src/client/vitest-compiler-setup.ts` explains why.
+  */
+-const COMPILER_SETUP = '@angular/compiler';
++const COMPILER_SETUP = '@storybook/angular-vite/internal/vitest-compiler-setup';
  
-   it.runIf(DTS_BUILT)(
-@@ -53,6 +56,6 @@ describe('React declaration contract', () => {
-         stdio: 'pipe',
-       });
-     },
--    30_000
-+    compileTimeoutMs
-   );
- });
+ /**
+  * Angular build options that influence how stories compile under Vitest.
+@@ -102,7 +104,7 @@ export function storybookAngularVitest(options: AngularVitestOptions = {}): Plug
+     // `node_modules` (with `@angular/compiler`) lives at the workspace root. Vite only treats
+     // `pnpm-workspace.yaml`, `lerna.json`, or a `workspaces` field as workspace-root markers, so a
+     // plain Angular workspace resolves the root to the library folder — and the `@angular/compiler`
+-    // setup file above falls outside `server.fs.allow`, failing to load in the browser with
++    // module that the setup file imports falls outside `server.fs.allow`, failing to load in the browser with
+     // "Failed to fetch dynamically imported module". Allow every ancestor that contains
+     // `node_modules`. `configureServer` is required: Vitest builds the browser server's allow-list
+     // itself, so entries added via the `config` hook or static config never reach it.
 ```
 
-**File**: `test-storybooks/mcp/vitest.config.ts` (modified, +5/-2)
+---
+
+### Incident Patch 2: `04ef472d` (2026-11-06)
+**Commit Message**: Merge pull request #37002 from naveedsajjdawan/fix/next-font-local-display
+
+Next.js: Preserve display option for local fonts
+
+**File**: `code/frameworks/nextjs/src/font/webpack/loader/local/get-font-face-declarations.test.ts` (added, +68/-0)
 ```diff
-@@ -9,8 +9,11 @@ import { playwright } from '@vitest/browser-playwright';
- // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
- export default defineConfig({
- 	test: {
--		testTimeout: 15_000,
--		hookTimeout: 15_000,
-+		// The test-run endpoint spawns a full test run, which on a loaded Windows CI runner can
-+		// exceed 15s even though the same tool finishes in ~4s on unloaded hardware. The timeout
-+		// only matters when a test would actually exceed it, so a wide ceiling is free.
-+		testTimeout: 30_000,
-+		hookTimeout: 30_000,
- 		projects: [
- 			// E2E tests project (for MCP endpoint testing)
- 			{
+@@ -0,0 +1,68 @@
++import { beforeEach, describe, expect, it, vi } from 'vitest';
++
++vi.mock('storybook/internal/common', { spy: true });
++vi.mock('next/dist/compiled/loader-utils3/index.js', { spy: true });
++
++import { getProjectRoot } from 'storybook/internal/common';
++import loaderUtils from 'next/dist/compiled/loader-utils3/index.js';
++import { getFontFaceDeclarations } from './get-font-face-declarations.ts';
++
++describe('getFontFaceDeclarations', () => {
++  beforeEach(() => {
++    vi.clearAllMocks();
++    vi.mocked(getProjectRoot).mockReturnValue('/project');
++    vi.mocked(loaderUtils.getHashDigest).mockReturnValue('font-test');
++  });
++
++  it('preserves the display option for a single local font', async () => {
++    const result = await getFontFaceDeclarations(
++      {
++        source: 'next/font/local',
++        props: { src: './font.woff2', display: 'fallback' },
++        fontFamily: 'LocalFont',
++        filename: '/project/src/fonts.ts',
++      },
++      '/project',
++      false
++    );
++
++    expect(result.fontFaceCSS).toContain('font-display: fallback;');
++  });
++
++  it('preserves the display option for every local font source', async () => {
++    const result = await getFontFaceDeclarations(
++      {
++        source: 'next/font/local',
++        props: {
++          src: [
++            { path: './regular.woff2', weight: '400' },
++            { path: './bold.woff2', weight: '700' },
++          ],
++          display: 'fallback',
++        },
++        fontFamily: 'LocalFont',
++        filename: '/project/src/fonts.ts',
++      },
++      '/project',
++      false
++    );
++
++    expect(result.fontFaceCSS.match(/@font-face/g) ?? []).toHaveLength(2);
++    expect(result.fontFaceCSS.match(/font-display: fallback;/g) ?? []).toHaveLength(2);
++  });
++
++  it('defaults display to swap when omitted', async () => {
++    const result = await getFontFaceDeclarations(
++      {
++        source: 'next/font/local',
++        props: { src: './font.woff2' },
++        fontFamily: 'LocalFont',
++        filename: '/project/src/fonts.ts',
++      },
++      '/project',
++      false
++    );
++
++    expect(result.fontFaceCSS).toContain('font-display: swap;');
++  });
++});
+```
+
+**File**: `code/frameworks/nextjs/src/font/webpack/loader/local/get-font-face-declarations.ts` (modified, +2/-1)
+```diff
+@@ -24,6 +24,7 @@ export async function getFontFaceDeclarations(
+   const {
+     weight,
+     style,
++    display,
+     variable,
+     declarations = [],
+   } = validateLocalFontFunctionCall('', options.props);
+@@ -35,7 +36,7 @@ export async function getFontFaceDeclarations(
+     6
+   )}`;
+ 
+-  const fontDeclarations = declarations
++  const fontDeclarations = [{ prop: 'font-display', value: display }, ...declarations]
+     .map(({ prop, value }: { prop: string; value: string }) => `${prop}: ${value};`)
+     .join('\n');
+ 
+```
+
+**File**: `code/frameworks/nextjs/src/font/webpack/loader/types.ts` (modified, +1/-1)
+```diff
+@@ -2,7 +2,7 @@ export type LoaderOptions = {
+   /** Initial import name. Can be `next/font/google` or `next/font/local` */
+   source: string;
+   /** Props passed to the `next/font` function call */
+-  props: Record<string, any>;
++  props: Record<string, any> & { display?: 'auto' | 'block' | 'swap' | 'fallback' | 'optional' };
+   /** Font Family name */
+   fontFamily: string;
+   /** Filename of the issuer file, which imports `next/font/google` or `next/font/local */
+```
+
+**File**: `code/lib/vite-plugin-storybook-nextjs/src/plugins/next-font/local/get-font-face-declarations.test.ts` (added, +71/-0)
+```diff
+@@ -0,0 +1,71 @@
++import { beforeEach, describe, expect, it, vi } from 'vitest';
++
++vi.mock('next/dist/compiled/loader-utils3/index.js', { spy: true });
++
++// @ts-expect-error no types
++import loaderUtils from 'next/dist/compiled/loader-utils3/index.js';
++import { getFontFaceDeclarations } from './get-font-face-declarations.ts';
++
++describe('getFontFaceDeclarations', () => {
++  beforeEach(() => {
++    vi.clearAllMocks();
++    vi.mocked(loaderUtils.getHashDigest).mockReturnValue('font-test');
++  });
++
++  it('preserves the display option for a single local font', async () => {
++    const result = await getFontFaceDeclarations({
++      source: 'next/font/local',
++      props: {
++        src: './font.woff2',
++        display: 'fallback',
++        metaSrc: { fontReferenceId: 'font-asset', fontPath: 'font.woff2' },
++      },
++      fontFamily: 'LocalFont',
++      filename: '/project/src/fonts.ts',
++    });
++
++    expect(result.fontFaceCSS).toContain('font-display: fallback;');
++  });
++
++  it('preserves the display option for every local font source', async () => {
++    const result = await getFontFaceDeclarations({
++      source: 'next/font/local',
++      props: {
++        src: [
++          { path: './regular.woff2', weight: '400' },
++          { path: './bold.woff2', weight: '700' },
++        ],
++        display: 'fallback',
++        metaSrc: [
++          {
++            path: { fontReferenceId: 'regular', fontPath: 'regular.woff2' },
++            weight: '400',
++          },
++          {
++            path: { fontReferenceId: 'bold', fontPath: 'bold.woff2' },
++            weight: '700',
++          },
++        ],
++      },
++      fontFamily: 'LocalFont',
++      filename: '/project/src/fonts.ts',
++    });
++
++    expect(result.fontFaceCSS.match(/@font-face/g) ?? []).toHaveLength(2);
++    expect(result.fontFaceCSS.match(/font-display: fallback;/g) ?? []).toHaveLength(2);
++  });
++
++  it('defaults display to swap when omitted', async () => {
++    const result = await getFontFaceDeclarations({
++      source: 'next/font/local',
++      props: {
++        src: './font.woff2',
++        metaSrc: { fontReferenceId: 'font-asset', fontPath: 'font.woff2' },
++      },
++      fontFamily: 'LocalFont',
++      filename: '/project/src/fonts.ts',
++    });
++
++    expect(result.fontFaceCSS).toContain('font-display: swap;');
++  });
++});
+```
+
+**File**: `code/lib/vite-plugin-storybook-nextjs/src/plugins/next-font/local/get-font-face-declarations.ts` (modified, +3/-1)
+```diff
+@@ -20,6 +20,7 @@ export type LoaderOptions = {
+   props: {
+     src?: string | Array<{ path: string; weight?: string; style?: string }>;
+     metaSrc?: LocalFontSrc;
++    display?: 'auto' | 'block' | 'swap' | 'fallback' | 'optional';
+   };
+   /**
+    * Font Family name
+@@ -49,6 +50,7 @@ export async function getFontFaceDeclarations(options: LoaderOptions) {
+   const {
+     weight,
+     style,
++    display,
+     variable,
+     declarations = [],
+   } = validateLocalFontFunctionCall('', options.props);
+@@ -60,7 +62,7 @@ export async function getFontFaceDeclarations(options: LoaderOptions) {
+     6
+   )}`;
+ 
+-  const fontDeclarations = declarations
++  const fontDeclarations = [{ prop: 'font-display', value: display }, ...declarations]
+     .map(({ prop, value }: { prop: string; value: string }) => `${prop}: ${value};`)
+     .join('\n');
+ 
+```
+
+**File**: `code/lib/vite-plugin-storybook-nextjs/src/plugins/next-font/plugin.ts` (modified, +1/-0)
+```diff
+@@ -25,6 +25,7 @@ type FontOptions = {
+   fontFamily: string;
+   props: {
+     src?: string | Array<{ path: string; weight?: string; style?: string }>;
++    display?: 'auto' | 'block' | 'swap' | 'fallback' | 'optional';
+   };
+   source: string;
+ };
+```
+
+**File**: `docs/get-started/frameworks/nextjs-vite.mdx` (modified, +1/-1)
+```diff
+@@ -151,7 +151,7 @@ The following features are not supported (yet). Support for these features might
+ - [fallback](https://nextjs.org/docs/pages/api-reference/components/font#fallback) option
+ - [adjustFontFallback](https://nextjs.org/docs/pages/api-reference/components/font#adjustfontfallback) option
+ - [preload](https://nextjs.org/docs/pages/api-reference/components/font#preload) option gets ignored. Storybook handles Font loading its own way.
+-- [display](https://nextjs.org/docs/pages/api-reference/components/font#display) option gets ignored. All fonts are loaded with display set to "block" to make Storybook load the font properly.
++- [display](https://nextjs.org/docs/pages/api-reference/components/font#display) is respected (defaulting to `swap`); `optional` is loaded as `block` so fonts render reliably.
+ 
+ #### Mocking fonts during testing
+ 
+```
+
+**File**: `docs/get-started/frameworks/nextjs.mdx` (modified, +1/-1)
+```diff
+@@ -161,7 +161,7 @@ The following features are not supported (yet). Support for these features might
+ - [fallback](https://nextjs.org/docs/pages/api-reference/components/font#fallback) option
+ - [adjustFontFallback](https://nextjs.org/docs/pages/api-reference/components/font#adjustfontfallback) option
+ - [preload](https://nextjs.org/docs/pages/api-reference/components/font#preload) option gets ignored. Storybook handles Font loading its own way.
+-- [display](https://nextjs.org/docs/pages/api-reference/components/font#display) option gets ignored. All fonts are loaded with display set to "block" to make Storybook load the font properly.
++- [display](https://nextjs.org/docs/pages/api-reference/components/font#display) is respected (defaulting to `swap`); `optional` is loaded as `block` so fonts render reliably.
+ 
+ #### Mocking fonts during testing
+ 
+```
+
+---
+
+### Incident Patch 3: `7d891920` (2026-11-06)
+**Commit Message**: Merge pull request #36754 from smg99/fix/issue-36738-react-eventwrapper
+
+React: Make nested user-event act wrappers re-entrant
+
+**File**: `code/renderers/react/src/act-compat.test.ts` (added, +48/-0)
+```diff
+@@ -0,0 +1,48 @@
++import { beforeEach, describe, expect, it, vi } from 'vitest';
++import type { Mock } from 'vitest';
++
++import { createEventWrapper } from './act-compat.ts';
++
++describe('createEventWrapper', () => {
++  let act: Mock<(cb: () => unknown) => unknown>;
++  let shouldReturnThenable = false;
++
++  beforeEach(() => {
++    shouldReturnThenable = false;
++    act = vi.fn((cb: () => unknown) => {
++      const result = cb();
++      return shouldReturnThenable ? { then: () => undefined } : result;
++    });
++  });
++
++  it('avoids nested act calls while already within an act scope', () => {
++    const wrapper = createEventWrapper(act);
++    const inner = vi.fn();
++
++    wrapper(() => {
++      wrapper(() => inner());
++    });
++
++    expect(act).toHaveBeenCalledTimes(1);
++    expect(inner).toHaveBeenCalledTimes(1);
++  });
++
++  it('restores the wrapper state when the callback throws', () => {
++    const wrapper = createEventWrapper(act);
++
++    expect(() =>
++      wrapper(() => {
++        throw new Error('boom');
++      })
++    ).toThrow('boom');
++    expect(() => wrapper(() => undefined)).not.toThrow();
++    expect(act).toHaveBeenCalledTimes(2);
++  });
++
++  it('returns the callback result rather than the act thenable', () => {
++    shouldReturnThenable = true;
++    const wrapper = createEventWrapper(act);
++
++    expect(wrapper(() => 'callback result')).toBe('callback result');
++  });
++});
+```
+
+**File**: `code/renderers/react/src/act-compat.ts` (modified, +22/-0)
+```diff
+@@ -62,6 +62,28 @@ function withGlobalActEnvironment(actImplementation: (callback: () => void) => P
+   };
+ }
+ 
++export function createEventWrapper(act: (cb: () => unknown) => unknown) {
++  let isInsideAct = false;
++
++  return <T>(cb: () => T): T => {
++    // Nested user-event dispatches (e.g. blur on focused-element removal) must reuse the outer act scope.
++    if (isInsideAct) {
++      return cb();
++    }
++
++    isInsideAct = true;
++    try {
++      let result!: T;
++      act(() => {
++        result = cb();
++      });
++      return result;
++    } finally {
++      isInsideAct = false;
++    }
++  };
++}
++
+ export const getAct = async ({ disableAct = false }: { disableAct?: boolean } = {}) => {
+   if (process.env.NODE_ENV === 'production' || disableAct) {
+     return (cb: (...args: any[]) => any) => cb();
+```
+
+**File**: `code/renderers/react/src/entry-preview.tsx` (modified, +7/-9)
+```diff
+@@ -6,7 +6,12 @@ import { global } from '@storybook/global';
+ 
+ import { configure } from 'storybook/test';
+ 
+-import { getAct, getReactActEnvironment, setReactActEnvironment } from './act-compat.ts';
++import {
++  createEventWrapper,
++  getAct,
++  getReactActEnvironment,
++  setReactActEnvironment,
++} from './act-compat.ts';
+ import type { Decorator } from './public-types.ts';
+ 
+ export { render } from './render.tsx';
+@@ -83,14 +88,7 @@ export const beforeAll = async () => {
+           setReactActEnvironment(previousActEnvironment);
+         }
+       },
+-      eventWrapper: (cb) => {
+-        let result;
+-        act(() => {
+-          result = cb();
+-          return result;
+-        });
+-        return result;
+-      },
++      eventWrapper: createEventWrapper(act),
+     });
+   } catch (e) {
+     // no-op
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #37215** (2026-11-05): Build: Drop the temporary base-branch exceptions of the NX experiments (@kasperpeulen)
-- **PR #37213** (2026-11-05): Build: Run the CircleCI NX DTE pipeline in two waves of agents, at about the per-job pipeline's cost (@kasperpeulen)
-- **PR #37212** (closed): Build: Measure the CircleCI NX DTE pipeline (experiment) (@kasperpeulen)
-- **PR #37209** (closed): Build: NX experiment - scheduling with base-branch history (@kasperpeulen)
-- **PR #37207** (2026-11-05): Build: Run CircleCI workflows as NX tasks distributed over CircleCI agents (@kasperpeulen)
-- **PR #37204** (2026-11-05): Svelte: Clearer indexing errors for files without defineMeta, and print each error once (@JReinhold)
+- **PR #37263** (closed): Bench: a core change, NX Windows (pathe links) (not for merging) (@kasperpeulen)
+- **PR #37260** (closed): Bench: a core change, NX daily (not for merging) (@kasperpeulen)
+- **PR #37257** (2026-11-08): Build: Start the NX DTE agents faster, on Windows most (@kasperpeulen)
+- **PR #37256** (closed): Bench: a docs change, NX normal (not for merging) (@kasperpeulen)
+- **PR #37255** (closed): Bench: a vue3 change, NX normal (not for merging) (@kasperpeulen)
+- **PR #37254** (closed): Bench: a core change, per-job normal (not for merging) (@kasperpeulen)
 
 ---
 
@@ -1001,32 +1116,32 @@ Core: Stabilize Windows unit tests (file-lock stale window, vue3 meta + dist-con
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Build: Declare node types where node built-ins are used
+## X. Merge pull request #37133 from yngvebn/fix/angular-vite-vitest-compiler-setup
 
 **RULE**:
-When implementing operations in `code/addons/links/src/utils.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in storybookjs/storybook. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `code/frameworks/angular-vite/build-config.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in storybookjs/storybook. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fb339536`: Build: Declare node types where node built-ins are used. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `44ea08ae`: Merge pull request #37133 from yngvebn/fix/angular-vite-vitest-compiler-setup. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `code/addons/links/src/utils.test.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `code/frameworks/angular-vite/build-config.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    // globalThis, not `global`: this suite runs in happy-dom, and the only reason the Node spelling
-    // ever compiled here was an @types/node reference this package picked up through a dependency.
-    document: globalThis.document,
-    window: globalThis,
+      {
+        exportEntries: ['./internal/vitest-compiler-setup'],
+        entryPoint: './src/client/vitest-compiler-setup.ts',
+        dts: false,
+      },
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-    document: global.document,
-    window: global,
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fb339536` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `44ea08ae` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/facebook-docusaurus-learnings.md`  
 > **Source**: github ([https://github.com/facebook/docusaurus](https://github.com/facebook/docusaurus))  
-> **Source Version**: `2a890559`  
+> **Source Version**: `c00f04e2`  
 > **License**: MIT  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T10:20:12.400Z  
+> **Synthesized By**: google-gemini-cloud-agent  
+> **Timestamp**: 2026-11-08T02:05:40.033Z  
 > **Learning ID**: `learn-github-meta-docusaurus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -12,1140 +12,499 @@
 
 ---
 
-# Forensic Learning Record (Deep Inspection): meta/docusaurus
-
-> **Canonical Artifact**: `07_PROJECT_LEARNING/facebook-docusaurus-learnings.md`  
-> **Source Platform**: GitHub ([https://github.com/facebook/docusaurus](https://github.com/facebook/docusaurus))  
-> **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T10:20:11.306Z  
-> **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
+# Project Learning Record (Full-Spectrum Forensic Harvest): meta/docusaurus
 
 ---
 
-## 1. Context & Architectural Overview
-- **Repository / Resource**: `meta/docusaurus`
-- **Description**: Easy to maintain open source documentation websites.
-- **Primary Language / Ecosystem**: TypeScript
-- **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 66649 stars
+## 1. Executive Forensic Architecture & System Mechanics
+
+Docusaurus is a static-first hybrid Single Page Application (SPA) generator optimized for content-driven systems. Its architecture bridges build-time Ahead-Of-Time (AOT) static compilation with runtime React client hydration.
+
+```
+                                  [ Content Pipeline ]
+  Markdown / MDX / Assets  ────────► Remark / Rehype / MDXAST
+                                               │
+                                               ▼
+                                      ESTree Code-Gen & TOC
+                                               │
+                                               ▼
+ [ Static Generation (SSG) ]          [ Webpack / Rspack Bundler ]
+  Node.js Headless Render  ◄───────── Client & Server Chunks
+            │                                  │
+            ▼                                  ▼
+   Static HTML Output                Client Bundle Artifacts
+            │                                  │
+            └──────────────┬───────────────────┘
+                           ▼
+                  [ Client Hydration ]
+               normalizeBrowserPathname()
+                           │
+                           ▼
+               preload(normalizedPath)
+                           │
+                           ▼
+             startTransition(renderApp)
+```
+
+### Architectural Subsystem Boundaries & State Ownership
+1. **The Content Compilation Pipeline (`@docusaurus-mdx-loader`, Remark/Rehype plugins)**:
+   - Content is read as raw streams, passed through unified processors where Markdown Abstract Syntax Trees (`mdast`) are transformed into ESTree (`mdxjsEsm`) structures.
+   - AST nodes are mutated in place (`transformNode`) to convert static document headings, partial imports, and local asset references into executable CommonJS/ESM modules.
+   - State is ephemeral and scoped strictly to single file compilation passes. Heading hierarchies are extracted into Table of Contents (TOC) exports injected directly into the AST program body.
+
+2. **File System Abstraction & Concurrency Controller (`@docusaurus/fs`)**:
+   - Decoupled from native `fs/promises` and legacy `fs-extra` to solve two OS-level failure modes: file descriptor exhaustion (`EMFILE`) and canonical path mismatch across operating systems.
+   - Enforces an invariant queue (`PQueue`) capping concurrent file descriptor operations to a bounded concurrency pool (default: 100), avoiding process crashes on monorepos with 10,000+ documentation nodes.
+   - Solves Windows/POSIX path divergence via explicit POSIX path normalization (`posixPath`), stripping UTF-8 Byte Order Marks (`\uFEFF`) that crash native JSON parsers, and binding to JavaScript-based `fs.realpath` rather than native OS `realpath` to prevent subst drive resolution discrepancies.
+
+3. **Client-Side Hydration & Routing Engine (`@docusaurus/core/src/client`)**:
+   - Maintains an invariant contract between server-rendered HTML routes and client-side history navigation.
+   - Pathnames undergo a dual-phase decoding/encoding lifecycle (`normalizeBrowserPathname`): stripping redundant `.html` extensions while preserving exact `.html` routes matching the generated route tree, avoiding dual-render layout tearing where React appends client DOM adjacent to unhydrated SSR markup.
 
 ---
 
-## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
+## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### D1: Architecture & Structural Boundaries
-- Entry configurations inspected via direct stream: package.json, README.md.
-- Evaluated system abstractions and modular contracts.
-
-### Core Architecture Module: `admin/new.docusaurus.io/functionUtils/playgroundUtils.ts`
-```
-/**
- * Copyright (c) Facebook, Inc. and its affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-
-const CookieName = 'DocusaurusPlaygroundName';
-
-const PlaygroundConfigs = {
-  codesandbox:
-    'https://codesandbox.io/p/sandbox/github/facebook/docusaurus/tree/main/examples/classic?file=%2FREADME.md&privacy=public',
-  'codesandbox-ts':
-    'https://codesandbox.io/p/sandbox/github/facebook/docusaurus/tree/main/examples/classic-typescript?file=%2FREADME.md&privacy=public',
-
-  // Slow to load
-  // stackblitz: 'https://stackblitz.com/github/facebook/docusaurus/tree/main/examples/classic',
-  // Dedicated branch: faster load
-  stackblitz: 'https://stackblitz.com/github/facebook/docusaurus/tree/starter',
-  'stackblitz-ts':
-    'https://stackblitz.com/github/facebook/docusaurus/tree/main/examples/classic-typescript',
-};
-
-const PlaygroundDocumentationUrl = 'https://docusaurus.io/docs/playground';
-
-export type PlaygroundName = keyof typeof PlaygroundConfigs;
-
-function isValidPlaygroundName(
-  playgroundName: string | undefined,
-): playgroundName is PlaygroundName {
-  return (
-    !!playgroundName && Object.keys(PlaygroundConfigs).includes(playgroundName)
-  );
-}
-
-export function createPlaygroundDocumentationResponse(): Response {
-  return new Response(null, {
-    status: 302,
-    headers: {
-      Location: PlaygroundDocumentationUrl,
-    },
-  });
-}
-
-export function createPlaygroundResponse(
-  playgroundName: PlaygroundName,
-): Response {
-  const playgroundUrl = PlaygroundConfigs[playgroundName];
-  // Not using Response.redirect(): its headers are immutable
-  return new Response(null, {
-    status: 302,
-    headers: {
-      Location: playgroundUrl,
-      'Set-Cookie': `${CookieName}=${playgroundName}`,
-    },
-  });
-}
-
-// Inspired by https://stackoverflow.com/a/3409200/82609
-function parseCookieString(cookieString: string): {[key: string]: string} {
-  const result: {[key: string]: string} = {};
-  cookieString.split(';').forEach((cookie) => {
-    const [name, value] = cookie.split('=') as [string, string];
-    result[name.trim()] = decodeURI(value);
-  });
-  return result;
-}
-
-export function readPlaygroundName(
-  request: Request,
-): PlaygroundName | undefined {
-  const cookieString = request.headers.get('cookie');
-  const parsedCookie: {[key: string]: string} = cookieString
-    ? parseCookieString(cookieString)
-    : {};
-  const playgroundName: string | undefined = parsedCookie[CookieName];
-
-  if (!isValidPlaygroundName(playgroundName)) {
-    console.error(
-      `playgroundName found in cookie was invalid: ${playgroundName}`,
-    );
-    return undefined;
-  }
-  return playgroundName;
-}
-
-```
-
-### Core Architecture Module: `packages/create-docusaurus/src/utils.ts`
-```
-/**
- * Copyright (c) Facebook, Inc. and its affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-
-import path from 'node:path';
-import {logger} from '@docusaurus/logger';
-import {fs} from '@docusaurus/fs';
-import {type PackageManager} from './constants.js';
-
-/**
- * We use a simple kebab-case-like conversion
- * It's not perfect, but good enough
- * We don't want to depend on lodash in this package
- * See https://github.com/facebook/docusaurus/pull/11653
- * @param siteName
- */
-export function siteNameToPackageName(siteName: string): string {
-  const match = siteName.match(
-    /[A-Z]{2,}(?=[A-Z][a-z]+\d*|\b|_)|[A-Z]?[a-z]+\d*|[A-Z]|\d+/g,
-  );
-  if (match) {
-    return match.map((x) => x.toLowerCase()).join('-');
-  }
-  return siteName;
-}
-
-export async function updatePkg(
-  pkgPath: string,
-  obj: {[key: string]: unknown},
-): Promise<void> {
-  const pkg = JSON.parse(await fs.readFile(pkgPath, 'utf8')) as {
-    [key: string]: unknown;
-  };
-  const newPkg = Object.assign(pkg, obj);
-
-  await fs.mkdir(path.dirname(pkgPath), {recursive: true});
-  await fs.writeFile(pkgPath, `${JSON.stringify(newPkg, null, 2)}\n`);
-}
-
-export function printPackageManagerHelp({
-  pkgManager,
-  cdpath,
-}: {
-  pkgManager: PackageManager;
-  cdpath: string;
-}) {
-  const useNpm = pkgManager === 'npm';
-  const useBun = pkgManager === 'bun';
-  const run = useNpm || useBun ? 'run ' : '';
-  logger.success`Created name=${cdpath}.`;
-  logger.info`Inside that directory, you can run several commands:
-
-  code=${`${pkgManager} start`}
-    Starts the development server.
-
-  code=${`${pkgManager} ${run}build`}
-    Bundles your website into static files for production.
-
-  code=${`${pkgManager} ${run}serve`}
-    Serves the built website locally.
-
-  code=${`${pkgManager} ${run}deploy`}
-    Publishes the website to GitHub pages.
-
-We recommend that you begin by typing:
-
-  code=${`cd ${cdpath}`}
-  code=${`${pkgManager} start`}
-
-Happy building awesome websites!
-`;
-}
-
-```
-
-### Core Architecture Module: `packages/docusaurus-babel/src/utils.ts`
-```
-/**
- * Copyright (c) Facebook, Inc. and its affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-
-import path from 'node:path';
-import {BABEL_CONFIG_FILE_NAME} from '@docusaurus/utils';
-import {pathExists} from '@docusaurus/fs';
-import type {TransformOptions} from '@babel/core';
-
-export async function getCustomBabelConfigFilePath(
-  siteDir: string,
-): Promise<string | undefined> {
-  const customBabelConfigurationPath = path.join(
-    siteDir,
-    BABEL_CONFIG_FILE_NAME,
-  );
-  return (await pathExists(customBabelConfigurationPath))
-    ? customBabelConfigurationPath
-    : undefined;
-}
-
-/**
- * Returns the options to pass to Babel.
- * @param configFile the site's custom Babel config file, if any. Without it,
- * the Docusaurus Babel preset is used.
- */
-export function getBabelOptions({
-  isServer,
-  configFile,
-}: {
-  isServer?: boolean;
-  configFile?: string;
-} = {}): TransformOptions {
-  const caller = {name: isServer ? 'server' : 'client'};
-  if (configFile) {
-    return {
-      babelrc: false,
-      configFile,
-      caller,
-    };
-  }
-  return {
-    presets: [require.resolve('@docusaurus/babel/preset')],
-    babelrc: false,
-    configFile: false,
-    caller,
-  };
-}
-
-```
-
-### Core Architecture Module: `packages/docusaurus-fs/src/fsUtils.ts`
-```
-/**
- * Copyright (c) Facebook, Inc. and its affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-
-// Small helpers to replace fs-extra APIs, with the same semantics.
-
-import fsCallback from 'node:fs';
-import path from 'node:path';
-import {promisify} from 'node:util';
-import logger from '@docusaurus/logger';
-import {fs} from './fs';
-
-/**
- * Checks if a file or directory exists, without throwing.
- * Same semantics as fs-extra `pathExists()`.
- */
-export async function pathExists(filePath: string): Promise<boolean> {
-  return fs.access(filePath).then(
-    () => true,
-    () => false,
-  );
-}
-
-/**
- * Writes a file, creating the parent directories if they don't exist yet.
- * Same semantics as fs-extra `outputFile()`.
- */
-export async function outputFile(
-  filePath: string,
-  data: Parameters<typeof fs.writeFile>[1],
-  options?: Parameters<typeof fs.writeFile>[2],
-): Promise<void> {
-  await fs.mkdir(path.dirname(filePath), {recursive: true});
-  await fs.writeFile(filePath, data, options);
-}
-
-// JSON.parse() rejects a leading UTF-8 BOM (U+FEFF) character, but some
-// editors (such as Windows Notepad) add one when saving files
-function stripUTF8BOM(content: string): string {
-  return content.startsWith('\uFEFF') ? content.slice(1) : content;
-}
-
-/**
- * Reads and parses a JSON file, ignoring a leading UTF-8 BOM (like fs-extra
- * `readJSON()`).
- * @throws Throws an error mentioning the relative file path, with the read or
- * parse error as cause.
- */
-export async function readJSON(filePath: string): Promise<unknown> {
-  try {
-    const content = await fs.readFile(filePath, 'utf8');
-    return JSON.parse(stripUTF8BOM(content));
-  } catch (err) {
-    throw new Error(
-      logger.interpolate`Failed to read JSON file at path=${path.relative(
-        process.cwd(),
-        filePath,
-      )}`,
-      {cause: err},
-    );
-  }
-}
-
-/**
- * Resolves a path to its canonical absolute path.
- * Same semantics as fs-extra `realpath()`, which uses the Node.js JavaScript
- * implementation `fs.realpath()`. In contrast, `fs/promises` `realpath()` uses
- * the native implementation, which may normalize path casing (macOS, Windows)
- * or resolve Windows subst/network drives differently from Node's module
- * resolution.
- */
-export async function realpath(filePath: string): Promise<string> {
-  return promisify(fsCallback.realpath)(filePath);
-}
-
-```
-
-### Core Architecture Module: `packages/docusaurus-fs/src/queue.ts`
-```
-/**
- * Copyright (c) Facebook, Inc. and its affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-
-import PQueue from 'p-queue';
-
-// Large sites can read/write a file for each of their thousands of docs/blog
-// posts concurrently. We bound how many files we keep open at once to avoid
-// EMFILE errors ("too many open files"): node:fs doesn't queue and retry
-// operations failing with EMFILE like graceful-fs (used by fs-extra) does.
-const DefaultFileOperationConcurrency = 100;
-
-// Secret way to set the concurrency (see DOCUSAURUS_GIT_COMMAND_CONCURRENCY)
-export function getFileOperationConcurrency(
-  envValue: string | undefined = process.env.DOCUSAURUS_FS_CONCURRENCY,
-): number {
-  const concurrency = envValue ? parseInt(envValue, 10) : NaN;
-  return concurrency > 0 ? concurrency : DefaultFileOperationConcurrency;
-}
-
-const FileOperationQueue = new PQueue({
-  concurrency: getFileOperationConcurrency(),
-});
-
-/**
- * Runs a file system operation through the shared queue.
- * Only queue "leaf" operations: an operation waiting for another queued one
- * could wait for a free slot forever.
- */
-export function queueFileOperation<T>(operation: () => Promise<T>): Promise<T> {
-  return FileOperationQueue.add(operation);
-}
-
-```
-
-### Core Architecture Module: `packages/docusaurus-glob/src/globUtils.ts`
-```
-/**
- * Copyright (c) Facebook, Inc. and its affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-
-// Tinyglobby/Micromatch are the 2 libs we use in Docusaurus consistently
-
-import path from 'node:path';
-import Micromatch from 'micromatch';
-import * as Tinyglobby from 'tinyglobby';
-
-/**
- * Our own glob options: we only expose the options we actually use, so that
- * we can swap the underlying lib (e.g. for Node.js native `fs.glob`).
- */
-export type GlobOptions = Pick<
-  Tinyglobby.GlobOptions,
-  'cwd' | 'ignore' | 'absolute'
->;
-
-/** Finds the files matching the given glob patterns. */
-export async function glob(
-  patterns: string | string[],
-  options?: GlobOptions,
-): Promise<string[]> {
-  // Other lib options are still forwarded at runtime for retro-compatibility
-  return Tinyglobby.glob(patterns, {...options});
-}
-
-/**
- * The default glob patterns we ignore when sourcing content.
- * - Ignore files and folders starting with `_` recursively
- * - Ignore tests
- */
-export const GlobExcludeDefault = [
-  '**/_*.{js,jsx,ts,tsx,md,mdx}',
-  '**/_*/**',
-  '**/*.test.{js,jsx,ts,tsx}',
-  '**/__tests__/**',
-];
-
-type Matcher = (str: string) => boolean;
-
-/**
- * Creates a matcher that tells if a path is matched by any of the patterns.
- *
- * @see {@link createAbsoluteFilePathMatcher}
- * @param patterns A list of glob patterns. If the list is empty, it defaults to
- * matching none.
- * @returns A matcher handle that tells if a file path is matched by any of the
- * patterns.
- */
-export function createMatcher(patterns: string[]): Matcher {
-  if (patterns.length === 0) {
-    // `/(?:)/.test("foo")` is `true`
-    return () => false;
-  }
-  const regexp = new RegExp(
-    patterns.map((pattern) => Micromatch.makeRe(pattern).source).join('|'),
-  );
-  return (str) => regexp.test(str);
-}
-
-/**
- * We use match patterns like `"** /_* /**"` (ignore the spaces), where `"_*"`
- * should only be matched within a subfolder. This function would:
- * - Match `/user/sebastien/website/docs/_partials/xyz.md`
- * - Ignore `/user/_sebastien/website/docs/partials/xyz.md`
- *
- * @param patterns A list of glob patterns.
- * @param rootFolders A list of root folders to resolve the glob from.
- * @returns A matcher handle that tells if a file path is matched by any of the
- * patterns, resolved from the first root folder that contains the path.
- * @throws Throws when the returned matcher receives a path that doesn't belong
- * to any of the `rootFolders`.
- */
-export function createAbsoluteFilePathMatcher(
-  patterns: string[],
-  rootFolders: string[],
-): Matcher {
-  const matcher = createMatcher(patterns);
-
-  function getRelativeFilePath(absoluteFilePath: string) {
-    const rootFolder = rootFolders.find((folderPath) =>
-      ['/', '\\'].some((separator) =>
-        absoluteFilePath.startsWith(
-          folderPath.endsWith(separator) ? folderPath : folderPath + separator,
-        ),
-      ),
-    );
-    if (!rootFolder) {
-      throw new Error(
-        `createAbsoluteFilePathMatcher unexpected error, absoluteFilePath=${absoluteFilePath} was not contained in any of the root folders: ${rootFolders.join(
-          ', ',
-        )}`,
-      );
-    }
-    return path.relative(rootFolder, absoluteFilePath);
-  }
-
-  return (absoluteFilePath: string) =>
-    matcher(getRelativeFilePath(absoluteFilePath));
-}
-
-// Duplicated from @docusaurus/utils to keep this package dependency-free
-// See https://github.com/sindresorhus/slash/blob/main/index.js
-function posixPath(str: string): string {
-  const isExtendedLengthPath = str.startsWith('\\\\?\\');
-  if (isExtendedLengthPath) {
-    return str;
-  }
-  return str.replace(/\\/g, '/');
-}
-
-// Glob that fix Windows path patterns
-// See https://github.com/facebook/docusaurus/pull/4222#issuecomment-795517329
-export async function safeGlob(
-  patterns: string[],
-  options?: GlobOptions,
-): Promise<string[]> {
-  // Required for Windows support, as paths using \ should not be used by glob
-  // (also using the windows hard drive prefix like c: is not a good idea)
-  const globPaths = patterns.map((dirPath) =>
-    posixPath(path.relative(process.cwd(), dirPath)),
-  );
-
-  return glob(globPaths, options);
-}
-
-```
-
-### Core Architecture Module: `packages/docusaurus-glob/src/translationUtils.ts`
-```
-/**
- * Copyright (c) Facebook, Inc. and its affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-
-// Awkward to have translation code in this package, but it is consumed by both
-// @docusaurus/core and @docusaurus/theme-translations: this avoids duplication
-
-import path from 'node:path';
-import {safeGlob} from './globUtils';
-
-export const isTranslatableSourceFile: (filePath: string) => boolean = (() => {
-  // We only support extracting source code translations from these extensions
-  const extensionsAllowed = new Set([
-    '.js',
-    '.jsx',
-    '.ts',
-    '.tsx',
-    // TODO support md/mdx too? (may be overkill)
-    // need to compile the MDX to JSX first and remove front matter
-    // '.md',
-    // '.mdx',
-  ]);
-
-  const isBlacklistedFilePath = (filePath: string) => {
-    // We usually extract from ts files, unless they are .d.ts files
-    return filePath.endsWith('.d.ts');
-  };
-
-  return (filePath): boolean => {
-    const ext = path.extname(filePath);
-    return extensionsAllowed.has(ext) && !isBlacklistedFilePath(filePath);
-  };
-})();
-
-export async function globTranslatableSourceFiles(
-  patterns: string[],
-): Promise<string[]> {
-  const filePaths = await safeGlob(patterns, {
-    absolute: true,
-  });
-  return filePaths.filter(isTranslatableSourceFile);
-}
-
-```
-
-### Core Architecture Module: `packages/docusaurus-glob/src/watchUtils.ts`
-```
-/**
- * Copyright (c) Facebook, Inc. and its affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-
-// Chokidar is the lib we use in Docusaurus to watch files
-
-import * as Chokidar from 'chokidar';
-
-/**
- * Our own watch options: we only expose the options we actually use, so that
- * we can upgrade or swap the underlying lib.
- */
-export type WatchOptions = Pick<
-  Chokidar.WatchOptions,
-  'cwd' | 'usePolling' | 'interval'
->;
-
-/** Our own file watcher handle, exposing only the APIs we actually use. */
-export type Watcher = Pick<Chokidar.FSWatcher, 'on' | 'close'>;
-
-/**
- * Watches file system paths for changes.
- * Only emits events for changes happening after the watcher is created.
- */
-export function watch(
-  paths: string | string[],
-  options?: WatchOptions,
-): Watcher {
-  return Chokidar.watch(paths, {
-    // Other lib options are still forwarded at runtime for retro-compatibility
-    ...options,
-    ignoreInitial: true,
-  });
-}
-
-```
-
-### Core Architecture Module: `packages/docusaurus-mdx-loader/src/remark/toc/utils.ts`
-```
-/**
- * Copyright (c) Facebook, Inc. and its affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-
-import {toString} from 'mdast-util-to-string';
-import {valueToEstree} from 'estree-util-value-to-estree';
-import escapeHtml from 'escape-html';
-import type {Node, Parent} from 'unist';
-import type {
-  MdxjsEsm,
-  MdxJsxAttribute,
-  MdxJsxTextElement,
-} from 'mdast-util-mdx';
-import type {TOCHeading, TOCItem, TOCItems, TOCSlice} from './types';
-import type {
-  Program,
-  SpreadElement,
-  ImportDeclaration,
-  ImportSpecifier,
-} from 'estree';
-import type {Heading, PhrasingContent} from 'mdast';
-
-export function getImportDeclarations(program: Program): ImportDeclaration[] {
-  return program.body.filter(
-    (item): item is ImportDeclaration => item.type === 'ImportDeclaration',
-  );
-}
-
-export function isMarkdownImport(node: Node): node is ImportDeclaration {
-  if (node.type !== 'ImportDeclaration') {
-    return false;
-  }
-  const importPath = (node as ImportDeclaration).source.value;
-  return typeof importPath === 'string' && /\.mdx?$/.test(importPath);
-}
-
-export function findDefaultImportName(
-  importDeclaration: ImportDeclaration,
-): string | undefined {
-  return importDeclaration.specifiers.find(
-    (o: Node) => o.type === 'ImportDefaultSpecifier',
-  )?.local.name;
-}
-
-function findNamedImportSpecifier(
-  importDeclaration: ImportDeclaration,
-  localName: string,
-): ImportSpecifier | undefined {
-  return importDeclaration?.specifiers.find(
-    (specifier): specifier is ImportSpecifier =>
-      specifier.type === 'ImportSpecifier' &&
-      specifier.local.name === localName,
-  );
-}
-
-// Before: import Partial from "partial"
-// After: import Partial, {toc as __tocPartial} from "partial"
-export function addTocSliceImportIfNeeded({
-  importDeclaration,
-  tocExportName,
-  tocSliceImportName,
-}: {
-  importDeclaration: ImportDeclaration;
-  tocExportName: string;
-  tocSliceImportName: string;
-}): void {
-  // We only add the toc slice named import if it doesn't exist already
-  if (!findNamedImportSpecifier(importDeclaration, tocSliceImportName)) {
-    importDeclaration.specifiers.push({
-      type: 'ImportSpecifier',
-      imported: {type: 'Identifier', name: tocExportName},
-      local: {type: 'Identifier', name: tocSliceImportName},
-    });
-  }
-}
-
-export function isNamedExport(
-  node: Node,
-  exportName: string,
-): node is MdxjsEsm {
-  if (node.type !== 'mdxjsEsm') {
-    return false;
-  }
-  const program = (node as MdxjsEsm).data?.estree;
-  if (!program) {
-    return false;
-  }
-  if (program.body.length !== 1) {
-    return false;
-  }
-  const exportDeclaration = program.body[0]!;
-  if (exportDeclaration.type !== 'ExportNamedDeclaration') {
-    return false;
-  }
-  const variableDeclaration = exportDeclaration.declaration;
-  if (variableDeclaration?.type !== 'VariableDeclaration') {
-    return false;
-  }
-  const {id} = variableDeclaration.declarations[0]!;
-  if (id.type !== 'Identifier') {
-    return false;
-  }
-
-  return id.name === exportName;
-}
-
-export function createTOCExportNodeAST({
-  tocExportName,
-  tocItems,
-}: {
-  tocExportName: string;
-  tocItems: TOCItems;
-}): MdxjsEsm {
-  function createTOCSliceAST(tocSlice: TOCSlice): SpreadElement {
-    return {
-      type: 'SpreadElement',
-      argument: {type: 'Identifier', name: tocSlice.importName},
-    };
-  }
-
-  function createTOCHeadingAST({heading}: TOCHeading) {
-    const value: TOCItem = {
-      value: toHeadingHTMLValue(heading),
-      id: heading.data!.id!,
-      level: heading.depth,
-    };
-    return valueToEstree(value);
-  }
-
-  function createTOCItemAST(tocItem: TOCItems[number]) {
-    switch (tocItem.type) {
-      case 'slice':
-        return createTOCSliceAST(tocItem);
-      case 'heading':
-        return createTOCHeadingAST(tocItem);
-      default: {
-        throw new Error(`unexpected toc item type`);
-      }
-    }
-  }
-
-  return {
-    type: 'mdxjsEsm',
-    value: '', // See https://github.com/facebook/docusaurus/pull/9684#discussion_r1457595181
-    data: {
-      estree: {
-        type: 'Program',
-        body: [
-          {
-            type: 'ExportNamedDeclaration',
-            attributes: [],
-            declaration: {
-              type: 'VariableDeclaration',
-              declarations: [
-                {
-                  type: 'VariableDeclarator',
-                  id: {
-                    type: 'Identifier',
-                    name: tocExportName,
-                  },
-                  init: {
-                    type: 'ArrayExpression',
-                    elements: tocItems.map(createTOCItemAST),
-                  },
-                },
-              ],
-              kind: 'const',
-            },
-            specifiers: [],
-            source: null,
-          },
-        ],
-        sourceType: 'module',
-      },
-    },
-  };
-}
-
-function stringifyChildren(node: Parent): string {
-  return (node.children as PhrasingContent[])
-    .map(toHeadingHTMLValue)
-    .join('')
-    .trim();
-}
-
-// TODO This is really a workaround, and not super reliable
-// For now we only support serializing tagName, className and content
-// Can we implement the TOC with real JSX nodes instead of html strings later?
-function mdxJsxTextElementToHtml(element: MdxJsxTextElement): string {
-  const tag = element.name;
-
-  // See https://github.com/facebook/docusaurus/issues/11003#issuecomment-2733925363
-  if (tag === 'img') {
-    return '';
-  }
-
-  const attributes = element.attributes.filter(
-    (child): child is MdxJsxAttribute => child.type === 'mdxJsxAttribute',
-  );
-
-  const classAttribute =
-    attributes.find((attr) => attr.name === 'className') ??
-    attributes.find((attr) => attr.name === 'class');
-
-  const classAttributeString = classAttribute
-    ? `class="${escapeHtml(String(classAttribute.value))}"`
-    : ``;
-
-  const allAttributes = classAttributeString ? ` ${classAttributeString}` : '';
-
-  const content = stringifyChildren(element);
-
-  return `<${tag}${allAttributes}>${content}</${tag}>`;
-}
-
-export function toHeadingHTMLValue(
-  node: PhrasingContent | Heading | MdxJsxTextElement,
-): string {
-  switch (node.type) {
-    case 'mdxJsxTextElement': {
-      return mdxJsxTextElementToHtml(node as MdxJsxTextElement);
-    }
-    case 'text':
-      return escapeHtml(node.value);
-    case 'heading':
-      return stringifyChildren(node);
-    case 'inlineCode':
-      return `<code>${escapeHtml(node.value)}</code>`;
-    case 'emphasis':
-      return `<em>${stringifyChildren(node)}</em>`;
-    case 'strong':
-      return `<strong>${stringifyChildren(node)}</strong>`;
-    case 'delete':
-      return `<del>${stringifyChildren(node)}</del>`;
-    case 'link':
-      return stringifyChildren(node);
-    default:
-      return toString(node);
-  }
-}
-
-```
-
-### Core Architecture Module: `packages/docusaurus-mdx-loader/src/remark/utils/index.ts`
-```
-/**
- * Copyright (c) Facebook, Inc. and its affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-
-import logger from '@docusaurus/logger';
-import type {Node} from 'unist';
-import type {MdxJsxAttributeValueExpression} from 'mdast-util-mdx';
-
-/**
- * Util to transform one node type to another node type
- * The input node is mutated in place
- * @param node the node to mutate
- * @param newNode what the original node should become become
- */
-export function transformNode<NewNode extends Node>(
-  node: Node,
-  newNode: NewNode,
-): NewNode {
-  Object.keys(node).forEach((key) => {
-    // @ts-expect-error: unsafe but ok
-    delete node[key];
-  });
-  Object.keys(newNode).forEach((key) => {
-    // @ts-expect-error: unsafe but ok
-    node[key] = newNode[key];
-  });
-  return node as NewNode;
-}
-
-export function assetRequireAttributeValue(
-  requireString: string,
-  hash: string,
-): MdxJsxAttributeValueExpression {
-  return {
-    type: 'mdxJsxAttributeValueExpression',
-    value: `require("${requireString}")${hash && ` + '${hash}'`}`,
-    data: {
-      estree: {
-        type: 'Program',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
-              type: 'BinaryExpression',
-              left: {
-                type: 'CallExpression',
-                callee: {
-                  type: 'Identifier',
-                  name: 'require',
-                },
-                arguments: [
-                  {
-                    type: 'Literal',
-                    value: requireString,
-                    raw: `"${requireString}"`,
-                  },
-                ],
-                optional: false,
-              },
-              operator: '+',
-              right: {
-                type: 'Literal',
-                value: hash,
-                raw: `"${hash}"`,
-              },
-            },
-          },
-        ],
-        sourceType: 'module',
-        comments: [],
-      },
-    },
-  };
-}
-
-function formatNodePosition(node: Node): string | undefined {
-  return node.position?.start
-    ? logger.interpolate`number=${node.position.start.line}:number=${node.position.start.column}`
-    : undefined;
-}
-
-// Returns " (line:column)" when position info is available
-// The initial space is useful to append easily to any existing message
-export function formatNodePositionExtraMessage(node: Node): string {
-  const position = formatNodePosition(node);
-  return `${position ? ` (${position})` : ''}`;
-}
-
-```
-
-
-### D2: Asynchronous State & Concurrency
-- Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
-
-### D3: Error Boundaries, Recovery & Rollbacks
-- Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #12743** (2026-10-29): **Add the mobile-web-app-capable meta tag to the website's PWA configuration**
-  *Symptoms*: ### Have you read the Contributing Guidelines on issues?  - [x] I have read the [Contributing Guidelines on issues](https://github.com/facebook/docusaurus/blob/main/CONTRIBUTING.md#issues).  ### Prerequisites  - [x] I'm using the latest version of Docusaurus. - [x] I have tried the `npm run clear` or `yarn clear` command. - [x] I have tried `rm -rf node_modules yarn.lock package-lock.json` and re-installing packages. - [x] I have tried creating a repro with https://new.docusaurus.io. - [x] I have read the console error message carefully (if applicable).  ### Description  ### Description  The Docusaurus website's PWA configuration includes the `apple-mobile-web-app-capable` meta tag, which triggers a deprecation warning in Chrome.  The browser console reports:  ```text (index):1 <meta name="apple-mobile-web-app-capable" content="yes"> is deprecated. Please include <meta name="mobile-web-app-capable" content="yes"> ```  The existing configuration is in `website/docusaurus.config.ts` and includes the Apple-specific meta tag with `content: 'yes'`.  Adding the standard `mobile-web-app-capable` meta tag alongside the existing Apple-specific tag may resolve this warning while preserving compatibility with Apple devices.  I would be happy to investigate and implement this change if the maintainers consider it appropriate.  ### Reproducible demo  https://docusaurus.io/  ### Steps to reproduce  1. Visit https://docusaurus.io/. 2. Open Chrome Developer Tools. 3. Select the Console tab. 
-
-- **Issue #12584** (2026-10-08): **Security: Update to Tinypool 2.1.2 in @docusaurus/core@3.x - CVE-2026-104848 CVE-2026-104849**
-  *Symptoms*: ### Have you read the Contributing Guidelines on issues?  - [x] I have read the [Contributing Guidelines on issues](https://github.com/facebook/docusaurus/blob/main/CONTRIBUTING.md#issues).  ### Prerequisites  - [x] I'm using the latest version of Docusaurus. - [x] I have tried the `npm run clear` or `yarn clear` command. - [x] I have tried `rm -rf node_modules yarn.lock package-lock.json` and re-installing packages. - [ ] I have tried creating a repro with https://new.docusaurus.io. - [ ] I have read the console error message carefully (if applicable).  ### Description  Please update to Tinypool 2.1.2 in @docusaurus/core@3.x  Consider using an CVE-Scanner and an automatic update tool like renovate.  See:  - [GHSA-85c8-ppgw-ccpr](https://github.com/advisories/GHSA-85c8-ppgw-ccpr) - [cve-2026-104849](https://nvd.nist.gov/vuln/detail/cve-2026-104849) - [GHSA-5gmw-xhrv-c9v3](https://github.com/advisories/GHSA-5gmw-xhrv-c9v3) - [cve-2026-104848](https://nvd.nist.gov/vuln/detail/cve-2026-104848)  ### Reproducible demo  _No response_  ### Steps to reproduce  1. npm install 2. npm audit  ### Expected behavior  No critical Dependencies  ### Actual behavior  `45 vulnerabilities (2 low, 13 moderate, 14 high, 16 critical)`  ### Your environment  - Docusaurus version used: 3.10.2   ### Self-service  - [ ] I'd be willing to fix this bug myself.
-
-### D4: Resource Lifecycle & Leak Defenses
-- Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
-
-### D5: Boundary Deserialization & Encoding
-- Schema deserialization, payload validation, and untrusted input guards.
-
-### D6: Cross-Platform & Runtime Gotchas
-- Platform variance, OS-specific gotchas, and environment discrepancies detected in issue reports.
-
-### D7: Build, CI/CD, Deployment & Tooling
-- Toolchain requirements, dependencies, and packaging specs verified against remote manifests.
-
-### D8: Forensic Bug Fixes & Real Production Code Patches
-Observed empirical fixes and code patches:
-
-### Incident Patch 1: `2a890559` (2026-11-02)
-**Commit Message**: chore!: require Node.js 26.13 LTS (AI-assisted) (#12821)
-
-Node.js 26 became LTS with 26.13.0. Re-applies #12463 and #12464, reverted
-by #12468 because Netlify used an outdated Corepack with Node 26.
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/tests-e2e.yml` (modified, +1/-1)
-```diff
-@@ -99,7 +99,7 @@ jobs:
-     runs-on: ubuntu-latest
-     strategy:
-       matrix:
--        node: ['24.21', '26']
-+        node: ['26.13', '26']
-     steps:
-       - name: Checkout
-         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-```
-
-**File**: `.github/workflows/tests-windows.yml` (modified, +1/-1)
-```diff
-@@ -28,7 +28,7 @@ jobs:
-     runs-on: windows-8-core
-     strategy:
-       matrix:
--        node: ['24.21', '26']
-+        node: ['26.13', '26']
-     steps:
-       - name: Support longpaths
-         run: git config --system core.longpaths true
-```
-
-**File**: `.github/workflows/tests.yml` (modified, +2/-2)
-```diff
-@@ -28,7 +28,7 @@ jobs:
-     runs-on: ubuntu-latest
-     strategy:
-       matrix:
--        node: ['24.21', '26']
-+        node: ['26.13', '26']
-     steps:
-       - name: Checkout
-         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-@@ -58,7 +58,7 @@ jobs:
-         env:
-           # Our website should build even with limited memory
-           # See https://github.com/facebook/docusaurus/pull/10590
--          NODE_OPTIONS: "--max-old-space-size=${{ matrix.node == '24.21' && 350 || 300 }}"
-+          NODE_OPTIONS: '--max-old-space-size=300'
-           DOCUSAURUS_PERF_LOGGER: 'true'
-       - name: Docusaurus site CSS order
-         run: pnpm --filter website test:css-order
-```
-
-**File**: `.nvmrc` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--24
-+26
-```
-
-**File**: `admin/scripts/generateExamples.js` (modified, +2/-2)
-```diff
-@@ -81,9 +81,9 @@ async function generateTemplateExample(template) {
-       hardReloadOnChange: true,
-       view: 'browser',
-       template: 'docusaurus',
--      node: '24',
-+      node: '26',
-       container: {
--        node: '24',
-+        node: '26',
-       },
-     };
-     await fs.writeFile(
-```
-
-**File**: `package.json` (modified, +1/-1)
-```diff
-@@ -141,7 +141,7 @@
-   },
-   "packageManager": "pnpm@12.3.4",
-   "engines": {
--    "node": ">=24.21",
-+    "node": ">=26.13",
-     "pnpm": ">=12.3.4"
-   }
- }
-```
-
-**File**: `packages/create-docusaurus/package.json` (modified, +1/-1)
-```diff
-@@ -34,6 +34,6 @@
-     "@types/cross-spawn": "catalog:dev"
-   },
-   "engines": {
--    "node": ">=24.21"
-+    "node": ">=26.13"
-   }
- }
-```
-
-**File**: `packages/create-docusaurus/templates/classic-typescript/package.json` (modified, +1/-1)
-```diff
-@@ -35,6 +35,6 @@
-     "baseline widely available"
-   ],
-   "engines": {
--    "node": ">=24.21"
-+    "node": ">=26.13"
-   }
- }
-```
-
-#### Recent Merged Pull Requests:
-- **PR #12830** (closed): fix(theme-classic): check announcement bar id in inline script before initial load (#12646) (@praveen-kumary)
-- **PR #12829** (closed): fix(utils): preserve trailing hash in markdown content title without preceding whitespace (#12644) (@praveen-kumary)
-- **PR #12821** (2026-11-02): chore!: require Node.js 26.13 LTS (AI-assisted) (@slorber)
-- **PR #12817** (2026-10-30): fix(ci): run workflows on meta/docusaurus after the repository move (AI-assisted) (@slorber)
-- **PR #12812** (closed): test(website): dogfood a doc with a non-ASCII html slug (AI-assisted) (@slorber)
-- **PR #12809** (2026-10-30): chore(deps): upgrade mdast-util-directive to 3.1.1 and mdast-util-to-markdown to 2.2.0 (AI-assisted) (@slorber)
-
----
-
-## 3. Empirical Evidence & Compliance Certification
-- **Evidence Provenance**: Fetched directly from verified official GitHub REST API.
-- **Zero Disk Footprint**: 0 bytes of unnecessary repository bloat stored locally.
-- **TOS & Free-Tier Adherence**: Request pace complied with public API guidelines without fee, penalty, or unauthorized scraping.
-
----
-
-## 4. Promotion & Integration Status
-- **Status**: HARVESTED_DEEP_FORENSIC
-- **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. chore!: require Node.js 26.13 LTS (AI-assisted) (#12821)
-
+### 1. Invariant URL Path Normalization in Static Site Hydration
 **RULE**:
-When implementing operations in `.github/workflows/tests-e2e.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meta/docusaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When preloading dynamic client chunks based on `window.location.pathname` prior to React hydration, systems MUST decode the URI, resolve it against the exact-match client route table, apply URL extension stripping, and re-encode the path before chunk invocation. Systems MUST NOT pass raw `window.location.pathname` directly to dynamic import loaders.
 
 **WHY**:
-Prevents defects observed in production commit `2a890559`: chore!: require Node.js 26.13 LTS (AI-assisted) (#12821). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Browsers deliver encoded URI components (e.g., `/caf%C3%A9.html` or `/100%25.html`). Modern routers decode URI segments internally to match declared route patterns (`/café.html` or `/100%`). If the preload mechanism consumes raw browser paths while the route matcher evaluates decoded or normalized paths, the preload loader fails to resolve chunk metadata or matches an empty route fallback. Consequently, React hydrators encounter an empty client tree, fail hydration reconciliation, and append the entire client DOM tree underneath the non-hydrated static SSR DOM, causing duplicated pages and memory bloat. Furthermore, un-encoded literal `%` characters (e.g., from decoding `/100%25` to `/100%`) crash downstream URI decoders with `URIError: URI malformed`.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/tests-e2e.yml`.
+Static site generators (SSGs), universal React applications, and client-side micro-frontends executing dynamic route chunk preloading prior to hydration in environments where files contain spaces, non-ASCII Unicode characters, or reserved URL tokens.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
-// Verified production-grade fix pattern:
-        node: ['26.13', '26']
+import {matchRoutes, type RouteConfig} from 'react-router-config';
+
+const pathnamesMemo = new Map<string, string>();
+
+function computeNormalizedPathname(pathname: string, routes: RouteConfig[]): string {
+  // Retain .html extension if an exact route was explicitly registered with it
+  const matchedRoutes = matchRoutes(routes, pathname);
+  if (matchedRoutes.some(({route}) => route.exact === true)) {
+    return pathname;
+  }
+  // Strip trailing /index.html or .html from static builds
+  return pathname.trim().replace(/(?:\/index)?\.html$/, '') || '/';
+}
+
+function normalizePathname(pathname: string, routes: RouteConfig[]): string {
+  let normalized = pathnamesMemo.get(pathname);
+  if (normalized === undefined) {
+    normalized = computeNormalizedPathname(pathname, routes);
+    pathnamesMemo.set(pathname, normalized);
+  }
+  return normalized;
+}
+
+/**
+ * Normalizes browser pathname for chunk preloader and hydration entry.
+ * Prevents double-decoding errors (e.g., %25 -> % -> crash) while aligning
+ * chunk fetch keys with router internal route tokens.
+ */
+export function normalizeBrowserPathname(browserPathname: string, routes: RouteConfig[]): string {
+  const routerPathname = decodeURI(browserPathname);
+  return encodeURI(normalizePathname(routerPathname, routes));
+}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-        node: ['24.21', '26']
+// ANTI-PATTERN: Direct preloading of un-normalized browser pathname
+if (typeof window !== 'undefined') {
+  // FAILS: /caf%C3%A9.html loads 404 chunk while router expects /café
+  // FAILS: /about.html does not match /about, causing double DOM tree rendering
+  preload(window.location.pathname).then(() => {
+    ReactDOM.hydrateRoot(document.getElementById('root')!, <App />);
+  });
+}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2a890559` are properly handled with clean fallback behavior.
+Run an automated test suite verifying that encoded, percent-containing, and non-ASCII URLs match their target route components and successfully execute preloading without throwing `URIError`:
+```typescript
+import {describe, it, expect} from 'vitest';
+
+describe('normalizeBrowserPathname Invariant Test', () => {
+  it('correctly preserves encoded characters and resolves stripped extensions', () => {
+    const mockRoutes = [{path: '/café.html', exact: true}, {path: '/docs', exact: false}];
+    expect(normalizeBrowserPathname('/index.html', mockRoutes)).toBe('/');
+    expect(normalizeBrowserPathname('/docs/intro.html', mockRoutes)).toBe('/docs/intro');
+    expect(normalizeBrowserPathname('/caf%C3%A9.html', mockRoutes)).toBe('/caf%C3%A9.html');
+    
+    // Malformed URI guard verification (%25 decoding)
+    const escapedPercent = normalizeBrowserPathname('/100%25.html', mockRoutes);
+    expect(escapedPercent).toBe('/100%25');
+    expect(decodeURI(escapedPercent)).toBe('/100%');
+  });
+});
+```
+
+---
+
+### 2. Guarded Concurrency Leaf Queue for Local I/O
+**RULE**:
+File system operations traversing or processing large file trees MUST execute exclusively through a concurrency-bounded queue. Only leaf I/O operations (operations that do not depend on unresolved pending file operations) MUST be enqueued. Enqueuing composite or nested file operations that await child queued tasks MUST NOT be permitted.
+
+**WHY**:
+Node.js standard library `node:fs/promises` does not provide an automated file-descriptor backpressure or retry mechanism upon encountering `EMFILE` ("too many open files") or `ENFILE`. In contrast to legacy libraries like `graceful-fs`, modern Node runtime `fs/promises` immediately throws an unhandled rejection when system file descriptor limits (commonly 1024 or 256 on default Unix shells) are breached during parallel traversal of large static sites. Nesting non-leaf operations inside the same bounded queue causes permanent deadlocks: parent jobs consume all available concurrency concurrency slots waiting for child operations that can never be scheduled.
+
+**WHEN TO APPLY**:
+Node.js build CLI engines, asset processors, crawlers, bundlers, and static site generators processing disk assets across arbitrary repository sizes.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+import PQueue from 'p-queue';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+
+const DEFAULT_FS_CONCURRENCY = 100;
+
+function resolveConcurrencyLimit(): number {
+  const envVal = process.env.SYSTEM_FS_CONCURRENCY;
+  const parsed = envVal ? parseInt(envVal, 10) : NaN;
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : DEFAULT_FS_CONCURRENCY;
+}
+
+const leafIoQueue = new PQueue({concurrency: resolveConcurrencyLimit()});
+
+/**
+ * Executes a leaf file system operation within bounded concurrency.
+ * INVARIANT: Never call queueFileOperation inside another queueFileOperation callback.
+ */
+export function queueLeafIo<T>(operation: () => Promise<T>): Promise<T> {
+  return leafIoQueue.add(operation);
+}
+
+export async function readJsonGuarded<T = unknown>(filePath: string): Promise<T> {
+  return queueLeafIo(async () => {
+    const raw = await fs.readFile(filePath, 'utf8');
+    // Strip UTF-8 Byte Order Mark (BOM) to guard JSON.parse
+    const sanitized = raw.startsWith('\uFEFF') ? raw.slice(1) : raw;
+    return JSON.parse(sanitized) as T;
+  });
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Unbounded Promise.all triggering EMFILE crash
+async function readAllMarkdownFiles(filePaths: string[]) {
+  // CRASH: Exceeds OS ulimit -n with 5000+ files
+  return Promise.all(filePaths.map((p) => fs.readFile(p, 'utf8')));
+}
+
+// ANTI-PATTERN: Nested Queue deadlock
+async function writeAllArtifacts(dir: string, items: Array<{file: string; content: string}>) {
+  return leafIoQueue.add(async () => {
+    await fs.mkdir(dir, {recursive: true});
+    // DEADLOCK: Child tasks block on queue slots owned by the parent
+    return Promise.all(
+      items.map((item) =>
+        leafIoQueue.add(() => fs.writeFile(path.join(dir, item.file), item.content))
+      )
+    );
+  });
+}
+```
+
+**VERIFICATION METHOD**:
+Run high-volume parallel read/write stress tests mocking tight file-descriptor limits:
+```typescript
+import {describe, it, expect} from 'vitest';
+
+describe('Guarded I/O Concurrency', () => {
+  it('processes 10,000 files without EMFILE errors', async () => {
+    const operations = Array.from({length: 10_000}, (_, i) => 
+      queueLeafIo(async () => `data-${i}`)
+    );
+    const results = await Promise.all(operations);
+    expect(results.length).toBe(10_000);
+    expect(leafIoQueue.pending).toBe(0);
+  });
+});
+```
+
+---
+
+### 3. HTTP Header Value Sanitization Against Latin-1 Invalidation
+**RULE**:
+HTTP response headers generated by static file handlers or application servers (specifically `Content-Disposition`, `Location`, and custom metadata headers) MUST NOT contain un-escaped Latin-1 characters outside the ASCII range (`> 0xFF`) or un-encoded non-ASCII UTF-8 characters. When serving files whose names contain characters outside ISO-8859-1 (Latin-1), headers MUST specify sanitized token values (such as `inline` without raw filename parameters) or use RFC 5987 / RFC 6266 encoding (`filename*=UTF-8''...`).
+
+**WHY**:
+The Node.js HTTP parser and outgoing message layer (`node:_http_outgoing`) enforces that HTTP header values match the Latin-1 character set. Attempting to emit a header containing characters outside Latin-1 (such as Chinese characters, e.g., `/文档/`, or non-encoded UTF-8 sequences like `café.html` in default filename parameters of packages like `serve-handler`) causes Node.js to throw a fatal unhandled exception: `TypeError [ERR_INVALID_CHAR]: Invalid character in header content ["Content-Disposition"]` or `["Location"]`. This terminates the process and creates a remote Denial of Service (DoS) vulnerability accessible via trivial URL requests.
+
+**WHEN TO APPLY**:
+Static development and production web servers (`serve`, custom Express/Koa/Fastify static servers), download controllers, and redirect handlers handling internationalized paths.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+import http from 'node:http';
+import {parse} from 'node:url';
+
+export function configureSafeStaticHeaders(): Record<string, string>[] {
+  return [
+    {
+      source: '**',
+      headers: [
+        // Setting Content-Disposition explicitly to 'inline' prevents third-party
+        // static handlers from synthesizing default filenames with Latin-1/UTF-8
+        // characters that crash Node.js via ERR_INVALID_CHAR
+        {key: 'Content-Disposition', value: 'inline'},
+      ],
+    },
+  ];
+}
+
+export function sanitizeRedirectLocation(rawUrl: string): string {
+  // Convert any arbitrary Unicode / non-ASCII path into a valid percent-encoded URI
+  const parsed = new URL(rawUrl, 'http://localhost');
+  return parsed.pathname + parsed.search + parsed.hash;
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Passing raw Unicode filenames directly into HTTP headers
+app.get('/download/:filename', (req, res) => {
+  const filename = req.params.filename; // e.g. "café.html" or "文档.pdf"
+  // CRASHES Node.js HTTP engine: ERR_INVALID_CHAR
+  res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+  res.sendFile(path.resolve('/data', filename));
+});
+```
+
+**VERIFICATION METHOD**:
+Execute integration requests requesting files with multi-byte and Latin-1 characters:
+```typescript
+import {test, expect} from 'vitest';
+import request from 'supertest';
+
+test('server handles non-ASCII and Latin-1 filenames without crashing', async () => {
+  const response = await request(serverApp).get('/caf%C3%A9.html');
+  expect(response.status).toBe(200);
+  expect(response.headers['content-disposition']).toBe('inline');
+});
+```
+
+---
+
+## 3. Forensic Real Incidents & Production Patches
+
+### Incident 1: Non-ASCII BaseURL Infinite Redirect & Crash (BUG-DOCU-01)
+- **Context**: Local production static preview command (`docusaurus serve`), `packages/docusaurus/src/commands/serve/requestHandler.ts`.
+- **What Was Expected**: Running `docusaurus serve` with a site configured with a non-ASCII `baseUrl` (e.g. `baseUrl: '/café/'` or `baseUrl: '/文档/'`) should serve `index.html` at `200 OK` when requested by modern browsers sending percent-encoded URLs (e.g., `/caf%C3%A9/`), and properly redirect un-encoded requests with a valid `302` HTTP header.
+- **What Actually Happened**: Modern browsers automatically percent-encode pathnames before transmission (`/café/` -> `/caf%C3%A9/`). The server's request handler compared the raw, un-encoded `configBaseUrl` (`/café/`) directly against the incoming `req.url` (`/caf%C3%A9/`). Because the string match failed, the server issued a redirect to `/café/`. The browser received the redirect, percent-encoded it again to `/caf%C3%A9/`, and re-requested it, resulting in an infinite redirect loop (`302 -> 302 -> 302...`). When non-Latin-1 characters were used (`/文档/`), writing the un-encoded path to the HTTP `Location` header crashed the Node.js server with `ERR_INVALID_CHAR`.
+- **Evidence in Repo**: Commit `a8bbbc43`, PR #12911. Test suite in `packages/docusaurus/src/commands/serve/__tests__/requestHandler.test.ts`.
+- **Root Cause**: Failure to normalize the configuration string `baseUrl` to its percent-encoded canonical pathname representation during request handler initialization.
+- **Remediation Code Diff**:
+```diff
+--- a/packages/docusaurus/src/commands/serve/requestHandler.ts
++++ b/packages/docusaurus/src/commands/serve/requestHandler.ts
+@@ -21,12 +21,16 @@ type ServeRequestHandler = (
+ export function createServeRequestHandler({
+   outDir,
+-  baseUrl,
++  baseUrl: configBaseUrl,
+   trailingSlash,
+ }: {outDir: string} & Pick<
+   DocusaurusConfig,
+   'baseUrl' | 'trailingSlash'
+ >): ServeRequestHandler {
++  // Browsers send the baseUrl percent-encoded, like "/caf%C3%A9/"
++  // A baseUrl already percent-encoded in the config stays the same
++  const baseUrl = parseURLPath(configBaseUrl).pathname;
++
+   return async (req, res) => {
+```
+- **Lesson**: All URL matching and redirection logic must operate strictly on canonical, percent-encoded representations using URL parsing primitives rather than raw config strings.
+
+---
+
+### Incident 2: Process Crash on Latin-1 Static File Requests (BUG-DOCU-02)
+- **Context**: File server handler integration in `packages/docusaurus/src/commands/serve/requestHandler.ts`.
+- **What Was Expected**: Serving static files containing Latin-1 characters (such as `/café.html` or `/base/café`) should return HTTP status `200 OK` with the file contents.
+- **What Actually Happened**: The underlying static file library (`serve-handler`) generated a default `Content-Disposition` header containing the raw filename extracted from the disk path. When a request resolved to `café.html`, Node.js threw an uncatchable `ERR_INVALID_CHAR` exception during header serialization because the filename string contained characters outside the Latin-1 range allowed by Node's internal header validator.
+- **Evidence in Repo**: Commit `df697fae`, PR #12895, referencing `serve-handler#205`.
+- **Root Cause**: `serve-handler` generates an unescaped `Content-Disposition` header containing local disk filenames by default if no explicit headers are configured.
+- **Remediation Code Diff**:
+```diff
+--- a/packages/docusaurus/src/commands/serve/requestHandler.ts
++++ b/packages/docusaurus/src/commands/serve/requestHandler.ts
+@@ -48,6 +48,15 @@ export function createServeRequestHandler({
+       public: outDir,
+       trailingSlash,
+       directoryListing: false,
++      // The default value has the file name, which crashes Node.js when it has
++      // Latin-1 characters like "café.html"
++      // See https://github.com/vercel/serve-handler/issues/205
++      headers: [
++        {
++          source: '**',
++          headers: [{key: 'Content-Disposition', value: 'inline'}],
++        },
++      ],
+     });
+   };
+ }
+```
+- **Lesson**: Third-party server abstractions must be explicitly constrained by overriding default header-generation behavior that exposes the runtime to raw filesystem string encoding mismatches.
+
+---
+
+### Incident 3: React Hydration Route Mismatch & Duplicate Render (BUG-DOCU-03)
+- **Context**: Client runtime bootstrap and location normalization in `packages/docusaurus/src/client/clientEntry.tsx` and `normalizeLocation.ts`.
+- **What Was Expected**: Accessing static pages deployed on hosts like Netlify that serve `.html` files directly (e.g. `/page.html` or `/café.html`) should smoothly hydrate the existing SSR DOM without layout flashes or UI duplication.
+- **What Actually Happened**: The preloader in `clientEntry.tsx` passed raw `window.location.pathname` (`/page.html`) to `preload()`. However, the React router internally normalized the route to `/page`. Because `/page.html` did not match the routes table, `preload()` resolved with no component chunk loaded. React then initiated client hydration with an empty route. React hydration mismatch ensued: React did not discard the existing server-rendered HTML, but instead rendered the client SPA tree immediately adjacent to it, creating a duplicated document layout.
+- **Evidence in Repo**: Commit `74c8363d`, PR #12810. Snapshots in Argos visual regression suite.
+- **Root Cause**: Asymmetric path representations: the client preloader evaluated the raw browser pathname (`.html`), while the route matching system evaluated the normalized pathname (`.html` stripped).
+- **Remediation Code Diff**:
+```diff
+--- a/packages/docusaurus/src/client/clientEntry.tsx
++++ b/packages/docusaurus/src/client/clientEntry.tsx
+@@ -13,6 +13,7 @@ import siteConfig from '@generated/docusaurus.config';
+ import ExecutionEnvironment from './exports/ExecutionEnvironment';
+ import App from './App';
+ import preload from './preload';
++import {normalizeBrowserPathname} from './normalizeLocation';
+ import docusaurus from './docusaurus';
+ 
+ function Router({children}: {children: ReactNode}): ReactNode {
+@@ -63,7 +64,10 @@ if (ExecutionEnvironment.canUseDOM) {
+     }
+   };
+ 
+-  preload(window.location.pathname).then(() => {
++  // Normalize /page.html to /page, the route App renders: preloading
++  // /page.html would hydrate an empty route and render the page twice
++  // See https://github.com/meta/docusaurus/pull/12810
++  preload(normalizeBrowserPathname(window.location.pathname)).then(() => {
+     startTransition(renderApp);
+   });
+```
+```diff
+--- a/packages/docusaurus/src/client/normalizeLocation.ts
++++ b/packages/docusaurus/src/client/normalizeLocation.ts
+@@ -12,29 +12,35 @@ import type {Location} from 'history';
+ const pathnames = new Map<string, string>();
+ 
+-export default function normalizeLocation<T extends Location>(location: T): T {
++function computeNormalizedPathname(pathname: string): string {
+   const matchedRoutes = matchRoutes(routes, pathname);
+   if (matchedRoutes.some(({route}) => route.exact === true)) {
+     return pathname;
+   }
+   return pathname.trim().replace(/(?:\/index)?\.html$/, '') || '/';
+ }
+ 
++export function normalizeBrowserPathname(browserPathname: string): string {
++  const routerPathname = decodeURI(browserPathname);
++  return encodeURI(normalizePathname(routerPathname));
++}
+```
+- **Lesson**: Pre-hydration asset loaders and post-hydration application routers must share the identical route normalization transformation pipeline.
+
+---
+
+### Incident 4: Double Decoding Crash on Percent-Encoded Slugs (BUG-DOCU-04)
+- **Context**: Client routing normalization helper, `packages/docusaurus/src/client/normalizeLocation.ts`.
+- **What Was Expected**: URLs containing encoded percent literals, such as `/100%25.html` (representing the literal slug `/100%`), should normalize correctly to `/100%25` and load without throwing exceptions.
+- **What Actually Happened**: `normalizeBrowserPathname` decoded `/100%25.html` into `/100%.html`. When this stripped string (`/100%`) was passed back to `preload()`, the preloader executed another internal `decodeURI()` pass. In JavaScript, executing `decodeURI('/100%')` throws `URIError: URI malformed` because an unescaped `%` character not followed by two valid hexadecimal digits is illegal in URI grammar.
+- **Evidence in Repo**: Commit `74c8363d`, `packages/docusaurus/src/client/__tests__/normalizeLocation.test.ts`.
+- **Root Cause**: Architectural ambiguity over whether paths returned from normalization utilities are in raw decoded form or URI-encoded form.
+- **Remediation Code Diff**:
+```diff
+--- a/packages/docusaurus/src/client/normalizeLocation.ts
++++ b/packages/docusaurus/src/client/normalizeLocation.ts
++// The router decodes the browser pathname before App normalizes it. Encode it
++// back for preload(), which decodes again and throws on /100%25 if not encoded
++export function normalizeBrowserPathname(browserPathname: string): string {
++  const routerPathname = decodeURI(browserPathname);
++  return encodeURI(normalizePathname(routerPathname));
++}
+```
+- **Lesson**: Any function accepting an encoded string and outputting to a consumer that decodes must ensure the return value is defensively re-encoded.
+
+---
+
+### Incident 5: Deprecated PWA Capabilities Header Warning (BUG-DOCU-05)
+- **Context**: PWA configuration in `website/docusaurus.config.ts`, Issue #12743.
+- **What Was Expected**: Compliance with web standards across evergreen mobile browsers without triggering console deprecation warnings.
+- **What Actually Happened**: The PWA manifest configuration only included `<meta name="apple-mobile-web-app-capable" content="yes">`. Chromium-based browsers logged loud console warnings: `<meta name="apple-mobile-web-app-capable" content="yes"> is deprecated. Please include <meta name="mobile-web-app-capable" content="yes">`.
+- **Evidence in Repo**: Issue #12743 closed post-mortem.
+- **Root Cause**: Reliance on legacy Apple-proprietary meta tags without the W3C standard mobile web application capability counterpart.
+- **Remediation**: Injected the standard `mobile-web-app-capable` meta tag alongside the legacy Apple meta tag in the head tags configuration.
+- **Lesson**: Always emit standard W3C metadata attributes before or alongside vendor-prefixed legacy attributes.
+
+---
+
+## 4. Microscopic Code-Level Invariants
+
+### 1. Micro-Syntax & Token-Level Precision
+- **Operator Precedence and String Concatenation Hazards**:
+  In MDX AST AST transformation utilities (`packages/docusaurus-mdx-loader/src/remark/utils/index.ts`):
+  ```typescript
+  // INVARIANT: Precedence of ternary vs template/concatenation
+  export function assetRequireAttributeValue(
+    requireString: string,
+    hash: string,
+  ): MdxJsxAttributeValueExpression {
+    return {
+      type: 'mdxJsxAttributeValueExpression',
+      // DANGER: `require("${requireString}")${hash && ` + '${hash}'`}`
+      // If hash is empty string "", it evaluates to false, injecting "" instead of "false".
+      value: `require("${requireString}")${hash ? ` + '${hash}'` : ''}`,
+      // ...
+    };
+  }
+  ```
+- **Deep Immutability vs Shallow Mutation Leaks**:
+  When replacing AST nodes in Unified/Remark (`transformNode`):
+  ```typescript
+  export function transformNode<NewNode extends Node>(
+    node: Node,
+    newNode: NewNode,
+  ): NewNode {
+    // MUST completely flush existing keys to eliminate ghost AST attributes
+    Object.keys(node).forEach((key) => {
+      // @ts-expect-error: unsafe in-place AST wipe
+      delete node[key];
+    });
+    Object.keys(newNode).forEach((key) => {
+      // @ts-expect-error: unsafe in-place mutation
+      node[key] = newNode[key];
+    });
+    return node as NewNode;
+  }
+  ```
+  *Trap*: Shallow assignment (`Object.assign(node, newNode)`) leaves stale `type`, `children`, or `data` properties from the old node, corrupting ESTree generation downstream.
+
+- **Explicit UTF-8 BOM Stripping**:
+  In `packages/docusaurus-fs/src/fsUtils.ts`:
+  ```typescript
+  function stripUTF8BOM(content: string): string {
+    // INVARIANT: Node.js JSON.parse() crashes with SyntaxError on leading \uFEFF
+    return content.startsWith('\uFEFF') ? content.slice(1) : content;
+  }
+  ```
+
+---
+
+### 2. Infinite Loop & Recursion Guards
+- **AST Child Stringification Recursion Guard**:
+  In `packages/docusaurus-mdx-loader/src/remark/toc/utils.ts`:
+  MDX headings can nest arbitrary JSX components (`mdxJsxTextElement`).
+  - *Invariant Proof*: Leaf nodes (`text`, `inlineCode`) terminate the recursion.
+  - *Base Condition*: Non-terminal parent nodes map over `children` recursively.
+  - *Infinite Loop Trap*: Circular structures in AST nodes created by misconfigured Remark plugins. To prevent circular traversal, `stringifyChildren` operates strictly over read-only slices without visiting parent back-references (`node.parent`).
+  - *Exclusion Guard*: `img` tags are explicitly culled (`if (tag === 'img') return '';`) to prevent image metadata from entering the table of contents hierarchy.
+
+---
+
+### 3. UI & UX Micro-Mechanics
+- **Static SSR and Client Hydration Dual-Tree Prevention**:
+  If a user lands on `/docs/installation.html` directly, the DOM contains the pre-rendered SSR layout.
+  - *Reflow Hazard*: If hydration triggers an initial route

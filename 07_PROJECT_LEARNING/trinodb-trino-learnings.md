@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trinodb-trino-learnings.md`  
 > **Source**: github ([https://github.com/trinodb/trino](https://github.com/trinodb/trino))  
-> **Source Version**: `89d09f46`  
+> **Source Version**: `93d16081`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T22:40:16.245Z  
+> **Timestamp**: 2026-11-09T16:40:32.636Z  
 > **Learning ID**: `learn-github-trinodb-trino`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trinodb-trino-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trinodb/trino](https://github.com/trinodb/trino))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T22:40:16.239Z  
+> **Harvest Timestamp**: 2026-11-09T16:40:32.529Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Official repository of Trino, the distributed SQL query engine for big data, formerly known as PrestoSQL (https://trino.io)
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13471 stars
+- **Stars / Engagement**: 13490 stars
 
 ---
 
@@ -1862,382 +1862,176 @@ export const SqlBlock = ({ language, code }) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fde63530` (2026-11-05)
-**Commit Message**: Block spatial join probe until its index is built
+### Incident Patch 1: `93d16081` (2026-11-09)
+**Commit Message**: Fix race in testLeafAdmissionRotatesAcrossTasks
 
-The operator did not expose the index future, so its driver looped
-without progress while the build side ran.
+The test submits three held intermediate splits and two held leaf
+splits to a scheduler with four slots, without waiting for the
+intermediate splits to start. If the first one's thread is the last
+to ask for a slot, it never runs: releasing it does not block it, the
+blocked split count stays 0, and the wait for it times out. Wait for
+all intermediate splits to start before submitting the leaf splits.
 
-**File**: `core/trino-main/src/main/java/io/trino/operator/SpatialJoinOperator.java` (modified, +13/-0)
+**File**: `core/trino-main/src/test/java/io/trino/execution/executor/dedicated/TestThreadPerDriverTaskExecutor.java` (modified, +1/-0)
 ```diff
-@@ -14,6 +14,7 @@
- package io.trino.operator;
- 
- import com.google.common.collect.ImmutableList;
-+import com.google.common.util.concurrent.Futures;
- import com.google.common.util.concurrent.ListenableFuture;
- import io.trino.memory.context.LocalMemoryContext;
- import io.trino.spi.Page;
-@@ -143,6 +144,7 @@ public OperatorFactory duplicate()
-     private final Runnable onClose;
- 
-     private ListenableFuture<PagesSpatialIndex> pagesSpatialIndexFuture;
-+    private final ListenableFuture<Void> pagesSpatialIndexBlocked;
-     private final PageBuilder pageBuilder;
-     @Nullable
-     private Page probe;
-@@ -178,6 +180,7 @@ public SpatialJoinOperator(
-         this.pagesSpatialIndexFactory = requireNonNull(pagesSpatialIndexFactory, "pagesSpatialIndexFactory is null");
-         this.onClose = requireNonNull(onClose, "onClose is null");
-         this.pagesSpatialIndexFuture = pagesSpatialIndexFactory.createPagesSpatialIndex();
-+        this.pagesSpatialIndexBlocked = Futures.transform(pagesSpatialIndexFuture, _ -> null, directExecutor());
-         this.pageBuilder = new PageBuilder(ImmutableList.<Type>builder()
-                 .addAll(probeOutputChannels.stream()
-                         .map(probeTypes::get)
-@@ -192,6 +195,16 @@ public OperatorContext getOperatorContext()
-         return operatorContext;
-     }
- 
-+    @Override
-+    public ListenableFuture<Void> isBlocked()
-+    {
-+        // A finishing operator with no probe page completes without the spatial index.
-+        if (finishing) {
-+            return NOT_BLOCKED;
-+        }
-+        return pagesSpatialIndexBlocked;
-+    }
-+
-     @Override
-     public boolean needsInput()
-     {
+@@ -990,6 +990,7 @@ public void testLeafAdmissionRotatesAcrossTasks()
+                     new AdmissionSplit(BlockedReason.OUTPUT, true),
+                     new AdmissionSplit(BlockedReason.OUTPUT, true));
+             executor.enqueueSplits(firstTask, true, busySplits);
++            assertEventually(new Duration(10, SECONDS), () -> assertThat(busySplits).allMatch(AdmissionSplit::isStarted));
+             List<AdmissionSplit> firstTaskSplits = ImmutableList.of(
+                     new AdmissionSplit(BlockedReason.SOURCE, true),
+                     new AdmissionSplit(BlockedReason.SOURCE, true),
 ```
 
-**File**: `plugin/trino-geospatial/src/test/java/io/trino/plugin/geospatial/TestSpatialJoinOperator.java` (modified, +53/-0)
+---
+
+### Incident Patch 2: `eb83618c` (2026-11-09)
+**Commit Message**: Retry Bun download in mvnd-build CI job
+
+The mvnd-build job does not restore the Bun cache, so every run downloads
+Bun from GitHub releases. frontend-maven-plugin fails the build on any
+non-200 response without retrying, so a transient 504 failed the job.
+
+Install Bun in a separate retried step. The build's install-bun execution
+then finds it already installed and skips the download.
+
+**File**: `.github/workflows/ci.yml` (modified, +5/-0)
 ```diff
-@@ -470,6 +470,59 @@ public void testDuplicateProbeFactory(boolean createSecondaryOperators)
-         assertOperatorEquals(firstFactory, probeDriver, probePages.build(), expected);
+@@ -193,6 +193,11 @@ jobs:
+           cleanup-node: false
+       - name: Install Maven Daemon
+         run: .github/bin/retry brew install mvndaemon/mvnd/mvnd
++      - name: Install Bun
++        # This job does not restore the Bun cache, so Bun is downloaded on every run, and
++        # frontend-maven-plugin does not retry failed downloads. The build then finds it installed.
++        run: |
++          .github/bin/retry mvnd ${MAVEN_ARGS} -B -pl :trino-web-ui frontend:install-bun@"install bun"
+       - name: Build with Maven Daemon
+         # Start from an empty local repository, as artifacts already present there bypass repository filtering.
+         # trino-docs is excluded because its build runs Sphinx in Docker, which macOS runners do not provide.
+```
+
+---
+
+### Incident Patch 3: `e47c07c2` (2026-10-30)
+**Commit Message**: Fix physical input size for partition-only scans
+
+Iceberg and Delta Lake skip opening data files when a scan only needs
+partition values, so these scans must not count toward physical input
+bytes or the physical scan limit.
+
+**File**: `plugin/trino-delta-lake/src/main/java/io/trino/plugin/deltalake/DeltaLakePageSourceProvider.java` (modified, +9/-1)
+```diff
+@@ -460,7 +460,15 @@ protected Page computeNext()
+                         return page;
+                     }
+                 },
+-                0);
++                0)
++        {
++            // Pages are generated without reading the file, so no input bytes are consumed
++            @Override
++            public long getCompletedBytes()
++            {
++                return 0;
++            }
++        };
+     }
+ 
+     private static Block createRowNumberBlock(long baseIndex, int size)
+```
+
+**File**: `plugin/trino-delta-lake/src/test/java/io/trino/plugin/deltalake/TestDeltaLakeConnectorTest.java` (modified, +24/-0)
+```diff
+@@ -698,6 +698,30 @@ private void testTimestampPredicatePushdown(String value)
+                 _ -> {});
      }
  
 +    @Test
-+    public void testProbeBlockedUntilIndexIsBuilt()
-+            throws Exception
++    public void testPartitionOnlyDeletePhysicalInputDataSize()
 +    {
-+        TaskContext taskContext = createTaskContext();
-+        PipelineContext pipelineContext = taskContext.addPipelineContext(0, true, true, false);
-+        DriverContext buildDriverContext = pipelineContext.addDriverContext();
++        try (TestTable table = newTrinoTable(
++                "test_partition_only_delete_input",
++                "WITH (partitioned_by = ARRAY['part']) AS SELECT x, x % 3 part FROM UNNEST(sequence(1, 100)) t(x)")) {
++            // Deleting by partition columns only generates row ids without reading data files
++            assertQueryStats(
++                    getSession(),
++                    "DELETE FROM " + table.getName() + " WHERE part % 3 = 0",
++                    queryStats -> {
++                        assertThat(queryStats.getPhysicalInputPositions()).isPositive();
++                        assertThat(queryStats.getPhysicalInputDataSize().toBytes()).isZero();
++                    },
++                    result -> assertThat(result.getOnlyValue()).isEqualTo(33L));
 +
-+        RowPagesBuilder buildPages = rowPagesBuilder(ImmutableList.of(GEOMETRY, VARCHAR))
-+                .row(POLYGON_A, "A");
-+        ValuesOperator.ValuesOperatorFactory valuesOperatorFactory = new ValuesOperator.ValuesOperatorFactory(0, new PlanNodeId("test"), buildPages.build());
-+        SpatialIndexBuilderOperatorFactory buildOperatorFactory = new SpatialIndexBuilderOperatorFactory(
-+                1,
-+                new PlanNodeId("test"),
-+                buildPages.getTypes(),
-+                Ints.asList(1),
-+                0,
-+                OptionalInt.empty(),
-+                OptionalDouble.empty(),
-+                OptionalInt.empty(),
-+                (build, probe, _) -> build.contains(probe),
-+                Optional.empty(),
-+                Optional.empty(),
-+                10_000,
-+                new TestingFactory(false));
-+        Driver buildDriver = Driver.createDriver(
-+                buildDriverContext,
-+                valuesOperatorFactory.createOperator(buildDriverContext),
-+                buildOperatorFactory.createOperator(buildDriverContext));
++            assertQueryStats(
++                    getSession(),
++                    "DELETE FROM " + table.getName() + " WHERE x % 2 = 0",
++                    queryStats -> assertThat(queryStats.getPhysicalInputDataSize().toBytes()).isPositive(),
++                    _ -> {});
++        }
++    }
 +
-+        RowPagesBuilder probePages = rowPagesBuilder(ImmutableList.of(GEOMETRY, VARCHAR));
-+        OperatorFactory joinOperatorFactory = new SpatialJoinOperatorFactory(2, new PlanNodeId("test"), INNER, probePages.getTypes(), Ints.asList(1), 0, OptionalInt.empty(), buildOperatorFactory.getPagesSpatialIndexFactory());
-+        try (Operator probeOperator = joinOperatorFactory.createOperator(pipelineContext.addDriverContext());
-+                Operator finishingProbeOperator = joinOperatorFactory.createOperator(pipelineContext.addDriverContext())) {
-+            ListenableFuture<Void> probeBlocked = probeOperator.isBlocked();
-+            assertThat(probeBlocked.isDone()).isFalse();
-+            assertThat(probeOperator.needsInput()).isFalse();
-+
-+            finishingProbeOperator.finish();
-+            assertThat(finishingProbeOperator.isBlocked().isDone()).isTrue();
-+            assertThat(finishingProbeOperator.getOutput()).isNull();
-+            assertThat(finishingProbeOperator.isFinished()).isTrue();
-+
-+            while (!probeOperator.isBlocked().isDone()) {
-+                buildDriver.processUntilBlocked();
+     @Test
+     public void testTimestampPartition()
+     {
+```
+
+**File**: `plugin/trino-iceberg/src/main/java/io/trino/plugin/iceberg/IcebergPageSourceProvider.java` (modified, +9/-1)
+```diff
+@@ -771,7 +771,15 @@ protected Page computeNext()
+                     }
+                 },
+                 maxPage.getRetainedSizeInBytes(),
+-                memoryContext);
++                memoryContext)
++        {
++            // Pages are generated from partition values without reading the file, so no input bytes are consumed
++            @Override
++            public long getCompletedBytes()
++            {
++                return 0;
 +            }
-+            assertThat(probeBlocked.isDone()).isTrue();
-+            assertThat(probeOperator.needsInput()).isTrue();
-+        }
-+        joinOperatorFactory.noMoreOperators();
-+        runDriverInThread(executor, buildDriver);
-+    }
-+
-     @Test
-     public void testDistanceQuery()
-     {
-```
-
----
-
-### Incident Patch 2: `f0883a69` (2026-11-01)
-**Commit Message**: Fix Iceberg statistics after column type change
-
-**File**: `plugin/trino-iceberg/src/main/java/io/trino/plugin/iceberg/IcebergSplitSource.java` (modified, +11/-8)
-```diff
-@@ -83,6 +83,7 @@
- import org.apache.iceberg.metrics.ScanMetricsResult;
- import org.apache.iceberg.metrics.ScanReport;
- import org.apache.iceberg.types.Type;
-+import org.apache.iceberg.types.Types.NestedField;
- 
- import java.io.IOException;
- import java.io.UncheckedIOException;
-@@ -105,6 +106,7 @@
- import static com.google.common.base.Suppliers.memoize;
- import static com.google.common.base.Verify.verify;
- import static com.google.common.collect.ImmutableList.toImmutableList;
-+import static com.google.common.collect.ImmutableMap.toImmutableMap;
- import static com.google.common.collect.ImmutableSet.toImmutableSet;
- import static com.google.common.collect.Sets.intersection;
- import static com.google.common.math.LongMath.saturatedAdd;
-@@ -127,7 +129,6 @@
- import static io.trino.plugin.iceberg.IcebergUtil.getPartitionKeys;
- import static io.trino.plugin.iceberg.IcebergUtil.getPartitionValues;
- import static io.trino.plugin.iceberg.IcebergUtil.getPathDomain;
--import static io.trino.plugin.iceberg.IcebergUtil.primitiveFieldTypes;
- import static io.trino.plugin.iceberg.StructLikeWrapperWithFieldIdToIndex.createStructLikeWrapper;
- import static io.trino.plugin.iceberg.TypeConverter.toTrinoType;
- import static io.trino.spi.StandardErrorCode.NOT_SUPPORTED;
-@@ -163,7 +164,6 @@ public class IcebergSplitSource
-     private final EncryptionManager encryptionManager;
-     private final Scan<?, FileScanTask, CombinedScanTask> tableScan;
-     private final OptionalLong maxScannedFileSizeInBytes;
--    private final Map<Integer, Type.PrimitiveType> fieldIdToType;
-     private final PartitionConstraintMatcher partitionConstraintMatcher;
-     private final TypeManager typeManager;
-     @GuardedBy("closer")
-@@ -234,7 +234,6 @@ public IcebergSplitSource(
-         this.encryptionManager = requireNonNull(icebergTable.encryption(), "encryptionManager is null");
-         this.tableScan = requireNonNull(tableScan, "tableScan is null");
-         this.maxScannedFileSizeInBytes = maxScannedFileSize.isPresent() ? OptionalLong.of(maxScannedFileSize.orElseThrow().toBytes()) : OptionalLong.empty();
--        this.fieldIdToType = primitiveFieldTypes(tableScan.schema());
-         this.partitionConstraintMatcher = new PartitionConstraintMatcher(constraint, evaluator, session);
-         this.typeManager = requireNonNull(typeManager, "typeManager is null");
-         this.recordScannedFiles = recordScannedFiles;
-@@ -644,9 +643,11 @@ private void closeInternal(boolean interruptIfRunning)
-     private FileScanTaskWithContext createFileScanTaskWithContext(FileScanTask wholeFileTask, Set<Integer> predicatedColumnIds)
-     {
-         verify(predicatedColumnIds != null, "predicatedColumnIds is null");
--        List<IcebergColumnHandle> predicatedColumns = wholeFileTask.schema().columns().stream()
--                .filter(column -> predicatedColumnIds.contains(column.fieldId()))
--                .map(column -> getColumnHandle(column, typeManager))
-+        List<NestedField> predicatedFields = wholeFileTask.schema().columns().stream()
-+                .filter(field -> predicatedColumnIds.contains(field.fieldId()))
-+                .collect(toImmutableList());
-+        List<IcebergColumnHandle> predicatedColumns = predicatedFields.stream()
-+                .map(field -> getColumnHandle(field, typeManager))
-                 .collect(toImmutableList());
-         List<DeleteFile> deleteFiles = wholeFileTask.deletes().stream()
-                 .peek(file -> verifyDeletionVectorReferencesDataFile(wholeFileTask, file))
-@@ -661,7 +662,9 @@ private FileScanTaskWithContext createFileScanTaskWithContext(FileScanTask whole
-         return new FileScanTaskWithContext(
-                 wholeFileTask,
-                 createFileStatisticsDomain(
--                        fieldIdToType,
-+                        // Read the bounds as the type of these columns rather than of the scan. Changing the type of a column creates no snapshot,
-+                        // so until the next one the scan of the current snapshot keeps the older schema, while its tasks have the new one
-+                        predicatedFields.stream().collect(toImmutableMap(NestedField::fieldId, NestedField::type)),
-                         wholeFileTask.file().lowerBounds(),
-                         wholeFileTask.file().upperBounds(),
-                         wholeFileTask.file().nullValueCounts(),
-@@ -760,7 +763,7 @@ public static Optional<ParquetFileDecryptionData> parquetFileDecryptionData(
- 
-     @VisibleForTesting
-     static TupleDomain<IcebergColumnHandle> createFileStatisticsDomain(
--            Map<Integer, Type.PrimitiveType> fieldIdToType,
-+            Map<Integer, ? extends Type> fieldIdToType,
-             @Nullable Map<Integer, ByteBuffer> lowerBounds,
-             @Nullable Map<Integer, ByteBuffer> upperBounds,
-             @Nullable Map<Integer, Long> nullValueCounts,
-```
-
-**File**: `plugin/trino-iceberg/src/test/java/io/trino/plugin/iceberg/BaseIcebergConnectorTest.java` (modified, +17/-3)
-```diff
-@@ -9479,11 +9479,25 @@ public void testSetTransformPartitionedColumnType()
-     @Test // regression test for https://github.com/trinodb/trino/issues/29802
-     public void testColumnTypeEvolutionWithStatistics()
-     {
--        try (TestTable table = newTrinoTable("test_stats_type_change", "(x INT)", List.of("1", "2"))) {
--            assertUpdate("ALTER TABLE " + table.getName() + " ALTER COLUMN x SET DATA TYPE BIGINT");
-+        testColumnTypeEvolutionWithStatistics("INT", "BIGINT");
-+        testColumnTypeEvolutionWithStatistics("DECIMAL(5, 3)", "DECIMAL(10, 3)");
-+        testColumnTypeEvolutionWithStatistics("DECIMAL(5, 3)", "DECIMAL(38, 3)");
-+        testColumnTypeEvolutionWithStatistics("DECIMAL(28, 3)", "DECIMAL(38, 3)");
-+        // The Parquet predicate cannot use the float statistics of an older file yet, see https://github.com/trinodb/trino/issues/30544
-+        if (format != PARQUET) {
-+            testColumnTypeEvolutionWithStatistics("REAL", "DOUBLE");
-+        }
-+    }
-+
-+    private void testColumnTypeEvolutionWithStatistics(String initialType, String newType)
-+    {
-+        try (TestTable table = newTrinoTable("test_stats_type_change", "(x %s)".formatted(initialType), List.of("1", "2"))) {
-+            assertUpdate("ALTER TABLE " + table.getName() + " ALTER COLUMN x SET DATA TYPE " + newType);
- 
-             assertThat(query("SELECT * FROM " + table.getName() + " WHERE x IN (SELECT DISTINCT x FROM " + table.getName() + ")"))
--                    .matches("VALUES BIGINT '1', 2");
-+                    .matches("VALUES CAST(1 AS %1$s), CAST(2 AS %1$s)".formatted(newType));
-+            assertThat(query("SELECT * FROM %s WHERE x = CAST(1 AS %s)".formatted(table.getName(), newType)))
-+                    .matches("VALUES CAST(1 AS %s)".formatted(newType));
-         }
++        };
      }
  
+     private static ReaderPageSourceWithRowPositions createOrcPageSource(
 ```
 
-**File**: `plugin/trino-iceberg/src/test/java/io/trino/plugin/iceberg/TestIcebergSplitSource.java` (modified, +46/-1)
+**File**: `plugin/trino-iceberg/src/test/java/io/trino/plugin/iceberg/BaseIcebergConnectorTest.java` (modified, +16/-0)
 ```diff
-@@ -43,6 +43,7 @@
- import io.trino.spi.predicate.Range;
- import io.trino.spi.predicate.TupleDomain;
- import io.trino.spi.predicate.ValueSet;
-+import io.trino.spi.type.Int128;
- import io.trino.testing.AbstractTestQueryFramework;
- import io.trino.testing.QueryRunner;
- import io.trino.testing.TestingConnectorSession;
-@@ -112,8 +113,10 @@
- import static io.trino.spi.connector.Constraint.alwaysTrue;
- import static io.trino.spi.predicate.FloatingPointValueSet.nanValue;
- import static io.trino.spi.type.BigintType.BIGINT;
-+import static io.trino.spi.type.DecimalType.createDecimalType;
- import static io.trino.spi.type.DoubleType.DOUBLE;
- import static io.trino.spi.type.RealType.REAL;
-+import static io.trino.testing.TestingNames.randomNameSuffix;
- import static io.trino.tpch.TpchTable.NATION;
- import static io.trino.type.InternalTypeManager.TESTING_TYPE_MANAGER;
- import static java.lang.Float.floatToRawIntBits;
-@@ -402,6 +405,48 @@ public void testNaNPruningWithFiniteBounds(String format)
-         }
-     }
+@@ -6037,6 +6037,22 @@ public void testSplitPruningFromDataFileStatistics()
  
-+    /**
-+     * Changing the type of a column creates no snapshot, so until the next one the scan of the current snapshot keeps the
-+     * older schema, while its tasks have the new one.
-+     */
-+    @ParameterizedTest
-+    @ValueSource(strings = {"PARQUET", "ORC"})
-+    public void testFileStatisticsDomainAfterColumnTypeChange(String format)
-+            throws Exception
+     protected abstract boolean supportsRowGroupStatistics(String typeName);
+ 
++    @Test
++    public void testPartitionOnlyScanPhysicalInputDataSize()
 +    {
-+        assertFileStatisticsDomainAfterColumnTypeChange(format, "integer", BIGINT, 0L, 1L, 3L, 4L);
-+        assertFileStatisticsDomainAfterColumnTypeChange(format, "real", DOUBLE, 0.0, 1.0, 3.0, 4.0);
-+        assertFileStatisticsDomainAfterColumnTypeChange(format, "decimal(5,2)", createDecimalType(10, 2), 0L, 100L, 300L, 400L);
-+        assertFileStatisticsDomainAfterColumnTypeChange(format, "decimal(5,2)", createDecimalType(38, 2), Int128.valueOf(0), Int128.valueOf(100), Int128.valueOf(300), Int128.valueOf(400));
-+        assertFileStatisticsDomainAfterColumnTypeChange(format, "decimal(28,2)", createDecimalType(38, 2), Int128.valueOf(0), Int128.valueOf(100), Int128.valueOf(300), Int128.valueOf(400));
-+    }
++        try (TestTable table = newTrinoTable(
++                "test_partition_only_scan_input",
++                "WITH (partitioning = ARRAY['part']) AS SELECT x, x % 3 part FROM UNNEST(sequence(1, 10000)) t(x)")) {
++            // Reading only partition columns does not read data files
++            OperatorStats partitionOnlyStats = getOperatorStats(executeWithQueryId("SELECT DISTINCT part FROM " + table.getName()));
++            assertThat(partitionOnlyStats.getPhysicalInputPositions()).isEqualTo(10000);
++            assertThat(partitionOnlyStats.getPhysicalInputDataSize().toBytes()).isZero();
 +
-+    private void assertFileStatisticsDomainAfterColumnTypeChange(String format, String initialType, io.trino.spi.type.Type newType, Object belowMinimum, Object minimum, Object maximum, Object aboveMaximum)
-+            throws Exception
-+    {
-+        String tableName = "test_statistics_type_change_" + randomNameSuffix();
-+        assertUpdate("CREATE TABLE %s WITH (format = '%s') AS SELECT CAST(x AS %s) x FROM (VALUES 1, 2, 3) t(x)".formatted(tableName, format, initialType), 3);
-+        try {
-+            assertUpdate("ALTER TABLE %s ALTER COLUMN x SET DATA TYPE %s".formatted(tableName, newType));
-+
-+            SchemaTableName schemaTableName = new SchemaTableName("tpch", tableName);
-+            Table table = catalog.loadTable(SESSION, schemaTableName);
-+            IcebergColumnHandle column = IcebergColumnHandle.optional(new ColumnIdentity(table.schema().findField("x").fieldId(), "x", ColumnIdentity.TypeCategory.PRIMITIVE, ImmutableList.of()))
-+                    .columnType(newType)
-+                    .build();
-+            IcebergTableHandle tableHandle = createTableHandle(schemaTableName, table, TupleDomain.withColumnDomains(ImmutableMap.of(column, Domain.notNull(newType))));
-+
-+            Domain domain = generateSplit(table, tableHandle).fileStatisticsDomain().getDomains().orElseThrow().get(column);
-+            assertThat(domain.includesNullableValue(minimum)).isTrue();
-+            assertThat(domain.includesNullableValue(maximum)).isTrue();
-+            assertThat(domain.includesNullableValue(aboveMaximum)).isFalse();
-+            assertThat(domain.includesNullableValue(belowMinimum)).isFalse();
-+        }
-+        finally {
-+            assertUpdate("DROP TABLE " + tableName);
++            OperatorStats dataColumnStats = getOperatorStats(executeWithQueryId("SELECT DISTINCT x FROM " + table.getName()));
++            assertThat(dataColumnStats.getPhysicalInputDataSize().toBytes()).isPositive();
 +        }
 +    }
 +
-     @Test
-     public void testNullStatisticsMaps()
+     private void verifySplitCount(String query, int expectedSplitCount)
      {
-@@ -798,7 +843,7 @@ private List<IcebergSplit> generateSplits(ConnectorSession session, Table nation
-                 session,
-                 tableHandle,
-                 nationTable,
--                nationTable.newScan().metricsReporter(metricsReporter),
-+                nationTable.newScan().useSnapshot(nationTable.currentSnapshot().snapshotId()).metricsReporter(metricsReporter),
-                 Optional.empty(),
-                 alwaysTrue(),
-                 TESTING_TYPE_MANAGER,
-```
-
----
-
-### Incident Patch 3: `e335dc13` (2026-11-03)
-**Commit Message**: Fix format_number precision for negative values
-
-format_number picked the number of decimals from the signed value, so
-every negative number was formatted with up to two decimals. For
-example, -12345 was formatted as -12.35K, while 12345 is 12.3K. Choose
-the precision from the absolute value instead.
-
-**File**: `core/trino-main/src/main/java/io/trino/operator/scalar/FormatNumberFunction.java` (modified, +2/-1)
-```diff
-@@ -23,6 +23,7 @@
- import java.text.DecimalFormat;
- 
- import static io.airlift.slice.Slices.utf8Slice;
-+import static java.lang.Math.abs;
- 
- public final class FormatNumberFunction
- {
-@@ -81,7 +82,7 @@ private String format(long count)
-             unit = "Q";
-         }
- 
--        return getFormat(fractional).format(fractional) + unit;
-+        return getFormat(abs(fractional)).format(fractional) + unit;
-     }
- 
-     private DecimalFormat getFormat(double value)
-```
-
-**File**: `core/trino-main/src/test/java/io/trino/operator/scalar/TestFormatNumberFunction.java` (modified, +13/-1)
-```diff
-@@ -141,7 +141,19 @@ public void testFormatNumber()
- 
-         assertThat(assertions.function("format_number", "-9223372036854775808"))
-                 .hasType(VARCHAR)
--                .isEqualTo("-9223.37Q");
-+                .isEqualTo("-9223Q");
-+
-+        assertThat(assertions.function("format_number", "SMALLINT '-12345'"))
-+                .hasType(VARCHAR)
-+                .isEqualTo("-12.3K");
-+
-+        assertThat(assertions.function("format_number", "INTEGER '-123456789'"))
-+                .hasType(VARCHAR)
-+                .isEqualTo("-123M");
-+
-+        assertThat(assertions.function("format_number", "DOUBLE '-1234.5'"))
-+                .hasType(VARCHAR)
-+                .isEqualTo("-1.23K");
- 
-         assertThat(assertions.function("format_number", "0"))
-                 .hasType(VARCHAR)
+         MaterializedResultWithPlan selectAllPartitionsResult = getDistributedQueryRunner().executeWithPlan(getSession(), query);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #31998** (2026-11-05): Block spatial join probe until its index is built (@raunaqmorarka)
-- **PR #31996** (2026-11-05): Bump com.amazon.redshift:redshift-jdbc42 from 2.2.9 to 2.3.0 (@dependabot[bot])
-- **PR #31995** (2026-11-05): Bump com.azure:azure-core-tracing-opentelemetry from 1.0.0-beta.67 to 1.0.0-beta.68 (@dependabot[bot])
-- **PR #31992** (2026-11-05): Speed up building SortedRangeSet from unordered integers (@wendigo)
-- **PR #31988** (2026-11-05): Use synchronized output for CLI status redraw  (@wendigo)
-- **PR #31987** (2026-11-05): Classify MongoDB network errors as external errors (@losipiuk)
+- **PR #32042** (2026-11-09): Retry Bun download in mvnd-build CI job (@findepi)
+- **PR #32039** (2026-11-09): Fix race in testLeafAdmissionRotatesAcrossTasks (@findepi)
+- **PR #32038** (closed): Bump dep.airlift.version from 456 to 457 (@dependabot[bot])
+- **PR #32037** (2026-11-09): Bump the airlift group with 2 updates (@dependabot[bot])
+- **PR #32030** (closed): Allow statistics commits for S3 Tables in Iceberg (@FrancescoCastaldi)
+- **PR #32024** (2026-11-09): Modernize modernizer rules (@findepi)
 
 ---
 
@@ -2257,33 +2051,21 @@ the precision from the absolute value instead.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Block spatial join probe until its index is built
+## X. race in testLeafAdmissionRotatesAcrossTasks
 
 **RULE**:
-When implementing operations in `core/trino-main/src/main/java/io/trino/operator/SpatialJoinOperator.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/trino-main/src/test/java/io/trino/execution/executor/dedicated/TestThreadPerDriverTaskExecutor.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fde63530`: Block spatial join probe until its index is built. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `93d16081`: race in testLeafAdmissionRotatesAcrossTasks. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/trino-main/src/main/java/io/trino/operator/SpatialJoinOperator.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/trino-main/src/test/java/io/trino/execution/executor/dedicated/TestThreadPerDriverTaskExecutor.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-import com.google.common.util.concurrent.Futures;
-    private final ListenableFuture<Void> pagesSpatialIndexBlocked;
-        this.pagesSpatialIndexBlocked = Futures.transform(pagesSpatialIndexFuture, _ -> null, directExecutor());
-    @Override
-    public ListenableFuture<Void> isBlocked()
-    {
-        // A finishing operator with no probe page completes without the spatial index.
-        if (finishing) {
-            return NOT_BLOCKED;
-        }
-        return pagesSpatialIndexBlocked;
-    }
-
+            assertEventually(new Duration(10, SECONDS), () -> assertThat(busySplits).allMatch(AdmissionSplit::isStarted));
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2293,4 +2075,4 @@ import com.google.common.util.concurrent.Futures;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fde63530` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `93d16081` are properly handled with clean fallback behavior.

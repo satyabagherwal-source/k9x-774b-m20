@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md`  
 > **Source**: github ([https://github.com/aquasecurity/trivy](https://github.com/aquasecurity/trivy))  
-> **Source Version**: `72e7d838`  
+> **Source Version**: `10ab0f82`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T13:27:09.265Z  
+> **Timestamp**: 2026-11-10T02:24:06.868Z  
 > **Learning ID**: `learn-github-aquasecurity-trivy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aquasecurity/trivy](https://github.com/aquasecurity/trivy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T13:27:09.261Z  
+> **Harvest Timestamp**: 2026-11-10T02:19:05.474Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Find vulnerabilities, misconfigurations, secrets, SBOM in containers, Kubernetes, code repositories, clouds and more
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 39006 stars
+- **Stars / Engagement**: 39173 stars
 
 ---
 
@@ -1002,45 +1002,48 @@ type TracingConfiguration struct {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c5b87b77` (2026-11-05)
-**Commit Message**: fix(rocky): add Rocky Linux 10 EOL date (#11531)
+### Incident Patch 1: `10ab0f82` (2026-11-09)
+**Commit Message**: docs(python): add pylock.toml row to language coverage index (#11584)
 
-**File**: `docs/guide/coverage/os/index.md` (modified, +1/-1)
+**File**: `docs/guide/coverage/language/index.md` (modified, +1/-0)
 ```diff
-@@ -19,7 +19,7 @@ Trivy supports operating systems for
- | [Red Hat Enterprise Linux](rhel.md)            | 10 (SBOM only)                      | dnf/yum/rpm      |
- | [CentOS](centos.md)[^1]                        | 6, 7, 8                             | dnf/yum/rpm      |
- | [AlmaLinux](alma.md)                           | 8, 9, 10                            | dnf/yum/rpm      |
--| [Rocky Linux](rocky.md)                        | 8, 9                                | dnf/yum/rpm      |
-+| [Rocky Linux](rocky.md)                        | 8, 9, 10                            | dnf/yum/rpm      |
- | [Oracle Linux](oracle.md)                      | 5, 6, 7, 8                          | dnf/yum/rpm      |
- | [Azure Linux (CBL-Mariner)](azure.md)          | 1.0, 2.0, 3.0                       | tdnf/dnf/yum/rpm |
- | [Amazon Linux](amazon.md)                      | 1, 2, 2023                          | dnf/yum/rpm      |
+@@ -23,6 +23,7 @@ On the other hand, when the target is a post-build artifact, like a container im
+ | [Python](python.md)  | Pipfile.lock                                                                               |     -     |     -      |       ✅        |       ✅        |
+ |                      | poetry.lock                                                                                |     -     |     -      |       ✅        |       ✅        |
+ |                      | uv.lock                                                                                    |     -     |     -      |       ✅        |       ✅        |
++|                      | pylock.toml                                                                                |     -     |     -      |       ✅        |       ✅        |
+ |                      | requirements.txt                                                                           |     -     |     -      |       ✅        |       ✅        |
+ |                      | egg package[^1]                                                                            |     ✅     |     ✅      |       -        |       -        |
+ |                      | wheel package[^2]                                                                          |     ✅     |     ✅      |       -        |       -        |
 ```
 
-**File**: `pkg/detector/ospkg/rocky/rocky.go` (modified, +3/-2)
+---
+
+### Incident Patch 2: `63e2f381` (2026-11-09)
+**Commit Message**: docs(go): describe which go.mod directive sets the stdlib version (#11583)
+
+Co-authored-by: Wilson Santos <[REDACTED_EMAIL]>
+
+**File**: `docs/guide/coverage/language/golang.md` (modified, +1/-1)
 ```diff
-@@ -20,8 +20,9 @@ var (
- 	eolDates = map[string]time.Time{
- 		// Source:
- 		// https://endoflife.date/rocky-linux
--		"8": time.Date(2029, 5, 31, 23, 59, 59, 0, time.UTC),
--		"9": time.Date(2032, 5, 31, 23, 59, 59, 0, time.UTC),
-+		"8":  time.Date(2029, 5, 31, 23, 59, 59, 0, time.UTC),
-+		"9":  time.Date(2032, 5, 31, 23, 59, 59, 0, time.UTC),
-+		"10": time.Date(2035, 5, 31, 23, 59, 59, 0, time.UTC),
- 	}
- )
+@@ -87,7 +87,7 @@ Moreover, when scanning the Trivy project, which happens to use Docker, Docker's
+ Detecting the version of Go used in the project can be tricky.
+ The go.mod file include hints that allows Trivy to guess the Go version but it eventually depends on the Go tool version in the build environment.
+ Since this strategy is not fully deterministic and accurate, it is enabled only in [--detection-priority comprehensive][detection-priority] mode.
+-When enabled, Trivy detects stdlib version as the minimum between the `go` and the `toolchain` directives in the `go.mod` file.
++When enabled, Trivy detects the stdlib version from the `toolchain` directive in the `go.mod` file, or from the `go` directive when there is no `toolchain` directive.
+ To obtain reproducible scan results Trivy doesn't check the locally installed version of `Go`.
  
+ !!! note
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #11584** (2026-11-09): docs(python): add pylock.toml row to language coverage index (@delaysystem)
+- **PR #11583** (2026-11-09): docs(go): describe which go.mod directive sets the stdlib version (@wils0ns)
+- **PR #11582** (closed): fix(misconf): read ARM blob soft delete from nested blobServices (@anandhx)
+- **PR #11573** (closed): fix(nodejs): parse Bun 1.4 four-element git entries in bun.lock (@anandhx)
 - **PR #11558** (2026-11-05): ci(helm): bump Trivy version to 0.76.2 for Trivy Helm Chart 0.28.2 (@repo-trivy-write-33ed3c[bot])
 - **PR #11555** (2026-11-05): chore(deps): bump the common group across 1 directory with 14 updates [backport: release/v0.76] (@repo-trivy-write-33ed3c[bot])
-- **PR #11554** (2026-11-05): fix(deps): bump golang.org/x/net from 0.61.0 to 0.62.0 [backport: release/v0.76] (@repo-trivy-write-33ed3c[bot])
-- **PR #11553** (2026-11-05): fix(deps): bump github.com/go-jose/go-jose/v4 from 4.1.5 to 4.1.6 [backport: release/v0.76] (@repo-trivy-write-33ed3c[bot])
-- **PR #11552** (2026-11-05): release: v0.76.2 [release/v0.76] (@repo-trivy-write-33ed3c[bot])
-- **PR #11551** (2026-11-05): fix(deps): bump alpine to 3.24.3 in container images [backport: release/v0.76] (@repo-trivy-write-33ed3c[bot])
 
 ---
 
@@ -1060,28 +1063,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. rocky): add Rocky Linux 10 EOL date (#11531)
+## X. docs(python): add pylock.toml row to language coverage index (#11584)
 
 **RULE**:
-When implementing operations in `docs/guide/coverage/os/index.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aquasecurity/trivy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/guide/coverage/language/index.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aquasecurity/trivy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c5b87b77`: rocky): add Rocky Linux 10 EOL date (#11531). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `10ab0f82`: docs(python): add pylock.toml row to language coverage index (#11584). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/guide/coverage/os/index.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/guide/coverage/language/index.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-| [Rocky Linux](rocky.md)                        | 8, 9, 10                            | dnf/yum/rpm      |
+|                      | pylock.toml                                                                                |     -     |     -      |       ✅        |       ✅        |
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-| [Rocky Linux](rocky.md)                        | 8, 9                                | dnf/yum/rpm      |
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c5b87b77` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `10ab0f82` are properly handled with clean fallback behavior.

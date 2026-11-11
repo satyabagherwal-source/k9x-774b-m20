@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mikepenz-multiplatform-markdown-renderer-learnings.md`  
 > **Source**: github ([https://github.com/mikepenz/multiplatform-markdown-renderer](https://github.com/mikepenz/multiplatform-markdown-renderer))  
-> **Source Version**: `86599b9d`  
+> **Source Version**: `28528661`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T11:16:43.772Z  
+> **Timestamp**: 2026-11-08T16:58:42.783Z  
 > **Learning ID**: `learn-github-mikepenz-multiplatform-markdown-renderer`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mikepenz-multiplatform-markdown-renderer-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mikepenz/multiplatform-markdown-renderer](https://github.com/mikepenz/multiplatform-markdown-renderer))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T11:16:43.247Z  
+> **Harvest Timestamp**: 2026-11-08T16:58:42.775Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Markdown renderer for Kotlin Multiplatform Projects (Android, iOS, Desktop), using Compose.
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1130 stars
+- **Stars / Engagement**: 1132 stars
 
 ---
 
@@ -758,11 +758,11 @@ fun MarkdownCheckBox(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #662** (2026-11-07): **chore(deps): update mike penz internal projects**
+  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | Pending | OpenSSF | |---|---|---|---|---|---| | [mikepenz/action-junit-report](https://redirect.github.com/mikepenz/action-junit-report) | action | patch | `v6.6.1` → `v6.6.2` | `v6.7.1` (+1) | [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/mikepenz/action-junit-report/badge)](https://securityscorecards.dev/viewer/?uri=github.com/mikepenz/action-junit-report) | | [mikepenz/release-changelog-builder-action](https://redirect.github.com/mikepenz/release-changelog-builder-action) | action | minor | `v6.4.0` → `v6.5.0` |  | [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/mikepenz/release-changelog-builder-action/badge)](https://securityscorecards.dev/viewer/?uri=github.com/mikepenz/release-changelog-builder-action) |  ---  ### Release Notes  <details> <summary>mikepenz/action-junit-report</summary>  ### [`v6.6.2`](https://redirect.github.com/mikepenz/action-junit-report/releases/tag/v6.6.2)  [Compare Source](https://redirect.github.com/mikepenz/action-junit-report/compare/v6.6.1...v6.6.2)  #### 📦 Dependencies  - chore(deps): update dependency nanoid to v6.0.2   - PR: [#&#8203;1634](https://redirect.github.com/mikepenz/action-junit-report/issues/1634) - chore(deps): update dependency fast-uri to v4.2.2   - PR: [#&#8203;1633](https://redirect.github.com/mikepenz/action-junit-report/issues/1633)  #### Contributors:  - [@&#8203;renovate-mike](https:
+
 - **Issue #661** (2026-11-05): **fix: restore multiplatform test compilation and update deprecated APIs**
   *Symptoms*: ## Description  Fix test compilation after the Markdown color API and Compose test API updates:  - Supply the required highlight colors in `DetachedPlacementTest` and migrate to `androidx.compose.ui.test.v2.runComposeUiTest`. - Replace `runBlocking` with `runTest` in `AsMarkdownStateTest` so common tests compile for JS and Wasm, retaining real-time delays on `Dispatchers.Default`.  Fixes # (issue)  ## Type of change Please delete options that are not relevant.  - [x] Bug fix (non-breaking change which fixes an issue) - [ ] New feature (non-breaking change which adds functionality) - [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected) - [ ] Documentation update - [ ] Code style update (formatting, renaming) - [ ] Refactoring (no functional changes, no API changes) - [ ] Build configuration change - [ ] Other (please describe):  ## How Has This Been Tested?   ## Checklist: - [ ] My code follows the style guidelines of this project - [x] I have performed a self-review of my own code - [ ] I have commented my code, particularly in hard-to-understand areas - [ ] I have made corresponding changes to the documentation - [ ] My changes generate no new warnings - [ ] I have added tests that prove my fix is effective or that my feature works - [ ] New and existing unit tests pass locally with my changes - [ ] Any dependent changes have been merged and published in downstream modules 
-
-- **Issue #660** (2026-11-02): **fix(deps): update dependency org.jetbrains:markdown to v0.7.18**
-  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | OpenSSF | |---|---|---|---|---| | [org.jetbrains:markdown](https://redirect.github.com/JetBrains/markdown) | dependencies | patch | `0.7.17` → `0.7.18` | [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/JetBrains/markdown/badge)](https://securityscorecards.dev/viewer/?uri=github.com/JetBrains/markdown) |  ---  ### Release Notes  <details> <summary>JetBrains/markdown (org.jetbrains:markdown)</summary>  ### [`v0.7.18`](https://redirect.github.com/JetBrains/markdown/blob/HEAD/CHANGELOG.md#0718)  - Recognize a single indented `-` after a list item's text as an empty nested list item - Add `MarkdownParser#parseBlock`, which parses one top-level block at the time  </details>  ---  ### Configuration  📅 **Schedule**: (in timezone Europe/Berlin)  - Branch creation   - "before 6am on Monday" - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Enabled.  ♻ **Rebasing**: Whenever PR is behind base branch, or you tick the rebase/retry checkbox.  🔕 **Ignore**: Close this PR and you won't be reminded about this update again.  ---   - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, check this box  ---  This PR has been generated by [Mend Renovate CLI](https://redirect.github.com/renovatebot/renovate). <!--renovate-debug:eyJjcmVhdGVkSW5WZXIiOiI0NC4xODAuMCIsInVwZGF0ZWRJblZlciI6IjQ0LjE4MC4wIiwidGFyZ2V0QnJhbmNoIjoiZGV2ZWxvcCIsImxhYmVscyI6WyJkZXBlbmRlbmNpZXMiXX
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -779,208 +779,40 @@ fun MarkdownCheckBox(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `86599b9d` (2026-11-05)
-**Commit Message**: Merge pull request #661 from keta1/test/fix-detached-placement-test
+### Incident Patch 1: `28528661` (2026-11-07)
+**Commit Message**: chore(deps): update mike penz internal projects (#662)
 
-fix: restore multiplatform test compilation and update deprecated APIs
+Co-authored-by: renovate-mike[bot] <274037420+renovate-mike[bot]@users.noreply.github.com>
 
-**File**: `multiplatform-markdown-renderer/src/commonTest/kotlin/com/mikepenz/markdown/model/AsMarkdownStateTest.kt` (modified, +12/-7)
+**File**: `.github/workflows/ci.yml` (modified, +2/-2)
 ```diff
-@@ -1,18 +1,17 @@
- package com.mikepenz.markdown.model
+@@ -101,7 +101,7 @@ jobs:
  
-+import kotlinx.coroutines.Dispatchers
- import kotlinx.coroutines.delay
- import kotlinx.coroutines.flow.MutableStateFlow
- import kotlinx.coroutines.flow.take
- import kotlinx.coroutines.flow.toList
- import kotlinx.coroutines.launch
--import kotlinx.coroutines.runBlocking
--import kotlinx.coroutines.test.advanceUntilIdle
- import kotlinx.coroutines.test.runTest
-+import kotlinx.coroutines.withContext
- import kotlin.test.Test
- import kotlin.test.assertEquals
- import kotlin.test.assertIs
- import kotlin.test.assertTrue
--import kotlin.time.Duration.Companion.seconds
+       - name: Publish Test Report
+         if: false && (failure() || success()) && github.event_name == 'pull_request'
+-        uses: mikepenz/action-junit-report@6ef3fdcfcd5f0b5d14df3e659ef19b8c6820f93d # v6.6.1
++        uses: mikepenz/action-junit-report@8a133bfa3ecb0ea9024c1e2ae788b4c25f6cdb9d # v6.6.2
+         with:
+           report_paths: '**/sample/android/build/test-results/testDebugUnitTest/TEST-*.xml'
+           github_token: ${{ secrets.GITHUB_TOKEN }}
+@@ -188,7 +188,7 @@ jobs:
  
- /**
-  * Tests for the Flow<String>.asMarkdownState() extension function.
-@@ -109,7 +108,7 @@ class AsMarkdownStateTest {
-     }
- 
-     @Test
--    fun asMarkdownState_incrementalContentBuildup() = runBlocking {
-+    fun asMarkdownState_incrementalContentBuildup() = runTest {
-         // Given a flow that gradually builds up markdown content
-         val contentFlow = MutableStateFlow("# Title")
-         val states = mutableListOf<State>()
-@@ -125,7 +124,9 @@ class AsMarkdownStateTest {
-         }
- 
-         // Wait for initial emissions (Loading + Success) - use real delay since parse uses Dispatchers.Default
--        delay(500)
-+        withContext(Dispatchers.Default) {
-+            delay(500)
-+        }
-         assertTrue(states.size >= 2, "Should have at least Loading + Success for first emission, got ${states.size}: $states")
-         assertIs<State.Loading>(states[0], "First state should be Loading")
-         assertIs<State.Success>(states[1], "Second state should be Success")
-@@ -135,7 +136,9 @@ class AsMarkdownStateTest {
- 
-         // Update with more content - this tests that the flow continues to work
-         contentFlow.value = "# Title\n\nSome paragraph text."
--        delay(500)
-+        withContext(Dispatchers.Default) {
-+            delay(500)
-+        }
- 
-         // Verify we got NEW states (Loading + Success for the second emission)
-         assertTrue(states.size > stateCountAfterFirst, "Should have new states after second emission, got ${states.size} total states")
-@@ -148,7 +151,9 @@ class AsMarkdownStateTest {
- 
-         // Third update
-         contentFlow.value = "# Title\n\nSome paragraph text.\n\n- Item 1\n- Item 2"
--        delay(500)
-+        withContext(Dispatchers.Default) {
-+            delay(500)
-+        }
- 
-         // Verify we got ANOTHER set of new states
-         assertTrue(states.size > stateCountAfterSecond, "Should have new states after third emission, got ${states.size} total states")
-```
-
-**File**: `multiplatform-markdown-renderer/src/jvmTest/kotlin/com/mikepenz/markdown/compose/elements/DetachedPlacementTest.kt` (modified, +19/-12)
-```diff
-@@ -1,25 +1,24 @@
- package com.mikepenz.markdown.compose.elements
- 
--import androidx.compose.foundation.ExperimentalFoundationApi
- import androidx.compose.foundation.layout.fillMaxSize
- import androidx.compose.foundation.layout.height
- import androidx.compose.foundation.lazy.LazyColumn
- import androidx.compose.foundation.pager.HorizontalPager
- import androidx.compose.foundation.pager.rememberPagerState
- import androidx.compose.ui.Modifier
- import androidx.compose.ui.graphics.Color
--import androidx.compose.ui.text.TextLinkStyles
--import androidx.compose.ui.text.TextStyle
-+import androidx.compose.ui.platform.testTag
- import androidx.compose.ui.test.ExperimentalTestApi
--import androidx.compose.ui.test.runComposeUiTest
--import androidx.compose.ui.unit.dp
--import androidx.compose.ui.test.swipeRight
--import androidx.compose.ui.test.swipeLeft
-+import androidx.compose.ui.test.onNodeWithTag
-+import androidx.compose.ui.test.performTouchInput
- import androidx.compose.ui.test.swipeDown
-+import androidx.compose.ui.test.swipeLeft
-+import androidx.compose.ui.test.swipeRight
- import androidx.compose.ui.test.swipeUp
--import androidx.compose.ui.test.performTouchInput
--import androidx.compose.ui.test.onNodeWithTag
--import androidx.compose.ui.platform.testTag
-+import androidx.compose.ui.test.v2.runComposeUiTest
-+import androidx.compose.ui.text.TextLinkStyles
-+import androidx.compose.ui.text.TextStyle
-+import androidx.compose.ui.unit.dp
- import com.mikepenz.markdown.compose.Markdown
- import com.mikepenz.markdown.model.DefaultMarkdownColors
- import com.mikepenz.markdown.model.DefaultMarkdownTypography
-@@ -29,9 +28,17 @@ import kotlin.test.Test
-  * Regression test for #639: `onPlaced` read `parentLayoutCoordinates` on detached coordinates
-  * while lazy items / pager pages were recycled, throwing `IllegalStateException`.
-  */
--@OptIn(ExperimentalTestApi::class, ExperimentalFoundationApi::class)
-+@OptIn(ExperimentalTestApi::class)
- class DetachedPlacementTest {
--    private val colors = DefaultMarkdownColors(Color.Black, Color.LightGray, Color.LightGray, Color.Gray, Color.White)
-+    private val colors = DefaultMarkdownColors(
-+        text = Color.Black,
-+        codeBackground = Color.LightGray,
-+        inlineCodeBackground = Color.LightGray,
-+        dividerColor = Color.Gray,
-+        tableBackground = Color.White,
-+        highlightText = Color.Black,
-+        highlightBackground = Color.Yellow,
-+    )
-     private val style = TextStyle.Default
-     private val typography = DefaultMarkdownTypography(
-         style, style, style, style, style, style, style, style, style, style, style, style, style, style,
-```
-
----
-
-### Incident Patch 2: `04a06879` (2026-11-05)
-**Commit Message**: test: fix DetachedPlacementTest compilation
-
-**File**: `multiplatform-markdown-renderer/src/jvmTest/kotlin/com/mikepenz/markdown/compose/elements/DetachedPlacementTest.kt` (modified, +19/-12)
-```diff
-@@ -1,25 +1,24 @@
- package com.mikepenz.markdown.compose.elements
- 
--import androidx.compose.foundation.ExperimentalFoundationApi
- import androidx.compose.foundation.layout.fillMaxSize
- import androidx.compose.foundation.layout.height
- import androidx.compose.foundation.lazy.LazyColumn
- import androidx.compose.foundation.pager.HorizontalPager
- import androidx.compose.foundation.pager.rememberPagerState
- import androidx.compose.ui.Modifier
- import androidx.compose.ui.graphics.Color
--import androidx.compose.ui.text.TextLinkStyles
--import androidx.compose.ui.text.TextStyle
-+import androidx.compose.ui.platform.testTag
- import androidx.compose.ui.test.ExperimentalTestApi
--import androidx.compose.ui.test.runComposeUiTest
--import androidx.compose.ui.unit.dp
--import androidx.compose.ui.test.swipeRight
--import androidx.compose.ui.test.swipeLeft
-+import androidx.compose.ui.test.onNodeWithTag
-+import androidx.compose.ui.test.performTouchInput
- import androidx.compose.ui.test.swipeDown
-+import androidx.compose.ui.test.swipeLeft
-+import androidx.compose.ui.test.swipeRight
- import androidx.compose.ui.test.swipeUp
--import androidx.compose.ui.test.performTouchInput
--import androidx.compose.ui.test.onNodeWithTag
--import androidx.compose.ui.platform.testTag
-+import androidx.compose.ui.test.v2.runComposeUiTest
-+import androidx.compose.ui.text.TextLinkStyles
-+import androidx.compose.ui.text.TextStyle
-+import androidx.compose.ui.unit.dp
- import com.mikepenz.markdown.compose.Markdown
- import com.mikepenz.markdown.model.DefaultMarkdownColors
- import com.mikepenz.markdown.model.DefaultMarkdownTypography
-@@ -29,9 +28,17 @@ import kotlin.test.Test
-  * Regression test for #639: `onPlaced` read `parentLayoutCoordinates` on detached coordinates
-  * while lazy items / pager pages were recycled, throwing `IllegalStateException`.
-  */
--@OptIn(ExperimentalTestApi::class, ExperimentalFoundationApi::class)
-+@OptIn(ExperimentalTestApi::class)
- class DetachedPlacementTest {
--    private val colors = DefaultMarkdownColors(Color.Black, Color.LightGray, Color.LightGray, Color.Gray, Color.White)
-+    private val colors = DefaultMarkdownColors(
-+        text = Color.Black,
-+        codeBackground = Color.LightGray,
-+        inlineCodeBackground = Color.LightGray,
-+        dividerColor = Color.Gray,
-+        tableBackground = Color.White,
-+        highlightText = Color.Black,
-+        highlightBackground = Color.Yellow,
-+    )
-     private val style = TextStyle.Default
-     private val typography = DefaultMarkdownTypography(
-         style, style, style, style, style, style, style, style, style, style, style, style, style, style,
+       - name: Build Changelog
+         id: github_release
+-        uses: mikepenz/release-changelog-builder-action@aa013739bbc8e7067dbbecd4525ff11aeb51a84b # v6.4.0
++        uses: mikepenz/release-changelog-builder-action@b0db9d18b53447ef9f940a46c8f31653c4d9f621 # v6.5.0
+         with:
+           configuration: ".github/config/configuration.json"
+           ignorePreReleases: ${{ !contains(github.ref, '-') }}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #662** (2026-11-07): chore(deps): update mike penz internal projects (@renovate-mike[bot])
 - **PR #661** (2026-11-05): fix: restore multiplatform test compilation and update deprecated APIs (@keta1)
 - **PR #660** (2026-11-02): fix(deps): update dependency org.jetbrains:markdown to v0.7.18 (@renovate-mike[bot])
 - **PR #659** (2026-11-02): chore(deps): update gradle to v9.8.2 (@renovate-mike[bot])
 - **PR #658** (2026-11-02): chore(deps): update github actions updates (@renovate-mike[bot])
 - **PR #657** (2026-10-27): fix(deps): update dependency com.mikepenz:version-catalog to v0.23.2 (@renovate-mike[bot])
-- **PR #656** (2026-10-15): chore(deps): update mikepenz/action-junit-report action to v6.6.1 (@renovate-mike[bot])
 
 ---
 
@@ -1000,45 +832,30 @@ fix: restore multiplatform test compilation and update deprecated APIs
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #661 from keta1/test/fix-detached-placement-test
+## X. deps): update mike penz internal projects (#662)
 
 **RULE**:
-When implementing operations in `multiplatform-markdown-renderer/src/commonTest/kotlin/com/mikepenz/markdown/model/AsMarkdownStateTest.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mikepenz/multiplatform-markdown-renderer. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mikepenz/multiplatform-markdown-renderer. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `86599b9d`: Merge pull request #661 from keta1/test/fix-detached-placement-test. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `28528661`: deps): update mike penz internal projects (#662). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `multiplatform-markdown-renderer/src/commonTest/kotlin/com/mikepenz/markdown/model/AsMarkdownStateTest.kt`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-    fun asMarkdownState_incrementalContentBuildup() = runTest {
-        withContext(Dispatchers.Default) {
-            delay(500)
-        }
-        withContext(Dispatchers.Default) {
-            delay(500)
-        }
-        withContext(Dispatchers.Default) {
-            delay(500)
-        }
+        uses: mikepenz/action-junit-report@8a133bfa3ecb0ea9024c1e2ae788b4c25f6cdb9d # v6.6.2
+        uses: mikepenz/release-changelog-builder-action@b0db9d18b53447ef9f940a46c8f31653c4d9f621 # v6.5.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.advanceUntilIdle
-import kotlin.time.Duration.Companion.seconds
-    fun asMarkdownState_incrementalContentBuildup() = runBlocking {
-        delay(500)
-        delay(500)
-        delay(500)
+        uses: mikepenz/action-junit-report@6ef3fdcfcd5f0b5d14df3e659ef19b8c6820f93d # v6.6.1
+        uses: mikepenz/release-changelog-builder-action@aa013739bbc8e7067dbbecd4525ff11aeb51a84b # v6.4.0
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `86599b9d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `28528661` are properly handled with clean fallback behavior.

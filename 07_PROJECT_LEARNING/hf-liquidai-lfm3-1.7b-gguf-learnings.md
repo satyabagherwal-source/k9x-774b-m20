@@ -3,7 +3,7 @@
 > **Source Version**: `hf-liquidai-`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-11-04T02:46:32.556Z  
+> **Timestamp**: 2026-11-07T20:49:06.156Z  
 > **Learning ID**: `learn-huggingface-liquidai-lfm3-1-7b-gguf`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -16,198 +16,333 @@
 
 ## 1. Executive Forensic Architecture & System Mechanics
 
-**Technical Problem Solved:**
-This repository is not a software application but a **Model Artifact Container**. It solves the problem of **local inference compatibility** for the LiquidAI LFM3-1.7B model. Specifically, it bridges the gap between high-precision training formats (likely FP16/BF16 or NVFP4) and the `llama.cpp` ecosystem by providing weights in the **GGUF (GPT-Generated Unified Format)** standard.
+**Forensic Status:** **DATA INSUFFICIENT FOR CODE-LEVEL EXTRACTION**
+
+The target repository `LiquidAI/LFM3-1.7B-GGUF` is a **Model Artifact Repository**, not a software source code repository. It contains pre-compiled binary weights (GGUF format) and metadata, not executable logic, build scripts, or application code.
 
 **Architectural Boundaries:**
-1.  **Static Data Boundary**: The repository contains no executable logic, no CI/CD pipelines, and no source code. It is a pure data payload.
-2.  **Consumer Dependency**: The "architecture" is defined entirely by the consumer (e.g., `llama.cpp`, `Ollama`, `LM Studio`). The repository's integrity depends on the consumer's ability to parse the GGUF binary header and tensor layout.
-3.  **Quantization Boundary**: The `base_model_relation: quantized` tag indicates this is a derived artifact. The architectural invariant is that the quantization process must preserve the semantic integrity of the original 1.7B parameter model while reducing memory footprint.
+1.  **Artifact Type:** The primary payload is a `.gguf` file (GGML Universal File Format), which is a binary container for neural network weights and architecture definitions.
+2.  **Consumer Interface:** The "code" is external. This repository is consumed by inference engines (e.g., `llama.cpp`, `Ollama`, `LM Studio`). The logic for memory management, quantization dequantization, and attention mechanisms resides in the *consumer* engine, not this repo.
+3.  **Metadata Layer:** The only "source code" present is the `README.md` (YAML frontmatter + HTML) and potentially `config.json` (if present, though marked N/A in the provided data). The YAML frontmatter defines the model's identity, license, and base model lineage.
+4.  **Quantization Lineage:** The metadata reveals a critical architectural dependency: `base_model: LiquidAI/LFM3-1.7B` and `LiquidAI/LFM3-1.7B-NVFP4`. This indicates a **Quantization Pipeline** where the original FP16/BF16 weights were compressed into GGUF formats (likely Q4_K_M, Q5_K_M, etc.) to reduce memory footprint for edge/local inference.
 
-**Critical Subsystem Abstractions:**
-*   **GGUF Header**: A binary metadata block defining tensor names, shapes, dtypes, and architecture-specific parameters (e.g., `n_ctx`, `n_embd`).
-*   **Tensor Storage**: Raw binary blobs of quantized weights (Q4_K_M, Q5_K_M, etc.) aligned to specific memory boundaries for SIMD optimization.
-*   **Tokenizer Mapping**: While not explicitly listed in the snippet, GGUF files typically embed or reference the tokenizer vocabulary to ensure token ID consistency between the model and the inference engine.
+**Critical Subsystem Abstractions (Inferred from Metadata):**
+*   **Tokenizer Interface:** Defined by `tokenizer_config.json` (N/A in data, but implied by `pipeline_tag: text-generation`). The model relies on a specific BPE or SentencePiece tokenizer.
+*   **Architecture Definition:** The GGUF header contains the architecture string (e.g., `llama`, `mistral`, or a custom `liquid` architecture) which dictates how the inference engine interprets the weight tensors.
+*   **License Boundary:** `license: other` with `license_name: lfm1.0`. This is a **custom, non-standard license**. This is a critical security/compliance boundary. Standard OSS licenses (MIT, Apache 2.0) have known legal interpretations; `lfm1.0` requires manual legal review.
+
+**Why No Code Diffs/Issues Exist:**
+*   Model repositories on Hugging Face do not have "commits" in the traditional Git sense for the weights (they are large binary blobs).
+*   There are no "bugs" in the weights themselves; bugs exist in the *inference engine* or the *quantization script* that produced them.
+*   The "code" is the mathematical definition of the model, which is static once published.
+
+---
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Model Artifact Provenance & Lineage Integrity
+Since no source code is present, the rules are derived from the **metadata invariants** and the **nature of model artifact distribution**.
+
+### 1. Model Artifact License Provenance & Compliance Gate
 **RULE**:
-Any quantized or derived model artifact MUST explicitly declare its `base_model` and `base_model_relation` in its metadata (e.g., Hugging Face `config.json` or GGUF metadata). The lineage MUST be traceable to the original high-precision checkpoint.
+Any AI system consuming a model artifact MUST parse the `license` and `license_name` fields from the repository metadata. If the license is not a standard OSI-approved license (e.g., MIT, Apache-2.0, BSD-3-Clause) or a well-known commercial license, the system MUST halt deployment and flag for manual legal review. It MUST NOT assume permissive usage for `license: other` or `license_name: custom`.
 
 **WHY**:
-Without explicit lineage, users cannot verify if the quantization was performed correctly or if the base model was fine-tuned. This prevents "model drift" where a user assumes they are running the base model but are actually running a subtly different quantized version with altered behavior. It also allows for automated validation of expected performance metrics.
+Forensic analysis of `LiquidAI/LFM3-1.7B-GGUF` shows `license: other` and `license_name: lfm1.0`. Standard OSS tools often default to permissive assumptions or fail to parse custom licenses, leading to potential legal violations (e.g., using a model with commercial restrictions in a free product). The "other" tag is a trap for automated compliance scanners.
 
 **WHEN TO APPLY**:
-When publishing any model derivative (quantized, pruned, fine-tuned) to a public registry like Hugging Face.
+*   Any CI/CD pipeline that downloads model weights.
+*   Any model registry or model serving platform.
+*   Any AI agent that selects models for deployment.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
-```json
-{
-  "base_model": [
-    "LiquidAI/LFM3-1.7B",
-    "LiquidAI/LFM3-1.7B-NVFP4"
-  ],
-  "base_model_relation": "quantized",
-  "license": "other",
-  "license_name": "lfm1.0"
-}
+```python
+import json
+import requests
+
+def validate_model_license(repo_id: str) -> bool:
+    """
+    Validates the license of a Hugging Face model repository.
+    Returns True if safe for general use, False if manual review required.
+    """
+    url = f"https://huggingface.co/api/models/{repo_id}"
+    try:
+        response = requests.get(url, timeout=5)
+        data = response.json()
+        license_name = data.get('cardData', {}).get('license', 'unknown')
+        
+        # List of known safe, permissive licenses
+        SAFE_LICENSES = {
+            'mit', 'apache-2.0', 'bsd-3-clause', 'gpl-3.0', 'lgpl-3.0'
+        }
+        
+        # Normalize license name
+        normalized_license = license_name.lower().strip()
+        
+        # If license is 'other' or not in safe list, flag for review
+        if normalized_license in SAFE_LICENSES:
+            return True
+        else:
+            # Log warning for manual review
+            print(f"WARNING: Model {repo_id} has non-standard license: {license_name}. Manual legal review required.")
+            return False
+            
+    except Exception as e:
+        print(f"ERROR: Failed to fetch license for {repo_id}: {e}")
+        return False
+
+# Usage
+is_safe = validate_model_license("LiquidAI/LFM3-1.7B-GGUF")
+if not is_safe:
+    raise SecurityError("Model license requires manual review")
 ```
 
 **NEGATIVE CONSTRAINT**:
-```json
-{
-  "base_model": null,
-  "base_model_relation": "unknown"
-}
+```python
+# ANTI-PATTERN: Assuming all models are permissive
+def load_model(repo_id: str):
+    # No license check
+    model = AutoModelForCausalLM.from_pretrained(repo_id)
+    return model
+# This can lead to legal liability if the model has commercial restrictions.
 ```
 
 **VERIFICATION METHOD**:
-A linter script that parses the `config.json` or GGUF metadata and asserts that `base_model` is a non-empty array of valid repository IDs and `base_model_relation` is one of `["quantized", "fine-tuned", "pruned"]`.
+*   Unit test: Mock the Hugging Face API response with `license: other` and assert that `validate_model_license` returns `False`.
+*   Unit test: Mock the API response with `license: mit` and assert that `validate_model_license` returns `True`.
+*   Lint rule: Enforce that any model loading function must call a license validation function before instantiation.
 
-### 2. Multi-Lingual Tokenizer Coverage Declaration
+### 2. Quantization Lineage Integrity Check
 **RULE**:
-The model's metadata MUST explicitly list all supported languages in the `language` field. The tokenizer vocabulary MUST be verified to cover the character sets of all declared languages.
+When consuming a quantized model artifact, the system MUST verify the `base_model` and `base_model_relation` fields in the metadata. If `base_model_relation` is `quantized`, the system MUST ensure that the inference engine supports the specific quantization type (e.g., GGUF Q4_K_M) and that the base model's architecture is compatible. It MUST NOT assume that a quantized model is bit-for-bit equivalent to the base model in terms of performance or behavior.
 
 **WHY**:
-If a model claims to support Arabic (`ar`) or Chinese (`zh`) but the tokenizer was trained primarily on English, the inference engine may produce garbage output or fail to tokenize correctly. Explicit declaration allows users to filter models based on their linguistic needs and prevents silent failures in multi-lingual applications.
+The metadata for `LiquidAI/LFM3-1.7B-GGUF` shows `base_model: LiquidAI/LFM3-1.7B` and `base_model_relation: quantized`. Quantization introduces approximation errors. If the inference engine does not support the specific GGUF quantization format, it will fail to load or produce garbage output. Additionally, the performance characteristics (latency, accuracy) of the quantized model differ from the base model.
 
 **WHEN TO APPLY**:
-When publishing models intended for multi-lingual use cases.
+*   Model selection pipelines.
+*   Inference engine configuration.
+*   Performance benchmarking.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
-```yaml
-language:
-- en
-- ar
-- zh
-- fr
-- de
-- it
-- ja
-- ko
-- pt
-- es
-- vi
-- th
-- id
-- hi
-- ru
-- pl
+```python
+def check_quantization_compatibility(repo_id: str, engine_capabilities: set) -> bool:
+    """
+    Checks if the model's quantization format is supported by the engine.
+    """
+    url = f"https://huggingface.co/api/models/{repo_id}"
+    try:
+        response = requests.get(url, timeout=5)
+        data = response.json()
+        card_data = data.get('cardData', {})
+        
+        base_model = card_data.get('base_model')
+        relation = card_data.get('base_model_relation')
+        
+        if relation == 'quantized':
+            # Check if the engine supports GGUF
+            if 'gguf' not in engine_capabilities:
+                print(f"ERROR: Engine does not support GGUF quantization for {repo_id}")
+                return False
+            
+            # Check if the base model is available for reference
+            if not base_model:
+                print(f"WARNING: No base model specified for quantized model {repo_id}")
+                return False
+                
+            return True
+        else:
+            # Non-quantized model, check standard compatibility
+            return True
+            
+    except Exception as e:
+        print(f"ERROR: Failed to check quantization compatibility for {repo_id}: {e}")
+        return False
+
+# Usage
+engine_caps = {'gguf', 'safetensors', 'pytorch'}
+is_compatible = check_quantization_compatibility("LiquidAI/LFM3-1.7B-GGUF", engine_caps)
 ```
 
 **NEGATIVE CONSTRAINT**:
-```yaml
-language:
-- en
-# Missing other declared languages in the model's training data
+```python
+# ANTI-PATTERN: Ignoring quantization metadata
+def load_model(repo_id: str):
+    # Assumes all models are standard PyTorch/Safetensors
+    model = AutoModelForCausalLM.from_pretrained(repo_id)
+    # This will fail if the model is GGUF and the engine doesn't support it
+    return model
 ```
 
 **VERIFICATION METHOD**:
-A script that extracts the `language` list from the metadata and compares it against the tokenizer's vocabulary coverage (e.g., checking if common characters from each language are present in the vocab).
+*   Unit test: Mock API response with `base_model_relation: quantized` and `engine_capabilities` not including 'gguf', assert `check_quantization_compatibility` returns `False`.
+*   Unit test: Mock API response with `base_model_relation: quantized` and `engine_capabilities` including 'gguf', assert `check_quantization_compatibility` returns `True`.
+
+---
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-**Note**: The provided data contains no commit history, bug issues, or code diffs. Therefore, no specific incidents can be documented from this repository. However, based on the nature of GGUF artifacts, we can infer common failure modes that this repository is designed to prevent.
+**No incidents found.**
 
-### Incident 1: Quantization Artifact Mismatch (BUG-QUANT-01)
-- **Context**: Model Inference Subsystem
-- **What Was Expected**: The quantized model should produce outputs consistent with the base model within an acceptable error margin.
-- **What Actually Happened**: Users reported significant degradation in output quality, particularly for non-English languages.
-- **Evidence in Repo**: N/A (Inferred from common issues with quantized models)
-- **Root Cause**: The quantization process may have been applied without proper calibration data for non-English languages, leading to loss of precision in less frequent tokens.
-- **Remediation Code Diff**:
-```python
-# - Buggy code: Quantizing without language-specific calibration
-quantized_model = quantize(model, method="Q4_K_M")
+The provided data contains:
+*   `OBSERVED PRODUCTION COMMIT PATCHES & CODE DIFFS: []`
+*   `OBSERVED CLOSED BUG ISSUES & DEVELOPER POST-MORTEMS: []`
 
-# + Fixed pattern: Using language-specific calibration data
-calibration_data = load_calibration_data(languages=["en", "ar", "zh"])
-quantized_model = quantize(model, method="Q4_K_M", calibration_data=calibration_data)
-```
-- **Lesson**: Always use representative calibration data for all supported languages when quantizing models.
+This is expected for a model artifact repository. There is no source code to have bugs, and no commits to analyze. The "incidents" would be in the *inference engine* or the *quantization script*, which are not part of this repository.
+
+---
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
-**Note**: Since this is a data repository, traditional code-level invariants (e.g., null checks, race conditions) do not apply. However, we can derive invariants related to data integrity and consumption.
+**Not Applicable.**
 
-1.  **Micro-Syntax & Token-Level Precision**:
-    *   **Invariant**: The GGUF binary header MUST be parsed with strict endianness handling. Most GGUF files use little-endian format.
-    *   **Code Example**:
-        ```python
-        import struct
-        # Correct: Little-endian parsing
-        magic = struct.unpack('<I', header_bytes[0:4])[0]
-        # Incorrect: Big-endian parsing
-        # magic = struct.unpack('>I', header_bytes[0:4])[0]
-        ```
+This repository contains no executable code. The only "code" is the YAML frontmatter in `README.md`, which is static data. There are no functions, loops, UI components, or concurrency primitives to analyze.
 
-2.  **Infinite Loop & Recursion Guards**:
-    *   **Invariant**: When iterating over tensors in the GGUF file, the loop MUST terminate based on the tensor count specified in the header, not on a null terminator.
-    *   **Code Example**:
-        ```python
-        tensor_count = struct.unpack('<I', header_bytes[4:8])[0]
-        for i in range(tensor_count):
-            # Process tensor
-            pass
-        # Incorrect: Looping until null
-        # while True:
-        #     tensor = read_tensor()
-        #     if tensor is None: break
-        ```
-
-3.  **UI & UX Micro-Mechanics**:
-    *   **Invariant**: N/A (No UI components).
-
-4.  **Backend Concurrency & Memory Safety**:
-    *   **Invariant**: When loading large GGUF files, the memory allocation MUST be checked against available system memory to prevent OOM (Out of Memory) crashes.
-    *   **Code Example**:
-        ```python
-        import psutil
-        file_size = os.path.getsize("model.gguf")
-        available_memory = psutil.virtual_memory().available
-        if file_size > available_memory * 0.8:
-            raise MemoryError("Insufficient memory to load model")
-        ```
-
-5.  **Defect & Error Prevention ("Galti Pakadna")**:
-    *   **Invariant**: The GGUF file MUST be validated for checksum integrity before loading.
-    *   **Code Example**:
-        ```python
-        import hashlib
-        expected_checksum = "abc123..."
-        actual_checksum = hashlib.sha256(open("model.gguf", "rb").read()).hexdigest()
-        if actual_checksum != expected_checksum:
-            raise ValueError("Checksum mismatch")
-        ```
+---
 
 ## 5. The 9 Deep Learning Dimensions
 
-1.  **Architecture**: The repository is a static data container. The architecture is defined by the GGUF format specification, which includes a binary header and a sequence of tensor blobs.
-2.  **Core Abstractions**: The core abstractions are the GGUF tensor, the model architecture parameters (e.g., `n_layers`, `n_heads`), and the tokenizer vocabulary.
-3.  **Error Handling**: Error handling is delegated to the consumer (e.g., `llama.cpp`). The repository itself does not contain error handling logic.
-4.  **Testing**: Testing is performed by the consumer. The repository does not contain test cases.
-5.  **Security**: Security is ensured by the integrity of the GGUF file (checksums) and the license terms.
-6.  **Performance**: Performance is optimized through quantization (Q4_K_M, etc.) and SIMD-friendly tensor layouts.
-7.  **Deployment**: Deployment is straightforward: download the GGUF file and load it into a compatible inference engine.
-8.  **Agent Patterns**: N/A (No agent logic).
-9.  **Data Flow**: Data flows from the GGUF file into the inference engine's memory, where it is processed by the model's forward pass.
+### 1. Architecture
+*   **Subsystem Boundaries:** The repository is a leaf node in the model distribution tree. It has no internal subsystems. It is a single artifact (GGUF file) with metadata.
+*   **Decoupling:** The model is decoupled from the inference engine. The GGUF format is a standard that allows any compatible engine to load the model.
+*   **State Ownership:** The state (weights) is owned by the model file. The inference engine owns the runtime state (KV cache, activations).
+
+### 2. Core Abstractions
+*   **Key Types:** `GGUF` (binary format), `YAML` (metadata), `JSON` (config).
+*   **Traits/Interfaces:** The model must conform to the GGUF specification. The metadata must conform to the Hugging Face model card schema.
+*   **Domain Primitives:** Weights, biases, embeddings, attention heads, feed-forward layers.
+*   **Invariant Contracts:** The GGUF header must correctly describe the architecture and tensor layout. The metadata must accurately reflect the model's capabilities and license.
+
+### 3. Error Handling
+*   **Fault Boundaries:** The boundary is between the model file and the inference engine. If the file is corrupted, the engine must fail gracefully.
+*   **Error Trees:**
+    *   File not found.
+    *   File corrupted (checksum mismatch).
+    *   Unsupported architecture.
+    *   Unsupported quantization type.
+    *   Insufficient memory.
+*   **Retries:** Not applicable to the model file itself. Retries are handled by the download mechanism.
+*   **Rollbacks:** Not applicable.
+*   **Graceful Degradation:** The engine can fall back to a lower precision quantization if available, but this is not defined in the repository.
+
+### 4. Testing
+*   **Property Testing:** Not applicable to the model file.
+*   **Mock Invariants:** Not applicable.
+*   **Integration Harnesses:** The inference engine must have integration tests that load this specific model and verify output.
+*   **Regression Shields:** The model's output should be consistent across different inference engines (within tolerance).
+
+### 5. Security
+*   **Threat Model:**
+    *   **Malicious Model:** A model file could contain malicious code if the inference engine is vulnerable to code injection via the GGUF format.
+    *   **License Violation:** Using the model in a way that violates the `lfm1.0` license.
+    *   **Data Leakage:** The model could be used to extract training data (membership inference).
+*   **Credential Boundaries:** Not applicable.
+*   **Sanitization:** The GGUF parser must sanitize the file to prevent buffer overflows.
+*   **Memory Safety:** The GGUF parser must be memory-safe (e.g., written in Rust or C with careful bounds checking).
+*   **Least Privilege:** The inference engine should run with minimal privileges.
+
+### 6. Performance
+*   **Latency Profiles:** The model is 1.7B parameters, so it is suitable for low-latency inference on edge devices.
+*   **Asymptotic Complexity:** O(N) for inference, where N is the sequence length.
+*   **Caching:** KV cache is used to store attention keys and values.
+*   **Zero-Copy:** The GGUF format allows zero-copy loading of weights into GPU memory.
+*   **Concurrency Bottlenecks:** The inference engine must handle concurrent requests efficiently.
+
+### 7. Deployment
+*   **CI/CD Invariants:** The model file must be checksummed and verified before deployment.
+*   **Container Constraints:** The model file must be mounted into the container.
+*   **Reproducible Builds:** The quantization script must be reproducible.
+*   **Runtime Flags:** The inference engine must support flags to select the quantization type.
+
+### 8. Agent Patterns
+*   **Tooling Interfaces:** The model can be used by AI agents via an API.
+*   **Prompt Chains:** Not applicable to the model file.
+*   **Loop Guards:** Not applicable.
+*   **Context Budget Optimization:** The model's context window must be respected by the agent.
+
+### 9. Data Flow
+*   **Mutation Lifecycles:** The model weights are immutable.
+*   **Streams:** The model can be streamed to the inference engine.
+*   **Serializers:** The GGUF format is a serializer for the model weights.
+*   **Network Protocol Barriers:** The model file is downloaded over HTTPS.
+
+---
 
 ## 6. The 8 Learning Extraction Artifacts
 
-1.  **Pattern**: Use GGUF format for local inference compatibility.
-2.  **Rule**: Always declare model lineage and supported languages in metadata.
-3.  **Architecture Principle**: Separate model artifacts from inference logic.
-4.  **Failure Mode**: Quantization without proper calibration leads to performance degradation.
-5.  **Reusable Skill**: Validate GGUF file integrity before loading.
-6.  **Decision**: Choose GGUF over other formats for broader compatibility with local inference tools.
-7.  **Anti-pattern**: Publishing quantized models without explicit lineage or language support declarations.
-8.  **Verification Method**: Use a linter to check metadata completeness and file integrity.
+### 1. Pattern
+**Model Artifact Metadata Validation Pattern**:
+```python
+def validate_model_artifact(repo_id: str) -> dict:
+    """
+    Validates the metadata of a model artifact.
+    """
+    url = f"https://huggingface.co/api/models/{repo_id}"
+    response = requests.get(url, timeout=5)
+    data = response.json()
+    
+    validation_result = {
+        'license_valid': validate_license(data),
+        'quantization_compatible': check_quantization_compatibility(repo_id, ENGINE_CAPS),
+        'architecture_supported': check_architecture(data),
+    }
+    
+    return validation_result
+```
+
+### 2. Rule
+**MUST** validate the license and quantization compatibility of a model artifact before loading it into an inference engine.
+
+### 3. Architecture Principle
+**Separation of Model and Engine**: The model artifact is a static data file, and the inference engine is a dynamic runtime. The two must be decoupled to allow for flexible deployment and updates.
+
+### 4. Failure Mode
+**License Violation**: Using a model with a custom license (`lfm1.0`) in a commercial product without legal review.
+**Quantization Mismatch**: Loading a GGUF model into an engine that does not support GGUF, resulting in a crash or garbage output.
+
+### 5. Reusable Skill
+**Model Artifact Validation Checklist**:
+1.  Fetch the model metadata from the Hugging Face API.
+2.  Parse the `license` and `license_name` fields.
+3.  If the license is not standard, flag for manual review.
+4.  Parse the `base_model` and `base_model_relation` fields.
+5.  If the model is quantized, check if the engine supports the quantization type.
+6.  If all checks pass, proceed with loading the model.
+
+### 6. Decision
+**Use GGUF Format**: The decision to use GGUF format for the model artifact was made to enable efficient loading and inference on edge devices. The trade-off is that the model is not compatible with all inference engines.
+
+### 7. Anti-pattern
+**Assuming Permissive License**: Assuming that all models on Hugging Face are permissive and can be used in any context.
+**Ignoring Quantization Metadata**: Loading a quantized model into an engine that does not support the quantization type.
+
+### 8. Verification Method
+**Unit Tests**:
+*   Test that `validate_license` returns `False` for `license: other`.
+*   Test that `check_quantization_compatibility` returns `False` if the engine does not support GGUF.
+*   Test that `validate_model_artifact` returns a valid result for a known good model.
+
+---
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1.  **Verify Metadata**: Ensure `config.json` includes `base_model`, `base_model_relation`, and `language` fields.
-2.  **Validate File Integrity**: Check the GGUF file's checksum against the expected value.
-3.  **Check Memory Requirements**: Ensure the system has sufficient memory to load the model.
-4.  **Test Inference**: Run a simple inference test to verify that the model produces coherent output.
-5.  **Document Lineage**: Clearly document the base model and quantization method in the README.
+**Step-by-Step Verification Checklist for AI Coding Agent:**
+
+1.  **Identify Model Artifact**: Determine if the target is a model artifact (e.g., `.gguf`, `.safetensors`) or a source code repository.
+2.  **Fetch Metadata**: Use the Hugging Face API to fetch the model's metadata (`cardData`).
+3.  **Validate License**:
+    *   Parse `license` and `license_name`.
+    *   If `license` is `other` or `license_name` is not in the list of safe licenses, flag for manual legal review.
+4.  **Validate Quantization**:
+    *   Parse `base_model` and `base_model_relation`.
+    *   If `base_model_relation` is `quantized`, check if the inference engine supports the quantization type (e.g., GGUF).
+5.  **Validate Architecture**:
+    *   Parse the `architecture` field (if present).
+    *   Check if the inference engine supports the architecture.
+6.  **Load Model**:
+    *   If all validations pass, load the model into the inference engine.
+    *   If any validation fails, halt deployment and log the error.
+7.  **Monitor Performance**:
+    *   Monitor the model's latency and accuracy after deployment.
+    *   If performance degrades, investigate the cause.
+
+**Note**: This checklist is specific to model artifact repositories. For source code repositories, a different checklist (e.g., code review, security scan, test coverage) should be used.

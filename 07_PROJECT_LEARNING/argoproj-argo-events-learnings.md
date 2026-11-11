@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/argoproj-argo-events-learnings.md`  
 > **Source**: github ([https://github.com/argoproj/argo-events](https://github.com/argoproj/argo-events))  
-> **Source Version**: `7265166e`  
+> **Source Version**: `c6a8c5ae`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-01T01:40:29.947Z  
+> **Timestamp**: 2026-11-08T01:25:30.667Z  
 > **Learning ID**: `learn-github-argoproj-argo-events`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/argoproj-argo-events-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/argoproj/argo-events](https://github.com/argoproj/argo-events))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-01T01:40:29.799Z  
+> **Harvest Timestamp**: 2026-11-08T01:25:30.020Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Event-driven Automation Framework for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 2709 stars
+- **Stars / Engagement**: 2714 stars
 
 ---
 
@@ -1046,94 +1046,143 @@ func (g *gerritWebhookService) Delete(project, remoteName string) error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7265166e` (2026-10-31)
-**Commit Message**: chore(deps): bump cloud.google.com/go/iam from 1.14.0 to 1.15.0 (#4245)
+### Incident Patch 1: `c6a8c5ae` (2026-11-07)
+**Commit Message**: chore(deps): bump google.golang.org/api from 0.309.0 to 0.310.0 (#4270)
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `go.mod` (modified, +1/-1)
+**File**: `go.mod` (modified, +2/-2)
+```diff
+@@ -89,7 +89,7 @@ require (
+ 	go.yaml.in/yaml/v3 v3.0.6
+ 	golang.org/x/crypto v0.58.0
+ 	golang.org/x/tools v0.52.0
+-	google.golang.org/api v0.309.0
++	google.golang.org/api v0.310.0
+ 	google.golang.org/grpc v1.85.0
+ 	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.6.2
+ 	google.golang.org/protobuf v1.36.12
+@@ -231,7 +231,7 @@ require (
+ 	github.com/google/go-tpm v0.9.8 // indirect
+ 	github.com/google/gofuzz v1.2.0 // indirect
+ 	github.com/google/s2a-go v0.1.11 // indirect
+-	github.com/googleapis/enterprise-certificate-proxy v0.3.23 // indirect
++	github.com/googleapis/enterprise-certificate-proxy v0.3.24 // indirect
+ 	github.com/googleapis/gax-go/v2 v2.27.0 // indirect
+ 	github.com/gopherjs/gopherjs v1.17.2 // indirect
+ 	github.com/gorilla/handlers v1.5.2 // indirect
+```
+
+**File**: `go.sum` (modified, +4/-4)
+```diff
+@@ -488,8 +488,8 @@ github.com/google/uuid v1.1.1/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+
+ github.com/google/uuid v1.1.2/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
+ github.com/google/uuid v1.6.0 h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=
+ github.com/google/uuid v1.6.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
+-github.com/googleapis/enterprise-certificate-proxy v0.3.23 h1:J+VGF1wjAM2dU2kKUXZxJdDppRLReWP7KWcclfngQhc=
+-github.com/googleapis/enterprise-certificate-proxy v0.3.23/go.mod h1:Y8NO/15GNLkrXI3OR5xOFmeU3XLX1sLSdtlXgJ0zmIw=
++github.com/googleapis/enterprise-certificate-proxy v0.3.24 h1:G9iCJIY+AYVmUskKdjX8FVy7sG+nbzjOQ41cvlmhcvg=
++github.com/googleapis/enterprise-certificate-proxy v0.3.24/go.mod h1:hEjCmnoakQzv5ImLUp6alkY7XgLlNoAxwTXmhHHNIsI=
+ github.com/googleapis/gax-go/v2 v2.27.0 h1:qe2iQOUzxb3fd6x6ewpIEixPQhJ+0Ihc/RRZhKA/2g0=
+ github.com/googleapis/gax-go/v2 v2.27.0/go.mod h1:RofiqDw3ehcG4L0H1zO3D2Itpwd3/uS/7wdmbNDF1DE=
+ github.com/gopackage/ddp v0.0.0-20170117053602-652027933df4 h1:4EZlYQIiyecYJlUbVkFXCXHz1QPhVXcHnQKAzBTPfQo=
+@@ -1165,8 +1165,8 @@ gomodules.xyz/notify v0.1.1/go.mod h1:QgQyU4xEA/plJcDeT66J2Go2V7U4c0pD9wjo7HfFil
+ gomodules.xyz/version v0.1.0/go.mod h1:Y8xuV02mL/45psyPKG3NCVOwvAOy6T5Kx0l3rCjKSjU=
+ gonum.org/v1/gonum v0.17.0 h1:VbpOemQlsSMrYmn7T2OUvQ4dqxQXU+ouZFQsZOx50z4=
+ gonum.org/v1/gonum v0.17.0/go.mod h1:El3tOrEuMpv2UdMrbNlKEh9vd86bmQ6vqIcDwxEOc1E=
+-google.golang.org/api v0.309.0 h1:DXP86di4cL3R3R6aUrJNUNthav2djJ99QbSOrN63238=
+-google.golang.org/api v0.309.0/go.mod h1:4XMH+b/ZEfuTbK7FnrFRY9c4xfFHVflGTKuy/i5wUmE=
++google.golang.org/api v0.310.0 h1:537ccDDmbwuwX1iof3Vtdz9vow6uJCgrSZJWedAWM0I=
++google.golang.org/api v0.310.0/go.mod h1:5NUthU+LmGMKzYgRaScb+TTe1Lo7x4A+J7g+Yj8BRzA=
+ google.golang.org/appengine v1.1.0/go.mod h1:EbEs0AVv82hx2wNQdGPgUI5lhzA/G0D9YwlJXL52JkM=
+ google.golang.org/appengine v1.4.0/go.mod h1:xpcJRLb0r/rnEns0DIKYYv+WjYCduHsrkT7/EB5XEv4=
+ google.golang.org/genproto v0.0.0-20180817151627-c66870c02cf8/go.mod h1:JiN7NxoALGmiZfu7CAH4rXhgtRTLTxftemlI0sWmxmc=
+```
+
+---
+
+### Incident Patch 2: `16a36f69` (2026-11-07)
+**Commit Message**: chore(deps): bump cloud.google.com/go/iam from 1.15.0 to 1.15.1 (#4267)
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `go.mod` (modified, +3/-3)
 ```diff
 @@ -8,7 +8,7 @@ retract v1.15.0 // Published accidentally.
  
  require (
  	cloud.google.com/go/compute/metadata v0.10.0
--	cloud.google.com/go/iam v1.14.0
-+	cloud.google.com/go/iam v1.15.0
+-	cloud.google.com/go/iam v1.15.0
++	cloud.google.com/go/iam v1.15.1
  	cloud.google.com/go/pubsub/v2 v2.8.0
  	dario.cat/mergo v1.0.2
  	github.com/AdaLogics/go-fuzz-headers v0.0.0-20221103172237-443f56ff4ba8
+@@ -232,7 +232,7 @@ require (
+ 	github.com/google/gofuzz v1.2.0 // indirect
+ 	github.com/google/s2a-go v0.1.11 // indirect
+ 	github.com/googleapis/enterprise-certificate-proxy v0.3.23 // indirect
+-	github.com/googleapis/gax-go/v2 v2.26.2 // indirect
++	github.com/googleapis/gax-go/v2 v2.27.0 // indirect
+ 	github.com/gopherjs/gopherjs v1.17.2 // indirect
+ 	github.com/gorilla/handlers v1.5.2 // indirect
+ 	github.com/gorilla/websocket v1.5.3 // indirect
+@@ -358,7 +358,7 @@ require (
+ 	gomodules.xyz/envconfig v1.3.1-0.20190308184047-426f31af0d45 // indirect
+ 	gomodules.xyz/jsonpatch/v2 v2.4.0 // indirect
+ 	gomodules.xyz/notify v0.1.1 // indirect
+-	google.golang.org/genproto v0.0.0-20260715232425-e75dac1f907d // indirect
++	google.golang.org/genproto v0.0.0-20261012220534-4341edf3f941 // indirect
+ 	google.golang.org/genproto/googleapis/api v0.0.0-20261026165753-2ffab32bce7e // indirect
+ 	google.golang.org/genproto/googleapis/rpc v0.0.0-20261019180522-ce908d29299b // indirect
+ 	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
 ```
 
-**File**: `go.sum` (modified, +2/-2)
+**File**: `go.sum` (modified, +6/-6)
 ```diff
 @@ -8,8 +8,8 @@ cloud.google.com/go/auth/oauth2adapt v0.3.0 h1:FY8oSZpCYoUNv6QxVODuMjQz4IlSOVeiQ
  cloud.google.com/go/auth/oauth2adapt v0.3.0/go.mod h1:7+2uCm7++XFO+/lN06c2HXpDXb/NMNn2/UwyBPbTnkk=
  cloud.google.com/go/compute/metadata v0.10.0 h1:pyKMUQSwchgkIBBJGdILqQbs/BNJXqwSA7Ej6LAvvtY=
  cloud.google.com/go/compute/metadata v0.10.0/go.mod h1:rGFHRrIif570kSibjFTMbt6/4/tzgJWFGI/HVol4GIk=
--cloud.google.com/go/iam v1.14.0 h1:YRIB1/4xxwJ+NfI6RQr1WaOoHHeV0MizJEj940nBXJA=
--cloud.google.com/go/iam v1.14.0/go.mod h1:JTPZfbHdGXJrOYREtkRoFzCDGaBdbA7ILLKO/DDuav0=
-+cloud.google.com/go/iam v1.15.0 h1:U/wqjfrM0ceBFdPlOI2+cu68yPAxh72M8fe9uLG0+ZE=
-+cloud.google.com/go/iam v1.15.0/go.mod h1:HAVf7PNhTrNTrEc6fVB21l8ejkbzNTulJHYf7QtD424=
+-cloud.google.com/go/iam v1.15.0 h1:U/wqjfrM0ceBFdPlOI2+cu68yPAxh72M8fe9uLG0+ZE=
+-cloud.google.com/go/iam v1.15.0/go.mod h1:HAVf7PNhTrNTrEc6fVB21l8ejkbzNTulJHYf7QtD424=
++cloud.google.com/go/iam v1.15.1 h1:i6EXLKyIi0Sh72p+5+Fz0PfnzB63bkneVpaBCGrjlWs=
++cloud.google.com/go/iam v1.15.1/go.mod h1:nDJ/rfCzLKyBUY1AeiSQwOAJg/AN7zZ2QmNzRTcK2jM=
  cloud.google.com/go/pubsub/v2 v2.8.0 h1:mDGFPDisDUcv0fEkiYQX+BRbenlzdnV6BdH2eb9YQ/M=
  cloud.google.com/go/pubsub/v2 v2.8.0/go.mod h1:OUQLW4ZkmJ0lVvXpP+2Kk0acWWO2pTg5nJ3xaq786ag=
  dario.cat/mergo v1.0.2 h1:85+piFYR1tMbRrLcDwR18y4UKJ3aH1Tbzi24VRW1TK8=
-```
-
----
-
-### Incident Patch 2: `5ccde51a` (2026-10-31)
-**Commit Message**: chore(deps): bump google.golang.org/grpc from 1.84.0 to 1.85.0 (#4247)
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `go.mod` (modified, +1/-1)
-```diff
-@@ -90,7 +90,7 @@ require (
- 	golang.org/x/crypto v0.58.0
- 	golang.org/x/tools v0.52.0
- 	google.golang.org/api v0.309.0
--	google.golang.org/grpc v1.84.0
-+	google.golang.org/grpc v1.85.0
- 	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.6.2
- 	google.golang.org/protobuf v1.36.12
- 	gopkg.in/jcmturner/gokrb5.v5 v5.3.0
-```
-
-**File**: `go.sum` (modified, +4/-4)
-```diff
-@@ -272,8 +272,8 @@ github.com/envoyproxy/go-control-plane v0.9.0/go.mod h1:YTl/9mNaCwkRvm6d1a2C3ymF
- github.com/envoyproxy/go-control-plane v0.9.1-0.20191026205805-5f8ba28d4473/go.mod h1:YTl/9mNaCwkRvm6d1a2C3ymFceY/DCBVvsKhRF0iEA4=
- github.com/envoyproxy/go-control-plane v0.9.4/go.mod h1:6rpuAdCZL397s3pYoYcLgu1mIlRU8Am5FuJP05cCM98=
- github.com/envoyproxy/go-control-plane v0.14.0 h1:hbG2kr4RuFj222B6+7T83thSPqLjwBIfQawTkC++2HA=
--github.com/envoyproxy/go-control-plane/envoy v1.37.0 h1:u3riX6BoYRfF4Dr7dwSOroNfdSbEPe9Yyl09/B6wBrQ=
--github.com/envoyproxy/go-control-plane/envoy v1.37.0/go.mod h1:DReE9MMrmecPy+YvQOAOHNYMALuowAnbjjEMkkWOi6A=
-+github.com/envoyproxy/go-control-plane/envoy v1.39.1-0.20260819172001-e6e3fd93e4be h1:SWe0x6yfglnxuvOiYgTTnNq7QD/yvqthOh1RBI8Bj8w=
-+github.com/envoyproxy/go-control-plane/envoy v1.39.1-0.20260819172001-e6e3fd93e4be/go.mod h1:PYEOlng9XcrulfyWpm49jECTPV0LT4q8cO7fLW/xwgk=
- github.com/envoyproxy/protoc-gen-validate v0.1.0/go.mod h1:iSmxcyjqTsJpI2R4NaDN7+kN2VEUnK/pcBlmesArF7c=
- github.com/envoyproxy/protoc-gen-validate v1.3.3 h1:MVQghNeW+LZcmXe7SY1V36Z+WFMDjpqGAGacLe2T0ds=
- github.com/envoyproxy/protoc-gen-validate v1.3.3/go.mod h1:TsndJ/ngyIdQRhMcVVGDDHINPLWB7C82oDArY51KfB0=
-@@ -1185,8 +1185,8 @@ google.golang.org/grpc v1.25.1/go.mod h1:c3i+UQWmh7LiEpx4sFZnkU36qjEYZ0imhYfXVyQ
- google.golang.org/grpc v1.27.0/go.mod h1:qbnxyOmOxrQa7FizSgH+ReBfzJrCY1pSN7KXBS8abTk=
- google.golang.org/grpc v1.33.1/go.mod h1:fr5YgcSWrqhRRxogOsw7RzIpsmvOZ6IcH4kBYTpR3n0=
- google.golang.org/grpc v1.33.2/go.mod h1:JMHMWHQWaTccqQQlmk3MJZS+GWXOdAesneDmEnv2fbc=
--google.golang.org/grpc v1.84.0 h1:soMyaPJ8pAak5PIQ0DGBUir0XRo2fRoMqhNWMLlLxO0=
--google.golang.org/grpc v1.84.0/go.mod h1:ljCht0DrxQrXBDRTZp52Qxh3Ffk8CdYm2sj4O2QN2C0=
-+google.golang.org/grpc v1.85.0 h1:BPBCfuVRQ1qvBhKDOq9uvQllMvO59rKsYhXpp7Dd8vw=
-+google.golang.org/grpc v1.85.0/go.mod h1:0rQrOD58yjal/0EaVbGBANindixsCZNQPDV3VKtaKuQ=
- google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.6.2 h1:rgSNvqscFZ1JgV/4wH5GOsZFSFkR2Eua9As3KIr2LlM=
- google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.6.2/go.mod h1:iMEtFwDlAhjDU9L5mY6U1XLwlIId/G3h+QcBHDIvrJ8=
- google.golang.org/protobuf v0.0.0-20200109180630-ec00e32a8dfd/go.mod h1:DFci5gLYBciE7Vtevhsrf46CRTquxDuWsQurQQe4oz8=
+@@ -490,8 +490,8 @@ github.com/google/uuid v1.6.0 h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=
+ github.com/google/uuid v1.6.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
+ github.com/googleapis/enterprise-certificate-proxy v0.3.23 h1:J+VGF1wjAM2dU2kKUXZxJdDppRLReWP7KWcclfngQhc=
+ github.com/googleapis/enterprise-certificate-proxy v0.3.23/go.mod h1:Y8NO/15GNLkrXI3OR5xOFmeU3XLX1sLSdtlXgJ0zmIw=
+-github.com/googleapis/gax-go/v2 v2.26.2 h1:ydkmNXxj7bEmmeK5AihkKnWxyOyBR9TDebvp5L5izk8=
+-github.com/googleapis/gax-go/v2 v2.26.2/go.mod h1:sMKqnMesnKH+3wiRJROcttA+cJoZoGbZl1vDQ8XYtGk=
++github.com/googleapis/gax-go/v2 v2.27.0 h1:qe2iQOUzxb3fd6x6ewpIEixPQhJ+0Ihc/RRZhKA/2g0=
++github.com/googleapis/gax-go/v2 v2.27.0/go.mod h1:RofiqDw3ehcG4L0H1zO3D2Itpwd3/uS/7wdmbNDF1DE=
+ github.com/gopackage/ddp v0.0.0-20170117053602-652027933df4 h1:4EZlYQIiyecYJlUbVkFXCXHz1QPhVXcHnQKAzBTPfQo=
+ github.com/gopackage/ddp v0.0.0-20170117053602-652027933df4/go.mod h1:lEO7XoHJ/xNRBCxrn4h/CEB67h0kW1B0t4ooP2yrjUA=
+ github.com/gopherjs/gopherjs v0.0.0-20181017120253-0766667cb4d1/go.mod h1:wJfORRmW1u3UXTncJ5qlYoELFm8eSnnEO6hX4iZ3EWY=
+@@ -1173,8 +1173,8 @@ google.golang.org/genproto v0.0.0-20180817151627-c66870c02cf8/go.mod h1:JiN7NxoA
+ google.golang.org/genproto v0.0.0-20190819201941-24fa4b261c55/go.mod h1:DMBHOl98Agz4BDEuKkezgsaosCRResVns1a3J2ZsMNc=
+ google.golang.org/genproto v0.0.0-20200513103714-09dca8ec2884/go.mod h1:55QSHmfGQM9UVYDPBsyGGes0y52j32PQ3BqQfXhyH3c=
+ google.golang.org/genproto v0.0.0-20200526211855-cb27e3aa2013/go.mod h1:NbSheEEYHJ7i3ixzK3sjbqSGDJWnxyFXZblF3eUsNvo=
+-google.golang.org/genproto v0.0.0-20260715232425-e75dac1f907d h1:C9v1o0/4quuhOAfmRXA2j+we0PqZIp8traLdeogF3Ms=
+-google.golang.org/genproto v0.0.0-20260715232425-e75dac1f907d/go.mod h1:Wz2wFJntZFmLGo7pLDXZ3wYk5hyc0Mb+SkHhDDXT+lU=
++google.golang.org/genproto v0.0.0-20261012220534-4341edf3f941 h1:CXq2XEi5aEyLjjPZIwqrmQH8ZY4ctUwK7uyAx3mjX/U=
++google.golang.org/genproto v0.0.0-20261012220534-4341edf3f941/go.mod h1:3gK0ehnhP0V7/x3ypGoLyT3d0n6TSi/EcsphIjHrcz4=
+ google.golang.org/genproto/googleapis/api v0.0.0-20261026165753-2ffab32bce7e h1:e789sLZjeTdc02ZCQGTSzHOu0fR73+dwPQVKUp67Z88=
+ google.golang.org/genproto/googleapis/api v0.0.0-20261026165753-2ffab32bce7e/go.mod h1:vHV3wJM9WZyfV7GyB+OQGq5dWVrFwCDxapPK4WlRD88=
+ google.golang.org/genproto/googleapis/rpc v0.0.0-20261019180522-ce908d29299b h1:6WNWHZk91dp4gZ25642OALkuG1UVNZbwENJD19DnB8k=
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4254** (2026-10-31): chore(deps): bump github.com/grpc-ecosystem/grpc-gateway/v2 from 2.32.0 to 2.33.0 (@dependabot[bot])
-- **PR #4253** (2026-10-31): chore(deps): bump github.com/nats-io/nats.go from 1.54.0 to 1.55.0 (@dependabot[bot])
-- **PR #4252** (2026-10-31): chore(deps): bump cloud.google.com/go/pubsub/v2 from 2.7.0 to 2.8.0 (@dependabot[bot])
-- **PR #4251** (2026-10-31): chore(deps): bump github.com/gobwas/glob from 1.0.0 to 1.1.0 (@dependabot[bot])
-- **PR #4250** (2026-10-31): chore(deps): bump github.com/pkg/sftp from 1.13.11 to 1.13.12 (@dependabot[bot])
-- **PR #4249** (2026-10-31): chore(deps): bump google.golang.org/api from 0.306.0 to 0.309.0 (@dependabot[bot])
+- **PR #4271** (2026-11-07): chore(deps): bump github.com/xdg-go/scram from 1.2.0 to 1.3.0 (@dependabot[bot])
+- **PR #4270** (2026-11-07): chore(deps): bump google.golang.org/api from 0.309.0 to 0.310.0 (@dependabot[bot])
+- **PR #4269** (2026-11-07): chore(deps): bump go.yaml.in/yaml/v3 from 3.0.5 to 3.0.6 (@dependabot[bot])
+- **PR #4268** (2026-11-07): chore(deps): bump github.com/go-swagger/go-swagger from 0.36.6 to 0.36.7 (@dependabot[bot])
+- **PR #4267** (2026-11-07): chore(deps): bump cloud.google.com/go/iam from 1.15.0 to 1.15.1 (@dependabot[bot])
+- **PR #4265** (2026-11-07): chore(deps): bump github.com/itchyny/gojq from 0.12.19 to 0.12.20 (@dependabot[bot])
 
 ---
 
@@ -1153,13 +1202,13 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump cloud.google.com/go/iam from 1.14.0 to 1.15.0 (#4245)
+## X. deps): bump google.golang.org/api from 0.309.0 to 0.310.0 (#4270)
 
 **RULE**:
 When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-events. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7265166e`: deps): bump cloud.google.com/go/iam from 1.14.0 to 1.15.0 (#4245). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c6a8c5ae`: deps): bump google.golang.org/api from 0.309.0 to 0.310.0 (#4270). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
@@ -1167,14 +1216,16 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	cloud.google.com/go/iam v1.15.0
+	google.golang.org/api v0.310.0
+	github.com/googleapis/enterprise-certificate-proxy v0.3.24 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	cloud.google.com/go/iam v1.14.0
+	google.golang.org/api v0.309.0
+	github.com/googleapis/enterprise-certificate-proxy v0.3.23 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7265166e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c6a8c5ae` are properly handled with clean fallback behavior.

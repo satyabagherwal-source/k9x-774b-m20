@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/fb55-htmlparser2-learnings.md`  
 > **Source**: github ([https://github.com/fb55/htmlparser2](https://github.com/fb55/htmlparser2))  
-> **Source Version**: `dcafeac3`  
+> **Source Version**: `56968892`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T22:06:35.717Z  
+> **Timestamp**: 2026-11-07T03:56:14.442Z  
 > **Learning ID**: `learn-github-fb55-htmlparser2`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/fb55-htmlparser2-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/fb55/htmlparser2](https://github.com/fb55/htmlparser2))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T22:06:35.446Z  
+> **Harvest Timestamp**: 2026-11-07T03:56:13.017Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -135,7 +135,7 @@ const formTags = new Set([
 const pTag = new Set(["p"]);
 const headingTags = new Set(["h1", "h2", "h3", "h4", "h5", "h6", "p"]);
 const tableSectionTags = new Set(["thead", "tbody", "tfoot", "tr", "td", "th"]);
-const ddtTags = new Set(["dd", "dt"]);
+const ddtTags = new Set(["dd", "dt", "p"]);
 const rtpTags = new Set(["rt", "rp"]);
 
 const openImpliesClose = new Map<string, Set<string>>([
@@ -144,7 +144,7 @@ const openImpliesClose = new Map<string, Set<string>>([
     ["td", new Set(["thead", "th", "td"])],
     ["body", new Set(["head", "link", "script"])],
     ["a", new Set(["a"])],
-    ["li", new Set(["li"])],
+    ["li", new Set(["li", "p"])],
     ["p", pTag],
     ["h1", headingTags],
     ["h2", headingTags],
@@ -180,16 +180,19 @@ const openImpliesClose = new Map<string, Set<string>>([
     ["header", pTag],
     ["hgroup", pTag],
     ["hr", pTag],
+    ["listing", pTag],
     ["main", pTag],
     ["menu", pTag],
     ["nav", pTag],
     ["ol", pTag],
+    ["plaintext", pTag],
     ["pre", pTag],
     ["search", pTag],
     ["section", pTag],
     ["summary", pTag],
     ["table", pTag],
     ["ul", pTag],
+    ["xmp", pTag],
     ["rt", rtpTags],
     ["rp", rtpTags],
     ["thead", tableSectionTags],
@@ -280,6 +283,9 @@ const svgTagNameAdjustments = new Map<string, string>([
     ["radialgradient", "radialGradient"],
     ["textpath", "textPath"],
 ]);
+
+// Keep ordinary shallow documents out of the per-name bookkeeping.
+const STACK_SCAN_LIMIT = 64;
 
 const enum ForeignContext {
     None,
@@ -397,6 +403,12 @@ export class Parser implements Callbacks {
     private attribvalue = "";
     private attribs: null | { [key: string]: string } = null;
     private readonly stack: string[] = [];
+    /**
+     * How many elements of each name `stack` holds, kept once the stack is
+     * deeper than `STACK_SCAN_LIMIT`. Asking whether a name is open is then
+     * one lookup instead of a scan of every open element.
+     */
+    private openCounts: Map<string, number> | null = null;
     private readonly foreignContext: ForeignContext[];
     private readonly cbs: Partial<Handler>;
     private readonly lowerCaseTagNames: boolean;
@@ -450,21 +462,7 @@ export class Parser implements Callbacks {
             ? this.getSlice(start, endIndex).toLowerCase()
             : this.getSlice(start, endIndex);
 
-        if (!(this.lowerCaseTagNames && this.htmlMode)) {
-            return name;
-        }
-
-        if (
-            this.foreignContext[this.foreignContext.length - 1] ===
-            ForeignContext.Svg
-        ) {
-            return svgTagNameAdjustments.get(name) ?? name;
-        }
-
-        /*
-         * Closing tags for SVG elements inside HTML integration points
-         * (e.g. </foreignObject> while inside its own content) need case
-         * adjustment so the name matches wha
+        if (!(this.lowerCaseT
 ```
 
 ### Core Architecture Module: `src/Tokenizer.ts`
@@ -601,6 +599,7 @@ export interface Callbacks {
     ontext(start: number, endIndex: number): void;
     ontextentity(codepoint: number, endIndex: number): void;
     isInForeignContext?(): boolean;
+    isCurrentNodeForeign?(): boolean;
 }
 
 /**
@@ -766,8 +765,7 @@ export default class Tokenizer {
 
                 if (
                     this.currentSequence === Sequences.TitleEnd &&
-                    lower === Sequences.TextareaEnd[3]
-         
+                    lower 
 ```
 
 ### Core Architecture Module: `src/WebWritableStream.ts`
@@ -797,16 +795,21 @@ import { type Handler, Parser, type ParserOptions } from "./Parser.js";
 export class WebWritableStream extends WritableStream<string | Uint8Array> {
     constructor(cbs: Partial<Handler>, options?: ParserOptions) {
         const parser = new Parser(cbs, options);
-        const decoder = new TextDecoder();
+        let decoder = new TextDecoder();
         const streamOption: TextDecodeOptions = { stream: true };
 
         super({
             write(chunk) {
-                parser.write(
-                    typeof chunk === "string"
-                        ? chunk
-                        : decoder.decode(chunk, streamOption),
-                );
+                if (typeof chunk === "string") {
+                    const remaining = chunk ? decoder.decode() : "";
+                    if (chunk && !decoder.ignoreBOM) {
+                        // A BOM following text is part of the document content.
+                        decoder = new TextDecoder("utf-8", { ignoreBOM: true });
+                    }
+                    parser.write(remaining + chunk);
+                } else {
+                    parser.write(decoder.decode(chunk, streamOption));
+                }
             },
             close() {
                 // Flush any remaining bytes in the decoder
@@ -855,9 +858,11 @@ export class WritableStream extends Writable {
         encoding: string,
         callback: () => void,
     ): void {
-        this._parser.write(
-            isBuffer(chunk, encoding) ? this._decoder.write(chunk) : chunk,
-        );
+        if (isBuffer(chunk, encoding)) {
+            this._parser.write(this._decoder.write(chunk));
+        } else {
+            this._parser.write((chunk ? this._decoder.end() : "") + chunk);
+        }
         callback();
     }
 
@@ -990,17 +995,154 @@ export * as DomUtils from "domutils";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dcafeac3` (2026-11-03)
-**Commit Message**: build(deps-dev): Bump eslint from 10.13.0 to 10.14.0 (#2561)
+### Incident Patch 1: `5742cc49` (2026-11-06)
+**Commit Message**: fix(parser): close an open <p> for li, dd, dt, listing, plaintext and xmp (#2547)
 
-Bumps [eslint](https://github.com/eslint/eslint) from 10.13.0 to 10.14.0.
-- [Release notes](https://github.com/eslint/eslint/releases)
-- [Commits](https://github.com/eslint/eslint/compare/v10.13.0...v10.14.0)
+* fix(parser): close an open <p> for li, dd, dt, listing, plaintext and xmp
+
+Per the WHATWG tree construction rules for "in body", the start tags
+li, dd, dt, listing, plaintext and xmp close a <p> element in button
+scope, the same as the block elements already in openImpliesClose.
+htmlparser2 nested these elements inside the open <p> instead.
+
+This also fixes list items that contain a paragraph:
+`<ul><li><p>a<li>b</ul>` previously nested the second <li> inside the
+first <p>; it now closes the <p> and the previous <li>, as browsers do.
+
+* test(parser): keep one test per path for the new <p>-closing tags
+
+All six rows run the same openImpliesClose loop. The list-item test
+already covers li, dd and dt, so one row stays for listing, plaintext
+and xmp.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+---------
+
+Co-authored-by: ybai08 <[REDACTED_EMAIL]>
+Co-authored-by: Felix Boehm <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `src/Parser.spec.ts` (modified, +46/-0)
+```diff
+@@ -20,6 +20,20 @@ function countArrayReads(parser: Parser, key: string, run: () => void): number {
+     return reads;
+ }
+ 
++// Record open and close tag events in the order they are emitted.
++function tagEvents(html: string): string[] {
++    const events: string[] = [];
++    new Parser({
++        onopentagname(name) {
++            events.push(`<${name}>`);
++        },
++        onclosetag(name) {
++            events.push(`</${name}>`);
++        },
++    }).end(html);
++    return events;
++}
++
+ describe("API", () => {
+     it("should preserve prototype-named attributes", () => {
+         const onopentag = vi.fn<Handler["onopentag"]>();
+@@ -253,6 +267,38 @@ describe("API", () => {
+         expect(pClose).toBeLessThan(hgroupOpen);
+     });
+ 
++    it("should close an open <p> when <listing> starts", () => {
++        expect(tagEvents("<p>text<listing>inner")).toEqual([
++            "<p>",
++            "</p>",
++            "<listing>",
++            "</listing>",
++        ]);
++    });
++
++    it("should close an open <p> together with the previous list item", () => {
++        expect(
++            tagEvents("<ul><li><p>a<li>b</ul><dl><dt><p>c<dd>d</dl>"),
++        ).toEqual([
++            "<ul>",
++            "<li>",
++            "<p>",
++            "</p>",
++            "</li>",
++            "<li>",
++            "</li>",
++            "</ul>",
++            "<dl>",
++            "<dt>",
++            "<p>",
++            "</p>",
++            "</dt>",
++            "<dd>",
++            "</dd>",
++            "</dl>",
++        ]);
++    });
++
+     it("should implicitly close <tbody> when <thead> opens", () => {
+         const onopentagname = vi.fn();
+         const onclosetag = vi.fn();
+```
+
+**File**: `src/Parser.ts` (modified, +5/-2)
+```diff
+@@ -14,7 +14,7 @@ const formTags = new Set([
+ const pTag = new Set(["p"]);
+ const headingTags = new Set(["h1", "h2", "h3", "h4", "h5", "h6", "p"]);
+ const tableSectionTags = new Set(["thead", "tbody", "tfoot", "tr", "td", "th"]);
+-const ddtTags = new Set(["dd", "dt"]);
++const ddtTags = new Set(["dd", "dt", "p"]);
+ const rtpTags = new Set(["rt", "rp"]);
+ 
+ const openImpliesClose = new Map<string, Set<string>>([
+@@ -23,7 +23,7 @@ const openImpliesClose = new Map<string, Set<string>>([
+     ["td", new Set(["thead", "th", "td"])],
+     ["body", new Set(["head", "link", "script"])],
+     ["a", new Set(["a"])],
+-    ["li", new Set(["li"])],
++    ["li", new Set(["li", "p"])],
+     ["p", pTag],
+     ["h1", headingTags],
+     ["h2", headingTags],
+@@ -59,16 +59,19 @@ const openImpliesClose = new Map<string, Set<string>>([
+     ["header", pTag],
+     ["hgroup", pTag],
+     ["hr", pTag],
++    ["listing", pTag],
+     ["main", pTag],
+     ["menu", pTag],
+     ["nav", pTag],
+     ["ol", pTag],
++    ["plaintext", pTag],
+     ["pre", pTag],
+     ["search", pTag],
+     ["section", pTag],
+     ["summary", pTag],
+     ["table", pTag],
+     ["ul", pTag],
++    ["xmp", pTag],
+     ["rt", rtpTags],
+     ["rp", rtpTags],
+     ["thead", tableSectionTags],
+```
+
+---
+
+### Incident Patch 2: `56968892` (2026-11-06)
+**Commit Message**: build(deps-dev): Bump vitest from 5.0.5 to 5.1.0 (#2565)
+
+Bumps [vitest](https://github.com/vitest-dev/vitest/tree/HEAD/packages/vitest) from 5.0.5 to 5.1.0.
+- [Release notes](https://github.com/vitest-dev/vitest/releases)
+- [Changelog](https://github.com/vitest-dev/vitest/blob/main/docs/releases.md)
+- [Commits](https://github.com/vitest-dev/vitest/commits/v5.1.0/packages/vitest)
 
 ---
 updated-dependencies:
-- dependency-name: eslint
-  dependency-version: 10.14.0
+- dependency-name: vitest
+  dependency-version: 5.1.0
   dependency-type: direct:development
   update-type: version-update:semver-minor
 ...
@@ -1008,147 +1150,161 @@ updated-dependencies:
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `package-lock.json` (modified, +10/-10)
+**File**: `package-lock.json` (modified, +96/-96)
 ```diff
-@@ -25,7 +25,7 @@
-                 "@biomejs/biome": "^2.5.15",
-                 "@feedic/eslint-config": "^0.5.0",
-                 "@types/node": "^26.6.6",
--                "eslint": "^10.13.0",
-+                "eslint": "^10.14.0",
+@@ -29,7 +29,7 @@
                  "eslint-config-biome": "^2.1.3",
                  "typescript": "^6.0.3",
                  "typescript-eslint": "^8.72.1",
-@@ -1635,9 +1635,9 @@
-             }
-         },
-         "node_modules/eslint": {
--            "version": "10.13.0",
--            "resolved": "https://registry.npmjs.org/eslint/-/eslint-10.13.0.tgz",
--            "integrity": "sha512-UohDjD4zSzEwhf58M3O7vc/ycc8O1I7dNlhtD0WxE8Px8EHNJKtUwzBqrzeGhisRuv2ag4sAYswszCJRgKXYUg==",
-+            "version": "10.14.0",
-+            "resolved": "https://registry.npmjs.org/eslint/-/eslint-10.14.0.tgz",
-+            "integrity": "sha512-T0pNsxkb9IKmtQjhpK3d7nWOpFv+YHuMbTJnSVMoQblF0onvXfErrtp4V1jHtsQPan7dKaGVD0q1WCXnzMF31A==",
-             "dev": true,
-             "license": "MIT",
-             "workspaces": [
-@@ -1650,7 +1650,7 @@
-                 "@eslint/config-helpers": "^0.7.0",
-                 "@eslint/core": "^1.2.1",
-                 "@eslint/plugin-kit": "^0.7.3",
--                "@humanfs/node": "^0.16.6",
-+                "@humanfs/node": "^0.16.8",
-                 "@humanwhocodes/module-importer": "^1.0.1",
-                 "@humanwhocodes/retry": "^0.4.2",
-                 "@types/estree": "^1.0.6",
-@@ -1671,7 +1671,7 @@
-                 "imurmurhash": "^0.1.4",
-                 "is-glob": "^4.0.0",
-                 "json-stable-stringify-without-jsonify": "^1.0.1",
--                "minimatch": "^10.2.5",
-+                "minimatch": "^10.2.6",
-                 "natural-compare": "^1.4.0",
-                 "optionator": "^0.9.3"
-             },
-@@ -2784,13 +2784,13 @@
-             }
-         },
-         "node_modules/minimatch": {
--            "version": "10.2.5",
--            "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-10.2.5.tgz",
--            "integrity": "sha512-MULkVLfKGYDFYejP07QOurDLLQpcjk7Fw+7jXS2R2czRQzR56yHRveU5NDJEOviH+hETZKSkIk5c+T23GjFUMg==",
-+            "version": "10.2.6",
-+            "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-10.2.6.tgz",
-+            "integrity": "sha512-vpLQEs+VLCr1nU0BXS07maYoFwlDAH0gngQuuttxIwutDFEMHq2blX+8vpgxDdK3J1PwjCJiep77OitTZ4Ll1A==",
-             "dev": true,
-             "license": "BlueOak-1.0.0",
-             "dependencies": {
--                "brace-expansion": "^5.0.5"
-+                "brace-expansion": "^5.0.8"
+-                "vitest": "^5.0.5"
++                "vitest": "^5.1.0"
              },
              "engines": {
-                 "node": "18 || 20 || >=22"
+                 "node": ">=20.19.0"
+@@ -546,9 +546,9 @@
+             "license": "MIT"
+         },
+         "node_modules/@oxc-project/types": {
+-            "version": "0.154.0",
+-            "resolved": "https://registry.npmjs.org/@oxc-project/types/-/types-0.154.0.tgz",
+-            "integrity": "sha512-KYOUGQFlLWR+s4QMV2Q9ko38TZm7EdO87Qm7rvZLqk/webse/cDjtyxKhg/47l0byCbs/k46LT8qc4PKjAikzA==",
++            "version": "0.156.0",
++            "resolved": "https://registry.npmjs.org/@oxc-project/types/-/types-0.156.0.tgz",
++            "integrity": "sha512-1Duyg48TdJNdyhEB8Xn1L36bT9Pv6GUtlKjHxOys8xkaF/rQq3XJE+bAurSK/AgIz5mGFsb77cn9Pb20+WCScw==",
+             "dev": true,
+             "license": "MIT",
+             "peer": true,
+@@ -557,9 +557,9 @@
+             }
+         },
+         "node_modules/@rolldown/binding-android-arm-eabi": {
+-            "version": "1.2.14",
+-            "resolved": "https://registry.npmjs.org/@rolldown/binding-android-arm-eabi/-/binding-android-arm-eabi-1.2.14.tgz",
+-            "integrity": "sha512-aWR+XKH9+rW7m5fWq/5360J3mHycrx/o6xZM2DQFdJnTMdyP7/WzxPjhtLbVWdKo2y612/4U1bWqb3HQhiF7vg==",
++            "version": "1.2.16",
++            "resolved": "https://registry.npmjs.org/@rolldown/binding-android-arm-eabi/-/binding-android-arm-eabi-1.2.16.tgz",
++            "integrity": "sha512-ia3DwAs0OsMGS7+IConptSiyk9pEXkOx/AbJ2n/lAGxH3QkWQus1t8d7gnAT38FCU2sQu8lUbeR6AiZFv4JxaA==",
+             "cpu": [
+                 "arm"
+             ],
+@@ -575,9 +575,9 @@
+             }
+         },
+         "node_modules/@rolldown/binding-android-arm64": {
+-            "version": "1.2.14",
+-            "resolved": "https://registry.npmjs.org/@rolldown/binding-android-arm64/-/binding-android-arm64-1.2.14.tgz",
+-            "integrity": "sha512-QiVxHofl6A8lQU7WAtOUY4QMVZXohxwz7WJJoeh8NBEUyKfIkMRKhYyq8az/1RypNiIXzNTtiS6KwHz0erxYRQ==",
++            "version": "1.2.16",
++            "resolved": "https://registry.npmjs.org/@rolldown/binding-android-arm64/-/binding-android-arm64-1.2.16.tgz",
++            "integrity": "sha512-kx5wBiMB6E7TEvpl2B9gjLU004BkvEm2Dr941BFjx/SontPwSzNuQUIoVKxHHoSjpFIfHMmcguyLOtyn0hObRg==",
+             "cpu": [
+                 "arm64"
+             ],
+@@ -593,9 +593,9 @@
+             }
+         },
+         "node_modules/@rolldown/binding-darwin-arm64": {
+-            "version": "1.2.14",
+-            "resolved": "https://registry.npmjs.org/@rolldown/binding-darwin-arm64/-/binding-darwin-arm64-1.2.14.tgz",
+-            "integrity": "sha512-lTQOzHuBIooh3jIr5XINQkjPGEuGy+Dsy0meXDr6Sjty0b99kYgGh4uBC/8mJX1T0kC8d6S0aPP1Y+bHkh6aBw==",
++            "version": "1.2.16",
++            "resolved": "https://registry.npmjs.org/@rolldown/binding-darwin-arm64/-/binding-darwin-arm64-1.2.16.tgz",
++            "integrity": "sha512-qslZrXnKJU4cUpjoAmtAo/KQM9e2IRMlmpig6Zpwj+8KWxW8v+nkAf9216Bsek9lOC1jvg2yCjygCFo2f83msQ==",
+             "cpu": [
+                 "arm64"
+             ],
+@@ -611,9 +611,9 @@
+             }
+         },
+         "node_modules/@rolldown/binding-darwin-x64": {
+-            "version": "1.2.14",
+-            "resolved": "https://registry.npmjs.org/@rolldown/binding-darwin-x64/-/binding-darwin-x64-1.2.14.tgz",
+-            "integrity": "sha512-hyMKEGatjmBYCs/Q4sbIcL/GqpFEqsX3wc+HYVQ/85A4rxc1o7rPm4DUI4GV4k/h0ITddwFSGpqQunI14GXjTA==",
++            "version": "1.2.16",
++            "resolved": "https://registry.npmjs.org/@rolldown/binding-darwin-x64/-/binding-darwin-x64-1.2.16.tgz",
++            "integrity": "sha512-FdF+y48ND13eAyM2mQn+85kvAqNlvRWROy2rhgA463X/0Gv4vGtazZtfaF1mRBLscYvtOlh4QnLjOWiFzX69OQ==",
+             "cpu": [
+                 "x64"
+             ],
+@@ -629,9 +629,9 @@
+             }
+         },
+         "node_modules/@rolldown/binding-freebsd-x64": {
+-            "version": "1.2.14",
+-            "resolved": "https://registry.npmjs.org/@rolldown/binding-freebsd-x64/-/binding-freebsd-x64-1.2.14.tgz",
+-            "integrity": "sha512-u371GbXoVXrEgP20PwzoGNOdAOqAMhzo19JzzY+V4YmmnC+DTOoqdbMu+O+54emM59Mik/UdrtWgcuEDKWRPKA==",
++            "version": "1.2.16",
++            "resolved": "https://registry.npmjs.org/@rolldown/binding-freebsd-x64/-/binding-freebsd-x64-1.2.16.tgz",
++            "integrity": "sha512-ddjqFM5e95AgLbUPtKIS7V1KTVlA0RUgCVr5mn+/IEhsdy3pr+Vuj/HZ7nlMN2FyxIwUktOH1LEPIQXO1v9y1Q==",
+             "cpu": [
+                 "x64"
+             ],
+@@ -647,9 +647,9 @@
+             }
+         },
+         "node_modules/@rolldown/binding-linux-arm-gnueabihf": {
+-            "version": "1.2.14",
+-            "resolved": "https://registry.npmjs.org/@rolldown/binding-linux-arm-gnueabihf/-/binding-linux-arm-gnueabihf-1.2.14.tgz",
+-            "integrity": "sha512-BqwKsdZQf6EqVWr8fv2MrDYzAvOZ7+NYFSJESRGs87f
 ```
 
 **File**: `package.json` (modified, +1/-1)
 ```diff
-@@ -74,7 +74,7 @@
-         "@biomejs/biome": "^2.5.15",
-         "@feedic/eslint-config": "^0.5.0",
-         "@types/node": "^26.6.6",
--        "eslint": "^10.13.0",
-+        "eslint": "^10.14.0",
+@@ -78,7 +78,7 @@
          "eslint-config-biome": "^2.1.3",
          "typescript": "^6.0.3",
          "typescript-eslint": "^8.72.1",
+-        "vitest": "^5.0.5"
++        "vitest": "^5.1.0"
+     },
+     "engines": {
+         "node": ">=20.19.0"
 ```
 
 ---
 
-### Incident Patch 2: `a2ef6259` (2026-11-02)
-**Commit Message**: build(deps-dev): Bump @types/node from 26.6.5 to 26.6.6 (#2560)
+### Incident Patch 3: `d6d2da82` (2026-11-06)
+**Commit Message**: build(deps): Bump github/codeql-action from 4.39.1 to 4.39.2 (#2564)
 
-Bumps [@types/node](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/HEAD/types/node) from 26.6.5 to 26.6.6.
-- [Release notes](https://github.com/DefinitelyTyped/DefinitelyTyped/releases)
-- [Commits](https://github.com/DefinitelyTyped/DefinitelyTyped/commits/HEAD/types/node)
+Bumps [github/codeql-action](https://github.com/github/codeql-action) from 4.39.1 to 4.39.2.
+- [Release notes](https://github.com/github/codeql-action/releases)
+- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/github/codeql-action/compare/v4.39.1...v4.39.2)
 
 ---
 updated-dependencies:
-- dependency-name: "@types/node"
-  dependency-version: 26.6.6
-  dependency-type: direct:development
+- dependency-name: github/codeql-action
+  dependency-version: 4.39.2
+  dependency-type: direct:production
   update-type: version-update:semver-patch
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `package-lock.json` (modified, +4/-4)
+**File**: `.github/workflows/codeql-analysis.yml` (modified, +2/-2)
 ```diff
-@@ -24,7 +24,7 @@
-             "devDependencies": {
-                 "@biomejs/biome": "^2.5.15",
-                 "@feedic/eslint-config": "^0.5.0",
--                "@types/node": "^26.6.5",
-+                "@types/node": "^26.6.6",
-                 "eslint": "^10.13.0",
-                 "eslint-config-biome": "^2.1.3",
-                 "typescript": "^6.0.3",
-@@ -905,9 +905,9 @@
-             "license": "MIT"
-         },
-         "node_modules/@types/node": {
--            "version": "26.6.5",
--            "resolved": "https://registry.npmjs.org/@types/node/-/node-26.6.5.tgz",
--            "integrity": "sha512-uMzsv9stDdofIZBx4UGh4Z9ZgXnGC9seRDscilBcTHAeOFk67MZg/k9bWVfO+bk4qZmG+l52hRnLwUiH2LnJTg==",
-+            "version": "26.6.6",
-+            "resolved": "https://registry.npmjs.org/@types/node/-/node-26.6.6.tgz",
-+            "integrity": "sha512-MzQj+8Kx3XI40OmUAE6Qoh58ZMNstNNMwn2nfd3qWsfe7nDNSqJNzes4njhz6AHwrSHOffSLwXU6yb474Q4aog==",
-             "dev": true,
-             "license": "MIT",
-             "dependencies": {
-```
-
-**File**: `package.json` (modified, +1/-1)
-```diff
-@@ -73,7 +73,7 @@
-     "devDependencies": {
-         "@biomejs/biome": "^2.5.15",
-         "@feedic/eslint-config": "^0.5.0",
--        "@types/node": "^26.6.5",
-+        "@types/node": "^26.6.6",
-         "eslint": "^10.13.0",
-         "eslint-config-biome": "^2.1.3",
-         "typescript": "^6.0.3",
+@@ -23,9 +23,9 @@ jobs:
+               uses: actions/checkout@v7
+ 
+             - name: Initialize CodeQL
+-              uses: github/codeql-action/init@v4.39.1
++              uses: github/codeql-action/init@v4.39.2
+               with:
+                   languages: "javascript"
+ 
+             - name: Perform CodeQL Analysis
+-              uses: github/codeql-action/analyze@v4.39.1
++              uses: github/codeql-action/analyze@v4.39.2
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2565** (2026-11-06): build(deps-dev): Bump vitest from 5.0.5 to 5.1.0 (@dependabot[bot])
+- **PR #2564** (2026-11-06): build(deps): Bump github/codeql-action from 4.39.1 to 4.39.2 (@dependabot[bot])
 - **PR #2561** (2026-11-03): build(deps-dev): Bump eslint from 10.13.0 to 10.14.0 (@dependabot[bot])
 - **PR #2560** (2026-11-02): build(deps-dev): Bump @types/node from 26.6.5 to 26.6.6 (@dependabot[bot])
 - **PR #2557** (2026-10-30): build(deps-dev): Bump typescript-eslint from 8.72.0 to 8.72.1 (@dependabot[bot])
 - **PR #2556** (closed): build(deps-dev): Bump @biomejs/biome from 2.5.15 to 2.6.3 (@dependabot[bot])
-- **PR #2555** (2026-10-26): build(deps): Bump github/codeql-action from 4.39.0 to 4.39.1 (@dependabot[bot])
-- **PR #2554** (closed): build(deps-dev): Bump @biomejs/biome from 2.5.15 to 2.6.2 (@dependabot[bot])
 
 ---
 
@@ -1168,46 +1324,73 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps-dev): Bump eslint from 10.13.0 to 10.14.0 (#2561)
+## X. parser): close an open <p> for li, dd, dt, listing, plaintext and xmp (#2547)
 
 **RULE**:
-When implementing operations in `package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fb55/htmlparser2. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/Parser.spec.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fb55/htmlparser2. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dcafeac3`: build(deps-dev): Bump eslint from 10.13.0 to 10.14.0 (#2561). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5742cc49`: parser): close an open <p> for li, dd, dt, listing, plaintext and xmp (#2547). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package-lock.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/Parser.spec.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-                "eslint": "^10.14.0",
-            "version": "10.14.0",
-            "resolved": "https://registry.npmjs.org/eslint/-/eslint-10.14.0.tgz",
-            "integrity": "sha512-T0pNsxkb9IKmtQjhpK3d7nWOpFv+YHuMbTJnSVMoQblF0onvXfErrtp4V1jHtsQPan7dKaGVD0q1WCXnzMF31A==",
-                "@humanfs/node": "^0.16.8",
-                "minimatch": "^10.2.6",
-            "version": "10.2.6",
-            "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-10.2.6.tgz",
-            "integrity": "sha512-vpLQEs+VLCr1nU0BXS07maYoFwlDAH0gngQuuttxIwutDFEMHq2blX+8vpgxDdK3J1PwjCJiep77OitTZ4Ll1A==",
-                "brace-expansion": "^5.0.8"
+// Record open and close tag events in the order they are emitted.
+function tagEvents(html: string): string[] {
+    const events: string[] = [];
+    new Parser({
+        onopentagname(name) {
+            events.push(`<${name}>`);
+        },
+        onclosetag(name) {
+            events.push(`</${name}>`);
+        },
+    }).end(html);
+    return events;
+}
+
+    it("should close an open <p> when <listing> starts", () => {
+        expect(tagEvents("<p>text<listing>inner")).toEqual([
+            "<p>",
+            "</p>",
+            "<listing>",
+            "</listing>",
+        ]);
+    });
+
+    it("should close an open <p> together with the previous list item", () => {
+        expect(
+            tagEvents("<ul><li><p>a<li>b</ul><dl><dt><p>c<dd>d</dl>"),
+        ).toEqual([
+            "<ul>",
+            "<li>",
+            "<p>",
+            "</p>",
+            "</li>",
+            "<li>",
+            "</li>",
+            "</ul>",
+            "<dl>",
+            "<dt>",
+            "<p>",
+            "</p>",
+            "</dt>",
+            "<dd>",
+            "</dd>",
+            "</dl>",
+        ]);
+    });
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-                "eslint": "^10.13.0",
-            "version": "10.13.0",
-            "resolved": "https://registry.npmjs.org/eslint/-/eslint-10.13.0.tgz",
-            "integrity": "sha512-UohDjD4zSzEwhf58M3O7vc/ycc8O1I7dNlhtD0WxE8Px8EHNJKtUwzBqrzeGhisRuv2ag4sAYswszCJRgKXYUg==",
-                "@humanfs/node": "^0.16.6",
-                "minimatch": "^10.2.5",
-            "version": "10.2.5",
-            "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-10.2.5.tgz",
-            "integrity": "sha512-MULkVLfKGYDFYejP07QOurDLLQpcjk7Fw+7jXS2R2czRQzR56yHRveU5NDJEOviH+hETZKSkIk5c+T23GjFUMg==",
-                "brace-expansion": "^5.0.5"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dcafeac3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5742cc49` are properly handled with clean fallback behavior.

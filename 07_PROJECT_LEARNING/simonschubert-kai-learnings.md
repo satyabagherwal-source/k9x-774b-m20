@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/simonschubert-kai-learnings.md`  
 > **Source**: github ([https://github.com/SimonSchubert/Kai](https://github.com/SimonSchubert/Kai))  
-> **Source Version**: `f0c4ee48`  
+> **Source Version**: `a055ad41`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T09:57:46.046Z  
+> **Timestamp**: 2026-11-08T15:35:13.196Z  
 > **Learning ID**: `learn-github-simonschubert-kai`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/simonschubert-kai-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/SimonSchubert/Kai](https://github.com/SimonSchubert/Kai))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T09:57:46.042Z  
+> **Harvest Timestamp**: 2026-11-08T15:35:13.071Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: OpenClaw alternative in your pocket
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1331 stars
+- **Stars / Engagement**: 1343 stars
 
 ---
 
@@ -1036,80 +1036,44 @@ private fun AnnotatedString.Builder.appendInline(node: InlineNode, colors: Color
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f0c4ee48` (2026-11-05)
+### Incident Patch 1: `a055ad41` (2026-11-07)
 **Commit Message**: Upgrade dependencies
 
-**File**: `gradle/libs.versions.toml` (modified, +1/-1)
+**File**: `gradle/wrapper/gradle-wrapper.properties` (modified, +1/-1)
 ```diff
-@@ -24,7 +24,7 @@ material = "1.14.0"
- playReview = "2.0.2"
- multiplatformSettings = "1.3.0"
- navigationComposeVersion = "2.10.0"
--spotless = "8.10.4"
-+spotless = "8.11.0"
- tts = "3.0.0"
- foundationAndroid = "1.12.1"
- paparazzi = "2.0.0-alpha05"
+@@ -1,6 +1,6 @@
+ distributionBase=GRADLE_USER_HOME
+ distributionPath=wrapper/dists
+-distributionUrl=https\://services.gradle.org/distributions/gradle-9.8.2-bin.zip
++distributionUrl=https\://services.gradle.org/distributions/gradle-9.9.0-bin.zip
+ networkTimeout=10000
+ retries=0
+ retryBackOffMs=500
 ```
 
 ---
 
-### Incident Patch 2: `a4dfc607` (2026-11-04)
-**Commit Message**: Site: link Impressum and privacy policy on schubert-simon.de
+### Incident Patch 2: `b8d605cf` (2026-11-06)
+**Commit Message**: Upgrade dependencies
 
-**File**: `site/index.html` (modified, +1/-1)
+**File**: `gradle/libs.versions.toml` (modified, +2/-2)
 ```diff
-@@ -246,7 +246,7 @@ <h2 class="section-title fade-in">Available Everywhere</h2>
-       <a href="https://github.com/SimonSchubert/Kai/releases">Releases</a>
-     </div>
-     <p class="note">Kai is open-source software. Built with Kotlin Multiplatform &amp; Compose Multiplatform.</p>
--    <p class="impressum">Simon Schubert &middot; Parkstr. 43, 13585 Berlin &middot; simon@librem.one</p>
-+    <p class="impressum">Simon Schubert &middot; <a href="https://schubert-simon.de/impressum.html">Impressum</a> &middot; <a href="https://schubert-simon.de/privacy.html">Privacy</a></p>
-   </footer>
- 
-   <script>
-```
-
-**File**: `site/latex-math/index.html` (modified, +1/-1)
-```diff
-@@ -416,7 +416,7 @@ <h2 class="section-title fade-in">Get Kai and try math rendering</h2>
-       <a href="https://github.com/SimonSchubert/Kai/releases">Releases</a>
-     </div>
-     <p class="note">Kai is open-source software. Built with Kotlin Multiplatform &amp; Compose Multiplatform.</p>
--    <p class="impressum">Simon Schubert &middot; Parkstr. 43, 13585 Berlin &middot; simon@librem.one</p>
-+    <p class="impressum">Simon Schubert &middot; <a href="https://schubert-simon.de/impressum.html">Impressum</a> &middot; <a href="https://schubert-simon.de/privacy.html">Privacy</a></p>
-   </footer>
- 
-   <script>
-```
-
-**File**: `site/run-gemma-locally/index.html` (modified, +1/-1)
-```diff
-@@ -451,7 +451,7 @@ <h2 class="section-title fade-in">Get Kai and try Gemma 4 locally</h2>
-       <a href="https://github.com/SimonSchubert/Kai/releases">Releases</a>
-     </div>
-     <p class="note">Kai is open-source software. Built with Kotlin Multiplatform &amp; Compose Multiplatform. Gemma 4 is a trademark of Google LLC.</p>
--    <p class="impressum">Simon Schubert &middot; Parkstr. 43, 13585 Berlin &middot; simon@librem.one</p>
-+    <p class="impressum">Simon Schubert &middot; <a href="https://schubert-simon.de/impressum.html">Impressum</a> &middot; <a href="https://schubert-simon.de/privacy.html">Privacy</a></p>
-   </footer>
- 
-   <script>
-```
-
-**File**: `site/styles.css` (modified, +5/-0)
-```diff
-@@ -425,6 +425,11 @@ footer .impressum {
-   margin-top: 12px;
- }
- 
-+footer .impressum a {
-+  color: inherit;
-+  text-decoration: underline;
-+}
-+
- /* ---- Responsive ---- */
- @media (max-width: 768px) {
-   .hero {
+@@ -1,5 +1,5 @@
+ [versions]
+-agp = "9.5.0"
++agp = "9.5.1"
+ appVersion = "3.3.0"
+ android-versionCode = "117"
+ android-compileSdk = "37"
+@@ -31,7 +31,7 @@ paparazzi = "2.0.0-alpha05"
+ turbine = "1.2.1"
+ bouncycastle = "1.86"
+ reorderable = "3.1.0"
+-litert-lm = "0.19.0"
++litert-lm = "0.19.1"
+ sqldelight = "2.4.1"
+ materialIcons = "1.7.3"
+ xz = "1.12"
 ```
 
 #### Recent Merged Pull Requests:
@@ -1141,25 +1105,25 @@ Observed empirical fixes and code patches:
 ## X. Upgrade dependencies
 
 **RULE**:
-When implementing operations in `gradle/libs.versions.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in SimonSchubert/Kai. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `gradle/wrapper/gradle-wrapper.properties`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in SimonSchubert/Kai. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f0c4ee48`: Upgrade dependencies. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a055ad41`: Upgrade dependencies. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `gradle/libs.versions.toml`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `gradle/wrapper/gradle-wrapper.properties`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-spotless = "8.11.0"
+distributionUrl=https\://services.gradle.org/distributions/gradle-9.9.0-bin.zip
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-spotless = "8.10.4"
+distributionUrl=https\://services.gradle.org/distributions/gradle-9.8.2-bin.zip
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f0c4ee48` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a055ad41` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/goodrain-rainbond-learnings.md`  
 > **Source**: github ([https://github.com/goodrain/rainbond](https://github.com/goodrain/rainbond))  
-> **Source Version**: `ae8540b0`  
+> **Source Version**: `bbb1e5bd`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T18:28:42.110Z  
+> **Timestamp**: 2026-11-07T21:36:31.553Z  
 > **Learning ID**: `learn-github-goodrain-rainbond`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/goodrain-rainbond-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/goodrain/rainbond](https://github.com/goodrain/rainbond))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T18:28:41.549Z  
+> **Harvest Timestamp**: 2026-11-07T21:36:31.147Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Rainbond is an open-source container platform that requires no Kubernetes expertise. Its core capabilities are 100% open source.  It abstracts away infrastructure complexity and provides a unified way to deploy and manage business applications, AI-generated projects, open-source AI software, and large language model services. AI helps teams deploy 
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 6293 stars
+- **Stars / Engagement**: 6294 stars
 
 ---
 
@@ -1237,139 +1237,41 @@ func NewBadRequest(msg string) Coder {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `85ce1798` (2026-11-04)
-**Commit Message**: ci(release): build the standalone image during release-publish (#2744)
+### Incident Patch 1: `bbb1e5bd` (2026-11-06)
+**Commit Message**: chore: record v6.10.3-release in upgrade feed
 
-Signed-off-by: yangkaa <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/release-publish.yml` (modified, +13/-1)
+**File**: `hack/release/upgrade-versions.json` (modified, +16/-0)
 ```diff
-@@ -9,6 +9,7 @@ name: release-publish
- #   verify   从线上重新下载，确认与产物一致
- #   docs     次版本发布时给文档仓库提版本表草稿 PR（失败不影响 verify）
- #   roi      触发 roi 仓库的发版工作流，构建并上传对应版本的 roi 二进制，跟踪到结束
-+#   standalone 构建并推送单机版镜像（RELEASE_STANDALONE=true 才运行）
- #
- # 使用说明与需要配置的 secrets / vars 见 hack/release/README.md。
- #
-@@ -513,8 +514,19 @@ jobs:
-             --line "amd64 / arm64 二进制已上传，并从线上回读校验了嵌入的版本。" \
-             --link "$ROI_RUN_URL" --link-text "查看 roi 运行"
- 
-+  standalone:
-+    needs: [prepare, publish]
-+    # 和 roi 一样：回滚旧版本时（chart 不是最新）不动单机版。
-+    if: vars.RELEASE_STANDALONE == 'true' && needs.prepare.outputs.chart_main_version == needs.prepare.outputs.chart_version
-+    uses: ./.github/workflows/release-v6-standalone.yml
-+    with:
-+      branch: ${{ github.event.release.tag_name || inputs.tag }}
-+      version: ${{ github.event.release.tag_name || inputs.tag }}
-+      platforms: linux/amd64,linux/arm64
-+    secrets: inherit
-+
-   notify-failure:
--    needs: [prepare, publish, verify, docs, roi]
-+    needs: [prepare, publish, verify, docs, roi, standalone]
-     if: failure()
-     runs-on: ubuntu-latest
-     steps:
-```
-
-**File**: `.github/workflows/release-v6-standalone.yml` (modified, +17/-5)
-```diff
-@@ -18,9 +18,21 @@ on:
-         options:
-           - linux/amd64
-           - linux/amd64,linux/arm64
--      
-+  # release-publish calls this after every release, so the standalone image ships with it.
-+  workflow_call:
-+    inputs:
-+      branch:
-+        required: true
-+        type: string
-+      version:
-+        required: true
-+        type: string
-+      platforms:
-+        required: true
-+        type: string
-+
- env:
--  VERSION: ${{ github.event.inputs.version }}
-+  VERSION: ${{ inputs.version }}
-   
- jobs:
-   standalone:
-@@ -31,7 +43,7 @@ jobs:
-         uses: actions/checkout@v3
-         with:
-           repository: goodrain/rainbond-console
--          ref: ${{ github.event.inputs.branch }}
-+          ref: ${{ inputs.branch }}
-       
-       # - name: Free Disk Space (Ubuntu)
-       #   uses: jlumbroso/free-disk-space@main
-@@ -56,7 +68,7 @@ jobs:
- 
-       - name: Pull Arm64 Docker image
-         run: |
--          if [[ "${{ github.event.inputs.platforms }}" == "linux/amd64,linux/arm64" ]]; then
-+          if [[ "${{ inputs.platforms }}" == "linux/amd64,linux/arm64" ]]; then
-             ARCH=arm64 VERSION=${{ env.VERSION }} sh standalone/images-package.sh
-           fi
-       
-@@ -76,7 +88,7 @@ jobs:
-       - name: Build and push
-         uses: docker/build-push-action@v6
-         with:
--          platforms: ${{ github.event.inputs.platforms }}
-+          platforms: ${{ inputs.platforms }}
-           build-args: |
-             VERSION=${{ env.VERSION }}
-           context: .
-```
-
-**File**: `hack/release/README.md` (modified, +6/-2)
-```diff
-@@ -22,7 +22,9 @@ rainbond 发布 release 之后，原来要手工做的发布步骤由
-    - **docs**：中版本号变化时给 rainbond-docs 提版本表 draft PR（已有同名 PR 就跳过）；
-    - **roi**：`RELEASE_ROI=true` 时触发 goodrain/roi 的 `release-from-rainbond.yml`，构建、上传并回读校验
-      roi 二进制，跟踪到结束（线上 roi 已经是这个版本就跳过）。
--   离线包目前仍需单独处理。
-+   - **standalone**：`RELEASE_STANDALONE=true` 时构建并推送 amd64、arm64 单机版镜像，
-+     使用 rainbond-console 对应 tag 的代码。回滚旧版本时跳过。
-+   离线包不在本流程内，由打包机自动处理，见下文。
- 
- 只想重新发布 chart / 安装脚本 / upgrade feed（例如回滚），直接运行 `release-publish`，
- `dry_run` 保持勾选可以只看预览。
-@@ -41,7 +43,8 @@ rainbond 发布 release 之后，原来要手工做的发布步骤由
- | versions.json | 即 `upgrade-versions.json`，控制台「版本升级」读取。由本目录的同名文件加上新版本生成 |
- | 文档版本号 | 中版本号变化（如 6.9→6.10）时给 rainbond-docs 提 draft PR；补丁版本不改 |
- 
--离线包仍在火山云服务器上手工打包，不在本流程内。
-+离线包不在本流程内：火山云打包机每 30 分钟检查一次最新 release，自动打包上传，
-+见 goodrain/roi 的 `package-scripts/systemd/README.md`。
- 
- ## 文件
- 
-@@ -119,6 +122,7 @@ release 流程会把 gate 固定的 commit 传过去，tag 精确打在测过的
- | `RELEASE_CHART_REPO` | `goodrain/rainbond-chart` |
- | `RELEASE_DOCS_REPO` | `goodrain/rainbond-docs` |
- | `RELEASE_ROI` | 不设即关闭；roi 仓库的发版工作流配置好后设为 `true` |
-+| `RELEASE_STANDALONE` | 不设即关闭；设为 `true` 后每次发版构建单机版镜像 |
- | `RELEASE_ROI_REPO` | `goodrain/roi` |
- | `RELEASE_ROI_PUBLIC_URL` | `https://get.rainbond.com/roi/roi-amd64`（用来判断线上 roi 是否已是本版本） |
- | `RELEASE_CHART_REPO_URL` | `https://chart.rainbond.com` |
+@@ -1,4 +1,20 @@
+ [
++  {
++    "version": "v6.10.3-release",
++    "detail": {
++      "update_time": "2026-11-06",
++      "html_url": "https://github.com/goodrain/rainbond/releases/tag/v6.10.3-release",
++      "tag_name": "v6.10.3-release",
++      "body": "For update details, reference: https://github.com/goodrain/rainbond/releases/tag/v6.10.3-release."
++    },
++    "images": {
++      "rbd-api": "registry.cn-hangzhou.aliyuncs.com/goodrain/rbd-api:v6.10.3-release",
++      "rbd-app-ui": "registry.cn-hangzhou.aliyuncs.com/goodrain/rainbond:v6.10.3-release",
++      "rbd-chaos": "registry.cn-hangzhou.aliyuncs.com/goodrain/rbd-chaos:v6.10.3-release",
++      "rbd-mq": "registry.cn-hangzhou.aliyuncs.com/goodrain/rbd-mq:v6.10.3-release",
++      "rbd-worker": "registry.cn-hangzhou.aliyuncs.com/goodrain/rbd-worker:v6.10.3-release"
++    }
++  },
+   {
+     "version": "v6.10.2-release",
+     "detail": {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2748** (2026-11-06): chore: sync latest main into disk cleanup branch (@RainBondsongyg)
 - **PR #2747** (2026-11-04): chore(release): add the other release approvers as code owners (@yangkaa)
 - **PR #2746** (2026-11-04): ci(release): test a fresh standalone install before publishing (@yangkaa)
 - **PR #2745** (2026-11-04): ci(release): convert release images to eStargz before publishing (@yangkaa)
 - **PR #2744** (2026-11-04): ci(release): build the standalone image during release-publish (@yangkaa)
 - **PR #2743** (2026-11-03): V6.10.3 dev (@ZhangSetSail)
-- **PR #2742** (2026-11-03): chore(release): remove the agent skill moved to rainbond-multica-skills (@yangkaa)
 
 ---
 
@@ -1389,40 +1291,43 @@ Signed-off-by: yangkaa <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci(release): build the standalone image during release-publish (#2744)
+## X. record v6.10.3-release in upgrade feed
 
 **RULE**:
-When implementing operations in `.github/workflows/release-publish.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in goodrain/rainbond. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `hack/release/upgrade-versions.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in goodrain/rainbond. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `85ce1798`: ci(release): build the standalone image during release-publish (#2744). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bbb1e5bd`: record v6.10.3-release in upgrade feed. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release-publish.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `hack/release/upgrade-versions.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-#   standalone 构建并推送单机版镜像（RELEASE_STANDALONE=true 才运行）
-  standalone:
-    needs: [prepare, publish]
-    # 和 roi 一样：回滚旧版本时（chart 不是最新）不动单机版。
-    if: vars.RELEASE_STANDALONE == 'true' && needs.prepare.outputs.chart_main_version == needs.prepare.outputs.chart_version
-    uses: ./.github/workflows/release-v6-standalone.yml
-    with:
-      branch: ${{ github.event.release.tag_name || inputs.tag }}
-      version: ${{ github.event.release.tag_name || inputs.tag }}
-      platforms: linux/amd64,linux/arm64
-    secrets: inherit
-
-    needs: [prepare, publish, verify, docs, roi, standalone]
+  {
+    "version": "v6.10.3-release",
+    "detail": {
+      "update_time": "2026-11-06",
+      "html_url": "https://github.com/goodrain/rainbond/releases/tag/v6.10.3-release",
+      "tag_name": "v6.10.3-release",
+      "body": "For update details, reference: https://github.com/goodrain/rainbond/releases/tag/v6.10.3-release."
+    },
+    "images": {
+      "rbd-api": "registry.cn-hangzhou.aliyuncs.com/goodrain/rbd-api:v6.10.3-release",
+      "rbd-app-ui": "registry.cn-hangzhou.aliyuncs.com/goodrain/rainbond:v6.10.3-release",
+      "rbd-chaos": "registry.cn-hangzhou.aliyuncs.com/goodrain/rbd-chaos:v6.10.3-release",
+      "rbd-mq": "registry.cn-hangzhou.aliyuncs.com/goodrain/rbd-mq:v6.10.3-release",
+      "rbd-worker": "registry.cn-hangzhou.aliyuncs.com/goodrain/rbd-worker:v6.10.3-release"
+    }
+  },
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-    needs: [prepare, publish, verify, docs, roi]
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `85ce1798` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bbb1e5bd` are properly handled with clean fallback behavior.

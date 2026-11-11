@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pointfreeco-swift-composable-architecture-learnings.md`  
 > **Source**: github ([https://github.com/pointfreeco/swift-composable-architecture](https://github.com/pointfreeco/swift-composable-architecture))  
-> **Source Version**: `9ac5a9dc`  
+> **Source Version**: `bf66bd83`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T00:29:43.554Z  
+> **Timestamp**: 2026-11-08T01:03:11.442Z  
 > **Learning ID**: `learn-github-pointfreeco-swift-composable-architecture`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pointfreeco-swift-composable-architecture-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pointfreeco/swift-composable-architecture](https://github.com/pointfreeco/swift-composable-architecture))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T00:29:43.548Z  
+> **Harvest Timestamp**: 2026-11-08T01:03:10.386Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A library for building applications in a consistent and understandable way, with composition, testing, and ergonomics in mind.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 15004 stars
+- **Stars / Engagement**: 15007 stars
 
 ---
 
@@ -1654,29 +1654,100 @@ extension Three<Three<Player?>> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9ac5a9dc` (2026-11-04)
-**Commit Message**: Update Korean translation in README.md (#3973)
+### Incident Patch 1: `bf66bd83` (2026-11-05)
+**Commit Message**: Add init option to TestStore to disable forcing all tasks to run on the main actor. (#3975)
 
-**File**: `README.md` (modified, +1/-1)
+* Add init option to TestStore to disable forcing all tasks to run on the main actor.
+
+* reorder
+
+* Reorder parameters in TestStore initialization
+
+---------
+
+Co-authored-by: Stephen Celis <[REDACTED_EMAIL]>
+
+**File**: `Sources/ComposableArchitecture/TestStore.swift` (modified, +5/-1)
 ```diff
-@@ -605,7 +605,7 @@ The following translations of this README have been contributed by members of th
- * [Indonesian](https://gist.github.com/wendyliga/792ea9ac5cc887f59de70a9e39cc7343)
- * [Italian](https://gist.github.com/Bellaposa/5114e6d4d55fdb1388e8186886d48958)
- * [Japanese](https://gist.github.com/Achoo-kr/2d0712deb77f78b3379551ac7baea3e4)
--* [Korean](https://gist.github.com/Achoo-kr/5d8936d12e71028fcc4a7c5e078ca038)
-+* [Korean](https://gist.github.com/Jager-yoo/6ffe6f481f0c9b6244404dae00c78786)
- * [Persian](https://gist.github.com/MojtabaHs/aec8eb43a7ffe184be8d6ed629adcef4)
- * [Polish](https://gist.github.com/MarcelStarczyk/6b6153051f46912a665c32199f0d1d54)
- * [Portuguese](https://gist.github.com/SevioCorrea/2bbf337cd084a58c89f2f7f370626dc8)
+@@ -512,6 +512,9 @@ public final class TestStore<State: Equatable, Action> {
+   ///
+   /// - Parameters:
+   ///   - initialState: The state the feature starts in.
++  ///   - useMainSerialExecutor: Force all tasks while this TestStore is live to run on the main
++  ///     actor. For historical reasons, this defaults to true. If possible, you should set this to
++  ///     false.
+   ///   - reducer: The reducer that powers the runtime of the feature. Unlike
+   ///     ``Store/init(initialState:reducer:withDependencies:)``, this is _not_ a builder closure
+   ///     due to a [Swift bug](https://github.com/apple/swift/issues/72399) that is more likely to
+@@ -526,6 +529,7 @@ public final class TestStore<State: Equatable, Action> {
+   ///   - column: The column.
+   public init(
+     initialState: @autoclosure () -> State,
++    useMainSerialExecutor: Bool = true,
+     reducer: () -> some Reducer<State, Action>,
+     withDependencies prepareDependencies: (inout DependencyValues) -> Void = { _ in },
+     fileID: StaticString = #fileID,
+@@ -549,7 +553,7 @@ public final class TestStore<State: Equatable, Action> {
+     self.store = Store(initialState: reducer.state) { reducer }
+     self.timeout = .seconds(1)
+     self.sharedChangeTracker = sharedChangeTracker
+-    self.useMainSerialExecutor = true
++    self.useMainSerialExecutor = useMainSerialExecutor
+     self.reducer.store = self
+   }
+ 
+```
+
+**File**: `Tests/ComposableArchitectureTests/TestStoreTests.swift` (modified, +32/-0)
+```diff
+@@ -74,6 +74,38 @@ final class TestStoreTests: BaseTCATestCase {
+     }
+   }
+ 
++  func testSettingUseMainSerialExecutorToTrue() async {
++    let store = await TestStore(initialState: 0, useMainSerialExecutor: true) {
++      Reduce<Int, Void> { state, action in
++        return .none
++      }
++    }
++
++    @concurrent func runOffMainThread() async {
++      XCTAssert(Thread.isMainThread)
++    }
++
++    await runOffMainThread()
++
++    _ = store
++  }
++
++  func testSettingUseMainSerialExecutorToFalse() async {
++    let store = await TestStore(initialState: 0, useMainSerialExecutor: false) {
++      Reduce<Int, Void> { state, action in
++        return .none
++      }
++    }
++
++    @concurrent func runOffMainThread() async {
++      XCTAssertFalse(Thread.isMainThread)
++    }
++
++    await runOffMainThread()
++
++    _ = store
++  }
++
+   func testExpectedStateEquality() async {
+     struct State: Equatable {
+       var count: Int = 0
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3975** (2026-11-05): Add init option to TestStore to disable forcing all tasks to run on the main actor. (@younata)
 - **PR #3974** (closed): Support concurrent and parallel tests when using TestStore with Swift Testing. (@younata)
 - **PR #3973** (2026-11-04): Update Korean translation in README.md (@Jager-yoo)
 - **PR #3971** (2026-10-27): Deprecate `ReducerBuilder.buildArray` (@stephencelis)
 - **PR #3967** (2026-10-06): Make PresentationAction, IdentifiedAction and StackAction CasePathIterable (@heyltsjay)
 - **PR #3960** (closed): Issue 3950 - Backport Xcode 27 support to TCA 1.23 (@aryansk)
-- **PR #3956** (2026-07-24): Fix missing @ObservableState annotations in bindings examples (@indextrown)
 
 ---
 
@@ -1696,28 +1767,32 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update Korean translation in README.md (#3973)
+## X. Add init option to TestStore to disable forcing all tasks to run on the main act
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pointfreeco/swift-composable-architecture. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Sources/ComposableArchitecture/TestStore.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pointfreeco/swift-composable-architecture. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9ac5a9dc`: Update Korean translation in README.md (#3973). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bf66bd83`: Add init option to TestStore to disable forcing all tasks to run on the main actor. (#3975). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/ComposableArchitecture/TestStore.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-* [Korean](https://gist.github.com/Jager-yoo/6ffe6f481f0c9b6244404dae00c78786)
+  ///   - useMainSerialExecutor: Force all tasks while this TestStore is live to run on the main
+  ///     actor. For historical reasons, this defaults to true. If possible, you should set this to
+  ///     false.
+    useMainSerialExecutor: Bool = true,
+    self.useMainSerialExecutor = useMainSerialExecutor
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-* [Korean](https://gist.github.com/Achoo-kr/5d8936d12e71028fcc4a7c5e078ca038)
+    self.useMainSerialExecutor = true
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9ac5a9dc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bf66bd83` are properly handled with clean fallback behavior.

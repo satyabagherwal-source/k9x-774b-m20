@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md`  
 > **Source**: github ([https://github.com/agent-of-empires/agent-of-empires](https://github.com/agent-of-empires/agent-of-empires))  
-> **Source Version**: `1f674d07`  
+> **Source Version**: `ff0a5e36`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T15:20:35.133Z  
+> **Timestamp**: 2026-11-10T05:21:50.187Z  
 > **Learning ID**: `learn-github-agent-of-empires-agent-of-empires`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/agent-of-empires/agent-of-empires](https://github.com/agent-of-empires/agent-of-empires))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T15:20:34.922Z  
+> **Harvest Timestamp**: 2026-11-10T05:21:46.673Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Manage multiple Claude Code, OpenCode agents from either TUI or Web for easy access on mobile. Also supports Mistral Vibe, Codex CLI, Gemini CLI, Pi.dev, Copilot CLI, Factory Droid Coding.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3602 stars
+- **Stars / Engagement**: 3991 stars
 
 ---
 
@@ -504,6 +504,121 @@ export function createAgentStream(
 
 ```
 
+### Core Architecture Module: `scripts/check-no-claude-in-core.py`
+```
+#!/usr/bin/env python3
+"""Fail if core mentions Claude outside the allowlist (epic #5308, "zero Claude in core").
+
+Claude support moves to the Claude plugin. Once it has, `claude`, `claudeCode`
+and `CLAUDE_` must not reappear in the core trees below. The match is
+case-insensitive, so it also catches `Claude` in prose.
+
+Scanned: tracked files under src/, web/src/, docker/ and acp-worker/.
+
+Allowlist (the only places Claude may stay):
+  - src/migrations/                  immutable migrations rewrite persisted Claude data
+  - src/telemetry/sanitize.rs        model-family bucket for Anthropic model names
+  - acp-worker/aoe-agent/            the aoe-agent Anthropic provider and default model,
+                                     an Anthropic API choice, not Claude Code
+  - CHANGELOG.md                     outside the scanned trees, listed for completeness
+
+CI wires this in disabled form until the removal work (C25 to C29) has landed on
+integration/claude-removal; see .github/workflows/ci.yml.
+
+Usage:
+    python3 scripts/check-no-claude-in-core.py [--self-test]
+"""
+
+import re
+import subprocess
+import sys
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parent.parent
+
+SCANNED = ("src/", "web/src/", "docker/", "acp-worker/")
+
+ALLOWLIST = (
+    "src/migrations/",
+    "src/telemetry/sanitize.rs",
+    "acp-worker/aoe-agent/",
+    "CHANGELOG.md",
+)
+
+PATTERN = re.compile(r"claude", re.IGNORECASE)
+
+
+def is_scanned(path):
+    return path.startswith(SCANNED) and not path.startswith(ALLOWLIST)
+
+
+def find_hits(path, text):
+    return [
+        (path, number, line.strip())
+        for number, line in enumerate(text.splitlines(), 1)
+        if PATTERN.search(line)
+    ]
+
+
+def tracked_files():
+    out = subprocess.run(
+        ["git", "ls-files", "-z"], cwd=REPO_ROOT, capture_output=True, check=True
+    ).stdout
+    return [p for p in out.decode().split("\0") if p]
+
+
+def self_test():
+    cases = [
+        ("src/agents.rs", True),
+        ("web/src/App.tsx", True),
+        ("docker/Dockerfile", True),
+        ("acp-worker/adapters/package.json", True),
+        ("src/migrations/v012_acp_rename.rs", False),
+        ("src/telemetry/sanitize.rs", False),
+        ("src/telemetry/mod.rs", True),
+        ("acp-worker/aoe-agent/index.ts", False),
+        ("CHANGELOG.md", False),
+        ("docs/claude.md", False),
+        ("tests/e2e/harness.rs", False),
+    ]
+    for path, expected in cases:
+        assert is_scanned(path) == expected, path
+
+    for line in ("let c = claudeCode;", "env CLAUDE_CONFIG_DIR", "Claude Code", "claude"):
+        assert find_hits("f", line), line
+    assert not find_hits("f", "let agent = codex;")
+    assert find_hits("f", "a\nb claude\nc") == [("f", 2, "b claude")]
+    print("self-test ok")
+
+
+def main():
+    if "--self-test" in sys.argv[1:]:
+        self_test()
+        return 0
+
+    hits = []
+    for path in tracked_files():
+        if not is_scanned(path):
+            continue
+        try:
+            text = (REPO_ROOT / path).read_text(encoding="utf-8", errors="replace")
+        except FileNotFoundError:
+            continue
+        hits.extend(find_hits(path, text))
+
+    for path, number, line in hits:
+        print(f"{path}:{number}: {line}")
+    if hits:
+        print(f"\n{len(hits)} Claude reference(s) in core outside the allowlist", file=sys.stderr)
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
+
+```
+
 ### Core Architecture Module: `src/acp/acp_client/connection/command_loop.rs`
 ```
 //! The between-prompt command loop over an established session, including
@@ -817,15 +932,32 @@ pub(super) fn classify_lifecycle_signal(update: &SessionUpdate) -> Option<Lifecy
         SessionUpdate::AgentThoughtChunk(_)
         | SessionUpdate::Plan(_)
         | SessionUpdate::CompactionSummaryChunk(_) => Some(LifecycleSignal::Progress),
-        SessionUpdate::ToolCall(tc) => Some(LifecycleSignal::ToolStarted {
-            id: tc.tool_call_id.0.to_string(),
-            is_background_task: tc
-                .raw_input
-                .as_ref()
-                .and_then(|v| v.get("run_in_background"))
-                .and_then(|v| v.as_bool())
-                .unwrap_or(false),
-        }),
+        SessionUpdate::ToolCall(tc) => {
+            let id = tc.tool_call_id.0.to_string();
+            // Replay reports a final status on the initial call (#5206); a
+            // `ToolStarted` here would never be closed.
+            Some(match tc.status {
+                ToolCallStatus::Completed => LifecycleSignal::ToolCompleted {
+                    id,
+                    succeeded: true,
+                    off_protocol_work: detect_off_protocol_work_completed(&tc.content),
+                },
+                ToolCallStatus::Failed => LifecycleSignal::ToolCompleted {
+                    id,
+                    succeeded: false,
+                    off_protocol_work: None,
+                },
+                _ => LifecycleSignal::ToolStarted {
+                    id,
+                    is_background_task: tc
+                        .raw_input
+                        .as_ref()
+                        .and_then(|v| v.get("run_in_background"))
+                        .and_then(|v| v.as_bool())
+                        .unwrap_or(false),
+                },
+            })
+        }
         SessionUpdate::ToolCallUpdate(update) => {
             let id = update.tool_call_id.0.to_string();
             Some(match update.fields.status {
@@ -833,7 +965,9 @@ pub(super) fn classify_lifecycle_signal(update: &SessionUpdate) -> Option<Lifecy
                 Some(ToolCallStatus::Completed) => LifecycleSignal::ToolCompleted {
                     id,
                     succeeded: true,
-                    off_protocol_work: detect_off_protocol_work_completed(&update.fields.content),
+                    off_protocol_work: detect_off_protocol_work_completed(
+                        update.fields.content.as_deref().unwrap_or_default(),
+                    ),
                 },
                 Some(ToolCallStatus::Failed) => LifecycleSignal::ToolCompleted {
                     id,
@@ -953,11 +1087,10 @@ pub(super) async fn forward_lifecycle_signals(
 /// Matches SDK markers only at line starts so echoed output does not extend
 /// watchdog grace.
 pub(super) fn detect_off_protocol_work_completed(
-    content: &Option<Vec<ToolCallContent>>,
+    content: &[ToolCallContent],
 ) -> Option<OffProtocolWorkKind> {
     content
         .iter()
-        .flatten()
         .filter_map(|block| match block {
             ToolCallContent::Content(c) => match &c.content {
                 ContentBlock::Text(t) => Some(t.text.as_str()),
@@ -985,31 +1118,6 @@ pub(super) fn detect_off_protocol_work_completed(
 pub(super) fn wakeup_lifecycle_signal_from_update(
     update: &SessionUpdate,
     restored_title: Option<&str>,
-    profile: &agent_profiles::AgentProfile,
-) -> Option<LifecycleSignal> {
-    if !profile.supports_wakeup_tools {
-        return None;
-    }
-    let SessionUpdate::ToolCallUpdate(u) = update else {
-        return None;
-    };
-    if matches!(u.fields.status, Some(ToolCallStatus::Failed))
-        || u.fields.title.as_deref().or(restored_title) != Some("ScheduleWakeup")
-    {
-        return None;
-    }
-    match wakeup_event_from_raw(u.fields.raw_input.as_ref()?)? {
-        Event::WakeupScheduled { at, .. } => Some(LifecycleSignal::WakeupPending { at }),
-        _ => None,
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::acp::acp_client::test_helpers::{compaction_chunk, compaction_update, text_chunk};
-    use agent_client_protocol::v1::schema::{
-        Content
 ```
 
 ### Core Architecture Module: `src/acp/runner_lifecycle.rs`
@@ -1170,6 +1278,8 @@ struct Construction {
     /// Wall-clock ms of admission, refreshed on install so a slow start
     /// does not read as idle; atomic only so tests can backdate it.
     idle_baseline_ms: std::sync::atomic::AtomicI64,
+    /// Prompts admitted to this epoch; an idle stop observed before one is void.
+    admissions: std::sync::atomic::AtomicU64,
 }
 
 impl Default for Construction {
@@ -1193,6 +1303,7 @@ impl Default for Construction {
             idle_baseline_ms: std::sync::atomic::AtomicI64::new(
                 chrono::Utc::now().timestamp_millis(),
             ),
+            admissions: std::sync::atomic::AtomicU64::new(0),
         }
     }
 }
@@ -1227,6 +1338,12 @@ impl Lease {
         self.construction
             .idle_baseline_ms
             .load(std::sync::atomic::Ordering::Relaxed)
+    }
+
+    pub(crate) fn admissions(&self) -> u64 {
+        self.construction
+            .admissions
+            .load(std::sync::atomic::Ordering::Acquire)
     }
 
     #[cfg(test)]
@@ -1299,22 +1416,7 @@ impl Lease {
             .construction
             .stop_completion
             .lock()
-            .unwrap_or_else(|error| error.into_inner())
-            .as_mut()
-        {
-            debt.done = true;
-        }
-    }
-
-    pub(crate) fn previous_runner(&self) -> Option<RunnerIdentity> {
-        *self
-            .construction
-            .previous_runner
-            .lock()
-            .unwrap_or_else(|error| error.into_inner())
-    }
-
-    /// Freeze the predeces
+            .unwrap_or_else(|error|
 ```
 
 ### Core Architecture Module: `src/acp/state.rs`
@@ -1848,275 +1950,17 @@ fn print_disclosure(profile: &str) {
 
 ```
 
-### Core Architecture Module: `src/cli/runtime_read/render.rs`
-```
-use std::borrow::Cow;
-use std::collections::HashMap;
-use std::fmt::Write as _;
-use std::path::Path;
-
-use serde::Serialize;
-
-use super::dto::{
-    component_healthy, freshness_observed, profile_component_healthy, ProfileRead, ProjectRead,
-    ProjectScope, SessionRead, SnapshotData, WireState,
-};
-use super::endpoint::{selected_profile_source, ProfileSource};
-use super::{ReadFailure, ScopedCommand};
-use crate::cli::group::GroupListArgs;
-use crate::cli::list::{self, ListArgs, SessionJson, StateFilter, WorkspaceRepoJson, WorktreeJson};
-use crate::cli::project::{ProjectListArgs, ScopeFilter};
-use crate::cli::session::ShowArgs;
-use crate::cli::status::{self, VERBOSE_GROUPS};
-
-/// One rendered read: the text the command prints, and whether it printed the
-/// human session table, which is the only place the update notice belongs.
-#[derive(Debug)]
-pub(crate) struct Projection {
-    pub stdout: String,
-    pub session_table: bool,
-    pub stderr: Option<String>,
-    pub exit: i32,
-}
-
-impl Projection {
-    fn text(stdout: String) -> Self {
-        Self {
-            stdout,
-            session_table: false,
-            stderr: None,
-            exit: 0,
-        }
-    }
-}
-
-pub(crate) fn evaluate(
-    command: &ScopedCommand<'_>,
-    snapshot: &SnapshotData,
-    source: &super::endpoint::ReadRequestSource,
-    local_home: Option<&Path>,
-) -> Result<Projection, ReadFailure> {
-    match command {
-        ScopedCommand::List(args) => render_list(args, snapshot, source, local_home.is_some()),
-        ScopedCommand::Status(args) => render_status(args, snapshot, source, local_home),
-        ScopedCommand::Show(args) => render_show(args, snapshot, source),
-        ScopedCommand::ListTrash => render_trash(snapshot, source).map(Projection::text),
-        ScopedCommand::GroupList(args) => {
-            render_groups(args, snapshot, source).map(Projection::text)
-        }
-        ScopedCommand::Profile => render_profiles(snapshot).map(Projection::text),
-        ScopedCommand::ProjectList(args) => {
-            render_projects(args, snapshot, source).map(Projection::text)
-        }
-    }
-}
-
-fn terminal_text(value: &str) -> Cow<'_, str> {
-    let Some((start, _)) = value.char_indices().find(|(_, ch)| ch.is_control()) else {
-        return Cow::Borrowed(value);
-    };
-    let mut clean = String::with_capacity(value.len());
-    clean.push_str(&value[..start]);
-    clean.extend(value[start..].chars().filter(|ch| !ch.is_control()));
-    Cow::Owned(clean)
-}
-
-fn selected_profile<'a>(
-    snapshot: &'a SnapshotData,
-    source: &'a super::endpoint::ReadRequestSource,
-) -> Result<(&'a str, &'a ProfileRead), ReadFailure> {
-    let selected = match selected_profile_source(source) {
-        ProfileSource::Explicit(value) => value,
-        ProfileSource::Environment(value) => value.to_str().ok_or_else(|| {
-            // Match clap's invalid-environment-profile exit status.
-            ReadFailure::exit(2, "error: AGENT_OF_EMPIRES_PROFILE must be valid UTF-8\n")
-        })?,
-        ProfileSource::Default => match snapshot.default_profile.as_deref() {
-            Some(value) => value,
-            // A resolved but absent default is a user-state refusal.
-            None => match &snapshot.resolved_default_profile {
-                Some(name) => {
-                    crate::session::validate_profile_name(name).map_err(|error| {
-                        ReadFailure::exit(
-                            1,
-                            format!("Error: {}\n", terminal_text(&error.to_string())),
-                        )
-                    })?;
-                    return Err(profile_absent("default_missing", name));
-                }
-                // Nothing was resolved, because resolving would have created
-                // the profile this read has to stay out of.
-                None => return Err(ReadFailure::post("default_missing")),
-            },
-        },
-    };
-    crate::session::validate_profile_name(selected).map_err(|error| {
-        ReadFailure::exit(1, format!("Error: {}\n", terminal_text(&error.to_string())))
-    })?;
-    snapshot
-        .profiles
-        .iter()
-        .find(|profile| {
-            profile.name == selected || profile.aliases.iter().any(|alias| alias == selected)
-        })
-        .map(|profile| (selected, profile))
-        .ok_or_else(|| profile_absent("profile_missing", selected))
-}
-
-/// Preserve the local CLI's profile-creation guidance and exit status.
-fn profile_absent(code: &'static str, name: &str) -> ReadFailure {
-    let name = terminal_text(name);
-    ReadFailure::refuse(
-        code,
-        1,
-        format!(
-            "Error: Profile '{name}' does not exist. Create it with: aoe profile create {name}\n"
-        ),
-    )
-}
-
-/// Preserve the local resolver's sorted ambiguity candidates.
-fn ambiguous_prefix(identifier: &str, candidates: &[&SessionRead]) -> ReadFailure {
-    let mut lines: Vec<String> = candidates
-        .iter()
-        .map(|session| format!("  {} ({})", session.id, terminal_text(&session.title)))
-        .collect();
-    lines.sort();
-    ReadFailure::refuse(
-        "session_ambiguous",
-        1,
-        format!(
-            "Error: Ambiguous session identifier {identifier:?} matches {} sessions:\n{}\n\
-             Use a longer prefix or the full ID.\n",
-            candidates.len(),
-            lines.join("\n")
-        ),
-    )
-}
-
-fn render_list(
-    args: &ListArgs,
-    snapshot: &SnapshotData,
-    source: &super::endpoint::ReadRequestSource,
-    local_peer: bool,
-) -> Result<Projection, ReadFailure> {
-    let state = args.state;
-    if args.all {
-        if !component_healthy(&snapshot.health.global_enumeration) {
-            return Err(unreadable("The profile registry"));
-        }
-        // Local empty-inventory output precedes JSON formatting.
-        if !snapshot.profiles.iter().any(|profile| profile.listed) {
-            return Ok(Projection::text("No profiles found.\n".into()));
-        }
-        let mut stderr = String::new();
-        if args.json {
-            let systemd_active = local_peer && list::systemd_scopes_active();
-            let mut rows = Vec::new();
-            for profile in snapshot.profiles.iter().filter(|profile| profile.listed) {
-                if !profile_sessions_healthy(profile) {
-                    let _ = writeln!(
-                        stderr,
-                        "warning: profile '{}': unavailable for this listing",
-                        terminal_text(&profile.name)
-                    );
-                    continue;
-                }
-                for session in sessions_for_profile(snapshot, &profile.name)
-                    .filter(|session| matches_state(session.state, state))
-                {
-                    rows.push(session_json(session, &profile.name, systemd_active)?);
-                }
-            }
-            let incomplete = !stderr.is_empty();
-            if incomplete {
-                stderr.push_str("Error: the listing is incomplete\n");
-            }
-            return Ok(Projection {
-                stdout: json_lines(&rows)?,
-                session_table: false,
-                stderr: incomplete.then_some(stderr),
-                exit: i32::from(incomplete),
-            });
-        }
-        let show_state = state == StateFilter::All;
-        let mut output = String::new();
-        let mut total = 0usize;
-        for profile in snapshot.profiles.iter().filter(|profile| profile.listed) {
-            if !profile_sessions_healthy(profile) {
-                let _ = writeln!(
-                    stderr,
-                    "warning: profile '{}': unavailable for this listing",
-                    terminal_text(&profile.name)
-                );
-                continue;
-            }
-            let sessions: Vec<&SessionRead> = sessions_for_profile(snapshot, &profile.name)
-                .filter(|session| matches_state(session.state, state))
-                .collect();
-            // Empty profiles have no banner.
-            if sessions.is_empty() {
-                continue;
-            }
-            output.push_str(&format!(
-                "\n═══ Profile: {} ═══\n\n",
-                terminal_text(&profile.name)
-            ));
-            output.push_str(&list::table_header(show_state));
-            for (session, depth) in tree_order(&sessions) {
-                output.push_str(&list::table_row(
-                    &list::table_title(&terminal_text(&session.title), depth),
-                    &terminal_text(&session.group_path),
-                    &terminal_text(&session.project_path),
-                    show_state.then(|| session.state.as_str()),
-                    &session.id,
-                ));
-            }
-            output.push_str(&format!("({} sessions)\n", sessions.len()));
-            total += sessions.len();
-        }
-        output.push_str(&format!(
-            "\n═══════════════════════════════════════\nTotal: {total} sessions across {} profiles\n",
-            snapshot.profiles.iter().filter(|profile| profile.listed).count()
-        ));
-        return Ok(Projection {
-            stdout: output,
-            session_table: false,
-            stderr: (!stderr.is_empty()).then_some(stderr),
-            exit: 0,
-        });
-    }
-
-    let (profile_name, profile) = selected_profile(snapshot, source)?;
-    let sessions: Vec<&SessionRead> = sessions_for_profile(snapshot, &profile.name)
-        .filter(|session| matches_state(session.state, state))
-        .collect();
-    require_selected_profile_health(snapshot, profile, profile_name)?;
-
-    if args.json {
-        let systemd_active = local_peer && list::systemd_scopes_active();
-        let rows: Vec<SessionJson> = sessions
-            .iter()
-            .map(|session| session_json(session, profile_name, systemd_active))
-            .collect::<Result<_, _>>()?;
-        return json_lines(&rows).map(Projection::text);
-    }
-    if sessions.is_empty() {
-        let profile_name = terminal_text(profile_name);
-        return Ok(Projection::text(fo
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5226** (2026-11-03): **Dependabot: group Vitest and its V8 coverage provider across major updates**
-  *Symptoms*: ## What happened?  Dependabot opened separate major upgrades for `vitest` (#5191) and `@vitest/coverage-v8` (#5193). Each PR updates only one direct dependency, leaving incompatible peers and preventing normal npm installation.  At [main@9ffbbf24](https://github.com/agent-of-empires/agent-of-empires/blob/9ffbbf24be690929ea6a61d02fc4cbdefc1db924/.github/dependabot.yml#L91-L138), minor/patch upgrades already match `web-minor-patch`. Major upgrades match no group and therefore receive individual PRs, as [documented by GitHub](https://docs.github.com/en/code-security/reference/supply-chain-security/dependabot-options-reference#groups--).  The coverage provider requires an exact Vitest peer: [4.1.11](https://registry.npmjs.org/@vitest/coverage-v8/4.1.11) requires `vitest: 4.1.11`; [5.0.3](https://registry.npmjs.org/@vitest/coverage-v8/5.0.3) requires `vitest: 5.0.3`.  ## Reproduction and evidence  Copy `web/package.json`, `web/package-lock.json` and `web/.npmrc` from each revision into an isolated temporary directory, then run:  ```sh npm ci --dry-run --ignore-scripts --no-audit --no-fund \   --legacy-peer-deps=false --force=false ```  Observed locally:  | Revision | Exit | Result | | --- | --- | --- | | `main@9ffbbf24` | 0 | Dependency resolution succeeds | | #5191 at `2564fdbe1bd6e1d0737b5606939d5eb8744dced5` | 1 | `ERESOLVE`: coverage 4.1.11 requires Vitest 4.1.11, but Vitest resolves to 5.0.3 | | #5193 at `932bfaf06365868baf74ed378e18adb32430ece6` | 1 | `ERESOLVE`: coverage 5.
+- **Issue #5477** (2026-11-08): **Can't resume sandboxes after a stop with Codex**
+  *Symptoms*: ### What happened?  I used to be able to resume a Codex session in a sandbox after the sandbox had stopped. This no longer works and I'm not sure what changed. I get:  ``` Cannot attest execution context for managed conversation 01a1bbfe-4006-73e2-849e-139baf24402c; launch refused without replacing it. Restore the original agent configuration and store, or rebind with aoe session set-session-id bd9668fecc064d78 01a1bbfe-4006-73e2-849e-139baf24402c. Codex is not authenticated with a local OpenAI API key (a ChatGPT login cannot be attested, because it may select cloud-managed requirements); replace the credentials with an OpenAI API key (OPENAI_API_KEY, no ChatGPT tokens) in the auth.json of its resolved configuration directory and re-run. ```  I'm on MacOS, Aoe version 1.22.1 and Codex 0.166.0 and aoe-dev-sandbox:2.0.0.  My agent may have found some related documented change: "AoE v1.19.0’s guide says automatic restarts still tried to resume a stored conversation when its execution context couldn’t be verified. The v1.22.1 guide says AoE now refuses that launch."  I'm not using API keys but a GPT subscription.  I can't find anything online about this - which makes me think that something is special in my situation, but I don't know what else to try.  ### aoe version and OS  Aoe 1.22.1, MacOS 26.6.2  ### AI usage  Only the quoted bit
 
-- **Issue #5224** (2026-11-04): **[bug] Structured view (ACP): every UserPromptSent stored and rendered twice with vibe-acp**
-  *Symptoms*: ### What happened?  In Structured view sessions (ACP, agent: vibe / vibe-acp), every user prompt is stored twice in `acp_events.db` (~30 ms apart) and therefore rendered twice in the TUI and web transcript. Terminal sessions are unaffected. The agent itself receives and processes the prompt exactly once — only the event/transcript is duplicated.  ### Environment  - AoE 1.21.0 (binary install), current latest release - Vibe 3.0.4, vibe-acp 3.0.4 (current latest) - Debian 12/13, reproduced on two hosts  ### Evidence  ```sql sqlite3 ~/.config/agent-of-empires/acp_events.db "SELECT seq, discriminant, substr(event_json,1,300), created_at FROM acp_events WHERE session_id='16f71f008d6d424f' AND discriminant='UserPromptSent' ORDER BY seq LIMIT 6;" ```  ``` seq=4953   UserPromptSent | {"UserPromptSent":{"text":"...","prompt_id":"abc-123...","synthesized"\:false}} | 1730285358156 seq=4954 | UserPromptSent | {"UserPromptSent":{"text":"...","synthesized"\:false}}                          | 1730285358391 ```  - 44 `UserPromptSent` events in one session = 22 prompts × 2, gap 27–156 ms (avg 39 ms) - First copy usually carries `prompt_id`, second copy has none (on a second host both copies lacked `prompt_id`, so dedup on `prompt_id` alone is not reliable) - `synthesized: false` in **both** copies → the synthesized suppression introduced in #4041 does not apply - No `rate_limited`/`Stopped` events, no idle phase, not a replay pattern  Reproduced again after updating to Vibe/vibe-acp 3.0.4, so
+- **Issue #5454** (2026-11-08): **Show failed Trash reads when opening a retained Session**
+  *Symptoms*: ### What happened?  P3 follow-up from #5355. A failed Trash read is indistinguishable from an unfinished load when opening a retained Session.  Source-derived scenario, not dynamically reproduced: 1. Open a direct link to a trashed Session. 2. Let `GET /api/sessions?state=untrashed` succeed, while the scoped Trash reads fail or time out. 3. The main pane remains a skeleton without a Trash error/retry state. Later automatic retries may recover, but a persistent failure stays unexplained.  `syncTrash` silently returns on a failed read and never sets `trashEpoch`; `openedSessionSettled` continues waiting while the untrashed poll has no error.  Expected: expose the scoped read failure and a retry path, preserve known rows, and do not treat an unread Session as deleted. Cover failure, retry and recovery with a deterministic regression and the applicable coverage entry.  Evidence: [failed read](https://github.com/agent-of-empires/agent-of-empires/blob/a7ccc0e5384f1f5247b29a8db5fb098b7320ead1/web/src/hooks/useSessions.ts#L171), [route settlement](https://github.com/agent-of-empires/agent-of-empires/blob/a7ccc0e5384f1f5247b29a8db5fb098b7320ead1/web/src/App.tsx#L461). #5278 concerns unfinished Trash transitions, not this read failure.  ### aoe version and OS  `main@a7ccc0e5384f1f5247b29a8db5fb098b7320ead1`; web dashboard. Static analysis only, no OS/browser reproduction claimed.  ### AI usage  Prepared with Codex, two independent sequential source reviews and a paginated search of ope
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2133,957 +1977,579 @@ fn render_list(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `95c5d66c` (2026-11-05)
-**Commit Message**: ci: cancel obsolete queue runs and validate npm before builds (#5306)
+### Incident Patch 1: `ec5be5a6` (2026-11-09)
+**Commit Message**: fix(tui): lock Yolo in the new-session dialog for the agent each view runs (#5412)
 
-* ci: cancel superseded queue generations and validate npm before builds
+* fix(tui): lock Yolo in the new-session dialog for the agent each view runs
 
-* ci: preserve manual queue reruns during cleanup
+A custom agent inherits always-Yolo from the base it actually runs: the
+agent_detect_as base in a terminal session, and in a structured one its own
+adapter when it has one, else the base's. The dialog now uses
+acp::runs_always_yolo for the selected view, and re-checks the lock when the
+Structured toggle changes or is inherited.
 
-* ci: shorten web dependency step names
+Fixes #5366
 
-**File**: `.github/scripts/cancel-obsolete-queue-runs.cjs` (added, +75/-0)
+Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+
+* fix(tui): refresh the agent's Yolo lock and view when the path changes
+
+A repo config can map a custom agent onto a base with agent_detect_as,
+which changes whether Yolo is forced and whether Structured is offered.
+Typing or picking a path, a path set while the sandbox env is edited,
+and turning scratch on now re-read that map when it differs, recompute
+the Structured capability, and reset Yolo when the lock moves.
+
+Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+
+* fix(tui): keep a click and focus on their row when a path change moves rows
+
+The path refresh can show or hide the Structured and Yolo rows,
+
+**File**: `src/tui/dialogs/new_session/mod.rs` (modified, +100/-14)
 ```diff
-@@ -0,0 +1,75 @@
-+const paths = new Set(['.github/workflows/ci.yml', '.github/workflows/tests.yml']);
-+const active = ['queued', 'in_progress', 'waiting', 'pending', 'requested'];
+@@ -216,6 +216,10 @@ pub struct NewSessionDialog {
+     /// every tool or profile change. Gates the Structured field's visibility
+     /// like `has_yolo` / `has_sandbox`.
+     pub(super) structured_capable: bool,
++    /// The profile's custom-agent maps, which decide whether a custom tool always
++    /// runs in Yolo mode in the chosen view.
++    pub(super) agent_acp_cmd: std::collections::HashMap<String, String>,
++    pub(super) agent_detect_as: std::collections::HashMap<String, String>,
+     pub(super) workspace_repos: Vec<String>,
+     pub(super) workspace_repos_expanded: bool,
+     pub(super) workspace_repo_selected_index: usize,
+@@ -465,6 +469,25 @@ pub(super) struct FieldIndices {
+ impl FieldIndices {
+     /// Stands in for a field the current layout hides.
+     pub const ABSENT: usize = usize::MAX;
 +
-+function entry(branch) {
-+  const match = /^gh-readonly-queue\/(.+)\/pr-([1-9]\d*)-[0-9a-f]{40}$/.exec(branch ?? '');
-+  return match && { base: match[1], number: Number(match[2]) };
-+}
-+
-+function sameWorkflow(run, current, repositoryId) {
-+  return run.event === 'merge_group' && paths.has(run.path) &&
-+    run.path === current.path && run.workflow_id === current.workflow_id &&
-+    run.repository?.id === repositoryId && run.head_repository?.id === repositoryId;
-+}
-+
-+module.exports = async ({ github, context, core }) => {
-+  const event = context.payload.workflow_run;
-+  const repositoryId = context.payload.repository.id;
-+  const { data: current } = await github.rest.actions.getWorkflowRun({
-+    ...context.repo, run_id: event.id,
-+  });
-+  const key = entry(current.head_branch);
-+  if (!key || !sameWorkflow(current, current, repositoryId) ||
-+      current.head_sha !== event.head_sha || current.workflow_id !== event.workflow_id) return;
-+
-+  // Queue state, rather than event delivery order, identifies the current generation.
-+  const isCurrent = async () => {
-+    const { repository } = await github.graphql(`
-+      query($owner: String!, $repo: String!, $number: Int!) {
-+        repository(owner: $owner, name: $repo) {
-+          pullRequest(number: $number) {
-+            baseRefName
-+            mergeQueueEntry { headCommit { oid } }
-+          }
-+        }
-+      }`, { ...context.repo, number: key.number });
-+    const pr = repository?.pullRequest;
-+    return pr?.baseRefName === key.base &&
-+      pr.mergeQueueEntry?.headCommit?.oid === current.head_sha;
-+  };
-+  if (!await isCurrent()) return;
-+
-+  const obsolete = run => {
-+    const candidate = entry(run.head_branch);
-+    return sameWorkflow(run, current, repositoryId) &&
-+      candidate?.base === key.base && candidate.number === key.number &&
-+      run.run_number < current.run_number && run.head_sha !== current.head_sha &&
-+      run.run_attempt === 1 && active.includes(run.status);
-+  };
-+  // Snapshot every page before cancelling: mutations can shift API pagination.
-+  const candidates = new Map();
-+  for (const status of active) {
-+    const runs = await github.paginate(github.rest.actions.listWorkflowRuns, {
-+      ...context.repo, workflow_id: current.workflow_id,
-+      event: 'merge_group', status, per_page: 100,
-+    });
-+    for (const run of runs) if (obsolete(run)) candidates.set(run.id, run);
-+  }
-+  for (const candidate of candidates.values()) {
-+    const { data: run } = await github.rest.actions.getWorkflowRun({
-+      ...context.repo, run_id: candidate.id,
-+    });
-+    if (!obsolete(run) || run.head_sha !== candidate.head_sha) continue;
-+    if (!await isCurrent()) return;
-+    try {
-+      await github.rest.actions.cancelWorkflowRun({ ...context.repo, run_id: run.id });
-+      core.notice(`Cancelled obsolete queue run ${run.id} for ${key.base}/${key.number}`);
-+    } catch (error) {
-+      if (error.status !== 409) throw error;
-+      const { data: latest } = await github.rest.actions.getWorkflowRun({
-+        ...context.repo, run_id: run.id,
-+      });
-+      if (latest.status !== 'completed') throw error;
++    /// Where the row at `index` in the `before` layout sits now, or `None` if it is hidden.
++    fn follow(&self, before: &FieldIndices, index: usize) -> Option<usize> {
++        [
++            (before.profile, self.profile),
++            (before.path, self.path),
++            (before.title, self.title),
++            (before.tool, self.tool),
++            (before.structured, self.structured),
++            (before.yolo, self.yolo),
++            (before.worktree, self.worktree),
++            (before.sandbox, self.sandbox),
++            (before.group, self.group),
++        ]
++        .into_iter()
++        .find(|(old, _)| *old == index)
++        .map(|(_, new)| new)
++        .filter(|new| *new != Self::ABSENT)
 +    }
-+  }
-+};
+ }
+ 
+ impl NewSessionDialog {
+@@ -600,6 +623,8 @@ impl NewSessionDialog {
+             structured_default,
+             structured_choice: None,
+             structured_capable,
++            agent_acp_cmd: config.session.agent_acp_cmd.clone(),
++            agent_detect_as: config.session.agent_detect_as.clone(),
+             extra_env,
+             extra_env_overridden: false,
+             env_list_expanded: false,
+@@ -638,6 +663,9 @@ impl NewSessionDialog {
+         self.path = Input::new(path);
+         if !self.extra_env_overridden {
+             self.reload_config_defaults();
++        } else {
++            let config = self.resolve_config_for_path(self.selected_profile());
++            self.refresh_path_agent_config(&config);
+         }
+     }
+ 
+@@ -681,17 +709,28 @@ impl NewSessionDialog {
+             return;
+         }
+         self.tool_index = index;
+-        if self.selected_tool_always_yolo() {
+-            self.yolo_mode = true;
+-        } else {
+-            self.yolo_mode = self.yolo_mode_default;
+-        }
+         if self.selected_tool_host_only() {
+             self.sandbox_enabled = false;
+             self.worktree_enabled = false;
+             self.worktree_branch.reset();
+         }
+         self.reload_tool_config();
++        self.reset_yolo();
++    }
++
++    fn reset_yolo(&mut self) {
++        self.yolo_mode = self.selected_tool_always_yolo() || self.yolo_mode_default;
++    }
++
++    /// The Yolo choice resets only when the view moves the session onto or off an
++    /// always-Yolo agent.
++    fn set_structured(&mut self, enabled: bool) {
++        let was_locked = self.selected_tool_always_yolo();
++        self.structured_enabled = enabled;
++        self.structured_choice = Some(enabled);
++        if self.selected_tool_always_yolo() != was_locked {
++            self.reset_yolo();
++        }
+     }
+ 
+     /// Carry a session's agent, view and sandbox, each only as far as this form allows.
+@@ -706,8 +745,7 @@ impl NewSessionDialog {
+ 
+     fn inherit_modes(&mut self, structured: bool, sandboxed: bool) {
+         if self.structured_capable {
+-            self.structured_enabled = structured;
+-            self.structured_choice = Some(structured);
++            self.set_structured(structured);
+         }
+         if sandboxed && self.docker_available && !self.selected_tool_host_only() {
+             self.set_sandbox_enabled(true);
+@@ -837,12 +875,13 @@ impl NewSessionDialog {
+             return;
+         }
+         let profile = self.selected_profile().to_string();
++        let config = self.resolve_config_for_path(&profile);
++        self.refresh_path_agent_config(&config);
+         // Unknown overrides leave the toggles alone: a guess could disable a sandbox the project asks for.
+         let ProjectOverridesLookup::Known(overrides) = self.resolve_overrides(&profile) else {
+             return;
+         };
+         let host_only = self.selected_tool_host_only();
+-        let config = self.resolve_config_for_path(&profile);
+         if !self.worktree_dirty {
+             let on = overrides
+                 .as_ref()
+@@ -922,6 +961,28 @@ impl NewSessionDialog {
+         }
+     }
+ 
++    /// A path's repo config changes the agent only through `agent_detect_as`. When it does,
++    /// re-read whether the agent can run structured and re-check the Yolo lock.
++    fn refresh_path_agent_config(&mut self, config: &crate::session::Config) {
++        if config.session.agent_detect_as
 ```
 
-**File**: `.github/scripts/cancel-obsolete-queue-runs.test.cjs` (added, +139/-0)
+**File**: `src/tui/dialogs/new_session/tests.rs` (modified, +143/-0)
 ```diff
-@@ -0,0 +1,139 @@
-+const { test } = require('node:test');
-+const assert = require('node:assert/strict');
-+const cancel = require('./cancel-obsolete-queue-runs.cjs');
+@@ -957,6 +957,149 @@ fn the_structured_row_appears_only_for_an_acp_capable_tool() {
+     assert!(!submitted(dialog.build_submit_result()).structured);
+ }
+ 
++#[test]
++fn a_custom_agent_locks_yolo_only_in_the_views_that_run_an_always_yolo_base() {
++    // (terminal locked, structured locked), with a Yolo the user turned on beforehand.
++    for (name, expected) in [
++        ("my-pi", (true, true)),
++        ("own-pi", (true, false)),
++        ("my-claude", (false, false)),
++    ] {
++        let mut dialog = NewSessionDialog::new_with_tools(vec![name], TEST_PATH.to_string());
++        let base = name.trim_start_matches("my-").trim_start_matches("own-");
++        dialog
++            .agent_detect_as
++            .insert(name.to_string(), base.to_string());
++        dialog
++            .agent_acp_cmd
++            .insert("own-pi".to_string(), "own-pi-acp".to_string());
++        dialog.set_structured_capable(true);
++        dialog.yolo_mode = true;
++        let locked = |d: &NewSessionDialog| d.field_indices().yolo == FieldIndices::ABSENT;
++        assert_eq!(locked(&dialog), expected.0, "{name} terminal");
 +
-+const branch = (pr = 42, base = 'main', sha = 'a') =>
-+  `gh-readonly-queue/${base}/pr-${pr}-${sha.repeat(40)}`;
-+const current = {
-+  id: 20, run_number: 10, run_attempt: 1, workflow_id: 100, event: 'merge_group',
-+  path: '.github/workflows/ci.yml', head_branch: branch(), head_sha: 'b'.repeat(40),
-+  repository: { id: 1 }, head_repository: { id: 1 }, status: 'queued',
-+};
-+const old = { ...current, id: 19, run_number: 9, head_branch: branch(42, 'main', 'c'), head_sha: 'd'.repeat(40) };
-+
-+async function exercise({ trigger = {}, candidates = [old], fresh = {}, queueSha = current.head_sha, queueBase = 'main',
-+  queueError, cancelError, latest, pageError, leaveQueue = false, advanceQueue = () => false, event = current } = {}) {
-+  const run = { ...current, ...trigger };
-+  const cancelled = [];
-+  const queries = [];
-+  const reads = [];
-+  let queueReads = 0;
-+  const github = {
-+    rest: {
-+      actions: {
-+        listWorkflowRuns: () => {},
-+        getWorkflowRun: async ({ run_id }) => {
-+          reads.push(run_id);
-+          if (run_id === run.id) return { data: run };
-+          const candidate = candidates.find(c => c.id === run_id);
-+          return { data: latest && reads.filter(id => id === run_id).length > 1
-+            ? { ...candidate, ...latest } : { ...candidate, ...fresh } };
-+        },
-+        cancelWorkflowRun: async ({ run_id }) => {
-+          assert.equal(queries.length, 5, 'snapshot all statuses before mutating');
-+          cancelled.push(run_id);
-+          if (cancelError) throw cancelError;
-+        },
-+      },
-+    },
-+    graphql: async (query, args) => {
-+      assert.equal(args.number, 42);
-+      assert.match(query, /mergeQueueEntry/);
-+      queueReads++;
-+      if (queueError) throw queueError;
-+      return { repository: { pullRequest: {
-+        baseRefName: queueBase,
-+        mergeQueueEntry: leaveQueue ? null : {
-+          headCommit: { oid: advanceQueue({ reads: queueReads, cancelled }) ? 'new-generation' : queueSha },
-+        },
-+      } } };
-+    },
-+    paginate: async (method, args) => {
-+      assert.equal(method, github.rest.actions.listWorkflowRuns);
-+      assert.equal(args.event, 'merge_group');
-+      assert.equal(args.workflow_id, run.workflow_id);
-+      assert.equal(args.per_page, 100);
-+      queries.push(args.status);
-+      if (pageError) throw pageError;
-+      return candidates.filter(c => c.status === args.status);
-+    },
-+  };
-+  await cancel({ github, context: {
-+    repo: { owner: 'owner', repo: 'repo' },
-+    payload: { repository: { id: 1 }, workflow_run: event },
-+  }, core: { notice() {} } });
-+  return { cancelled, queries, reads };
++        dialog.focused_field = dialog.field_indices().structured;
++        dialog.handle_key(key(KeyCode::Char(' ')));
++        assert!(dialog.structured_enabled, "{name}");
++        assert_eq!(locked(&dialog), expected.1, "{name} structured");
++        // Leaving the lock resets Yolo to the default; an unchanged lock keeps the choice.
++        let yolo = expected.1 || expected.0 == expected.1;
++        assert_eq!(dialog.yolo_mode, yolo, "{name}");
++        assert_eq!(
++            submitted(dialog.build_submit_result()).yolo_mode,
++            yolo,
++            "{name}"
++        );
++    }
 +}
 +
-+test('cancels obsolete CI and Tests generations, including more than 100 returned candidates', async () => {
-+  for (const path of ['.github/workflows/ci.yml', '.github/workflows/tests.yml']) {
-+    const candidates = Array.from({ length: 105 }, (_, i) => ({ ...old, path, id: 1000 + i }));
-+    candidates.push({ ...old, path, id: 2000, status: 'in_progress' });
-+    const result = await exercise({ trigger: { path }, event: { ...current, path }, candidates });
-+    assert.deepEqual(result.cancelled, candidates.map(c => c.id));
-+    assert.deepEqual(result.queries, ['queued', 'in_progress', 'waiting', 'pending', 'requested']);
-+  }
-+});
-+
-+test('leaves unrelated, newer, completed and same-SHA runs alone', async () => {
-+  const cases = [
-+    { head_branch: branch(43) }, { head_branch: branch(42, 'release/main') },
-+    { head_branch: 'feature/fake-queue' }, { head_branch: branch() + '-suffix' },
-+    { event: 'pull_request' }, { workflow_id: 101 },
-+    { path: '.github/workflows/tests.yml' }, { repository: { id: 2 } },
-+    { head_repository: { id: 2 } }, { run_number: 10 }, { run_number: 11 },
-+    { head_sha: current.head_sha }, { status: 'completed' }, { run_attempt: 2 },
-+  ];
-+  for (const change of cases) {
-+    assert.deepEqual((await exercise({ candidates: [{ ...old, ...change }] })).cancelled, [], JSON.stringify(change));
-+  }
-+});
-+
-+test('rejects untrusted triggers and generations no longer current in the queue', async () => {
-+  for (const trigger of [
-+    { event: 'pull_request' }, { path: '.github/workflows/release.yml' },
-+    { head_branch: 'main' }, { head_sha: 'changed' }, { workflow_id: 101 },
-+    { repository: { id: 2 } }, { head_repository: { id: 2 } },
-+  ]) {
-+    assert.deepEqual((await exercise({ trigger })).queries, [], JSON.stringify(trigger));
-+  }
-+  assert.deepEqual((await exercise({ queueSha: 'changed' })).cancelled, []);
-+  assert.deepEqual((await exercise({ queueBase: 'release' })).cancelled, []);
-+  assert.deepEqual((await exercise({ leaveQueue: true })).cancelled, []);
-+  assert.deepEqual((await exercise({ advanceQueue: ({ reads }) => reads > 1 })).cancelled, []);
-+  await assert.rejects(exer
-```
-
-**File**: `.github/workflows/cancel-obsolete-queue-runs.yml` (added, +30/-0)
-```diff
-@@ -0,0 +1,30 @@
-+name: Cancel obsolete queue runs
-+
-+on:
-+  # Default-branch code only; no queue checkout, cache restoration or artifacts.
-+  workflow_run: # zizmor: ignore[dangerous-triggers]
-+    workflows: [CI, Tests]
-+    types: [requested]
-+
-+permissions:
-+  contents: read
-+  actions: write
-+  pull-requests: read
-+
-+jobs:
-+  cancel:
-+    if: github.event.workflow_run.event == 'merge_group'
-+    runs-on: ubuntu-latest
-+    timeout-minutes: 5
-+    steps:
-+      # workflow_run's SHA belongs to the default branch, never the queue head.
-+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-+        with:
-+          ref: ${{ github.sha }}
-+          persist-credentials: false
-+          sparse-checkout: .github/scripts
-+      - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
-+        with:
-+          script: |
-+            const cancel = require('./.github/scripts/cancel-obsolete-queue-runs.cjs');
-+            await cancel({ github, context, core });
-```
-
-**File**: `.github/workflows/ci.yml` (modified, +2/-1)
-```diff
-@@ -10,7 +10,7 @@ on:
-   merge_group:
- 
- # The event keeps a queue run and the push of its fast-forwarded commit apart.
--# Queue refs are unique per entry; newer PR and main pushes cancel older runs.
-+# Queue generations have distinct refs; cancel-obsolete-queue-runs handles them.
- concurrency:
-   group: ci-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }}
-   cancel-in-progress: true
-@@ -215,6 +215,7 @@ jobs:
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-         with:
-           persist-credentials: false
-+      - run: node --test .github/scripts/cancel-obsolete-queue-runs.test.cjs
-       - run: scripts/verify-shared-target.sh --self-test
-       - run: python3 .github/scripts/select-internal-pr.py --self-test
-       - run: python3 .github/scripts/check-dependabot-pr.py --self-test
-```
-
-**File**: `.github/workflows/tests.yml` (modified, +15/-11)
-```diff
-@@ -8,7 +8,7 @@ on:
-   merge_group:
- 
- # The event keeps a queue run and the push of its fast-forwarded commit apart.
--# Queue refs are unique per entry; newer PR and main pushes cancel older runs.
-+# Queue generations have distinct refs; cancel-obsolete-queue-runs handles them.
- concurrency:
-   group: tests-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }}
-   cancel-in-progress: true
-@@ -41,6 +41,17 @@ jobs:
-           # (zizmor artipacked). Matches the hardened convention in ci.yml and
-           # release.yml.
-           persist-credentials: false
-+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-+        with:
-+          node-version: '22'
-+          cache: npm
-+          cache-dependency-path: |
-+            web/package-lock.json
-+            acp-worker/test-shim/package-lock.json
-+      - name: Validate web lockfile
-+        if: matrix.leg == 'web-e2e'
-+        working-directory: web
-+        run: npm ci --dry-run --ignore-scripts --no-audit --no-fund
-       - uses: ./.github/actions/rust-toolchain
-       - uses: ./.github/actions/kache
-         with:
-@@ -63,13 +74,6 @@ jobs:
-             userns,
-           }
-           PROFILE
--      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
--        with:
--          node-version: '22'
--          cache: npm
--          cache-dependency-path: |
--            web/package-lock.json
--            acp-worker/test-shim/package-lock.json
-       # tests/integration/acp_smoke.rs spawns the Node ACP shim under
-       # acp-worker/test-shim/. The shim depends on @agentclientprotocol/sdk,
-       # so its deps must be installed before the integration crate runs. Only
-@@ -558,6 +562,9 @@ jobs:
-           node-version: '22'
-           cache: npm
-           cache-dependency-path: web/package-lock.json
-+      - name: Install web deps
-+        working-directory: web
-+        run: npm ci
-       - uses: ./.github/actions/rust-toolchain
-       - uses: ./.github/actions/kache
-         with:
-@@ -579,9 +586,6 @@ jobs:
-           # smaller `.js`, far faster navigation); see web/vite.config.ts.
-           AOE_COVERAGE_INLINE_SOURCEMAP: '1'
-         run: cargo build --features web
--      - name: Install web deps
--        working-directory: web
--        run: npm ci
-       # Same scheme as the mocked job: cache Chromium under
-       # ~/.cache/ms-playwright, key on the lockfile, skip --with-deps
-       # because ubuntu-latest already has the apt prerequisites.
++#[test]
++#[serial_test::serial]
++fn moving_between_repos_that_map_the_agent_differently_refreshes_its_lock_and_view() {
++    let temp_home = tempfile::tempdir().expect("temp home");
++    let _home = crate::session::test_support::isolate_home(temp_home.path());
++    let repo_mapping = |base: &str| {
++        let repo = tempfile::tempdir().expect("repo dir");
++        fs::create_dir_all(repo.path().join(".agent-of-empires")).expect("repo config dir");
++        fs::write(
++            repo.path().join(".agent-of-empires/config.toml"),
++            format!("[session]\nagent_detect_as = {{ wrap = \"{base}\" }}\n"),
++        )
++        .expect("repo config");
++        repo
++    };
++    let (pi, claude) = (repo_mapping("pi"), repo_mapping("claude"));
++    type Arrive = fn(&mut NewSessionDialog, String);
++    let arrivals: &[(&str, Arrive)] = &[
++        ("typed", |d, path| {
++            d.focused_field = d.path_field();
++            d.path = Input::new(String::new());
++            type_str(d, &path);
++            d.handle_key(key(KeyCode::Tab));
++        }),
++        ("picked", |d, path| {
++            d.focused_field = d.path_field();
++            d.path = Input::new(path);
++            d.handle_key(ctrl_key(KeyCode::Char('p')));
++            d.handle_key(key(KeyCode::Enter));
++            assert!(!d.dir_picker.is_active());
++        }),
++        ("clicked away", |d, path| {
++            d.focused_field = d.path_field();
++            d.path = Input::new(path);
++            let worktree = d.field_indices().worktree;
++            d.focusable_rects
++                .push((worktree, ratatui::layout::Rect::new(0, 9, 30, 1)));
++            d.handle_click(10, 9);
++            assert!(d.worktree_enabled, "the click must toggle the row it hit");
++        }),
++        ("sandbox env edited", |d, path| {
++            d.extra_env_overridden = true;
++            d.set_path(path);
++        }),
++        ("back-tabbed", |d, path| {
++            d.focused_field = d.path_field();
++            d.path = Input::new(path);
++            d.handle_key(key(KeyCode::BackTab));
++            assert_eq!(
++                d.focused_field,
++                d.field_indices().group,
++                "BackTab wraps to Group"
++            );
++        }),
++        ("scratch", |d, _| {
++            d.focused_field = d.field_indices().worktree;
++            d.handle_key(ctrl_key(KeyCode::Char('t')));
++            assert_eq!(
++                d.focused_field,
++                d.field_indices().worktree,
++                "focus stays on Worktree"
++            );
++        }),
++    ];
++    let locked = |d: &NewSessionDialog| d.field_indices().yolo == FieldIndices::ABSENT;
++    // Leaving the `pi` lock must drop the forced Yolo, not submit it.
++    for (from, to, to_locked) in [(&pi, &claude, false), (&claude, &pi, true)] {
++        for (name, arrive) in arrivals {
++            let mut dialog = NewSessionDialog::new_with_tools(vec!["wrap"], TEST_PATH.to_string());
++            dialog.set_path(from.path().to_string_lossy().to_string());
++            assert!(dialog.structured_capable, "{name}");
++            assert_eq!(locked(&dialog), !to_locked, "{name}");
++            arrive(&mut dialog, to.path().to_string_lossy().to_string());
++            // Scratch has no re
 ```
 
 ---
 
-### Incident Patch 2: `db073acb` (2026-11-05)
-**Commit Message**: chore(deps): bump @assistant-ui/react from 0.15.21 to 0.15.32 in /web in the web-pre1-patch group across 1 directory (#5190)
+### Incident Patch 2: `08635740` (2026-11-08)
+**Commit Message**: fix(session): resume verified Codex rollouts without attested policy (#5446)
 
-* chore(deps): bump @assistant-ui/react
+* fix(session): resume verified Codex rollouts without attested policy
 
-Bumps the web-pre1-patch group with 1 update in the /web directory: [@assistant-ui/react](https://github.com/assistant-ui/assistant-ui/tree/HEAD/packages/react).
+Since #4942, a Default restart refuses when AoE cannot attest Codex's
+execution context. That always fails on a macOS host, where managed
+preferences are unreadable, and with a ChatGPT login, so existing sessions
+went to Error. The suggested set-session-id rebind fails for the same reason.
 
+Exact-UUID lookup still spans all of CODEX_HOME, so it does not by itself
+rule out #4941's cross-project resume. Admit an unpinned Default resume only
+when every rollout of that UUID in the store records this session's working
+directory. Everything else stays refused, with a new cause whose recovery
+does not suggest the rebind.
 
-Updates `@assistant-ui/react` from 0.15.21 to 0.15.32
-- [Release notes](https://github.com/assistant-ui/assistant-ui/releases)
-- [Changelog](https://github.com/assistant-ui/assistant-ui/blob/main/packages/react/CHANGELOG.md)
-- [Commits](https://github.com/assistant-ui/assistant-ui/commits/@assistant-ui/react@0.15.32/packages/react)
+Fixes #5415
 
----
-updated-dependencies:
-- dependency-name: "@assistant-ui/react"
-  dependency-version: 0.15.31
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-  dependency-group: web-pre1-patch
-...
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+* fix(session): apply one Codex refusal policy on every host
 
-* chore: update Nix npmDepsHash for web dependencies
+The macOS gate ran before the config checks, so macOS admitted profile and
+remote-store contexts that Linux refused, while Linux refused keyring and
+missing auth.json. Admit only credential and managed-preference gaps
+everywhere; refuse unreadable routing everywhere, with recovery that fits.
 
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Match 
 
----------
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.no
-
-**File**: `flake.nix` (modified, +1/-1)
+**File**: `Cargo.lock` (modified, +2/-0)
 ```diff
-@@ -105,7 +105,7 @@
-             pname = "agent-of-empires-web";
-             version = "0";
-             src = ./web;
--            npmDepsHash = "sha256-zITYrFhy9ewkgUsnF1Uazp46NaJbY5svOsuFdwk0HiY=";
-+            npmDepsHash = "sha256-ACTtB+XehAX4DxRmwMj+cU1aJl3R41Xv5TW2IRyTOKk=";
-             # tsc -b && vite build; output goes to web/dist
-             installPhase = ''
-               mkdir $out
+@@ -103,6 +103,8 @@ dependencies = [
+  "chrono",
+  "clap",
+  "clap_complete",
++ "core-foundation",
++ "core-foundation-sys",
+  "crossterm",
+  "dirs",
+  "dotenv-ng-core",
 ```
 
-**File**: `web/package-lock.json` (modified, +503/-495)
+**File**: `Cargo.toml` (modified, +4/-0)
 ```diff
-@@ -8,7 +8,7 @@
-       "name": "web",
-       "version": "0.0.0",
-       "dependencies": {
--        "@assistant-ui/react": "^0.15.21",
-+        "@assistant-ui/react": "^0.15.32",
-         "@assistant-ui/react-markdown": "^0.14.15",
-         "@dnd-kit/core": "^6.3.1",
-         "@dnd-kit/sortable": "^10.0.0",
-@@ -199,49 +199,46 @@
-       }
-     },
-     "node_modules/@assistant-ui/core": {
--      "version": "0.3.20",
--      "resolved": "https://registry.npmjs.org/@assistant-ui/core/-/core-0.3.20.tgz",
--      "integrity": "sha512-gSY7kI5crnbaXFaF2tObBVekXvQCpBz0D8CqzEkDJrKOwe57gn2K52qBr2hL0o36Ssyg0DmiEAi0LjPG5ZSGqQ==",
-+      "version": "0.3.32",
-+      "resolved": "https://registry.npmjs.org/@assistant-ui/core/-/core-0.3.32.tgz",
-+      "integrity": "sha512-eEOuM3K0HWoetfFW8WwGJrhFu7lAfn/Su9us6xMk9HbHUc3/5jL6EOa2VsxrWeZbPqu/yXxGT2KaaFVvzZtCbA==",
-       "license": "MIT",
-       "dependencies": {
--        "assistant-stream": "^0.3.44",
--        "nanoid": "^6.0.1"
-+        "assistant-cloud": "^0.2.9",
-+        "assistant-stream": "^0.3.55",
-+        "nanoid": "^6.0.2"
-       },
-       "peerDependencies": {
--        "@assistant-ui/store": "^0.3.14",
--        "@assistant-ui/tap": "^0.9.18",
-+        "@assistant-ui/store": "^0.3.22",
-+        "@assistant-ui/tap": "^0.9.24",
-         "@types/react": "*",
--        "assistant-cloud": "^0.2.1",
-         "react": "^18 || ^19"
-       },
-       "peerDependenciesMeta": {
-         "@types/react": {
-           "optional": true
+@@ -201,6 +201,10 @@ schemars = { version = "1", features = ["chrono04"] }
+ libc = "0.2"
+ nix = { version = "0.31", features = ["signal", "process", "net", "fs", "resource", "dir", "user", "poll", "hostname"] }
+ 
++[target.'cfg(target_os = "macos")'.dependencies]
++core-foundation = "0.10.1"
++core-foundation-sys = "0.8.7"
++
+ [features]
+ # The daemon (REST/WS API, auth, Web Push, ACP, structured view) is core: a
+ # plain `cargo build` ships it and needs no Node. `web` adds the embedded
+```
+
+**File**: `docs/api.md` (modified, +3/-1)
+```diff
+@@ -777,7 +777,9 @@ The `omp_transcript_binding_required` cause identifies an absent OMP conversatio
+ binding or exact transcript path. `pi_transcript_binding_required` identifies
+ the refusal when a matching Pi binding lacks the required transcript path
+ after permitted discovery. Neither cause identifies a missing file on disk or
+-another failed attestation. Missing, unknown, or ambiguous cause metadata keeps
++another failed attestation. `codex_conversation_unverified` identifies a Codex
++context AoE cannot attest whose conversation could not be verified from its
++local rollout either. Missing, unknown, or ambiguous cause metadata keeps
+ the refusal generic; native clients do not read response bodies to derive that
+ reason. See
+ [managed resume recovery](guides/session-resume.md#common-managed-resume-and-fork-refusals).
+```
+
+**File**: `docs/guides/session-resume.md` (modified, +3/-3)
+```diff
+@@ -41,7 +41,7 @@ Shell pipelines, remote launchers, redirections, expansion, and unrecognized con
+ ## Supported managed contexts
+ 
+ - **Claude:** on a host launch, the store its conversation recorded, a declared `agent_config_dir`, the resolved `CLAUDE_CONFIG_DIR`, or the default Claude store; a sandboxed session takes a per-session child of the entry instead. A recorded conversation store outranks a conflicting configuration-directory setting; see [Swapping the engine on a restart](#swapping-the-engine-on-a-restart). Managed arguments allow namespace-neutral `--mcp-config` with one or more files or JSON strings, and zero-arity `--strict-mcp-config`, per the [Claude CLI reference](https://code.claude.com/docs/en/cli-reference). Extra native session selectors and unsupported configuration-routing options remain refused.
+-- **Codex:** a local host-readable `CODEX_HOME`, file-backed API-key authentication, and local SQLite/thread storage. Cloud, keyring, profile, project-routing, managed-policy, and host macOS contexts are not currently proven.
++- **Codex:** a local host-readable `CODEX_HOME`, file-backed API-key authentication, and local SQLite/thread storage. Cloud, keyring, profile, project-routing, managed-policy, and host macOS contexts are not currently proven. On a host whose only gap is macOS managed preferences or its credentials (ChatGPT login, keyring, no `auth.json`), a Default restart still runs `codex resume <uuid>` when every rollout of that exact ID found under the store's `sessions/YYYY/MM/DD` directories is a root thread (not a subagent) that records the session's working directory. A `config_toml_base64` or `requirements_toml_base64` value in the `com.openai.codex` preference domain, forced or not, can route the store, so it refuses, as do `session.agent_config_dir`, a profile, project routing, and a remote thread store.
+ - **OpenCode:** an explicit `OPENCODE_DB`, or the common database when `OPENCODE_DISABLE_CHANNEL_DB` is already enabled. Sandboxed explicit resume requires a host-readable database mount; the target working directory is still validated inside the container. Target routing is read only from the session table selected by the prepared executable's verified release/build identity. An inactive table cannot supply a missing target or override its working directory or workspace. A workspace-routed target or different stored working directory is refused. Managed current-generation launches and resumes use `--standalone` so an existing background service cannot redirect them to another database.
+ - **Pi and OMP:** the verified transcript and exact store. Recovery uses `--store` with the transcript file. A Pi row that has an id but no recorded transcript path looks for `<timestamp>_<id>.jsonl` in the store, then resumes it with `--session <path>`. OMP also verifies its stored working directory and pins the resolved profile.
+ - **Gemini, Cursor, Kimi, and Copilot:** their native config/share/home store inputs. AoE does not combine unrelated environment roots.
+@@ -90,8 +90,8 @@ Local diagnostics include the native refusal chain and any scope-retirement erro
+ 
+ | Context | `set-session-id` | Fork | Remedy |
+ |---------|------------------|------|--------|
+-| Unsandboxed Codex on a macOS host | Refused | Refused | None yet; run Codex in a managed container |
+-| Codex signed in with a ChatGPT login | Refused | Refused | A local OpenAI API key, per [Codex](#supported-managed-contexts) |
++| Unsandboxed Codex on a macOS host | Refused | Refused | Default restarts resume a [verified rollout](#supported-managed-contexts); otherwise clear the ID, restart, and run `/resume <id>` in Codex. A managed container with a local OpenAI API key supports all three |
++| Codex with a ChatGPT login, keyring, or no `auth.json` | Refused | Refused | Default host restarts resume a [verified rollout](#supported-managed-contexts); a local OpenAI API key supports all three |
+ | OpenCode with no provable durable database | Refused | Refused | Point `OPENCODE_DB` at a durable database (`opencode debug paths` prints the current one); otherwise `OPENCODE_DISABLE_CHANNEL_DB` must be exactly `1` or `true`, and `:memory:` never qualifies, per [OpenCode](#supported-managed-contexts) |
+ | OpenCode with an unlisted release/build identity | May be recorded; resume refused | Refused | Use a listed identity; Default restarts also refuse without guessing the active schema |
+ | Sandboxed OpenCode fork, or a current-generation wrapper-mediated store fork | n/a | Refused | Disable the sandbox; for a current-generation store fork, launch `opencode` directly |
+```
+
+**File**: `src/daemon/error.rs` (modified, +2/-0)
+```diff
+@@ -187,6 +187,7 @@ fn managed_resume_cause(headers: &HeaderMap) -> ManagedResumeCause {
+             b"opencode_schema_unattested" => ManagedResumeCause::OpenCodeSchemaUnattested,
+             b"pi_transcript_binding_required" => ManagedResumeCause::PiTranscriptBindingRequired,
+             b"omp_transcript_binding_required" => ManagedResumeCause::OmpTranscriptBindingRequired,
++            b"codex_conversation_unverified" => ManagedResumeCause::CodexConversationUnverified,
+             _ => ManagedResumeCause::ExecutionContextUnattested,
          },
--        "assistant-cloud": {
--          "optional": true
--        },
-         "react": {
-           "optional": true
-         }
-       }
-     },
-     "node_modules/@assistant-ui/react": {
--      "version": "0.15.21",
--      "resolved": "https://registry.npmjs.org/@assistant-ui/react/-/react-0.15.21.tgz",
--      "integrity": "sha512-5VID3r2YpYFbx6LLfyOSWwRVf4WOJXYsfSN/C67sbCsJsqqBbxeQpn4MB9g73HcyriBkRwqvHY5XXCguyNqP6Q==",
-+      "version": "0.15.32",
-+      "resolved": "https://registry.npmjs.org/@assistant-ui/react/-/react-0.15.32.tgz",
-+      "integrity": "sha512-cw+8UQRnJocyHEaNc3+S+ulZaFp4UoVnbjyRmVFZcq8XSHpe4onz7ZkXkBl7L8IZftgvNdHS9ZEujnqohwzibw==",
-       "license": "MIT",
-       "dependencies": {
--        "@assistant-ui/core": "^0.3.20",
--        "@assistant-ui/store": "^0.3.14",
--        "@assistant-ui/tap": "^0.9.18",
--        "assistant-cloud": "^0.2.2",
--        "assistant-stream": "^0.3.44",
--        "radix-ui": "^1.6.7",
-+        "@assistant-ui/core": "^0.3.32",
-+        "@assistant-ui/store": "^0.3.22",
-+        "@assistant-ui/tap": "^0.9.24",
-+        "assistant-cloud": "^0.2.9",
-+        "assistant-stream": "^0.3.55",
-+        "radix-ui": "^1.8.1",
-         "react-textarea-autosize": "^8.5.9",
--        "safe-content-frame": "^0.0.31",
--        "zod": "^4.6.5",
--        "zustand": "^5.0.15"
-+        "safe-content-frame": "^0.0.34",
-+        "zod": "^4.6.7",
-+        "zustand": "^5.0.16"
-       },
-       "peerDependencies": {
-         "@types/react": "*",
-@@ -282,12 +279,12 @@
-       }
-     },
-     "node_modules/@assistant-ui/store": {
--      "version": "0.3.14",
--      "resolved": "https://registry.npmjs.org/@assistant-ui/store/-/store-0.3.14.tgz",
--      "integrity": "sha512-GqHYBD4TfSBTynyBYs2DDnyskfTVNtKHNaXws6dG5//18fb5PJyTYhXjkOSvDqF+dKX5rlOk9Bbd7G0CfJ+xkQ==",
-+      "version": "0.3.22",
-+      "resolved": "https://registry.npmjs.org/@assistant-ui/store/-/store-0.3.22.tgz",
-+      "integrity": "sha512-aXp4m42mmtZOQUE0lzxJ8Z9EZKknOWBk+DDg1Pj2gNhhBGYXmfrScYD1N1e/9/8wTKSwL0g4z2fSZqr+5fWbxg==",
-       "license": "MIT",
-       "peerDependencies": {
--        "@assistant-ui/tap": "^0.9.18",
-+        "@assistant-ui/tap": "^0.9.24",
-         "@types/react": "*",
-         "react": "^18 || ^19"
-       },
-@@ -301,9 +298,9 @@
-       }
-     },
-     "node_modules/@assistant-ui/tap": {
--      "version": "0.9.18",
--      "resolved": "https://registry.npmjs.org/@assistant-ui/tap/-/tap-0.9.18.tgz",
--      "integrity": "sha512-JowBf+JbzQRarun3DWy/4H6XZ7v/1fJ154By00Kn7b30thmlA/bh2lOPa9hPPeYaMcsTiYYYu6yWEM+AFMvdIw==",
-+      "version": "0.9.24",
-+      "resolved": "https://registry.npmjs.org/@assistant-ui/tap/-/tap-0.9.24.tgz",
-+      "integrity": "sha512-6O0hf2HkKbrylIwNlFUimHf2V/6Gq5UXF0y0r2Fbw5wSvvO8ZDmv0AEkMwwygSfJgbpnQgiC8Xs+2VFaeO0RBw==",
-       "license": "MIT",
-       "peerDependencies": {
-         "@types/react": "*",
-@@ -1968,18 +1965,18 @@
-       "license": "MIT"
-     },
-     "node_modules/@radix-ui/primitive": {
--      "version": "1.1.7",
--      "resolved": "https://registry.npmjs.org/@radix-ui/primitive/-/primitive-1.1.7.tgz",
--      "integrity": "sha512-rqWnm76nYT8HoNNqEjpgJ7Pw/DrBj5iBTrmEPo6HTX5+VJyBNOqTdv4g89G63HuR5g0AaENoAcH7Is5fF2kZ8Q==",
-+      "version": "1.2.0",
-+      "resolved": "https://registry.npmjs.org/@radix-ui/primitive/-/primitive-1.2.0.tgz",
-+      "integrity": "sha512-KABY+VMIRPJL+Vyzv/335FEhXXD/xDv8BMb1kl48/aXJZMH0LtHCTx5ga5RnxaEP3nZHtmTLf1P9vanmFX46bw==",
-       "license": "MIT"
-     },
-     "node_modules/@rad
+         _ => ManagedResumeCause::ExecutionContextUnattested,
+@@ -336,6 +337,7 @@ mod tests {
+                 "omp_transcript_binding_required",
+                 OmpTranscriptBindingRequired,
+             ),
++            ("codex_conversation_unverified", CodexConversationUnverified),
+             ("execution_context_unattested", ExecutionContextUnattested),
+             ("secret-token", ExecutionContextUnattested),
+             (
 ```
 
-**File**: `web/package.json` (modified, +1/-1)
+**File**: `src/process/linux.rs` (modified, +6/-1)
 ```diff
-@@ -18,7 +18,7 @@
-     "coverage:all": "rm -rf coverage && AOE_COVERAGE=1 npm run test:unit -- --coverage && AOE_COVERAGE=1 npx playwright test && npm run coverage:merge"
-   },
-   "dependencies": {
--    "@assistant-ui/react": "^0.15.21",
-+    "@assistant-ui/react": "^0.15.32",
-     "@assistant-ui/react-markdown": "^0.14.15",
-     "@dnd-kit/core": "^6.3.1",
-     "@dnd-kit/sortable": "^10.0.0",
+@@ -1,6 +1,5 @@
+ //! Linux-specific process utilities.
+ 
+-pub(crate) const HAS_CODEX_MANAGED_PREFERENCES: bool = false;
+ use anyhow::Context as _;
+ use std::collections::HashMap;
+ use std::fs;
+@@ -12,6 +11,12 @@ pub(super) use super::unix::{
+     restore_environment_value, terminate_process_group, try_wait_status_hook,
+ };
+ 
++pub(crate) const HAS_CODEX_MANAGED_PREFERENCES: bool = false;
++
++pub(crate) fn codex_managed_preferences_present() -> bool {
++    false
++}
++
+ struct LegacyRuntimeDirectories {
+     run: std::os::fd::OwnedFd,
+     user: Option<std::os::fd::OwnedFd>,
+```
+
+**File**: `src/process/macos.rs` (modified, +55/-1)
+```diff
+@@ -1,6 +1,5 @@
+ //! macOS-specific process utilities.
+ 
+-pub(crate) const HAS_CODEX_MANAGED_PREFERENCES: bool = true;
+ use anyhow::Context as _;
+ use std::collections::HashMap;
+ use std::process::Command;
+@@ -9,6 +8,43 @@ pub(super) use super::unix::{
+     close_frozen_payload, configure_process_group, exec_command, kill_process_group,
+     restore_environment_value, terminate_process_group, try_wait_status_hook,
+ };
++
++pub(crate) const HAS_CODEX_MANAGED_PREFERENCES: bool = true;
++
++const CODEX_PREFERENCES_DOMAIN: &str = "com.openai.codex";
++
++/// Whether CFPreferences holds a Codex managed configuration or requirements
++/// value. Forced or not: Codex before openai/codex#46032 read either.
++pub(crate) fn codex_managed_preferences_present() -> bool {
++    codex_managed_preferences_present_with(|key| {
++        preference_value_present(key, CODEX_PREFERENCES_DOMAIN)
++    })
++}
++
++fn codex_managed_preferences_present_with(present: impl Fn(&str) -> bool) -> bool {
++    ["config_toml_base64", "requirements_toml_base64"]
++        .into_iter()
++        .any(present)
++}
++
++fn preference_value_present(key: &str, application: &str) -> bool {
++    use core_foundation::base::{CFType, TCFType as _};
++    use core_foundation::string::CFString;
++    let (key, application) = (CFString::new(key), CFString::new(application));
++    // SAFETY: both arguments are live CFStrings.
++    let value = unsafe {
++        core_foundation_sys::preferences::CFPreferencesCopyAppValue(
++            key.as_concrete_TypeRef(),
++            application.as_concrete_TypeRef(),
++        )
++    };
++    if value.is_null() {
++        return false;
++    }
++    // SAFETY: the copy rule hands ownership of a non-null result to the wrapper.
++    drop(unsafe { CFType::wrap_under_create_rule(value) });
++    true
++}
+ /// Prove only the absence of the Linux scope backend on this kernel.
+ /// Native process, worker and tmux custody must still pass their own guards.
+ pub(super) fn legacy_scope_inventory_clear(
+@@ -1158,6 +1194,24 @@ impl super::SleepInhibit for CaffeinateInhibitor {
+ mod tests {
+     use super::*;
+ 
++    #[test]
++    fn codex_managed_preferences_refuse_either_key() {
++        for (config, requirements, expected) in [
++            (false, false, false),
++            (true, false, true),
++            (false, true, true),
++        ] {
++            let present = codex_managed_preferences_present_with(|key| match key {
++                "config_toml_base64" => config,
++                "requirements_toml_base64" => requirements,
++                _ => unreachable!("{key}"),
++            });
++            assert_eq!(present, expected, "{config} {requirements}");
++        }
++        let unused = format!("dev.aoe.test.{}", uuid::Uuid::new_v4());
++        assert!(!preference_value_present("config_toml_base64", &unused));
++    }
++
+     #[test]
+     fn foreign_runner_probe_requires_an_empty_original_group_and_keeps_native_tokens_strict() {
+         use std::io::BufRead as _;
+```
+
+**File**: `src/process/mod.rs` (modified, +5/-1)
+```diff
+@@ -261,9 +261,13 @@ pub(crate) fn throttle_child(cmd: &mut std::process::Command) {
+ }
+ 
+ #[cfg(any(target_os = "linux", target_os = "macos"))]
+-pub(crate) use platform::HAS_CODEX_MANAGED_PREFERENCES;
++pub(crate) use platform::{codex_managed_preferences_present, HAS_CODEX_MANAGED_PREFERENCES};
+ #[cfg(not(any(target_os = "linux", target_os = "macos")))]
+ pub(crate) const HAS_CODEX_MANAGED_PREFERENCES: bool = true;
++#[cfg(not(any(target_os = "linux", target_os = "macos")))]
++pub(crate) fn codex_managed_preferences_present() -> bool {
++    true
++}
+ 
+ /// System memory + agent-count sampling for the TUI diagnostics strip.
+ pub(crate) mod metrics;
 ```
 
 ---
 
-### Incident Patch 3: `259bdfb5` (2026-11-05)
-**Commit Message**: fix(web): stop retrying an unknown profile's agent list and key the list by profile (#5279)
+### Incident Patch 3: `c7494f74` (2026-11-09)
+**Commit Message**: fix(deps): bump rusqlite to 0.41 for bundled SQLite 3.54 (RUSTSEC-2026-0459) (#5506)
 
-* fix(web): stop retrying an unknown profile's agent list and key the list by profile
+libsqlite3-sys 0.38.2 bundles SQLite 3.53.2, affected by CVE-2026-119375.
+rusqlite 0.41 pulls libsqlite3-sys 0.39.1 (SQLite 3.54.1).
 
-The wizard's agent list now records the profile it was loaded for and reads
-as loading for any other, so a profile switch never shows the previous
-list as ready. A 404 profile_not_found from /api/agents is no longer
-retried; the footer says the profile is gone and Launch stays off.
+Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-Closes #5063
-
-Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
-
-* fix(web): drop the last Profile's agents on a failed switch, and name a deleted Profile first
-
-A failed agent list for a newly chosen Profile kept the previous
-Profile's agents, so the Agent picker and the Yolo and View rows read
-them for the new one. A failure for another Profile now clears the list;
-a retry for the same Profile keeps it.
-
-A deleted Profile also fails the project lookup, and the footer showed
-that error, which reselecting the project can't fix. The missing-Profile
-message now comes first.
-
-Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
-
-* fix(web): offer the Profile row for a deleted Profile with one Profile left
-
-**File**: `web/src/components/session-wizard/SessionWizard.tsx` (modified, +29/-21)
+**File**: `Cargo.lock` (modified, +4/-4)
 ```diff
-@@ -1,4 +1,4 @@
--import { useCallback, useEffect, useReducer, useRef, useState } from "react";
-+import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
- import { createPortal } from "react-dom";
- import type {
-   CreateFailure,
-@@ -10,7 +10,7 @@ import type {
- } from "../../lib/types";
- import { setAgentNames } from "../../lib/agentDisplayName";
- import {
--  fetchAgents,
-+  fetchProfileAgents,
-   fetchGroups,
-   fetchDockerStatus,
-   fetchProfiles,
-@@ -58,7 +58,7 @@ import { failureView, type FailureAction } from "./createFailureView";
- import { CreateProgressView } from "./CreateProgressView";
- import { FieldRow, NavRow, PanelHeader, ROW_INPUT, RowGroup, SegmentedRow, SwitchRow } from "./WizardRows";
- import { LaunchFooter } from "./LaunchFooter";
--import { initialData, reducer, type WizardData } from "./wizardReducer";
-+import { agentsView, initialData, reducer, type WizardData } from "./wizardReducer";
- import { buildCreateRequest, launchEligible } from "./createRequest";
- import { commandMapsFromSettings, EMPTY_COMMAND_MAPS, type CommandMaps } from "./commandMaps";
- import { profileDefaults, type ProfileDefaults } from "./profileDefaults";
-@@ -134,6 +134,8 @@ const MAX_RETRY_DELAY_MS = 30_000;
- const UNKNOWN_OUTCOME_ERROR =
-   "Lost connection while creating. The session may still be created; Launch retries the same request.";
- const AGENTS_UNAVAILABLE_ERROR = "Couldn't load the agent list, so Yolo mode can't be shown yet. Retrying…";
-+const profileMissingError = (profile: string) =>
-+  `The profile "${profile}" no longer exists. Choose another profile to launch.`;
+@@ -2616,9 +2616,9 @@ dependencies = [
  
- const REGISTRY_UNRESOLVED_ERROR =
-   "Could not load this project's settings, so its sandbox and worktree defaults are unknown. Select the project again to retry.";
-@@ -213,6 +215,7 @@ export function SessionWizard({
-     failure: restore?.failure ?? null,
-     agents: [],
-     agentsStatus: "loading",
-+    agentsFor: null,
-     groups: [],
-     groupsFor: null,
-     profiles: [],
-@@ -315,29 +318,32 @@ export function SessionWizard({
-     };
-   }, [state.data.profile, groupsKey]);
+ [[package]]
+ name = "libsqlite3-sys"
+-version = "0.38.2"
++version = "0.39.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "f1d20bef17f513b9b3004532233187769cd072d790971f4e4da0e346eb6401e8"
++checksum = "14a5f01b87b92705d07b433c06f96cbc764637d81a0bffb5734ce17cf0f9a2b3"
+ dependencies = [
+  "cc",
+  "pkg-config",
+@@ -4114,9 +4114,9 @@ dependencies = [
  
--  // A custom agent's base comes from the profile the session is created in.
-+  // A custom agent's base comes from the profile the session is created in. Like Groups, a list
-+  // is read only for the profile it was fetched for, so a switch never shows the last one as ready.
-   const agentsProfile = state.data.profile || servedProfile;
-+  const agentsKey = agentsProfile ?? "";
-+  const { agents, agentsStatus } = useMemo(() => agentsView(state, agentsKey), [state, agentsKey]);
-   useEffect(() => {
-     let alive = true;
-     let retry: ReturnType<typeof setTimeout> | undefined;
--    dispatch({ type: "AGENTS_LOADING" });
-     const load = (attempt: number) =>
--      void fetchAgents(agentsProfile || undefined).then((agents) => {
-+      void fetchProfileAgents(agentsProfile || undefined).then((list) => {
-         if (!alive) return;
--        if (agents) {
-+        if (Array.isArray(list)) {
-           // The app-wide names describe the served profile, not the one being created in.
--          if (agentsProfile === servedProfile) setAgentNames(agents);
--          return dispatch({ type: "SET_AGENTS", agents });
-+          if (agentsProfile === servedProfile) setAgentNames(list);
-+          return dispatch({ type: "SET_AGENTS", agents: list, agentsFor: agentsKey });
-         }
--        dispatch({ type: "AGENTS_FAILED" });
--        retry = setTimeout(() => load(attempt + 1), Math.min(1000 * 2 ** attempt, 15000));
-+        const missing = list === "profile_not_found";
-+        dispatch({ type: "AGENTS_FAILED", agentsFor: agentsKey, missing });
-+        if (!missing) retry = setTimeout(() => load(attempt + 1), Math.min(1000 * 2 ** attempt, 15000));
-       });
-     load(0);
-     return () => {
-       alive = false;
-       clearTimeout(retry);
-     };
--  }, [agentsProfile, servedProfile]);
-+  }, [agentsProfile, agentsKey, servedProfile]);
- 
-   useEffect(() => {
-     const generations = defaultsGeneration;
-@@ -693,7 +699,7 @@ export function SessionWizard({
-         d,
-         isAcpEligible(
-           d.tool,
--          state.agents.find((a) => a.name === d.tool),
-+          agents.find((a) => a.name === d.tool),
-         ),
-       ),
-       idempotency_key: newIdempotencyKey(),
-@@ -809,8 +815,7 @@ export function SessionWizard({
-   // A scratch session has no project whose overrides could be unknown.
-   const projectUnresolved = registryUnresolved && !d.scratch && !d.importAcpSessionId;
-   // Only the Yolo row needs the agent list, and a name-only form has none.
--  const formReady =
--    defaultsReady && (nameOnly || state.agentsStatus === "ready") && !profileSwitching && !projectUnresolved;
-+  const formReady = defaultsReady && (nameOnly || agentsStatus === "ready") && !profileSwitching && !projectUnresolved;
-   const canResend = launchEligible(d, { ready: formReady, offline, nameOnly });
-   const canResendRef = useRef(canResend);
-   us
+ [[package]]
+ name = "rusqlite"
+-version = "0.40.2"
++version = "0.41.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "23f2a97da3e3873c73cb2a2e71b35c40ff95e0b1eefa8d72d8499a6928c3b5b3"
++checksum = "da9bba6f3506135e120a6586df05be18b48d18896600646a4bec8f993d91a594"
+ dependencies = [
+  "bitflags 2.13.2",
+  "fallible-iterator",
 ```
 
-**File**: `web/src/components/session-wizard/__tests__/SessionWizard.lastProject.test.tsx` (modified, +1/-1)
+**File**: `Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -26,7 +26,7 @@ vi.mock("../../../lib/api", () => ({
-   fetchCreateProgress: vi.fn().mockResolvedValue(null),
-   fetchCreateBootId: vi.fn().mockResolvedValue("boot-1"),
-   fetchSettings: (...args: unknown[]) => fetchSettings(...args),
--  fetchAgents: vi.fn().mockResolvedValue([]),
-+  fetchProfileAgents: vi.fn().mockResolvedValue([]),
-   fetchIsGitRepo: (...args: unknown[]) => fetchIsGitRepo(...args),
-   fetchGroups: vi.fn().mockResolvedValue([]),
-   fetchDockerStatus: vi.fn().mockResolvedValue({ available: true }),
-```
-
-**File**: `web/src/components/session-wizard/__tests__/SessionWizard.projectWorktreeOverride.test.tsx` (modified, +1/-1)
-```diff
-@@ -25,7 +25,7 @@ vi.mock("../../../lib/api", () => ({
-   fetchCreateProgress: vi.fn().mockResolvedValue(null),
-   fetchCreateBootId: vi.fn().mockResolvedValue("boot-1"),
-   fetchSettings: (...args: unknown[]) => fetchSettings(...args),
--  fetchAgents: vi.fn().mockResolvedValue([]),
-+  fetchProfileAgents: vi.fn().mockResolvedValue([]),
-   fetchIsGitRepo: vi.fn().mockResolvedValue(true),
-   fetchGroups: vi.fn().mockResolvedValue([]),
-   fetchProfiles: (...args: unknown[]) => fetchProfiles(...args),
-```
-
-**File**: `web/src/components/session-wizard/__tests__/SessionWizard.test.tsx` (modified, +108/-21)
-```diff
-@@ -7,7 +7,7 @@ import { act, cleanup, fireEvent, render, renderHook, screen, waitFor } from "@t
- import { SessionWizard, type WizardPrefill } from "../SessionWizard";
- import { initialData } from "../wizardReducer";
- import {
--  fetchAgents,
-+  fetchProfileAgents,
-   fetchCreateProgress,
-   fetchDockerStatus,
-   fetchGroups,
-@@ -37,6 +37,7 @@ vi.mock("../../../lib/api", () => ({
-   fetchCreateProgress: vi.fn().mockResolvedValue(null),
-   fetchCreateBootId: vi.fn().mockResolvedValue("boot-1"),
-   fetchSettings: vi.fn().mockResolvedValue({}),
-+  fetchProfileAgents: vi.fn().mockResolvedValue([]),
-   fetchAgents: vi.fn().mockResolvedValue([]),
-   fetchIsGitRepo: vi.fn().mockResolvedValue(true),
-   fetchGroups: vi.fn().mockResolvedValue([]),
-@@ -72,7 +73,7 @@ const INSTRUCTION_KEY = "aoe-new-session-last-instruction";
- beforeEach(() => {
-   vi.clearAllMocks();
-   // clearAllMocks keeps queued answers, and a test can leave some unread.
--  vi.mocked(fetchAgents).mockReset().mockResolvedValue([]);
-+  vi.mocked(fetchProfileAgents).mockReset().mockResolvedValue([]);
-   localStorage.clear();
-   createSession.mockResolvedValue({ ok: true, session: { id: "s1" } });
-   reviewCreationTrust.mockResolvedValue({
-@@ -140,7 +141,7 @@ describe("SessionWizard native import late defaults", () => {
-             resolveSettings = resolve;
-           }),
-       );
--      vi.mocked(fetchAgents).mockResolvedValueOnce([agent("claude", { acp_installed: true })]);
-+      vi.mocked(fetchProfileAgents).mockResolvedValueOnce([agent("claude", { acp_installed: true })]);
-       renderWizard({ path: "/tmp/proj", worktreeEnabled: true, sandboxEnabled: true });
-       fireEvent.click(screen.getByText("Project"));
-       fireEvent.click(await screen.findByRole("button", { name: "Import session" }));
-@@ -232,7 +233,7 @@ describe("SessionWizard structured view payload", () => {
-       acp: { acp_defaults: { opencode: { model: "openai/gpt-5.5", effort: "high" } } },
-       sandbox: {},
-     } as never);
--    vi.mocked(fetchAgents).mockResolvedValueOnce([
-+    vi.mocked(fetchProfileAgents).mockResolvedValueOnce([
-       agent("opencode", { acp_installed: true }),
-       agent("claude", { acp_installed: true }),
-     ]);
-@@ -410,7 +411,7 @@ describe("SessionWizard rows", () => {
-     ["sandbox_enabled", "Sandbox unavailable: settl runs on the host only"],
-     ["worktree_enabled", "Worktree unavailable: settl runs on the host only"],
-   ])("refuses a host-only agent with a seeded %s project override", async (field, message) => {
--    vi.mocked(fetchAgents).mockResolvedValueOnce([agent("settl", { host_only: true })]);
-+    vi.mocked(fetchProfileAgents).mockResolvedValueOnce([agent("settl", { host_only: true })]);
-     vi.mocked(fetchProjects).mockResolvedValueOnce([
-       {
-         name: "proj",
-@@ -433,7 +434,7 @@ describe("SessionWizard rows", () => {
-     ["helper", [agent("helper", { kind: "custom", acp_capable: false })], true, /needs agent_acp_cmd/],
-     ["claude", [agent("claude", { acp_allowed: false })], true, /not on the allowed agents list/],
-   ])("gates the structured view for %s", async (tool, agents, disabled, summary) => {
--    if (agents) vi.mocked(fetchAgents).mockResolvedValueOnce(agents);
-+    if (agents) vi.mocked(fetchProfileAgents).mockResolvedValueOnce(agents);
-     renderWizard({ path: "/tmp/proj", tool });
-     await waitFor(() => expect(viewSwitch().disabled).toBe(disabled));
-     expect(screen.getByTestId("wizard-view-row").textContent).toMatch(summary);
-@@ -462,7 +463,7 @@ describe("SessionWizard rows", () => {
-     [undefined, "Run in a safe container", "Docker is not running"],
-     [[agent("settl", { host_only: true })], "Create a worktree", "settl runs on the host only"],
-   ])("a blocked switch left on shows on and turns off: %#", async (agents, name, reason) => {
--    if (agents) vi.mocked(fetchAgents).mockResolvedValueOnce(agents);
-+    if (agents) vi.mocked(fetchProfileAgents).mockResolvedValueOnce(agents);
-     const tool = agents ? "settl" : "claude";
-     renderWizard({ path: "/tmp/proj", tool, sandboxEnabled: true, worktreeEnabled: true });
-     const toggle = () => screen.getByRole("switch", { name }) as HTMLButtonElement;
-@@ -1160,7 +1161,10 @@ describe("SessionWizard Yolo mode", () => {
-   });
+@@ -140,7 +140,7 @@ tempfile = "3.14"
+ which = "8.0"
  
-   it("locks on for an agent that always runs in Yolo mode, and gives the value back after", async () => {
--    vi.mocked(fetchAgents).mockResolvedValue([agent("claude"), agent("pi", { always_yolo: true, acp_capable: false })]);
-+    vi.mocked(fetchProfileAgents).mockResolvedValue([
-+      agent("claude"),
-+      agent("pi", { always_yolo: true, acp_capable: false }),
-+    ]);
-     vi.mocked(fetchSettings).mockResolvedValueOnce({ session: { yolo_mode_default: false }, sandbox: {} } as never);
-     renderWizard({ path: "/tmp/proj", tool: "pi" });
-     await waitFor(() => expect(yoloRow()).toContain("always on for pi"));
-@@ -1180,7 +1184,10 @@ describe("SessionWizard Yolo mode", () => {
-   });
+ # SQLite
+-rusqlite = "0.40"
++rusqlite = "0.41"
  
-   it("keeps a profi
-```
-
-**File**: `web/src/components/session-wizard/wizardReducer.test.ts` (modified, +24/-1)
-```diff
-@@ -1,7 +1,7 @@
- import { describe, expect, it } from "vitest";
- 
- import type { CreateStage } from "../../lib/types";
--import { initialData, reducer, type Action, type WizardData, type WizardState } from "./wizardReducer";
-+import { agentsView, initialData, reducer, type Action, type WizardData, type WizardState } from "./wizardReducer";
- 
- function makeState(data: Partial<WizardData> = {}): WizardState {
-   return {
-@@ -11,6 +11,7 @@ function makeState(data: Partial<WizardData> = {}): WizardState {
-     failure: null,
-     agents: [],
-     agentsStatus: "ready",
-+    agentsFor: null,
-     groups: [],
-     groupsFor: null,
-     profiles: [],
-@@ -398,6 +399,28 @@ describe("SEED_PROJECT_OVERRIDES sandbox", () => {
-   });
- });
- 
-+describe("agent list per profile", () => {
-+  const claude = { name: "claude" } as WizardState["agents"][number];
-+  const failed = (agentsFor: string, missing = false): Action => ({ type: "AGENTS_FAILED", agentsFor, missing });
-+  // Each row starts from a list loaded for alpha.
-+  it.each([
-+    ["alpha's list reads as itself for alpha", [], "alpha", "ready", 1],
-+    ["alpha's list is still loading for beta", [], "beta", "loading", 0],
-+    ["a failed load for beta drops alpha's list", [failed("beta")], "beta", "failed", 0],
-+    ["a missing beta drops alpha's list", [failed("beta", true)], "beta", "missing", 0],
-+    ["a failed retry for alpha keeps alpha's list", [failed("alpha")], "alpha", "failed", 1],
-+    ["a missing alpha keeps alpha's list", [failed("alpha", true)], "alpha", "missing", 1],
-+  ] as const)("%s", (_label, actions, profile, status, count) => {
-+    const loaded = reducer(
-+      { ...makeState(), agentsStatus: "loading" },
-+      { type: "SET_AGENTS", agents: [claude], agentsFor: "alpha" },
-+    );
-+    const view = agentsView(actions.reduce<WizardState>(reducer, loaded), profile);
-+    expect(view.agentsStatus).toBe(status);
-+    expect(view.agents).toHaveLength(count);
-+  });
-+});
-+
- describe("submit failures", () => {
-   const failure = { code: "hook_failed", message: "m", stage: "running_hooks" as const, reference: "r" };
-   it.each<[string, Action, Partial<WizardState>]>([
-```
-
-**File**: `web/src/components/session-wizard/wizardReducer.ts` (modified, +26/-9)
-```diff
-@@ -67,8 +67,10 @@ export interface WizardState {
-   /** A create the server refused, shown as the failure box instead of `error`. */
-   failure: CreateFailure | null;
-   agents: AgentInfo[];
--  /** Until "ready", which agents always run in Yolo mode is unknown. */
--  agentsStatus: "loading" | "ready" | "failed";
-+  /** Until "ready", which agents always run in Yolo mode is unknown. "missing": the profile is gone. */
-+  agentsStatus: "loading" | "ready" | "failed" | "missing";
-+  /** Which profile `agents` and `agentsStatus` describe; any other profile is still loading. */
-+  agentsFor: string | null;
-   groups: GroupInfo[];
-   /** Which profile `groups` was fetched for; any other profile sees no Groups. */
-   groupsFor: string | null;
-@@ -87,9 +89,8 @@ export type Action =
-   | { type: "SUBMIT_FAILED"; failure: CreateFailure }
-   | { type: "SUBMIT_SUCCESS" }
-   | { type: "SUBMIT_CANCEL" }
--  | { type: "SET_AGENTS"; agents: AgentInfo[] }
--  | { type: "AGENTS_FAILED" }
--  | { type: "AGENTS_LOADING" }
-+  | { type: "SET_AGENTS"; agents: AgentInfo[]; agentsFor: string }
-+  | { type: "AGENTS_FAILED"; agentsFor: string; missing: boolean }
-   | { type: "SET_GROUPS"; groups: GroupInfo[]; groupsFor: string }
-   | { type: "SET_PROFILES"; profiles: ProfileInfo[] }
-   | { type: "SET_DOCKER"; available: boolean; runtimeName: string | null }
-@@ -228,6 +229,18 @@ function seededStructuredView(data: WizardData, action: { useStructuredView?: bo
-   return action.useStructuredView ?? data.useStructuredView;
- }
- 
-+const NO_AGENTS: AgentInfo[] = [];
-+
-+/** The agent list for `profile`: one loaded for another profile reads as still loading. */
-+export function agentsView(
-+  state: Pick<WizardState, "agents" | "agentsStatus" | "agentsFor">,
-+  profile: string,
-+): { agents: AgentInfo[]; agentsStatus: WizardState["agentsStatus"] } {
-+  return state.agentsFor === profile
-+    ? { agents: state.agents, agentsStatus: state.agentsStatus }
-+    : { agents: NO_AGENTS, agentsStatus: "loading" };
-+}
-+
- export function reducer(state: WizardState, action: Action): WizardState {
-   const next = reduce(state, action);
-   const { failure } = next;
-@@ -278,11 +291,15 @@ function reduce(state: WizardState, action: Action): WizardState {
-     case "SUBMIT_CANCEL":
-       return { ...state, isSubmitting: false, error: null, failure: null };
-     case "SET_AGENTS":
--      return { ...state, agents: action.agents, agentsStatus: "ready" };
-+      return { ...state, agents: action.agents, agentsStatus: "ready", agentsFor: action.agentsFor };
-     case "AGENTS_FAILED":
--      return { ...state, agentsStatus: "failed" };
--    case "AGENTS_LOADING":
--      return { ...state, agentsStatus: "loading" };
-+      return {
-+        ...state,
-+        // A retry for the same Profile keeps its list; another Profile's list must not be read for it.
-+        agents: action.agentsFor === state.agentsFor ? state.agents : [],
-+        agentsStatus: action.missing ? "missing" : "failed",
-+        agentsFor: action.agentsFor,
-+      };
-     case "SET_GROUPS":
-       return { ...state, groups: action.groups, groupsFor: action.groupsFor };
-     case "SET_PROFILES":
-```
-
-**File**: `web/src/lib/api.test.ts` (modified, +20/-0)
-```diff
-@@ -780,6 +780,7 @@ const failureCases: [string, () => Promise<unknown>, unknown][] = [
-   ["invokePluginAction", () => api.invokePluginAction("p", "m"), null],
-   ["resolvePluginOptions", () => api.resolvePluginOptions("p", "s", []), []],
-   ["fetchSoundBlob", () => api.fetchSoundBlob("x.wav"), null],
-+  ["fetchProfileAgents", () => api.fetchProfileAgents("work"), null],
-   ["pullSandboxImage", () => api.pullSandboxImage(), { ok: false }],
-   ["dismissSandboxImage", () => api.dismissSandboxImage("sha256:new"), false],
- ];
-@@ -1046,6 +1047,25 @@ describe("project mutations", () => {
-   });
- });
- 
-+describe("fetchProfileAgents", () => {
-+  it.each([
-+    ["a list", () => json([{ id: "claude" }]), [{ id: "claude" }]],
-+    ["an unknown profile", () => json({ error: "profile_not_found", message: "no" }, 404), "profile_not_found"],
-+    ["another 404", () => json({ error: "not_found" }, 404), null],
-+    ["a 404 without JSON", () => new Response("gone", { status: 404 }), null],
-+    ["a server error", () => json({ error: "profile_not_found" }, 500), null],
-+  ])("reads %s", async (_name, respond, result) => {
-+    fetchSpy.mockResolvedValueOnce(respond());
-+    expect(await api.fetchProfileAgents("work")).toEqual(result);
-+    expect(lastCall().url).toBe("/api/agents?profile=work");
-+  });
-+
-+  it("is null for fetchAgents when the profile is unknown", async () => {
-+    fetchSpy.mockResolvedValueOnce(json({ error: "profile_not_found" }, 404));
-+    expect(await api.fetchAgents("work")).toBeNull();
-+  });
-+});
-+
- describe("createSession errors", () => {
-   const body = { path: "/repo", tool: "claude" } as CreateSessionRequest;
- 
-```
-
-**File**: `web/src/lib/api.ts` (modified, +15/-1)
-```diff
-@@ -1969,8 +1969,22 @@ export async function signOutAllDevices(): Promise<boolean> {
- 
- /** Null when the request failed, so callers can tell "no agents" from "unknown". */
- export async function fetchAgents(profile?: string): Promise<AgentInfo[] | null> {
-+  const agents = await fetchProfileAgents(profile);
-+  return Array.isArray(agents) ? agents : null;
-+}
-+
-+/** Like `fetchAgents`, but says when the Daemon has no such profile, which no retry fixes. */
-+export async function fetchProfileAgents(profile?: string): Promise<AgentInfo[] | "profile_not_found" | null> {
-   const query = profile ? `?profile=${encodeURIComponent(profile)}` : "";
--  return fetchJson<AgentInfo[]>(`/api/agents${query}`);
-+  try {
-+    const res = await fetch(`/api/agents${query}`);
-+    if (res.ok) return (await res.json()) as AgentInfo[];
-+    if (res.status !== 404) return null;
-+    const body = (await res.json().catch(() => null)) as { error?: unknown } | null;
-+    return body?.error === "profile_not_found" ? "profile_not_found" : null;
-+  } catch {
-+    return null;
-+  }
- }
- 
- export async function fetchProfiles(): Promise<ProfileInfo[]> {
+ axum = { version = "0.8", features = ["ws"] }
+ # hyper/TokioIo reuse the UID/PID-verified UnixStream, including builds without `web`.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5374** (closed): chore: add a fix-and-respond skill for review feedback (@ZelZorgia)
-- **PR #5356** (2026-11-05): perf(server): compress /api JSON responses with gzip and zstd (@cwrau)
-- **PR #5351** (closed): chore(review): review dependency updates and plan ready issues (@athal7)
-- **PR #5306** (2026-11-05): ci: cancel obsolete queue runs and validate npm before builds (@jerome-benoit)
-- **PR #5298** (2026-11-04): chore(deps): bump agent-client-protocol from 2.2.0 to 3.1.0 (@dependabot[bot])
-- **PR #5297** (closed): chore(deps): bump unicode-width from 0.2.2 to 0.2.3 in the cargo-minor-patch group (@dependabot[bot])
+- **PR #5521** (closed): ci: split compile from run in build-and-test steps (@Seluj78)
+- **PR #5520** (2026-11-09): ci: 4cpu jobs on Spot, split build/test steps, faster cargo builds (@Seluj78)
+- **PR #5519** (2026-11-09): chore(castellan): use Sonnet 4.6 and Haiku 4.5 on Bedrock (@Seluj78)
+- **PR #5511** (2026-11-09): chore(castellan): add code review findings rules to the review prompt (@athal7)
+- **PR #5510** (2026-11-09): ci: add castellan shadow config and needs-triage labeler (@Seluj78)
+- **PR #5506** (2026-11-09): fix(deps): bump rusqlite to 0.41 for patched bundled SQLite (RUSTSEC-2026-0459) (@Seluj78)
 
 ---
 
@@ -3103,53 +2569,61 @@ Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: cancel obsolete queue runs and validate npm before builds (#5306)
+## X. tui): lock Yolo in the new-session dialog for the agent each view runs (#5412)
 
 **RULE**:
-When implementing operations in `.github/scripts/cancel-obsolete-queue-runs.cjs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in agent-of-empires/agent-of-empires. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/tui/dialogs/new_session/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in agent-of-empires/agent-of-empires. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `95c5d66c`: ci: cancel obsolete queue runs and validate npm before builds (#5306). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ec5be5a6`: tui): lock Yolo in the new-session dialog for the agent each view runs (#5412). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/scripts/cancel-obsolete-queue-runs.cjs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/tui/dialogs/new_session/mod.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-const paths = new Set(['.github/workflows/ci.yml', '.github/workflows/tests.yml']);
-const active = ['queued', 'in_progress', 'waiting', 'pending', 'requested'];
+    /// The profile's custom-agent maps, which decide whether a custom tool always
+    /// runs in Yolo mode in the chosen view.
+    pub(super) agent_acp_cmd: std::collections::HashMap<String, String>,
+    pub(super) agent_detect_as: std::collections::HashMap<String, String>,
 
-function entry(branch) {
-  const match = /^gh-readonly-queue\/(.+)\/pr-([1-9]\d*)-[0-9a-f]{40}$/.exec(branch ?? '');
-  return match && { base: match[1], number: Number(match[2]) };
-}
-
-function sameWorkflow(run, current, repositoryId) {
-  return run.event === 'merge_group' && paths.has(run.path) &&
-    run.path === current.path && run.workflow_id === current.workflow_id &&
-    run.repository?.id === repositoryId && run.head_repository?.id === repositoryId;
-}
-
-module.exports = async ({ github, context, core }) => {
-  const event = context.payload.workflow_run;
-  const repositoryId = context.payload.repository.id;
-  const { data: current } = await github.rest.actions.getWorkflowRun({
-    ...context.repo, run_id: event.id,
-  });
-  const key = entry(current.head_branch);
-  if (!key || !sameWorkflow(current, current, repositoryId) ||
-      current.head_sha !== event.head_sha || current.workflow_id !== event.workflow_id) return;
-
-  // Queue state, rather than event delivery order, identifies the current generation.
-  const isCurr
+    /// Where the row at `index` in the `before` layout sits now, or `None` if it is hidden.
+    fn follow(&self, before: &FieldIndices, index: usize) -> Option<usize> {
+        [
+            (before.profile, self.profile),
+            (before.path, self.path),
+            (before.title, self.title),
+            (before.tool, self.tool),
+            (before.structured, self.structured),
+            (before.yolo, self.yolo),
+            (before.worktree, self.worktree),
+            (before.sandbox, self.sandbox),
+            (before.group, self.group),
+        ]
+        .into_iter()
+        .find(|(old, _)| *old == index)
+        .map(|(_, new)| new)
+        .filter(|new| *new != Self::ABSENT)
+    }
+            agent_acp_cmd: config.session.agent_acp_cmd.clone(),
+            agent_detect_as: config.session.agent_detect_as.clone(),
+        } else {
+            let config = self.resolve_config_for_path(self.sele
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        if self.selected_tool_always_yolo() {
+            self.yolo_mode = true;
+        } else {
+            self.yolo_mode = self.yolo_mode_default;
+        }
+            self.structured_enabled = structured;
+            self.structured_choice = Some(structured);
+        let config = self.resolve_config_for_path(&profile);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `95c5d66c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ec5be5a6` are properly handled with clean fallback behavior.

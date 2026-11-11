@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/higress-group-higress-learnings.md`  
 > **Source**: github ([https://github.com/higress-group/higress](https://github.com/higress-group/higress))  
-> **Source Version**: `bfcd87d1`  
+> **Source Version**: `942b6cfa`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T22:54:58.562Z  
+> **Timestamp**: 2026-11-09T12:49:35.461Z  
 > **Learning ID**: `learn-github-higress-group-higress`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/higress-group-higress-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/higress-group/higress](https://github.com/higress-group/higress))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T22:54:58.555Z  
+> **Harvest Timestamp**: 2026-11-09T12:49:34.619Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🤖 AI Gateway | AI Native API Gateway
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 9717 stars
+- **Stars / Engagement**: 9732 stars
 
 ---
 
@@ -1736,11 +1736,13 @@ func AskOne(p survey.Prompt, response interface{}, opts ...survey.AskOpt) error 
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5309** (2026-11-05): **fix(mcp-server): preserve SSE data priority with a no-space fallback**
-  *Symptoms*: ## I. Summary  MCP backends that emit legal SSE `data:{...}` lines currently fail initialization or HTTP tool response extraction. Keep the existing `data: ` immediate-return path, remember the first nonempty no-space candidate and use it only after a clean scan with no original-format match. An earlier no-space notification therefore cannot replace a later original-format result.  The only production edit is `parseSSEResponse` and its comments. Add focused parser/TestHost regressions and a bounded baseline/candidate mode in the existing real Wasm harness. No caller, other parser, MCP version, dependency or normal-mode historical baseline changes.  ## II. Related issue  Fixes #5306. Implements [Proposal #5307](https://github.com/higress-group/higress/issues/5307) and [Design #5308](https://github.com/higress-group/higress/issues/5308).  ## III. Change type  - [x] Bug fix - [ ] Feature or enhancement - [ ] Documentation or configuration only - [x] Refactoring, tests, or maintenance  ## IV. Agent participation and issue-spec gate  - [ ] **No agent participation:** This PR is human-only. - [ ] **Trivial agent-use exception:** Only nonsubstantive agent use. - [x] **Verified maintainer/administrator exception:** Material agent participation; authenticated canonical-repository role and PR-author match are recorded below. - [ ] **Material agent participation:** Ordinary non-exception path.  Ordinary-path timed obligations are N/A under the verified exception; implementation/verifica
+- **Issue #5323** (2026-11-09): **chore(deps): bump istio to pick up SRDS gateway cache fix**
+  *Symptoms*: Bring higress-group/istio#73 into Higress: `istio/istio` 65133dd → 383f79d.  - Route cache dependencies now cover only the Gateways actually selected (HTTP and HTTP/3) - Unselected Gateway edits invalidate the affected hosts' cache entries - Removes the O(n^2) invalidation work that delayed new Ingress propagation at scale (#5247)  The e2e scale guard in #5322 will exercise this path on the weekly workflow.
 
-- **Issue #5306** (2026-11-05): **mcp-server：兼容 data: 后无空格的 SSE 响应（原格式优先、无空格兜底）**
-  *Symptoms*: - [x] 已检索仓库相关 issue。#4684、#5280/#5281 为相关机制与兼容性依据。  ### Ⅰ. Issue Description  **本次范围已于 2026-11-05 收敛：生产代码只修改 `parseSSEResponse`，采用“原格式优先、无空格兜底”，补充必要测试。** 原报告中的共享 SSE 解码器及各分支统一改造不再属于本次交付；其它 SSE 问题列在文末后续事项，不阻塞本次修复验收。  在排查 `mcp-server` 代理 SSE 响应解析失败时发现，当前函数只匹配 `data: `，无法识别冒号后没有空格的合法 `data:JSON`。本次解决“单行完整 JSON 响应仅因 data 冒号后没有空格而无法提取”的问题，优先保护此前已成功的输入和业务行为。  本 issue 是已确认的缺陷与修复范围，不代表产品代码已经修改或修复已经验证。原始故障响应未完整确认；函数级复现不能证明每个现场 `sse_parse_error` 都由无空格导致。  ### Ⅱ. Describe what happened  源码核对基线：upstream [`main@a89b18dc12882f06fe4ac9fe33cfa8c03d11292a`](https://github.com/higress-group/higress/commit/a89b18dc12882f06fe4ac9fe33cfa8c03d11292a)。该提交已通过 #5305 支持 `2025-11-25` Tools 客户端；本问题独立于协议版本头支持，本次不修改版本支持或协商逻辑。  [`parseSSEResponse`](https://github.com/higress-group/higress/blob/a89b18dc12882f06fe4ac9fe33cfa8c03d11292a/plugins/wasm-go/pkg/mcp/server/proxy_tool.go#L292-L322) 对每行先执行 `strings.TrimSpace`，再执行：  ```go if strings.HasPrefix(line, "data: ") {     dataContent := strings.TrimPrefix(line, "data: ")     return []byte(dataContent), nil } ```  因此 `data:JSON` 不会匹配，扫描结束后返回 `no data field found in SSE response`。后续调用路径会产生 `sse_parse_error`。SSE 规范允许冒号后省略空格，详见 [WHATWG SSE 字段解析规则](https://html.spec.whatwg.org/multipage/server-sent-events.html#event-stream-interpretation)。  #### 各分支的处理范围  | 分支/调用路径 | 本次是否修改生产代码 | 说明 | | --- | --- | --- | | `parseSSEResponse` | **是，仅修改该函数** | 增加无空格候选兜底，保留原格式优先。 | | 显式 HTTP 初始化、HTTP tools/list/tools/call（含 auto 协商后的业务请求）、server/discover SSE 透传 | 否 | 现有调用点共享上述函数，自动获得
+- **Issue #5322** (2026-11-08): **test(e2e): add SRDS scale regression guard**
+  *Symptoms*: ## Summary  Adds a dedicated e2e scale regression guard for incremental Ingress-to-route propagation. The test creates 200 Ingresses in phase A, extends to 400 in phase B, warms up each phase, and measures three newly-created Ingresses per phase by polling the gateway with the Ingress host until it returns HTTP 200.  It asserts:  - `median(phase B) / median(phase A) <= 3.0` (configurable via `E2E_SCALE_RATIO_MAX`). - Every measured event completes within 60 seconds (configurable via `E2E_SCALE_EVENT_MAX_SECONDS`). - On failure it prints every raw sample, the configured Ingress counts, medians, ratio, and a short diagnosis hint.  A ratio near 4x points at per-event work growing with the total host-route/merged-gateway set (quadratic-style dependency or cache-index growth). An absolute timeout points at the controller or gateway not keeping up.  ## Changes  - `test/e2e/scale/scale_test.go` with the `scale` build tag. - `Makefile.core.mk`: `higress-scale-test` and `run-higress-scale-test` targets. - `.github/workflows/e2e-scale.yaml`: manual dispatch plus weekly schedule; intentionally not wired into per-PR CI. - `test/e2e/README.md`: purpose, thresholds, configuration, and run instructions.  ## Validation  - `go vet -tags scale ./test/e2e/scale/...` - `go test -tags scale -run '^$' ./test/e2e/scale/...` (compile-only; creates no resources) - `gofmt` - Workflow YAML parsed successfully  The full kind-based e2e run is left to the new workflow and was not run on the development ho
+  **Post-Mortem & Fix Analysis**:
+  > :warning: Please install the !['codecov app svg image'](https://github.com/codecov/engineering-team/assets/152432831/e90313f4-9d3a-4b63-8b54-cfe14e7ec20d) to ensure uploads and comments are reliably processed by Codecov.  ## [Codecov](https://app.codecov.io/gh/higress-group/higress/pull/5322?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=None) Report :white_check_mark: All modified and coverable lines are covered by tests. :warning: Please [upload](https://docs.codecov.com/docs/codecov-uploader) report for BASE (`main@bee73a1`). [Learn more](https://docs.codecov.io/docs/error-reference?utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=None#section-missing-base-commit) about missing BASE report. :exclamation: Your organization needs to install the [Codecov GitHub app](https://github.com/apps/codecov/installations/select_target) to enable full functionality.  <details><su
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1757,509 +1759,25 @@ func AskOne(p survey.Prompt, response interface{}, opts ...survey.AskOpt) error 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bfcd87d1` (2026-11-05)
-**Commit Message**: fix(mcp-server): preserve SSE data priority with a no-space fallback (#5309)
+### Incident Patch 1: `942b6cfa` (2026-11-09)
+**Commit Message**: chore(deps): bump istio to pick up SRDS gateway cache fix (#5323)
 
-Signed-off-by: xunmu <[REDACTED_EMAIL]>
+Signed-off-by: johnlanni <[REDACTED_EMAIL]>
 
-**File**: `plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/README.md` (modified, +64/-0)
+**File**: `istio/istio` (modified, +1/-1)
 ```diff
-@@ -275,3 +275,67 @@ as red reproduction. Candidate acceptance requires all 12 PASS and exit zero.
- The external recorder must additionally validate exact sources/hashes, access
- records, successful Wasm loading and cleanup; this focused output does not claim
- the full compatibility matrix or update previous source-scoped results.
-+
-+
-+## Focused SSE no-space fallback (#5308)
-+
-+From a clean, committed candidate checkout, select only the ten-case parser
-+matrix. This mode builds plain Wasm for the exact affected source
-+`a89b18dc12882f06fe4ac9fe33cfa8c03d11292a` and candidate. It reuses the existing
-+Compose services, backend, renderer, build and bounded lifecycle, with one
-+`plugin.wasm` mount path. It does not run or retarget the normal business
-+oracle, control, November-version or routing matrices.
-+
-+```sh
-+env -u GH_TOKEN -u GITHUB_TOKEN PYTHONDONTWRITEBYTECODE=1 python3.12 \
-+  plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/run_compat.py \
-+  --sse-no-space \
-+  --sse-baseline a89b18dc12882f06fe4ac9fe33cfa8c03d11292a \
-+  --candidate HEAD \
-+  --gateway-image higress-registry.cn-hangzhou.cr.aliyuncs.com/higress/gateway@sha256:2b00548e16aafc5ee51314a0de8c4df4369877b1d0f9eaec13becc3675dd04b7 \
-+  --backend-image docker.io/library/python:3.12-alpine \
-+  --output "$SSE_EVIDENCE/runtime"
-+```
-+
-+Use an empty absolute external output directory. Python 3.12+ is needed for
-+archive extraction; on this macOS host use `/opt/homebrew/bin/python3.12`.
-+Images must already resolve locally to immutable RepoDigests. Both roles use
-+the same resolved gateway/Python image identities and frozen harness.
-+
-+The five positive targets are no-space upstream initialization, HTTP list,
-+HTTP call, CRLF call, and business after successful auto controls. The five
-+controls are original-format list/call (including initialization), an earlier
-+no-space progress notification followed by an original-format result, empty
-+data followed by an original result, and invalid no-space JSON. Mixed traffic
-+supplies `progressToken`. Formatting is selected only by synthetic fixture
-+headers; default responses and unrelated probe/handshake controls stay intact.
-+
-+`verify-sse-baseline.log` retains verifier exit 1 and five actual failed
-+positive assertions; its controls must pass. `verify-candidate.log` must exit
-+0 with all ten cases passing. Invalid JSON remains an error on both roles:
-+extraction on baseline, existing JSON decoding on candidate. An overall runner
-+exit 0 means this expected red/green matrix was observed, not that baseline
-+positive targets succeeded.
-+
-+`sse-no-space-{sse-baseline,candidate}.json` separates assertions, exact client
-+requests, gateway access IDs and backend ledgers, including upstream wire bytes
-+and hashes. `compat-inputs.json` records source, selected Go/module inputs,
-+Wasm/harness/config hashes and image inspections. Finalization rejects missing,
-+duplicate or unobserved cases, changed requests/configs/wire data, mismatched
-+Go/module inputs, stale hashes and incomplete cleanup.
-+`sse-no-space-manifest.json` seals all completed evidence files. Cleanup uses
-+Compose down with volumes/orphans and inventories only this run's labelled
-+containers, networks and volumes. The Compose fixture publishes no host ports;
-+its listeners and server processes disappear with those containers.
-+
-+Before containers, run the fixture checks from this directory:
-+
-+```sh
-+env -u GH_TOKEN -u GITHUB_TOKEN PYTHONDONTWRITEBYTECODE=1 python3.12 compat_self_test.py
-+```
-+
-+The new checks exercise selection, complete registry, format isolation,
-+assertion fault injection, source/config/request equivalence and failed cleanup.
-+They run alongside all retained normal-mode fixture assertions. These injected
-+self-tests establish harness behavior; real Wasm evidence requires the command
-+above.
-```
-
-**File**: `plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/compat_backend.py` (modified, +20/-1)
-```diff
-@@ -45,6 +45,18 @@ def rpc_response(rpc_id, result=None, error=False):
-     return b'{"jsonrpc":"2.0","id":' + token(rpc_id).encode() + b',' + field + b'}'
- 
- 
-+def sse_no_space_wire(response, framing):
-+    """Synthetic complete SSE bytes, selected only by the focused test header."""
-+    if framing == "no-space": return b"data:" + response + b"\n\n"
-+    if framing == "no-space-crlf": return b"data:" + response + b"\r\n\r\n"
-+    if framing == "original": return b"data: " + response + b"\n\n"
-+    if framing == "mixed":
-+        return b'data:{"jsonrpc":"2.0","method":"notifications/progress","params":{"progressToken":"sse-progress","progress":1}}\n\ndata: ' + response + b"\n\n"
-+    if framing == "empty": return b"data:\n\ndata: " + response + b"\n\n"
-+    if framing == "invalid": return b"data:{invalid json}\n\n"
-+    raise ValueError("unknown focused SSE framing")
-+
-+
- def record(handler, raw, request=None, rejection=None):
-     request = request or {}
-     method = request.get("method")
-@@ -171,7 +183,7 @@ def post(handler, body):
-         record(handler, body.encode(), rejection=str(error))
-         raw_response(handler, 400, b'{"error":"strict upstream rejected request"}')
-         return True
--    record(handler, body.encode(), request)
-+    event = record(handler, body.encode(), request)
-     method, rpc_id = request.get("method"), request.get("id")
-     mode = handler.headers.get("X-Compat-Response", "success")
-     if handler.headers.get("Host") == "unknownhost":
-@@ -216,6 +228,13 @@ def post(handler, body):
-             failed = arguments.get("fail") is True
-             result = json.dumps({"content": [{"type": "text", "text": "synthetic execution failed" if failed else "echo:" + arguments.get("value", "")}], "isError": failed}, separators=(",", ":")).encode()
-     response = rpc_response(rpc_id, result, mode == "rpc-error")
-+    framing = headers.get("X-Compat-SSE-Format")
-+    stage = headers.get("X-Compat-SSE-Stage", "business")
-+    if framing and ((stage == "all" and method != "server/discover") or stage == method or stage == "business" and method.startswith("tools/")):
-+        wire = sse_no_space_wire(response, framing)
-+        event["sseFixture"] = {"format": framing, "stage": method, **body_record(wire), "rawBase64": base64.b64encode(wire).decode()}
-+        raw_response(handler, 200, wire, "text/event-stream")
-+        return True
-     if path == "/unified/messages":
-         key = handler.headers.get("X-Compat-Case", "unassociated")
-         with LOCK:
-```
-
-**File**: `plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/compat_fixture.py` (modified, +27/-0)
-```diff
-@@ -94,6 +94,33 @@ def nov25_config(out):
-     Path(out, "envoy.yaml").write_text("admin:\n  address:\n    socket_address: {address: 0.0.0.0, port_value: 9901}\nstatic_resources:\n  listeners:\n" + listener + "  clusters:\n" + cluster)
- 
- 
-+SSE_NO_SPACE_BASELINE = "a89b18dc12882f06fe4ac9fe33cfa8c03d11292a"
-+
-+
-+def sse_no_space_cases():
-+    """Closed #5308 matrix; positive targets stay red on the affected source."""
-+    return [
-+        {"id": "sse-no-space/initialize", "route": "http-legacy", "method": "tools/call", "format": "no-space", "stage": "initialize", "target": True},
-+        {"id": "sse-no-space/list", "route": "http-legacy", "method": "tools/list", "format": "no-space", "target": True},
-+        {"id": "sse-no-space/call", "route": "http-legacy", "method": "tools/call", "format": "no-space", "target": True},
-+        {"id": "sse-no-space/crlf", "route": "http-legacy", "method": "tools/call", "format": "no-space-crlf", "target": True},
-+        {"id": "sse-no-space/post-auto", "route": "auto-modern", "method": "tools/call", "format": "no-space", "target": True},
-+        {"id": "sse-no-space/original-list", "route": "http-legacy", "method": "tools/list", "format": "original", "stage": "all", "target": False},
-+        {"id": "sse-no-space/original-call", "route": "http-legacy", "method": "tools/call", "format": "original", "stage": "all", "target": False},
-+        {"id": "sse-no-space/mixed", "route": "http-legacy", "method": "tools/call", "format": "mixed", "target": False},
-+        {"id": "sse-no-space/empty", "route": "http-legacy", "method": "tools/call", "format": "empty", "target": False},
-+        {"id": "sse-no-space/invalid", "route": "http-legacy", "method": "tools/call", "format": "invalid", "target": False},
-+    ]
-+
-+
-+def sse_no_space_config(out):
-+    # Fixed VM identities/module path make baseline and candidate config identical.
-+    listeners = "".join(base.listener_yaml(PORTS[name], "sse-no-space-" + name, "compat-route", proxy(name), "plugin.wasm")
-+                        for name in ("http-legacy", "auto-modern"))
-+    cluster = base.cluster_yaml("compat-route").replace("address: compat-route,", "address: backend-primary,")
-+    Path(out, "envoy.yaml").write_text("admin:\n  address:\n    socket_address: {address: 0.0.0.0, port_value: 9901}\nstatic_resources:\n  listeners:\n" + listeners + "  clusters:\n" + cluster)
-+
-+
- if __name__ == "__main__":
-     import sys
-     if "--sse-get-auth-headers" in sys.argv[3:]:
-```
-
-**File**: `plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/compat_self_test.py` (modified, +128/-1)
-```diff
-@@ -558,8 +558,135 @@ def evidence_checks():
-         require(json.loads((root / "compat-manifest.json").read_text())["checksums"] != evidence.checksums(root), "post-finalization mutation hidden")
- 
- 
-+
-+def sse_no_space_focused_checks():
-+    """Run the focused verifier/finalizer with injected observations, never Wasm."""
-+    import contextlib
-+    import subprocess
-+    import sys
-+    from types import SimpleNamespace
-+    from unittest.mock import patch
-+    import run_compat
-+    import verify
-+    cases = compat_fixture.sse_no_space_cases()
-+    require(len(cases) == 10 and len({row["id"] for row in cases}) == 10 and sum(row["target"] for row in cases) == 5, "focused matrix incomplete")
-+    # Actual backend selection must preserve default/control JSON responses.
-+    for method in ("server/discover", "initialize", "notifications/initialized", "tools/list", "tools/call"):
-+        for stage in (None, "business", "initialize", "all"):
-+            h = parse_headers(io.BytesIO(b"Content-Type: application/json\r\n\r\n"))
-+            if stage:
-+                h["X-Compat-SSE-Format"], h["X-Compat-SSE-Stage"] = "no-space", stage
-+            handler = SimpleNamespace(headers=h, command="POST", path="/unified/modern")
-+            compat_backend.reset()
-+            with patch.object(compat_backend, "raw_response") as send:
-+                require(compat_backend.post(handler, c.envelope(False, method=method, tool="echo").decode()), "backend request missing")
-+                event = compat_backend.state()["events"][-1]
-+                formatted = bool(stage and method != "notifications/initialized" and
-+                                 (stage == method or stage == "all" and method != "server/discover" or stage == "business" and method.startswith("tools/")))
-+                require(("sseFixture" in event) == formatted, "focused format poisoned controls/default")
-+                if formatted: require(send.call_args.args[3] == "text/event-stream", "focused media mismatch")
-+    for framing in {row["format"] for row in cases}:
-+        wire = compat_backend.sse_no_space_wire(b'{"result":{}}', framing)
-+        require(wire.endswith(b"\r\n\r\n") if framing.endswith("crlf") else wire.endswith(b"\n\n"), "SSE wire incomplete")
-+    rejected(lambda: compat_backend.sse_no_space_wire(b'{}', "unknown"))
-+    with tempfile.TemporaryDirectory() as directory:
-+        root = Path(directory)
-+        result = {"tools": [{"name": "echo", "inputSchema": {"type": "object"}}], "content": [], "number": c.JSONNumber("900719925474099312345"), "value": c.JSONNumber("2")}
-+        def attach(verifier, fault=None):
-+            state = {}
-+            def exchange(port, raw, modern, **options):
-+                case = next(row for row in cases if row["id"] == verifier.case)
-+                require(c.loads_typed(raw)["params"]["_meta"]["progressToken"] == "sse-progress", "progressToken omitted")
-+                require(port == compat_fixture.PORTS[case["route"]] and modern == (case["route"] == "auto-modern"), "focused route changed")
-+                init_red = verifier.variant == "sse-baseline" and case.get("stage") == "initialize"
-+                methods = ["server/discover", case["method"]] if modern else ["initialize"] if init_red else ["initialize", "notifications/initialized", case["method"]]
-+                events = []
-+                for method in methods:
-+                    event = {"case": verifier.case, "rpcMethod": method, "kind": "probe" if method == "server/discover" else "control" if method in ("initialize", "notifications/initialized") else "business",
-+                             "accepted": True, "backendOrigin": "primary", "protocolVersion": c.MODERN if modern else "2025-03-26"}
-+                    stage = case.get("stage", "business")
-+                    if method != "notifications/initialized" and (stage == "all" or stage == method or stage == "business" and method.startswith("tools/")):
-+                        wire = compat_backend.sse_no_space_wire(b'{"jsonrpc":"2.0","id":2,"result":{}}', case["format"])
-+                        event["sseFixture"] = {"format": case["format"], "stage": method, **c.body_record(wire), "rawBase64": base64.b64encode(wire).decode()}
-+                    events.append(event)
-+                state["events"] = events
-+                failed = verifier.variant == "sse-baseline" and case["target"] or case["format"] == "invalid"
-+                response = {"jsonrpc": "2.0", "id": "sse-client"}
-+                if failed: response["error"] = {"code": c.JSONNumber("-32603"), "message": "no data field found in SSE response" if verifier.variant == "sse-baseline" else "invalid JSON response"}
-+                else: response["result"] = copy.deepcopy(result)
-+                if fault == "dispatch": events.append(copy.deepcopy(events[-1]))
-+                elif fault == "id": response["id"] = "wrong"
-+                elif fault == "number" and not failed: response["result"]["
-```
-
-**File**: `plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/run_compat.py` (modified, +140/-51)
-```diff
-@@ -13,6 +13,7 @@
- import uuid
- 
- import compat_contract as contract
-+from compat_fixture import SSE_NO_SPACE_BASELINE, sse_no_space_cases, sse_no_space_config
- from run_routing import ROOT, recorded_run, sha
- 
- HERE = Path(__file__).resolve().parent
-@@ -27,6 +28,63 @@ def source_is_clean(revision):
-     return subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip() == revision and not subprocess.check_output(["git", "status", "--porcelain"], cwd=ROOT, text=True).strip()
- 
- 
-+def sse_no_space_errors(out, inputs):
-+    """Reject incomplete, stale or non-equivalent focused evidence."""
-+    from collections import Counter
-+    errors = []
-+    def require(value, message):
-+        if not value: errors.append(message)
-+    require(not inputs.get("error") and not inputs.get("verifierFailed"), "runner/build/verifier failed")
-+    require(inputs.get("sourceStillClean") is True and inputs.get("tokenOverridesUnset") is True, "source/token preconditions failed")
-+    require(inputs.get("cleanupComplete") is True, "run-owned cleanup incomplete")
-+    require(inputs.get("sseBaseline") == SSE_NO_SPACE_BASELINE, "wrong affected source")
-+    require(inputs.get("verifierExits") == {"sse-baseline": 1, "candidate": 0}, "baseline red/candidate green process exits missing")
-+    expected, snapshots = sse_no_space_cases(), {}
-+    for role, revision in (("sse-baseline", SSE_NO_SPACE_BASELINE), ("candidate", inputs.get("candidate"))):
-+        try:
-+            version = inputs["versions"][role]
-+            require(version["source"] == revision and set(version["wasm"]) == {"plain"}, role + ": source/flavor mismatch")
-+            require(version["wasm"]["plain"] == sha(out / f"plain-{role}.wasm"), role + ": Wasm hash mismatch")
-+            snapshot = json.loads((out / f"sse-no-space-{role}.json").read_text())
-+            snapshots[role] = snapshot
-+            require(snapshot["variant"] == role and snapshot["expectedCases"] == expected and not snapshot.get("startupError"), role + ": registry/startup mismatch")
-+            require(contract.complete(expected, snapshot["cases"]), role + ": missing/duplicate case")
-+            require(Counter(row["id"] for row in expected) == Counter(row["case"] for row in snapshot["exchanges"]), role + ": missing/duplicate exchange")
-+            access_ids = [row["accessRequestId"] for row in snapshot["exchanges"]]
-+            require(all(access_ids) and len(access_ids) == len(set(access_ids)), role + ": invalid access identity")
-+            gateway_log = (out / f"gateway-{role}.log").read_text()
-+            for request_id in access_ids:
-+                require(gateway_log.count("access request_id=" + request_id + " ") == 1, role + ": missing/duplicate gateway access")
-+            rows = {row["id"]: row for row in snapshot["cases"]}
-+            for case in expected:
-+                row = rows[case["id"]]
-+                red = role == "sse-baseline" and case["target"]
-+                require(row["status"] == ("FAIL" if red else "PASS") and row.get("validRedReproduction") is red, role + ": unexpected outcome " + case["id"])
-+                require(bool(row.get("detail", {}).get("ledger", {}).get("events")), role + ": unobserved case " + case["id"])
-+            require(inputs["configs"][role] == sha(out / f"envoy-{role}.yaml"), role + ": config hash mismatch")
-+        except (KeyError, OSError, ValueError, TypeError) as error:
-+            errors.append(role + ": incomplete evidence: " + str(error))
-+    try:
-+        require(inputs["configs"]["sse-baseline"] == inputs["configs"]["candidate"], "role configs differ")
-+        before, after = (inputs["versions"][role] for role in ("sse-baseline", "candidate"))
-+        require(before["go"] == after["go"] and before["moduleFiles"] == after["moduleFiles"], "Go/module inputs differ")
-+        require(len(inputs["images"]) == 2 and all("@sha256:" in name for name in inputs["images"]), "immutable image pair missing")
-+        for name, digest in inputs["harness"].items():
-+            require(sha(out / "harness" / name) == digest, "harness mutated: " + name)
-+        left, right = (snapshots[role] for role in ("sse-baseline", "candidate"))
-+        for first, second in zip(left["exchanges"], right["exchanges"]):
-+            require(all(first[key] == second[key] for key in ("case", "request", "requestHeadersSha256")), "role requests differ")
-+        for first, second in zip(left["cases"], right["cases"]):
-+            wire = lambda row: [(event["rpcMethod"], event["sseFixture"]["sha256"]) for event in row["detail"]["ledger"]["events"] if "sseFixture" in event]
-+            require(wire(first) == wire(second), "backend wire differs: " + first["id"])
-+            case = next(row for row in expected if row["id"] == first["id"])
-+            if not case["target"] and case["format"] != "invalid":
-+                require(first["detail"]["resultSha256"] == second["detail"]["resultSha256"], "control business result d
-```
-
-**File**: `plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/verify_compat.py` (modified, +73/-1)
-```diff
-@@ -17,7 +17,7 @@
- from pathlib import Path
- 
- import compat_contract as contract
--from compat_fixture import PORTS
-+from compat_fixture import PORTS, sse_no_space_cases
- from typed_canonical import JSONNumber, canonical_json_sha256, loads_typed
- 
- 
-@@ -500,6 +500,76 @@ def write(self, expected):
-             "cases": self.rows, "exchanges": self.exchanges}, indent=2, sort_keys=True) + "\n")
- 
- 
-+    def sse_no_space_case(self, case):
-+        """Assert stage/count identity before recognizing a targeted baseline red."""
-+        modern = case["route"] == "auto-modern"
-+        raw = contract.envelope(modern, method=case["method"], tool="echo", rpc_id='"sse-client"')
-+        if modern:
-+            raw = raw.replace(b'"_meta":{', b'"_meta":{"progressToken":"sse-progress",', 1)
-+        else:
-+            raw = raw[:-2] + b',"_meta":{"progressToken":"sse-progress"}}}'
-+        extra = [("X-Compat-SSE-Format", case["format"]), ("X-Compat-SSE-Stage", case.get("stage", "business"))]
-+        status, headers, response = self.exchange(PORTS[case["route"]], raw, modern, tool="echo", method=case["method"], extra=extra)
-+        self.exchanges[-1]["observedResponse"] = response
-+        ledger = self.ledger()
-+        baseline_red = self.variant == "sse-baseline" and case["target"]
-+        init_red = baseline_red and case.get("stage") == "initialize"
-+        methods = ["server/discover", case["method"]] if modern else ["initialize"] if init_red else ["initialize", "notifications/initialized", case["method"]]
-+        counts = {"transport": 0, "probe": int(modern), "control": 0 if modern else 1 if init_red else 2, "business": 0 if init_red else 1}
-+        check(ledger["attempts"] == counts and [row["rpcMethod"] for row in ledger["events"]] == methods, "missing/duplicate/unexpected backend dispatch")
-+        check(all(row["accepted"] and row["backendOrigin"] == "primary" for row in ledger["events"]), "strict peer rejection or wrong backend")
-+        check(all(row["protocolVersion"] == contract.MODERN if modern else row["protocolVersion"] in (None, "2025-03-26") for row in ledger["events"]), "upstream version policy changed")
-+        fixtures = [row["sseFixture"] for row in ledger["events"] if "sseFixture" in row]
-+        check(len(fixtures) == (2 if case.get("stage") == "all" else 1), "target SSE response was not observed")
-+        for fixture in fixtures:
-+            wire = base64.b64decode(fixture["rawBase64"], validate=True)
-+            check(fixture["format"] == case["format"] and contract.body_record(wire) == {key: fixture[key] for key in ("utf8Bytes", "sha256")}, "wire fixture mismatch")
-+        check(status == 200 and isinstance(response, dict) and response.get("jsonrpc") == "2.0" and response.get("id") == "sse-client", "HTTP/envelope/client ID changed")
-+        check(headers.get("content-type", "").split(";", 1)[0] == "application/json", "gateway media changed")
-+        if baseline_red or case["format"] == "invalid":
-+            error = response.get("error", {})
-+            check(integer(error.get("code")) == -32603 and "result" not in response, "controlled error missing")
-+            message = error.get("message", "")
-+            extraction = self.variant == "sse-baseline"
-+            check("no data field found in SSE response" in message if extraction else message == "invalid JSON response", "wrong extraction/JSON failure stage")
-+            return {"ledger": ledger, "stage": "extraction" if extraction else "json", "validRedReproduction": baseline_red,
-+                    "positiveAssertion": "normal business result missing" if baseline_red else None}
-+        check("error" not in response and "result" in response, "normal business result missing")
-+        result = response["result"]
-+        check(integer(result.get("number")) == 900719925474099312345 and integer(result.get("value")) == 2 and result.get("content") == [], "precise business result changed")
-+        check(result.get("tools") == [{"name": "echo", "inputSchema": {"type": "object"}}], "tool list changed")
-+        return {"ledger": ledger, "stage": "business", "validRedReproduction": False, "resultSha256": canonical_json_sha256(result)}
-+
-+    def run_sse_no_space(self):
-+        import verify as existing
-+        expected = sse_no_space_cases()
-+        startup_error = None
-+        try:
-+            existing.wait_http("http://backend-primary:8080/healthz")
-+            existing.wait_http("http://gateway:9901/ready")
-+        except Exception as error:
-+            startup_error = str(error)
-+        for case in expected:
-+            self.case = case["id"]
-+            row = {"id": self.case, "status": "FAIL", "validRedReproduction": False}
-+            try:
-+                check(not startup_error, "startup failed: " + str(startup_error))
-+                self.backend(reset=True)
-+                detail = self.sse_no_space_case(case)
-+                row.update(detail=detail, validRedReproduction=detail["validRedReproduct
-```
-
-**File**: `plugins/wasm-go/pkg/mcp/server/proxy_compatibility_test.go` (modified, +71/-0)
-```diff
-@@ -259,6 +259,77 @@ func TestProxyLooseClientIDsReachStrictUpstreamsAndRestoreClientSemantics(t *tes
- 	}
- }
- 
-+// TestSSENoSpaceHTTPCompatibility 验证显式 HTTP 握手、list/call 和 auto 后业务均沿用原调用方策略。
-+// 输入仅改变 SSE data 字段空格；输出必须保留客户端 ID、精确数字和既有 JSON 错误边界。
-+func TestSSENoSpaceHTTPCompatibility(t *testing.T) {
-+	for _, strategy := range []ProtocolStrategy{ProtocolStrategyLegacy, ProtocolStrategyAuto} {
-+		for _, operation := range []string{string(OpToolsList), string(OpToolsCall)} {
-+			for _, framing := range []string{"initialize", "LF", "CRLF", "mixed", "empty", "invalid"} {
-+				t.Run(fmt.Sprintf("%s/%s/%s", strategy, operation, framing), func(t *testing.T) {
-+					var host wasmtest.TestHost
-+					if strategy == ProtocolStrategyAuto {
-+						host = newAutoTestHost(t, "")
-+					} else {
-+						host = newProxyBridgeHost(t, strategy)
-+					}
-+					headers, body := looseProxyRequest(true, operation, `"sse-client"`)
-+					body = bytes.Replace(body, []byte(`"_meta":{`), []byte(`"_meta":{"progressToken":"sse-progress",`), 1)
-+					require.Equal(t, types.ActionPause, host.CallOnHttpRequestHeaders(headers))
-+					host.CallOnHttpRequestBody(body)
-+					if strategy == ProtocolStrategyAuto {
-+						finishProxyControls(t, host, strategy, true, true)
-+					} else {
-+						initialize := calloutAt(t, host, 0)
-+						initBody := autoResult(gjson.GetBytes(initialize.Body, "id").Raw, validAutoInitResult)
-+						initPrefix := "data: "
-+						if framing == "initialize" {
-+							initPrefix = "data:"
-+						}
-+						completeCallout(host, initialize, "200", [][2]string{{"Content-Type", "text/event-stream"}}, append(append([]byte(initPrefix), initBody...), []byte("\n\n")...))
-+						notification := calloutAt(t, host, 0)
-+						require.Equal(t, "notifications/initialized", gjson.GetBytes(notification.Body, "method").String())
-+						completeCallout(host, notification, "202", nil, nil)
-+					}
-+					business := routedRequest(t, host)
-+					result := autoResult(gjson.GetBytes(business.Body, "id").Raw, `{"tools":[],"content":[],"number":900719925474099312345}`)
-+					wire := append(append([]byte("data:"), result...), []byte("\n\n")...)
-+					switch framing {
-+					case "initialize":
-+						wire = append(append([]byte("data: "), result...), []byte("\n\n")...)
-+					case "CRLF":
-+						wire = bytes.ReplaceAll(wire, []byte("\n"), []byte("\r\n"))
-+					case "mixed":
-+						wire = append(append([]byte("data:{\"jsonrpc\":\"2.0\",\"method\":\"notifications/progress\",\"params\":{\"progressToken\":\"sse-progress\",\"progress\":1}}\n\ndata: "), result...), []byte("\n\n")...)
-+					case "empty":
-+						wire = append(append([]byte("data:\n\ndata: "), result...), []byte("\n\n")...)
-+					case "invalid":
-+						wire = []byte("data:{invalid json}\n\n")
-+					}
-+					completeCallout(host, business, "200", [][2]string{{"Content-Type", "text/event-stream"}}, wire)
-+					response := proxyTestResponse(host)
-+					require.NotNil(t, response)
-+					assert.Equal(t, `"sse-client"`, gjson.GetBytes(response.Data, "id").Raw)
-+					if framing == "invalid" {
-+						assert.Equal(t, int64(utils.ErrInternalError), gjson.GetBytes(response.Data, "error.code").Int())
-+						assert.NotContains(t, string(response.Data), "no data field found")
-+						if operation == string(OpToolsCall) {
-+							assert.Contains(t, string(response.Data), "invalid JSON response")
-+						} else {
-+							assert.Contains(t, string(response.Data), "invalid character")
-+						}
-+					} else {
-+						assert.Equal(t, uint32(200), response.StatusCode)
-+						assert.False(t, gjson.GetBytes(response.Data, "error").Exists())
-+						assert.Equal(t, "900719925474099312345", gjson.GetBytes(response.Data, "result.number").Raw)
-+						assert.Equal(t, "[]", gjson.GetBytes(response.Data, "result.tools").Raw)
-+					}
-+					require.Empty(t, host.GetHttpCalloutAttributes())
-+				})
-+			}
-+		}
-+	}
-+}
-+
- func TestHTTPBusinessResponsePolicyDoesNotInheritControlRestrictions(t *testing.T) {
- 	deep := strings.Repeat("[", 70) + "0" + strings.Repeat("]", 70)
- 	for _, strategy := range []ProtocolStrategy{ProtocolStrategyLegacy, ProtocolStrategyModern, ProtocolStrategyAuto} {
-```
-
-**File**: `plugins/wasm-go/pkg/mcp/server/proxy_tool.go` (modified, +13/-1)
-```diff
-@@ -289,12 +289,15 @@ func sendUpstreamAuthFailure(ctx wrapper.HttpContext, statusCode int, responseHe
- 	return true
- }
- 
--// parseSSEResponse parses Server-Sent Events format and extracts data field content
-+// parseSSEResponse 从完整 SSE 响应 sseData 中提取 data 字段，返回原始内容或扫描/缺失错误。
-+// 原有 "data: " 格式仍立即返回；仅在完整扫描无错误且没有原格式时，回退到第一个非空 "data:" 内容。
-+// 本函数沿用行级 TrimSpace 和 32MB 扫描上限，不校验 JSON、不选择通知或最终响应，也不拼接多行事件。
- func parseSSEResponse(sseData []byte) ([]byte, error) {
- 	scanner := bufio.NewScanner(bytes.NewReader(sseData))
- 	// Set max token size to 32MB to handle large messages
- 	maxTokenSize := 32 * 1024 * 1024 // 32MB
- 	scanner.Buffer(make([]byte, 0, 64*1024), maxTokenSize)
-+	var fallback string
- 
- 	for scanner.Scan() {
- 		line := strings.TrimSpace(scanner.Text())
-@@ -309,6 +312,11 @@ func parseSSEResponse(sseData []byte) ([]byte, error) {
- 			dataContent := strings.TrimPrefix(line, "data: ")
- 			return []byte(dataContent), nil
- 		}
-+
-+		// 无空格内容只作为候选，继续扫描以保留后续原格式的优先级。
-+		if fallback == "" && strings.HasPrefix(line, "data:") {
-+			fallback = strings.TrimPrefix(line, "data:")
-+		}
- 	}
- 
- 	if err := scanner.Err(); err != nil {
-@@ -318,6 +326,10 @@ func parseSSEResponse(sseData []byte) ([]byte, error) {
- 		return nil, fmt.Errorf("error reading SSE data: %v", err)
- 	}
- 
-+	// 候选不能掩盖扫描错误；空 data 字段不会占据回退位置。
-+	if fallback != "" {
-+		return []byte(fallback), nil
-+	}
- 	return nil, fmt.Errorf("no data field found in SSE response")
- }
- 
+@@ -1 +1 @@
+-Subproject commit 65133dd61c6c597fb301c53beaa777ca5c9e4ba2
++Subproject commit 383f79d0ccdba5d856a7f765b97cacba7c209dca
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5309** (2026-11-05): fix(mcp-server): preserve SSE data priority with a no-space fallback (@sunxia0)
-- **PR #5305** (2026-11-04): fix(mcp-server): support 2025-11-25 Tools clients (@sunxia0)
-- **PR #5294** (2026-11-03): fix(mcp): bind user-level access to consumers (@johnlanni)
-- **PR #5293** (2026-11-03): fix(mcp): remove client config headers on ingress (@johnlanni)
-- **PR #5292** (2026-11-02): fix(plugins): isolate ai-cache data by consumer (@johnlanni)
-- **PR #5291** (2026-11-01): fix(plugins): require raw bodies for request validation (@johnlanni)
+- **PR #5323** (2026-11-09): chore(deps): bump istio to pick up SRDS gateway cache fix (@johnlanni)
+- **PR #5322** (2026-11-08): test(e2e): add SRDS scale regression guard (@johnlanni)
+- **PR #5321** (2026-11-08): fix(mcp-server): escape path arguments in REST-to-MCP request URLs (@johnlanni)
+- **PR #5320** (2026-11-07): chore(ci): add a manual retag workflow for published plugin artifacts (@johnlanni)
+- **PR #5319** (2026-11-07): chore(plugin-server): publish mcp-server 2.0.3 content under legacy 1.0.0/2.0.0 paths (@johnlanni)
+- **PR #5318** (2026-11-07): docs(mcp-server): resolve leftover conflict markers in README (@johnlanni)
 
 ---
 
@@ -2279,52 +1797,28 @@ Signed-off-by: xunmu <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. mcp-server): preserve SSE data priority with a no-space fallback (#5309)
+## X. deps): bump istio to pick up SRDS gateway cache fix (#5323)
 
 **RULE**:
-When implementing operations in `plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in higress-group/higress. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `istio/istio`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in higress-group/higress. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bfcd87d1`: mcp-server): preserve SSE data priority with a no-space fallback (#5309). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `942b6cfa`: deps): bump istio to pick up SRDS gateway cache fix (#5323). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/README.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `istio/istio`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-
-
-## Focused SSE no-space fallback (#5308)
-
-From a clean, committed candidate checkout, select only the ten-case parser
-matrix. This mode builds plain Wasm for the exact affected source
-`a89b18dc12882f06fe4ac9fe33cfa8c03d11292a` and candidate. It reuses the existing
-Compose services, backend, renderer, build and bounded lifecycle, with one
-`plugin.wasm` mount path. It does not run or retarget the normal business
-oracle, control, November-version or routing matrices.
-
-```sh
-env -u GH_TOKEN -u GITHUB_TOKEN PYTHONDONTWRITEBYTECODE=1 python3.12 \
-  plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/run_compat.py \
-  --sse-no-space \
-  --sse-baseline a89b18dc12882f06fe4ac9fe33cfa8c03d11292a \
-  --candidate HEAD \
-  --gateway-image higress-registry.cn-hangzhou.cr.aliyuncs.com/higress/gateway@sha256:2b00548e16aafc5ee51314a0de8c4df4369877b1d0f9eaec13becc3675dd04b7 \
-  --backend-image docker.io/library/python:3.12-alpine \
-  --output "$SSE_EVIDENCE/runtime"
-```
-
-Use an empty absolute external output directory. Python 3.12+ is needed for
-archive extraction; on this macOS host use `/opt/homebrew/bin/python3.12`.
-Images must already resolve locally to immutable RepoDigests. Bo
+Subproject commit 383f79d0ccdba5d856a7f765b97cacba7c209dca
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+Subproject commit 65133dd61c6c597fb301c53beaa777ca5c9e4ba2
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bfcd87d1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `942b6cfa` are properly handled with clean fallback behavior.

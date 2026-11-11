@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/u-root-u-root-learnings.md`  
 > **Source**: github ([https://github.com/u-root/u-root](https://github.com/u-root/u-root))  
-> **Source Version**: `5e3bfe39`  
+> **Source Version**: `d7b8f4d3`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T11:02:28.945Z  
+> **Timestamp**: 2026-11-09T17:43:53.024Z  
 > **Learning ID**: `learn-github-u-root-u-root`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/u-root-u-root-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/u-root/u-root](https://github.com/u-root/u-root))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T10:57:27.445Z  
+> **Harvest Timestamp**: 2026-11-09T17:43:52.349Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A fully Go userland with Linux bootloaders! u-root can create a one-binary root file system (initramfs) containing a busybox-like set of tools written in Go.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 3086 stars
+- **Stars / Engagement**: 3087 stars
 
 ---
 
@@ -1286,177 +1286,209 @@ func main() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5e3bfe39` (2026-10-29)
-**Commit Message**: boot/grub: fix root search for separate FAT boot partitions
+### Incident Patch 1: `d7b8f4d3` (2026-11-09)
+**Commit Message**: gzip: chmod the opened output and tidy the mode test
 
-Match filesystem UUIDs case-insensitively so uppercase FAT UUIDs
-from GRUB match the lowercase IDs detected by u-root.
+Call Chmod on the *os.File returned by OpenFile instead of on the
+path, so the mode lands on the file being written even if the path is
+replaced in between. Shorten the comment.
 
-Parse --no-floppy as a boolean and preserve values when normalizing
-GRUB hint flags. Otherwise flag parsing can consume the search
-mode or UUID and leave image paths rooted on the config partition.
+Use got/want messages with context in TestFileProcessKeepsMode.
 
-Add regression tests with configs on p3 and kernel/initramfs files
-on p2 for NVMe and eMMC-style devices.
+Signed-off-by: Alhuda Khan <[REDACTED_EMAIL]>
 
-Tests: go test ./pkg/boot/grub ./pkg/mount/block ./pkg/boot -count=1
-
-Signed-off-by: Jono Powell <[REDACTED_EMAIL]>
-Co-Authored-By: Claude Code <[REDACTED_EMAIL]>
-
-**File**: `pkg/boot/grub/config_test.go` (modified, +87/-0)
+**File**: `pkg/gzip/file.go` (modified, +6/-6)
 ```diff
-@@ -14,9 +14,11 @@ import (
- 	"strings"
- 	"testing"
+@@ -140,17 +140,17 @@ func (f *File) Process() error {
+ 		if fi, err = i.Stat(); err != nil {
+ 			return err
+ 		}
+-		// Like gzip(1), give the output the input's permissions. Set them
+-		// before writing: OpenFile's mode is masked by the umask and is
+-		// not applied to an existing output that -f overwrites.
++		// Give the output file the input file's permissions.
+ 		perm := fi.Mode().Perm()
+-		if o, err = os.OpenFile(f.outputPath(), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, perm); err != nil {
++		var out *os.File
++		if out, err = os.OpenFile(f.outputPath(), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, perm); err != nil {
+ 			return err
+ 		}
+-		if err = os.Chmod(f.outputPath(), perm); err != nil {
+-			o.Close()
++		if err = out.Chmod(perm); err != nil {
++			out.Close()
+ 			return err
+ 		}
++		o = out
+ 	}
  
-+	"github.com/u-root/u-root/pkg/boot"
- 	"github.com/u-root/u-root/pkg/boot/boottest"
- 	"github.com/u-root/u-root/pkg/mount"
- 	"github.com/u-root/u-root/pkg/mount/block"
-+	"github.com/u-root/uio/uio"
- )
+ 	if f.Options.Verbose && !f.Options.Quiet {
+```
+
+**File**: `pkg/gzip/file_test.go` (modified, +9/-8)
+```diff
+@@ -321,11 +321,12 @@ func TestFileProcessKeepsMode(t *testing.T) {
+ 	}
+ 	plain := filepath.Join(t.TempDir(), "secret")
+ 	if err := os.WriteFile(plain, []byte("hunter2"), 0o600); err != nil {
+-		t.Fatal(err)
++		t.Fatalf("create %q with mode 0600: got %v, want nil", plain, err)
+ 	}
+-	// An existing, wider output, as overwritten by -f.
++	// An existing 0644 output, more permissive than the 0600 input, which
++	// -f overwrites.
+ 	if err := os.WriteFile(plain+".gz", nil, 0o644); err != nil {
+-		t.Fatal(err)
++		t.Fatalf("create %q with mode 0644: got %v, want nil", plain+".gz", err)
+ 	}
  
- // fakeDevices returns a list of fake block devices and a pool of mount points.
-@@ -110,6 +112,91 @@ func TestConfigs(t *testing.T) {
+ 	f := File{
+@@ -339,24 +340,24 @@ func TestFileProcessKeepsMode(t *testing.T) {
+ 		},
+ 	}
+ 	if err := f.Process(); err != nil {
+-		t.Fatalf("File.Process() compression error = %v", err)
++		t.Fatalf("compressing %q: got %v, want nil", plain, err)
+ 	}
+ 	if err := os.Remove(plain); err != nil {
+-		t.Fatal(err)
++		t.Fatalf("remove %q: got %v, want nil", plain, err)
+ 	}
+ 	f.Path = plain + ".gz"
+ 	f.Options.Decompress = true
+ 	if err := f.Process(); err != nil {
+-		t.Fatalf("File.Process() decompression error = %v", err)
++		t.Fatalf("decompressing %q: got %v, want nil", f.Path, err)
+ 	}
+ 
+ 	for _, p := range []string{plain + ".gz", plain} {
+ 		fi, err := os.Stat(p)
+ 		if err != nil {
+-			t.Fatal(err)
++			t.Fatalf("stat %q: got %v, want nil", p, err)
+ 		}
+ 		if got := fi.Mode().Perm(); got != 0o600 {
+-			t.Errorf("File.Process() mode of %q = %#o; want %#o", p, got, 0o600)
++			t.Errorf("mode of %q: got %#o, want %#o", p, got, 0o600)
+ 		}
  	}
  }
- 
-+func TestSearchSeparateFATBootPartition(t *testing.T) {
-+	for _, device := range []struct {
-+		name string
-+		uuid string
-+	}{
-+		{name: "nvme0n1", uuid: "a1e8-94da"},
-+		{name: "mmcblk0", uuid: "6cfc-948e"},
-+	} {
-+		t.Run(device.name, func(t *testing.T) {
-+			for _, tt := range []struct {
-+				name   string
-+				search string
-+			}{
-+				{name: "lowercase UUID", search: "search --fs-uuid --set=root " + device.uuid},
-+				{name: "uppercase UUID", search: "search --fs-uuid --set=root " + strings.ToUpper(device.uuid)},
-+				{name: "generated search", search: "search --no-floppy --fs-uuid --set=root " + strings.ToUpper(device.uuid)},
-+				{name: "generated search with hints", search: "search --no-floppy --fs-uuid --set=root --hint-bios=hd0,gpt2 --hint-efi=hd0,gpt2 --hint-baremetal=ahci0,gpt2 " + strings.ToUpper(device.uuid)},
-+				{name: "lowercase UUID with hints", search: "search --no-floppy --fs-uuid --set=root --hint-bios=hd0,gpt2 --hint-efi=hd0,gpt2 --hint-baremetal=ahci0,gpt2 " + device.uuid},
-+				{name: "file search with no-floppy", search: "search --no-floppy --file --set=root /vmlinuz-linux"},
-+			} {
-+				t.Run(tt.name, func(t *testing.T) {
-+					rootDir := filepath.Join(t.TempDir(), "p3")
-+					bootDir := filepath.Join(t.TempDir(), "p2")
-+					configDir := filepath.Join(rootDir, "boot", "grub")
-+					for _, dir := range []string{configDir, bootDir} {
-+						if err := os.MkdirAll(dir, 0o755); err != nil {
-+							t.Fatal(err)
-+						}
-+					}
-+					for name, contents := range map[string]string{
-+						"vmlinuz-linux":       "test kernel on p2",
-+						"initramfs-linux.img": "test initramfs on p2",
-+					} {
-+						if err := os.WriteFile(filepath.Join(bootDir, name), []byte(contents), 0o644); err != nil {
-+							t.Fatal(err)
-+						}
-+					}
-+					config := "menuentry 'test' {\nset root='hd0,gpt2'\n" + tt.search + "\nlinux /vmlinuz-linux\ninitrd /initramfs-linux.img\n}\n"
-+					if err := os.WriteFile(filepath.Join(configDir, "grub.cfg"), []byte(config), 0o644); err != nil {
-+						t.Fatal(err)
-+					}
-+
-+					devices := block.BlockDevices{
-+						&block.BlockDev{Name: device.name + "p2", FsUUID: device.uuid, FSType: "vfat"},
-+						&block.BlockDev{Name: device.name + "p3", FsUUID: "test-root-uuid", FSType: "ext4"},
-+					}
-+					mountPool := &mount.Pool{}
-+					mountPool.Add(
-+						&mount.MountPoint{Path: bootDir, Device: devices[0].DevicePath(), FSType: "vfat"},
-+						&mount.MountPoint{Path: rootDir, Device: devices[1].DevicePath(), FSType: "ext4"},
-+					)
-+					images, err := ParseLocalConfig(context.Background(), rootDir, devices, mountPool)
-+					if err != nil {
-+						t.Fatal(err)
-+					}
-+					if len(images) != 1 {
-+						t.Fatalf("Got %d images, want 1", len(images))
-+					}
-+					image, ok := images[0].(*boot.LinuxImage)
-+					if !ok {
-+						t.Fatalf("Got image type %T, want *boot.LinuxImage", images[0])
-+					}
-+					for _, file := range []struct {
-+						name   string
-+						reader io.ReaderAt
-+						want   string
-+					}{
-+						{name: "kernel", reader: image.Kernel, want: "test kernel on p2"},
-+						{name: "initramfs", reader: image.Initrd, want: "test initramfs on p2"},
-+					} {
-+						got, err := uio.ReadAll(file.reader)
-+						if err != nil {
-+							t.Errorf("Failed to read %s from p2: %v", file.name, err)
-+							continue
-+						}
-+						if string(got) != file.want {
-+							t.Errorf("Read %s = %q, want %q", file.name, got, file.want)
-+						}
-+					}
-+				})
-+			}
-+		})
-+	}
-+}
-+
- func FuzzParseGrubConfig(f *testing.F) {
- 	baseDir := f.TempDir()
- 
 ```
 
-**File**: `pkg/boot/grub/grub.go` (modified, +5/-1)
-```diff
-@@ -429,7 +429,7 @@ func (c *parser) append(ctx context.Context, config string) error {
- 			fs.BoolVar(searchFile, "f", false, "")
- 			setVar := fs.String("set", "root", "")
- 			// Ignored flags
--			fs.String("no-floppy", "", "ignored")
-+			fs.Bool("no-floppy", false, "ignored")
- 			fs.String("hint", "", "ignored")
- 			// Everything that begins with "hint" is ignored.
- 			// This was slightly cleaner with pflag, but, at the same time,
-@@ -440,7 +440,11 @@ func (c *parser) append(ctx context.Context, config string) error {
- 			// about an extra loop iterator.
- 			for i := range kv {
- 				if strings.HasPrefix(kv[i], "--hint") {
-+					_, value, hasValue := strings.Cut(kv[i], "=")
- 					kv[i] = "--hint"
-+					if hasValue {
-+						kv[i] += "=" + value
-+					}
- 				}
- 			}
- 
-```
+---
 
-**File**: `pkg/mount/block/blockdev_linux.go` (modified, +1/-1)
+### Incident Patch 2: `2a1953f5` (2026-11-04)
+**Commit Message**: gzip: keep the input file's permissions on the output
+
+File.Process created the output with os.Create and never looked at the
+input's mode, and Cleanup then removes the input. gzip or gzip -d on a
+0600 file therefore left a 0644 copy behind (0666 under a zero umask),
+readable by every local user. GNU and BSD gzip give the output the
+input's mode.
+
+Open the output with the input's permission bits and chmod it before
+any data is written, so neither the umask nor an existing output
+overwritten by -f can leave it wider.
+
+Signed-off-by: Alhuda Khan <[REDACTED_EMAIL]>
+
+**File**: `pkg/gzip/file.go` (modified, +13/-1)
 ```diff
-@@ -463,7 +463,7 @@ func (b BlockDevices) FilterNames(names ...string) BlockDevices {
- func (b BlockDevices) FilterFSUUID(fsuuid string) BlockDevices {
- 	partitions := make(BlockDevices, 0)
- 	for _, device := range b {
--		if device.FsUUID == fsuuid {
-+		if strings.EqualFold(device.FsUUID, fsuuid) {
- 			partitions = append(partitions, device)
+@@ -136,7 +136,19 @@ func (f *File) Process() error {
+ 	} else if f.Options.Stdout {
+ 		o = os.Stdout
+ 	} else {
+-		if o, err = os.Create(f.outputPath()); err != nil {
++		var fi os.FileInfo
++		if fi, err = i.Stat(); err != nil {
++			return err
++		}
++		// Like gzip(1), give the output the input's permissions. Set them
++		// before writing: OpenFile's mode is masked by the umask and is
++		// not applied to an existing output that -f overwrites.
++		perm := fi.Mode().Perm()
++		if o, err = os.OpenFile(f.outputPath(), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, perm); err != nil {
++			return err
++		}
++		if err = os.Chmod(f.outputPath(), perm); err != nil {
++			o.Close()
+ 			return err
  		}
  	}
 ```
 
+**File**: `pkg/gzip/file_test.go` (modified, +47/-0)
+```diff
+@@ -8,6 +8,7 @@ import (
+ 	"errors"
+ 	"os"
+ 	"path/filepath"
++	"runtime"
+ 	"testing"
+ )
+ 
+@@ -314,6 +315,52 @@ func TestFileProcess(t *testing.T) {
+ 	}
+ }
+ 
++func TestFileProcessKeepsMode(t *testing.T) {
++	if runtime.GOOS == "windows" {
++		t.Skip("no Unix permission bits on windows")
++	}
++	plain := filepath.Join(t.TempDir(), "secret")
++	if err := os.WriteFile(plain, []byte("hunter2"), 0o600); err != nil {
++		t.Fatal(err)
++	}
++	// An existing, wider output, as overwritten by -f.
++	if err := os.WriteFile(plain+".gz", nil, 0o644); err != nil {
++		t.Fatal(err)
++	}
++
++	f := File{
++		Path: plain,
++		Options: &Options{
++			Blocksize: 128,
++			Level:     -1,
++			Processes: 1,
++			Suffix:    ".gz",
++			Force:     true,
++		},
++	}
++	if err := f.Process(); err != nil {
++		t.Fatalf("File.Process() compression error = %v", err)
++	}
++	if err := os.Remove(plain); err != nil {
++		t.Fatal(err)
++	}
++	f.Path = plain + ".gz"
++	f.Options.Decompress = true
++	if err := f.Process(); err != nil {
++		t.Fatalf("File.Process() decompression error = %v", err)
++	}
++
++	for _, p := range []string{plain + ".gz", plain} {
++		fi, err := os.Stat(p)
++		if err != nil {
++			t.Fatal(err)
++		}
++		if got := fi.Mode().Perm(); got != 0o600 {
++			t.Errorf("File.Process() mode of %q = %#o; want %#o", p, got, 0o600)
++		}
++	}
++}
++
+ func TestCheckPath(t *testing.T) {
+ 	d := t.TempDir()
+ 
+```
+
 #### Recent Merged Pull Requests:
+- **PR #3827** (2026-11-09): gzip: keep the input file's permissions on the output (@alhudz)
+- **PR #3826** (2026-11-07): go.mod: pick up p9 v0.5.1, which bounds a server-reported size (@rminnich)
+- **PR #3822** (2026-11-05): fix spelling so spellcheck will pass (@rminnich)
+- **PR #3821** (2026-11-05): go.mod: drop the phantom pkg/uroot module and its replace (@rminnich)
+- **PR #3820** (2026-11-08): Add kexec UniversalPayload RISC-V 64 support (@AjanZhong)
 - **PR #3819** (closed): build(deps): bump postcss-selector-parser from 6.0.13 to 6.1.5 in /website (@dependabot[bot])
-- **PR #3818** (2026-11-03): cmds/core/cmp: exit 1 when the files differ, as documented (@minjcore)
-- **PR #3817** (2026-11-03): boot/grub: fix searches for separate FAT boot partitions (@loearthorbit)
-- **PR #3816** (2026-10-31): Use more `golang.org/x/sys/unix` syscall wrappers (@tklauser)
-- **PR #3814** (2026-11-03): pkg/boot: add arm kexec support (@alanhc)
-- **PR #3813** (2026-10-27): pkg/boot/kexec: honour #address-cells and #size-cells in the FDT memory map (@alanhc)
 
 ---
 
@@ -1476,50 +1508,38 @@ Co-Authored-By: Claude Code <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. boot/grub: fix root search for separate FAT boot partitions
+## X. gzip: chmod the opened output and tidy the mode test
 
 **RULE**:
-When implementing operations in `pkg/boot/grub/config_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in u-root/u-root. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/gzip/file.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in u-root/u-root. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5e3bfe39`: boot/grub: fix root search for separate FAT boot partitions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d7b8f4d3`: gzip: chmod the opened output and tidy the mode test. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/boot/grub/config_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/gzip/file.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"github.com/u-root/u-root/pkg/boot"
-	"github.com/u-root/uio/uio"
-func TestSearchSeparateFATBootPartition(t *testing.T) {
-	for _, device := range []struct {
-		name string
-		uuid string
-	}{
-		{name: "nvme0n1", uuid: "a1e8-94da"},
-		{name: "mmcblk0", uuid: "6cfc-948e"},
-	} {
-		t.Run(device.name, func(t *testing.T) {
-			for _, tt := range []struct {
-				name   string
-				search string
-			}{
-				{name: "lowercase UUID", search: "search --fs-uuid --set=root " + device.uuid},
-				{name: "uppercase UUID", search: "search --fs-uuid --set=root " + strings.ToUpper(device.uuid)},
-				{name: "generated search", search: "search --no-floppy --fs-uuid --set=root " + strings.ToUpper(device.uuid)},
-				{name: "generated search with hints", search: "search --no-floppy --fs-uuid --set=root --hint-bios=hd0,gpt2 --hint-efi=hd0,gpt2 --hint-baremetal=ahci0,gpt2 " + strings.ToUpper(device.uuid)},
-				{name: "lowercase UUID with hints", search: "search --no-floppy --fs-uuid --set=root --hint-bios=hd0,gpt2 --hint-efi=hd0,gpt2 --hint-baremetal=ahci0,gpt2 " + device.uuid},
-				{name: "file search with no-floppy", search: "search --no-floppy --file --set=root /vmlinuz-linux"},
-			} {
-				t.Run(tt.name, func(t 
+		// Give the output file the input file's permissions.
+		var out *os.File
+		if out, err = os.OpenFile(f.outputPath(), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, perm); err != nil {
+		if err = out.Chmod(perm); err != nil {
+			out.Close()
+		o = out
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+		// Like gzip(1), give the output the input's permissions. Set them
+		// before writing: OpenFile's mode is masked by the umask and is
+		// not applied to an existing output that -f overwrites.
+		if o, err = os.OpenFile(f.outputPath(), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, perm); err != nil {
+		if err = os.Chmod(f.outputPath(), perm); err != nil {
+			o.Close()
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5e3bfe39` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d7b8f4d3` are properly handled with clean fallback behavior.

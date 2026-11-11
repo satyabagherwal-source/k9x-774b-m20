@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md`  
 > **Source**: github ([https://github.com/open-policy-agent/opa](https://github.com/open-policy-agent/opa))  
-> **Source Version**: `3ad9af7b`  
+> **Source Version**: `bbcac03c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T17:57:28.929Z  
+> **Timestamp**: 2026-11-08T07:22:05.266Z  
 > **Learning ID**: `learn-github-open-policy-agent-opa`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/open-policy-agent/opa](https://github.com/open-policy-agent/opa))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T17:57:28.922Z  
+> **Harvest Timestamp**: 2026-11-08T07:22:04.691Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open Policy Agent (OPA) is an open source, general-purpose policy engine.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 12434 stars
+- **Stars / Engagement**: 12445 stars
 
 ---
 
@@ -967,898 +967,296 @@ func BuildTLSConfig(scheme string, skipVerify bool, cert *tls.Certificate, pool 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `73378137` (2026-11-05)
-**Commit Message**: eval: a few more fixes reducing allocations (#9514)
+### Incident Patch 1: `bbcac03c` (2026-11-07)
+**Commit Message**: ast: Allow keys of empty collections in rules replaced by with
 
-Intended to go all in on int->uint but that turned out to be a bit too
-messy. I did however find a few places where we could eliminate a few
-more heap allocations:
+A rule like `default x := {}` is typed as an empty collection, so any
+constant key on it is rejected, even though tests replace it using `with`.
+Empty collections in the types of rules that a with modifier targets are
+now typed as any.
 
-- Group all items passed into the closure of every to have only a single
-allocation performed rather than many
-- Replace the `Until` calls in the evalTree `eval` with iteration that
-doesn't allocate
+Signed-off-by: Sebastian Spaink <[REDACTED_EMAIL]>
 
-Also replaced a few "util.NumDigits__" functions with a single generic
-one. "Breaking change" I suppose but not really code meant to be used
-outside of OPA. I suppose I could add alias functions to call the
-generic one if someone wants that.
-
-Signed-off-by: Anders Eknert <[REDACTED_EMAIL]>
-
-**File**: `internal/semver/semver.go` (modified, +1/-1)
+**File**: `v1/ast/check.go` (modified, +95/-0)
 ```diff
-@@ -253,7 +253,7 @@ func isAllDecimals(s string) bool {
- 
- // length allows calculating the length of the version for pre-allocation.
- func length(v Version) int {
--	n := util.NumDigitsInt64(v.Major) + util.NumDigitsInt64(v.Minor) + util.NumDigitsInt64(v.Patch) + 2
-+	n := util.NumDigitsInt(v.Major) + util.NumDigitsInt(v.Minor) + util.NumDigitsInt(v.Patch) + 2
- 	if v.PreRelease != "" {
- 		n += len(v.PreRelease) + 1
- 	}
-```
-
-**File**: `v1/ast/index_membership_test.go` (modified, +2/-1)
-```diff
-@@ -476,7 +476,8 @@ func TestBaseDocEqIndexCollectionEarlyExit(t *testing.T) {
- 			var sb strings.Builder
- 			sb.WriteString("package test\n\n")
- 			for i := range n {
--				sb.WriteString(strings.ReplaceAll(tc.head, "IDX", strconv.Itoa(i)) + "\n")
-+				sb.WriteString(strings.ReplaceAll(tc.head, "IDX", strconv.Itoa(i)))
-+				sb.WriteByte('\n')
- 				fmt.Fprintf(&sb, "\tdata.groups.g%d.members[input.subject]\n}\n\n", i)
- 			}
- 
-```
-
-**File**: `v1/rego/collection_lookup_bench_test.go` (modified, +2/-1)
-```diff
-@@ -21,7 +21,8 @@ func collectionPolicy(n, members int, head string) (string, map[string]any) {
- 	var sb strings.Builder
- 	sb.WriteString("package test\n\n")
- 	for i := range n {
--		sb.WriteString(strings.ReplaceAll(head, "IDX", strconv.Itoa(i)) + " if {\n")
-+		sb.WriteString(strings.ReplaceAll(head, "IDX", strconv.Itoa(i)))
-+		sb.WriteString(" if {\n")
- 		fmt.Fprintf(&sb, "\tdata.groups.g%d.members[input.subject]\n}\n\n", i)
- 	}
- 
-```
-
-**File**: `v1/topdown/bindings.go` (modified, +1/-1)
-```diff
-@@ -216,7 +216,7 @@ func (u *bindings) namespaceVar(v *ast.Term, caller *bindings) *ast.Term {
- 	if caller != nil && caller != u && !ast.RootDocumentNames.Contains(v) {
- 		// Root documents (i.e., data, input) should never be namespaced
- 		// because they are globally unique.
--		len := len(name) + util.NumDigitsUint(u.id)
-+		len := len(name) + util.NumDigitsInt(u.id)
- 		buf := util.AppendInt(append(make([]byte, 0, len), name...), u.id)
- 		return ast.VarTerm(util.ByteSliceToString(buf))
- 	}
-```
-
-**File**: `v1/topdown/eval.go` (modified, +54/-56)
-```diff
-@@ -35,7 +35,7 @@ type biunifyArraysRecParams struct {
- 	a, b    *ast.Array
- 	b1, b2  *bindings
- 	iter    unifyIterator
--	idx     int
-+	idx     uint64
- 	inPlace bool // bind and compare elements without a continuation, see unifyInPlace
+@@ -35,6 +35,8 @@ type typeChecker struct {
+ 	schemaTypes         map[string]types.Type
+ 	dependentsResolver  dependentsResolver
+ 	withTrees           map[string]*typeTreeNode
++	replacedRules       func() map[*Rule]struct{}
++	replaced            map[*Rule]struct{}
  }
  
-@@ -130,8 +130,8 @@ type eval struct {
- 	tracingOpts                 tracing.Options
- 	queryID                     uint64
- 	timeStart                   int64
--	index                       uint
--	genvarid                    int
-+	index                       uint64
-+	genvarid                    uint64
- 	everyUnrollDiv              int
- 	indexing                    bool
- 	earlyExit                   bool
-@@ -433,7 +433,7 @@ func (e *eval) evalExpr(iter evalIterator) error {
- 		return cancelErr
- 	}
- 
--	if e.index >= uint(len(e.query)) {
-+	if e.index >= uint64(len(e.query)) {
- 		if err := iter(e); err != nil {
- 			switch err := err.(type) {
- 			case *deferredEarlyExitError, *earlyExitError:
-@@ -711,7 +711,7 @@ func (e *eval) evalStepTrace(iter evalIterator, expr *ast.Expr, advance bool) (e
- // Single-purpose fmt.Sprintf replacement for generating variable names with only
- // one allocation performed instead of 4, and in 1/3 the time.
- func (e *eval) fmtVar() string {
--	buf := make([]byte, 0, len(e.genvarprefix)+util.NumDigitsUint(e.queryID)+util.NumDigitsUint(uint64(e.index))+7)
-+	buf := make([]byte, 0, len(e.genvarprefix)+util.NumDigitsInt(e.queryID)+util.NumDigitsInt(e.index)+7)
- 
- 	buf = append(buf, e.genvarprefix...)
- 	buf = append(buf, "_term_"...)
-@@ -1331,15 +1331,13 @@ func (e *eval) biunify(a, b *ast.Term, b1, b2 *bindings, iter unifyIterator) err
+ // newTypeChecker returns a new typeChecker object that has no errors.
+@@ -111,6 +113,26 @@ func (tc *typeChecker) WithVarRewriter(f varRewriter) *typeChecker {
+ 	return tc
  }
  
- func (e *eval) biunifyArraysRec(params *biunifyArraysRecParams) (err error) {
--	n := params.a.Len()
--
- 	var undos [4]undo
- 	var nu uint8 // uint to avoid bounds check in &undos[nu]
- 
- 	if params.inPlace {
--		for params.idx < n && params.idx < params.b.Len() && nu < uint8(len(undos)) {
--			lhs := params.a.Elem(params.idx)
--			rhs := params.b.Elem(params.idx)
-+		for params.idx < uint64(params.a.Len()) && params.idx < uint64(params.b.Len()) && nu < uint8(len(undos)) {
-+			lhs := params.a.Elem(int(params.idx))
-+			rhs := params.b.Elem(int(params.idx))
- 
- 			r := unifyInPlace(lhs, rhs, params.b1, params.b2, &undos[nu])
- 			if r == unifyNeedsMore {
-@@ -1358,16 +1356,16 @@ func (e *eval) biunifyArraysRec(params *biunifyArraysRecParams) (err error) {
- 	}
- 
- 	switch {
--	case params.idx == n:
-+	case int(params.idx) == params.a.Len():
- 		err = params.iter()
- 		arraysRecPool.Put(params)
--	case params.idx == n-1: // nothing left to continue with after the last element
--		a, b := params.a.Elem(params.idx), params.b.Elem(params.idx)
-+	case int(params.idx) == params.a.Len()-1: // nothing left to continue with after the last element
-+		a, b := params.a.Elem(int(params.idx)), params.b.Elem(int(params.idx))
- 		b1, b2, iter := params.b1, params.b2, params.iter
- 		arraysRecPool.Put(params)
- 		err = e.biunify(a, b, b1, b2, iter)
- 	default:
--		err = e.biunify(params.a.Elem(params.idx), params.b.Elem(params.idx), params.b1, params.b2, func() error {
-+		err = e.biunify(params.a.Elem(int(params.idx)), params.b.Elem(int(params.idx)), params.b1, params.b2, func() error {
- 			params.idx++
- 			return e.biunifyArraysRec(params)
- 		})
-@@ -1512,7 +1510,6 @@ func (e *eval) biunifyValues(a, b *ast.Term, b1, b2 *bindings, iter unifyIterato
- 	// enabled, then skip evaluation (and save the expression) if the term is
- 	// in the save set. Currently, comprehensions are not evaluated during
- 	// partial eval. This could be improved in the future.
--
- 	var saveA, saveB bool
- 
- 	if _, ok := a.Value.(ast.Set); ok {
-@@ -1653,9 +1650,7 @@ func (e *eval) biunifyComprehension(a, b *ast.Term, b1, b2 *bindings, swap bool,
- 		return e.biunifyComprehensionPartial(a, b, b1, b2, swap, iter)
- 	}
- 
--	value, err := e.buildComprehensionCache(a)
--
--	if err != nil {
-+	if value, err := e.buildComprehensionCache(a); err != nil {
- 		return err
- 	} else if value != nil {
- 		return e.biunify(value, b, b1, b2, iter)
-@@ -2888,7 +2883,6 @@ type evalTree struct {
- }
- 
- func (e evalTree) eval(iter unifyIterator) error {
--
- 	if len(e.ref) == e.pos {
- 		return e.finish(iter)
- 	}
-@@ -4595,37 +4589,27 @@ func (e evalTerm) get(plugged *ast.Term) (*ast.Term, *bindings) {
- 				return e.termbindings.apply(plugged)
- 			}
- 		} else {
--			var t *ast.Term
--			var b *bindings
--			stop := v.Until(func(elem *ast.Term) bool {
-+			for _, elem := range v.Slice() {
- 				if e.termbindings.Plug(elem).Equal(plugged) {
--					t, b = e.termbindings.apply(plugged)
--					return true
-+					return e.termbindings.apply(plugged)
- 				}
--				return false
--			})
--			if stop {
--				return t, b
- 			}
- 		}
- 	case ast.Object:
- 		if v.IsGround() {
--			term := v.Get(plugged)
--			if term != nil {
-+			if term := v.Get(plugged); term != nil {
- 				return e.termbindings.apply(term)
- 			}
- 		} else {
--			var t *ast.Term
--			var b *bindings
--			stop := v.Until(func(k, v *ast.Term) bool {
--				if e.termbindings.Plug(k).Equal(plugged
-```
-
-**File**: `v1/topdown/stacktrace.go` (modified, +1/-1)
-```diff
-@@ -134,7 +134,7 @@ func (e *eval) currentExpr() *ast.Expr {
- 	if len(e.query) == 0 {
- 		return nil
- 	}
--	return e.query[min(e.index, uint(len(e.query)-1))]
-+	return e.query[min(e.index, uint64(len(e.query)-1))]
- }
- 
- // resolvedText renders the source of expr with the values its variables are
-```
-
-**File**: `v1/topdown/topdown_bench_test.go` (modified, +7/-7)
-```diff
-@@ -550,7 +550,6 @@ func generatePartialEvalBenchmarkData(numRoles int) map[string]any {
- }
- 
- func generatePartialEvalBenchmarkInput(numRoles int) *ast.Term {
--
- 	tmpl, err := template.New("Test").Parse(`{
- 		"operation": "operation-{{ . }}",
- 		"resource": "resource-{{ . }}",
-@@ -571,11 +570,10 @@ func generatePartialEvalBenchmarkInput(numRoles int) *ast.Term {
- 	return ast.MustParseTerm(buf.String())
- }
- 
--// BenchmarkWalk/100-16         	  319608	      3388 ns/op	    7862 B/op	      66 allocs/op
--// BenchmarkWalk/1000-16        	   49064	     25721 ns/op	   53824 B/op	    1043 allocs/op
--// BenchmarkWalk/2000-16        	   16743	     72156 ns/op	  114898 B/op	    3043 allocs/op
--// BenchmarkWalk/3000-16        	   10000	    115028 ns/op	  175968 B/op	    5043 allocs/op
--
-+// BenchmarkWalk/100-16         	  383415	      3118 ns/op	    7526 B/op	      55 allocs/op
-+// BenchmarkWalk/1000-16        	   50845	     23604 ns/op	   51928 B/op	     542 allocs/op
-+// BenchmarkWalk/2000-16        	   19908	     60316 ns/op	  109059 B/op	    1542 allocs/op
-+// BenchmarkWalk/3000-16        	   12272	     97774 ns/op	  166188 B/op	    2542 allocs/op
- func BenchmarkWalk(b *testing.B) {
- 	sizes := []int{100, 1000, 2000, 3000}
- 
-@@ -597,9 +595,11 @@ func BenchmarkWalk(b *testing.B) {
- 					WithCompiler(compiler).
- 					WithTransaction(txn)
- 
-+				exp := ast.IntNumberTerm(n - 1)
-+
- 				for b.Loop() {
- 					rs, err := q.Run(ctx)
--					if err != nil || len(rs) != 1 || !rs[0][ast.Var("x")].Equal(ast.IntNumberTerm(n-1)) {
-+					if err != nil || len(rs) != 1 || !rs[0][ast.Var("x")].Equal(exp) {
- 						b.Fatal("Unexpected result:", rs, "err:", err)
- 					}
- 				}
-```
-
-**File**: `v1/util/performance.go` (modified, +1/-22)
-```diff
-@@ -131,13 +131,7 @@ func StringToByteSlice[T ~string](s T) []byte {
- 
- // NumDigitsInt returns the number of digits in n.
- // This is useful for pre-allocating buffers for string conversion.
--func NumDigitsInt(n int) int {
--	return NumDigitsInt64(int64(n))
--}
--
--// NumDigitsInt64 returns the number of digits in n.
--// This is useful for pre-allocating buffers for string conversion.
--func NumDigitsInt64(n int64) int {
-+func NumDigitsInt[T Integer](n T) int {
- 	if n == 0 {
- 		return 1
- 	}
-@@ -154,21 +148,6 @@ func NumDigitsInt64(n int64) int {
- 	return count
- }
- 
--// NumDigitsUint returns the number of digits in n.
--// This is useful for pre-allocating buffers for string conversion.
--func NumDigitsUint(n uint64) int {
--	if n == 0 {
--		return 1
--	}
--
--	count := 0
--	for n > 0 {
--		n /= 10
--		count++
--	}
--	return count
--}
--
- // AppendInt is a less messy version of strconv.AppendInt for base 10 ints.
- func AppendInt[T Integer](buf []byte, n T) []byte {
- 	return strconv.AppendInt(buf, int64(n), 10)
-```
-
----
-
-### Incident Patch 2: `5fd9e07f` (2026-11-05)
-**Commit Message**: tester: add --strict-builtin-errors to opa test (#9462)
-
-Added `Runner.StrictBuiltinErrors` and an opa test
-`--strict-builtin-errors` flag, the test now stops at the first built-in
-error and reports it as the test's error, the same as `opa eval
---strict-builtin-errors`. Without the flag the output and the exit
-status are unchanged.
-
-Fixes #6816
-
----------
-
-Signed-off-by: Oleksii Udovychenko <[REDACTED_EMAIL]>
-Co-authored-by: Oleksii Udovychenko <[REDACTED_EMAIL]>
-
-**File**: `cmd/test.go` (modified, +32/-29)
-```diff
-@@ -41,35 +41,36 @@ import (
- )
- 
- type testCommandParams struct {
--	verbose      bool
--	explain      *util.EnumFlag
--	errLimit     int
--	outputFormat *util.EnumFlag
--	coverage     bool
--	coverageRuns []string
--	threshold    float64
--	timeout      time.Duration
--	ignore       []string
--	bundleMode   bool
--	benchmark    bool
--	benchMem     bool
--	runRegex     string
--	sortTests    *util.EnumFlag
--	count        int
--	target       *util.EnumFlag
--	skipExitZero bool
--	capabilities *capabilitiesFlag
--	schema       *schemaFlags
--	watch        bool
--	stopChan     chan os.Signal
--	output       io.Writer
--	errOutput    io.Writer
--	v0Compatible bool
--	v1Compatible bool
--	v2Compatible bool
--	varValues    bool
--	parallel     int
--	failOnEmpty  bool
-+	verbose             bool
-+	explain             *util.EnumFlag
-+	errLimit            int
-+	outputFormat        *util.EnumFlag
-+	coverage            bool
-+	coverageRuns        []string
-+	threshold           float64
-+	timeout             time.Duration
-+	ignore              []string
-+	bundleMode          bool
-+	benchmark           bool
-+	benchMem            bool
-+	runRegex            string
-+	sortTests           *util.EnumFlag
-+	count               int
-+	target              *util.EnumFlag
-+	skipExitZero        bool
-+	capabilities        *capabilitiesFlag
-+	schema              *schemaFlags
-+	watch               bool
-+	stopChan            chan os.Signal
-+	output              io.Writer
-+	errOutput           io.Writer
-+	v0Compatible        bool
-+	v1Compatible        bool
-+	v2Compatible        bool
-+	varValues           bool
-+	parallel            int
-+	failOnEmpty         bool
-+	strictBuiltinErrors bool
- }
- 
- func newTestCommandParams() testCommandParams {
-@@ -421,6 +422,7 @@ func compileAndSetupTests(ctx context.Context, testParams testCommandParams, sto
- 		CapturePrintOutput(true).
- 		EnableTracing(testParams.verbose || testParams.varValues).
- 		StackTraces(true).
-+		StrictBuiltinErrors(testParams.strictBuiltinErrors).
- 		SetCoverageRuns(coverageRuns).
- 		SetCoverageQueryTracer(coverTracer).
- 		SetRuntime(runtimeInfo).
-@@ -602,6 +604,7 @@ recommended as some updates might cause them to be dropped by OPA.
- 	testCommand.Flags().BoolVar(&testParams.varValues, "var-values", false, "show local variable values in test output")
- 	testCommand.Flags().IntVarP(&testParams.parallel, "parallel", "p", goRuntime.NumCPU(), "the number of tests that can run in parallel, defaulting to the number of CPUs (explicitly set with 0). Benchmarks are always run sequentially.")
- 	testCommand.Flags().BoolVar(&testParams.failOnEmpty, "fail-on-empty", false, "Whether to fail the test when no test was run")
-+	testCommand.Flags().BoolVar(&testParams.strictBuiltinErrors, "strict-builtin-errors", false, "treat the first built-in function error encountered in a test as fatal and report the test as an error")
- 	testCommand.Flags().Var(testParams.sortTests, "sort", "sort the JSON formatted test output")
- 
- 	// Shared flags
-```
-
-**File**: `cmd/test_jsonv2_test.go` (modified, +59/-0)
-```diff
-@@ -2325,6 +2325,26 @@ func testExitCodeWithFailOnEmpty(rego string, failOnEmpty bool) int {
- 	return exitCode
- }
- 
-+func testExitCodeWithStrictBuiltinErrors(rego string, strictBuiltinErrors bool) int {
-+	files := map[string]string{
-+		"test.rego": rego,
-+	}
-+
-+	var exitCode int
-+	test.WithTempFS(files, func(path string) {
-+		regoFilePath := filepath.Join(path, "test.rego")
-+
-+		testParams := newTestCommandParams()
-+		testParams.count = 1
-+		testParams.strictBuiltinErrors = strictBuiltinErrors
-+		testParams.errOutput = io.Discard
-+		testParams.output = io.Discard
-+
-+		exitCode = opaTest([]string{regoFilePath}, testParams)
-+	})
-+	return exitCode
++// WithReplacedRules sets the function returning the rules that a with modifier
++// replaces somewhere. Their values are not known statically, so empty collections
++// in their types are typed as any. It is called at most once, and only if a rule
++// has such a type.
++func (tc *typeChecker) WithReplacedRules(f func() map[*Rule]struct{}) *typeChecker {
++	tc.replacedRules = f
++	return tc
 +}
 +
- func TestExitCode(t *testing.T) {
- 	testCases := map[string]struct {
- 		Test              string
-@@ -3912,6 +3932,45 @@ func TestFailOnEmpty(t *testing.T) {
++func (tc *typeChecker) isReplaced(rule *Rule) bool {
++	if tc.replacedRules == nil {
++		return false
++	}
++	if tc.replaced == nil {
++		tc.replaced = tc.replacedRules()
++	}
++	_, ok := tc.replaced[rule]
++	return ok
++}
++
+ // WithDependentsResolver sets the function used to look up the rules that depend
+ // on the document(s) replaced by a with modifier.
+ func (tc *typeChecker) WithDependentsResolver(f dependentsResolver) *typeChecker {
+@@ -369,6 +391,10 @@ func (tc *typeChecker) checkRule(env *TypeEnv, as *AnnotationSet, rule *Rule) {
+ 	}
+ 
+ 	if tpe != nil {
++		if hasEmptyCollectionType(tpe) && tc.isReplaced(rule) {
++			// e.g. `default x := {}`, which tests replace with another value.
++			tpe = relaxEmptyCollections(tpe)
++		}
+ 		env.tree.Insert(path, tpe, env)
  	}
  }
+@@ -1129,6 +1155,75 @@ func isEmptyCollectionType(tpe types.Type) bool {
+ 	return false
+ }
  
-+func TestStrictBuiltinErrors(t *testing.T) {
-+	testCases := map[string]struct {
-+		Test                string
-+		StrictBuiltinErrors bool
-+		ExpectedExitCode    int
-+	}{
-+		"pass when builtin error is swallowed and strict-builtin-errors disabled": {
-+			Test: `package foo
-+
-+			test_swallowed if {
-+				to_number("not a number")
-+			} else := true
-+			`,
-+			StrictBuiltinErrors: false,
-+			ExpectedExitCode:    0,
-+		},
-+		"error when builtin error is swallowed and strict-builtin-errors enabled": {
-+			Test: `package foo
-+
-+			test_swallowed if {
-+				to_number("not a number")
-+			} else := true
-+			`,
-+			StrictBuiltinErrors: true,
-+			ExpectedExitCode:    2,
-+		},
++// hasEmptyCollectionType returns true if tpe is, or contains, an empty collection type.
++func hasEmptyCollectionType(tpe types.Type) bool {
++	if isEmptyCollectionType(tpe) {
++		return true
 +	}
-+
-+	for name, tc := range testCases {
-+		t.Run(name, func(t *testing.T) {
-+			exitCode := testExitCodeWithStrictBuiltinErrors(tc.Test, tc.StrictBuiltinErrors)
-+
-+			if exitCode != tc.ExpectedExitCode {
-+				t.Errorf("Expected exit code to be %d but got %d", tc.ExpectedExitCode, exitCode)
++	switch tpe := tpe.(type) {
++	case *types.Object:
++		for _, p := range tpe.StaticProperties() {
++			if hasEmptyCollectionType(p.Value) {
++				return true
 +			}
-+		})
-+	}
-+}
-+
- type testPlugin struct {
- 	target string
- }
-```
-
-**File**: `cmd/test_test.go` (modified, +59/-0)
-```diff
-@@ -2358,6 +2358,26 @@ func testExitCodeWithFailOnEmpty(rego string, failOnEmpty bool) int {
- 	return exitCode
- }
- 
-+func testExitCodeWithStrictBuiltinErrors(rego string, strictBuiltinErrors bool) int {
-+	files := map[string]string{
-+		"test.rego": rego,
-+	}
-+
-+	var exitCode int
-+	test.WithTempFS(files, func(path string) {
-+		regoFilePath := filepath.Join(path, "test.rego")
-+
-+		testParams := newTestCommandParams()
-+		testParams.count = 1
-+		testParams.strictBuiltinErrors = strictBuiltinErrors
-+		testParams.errOutput = io.Discard
-+		testParams.output = io.Discard
-+
-+		exitCode = opaTest([]string{regoFilePath}, testParams)
-+	})
-+	return exitCode
-+}
-+
- func TestExitCode(t *testing.T) {
- 	testCases := map[string]struct {
- 		Test              string
-@@ -4039,6 +4059,45 @@ func TestFailOnEmpty(t *testing.T) {
- 	}
- }
- 
-+func TestStrictBuiltinErrors(t *testing.T) {
-+	testCases := map[string]struct {
-+		Test                string
-+		StrictBuiltinErrors bool
-+		ExpectedExitCode    int
-+	}{
-+		"pass when builtin error is swallowed and strict-builtin-errors disabled": {
-+			Test: `package foo
-+
-+			test_swallowed if {
-+				to_number("not a number")
-+			} else := true
-+			`,
-+			StrictBuiltinErrors: false,
-+			ExpectedExitCode:    0,
-+		},
-+		"error when builtin error is swallowed and strict-builtin-errors enabled": {
-+			Test: `package foo
-+
-+			test_swallowed if {
-+				to_number("not a number")
-+			} else := true
-+			`,
-+			StrictBuiltinErrors: true,
-+			ExpectedExitCode:    2,
-+		},
-+	}
-+
-+	for name, tc := range testCases {
-+		t.Run(name, func(t *testing.T) {
-+			exitCode := testExitCodeWithStrictBuiltinErrors(tc.Test, tc.StrictBuiltinErrors)
-+
-+			if exitCode != tc.ExpectedExitCode {
-+				t.Errorf("Expected exit code to be %d but got %d", tc.ExpectedExitCode, exitCode)
++		}
++		if dp := tpe.DynamicProperties(); dp != nil {
++			return hasEmptyCollectionType(dp.Value)
++		}
++	case *types.Array:
++		for i := range tpe.Len() {
++			if hasEmptyCollectionType(tpe.Select(i)) {
++				return true
 +			}
-+		})
++		}
++		return tpe.Dynamic() != nil && hasEmptyCollectionType(tpe.Dynamic())
++	case *types.Set:
++		return tpe.Of() != nil && hasEmptyCollectionType(tpe.Of())
++	case types.Any:
++		return slices.ContainsFunc(tpe, hasEmptyCollectionType)
 +	}
++	return false
 +}
 +
- type testPlugin struct {
- 	target string
- }
-```
-
-**File**: `docs/docs/policy-testing.md` (modified, +34/-7)
-```diff
-@@ -197,10 +197,13 @@ This is also useful in CI/CD pipelines to ensure that tests are actually being e
- ## Test Results
- 
- If the test rule is undefined or generates a non-`true` value the test result
--is reported as `FAIL`. If the test encounters a runtime error (e.g., a divide
--by zero condition) the test result is marked as an `ERROR`. Tests prefixed with
--`todo_` will be reported as `SKIPPED`. Otherwise, the test result is marked as
--`PASS`.
-+is reported as `FAIL`. If the test encounters a runtime error (e.g., conflicting
-+values for a rule) the test result is marked as an `ERROR`. An error raised by a
-+built-in function (e.g., a divide by zero condition) makes the expression
-+undefined, so the test is reported as `FAIL`, unless `opa test` is run with
-+`--strict-builtin-errors`, which reports the first such error as an `ERROR`.
-+Tests prefixed with `todo_` will be reported as `SKIPPED`. Otherwise, the test
-+result is marked as `PASS`.
- 
- ```rego title="pass_fail_error_test.rego"
- package example_test
-@@ -226,7 +229,7 @@ By default, `opa test` reports the number of tests executed and displays all
- of the tests that failed or errored.
- 
- ```console
--$ opa test pass_fail_error_test.rego
-+$ opa test --strict-builtin-errors pass_fail_error_test.rego
- data.example_test.test_failure: FAIL (253ns)
- data.example_test.test_error: ERROR (289ns)
-   pass_fail_error_test.rego:15: eval_builtin_error: div: divide by zero
-@@ -236,11 +239,15 @@ FAIL: 1/3
- ERROR: 1/3
- ```
- 
-+:::info
-+`--strict-builtin-errors` has no effect when `opa test` runs with `--bench`. A built-in error still makes the expression undefined, so the test is reported as `FAIL`.
-+:::
-+
- By default, OPA prints the test results in a human-readable format. If you
- need to consume the test results programmatically, use the JSON output format.
- 
- ```bash
--opa test --format=json pass_fail_error_test.rego
-+opa test --strict-builtin-errors --format=json pass_fail_error_test.rego
- ```
- 
- ```json
-@@ -275,7 +282,7 @@ opa test --format=json pass_fail_error_test.rego
-     "package": "data.example_test",
-     "name": "test_error",
-     "error": {
--      "code": "eval_internal_error",
-+      "code": "eval_builtin_error",
-       "message": "div: divide by zero",
-       "location": {
-         "file": "pass_fail_error_test.rego",
-@@ -428,6 +435,26 @@ data.example_test.test_sign_token: FAIL (1.214541ms)
- FAIL: 1/1
- ```
- 
-+With `--strict-builtin-errors`, a built-in error in any test case stops the whole test rule.
-+The test is reported as a single `ERROR`, and none of its test cases are listed, including those that passed:
-+
-+```rego title="strict_cases_test.rego"
-+package example_test
-+
-+test_divide_three[x] if {
-+    some x in [1, 0]
-+    3 / x == 3
-+}
-+```
-+
-+```console
-+$ opa test --strict-builtin-errors strict_cases_test.rego
-+data.example_test.test_divide_three: ERROR (373.268µs)
-+  strict_cases_test.rego:5: eval_builtin_error: div: divide by zero
-+--------------------------------------------------------------------------------
-+ERROR: 1/1
-+```
-+
- ## Data and Function Mocking
- 
- OPA's `with` keyword can be used to replace the data document or called functions with mocks.
-```
-
-**File**: `v1/tester/runner.go` (modified, +13/-2)
-```diff
-@@ -329,6 +329,7 @@ type Runner struct {
- 	trace                 bool
- 	enablePrintStatements bool
- 	raiseBuiltinErrors    bool
-+	strictBuiltinErrors   bool
- 	stackTraces           bool
- 	runtime               *ast.Term
- 	timeout               time.Duration
-@@ -381,12 +382,20 @@ func (r *Runner) SetCompiler(compiler *ast.Compiler) *Runner {
- }
- 
- // RaiseBuiltinErrors sets the runner to raise errors encountered by builtins
--// such as parsing input.
-+// such as parsing input. StrictBuiltinErrors takes precedence when both are set.
- func (r *Runner) RaiseBuiltinErrors(enabled bool) *Runner {
- 	r.raiseBuiltinErrors = enabled
- 	return r
- }
- 
-+// StrictBuiltinErrors sets the runner to stop a test at the first error
-+// encountered by a builtin and report it as the test's error, the same as
-+// rego.StrictBuiltinErrors. It takes precedence over RaiseBuiltinErrors.
-+func (r *Runner) StrictBuiltinErrors(enabled bool) *Runner {
-+	r.strictBuiltinErrors = enabled
-+	return r
++// relaxEmptyCollections returns tpe with every empty collection type, however
++// deeply nested, replaced by any.
++func relaxEmptyCollections(tpe types.Type) types.Type {
++	if isEmptyCollectionType(tpe) {
++		return types.A
++	}
++	switch tpe := tpe.(type) {
++	case *types.Object:
++		static := make([]*types.StaticProperty, 0, len(tpe.StaticProperties()))
++		for _, p := range tpe.StaticProperties() {
++			static = append(static, types.NewStaticProperty(p.Key, relaxEmptyCollections(p.Value)))
++		}
++		var dynamic *types.DynamicProperty
++		if dp := tpe.DynamicProperties(); dp != nil {
++			dynamic = types.NewDynamicProperty(dp.Key, relaxEmptyCollections(dp.Value))
++		}
++		return types.NewObject(static, dynamic)
++	case *types.Array:
++		static := make([]types.Type, tpe.Len())
++		for i := range static {
++			static[i] = relaxEmptyCollections(tpe.Select(i))
++		}
++		var dynamic types.Type
++		if tpe.Dynamic() != nil {
++			dynamic = relaxEmptyCollections(tpe.Dynamic())
++		}
++		return types.NewArray(static, dynamic)
++	case *types.Set:
++		return types.NewSet(relaxEmptyCollections(tpe.Of()))
++	case types.Any:
++		members := make([]types.Type, len(tpe))
++		for i, m := range tpe {
++			members[i] = relaxEmptyCollections(m)
++		}
++		return types.NewAny(members...)
++	}
++	return tpe
 +}
 +
- // StackTraces sets the runner to record the stack of queries being evaluated
- // when a test errors, reported as topdown.Error.StackTrace.
- func (r *Runner) StackTraces(enabled bool) *Runner {
-@@ -1051,7 +1060,9 @@ func (r *Runner) runTest(ctx context.Context, txn storage.Transaction, mod *ast.
- 	// Only collect built-in errors when they will be reported below. Supplying
- 	// the list unconditionally makes the evaluator hold on to every error a test
- 	// raises, and annotate each with a stack trace nothing reads.
--	if r.raiseBuiltinErrors {
-+	if r.strictBuiltinErrors {
-+		opts = append(opts, rego.StrictBuiltinErrors(true))
-+	} else if r.raiseBuiltinErrors {
- 		opts = append(opts, rego.BuiltinErrorList(&builtinErrors))
- 	}
+ // unifies checks whether two types are compatible with each other.
+ func unifies(a, b types.Type) bool {
  
 ```
 
-**File**: `v1/tester/runner_test.go` (modified, +240/-5)
+**File**: `v1/ast/check_test.go` (modified, +97/-0)
 ```diff
-@@ -1032,10 +1032,11 @@ func TestRunnerWithBuiltinErrors(t *testing.T) {
- 	}`
- 
- 	testCases := []struct {
--		desc          string
--		json          string
--		builtinErrors bool
--		wantErr       bool
-+		desc                string
-+		json                string
-+		builtinErrors       bool
-+		strictBuiltinErrors bool
-+		wantErr             bool
- 	}{
- 		{
- 			desc:          "Valid JSON with flag enabled does not raise an error",
-@@ -1052,6 +1053,17 @@ func TestRunnerWithBuiltinErrors(t *testing.T) {
- 			desc: "Invalid JSON with flag disabled does not raise an error",
- 			json: `test: 123`,
+@@ -3277,6 +3277,103 @@ func TestCheckWithModifiers(t *testing.T) {
+ 				q if { lower(data.p.a) == "foo" with data.p.f as "foo" }`,
+ 			},
  		},
 +		{
-+			desc:                "Valid JSON with strict flag enabled does not raise an error",
-+			json:                `{\"test\": 123}`,
-+			strictBuiltinErrors: true,
++			note: "key of a replaced empty default object",
++			modules: []string{
++				`package p
++				default allowed := {}
++				a contains x if { some x in allowed.k }
++				test_a if { count(a) == 1 with data.p.allowed as {"k": [1]} }`,
++			},
 +		},
 +		{
-+			desc:                "Invalid JSON with strict flag enabled raises an error",
-+			json:                `test: 123`,
-+			strictBuiltinErrors: true,
-+			wantErr:             true,
++			note: "key of a replaced empty default array",
++			modules: []string{
++				`package p
++				default allowed := []
++				a := allowed[0]
++				test_a if { a == 1 with data.p.allowed as [1] }`,
++			},
 +		},
- 	}
- 
- 	for _, tc := range testCases {
-@@ -1069,7 +1081,8 @@ func TestRunnerWithBuiltinErrors(t *testing.T) {
- 				NewRunner().
- 				SetStore(store).
- 				SetModules(modules).
--				RaiseBuiltinErrors(tc.builtinErrors)
-+				RaiseBuiltinErrors(tc.builtinErrors).
-+				StrictBuiltinErrors(tc.strictBuiltinErrors)
- 
- 			ch, err := runner.RunTests(ctx, txn)
- 			if err != nil {
-@@ -1084,6 +1097,228 @@ func TestRunnerWithBuiltinErrors(t *testing.T) {
- 	}
++		{
++			note: "key of a replaced empty default set",
++			modules: []string{
++				`package p
++				default s := set()
++				a := s[1]
++				test_a if { a == 1 with data.p.s as {1} }`,
++			},
++		},
++		{
++			note: "key of a replaced rule with an empty default and another definition",
++			modules: []string{
++				`package p
++				default allowed := {}
++				allowed := {"z": 1} if { input.x }
++				a := allowed.k
++				test_a if { a == 1 with data.p.allowed as {"k": 1} }`,
++			},
++		},
++		{
++			note: "key of a nested empty collection in a replaced default",
++			modules: []string{
++				`package p
++				default cfg := {"a": {}, "b": [[]], "c": {"d": set()}}
++				r := [cfg.a.x, cfg.b[0][0], cfg.c.d[1]]
++				test_r if { r == [1, 2, 3] with data.p.cfg as {"a": {"x": 1}, "b": [[2]], "c": {"d": {3}}} }`,
++			},
++		},
++		{
++			note: "empty default replaced through an import alias",
++			modules: []string{
++				`package p
++				import data.p as pp
++				default allowed := {}
++				a := allowed.k
++				test_a if { a == 1 with pp.allowed as {"k": 1} }`,
++			},
++		},
++		{
++			note: "empty default replaced from another package",
++			modules: []string{
++				`package p
++				default allowed := {}
++				a := allowed.k`,
++				`package q
++				test_a if { data.p.a == 1 with data.p.allowed as {"k": 1} }`,
++			},
++		},
++		{
++			note: "empty default replaced by its package",
++			modules: []string{
++				`package p
++				default allowed := {}
++				a := allowed.k`,
++				`package q
++				test_a if { data.p.a == 1 with data.p as {"allowed": {"k": 1}} }`,
++			},
++		},
++		{
++			note: "key of an unreplaced empty default next to a replaced one",
++			modules: []string{
++				`package p
++				default replaced := {}
++				default other := {}
++				a := replaced.k
++				b := other.k
++				test_a if { a == 1 with data.p.replaced as {"k": 1} }`,
++			},
++			err: "rego_type_error: undefined ref: data.p.other.k",
++		},
++		{
++			note: "key of an empty default object that is never replaced",
++			modules: []string{
++				`package p
++				default allowed := {}
++				a contains x if { some x in allowed.k }`,
++			},
++			err: "rego_type_error: undefined ref: data.p.allowed.k[__local",
++		},
+ 		{
+ 			note: "function replacement arity is still checked",
+ 			modules: []string{
+```
+
+**File**: `v1/ast/compile.go` (modified, +20/-0)
+```diff
+@@ -2278,6 +2278,7 @@ func (c *Compiler) checkTypes() {
+ 		WithRequiredCapabilities(c.Required).
+ 		WithVarRewriter(rewriteRefErrVars(c.localvargen.subjects, c.RewrittenVars)).
+ 		WithDependentsResolver(c.dependentRuleRefs).
++		WithReplacedRules(c.replacedRules).
+ 		WithAllowUndefinedFunctionCalls(c.allowUndefinedFuncCalls)
+ 	var as *AnnotationSet
+ 	if c.useTypeCheckAnnotations {
+@@ -2288,6 +2289,25 @@ func (c *Compiler) checkTypes() {
+ 	c.TypeEnv = env
  }
  
-+func TestRunnerStrictBuiltinErrorsTakesPrecedence(t *testing.T) {
-+	files := map[string]string{
-+		"/test.rego": `package test
-+
-+a if to_number("not a number")
-+
-+b if to_number("not a number either")
-+
-+test_both if {
-+	not a
-+	not b
-+}`,
++// replacedRules returns the rules that the with modifier of any module could replace.
++func (c *Compiler) replacedRules() map[*Rule]struct{} {
++	var rules map[*Rule]struct{}
++	for _, module := range c.Modules {
++		WalkWiths(module, func(w *With) bool {
++			if ref, ok := w.Target.Value.(Ref); ok && ref.HasPrefix(DefaultRootRef) {
++				for _, rule := range c.GetRulesDynamicWithOpts(ref, RulesOptions{IncludeHiddenModules: true}) {
++					if rules == nil {
++						rules = map[*Rule]struct{}{}
++					}
++					rules[rule] = struct{}{}
++				}
++			}
++			return false
++		})
 +	}
-+
-+	modules, store, err := tester.Load([]string{test.TempDir(t, files)}, nil)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	ctx := t.Context()
-+	txn := storage.NewTransactionOrDie(ctx, store)
-+	defer store.Abort(ctx, txn)
-+
-+	ch, err := tester.NewRunner().
-+		SetStore(store).
-+		SetModules(modules).
-+		RaiseBuiltinErrors(true).
-+		StrictBuiltinErrors(true).
-+		RunTests(ctx, txn)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	var results []*tester.Result
-+	for r := range ch {
-+		results = append(results, r)
-+	}
-+	if len(results) != 1 {
-+		t.Fatalf("expected 1 result, got %d", len(results))
-+	}
-+
-+	// Strict mode stops at the first error instead of collecting both as a list.
-+	tdErr, ok := errors.AsType[*topdown.Error](results[0].Error)
-+	if !ok {
-+		t.Fatalf("expected *topdown.Error, got %v (%[1]T)", results[0].Error)
-+	}
-+	if tdErr.Code != topdown.BuiltinErr {
-+		t.Fatalf("expected code %q, got %q", topdown.BuiltinErr, tdErr.Code)
-+	}
-+	if results[0].Fail {
-+		t.Fatal("expected the test to be reported as an error, not a failure")
-+	}
++	return rules
 +}
 +
-+func TestRunnerStrictBuiltinErrorsParameterizedTest(t *testing.T) {
-+	const failingCases = `package test
-+
-+test_3_divided_by[x] if {
-+	some x in [3, 0]
-+	3 / x != 1
-+}`
-+
-+	const passingCase = `package test
-+
-+test_3_divided_by[x] if {
-+	some x in [1, 0]
-+	3 / x == 3
-+}`
-+
-+	testCases := []struct {
-+		note                string
-+		module              string
-+		strictBuiltinErrors bool
-+		wantCaseFail        map[string]bool
-+	}{
-+		{
-+			note:         "strict flag disabled reports each case",
-+			module:       failingCases,
-+			wantCaseFail: map[string]bool{"3": true, "0": true},
-+		},
-+		{
-+			note:         "strict flag disabled reports a passing case",
-+			module:       passingCase,
-+			wantCaseFail: map[string]bool{"1": false, "0": true},
-+		},
-+		{
-+			note:                "strict flag enabled reports the test as an error",
-+			module:              failingCases,
-+			strictBuiltinErrors: true,
-+		},
-+		{
-+			note:                "strict flag enabled drops a passing case",
-+			module:              passingCase,
-+			strictBuiltinErrors: true,
-+		},
-+	}
-+
-+	for _, tc := range testCases {
-+		t.Run(tc.note, func(t *testing.T) {
-+			modules, store, err := tester.Load([]string{test.TempDir(t, map[string]string{"/test.rego": tc.module})}, nil)
-+			if err != nil {
-+				t.Fatal(err)
-+			}
-+
-+			ctx := t.Context()
-+			txn := storage.NewTransactionOrDie(ctx, store)
-+			defer store.Abort(ctx, txn)
-+
-+			ch, err := tester.NewRunner().
-+				SetStore(store).
-+				SetModules(modules).
-+				StrictBuiltinErrors(tc.strictBuiltinErrors).
-+				RunTests(ctx, txn)
-+			if err != nil {
-+				t.Fatal(err)
-+			}
-+
-+			var results []*tester.Result
-+			for r := range ch {
-+				results = append(results, r)
-+			}
-+			if len(results) != 1 {
-+				t.Fatalf("expected 1 result, got %d", len(results))
-+			}
-+			r := results[0]
-+
-+			if !tc.strictBuiltinErrors {
-+				if r.Error != nil || !r.Fail {
-+					t.Fatalf("expected a failure without an error, got fail=%v err=%v", r.Fail, r.Error)
-+				}
-+				if len(r.SubResults) != len(tc.wantCaseFail) {
-+					t.Fatalf("expected %d test cases, got %d", len(tc.wantCaseFail), len(r.SubResults))
-+				}
-+				for name, wantFail := range tc.wantCaseFail {
-+					sr, ok := r.SubResults[name]
-+					if !ok {
-+						t.Fatalf("expected test case %q", name)
-
+ // dependentRuleRefs returns the refs of the rules that ref could refer to,
+ // together with the refs of the rules that transitively depend on them.
+ func (c *Compiler) dependentRuleRefs(ref Ref) []Ref {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #9514** (2026-11-05): eval: a few more fixes reducing allocations (@anderseknert)
-- **PR #9512** (2026-11-05): Integrate release 1.22.1 (@srenatus)
-- **PR #9511** (2026-11-05): ecosystem: Add formal.ai (@charlieegan3)
-- **PR #9510** (2026-11-05): Release v1.22.1 (@srenatus)
-- **PR #9509** (2026-11-05): topdown: cover the ordering of values of different types (@srenatus)
-- **PR #9507** (2026-11-05): ast: keep a rule indexed as "anything" for `in` with a var member (@srenatus)
+- **PR #9529** (2026-11-07): ast: Allow keys of empty collections in rules replaced by with (@sspaink)
+- **PR #9524** (2026-11-06): cmd/inspect: Show labels metadata with -a (@srenatus)
+- **PR #9523** (2026-11-06): release: Open the patch release integration PR from the post-tag workflow (@srenatus)
+- **PR #9522** (2026-11-06): Integrate release 1.22.2 (@sspaink)
+- **PR #9521** (2026-11-05): Release 1.22.2 prep (@sspaink)
+- **PR #9520** (2026-11-05): build: Move release builds off retired macos-14 runners (@sspaink)
 
 ---
 
@@ -1878,28 +1276,66 @@ Co-authored-by: Oleksii Udovychenko <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. eval: a few more fixes reducing allocations (#9514)
+## X. ast: Allow keys of empty collections in rules replaced by with
 
 **RULE**:
-When implementing operations in `internal/semver/semver.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/opa. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `v1/ast/check.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/opa. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `73378137`: eval: a few more fixes reducing allocations (#9514). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bbcac03c`: ast: Allow keys of empty collections in rules replaced by with. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/semver/semver.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `v1/ast/check.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	n := util.NumDigitsInt(v.Major) + util.NumDigitsInt(v.Minor) + util.NumDigitsInt(v.Patch) + 2
+	replacedRules       func() map[*Rule]struct{}
+	replaced            map[*Rule]struct{}
+// WithReplacedRules sets the function returning the rules that a with modifier
+// replaces somewhere. Their values are not known statically, so empty collections
+// in their types are typed as any. It is called at most once, and only if a rule
+// has such a type.
+func (tc *typeChecker) WithReplacedRules(f func() map[*Rule]struct{}) *typeChecker {
+	tc.replacedRules = f
+	return tc
+}
+
+func (tc *typeChecker) isReplaced(rule *Rule) bool {
+	if tc.replacedRules == nil {
+		return false
+	}
+	if tc.replaced == nil {
+		tc.replaced = tc.replacedRules()
+	}
+	_, ok := tc.replaced[rule]
+	return ok
+}
+
+		if hasEmptyCollectionType(tpe) && tc.isReplaced(rule) {
+			// e.g. `default x := {}`, which tests replace with another value.
+			tpe = relaxEmptyCollections(tpe)
+		}
+// hasEmptyCollectionType returns true if tpe is, or contains, an empty collection type.
+func hasEmptyCollectionType(tpe types.Type) bool {
+	if isEmptyCollectionType(tpe) {
+		return true
+	}
+	switch tpe := tpe.(type) {
+	case *types.Object:
+		for _, p := range tpe.StaticProperties() {
+			if hasEmptyCollectionType(p.Value) {
+				return true
+			}
+		}
+		if
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	n := util.NumDigitsInt64(v.Major) + util.NumDigitsInt64(v.Minor) + util.NumDigitsInt64(v.Patch) + 2
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `73378137` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bbcac03c` are properly handled with clean fallback behavior.

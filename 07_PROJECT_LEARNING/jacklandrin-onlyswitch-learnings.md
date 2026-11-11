@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/jacklandrin-onlyswitch-learnings.md`  
 > **Source**: github ([https://github.com/jacklandrin/OnlySwitch](https://github.com/jacklandrin/OnlySwitch))  
-> **Source Version**: `5366e006`  
+> **Source Version**: `5919d349`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T03:46:28.126Z  
+> **Timestamp**: 2026-11-08T04:33:51.799Z  
 > **Learning ID**: `learn-github-jacklandrin-onlyswitch`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/jacklandrin-onlyswitch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/jacklandrin/OnlySwitch](https://github.com/jacklandrin/OnlySwitch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T03:46:28.122Z  
+> **Harvest Timestamp**: 2026-11-08T04:33:51.562Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 👑 The all-in-one macOS menu bar companion: customizable controls, system monitor, AI Agent, Shortcuts, widgets, remote control, and more.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 6035 stars
+- **Stars / Engagement**: 6043 stars
 
 ---
 
@@ -60,20 +60,57 @@ public struct DesktopPetPomodoroState: Equatable, Sendable {
 ```
 /// Tracks observed native changes separately from our own writes and invalidates overlapping sync passes.
 public struct BrightnessNativeSyncState: Sendable {
+    private static let tolerance = 0.004
     private var revision: UInt64 = 0
     private var previous: [UInt32: Double] = [:]
+    private var expectedReadbacks: [UInt32: Double] = [:]
     public init() {}
     public mutating func beginCycle() -> UInt64 { revision &+= 1; return revision }
     public func isCurrent(_ candidate: UInt64) -> Bool { candidate == revision }
-    public mutating func recordOwnWrite(id: UInt32, level: Double) { previous[id] = level }
+    public mutating func recordOwnWrite(id: UInt32, level: Double, readback: Double? = nil) {
+        let sampled = readback ?? level
+        previous[id] = sampled
+        // A read immediately after Set may still report the old value. Accept the requested
+        // value as our own echo on the next poll too, without masking later user changes.
+        expectedReadbacks[id] = abs(sampled - level) > Self.tolerance ? level : nil
+    }
     public mutating func observe(id: UInt32, level: Double) -> Bool {
         guard level.isFinite else { return false }
+        let expected = expectedReadbacks.removeValue(forKey: id)
         guard let old = previous[id] else { previous[id] = level; return false }
-        guard abs(old - level) > 0.004 else { return false }
+        guard abs(old - level) > Self.tolerance else { return false }
         previous[id] = level
-        return true
+        return expected.map { abs($0 - level) > Self.tolerance } ?? true
     }
-    public mutating func invalidate() { revision &+= 1; previous.removeAll() }
+
+    public mutating func observeChanges(
+        _ readings: [(display: BrightnessDisplay, level: Double)]
+    ) -> (id: UInt32, level: Double)? {
+        let changes = readings.filter {
+            $0.display.control == .native && observe(id: $0.display.id, level: $0.level)
+        }
+        return Self.preferredSource(in: changes)
+    }
+
+    public static func preferredSource(
+        in readings: [(display: BrightnessDisplay, level: Double)]
+    ) -> (id: UInt32, level: Double)? {
+        let source = readings.lazy.filter { $0.display.control == .native && $0.level.isFinite }.min {
+            if $0.display.isBuiltIn != $1.display.isBuiltIn { return $0.display.isBuiltIn }
+            return $0.display.id < $1.display.id
+        }
+        return source.map { ($0.display.id, $0.level) }
+    }
+
+    public static func targets(in displays: [BrightnessDisplay], excluding sourceID: UInt32) -> [BrightnessDisplay] {
+        displays.filter { !$0.isBuiltIn && $0.id != sourceID && $0.control != .unavailable }
+    }
+
+    public mutating func invalidate() {
+        revision &+= 1
+        previous.removeAll()
+        expectedReadbacks.removeAll()
+    }
 }
 
 ```
@@ -869,171 +906,234 @@ public struct RemoteControlDescriptor: Codable, Equatable, Identifiable, Sendabl
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `759b88f5` (2026-11-04)
-**Commit Message**: Clamp overflowing schedule intervals instead of trapping
+### Incident Patch 1: `72a3ac88` (2026-11-05)
+**Commit Message**: Stop crashing when a music player quits while its state is polled
+
+A player that quits mid-request replies with no playback state, which is
+not a valid case of the bridged enum and trapped when switched on.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `Modules/Sources/Scheduler/ScheduleCalendar.swift` (modified, +5/-1)
+**File**: `OnlySwitch/Player/MusicAppPlayer/AppleMusic/AppleMusicPlayer/AppleMusicPlayer.swift` (modified, +4/-1)
 ```diff
-@@ -8,7 +8,11 @@ public enum ScheduleCalendar {
-     public static func nextFireDate(for trigger: ScheduleTrigger, after date: Date, calendar: Calendar) -> Date? {
-         switch trigger {
-         case let .interval(value, unit):
--            let seconds = min(max(value * unit.seconds, minimumIntervalSeconds), maximumIntervalSeconds)
-+            // Stored data is decoded without validation, so an oversized value must clamp rather than trap.
-+            let (product, overflow) = value.multipliedReportingOverflow(by: unit.seconds)
-+            let seconds = overflow
-+                ? (value < 0 ? minimumIntervalSeconds : maximumIntervalSeconds)
-+                : min(max(product, minimumIntervalSeconds), maximumIntervalSeconds)
-             return date.addingTimeInterval(TimeInterval(seconds))
-         case let .hourly(minute):
-             return calendar.nextDate(
+@@ -64,8 +64,11 @@ extension AppleMusicPlayer:MusicPlayer {
+     }
+     
+     var playbackState: MusicPlaybackState {
++        // A player that quits mid-request replies with no state, which is not a valid case
++        // and would trap when switched on, so validate it through its raw value first.
+         guard isRunning,
+-              let playerState = applemusicApp.playerState
++              let rawState = applemusicApp.playerState?.rawValue,
++              let playerState = iTunesEPlS(rawValue: rawState)
+         else { return .stopped }
+         return MusicPlaybackState(playerState)
+     }
 ```
 
-**File**: `Modules/Tests/SchedulerTests/ScheduleCalendarTests.swift` (modified, +8/-0)
+**File**: `OnlySwitch/Player/MusicAppPlayer/Spotify/SpotifyPlayer/SpotifyPlayer.swift` (modified, +4/-1)
 ```diff
-@@ -59,6 +59,14 @@ struct ScheduleCalendarTests {
-         #expect(next == t.addingTimeInterval(604_800))
-     }
+@@ -61,8 +61,11 @@ class SpotifyPlayer{
  
-+    @Test func overflowingStoredIntervalClampsInsteadOfTrapping() {
-+        let t = date(2026, 11, 4, 10, 0)
-+        let huge = ScheduleCalendar.nextFireDate(for: .interval(value: .max, unit: .hours), after: t, calendar: calendar)
-+        let negative = ScheduleCalendar.nextFireDate(for: .interval(value: .min, unit: .hours), after: t, calendar: calendar)
-+        #expect(huge == t.addingTimeInterval(604_800))
-+        #expect(negative == t.addingTimeInterval(10))
-+    }
-+
-     @Test func intervalLimits() {
-         #expect(ScheduleCalendar.minimumIntervalSeconds == 10)
-         #expect(ScheduleCalendar.maximumIntervalSeconds == 604_800)
+ extension SpotifyPlayer:MusicPlayer {
+     var playbackState: MusicPlaybackState {
++        // A player that quits mid-request replies with no state, which is not a valid case
++        // and would trap when switched on, so validate it through its raw value first.
+         guard isRunning,
+-              let playerState = spotifyApp.playerState
++              let rawState = spotifyApp.playerState?.rawValue,
++              let playerState = SpotifyEPlS(rawValue: rawState)
+         else { return .stopped }
+         return MusicPlaybackState(playerState)
+     }
 ```
 
 ---
 
-### Incident Patch 2: `bcc36458` (2026-11-02)
-**Commit Message**: change Authenticator UI
+### Incident Patch 2: `5919d349` (2026-11-06)
+**Commit Message**: fix screenshots buttons
 
 **File**: `Config/Versions/OnlySwitch.xcconfig` (modified, +1/-1)
 ```diff
 @@ -1,2 +1,2 @@
  // Shared build number for the macOS app and its embedded components.
--CURRENT_PROJECT_VERSION = 305
-+CURRENT_PROJECT_VERSION = 306
+-CURRENT_PROJECT_VERSION = 310
++CURRENT_PROJECT_VERSION = 311
 ```
 
-**File**: `Modules/Sources/Authenticator/AuthenticatorPanelView.swift` (modified, +5/-26)
+**File**: `Modules/Sources/Screenshots/ScreenshotsView.swift` (modified, +13/-11)
 ```diff
-@@ -13,11 +13,9 @@ public struct AuthenticatorPanelView: View {
-     @ObservedObject private var store = AuthenticatorStore.shared
-     @ObservedObject private var languageManager = LanguageManager.sharedManager
-     @State private var showImport = false
--    @State private var isExpanded: Bool
-     private let onCodeCopied: () -> Void
- 
--    public init(initiallyExpanded: Bool = false, onCodeCopied: @escaping () -> Void = {}) {
--        _isExpanded = State(initialValue: initiallyExpanded)
-+    public init(onCodeCopied: @escaping () -> Void = {}) {
-         self.onCodeCopied = onCodeCopied
-     }
- 
-@@ -28,19 +26,14 @@ public struct AuthenticatorPanelView: View {
-                 .opacity(0.25)
-                 .frame(height: 1)
- 
--            if store.enabled && isExpanded {
-+            if store.enabled {
-                 if store.accounts.isEmpty {
-                     emptyRow
-                 } else {
-                     TimelineView(.periodic(from: .now, by: 1)) { context in
-                         VStack(spacing: 0) {
-                             ForEach(store.accounts) { account in
--                                AuthenticatorCodeRow(account: account, now: context.date) {
--                                    withAnimation(.spring()) {
--                                        isExpanded = false
--                                    }
--                                    onCodeCopied()
--                                }
-+                                AuthenticatorCodeRow(account: account, now: context.date, onCopied: onCodeCopied)
-                                 Divider()
-                                     .opacity(0.25)
-                                     .frame(height: 1)
-@@ -63,18 +56,8 @@ public struct AuthenticatorPanelView: View {
-                 .foregroundColor(.accentColor)
-                 .padding(.trailing, 8)
- 
--            Button {
--                withAnimation(.spring()) { isExpanded.toggle() }
--            } label: {
--                HStack(spacing: 6) {
--                    Text("Authenticator".localized())
--                        .font(.system(size: 14))
--                    Image(systemName: isExpanded ? "chevron.down" : "chevron.right")
--                        .font(.system(size: 12, weight: .semibold))
--                        .foregroundColor(.secondary)
--                }
--            }
--            .buttonStyle(.plain)
-+            Text("Authenticator".localized())
-+                .font(.system(size: 14))
- 
-             Text(accountSummary)
-                 .foregroundColor(.gray)
-@@ -85,10 +68,6 @@ public struct AuthenticatorPanelView: View {
-         }
-         .padding(.horizontal, 15)
-         .padding(.top, 8)
--        .contentShape(Rectangle())
--        .onTapGesture {
--            withAnimation(.spring()) { isExpanded.toggle() }
--        }
-         .frame(height: 45)
-     }
- 
-```
-
-**File**: `Modules/Sources/OnlyControl/AuthenticatorControlPopover.swift` (modified, +1/-4)
-```diff
-@@ -5,10 +5,7 @@ struct AuthenticatorControlPopover: View {
-     let onCodeCopied: () -> Void
+@@ -364,17 +364,19 @@ private struct ScreenshotHoverButton: View {
+     let action: () -> Void
  
      var body: some View {
--        AuthenticatorPanelView(
--            initiallyExpanded: true,
--            onCodeCopied: onCodeCopied
--        )
-+        AuthenticatorPanelView(onCodeCopied: onCodeCopied)
-         .frame(width: 360)
+-        Button(title, systemImage: systemImage, action: action)
+-            .labelStyle(.iconOnly)
+-            .font(.system(size: 11, weight: .bold))
+-            .foregroundStyle(.primary)
+-            .frame(width: 24, height: 24)
+-            .modifier(ScreenshotHoverButtonSurface())
+-            .contentShape(.circle)
+-            .buttonStyle(.plain)
+-            .help(title)
+-            .padding(5)
+-            .transition(.opacity)
++        Button(action: action) {
++            Label(title, systemImage: systemImage)
++                .labelStyle(.iconOnly)
++                .font(.system(size: 11, weight: .bold))
++                .foregroundStyle(.primary)
++                .frame(width: 24, height: 24)
++                .modifier(ScreenshotHoverButtonSurface())
++                .contentShape(.interaction, Circle())
++        }
++        .buttonStyle(.plain)
++        .help(title)
++        .padding(5)
++        .transition(.opacity)
      }
  }
+ 
 ```
 
-**File**: `OnlySwitch/Features/OnlyControl/OnlyControlView.swift` (modified, +1/-1)
+**File**: `OnlySwitch.xcodeproj/project.pbxproj` (modified, +19/-19)
 ```diff
-@@ -154,7 +154,7 @@ struct OnlyControlView: View {
+@@ -281,6 +281,8 @@
+ 		217549FC82A1C95A0843C27E /* DisplayBrightnessKeyTap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C34535B906CBDA47D280D10 /* DisplayBrightnessKeyTap.swift */; };
+ 		2B346BE56384C700F4046FC4 /* SystemAudioMixer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35AD1FCF5024EAC8DC9C8E5E /* SystemAudioMixer.swift */; };
+ 		4BE55DA1B55BBA22CCF4E310 /* DisplayBrightnessService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52660C8AAA3F5E6778721434 /* DisplayBrightnessService.swift */; };
++		5C4ED00000000000000000A1 /* Scheduler in Frameworks */ = {isa = PBXBuildFile; productRef = 5C4ED00000000000000000A2 /* Scheduler */; };
++		5C4ED00000000000000000A4 /* ScheduleClients+App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C4ED00000000000000000A3 /* ScheduleClients+App.swift */; };
+ 		5DA700000000000000000201 /* RemoteSoundMixerFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA700000000000000000101 /* RemoteSoundMixerFeature.swift */; };
+ 		5DA700000000000000000202 /* RemoteSoundMixerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA700000000000000000102 /* RemoteSoundMixerView.swift */; };
+ 		5DA700000000000000000203 /* RemoteMixerSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA700000000000000000103 /* RemoteMixerSlider.swift */; };
+@@ -311,8 +313,6 @@
+ 		A9C70D062EE490B3000A2367 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A9C70D052EE490B3000A2367 /* GoogleService-Info.plist */; };
+ 		A9F007CA2EC3D9BD002D9AB0 /* Design in Frameworks */ = {isa = PBXBuildFile; productRef = A9F007C92EC3D9BD002D9AB0 /* Design */; };
+ 		AD1000010000000000000001 /* RadioBrowser in Frameworks */ = {isa = PBXBuildFile; productRef = AD1000020000000000000001 /* RadioBrowser */; };
+-		5C4ED00000000000000000A1 /* Scheduler in Frameworks */ = {isa = PBXBuildFile; productRef = 5C4ED00000000000000000A2 /* Scheduler */; };
+-		5C4ED00000000000000000A4 /* ScheduleClients+App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C4ED00000000000000000A3 /* ScheduleClients+App.swift */; };
+ 		AD1000030000000000000001 /* RadioLibraryClient+App.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD1000040000000000000001 /* RadioLibraryClient+App.swift */; };
+ 		AF1000010000000000000001 /* Aphrodite in Frameworks */ = {isa = PBXBuildFile; productRef = AF1000020000000000000001 /* Aphrodite */; };
+ 		AF1000050000000000000001 /* AphroditeSwitch.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF1000040000000000000001 /* AphroditeSwitch.swift */; };
+@@ -919,6 +919,7 @@
+ 		2C34535B906CBDA47D280D10 /* DisplayBrightnessKeyTap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayBrightnessKeyTap.swift; sourceTree = "<group>"; };
+ 		35AD1FCF5024EAC8DC9C8E5E /* SystemAudioMixer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SystemAudioMixer.swift; sourceTree = "<group>"; };
+ 		52660C8AAA3F5E6778721434 /* DisplayBrightnessService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayBrightnessService.swift; sourceTree = "<group>"; };
++		5C4ED00000000000000000A3 /* ScheduleClients+App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ScheduleClients+App.swift"; sourceTree = "<group>"; };
+ 		5DA700000000000000000101 /* RemoteSoundMixerFeature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteSoundMixerFeature.swift; sourceTree = "<group>"; };
+ 		5DA700000000000000000102 /* RemoteSoundMixerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteSoundMixerView.swift; sourceTree = "<group>"; };
+ 		5DA700000000000000000103 /* RemoteMixerSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteMixerSlider.swift; sourceTree = "<group>"; };
+@@ -1185,7 +1186,6 @@
+ 		RSVW00000000000000001101 /* RemoteScreenshotDragProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteScreenshotDragProvider.swift; sourceTree = "<group>"; };
+ 		SMRB00000000000000000001 /* SoundMixerRemoteBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundMixerRemoteBridge.swift; sourceTree = "<group>"; };
+ 		SMRB00000000000000000003 /* SoundMixerRemoteBridgeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundMixerRemoteBridgeTests.swift; sourceTree = "<group>"; };
+-		5C4ED00000000000000000A3 /* ScheduleClients+App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ScheduleClients+App.swift"; sourceTree = "<group>"; };
+ 		TB5A00000000000000000001 /* TabVisibilitySettingsVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabVisibilitySettingsVM.swift; sourceTree = "<group>"; };
+ 		TB5A00000000000000000003 /* TabVisibilitySettingsView.swift */ = {i
+```
+
+**File**: `README.md` (modified, +7/-0)
+```diff
+@@ -54,6 +54,7 @@ To control OnlySwitch from an iPhone or iPad, install [OnlyRemote from the App S
  
-     private var authenticatorPage: some View {
-         VStack(spacing: 0) {
--            AuthenticatorPanelView(initiallyExpanded: true).padding(.vertical, 8)
-+            AuthenticatorPanelView().padding(.vertical, 8)
-         }
-     }
+ ### Highlights
  
++- Automate recurring Mac tasks with [Schedules](#schedules).
+ - Import macOS Shortcuts into OnlySwitch and control switches and Shortcuts with keyboard shortcuts.
+ - Customize which controls appear and arrange them to fit your workflow. Built-in switches are grouped by category and can be searched by name.
+ - Manage every optional page from one place: **OnlySwitch Settings → Tabs** shows or hides tabs in the menu-bar list and Only Control.
+@@ -71,6 +72,12 @@ To control OnlySwitch from an iPhone or iPad, install [OnlyRemote from the App S
+   <img alt="OnlySwitch desktop pet" src="https://github.com/user-attachments/assets/f45e4b4f-932e-4768-8bfd-845e22fdfff3" width="152" height="188" />
+ </p>
+ 
++### Schedules
++
++Open **OnlySwitch Settings → Schedules** to automate supported switches, buttons, Shortcuts, and Evolutions. Run an action at a repeating interval, at a specific minute every hour, or at a set time on selected days. For example, turn **Dim Screen** on at 8:00 AM and off at 7:00 PM every day, or run **Empty Trash** every Saturday at 9:00 AM.
++
++Use the **Schedules** tab in the menu bar or Only Control to see what runs next, run an action immediately, or turn a schedule on or off. Show or hide the tab under **OnlySwitch Settings → Tabs**. Schedules run locally while OnlySwitch is running, even with no window open.
++
+ ### Built-in switches
+ 
+ | Switch | Status | Switch | Status |
 ```
 
 ---
 
-### Incident Patch 3: `5366e006` (2026-11-04)
-**Commit Message**: bump build version
+### Incident Patch 3: `cac06959` (2026-11-06)
+**Commit Message**: Use physical footprint for process memory
 
-**File**: `Config/Versions/OnlySwitch.xcconfig` (modified, +1/-1)
+**File**: `OnlySwitch/Features/SystemMonitor/MacSystemMonitorCollector.swift` (modified, +9/-9)
 ```diff
-@@ -1,2 +1,2 @@
- // Shared build number for the macOS app and its embedded components.
--CURRENT_PROJECT_VERSION = 307
-+CURRENT_PROJECT_VERSION = 308
+@@ -774,7 +774,7 @@ actor MacSystemMonitorCollector {
+ 
+     private struct ProcessCounters {
+         let cpuNanoseconds: UInt64
+-        let residentBytes: UInt64
++        let memoryBytes: UInt64?
+         let name: String
+         let identity: SystemMonitorProcessIdentity?
+     }
+@@ -1216,7 +1216,7 @@ private extension MacSystemMonitorCollector {
+                 pid: pid,
+                 name: counters.name,
+                 cpuUsage: .available(cpuUsage),
+-                memoryBytes: .available(counters.residentBytes),
++                memoryBytes: counters.memoryBytes.map { .available($0) } ?? .unavailable,
+                 downloadBytesPerSecond: .unavailable,
+                 uploadBytesPerSecond: .unavailable
+             )
+@@ -1232,14 +1232,14 @@ private extension MacSystemMonitorCollector {
+ 
+         // `proc_pid_rusage` can be denied for individual processes (and has differed between
+         // macOS releases for sandboxed callers). Use the documented task-info query as a
+-        // per-process fallback rather than dropping every row when that happens. Both sources
+-        // report cumulative CPU time and resident memory, so downstream rate calculations stay
+-        // identical.
+-        let values: (cpuNanoseconds: UInt64, residentBytes: UInt64)
++        // per-process CPU fallback rather than dropping every row when that happens. Physical
++        // footprint is not available from task info, and RSS is intentionally not substituted
++        // because it measures different memory semantics.
++        let values: (cpuNanoseconds: UInt64, memoryBytes: UInt64?)
+         if resourceUsageResult == 0 {
+             values = (
+                 cpuNanoseconds: usage.ri_user_time + usage.ri_system_time,
+-                residentBytes: usage.ri_resident_size
++                memoryBytes: usage.ri_phys_footprint
+             )
+         } else {
+             var taskInfo = proc_taskinfo()
+@@ -1253,7 +1253,7 @@ private extension MacSystemMonitorCollector {
+             guard returnedByteCount == MemoryLayout<proc_taskinfo>.size else { return nil }
+             values = (
+                 cpuNanoseconds: taskInfo.pti_total_user + taskInfo.pti_total_system,
+-                residentBytes: taskInfo.pti_resident_size
++                memoryBytes: nil
+             )
+         }
+ 
+@@ -1287,7 +1287,7 @@ private extension MacSystemMonitorCollector {
+ 
+         return ProcessCounters(
+             cpuNanoseconds: values.cpuNanoseconds,
+-            residentBytes: values.residentBytes,
++            memoryBytes: values.memoryBytes,
+             name: name,
+             identity: identity
+         )
+```
+
+**File**: `OnlySwitchTests/SystemMonitor/MacSystemMonitorCollectorTests.swift` (modified, +1/-1)
+```diff
+@@ -145,7 +145,7 @@ struct MacSystemMonitorCollectorTests {
+ 
+         #expect(snapshot.processes.isEmpty == false)
+         #expect(snapshot.processes.allSatisfy { process in
+-            process.pid > 0 && process.name.isEmpty == false && process.memoryBytes.value != nil
++            process.pid > 0 && process.name.isEmpty == false && process.cpuUsage.value != nil
+         })
+     }
+ 
 ```
 
 #### Recent Merged Pull Requests:
@@ -1062,32 +1162,31 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Clamp overflowing schedule intervals instead of trapping
+## X. Stop crashing when a music player quits while its state is polled
 
 **RULE**:
-When implementing operations in `Modules/Sources/Scheduler/ScheduleCalendar.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jacklandrin/OnlySwitch. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `OnlySwitch/Player/MusicAppPlayer/AppleMusic/AppleMusicPlayer/AppleMusicPlayer.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jacklandrin/OnlySwitch. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `759b88f5`: Clamp overflowing schedule intervals instead of trapping. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `72a3ac88`: Stop crashing when a music player quits while its state is polled. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Modules/Sources/Scheduler/ScheduleCalendar.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `OnlySwitch/Player/MusicAppPlayer/AppleMusic/AppleMusicPlayer/AppleMusicPlayer.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-            // Stored data is decoded without validation, so an oversized value must clamp rather than trap.
-            let (product, overflow) = value.multipliedReportingOverflow(by: unit.seconds)
-            let seconds = overflow
-                ? (value < 0 ? minimumIntervalSeconds : maximumIntervalSeconds)
-                : min(max(product, minimumIntervalSeconds), maximumIntervalSeconds)
+        // A player that quits mid-request replies with no state, which is not a valid case
+        // and would trap when switched on, so validate it through its raw value first.
+              let rawState = applemusicApp.playerState?.rawValue,
+              let playerState = iTunesEPlS(rawValue: rawState)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-            let seconds = min(max(value * unit.seconds, minimumIntervalSeconds), maximumIntervalSeconds)
+              let playerState = applemusicApp.playerState
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `759b88f5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `72a3ac88` are properly handled with clean fallback behavior.

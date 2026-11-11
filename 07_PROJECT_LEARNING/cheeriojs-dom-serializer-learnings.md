@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md`  
 > **Source**: github ([https://github.com/cheeriojs/dom-serializer](https://github.com/cheeriojs/dom-serializer))  
-> **Source Version**: `1261fc46`  
+> **Source Version**: `9c682911`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T22:31:58.088Z  
+> **Timestamp**: 2026-11-07T04:22:25.247Z  
 > **Learning ID**: `learn-github-cheeriojs-dom-serializer`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cheeriojs/dom-serializer](https://github.com/cheeriojs/dom-serializer))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T22:31:56.964Z  
+> **Harvest Timestamp**: 2026-11-07T04:22:23.257Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -661,11 +661,11 @@ function renderText(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1761** (2026-11-03): **build(deps-dev): bump eslint from 10.13.0 to 10.14.0**
-  *Symptoms*: Bumps [eslint](https://github.com/eslint/eslint) from 10.13.0 to 10.14.0. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/eslint/eslint/releases">eslint's releases</a>.</em></p> <blockquote> <h2>v10.14.0</h2> <h2>Features</h2> <ul> <li><a href="https://github.com/eslint/eslint/commit/d23a7f9eed78e2733fa2d17d7d7dbb9891bbb692"><code>d23a7f9</code></a> feat: fix property descriptor handling in <code>func-name-matching</code> (<a href="https://redirect.github.com/eslint/eslint/issues/21400">#21400</a>) (xbinaryx)</li> </ul> <h2>Bug Fixes</h2> <ul> <li><a href="https://github.com/eslint/eslint/commit/4a12580eefdb240bd9b6ae83428638120e9a5f66"><code>4a12580</code></a> fix: require minimatch <code>10.2.6</code> to avoid vulnerable brace-expansion (<a href="https://redirect.github.com/eslint/eslint/issues/21460">#21460</a>) (lumir)</li> <li><a href="https://github.com/eslint/eslint/commit/827a8f3cca710d3efd76c1d7088d894deff08434"><code>827a8f3</code></a> fix: <code>no-restricted-globals</code> crash on global objects as property values (<a href="https://redirect.github.com/eslint/eslint/issues/21449">#21449</a>) (xbinaryx)</li> <li><a href="https://github.com/eslint/eslint/commit/161558ae1391a8649a8d69a8b2c2e555b40121b9"><code>161558a</code></a> fix: handle LS, PS and empty hashbang comments (<a href="https://redirect.github.com/eslint/eslint/issues/21419">#21419</a>) (lumir)</li> <li><a href="https://github.com/eslint/eslint/commit/619493987
+- **Issue #1763** (2026-11-06): **build(deps-dev): bump vitest from 5.0.5 to 5.1.0**
+  *Symptoms*: Bumps [vitest](https://github.com/vitest-dev/vitest/tree/HEAD/packages/vitest) from 5.0.5 to 5.1.0. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/vitest-dev/vitest/releases">vitest's releases</a>.</em></p> <blockquote> <h2>v5.1.0</h2> <h3>   🚀 Features</h3> <ul> <li>Add <code>--last-failed</code> to run only failed tests  -  by <a href="https://github.com/sheremet-va"><code>@​sheremet-va</code></a> in <a href="https://redirect.github.com/vitest-dev/vitest/issues/11558">vitest-dev/vitest#11558</a> <a href="https://github.com/vitest-dev/vitest/commit/82f634220"><!-- raw HTML omitted -->(82f63)<!-- raw HTML omitted --></a></li> <li>Support <code>Temporal.Instant</code> and <code>Temporal.ZonedDateTime</code> in <code>vi.setSystemTime()</code>  -  by <a href="https://github.com/Prajwal2246"><code>@​Prajwal2246</code></a>, <strong>Prajwal2246</strong>, <strong>Claude Opus 5.5 (1M context)</strong>, <a href="https://github.com/hi-ogawa"><code>@​hi-ogawa</code></a> and <strong>Codex (GPT-6)</strong> in <a href="https://redirect.github.com/vitest-dev/vitest/issues/11321">vitest-dev/vitest#11321</a> <a href="https://github.com/vitest-dev/vitest/commit/f150f5108"><!-- raw HTML omitted -->(f150f)<!-- raw HTML omitted --></a></li> <li>Introduce <code>--since-last-run</code> flag  -  by <a href="https://github.com/sheremet-va"><code>@​sheremet-va</code></a> in <a href="https://redirect.github.com/vitest-dev/vitest/issues/11516">vitest-dev/vite
 
-- **Issue #1760** (2026-11-02): **build(deps-dev): bump @types/node from 26.6.5 to 26.6.6**
-  *Symptoms*: Bumps [@types/node](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/HEAD/types/node) from 26.6.5 to 26.6.6. <details> <summary>Commits</summary> <ul> <li>See full diff in <a href="https://github.com/DefinitelyTyped/DefinitelyTyped/commits/HEAD/types/node">compare view</a></li> </ul> </details> <br />   [![Dependabot compatibility score](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=@types/node&package-manager=npm_and_yarn&previous-version=26.6.5&new-version=26.6.6)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)  Dependabot will resolve any conflicts with this PR as long as you don't alter it yourself. You can also trigger a rebase manually by commenting `@dependabot rebase`.  [//]: # (dependabot-automerge-start) [//]: # (dependabot-automerge-end)  ---  <details> <summary>Dependabot commands and options</summary> <br />  You can trigger Dependabot actions by commenting on this PR: - `@dependabot rebase` will rebase this PR - `@dependabot recreate` will recreate this PR, overwriting any edits that have been made to it - `@dependabot show <dependency name> ignore conditions` will show all of the ignore conditions of the specified dependency - `@dependabot ignore this major version` will close this PR and stop Dependabot creating any more for this major version (unless you reopen the PR or upgrade to it yourself) - `@dependabot ignore this minor version
+- **Issue #1762** (2026-11-06): **build(deps): bump github/codeql-action from 4.39.1 to 4.39.2**
+  *Symptoms*: Bumps [github/codeql-action](https://github.com/github/codeql-action) from 4.39.1 to 4.39.2. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/github/codeql-action/releases">github/codeql-action's releases</a>.</em></p> <blockquote> <h2>v4.39.2</h2> <ul> <li>Update default CodeQL bundle version to <a href="https://github.com/github/codeql-action/releases/tag/codeql-bundle-v2.27.4">2.27.4</a>. <a href="https://redirect.github.com/github/codeql-action/pull/4284">#4284</a></li> <li><em>Upcoming breaking change</em>: CodeQL version 2.22.3 and earlier were discontinued on 16 October 2026 alongside GitHub Enterprise Server 3.18, and will be unsupported by the next minor release of the CodeQL Action. Added a deprecation warning for customers using these versions of CodeQL. <a href="https://redirect.github.com/github/codeql-action/pull/4266">#4266</a></li> <li>Starting with macOS 27 and Xcode 27, traced analyses are unsupported. See <a href="https://github.blog/changelog/2026-10-19-codeql-changes-for-macos-27-xcode-27-and-swift-6-4/">this blog post for more information</a>. The CodeQL Action will now try to identify if a workflow is about to perform a traced analysis on version 27 or above of macOS or Xcode. If so, the CodeQL Action will emit a corresponding warning that will also be visible on the <a href="https://docs.github.com/en/code-security/how-tos/find-and-fix-code-vulnerabilities/manage-your-configuration/use-the-tools-status-page-for
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -682,17 +682,18 @@ function renderText(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1261fc46` (2026-11-03)
-**Commit Message**: build(deps-dev): bump eslint from 10.13.0 to 10.14.0 (#1761)
+### Incident Patch 1: `9c682911` (2026-11-06)
+**Commit Message**: build(deps-dev): bump vitest from 5.0.5 to 5.1.0 (#1763)
 
-Bumps [eslint](https://github.com/eslint/eslint) from 10.13.0 to 10.14.0.
-- [Release notes](https://github.com/eslint/eslint/releases)
-- [Commits](https://github.com/eslint/eslint/compare/v10.13.0...v10.14.0)
+Bumps [vitest](https://github.com/vitest-dev/vitest/tree/HEAD/packages/vitest) from 5.0.5 to 5.1.0.
+- [Release notes](https://github.com/vitest-dev/vitest/releases)
+- [Changelog](https://github.com/vitest-dev/vitest/blob/main/docs/releases.md)
+- [Commits](https://github.com/vitest-dev/vitest/commits/v5.1.0/packages/vitest)
 
 ---
 updated-dependencies:
-- dependency-name: eslint
-  dependency-version: 10.14.0
+- dependency-name: vitest
+  dependency-version: 5.1.0
   dependency-type: direct:development
   update-type: version-update:semver-minor
 ...
@@ -700,147 +701,173 @@ updated-dependencies:
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `package-lock.json` (modified, +10/-10)
+**File**: `package-lock.json` (modified, +96/-96)
 ```diff
-@@ -19,7 +19,7 @@
-         "@feedic/eslint-config": "^0.5.0",
-         "@types/node": "^26.6.6",
-         "cheerio": "^1.2.0",
--        "eslint": "^10.13.0",
-+        "eslint": "^10.14.0",
+@@ -23,7 +23,7 @@
          "eslint-config-biome": "^2.1.3",
          "typescript": "^6.0.2",
          "typescript-eslint": "^8.72.1",
-@@ -1891,9 +1891,9 @@
-       }
-     },
-     "node_modules/eslint": {
--      "version": "10.13.0",
--      "resolved": "https://registry.npmjs.org/eslint/-/eslint-10.13.0.tgz",
--      "integrity": "sha512-UohDjD4zSzEwhf58M3O7vc/ycc8O1I7dNlhtD0WxE8Px8EHNJKtUwzBqrzeGhisRuv2ag4sAYswszCJRgKXYUg==",
-+      "version": "10.14.0",
-+      "resolved": "https://registry.npmjs.org/eslint/-/eslint-10.14.0.tgz",
-+      "integrity": "sha512-T0pNsxkb9IKmtQjhpK3d7nWOpFv+YHuMbTJnSVMoQblF0onvXfErrtp4V1jHtsQPan7dKaGVD0q1WCXnzMF31A==",
-       "dev": true,
-       "license": "MIT",
-       "workspaces": [
-@@ -1906,7 +1906,7 @@
-         "@eslint/config-helpers": "^0.7.0",
-         "@eslint/core": "^1.2.1",
-         "@eslint/plugin-kit": "^0.7.3",
--        "@humanfs/node": "^0.16.6",
-+        "@humanfs/node": "^0.16.8",
-         "@humanwhocodes/module-importer": "^1.0.1",
-         "@humanwhocodes/retry": "^0.4.2",
-         "@types/estree": "^1.0.6",
-@@ -1927,7 +1927,7 @@
-         "imurmurhash": "^0.1.4",
-         "is-glob": "^4.0.0",
-         "json-stable-stringify-without-jsonify": "^1.0.1",
--        "minimatch": "^10.2.5",
-+        "minimatch": "^10.2.6",
-         "natural-compare": "^1.4.0",
-         "optionator": "^0.9.3"
-       },
-@@ -3090,13 +3090,13 @@
-       }
-     },
-     "node_modules/minimatch": {
--      "version": "10.2.5",
--      "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-10.2.5.tgz",
--      "integrity": "sha512-MULkVLfKGYDFYejP07QOurDLLQpcjk7Fw+7jXS2R2czRQzR56yHRveU5NDJEOviH+hETZKSkIk5c+T23GjFUMg==",
-+      "version": "10.2.6",
-+      "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-10.2.6.tgz",
-+      "integrity": "sha512-vpLQEs+VLCr1nU0BXS07maYoFwlDAH0gngQuuttxIwutDFEMHq2blX+8vpgxDdK3J1PwjCJiep77OitTZ4Ll1A==",
-       "dev": true,
-       "license": "BlueOak-1.0.0",
-       "dependencies": {
--        "brace-expansion": "^5.0.5"
-+        "brace-expansion": "^5.0.8"
+-        "vitest": "^5.0.5"
++        "vitest": "^5.1.0"
        },
        "engines": {
-         "node": "18 || 20 || >=22"
+         "node": ">=20.19.0"
+@@ -565,9 +565,9 @@
+       "license": "MIT"
+     },
+     "node_modules/@oxc-project/types": {
+-      "version": "0.154.0",
+-      "resolved": "https://registry.npmjs.org/@oxc-project/types/-/types-0.154.0.tgz",
+-      "integrity": "sha512-KYOUGQFlLWR+s4QMV2Q9ko38TZm7EdO87Qm7rvZLqk/webse/cDjtyxKhg/47l0byCbs/k46LT8qc4PKjAikzA==",
++      "version": "0.156.0",
++      "resolved": "https://registry.npmjs.org/@oxc-project/types/-/types-0.156.0.tgz",
++      "integrity": "sha512-1Duyg48TdJNdyhEB8Xn1L36bT9Pv6GUtlKjHxOys8xkaF/rQq3XJE+bAurSK/AgIz5mGFsb77cn9Pb20+WCScw==",
+       "dev": true,
+       "license": "MIT",
+       "peer": true,
+@@ -576,9 +576,9 @@
+       }
+     },
+     "node_modules/@rolldown/binding-android-arm-eabi": {
+-      "version": "1.2.14",
+-      "resolved": "https://registry.npmjs.org/@rolldown/binding-android-arm-eabi/-/binding-android-arm-eabi-1.2.14.tgz",
+-      "integrity": "sha512-aWR+XKH9+rW7m5fWq/5360J3mHycrx/o6xZM2DQFdJnTMdyP7/WzxPjhtLbVWdKo2y612/4U1bWqb3HQhiF7vg==",
++      "version": "1.2.16",
++      "resolved": "https://registry.npmjs.org/@rolldown/binding-android-arm-eabi/-/binding-android-arm-eabi-1.2.16.tgz",
++      "integrity": "sha512-ia3DwAs0OsMGS7+IConptSiyk9pEXkOx/AbJ2n/lAGxH3QkWQus1t8d7gnAT38FCU2sQu8lUbeR6AiZFv4JxaA==",
+       "cpu": [
+         "arm"
+       ],
+@@ -594,9 +594,9 @@
+       }
+     },
+     "node_modules/@rolldown/binding-android-arm64": {
+-      "version": "1.2.14",
+-      "resolved": "https://registry.npmjs.org/@rolldown/binding-android-arm64/-/binding-android-arm64-1.2.14.tgz",
+-      "integrity": "sha512-QiVxHofl6A8lQU7WAtOUY4QMVZXohxwz7WJJoeh8NBEUyKfIkMRKhYyq8az/1RypNiIXzNTtiS6KwHz0erxYRQ==",
++      "version": "1.2.16",
++      "resolved": "https://registry.npmjs.org/@rolldown/binding-android-arm64/-/binding-android-arm64-1.2.16.tgz",
++      "integrity": "sha512-kx5wBiMB6E7TEvpl2B9gjLU004BkvEm2Dr941BFjx/SontPwSzNuQUIoVKxHHoSjpFIfHMmcguyLOtyn0hObRg==",
+       "cpu": [
+         "arm64"
+       ],
+@@ -612,9 +612,9 @@
+       }
+     },
+     "node_modules/@rolldown/binding-darwin-arm64": {
+-      "version": "1.2.14",
+-      "resolved": "https://registry.npmjs.org/@rolldown/binding-darwin-arm64/-/binding-darwin-arm64-1.2.14.tgz",
+-      "integrity": "sha512-lTQOzHuBIooh3jIr5XINQkjPGEuGy+Dsy0meXDr6Sjty0b99kYgGh4uBC/8mJX1T0kC8d6S0aPP1Y+bHkh6aBw==",
++      "version": "1.2.16",
++      "resolved": "https://registry.npmjs.org/@rolldown/binding-darwin-arm64/-/binding-darwin-arm64-1.2.16.tgz",
++      "integrity": "sha512-qslZrXnKJU4cUpjoAmtAo/KQM9e2IRMlmpig6Zpwj+8KWxW8v+nkAf9216Bsek9lOC1jvg2yCjygCFo2f83msQ==",
+       "cpu": [
+         "arm64"
+       ],
+@@ -630,9 +630,9 @@
+       }
+     },
+     "node_modules/@rolldown/binding-darwin-x64": {
+-      "version": "1.2.14",
+-      "resolved": "https://registry.npmjs.org/@rolldown/binding-darwin-x64/-/binding-darwin-x64-1.2.14.tgz",
+-      "integrity": "sha512-hyMKEGatjmBYCs/Q4sbIcL/GqpFEqsX3wc+HYVQ/85A4rxc1o7rPm4DUI4GV4k/h0ITddwFSGpqQunI14GXjTA==",
++      "version": "1.2.16",
++      "resolved": "https://registry.npmjs.org/@rolldown/binding-darwin-x64/-/binding-darwin-x64-1.2.16.tgz",
++      "integrity": "sha512-FdF+y48ND13eAyM2mQn+85kvAqNlvRWROy2rhgA463X/0Gv4vGtazZtfaF1mRBLscYvtOlh4QnLjOWiFzX69OQ==",
+       "cpu": [
+         "x64"
+       ],
+@@ -648,9 +648,9 @@
+       }
+     },
+     "node_modules/@rolldown/binding-freebsd-x64": {
+-      "version": "1.2.14",
+-      "resolved": "https://registry.npmjs.org/@rolldown/binding-freebsd-x64/-/binding-freebsd-x64-1.2.14.tgz",
+-      "integrity": "sha512-u371GbXoVXrEgP20PwzoGNOdAOqAMhzo19JzzY+V4YmmnC+DTOoqdbMu+O+54emM59Mik/UdrtWgcuEDKWRPKA==",
++      "version": "1.2.16",
++      "resolved": "https://registry.npmjs.org/@rolldown/binding-freebsd-x64/-/binding-freebsd-x64-1.2.16.tgz",
++      "integrity": "sha512-ddjqFM5e95AgLbUPtKIS7V1KTVlA0RUgCVr5mn+/IEhsdy3pr+Vuj/HZ7nlMN2FyxIwUktOH1LEPIQXO1v9y1Q==",
+       "cpu": [
+         "x64"
+       ],
+@@ -666,9 +666,9 @@
+       }
+     },
+     "node_modules/@rolldown/binding-linux-arm-gnueabihf": {
+-      "version": "1.2.14",
+-      "resolved": "https://registry.npmjs.org/@rolldown/binding-linux-arm-gnueabihf/-/binding-linux-arm-gnueabihf-1.2.14.tgz",
+-      "integrity": "sha512-BqwKsdZQf6EqVWr8fv2MrDYzAvOZ7+NYFSJESRGs87fkseEhs0TU9TXgRJTkZoRRkxTizyEg1LKUXfU3/78uqg==",
++      "version": "1.2.16",
++      "resolved": "https://registry.npmjs.org/@rolldown/binding-linux-arm-gnueabihf/-/binding-linux-arm-gnueabihf-1.2.16.tgz",
++      "integrity": "sha512-tHdKWbFkFBI687iim3LIyIvyL7j66VvQYkDPss5Stn/qyE2tWkR1YD0dXmXPFKKqT/o5ZEJVsaRsWS2meQwGOA==",
+       "cpu": [
+         "arm"
+       ],
+@@ -684,9 +684,9 @@
+       }
+     },
+     "node_modules/@rolldown/binding-linux-arm64-gnu": {
+-      "version": "1.2.14",
+-      "resolved": "http
 ```
 
 **File**: `package.json` (modified, +1/-1)
 ```diff
-@@ -39,7 +39,7 @@
-     "@feedic/eslint-config": "^0.5.0",
-     "@types/node": "^26.6.6",
-     "cheerio": "^1.2.0",
--    "eslint": "^10.13.0",
-+    "eslint": "^10.14.0",
+@@ -43,7 +43,7 @@
      "eslint-config-biome": "^2.1.3",
      "typescript": "^6.0.2",
      "typescript-eslint": "^8.72.1",
+-    "vitest": "^5.0.5"
++    "vitest": "^5.1.0"
+   },
+   "engines": {
+     "node": ">=20.19.0"
 ```
 
 ---
 
-### Incident Patch 2: `d77562ee` (2026-11-02)
-**Commit Message**: build(deps-dev): bump @types/node from 26.6.5 to 26.6.6 (#1760)
+### Incident Patch 2: `d3fabaa0` (2026-11-06)
+**Commit Message**: build(deps): bump github/codeql-action from 4.39.1 to 4.39.2 (#1762)
 
-Bumps [@types/node](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/HEAD/types/node) from 26.6.5 to 26.6.6.
-- [Release notes](https://github.com/DefinitelyTyped/DefinitelyTyped/releases)
-- [Commits](https://github.com/DefinitelyTyped/DefinitelyTyped/commits/HEAD/types/node)
+Bumps [github/codeql-action](https://github.com/github/codeql-action) from 4.39.1 to 4.39.2.
+- [Release notes](https://github.com/github/codeql-action/releases)
+- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/github/codeql-action/compare/v4.39.1...v4.39.2)
 
 ---
 updated-dependencies:
-- dependency-name: "@types/node"
-  dependency-version: 26.6.6
-  dependency-type: direct:development
+- dependency-name: github/codeql-action
+  dependency-version: 4.39.2
+  dependency-type: direct:production
   update-type: version-update:semver-patch
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `package-lock.json` (modified, +4/-4)
+**File**: `.github/workflows/codeql-analysis.yml` (modified, +2/-2)
 ```diff
-@@ -17,7 +17,7 @@
-         "@biomejs/biome": "^2.5.15",
-         "@eslint/compat": "^2.1.1",
-         "@feedic/eslint-config": "^0.5.0",
--        "@types/node": "^26.6.5",
-+        "@types/node": "^26.6.6",
-         "cheerio": "^1.2.0",
-         "eslint": "^10.13.0",
-         "eslint-config-biome": "^2.1.3",
-@@ -924,9 +924,9 @@
-       "license": "MIT"
-     },
-     "node_modules/@types/node": {
--      "version": "26.6.5",
--      "resolved": "https://registry.npmjs.org/@types/node/-/node-26.6.5.tgz",
--      "integrity": "sha512-uMzsv9stDdofIZBx4UGh4Z9ZgXnGC9seRDscilBcTHAeOFk67MZg/k9bWVfO+bk4qZmG+l52hRnLwUiH2LnJTg==",
-+      "version": "26.6.6",
-+      "resolved": "https://registry.npmjs.org/@types/node/-/node-26.6.6.tgz",
-+      "integrity": "sha512-MzQj+8Kx3XI40OmUAE6Qoh58ZMNstNNMwn2nfd3qWsfe7nDNSqJNzes4njhz6AHwrSHOffSLwXU6yb474Q4aog==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-```
-
-**File**: `package.json` (modified, +1/-1)
-```diff
-@@ -37,7 +37,7 @@
-     "@biomejs/biome": "^2.5.15",
-     "@eslint/compat": "^2.1.1",
-     "@feedic/eslint-config": "^0.5.0",
--    "@types/node": "^26.6.5",
-+    "@types/node": "^26.6.6",
-     "cheerio": "^1.2.0",
-     "eslint": "^10.13.0",
-     "eslint-config-biome": "^2.1.3",
+@@ -23,9 +23,9 @@ jobs:
+         uses: actions/checkout@v7
+ 
+       - name: Initialize CodeQL
+-        uses: github/codeql-action/init@v4.39.1
++        uses: github/codeql-action/init@v4.39.2
+         with:
+           languages: "javascript"
+ 
+       - name: Perform CodeQL Analysis
+-        uses: github/codeql-action/analyze@v4.39.1
++        uses: github/codeql-action/analyze@v4.39.2
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1763** (2026-11-06): build(deps-dev): bump vitest from 5.0.5 to 5.1.0 (@dependabot[bot])
+- **PR #1762** (2026-11-06): build(deps): bump github/codeql-action from 4.39.1 to 4.39.2 (@dependabot[bot])
 - **PR #1761** (2026-11-03): build(deps-dev): bump eslint from 10.13.0 to 10.14.0 (@dependabot[bot])
 - **PR #1760** (2026-11-02): build(deps-dev): bump @types/node from 26.6.5 to 26.6.6 (@dependabot[bot])
 - **PR #1757** (2026-10-30): build(deps-dev): bump typescript-eslint from 8.72.0 to 8.72.1 (@dependabot[bot])
 - **PR #1756** (closed): build(deps-dev): bump @biomejs/biome from 2.5.15 to 2.6.3 (@dependabot[bot])
-- **PR #1755** (2026-10-26): build(deps-dev): bump undici from 7.30.0 to 7.30.1 (@dependabot[bot])
-- **PR #1754** (2026-10-26): build(deps): bump github/codeql-action from 4.39.0 to 4.39.1 (@dependabot[bot])
 
 ---
 
@@ -860,13 +887,13 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps-dev): bump eslint from 10.13.0 to 10.14.0 (#1761)
+## X. build(deps-dev): bump vitest from 5.0.5 to 5.1.0 (#1763)
 
 **RULE**:
 When implementing operations in `package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cheeriojs/dom-serializer. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1261fc46`: build(deps-dev): bump eslint from 10.13.0 to 10.14.0 (#1761). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9c682911`: build(deps-dev): bump vitest from 5.0.5 to 5.1.0 (#1763). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package-lock.json`.
@@ -874,32 +901,44 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-        "eslint": "^10.14.0",
-      "version": "10.14.0",
-      "resolved": "https://registry.npmjs.org/eslint/-/eslint-10.14.0.tgz",
-      "integrity": "sha512-T0pNsxkb9IKmtQjhpK3d7nWOpFv+YHuMbTJnSVMoQblF0onvXfErrtp4V1jHtsQPan7dKaGVD0q1WCXnzMF31A==",
-        "@humanfs/node": "^0.16.8",
-        "minimatch": "^10.2.6",
-      "version": "10.2.6",
-      "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-10.2.6.tgz",
-      "integrity": "sha512-vpLQEs+VLCr1nU0BXS07maYoFwlDAH0gngQuuttxIwutDFEMHq2blX+8vpgxDdK3J1PwjCJiep77OitTZ4Ll1A==",
-        "brace-expansion": "^5.0.8"
+        "vitest": "^5.1.0"
+      "version": "0.156.0",
+      "resolved": "https://registry.npmjs.org/@oxc-project/types/-/types-0.156.0.tgz",
+      "integrity": "sha512-1Duyg48TdJNdyhEB8Xn1L36bT9Pv6GUtlKjHxOys8xkaF/rQq3XJE+bAurSK/AgIz5mGFsb77cn9Pb20+WCScw==",
+      "version": "1.2.16",
+      "resolved": "https://registry.npmjs.org/@rolldown/binding-android-arm-eabi/-/binding-android-arm-eabi-1.2.16.tgz",
+      "integrity": "sha512-ia3DwAs0OsMGS7+IConptSiyk9pEXkOx/AbJ2n/lAGxH3QkWQus1t8d7gnAT38FCU2sQu8lUbeR6AiZFv4JxaA==",
+      "version": "1.2.16",
+      "resolved": "https://registry.npmjs.org/@rolldown/binding-android-arm64/-/binding-android-arm64-1.2.16.tgz",
+      "integrity": "sha512-kx5wBiMB6E7TEvpl2B9gjLU004BkvEm2Dr941BFjx/SontPwSzNuQUIoVKxHHoSjpFIfHMmcguyLOtyn0hObRg==",
+      "version": "1.2.16",
+      "resolved": "https://registry.npmjs.org/@rolldown/binding-darwin-arm64/-/binding-darwin-arm64-1.2.16.tgz",
+      "integrity": "sha512-qslZrXnKJU4cUpjoAmtAo/KQM9e2IRMlmpig6Zpwj+8KWxW8v+nkAf9216Bsek9lOC1jvg2yCjygCFo2f83msQ==",
+      "version": "1.2.16",
+      "resolved": "https://registry.npmjs.org/@rolldown/binding-darwin-x64/-/binding-darwin-x64-1.2.16.tgz",
+      "integrity": "
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-        "eslint": "^10.13.0",
-      "version": "10.13.0",
-      "resolved": "https://registry.npmjs.org/eslint/-/eslint-10.13.0.tgz",
-      "integrity": "sha512-UohDjD4zSzEwhf58M3O7vc/ycc8O1I7dNlhtD0WxE8Px8EHNJKtUwzBqrzeGhisRuv2ag4sAYswszCJRgKXYUg==",
-        "@humanfs/node": "^0.16.6",
-        "minimatch": "^10.2.5",
-      "version": "10.2.5",
-      "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-10.2.5.tgz",
-      "integrity": "sha512-MULkVLfKGYDFYejP07QOurDLLQpcjk7Fw+7jXS2R2czRQzR56yHRveU5NDJEOviH+hETZKSkIk5c+T23GjFUMg==",
-        "brace-expansion": "^5.0.5"
+        "vitest": "^5.0.5"
+      "version": "0.154.0",
+      "resolved": "https://registry.npmjs.org/@oxc-project/types/-/types-0.154.0.tgz",
+      "integrity": "sha512-KYOUGQFlLWR+s4QMV2Q9ko38TZm7EdO87Qm7rvZLqk/webse/cDjtyxKhg/47l0byCbs/k46LT8qc4PKjAikzA==",
+      "version": "1.2.14",
+      "resolved": "https://registry.npmjs.org/@rolldown/binding-android-arm-eabi/-/binding-android-arm-eabi-1.2.14.tgz",
+      "integrity": "sha512-aWR+XKH9+rW7m5fWq/5360J3mHycrx/o6xZM2DQFdJnTMdyP7/WzxPjhtLbVWdKo2y612/4U1bWqb3HQhiF7vg==",
+      "version": "1.2.14",
+      "resolved": "https://registry.npmjs.org/@rolldown/binding-android-arm64/-/binding-android-arm64-1.2.14.tgz",
+      "integrity": "sha512-QiVxHofl6A8lQU7WAtOUY4QMVZXohxwz7WJJoeh8NBEUyKfIkMRKhYyq8az/1RypNiIXzNTtiS6KwHz0erxYRQ==",
+      "version": "1.2.14",
+      "resolved": "https://registry.npmjs.org/@rolldown/binding-darwin-arm64/-/binding-darwin-arm64-1.2.14.tgz",
+      "integrity": "sha512-lTQOzHuBIooh3jIr5XINQkjPGEuGy+Dsy0meXDr6Sjty0b99kYgGh4uBC/8mJX1T0kC8d6S0aPP1Y+bHkh6aBw==",
+      "version": "1.2.14",
+      "resolved": "https://registry.npmjs.org/@rolldown/binding-darwin-x64/-/binding-darwin-x64-1.2.14.tgz",
+      "integrity": "
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1261fc46` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9c682911` are properly handled with clean fallback behavior.

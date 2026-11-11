@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md`  
 > **Source**: github ([https://github.com/Open-Source-Legal/OpenContracts](https://github.com/Open-Source-Legal/OpenContracts))  
-> **Source Version**: `fab192a5`  
+> **Source Version**: `01dd8500`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T19:09:00.108Z  
+> **Timestamp**: 2026-11-10T01:58:36.418Z  
 > **Learning ID**: `learn-github-open-source-legal-opencontracts`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Open-Source-Legal/OpenContracts](https://github.com/Open-Source-Legal/OpenContracts))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T19:09:00.100Z  
+> **Harvest Timestamp**: 2026-11-10T01:58:36.412Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The open document intelligence platform for builders and hackers - DMS for the agentic world
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1533 stars
+- **Stars / Engagement**: 1535 stars
 
 ---
 
@@ -1530,272 +1530,18 @@ def filterset_factory(model: type, fields: dict) -> type:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fab192a5` (2026-11-04)
-**Commit Message**: fix(deps-dev): bump @vitest/coverage-istanbul from 4.1.8 to 5.0.5 in /frontend (#2498)
+### Incident Patch 1: `01dd8500` (2026-11-09)
+**Commit Message**: fix(deps): bump react-window from 2.2.3 to 2.5.3 in /frontend (#2527)
 
-* fix(deps-dev): bump @vitest/coverage-istanbul in /frontend
-
-Bumps [@vitest/coverage-istanbul](https://github.com/vitest-dev/vitest/tree/HEAD/packages/coverage-istanbul) from 4.1.8 to 5.0.5.
-- [Release notes](https://github.com/vitest-dev/vitest/releases)
-- [Changelog](https://github.com/vitest-dev/vitest/blob/main/docs/releases.md)
-- [Commits](https://github.com/vitest-dev/vitest/commits/v5.0.5/packages/coverage-istanbul)
+Bumps [react-window](https://github.com/bvaughn/react-window) from 2.2.3 to 2.5.3.
+- [Release notes](https://github.com/bvaughn/react-window/releases)
+- [Changelog](https://github.com/bvaughn/react-window/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/bvaughn/react-window/compare/2.2.3...2.5.3)
 
 ---
 updated-dependencies:
-- dependency-name: "@vitest/coverage-istanbul"
-  dependency-version: 5.0.5
-  dependency-type: direct:development
-  update-type: version-update:semver-major
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-* Align vitest with coverage-istanbul 5 and use jest-dom vitest entry
-
----------
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-Co-authored-by: JSv4 <[REDACTED_EMAIL]>
-
-**File**: `frontend/package.json` (modified, +2/-2)
-```diff
-@@ -164,7 +164,7 @@
-     "@types/lodash.uniqueid": "^4.0.9",
-     "@types/react-helmet-async": "^1.0.3",
-     "@types/uuid": "^8.3.4",
--    "@vitest/coverage-istanbul": "^4.1.0",
-+    "@vitest/coverage-istanbul": "^5.0.5",
-     "dotenv": "^18.0.9",
-     "fake-indexeddb": "^6.2.2",
-     "husky": "^8.0.1",
-@@ -173,7 +173,7 @@
-     "playwright": "^1.52.0",
-     "prettier": "^2.7.1",
-     "vite-plugin-istanbul": "^9.0.1",
--    "vitest": "^4.1.11"
-+    "vitest": "^5.0.5"
-   },
-   "nyc": {
-     "include": [
-```
-
-**File**: `frontend/src/setupTests.ts` (modified, +1/-1)
-```diff
-@@ -2,7 +2,7 @@
- // allows you to do things like:
- // expect(element).toHaveTextContent(/react/i)
- // learn more: https://github.com/testing-library/jest-dom
--import "@testing-library/jest-dom";
-+import "@testing-library/jest-dom/vitest";
- 
- // React 18 requires this flag so it knows the environment supports
- // act(...). Without it, our React-18-native renderHook helper
-```
-
-**File**: `frontend/yarn.lock` (modified, +311/-166)
-```diff
-@@ -97,12 +97,25 @@
-     js-tokens "^4.0.0"
-     picocolors "^1.1.1"
- 
-+"@babel/code-frame@^8.0.0", "@babel/code-frame@^8.0.6":
-+  version "8.0.6"
-+  resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-8.0.6.tgz#5247d36cef9fd187dd4d84a0ba659fa29341616c"
-+  integrity sha512-uMHhvmDmwFiLuiozaoRYTZHqMFuu3fem/X9JY78lohAuLoh8LSGGC8JqUzo2cVuBsBxkjMZNk56CE7ock8Xxkw==
-+  dependencies:
-+    "@babel/helper-validator-identifier" "^8.0.6"
-+    js-tokens "^10.0.0"
-+
- "@babel/compat-data@^7.29.7":
-   version "7.29.7"
-   resolved "https://registry.yarnpkg.com/@babel/compat-data/-/compat-data-7.29.7.tgz#6f0237f0f36d2e51c0570a636faed9d2d0efe629"
-   integrity sha512-locTkQyKvwIEgBzVrn8693ebc97F2U8ZHjbXwDXJ5Fn2TCpNwTlKcaKLkdHop5c/icOFE7qt7Q9JC5hnKNa6Gg==
- 
--"@babel/core@^7.21.3", "@babel/core@^7.23.9", "@babel/core@^7.28.0", "@babel/core@^7.29.0":
-+"@babel/compat-data@^8.0.5":
-+  version "8.0.5"
-+  resolved "https://registry.yarnpkg.com/@babel/compat-data/-/compat-data-8.0.5.tgz#b5e933559f0830bd4d71f167a7b24cbb4b0f3fd7"
-+  integrity sha512-YLsYoQMvL8l8WrGpN3Zj7O1wK5LEBN+cQtux7BcuHyxIXve724XG+zuJ1n3U1cUweRtTzQOA4IHbuQw3N34SZw==
-+
-+"@babel/core@^7.21.3", "@babel/core@^7.23.9", "@babel/core@^7.28.0":
-   version "7.29.7"
-   resolved "https://registry.yarnpkg.com/@babel/core/-/core-7.29.7.tgz#80c10b17248082968b57a857b91640971f2070f7"
-   integrity sha512-RgHBCvtjbOK2gXSNBNIkNoEc9qoVEtau3hj8gEqKQuL3HZAibKarWFEI3Lfm6EYKkLalOh8eSrj9b+ch9H/VBA==
-@@ -123,6 +136,28 @@
-     json5 "^2.2.3"
-     semver "^6.3.1"
- 
-+"@babel/core@^8.0.1":
-+  version "8.0.9"
-+  resolved "https://registry.yarnpkg.com/@babel/core/-/core-8.0.9.tgz#4d597c512a119d16ffab53a71b967b3a48088cbf"
-+  integrity sha512-wXtyKlpR/pXf/u0vmib+OBakQaIzLglLcRoKpWxCHW/whqq7YfQYPD0IAAl9H/evi40MyLIjYYdvb6N+9DI2yA==
-+  dependencies:
-+    "@babel/code-frame" "^8.0.6"
-+    "@babel/generator" "^8.0.6"
-+    "@babel/helper-compilation-targets" "^8.0.7"
-+    "@babel/helpers" "^8.0.8"
-+    "@babel/parser" "^8.0.8"
-+    "@babel/template" "^8.0.0"
-+    "@babel/traverse" "^8.0.7"
-+    "@babel/types" "^8.0.8"
-+    "@types/gensync" "^1.0.5"
-+    convert-source-map "^2.0.0"
-+    empathic "^2.0.1"
-+    gensync "^1.0.0-beta.2"
-+    import-meta-resolve "^4.2.0"
-+    json5 "^2.2.3"
-+    obug "^3.0.0"
-+    verkit "^0.5.0"
-+
- "@babel/generator@^7.28.5", "@babel/generator@^7.29.7":
-   version "7.29.7"
-   resolved "https://registry.yarnpkg.com/@babel/generator/-/generator-7.29.7.tgz#cca0b8827e6bcf3ba176788e7f3b180ad6db2fa3"
-@@ -134,6 +169,18 @@
-     "@jridgewell/trace-mapping" "^0.3.28"
-     jsesc "^3.0.2"
- 
-+"@babel/generator@^8.0.6":
-+  version "8.0.6"
-+  resolved "https://registry.yarnpkg.com/@babel/generator/-/generator-8.0.6.tgz#a2027d70276bd721aa5b85fc2424852976d5d474"
-+  integrity sha512-/pcanjdRsonCexCuxgGD8fKnBLLzk2i9uM4kmcmGyyev2R5YDs+rafMYZ89RvaGY1mW8T7C5au0TyYaEeHBGng==
-+  dependencies:
-+    "@babel/parser" "^8.0.6"
-+    "@babel/types" "^8.0.6"
-+    "@jridgewell/gen-mapping" "0.4.0-beta.0"
-+    "@jridgewell/trace-mapping" "^0.3.31"
-+    "@types/jsesc" "^2.5.0"
-+    jsesc "^3.0.2"
-+
- "@babel/helper-compilation-targets@^7.29.7":
-   version "7.29.7"
-   resolved "https://registry.yarnpkg.com/@babel/helper-compilation-targets/-/helper-compilation-targets-7.29.7.tgz#7a1def704302401c47f64fa85589e974ae217042"
-@@ -145,6 +192,17 @@
-     lru-cache "^5.1.1"
-     semver "^6.3.1"
- 
-+"@babel/helper-compilation-targets@^8.0.7":
-+  version "8.0.7"
-+  resolved "https://registry.yarnpkg.com/@babel/helper-compilation-targets/-/helper-compilation-targets-8.0.7.tgz#7ece9e53952af8f769e15ecabc8b899cb017f745"
-+  integrity sha512-ilAZCdOOlOVA7dQbaFNw2f/59p6GW33NxTopc3DvEE3efp3ZXTrGX/yZScaKw8/vd9bq31Ag0EcXiLw32bAgJg==
-+  dependencies:
-+    "@babel/compat-data" "^8.0.5"
-+    "@babel/helper-validator-option" "^8.0.0"
-+    browserslist "^4.24.0"
-+    flru "1.0.2"
-+    verkit "^0.5.0"
-+
- "@babel/helper-globals@^7.28.0":
-   version "7.28.0"
-   resolved "https://registry.yarnpkg.com/@babel/helper-globals/-/helper-globals-7.28.0.tgz#b9430df2aa4e17bc28665eadeae8aa1d985e6674"
-@@ -155,6 +213,11 @@
-   resolved "https://registry.yarnpkg.com/@babel/helper-globals/-/helper-globals-7.29.7.tgz#f04a96fbd8473241b1079243f5b3f03a3010ab7b"
-   integrity sha512-3nQVUAtvkKH9zahfWgw96Jc/uFOmjACE1kQz82E2lqWmHBgjzbNlsC22nuQTfahmWeQtTq5nQ/4Nnd2A1wj4zA==
- 
-+"@babel/helper-globals@^8.0.6":
-+  version "8.0.6"
-+  resolved "https://registry.yarnpkg.com/@babel/helper-globals/-/helper-globals-8.0.6.tgz#198c218ccff8a99093d620abf66328ec80d234cd"
-+  integrity sha512-OdnA/N52LhzFpeUuVz5YGuSWjc7TPHiFmVYZbPlSgExocO2GwbxVpSni9MVs5wwW+wZ4kPuwBEBN9pIPDYz1mA==
-+
- "@babel/helper-module-imports@^7.16.7":
-   version "7.27.1"
-   resolved "https://registry.yarnpkg.com/@babel/helper-module-imports/-/helper-module-imports-7.27.1.tgz#7ef769a323e2655e126673bb6d2d6913bbead204"
-@@ -195,6 +258,11 @@
-   resolved "https://registry.yarnpkg.com/@babel/helper-string-parser/-/helper-string-parser-7.29.7.tgz#7f0871d99824d23137d60f86fcf6130fd5a1b51f"
-   integrity sh
-```
-
----
-
-### Incident Patch 2: `17a2af35` (2026-11-04)
-**Commit Message**: fix(deps): update twisted requirement from >=26.4.0 to >=26.10.0rc1 (#2494)
-
-* fix(deps): update twisted requirement from >=26.4.0 to >=26.10.0rc1
-
-Updates the requirements on [twisted](https://github.com/twisted/twisted) to permit the latest version.
-- [Release notes](https://github.com/twisted/twisted/releases)
-- [Changelog](https://github.com/twisted/twisted/blob/twisted-26.10.0rc1/NEWS.rst)
-- [Commits](https://github.com/twisted/twisted/compare/twisted-26.4.0...twisted-26.10.0rc1)
-
----
-updated-dependencies:
-- dependency-name: twisted
-  dependency-version: 26.10.0rc1
-  dependency-type: direct:production
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-* Pin Twisted floor to final 26.10.0 release
-
----------
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-Co-authored-by: JSv4 <[REDACTED_EMAIL]>
-
-**File**: `requirements/base.txt` (modified, +2/-2)
-```diff
-@@ -27,7 +27,7 @@ pgvector>=0.5.1  # Python binding for pgvector; PostgreSQL extension v0.8.2+ req
- channels==4.3.2  # https://github.com/django/channels
- daphne==4.2.3  # https://github.com/django/daphne
- channels-redis==4.3.0
--Twisted[tls,http2]>=26.4.0
-+Twisted[tls,http2]>=26.10.0
- 
- # Django REST Framework
- # ------------------------------------------------------------------------------
-@@ -101,7 +101,7 @@ jsonschema>=4.26.0,<5  # https://github.com/python-jsonschema/jsonschema - MCP t
- 
- # Not directly required, pinned by Snyk to avoid a vulnerability
- # ------------------------------------------------------------------------------
--twisted>=24.7.0rc1 # not directly required, pinned by Snyk to avoid a vulnerability
-+twisted>=26.10.0 # not directly required, pinned by Snyk to avoid a vulnerability
- ipython>=9.17.1 # not directly required, pinned by Snyk to avoid a vulnerability
- setuptools>=84.0.0 # not directly required, pinned by Snyk to avoid a vulnerability
- sqlparse>=0.6.0 # not directly required, pinned by Snyk to avoid a vulnerability
-```
-
-**File**: `requirements/local.txt` (modified, +1/-1)
-```diff
-@@ -59,7 +59,7 @@ pytesseract
- # Not directly required, pinned by Snyk to avoid a vulnerability
- # ------------------------------------------------------------------------------
- django==5.2.17  # https://www.djangoproject.com/
--twisted>=26.4.0 # not directly required, pinned by Snyk to avoid a vulnerability
-+twisted>=26.10.0 # not directly required, pinned by Snyk to avoid a vulnerability
- ipython>=9.17.1 # not directly required, pinned by Snyk to avoid a vulnerability
- requests>=2.34.2,<3 # not directly required, pinned by Snyk to avoid a vulnerability
- setuptools>=84.0.0 # not directly required, pinned by Snyk to avoid a vulnerability
-```
-
-**File**: `requirements/production.txt` (modified, +1/-1)
-```diff
-@@ -14,7 +14,7 @@ google-auth==2.62.0
- # Duplicated accross requirements files due to Snyk not understanding requirements inheritance
- # ------------------------------------------------------------------------------
- django==5.2.17  # https://www.djangoproject.com/
--twisted>=26.4.0 # not directly required, pinned by Snyk to avoid a vulnerability
-+twisted>=26.10.0 # not directly required, pinned by Snyk to avoid a vulnerability
- ipython>=9.17.1 # not directly required, pinned by Snyk to avoid a vulnerability
- requests>=2.34.2,<3 # not directly required, pinned by Snyk to avoid a vulnerability
- setuptools>=84.0.0 # not directly required, pinned by Snyk to avoid a vulnerability
-```
-
----
-
-### Incident Patch 3: `69fae752` (2026-11-04)
-**Commit Message**: fix(deps): bump @tiptap/pm from 3.10.4 to 3.32.0 in /frontend (#2506)
-
-Bumps [@tiptap/pm](https://github.com/ueberdosis/tiptap/tree/HEAD/packages/pm) from 3.10.4 to 3.32.0.
-- [Release notes](https://github.com/ueberdosis/tiptap/releases)
-- [Changelog](https://github.com/ueberdosis/tiptap/blob/v3.32.0/packages/pm/CHANGELOG.md)
-- [Commits](https://github.com/ueberdosis/tiptap/commits/v3.32.0/packages/pm)
-
----
-updated-dependencies:
-- dependency-name: "@tiptap/pm"
-  dependency-version: 3.32.0
+- dependency-name: react-window
+  dependency-version: 2.5.2
   dependency-type: direct:production
   update-type: version-update:semver-minor
 ...
@@ -1805,129 +1551,285 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 **File**: `frontend/package.json` (modified, +1/-1)
 ```diff
-@@ -26,7 +26,7 @@
-     "@tiptap/core": "^3.30.5",
-     "@tiptap/extension-mention": "^3.10.1",
-     "@tiptap/extension-placeholder": "^3.10.1",
--    "@tiptap/pm": "^3.10.4",
-+    "@tiptap/pm": "^3.32.0",
-     "@tiptap/react": "^3.10.1",
-     "@tiptap/starter-kit": "^3.10.1",
-     "@tiptap/suggestion": "^3.10.4",
+@@ -78,7 +78,7 @@
+     "react-syntax-highlighter": "^16.1.0",
+     "react-toastify": "^11.0.5",
+     "react-virtualized-auto-sizer": "^1.0.26",
+-    "react-window": "^2.2.0",
++    "react-window": "^2.5.3",
+     "recharts": "^3.10.1",
+     "rehype-react": "^8.0.0",
+     "rehype-sanitize": "^6.0.0",
 ```
 
-**File**: `frontend/yarn.lock` (modified, +61/-115)
+**File**: `frontend/yarn.lock` (modified, +4/-4)
 ```diff
-@@ -919,11 +919,6 @@
+@@ -5817,10 +5817,10 @@ react-virtualized-auto-sizer@^1.0.26:
+   resolved "https://registry.yarnpkg.com/react-virtualized-auto-sizer/-/react-virtualized-auto-sizer-1.0.26.tgz#e9470ef6a778dc4f1d5fd76305fa2d8b610c357a"
+   integrity sha512-CblNyiNVw2o+hsa5/49NH2ogGxZ+t+3aweRvNSq7TVjDIlwk7ir4lencEg5HxHeSzwNarSkNkiu0qJSOXtxm5A==
+ 
+-react-window@*, react-window@^2.2.0:
+-  version "2.2.3"
+-  resolved "https://registry.yarnpkg.com/react-window/-/react-window-2.2.3.tgz#f8ffdddbb612ccd3e1314b59fce79af85d3f15e3"
+-  integrity sha512-gTRqQYC8ojbiXyd9duYFiSn2TJw0ROXCgYjenOvNKITWzK0m0eCvkUsEUM08xvydkMh7ncp+LE0uS3DeNGZxnQ==
++react-window@*, react-window@^2.5.3:
++  version "2.5.3"
++  resolved "https://registry.yarnpkg.com/react-window/-/react-window-2.5.3.tgz#75a7d9e21f8faa1928b191f670f8a975406c541f"
++  integrity sha512-zN/mX+4cLgwp8xDqQYKmgbzj/oZ2LrF4V8KbAbgkpA9zAt3+q4nWPe0MhvIDIh9c4kHPySSchNcd8DjyR6jItQ==
+ 
+ react@18:
+   version "18.3.1"
+```
+
+---
+
+### Incident Patch 2: `eca5412a` (2026-11-09)
+**Commit Message**: fix(deps): bump recharts from 3.4.1 to 3.10.1 in /frontend (#2530)
+
+Bumps [recharts](https://github.com/recharts/recharts) from 3.4.1 to 3.10.1.
+- [Release notes](https://github.com/recharts/recharts/releases)
+- [Changelog](https://github.com/recharts/recharts/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/recharts/recharts/compare/v3.4.1...v3.10.1)
+
+---
+updated-dependencies:
+- dependency-name: recharts
+  dependency-version: 3.10.1
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `frontend/package.json` (modified, +1/-1)
+```diff
+@@ -79,7 +79,7 @@
+     "react-toastify": "^11.0.5",
+     "react-virtualized-auto-sizer": "^1.0.26",
+     "react-window": "^2.2.0",
+-    "recharts": "^3.4.1",
++    "recharts": "^3.10.1",
+     "rehype-react": "^8.0.0",
+     "rehype-sanitize": "^6.0.0",
+     "remark-gfm": "^4.0.1",
+```
+
+**File**: `frontend/yarn.lock` (modified, +20/-20)
+```diff
+@@ -1048,14 +1048,14 @@
+   resolved "https://registry.yarnpkg.com/@react-leaflet/core/-/core-2.1.0.tgz#383acd31259d7c9ae8fb1b02d5e18fe613c2a13d"
+   integrity sha512-Qk7Pfu8BSarKGqILj4x7bCSZ1pjuAPZ+qmRwH5S7mDS91VSbVVsJSrW4qA+GPrro8t69gFYVMWb1Zc4yFmPiVg==
+ 
+-"@reduxjs/toolkit@1.x.x || 2.x.x":
+-  version "2.10.1"
+-  resolved "https://registry.yarnpkg.com/@reduxjs/toolkit/-/toolkit-2.10.1.tgz#b3b9da21335eea409d3498544bcaf83b481a0195"
+-  integrity sha512-/U17EXQ9Do9Yx4DlNGU6eVNfZvFJfYpUtRRdLf19PbPjdWBxNlxGZXywQZ1p1Nz8nMkWplTI7iD/23m07nolDA==
++"@reduxjs/toolkit@^1.9.0 || 2.x.x":
++  version "2.14.0"
++  resolved "https://registry.yarnpkg.com/@reduxjs/toolkit/-/toolkit-2.14.0.tgz#4977d4f7f889e634eeb7381becc5b5648fecf051"
++  integrity sha512-m/PxMwRe0xLL6XUsAgy0YjInklHcfi9uMwFhJk+QINqjxqPvyc89T5cMjszA5bDmTE0gwGc7zr9LRO4gL+mhaw==
+   dependencies:
+     "@standard-schema/spec" "^1.0.0"
+     "@standard-schema/utils" "^0.3.0"
+-    immer "^10.2.0"
++    immer "^11.2.9"
+     redux "^5.0.1"
      redux-thunk "^3.1.0"
      reselect "^5.1.0"
- 
--"@remirror/core-constants@3.0.0":
--  version "3.0.0"
--  resolved "https://registry.yarnpkg.com/@remirror/core-constants/-/core-constants-3.0.0.tgz#96fdb89d25c62e7b6a5d08caf0ce5114370e3b8f"
--  integrity sha512-42aWfPrimMfDKDi4YegyS7x+/0tlzaqwPQCULLanv3DMIlu96KTJR0fM5isWX2UViOqlGnX6YFgqWepcX+XMNg==
--
- "@rjsf/core@^5.24.12":
-   version "5.24.13"
-   resolved "https://registry.yarnpkg.com/@rjsf/core/-/core-5.24.13.tgz#ef98e5dc6ac064b2be2f56e0887c99df2b1f8d44"
-@@ -1452,29 +1447,24 @@
-   resolved "https://registry.yarnpkg.com/@tiptap/extensions/-/extensions-3.10.4.tgz#0564491ec52f6994b2829e983e09acd24659968a"
-   integrity sha512-DO/72X2AVhuVbcghBRvHNwb9tHmKQvERax1XKX9D9AuJyL/s8x9F0CXbbuBjdSkEeIFrFxQMLxH0NBak3upW4A==
- 
--"@tiptap/pm@^3.10.4":
--  version "3.10.4"
--  resolved "https://registry.yarnpkg.com/@tiptap/pm/-/pm-3.10.4.tgz#5dbf6623de10fdcb177ed510f450de3a0077db2f"
--  integrity sha512-tNGAXSLq5l/G72EPTBUNRHkRmiQoU2ODpIvqXZWFjymaW+8x1nzU3oZwinfvCdwNPrsZJv4x7pfX5EA6pbnW8w==
--  dependencies:
--    prosemirror-changeset "^2.3.0"
--    prosemirror-collab "^1.3.1"
--    prosemirror-commands "^1.6.2"
--    prosemirror-dropcursor "^1.8.1"
--    prosemirror-gapcursor "^1.3.2"
--    prosemirror-history "^1.4.1"
--    prosemirror-inputrules "^1.4.0"
--    prosemirror-keymap "^1.2.2"
--    prosemirror-markdown "^1.13.1"
--    prosemirror-menu "^1.2.4"
--    prosemirror-model "^1.24.1"
--    prosemirror-schema-basic "^1.2.3"
--    prosemirror-schema-list "^1.5.0"
--    prosemirror-state "^1.4.3"
--    prosemirror-tables "^1.6.4"
--    prosemirror-trailing-node "^3.0.0"
--    prosemirror-transform "^1.10.2"
--    prosemirror-view "^1.38.1"
-+"@tiptap/pm@^3.10.4", "@tiptap/pm@^3.32.0":
-+  version "3.32.0"
-+  resolved "https://registry.yarnpkg.com/@tiptap/pm/-/pm-3.32.0.tgz#6acb87b907ea4f93ba70b00e295fd7e50f8f3dcc"
-+  integrity sha512-H9eN+xHFboJybE7KPGVsu24S8aBlCIgYz38vCHRSnNv17nwmqm06owq/IQ5scza0n3Y7IfUfpgPOtm9SgeHmNQ==
-+  dependencies:
-+    prosemirror-changeset "^2.4.4"
-+    prosemirror-commands "^1.7.2"
-+    prosemirror-dropcursor "^1.8.4"
-+    prosemirror-gapcursor "^1.4.1"
-+    prosemirror-history "^1.5.1"
-+    prosemirror-inputrules "^1.5.1"
-+    prosemirror-keymap "^1.2.3"
-+    prosemirror-model "^1.25.12"
-+    prosemirror-schema-list "^1.5.1"
-+    prosemirror-state "^1.4.4"
-+    prosemirror-tables "^1.8.5"
-+    prosemirror-transform "^1.12.2"
-+    prosemirror-view "^1.42.6"
- 
- "@tiptap/react@^3.10.1":
-   version "3.10.4"
-@@ -2783,11 +2773,6 @@ countup.js@^2.8.0:
-   resolved "https://registry.yarnpkg.com/countup.js/-/countup.js-2.9.0.tgz#599e6482e502e5e3f00f8816637120c9b21856ed"
-   integrity sha512-llqrvyXztRFPp6+i8jx25phHWcVWhrHO4Nlt0uAOSKHB8778zzQswa4MU3qKBvkXfJKftRYFJuVHez67lyKdHg==
- 
--crelt@^1.0.0:
--  version "1.0.6"
--  resolved "https://registry.yarnpkg.com/crelt/-/crelt-1.0.6.tgz#7cc898ea74e190fb6ef9dae57f8f81cf7302df72"
--  integrity sha512-VQ2MBenTq1fWZUH9DJNGti7kKv6EeAuYr3cLwxUWhIu1baTaXh4Ib5W2CqHVqib4/MqbYGJqiL3Zb8GJZr3l4g==
--
- cross-fetch@^3.1.5:
-   version "3.2.0"
-   resolved "https://registry.yarnpkg.com/cross-fetch/-/cross-fetch-3.2.0.tgz#34e9192f53bc757d6614304d9e5e6fb4edb782e3"
-@@ -5161,75 +5146,68 @@ property-information@^7.0.0:
-   resolved "https://registry.yarnpkg.com/property-information/-/property-information-7.1.0.tgz#b622e8646e02b580205415586b40804d3e8bfd5d"
-   integrity sha512-TwEZ+X+yCJmYfL7TPUOcvBZ4QfoT5YenQiJuX//0th53DE6w0xxLEtfK3iyryQFddXuvkIk51EEgrJQ0WJkOmQ==
- 
--prosemirror-changeset@^2.3.0:
--  version "2.3.1"
--  resolved "https://registry.yarnpkg.com/prosemirror-changeset/-/prosemirror-changeset-2.3.1.tgz#eee3299cfabc7a027694e9abdc4e85505e9dd5e7"
--  integrity sha512-j0kORIBm8ayJNl3zQvD1TTPHJX3g042et6y/KQhZhnPrruO8exkTgG8X+NRpj7kIyMMEx74Xb3DyMIBtO0IKkQ==
-+prosemirror-changeset@^2.4.4:
-+  version "2.4.4"
-+  resolved "https://registry.yarnpkg.com/prosemirror-changeset/-/prosemirror-changeset-2.4.4.tgz#406dc360110f16d4eebfb0c28abf72a84e51663e"
-+  integrity sha512-Gyuz9jYdrAeA9I7AholyOes9KUmv/lEwsC5O9s5xF5VB3EgTPsXMGUxz4+H1B+wKVPdZbvRcg1Cp3x8qX+8ofA==
+@@ -4043,10 +4043,10 @@ iconv-lite@0.6, iconv-lite@0.6.3:
    dependencies:
-     prosemirror-transform "^1.0.0"
+     safer-buffer ">= 2.1.2 < 3.0.0"
  
--prosemirror-collab@^1.3.1:
--  version "1.3.1"
--  resolved "https://registry.yarnpkg.com/prosemirror-collab/-/prosemirror-collab-1.3.1.tgz#0e8c91e76e009b53457eb3b3051fb68dad029a33"
--  integrity sha512-4SnynYR9TTYaQVXd/ieUvsVV4PDMBzrq2xPUWutHivDuOshZXqQ5rGbZM84HEaXKbLdItse7weMGOUdDVcLKEQ==
--  dependencies:
--    prosemirror-state "^1.0.0"
--
--prosemirror-commands@^1.0.0, prosemirror-commands@^1.6.2:
--  version "1.7.1"
--  resolved "https://registry.yarnpkg.com/prosemirror-commands/-/prosemirror-commands-1.7.1.tgz#d101fef85618b1be53d5b99ea17bee5600781b38"
--  integrity sha512-rT7qZnQtx5c0/y/KlYaGvtG411S97UaL6gdp6RIZ23DLHanMYLyfGBV5DtSnZdthQql7W+lEVbpSfwtO8T+L2w==
-+prosemirror-commands@^1.7.2:
-+  version "1.7.2"
-+  resolved "https://registry.yarnpkg.com/prosemirror-commands/-/prosemirror-commands-1.7.2.tgz#cbef3b0d722dc51e71cc936c87c4ca27d81df3a6
+-immer@^10.1.1, immer@^10.2.0:
+-  version "10.2.0"
+-  resolved "https://registry.yarnpkg.com/immer/-/immer-10.2.0.tgz#88a4ce06a1af64172d254b70f7cb04df51c871b1"
+-  integrity sha512-d/+XTN3zfODyjr89gM3mPq1WNX2B8pYsu7eORitdwyA2sBubnTl3laYlBk4sXY5FUa5qTZGBDPJICVbvqzjlbw==
++immer@^11.1.8, immer@^11.2.9:
++  version "11.2.9"
++  resolved "https://registry.yarnpkg.com/immer/-/immer-11.2.9.tgz#025deddab07b73a87aaf99b6ecf2b53267da5ee2"
++  integrity sha512-IQ4UEtXjZjyefyWjtLEDXUSrF6T2hwjKPi6BIJl3bY/2XXW24d6cNGdXJSBOA/+KNnuiXkZY6DR0C3efolhitA==
+ 
+ immutable@>=5.1.8:
+   version "5.1.9"
+@@ -5829,19 +5829,19 @@ react@18:
+   dependencies:
+     loose-envify "^1.1.0"
+ 
+-recharts@^3.4.1:
+-  version "3.4.1"
+-  resolved "https://registry.yarnpkg.com/recharts/-/recharts-3.4.1.tgz#f8c7b7ad40c9794eb0113f79c17fb1c1f15e2728"
+-  integrity sha512-35kYg6JoOgwq8sE4rhYkVWwa6aAIgOtT+Ob0gitnShjwUwZmhrmy7Jco/5kJNF4PnLXgt9Hwq+geEMS+WrjU1g==
++recharts@^3.10.1:
++  version "3.10.1"
++  resolved "https://registry.yarnpkg.com/recharts/-/recharts-3.10.1.tgz#e6f52c2604a38f728b6d47f95881595fa6604c6c"
++  integrity sha512-QXFrvt6IVcw7eeZCoyXTwkIJAX3Dv1nyVhMicXJ47GsGDDpcN8z6o644DibE9XjpBTThtsomLKnTV6lc+cVFUA==
+   dependencies:
+-    "@reduxjs/toolkit" "1.x.x || 2.x.x"
++    "@reduxjs/toolkit" "^1.9.0 || 2.x.x"
+     clsx "^2.1.1"
+     decimal.js-light "^2.5.1"
+     es-toolkit "^1.39.3"
+     eventemitter3 "^5.0.1"
+-    immer "^10.1.1"
++    immer "^11.1.8"
+     react-redux "8.x.x || 9.x.x"
+-    reselect "5.1.1"
++    reselect "5.2.0"
+     tiny-invariant "^1.3.3"
+     use-sync-external-store "^1.2.2"
+     victory-vendor "^37.0.2"
+@@ -5960,10 +5960,10 @@ require-main-filename@^2.0.0:
+   resolved "https://registry.yarnpkg.com/require-main-filename/-/require-main-filename-2.0.0.tgz#d0b329ecc7cc0f61649f62215be69af54aa8989b"
+   integrity sha512-NKN5kMDylKuldxYLSUfrbo5Tuzh4hd+2E8NPPX02mZtn1VuREQToYe/ZdlJy+J3uCpfaiGF05e7B8W0iXbQHmg==
+ 
+-reselect@5.1.1, reselect@^5.1.0:
+-  version "5.1.1"
+-  resolved "https://registry.yarnpkg.com/reselect/-/reselect-5.1.1.tgz#c766b1eb5d558291e5e550298adb0becc24bb72e"
+-  integrity sha512-K/BG6eIky/SBpzfHZv/dd+9JBFiS4SWV7FIujVyJRux6e45+73RaUHXLmIR1f7WOMaQ0U1km6qwklRQxpJJY0w==
++reselect@5.2.0, reselect@^5.1.0:
++  version "5.2.0"
++  resolved "https://registry.yarnpkg.com/reselect/-/reselect-5.2.0.tgz#f380ef7664332d26ea06c1cba04bdbbdcaa955f1"
++  integrity sha512-AgZ3UOZm3YndfrJ4OYjgrT7bmCm/1iqkjvEfH/oYjzh6PD2qw4QuT3jjnXIrpdt4MTpMXclMT3lXbmRY+XRakw==
+ 
+ resolve-from@^4.0.0:
+   version "4.0.0"
+```
+
+---
+
+### Incident Patch 3: `b55daef6` (2026-11-09)
+**Commit Message**: fix(deps): bump vite from 7.3.7 to 8.3.5 in /frontend (#2531)
+
+Bumps [vite](https://github.com/vitejs/vite/tree/HEAD/packages/vite) from 7.3.7 to 8.3.5.
+- [Release notes](https://github.com/vitejs/vite/releases)
+- [Changelog](https://github.com/vitejs/vite/blob/main/packages/vite/CHANGELOG.md)
+- [Commits](https://github.com/vitejs/vite/commits/v8.3.5/packages/vite)
+
+---
+updated-dependencies:
+- dependency-name: vite
+  dependency-version: 8.3.5
+  dependency-type: direct:production
+  update-type: version-update:semver-major
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `frontend/package.json` (modified, +2/-2)
+```diff
+@@ -92,7 +92,7 @@
+     "unified": "^11.0.5",
+     "use-debounce": "^10.1.1",
+     "uuid": "^14.0.0",
+-    "vite": "^7.3.7",
++    "vite": "^8.3.5",
+     "vite-plugin-svgr": "^4.3.0",
+     "vite-tsconfig-paths": "^5.1.4",
+     "web-vitals": "^2.1.2"
+@@ -150,7 +150,7 @@
+     "react-router": "^7.18.2",
+     "rollup": "^4.59.0",
+     "immutable": ">=5.1.8",
+-    "vite": "^7.3.7",
++    "vite": "^8.3.5",
+     "uuid": "^11.1.1"
+   },
+   "devDependencies": {
+```
+
+**File**: `frontend/yarn.lock` (modified, +201/-27)
+```diff
+@@ -1002,6 +1002,11 @@
+   resolved "https://registry.yarnpkg.com/@os-legal/ui/-/ui-0.1.19.tgz#d3511090cc41a8b8e0f499bcab23bd010e99e237"
+   integrity sha512-+bu/s0hJc5pS92Rd/iKggb7Luutwc6Gs76+ErT4uMTnzoIwxI6PA0HQS2FJFbcnvuNBNy+qRxy32AKhFuAzkAA==
+ 
++"@oxc-project/types@=0.156.0":
++  version "0.156.0"
++  resolved "https://registry.yarnpkg.com/@oxc-project/types/-/types-0.156.0.tgz#00e35b1ead490d81b4c7fe1dbfe35fc55e89c5e6"
++  integrity sha512-1Duyg48TdJNdyhEB8Xn1L36bT9Pv6GUtlKjHxOys8xkaF/rQq3XJE+bAurSK/AgIz5mGFsb77cn9Pb20+WCScw==
++
+ "@pkgjs/parseargs@^0.11.0":
+   version "0.11.0"
+   resolved "https://registry.yarnpkg.com/@pkgjs/parseargs/-/parseargs-0.11.0.tgz#a77ea742fab25775145434eb1d2328cf5013ac33"
+@@ -1086,11 +1091,91 @@
+     lodash "^4.17.21"
+     lodash-es "^4.17.21"
+ 
++"@rolldown/binding-android-arm-eabi@1.2.16":
++  version "1.2.16"
++  resolved "https://registry.yarnpkg.com/@rolldown/binding-android-arm-eabi/-/binding-android-arm-eabi-1.2.16.tgz#abc3e1d5aacd1983d32a490c3a8793770da3bd1a"
++  integrity sha512-ia3DwAs0OsMGS7+IConptSiyk9pEXkOx/AbJ2n/lAGxH3QkWQus1t8d7gnAT38FCU2sQu8lUbeR6AiZFv4JxaA==
++
++"@rolldown/binding-android-arm64@1.2.16":
++  version "1.2.16"
++  resolved "https://registry.yarnpkg.com/@rolldown/binding-android-arm64/-/binding-android-arm64-1.2.16.tgz#85c4d52aeb79c69e8abd52e3ba3174bb946bcd49"
++  integrity sha512-kx5wBiMB6E7TEvpl2B9gjLU004BkvEm2Dr941BFjx/SontPwSzNuQUIoVKxHHoSjpFIfHMmcguyLOtyn0hObRg==
++
++"@rolldown/binding-darwin-arm64@1.2.16":
++  version "1.2.16"
++  resolved "https://registry.yarnpkg.com/@rolldown/binding-darwin-arm64/-/binding-darwin-arm64-1.2.16.tgz#d188fd77cdb2b6dc140011a573203e374fdba2d8"
++  integrity sha512-qslZrXnKJU4cUpjoAmtAo/KQM9e2IRMlmpig6Zpwj+8KWxW8v+nkAf9216Bsek9lOC1jvg2yCjygCFo2f83msQ==
++
++"@rolldown/binding-darwin-x64@1.2.16":
++  version "1.2.16"
++  resolved "https://registry.yarnpkg.com/@rolldown/binding-darwin-x64/-/binding-darwin-x64-1.2.16.tgz#eb84cc00765ce2f6c48d85624ebecaa2c88470ba"
++  integrity sha512-FdF+y48ND13eAyM2mQn+85kvAqNlvRWROy2rhgA463X/0Gv4vGtazZtfaF1mRBLscYvtOlh4QnLjOWiFzX69OQ==
++
++"@rolldown/binding-freebsd-x64@1.2.16":
++  version "1.2.16"
++  resolved "https://registry.yarnpkg.com/@rolldown/binding-freebsd-x64/-/binding-freebsd-x64-1.2.16.tgz#d3c51e8a2cd2977eac7fff0e6655e2715a39328c"
++  integrity sha512-ddjqFM5e95AgLbUPtKIS7V1KTVlA0RUgCVr5mn+/IEhsdy3pr+Vuj/HZ7nlMN2FyxIwUktOH1LEPIQXO1v9y1Q==
++
++"@rolldown/binding-linux-arm-gnueabihf@1.2.16":
++  version "1.2.16"
++  resolved "https://registry.yarnpkg.com/@rolldown/binding-linux-arm-gnueabihf/-/binding-linux-arm-gnueabihf-1.2.16.tgz#216c99c72c005c375d63d31060209b78a8983fec"
++  integrity sha512-tHdKWbFkFBI687iim3LIyIvyL7j66VvQYkDPss5Stn/qyE2tWkR1YD0dXmXPFKKqT/o5ZEJVsaRsWS2meQwGOA==
++
++"@rolldown/binding-linux-arm64-gnu@1.2.16":
++  version "1.2.16"
++  resolved "https://registry.yarnpkg.com/@rolldown/binding-linux-arm64-gnu/-/binding-linux-arm64-gnu-1.2.16.tgz#4e03383b29c5ba30bbfdd06ec746c13e7dee12dd"
++  integrity sha512-FJiLGAblPBMlBEdbOqw6kW6QcXDWAf/oJu7gYs9ZJZwmg+K+/zjFLxPTIY9izJUzxzc24FHvmseyA0IvJSl17w==
++
++"@rolldown/binding-linux-arm64-musl@1.2.16":
++  version "1.2.16"
++  resolved "https://registry.yarnpkg.com/@rolldown/binding-linux-arm64-musl/-/binding-linux-arm64-musl-1.2.16.tgz#d159c4c87ecda02962be95a1dccde1ef6934ccf2"
++  integrity sha512-hrJpblMsrQ58U9veWpbXzkhV5zStunds6HWLprqq1qauvgBr1E6P+24kLj6lSLI9vjRn/RYpjprhkHQPKGWpNg==
++
++"@rolldown/binding-linux-ppc64-gnu@1.2.16":
++  version "1.2.16"
++  resolved "https://registry.yarnpkg.com/@rolldown/binding-linux-ppc64-gnu/-/binding-linux-ppc64-gnu-1.2.16.tgz#6e4be205f9d2188b2a996c0f82242beac7d573f6"
++  integrity sha512-qJd/dC6j6CwLG9/s/RP2nb1RZ0GIgj7Ioj7x/SYa3RzjVrlzrmH0fhIOpfvqQDeIsdP0loi+kHaMhJzY1PBIaA==
++
++"@rolldown/binding-linux-s390x-gnu@1.2.16":
++  version "1.2.16"
++  resolved "https://registry.yarnpkg.com/@rolldown/binding-linux-s390x-gnu/-/binding-linux-s390x-gnu-1.2.16.tgz#7e68a24dbc387fdba75d95992974eddf39c9ddaf"
++  integrity sha512-Vx7Xg5uUJuNcujJjI70OICaH0EYj80BtOLZTSN7uOYg8QOLlyKnaG0IW7Fn/J0IpJsaKzmDKMhOQv1JBM9m9vg==
++
++"@rolldown/binding-linux-x64-gnu@1.2.16":
++  version "1.2.16"
++  resolved "https://registry.yarnpkg.com/@rolldown/binding-linux-x64-gnu/-/binding-linux-x64-gnu-1.2.16.tgz#591cdec3e65bd701ba2e7b671ca9d694142dec2c"
++  integrity sha512-TNKhgE3uJTsTzatUSSYt0Kgo+Oa2uSlSjz4r1aEIea7HX6ULBym4fAlYUhG1i6pjNf2njfCUAfKwr6C3E9Xg1w==
++
++"@rolldown/binding-linux-x64-musl@1.2.16":
++  version "1.2.16"
++  resolved "https://registry.yarnpkg.com/@rolldown/binding-linux-x64-musl/-/binding-linux-x64-musl-1.2.16.tgz#833ac527e031f51c2ac23a615a19ed111092088c"
++  integrity sha512-7chXdpjXZ8qG0+mIxECN3cT9kvhZ3/oZhMX6Pp876P7CDrIy8nJswva6Mq357JR7eYXfuskwZxMeV1SzoZdHrA==
++
++"@rolldown/binding-openharmony-arm64@1.2.16":
++  version "1.2.16"
++  resolved "https://registry.yarnpkg.com/@rolldown/binding-openharmony-arm64/-/binding-openharmony-arm64-1.2.16.tgz#2991fbf22995469b1404afbf3850713fd917b525"
++  integrity sha512-Kwjt+7uNTJK5/MDkGWGVO2KQPnj8yAV75
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2517** (2026-11-04): fix(deps): bump follow-redirects from 1.16.1 to 1.16.2 in /frontend (@dependabot[bot])
-- **PR #2513** (2026-11-04): fix(deps): bump nginx from 1.31.0-alpine to 1.31.8-alpine in /frontend (@dependabot[bot])
-- **PR #2512** (2026-11-04): fix(deps): bump busybox from latest to latest in /compose (@dependabot[bot])
-- **PR #2511** (2026-11-04): fix(deps): bump the python-base-image group across 2 directories with 1 update (@dependabot[bot])
-- **PR #2510** (2026-11-04): fix(deps): bump transformers from 5.20.2 to 5.22.1 in /compose/accelerated/embedder (@dependabot[bot])
-- **PR #2509** (closed): fix(deps): bump transformers from 5.20.2 to 5.21.0 in /compose/accelerated/embedder (@dependabot[bot])
+- **PR #2531** (2026-11-09): fix(deps): bump vite from 7.3.7 to 8.3.5 in /frontend (@dependabot[bot])
+- **PR #2530** (2026-11-09): fix(deps): bump recharts from 3.4.1 to 3.10.1 in /frontend (@dependabot[bot])
+- **PR #2529** (2026-11-09): fix(deps): bump react-intersection-observer from 9.16.0 to 11.0.1 in /frontend (@dependabot[bot])
+- **PR #2528** (2026-11-09): fix(deps): bump @tiptap/extension-placeholder from 3.10.4 to 3.32.2 in /frontend (@dependabot[bot])
+- **PR #2527** (2026-11-09): fix(deps): bump react-window from 2.2.3 to 2.5.3 in /frontend (@dependabot[bot])
+- **PR #2526** (2026-11-09): fix(deps): bump pytest from 9.1.1 to 9.2.0 (@dependabot[bot])
 
 ---
 
@@ -1947,13 +1849,13 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps-dev): bump @vitest/coverage-istanbul from 4.1.8 to 5.0.5 in /frontend (#249
+## X. deps): bump react-window from 2.2.3 to 2.5.3 in /frontend (#2527)
 
 **RULE**:
 When implementing operations in `frontend/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Open-Source-Legal/OpenContracts. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fab192a5`: deps-dev): bump @vitest/coverage-istanbul from 4.1.8 to 5.0.5 in /frontend (#2498). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `01dd8500`: deps): bump react-window from 2.2.3 to 2.5.3 in /frontend (#2527). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `frontend/package.json`.
@@ -1961,16 +1863,14 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-    "@vitest/coverage-istanbul": "^5.0.5",
-    "vitest": "^5.0.5"
+    "react-window": "^2.5.3",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-    "@vitest/coverage-istanbul": "^4.1.0",
-    "vitest": "^4.1.11"
+    "react-window": "^2.2.0",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fab192a5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `01dd8500` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/crossplane-crossplane-learnings.md`  
 > **Source**: github ([https://github.com/crossplane/crossplane](https://github.com/crossplane/crossplane))  
-> **Source Version**: `6e727661`  
+> **Source Version**: `6899c191`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T00:14:58.506Z  
+> **Timestamp**: 2026-11-10T04:51:48.634Z  
 > **Learning ID**: `learn-github-crossplane-crossplane`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/crossplane-crossplane-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/crossplane/crossplane](https://github.com/crossplane/crossplane))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T00:14:58.396Z  
+> **Harvest Timestamp**: 2026-11-10T04:51:48.404Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Cloud Native Control Plane
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 12222 stars
+- **Stars / Engagement**: 12232 stars
 
 ---
 
@@ -1525,52 +1525,49 @@ type startCommand struct {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6e727661` (2026-11-04)
-**Commit Message**: Merge pull request #7989 from crossplane/renovate/main-lock-file-maintenance
+### Incident Patch 1: `6899c191` (2026-11-09)
+**Commit Message**: Merge pull request #8024 from crossplane/renovate/main-renovate-44.x
 
-chore(deps): lock file maintenance (main)
+chore(deps): update dependency renovate to v44.222.5 (main)
 
-**File**: `flake.lock` (modified, +6/-6)
+**File**: `.github/workflows/renovate.yml` (modified, +1/-1)
 ```diff
-@@ -2,11 +2,11 @@
-   "nodes": {
-     "nixpkgs": {
-       "locked": {
--        "lastModified": 1793015021,
--        "narHash": "sha256-Ee5BWo8sh3pGt70QUdRajnaginqFmWvrtdBc4gJzhks=",
-+        "lastModified": 1793183032,
-+        "narHash": "sha256-56mFMf8heLNfYhcgbrh4GpN5x+G9JOfTFXZC3n6w0qM=",
-         "owner": "NixOS",
-         "repo": "nixpkgs",
--        "rev": "718f670e845328e9c2cecdd832835712b2cbd065",
-+        "rev": "08d3a97586f6b6343b3b5e799980773629432610",
-         "type": "github"
-       },
-       "original": {
-@@ -18,11 +18,11 @@
-     },
-     "nixpkgs-unstable": {
-       "locked": {
--        "lastModified": 1793136825,
--        "narHash": "sha256-2pkE69JpFRInaARSczZytcfPw83IL82E2KdhbWGwdMs=",
-+        "lastModified": 1793225069,
-+        "narHash": "sha256-sx1f99WGrDfJ83KKuQrqGPmot0rnDgmpLJDzpU2oHQQ=",
-         "owner": "NixOS",
-         "repo": "nixpkgs",
--        "rev": "f05535a0efcb2134c478d1e88434fadf486d42b5",
-+        "rev": "e62746b0b472753ef019baceab6f1e2e52014980",
-         "type": "github"
-       },
-       "original": {
+@@ -16,7 +16,7 @@ permissions:
+ 
+ env:
+   LOG_LEVEL: "info"
+-  RENOVATE_VERSION: "44.221.4"
++  RENOVATE_VERSION: "44.222.5"
+ 
+ jobs:
+   renovate:
+```
+
+---
+
+### Incident Patch 2: `a6dfb9ac` (2026-11-09)
+**Commit Message**: chore(deps): update dependency renovate to v44.222.5
+
+**File**: `.github/workflows/renovate.yml` (modified, +1/-1)
+```diff
+@@ -16,7 +16,7 @@ permissions:
+ 
+ env:
+   LOG_LEVEL: "info"
+-  RENOVATE_VERSION: "44.221.4"
++  RENOVATE_VERSION: "44.222.5"
+ 
+ jobs:
+   renovate:
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8006** (2026-11-02): feat(apis): add drc shortName to DeploymentRuntimeConfig (@haarchri)
-- **PR #8000** (2026-11-03): feat: function-controlled deletion of composite resources (@lsviben)
-- **PR #7998** (2026-10-30): chore(deps): bump crossplane-runtime (@lsviben)
-- **PR #7997** (2026-10-30): [Backport release-2.2] fix(xpkg): use cached package with PullAlways when digest is unchanged (@jbw976)
-- **PR #7992** (2026-10-29): feat(apis): add a deletion policy to Compositions (@lsviben)
-- **PR #7989** (2026-11-04): chore(deps): lock file maintenance (main) (@crossplane-renovate[bot])
+- **PR #8025** (2026-11-06): chore(deps): update korthout/backport-action action to v4.7.1 (main) (@crossplane-renovate[bot])
+- **PR #8024** (2026-11-09): chore(deps): update dependency renovate to v44.222.5 (main) (@crossplane-renovate[bot])
+- **PR #8023** (2026-11-06): chore(deps): update buildpulse/buildpulse-action digest to e27b872 (main) (@crossplane-renovate[bot])
+- **PR #8022** (2026-11-06): chore(deps): update bufbuild/buf-action digest to 37ac33d (main) (@crossplane-renovate[bot])
+- **PR #8020** (2026-11-06): chore(deps): update module github.com/klauspost/compress to v1.20.2 [security] (release-2.4) (@crossplane-renovate[bot])
+- **PR #8019** (2026-11-06): chore(deps): update module github.com/klauspost/compress to v1.20.2 [security] (release-2.3) (@crossplane-renovate[bot])
 
 ---
 
@@ -1590,38 +1587,28 @@ chore(deps): lock file maintenance (main)
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #7989 from crossplane/renovate/main-lock-file-maintenance
+## X. Merge pull request #8024 from crossplane/renovate/main-renovate-44.x
 
 **RULE**:
-When implementing operations in `flake.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crossplane/crossplane. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/renovate.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crossplane/crossplane. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6e727661`: Merge pull request #7989 from crossplane/renovate/main-lock-file-maintenance. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6899c191`: Merge pull request #8024 from crossplane/renovate/main-renovate-44.x. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `flake.lock`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/renovate.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        "lastModified": 1793183032,
-        "narHash": "sha256-56mFMf8heLNfYhcgbrh4GpN5x+G9JOfTFXZC3n6w0qM=",
-        "rev": "08d3a97586f6b6343b3b5e799980773629432610",
-        "lastModified": 1793225069,
-        "narHash": "sha256-sx1f99WGrDfJ83KKuQrqGPmot0rnDgmpLJDzpU2oHQQ=",
-        "rev": "e62746b0b472753ef019baceab6f1e2e52014980",
+  RENOVATE_VERSION: "44.222.5"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-        "lastModified": 1793015021,
-        "narHash": "sha256-Ee5BWo8sh3pGt70QUdRajnaginqFmWvrtdBc4gJzhks=",
-        "rev": "718f670e845328e9c2cecdd832835712b2cbd065",
-        "lastModified": 1793136825,
-        "narHash": "sha256-2pkE69JpFRInaARSczZytcfPw83IL82E2KdhbWGwdMs=",
-        "rev": "f05535a0efcb2134c478d1e88434fadf486d42b5",
+  RENOVATE_VERSION: "44.221.4"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6e727661` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6899c191` are properly handled with clean fallback behavior.

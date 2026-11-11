@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md`  
 > **Source**: github ([https://github.com/dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly))  
-> **Source Version**: `932cd18b`  
+> **Source Version**: `77157716`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T09:05:02.208Z  
+> **Timestamp**: 2026-11-10T00:31:58.671Z  
 > **Learning ID**: `learn-github-dragonflydb-dragonfly`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T09:05:02.200Z  
+> **Harvest Timestamp**: 2026-11-10T00:31:57.185Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A modern replacement for Redis and Memcached
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 31844 stars
+- **Stars / Engagement**: 31854 stars
 
 ---
 
@@ -2321,142 +2321,457 @@ class Segment {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `737cfe18` (2026-11-04)
-**Commit Message**: fix(tiering): carry the pending-bytes cap in TieredStats to fix the macOS link (#8745)
+### Incident Patch 1: `77157716` (2026-11-09)
+**Commit Message**: chore(search): Make alter critical path non-yielding (#8764)
 
-tiered_max_pending_bytes is defined in tiered_storage.cc, which is not compiled when WITH_TIERING
-is off (forced for APPLE), but #8122 reads the flag from metrics.cc and server_family.cc, so every
-server binary fails to link on macOS with an undefined _FLAGS_tiered_max_pending_bytes.
+chore(search): Make alter safe for alias consistency
 
-TieredStorage::GetStats() now reports config_.max_pending_bytes in TieredStats::max_pending_bytes,
-operator+= sums it over the shards, and both printers use that sum as the device-usage cap. The
-stub without tiering reports 0, so INFO TIERED and /metrics keep the same fields on every platform
-and the flag stays private to tiered_storage.cc.
+During alter, first cancel the builder while the index is still there,
+and extract it later. So the yield point is done before the extract.
 
-Signed-off-by: Volodymyr Yavdoshenko <[REDACTED_EMAIL]>
+The index and alias definitions are always consistently available in
+this way, we do not yield in a place where index is missing and aliases
+are present, to snapshot code.
 
-**File**: `src/server/metrics.cc` (modified, +1/-4)
+Signed-off-by: Abhijat Malviya <[REDACTED_EMAIL]>
+
+**File**: `src/server/rdb_test.cc` (modified, +38/-0)
 ```diff
-@@ -22,11 +22,9 @@
- #include "server/search/doc_index.h"
- #include "server/server_family.h"
- #include "server/snapshot.h"
--#include "strings/human_readable.h"
- #include "util/fibers/fibers.h"
+@@ -1037,6 +1037,44 @@ TEST_F(RdbTest, SearchAliasesRoundTrip) {
+   expect_aliases(expected_aliases);
+ }
  
- ABSL_DECLARE_FLAG(uint32_t, maxclients);
--ABSL_DECLARE_FLAG(strings::MemoryBytesFlag, tiered_max_pending_bytes);
++TEST_F(RdbTest, SearchAliasAndAlterConsistency) {
++  absl::FlagSaver flags;
++  SetFlag(&FLAGS_num_shards, 1);
++  ResetService();
++
++  ASSERT_EQ(Run({"DEBUG", "POPULATE", "15000", "doc", "32", "TYPE", "HASH", "ELEMENTS", "1"}),
++            "OK");
++
++  // DEBUG POPULATE uses a field and value of 16 'x' characters for these hashes.
++  ASSERT_EQ(Run({"FT.CREATE", "idx", "ON", "HASH", "SCHEMA", string(16, 'x'), "TEXT"}), "OK");
++  ASSERT_EQ(Run({"FT.ALIASADD", "idx-alias", "idx"}), "OK");
++
++  const auto aliases = pp_->at(0)->Await(
++      [&] { return RdbSaver::GetGlobalData(service_.get(), true).search_aliases; });
++  ASSERT_EQ(aliases.size(), 1);
++
++  atomic done{false};
++  bool consistent = true;
++  size_t samples = 0;
++  auto collector = pp_->at(1)->LaunchFiber([&] {
++    while (!done.load(memory_order_relaxed)) {
++      auto data = RdbSaver::GetGlobalData(service_.get(), true);
++      if (data.search_indices.size() != 1 || data.search_aliases != aliases)
++        consistent = false;
++      ++samples;
++    }
++  });
++
++  // Repeatedly restart the build to give metadata collection chances to observe cancellation.
++  for (unsigned i = 0; i < 20; ++i)
++    EXPECT_EQ(Run({"FT.ALTER", "idx", "SCHEMA", "ADD", StrCat("field", i), "TEXT"}), "OK");
++  done.store(true, memory_order_relaxed);
++  collector.Join();
++
++  EXPECT_GT(samples, 0);
++  EXPECT_TRUE(consistent);
++}
++
+ // Users choose names, prefixes, stop words, separators and synonym terms, spaces and tabs included.
+ TEST_F(RdbTest, SearchDefinitionsWithSpacesSurviveReload) {
+   ASSERT_EQ(Run({"FT.CREATE", "my idx", "ON",        "JSON", "PREFIX",    "2",
+```
+
+**File**: `src/server/search/doc_index.h` (modified, +3/-3)
+```diff
+@@ -446,6 +446,9 @@ class ShardDocIndex {
+   // Possibly blocking to stop indexing job
+   ~ShardDocIndex();
+ 
++  // Waits for the builder to stop and may yield.
++  void CancelBuilder();
++
+   // Perform search on all indexed documents and return results.
+   // When global_stats is non-null, scorers see cluster-wide counts.
+   SearchResult Search(const OpArgs& op_args, const SearchParams& params,
+@@ -631,9 +634,6 @@ class ShardDocIndex {
+   // Clears internal data. Traverses all matching documents and assigns ids.
+   void Rebuild(const OpArgs& op_args, PMR_NS::memory_resource* mr, bool is_restored = false);
+ 
+-  // Cancel builder if in progress
+-  void CancelBuilder();
+-
+   using LoadedEntry = std::pair<std::string_view, std::unique_ptr<BaseAccessor>>;
+   std::optional<LoadedEntry> LoadEntry(search::DocId id, const OpArgs& op_args) const;
+ 
+```
+
+**File**: `src/server/search/search_family.cc` (modified, +4/-3)
+```diff
+@@ -2873,11 +2873,12 @@ void CmdFtAlter(CmdArgParser parser, CommandContext* cmd_cntx) {
+   // TODO: Introduce partial rebuild
+   const bool is_journal = cmd_cntx->server_conn_cntx()->journal_emulated;
+   auto upd_cb = [canonical_name, index_info, is_journal](Transaction* tx, EngineShard* es) {
++    auto* index = es->search_indices()->GetIndex(canonical_name);
++    DCHECK(index);
++    index->CancelBuilder();
++
+     unique_ptr<ShardDocIndex> old_index = es->search_indices()->ExtractIndex(canonical_name);
+     Synonyms synonyms = old_index ? old_index->GetSynonyms() : Synonyms{};
+-    // Destroying the old index waits for its builder, so the replacement builder never runs next
+-    // to it on the same global vector index. The old index is already unregistered, so no new
+-    // caller can reach that builder meanwhile.
+     old_index.reset();
+     es->search_indices()->InitIndex(tx->GetOpArgs(es), canonical_name, index_info, is_journal,
+                                     std::move(synonyms));
+```
+
+---
+
+### Incident Patch 2: `8bd35ca2` (2026-11-09)
+**Commit Message**: feat: add slot migration DB index (#8654)
+
+**File**: `docs/cluster-mode.md` (modified, +4/-0)
+```diff
+@@ -366,6 +366,10 @@ Mutations to migrating slots that arrive while the snapshot walk is still runnin
+ streamed as ordinary write commands over the same connection, so the target catches
+ up incrementally with no separate journal channel.
+ 
++Every command keeps the database ID of its source key, and the target creates the
++database if it doesn't exist yet. As in replication, the ID must be below the target's
++`--dbnum`.
++
+ The target executes every decoded command through its normal transaction framework,
+ exactly as if it had arrived from a client. The writes therefore appear on the
+ target's outbound replication stream like any other write, so target-side replicas
+```
+
+**File**: `docs/replication.md` (modified, +13/-3)
+```diff
+@@ -188,6 +188,10 @@ Per shard, starting full sync:
+ - Once all buckets are traversed, the snapshot writes a "full sync cut" marker into the RDB
+   stream.
+ 
++The RDB snapshot preserves logical database IDs with `SELECTDB` opcodes. Each opcode carries a
++database ID and selects the database for subsequent key/value entries, until the next `SELECTDB`.
++The replica loads those entries into the selected database.
++
+ On the replica, each flow feeds its socket into an RDB loader with a callback that decrements a
+ shared counter the first time the cut marker is observed. The replica blocks until every flow has
+ hit its cut - this is how the replica knows the RDB "photo" portion is done on all shards
+@@ -314,12 +318,18 @@ no clean way to leave stable sync; the *only* way out is via an error after canc
+ 
+ ### Wire format & command grouping
+ 
+-Each journal entry carries an opcode (`SELECT`, `EXPIRED`, `COMMAND`, `PING`, `LSN`) plus, for
+-`COMMAND`/`EXPIRED`, a transaction id, database index, and the backed command arguments. The
+-replica turns the raw stream into per-transaction records one at a time and (when tracking LSNs)
++Each journal entry starts with an opcode (`SELECT`, `EXPIRED`, `COMMAND`, `PING`, `LSN`).
++`COMMAND`/`EXPIRED` entries carry a transaction id and command arguments, and use the database
++selected on that flow. The replica reads records in stream order and (when tracking LSNs)
+ cross-checks the LSN opcode's embedded value against its own running counter, logging (not
+ failing) on mismatch.
+ 
++Each journal flow maintains its own selected database. A `SELECT` record carries a database ID
++and sets the database for subsequent commands, until the next `SELECT` record. The master sends
++a selection record before the first command and whenever its database changes. The replica
++replays commands in the selected database. These records also preserve database selection during
++partial sync and for journal data embedded in full-sync snapshots.
++
+ Multi-shard transactions (global commands `FLUSHALL`/`FLUSHDB`/`DFLYCLUSTER FLUSHSLOTS`, and
+ ordinary cross-shard multi-commands identified by a shared transaction id) are re-synchronized
+ across flow workers: each flow inserts its transaction id into a shared map and waits until all
+```
+
+**File**: `docs/shard-serialization.md` (modified, +1/-1)
+```diff
+@@ -235,7 +235,7 @@ it and miss the bucket entirely.
+ 
+ `SerializeBucket` (in `serializer_base.cc`) iterates the occupied slots of a physical bucket and
+ calls `SerializeEntry` for each entry accepted by the virtual `ShouldSerialize` hook (all entries
+-by default; slot migration keeps db 0 and its owned slots). No lock is held for the whole bucket:
++by default; slot migration keeps its owned slots in every db). No lock is held for the whole bucket:
+ `SerializeEntry` takes `stream_mu_` per entry.
+ 
+ `SerializeEntry` (in `serializer_base.cc`) dispatches based on value location:
+```
+
+**File**: `src/server/cluster/cluster_family_test.cc` (modified, +1/-1)
+```diff
+@@ -1532,7 +1532,7 @@ TEST_F(ClusterFamilyTest, FlushSlotsNonDefaultDb) {
+     ASSERT_TRUE(res.ok());
+     EXPECT_TRUE(res->is_new);
+ 
+-    util::ThisFiber::SleepFor(50ms);  // let the flush fiber finish
++    ASSERT_TRUE(WaitUntilCondition([&] { return !db_slice.HasRegisteredCallbacks(); }, 1s));
+ 
+     // Only the entry written after FlushSlots stays.
+     EXPECT_EQ(db_slice.DbSize(1), 1u);
+```
+
+**File**: `src/server/cluster/incoming_slot_migration.cc` (modified, +11/-7)
+```diff
+@@ -169,19 +169,23 @@ class ClusterShardMigration {
+       return {};
+     }
+ 
++    std::string error;
+     if (!tx_data.IsGlobalCmd()) {
+       facade::DispatchResult res = executor_.Execute(tx_data.dbid, tx_data.command);
+-      return res == facade::DispatchResult::OOM ? make_error_code(errc::not_enough_memory)
+-                                                : error_code();
++      if (res == facade::DispatchResult::OK)
++        return {};
++      if (res == facade::DispatchResult::OOM)
++        return make_error_code(errc::not_enough_memory);
++      error = absl::StrCat("Failed to replay migration command in db ", tx_data.dbid);
+     } else {
+       // TODO check which global commands should be supported
+-      std::string error = absl::StrCat("We don't support command: ", tx_data.command[0],
+-                                       " in cluster migration process.");
+-      LOG(ERROR) << error;
+-      cntx->ReportError(error);
+-      in_migration_->ReportError(error);
++      error = absl::StrCat("We don't support command: ", tx_data.command[0],
++                           " in cluster migration process.");
+     }
+ 
++    LOG(ERROR) << error;
++    cntx->ReportError(error);
++    in_migration_->ReportError(error);
+     return {};
+   }
+ 
+```
+
+**File**: `src/server/journal/cmd_serializer.cc` (modified, +32/-30)
+```diff
+@@ -76,32 +76,32 @@ CmdSerializer::CmdSerializer(FlushSerialized cb, size_t max_serialization_buffer
+   serializer_ = std::make_unique<RdbSerializer>(GetDefaultCompressionMode());
+ }
+ 
+-size_t CmdSerializer::SerializeEntry(string_view key, const PrimeKey& pk, const PrimeValue& pv,
+-                                     uint64_t expire_ms) {
++size_t CmdSerializer::SerializeEntry(DbIndex db_index, string_view key, const PrimeKey& pk,
++                                     const PrimeValue& pv, uint64_t expire_ms) {
+   DCHECK(!pv.IsExternal());  // Delayed entries are handled separately
+ 
+   // We send RESTORE commands objects we don't support breaking.
+   bool use_restore_serialization = true;
+   size_t commands = 1;
+   switch (pv.ObjType()) {
+     case OBJ_SET:
+-      commands = SerializeSet(key, pv);
++      commands = SerializeSet(db_index, key, pv);
+       use_restore_serialization = false;
+       break;
+     case OBJ_ZSET:
+-      commands = SerializeZSet(key, pv);
++      commands = SerializeZSet(db_index, key, pv);
+       use_restore_serialization = false;
+       break;
+     case OBJ_HASH:
+-      commands = SerializeHash(key, pv);
++      commands = SerializeHash(db_index, key, pv);
+       use_restore_serialization = false;
+       break;
+     case OBJ_LIST:
+-      commands = SerializeList(key, pv);
++      commands = SerializeList(db_index, key, pv);
+       use_restore_serialization = false;
+       break;
+     case OBJ_STRING:
+-      commands = SerializeString(key, pv, expire_ms);
++      commands = SerializeString(db_index, key, pv, expire_ms);
+       use_restore_serialization = false;
+       // reset expire_ms to skip it in SerializeExpireIfNeeded
+       expire_ms = 0;
+@@ -117,18 +117,19 @@ size_t CmdSerializer::SerializeEntry(string_view key, const PrimeKey& pk, const
+ 
+   if (use_restore_serialization) {
+     // RESTORE sets STICK and EXPIRE as part of the command.
+-    SerializeRestore(key, pk, pv, expire_ms);
++    SerializeRestore(db_index, key, pk, pv, expire_ms);
+   } else {
+-    SerializeStickIfNeeded(key, pk);
+-    SerializeExpireIfNeeded(key, expire_ms);
++    SerializeStickIfNeeded(db_index, key, pk);
++    SerializeExpireIfNeeded(db_index, key, expire_ms);
+   }
+   return commands;
+ }
+ 
+-void CmdSerializer::SerializeCommand(string_view cmd, absl::Span<const string_view> args) {
++void CmdSerializer::SerializeCommand(DbIndex db_index, string_view cmd,
++                                     absl::Span<const string_view> args) {
+   journal::Entry entry(0,                     // txid
+                        journal::Op::COMMAND,  // single command
+-                       0,                     // db index
++                       db_index,              // db index
+                        0,                     // slot-id, but it is ignored at this level
+                        journal::Entry::Payload(cmd, ArgSlice(args)));
+ 
+@@ -140,30 +141,30 @@ void CmdSerializer::SerializeCommand(string_view cmd, absl::Span<const string_vi
+   cb_(std::move(cmd_sink).str());
+ }
+ 
+-void CmdSerializer::SerializeStickIfNeeded(string_view key, const PrimeKey& pk) {
++void CmdSerializer::SerializeStickIfNeeded(DbIndex db_index, string_view key, const PrimeKey& pk) {
+   if (!pk.IsSticky()) {
+     return;
+   }
+ 
+-  SerializeCommand("STICK", {key});
++  SerializeCommand(db_index, "STICK", {key});
+ }
+ 
+-void CmdSerializer::SerializeExpireIfNeeded(string_view key, uint64_t expire_ms) {
++void CmdSerializer::SerializeExpireIfNeeded(DbIndex db_index, string_view key, uint64_t expire_ms) {
+   if (expire_ms == 0) {
+     return;
+   }
+ 
+-  SerializeCommand("PEXPIREAT", {key, absl::StrCat(expire_ms)});
++  SerializeCommand(db_index, "PEXPIREAT", {key, absl::StrCat(expire_ms)});
+ }
+ 
+-size_t CmdSerializer::SerializeSet(string_view key, const PrimeValue& pv) {
++size_t CmdSerializer::SerializeSet(DbIndex db_index, string_view key, const PrimeValue& pv) {
+   // Disable lazy expiry during serialization (same as rdb_save.cc).
+   // We are called under bucket lock so DeleteIfEmpty is not possible.
+   const uint32_t prev_time = pv.MemberTime();
+   pv.SetMemberTime(0);
+ 
+   CommandAggregator aggregator(
+-      key, [&](absl::Span<const string_view> args) { SerializeCommand("SADD", args); },
++      key, [&](absl::Span<const string_view> args) { SerializeCommand(db_index, "SADD", args); },
+       max_serialization_buffer_size_);
+ 
+   size_t commands = 0;
+@@ -181,9 +182,9 @@ size_t CmdSerializer::SerializeSet(string_view key, const PrimeValue& pv) {
+   return commands;
+ }
+ 
+-size_t CmdSerializer::SerializeZSet(string_view key, const PrimeValue& pv) {
++size_t CmdSerializer::SerializeZSet(DbIndex db_index, string_view key, const PrimeValue& pv) {
+   CommandAggregator aggregator(
+-      key, [&](absl::Span<const string_view> args) { SerializeCommand("ZADD", args); },
++      key, [&](absl::Span<const string_view> args) { SerializeCommand(db_index, "ZADD", args); },
+       max_serialization_buffer_size_);
+ 
+   size_t commands = 0;
+@@ -198,13 +199,13 @@ size_t
+```
+
+**File**: `src/server/journal/cmd_serializer.h` (modified, +15/-13)
+```diff
+@@ -28,21 +28,23 @@ class CmdSerializer {
+   explicit CmdSerializer(FlushSerialized cb, size_t max_serialization_buffer_size);
+ 
+   // Returns how many commands we broke this entry into (like multiple HSETs etc)
+-  size_t SerializeEntry(std::string_view key, const PrimeKey& pk, const PrimeValue& pv,
+-                        uint64_t expire_ms);
++  size_t SerializeEntry(DbIndex db_index, std::string_view key, const PrimeKey& pk,
++                        const PrimeValue& pv, uint64_t expire_ms);
+ 
+  private:
+-  void SerializeCommand(std::string_view cmd, absl::Span<const std::string_view> args);
+-  void SerializeStickIfNeeded(std::string_view key, const PrimeKey& pk);
+-  void SerializeExpireIfNeeded(std::string_view key, uint64_t expire_ms);
+-
+-  size_t SerializeSet(std::string_view key, const PrimeValue& pv);
+-  size_t SerializeZSet(std::string_view key, const PrimeValue& pv);
+-  size_t SerializeHash(std::string_view key, const PrimeValue& pv);
+-  size_t SerializeList(std::string_view key, const PrimeValue& pv);
+-  size_t SerializeString(std::string_view key, const PrimeValue& pv, uint64_t expire_ms);
+-  void SerializeRestore(std::string_view key, const PrimeKey& pk, const PrimeValue& pv,
+-                        uint64_t expire_ms);
++  void SerializeCommand(DbIndex db_index, std::string_view cmd,
++                        absl::Span<const std::string_view> args);
++  void SerializeStickIfNeeded(DbIndex db_index, std::string_view key, const PrimeKey& pk);
++  void SerializeExpireIfNeeded(DbIndex db_index, std::string_view key, uint64_t expire_ms);
++
++  size_t SerializeSet(DbIndex db_index, std::string_view key, const PrimeValue& pv);
++  size_t SerializeZSet(DbIndex db_index, std::string_view key, const PrimeValue& pv);
++  size_t SerializeHash(DbIndex db_index, std::string_view key, const PrimeValue& pv);
++  size_t SerializeList(DbIndex db_index, std::string_view key, const PrimeValue& pv);
++  size_t SerializeString(DbIndex db_index, std::string_view key, const PrimeValue& pv,
++                         uint64_t expire_ms);
++  void SerializeRestore(DbIndex db_index, std::string_view key, const PrimeKey& pk,
++                        const PrimeValue& pv, uint64_t expire_ms);
+ 
+   FlushSerialized cb_;
+   size_t max_serialization_buffer_size_;
+```
+
+**File**: `src/server/journal/executor.cc` (modified, +16/-10)
+```diff
+@@ -10,12 +10,18 @@
+ #include <algorithm>
+ #include <memory>
+ 
++#include "base/flags.h"
+ #include "base/logging.h"
+ #include "facade/reply_capture.h"
+ #include "facade/service_interface.h"
++#include "server/db_slice.h"
++#include "server/engine_shard.h"
++#include "server/engine_shard_set.h"
+ #include "server/main_service.h"
+ #include "server/namespaces.h"
+ 
++ABSL_DECLARE_FLAG(uint32_t, dbnum);
++
+ using namespace std;
  
  namespace dfly {
+@@ -44,6 +50,11 @@ JournalExecutor::~JournalExecutor() {
+ }
  
-@@ -801,8 +799,7 @@ void Metrics::Print(uint64_t uptime, const CommandRegistry* registry, DflyCmd* d
-     AppendMetricWithoutLabels("tiered_clients_throttled", "Currently throttled clients",
-                               m.tiered_stats.clients_throttled, MetricType::GAUGE, &resp->body());
-     // Device pressure: in-flight IO bytes as a percentage of the aggregate
--    const uint64_t per_shard_cap = GetFlag(FLAGS_tiered_max_pending_bytes).value;
--    const uint64_t total_cap = per_shard_cap * shard_set->size();
-+    const uint64_t total_cap = m.tiered_stats.max_pending_bytes;
-     const uint64_t read_pct = total_cap ? (m.tiered_stats.pending_read_bytes * 100) / total_cap : 0;
-     const uint64_t write_pct =
-         total_cap ? (m.tiered_stats.pending_stash_bytes * 100) / total_cap : 0;
-```
-
-**File**: `src/server/server_family.cc` (modified, +1/-3)
-```diff
-@@ -171,7 +171,6 @@ ABSL_FLAG(bool, replicaof_no_one_start_journal, true,
- 
- ABSL_DECLARE_FLAG(int32_t, port);
- ABSL_DECLARE_FLAG(std::string, notify_keyspace_events);
--ABSL_DECLARE_FLAG(strings::MemoryBytesFlag, tiered_max_pending_bytes);
- ABSL_DECLARE_FLAG(bool, cache_mode);
- ABSL_DECLARE_FLAG(int32_t, hz);
- ABSL_DECLARE_FLAG(bool, experimental_cascaded_partial_sync);
-@@ -3230,8 +3229,7 @@ string ServerFamily::FormatInfoMetrics(
-     // tiered_max_pending_bytes cap. Read + write usage is exported separately (reads are the
-     // priority traffic; writes yield to total pressure) plus their sum. >= 100 means the device is
-     // at/over its cap.
--    const uint64_t per_shard_cap = absl::GetFlag(FLAGS_tiered_max_pending_bytes).value;
--    const uint64_t total_cap = per_shard_cap * shard_set->size();
-+    const uint64_t total_cap = m.tiered_stats.max_pending_bytes;
-     const uint64_t read_pct = total_cap ? (m.tiered_stats.pending_read_bytes * 100) / total_cap : 0;
-     const uint64_t write_pct =
-         total_cap ? (m.tiered_stats.pending_stash_bytes * 100) / total_cap : 0;
-```
-
-**File**: `src/server/stats.cc` (modified, +2/-1)
-```diff
-@@ -12,7 +12,7 @@ namespace dfly {
- #define UMAX(x) (x) = std::max((x), o.x)
- 
- TieredStats& TieredStats::operator+=(const TieredStats& o) {
--  static_assert(sizeof(TieredStats) == 256);
-+  static_assert(sizeof(TieredStats) == 264);
- 
-   ADD(total_stashes);
-   ADD(total_fetches);
-@@ -43,6 +43,7 @@ TieredStats& TieredStats::operator+=(const TieredStats& o) {
-   ADD(total_stash_overflows);
-   ADD(cold_storage_bytes);
-   ADD(pending_stash_bytes);
-+  ADD(max_pending_bytes);
-   ADD(total_offloading_usec);
-   ADD(total_defrag_usec);
-   ADD(total_offloading_stashes);
-```
-
-**File**: `src/server/stats.h` (modified, +3/-0)
-```diff
-@@ -102,6 +102,9 @@ struct TieredStats {
-   // Bytes currently in-flight to disk (submitted stash IOs not yet completed).
-   size_t pending_stash_bytes = 0;
- 
-+  // Sum of the per-shard tiered_max_pending_bytes caps; 0 when tiering is off.
-+  size_t max_pending_bytes = 0;
+ facade::DispatchResult JournalExecutor::Execute(DbIndex dbid, journal::ParsedEntry::CmdData& cmd) {
++  if (dbid >= absl::GetFlag(FLAGS_dbnum)) {
++    LOG(ERROR) << "Database index out of range in journal: " << dbid;
++    return facade::DispatchResult::ERROR;
++  }
 +
-   // Current number of throttled clients.
-   uint64_t clients_throttled = 0;
+   SelectDb(dbid);
+   CommandContext cntx_cmd;
+   cntx_cmd.Init(reply_builder_.get(), &conn_context_);
+@@ -78,18 +89,13 @@ void JournalExecutor::SelectDb(DbIndex dbid) {
+     ensured_dbs_.resize(dbid + 1);
  
-```
-
-**File**: `src/server/tiered_storage.cc` (modified, +1/-0)
-```diff
-@@ -690,6 +690,7 @@ TieredStats TieredStorage::GetStats() const {
-     stats.estimated_bin_bucket_fragmentation = stats_.estimated_bin_bucket_fragmentation;
-     stats.clients_throttled = stash_backpressure_.size();
-     stats.total_clients_throttled = stats_.total_clients_throttled;
-+    stats.max_pending_bytes = config_.max_pending_bytes;
+   if (!ensured_dbs_[dbid]) {
+-    CommandContext cmd;
+-
+-    cmd.Init(reply_builder_.get(), &conn_context_);
+-    BuildFromParts(&cmd, "SELECT", dbid);
+-    facade::DispatchResult result = Execute(&cmd);
+-    if (result != facade::DispatchResult::OK) {
+-      LOG(DFATAL) << "Failed to select DB: " << dbid;
+-    }
++    // Journal replay can target nonzero databases even when client SELECT is disabled.
++    shard_set->RunBriefInParallel([ns = conn_context_.ns, dbid](EngineShard* shard) {
++      ns->GetDbSlice(shard->shard_id()).ActivateDb(dbid);
++    });
+     ensured_dbs_[dbid] = true;
+-  } else {
+-    conn_context_.conn_state.db_index = dbid;
    }
-   return stats;
- }
-```
-
-**File**: `src/server/tiered_storage_test.cc` (modified, +2/-0)
-```diff
-@@ -718,6 +718,7 @@ TEST_F(PureDiskTSMTTest, SortByGetOffloadedSquashed) {
-   EXPECT_TRUE(GetMetrics().facade_stats.reply_stats.err_count.empty());  // RunMany drops replies
-   EXPECT_THAT(Run({"LRANGE", "dst", "0", "-1"}), RespElementsAre(o1, o2));
-   EXPECT_EQ(GetMetrics().db_stats[0].tiered_entries, 4u);
-+  EXPECT_EQ(GetMetrics().tiered_stats.max_pending_bytes, 32_MB * shard_set->size());
++  conn_context_.conn_state.db_index = dbid;
  }
  
- // The remaining in-place overwrite paths reach the value through DbSlice::AddOrFind and retype it,
-@@ -892,6 +893,7 @@ TEST_F(PureDiskTSTest, ThrottleClients) {
-   // Check that we provided backpressure for all the clients.
-   auto metrics = GetMetrics();
-   EXPECT_EQ(metrics.tiered_stats.total_clients_throttled, fibs.size());
-+  EXPECT_EQ(metrics.tiered_stats.max_pending_bytes, 1u * shard_set->size());
- 
-   for (auto& fib : fibs)
-     fib.JoinIfNeeded();
+ }  // namespace dfly
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8748** (2026-11-04): ci(release): reject tags that are not vMAJOR.MINOR.PATCH (@romange)
-- **PR #8745** (2026-11-04): fix(tiering): carry the pending-bytes cap in TieredStats to fix the macOS link (@vyavdoshenko)
-- **PR #8743** (2026-11-04): chore(ci): move the sanitizer build from PR checks to daily builds (@vyavdoshenko)
-- **PR #8741** (2026-11-04): fix(server): Unify key expiry capping and fix GETEX replies (@vyavdoshenko)
-- **PR #8740** (2026-11-04): feat(metrics): export snapshot and replica disconnect counters (@romange)
-- **PR #8739** (2026-11-03): chore: Switch license to Dragonfly Source Available License (DSAL) (@romange)
+- **PR #8775** (2026-11-08): fix(ci): update chart-testing and add Silo download fallback (@vyavdoshenko)
+- **PR #8772** (2026-11-07): fix: remove unused code and obsolete test helpers (@vyavdoshenko)
+- **PR #8770** (2026-11-07): test: make the CLIENT KILL stuck-send regression test portable (macOS fix) (@vyavdoshenko)
+- **PR #8764** (2026-11-09): chore(search): Make alter critical path non-yielding (@abhijat)
+- **PR #8763** (2026-11-06): fix: resolve sanitizer UB and extend nightly test timeouts (@vyavdoshenko)
+- **PR #8761** (2026-11-06): test: fix queued sink writer tests on libc++ (macOS) (@vyavdoshenko)
 
 ---
 
@@ -2476,31 +2791,58 @@ Signed-off-by: Volodymyr Yavdoshenko <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tiering): carry the pending-bytes cap in TieredStats to fix the macOS link (#874
+## X. search): Make alter critical path non-yielding (#8764)
 
 **RULE**:
-When implementing operations in `src/server/metrics.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflydb/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/server/rdb_test.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflydb/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `737cfe18`: tiering): carry the pending-bytes cap in TieredStats to fix the macOS link (#8745). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `77157716`: search): Make alter critical path non-yielding (#8764). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/server/metrics.cc`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/server/rdb_test.cc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-    const uint64_t total_cap = m.tiered_stats.max_pending_bytes;
+TEST_F(RdbTest, SearchAliasAndAlterConsistency) {
+  absl::FlagSaver flags;
+  SetFlag(&FLAGS_num_shards, 1);
+  ResetService();
+
+  ASSERT_EQ(Run({"DEBUG", "POPULATE", "15000", "doc", "32", "TYPE", "HASH", "ELEMENTS", "1"}),
+            "OK");
+
+  // DEBUG POPULATE uses a field and value of 16 'x' characters for these hashes.
+  ASSERT_EQ(Run({"FT.CREATE", "idx", "ON", "HASH", "SCHEMA", string(16, 'x'), "TEXT"}), "OK");
+  ASSERT_EQ(Run({"FT.ALIASADD", "idx-alias", "idx"}), "OK");
+
+  const auto aliases = pp_->at(0)->Await(
+      [&] { return RdbSaver::GetGlobalData(service_.get(), true).search_aliases; });
+  ASSERT_EQ(aliases.size(), 1);
+
+  atomic done{false};
+  bool consistent = true;
+  size_t samples = 0;
+  auto collector = pp_->at(1)->LaunchFiber([&] {
+    while (!done.load(memory_order_relaxed)) {
+      auto data = RdbSaver::GetGlobalData(service_.get(), true);
+      if (data.search_indices.size() != 1 || data.search_aliases != aliases)
+        consistent = false;
+      ++samples;
+    }
+  });
+
+  // Repeatedly restart the build to give metadata collection chances to observe cancellation.
+  for (unsigned i = 0; i < 20; ++i)
+    EXPECT_EQ(Run({"FT.ALTER", "idx", "SCHEMA", "ADD", StrCat(
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-#include "strings/human_readable.h"
-ABSL_DECLARE_FLAG(strings::MemoryBytesFlag, tiered_max_pending_bytes);
-    const uint64_t per_shard_cap = GetFlag(FLAGS_tiered_max_pending_bytes).value;
-    const uint64_t total_cap = per_shard_cap * shard_set->size();
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `737cfe18` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `77157716` are properly handled with clean fallback behavior.

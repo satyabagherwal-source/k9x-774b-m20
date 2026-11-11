@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tanstack-router-learnings.md`  
 > **Source**: github ([https://github.com/TanStack/router](https://github.com/TanStack/router))  
-> **Source Version**: `c5320d7c`  
+> **Source Version**: `7dbce080`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T20:32:00.860Z  
+> **Timestamp**: 2026-11-08T07:08:52.457Z  
 > **Learning ID**: `learn-github-tanstack-router`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tanstack-router-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/TanStack/router](https://github.com/TanStack/router))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T20:32:00.855Z  
+> **Harvest Timestamp**: 2026-11-08T07:08:52.448Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🤖 A client-first, server-capable, fully type-safe router and full-stack framework for the web (React and more).
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 15281 stars
+- **Stars / Engagement**: 15289 stars
 
 ---
 
@@ -684,663 +684,346 @@ export const apiHandlers = [
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c5320d7c` (2026-11-04)
-**Commit Message**: fix(start-plugin-core): define TSS_SHELL in Rsbuild dev for SPA mode (#8805)
+### Incident Patch 1: `bbf9b758` (2026-11-08)
+**Commit Message**: fix(router-devtools-core): restore embedded panel styling (#8888)
 
-* fix(start-plugin-core): define TSS_SHELL in Rsbuild dev for SPA mode
+* fix(router-devtools-core): restore embedded panel styling
 
-In Rsbuild dev mode, `source.define` now sets `process.env.TSS_SHELL` and `import.meta.env.TSS_SHELL` from `startConfig.spa?.enabled` (`"true"` when SPA mode is enabled, `"false"` otherwise). Before this, Rsbuild dev never defined `TSS_SHELL`, so with `spa: { enabled: true }` it server-rendered the matched route and ran its loader on the server instead of serving only the shell. Build and preview are unchanged: the define is added only when `isDev` is true.
+All devtools size tokens are `calc(var(--tsrd-font-size) * n)`, but only the
+floating devtools set `--tsrd-font-size` (via JS). The embedded
+TanStackRouterDevtoolsPanel never had it defined, so every size declaration
+was dropped: inherited font sizes, zero padding/gap/indentation and invisible
+route status dots. Regressed in #1222 (v1.17.0).
 
-Changes:
-- `packages/start-plugin-core/src/rsbuild/plugin.ts`: add the dev-only `TSS_SHELL` defines to the Rsbuild define block.
-- `packages/start-plugin-core/tests/rsbuild/spa-shell-define.test.ts`: new test that calls the plugin's `modifyRsbuildConfig` hook. It checks that `TSS_SHELL` is `"true"` in dev with SPA enabled, `"false"` in dev without SPA, and not defined in build.
-- `.changeset/rsbuild-spa-dev-shell.md`: patch changeset for `@tanstack/start-plugin-core`.
-
-Fixes #8543
-
-Signed-off-by: Pujitha Paladugu <[REDACTED_EMAIL]>
-Assisted-by: claude-sonnet-5-5 (via Claude Code)
-
-
-**File**: `.changeset/rsbuild-spa-dev-shell.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+'@tanstack/start-plugin-core': patch
-+---
-+
-+With `spa.enabled`, the Rsbuild dev server answers the SPA shell, as Vite's dev server does, instead of rendering the route and running its loaders on the server.
-```
-
-**File**: `e2e/react-start/basic/package.json` (modified, +28/-0)
-```diff
-@@ -50,6 +50,18 @@
-     "zod": "^4.4.3"
-   },
-   "nx": {
-+    "targets": {
-+      "test:e2e--vite-spa--dev": {
-+        "dependsOn": [
-+          "^build"
-+        ]
-+      },
-+      "test:e2e--rsbuild-spa--dev": {
-+        "dependsOn": [
-+          "^build"
-+        ]
-+      }
-+    },
-     "metadata": {
-       "playwrightModes": [
-         {
-@@ -60,6 +72,14 @@
-           "toolchain": "vite",
-           "mode": "spa"
-         },
-+        {
-+          "toolchain": "vite",
-+          "mode": "spa",
-+          "name": "dev",
-+          "env": {
-+            "E2E_DEV_SERVER": "true"
-+          }
-+        },
-         {
-           "toolchain": "vite",
-           "mode": "prerender",
-@@ -87,6 +107,14 @@
-           "toolchain": "rsbuild",
-           "mode": "spa"
-         },
-+        {
-+          "toolchain": "rsbuild",
-+          "mode": "spa",
-+          "name": "dev",
-+          "env": {
-+            "E2E_DEV_SERVER": "true"
-+          }
-+        },
-         {
-           "toolchain": "rsbuild",
-           "mode": "prerender",
-```
-
-**File**: `e2e/react-start/basic/playwright.config.ts` (modified, +17/-1)
-```diff
-@@ -5,19 +5,35 @@ const mode = process.env.MODE ?? 'ssr'
- const toolchain = process.env.E2E_TOOLCHAIN ?? 'vite'
- 
- const distDir = process.env.E2E_DIST_DIR ?? 'dist'
-+// The dev runs start the dev server and run only the SPA shell spec
-+const devServer = process.env.E2E_DEV_SERVER === 'true'
- 
- const PORT = Number(process.env.E2E_APP_PORT ?? 0)
- const baseURL = `http://localhost:${PORT}`
- const previewCommand =
-   toolchain === 'rsbuild'
-     ? `pnpm preview:rsbuild --host 0.0.0.0 --port ${PORT}`
-     : `pnpm preview --host 0.0.0.0 --outDir ${distDir} --port ${PORT}`
--const commandByMode = mode === 'preview' ? previewCommand : 'pnpm start'
-+const devCommand =
-+  toolchain === 'rsbuild'
-+    ? `pnpm dev:rsbuild --port ${PORT}`
-+    : `pnpm dev:vite --port ${PORT}`
-+const commandByMode = devServer
-+  ? devCommand
-+  : mode === 'preview'
-+    ? previewCommand
-+    : 'pnpm start'
- /**
-  * See https://playwright.dev/docs/test-configuration.
-  */
- export default defineConfig({
-   testDir: './tests',
-+  ...(devServer
-+    ? {
-+        testMatch: 'spa-shell.spec.ts',
-+        globalSetup: './tests/setup/dev-server.setup.ts',
-+      }
-+    : {}),
-   workers: 1,
-   reporter: [['line']],
- 
-```
-
-**File**: `e2e/react-start/basic/tests/setup/dev-server.setup.ts` (added, +19/-0)
-```diff
-@@ -0,0 +1,19 @@
-+import { preOptimizeDevServer, waitForServer } from '@tanstack/router-e2e-utils'
-+
-+export default async function setup() {
-+  const port = Number(process.env.E2E_APP_PORT ?? 0)
-+  const baseURL = `http://localhost:${port}`
-+
-+  await waitForServer(baseURL)
-+  await preOptimizeDevServer({
-+    baseURL,
-+    warmup: async (page) => {
-+      await page.getByRole('heading').getByText('Welcome Home').waitFor()
-+      await page.goto(`${baseURL}/specialChars/search?searchParam=warmup`)
-+      await page.getByTestId('special-search-loaded-info').waitFor()
-+      await page.goto(`${baseURL}/posts`)
-+      await page.getByRole('link', { name: 'sunt aut facere repe' }).waitFor()
-+      await page.waitForLoadState('networkidle')
-+    },
-+  })
-+}
-```
-
-**File**: `e2e/react-start/basic/tests/spa-shell.spec.ts` (added, +53/-0)
-```diff
-@@ -0,0 +1,53 @@
-+import { expect } from '@playwright/test'
-+import { test } from '@tanstack/router-e2e-utils'
-+import { isSpaMode } from './utils/isSpaMode'
-+
-+// The prod SPA run and the dev SPA runs (`E2E_DEV_SERVER`) all run this file.
-+// The dev runs run nothing else.
-+test.skip(!isSpaMode, 'only SPA mode answers documents with the shell')
-+
-+// Its loader and beforeLoad report where they ran.
-+const searchRoute = '/specialChars/search?searchParam=shell'
-+
-+test('a document request gets the shell, not the rendered route', async ({
-+  request,
-+}) => {
-+  const response = await request.get(searchRoute)
-+
-+  expect(response.status()).toBe(200)
-+  const html = await response.text()
-+  // The root route's document renders...
-+  expect(html).toContain('This Route Does Not Exist')
-+  // ...but not the matched route, nor its loader's output.
-+  expect(html).not.toContain('special-search-loaded-info')
-+  expect(html).not.toContain('Loaded on: server')
-+})
-+
-+test('the route loads in the browser', async ({ page }) => {
-+  await page.goto(searchRoute)
-+
-+  await expect(page.getByTestId('special-search-loaded-info')).toHaveText(
-+    'Loaded on: client',
-+  )
-+  await expect(page.getByTestId('special-search-before-load-info')).toHaveText(
-+    'Before load on: client',
-+  )
-+  await expect(page.getByTestId('special-search-param')).toHaveText('shell')
-+})
-+
-+test('client navigation works from the shell', async ({ page }) => {
-+  await page.goto('/')
-+  await expect(page.getByRole('heading')).toContainText('Welcome Home')
-+  await expect(page.getByTestId('router-status')).toHaveText('idle')
-+
-+  // A full page load would drop this.
-+  await page.evaluate(() => {
-+    ;(window as any).__spaShellPage = true
-+  })
-+  await page.getByRole('link', { name: 'Posts' }).click()
-+  await page.waitForURL('/posts')
-+  await expect(
-+    page.getByRole('link', { name: 'sunt aut facere repe' }),
-+  ).toBeVisible()
-+  expect(await page.evaluate(() => (window as any).__spaShellPage)).toBe(true)
-+})
-```
-
-**File**: `packages/start-plugin-core/src/rsbuild/plugin.ts` (modified, +12/-0)
-```diff
-@@ -210,6 +210,18 @@ export function tanStackStartRsbuild(
-               'process.env.TSS_ROUTER_BASEPATH': JSON.stringify(routerBasepath),
-               'import.meta.env.TSS_ROUTER_BASEPATH':
-                 JSON.stringify(routerBasepath),
-+              // In dev, SPA mode answers the shell (as Vite's dev server);
-+              // a build leaves it to the prerendered shell (#8543)
-+              ...(isDev
-+                ? {
-+                    'process.env.TSS_SHELL': JSON.stringify(
-+                      startConfig.spa?.enabled ? 'true' : 'false',
-+                    ),
-+                    'import.meta.env.TSS_SHELL': JSON.stringify(
-+                      startConfig.spa?.enabled ? 'true' : 'false',
-+                    ),
-+                  }
-+                : {}),
-               'process.env.TSS_DEV_SERVER': JSON.stringify(
-                 isDev ? 'true' : 'false',
-               ),
-```
-
----
-
-### Incident Patch 2: `545a8d37` (2026-11-04)
-**Commit Message**: fix(start-plugin-core): require exsolve ^1.1.3, and see new entry files after a dev server restart (#8871)
-
-* fix(start-plugin-core): require exsolve ^1.1.3 and bypass its cache for entry lookups
-
-exsolve caches a failed `try: true` lookup as an Error in its
-process-wide cache. Before 1.1.2 that Error kept its call sites, and
-with them its callers, alive for the life of the process (unjs/exsolve#63),
-so each build in one process left its objects behind. Require ^1.1.3.
-
-The cache also kept misses: Start looks up its optional entries
-(`src/start.ts`, `src/client.tsx`, `src/server.ts`) once per plugin
-instance, and a dev server restart got the cached miss for an entry
-created since. Entry lookups now pass `cache: false`.
-
-From #8817.
+Fall back to `1rem` when the variable is unset. Floating behavior is unchanged.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* docs(changeset): narrow the exsolve memory claim
+* test(react-router): read devtools mode from a validated search param
 
-exsolve still caches lookups, and other packages in an app's build (for
-example Nitro, which bundles an older exsolve) share its process-wide
-cache. Say what the bump fixes: Start's cached failed lookups no longer
-keep each build's objects alive.
+Use root route validateSearch + useSearch instead of raw URLSearchParams,
+and render the shadow DOM panel through a portal instead of mounting the
+whole app in a shadow root.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* test(react-router): validate devtools search param with zod
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* test(react-router): add links to switch devtools variants
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ---------
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED
-
-**File**: `.changeset/start-plugin-core-exsolve.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+'@tanstack/start-plugin-core': patch
-+---
-+
-+Require `exsolve` `^1.1.3`: a failed lookup that exsolve caches no longer keeps its callers alive, so Start's cached failed lookups no longer hold on to each build's objects. Entry lookups bypass exsolve's process-wide cache, so a dev server restart finds an entry file (such as `src/start.ts`) created since.
-```
-
-**File**: `packages/start-plugin-core/package.json` (modified, +1/-1)
-```diff
-@@ -117,7 +117,7 @@
-     "@tanstack/router-plugin": "workspace:*",
-     "@tanstack/router-utils": "workspace:*",
-     "@tanstack/start-server-core": "workspace:*",
--    "exsolve": "^1.1.1",
-+    "exsolve": "^1.1.3",
-     "lightningcss": "^1.33.0",
-     "pathe": "catalog:",
-     "picomatch": "^4.0.7",
-```
-
-**File**: `packages/start-plugin-core/src/resolve-entries.ts` (modified, +4/-0)
-```diff
-@@ -13,6 +13,10 @@ function resolveModule(opts: ResolveModuleOptions): string | undefined {
-     from: opts.from,
-     extensions: ['.ts', '.js', '.mts', '.mjs', '.tsx', '.jsx'],
-     try: true,
-+    // exsolve's default cache is process-wide and keeps misses: a dev server
-+    // restart would not see an entry created since. The plugin already
-+    // resolves the entries once per instance.
-+    cache: false,
-   })
- }
- 
-```
-
-**File**: `packages/start-plugin-core/tests/integration/start-dev-restart.test.ts` (added, +54/-0)
-```diff
-@@ -0,0 +1,54 @@
-+/**
-+ * A Vite dev server restart (`r` in the terminal, or an edit of the Vite
-+ * config) loads the app's Vite config again, with new Start plugin
-+ * instances: they see the app's files as they are now.
-+ */
-+import path from 'node:path'
-+import { createServer } from 'vite'
-+import { expect, onTestFinished, test } from 'vitest'
-+import { appFiles, createStartApp } from './start-app'
-+
-+const timeout = 60_000
-+
-+// Start looks up its optional entries (`src/start.ts`, `src/client.tsx`,
-+// `src/server.ts`) once per plugin instance. The lookup's cache was
-+// process-wide and kept misses, so a restart did not see an entry created
-+// since.
-+test(
-+  'after a dev server restart, a start entry created since is used',
-+  async () => {
-+    const app = await createStartApp(
-+      appFiles({
-+        'vite.config.ts': `import { tanstackStart } from '@tanstack/react-start/plugin/vite'
-+export default { plugins: [tanstackStart()] }
-+`,
-+      }),
-+    )
-+    // (listening, as `vite dev`: Start leaves its request handler out in
-+    // middleware mode)
-+    const server = await createServer({
-+      root: app.root,
-+      configFile: path.join(app.root, 'vite.config.ts'),
-+      logLevel: 'error',
-+      server: { port: 0 },
-+    })
-+    onTestFinished(() => server.close())
-+    await server.listen()
-+    const page = () => fetch(server.resolvedUrls!.local[0]!)
-+    expect((await page()).headers.get('x-start')).toBeNull()
-+
-+    await app.write({
-+      'src/start.ts': `import { createMiddleware, createStart } from '@tanstack/react-start'
-+import { setResponseHeader } from '@tanstack/react-start/server'
-+const mark = createMiddleware().server(({ next }) => {
-+  setResponseHeader('x-start', 'MARK_START')
-+  return next()
-+})
-+export const startInstance = createStart(() => ({ requestMiddleware: [mark] }))
-+`,
-+    })
-+    await server.restart()
-+    expect((await page()).headers.get('x-start')).toBe('MARK_START')
-+  },
-+  timeout,
-+)
-```
-
-**File**: `pnpm-lock.yaml` (modified, +7/-2)
-```diff
-@@ -15307,8 +15307,8 @@ importers:
-         specifier: workspace:*
-         version: link:../start-server-core
-       exsolve:
--        specifier: ^1.1.1
--        version: 1.1.1
-+        specifier: ^1.1.3
-+        version: 1.2.0
-       lightningcss:
-         specifier: ^1.33.0
-         version: 1.33.0
-@@ -24697,6 +24697,9 @@ packages:
-   exsolve@1.1.1:
-     resolution: {integrity: sha512-9U/jZUgjnSGyntRr6y5Muu1MJcwFl6kPu7k8qLF0IMNfLqvw0NZ4nnVDq0RVoZ0RvCyumib4Ez3KYrVfilrw+g==}
- 
-+  exsolve@1.2.0:
-+    resolution: {integrity: sha512-h1pQPR9XoeSMdntRNCjyTznaume4UpfXrULBnlkZ2CUM/G5eSa+pBByGldO5uR8dxbPC+OuJXsPPNf+JZ81ADg==}
-+
-   extendable-error@0.1.7:
-     resolution: {integrity: sha512-UOiS2in6/Q0FK0R0q6UY9vYpQ21mr/Qn1KOnte7vsACuNJf514WvCCUHSRCPcgjPT2bAhNIJdlE6bVap1GKmeg==}
- 
-@@ -39389,6 +39392,8 @@ snapshots:
- 
-   exsolve@1.1.1: {}
- 
-+  exsolve@1.2.0: {}
-+
-   extendable-error@0.1.7: {}
- 
-   fast-check@3.23.2:
-```
-
----
-
-### Incident Patch 3: `1ba19a04` (2026-11-04)
-**Commit Message**: fix(router-plugin): omit browser warnings from production bundles (#8269)
-
-* fix(router-plugin): omit browser warnings from production bundles
-
-* fix(router-plugin): only the bundler's mode keeps the warning out of the page
-
-The code splitter always passes isProduction, so the NODE_ENV fallback in the compiler was reachable only from direct test calls. The changeset now names the bug users see.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* test(router-plugin): real webpack and Rspack production builds ship no splitter warning
-
-Builds an app whose route exports its component, with mode 'production' and with mode left out, and checks that no emitted JS names the app's absolute path. Fails on main. Replaces the fake-compiler matrix in router-plugin-context.test.ts.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: Sheraff <[REDACTED_EMAIL]>
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `.changeset/calm-tables-warn.md` (added, +5/-0)
+**File**: `.changeset/happy-radios-call.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
-+'@tanstack/router-plugin': patch
++'@tanstack/router-devtools-core': patch
 +---
 +
-+fix: webpack and Rspack production builds no longer put the code splitter's "will not be code-split" warning, with the route file's absolute path, into the client bundle when the build process's `NODE_ENV` isn't `production`. The bundler's mode decides, and a config without `mode` counts as production, as it does for webpack and Rspack. The warning still prints in the build output.
++Fix broken styling of the embedded `TanStackRouterDevtoolsPanel` (including inside shadow DOM) by giving the devtools size tokens a `1rem` fallback when `--tsrd-font-size` is not set.
 ```
 
-**File**: `packages/router-plugin/src/core/code-splitter/compilers.ts` (modified, +4/-2)
+**File**: `e2e/react-router/basic/package.json` (modified, +2/-1)
 ```diff
-@@ -364,6 +364,7 @@ function removeSharedDeclarations(ast: t.File, sharedBindings: Set<string>) {
- export function compileCodeSplitReferenceRoute(
-   opts: ParseAstOptions &
-     CompileCodeSplitReferenceRouteOptions & {
-+      isProduction?: boolean
-       compilerPlugins?: Array<CodeSplitCompilerPlugin>
-     },
- ): GeneratorResult | null {
-@@ -847,8 +848,9 @@ export function compileCodeSplitReferenceRoute(
-     )
-     console.warn(warningMessage)
- 
--    // append this warning to the file using a template
--    if (process.env.NODE_ENV !== 'production') {
-+    // Development builds log it in the page too. The bundler's mode decides,
-+    // not the build process's NODE_ENV, which webpack never sets.
-+    if (!opts.isProduction) {
-       const warningTemplate = template.statement(
-         `console.warn(${JSON.stringify(warningMessage)})`,
-       )()
+@@ -17,7 +17,8 @@
+     "react": "^19.0.0",
+     "react-dom": "^19.0.0",
+     "redaxios": "catalog:",
+-    "tailwindcss": "^4.2.2"
++    "tailwindcss": "^4.2.2",
++    "zod": "catalog:"
+   },
+   "devDependencies": {
+     "@playwright/test": "^1.61.0",
 ```
 
-**File**: `packages/router-plugin/src/core/router-code-splitter-plugin.ts` (modified, +3/-2)
+**File**: `e2e/react-router/basic/src/main.tsx` (modified, +58/-2)
 ```diff
-@@ -182,6 +182,7 @@ export function createRouterCodeSplitterPlugin(
-       targetFramework: userConfig.target,
-       filename: id,
-       id,
-+      isProduction,
-       deleteNodes: userConfig.codeSplittingOptions?.deleteNodes
-         ? new Set(userConfig.codeSplittingOptions.deleteNodes)
-         : undefined,
-@@ -327,13 +328,13 @@ export function createRouterCodeSplitterPlugin(
-       },
- 
-       rspack(compiler) {
--        isProduction = compiler.options.mode === 'production'
-+        isProduction = (compiler.options.mode ?? 'production') === 'production'
-         ROOT = process.cwd()
-         initUserConfig()
-       },
- 
-       webpack(compiler) {
--        isProduction = compiler.options.mode === 'production'
-+        isProduction = (compiler.options.mode ?? 'production') === 'production'
-         ROOT = process.cwd()
-         initUserConfig()
-       },
-```
-
-**File**: `packages/router-plugin/tests/production-warnings.test.ts` (added, +209/-0)
-```diff
-@@ -0,0 +1,209 @@
-+/**
-+ * A production client build ships none of the code splitter's development
-+ * warnings, whatever the build process's `NODE_ENV` (Vitest sets it to
-+ * `test`, which behaves like a shell without it): the bundler's mode
-+ * decides, and webpack and Rspack build in production when `mode` is left
-+ * out. Such a warning would log in every visitor's console, with the
-+ * absolute path of the route file on the build machine.
-+ */
+@@ -1,3 +1,5 @@
++import { useState } from 'react'
++import { createPortal } from 'react-dom'
+ import ReactDOM from 'react-dom/client'
+ import {
+   ErrorComponent,
+@@ -9,12 +11,19 @@ import {
+   createRouter,
+   redirect,
+ } from '@tanstack/react-router'
+-import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 +import {
-+  mkdir,
-+  mkdtemp,
-+  readFile,
-+  readdir,
-+  rm,
-+  writeFile,
-+} from 'node:fs/promises'
-+import path from 'node:path'
-+import { rspack } from '@rsbuild/core'
-+import webpack from 'webpack'
-+import { describe, expect, test, vi } from 'vitest'
++  TanStackRouterDevtoolsInProd as TanStackRouterDevtools,
++  TanStackRouterDevtoolsPanelInProd as TanStackRouterDevtoolsPanel,
++} from '@tanstack/react-router-devtools'
++import { z } from 'zod'
+ import { NotFoundError, fetchPost, fetchPosts } from './posts'
+ import './styles.css'
+ import type { ErrorComponentProps } from '@tanstack/react-router'
+ 
+ const rootRoute = createRootRoute({
++  validateSearch: z.object({
++    devtools: z.enum(['panel', 'shadow']).optional().catch(undefined),
++  }),
+   component: RootComponent,
+   notFoundComponent: () => {
+     return (
+@@ -27,6 +36,8 @@ const rootRoute = createRootRoute({
+ })
+ 
+ function RootComponent() {
++  const { devtools } = rootRoute.useSearch()
 +
-+const timeout = 60_000
+   return (
+     <>
+       <div className="p-2 flex gap-2 text-lg border-b">
+@@ -86,12 +97,57 @@ function RootComponent() {
+             </Link>
+           </svg>
+         </div>
++        <div className="ml-auto flex gap-2 text-sm items-center">
++          Devtools:
++          {(['floating', 'panel', 'shadow'] as const).map((mode) => (
++            <Link
++              key={mode}
++              to="."
++              search={(prev) => ({
++                ...prev,
++                devtools: mode === 'floating' ? undefined : mode,
++              })}
++              className={
++                (devtools ?? 'floating') === mode ? 'font-bold' : undefined
++              }
++            >
++              {mode}
++            </Link>
++          ))}
++        </div>
+       </div>
+       <Outlet />
+-      <TanStackRouterDevtools position="bottom-right" />
++      {devtools === 'panel' ? (
++        <TanStackRouterDevtoolsPanel />
++      ) : devtools === 'shadow' ? (
++        <ShadowDevtoolsPanel />
++      ) : (
++        <TanStackRouterDevtools position="bottom-right" />
++      )}
+     </>
+   )
+ }
 +
-+/**
-+ * The exported component stays in the route module unless the code splitter
-+ * can split exports; the error component is split either way.
-+ */
-+const routeSource = `import { createFileRoute } from '@tanstack/react-router'
++function ShadowDevtoolsPanel() {
++  const [shadowRoot, setShadowRoot] = useState<ShadowRoot>()
 +
-+export function ExportedPage() {
-+  return 'MARK_EXPORTED_PAGE'
-+}
-+
-+function ErrorPage() {
-+  return 'MARK_ERROR_PAGE'
-+}
-+
-+export const Route = createFileRoute('/')({
-+  component: ExportedPage,
-+  errorComponent: ErrorPage,
-+})
-+`
-+
-+const rootSource = `import { createRootRoute } from '@tanstack/react-router'
-+export const Route = createRootRoute({})
-+`
-+
-+/** Writes `files` into a new app directory inside the package. */
-+async function createApp(files: Record<string, string>) {
-+  // Keep the app inside the package so runtime imports resolve.
-+  const root = await mkdtemp(path.join(__dirname, '.production-warnings-'))
-+  await mkdir(path.join(root, 'routes'))
-+  for (const [file, code] of Object.entries(files)) {
-+    await writeFile(path.join(root, file), code)
-+  }
-+  return root
-+}
-+
-+function routerOptions(root: string) {
-+  return {
-+    target: 'react',
-+    routesDirectory: path.join(root, 'routes'),
-+    generatedRouteTree: path.join(root, 'routeTree.gen.ts'),
-+    autoCodeSplitting: true,
-+  } as const
-+}
-+
-+/** A client build of `entry` in `mode` (left out when undefined), unminified. */
-+function compilerConfig(
-+  root: string,
-+  entry: string,
-+  mode: 'production' | undefined,
-+) {
-+  return {
-+    context: root,
-+    ...(mode ? { mode } : {}),
-+    target: 'web',
-+    entry: `./${entry}`,
-+    output: { path: path.join(root, 'dist') },
-+    optimization: { minimize: false },
-+  } as const
-+}
-+
-+interface Compiler {
-+  run: (
-+    callback: (
-+      error: Error | null,
-+      stats?: {
-+        hasErrors: () => boolean
-+        toString: (options: object) => string
-+      },
-+    ) => void,
-+  ) => void
-+  close: (callback: (error?: Error | null) => void) => void
-+}
-+
-+/** Runs one build and settles once the compiler has closed. */
-+function runCompiler(compiler: Compiler) {
-+  return new Promise<void>((resolve, reject) => {
-+    compiler.run((error, stats) => {
-+      // The test removes the app afterwards: wait for the compiler to finish.
-+      compiler.close((closeError) => {
-+        if (error ?? closeError) {
-+          reject(error ?? closeError)
-+        } else if (stats?.hasErrors()) {
-+          reject(new Error(stats.toString({ all: false, errors: true })))
-+        } else {
-+          resolve()
++  return (
++    <div
++      ref={(host) => {
++        if (host) {
++          setShadowRoot(host.shadowRoot ?? host.attachShadow({ mode: 'open' }))
 +        }
++      }}
++    >
++      {shadowRoot
++        ? createPortal(
++            <TanStackRouterDevtoolsPanel shadowDOMTarget={shadowRoot} />,
++            shadowRoot,
++          )
++        : null}
++    </div>
++  )
++}
+ const indexRoute = createRoute({
+   getParentRoute: () => rootRoute,
+   path: '/',
+```
+
+**File**: `e2e/react-router/basic/tests/devtools.spec.ts` (added, +42/-0)
+```diff
+@@ -0,0 +1,42 @@
++import { expect } from '@playwright/test'
++import { test } from '@tanstack/router-e2e-utils'
++
++for (const mode of ['panel', 'shadow', 'floating']) {
++  test(`devtools preserve typography and explorer indentation in ${mode} mode`, async ({
++    page,
++  }) => {
++    await page.goto(mode === 'floating' ? '/' : `/?devtools=${mode}`)
++    if (mode === 'floating') {
++      await page
++        .getByRole('button', { name: 'Open TanStack Router Devtools' })
++        .click()
++    }
++
++    const panel = page.locator('.TanStackRouterDevtoolsPanel')
++    const router = panel.getByRole('button', { name: /^Router\s*\d+ items/ })
++    const state = panel.getByRole('button', { name: /^state\s*\d+ items/ })
++    await expect(router).toBeVisible()
++    await expect(state).toBeVisible()
++    await expect(router).toHaveCSS('font-size', '12px')
++    await expect(router).toHaveCSS('gap', '4px')
++    await expect(
++      panel.getByText('Pathname', { exact: true }).locator('..'),
++    ).toHaveCSS('padding-left', '8px')
++
++    const routerBox = await router.boundingBox()
++    const stateBox = await state.boundingBox()
++    expect(stateBox!.x - routerBox!.x).toBe(18)
++
++    if (mode !== 'floating') {
++      await page.addStyleTag({ content: ':root { font-size: 20px; }' })
++      await expect(router).toHaveCSS('font-size', '15px')
++      await expect(router).toHaveCSS('gap', '5px')
++
++      await page.addStyleTag({
++        content: ':root { --tsrd-font-size: 24px; }',
 +      })
-+    })
++      await expect(router).toHaveCSS('font-size', '18px')
++      await expect(router).toHaveCSS('gap', '6px')
++    }
 +  })
 +}
-+
-+const bundlers = [
-+  {
-+    name: 'webpack',
-+    // webpack parses no TypeScript: the router plugin is the only loader.
-+    extension: 'js',
-+    async build(root: string, entry: string, mode: 'production' | undefined) {
-+      const { tanstackRouter } = await import('../src/webpack')
-+      await runCompiler(
-+        webpack({
-+          ...compilerConfig(root, entry, mode),
-+          // The test app is not part of the package's TypeScript project.
-+          resolve: { tsconfig: false },
-+          plugins: [tanstackRouter(routerOptions(root))],
-+        }),
-+      )
-+    },
-+  },
-+  {
-+    name: 'rspack',
-+    // As in Rsbuild: SWC compiles the router plugin's output.
-+    extension: 'tsx',
-+    async build(root: string, entry: string, mode: 'production' | undefined) {
-+      const { tanstackRouter } = await import('../src/rspack')
-+      await runCompiler(
-+        rspack({
-+          ...compilerConfig(root, entry, mode),
-+          module: {
-+            rules: [
-+              {
-+                test: /\.tsx?$/,
-+                loader: 'builtin:swc-loader',
-+                options: {
-+                  jsc: { parser: { syntax: 'typescript', tsx: true } },
-+                },
-+                type: 'javascript/auto',
-+              },
-+            ],
-+          },
-+          plugins: [tanstackRouter(routerOptions(root))],
-+        }),
-+      )
-+    },
-+  },
-+] as const
-+
-+describe.each(bundlers)('$name build', (bundler) => {
-+  test.each([
-+    { label: "mode: 'production'", mode: 'production' },
-+    { label: 'mode left out', mode: undefined },
-+  ] as const)(
-+    'with $label, the client JS logs no warning about an exported component',
-+    async ({ mode }) => {
-+      con
+```
+
+**File**: `packages/router-devtools-core/src/tokens.ts` (modified, +73/-73)
+```diff
+@@ -161,37 +161,37 @@ export const tokens = {
+   },
+   font: {
+     size: {
+-      '2xs': 'calc(var(--tsrd-font-size) * 0.625)',
+-      xs: 'calc(var(--tsrd-font-size) * 0.75)',
+-      sm: 'calc(var(--tsrd-font-size) * 0.875)',
+-      md: 'var(--tsrd-font-size)',
+-      lg: 'calc(var(--tsrd-font-size) * 1.125)',
+-      xl: 'calc(var(--tsrd-font-size) * 1.25)',
+-      '2xl': 'calc(var(--tsrd-font-size) * 1.5)',
+-      '3xl': 'calc(var(--tsrd-font-size) * 1.875)',
+-      '4xl': 'calc(var(--tsrd-font-size) * 2.25)',
+-      '5xl': 'calc(var(--tsrd-font-size) * 3)',
+-      '6xl': 'calc(var(--tsrd-font-size) * 3.75)',
+-      '7xl': 'calc(var(--tsrd-font-size) * 4.5)',
+-      '8xl': 'calc(var(--tsrd-font-size) * 6)',
+-      '9xl': 'calc(var(--tsrd-font-size) * 8)',
++      '2xs': 'calc(var(--tsrd-font-size, 1rem) * 0.625)',
++      xs: 'calc(var(--tsrd-font-size, 1rem) * 0.75)',
++      sm: 'calc(var(--tsrd-font-size, 1rem) * 0.875)',
++      md: 'var(--tsrd-font-size, 1rem)',
++      lg: 'calc(var(--tsrd-font-size, 1rem) * 1.125)',
++      xl: 'calc(var(--tsrd-font-size, 1rem) * 1.25)',
++      '2xl': 'calc(var(--tsrd-font-size, 1rem) * 1.5)',
++      '3xl': 'calc(var(--tsrd-font-size, 1rem) * 1.875)',
++      '4xl': 'calc(var(--tsrd-font-size, 1rem) * 2.25)',
++      '5xl': 'calc(var(--tsrd-font-size, 1rem) * 3)',
++      '6xl': 'calc(var(--tsrd-font-size, 1rem) * 3.75)',
++      '7xl': 'calc(var(--tsrd-font-size, 1rem) * 4.5)',
++      '8xl': 'calc(var(--tsrd-font-size, 1rem) * 6)',
++      '9xl': 'calc(var(--tsrd-font-size, 1rem) * 8)',
+     },
+     lineHeight: {
+-      '3xs': 'calc(var(--tsrd-font-size) * 0.75)',
+-      '2xs': 'calc(var(--tsrd-font-size) * 0.875)',
+-      xs: 'calc(var(--tsrd-font-size) * 1)',
+-      sm: 'calc(var(--tsrd-font-size) * 1.25)',
+-      md: 'calc(var(--tsrd-font-size) * 1.5)',
+-      lg: 'calc(var(--tsrd-font-size) * 1.75)',
+-      xl: 'calc(var(--tsrd-font-size) * 2)',
+-      '2xl': 'calc(var(--tsrd-font-size) * 2.25)',
+-      '3xl': 'calc(var(--tsrd-font-size) * 2.5)',
+-      '4xl': 'calc(var(--tsrd-font-size) * 2.75)',
+-      '5xl': 'calc(var(--tsrd-font-size) * 3)',
+-      '6xl': 'calc(var(--tsrd-font-size) * 3.25)',
+-      '7xl': 'calc(var(--tsrd-font-size) * 3.5)',
+-      '8xl': 'calc(var(--tsrd-font-size) * 3.75)',
+-      '9xl': 'calc(var(--tsrd-font-size) * 4)',
++      '3xs': 'calc(var(--tsrd-font-size, 1rem) * 0.75)',
++      '2xs': 'calc(var(--tsrd-font-size, 1rem) * 0.875)',
++      xs: 'calc(var(--tsrd-font-size, 1rem) * 1)',
++      sm: 'calc(var(--tsrd-font-size, 1rem) * 1.25)',
++      md: 'calc(var(--tsrd-font-size, 1rem) * 1.5)',
++      lg: 'calc(var(--tsrd-font-size, 1rem) * 1.75)',
++      xl: 'calc(var(--tsrd-font-size, 1rem) * 2)',
++      '2xl': 'calc(var(--tsrd-font-size, 1rem) * 2.25)',
++      '3xl': 'calc(var(--tsrd-font-size, 1rem) * 2.5)',
++      '4xl': 'calc(var(--tsrd-font-size, 1rem) * 2.75)',
++      '5xl': 'calc(var(--tsrd-font-size, 1rem) * 3)',
++      '6xl': 'calc(var(--tsrd-font-size, 1rem) * 3.25)',
++      '7xl': 'calc(var(--tsrd-font-size, 1rem) * 3.5)',
++      '8xl': 'calc(var(--tsrd-font-size, 1rem) * 3.75)',
++      '9xl': 'calc(var(--tsrd-font-size, 1rem) * 4)',
+     },
+     weight: {
+       thin: '100',
+@@ -220,55 +220,55 @@ export const tokens = {
+   border: {
+     radius: {
+       none: '0px',
+-      xs: 'calc(var(--tsrd-font-size) * 0.125)',
+-      sm: 'calc(var(--tsrd-font-size) * 0.25)',
+-      md: 'calc(var(--tsrd-font-size) * 0.375)',
+-      lg: 'calc(var(--tsrd-font-size) * 0.5)',
+-      xl: 'calc(var(--tsrd-font-size) * 0.75)',
+-      '2xl': 'calc(var(--tsrd-font-size) * 1)',
+-      '3xl': 'calc(var(--tsrd-font-size) * 1.5)',
++      xs: 'calc(var(--tsrd-font-size, 1rem) * 0.125)',
++      sm: 'calc(var(--tsrd-font-size, 1rem) * 0.25)',
++      md: 'calc(var(--tsrd-font-size, 1rem) * 0.375)',
++      lg: 'calc(var(--tsrd-font-size, 1rem) * 0.5)',
++      xl: 'calc(var(--tsrd-font-size, 1rem) * 0.75)',
++      '2xl': 'calc(var(--tsrd-font-size, 1rem) * 1)',
++      '3xl': 'calc(var(--tsrd-font-size, 1rem) * 1.5)',
+       full: '9999px',
+     },
+   },
+   size: {
+     0: '0px',
+-    0.25: 'calc(var(--tsrd-font-size) * 0.0625)',
+-    0.5: 'calc(var(--tsrd-font-size) * 0.125)',
+-    1: 'calc(var(--tsrd-font-size) * 0.25)',
+-    1.5: 'calc(var(--tsrd-font-size) * 0.375)',
+-    2: 'calc(var(--tsrd-font-size) * 0.5)',
+-    2.5: 'calc(var(--tsrd-font-size) * 0.625)',
+-    3: 'calc(var(--tsrd-font-size) * 0.75)',
+-    3.5: 'calc(var(--tsrd-font-size) * 0.875)',
+-    4: 'calc(var(--tsrd-font-size) * 1)',
+-    4.5: 'calc(var(--tsrd-font-size) * 1.125)',
+-    5: 'calc(var(--tsrd-font-size) * 1.25)',
+-    5.5: 'calc(var(--tsrd-font-size) * 1.375)',
+-    6: 'calc(var(--tsrd-font-size) * 1.5)',
+-    6.5: 'calc(var(--tsrd-font-size) * 1.625)',
+-    7: 'calc(var(--tsrd-font-size) * 1.75)',
+-    8: 'calc(var(--tsrd-font-size) * 2)',
+-    9: 'calc(var(--tsrd-font-size) * 2.25)',
+-    10: 'calc(var(--tsrd-font-size) * 2.5)',
+-    11: 'calc(var(--tsrd-font-size) * 2.75)',
+-    12:
+```
+
+**File**: `pnpm-lock.yaml` (modified, +3/-0)
+```diff
+@@ -684,6 +684,9 @@ importers:
+       tailwindcss:
+         specifier: ^4.2.2
+         version: 4.2.2
++      zod:
++        specifier: 'catalog:'
++        version: 4.5.4
+     devDependencies:
+       '@playwright/test':
+         specifier: ^1.63.0
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8888** (2026-11-08): fix(router-devtools-core): restore embedded panel styling (@schiller-manuel)
 - **PR #8871** (2026-11-04): fix(start-plugin-core): require exsolve ^1.1.3, and see new entry files after a dev server restart (@Sheraff)
 - **PR #8870** (2026-11-04): fix(router-plugin): write `import.meta.hot.accept(` out in Vite route HMR (@Sheraff)
 - **PR #8869** (2026-11-04): fix(vue-start): pre-bundle @tanstack/vue-store so a cold dev start doesn't reload the page (@Sheraff)
 - **PR #8867** (2026-11-04): fix(router-utils): parse decorators after `export` (@Sheraff)
 - **PR #8863** (2026-11-04): fix(start-plugin-core): keep the app's server.compress on Rsbuild (@Sheraff)
-- **PR #8862** (closed): fix(router-core): the server's route tree cache follows a re-evaluated route tree (@Sheraff)
 
 ---
 
@@ -1360,25 +1043,25 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. start-plugin-core): define TSS_SHELL in Rsbuild dev for SPA mode (#8805)
+## X. router-devtools-core): restore embedded panel styling (#8888)
 
 **RULE**:
-When implementing operations in `.changeset/rsbuild-spa-dev-shell.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TanStack/router. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changeset/happy-radios-call.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TanStack/router. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c5320d7c`: start-plugin-core): define TSS_SHELL in Rsbuild dev for SPA mode (#8805). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bbf9b758`: router-devtools-core): restore embedded panel styling (#8888). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/rsbuild-spa-dev-shell.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/happy-radios-call.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
 ---
-'@tanstack/start-plugin-core': patch
+'@tanstack/router-devtools-core': patch
 ---
 
-With `spa.enabled`, the Rsbuild dev server answers the SPA shell, as Vite's dev server does, instead of rendering the route and running its loaders on the server.
+Fix broken styling of the embedded `TanStackRouterDevtoolsPanel` (including inside shadow DOM) by giving the devtools size tokens a `1rem` fallback when `--tsrd-font-size` is not set.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1388,4 +1071,4 @@ With `spa.enabled`, the Rsbuild dev server answers the SPA shell, as Vite's dev 
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c5320d7c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bbf9b758` are properly handled with clean fallback behavior.

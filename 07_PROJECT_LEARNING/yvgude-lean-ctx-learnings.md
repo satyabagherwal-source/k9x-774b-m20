@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md`  
 > **Source**: github ([https://github.com/yvgude/lean-ctx](https://github.com/yvgude/lean-ctx))  
-> **Source Version**: `ffe6e95c`  
+> **Source Version**: `f97f122a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T11:23:22.771Z  
+> **Timestamp**: 2026-11-09T22:14:47.804Z  
 > **Learning ID**: `learn-github-yvgude-lean-ctx`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/yvgude/lean-ctx](https://github.com/yvgude/lean-ctx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T11:23:22.765Z  
+> **Harvest Timestamp**: 2026-11-09T22:14:47.575Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: LeanCTX is the Context Gateway for AI Systems. Select task-relevant context, apply supported controls, connect local knowledge and inspect recorded evidence. Open-source Engine: CLI, MCP, hooks and supported proxy paths.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3928 stars
+- **Stars / Engagement**: 3937 stars
 
 ---
 
@@ -2490,11 +2490,11 @@ impl HiveStore {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2189** (2026-11-05): **bug: Claude Code broken after update 3.12.1**
-  *Symptoms*: I'm aware of this and currently working an a hotfix.
+- **Issue #2212** (2026-11-08): **shell gate: curl --hsts/--alt-svc and wget --save-cookies after an unfollowable cd are not judged as writes (#2201 follow-up)**
+  *Symptoms*: ### What happens  After a `cd` the shell gate cannot follow, a `curl`/`wget` call is judged only by the files it writes (#2201, `rust/src/core/shell_allowlist/download_targets.rs`). That list is incomplete. These options write a file named on the command line, but the list misses them, so a call like  ```sh cd "$(some-dir)" && curl --hsts config.toml https://example.com cd "$(some-dir)" && wget --save-cookies config.toml https://example.com ```  is no longer refused when the named file is a protected LeanCTX config file, while `curl -o config.toml` is.  ### Missing write targets  - curl (`CURL_OUTPUT_LONGS`, lines 27-35): `--hsts <file>`, `--alt-svc <file>` (both read *and write* their cache file) - wget (`wget_targets`, only `-O`/`-P`/`-o`/`-a` today): `--save-cookies <file>`, `--hsts-file <file>`, `--warc-file <file>` (writes `<file>.warc[.gz]`), `--rejected-log <file>`  Each must be read in both the `--opt value` and `--opt=value` forms.  ### Expected  Every option that writes a file named on the command line counts as a write target, with tests per option in both forms. The fix lands in the 3.12.x line.  Found while reviewing the 3.12.3 port of #2201. 
 
-- **Issue #2178** (2026-11-04): **Windows (MSVC build): lean-ctx.exe exits silently with 0xC0000135 when the VC++ runtime (VCRUNTIME140.dll) is missing**
-  *Symptoms*: **lean-ctx version:** v3.12.0 (official `x86_64-pc-windows-msvc` release asset) **OS:** Windows (reproduced on Windows Server 2025, build 26100, clean install)  **What happens**  On a Windows machine without the Microsoft Visual C++ Redistributable, `lean-ctx.exe` from the MSVC release asset exits immediately without any output. The exit status is `0xC0000135` (`STATUS_DLL_NOT_FOUND`): the binary links the C runtime dynamically and needs `VCRUNTIME140.dll`, which a clean Windows install (notably Windows Server, minimal/fresh Windows 11 images, CI images without VS) does not ship.  There is no error message, so the user just sees "nothing happens".  **Steps to reproduce**  1. Fresh Windows Server 2025 (or any Windows without the VC++ 2015–2022 Redistributable). 2. Download and verify `lean-ctx` v3.12.0 `x86_64-pc-windows-msvc` from the release. 3. Run `lean-ctx --version` → no output, `$LASTEXITCODE` = `-1073741515` (`0xC0000135`). 4. Install the VC++ Redistributable (x64) → the same binary works.  **Expected**  The binary runs on a stock Windows install, or the installer/docs state the dependency and install it.  **Possible fixes**  - Link the C runtime statically for the MSVC target (`-C target-feature=+crt-static`, e.g. via `[target.x86_64-pc-windows-msvc] rustflags` in `rust/.cargo/config.toml` or the release workflow). Needs a check of the CUDA variant (`x86_64-pc-windows-msvc-cuda`), whose CUDA libraries may require the dynamic CRT. - Or: `install.ps1` detects the missin
+- **Issue #2203** (2026-11-08): **bug: cockpit doesn't start**
+  *Symptoms*: **lean-ctx version:** (run `lean-ctx --version`) 3.12.2  **OS:** (macOS / Linux / Windows) Windows  **AI tool:** (Cursor / Claude Code / Copilot / Crush / other)  **What happened:** tried starting it but it didn't start. Seems to keep retrying as my screen flickers every now and then.  It also says use lean-ctx gain --terminal but that looks the same as lean-ctx gain  **What you expected:** it to start.  **Steps to reproduce:** 1. lean-ctx dashboard 2.  or lean-ctx cockpit 3.   **Relevant output:** ``` PS G:\ESP32\ESP32AlpacaObservingConditions> lean-ctx dashboard The Cockpit did not start. It is retried automatically; in the terminal: lean-ctx gain In the terminal: lean-ctx gain --terminal ``` 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2511,458 +2511,1273 @@ impl HiveStore {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ffe6e95c` (2026-11-05)
-**Commit Message**: Merge pull request #2193 from yvgude/fix/3122-exec-race
+### Incident Patch 1: `f1172309` (2026-11-09)
+**Commit Message**: fix(deps): clear RUSTSEC-2026-0459, -0457 and -0462 from main CI
 
-test(lifecycle): wait for exec before recording a stand-in's identity (3.12.2 prebuild)
+Security Check (Dependency audit) and CI (Licensing, cargo-deny) fail on
+main because of three advisories:
 
-**File**: `PUBLIC-EXPORT-RECEIPT.json` (modified, +5/-5)
+- RUSTSEC-2026-0459: bundled SQLite in libsqlite3-sys. rusqlite 0.39 ->
+  0.41 (libsqlite3-sys 0.39.1).
+- RUSTSEC-2026-0457: rmcp OAuth discovery follows metadata URLs to
+  private/loopback addresses (fixed in rmcp >= 3.7).
+- RUSTSEC-2026-0462: rmcp HTTP client reads response bodies unbounded
+  (fixed in rmcp >= 3.9).
+
+lean-ctx uses both rmcp paths (mcp_catalog OAuth login and streamable
+HTTP client), so the advisories are fixed, not ignored: the vendored
+rmcp/rmcp-macros move from 2.0.0 to upstream 3.9.0.
+
+Of the four lean-ctx patches on 2.0.0, three are upstream in 3.x (the
+JoinSet drain #1161, the #1391 status-page discovery fix, the
+SseStream rename). One stays: a one-shot transport releases its
+service even when the caller disconnected. The #1391 regression test is
+ported to the 3.9 API.
+
+API migration in lean-ctx: Meta -> RequestMetaObject (request _meta)
+and MetaObject (result/content _meta); ServerHandler call_tool,
+get_prompt and read_resource return the *Response types;
+with_stateful_mode -> with_lega
+
+**File**: `CHANGELOG.md` (modified, +8/-0)
 ```diff
-@@ -16053,11 +16053,11 @@
-    "size": 40782
-   },
-   {
--   "blob": "c440fc9d82daa9fe5cbedf1fed65addff2e30f96",
-+   "blob": "5ef642bd2f0523c8d7159261a13ac469cb89061f",
-    "mode": "100644",
-    "path": "rust/crates/lean-ctx/src/cli/dispatch/mcp_instances.rs",
--   "sha256": "4ff365c946497e49113c6adf5503e6cae7248e948924ee4fbdccfb446eeb658f",
--   "size": 10672
-+   "sha256": "b54bd886e82d52f41a39b5ef28e1ad3c8584d198bb2cf55478c6ad3392693cb9",
-+   "size": 11365
-   },
-   {
-    "blob": "010c46be112355a7adb704ba6ab65de240686cbe",
-@@ -32928,7 +32928,7 @@
-  ],
-  "manifest_sha256": "805b64f589b49fadc68295fb26f3f302e36899b147a8b13266470b46b7ad1323",
-  "schema": 1,
-- "source_commit": "de76ec3a1f76b05db847441ee41395ae9db5027c",
-+ "source_commit": "f54099a9db2f3460181fef1be8b08ea82de36f72",
-  "tool_sha256": "86ea08dc440cce975409b9f805c74bf5beb402284f3200800381def3714c8f3c",
-- "tree_sha256": "3abbe732f8ebf5751ae835881bd9e3d4ef63d8033e31268a9cf59da0d111d4e1"
-+ "tree_sha256": "71077f17e087a40cfeb974357dd7b9a495183ea2bc4c793c4ebddb73444eece2"
- }
+@@ -62,6 +62,14 @@ Current positioning: [LeanCTX Engine — Context Gateway for AI Systems](docs/PO
+   from its automatic reviewer both refuse the command and name `lean-ctx allow`; an accept without
+   a choice runs nothing.
+ 
++- **Dependencies with published advisories are updated.** The bundled SQLite moves to the
++  release `rusqlite` 0.41 ships, fixing RUSTSEC-2026-0459. The vendored MCP SDK `rmcp` moves
++  from 2.0 to 3.9, which bounds HTTP response bodies an MCP server sends to `lean-ctx`
++  (RUSTSEC-2026-0462) and stops OAuth discovery for HTTP MCP servers from following metadata
++  URLs to private or loopback addresses (RUSTSEC-2026-0457). The lean-ctx patches on top of
++  `rmcp` shrink to one, since 3.9 contains the other fixes; `lean-ctx-embed` now declares the
++  Rust 1.89 its dependencies need.
++
+ ## [3.12.2] — 2026-11-04
+ 
+ ### Added
 ```
 
-**File**: `rust/crates/lean-ctx/src/cli/dispatch/mcp_instances.rs` (modified, +14/-2)
+**File**: `rust/Cargo.lock` (modified, +27/-22)
 ```diff
-@@ -167,13 +167,25 @@ mod tests {
-     }
+@@ -929,36 +929,36 @@ dependencies = [
  
-     fn long_running(program: &str, arguments: &[&str]) -> Child {
--        Command::new(program)
-+        let child = Command::new(program)
-             .args(arguments)
-             .stdin(Stdio::null())
-             .stdout(Stdio::null())
-             .stderr(Stdio::null())
-             .spawn()
--            .expect("process starts")
-+            .expect("process starts");
-+        // `spawn` returns after fork; until the child has exec'd, its identity
-+        // is still this test binary, and a record taken then never matches the
-+        // live process again (release prebuild, 3.12.2). Wait for the exec.
-+        let own = process::identity(std::process::id()).map(|identity| identity.executable);
-+        let deadline = Instant::now() + Duration::from_secs(10);
-+        while Instant::now() < deadline {
-+            match process::identity(child.id()) {
-+                Some(identity) if Some(&identity.executable) != own.as_ref() => break,
-+                _ => std::thread::sleep(Duration::from_millis(10)),
-+            }
-+        }
-+        child
-     }
+ [[package]]
+ name = "darling"
+-version = "0.23.0"
++version = "0.24.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "25ae13da2f202d56bd7f91c25fba009e7717a1e4a1cc98a76d844b65ae912e9d"
++checksum = "ed17f5901b6630b993ca003def43f2f8ef4014fc13b047b57aad617ff32bc2ec"
+ dependencies = [
+  "darling_core",
+  "darling_macro",
+ ]
  
-     fn record(directory: &Path, child: &Child, change: impl FnOnce(&mut Instance)) -> PathBuf {
+ [[package]]
+ name = "darling_core"
+-version = "0.23.0"
++version = "0.24.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "9865a50f7c335f53564bb694ef660825eb8610e0a53d3e11bf1b0d3df31e03b0"
++checksum = "6837e2cf7485aaae18f86181d2f0e9a7ed297a025e220aeabf63fdebd3a2ddff"
+ dependencies = [
+  "ident_case",
+  "proc-macro2",
+  "quote",
+  "strsim",
+- "syn 2.0.119",
++ "syn 3.0.3",
+ ]
+ 
+ [[package]]
+ name = "darling_macro"
+-version = "0.23.0"
++version = "0.24.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ac3984ec7bd6cfa798e62b4a642426a5be0e68f9401cfc2a01e3fa9ea2fcdb8d"
++checksum = "2ac7135c3ef02b2f7833bbeb1be5ba7f966dcde8a87c6b87f65a778d71a02785"
+ dependencies = [
+  "darling_core",
+  "quote",
+- "syn 2.0.119",
++ "syn 3.0.3",
+ ]
+ 
+ [[package]]
+@@ -1656,11 +1656,11 @@ dependencies = [
+ 
+ [[package]]
+ name = "hashlink"
+-version = "0.11.1"
++version = "0.12.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "824e001ac4f3012dd16a264bec811403a67ca9deb6c102fc5049b32c4574b35f"
++checksum = "a596f1b20ed2cc5ecac41a164aaebc7258057060f06c0cf7a2ba3991ee7990fb"
+ dependencies = [
+- "hashbrown 0.16.1",
++ "hashbrown 0.17.1",
+ ]
+ 
+ [[package]]
+@@ -1978,6 +1978,8 @@ checksum = "d466e9454f08e4a911e14806c24e16fba1b4c121d1ea474396f396069cf949d9"
+ dependencies = [
+  "equivalent",
+  "hashbrown 0.17.1",
++ "serde",
++ "serde_core",
+ ]
+ 
+ [[package]]
+@@ -2709,9 +2711,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "libsqlite3-sys"
+-version = "0.37.0"
++version = "0.39.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "b1f111c8c41e7c61a49cd34e44c7619462967221a6443b0ec299e0ac30cfb9b1"
++checksum = "14a5f01b87b92705d07b433c06f96cbc764637d81a0bffb5734ce17cf0f9a2b3"
+ dependencies = [
+  "cc",
+  "pkg-config",
+@@ -3453,9 +3455,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "process-wrap"
+-version = "9.1.0"
++version = "10.0.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "2e842efad9119158434d193c6682e2ebee4b44d6ad801d7b349623b3f57cdf55"
++checksum = "1f21b97672d2dc848e7b25701ab4535618b92f4861c13cc3f7f7bed52ad3c8da"
+ dependencies = [
+  "futures",
+  "indexmap",
+@@ -3864,16 +3866,18 @@ dependencies = [
+ 
+ [[package]]
+ name = "rmcp"
+-version = "2.0.0"
++version = "3.9.0"
+ dependencies = [
+  "async-trait",
+- "base64 0.22.1",
++ "base64 0.23.1",
+  "bytes",
+  "chrono",
+  "futures",
+  "http",
+  "http-body",
+  "http-body-util",
++ "indexmap",
++ "libc",
+  "oauth2",
+  "pastey",
+  "pin-project-lite",
+@@ -3884,6 +3888,7 @@ dependencies = [
+  "schemars",
+  "serde",
+  "serde_json",
++ "sha2 0.11.0",
+  "sse-stream",
+  "thiserror 2.0.20",
+  "tokio",
+@@ -3897,13 +3902,13 @@ dependencies = [
+ 
+ [[package]]
+ name = "rmcp-macros"
+-version = "2.0.0"
++version = "3.9.0"
+ dependencies = [
+  "darling",
+  "proc-macro2",
+  "quote",
+  "serde_json",
+- "syn 2.0.119",
++ "syn 3.0.3",
+ ]
+ 
+ [[package]]
+@@ -3939,9 +3944,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "rusqlite"
+-version = "0.39.0"
++version = "0.41.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "a0d2b0146dd9661bf67bb107c0bb2a55064d556eeb3fc314151b957f313bcd4e"
++checksum = "da9bba6f3506135e120a6586df05be18b48d18896600646a4bec8f993d91a594"
+ dependencies = [
+  "bitflags 2.13.1",
+  "fallible-iterator",
+@@ -4643,7 +4648,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "32497e9a4c7b38532efcdebeef879707aa9f794296a4f0244f6f69e9bc8574bd"
+ dependencies = [
+  "fastrand",
+- "getrandom 0.3.4",
++ "getrandom 0.4.3",
+  "once_cell",
+  "rustix",
+  "windows-sys 0.61.2",
+```
+
+**File**: `rust/Cargo.toml` (modified, +6/-7)
+```diff
+@@ -147,7 +147,7 @@ lean-ctx-compress = { path = "crates/lean-ctx-compress", version = "0.1.0" }
+ lean-ctx-fs = { path = "crates/lean-ctx-fs", version = "0.1.0" }
+ lean-ctx-syntax = { path = "crates/lean-ctx-syntax", version = "0.1.0" }
+ lean-ctx-doc = { path = "crates/lean-ctx-doc", version = "0.1.0" }
+-rmcp = { version = "2", features = [
++rmcp = { version = "3", features = [
+   "server",
+   "client",
+   "transport-io",
+@@ -200,7 +200,7 @@ toml = "1.1"
+ toml_edit = "0.25"
+ similar = "3.1"
+ flate2 = "1.1"
+-rusqlite = { version = "0.39", features = ["bundled"] }
++rusqlite = { version = "0.41", features = ["bundled"] }
+ tree-sitter = { version = "0.26", optional = true }
+ # platform-verifier: validate TLS against the OS trust store (corp proxy CAs),
+ # not just compiled-in webpki-roots. Opt-in per-agent via RootCerts::PlatformVerifier.
+@@ -503,11 +503,10 @@ harness = false
+ # Protocol 0.5.0 is the in-tree migration release; keep workspace/root builds
+ # on these exact local bytes until that release is published to crates.io.
+ # Remove this entry only after publication and registry-version verification.
+-# rmcp 2.0.0 keeps completed response-send tasks in a JoinSet until shutdown,
+-# which grows RSS for long-lived MCP sessions. Keep this vendored patch until
+-# modelcontextprotocol/rust-sdk ships the continuous drain fix.
+-# Also patched: OAuth discovery ignores a 200 status page on the MCP endpoint
+-# instead of reading it as resource metadata (#1391, transport/auth.rs).
++# rmcp 3.9.0 with one lean-ctx patch: a one-shot transport releases its service
++# even when the caller has disconnected (transport.rs). The JoinSet drain
++# (#1161) and the status-page fix for OAuth discovery (#1391) are upstream
++# since 3.x; the #1391 regression test stays in transport/auth.rs.
+ [patch.crates-io]
+ lean-ctx-protocol = { path = "crates/lean-ctx-protocol" }
+ rmcp = { path = "crates/vendor/rmcp" }
+```
+
+**File**: `rust/crates/lean-ctx-embed/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -2,7 +2,7 @@
+ name = "lean-ctx-embed"
+ version = "0.1.0"
+ edition = "2024"
+-rust-version = "1.87"
++rust-version = "1.89"
+ license = "Apache-2.0"
+ description = "Experimental Apache Rust facade for embedding LeanCTX | OSS in-process. Not an SDK: LeanCTX | SDK is thinkery-leanctx-sdk (Python)."
+ repository = "https://github.com/yvgude/lean-ctx"
+```
+
+**File**: `rust/crates/lean-ctx-hive/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -49,7 +49,7 @@ futures = "0.3"
+ dirs = "6.0"
+ chrono = { version = "0.4", features = ["serde"] }
+ toml = "1.1"
+-rusqlite = { version = "0.39", features = ["bundled"] }
++rusqlite = { version = "0.41", features = ["bundled"] }
+ ureq = { version = "3.3", features = ["platform-verifier"] }
+ tokio-tungstenite = { version = "0.29", default-features = false, features = [
+   "connect",
+```
+
+**File**: `rust/crates/lean-ctx-proxy/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -27,7 +27,7 @@ shape-xlat = ["lean-ctx-engine/shape-xlat"]
+ [dependencies]
+ lean-ctx-engine = { path = "../..", version = "=3.12.2", default-features = false }
+ lean-ctx-protocol = { path = "../lean-ctx-protocol", version = "0.5.0" }
+-rmcp = { version = "2", features = [
++rmcp = { version = "3", features = [
+   "server",
+   "client",
+   "transport-io",
+```
+
+**File**: `rust/crates/lean-ctx-server/Cargo.toml` (modified, +2/-2)
+```diff
+@@ -67,7 +67,7 @@ lean-ctx-hive = { path = "../lean-ctx-hive", version = "=3.12.2", default-featur
+ lean-ctx-ocla = { path = "../lean-ctx-ocla", version = "5.0.0" }
+ lean-ctx-protocol = { path = "../lean-ctx-protocol", version = "0.5.0" }
+ lean-ctx-doc = { path = "../lean-ctx-doc", version = "0.1.0" }
+-rmcp = { version = "2", features = [
++rmcp = { version = "3", features = [
+   "server",
+   "client",
+   "transport-io",
+@@ -106,7 +106,7 @@ dirs = "6.0"
+ chrono = { version = "0.4", features = ["serde"] }
+ toml = "1.1"
+ similar = "3.1"
+-rusqlite = { version = "0.39", features = ["bundled"] }
++rusqlite = { version = "0.41", features = ["bundled"] }
+ tree-sitter = { version = "0.26", optional = true }
+ base64 = "0.22"
+ sha2 = "0.11"
+```
+
+**File**: `rust/crates/lean-ctx-server/src/server/call_identity.rs` (modified, +20/-10)
+```diff
+@@ -36,7 +36,7 @@ tokio::task_local! {
+ ///
+ /// The same read takes the presenter capability the host showed, if any
+ /// ([`HOST_PRESENTER_META_KEY`]); see [`HostCall`].
+-pub(super) fn host_call_id(meta: Option<&rmcp::model::Meta>) -> HostCall {
++pub(super) fn host_call_id(meta: Option<&rmcp::model::RequestMetaObject>) -> HostCall {
+     HostCall {
+         call_id: meta_text(meta, HOST_CALL_ID_META_KEY)
+             .filter(|call_id| delivered::valid_call_id(call_id))
+@@ -46,7 +46,10 @@ pub(super) fn host_call_id(meta: Option<&rmcp::model::Meta>) -> HostCall {
+ }
+ 
+ /// The string under exactly `key`; no other key, no other value form.
+-fn meta_text<'meta>(meta: Option<&'meta rmcp::model::Meta>, key: &str) -> Option<&'meta str> {
++fn meta_text<'meta>(
++    meta: Option<&'meta rmcp::model::RequestMetaObject>,
++    key: &str,
++) -> Option<&'meta str> {
+     meta?.0.get(key)?.as_str()
+ }
+ 
+@@ -108,8 +111,8 @@ pub(super) fn record_delivery(
+ mod tests {
+     use super::{HOST_CALL_ID_META_KEY, delivered, host_call_id, scoped};
+ 
+-    fn meta(value: &serde_json::Value) -> rmcp::model::Meta {
+-        let mut meta = rmcp::model::Meta::new();
++    fn meta(value: &serde_json::Value) -> rmcp::model::RequestMetaObject {
++        let mut meta = rmcp::model::RequestMetaObject::new();
+         meta.0
+             .insert(HOST_CALL_ID_META_KEY.to_owned(), value.clone());
+         meta
+@@ -121,13 +124,17 @@ mod tests {
+     fn only_a_well_formed_string_under_the_one_key_is_an_id() {
+         let id = serde_json::json!("toolu_01AbC-9");
+         // The call id is one part of what the host says about a call.
+-        let host_call_id = |meta: Option<&rmcp::model::Meta>| super::host_call_id(meta).call_id;
++        let host_call_id =
++            |meta: Option<&rmcp::model::RequestMetaObject>| super::host_call_id(meta).call_id;
+         assert_eq!(
+             host_call_id(Some(&meta(&id))).as_deref(),
+             Some("toolu_01AbC-9")
+         );
+         assert_eq!(host_call_id(None), None);
+-        assert_eq!(host_call_id(Some(&rmcp::model::Meta::new())), None);
++        assert_eq!(
++            host_call_id(Some(&rmcp::model::RequestMetaObject::new())),
++            None
++        );
+         for refused in [
+             serde_json::json!(""),
+             serde_json::json!("has space"),
+@@ -138,14 +145,14 @@ mod tests {
+         ] {
+             assert_eq!(host_call_id(Some(&meta(&refused))), None, "{refused}");
+         }
+-        let mut other_key = rmcp::model::Meta::new();
++        let mut other_key = rmcp::model::RequestMetaObject::new();
+         other_key.0.insert("toolUseId".to_owned(), id);
+         assert_eq!(host_call_id(Some(&other_key)), None);
+ 
+         // The presenter capability: its own key, a well-formed value, and
+         // never visible in what the read formats to.
+         let wire = format!("lcp1_{}", "5a".repeat(32));
+-        let mut shown = rmcp::model::Meta::new();
++        let mut shown = rmcp::model::RequestMetaObject::new();
+         shown.0.insert(
+             super::HOST_PRESENTER_META_KEY.to_owned(),
+             serde_json::json!(wire),
+@@ -191,12 +198,15 @@ mod tests {
+         let wire: rmcp::model::CallToolRequest =
+             serde_json::from_value(serde_json::json!({"method": "tools/call", "params": params}))
+                 .expect("a tools/call request");
+-        let transported = wire.extensions.get::<rmcp::model::Meta>().cloned();
++        let transported = wire
++            .extensions
++            .get::<rmcp::model::RequestMetaObject>()
++            .cloned();
+         let mut request = wire.params;
+         if let Some(transported) = transported {
+             request
+                 .meta
+-                .get_or_insert_with(rmcp::model::Meta::new)
++                .get_or_insert_with(rmcp::model::RequestMetaObject::new)
+                 .extend(transported);
+         }
+         let call_id = host_call_id(request.meta.as_ref());
 ```
 
 ---
 
-### Incident Patch 2: `d4523af0` (2026-11-04)
-**Commit Message**: release: 3.12.2 (governor setup hotfix, GHSA-483j-9vcj-2gxx, Hive opens, #2190)
+### Incident Patch 2: `f317ac93` (2026-11-08)
+**Commit Message**: fix(shell): read a PowerShell tool call as PowerShell, accept its member calls, gate its call operator (#2216)
 
-Exported from the private source de32bc8cdb.
+* fix(hooks): check a PowerShell tool call under the PowerShell host
+
+A host that launches its hooks through Git Bash (Claude Code on Windows
+does) hands the hook SHELL=/usr/bin/bash and MSYSTEM=MINGW64.
+host_mode() picked the POSIX Strict mode from that environment and
+refused ordinary PowerShell tool lines
+(`Get-ChildItem | Select-Object @{n='kb'; e={ $_.Length / 1kb }}`,
+`$f = "C:\x\y"; Test-Path $f`, `foreach ($c in 'a','b') { … }`).
+
+HostGuard and its thread-local leave #[cfg(test)]; the new
+check_shell_allowlist_in_powershell() holds the PowerShell host for one
+check, and the PowerShell-tool hook path uses it. ctx_shell, ctx_execute
+and the shell aliases keep environment-based detection.
+
+* fix(shell): accept a PowerShell member call's attached paren under the PowerShell host
+
+The lexer refused every `(` attached to a word because zsh reads
+`*(e:…:)` as code-running glob qualifiers. That check ignored the host,
+so `[Math]::Max(1,2)` and
+`[Environment]::GetEnvironmentVariable('Path','User')` were refused even
+when PowerShell runs the line.
+
+Under the PowerShell host 
+
+**File**: `CHANGELOG.md` (modified, +9/-0)
+```diff
+@@ -35,6 +35,15 @@ Current positioning: [LeanCTX Engine — Context Gateway for AI Systems](docs/PO
+   `-e`/`--execute`, are judged as write targets in every spelling. A config file the call reads
+   (`curl -K`, `curl -w @FILE`, `wget --config`) may name any file and is refused wherever the call
+   runs. ctx_shell's download guard uses the same list instead of its own copy.
++- **A PowerShell tool call is checked as PowerShell (#2215).** A host that launches its hooks through
++  Git Bash (Claude Code on Windows does) hands the hook a POSIX `SHELL`/`MSYSTEM`, so ordinary
++  PowerShell lines such as `$f = "C:\x"; Test-Path $f` were denied as POSIX. The PowerShell tool
++  hook now reads its line under the PowerShell host whatever the environment says. Under that host
++  a .NET member call's attached `(` (`[Math]::Max(1,2)`) is accepted at statement start or as a
++  local assignment value, and the reader still decides whether the member is safe. The call
++  operator `&` no longer hides its target: a literal is checked against the allowlist, a run-time
++  target is refused, a script block is walked, a trailing redirect is allowed, and nesting is
++  depth-bounded. A quoted call-operator target used to pass unchecked under the PowerShell host.
+ 
+ ## [3.12.2] — 2026-11-04
+ 
+```
+
+**File**: `rust/crates/lean-ctx-hooks/src/hook_handlers/powershell_rewrite.rs` (modified, +129/-1)
+```diff
+@@ -80,7 +80,9 @@ pub(super) fn allowlist_denial(cmd: &str, binary: &str) -> Option<String> {
+     {
+         return Some(msg);
+     }
+-    shell_allowlist::check_shell_allowlist(&as_read)
++    // Read as PowerShell, not as the shell lean-ctx detects: the hook may
++    // run under Git Bash (`SHELL=/usr/bin/bash`, `MSYSTEM`).
++    shell_allowlist::check_shell_allowlist_in_powershell(&as_read)
+         .err()
+         .map(|msg| msg.to_string())
+ }
+@@ -400,6 +402,132 @@ mod tests {
+         }
+     }
+ 
++    /// Asserts each `(command, denied)` decision, with the allowlist `git`,
++    /// both under Git Bash's environment and with no shell named at all.
++    ///
++    /// A host that launches its hooks through Git Bash (Claude Code on
++    /// Windows does) hands the hook `SHELL=/usr/bin/bash` and
++    /// `MSYSTEM=MINGW64`. A PowerShell tool call still runs in PowerShell and
++    /// is read as PowerShell, whatever the environment names.
++    fn assert_decisions_under_any_hook_shell(cases: &[(&str, bool)]) {
++        const SHELL_VARS: [&str; 4] = ["LEAN_CTX_SHELL", "SHELL", "MSYSTEM", "MINGW_PREFIX"];
++        let git_bash = [
++            ("SHELL", "/usr/bin/bash"),
++            ("MSYSTEM", "MINGW64"),
++            ("MINGW_PREFIX", "/mingw64"),
++        ];
++        for env in [&git_bash[..], &[]] {
++            let decisions: Vec<_> = with_security("enforce", || {
++                // Each guard restores its variable on drop, inside the lock.
++                let _allowlist =
++                    lean_ctx::test_env::VarGuard::set("LEAN_CTX_SHELL_ALLOWLIST_OVERRIDE", "git");
++                let _guards: Vec<_> = SHELL_VARS
++                    .iter()
++                    .map(|key| {
++                        let guard = lean_ctx::test_env::VarGuard::set(key, "");
++                        match env.iter().find(|(k, _)| k == key) {
++                            Some((_, value)) => lean_ctx::test_env::set_var(key, value),
++                            None => lean_ctx::test_env::remove_var(key),
++                        }
++                        guard
++                    })
++                    .collect();
++                cases
++                    .iter()
++                    .map(|&(cmd, denied)| (cmd, denied, decide(cmd, BIN)))
++                    .collect()
++            });
++            for (cmd, denied, decision) in decisions {
++                assert_eq!(
++                    matches!(decision, PowerShellDecision::Deny(_)),
++                    denied,
++                    "env {env:?}: {cmd}: {decision:?}"
++                );
++                if !denied {
++                    assert_eq!(decision, PowerShellDecision::Passthrough, "{cmd}");
++                }
++            }
++        }
++    }
++
++    #[test]
++    fn powershell_lines_are_read_as_powershell_under_any_hook_shell() {
++        assert_decisions_under_any_hook_shell(&[
++            (
++                "Get-ChildItem | Select-Object @{n='kb'; e={ $_.Length / 1kb }}",
++                false,
++            ),
++            ("$f = \"C:\\x\\y\"; Test-Path $f", false),
++            ("foreach ($c in 'a','b') { Write-Output $c }", false),
++            ("$env:PATH = \"x\"; calc", true),
++            ("Invoke-Expression 'calc'", true),
++            ("iex 'calc'", true),
++            (". ./x.ps1", true),
++            ("Start-Process calc", true),
++            ("[IO.File]::Delete('x')", true),
++            ("[Diagnostics.Process]::Start('calc')", true),
++            ("$p.Kill(1)", true),
++            ("Write-Output x.y(calc)", true),
++            ("Write-Output $x.ToString((calc))", true),
++            ("$n = $x.ToString((calc))", true),
++        ]);
++    }
++
++    /// A .NET member call at statement start or as a local assignment's
++    /// value is read by the PowerShell reader; one inside an argument is not.
++    #[test]
++    fn member_calls_pass_only_where_the_powershell_reader_sees_them() {
++        assert_decisions_under_any_hook_shell(&[
++            ("[Math]::Max(1,2)", false),
++            (
++                "[Environment]::GetEnvironmentVariable('Path','User') -split ';'",
++                false,
++            ),
++            (
++                "$p = [Environment]::GetEnvironmentVariable('Path','User')",
++                false,
++            ),
++            ("$env:X = $x.ToString((calc))", true),
++            ("ForEach-Object { $x.ToString((calc)) }", true),
++            ("echo =$x.y(calc)", true),
++            ("git log --format=$x.y(calc)", true),
++            ("Get-ChildItem a=[Math]::Max(calc)", true),
++        ]);
++    }
++
++    /// The call operator `&` runs its target: only a literal name or path
++    /// that the allowlist accepts may pass.
++    #[test]
++    fn call_operator_targets_meet_the_allowlist() {
++        assert_decisions_under_any_hook_shell(&[
++            ("& git status", false),
++            ("& 'evil_binary'", true),
++            ("& 'cmd' ,'/c','evil_binary'", true),
++            ("& $env:ComSpec", true),
++            ("& (Get-Comman
+```
+
+**File**: `rust/src/core/shell_allowlist/compound.rs` (modified, +135/-30)
+```diff
+@@ -41,9 +41,7 @@ pub(super) fn expand_to_leaf_segments(command: &str) -> Result<Vec<String>, Shel
+         .into());
+     }
+     let mut leaves = Vec::new();
+-    for seg in extract_all_commands(&command) {
+-        resolve_segment_leaves(&seg, 0, &mut leaves)?;
+-    }
++    resolve_commands(&command, 0, &mut leaves)?;
+     Ok(leaves)
+ }
+ 
+@@ -73,9 +71,7 @@ fn resolve_segment_leaves(
+     // neither walk below can claim it.
+     if let Some(expr) = arithmetic_command_expr(strip_body_intro_keywords(s)) {
+         for inner in arithmetic_substitutions(expr, segment)? {
+-            for inner_seg in extract_all_commands(inner) {
+-                resolve_segment_leaves(&inner_seg, depth + 1, out)?;
+-            }
++            resolve_commands(inner, depth + 1, out)?;
+         }
+         return Ok(());
+     }
+@@ -121,20 +117,14 @@ fn resolve_segment_leaves(
+         return resolve_segment_leaves(assignment_rhs, depth + 1, out);
+     }
+     if let Some(inner) = balanced_paren_inner(s) {
+-        for inner_seg in extract_all_commands(inner) {
+-            resolve_segment_leaves(&inner_seg, depth + 1, out)?;
+-        }
+-        return Ok(());
++        return resolve_commands(inner, depth + 1, out);
+     }
+     // #1514: PowerShell commonly wraps a read-only cmdlet before selecting a
+     // property: `(Get-Item 'x').VersionInfo`. Validate the inner command and
+     // accept only a conservative property chain. Method calls, indexers and
+     // operators fall through to deny-by-default as an unrecognized command.
+     if let Some(inner) = powershell_property_expression_inner(s) {
+-        for inner_seg in extract_all_commands(inner) {
+-            resolve_segment_leaves(&inner_seg, depth + 1, out)?;
+-        }
+-        return Ok(());
++        return resolve_commands(inner, depth + 1, out);
+     }
+     // #968: a `{ cmd1; cmd2; }` brace group must be recursed into exactly like
+     // a `( … )` subshell above — otherwise every command after the first
+@@ -156,10 +146,7 @@ fn resolve_segment_leaves(
+         if !suffix.trim().is_empty() && !is_redirect_only_suffix(suffix) {
+             return Err(zsh_only_form(segment));
+         }
+-        for inner_seg in extract_all_commands(inner) {
+-            resolve_segment_leaves(&inner_seg, depth + 1, out)?;
+-        }
+-        return Ok(());
++        return resolve_commands(inner, depth + 1, out);
+     }
+     // #855: a segment that is *entirely* env-var assignments (`VAR=$(cmd …)`,
+     // nothing left over — `out=$(gh pr view …)` is a common, legitimate idiom
+@@ -171,9 +158,7 @@ fn resolve_segment_leaves(
+     // as its own leaf so `gh`, not the assignment wrapper, is what actually
+     // gets checked against the allowlist.
+     for inner in assignment_substitution_leaves(s) {
+-        for inner_seg in extract_all_commands(inner) {
+-            resolve_segment_leaves(&inner_seg, depth + 1, out)?;
+-        }
++        resolve_commands(inner, depth + 1, out)?;
+     }
+     // Anything else (incl. `( … ) trailing`, leftover delimiters) is pushed
+     // verbatim: base-extraction below sees a first token like `(ls)` that
+@@ -186,11 +171,24 @@ fn resolve_segment_leaves(
+     // the real base command inside — no recursion needed like subshells get,
+     // since `cd`/env changes inside `{ }` must persist to the caller (#939,
+     // agent_wrapper::rebuild's cwd-tracking wrapper).
+-    //
+-    // #1930: a cmdlet runs the script blocks it is handed
+-    // (`ForEach-Object { Remove-Item $_ }`), so each block body is resolved
+-    // into leaves of its own, after the cmdlet itself so its verdict comes
+-    // first.
++    resolve_command_leaf(s, segment, depth, out)
++}
++
++/// Push the simple command `s` as a leaf, then resolve the script blocks it
++/// runs. Shared by an ordinary segment and the literal target of a call
++/// operator (`& ForEach-Object { … }`), so neither skips these checks.
++/// `segment` is the text an error shows.
++///
++/// #1930: a cmdlet runs the script blocks it is handed
++/// (`ForEach-Object { Remove-Item $_ }`), so each block body is resolved
++/// into leaves of its own, after the cmdlet itself so its verdict comes
++/// first.
++fn resolve_command_leaf(
++    s: &str,
++    segment: &str,
++    depth: usize,
++    out: &mut Vec<String>,
++) -> Result<(), ShellError> {
+     let base = extract_base_from_segment(s);
+     let bodies = super::ps_statements::script_block_bodies(s, &base);
+     // zsh runs brace bodies without `do`/`then`: `while true { cmd }`,
+@@ -236,20 +234,127 @@ fn zsh_only_form(segment: &str) -> ShellError {
+     .into()
+ }
+ 
+-/// Resolve every segment of a command text found inside PowerShell syntax.
++/// Resolve every segment of a command text.
+ fn resolve_commands(text: &str, depth: usize, out: &mut Vec<String>) -> Result<(), ShellError> {
+-    for segment in extract_all_commands(text) {
+-        resolve_segment_leaves(&segment, depth, out)?;
++    for (segment, call_target) in call_operator_segments(text)? {
++        if call_target {
++        
+```
+
+**File**: `rust/src/core/shell_allowlist/enforcement.rs` (modified, +9/-0)
+```diff
+@@ -66,6 +66,15 @@ pub fn check_shell_allowlist(command: &str) -> Result<(), ShellError> {
+     decided
+ }
+ 
++/// [`check_shell_allowlist`] for a host's PowerShell tool call, which the hook
++/// checks but does not wrap. Not the detected shell: a host that runs hooks
++/// through Git Bash (Claude Code on Windows) passes `SHELL=/usr/bin/bash` and
++/// `MSYSTEM=MINGW64`, and PowerShell read under POSIX rules is refused.
++pub fn check_shell_allowlist_in_powershell(command: &str) -> Result<(), ShellError> {
++    let _host = super::ps_statements::HostGuard::powershell(true);
++    check_shell_allowlist(command)
++}
++
+ /// Refuses code that contains a redaction marker such as
+ /// `[REDACTED:Database credentials]`. Redaction applies only to what an agent
+ /// is shown, never to what runs; an agent that copies a marker out of a
+```
+
+**File**: `rust/src/core/shell_allowlist/lexer.rs` (modified, +63/-0)
+```diff
+@@ -352,6 +352,8 @@ impl<'a> Lexer<'a> {
+                         && !starts_word(bytes, i, start, bare_close_at)
+                         && bytes[i - 1] != b'='
+                         && bytes.get(i + 1) != Some(&b')')
++                        && !(powershell_member_call(bytes, i, start)
++                            && super::ps_statements::host_is_powershell())
+                     {
+                         // `*(e:…:)`, `x(+cmd)`, `@(a|b)`: only a function
+                         // head `f()` or an array `a=(…)` may touch a word.
+@@ -522,6 +524,67 @@ fn starts_word(bytes: &[u8], i: usize, start: usize, bare_close_at: usize) -> bo
+     }
+ }
+ 
++/// Is the `(` at `i` the argument list of a PowerShell member call —
++/// `[Math]::Max(`, `$p.WaitForExit(`, `(Get-Date).ToString(` — on a word that
++/// opens an expression (`$`, `[`, `(`) at the start of a statement or as the
++/// value of a local assignment (`$n = …`, `$n += …`)? No shell glob runs in
++/// PowerShell, and `ps_statements` reads such a statement and decides which
++/// members are inert. Not one: a bare word (`x.y(` — in argument mode its `(`
++/// starts another argument), a call in a command's arguments
++/// (`echo $x.ToString((cmd))`, `git log --format=$x.y((cmd))`) and the value
++/// of a scoped assignment (`$env:X = …`), none of which a reader looks into.
++fn powershell_member_call(bytes: &[u8], i: usize, start: usize) -> bool {
++    let mut j = i;
++    while j > start && (bytes[j - 1].is_ascii_alphanumeric() || bytes[j - 1] == b'_') {
++        j -= 1;
++    }
++    let accessed = j < i
++        && j > start
++        && (bytes[j - 1] == b'.' && (j - 1 == start || bytes[j - 2] != b'.')
++            || bytes[j - 1] == b':' && j - 1 > start && bytes[j - 2] == b':');
++    if !accessed {
++        return false;
++    }
++    while j > start
++        && !matches!(
++            bytes[j - 1],
++            b' ' | b'\t' | b'\n' | b';' | b'&' | b'|' | b'{' | b'}' | b'=' | b','
++        )
++    {
++        j -= 1;
++    }
++    if !matches!(bytes[j], b'$' | b'[' | b'(') {
++        return false;
++    }
++    j = skip_blanks_back(bytes, j, start);
++    if j > start && bytes[j - 1] == b'=' {
++        // Only `$name =` or `$name <op>=` at statement start: an `=` inside
++        // an argument (`--format=`, `a=`) belongs to that argument.
++        let mut k = j - 1;
++        if k > start && matches!(bytes[k - 1], b'+' | b'-' | b'*' | b'/' | b'%') {
++            k -= 1;
++        }
++        k = skip_blanks_back(bytes, k, start);
++        let name_end = k;
++        while k > start && (bytes[k - 1].is_ascii_alphanumeric() || bytes[k - 1] == b'_') {
++            k -= 1;
++        }
++        if k == name_end || k == start || bytes[k - 1] != b'$' {
++            return false;
++        }
++        j = skip_blanks_back(bytes, k - 1, start);
++    }
++    j == start || matches!(bytes[j - 1], b'\n' | b';' | b'{')
++}
++
++/// `at` moved back over the spaces and tabs before it, not past `start`.
++fn skip_blanks_back(bytes: &[u8], mut at: usize, start: usize) -> usize {
++    while at > start && matches!(bytes[at - 1], b' ' | b'\t') {
++        at -= 1;
++    }
++    at
++}
++
+ /// Index of the backtick closing a substitution opened before `from`,
+ /// skipping backslash escapes. `None` when it is unterminated.
+ fn closing_backtick(bytes: &[u8], from: usize) -> Option<usize> {
+```
+
+**File**: `rust/src/core/shell_allowlist/lexer_tests.rs` (modified, +43/-0)
+```diff
+@@ -195,3 +195,46 @@ fn ordinary_commands_keep_passing() {
+         ],
+     );
+ }
++
++/// A `(` attached to a member name is a .NET call, not a glob qualifier, only
++/// when PowerShell runs the line; which members are inert is decided by the
++/// PowerShell reader, and a bare word keeps the refusal on every host.
++#[test]
++fn attached_paren_of_a_member_call_passes_only_under_powershell() {
++    use crate::core::shell_allowlist::ps_statements::HostGuard;
++    let member_calls = [
++        "[Math]::Max(1,2)",
++        "[Environment]::GetEnvironmentVariable('Path','User') -split ';'",
++        "$s.Substring(1)",
++        "$p = [Environment]::GetEnvironmentVariable('Path','User')",
++        "if ($x) { $n += $s.IndexOf('x') }",
++    ];
++    {
++        let _host = HostGuard::powershell(true);
++        assert_all_pass("echo", &member_calls);
++        assert_all_block(
++            "echo",
++            &[
++                "[IO.File]::Delete('x')",
++                "[Diagnostics.Process]::Start('calc')",
++                "$p.Kill(1)",
++                "echo x.y(evil_binary)",
++                "echo $x.ToString((evil_binary))",
++                "$n = $x.ToString((evil_binary))",
++                "$env:X = $x.ToString((evil_binary))",
++                "ForEach-Object { $x.ToString((evil_binary)) }",
++                // An `=` inside an argument is no assignment: PowerShell
++                // runs the `( … )` there as another argument.
++                "echo =$x.y(evil_binary)",
++                "git log --format=$x.y(evil_binary)",
++                "Get-ChildItem a=[Math]::Max(evil_binary)",
++                "[Math]::Max((evil_binary), 1)",
++                "echo *(e:evil_binary:)",
++                "echo x(+evil_binary)",
++            ],
++        );
++    }
++    let _host = HostGuard::powershell(false);
++    assert_all_block("echo", &member_calls);
++    assert_all_block("echo", &["echo x(+evil_binary)"]);
++}
+```
+
+**File**: `rust/src/core/shell_allowlist/ps_statements.rs` (modified, +24/-10)
+```diff
+@@ -237,18 +237,21 @@ pub(crate) enum Mode {
+     PowerShell,
+ }
+ 
+-#[cfg(test)]
+ thread_local! {
+     static FORCED_HOST: std::cell::Cell<Option<bool>> = const { std::cell::Cell::new(None) };
+ }
+ 
+-/// Test-only override of the executing shell for this thread.
+-#[cfg(test)]
++/// Overrides the executing shell for checks on this thread until dropped.
++///
++/// A host's PowerShell tool runs its line in PowerShell whatever shell
++/// lean-ctx would detect for itself: a host that launches its hooks through
++/// Git Bash (Claude Code on Windows does) hands the hook
++/// `SHELL=/usr/bin/bash` and `MSYSTEM=MINGW64` (see
++/// [`super::check_shell_allowlist_in_powershell`]).
+ pub(super) struct HostGuard {
+     prev: Option<bool>,
+ }
+ 
+-#[cfg(test)]
+ impl HostGuard {
+     pub(super) fn powershell(on: bool) -> Self {
+         Self {
+@@ -257,17 +260,16 @@ impl HostGuard {
+     }
+ }
+ 
+-#[cfg(test)]
+ impl Drop for HostGuard {
+     fn drop(&mut self) {
+         FORCED_HOST.with(|host| host.set(self.prev));
+     }
+ }
+ 
+ /// The mode for the shell that runs the checked line: the one `ctx_shell`,
+-/// `ctx_execute` and the shell aliases execute with.
++/// `ctx_execute` and the shell aliases execute with, unless a [`HostGuard`]
++/// names it.
+ fn host_mode() -> Mode {
+-    #[cfg(test)]
+     if let Some(forced) = FORCED_HOST.with(std::cell::Cell::get) {
+         return if forced {
+             Mode::PowerShell
+@@ -283,6 +285,12 @@ fn host_mode() -> Mode {
+     }
+ }
+ 
++/// Does PowerShell run the checked line? For the lexer, which otherwise reads
++/// only POSIX shells.
++pub(super) fn host_is_powershell() -> bool {
++    host_mode() == Mode::PowerShell
++}
++
+ /// Commands a PowerShell control-flow statement runs — its conditions, loop
+ /// sources and block bodies — as text for the walker to validate.
+ ///
+@@ -429,11 +437,17 @@ fn local_assignment_value(statement: &str) -> Option<&str> {
+ 
+ /// Is every top-level segment of `command` a PowerShell statement or
+ /// expression this module reads? Then an empty leaf list means the line runs
+-/// no command, not that the walker found nothing to check.
++/// no command, not that the walker found nothing to check. The target of a
++/// call operator (`& 'x'`) is a command, never inert.
+ pub(super) fn is_inert_powershell(command: &str) -> bool {
+-    let segments = super::extract_all_commands(command);
++    let Ok(segments) = super::compound::call_operator_segments(command) else {
++        return false;
++    };
+     !segments.is_empty()
+-        && segments.iter().all(|segment| {
++        && segments.iter().all(|(segment, call_target)| {
++            if *call_target {
++                return false;
++            }
+             let statement = super::skip_powershell_assignment(segment);
+             matches!(statement_commands(statement), Some(Ok(_)))
+                 || expression_commands(statement).is_some()
+```
+
+**File**: `rust/src/core/shell_allowlist/substitution.rs` (modified, +11/-4)
+```diff
+@@ -1,6 +1,6 @@
+ use super::heredoc::strip_for_analysis;
+ use super::lexer::{Expansion, lex};
+-use super::{ShellError, effective_allowlist, extract_all_commands, extract_base_from_segment};
++use super::{ShellError, effective_allowlist, extract_base_from_segment};
+ 
+ /// $(), backticks, <() in arguments: a substituted command runs like any other,
+ /// so it is gated like one (GHSA-rxv5-4c3x-g4q6 E, owner decision 26.10.;
+@@ -91,9 +91,16 @@ fn extract_substitution_commands(command: &str) -> Result<Vec<String>, ShellErro
+             if trimmed.is_empty() {
+                 continue;
+             }
+-            results.extend(extract_all_commands(&strip_for_analysis(
+-                trimmed, false, true,
+-            )));
++            // Split like a top-level line, so a PowerShell call operator
++            // keeps its target a command (`$(& 'x')`), never an inert string.
++            let stripped = strip_for_analysis(trimmed, false, true);
++            for (segment, call) in super::compound::call_operator_segments(&stripped)? {
++                results.push(if call {
++                    format!("& {segment}")
++                } else {
++                    segment
++                });
++            }
+             results.extend(extract_substitution_commands(trimmed)?);
+         }
+     }
+```
+
+---
+
+### Incident Patch 3: `436db5e1` (2026-11-08)
+**Commit Message**: ci(test): test PathJail on GitHub, fix the tests it exposed (#2214)
+
+* ci(test): unit tests on nextest, test features without no-jail
+
+The Windows lib part was the critical path of the PR run (32 min,
+424 s for the engine lib under libtest). Unit tests now run on
+nextest's ci profile, which gives each test its own data dir;
+integration binaries and doctests stay on libtest (#1206).
+
+Tests build with every feature except no-jail (and what enables it),
+computed by .github/scripts/test_features.py with the same rule as
+GitLab's mr_quick.py: --all-features compiled PathJail and its tests
+out, so the jail was never tested here. The wall-clock gates use the
+same set so they reuse the build.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/ci.yml` (modified, +2/-1)
+* ci(nextest): Windows data-dir wrapper, wrappers split by platform
+
+Port of the nextest config from GitLab 5!213 (6c48d920f9):
+nextest-data-dir.cmd is the batch counterpart of the per-test data-dir
+wrapper, the wrapper scripts are split by cfg(unix) / cfg(windows) in
+the default and ci profiles, and the ci profile drops the
+solution_integration retry. The .cmd is named in PUBLISH_MANIFEST.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* ci: 
+
+**File**: `.github/scripts/test_features.py` (added, +65/-0)
 ```diff
-@@ -312,9 +312,10 @@ jobs:
-         shell: bash
-         run: |
-           umask 077
--          if [[ "${{ runner.os }}" == "macOS" ]]; then
-+          if [[ "${{ runner.os }}" == "macOS" && -x "${CARGO_HOME}/bin/cargo" ]]; then
-             CARGO="${CARGO_HOME}/bin/cargo"
-           else
-+            # Newer macOS images install rustup's proxies outside CARGO_HOME.
-             CARGO="cargo"
-           fi
-           if [[ "${{ runner.os }}" == "Windows" ]]; then
+@@ -0,0 +1,65 @@
++#!/usr/bin/env python3
++# SPDX-License-Identifier: Apache-2.0
++"""Print the `--features` list the Test job builds with.
++
++Every feature of every default workspace member, except those that enable
++`no-jail` directly or through other features. `no-jail` compiles PathJail
++and its tests out, so `--all-features` never tested the jail at all. This is
++the same rule as GitLab's `scripts/ci/mr_quick.py --print-test-features`.
++
++Run from `rust/`.
++"""
++
++import json
++import subprocess
++
++UNTESTED_FEATURES = {"no-jail"}
++
++
++def main() -> None:
++    meta = json.loads(
++        subprocess.run(
++            ["cargo", "metadata", "--format-version", "1", "--no-deps"],
++            check=True,
++            capture_output=True,
++            text=True,
++        ).stdout
++    )
++    packages = meta["packages"]
++    names = {p["name"] for p in packages}
++    edges: dict[str, set[str]] = {}
++    for p in packages:
++        for feature, values in p["features"].items():
++            out = edges.setdefault(f"{p['name']}/{feature}", set())
++            for value in values:
++                if value.startswith("dep:"):
++                    continue
++                if "/" in value:
++                    dep, sub = value.split("/", 1)
++                    dep = dep.rstrip("?")
++                    if dep in names:
++                        out.add(f"{dep}/{sub}")
++                else:
++                    out.add(f"{p['name']}/{value}")
++    bad = {n for n in edges if n.split("/", 1)[1] in UNTESTED_FEATURES}
++    changed = True
++    while changed:
++        changed = False
++        for node, outs in edges.items():
++            if node not in bad and outs & bad:
++                bad.add(node)
++                changed = True
++    selected = set(meta["workspace_default_members"])
++    print(
++        ",".join(
++            f"{p['name']}/{f}"
++            for p in sorted(packages, key=lambda p: p["name"])
++            if p["id"] in selected
++            for f in sorted(p["features"])
++            if f != "default" and f"{p['name']}/{f}" not in bad
++        )
++    )
++
++
++if __name__ == "__main__":
++    main()
 ```
 
-**File**: `.github/workflows/release.yml` (modified, +10/-1)
+**File**: `.github/workflows/ci.yml` (modified, +18/-6)
 ```diff
-@@ -1203,7 +1203,16 @@ jobs:
-       - name: Publish the verified draft
-         env:
-           GH_TOKEN: ${{ github.token }}
--        run: gh release edit "${GITHUB_REF_NAME}" --repo "${GITHUB_REPOSITORY}" --draft=false --latest
-+        # GitHub can answer a 5xx after it applied the edit (3.12.1); the edit
-+        # is idempotent, so a retry only confirms it. Success = not a draft.
+@@ -307,6 +307,17 @@ jobs:
+                      /etc/apt/sources.list.d/*microsoft*
+           sudo apt-get update
+           sudo apt-get install -y mold
++      # Every feature except no-jail (and what enables it): no-jail compiles
++      # PathJail and its tests out, so `--all-features` never tested the jail.
++      # Same set as GitLab's mr_quick.py --print-test-features.
++      - name: Select test features
++        working-directory: rust
++        shell: bash
 +        run: |
-+          for attempt in 1 2 3 4; do
-+            gh release edit "${GITHUB_REF_NAME}" --repo "${GITHUB_REPOSITORY}" --draft=false --latest && exit 0
-+            draft="$(gh release view "${GITHUB_REF_NAME}" --repo "${GITHUB_REPOSITORY}" --json isDraft --jq .isDraft || echo unknown)"
-+            [[ "$draft" == "false" ]] && { echo "::warning::release edit errored but the release is published"; exit 0; }
-+            sleep $((attempt * 15))
-+          done
-+          echo "::error::could not publish the draft"; exit 1
++          if [[ "${{ runner.os }}" == "Windows" ]]; then PY=python; else PY=python3; fi
++          features=$("$PY" ../.github/scripts/test_features.py)
++          [[ -n "$features" ]]
++          echo "TEST_FEATURES=$features" >> "$GITHUB_ENV"
+       - name: Run tests
+         working-directory: rust
+         shell: bash
+@@ -329,14 +340,14 @@ jobs:
+             fi
+             JEMALLOC_OVERRIDE="${{ steps.jemalloc.outputs.jemalloc-override }}" \
+             CARGO_TARGET_X86_64_PC_WINDOWS_GNU_RUSTFLAGS="-L ${{ steps.jemalloc.outputs.dummy-dir }}" \
+-            "$CARGO" test --target x86_64-pc-windows-gnu --all-features "${SELECT[@]}"
++            "$CARGO" test --target x86_64-pc-windows-gnu --features "$TEST_FEATURES" "${SELECT[@]}"
+           elif [[ "${{ runner.os }}" == "Linux" ]]; then
+             # `mold -run` redirects child linker invocations to mold without
+             # touching RUSTFLAGS (which is pinned to `-Dwarnings` job-wide and
+             # would override any .cargo/config.toml rustflags).
+-            mold -run "$CARGO" test --all-features
++            mold -run "$CARGO" test --features "$TEST_FEATURES"
+           else
+-            "$CARGO" test --all-features
++            "$CARGO" test --features "$TEST_FEATURES"
+           fi
  
-   jetbrains-plugin:
-     # Build the JetBrains/IntelliJ plugin and attach it to the GitHub Release as a
+       # Wall-clock gates: #581's parallel BM25 rebuild win, the context-kernel
+@@ -372,9 +383,10 @@ jobs:
+             (( idle * 10 >= (busy + idle) * 9 )) && break
+           done
+           ps -eo pid,pcpu,etime,args --sort=-pcpu | head -4
+-          cargo test --all-features --lib -- --test-threads=1 parallel_incremental_rebuild_perf_gate --nocapture
+-          cargo test --all-features --lib -- --test-threads=1 context_kernel::perf_benchmark
+-          cargo test --all-features --test main -- --test-threads=1 performance_stress
++          cargo test --features "$TEST_FEATURES" --lib -- --test-threads=1 parallel_incremental_rebuild_perf_gate --nocapture
++          cargo test --features "$TEST_FEATURES" --lib -- --test-threads=1 context_kernel::perf_benchmark
++          cargo test --features "$TEST_FEATURES" --test main -- --test-threads=1 performance_stress
++          cargo test --features "$TEST_FEATURES" --test main -- --test-threads=1 context_radar_perf
+ 
+   clippy:
+     name: Clippy
 ```
 
-**File**: `CHANGELOG.md` (modified, +49/-1)
+**File**: `docs/contracts/team-seat-value-v1/frozen-hashes.json` (modified, +1/-1)
 ```diff
-@@ -6,8 +6,56 @@ Current positioning: [LeanCTX Engine — Context Gateway for AI Systems](docs/PO
+@@ -1,7 +1,7 @@
+ {
+   "contract": "team-seat-value-v1",
+   "sha256": {
+-    ".github/workflows/ci.yml": "adfe71e30bd19082d30c369c2cb8219912741951413c29e206029546b64ac14e",
++    ".github/workflows/ci.yml": "797956ec6f0ea25f8ddd5799368ca79922cdeabfe8e6032cc961097eeac4e3a5",
+     "ci/gitlab-ci.yml": "5a1251f812a03c6ab97df01feda26942dc22d406b0e79374e4ff97c5c279178b",
+     "docs/contracts/README.md": "e7012341f0448efe8570ed93d20772558f0245566b333b962f9dfabc1c1ff08a",
+     "docs/contracts/team-seat-value-v1/README.md": "caecd3e67f1e9c0adacc272a9dae892ac0cddef42c5e17066c069d17a83505d6",
+```
+
+**File**: `rust/src/core/artifacts.rs` (modified, +6/-4)
+```diff
+@@ -229,12 +229,14 @@ mod tests {
+         std::fs::create_dir_all(&vault).unwrap();
+         std::fs::write(vault.join("note.md"), "# Vault note\nrotation policy").unwrap();
  
- ## [Unreleased]
++        // serde_json escapes the path: a Windows path's backslashes are not
++        // valid JSON escapes when formatted into the string verbatim.
+         write_registry(
+             project.path(),
+-            &format!(
+-                r#"{{"artifacts":[{{"name":"vault","path":"{}","description":"notes"}}]}}"#,
+-                vault.display()
+-            ),
++            &serde_json::json!({
++                "artifacts": [{"name": "vault", "path": vault, "description": "notes"}]
++            })
++            .to_string(),
+         );
  
--### Fixed
-+### Added
+         // Without an allow-list entry the external path is rejected by the jail.
+```
+
+**File**: `rust/src/core/pathjail_tests.rs` (modified, +6/-0)
+```diff
+@@ -585,6 +585,10 @@ fn harness_auto_memory_path_is_allowed_without_extra_roots() {
+     let old_home = std::env::var_os("HOME");
+     crate::test_env::set_var("HOME", tmp.path());
+     crate::test_env::remove_var("CLAUDE_CONFIG_DIR");
++    // `dirs::home_dir()` ignores HOME on Windows (it asks the shell for the
++    // profile folder), so name the harness config dir there instead.
++    #[cfg(windows)]
++    crate::test_env::set_var("CLAUDE_CONFIG_DIR", tmp.path().join(".claude"));
+     let root = tmp.path().join("project");
+     let memory = tmp
+         .path()
+@@ -633,6 +637,8 @@ fn harness_auto_memory_path_is_allowed_without_extra_roots() {
+         Some(h) => crate::test_env::set_var("HOME", h),
+         None => crate::test_env::remove_var("HOME"),
+     }
++    #[cfg(windows)]
++    crate::test_env::remove_var("CLAUDE_CONFIG_DIR");
+ }
+ 
+ /// #820: lean-ctx state dir (tee files) is implicitly allowed by the jail.
+```
+
+**File**: `rust/tests/suite/context_radar_perf.rs` (modified, +33/-14)
+```diff
+@@ -3,6 +3,15 @@ use std::time::Instant;
+ 
+ use lean_ctx::core::context_radar::{ContextRadar, RadarEvent, default_window_for_client};
+ 
++/// The timing half of each perf test is opt-in, as in `performance_stress`:
++/// under the multi-threaded suite, CPU contention alone pushed a 150 ms bound
++/// to 409 ms on a green ubuntu runner. CI's perf-gate step sets
++/// `LEAN_CTX_PERF_GATE=1` and runs these serialized; the functional
++/// assertions run always.
++fn timing_enforced() -> bool {
++    std::env::var("LEAN_CTX_PERF_GATE").as_deref() == Ok("1")
++}
 +
-+- **LeanCTX | Hive is open.** `lean-ctx hive connect` and `hive link` connect an instance to
-+  hive.leanctx.com (or a self-hosted Hive), and `hive` is back in help, suggestions and
-+  completions; 3.12.0 and 3.12.1 shipped the connector switched off.
-+
-+### Security
+ fn make_event(event_type: &str, tokens: usize, tool_name: Option<&str>) -> RadarEvent {
+     RadarEvent {
+         ts: 1700000000,
+@@ -44,7 +53,9 @@ fn perf_radar_load_100_events() {
+     assert_eq!(radar.events.len(), 100);
+     let b = radar.budget_breakdown();
+     assert!(b.lean_ctx_tool_tokens > 0);
+-    assert!(elapsed.as_millis() < 100, "100 events took {elapsed:?}");
++    if timing_enforced() {
++        assert!(elapsed.as_millis() < 100, "100 events took {elapsed:?}");
++    }
+ }
  
-+- **Write destinations stay inside the project without a Workspace (GHSA-483j-9vcj-2gxx).**
-+  `ctx_package save`, `ctx_pack export`, the `ctx_edit`/`ctx_patch` backups, `ctx_checkpoint
-+  restore` and the `ctx_knowledge` export wrote to the path the model passed, so an absolute or
-+  `../` path left the project in the default configuration. A write destination now goes
-+  through the path jail with or without a Workspace; reads are unchanged. Reported by
-+  kasparovabi.
-+
-+### Fixed
-+
-+- **A directory granted with `lean-ctx allow-path` is walkable (#2190).** `ctx_search`,
-+  `ctx_tree` and `ctx_glob` refused a granted folder below a protected home location such as
-+  `~/Library` although `ctx_read` read its files. A walk inside a granted directory now runs;
-+  a grant never makes home, a filesystem root or a privacy-guarded home folder walkable.
-+- **A dogfood or release-candidate build updates to its release.** The update check read
-+  `3.12.1-dogfood.9` as 3.12.9 and answered "already up to date"; a prerelease now sorts
-+  before its release, as in SemVer.
-+- **Updates no longer switch an existing setup to the governor, and 3.12.1's switch is
-+  undone.** The 3.12.1 update moved every unpinned Claude Code, CodeBuddy, Cursor, Codex,
-+  Gemini and Copilot CLI setup to the governor without the lean-ctx MCP server. An update or
-+  setup refresh now keeps the MCP, hybrid or replace setup it finds. A host that 3.12.1 switched
-+  automatically (a `*.pre-governor-<version>.bak` backup or an interrupted migration, and no
-+  governor pin) gets its previous mode back on the next `lean-ctx setup`, `lean-ctx update` or
-+  `init --agent <host>`. The mode is read from the backup and pinned. `init --agent <host>
-+  --mode governor|governor-mcp` now pins that choice too, so the repair leaves it alone.
-+- **New Claude Code installs get `governor-mcp`.** Governor hooks plus the lean-ctx MCP server
-+  with deferred tools, so Hive, the agent bus and knowledge work from the first session. New
-+  installs of the other hosts get the standard MCP setup.
-+- **Claude Code always keeps a search tool.** The standard setup denied native Grep/Glob even
-+  when `~/.claude.json` had no lean-ctx MCP server. That happened after the 3.12.1 migration,
-+  when a server or daemon of the previous build re-rendered the standard hooks, and sessions
-+  then had neither native search nor `ctx_search`. The deny is now written only together with
-+  the MCP entry, and a refresh removes it when the entry is missing. `lean-ctx doctor` reports
-+  a pinned standard mode or a native-tool deny without the MCP server, with the repair command.
-+- **An older binary no longer overwrites a newer setup.** Every explicit setup and init records
-+  its version. The silent hook refresh of a server or daemon still running from before an update
-+  leaves the setup alone when a newer build wrote it.
-+- **A host pin selects the mode of later refreshes.** `[governor] pinned.<host>` (written by
-+  `init --agent <host> --mode <m>`) is honoured by every setup and refresh path, not only by the
-+  governor default.
-+- **`gain` and the cockpit count the governor's applied savings.** Applied R1.bash, R2 and R4
-+  decisions are recorded as `governor:<rule>` savings; shadow decisions still count nothing.
-+  R1.read already did.
- - **Test processes of every LeanCTX crate stay off production endpoints.** The guard that
-   sends test traffic to a loopback sink recognised only the Engine's own unit tests and
-   processes cargo launched for the Engine or `lean-ctx` package. Since the crate split, the
-```
-
-**File**: `PUBLIC-EXPORT-RECEIPT.json` (modified, +136/-129)
-```diff
-@@ -184,11 +184,11 @@
-    "size": 1605
-   },
-   {
--   "blob": "8178bbdcf572506ff490615dde345a97e29b6b9e",
-+   "blob": "657aefd74d71f3ef885205866f0bac4f4915b44a",
-    "mode": "100644",
-    "path": ".github/workflows/ci.yml",
--   "sha256": "828f77ecc3d6d172a7bf30cc109670af87944304ad9a3d419dda0a2c2d9cc0c4",
--   "size": 46655
-+   "sha256": "adfe71e30bd19082d30c369c2cb8219912741951413c29e206029546b64ac14e",
-+   "size": 46765
-   },
-   {
-    "blob": "75f0a8c31e05c2ead623063c320d5783b406aee0",
-@@ -233,11 +233,11 @@
-    "size": 3699
-   },
-   {
--   "blob": "14d8a0606170c9328101ff51ddcf16ddedceb9a2",
-+   "blob": "3bfe07e9a438bc84af8edb1df3ac171f1e717a77",
-    "mode": "100644",
-    "path": ".github/workflows/release.yml",
--   "sha256": "1e8dcaaf051fb4d37f432756096b7324266ce44ec0c151c1c8875137a2ce868d",
--   "size": 84978
-+   "sha256": "25412dd2826f0493f3b211c377942cf5cf7decb3f5697cfbf6c8738d9ecc38d3",
-+   "size": 85565
-   },
-   {
-    "blob": "75a4d6a3ea3e0e6bf69efff80c68bc5cca72e7b4",
-@@ -331,11 +331,11 @@
-    "size": 1033
-   },
-   {
--   "blob": "c9fdc270931bba41b4f402eeaa7b475a6af46e95",
-+   "blob": "2fc1be75c80a3e436d27d7b351a3c2eb6a6e5ecf",
-    "mode": "100644",
-    "path": "CHANGELOG.md",
--   "sha256": "833539f2b2c576a24b204486f654759223865e3f51bd6c6d55f3905b76178268",
--   "size": 1216375
-+   "sha256": "9e539f44953284c81ccbecd9dfadf0796727823c30538ba5563ddaa366d01a10",
-+   "size": 1219915
-   },
-   {
-    "blob": "77a7c7a520af8fc8b4df372eb5bd5fddcefbfecf",
-@@ -436,11 +436,11 @@
-    "size": 525
-   },
-   {
--   "blob": "1a43bc6fd158be0198bda72668d8c2e9bf1ed44b",
-+   "blob": "7c0502ae5cd6267c35c256b445f1dc99a18678eb",
-    "mode": "100644",
-    "path": "PUBLISH_MANIFEST.toml",
--   "sha256": "e9e923ead0330e9ebe42cf73ab0f6f9bbbed81099953cdf17e8ce112ef426083",
--   "size": 258380
-+   "sha256": "805b64f589b49fadc68295fb26f3f302e36899b147a8b13266470b46b7ad1323",
-+   "size": 258438
-   },
-   {
-    "blob": "b50ec9ee68e230777b65ff932e22735417a8e540",
-@@ -450,10 +450,10 @@
-    "size": 38306
-   },
-   {
--   "blob": "25fc786e4fdc0fdf19370e7634f4201767392ba2",
-+   "blob": "f04fefb3a8dff3c0cc59e8e4c862e3e62239fd1d",
-    "mode": "100644",
-    "path": "SBOM.cdx.json",
--   "sha256": "c86a714c4ad681434e52c475261330297ca1fa74ed54c6637b17567a25fcb8fe",
-+   "sha256": "f81caf6a3fc7ca4afea4e7a9cf9dd9218351054aa26b880b1dce469ac6456795",
-    "size": 687888
-   },
-   {
-@@ -464,10 +464,10 @@
-    "size": 32425
-   },
-   {
--   "blob": "1e469b210359b3301245846fade9b24336760537",
-+   "blob": "a39760398db5390c1d7399e6434325ac0cc09dcc",
-    "mode": "100644",
-    "path": "THIRD_PARTY_NOTICES",
--   "sha256": "fdf3c5f98521928cda39ba844278809b5fe841670d7e87790261b95e5c0dc95e",
-+   "sha256": "bc5157a267362bf62cd31153e55401fe219fd7ae5693892df93e9ddb2d4bc977",
-    "size": 330302
-   },
-   {
-@@ -513,10 +513,10 @@
-    "size": 593
-   },
-   {
--   "blob": "7d2e1e46c0e0350acadcb950fa4f0806ad7db5bb",
-+   "blob": "b6638fc1abe7daf0c3c302d43474bef4ff7f1001",
-    "mode": "100644",
-    "path": "aur/lean-ctx/PKGBUILD",
--   "sha256": "bdd1b648332be46db0cedfd3d541e0b10a977a71a2153aa47125c3e527609d70",
-+   "sha256": "d03b5a428f3491d9029f12faed4d8a6a30625f57d30e7c953f9882406122c018",
-    "size": 2096
-   },
-   {
-@@ -1605,10 +1605,10 @@
-    "size": 4024
-   },
-   {
--   "blob": "5a17b1fdd7e7019556fe81daa94b2ccdc18bf71a",
-+   "blob": "e39e170e52e353d6ca8d8236b4ec9199459c5805",
-    "mode": "100644",
-    "path": "docs/contracts/delivery-evidence-v1.json",
--   "sha256": "69c7633dfe33696156bb6588310afda444b2cccaf616fe2728e4c2aab4a896d4",
-+   "sha256": "16b47b3e44a3d21df82bb79ccf2fa2929cf08d30c70bd28a6860c151f1162ff8",
-    "size": 6734
-   },
-   {
-@@ -2424,10 +2424,10 @@
-    "size": 671
-   },
-   {
--   "blob": "379421e3e954d5ad3f06957fe1292dbd64cef752",
-+   "blob": "49d068e4b53f3005e1e781ca070b6ec99ad776fd",
-    "mode": "100644",
-    "path": "docs/contracts/team-seat-value-v1/frozen-hashes.json",
--   "sha256": "6d7d7543053f54a0d063f3f6e3ef2b67b6452175655eb3d01e0317a7c126888f",
-+   "sha256": "3bf150d57d921b3522e2debd7035e11070cf06b498c35a4583ed66b457092802",
-    "size": 3887
-   },
-   {
-@@ -3194,11 +3194,11 @@
-    "size": 5291
-   },
-   {
--   "blob": "a2664be50b991d4786f436f347f3f51129088ba6",
-+   "blob": "a479dbab138357465cbb93e7a109e1ef8c51b920",
-    "mode": "100644",
-    "path": "docs/reference/generated/mcp-tools.md",
--   "sha256": "170e340975ed1e50da31753fae22dce336c0e8a0cd6a3023ca70f7848fbd30c0",
--   "size": 22281
-+   "sha256": "2f7a374eb7f30ef9077b584b89b8371307b06e4a1dff05ef3cf0f08e687a3a56",
-+   "size": 22820
-   },
-   {
-    "blob": "b07e4a82faa703c5eb4f3ede20b051e9e4c7b5cc",
-@@ -3901,18 +3901,18 @@
-    "size": 193663
-   },
-   {
--   "blob": "d1c6793d13b0f32a6a875d86238349a30a6f0b57",
-+   "blob": "ac474bf4aa273114caee4d008479cdfc5c8eb98f",
-    "mode": "100644",
-    "path": "legal/third-party-assets.toml",
--   "sha256": "e0e23ba3409222c534ca6f2b60047753e9435f0d5b6a99169b7beac21b2715ac",
-+   "sha256": "127f610654f874638558d0ed6d8bd827607e675507c755be49659b4351bb7dd4",
-    "size": 3792
-   },
-  
-```
-
-**File**: `PUBLISH_MANIFEST.toml` (modified, +1/-0)
-```diff
-@@ -721,6 +721,7 @@ new_paths = [
-   "rust/crates/lean-ctx-protocol/tests/fixtures/hive-v2/routes/worker_retire.error.not_found.json",
-   "rust/crates/lean-ctx-protocol/tests/fixtures/hive-v2/routes/worker_retire.error.not_owned.json",
-   "rust/crates/lean-ctx-protocol/tests/fixtures/hive-v2/routes/worker_retire.request.json",
-+  "rust/crates/lean-ctx-hooks/src/hooks/setup_writer.rs",
-   "integrations/claude-code-mod/tests/pick-session.test.ts",
-   "rust/crates/lean-ctx-protocol/tests/fixtures/hive-v2/vectors/screening_exceptions.vectors.json",
-   "rust/crates/lean-ctx-protocol/tests/fixtures/hive-v2/web/organisation-instances-revoke.json",
-```
-
-**File**: `SBOM.cdx.json` (modified, +8/-8)
-```diff
-@@ -16952,7 +16952,7 @@
-         "registry+https://github.com/rust-lang/crates.io-index#zip@9.0.5",
-         "registry+https://github.com/rust-lang/crates.io-index#zstd@0.14.3"
-       ],
--      "ref": "path+file://./rust#lean-ctx-engine@3.12.1"
-+      "ref": "path+file://./rust#lean-ctx-engine@3.12.2"
-     },
-     {
-       "dependsOn": [
-@@ -20832,14 +20832,14 @@
-   ],
-   "metadata": {
-     "component": {
--      "bom-ref": "path+file://./rust#lean-ctx-engine@3.12.1",
-+      "bom-ref": "path+file://./rust#lean-ctx-engine@3.12.2",
-       "components": [
-         {
--          "bom-ref": "path+file://./rust#lean-ctx-engine@3.12.1 bin-target-0",
-+          "bom-ref": "path+file://./rust#lean-ctx-engine@3.12.2 bin-target-0",
-           "name": "lean_ctx",
--          "purl": "pkg:cargo/lean-ctx-engine@3.12.1?download_url=file://.#src/lib.rs",
-+          "purl": "pkg:cargo/lean-ctx-engine@3.12.2?download_url=file://.#src/lib.rs",
-           "type": "library",
--          "version": "3.12.1"
-+          "version": "3.12.2"
-         }
-       ],
-       "description": "LeanCTX | OSS library: the open-source runtime for the Context Gateway for AI agents behind the lean-ctx CLI, MCP server and proxy integrations.",
-@@ -20859,10 +20859,10 @@
-         }
-       ],
-       "name": "lean-ctx-engine",
--      "purl": "pkg:cargo/lean-ctx-engine@3.12.1?download_url=file://.",
-+      "purl": "pkg:cargo/lean-ctx-engine@3.12.2?download_url=file://.",
-       "scope": "required",
-       "type": "library",
--      "version": "3.12.1"
-+      "version": "3.12.2"
-     },
-     "properties": [
-       {
-@@ -20871,7 +20871,7 @@
-       },
-       {
-         "name": "leanctx:cargo-lock-sha256",
--        "value": "51d03d76fc7ecadd77f622efcd7add3da53f5d53f2973c1c2efca72b49293515"
-+        "value": "f6f1ffbfb6268065c7da0f50461fe3d8da6cd4532aaf53697bce002a9c3e0775"
-       }
-     ],
-     "tools": [
-```
-
-**File**: `THIRD_PARTY_NOTICES` (modified, +5/-5)
-```diff
-@@ -2,16 +2,16 @@
- Schema: leanctx.third-party-notices/v1
- Status: GENERATED AND APPROVED
- Content-Digest-Scope: SHA-256 of this file with the Content-Digest value zeroed
--Content-Digest: sha256:81fb0e0afb341ba0179d18f3a219a90fa676885c51b852288e62692e80345754
-+Content-Digest: sha256:ff359347607ff49d04169805af92e77fcfc09a59a43cb8d28fb78f98bfd12b2a
- Source inventory: rust/Cargo.lock + cargo metadata --locked --offline --all-features + SBOM.cdx.json + legal/third-party-assets.toml + packages/pi-lean-ctx/package-lock.json
- Generation command: cargo metadata --locked --offline --all-features --manifest-path rust/Cargo.toml --format-version 1
- Approval contract: legal/third-party-notices-approval.toml binds approved_content_sha256 to this file's exact SHA-256
--Cargo.lock SHA-256: 51d03d76fc7ecadd77f622efcd7add3da53f5d53f2973c1c2efca72b49293515
-+Cargo.lock SHA-256: f6f1ffbfb6268065c7da0f50461fe3d8da6cd4532aaf53697bce002a9c3e0775
- Cargo metadata inventory SHA-256: ecf8f62963d7200572a0d8925e71534384c3a8d18ca26cf96ecd4147ba383123
--SBOM.cdx.json SHA-256: c86a714c4ad681434e52c475261330297ca1fa74ed54c6637b17567a25fcb8fe
-+SBOM.cdx.json SHA-256: f81caf6a3fc7ca4afea4e7a9cf9dd9218351054aa26b880b1dce469ac6456795
- SBOM components: 558
--Asset manifest SHA-256: e0e23ba3409222c534ca6f2b60047753e9435f0d5b6a99169b7beac21b2715ac
--npm package-lock.json SHA-256: bf393664d199c189c280f2556107743f0c61963228bbc65706111b3d24bd2230
-+Asset manifest SHA-256: 127f610654f874638558d0ed6d8bd827607e675507c755be49659b4351bb7dd4
-+npm package-lock.json SHA-256: 29ddc11be191ab696ad7953593bab94b93f0724653645c00994ad5d8ee794fae
- Bundled MCP SDK: @modelcontextprotocol/sdk 1.32.1 (sha512-2DdE+SJDtzLEEWzY1ZjY7Q+VcPhcV1KisD3zI4u0XZyktsjHum1mwbMI+JaulUBi2OZk+KJAi2uPXzxichPkdw==)
- Cargo graph packages: 618
- Third-party Cargo packages: 599
-```
-
-**File**: `aur/lean-ctx/PKGBUILD` (modified, +2/-2)
-```diff
-@@ -1,6 +1,6 @@
- # Maintainer: Yves Gugger <yves@pounce.ch>
- pkgname=lean-ctx
--pkgver=3.12.0
-+pkgver=3.12.1
- pkgrel=1
- pkgdesc="LeanCTX | OSS — open-source Context Gateway for AI Systems. Context selection, supported controls, and evidence through local integration paths."
- arch=('x86_64' 'aarch64')
-@@ -12,7 +12,7 @@ makedepends=('cargo' 'gcc')
- # resolver finds it — no manual install, no runtime download.
- depends=('gcc-libs' 'onnxruntime')
- source=("$pkgname-$pkgver.tar.gz::https://github.com/yvgude/lean-ctx/releases/download/v$pkgver/lean-ctx-$pkgver-source.tar.gz")
--sha256sums=('a1009099b7933ddb8948d6511a38c4f9addfcfbc60c0a54161adea174e32bfb5')
-+sha256sums=('7667029e063b924e48015e8d93fb0a66bfcdc528817b98ac53cc3d700ae69b2b')
+ #[test]
+@@ -71,10 +82,12 @@ fn perf_radar_load_10k_events() {
+     assert_eq!(radar.events.len(), 10_000);
+     let b = radar.budget_breakdown();
+     assert!(b.tracked_total > 0);
+-    assert!(
+-        elapsed.as_millis() < 500,
+-        "10k events took {elapsed:?} — should be <500ms"
+-    );
++    if timing_enforced() {
++        assert!(
++            elapsed.as_millis() < 500,
++            "10k events took {elapsed:?} — should be <500ms"
++        );
++    }
+ }
  
- prepare() {
-   cd "$pkgname-$pkgver/rust"
+ #[test]
+@@ -90,10 +103,12 @@ fn perf_radar_load_50k_events() {
+     let elapsed = start.elapsed();
+ 
+     assert_eq!(radar.events.len(), 50_000);
+-    assert!(
+-        elapsed.as_millis() < 2000,
+-        "50k events took {elapsed:?} — should be <2s"
+-    );
++    if timing_enforced() {
++        assert!(
++            elapsed.as_millis() < 2000,
++            "50k events took {elapsed:?} — should be <2s"
++        );
++    }
+ }
+ 
+ // ---------------------------------------------------------------------------
+@@ -278,7 +293,9 @@ fn introspect_anthropic_large_request() {
+     assert_eq!(b.tool_definition_count, 60);
+     assert!(b.tool_definition_tokens > 0);
+     assert!(b.total_input_tokens > 7000);
+-    assert!(elapsed.as_millis() < 150, "introspect took {elapsed:?}");
++    if timing_enforced() {
++        assert!(elapsed.as_millis() < 150, "introspect took {elapsed:?}");
++    }
+ }
+ 
+ #[test]
+@@ -487,8 +504,10 @@ fn perf_budget_breakdown_100k_events() {
+     let elapsed = start.elapsed();
+ 
+     assert!(b.tracked_total > 0);
+-    assert!(
+-        elapsed.as_millis() < 150,
+-        "budget_breakdown on 100k events took {elapsed:?}"
+-    );
++    if timing_enforced() {
++        assert!(
++            elapsed.as_millis() < 150,
++            "budget_breakdown on 100k events took {elapsed:?}"
++        );
++    }
+ }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2193** (2026-11-05): test(lifecycle): wait for exec before recording a stand-in's identity (3.12.2 prebuild) (@yvgude)
-- **PR #2191** (2026-11-04): release: 3.12.2 (hotfix) (@yvgude)
-- **PR #2188** (2026-11-04): fix(telemetry): test processes of every LeanCTX crate stay off production endpoints (@yvgude)
-- **PR #2187** (2026-11-04): release: 3.12.1 long-session elision opt-in (@yvgude)
-- **PR #2185** (2026-11-03): release: 3.12.1 flaky-test hardening (@yvgude)
-- **PR #2183** (2026-11-03): release: 3.12.1 (@yvgude)
+- **PR #2221** (2026-11-09): fix(deps): clear RUSTSEC-2026-0459, -0457 and -0462 from main CI (@yvgude)
+- **PR #2220** (2026-11-09): fix(shell): close PowerShell gate gaps and Codex auto-approval (@yvgude)
+- **PR #2219** (2026-11-09): ci: speed up GitHub Actions CI (O0 engine, path filter, sccache, split docs) (@yvgude)
+- **PR #2218** (2026-11-09): test(shell): hold the env lock in cwd-reading allowlist tests (@RobinNorberg)
+- **PR #2216** (2026-11-08): fix(shell): read a PowerShell tool call as PowerShell, accept its member calls, gate its call operator (@RobinNorberg)
+- **PR #2214** (2026-11-08): ci(test): test PathJail on GitHub, fix the tests it exposed (@yvgude)
 
 ---
 
@@ -2982,36 +3797,35 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #2193 from yvgude/fix/3122-exec-race
+## X. deps): clear RUSTSEC-2026-0459, -0457 and -0462 from main CI
 
 **RULE**:
-When implementing operations in `PUBLIC-EXPORT-RECEIPT.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yvgude/lean-ctx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yvgude/lean-ctx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ffe6e95c`: Merge pull request #2193 from yvgude/fix/3122-exec-race. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f1172309`: deps): clear RUSTSEC-2026-0459, -0457 and -0462 from main CI. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `PUBLIC-EXPORT-RECEIPT.json`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-   "blob": "5ef642bd2f0523c8d7159261a13ac469cb89061f",
-   "sha256": "b54bd886e82d52f41a39b5ef28e1ad3c8584d198bb2cf55478c6ad3392693cb9",
-   "size": 11365
- "source_commit": "f54099a9db2f3460181fef1be8b08ea82de36f72",
- "tree_sha256": "71077f17e087a40cfeb974357dd7b9a495183ea2bc4c793c4ebddb73444eece2"
+- **Dependencies with published advisories are updated.** The bundled SQLite moves to the
+  release `rusqlite` 0.41 ships, fixing RUSTSEC-2026-0459. The vendored MCP SDK `rmcp` moves
+  from 2.0 to 3.9, which bounds HTTP response bodies an MCP server sends to `lean-ctx`
+  (RUSTSEC-2026-0462) and stops OAuth discovery for HTTP MCP servers from following metadata
+  URLs to private or loopback addresses (RUSTSEC-2026-0457). The lean-ctx patches on top of
+  `rmcp` shrink to one, since 3.9 contains the other fixes; `lean-ctx-embed` now declares the
+  Rust 1.89 its dependencies need.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-   "blob": "c440fc9d82daa9fe5cbedf1fed65addff2e30f96",
-   "sha256": "4ff365c946497e49113c6adf5503e6cae7248e948924ee4fbdccfb446eeb658f",
-   "size": 10672
- "source_commit": "de76ec3a1f76b05db847441ee41395ae9db5027c",
- "tree_sha256": "3abbe732f8ebf5751ae835881bd9e3d4ef63d8033e31268a9cf59da0d111d4e1"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ffe6e95c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f1172309` are properly handled with clean fallback behavior.

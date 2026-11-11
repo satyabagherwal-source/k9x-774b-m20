@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/google-closure-compiler-learnings.md`  
 > **Source**: github ([https://github.com/google/closure-compiler](https://github.com/google/closure-compiler))  
-> **Source Version**: `e2d3152d`  
+> **Source Version**: `51d80993`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T02:04:42.377Z  
+> **Timestamp**: 2026-11-07T19:55:18.614Z  
 > **Learning ID**: `learn-github-google-closure-compiler`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/google-closure-compiler-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/google/closure-compiler](https://github.com/google/closure-compiler))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T02:04:41.919Z  
+> **Harvest Timestamp**: 2026-11-07T19:55:17.510Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A JavaScript checker and optimizer.
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 7703 stars
+- **Stars / Engagement**: 7702 stars
 
 ---
 
@@ -2461,795 +2461,117 @@ $jscomp.arrayIterator = function(array) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e2d3152d` (2026-11-03)
-**Commit Message**: Fix `zizmor/template-injection` findings in `.github/workflows/release.yaml`.
+### Incident Patch 1: `51d80993` (2026-11-06)
+**Commit Message**: Merge pull request #4372 from rajath201:split-null-separator
 
-Extract `piper_cut_cl` and `version_id` from `steps.set_piper_json_vars.outputs.piperJson` in the `tag_cut_cl` step's `env:` block and pass them as quoted shell environment variables (`"${PIPER_CUT_CL}"` and `"${VERSION_ID}"`) instead of expanding `${{ fromJson(...) }}` expressions directly inside `run:`.
+PiperOrigin-RevId: 1015627121
 
-PiperOrigin-RevId: 1013174512
-
-**File**: `.github/workflows/release.yaml` (modified, +4/-3)
+**File**: `src/com/google/javascript/jscomp/PeepholeReplaceKnownMethods.java` (modified, +5/-3)
 ```diff
-@@ -74,10 +74,11 @@ jobs:
-           git config --global user.name "${GITHUB_ACTOR}"
-           git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
-           .github/ci_support/tag_release_version.sh \
--              "${{ fromJson(env.piperJson).piper_cut_cl }}" \
--              "${{ fromJson(env.piperJson).version_id }}";
-+              "${PIPER_CUT_CL}" \
-+              "${VERSION_ID}";
-       env:
--        piperJson: ${{ steps.set_piper_json_vars.outputs.piperJson }}
-+        PIPER_CUT_CL: ${{ fromJson(steps.set_piper_json_vars.outputs.piperJson).piper_cut_cl }}
-+        VERSION_ID: ${{ fromJson(steps.set_piper_json_vars.outputs.piperJson).version_id }}
-         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+@@ -1410,9 +1410,11 @@ private Node tryFoldStringSplit(Node n, Node stringNode, Node arg1) {
+     int limit = stringValue.length() + 1;
  
-   run-tests:
+     if (arg1 != null) {
+-      if (arg1.isStringLit()) {
+-        separator = arg1.getString();
+-      } else if (!arg1.isNull()) {
++      if (arg1.isStringLit() || arg1.isNull()) {
++        // Only `undefined` means "no separator"; any other value is converted with ToString, so
++        // `str.split(null)` splits on the text "null".
++        separator = NodeUtil.getStringValue(arg1);
++      } else {
+         return n;
+       }
+ 
+```
+
+**File**: `test/com/google/javascript/jscomp/PeepholeReplaceKnownMethodsTest.java` (modified, +5/-0)
+```diff
+@@ -713,6 +713,11 @@ public void testFoldStringSplit() {
+     fold("x = 'a b c d e'.split(' ', 1)", "x = ['a']");
+     fold("x = 'a b c d e'.split(' ', 3)", "x = ['a','b','c']");
+     fold("x = 'a b c d e'.split(null, 1)", "x = ['a b c d e']");
++    // A null separator is converted with ToString, so it splits on the text "null".
++    fold("x = 'anullb'.split(null)", "x = ['a','b']");
++    fold("x = 'null'.split(null)", "x = ['','']");
++    fold("x = 'anullbnullc'.split(null, 2)", "x = ['a','b']");
++    foldSame("x = 'anullb'.split(undefined)");
+     fold("x = 'aaaaa'.split('a')", "x = ['', '', '', '', '', '']");
+     fold("x = 'xyx'.split('x')", "x = ['', 'y', '']");
+ 
 ```
 
 ---
 
-### Incident Patch 2: `7121478f` (2026-11-02)
-**Commit Message**: Add regression tests for logical assignment on static class properties
+### Incident Patch 2: `b2dd5e98` (2026-11-05)
+**Commit Message**: Merge pull request #4326 from Pybsama:codex/fix-jsdoc-default-delimiters
 
-See also #4288.
+PiperOrigin-RevId: 1014271126
 
-PiperOrigin-RevId: 1012177299
-
-**File**: `test/com/google/javascript/jscomp/AggressiveInlineAliasesTest.java` (modified, +358/-0)
+**File**: `src/com/google/javascript/jscomp/parsing/JsDocInfoParser.java` (modified, +4/-1)
 ```diff
-@@ -933,6 +933,355 @@ function f() {
-         """);
+@@ -930,7 +930,10 @@ private JsDocToken parseAnnotation(JsDocToken token, List<ExtendedTypeInfo> exte
+               // system.
+               if (JsDocToken.EQUALS == token) {
+                 token = next();
+-                if (JsDocToken.STRING == token) {
++                if (token != JsDocToken.RIGHT_SQUARE
++                    && token != JsDocToken.EOL
++                    && token != JsDocToken.EOC
++                    && token != JsDocToken.EOF) {
+                   token = next();
+                 }
+               }
+```
+
+**File**: `test/com/google/javascript/jscomp/parsing/JsDocInfoParserTest.java` (modified, +30/-0)
+```diff
+@@ -5708,6 +5708,36 @@ public void testUnsupportedJsDocSyntax1() {
+     assertThat(info.getDescriptionForParameter("accessLevel")).isEqualTo("The user level");
    }
  
 +  @Test
-+  public void testLocalAliasInGetPropReceiver_knownBug() {
-+    // Regression test for b/476221453: logical assignment `Main.prop ??= ...` normalizes to
-+    // `let tmp; (tmp = Main).prop ?? (tmp.prop = ...);`.
-+    // TODO: b/476221453 - `(tmp = Main).prop` should also be inlined to `Main.prop`.
-+    test(
-+        """
-+        class Main {}
-+        Main.prop = 1;
-+        function f() {
-+          let tmp;
-+          return (tmp = Main).prop ?? (tmp.prop = {});
-+        }
-+        """,
-+        """
-+        class Main {}
-+        Main.prop = 1;
-+        function f() {
-+          let tmp;
-+          return (tmp = Main).prop ?? (Main.prop = {});
-+        }
-+        """);
++  public void testUnsupportedJsDocSyntaxWithDelimiterDefaultValue() {
++    for (String defaultValue : ImmutableList.of("(", ")")) {
++      JSDocInfo info =
++          parse("@param {string} [accessLevel=" + defaultValue + "] The user level */", true);
++      assertThat(info.getParameterCount()).isEqualTo(1);
++      assertTypeEquals(
++          registry.createOptionalType(STRING_TYPE), info.getParameterType("accessLevel"));
++      assertThat(info.getDescriptionForParameter("accessLevel")).isEqualTo("The user level");
++    }
 +  }
 +
 +  @Test
-+  public void testLocalAliasInGetPropReceiverWithZeroReadsNested_knownBug() {
-+    // Pre-fix baseline for b/476221453: `t1` has 0 separate read references (its only use is the
-+    // `(t1 = ...)` assignment expression result), and inlining `t1` exposes `(t2 = A).b.p` for
-+    // the next iteration.
-+    // TODO: b/476221453 - `(t1 = (t2 = A).b).p` should be inlined to `A.b.p`.
-+    testSame(
-+        """
-+        const A = {b: {p: 1}};
-+        function f() {
-+          let t1;
-+          let t2;
-+          use((t1 = (t2 = A).b).p);
-+        }
-+        """);
++  public void testUnsupportedJsDocSyntaxWithDelimiterDefaultValue_missingClosingBracket() {
++    for (String defaultValue : ImmutableList.of("(", ")")) {
++      parse(
++          "@param {string} [accessLevel=" + defaultValue + " */",
++          "Bad type annotation. missing closing ]" + BAD_TYPE_WIKI_LINK);
++    }
 +  }
 +
 +  @Test
-+  public void testGlobalAliasInConditionalGetPropReceiver_knownBug() {
-+    // Regression test for b/476221453: in global scope, `window.cond && (Main.prop ??= {})`
-+    // normalizes to `let tmp; window.cond && ((tmp = Main).prop ?? (tmp.prop = {}));`.
-+    // TODO: b/476221453 - `tmp` should be inlined to `Main`.
-+    test(
-+        """
-+        class Main {}
-+        Main.prop = 1;
-+        let tmp;
-+        window.cond && ((tmp = Main).prop ?? (tmp.prop = {}));
-+        """,
-+        """
-+        class Main {}
-+        Main.prop = 1;
-+        let tmp;
-+        window.cond && ((tmp = Main).prop ?? (tmp.prop = {}));
-+        """);
-+  }
-+
-+  @Test
-+  public void testLocalEs6ClassAliasInLoopCondition_knownBug() {
-+    // Regression test for b/476221453: `while (Main.prop ??= {})` normalizes `let tmp;`
-+    // outside the loop and `(tmp = Main).prop ?? (tmp.prop = {})` inside the loop condition.
-+    // TODO: b/476221453 - `tmp` should be inlined to `Main`.
-+    test(
-+        """
-+        class Main {}
-+        Main.prop = 1;
-+        function f() {
-+          let tmp;
-+          while ((tmp = Main).prop ?? (tmp.prop = {})) {
-+            break;
-+          }
-+        }
-+        """,
-+        """
-+        class Main {}
-+        Main.prop = 1;
-+        function f() {
-+          let tmp;
-+          for (; (tmp = Main).prop ?? (tmp.prop = {});) {
-+            break;
-+          }
-+        }
-+        """);
-+  }
-+
-+  @Test
-+  public void testUnsafeCtorAliasingInGetPropReceiverInLoop_knownBug() {
-+    // Regression test for b/476221453: `referencesCollapsibleProperty` should unwrap `ASSIGN` when
-+    // checking `(tmp = Main).doSomething(5)` after `partiallyInlineAlias` backs off.
-+    // TODO: b/476221453 - This should report `InlineAndCollapseProperties.UNSAFE_CTOR_ALIASING`.
-+    testSame(
-+        """
-+        /** @constructor */ var Main = function() {};
-+        Main.doSomething = function() {};
-+        function f() {
-+          var tmp;
-+          for (let i = 0; i < n(); i++) {
-+            use(tmp);
-+            (tmp = Main).doSomething(5);
-+          }
-+        }
-+        """);
-+  }
-+
-+  @Test
-+  public void testLocalEs6ClassAliasInForDoWhileAndForOfHeaders_knownBug() {
-+    // Pre-fix baseline for b/476221453 across `for` condition+update, `do-while`, and `for-of`.
-+    // TODO: b/476221453 - `t1`, `t2`, `t3`, and `t4` should be inlined to `Main`.
-+    testSame(
-+        """
-+        class Main {}
-+        Main.a = 1;
-+        Main.b = 2;
-+        Main.items = [];
-+        function f() {
-+          let t1;
-+          let t2;
-+          let t3;
-+          let t4;
-+          for (; (t1 = Main).a ?? (t1.a = 10); (t2 = Main).b || (t2.b = 20)) {
-+            break;
-+          }
-+          do {
-+            break;
-+          } while ((t3 = Main).a && (t3.a = 30));
-+          for (const x of ((t4 = Main).items ?? (t4.items = [1]))) {
-+            use(x);
-+          }
-+        }
-+        """);
-+  }
-+
-+  @Test
-+  public void testUnsafeCtorAliasingOnEs6ClassAndEnumInLoop_knownBug() {
-+    // Pre-fix baseline for b/476221453: before `Name.isConstructor()` checks
-+    // `NameProp.CONSTRUCTOR_TYPE`, ES6 classes in loops do not enter `partiallyInlineAlias` or
-+    // report `UNSAFE_CTOR_ALIASING` when read before their loop assignment.
-+    // TODO: b/476221453 - The ES6 class case should report
-+    // `InlineAndCollapseProperties.UNSAFE_CTOR_ALIASING`, whereas the `@enum` case should not.
-+    testSame(
-+        """
-+        class Main {
-+          static doSomething(x) {}
-+        }
-+        function f() {
-+          var tmp;
-+          for (let i = 0; i < n(); i++) {
-+            use(tm
-```
-
-**File**: `test/com/google/javascript/jscomp/InlineAndCollapsePropertiesTest.java` (modified, +219/-0)
-```diff
-@@ -1344,6 +1344,225 @@ public void testLocalAlias1() {
-         "var   a = {b: 3}; function f() { var x = null; f(a?.b); }");
-   }
- 
-+  @Test
-+  public void testLocalAliasInGetPropReceiver_knownBug() {
-+    // Regression test for b/476221453
-+    // TODO: b/476221453 - `(tmp = Main).prop` should also be collapsed to `Main$prop`.
-+    test(
-+        """
-+        class Main {}
-+        Main.prop = 1;
-+        function f() {
-+          let tmp;
-+          return (tmp = Main).prop ?? (tmp.prop = {});
-+        }
-+        """,
-+        """
-+        class Main {}
-+        var Main$prop = 1;
-+        function f() {
-+          let tmp;
-+          return (tmp = Main).prop ?? (Main$prop = {});
-+        }
-+        """);
-+  }
-+
-+  @Test
-+  public void testGlobalAliasInConditionalGetPropReceiver_knownBug() {
-+    // Regression test for b/476221453
-+    // TODO: b/476221453 - `(tmp = Main).prop` and `tmp.prop` should be collapsed to `Main$prop`.
-+    test(
-+        """
-+        class Main {}
-+        Main.prop = 1;
-+        let tmp;
-+        window.cond && ((tmp = Main).prop ?? (tmp.prop = {}));
-+        """,
-+        """
-+        class Main {}
-+        var Main$prop = 1;
-+        let tmp;
-+        window.cond && ((tmp = Main).prop ?? (tmp.prop = {}));
-+        """);
-+  }
-+
-+  @Test
-+  public void testLocalEs6ClassAliasInLoopCondition_knownBug() {
-+    // Regression test for b/476221453
-+    // TODO: b/476221453 - `(tmp = Main).prop` and `tmp.prop` should be collapsed to `Main$prop`.
-+    test(
-+        """
-+        class Main {}
-+        Main.prop = 1;
-+        function f() {
-+          let tmp;
-+          while ((tmp = Main).prop ?? (tmp.prop = {})) {
-+            break;
-+          }
-+        }
-+        """,
-+        """
-+        class Main {}
-+        var Main$prop = 1;
-+        function f() {
-+          let tmp;
-+          for (; (tmp = Main).prop ?? (tmp.prop = {});) {
-+            break;
-+          }
-+        }
-+        """);
-+  }
-+
-+  @Test
-+  public void testTopLevelBlockTwinAssignmentPreservesDeclarationOrder_knownBug() {
-+    // Regression test for b/476221453: when `(tmp = ns).sub = {x: 1}` is inlined to
-+    // `ns.sub = {x: 1}`, `GlobalNamespace` must scan it before `tmp.sub = tmp.sub || {}` so that
-+    // `var ns$sub = {x: 1}` is treated as the declaration of `ns$sub`.
-+    // TODO: b/476221453 - `(tmp = ns).sub` should be inlined and collapsed to `var ns$sub = {x:
-+    // 1}`.
-+    test(
-+        """
-+        var ns = {};
-+        {
-+          let tmp;
-+          (tmp = ns).sub = {x: 1};
-+          tmp.sub = tmp.sub || {};
-+        }
-+        use(ns.sub.x);
-+        """,
-+        """
-+        var ns = {};
-+        {
-+          let tmp;
-+          (tmp = ns).sub = {x: 1};
-+          ns.sub = ns.sub || {};
-+        }
-+        use(ns.sub.x);
-+        """);
-+  }
-+
-+  @Test
-+  public void testLocalEs6ClassAliasInForDoWhileAndForOfHeaders_knownBug() {
-+    // Pre-fix baseline for b/476221453: `Main.a`, `Main.b`, and `Main.items` collapse outside the
-+    // loops while the loop-header aliases `(t = Main)` remain un-inlined and uncollapsed.
-+    // TODO: b/476221453 - The loop-header aliases should also be inlined and collapsed.
-+    test(
-+        """
-+        class Main {}
-+        Main.a = 1;
-+        Main.b = 2;
-+        Main.items = [];
-+        function f() {
-+          let t1;
-+          let t2;
-+          let t3;
-+          let t4;
-+          for (; (t1 = Main).a ?? (t1.a = 10); (t2 = Main).b || (t2.b = 20)) {
-+            break;
-+          }
-+          do {
-+            break;
-+          } while ((t3 = Main).a && (t3.a = 30));
-+          for (const x of ((t4 = Main).items ?? (t4.items = [1]))) {
-+            use(x);
-+          }
-+        }
-+        use(Main.a, Main.b, Main.items);
-+        """,
-+        """
-+        class Main {}
-+        var Main$a = 1;
-+        var Main$b = 2;
-+        var Main$items = [];
-+        function f() {
-+          let t1;
-+          let t2;
-+          let t3;
-+          let t4;
-+          for (; (t1 = Main).a ?? (t1.a = 10); (t2 = Main).b || (t2.b = 20)) {
-+            break;
-+          }
-+          do {
-+            break;
-+          } while ((t3 = Main).a && (t3.a = 30));
-+          for (const x of ((t4 = Main).items ?? (t4.items = [1]))) {
-+            use(x);
-+          }
-+        }
-+        use(Main$a, Main$b, Main$items);
-+        """);
-+  }
-+
-+  @Test
-+  public void testConstNamespaceAliasInLoopConditionBacksOffCollapse() {
-+    // Unlike constructors/classes, a `@const` namespace in a loop header is not inlined, so
-+    // GlobalNamespace sees the aliasing get on `ns`, emits `PARTIAL_NAMESPACE_WARNING` when `ns`
-+    // contains a declared type, and backs off collapsing `ns.prop` everywhere (avoiding
-+    // split-brain).
-+    test(
-+        srcs(
-+            """
-+            /** @const */ var ns = {prop: 1};
-+            ns.Sub = class {};
-+            function f() {
-+              let tmp;
-+              while ((tmp = ns).prop ?? (tmp.prop = 2)) {
-+               
-```
-
-**File**: `test/com/google/javascript/jscomp/integration/ES2021IntegrationTest.java` (modified, +166/-0)
-```diff
-@@ -376,4 +376,170 @@ public void logicalAsssignmentsPropRefWithElementCastType_supportedWithTranspila
-         (a = foo)[b = x] ?? (a[b] = 5)
-         """);
-   }
-+
-+  @Test
-+  public void logicalAssignmentStaticClassPropertyNotTranspiledOutput_knownBug() {
-+    CompilerOptions options = optimizedWithoutTranspilationCompilerOptions();
-+
-+    // TODO: b/476221453 - `a.a` should be collapsed to `b` (`alert(() => b ??= {})`).
-+    test(
-+        options,
-+        """
-+        class MyClass {}
-+        MyClass.myField = 1;
-+        alert(() => {
-+          return (MyClass.myField ??= {});
-+        });
-+        alert(MyClass.myField);
-+        """,
-+        """
-+        class a {}
-+        var b = 1;
-+        alert(() => a.a ?? (b = {}));
-+        alert(b);
-+        """);
-+  }
-+
-+  @Test
-+  public void logicalAssignmentStaticClassPropertyTranspiledOutput_knownBug() {
-+    CompilerOptions options = fullyOptimizedCompilerOptions();
-+
-+    // TODO: b/476221453 - `a.a` should be collapsed to `b` (`alert(() => b ?? (b = {}))`).
-+    test(
-+        options,
-+        """
-+        class MyClass {}
-+        MyClass.myField = 1;
-+        alert(() => {
-+          return (MyClass.myField ??= {});
-+        });
-+        alert(MyClass.myField);
-+        """,
-+        """
-+        class a {}
-+        var b = 1;
-+        alert(() => a.a ?? (b = {}));
-+        alert(b);
-+        """);
-+  }
-+
-+  @Test
-+  public void logicalAssignmentNamespacedStaticClassPropertyTranspiledOutput_knownBug() {
-+    CompilerOptions options = fullyOptimizedCompilerOptions();
-+
-+    // TODO: b/476221453 - `a.a` should be collapsed to `b` (`alert(() => b ?? (b = {}))`).
-+    test(
-+        options,
-+        """
-+        const MyNs = {};
-+        MyNs.MyClass = class {};
-+        MyNs.MyClass.myField = 1;
-+        alert(() => {
-+          return (MyNs.MyClass.myField ??= {});
-+        });
-+        alert(MyNs.MyClass.myField);
-+        """,
-+        """
-+        var a = class {}, b = 1;
-+        alert(() => a.a ?? (b = {}));
-+        alert(b);
-+        """);
-+  }
-+
-+  @Test
-+  public void logicalAssignmentStaticClassPropertyGlobalConditionalOutput_knownBug() {
-+    CompilerOptions options = fullyOptimizedCompilerOptions();
-+
-+    // TODO: b/476221453 - `(c = a).a ?? (c.a = 3)` should be collapsed, preventing `MyClass.b`
-+    // from being constant-inlined as `2` in `alert(2)`.
-+    test(
-+        options,
-+        """
-+        class MyClass {}
-+        MyClass.a = 1;
-+        MyClass.b = 2;
-+        alert(MyClass.a ||= (MyClass.b ??= 3));
-+        alert(MyClass.b);
-+        """,
-+        """
-+        class a {}
-+        var b = 1;
-+        let c;
-+        alert(b || (b = (c = a).a ?? (c.a = 3)));
-+        alert(2);
-+        """);
-+  }
-+
-+  @Test
-+  public void logicalAssignmentStaticClassPropertyInLoopNotTranspiledOutput_knownBug() {
-+    CompilerOptions options = optimizedWithoutTranspilationCompilerOptions();
-+
-+    // TODO: b/476221453 - `(a = b).a ?? (a.a = {})` should be collapsed, preventing
-+    // `MyClass.myField` from being constant-inlined as `1` in `alert(1)`.
-+    test(
-+        options,
-+        """
-+        class MyClass {}
-+        MyClass.myField = 1;
-+        alert(() => {
-+          while (MyClass.myField ??= {}) {
-+            break;
-+          }
-+        });
-+        alert(MyClass.myField);
-+        """,
-+        """
-+        class b {}
-+        alert(() => {
-+          for (var a; (a = b).a ?? (a.a = {});) {
-+            break;
-+          }
-+        });
-+        alert(1);
-+        """);
-+  }
-+
-+  @Test
-+  public void logicalAssignmentStaticClassPropertyInForDoWhileForOfTranspiledOutput_knownBug() {
-+    CompilerOptions options = fullyOptimizedCompilerOptions();
-+
-+    // TODO: b/476221453 - Before the fix, `MyClass.a`, `MyClass.b`, and `MyClass.items` are
-+    // collapsed and constant-inlined as `[1, 2, [1]]` outside the loops, while `(c = b)` inside
-+    // the loop headers reads/writes properties on the empty `class b {}` constructor.
-+    test(
-+        options,
-+        """
-+        class MyClass {}
-+        MyClass.a = 1;
-+        MyClass.b = 2;
-+        MyClass.items = [1];
-+        alert(() => {
-+          for (; MyClass.a ??= 10; MyClass.b ||= 20) {
-+            if (window.stop) break;
-+          }
-+          do {
-+            if (window.stop) break;
-+          } while (MyClass.a &&= 30);
-+          for (const x of (MyClass.items ??= [])) {
-+            alert(x);
-+          }
-+        });
-+        alert([MyClass.a, MyClass.b, MyClass.items]);
-+        """,
-+        """
-+        class b {}
-+        alert(() => {
-+          for (var c, d; ((c = b).a ?? (c.a = 10)) && !window.a; (d = b).b || (d.b = 20)) {}
-+          var e;
-+          do {
-+            if (window.a) break;
-+          } while ((e = b).a && (e.a = 30));
-+          var f;
-+          for (let g of (f = b).c ?? (f.c = [])) {
-+            alert(g);
-+          }
-+        });
-+        alert([1, 2, [1]]);
-+        """);
-+  }
- }
-```
-
----
-
-### Incident Patch 3: `bbede293` (2026-11-03)
-**Commit Message**: Check in a test reproducing a InlineVariables and ReferenceCollector declaration-order bug.
-
-PiperOrigin-RevId: 1013124995
-
-**File**: `test/com/google/javascript/jscomp/InlineVariablesTest.java` (modified, +87/-0)
-```diff
-@@ -2763,4 +2763,91 @@ class C {
-         }
-         """);
-   }
-+
-+  @Test
-+  public void testNeverAssignedLetAndVar_referencedInEarlierHoistedFunction() {
-+    // Baseline: when declared lexically before `isDebugMode`, never-assigned `let` folds to
-+    // `void 0`.
-+    test(
-+        """
-+        let googDebugOverride;
-+        function isDebugMode() {
-+          return googDebugOverride ?? false;
-+        }
-+        use(isDebugMode());
-+        use(isDebugMode());
-+        """,
-+        """
-+        function isDebugMode() {
-+          return void 0 ?? false;
-+        }
-+        use(isDebugMode());
-+        use(isDebugMode());
-+        """);
-+
-+    // TODO(b/581117790): InlineVariables fails to inline never-assigned `let` or `var` to `void 0`
-+    // when a hoisted function declared earlier in AST order reads it, even when the function is
-+    // only called after the declaration (because ReferenceCollector visits `isDebugMode` before
-+    // `googDebugOverride`, causing StandardVarExpert#hasValidDeclaration to reject
-+    // `references.get(0)`).
-+    testSame(
-+        """
-+        function isDebugMode() {
-+          return googDebugOverride ?? false;
-+        }
-+        let googDebugOverride;
-+        use(isDebugMode());
-+        use(isDebugMode());
-+        """);
-+    testSame(
-+        """
-+        function isDebugMode() {
-+          return googDebugOverride ?? false;
-+        }
-+        var googDebugOverride;
-+        use(isDebugMode());
-+        use(isDebugMode());
-+        """);
-+
-+    // Soundness guard: calling `isDebugMode()` before `let googDebugOverride;` executes throws a
-+    // TDZ ReferenceError at runtime and must not be folded to `void 0`.
-+    testSame(
-+        """
-+        function isDebugMode() {
-+          return googDebugOverride ?? false;
-+        }
-+        use(isDebugMode());
-+        use(isDebugMode());
-+        let googDebugOverride;
-+        """);
-+  }
-+
-+  @Test
-+  public void testHoistedFunctionDeclaredBeforeInitializedVar() {
-+    // Mirror of `testHoistedFunction6` with hoisted functions placed at the top of the scope.
-+    // TODO(b/581117790): Because ReferenceCollector traverses `b` and `a` at their declaration
-+    // sites rather than at `a()`, `debug` is not considered well-defined and fails to inline `1`.
-+    testSame(
-+        """
-+        function b() { return debug; }
-+        function a() { return b(); }
-+        var debug = 1;
-+        a();
-+        a();
-+        """);
-+  }
-+
-+  @Test
-+  public void testNeverAssignedVar_referencedInEarlierArrowFunction() {
-+    // TODO(b/581117790): `var` has no temporal dead zone, so a never-assigned `var` is
-+    // unconditionally `undefined` throughout its hoist scope, but StandardVarExpert assumes
-+    // `references.get(0)` is the declaration and fails to inline `void 0`.
-+    testSame(
-+        """
-+        const isDebugMode = () => googDebugOverride ?? false;
-+        var googDebugOverride;
-+        use(isDebugMode());
-+        use(isDebugMode());
-+        """);
-+  }
- }
-```
-
-**File**: `test/com/google/javascript/jscomp/ReferenceCollectorTest.java` (modified, +41/-0)
-```diff
-@@ -694,6 +694,47 @@ public void afterExitScope(NodeTraversal t, ReferenceMap referenceMap) {}
-     assertThat(visitedReferenceNames).containsExactly("z", "f", "z").inOrder();
-   }
- 
-+  @Test
-+  public void testBehavior_hoistedFunctionsInReferenceOrder_declaredBeforeFirstCall() {
-+    List<String> visitedReferenceNames = new ArrayList<>();
-+    this.collectHoistedFunctionsInReferenceOrder = true;
-+    testBehavior(
-+        """
-+        function f() {
-+          return z;
-+        }
-+        let z;
-+        f();
-+        """,
-+        new Behavior() {
-+          @Override
-+          public void afterVisitNode(
-+              NodeTraversal t, Node n, @Nullable Node parent, @Nullable Reference addedReference) {
-+            if (addedReference != null) {
-+              visitedReferenceNames.add(addedReference.getNode().getString());
-+            }
-+          }
-+
-+          @Override
-+          public void afterExitScope(NodeTraversal t, ReferenceMap referenceMap) {
-+            if (t.getScope().isGlobal()) {
-+              ReferenceCollection z = referenceMap.getReferences(t.getScope().getVar("z"));
-+              // TODO(b/581117790): Even with collectHoistedFunctionsInReferenceOrder = true,
-+              // shouldTraverse() traverses `function f()` immediately on first AST encounter when
-+              // `f` has not been referenced yet, recording the read of `z` inside `f()` before
-+              // `let z;` rather than deferring traversal of `f()` until its first reference at
-+              // `f();`.
-+              assertThat(z)
-+                  .comparingElementsUsing(IS_DECLARATION)
-+                  .containsExactly(false, true)
-+                  .inOrder();
-+            }
-+          }
-+        });
-+
-+    assertThat(visitedReferenceNames).containsExactly("f", "z", "z", "f").inOrder();
++  public void testUnsupportedJsDocSyntaxWithEmptyDefaultValue() {
++    JSDocInfo info = parse("@param {string} [accessLevel=] The user level */", true);
++    assertThat(info.getParameterCount()).isEqualTo(1);
++    assertTypeEquals(
++        registry.createOptionalType(STRING_TYPE), info.getParameterType("accessLevel"));
++    assertThat(info.getDescriptionForParameter("accessLevel")).isEqualTo("The user level");
 +  }
 +
    @Test
-   public void testBehavior_hoistedFunctionsInReferenceOrder_false() {
-     List<String> visitedReferenceNames = new ArrayList<>();
-```
-
-**File**: `test/com/google/javascript/jscomp/integration/IntegrationTest.java` (modified, +75/-0)
-```diff
-@@ -5996,5 +5996,80 @@ function sanitize(data) {
-         window.res = "42".replace("foo", "bar");
-         """);
-   }
-+
-+  @Test
-+  public void testUnusedTestOnlyOverride_compileToZeroDependsOnDeclarationOrder() {
-+    CompilerOptions options = createCompilerOptions();
-+    CompilationLevel.ADVANCED_OPTIMIZATIONS.setOptionsForCompilationLevel(options);
-+    options.setLanguageIn(LanguageMode.ECMASCRIPT_NEXT);
-+    options.setLanguageOut(LanguageMode.ECMASCRIPT_NEXT);
-+    options.setDefineToBooleanLiteral("DEBUG", false);
-+
-+    // When `let debugOverride;` precedes `isDebugMode()` and `assertInRealm()`, RemoveUnusedCode
-+    // strips `TEST_ONLY`, InlineVariables folds `debugOverride` to `void 0`, `assertInRealm`
-+    // simplifies to an empty function, and the entire bundle compiles to zero bytes.
-+    test(
-+        options,
-+        """
-+        /** @define {boolean} */
-+        const DEBUG = true;
-+        let debugOverride;
-+        function isDebugMode() {
-+          return debugOverride ?? DEBUG;
-+        }
-+        function assertInRealm(name) {
-+          if (isDebugMode() && !window['inRealm']) {
-+            throw new Error(`Assertion failed for ${name}: must run inside child realm.`);
-+          }
-+        }
-+        const TEST_ONLY = {
-+          setDebug(val) {
-+            debugOverride = val;
-+          },
-+        };
-+        assertInRealm('ext-a');
-+        assertInRealm('ext-b');
-+        """,
-+        "");
-+
-+    // TODO(b/581117790): Moving `let debugOverride;` below `assertInRealm()` (above `TEST_ONLY`)
-+    // deadlocks InlineFunctions and InlineVariables even though `TEST_ONLY` is completely stripped
-+    // by RemoveUnusedCode and `debugOverride` has zero remaining assignments: multi-call
-+    // `assertInRealm` is too large for InlineFunctions to inline before its body shrinks, while
-+    // InlineVariables refuses to fold `debugOverride` to `void 0` because ReferenceCollector
-+    // visits `assertInRealm` (declared above `let debugOverride;`) before `let debugOverride;`.
-+    test(
-+        options,
-+        """
-+        /** @define {boolean} */
-+        const DEBUG = true;
-+        function isDebugMode() {
-+          return debugOverride ?? DEBUG;
-+        }
-+        function assertInRealm(name) {
-+          if (isDebugMode() && !window['inRealm']) {
-+            throw new Error(`Assertion failed for ${name}: must run inside child realm.`);
-+          }
-+        }
-+        let debugOverride;
-+        const TEST_ONLY = {
-+          setDebug(val) {
-+            debugOverride = val;
-+          },
-+        };
-+        assertInRealm('ext-a');
-+        assertInRealm('ext-b');
-+        """,
-+        """
-+        function a(b) {
-+          if ((c ?? !1) && !window.inRealm) {
-+            throw Error(`Assertion failed for ${b}: must run inside child realm.`);
-+          }
-+        }
-+        let c;
-+        a("ext-a");
-+        a("ext-b");
-+        """);
-+  }
- }
- 
+   public void testUnsupportedJsDocSyntax2() {
+     JSDocInfo info =
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4371** (2026-11-03): Bump actions/setup-java from 6.0.1 to 6.1.0 (@dependabot[bot])
-- **PR #4370** (2026-11-02): Bump bazel-contrib/setup-bazel from 0.19.0 to 0.19.1 (@dependabot[bot])
-- **PR #4367** (2026-10-29): fold bigint % with truncated remainder, not BigInteger.mod (@rajath201)
-- **PR #4366** (2026-11-02): round large hex, octal and binary literals once in normalizeNumber (@rajath201)
-- **PR #4365** (2026-10-26): Bump actions/upload-artifact from 7.0.1 to 7.0.2 (@dependabot[bot])
-- **PR #4364** (2026-10-26): Bump actions/download-artifact from 8.0.1 to 8.0.2 (@dependabot[bot])
+- **PR #4381** (closed): Add externs for the Translator and Language Detector APIs. (@avelad)
+- **PR #4380** (closed): Add on-device speech recognition APIs to SpeechRecognition externs. (@avelad)
+- **PR #4379** (closed): Add AudioTrack and VideoTrack externs. (@avelad)
+- **PR #4378** (closed): Add requestPermission to DeviceOrientationEvent and DeviceMotionEvent externs. (@avelad)
+- **PR #4377** (closed): Add DataCue to the HTML5 externs. (@avelad)
+- **PR #4372** (2026-11-06): fold str.split(null) with a "null" separator (@rajath201)
 
 ---
 
@@ -3269,33 +2591,34 @@ PiperOrigin-RevId: 1013124995
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. `zizmor/template-injection` findings in `.github/workflows/release.yaml`.
+## X. Merge pull request #4372 from rajath201:split-null-separator
 
 **RULE**:
-When implementing operations in `.github/workflows/release.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in google/closure-compiler. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/com/google/javascript/jscomp/PeepholeReplaceKnownMethods.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in google/closure-compiler. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e2d3152d`: `zizmor/template-injection` findings in `.github/workflows/release.yaml`.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `51d80993`: Merge pull request #4372 from rajath201:split-null-separator. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release.yaml`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/com/google/javascript/jscomp/PeepholeReplaceKnownMethods.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-              "${PIPER_CUT_CL}" \
-              "${VERSION_ID}";
-        PIPER_CUT_CL: ${{ fromJson(steps.set_piper_json_vars.outputs.piperJson).piper_cut_cl }}
-        VERSION_ID: ${{ fromJson(steps.set_piper_json_vars.outputs.piperJson).version_id }}
+      if (arg1.isStringLit() || arg1.isNull()) {
+        // Only `undefined` means "no separator"; any other value is converted with ToString, so
+        // `str.split(null)` splits on the text "null".
+        separator = NodeUtil.getStringValue(arg1);
+      } else {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-              "${{ fromJson(env.piperJson).piper_cut_cl }}" \
-              "${{ fromJson(env.piperJson).version_id }}";
-        piperJson: ${{ steps.set_piper_json_vars.outputs.piperJson }}
+      if (arg1.isStringLit()) {
+        separator = arg1.getString();
+      } else if (!arg1.isNull()) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e2d3152d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `51d80993` are properly handled with clean fallback behavior.

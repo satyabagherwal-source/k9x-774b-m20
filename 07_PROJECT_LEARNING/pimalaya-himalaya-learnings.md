@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md`  
 > **Source**: github ([https://github.com/pimalaya/himalaya](https://github.com/pimalaya/himalaya))  
-> **Source Version**: `8196891f`  
+> **Source Version**: `42134fd2`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T03:44:07.280Z  
+> **Timestamp**: 2026-11-09T11:16:17.648Z  
 > **Learning ID**: `learn-github-pimalaya-himalaya`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pimalaya/himalaya](https://github.com/pimalaya/himalaya))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T03:44:06.004Z  
+> **Harvest Timestamp**: 2026-11-09T11:16:16.876Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: CLI to manage emails
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7582 stars
+- **Stars / Engagement**: 7613 stars
 
 ---
 
@@ -1536,11 +1536,13 @@ impl Account {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #800** (2026-11-01): **fix(cli): delimit config paths with $PATH's own separator**
-  *Symptoms*: ## Problem  On Windows, `-c/--config` splits its value on `:`, the separator `$PATH` uses on Unix. An absolute Windows path carries a colon of its own, so the argument is cut at the drive letter:  ``` $ himalaya -c C:\Users\me\config.toml account list Error: No configuration found, run bare `himalaya` to launch the wizard, or write one by hand: ... ```  The parsed value is `["C", "\Users\me\config.toml"]`, neither of which exists, so the configuration is never read even though the file is right there. `HIMALAYA_CONFIG` feeds the same argument and fails the same way, and so does `-c` repeated with absolute paths. A relative path (`-c config.toml`) works, which is why this stays hidden.  ## Change  `src/cli.rs` picks the delimiter per platform: `;` on Windows, as `$PATH` and `std::env::split_paths` spell it, and `:` everywhere else, so Unix behaves exactly as before. A single path is never split, and several may still be given at once, or by repeating `-c`.  Two trade-offs are worth naming, both Windows-only. A colon-joined list (`-c a.toml:b.toml`, `HIMALAYA_CONFIG=a.toml:b.toml`) is no longer split there; `;` or repeated `-c` is the spelling now, which is also what `cairn/spec/config.md` already described. And a relative path that itself contains `;` is now split where it used to be one path. Keeping `:` splitting while reading absolute paths whole is not expressible through clap's `value_delimiter`; the README, the sample configuration, the changelog and the config spec now 
+- **Issue #810** (2026-11-08): **Support searching in multiple mailboxes at once**
+  *Symptoms*: At the moment `himalaya envelope search` only supports one mailbox with `--mailbox <NAME>` or default to `inbox.` It would be great to be able to search all mailboxes or be able to provide multiple `--mailbox <NAME>` arguments. Ideally support `--mailbox <REGEX>`.
+  **Post-Mortem & Fix Analysis**:
+  > @mschneiderwng this won't be supported: IMAP searches only the selected mailbox by design (RFC 9051 §6.4.4), so a search across mailboxes doesn't fit the protocol. The way to get it is to sync with [neverest](https://github.com/pimalaya/neverest) into a local store, which merges every mailbox (and account) into one view; `himalaya pimdir search` (next release) then searches it all at once.
 
-- **Issue #798** (2026-10-27): **message compose still nests display names: `--from "Name <addr>"` stores `From: > <Name <addr>>` (also To/Cc/Bcc)**
-  *Symptoms*: ## Problem  `message compose` still corrupts addresses that carry a display name, for `From` and for `To`/`Cc`/`Bcc`. The store round-trip makes it worse: what ends up in the mailbox is not even the double-wrapped form.  ``` $ himalaya -a zoho message compose --from "support <support@cryptoquant.dev>" \     --to jozef.rudy@gmail.com --subject t --body hi | head -2 From: <support <support@cryptoquant.dev>> To: <jozef.rudy@gmail.com> ```  Piped into `message add -m drafts -f draft`, the stored draft reads:  ``` From: > <support <support@cryptoquant.dev> To: jozef.rudy@gmail.com ```  and the envelope parser agrees the address itself is malformed — `himalaya envelope list -m drafts --json` reports:  ```json {"from":[{"name":null,"email":"support <support@cryptoquant.dev>"},{"name":null,"email":">"}]} ```  `To` is broken identically:  ``` $ ... --from support@cryptoquant.dev --to "Jozef Rudy <jozef.rudy@gmail.com>" ... To: > <Jozef Rudy <jozef.rudy@gmail.com> ```  Bare addresses are fine (`From: <support@cryptoquant.dev>` → stored as `support@cryptoquant.dev`), so only the display-name path is affected.  This matters beyond cosmetics: per #727 the same malformed header fails at send time with `SMTP MAIL FROM failed: rejected 501 5.1.7 Bad sender address syntax`.  ## Why this looks like a regression / incomplete fix  - #727 ("`--from \"Name <email>\"` breaks the composed From header") was closed 2026-08-16. - commit `48f00e3` (2026-09-26) is titled "fix: parse display names in To, 
+- **Issue #808** (2026-11-08): **feat(mcp): read an attachment's content without touching disk (#805)**
+  *Symptoms*: Closes #805.  `himalaya mcp` now lists `attachment_download` as a reading tool, so an agent can read an attachment without a file being written.  ## Result  A call on a 10 KiB binary PDF part, piped as JSON-RPC into the built binary over a temporary Maildir account:  ```json {   "structuredContent": { "id": "3", "mime": "application/pdf", "filename": "résumé.pdf", "size": 10240 },   "content": [     { "type": "text", "text": "{\"filename\":\"résumé.pdf\",\"id\":\"3\",\"mime\":\"application/pdf\",\"size\":10240}" },     { "type": "resource", "resource": { "uri": "himalaya://my%20work/My%20Box/m2/3", "mimeType": "application/pdf", "blob": "AAECAwQF…" } }   ] } ```  The bytes travel once, in the embedded resource. `data` appears nowhere, and the temporary directory is byte-for-byte unchanged afterwards.  ## As accepted  - **A fixed `--stdout`.** The tool table can now append fixed arguments to a tool's argv, before the `--` that opens the positionals. An argument a fixed value sets is no property, so a call cannot unset it. `attachment_download` is `attachment download` run with `--stdout`: no MCP-only verb, no new leaf. `stdout` and `dir` are not properties, and `attachment-id` takes exactly one id. - **The cap is the server's.** `himalaya mcp --max-attachment-size <BYTES>` defaults to 10 MiB and is no tool property. A larger part is refused after decoding and before base64 encoding, with the new code `attachment-too-large` and `isError: true`. Outside the server nothing is bou
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1557,348 +1559,38 @@ impl Account {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `529d2119` (2026-11-01)
-**Commit Message**: fix(cli): delimit config paths with $PATH's own separator (#800)
+### Incident Patch 1: `42134fd2` (2026-11-08)
+**Commit Message**: build: pin pimalaya-cli f976e40
 
-* fix(cli): delimit config paths with $PATH's own separator
-
-On Windows an absolute path carries a colon of its own, so `-c
-C:\Users\me\config.toml` was split on it and read as the two paths `C` and
-`\Users\me\config.toml`. Neither exists, so the configuration was never
-found and every command failed with "No configuration found", even though
-the file was there. The same held for HIMALAYA_CONFIG, which feeds the
-same argument.
-
-The separator is now `;` on Windows, as `$PATH` and `std::env::split_paths`
-spell it, and stays `:` elsewhere, so nothing changes on Unix. Several
-paths can still be given at once, and a single one is never split.
-
-* docs(config): state the platform config path separator
-
-The loader now splits -c on \'s own separator, so the README, the sample configuration and the config spec say so, and an Unreleased entry records the Windows fix and the colon-joined trade-off that comes with it.
-
-* test(cli): pin the config path delimiter to the platform
-
-The two splitting tests build their input from the constant, so an unconditional semicolon would pass them on Unix while breaking every colon-joined path 
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `Cargo.lock` (modified, +1/-0)
 ```diff
-@@ -64,6 +64,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- ### Fixed
- 
-+- Fixed `-c/--config` being split on `:`, which cut every absolute Windows path at its drive letter: `-c C:\Users\me\config.toml` reached the loader as `C` and `\Users\me\config.toml`, neither of which exists, so the configuration was never read. The delimiter now follows `$PATH` on the platform, `;` on Windows and `:` elsewhere, and the help text says so; `HIMALAYA_CONFIG` and repeated `-c` flags take absolute paths whole. On Windows a colon-joined list is no longer split, so pass several paths with `;` or repeat `-c`.
- - Fixed `account check` refusing an account declaring only a pimdir block as configuring no backend: the store is opened, its mailboxes listed, and a producer probed without writing anything, so a store whose staging lock a collector holds fails the check at once with `store-busy`.
- - Fixed `account check` exiting 0 when a backend failed: it now fails with one error naming each failed backend and why.
- - Fixed `pimdir queue cancel` reshaping the store's schema to Himalaya's io-pimdir revision, which dropped the tables and columns another app's revision keeps: the store is opened as it stands, and one of another draft is refused with `store-version`.
-```
-
-**File**: `README.md` (modified, +1/-1)
-```diff
-@@ -178,7 +178,7 @@ A persistent configuration is loaded from the first valid path among:
- 
- These are the same paths the [himalaya-tui](https://github.com/pimalaya/himalaya-tui) TUI looks at: one TOML file backs both binaries. CLI-only fields and TUI-only sections coexist without errors. See [config.sample.toml](./config.sample.toml) for a documented template.
- 
--Override the path with `-c <PATH>`; multiple paths can be passed at once, separated by `:`. The first one is the base and the rest are deep-merged on top.
-+Override the path with `-c <PATH>`; multiple paths can be passed at once, separated by `;` on Windows and `:` elsewhere, as `$PATH` separates them, or by repeating `-c`. The first one is the base and the rest are deep-merged on top.
- 
- To add or reconfigure an account, run the bare `himalaya` wizard again and redirect its printed TOML into (or merge it with) your config file. There is no in-place edit subcommand; `himalaya account list` and `himalaya account check` inspect and validate the accounts already declared.
- 
-```
-
-**File**: `cairn/log/2026-10-31-config-path-separator.md` (added, +34/-0)
-```diff
-@@ -0,0 +1,34 @@
-+---
-+cairn: log
-+change: config-path-separator
-+landed: 2026-10-31
-+---
-+
-+# Took the config path separator from the platform
-+
-+A Windows absolute path carries a colon of its own. `ConfigPathsArg` declared
-+`value_delimiter = ':'`, so clap split every `-c` value at the drive letter:
-+`-c C:\Users\me\config.toml` reached the loader as `C` and
-+`\Users\me\config.toml`, neither of which exists, and the configuration was
-+never read even though the file was right there. `HIMALAYA_CONFIG` feeds the
-+same argument and failed the same way, and so did repeated `-c` flags with
-+absolute paths. A relative path worked, which is why it stayed hidden.
-+
-+The delimiter now follows `$PATH` on the platform: `;` on Windows and `:` on
-+every other target. A single path is never split, the help text says which
-+separator applies, and several paths can still be given at once or by
-+repeating `-c`. On Windows a colon-joined list is no longer split, and a path
-+that itself contains `;` now is; both are the price of reading absolute paths
-+whole, and the documented spelling on Windows is `;` or repeated flags.
-+
-+Verified: `cargo build`, `cargo fmt --check` and `cargo test --all-features`
-+run on Windows before and after. The failures already present there, the
-+pimdir, mbox and tilde-expansion ones, are unchanged by name; one integration
-+test passing `-c` an absolute path now passes instead of failing on the
-+missing configuration. Two new tests parse the CLI: an absolute path yields one
-+path (before the change it yielded `["C", "\Users\...\config.toml"]`), and two
-+paths joined with the platform separator yield two. A third pins the constant
-+to `;` on Windows and `:` elsewhere, so dropping the platform gate cannot pass
-+unnoticed.
-+
-+Spec updated: config (MODIFIED: Config loading and merge).
-```
-
-**File**: `cairn/spec/config.md` (modified, +1/-1)
-```diff
-@@ -18,7 +18,7 @@ A bare authority SHALL resolve to `sieve://`, where the `imap` and `smtp` blocks
- A mechanism disclosing a reusable credential SHALL be refused over a cleartext connection unless `sieve.allow-cleartext-auth` is set, which is the configuration RFC 5804 section 5 asks for.
- 
- ### Requirement: Config loading and merge
--The config SHALL load from the first existing canonical path (`$XDG_CONFIG_HOME/himalaya/config.toml`, `$HOME/.config/himalaya/config.toml`, `$HOME/.himalayarc`), overridable with `-c/--config`. Multiple `-c` paths MAY be passed, colon-free as repeated flags: the first is the base and the rest are deep-merged on top.
-+The config SHALL load from the first existing canonical path (`$XDG_CONFIG_HOME/himalaya/config.toml`, `$HOME/.config/himalaya/config.toml`, `$HOME/.himalayarc`), overridable with `-c/--config`. Multiple `-c` paths MAY be passed, delimited like `$PATH` (`;` on Windows, `:` elsewhere) or repeated as flags: the first is the base and the rest are deep-merged on top.
- 
- ### Requirement: Missing account is an error
- When the config exists but lacks the requested account, the command SHALL fail with a hard error, not fall back to the wizard. The wizard is proposed only when no config is found at all.
-```
-
-**File**: `config.sample.toml` (modified, +2/-1)
-```diff
-@@ -7,7 +7,8 @@
- #   - $HOME/.himalayarc
- #
- # Override with `himalaya -c <PATH>`. Multiple paths can be passed at once,
--# separated by `:`; the first one is the base and the rest are deep-merged on
-+# separated by `;` on Windows and `:` elsewhere, as `$PATH` separates them, or
-+# by repeating `-c`; the first one is the base and the rest are deep-merged on
- # top of it.
- #
- # Bare `himalaya` launches the wizard, which discovers an account from your
-```
-
-**File**: `src/cli.rs` (modified, +69/-4)
-```diff
-@@ -165,6 +165,14 @@ pub enum Command {
-     JsonSchema(JsonSchemaCommand),
- }
- 
-+/// The character separating several configuration paths, `$PATH`'s own: `;`
-+/// on Windows, where a colon belongs to the drive letter of an absolute path,
-+/// and `:` elsewhere.
-+#[cfg(windows)]
-+const CONFIG_PATH_DELIMITER: char = ';';
-+#[cfg(not(windows))]
-+const CONFIG_PATH_DELIMITER: char = ':';
-+
- /// Path(s) to the TOML configuration file(s).
- ///
- /// Declared here rather than taken from pimalaya-cli, so the environment
-@@ -174,11 +182,11 @@ pub struct ConfigPathsArg {
-     /// Override the default configuration file path.
-     ///
-     /// Paths are shell-expanded then canonicalized, and several may be given
--    /// at once, delimited by `:` like `$PATH`. The first is the base and the
--    /// rest are merged on top, which is how a public configuration stays
--    /// separate from the private ones.
-+    /// at once, delimited like `$PATH` (`;` on Windows, `:` elsewhere). The
-+    /// first is the base and the rest are merged on top, which is how a public
-+    /// configuration stays separate from the private ones.
-     #[arg(long = "config", short = 'c', global = true, env = "HIMALAYA_CONFIG")]
--    #[arg(name = "config_paths", value_name = "PATH", value_parser = path_parser, value_delimiter = ':')]
-+    #[arg(name = "config_paths", value_name = "PATH", value_parser = path_parser, value_delimiter = CONFIG_PATH_DELIMITER)]
-     pub paths: Vec<PathBuf>,
- }
- 
-@@ -411,3 +419,60 @@ impl Command {
-         }
-     }
- }
-+
-+#[cfg(test)]
-+mod tests {
-+    use std::{env, path::PathBuf, process};
-+
-+    use clap::Parser;
-+
-+    use super::{CONFIG_PATH_DELIMITER, Cli};
-+
-+    /// A directory that is never created, so the paths below it keep the
-+    /// spelling they were given instead of being canonicalized.
-+    fn absent_dir() -> PathBuf {
-+        env::temp_dir().join(format!("himalaya-config-paths-{}", process::id()))
-+    }
-+
-+    fn paths(args: &[&str]) -> Vec<PathBuf> {
-+        Cli::try_parse_from([&["himalaya"], args].concat())
-+            .expect("parse")
-+            .config
-+            .paths
-+    }
-+
-+    #[test]
-+    fn a_config_path_is_never_split() {
-+        // NOTE: an absolute Windows path holds a colon of its own, so splitting
-+        // on it would read `C:\dir\config.toml` as two paths and find neither.
-+        let path = absent_dir().join("config.toml");
-+
-+        assert_eq!(
-+            paths(&["-c", path.to_str().unwrap(), "account", "list"]),
-+            [path]
-+        );
-+    }
-+
-+    #[test]
-+    fn several_config_paths_split_on_the_platform_delimiter() {
-+        let dir = absent_dir();
-+        let (one, two) = (dir.join("one.toml"), dir.join("two.toml"));
-+        let given = format!(
-+            "{}{}{}",
-+            one.display(),
-+            CONFIG_PATH_DELIMITER,
-+            two.display()
-+        );
-+
-+        assert_eq!(paths(&["-c", &given, "account", "list"]), [one, two]);
-+    }
-+
-+    #[test]
-+    fn the_delimiter_is_the_platform_one() {
-+        // NOTE: `$PATH` separates with `;` on Windows, where a colon belongs to
-+        // the drive letter of an absolute path, and with `:` elsewhere.
-+        let expected = if cfg!(windows) { ';' } else { ':' };
-+
-+        assert_eq!(CONFIG_PATH_DELIMITER, expected);
-+    }
-+}
-```
-
----
-
-### Incident Patch 2: `5d54dd51` (2026-11-01)
-**Commit Message**: build: pin io-pimdir to fd0c060
-
-pimdir 3d6a04e: a queued update over a conflict parks unless it names
-the conflict it resolves (`resolves`); a blob name held by bytes that
-fail it is verified and quarantined.
-
-**File**: `Cargo.lock` (modified, +1/-1)
-```diff
-@@ -1371,7 +1371,7 @@ dependencies = [
+@@ -2002,6 +2002,7 @@ checksum = "9b4f627cb1b25917193a259e49bdad08f671f8d9708acfd5fe0a8c1455d87220"
  [[package]]
- name = "io-pimdir"
- version = "0.8.0"
--source = "git+https://github.com/pimalaya/io-pimdir?rev=09d2d1c5cf8c157cf9b558a715e42af77fc284e9#09d2d1c5cf8c157cf9b558a715e42af77fc284e9"
-+source = "git+https://github.com/pimalaya/io-pimdir?rev=fd0c06059dfb947f536bb0b72d55b2603fd2456a#fd0c06059dfb947f536bb0b72d55b2603fd2456a"
+ name = "pimalaya-cli"
+ version = "0.3.1"
++source = "git+https://github.com/pimalaya/cli?rev=f976e40cb609194e21cd8df8a089f86a1cd510fd#f976e40cb609194e21cd8df8a089f86a1cd510fd"
  dependencies = [
-  "blake3",
-  "encoding_rs",
+  "anyhow",
+  "base64-codec",
 ```
 
 **File**: `Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -94,6 +94,6 @@ io-http = { git = "https://github.com/pimalaya/io-http", rev = "e1815307771c1ec6
- io-imap = { git = "https://github.com/pimalaya/io-imap", rev = "5d83c49a832310cf83b2432ed57fc8093647fbe3" }
+@@ -94,4 +94,4 @@ io-http = { git = "https://github.com/pimalaya/io-http", rev = "e1815307771c1ec6
  io-jmap = { git = "https://github.com/pimalaya/io-jmap", rev = "919eab465ab620b323f9191ab8de2f640bc4a1d2" }
  io-msgraph = { git = "https://github.com/pimalaya/io-msgraph", rev = "2ae26370aefa671c16316dbad98107634436bce6" }
--io-pimdir = { git = "https://github.com/pimalaya/io-pimdir", rev = "09d2d1c5cf8c157cf9b558a715e42af77fc284e9" }
-+io-pimdir = { git = "https://github.com/pimalaya/io-pimdir", rev = "fd0c06059dfb947f536bb0b72d55b2603fd2456a" }
- pimalaya-cli = { git = "https://github.com/pimalaya/cli", rev = "55b66933950f02541892407667e5e0b254245871" }
- pimalaya-config = { git = "https://github.com/pimalaya/config", rev = "48c8c63a6fb917175f4c684e709ce659055c5338" }
-```
-
----
-
-### Incident Patch 3: `8196891f` (2026-11-03)
-**Commit Message**: build: pin io-pimdir 0c70144, pimalaya-cli and pimalaya-config 0.3
-
-**File**: `CHANGELOG.md` (modified, +2/-0)
-```diff
-@@ -93,6 +93,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - Changed `flag add`, `flag set`, `flag remove`, `message move`, `message copy` and `message delete` (when it moves to the trash) to fail, exit code 1, when none of the given ids exists in the mailbox. Over IMAP the flag commands reported a success for such an id, and `message move` and `message copy` exited 0 on "no id matched". The flag commands now report how many messages they found, as `count` under `--json` ([#777]).
- - Bumped io-pimdir to 0.8, io-msgraph to 0.6, io-jmap to 0.6 and io-gmail to 0.5, the unreleased ones and io-http and io-imap taken from git until they are published, whose fixes bound what a server can make the client hold: an HTTP response head is capped at 64 KiB and a body at 256 MiB, failing with a typed error rather than buffering without end, an IMAP greeting carrying a literal fails rather than panicking, a `STARTTLS` response line is capped, and `LOGIN` and `AUTHENTICATE` no longer log credentials at trace level. A JMAP submission refused as `tooLarge`, `forbidden`, `overQuota` or `rateLimit` now names that type rather than `unknown`. The pimdir reads take no date floor; outputs are unchanged.
- - Changed the `pimdir` cargo feature to enable io-pimdir's `search` feature, which brings ical-rs and vcard-rs.
-+- Changed `message copy` and `message move` on a pimdir account to fail for a message whose body is not downloaded when the account does not sync the target mailbox yet, no copy being able to reach it (io-pimdir 0c70144, pimdir SYNC §7).
-+- Bumped pimalaya-cli and pimalaya-config to 0.3, taken from crates.io rather than git.
- - Changed the pimdir backend to follow pimdir storage-draft-08, sync-draft-07 and search-draft-08 (io-pimdir bff5737). A store or a search index an earlier neverest wrote is refused, never migrated (`store-version`, `index-version`): reinstall it as neverest's MIGRATION.md says. A store whose directory or pimdir.db another user can read is refused with `store-exposed`; restrict it (`chmod 700` the directory, `chmod 600` pimdir.db). The test-only rusqlite moves to 0.41, as io-pimdir requires.
- - Changed a pimdir send to name its performer in the queued `submit` whatever the sources declare, the one source syncing the mailbox when none declares capabilities; a mailbox no source syncs yet is refused with `no-performer`, staging nothing.
- - Changed `pimdir flag` and `pimdir tag` to refuse a flag the store cannot hold (empty, or holding whitespace, a control or a non-ASCII character) with the code `flag-invalid`.
-```
-
-**File**: `Cargo.lock` (modified, +8/-5)
-```diff
-@@ -1380,7 +1380,7 @@ dependencies = [
- [[package]]
- name = "io-pimdir"
- version = "0.8.0"
--source = "git+https://github.com/pimalaya/io-pimdir?rev=908db2ba74e40cccb89281e797d1807dbf0b7d9b#908db2ba74e40cccb89281e797d1807dbf0b7d9b"
-+source = "git+https://github.com/pimalaya/io-pimdir?rev=0c701447473a03e5cf9effcd0039a49a78419c4d#0c701447473a03e5cf9effcd0039a49a78419c4d"
- dependencies = [
-  "blake3",
-  "encoding_rs",
-@@ -1972,7 +1972,9 @@ checksum = "9b4f627cb1b25917193a259e49bdad08f671f8d9708acfd5fe0a8c1455d87220"
- 
- [[package]]
- name = "pimalaya-cli"
--version = "0.2.6"
-+version = "0.3.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "3fe9eda0c6d281d896f4bbb0e88fa2b88f5ae3bfc8daab083de922959e5d549f"
- dependencies = [
-  "anyhow",
-  "base64 0.23.1",
-@@ -1997,11 +1999,12 @@ dependencies = [
- 
- [[package]]
- name = "pimalaya-config"
--version = "0.2.1"
--source = "git+https://github.com/pimalaya/config?rev=5fc629b28e3c7afa7ec8de59e4f2f571bfabbc8d#5fc629b28e3c7afa7ec8de59e4f2f571bfabbc8d"
-+version = "0.3.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "8ea46595a4484b0a6e8af89ee9597d5d10cd7ccec39442137aafc969f0a5587a"
- dependencies = [
-  "anyhow",
-- "dirs 6.0.0",
-+ "dirs 7.0.0",
-  "log",
-  "secrecy",
-  "serde",
-```
-
-**File**: `Cargo.toml` (modified, +4/-6)
-```diff
-@@ -36,7 +36,7 @@ strip = "symbols"
- panic = "abort"
- 
- [build-dependencies]
--pimalaya-cli = { version = "0.2.6", default-features = false, features = ["build"] }
-+pimalaya-cli = { version = "0.3", default-features = false, features = ["build"] }
- 
- [dev-dependencies]
- rusqlite = { version = "0.41", default-features = false, features = ["bundled"] }
-@@ -71,8 +71,8 @@ mime-rs = { version = "0.0.1", git = "https://github.com/pimalaya/mime-rs", rev
- mime_guess = "2"
- open = "5"
- percent-encoding = "2"
--pimalaya-cli = { version = "0.2.6", default-features = false, features = ["terminal", "table", "prompt"] }
--pimalaya-config = { version = "0.2.1", default-features = false, features = ["toml", "secret"] }
-+pimalaya-cli = { version = "0.3", default-features = false, features = ["terminal", "table", "prompt"] }
-+pimalaya-config = { version = "0.3", default-features = false, features = ["toml", "secret"] }
- pimalaya-stream = { version = "0.3", default-features = false, features = ["std"] }
- rfc2047-decoder = { version = "1", optional = true }
- schemars = { version = "1", features = ["chrono04"] }
-@@ -93,6 +93,4 @@ ical-rs = { git = "https://github.com/pimalaya/ical", rev = "99b92736a6a076c7293
- io-http = { git = "https://github.com/pimalaya/io-http", rev = "e1815307771c1ec65a86b77256d46c33241d3038" }
- io-jmap = { git = "https://github.com/pimalaya/io-jmap", rev = "919eab465ab620b323f9191ab8de2f640bc4a1d2" }
- io-msgraph = { git = "https://github.com/pimalaya/io-msgraph", rev = "2ae26370aefa671c16316dbad98107634436bce6" }
--io-pimdir = { git = "https://github.com/pimalaya/io-pimdir", rev = "908db2ba74e40cccb89281e797d1807dbf0b7d9b" }
+ io-pimdir = { git = "https://github.com/pimalaya/io-pimdir", rev = "5c18a026b9c85b470984192452c2aa66e060a3fe" }
 -pimalaya-cli = { path = "../cli" }
--pimalaya-config = { git = "https://github.com/pimalaya/config", rev = "5fc629b28e3c7afa7ec8de59e4f2f571bfabbc8d" }
-+io-pimdir = { git = "https://github.com/pimalaya/io-pimdir", rev = "0c701447473a03e5cf9effcd0039a49a78419c4d" }
++pimalaya-cli = { git = "https://github.com/pimalaya/cli", rev = "f976e40cb609194e21cd8df8a089f86a1cd510fd" }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #808** (2026-11-08): feat(mcp): read an attachment's content without touching disk (#805) (@maybenotconnor)
+- **PR #807** (2026-11-08): feat(mcp): attach files given inline to the composers (@maybenotconnor)
+- **PR #803** (2026-11-05): fix(envelope): one rule for hasAttachment across the MIME backends (@snrmwg)
 - **PR #800** (2026-11-01): fix(cli): delimit config paths with $PATH's own separator (@Omair-Asdaq)
 - **PR #796** (2026-10-29): docs(testing): add IMAP+SMTP provider reports for QQ, 163, 139 Mail (@xiaolinstar)
 - **PR #794** (2026-10-15): fix: fail when no given message id exists (@jontxux)
-- **PR #793** (2026-10-16): feat(pimdir): stage any flag through pimdir flag (@bobberb)
-- **PR #792** (2026-10-14): docs(readme): add himalaya-fzf to interfaces (@kezhenxu94)
-- **PR #791** (2026-10-14): feat(message): reply to all recipients with message reply --all (@jadhavgaurav)
 
 ---
 
@@ -1918,21 +1610,21 @@ fail it is verified and quarantined.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cli): delimit config paths with $PATH's own separator (#800)
+## X. build: pin pimalaya-cli f976e40
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pimalaya/himalaya. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pimalaya/himalaya. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `529d2119`: cli): delimit config paths with $PATH's own separator (#800). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `42134fd2`: build: pin pimalaya-cli f976e40. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Fixed `-c/--config` being split on `:`, which cut every absolute Windows path at its drive letter: `-c C:\Users\me\config.toml` reached the loader as `C` and `\Users\me\config.toml`, neither of which exists, so the configuration was never read. The delimiter now follows `$PATH` on the platform, `;` on Windows and `:` elsewhere, and the help text says so; `HIMALAYA_CONFIG` and repeated `-c` flags take absolute paths whole. On Windows a colon-joined list is no longer split, so pass several paths with `;` or repeat `-c`.
+source = "git+https://github.com/pimalaya/cli?rev=f976e40cb609194e21cd8df8a089f86a1cd510fd#f976e40cb609194e21cd8df8a089f86a1cd510fd"
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1942,4 +1634,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `529d2119` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `42134fd2` are properly handled with clean fallback behavior.

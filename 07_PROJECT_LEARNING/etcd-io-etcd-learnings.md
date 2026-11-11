@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/etcd-io-etcd-learnings.md`  
 > **Source**: github ([https://github.com/etcd-io/etcd](https://github.com/etcd-io/etcd))  
-> **Source Version**: `cda871cc`  
+> **Source Version**: `d622ec57`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T21:54:42.401Z  
+> **Timestamp**: 2026-11-07T20:23:07.020Z  
 > **Learning ID**: `learn-github-etcd-io-etcd`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/etcd-io-etcd-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/etcd-io/etcd](https://github.com/etcd-io/etcd))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T21:54:42.120Z  
+> **Harvest Timestamp**: 2026-11-07T20:23:06.694Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Distributed reliable key-value store for the most critical data of a distributed system
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 52472 stars
+- **Stars / Engagement**: 52669 stars
 
 ---
 
@@ -693,64 +693,388 @@ func LockFile(path string, flag int, perm os.FileMode) (*LockedFile, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ae89bf29` (2026-11-05)
-**Commit Message**: Update changelog to cover the alarmStore race issue
+### Incident Patch 1: `d622ec57` (2026-11-06)
+**Commit Message**: Merge pull request #22682 from fuweid/weifu/benchmark
 
-Signed-off-by: Benjamin Wang <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG/CHANGELOG-3.5.md` (modified, +1/-0)
+**File**: `server/storage/backend/testing/betesting.go` (modified, +6/-0)
 ```diff
-@@ -9,6 +9,7 @@ Previous change logs can be found at [CHANGELOG-3.4](https://github.com/etcd-io/
- ### etcd server
+@@ -21,6 +21,7 @@ import (
+ 	"time"
  
- - Fix [`--force-new-cluster` permanently bricking a member whose backend consistent index is ahead of its WAL](https://github.com/etcd-io/etcd/pull/22688)
-+- [Define `alarmStore` as an `atomic.Pointer` to avoid race condition](https://github.com/etcd-io/etcd/pull/22707)
+ 	"github.com/stretchr/testify/assert"
++	"go.uber.org/zap"
+ 	"go.uber.org/zap/zaptest"
  
- ---
+ 	"go.etcd.io/etcd/server/v3/storage/backend"
+@@ -50,6 +51,11 @@ func NewDefaultTmpBackend(tb testing.TB) (backend.Backend, string) {
+ 	return NewTmpBackendFromCfg(tb, backend.DefaultBackendConfig(zaptest.NewLogger(tb)))
+ }
+ 
++// NewDefaultTmpBackendWithNopLogger creates a default temporary backend with logging disabled.
++func NewDefaultTmpBackendWithNopLogger(tb testing.TB) (backend.Backend, string) {
++	return NewTmpBackendFromCfg(tb, backend.DefaultBackendConfig(zap.NewNop()))
++}
++
+ func Close(tb testing.TB, b backend.Backend) {
+ 	assert.NoError(tb, b.Close())
+ }
+```
+
+**File**: `server/storage/mvcc/index_bench_test.go` (modified, +220/-6)
+```diff
+@@ -15,6 +15,12 @@
+ package mvcc
+ 
+ import (
++	"bytes"
++	"fmt"
++	"math"
++	"slices"
++	"sync"
++	"sync/atomic"
+ 	"testing"
+ 
+ 	"go.uber.org/zap"
+@@ -35,22 +41,179 @@ func benchmarkIndexCompact(b *testing.B, size int) {
+ 	for i := 1; i < size; i++ {
+ 		kvindex.Put(keys[i], Revision{Main: int64(i), Sub: int64(i)})
+ 	}
++	b.ReportAllocs()
+ 	b.ResetTimer()
+ 	for i := 1; i < b.N; i++ {
+ 		kvindex.Compact(int64(i))
+ 	}
+ }
+ 
+ func BenchmarkIndexPut(b *testing.B) {
+-	log := zap.NewNop()
+-	kvindex := newTreeIndex(log)
++	for _, txnSize := range []int{1, 8} {
++		for _, dataset := range indexBenchDatasets {
++			b.Run(fmt.Sprintf("Update/Keys=%d,KeyLength=%d,TxnSize=%d", dataset.keySpace, dataset.keyLen, txnSize), func(b *testing.B) {
++				benchmarkIndexPut(b, dataset.keys(), txnSize, true)
++			})
++		}
+ 
+-	bytesN := 64
+-	keys := createBytesSlice(bytesN, b.N)
++		b.Run(fmt.Sprintf("Create/Keys=b.N,KeyLength=64,TxnSize=%d", txnSize), func(b *testing.B) {
++			benchmarkIndexPut(b, createBytesSlice(64, b.N), txnSize, false)
++		})
++	}
++}
++
++// benchmarkIndexPut puts keys in order, cycling through them as needed.
++// If prepopulate is true, the index is populated before timing starts.
++func benchmarkIndexPut(b *testing.B, keys [][]byte, txnSize int, prepopulate bool) {
++	kvindex := newTreeIndex(zap.NewNop())
++	var baseRev int64
++	if prepopulate {
++		for i, key := range keys {
++			kvindex.Put(key, Revision{Main: int64(i + 1)})
++		}
++		baseRev = int64(len(keys))
++	}
++	b.ReportAllocs()
+ 	b.ResetTimer()
+-	for i := 1; i < b.N; i++ {
+-		kvindex.Put(keys[i], Revision{Main: int64(i), Sub: int64(i)})
++	for i := range b.N {
++		kvindex.Put(keys[i%len(keys)], Revision{
++			Main: baseRev + int64(i/txnSize) + 1,
++			Sub:  int64(i % txnSize),
++		})
++	}
++}
++
++func BenchmarkIndexPutTombstone(b *testing.B) {
++	for _, dataset := range indexBenchDatasets {
++		b.Run(fmt.Sprintf("Keys=%d,KeyLength=%d", dataset.keySpace, dataset.keyLen), func(b *testing.B) {
++			keys := dataset.keys()
++			benchmarkIndexPutTombstone(b, keys, keys)
++		})
++		if dataset.keySpace == 100_000 {
++			const activeKeys = 5_000
++			b.Run(fmt.Sprintf("Keys=%d,KeyLength=%d,ActiveKeys=%d", dataset.keySpace, dataset.keyLen, activeKeys), func(b *testing.B) {
++				keys, sortedKeys := dataset.keys(), dataset.sortedKeys()
++				first := (len(sortedKeys) - activeKeys) / 2
++				benchmarkIndexPutTombstone(b, keys, sortedKeys[first:first+activeKeys])
++			})
++		}
++	}
++}
++
++func benchmarkIndexPutTombstone(b *testing.B, keys, activeKeys [][]byte) {
++	kvindex := newTreeIndex(zap.NewNop())
++	for i, key := range keys {
++		kvindex.Put(key, Revision{Main: int64(i + 1)})
++	}
++	var putIndex, tombstoneIndex int
++	b.ReportAllocs()
++	b.ResetTimer()
++	for i := range b.N {
++		rev := Revision{Main: int64(len(keys) + i + 1)}
++		if i%3 == 1 {
++			if err := kvindex.Tombstone(activeKeys[tombstoneIndex%len(activeKeys)], rev); err != nil {
++				b.Fatal(err)
++			}
++			tombstoneIndex++
++		} else {
++			kvindex.Put(activeKeys[putIndex%len(activeKeys)], rev)
++			putIndex++
++		}
++	}
++	b.StopTimer()
++	b.ReportMetric(float64(tombstoneIndex)/float64(b.N), "tombstones/op")
++}
++
++func BenchmarkIndexPutCount(b *testing.B) {
++	for _, dataset := range indexBenchDatasets {
++		if dataset.keySpace != 100_000 {
++			continue
++		}
++		for _, countKeys := range []int{1, 10, 1000} {
++			b.Run(fmt.Sprintf("Keys=%d,KeyLength=%d,CountKeys=%d", dataset.keySpace, dataset.keyLen, countKeys), func(b *testing.B) {
++				benchmarkIndexPutCount(b, dataset, countKeys)
++			})
++		}
++	}
++}
++
++func benchmarkIndexPutCount(b *testing.B, dataset *indexBenchDataset, countKeys int) {
++	keys, sortedKeys := dataset.keys(), dataset.sortedKeys()
++	first := (len(sortedKeys) - countKeys) / 2
++	start := sortedKeys[first]
++	var end []byte
++	if first+countKeys < len(sortedKeys) {
++		end = sortedKeys[first+countKeys]
++	} else {
++		end = append(slices.Clone(sortedKeys[len(sortedKeys)-1]), 0)
++	}
++	benchmarkIndexPutWithRead(b, keys, func(kvindex index) bool {
++		if count := kvindex.CountRevisions(start, end, math.MaxInt64); count != countKeys {
++			b.Errorf("range count = %d, want %d", count, countKeys)
++			return false
++		}
++		return true
++	})
++}
++
++func BenchmarkIndexPutRangeLimit(b *testing.B) {
++	const limit = 100
++	for _, dataset := range indexBenchDatasets {
++		if dataset.keySpace != 100_000 {
++			continue
++		}
++		for _, withTotalCount := range []bool{true, false} {
++			b.Run(fmt.Sprintf("Keys=%d,KeyLength=%d,Limit=%d,WithTotalCount=%t", dataset.keySpace, dataset.keyLen, limit, withTotalCount), func(b *testing.B) {
++				benchmarkIndexPutRangeLimit(b, dataset.keys(), limit, withTotalCount)
++			})
++		}
++	}
++}
++
++func benchmarkIndexPutRangeLimit(b *testing.B, keys [][]byte, limit int, withTotalCount bool) {
++	end := []byte{}
++	wantTotal := limit
++	if withTotalCount {
++		wantTotal = len(keys)
+ 	}
++	benchmarkIndexPutWithRead(b, keys, func(kvindex index) bool {
++		rangeKeys, _, _, _, total := kvindex.Range(nil, end, math.MaxInt64, limit, withTotalCount)
++		if len(rangeKey
+```
+
+**File**: `server/storage/mvcc/kvstore_bench_test.go` (modified, +15/-13)
+```diff
+@@ -18,7 +18,7 @@ import (
+ 	"testing"
+ 
+ 	"github.com/stretchr/testify/require"
+-	"go.uber.org/zap/zaptest"
++	"go.uber.org/zap"
+ 
+ 	"go.etcd.io/etcd/pkg/v3/traceutil"
+ 	"go.etcd.io/etcd/server/v3/etcdserver/cindex"
+@@ -28,15 +28,16 @@ import (
+ )
+ 
+ func BenchmarkStorePut(b *testing.B) {
+-	be, _ := betesting.NewDefaultTmpBackend(b)
+-	s := NewStore(zaptest.NewLogger(b), be, &lease.FakeLessor{}, StoreConfig{})
++	be, _ := betesting.NewDefaultTmpBackendWithNopLogger(b)
++	s := NewStore(zap.NewNop(), be, &lease.FakeLessor{}, StoreConfig{})
+ 	defer cleanup(s, be)
+ 
+ 	// arbitrary number of bytes
+ 	bytesN := 64
+ 	keys := createBytesSlice(bytesN, b.N)
+ 	vals := createBytesSlice(bytesN, b.N)
+ 
++	b.ReportAllocs()
+ 	b.ResetTimer()
+ 	for i := 0; i < b.N; i++ {
+ 		s.Put(keys[i], vals[i], lease.NoLease)
+@@ -47,8 +48,8 @@ func BenchmarkStoreRangeKey1(b *testing.B)   { benchmarkStoreRange(b, 1) }
+ func BenchmarkStoreRangeKey100(b *testing.B) { benchmarkStoreRange(b, 100) }
+ 
+ func benchmarkStoreRange(b *testing.B, n int) {
+-	be, _ := betesting.NewDefaultTmpBackend(b)
+-	s := NewStore(zaptest.NewLogger(b), be, &lease.FakeLessor{}, StoreConfig{})
++	be, _ := betesting.NewDefaultTmpBackendWithNopLogger(b)
++	s := NewStore(zap.NewNop(), be, &lease.FakeLessor{}, StoreConfig{})
+ 	defer cleanup(s, be)
+ 
+ 	// 64 byte key/val
+@@ -74,7 +75,7 @@ func benchmarkStoreRange(b *testing.B, n int) {
+ }
+ 
+ func BenchmarkConsistentIndex(b *testing.B) {
+-	be, _ := betesting.NewDefaultTmpBackend(b)
++	be, _ := betesting.NewDefaultTmpBackendWithNopLogger(b)
+ 	ci := cindex.NewConsistentIndex(be)
+ 	defer betesting.Close(b, be)
+ 
+@@ -96,14 +97,15 @@ func BenchmarkConsistentIndex(b *testing.B) {
+ 
+ // BenchmarkStorePutUpdate is same as above, but instead updates single key
+ func BenchmarkStorePutUpdate(b *testing.B) {
+-	be, _ := betesting.NewDefaultTmpBackend(b)
+-	s := NewStore(zaptest.NewLogger(b), be, &lease.FakeLessor{}, StoreConfig{})
++	be, _ := betesting.NewDefaultTmpBackendWithNopLogger(b)
++	s := NewStore(zap.NewNop(), be, &lease.FakeLessor{}, StoreConfig{})
+ 	defer cleanup(s, be)
+ 
+ 	// arbitrary number of bytes
+ 	keys := createBytesSlice(64, 1)
+ 	vals := createBytesSlice(1024, 1)
+ 
++	b.ReportAllocs()
+ 	b.ResetTimer()
+ 	for i := 0; i < b.N; i++ {
+ 		s.Put(keys[0], vals[0], lease.NoLease)
+@@ -114,8 +116,8 @@ func BenchmarkStorePutUpdate(b *testing.B) {
+ // with transaction begin and end, where transaction involves
+ // some synchronization operations, such as mutex locking.
+ func BenchmarkStoreTxnPut(b *testing.B) {
+-	be, _ := betesting.NewDefaultTmpBackend(b)
+-	s := NewStore(zaptest.NewLogger(b), be, &lease.FakeLessor{}, StoreConfig{})
++	be, _ := betesting.NewDefaultTmpBackendWithNopLogger(b)
++	s := NewStore(zap.NewNop(), be, &lease.FakeLessor{}, StoreConfig{})
+ 	defer cleanup(s, be)
+ 
+ 	// arbitrary number of bytes
+@@ -134,8 +136,8 @@ func BenchmarkStoreTxnPut(b *testing.B) {
+ 
+ // benchmarkStoreRestore benchmarks the restore operation
+ func benchmarkStoreRestore(revsPerKey int, b *testing.B) {
+-	be, _ := betesting.NewDefaultTmpBackend(b)
+-	s := NewStore(zaptest.NewLogger(b), be, &lease.FakeLessor{}, StoreConfig{})
++	be, _ := betesting.NewDefaultTmpBackendWithNopLogger(b)
++	s := NewStore(zap.NewNop(), be, &lease.FakeLessor{}, StoreConfig{})
+ 	// use closure to capture 's' to pick up the reassignment
+ 	defer func() { cleanup(s, be) }()
+ 
+@@ -155,7 +157,7 @@ func benchmarkStoreRestore(revsPerKey int, b *testing.B) {
+ 
+ 	b.ReportAllocs()
+ 	b.ResetTimer()
+-	s = NewStore(zaptest.NewLogger(b), be, &lease.FakeLessor{}, StoreConfig{})
++	s = NewStore(zap.NewNop(), be, &lease.FakeLessor{}, StoreConfig{})
+ }
+ 
+ func BenchmarkStoreRestoreRevs1(b *testing.B) {
+```
+
+**File**: `server/storage/mvcc/watchable_store_bench_test.go` (modified, +11/-11)
+```diff
+@@ -18,16 +18,16 @@ import (
+ 	"math/rand"
+ 	"testing"
+ 
+-	"go.uber.org/zap/zaptest"
++	"go.uber.org/zap"
+ 
+ 	"go.etcd.io/etcd/pkg/v3/traceutil"
+ 	"go.etcd.io/etcd/server/v3/lease"
+ 	betesting "go.etcd.io/etcd/server/v3/storage/backend/testing"
+ )
+ 
+ func BenchmarkWatchableStorePut(b *testing.B) {
+-	be, _ := betesting.NewDefaultTmpBackend(b)
+-	s := New(zaptest.NewLogger(b), be, &lease.FakeLessor{}, StoreConfig{})
++	be, _ := betesting.NewDefaultTmpBackendWithNopLogger(b)
++	s := New(zap.NewNop(), be, &lease.FakeLessor{}, StoreConfig{})
+ 	defer cleanup(s, be)
+ 
+ 	// arbitrary number of bytes
+@@ -46,8 +46,8 @@ func BenchmarkWatchableStorePut(b *testing.B) {
+ // with transaction begin and end, where transaction involves
+ // some synchronization operations, such as mutex locking.
+ func BenchmarkWatchableStoreTxnPut(b *testing.B) {
+-	be, _ := betesting.NewDefaultTmpBackend(b)
+-	s := New(zaptest.NewLogger(b), be, &lease.FakeLessor{}, StoreConfig{})
++	be, _ := betesting.NewDefaultTmpBackendWithNopLogger(b)
++	s := New(zap.NewNop(), be, &lease.FakeLessor{}, StoreConfig{})
+ 	defer cleanup(s, be)
+ 
+ 	// arbitrary number of bytes
+@@ -77,8 +77,8 @@ func BenchmarkWatchableStoreWatchPutUnsync(b *testing.B) {
+ }
+ 
+ func benchmarkWatchableStoreWatchPut(b *testing.B, synced bool) {
+-	be, _ := betesting.NewDefaultTmpBackend(b)
+-	s := New(zaptest.NewLogger(b), be, &lease.FakeLessor{}, StoreConfig{})
++	be, _ := betesting.NewDefaultTmpBackendWithNopLogger(b)
++	s := New(zap.NewNop(), be, &lease.FakeLessor{}, StoreConfig{})
+ 	defer cleanup(s, be)
+ 
+ 	k := []byte("testkey")
+@@ -121,8 +121,8 @@ func benchmarkWatchableStoreWatchPut(b *testing.B, synced bool) {
+ // TODO: k is an arbitrary constant. We need to figure out what factor
+ // we should put to simulate the real-world use cases.
+ func BenchmarkWatchableStoreUnsyncedCancel(b *testing.B) {
+-	be, _ := betesting.NewDefaultTmpBackend(b)
+-	ws := newWatchableStore(zaptest.NewLogger(b), be, &lease.FakeLessor{}, StoreConfig{})
++	be, _ := betesting.NewDefaultTmpBackendWithNopLogger(b)
++	ws := newWatchableStore(zap.NewNop(), be, &lease.FakeLessor{}, StoreConfig{})
+ 
+ 	defer cleanup(ws, be)
+ 
+@@ -163,8 +163,8 @@ func BenchmarkWatchableStoreUnsyncedCancel(b *testing.B) {
+ }
+ 
+ func BenchmarkWatchableStoreSyncedCancel(b *testing.B) {
+-	be, _ := betesting.NewDefaultTmpBackend(b)
+-	s := New(zaptest.NewLogger(b), be, &lease.FakeLessor{}, StoreConfig{})
++	be, _ := betesting.NewDefaultTmpBackendWithNopLogger(b)
++	s := New(zap.NewNop(), be, &lease.FakeLessor{}, StoreConfig{})
+ 
+ 	defer cleanup(s, be)
  
 ```
 
-**File**: `CHANGELOG/CHANGELOG-3.6.md` (modified, +1/-0)
+**File**: `server/storage/mvcc/watcher_bench_test.go` (modified, +3/-3)
 ```diff
-@@ -9,6 +9,7 @@ Previous change logs can be found at [CHANGELOG-3.5](https://github.com/etcd-io/
- ### etcd server
+@@ -18,15 +18,15 @@ import (
+ 	"fmt"
+ 	"testing"
  
- - Fix [`--force-new-cluster` permanently bricking a member whose backend consistent index is ahead of its WAL](https://github.com/etcd-io/etcd/pull/22686)
-+- [Define `alarmStore` as an `atomic.Pointer` to avoid race condition](https://github.com/etcd-io/etcd/pull/22706)
+-	"go.uber.org/zap/zaptest"
++	"go.uber.org/zap"
  
- ---
+ 	"go.etcd.io/etcd/server/v3/lease"
+ 	betesting "go.etcd.io/etcd/server/v3/storage/backend/testing"
+ )
  
-```
-
-**File**: `CHANGELOG/CHANGELOG-3.7.md` (modified, +1/-0)
-```diff
-@@ -8,6 +8,7 @@ Previous change logs can be found at [CHANGELOG-3.6](https://github.com/etcd-io/
- ### etcd server
+ func BenchmarkKVWatcherMemoryUsage(b *testing.B) {
+-	be, _ := betesting.NewDefaultTmpBackend(b)
+-	watchable := New(zaptest.NewLogger(b), be, &lease.FakeLessor{}, StoreConfig{})
++	be, _ := betesting.NewDefaultTmpBackendWithNopLogger(b)
++	watchable := New(zap.NewNop(), be, &lease.FakeLessor{}, StoreConfig{})
  
- - Fix [`--force-new-cluster` permanently bricking a member whose backend consistent index is ahead of its WAL](https://github.com/etcd-io/etcd/pull/22685)
-+- [Define `alarmStore` as an `atomic.Pointer` to avoid race condition](https://github.com/etcd-io/etcd/pull/22705)
+ 	defer cleanup(watchable, be)
  
- ---
- 
-```
-
----
-
-### Incident Patch 2: `b93f7732` (2026-11-05)
-**Commit Message**: Merge pull request #22678 from supahero1/fix-coverage-watch-prev-kv
-
-Update contract tests after WatchFromStorageWithoutPrevKV
-
-**File**: `tests/robustness/coverage/coverage_test.go` (modified, +0/-1)
-```diff
-@@ -198,7 +198,6 @@ var referenceUsageOfWatchAndKV = map[string]refOp{
- 			{name: "Watch", matcher: andMatcher(
- 				isRangeEndSet,
- 				intAttrSet("start_rev"),
--				boolAttrSet("prev_kv"),
- 				notMatcher(boolAttrSet("fragment")),
- 			)},
- 		},
 ```
 
 #### Recent Merged Pull Requests:
@@ -779,21 +1103,26 @@ Update contract tests after WatchFromStorageWithoutPrevKV
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update changelog to cover the alarmStore race issue
+## X. Merge pull request #22682 from fuweid/weifu/benchmark
 
 **RULE**:
-When implementing operations in `CHANGELOG/CHANGELOG-3.5.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in etcd-io/etcd. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `server/storage/backend/testing/betesting.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in etcd-io/etcd. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ae89bf29`: Update changelog to cover the alarmStore race issue. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d622ec57`: Merge pull request #22682 from fuweid/weifu/benchmark. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG/CHANGELOG-3.5.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/storage/backend/testing/betesting.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-- [Define `alarmStore` as an `atomic.Pointer` to avoid race condition](https://github.com/etcd-io/etcd/pull/22707)
+	"go.uber.org/zap"
+// NewDefaultTmpBackendWithNopLogger creates a default temporary backend with logging disabled.
+func NewDefaultTmpBackendWithNopLogger(tb testing.TB) (backend.Backend, string) {
+	return NewTmpBackendFromCfg(tb, backend.DefaultBackendConfig(zap.NewNop()))
+}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -803,4 +1132,4 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ae89bf29` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d622ec57` are properly handled with clean fallback behavior.

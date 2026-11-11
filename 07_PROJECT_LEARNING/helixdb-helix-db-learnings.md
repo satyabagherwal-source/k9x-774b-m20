@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/helixdb-helix-db-learnings.md`  
 > **Source**: github ([https://github.com/HelixDB/helix-db](https://github.com/HelixDB/helix-db))  
-> **Source Version**: `48427266`  
+> **Source Version**: `06fcb151`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T18:45:47.786Z  
+> **Timestamp**: 2026-11-07T17:57:49.892Z  
 > **Learning ID**: `learn-github-helixdb-helix-db`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/helixdb-helix-db-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/HelixDB/helix-db](https://github.com/HelixDB/helix-db))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T18:45:47.780Z  
+> **Harvest Timestamp**: 2026-11-07T17:57:48.592Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: HelixDB is an OLTP graph database with native vector and full-text search built in Rust on Object Storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 6268 stars
+- **Stars / Engagement**: 6273 stars
 
 ---
 
@@ -230,6 +230,302 @@ mod tests {
     }
 }
 
+```
+
+### Core Architecture Module: `crates/db/benches/concurrent_request_throughput.rs`
+```
+//! Concurrent request throughput through the public query API.
+//!
+//! One storage scope holds a label with several secondary equality indexes.
+//! Each round runs `concurrency` client tasks for a fixed duration and
+//! reports completed requests per second and per-request latency
+//! percentiles. Every request plans against the scope's index catalog, so
+//! this measures how well planning and commit scale with concurrent clients.
+//!
+//! `cargo bench` measures. Under `cargo test`, which passes no `--bench`
+//! flag, it runs one short smoke round per workload instead and fails on any
+//! request error, so CI checks the fixture without timing it.
+//!
+//! Measurement configuration (environment):
+//! - `BENCH_SECONDS` per round, default 10
+//! - `BENCH_CONCURRENCY` comma-separated client counts, default `1,8,32,128`
+//! - `BENCH_INDEXES` equality indexes on the label, default 8
+//! - `BENCH_SEED_NODES` nodes written before measuring, default 20000
+//! - `BENCH_WORKLOADS` comma-separated subset of `read,write,mixed`
+//! - `BENCH_STORAGE` `memory` (default) or `disk`
+
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::Arc;
+use std::time::{Duration, Instant};
+
+use db::{HelixDB, HelixDbSource};
+use helix_ast::prelude::*;
+
+/// One measured kind of request mix.
+#[derive(Clone, Copy, Debug)]
+enum Workload {
+    /// Equality lookups on an indexed property.
+    Read,
+    /// Single-node inserts that maintain every index.
+    Write,
+    /// Nine lookups for every insert.
+    Mixed,
+}
+
+impl Workload {
+    fn parse(name: &str) -> Self {
+        match name {
+            "read" => Self::Read,
+            "write" => Self::Write,
+            "mixed" => Self::Mixed,
+            other => panic!("unknown workload {other:?}; expected read, write, or mixed"),
+        }
+    }
+
+    const fn name(self) -> &'static str {
+        match self {
+            Self::Read => "read",
+            Self::Write => "write",
+            Self::Mixed => "mixed",
+        }
+    }
+
+    const fn writes(self, request: u64) -> bool {
+        match self {
+            Self::Read => false,
+            Self::Write => true,
+            Self::Mixed => request % 10 == 9,
+        }
+    }
+}
+
+fn env_or<T: std::str::FromStr>(name: &str, default: T) -> T {
+    std::env::var(name)
+        .ok()
+        .map(|value| {
+            value
+                .parse()
+                .unwrap_or_else(|_| panic!("{name} must parse, got {value:?}"))
+        })
+        .unwrap_or(default)
+}
+
+fn env_list(name: &str, default: &str) -> Vec<String> {
+    std::env::var(name)
+        .unwrap_or_else(|_| default.to_string())
+        .split(',')
+        .map(str::trim)
+        .filter(|item| !item.is_empty())
+        .map(str::to_string)
+        .collect()
+}
+
+fn node(index_count: usize, key: u64) -> Vec<(String, PropertyInput)> {
+    (0..index_count)
+        .map(|index| {
+            (
+                format!("p{index}"),
+                PropertyInput::from(i64::try_from(key % 1000).expect("small key")),
+            )
+        })
+        .chain(std::iter::once((
+            "key".to_string(),
+            PropertyInput::from(i64::try_from(key).expect("key fits i64")),
+        )))
+        .collect()
+}
+
+fn insert(index_count: usize, key: u64) -> QueryRequest {
+    QueryRequest::write(
+        write_batch()
+            .var_as("created", g().add_n("Bench", node(index_count, key)))
+            .returning(Vec::<String>::new()),
+    )
+}
+
+fn lookup(key: u64) -> QueryRequest {
+    QueryRequest::read(
+        read_batch()
+            .var_as(
+                "found",
+                g().n_with_label_where(
+                    "Bench",
+                    Predicate::eq("p0", i64::try_from(key % 1000).expect("small key")),
+                )
+                .count(),
+            )
+            .returning(["found"]),
+    )
+}
+
+async fn create_indexes(db: &HelixDB, index_count: usize) {
+    for index in 0..index_count {
+        let receipt = db
+            .query(QueryRequest::write(
+                write_batch()
+                    .var_as(
+                        "operation",
+                        g().create_index_if_not_exists(IndexSpec::node_equality(
+                            "Bench",
+                            format!("p{index}"),
+                        )),
+                    )
+                    .returning(["operation"]),
+            ))
+            .await
+            .expect("index create is accepted");
+        let Some(operation_id) = receipt["operation"]["operation_id"].as_str() else {
+            continue;
+        };
+        let operation_id = operation_id.to_string();
+        let deadline = Instant::now() + Duration::from_secs(120);
+        loop {
+            let status = db
+                .query(QueryRequest::read(
+                    read_batch()
+                        .var_as("status", g().get_index_operation(operation_id.clone()))
+                        .returning(["status"]),
+                ))
+                .await
+                .expect("index status reads");
+            match status["status"]["status"].as_str() {
+                Some("succeeded") => break,
+                Some("queued" | "running") if Instant::now() < deadline => {
+                    tokio::time::sleep(Duration::from_millis(5)).await;
+                }
+                other => panic!("index p{index} did not build: {other:?}"),
+            }
+        }
+    }
+}
+
+fn percentile(sorted: &[u32], fraction: f64) -> u32 {
+    if sorted.is_empty() {
+        return 0;
+    }
+    // Nearest-rank percentile; the cast is bounded by the slice length.
+    let rank = ((sorted.len() as f64) * fraction).ceil() as usize;
+    sorted[rank.clamp(1, sorted.len()) - 1]
+}
+
+async fn run_round(
+    db: &Arc<HelixDB>,
+    workload: Workload,
+    concurrency: usize,
+    duration: Duration,
+    index_count: usize,
+    next_key: &Arc<std::sync::atomic::AtomicU64>,
+) -> u64 {
+    let stop = Arc::new(AtomicBool::new(false));
+    let tasks: Vec<_> = (0..concurrency)
+        .map(|client| {
+            let db = Arc::clone(db);
+            let stop = Arc::clone(&stop);
+            let next_key = Arc::clone(next_key);
+            tokio::spawn(async move {
+                let mut latencies = Vec::with_capacity(4096);
+                let mut errors = 0_u64;
+                let mut request = u64::try_from(client).expect("client fits u64");
+                while !stop.load(Ordering::Relaxed) {
+                    let started = Instant::now();
+                    let outcome = if workload.writes(request) {
+                        let key = next_key.fetch_add(1, Ordering::Relaxed);
+                        db.query(insert(index_count, key)).await.map(drop)
+                    } else {
+                        db.query(lookup(request.wrapping_mul(7919))).await.map(drop)
+                    };
+                    match outcome {
+                        Ok(()) => latencies
+                            .push(u32::try_from(started.elapsed().as_micros()).unwrap_or(u32::MAX)),
+                        Err(_) => errors += 1,
+                    }
+                    request = request.wrapping_add(1);
+                }
+                (latencies, errors)
+            })
+        })
+        .collect();
+    let started = Instant::now();
+    tokio::time::sleep(duration).await;
+    stop.store(true, Ordering::Relaxed);
+    let mut latencies = Vec::new();
+    let mut errors = 0;
+    for task in tasks {
+        let (task_latencies, task_errors) = task.await.expect("client task joins");
+        latencies.extend(task_latencies);
+        errors += task_errors;
+    }
+    let elapsed = started.elapsed().as_secs_f64();
+    latencies.sort_unstable();
+    println!(
+        "workload={} concurrency={} ops={} ops_per_sec={:.0} p50_us={} p99_us={} p999_us={} errors={}",
+        workload.name(),
+        concurrency,
+        latencies.len(),
+        latencies.len() as f64 / elapsed,
+        percentile(&latencies, 0.50),
+        percentile(&latencies, 0.99),
+        percentile(&latencies, 0.999),
+        errors,
+    );
+    errors
+}
+
+fn main() {
+    let measuring = std::env::args().any(|arg| arg == "--bench");
+    let round = if measuring {
+        Duration::from_secs(env_or("BENCH_SECONDS", 10))
+    } else {
+        Duration::from_millis(200)
+    };
+    let index_count: usize = if measuring {
+        env_or("BENCH_INDEXES", 8)
+    } else {
+        2
+    };
+    let seed_nodes: u64 = if measuring {
+        env_or("BENCH_SEED_NODES", 20_000)
+    } else {
+        200
+    };
+    let concurrency: Vec<usize> = if measuring {
+        env_list("BENCH_CONCURRENCY", "1,8,32,128")
+    } else {
+        vec!["1".to_string(), "4".to_string()]
+    }
+    .iter()
+    .map(|value| value.parse().expect("BENCH_CONCURRENCY holds integers"))
+    .collect();
+    let workloads: Vec<Workload> = env_list("BENCH_WORKLOADS", "read,write,mixed")
+        .iter()
+        .map(|name| Workload::parse(name))
+        .collect();
+    let storage = std::env::var("BENCH_STORAGE").unwrap_or_else(|_| "memory".to_string());
+    let disk_root = (storage == "disk").then(|| tempfile::tempdir().expect("bench disk root"));
+    let source = match &disk_root {
+        Some(root) => HelixDbSource::Disk {
+            root: root.path().to_path_buf(),
+            database: "concurrent-request-throughput".to_string(),
+        },
+        None => HelixDbSource::InMemory {
+            database: "concurrent-request-throughput".to_string(),
+        },
+    };
+
+    let runtime = tokio::runtime::Builder::new_multi_thread()
+        .enable_all()
+        .build()
+        .expect("bench runtime starts");
+    runtime.block_on(async {
+        let db = Arc::new(HelixDB::open(source).await.expect("database opens"));
+        create_indexes(&db, index_count).await;
+        let next_key = Arc::new(std::sync::atomic::AtomicU64::new(0));
+        let seed_clients = 32_u64;
+        let seeds: Vec<_> = (0..seed_clients)
+            .map(|client| {
+                let db = Arc::clone(&db);
+                tokio::spawn(async move {
+                    let 
 ```
 
 ### Core Architecture Module: `crates/db/examples/queue_acceptance_verify.rs`
@@ -1753,263 +2049,6 @@ pub(super) fn validate_body(family: QueueFamily, body: &[u8]) -> Result<(), Enco
                         Encod
 ```
 
-### Core Architecture Module: `crates/db/src/encoding/v2/values/indexes/operation_queue/mod.rs`
-```
-//! Immutable vector/text index-operation queue values.
-//!
-//! One SlateDB key per `(scope, logical index, generation)` holds every
-//! committed-but-unpublished operation for that generation. Producers append
-//! with blind [`slatedb::DbTransaction::merge_disjoint_tokens`] operands and the
-//! publication worker removes exact operation IDs with acknowledgement
-//! operands. Neither side reads the row to stage its operand.
-//!
-//! # Persisted format
-//!
-//! Every operand, partial merge result, and resolved value shares one
-//! canonical layout:
-//!
-//! ```text
-//! value      := version:u8(0x01) kind:u8(0x14) family:u8 removes inserts
-//! family     := 0x01 vector | 0x02 text
-//! removes    := count:varint operation_id{count}        (strictly ascending)
-//! inserts    := count:varint insert{count}              (storage commit order)
-//! insert     := mode:u8 operation_id body_len:varint body
-//! mode       := 0x01 insert-if-absent | 0x02 unconditional set
-//! operation_id := 16 bytes, big-endian u128 with bit 127 clear
-//! body       := entity_kind:u8 entity_id:varint payload
-//! payload    := vector_payload | text_payload           (selected by family)
-//! vector_payload := previous:optional_partition replacement:vector_replacement
-//! vector_replacement := 0x00 | 0x01 partition dimension:varint f32_be{dimension}
-//! text_payload := 0x00 | 0x01 partition length:varint utf8{length}
-//! optional_partition := 0x00 | partition
-//! partition  := 0x01 unpartitioned | 0x02 length:varint tenant_bytes{length}
-//! ```
-//!
-//! Varints are minimal unsigned LEB128. Each operation ID appears at most once
-//! per value, and an operation ID never appears both as a removal and an
-//! insert. A value resolved against a known base contains only
-//! insert-if-absent records; an empty resolved queue is a SlateDB tombstone,
-//! so an absent key is the empty queue. A partial merge result may hold no
-//! records at all (both counts zero) when every acknowledgement it composed
-//! cancelled its own enqueue; it is the identity of composition and is never
-//! a resolved value.
-//!
-//! Relative insert order is storage commit order. Producers serialize enqueue
-//! operations for one entity with a per-entity conflict token, so one
-//! entity's operations appear in exactly the order their transactions
-//! committed. Different entities have no global order.
-//!
-//! # Row layout (benchmark baseline)
-//!
-//! The row-per-operation layout stores each operation under its own
-//! sequence-ordered key and acknowledges it by deleting that key:
-//!
-//! ```text
-//! row := version:u8(0x01) kind:u8(0x15) family:u8 operation_id body
-//! ```
-//!
-//! Both layouts decode into the same [`OperationQueue`], so workers and
-//! overlays are identical; only storage and acknowledgement differ.
-
-mod algebra;
-#[cfg(test)]
-mod tests;
-
-use std::sync::Arc;
-
-use bytes::{BufMut, Bytes};
-
-use crate::encoding::error::EncodingError;
-use crate::encoding::v2::keys::IndexEntity;
-use crate::index_lifecycle::work::TextPartition;
-use crate::index_lifecycle::{IndexElementKind, IndexEntityId};
-
-#[cfg(test)]
-pub(crate) use algebra::validate_operand;
-pub(crate) use algebra::{merge_partial, merge_with_base, QueueMergeResult};
-
-/// Frozen framing version for queue values.
-const QUEUE_VALUE_VERSION: u8 = 0x01;
-/// Value kind mirrors the key's `RecordKind::IndexOperationQueue` byte.
-pub(crate) const QUEUE_VALUE_KIND: u8 = 0x14;
-/// Row value kind mirrors the key's `RecordKind::IndexOperationRow` byte.
-const ROW_VALUE_KIND: u8 = 0x15;
-const VERSION_LEN: usize = core::mem::size_of::<u8>();
-const KIND_LEN: usize = core::mem::size_of::<u8>();
-const FAMILY_LEN: usize = core::mem::size_of::<u8>();
-const MODE_LEN: usize = core::mem::size_of::<u8>();
-/// Encoded operation-ID width.
-pub(crate) const OPERATION_ID_LEN: usize = core::mem::size_of::<u128>();
-const HEADER_LEN: usize = VERSION_LEN + KIND_LEN + FAMILY_LEN;
-const F32_LEN: usize = core::mem::size_of::<f32>();
-const MAX_VARINT_LEN: usize = 10;
-/// Largest tenant partition accepted by canonical partitions.
-const MAX_PARTITION_LEN: usize = 16 * 1024 * 1024;
-const OPERATION_TOKEN_BIT: u128 = 1 << 127;
-/// Smallest record an operation retains: mode, identity, a one-byte body
-/// length, and a text deletion of an entity whose ID is one varint byte
-/// (entity kind, ID, absent replacement). A vector deletion adds an absent
-/// previous partition.
-pub(crate) const MIN_RETAINED_RECORD_LEN: usize = MODE_LEN + OPERATION_ID_LEN + 1 + 3;
-/// Upper bound on the bytes of a value that are not records: the header and
-/// both counts.
-const MAX_VALUE_FRAMING_LEN: usize = HEADER_LEN + 2 * MAX_VARINT_LEN;
-
-/// Largest per-index retained-operation ceiling whose queue values SlateDB
-/// can store.
-///
-/// SlateDB encodes a stored value's length as a `u32`, and a longer merge
-/// result written by a flush or compaction is truncated, corrupting its
-/// table. Admission keeps the retained bytes of a generation's outstanding
-/// operations within the ceiling `R`, which bounds a resolved value. An
-/// unresolved value also keeps one [`OPERATION_ID_LEN`]-byte removal per
-/// operation that was outstanding before its oldest operand (see the
-/// cancellation contract in `algebra`), and every operation retains at least
-/// `MIN_RETAINED_RECORD_LEN` bytes, so no value exceeds
-/// `MAX_VALUE_FRAMING_LEN + OPERATION_ID_LEN * (R / MIN_RETAINED_RECORD_LEN) + R`.
-/// This is the largest `R` for which that fits a `u32`.
-pub(crate) const MAX_RETAINED_BYTES: u64 = (u32::MAX as u64 - MAX_VALUE_FRAMING_LEN as u64)
-    * MIN_RETAINED_RECORD_LEN as u64
-    / (MIN_RETAINED_RECORD_LEN + OPERATION_ID_LEN) as u64;
-
-/// Unique immutable identity of one queued operation.
-///
-/// Bit 127 is always clear so operation tokens and entity enqueue-order tokens
-/// occupy disjoint halves of SlateDB's `u128` token space.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub(crate) struct QueuedOperationId(u128);
-
-impl QueuedOperationId {
-    /// Generates a fresh random identity that is never reused by a producer.
-    pub(crate) fn generate() -> Self {
-        Self(uuid::Uuid::new_v4().as_u128() & !OPERATION_TOKEN_BIT)
-    }
-
-    /// Validates a decoded identity.
-    pub(crate) fn try_from_u128(value: u128) -> Result<Self, EncodingError> {
-        if value & OPERATION_TOKEN_BIT != 0 {
-            return Err(EncodingError::Custom(
-                "queued operation ID uses the reserved entity-token bit".to_string(),
-            ));
-        }
-        Ok(Self(value))
-    }
-
-    /// Returns the raw identity.
-    pub(crate) const fn get(self) -> u128 {
-        self.0
-    }
-
-    /// Returns the disjoint-merge token owned by exactly this operation.
-    pub(crate) const fn token(self) -> u128 {
-        self.0
-    }
-
-    fn to_be_bytes(self) -> [u8; OPERATION_ID_LEN] {
-        self.0.to_be_bytes()
-    }
-}
-
-/// Returns the stable per-entity enqueue-order token.
-///
-/// Every enqueue for the same entity carries this token, so competing
-/// enqueues conflict and retry instead of committing in an ambiguous order.
-/// Acknowledgements never carry it.
-pub(crate) const fn entity_enqueue_token(entity: IndexEntity) -> u128 {
-    OPERATION_TOKEN_BIT | ((entity.kind as u128) << 64) | entity.id.get() as u128
-}
-
-/// Index family whose payloads a queue retains.
-#[repr(u8)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub(crate) enum QueueFamily {
-    /// Vector operations.
-    Vector = 0x01,
-    /// Text operations.
-    Text = 0x02,
-}
-
-impl QueueFamily {
-    fn try_from_u8(value: u8) -> Result<Self, EncodingError> {
-        match value {
-            0x01 => Ok(Self::Vector),
-            0x02 => Ok(Self::Text),
-            unknown => Err(EncodingError::Custom(format!(
-                "unknown queued operation family {unknown:#04x}"
-            ))),
-        }
-    }
-}
-
-/// Destination state of one vector operation.
-#[derive(Debug, Clone, PartialEq)]
-pub(crate) struct QueuedVectorReplacement {
-    partition: TextPartition,
-    vector: Arc<[f32]>,
-}
-
-impl QueuedVectorReplacement {
-    /// Accepts a non-empty finite vector already validated by its index metric.
-    pub(crate) fn try_new(
-        partition: TextPartition,
-        vector: Arc<[f32]>,
-    ) -> Result<Self, EncodingError> {
-        if vector.is_empty() {
-            return Err(EncodingError::Custom(
-                "queued vector replacement must not be empty".to_string(),
-            ));
-        }
-        if let Some(index) = vector.iter().position(|value| !value.is_finite()) {
-            return Err(EncodingError::Custom(format!(
-                "queued vector component {index} is not finite"
-            )));
-        }
-        Ok(Self { partition, vector })
-    }
-
-    /// Returns the destination partition.
-    pub(crate) const fn partition(&self) -> &TextPartition {
-        &self.partition
-    }
-
-    /// Returns the exact queued vector components.
-    pub(crate) fn vector(&self) -> &[f32] {
-        &self.vector
-    }
-
-    /// Shares the exact queued vector components without copying them.
-    pub(crate) fn shared_vector(&self) -> Arc<[f32]> {
-        Arc::clone(&self.vector)
-    }
-}
-
-/// Complete vector operation: previous routing plus optional replacement.
-///
-/// `previous` is the partition the committed graph state was indexed under
-/// immediately before this operation. `None` replacement is a deletion.
-#[derive(Debug, Clone, PartialEq)]
-pub(crate) struct QueuedVectorPayload {
-    pub(crate) previous: Option<TextPartition>,
-    pub(crate) replacement: Option<QueuedVectorReplacement>,
-}
-
-/// Destination state of one text operation.
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub(crate) struct QueuedTextReplacement {
-    partition: TextPartition,
-    text: Arc<str>,
-}
-
-impl QueuedTextReplacement {
-    /// Accepts the exact normalized text projected by the index definition.
-    pub(crate) const fn new(partition: TextPartition, text: Arc<str>) -> Self {
-        Self { partition, text }
-    }
-
-    /// Returns the destination partition.
-    p
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -2039,216 +2078,896 @@ impl QueuedTextReplacement {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0118a4ed` (2026-11-05)
-**Commit Message**: Document SQL across the query guides (#1249)
+### Incident Patch 1: `4775f29a` (2026-11-06)
+**Commit Message**: Validate secondary builds without fencing writers (#1271)
 
-* Document SQL alongside Cypher across the guides
+Stacked on #1270.
 
-- the SQL guide follows the Cypher guide's structure: running a statement,
-  request options, what is supported, values and parameters, writes and
-  transactions, indexes and performance, limits and errors
-- reading, writing, filtering, projection and parameter guides add a SQL
-  tab where one SQL statement does the same work, verified to return the
-  Cypher tab's results; search and index pages name SQL beside Cypher
-- docs/sql.md holds the implementation notes, linked from cypher.md and
-  the codebase map
-- Indexes and search follow Traversals in the navigation
+## Problem
 
-* Correct the SQL id-lookup and relationship-insert examples; note stack and telemetry design
+Every validation step held a write fence for its whole batch. That was
+needed because its in-transaction drain range-read the delta prefix.
+Validation visits one applied-state row per entity, so **writers stalled
+for time proportional to the table**: about 15-20 s at about 12% write
+throughput for 300k rows.
 
-**File**: `docs/codebase-map.md` (modified, +7/-2)
-```diff
-@@ -64,13 +64,15 @@ cargo metadata --offline --locked --no-deps --format-version 1
- 
- ```mermaid
- flowchart TD
--    TS["TypeScript / Python / Go SDKs"] --> HTTP["HTTP: /v2/query, /v2/cypher"]
-+    TS["TypeScript / Python / Go SDKs"] --> HTTP["HTTP: /v2/query, /v2/cypher, /v2/sql"]
-     CLI["CLI: query / cypher"] --> HTTP
-     GRPC["gRPC methods"] --> SERVICE["db::query_service · request authority"]
-     HTTP --> SERVICE
-     RUST["Rust SDK / embedded HelixDB"] --> SERVICE
-     FFI["UniFFI embedded bindings"] --> SERVICE
-     SERVICE --> DSL["Native JSON AST · helix-ast"]
-+    HTTP --> SQL["SQL translate · sqlparser → Cypher syntax"]
-+    SQL --> CYPHER
-     SERVICE --> CYPHER["Cypher compile · lexer → parser → bind"]
-     DSL --> NATIVE["planner::planning · native adapters"]
-     CYPHER --> ROWS["planner::relational::Query · validated scopes/effects"]
-@@ -89,6 +91,7 @@ flowchart TD
- | Request service | [query_service.rs](../crates/db/src/query_service.rs), [cypher.rs](../crates/db/src/cypher.rs) | Tenant scope, execute/explain mode, parameters, catalog observation, cancellation and output format belong to one attempt. |
- | Native language | [AST](../crates/ast/src), [native planning](../crates/planner/src/planning) | SDK JSON contracts and native semantics remain supported. |
- | Cypher language | [frontend](../crates/cypher/src), [requests](../crates/cypher/src/request.rs), [transport contract](../crates/cypher/src/api.rs) | Resolve names to stable slots; reject unsupported semantics before execution; never translate through native DSL syntax. |
-+| SQL language | [translator](../crates/cypher/src/sql.rs), [requests](../crates/cypher/src/sql/request.rs) | Translate one statement into Cypher syntax without reading storage; follow SQL's results; reject what Cypher cannot express before execution. |
- | Result encoding | [Cypher output](../crates/db/src/cypher/output.rs), [parameter decoding](../crates/db/src/cypher/parameters.rs) | Ordered columns, rectangular rows, lossless graph IDs and values; diagnostics stay outside result data. Prepare output before committing writes. |
- | Native bindings | [UniFFI](../bindings/uniffi/src), [Rust SDK](../sdks/rust/src) | Own API/language conversion and runtime handles; delegate storage and query execution to the engine. |
- 
-@@ -195,7 +198,9 @@ Materialisation depends on the selected pipeline:
- Disk spilling is not implemented. Resource exhaustion must fail the query, never
- silently truncate its successful result. The public behaviour is in the
- [Cypher guide](database/helix-db/query-guides/cypher.mdx), and implementation
--detail is in the [Cypher implementation notes](cypher.md).
-+detail is in the [Cypher implementation notes](cypher.md). SQL translates into
-+the same Cypher syntax; see the [SQL guide](database/helix-db/query-guides/sql.mdx)
-+and the [SQL implementation notes](sql.md).
- 
- ## Storage, transactions and indexes
- 
+## Fix
+
+```text
+prepare(validate)
+  if the cursor has not moved for 8 preparations
+    fence writers, drain the whole backlog, validate one batch
+  else if backlog > gated reach
+    reconcile exact delta keys, keep the cursor          # like catch-up
+  else
+    observe the batch's applied-state keys outside any transaction
+stage(validate batch)
+  multi_get rows and deltas                              # point reads only
+  per group of 32: multi_get source rows and entries     # counted against the input budget
+  release rows with no pending delta                     # pending ones go to the drains
 ```
 
-**File**: `docs/cypher.md` (modified, +3/-12)
+- **Point reads keep conflicts local.** Only writes to the batch's own
+entities conflict. A transactional range read conflicts with every write
+ahead of the cursor: a 20k-row build under ste
+
+**File**: `crates/db/src/index_lifecycle/secondary.rs` (modified, +1020/-270)
 ```diff
-@@ -67,18 +67,9 @@ decode requests with `helix_cypher::request::Request`, which needs no database.
+@@ -115,18 +115,23 @@ pub(crate) fn record_equality_point_read() {
+ pub(crate) struct SecondaryIndexDriver {
+     scope_gates: Arc<IndexScopeGates>,
+     scan_tuning: IndexLifecycleScanTuning,
+-    /// Consecutive preparations of each operation's scan that found its
+-    /// cursor where the previous one left it, with that cursor.
++    /// Consecutive preparations of each operation's scan or validation that
++    /// found its cursor where the previous one left it, with that cursor.
+     stalled_preparations: parking_lot::Mutex<HashMap<IndexOperationId, (Option<IndexCursor>, u32)>>,
+ }
  
- ## SQL translation
+-/// Unfenced preparations without progress before a scan fences writers.
++/// Unfenced preparations without progress before a scan or validation step
++/// fences writers.
+ ///
+ /// A unique scan conflicts with every claiming write to an entity of its
+-/// batch (see [`claim_while_building`]), so writes that keep hitting one
+-/// batch, such as a hot row, could otherwise stop it forever. The fenced
+-/// preparation scans one batch with writers excluded, so the build always
+-/// advances, and its stall is one batch.
++/// batch (see [`claim_while_building`]), and a validation batch with every
++/// write to an entity it releases, so writes that keep hitting one batch,
++/// such as a hot row, could otherwise stop either forever. Validation also
++/// makes no progress while writes keep the backlog beyond
++/// [`GATED_BACKLOG_BATCHES`] faster than exact drains reduce it. The fenced
++/// preparation handles one batch with writers excluded (validation first
++/// drains the whole backlog), so the build always advances, and its stall is
++/// bounded by one batch plus what this many preparations let accumulate.
+ const PREPARATIONS_BEFORE_FENCE: u32 = 8;
  
--`helix_cypher::sql` translates one SQL statement into the same
--`syntax::Statement` the Cypher parser builds, so binding, planning, execution and
--error reporting are shared, and every span points into the SQL text. It is a port
--of neo4j-jdbc's translator (`neo4j-jdbc-translator/impl`, Apache-2.0); the golden
--corpus in `crates/cypher/tests/sql/translations.txt` carries its tests and marks
--each deliberate divergence. Translation reads no storage or catalog, so a gateway
--can route SQL by effect like Cypher. `sql::request::Request::compile` returns the
--ordinary `CompiledRequest`, whose text is the printed Cypher (`syntax::Statement`
--implements `Display`), so telemetry records the redacted Cypher shape.
--sqlparser materializes every token and builds operator chains left-deep, then
--walks and drops them recursively; the translation therefore bounds an estimate of
--the token count before tokenizing and the binary operators before parsing.
-+`helix_cypher::sql` translates SQL into the same `syntax::Statement` the Cypher
-+parser builds, so SQL shares binding, planning, execution and error reporting
-+with Cypher. The [SQL implementation notes](sql.md) describe the translation.
+ impl core::fmt::Debug for SecondaryIndexDriver {
+@@ -187,13 +192,20 @@ pub(crate) struct PreparedSecondaryOperationStep {
+ }
  
- ## Index selection
- 
+ enum PreparedSecondaryStep {
+-    /// A catch-up backlog beyond [`GATED_BACKLOG_BATCHES`]: exact durable
+-    /// delta keys selected without adding an SSI range read, reconciled
+-    /// while writes continue.
+-    ExactCatchUp { keys: Vec<IndexEntityStateKey> },
+-    /// A catch-up, validation, or activation step that fences the scope's
+-    /// writers: catch-up and validation hold the write fence, activation the
+-    /// lifecycle permit. Bounded drains committed under that permit left the
++    /// A catch-up or validation backlog beyond [`GATED_BACKLOG_BATCHES`]:
++    /// exact durable delta keys selected without adding an SSI range read,
++    /// reconciled while writes continue.
++    Exact { keys: Vec<IndexEntityStateKey> },
++    /// One validation batch whose applied-state keys were observed before its
++    /// transaction opened, with the counters it continues from. It fences
++    /// writers only once validation stalls (see [`PREPARATIONS_BEFORE_FENCE`]).
++    Validate {
++        counters: OperationCounters,
++        batch: ObservedValidationBatch,
++    },
++    /// A catch-up or activation step that fences the scope's writers:
++    /// catch-up holds the write fence, activation the lifecycle permit.
++    /// Bounded drains committed under that permit left the
+     /// prefix empty, or headed by the entity one blocked on, so the step's
+     /// own drain reaches the end of the prefix or blocks on that entity;
+     /// `counters` include their work.
+@@ -223,16 +235,27 @@ impl PreparedSecondaryOperationStep {
+             ));
+         };
+         let result = match (&self.step, stage) {
+-            (
+-                PreparedSecondaryStep::ExactCatchUp { keys },
+-                SecondaryBuildStage::CatchUp(progress),
+-            ) => {
++            (PreparedSecondaryStep::Exact { keys }, SecondaryBuildStage::CatchUp(progress)) => {
+                 catch_up_exact(
+                     transaction,
+                     scope,
+                     operation,
+                     definition,
+-                    progress,
++                    progress.counters,
++                    ExactDrain::CatchUp,
++                    limits,
++                    keys,
++                )
++                .await
++            }
++            (PreparedSecondaryStep::Exact { keys }, SecondaryBuildStage::Validate(progress)) => {
++                catch_up_exact(
++                    transaction,
++                    scope,
++                    operation,
++                    definition,
++                    progress.counters,
++                    ExactDrain::Validation(progress.cursor.as_ref()),
+                     limits,
+                     keys,
+                 )
+@@ -246,35 +269,40 @@ impl PreparedSecondaryOperationStep {
+                 catch_up(transaction, scope, operation, definition, &progress, limits).await
+             }
+             (
+-                PreparedSecondaryStep::Gated { counters },
++                PreparedSecondaryStep::Validate { counters, batch },
+                 SecondaryBuildStage::Validate(progress),
+             ) => {
+-               
 ```
 
-**File**: `docs/database/helix-db/core-concepts/overview.mdx` (modified, +3/-1)
-```diff
-@@ -18,7 +18,9 @@ sends back. To run it, start a local instance as described in
-   the body sent to `POST /v2/query`, and the v3 SDKs are typed builders for exactly that
-   body. The Cypher tab is the equivalent statement for
-   [`POST /v2/cypher`](/database/helix-db/query-guides/cypher), and the steps below show
--  the clauses of that statement that do the same work.
-+  the clauses of that statement that do the same work. Other guides add a SQL tab for
-+  [`POST /v2/sql`](/database/helix-db/query-guides/sql) where one SQL statement does the
-+  same work; this query writes and then reads in one transaction, which SQL cannot.
- </Note>
- 
- ## The whole query
-```
+---
 
-**File**: `docs/database/helix-db/query-guides/filtering.mdx` (modified, +6/-0)
+### Incident Patch 2: `45146201` (2026-11-06)
+**Commit Message**: Fence writers without blocking planning in build steps that keep the Active set (#1269)
+
+## Problem
+
+Every gated build step took the scope's lifecycle permit, which holds
+the catalog gate exclusively, so **all reads in the scope blocked** for
+the whole step. That covered:
+- secondary catch-up and validation;
+- vector adoption and descriptor validation;
+- abort and cleanup in every family.
+
+During a 300k-row secondary build, reads fell from about 200k/s to 8k/s,
+with the permit held 84-89% of every second. Catalog reloads cost about
+2 ms/s, so they were not the cause.
+
+## Fix
+
+The planning catalog holds only Active indexes. Writers read Building
+and Dropping state inside their own transaction. So only a step that
+changes the Active set needs the catalog gate.
+
 ```diff
-@@ -115,6 +115,12 @@ WHERE u.score >= 100
- RETURN id(u) AS id, u.name AS name, u.score AS score
- ```
+ step gate per stage (one exhaustive match per family)
+   secondary  catch-up (gated), validate, abort, cleanup    - Lifecycle  + WriteFence
+   vector     adopt, validate directory/descriptor,
+              abort, cleanup                               - Lifecycle  + WriteFence
+   text       abort, cleanup                               - Lifecycle  + WriteFence
+   all        activate                                     
+
+**File**: `crates/db/src/index_lifecycle/scope_gate.rs` (modified, +143/-0)
+```diff
+@@ -6,6 +6,11 @@
+ //! until commit or abort. Active lifecycle publication takes both gates
+ //! exclusively, while DROP takes only catalog exclusivity and relies on the
+ //! graph transaction's canonical reads for serializable conflict detection.
++//! Build steps that must see no concurrent graph write but leave the Active
++//! index set unchanged take only mutation exclusivity
++//! ([`IndexScopeWriteFencePermit`]), so planning and reads continue. Each
++//! family names the gate of every step through one exhaustive [`StepGate`]
++//! mapping.
+ //! The mutation, refresh, and publication registries store weak references
+ //! so one-off tenant scopes do not accumulate forever.
+ //!
+@@ -95,6 +100,40 @@ pub(crate) struct IndexScopeLifecyclePermit {
+     _mutation_guard: OwnedRwLockWriteGuard<()>,
+ }
  
-+```sql SQL
-+SELECT id(u) AS id, u.name AS name, u.score AS score
-+FROM User u
-+WHERE u.score >= 100
-+```
++/// Exclusive mutation authority for a build step that leaves the Active index
++/// set unchanged.
++///
++/// It excludes every graph transaction in the scope, so a step that drains or
++/// validates a generation observes no new build delta. It does not exclude
++/// planning: the planner-visible catalog holds only Active indexes, and graph
++/// transactions read Building and Dropping records through their own
++/// serializable transaction, so the step neither takes the catalog gate nor
++/// advances the catalog version.
++///
++/// Lock order is catalog, then mutation. A holder must never wait for a
++/// catalog permit: a graph transaction holding a shared catalog permit can be
++/// queued for the mutation gate this permit holds, and an exclusive catalog
++/// waiter queued behind that transaction blocks every later shared one.
++#[derive(Debug)]
++pub(crate) struct IndexScopeWriteFencePermit {
++    _mutation_guard: OwnedRwLockWriteGuard<()>,
++}
 +
- </CodeGroup>
++/// The scope coordination one index operation step holds through its commit.
++///
++/// Every family maps each of its steps to exactly one gate in an exhaustive
++/// match, so a new stage cannot inherit a gate by omission.
++#[derive(Debug, Clone, Copy, PartialEq, Eq)]
++pub(crate) enum StepGate {
++    /// The step coordinates through its own transaction alone.
++    None,
++    /// The step must observe no concurrent graph write but leaves the Active
++    /// index set unchanged.
++    WriteFence,
++    /// The step changes the scope's Active index set.
++    Lifecycle,
++}
++
+ /// Exclusive process-local ownership of one generation's physical publication.
+ ///
+ /// Queued publication into an Active generation, build steps, activation,
+@@ -183,6 +222,28 @@ impl IndexScopeGates {
+         }
+     }
  
- ## Filter search candidates
++    /// Acquires mutation exclusivity only, for a step that leaves the Active
++    /// index set unchanged. See [`IndexScopeWriteFencePermit`] for the lock
++    /// order its holders must keep.
++    pub(crate) async fn write_fence_permit(&self, scope: DataScope) -> IndexScopeWriteFencePermit {
++        IndexScopeWriteFencePermit {
++            _mutation_guard: self.mutation_gate(scope).write_owned().await,
++        }
++    }
++
++    /// Acquires the permit `gate` names for one operation step.
++    pub(crate) async fn step_permit(
++        &self,
++        scope: DataScope,
++        gate: StepGate,
++    ) -> Box<dyn super::outbox::IndexOperationStepPermit> {
++        match gate {
++            StepGate::None => Box::new(()),
++            StepGate::WriteFence => Box::new(self.write_fence_permit(scope).await),
++            StepGate::Lifecycle => Box::new(self.lifecycle_permit(scope).await),
++        }
++    }
++
+     /// Serializes persisted-catalog refreshes for one handle and scope.
+     ///
+     /// Storage scans happen outside the synchronous runtime-state lock. This
+@@ -278,6 +339,7 @@ impl IndexScopeGates {
+ #[cfg(test)]
+ mod tests {
+     use std::sync::Arc;
++    use std::time::Duration;
+ 
+     use super::*;
+ 
+@@ -325,6 +387,87 @@ mod tests {
+         drop(mutation);
+     }
+ 
++    /// Each step gate excludes exactly what its holder needs: none nothing,
++    /// the write fence only graph transactions, and the lifecycle permit
++    /// planning too. Only the lifecycle permit advances the catalog version.
++    #[tokio::test]
++    async fn step_gates_exclude_only_what_their_step_needs() {
++        let gates = Arc::new(IndexScopeGates::default());
++        let scope = DataScope::LegacyUnscoped;
++        let wait = Duration::from_millis(50);
++        for (gate, fences_writers, gates_planning) in [
++            (StepGate::None, false, false),
++            (StepGate::WriteFence, true, false),
++            (StepGate::Lifecycle, true, true),
++        ] {
++            let before = gates.catalog_permit(scope).await.version();
++            let held = gates.step_permit(scope, gate).await;
++            let mutation = tokio::time::timeout(wait, gates.mutation_permit(scope)).await;
++            assert_eq!(
++                mutation.is_err(),
++                fences_writers,
++                "{gate:?} and graph writes"
++            );
++            drop(mutation);
++            let planning = tokio::time::timeo
 ```
 
-**File**: `docs/database/helix-db/query-guides/parameters.mdx` (modified, +11/-0)
+**File**: `crates/db/src/index_lifecycle/secondary.rs` (modified, +119/-29)
 ```diff
-@@ -165,11 +165,22 @@ WITH u LIMIT $limit
- RETURN id(u) AS id, u.name AS name, u.tenantId AS tenantId
- ```
+@@ -74,7 +74,7 @@ use crate::index_lifecycle::{
+     ValidatedSecondaryIndexDefinition,
+ };
  
-+```sql SQL
-+-- parameters: {"tenant_id": "acme", "limit": 25}
-+SELECT id(u) AS id, u.name AS name, u.tenantId AS tenantId
-+FROM User u
-+WHERE u.tenantId = :tenant_id
-+LIMIT :limit
-+```
-+
- </CodeGroup>
+-use super::IndexScopeGates;
++use super::{IndexScopeGates, StepGate};
  
- The Cypher statement reads the same values as `$tenant_id` and `$limit`. A Cypher
- request has no `parameter_types`; each value's type comes from its
- [JSON encoding](/database/helix-db/query-guides/cypher#values-and-parameters).
-+The SQL statement binds the same values as `:tenant_id` and `:limit`; with `?`
-+placeholders instead, `parameters` is a list bound in written order. See
-+[SQL values and parameters](/database/helix-db/query-guides/sql#values-and-parameters).
+ mod exact;
+ pub(crate) use exact::lookup_active_unique_equality_batch_admitted;
+@@ -151,8 +151,9 @@ enum PreparedSecondaryStep {
+     /// delta keys selected without adding an SSI range read, reconciled
+     /// while writes continue.
+     ExactCatchUp { keys: Vec<IndexEntityStateKey> },
+-    /// A catch-up, validation, or activation step holding the scope's
+-    /// exclusive permit. Bounded drains committed under that permit left the
++    /// A catch-up, validation, or activation step that fences the scope's
++    /// writers: catch-up and validation hold the write fence, activation the
++    /// lifecycle permit. Bounded drains committed under that permit left the
+     /// prefix empty, or headed by the entity one blocked on, so the step's
+     /// own drain reaches the end of the prefix or blocks on that entity;
+     /// `counters` include their work.
+@@ -727,21 +728,32 @@ impl IndexOperationDriver for SecondaryIndexDriver {
+         scope: DataScope,
+         operation: &IndexOperationRecord,
+     ) -> Result<Box<dyn IndexOperationStepPermit>> {
+-        // Constructing builds take their permit in `prepare_step`.
+-        let needs_exclusive = matches!(
+-            operation.progress(),
++        let gate = match operation.progress() {
++            // Constructing builds take their permit in `prepare_step`.
++            IndexOperationProgress::SecondaryBuild(SecondaryBuildProgress::Constructing(_)) => {
++                StepGate::None
++            }
++            // Abort and cleanup delete rows of a generation that is not
++            // Active: writers stay fenced, planning continues.
+             IndexOperationProgress::SecondaryBuild(SecondaryBuildProgress::Aborting(_))
+-                | IndexOperationProgress::SecondaryCleanup(_)
+-        );
+-        if needs_exclusive {
+-            return Ok(Box::new(self.scope_gates.lifecycle_permit(scope).await));
+-        }
+-        Ok(Box::new(()))
++            | IndexOperationProgress::SecondaryCleanup(_) => StepGate::WriteFence,
++            IndexOperationProgress::VectorBuild(_)
++            | IndexOperationProgress::TextBuild(_)
++            | IndexOperationProgress::VectorCleanup(_)
++            | IndexOperationProgress::TextCleanup(_) => {
++                return Err(corruption(
++                    "secondary driver received another family progress",
++                ));
++            }
++        };
++        Ok(self.scope_gates.step_permit(scope, gate).await)
+     }
  
- ## Supported parameter families
- 
+-    /// Takes the scope's exclusive permit for every step that must end with
+-    /// the delta prefix empty, and drains the backlog the writes it waited
+-    /// for left behind before the step's own transaction opens.
++    /// Fences the scope's writers for every step that must end with the delta
++    /// prefix empty, and drains the backlog the writes it waited for left
++    /// behind before the step's own transaction opens. Only activation also
++    /// takes the catalog gate: catch-up and validation leave the Active index
++    /// set unchanged, so planning and reads continue through them.
+     ///
+     /// A catch-up backlog beyond [`GATED_BACKLOG_BATCHES`] is instead
+     /// reconciled by exact keys while writes continue. It is observed before
+@@ -771,7 +783,7 @@ impl IndexOperationDriver for SecondaryIndexDriver {
+                 },
+             )
+         };
+-        let (counters, disposition) = match stage {
++        let (counters, disposition, gate) = match stage {
+             SecondaryBuildStage::Scan(_) => {
+                 return Ok(PreparedIndexOperationStep::driver_owned(
+                     self.family(),
+@@ -781,17 +793,25 @@ impl IndexOperationDriver for SecondaryIndexDriver {
+             SecondaryBuildStage::CatchUp(progress) => {
+                 match observe_backlog(db, scope, operation, limits).await? {
+                     Some(keys) => return Ok(exact_catch_up(keys)),
+-                    None => (progress.counters, AppliedStateDisposition::Retain),
++                    None => (
++                        progress.counters,
++                        AppliedStateDisposition::Retain,
++                        StepGate::WriteFence,
++                    ),
+                 }
+             }
+-            SecondaryBuildStage::Validate(progress) => {
+-                (progress.counters, AppliedStateDisposition::Release)
+-            }
+-            SecondaryBuildStage::Activate(progress) => {
+-                (progress.counters, AppliedStateDisposition::Release)
+-            }
++            SecondaryBuildStage::Validate(progress) => (
++                progress.counters,
++                AppliedStateDisposition::Release,
++                StepGate::WriteFence,
++            ),
++            SecondaryBuildStage::Activate(progress) => (
++                progress.counters,
++                AppliedStateDisposition
 ```
 
-**File**: `docs/database/helix-db/query-guides/prefiltering.mdx` (modified, +2/-1)
+**File**: `crates/db/src/index_lifecycle/text/driver.rs` (modified, +26/-13)
 ```diff
-@@ -15,7 +15,8 @@ vector and full-text search.
- For why filtering before ranking matters, see
- [Filtered vector search](/learn/vector-search/filtered-vector-search).
+@@ -61,8 +61,9 @@ use crate::index_lifecycle::{
+     BuildOperationOutcome, IndexCursor, IndexElementKind, IndexEntityId, IndexOperationBlocker,
+     IndexOperationExecutionState, IndexOperationFamily, IndexOperationOutcome,
+     IndexOperationProgress, IndexOperationRecord, IndexRecordV2, OperationCounters,
+-    PrefixScanProgress, SourceScanProgress, TextBuildProgress, TextBuildStage, TextLogicalVersion,
+-    TextManifestValidationProgress, ValidatedDynamicIndexDefinition, ValidatedTextIndexDefinition,
++    PrefixScanProgress, SourceScanProgress, StepGate, TextBuildProgress, TextBuildStage,
++    TextLogicalVersion, TextManifestValidationProgress, ValidatedDynamicIndexDefinition,
++    ValidatedTextIndexDefinition,
+ };
+ use crate::transaction::Mutation;
  
--Prefiltered search is native-only: Cypher has no vector or full-text search syntax.
-+Prefiltered search is native-only: Cypher and SQL have no vector or full-text search
-+syntax.
- The [Cypher guide](/database/helix-db/query-guides/cypher#what-is-not-supported) lists
- what Cypher covers.
+@@ -637,17 +638,29 @@ impl IndexOperationDriver for TextIndexDriver {
+         scope: DataScope,
+         operation: &IndexOperationRecord,
+     ) -> Result<Box<dyn IndexOperationStepPermit>> {
+-        let needs_exclusive = matches!(
+-            operation.progress(),
+-            IndexOperationProgress::TextBuild(
+-                TextBuildProgress::Constructing(TextBuildStage::Activate(_))
+-                    | TextBuildProgress::Aborting(_)
+-            ) | IndexOperationProgress::TextCleanup(_)
+-        );
+-        if needs_exclusive {
+-            return Ok(Box::new(self.scope_gates.lifecycle_permit(scope).await));
+-        }
+-        Ok(Box::new(()))
++        let gate = match operation.progress() {
++            IndexOperationProgress::TextBuild(TextBuildProgress::Constructing(stage)) => {
++                match stage {
++                    TextBuildStage::ScanSource(_)
++                    | TextBuildStage::ScanPartitions(_)
++                    | TextBuildStage::CatchUp(_)
++                    | TextBuildStage::Compact(_)
++                    | TextBuildStage::PrepareManifests(_)
++                    | TextBuildStage::ValidateManifests(_) => StepGate::None,
++                    TextBuildStage::Activate(_) => StepGate::Lifecycle,
++                }
++            }
++            // Abort and cleanup delete rows of a generation that is not Active.
++            IndexOperationProgress::TextBuild(TextBuildProgress::Aborting(_))
++            | IndexOperationProgress::TextCleanup(_) => StepGate::WriteFence,
++            IndexOperationProgress::SecondaryBuild(_)
++            | IndexOperationProgress::VectorBuild(_)
++            | IndexOperationProgress::SecondaryCleanup(_)
++            | IndexOperationProgress::VectorCleanup(_) => {
++                return Err(corruption("text driver received another family progress"));
++            }
++        };
++        Ok(self.scope_gates.step_permit(scope, gate).await)
+     }
  
+     async fn prepare_step(
 ```
 
-**File**: `docs/database/helix-db/query-guides/projections.mdx` (modified, +5/-0)
+**File**: `crates/db/src/index_lifecycle/vector/driver.rs` (modified, +26/-17)
 ```diff
-@@ -105,6 +105,11 @@ MATCH (u:User)
- RETURN id(u) AS user_id, u.name AS name
- ```
+@@ -75,10 +75,10 @@ use crate::index_lifecycle::{
+     IndexOperationRecord, IndexRecordV2, IndexV2MetadataValue,
+     LegacyVectorDirectoryValidationProgress, LegacyVectorPhysicalReservation,
+     LegacyVectorValidationLane, LegacyVectorValidationProgress, NoCursorProgress,
+-    OperationCounters, PhysicalGeneration, PrefixScanProgress, SourceScanProgress, TextPartition,
+-    ValidatedDynamicIndexDefinition, ValidatedVectorIndexDefinition, VectorBuildProgress,
+-    VectorBuildStage, VectorCleanupProgress, VectorPhysicalIdWatermark, VectorPhysicalIndexId,
+-    VectorPhysicalLayout, VectorRoutingLayoutV2,
++    OperationCounters, PhysicalGeneration, PrefixScanProgress, SourceScanProgress, StepGate,
++    TextPartition, ValidatedDynamicIndexDefinition, ValidatedVectorIndexDefinition,
++    VectorBuildProgress, VectorBuildStage, VectorCleanupProgress, VectorPhysicalIdWatermark,
++    VectorPhysicalIndexId, VectorPhysicalLayout, VectorRoutingLayoutV2,
+ };
+ use crate::transaction::Mutation;
  
-+```sql SQL
-+SELECT id(u) AS user_id, u.name AS name
-+FROM User u
-+```
-+
- </CodeGroup>
+@@ -1065,20 +1065,29 @@ impl IndexOperationDriver for VectorIndexDriver {
+         scope: DataScope,
+         operation: &IndexOperationRecord,
+     ) -> Result<Box<dyn IndexOperationStepPermit>> {
+-        let needs_exclusive = matches!(
+-            operation.progress(),
+-            IndexOperationProgress::VectorBuild(VectorBuildProgress::Constructing(
+-                VectorBuildStage::AdoptLegacy(_)
++        let gate = match operation.progress() {
++            IndexOperationProgress::VectorBuild(VectorBuildProgress::Constructing(stage)) => {
++                match stage {
++                    VectorBuildStage::Scan(_) | VectorBuildStage::CatchUp(_) => StepGate::None,
++                    // Adoption and validation keep the generation Building, so
++                    // they fence writers without blocking planning.
++                    VectorBuildStage::AdoptLegacy(_)
+                     | VectorBuildStage::ValidateAdoptedDirectory(_)
+-                    | VectorBuildStage::ValidateDescriptor(_)
+-                    | VectorBuildStage::Activate(_)
+-            )) | IndexOperationProgress::VectorBuild(VectorBuildProgress::Aborting(_))
+-                | IndexOperationProgress::VectorCleanup(_)
+-        );
+-        if needs_exclusive {
+-            return Ok(Box::new(self.scope_gates.lifecycle_permit(scope).await));
+-        }
+-        Ok(Box::new(()))
++                    | VectorBuildStage::ValidateDescriptor(_) => StepGate::WriteFence,
++                    VectorBuildStage::Activate(_) => StepGate::Lifecycle,
++                }
++            }
++            // Abort and cleanup delete rows of a generation that is not Active.
++            IndexOperationProgress::VectorBuild(VectorBuildProgress::Aborting(_))
++            | IndexOperationProgress::VectorCleanup(_) => StepGate::WriteFence,
++            IndexOperationProgress::SecondaryBuild(_)
++            | IndexOperationProgress::TextBuild(_)
++            | IndexOperationProgress::SecondaryCleanup(_)
++            | IndexOperationProgress::TextCleanup(_) => {
++                return Err(corruption("vector driver received another family progress"));
++            }
++        };
++        Ok(self.scope_gates.step_permit(scope, gate).await)
+     }
  
- ## Project correlated bindings
+     async fn prepare_step(
 ```
 
-**File**: `docs/database/helix-db/query-guides/reading-data.mdx` (modified, +13/-0)
+---
+
+### Incident Patch 3: `cf8ab9d0` (2026-11-06)
+**Commit Message**: Fence writers without blocking planning in build steps that keep the Active set
+
+Every gated secondary catch-up and validation step, and every secondary,
+vector and text abort or cleanup step, took the scope's lifecycle permit,
+which holds the catalog gate exclusively. That blocked all planning and
+reads in the scope for the step's whole duration. During a 300k-row
+secondary build, reads fell from about 200k/s to 8k/s while the permit
+was held 84-89% of each second.
+
+The planning catalog holds only Active indexes, and graph transactions
+read Building and Dropping records through their own transaction, so only
+a step that changes the Active set needs the catalog gate. Those steps
+now take a write fence: mutation exclusivity only, no catalog gate and no
+catalog version advance. Each family maps every stage to None,
+WriteFence or Lifecycle in one exhaustive match; only activation takes
+Lifecycle. A fence holder never waits for a catalog permit, so a queued
+activation cannot deadlock with the writers it waits for.
+
+Fixes HEL-1003.
+
+**File**: `crates/db/src/index_lifecycle/scope_gate.rs` (modified, +143/-0)
 ```diff
-@@ -138,6 +138,13 @@ WITH u LIMIT 25
- RETURN id(u) AS id, u.name AS name
- ```
+@@ -6,6 +6,11 @@
+ //! until commit or abort. Active lifecycle publication takes both gates
+ //! exclusively, while DROP takes only catalog exclusivity and relies on the
+ //! graph transaction's canonical reads for serializable conflict detection.
++//! Build steps that must see no concurrent graph write but leave the Active
++//! index set unchanged take only mutation exclusivity
++//! ([`IndexScopeWriteFencePermit`]), so planning and reads continue. Each
++//! family names the gate of every step through one exhaustive [`StepGate`]
++//! mapping.
+ //! The mutation, refresh, and publication registries store weak references
+ //! so one-off tenant scopes do not accumulate forever.
+ //!
+@@ -95,6 +100,40 @@ pub(crate) struct IndexScopeLifecyclePermit {
+     _mutation_guard: OwnedRwLockWriteGuard<()>,
+ }
  
-+```sql SQL
-+SELECT id(u) AS id, u.name AS name
-+FROM User u
-+WHERE u.status = 'active'
-+LIMIT 25
-+```
++/// Exclusive mutation authority for a build step that leaves the Active index
++/// set unchanged.
++///
++/// It excludes every graph transaction in the scope, so a step that drains or
++/// validates a generation observes no new build delta. It does not exclude
++/// planning: the planner-visible catalog holds only Active indexes, and graph
++/// transactions read Building and Dropping records through their own
++/// serializable transaction, so the step neither takes the catalog gate nor
++/// advances the catalog version.
++///
++/// Lock order is catalog, then mutation. A holder must never wait for a
++/// catalog permit: a graph transaction holding a shared catalog permit can be
++/// queued for the mutation gate this permit holds, and an exclusive catalog
++/// waiter queued behind that transaction blocks every later shared one.
++#[derive(Debug)]
++pub(crate) struct IndexScopeWriteFencePermit {
++    _mutation_guard: OwnedRwLockWriteGuard<()>,
++}
 +
- </CodeGroup>
- 
- ## Read by indexed property
-@@ -208,6 +215,12 @@ MATCH (user:User {email: 'alice@example.com'})
- RETURN id(user) AS user
- ```
- 
-+```sql SQL
-+SELECT id(u) AS "user"
-+FROM User u
-+WHERE u.email = 'alice@example.com'
-+```
++/// The scope coordination one index operation step holds through its commit.
++///
++/// Every family maps each of its steps to exactly one gate in an exhaustive
++/// match, so a new stage cannot inherit a gate by omission.
++#[derive(Debug, Clone, Copy, PartialEq, Eq)]
++pub(crate) enum StepGate {
++    /// The step coordinates through its own transaction alone.
++    None,
++    /// The step must observe no concurrent graph write but leaves the Active
++    /// index set unchanged.
++    WriteFence,
++    /// The step changes the scope's Active index set.
++    Lifecycle,
++}
 +
- </CodeGroup>
+ /// Exclusive process-local ownership of one generation's physical publication.
+ ///
+ /// Queued publication into an Active generation, build steps, activation,
+@@ -183,6 +222,28 @@ impl IndexScopeGates {
+         }
+     }
  
- ## Read an earlier result
++    /// Acquires mutation exclusivity only, for a step that leaves the Active
++    /// index set unchanged. See [`IndexScopeWriteFencePermit`] for the lock
++    /// order its holders must keep.
++    pub(crate) async fn write_fence_permit(&self, scope: DataScope) -> IndexScopeWriteFencePermit {
++        IndexScopeWriteFencePermit {
++            _mutation_guard: self.mutation_gate(scope).write_owned().await,
++        }
++    }
++
++    /// Acquires the permit `gate` names for one operation step.
++    pub(crate) async fn step_permit(
++        &self,
++        scope: DataScope,
++        gate: StepGate,
++    ) -> Box<dyn super::outbox::IndexOperationStepPermit> {
++        match gate {
++            StepGate::None => Box::new(()),
++            StepGate::WriteFence => Box::new(self.write_fence_permit(scope).await),
++            StepGate::Lifecycle => Box::new(self.lifecycle_permit(scope).await),
++        }
++    }
++
+     /// Serializes persisted-catalog refreshes for one handle and scope.
+     ///
+     /// Storage scans happen outside the synchronous runtime-state lock. This
+@@ -278,6 +339,7 @@ impl IndexScopeGates {
+ #[cfg(test)]
+ mod tests {
+     use std::sync::Arc;
++    use std::time::Duration;
+ 
+     use super::*;
+ 
+@@ -325,6 +387,87 @@ mod tests {
+         drop(mutation);
+     }
+ 
++    /// Each step gate excludes exactly what its holder needs: none nothing,
++    /// the write fence only graph transactions, and the lifecycle permit
++    /// planning too. Only the lifecycle permit advances the catalog version.
++    #[tokio::test]
++    async fn step_gates_exclude_only_what_their_step_needs() {
++        let gates = Arc::new(IndexScopeGates::default());
++        let scope = DataScope::LegacyUnscoped;
++        let wait = Duration::from_millis(50);
++        for (gate, fences_writers, gates_planning) in [
++            (StepGate::None, false, false),
++            (StepGate::WriteFence, true, false),
++            (StepGate::Lifecycle, true, true),
++        ] {
++            let before = gates.catalog_permit(scope).await.version();
++            let held = gates.step_permit(scope, gate).await;
++            let mutation = tokio::time::timeout(wait, gates.mutation_permit(scope)).await;
++            assert_eq!(
++                mutation.is_err(),
++                fences_writers,
++                "{gate:?} and graph writes"
++            );
++            drop(mutation);
++            let planning = tokio::time::timeo
+```
+
+**File**: `crates/db/src/index_lifecycle/secondary.rs` (modified, +119/-29)
+```diff
+@@ -74,7 +74,7 @@ use crate::index_lifecycle::{
+     ValidatedSecondaryIndexDefinition,
+ };
+ 
+-use super::IndexScopeGates;
++use super::{IndexScopeGates, StepGate};
+ 
+ mod exact;
+ pub(crate) use exact::lookup_active_unique_equality_batch_admitted;
+@@ -151,8 +151,9 @@ enum PreparedSecondaryStep {
+     /// delta keys selected without adding an SSI range read, reconciled
+     /// while writes continue.
+     ExactCatchUp { keys: Vec<IndexEntityStateKey> },
+-    /// A catch-up, validation, or activation step holding the scope's
+-    /// exclusive permit. Bounded drains committed under that permit left the
++    /// A catch-up, validation, or activation step that fences the scope's
++    /// writers: catch-up and validation hold the write fence, activation the
++    /// lifecycle permit. Bounded drains committed under that permit left the
+     /// prefix empty, or headed by the entity one blocked on, so the step's
+     /// own drain reaches the end of the prefix or blocks on that entity;
+     /// `counters` include their work.
+@@ -727,21 +728,32 @@ impl IndexOperationDriver for SecondaryIndexDriver {
+         scope: DataScope,
+         operation: &IndexOperationRecord,
+     ) -> Result<Box<dyn IndexOperationStepPermit>> {
+-        // Constructing builds take their permit in `prepare_step`.
+-        let needs_exclusive = matches!(
+-            operation.progress(),
++        let gate = match operation.progress() {
++            // Constructing builds take their permit in `prepare_step`.
++            IndexOperationProgress::SecondaryBuild(SecondaryBuildProgress::Constructing(_)) => {
++                StepGate::None
++            }
++            // Abort and cleanup delete rows of a generation that is not
++            // Active: writers stay fenced, planning continues.
+             IndexOperationProgress::SecondaryBuild(SecondaryBuildProgress::Aborting(_))
+-                | IndexOperationProgress::SecondaryCleanup(_)
+-        );
+-        if needs_exclusive {
+-            return Ok(Box::new(self.scope_gates.lifecycle_permit(scope).await));
+-        }
+-        Ok(Box::new(()))
++            | IndexOperationProgress::SecondaryCleanup(_) => StepGate::WriteFence,
++            IndexOperationProgress::VectorBuild(_)
++            | IndexOperationProgress::TextBuild(_)
++            | IndexOperationProgress::VectorCleanup(_)
++            | IndexOperationProgress::TextCleanup(_) => {
++                return Err(corruption(
++                    "secondary driver received another family progress",
++                ));
++            }
++        };
++        Ok(self.scope_gates.step_permit(scope, gate).await)
+     }
+ 
+-    /// Takes the scope's exclusive permit for every step that must end with
+-    /// the delta prefix empty, and drains the backlog the writes it waited
+-    /// for left behind before the step's own transaction opens.
++    /// Fences the scope's writers for every step that must end with the delta
++    /// prefix empty, and drains the backlog the writes it waited for left
++    /// behind before the step's own transaction opens. Only activation also
++    /// takes the catalog gate: catch-up and validation leave the Active index
++    /// set unchanged, so planning and reads continue through them.
+     ///
+     /// A catch-up backlog beyond [`GATED_BACKLOG_BATCHES`] is instead
+     /// reconciled by exact keys while writes continue. It is observed before
+@@ -771,7 +783,7 @@ impl IndexOperationDriver for SecondaryIndexDriver {
+                 },
+             )
+         };
+-        let (counters, disposition) = match stage {
++        let (counters, disposition, gate) = match stage {
+             SecondaryBuildStage::Scan(_) => {
+                 return Ok(PreparedIndexOperationStep::driver_owned(
+                     self.family(),
+@@ -781,17 +793,25 @@ impl IndexOperationDriver for SecondaryIndexDriver {
+             SecondaryBuildStage::CatchUp(progress) => {
+                 match observe_backlog(db, scope, operation, limits).await? {
+                     Some(keys) => return Ok(exact_catch_up(keys)),
+-                    None => (progress.counters, AppliedStateDisposition::Retain),
++                    None => (
++                        progress.counters,
++                        AppliedStateDisposition::Retain,
++                        StepGate::WriteFence,
++                    ),
+                 }
+             }
+-            SecondaryBuildStage::Validate(progress) => {
+-                (progress.counters, AppliedStateDisposition::Release)
+-            }
+-            SecondaryBuildStage::Activate(progress) => {
+-                (progress.counters, AppliedStateDisposition::Release)
+-            }
++            SecondaryBuildStage::Validate(progress) => (
++                progress.counters,
++                AppliedStateDisposition::Release,
++                StepGate::WriteFence,
++            ),
++            SecondaryBuildStage::Activate(progress) => (
++                progress.counters,
++                AppliedStateDisposition
+```
+
+**File**: `crates/db/src/index_lifecycle/text/driver.rs` (modified, +26/-13)
+```diff
+@@ -61,8 +61,9 @@ use crate::index_lifecycle::{
+     BuildOperationOutcome, IndexCursor, IndexElementKind, IndexEntityId, IndexOperationBlocker,
+     IndexOperationExecutionState, IndexOperationFamily, IndexOperationOutcome,
+     IndexOperationProgress, IndexOperationRecord, IndexRecordV2, OperationCounters,
+-    PrefixScanProgress, SourceScanProgress, TextBuildProgress, TextBuildStage, TextLogicalVersion,
+-    TextManifestValidationProgress, ValidatedDynamicIndexDefinition, ValidatedTextIndexDefinition,
++    PrefixScanProgress, SourceScanProgress, StepGate, TextBuildProgress, TextBuildStage,
++    TextLogicalVersion, TextManifestValidationProgress, ValidatedDynamicIndexDefinition,
++    ValidatedTextIndexDefinition,
+ };
+ use crate::transaction::Mutation;
+ 
+@@ -637,17 +638,29 @@ impl IndexOperationDriver for TextIndexDriver {
+         scope: DataScope,
+         operation: &IndexOperationRecord,
+     ) -> Result<Box<dyn IndexOperationStepPermit>> {
+-        let needs_exclusive = matches!(
+-            operation.progress(),
+-            IndexOperationProgress::TextBuild(
+-                TextBuildProgress::Constructing(TextBuildStage::Activate(_))
+-                    | TextBuildProgress::Aborting(_)
+-            ) | IndexOperationProgress::TextCleanup(_)
+-        );
+-        if needs_exclusive {
+-            return Ok(Box::new(self.scope_gates.lifecycle_permit(scope).await));
+-        }
+-        Ok(Box::new(()))
++        let gate = match operation.progress() {
++            IndexOperationProgress::TextBuild(TextBuildProgress::Constructing(stage)) => {
++                match stage {
++                    TextBuildStage::ScanSource(_)
++                    | TextBuildStage::ScanPartitions(_)
++                    | TextBuildStage::CatchUp(_)
++                    | TextBuildStage::Compact(_)
++                    | TextBuildStage::PrepareManifests(_)
++                    | TextBuildStage::ValidateManifests(_) => StepGate::None,
++                    TextBuildStage::Activate(_) => StepGate::Lifecycle,
++                }
++            }
++            // Abort and cleanup delete rows of a generation that is not Active.
++            IndexOperationProgress::TextBuild(TextBuildProgress::Aborting(_))
++            | IndexOperationProgress::TextCleanup(_) => StepGate::WriteFence,
++            IndexOperationProgress::SecondaryBuild(_)
++            | IndexOperationProgress::VectorBuild(_)
++            | IndexOperationProgress::SecondaryCleanup(_)
++            | IndexOperationProgress::VectorCleanup(_) => {
++                return Err(corruption("text driver received another family progress"));
++            }
++        };
++        Ok(self.scope_gates.step_permit(scope, gate).await)
+     }
+ 
+     async fn prepare_step(
+```
+
+**File**: `crates/db/src/index_lifecycle/vector/driver.rs` (modified, +26/-17)
+```diff
+@@ -75,10 +75,10 @@ use crate::index_lifecycle::{
+     IndexOperationRecord, IndexRecordV2, IndexV2MetadataValue,
+     LegacyVectorDirectoryValidationProgress, LegacyVectorPhysicalReservation,
+     LegacyVectorValidationLane, LegacyVectorValidationProgress, NoCursorProgress,
+-    OperationCounters, PhysicalGeneration, PrefixScanProgress, SourceScanProgress, TextPartition,
+-    ValidatedDynamicIndexDefinition, ValidatedVectorIndexDefinition, VectorBuildProgress,
+-    VectorBuildStage, VectorCleanupProgress, VectorPhysicalIdWatermark, VectorPhysicalIndexId,
+-    VectorPhysicalLayout, VectorRoutingLayoutV2,
++    OperationCounters, PhysicalGeneration, PrefixScanProgress, SourceScanProgress, StepGate,
++    TextPartition, ValidatedDynamicIndexDefinition, ValidatedVectorIndexDefinition,
++    VectorBuildProgress, VectorBuildStage, VectorCleanupProgress, VectorPhysicalIdWatermark,
++    VectorPhysicalIndexId, VectorPhysicalLayout, VectorRoutingLayoutV2,
+ };
+ use crate::transaction::Mutation;
+ 
+@@ -1065,20 +1065,29 @@ impl IndexOperationDriver for VectorIndexDriver {
+         scope: DataScope,
+         operation: &IndexOperationRecord,
+     ) -> Result<Box<dyn IndexOperationStepPermit>> {
+-        let needs_exclusive = matches!(
+-            operation.progress(),
+-            IndexOperationProgress::VectorBuild(VectorBuildProgress::Constructing(
+-                VectorBuildStage::AdoptLegacy(_)
++        let gate = match operation.progress() {
++            IndexOperationProgress::VectorBuild(VectorBuildProgress::Constructing(stage)) => {
++                match stage {
++                    VectorBuildStage::Scan(_) | VectorBuildStage::CatchUp(_) => StepGate::None,
++                    // Adoption and validation keep the generation Building, so
++                    // they fence writers without blocking planning.
++                    VectorBuildStage::AdoptLegacy(_)
+                     | VectorBuildStage::ValidateAdoptedDirectory(_)
+-                    | VectorBuildStage::ValidateDescriptor(_)
+-                    | VectorBuildStage::Activate(_)
+-            )) | IndexOperationProgress::VectorBuild(VectorBuildProgress::Aborting(_))
+-                | IndexOperationProgress::VectorCleanup(_)
+-        );
+-        if needs_exclusive {
+-            return Ok(Box::new(self.scope_gates.lifecycle_permit(scope).await));
+-        }
+-        Ok(Box::new(()))
++                    | VectorBuildStage::ValidateDescriptor(_) => StepGate::WriteFence,
++                    VectorBuildStage::Activate(_) => StepGate::Lifecycle,
++                }
++            }
++            // Abort and cleanup delete rows of a generation that is not Active.
++            IndexOperationProgress::VectorBuild(VectorBuildProgress::Aborting(_))
++            | IndexOperationProgress::VectorCleanup(_) => StepGate::WriteFence,
++            IndexOperationProgress::SecondaryBuild(_)
++            | IndexOperationProgress::TextBuild(_)
++            | IndexOperationProgress::SecondaryCleanup(_)
++            | IndexOperationProgress::TextCleanup(_) => {
++                return Err(corruption("vector driver received another family progress"));
++            }
++        };
++        Ok(self.scope_gates.step_permit(scope, gate).await)
+     }
+ 
+     async fn prepare_step(
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1251** (2026-11-05): Crucible: keep test telemetry off the network (@xav-db)
-- **PR #1250** (2026-11-05): Add SQL explain, gRPC, embedded and SDK support (@xav-db)
-- **PR #1249** (2026-11-05): Document SQL across the query guides (@xav-db)
-- **PR #1248** (2026-11-05): Translate SQL to Cypher and serve it at POST /v2/sql (@xav-db)
-- **PR #1247** (2026-11-04): Crucible: lean debuginfo for base builds (@xav-db)
-- **PR #1245** (2026-11-04): Add Crucible config: large VMs, longer timeouts, no Crucible PR check (@xav-db)
+- **PR #1274** (2026-11-07): Pin the SlateDB fork with full index keys for very large rows (@xav-db)
+- **PR #1273** (2026-11-07): Default SST compression to none (@xav-db)
+- **PR #1272** (2026-11-06): docs: Helix Foundry access: share sources with people, teams and agent keys (@xav-db)
+- **PR #1271** (2026-11-06): Validate secondary builds without fencing writers (@xav-db)
+- **PR #1270** (2026-11-06): Reject duplicate writes while a unique secondary index builds (@xav-db)
+- **PR #1269** (2026-11-06): Fence writers without blocking planning in build steps that keep the Active set (@xav-db)
 
 ---
 
@@ -2268,35 +2987,65 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Document SQL across the query guides (#1249)
+## X. Validate secondary builds without fencing writers (#1271)
 
 **RULE**:
-When implementing operations in `docs/codebase-map.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in HelixDB/helix-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/db/src/index_lifecycle/secondary.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in HelixDB/helix-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0118a4ed`: Document SQL across the query guides (#1249). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4775f29a`: Validate secondary builds without fencing writers (#1271). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/codebase-map.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/db/src/index_lifecycle/secondary.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    TS["TypeScript / Python / Go SDKs"] --> HTTP["HTTP: /v2/query, /v2/cypher, /v2/sql"]
-    HTTP --> SQL["SQL translate · sqlparser → Cypher syntax"]
-    SQL --> CYPHER
-| SQL language | [translator](../crates/cypher/src/sql.rs), [requests](../crates/cypher/src/sql/request.rs) | Translate one statement into Cypher syntax without reading storage; follow SQL's results; reject what Cypher cannot express before execution. |
-detail is in the [Cypher implementation notes](cypher.md). SQL translates into
-the same Cypher syntax; see the [SQL guide](database/helix-db/query-guides/sql.mdx)
-and the [SQL implementation notes](sql.md).
+    /// Consecutive preparations of each operation's scan or validation that
+    /// found its cursor where the previous one left it, with that cursor.
+/// Unfenced preparations without progress before a scan or validation step
+/// fences writers.
+/// batch (see [`claim_while_building`]), and a validation batch with every
+/// write to an entity it releases, so writes that keep hitting one batch,
+/// such as a hot row, could otherwise stop either forever. Validation also
+/// makes no progress while writes keep the backlog beyond
+/// [`GATED_BACKLOG_BATCHES`] faster than exact drains reduce it. The fenced
+/// preparation handles one batch with writers excluded (validation first
+/// drains the whole backlog), so the build always advances, and its stall is
+/// bounded by one batch plus what this many preparations let accumulate.
+    /// A catch-up or validation backlog beyond [`GATED_BACKLOG_BATCHES`]:
+    /// exact durable delta keys selected without adding an SSI range read,
+    /// reconciled while writes continue.
+    Exact { keys: Vec<IndexEntityStateKey> },
+    /// One validation batch whose applied-state keys were observed before its
+    /// transaction opened, with the counters
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    TS["TypeScript / Python / Go SDKs"] --> HTTP["HTTP: /v2/query, /v2/cypher"]
-detail is in the [Cypher implementation notes](cypher.md).
+    /// Consecutive preparations of each operation's scan that found its
+    /// cursor where the previous one left it, with that cursor.
+/// Unfenced preparations without progress before a scan fences writers.
+/// batch (see [`claim_while_building`]), so writes that keep hitting one
+/// batch, such as a hot row, could otherwise stop it forever. The fenced
+/// preparation scans one batch with writers excluded, so the build always
+/// advances, and its stall is one batch.
+    /// A catch-up backlog beyond [`GATED_BACKLOG_BATCHES`]: exact durable
+    /// delta keys selected without adding an SSI range read, reconciled
+    /// while writes continue.
+    ExactCatchUp { keys: Vec<IndexEntityStateKey> },
+    /// A catch-up, validation, or activation step that fences the scope's
+    /// writers: catch-up and validation hold the write fence, activation the
+    /// lifecycle permit. Bounded drains committed under that permit left the
+            (
+                PreparedSecondaryStep::ExactCatchUp { keys },
+                SecondaryBuildStage::CatchUp(progress),
+            ) => {
+                    progress,
+                PreparedSecondaryStep::Gated { counters },
+               
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0118a4ed` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4775f29a` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source**: github ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
-> **Source Version**: `196263ba`  
+> **Source Version**: `7c445c0c`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T22:31:50.880Z  
+> **Timestamp**: 2026-11-09T23:17:50.977Z  
 > **Learning ID**: `learn-github-freenet-freenet-core`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T22:31:50.647Z  
+> **Harvest Timestamp**: 2026-11-09T23:17:50.969Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Declare your digital independence
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3111 stars
+- **Stars / Engagement**: 3115 stars
 
 ---
 
@@ -1738,11 +1738,11 @@ pub mod streaming_buffer;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6119** (2026-11-05): **fix(test): advance VirtualTime in controlled simulations**
-  *Symptoms*: ## Problem  The turmoil-based simulation runners never moved the network's `VirtualTime`. After a 700 s `run_controlled_simulation` it still read 0 ns. Those runners are `run_simulation` (behind `TestConfig`), `run_controlled_simulation`, `run_fdev_test` and `turmoil_runner::run_turmoil_simulation`.  The node tasks run on turmoil's clock, so most of a node is unaffected. Two things read `VirtualTime` instead, and none of their timers fired in these runners:  - **Each QUIC endpoint and path.** This covers quinn's timers (loss detection, idle, keepalive, pacing), the path's send deadlines, and the 2 s acknowledgement watch, all through `get_socket_virtual_time`. A QUIC scenario under these runners ran with every QUIC timer frozen. Data still moved, because quinn is driven by packets, so a passing test could not show it. - **The fault injector's time-based rules**, such as partitions with heal times and QUIC datagram drops with a start time. A rule starting after zero never applied.  The direct runner (`run_simulation_direct`) already follows tokio's clock with a time driver, so it was not affected.  Found while writing the QUIC data scenarios for #5940 (step e5b-9). `fail_endpoint_at` never fired in a controlled run, even at 1 s.  ## Approach  The runners now step turmoil themselves and move `VirtualTime` to `sim.elapsed()` after each step, through `run_turmoil_on_virtual_time` in `testing_impl.rs`. This mirrors what the direct runner's time driver does with tokio's clock. The 
+- **Issue #6169** (2026-11-09): **build: gate a constant only the panic-injection tests read**
+  *Symptoms*: ## Problem  Windows Check is red on main: `constant COOLING_WARN is never used` at `crates/core/tests/quic_breaker_windows.rs:33`. The constant is read only by `three_quic_panics_keep_quic_off_for_the_cooldown`, which is behind `#[cfg(feature = "quic-panic-injection")]`. #6160 made Windows Check run `cargo clippy --all-targets -- -D warnings` without that feature, so after #6155 and #6160 both merged, the constant is dead code there. Every open PR's Windows Check fails on it.  ## Solution  Gate the constant on the same feature as its only reader.  ## Testing  - `cargo clippy --locked --target x86_64-pc-windows-gnu -p freenet -p fdev --all-targets -- -D warnings`: clean. - `cargo clippy --locked --target x86_64-pc-windows-gnu -p freenet --test quic_breaker_windows --features quic-panic-injection -- -D warnings`: clean (the feature build `windows_unit` runs).  [AI-assisted - Claude] 
 
-- **Issue #6118** (2026-11-05): **feat(transport): export QUIC data path telemetry**
-  *Symptoms*: ## Problem  #6114 put QUIC data on the path, but what the sends and receives did was counted only per path, inside `QuicPathStats`, so none of it reached telemetry. The step-3 rollout gates (#5940) cannot be read without these counts, and neither can how far paths lag the data ramp. The gates are stream-limit waits below 0.5% of sends, `ge_48` below 0.2% of path-windows, data refusals at 0, and memory read against QUIC bytes.  ## Approach  - One node-wide `QuicDataCounters` in `TRANSPORT_METRICS` (`transport/metrics/quic_data.rs`). Each count is recorded where the path decides it, into the path's own counters and the node's in the same step, so it is counted once, at the decision. A path holds a reference to its node counters (`QuicPathLimits::counters`), which tests replace with their own, since every test in a process writes the global one. - The snapshot is one nested field, `TransportSnapshot::quic_data`, uploaded flat with a key per non-zero count. `QuicUpgradeOutcome` is already at 32, the most serde and `Default` take for an array, so this is a set of its own:   - `quic_data_send_<kind>_<result>`: short, large short, stream and pipe, by sent, maybe delivered, not opened then UDP, failed then UDP, dropped.   - `quic_data_event_<event>`: short overflow to UDP, data refused, stall closes, UDP sends that failed.   - `quic_data_stop_<code>`: stops the peer sent to data sends, by code.   - `quic_inbound_<outcome>`: every receive outcome, including `refused_not_accepting_data
+- **Issue #6168** (2026-11-09): **test: gate COOLING_WARN on the quic-panic-injection feature (fixes Windows Check on every PR)**
+  *Symptoms*: ## Problem  Every PR's **Windows Check** currently fails:  ``` error: constant `COOLING_WARN` is never used   --> crates\core\tests\quic_breaker_windows.rs:33:7 ```  #6155 left `COOLING_WARN` read only by the tests gated on `feature = "quic-panic-injection"`. Windows Check builds without that feature, so `-D warnings` rejects the constant as dead code. main's own CI skips Windows Check, so main stayed green while every PR goes red. Seen on #6145.  ## Approach  Gate the constant on the same feature as its only readers. Nothing else changes.  ## Testing  `cargo clippy -p freenet --test quic_breaker_windows --target x86_64-pc-windows-gnu -- -D warnings`: - before the change: fails with the CI error above; - after: clean.  No new test, because this fixes a compile warning in a test file.  [AI-assisted - Claude]  https://claude.ai/code/session_01VjxvYRDc6DUZFjhryWRHAB 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1759,1209 +1759,800 @@ pub mod streaming_buffer;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `196263ba` (2026-11-05)
-**Commit Message**: feat(transport): export QUIC data path telemetry (#6118)
+### Incident Patch 1: `c7610781` (2026-11-09)
+**Commit Message**: test: gate COOLING_WARN on the quic-panic-injection feature (fixes Windows Check on every PR) (#6168)
 
-**File**: `.claude/rules/transport.md` (modified, +41/-5)
+**File**: `crates/core/tests/quic_breaker_windows.rs` (modified, +3/-0)
 ```diff
-@@ -1180,10 +1180,46 @@ snapshot except the two gauges.
-   connections (per connection and direction), set when the endpoint is built,
-   0 without one; a state, not reset and not activity. Throughput by window
-   size shows whether nodes at the 128 KiB floor are slower on QUIC than on UDP.
--  Not built: stream-concurrency instruments on real QUIC (`quic_open_uni_waited`,
--  permit waits, ge_8..ge_48, control_* refusals) have no source until e5b and
--  read zero in shadow; the `transport=legacy|quic` connection attribute; a
--  per-path memory estimate.
-+  Not built: the `transport=legacy|quic` attribute on connection, transfer and
-+  disconnect events; quinn's RTT, min RTT and lost bytes on a QUIC transfer's
-+  events (those fields are None today); the per-peer byte counters and the
-+  dashboard for QUIC traffic; a per-path memory estimate.
-+
-+QUIC data telemetry (#5940 e5b-8, `transport/metrics/quic_data.rs`): node-wide
-+counts of what paths' data sends and receives did, in one nested
-+`TransportSnapshot::quic_data` and uploaded flat, a key per non-zero count and the
-+gauge every period, 0 included (`QuicDataSnapshot::upload_keys`). Each is
-+recorded where the path decides it, into the path's `QuicPathStats` and the node's
-+`QuicDataCounters` together (`QuicPathLimits::counters`, `TRANSPORT_METRICS` unless
-+a test passes its own; tests read their own, never the global).
-+  quic_data_send_<short|large_short|stream|pipe>_<sent|maybe_delivered|
-+  not_opened_udp|failed_udp|dropped>; quic_data_event_<short_overflow_udp|
-+  data_refused|stalled_closed|udp_send_failed>; quic_data_stop_<code> (stops a
-+  peer sent to data sends); quic_inbound_<QuicInboundOutcome> (every receive
-+  outcome, refusals by frame kind as short_refused_budget and
-+  stream_refused_budget); quic_enabled_data_paths; quic_live_data_paths (a gauge of
-+  paths with a route the peer has not refused data on, not reset, not activity;
-+  lowered once, at the refusal or when the attempt goes); quic_sends and quic_open_uni_waited (opens a
-+  path tried, data and control, and those that waited for stream credit);
-+  quic_streamed_sends and quic_stream_permit_waited; quic_bytes_sent and
-+  quic_bytes_received (quinn's UDP payload counts, reported by change at each 2 s
-+  tick of the acknowledgement watch, so a path's last tick before it closes is
-+  lost); quic_session_ended_with_data_path_<age> (sessions that ended while their
-+  path's route still carried data); quic_streams_sampled_paths,
-+  quic_streams_open_ge_<8|16|32|48> and quic_streams_peak_max (per path and period,
-+  the peak of inbound streams read at once, counted as inbound_concurrency counts
-+  connections).
-+  A family is the keys of one label list under one prefix
-+  (`QuicDataSnapshot::keys_by_family`). No other key starts with a family's
-+  prefix or with the prefix sibling families share (`quic_data_` for the send,
-+  event and stop families, `quic_streams_open_` for the levels), and no key starts
-+  with a prefix two of the snapshot's other keys share (`quic_send_`,
-+  `quic_paths_` and the rest), so a prefix sum never adds two kinds of count. The
-+  tests read the families from the keys and the other keys from the snapshot's
-+  serde fields, not from a list (`no_key_is_under_another_family`). The step-3
-+  stream-limit bars read quic_open_uni_waited over quic_sends,
-+  quic_stream_permit_waited over quic_streamed_sends (both counts of attempts),
-+  and quic_streams_open_ge_48 over quic_streams_sampled_paths.
- 
- Upgrade driver (`quic/upgrade/driver.rs`, #5940 step e5a-5b): QuicUpgrades is
- per node (endpoint, policy, routes by address, live sessions by peer key, backoff
-@@ -1841,7 +1877,7 @@ Control payload (quic/control.rs), the body of a Control frame, one per
-   QuicInbound::controls and counts refusals per path
-   (control_unknown_version, control_unknown_type, control_malformed); they
-   are counted only through it, not by QuicControl::decode.
--Not here: export of the QUIC-only counters (per path, QuicPath::stats).
-+Counts: per path (QuicPath::stats) and node-wide ("QUIC data telemetry" above).
- QUIC send route (#5940 e5b-6, quic/upgrade/data_route.rs,
-   peer_connection/quic_send.rs, quic/path/route.rs):
-   A message has one route, chosen when it is sent, from
+@@ -30,6 +30,9 @@ const MARKER_FILE: &str = "quic-crash-breaker.json";
+ const TRANSPORT_BOUND: &str = "UDP socket bound successfully";
+ const QUIC_BUILT: &str = "QUIC endpoint built";
+ const TRIP_WARN: &str = "Several runs in a row with QUIC enabled ended early";
++/// Only the `quic-panic-injection` tests read it, so it is gated with them:
++/// without the feature (CI's Windows Check) it is dead code under `-D warnings`.
++#[cfg(feature = "quic-panic-injection")]
+ const COOLING_WARN: &str = "QUIC stays off: several runs in a row with QUIC enabled ended early";
+ /// What a run logs when its marker gets no timer, so it could never clear.
+ const NO_TIMER_WARN: &str = "No task registrar";
 ```
 
-**File**: `crates/core/src/tracing/telemetry.rs` (modified, +64/-1)
+---
+
+### Incident Patch 2: `c1d8844a` (2026-11-09)
+**Commit Message**: fix(update): spend a locked-out node's retry only on a check that runs, and let the run wrapper update a crash loop (#6157)
+
+**File**: `.claude/rules/deployment.md` (modified, +6/-0)
 ```diff
-@@ -3136,6 +3136,10 @@ fn event_kind_to_json(kind: &EventKind) -> serde_json::Value {
-                 "quic_flow_control_window_bytes".into(),
-                 serde_json::json!(snapshot.quic_flow_control_window_bytes),
-             );
-+            // Flat, a key per non-zero count, as the upload carries them.
-+            for (key, count) in snapshot.quic_data.upload_keys() {
-+                m.insert(key, count.into());
-+            }
-             m.insert(
-                 "nat_fail_samples".into(),
-                 serde_json::json!(snapshot.nat_fail_samples),
-@@ -7607,11 +7611,15 @@ mod tests {
-             .unwrap()
-             .keys()
-             .filter(|key| {
--                !key.starts_with("conn_identity_") && !key.starts_with("inbound_concurrency_")
-+                !key.starts_with("conn_identity_")
-+                    && !key.starts_with("inbound_concurrency_")
-+                    && *key != "quic_data"
-             })
-             .cloned()
-             .collect();
-         expected.insert("type".to_string());
-+        // The QUIC data gauge goes out in every snapshot, 0 included.
-+        expected.insert("quic_live_data_paths".to_string());
-         // The QUIC families are arrays in the snapshot and one key per label in
-         // the event.
-         use crate::transport::metrics::{
-@@ -7664,6 +7672,61 @@ mod tests {
-         assert_eq!(actual, expected);
+@@ -72,6 +72,12 @@ Its sibling `FREENET_GIT_COMMIT_HASH` has the same empty-means-no-override rule
+ and must be <= 40 hex characters. Passing a placeholder such as `unknown` FAILS
+ THE BUILD; pass empty instead and let build.rs's own fallback report `unknown`.
+ See docs/nix.md.
++
++The daily retry of a locked-out node (`claim_update_attempt`) must be spent
++only on a check that actually runs: the startup check claims AFTER its jitter,
++and the Windows/macOS run wrapper's crash-loop update (`crash_update_due`, at 3,
++6, 12, 24 and 48 consecutive failures, at most 10 minutes each) claims right
++before it runs `freenet update`. `freenet update` itself never claims (#6152).
+ ```
+ 
+ ### WHEN tightening security (sandbox, CSP, CORS)
+```
+
+**File**: `crates/core/src/bin/commands/auto_update.rs` (modified, +101/-0)
+```diff
+@@ -1878,6 +1878,40 @@ pub fn claim_update_attempt() -> Result<UpdateAttempt, ClaimRefused> {
+     }
+ }
+ 
++/// Why [`claim_update_attempt`] would refuse an attempt now, or `Ok` if it
++/// would allow one, without spending anything.
++pub fn peek_update_attempt() -> Result<(), ClaimRefused> {
++    match state_dir() {
++        Some(dir) => {
++            claim_decision_at(&dir, env!("CARGO_PKG_VERSION"), SystemTime::now()).map(|_| ())
++        }
++        None => Err(ClaimRefused::NoStateDir),
++    }
++}
++
++/// The startup update check, ordered so that a locked-out node's daily retry
++/// is spent only on a check that runs (#6152): wait out `jitter` first, and
++/// only then `claim` the attempt and run `check` with it. The startup check
++/// runs in a task beside the node, so a node that dies during the jitter
++/// (a crash loop) used to spend its retry without ever asking GitHub, and
++/// could go days without a check. Dropped during the jitter, this spends
++/// nothing.
++pub async fn claim_after_jitter<J, C, F, Fut>(
++    jitter: J,
++    claim: C,
++    check: F,
++) -> Result<Option<String>, ClaimRefused>
++where
++    J: std::future::Future<Output = ()>,
++    C: FnOnce() -> Result<UpdateAttempt, ClaimRefused>,
++    F: FnOnce(UpdateAttempt) -> Fut,
++    Fut: std::future::Future<Output = Option<String>>,
++{
++    jitter.await;
++    let attempt = claim()?;
++    Ok(check(attempt).await)
++}
++
+ /// Whether [`claim_update_attempt`] would allow an attempt now, without
+ /// spending anything. The version-less triggers check this before staging and
+ /// claim only once staging decides to exit (#5799), so a stay does not spend a
+@@ -4863,4 +4897,71 @@ mod tests {
+         let vague = GithubRateLimitedError { retry_after: None }.user_message();
+         assert!(vague.contains("within the hour"), "{vague}");
+     }
++
++    /// #6152: a locked-out node whose process dies during the startup
++    /// jitter spends no retry, so the next start still checks; one that gets
++    /// through the jitter claims it and runs the check with the claim.
++    #[tokio::test]
++    async fn dying_inside_the_startup_jitter_spends_no_retry() {
++        use std::future::Future;
++        let tmp = tempfile::tempdir().unwrap();
++        let dir = tmp.path();
++        let now = lock_out(dir) + UPDATE_LOCKOUT_COOLDOWN;
++        assert!(
++            update_attempt_claimable_at(dir, "0.2.140", now),
++            "premise: retry due"
++        );
++
++        // The process dies while the jitter is still running: the future is
++        // dropped part-way.
++        let checked = std::cell::Cell::new(false);
++        {
++            let mut startup = Box::pin(claim_after_jitter(
++                std::future::pending::<()>(),
++                || claim_update_attempt_unless_cooling_at(dir, "0.2.140", now),
++                |_attempt| async {
++                    checked.set(true);
++                    None
++                },
++            ));
++            let waker = futures::task::noop_waker();
++            let mut cx = std::task::Context::from_waker(&waker);
++            assert!(startup.as_mut().poll(&mut cx).is_pending());
++        }
++        assert!(!checked.get());
++        assert!(!dir.join(LOCKOUT_RETRY_FILE).exists(), "nothing spent");
++        assert!(
++            update_attempt_claimable_at(dir, "0.2.140", now),
++            "still due"
++        );
++
++        // The next start gets through the jitter: claimed, then checked.
++        let latest = claim_after_jitter(
++            async {},
++            || claim_update_attempt_unless_cooling_at(dir, "0.2.140", now),
++            |_attempt| async {
++                checked.set(true);
++                Some("0.2.141".to_string())
++            },
++        )
++        .await;
++        assert_eq!(latest, Ok(Some("0.2.141".to_string())));
++        assert!(checked.get());
++        assert!(dir.join(LOCKOUT_RETRY_FILE).exists(), "spent by the check");
++        assert!(!update_attempt_claimable_at(dir, "0.2.140", now));
++
++        // Spent: a further start refuses after its jitter and checks nothing.
++        checked.set(false);
++        let refused = claim_after_jitter(
++            async {},
++            || claim_update_attempt_unless_cooling_at(dir, "0.2.140", now),
++            |_attempt| async {
++                checked.set(true);
++                None
++            },
++        )
++        .await;
++        assert!(refused.is_err());
++        assert!(!checked.get());
++    }
+ }
+```
+
+**File**: `crates/core/src/bin/commands/service.rs` (modified, +363/-3)
+```diff
+@@ -3947,6 +3947,336 @@ echo "RC=$?"
+         assert_eq!(state.consecutive_failures, 7);
      }
  
-+    /// The QUIC data counts go out flat, one key per non-zero count with its own
-+    /// value, in the event log and in the upload alike, and the nested field
-+    /// does not.
++    /// #6152: a crash loop run to the wrapper's give-up limit tries an update
++    /// itself a bounded number of times, never before the third crash, never
++    /// twice for one failure count, and without resetting the count, so the
++    /// give-up limit still holds.
 +    #[test]
-+    fn transport_snapshot_json_carries_quic_data_values() {
-+        use crate::transport::metrics::{QuicDataCounters, TransportSnapshot};
-+        let mut snapshot = TransportSnapshot {
-+            quic_data: QuicDataCounters::new().snapshot(false),
-+            ..Default::default()
-+        };
-+        let mut next = 0u64;
-+        let mut fill = |values: &mut Vec<u64>| {
-+            for value in values.iter_mut() {
-+                next += 1;
-+                *value = next;
++    fn a_crash_loop_triggers_a_bounded_update_attempt() {
++        let mut state = WrapperState::new();
++        let mut attempts_at = Vec::new();
++        let mut gave_up_at = None;
++        for crash in 1..=200u32 {
++            match next_wrapper_action(&mut state, 1, false, None) {
++                WrapperAction::BackoffAndRelaunch { .. } => {}
++                other @ (WrapperAction::Update
++                | WrapperAction::Exit
++                | WrapperAction::KillAndRetry) => {
++                    panic!("crash {crash}: {other:?}")
++                }
 +            }
-+        };
-+        let data = &mut snapshot.quic_data;
-+        fill(&mut data.sends);
-+        fill(&mut data.events);
-+        fill(&mut data.stops);
-+        fill(&mut data.inbound);
-+        fill(&mut data.session_ended_with_data_path);
-+        data.data_enabled = 1001;
-+        data.data_paths = 1002;
-+        data.sends_opened = 1003;
-+        data.open_uni_waited = 1004;
-+        data.permit_takes = 1005;
-+        data.permit_waited = 1006;
-+        data.bytes_sent = 1007;
-+        data.bytes_received = 1008;
-+        data.streams_open_paths_sampled = 1009;
-+        data.streams_open_ge = vec![1010, 1011, 1012, 1013];
-+        data.streams_open_max = 1014;
-+        let want: std::collections::BTreeMap<String, u64> =
-+            snapshot.quic_data.keys().into_iter().collect();
-+        assert!(want.values().all(|value| *value != 0));
-+        let distinct: std::collections::BTreeSet<_> = want.values().collect();
-+        assert_eq!(distinct.len(), want.len(), "each value tells its key apart");
++            if state.consecutive_failures >= WRAPPER_MAX_CONSECUTIVE_FAILURES {
++                gave_up_at = Some(crash);
++                break;
++            }
++            if crash_update_due(state.consecutive_failures) {
++                attempts_at.push(state.consecutive_failures);
++            }
++        }
++        assert_eq!(attempts_at, vec![3, 6, 12, 24, 48]);
++        assert_eq!(gave_up_at, Some(WRAPPER_MAX_CONSECUTIVE_FAILURES));
++        assert!(!(0..3).any(crash_update_due), "not before the third crash");
++    }
 +
-+        let event = event_kind_to_json(&super::super::EventKind::TransportSnapshot(Box::new(
-+            snapshot.clone(),
-+        )));
-+        let upload = snapshot.upload_json().expect("serializes");
-+        for json in [event, upload] {
-+            let map = json.as_object().unwrap();
-+            assert!(!map.contains_key("quic_data"));
-+            for (key, value) in &want {
-+                assert_eq!(map.get(key), Some(&serde_json::json!(value)), "{key}");
-+            }
-+            let sent = map.keys().filter(|key| want.contains_key(*key)).count();
-+            assert_eq!(sent, want.len());
++    /// #6157 review: the crash-loop update runs only after an ordinary crash.
++    /// Not after an exit 42 or a probation crash (each already ran an update
++    /// for this exit), and not after a port conflict: the attempt forwards the
++    /// exit code, which during probation `freenet update` would count as a
++    /// crash, so a stale process holding the port after an update could roll
++    /// back and pin a good release.
++    #[test]
++    fn the_crash_loop_update_skips_port_conflicts_and_exits_already_updated() {
++        assert!(
++            crash_update_wanted(1, false, false, 3),
++            "an ordinary crash at 3"
++        );
++        assert!(
++            !crash_update_wanted(1, true, false, 3),
++            "a port conflict must not reach `freenet update` as a crash"
++        );
++        assert!(!crash_update_wanted(1, false, true, 3), "a probation crash");
++        assert!(
++            !crash_update_wanted(WRAPPER_EXIT_UPDATE_NEEDED, false, false, 3),
++            "an exit 42 already ran an update"
++        );
++        assert!(!crash_update_wanted(1, false, false, 4), "not a due count");
++    }
++
++    /// #6157 review: on the macOS app, `freenet update` exits 44 after staging
++    /// the bundle updater, which waits for the wrapper to exit before it swaps
++    /// the bundle. The crash-loop update must exit the wrapper for it, as the
++    /// other wrapper update paths do; relaunching makes the updater time out
++    /// and delete the staged bundle. Only a replaced binary re-execs the
++    /// wrapper, and everything else (including a skipped or stopped attempt)
++    /// relaunches.
++    #[test]
++    fn a_crash_loop_update_that_stages_the_bundle_exits_for_the_updater() {
++        use crate::commands::update::UpdateSubprocessOutcome as O;
++        for (outcome, next) in [
++            (Some(O::BinaryReplaced), CrashLoopUpdateNext::RestartWrapper),
++            (
++                Some(O::BundleUpdateStaged),
++                CrashLoopUpdateNext::ExitForBundleUpdater,
++            ),
++            (Some(O::AlreadyUpToDate), CrashLoopUpdateNext::Relaunch),
++            (Some(O::OtherFailure), CrashLoopUpdateNext::Relaunch),
++            (Some(O::SpawnFailed), CrashLoopUpdateNext::Relaunch),
++            (None, CrashLoopUpdateNext::Relaunch),
++        ] {
++            assert_eq!(crash_loop_update_next(outcome), next, "{outcome:?}");
 +        }
 +    }
 +
-     /// As below, for the NAT-origin, stray-intro and dial-queue counts:
-     /// each is distinct and non-zero, so a swapped or mis-keyed one is caught.
-     #[test]
++    /// The crash-loop update is wired into the backoff branch: after the
++    /// give-up check, gated by `crash_update_wanted` with the real port-conflict
++    /// and probation flags, a replaced binary re-execs the wrapper and a staged
++    /// bundle exits it, and the remaining backoff is shortened by the time the
++    /// attempt took. Inside the attempt: the node's claim, a bounded
++    /// `freenet update`, the failure counter driven like every other wrapper
++    /// update, then the decision. Pinned from the source with comments
++    /// stripped, since the loop spawns processes.
++    #[test]
++    fn the_crash_loop_update_is_wired_into_the_backoff() {
++        let flat: String = include_str!("service/wrapper.rs")
++            .lines()
++            .map(|line| line.split_once("//").map_or(line, |(code, _)| code))
++            .collect::<String>()
++            .split_whitespace()
++            .collect();
++        let arm = flat
++            .find("WrapperAction::BackoffAndRelaunch{secs}=>{")
++            .expect("the backoff arm");
++        let body = &flat[arm..];
++ 
 ```
 
-**File**: `crates/core/src/transport/metrics.rs` (modified, +57/-1)
+**File**: `crates/core/src/bin/commands/service/wrapper.rs` (modified, +371/-4)
 ```diff
-@@ -29,6 +29,10 @@ use tokio::sync::mpsc;
+@@ -1,4 +1,5 @@
+ use anyhow::{Context, Result};
++use freenet::simulation::{RealTime, TimeSource};
+ use std::path::Path;
  
- use crate::tracing::{TransferDirection, TransferEvent};
+ #[cfg(target_os = "macos")]
+@@ -246,6 +247,169 @@ pub(super) fn note_child_runtime(state: &mut WrapperState, runtime_secs: u64) {
+     }
+ }
  
-+mod quic_data;
-+pub use quic_data::QuicDataSnapshot;
-+pub(crate) use quic_data::{QuicDataCounters, StreamsOpenPeak};
++/// The first crash count at which the wrapper tries an update itself
++/// ([`crash_update_due`], #6152).
++const CRASH_UPDATE_FIRST_AT: u32 = 3;
 +
- /// Global transport metrics instance.
- ///
- /// All peer connections report to this single instance, which aggregates
-@@ -870,6 +874,8 @@ pub struct TransportMetrics {
-     /// connection and direction (`quic::config::connection_window_bytes`):
-     /// a state set when the endpoint is built, 0 without one.
-     quic_flow_control_window_bytes: AtomicU64,
-+    /// What QUIC paths' data sends and receives did (`quic_data`).
-+    pub(crate) quic_data: QuicDataCounters,
- 
-     /// The current snapshot period, starting at 1 and advanced by each
-     /// `take_snapshot`. A connection's [`InboundConcurrencyPeak`] from an
-@@ -1280,6 +1286,7 @@ impl TransportMetrics {
-             quic_paths_offered_or_dialing: AtomicU64::new(0),
-             quic_paths_active: AtomicU64::new(0),
-             quic_flow_control_window_bytes: AtomicU64::new(0),
-+            quic_data: QuicDataCounters::new(),
-             inbound_concurrency_epoch: AtomicU64::new(1),
-             inbound_concurrency: Default::default(),
-             inbound_stream_outcomes: Default::default(),
-@@ -2582,6 +2589,7 @@ impl TransportMetrics {
-             quic_flow_control_window_bytes: self
-                 .quic_flow_control_window_bytes
-                 .load(Ordering::Relaxed),
-+            quic_data: self.quic_data.snapshot(reset),
-             quic_close_sent_peer_not_acknowledging: get64(
-                 &self.quic_close_sent[QuicCloseCode::PeerNotAcknowledging as usize],
-             ),
-@@ -3183,6 +3191,9 @@ pub struct TransportSnapshot {
-     /// low-memory nodes, whose window is the 128 KiB floor, are slower on QUIC
-     /// than on UDP over long paths.
-     pub quic_flow_control_window_bytes: u64,
-+    /// What QUIC paths' data sends and receives did (`metrics::quic_data`).
-+    /// Uploaded flat, a key per non-zero count ([`QuicDataSnapshot::keys`]).
-+    pub quic_data: QuicDataSnapshot,
-     /// Per-attempt records of the FIRST 8 failed outbound NAT traversals in
-     /// the period (not a representative sample of a busy period);
-     /// `nat_fail_samples_dropped` counts the rest. Read with the same
-@@ -3461,8 +3472,13 @@ impl TransportSnapshot {
-         let mut json = serde_json::to_value(self)?;
-         if let Some(map) = json.as_object_mut() {
-             map.retain(|key, _| {
--                !key.starts_with("conn_identity_") && !key.starts_with("inbound_concurrency_")
-+                !key.starts_with("conn_identity_")
-+                    && !key.starts_with("inbound_concurrency_")
-+                    && key != "quic_data"
-             });
-+            for (key, count) in self.quic_data.upload_keys() {
-+                map.insert(key, serde_json::json!(count));
-+            }
-             for (key, count) in self.nonzero_conn_identity() {
-                 map.insert(key, serde_json::json!(count));
-             }
-@@ -3533,6 +3549,7 @@ impl TransportSnapshot {
-             quic_paths_offered_or_dialing,
-             quic_paths_active,
-             quic_flow_control_window_bytes,
-+            quic_data,
-             nat_fail_samples,
-             nat_fail_samples_dropped,
-             inbound_stream_refused_invalid_length,
-@@ -3674,6 +3691,7 @@ impl TransportSnapshot {
-         self.quic_paths_offered_or_dialing = quic_paths_offered_or_dialing;
-         self.quic_paths_active = quic_paths_active;
-         self.quic_flow_control_window_bytes = quic_flow_control_window_bytes;
-+        self.quic_data = quic_data;
-         self.nat_fail_samples = nat_fail_samples;
-         self.nat_fail_samples_dropped = nat_fail_samples_dropped;
-         self.inbound_stream_refused_invalid_length = inbound_stream_refused_invalid_length;
-@@ -3897,6 +3915,9 @@ struct SnapshotExtras {
-     /// low-memory nodes, whose window is the 128 KiB floor, are slower on QUIC
-     /// than on UDP over long paths.
-     pub quic_flow_control_window_bytes: u64,
-+    /// What QUIC paths' data sends and receives did (`metrics::quic_data`).
-+    /// Uploaded flat, a key per non-zero count ([`QuicDataSnapshot::keys`]).
-+    pub quic_data: QuicDataSnapshot,
-     /// Per-attempt records of the FIRST 8 failed outbound NAT traversals in
-     /// the period (not a representative sample of a busy period);
-     /// `nat_fail_samples_dropped` counts the rest. Read with the same
-@@ -4075,6 +4096,7 @@ impl SnapshotExtras {
-             || self.quic_establish_samples != 0
-             || self.quic_paths_offered_or_dialing != 0
-             || self.quic_paths_active != 0
-+            || self.quic_data.has_activity()
-             || !self.nat_fail_samples.is_empty()
-             || self.inbound_stream_refused_invalid_length != 0
-             || self.inbound_stream_refused_connection_bytes != 0
-@@ -5029,6 +5051,40 @@ mod tests {
-         assert_eq!(snap.quic_flow_con
-```
-
-**File**: `crates/core/src/transport/metrics/quic_data.rs` (added, +678/-0)
-```diff
-@@ -0,0 +1,678 @@
-+//! Telemetry of QUIC data paths (#5940, e5b-8).
-+//!
-+//! Node-wide counts of what the paths' data sends and receives did, gathered from
-+//! the per-path counters (`QuicPathStats`) where each is recorded, so a count is
-+//! made once, at the decision. Exported per period in `transport_snapshot`, each
-+//! count only when non-zero and the gauge always. A family is the keys of one
-+//! label list under one prefix; no other key starts with a family's prefix, or
-+//! with the prefix its sibling families share (`quic_data_`), so summing either
-+//! never adds two kinds of count:
-+//!
-+//! | Key | What |
-+//! |---|---|
-+//! | `quic_data_send_<kind>_<result>` | data sends by kind and how they ended |
-+//! | `quic_data_event_<event>` | short overflow to UDP, refusals, stall closes, lost UDP sends |
-+//! | `quic_data_stop_<code>` | stops the peer sent to data sends, by code |
-+//! | `quic_inbound_<outcome>` | every `QuicInboundOutcome`, node-wide |
-+//! | `quic_enabled_data_paths` | paths where both sides set the data bit |
-+//! | `quic_live_data_paths` | paths carrying data now (a gauge, not reset, sent every period, 0 included); a path the peer refused data on is not one |
-+//! | `quic_sends`, `quic_open_uni_waited` | streams a path tried to open (data and control), and those whose open had to wait for a stream credit |
-+//! | `quic_streamed_sends`, `quic_stream_permit_waited` | streamed-send permits taken, and those that waited |
-+//! | `quic_bytes_sent`, `quic_bytes_received` | UDP payload bytes of QUIC paths, from quinn's counts |
-+//! | `quic_session_ended_with_data_path_<age>` | sessions that ended under a data path, by the path's age |
-+//! | `quic_streams_sampled_paths`, `quic_streams_open_ge_<n>`, `quic_streams_peak_max` | per path and period, the peak of inbound streams read at once: the paths sampled, those whose peak reached each level, and the highest peak |
-+//!
-+//! The waits are the step-3 stream-limit bars: `quic_open_uni_waited` over
-+//! `quic_sends` and `quic_stream_permit_waited` over `quic_streamed_sends` below 0.5%, and
-+//! `quic_streams_open_ge_48` below 0.2% of `quic_streams_sampled_paths`. Both
-+//! wait counts are of attempts: a send that waits and then times out is counted.
-+
-+use std::sync::atomic::{AtomicU64, Ordering};
-+
-+use parking_lot::Mutex;
-+
-+use super::QuicPathAge;
-+use crate::transport::quic::path::{
-+    QuicInboundOutcome, QuicSendEvent, QuicSendResult, SendKind, stop_code,
-+};
-+
-+/// The gauge's key, uploaded in every snapshot ([`QuicDataSnapshot::upload_keys`]).
-+const LIVE_DATA_PATHS: &str = "quic_live_data_paths";
-+
-+/// The levels `quic_streams_open_ge_<n>` reports, up to the streamed-send limit
-+/// (`quic::config::STREAMED_SEND_LIMIT`), which is the bar.
-+pub(crate) const QUIC_STREAMS_OPEN_THRESHOLDS: [u32; 4] = [8, 16, 32, 48];
-+
-+/// The streams-open counts of one period, under one lock with its period, as the
-+/// connection-level inbound concurrency counts are.
-+#[derive(Debug, Default, Clone, Copy)]
-+struct StreamsOpenCounts {
-+    paths_sampled: u32,
-+    ge: [u32; QUIC_STREAMS_OPEN_THRESHOLDS.len()],
-+    max: u32,
++/// Whether the wrapper tries `freenet update` itself after this many
++/// consecutive failures: at 3, 6, 12, 24 and 48, so at most five attempts
++/// before the wrapper gives up at [`WRAPPER_MAX_CONSECUTIVE_FAILURES`], each
++/// inside one backoff wait. A crash loop whose every run dies before the
++/// node's own update check otherwise never updates, so a release that fixes
++/// the crash cannot reach it (#6152). The attempts do not reset the failure
++/// count: the give-up limit still holds.
++pub(super) fn crash_update_due(consecutive_failures: u32) -> bool {
++    consecutive_failures >= CRASH_UPDATE_FIRST_AT
++        && consecutive_failures % CRASH_UPDATE_FIRST_AT == 0
++        && (consecutive_failures / CRASH_UPDATE_FIRST_AT).is_power_of_two()
 +}
 +
-+/// One path's peak of inbound streams read at once in the current period. Owned
-+/// by the path's receive task.
-+#[derive(Debug, Default)]
-+pub(crate) struct StreamsOpenPeak {
-+    /// The period the peak belongs to; 0 before the first sample.
-+    epoch: u64,
-+    peak: u32,
++/// Whether the backoff after this exit runs a crash-loop update attempt
++/// ([`crash_update_due`]). Never after an exit 42 or a probation crash, which
++/// already ran an update for this exit. Never after a port conflict: the
++/// attempt forwards the exit code so `freenet update` keeps the supervised
++/// download budget, and during probation that code would count as a crash, so
++/// a port held by a stale process after an update (#3967) could roll back and
++/// pin a good release.
++pub(super) fn crash_update_wanted(
++    exit_code: i32,
++    is_port_conflict: bool,
++    probation_crash: bool,
++    consecutive_failures: u32,
++) -> bool {
++    exit_code != WRAPPER_EXIT_UPDATE_NEEDED
++        && !is_port_conflict
++        && !probation_crash
++        && crash_update_due(consecutive_failures)
 +}
 +
-+/// The node-wide counts. A field of `TransportMetrics`.
-+#[derive(Debug)]
-+pub(crate) struct QuicDataCounters {
-+    sends: [[AtomicU64; QuicSendResult::COUNT]; SendKind::ALL.len()],
-+    events: [AtomicU64; QuicSendEvent::COUNT],
-+    stops: [AtomicU64; stop_code::ALL.len()],
-+    inbound: [AtomicU64; QuicInboundOutcome::COUNT],
-+    data_enabled: AtomicU64,
-+    /// A gauge: paths with a data route now.
-+    data_paths: AtomicU64,
-+    sends_opened: AtomicU64,
-+    open_uni_waited: AtomicU64,
-+    permit_takes: AtomicU64,
-+    permit_waited: AtomicU64,
-+    bytes_sent: AtomicU64,
-+    bytes_received: AtomicU64,
-+    session_ended: [AtomicU64; QuicPathAge::COUNT],
-+    streams_epoch: AtomicU64,
-+    streams: Mutex<StreamsOpenCounts>,
++/// The longest a crash-loop update attempt may hold the relaunch. Past it the
++/// wrapper stops `freenet update` and relaunches the node: the attempt is an
++/// extra chance to update, and must never keep the node down.
++const CRASH_UPDATE_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(10 * 60);
++
++/// What the wrapper does after a crash-loop update attempt.
++#[derive(Debug, Clone, Copy, PartialEq, Eq)]
++pub(super) enum CrashLoopUpdateNext {
++    /// The binary on disk was replaced: re-exec the wrapper from it.
++    RestartWrapper,
++    /// The macOS app's bundle updater was staged (exit 44). It waits for this
++    /// process to exit before it swaps the bundle, so the wrapper exits, as the
++    /// other wrapper update paths do. Relaunching instead would make the
++    /// updater time out and delete the staged bundle.
++    ExitForBundleUpdater,
++    /// Nothing was installed (skipped, no release, failed or stopped at
++    /// [`CRASH_UPDATE_TIMEOUT`]): go on with the backoff and relaunch.
++    Relaunch,
 +}
 +
-+impl QuicDataCounters {
-+    pub(crate) fn new() -> Self {
-+        let zero = || AtomicU64::new(0);
-+        Self {
-+            sends: std::array::from_fn(|_| std::array::from_fn(|_| zero())),
-+            events: std::array::from_fn(|_| zero()),
-+            stops: std::array::from_fn(|_| zero()),
-+            inbound: std::array::from_fn(|_| zero()),
-+            data_enabled: zero(),
-+            data_paths: zero(),
-+            sends_opened: zero(),
-+            open_uni_waited: zero(),
-+            permit_takes: zero(),
-+            permit_waited: zero(),
-+            bytes_sent: zero(),
-+            bytes_received: zero(),
-+            session_ended: std::array::from_fn(|_| zero()),
-+            streams_epoch: AtomicU64::new(1),
-+            streams: Mutex::new(StreamsOpenCounts::default()),
-+     
-```
-
-**File**: `crates/core/src/transport/quic/path.rs` (modified, +98/-8)
-```diff
-@@ -121,10 +121,11 @@
- //! - Dedup. A message goes on UDP only when the outcome proves the receiver
- //!   cannot deliver it ([`route`]), so a Short needs none. A stream id on both
- //!   paths is refused where both transports meet (`completed_inbound_streams`).
--//! - Exporting the QUIC-specific counters. They are per path
--//!   ([`QuicPath::stats`]); the refusals and evictions the UDP transport also
--//!   has are counted in `TRANSPORT_METRICS` as well, under the same
--//!   `InboundStreamOutcome` labels. Telemetry for the rest is e2/e5.
-+//!
-+//! Counts: per path ([`QuicPath::stats`]), and node-wide in the same step, in
-+//! `metrics::quic_data` (exported as `quic_data_*`, `quic_inbound_*` and the
-+//! rest listed there). The refusals and evictions the UDP transport also has are
-+//! also counted under the shared `InboundStreamOutcome` labels.
- //!
- //! [`MAX_UNI_STREAMS`]: super::config::MAX_UNI_STREAMS
- //! [`StreamHandle`]: crate::transport::peer_connection::streaming::StreamHandle
-@@ -152,7 +153,7 @@ use crate::config::GlobalExecutor;
- use crate::simulation::TimeSource;
- use crate::transport::StreamId;
- use crate::transport::boundary::StreamProgressObserver;
--use crate::transport::metrics::{InboundStreamOutcome, QuicCloseCode};
-+use crate::transport::metrics::{InboundStreamOutcome, QuicCloseCode, QuicDataCounters};
- use crate::transport::peer_connection::inbound_budget::SharedInboundBudget;
- use crate::transport::peer_connection::streaming::StreamError;
- #[cfg(test)]
-@@ -202,6 +203,23 @@ pub(crate) mod stop_code {
-     /// it and sends on the UDP session, since a retry on the same path fails
-     /// the same way.
-     pub(crate) const NOT_ACCEPTING_DATA: u32 = 0x19;
-+    /// A code's name in telemetry (`quic_data_stop_<label>`); `unknown` for a
-+    /// code not in [`ALL`].
-+    pub(crate) fn label(code: u32) -> &'static str {
-+        match code {
-+            HEADER_REFUSED => "header_refused",
-+            BUDGET_REFUSED => "budget_refused",
-+            STREAM_ID_IN_USE => "stream_id_in_use",
-+            CHANNEL_FULL => "channel_full",
-+            OVERLONG => "overlong",
-+            EVICTED => "evicted",
-+            CANCELLED => "cancelled",
-+            FRAGMENT_REFUSED => "fragment_refused",
-+            NOT_ACCEPTING_DATA => "not_accepting_data",
-+            _ => "unknown",
-+        }
++/// [`CrashLoopUpdateNext`] after an attempt stopped at [`CRASH_UPDATE_TIMEOUT`].
++/// `freenet update` replaces the binary before its slower last steps (the
++/// service-file update, the fdev download), so a stop can come after a
++/// successful install. The wrapper must then re-exec: on Windows the running
++/// wrapper's image is the moved-aside `freenet.old`, and every update it ran
++/// later would fail to remove that file and count toward the lockout.
++pub(super) fn crash_loop_update_after_stop(replaced: bool) -> CrashLoopUpdateNext {
++    if replaced {
++        CrashLoopUpdateNext::RestartWrapper
++    } else {
++        crash_loop_update_next(None)
 +    }
++}
 +
-     /// Every stop code, for the range and duplicate checks in
-     /// `super::error`. A source-scrape test checks that each `const` in this
-     /// module is listed.
-@@ -273,6 +291,10 @@ pub(crate) struct QuicPathLimits {
-     /// refuses data with [`stop_code::NOT_ACCEPTING_DATA`] right after the
-     /// header, before anything is charged to the inbound budget.
-     pub(crate) accept_data: bool,
-+    /// Where the path's counts are also kept node-wide; `None` is
-+    /// `TRANSPORT_METRICS`. A test passes its own, since every test in a process
-+    /// writes the global one.
-+    pub(crate) counters: Option<&'static QuicDataCounters>,
-     /// The receive task panics on its first stream (supervisor test).
-     #[cfg(test)]
-     pub(crate) panic_in_receive: bool,
-@@ -297,6 +319,7 @@ impl QuicPathLimits {
-         control_capacity: CONTROL_CHANNEL_CAPACITY,
-         max_send_aborts: recycle::SEND_ABORT_LIMIT,
-         accept_data: true,
-+        counters: None,
-         #[cfg(test)]
-         panic_in_receive: false,
-     };
-@@ -401,6 +424,11 @@ quic_outcomes! {
-         ControlUnknownType => "control_unknown_type",
-         /// A control payload that is empty or of the wrong length.
-         ControlMalformed => "control_malformed",
-+        /// A Short past one packet did not fit the inbound budget
-+        /// (`stop_code::BUDGET_REFUSED`; also counted under the shared refusal).
-+        ShortRefusedBudget => "short_refused_budget",
-+        /// A Stream did not fit the inbound budget (as above).
-+        StreamRefusedBudget => "stream_refused_budget",
-     }
- }
- 
-@@ -436,6 +464,9 @@ impl QuicInboundOutcome {
- /// Per-path counters. Tests read these, never the process-wide ones, which
- /// every test in the process writes.
- pub(crate) struct QuicPathStats {
-+    /// Where the counts are also kept node-wide: `TRANSPORT_METRICS`, or a
-+    /// test's own ([`QuicPathLimits::counters`]).
-+    node: &'static QuicDataCounters,
-     quic: [AtomicU64; QuicInboundOutcome::COUNT],
-     shared: [AtomicU64; InboundStreamOutcome::COUNT],
-     /// Data sends by [`SendKind`] and [`QuicSendResult`].
-@@ -446,8 +477,9 @@ pub(crate) struct QuicPathStats {
- }
- 
- impl QuicPathStats {
--    fn new() -> Self {
-+    fn new(node: &'static QuicDataCounters) -> Self {
-         Self {
-+            node,
-             quic: std::array::from_fn(|_| AtomicU64::new(0)),
-             shared: std::array::from_fn(|_| AtomicU64::new(0)),
-             sends: std::array::from_fn(|_| std::array::from_fn(|_| AtomicU64::new(0))),
-@@ -456,7 +488,9 @@ impl QuicPathStats {
-         }
-     }
- 
-+    /// Count an outcome here and node-wide 
++/// [`CrashLoopUpdateNext`] for an attempt's outcome; `None` when the attempt
++/// was skipped.
++pub(super) fn crash_loop_update_next(
++    outcome: Option<super::super::update::UpdateSubprocessOutcome>,
++) -> CrashLoopUpdateNext {
++    use super::super::update::UpdateSubprocessOutcome;
++    match outcome {
++        Some(UpdateSubprocessOutcome::BinaryReplaced) => CrashLoopUpdateNext::RestartWrapper,
++        Some(UpdateSubprocessOutcome::BundleUpdateStaged) => {
++            CrashLoopUpdateNext::ExitForBundleUpdater
++        }
++        Some(
++            UpdateSubprocessOutcome::AlreadyUpToDate
++            | UpdateSubprocessOutcome::OtherFailure
++            | UpdateSubprocessOutcome::SpawnFailed,
++        )
++        | None => CrashLoopUpdateNext::Relaunch,
++    }
++}
++
++/// One crash-loop update attempt ([`crash_update_due`]): claim the attempt
++/// as the node does (a locked-out node spends its daily retry here, even when
++/// no release is found, or skips if it is spent), run `freenet update` with
++/// the crash's exit code for at most [`CRASH_UPDATE_TIMEOUT`], and drive the
++/// failure counter as every other wrapper update path does. A failed, skipped
++/// or stopped attempt changes nothing else: the wrapper goes on with its
++/// backoff and relaunch.
++fn crash_loop_u
 ```
 
-**File**: `crates/core/src/transport/quic/path/inbound.rs` (modified, +28/-4)
+**File**: `crates/core/src/bin/commands/update.rs` (modified, +9/-1)
 ```diff
-@@ -212,11 +212,17 @@ pub(in crate::transport::quic) async fn receive<T: TimeSource>(
-     let mut readers = FuturesUnordered::new();
-     // Kept across iterations, so a pending accept is never dropped.
-     let mut accept = std::pin::pin!(connection.accept_uni());
-+    // This path's peak of streams read at once (`quic_streams_open_*`).
-+    let mut peak = crate::transport::metrics::StreamsOpenPeak::default();
-     loop {
-         tokio::select! {
-             accepted = &mut accept => match accepted {
-                 Ok(recv) => {
-                     readers.push(read_one(recv, receiver.clone()));
-+                    receiver.stats.node().record_streams_open(
-+                        &mut peak,
-+                        u32::try_from(readers.len()).unwrap_or(u32::MAX),
-+                    );
-                     accept.set(connection.accept_uni());
-                 }
-                 Err(error) => {
-@@ -721,13 +727,21 @@ impl<T: TimeSource> Receiver<T> {
-         tracing::debug!(?failure, "QUIC path: inbound stream failed");
-     }
+@@ -2873,8 +2873,16 @@ fn ensure_service_file_updated(_binary_path: &Path, _quiet: bool) -> Result<()>
+     Ok(())
+ }
  
--    /// Count a budget refusal as the UDP transport does, and stop the stream.
--    fn refuse(&self, reader: &mut BodyReader<T>, rejection: BudgetRejection, total: u64) {
-+    /// Count a budget refusal as the UDP transport does, and by frame kind
-+    /// (`kind`), and stop the stream.
-+    fn refuse(
-+        &self,
-+        reader: &mut BodyReader<T>,
-+        rejection: BudgetRejection,
-+        total: u64,
-+        kind: QuicInboundOutcome,
-+    ) {
-         let outcome = match rejection {
-             BudgetRejection::Bytes { .. } => InboundStreamOutcome::RefusedConnectionBytes,
-             BudgetRejection::Streams { .. } => InboundStreamOutcome::RefusedConnectionStreams,
++/// Where [`replace_binary`] moves the binary it replaces before moving the new
++/// one in. Between those two renames there is no binary at `dest`, so a
++/// supervisor that kills `freenet update` there puts this one back (the run
++/// wrapper's crash-loop update, #6152).
++pub(crate) fn binary_backup_path(dest: &Path) -> PathBuf {
++    dest.with_extension("old")
++}
++
+ fn replace_binary(new_binary: &Path, dest: &Path) -> Result<()> {
+-    let backup_path = dest.with_extension("old");
++    let backup_path = binary_backup_path(dest);
+     let parent_dir = dest
+         .parent()
+         .context("Destination path has no parent directory")?;
+```
+
+**File**: `crates/core/src/bin/freenet.rs` (modified, +64/-17)
+```diff
+@@ -582,10 +582,16 @@ async fn run_network_node_with_signals(
+         // #5799: a release that could not be fetched recently is cooling down.
+         // GitHub would only report it again, so the check is skipped, before
+         // any request and before the claim.
++        //
++        // #6152: the decision is made here without spending anything
++        // (`peek_update_attempt`), and the retry is claimed only after the
++        // jitter, right before GitHub is asked (`claim_after_jitter`). This
++        // task runs beside the node, so a node that dies during the jitter
++        // used to spend its daily retry without a check.
+         let cooling = commands::rollback::update_cooldown_pending(build_info::VERSION);
+         let startup_attempt = match &cooling {
+             Some(_) => None,
+-            None => Some(commands::auto_update::claim_update_attempt()),
++            None => Some(commands::auto_update::peek_update_attempt()),
          };
-         self.stats.record_shared(outcome);
-+        self.stats.record(kind);
-         tracing::debug!(?rejection, total, "QUIC path: refusing an inbound stream");
-         reader.stop(stop_code::BUDGET_REFUSED);
+         if let Some((version, left)) = &cooling {
+             tracing::warn!(
+@@ -601,22 +607,38 @@ async fn run_network_node_with_signals(
+                 "Startup update check skipped: {reason}. Run `freenet update` to update now."
+             );
+         }
+-        let startup_attempt = startup_attempt.and_then(Result::ok);
+-        let startup_check_ran = startup_attempt.is_some();
+         let startup_jitter_secs = freenet::config::GlobalRng::random_u64() % 60;
+-        if startup_check_ran && startup_jitter_secs > 0 {
+-            tokio::time::sleep(std::time::Duration::from_secs(startup_jitter_secs)).await;
+-        }
+-        let latest = match startup_attempt {
+-            Some(attempt) => {
+-                tracing::info!(
+-                    current = build_info::VERSION,
+-                    jitter_secs = startup_jitter_secs,
+-                    "Startup update check against GitHub"
+-                );
+-                startup_update_check(attempt, build_info::VERSION).await
++        // `startup_check_ran` is true only if the claim, made after the
++        // jitter, allowed the check.
++        let (startup_check_ran, latest) = match startup_attempt {
++            Some(Ok(())) => {
++                let jitter =
++                    tokio::time::sleep(std::time::Duration::from_secs(startup_jitter_secs));
++                let checked = commands::auto_update::claim_after_jitter(
++                    jitter,
++                    claim_update_attempt,
++                    |attempt| {
++                        tracing::info!(
++                            current = build_info::VERSION,
++                            jitter_secs = startup_jitter_secs,
++                            "Startup update check against GitHub"
++                        );
++                        startup_update_check(attempt, build_info::VERSION)
++                    },
++                )
++                .await;
++                match checked {
++                    Ok(latest) => (true, latest),
++                    Err(reason) => {
++                        tracing::warn!(
++                            reason = %reason,
++                            "Startup update check skipped: {reason}. Run `freenet update` to update now."
++                        );
++                        (false, None)
++                    }
++                }
+             }
+-            None => None,
++            Some(Err(_)) | None => (false, None),
+         };
+         if let Some(new_version) = latest {
+             // #4073: don't auto-update to a version that is locally BLOCKED — a
+@@ -3328,6 +3350,31 @@ mod tests {
+         );
      }
-@@ -759,7 +773,12 @@ impl<T: TimeSource> Receiver<T> {
-                 let mut budget = self.budget.lock();
-                 if let Err(rejection) = budget.check(total, Releaser::Quic) {
-                     drop(budget);
--                    self.refuse(&mut reader, rejection, total);
-+                    self.refuse(
-+                        &mut reader,
-+                        rejection,
-+                        total,
-+                        QuicInboundOutcome::ShortRefusedBudget,
-+                    );
-                     return;
-                 }
-                 let key = self.short_key(&budget);
-@@ -879,7 +898,12 @@ impl<T: TimeSource> Receiver<T> {
-             }
-             if let Err(rejection) = budget.check(total, Releaser::Quic) {
-                 drop(budget);
--                self.refuse(&mut reader, rejection, total);
-+                self.refuse(
-+                    &mut reader,
-+                    rejection,
-+                    total,
-+                    QuicInboundOutcome::StreamRefusedBudget,
-+                );
-                 return;
-             }
-             // Allocates only the buffer's chunk table (see
-```
-
-**File**: `crates/core/src/transport/quic/path/route.rs` (modified, +10/-0)
-```diff
-@@ -61,6 +61,16 @@ pub(crate) enum SendKind {
- impl SendKind {
-     pub(crate) const ALL: [Self; 4] = [Self::Short, Self::LargeShort, Self::Stream, Self::Pipe];
  
-+    /// Its name in telemetry (`quic_data_send_<kind>_<result>`).
-+    pub(crate) fn label(self) -> &'static str {
-+        match self {
-+            Self::Short => "short",
-+            Self::LargeShort => "large_short",
-+            Self::Stream => "stream",
-+            Self::Pipe => "pipe",
-+        }
++    /// #6152: the startup check decides without spending (`peek`), and claims
++    /// a locked-out node's retry only after the jitter, inside
++    /// `claim_after_jitter`, so a node that dies during the jitter spends
++    /// nothing. `claim_after_jitter` itself is tested in auto_update.rs.
++    #[test]
++    fn the_startup_check_claims_after_its_jitter() {
++        let flat = squeeze(production_region(&strip_line_comments(include_str!(
++            "freenet.rs"
++        ))));
++        let peek = flat
++            .find("Some(commands::auto_update::peek_update_attempt())")
++            .expect("the startup check peeks first");
++        let jitter = flat
++            .find("letjitter=tokio::time::sleep(std::time::Duration::from_secs(startup_jitter_secs));")
++            .expect("the jitter");
++        let claim = flat
++            .find("commands::auto_update::claim_after_jitter(jitter,claim_update_attempt,")
++            .expect("claimed after the jitter");
++        assert!(peek < jitter && jitter < claim);
++        assert!(
++            !flat[peek..claim].contains("claim_update_attempt()"),
++            "nothing claims between the peek and the jitter"
++        );
 +    }
 +
-     fn is_short(self) -> bool {
-         match self {
-             Self::Short | Self::LargeShort => true,
-```
-
-**File**: `crates/core/src/transport/quic/path/tests.rs` (modified, +7/-1)
-```diff
-@@ -23,6 +23,7 @@ use crate::transport::peer_connection::streaming::{
- use crate::transport::peer_connection::streaming_buffer::FRAGMENT_PAYLOAD_SIZE;
- use crate::transport::peer_connection::streaming_handle_idle_timeout;
- 
-+mod node_counts;
- mod route;
- 
- /// How long, in virtual time, a test's traffic may take.
-@@ -114,7 +115,12 @@ async fn paths_built(
-     })
-     .await;
-     drop(permit);
--    let (a, a_in) = QuicPath::new(client, pair.time.clone());
-+    // `a` keeps its node-wide counts where `b` does.
-+    let a_limits = QuicPathLimits {
-+        counters: b_limits.counters,
-+        ..QuicPathLimits::DEFAULT
-+    };
-+    let (a, a_in) = QuicPath::with_limits(client, pair.time.clone(), a_limits);
-     let (b, b_in) = match b_budget {
-         Some(budget) => {
-             let (b, b_in) =
+     /// #5799: while a newer release cools down, no trigger asks GitHub or
+     /// claims a lockout retry, and every CoolingDown arm keeps its signal and
+     /// does not send. Every gate re-re
 ```
 
 ---
 
-### Incident Patch 2: `86a4034e` (2026-11-05)
-**Commit Message**: fix(test): advance VirtualTime in controlled simulations (#6119)
+### Incident Patch 3: `2339b1da` (2026-11-09)
+**Commit Message**: fix(transport): count only short runs that panicked in QUIC code in the Windows QUIC breaker (#6155)
 
-**File**: `.claude/rules/testing.md` (modified, +1/-0)
+**File**: `.claude/rules/transport.md` (modified, +12/-5)
 ```diff
-@@ -339,6 +339,7 @@ Scale > 50 nodes or virtual time > 5 minutes?
- 
- - **Direct runner** (`run_simulation_direct`): Single `current_thread` + `start_paused(true)` tokio runtime. 100% deterministic. Scales to 500+ nodes. Supports `ChurnConfig` for automated crash/recover cycles via fault injection. Used by fdev CLI and nightly tests.
- - **Turmoil runner** (`run_simulation`): Turmoil scheduler. ~99% deterministic. Supports mid-simulation fault injection via closures (partitions, targeted crashes). Better for fine-grained fault tolerance tests.
-+- Both kinds move the network's `VirtualTime`, which QUIC endpoints and paths and the fault injector's time-based rules run on: the direct runner from tokio's clock, the turmoil runners (`run_simulation`, `run_controlled_simulation`, `run_fdev_test`, `run_turmoil_simulation`) through `run_turmoil_on_virtual_time` after each step. A test that drives turmoil itself with `sim.run()` leaves VirtualTime at 0, so no timer on it fires.
- 
- ## Fault Injection in Turmoil Tests
- 
+@@ -450,7 +450,8 @@ inbound session key (`handshake_unauthenticated_dropped`), QUIC endpoint deaths
+ and no breaker state is left), QUIC crash-loop breaker trips at startup
+ (`quic_breaker_trips`, on unix counted for any abnormal end of a QUIC-enabled
+ run, not only a QUIC fault, and on Windows for three runs in a row that ended
+-within ten minutes, for any reason, each starting within 24 h of the one before;
++within ten minutes after recording a panic in QUIC code (quinn, quinn-proto or
++transport/quic, by panic location), each starting within 24 h of the one before;
+ see `quic/breaker.rs`) and whether the breaker keeps QUIC
+ off in this process (`quic_breaker_suppressed`, a state that is never reset and
+ is not activity by itself) and QUIC connections this node closed, by close code
+@@ -2477,10 +2478,16 @@ Liveness ("alive" = the endpoint driver has not ENDED; it does not mean
+     deterministic fault recurs once per start. A panic that is not
+     contained aborts the process. On unix the next start trips the breaker
+     (quic_breaker_trips, see quic/breaker.rs). On Windows the breaker does
+-    not look at how a run ended: it counts runs that lasted under 10 minutes,
+-    so the fourth start after three such aborts in a row trips it, and an
+-    abort after 10 minutes or more never does, nor do aborts a day apart
+-    (quic/breaker/short_runs.rs).
++    not look at how a run ended: a panic hook records a panic located in QUIC
++    code in the run's marker, and it counts runs that lasted under 10 minutes
++    and recorded one, so the fourth start after three such aborts in a row
++    trips it. An ordinary stop records no panic and never counts; an abort
++    after 10 minutes or more never does, nor do aborts a day apart
++    (quic/breaker/short_runs.rs). A panic counts as QUIC's when the thread
++    is inside a QuicCode guard (quinn's driver polls in runtime.rs, the socket
++    adapter's catch_unwind calls) or, failing that, by location. The hook is
++    process-global: only a child-process test installs it (the arming tests
++    pass a no-op installer).
+   → When the node drops its last handle, the availability is Released
+     (final; the first final state stored wins, so a release and a
+     driver return racing never overwrite each other) and the driver's
 ```
 
-**File**: `.claude/rules/transport.md` (modified, +6/-2)
+**File**: `.config/nextest.toml` (modified, +7/-0)
 ```diff
-@@ -1386,7 +1386,11 @@ once connections open, quinn's connection-ID draws
- inside quinn's tasks. With endpoints idle, the one difference from QUIC off
- is scheduling (one endpoint driver task per node), which changes some
- connection choices, so a QUIC-on run is compared with QUIC off by the peers
--that join, not by the exact edge set. `probe_quic_endpoints_at` sends each
-+that join, not by the exact edge set. Every runner moves that VirtualTime: the
-+direct runner from tokio's clock, the turmoil runners after each step
-+(`run_turmoil_on_virtual_time`); before that the turmoil runners left it at 0, so
-+no QUIC timer fired there. A record's `at` is on its host's own clock; under
-+turmoil each host's starts when its runtime is built. `probe_quic_endpoints_at` sends each
- node a stranger's QUIC datagram during a direct-runner run, so a test can
- check every endpoint was live (`not_allowed`) rather than failed to bind.
- `SimNetwork::quic_upgrade_trace` returns a handle (`quic/upgrade/sim_trace.rs`,
-@@ -1399,7 +1403,7 @@ peer's address as its source each time it allows that address, and records
- `injected an Initial`), `make_record_wrong` (the key compared after the
- handshake disagrees, so the path closes with IDENTITY_MISMATCH),
- `fail_endpoint_at` (the endpoint
--driver dies) and `run_as_release` (a peer reporting the crate's version reads
-+driver dies, recorded as `failed the endpoint at <ms> ms` on VirtualTime) and `run_as_release` (a peer reporting the crate's version reads
- as a given release, since this tree reports a version below the negotiation
- floor until the release bump). The first offer is 2-10 s after promotion, so give a run tens of
- virtual seconds.
-```
-
-**File**: `crates/core/src/node/testing_impl.rs` (modified, +121/-5)
-```diff
-@@ -433,6 +433,34 @@ impl ScheduledOperation {
-     }
- }
- 
-+/// Steps turmoil to the end of the run, as `turmoil::Sim::run` does, and moves
-+/// the network's `VirtualTime` to turmoil's elapsed time after every step, the way
-+/// the direct runner's time driver follows tokio's clock.
-+///
-+/// Two differences from `Sim::run`: it steps once even with no client registered
-+/// (`run` returns at once then, and `step` reports the run finished after one
-+/// tick), and VirtualTime trails each host's tokio clock by up to one tick, since
-+/// it moves after the step (1 ms at turmoil's default tick; deterministic).
-+///
-+/// The node tasks run on turmoil's clock, but some parts of a node read the
-+/// network's `VirtualTime` instead: each QUIC endpoint and path (quinn's timers,
-+/// the path's send deadlines and ack watch, `get_socket_virtual_time`), and the
-+/// fault injector's time-based rules. Without this the clock stayed at zero for
-+/// the whole run, so none of those timers ever fired and a rule starting after
-+/// zero never applied.
-+pub(crate) fn run_turmoil_on_virtual_time(
-+    sim: &mut turmoil::Sim<'_>,
-+    time: &VirtualTime,
-+) -> turmoil::Result {
-+    loop {
-+        let finished = sim.step()?;
-+        time.advance_to(u64::try_from(sim.elapsed().as_nanos()).unwrap_or(u64::MAX));
-+        if finished {
-+            return Ok(());
-+        }
-+    }
-+}
+@@ -157,3 +157,10 @@ fail-fast = false
+ # (test_get_reliability_with_latency: 100 nodes + fault injection).
+ # Allow 15 min per period with 2 periods = 30 min hard cap.
+ slow-timeout = { period = "900s", terminate-after = 2 }
 +
- /// Packet-delivery decision consulted by every `SimulationSocket` (via the
- /// per-network delivery callback installed by `run_controlled_simulation` and
- /// `run_simulation_direct`) so an injected node crash or partition actually
-@@ -5275,7 +5303,7 @@ impl SimNetwork {
-         });
- 
-         // Run the simulation
--        sim.run()
-+        run_turmoil_on_virtual_time(&mut sim, &self.virtual_time)
-     }
- 
-     /// Run a deterministic simulation with controlled events using Turmoil.
-@@ -5540,7 +5568,7 @@ impl SimNetwork {
-             HashMap::new();
-         // Pre-seeded contract stores for nodes with SeedContract operations.
-         // Wrapped in Arc<Mutex> so closures can look up their store at
--        // startup (after seed_ops populates the map, before sim.run()).
-+        // startup (after seed_ops populates the map, before the run).
-         let contract_stores: Arc<
-             Mutex<HashMap<NodeLabel, crate::wasm_runtime::InMemoryContractStore>>,
-         > = Arc::new(Mutex::new(HashMap::new()));
-@@ -5776,7 +5804,7 @@ impl SimNetwork {
-         let label_to_key: HashMap<NodeLabel, _> = labels.into_iter().collect();
- 
-         // Clone the network name for the client closure (the outer
--        // `network_name` is still needed after `sim.run()` for topology capture).
-+        // `network_name` is still needed after the run for topology capture).
-         let network_name_for_client = network_name.clone();
- 
-         // Optional pre-operation join-convergence barrier (see
-@@ -5964,7 +5992,7 @@ impl SimNetwork {
-         });
- 
-         // Run the simulation
--        let turmoil_result = sim.run();
-+        let turmoil_result = run_turmoil_on_virtual_time(&mut sim, &self.virtual_time);
- 
-         // Capture topology snapshots BEFORE self is dropped (which clears them)
-         let topology_snapshots = get_all_topology_snapshots(&network_name);
-@@ -6262,7 +6290,7 @@ impl SimNetwork {
-         });
- 
-         // Run the simulation
--        sim.run()
-+        run_turmoil_on_virtual_time(&mut sim, &self.virtual_time)
-             .map_err(|e| anyhow::anyhow!("Turmoil simulation failed: {:?}", e))
-     }
- 
-@@ -7441,6 +7469,94 @@ use crate::contract::OperationMode;
- mod tests {
-     use super::*;
- 
-+    /// The helper moves VirtualTime with turmoil's clock: after a run whose client
-+    /// sleeps 5 s, VirtualTime reads 5 s, within a tick or two.
-+    #[test]
-+    fn run_turmoil_on_virtual_time_moves_the_clock_with_the_run() {
-+        use crate::simulation::TimeSource;
-+        let time = VirtualTime::new();
-+        let mut sim = turmoil::Builder::new()
-+            .simulation_duration(Duration::from_secs(60))
-+            .build();
-+        sim.client("sleeper", async {
-+            tokio::time::sleep(Duration::from_secs(5)).await;
-+            Ok(())
-+        });
-+        run_turmoil_on_virtual_time(&mut sim, &time).expect("the run succeeds");
-+        let now = Duration::from_nanos(time.now_nanos());
-+        assert!(
-+            now >= Duration::from_secs(5)
-+                && now <= Duration::from_secs(5) + Duration::from_millis(10),
-+            "VirtualTime followed the run: {now:?}"
-+        );
-+    }
-+
-+    /// Every turmoil runner goes through `run_turmoil_on_virtual_time`, checked in
-+    /// each runner's own body. A runner that stepped turmoil any other way
-+    /// (`sim.run()`, `turmoil::Sim::run(&mut sim)`) would leave the network's
-+    /// VirtualTime at 0, and no QUIC timer or time-based fault rule would fire in
-+    /// its runs.
-+    #[test]
-+    fn turmoil_runners_move_virtual_time() {
-+        /// The body of t
++# The Windows QUIC crash-loop breaker tests (#6031) drive the real binary
++# through several starts each; a failure is deterministic (an injected panic
++# is counted or it is not), so a retry only repeats the minutes.
++[[profile.ci.overrides]]
++filter = "binary(quic_breaker_windows)"
++retries = 0
 ```
 
-**File**: `crates/core/src/node/testing_impl/turmoil_runner.rs` (modified, +1/-1)
+**File**: `.github/workflows/ci.yml` (modified, +7/-4)
 ```diff
-@@ -274,7 +274,7 @@ where
-     }
+@@ -1251,24 +1251,27 @@ jobs:
+           tool: cargo-nextest
+           fallback: none
  
-     // Run the simulation
--    let result = sim.run();
-+    let result = super::run_turmoil_on_virtual_time(&mut sim, &virtual_time);
++      # Every step here builds with `quic-panic-injection` (test builds only;
++      # it lets the QUIC breaker test below abort the node on a QUIC panic),
++      # so the job compiles the crate once.
+       - name: Build freenet bin
+-        run: cargo build --locked -p freenet --bin freenet
++        run: cargo build --locked -p freenet --bin freenet --features quic-panic-injection
  
-     // Cleanup
-     unregister_network_time_source(&network_name);
+       - name: Test service commands
+-        run: cargo nextest run -p freenet --bin freenet --profile ci -E 'test(commands::service) | test(commands::url_handler) | test(commands::open_link)'
++        run: cargo nextest run -p freenet --bin freenet --profile ci --features quic-panic-injection -E 'test(commands::service) | test(commands::url_handler) | test(commands::open_link)'
+ 
+       # freenet:// scheme handler (#5726). Includes the argument-injection
+       # test: the command line registered in HKCU, with hostile links
+       # substituted for %1 and launched raw, so the real Windows argv parser
+       # splits it.
+       - name: Test freenet:// handler binary
+-        run: cargo nextest run -p freenet --profile ci --test url_scheme_handler
++        run: cargo nextest run -p freenet --profile ci --test url_scheme_handler --features quic-panic-injection
+ 
+       # The QUIC crash-loop breaker through the real process (#6031). Its
+       # decision is tested on every platform; only this reaches the Windows
+       # branch in the binary.
+       - name: Test QUIC breaker on Windows
+-        run: cargo nextest run -p freenet --profile ci --test quic_breaker_windows
++        run: cargo nextest run -p freenet --profile ci --test quic_breaker_windows --features quic-panic-injection
+ 
+       # And through real protocol activation: Start-Process hands the link to
+       # Windows, which looks up HKCU\Software\Classes\freenet and runs the
 ```
 
-**File**: `crates/core/src/transport/connection_handler.rs` (modified, +8/-0)
+**File**: `crates/core/Cargo.toml` (modified, +4/-0)
 ```diff
-@@ -369,10 +369,18 @@ fn build_quic_upgrades(
-     if let Some(at) = trace.as_ref().and_then(|trace| trace.down_at()) {
-         let failing = endpoint.clone();
-         let clock = path_clock.clone();
-+        let noted = trace.clone();
-         // Bounded by `at`, and holds an endpoint share only until then.
-         drop(GlobalExecutor::spawn(async move {
-             clock.sleep(at).await;
-             failing.fail_driver();
-+            // Recorded so a test can check the fault ran rather than infer it,
-+            // with the time on the clock the fault was set on: a record's `at`
-+            // is on the recording host's own clock.
-+            if let Some(trace) = noted {
-+                let ms = clock.now_nanos() / 1_000_000;
-+                trace.record(trace.addr(), 0, format!("failed the endpoint at {ms} ms"));
-+            }
-         }));
-     }
-     Some(QuicUpgrades::new(
+@@ -347,6 +347,10 @@ nightly_tests = []
+ jemalloc-prof = ["tikv-jemallocator/profiling", "dep:tikv-jemalloc-ctl"]
+ # WASM runtime backend
+ wasmtime-backend = ["dep:wasmtime"]
++# Test builds only, never a release: `FREENET_TEST_QUIC_PANIC` injects a panic
++# in QUIC code, to exercise the Windows QUIC crash-loop breaker through the
++# real binary (transport/quic/panic_injection.rs, #6031).
++quic-panic-injection = []
+ 
+ # ==============================================================================
+ # Lint Configuration
 ```
 
-**File**: `crates/core/src/transport/quic/upgrade/sim_trace.rs` (modified, +11/-4)
+**File**: `crates/core/src/config.rs` (modified, +3/-3)
 ```diff
-@@ -20,14 +20,19 @@ type Version = (u8, u8, u16);
- /// One thing a node's upgrades did.
- #[derive(Debug, Clone, PartialEq, Eq)]
- pub struct QuicUpgradeRecord {
--    /// On the runtime's clock, which every node shares.
-+    /// Since the first record, on the clock of the runtime that recorded it. The
-+    /// direct runner has one runtime, so times compare across nodes. Under turmoil
-+    /// each host's clock starts when its runtime is built, so compare times only
-+    /// within one node.
-     pub at: Duration,
-     pub node: SocketAddr,
-     pub peer: SocketAddr,
--    /// The session's number in its node; 0 for a node with QUIC off.
-+    /// The session's number in its node; 0 for a node with QUIC off, and for a
-+    /// record about no session (an injected fault, with the node as `peer`).
-     pub session: u64,
-     /// An `Outcome` in its `Debug` form, or `received ...`, `sent ...`,
--    /// `closed path with ...`, `stale connection ...`, `session ended`.
-+    /// `closed path with ...`, `stale connection ...`, `session ended`,
-+    /// `injected an Initial`, `failed the endpoint at <ms> ms`.
-     pub what: String,
-     /// The path permits the node held just after this.
-     pub permits: usize,
-@@ -124,7 +129,9 @@ impl QuicUpgradeTrace {
-         *self.data.release.lock() = Some((real, release));
-     }
- 
--    /// `node`'s QUIC endpoint driver fails `at` after its transport opens.
-+    /// `node`'s QUIC endpoint driver fails `at` after its transport opens, on the
-+    /// path clock (the network's VirtualTime in simulation). The node records
-+    /// `failed the endpoint at <ms> ms` with that clock's time.
-     pub fn fail_endpoint_at(&self, node: SocketAddr, at: Duration) {
-         self.data.down_at.lock().insert(node, at);
-     }
+@@ -2636,9 +2636,9 @@ pub struct NetworkArgs {
+     ///
+     /// On unix, if a run with QUIC enabled ends abnormally, the node starts
+     /// with QUIC off for 24 hours. On Windows the same happens after three
+-    /// short runs in a row, whatever ended them. Set this to run QUIC anyway. A
+-    /// start with this set erases the trip: removing it later does not bring
+-    /// the 24 hours back. Default: false.
++    /// short runs in a row that each panicked in QUIC code. Set this to run
++    /// QUIC anyway. A start with this set erases the trip: removing it later
++    /// does not bring the 24 hours back. Default: false.
+     ///
+     /// Works as a bare flag after the subcommand: `--quic-ignore-crash-breaker`
+     /// turns it on, `--quic-ignore-crash-breaker=false` turns it off. Before
 ```
 
-**File**: `crates/core/tests/simulation_integration.rs` (modified, +64/-0)
+**File**: `crates/core/src/transport/metrics.rs` (modified, +4/-2)
 ```diff
-@@ -1688,6 +1688,8 @@ fn test_high_latency_timeout_regression() {
+@@ -3138,7 +3138,8 @@ pub struct TransportSnapshot {
+     pub quic_adapter_panicked: u64,
+     /// Times the QUIC crash-loop breaker tripped, so this run started with
+     /// QUIC off (#5940): on unix a run with QUIC enabled ended abnormally, on
+-    /// Windows three runs in a row ended within ten minutes for any reason.
++    /// Windows three runs in a row ended within ten minutes after a panic in
++    /// QUIC code.
+     pub quic_breaker_trips: u64,
+     /// Sends the QUIC socket refused with `WouldBlock` (egress cap or full
+     /// socket buffer). Chiefly datagrams quinn's endpoint made on its own,
+@@ -3862,7 +3863,8 @@ struct SnapshotExtras {
+     pub quic_adapter_panicked: u64,
+     /// Times the QUIC crash-loop breaker tripped, so this run started with
+     /// QUIC off (#5940): on unix a run with QUIC enabled ended abnormally, on
+-    /// Windows three runs in a row ended within ten minutes for any reason.
++    /// Windows three runs in a row ended within ten minutes after a panic in
++    /// QUIC code.
+     pub quic_breaker_trips: u64,
+     /// Sends the QUIC socket refused with `WouldBlock` (egress cap or full
+     /// socket buffer). Chiefly datagrams quinn's endpoint made on its own,
+```
+
+**File**: `crates/core/src/transport/quic.rs` (modified, +7/-4)
+```diff
+@@ -44,6 +44,8 @@ pub(crate) mod error;
+ pub(crate) mod framing;
+ pub(crate) mod identity;
+ pub(crate) mod liveness;
++#[cfg(any(test, feature = "quic-panic-injection"))]
++pub(crate) mod panic_injection;
+ pub(crate) mod path;
+ pub(crate) mod recycle;
+ pub(crate) mod runtime;
+@@ -83,10 +85,11 @@ pub(crate) use liveness::QuicAvailabilityWatch;
+ ///
+ /// An unset key is [`QuicMode::default_mode`]: shadow on Linux and macOS, and
+ /// off elsewhere. Windows stays off until the crash-loop breaker has been
+-/// confirmed on a real Windows machine (#6031), and other platforms because the
+-/// breaker reads no boot identity there and so cannot trip. That breaker counts short runs instead of
+-/// detecting crashes ([`breaker`]). The default is decided when the value is
+-/// read and never written to `config.toml`, so a later release can change it
++/// confirmed on a real Windows machine (#6031), and other platforms because
++/// the breaker reads no boot identity there and so cannot trip. The Windows
++/// breaker counts short runs that panicked in QUIC code instead of detecting
++/// crashes ([`breaker`]). The default is decided when the value is read and
++/// never written to `config.toml`, so a later release can change it
+ /// for every node that did not set the key, which is how a default-off
+ /// release turns QUIC off. A value given with `--transport-quic` or
+ /// `FREENET_TRANSPORT_QUIC` is saved to `config.toml` like any other setting,
+```
+
+**File**: `crates/core/src/transport/quic/breaker.rs` (modified, +56/-22)
+```diff
+@@ -9,14 +9,16 @@
+ //! **This module doc describes unix.** Windows does not reliably tell a
+ //! process that it is being stopped: every design that tried to tell a crash
+ //! from a normal stop there (a logoff, a Fast Startup shutdown, a session end)
+-//! got one of them wrong. So Windows does not ask. It counts runs that ended
+-//! within ten minutes, for any reason, and three in a row, each starting
+-//! within the cooldown of the one before, keep QUIC off for the same cooldown,
+-//! with the same state and telemetry. [`short_runs`] describes it.
++//! got one of them wrong. So Windows does not ask how a run ended. A panic
++//! hook records a panic located in QUIC code (the failure this breaker is for
++//! always panics before it aborts), and runs that ended within ten minutes
++//! after recording one, three in a row, each starting within the cooldown of
++//! the one before, keep QUIC off for the same cooldown, with the same state
++//! and telemetry. [`short_runs`] describes it.
+ //!
+-//! **Windows is weaker than unix.** There, a crash loop whose runs each last
+-//! ten minutes or more never trips, and neither does a fault that crashes once
+-//! a day. That must be weighed before QUIC goes on by default on Windows. QUIC
++//! **Windows is weaker than unix.** There, a crash not preceded by a panic in
++//! QUIC code is not counted, a crash loop whose runs each last ten minutes or
++//! more never trips, and neither does a fault that crashes once a day. That must be weighed before QUIC goes on by default on Windows. QUIC
+ //! stays off by default there until the breaker has been confirmed on a real
+ //! Windows machine (#6031).
+ //!
+@@ -135,6 +137,7 @@ use serde::{Deserialize, Serialize};
+ use crate::node::background_task_monitor::LateRegistrar;
  
- /// Test: Use actual SimulationSocket inside Turmoil.
- /// This verifies that the real in-memory socket works with Turmoil's deterministic scheduler.
-+/// It drives turmoil itself with `sim.run()`, so the VirtualTime it registers stays
-+/// at 0: nothing here (no QUIC endpoint, no time-based fault rule) runs on it.
- #[test]
- fn test_turmoil_with_real_simulation_socket() -> turmoil::Result {
-     let network_name = "turmoil-test";
-@@ -21472,6 +21474,68 @@ fn test_quic_endpoint_down_closes_every_path() {
-     );
+ mod short_runs;
++pub(crate) use short_runs::QuicCode;
+ 
+ /// How long QUIC stays off after a run with QUIC enabled ended abnormally.
+ pub(crate) const QUIC_BREAKER_COOLDOWN: Duration = Duration::from_secs(24 * 60 * 60);
+@@ -204,6 +207,7 @@ pub fn quic_breaker_signals_ready() {
+ /// and the auto-update exit) and on no other.
+ pub fn quic_breaker_clean_exit() {
+     if let Some((path, nonce)) = ARMED.get() {
++        short_runs::note_marker_cleared();
+         if let Err(error) = clear_if_owned(path, *nonce) {
+             tracing::warn!(
+                 %error,
+@@ -247,6 +251,11 @@ pub(crate) enum Marker {
+         short_runs: u32,
+         started_at_secs: u64,
+         nonce: u64,
++        /// The run recorded a panic in QUIC code (quinn, quinn-proto or this
++        /// crate's QUIC transport) while it was still short. Only such a run
++        /// counts. Absent in a marker from an earlier release.
++        #[serde(default)]
++        quic_panicked: bool,
+     },
+     /// A state this binary does not know, written by a later release.
+     #[serde(other)]
+@@ -680,12 +689,18 @@ struct Pending {
+ /// are installed. Called under the `PENDING` lock from both events, so
+ /// whichever comes second writes it, exactly once.
+ fn arm_when_ready(pending: &mut Pending) {
+-    arm_when_ready_into(pending, &ARMED);
++    arm_when_ready_into(pending, &ARMED, short_runs::record_quic_panics);
  }
  
-+/// The controlled (turmoil) runner moves the network's VirtualTime with its own
-+/// clock, so a timer on that clock fires: the gateway's endpoint failure, set for
-+/// 5 s on the path clock, happens at 5 s, and VirtualTime ends near the run's
-+/// length. Before the runner moved it, VirtualTime read 0 for the whole run and
-+/// the failure never happened.
-+#[test_log::test]
-+fn test_controlled_simulation_advances_virtual_time() {
-+    use freenet::dev_tool::NodeLabel;
-+    const NETWORK: &str = "controlled-virtual-time";
-+    const SEED: u64 = 0x5940_7117_0001;
-+    const FAIL_AT: Duration = Duration::from_secs(5);
-+    const WAIT: Duration = Duration::from_secs(20);
-+    setup_deterministic_state(SEED);
-+    let rt = create_runtime();
-+    let gateway = NodeLabel::gateway(NETWORK, 0);
-+    let (sim, trace, time, gateway_addr) = rt.block_on(async {
-+        let mut sim = SimNetwork::new(NETWORK, 1, 1, 7, 3, 10, 2, SEED).await;
-+        sim.with_transport_quic("shadow");
-+        let trace = sim.quic_upgrade_trace();
-+        let gateway_addr = sim.all_node_addresses()[&gateway];
-+        trace.fail_endpoint_at(gateway_addr, FAIL_AT);
-+        let time = sim.virtual_time().clone();
-+        (sim, trace, time, gateway_addr)
-+    });
-+    drop(rt);
-+    let (no_operations, max_duration) = (Vec::new(), Duration::from_secs(60));
-+    let result = sim.run_controlled_simulation(SEED, no_operations, max_duration, WAIT);
-+    assert!(
-+        result.turmoil_result.is_ok(),
-+        "simulation failed: {:?}",
-+        result.turmoil_result.err()
-+    );
-+    // The client sleeps 3 s, fires no operation and waits `WAIT`, so the run
-+    // lasts at least that long, and VirtualTime with it.
-+    let now = Duration::from_nanos(time.now_nanos());
-+    assert!(
-+        now >= WAIT + Duration::from_secs(3),
-+        "VirtualTime followed the run: {now:?}"
-+    );
-+    let failed = trace.matching(gateway_addr, "failed the endpoint at ");
-+    assert_eq!(
-+        failed.len(),
-+        1,
-+        "the 5 s timer fired once: {:#?}",
-+        trace.records()
-+    );
-+    // The time the record carries is on the path clock, VirtualTime itself; a
-+    // record's `at` is on its host's own clock, which under turmoil does not
-+    // start at the run's start.
-+    let fired_ms: u64 = failed[0]
-+        .what
-+        .trim_start_matches("failed the endpoint at ")
-+        .trim_end_matches(" ms")
-+        .parse()
-+        .expect("the record carries its time");
-+    let fired = Duration::from_millis(fired_ms);
-+    assert!(
-+        fired >= FAIL_AT && fired <= FAIL_AT + Duration::from_secs(1),
-+        "it fired at 5 s on VirtualTime: {fired:?}"
-+    );
-+}
-+
- /// The same run with the same seed gives the same upgrades at the same times.
- #[test_log::test]
- fn test_quic_shadow_upgrade_is_deterministic() {
-```
-
----
-
-### Incident Patch 3: `e65f5d59` (2026-11-05)
-**Commit Message**: fix(hosted): orient cold visitors and point them at the installer (#6117)
-
-**File**: `crates/core/src/server/path_handlers.rs` (modified, +96/-6)
-```diff
-@@ -2236,7 +2236,7 @@ fn shell_page(
-     // the sandboxed app iframe. It is the only place a per-user-data action
-     // (export to your own peer) can live — the durable user token is held by
-     // the shell and must never reach the sandbox — and the only place the
--    // "this is a hosted proxy, not private" disclosure cannot be hidden or
-+    // "stored encrypted on this server" privacy disclosure cannot be hidden or
-     // spoofed by the contract app. Empty (and the layout unchanged) when hosted
-     // mode is off. The export control is a placeholder until the node-side
-     // export endpoint lands (P3 `secrets export` over HTTP, scoped to the
-@@ -2478,7 +2478,7 @@ const SHELL_USER_TOKEN_JS: &str = include_str!("path_handlers/assets/shell_user_
- /// only when hosted mode is on; the bar lives OUTSIDE the sandboxed app iframe.
- const HOSTED_BAR_STYLES: &str = include_str!("path_handlers/assets/hosted_bar.css");
- 
--/// Markup for the hosted-mode bar: the always-visible "not private" disclosure
-+/// Markup for the hosted-mode bar: the always-visible privacy disclosure (with an inline install link)
- /// plus an Account popover with the access-key backup/restore, a "New ID"
- /// control to start over with a fresh identity, and the export-to-your-own-peer
- /// action. The access key is the per-user token, read from the shell-only
-@@ -6769,7 +6769,7 @@ mod tests {
-     #[tokio::test]
-     async fn shell_page_hosted_mode_renders_proxy_chrome_bar() {
-         // The hosted-mode "shell chrome" bar lives OUTSIDE the sandboxed iframe
--        // and carries the "not private" disclosure plus the Account popover
-+        // and carries the privacy disclosure plus the Account popover
-         // (access-key backup/restore + export-to-your-own-peer). It must render
-         // in hosted mode and be ABSENT in non-hosted mode so a normal
-         // single-user node is unaffected.
-@@ -6782,9 +6782,24 @@ mod tests {
-             hosted.contains(r#"id="fnbar""#),
-             "hosted bar missing: {hosted}"
-         );
-+        // The always-visible disclosure must say both halves: the data is held
-+        // (encrypted) by this server, and full privacy needs your own peer.
-+        // Located via the bar's own `.nt` span, so the text cannot pass by
-+        // appearing somewhere else (the popover, a script) instead.
-+        let disclosure = hosted
-+            .split_once(r#"class="nt""#)
-+            .and_then(|(_, rest)| rest.split_once('>'))
-+            .and_then(|(_, rest)| rest.split_once("for full privacy."))
-+            .map(|(d, _)| d.trim())
-+            .expect("the bar's .nt disclosure must end 'for full privacy.'");
-         assert!(
--            hosted.contains("not private"),
--            "always-visible disclosure missing"
-+            disclosure.starts_with("Stored encrypted on this server."),
-+            "disclosure must lead with where the data lives: {disclosure}"
-+        );
-+        assert!(
-+            disclosure.contains("https://freenet.org/quickstart/"),
-+            "the install link must sit inside the disclosure, before \
-+             'for full privacy.': {disclosure}"
-         );
-         assert!(
-             hosted.contains("Access key") && hosted.contains("Restore from key"),
-@@ -8484,6 +8499,77 @@ mod tests {
-         assert!(clear < reload, "must clear the token before reloading");
+ /// [`arm_when_ready`], recording what was written in `armed`, which is the
+-/// static [`ARMED`] outside tests.
+-fn arm_when_ready_into(pending: &mut Pending, armed: &OnceLock<(PathBuf, u64)>) {
++/// static [`ARMED`] outside tests, and installing the Windows panic hook with
++/// `record_panics`, which tests replace: the real hook is process-global, so
++/// only a test in a child process may install it.
++fn arm_when_ready_into(
++    pending: &mut Pending,
++    armed: &OnceLock<(PathBuf, u64)>,
++    record_panics: fn(PathBuf, u64),
++) {
+     if !(pending.quic_up && pending.signals_ready) {
+         return;
+     }
+@@ -694,7 +709,12 @@ fn arm_when_ready_into(pending: &mut Pending, armed: &OnceLock<(PathBuf, u64)>)
+     if let Some((path, nonce)) = arm(pending.marker.take()) {
+         if counts_short_runs {
+             short_runs::start_clear_timer(registrar.as_ref(), path.clone(), nonce);
++            record_panics(path.clone(), nonce);
+         }
++        // Test builds only: start an injected QUIC panic's countdown now that
++        // the marker (and on Windows the panic hook) is in place.
++        #[cfg(feature = "quic-panic-injection")]
++        super::panic_injection::inject_from_env();
+         // One node per process in production; a second keeps the first.
+         let _first_wins = armed.set((path, nonce));
+     }
+@@ -864,7 +884,7 @@ mod platform {
+         rc == 0 || std::io::Error::last_os_error().raw_os_error() == Some(libc::EPERM)
      }
  
-+    /// A hosted visitor who has no peer must be told how to get one. Before
-+    /// this, the bar never said what Freenet is or how to install it, and the
-+    /// popover offered "Move to my peer" and a loopback import link with no
-+    /// install pointer, so a try.freenet.org visitor (typically arriving cold
-+    /// from a shared link) had no way forward.
-+    #[test]
-+    fn hosted_bar_points_visitors_without_a_peer_at_the_installer() {
-+        const QUICKSTART: &str = "href=\"https://freenet.org/quickstart/\"";
-+        let section = HOSTED_BAR_HTML
-+            .find("<h4>Your own peer</h4>")
-+            .expect("hosted bar must have a 'Your own peer' section");
-+        let migrate = HOSTED_BAR_HTML
-+            .find("id=\"fnmigrate\"")
-+            .expect("Move-to-my-peer button present");
-+        let reveal = HOSTED_BAR_HTML
-+            .find("id=\"fnmigrateout\"")
-+            .expect("migration hint block present");
-+        let open = HOSTED_BAR_HTML
-+            .find("id=\"fnmigrateopen\"")
-+            .expect("primary open control present");
-+        let acct = HOSTED_BAR_HTML
-+            .find("id=\"fnacct\"")
-+            .expect("Account control present");
-+
-+        // (0) The always-visible bar itself, before the Account popover: the
-+        // brand links to what Freenet is, and an install pointer is one click
-+        // away without opening any menu.
-+        let bar = &HOSTED_BAR_HTML[..acct];
-+        assert!(
-+            bar.contains("href=\"https://freenet.org/\""),
-+            "the bar's Freenet brand must link to what Freenet is"
-+        );
-+   
-```
-
-**File**: `crates/core/src/server/path_handlers/assets/hosted_bar.css` (modified, +57/-1)
-```diff
-@@ -27,10 +27,24 @@ iframe {
-   font-weight: 600;
-   color: #222;
-   letter-spacing: 0.02em;
-+  text-decoration: none;
-+}
-+#fnbar .fn:hover {
-+  text-decoration: underline;
-+}
-+/* The bar's own "Install Freenet" pointer, inline in the disclosure: the next
-+   step for a visitor who arrived from a shared link, always visible rather than
-+   buried in the popover. */
-+#fnbar a.fnbarinstall {
-+  color: #222;
-+  text-decoration: underline;
- }
- #fnbar .nt {
-   flex: 1 1 auto;
-   min-width: 0;
-+  /* Not the bar's line-height 1: the inline install link's underline and focus
-+     ring would be clipped by this span's overflow:hidden. */
-+  line-height: 1.4;
-   color: #777;
-   overflow: hidden;
-   text-overflow: ellipsis;
-@@ -83,6 +97,14 @@ iframe {
-   cursor: auto;
-   display: none;
-   z-index: 10;
-+  /* The shell body is overflow:hidden, so a popover taller than a short
-+     (landscape phone) viewport would be clipped with no way to reach its
-+     lower sections. */
-+  max-height: calc(100vh - 50px);
-+  /* dvh excludes a mobile browser's dynamic URL bar; 100vh is the fallback. */
-+  max-height: calc(100dvh - 50px);
-+  overflow-y: auto;
-+  box-sizing: border-box;
- }
- #fnpop.open {
-   display: block;
-@@ -102,6 +124,13 @@ iframe {
- #fnpop .sec {
-   margin-bottom: 14px;
- }
-+/* Inline "Install Freenet" pointer for visitors who have no peer yet. A plain
-+   underlined link in the text colour, so it stays inside the popover's
-+   near-monochrome palette rather than shouting in default link blue. */
-+#fnpop a.fninstall {
-+  color: #222;
-+  text-decoration: underline;
-+}
- #fnpop .sec:last-child {
-   margin-bottom: 0;
- }
-@@ -143,6 +172,28 @@ iframe {
-   font-size: 12px;
- }
+-    /// Unused: Windows counts short runs instead.
++    /// Unused: Windows counts short runs that panicked in QUIC code instead.
+     #[cfg(not(unix))]
+     pub(super) fn pid_alive(_pid: u32) -> bool {
+         false
+@@ -880,6 +900,10 @@ mod tests {
+     const T0: u64 = 1_800_000_000;
+     const BOOT: &str = "boot-a";
  
-+/* Phone width: let the disclosure wrap instead of truncating, so the whole
-+   sentence survives, including its inline install link ("on this server" is
-+   also the answer to "how is this peer-to-peer with nothing installed?").
-+   Three lines covers a 320px screen. */
-+@media (max-width: 560px) {
-+  #fnbar {
-+    height: auto;
-+    min-height: 34px;
-+    padding-top: 4px;
-+    padding-bottom: 4px;
-+  }
-+  #fnbar .nt {
-+    white-space: normal;
-+    line-height: 1.25;
-+    font-size: 12px;
-+    display: -webkit-box;
-+    -webkit-box-orient: vertical;
-+    -webkit-line-clamp: 3;
-+    line-clamp: 3;
-+  }
-+}
-+
- /* Respect the OS dark-mode preference. Same restrained, near-monochrome
-    character as the light theme: charcoal bar, light-grey text, hairline
-    borders. */
-@@ -152,7 +203,8 @@ iframe {
-     border-bottom-color: #303032;
-     color: #98989c;
-   }
--  #fnbar .fn {
-+  #fnbar .fn,
-+  #fnbar a.fnbarinstall {
-     color: #ececee;
-   }
-   #fnbar .nt {
-@@ -182,13 +234,17 @@ iframe {
-     border-color: #3a3a3e;
-     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
-     color: #c2c2c6;
-+    color-scheme: dark;
-   }
-   #fnpop h4 {
-     color: #88888c;
-   }
-   #fnpop p {
-     color: #a0a0a4;
-   }
-+  #fnpop a.fninstall {
-+    color: #e6e6e8;
-+  }
-   #fnok {
-     color: #5cbd83;
-   }
-```
-
-**File**: `crates/core/src/server/path_handlers/assets/hosted_bar.html` (modified, +34/-5)
-```diff
-@@ -1,7 +1,21 @@
--<div id="fnbar" role="region" aria-label="Hosted proxy notice">
--  <span class="fn">Freenet</span
-+<div id="fnbar" role="region" aria-label="Hosted privacy notice">
-+  <a
-+    class="fn"
-+    href="https://freenet.org/"
-+    target="_blank"
-+    rel="noopener"
-+    title="What is Freenet?"
-+    >Freenet</a
-   ><span class="nt"
--    >Hosted proxy, not private. Your data is stored on this server.</span
-+    >Stored encrypted on this server.
-+    <a
-+      class="fninstall fnbarinstall"
-+      href="https://freenet.org/quickstart/"
-+      target="_blank"
-+      rel="noopener"
-+      >Install Freenet</a
-+    >
-+    for full privacy.</span
-   ><span id="fnacct"
-     ><button id="fnacctbtn" type="button">Account</button>
-     <div id="fnpop">
-@@ -23,7 +37,14 @@ <h4>Access key</h4>
-         <h4>Your own peer</h4>
-         <p>
-           Move your data to a Freenet peer you run yourself, fully
--          decentralized.
-+          decentralized. Don't have one yet?
-+          <a
-+            class="fninstall"
-+            href="https://freenet.org/quickstart/"
-+            target="_blank"
-+            rel="noopener"
-+            >Install Freenet</a
-+          >, then come back here.
-         </p>
-         <div class="row">
-           <button class="act" id="fnmigrate">Move to my peer</button
-@@ -32,7 +53,15 @@ <h4>Your own peer</h4>
-         <div id="fnmigrateout" hidden>
-           <p class="mhint">
-             This opens a one-time confirmation page on the Freenet peer running
--            on this computer. It expires in a few minutes.
-+            on this computer. It expires in a few minutes. If that page can't
-+            connect, your peer isn't running, or Freenet isn't installed yet:
-+            <a
-+              class="fninstall"
-+              href="https://freenet.org/quickstart/"
-+              target="_blank"
-+              rel="noopener"
-+              >install Freenet</a
-+            >, then try again.
-           </p>
-           <div class="row">
-             <a
++    /// The pani
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6119** (2026-11-05): fix(test): advance VirtualTime in controlled simulations (@sanity)
-- **PR #6118** (2026-11-05): feat(transport): export QUIC data path telemetry (@sanity)
-- **PR #6117** (2026-11-05): fix(hosted): orient cold visitors and point them at the installer (@sanity)
-- **PR #6114** (2026-11-05): feat(transport): send QUIC data on the path with fallback to UDP (@sanity)
-- **PR #6113** (2026-11-05): test(transport): pin the QUIC fair share where it holds and record the default-minimum case (@sanity)
-- **PR #6111** (2026-11-05): feat(transport): cap the QUIC window to the configured bandwidth (@sanity)
+- **PR #6169** (closed): build: gate a constant only the panic-injection tests read (@sanity)
+- **PR #6168** (2026-11-09): test: gate COOLING_WARN on the quic-panic-injection feature (fixes Windows Check on every PR) (@sanity)
+- **PR #6167** (2026-11-09): feat(transport): a fixed QUIC connection charge, buffer budget, OVER_BUDGET close and reset gauge (@sanity)
+- **PR #6166** (2026-11-09): test(config): hold each allocated port while asking for the next (@sanity)
+- **PR #6164** (closed): feat(transport): QUIC fixed charge, buffer budget, OVER_BUDGET and reset gauge (@sanity)
+- **PR #6162** (2026-11-09): ci: install the latest riverctl in river-dev-notify (stop duplicate dev-room posts) (@sanity)
 
 ---
 
@@ -2981,49 +2572,30 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. transport): export QUIC data path telemetry (#6118)
+## X. test: gate COOLING_WARN on the quic-panic-injection feature (fixes Windows Check
 
 **RULE**:
-When implementing operations in `.claude/rules/transport.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/core/tests/quic_breaker_windows.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `196263ba`: transport): export QUIC data path telemetry (#6118). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c7610781`: test: gate COOLING_WARN on the quic-panic-injection feature (fixes Windows Check on every PR) (#6168). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/transport.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/tests/quic_breaker_windows.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  Not built: the `transport=legacy|quic` attribute on connection, transfer and
-  disconnect events; quinn's RTT, min RTT and lost bytes on a QUIC transfer's
-  events (those fields are None today); the per-peer byte counters and the
-  dashboard for QUIC traffic; a per-path memory estimate.
-
-QUIC data telemetry (#5940 e5b-8, `transport/metrics/quic_data.rs`): node-wide
-counts of what paths' data sends and receives did, in one nested
-`TransportSnapshot::quic_data` and uploaded flat, a key per non-zero count and the
-gauge every period, 0 included (`QuicDataSnapshot::upload_keys`). Each is
-recorded where the path decides it, into the path's `QuicPathStats` and the node's
-`QuicDataCounters` together (`QuicPathLimits::counters`, `TRANSPORT_METRICS` unless
-a test passes its own; tests read their own, never the global).
-  quic_data_send_<short|large_short|stream|pipe>_<sent|maybe_delivered|
-  not_opened_udp|failed_udp|dropped>; quic_data_event_<short_overflow_udp|
-  data_refused|stalled_closed|udp_send_failed>; quic_data_stop_<code> (stops a
-  peer sent to data sends); quic_inbound_<QuicInboundOutcome> (every receive
-  outcome, refusals by frame kind as short_refused_budget and
-  stream_ref
+/// Only the `quic-panic-injection` tests read it, so it is gated with them:
+/// without the feature (CI's Windows Check) it is dead code under `-D warnings`.
+#[cfg(feature = "quic-panic-injection")]
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-  Not built: stream-concurrency instruments on real QUIC (`quic_open_uni_waited`,
-  permit waits, ge_8..ge_48, control_* refusals) have no source until e5b and
-  read zero in shadow; the `transport=legacy|quic` connection attribute; a
-  per-path memory estimate.
-Not here: export of the QUIC-only counters (per path, QuicPath::stats).
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `196263ba` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c7610781` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/callstack-react-native-paper-learnings.md`  
 > **Source**: github ([https://github.com/callstack/react-native-paper](https://github.com/callstack/react-native-paper))  
-> **Source Version**: `61d935b6`  
+> **Source Version**: `c87c351a`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T02:26:10.407Z  
+> **Timestamp**: 2026-11-09T13:46:49.994Z  
 > **Learning ID**: `learn-github-callstack-react-native-paper`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/callstack-react-native-paper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/callstack/react-native-paper](https://github.com/callstack/react-native-paper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T02:26:09.718Z  
+> **Harvest Timestamp**: 2026-11-09T13:46:49.987Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Material Design for React Native (Android & iOS)
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 14494 stars
+- **Stars / Engagement**: 14501 stars
 
 ---
 
@@ -386,7 +386,7 @@ export const getAppbarBackgroundColor = (
   theme: InternalTheme,
   elevated: boolean,
   customBackground?: ColorValue
-) => {
+): ColorValue => {
   const { colors } = theme;
   if (customBackground) {
     return customBackground;
@@ -550,7 +550,7 @@ export const getActiveTintColor = ({
 }: {
   activeColor: ColorValue | undefined;
   theme: InternalTheme;
-}) => {
+}): ColorValue => {
   if (activeColor != null) {
     return activeColor;
   }
@@ -564,7 +564,7 @@ export const getInactiveTintColor = ({
 }: {
   inactiveColor: ColorValue | undefined;
   theme: InternalTheme;
-}) => {
+}): ColorValue => {
   if (inactiveColor != null) {
     return inactiveColor;
   }
@@ -582,7 +582,7 @@ export const getLabelColor = ({
   hasColor: boolean;
   focused: boolean;
   theme: InternalTheme;
-}) => {
+}): ColorValue => {
   const { colors } = theme;
   if (hasColor) {
     return tintColor;
@@ -598,26 +598,223 @@ export const getLabelColor = ({
 
 ### Core Architecture Module: `src/components/Button/utils.tsx`
 ```
-import type { ColorValue, ViewStyle } from 'react-native';
+import type { ColorValue, Insets } from 'react-native';
 
+import color from 'color';
+
+import { Tokens } from './tokens';
+import type { ButtonToggleMode } from './tokens';
 import { black, white } from '../../theme/colors';
 import { tokens } from '../../theme/tokens';
 import type { InternalTheme } from '../../theme/types';
-import { splitStyles } from '../../utils/splitStyles';
+import { resolveCornerRadius } from '../../theme/utils/shape';
 
 const stateOpacity = tokens.md.sys.state.opacity;
 
-export type ButtonMode =
-  | 'text'
-  | 'outlined'
-  | 'contained'
-  | 'elevated'
-  | 'contained-tonal';
+export type ButtonMode = 'text' | 'outlined' | 'filled' | 'elevated' | 'tonal';
+
+export type ButtonIconPosition = 'leading' | 'trailing';
+
+export type ButtonSize =
+  | 'extra-small'
+  | 'small'
+  | 'medium'
+  | 'large'
+  | 'extra-large';
+
+export type ButtonLabelVariant =
+  | 'labelLarge'
+  | 'titleMedium'
+  | 'headlineSmall'
+  | 'headlineLarge';
+
+export type ButtonSizeStyle = {
+  minHeight: number;
+  paddingStart: number;
+  paddingEnd: number;
+  iconSize: number;
+  iconGap: number;
+  outlineWidth: number;
+  labelVariant: ButtonLabelVariant;
+};
+
+/**
+ * Per-size metrics for the Material Design 3 (expressive) button sizes, read
+ * from the component tokens.
+ */
+export const getButtonSizeStyle = (size: ButtonSize): ButtonSizeStyle => {
+  const t = Tokens.sizes[size];
+  return {
+    minHeight: t.containerHeight,
+    paddingStart: t.leadingSpace,
+    paddingEnd: t.trailingSpace,
+    iconSize: t.iconSize,
+    iconGap: t.iconLabelSpace,
+    outlineWidth: t.outlinedOutlineWidth,
+    labelVariant: t.labelVariant,
+  };
+};
+
+/** The content box sits inside the outline, so the outline can't grow it. */
+export const getButtonContentBoxStyle = (
+  sizeStyle: ButtonSizeStyle,
+  borderWidth: number
+) => ({
+  minHeight: sizeStyle.minHeight - borderWidth * 2,
+  paddingStart: sizeStyle.paddingStart - borderWidth,
+  paddingEnd: sizeStyle.paddingEnd - borderWidth,
+  gap: sizeStyle.iconGap,
+});
+
+/**
+ * Slop that brings the touch target up to `max(48, containerHeight)`,
+ * expanding outside the container.
+ *
+ * Returns `undefined` when the container is already tall enough.
+ */
+export const getButtonHitSlop = (size: ButtonSize): Insets | undefined => {
+  const { containerHeight } = Tokens.sizes[size];
+  const vertical = (Tokens.minTouchTargetHeight - containerHeight) / 2;
+
+  if (vertical <= 0) {
+    return undefined;
+  }
+
+  return { top: vertical, bottom: vertical, left: 0, right: 0 };
+};
+
+export type ButtonShape = 'round' | 'square';
+
+/**
+ * A selected toggle contrasts with its unselected state by flipping the shape,
+ * so a selected `round` button renders square and vice versa.
+ */
+export const getEffectiveButtonShape = (
+  shape: ButtonShape,
+  selected?: boolean
+): ButtonShape => {
+  if (!selected) {
+    return shape;
+  }
+  return shape === 'round' ? 'square' : 'round';
+};
+
+/**
+ * Corner radius for a shape, read from the component tokens and resolved
+ * against the theme shape tokens. `round` is the full-pill radius; `square`
+ * uses a per-size smaller corner. Pass the shape after the `selected` flip.
+ */
+export const getButtonShapeRadius = ({
+  size,
+  shape,
+  theme,
+}: {
+  size: ButtonSize;
+  shape: ButtonShape;
+  theme: InternalTheme;
+}): number => {
+  const t = Tokens.sizes[size];
+  const token =
+    shape === 'round' ? t.containerShapeRound : t.containerShapeSquare;
+  return resolveCornerRadius(theme, token);
+};
+
+/**
+ * Duration of `Surface`'s background and elevation transition.
+ *
+ * Snaps when either color is transparent or not a plain string.
+ */
+export const getButtonTransitionDuration = ({
+  theme,
+  pressed,
+  containerColor,
+  previousContainerColor,
+}: {
+  theme: InternalTheme;
+  pressed: boolean;
+  containerColor: ColorValue;
+  previousContainerColor: ColorValue;
+}): number => {
+  if (
+    typeof containerColor !== 'string' ||
+    typeof previousContainerColor !== 'string' ||
+    containerColor === 'transparent' ||
+    previousContainerColor === 'transparent'
+  ) {
+    return 0;
+  }
+
+  return (
+    theme.motion.duration[pressed ? 'short4' : 'short3'] * theme.animation.scale
+  );
+};
+
+/**
+ * Caps the spring curve so the corner can't overshoot below 0 on its way to
+ * `radius`, from any start up to `largestRadius`.
+ */
+export const getButtonShapeCurvePoints = ({
+  points,
+  radius,
+  largestRadius,
+}: {
+  points: number[];
+  radius: number;
+  largestRadius: number;
+}): number[] => {
+  if (largestRadius <= radius) {
+    return points;
+  }
+
+  const maxProgress = largestRadius / (largestRadius - radius);
+
+  return points.map((point) => Math.min(point, maxProgress));
+};
+
+/** Corner the container morphs to while pressed. */
+export const getButtonPressedRadius = ({
+  size,
+  theme,
+}: {
+  size: ButtonSize;
+  theme: InternalTheme;
+}): number =>
+  resolveCornerRadius(theme, Tokens.sizes[size].pressedContainerShape);
+
+export const createIsMode =
+  (mode: ButtonMode) =>
+  (modeToCompare: ButtonMode): boolean =>
+    mode === modeToCompare;
 
 type BaseProps = {
   isMode: (mode: ButtonMode) => boolean;
   theme: InternalTheme;
   disabled?: boolean;
+  selected?: boolean;
+};
+
+type ToggleColors = (typeof Tokens.toggle)[ButtonToggleMode][
+  | 'selected'
+  | 'unselected'];
+
+const isToggleMode = (mode: ButtonMode): mode is ButtonToggleMode =>
+  mode !== 'text';
+
+/**
+ * The toggle colour pair for a mode, or `undefined` when the button is not a
+ * toggle (`selected` omitted) or the mode has no toggle at all (`text`).
+ */
+const getToggleColors = ({
+  mode,
+  selected,
+}: {
+  mode: ButtonMode;
+  selected?: boolean;
+}) => {
+  if (!isToggleMode(mode) || selected === undefined) {
+    return undefined;
+  }
+  return Tokens.toggle[mode][selected ? 'selected' : 'unselected'];
 };
 
 const isDark = ({
@@ -642,9 +839,12 @@ const getButtonBackgroundColor = ({
   isMode,
   theme,
   disabled,
+  selected,
   customButtonColor,
+  toggleColors,
 }: BaseProps & {
   customButtonColor?: ColorValue;
+  toggleColors?: ToggleColors;
 }) => {
   const { colors } = theme;
   if (customButtonColor && !disabled) {
@@ -652,74 +852,99 @@ const getButtonBackgroundColor = ({
   }
 
   if (disabled) {
-    if (isMode('outlined') || isMode('text')) {
+    if (isMode('text') || (isMode('outlined') && !selected)) {
       return 'transparent';
     }
     return colors.onSurface;
+  }
+
+  if (toggleColors) {
+    const { container } = toggleColors;
+    return container === 'transparent' ? 'transparent' : colors[container];
   }
 
   if (isMode('elevated')) {
     return colors.surfaceContainerLow;
   }
 
-  if (isMode('contained')) {
+  if (isMode('filled')) {
     return colors.primary;
   }
 
-  if (isMode('contained-tonal')) {
+  if (isMode('tonal')) {
     return colors.secondaryContainer;
   }
 
   return 'transparent';
 };
 
-const getButtonTextColor = ({
+const getButtonLabelColor = ({
   isMode,
   theme,
   disabled,
-  customTextColor,
+  customLabelColor,
+  customButtonColor,
   backgroundColor,
   dark,
-}: BaseProps & {
-  customTextColor?: ColorValue;
+  toggleColors,
+}: Omit<BaseProps, 'selected'> & {
+  customLabelColor?: ColorValue;
+  customButtonColor?: ColorValue;
   backgroundColor: ColorValue;
   dark?: boolean;
+  toggleColors?: ToggleColors;
 }) => {
   const { colors } = theme;
-  if (customTextColor && !disabled) {
-    return customTextColor;
+  if (customLabelColor && !disabled) {
+    return customLabelColor;
   }
 
   if (disabled) {
     return theme.colors.onSurface;
   }
 
-  if (typeof dark === 'boolean') {
-    if (
-      isMode('contained') ||
-      isMode('contained-tonal') ||
-      isMode('elevated')
-    ) {
-      return isDark({ dark, backgroundColor }) ? white : black;
-    }
+  const appliesDark =
+    typeof dark === 'boolean' &&
+    (isMode('filled') || isMode('tonal') || isMode('elevated'));
+
+  if (toggleColors && !(customButtonColor && appliesDark)) {
+    return colors[toggleColors.label];
   }
 
-  if (isMode('outlined') || isMode('text') || isMode('elevated')) {
+  if (appliesDark) {
+    return isDark({ dark, backgroundColor }) ? white : black;
+  }
+
+  // Outlined uses the neutral on-surface-variant label per MD3 spec; text and
+  // elevated keep the primary accent.
+  if (isMode('outlined')) {
+    return colors.onSurfaceVariant;
+  }
+
+  if (isMode('text') || isMode('elevated')) {
     return colors.primary;
   }
 
-  if (isMode('contained')) {
+  if (isMode('filled')) {
     return colors.onPrimary;
   }
 
-  if (isMode('contained-tonal')) {
+  if (isMode('tonal')) {
     return colors.onSecondaryContainer;
   }
 
   return colors.primary;
 };
 
-const getButtonBorderColor = ({ isMode, theme }: BaseProps) => {
+const getButtonBorderColor = ({
+  isMode,
+  theme,
+  selected,
+}: Omit<BaseProps, 'disabled'>) => {
+  // A selected outlined toggle drops its outline, disabled or not.
+  if (selected && isMode('outlined')) {
+    return 'transparent';
+  }
   if (isMode('outlined')) {
     return theme.colors.outlineVariant;
   }
@@ -727,9 +952,16 @@ const getButtonBorderColor = ({ isMode, theme }: BaseProps) => {
   return 'transparent';
 };
 
-const getButtonBorderWidth = ({ isMode }: Omit<BaseProps, 'disabled'>) => {
+const getButtonBorderWidth = ({
+  isMode,
+  selected,
+  size,
+}: Omit<BaseProps, 'theme' | 'disabled'> & { size: ButtonSize }) => {
+  if (selected && isMode('outlined')) {
+    return 0;
+  }
   if (isMode('outlined')) {
-    return 1;
+    return Tokens.sizes[size].outlinedOutlineWidth;
   }
 
   return 0;
@@ -738,105 +970,86 @@ const getButtonBorderWidth = ({ isMode }: Omit<BaseProps, 'disabled'>) => {
 export const getButtonColors = ({
   theme,
   mode,
+  size = 'small',
   customButtonColor,
-  customTextColor,
+  customLabelColor,
   disabled,
   dark,
+  selected,
 }: {
   theme: InternalTheme;
   mode: ButtonMode;
+  size?: ButtonSize;
   customButtonColor?: ColorValue;
-  customTextColor?: ColorValue;
+  customLabelColor?: ColorValue;
   disabled?: boolean;
   dark?: boolean;
-}) => {
-  const isMode = (modeToCompare: ButtonMode) => {
-    return mode === modeToCompare;
-  };
+  selected?: boolean;
+}): {
+  backgroundColor: ColorValue;
+  borderColor: ColorValue;
+  labelColor: ColorValue;
+  labelOpacity: number;
+  borderWidth: number;
+  backgroundOpacity: number;
+} => {
+  const isMode = createIsMode(mode);
+
+  const toggleColors = disabled
+    ? undefined
+    : getToggleColors({ mode, selected });
 
   const backgroundColor = getButtonBackgroundColor({
     isMode,
     theme,
     disabled,
+    selected,
     customButtonColor,
+    toggleColors,
   });
 
-  const textColor = getButtonTextColor({
+  const labelColor = getButtonLabelColor({
     isMode,
     theme,
     disabled,
-    customTextColor,
+    customLabelColor,
+    customButtonColor,
     backgroundColor,
     dark,
+    toggleColors,
   });
 
-  const borderColor = getButtonBorderColor({ isMode, theme });
+  const borderColor = getButtonBorderColor({
+    isMode,
+    theme,
+    selected,
+  });
 
-  const borderWidth = getButtonBorderWidth({ isMode, theme });
+  const borderWidth = getButtonBorderWidth({
+    isMode,
+    selected,
+    size,
+  });
 
-  const textOpacity = disabled ? stateOpacity.disabled : stateOpacity.enabled;
+  const labelOpacity = disabled ? stateOpacity.disabled : stateOpacity.enabled;
 
   const backgroundOpacity =
-    disabled && !isMode('outlined') && !isMode('text')
+    disabled && backgroundColor !== 'transparent'
       ? stateOpacity.pressed
       : stateOpacity.enabled;
 
   return {
     backgroundColor,
     borderColor,
-    textColor,
-    textOpacity,
+    labelColor,
+    labelOpacity,
     borderWidth,
-    backgroundOpacity,
-  };
-};
-
-type ViewStyleBorderRadiusStyles = Partial<
-  Pick<
-    ViewStyle,
-    | 'borderBottomEndRadius'
-    | 'borderBottomLeftRadius'
-    | 'borderBottomRightRadius'
-    | 'borderBottomStartRadius'
-    | 'borderTopEndRadius'
-    | 'borderTopLeftRadius'
-    | 'borderTopRightRadius'
-    | 'borderTopStartRadius'
-    | 'borderRadius'
-  >
->;
-export const getButtonTouchableRippleStyle = (
-  style?: ViewStyle,
-  borderWidth: number = 0
-): ViewStyleBorderRadiusStyles => {
-  if (!style) return {};
-  const touchableRippleStyle: ViewStyleBorderRadiusStyles = {};
-
-  const [, borderRadiusStyles] = splitStyles(
-    style,
-    (style) => style.startsWith('border') && style.endsWith('Radius')
-  );
-
-  const borderRadiusKeys =
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
-    Object.keys(borderRadiusStyles) as Array<keyof ViewStyleBorderRadiusStyles>;
-
-  borderRadiusKeys.forEach((key) => {
-    const value = style[key];
-    if (typeof value === 'number') {
-      // Only subtract borderWidth if value is greater than 0
-      const radius = value > 0 ? value - borderWidth : 0;
-      touchableRippleStyle[key] = radius;
-    }
-  });
-  return touchableRippleStyle;
-};
-
+    backgroun
 ```
 
 ### Core Architecture Module: `src/components/Card/utils.tsx`
 ```
-import type { StyleProp, ViewStyle } from 'react-native';
+import type { ColorValue, StyleProp, ViewStyle } from 'react-native';
 
 import type { InternalTheme } from '../../theme/types';
 
@@ -848,7 +1061,6 @@ type BorderRadiusStyles = Pick<
 >;
 
 export type CardActionChildProps = {
-  compact?: boolean;
   mode?: string;
   style?: StyleProp<ViewStyle>;
 };
@@ -899,7 +1111,10 @@ export const getCardColors = ({
 }: {
   theme: InternalTheme;
   mode: CardMode;
-}) => {
+}): {
+  backgroundColor: ColorValue | undefined;
+  borderColor: ColorValue;
+} => {
   const isMode = (modeToCompare: CardMode) => {
     return mode === modeToCompare;
   };
@@ -921,7 +1136,12 @@ import type { ColorValue } from 'react-native';
 
 import { CheckboxTokens } from './tokens';
 import { tokens } from '../../theme/tokens';
-import type { InternalTheme } from '../../theme/types';
+import type {
+  InternalTheme,
+  StateLayer,
+  StateOpacityKey,
+} from '../../theme/types';
+import { getStateLayer } from '../../theme/utils/state';
 
 // MD3 Checkbox spec: https://m3.material.io/components/checkbox/specs
 
@@ -995,8 +1215,8 @@ const getIconColor = ({
 
 /**
  * Resolve the static (non-interactive) colors + opacity for the Checkbox
- * renderer. Hover / pressed / focused visuals are owned by `TouchableRipple`
- * and the focus-ring outline, so they don't appear here.
+ * renderer. The interaction states are resolved by `getCheckboxStateLayer`
+ * instead.
  */
 export const getSelectionVisualState = ({
   theme,
@@ -1035,6 +1255,73 @@ export const getSelectionVisualState = ({
   };
 };
 
+/** Interaction the state layer is painting, or `null` when it is idle. */
+export type CheckboxInteraction = Extract<
+  StateOpacityKey,
+  'hovered' | 'focused' | 'pressed'
+>;
+
+type StateLayerState = {
+  theme: InternalTheme;
+  selected: boolean;
+  error?: boolean;
+  customColor?: ColorValue;
+  customUncheckedColor?: ColorValue;
+};
+
+/**
+ * Resolve the MD3 state layer for the current interaction. Hover and focus use
+ * `primary` when selected and `onSurface` when not; pressing swaps them. An
+ * error checkbox stays on `error` throughout, and `color`/`uncheckedColor`
+ * override the role they already override on the box itself.
+ */
+export const getCheckboxStateLayer = ({
+  theme,
+  selected,
+  error,
+  interaction,
+  customColor,
+  customUncheckedColor,
+}: StateLayerState & {
+  interaction: CheckboxInteraction | null;
+}): StateLayer => {
+  if (interaction === null) {
+    return { color: 'transparent', opacity: 0 };
+  }
+
+  // A press previews the state being moved to, so the layer takes the opposite
+  // selection's color -- the same inversion the tokens below encode.
+  const followsSelected = interaction === 'pressed' ? !selected : selected;
+  const custom = followsSelected ? customColor : customUncheckedColor;
+
+  if (custom) {
+    return { color: custom, opacity: stateOpacity[interaction] };
+  }
+
+  if (error) {
+    return getStateLayer(
+      theme,
+      CheckboxTokens.errorStateLayerColor,
+      interaction
+    );
+  }
+
+  const role =
+    interaction === 'pressed'
+      ? selected
+        ? CheckboxTokens.selectedPressedStateLayerColor
+        : CheckboxTokens.unselectedPressedStateLayerColor
+      : interaction === 'focused'
+        ? selected
+          ? CheckboxTokens.selectedFocusStateLayerColor
+          : CheckboxTokens.unselectedFocusStateLayerColor
+        : selected
+          ? CheckboxTokens.selectedHoverStateLayerColor
+          : CheckboxTokens.unselectedHoverStateLayerColor;
+
+  return getStateLayer(theme, role, interaction);
+};
+
 ```
 
 ### Core Architecture Module: `src/components/Dialog/utils.ts`
@@ -1048,11 +1335,6 @@ export const DialogTitleIdContext = React.createContext<string | undefined>(
 
 export type DialogChildProps = {
   style?: StyleProp<ViewStyle>;
-};
-
-export type DialogActionChildProps = DialogChildProps & {
-  compact?: boolean;
-  uppercase?: boolean;
 };
 
 ```
@@ -1260,7 +1542,13 @@ export const getIconButtonColor = ({
   mode?: IconButtonMode;
   customIconColor?: ColorValue;
   customContainerColor?: ColorValue;
-}) => {
+}): {
+  iconColor: ColorValue;
+  iconOpacity: number;
+  backgroundColor: ColorValue | undefined;
+  borderColor: ColorValue;
+  backgroundOpacity: number;
+} => {
   const isMode = (modeToCompare: IconButtonMode) => {
     return mode === modeToCompare;
   };
@@ -1306,11 +1594,11 @@ export const getIconButtonColor = ({
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5105** (2026-09-23): **Exception 1, Code 1, Subcode 11674116835123304857 > KERN_INVALID_ADDRESS at 0xa202cb68cfee9999. EXC_BAD_ACCESS folly::dynamic::hash**
-  *Symptoms*: ### Current behaviour <!-- When i navigate between 2 screens then app got crash  --> When i navigate between 2 screens then app got crash  ### Expected behaviour <!-- Must be No crash while moving between 2 screens --> Must be No crash while moving between 2 screens  ### How to reproduce? <!-- Add 10-15 textinnut in screen and move to same screen again and again --> Add 10-15 textinnut in screen and move to same screen again and again  ### Issue stack trace  EXC_BAD_ACCESS: Exception 1, Code 1, Subcode 13012598385430910662 > KERN_INVALID_ADDRESS at 0xb4960949b06e56c6.   ReactNativeDependencies0x1052078ec  folly::dynamic::hash   ReactNativeDependencies0x105209b74  0x105209b40   ReactNativeDependencies0x105209b74  0x105209b40   ReactNativeDependencies0x1052098e0  0x105209898   ReactNativeDependencies0x1052069a4  folly::dynamic::dynamic   React               0x105dcd270  facebook::react::ShadowNode::clone   React               0x105db90b8  facebook::react::YogaLayoutableShadowNode::cloneChildInPlace   React               0x105dba074  facebook::react::YogaLayoutableShadowNode::yogaNodeCloneCallbackConnector   React               0x105c60138  facebook::yoga::Config::cloneNode   React               0x105c61dd4  facebook::yoga::Node::cloneChildrenIfNeeded   React               0x105c5bfa4  0x105c5ba90   React               0x105c5b92c  facebook::yoga::calculateLayoutInternal   React               0x105c58b38  facebook::yoga::layoutAbsoluteChild   React               0x105c59838  fac
+- **Issue #5187** (2026-11-09): **TextInput without a label is invisible while it is empty and unfocused**
+  *Symptoms*: ### Current behaviour  A `TextInput` with no `label` is invisible while it is empty and unfocused: its input, its placeholder and any prefix or suffix have opacity 0, so only the outline shows until the field is focused. The wrapper around the native input takes the label float opacity (`animatedContainerStyle` in `src/components/TextInput/hooks.ts`, applied at `TextInput.tsx:401`) whether or not there is a label, and that value is 0 while the field is empty and unfocused. In 5.x the placeholder was visible.  ### Expected behaviour  A `TextInput` without a label shows its input and placeholder at full opacity at all times. Only a `TextInput` with a label hides the input while the label rests in its place.  ### How to reproduce?  ```tsx const [query, setQuery] = React.useState('');  <TextInput   variant="outlined"   placeholder="Search for plugins..."   value={query}   onChangeText={setQuery} /> ```  1. Render it: only the outline shows, with no placeholder. 2. In a test, `expect(screen.getByPlaceholderText('Search for plugins...')).toBeVisible()` fails with "Received element is not visible".  ### What have you tried so far?  Applying `animatedContainerStyle` only when `label` is set keeps the floating label behaviour and shows the placeholder.  ### Your Environment  | software | version | --- | --- | react-native | 0.88.1 | react-native-paper | 6.0.0-alpha.1 and `main` at c8d8bab 
 
-- **Issue #5093** (2026-10-29): **Color Picker Popup Is Obscured On "Guides -> Theming -> Creating Dynamic Theme Colors" Documentation On Both v5 and v6**
-  *Symptoms*: ### Current behaviour <!-- Describe your issue in detail --> Color picker popup is not fully shown. I can't fill the color manually because the input is obscured. This happens for primary, secondary, and tertiary color pickers. I don't know if this happens on another platform, but I'm currently using Firefox 155.0 at the time of writing.  ### Expected behaviour <!-- A clear and concise description of what you expected to happen --> The color picker should be fully shown.  ### How to reproduce? <!-- Help us to reproduce the issue and describe the steps --> <!-- Attach code example on snack.expo.dev or in a GitHub repo --> 1. Go to **React Native Paper** documentation site (v5 or v6). 2. Navigate to **Guides -> Theming -> Creating Dynamic Theme Colors**. 3. Scroll down to the custom theme builder / color picker section and click any color input.  ### Preview <!-- Include screenshots or video if applicable. -->  **Primary Color Picker** <img width="2240" height="1400" alt="Image" src="https://github.com/user-attachments/assets/926c73a6-7e3d-4e7f-bb7a-b4d2974da9d9" />  **Secondary Color Picker** <img width="2240" height="1400" alt="Image" src="https://github.com/user-attachments/assets/006cdf2e-7344-43f9-a00d-05820e21aa0a" />  **Tertiary Color Picker** <img width="2240" height="1400" alt="Image" src="https://github.com/user-attachments/assets/aa07cdbe-3a60-43a3-b33b-62bc0168e934" />  ### What have you tried so far? <!-- List down the steps you have tried to fix or identify the is
+- **Issue #5162** (2026-11-06): **Text inside a View inside a Text renders with the default color on iOS and Android**
+  *Symptoms*: ### Current behaviour  With #5040, a nested `Text` or `AnimatedText` sets only its own style and leaves color and font to the enclosing text. Paper detects nesting with its own context, but React Native's `View` resets text inheritance, and Paper's context doesn't. So a Paper `Text` inside a `View` inside a Paper `Text` still counts as nested and sets no color or font. React Native then draws it with its defaults: black, system font, 14pt. In dark theme it is invisible. Before #5040 it rendered with the theme's `onSurface` color and default font.  This reaches any Paper component that wraps a `ReactNode` in a Paper `Text`, such as `Button` and `Chip` children or `List.Accordion`'s `title`, when the caller wraps a `Text` in a `View`.  Web is not affected: react-native-web's `View` doesn't reset inheritance, so the color reaches the text through CSS.  ### Expected behaviour  A `Text` inside a `View` isn't nested as far as React Native is concerned, so it should render like a top-level `Text`, with the theme color and default font, as before #5040.  ### How to reproduce?  ```tsx <Text variant="headlineSmall">   Parent{' '}   <View>     <Text>child in a View</Text>   </View> </Text> ```  Render it in dark theme on iOS or Android: "child in a View" is black on the dark surface.  ### Preview <img width="1144" height="287" alt="Image" src="https://github.com/user-attachments/assets/ed27b7b9-6baa-4228-91ae-2269907b6cb0" />  ### What have you tried so far?  Workarounds: pass `theme` t
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1327,382 +1615,77 @@ export const getIconButtonColor = ({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d7320443` (2026-11-03)
-**Commit Message**: docs: add a security policy (#5157)
+### Incident Patch 1: `d1fa26b7` (2026-11-09)
+**Commit Message**: fix(text-input): keep a TextInput without a label visible while empty (#5191)
 
-Point reporters to GitHub's private vulnerability reporting and list the versions that get security fixes.
+A TextInput without a label showed only its outline while empty and unfocused: the label's float opacity also hid the input and its placeholder. That opacity now applies only when a label is set.
 
-**File**: `SECURITY.md` (added, +17/-0)
+Fixes #5187
+
+**File**: `src/components/TextInput/hooks.ts` (modified, +5/-1)
 ```diff
-@@ -0,0 +1,17 @@
-+# Security policy
-+
-+## Supported versions
-+
-+| Version                                                   | Security fixes |
-+| --------------------------------------------------------- | -------------- |
-+| 6.x (`main`, published under the `alpha` tag until 6.0.0) | Yes            |
-+| The latest 5.x release                                    | Yes            |
-+| Older 5.x releases and earlier majors                     | No             |
-+
-+## Reporting a vulnerability
-+
-+Please don't report security problems in public issues, pull requests or discussions.
-+
-+Report them privately through GitHub instead: on the repository's Security tab, click "Report a vulnerability", or go straight to https://github.com/callstack/react-native-paper/security/advisories/new. Include what is affected (the version and the component or API), how to reproduce it, and what an attacker could do with it.
-+
-+The maintainers will reply in the advisory, work on a fix there with you, and credit you when it is published, unless you'd rather not be named.
+@@ -453,7 +453,11 @@ export const useTextInput = (props: TextInputProps): TextInputHookReturn => {
+     selectionColor,
+     cursorColor,
+     animatedActiveOutlineStyles: undefined,
+-    animatedContainerStyle: animation.animatedContainerStyle,
++    // The input only fades out while a label rests in its place; without a
++    // label the input and its placeholder stay visible.
++    animatedContainerStyle: props.label
++      ? animation.animatedContainerStyle
++      : undefined,
+     placeholder,
+     counterText,
+     accessibilityProps,
 ```
 
----
-
-### Incident Patch 2: `d2f5be6e` (2026-11-03)
-**Commit Message**: docs: fix getting started for new Expo and Community CLI apps (#5159)
-
-- Expo: install the icon package before the Reanimated step, which ends
-  in `npx expo prebuild`, and rerun prebuild for projects that already
-  have native folders.
-- Usage: point Expo Router projects to the root layout and add a sample.
-- Samples: import `./App` as the Community CLI template has it, and keep
-  `AppRegistry` in the Customization sample.
-- Bundle size: tell Expo users to create `babel.config.js`, and explain
-  how the plugin sits next to the worklets plugin.
-- Community CLI: say to run `pod install`, and drop the
-  `babel-plugin-optional-require` advice: Paper and Metro already treat
-  the icon package as optional (also in the Icons guide).
-
-**File**: `docs/6.x/docs/guides/getting-started.mdx` (modified, +37/-8)
+**File**: `src/components/__tests__/TextInput.test.tsx` (modified, +29/-0)
 ```diff
-@@ -34,14 +34,16 @@ Minimum requirements:
- - `react-native-worklets` **≥ 0.8.1**
- - `react-native-safe-area-context` — version compatible with your React Native toolchain.
+@@ -979,6 +979,35 @@ it('shows placeholder on multiline TextInput when focused', async () => {
+   );
+ });
  
--Follow the [React Native Reanimated installation guide](https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/getting-started/).
--
- You also need to install [@react-native-vector-icons/material-design-icons](https://github.com/oblador/react-native-vector-icons/tree/master/packages/material-design-icons), because some components use these icons internally:
- 
- ```bash
- npx expo install @react-native-vector-icons/material-design-icons
- ```
- 
-+If your project already has `ios` and `android` folders from `npx expo prebuild`, run `npx expo prebuild` again after installing it, so that its config plugin can add the icon font to the native projects.
++it.each(['filled', 'outlined'] as const)(
++  'keeps an empty, unfocused %s TextInput without a label visible',
++  async (variant) => {
++    await render(
++      <TextInput
++        variant={variant}
++        value=""
++        onChangeText={() => {}}
++        placeholder="Search for plugins..."
++      />
++    );
 +
-+Follow the [React Native Reanimated installation guide](https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/getting-started/).
++    expect(screen.getByPlaceholderText('Search for plugins...')).toBeVisible();
++  }
++);
 +
- If you have a `babel.config.js` or `.babelrc` file, make sure that it includes `babel-preset-expo`.
- 
-   </TabItem>
-@@ -71,8 +73,14 @@ npm install @react-native-vector-icons/material-design-icons
- `@react-native-vector-icons/material-design-icons` may require some additional setup steps depending on platform. To ensure the icon font is configured correctly, please follow the upstream [installation guide](https://github.com/oblador/react-native-vector-icons?tab=readme-ov-file#setup).
- :::
- 
-+On iOS, install the pods after adding these packages:
-+
-+```bash
-+cd ios && pod install
-+```
-+
- :::info
--If you don't want to install vector icons, you can use [babel-plugin-optional-require](https://github.com/satya164/babel-plugin-optional-require) to opt-out.
-+If you don't want to install vector icons, leave the package out. Components then show a placeholder instead of their built-in icons and log a warning for each one, so pass your own icons as described in [Use custom icons](./icons#4-use-custom-icons).
- :::
- 
-   </TabItem>
-@@ -93,7 +101,7 @@ module.exports = {
- };
- ```
- 
--If you created your project using Expo, it'll look something like this:
-+If you created your project using Expo, it'll look something like this. New Expo projects don't include a `babel.config.js`, so create it in the project root if it's missing:
- 
- ```js
- module.exports = function (api) {
-@@ -111,6 +119,8 @@ module.exports = function (api) {
- 
- The plugin only works if you are importing the library using ES2015 import statements and not with `require`.
- 
-+If your `babel.config.js` also lists `react-native-worklets/plugin`, as Reanimated requires for Community CLI projects, keep it in the top-level `plugins`. Babel adds the `env.production` plugins after it, which is fine because `react-native-paper/babel` only rewrites `import` statements.
-+
- :::note
- The above examples are for the latest `react-native` using Babel 7. If you have `react-native <= 0.55`, you'll have a `.babelrc` file instead of a `babel.config.js` file and the content of the file will be different.
- :::
-@@ -126,7 +136,7 @@ module.file_ext=.ios.js
- 
- ## Usage
- 
--Wrap your root component in `PaperProvider` from `react-native-paper`(if you are using versions prior to 5.8.0 you need to use `Provider`). If you have a vanilla React Native project, it's a good idea to add it in the component which is passed to `AppRegistry.registerComponent`. This will usually be in the `index.js` file. If you have an Expo project, you can do this inside the exported component in the `App.js` file.
-+Wrap your root component in `PaperProvider` from `react-native-paper`(if you are using versions prior to 5.8.0 you need to use `Provider`). If you have a vanilla React Native project, it's a good idea to add it in the component which is passed to `AppRegistry.registerComponent`. This will usually be in the `index.js` file. If you have an Expo project that uses Expo Router (the default for new Expo projects), wrap the content of your root layout, `app/_layout.tsx` (or `src/app/_layout.tsx`). In an Expo project without Expo Router, you can do this inside the exported component in the `App.js` file.
- 
- Example:
- 
-@@ -135,7 +145,7 @@ import * as React from 'react';
- import { AppRegistry } from 'react-native';
- import { PaperProvider } from 'react-native-paper';
- import { name as appName } from './app.json';
--import App from './src/App';
-+import App from './App';
- 
- export default function Main() {
-   return (
-@@ -148,6 +158,21 @@ export default function Main() {
- AppRegistry.registerComponent(appName, () => Main);
- ```
- 
-+For an Expo Router project, the root layout can look like this:
-+
-+```js
-+import { Stack } from 'expo-router';
-+import { PaperProvider } from 'react-native-paper';
-+
-+export default function RootLayout() {
-+  return (
-+    <PaperProvider>
-+      <Stack />
-+    </PaperProvider>
++it('hides the input of an empty, unfocused TextInput while its label rests in place', async () => {
++  await render(
++    <TextInput
++      label="Email"
++      value=""
++      onChangeText={() => {}}
++      testID="tf-input"
++    />
 +  );
-+}
-+```
 +
- The `PaperProvider` component provides the theme to all the components in the framework. It also acts as a portal to components whi
-```
-
-**File**: `docs/6.x/docs/guides/icons.mdx` (modified, +1/-1)
-```diff
-@@ -13,7 +13,7 @@ import IconsList from '@docs/components/IconsList.tsx';
- Many of the components render icon names using [`@react-native-vector-icons/material-design-icons`](https://github.com/oblador/react-native-vector-icons/tree/master/packages/material-design-icons). In Expo projects this usually works without extra setup. In vanilla React Native projects, install the package and complete any required platform setup as described in the [getting started guide](./getting-started).
- 
- :::note
--If you opted out of vector icons support using [babel-plugin-optional-require](https://github.com/satya164/babel-plugin-optional-require), you won't be able to use icon names for the icon prop. Some components may not look correct without vector icons and might need extra configuration.
-+If you don't install `@react-native-vector-icons/material-design-icons`, you won't be able to use icon names for the icon prop: components show a placeholder and log a warning instead. Some components may not look correct without vector icons and might need extra configuration.
- :::
- 
- ## Using the `icon` prop
-```
-
----
-
-### Incident Patch 3: `dc196281` (2026-11-03)
-**Commit Message**: fix(menu): account for keyboard already open when Menu mounts (#5122)
-
-* fix(menu): account for keyboard already open when Menu mounts
-
-Use Keyboard.metrics() when measuring layout so a Menu that mounts
-while the keyboard is visible still avoids it. Fixes #5096.
-
-* Update src/components/Menu/Menu.tsx
-
-Co-authored-by: Mikita Kliushun <[REDACTED_EMAIL]>
-
-* fix(menu): guard Keyboard.metrics call for react-native-web
-
-* Update Menu.test.tsx
-
-* test(menu): fix duplicate jest import and restore Platform
-
----------
-
-Co-authored-by: Manisha choudhary <[REDACTED_EMAIL]>
-Co-authored-by: Mikita Kliushun <[REDACTED_EMAIL]>
-
-**File**: `src/components/Menu/Menu.tsx` (modified, +7/-1)
-```diff
-@@ -117,6 +117,8 @@ const EASING = Easing.bezier(0.4, 0, 0.2, 1);
- 
- const WINDOW_LAYOUT = Dimensions.get('window');
- 
-+const getKeyboardHeight = (fallback: number) =>
-+  Keyboard.metrics?.()?.height ?? fallback;
- const DEFAULT_ELEVATION: Elevation = 2;
- const DEFAULT_MODE = 'elevated';
- 
-@@ -380,7 +382,9 @@ const Menu = ({
-     });
- 
-     setWindowLayout({
--      height: windowLayoutResult.height - keyboardHeightRef.current,
-+      height:
-+        windowLayoutResult.height -
-+        getKeyboardHeight(keyboardHeightRef.current),
-       width: windowLayoutResult.width,
-     });
- 
-@@ -461,6 +465,8 @@ const Menu = ({
-       'keyboardDidHide',
-       keyboardDidHide
-     );
-+    // iOS does not replay keyboardDidShow for a keyboard that is already open.
-+    keyboardHeightRef.current = getKeyboardHeight(keyboardHeightRef.current);
- 
-     return () => {
-       removeListeners();
-```
-
-**File**: `src/components/__tests__/Menu.test.tsx` (modified, +118/-6)
-```diff
-@@ -1,4 +1,4 @@
--import { Dimensions, Platform, StyleSheet, View } from 'react-native';
-+import { Dimensions, Keyboard, Platform, StyleSheet, View } from 'react-native';
- 
- import {
-   afterEach,
-@@ -92,27 +92,22 @@ describe('web focus', () => {
-   it('does not move focus when mounted hidden', async () => {
-     await render(makeMenu(false));
-     await act(() => jest.advanceTimersByTime(PAST_ANIMATION_MS));
--
-     expect(focus).not.toHaveBeenCalled();
-   });
- 
-   it('moves focus when opened and restores it when closed', async () => {
-     const { rerender } = await render(makeMenu(false));
-     await rerender(makeMenu(true));
-     await act(() => jest.advanceTimersByTime(PAST_ANIMATION_MS));
--
-     expect(focus).toHaveBeenCalledTimes(1);
--
-     await rerender(makeMenu(false));
-     await act(() => jest.advanceTimersByTime(PAST_ANIMATION_MS));
--
-     expect(focus).toHaveBeenCalledTimes(2);
-   });
- 
-   it('moves focus when mounted visible', async () => {
-     await render(makeMenu(true));
-     await act(() => jest.advanceTimersByTime(PAST_ANIMATION_MS));
--
-     expect(focus).toHaveBeenCalledTimes(1);
-   });
- });
-@@ -341,3 +336,120 @@ it('renders menu with mode "flat"', async () => {
-   expect(styles).not.toHaveProperty('shadowColor');
-   expect(styles).not.toHaveProperty('shadowOpacity');
- });
-+
-+it('accounts for a keyboard that is already open when the menu mounts', async () => {
-+  const testID = 'keyboard-aware-menu';
-+  const dimensionsSpy = jest.spyOn(Dimensions, 'get').mockReturnValue({
-+    width: 400,
-+    height: 800,
-+    scale: 2,
-+    fontScale: 2,
-+  });
-+  const keyboardMetricsSpy = jest.spyOn(Keyboard, 'metrics').mockReturnValue({
-+    screenX: 0,
-+    screenY: 500,
-+    width: 400,
-+    height: 300,
-+  });
-+
-+  let measureCalls = 0;
-+  const measureSpy = jest
-+    .spyOn(View.prototype, 'measureInWindow')
-+    .mockImplementation((fn) => {
-+      measureCalls += 1;
-+      if (measureCalls % 2 === 1) {
-+        // Menu content is tall enough to overflow the remaining window.
-+        fn(100, 100, 200, 400);
-+      } else {
-+        fn(100, 100, 80, 32);
-+      }
-+    });
-+
-+  function makeMenu(visible: boolean) {
-+    return (
-+      <Portal.Host>
-+        <Menu
-+          visible={visible}
-+          onDismiss={jest.fn()}
-+          anchor={
-+            <Button mode="outlined" testID="anchor">
-+              Open menu
-+            </Button>
-+          }
-+          testID={testID}
-+        >
-+          <Menu.Item onPress={jest.fn()} title="Undo" />
-+          <Menu.Item onPress={jest.fn()} title="Redo" />
-+        </Menu>
-+      </Portal.Host>
-+    );
-+  }
-+
-+  const { rerender } = await render(makeMenu(false));
-+
-+  await act(async () => {
-+    await rerender(makeMenu(true));
-+    await Promise.resolve();
-+  });
-+
-+  await waitFor(() => {
-+    // eslint-disable-next-line no-restricted-syntax -- layout height is not otherwise exposed.
-+    const styles = StyleSheet.flatten(screen.getByTestId(testID).props.style);
-+    // Available height is window (800) minus keyboard (300) minus top (100) minus SCREEN_INDENT (8).
-+    expect(styles).toEqual(expect.objectContaining({ height: 392 }));
-+  });
-+
-+  measureSpy.mockRestore();
-+  keyboardMetricsSpy.mockRestore();
-+  dimensionsSpy.mockRestore();
++  expect(screen.getByTestId('tf-input')).not.toBeVisible();
 +});
-+it('does not crash when Keyboard.metrics is unavailable (react-native-web)', async () => {
-+  const testID = 'no-metrics-menu';
-+  const original = Keyboard.metrics;
-+  // @ts-expect-error simulate react-native-web, where metrics doesn't exist
-+  Keyboard.metrics = undefined;
 +
-+  const dimensionsSpy = jest.spyOn(Dimensions, 'get').mockReturnValue({
-+    width: 400,
-+    height: 800,
-+    scale: 2,
-+    fontScale: 2,
-+  });
-+  const measureSpy = jest
-+    .spyOn(View.prototype, 'measureInWindow')
-+    .mockImplementation((fn) => fn(100, 100, 80, 32));
-+
-+  function makeMenu(visible: boolean) {
-+    return (
-+      <Portal.Host>
-+        <Menu
-+          visible={visible}
-+          onDismiss={jest.fn()}
-+          anchor={<Button mode="outlined">Open menu</Button>}
-+          testID={testID}
-+        >
-+          <Menu.Item onPress={jest.fn()} title="Undo" />
-+        </Menu>
-+      </Portal.Host>
-+    );
-+  }
-+
-+  try {
-+    const { rerender, toJSON } = await render(makeMenu(false));
-+
-+    await act(async () => {
-+      await rerender(makeMenu(true));
-+      await Promise.resolve();
-+    });
-+
-+    await waitFor(() => {
-+      const json = JSON.stringify(toJSON());
-+      expect(json).toContain('"left":100');
-+      expect(json).toContain('"top":100');
-+    });
-+  } finally {
-+    Keyboard.metrics = original;
-+    measureSpy.mockRestore();
-+    dimensionsSpy.mockRestore();
-+  }
-+});
+ it('does not expose the placeholder string again after the TextInput loses focus', async () => {
+   await render(
+     <TextInput
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5160** (2026-11-03): docs: mark the 6.x docs as prerelease instead of unreleased (@Doberjohn)
-- **PR #5159** (2026-11-03): docs: fix getting started for new Expo and Community CLI apps (@Doberjohn)
-- **PR #5158** (2026-11-03): docs: improve icon search visibility in dark mode (@mensonones)
-- **PR #5157** (2026-11-03): docs: add a security policy (@Doberjohn)
-- **PR #5156** (2026-11-03): docs: point the showcase page to the show and tell discussion (@Doberjohn)
-- **PR #5154** (2026-11-03): chore(deps): refresh vulnerable transitive dependencies in the lockfile (@Doberjohn)
+- **PR #5196** (2026-11-09): docs(migration): note the Button outline color and wider Banner actions (@Doberjohn)
+- **PR #5191** (2026-11-09): fix(text-input): keep a TextInput without a label visible while empty (@RClaudiuM)
+- **PR #5184** (2026-11-06): docs: fix the 6.x guide samples and fill gaps in the migration guide (@Doberjohn)
+- **PR #5183** (2026-11-06): docs(migration): cover theme exports, typography and aria props (@Doberjohn)
+- **PR #5178** (2026-11-06): fix(text): render a Text inside a View like a top-level Text on native (@Doberjohn)
+- **PR #5176** (2026-11-06): docs: fix dark mode styles on the docs site (@Stoneski93)
 
 ---
 
@@ -1722,44 +1705,32 @@ Co-authored-by: Mikita Kliushun <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: add a security policy (#5157)
+## X. text-input): keep a TextInput without a label visible while empty (#5191)
 
 **RULE**:
-When implementing operations in `SECURITY.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in callstack/react-native-paper. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/components/TextInput/hooks.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in callstack/react-native-paper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d7320443`: docs: add a security policy (#5157). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d1fa26b7`: text-input): keep a TextInput without a label visible while empty (#5191). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `SECURITY.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/components/TextInput/hooks.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-# Security policy
-
-## Supported versions
-
-| Version                                                   | Security fixes |
-| --------------------------------------------------------- | -------------- |
-| 6.x (`main`, published under the `alpha` tag until 6.0.0) | Yes            |
-| The latest 5.x release                                    | Yes            |
-| Older 5.x releases and earlier majors                     | No             |
-
-## Reporting a vulnerability
-
-Please don't report security problems in public issues, pull requests or discussions.
-
-Report them privately through GitHub instead: on the repository's Security tab, click "Report a vulnerability", or go straight to https://github.com/callstack/react-native-paper/security/advisories/new. Include what is affected (the version and the component or API), how to reproduce it, and what an attacker could do with it.
-
-The maintainers will reply in the advisory, work on a fix there with you, and credit you when it is published, unless you'd rather not be named.
+    // The input only fades out while a label rests in its place; without a
+    // label the input and its placeholder stay visible.
+    animatedContainerStyle: props.label
+      ? animation.animatedContainerStyle
+      : undefined,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    animatedContainerStyle: animation.animatedContainerStyle,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d7320443` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d1fa26b7` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/joreilly-peopleinspace-learnings.md`  
 > **Source**: github ([https://github.com/joreilly/PeopleInSpace](https://github.com/joreilly/PeopleInSpace))  
-> **Source Version**: `8b77f91d`  
+> **Source Version**: `9f9e8336`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T12:23:06.981Z  
+> **Timestamp**: 2026-11-07T22:16:06.639Z  
 > **Learning ID**: `learn-github-joreilly-peopleinspace`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/joreilly-peopleinspace-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/joreilly/PeopleInSpace](https://github.com/joreilly/PeopleInSpace))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T12:23:06.977Z  
+> **Harvest Timestamp**: 2026-11-07T22:16:06.458Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Kotlin Multiplatform sample with SwiftUI, Jetpack Compose, Compose for Wear, Compose for Desktop, and Compose for Web clients along with Ktor backend.
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3438 stars
+- **Stars / Engagement**: 3442 stars
 
 ---
 
@@ -627,11 +627,11 @@ if (typeof importScripts === "function") {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #559** (2026-10-22): **Batch Renovate updates**
-  *Symptoms*: ## Summary Combines the green Renovate PRs into one so they land together without catalog conflicts.  | Update | Supersedes | |---|---| | okhttp 5.5.0 → 5.5.1 | #558 | | kotlinx-serialization 1.11.0 → 1.12.0 | #556 | | kotlin.native.nuget 0.9.0 → 0.10.0 | #555 |  ## Test plan - [x] Local: `:common:jvmTest`, `:common:iosSimulatorArm64Test`, `:common:compileKotlinMingwX64`, `:app:assembleDebug`, `:wearApp:assembleDebug`, desktop / wasm / backend / mcp-server compile - [ ] CI green (incl. WinUI for the nuget bump, iOS, Maestro)  🤖 Generated with [Claude Code](https://claude.com/claude-code)  https://claude.ai/code/session_01TozpobA31Pi7QfQ6jfcn1G
+- **Issue #574** (2026-11-07): **Fix distZip/distTar for the desktop app and MCP server**
+  *Symptoms*: ## Summary - `:compose-desktop:distZip/distTar` and `:mcp-server:distZip/distTar` failed with `Entry …/lib/lifecycle-runtime-desktop-2.11.0.jar is a duplicate`. CI doesn't run these tasks, but `assemble` / `build` does. - Six lifecycle jars are on the runtime classpath twice under the same name: Google's `androidx.lifecycle` (real classes) and JetBrains' `org.jetbrains.androidx.lifecycle` 2.11.0, which are empty redirects (0 classes) to Google's. Compose 1.12.2 still requests the JetBrains coordinates. - A blanket `duplicatesStrategy = EXCLUDE` could keep the empty jar and break the app at runtime, so the distributions leave out the empty JetBrains redirects instead. The runtime classpath itself is unchanged.  ## Test plan - [x] `distZip`, `distTar`, `installDist` succeed for both modules; `:mcp-server:shadowJar` still builds - [x] `lib/` holds Google's lifecycle jars (14–42 classes each), no empty ones; jar counts match (110 → 105 incl. the module jar) - [x] Packaged MCP server (`installDist`, `--stdio`) answers `initialize` and `tools/list` - [ ] Packaged desktop app launch (not run, opens a window)  🤖 Generated with [Claude Code](https://claude.com/claude-code)  https://claude.ai/code/session_01XcDRQqpWA7UooBaaxdXrP1
 
-- **Issue #558** (2026-10-22): **Update okhttp to v5.5.1**
-  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [com.squareup.okhttp3:logging-interceptor](https://lysine.dev/okhttp/) ([source](https://redirect.github.com/lysine-dev/okhttp)) | `5.5.0` → `5.5.1` | ![age](https://developer.mend.io/api/mc/badges/age/maven/com.squareup.okhttp3:logging-interceptor/5.5.1?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/maven/com.squareup.okhttp3:logging-interceptor/5.5.0/5.5.1?slim=true) | | [com.squareup.okhttp3:okhttp](https://lysine.dev/okhttp/) ([source](https://redirect.github.com/lysine-dev/okhttp)) | `5.5.0` → `5.5.1` | ![age](https://developer.mend.io/api/mc/badges/age/maven/com.squareup.okhttp3:okhttp/5.5.1?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/maven/com.squareup.okhttp3:okhttp/5.5.0/5.5.1?slim=true) |  ---  > [!WARNING] > Some dependencies could not be looked up. Check the [Dependency Dashboard](../issues/203) for more information.  ---  ### Release Notes  <details> <summary>lysine-dev/okhttp (com.squareup.okhttp3:logging-interceptor)</summary>  ### [`v5.5.1`](https://redirect.github.com/lysine-dev/okhttp/blob/HEAD/CHANGELOG.md#Version-551)  *2026_10_22*  - Fix: \[Block 8 compromised eMudhra intermediate certificates]\[Mozilla_eMudhra]. Note that this   update is not necessary for Android devices with Google Play Serv
+- **Issue #573** (2026-11-07): **Fix startup crash: restore SQLDelight migrations and start a fresh people cache**
+  *Symptoms*: ## Summary - Since #524 (Oct 21), the Android app crashes on start for anyone upgrading from an earlier build: `SQLiteException: Can't downgrade database from version 3 to 1`. - #524 moved `PeopleInSpace.sq` into the new `db` module but left `1.sqm` / `2.sqm` in `common`, where SQLDelight no longer runs, so the generated `Schema.version` fell from 3 to 1. The migrations are moved next to the `.sq`, so the version is 3 again. - Installs created *since* #524 have the full schema labelled version 1, so re-running the migrations on them would crash with duplicate columns. The table is only a cache of the people list (refetched on start), so the file is renamed `peopleinspace-v3.db` (one shared constant, used on Android, iOS and Windows). Both kinds of install get a fresh database. Android deletes the old file; on iOS/Windows the small old file is left behind.  ## Test plan - [x] Generated `Schema.version` is 3 with both migrations - [x] `:common:jvmTest`, `:common:iosSimulatorArm64Test`; `:common:compileKotlinIosSimulatorArm64`, `:common:compileKotlinMingwX64` - [x] Installed over a version-3 `peopleinspace.db` on an emulator (previously crashing on start): launches, old file removed, `peopleinspace-v3.db` created, list loads - [ ] iOS app with a pre-existing database  🤖 Generated with [Claude Code](https://claude.com/claude-code)  https://claude.ai/code/session_01XcDRQqpWA7UooBaaxdXrP1
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -648,193 +648,233 @@ if (typeof importScripts === "function") {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8b77f91d` (2026-10-22)
-**Commit Message**: Batch Renovate updates (#559)
+### Incident Patch 1: `af06e426` (2026-11-06)
+**Commit Message**: Fix crash on configuration change with a person selected (#566)
 
-* Update dependency org.jetbrains.kotlinx:kotlinx-serialization-core to v1.12.0
+The list-detail navigator was keyed by Assignment, which isn't
+Bundle-saveable, so recreating the activity (dark mode toggle, rotation,
+fold/unfold) with a person selected crashed in onSaveInstanceState. Key it
+by the person's name instead and look the person up from the locally
+persisted list.
 
-* Update dependency io.github.xxfast.kotlin.native.nuget to v0.10.0
 
-* Update okhttp to v5.5.1
+Claude-Session: https://claude.ai/code/session_01XcDRQqpWA7UooBaaxdXrP1
 
----------
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-
-**File**: `gradle/libs.versions.toml` (modified, +3/-3)
+**File**: `app/src/main/java/dev/johnoreilly/peopleinspace/peopleinspace/persondetails/PersonDetailsScreen.kt` (modified, +20/-0)
 ```diff
-@@ -1,11 +1,11 @@
- [versions]
- kotlin = "2.5.0-Beta2"
--kotlinNativeNuget = "0.9.0"
-+kotlinNativeNuget = "0.10.0"
+@@ -23,16 +23,36 @@ import androidx.compose.material3.Scaffold
+ import androidx.compose.material3.Text
+ import androidx.compose.material3.TopAppBarDefaults
+ import androidx.compose.runtime.Composable
++import androidx.compose.runtime.getValue
+ import androidx.compose.ui.Alignment
+ import androidx.compose.ui.Modifier
+ import androidx.compose.ui.draw.clip
+ import androidx.compose.ui.graphics.Color
+ import androidx.compose.ui.layout.ContentScale
+ import androidx.compose.ui.unit.dp
++import androidx.lifecycle.compose.collectAsStateWithLifecycle
+ import coil3.compose.AsyncImage
+ import dev.johnoreilly.common.remote.Assignment
++import dev.johnoreilly.common.viewmodel.PersonListUiState
++import dev.johnoreilly.common.viewmodel.PersonListViewModel
++import org.koin.androidx.compose.koinViewModel
  
- compose-multiplatform = "1.12.2"
- composeUiTooling = "1.6.2"
- coroutines = "1.11.0"
--kotlinxSerialization = "1.11.0"
-+kotlinxSerialization = "1.12.0"
- androidGradlePlugin = "9.1.1"
- koin = "4.2.2"
- koin-compiler-plugin = "1.2.1"
-@@ -39,7 +39,7 @@ coilCompose3 = "3.6.3"
  
- horologist = "0.8.2-alpha"
- glanceAppWidget = "1.2.0-rc01"
--okhttp = "5.5.0"
-+okhttp = "5.5.1"
- kermit = "2.2.0"
++/**
++ * Looks the person up by name in the same (activity-scoped) list the list pane shows, so only
++ * the name needs to survive a configuration change. The list is persisted locally, so it's
++ * available again straight after the activity is recreated.
++ */
++@Composable
++fun PersonDetailsRoute(personName: String, showBackButton: Boolean, popBack: () -> Unit) {
++    val viewModel: PersonListViewModel = koinViewModel()
++    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
++    val person = (uiState as? PersonListUiState.Success)?.result?.firstOrNull { it.name == personName }
++    if (person != null) {
++        PersonDetailsScreen(person, showBackButton, popBack)
++    }
++}
++
+ @Composable
+ fun PersonDetailsScreen(person: Assignment, showBackButton: Boolean, popBack: () -> Unit) {
+     Scaffold(
+```
+
+**File**: `app/src/main/java/dev/johnoreilly/peopleinspace/peopleinspace/ui/PeopleInSpaceApp.kt` (modified, +7/-6)
+```diff
+@@ -23,10 +23,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
+ import androidx.compose.runtime.setValue
+ import androidx.compose.ui.graphics.vector.ImageVector
+ import androidx.compose.ui.res.stringResource
+-import dev.johnoreilly.common.remote.Assignment
+ import dev.johnoreilly.peopleinspace.R
+ import dev.johnoreilly.peopleinspace.issposition.ISSPositionRoute
+-import dev.johnoreilly.peopleinspace.persondetails.PersonDetailsScreen
++import dev.johnoreilly.peopleinspace.persondetails.PersonDetailsRoute
+ import dev.johnoreilly.peopleinspace.personlist.PersonListRoute
+ import kotlinx.coroutines.launch
  
- gradleVersionsPlugin = "0.66.0"
+@@ -43,7 +42,9 @@ enum class AppDestinations(
+ @Composable
+ fun PeopleInSpaceApp() {
+     var currentDestination by rememberSaveable { mutableStateOf(AppDestinations.PERSON_LIST) }
+-    val navigator = rememberListDetailPaneScaffoldNavigator<Assignment>()
++    // Keyed by name, not Assignment: the key is saved to the Bundle on configuration changes
++    // (rotation, dark mode), and Assignment isn't Bundle-saveable.
++    val navigator = rememberListDetailPaneScaffoldNavigator<String>()
+     val scope = rememberCoroutineScope()
+ 
+     BackHandler(navigator.canNavigateBack()) {
+@@ -78,14 +79,14 @@ fun PeopleInSpaceApp() {
+                         listPane = {
+                             PersonListRoute { person ->
+                                 scope.launch {
+-                                    navigator.navigateTo(ListDetailPaneScaffoldRole.Detail, person)
++                                    navigator.navigateTo(ListDetailPaneScaffoldRole.Detail, person.name)
+                                 }
+                             }
+                         },
+                         detailPane = {
+                             navigator.currentDestination?.contentKey?.let {
+-                                PersonDetailsScreen(
+-                                    person = it,
++                                PersonDetailsRoute(
++                                    personName = it,
+                                     showBackButton = !navigator.isListPaneVisible(),
+                                     popBack = {
+                                         scope.launch { navigator.navigateBack() }
 ```
 
 ---
 
-### Incident Patch 2: `63ffad70` (2026-10-21)
-**Commit Message**: Remove SwiftExecutablePackage and stale SKIE references (#557)
+### Incident Patch 2: `9f9e8336` (2026-11-07)
+**Commit Message**: Fix distZip/distTar for the desktop app and MCP server (#574)
 
-The CLI ran against a 2023 Objective-C export XCFramework in
-PeopleInSpacePackage that nothing here builds any more, and it was the last
-KMP-NativeCoroutines user. The README now reflects Swift Export.
+JetBrains' org.jetbrains.androidx.lifecycle 2.11 desktop artifacts are empty
+redirects to Google's androidx.lifecycle ones and share their jar names, and
+Compose 1.12.2 still requests them. Both end up on the runtime classpath, so
+the distribution's lib/ held six names twice and distZip/distTar failed. A
+blanket duplicatesStrategy could keep the empty jar and break the app at
+runtime, so leave the empty redirects out instead.
 
 
-Claude-Session: https://claude.ai/code/session_01TozpobA31Pi7QfQ6jfcn1G
+Claude-Session: https://claude.ai/code/session_01XcDRQqpWA7UooBaaxdXrP1
 
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `README.md` (modified, +2/-3)
+**File**: `compose-desktop/build.gradle.kts` (modified, +11/-0)
 ```diff
-@@ -7,7 +7,6 @@
- * Android App Widget (Compose based Glance API - contributed by https://github.com/yschimke)
- * Wear OS (Compose for Wear OS - primarily developed by https://github.com/yschimke)  
- * iOS (SwiftUI)
--* Swift Executable Package
- * Desktop (Compose for Desktop)
- * Web (Compose for Web - Wasm based)
- * Windows (WinUI 3)
-@@ -33,7 +32,7 @@ flowchart TB
-         direction LR
-         android["<b>app</b><br/>Android · Jetpack Compose<br/>+ Glance / Remote Compose widgets"]
-         wear["<b>wearApp</b><br/>Wear OS · Compose + Tile"]
--        ios["<b>PeopleInSpaceSwiftUI</b><br/>iOS · SwiftUI (SKIE)<br/>+ SwiftExecutablePackage"]
-+        ios["<b>PeopleInSpaceSwiftUI</b><br/>iOS · SwiftUI (Swift Export)"]
-         desktop["<b>compose-desktop</b><br/>JVM · Compose for Desktop"]
-         web["<b>compose-web</b><br/>Kotlin/Wasm · Compose"]
-         winui["<b>windows/WinUiApp</b><br/>.NET · WinUI 3"]
-@@ -248,7 +247,7 @@ I also have the following samples that demonstrate the use of a variety of Kotli
- * [Compose Multiplatform](https://www.jetbrains.com/compose-multiplatform/)
- * [Compose for Wear OS](https://developer.android.com/training/wearables/compose)
- * [SwiftUI](https://developer.apple.com/documentation/swiftui)
--* [SKIE](https://skie.touchlab.co/intro)
-+* [Swift Export](https://kotlinlang.org/docs/native-swift-export.html)
- * [Coil](https://coil-kt.github.io/coil/)
- * [Kermit](https://kermit.touchlab.co/)
- * [Maestro](https://maestro.mobile.dev/)
+@@ -19,3 +19,14 @@ dependencies {
+ application {
+     mainClass.set("MainKt")
+ }
++
++// JetBrains' org.jetbrains.androidx.lifecycle 2.11 desktop artifacts are empty redirects to Google's
++// androidx.lifecycle ones and share their jar names, so lib/ would hold each name twice and
++// distZip/distTar fail. Leave the empty redirects out; Google's jars carry the classes.
++distributions {
++    main {
++        contents {
++            exclude { it.file.path.contains("${File.separator}org.jetbrains.androidx.lifecycle${File.separator}") }
++        }
++    }
++}
 ```
 
-**File**: `SwiftExecutablePackage/.gitignore` (removed, +0/-8)
+**File**: `mcp-server/build.gradle.kts` (modified, +11/-0)
 ```diff
-@@ -1,8 +0,0 @@
--.DS_Store
--/.build
--/Packages
--xcuserdata/
--DerivedData/
--.swiftpm/configuration/registries.json
--.swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata
--.netrc
+@@ -32,3 +32,14 @@ tasks.shadowJar {
+     }
+ }
+ 
++
++// JetBrains' org.jetbrains.androidx.lifecycle 2.11 desktop artifacts are empty redirects to Google's
++// androidx.lifecycle ones and share their jar names, so lib/ would hold each name twice and
++// distZip/distTar fail. Leave the empty redirects out; Google's jars carry the classes.
++distributions {
++    main {
++        contents {
++            exclude { it.file.path.contains("${File.separator}org.jetbrains.androidx.lifecycle${File.separator}") }
++        }
++    }
++}
 ```
 
-**File**: `SwiftExecutablePackage/Package.resolved` (removed, +0/-32)
+---
+
+### Incident Patch 3: `dc8a6568` (2026-11-07)
+**Commit Message**: Fix IDE sync with AGP 9.5's Compose Preview task (#572)
+
+AGP 9.5 registers generate<Variant>ComposePreviewRunfiles for every Compose
+variant and fails to create it when the variant has no unit-test component,
+which AGP 9 omits for non-debug build types by default. CLI builds never
+realise the task, but IDE sync (and `tasks --all`) does, so sync broke after
+the 9.5.1 bump. Re-enable unit-test components for all build types and skip
+the non-debug test tasks, which can't run the Robolectric Compose tests
+(ui-test-manifest is debug-only) and didn't exist before the bump.
+
+
+Claude-Session: https://claude.ai/code/session_01XcDRQqpWA7UooBaaxdXrP1
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `app/build.gradle.kts` (modified, +7/-0)
 ```diff
-@@ -1,32 +0,0 @@
--{
--  "pins" : [
--    {
--      "identity" : "kmp-nativecoroutines",
--      "kind" : "remoteSourceControl",
--      "location" : "https://github.com/rickclephas/KMP-NativeCoroutines.git",
--      "state" : {
--        "revision" : "54a45fbb15bc0bebc54081f87683830d3bc9e84e",
--        "version" : "1.0.6"
--      }
--    },
--    {
--      "identity" : "peopleinspacepackage",
--      "kind" : "remoteSourceControl",
--      "location" : "https://github.com/joreilly/PeopleInSpacePackage",
--      "state" : {
--        "branch" : "main",
--        "revision" : "af7f4e6adbc5f9016ec4b035e64a9aa696d1df34"
--      }
--    },
--    {
--      "identity" : "rxswift",
--      "kind" : "remoteSourceControl",
--      "location" : "https://github.com/ReactiveX/RxSwift.git",
--      "state" : {
--        "revision" : "9dcaa4b333db437b0fbfaf453fad29069044a8b4",
--        "version" : "6.6.0"
--      }
--    }
--  ],
--  "version" : 2
+@@ -114,3 +114,10 @@ dependencies {
+     implementation(projects.common)
+ }
+ 
++
++// Only debug unit tests run (ui-test-manifest, which provides createComposeRule()'s
++// ComponentActivity, is debug-only). The other variants' unit-test components exist only so
++// AGP 9.5's Compose Preview task can be created; see gradle.properties.
++tasks.withType<Test>().configureEach {
++    enabled = name.contains("Debug")
++}
+```
+
+**File**: `gradle.properties` (modified, +6/-0)
+```diff
+@@ -16,3 +16,9 @@ org.jetbrains.compose.experimental.jscanvas.enabled=true
+ org.jetbrains.compose.experimental.macos.enabled=true
+ # Experimental: incremental compilation for Kotlin/Native (speeds up iOS framework rebuilds)
+ kotlin.incremental.native=true
++
++# AGP 9.5 creates a Compose Preview task for every Compose variant and fails IDE sync
++# (`tasks --all`) when that variant has no unit-test component, which AGP 9 omits for
++# non-debug build types by default (b/572377862). The extra non-debug unit-test tasks are
++# skipped in app/ and wearApp/.
++android.onlyEnableUnitTestForTheTestedBuildType=false
+```
+
+**File**: `wearApp/build.gradle.kts` (modified, +8/-1)
+```diff
+@@ -106,4 +106,11 @@ dependencies {
+     debugImplementation(libs.androidx.tracing)
+ 
+     implementation(projects.common)
 -}
-```
-
-**File**: `SwiftExecutablePackage/Package.swift` (removed, +0/-22)
-```diff
-@@ -1,22 +0,0 @@
--// swift-tools-version:5.9
--// The swift-tools-version declares the minimum version of Swift required to build this package.
--
--import PackageDescription
--
--let package = Package(
--    name: "PeopleInSpace",
--    platforms: [.macOS(.v13)],
--    dependencies: [
--        .package(url: "https://github.com/rickclephas/KMP-NativeCoroutines.git", exact: "1.0.6"),
--        .package(url: "https://github.com/joreilly/PeopleInSpacePackage", branch: "main")
--    ],
--    targets: [
--        .executableTarget(
--            name: "peopleinspace",
--            dependencies: [
--                .product(name: "KMPNativeCoroutinesAsync", package: "KMP-NativeCoroutines"),
--                .product(name: "PeopleInSpaceKit", package: "PeopleInSpacePackage")
--            ]
--        )
--    ]
--)
-```
-
-**File**: `SwiftExecutablePackage/Sources/main.swift` (removed, +0/-14)
-```diff
-@@ -1,14 +0,0 @@
--import KMPNativeCoroutinesAsync
--import PeopleInSpaceKit
--
--KoinKt.doInitKoin()
--let repository = PeopleInSpaceRepository()
--let people = try await asyncFunction(for: repository.fetchPeople())
--people.forEach { person in
--    print(person.name)
--}
--
--let issPositionStream = asyncSequence(for: repository.pollISSPosition())
--for try await issPosition in issPositionStream {
--    print(issPosition)
--}
+\ No newline at end of file
++}
++
++// Only debug unit tests run (ui-test-manifest, which provides createComposeRule()'s
++// ComponentActivity, is debug-only). The other variants' unit-test components exist only so
++// AGP 9.5's Compose Preview task can be created; see gradle.properties.
++tasks.withType<Test>().configureEach {
++    enabled = name.contains("Debug")
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #559** (2026-10-22): Batch Renovate updates (@joreilly)
-- **PR #558** (closed): Update okhttp to v5.5.1 (@renovate[bot])
-- **PR #557** (2026-10-21): Remove SwiftExecutablePackage and stale SKIE references (@joreilly)
-- **PR #556** (closed): Update dependency org.jetbrains.kotlinx:kotlinx-serialization-core to v1.12.0 (@renovate[bot])
-- **PR #555** (closed): Update dependency io.github.xxfast.kotlin.native.nuget to v0.10.0 (@renovate[bot])
-- **PR #554** (2026-10-18): Update copy-webpack-plugin to 14.0.0 (removes vulnerable braces) (@joreilly)
+- **PR #574** (2026-11-07): Fix distZip/distTar for the desktop app and MCP server (@joreilly)
+- **PR #573** (2026-11-07): Fix startup crash: restore SQLDelight migrations and start a fresh people cache (@joreilly)
+- **PR #572** (2026-11-07): Fix IDE sync with AGP 9.5's Compose Preview task (@joreilly)
+- **PR #571** (2026-11-07): Batch Renovate updates (@joreilly)
+- **PR #570** (closed): Update dependency Microsoft.WindowsAppSDK to 2.6.5 (@renovate[bot])
+- **PR #569** (closed): Update dependency io.modelcontextprotocol:kotlin-sdk to v0.16.0 (@renovate[bot])
 
 ---
 
@@ -854,32 +894,47 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Batch Renovate updates (#559)
+## X. crash on configuration change with a person selected (#566)
 
 **RULE**:
-When implementing operations in `gradle/libs.versions.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in joreilly/PeopleInSpace. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `app/src/main/java/dev/johnoreilly/peopleinspace/peopleinspace/persondetails/PersonDetailsScreen.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in joreilly/PeopleInSpace. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8b77f91d`: Batch Renovate updates (#559). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `af06e426`: crash on configuration change with a person selected (#566). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `gradle/libs.versions.toml`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `app/src/main/java/dev/johnoreilly/peopleinspace/peopleinspace/persondetails/PersonDetailsScreen.kt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-kotlinNativeNuget = "0.10.0"
-kotlinxSerialization = "1.12.0"
-okhttp = "5.5.1"
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import dev.johnoreilly.common.viewmodel.PersonListUiState
+import dev.johnoreilly.common.viewmodel.PersonListViewModel
+import org.koin.androidx.compose.koinViewModel
+/**
+ * Looks the person up by name in the same (activity-scoped) list the list pane shows, so only
+ * the name needs to survive a configuration change. The list is persisted locally, so it's
+ * available again straight after the activity is recreated.
+ */
+@Composable
+fun PersonDetailsRoute(personName: String, showBackButton: Boolean, popBack: () -> Unit) {
+    val viewModel: PersonListViewModel = koinViewModel()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val person = (uiState as? PersonListUiState.Success)?.result?.firstOrNull { it.name == personName }
+    if (person != null) {
+        PersonDetailsScreen(person, showBackButton, popBack)
+    }
+}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-kotlinNativeNuget = "0.9.0"
-kotlinxSerialization = "1.11.0"
-okhttp = "5.5.0"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8b77f91d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `af06e426` are properly handled with clean fallback behavior.

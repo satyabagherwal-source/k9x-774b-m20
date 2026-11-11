@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source**: github ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
-> **Source Version**: `202384a1`  
+> **Source Version**: `0d01dff9`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T12:29:30.541Z  
+> **Timestamp**: 2026-11-09T01:46:47.380Z  
 > **Learning ID**: `learn-github-t8y2-dbx`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T12:29:30.536Z  
+> **Harvest Timestamp**: 2026-11-09T01:46:47.371Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 25 MB lightweight cross-platform database client for 100+ databases, including MySQL, PostgreSQL, SQLite, Redis, MongoDB, DuckDB, SQL Server, and Dameng. Built-in AI, MCP Server, CLI, desktop and Docker. | 轻量级跨平台数据库管理工具，支持 MySQL、PostgreSQL、SQLite、Redis、MongoDB、达梦等 100+ 数据库，提供桌面端、Docker、CLI、内置 AI 助手和 MCP。
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 29186 stars
+- **Stars / Engagement**: 29581 stars
 
 ---
 
@@ -223,6 +223,8 @@ pub fn build_dsn(params: &ConnectParams) -> Result<BuiltDsn> {
     if !params.ca_cert_path.trim().is_empty() {
         set_query_param(&mut url, "tls_mode", "verify_identity");
         set_query_param(&mut url, "tls_ca", params.ca_cert_path.trim());
+    } else if params.ssl && !has_query_param(&url, "tls_version") {
+        set_query_param(&mut url, "tls_version", "tlsv1.2,tlsv1.3");
     }
     let database = url
         .path_segments()
@@ -340,6 +342,10 @@ fn set_query_param(url: &mut Url, key: &str, value: &str) {
     }
 }
 
+fn has_query_param(url: &Url, key: &str) -> bool {
+    url.query_pairs().any(|(existing, _)| existing.eq_ignore_ascii_case(key))
+}
+
 fn is_control_param(key: &str) -> bool {
     key.eq_ignore_ascii_case("transport") || key.eq_ignore_ascii_case("dbx.transport")
 }
@@ -424,14 +430,7 @@ mod tests {
     fn rejects_mutual_tls_paths_instead_of_ignoring_them() {
         let error =
             build_dsn(&ConnectParams { client_cert_path: "/tmp/client.pem".into(), ..Default::default() }).unwrap_err();
-        assert!(error.to_string().contains("client certificate"));
-    }
-
-    #[test]
-    fn ca_certificate_enables_tls_and_replaces_conflicting_query_values() {
-        let dsn = build_dsn(&ConnectParams {
-            connection_string: "ws://td.example.com:6041/db?tls_mode=verify_ca&tls_ca=old.pem".into(),
-          
+        assert!(error.to_string().contains("client 
 ```
 
 ### Core Architecture Module: `agents/drivers/tdengine/src/driver.rs`
@@ -515,6 +514,10 @@ struct QueryCursor {
     last_accessed_at: Instant,
 }
 
+pub fn ensure_crypto_provider() {
+    let _ = rustls::crypto::ring::default_provider().install_default();
+}
+
 impl TdengineDriver {
     pub fn new() -> Self {
         Self {
@@ -528,6 +531,7 @@ impl TdengineDriver {
     }
 
     pub async fn connect(&mut self, params: ConnectParams) -> Result<()> {
+        ensure_crypto_provider();
         self.disconnect().await;
         let dsn = build_dsn(&params)?;
         let builder =
@@ -694,8 +698,7 @@ impl TdengineDriver {
         let allowed = request.object_kinds.iter().map(|kind| kind.to_ascii_lowercase()).collect::<HashSet<_>>();
         let include_databases = allowed.contains("database") || allowed.contains("schema");
         let include_tables = allowed.is_empty() || allowed.contains("table") || allowed.contains("view");
-        let include_columns = allowed.contains("column");
-        let max_results = if request.max_results == 0 { 100 } else { request.max_results.min(1000
+        let 
 ```
 
 ### Core Architecture Module: `agents/drivers/tdengine/src/lib.rs`
@@ -1075,6 +1078,7 @@ impl AgentSession {
 }
 
 pub async fn run() -> Result<()> {
+    crate::driver::ensure_crypto_provider();
     let runtime = Arc::new(RuntimeServer::new());
     let (responses, mut response_rx) = mpsc::unbounded_channel::<RpcResponse>();
     let writer = tokio::spawn(async move {
@@ -1263,8 +1267,7 @@ impl RuntimeServer {
         Ok(())
     }
 
-    async fn session(&self, id: &str) -> Result<Arc<AgentSession>> {
-        self.sessions.read().awa
+    async fn session(&self, id: &str) -> Result<Arc<Agen
 ```
 
 ### Core Architecture Module: `agents/drivers/tdengine/src/value.rs`
@@ -1988,14 +1991,17 @@ func (b *Binary) GetValues() []byte {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #14360** (2026-11-05): **[Bug] 创建连接，选择Duckdb文件时不应该有这个文件扩展名的限制**
-  *Symptoms*: ### 数据库类型和版本 / Database type and version  duckdb  ### 问题描述 / Problem description  <img width="929" height="145" alt="Image" src="https://github.com/user-attachments/assets/3a555806-19e3-4d9f-8043-4e065c32eefe" />  ### 支持信息 / Support information  dbx: 0.6.66 操作系统：windows  ### 优先级（是否紧急） / Priority (urgency)  🔴 P0 紧急 · 下个版本必须修 / Urgent · Must fix next release  ### 补充信息 / Additional information  _No response_
-
-- **Issue #14338** (2026-11-05): **[Bug] 编辑框表名右键-结构工具-查看DDL语句-其中字段注释COMMENT ON COLUMN与表名粘连**
-  *Symptoms*: ### 数据库类型和版本 / Database type and version  GaussDB驱动  ### 问题描述 / Problem description  <img width="1331" height="991" alt="Image" src="https://github.com/user-attachments/assets/b0b02122-e4e7-43f2-8a06-7c96b9973d0a" />  <img width="237" height="320" alt="Image" src="https://github.com/user-attachments/assets/256baa61-420d-48f3-9322-76ff7e110c51" />  ### 支持信息 / Support information  DBX：0.6.65-beta.20261103.1 Windows11  ### 优先级（是否紧急） / Priority (urgency)  🟠 P1 重要 · 尽快处理 / Important · Fix soon  ### 补充信息 / Additional information  _No response_
+- **Issue #14525** (2026-11-07): **[Bug] PostgreSQL创建表无法选中安装的扩展类型**
+  *Symptoms*: ### 数据库类型和版本 / Database type and version  PostgreSQL 18.6  ### 问题描述 / Problem description  我在PostgreSQL 安装了扩展vector 但是创建表的时候无法找到这个下拉选项  <img width="1209" height="255" alt="Image" src="https://github.com/user-attachments/assets/9ef912d0-e9d8-4e75-8034-1e81efec3928" />  但是通过SQL创建的   显示这个类型 但是下拉选项依旧没有这类型  ### 支持信息 / Support information  <img width="403" height="426" alt="Image" src="https://github.com/user-attachments/assets/63531858-8728-4f99-afe2-1591d002258e" />  ### 优先级（是否紧急） / Priority (urgency)  🟠 P1 重要 · 尽快处理 / Important · Fix soon  ### 补充信息 / Additional information  _No response_
   **Post-Mortem & Fix Analysis**:
-  > 你好，正在尝试复现这个问题。截图中的 `COMMENT ON COLUMN` 与表名粘连已看到，但目前还不能确定发生在服务端 DDL 输出还是 DBX 显示处理环节。方便补充以下信息吗？  1. 执行 `SELECT version();` 的结果，以及连接配置里选择的具体驱动类型/配置（GaussDB、openGauss 或 JDBC；若是 JDBC，请提供驱动名称和版本，无需连接地址或账号密码）。 2. 一个能复现的最小建表 SQL，包含表/字段注释；并提供通过「编辑器右键表名 → 结构工具 → 查看 DDL」得到的**完整文本**，不要只截取注释行。表名、注释及业务信息可脱敏，但请保留引号、空格、换行和表选项。 3. 如果当前数据库支持，请提供 `SELECT pg_get_tabledef('实际schema.实际表名');` 返回的完整文本，便于与上面的 DDL 对比；若执行失败，提供报错即可。 4. 设置中「生成 SQL 是否带标识符引号」「是否带数据库名」的开关状态，以及 SQL 格式化风格（默认 DBX / 经典或自定义）。另外，从侧边栏查看同一张表的 DDL 是否也会粘连？  暂时还没有确认根因，这些信息有助于区分服务端生成、格式化和引号处理。谢谢！ 
-  > 1.(openGauss 5.0.0 build a07d57c3) compiled at 2023-03-29 03:07:56 commit 0 last mr   on x86_64-unknown-linux-gnu, compiled by g++ (GCC) 7.3.0, 64-bit postgresql://XXX@XX.XX.XX.XX:15400/XXX 2. SET search_path = yt;  CREATE TABLE test_table (a character varying(20),                          b  CHARACTER VARYING(20),                          c  CHARACTER VARYING(20),                          d  CHARACTER VARYING(20),                          e  CHARACTER VARYING(20),                          f  CHARACTER VARYING(20),                          g  CHARACTER VARYING(20),                          h  CHARACTER VARYING(20),                          i  CHARACTER VARYING(20),                          j character varying(20)) WITH (orientation = ROW, compression = no);  COMMENT ON TABLE test_table IS '测试表';  COMMENT ON COLUMN test_table.a IS '测试字段';  COMMENT ON COLUMN test_table.b IS '测试字段';  COMMENT ON COLUMN test_table.c IS '测试字段';  COMMENT ON COLUMN test_table.d IS '测试字段';  COMMENT ON COLUMN te
+  > /claim
+  > ✅ @dienaso 已认领 #14525，开始处理吧！
+
+- **Issue #14518** (2026-11-07): **[Bug] 修改存储过程中使用了未定义的变量任然可以执行成功**
+  *Symptoms*: ### 数据库类型和版本 / Database type and version  SQL server  ### 问题描述 / Problem description  修改存储过程中使用了未定义的变量任然可以执行成功  <img width="1518" height="651" alt="Image" src="https://github.com/user-attachments/assets/d24cbe7c-6ec5-43a7-aea8-dbb7f1dbeb49" />  ### 支持信息 / Support information  修改存储过程中使用了未定义的变量任然可以执行成功  ### 优先级（是否紧急） / Priority (urgency)  🔴 P0 紧急 · 下个版本必须修 / Urgent · Must fix next release  ### 补充信息 / Additional information  _No response_
+  **Post-Mortem & Fix Analysis**:
+  > /claim
+  > ✅ @Acd-kk 已认领 #14518，开始处理吧！
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2012,295 +2018,607 @@ func (b *Binary) GetValues() []byte {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `997c8b74` (2026-11-05)
-**Commit Message**: fix(jdbc): run DDL outside the paged query transaction (#14368)
+### Incident Patch 1: `1fd5f9c3` (2026-11-08)
+**Commit Message**: fix(release): retry agent R2 uploads and resume driver sync
 
-Paged execution wraps PostgreSQL statements in an explicit transaction so
-the cursor survives between pages. DDL has no cursor: the transaction only
-changes how the engine executes it. A CREATE TABLE AS may be committed by
-the engine on its own while the selected rows stay inside the transaction,
-so a retry reports 42P07 and an empty table is left behind (#14243).
+The first attempt of the agents release uploaded the JRE tarballs in one
+unretried `aws s3 cp`, so a single R2 response timeout failed the whole
+release after every build had succeeded. Retry each upload, and sync the
+version-scoped driver packages by size so a retry only sends what is missing.
 
-Statements that can never return rows now run in auto-commit, matching psql
-and DBeaver. Queries, INSERT/UPDATE/DELETE (including RETURNING) and CALL
-keep the cursor transaction unchanged.
-
-**File**: `plugins/jdbc/src/main/java/app/dbx/jdbc/DbxJdbcPlugin.java` (modified, +32/-1)
+**File**: `.github/workflows/agents-release.yml` (modified, +19/-5)
 ```diff
-@@ -1881,7 +1881,10 @@ private static JsonNode executeQueryPage(
-         boolean preserveOracleDateTime = isOracleUrl(jdbcUrl(connection));
-         ZoneId timestampZone = tdengineTimestampZone(connection, conn);
-         boolean bitStringColumns = usesBitStringColumns(connection);
--        boolean restoreAutoCommit = beginPagedQueryTransaction(connection, conn);
-+        // DDL has no cursor to keep alive across pages, and wrapping it in the
-+        // paged transaction changes how PostgreSQL-compatible engines execute
-+        // it (see pagedQueryCannotReturnRows).
-+        boolean restoreAutoCommit = !pagedQueryCannotReturnRows(sql) && beginPagedQueryTransaction(connection, conn);
-         Statement statement;
-         try {
-             statement = createPagedQueryStatement(conn);
-@@ -1963,6 +1966,34 @@ private static Statement createPagedQueryStatement(Connection connection) throws
-         }
+@@ -1879,23 +1879,37 @@ jobs:
+           R2_ENDPOINT: "https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com"
+           R2_BUCKET: "s3://${{ secrets.R2_BUCKET_NAME }}"
+         run: |
++          set -euo pipefail
++          retry() {
++            local attempt
++            for attempt in 1 2 3; do
++              if "$@"; then
++                return 0
++              fi
++              echo "::warning::R2 upload attempt ${attempt}/3 failed: $*"
++              sleep $((attempt * 15))
++            done
++            return 1
++          }
+           # Always upload the current registry.
+-          aws s3 cp release/agent-registry.json \
++          retry aws s3 cp release/agent-registry.json \
+             "$R2_BUCKET/agents/agent-registry.json" \
+             --endpoint-url "$R2_ENDPOINT"
+           echo "Uploaded agent-registry.json"
+ 
+-          # Upload all single-driver packages concurrently.
+-          aws s3 cp release/ "$R2_BUCKET/agents/drivers/" \
+-            --recursive \
++          # Upload all single-driver packages concurrently. Package names carry
++          # the driver version, so the size check makes a retry resume after a
++          # transient R2 failure instead of re-uploading every driver again.
++          retry aws s3 sync release/ "$R2_BUCKET/agents/drivers/" \
+             --exclude "*" \
+             --include "dbx-agent-*.tar.zst" \
+             --include "dbx-agent-*.tar.zst.delta" \
++            --size-only \
+             --endpoint-url "$R2_ENDPOINT"
+           echo "Uploaded single-driver packages"
+ 
+           # Upload JRE packages concurrently, always overwriting the stable names.
+-          aws s3 cp release/ "$R2_BUCKET/agents/jre/" \
++          retry aws s3 cp release/ "$R2_BUCKET/agents/jre/" \
+             --recursive \
+             --exclude "*" \
+             --include "dbx-jre-*.tar.zst" \
+```
+
+---
+
+### Incident Patch 2: `5f1b876d` (2026-11-08)
+**Commit Message**: fix(oracle): scope trigger listings by TABLE_OWNER
+
+Closes #13498
+
+**File**: `agents/common/src/main/java/com/dbx/agent/OracleTriggerReader.java` (modified, +19/-0)
+```diff
+@@ -77,6 +77,25 @@ private static void attach(ObjectInfo object, TriggerInfo trigger) {
+         object.setParent_name(parent == null ? null : parent.name());
      }
  
 +    /**
-+     * Keywords for statements that never leave a result-set cursor behind.
-+     * The paged transaction exists only to keep a cursor readable across pages;
-+     * for these statements it changes engine semantics instead of adding value
-+     * (issue #14243: PostgreSQL-compatible engines may commit a `CREATE TABLE AS`
-+     * on their own while the selected rows stay inside the transaction, so the
-+     * client sees 42P07 on a retry and an empty table is left behind). Running
-+     * them in auto-commit matches psql and DBeaver.
++     * Schema-level trigger objects for the object tree's "触发器" group.
++     *
++     * <p>Unlike {@link #listTriggers}, this returns every trigger owned by the schema,
++     * including schema- and database-scoped triggers, as lightweight {@link ObjectInfo}
++     * rows that the tree expands and enriches on demand. The generic JDBC table/routine
++     * metadata never lists triggers, so the JDBC agent's schema object group is otherwise
++     * empty for Oracle connections (#13498).</p>
 +     */
-+    private static final Set<String> NO_RESULT_SET_KEYWORDS = Set.of(
-+        "ALTER",
-+        "ANALYZE",
-+        "CLUSTER",
-+        "COMMENT",
-+        "CREATE",
-+        "DROP",
-+        "GRANT",
-+        "REINDEX",
-+        "REFRESH",
-+        "REVOKE",
-+        "TRUNCATE",
-+        "VACUUM"
-+    );
-+
-+    private static boolean pagedQueryCannotReturnRows(String sql) {
-+        return NO_RESULT_SET_KEYWORDS.contains(firstSqlKeyword(sql));
++    public List<ObjectInfo> listSchemaObjects(String owner) throws SQLException {
++        List<ObjectInfo> objects = new ArrayList<>();
++        for (TriggerInfo trigger : summaries("t.OWNER = ?", List.of(owner), false)) {
++            ObjectInfo object = new ObjectInfo(trigger.getName(), "TRIGGER", owner, null);
++            attach(object, trigger);
++            objects.add(object);
++        }
++        return objects;
 +    }
 +
-     private static boolean beginPagedQueryTransaction(JsonNode connectionConfig, Connection connection)
-         throws SQLException {
-         if (!isPostgresConnection(connectionConfig) || !connection.getAutoCommit()) {
+     private TriggerInfo unavailable(ObjectInfo object, String owner, OracleTriggerMetadata.ReadState failure) {
+         TriggerInfo trigger = new TriggerInfo(object.getName(), "", "");
+         Map<String, OracleTriggerMetadata.ReadState> reads = new LinkedHashMap<>();
 ```
 
-**File**: `plugins/jdbc/src/test/java/app/dbx/jdbc/DbxJdbcPluginTest.java` (modified, +29/-5)
+**File**: `agents/common/src/main/java/com/dbx/agent/StandardJdbcMetadata.java` (modified, +34/-0)
 ```diff
-@@ -735,7 +735,7 @@ void executeQueryPageKeepsCursorForNextPages() throws Exception {
+@@ -151,11 +151,45 @@ public List<ObjectInfo> listObjects(
+                 && !configuredDatabase.trim().isEmpty()) {
+                 appendRoutines(result, meta, profile.getEscapeSchemaWildcards(), configuredDatabase, schema, schema);
+             }
++            // The generic JDBC table/routine metadata never lists Oracle triggers, so the
++            // schema "触发器" group is empty for JDBC Oracle connections unless we read them
++            // directly from the dictionary (#13498). Non-Oracle databases either lack the
++            // dictionary views or don't expose triggers this way, so the query is Oracle-only.
++            if (isOracle(meta)) {
++                try {
++                    result.addAll(new OracleTriggerReader(conn, oracleEngine(meta)).listSchemaObjects(schema));
++                } catch (Exception | AbstractMethodError ignored) {
++                    // Trigger metadata is best-effort; never fail the whole object group.
++                }
++            }
+             result.sort(Comparator.comparing(ObjectInfo::getName));
+             return normalized.filterObjects(result);
+         });
      }
  
-     @Test
--    void executeQueryPageCommitsStatementWithoutResultSet() throws Exception {
-+    void executeQueryPageRunsCtasInAutoCommitWithoutPagedTransaction() throws Exception {
-         List<String> calls = new ArrayList<>();
-         Driver driver = testDriver("jdbc:postgresql:dbx-ctas", scriptedPostgresConnection(calls, false, 2, false));
-         DriverManager.registerDriver(driver);
-@@ -755,16 +755,40 @@ void executeQueryPageCommitsStatementWithoutResultSet() throws Exception {
-             assertFalse(response.has("error"), response.toString());
-             assertEquals(2, response.path("result").path("affected_rows").asInt());
-             assertEquals(true, response.path("result").path("session_id").isNull());
--            int begin = callIndex(calls, call -> call.equals("setAutoCommit:false"));
--            int commit = callIndex(calls, call -> call.equals("commit"));
--            int restore = callIndex(calls, call -> call.equals("setAutoCommit:true"));
--            assertTrue(begin >= 0 && begin < commit && commit < restore, calls.toString());
-+            // DDL runs in auto-commit: no paged transaction, hence no
-+            // commit/rollback of it. See #14243.
-+            assertEquals(-1, callIndex(calls, call -> call.equals("setAutoCommit:false")), calls.toString());
-+            assertFalse(calls.contains("commit"), calls.toString());
-             assertFalse(calls.contains("rollback"), calls.toString());
-         } finally {
-             closeAndDeregister(connection, driver);
++    private static boolean isOracle(DatabaseMetaData meta) {
++        try {
++            String productName = meta.getDatabaseProductName();
++            return productName != null
++                && (productName.toLowerCase(Locale.ROOT).contains("oracle")
++                    || productName.toLowerCase(Locale.ROOT).contains("oceanbase"));
++        } catch (Exception | AbstractMethodError ignored) {
++            return false;
++        }
++    }
++
++    private static String oracleEngine(DatabaseMetaData meta) {
++        try {
++            String productName = meta.getDatabaseProductName();
++            if (productName != null && productName.toLowerCase(Locale.ROOT).contains("oceanbase")) {
++                return "oceanbase-oracle";
++            }
++        } catch (Exception | AbstractMethodError ignored) {
++            // fall through to plain oracle
++        }
++        return "oracle";
++    }
++
+     public List<String> listDataTypes(Connection conn) {
+         return unchecked(() -> {
+             Set<String> seen = new LinkedHashSet<>();
+```
+
+**File**: `agents/common/src/test/java/com/dbx/agent/OracleTriggerReaderTest.java` (modified, +17/-0)
+```diff
+@@ -59,6 +59,23 @@ void enrichesOnlyTheSelectedPageWithoutLoadingSourceOrRewritingOtherRows() throw
          }
      }
  
 +    @Test
-+    void pagedQueryCannotReturnRowsSkipsLeadingCommentsAndKeepsQueriesInTheTransaction() throws Exception {
-+        Method method = DbxJdbcPlugin.class.getDeclaredMethod("pagedQueryCannotReturnRows", String.class);
-+        method.setAccessible(true);
-+
-+        for (String sql : new String[] {
-+            "create table t as select 1",
-+            "  \n-- note\n/* block */ truncate table t",
-+            "ALTER TABLE t ADD COLUMN c int",
-+        }) {
-+            assertTrue((boolean) method.invoke(null, sql), sql);
-+        }
-+        for (String sql : new String[] {
-+            "select 1",
-+            "with x as (select 1) select * from x",
-+            "explain analyze select 1",
-+            "(select 1)",
-+            "insert into t(a) values (1) returning a",
-+            "call refresh_stats()",
-+        }) {
-+            assertFalse((boolean) method.invoke(null, sql), sql);
++    void listsSchemaLevelTriggerObjectsForTheTreeGroup() throws Exception {
++        try (Connection connection = fixture()) {
++            OracleTriggerReader reader = new OracleTriggerReader(connection, "oceanbase-oracle");
++            List<ObjectInfo> objects = reader.listSchemaObjects(OWNER);
++            assertEquals(1, objects.size());
++            ObjectInfo trigger = objects.get(0);
++            assertEquals("TRIGGER", trigger.getObject_type());
++            assertEquals(NAME, trigger.getName());
++            assertEquals(OWNER, trigger.getSchema());
++            assertNotNull(trigger.getTrigger());
++            assertEquals(PARENT_OWNER, trigger.getParent_schema());
++            assertEquals(" Parent ", trigger.getParent_name());
++            assertFalse(trigger.getValid());
 +        }
 +    }
 +
      @Test
-     void executeQueryPageCommitsEffectfulCursorWhenSessionDrains() throws Exception {
-         List<String> calls = new ArrayList<>();
+     void missingColumnsStayUnknownRatherThanDisabledOrValid() throws Exception {
+         try (Connection connection = fixture()) {
 ```
 
----
-
-### Incident Patch 2: `dc41ee21` (2026-11-05)
-**Commit Message**: fix(duckdb): allow any extension in the database file picker (#14366)
-
-Leave the save dialog and other database file filters unchanged.
-
-Refs #14360
-
-Co-authored-by: ThugKd <[REDACTED_EMAIL]>
-
-**File**: `apps/desktop/src/components/connection/ConnectionDialog.vue` (modified, +1/-1)
+**File**: `agents/common/src/test/java/com/dbx/agent/StandardJdbcMetadataTest.java` (modified, +149/-0)
 ```diff
-@@ -7393,7 +7393,7 @@ async function browseKafkaTlsFile(target: "ca" | "clientCert" | "clientKey") {
- async function browseDbFilePath() {
-   if (isTauriRuntime()) {
-     const { open } = await import("@tauri-apps/plugin-dialog");
--    const filters = form.value.db_type === "duckdb" ? [{ name: "DuckDB", extensions: ["duckdb", "db"] }] : form.value.db_type === "access" ? [{ name: "Microsoft Access", extensions: ["accdb", "mdb"] }] : form.value.db_type === "h2" ? [{ name: "H2", extensions: ["db"] }] : undefined;
-+    const filters = form.value.db_type === "access" ? [{ name: "Microsoft Access", extensions: ["accdb", "mdb"] }] : form.value.db_type === "h2" ? [{ name: "H2", extensions: ["db"] }] : undefined;
-     const selected = await open({
-       title: "Select Database File",
-       multiple: false,
-```
-
----
-
-### Incident Patch 3: `202384a1` (2026-11-05)
-**Commit Message**: fix(sqlserver): 导出脚本用 GO 分隔视图/例程/触发器批次 (#14314)
-
-SQL Server 要求 CREATE VIEW/PROCEDURE/FUNCTION/TRIGGER 是批次的第一条语句，
-原导出统一用分号和换行拼接，前面有表结构或 INSERT 时回放会报
-"CREATE VIEW 必须是查询批次中的第一个语句"。
-
-- 仅 SQL Server 的这四类对象在导出源前后写 GO，自成批次
-- 其它语句与方言保持不变；GO 是客户端批分隔符，DBX 的 SQL 文件执行器已用
-  split_sql_batches 支持 SQL Server 的 GO
-- 单测覆盖四类对象被包裹、非批对象不受影响，并用 split_sql_batches 验证
-  view/trigger 各自批次的首语句
-
-**File**: `crates/dbx-core/src/data/database_export.rs` (modified, +103/-0)
-```diff
-@@ -6433,6 +6433,47 @@ fn build_database_export_object_source_sql(
-     source: &str,
-     schema: &str,
-     drop_if_exists: bool,
-+) -> String {
-+    let source = build_database_export_object_source_sql_unwrapped(
-+        database_type,
-+        object_type,
-+        object_name,
-+        source,
-+        schema,
-+        drop_if_exists,
-+    );
-+    wrap_sqlserver_export_batch(database_type, object_type, source)
-+}
-+
-+/// SQL Server requires `CREATE VIEW` / `PROCEDURE` / `FUNCTION` / `TRIGGER` to be
-+/// the first statement in a batch. `;` only ends a statement, so an exported
-+/// script that places one of these after a table DDL or INSERT fails with
-+/// "CREATE VIEW must be the first statement in a query batch". `GO` is the
-+/// client-side batch separator; the exporter emits it around exactly those
-+/// objects, while every other statement keeps `;` (#14295).
-+fn wrap_sqlserver_export_batch(database_type: DatabaseType, object_type: &ObjectSourceKind, source: String) -> String {
-+    if source.is_empty()
-+        || database_type != DatabaseType::SqlServer
-+        || !matches!(
-+            object_type,
-+            ObjectSourceKind::View
-+                | ObjectSourceKind::Procedure
-+                | ObjectSourceKind::Function
-+                | ObjectSourceKind::Trigger
-+        )
-+    {
-+        return source;
-+    }
-+    format!("GO\n{source}\nGO")
-+}
-+
-+fn build_database_export_object_source_sql_unwrapped(
-+    database_type: DatabaseType,
-+    object_type: &ObjectSourceKind,
-+    object_name: &str,
-+    source: &str,
-+    schema: &str,
-+    drop_if_exists: bool,
- ) -> String {
-     let wrapped_source;
-     let source = if matches!(object_type, ObjectSourceKind::View | ObjectSourceKind::MaterializedView)
-@@ -7387,6 +7428,68 @@ mod tests {
-         );
+@@ -5,6 +5,7 @@
+ import org.junit.jupiter.params.provider.CsvSource;
+ 
+ import java.lang.reflect.InvocationHandler;
++import java.lang.reflect.InvocationTargetException;
+ import java.lang.reflect.Method;
+ import java.lang.reflect.Proxy;
+ import java.sql.Connection;
+@@ -20,9 +21,11 @@
+ import java.util.Map;
+ import java.util.concurrent.atomic.AtomicReference;
+ import java.util.concurrent.atomic.AtomicInteger;
++import java.util.stream.Collectors;
+ 
+ import static org.junit.jupiter.api.Assertions.assertEquals;
+ import static org.junit.jupiter.api.Assertions.assertFalse;
++import static org.junit.jupiter.api.Assertions.assertNotNull;
+ import static org.junit.jupiter.api.Assertions.assertTrue;
+ 
+ class StandardJdbcMetadataTest {
+@@ -878,6 +881,152 @@ void completionEscapesExactParentTable(String escape, String table, String expec
+         assertEquals(table, result.getCandidates().get(0).getParent_name());
      }
  
-+    #[test]
-+    fn sqlserver_export_wraps_batch_scoped_objects_with_go() {
-+        let cases = [
-+            (ObjectSourceKind::View, "CREATE VIEW [dbo].[v] AS SELECT 1;"),
-+            (ObjectSourceKind::Procedure, "CREATE PROCEDURE [dbo].[p] AS SELECT 1;"),
-+            (ObjectSourceKind::Function, "CREATE FUNCTION [dbo].[f]() RETURNS INT AS BEGIN RETURN 1 END;"),
-+            (ObjectSourceKind::Trigger, "CREATE TRIGGER [dbo].[trg] ON [dbo].[orders] AFTER INSERT AS SELECT 1;"),
-+        ];
-+        for (kind, source) in cases {
-+            let ddl =
-+                build_database_export_object_source_sql(DatabaseType::SqlServer, &kind, "obj", source, "dbo", false);
-+            assert_eq!(ddl, format!("GO\n{source}\nGO"), "{kind:?}");
++    @Test
++    void listsOracleTriggersInTheSchemaObjectGroup() throws Exception {
++        try (Connection connection = oracleFixture()) {
++            List<ObjectInfo> objects = StandardJdbcMetadata.INSTANCE.listObjects(
++                connection, oracleProfile(), "ORCL", "APP", MetadataListConstraints.NONE);
++
++            List<ObjectInfo> triggers = objects.stream()
++                .filter(object -> "TRIGGER".equals(object.getObject_type()))
++                .collect(Collectors.toList());
++            assertEquals(1, triggers.size());
++            ObjectInfo trigger = triggers.get(0);
++            assertEquals("Trigger A", trigger.getName());
++            assertEquals("APP", trigger.getSchema());
++            assertNotNull(trigger.getTrigger());
++            assertEquals("Trigger A", trigger.getTrigger().getName());
++            assertEquals("PARENT_OWNER", trigger.getParent_schema());
++            assertEquals("PARENT_TABLE", trigger.getParent_name());
 +        }
 +    }
 +
-+    #[test]
-+    fn sqlserver_export_keeps_non_batch_scoped_objects_unchanged() {
-+        let source = "CREATE SEQUENCE [dbo].[s] START WITH 1;";
-+        let ddl = build_database_export_object_source_sql(
-+            DatabaseType::SqlServer,
-+            &ObjectSourceKind::Sequence,
-+            "s",
-+            source,
-+            "dbo",
-+            false,
-+        );
-+        assert_eq!(ddl, source);
++    @Test
++    void nonOracleConnectionsNeverReadTheOracleTriggerDictionary() {
++        AtomicInteger preparedStatements = new AtomicInteger();
++        DatabaseMetaData meta = proxy(DatabaseMetaData.class, new MethodHandler() {
++            @Override
++            public Object handle(Method method, Object[] args) {
++                if ("getTables".equals(method.getName())) {
++                    return rows(row("TABLE_NAME", "T", "TABLE_TYPE", "TABLE", "REMARKS", null));
++                }
++                if ("getDatabaseProductName".equals(method.getName())) {
++                    return "PostgreSQL";
++                }
++                if ("getTableTypes".equals(method.getName())) {
++                    return rows(row("TABLE_TYPE", "TABLE"));
++                }
++                return defaultValue(method.getReturnType());
++            }
++        });
++        Connection conn = proxy(Connection.class, new MethodHandler() {
++            @Override
++            public Object handle(Method method, Object[] args) {
++                if ("getMetaData".equals(method.getName())) {
++                    return meta;
++                }
++                if ("prepareStatement".equals(method.getName())) {
++                    preparedStatements.incrementAndGet();
++                }
++                return defaultValue(method.getReturnType());
++            }
++        });
++
++        List<ObjectInfo> objects = StandardJdbcMetadata.INSTANCE.listObjects(
++            conn, profile, "postgres", "public", MetadataListConstraints.NONE);
++        assertEquals(0, preparedStatements.get());
++        assertTrue(objects.stream().noneMatch(object -> "TRIGGER".equals(object.getObject_type())));
 +    }
 +
-+    #[test]
-+    fn sqlserver_export_batches_place_each_create_first() {
-+        let view = build_database_export_object_source_sql(
-+            DatabaseType::SqlServer,
-+            &ObjectSourceKind::View,
-+            "v",
-+            "CREATE VIEW [dbo].[v] AS SELECT 1;",
-+            "dbo",
-+            false,
-+        );
-+        let trigger = build_database_export_object_source_sql(
-+            DatabaseType::SqlServer,
-+            &ObjectSourceKind::Trigger,
-+            "trg",
-+            "CREATE TRIGGER [dbo].[trg] ON [dbo].[orders] AFTER INSERT AS SELECT 1;",
-+            "dbo",
-+            false,
-+        );
-+        let script = format!(
-+            "CREATE TABLE [dbo].[orders] ([id] int);\nINSERT INTO [dbo].[orders] VALUES (1);\n{view}\n{trigger}\n"
-+        );
++    @Test
++    void oracleTriggerReadFailureKeepsTheRestOfTheObjectGroup() throws Exception {
++        try (Connection h2 = oracleH2Fixture()) {
++            h2.createStatement().execute("DROP TABLE ALL_TRIGGERS");
++            List<ObjectInfo> objects = StandardJdbcMetadata.INSTANCE.listObjects(
++                asOracleConnection(h2), oracleProfile(), "ORCL", "APP", MetadataListConstraints.NONE);
++            assertTrue(objects.stream().noneMatch(object -> "TRIGGER".equals(object.getObject_type())));
++        }
++    }
 +
-+        let batches = crate::sql::split_sql_batches(&script);
-+        assert!(
-+            batches.iter().any(|batch| batch.trim_start().starts_with("CREATE VIEW [dbo].[v]")),
-+            "view must start its own batch: {batches:?}"
-+        );
-+        assert!(
-+            batches.iter().any(|batch| batch.trim_start().starts_with("CREATE TRIGGER [dbo].[trg]")),
-+            "trigger must start its own batch: {batches:?}"
++    private static JdbcAgentProfile oracleProfile() {
++        return new JdbcAgentProfile(
++            "oracle.jdbc.OracleDriver",
++            "jdbc:oracle:thin:@{host}:{port}/{database}",
++            1521,
++            false,
++            Collections.singleton("SYS"),
++            Arrays.asList("TABLE", "VIEW")
 +        );
 +    }
 +
-     #[test]
-     fn postgres_extension_ddl_uses_target_default_version_and_source_schema() {
-         let extension = PostgresExportExtension { name: "pg_trgm".to_string(), schema: "addons".to_string() };
++    /**
++     * An Oracle-flavoured connection whose ALL_TRIGGERS dictionary answers the
++     * schema-level trigger query used by the object tree's 触发器 group.
++     */
++    private static Connection oracleFixture() throws Exception {
++        return asOracleConnection(oracleH2Fixture());
++    }
++
++    private static Connection oracleH2Fixture() throws Exception {
++        Connection h2 = java.sql.DriverManager.getConnection(
++            "jdbc:h2:mem:" + java.util.UUID.randomUUID() + ";MODE=Oracle
+```
+
+**File**: `agents/drivers/oracle-go/main.go` (modified, +1/-1)
+```diff
+@@ -262,7 +262,7 @@ LEFT JOIN ALL_SOURCE s
+   ON s.OWNER = t.OWNER
+  AND s.NAME = t.TRIGGER_NAME
+  AND s.TYPE = 'TRIGGER'
+-WHERE t.OWNER = :1
++WHERE t.TABLE_OWNER = :1
+   AND t.TABLE_NAME = :2
+   AND t.BASE_OBJECT_TYPE IN ('TABLE', 'VIEW')
+ ORDER BY t.TRIGGER_NAME, s.LINE`
+```
+
+**File**: `agents/drivers/oracle-go/main_test.go` (modified, +7/-2)
+```diff
+@@ -2750,8 +2750,13 @@ func TestOracleListTriggersSQLLoadsSourceWithoutLongColumns(t *testing.T) {
+ 	if strings.Contains(sqlText, "TRIGGER_BODY") {
+ 		t.Fatalf("trigger listing should avoid Oracle LONG trigger bodies, got: %s", oracleListTriggersSQL)
+ 	}
+-	if !strings.Contains(sqlText, "T.OWNER = :1") || !strings.Contains(sqlText, "T.TABLE_NAME = :2") {
+-		t.Fatalf("trigger listing should stay scoped to the selected schema and table, got: %s", oracleListTriggersSQL)
++	// Strict TABLE_OWNER scoping matches every sibling trigger path (the Rust
++	// reader, the Java agent, the DDL loader in this file, DBeaver) and keeps
++	// oracle_table_triggers' inventory OWNER match intact; an OR OWNER branch
++	// would list same-named tables in other schemas and then hard-fail that
++	// inventory check (#13498 review).
++	if !strings.Contains(sqlText, "T.TABLE_OWNER = :1") || !strings.Contains(sqlText, "T.TABLE_NAME = :2") || strings.Contains(sqlText, "T.OWNER = :1") {
++		t.Fatalf("trigger listing should scope strictly by the base table owner and table, got: %s", oracleListTriggersSQL)
+ 	}
+ }
+ 
+```
+
+**File**: `crates/dbx-core/src/schema/oracle_table_triggers.rs` (modified, +18/-13)
+```diff
+@@ -1,6 +1,6 @@
+ use super::*;
+ use dbx_sql::object_source_sql::{
+-    oracle_trigger_ddl_sources, oracle_trigger_enabled, oracle_trigger_metadata_matches,
++    oracle_trigger_ddl_sources_with_table_owner, oracle_trigger_enabled, oracle_trigger_metadata_matches,
+     oracle_trigger_source_with_create,
+ };
+ 
+@@ -36,18 +36,20 @@ pub(super) async fn enrich(
+         }
+     };
+     for trigger in triggers.iter_mut().filter(|trigger| incomplete(trigger)) {
+-        let mut rows = inventory.rows.iter().filter(|row| {
+-            row.first().and_then(serde_json::Value::as_str) == Some(schema)
+-                && row.get(1).and_then(serde_json::Value::as_str) == Some(trigger.name.as_str())
+-        });
++        // The listing admits triggers owned by other schemas (TABLE_OWNER
++        // match), so rows are keyed by name here and the row's actual OWNER is
++        // recorded instead of being required to equal the queried schema
++        // (#13498 review).
++        let mut rows = inventory
++            .rows
++            .iter()
++            .filter(|row| row.get(1).and_then(serde_json::Value::as_str) == Some(trigger.name.as_str()));
+         let row =
+             rows.next().ok_or_else(|| format!("{schema}.{}: trigger identity changed; compare again", trigger.name))?;
+-        if rows.next().is_some()
+-            || row.get(2).and_then(serde_json::Value::as_str) != Some(schema)
+-            || row.get(3).and_then(serde_json::Value::as_str) != Some(table)
+-        {
++        if rows.next().is_some() || row.get(3).and_then(serde_json::Value::as_str) != Some(table) {
+             return Err(format!("{schema}.{}: trigger table identity changed; compare again", trigger.name));
+         }
++        let trigger_owner = row.first().and_then(serde_json::Value::as_str).unwrap_or(schema);
+         let enabled = match row.get(4).and_then(serde_json::Value::as_str) {
+             Some("ENABLED") => true,
+             Some("DISABLED") => false,
+@@ -63,12 +65,15 @@ pub(super) async fn enrich(
+             return Err(format!("{schema}.{}: trigger firing state changed; compare again", trigger.name));
+         }
+         let missing_source = trigger.statement.as_deref().is_none_or(|source| source.trim().is_empty());
++        // A cross-schema trigger's ALL_SOURCE rows live under its actual OWNER,
++        // so both the source lookup and the identity check use trigger_owner
++        // rather than the queried schema (#13498 review).
+         let source = if missing_source {
+             match get_object_source_core(
+                 state,
+                 connection_id,
+                 database,
+-                schema,
++                trigger_owner,
+                 &trigger.name,
+                 db::ObjectSourceKind::Trigger,
+                 None,
+@@ -97,7 +102,7 @@ pub(super) async fn enrich(
+             }
+         };
+         if source.name != trigger.name
+-            || source.schema.as_deref() != Some(schema)
++            || source.schema.as_deref() != Some(trigger_owner)
+             || source.object_type != db::ObjectSourceKind::Trigger
+         {
+             return Err(format!("{schema}.{}: trigger source identity changed; compare again", trigger.name));
+@@ -112,15 +117,15 @@ pub(super) async fn enrich(
+                 continue;
+             }
+         };
+-        let definitions = match oracle_trigger_ddl_sources(&full, schema) {
++        let definitions = match oracle_trigger_ddl_sources_with_table_owner(&full, trigger_owner, schema) {
+             Ok(definitions) => definitions,
+             Err(_) => {
+                 log::warn!("Trigger metadata remains incomplete for {schema}.{}: invalid declaration", trigger.name);
+                 continue;
+             }
+         };
+         if definitions.len() != 1
+-            || definitions[0].owner != schema
++            || definitions[0].owner != trigger_owner
+             || definitions[0].name != trigger.name
+             || definitions[0].table_owner != schema
+             || definitions[0].table != table
+```
+
+**File**: `crates/dbx-sql-core/src/object_source_sql.rs` (modified, +7/-6)
+```diff
+@@ -17,12 +17,13 @@ pub use oracle_trigger::{
+ mod oracle_routines;
+ pub use oracle_indexes::{
+     extract_oracle_table_triggers, oracle_index_ddl_sources, oracle_table_created_index_identities,
+-    oracle_trigger_ddl_sources, oracle_trigger_definitions_match, oracle_trigger_enabled,
+-    oracle_trigger_metadata_matches, oracle_trigger_source_with_create, order_oracle_trigger_sources,
+-    parse_oracle_table_ddl, rebase_oracle_table_ddl, rebase_oracle_trigger_ddl, separate_oracle_supporting_indexes,
+-    separate_oracle_supporting_indexes_with_retained, split_oracle_table_ddl, split_oracle_table_ddl_with_retained,
+-    OracleDdlNameMapping, OracleIndexDdlSource, OracleSupportingIndexDdl, OracleSupportingIndexIdentity,
+-    OracleTableConstraintSource, OracleTableDdlParts, OracleTableDdlSource, OracleTriggerDdlSource,
++    oracle_trigger_ddl_sources, oracle_trigger_ddl_sources_with_table_owner, oracle_trigger_definitions_match,
++    oracle_trigger_enabled, oracle_trigger_metadata_matches, oracle_trigger_source_with_create,
++    order_oracle_trigger_sources, parse_oracle_table_ddl, rebase_oracle_table_ddl, rebase_oracle_trigger_ddl,
++    separate_oracle_supporting_indexes, separate_oracle_supporting_indexes_with_retained, split_oracle_table_ddl,
++    split_oracle_table_ddl_with_retained, OracleDdlNameMapping, OracleIndexDdlSource, OracleSupportingIndexDdl,
++    OracleSupportingIndexIdentity, OracleTableConstraintSource, OracleTableDdlParts, OracleTableDdlSource,
++    OracleTriggerDdlSource,
+ };
+ pub use oracle_routines::{
+     analyze_oracle_package_body_draft, analyze_oracle_routine_draft, compact_oracle_ddl,
+```
+
+---
+
+### Incident Patch 3: `9eb7dfb9` (2026-11-08)
+**Commit Message**: fix(postgres): surface underlying server errors
+
+Closes #13016
+
+**File**: `Cargo.lock` (modified, +3/-3)
+```diff
+@@ -7200,7 +7200,7 @@ dependencies = [
+ [[package]]
+ name = "postgres-protocol"
+ version = "0.6.12"
+-source = "git+https://github.com/t8y2/tokio-postgres-gaussdb.git?rev=ac8ad476de59093d33ab9f294531c956e0c6a724#ac8ad476de59093d33ab9f294531c956e0c6a724"
++source = "git+https://github.com/t8y2/tokio-postgres-gaussdb.git?rev=5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89#5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89"
+ dependencies = [
+  "base64 0.23.0",
+  "byteorder",
+@@ -7219,7 +7219,7 @@ dependencies = [
+ [[package]]
+ name = "postgres-types"
+ version = "0.2.14"
+-source = "git+https://github.com/t8y2/tokio-postgres-gaussdb.git?rev=ac8ad476de59093d33ab9f294531c956e0c6a724#ac8ad476de59093d33ab9f294531c956e0c6a724"
++source = "git+https://github.com/t8y2/tokio-postgres-gaussdb.git?rev=5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89#5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89"
+ dependencies = [
+  "bytes",
+  "chrono",
+@@ -10291,7 +10291,7 @@ dependencies = [
+ [[package]]
+ name = "tokio-postgres"
+ version = "0.7.18"
+-source = "git+https://github.com/t8y2/tokio-postgres-gaussdb.git?rev=ac8ad476de59093d33ab9f294531c956e0c6a724#ac8ad476de59093d33ab9f294531c956e0c6a724"
++source = "git+https://github.com/t8y2/tokio-postgres-gaussdb.git?rev=5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89#5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89"
+ dependencies = [
+  "async-trait",
+  "byteorder",
+```
+
+**File**: `Cargo.toml` (modified, +3/-3)
+```diff
+@@ -36,9 +36,9 @@ pageant = { path = "vendor/pageant" }
+ # (MicrosoftEdge/WebView2Feedback#5650, see
+ # vendor/wry/src/webview2/clipboard_history.rs).
+ wry = { path = "vendor/wry" }
+-tokio-postgres = { git = "https://github.com/t8y2/tokio-postgres-gaussdb.git", rev = "ac8ad476de59093d33ab9f294531c956e0c6a724" }
+-postgres-types = { git = "https://github.com/t8y2/tokio-postgres-gaussdb.git", rev = "ac8ad476de59093d33ab9f294531c956e0c6a724" }
+-postgres-protocol = { git = "https://github.com/t8y2/tokio-postgres-gaussdb.git", rev = "ac8ad476de59093d33ab9f294531c956e0c6a724" }
++tokio-postgres = { git = "https://github.com/t8y2/tokio-postgres-gaussdb.git", rev = "5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89" }
++postgres-types = { git = "https://github.com/t8y2/tokio-postgres-gaussdb.git", rev = "5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89" }
++postgres-protocol = { git = "https://github.com/t8y2/tokio-postgres-gaussdb.git", rev = "5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89" }
+ # Temporary compatibility patches for deprecated sha256_password accounts and
+ # rustls dangerous-mode connections to legacy certificates. Remove after upstream support lands.
+ mysql_async = { git = "https://github.com/t8y2/mysql_async.git", rev = "4cd84d86bb86b060320ce3459561e8093e4422fa" }
+```
+
+**File**: `crates/dbx-driver-postgres/src/postgres.rs` (modified, +119/-9)
+```diff
+@@ -82,7 +82,7 @@ pub fn gaussdb_identifier_quote_for_compatibility_mode(compatibility_mode: &str)
+ pub async fn opengauss_compatibility_mode(pool: &Pool) -> Result<Option<String>, String> {
+     let client = checkout_postgres_client(pool, None, super::connection_timeout()).await?;
+     let client = &EncodingClient::new(&client);
+-    let row = postgres_query_one_cached(client, GAUSSDB_COMPATIBILITY_SQL, &[]).await.map_err(|e| e.to_string())?;
++    let row = postgres_query_one_cached(client, GAUSSDB_COMPATIBILITY_SQL, &[]).await.map_err(pg_error_to_string)?;
+     Ok(row.try_get::<_, Option<String>>(0).ok().flatten().filter(|value| !value.trim().is_empty()))
+ }
+ 
+@@ -1558,9 +1558,9 @@ fn escape_tsvector_lexeme(value: &str) -> String {
+ fn pg_error_to_string(err: impl Into<PgError>) -> String {
+     let err = err.into();
+     let Some(db_error) = err.as_db_error() else {
+-        return err.to_string();
++        return error_with_sources_to_string(&err);
+     };
+-    let mut message = pg_db_error_to_string(db_error);
++    let mut message = db_error.to_string();
+     // Carry the server-reported cursor position across the `db` layer's
+     // `Result<_, String>` boundary; `query.rs` resolves it against the executed
+     // statement and strips the suffix before the message reaches any client.
+@@ -1577,7 +1577,7 @@ fn pg_error_to_string(err: impl Into<PgError>) -> String {
+ /// be resolved against the user's SQL and point at the wrong place.
+ fn pg_error_to_string_plain(err: impl Into<PgError>) -> String {
+     let err = err.into();
+-    err.as_db_error().map(pg_db_error_to_string).unwrap_or_else(|| err.to_string())
++    err.as_db_error().map(pg_db_error_to_string).unwrap_or_else(|| error_with_sources_to_string(&err))
+ }
+ 
+ /// Tries each SQL tier in `tiers` in order (most-capable first), via `run`,
+@@ -1816,7 +1816,11 @@ fn pg_pool_error_to_string(err: PoolError) -> String {
+ }
+ 
+ fn should_retry_postgres_text_query(err: &PgError) -> bool {
+-    let message = err.as_db_error().map(ToString::to_string).unwrap_or_else(|| err.to_string()).to_ascii_lowercase();
++    let message = err
++        .as_db_error()
++        .map(ToString::to_string)
++        .unwrap_or_else(|| error_with_sources_to_string(err))
++        .to_ascii_lowercase();
+     should_retry_postgres_text_query_message(&message)
+ }
+ 
+@@ -1834,7 +1838,8 @@ fn should_retry_postgres_stale_cache(err: &PgError) -> bool {
+             db_error.message(),
+         );
+     }
+-    should_retry_postgres_stale_cache_fields(None, None, &err.to_string())
++    let message = error_with_sources_to_string(err);
++    should_retry_postgres_stale_cache_fields(None, None, &message)
+ }
+ 
+ fn should_retry_postgres_stale_cache_fields(sqlstate: Option<&str>, routine: Option<&str>, message: &str) -> bool {
+@@ -1850,7 +1855,8 @@ fn should_fallback_postgres_missing_prepared_statement(err: &PgError) -> bool {
+             db_error.message(),
+         );
+     }
+-    should_fallback_postgres_missing_prepared_statement_fields(None, &err.to_string())
++    let message = error_with_sources_to_string(err);
++    should_fallback_postgres_missing_prepared_statement_fields(None, &message)
+ }
+ 
+ fn should_fallback_postgres_missing_prepared_statement_fields(sqlstate: Option<&str>, message: &str) -> bool {
+@@ -3932,7 +3938,7 @@ fn database_storage_sql() -> &'static str {
+ pub async fn list_databases(pool: &Pool) -> Result<Vec<DatabaseInfo>, String> {
+     let client = checkout_postgres_client(pool, None, super::connection_timeout()).await?;
+     let client = &EncodingClient::new(&client);
+-    let rows = postgres_query_cached(client, list_databases_sql(), &[]).await.map_err(|e| e.to_string())?;
++    let rows = postgres_query_cached(client, list_databases_sql(), &[]).await.map_err(pg_error_to_string)?;
+ 
+     Ok(rows.iter().map(|row| DatabaseInfo { name: pg_row_try_string(row, 0), ..Default::default() }).collect())
+ }
+@@ -3943,7 +3949,7 @@ pub async fn list_opengauss_databases(pool: &Pool) -> Result<Vec<DatabaseInfo>,
+     let rows = match postgres_query_cached(client, list_opengauss_databases_sql(), &[]).await {
+         Ok(rows) => rows,
+         Err(primary_error) => {
+-            let primary_error = primary_error.to_string();
++            let primary_error = pg_error_to_string(primary_error);
+             return postgres_query_cached(client, list_databases_sql(), &[])
+                 .await
+                 .map(|rows| {
+@@ -3952,6 +3958,7 @@ pub async fn list_opengauss_databases(pool: &Pool) -> Result<Vec<DatabaseInfo>,
+                         .collect()
+                 })
+                 .map_err(|fallback_error| {
++                    let fallback_error = pg_error_to_string(fallback_error);
+                     format!(
+                         "openGauss database compatibility lookup failed: {primary_error}; database list fallback failed: {fallback_error}"
+                     )
+@@ -17877,6 +17884,109 @@ mod tests {
+         let other_schema = format!("CREATE OR REPLACE PROCEDURE oth
+```
+
+**File**: `flake.nix` (modified, +2/-2)
+```diff
+@@ -217,8 +217,8 @@
+                 "sha256-8lWgsdTuLTgOmzP7tXmA9LnomOE0wjxXsCBw9NEMt2o=";
+               "git+https://github.com/t8y2/mysql_async.git?rev=2be6e392eb9b06d20dcd2d8ed8eae748d413c9ec#2be6e392eb9b06d20dcd2d8ed8eae748d413c9ec" =
+                 "sha256-tMFvmypIBh1GHg3cLFWmLf6N1wrwKPlzx2G/MHwtlFM=";
+-              "git+https://github.com/t8y2/tokio-postgres-gaussdb.git?rev=115f9fef10f0fc3669b5337955e4eb461fc349a6#115f9fef10f0fc3669b5337955e4eb461fc349a6" =
+-                "sha256-HRbYVSD7iIwG3m1tOGoIZy0xAZwALWIpTtakVSYPIYI=";
++              "git+https://github.com/t8y2/tokio-postgres-gaussdb.git?rev=5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89#5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89" =
++                "sha256-NkSST+xuE8NCVobwmX5j87WY+zXU6aWHMSR0LFjn8UA=";
+             };
+           };
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14394** (2026-11-05): fix(sql): 修复自定义格式化中限定标识符前的空格丢失 (@CN-Scars)
-- **PR #14368** (2026-11-05): fix(jdbc): run DDL outside the paged query transaction (@hongshuo-wang)
-- **PR #14366** (2026-11-05): fix(duckdb): allow any extension in the database file picker (@ThugKd)
-- **PR #14362** (2026-11-05): fix(mysql): restore Doris compatible handshake (@zipg)
-- **PR #14343** (2026-11-05): feat(tabs): distinguish duplicate titles by connection (@javalover123)
-- **PR #14337** (2026-11-05): test(sql): cover the SQL Server three-part table reference (@xiaou61)
+- **PR #14556** (2026-11-08): feat(editor): save routine definitions to database (@Acd-kk)
+- **PR #14553** (2026-11-08): feat(elasticsearch): add per-connection index search (@ThugKd)
+- **PR #14545** (2026-11-08): feat(query): add configurable shortcut to copy the active result (@imcman)
+- **PR #14542** (2026-11-07): fix(grid): Oracle 无主键查询结果与表数据页签对齐 keyless 可编辑性 (@dienaso)
+- **PR #14541** (2026-11-07): fix(export): TDengine 标识符改用反引号，双引号在 TDengine 中是字符串字面量 (@dienaso)
+- **PR #14539** (2026-11-07): fix(mcp): dbx_add_connection 补齐 Nacos external_config 与桌面端默认上下文 (@dienaso)
 
 ---
 
@@ -2320,56 +2638,50 @@ SQL Server 要求 CREATE VIEW/PROCEDURE/FUNCTION/TRIGGER 是批次的第一条�
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. jdbc): run DDL outside the paged query transaction (#14368)
+## X. release): retry agent R2 uploads and resume driver sync
 
 **RULE**:
-When implementing operations in `plugins/jdbc/src/main/java/app/dbx/jdbc/DbxJdbcPlugin.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/agents-release.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `997c8b74`: jdbc): run DDL outside the paged query transaction (#14368). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1fd5f9c3`: release): retry agent R2 uploads and resume driver sync. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `plugins/jdbc/src/main/java/app/dbx/jdbc/DbxJdbcPlugin.java`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/agents-release.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        // DDL has no cursor to keep alive across pages, and wrapping it in the
-        // paged transaction changes how PostgreSQL-compatible engines execute
-        // it (see pagedQueryCannotReturnRows).
-        boolean restoreAutoCommit = !pagedQueryCannotReturnRows(sql) && beginPagedQueryTransaction(connection, conn);
-    /**
-     * Keywords for statements that never leave a result-set cursor behind.
-     * The paged transaction exists only to keep a cursor readable across pages;
-     * for these statements it changes engine semantics instead of adding value
-     * (issue #14243: PostgreSQL-compatible engines may commit a `CREATE TABLE AS`
-     * on their own while the selected rows stay inside the transaction, so the
-     * client sees 42P07 on a retry and an empty table is left behind). Running
-     * them in auto-commit matches psql and DBeaver.
-     */
-    private static final Set<String> NO_RESULT_SET_KEYWORDS = Set.of(
-        "ALTER",
-        "ANALYZE",
-        "CLUSTER",
-        "COMMENT",
-        "CREATE",
-        "DROP",
-        "GRANT",
-        "REINDEX",
-        "REFRESH",
-        "REVOKE",
-        "TRUNCATE",
-        "VACUUM"
-    );
-
-    private static boolean pag
+          set -euo pipefail
+          retry() {
+            local attempt
+            for attempt in 1 2 3; do
+              if "$@"; then
+                return 0
+              fi
+              echo "::warning::R2 upload attempt ${attempt}/3 failed: $*"
+              sleep $((attempt * 15))
+            done
+            return 1
+          }
+          retry aws s3 cp release/agent-registry.json \
+          # Upload all single-driver packages concurrently. Package names carry
+          # the driver version, so the size check makes a retry resume after a
+          # transient R2 failure instead of re-uploading every driver again.
+          retry aws s3 sync release/ "$R2_BUCKET/agents/drivers/" \
+            --size-only \
+          retry aws s3 cp release/ "$R2_BUCKET/agents/jre/" \
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        boolean restoreAutoCommit = beginPagedQueryTransaction(connection, conn);
+          aws s3 cp release/agent-registry.json \
+          # Upload all single-driver packages concurrently.
+          aws s3 cp release/ "$R2_BUCKET/agents/drivers/" \
+            --recursive \
+          aws s3 cp release/ "$R2_BUCKET/agents/jre/" \
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `997c8b74` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1fd5f9c3` are properly handled with clean fallback behavior.

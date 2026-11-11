@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kuddev-pebrel-learnings.md`  
 > **Source**: github ([https://github.com/Kuddev/pebrel](https://github.com/Kuddev/pebrel))  
-> **Source Version**: `97d3bfe5`  
+> **Source Version**: `288e4a3e`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T02:55:10.187Z  
+> **Timestamp**: 2026-11-09T04:10:24.706Z  
 > **Learning ID**: `learn-github-kuddev-pebrel`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kuddev-pebrel-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Kuddev/pebrel](https://github.com/Kuddev/pebrel))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T02:55:09.175Z  
+> **Harvest Timestamp**: 2026-11-09T04:10:23.157Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: AI-native, GPU-accelerated terminal emulator for Windows with SSH, persistent sessions, split panes, and first-class AI CLI workflows.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3711 stars
+- **Stars / Engagement**: 3741 stars
 
 ---
 
@@ -444,6 +444,8 @@ export async function startLoopbackProxy(targetHost, targetPort) {
 // Inert outside Pebrel (no PEBREL_HOOK_EXE or legacy alias in the environment).
 import { execFile } from "node:child_process"
 
+const REPLIES = ["permission.replied", "question.replied", "question.rejected"]
+
 const PebrelNotify = async ({ directory, worktree }) => {
   const hook = process.env.PEBREL_HOOK_EXE ?? process.env.NEBULA_HOOK_EXE
   if (!hook) return {}
@@ -453,7 +455,7 @@ const PebrelNotify = async ({ directory, worktree }) => {
   const turns = new Map()
   const turnFor = (id) => {
     const key = id || "pending"
-    const turn = turns.get(key) || { active: false, lastUser: "" }
+    const turn = turns.get(key) || { active: false, lastUser: "", waiting: false }
     turns.delete(key)
     if (turns.size >= 512) turns.delete(turns.keys().next().value)
     turns.set(key, turn)
@@ -499,6 +501,7 @@ const PebrelNotify = async ({ directory, worktree }) => {
     const request = input || {}
     const candidate = request.sessionID || request.sessionId || (request.session && request.session.id)
     if (candidate) sessionId = candidate
+    turnFor(sessionId).waiting = true
     const permission = request.permission
     const permissionType = typeof permission === "string"
       ? permission
@@ -525,6 +528,8 @@ const PebrelNotify = async ({ directory, worktree }) => {
       // Root session only: subagents carry parentID and must not steal the
       // pane's resume identity.
       const candidate = props.sessionID || info.sessionID || (!info.parentID && info.id)
+      // A reply to a request this bridge never reported is not lifecycle evidence.
+      if (REPLIES.includes(t) && !turns.get(candidate || sessionId || "pending")?.waiting) return
       if (candidate) {
         const first = !sessionId
         sessionId = candidate
@@ -537,14 +542,28 @@ const PebrelNotify = async ({ directory, worktree }) => {
           turn.active = true
           send({ kind: "prompt" })
         }
-      } else if (t === "session.idle") {
+      } else if (t === "session.status" && ["busy", "retry"].includes(props.status?.type)) {
+        if (!turn.active) { turn.active = true; send({ kind: "prompt" }) }
+      } else if (t === "session.finished" || t === "session.error") {
+        // A repeated execution result must not finish the same turn twice.
+        if (!turn.active) return
+        turn.active = false
+        turn.waiting = false
+        const outcome = t === "session.error"
+          ? (props.error?.name === "MessageAbortedError" ? "cancelled" : "failed")
+          : props.outcome
+        send({ kind: "done", outcome })
+      } else if (t === "session.idle" || (t === "session.status" && props.status?.type === "idle")) {
         // Dedupe opencode's spurious idles (startup/cancel): only a turn
         // that actually started reports done.
-        if (turn.active) { turn.active = false; send({ kind: "done" }) }
-      } else if (t === "permission.updated" || t === "permission.ask") {
+        if (turn.active) { turn.active = false; turn.waiting = false; send({ kind: "done" }) }
+      } else if (["permission.updated", "permission.ask", "permission.asked", "question.asked"].includes(t)) {
         // Compatibility path for OpenCode builds that also publish permission
         // changes on the generic event bus.
         reportPermission(props)
+      } else if (REPLIES.includes(t)) {
+        turn.waiting = false
+        send({ kind: "tool-complete" })
       } else if (t === "tool.execute.after") {
         send({ kind: "tool-complete" })
       } else if (t === "session.deleted") {
@@ -587,10 +606,18 @@ export default {
           case "session.execution.succeeded":
           case "session.execution.failed":
           case "session.execution.interrupted":
-            type = "session.idle"
+            type = "session.finished"
+            properties = { ...data, outcome: event.type === "session.execution.succeeded"
+              ? "succeeded" : event.type === "session.execution.failed" ? "failed" : "cancelled" }
             break
           case "permission.asked":
+          case "question.asked":
             type = "permission.ask"
+            break
+          case "permission.replied":
+          case "question.replied":
+          case "question.rejected":
+            type = "permission.replied"
             break
           case "session.tool.success":
           case "session.tool.failed":
@@ -755,6 +782,7 @@ from pathlib import Path
 import re
 import select
 import shlex
+import stat
 import subprocess
 import sys
 import time
@@ -870,8 +898,8 @@ def stream_state(token, identity):
             yield state
 
 
-def send(source, native, mode, payload, token):
-    owner = process_identity(source)
+def send(source, native, mode, payload, token, owner=None, route=None, deadline=None):
+    owner = owner or process_identity(source)
     with stream_state(token, owner or source) as state:
         state.seek(0)
         previous = state.read(32)
@@ -886,6 +914,8 @@ def send(source, native, mode, payload, token):
         header = f"nebula-hook/1 source={source}"
         if owner:
             header += " process=" + owner
+        if route:
+            header += " tmux=" + route["context"]
         if native:
             header += " codex_hooks=" + mode.split("=", 1)[1]
         encoded = json.dumps(payload, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
@@ -903,22 +933,27 @@ def send(source, native, mode, payload, token):
         if len(envelope) > MAX_ENVELOPE:
             return
         osc = b"\x1b]777;nebula-hook;" + token.encode() + b";" + base64.b64encode(envelope) + b"\x07"
-        write_terminal(osc, source)
+        write_terminal(osc, source, route, deadline)
 
 
-def write_terminal(osc, source=None):
+def write_terminal(osc, source=None, route=None, deadline=None):
     try:
-        fd = os.open("/dev/tty", os.O_WRONLY | os.O_NONBLOCK)
+        fd = os.open(route["tty"] if route else "/dev/tty",
+                     os.O_WRONLY | os.O_NONBLOCK | os.O_NOFOLLOW)
     except OSError as error:
-        if source != "claude" or error.errno != errno.ENXIO:
+        if route or source != "claude" or error.errno != errno.ENXIO:
             raise
         # Interactive Claude consumes hook JSON even when its hook has no TTY.
         # This fallback is only possible before any part of the OSC was written.
         print(json.dumps({"terminalSequence": osc.decode("ascii")}), flush=True)
         return
     offset = 0
-    deadline = time.monotonic() + 0.5
+    deadline = min(deadline or float("inf"), time.monotonic() + 0.5)
     try:
+        if route:
+            info = os.fstat(fd)
+            if not stat.S_ISCHR(info.st_mode) or info.st_rdev != route["device"]:
+                raise ValueError("SSH terminal identity changed")
         while offset < len(osc):
             remaining = deadline - time.monotonic()
             if remaining <= 0 or not select.select([], [fd], [], remaining)[1]:
@@ -944,23 +979,25 @@ def run(args):
     try:
         payload, native = bounded_payload(args)
         token = os.environ.get("PEBREL_REMOTE_HOOK_TOKEN", os.environ.get("NEBULA_REMOTE_HOOK_TOKEN", ""))
-        if payload is not None and re.fullmatch(r"[a-fA-F0-9]{32}", token):
-            if args[0] != "claude" or not os.environ.get("GROK_HOOK_NAME"):
-                send(args[0], native, args[1] if native else "", payload, token)
+        if payload is not None and (args[0] != "claude" or not os.environ.get("GROK_HOOK_NAME")):
+            mode = args[1] if native else ""
+            if os.environ.get("TMUX"):
+                from remote_tmux import destinations
+                deadline = time.monotonic() + 2
+                owner = process_identity(args[0])
+                for route in destinations(owner, deadline):
+                    if time.monotonic() >= deadline:
+                        break
+                    try:
+                        send(args[0], native, mode, payload, route["token"], owner, route, deadline)
+                    except (OSError, ValueError, TimeoutError):
+                        continue
+            elif re.fullmatch(r"[a-fA-F0-9]{32}", token):
+                send(args[0], native, mode, payload, token)
     finally:
         # A malformed payload, unavailable TTY or delivery failure must never
         # suppress the user's original notifier (also outside Pebrel).
-        if args[:2] == ["codex", "--chain"] and len(args) >= 4:
-            subprocess.Popen(args[2:], stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
-                             stderr=subprocess.DEVNULL, start_new_session=True)
-
-
-if __name__ == "__main__":
-    try:
-        run(sys.argv[1:])
-    except Exception:
-        pass
-
+        if args[:2] == ["codex", "--chain"] and len(
 ```
 
 ### Core Architecture Module: `nebula_app/res/hooks/remote_files.py`
@@ -1057,7 +1094,7 @@ def locations():
         "manifest": root / "manifest.json",
         "disabled": root / "disabled",
     }
-    for name in ("pebrel-hook", "bridge.py", "shell.py", "bashrc", ".zshenv", ".zprofile", ".zshrc"):
+    for name in ("pebrel-hook", "bridge.py", "remote_tmux.py", "shell.py", "bashrc", ".zshenv", ".zprofile", ".zshrc"):
         paths[name] = root / name
     return root, paths
 
@@ -1204,252 +1241,242 @@ if __name__ == "__main__":
 
 ```
 
-### Core Architecture Module: `nebula_app/res/prompt-suggestions/claude/hooks/prompt.js`
+### Core Architecture Module: `nebula_app/res/hooks/remote_tmux.py`
 ```
-// Claude Code function hooks own the composer. No screen parsing, draft writes,
-// model overrides, transcript polling, or per-user style storage live here.
-const state = {
-  revision: 0,
-  interactive: false,
-  composer: false,
-  busy: false,
-  turn: null,
-  handled: null,
-  loading: null,
-  dots: 1,
-  tick: null,
-  deadline: null,
-  scheduled: null,
-};
+"""Short-lived routes from an active remote pane to its owning SSH PTY.
 
-function stopLoading($) {
-  state.tick?.cancel();
-  state.deadline?.cancel();
-  state.tick = state.deadline = null;
-  if (state.loading !== null) {
-    state.loading = null;
-    $.ui.invalidate("ui.render");
-  }
-}
+Called over authenticated exec for observations; imported by the hook bridge for
+delivery. No server options, pane input, daemon or transcript files are involved.
+"""
+import hashlib
+import json
+import os
+from pathlib import Path
+import re
+import select
+import shlex
+import stat
+import subprocess
+import sys
+import tempfile
+import time
 
-function invalidate($) {
-  state.revision += 1;
-  state.scheduled?.cancel();
-  state.scheduled = null;
-  stopLoading($);
-}
+TTL = 10
+MAX_ROUTES = 128
+CLIENT_FORMAT = "#{client_tty}\t#{session_id}\t#{session_created}:#{pid}\t#{window_id}\t#{pane_id}"
+PANE_FORMAT = "#{pane_pid}\t#{pane_tty}\t#{pane_current_command}\t#{pane_title}"
 
-function current(revision) {
-  return state.revision === revision && state.interactive && state.composer && !state.busy;
-}
 
-function startLoading($, text, revision) {
-  state.loading = text;
-  state.dots = 1;
-  $.ui.invalidate("ui.render");
-  state.tick = $.clock.every(400, () => {
-    if (!current(revision)) return stopLoading($);
-    state.dots = state.dots % 3 + 1;
-    $.ui.invalidate("ui.render");
-  });
-}
+def capture(argv, deadline, limit=65536):
+    """Bound both child lifetime and stdout, including malformed remote pane formats."""
+    with subprocess.Popen(argv, stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
+                          stderr=subprocess.DEVNULL) as child:
+        output = bytearray()
+        try:
+            while True:
+                remaining = deadline - time.monotonic()
+                if remaining <= 0 or not select.select([child.stdout], [], [], remaining)[0]:
+                    raise TimeoutError("remote pane observation expired")
+                chunk = os.read(child.stdout.fileno(), min(8192, limit + 1 - len(output)))
+                if not chunk:
+                    if child.wait(timeout=max(0.001, deadline - time.monotonic())):
+                        raise ValueError("remote pane query failed")
+                    return output.decode("utf-8", "replace")
+                output.extend(chunk)
+                if len(output) > limit:
+                    raise ValueError("remote pane output exceeds budget")
+        finally:
+            if child.poll() is None:
+                child.kill()
+                child.wait()
 
-function boundedMessages(messages) {
-  function excerpt(message, limit) {
-    let text = message.text;
-    if (typeof text !== "string" || !/\S/u.test(text)) return "";
-    if (text.length > limit) {
-      const gap = "\n[... omitted ...]\n";
-      if (limit <= gap.length + 2) {
-        text = text.slice(-limit).replace(/^[\uDC00-\uDFFF]/, "");
-      } else {
-        const headLength = Math.floor((limit - gap.length) / 2);
-        const head = text.slice(0, headLength).replace(/[\uD800-\uDBFF]$/, "");
-        const tail = text.slice(-(limit - gap.length - headLength)).replace(/^[\uDC00-\uDFFF]/, "");
-        text = head + gap + tail;
-      }
-    }
-    return text;
-  }
-  const result = [];
-  let remaining = 12000;
-  let userIndex = -1;
-  // Reserve the latest user's wording even after a long, tool-heavy answer.
-  for (let index = messages.length - 1; index >= 0; index -= 1) {
-    if (messages[index].role !== "user") continue;
-    const text = excerpt(messages[index], 3000);
-    if (text.trim() === "") continue;
-    userIndex = index;
-    result.push({ index, message: { role: "user", text } });
-    remaining -= text.length;
-    break;
-  }
-  for (let index = messages.length - 1; index >= 0 && remaining > 0 && result.length < 24; index -= 1) {
-    if (index === userIndex) continue;
-    const message = messages[index];
-    if (message.role !== "user" && message.role !== "assistant") continue;
-    const text = excerpt(message, Math.min(remaining, 3000));
-    if (text.trim() === "") continue;
-    remaining -= text.length;
-    result.push({ index, message: { role: message.role, text } });
-  }
-  return result.sort((a, b) => a.index - b.index).map(entry => entry.message);
-}
 
-async function bridge($) {
-  const [endpoint, token, nativeSuggestion] = await Promise.all([
-    $.env.get("PEBREL_PREDICTION_ENDPOINT"),
-    $.env.get("PEBREL_PREDICTION_TOKEN"),
-    $.env.get("CLAUDE_CODE_ENABLE_PROMPT_SUGGESTION"),
-  ]);
-  // Suppress the built-in inference at process launch, never via persisted
-  // config.set or by discarding its already-paid result in prompt.suggest.
-  if (nativeSuggestion !== "false" && nativeSuggestion !== "0") return null;
-  const match = /^http:\/\/127\.0\.0\.1:(\d{1,5})$/.exec(endpoint ?? "");
-  if (!match || Number(match[1]) < 1 || Number(match[1]) > 65535) return null;
-  if (!token || token.length > 512 || /[\r\n]/.test(token)) return null;
-  return { endpoint, headers: { Authorization: `Bearer ${token}` } };
-}
+def process(pid, deadline):
+    pid = int(pid)
+    if pid <= 0 or time.monotonic() >= deadline:
+        raise ValueError("invalid process identity")
+    try:
+        raw = Path(f"/proc/{pid}/stat").read_text(encoding="utf-8")
+        fields = raw[raw.rfind(")") + 2:].split()
+        with open(f"/proc/{pid}/cmdline", "rb") as source:
+            argv = source.read(4096).split(b"\0")[:3]
+        return dict(pid=pid, parent=int(fields[1]), group=int(fields[2]),
+                    foreground=int(fields[5]), device=int(fields[4]) & 0xffffffff,
+                    epoch=fields[19], argv=[arg.decode("utf-8", "replace") for arg in argv])
+    except FileNotFoundError:
+        if Path("/proc/self/stat").exists():
+            raise
+    # BSD/macOS expose the same identity through ps. Unknown fields fail closed.
+    row = capture(["ps", "-ww", "-p", str(pid), "-o", "ppid=", "-o", "pgid=",
+                   "-o", "tpgid=", "-o", "tty=", "-o", "lstart=", "-o", "args="],
+                  min(deadline, time.monotonic() + 0.15), 8192).strip().split(None, 9)
+    if len(row) != 10:
+        raise ValueError("process identity is unavailable")
+    tty = row[3] if row[3].startswith("/") else "/dev/" + row[3]
+    return dict(pid=pid, parent=int(row[0]), group=int(row[1]), foreground=int(row[2]),
+                device=os.stat(tty).st_rdev,
+                epoch=hashlib.sha256(" ".join(row[4:9]).encode()).hexdigest()[:16],
+                argv=shlex.split(row[9])[:3])
 
-function readJson(response) {
-  if (!response.ok || typeof response.text !== "string" || response.text.length > 8192) {
-    throw new Error("Invalid prediction bridge response");
-  }
-  let bytes = 0;
-  for (const char of response.text) {
-    const point = char.codePointAt(0);
-    bytes += point <= 0x7f ? 1 : point <= 0x7ff ? 2 : point <= 0xffff ? 3 : 4;
-    if (bytes > 8192) throw new Error("Invalid prediction bridge response");
-  }
-  return JSON.parse(response.text);
-}
 
-function candidate(value) {
-  if (typeof value !== "string" || value.length > 1024) return null;
-  if (/[\u0000-\u001F\u007F-\u009F\u2028\u2029]/.test(value)) return null;
-  const text = value.trim();
-  return text && [...text].length <= 240 ? text : null;
-}
+def process_key(value):
+    return f"{value['pid']}:{value['epoch']}"
 
-async function sameEmptyComposer($, revision, session) {
-  if (!current(revision)) return false;
-  const [id, draft] = await Promise.all([$.session.id(), $.prompt.read()]);
-  return current(revision) && id === session && draft.text === "";
-}
 
-async function predict($, turn, revision) {
-  try {
-    if (!current(revision)) return;
-    const [connection, session, draft] = await Promise.all([
-      bridge($), $.session.id(), $.prompt.read(),
-    ]);
-    if (!connection || !current(revision) || draft.text !== "") return;
-    const config = readJson(await $.http.fetch(
-      `${connection.endpoint}/v1/prompt-suggestions/config`,
-      { headers: connection.headers },
-    ));
-    // Settings own model-name validation; the complete response is bounded above.
-    if (!config.enabled || typeof config.loading_text !== "string" ||
-        config.loading_text.trim() === "" ||
-        /[\u0000-\u001F\u007F-\u009F\u2028\u2029]/.test(config.loading_text)) return;
-    if (!await sameEmptyComposer($, revision, session)) return;
-    startLoading($, config.loading_text, revision);
-    const messages = boundedMessages(await $.session.messages());
-    if (!messages.some(message => message.role === "user")) return;
-    if (!await sameEmptyComposer($, revision, session)) return;
-    const response = readJson(await $.http.fetch(
-      `${connection.endpoint}/v1/prompt-suggestions`,
-      {
-        method: "POST",
-        headers: { ...connection.headers, "Content-Type": "application/json" },
-        body: JSON.stringify({ agent: "claude", session, turn, revision, messages }),
-      },
-    ));
-    const text = candidate(response.suggestion);
-    if (text && await sameEmptyComposer($, revision, session)) {
-      // Native suggest rechecks empty/not-working atomically when it lands.
-      // It owns Tab/right-arrow acceptance and never submits the draft.
-      stopLoading($);
-      await $.prompt.suggest({ text });
-    }
-  } catch {
-    // Predictions are optional; a failed bridge must not disrupt a main turn.
-  } finally {
-    if (state.revision === revision) stopLoading($);
-  }
-}
+def owns_tty(value, tty):
+    info = os.stat(tty, follow_symlinks=False)
+    return stat.S_ISCHR(info.st_mode) and info.st_uid == os.getuid() and value["device"] == info.st_rdev
 
-export function register(on) {
-  on("session.start", ($, event, next) => {
-    invalidate($);
-    state.interactive = event.isInteractive && event.surface === "terminal";
-    state.composer = state.busy = false;
-    state.turn = state.handled = null;
-    return next(event);
-  });
 
-  on("turn.start", ($, event, next) => {
-    if (event.agentId === undefined) {
-      invalidate($);
-      state.busy = true;
-      state.turn = event.turnId;
-    }
-    return next(event);
-  });
+def query(route, *args, deadline):
+    command = [route["executable"], "-u"]
+    if route["socket"]:
+        command += ["-S", route["socket"]]
+    return capture(command + list(args), min(deadline, time.monotonic() + 0.5))
 
-  on("turn.complete", async ($, event, next) => {
-    const result = await next(event);
-    if (event.agentId !== undefined || (state.turn && state.turn !== event.turnId)) return result;
-    state.busy = false;
-    if (state.handled === event.turnId) return result;
-    state.handled = event.turnId;
-    invalidate($);
-    if (event.reason !== "answer" || event.isAborted || !event.answer.trim()) return result;
-    const revision = state.revision;
-    // Leave the turn.complete stack before asking the composer. Awaiting the
-    // bridge inside that hook would keep the main turn working unnecessarily.
-    state.scheduled = $.clock.after(0, () => {
-      state.scheduled = null;
-      if (!current(revision)) return;
-      // http.fetch has no AbortSignal. Bound UI lifetime and ignore late results;
-      // the host owns the request/network deadline.
-      state.deadline = $.clock.after(10000, () => {
-        if (state.revision === revision) invalidate($);
-      });
-      return predict($, event.turnId, revision);
-    });
-    return result;
-  });
 
-  on("prompt.edit", ($, event, next) => {
-    // This event is pre-edit; cancel before next instead of rereading old text.
-    invalidate($);
-    return next(event);
-  });
+def clients(route, deadline):
+    rows = query(route, "list-clients", "-F", CLIENT_FORMAT, deadline=deadline)
+    return [line.split("\t") for line in rows.splitlines() if len(line.split("\t")) == 5]
 
-  on("prompt.change", ($, event, next) => {
-    invalidate($);
-    return next(event);
-  });
 
-  on("session.end", ($, event, next) => {
-    invalidate($);
-    state.composer = state.busy = false;
-    state.turn = state.handled = null;
-    if (event.reason !== "clear" && event.reason !== "resume") state.interactive = false;
-    return next(event);
-  });
+def client_matches(route, rows):
+    expected = [route[key] for key in ("tty", "session", "identity", "window", "pane")]
+    return sum(row[0] == route["tty"] for row in rows) == 1 and expected in rows
 
-  on("ui.render", { component: "PromptHint" }, ($, event, next) => {
-    if (event.surface !== "terminal") return next(event);
-    state.composer = true;
-    if (!state.loading || event.props.isDraft || event.props.isWorking) return next(event);
-    const loading = `${state.loading}${".".repeat(state.dots)}`;
-    const tail = event.props.tail ? `${event.props.tail} ${loading}` : loading;
-    return next({ ...event, props: { ...event.props, tail } });
-  });
-}
 
+def pane(route, deadline):
+    target = f"{route['session']}:{route['window']}.{route['pane']}"
+    fields = query(route, "display-message", "-p", "-t", target, PANE_FORMAT,
+                  deadline=deadline).rstrip("\n").split("\t", 3)
+    if len(fields) != 4:
+        raise ValueError("invalid pane metadata")
+    root = process(fields[0], deadline)
+    if not owns_tty(root, fields[1]):
+        raise ValueError("pane no longer owns its terminal")
+    foreground = process(root["foreground"], deadline)
+    if not owns_tty(foreground, fields[1]):
+        raise ValueError("foreground process left the pane")
+    return dict(root=root, foreground=foreground, tty=fields[1],
+                command=fields[2][:256], title=fields[3][:4096])
+
+
+def route_directory():
+    # The installed bridge path is stable even when an old server inherited
+    # a different XDG_CACHE_HOME or no Pebrel environment at all.
+    root = Path(__file__).absolute().parent / "tmux-routes"
+    if any(path.is_symlink() for path in (root, *root.parents)):
+        raise ValueError("remote pane route directory contains a symbolic link")
+    root.mkdir(mode=0o700, exist_ok=True)
+    info = root.stat()
+    if info.st_uid != os.getuid() or info.st_mode & 0o077:
+        raise ValueError("remote pane route directory is not private")
+    return root
+
+
+def route_paths(root):
+    found = []
+    for index, entry in enumerate(root.iterdir()):
+        if index >= MAX_ROUTES * 2:
+            raise ValueError("remote pane route scan exceeds budget")
+        if re.fullmatch(r"[a-f0-9]{64}\.json", entry.name):
+            found.append(entry)
+    return found
+
+
+def read_route(path):
+    fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+    with os.fdopen(fd, "rb") as source:
+        info = os.fstat(source.fileno())
+        if not stat.S_ISREG(info.st_mode) or info.st_uid != os.getuid() or info.st_mode & 0o077:
+            raise ValueError("remote pane route is not private")
+        raw = source.read(16385)
+    if len(raw) > 16384:
+        raise ValueError("remote pane route exceeds budget")
+    route = json.loads(raw)
+    if route.get("version") != 1 or not 0 <= time.time() - route["updated"] <= TTL:
+        return None
+    return route
+
+
+def register(route):
+    root = route_directory()
+    paths = route_paths(root)
+    for path in paths:
+        try:
+            if read_route(path) is None:
+                path.unlink()
+        except (OSError, ValueError, KeyError):
+            pass
+    name = hashlib.sha256(route["token"].encode()).hexdigest() + ".json"
+    if len(route_paths(root)) >= MAX_ROUTES and not (root / name).exists():
+        raise ValueError("remote pane route directory is full")
+    path = None
+    try:
+        with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", dir=root, delete=False) as output:
+            path = Path(output.name)
+            json.dump(route, output, ensure_ascii=False, separators=(",", ":"))
+        os.replace(path, root / name)
+    finally:
+        if path is not None:
+            path.unlink(missing_ok=True)
+
+
+def observe(route):
+    deadline = time.monotonic() + 2
+    if not re.fullmatch(r"[a-fA-F0-9]{32}", route["token"]):
+        raise ValueError("invalid channel token")
+    outer = process(route["pid"], deadline)
+    if not owns_tty(outer, route["tty"]) or not client_matches(route, clients(route, deadline)):
+        raise ValueError("SSH client no longer owns this pane")
+    current = pane(route, deadline)
+    server = process(route["identity"].split(":")[1], deadline)
+    socket = query(route, "display-message", "-p", "#{socket_path}", deadline=deadline).strip()
+    if not socket.startswith("/") or any(ord(char) < 32 for char in socket):
+        raise ValueError("invalid remote pane socket")
+    route["socket"] = socket
+    screen = query(route, "capture-pane", "-p", "-t", route["pane"], deadline=deadline)
+    # A switched pane or foreground job must not inherit the preceding snapshot.
+    if not client_matches(route, clients(route, deadline)):
+        raise ValueError("remote pane client switched panes")
+    latest = pane(route, deadline)
+    if process_key(current["foreground"]) != process_key(latest["foreground"]):
+        raise ValueError("remote pane foreground job changed")
+    route.update(version=1, updated=time.time(), outer=process_key(outer),
+                 server=process_key(server), foreground=process_key(current["foreground"]),
+                 pane_pid=current["root"]["pid"], pane_tty=current["tty"],
+                 program=current["foreground"]["argv"])
+    scope = [route[key] for key in ("token", "tty", "outer", "socket", "server", "session",
+                                    "identity", "window", "pane", "foreground", "program")]
+    route["context"] = hashlib.sha256(json.dumps(scope, separators=(",", ":")).encode()).hexdigest()
+    register(route)
+    return dict(context=route["context"], command=current["command"], title=current["title"],
+                argv=current["foreground"]["argv"], screen="\n".join(screen.splitlines()[-24:])[-32768:])
+
+
+def descendant(child, root_pid, deadline):
+    for _ in range(48):
+        if child["pid"] == root_pid:
+            return True
+        if child["parent"] <= 1 or child["parent"] == child["pid"]:
+            break
+        child = process(child["parent"], deadline)
+    return False
+
+
+def destinations(owner, deadline):
+    """Never fall back to writing an unscoped OSC inside a remote pane."""
+    if not owner or not re.fullmatch(r"%\d+", os.environ.get("TMUX_PANE", "")):
+        return []
+    environment = os.environ.get("TMUX", "").rsplit(",", 2)
+    if len(environment) != 3:
+        return []
+    socket, server_pid, _ = environment
+    routes = []
+    for path in route_paths(route_directory()):
+        try:
+            route = read_route(path)
+            if (route and rout
 ```
 
 
@@ -1458,11 +1485,11 @@ export function register(on) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #839** (2026-10-31): **[Bug] Windows 下 Shift+Enter 在未协商扩展键盘协议的应用里退化为普通回车（CodeBuddy Code 无法换行）**
-  *Symptoms*: ### Operating system / 操作系统  Windows  ### OS version and display / 系统版本与显示  Windows 11 专业版 25H2，Build 26300，单显示器，100% 缩放  ### Pebrel version / 版本号  2.3.1 (7311e07)  ### How did you install Pebrel? / 安装方式  GitHub Release (.exe / .zip / .dmg / .AppImage / .deb)  ### Shell in the affected pane / 出问题的面板用的 Shell  PowerShell 7 (pwsh)  ### Program running in the pane / 面板里正在跑的程序  Gemini CLI / other AI agent — 其他 AI agent  ### Connection type / 连接方式  Local terminal / 本地终端  ### Affected area / 影响范围  Keyboard / IME / mouse / shortcuts / clipboard — 键盘、输入法、鼠标、快捷键、剪贴板  ### Did it work in a previous version? / 旧版本是否正常？  Not sure / 不确定  ### Can you reproduce it? / 复现概率  Always (100%) / 必现  ### Steps to reproduce / 复现步骤  1. 新开一个标签页，在 PowerShell 7 里运行下面的探针脚本，它会把 stdin 收到的原始字节写入 keyhex.txt 2. 运行 `pebrel ctl run --pane <id> --command "node <探针脚本路径>"` 3. 运行 `pebrel ctl send-key --pane <id> --key enter --shift` 4. 读取 keyhex.txt，得到 `0d`（普通回车）；对照组 `pebrel ctl send-key --pane <id> --key j --control` 得到 `0a` 5. 同一台机器、同一个 CLI，在 Windows Terminal 里配置终端级键位后 Shift+Enter 正常换行  探针脚本：  ```js const fs = require('fs'); fs.writeFileSync('keyhex.txt', 'start\n'); process.stdin.setRawMode(true); process.stdin.resume(); process.stdin.on('data', b => fs.appendFileSync('keyhex.txt', Buffer.from(b).toString('hex') + '\n')); setTimeout(() => process.exit(0), 12000); ```   ### Expected behavior / 期望结果  应用应该收到可区分的 Shift+Enter 输入（xterm 惯例是 `ESC CR`，即 `\x1b\r`），从而插入换行而不是提交。  建议修复（任选其一）：  1. 当 pane 内的应用未启用 9001 / kitty 键盘
+- **Issue #870** (2026-11-07): **[Bug] 文件管理器图标乱码**
+  *Symptoms*: ### Operating system / 操作系统  macOS  ### OS version and display / 系统版本与显示  macos 26.0  ### Pebrel version / 版本号  2.4.0  ### How did you install Pebrel? / 安装方式  GitHub Release (.exe / .zip / .dmg / .AppImage / .deb)  ### Shell in the affected pane / 出问题的面板用的 Shell  zsh  ### Program running in the pane / 面板里正在跑的程序  Nothing, plain shell prompt / 什么都没跑  ### Connection type / 连接方式  Local terminal / 本地终端  ### Affected area / 影响范围  File tree / drag-and-drop upload — 文件树、拖拽上传  ### Did it work in a previous version? / 旧版本是否正常？  Not sure / 不确定  ### Can you reproduce it? / 复现概率  Always (100%) / 必现  ### Steps to reproduce / 复现步骤  <img width="425" height="293" alt="Image" src="https://github.com/user-attachments/assets/b79f6e67-9b1c-4eef-a239-ebc55bc004fb" />  ### Expected behavior / 期望结果  图标显示  ### Actual behavior / 实际结果  无  ### Logs / screenshots / 日志或截图  无  ### Non-default settings / 改过的设置  _No response_  ### Before submitting / 提交前确认  - [x] I searched existing issues and did not find a duplicate / 已搜索，无重复 - [x] I tested with the latest release / 已用最新版本试过 - [x] I removed passwords, private keys, tokens and other secrets / 已删除敏感信息
 
-- **Issue #821** (2026-10-31): **[Bug] Settings search ignores the UI language: Japanese queries find nothing except section names**
-  *Symptoms*: ### Operating system / 操作系统  Windows  ### OS version and display / 系统版本与显示  Windows 11 25H2  ### Pebrel version / 版本号  2.3.1 (release). The same code is on current `main`.  ### How did you install Pebrel? / 安装方式  GitHub Release (.exe / .zip / .dmg / .AppImage / .deb)  ### Shell in the affected pane / 出问题的面板用的 Shell  Not sure / 不确定  ### Program running in the pane / 面板里正在跑的程序  Nothing, plain shell prompt / 什么都没跑  ### Connection type / 连接方式  Local terminal / 本地终端  ### Affected area / 影响范围  Settings / theme / layout / blur — 设置页、主题、布局、模糊背景  ### Did it work in a previous version? / 旧版本是否正常？  Not sure / 不确定  ### Can you reproduce it? / 复现概率  Always (100%) / 必现  ### Steps to reproduce / 复现步骤  1. Set the UI language to Japanese. 2. Open Settings and type フォント (font), 不透明度 (opacity), プロキシ (proxy) or ショートカット (shortcut) in the settings search box. 3. Open the keymap page and type the Japanese name of an action shown in the list, for example コピー (copy).  ### Expected behavior / 期望结果  The search goes to the page that owns the setting (Appearance for フォント, Network for プロキシ, and so on), like "font" in English or "字体" in Chinese. On the keymap page, the rows whose Japanese action label matches are shown.  ### Actual behavior / 实际结果  Settings search does not work in Japanese. A Japanese query only matches the page names shown in the navigation (for example 外観). Words for the settings on a page are not matched. A few queries match by accident because Japanese and Chinese share the kanji (背景, 
+- **Issue #868** (2026-11-07): **[Bug] 打字时鼠标光标每一次都会闪烁**
+  *Symptoms*: ### Operating system / 操作系统  Windows  ### OS version and display / 系统版本与显示  Windows 11 23 H2  ### Pebrel version / 版本号  2.4.0  ### How did you install Pebrel? / 安装方式  GitHub Release (.exe / .zip / .dmg / .AppImage / .deb)  ### Shell in the affected pane / 出问题的面板用的 Shell  fish, nushell  ### Program running in the pane / 面板里正在跑的程序  Nothing, plain shell prompt / 什么都没跑  ### Connection type / 连接方式  Local terminal / 本地终端  ### Affected area / 影响范围  Keyboard / IME / mouse / shortcuts / clipboard — 键盘、输入法、鼠标、快捷键、剪贴板  ### Did it work in a previous version? / 旧版本是否正常？  Not sure / 不确定  ### Can you reproduce it? / 复现概率  Always (100%) / 必现  ### Steps to reproduce / 复现步骤  1. 鼠标光标移入终端 2. 每一次打字鼠标光标都会闪烁  ### Expected behavior / 期望结果  与Windows Terminal类似, 第一次键入后, 鼠标光标隐藏, 移动鼠标后, 鼠标光标出现  ### Actual behavior / 实际结果  每一次打字鼠标光标都会闪烁  ### Logs / screenshots / 日志或截图  <img width="916" height="358" alt="Image" src="https://github.com/user-attachments/assets/a34ddf26-6397-4fb3-a4a3-7ca6ed6d3faf" />  ### Non-default settings / 改过的设置  1. 使用monolisa字体 2. 开启平滑光标 3. 背景不透明度改为95%  ### Before submitting / 提交前确认  - [x] I searched existing issues and did not find a duplicate / 已搜索，无重复 - [x] I tested with the latest release / 已用最新版本试过 - [x] I removed passwords, private keys, tokens and other secrets / 已删除敏感信息
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1479,789 +1506,1035 @@ export function register(on) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `97d3bfe5` (2026-11-04)
-**Commit Message**: Merge 2.4.0 release part 2/7: SFTP sidebar layout and batch file interactions
+### Incident Patch 1: `13af2b2d` (2026-11-08)
+**Commit Message**: Allow the tmux name in the naming gate (#916)
 
-Bring the published v2.4.0 release branch back to main in reviewable
-segments; this part adds the release commits up to b4552072.
+tmux is a compatibility target: hooks route through $TMUX, session
+discovery and recovery drive it, and mobile integration tests run it.
+Keeping it on the prohibited list required a new file-specific pattern
+for every integration and still rejected prose and commit messages, which
+now blocks the 2.4.0 follow-up chain (#882).
 
-**File**: `architecture/notes/nebula_app/gpui_shell/workspace/remote_files/2026-11-02-batch-selection-and-transfers.md` (added, +60/-0)
+Remove it from the list and delete the patterns that only existed to
+strip it. Other listed names keep their rules; tests that relied on tmux
+to show the rest of a line is still checked now use another listed name.
+
+Co-authored-by: Kuddev <[REDACTED_EMAIL]>
+
+**File**: `architecture/notes/scripts/check_prohibited_names/2026-11-01-protocol-and-process-fixtures.md` (modified, +2/-0)
 ```diff
-@@ -0,0 +1,60 @@
-+# SFTP selection and batch transfer ownership
+@@ -2,6 +2,8 @@
+ 
+ ## Status
+ 
++Superseded in part (tmux name rules) by [allow the tmux name](2026-11-08-allow-terminal-multiplexer-name.md).
++
+ Prepared for maintainer review under the task's explicit instruction to retain
+ necessary technical terms. This is a scoped governance correction, separate from
+ the release candidate and its behavior fixes.
+```
+
+**File**: `architecture/notes/scripts/check_prohibited_names/2026-11-08-allow-terminal-multiplexer-name.md` (added, +75/-0)
+```diff
+@@ -0,0 +1,75 @@
++# Allow the tmux name in the naming gate
 +
 +## Status
 +
-+Proposed with the SFTP sidebar interaction update.
++Accepted by the maintainer on 2026-11-08.
 +
 +## Context
 +
-+The remote sidebar previously retained one selected path. Adding Ctrl/Shift
-+selection also requires downloads, remote copies and native file drags to carry
-+the complete selection through their existing asynchronous handoffs.
++The naming gate rejects listed product names in added text and commit messages.
++tmux was on that list. Earlier changes kept it there and added narrow
++per-file patterns, so that code which really uses tmux could still pass. These
++patterns covered desktop resume endpoints, activity fixtures, mobile discovery,
++history control and process fixtures. Prose, comments and commit subjects still
++had to avoid the name.
 +
 +## Evidence
 +
-+`SftpController::start_job` advances the controller generation and retires the
-+previous job. Calling the single-entry transfer once per selected row would
-+therefore cancel earlier entries. Native export likewise owns one download plan
-+and one temporary-directory lease for the lifetime of the drag.
++The 2.4.0 follow-up chain (#882, folding #883–#887) fails `architecture-contracts`
++on functional code and one commit message:
++
++- the remote hook bridge reads `$TMUX` and sends a `tmux=` route field
++  (`nebula_app/res/hooks/remote_tmux.py`, `remote_bridge.py`, `ai_hook/protocol.rs`);
++- the Android SSH integration test runs real `tmux` commands;
++- a merge commit message names the IME fix "in tmux".
++
++Each of these would need another file-specific pattern, or a history rewrite of
++an already reviewed merge chain. The checker already carried about 20 tmux-only
++patterns and branches, with tests for each, and every new tmux integration
++needed another governance change.
++
++tmux is a compatibility target the product integrates with: hooks, session
++discovery, recovery, the mobile client. It is not a competing terminal the policy needs to keep out of
++product text.
 +
 +## Decision
 +
-+The browser retains path-based selections, anchors and focused rows in its
-+existing per-pane snapshots. Display order supplies range selection. A refresh
-+retains surviving paths; changing directories clears the selection. Mouse-down
-+on an already selected row defers collapsing the group until a click is confirmed.
-+
-+Actions capture the ordered entries and existing pane/destination/generation
-+target before opening a picker or confirming conflicts. One controller job plans
-+the complete download or copy batch, using the existing concurrency and entry
-+limits. Native export receives the same batch. Duplicate download names reserve
-+the other incoming roots before choosing a replacement name.
-+
-+Keyboard commands belong to the remote list's focus context. Hover actions stop
-+their gestures from reaching the row's selection and double-click navigation.
++Remove tmux from `PROHIBITED_PATTERNS` and `PROHIBITED_EXAMPLES`. Delete the
++patterns and branches that existed only to strip tmux references. Patterns
++shared with other listed names keep their remaining alternatives. Tests that
++used tmux to prove "the rest of the line is still checked" now use another
++listed name. A new test fixes the counterexample: prose,
++functional code and a commit message that name tmux are accepted, while text
++appended to them is still checked.
 +
 +## Rejected alternatives
 +
-+- Starting a controller job per selected row cancels earlier jobs.
-+- Storing row indices selects different files when a listing is replaced.
-+- Changing the local tree's selection model expands this remote-only change.
++- More per-file patterns for the new hook and Android files: does not cover the
++  commit message, and the pattern set grows with every integration.
++- Rewriting the merged chain's history to remove the word: changes reviewed merge
++  commits and only defers the next conflict.
 +
 +## Consequences
 +
-+No persisted format, authentication policy or worker model changes. The existing
-+transfer target validation still rejects results from stale pickers and dialogs.
-+Selection stays independent of the batch already being transferred.
++The tmux name may appear anywhere, including docs and commit messages. All other
++listed names keep their existing rules and narrow allowances.
 +
 +## Validation
 +
-+The supplied HTML was inspected in Chromium, including hover and range selection.
-+Formatting and architecture checks cover the source change. Native compilation,
-+application visual acceptance and regression tests were not run at the user's request.
++`python3 -m unittest scripts.tests.test_prohibited_names`: 26 passed.
++`check_prohibited_names.py range` over the #882 chain
++(`merge/2.4.0-part3-20261104..merge/mobile-baseline-20261104`) reports no hits.
 +
 +## Supersedes
 +
-+None.
++The tmux-specific parts of
++[remote control references](../naming/2026-10-22-remote-control-references.md),
++[protocol and process fixtures](2026-11-01-protocol-and-process-fixtures.md),
++[remote endpoint compatibility](../names/2026-10-25-remote-endpoint-compatibility.md),
++[remote discovery compatibility](../policy/2026-09-30-remote-discovery-compatibility.md) and
++[mobile integration references](../naming/2026-09-28-mobile-integration-references.md).
 +
 +## Revisit when
 +
-+The browser supports selection across directories or concurrent transfer jobs.
++tmux becomes a product the project competes with, or the maintainer wants to
++restore the name to the prohibited list.
 ```
 
-**File**: `nebula_app/i18n/en-US.json` (modified, +7/-2)
+**File**: `architecture/notes/scripts/names/2026-10-25-remote-endpoint-compatibility.md` (modified, +2/-0)
 ```diff
-@@ -1110,7 +1110,9 @@
-     "choose_files": "Choose files to upload",
-     "choose_upload_directory": "Choose a folder to upload",
-     "choose_download_directory": "Choose the download folder",
--    "drag_hint": "Drop files here to upload; drag an item to File Explorer to download."
-+    "drag_hint": "Drop files here to upload; drag an item to File Explorer to download.",
-+    "completed": "Transfer completed",
-+    "copied_items": "Copied {count} remote items"
-   },
-   "hosts": {
-     "copied": "Created host copy: {name}",
-@@ -1651,7 +1653,10 @@
-     "reading": "Reading the remote directory…",
-     "empty": "This directory is empty.",
-     "error_retry": "{error} (click Reload in the top-right to retry)",
--    "busy_other": "Another host is transferring: {destination}"
-+    "busy_other": "Another host is transferring: {destination}",
-+    "items": "{count} items",
-+    "selected_items": "{count} items selected",
-+    "clear_selection": "Clear selection (Esc)"
-   },
-   "backup_flow": {
-     "password_notice": "Pebrel keeps this password in memory only for the current run and never writes it to disk. You will be asked again for the first backup after restarting. If you forget it, existing backups cannot be unlocked.",
-```
-
-**File**: `nebula_app/i18n/zh-CN.json` (modified, +7/-2)
-```diff
-@@ -1110,7 +1110,9 @@
-     "choose_files": "选择要上传的文件",
-     "choose_upload_directory": "选择要上传的文件夹",
-     "choose_download_directory": "选择下载位置",
--    "drag_hint": "拖入文件即可上传；拖到资源管理器即可下载。"
-+    "drag_hint": "拖入文件即可上传；拖到资源管理器即可下载。",
-+    "completed": "传输完成",
-+    "copied_items": "已复制 {count} 个远端项目"
-   },
-   "hosts": {
-     "copied": "已创建主机副本：{name}",
-@@ -1651,7 +1653,10 @@
-     "reading": "正在读取远端目录…",
-     "empty": "此目录为空。",
-     "error_retry": "{error}（点右上角重新读取）",
--    "busy_other": "另一主机正在传输：{destination}"
-+    "busy_other": "另一主机正在传输：{destination}",
-+    "items": "{count} 项",
-+    "selected_items": "已选 {count} 项",
-+    "clear_selection": "清空选择（Esc）"
-   },
-   "backup_flow": {
-     "password_notice": "Pebrel 不把这个密码写到磁盘，只在本次运行期间留在内存里，下次启动后第一次备份时再问。忘了它，已有的备份就解不开了。",
-```
-
-**File**: `nebula_app/i18n/zh-TW.json` (modified, +7/-2)
-```diff
-@@ -615,7 +615,9 @@
-     "choose_files": "選擇要上傳的檔案",
-     "choose_upload_directory": "選擇要上傳的資料夾",
-     "choose_download_directory": "選擇下載位置",
--    "drag_hint": "將檔案拖進來即可上傳；拖至檔案總管即可下載。"
-+    "drag_hint": "將檔案拖進來即可上傳；拖至檔案總管即可下載。",
-+    "completed": "傳輸完成",
-+    "copied_items": "已複製 {count} 個遠端項目"
-   },
-   "hosts": {
-     "search": "搜尋名稱、位址、群組、標籤或備註",
-@@ -1030,7 +1032,10 @@
-     "reading": "正在讀取遠端目錄…",
-     "empty": "此目錄為空。",
-     "error_retry": "{error}（點選右上角重新讀取）",
--    "busy_other": "另一主機正在傳輸：{destination}"
-+    "busy_other": "另一主機正在傳輸：{destination}",
-+    "items": "{count} 個項目",
-+    "selected_items": "已選取 {count} 個項目",
-+    "clear_selection": "清除選取（Esc）"
-   },
-   "terminal.ssh_disconnected": "連線已中斷，按 R 重新連線。",
-   "terminal.ssh_reconnect": "重新連線 (R)",
-```
-
-**File**: `nebula_app/src/gpui_shell/widgets/switch.rs` (modified, +14/-7)
-```diff
-@@ -22,12 +22,18 @@ pub struct NebulaSwitch {
-     key: SharedString,
-     checked: bool,
-     disabled: bool,
-+    small: bool,
-     on_click: Option<Rc<dyn Fn(&bool, &mut Window, &mut App)>>,
- }
+@@ -2,6 +2,8 @@
  
- impl NebulaSwitch {
-     pub fn new(key: impl Into<SharedString>) -> Self {
--        Self { key: key.into(), checked: false, disabled: false, on_click: None }
-+        Self { key: key.into(), checked: false, disabled: false, small: false, on_click: None }
-+    }
+ ## Status
+ 
++Superseded in part (tmux name rules) by [allow the tmux name](../check_prohibited_names/2026-11-08-allow-terminal-multiplexer-name.md).
 +
-+    pub fn small(mut self) -> Self {
-+        self.small = true;
-+        self
-     }
+ Proposed for maintainer review with the remote session recovery change.
  
-     pub fn checked(mut self, checked: bool) -> Self {
-@@ -80,10 +86,11 @@ impl RenderOnce for NebulaSwitch {
-         let muted = cx.theme().muted_foreground;
-         let white = gpui::hsla(0.0, 0.0, 1.0, 1.0);
-         let checked = self.checked;
-+        let small = self.small;
-         let group = SharedString::from(format!("switch-hit-{}", self.key));
-         let track = div()
--            .w(px(40.0))
--            .h(px(22.0))
-+            .w(px(if small { 28.0 } else { 40.0 }))
-+            .h(px(if small { 16.0 } else { 22.0 }))
-             .relative()
-             .flex_shrink_0()
-             .rounded(px(11.0))
-@@ -97,9 +104,9 @@ impl RenderOnce for NebulaSwitch {
-             track.bg(primary.opacity(t)).border_color(border.blend(primary.opacity(t))).child(
-                 div()
-                     .absolute()
--                    .left(px(4.0 + 16.0 * t))
--                    .top(px(4.0 - 2.0 * t))
--                    .size(px(12.0 + 4.0 * t))
-+                    .left(px(if small { 3.0 + 12.0 * t } else { 4.0 + 16.0 * t }))
-+                    .top(px(if small { 3.0 } else { 4.0 - 2.0 * t }))
-+                    .size(px(if small { 10.0 } else { 12.0 + 4.0 * t }))
-                     .rounded_full()
-                     .bg(muted.blend(white.opacity(t))),
-             )
-@@ -127,7 +134,7 @@ impl RenderOnce for NebulaSwitch {
-             .toggled(checked)
-             .disabled(self.disabled)
-             .custom(ButtonCustomVariant::new(cx))
--            .w(px(44.0))
-+            .w(px(if small { 32.0 } else { 44.0 }))
-             .h(px(32.0))
-             .px_0()
-             .rounded(px(6.0))
+ ## Context
 ```
 
-**File**: `nebula_app/src/gpui_shell/workspace/details_panel.rs` (modified, +5/-1)
+**File**: `architecture/notes/scripts/naming/2026-09-28-mobile-integration-references.md` (modified, +2/-0)
 ```diff
-@@ -365,7 +365,11 @@ impl NebulaWorkspace {
-             .relative()
-             .w(px(width))
-             .h_full()
--            .pb(px(crate::gpui_shell::theme::PaneCardStyle::current(cx).margin.bottom))
-+            .pb(px(if remote && matches!(self.side_panel.view, PanelView::Files) {
-+                0.0
-+            } else {
-+                crate::gpui_shell::theme::PaneCardStyle::current(cx).margin.bottom
-+            }))
-             .child(self.render_details_header(width, window, cx))
-             .child(div().flex_1().min_h_0().w_full().child(panel).with_animation(
-                 ("details-content", self.details_panel.transition),
+@@ -1,6 +1,8 @@
+ # Mobile dependency and session references in name checks
+ 
+ ## Status
++
++Superseded in part (tmux name rules) by [allow the tmux name](../check_prohibited_names/2026-11-08-allow-terminal-multiplexer-name.md).
+ Implemented with positive and negative regression coverage.
+ 
+ ## Context
 ```
 
-**File**: `nebula_app/src/gpui_shell/workspace/keyboard_bindings.rs` (modified, +17/-0)
+**File**: `architecture/notes/scripts/naming/2026-10-22-remote-control-references.md` (modified, +2/-0)
 ```diff
-@@ -66,6 +66,23 @@ pub(super) fn gpui_binding_combo(combo: &str) -> String {
- /// 注册工作区快捷键；在 `gpui_component::init` 之后调用一次。
- pub(super) fn init(cx: &mut App) {
-     cx.bind_keys(default_workspace_bindings());
-+    let modifier = if crate::platform::Platform::current() == crate::platform::Platform::MacOS {
-+        "cmd"
-+    } else {
-+        "ctrl"
-+    };
-+    cx.bind_keys([
-+        KeyBinding::new(
-+            &format!("{modifier}-shift-u"),
-+            remote_files::UploadFiles,
-+            Some(remote_files::KEY_CONTEXT),
-+        ),
-+        KeyBinding::new(
-+            &format!("{modifier}-shift-d"),
-+            remote_files::DownloadSelection,
-+            Some(remote_files::KEY_CONTEXT),
-+        ),
-+    ]);
-     // 平台判定复用已有入口；共享表不意味着给其他平台注册 ⌘ 快捷键。
-     if crate::platform::Platform::current() == crate::platform::Platform::MacOS {
-         bind_macos_command_keys(cx);
+@@ -2,6 +2,8 @@
+ 
+ ## Status
+ 
++Superseded in part (tmux name rules) by [allow the tmux name](../check_prohibited_names/2026-11-08-allow-terminal-multiplexer-name.md).
++
+ Focused correction prepared for maintainer review after reproducing PR #712.
+ 
+ ## Context
 ```
 
-**File**: `nebula_app/src/gpui_shell/workspace/remote_files.rs` (modified, +540/-257)
+**File**: `architecture/notes/scripts/policy/2026-09-30-remote-discovery-compatibility.md` (modified, +2/-0)
 ```diff
-@@ -23,8 +23,11 @@
- mod drag;
- #[cfg(all(test, feature = "gpui-test-support"))]
- mod follow_tests;
-+mod interaction;
-+mod selection;
- mod target;
- mod transfers;
-+use selection::Selection;
- use target::RemoteTransferTarget;
+@@ -1,6 +1,8 @@
+ # Remote discovery compatibility references
  
- use gpui::AppContext as _;
-@@ -45,19 +48,19 @@ use crate::ssh_sftp::{
-     SftpSnapshot, SftpTransferOptions,
- };
+ ## Status
++
++Superseded in part (tmux name rules) by [allow the tmux name](../check_prohibited_names/2026-11-08-allow-terminal-multiplexer-name.md).
+ Proposed for separate maintainer review.
  
--use super::file_tree::{DRAWER_TEXT_INSET, ROW_PITCH, ROW_WASH_H, ROW_WASH_INSET};
- use super::{NebulaWorkspace, workspace_ui_language};
+ ## Context
+```
+
+**File**: `scripts/check_prohibited_names.py` (modified, +9/-78)
+```diff
+@@ -21,7 +21,6 @@
+     re.compile(r"(?<![A-Za-z0-9_])herdr(?![A-Za-z0-9_])", re.IGNORECASE),
+     re.compile(r"(?<![A-Za-z0-9_])kaku(?![A-Za-z0-9_])", re.IGNORECASE),
+     re.compile(r"(?<![A-Za-z0-9_])orca(?![A-Za-z0-9_])", re.IGNORECASE),
+-    re.compile(r"(?<![A-Za-z0-9_])tmux(?![A-Za-z0-9_])", re.IGNORECASE),
+     re.compile(r"(?<![A-Za-z0-9_])wezterm(?![A-Za-z0-9_])", re.IGNORECASE),
+     re.compile(r"(?<![A-Za-z0-9_])windows[-_ ]?terminal(?![A-Za-z0-9_])", re.IGNORECASE),
+     re.compile(r"(?<![A-Za-z0-9_])alacritty(?![A-Za-z0-9_])", re.IGNORECASE),
+@@ -54,7 +53,6 @@
+     "herdr",
+     "kaku",
+     "orca",
+-    "tmux",
+     "wezterm",
+     "Windows Terminal",
+     "Alacritty",
+@@ -89,14 +87,13 @@
+     re.compile(r"\bkitty\s+(?:graphics\s+protocol\b|图形协议)", re.IGNORECASE),
+     re.compile(r"\bKITTY_[A-Z0-9_]+\b"),
+     re.compile(r"\bkitty_(?:keyboard|seq|event|release|escape|input)[A-Za-z0-9_]*\b", re.IGNORECASE),
+-    re.compile(r"\b(?:kitty|tmux)/(?:legacy|style|protocol)\b", re.IGNORECASE),
+-    re.compile(r"\b(?:kitty|tmux)\s+(?:keyboard|protocol|escape|sequence)\b", re.IGNORECASE),
++    re.compile(r"\bkitty/(?:legacy|style|protocol)\b", re.IGNORECASE),
++    re.compile(r"\bkitty\s+(?:keyboard|protocol|escape|sequence)\b", re.IGNORECASE),
+     re.compile(r"\bThemeFormat::(?:WindowsTerminal|Kitty|Ghostty|WezTerm|Alacritty)\b"),
+     re.compile(
+         r"unsupported theme format; use Pebrel JSON, Windows Terminal JSON, Kitty, Ghostty, WezTerm or Alacritty",
+         re.IGNORECASE,
+     ),
+-    re.compile(r"\\x1bPtmux;"),
+ )
  
--/// 工具栏与说明文字沿用本地树的抽屉内边距。
--const TEXT_INSET: f32 = DRAWER_TEXT_INSET;
-+const TEXT_INSET: f32 = 12.0;
-+pub(super) const KEY_CONTEXT: &str = "RemoteFiles";
-+gpui::actions!(remote_files, [UploadFiles, DownloadSelection]);
+ # 移动端的原生依赖路径和远端命令是构建/兼容接口；只剔除这些确切引用，
+@@ -109,88 +106,47 @@
+     r"[\"']include/ghostty/vt\.h[\"']",
+ ))
+ REMOTE_SESSION_PATTERNS = tuple(re.compile(pattern) for pattern in (
+-    r"\bSshSessionMode\.(?:TMUX|HERDR)\b",
+-    r"\b(?:exec )?tmux (?:new-session -A -s|kill-session -t) '[^'\n]+'",
++    r"\bSshSessionMode\.HERDR\b",
+     r"\bexec herdr(?=[\"'\s])",
+     r"\bherdr session (?:attach|stop) '[^'\n]+'",
+-    r"\bcommand -v (?:tmux|herdr)(?=\s+>)",
++    r"\bcommand -v herdr(?=\s+>)",
+     r"\bGet-Command herdr(?= -ErrorAction\b)",
+-    r"\btmux (?:-u )?(?:list-sessions|list-windows|list-clients)(?= -[a-zA-Z]\b)",
+-    r"\btmux (?:select-window -t|select-pane -t|display-message -p -t|attach-session -t|has-session -t)(?= )",
+     r"\bherdr session list --json\b",
+     r"\bherdr session attach(?= \$\{psQuote\()",
+     r"\bherdr --session(?= \$\{(?:quote|psQuote)\()",
+ ))
+ # 发现器的类型标签是线协议的一部分；只允许明确的构造/分派位置，
+ # 不放行任意字符串字面量，更不能吞掉同行的说明、链接或比较文案。
+ REMOTE_DISCOVERY_TAG_PATTERNS = tuple(re.compile(pattern) for pattern in (
+-    r'\bdata\["(?:tmux|herdr)"\]',
+-    r'\bSshSessionMode\.TMUX\s+->\s+"tmux"',
++    r'\bdata\["herdr"\]',
+     r'\bSshSessionMode\.HERDR\s+->\s+"herdr"',
+-    r'^\s*"(?:tmux|herdr)"(?= ->)',
++    r'^\s*"herdr"(?= ->)',
+     r'\bwarnings \+= "herdr"',
+     r"\[char\]30 \+ 'herdr'(?= \+ \[char\]10)",
+ ))
+ # Model tags belong to the remote-session consumers and their behavioral tests,
+ # not to arbitrary labels or UI strings elsewhere in the mobile tree.
+ REMOTE_MODEL_REFERENCE_PATTERNS = tuple(re.compile(pattern) for pattern in (
+-    r'\bRemoteSession\("(?:tmux|herdr)"(?=,)',
+-    r'\b(?:session|it)\??\.kind (?:==|!=) "(?:tmux|herdr)"',
++    r'\bRemoteSession\("herdr"(?=,)',
++    r'\b(?:session|it)\??\.kind (?:==|!=) "herdr"',
+ ))
+ REMOTE_MODEL_CONSUMERS = (
+     "/connection/RemoteSessions.kt", "/connection/TmuxSessionControl.kt",
+     "/session/SessionRepository.kt",
+ )
+-REMOTE_CONTROL_PATTERNS = tuple(re.compile(pattern) for pattern in (
+-    r"\btmux copy-mode(?= -t )",
+-    r"\btmux send-keys -X(?= -(?:N|t) )",
+-))
+-REMOTE_DISCOVERY_TEST_PATTERNS = tuple(re.compile(pattern) for pattern in (
+-    r'\bProcessBuilder\("tmux", "-V"\)',
+-    r'\bcommand\("tmux", (?="-f", "/dev/null", "new-session"|"kill-server"\))',
+-    r'\bremove\("TMUX"\)',
+-))
+-REMOTE_PROCESS_FIXTURE_PATTERN = re.compile(
+-    r"^\s*[0-9]+ [0-9]+ (?:pts/[0-9]+|\?) tmux: (?:client|server)\b"
+-)
  
- #[derive(Clone)]
- struct RemoteDirectorySnapshot {
-     destination: String,
-     path: String,
-     entries: Vec<SftpEntry>,
-     error: Option<String>,
--    selected: Option<String>,
-+    selection: Selection,
-     shell_cwd: Option<String>,
-     retry_path: Option<String>,
- }
-@@ -99,7 +102,8 @@ pub(super) struct RemoteBrowser {
-     error: Option<String>,
-     /// 导航世代号。晚发早到的响应靠它被丢弃。
-     generation: u64,
--    selected: Option<String>,
-+    selection: Selection,
-+    focus_handle: Option<gpui::FocusHandle>,
-     /// 当前唯一的传输控制器。任务可以跨 pane 切换继续跑，但只有目的地与当前
-     /// pane 一致时才把完成结果写回列表，避免 A 主机的结果覆盖 B 主机。
-     transfer: Option<SftpController>,
-@@ -116,13 +120,13 @@ pub(super) struct RemoteBrowser {
- #[derive(Clone)]
- struct RemoteClipboard {
-     source_destination: String,
--    entry: SftpEntry,
-+    entries: Vec<SftpEntry>,
- }
  
- #[derive(Clone)]
- enum PendingRemoteTransfer {
-     Upload(Vec<PathBuf>),
--    Download { entry: SftpEntry, local_directory: PathBuf },
-+    Download { entries: Vec<SftpEntry>, local_directory: PathBuf },
-     Copy(RemoteClipboard),
- }
+ def remote_reference_remainder(path: str, text: str) -> str:
+     is_test = path.startswith(("mobile/android/app/src/test/", "mobile/android/app/src/androidTest/"))
+     model_test = is_test and path.endswith("Test.kt") and any(
+         part in path for part in ("/connection/", "/session/")
+     )
+-    if path.endswith("/connection/TmuxEndpoint.kt"):
+-        # Executable defaults, process-name comparisons and executable path regexes
+-        # are interface data. Only remove the matched tokens, never the whole line.
+-        text = re.sub(r'\bexecutable: String = "tmux"', "", text)
+-        text = re.sub(r'== "(?:tmux|tmux:)"', "", text)
+-        text = text.replace(r"\/tmux${'$'}/", "").replace(r"\/tmux\)$/", "")
+-    if path.endswith("/connection/SshPtyIdentity.kt"):
+-        text = re.sub(r'\bit\.command == "tmux"', "", text)
+-        text = re.sub(r'\bit\.command\.startsWith\("tmux:"\)', "", text)
+-    if is_test and path.endswith(("/connection/TmuxSessionControlTest.kt", "/connection/TmuxReco
+```
+
+**File**: `scripts/tests/test_prohibited_names.py` (modified, +33/-169)
+```diff
+@@ -35,48 +35,24 @@ def test_graphics_protocol_names_preserve_the_exact_technical_reference(self) ->
+                      "Kitty graphics protocol_adapter"):
+             self.assertTrue(check_prohibited_names.prohibited_source_line("CHANGELOG.md", text))
  
-@@ -152,7 +156,7 @@ impl RemoteBrowser {
-                 path: self.path.clone(),
-                 entries: self.entries.clone(),
-                 error: self.error.clone(),
--                selected: self.selected.clone(),
-+                selection: self.selection.clone(),
-                 // A switch cancels unfinished navigation. Reobserve the pane
-                 // cwd when it returns rather than treating its old listing as
-                 // already synchronized with the cancelled target.
-@@ -195,7 +199,7 @@ impl RemoteBrowser {
-             self.path = snapshot.path;
-             self.entries = snapshot.entries;
-             self.error = snapshot.error;
--            self.selected = snapshot.selected;
-+            self.selection = snapshot.selection;
-             self.shell_cwd = snapshot.shell_cwd;
-             self.retry_path = snapshot.retry_path;
-             return true;
-@@ -206,7 +210,7 @@ impl RemoteBrowser {
-         self.path.clear();
-         self.entries.clear();
-         self.error = None;
--        self.selected = None;
-+        self.selection.clear();
-         self.shell_cwd = None;
-         self.retry_path = None;
-         false
-@@ -227,7 +231,7 @@ impl RemoteBrowser {
-             self.entries.clear();
-             self.error = None;
-             self.loading = false;
--            self.selected = None;
-+            self.selection.clear();
-             self.shell_cwd = None;
-             self.retry_path = None;
-             self.pending_path = None;
-@@ -247,7 +251,7 @@ impl RemoteBrowser {
-         self.entries.clear();
-         self.error = None;
-         self.loading = false;
--        self.selected = None;
-+        self.selection.clear();
-         self.shell_cwd = None;
-         self.retry_path = None;
-         self.pending_path = None;
-@@ -429,10 +433,20 @@ impl NebulaWorkspace {
-                 workspace.remote_browser.following_cwd = false;
-                 match listed {
-                     Some(Ok(entries)) => {
-+                        let same_directory = workspace.remote_browser.path == path;
-                         workspace.remote_browser.entries = entries;
-                         workspace.remote_browser.path = path.clone();
-                         workspace.remote_browser.error = None;
--                        workspace.remote_browser.selected = None;
-+                        if same_directory {
-+                            let rows = workspace.remote_rows();
-+                            let paths: Vec<_> = rows.iter().map(|row| row.path.as_str()).collect();
-+                            workspace.remote_browser.selection.retain(&paths);
-+                        } else {
-+                            workspace.remote_browser.selection.clear();
-+                            workspace
-+                                .remote_files_scroll
-+                                .scroll_to_item(0, gpui::ScrollStrategy::Top);
-+                        }
-                         workspace.remote_browser.retry_path = None;
-                     },
-                     Some(Err(message)) => {
-@@ -469,9 +483,13 @@ impl NebulaWorkspace {
-         self.navigate_remote(path, cx);
-     }
+-    def test_activity_fixtures_preserve_real_process_names_without_exempting_prose(self) -> None:
+-        path = "nebula_app/src/gpui_shell/terminal/view/activity_tests.rs"
+-        cases = ('view.running_program = Some("tmux".into());',
+-                 'for program in ["tmux", "screen"] {')
+-        for text in cases:
+-            with self.subTest(text=text):
+-                self.assertFalse(check_prohibited_names.prohibited_source_line(path, text))
+-                self.assertTrue(check_prohibited_names.prohibited_source_line("README.md", text))
+-                self.assertTrue(check_prohibited_names.prohibited_source_line(
+-                    path.replace("activity_tests", "other_tests"), text
+-                ))
+-                self.assertTrue(check_prohibited_names.prohibited_source_line(path, text + " // use tmux"))
+-                self.assertTrue(check_prohibited_names.prohibited_source_line(
+-                    path, text + " // https://example.invalid/tmux"
+-                ))
+-        for text in ('let label = "tmux";', '// tmux 里的 Agent 经 hook 报告回合',
+-                     'hook("inside-tmux", "UserPromptSubmit", 1)', 'println!("tmux");'):
+-            self.assertTrue(check_prohibited_names.prohibited_source_line(path, text))
+-
+-    def test_desktop_endpoint_protocol_references_do_not_allow_prose(self) -> None:
++    def test_the_terminal_multiplexer_name_is_a_compatibility_target(self) -> None:
++        # 产品要调用它、读取其环境变量并路由它的会话；叙述和提交说明同样可以直接写名称。
+         cases = (
+-            ("resume.rs", 'Self { executable: "tmux".into(), socket: String::new() }'),
+-            ("resume/identity.rs", 'command == "tmux" || command == "tmux:" || command.ends_with("/tmux")'),
+-            ("resume/discover.sh", r'$3 == "tmux" || $3 == "tmux:" || $3 ~ /\/tmux$/'),
+-            ("resume/discover.sh", r"sed -n 's/^n\(.*\/tmux\)$/\1/p'"),
+-            ("resume/tests.rs", r'identity.has_client("42 pts/3 bash\n43 pts/3 tmux: client\n")'),
++            ("README.md", "Agent status works inside tmux."),
++            ("architecture/notes/mobile/recovery.md", "Typed tmux commands use an independent channel."),
++            ("nebula_app/res/hooks/remote_tmux.py", 'if os.environ.get("TMUX"):'),
++            ("nebula_app/src/ai_hook/protocol.rs", 'field.strip_prefix("tmux=")'),
++            ("mobile/android/app/src/androidTest/SshIntegrationTest.kt", "tmux capture-pane -p -t '$name'"),
++            ("mobile/android/app/preview-proguard-rules.pro", "# The real tmux/IME regression"),
+         )
+-        for suffix, text in cases:
+-            path = "nebula_app/src/ssh_session/" + suffix
+-            with self.subTest(path=path, text=text):
++        for path, text in cases:
++            with self.subTest(path=path):
+                 self.assertFalse(check_prohibited_names.prohibited_source_line(path, text))
+-                self.assertTrue(check_prohibited_names.prohibited_source_line("README.md", text))
+-                self.assertTrue(check_prohibited_names.prohibited_source_line(path, text + " // use tmux"))
+-                self.assertTrue(check_prohibited_names.prohibited_source_line(path, text + " // use Ghostty"))
+-        for path, text in (
+-            ("resume.rs", 'let description = "tmux";'),
+-            ("resume/identity.rs", '// use tmux for everything'),
+-            ("resume/discover.sh", "tmux unknown-command"),
+-            ("resume/tests.rs", 'println!("tmux");'),
+-            ("other.rs", 'Self { executable: "tmux".into(), socket: String::new() }'),
+-        ):
+-            self.assertTrue(check_prohibited_names.prohibited_source_line("nebula_app/src/ssh_session/" + path, text))
++                self.assertTrue(check_prohibited_names.prohibited_source_line(path, text + " Compare with Ghostty."))
++        with tempfile.TemporaryDirectory() as directory:
++            message = Path(directory) / "message.txt"
++            message.write_text("fix(android): scroll tmux history", encoding="utf-8")
++            self.assertFalse(check_prohibited_names.scan_message(message))
  
--    fn selected_remote_entry(&self) -> Option<SftpE
+     def test_truncated_unicode_hunk_context_preserves_added_source_checks(self) -> None:
+         context = "managed generation 改变时，旧回调".encode("utf-8")[:-1]
+@@ -210,22 +186,6 @@ def test_real_cargo_git_dependency_is_allowed_but_readme_reference_is_not(self)
+         self.assertFalse(check_prohibited_names.prohibited_source_line("Cargo.toml", dependency))
+         self.assertTrue(check_prohibited_names.prohibited_source_line("README.md", dependency))
+ 
+-    def test_desktop_hook_wire_references_preserve_only_the_exact_interface(self) -> None:
+-        cases = (
+-            ("nebula_app/res/hooks/remote_bridge.py", 'if os.environ.get("TMUX"):'),
+-            ("nebula_app/res/hooks
 ```
 
 ---
 
-### Incident Patch 2: `888e9f2b` (2026-11-04)
-**Commit Message**: Merge 2.4.0 release part 1/7: PowerShell pointer editing and provider navigation
+### Incident Patch 2: `426077a6` (2026-11-08)
+**Commit Message**: Allow the tmux name in the naming gate
 
-Bring the published v2.4.0 release branch back to main in reviewable
-segments; this part adds the release commits up to 42167bff.
+tmux is a compatibility target: hooks route through $TMUX, session
+discovery and recovery drive it, and mobile integration tests run it.
+Keeping it on the prohibited list required a new file-specific pattern
+for every integration and still rejected prose and commit messages, which
+now blocks the 2.4.0 follow-up chain (#882).
 
-**File**: `architecture/notes/nebula_terminal/tty/2026-11-01-legacy-powershell-pointer.md` (added, +65/-0)
+Remove it from the list and delete the patterns that only existed to
+strip it. Other listed names keep their rules; tests that relied on tmux
+to show the rest of a line is still checked now use another listed name.
+
+**File**: `architecture/notes/scripts/check_prohibited_names/2026-11-01-protocol-and-process-fixtures.md` (modified, +2/-0)
 ```diff
-@@ -0,0 +1,65 @@
-+# Legacy PSReadLine pointer eligibility
+@@ -2,6 +2,8 @@
+ 
+ ## Status
+ 
++Superseded in part (tmux name rules) by [allow the tmux name](2026-11-08-allow-terminal-multiplexer-name.md).
++
+ Prepared for maintainer review under the task's explicit instruction to retain
+ necessary technical terms. This is a scoped governance correction, separate from
+ the release candidate and its behavior fixes.
+```
+
+**File**: `architecture/notes/scripts/check_prohibited_names/2026-11-08-allow-terminal-multiplexer-name.md` (added, +75/-0)
+```diff
+@@ -0,0 +1,75 @@
++# Allow the tmux name in the naming gate
 +
 +## Status
 +
-+Implemented; real PSReadLine 2.0 and 2.4.5 Unix PTY checks passed. Windows
-+ConPTY and desktop acceptance of this change remain unverified.
++Accepted by the maintainer on 2026-11-08.
 +
 +## Context
 +
-+The Windows default shell is Windows PowerShell. Its in-box PSReadLine can be
-+older than 2.1. The initial pointer adapter excluded the entire editor because
-+older PSReadLine can lose surrogate pairs after native editing. Consequently
-+even clicking inside an ASCII command such as `ls` did nothing.
++The naming gate rejects listed product names in added text and commit messages.
++tmux was on that list. Earlier changes kept it there and added narrow
++per-file patterns, so that code which really uses tmux could still pass. These
++patterns covered desktop resume endpoints, activity fixtures, mobile discovery,
++history control and process fixtures. Prose, comments and commit subjects still
++had to avoid the name.
 +
 +## Evidence
 +
-+The public `GetBufferState`, `SetCursorPosition` and undoable `Delete` APIs exist
-+in [PSReadLine 1.2](https://github.com/PowerShell/PSReadLine/blob/v1.2/PSReadLine/PublicAPI.cs)
-+and [2.0](https://github.com/PowerShell/PSReadLine/blob/v2.0.0/PSReadLine/PublicAPI.cs).
-+The existing adapter already checks owned key chords without depending on the
-+newer `Get-PSReadLineKeyHandler -Chord` parameter.
++The 2.4.0 follow-up chain (#882, folding #883–#887) fails `architecture-contracts`
++on functional code and one commit message:
 +
-+Loading the actual 2.0 module into a real Unix PTY verifies native ASCII/CJK
-+cursor movement, insertion, range deletion and undo in Windows and Emacs modes.
-+A buffer containing a surrogate pair can be queried and rejected without
-+mutating it. These are Unix editor checks, not proof of Windows input transport.
++- the remote hook bridge reads `$TMUX` and sends a `tmux=` route field
++  (`nebula_app/res/hooks/remote_tmux.py`, `remote_bridge.py`, `ai_hook/protocol.rs`);
++- the Android SSH integration test runs real `tmux` commands;
++- a merge commit message names the IME fix "in tmux".
++
++Each of these would need another file-specific pattern, or a history rewrite of
++an already reviewed merge chain. The checker already carried about 20 tmux-only
++patterns and branches, with tests for each, and every new tmux integration
++needed another governance change.
++
++tmux is a compatibility target the product integrates with: hooks, session
++discovery, recovery, the mobile client. It is not a competing terminal the policy needs to keep out of
++product text.
 +
 +## Decision
 +
-+Allow the owned bridge on PSReadLine 1.2 or newer. For versions before 2.1,
-+reject pointer snapshots containing any surrogate code unit. Preserve the
-+strict UTF-8, binding ownership, native snapshot, nonce and stale-buffer checks.
-+The native editor remains the only input buffer and edit authority.
++Remove tmux from `PROHIBITED_PATTERNS` and `PROHIBITED_EXAMPLES`. Delete the
++patterns and branches that existed only to strip tmux references. Patterns
++shared with other listed names keep their remaining alternatives. Tests that
++used tmux to prove "the rest of the line is still checked" now use another
++listed name. A new test fixes the counterexample: prose,
++functional code and a commit message that name tmux are accepted, while text
++appended to them is still checked.
 +
 +## Rejected alternatives
 +
-+- Requiring users to install a new shell or module for ASCII clicks.
-+- Removing the Unicode boundary and risking silent loss of existing emoji.
-+- Sending approximate arrow counts or replacing the editor buffer from a mirror.
++- More per-file patterns for the new hook and Android files: does not cover the
++  commit message, and the pattern set grows with every integration.
++- Rewriting the merged chain's history to remove the word: changes reviewed merge
++  commits and only defers the next conflict.
 +
 +## Consequences
 +
-+Legacy editors can advertise pointer support for BMP input. Emoji-containing
-+buffers retain normal terminal selection without native pointer mutation.
-+Modern editors retain their existing Unicode behavior. No network access,
-+module installation, persistence format or per-keystroke I/O is added.
++The tmux name may appear anywhere, including docs and commit messages. All other
++listed names keep their existing rules and narrow allowances.
 +
 +## Validation
 +
-+`scripts.tests.test_powershell_pointer` runs the actual 2.0 module when
-+`NEBULA_TEST_PSREADLINE_LEGACY` names its manifest; an absent module is an explicit
-+skip. It also checks the modern editor, races, ownership, redraw and re-source.
-+`nebula_terminal/tests/native_pointer.rs` checks the in-box Windows module's
-+actual bindings. That Windows test has not been executed on this Linux host.
++`python3 -m unittest scripts.tests.test_prohibited_names`: 26 passed.
++`check_prohibited_names.py range` over the #882 chain
++(`merge/2.4.0-part3-20261104..merge/mobile-baseline-20261104`) reports no hits.
 +
 +## Supersedes
 +
-+Only the blanket 2.1 minimum in
-+[the original pointer decision](2026-10-31-powershell-native-pointer.md).
-+Its transport and lifecycle contracts remain unchanged.
++The tmux-specific parts of
++[remote control references](../naming/2026-10-22-remote-control-references.md),
++[protocol and process fixtures](2026-11-01-protocol-and-process-fixtures.md),
++[remote endpoint compatibility](../names/2026-10-25-remote-endpoint-compatibility.md),
++[remote discovery compatibility](../policy/2026-09-30-remote-discovery-compatibility.md) and
++[mobile integration references](../naming/2026-09-28-mobile-integration-references.md).
 +
 +## Revisit when
 +
-+Native Windows acceptance finds an additional legacy limitation, or the
-+supported Windows baseline guarantees a newer PSReadLine.
++tmux becomes a product the project competes with, or the maintainer wants to
++restore the name to the prohibited list.
 ```
 
-**File**: `nebula_app/src/gpui_shell/settings_pane.rs` (modified, +1/-0)
+**File**: `architecture/notes/scripts/names/2026-10-25-remote-endpoint-compatibility.md` (modified, +2/-0)
 ```diff
-@@ -1571,6 +1571,7 @@ impl SettingsPane {
-             nav = nav.child(
-                 div()
-                     .id(("settings-nav", ix))
-+                    .debug_selector(move || format!("settings-nav-{ix}"))
-                     .px(px(10.0))
-                     .ml_1()
-                     .mr_1()
-```
-
-**File**: `nebula_app/src/gpui_shell/settings_pane/navigation.rs` (modified, +1/-1)
-```diff
-@@ -67,7 +67,7 @@ pub(super) fn section_label(index: usize, language: crate::display::UiLanguage)
- }
+@@ -2,6 +2,8 @@
  
- pub(super) fn is_nav_section_visible(index: usize) -> bool {
--    index < SECTION_IDS.len()
-+    index < SECTION_IDS.len() && index != 3
- }
+ ## Status
  
- pub(super) fn visible_nav_sections() -> impl Iterator<Item = usize> {
-```
-
-**File**: `nebula_app/src/gpui_shell/settings_pane/search_header.rs` (modified, +3/-0)
-```diff
-@@ -132,7 +132,10 @@ pub(super) fn matching_sections(query: &str, language: crate::display::UiLanguag
-     }
- 
-     let tokens = query.split_whitespace().collect::<Vec<_>>();
-+    // Keep prediction/model configuration reachable by deliberate search while
-+    // hiding the provider entry from the default sidebar. Route IDs stay stable.
-     let mut matches = visible_nav_sections()
-+        .chain(std::iter::once(3))
-         .filter_map(|index| {
-             let message = SECTION_SEARCH_TERMS[index];
-             let haystack = format!(
-```
-
-**File**: `nebula_app/src/gpui_shell/settings_pane/tests.rs` (modified, +45/-5)
-```diff
-@@ -466,9 +466,12 @@ fn ctrl_wheel_font_zoom_setting_is_searchable_and_has_a_visible_switch(
- }
- 
- #[test]
--fn settings_nav_exposes_prediction_providers_without_changing_stable_routes() {
-+fn settings_nav_hides_providers_without_changing_stable_routes() {
-     let visibility: Vec<_> = (0..SECTION_IDS.len()).map(is_nav_section_visible).collect();
--    assert_eq!(visibility, vec![true; SECTION_IDS.len()]);
-+    assert_eq!(
-+        visibility,
-+        vec![true, true, true, false, true, true, true, true, true, true, true, true]
-+    );
-     assert!(!is_nav_section_visible(SECTION_IDS.len()));
-     assert!(!is_nav_section_visible(usize::MAX));
-     assert_eq!(
-@@ -490,10 +493,49 @@ fn settings_nav_exposes_prediction_providers_without_changing_stable_routes() {
-     );
- }
- 
-+#[cfg(feature = "gpui-test-support")]
-+#[gpui::test]
-+fn hidden_provider_navigation_keeps_prediction_search_reachable(cx: &mut gpui::TestAppContext) {
-+    cx.update(|cx| {
-+        gpui_component::init(cx);
-+        cx.set_global(crate::gpui_shell::config::Settings::load(ThemeName::Nord));
-+    });
-+    let mut pane = None;
-+    let (_, cx) = cx.add_window_view(|window, cx| {
-+        let view = cx.new(|cx| SettingsPane::new(window, cx));
-+        pane = Some(view.clone());
-+        gpui_component::Root::new(view, window, cx)
-+    });
-+    let pane = pane.unwrap();
-+    cx.simulate_resize(gpui::size(px(1200.0), px(900.0)));
-+    cx.update(|window, cx| {
-+        let _ = window.draw(cx);
-+    });
-+    assert!(cx.debug_bounds("settings-nav-3").is_none());
-+    let origin = pane.read_with(cx, |pane, _| pane.active_section);
-+    for (query, visible) in [("prediction", true), ("", false)] {
-+        cx.update(|window, cx| {
-+            pane.update(cx, |pane, cx| {
-+                pane.settings_search_input
-+                    .update(cx, |input, cx| input.replace_all(query, window, cx));
-+            });
-+        });
-+        cx.run_until_parked();
-+        cx.update(|window, cx| {
-+            let _ = window.draw(cx);
-+        });
-+        assert_eq!(cx.debug_bounds("settings-nav-3").is_some(), visible);
-+        assert_eq!(
-+            pane.read_with(cx, |pane, _| pane.active_section),
-+            if visible { 3 } else { origin }
-+        );
-+    }
-+}
++Superseded in part (tmux name rules) by [allow the tmux name](../check_prohibited_names/2026-11-08-allow-terminal-multiplexer-name.md).
 +
- #[test]
- fn settings_nav_starts_with_application_then_frequent_options() {
-     let visible: Vec<_> = visible_nav_sections().collect();
--    assert_eq!(visible, vec![0, 1, 2, 10, 6, 7, 3, 4, 5, 11, 8, 9]);
-+    assert_eq!(visible, vec![0, 1, 2, 10, 6, 7, 4, 5, 11, 8, 9]);
-     let zh_labels: Vec<_> = visible
-         .iter()
-         .map(|index| section_label(*index, crate::display::UiLanguage::ZhCn))
-@@ -507,7 +549,6 @@ fn settings_nav_starts_with_application_then_frequent_options() {
-             "Agents",
-             "交互",
-             "按键映射",
--            "API 供应商",
-             "SSH",
-             "网络",
-             "手机远程",
-@@ -528,7 +569,6 @@ fn settings_nav_starts_with_application_then_frequent_options() {
-             "Agents",
-             "Interaction",
-             "Key Bindings",
--            "API Providers",
-             "SSH",
-             "Network",
-             "Phone Remote",
-```
-
-**File**: `nebula_terminal/src/tty/pointer.ps1` (modified, +9/-1)
-```diff
-@@ -2,9 +2,12 @@
- function global:Test-PebrelPointerBinding {
-     try {
-         if (-not $global:PebrelCompletionInputReady -or
--            (Get-Module PSReadLine).Version -lt [Version]'2.1.0' -or
-+            (Get-Module PSReadLine).Version -lt [Version]'1.2.0' -or
-             (Get-PSReadLineOption).EditMode -eq 'Vi') { return $false }
-         $bindings = @(Get-PSReadLineKeyHandler -ErrorAction Stop)
-+        # The editor can retain child chords after a user replaces their prefix.
-+        # Such children are no longer reachable through the native dispatcher.
-+        if ($bindings | Where-Object { $_.Key -in 'Ctrl+Shift+F10','Shift+Ctrl+F10' }) { return $false }
-         $query = @($bindings | Where-Object { $_.Key -in 'Ctrl+Shift+F12','Shift+Ctrl+F12' })
-         if ($query.Count -ne 1 -or $query[0].Function -ne $global:PebrelEditorHandlerName) { return $false }
-         foreach ($digit in 0..9) {
-@@ -56,6 +59,11 @@ function global:Invoke-PebrelPointerAction {
-         try {
-             $utf8 = New-Object Text.UTF8Encoding($false, $true)
-             if (-not (Test-PebrelPointerBinding) -or $utf8.GetByteCount($line) -gt 4096) { throw 'Unsupported editor' }
-+            # In-box PSReadLine has native cursor/delete APIs too. Its old
-+            # renderer can lose surrogate pairs after an edit, so reject only
-+            # affected buffers rather than disabling all ASCII/CJK pointer edits.
-+            if ((Get-Module PSReadLine).Version -lt [Version]'2.1.0' -and
-+                $line -match '[\uD800-\uDFFF]') { throw 'Unsupported Unicode buffer' }
-             $bytes = $utf8.GetByteCount($line.Substring(0, $cursor))
-             $global:PebrelPointerSnapshot = @{ Line=$line; Cursor=$cursor; Token=$global:PebrelShellToken; Anchor=$null }
-             Send-PebrelPointerValue 'pebrel_pointer' "$owner`n$unit`n$bytes`n$line"
-```
-
-**File**: `nebula_terminal/tests/native_pointer.rs` (added, +57/-0)
-```diff
-@@ -0,0 +1,57 @@
-+//! Check the actual in-box PSReadLine key maps, including the legacy API.
-+#![cfg(windows)]
-+
-+#[test]
-+fn in_box_powershell_advertises_owned_pointer_bindings() {
-+    let editor = include_str!("../src/tty/completion.ps1");
-+    let pointer = include_str!("../src/tty/pointer.ps1");
-+    let command = format!(
-+        r#"
-+$ErrorActionPreference = 'Stop'
-+Import-Module PSReadLine
-+$global:PebrelShellToken = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes('pwsh:fixture'))
-+$editorSetup = {{
-+{editor}
-+}}
-+$pointerSetup = {{
-+{pointer}
-+}}
-+foreach ($mode in 'Windows','Emacs') {{
-+    Set-PSReadLineOption -EditMode $mode
-+    & $editorSetup
-+    & $pointerSetup
-+    if (-not (Test-PebrelPointerBinding)) {{ throw "Native pointer unavailable in $mode" }}
-+    & $editorSetup
-+    & $pointerSetup
-+    if (-not (Test-PebrelPointerBinding)) {{ throw 'Reload revoked native pointer' }}
-+    Set-PSReadLineKeyHandler -Chord 'Ctrl+Shift+F10,1' -Function BeginningOfLine
-+    if (Test-PebrelPointerBinding) {{ throw 'Changed user key was claimed' }}
-+    & $pointerSetup
-+    if (Test-PebrelPointerBinding) {{ throw 'Reload replaced user key' }}
-+    Set-PSReadLineKeyHandler -Chord 'Ctrl+Shift+F10,1' -BriefDescription $global:PebrelPointerHandlerName -ScriptBlock {{ }}
-+    if (-not (Test-PebrelPointerBinding)) {{ throw 'Restored child chord unavailable' }}
-+    Set-PSReadLineKeyHandler -Chord Ctrl+Shift+F10 -Function BeginningOfLine
-+    if (Test-PebrelPointerBinding) {{ throw 'Changed prefix was claimed' }}
-+    & $pointerSetup
-+    if (Test-PebrelPointerBinding) {{ throw 'Reload replaced user prefix' }}
-+}}
-+Set-PSReadLineOption -EditMode Vi
-+if (Test-PebrelPointerBinding) {{ throw 'Unsupported Vi map was advertised' }}
-+[Console]::Write('NATIVE_POINTER_BINDINGS_OK')
-+"#
-+    );
-+    let program =
-+        std::env::var_os("PEBREL_TEST_POWERSHELL").unwrap_or_else(|| "powershell.exe".into());
-+    let output = std::process::Command::new(program)
-+        .args(["-NoLogo", "-NoProfile", "-NonInteractive", "-Command", &command])
-+        .env("POWERSHELL_TELEMETRY_OPTOUT", "1")
-+        .output()
-+        .expect("start in-box PowerShell with its native PSReadLine");
-+    assert!(
-+        output.status.success(),
-+        "PSReadLine pointer checks failed: {} {}",
-+        String::from_utf8_lossy(&output.stdout),
-+        String::from_utf8_lossy(&output.stderr),
-+    );
-+    assert!(String::from_utf8_lossy(&output.stdout).contains("NATIVE_POINTER_BINDINGS_OK"));
-+}
-```
-
-**File**: `scripts/tests/test_powershell_pointer.py` (modified, +52/-7)
-```diff
-@@ -45,10 +45,16 @@ def wait(self, marker: bytes) -> bytes:
+ Proposed for maintainer review with the remote session recovery change.
  
- @unittest.skipUnless(os.name == "posix", "requires Unix PTYs")
- class PowerShellPointerTests(unittest.TestCase):
--    def start(self, mode: str = "Emacs", before: str = "") -> PowerShellSession:
-+    def start(self, mode: str = "Emacs", before: str = "", *, legacy: bool = False) -> PowerShellSession:
-         program = os.environ.get("NEBULA_TEST_PWSH") or shutil.which("pwsh")
-         if not program:
-             self.skipTest("pwsh is not installed")
-+        module = os.environ.get("NEBULA_TEST_PSREADLINE_LEGACY") if legacy else None
-+        if legacy and not module:
-+            self.skipTest("NEBULA_TEST_PSREADLINE_LEGACY is not configured")
-+        import_module = "Import-Module " + ("'" + module.replace("'", "''") + "'" if module else "PSReadLine")
-+        if legacy:
-+            import_module += "\nif ((Get-Module PSReadLine).Version -ge [Version]'2.1.0') { throw 'Fixture requires a legacy editor' }"
-         temporary = tempfile.TemporaryDirectory(prefix="pebrel-pwsh-pointer-")
-         self.addCleanup(temporary.cleanup)
-         home = Path(temporary.name)
-@@ -61,8 +67,9 @@ def start(self, mode: str = "Emacs", before: str = "") -> PowerShellSession:
-         bootstrap = home / "bootstrap.ps1"
-         bootstrap.write_text((root.parents[2] / "nebula_app/res/shell/powershell.ps1").read_text(encoding="utf-8"), encoding="utf-8")
-         script.write_text(
--            "Import-Module PSReadLine\n"
--            "Set-PSReadLineOption -HistorySaveStyle SaveNothing -PredictionSource None\n"
-+            import_module + "\n"
-+            "Set-PSReadLineOption -HistorySaveStyle SaveNothing\n"
-+            "if ((Get-Command Set-PSReadLineOption).Parameters.ContainsKey('PredictionSource')) { Set-PSReadLineOption -PredictionSource None }\n"
-             f"Set-PSReadLineOption -EditMode {mode}\n"
-             "$global:PebrelShellToken=[Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes('pwsh:fixture'))\n"
-             "function prompt { 'PS> ' }\n" + before + "\n" +
-@@ -71,16 +78,22 @@ def start(self, mode: str = "Emacs", before: str = "") -> PowerShellSession:
-             "function global:PSConsoleHostReadLine {\n"
-             "  [Console]::Write(\"$([char]27)]1337;SetUserVar=qa_ready=eA==$([char]7)\")\n"
-             "  & $global:QaOriginalReadLine\n"
--            "}\n", encoding="utf-8",
-+            "}\n" + (
-+                # Bypass ConsoleHost's preloaded editor and run the imported
-+                # legacy module's real ReadLine on this PTY instead.
-+                "while ($true) { [Console]::Write((prompt)); $null = PSConsoleHostReadLine }\n"
-+                if legacy else ""
-+            ), encoding="utf-8",
+ ## Context
+```
+
+**File**: `architecture/notes/scripts/naming/2026-09-28-mobile-integration-references.md` (modified, +2/-0)
+```diff
+@@ -1,6 +1,8 @@
+ # Mobile dependency and session references in name checks
+ 
+ ## Status
++
++Superseded in part (tmux name rules) by [allow the tmux name](../check_prohibited_names/2026-11-08-allow-terminal-multiplexer-name.md).
+ Implemented with positive and negative regression coverage.
+ 
+ ## Context
+```
+
+**File**: `architecture/notes/scripts/naming/2026-10-22-remote-control-references.md` (modified, +2/-0)
+```diff
+@@ -2,6 +2,8 @@
+ 
+ ## Status
+ 
++Superseded in part (tmux name rules) by [allow the tmux name](../check_prohibited_names/2026-11-08-allow-terminal-multiplexer-name.md).
++
+ Focused correction prepared for maintainer review after reproducing PR #712.
+ 
+ ## Context
+```
+
+**File**: `architecture/notes/scripts/policy/2026-09-30-remote-discovery-compatibility.md` (modified, +2/-0)
+```diff
+@@ -1,6 +1,8 @@
+ # Remote discovery compatibility references
+ 
+ ## Status
++
++Superseded in part (tmux name rules) by [allow the tmux name](../check_prohibited_names/2026-11-08-allow-terminal-multiplexer-name.md).
+ Proposed for separate maintainer review.
+ 
+ ## Context
+```
+
+**File**: `scripts/check_prohibited_names.py` (modified, +9/-70)
+```diff
+@@ -21,7 +21,6 @@
+     re.compile(r"(?<![A-Za-z0-9_])herdr(?![A-Za-z0-9_])", re.IGNORECASE),
+     re.compile(r"(?<![A-Za-z0-9_])kaku(?![A-Za-z0-9_])", re.IGNORECASE),
+     re.compile(r"(?<![A-Za-z0-9_])orca(?![A-Za-z0-9_])", re.IGNORECASE),
+-    re.compile(r"(?<![A-Za-z0-9_])tmux(?![A-Za-z0-9_])", re.IGNORECASE),
+     re.compile(r"(?<![A-Za-z0-9_])wezterm(?![A-Za-z0-9_])", re.IGNORECASE),
+     re.compile(r"(?<![A-Za-z0-9_])windows[-_ ]?terminal(?![A-Za-z0-9_])", re.IGNORECASE),
+     re.compile(r"(?<![A-Za-z0-9_])alacritty(?![A-Za-z0-9_])", re.IGNORECASE),
+@@ -54,7 +53,6 @@
+     "herdr",
+     "kaku",
+     "orca",
+-    "tmux",
+     "wezterm",
+     "Windows Terminal",
+     "Alacritty",
+@@ -89,14 +87,13 @@
+     re.compile(r"\bkitty\s+(?:graphics\s+protocol\b|图形协议)", re.IGNORECASE),
+     re.compile(r"\bKITTY_[A-Z0-9_]+\b"),
+     re.compile(r"\bkitty_(?:keyboard|seq|event|release|escape|input)[A-Za-z0-9_]*\b", re.IGNORECASE),
+-    re.compile(r"\b(?:kitty|tmux)/(?:legacy|style|protocol)\b", re.IGNORECASE),
+-    re.compile(r"\b(?:kitty|tmux)\s+(?:keyboard|protocol|escape|sequence)\b", re.IGNORECASE),
++    re.compile(r"\bkitty/(?:legacy|style|protocol)\b", re.IGNORECASE),
++    re.compile(r"\bkitty\s+(?:keyboard|protocol|escape|sequence)\b", re.IGNORECASE),
+     re.compile(r"\bThemeFormat::(?:WindowsTerminal|Kitty|Ghostty|WezTerm|Alacritty)\b"),
+     re.compile(
+         r"unsupported theme format; use Pebrel JSON, Windows Terminal JSON, Kitty, Ghostty, WezTerm or Alacritty",
+         re.IGNORECASE,
+     ),
+-    re.compile(r"\\x1bPtmux;"),
+ )
+ 
+ # 移动端的原生依赖路径和远端命令是构建/兼容接口；只剔除这些确切引用，
+@@ -109,88 +106,47 @@
+     r"[\"']include/ghostty/vt\.h[\"']",
+ ))
+ REMOTE_SESSION_PATTERNS = tuple(re.compile(pattern) for pattern in (
+-    r"\bSshSessionMode\.(?:TMUX|HERDR)\b",
+-    r"\b(?:exec )?tmux (?:new-session -A -s|kill-session -t) '[^'\n]+'",
++    r"\bSshSessionMode\.HERDR\b",
+     r"\bexec herdr(?=[\"'\s])",
+     r"\bherdr session (?:attach|stop) '[^'\n]+'",
+-    r"\bcommand -v (?:tmux|herdr)(?=\s+>)",
++    r"\bcommand -v herdr(?=\s+>)",
+     r"\bGet-Command herdr(?= -ErrorAction\b)",
+-    r"\btmux (?:-u )?(?:list-sessions|list-windows|list-clients)(?= -[a-zA-Z]\b)",
+-    r"\btmux (?:select-window -t|select-pane -t|display-message -p -t|attach-session -t|has-session -t)(?= )",
+     r"\bherdr session list --json\b",
+     r"\bherdr session attach(?= \$\{psQuote\()",
+     r"\bherdr --session(?= \$\{(?:quote|psQuote)\()",
+ ))
+ # 发现器的类型标签是线协议的一部分；只允许明确的构造/分派位置，
+ # 不放行任意字符串字面量，更不能吞掉同行的说明、链接或比较文案。
+ REMOTE_DISCOVERY_TAG_PATTERNS = tuple(re.compile(pattern) for pattern in (
+-    r'\bdata\["(?:tmux|herdr)"\]',
+-    r'\bSshSessionMode\.TMUX\s+->\s+"tmux"',
++    r'\bdata\["herdr"\]',
+     r'\bSshSessionMode\.HERDR\s+->\s+"herdr"',
+-    r'^\s*"(?:tmux|herdr)"(?= ->)',
++    r'^\s*"herdr"(?= ->)',
+     r'\bwarnings \+= "herdr"',
+     r"\[char\]30 \+ 'herdr'(?= \+ \[char\]10)",
+ ))
+ # Model tags belong to the remote-session consumers and their behavioral tests,
+ # not to arbitrary labels or UI strings elsewhere in the mobile tree.
+ REMOTE_MODEL_REFERENCE_PATTERNS = tuple(re.compile(pattern) for pattern in (
+-    r'\bRemoteSession\("(?:tmux|herdr)"(?=,)',
+-    r'\b(?:session|it)\??\.kind (?:==|!=) "(?:tmux|herdr)"',
++    r'\bRemoteSession\("herdr"(?=,)',
++    r'\b(?:session|it)\??\.kind (?:==|!=) "herdr"',
+ ))
+ REMOTE_MODEL_CONSUMERS = (
+     "/connection/RemoteSessions.kt", "/connection/TmuxSessionControl.kt",
+     "/session/SessionRepository.kt",
+ )
+-REMOTE_CONTROL_PATTERNS = tuple(re.compile(pattern) for pattern in (
+-    r"\btmux copy-mode(?= -t )",
+-    r"\btmux send-keys -X(?= -(?:N|t) )",
+-))
+-REMOTE_DISCOVERY_TEST_PATTERNS = tuple(re.compile(pattern) for pattern in (
+-    r'\bProcessBuilder\("tmux", "-V"\)',
+-    r'\bcommand\("tmux", (?="-f", "/dev/null", "new-session"|"kill-server"\))',
+-    r'\bremove\("TMUX"\)',
+-))
+-REMOTE_PROCESS_FIXTURE_PATTERN = re.compile(
+-    r"^\s*[0-9]+ [0-9]+ (?:pts/[0-9]+|\?) tmux: (?:client|server)\b"
+-)
+ 
+ 
+ def remote_reference_remainder(path: str, text: str) -> str:
+     is_test = path.startswith(("mobile/android/app/src/test/", "mobile/android/app/src/androidTest/"))
+     model_test = is_test and path.endswith("Test.kt") and any(
+         part in path for part in ("/connection/", "/session/")
+     )
+-    if path.endswith("/connection/TmuxEndpoint.kt"):
+-        # Executable defaults, process-name comparisons and executable path regexes
+-        # are interface data. Only remove the matched tokens, never the whole line.
+-        text = re.sub(r'\bexecutable: String = "tmux"', "", text)
+-        text = re.sub(r'== "(?:tmux|tmux:)"', "", text)
+-        text = text.replace(r"\/tmux${'$'}/", "").replace(r"\/tmux\)$/", "")
+-    if path.endswith("/connection/SshPtyIdentity.kt"):
+-        text = re.sub(r'\bit\.command == "tmux"', "", text)
+-        text = re.sub(r'\bit\.command\.startsWith\("tmux:"\)', "", text)
+-    if is_test and path.endswith(("/connection/TmuxSessionControlTest.kt", "/connection/TmuxReco
+```
+
+**File**: `scripts/tests/test_prohibited_names.py` (modified, +33/-153)
+```diff
+@@ -35,48 +35,24 @@ def test_graphics_protocol_names_preserve_the_exact_technical_reference(self) ->
+                      "Kitty graphics protocol_adapter"):
+             self.assertTrue(check_prohibited_names.prohibited_source_line("CHANGELOG.md", text))
+ 
+-    def test_activity_fixtures_preserve_real_process_names_without_exempting_prose(self) -> None:
+-        path = "nebula_app/src/gpui_shell/terminal/view/activity_tests.rs"
+-        cases = ('view.running_program = Some("tmux".into());',
+-                 'for program in ["tmux", "screen"] {')
+-        for text in cases:
+-            with self.subTest(text=text):
+-                self.assertFalse(check_prohibited_names.prohibited_source_line(path, text))
+-                self.assertTrue(check_prohibited_names.prohibited_source_line("README.md", text))
+-                self.assertTrue(check_prohibited_names.prohibited_source_line(
+-                    path.replace("activity_tests", "other_tests"), text
+-                ))
+-                self.assertTrue(check_prohibited_names.prohibited_source_line(path, text + " // use tmux"))
+-                self.assertTrue(check_prohibited_names.prohibited_source_line(
+-                    path, text + " // https://example.invalid/tmux"
+-                ))
+-        for text in ('let label = "tmux";', '// tmux 里的 Agent 经 hook 报告回合',
+-                     'hook("inside-tmux", "UserPromptSubmit", 1)', 'println!("tmux");'):
+-            self.assertTrue(check_prohibited_names.prohibited_source_line(path, text))
+-
+-    def test_desktop_endpoint_protocol_references_do_not_allow_prose(self) -> None:
++    def test_the_terminal_multiplexer_name_is_a_compatibility_target(self) -> None:
++        # 产品要调用它、读取其环境变量并路由它的会话；叙述和提交说明同样可以直接写名称。
+         cases = (
+-            ("resume.rs", 'Self { executable: "tmux".into(), socket: String::new() }'),
+-            ("resume/identity.rs", 'command == "tmux" || command == "tmux:" || command.ends_with("/tmux")'),
+-            ("resume/discover.sh", r'$3 == "tmux" || $3 == "tmux:" || $3 ~ /\/tmux$/'),
+-            ("resume/discover.sh", r"sed -n 's/^n\(.*\/tmux\)$/\1/p'"),
+-            ("resume/tests.rs", r'identity.has_client("42 pts/3 bash\n43 pts/3 tmux: client\n")'),
++            ("README.md", "Agent status works inside tmux."),
++            ("architecture/notes/mobile/recovery.md", "Typed tmux commands use an independent channel."),
++            ("nebula_app/res/hooks/remote_tmux.py", 'if os.environ.get("TMUX"):'),
++            ("nebula_app/src/ai_hook/protocol.rs", 'field.strip_prefix("tmux=")'),
++            ("mobile/android/app/src/androidTest/SshIntegrationTest.kt", "tmux capture-pane -p -t '$name'"),
++            ("mobile/android/app/preview-proguard-rules.pro", "# The real tmux/IME regression"),
          )
-         # .NET's named mutexes (including PSReadLine history initialization)
-         # require a real temporary directory on macOS even with SaveNothing.
-         # Keep it inside this fixture instead of inheriting the runner's home.
-         runtime_temp = home / "tmp"
-         runtime_temp.mkdir()
-+        environment = {"TMPDIR": str(runtime_temp) + os.sep}
-         session = PowerShellSession(
--            program, home, ["-NoLogo", "-NoProfile", "-NoExit", "-File", str(script)],
--            {"TMPDIR": str(runtime_temp) + os.sep},
-+            program, home, ["-NoLogo", "-NoProfile", "-NonInteractive" if legacy else "-NoExit", "-File", str(script)],
-+            environment,
-         )
-         self.addCleanup(session.close)
-         import fcntl
-@@ -137,6 +150,38 @@ def test_native_unicode_moves_range_delete_and_one_undo(self) -> None:
-                 os.write(session.master, b"\x18\x15" if mode == "Emacs" else b"\x1a")
-                 self.assertEqual(self.snapshot(session)[1], changed)
+-        for suffix, text in cases:
+-            path = "nebula_app/src/ssh_session/" + suffix
+-            with self.subTest(path=path, text=text):
++        for path, text in cases:
++            with self.subTest(path=path):
+                 self.assertFalse(check_prohibited_names.prohibited_source_line(path, text))
+-                self.assertTrue(check_prohibited_names.prohibited_source_line("README.md", text))
+-                self.assertTrue(check_prohibited_names.prohibited_source_line(path, text + " // use tmux"))
+-                self.assertTrue(check_prohibited_names.prohibited_source_line(path, text + " // use Ghostty"))
+-        for path, text in (
+-            ("resume.rs", 'let description = "tmux";'),
+-            ("resume/identity.rs", '// use tmux for everything'),
+-            ("resume/discover.sh", "tmux unknown-command"),
+-            ("resume/tests.rs", 'println!("tmux");'),
+-            ("other.rs", 'Self { executable: "tmux".into(), socket: String::new() }'),
+-        ):
+-            self.assertTrue(check_prohibited_names.prohibited_source_line("nebula_app/src/ssh_session/" + path, text))
++                self.assertTrue(check_prohibited_names.prohibited_source_line(path, text + " Compare with Ghostty."))
++        with tempfile.TemporaryDirectory() as directory:
++            message = Path(directory) / "message.txt"
++            message.write_text("fix(android): scroll tmux history", encoding="utf-8")
++            self.assertFalse(check_prohibited_names.scan_message(message))
  
-+    def test_legacy_editor_moves_ascii_and_cjk_and_preserves_undo(self) -> None:
-+        for mode in ("Emacs", "Windows"):
-+            with self.subTest(mode=mode):
-+                session = self.start(mode, legacy=True)
-+                self.assertIn(b"SetUserVar=pebrel_pointer_ready=", session.output)
-+                os.write(session.master, "ls 中文".encode())
-+                self.assertEqual(self.query(session)[3], "ls 中文")
-+                self.action(session, 1 + 1)
-+                self.assertEqual(self.snapshot(session), (1, "ls 中文"))
-+                os.write(session.master, b"X")
-+                self.assertEqual(self.snapshot(session), (2, "lXs 中文"))
-+                self.query(session)
-+                self.action(session, 4098 + 4)
-+                self.action(session, 8195 + 6)
-+                self.assertEqual(self.snapshot(session), (4, "lXs "))
-+                os.write(session.master, b"\x18\x15" if mode == "Emacs" else b"\x1a")
-+                self.assertEqual(self.snapshot(session)[1], "lXs 中文")
+     def test_truncated_unicode_hunk_context_preserves_added_source_checks(self) -> None:
+         context = "managed generation 改变时，旧回调".encode("utf-8")[:-1]
+@@ -224,7 +200,6 @@ def test_mobile_build_and_session_references_preserve_their_interfaces(self) ->
+             ("mobile/android/ghostty/UPSTREAM.json", '"project": "https://github.com/ghostty-org/ghostty",'),
+             ("mobile/ssh/licenses/SOURCE.json", '"url": "https://raw.githubusercontent.com/warp-tech/russh/revision/LICENSE.txt",'),
+             ("mobile/android/app/src/main/java/connection/SshSessionMode.kt", 'TMUX("tmux"), HERDR("herdr")'),
+-            ("mobile/android/app/src/main/java/connection/SshSessionMode.
+```
+
+---
+
+### Incident Patch 3: `e12622ff` (2026-11-08)
+**Commit Message**: Merge the tmux naming policy change (#916) into the follow-up chain
+
+The chain's tmux-specific checker branches and their test are superseded
+by #916, which allows the name everywhere.
+
+**File**: `architecture/notes/scripts/check_prohibited_names/2026-11-01-protocol-and-process-fixtures.md` (modified, +2/-0)
+```diff
+@@ -2,6 +2,8 @@
+ 
+ ## Status
+ 
++Superseded in part (tmux name rules) by [allow the tmux name](2026-11-08-allow-terminal-multiplexer-name.md).
 +
-+    def test_legacy_editor_rejects_surrogates_without_moving_or_deleting(self) -> None:
-+        session = self.start("Windows", before=(
-+            "Set-PSReadLineKeyHandler -Chord Ctrl+o -Scrip
+ Prepared for maintainer review under the task's explicit instruction to retain
+ necessary technical terms. This is a scoped governance correction, separate from
+ the release candidate and its behavior fixes.
+```
+
+**File**: `architecture/notes/scripts/check_prohibited_names/2026-11-08-allow-terminal-multiplexer-name.md` (added, +75/-0)
+```diff
+@@ -0,0 +1,75 @@
++# Allow the tmux name in the naming gate
++
++## Status
++
++Accepted by the maintainer on 2026-11-08.
++
++## Context
++
++The naming gate rejects listed product names in added text and commit messages.
++tmux was on that list. Earlier changes kept it there and added narrow
++per-file patterns, so that code which really uses tmux could still pass. These
++patterns covered desktop resume endpoints, activity fixtures, mobile discovery,
++history control and process fixtures. Prose, comments and commit subjects still
++had to avoid the name.
++
++## Evidence
++
++The 2.4.0 follow-up chain (#882, folding #883–#887) fails `architecture-contracts`
++on functional code and one commit message:
++
++- the remote hook bridge reads `$TMUX` and sends a `tmux=` route field
++  (`nebula_app/res/hooks/remote_tmux.py`, `remote_bridge.py`, `ai_hook/protocol.rs`);
++- the Android SSH integration test runs real `tmux` commands;
++- a merge commit message names the IME fix "in tmux".
++
++Each of these would need another file-specific pattern, or a history rewrite of
++an already reviewed merge chain. The checker already carried about 20 tmux-only
++patterns and branches, with tests for each, and every new tmux integration
++needed another governance change.
++
++tmux is a compatibility target the product integrates with: hooks, session
++discovery, recovery, the mobile client. It is not a competing terminal the policy needs to keep out of
++product text.
++
++## Decision
++
++Remove tmux from `PROHIBITED_PATTERNS` and `PROHIBITED_EXAMPLES`. Delete the
++patterns and branches that existed only to strip tmux references. Patterns
++shared with other listed names keep their remaining alternatives. Tests that
++used tmux to prove "the rest of the line is still checked" now use another
++listed name. A new test fixes the counterexample: prose,
++functional code and a commit message that name tmux are accepted, while text
++appended to them is still checked.
++
++## Rejected alternatives
++
++- More per-file patterns for the new hook and Android files: does not cover the
++  commit message, and the pattern set grows with every integration.
++- Rewriting the merged chain's history to remove the word: changes reviewed merge
++  commits and only defers the next conflict.
++
++## Consequences
++
++The tmux name may appear anywhere, including docs and commit messages. All other
++listed names keep their existing rules and narrow allowances.
++
++## Validation
++
++`python3 -m unittest scripts.tests.test_prohibited_names`: 26 passed.
++`check_prohibited_names.py range` over the #882 chain
++(`merge/2.4.0-part3-20261104..merge/mobile-baseline-20261104`) reports no hits.
++
++## Supersedes
++
++The tmux-specific parts of
++[remote control references](../naming/2026-10-22-remote-control-references.md),
++[protocol and process fixtures](2026-11-01-protocol-and-process-fixtures.md),
++[remote endpoint compatibility](../names/2026-10-25-remote-endpoint-compatibility.md),
++[remote discovery compatibility](../policy/2026-09-30-remote-discovery-compatibility.md) and
++[mobile integration references](../naming/2026-09-28-mobile-integration-references.md).
++
++## Revisit when
++
++tmux becomes a product the project competes with, or the maintainer wants to
++restore the name to the prohibited list.
+```
+
+**File**: `architecture/notes/scripts/names/2026-10-25-remote-endpoint-compatibility.md` (modified, +2/-0)
+```diff
+@@ -2,6 +2,8 @@
+ 
+ ## Status
+ 
++Superseded in part (tmux name rules) by [allow the tmux name](../check_prohibited_names/2026-11-08-allow-terminal-multiplexer-name.md).
++
+ Proposed for maintainer review with the remote session recovery change.
+ 
+ ## Context
+```
+
+**File**: `architecture/notes/scripts/naming/2026-09-28-mobile-integration-references.md` (modified, +2/-0)
+```diff
+@@ -1,6 +1,8 @@
+ # Mobile dependency and session references in name checks
+ 
+ ## Status
++
++Superseded in part (tmux name rules) by [allow the tmux name](../check_prohibited_names/2026-11-08-allow-terminal-multiplexer-name.md).
+ Implemented with positive and negative regression coverage.
+ 
+ ## Context
+```
+
+**File**: `architecture/notes/scripts/naming/2026-10-22-remote-control-references.md` (modified, +2/-0)
+```diff
+@@ -2,6 +2,8 @@
+ 
+ ## Status
+ 
++Superseded in part (tmux name rules) by [allow the tmux name](../check_prohibited_names/2026-11-08-allow-terminal-multiplexer-name.md).
++
+ Focused correction prepared for maintainer review after reproducing PR #712.
+ 
+ ## Context
+```
+
+**File**: `architecture/notes/scripts/policy/2026-09-30-remote-discovery-compatibility.md` (modified, +2/-0)
+```diff
+@@ -1,6 +1,8 @@
+ # Remote discovery compatibility references
+ 
+ ## Status
++
++Superseded in part (tmux name rules) by [allow the tmux name](../check_prohibited_names/2026-11-08-allow-terminal-multiplexer-name.md).
+ Proposed for separate maintainer review.
+ 
+ ## Context
+```
+
+**File**: `scripts/check_prohibited_names.py` (modified, +9/-78)
+```diff
+@@ -21,7 +21,6 @@
+     re.compile(r"(?<![A-Za-z0-9_])herdr(?![A-Za-z0-9_])", re.IGNORECASE),
+     re.compile(r"(?<![A-Za-z0-9_])kaku(?![A-Za-z0-9_])", re.IGNORECASE),
+     re.compile(r"(?<![A-Za-z0-9_])orca(?![A-Za-z0-9_])", re.IGNORECASE),
+-    re.compile(r"(?<![A-Za-z0-9_])tmux(?![A-Za-z0-9_])", re.IGNORECASE),
+     re.compile(r"(?<![A-Za-z0-9_])wezterm(?![A-Za-z0-9_])", re.IGNORECASE),
+     re.compile(r"(?<![A-Za-z0-9_])windows[-_ ]?terminal(?![A-Za-z0-9_])", re.IGNORECASE),
+     re.compile(r"(?<![A-Za-z0-9_])alacritty(?![A-Za-z0-9_])", re.IGNORECASE),
+@@ -54,7 +53,6 @@
+     "herdr",
+     "kaku",
+     "orca",
+-    "tmux",
+     "wezterm",
+     "Windows Terminal",
+     "Alacritty",
+@@ -89,14 +87,13 @@
+     re.compile(r"\bkitty\s+(?:graphics\s+protocol\b|图形协议)", re.IGNORECASE),
+     re.compile(r"\bKITTY_[A-Z0-9_]+\b"),
+     re.compile(r"\bkitty_(?:keyboard|seq|event|release|escape|input)[A-Za-z0-9_]*\b", re.IGNORECASE),
+-    re.compile(r"\b(?:kitty|tmux)/(?:legacy|style|protocol)\b", re.IGNORECASE),
+-    re.compile(r"\b(?:kitty|tmux)\s+(?:keyboard|protocol|escape|sequence)\b", re.IGNORECASE),
++    re.compile(r"\bkitty/(?:legacy|style|protocol)\b", re.IGNORECASE),
++    re.compile(r"\bkitty\s+(?:keyboard|protocol|escape|sequence)\b", re.IGNORECASE),
+     re.compile(r"\bThemeFormat::(?:WindowsTerminal|Kitty|Ghostty|WezTerm|Alacritty)\b"),
+     re.compile(
+         r"unsupported theme format; use Pebrel JSON, Windows Terminal JSON, Kitty, Ghostty, WezTerm or Alacritty",
+         re.IGNORECASE,
+     ),
+-    re.compile(r"\\x1bPtmux;"),
+ )
+ 
+ # 移动端的原生依赖路径和远端命令是构建/兼容接口；只剔除这些确切引用，
+@@ -109,88 +106,47 @@
+     r"[\"']include/ghostty/vt\.h[\"']",
+ ))
+ REMOTE_SESSION_PATTERNS = tuple(re.compile(pattern) for pattern in (
+-    r"\bSshSessionMode\.(?:TMUX|HERDR)\b",
+-    r"\b(?:exec )?tmux (?:new-session -A -s|kill-session -t) '[^'\n]+'",
++    r"\bSshSessionMode\.HERDR\b",
+     r"\bexec herdr(?=[\"'\s])",
+     r"\bherdr session (?:attach|stop) '[^'\n]+'",
+-    r"\bcommand -v (?:tmux|herdr)(?=\s+>)",
++    r"\bcommand -v herdr(?=\s+>)",
+     r"\bGet-Command herdr(?= -ErrorAction\b)",
+-    r"\btmux (?:-u )?(?:list-sessions|list-windows|list-clients)(?= -[a-zA-Z]\b)",
+-    r"\btmux (?:select-window -t|select-pane -t|display-message -p -t|attach-session -t|has-session -t)(?= )",
+     r"\bherdr session list --json\b",
+     r"\bherdr session attach(?= \$\{psQuote\()",
+     r"\bherdr --session(?= \$\{(?:quote|psQuote)\()",
+ ))
+ # 发现器的类型标签是线协议的一部分；只允许明确的构造/分派位置，
+ # 不放行任意字符串字面量，更不能吞掉同行的说明、链接或比较文案。
+ REMOTE_DISCOVERY_TAG_PATTERNS = tuple(re.compile(pattern) for pattern in (
+-    r'\bdata\["(?:tmux|herdr)"\]',
+-    r'\bSshSessionMode\.TMUX\s+->\s+"tmux"',
++    r'\bdata\["herdr"\]',
+     r'\bSshSessionMode\.HERDR\s+->\s+"herdr"',
+-    r'^\s*"(?:tmux|herdr)"(?= ->)',
++    r'^\s*"herdr"(?= ->)',
+     r'\bwarnings \+= "herdr"',
+     r"\[char\]30 \+ 'herdr'(?= \+ \[char\]10)",
+ ))
+ # Model tags belong to the remote-session consumers and their behavioral tests,
+ # not to arbitrary labels or UI strings elsewhere in the mobile tree.
+ REMOTE_MODEL_REFERENCE_PATTERNS = tuple(re.compile(pattern) for pattern in (
+-    r'\bRemoteSession\("(?:tmux|herdr)"(?=,)',
+-    r'\b(?:session|it)\??\.kind (?:==|!=) "(?:tmux|herdr)"',
++    r'\bRemoteSession\("herdr"(?=,)',
++    r'\b(?:session|it)\??\.kind (?:==|!=) "herdr"',
+ ))
+ REMOTE_MODEL_CONSUMERS = (
+     "/connection/RemoteSessions.kt", "/connection/TmuxSessionControl.kt",
+     "/session/SessionRepository.kt",
+ )
+-REMOTE_CONTROL_PATTERNS = tuple(re.compile(pattern) for pattern in (
+-    r"\btmux copy-mode(?= -t )",
+-    r"\btmux send-keys -X(?= -(?:N|t) )",
+-))
+-REMOTE_DISCOVERY_TEST_PATTERNS = tuple(re.compile(pattern) for pattern in (
+-    r'\bProcessBuilder\("tmux", "-V"\)',
+-    r'\bcommand\("tmux", (?="-f", "/dev/null", "new-session"|"kill-server"\))',
+-    r'\bremove\("TMUX"\)',
+-))
+-REMOTE_PROCESS_FIXTURE_PATTERN = re.compile(
+-    r"^\s*[0-9]+ [0-9]+ (?:pts/[0-9]+|\?) tmux: (?:client|server)\b"
+-)
+ 
+ 
+ def remote_reference_remainder(path: str, text: str) -> str:
+     is_test = path.startswith(("mobile/android/app/src/test/", "mobile/android/app/src/androidTest/"))
+     model_test = is_test and path.endswith("Test.kt") and any(
+         part in path for part in ("/connection/", "/session/")
+     )
+-    if path.endswith("/connection/TmuxEndpoint.kt"):
+-        # Executable defaults, process-name comparisons and executable path regexes
+-        # are interface data. Only remove the matched tokens, never the whole line.
+-        text = re.sub(r'\bexecutable: String = "tmux"', "", text)
+-        text = re.sub(r'== "(?:tmux|tmux:)"', "", text)
+-        text = text.replace(r"\/tmux${'$'}/", "").replace(r"\/tmux\)$/", "")
+-    if path.endswith("/connection/SshPtyIdentity.kt"):
+-        text = re.sub(r'\bit\.command == "tmux"', "", text)
+-        text = re.sub(r'\bit\.command\.startsWith\("tmux:"\)', "", text)
+-    if is_test and path.endswith(("/connection/TmuxSessionControlTest.kt", "/connection/TmuxReco
+```
+
+**File**: `scripts/tests/test_prohibited_names.py` (modified, +33/-169)
+```diff
+@@ -35,48 +35,24 @@ def test_graphics_protocol_names_preserve_the_exact_technical_reference(self) ->
+                      "Kitty graphics protocol_adapter"):
+             self.assertTrue(check_prohibited_names.prohibited_source_line("CHANGELOG.md", text))
+ 
+-    def test_activity_fixtures_preserve_real_process_names_without_exempting_prose(self) -> None:
+-        path = "nebula_app/src/gpui_shell/terminal/view/activity_tests.rs"
+-        cases = ('view.running_program = Some("tmux".into());',
+-                 'for program in ["tmux", "screen"] {')
+-        for text in cases:
+-            with self.subTest(text=text):
+-                self.assertFalse(check_prohibited_names.prohibited_source_line(path, text))
+-                self.assertTrue(check_prohibited_names.prohibited_source_line("README.md", text))
+-                self.assertTrue(check_prohibited_names.prohibited_source_line(
+-                    path.replace("activity_tests", "other_tests"), text
+-                ))
+-                self.assertTrue(check_prohibited_names.prohibited_source_line(path, text + " // use tmux"))
+-                self.assertTrue(check_prohibited_names.prohibited_source_line(
+-                    path, text + " // https://example.invalid/tmux"
+-                ))
+-        for text in ('let label = "tmux";', '// tmux 里的 Agent 经 hook 报告回合',
+-                     'hook("inside-tmux", "UserPromptSubmit", 1)', 'println!("tmux");'):
+-            self.assertTrue(check_prohibited_names.prohibited_source_line(path, text))
+-
+-    def test_desktop_endpoint_protocol_references_do_not_allow_prose(self) -> None:
++    def test_the_terminal_multiplexer_name_is_a_compatibility_target(self) -> None:
++        # 产品要调用它、读取其环境变量并路由它的会话；叙述和提交说明同样可以直接写名称。
+         cases = (
+-            ("resume.rs", 'Self { executable: "tmux".into(), socket: String::new() }'),
+-            ("resume/identity.rs", 'command == "tmux" || command == "tmux:" || command.ends_with("/tmux")'),
+-            ("resume/discover.sh", r'$3 == "tmux" || $3 == "tmux:" || $3 ~ /\/tmux$/'),
+-            ("resume/discover.sh", r"sed -n 's/^n\(.*\/tmux\)$/\1/p'"),
+-            ("resume/tests.rs", r'identity.has_client("42 pts/3 bash\n43 pts/3 tmux: client\n")'),
++            ("README.md", "Agent status works inside tmux."),
++            ("architecture/notes/mobile/recovery.md", "Typed tmux commands use an independent channel."),
++            ("nebula_app/res/hooks/remote_tmux.py", 'if os.environ.get("TMUX"):'),
++            ("nebula_app/src/ai_hook/protocol.rs", 'field.strip_prefix("tmux=")'),
++            ("mobile/android/app/src/androidTest/SshIntegrationTest.kt", "tmux capture-pane -p -t '$name'"),
++            ("mobile/android/app/preview-proguard-rules.pro", "# The real tmux/IME regression"),
+         )
+-        for suffix, text in cases:
+-            path = "nebula_app/src/ssh_session/" + suffix
+-            with self.subTest(path=path, text=text):
++        for path, text in cases:
++            with self.subTest(path=path):
+                 self.assertFalse(check_prohibited_names.prohibited_source_line(path, text))
+-                self.assertTrue(check_prohibited_names.prohibited_source_line("README.md", text))
+-                self.assertTrue(check_prohibited_names.prohibited_source_line(path, text + " // use tmux"))
+-                self.assertTrue(check_prohibited_names.prohibited_source_line(path, text + " // use Ghostty"))
+-        for path, text in (
+-            ("resume.rs", 'let description = "tmux";'),
+-            ("resume/identity.rs", '// use tmux for everything'),
+-            ("resume/discover.sh", "tmux unknown-command"),
+-            ("resume/tests.rs", 'println!("tmux");'),
+-            ("other.rs", 'Self { executable: "tmux".into(), socket: String::new() }'),
+-        ):
+-            self.assertTrue(check_prohibited_names.prohibited_source_line("nebula_app/src/ssh_session/" + path, text))
++                self.assertTrue(check_prohibited_names.prohibited_source_line(path, text + " Compare with Ghostty."))
++        with tempfile.TemporaryDirectory() as directory:
++            message = Path(directory) / "message.txt"
++            message.write_text("fix(android): scroll tmux history", encoding="utf-8")
++            self.assertFalse(check_prohibited_names.scan_message(message))
+ 
+     def test_truncated_unicode_hunk_context_preserves_added_source_checks(self) -> None:
+         context = "managed generation 改变时，旧回调".encode("utf-8")[:-1]
+@@ -210,22 +186,6 @@ def test_real_cargo_git_dependency_is_allowed_but_readme_reference_is_not(self)
+         self.assertFalse(check_prohibited_names.prohibited_source_line("Cargo.toml", dependency))
+         self.assertTrue(check_prohibited_names.prohibited_source_line("README.md", dependency))
+ 
+-    def test_desktop_hook_wire_references_preserve_only_the_exact_interface(self) -> None:
+-        cases = (
+-            ("nebula_app/res/hooks/remote_bridge.py", 'if os.environ.get("TMUX"):'),
+-            ("nebula_app/res/hooks
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #881** (closed): Merge 2.4.0 release (7/7): scoped release workflow and final 2.4.0 notes (@Kuddev)
-- **PR #880** (closed): Merge 2.4.0 release (6/7): SFTP previews, settings polish and 2.4.0 metadata (@Kuddev)
-- **PR #879** (closed): Merge 2.4.0 release (5/7): explicit client states and tab activity icons (@Kuddev)
-- **PR #878** (closed): Merge 2.4.0 release (4/7): GLSL effects and SSH agent hooks (@Kuddev)
-- **PR #876** (closed): Merge 2.4.0 release (2/7): SFTP sidebar layout and batch file interactions (@Kuddev)
-- **PR #875** (2026-11-04): Merge 2.4.0 release (1/7): PowerShell pointer editing and provider navigation (@Kuddev)
+- **PR #921** (2026-11-08): Add a Plugins page to Settings (@Kuddev)
+- **PR #920** (2026-11-09): Install plugins, let them contribute themes, and add a Plugins page (@Kuddev)
+- **PR #918** (2026-11-08): Bring the 2.4.0 release workflow and script to main (@Kuddev)
+- **PR #917** (closed): fix(runtime): restore WSL agent callbacks and safe session reuse (@yjjheizhu)
+- **PR #916** (2026-11-08): Allow the tmux name in the naming gate (@Kuddev)
+- **PR #913** (2026-11-08): Add a Community page to the theme picker (@Kuddev)
 
 ---
 
@@ -2281,49 +2554,22 @@ segments; this part adds the release commits up to 42167bff.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge 2.4.0 release part 2/7: SFTP sidebar layout and batch file interactions
+## X. Allow the tmux name in the naming gate (#916)
 
 **RULE**:
-When implementing operations in `architecture/notes/nebula_app/gpui_shell/workspace/remote_files/2026-11-02-batch-selection-and-transfers.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Kuddev/pebrel. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `architecture/notes/scripts/check_prohibited_names/2026-11-01-protocol-and-process-fixtures.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Kuddev/pebrel. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `97d3bfe5`: Merge 2.4.0 release part 2/7: SFTP sidebar layout and batch file interactions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `13af2b2d`: Allow the tmux name in the naming gate (#916). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `architecture/notes/nebula_app/gpui_shell/workspace/remote_files/2026-11-02-batch-selection-and-transfers.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `architecture/notes/scripts/check_prohibited_names/2026-11-01-protocol-and-process-fixtures.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# SFTP selection and batch transfer ownership
+Superseded in part (tmux name rules) by [allow the tmux name](2026-11-08-allow-terminal-multiplexer-name.md).
 
-## Status
-
-Proposed with the SFTP sidebar interaction update.
-
-## Context
-
-The remote sidebar previously retained one selected path. Adding Ctrl/Shift
-selection also requires downloads, remote copies and native file drags to carry
-the complete selection through their existing asynchronous handoffs.
-
-## Evidence
-
-`SftpController::start_job` advances the controller generation and retires the
-previous job. Calling the single-entry transfer once per selected row would
-therefore cancel earlier entries. Native export likewise owns one download plan
-and one temporary-directory lease for the lifetime of the drag.
-
-## Decision
-
-The browser retains path-based selections, anchors and focused rows in its
-existing per-pane snapshots. Display order supplies range selection. A refresh
-retains surviving paths; changing directories clears the selection. Mouse-down
-on an already selected row defers collapsing the group until a click is confirmed.
-
-Actions capture the ordered entries and existing pane/destination/generation
-target before opening a picker or confirming conflicts. One controller job plans
-the complete download or copy batch, using the exis
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2333,4 +2579,4 @@ the complete download or copy batch, using the exis
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `97d3bfe5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `13af2b2d` are properly handled with clean fallback behavior.

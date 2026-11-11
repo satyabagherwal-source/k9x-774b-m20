@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mtkennerly-ludusavi-learnings.md`  
 > **Source**: github ([https://github.com/mtkennerly/ludusavi](https://github.com/mtkennerly/ludusavi))  
-> **Source Version**: `95b651aa`  
+> **Source Version**: `c4c2ca99`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T02:37:04.008Z  
+> **Timestamp**: 2026-11-09T12:29:36.111Z  
 > **Learning ID**: `learn-github-mtkennerly-ludusavi`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mtkennerly-ludusavi-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mtkennerly/ludusavi](https://github.com/mtkennerly/ludusavi))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T02:37:04.000Z  
+> **Harvest Timestamp**: 2026-11-09T12:29:36.105Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Backup tool for PC game saves
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6432 stars
+- **Stars / Engagement**: 6540 stars
 
 ---
 
@@ -44,7 +44,7 @@ use ludusavi::api::*;
 fn main() {
     let mut ludusavi = Ludusavi::load().unwrap();
 
-    let games = vec![std::env::args().skip(1).next().unwrap_or_else(|| "Celeste".to_string())];
+    let games = vec![std::env::args().nth(1).unwrap_or_else(|| "Celeste".to_string())];
 
     let backups = ludusavi
         .list_backups(parameters::ListBackups { games: games.clone() })
@@ -493,7 +493,7 @@ fn parse_game(game: Option<String>) -> Option<String> {
                 None
             } else {
                 let game = stdin.lines().next().and_then(Result::ok);
-                log::debug!("Game from stdin: {:?}", &game);
+                log::debug!("Game from stdin: {:?}", game);
                 game
             }
         }
@@ -511,7 +511,7 @@ fn parse_games(games: Vec<String>) -> Vec<String> {
             vec![]
         } else {
             let games = stdin.lines().map_while(Result::ok).collect();
-            log::debug!("Games from stdin: {:?}", &games);
+            log::debug!("Games from stdin: {:?}", games);
             games
         }
     }
@@ -694,7 +694,7 @@ pub fn run(sub: Subcommand, no_manifest_update: bool, try_manifest_update: bool)
                         should_sync_cloud_after = false;
                         reporter.trip_cloud_sync_failed();
                     }
-        
+          
 ```
 
 ### Core Architecture Module: `src/cli/api.rs`
@@ -1552,7 +1552,7 @@ impl RcloneProcess {
             command.creation_flags(windows::Win32::System::Threading::CREATE_NO_WINDOW.0);
         }
 
-        log::debug!("Running command: {} {:?}", &program, &args);
+        log::debug!("Running command: {} {:?}", program, args);
 
         let mut child = command.spawn().map_err(|e| {
             let e = CommandError::Launched {
@@ -1815,6 +1815,7 @@ impl Remote {
     }
 
     pub fn config_args(&self) -> Option<Vec<String>> {
+ 
 ```
 
 ### Core Architecture Module: `src/gui.rs`
@@ -2207,11 +2208,11 @@ impl App {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #655** (2026-10-18): **Allow clearing the duplicates filter from the status row**
-  *Symptoms*: With "Show disabled games" turned off, disabling every game in the duplicates view leaves an empty list with no way to exit the filter. The per-game badges disappear with the rows, and the status-row badge disappears when the conflicts become resolved.  Keep the status-row DUPLICATES badge visible and clickable while the filter is selected, using the existing filter-clear message and active badge styling. This applies to both backup and restore. Outside the filter, the badge keeps its existing informational behavior.  Validation: - A software-rendered Iced test checks the badge text and sends real mouse press/release events with both backup and restore scan kinds, with unresolved, resolved, and absent duplicates, and with the filter active and inactive. - A state-flow regression follows selecting the filter, disabling both conflicting games, clearing the filter, and showing the unrelated game again without changing "Show disabled games". - Fault injection checks that tests fail if the exit badge is hidden after resolution, its click action is removed, or the application ignores the clear-filter message.  Local checks passed: - `cargo test --locked --config 'profile.dev.package."*".opt-level=0'`: 255 library tests and 30 binary tests passed. The documented Windows registry fixture was temporarily imported and removed after the run. - `cargo fmt --all -- --check` - `git diff --check` - `cargo clippy --locked --workspace --config 'profile.dev.package."*".opt-level=0
+- **Issue #665** (2026-11-09): **Saves not detected for Metal Gear Rising: Revengeance**
+  *Symptoms*: ### Ludusavi version  v0.31.0  ### Operating system  Linux  ### Installation method  Cargo  ### Description  I have the game installed through Steam, both the Steam native package and the Steam Flatpak (I am moving between the two).  The game is here on the PC Gaming Wiki: https://www.pcgamingwiki.com/wiki/Metal_Gear_Rising:_Revengeance  The Flatpak save data can be found here: ```text ${HOME}/.var/app/com.valvesoftware.Steam/.local/share/Steam/steamapps/compatdata/235460/pfx/drive_c/users/steamuser/Documents/MGR/SaveData/ ```  Similarly, the native save data can be found here: ```text ${HOME}/.local/share/Steam/steamapps/compatdata/235460/pfx/drive_c/users/steamuser/Documents/MGR/SaveData/ ```  This seems consistent with what is documented on the PC Gaming Wiki, so I'm not sure what the issue is. Maybe it has to do with the fixed drive, as noted on the wiki here?: https://www.pcgamingwiki.com/wiki/Metal_Gear_Rising:_Revengeance#Save_game_data_location  ### Logs  _No response_
 
-- **Issue #653** (2026-10-18): **Unable to leave "duplicate" view once all titles have been disabled w/o changing settings**
-  *Symptoms*: ### Ludusavi version  v0.31.0  ### Operating system  Windows  ### Installation method  Standalone  ### Description  Minor and very specific issue, but reporting nonetheless. I have "show disabled games" unchecked in Other. When I go to Backup/Restore Mode > preview and click the DUPLICATES badge, it shows only the conflicting titles, if I disable all titles (which makes them disappear), I remain stuck in this empty view with no way to see all the other titles unless I re-enable "show disabled games", re-click DUPLICATES to exit the view, and then re-disable "show disabled games".  ### Logs  Dupe games listed under Backup Mode <img width="1026" height="800" alt="Image" src="https://github.com/user-attachments/assets/eb0585bb-b88c-4d7e-bb93-dfd761db9828" />  Disabled both (because I do not own or have those games installed, never have. The files they are looking for belonged to a different game entirely) and now I cannot exit this dupe view without having to change my settings. <img width="1026" height="800" alt="Image" src="https://github.com/user-attachments/assets/2cd92ac4-f0b6-4799-a13c-1c6e3fecd906" />
+- **Issue #663** (2026-11-07): **chore(deps): Update dependencies to address various RUSTSEC advisories**
+  *Symptoms*: This PR updates dependencies to deal with multiple RUSTSEC advisories. Each `chore(deps)` commit describes how the changes in the commit were produced and which advisories are resolved by the commit, if any.  A few additional code changes are included, to address breaking changes in the `zip` dependency and new `clippy` lints in Rust 1.99.1.  It might also be a good idea to switch off the `macos-14` runner for GitHub Actions. That runner has been retired, and the job will just unconditionally be skipped now. See: https://github.blog/changelog/2026-10-01-github-actions-macos-14-runner-image-retirement/
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2228,466 +2229,130 @@ impl App {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5d6ff801` (2026-10-18)
-**Commit Message**: Merge pull request #655 from Zhong-fan/fix/653-exit-duplicates-filter
-
-Allow clearing the duplicates filter from the status row
+### Incident Patch 1: `c4c2ca99` (2026-11-09)
+**Commit Message**: #665: Map C: to Wine drive_c
 
 **File**: `CHANGELOG.md` (modified, +2/-0)
 ```diff
-@@ -19,6 +19,8 @@
-   * CLI: In `--api` mode, the `backup` command now outputs a `tags` field based on manifest tags.
-     ([Contributed by ChrisJr404](https://github.com/mtkennerly/ludusavi/pull/645))
- * Fixed:
-+  * GUI: The duplicates filter can now be cleared from the status row,
-+    even when all matching games are hidden or their conflicts are resolved.
-   * Two distinct drives whose escaped folder names collided
-     (such as the UNC shares `\\a_b\c` and `\\a\b_c`) would share one backup
-     so saves from one could silently overwrite the other.
+@@ -36,6 +36,8 @@
+   * CLI: `--full-limit 0` would result in no backups being created or retained.
+     0 is now rejected before the command runs.
+     ([Contributed by rleeon](https://github.com/mtkennerly/ludusavi/pull/647))
++  * On Linux, when a game's path includes a literal `C:` drive,
++    it will be mapped to the `drive_c` folder of a Wine prefix being scanned.
+ * Changed:
+   * Loading the primary manifest is faster after the first load.
+     ([Contributed by beallio](https://github.com/mtkennerly/ludusavi/pull/661))
 ```
 
-**File**: `src/gui/app.rs` (modified, +90/-0)
+**File**: `src/scan.rs` (modified, +12/-1)
 ```diff
-@@ -3089,3 +3089,93 @@ impl App {
-             .into()
-     }
- }
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+    use crate::{
-+        gui::game_list::GameListEntry,
-+        scan::{Duplication, ScanChange, ScanInfo, ScannedFile},
-+    };
-+
-+    #[test]
-+    fn clearing_duplicates_filter_restores_visible_games_after_disabling_all_matches() {
-+        for scan_kind in [ScanKind::Backup, ScanKind::Restore] {
-+            let mut app = App::default();
-+            app.config.scan.show_deselected_games = false;
-+
-+            let (log, detector) = match scan_kind {
-+                ScanKind::Backup => (&mut app.backup_screen.log, &mut app.backup_screen.duplicate_detector),
-+                ScanKind::Restore => (&mut app.restore_screen.log, &mut app.restore_screen.duplicate_detector),
-+            };
-+            for (name, path) in [
-+                ("duplicate1", "shared.sav"),
-+                ("duplicate2", "shared.sav"),
-+                ("other", "other.sav"),
-+            ] {
-+                let scan_info = ScanInfo {
-+                    game_name: name.to_owned(),
-+                    found_files: HashMap::from([(
-+                        StrictPath::from(path),
-+                        ScannedFile {
-+                            original_path: (scan_kind == ScanKind::Restore).then(|| StrictPath::from(path)),
-+                            change: ScanChange::New,
-+                            ..Default::default()
-+                        },
-+                    )]),
-+                    backup: (scan_kind == ScanKind::Restore)
-+                        .then(|| crate::scan::layout::Backup::Full(Default::default())),
-+                    has_backups: scan_kind == ScanKind::Restore,
-+                    ..Default::default()
-+                };
-+                detector.add_game(&scan_info, true);
-+                log.entries.push(GameListEntry {
-+                    scan_info,
-+                    scanned: true,
-+                    ..Default::default()
-+                });
-+            }
-+
-+            let visible_games = |app: &App| {
-+                let (log, detector) = match scan_kind {
-+                    ScanKind::Backup => (&app.backup_screen.log, &app.backup_screen.duplicate_detector),
-+                    ScanKind::Restore => (&app.restore_screen.log, &app.restore_screen.duplicate_detector),
-+                };
-+                log.visible_games(scan_kind, &app.config, &app.manifest.extended, detector)
-+            };
-+            let _ = app.update(Message::FilterDuplicates {
-+                scan_kind,
-+                game: Some("duplicate1".to_owned()),
-+            });
-+            assert_eq!(
-+                visible_games(&app),
-+                HashSet::from(["duplicate1".to_owned(), "duplicate2".to_owned()])
-+            );
-+
-+            for name in ["duplicate1", "duplicate2"] {
-+                let _ = app.update(Message::Config {
-+                    event: config::Event::GameListEntryEnabled {
-+                        name: name.to_owned(),
-+                        enabled: false,
-+                        scan_kind,
-+                    },
-+                });
-+            }
-+            assert!(visible_games(&app).is_empty());
-+            let detector = match scan_kind {
-+                ScanKind::Backup => &app.backup_screen.duplicate_detector,
-+                ScanKind::Restore => &app.restore_screen.duplicate_detector,
-+            };
-+            assert_eq!(detector.overall(), Duplication::Resolved);
-+
-+            let _ = app.update(Message::FilterDuplicates { scan_kind, game: None });
-+            assert_eq!(visible_games(&app), HashSet::from(["other".to_owned()]));
-+            assert!(!app.config.scan.show_deselected_games);
-+            let log = match scan_kind {
-+                ScanKind::Backup => &app.backup_screen.log,
-+                ScanKind::Restore => &app.restore_screen.log,
-+            };
-+            assert!(!log.is_filtered());
-+        }
-+    }
-+}
-```
-
-**File**: `src/gui/screen.rs` (modified, +115/-3)
-```diff
-@@ -37,7 +37,12 @@ fn template(content: Column) -> Element {
-         .into()
- }
+@@ -149,6 +149,8 @@ pub fn parse_paths(
+ ) -> HashSet<(StrictPath, bool)> {
+     use crate::resource::manifest::placeholder as p;
  
--fn make_status_row<'a>(status: &OperationStatus, duplication: Duplication) -> Row<'a> {
-+fn make_status_row<'a>(
-+    status: &OperationStatus,
-+    duplication: Duplication,
-+    scan_kind: ScanKind,
-+    filtering_duplicates: bool,
-+) -> Row<'a> {
-     let size = 25;
++    const DRIVE_C: &str = "C:";
++
+     let mut paths = HashSet::new();
  
-     Row::new()
-@@ -53,8 +58,12 @@ fn make_status_row<'a>(status: &OperationStatus, duplication: Duplication) -> Ro
-         })
-         .push(text("|").size(size))
-         .push(text(TRANSLATOR.processed_bytes(status)).size(size))
--        .push_if(!duplication.resolved(), || {
--            Badge::new(&TRANSLATOR.badge_duplicates()).view()
-+        .push_if(filtering_duplicates || !duplication.resolved(), || {
-+            let mut badge = Badge::new(&TRANSLATOR.badge_duplicates());
-+            if filtering_duplicates {
-+                badge = badge.on_press(Message::FilterDuplicates { scan_kind, game: None });
-+            }
-+            badge.view()
-         })
- }
- 
-@@ -116,6 +125,8 @@ impl Backup {
-                     duplicatees.as_ref(),
-                 ),
-                 self.duplicate_detector.overall(),
-+                Self::SCAN_KIND,
-+                self.log.filter_duplicates_of.is_some(),
-             ))
-             .push(
-                 Row::new()
-@@ -206,6 +217,8 @@ impl Restore {
-                     duplicatees.as_ref(),
-                 ),
-                 self.duplicate_detector.overall(),
-+                Self::SCAN_KIND,
-+                self.log.filter_duplicates_of.is_some(),
-             ))
-             .push(
-                 Row::new()
-@@ -725,3 +738,102 @@ pub fn other<'a>(
- 
-     template(content)
- }
+     macro_rules! add_path {
+@@ -295,6 +297,7 @@ pub fn parse_paths(
+                 for id in ids.steam(steam_shortcut.map(|x| x.id)) {
+                     let prefix = format!("{}/steamapps/compatdata/{}/pfx/drive_c", root_globbable, id);
+                     let path2 = path
++                        .replace(DRIVE_C, &prefix)
+                         .replace(p::ROOT, &root_globbable)
+                         .replace(p::GAME, &install_dir)
+                         .replace(p::BASE, &full_install_dir)
+@@ -332,7 +335,8 @@ pub fn parse_paths(
+                     if data.when.iter().any(|x| x.store == Some(Store::Uplay)) {
+                         let ubisoft = format!("{prefix}/Program Files (x86)/Ubisoft/Ubisoft Game Launcher");
+                         add_path!(
+-                            path.replace(p::ROOT, &ubisoft)
++                            path.replace(DRIVE_C, &prefix)
++                                .replace(p::ROOT, &ubisoft)
+                                 .replace(p::GAME, &install_dir)
+                                 .replace(p::BASE, &format!("{}/{}", ubisoft, install_dir))
+                                 .replace(p::STORE_USER_ID, "*")
+@@ -375,6 +379,13 @@ pub fn parse_paths(
+                 .replace(p::WIN_DIR, &format!("{prefix}/windows"))
+                 .replace(p::XDG_DATA, check_nonwindows_path(data_dir))
+                 .replace(p::XDG_CONFIG, check_nonwindows_path(config_dir));
 +
-+#[cfg(test)]
-+mod tests {
-+    use iced::{
-+        Event, Font, Pixels, Rectangle, Size,
-+        advanced::{
-+            Layout, Shell, clipboard, layout, mouse,
-+            renderer::Headless,
-+            widget::{Id, Operation as WidgetOperation, Tree},
-+        },
-+    };
++            let path2 = if Os::HOST == Os::Linux {
++                path2.replace(DRIVE_C, &prefix)
++            } else {
++                path2
++            };
 +
-+    use super::*;
-+
-+    struct FindBadge {
-+        label: String,
-+        bounds: Option<Rectangle>,
-+    }
-+
-+    impl WidgetOperation for FindBadge {
-+        fn traverse(&mut self, operate: &mut dyn FnMut(&mut dyn WidgetOperation)) {
-+            operate(self);
-+        }
-+
-+        fn text(&mut self, _id: Option<&Id>, bounds: Rectangle, text: &str) {
-+            if text == self.label {
-+                self.bounds = Some(bounds);
-+            }
-+        }
-+    }
-+
-+    #[tokio::test]
-+    async fn status_row_duplicates_badge_can_clear_active_filter() {
-+        let renderer = iced::Renderer::new(Font::DEFAULT, Pixels(16.0), Some("tiny-skia"))
-+            .await
-+            .expect("software renderer");
-+        let viewport = Rectangle::with_size(Size::new(1000.0, 100.0));
-+
-+        for scan_kind in [ScanKind::Backup, ScanKind::Restore] {
-+            for duplication in [Duplication::Duplicate, Duplication::Resolved, Duplication::Unique] {
-+                for filtering_duplicates in [false, true] {
-+                    let mut element: Element = make_status_row(
-+                        &OperationStatus::default(),
-+                        duplication,
-+                        scan_kind,
-+                        filtering_duplicates,
-+                    )
-+                    .into();
-+                    let mut tree = Tree::new(element.as_widget());
-+                    let node = element.as_widget_mut().layout(
-+                        &mut tree,
-+                        &renderer,
-+                        &layout::Limits::new(Size::ZERO, viewport.size()),
-+                    );
-+                    let layout = Layout::new(&node);
-+                    let mut badge = FindBadge {
-+                        label: TRANSLATOR.badge_duplicates(),
-+                        bounds: None,
-+                    };
-+                    element
-+                        .as_widget_mut()
-+                        .operate(&mut tree, layout, &renderer, &mut badge);
-+                    assert_eq!(badge.bounds.is_some(), filtering_duplicates || !duplication.resolved());
-+                    let Some(bounds) = badge.bounds else { continue };
-+                    let cursor = mouse::Cursor::Available(bounds.center());
-+                    let mut messages = vec![];
-+
-+                    for event in [
-+                        mouse::Event::ButtonPressed(mouse::Button::Left),
-+                        mouse::Event::ButtonReleased(mouse::Button::Left),
-+                    ] {
-+                        element.as_widget_mut().update(
-+                            &mut tree,
-+                            &Event::Mouse(event),
-+                            layout,
-+                            cursor,
-+                            &renderer,
-+                            &mut clipboard::Null,
-+                            &mut Shell::new(&mut messages),
-+                            &viewport,
-+                        );
-+                    }
-+
-+             
+             add_path_insensitive!(
+                 path2
+                     .replace(p::WIN_DOCUMENTS, &format!("{prefix}/users/*/Documents"))
 ```
 
 ---
 
-### Incident Patch 2: `308fd22f` (2026-10-12)
-**Commit Message**: Fix clearing the duplicates filter when game rows are hidden
+### Incident Patch 2: `f1c07e91` (2026-11-09)
+**Commit Message**: Update default branch used to download primary manifest
 
-**File**: `CHANGELOG.md` (modified, +2/-0)
+**File**: `CHANGELOG.md` (modified, +5/-0)
 ```diff
-@@ -19,6 +19,8 @@
-   * CLI: In `--api` mode, the `backup` command now outputs a `tags` field based on manifest tags.
-     ([Contributed by ChrisJr404](https://github.com/mtkennerly/ludusavi/pull/645))
- * Fixed:
-+  * GUI: The duplicates filter can now be cleared from the status row,
-+    even when all matching games are hidden or their conflicts are resolved.
-   * Two distinct drives whose escaped folder names collided
-     (such as the UNC shares `\\a_b\c` and `\\a\b_c`) would share one backup
-     so saves from one could silently overwrite the other.
+@@ -39,6 +39,11 @@
+ * Changed:
+   * Loading the primary manifest is faster after the first load.
+     ([Contributed by beallio](https://github.com/mtkennerly/ludusavi/pull/661))
++  * By default, the primary manifest is now downloaded from
++    `https://raw.githubusercontent.com/mtkennerly/ludusavi-manifest/refs/heads/data/data/manifest.yaml`
++    instead of
++    `https://raw.githubusercontent.com/mtkennerly/ludusavi-manifest/master/data/manifest.yaml`.
++    This is in an effort to reduce the growth rate of the `ludusavi-manifest` repository's history size.
+ 
+ ## v0.31.0 (2026-04-04)
+ 
 ```
 
-**File**: `src/gui/screen.rs` (modified, +86/-3)
+**File**: `docs/help/configuration-file.md` (modified, +1/-1)
 ```diff
-@@ -37,7 +37,12 @@ fn template(content: Column) -> Element {
-         .into()
- }
- 
--fn make_status_row<'a>(status: &OperationStatus, duplication: Duplication) -> Row<'a> {
-+fn make_status_row<'a>(
-+    status: &OperationStatus,
-+    duplication: Duplication,
-+    scan_kind: ScanKind,
-+    filtering_duplicates: bool,
-+) -> Row<'a> {
-     let size = 25;
- 
-     Row::new()
-@@ -53,8 +58,12 @@ fn make_status_row<'a>(status: &OperationStatus, duplication: Duplication) -> Ro
-         })
-         .push(text("|").size(size))
-         .push(text(TRANSLATOR.processed_bytes(status)).size(size))
--        .push_if(!duplication.resolved(), || {
--            Badge::new(&TRANSLATOR.badge_duplicates()).view()
-+        .push_if(filtering_duplicates || !duplication.resolved(), || {
-+            let mut badge = Badge::new(&TRANSLATOR.badge_duplicates());
-+            if filtering_duplicates {
-+                badge = badge.on_press(Message::FilterDuplicates { scan_kind, game: None });
-+            }
-+            badge.view()
-         })
- }
- 
-@@ -116,6 +125,8 @@ impl Backup {
-                     duplicatees.as_ref(),
-                 ),
-                 self.duplicate_detector.overall(),
-+                Self::SCAN_KIND,
-+                self.log.filter_duplicates_of.is_some(),
-             ))
-             .push(
-                 Row::new()
-@@ -206,6 +217,8 @@ impl Restore {
-                     duplicatees.as_ref(),
-                 ),
-                 self.duplicate_detector.overall(),
-+                Self::SCAN_KIND,
-+                self.log.filter_duplicates_of.is_some(),
-             ))
-             .push(
-                 Row::new()
-@@ -725,3 +738,73 @@ pub fn other<'a>(
- 
-     template(content)
- }
-+
-+#[cfg(test)]
-+mod tests {
-+    use iced::{
-+        Event, Font, Pixels, Rectangle, Size,
-+        advanced::{Layout, Shell, clipboard, layout, mouse, renderer::Headless, widget::Tree},
-+    };
-+
-+    use super::*;
-+
-+    #[test]
-+    fn status_row_hides_resolved_duplicates_when_not_filtering() {
-+        use iced::advanced::Widget;
-+
-+        for scan_kind in [ScanKind::Backup, ScanKind::Restore] {
-+            for duplication in [Duplication::Unique, Duplication::Resolved] {
-+                let row = make_status_row(&OperationStatus::default(), duplication, scan_kind, false);
-+                assert_eq!(row.children().len(), 3);
-+            }
-+            let row = make_status_row(&OperationStatus::default(), Duplication::Duplicate, scan_kind, false);
-+            assert_eq!(row.children().len(), 4);
-+        }
-+    }
-+
-+    #[tokio::test]
-+    async fn status_row_can_clear_duplicates_filter_without_game_rows() {
-+        let renderer = iced::Renderer::new(Font::DEFAULT, Pixels(16.0), Some("tiny-skia"))
-+            .await
-+            .expect("software renderer");
-+        let viewport = Rectangle::with_size(Size::new(1000.0, 100.0));
-+
-+        for scan_kind in [ScanKind::Backup, ScanKind::Restore] {
-+            for duplication in [Duplication::Duplicate, Duplication::Resolved, Duplication::Unique] {
-+                let mut element: Element =
-+                    make_status_row(&OperationStatus::default(), duplication, scan_kind, true).into();
-+                let mut tree = Tree::new(element.as_widget());
-+                let node = element.as_widget_mut().layout(
-+                    &mut tree,
-+                    &renderer,
-+                    &layout::Limits::new(Size::ZERO, viewport.size()),
-+                );
-+                let layout = Layout::new(&node);
-+                assert_eq!(layout.children().count(), 4, "active filter must keep its exit badge");
-+                let cursor = mouse::Cursor::Available(layout.children().last().unwrap().bounds().center());
-+                let mut messages = vec![];
-+
-+                for event in [
-+                    mouse::Event::ButtonPressed(mouse::Button::Left),
-+                    mouse::Event::ButtonReleased(mouse::Button::Left),
-+                ] {
-+                    element.as_widget_mut().update(
-+                        &mut tree,
-+                        &Event::Mouse(event),
-+                        layout,
-+                        cursor,
-+                        &renderer,
-+                        &mut clipboard::Null,
-+                        &mut Shell::new(&mut messages),
-+                        &viewport,
-+                    );
-+                }
-+
-+                assert!(matches!(
-+                    messages.as_slice(),
-+                    [Message::FilterDuplicates { scan_kind: kind, game: None }] if *kind == scan_kind
-+                ));
-+            }
-+        }
-+    }
-+}
+@@ -12,7 +12,7 @@ using the CLI exclusively, then you'll need to edit `config.yaml` yourself.
+ ## Example
+ ```yaml
+ manifest:
+-  url: "https://raw.githubusercontent.com/mtkennerly/ludusavi-manifest/master/data/manifest.yaml"
++  url: "https://raw.githubusercontent.com/mtkennerly/ludusavi-manifest/refs/heads/data/data/manifest.yaml"
+ roots:
+   - path: "D:/Steam"
+     store: steam
 ```
 
----
-
-### Incident Patch 3: `70f4abb3` (2026-09-11)
-**Commit Message**: Fix Windows 32-bit build
-
-**File**: `.github/workflows/main.yaml` (modified, +9/-8)
+**File**: `src/resource/config.rs` (modified, +2/-2)
 ```diff
-@@ -43,36 +43,37 @@ jobs:
-           args: --style semver
-       - uses: dtolnay/rust-toolchain@master
-         with:
--          toolchain: stable-${{ matrix.rust-target }}
-+          targets: ${{ matrix.rust-target }}
-+          toolchain: stable
-       - uses: Swatinem/rust-cache@v2
-         with:
-           key: ${{ matrix.os }}-${{ matrix.rust-target }}
-       - if: ${{ startsWith(matrix.os, 'ubuntu-') }}
-         run: sudo apt-get update && sudo apt-get install -y gcc libxcb-composite0-dev libgtk-3-dev
--      - run: cargo build --release
-+      - run: cargo build --release --target ${{ matrix.rust-target }}
-       - if: ${{ matrix.artifact-name == 'mac' }}
-         run: bash tests/package-macos-app.sh
-       - if: ${{ matrix.artifact-name == 'mac' }}
-         run: >
-           scripts/package-macos-app.sh
--          target/release/${{ matrix.artifact-file }}
-+          target/${{ matrix.rust-target }}/release/${{ matrix.artifact-file }}
-           ${{ env.LUDUSAVI_VERSION }}
--          target/release/ludusavi-v${{ env.LUDUSAVI_VERSION }}-${{ matrix.artifact-name }}
--          target/release/ludusavi-v${{ env.LUDUSAVI_VERSION }}-${{ matrix.artifact-name }}.tar.gz
-+          target/${{ matrix.rust-target }}/release/ludusavi-v${{ env.LUDUSAVI_VERSION }}-${{ matrix.artifact-name }}
-+          target/${{ matrix.rust-target }}/release/ludusavi-v${{ env.LUDUSAVI_VERSION }}-${{ matrix.artifact-name }}.tar.gz
-       - if: ${{ matrix.tar && matrix.artifact-name != 'mac' }}
-         run: |
--          cd target/release
-+          cd target/${{ matrix.rust-target }}/release
-           tar --create --gzip --file=ludusavi-v${{ env.LUDUSAVI_VERSION }}-${{ matrix.artifact-name }}.tar.gz ${{ matrix.artifact-file }}
-       - if: ${{ matrix.tar }}
-         uses: actions/upload-artifact@v4
-         with:
-           name: ludusavi-v${{ env.LUDUSAVI_VERSION }}-${{ matrix.artifact-name }}
--          path: target/release/ludusavi-v${{ env.LUDUSAVI_VERSION }}-${{ matrix.artifact-name }}.tar.gz
-+          path: target/${{ matrix.rust-target }}/release/ludusavi-v${{ env.LUDUSAVI_VERSION }}-${{ matrix.artifact-name }}.tar.gz
-       - if: ${{ !matrix.tar }}
-         uses: actions/upload-artifact@v4
-         with:
-           name: ludusavi-v${{ env.LUDUSAVI_VERSION }}-${{ matrix.artifact-name }}
--          path: target/release/${{ matrix.artifact-file }}
-+          path: target/${{ matrix.rust-target }}/release/${{ matrix.artifact-file }}
+@@ -19,7 +19,7 @@ use crate::{
+ };
  
-   test:
-     strategy:
+ pub const MANIFEST_URL: &str =
+-    "https://raw.githubusercontent.com/mtkennerly/ludusavi-manifest/master/data/manifest.yaml";
++    "https://raw.githubusercontent.com/mtkennerly/ludusavi-manifest/refs/heads/data/data/manifest.yaml";
+ 
+ fn default_backup_dir() -> StrictPath {
+     StrictPath::new(format!("{}/ludusavi-backup", CommonPath::Home.get().unwrap())).rendered()
+@@ -147,7 +147,7 @@ impl Default for Release {
+ #[serde(default, rename_all = "camelCase")]
+ pub struct ManifestConfig {
+     /// Where to download the primary manifest.
+-    /// Default: https://raw.githubusercontent.com/mtkennerly/ludusavi-manifest/master/data/manifest.yaml
++    /// Default: https://raw.githubusercontent.com/mtkennerly/ludusavi-manifest/refs/heads/data/data/manifest.yaml
+     #[serde(skip_serializing_if = "Option::is_none")]
+     pub url: Option<String>,
+     pub enable: bool,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #663** (2026-11-07): chore(deps): Update dependencies to address various RUSTSEC advisories (@hashcatHitman)
+- **PR #662** (closed): Detect the Telltale Batman Shadows Edition bundle in Legendary scans (@CloudCorpRecords)
+- **PR #661** (2026-11-07): Load the primary manifest faster by reusing a saved copy (@beallio)
+- **PR #658** (2026-11-07): Fix misleading Simplified Chinese duplicate badges (@hzura)
 - **PR #655** (2026-10-18): Allow clearing the duplicates filter from the status row (@Zhong-fan)
 - **PR #647** (2026-09-06): Prevent --full-limit 0 from discarding all backups (@rleeon)
-- **PR #645** (2026-08-27): Expose manifest file tags in the API output (@ChrisJr404)
-- **PR #643** (closed): Fix: escape literal brackets in custom game paths (@Darkmet98)
-- **PR #642** (2026-08-16): Package the macOS release as Ludusavi.app (@marcodallagatta)
-- **PR #641** (2026-08-10): Add hoverable placeholder menu for custom paths (@a1156883061)
 
 ---
 
@@ -2707,13 +2372,13 @@ Allow clearing the duplicates filter from the status row
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #655 from Zhong-fan/fix/653-exit-duplicates-filter
+## X. #665: Map C: to Wine drive_c
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mtkennerly/ludusavi. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5d6ff801`: Merge pull request #655 from Zhong-fan/fix/653-exit-duplicates-filter. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c4c2ca99`: #665: Map C: to Wine drive_c. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2721,8 +2386,8 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  * GUI: The duplicates filter can now be cleared from the status row,
-    even when all matching games are hidden or their conflicts are resolved.
+  * On Linux, when a game's path includes a literal `C:` drive,
+    it will be mapped to the `drive_c` folder of a Wine prefix being scanned.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2732,4 +2397,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5d6ff801` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c4c2ca99` are properly handled with clean fallback behavior.

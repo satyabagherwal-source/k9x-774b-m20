@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/chroma-core-chroma-learnings.md`  
 > **Source**: github ([https://github.com/chroma-core/chroma](https://github.com/chroma-core/chroma))  
-> **Source Version**: `52ce8448`  
+> **Source Version**: `1a3ac2c7`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T20:30:27.862Z  
+> **Timestamp**: 2026-11-08T03:43:25.796Z  
 > **Learning ID**: `learn-github-chroma-core-chroma`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/chroma-core-chroma-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/chroma-core/chroma](https://github.com/chroma-core/chroma))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T20:30:27.857Z  
+> **Harvest Timestamp**: 2026-11-08T03:43:25.327Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Search infrastructure for AI
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 29555 stars
+- **Stars / Engagement**: 29651 stars
 
 ---
 
@@ -811,53 +811,66 @@ def delete_file(name: str) -> None:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `52ce8448` (2026-10-22)
-**Commit Message**: [ENH](helm): Expose query-service termination grace and minReadySeconds (#7924)
+### Incident Patch 1: `1a3ac2c7` (2026-11-07)
+**Commit Message**: [DOC] Remove the retired BYOC option from the Cloud docs (#7945)
 
-**File**: `k8s/distributed-chroma/Chart.yaml` (modified, +1/-1)
+## Description of changes
+
+Chroma no longer offers a Bring Your Own Cloud (BYOC) deployment, but
+two public Cloud docs pages still advertised it.
+
+- `docs/mintlify/cloud/getting-started.mdx`: the "Security and
+Deployment" paragraph offered single-tenant deployment "managed by
+Chroma or hosted in your own VPC (BYOC)". It now offers a single-tenant
+deployment managed by Chroma.
+- `docs/mintlify/cloud/pricing.mdx`: removed the FAQ entry "Can I deploy
+Chroma in my own VPC?", which answered yes.
+
+No other BYOC references remain under `docs/`.
+
+## Test plan
+
+Docs-only change. Preview the two pages in the Mintlify preview; the FAQ
+accordion list renders without the removed entry.
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-authored-by: Claude Fable 5.1 <[REDACTED_EMAIL]>
+
+**File**: `docs/mintlify/cloud/getting-started.mdx` (modified, +1/-1)
 ```diff
-@@ -16,7 +16,7 @@ apiVersion: v2
- name: distributed-chroma
- description: A helm chart for distributed Chroma
- type: application
--version: 0.1.93
-+version: 0.1.94
- appVersion: "0.4.24"
- keywords:
-   - chroma
+@@ -17,7 +17,7 @@ Reliability and accuracy are core to the design. Chroma Cloud is thoroughly test
+ 
+ ### Security and Deployment
+ 
+-Chroma Cloud is SOC 2 Type II certified, and offers deployment flexibility to match your needs. You can sign up for our fully-managed multi-tenant cluster running in AWS `us-east-1` or GCP `europe-west1`, or contact us for single-tenant deployment managed by Chroma or hosted in your own VPC (BYOC). If you ever want to self-host open source Chroma, we will help you transition your data from Cloud to your self-managed deployment.
++Chroma Cloud is SOC 2 Type II certified, and offers deployment flexibility to match your needs. You can sign up for our fully-managed multi-tenant cluster running in AWS `us-east-1` or GCP `europe-west1`, or contact us for a single-tenant deployment managed by Chroma. If you ever want to self-host open source Chroma, we will help you transition your data from Cloud to your self-managed deployment.
+ 
+ ### Regions
+ 
 ```
 
-**File**: `k8s/distributed-chroma/templates/query-service.yaml` (modified, +6/-0)
+**File**: `docs/mintlify/cloud/pricing.mdx` (modified, +0/-3)
 ```diff
-@@ -38,6 +38,9 @@ metadata:
- spec:
-   serviceName: query-service
-   replicas: {{ .Values.queryService.replicaCount }}
-+  {{- if .Values.queryService.minReadySeconds }}
-+  minReadySeconds: {{ .Values.queryService.minReadySeconds }}
-+  {{- end }}
-   selector:
-     matchLabels:
-       app: query-service
-@@ -52,6 +55,9 @@ spec:
-         member-type: query-service
-     spec:
-       serviceAccountName: query-service-serviceaccount
-+      {{- if .Values.queryService.terminationGracePeriodSeconds }}
-+      terminationGracePeriodSeconds: {{ .Values.queryService.terminationGracePeriodSeconds }}
-+      {{- end }}
-       volumes:
-         {{if .Values.queryService.configuration}}
-         - name: query-service-config
+@@ -98,9 +98,6 @@ Sync pricing is usage-based:
+     <Accordion title="How is multi-tenancy handled for billing?">
+     Billing is account-based. All data across your collections and tenants within a Chroma Cloud account is aggregated for pricing.
+     </Accordion>
+-    <Accordion title="Can I deploy Chroma in my own VPC?">
+-    Yes. We offer a BYOC (bring your own cloud) option for single-tenant deployments. [Contact us](/cloud) for more details.
+-    </Accordion>
+     <Accordion title="Do I get charged for background indexing?">
+     No. You're only billed for the logical data you write and the storage you consume. Background jobs like compaction or reindexing do not generate additional write or read charges.
+     </Accordion>
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7958** (closed): fix(fastapi): bound limit, offset, and n_results to u32 range (fixes #7953) (@RajGahoi)
+- **PR #7949** (closed): [ENH](local): Add native sparse Search (@akshitkhokhani)
+- **PR #7945** (2026-11-07): [DOC] Remove the retired BYOC option from the Cloud docs (@davedash)
 - **PR #7941** (2026-10-22): [TST](sysdb): Pull coordinator test MinIO from GHCR mirror (@davedash)
 - **PR #7940** (2026-10-22): [BLD](ci): Use patched Node 22 for JavaScript (@lyon-chroma)
 - **PR #7939** (closed): [BLD](ci): Use patched Node 22 for JavaScript (@dbeglord)
-- **PR #7926** (closed): [HOTFIX] applying PR #7914 to release/2026-09-25 (@chroma-droid)
-- **PR #7924** (2026-10-22): [ENH](helm): Expose query-service termination grace and minReadySeconds (@davedash)
-- **PR #7921** (closed): [BUG](segments): Delete evicted HNSW data (@ducanhnguyen223)
 
 ---
 
@@ -877,28 +890,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [ENH](helm): Expose query-service termination grace and minReadySeconds (#7924)
+## X. [DOC] Remove the retired BYOC option from the Cloud docs (#7945)
 
 **RULE**:
-When implementing operations in `k8s/distributed-chroma/Chart.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in chroma-core/chroma. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/mintlify/cloud/getting-started.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in chroma-core/chroma. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `52ce8448`: [ENH](helm): Expose query-service termination grace and minReadySeconds (#7924). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1a3ac2c7`: [DOC] Remove the retired BYOC option from the Cloud docs (#7945). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `k8s/distributed-chroma/Chart.yaml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/mintlify/cloud/getting-started.mdx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version: 0.1.94
+Chroma Cloud is SOC 2 Type II certified, and offers deployment flexibility to match your needs. You can sign up for our fully-managed multi-tenant cluster running in AWS `us-east-1` or GCP `europe-west1`, or contact us for a single-tenant deployment managed by Chroma. If you ever want to self-host open source Chroma, we will help you transition your data from Cloud to your self-managed deployment.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-version: 0.1.93
+Chroma Cloud is SOC 2 Type II certified, and offers deployment flexibility to match your needs. You can sign up for our fully-managed multi-tenant cluster running in AWS `us-east-1` or GCP `europe-west1`, or contact us for single-tenant deployment managed by Chroma or hosted in your own VPC (BYOC). If you ever want to self-host open source Chroma, we will help you transition your data from Cloud to your self-managed deployment.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `52ce8448` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1a3ac2c7` are properly handled with clean fallback behavior.

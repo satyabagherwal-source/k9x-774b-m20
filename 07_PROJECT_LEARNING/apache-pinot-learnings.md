@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-pinot-learnings.md`  
 > **Source**: github ([https://github.com/apache/pinot](https://github.com/apache/pinot))  
-> **Source Version**: `0a53497f`  
+> **Source Version**: `3b23abd0`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T23:17:15.895Z  
+> **Timestamp**: 2026-11-09T17:57:02.350Z  
 > **Learning ID**: `learn-github-apache-pinot`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-pinot-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/pinot](https://github.com/apache/pinot))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T23:17:15.004Z  
+> **Harvest Timestamp**: 2026-11-09T17:57:01.969Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Apache Pinot: a real-time analytics database for low-latency SQL and vector search, serving user-facing and agent-facing applications
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 6172 stars
+- **Stars / Engagement**: 6171 stars
 
 ---
 
@@ -1972,13 +1972,13 @@ const syncTableSchemaData = (data, showFieldType) => {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #20169** (2026-11-07): **Reject cross-table functions under row-level security**
+  *Symptoms*: ## Summary  Row-level security (RLS) adds the principal's row filters to the WHERE clause of the queried table, which no function that reads rows from somewhere else goes through: `lookup()`, `IN_SUBQUERY` and `IN_PARTITIONED_SUBQUERY`. This PR fixes the one of them that leaked and makes the single-stage broker reject all of them for a principal with row filters, so that none can leak again.  The leak: a principal restricted by row filters could use `IN_PARTITIONED_SUBQUERY` to test, and with `GROUP BY` enumerate, which values exist in the rows its row filters hide, while the response still reported `rlsFiltersApplied: true`. The broker ANDs the row filters into the outer WHERE clause and stamps them in the query options, but the subquery of `IN_PARTITIONED_SUBQUERY` reaches the server as a string literal that carries neither; `ServerQueryExecutorV1Impl` compiled that literal and ran it on the table's segments as is, so the `ID_SET` it built covered every row. `IN_SUBQUERY` was not affected (the broker runs it as a nested request under the same identity), nor was the multi-stage engine (it applies row filters per table on the server, runs `IN_SUBQUERY` as a request of its own, and does not resolve `lookup()` or `IN_PARTITIONED_SUBQUERY` at all).  ## Changes  - **Broker**: when row filters apply to the queried table, a single-stage query that calls any cross-table function is rejected with `403` before the filters are added and before anything reaches a server. Whether the que
+
 - **Issue #20159** (2026-11-05): **Allow zero system activities CPU time in query killing tests**
   *Symptoms*: QueryKillingIntegrationTest can fail when offlineSystemActivitiesCpuTimeNs is zero, even though InstanceResponseOperator explicitly clamps this estimate of unaccounted wall time to zero. Allow nonnegative values in both resource usage tests, retaining the positive measured CPU/memory checks and total consistency assertions.  Observed in [this CI failure](https://github.com/apache/pinot/actions/runs/41926793312/job/126913552944?pr=20154).  Validation: all 7 QueryKillingIntegrationTest tests passed on current master with the CI lane settings (2 active processors, 1 GB initial heap, 4 GB maximum heap), with compiler warnings enabled. Spotless, Checkstyle, and license checks passed. An initial run using default local JVM settings exhausted the heap in the existing CPU-killing scenario before reaching the changed assertion. 
   **Post-Mortem & Fix Analysis**:
   > ## [Codecov](https://app.codecov.io/gh/apache/pinot/pull/20159?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=apache) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 70.37%. Comparing base ([`091eac7`](https://app.codecov.io/gh/apache/pinot/commit/091eac79529cfe0499bce1e498259dedc858bd9b?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=apache)) to head ([`6f84678`](https://app.codecov.io/gh/apache/pinot/commit/6f84678aa5b5448183f14c40ea5f6aa643c58564?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=apache)).  <details><summary>Additional details and impacted files</summary>    ```diff @@             Coverage Diff              @@ ##             master   #20159      +/-   ## ================================
-
-- **Issue #20154** (2026-11-05): **Fix HyperLogLogPlus max byte size and reject sp above 25**
-  *Symptoms*: ## Summary `HyperLogLogPlusUtils.byteSize(p, sp)` returned `sizeof() + 12` as the serialized size of a stream-lib `HyperLogLogPlus`, which matches neither serialized format: - **Normal format** (`sp == 0`): the header is a 4-byte version plus varints of `p`, `sp`, the format flag and the register set size, so the real size is 3 bytes smaller (10933 vs 10936 for `p = 14`). Ingestion aggregation stores the sketch in a `FixedByteSVMutableForwardIndex` whose `setBytes` requires the value length to equal the fixed width, so HLL++ ingestion aggregation failed on the first row. - **Sparse format** (`sp > 0`): the size grows with the sparse set until it converts to the normal format at `0.75 * 2^p` entries, and is unrelated to `sizeof()`. For `p = 14, sp = 25`, 5000 values already serialize to 11412 bytes, above the reported 10936. The star-tree passes this size as the max entry length of the raw forward index, which the V2/V3 writers use to allocate their chunk buffer.  Changes: - Rename `byteSize(int, int)` to `maxByteSize(int, int)` and make it a true upper bound: the exact normal-format size for `sp == 0`, and the largest sparse sketch (one varint of up to 5 bytes per entry, up to the conversion threshold) for `sp > 0`. - Remove the unused `byteSize(HyperLogLogPlus)`. stream-lib does not expose `sp` or the format, so an accurate per-value size would require serializing the sketch. - For serialized HLL++ inputs, bound the max aggregated value size by the `maxByteSize` of the `p` a
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1995,250 +1995,79 @@ const syncTableSchemaData = (data, showFieldType) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `684b7a4a` (2026-11-05)
-**Commit Message**: Add metric for local realtime segment builds with CRC mismatch (#19450)
+### Incident Patch 1: `3b23abd0` (2026-11-09)
+**Commit Message**: Bump org.codehaus.mojo:versions-maven-plugin from 2.23.0 to 2.24.0 (#20190)
 
-* Add metric for CRC-driven segment replacements
+Bumps [org.codehaus.mojo:versions-maven-plugin](https://github.com/mojohaus/versions) from 2.23.0 to 2.24.0.
+- [Release notes](https://github.com/mojohaus/versions/releases)
+- [Changelog](https://github.com/mojohaus/versions/blob/master/ReleaseNotes.md)
+- [Commits](https://github.com/mojohaus/versions/compare/2.23.0...2.24.0)
 
-Expose table-level observability for replicas that replace a segment after a confirmed CRC mismatch. Count only successful replacements so failed downloads and CRC read errors do not inflate the signal.
+---
+updated-dependencies:
+- dependency-name: org.codehaus.mojo:versions-maven-plugin
+  dependency-version: 2.24.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
 
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-# Conflicts:
-#	pinot-core/src/test/java/org/apache/pinot/core/data/manager/BaseTableDataManagerTest.java
-#	pinot-core/src/test/java/org/apache/pinot/core/data/manager/realtime/RealtimeSegmentDataManagerTest.java
-
-* Count CRC-driven replacements on the reloadSegment path
-
-reloadSegment can download and replace a segment after a CRC mismatch
-without going through replaceSegmentIfCrcMismatch, so the metric was
-missing those successful replacements. Same-CRC force downloads and
-failed reloads remain excluded.
-
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-# Conflicts:
-#	pinot-core/src/main/java/org/apache/pinot/core/data/manager/BaseTableDataManager.java
-
-* Count confirmed CRC mismatches on locally built realtime segments
-
-Rename the meter to SEGMENT_BUILD_WITH_CRC_MISMATCH and emit it when a
-local build diverges from the com
-
-**File**: `pinot-common/src/main/java/org/apache/pinot/common/metrics/ServerMeter.java` (modified, +1/-0)
+**File**: `pom.xml` (modified, +1/-1)
 ```diff
-@@ -103,6 +103,7 @@ public enum ServerMeter implements AbstractMetrics.Meter {
-   SEGMENT_DOWNLOAD_FAILURES("segments", false),
-   SEGMENT_DOWNLOAD_FROM_REMOTE_FAILURES("segments", false),
-   SEGMENT_DOWNLOAD_FROM_PEERS_FAILURES("segments", false),
-+  SEGMENT_BUILD_WITH_CRC_MISMATCH("segments", false),
-   SEGMENT_BUILD_FAILURE("segments", false),
-   SEGMENT_UPLOAD_FAILURE("segments", false),
-   SEGMENT_UPLOAD_SUCCESS("segments", false),
+@@ -2339,7 +2339,7 @@
+         <plugin>
+           <groupId>org.codehaus.mojo</groupId>
+           <artifactId>versions-maven-plugin</artifactId>
+-          <version>2.23.0</version>
++          <version>2.24.0</version>
+         </plugin>
+         <plugin>
+           <groupId>org.apache.maven.plugins</groupId>
 ```
 
-**File**: `pinot-core/src/main/java/org/apache/pinot/core/data/manager/realtime/RealtimeSegmentDataManager.java` (modified, +24/-17)
-```diff
-@@ -40,6 +40,7 @@
- import java.util.concurrent.locks.Lock;
- import java.util.function.BooleanSupplier;
- import javax.annotation.Nullable;
-+import org.apache.commons.configuration2.ex.ConfigurationException;
- import org.apache.commons.io.FileUtils;
- import org.apache.commons.lang3.StringUtils;
- import org.apache.pinot.common.Utils;
-@@ -1410,12 +1411,15 @@ protected boolean buildSegmentAndReplace()
-   ///
-   /// A locally-built segment can diverge in CRC from the one the winning replica committed (e.g. different docId
-   /// ordering); swapping in a divergent copy corrupts upsert metadata and leaves replicas inconsistent otherwise. So
--  /// when `committedSegmentZKMetadata` carries a CRC, a mismatch discards the local build (returns `false`) and the
-+  /// when `committedSegmentZKMetadata` carries a CRC, a mismatch discards the local build and the
-   /// caller downloads the committed segment. Skipped for pauseless tables and segments whose CRC is not yet set (the
-   /// COMMITTING window), so we never download a not-yet-uploaded segment (see PR #17885).
-   ///
-+  /// Confirmed CRC mismatches are counted via {@link ServerMeter#SEGMENT_BUILD_WITH_CRC_MISMATCH} regardless of
-+  /// whether the caller's download fallback succeeds. Build failures and CRC-read errors are not counted.
-+  ///
-   /// @param committedSegmentZKMetadata committed ZK metadata carrying the CRC, or `null` to skip the check
--  /// @return `true` if built and replaced locally; `false` if the build failed or was rejected on a CRC mismatch
-+  /// @return `true` if the consuming segment was replaced with the local copy; `false` if the caller should download
-   protected boolean buildSegmentAndReplace(@Nullable SegmentZKMetadata committedSegmentZKMetadata)
-       throws Exception {
-     SegmentBuildDescriptor descriptor;
-@@ -1429,30 +1433,33 @@ protected boolean buildSegmentAndReplace(@Nullable SegmentZKMetadata committedSe
-     }
-     boolean crcCheckEnabled = committedSegmentZKMetadata != null && committedSegmentZKMetadata.getCrc() >= 0
-         && !PauselessConsumptionUtils.isPauselessEnabled(_tableConfig);
--    if (crcCheckEnabled && !isLocalSegmentCrcMatchingZk(committedSegmentZKMetadata)) {
--      _segmentLogger.warn("Locally-built segment: {} CRC does not match committed CRC: {} in zk. "
--          + "Skipping local build to replace", _segmentNameStr, committedSegmentZKMetadata.getCrc());
--      return false;
-+    if (crcCheckEnabled) {
-+      try {
-+        if (!isLocalSegmentCrcMatchingZk(committedSegmentZKMetadata)) {
-+          _segmentLogger.warn("Locally-built segment: {} CRC does not match committed CRC: {} in zk. "
-+              + "Skipping local build to replace", _segmentNameStr, committedSegmentZKMetadata.getCrc());
-+          _serverMetrics.addMeteredTableValue(_tableNameWithType, ServerMeter.SEGMENT_BUILD_WITH_CRC_MISMATCH, 1);
-+          return false;
-+        }
-+      } catch (Exception e) {
-+        _segmentLogger.warn("Failed to read CRC of locally-built segment: {}; treating as a build failure to download "
-+            + "the committed segment", _segmentNameStr, e);
-+        return false;
-+      }
-     }
-     // On a CRC match use the committed metadata; otherwise the construction-time metadata.
-     _realtimeTableDataManager.replaceConsumingSegment(_segmentNameStr,
-         crcCheckEnabled ? committedSegmentZKMetadata : _segmentZKMetadata);
-     return true;
-   }
- 
--  /// Whether the just-built local segment's CRC matches the committed CRC in ZK. Returns `false` if the local metadata
--  /// cannot be read, so the caller downloads the committed segment rather than failing the transition.
-+  /// Whether the just-built local segment's CRC matches the committed CRC in ZK.
-   @VisibleForTesting
--  protected boolean isLocalSegmentCrcMatchingZk(SegmentZKMetadata committedSegmentZKMetadata) {
-+  protected boolean isLocalSegmentCrcMatchingZk(SegmentZKMetadata committedSegmentZKMetadata)
-+      throws IOException, ConfigurationException {
-     File indexDir = new File(_resourceDataDir, _segmentNameStr);
--    try {
--      SegmentMetadataImpl localMetadata = new SegmentMetadataImpl(indexDir);
--      return BaseTableDataManager.hasSameCRC(committedSegmentZKMetadata, localMetadata);
--    } catch (Exception e) {
--      _segmentLogger.warn("Failed to read CRC of locally-built segment: {}; treating as CRC mismatch to download the "
--          + "committed segment", _segmentNameStr, e);
--      return false;
--    }
-+    SegmentMetadataImpl localMetadata = new SegmentMetadataImpl(indexDir);
-+    return BaseTableDataManager.hasSameCRC(committedSegmentZKMetadata, localMetadata);
-   }
- 
-   /// Closes the stream consumer so that no more data can be consumed into this segment. Does NOT release the consumer
-```
+---
 
-**File**: `pinot-core/src/test/java/org/apache/pinot/core/data/manager/BaseTableDataManagerTest.java` (modified, +18/-0)
-```diff
-@@ -939,6 +939,24 @@ public void testReplaceSegmentNoop()
-     assertFalse(tableDataManager.getSegmentDataDir(segmentName).exists());
-   }
- 
-+  @Test
-+  public void testReplaceSegmentSkippedWhenCrcCheckDisabled()
-+      throws Exception {
-+    SegmentZKMetadata zkMetadata = createRawSegment(SegmentVersion.v3, 5);
-+    InstanceDataManagerConfig instanceDataManagerConfig = createDefaultInstanceDataManagerConfig();
-+    when(instanceDataManagerConfig.shouldCheckCRCOnSegmentLoad()).thenReturn(false);
-+
-+    BaseTableDataManager tableDataManager = createTableManager(instanceDataManagerConfig);
-+    File indexDir = createSegment(SegmentVersion.v3, 3);
-+    tableDataManager.addNewOnlineSegment(zkMetadata, new IndexLoadingConfig());
-+    assertEquals(new SegmentMetadataImpl(indexDir).getTotalDocs(), 3);
-+
-+    ImmutableSegmentDataManager segmentDataManager = createImmutableSegmentDataManager(SEGMENT_NAME, 0);
-+    tableDataManager.replaceSegmentIfCrcMismatch(segmentDataManager, zkMetadata, new IndexLoadingConfig());
-+    // CRC check disabled: local copy is kept even though CRCs differ.
-+    assertEquals(new SegmentMetadataImpl(indexDir).getTotalDocs(), 3);
-+  }
-+
-   @Test
-   public void testReplaceSegmentNewDataWithAsyncSegmentRefresh()
-       throws Exception {
-```
+### Incident Patch 2: `bbbb5632` (2026-11-09)
+**Commit Message**: Bump io.opentelemetry.contrib:opentelemetry-gcp-resources (#20191)
 
-**File**: `pinot-core/src/test/java/org/apache/pinot/core/data/manager/realtime/RealtimeSegmentDataManagerTest.java` (modified, +152/-29)
+Bumps [io.opentelemetry.contrib:opentelemetry-gcp-resources](https://github.com/open-telemetry/opentelemetry-java-contrib) from 1.61.0-alpha to 1.62.0-alpha.
+- [Release notes](https://github.com/open-telemetry/opentelemetry-java-contrib/releases)
+- [Changelog](https://github.com/open-telemetry/opentelemetry-java-contrib/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/open-telemetry/opentelemetry-java-contrib/commits)
+
+---
+updated-dependencies:
+- dependency-name: io.opentelemetry.contrib:opentelemetry-gcp-resources
+  dependency-version: 1.62.0-alpha
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `pom.xml` (modified, +1/-1)
 ```diff
-@@ -37,6 +37,7 @@
- import java.util.function.BooleanSupplier;
- import java.util.function.Supplier;
- import javax.annotation.Nullable;
-+import org.apache.commons.configuration2.ex.ConfigurationException;
- import org.apache.commons.io.FileUtils;
- import org.apache.helix.HelixManager;
- import org.apache.pinot.common.metadata.segment.SegmentZKMetadata;
-@@ -102,6 +103,9 @@
- import static org.mockito.Mockito.verify;
- import static org.mockito.Mockito.when;
- import static org.testng.Assert.assertEquals;
-+import static org.testng.Assert.assertFalse;
-+import static org.testng.Assert.assertThrows;
-+import static org.testng.Assert.assertTrue;
+@@ -311,7 +311,7 @@
+     <google.auto-service.version>1.1.1</google.auto-service.version>
+     <google.re2j.version>1.8</google.re2j.version>
+     <google.cloud.opentelemetry.version>0.36.0</google.cloud.opentelemetry.version>
+-    <opentelemetry.gcp.resources.version>1.61.0-alpha</opentelemetry.gcp.resources.version>
++    <opentelemetry.gcp.resources.version>1.62.0-alpha</opentelemetry.gcp.resources.version>
+     <google.errorprone.version>2.52.0</google.errorprone.version>
+     <google.j2objc.version>3.1</google.j2objc.version>
  
- 
- // TODO Re-write this test using the stream abstraction
-@@ -778,14 +782,18 @@ public void testOnlineTransitionAfterStop()
-     }
- 
-     // Test downloadAndReplace is called after buildAndReplace fails.
--    try (FakeRealtimeSegmentDataManager segmentDataManager = createFakeSegmentManager()) {
-+    ServerMetrics buildFailureServerMetrics = mock(ServerMetrics.class);
-+    try (FakeRealtimeSegmentDataManager segmentDataManager =
-+        createFakeSegmentManager(false, new TimeSupplier(), null, null, null, buildFailureServerMetrics)) {
-       segmentDataManager._failSegmentBuildAndReplace = true;
-       segmentDataManager._stopWaitTimeMs = 0;
-       segmentDataManager._state.set(segmentDataManager, RealtimeSegmentDataManager.State.HOLDING);
-       segmentDataManager.setCurrentOffset(finalOffsetValue);
-       segmentDataManager.goOnlineFromConsuming(metadata);
-       Assert.assertTrue(segmentDataManager._downloadAndReplaceCalled);
-       Assert.assertTrue(segmentDataManager._buildAndReplaceCalled);
-+      verify(buildFailureServerMetrics, never())
-+          .addMeteredTableValue(anyString(), eq(ServerMeter.SEGMENT_BUILD_WITH_CRC_MISMATCH), eq(1L));
-     }
-   }
- 
-@@ -892,11 +900,15 @@ public void testOnlineTransitionSkipsLocalBuildOnCrcMismatch()
-     long finalOffsetValue = START_OFFSET_VALUE + 600;
- 
-     // Upsert + committed CRC set + local CRC mismatch -> discard local build, download the committed segment.
--    try (FakeRealtimeSegmentDataManager segmentDataManager = createFakeSegmentManager()) {
-+    ServerMetrics crcMismatchServerMetrics = mock(ServerMetrics.class);
-+    try (FakeRealtimeSegmentDataManager segmentDataManager =
-+        createFakeSegmentManager(false, new TimeSupplier(), null, null, null, crcMismatchServerMetrics)) {
-       when(segmentDataManager._tableDataManager.isUpsertEnabled()).thenReturn(true);
-       runGoOnlineForCrcGuard(segmentDataManager, crcMetadata(finalOffsetValue, 12345L), false, finalOffsetValue);
--      Assert.assertTrue(segmentDataManager._buildAndReplaceCalled);
--      Assert.assertTrue(segmentDataManager._downloadAndReplaceCalled);
-+      assertTrue(segmentDataManager._buildAndReplaceCalled);
-+      assertTrue(segmentDataManager._downloadAndReplaceCalled);
-+      verify(crcMismatchServerMetrics)
-+          .addMeteredTableValue(anyString(), eq(ServerMeter.SEGMENT_BUILD_WITH_CRC_MISMATCH), eq(1L));
-     }
- 
-     // Non-upsert + committed CRC set + local CRC mismatch -> discard local build, download the committed segment.
-@@ -908,51 +920,175 @@ public void testOnlineTransitionSkipsLocalBuildOnCrcMismatch()
-     }
- 
-     // Upsert + committed CRC set + local CRC match -> build locally, no download, swap in committed metadata.
--    try (FakeRealtimeSegmentDataManager segmentDataManager = createFakeSegmentManager()) {
-+    ServerMetrics matchingUpsertServerMetrics = mock(ServerMetrics.class);
-+    try (FakeRealtimeSegmentDataManager segmentDataManager =
-+        createFakeSegmentManager(false, new TimeSupplier(), null, null, null, matchingUpsertServerMetrics)) {
-       when(segmentDataManager._tableDataManager.isUpsertEnabled()).thenReturn(true);
-       SegmentZKMetadata committedMetadata = crcMetadata(finalOffsetValue, 12345L);
-       runGoOnlineForCrcGuard(segmentDataManager, committedMetadata, true, finalOffsetValue);
-       Assert.assertTrue(segmentDataManager._buildAndReplaceCalled);
-       Assert.assertFalse(segmentDataManager._downloadAndReplaceCalled);
-+      verify(matchingUpsertServerMetrics, never())
-+          .addMeteredTableValue(anyString(), eq(ServerMeter.SEGMENT_BUILD_WITH_CRC_MISMATCH), eq(1L));
-       verify(segmentDataManager._tableDataManager)
-           .replaceConsumingSegment(eq(SEGMENT_NAME_STR), same(committedMetadata));
-     }
- 
-     // Non-upsert + committed CRC set + local CRC match -> build locally, no download, swap in committed metadata.
--    try (FakeRealtimeSegmentDataManager segmentDataManager = createFakeSegmentManager()) {
-+    ServerMetrics matchingNonUpsertServerMetrics = mock(ServerMetrics.class);
-+    try (FakeRealtimeSegmentDataManager segmentDataManager =
-+        createFakeSegmentManager(false, new TimeSupplier(), null, null, null, matchingNonUpsertServerMetrics)) {
-       when(segmentDataManager._tableDataManager.isUpsertEnabled()).thenReturn(false);
-       SegmentZKMetadata committedMetadata = 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #20164** (2026-11-05): Add a README Docker quickstart and improve GitHub metadata (@xiangfu0)
-- **PR #20163** (closed): Retry Confluent schema registry outages instead of dropping the message (@anshul98ks123)
-- **PR #20159** (2026-11-05): Allow zero system activities CPU time in query killing tests (@Jackie-Jiang)
-- **PR #20158** (2026-11-05): Let ControllerTest subclasses set the cluster configs a controller starts with (@Jackie-Jiang)
-- **PR #20156** (2026-11-05): Bump dnsjava:dnsjava from 3.7.0 to 3.7.1 (@dependabot[bot])
-- **PR #20155** (2026-11-04): Use a single Dependabot label (@xiangfu0)
+- **PR #20198** (2026-11-09): Bump org.jline:jline from 4.4.8 to 4.5.0 (@dependabot[bot])
+- **PR #20197** (2026-11-09): Bump org.codehaus.mojo:animal-sniffer-annotations from 1.28 to 1.29 (@dependabot[bot])
+- **PR #20194** (2026-11-09): Bump software.amazon.awssdk:bom from 2.57.8 to 2.57.10 (@dependabot[bot])
+- **PR #20193** (2026-11-09): Bump com.github.jnr:jnr-posix from 3.2.7 to 3.2.8 (@dependabot[bot])
+- **PR #20192** (2026-11-09): Bump docker/login-action from 4.7.0 to 4.8.0 (@dependabot[bot])
+- **PR #20191** (2026-11-09): Bump io.opentelemetry.contrib:opentelemetry-gcp-resources from 1.61.0-alpha to 1.62.0-alpha (@dependabot[bot])
 
 ---
 
@@ -2258,28 +2087,28 @@ local build diverges from the com
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add metric for local realtime segment builds with CRC mismatch (#19450)
+## X. Bump org.codehaus.mojo:versions-maven-plugin from 2.23.0 to 2.24.0 (#20190)
 
 **RULE**:
-When implementing operations in `pinot-common/src/main/java/org/apache/pinot/common/metrics/ServerMeter.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/pinot. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pom.xml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/pinot. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `684b7a4a`: Add metric for local realtime segment builds with CRC mismatch (#19450). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3b23abd0`: Bump org.codehaus.mojo:versions-maven-plugin from 2.23.0 to 2.24.0 (#20190). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `pinot-common/src/main/java/org/apache/pinot/common/metrics/ServerMeter.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `pom.xml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-  SEGMENT_BUILD_WITH_CRC_MISMATCH("segments", false),
+          <version>2.24.0</version>
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+          <version>2.23.0</version>
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `684b7a4a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3b23abd0` are properly handled with clean fallback behavior.

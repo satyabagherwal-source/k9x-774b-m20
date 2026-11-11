@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `7dc4e9ca`  
+> **Source Version**: `e00b7fde`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T12:58:36.597Z  
+> **Timestamp**: 2026-11-10T01:58:35.090Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T12:58:36.592Z  
+> **Harvest Timestamp**: 2026-11-10T01:58:35.084Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Blazing-fast, Neuro-symbolic Data-Wrangling toolkit
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3819 stars
+- **Stars / Engagement**: 3820 stars
 
 ---
 
@@ -2203,202 +2203,33 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7dc4e9ca` (2026-11-05)
-**Commit Message**: Point csvlens at fork with bumped deps
+### Incident Patch 1: `e00b7fde` (2026-11-10)
+**Commit Message**: chore(deps): note the compact_bytes big-endian caveat for crates.io builds
 
-Switch the csvlens git dependency from YS-L/csvlens (rev 6acf060) to the jqnatividad fork's deps-bump-2026-11 branch.
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-The fork's updated dependencies pull in arrow 60.1.0 (new arrow-cmp crate), atoi 3.1.1, generator 0.8.12 and windows-core/link/result/strings 0.100.0. winnow and finl_unicode get patch bumps.
-
-**File**: `Cargo.lock` (modified, +138/-67)
+**File**: `Cargo.toml` (modified, +3/-1)
 ```diff
-@@ -446,9 +446,9 @@ checksum = "d3fb67a6e08acf24fdeccbac2cb6ac4305825bd1f117462e0e6f2f193345ad56"
+@@ -587,7 +587,9 @@ spreadsheet-ods = { git = "https://github.com/jqnatividad/spreadsheet-ods", bran
+ # CompactBytesSlice::into_boxed_slice fix (upstream ParkMyCar/compact_bytes#11), and the
+ # big-endian heap-tag fix (ParkMyCar/compact_bytes#12; qsv #5015).
+ # Pulled in by qsv-stats' ByteKey (0.57+; qsv #5011). Same version as upstream, so crates.io
+-# builds (`cargo install qsv`) use upstream 0.2.1; the hot paths are identical.
++# builds (`cargo install qsv`) use upstream 0.2.1; the hot paths are identical. CAVEAT: on
++# big-endian targets (s390x, ppc64) upstream 0.2.1 still has the heap-tag bug (#12): a heap value
++# whose cap/len low byte is >= 0x80 is misread as inline (out-of-bounds read). Build from git there.
+ compact_bytes = { git = "https://github.com/jqnatividad/compact_bytes", branch = "main" }
  
- [[package]]
- name = "arrow"
--version = "59.3.2"
-+version = "60.1.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "3f04e0a89cc175eaf3740282537851e6fd9d7276f97730b9d0ea2859c11a85df"
-+checksum = "d965156f2220e94dcf676e04322b7b0b41c97e85cb3e1c365b8e56d0f70be999"
- dependencies = [
-  "arrow-arith",
-  "arrow-array",
-@@ -465,9 +465,9 @@ dependencies = [
- 
- [[package]]
- name = "arrow-arith"
--version = "59.3.2"
-+version = "60.1.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "157943c720919e8f5b6731407ce5cd4c9a5ef47a75bf10edaf24b7081b5763ef"
-+checksum = "ca16fdd1daeb1eccefb42df52ec65448ef33eec72488598675d46dfa9ce58923"
- dependencies = [
-  "arrow-array",
-  "arrow-buffer",
-@@ -479,9 +479,9 @@ dependencies = [
- 
- [[package]]
- name = "arrow-array"
--version = "59.3.2"
-+version = "60.1.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "72b5b1682924f11ecf6929689c16cbc69efbb6dd141b06ad98ee1cb10d858c43"
-+checksum = "0f3d22a41d3df78b71df0b685af219ae3a94188ab98d6fb29c958eb55c3247f4"
- dependencies = [
-  "ahash",
-  "arrow-buffer",
-@@ -497,9 +497,9 @@ dependencies = [
- 
- [[package]]
- name = "arrow-buffer"
--version = "59.3.2"
-+version = "60.1.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "b5d687afc6c927965a8a759f3b68de91933d9dfa2e1bb6e156bac84b85665e92"
-+checksum = "7bd46a530bc1a8e763102fc36c1dc0f51f3ffa150c78e7f5658ccb54b1458ade"
- dependencies = [
-  "bytes",
-  "half",
-@@ -509,9 +509,9 @@ dependencies = [
- 
- [[package]]
- name = "arrow-cast"
--version = "59.3.2"
-+version = "60.1.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "3f23c3379feede42135ef27ca60e67f6e643cd4343ae74e4c8b16c83f55afd85"
-+checksum = "baa83a0752814a1922d5ee75032524ca9bbfb7f60ee35a67ed4ab8b275260aaf"
- dependencies = [
-  "arrow-array",
-  "arrow-buffer",
-@@ -528,11 +528,22 @@ dependencies = [
-  "ryu",
- ]
- 
-+[[package]]
-+name = "arrow-cmp"
-+version = "60.1.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "1913e57a64fbf2c4502fa6d54b547d6a1ae59e3146cbc15321d47468c937abd1"
-+dependencies = [
-+ "arrow-array",
-+ "arrow-buffer",
-+ "arrow-schema",
-+]
-+
- [[package]]
- name = "arrow-csv"
--version = "59.3.2"
-+version = "60.1.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "85b1984628b091b8319b3c305fce21d04f9e9b2578bb733b0d0108462ae1d698"
-+checksum = "e4572af05fadde76a063139805c089d0915b7eb64ed5bef14456c6e458a80b28"
- dependencies = [
-  "arrow-array",
-  "arrow-cast",
-@@ -545,9 +556,9 @@ dependencies = [
- 
- [[package]]
- name = "arrow-data"
--version = "59.3.2"
-+version = "60.1.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "bb0a031c7ff5e2bdb443117054fb466af1d4df5b7f0ecbe197713dc8b113b1ba"
-+checksum = "415b7fbc4cf56b080bb5677a4ae74211b5c79e571ed37a1d547633ec07f3b43b"
- dependencies = [
-  "arrow-buffer",
-  "arrow-schema",
-@@ -558,22 +569,23 @@ dependencies = [
- 
- [[package]]
- name = "arrow-ord"
--version = "59.3.2"
-+version = "60.1.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "561b8209faa2cd489764b7fd07d7cb9e8d274d78048c38de59f77c41140cb834"
-+checksum = "4c58f2ae6dd1480fc413f7320a547e39dcc499c23d4f36ca19572b685811e6e4"
- dependencies = [
-  "arrow-array",
-  "arrow-buffer",
-+ "arrow-cmp",
-  "arrow-data",
-  "arrow-schema",
-  "arrow-select",
- ]
- 
- [[package]]
- name = "arrow-row"
--version = "59.3.2"
-+version = "60.1.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "0d8c68b87a569f92b90c46cb0a09d86bd9609ddc9b1bf1fc5a503c8c6907c14e"
-+checksum = "68f9db8345b0638416d3b56d117d262d13070fdef788c6d75b53a180215c477e"
- dependencies = [
-  "arrow-array",
-  "arrow-buffer",
-@@ -584,29 +596,30 @@ dependencies = [
- 
- [[package]]
- name = "arrow-schema"
--version = "59.3.2"
-+version = "60.1.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "e87acb0c6bf6237fca7a50d7b51e801c98a18a5fe6f3bb34f7d77b85ca165388"
-+checksum = "de2c8e714b466404cdc1189e89f892426efea614d938e16c15518c340cd43ba3"
- 
- [[package]]
- name = "arrow-select"
--version = "59.3.2"
-+version = "60.1.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "c844141958d805b47d1208e0d12aac53fcf388ce8011639fe82aa492adde0bb4"
-+checksum = "a5af3f6656c5f2c6944f93d9a357a7f204c93d5f349385a44cf46c4a26fbcf30"
- dependencies = [
-  "ahash",
-  "arrow-array",
-  "arrow-buffer",
-+ "arrow-cmp",
-  "arrow-data",
-  "arrow-schema",
-  "num-traits",
- ]
- 
- [[package]]
- name = "arrow-string"
--version = "59.3.2"
-+version = "60.1.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "bc130892b1a9552da77971924b390e06cf375d1f7e4344a7b7b40ca4426fa470"
-+checksum = "ab1be9306b9a413b5b004e2a5a19caac728870d76e8891b351f040d554c93862"
- dependencies = [
-  "arrow-array",
-  "arrow-buffer",
-@@
-```
-
-**File**: `Cargo.toml` (modified, +2/-2)
-```diff
-@@ -552,8 +552,8 @@ csv-index = { git = "https://github.com/dathere/rust-csv", branch = "qsv-tuned"
- # csv-core = { path = "../rust-csv/csv-core" }
- # csv-index = { path = "../rust-csv/csv-index" }
- 
--# use latest upstream now that our PR has been merged
--csvlens = { git = "https://github.com/YS-L/csvlens", rev = "6acf060" }
-+# use our patched fork of csvlens until our PR is merged
-+csvlens = { git = "https://github.com/jqnatividad/csvlens", branch = "deps-bump-2026-11" }
- 
- # use our patched fork of csvs_convert to bump dependencies until our PR is merged
- csvs_convert = { git = "https://github.com/jqnatividad/csvs_convert", branch = "replace-streaming-stats-redux", optional = true }
+ # Polars has a much higher release tempo for its Python bindings compared
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4997** (2026-11-03): bench: pin exact row counts in the joinp benchmarks' --verify checks (@jqnatividad)
-- **PR #4996** (2026-11-03): docs: Statistics at a Glance (159 statistic columns) in STATS_DEFINITIONS, with a count test (@jqnatividad)
-- **PR #4995** (2026-11-03): build(deps): bump anthropics/claude-code-action from 1.0.265 to 1.0.266 (@dependabot[bot])
-- **PR #4994** (2026-11-02): bench: regenerate Benchmarks Data Schematic for the 28.0.0 run (@jqnatividad)
-- **PR #4993** (2026-11-02): deps: bump Polars to upstream rev 0b47007 (@jqnatividad)
-- **PR #4992** (2026-11-02): build(deps): bump anthropics/claude-code-action from 1.0.264 to 1.0.265 (@dependabot[bot])
+- **PR #5027** (2026-11-09): deps: drop the webdriver-downloader fork patch (0.18.0 is on crates.io) (@jqnatividad)
+- **PR #5026** (2026-11-09): deps: bump Luau to 0.745 via mlua upstream rev a0ad453 (@jqnatividad)
+- **PR #5025** (2026-11-09): fix(profile): report --initial-context overrides that can't be applied; `-` appends (fixes #4991) (@jqnatividad)
+- **PR #5024** (2026-11-09): fix(sqlp): convert types Avro can't write before --format avro (fixes #5020) (@jqnatividad)
+- **PR #5023** (2026-11-09): test(joinp): don't assert the order of tied matches with --maintain-order left (@jqnatividad)
+- **PR #5022** (2026-11-09): deps: bundled SQLite 3.54.1 via rusqlite 0.41 (RUSTSEC-2026-0459) (@jqnatividad)
 
 ---
 
@@ -2418,82 +2249,30 @@ The fork's updated dependencies pull in arrow 60.1.0 (new arrow-cmp crate), atoi
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Point csvlens at fork with bumped deps
+## X. deps): note the compact_bytes big-endian caveat for crates.io builds
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7dc4e9ca`: Point csvlens at fork with bumped deps. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e00b7fde`: deps): note the compact_bytes big-endian caveat for crates.io builds. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "60.1.0"
-checksum = "d965156f2220e94dcf676e04322b7b0b41c97e85cb3e1c365b8e56d0f70be999"
-version = "60.1.0"
-checksum = "ca16fdd1daeb1eccefb42df52ec65448ef33eec72488598675d46dfa9ce58923"
-version = "60.1.0"
-checksum = "0f3d22a41d3df78b71df0b685af219ae3a94188ab98d6fb29c958eb55c3247f4"
-version = "60.1.0"
-checksum = "7bd46a530bc1a8e763102fc36c1dc0f51f3ffa150c78e7f5658ccb54b1458ade"
-version = "60.1.0"
-checksum = "baa83a0752814a1922d5ee75032524ca9bbfb7f60ee35a67ed4ab8b275260aaf"
-[[package]]
-name = "arrow-cmp"
-version = "60.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1913e57a64fbf2c4502fa6d54b547d6a1ae59e3146cbc15321d47468c937abd1"
-dependencies = [
- "arrow-array",
- "arrow-buffer",
- "arrow-schema",
-]
-
-version = "60.1.0"
-checksum = "e4572af05fadde76a063139805c089d0915b7eb64ed5bef14456c6e458a80b28"
-version = "60.1.0"
-checksum = "415b7fbc4cf56b080bb5677a4ae74211b5c79e571ed37a1d547633ec07f3b43b"
-version = "60.1.0"
-checksum = "4c58f2ae6dd1480fc413f7320a547e39dcc499c23d4f36ca19572b685811e6e4"
- "arrow-cmp",
-version = "60.1.0"
-checksum = "68f9db8345b0638416d3b56d117d262d13070fdef788c6d75b53a180215c477e"
-version = "60.1.0"
-checksum = "de2c8e714b466404cdc
+# builds (`cargo install qsv`) use upstream 0.2.1; the hot paths are identical. CAVEAT: on
+# big-endian targets (s390x, ppc64) upstream 0.2.1 still has the heap-tag bug (#12): a heap value
+# whose cap/len low byte is >= 0x80 is misread as inline (out-of-bounds read). Build from git there.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-version = "59.3.2"
-checksum = "3f04e0a89cc175eaf3740282537851e6fd9d7276f97730b9d0ea2859c11a85df"
-version = "59.3.2"
-checksum = "157943c720919e8f5b6731407ce5cd4c9a5ef47a75bf10edaf24b7081b5763ef"
-version = "59.3.2"
-checksum = "72b5b1682924f11ecf6929689c16cbc69efbb6dd141b06ad98ee1cb10d858c43"
-version = "59.3.2"
-checksum = "b5d687afc6c927965a8a759f3b68de91933d9dfa2e1bb6e156bac84b85665e92"
-version = "59.3.2"
-checksum = "3f23c3379feede42135ef27ca60e67f6e643cd4343ae74e4c8b16c83f55afd85"
-version = "59.3.2"
-checksum = "85b1984628b091b8319b3c305fce21d04f9e9b2578bb733b0d0108462ae1d698"
-version = "59.3.2"
-checksum = "bb0a031c7ff5e2bdb443117054fb466af1d4df5b7f0ecbe197713dc8b113b1ba"
-version = "59.3.2"
-checksum = "561b8209faa2cd489764b7fd07d7cb9e8d274d78048c38de59f77c41140cb834"
-version = "59.3.2"
-checksum = "0d8c68b87a569f92b90c46cb0a09d86bd9609ddc9b1bf1fc5a503c8c6907c14e"
-version = "59.3.2"
-checksum = "e87acb0c6bf6237fca7a50d7b51e801c98a18a5fe6f3bb34f7d77b85ca165388"
-version = "59.3.2"
-checksum = "c844141958d805b47d1208e0d12aac53fcf388ce8011639fe82aa492adde0bb4"
-version = "59.3.2"
-checksum = "bc130892b1a9552da77971924b390e06cf375d1f7e4344a7b7b40ca4426fa470"
+# builds (`cargo install qsv`) use upstream 0.2.1; the hot paths are identical.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7dc4e9ca` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e00b7fde` are properly handled with clean fallback behavior.

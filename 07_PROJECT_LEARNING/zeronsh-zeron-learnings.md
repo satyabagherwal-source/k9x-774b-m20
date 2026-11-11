@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zeronsh-zeron-learnings.md`  
 > **Source**: github ([https://github.com/zeronsh/zeron](https://github.com/zeronsh/zeron))  
-> **Source Version**: `971a3271`  
+> **Source Version**: `533e89d6`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T23:39:50.631Z  
+> **Timestamp**: 2026-11-09T04:20:07.135Z  
 > **Learning ID**: `learn-github-zeronsh-zeron`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zeronsh-zeron-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zeronsh/zeron](https://github.com/zeronsh/zeron))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T23:39:49.249Z  
+> **Harvest Timestamp**: 2026-11-09T04:20:07.127Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A native control plane for Claude Code, Codex, Cursor, Devin and other coding agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3459 stars
+- **Stars / Engagement**: 3479 stars
 
 ---
 
@@ -1741,11 +1741,11 @@ typedef void (*UniffiCallbackInterfacePlatformMeasurerMethod0)(uint64_t, RustBuf
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1240** (2026-11-05): **iOS: version 1.0.1, since Apple has closed 1.0**
-  *Symptoms*: TestFlight failed on the new icons because Apple refuses new builds on version 1.0: "must contain a higher version than that of the previously approved version [1.0]" and "The train version '1.0' is closed for new build submissions."  This changes `MARKETING_VERSION` to 1.0.1 for every target. Nothing else changes.  🤖 Generated with [Claude Code](https://claude.com/claude-code)  <!-- codesmith:footer --> --- <a href="https://backend.blacksmith.sh/track/enable-autofix?expires=1796510020&installation_model_id=425430&pr_number=1240&ref=codesmith_pr_footer&repository=zeronsh%2Fzeron&return_to=https%3A%2F%2Fgithub.com%2Fzeronsh%2Fzeron%2Fpull%2F1240&signature=f23d49554394e35203ac629dfc73b42be8a0e6b6c89b925686f0017c3dbe9655"><picture><source media="(prefers-color-scheme: dark)" srcset="https://pr-comments-assets.blacksmith.sh/codesmith/autofix-with-codesmith-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://pr-comments-assets.blacksmith.sh/codesmith/autofix-with-codesmith-light.svg"><img alt="Autofix with [code]smith" src="https://pr-comments-assets.blacksmith.sh/codesmith/autofix-with-codesmith-dark-3x.png" width="190" height="28"></picture></a> <sup><a href="https://app.blacksmith.sh/zeronsh/codesmith/zeron/pr/1240?autoLogin=true&ref=codesmith_pr_footer">Open in [code]smith</a> · Need help on this PR? Tag <code>@codesmith-bot</code> with what you need.</sup>  <!-- codesmith:autofix:disabled --> <!-- /codesmith:footer -->
+- **Issue #1298** (2026-11-08): **Codex usage and banked resets load again for user-scoped logins**
+  *Symptoms*: Codex usage limits and banked resets stopped loading for ChatGPT logins whose ID token carries a user id.  The engine keys such an account as `{user}::{workspace}`, so two seats in one team stay apart, but OpenAI's usage answer reports only the workspace. `refresh_codex_usage` and `codex_slot_auth` compared that answer with the whole key, so every successful probe was thrown away as missing credentials. The UI kept an old cached snapshot: no fresh week/5-hour bars, and no banked resets on Settings → Providers. Both now compare against the workspace part of the key.  Split out of #1292 by @laurentcodes (their commit, unchanged); the rest of #1292 stays there.  Tests: - `codex_usage_loads_for_a_login_whose_key_carries_the_user_id` (new): fails on main, passes here. - `cargo test -p zeron-engine --lib agent_accounts`: 92 passed, 0 failed.  What behaves differently: for these logins, the Codex usage bars refresh again, and banked resets appear on the Codex card. Nothing changes for other logins.  🤖 Generated with [Claude Code](https://claude.com/claude-code)  <!-- codesmith:footer --> --- <a href="https://backend.blacksmith.sh/track/enable-autofix?expires=1796772459&installation_model_id=425430&pr_number=1298&ref=codesmith_pr_footer&repository=zeronsh%2Fzeron&return_to=https%3A%2F%2Fgithub.com%2Fzeronsh%2Fzeron%2Fpull%2F1298&signature=a0d088d9531dd48c6778b8934acfbfeda700581c8e40792ee6015257f2a10edd"><picture><source media="(prefers-color-scheme: dark)" srcset="https://pr-comment
 
-- **Issue #1239** (2026-11-05): **The new app icon on iOS and Android**
-  *Symptoms*: The new Zeron icon on mobile, to match the desktop beta.  - **iOS:** light, dark and tinted icons, and the new mark on the sign-in screen. - **Android:** flat ink on ivory in light mode and ivory on ink in dark, with the mark and tile as separate layers so launchers can animate them. The sign-in screen uses the same mark.  **Checked so far:** the iOS asset catalog compiles with `actool`. The Android XML parses and nothing still refers to the removed resources. Android hasn't been compiled locally, because this Mac has no Android SDK, so CI is the first compile for it and for the iOS Swift edit.  **Not checked:** neither icon has been seen on a real device.  Merging publishes Android, since pushes to main release it. TestFlight is a separate manual run.  🤖 Generated with [Claude Code](https://claude.com/claude-code)  <!-- codesmith:footer --> --- <a href="https://backend.blacksmith.sh/track/enable-autofix?expires=1796505090&installation_model_id=425430&pr_number=1239&ref=codesmith_pr_footer&repository=zeronsh%2Fzeron&return_to=https%3A%2F%2Fgithub.com%2Fzeronsh%2Fzeron%2Fpull%2F1239&signature=ecff1730d04c7bce682f6734fdf0389dcbe3b72e6f900b2cc7bdef540d7b056b"><picture><source media="(prefers-color-scheme: dark)" srcset="https://pr-comments-assets.blacksmith.sh/codesmith/autofix-with-codesmith-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://pr-comments-assets.blacksmith.sh/codesmith/autofix-with-codesmith-light.svg"><img alt="Autofix with [code]smith" src
+- **Issue #1297** (2026-11-09): **Linux: a dropped image no longer crashes the window with "texture must exist"**
+  *Symptoms*: A Linux user's window aborted on 0.2.138 (beta). The background engine kept running.  ``` panicked at crates/gpui_wgpu/src/wgpu_atlas.rs:146:36: texture must exist panicked at wgpu-hal-29.0.4/src/vulkan/swapchain/native.rs:359:58: Trying to destroy a SwapchainAcquireSemaphore that is still in use by a SurfaceTexture panic in a destructor during cleanup ```  **Cause.** `Window::drop_image` freed an image's atlas tiles right away, and with them the whole atlas texture when those were its last tiles. Zeron drops images in several places: evicted tool images (`tool_images.rs`), visuals (`visuals.rs`), and browser frames on resize (`browser/linux`). The window can then present its last frame again without redrawing it, for example during high-rate input or on a forced present on Wayland. That frame still names the freed texture, so the lookup panicked. A second panic during the unwind aborted the process.  **Fix.** This PR only moves pins: - zui `b564a34` → `15ee708` (zeronsh/zui#19, stacked on zeronsh/zui#18). Dropped images stay in the atlas until the next draw. A scene that still names a freed texture is skipped and redrawn instead of panicking. - gpui-base `59f8924` → `cab50b0` (zeronsh/gpui-component#7, stacked on zeronsh/gpui-component#6), so it shares the same zui.  **Merge order.** zui#18 → zui#19, and gpui-component#6 → #7. The pinned commits can already be fetched through their PR refs, the way `b564a34` is today, so this PR doesn't wait on those merges.  **Tests.** - Th
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1762,250 +1762,285 @@ typedef void (*UniffiCallbackInterfacePlatformMeasurerMethod0)(uint64_t, RustBuf
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `971a3271` (2026-11-05)
-**Commit Message**: iOS: version 1.0.1, since Apple has closed 1.0 (#1240)
+### Incident Patch 1: `533e89d6` (2026-11-09)
+**Commit Message**: Linux: a dropped image no longer crashes the window with "texture must exist" (#1297)
 
-App Store Connect refuses new builds on a version it has approved.
+* Linux: keep dropped images on screen until the next frame, not a crash
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Co-authored-by: zeronsh[bot] <346184242+zeronsh[bot]@users.noreply.github.com>
+Pins zui 15ee708, which keeps a dropped image's atlas tiles until the next
+draw and lets the wgpu renderer skip, then redraw, a scene that names a
+freed atlas texture. Before, re-presenting a frame after an image was
+dropped (an evicted tool image or visual, a resized browser frame) could
+abort the window with "texture must exist" in wgpu_atlas.rs.
 
-**File**: `apps/ios/Zeron.xcodeproj/project.pbxproj` (modified, +8/-8)
+* Pin gpui-base cab50b0 so it shares zui 15ee708 with Zeron
+
+zeronsh/gpui-component#7 moves gpui-base to the same zui; without it the
+lock carried two copies of zui.
+
+**File**: `Cargo.lock` (modified, +21/-21)
 ```diff
-@@ -465,7 +465,7 @@
- 					"$(inherited)",
- 					"@executable_path/Frameworks",
- 				);
--				MARKETING_VERSION = 1.0;
-+				MARKETING_VERSION = 1.0.1;
- 				PRODUCT_BUNDLE_IDENTIFIER = sh.zeron.ios;
- 				PRODUCT_NAME = "$(TARGET_NAME)";
- 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-@@ -504,7 +504,7 @@
- 					"$(inherited)",
- 					"@executable_path/Frameworks",
- 				);
--				MARKETING_VERSION = 1.0;
-+				MARKETING_VERSION = 1.0.1;
- 				PRODUCT_BUNDLE_IDENTIFIER = sh.zeron.ios;
- 				PRODUCT_NAME = "$(TARGET_NAME)";
- 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-@@ -524,7 +524,7 @@
- 				CODE_SIGN_STYLE = Automatic;
- 				CURRENT_PROJECT_VERSION = 1;
- 				GENERATE_INFOPLIST_FILE = YES;
--				MARKETING_VERSION = 1.0;
-+				MARKETING_VERSION = 1.0.1;
- 				PRODUCT_BUNDLE_IDENTIFIER = sh.zeron.ios.tests;
- 				PRODUCT_NAME = "$(TARGET_NAME)";
- 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-@@ -542,7 +542,7 @@
- 				CODE_SIGN_STYLE = Automatic;
- 				CURRENT_PROJECT_VERSION = 1;
- 				GENERATE_INFOPLIST_FILE = YES;
--				MARKETING_VERSION = 1.0;
-+				MARKETING_VERSION = 1.0.1;
- 				PRODUCT_BUNDLE_IDENTIFIER = sh.zeron.ios.uitests;
- 				PRODUCT_NAME = "$(TARGET_NAME)";
- 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-@@ -562,7 +562,7 @@
- 				CODE_SIGN_STYLE = Automatic;
- 				CURRENT_PROJECT_VERSION = 1;
- 				GENERATE_INFOPLIST_FILE = YES;
--				MARKETING_VERSION = 1.0;
-+				MARKETING_VERSION = 1.0.1;
- 				PRODUCT_BUNDLE_IDENTIFIER = sh.zeron.ios.tests;
- 				PRODUCT_NAME = "$(TARGET_NAME)";
- 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-@@ -580,7 +580,7 @@
- 				CODE_SIGN_STYLE = Automatic;
- 				CURRENT_PROJECT_VERSION = 1;
- 				GENERATE_INFOPLIST_FILE = YES;
--				MARKETING_VERSION = 1.0;
-+				MARKETING_VERSION = 1.0.1;
- 				PRODUCT_BUNDLE_IDENTIFIER = sh.zeron.ios.uitests;
- 				PRODUCT_NAME = "$(TARGET_NAME)";
- 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-@@ -606,7 +606,7 @@
- 					"@executable_path/Frameworks",
- 					"@executable_path/../../Frameworks",
- 				);
--				MARKETING_VERSION = 1.0;
-+				MARKETING_VERSION = 1.0.1;
- 				PRODUCT_BUNDLE_IDENTIFIER = sh.zeron.ios.LiveActivity;
- 				PRODUCT_NAME = "$(TARGET_NAME)";
- 				SKIP_INSTALL = YES;
-@@ -633,7 +633,7 @@
- 					"@executable_path/Frameworks",
- 					"@executable_path/../../Frameworks",
- 				);
--				MARKETING_VERSION = 1.0;
-+				MARKETING_VERSION = 1.0.1;
- 				PRODUCT_BUNDLE_IDENTIFIER = sh.zeron.ios.LiveActivity;
- 				PRODUCT_NAME = "$(TARGET_NAME)";
- 				SKIP_INSTALL = YES;
+@@ -1650,7 +1650,7 @@ dependencies = [
+ [[package]]
+ name = "collections"
+ version = "0.1.0"
+-source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
++source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
+ dependencies = [
+  "gpui_util",
+  "indexmap",
+@@ -2454,7 +2454,7 @@ dependencies = [
+ [[package]]
+ name = "derive_refineable"
+ version = "0.1.0"
+-source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
++source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
+ dependencies = [
+  "proc-macro2",
+  "quote",
+@@ -3839,7 +3839,7 @@ dependencies = [
+ [[package]]
+ name = "gpui"
+ version = "0.2.2"
+-source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
++source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
+ dependencies = [
+  "accesskit",
+  "anyhow",
+@@ -3925,7 +3925,7 @@ dependencies = [
+ [[package]]
+ name = "gpui-base"
+ version = "0.5.2"
+-source = "git+https://github.com/zeronsh/gpui-component?rev=59f89243cea79dd70eb7a619b3930c374ef6958a#59f89243cea79dd70eb7a619b3930c374ef6958a"
++source = "git+https://github.com/zeronsh/gpui-component?rev=cab50b071497683a119ae0e4038880f195c0f23f#cab50b071497683a119ae0e4038880f195c0f23f"
+ dependencies = [
+  "aho-corasick",
+  "anyhow",
+@@ -3955,7 +3955,7 @@ dependencies = [
+ [[package]]
+ name = "gpui_linux"
+ version = "0.1.0"
+-source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
++source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
+ dependencies = [
+  "accesskit",
+  "accesskit_unix",
+@@ -4007,7 +4007,7 @@ dependencies = [
+ [[package]]
+ name = "gpui_macos"
+ version = "0.1.0"
+-source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
++source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
+ dependencies = [
+  "accesskit",
+  "accesskit_macos",
+@@ -4056,7 +4056,7 @@ dependencies = [
+ [[package]]
+ name = "gpui_macros"
+ version = "0.1.0"
+-source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
++source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
+ dependencies = [
+  "heck 0.5.0",
+  "proc-macro2",
+@@ -4067,7 +4067,7 @@ dependencies = [
+ [[package]]
+ name = "gpui_platform"
+ version = "0.1.0"
+-source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
++source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
+ dependencies = [
+  "console_error_panic_hook",
+  "gpui",
+@@ -4080,7 +4080,7 @@ dependencies = [
+ [[package]]
+ name = "gpui_shared_string"
+ version = "0.1.0"
+-source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
++source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
+ dependencies = [
+  "schemars",
+  "serde",
+@@ -4090,7 +4090,7 @@ dependencies = [
+ [[package]]
+ name = "gpui_tokio"
+ version = "0.1.0"
+-source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
++source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
+ dependencies = [
+  "anyhow",
+  "gpui",
+@@ -4101,7 +4101,7 @@ dependencies = [
+ [[package]]
+ name = "gpui_util"
+ version = "0.1.0"
+-source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
++source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
+ dependencies = [
+  "anyhow",
+  "log",
+@@ -4111,7 +4111,7 @@ dependencies = [
+ [[package]]
+ name = "gpui_web"
+ version = "0.1.0"
+-source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
++source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
+ dependencies = [
+  "anyhow",
+  "console_error_panic_hook",
+@@ -4135,7 +4135,7 @@ dependencies = [
+ [[package]]
+ name = "gpui_wgpu"
+ version = "0.1.
+```
+
+**File**: `Cargo.toml` (modified, +7/-4)
+```diff
+@@ -113,15 +113,18 @@ loro-protocol = "0.3"
+ # Atlas tiles updated in place from pixels or imported dma-bufs, display-rate
+ # frame callbacks in inactive windows, and Wayland frames that no longer stop
+ # after a forced draw (b564a34, zeronsh/zui#18).
+-gpui = { git = "https://github.com/zeronsh/zui", rev = "b564a34413bb7ef1da04121c4a287758f94993d9" }
+-gpui_platform = { git = "https://github.com/zeronsh/zui", rev = "b564a34413bb7ef1da04121c4a287758f94993d9", features = [
++# Dropped images stay in the atlas until the next draw, so presenting the last
++# frame again no longer aborts with "texture must exist" (15ee708,
++# zeronsh/zui#19; gpui-base cab50b0, zeronsh/gpui-component#7).
++gpui = { git = "https://github.com/zeronsh/zui", rev = "15ee7082c4f910618be306166436a6d9fe0451be" }
++gpui_platform = { git = "https://github.com/zeronsh/zui", rev = "15ee7082c4f910618be306166436a6d9fe0451be", features = [
+     "wayland",
+     "x11",
+     "font-kit",
+     "runtime_shaders",
+ ] }
+-gpui_tokio = { git = "https://github.com/zeronsh/zui", rev = "b564a34413bb7ef1da04121c4a287758f94993d9" }
+-gpui-base = { git = "https://github.com/zeronsh/gpui-component", rev = "59f89243cea79dd70eb7a619b3930c374ef6958a" }
++gpui_tokio = { git = "https://github.com/zeronsh/zui", rev = "15ee7082c4f910618be306166436a6d9fe0451be" }
++gpui-base = { git = "https://github.com/zeronsh/gpui-component", rev = "cab50b071497683a119ae0e4038880f195c0f23f" }
+ 
+ # diffs
+ similar = "2"
 ```
 
 ---
 
-### Incident Patch 2: `2a2212c7` (2026-11-05)
-**Commit Message**: The new app icon on iOS and Android (#1239)
+### Incident Patch 2: `adf87317` (2026-11-08)
+**Commit Message**: fix: load codex usage for logins keyed by user and workspace
 
-iOS gets its light, dark and tinted icons. Android goes flat, ink on ivory in
-light mode and ivory on ink in dark, its mark and tile separate layers again so
-launchers can animate them. The sign-in screens carry the new mark.
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Co-authored-by: zeronsh[bot] <346184242+zeronsh[bot]@users.noreply.github.com>
-
-**File**: `apps/android/app/src/main/java/sh/zeron/android/ui/SignInScreen.kt` (modified, +6/-2)
+**File**: `crates/engine/src/agent_accounts.rs` (modified, +10/-2)
 ```diff
-@@ -3,6 +3,7 @@ package sh.zeron.android.ui
- import android.net.Uri
- import androidx.browser.customtabs.CustomTabsIntent
- import androidx.compose.foundation.Image
-+import androidx.compose.foundation.background
- import androidx.compose.foundation.layout.Arrangement
- import androidx.compose.foundation.layout.Column
- import androidx.compose.foundation.layout.Spacer
-@@ -31,6 +32,7 @@ import androidx.compose.ui.Alignment
- import androidx.compose.ui.Modifier
- import androidx.compose.ui.draw.clip
- import androidx.compose.ui.platform.LocalContext
-+import androidx.compose.ui.res.colorResource
- import androidx.compose.ui.res.painterResource
- import androidx.compose.ui.text.style.TextAlign
- import androidx.compose.ui.unit.dp
-@@ -49,9 +51,11 @@ fun SignInScreen(model: AppModel) {
-         verticalArrangement = Arrangement.Center,
-     ) {
-         Image(
--            painterResource(R.mipmap.ic_launcher_foreground),
-+            painterResource(R.drawable.ic_launcher_foreground),
-             null,
--            Modifier.size(148.dp).clip(MaterialShapes.Cookie12Sided.toShape()),
-+            Modifier.size(148.dp)
-+                .clip(MaterialShapes.Cookie12Sided.toShape())
-+                .background(colorResource(R.color.icon_background)),
+@@ -3230,7 +3230,7 @@ impl AgentAccounts {
          )
-         Spacer(Modifier.height(32.dp))
-         Text("Zeron", style = MaterialTheme.typography.displayMedium)
-```
-
-**File**: `apps/android/app/src/main/res/drawable/ic_launcher_foreground.xml` (added, +13/-0)
-```diff
-@@ -0,0 +1,13 @@
-+<?xml version="1.0" encoding="utf-8"?>
-+<!-- Written by scripts/make-app-icons.py. -->
-+<vector xmlns:android="http://schemas.android.com/apk/res/android"
-+    android:width="108dp"
-+    android:height="108dp"
-+    android:viewportWidth="108"
-+    android:viewportHeight="108">
-+    <group android:translateX="18.0013" android:translateY="18.0013" android:scaleX="0.07031" android:scaleY="0.07031">
-+        <path
-+            android:fillColor="@color/icon_foreground"
-+            android:pathData="M289.41,369.31 L289.36,384.72 L289.24,390.73 L289.04,395.26 L288.75,399.03 L288.38,402.30 L287.92,405.20 L287.38,407.83 L286.76,410.22 L286.05,412.42 L285.25,414.44 L284.36,416.32 L283.38,418.06 L282.30,419.67 L281.13,421.16 L279.85,422.54 L278.47,423.82 L276.98,424.99 L275.37,426.07 L273.63,427.05 L271.76,427.94 L269.73,428.74 L267.53,429.45 L265.14,430.07 L262.51,430.61 L259.61,431.07 L256.34,431.44 L252.58,431.73 L248.04,431.93 L242.03,432.05 L226.62,432.09 L211.21,432.05 L205.20,431.93 L200.67,431.73 L196.90,431.44 L193.64,431.07 L190.73,430.61 L188.11,430.07 L185.72,429.45 L183.52,428.74 L181.49,427.94 L179.61,427.05 L177.88,426.07 L176.27,424.99 L174.77,423.82 L173.39,422.54 L172.12,421.16 L170.94,419.67 L169.87,418.06 L168.89,416.32 L168.00,414.44 L167.20,412.42 L166.49,410.22 L165.86,407.83 L165.32,405.20 L164.87,402.30 L164.50,399.03 L164.21,395.26 L164.00,390.73 L163.88,384.72 L163.84,369.31 L163.88,353.90 L164.00,347.89 L164.21,343.36 L164.50,339.59 L164.87,336.33 L165.32,333.42 L165.86,330.80 L166.49,328.40 L167.20,326.21 L168.00,324.18 L168.89,322.30 L169.87,320.56 L170.94,318.95 L172.12,317.46 L173.39,316.08 L174.77,314.80 L176.27,313.63 L177.88,312.56 L179.61,311.57 L181.49,310.68 L183.52,309.89 L185.72,309.17 L188.11,308.55 L190.73,308.01 L193.64,307.56 L196.90,307.19 L200.67,306.90 L205.20,306.69 L211.21,306.57 L226.62,306.53 L242.03,306.57 L248.04,306.69 L252.58,306.90 L256.34,307.19 L259.61,307.56 L262.51,308.01 L265.14,308.55 L267.53,309.17 L269.73,309.89 L271.76,310.68 L273.63,311.57 L275.37,312.56 L276.98,313.63 L278.47,314.80 L279.85,316.08 L281.13,317.46 L282.30,318.95 L283.38,320.56 L284.36,322.30 L285.25,324.18 L286.05,326.21 L286.76,328.40 L287.38,330.80 L287.92,333.42 L288.38,336.33 L288.75,339.59 L289.04,343.36 L289.24,347.89 L289.36,353.90 Z M432.09,369.31 L432.05,384.72 L431.93,390.73 L431.73,395.26 L431.44,399.03 L431.07,402.30 L430.61,405.20 L430.07,407.83 L429.45,410.22 L428.74,412.42 L427.94,414.44 L427.05,416.32 L426.07,418.06 L424.99,419.67 L423.82,421.16 L422.54,422.54 L421.16,423.82 L419.67,424.99 L418.06,426.07 L416.32,427.05 L414.44,427.94 L412.42,428.74 L410.22,429.45 L407.83,430.07 L405.20,430.61 L402.30,431.07 L399.03,431.44 L395.26,431.73 L390.73,431.93 L384.72,432.05 L369.31,432.09 L353.90,432.05 L347.89,431.93 L343.36,431.73 L339.59,431.44 L336.33,431.07 L333.42,430.61 L330.80,430.07 L328.40,429.45 L326.21,428.74 L324.18,427.94 L322.30,427.05 L320.56,426.07 L318.95,424.99 L317.46,423.82 L316.08,422.54 L314.80,421.16 L313.63,419.67 L312.56,418.06 L311.57,416.32 L310.68,414.44 L309.89,412.42 L309.17,410.22 L308.55,407.83 L308.01,405.20 L307.56,402.30 L307.19,399.03 L306.90,395.26 L306.69,390.73 L306.57,384.72 L306.53,369.31 L306.57,353.90 L306.69,347.89 L306.90,343.36 L307.19,339.59 L307.56,336.33 L308.01,333.42 L308.55,330.80 L309.17,328.40 L309.89,326.21 L310.68,324.18 L311.57,322.30 L312.56,320.56 L313.63,318.95 L314.80,317.46 L316.08,316.08 L317.46,314.80 L318.95,313.63 L320.56,312.56 L322.30,311.57 L324.18,310.68 L326.21,309.89 L328.40,309.17 L330.80,308.55 L333.42,308.01 L336.33,307.56 L339.59,307.19 L343.36,306.90 L347.89,306.69 L353.90,306.57 L369.31,306.53 L384.72,306.57 L390.73,306.69 L395.26,306.90 L399.03,307.19 L402.30,307.56 L405.20,308.01 L407.83,308.55 L410.22,309.17 L412.42,309.89 L414.44,310.68 L416.32,311.57 L418.06,312.56 L419.67,313.63 L421.16,314.80 L422.54,316.08 L423.82,317.46 L424.99,318.95 L426.07,320.56 L427.05,322.30 L427.94,324.18 L428.74,326.21 L429.45,328.40 L430.07,330.80 L430.61,333.42 L431.07,336.33 L431.44,339.59 L431.73,343.36 L431.93,347.89 L432.05,353.90 Z M574.78,369.31 L574.74,384.72 L574.62,390.73 L574.41,395.26 L574.13,399.03 L573.75,402.30 L573.30,405.20 L572.76,407.83 L572.14,410.22 L571.43,412.42 L570.63,414.44 L569.74,416.32 L568.76,418.06 L567.68,419.67 L566.51,421.16 L565.23,422.54 L563.85,423.82 L562.36,424.99 L560.75,426.07 L559.01,427.05 L557.13,427.94 L555.11,428.74 L552.91,429.45 L550.51,430.07 L547.89,430.61 L544.98,431.07 L541.72,431.44 L537.95,431.73 L533.42,431.93 L527.41,432.05 L512.00,432.09 L496.59,432.05 L490.58,431.93 L486.05,431.73 L482.28,431.44 L479.02,431.07 L476.11,430.61 L473.49,430.07 L471.09,429.45 L468.89,428.74 L466.87,427.94 L464.99,427.05 L463.25,426.07 L461.64,424.99 L460.15,423.82 L458.77,422.54 L457.49,421.16 L456.32,419.67 L455.24,418.06 L454.26,416.32 L453.37,414.44 L452.57,412.42 L451.86,410.22 L451.24,407.83 L450.70,405.20 L450.25,402.30 L449.87,399.03 L449.59,395.26 L449.38
-```
-
-**File**: `apps/android/app/src/main/res/drawable/ic_launcher_inset.xml` (removed, +0/-4)
-```diff
-@@ -1,4 +0,0 @@
--<?xml version="1.0" encoding="utf-8"?>
--<inset xmlns:android="http://schemas.android.com/apk/res/android"
--    android:drawable="@mipmap/ic_launcher_foreground"
--    android:inset="-6%" />
-```
-
-**File**: `apps/android/app/src/main/res/mipmap-anydpi/ic_launcher.xml` (modified, +2/-1)
-```diff
-@@ -1,5 +1,6 @@
- <?xml version="1.0" encoding="utf-8"?>
- <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
-     <background android:drawable="@color/icon_background" />
--    <foreground android:drawable="@drawable/ic_launcher_inset" />
-+    <foreground android:drawable="@drawable/ic_launcher_foreground" />
-+    <monochrome android:drawable="@drawable/ic_launcher_foreground" />
- </adaptive-icon>
-```
-
-**File**: `apps/android/app/src/main/res/values-night/colors.xml` (modified, +2/-0)
-```diff
-@@ -1,4 +1,6 @@
- <?xml version="1.0" encoding="utf-8"?>
- <resources>
-     <color name="launch_background">#060606</color>
-+    <color name="icon_background">#141418</color>
-+    <color name="icon_foreground">#F4F1EA</color>
- </resources>
-```
-
-**File**: `apps/android/app/src/main/res/values/colors.xml` (modified, +2/-1)
-```diff
-@@ -1,5 +1,6 @@
- <?xml version="1.0" encoding="utf-8"?>
- <resources>
-     <color name="launch_background">#F3F3F5</color>
--    <color name="icon_background">#12052B</color>
-+    <color name="icon_background">#F4F1EA</color>
-+    <color name="icon_foreground">#141418</color>
- </resources>
-```
-
-**File**: `apps/android/icons/zeron.svg` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 940" fill="#000000"><rect x="0" y="600" width="100" height="100" rx="16"/><rect x="0" y="720" width="100" height="100" rx="16"/><rect x="240" y="840" width="100" height="100" rx="16"/><rect x="240" y="720" width="100" height="100" rx="16"/><rect x="120" y="840" width="100" height="100" rx="16"/><rect x="120" y="600" width="100" height="100" rx="16"/><rect x="240" y="600" width="100" height="100" rx="16"/><rect x="0" y="480" width="100" height="100" rx="16"/><rect x="0" y="360" width="100" height="100" rx="16"/><rect x="480" y="840" width="100" height="100" rx="16"/><rect x="480" y="720" width="100" height="100" rx="16"/><rect x="120" y="360" width="100" height="100" rx="16"/><rect x="120" y="240" width="100" height="100" rx="16"/><rect x="240" y="360" width="100" height="100" rx="16"/><rect x="600" y="720" width="100" height="100" rx="16"/><rect x="480" y="600" width="100" height="100" rx="16"/><rect x="360" y="360" width="100" height="100" rx="16"/><rect x="240" y="240" width="100" height="100" rx="16"/><rect x="600" y="600" width="100" height="100" rx="16"/><rect x="720" y="600" width="100" height="100" rx="16"/><rect x="720" y="480" width="100" height="100" rx="16"/><rect x="240" y="120" width="100" height="100" rx="16"/><rect x="600" y="380" width="100" height="100" rx="16"/><rect x="720" y="240" width="100" height="100" rx="16"/><rect x="720" y="0" width="100" height="100" rx="16"/><rect x="480" y="240" width="100" height="100" rx="16"/><rect x="480" y="0" width="100" height="100" rx="16"/><rect x="120" y="480" width="100" height="100" rx="16"/><rect x="240" y="480" width="100" height="100" rx="16"/><rect x="360" y="840" width="100" height="100" rx="16"/><rect x="360" y="720" width="100" height="100" rx="16"/><rect x="360" y="600" width="100" height="100" rx="16"/><rect x="360" y="480" width="100" height="100" rx="16"/><rect x="120" y="720" width="100" height="100" rx="16"/></svg>
-+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 780"><path fill="#000000" d="M167.41,247.31 L167.36,262.72 L167.24,268.73 L167.04,273.26 L166.75,277.03 L166.38,280.30 L165.92,283.20 L165.38,285.83 L164.76,288.22 L164.05,290.42 L163.25,292.44 L162.36,294.32 L161.38,296.06 L160.30,297.67 L159.13,299.16 L157.85,300.54 L156.47,301.82 L154.98,302.99 L153.37,304.07 L151.63,305.05 L149.76,305.94 L147.73,306.74 L145.53,307.45 L143.14,308.07 L140.51,308.61 L137.61,309.07 L134.34,309.44 L130.58,309.73 L126.04,309.93 L120.03,310.05 L104.62,310.09 L89.21,310.05 L83.20,309.93 L78.67,309.73 L74.90,309.44 L71.64,309.07 L68.73,308.61 L66.11,308.07 L63.72,307.45 L61.52,306.74 L59.49,305.94 L57.61,305.05 L55.88,304.07 L54.27,302.99 L52.77,301.82 L51.39,300.54 L50.12,299.16 L48.94,297.67 L47.87,296.06 L46.89,294.32 L46.00,292.44 L45.20,290.42 L44.49,288.22 L43.86,285.83 L43.32,283.20 L42.87,280.30 L42.50,277.03 L42.21,273.26 L42.00,268.73 L41.88,262.72 L41.84,247.31 L41.88,231.90 L42.00,225.89 L42.21,221.36 L42.50,217.59 L42.87,214.33 L43.32,211.42 L43.86,208.80 L44.49,206.40 L45.20,204.21 L46.00,202.18 L46.89,200.30 L47.87,198.56 L48.94,196.95 L50.12,195.46 L51.39,194.08 L52.77,192.80 L54.27,191.63 L55.88,190.56 L57.61,189.57 L59.49,188.68 L61.52,187.89 L63.72,187.17 L66.11,186.55 L68.73,186.01 L71.64,185.56 L74.90,185.19 L78.67,184.90 L83.20,184.69 L89.21,184.57 L104.62,184.53 L120.03,184.57 L126.04,184.69 L130.58,184.90 L134.34,185.19 L137.61,185.56 L140.51,186.01 L143.14,186.55 L145.53,187.17 L147.73,187.89 L149.76,188.68 L151.63,189.57 L153.37,190.56 L154.98,191.63 L156.47,192.80 L157.85,194.08 L159.13,195.46 L160.30,196.95 L161.38,198.56 L162.36,200.30 L163.25,202.18 L164.05,204.21 L164.76,206.40 L165.38,208.80 L165.92,211.42 L166.38,214.33 L166.75,217.59 L167.04,221.36 L167.24,225.89 L167.36,231.90 Z M310.09,247.31 L310.05,262.72 L309.93,268.73 L309.73,273.26 L309.44,277.03 L309.07,280.30 L308.61,283.20 L308.07,285.83 L307.45,288.22 L306.74,290.42 L305.94,292.44 L305.05,294.32 L304.07,296.06 L302.99,297.67 L301.82,299.16 L300.54,300.54 L299.16,301.82 L297.67,302.99 L296.06,304.07 L294.32,305.05 L292.44,305.94 L290.42,306.74 L288.22,307.45 L285.83,308.07 L283.20,308.61 L280.30,309.07 L277.03,309.44 L273.26,309.73 L268.73,309.93 L262.72,310.05 L247.31,310.09 L231.90,310.05 L225.89,309.93 L221.36,309.73 L217.59,309.44 L214.33,309.07 L211.42,308.61 L208.80,308.07 L206.40,307.45 L204.21,306.74 L202.18,305.94 L200.30,305.05 L198.56,304.07 L196.95,302.99 L195.46,301.82 L194.08,300.54 L192.80,299.16 L191.63,297.67 L190.56,296.06 L189.57,294.32 L188.68,292.44 L187.89,290.42 L187.17,288.22 L186.55,285.83 L186.01,283.20 L185.56,280.30 L185.19,277.03 L184.90,273.26 L184.69,268.73 L184.57,262.72 L184.53,247.31 L184.57,231.90 L184.69,225.89 L184.90,221.36 L185.19,217.59 L185.56,214.33 L186.01,211.42 L186.55,208.80 L187.17,206.40 L187.89,204.21 L188.68,202.18 L189.57,200.30 L190.56,198.56 L191.63,196.95 L192.80,195.46 L194.08,194.08 L195.46,192.80 L196.95,191.63 L198.56,190
-```
-
-**File**: `apps/ios/Zeron/Assets.xcassets/AppIcon.appiconset/Contents.json` (modified, +28/-1)
-```diff
-@@ -5,7 +5,34 @@
-       "idiom" : "universal",
-       "platform" : "ios",
-       "size" : "1024x1024"
-+    },
-+    {
-+      "appearances" : [
-+        {
-+          "appearance" : "luminosity",
-+          "value" : "dark"
-+        }
-+      ],
-+      "filename" : "AppIcon1024-dark.png",
-+      "idiom" : "universal",
-+      "platform" : "ios",
-+      "size" : "1024x1024"
-+    },
-+    {
-+      "appearances" : [
-+        {
-+          "appearance" : "luminosity",
-+          "value" : "tinted"
-+        }
-+      ],
-+      "filename" : "AppIcon1024-tinted.png",
-+      "idiom" : "universal",
-+      "platform" : "ios",
-+      "size" : "1024x1024"
-     }
-   ],
--  "info" : { "author" : "xcode", "version" : 1 }
-+  "info" : {
-+    "author" : "xcode",
-+    "version" : 1
-+  }
+         .await?;
+         if let Some(account_id) = str_field(&body, "account_id")
+-            && account_id != slot.account_key
++            && account_id != codex_workspace(&slot.account_key)
+         {
+             return Err(ProbeError::NoCredentials {
+                 why: NoCredentials::Missing,
+@@ -4051,6 +4051,14 @@ fn parse_codex_auth(auth: serde_json::Value) -> Option<Detected> {
+     })
  }
+ 
++// account keys put the user id before "::" so team seats sharing a workspace
++// stay distinct (`parse_codex_auth`), but openai only ever reports the workspace
++fn codex_workspace(account_key: &str) -> &str {
++    account_key
++        .rsplit_once("::")
++        .map_or(account_key, |(_, workspace)| workspace)
++}
++
+ fn codex_slot_auth(slot: &Slot) -> Result<(&str, &str), EngineError> {
+     let detected = parse_codex_auth(slot.credentials.clone())
+         .ok_or_else(|| EngineError::Other("This Codex login needs to be refreshed.".into()))?;
+@@ -4064,7 +4072,7 @@ fn codex_slot_auth(slot: &Slot) -> Result<(&str, &str), EngineError> {
+     match (account_id, access_token) {
+         (Some(account_id), Some(access_token))
+             if !access_token.is_empty()
+-                && account_id == slot.account_key
++                && account_id == codex_workspace(&slot.account_key)
+                 && detected.account_key == slot.account_key =>
+         {
+             Ok((access_token, account_id))
+```
+
+**File**: `crates/engine/src/agent_accounts/provider_tests.rs` (modified, +60/-0)
+```diff
+@@ -1924,6 +1924,66 @@ fn codex_auth(email: &str, account_id: &str) -> String {
+     .to_string()
+ }
+ 
++#[tokio::test]
++async fn codex_usage_loads_for_a_login_whose_key_carries_the_user_id() {
++    let server = MockServer::start(move |method, path, _| match (method, path) {
++        ("GET", "/backend-api/wham/usage") => (
++            200,
++            serde_json::json!({
++                "account_id": "acct-team",
++                "plan_type": "plus",
++                "rate_limit": {
++                    "primary_window": { "used_percent": 12, "limit_window_seconds": 18000 },
++                    "secondary_window": { "used_percent": 40, "limit_window_seconds": 604800 },
++                },
++                "rate_limit_reset_credits": { "available_count": 1 },
++            })
++            .to_string(),
++        ),
++        ("GET", "/backend-api/wham/rate-limit-reset-credits") => (
++            200,
++            serde_json::json!({
++                "available_count": 1,
++                "credits": [
++                    { "id": "credit-1", "reset_type": "codex_rate_limits", "status": "available",
++                      "title": "Full reset (Weekly + 5 hr)", "expires_at": "2030-01-04T02:01:00Z" },
++                ]
++            })
++            .to_string(),
++        ),
++        _ => (404, String::new()),
++    })
++    .await;
++    let tmp = tempfile::tempdir().unwrap();
++    let (accounts, config) = accounts_with(tmp.path(), mocked(&server.base));
++    let id_token = jwt(serde_json::json!({
++        "email": "ada@example.com",
++        "https://api.openai.com/auth": {
++            "chatgpt_account_id": "acct-team",
++            "chatgpt_user_id": "user-ada",
++            "chatgpt_plan_type": "plus",
++        },
++    }));
++    write(
++        &config.codex_home.join("auth.json"),
++        &serde_json::json!({
++            "tokens": { "id_token": id_token, "access_token": "codex-access", "account_id": "acct-team" }
++        })
++        .to_string(),
++    );
++
++    let codex = rows(&accounts.list(true).await.unwrap(), HarnessId::Codex);
++    assert_eq!(codex.len(), 1);
++    let fractions: Vec<f32> = codex[0].usage_windows.iter().map(|w| w.used_fraction).collect();
++    assert_eq!(fractions.len(), 2, "{:?}", codex[0].usage_windows);
++    assert!((fractions[0] - 0.12).abs() < 1e-6);
++    assert!((fractions[1] - 0.40).abs() < 1e-6);
++    assert_eq!(
++        codex[0].codex_reset_credits.as_ref().map(|c| c.available_count),
++        Some(1)
++    );
++}
++
+ #[tokio::test]
+ async fn codex_banked_resets_list_persist_and_redeem_against_the_mock() {
+     // Who the usage endpoint says the token belongs to (a mismatch: another).
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1240** (2026-11-05): iOS: version 1.0.1, since Apple has closed 1.0 (@wingleeio)
-- **PR #1239** (2026-11-05): The new app icon on iOS and Android (@wingleeio)
-- **PR #1236** (closed): zgx: the model picker's reasoning and stars from the keys (@gaelcado)
-- **PR #1231** (closed): zgx sidebar: labels that don't fit fade, and the foot's rows share one edge (@gaelcado)
-- **PR #1229** (closed): zgx: the title bar's controls sit on the traffic lights' line (@gaelcado)
-- **PR #1228** (closed): zgx: a test that a new chat's composer holds its place as the page resizes (@gaelcado)
+- **PR #1298** (2026-11-08): Codex usage and banked resets load again for user-scoped logins (@wingleeio)
+- **PR #1297** (2026-11-09): Linux: a dropped image no longer crashes the window with "texture must exist" (@katulevskiy)
+- **PR #1296** (closed): feat(zgx): attach file and side-chat tabs as composer context (@jsgrrchg)
+- **PR #1292** (closed): fix: new chat project, codex usage, and composer invocations (@laurentcodes)
+- **PR #1284** (2026-11-08): iOS: Activity on the Sessions page, Sleep, and Settings → Activity (1.0.2) (@wingleeio)
+- **PR #1283** (2026-11-08): zgx on Windows: the panel level with the chat page, and chimes that play (@hoangvu12)
 
 ---
 
@@ -2025,42 +2060,46 @@ Co-authored-by: zeronsh[bot] <346184242+zeronsh[bot]@users.noreply.github.com>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. iOS: version 1.0.1, since Apple has closed 1.0 (#1240)
+## X. Linux: a dropped image no longer crashes the window with "texture must exist" (#
 
 **RULE**:
-When implementing operations in `apps/ios/Zeron.xcodeproj/project.pbxproj`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeronsh/zeron. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeronsh/zeron. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `971a3271`: iOS: version 1.0.1, since Apple has closed 1.0 (#1240). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `533e89d6`: Linux: a dropped image no longer crashes the window with "texture must exist" (#1297). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/ios/Zeron.xcodeproj/project.pbxproj`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-				MARKETING_VERSION = 1.0.1;
-				MARKETING_VERSION = 1.0.1;
-				MARKETING_VERSION = 1.0.1;
-				MARKETING_VERSION = 1.0.1;
-				MARKETING_VERSION = 1.0.1;
-				MARKETING_VERSION = 1.0.1;
-				MARKETING_VERSION = 1.0.1;
-				MARKETING_VERSION = 1.0.1;
+source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
+source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
+source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
+source = "git+https://github.com/zeronsh/gpui-component?rev=cab50b071497683a119ae0e4038880f195c0f23f#cab50b071497683a119ae0e4038880f195c0f23f"
+source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
+source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
+source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
+source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
+source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
+s
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-				MARKETING_VERSION = 1.0;
-				MARKETING_VERSION = 1.0;
-				MARKETING_VERSION = 1.0;
-				MARKETING_VERSION = 1.0;
-				MARKETING_VERSION = 1.0;
-				MARKETING_VERSION = 1.0;
-				MARKETING_VERSION = 1.0;
-				MARKETING_VERSION = 1.0;
+source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
+source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
+source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
+source = "git+https://github.com/zeronsh/gpui-component?rev=59f89243cea79dd70eb7a619b3930c374ef6958a#59f89243cea79dd70eb7a619b3930c374ef6958a"
+source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
+source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
+source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
+source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
+source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
+s
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `971a3271` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `533e89d6` are properly handled with clean fallback behavior.

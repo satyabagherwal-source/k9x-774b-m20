@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/weaviate-weaviate-learnings.md`  
 > **Source**: github ([https://github.com/weaviate/weaviate](https://github.com/weaviate/weaviate))  
-> **Source Version**: `7e97594b`  
+> **Source Version**: `6498ec79`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T11:45:27.340Z  
+> **Timestamp**: 2026-11-10T06:12:50.254Z  
 > **Learning ID**: `learn-github-weaviate-weaviate`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/weaviate-weaviate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/weaviate/weaviate](https://github.com/weaviate/weaviate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T11:45:27.332Z  
+> **Harvest Timestamp**: 2026-11-10T06:12:48.341Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Weaviate is an open-source vector database that stores both objects and vectors, allowing for the combination of vector search with structured filtering with the fault tolerance and scalability of a cloud-native database​.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: pyproject.toml, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 16938 stars
+- **Stars / Engagement**: 16945 stars
 
 ---
 
@@ -1732,14 +1732,12 @@ func (s *State) SetGraphQLIfCurrent(gql graphql.GraphQL, gen uint64) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7e97594b` (2026-11-05)
-**Commit Message**: Merge pull request #13785 from weaviate/merge-stable-v1.40-into-main
+### Incident Patch 1: `6498ec79` (2026-11-10)
+**Commit Message**: fix: use NEON instead of SVE dot product on 128-bit SVE cores (Neoverse V2) (#13779)
 
-Merge stable/v1.40 into main
-
-**File**: `adapters/clients/license/client.go` (added, +133/-0)
+**File**: `adapters/repos/db/vector/hnsw/distancer/asm/sve_arm64.go` (added, +17/-0)
 ```diff
-@@ -0,0 +1,133 @@
+@@ -0,0 +1,17 @@
 +//                           _       _
 +// __      _____  __ ___   ___  __ _| |_ ___
 +// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
@@ -1751,133 +1749,31 @@ Merge stable/v1.40 into main
 +//  CONTACT: hello@weaviate.io
 +//
 +
-+package license
++package asm
 +
-+import (
-+	"bytes"
-+	"context"
-+	"crypto/ed25519"
-+	"encoding/json"
-+	"errors"
-+	"fmt"
-+	"io"
-+	"net/http"
-+	"strings"
-+	"time"
-+
-+	protocol "github.com/weaviate/weaviate/entities/license"
-+)
-+
-+// DefaultServerURL is the production license service.
-+const DefaultServerURL = "https://license.weaviate.io"
-+
-+// Client performs signed verify calls against the license service. It is the
-+// piece Weaviate embeds.
-+type Client struct {
-+	ServerURL   string // defaults to DefaultServerURL
-+	LicenseID   string // from protocol.ParseKey
-+	PrivateKey  ed25519.PrivateKey
-+	TrustedKeys protocol.ServerKeySet // server public keys embedded in the binary
-+	HTTPClient  *http.Client          // defaults to a 10s-timeout client
-+	UserAgent   string
-+}
-+
-+// NewClient parses a customer license key and returns a client for it.
-+func NewClient(key string, trusted protocol.ServerKeySet) (*Client, error) {
-+	id, priv, err := protocol.ParseKey(key)
-+	if err != nil {
-+		return nil, err
-+	}
-+	if len(trusted) == 0 {
-+		return nil, errors.New("license: no trusted server keys")
-+	}
-+	return &Client{LicenseID: id, PrivateKey: priv, TrustedKeys: trusted}, nil
-+}
-+
-+// Error is a structured error returned by the service.
-+type Error struct {
-+	HTTPStatus int
-+	Code       string `json:"error"`
-+	Message    string `json:"message"`
-+}
-+
-+func (e *Error) Error() string {
-+	return fmt.Sprintf("license: server returned %d %s: %s", e.HTTPStatus, e.Code, e.Message)
-+}
-+
-+// Verify signs a challenge for this node and returns the server's answer.
-+// The response signature is checked against TrustedKeys and the nonce is
-+// checked against the request, so a non-nil result can be trusted.
-+func (c *Client) Verify(ctx context.Context, clusterID, instanceID, weaviateVersion string) (protocol.VerifyResponse, error) {
-+	req := protocol.VerifyRequest{
-+		LicenseID:       c.LicenseID,
-+		ClusterID:       clusterID,
-+		InstanceID:      instanceID,
-+		WeaviateVersion: weaviateVersion,
-+	}
-+	if err := req.Sign(c.PrivateKey); err != nil {
-+		return protocol.VerifyResponse{}, err
-+	}
-+	body, err := json.Marshal(req)
-+	if err != nil {
-+		return protocol.VerifyResponse{}, err
-+	}
-+
-+	base := c.ServerURL
-+	if base == "" {
-+		base = DefaultServerURL
-+	}
-+	// A trailing slash on a configured ServerURL must not produce
-+	// "//v1/verify": servers may answer that with a redirect, which would
-+	// turn this POST into a GET.
-+	base = strings.TrimRight(base, "/")
-+	httpReq, err := http.NewRequestWithContext(ctx, http.MethodPost, base+"/v1/verify", bytes.NewReader(body))
-+	if err != nil {
-+		return protocol.VerifyResponse{}, err
-+	}
-+	httpReq.Header.Set("Content-Type", "application/json")
-+	httpReq.Header.Set("Accept", "application/json")
-+	if c.UserAgent != "" {
-+		httpReq.Header.Set("User-Agent", c.UserAgent)
-+	}
-+	hc := c.HTTPClient
-+	if hc == nil {
-+		hc = &http.Client{Timeout: 10 * time.Second}
-+	}
-+	res, err := hc.Do(httpReq)
-+	if err != nil {
-+		return protocol.VerifyResponse{}, fmt.Errorf("license: verify request: %w", err)
-+	}
-+	defer res.Body.Close()
-+	raw, err := io.ReadAll(io.LimitReader(res.Body, 64<<10))
-+	if err != nil {
-+		return protocol.VerifyResponse{}, fmt.Errorf("license: read response: %w", err)
-+	}
-+	if res.StatusCode != http.StatusOK {
-+		e := &Error{HTTPStatus: res.StatusCode}
-+		if json.Unmarshal(raw, e) != nil || e.Code == "" {
-+			e.Code = "http_error"
-+			e.Message = http.StatusText(res.StatusCode)
-+		}
-+		return protocol.VerifyResponse{}, e
-+	}
-+	var resp protocol.VerifyResponse
-+	if err := json.Unmarshal(raw, &resp); err != nil {
-+		return protocol.VerifyResponse{}, fmt.Errorf("license: decode response: %w", err)
-+	}
-+	if err := c.TrustedKeys.Verify(resp); err != nil {
-+		return protocol.VerifyResponse{}, err
-+	}
-+	if !resp.Matches(req) {
-+		return protocol.VerifyResponse{}, errors.New("license: response does not match request")
-+	}
-+	return resp, nil
-+}
++// SVEVectorLengthBytes returns the SVE vector length of the host in bytes
++// (16 on Neoverse V2, 32 on Neoverse V1), read with RDVL. It executes an SVE
++// instruction, so it must only be called when cpu.ARM64.HasSVE is true.
++func SVEVectorLengthBytes() int
 ```
 
-**File**: `adapters/clients/license/client_test.go` (added, +196/-0)
+**File**: `adapters/repos/db/vector/hnsw/distancer/asm/sve_arm64.s` (added, +9/-0)
 ```diff
-@@ -0,0 +1,196 @@
+@@ -0,0 +1,9 @@
++//go:build arm64
++
++#include "textflag.h"
++
++// func SVEVectorLengthBytes() int
++TEXT ·SVEVectorLengthBytes(SB), NOSPLIT, $0-8
++	WORD $0x04bf5020 // rdvl x0, #1
++	MOVD R0, ret+0(FP)
++	RET
+```
+
+**File**: `adapters/repos/db/vector/hnsw/distancer/asm/sve_arm64_test.go` (added, +31/-0)
+```diff
+@@ -0,0 +1,31 @@
 +//                           _       _
 +// __      _____  __ ___   ___  __ _| |_ ___
 +// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
@@ -1889,897 +1785,922 @@ Merge stable/v1.40 into main
 +//  CONTACT: hello@weaviate.io
 +//
 +
-+package license
++package asm
 +
 +import (
-+	"context"
-+	"crypto/ed25519"
-+	"crypto/rand"
-+	"encoding/json"
-+	"net/http"
-+	"net/http/httptest"
-+	"reflect"
 +	"testing"
-+	"time"
 +
-+	"github.com/weaviate/weaviate/entities/license"
++	"github.com/stretchr/testify/require"
++	"golang.org/x/sys/cpu"
 +)
 +
-+func TestNewClientRejectsEmptyTrustedKeys(t *testing.T) {
-+	lic, err := license.Generate()
-+	if err != nil {
-+		t.Fatal(err)
++func TestSVEVectorLengthBytes(t *testing.T) {
++	if !cpu.ARM64.HasSVE {
++		t.Skip("SVE not supported by this CPU")
 +	}
-+	tests := []struct {
-+		name    string
-+		trusted license.ServerKeySet
-+	}{
-+		{name: "nil", trusted: nil},
-+		{name: "empty", trusted: license.ServerKeySet{}},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			client, err := NewClient(lic.Key(), tt.trusted)
-+			if err == nil {
-+				t.Fatal("NewClient() accepted an empty trusted-key set")
-+			}
-+			if client != nil {
-+				t.Fatal("NewClient() returned a client with an empty trusted-key set")
-+			}
-+		})
-+	}
++	vl := SVEVectorLengthBytes()
++	// The architecture allows 128..2048 bits in 128-bit steps; every shipped
++	// core uses a power of two (16 on Neoverse V2, 32 on Neoverse V1).
++	require.GreaterOrEqual(t, vl, 16)
++	require.LessOrEqual(t, vl, 256)
++	require.Zero(t, vl%16)
 +}
-+
-+func TestVerifyToleratesTrailingSlashServerURL(t *testing.T) {
-+	pub, priv, _ := ed25519.GenerateKey(rand.Reader)
-+	key := license.ServerKey{ID: "k", PrivateKey: priv}
-+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		if r.URL.Path != "/v1/verify" {
-+			t.Errorf("unexpected request path %q", r.URL.Path)
-+		}
-+		var req license.VerifyRequest
-+		json.NewDecoder(r.Body).Decode(&req)
-+		now := time.Now().UTC().Truncate(time.Second)
-+		resp := license.VerifyResponse{
-+			LicenseID: req.LicenseID, Status: license.StatusValid,
-+			ExpiresAt: now.Add(time.Hour), CheckedAt: now, NextCheckAfter: now.Add(24 * time.Hour), Nonce: req.Nonce,
-+		}
-+		key.Sign(&resp)
-+		json.NewEncoder(w).Encode(resp)
-+	}))
-+	defer srv.Close()
-+
-+	lic, _ := license.Generate()
-+	client, err := NewClient(lic.Key(), license.ServerKeySet{"k": pub})
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	client.ServerURL = srv.URL + "/"
-+	resp, err := client.Verify(context.Background(), "c-1", "n-1", "1.39.0")
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	if resp.Status != license.StatusValid {
-+		t.Fatalf("unexpected status %q", resp.Status)
-+	}
-+}
-+
-+// TestVerifyTrustChecks covers the two checks that make an answer
-+// trustworthy: the server signature against the trusted key set, and the
-+// echo of this request's license ID and nonce. Every bad row must produce an
-+// error and a zero response; each row fails if its corresponding check is
-+// removed.
-+func TestVerifyTrustChecks(t *testing.T) {
-+	pub, priv, _ := ed25519.GenerateKey(rand.Reader)
-+	_, roguePriv, _ := ed25519.GenerateKey(rand.Reader)
-+
-+	lic, err := license.Generate()
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	trusted := license.ServerKeySet{"k": pub}
-+
-+	cases := []struct {
-+		name             string
-+		signKey          ed25519.PrivateKey
-+		mutateBeforeSign func(*license.VerifyResponse) // signature stays valid
-+		mutateAfterSign  func(*license.VerifyResponse) // breaks the signature
-+		wantErr          bool
-+	}{
-+		{"valid answer", priv, nil, nil, false},
-+		{"signed by an untrusted key", roguePriv, nil, nil, true},
-+		{"different nonce, valid signature", priv, func(r *license.VerifyResponse) { r.Nonce = "other-nonce" }, nil, true},
-+		{"different license id, valid signature", priv, func(r *license.VerifyResponse) { r.LicenseID = "lic_01ARZ3NDEKTSV4RRFFQ69G5FAV" }, nil, true},
-+		{"field tampered after signing", priv, nil, func(r *license.VerifyResponse) { r.Status = license.StatusRevoked }, true},
-+	}
-+	for _, tt := range cases {
-+		t.Run(tt.name, func(t *testing.T) {
-+			srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+				var req license.VerifyRequest
-+				json.NewDecoder(r.Body).Decode(&req)
-+				now := time.Now().UTC().Truncate(time.Second)
-+				resp := license.VerifyResponse{
-+					LicenseID: req.LicenseID, Status: license.StatusValid,
-+					ExpiresAt: now.Add(time.Hour), CheckedAt: now, NextCheckAfter: now.Add(24 * time.Hour), Nonce: req.Nonce,
-+				}
-+				if tt.mutateBeforeSign != nil {
-+					tt.mutateBeforeSign(&resp)
-+				}
-+				key := license.ServerKey{ID: "k", PrivateKey: tt.signKey}
-+				key.Sign(&resp)
-+				if tt.mutateAfterSign != nil {
-+					tt.mutateAfterSign(&resp)
-+				}
-+				json.NewEncoder(w).Encode(resp)
-+			}))
-+			defer srv.Close()
-+
-+			client, err := NewClient(lic.Key(), trusted)
-+			if err != nil {
-+				t.Fatal(err)
-+			}
-+			client.ServerURL = srv.URL
-+			resp, err := client.Verify(context.Background(), "c-1", "n-1", "1.39.0")
-+			if tt.wantErr {
-+				if err == nil {
-+					t.Fatal("expected an error")
-+				}
-+				if !reflect.DeepEqual(resp, license.VerifyResponse{}) {
-+					t.Fatalf("expected a zero response on error, got %+v", resp)
-+				}
-+				return
-+			}
-+			if err != nil {
-+				t.Fatal(err)
-+			}
-+			if 
 ```
 
-**File**: `adapters/handlers/grpc/v1/batch/handler_test.go` (modified, +28/-3)
+**File**: `adapters/repos/db/vector/hnsw/distancer/dot_product_arm64.go` (modified, +7/-3)
 ```diff
-@@ -24,12 +24,13 @@ import (
- 	restCtx "github.com/weaviate/weaviate/adapters/handlers/rest/context"
- 	"github.com/weaviate/weaviate/entities/models"
- 	pb "github.com/weaviate/weaviate/grpc/generated/protocol/v1"
-+	"github.com/weaviate/weaviate/usecases/objects"
- 	wlnamespaces "github.com/weaviate/weaviate/wl/namespaces"
+@@ -17,11 +17,15 @@ import (
  )
  
--// Drives BatchObjects with a request carrying no objects, which returns before
--// the batch manager is touched. The namespace is recorded before class
--// resolution and authorization, so a rejected batch is still attributed.
-+// Drives BatchObjects with requests that return before the batch manager is
-+// touched. The namespace is recorded before class resolution and authorization,
-+// so a rejected batch is still attributed.
- // docs/metrics.md lists the residuals.
- func TestHandler_BatchObjects(t *testing.T) {
- 	t.Run("records the caller's namespace in the slot", func(t *testing.T) {
-@@ -87,4 +88,28 @@ func TestHandler_BatchObjects(t *testing.T) {
- 		require.Error(t, err)
- 		assert.Empty(t, slot.Namespace)
- 	})
-+
-+	t.Run("every object with an empty collection fails alone", func(t *testing.T) {
-+		logger, _ := test.NewNullLogger()
-+		authenticator := auth.NewHandler(false, func(string, []string) (*models.Principal, error) {
-+			return &models.Principal{Username: "ns_a:alice", Namespace: "ns_a"}, nil
-+		})
-+		// The nil authorizer, batch manager and schema manager panic if the handler reaches them.
-+		h := NewHandler(nil, nil, logger, authenticator, nil, wlnamespaces.NewPrefixing())
-+
-+		ctx, _ := restCtx.WithBatchNamespaceSlot(context.Background())
-+		reply, err := h.BatchObjects(ctx, &pb.BatchObjectsRequest{Objects: []*pb.BatchObject{
-+			{Collection: "", Uuid: "a0b55b05-bc5b-4cc9-b646-1452d1390a62"},
-+			{Collection: "", Uuid: "a0b55b05-bc5b-4cc9-b646-1452d1390a63"},
-+		}})
-+
-+		require.NoError(t, err)
-+		require.Len(t, reply.Errors, 2)
-+		var indexes []int32
-+		for _, batchErr := range reply.Errors {
-+			assert.Contains(t, batchErr.Error, objects.ErrEmptyClass.Error())
-+			indexes = append(indexes, batchErr.Index)
-+		}
-+		assert.ElementsMatch(t, []int32{0, 1}, indexes)
-+	})
- }
-```
-
-**File**: `adapters/handlers/grpc/v1/batch/parse.go` (modified, +8/-0)
-```diff
-@@ -21,6 +21,7 @@ import (
- 	"github.com/weaviate/weaviate/entities/models"
- 	"github.com/weaviate/weaviate/entities/schema"
- 	pb "github.com/weaviate/weaviate/grpc/generated/protocol/v1"
-+	"github.com/weaviate/weaviate/usecases/objects"
- 	"github.com/weaviate/weaviate/usecases/schema/namespacing"
- )
- 
-@@ -45,6 +46,13 @@ func BatchObjectsFromProto(req *pb.BatchObjectsRequest, authorizedGetClass func(
- 		var props map[string]interface{}
- 
- 		collection := schema.UppercaseClassName(obj.Collection)
-+		// An empty collection fails this object alone, before anything is parsed.
-+		// Resolving it would qualify it to "<namespace>:" for a namespaced caller,
-+		// and authorizing it would check every collection for anyone else.
-+		if collection == "" {
-+			objectErrors[i] = objects.ErrEmptyClass
-+			continue
-+		}
- 		resolved, class, err := authorizedGetClass(collection, obj.Tenant)
- 		if err != nil {
- 			objectErrors[i] = err
-```
-
-**File**: `adapters/handlers/grpc/v1/batch/parse_test.go` (modified, +31/-12)
-```diff
-@@ -22,6 +22,7 @@ import (
- 	"github.com/weaviate/weaviate/entities/models"
- 	"github.com/weaviate/weaviate/entities/schema"
- 	pb "github.com/weaviate/weaviate/grpc/generated/protocol/v1"
-+	"github.com/weaviate/weaviate/usecases/objects"
- 	"github.com/weaviate/weaviate/usecases/schema/namespacing"
- 	wlnamespaces "github.com/weaviate/weaviate/wl/namespaces"
- 	"google.golang.org/protobuf/encoding/protojson"
-@@ -557,21 +558,39 @@ func TestGRPCBatchRequest_MultiTargetNamespace(t *testing.T) {
- 	})
- }
- 
--// TestGRPCBatchRequest_AutoSchemaQualifiesNamespace pins the auto-schema branch
--// (class not yet in schema): the parsed object must carry the resolver's
--// qualified name, not the bare request collection.
-+// TestGRPCBatchRequest_AutoSchemaQualifiesNamespace pins that an object whose
-+// class is not yet in schema carries the resolver's qualified name, and that an
-+// empty collection fails that object alone without reaching the resolver.
- func TestGRPCBatchRequest_AutoSchemaQualifiesNamespace(t *testing.T) {
--	getClass := func(class, shard string) (string, *models.Class, error) {
--		// resolver qualifies the short name; class is nil (auto-schema creates it).
--		return "ns1:Movies", nil, nil
--	}
--	req := []*pb.BatchObject{{Collection: "Movies", Uuid: UUID4}}
-+	t.Run("short name", func(t *testing.T) {
-+		getClass := func(class, shard string) (string, *models.Class, error) {
-+			// The resolver qualifies the short name, and the class is nil because auto-schema creates it.
-+			return "ns1:" + class, nil, nil
-+		}
-+		req := []*pb.BatchObject{{Collection: "Movies", Uuid: UUID4}}
- 
--	out, _, batchErrors := batch.BatchObjectsFromProto(&pb.BatchObjectsRequest{Objects: req}, getClass, nil, namespacing.Disabled)
-+		out, _, batchErrors := batch.BatchObjectsFromProto(&pb.BatchObjectsRequest{Objects: req}, getClass, nil, namespacing.Disabled)
- 
--	require.Len(t, batchErrors, 0)
--	require.Len(t, out, 1)
--	require.Equal(t, "ns1:Movies", out[0].Class)
-+		require.Len(t, batchErrors, 0)
-+		require.Len(t, out, 1)
-+		require.Equal(t, "ns1:Movies", out[0].Class)
-+	})
-+
-+	t.Run("empty name beside a short name", func(t *testing.T) {
-+		getClass := func(class, shard string) (string, *models.Class, error) {
-+			require.NotEmpty(t, class, "resolver called with an empty collection")
-+			return "ns1:" + class, nil, nil
-+		}
-+		req := []*pb.BatchObject{{Collection: "", Uuid: UUID4}, {Collection: "Movies", Uuid: UUID4}}
-+
-+		out, originalIndex, batchErrors := batch.BatchObjectsFromProto(&pb.BatchObjectsRequest{Objects: req}, getClass, nil, namespacing.Disabled)
-+
-+		require.Len(t, batchErrors, 1)
-+		require.ErrorIs(t, batchErrors[0], objects.ErrEmptyClass)
-+		require.Len(t, out, 1)
-+		require.Equal(t, "ns1:Movies", out[0].Class)
-+		require.Equal(t, map[int]int{0: 1}, originalIndex)
-+	})
- }
- 
- // The worker re-sends the same pointers on retry; a parse that rewrites the
-```
-
-**File**: `adapters/handlers/rest/authz/handlers_authz_alias_pattern_test.go` (modified, +57/-31)
-```diff
-@@ -29,37 +29,63 @@ import (
- 	"github.com/weaviate/weaviate/usecases/config"
- )
- 
--// TestAliasPatternCheckedAsStored checks that create and add refuse an alias
--// pattern that stops compiling once conv uppercases it, and checkLookup doesn't.
--func TestAliasPatternCheckedAsStored(t *testing.T) {
--	perm := &models.Permission{Action: String(authorization.ReadAliases), Aliases: &models.PermissionAliases{Collection: String("*"), Alias: String("[[:alpha:]]+")}}
--	wantErr := "'[[:alpha:]]+' is not a valid alias name"
--	require.NoError(t, validatePermissions(false, checkLookup, perm))
--
--	t.Run("create role", func(t *testing.T) {
--		logger, _ := test.NewNullLogger()
--		h := &authZHandlers{authorizer: authorization.NewMockAuthorizer(t), controller: NewMockControllerAndGetUsers(t), logger: logger}
--		res := h.createRole(authz.CreateRoleParams{
--			HTTPRequest: req,
--			Body:        &models.Role{Name: String("newRole"), Permissions: []*models.Permission{perm}},
--		}, &models.Principal{Username: "user1"})
--		parsed, ok := res.(*authz.CreateRoleUnprocessableEntity)
--		require.True(t, ok, "got %T", res)
--		assert.Contains(t, parsed.Payload.Error[0].Message, wantErr)
--	})
--
--	t.Run("add permissions", func(t *testing.T) {
--		logger, _ := test.NewNullLogger()
--		h := &authZHandlers{authorizer: authorization.NewMockAuthorizer(t), controller: NewMockControllerAndGetUsers(t), logger: logger}
--		res := h.addPermissions(authz.AddPermissionsParams{
--			ID:          "someRole",
--			HTTPRequest: req,
--			Body:        authz.AddPermissionsBody{Permissions: []*models.Permission{perm}},
--		}, &models.Principal{Username: "user1"})
--		parsed, ok := res.(*authz.AddPermissionsBadRequest)
--		require.True(t, ok, "got %T", res)
--		assert.Contains(t, parsed.Payload.Error[0].Message, wantErr)
--	})
-+// TestPatternCheckedAsStored checks that create and add refuse a pattern that
-+// stops compiling once conv stores it, and checkLookup doesn't, so a row already
-+// stored stays removable.
-+func TestPatternCheckedAsStored(t *testing.T) {
-+	tests := []struct {
-+		name    string
-+		perm    *models.Permission
-+		wantErr string
-+	}{
-+		{
-+			name:    "alias uppercased",
-+			perm:    &models.Permission{Action: String(authorization.ReadAliases), Aliases: &models.PermissionAliases{Collection: String("*"), Alias: String("[[:alpha:]]+")}},
-+			wantErr: "'[[:alpha:]]+' is not a valid alias name",
-+		},
-+		{
-+			// conv stores X|\Q as (X|\Q), and \Q quotes the closing ')'.
-+			name:    "alternation wrapped in a group",
-+			perm:    &models.Permission{Action: String(authorization.ReadData), Data: &models.PermissionData{Collection: String(`X|\Q`)}},
-+			wantErr: "is not a valid pattern: error parsing regexp: missing closing )",
-+		},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			require.NoError(t, validatePermissions(false, checkLookup, tt.perm))
-+
-+			t.Run("create role", func(t *testing.T) {
-+				logger, _ := test.NewNullLogger()
-+				h := &authZHandlers{authorizer: authorization.NewMockAuthorizer(t), controller: NewMockControllerAndGetUsers(t), logger: logger}
-+				res := h.createRole(authz.CreateRoleParams{
-+					HTTPRequest: req,
-+					Body:        &models.Role{Name: String("newRole"), Permissions: []*models.Permission{tt.perm}},
-+				}, &models.Principal{Username: "user1"})
-+				parsed, ok := res.(*authz.CreateRoleUnprocessableEntity)
-+				require.True(t, ok, "got %T", res)
-+				assert.Contains(t, parsed.Payload.Error[0].Message, tt.wantErr)
-+			})
-+
-+			t.Run("add permissions", func(t *testing.T) {
-+				logger, _ := test.NewNullLogger()
-+				h := &authZHandlers{authorizer: authorization.NewMockAuthorizer(t), controller: NewMockControllerAndGetUsers(t), logger: logger}
-+				res := h.addPermissions(authz.AddPermissionsParams{
-+					ID:          "someRole",
-+					HTTPRequest: req,
-+					Body:        authz.AddPermissionsBody{Permissions: []*models.Permission{tt.perm}},
-+				}, &models.Principal{Username: "user1"})
-+				parsed, ok := res.(*authz.AddPermissionsBadRequest)
-+				require.True(t, ok, "got %T", res)
-+				assert.Contains(t, parsed.Payload.Error[0].Message, tt.wantErr)
-+			})
-+		})
-+	}
-+}
-+
-+// TestValidateStorablePoliciesBraceRewrite checks that the stored-form compile
-+// rewrites "{...}" as KeyMatch5 does, so a target the matcher accepts is not refused.
-+func TestValidateStorablePoliciesBraceRewrite(t *testing.T) {
-+	require.NoError(t, validateStorablePolicies([]authorization.Policy{{Resource: "users/x{1001}"}}))
- }
- 
- // TestValidatePermissionsAliasRule checks that create and add apply the
-```
-
-**File**: `adapters/handlers/rest/authz/validation.go` (modified, +10/-5)
-```diff
-@@ -34,9 +34,8 @@ const maxTargetLength = 256
- // validateRegexTarget rejects a permission target that would not survive being
- // stored as a casbin resource pattern: it is over-long, contains a '/' (which
- // shifts the segment boundaries used on read-back), or does not compile as a
--// regex (which panics the matcher at enforce time). It reproduces exactly what
--// the matcher compiles — the '*' wildcard expanded and KeyMatch5's "{...}"
--// rewrite applied — so constructs the rewrite would break (e.g. "\p{L}",
-+// regex. It compiles the target with the '*' wildcard expanded and KeyMatch5's
-+// "{...}" rewrite applied, so constructs the rewrite would break (e.g. "\p{L}",
- // "\x{263a}") are caught here, not at enforce.
- func validateRegexTarget(field, value string) error {
- 	if len(value) > maxTargetLength {
-@@ -90,8 +89,8 @@ func validatePermissions(namespacesEnabled bool, check permissionCheck, permissi
+ func init() {
++	// The SVE dot kernel pays off only with 256-bit vectors (Neoverse V1,
++	// Graviton3). With 128-bit SVE (Neoverse V2: Axion, Graviton4) it is 2.3x
++	// slower than the NEON kernel at 1536 dims, so the vector length decides.
++	// L2 (l2_arm64.go) keeps SVE whenever present: there the SVE kernel is
++	// faster than the NEON one on both cores.
+ 	if cpu.ARM64.HasASIMD {
+-		if cpu.ARM64.HasSVE {
++		dotProductImplementation = asm.Dot_Neon
++		if cpu.ARM64.HasSVE && asm.SVEVectorLengthBytes() >= 32 {
+ 			dotProductImplementation = asm.Dot_SVE
+-		} else {
+-			dotProductImplementation = asm.Dot_Neon
  		}
- 		// aliasName checks the pattern as conv stores it, uppercased, against the
- 		// class-name rule. That refuses "ålias.*", which matches no alias, and
--		// "[[:alpha:]]", stored as "[[:Alpha:]]", which panics casbin on every alias
--		// check. checkLookup skips the rule so remove can drop such stored rows.
-+		// "[[:alpha:]]", stored as "[[:Alpha:]]", which does not compile. checkLookup
-+		// skips the rule so remove can drop such stored rows.
- 		aliasName := func(name string) {
- 			if check == checkLookup {
- 				return
-@@ -170,11 +169,17 @@ func validatePermissions(namespacesEnabled bool, check permissionCheck, permissi
- // validateStorablePolicies rejects a permission whose resource would corrupt the
- // policy file. It skips the length check because a resource joins several
- // targets, and validatePermissions already caps each one at maxTargetLength.
-+// It also compiles each resource as KeyMatch5 does, since conv stores a target
-+// such as "X|\Q" as "(X|\Q)", and there "\Q" quotes the closing ')'.
- func validateStorablePolicies(policies []authorization.Policy) error {
- 	for _, p := range policies {
- 		if err := conv.ValidateStorableCharacters(p.Resource); err != nil {
- 			return fmt.Errorf("permission %q %w", p.Resource, err)
- 		}
-+		pattern := "^" + keyMatch5BraceRe.ReplaceAllString(strings.ReplaceAll(p.Resource, "/*", "/.*"), "[^/]+") + "$"
-+		if _, err := regexp.Compile(pattern); err != nil {
-+			return fmt.Errorf("permission %q is not a valid pattern: %w", p.Resource, err)
-+		}
  	}
- 	return nil
  }
-```
-
-**File**: `adapters/handlers/rest/embedded_spec.go` (modified, +8/-8)
-```diff
-@@ -1866,13 +1866,13 @@ func init() {
-             "description": "Unauthorized or invalid credentials."
-           },
-           "403": {
--            "description": "Forbidden",
-+            "description": "The caller lacks read_backups on a collection in the backup. Callers without read_backups on all collections also get 403 when no backup with this ID exists at this location, so a 403 does not confirm the backup exists.",
-             "schema": {
-               "$ref": "#/definitions/ErrorResponse"
-             }
-           },
-           "404": {
--            "description": "Backup not found on the specified backend with the given ID.",
-+            "description": "No backup with this ID exists at this backend, bucket and path. Only callers with read_backups on all collections get 404; others get 403.",
-             "schema": {
-               "$ref": "#/definitions/ErrorResponse"
-             }
-@@ -2007,13 +2007,13 @@ func init() {
-             "description": "Unauthorized or invalid credentials."
-           },
-           "403": {
--            "description": "Forbidden",
-+            "description": "The caller lacks read_backups on a collection in the backup. Callers without read_backups on all collections also get 403 when no backup with this ID exists at this location, so a 403 does not confirm the backup exists.",
-             "schema": {
-               "$ref": "#/definitions/ErrorResponse"
-             }
-           },
-           "404": {
--            "description": "Backup not found on the specified backend with the given ID.",
-+            "description": "No restore of this backup was started at this backend, bucket and path.",
-             "schema": {
-               "$ref": "#/definitions/ErrorResponse"
-             }
-@@ -14690,13 +14690,13 @@ func init() {
-             "description": "Unauthorized or invalid credentials."
-           },
-           "403": {
--            "description": "Forbidden",
-+            "description": "The caller lacks read_backups on a collection in the backup. Callers without read_backups on all collections also get 403 when no backup with this ID exists at this location, so a 403 does not confirm the backup exists.",
-             "schema": {
-               "$ref": "#/definitions/ErrorResponse"
-             }
-           },
-           "404": {
--            "description": "Backup not found on the specified backend with the given ID.",
-+            "description": "No backup with this ID exists at this backend, bucket and path. Only callers with read_backups on all collections get 404; others get 403.",
-             "schema": {
-               "$ref": "#/definitions/ErrorResponse"
-             }
-@@ -14831,13 +14831,13 @@ func init() {
-             "description": "Unauthorized or invalid credentials."
-           },
-           "403": {
--            "description": "Forbidden",
-+            "description": "The caller lacks read_backups on a collection in the backup. Callers without read_backups on all collections also get 403 when no backup with this ID exists at this location, so a 403 does not confirm the backup exists.",
-             "schema": {
-               "$ref": "#/definitions/ErrorResponse"
-             }
-           },
-           "404": {
--            "description": "Backup not found on the specified backend with the given ID.",
-+            "description": "No restore of this backup was started at this backend, bucket and path.",
-             "schema": {
-               "$ref": "#/definitions/ErrorResponse"
-             }
 ```
 
 ---
 
-### Incident Patch 2: `9e219cb0` (2026-11-05)
-**Commit Message**: Merge pull request #13773 from weaviate/vector-index-update-queue-rewind
+### Incident Patch 2: `88b51fed` (2026-11-09)
+**Commit Message**: Merge pull request #13827 from weaviate/fix/hnsw-commitlog-close-on-shutdown
 
-vector index update: a queue can rewind to where it started retaining
+Close the hnsw commit log on shutdown
 
-**File**: `adapters/repos/db/queue/queue.go` (modified, +233/-55)
+**File**: `adapters/repos/db/shard_hnsw_commitlog_descriptors_test.go` (added, +172/-0)
 ```diff
-@@ -37,6 +37,8 @@ import (
- 
- 	"github.com/pkg/errors"
- 	"github.com/sirupsen/logrus"
+@@ -0,0 +1,172 @@
++//                           _       _
++// __      _____  __ ___   ___  __ _| |_ ___
++// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
++//  \ V  V /  __/ (_| |\ V /| | (_| | ||  __/
++//   \_/\_/ \___|\__,_| \_/ |_|\__,_|\__\___|
++//
++//  Copyright © 2016 - 2026 Weaviate B.V. All rights reserved.
++//
++//  CONTACT: hello@weaviate.io
++//
 +
-+	"github.com/weaviate/weaviate/entities/diskio"
- )
- 
- const (
-@@ -712,14 +714,26 @@ func (q *DiskQueue) EnableMaintenanceMode() {
- // tombstone files and their corresponding chunk files left from the freeze
- // period, unless a retention still keeps them.
- func (q *DiskQueue) DisableMaintenanceMode() error {
-+	tombstones, err := q.endMaintenanceMode()
-+	if err != nil {
-+		return err
-+	}
-+	// without rmLock, as in ReleaseRetention
-+	q.logRemoveProcessedChunks(tombstones)
-+	return nil
++package db
++
++import (
++	"context"
++	"io/fs"
++	"os"
++	"path/filepath"
++	"runtime/debug"
++	"strconv"
++	"strings"
++	"syscall"
++	"testing"
++
++	"github.com/go-openapi/strfmt"
++	"github.com/google/uuid"
++	"github.com/stretchr/testify/require"
++
++	"github.com/weaviate/weaviate/entities/models"
++	"github.com/weaviate/weaviate/entities/schema"
++	schemaConfig "github.com/weaviate/weaviate/entities/schema/config"
++	"github.com/weaviate/weaviate/entities/storobj"
++	enthnsw "github.com/weaviate/weaviate/entities/vectorindex/hnsw"
++	"github.com/weaviate/weaviate/usecases/monitoring"
++)
++
++type fileIdentity struct {
++	dev uint64
++	ino uint64
 +}
 +
-+// endMaintenanceMode turns maintenance mode off and lists the tombstones of
-+// the chunks nothing keeps anymore.
-+func (q *DiskQueue) endMaintenanceMode() ([]string, error) {
- 	q.rmLock.Lock()
- 	defer q.rmLock.Unlock()
- 
- 	q.maintenanceMode.Store(false)
- 	if q.retained {
--		return q.cleanupProcessedChunksBefore(q.retainedFrom)
-+		return q.processedChunks(q.retainedFrom)
- 	}
--	return q.cleanupProcessedChunks()
-+	return q.processedChunks(math.MaxInt64)
- }
- 
- // keepsProcessed reports whether a processed chunk is kept rather than
-@@ -728,93 +742,221 @@ func (q *DiskQueue) keepsProcessed() bool {
- 	return q.maintenanceMode.Load() || q.retained
- }
- 
--// Retain keeps every chunk from the returned mark on, processed or not,
--// until ReleaseRetention: a replacement index replays them while the current
--// consumer carries on. Processed chunks are kept as a backup keeps them,
--// behind a .processed tombstone, so a restart deletes them: a replacement is
--// never resumed after one.
--//
--// The mark is the path of the first chunk to replay, and every chunk named
--// at or after it replays: the oldest chunk not processed yet, or on a queue
--// with none a name reserved below every chunk created next. The file may not
--// exist yet. Chunks a backup kept from before the mark go when the backup
--// ends. A queue is retained once at a time.
--func (q *DiskQueue) Retain() (mark string, err error) {
-+// Retain keeps everything queued from now on or not processed yet, processed
-+// or not, until ReleaseRetention: a replacement index replays it, see Rewind,
-+// while the current consumer carries on. Processed chunks are kept as a backup
-+// keeps them, behind a .processed tombstone, so a restart deletes them unless
-+// Rewind runs before Init. Chunks a backup kept from before Retain go when the
-+// backup ends. A queue is retained once at a time.
-+func (q *DiskQueue) Retain() error {
- 	q.rmLock.Lock()
- 	defer q.rmLock.Unlock()
- 
- 	if q.r == nil || q.w == nil {
--		return "", errors.New("queue not initialized")
-+		return errors.New("queue not initialized")
- 	}
- 	if q.retained {
--		return "", errors.New("queue already retained")
-+		return errors.New("queue already retained")
- 	}
- 
- 	// under the writer's lock, so no chunk is created in between
- 	q.m.Lock()
- 	defer q.m.Unlock()
--	mark = q.r.firstUnprocessed()
--	if mark == "" && q.w.f != nil {
--		mark = q.w.f.Name()
-+	first := q.r.firstUnprocessed()
-+	if first == "" && q.w.f != nil {
-+		first = q.w.f.Name()
- 	}
--	if mark == "" {
--		mark = chunkPath(q.dir, q.w.nextSeq())
-+	if first == "" {
-+		first = chunkPath(q.dir, q.w.nextSeq())
- 	}
--	from, ok := chunkSeq(mark)
-+	from, ok := chunkSeq(first)
- 	if !ok {
--		return "", fmt.Errorf("unexpected chunk name %q", mark)
-+		return fmt.Errorf("unexpected chunk name %q", first)
- 	}
- 	q.retained = true
- 	q.retainedFrom = from
--	return mark, nil
-+	return nil
-+}
++// collectCommitLogFiles adds the identity of every file under an hnsw commit log directory below root to seen, and returns how many such directories exist.
++func collectCommitLogFiles(t *testing.T, root string, seen map[fileIdentity]struct{}) int {
++	t.Helper()
 +
-+// Rewind serves every kept chunk again, in order, ahead of what is still
-+// queued. A running queue must be retained, not held by a backup, and paused
-+// with no batch left: a batch finishing after the rewind would tombstone its
-+// chunk out of the replay. On a queue not initialized yet it only
-+// makes the kept chunks ordinary ones for Init, which would delete them
-+// otherwise; that is how a restart resumes one. Doing it twice replays at most
-+// what a backup kept in between. The retention stays until ReleaseRetention,
-+// which must not overlap it: a release deleting would take what it re-queues,
-+// so the retention's one owner calls them in sequence.
-+func (q *DiskQueue) Rewind() error {
-+	// not q.m around the disk work: Push and the scheduler's Size need it
-+	q.rmLock.Lock()
-+	defer q.rmLock.Unlock()
-+
-+	live := q.r != nil
-+	if live && !q.retained {
-+		return errors.New("queue not retained")
-+	}
-+	if live && !q.scheduler.IsQueueIdle(q.id) {
-+		return errors.New("queue not paused, or a batch is still running")
-+	}
-+	// a backup may be copying the chunks this would move or re-queue
-+	if live && q.maintenanceMode.Load() {
-+		return errors.New("queue in maintenance mode")
-+	}
-+
-+	entries, err := os.ReadDir(q.dir)
-+	if err != nil {
-+		if stderrors.Is(err, fs.ErrNotExist) {
++	dirs := 0
++	err := filepath.WalkDir(root, func(path string, d fs.DirEntry, err error) error {
++		if err != nil {
++			return err
++		}
++		if d.IsDir() {
++			if strings.HasSuffix(d.Name(), ".hnsw.commitlog.d") {
++				dirs++
++			}
 +			return nil
 +		}
-+		return errors.Wrap(err, "failed to read directory during rewind")
-+	}
++		if !strings.HasSuffix(filepath.Dir(path), ".hnsw.commitlog.d") {
++			return nil
++		}
++		info, err := os.Stat(path)
++		if err != nil {
++			return err
++		}
++		st := info.Sys().(*syscall.Stat_t)
++		seen[fileIdentity{dev: uint64(st.Dev), ino: st.Ino}] = struct{}{}
++		return nil
++	})
++	require.NoError(t, err)
++	return dirs
++}
 +
-+	var refs []chunkRef
-+	var errs []error
++// descriptorsOnFiles counts this process's descriptors whose device and inode are in files, deleted files included.
++func descriptorsOnFiles(t *testing.T, files map[fileIdentity]struct{}) int {
++	t.Helper()
++
++	entries, err := os.ReadDir("/dev/fd")
++	require.NoError(t, err)
++
++	count := 0
 +	for _, entry := range entries {
-+		if !processedChunkFilePattern.MatchString(entry.Name()) {
-+	
++		fd, err := strconv.Atoi(entry.Name())
++		if err != nil {
++			continue
++		}
++		var st syscall.Stat_t
++		// ReadDir closed the descriptor it listed /dev/fd through, so Fstat fails on it
++		if err := syscall.Fstat(fd, &st); err != nil {
++			continue
++		}
++		if _, ok := files[fileIdentity{dev: uint64(st.Dev), ino: st.Ino}]; ok {
++			count++
++		}
++	}
++	return count
++}
++
++func TestShardShutdownReleasesHnswCommitLogs(t *testing.T) {
++	previous := debug.SetGCPercent(-1)
++	t.Cleanup(func() { debug.SetGCPercent(previous) })
++
++	ctx := context.Background()
++	const (
++		className = "HnswCommitLogDescriptors"
++		cycles    = 5
++		objects   = 5
++	)
++	class := &models.Class{
++		Class: className,
++		Properties: []*models.Property{{
++			Name:     "location",
++			DataType: schema.DataTypeGeoCoordinates.PropString(),
++		}},
++	}
++	shard, index := testShardWithSettings(t, ctx, class, nil, false, false, func(i *Index) {
++		i.vectorIndexUserConfigs = map[string]schemaConfig.VectorIndexConfig{
++			"first":  enthnsw.NewDefaultUserConfig(),
++			"second": enthnsw.NewDefaultUserConfig(),
++		}
++	})
++	s, ok := shard.(*Shard)
++	require.True(t, ok)
++
++	for i := range objects {
++		lat, lon := float32(48+i), float32(11+i)
++		require.NoError(t, s.PutObject(ctx, &storobj.Object{
++			MarshallerVersion: 1,
++			Object: models.Object{
++				ID:         strfmt.UUID(uuid.NewString()),
++				Class:      className,
++				Properties: map[string]interface{}{"location": &models.GeoCoordinates{Latitude: &lat, Longitude: &lon}},
++			},
++			Vectors: map[string][]float32{
++				"first":  {float32(i), 1, 2},
++				"second": {1, float32(i), 2},
++			},
++		}))
++	}
++
++	shardPath := s.path()
++	seen := map[fileIdentity]struct{}{}
++	for cycle := range cycles {
++		current := map[fileIdentity]struct{}{}
++		require.Equal(t, 3, collectCommitLogFiles(t, shardPath, current),
++			"cycle %d: expected one commit log per named vector and one for the geo property", cycle)
++		require.Equal(t, 3, descriptorsOnFiles(t, current),
++			"cycle %d: a loaded shard keeps one commit log open per hnsw index", cycle)
++		for file := range current {
++			seen[file] = struct{}{}
++		}
++
++		require.NoError(t, s.Shutdown(ctx))
++		require.Zero(t, descriptorsOnFiles(t, seen), "cycle %d: shutdown left hnsw commit logs open", cycle)
++
++		var err error
++		s, err = NewShard(ctx, nil, s.Name(), index, class, index.centralJobQueue, index.scheduler,
++			index.shardReindexer, false, index.bitmapBufPool, monitoring.ShardRegistrationEager)
++		require.NoError(t, err)
++
++		for _, target := range []string{"first", "second"} {
++			vectorIndex, release, ok := s.AcquireVectorIndex(target)
++			require.True(t, ok)
++			for docID := range uint64(objects) {
++				require.True(t, vectorIndex.ContainsDoc(docID), "cycle %d: %s lost doc %d", cycle, target, docID)
++			}
++			release()
++		}
++	}
++
++	collec
 ```
 
-**File**: `adapters/repos/db/queue/queue_test.go` (modified, +477/-29)
+**File**: `adapters/repos/db/vector/geo/geo_shutdown_test.go` (added, +139/-0)
 ```diff
-@@ -24,6 +24,7 @@ import (
- 	"path/filepath"
- 	"runtime/debug"
- 	"strings"
+@@ -0,0 +1,139 @@
++//                           _       _
++// __      _____  __ ___   ___  __ _| |_ ___
++// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
++//  \ V  V /  __/ (_| |\ V /| | (_| | ||  __/
++//   \_/\_/ \___|\__,_| \_/ |_|\__,_|\__\___|
++//
++//  Copyright © 2016 - 2026 Weaviate B.V. All rights reserved.
++//
++//  CONTACT: hello@weaviate.io
++//
++
++package geo
++
++import (
++	"context"
++	"os"
++	"path/filepath"
++	"runtime/debug"
++	"strconv"
++	"syscall"
++	"testing"
++
++	logrustest "github.com/sirupsen/logrus/hooks/test"
++	"github.com/stretchr/testify/require"
++
++	"github.com/weaviate/weaviate/entities/cyclemanager"
++	"github.com/weaviate/weaviate/entities/filters"
++	"github.com/weaviate/weaviate/entities/models"
++	"github.com/weaviate/weaviate/usecases/memwatch"
++)
++
++// descriptorsOnDir counts this process's descriptors on the regular files in dir, matched by device and inode.
++func descriptorsOnDir(t *testing.T, dir string) int {
++	t.Helper()
++
++	type fileID struct {
++		dev uint64
++		ino uint64
++	}
++	files := map[fileID]struct{}{}
++	entries, err := os.ReadDir(dir)
++	require.NoError(t, err)
++	for _, entry := range entries {
++		if entry.IsDir() {
++			continue
++		}
++		info, err := os.Stat(filepath.Join(dir, entry.Name()))
++		require.NoError(t, err)
++		st := info.Sys().(*syscall.Stat_t)
++		files[fileID{dev: uint64(st.Dev), ino: st.Ino}] = struct{}{}
++	}
++
++	fds, err := os.ReadDir("/dev/fd")
++	require.NoError(t, err)
++	count := 0
++	for _, entry := range fds {
++		fd, err := strconv.Atoi(entry.Name())
++		if err != nil {
++			continue
++		}
++		var st syscall.Stat_t
++		// ReadDir closed the descriptor it listed /dev/fd through, so Fstat fails on it
++		if err := syscall.Fstat(fd, &st); err != nil {
++			continue
++		}
++		if _, ok := files[fileID{dev: uint64(st.Dev), ino: st.Ino}]; ok {
++			count++
++		}
++	}
++	return count
++}
++
++func newPersistedGeoIndex(t *testing.T, rootPath string, elements []models.GeoCoordinates) *Index {
++	t.Helper()
++
++	nullLogger, _ := logrustest.NewNullLogger()
++	index, err := NewIndex(Config{
++		AllocChecker: memwatch.NewDummyMonitor(),
++		ID:           "geo-shutdown",
++		CoordinatesForID: func(ctx context.Context, id uint64) (*models.GeoCoordinates, error) {
++			return &elements[id], nil
++		},
++		RootPath: rootPath,
++		Logger:   nullLogger,
++	}, cyclemanager.NewCallbackGroupNoop(), cyclemanager.NewCallbackGroupNoop())
++	require.NoError(t, err)
++	index.PostStartup(context.Background())
++	return index
++}
++
++func TestGeoIndexShutdownReleasesCommitLog(t *testing.T) {
++	elements := []models.GeoCoordinates{
++		{Latitude: ptFloat32(48.13743), Longitude: ptFloat32(11.57549)},
++		{Latitude: ptFloat32(48.78232), Longitude: ptFloat32(9.17702)},
++		{Latitude: ptFloat32(52.52000), Longitude: ptFloat32(13.40500)},
++	}
++
++	tests := []struct {
++		name      string
++		flushed   int
++		unflushed int
++	}{
++		{name: "nothing added"},
++		{name: "all adds flushed", flushed: 3},
++		{name: "adds after the last flush", flushed: 1, unflushed: 2},
++	}
++
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			previous := debug.SetGCPercent(-1)
++			t.Cleanup(func() { debug.SetGCPercent(previous) })
++			ctx := context.Background()
++			root := t.TempDir()
++			dir := filepath.Join(root, "geo-shutdown.hnsw.commitlog.d")
++
++			index := newPersistedGeoIndex(t, root, elements)
++			for i := range tt.flushed {
++				require.NoError(t, index.Add(ctx, uint64(i), &elements[i]))
++			}
++			require.NoError(t, index.Flush())
++			for i := tt.flushed; i < tt.flushed+tt.unflushed; i++ {
++				require.NoError(t, index.Add(ctx, uint64(i), &elements[i]))
++			}
++			require.Equal(t, 1, descriptorsOnDir(t, dir))
++
++			require.NoError(t, index.Shutdown(ctx))
++			require.Zero(t, descriptorsOnDir(t, dir), "geo index shutdown left its commit log open")
++
++			reloaded := newPersistedGeoIndex(t, root, elements)
++			ids, err := reloaded.WithinRange(ctx, filters.GeoRange{
++				GeoCoordinates: &models.GeoCoordinates{Latitude: ptFloat32(50), Longitude: ptFloat32(11)},
++				Distance:       2_000_000,
++			})
++			require.NoError(t, err)
++			require.Len(t, ids, tt.flushed+tt.unflushed, "geo entries are missing after reload")
++			require.NoError(t, reloaded.Shutdown(ctx))
++		})
++	}
++}
+```
+
+**File**: `adapters/repos/db/vector/hnsw/commit_logger.go` (modified, +94/-22)
+```diff
+@@ -27,11 +27,15 @@ import (
+ 	"github.com/weaviate/weaviate/adapters/repos/db/vector/hnsw/compact"
+ 	"github.com/weaviate/weaviate/adapters/repos/db/vector/multivector"
+ 	"github.com/weaviate/weaviate/entities/cyclemanager"
++	"github.com/weaviate/weaviate/entities/errorcompounder"
+ 	"github.com/weaviate/weaviate/entities/vectorindex/compression"
+ )
+ 
+ const defaultCommitLogSize = 500 * 1024 * 1024
+ 
++// ErrCommitLogClosed is returned by every write once Shutdown or Drop closed the commit log.
++var ErrCommitLogClosed = errors.New("hnsw commit log is closed")
++
+ type hnswCommitLogger struct {
+ 	// protect against concurrent attempts to write in the underlying file or
+ 	// buffer
+@@ -47,6 +51,8 @@ type hnswCommitLogger struct {
+ 	currentFileName string
+ 	currentWriter   *bufio.Writer
+ 	walWriter       *compact.WALWriter
++	closed          bool
++	closeErr        error // first flush/close result, returned by every later close
+ 
+ 	// Compaction (replaces condensor + combiner)
+ 	compactor *compact.Compactor
+@@ -347,34 +353,49 @@ func (l *hnswCommitLogger) AddPQCompression(data compression.PQData) error {
+ 	l.Lock()
+ 	defer l.Unlock()
+ 
++	if l.closed {
++		return ErrCommitLogClosed
++	}
+ 	return l.walWriter.WriteAddPQ(&data)
+ }
+ 
+ func (l *hnswCommitLogger) AddSQCompression(data compression.SQData) error {
+ 	l.Lock()
+ 	defer l.Unlock()
+ 
++	if l.closed {
++		return ErrCommitLogClosed
++	}
+ 	return l.walWriter.WriteAddSQ(&data)
+ }
+ 
+ func (l *hnswCommitLogger) AddRQCompression(data compression.RQData) error {
+ 	l.Lock()
+ 	defer l.Unlock()
+ 
++	if l.closed {
++		return ErrCommitLogClosed
++	}
+ 	return l.walWriter.WriteAddRQ(&data)
+ }
+ 
+ func (l *hnswCommitLogger) AddMuvera(data multivector.MuveraData) error {
+ 	l.Lock()
+ 	defer l.Unlock()
+ 
++	if l.closed {
++		return ErrCommitLogClosed
++	}
+ 	return l.walWriter.WriteAddMuvera(&data)
+ }
+ 
+ func (l *hnswCommitLogger) AddBRQCompression(data compression.BRQData) error {
+ 	l.Lock()
+ 	defer l.Unlock()
+ 
++	if l.closed {
++		return ErrCommitLogClosed
++	}
+ 	return l.walWriter.WriteAddBRQ(&data)
+ }
+ 
+@@ -383,76 +404,115 @@ func (l *hnswCommitLogger) AddNode(id uint64, level uint16) error {
+ 	l.Lock()
+ 	defer l.Unlock()
+ 
++	if l.closed {
++		return ErrCommitLogClosed
++	}
+ 	return l.walWriter.WriteAddNode(id, level)
+ }
+ 
+ func (l *hnswCommitLogger) SetEntryPointWithMaxLayer(id uint64, level int) error {
+ 	l.Lock()
+ 	defer l.Unlock()
+ 
++	if l.closed {
++		return ErrCommitLogClosed
++	}
+ 	return l.walWriter.WriteSetEntryPointMaxLevel(id, uint16(level))
+ }
+ 
+ func (l *hnswCommitLogger) ReplaceLinksAtLevel(nodeid uint64, level int, targets []uint64) error {
+ 	l.Lock()
+ 	defer l.Unlock()
+ 
++	if l.closed {
++		return ErrCommitLogClosed
++	}
+ 	return l.walWriter.WriteReplaceLinksAtLevel(nodeid, uint16(level), targets)
+ }
+ 
+ func (l *hnswCommitLogger) AddLinkAtLevel(nodeid uint64, level int, target uint64) error {
+ 	l.Lock()
+ 	defer l.Unlock()
+ 
++	if l.closed {
++		return ErrCommitLogClosed
++	}
+ 	return l.walWriter.WriteAddLinkAtLevel(nodeid, uint16(level), target)
+ }
+ 
+ func (l *hnswCommitLogger) AddTombstone(nodeid uint64) error {
+ 	l.Lock()
+ 	defer l.Unlock()
+ 
++	if l.closed {
++		return ErrCommitLogClosed
++	}
+ 	return l.walWriter.WriteAddTombstone(nodeid)
+ }
+ 
+ func (l *hnswCommitLogger) RemoveTombstone(nodeid uint64) error {
+ 	l.Lock()
+ 	defer l.Unlock()
+ 
++	if l.closed {
++		return ErrCommitLogClosed
++	}
+ 	return l.walWriter.WriteRemoveTombstone(nodeid)
+ }
+ 
+ func (l *hnswCommitLogger) ClearLinks(nodeid uint64) error {
+ 	l.Lock()
+ 	defer l.Unlock()
+ 
++	if l.closed {
++		return ErrCommitLogClosed
++	}
+ 	return l.walWriter.WriteClearLinks(nodeid)
+ }
+ 
+ func (l *hnswCommitLogger) ClearLinksAtLevel(nodeid uint64, level uint16) error {
+ 	l.Lock()
+ 	defer l.Unlock()
+ 
++	if l.closed {
++		return ErrCommitLogClosed
++	}
+ 	return l.walWriter.WriteClearLinksAtLevel(nodeid, level)
+ }
+ 
+ func (l *hnswCommitLogger) DeleteNode(nodeid uint64) error {
+ 	l.Lock()
+ 	defer l.Unlock()
+ 
++	if l.closed {
++		return ErrCommitLogClosed
++	}
+ 	return l.walWriter.WriteDeleteNode(nodeid)
+ }
+ 
+ func (l *hnswCommitLogger) Reset() error {
+ 	l.Lock()
+ 	defer l.Unlock()
+ 
++	if l.closed {
++		return ErrCommitLogClosed
++	}
+ 	return l.walWriter.WriteResetIndex()
+ }
+ 
+-// Shutdown waits for ongoing maintenance processes to stop, then cancels their
+-// scheduling. The caller can be sure that state on disk is immutable after
+-// calling Shutdown().
++// Shutdown stops the maintenance cycles, then flushes and closes the active file once (every later call reports that result); later writes fail with ErrCommitLogClosed.
+ func (l *hnswCommitLogger) Shutdown(ctx context.Context) error {
++	// drain before locking (an in-flight switchCommitLogs takes l.Mutex), and close even if the drain failed
++	unregisterErr := l.unregisterMaintenance(ctx)
++	closeErr := l.close()
++
++	ec := errorcompounder.New()
++	ec.Add(unregisterErr)
++	ec.Add(closeErr)
++	return ec.ToError()
++}
++
++func (l *hnswCommitLogger) unregisterMaintenance(ctx context.Context) error {
+ 	if l.
+```
+
+**File**: `adapters/repos/db/vector/hnsw/commit_logger_shutdown_test.go` (added, +529/-0)
+```diff
+@@ -0,0 +1,529 @@
++//                           _       _
++// __      _____  __ ___   ___  __ _| |_ ___
++// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
++//  \ V  V /  __/ (_| |\ V /| | (_| | ||  __/
++//   \_/\_/ \___|\__,_| \_/ |_|\__,_|\__\___|
++//
++//  Copyright © 2016 - 2026 Weaviate B.V. All rights reserved.
++//
++//  CONTACT: hello@weaviate.io
++//
++
++package hnsw
++
++import (
++	"context"
++	"errors"
++	"io"
++	"os"
++	"path/filepath"
++	"runtime/debug"
++	"strconv"
 +	"sync"
- 	"testing"
- 	"time"
- 
-@@ -2338,6 +2339,11 @@ func chunksOf(t *testing.T, q *DiskQueue) (chunks []string, tombstoned map[strin
- 	return chunks, tombstoned
- }
- 
-+// retainedStart is the path of the first chunk q's retention keeps.
-+func retainedStart(q *DiskQueue) string {
-+	return chunkPath(q.dir, q.retainedFrom)
++	"syscall"
++	"testing"
++
++	"github.com/sirupsen/logrus/hooks/test"
++	"github.com/stretchr/testify/require"
++
++	"github.com/weaviate/weaviate/adapters/repos/db/lsmkv"
++	"github.com/weaviate/weaviate/adapters/repos/db/vector/common"
++	"github.com/weaviate/weaviate/adapters/repos/db/vector/hnsw/compact"
++	"github.com/weaviate/weaviate/adapters/repos/db/vector/hnsw/distancer"
++	"github.com/weaviate/weaviate/adapters/repos/db/vector/multivector"
++	"github.com/weaviate/weaviate/adapters/repos/db/vector/testinghelpers"
++	"github.com/weaviate/weaviate/entities/cyclemanager"
++	"github.com/weaviate/weaviate/entities/vectorindex/compression"
++	ent "github.com/weaviate/weaviate/entities/vectorindex/hnsw"
++	"github.com/weaviate/weaviate/usecases/memwatch"
++)
++
++// disableGC keeps the *os.File finalizer from closing a leaked descriptor mid-test.
++func disableGC(t *testing.T) {
++	t.Helper()
++	previous := debug.SetGCPercent(-1)
++	t.Cleanup(func() { debug.SetGCPercent(previous) })
 +}
 +
- // processNext dequeues the next batch and marks it done.
- func processNext(t *testing.T, q *DiskQueue) {
- 	t.Helper()
-@@ -2347,7 +2353,7 @@ func processNext(t *testing.T, q *DiskQueue) {
- 	batch.Done()
- }
- 
--// A retention keeps every processed chunk from its mark on, while the
-+// A retention keeps every processed chunk from where it started, while the
- // consumer moves past it, and its release deletes them.
- func TestRetention_KeepsProcessedChunksUntilReleased(t *testing.T) {
- 	s := makeScheduler(t)
-@@ -2357,9 +2363,9 @@ func TestRetention_KeepsProcessedChunksUntilReleased(t *testing.T) {
- 	chunks, _ := chunksOf(t, q)
- 	require.Len(t, chunks, 3)
- 
--	mark, err := q.Retain()
-+	err := q.Retain()
- 	require.NoError(t, err)
--	assert.Equal(t, chunks[0], mark)
-+	assert.Equal(t, chunks[0], retainedStart(q))
- 
- 	processNext(t, q)
- 	processNext(t, q)
-@@ -2392,7 +2398,7 @@ func TestRetention_AndBackupKeepChunksIndependently(t *testing.T) {
- 		pushMany(t, q, 1, 1, 2, 3, 4)
- 		chunks, _ := chunksOf(t, q)
- 		require.Len(t, chunks, 2)
--		_, err := q.Retain()
-+		err := q.Retain()
- 		require.NoError(t, err)
- 		q.EnableMaintenanceMode()
- 		processNext(t, q)
-@@ -2422,9 +2428,9 @@ func TestRetention_AndBackupKeepChunksIndependently(t *testing.T) {
- 	})
- }
- 
--// The mark is the oldest chunk not processed when the retention starts, or
-+// A retention starts at the oldest chunk not processed yet, or
- // the next chunk the queue creates.
--func TestRetention_Mark(t *testing.T) {
-+func TestRetention_Start(t *testing.T) {
- 	t.Run("the oldest chunk not processed yet", func(t *testing.T) {
- 		s := makeScheduler(t)
- 		q := makeQueueSize(t, s, discardExecutor(), 50)
-@@ -2433,9 +2439,9 @@ func TestRetention_Mark(t *testing.T) {
- 		require.Len(t, chunks, 3)
- 		processNext(t, q)
- 
--		mark, err := q.Retain()
-+		err := q.Retain()
- 		require.NoError(t, err)
--		assert.Equal(t, chunks[1], mark)
-+		assert.Equal(t, chunks[1], retainedStart(q))
- 	})
- 
- 	t.Run("the chunk being written", func(t *testing.T) {
-@@ -2445,12 +2451,12 @@ func TestRetention_Mark(t *testing.T) {
- 		chunks, _ := chunksOf(t, q)
- 		require.Len(t, chunks, 1)
- 
--		mark, err := q.Retain()
-+		err := q.Retain()
- 		require.NoError(t, err)
--		assert.Equal(t, chunks[0], mark)
-+		assert.Equal(t, chunks[0], retainedStart(q))
- 	})
- 
--	t.Run("an empty queue marks the next chunk name", func(t *testing.T) {
-+	t.Run("an empty queue starts at the next chunk name", func(t *testing.T) {
- 		s := makeScheduler(t)
- 		q := makeQueueSize(t, s, discardExecutor(), 50)
- 		pushMany(t, q, 1, 1, 2, 3, 4)
-@@ -2460,12 +2466,12 @@ func TestRetention_Mark(t *testing.T) {
- 		chunks, _ := chunksOf(t, q)
- 		require.Empty(t, chunks)
- 
--		mark, err := q.Retain()
-+		err := q.Retain()
- 		require.NoError(t, err)
- 		pushMany(t, q, 1, 5, 6, 7, 8)
- 		chunks, _ = chunksOf(t, q)
- 		require.Len(t, chunks, 2)
--		assert.LessOrEqual(t, filepath.Base(mark), filepath.Base(chunks[0]),
-+		assert.LessOrEqual(t, filepath.Base(retainedStart(q)), filepath.Base(chunks[0]),
- 			"every chunk created after Retain replays")
- 	})
- 
-@@ -2481,26 +2487,26 @@ func TestRetention_Mark(t *testing.T) {
- 		require.Len(t, kept, 2)
- 		require.Len(t, tombstoned, 2, "precondition: the queue is empty but a backup keeps its chunks")
- 
--		mark, err := q.Retain()
-+		err := q.Retain()
- 		require.NoError(t, err)
- 		pushMany(t, q, 1, 5)
- 		chunks, _ := chunksOf(t, q)
- 		require.Len(t, chunks, 3)
- 		for _, c := range kept {
--			assert.Less(t, filepath.Base(c), filepath.Base(mark), "a chunk processed before Retain")
-+			assert.Less(t, filepath.Base(c), filepath.Base(retainedStart(q)), "a chunk processed before Retain")
- 		}
--		assert.LessOrEqual(t, filepath.Base(mark), filepath.Base(chunks[2]), "a chunk created after Retain")
-+		assert.LessOrEqual(t, filepath.Base(retainedStart(q)), filepath.Base(chunks[2]), "a chunk created after Retain")
- 	})
- 
- 	t.Run("one retention at a time", func(t *testing.T) {
- 		s := makeScheduler(t)
- 		q := makeQueueSize(t, s, discardExecutor(), 50)
--		_, err := q.Retain()
-+		err := q.Retain()
- 		require.NoError(t, err)
--		_, err = q.Retain()
-+		err = q.Retain()
- 		require.ErrorContains(t, err, "already retained")
- 		require.NoError(t, q.ReleaseRetention())
--		_, err = q.Retain()
-+		err = q.Retain()
- 		require.NoError(t, err)
- 	})
- }
-@@ -2517,7 +2523,7 @@ func TestRetention_KeepsAChunkWhoseTombstoneFails(t *testing.T) {
- 	q.m.Unlock()
- 	chunks, _ := chunksOf(t, q)
- 	require.Len(t, chunks, 1)
--	_, err := q.Retain()
-+	err := q.Retain()
- 	require.NoError(t, err)
- 	t.Cleanup(func() { _ = q.ReleaseRetention() })
- 
-@@ -2537,7 +2543,7 @@ func
++// openDescriptorCount returns how many of this process's file descriptors
++// refer to the file at filePath, matched by device and inode.
++func openDescriptorCount(t *testing.T, filePath string) int {
++	t.Helper()
++
++	info, err := os.Stat(filePath)
++	require.NoError(t, err)
++	want := info.Sys().(*syscall.Stat_t)
++
++	entries, err := os.ReadDir("/dev/fd")
++	require.NoError(t, err)
++
++	count := 0
++	for _, entry := range entries {
++		fd, err := strconv.Atoi(entry.Name())
++		if err != nil {
++			continue
++		}
++		var got syscall.Stat_t
++		// ReadDir closed the descriptor it listed /dev/fd through, so Fstat fails on it
++		if err := syscall.Fstat(fd, &got); err != nil {
++			continue
++		}
++		if got.Dev == want.Dev && got.Ino == want.Ino {
++			count++
++		}
++	}
++	return count
++}
++
++// commitLogDescriptorCount sums the descriptors held on every file in a commit log directory.
++func commitLogDescriptorCount(t *testing.T, dir string) int {
++	t.Helper()
++
++	entries, err := os.ReadDir(dir)
++	require.NoError(t, err)
++
++	count := 0
++	for _, entry := range entries {
++		if entry.IsDir() {
++			continue
++		}
++		count += openDescriptorCount(t, filepath.Join(dir, entry.Name()))
++	}
++	return count
++}
++
++func readCommits(t *testing.T, filePath string) []compact.Commit {
++	t.Helper()
++
++	f, err := os.Open(filePath)
++	require.NoError(t, err)
++	defer f.Close()
++
++	reader := compact.NewWALCommitReader(f, logger)
++	var commits []compact.Commit
++	for {
++		c, err := reader.ReadNextCommit()
++		if errors.Is(err, io.EOF) {
++			return commits
++		}
++		require.NoError(t, err)
++		commits = append(commits, c)
++	}
++}
++
++func hasTombstoneCommit(commits []compact.Commit, id uint64) bool {
++	for _, c := range commits {
++		if tc, ok := c.(*compact.AddTombstoneCommit); ok && tc.ID == id {
++			return true
++		}
++	}
++	return false
++}
++
++func newShutdownTestCommitLogger(t *testing.T, rootPath string) *hnswCommitLogger {
++	t.Helper()
++
++	nullLogger, _ := test.NewNullLogger()
++	cl, err := NewCommitLogger(rootPath, "shutdown", nullLogger, cyclemanager.NewCallbackGroupNoop())
++	require.NoError(t, err)
++	cl.InitMaintenance()
++	return cl
++}
++
++func TestCommitLoggerShutdownReleasesFile(t *testing.T) {
++	tests := []struct {
++		name       string
++		flushed    []uint64
++		unflushed  []uint64
++		shutdowns  int
++		wantOnDisk []uint64
++	}{
++		{name: "empty log", shutdowns: 1},
++		{name: "flushed records", flushed: []uint64{1, 2}, shutdowns: 1, wantOnDisk: []uint64{1, 2}},
++		{name: "record appended after the last flush", flushed: []uint64{1}, unflushed: []uint64{2}, shutdowns: 1, wantOnDisk: []uint64{1, 2}},
++		{name: "never flushed", unflushed: []uint64{3}, shutdowns: 1, wantOnDisk: []uint64{3}},
++		{name: "shutdown twice", flushed: []uint64{1}, unflushed: []uint64{2}, shutdowns: 2, wantOnDisk: []uint64{1, 2}},
++	}
++
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			disableGC(t)
++			cl := newShutdownTestCommitLogger(t, t.TempDir())
++			filePath := cl.ActiveFilePath()
++
++			for _, id := range tt.flushed {
++				require.NoError(t, cl.AddTombstone(id))
++			}
++			require.NoError(t, cl.Flush())
++			for _, id := range tt.unflushed {
++				require.NoError(t, cl.AddTombstone(id))
++			}
++			require.Equal(t, 1, openDescriptorCount(t, filePath))
++
++			for range tt.shutdowns {
++				require.NoError(t, cl.Shutdown(context.Background()))
++			}
++
++			commits := readCommits(t, filePath)
++			for _, id := range tt.wantOnDisk {
++				require.True(t, hasTombstoneCommit(commits, id), "tombstone %d is not on disk after shutdown", id)
++			}
+
 ```
 
-**File**: `adapters/repos/db/queue/scheduler.go` (modified, +27/-5)
+**File**: `adapters/repos/db/vector/hnsw/index.go` (modified, +2/-1)
 ```diff
-@@ -290,6 +290,22 @@ func (s *Scheduler) ResumeQueue(id string) {
- 	s.Logger.WithField("id", id).Debug("queue resumed")
- }
+@@ -848,8 +848,9 @@ func (h *hnsw) Shutdown(ctx context.Context) error {
+ 	h.compressWg.Wait()
  
-+// IsQueueIdle returns true if the queue is paused and none of its work is
-+// scheduled or running.
-+func (s *Scheduler) IsQueueIdle(id string) bool {
-+	if s.ctx == nil {
-+		// scheduler not started
-+		return false
-+	}
-+
-+	q := s.getQueue(id)
-+	if q == nil {
-+		return false
-+	}
-+
-+	return q.Paused() && !q.Scheduled() && q.activeTasks.Count() == 0
-+}
-+
- func (s *Scheduler) updatePausedMetric() {
- 	if s.Metrics == nil {
- 		return
-@@ -446,10 +462,7 @@ func (s *Scheduler) scheduleQueues() (nothingScheduled bool) {
- 		}
+ 	ec := errorcompounder.New()
+-	ec.AddWrapf(h.commitLog.Shutdown(ctx), "shutdown commit log")
++	// a tombstone cleanup cycle writes to the commit log, so it stops before the log closes
+ 	ec.AddWrapf(h.tombstoneCleanupCallbackCtrl.Unregister(ctx), "unregister tombstone cleanup cycle")
++	ec.AddWrapf(h.commitLog.Shutdown(ctx), "shutdown commit log")
  
- 		// mark it as scheduled
--		q.MarkAsScheduled()
--
--		if q.Paused() {
--			q.MarkAsUnscheduled()
-+		if !q.MarkAsScheduled() {
- 			continue
- 		}
- 
-@@ -744,8 +757,17 @@ func (qs *queueState) Scheduled() bool {
- 	return qs.scheduled.Count() > 0
- }
- 
--func (qs *queueState) MarkAsScheduled() {
-+// MarkAsScheduled marks the queue unless it is paused, under the lock
-+// PauseQueue takes, so a pause sees the mark or the scheduler sees the pause.
-+func (qs *queueState) MarkAsScheduled() bool {
-+	qs.m.RLock()
-+	defer qs.m.RUnlock()
-+
-+	if qs.paused {
-+		return false
-+	}
- 	qs.scheduled.Incr()
-+	return true
- }
- 
- func (qs *queueState) MarkAsUnscheduled() {
+ 	// release the vectors even if the steps above failed, otherwise a failed
+ 	// teardown keeps the whole cache in memory
 ```
 
-**File**: `adapters/repos/db/queue/scheduler_test.go` (modified, +18/-0)
+---
+
+### Incident Patch 3: `d0a4096d` (2026-11-09)
+**Commit Message**: build(go.mod): upgrade to latest weaviate-go-client
+
+It includes a patch for kin-openapi v0.139.0
+
+**File**: `test/acceptance_with_go_client/go.mod` (modified, +13/-11)
 ```diff
-@@ -899,3 +899,21 @@ func TestStreamExecutorTaskDoesNotBlockClose(t *testing.T) {
- 
- 	require.NoError(t, s.Close(t.Context()))
- }
-+
-+// A queue is marked scheduled only when not paused, in one step with the
-+// check, so a pause sees the mark or the scheduler sees the pause.
-+func TestMarkAsScheduled_SkipsAPausedQueue(t *testing.T) {
-+	s := makeScheduler(t)
-+	s.Start()
-+	defer s.Close(t.Context())
-+	q := makeQueue(t, s, discardExecutor())
-+	state := s.getQueue(q.id)
-+
-+	require.NoError(t, q.Pause(t.Context()))
-+	require.False(t, state.MarkAsScheduled())
-+	require.True(t, s.IsQueueIdle(q.id))
-+
-+	q.Resume()
-+	require.True(t, state.MarkAsScheduled())
-+	state.MarkAsUnscheduled()
-+}
+@@ -13,7 +13,7 @@ require (
+ 	github.com/tailor-platform/graphql v0.6.0
+ 	github.com/weaviate/weaviate v1.38.16-0.20260915093746-7ecf175277a5
+ 	github.com/weaviate/weaviate-go-client/v5 v5.7.4-0.20260915114333-a2d4b0937103
+-	github.com/weaviate/weaviate-go-client/v6 v6.0.0
++	github.com/weaviate/weaviate-go-client/v6 v6.0.1-0.20261106163925-cb72b08ef2cb
+ 	golang.org/x/sync v0.24.0
+ 	google.golang.org/grpc v1.85.0
+ )
+@@ -22,7 +22,7 @@ require (
+ 	cel.dev/expr v0.25.3 // indirect
+ 	cloud.google.com/go v0.123.0 // indirect
+ 	cloud.google.com/go/auth v0.24.1-0.20261001053825-dbc26066f70a // indirect
+-	cloud.google.com/go/auth/oauth2adapt v0.3.0 // indirect
++	cloud.google.com/go/auth/oauth2adapt v0.3.1 // indirect
+ 	cloud.google.com/go/compute/metadata v0.10.0 // indirect
+ 	cloud.google.com/go/iam v1.14.0 // indirect
+ 	cloud.google.com/go/monitoring v1.30.0 // indirect
+@@ -79,15 +79,15 @@ require (
+ 	github.com/dlclark/regexp2 v1.12.0 // indirect
+ 	github.com/docker/go-connections v0.7.0 // indirect
+ 	github.com/docker/go-units v0.5.0 // indirect
+-	github.com/dprotaso/go-yit v0.0.0-20220510233725-9ba8df137936 // indirect
++	github.com/dprotaso/go-yit v0.0.0-20261106020759-d8881214a0db // indirect
+ 	github.com/dustin/go-humanize v1.0.1 // indirect
+ 	github.com/ebitengine/purego v0.10.1 // indirect
+ 	github.com/envoyproxy/go-control-plane/envoy v1.39.1-0.20260819172001-e6e3fd93e4be // indirect
+ 	github.com/envoyproxy/protoc-gen-validate v1.3.3 // indirect
+ 	github.com/fatih/camelcase v1.0.0 // indirect
+ 	github.com/fatih/color v1.19.0 // indirect
+ 	github.com/felixge/httpsnoop v1.1.0 // indirect
+-	github.com/getkin/kin-openapi v0.139.0 // indirect
++	github.com/getkin/kin-openapi v0.153.0 // indirect
+ 	github.com/getsentry/sentry-go v0.30.0 // indirect
+ 	github.com/go-jose/go-jose/v4 v4.1.6 // indirect
+ 	github.com/go-logr/logr v1.4.4 // indirect
+@@ -168,10 +168,10 @@ require (
+ 	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826 // indirect
+ 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
+ 	github.com/netresearch/go-cron v0.15.1 // indirect
+-	github.com/oapi-codegen/oapi-codegen/v2 v2.7.0 // indirect
++	github.com/oapi-codegen/oapi-codegen/v2 v2.8.2 // indirect
+ 	github.com/oapi-codegen/runtime v1.8.0 // indirect
+-	github.com/oasdiff/yaml v0.1.0 // indirect
+-	github.com/oasdiff/yaml3 v0.0.13 // indirect
++	github.com/oasdiff/yaml v0.1.3 // indirect
++	github.com/oasdiff/yaml3 v0.0.16 // indirect
+ 	github.com/oklog/ulid v1.3.1 // indirect
+ 	github.com/opencontainers/go-digest v1.0.0 // indirect
+ 	github.com/opencontainers/image-spec v1.1.1 // indirect
+@@ -191,8 +191,9 @@ require (
+ 	github.com/shirou/gopsutil/v4 v4.26.6 // indirect
+ 	github.com/sirupsen/logrus v1.9.4 // indirect
+ 	github.com/spaolacci/murmur3 v1.1.0 // indirect
+-	github.com/speakeasy-api/jsonpath v0.6.3 // indirect
+-	github.com/speakeasy-api/openapi v1.23.0 // indirect
++	github.com/speakeasy-api/jsonpath v0.7.0 // indirect
++	github.com/speakeasy-api/openapi v1.26.3 // indirect
++	github.com/speakeasy-api/yaml-jsonpath v0.0.0-20261016002013-07e5f48e6d17 // indirect
+ 	github.com/spf13/cast v1.7.1 // indirect
+ 	github.com/spiffe/go-spiffe/v2 v2.8.1 // indirect
+ 	github.com/stretchr/objx v0.5.3 // indirect
+@@ -232,6 +233,7 @@ require (
+ 	go.uber.org/mock v0.4.0 // indirect
+ 	go.yaml.in/yaml/v2 v2.4.3 // indirect
+ 	go.yaml.in/yaml/v3 v3.0.6 // indirect
++	go.yaml.in/yaml/v4 v4.0.0 // indirect
+ 	golang.org/x/crypto v0.58.0 // indirect
+ 	golang.org/x/mod v0.42.0 // indirect
+ 	golang.org/x/net v0.62.0 // indirect
+@@ -241,10 +243,10 @@ require (
+ 	golang.org/x/time v0.16.0 // indirect
+ 	golang.org/x/tools v0.52.0 // indirect
+ 	gonum.org/v1/gonum v0.17.0 // indirect
+-	google.golang.org/api v0.310.0 // indirect
++	google.golang.org/api v0.311.0 // indirect
+ 	google.golang.org/genproto v0.0.0-20261012220534-4341edf3f941 // indirect
+ 	google.golang.org/genproto/googleapis/api v0.0.0-20261012220534-4341edf3f941 // indirect
+-	google.golang.org/genproto/googleapis/rpc v0.0.0-20261026165753-2ffab32bce7e // indirect
++	google.golang.org/genproto/googleapis/rpc v0.0.0-20261104224025-d1e00e9f33ab // indirect
+ 	google.golang.org/protobuf v1.36.12 // indirect
+ 	gopkg.in/ini.v1 v1.67.2 // indirect
+ 	gopkg.in/yaml.v3 v3.0.1 // indirect
+```
+
+**File**: `test/acceptance_with_go_client/go.sum` (modified, +28/-0)
+```diff
+@@ -7,6 +7,8 @@ cloud.google.com/go/auth v0.24.1-0.20261001053825-dbc26066f70a h1:jW1ZLFy9oa5ai8
+ cloud.google.com/go/auth v0.24.1-0.20261001053825-dbc26066f70a/go.mod h1:1dmBXa9xfBvBr39ZnDUDkaaA91ccq9CcqENDgJA4d7c=
+ cloud.google.com/go/auth/oauth2adapt v0.3.0 h1:FY8oSZpCYoUNv6QxVODuMjQz4IlSOVeiQtZ08vLPz88=
+ cloud.google.com/go/auth/oauth2adapt v0.3.0/go.mod h1:7+2uCm7++XFO+/lN06c2HXpDXb/NMNn2/UwyBPbTnkk=
++cloud.google.com/go/auth/oauth2adapt v0.3.1 h1:BKLDdbWS7pafd820dsyFDF6fPEzIGqr7ny6hbTzCCgE=
++cloud.google.com/go/auth/oauth2adapt v0.3.1/go.mod h1:B1nM4FJDxoDqAt3PXFG4IflUoQ5kvWAOOM3R+5wAszg=
+ cloud.google.com/go/compute/metadata v0.10.0 h1:pyKMUQSwchgkIBBJGdILqQbs/BNJXqwSA7Ej6LAvvtY=
+ cloud.google.com/go/compute/metadata v0.10.0/go.mod h1:rGFHRrIif570kSibjFTMbt6/4/tzgJWFGI/HVol4GIk=
+ cloud.google.com/go/iam v1.14.0 h1:YRIB1/4xxwJ+NfI6RQr1WaOoHHeV0MizJEj940nBXJA=
+@@ -160,6 +162,8 @@ github.com/docker/go-units v0.5.0/go.mod h1:fgPhTUdO+D/Jk86RDLlptpiXQzgHJF7gydDD
+ github.com/dprotaso/go-yit v0.0.0-20191028211022-135eb7262960/go.mod h1:9HQzr9D/0PGwMEbC3d5AB7oi67+h4TsQqItC1GVYG58=
+ github.com/dprotaso/go-yit v0.0.0-20220510233725-9ba8df137936 h1:PRxIJD8XjimM5aTknUK9w6DHLDox2r2M3DI4i2pnd3w=
+ github.com/dprotaso/go-yit v0.0.0-20220510233725-9ba8df137936/go.mod h1:ttYvX5qlB+mlV1okblJqcSMtR4c52UKxDiX9GRBS8+Q=
++github.com/dprotaso/go-yit v0.0.0-20261106020759-d8881214a0db h1:rNdTo++1l+oAwsaXq3nrpx9x76ykK8lI5681box+IdM=
++github.com/dprotaso/go-yit v0.0.0-20261106020759-d8881214a0db/go.mod h1:qe1JbzSST2V+zxO4R8tYvEeYoyhY1PJgKN0emwaq6/s=
+ github.com/dustin/go-humanize v1.0.1 h1:GzkhY7T5VNhEkwH0PVJgjz+fX1rhBrR7pRT3mDkpeCY=
+ github.com/dustin/go-humanize v1.0.1/go.mod h1:Mu1zIs6XwVuF/gI1OepvI0qD18qycQx+mFykh5fBlto=
+ github.com/ebitengine/purego v0.10.1 h1:dewVBCBT2GaMu1SrNTYxQhgQBethzfhiwvZiLGP/qyY=
+@@ -185,8 +189,11 @@ github.com/fsnotify/fsnotify v1.4.7/go.mod h1:jwhsz4b93w/PPRr/qN1Yymfu8t87LnFCMo
+ github.com/fsnotify/fsnotify v1.4.9/go.mod h1:znqG4EE+3YCdAaPaxE2ZRY/06pZUdp0tY4IgpuI1SZQ=
+ github.com/fsnotify/fsnotify v1.5.4 h1:jRbGcIw6P2Meqdwuo0H1p6JVLbL5DHKAKlYndzMwVZI=
+ github.com/fsnotify/fsnotify v1.5.4/go.mod h1:OVB6XrOHzAwXMpEM7uPOzcehqUV2UqJxmVXmkdnm1bU=
++github.com/fsnotify/fsnotify v1.9.0 h1:2Ml+OJNzbYCTzsxtv8vKSFD9PbJjmhYF14k/jKC7S9k=
+ github.com/getkin/kin-openapi v0.139.0 h1:pBFXcZJFwz9J1X64jzxlOoNgFm+TF7kNrs9+HJVN6Ic=
+ github.com/getkin/kin-openapi v0.139.0/go.mod h1:NGxPfE4PwS/TRXEbyx2RrxDFPZvxcWw31Tw8XXjPZLs=
++github.com/getkin/kin-openapi v0.153.0 h1:Qo4qWW+Pj8o90LUTE6MDyG5TJAtWnfvrcWOBcWg7eBw=
++github.com/getkin/kin-openapi v0.153.0/go.mod h1:mEZ6Ip3gyqPDokUsJsttZhv3r46/NeH3tGwrFUMcoSE=
+ github.com/getsentry/sentry-go v0.30.0 h1:lWUwDnY7sKHaVIoZ9wYqRHJ5iEmoc0pqcRqFkosKzBo=
+ github.com/getsentry/sentry-go v0.30.0/go.mod h1:WU9B9/1/sHDqeV8T+3VwwbjeR5MSXs/6aqG3mqZrezA=
+ github.com/go-errors/errors v1.4.2 h1:J6MZopCL4uSllY1OfXM374weqZFFItUbrImctkmUxIA=
+@@ -456,12 +463,18 @@ github.com/nxadm/tail v1.4.11 h1:8feyoE3OzPrcshW5/MJ4sGESc5cqmGkGCWlco4l0bqY=
+ github.com/nxadm/tail v1.4.11/go.mod h1:OTaG3NK980DZzxbRq6lEuzgU+mug70nY11sMd4JXXHc=
+ github.com/oapi-codegen/oapi-codegen/v2 v2.7.0 h1:/8daqIYZfwnsHEAZdHUu9m0D5LA+5DoJCP7zLlT5Cs0=
+ github.com/oapi-codegen/oapi-codegen/v2 v2.7.0/go.mod h1:qzFy6iuobJw/hD1aRILee4G87/ShmhR0xYCwcUtZMCw=
++github.com/oapi-codegen/oapi-codegen/v2 v2.8.2 h1:68UGCFId8tysEuz1jqDgem0Lnz0d6T+73br+KwH/W6k=
++github.com/oapi-codegen/oapi-codegen/v2 v2.8.2/go.mod h1:yae2TI9IYB5vxQ35gFrpXh9L5H1eJv4MAUK1jumGMTo=
+ github.com/oapi-codegen/runtime v1.8.0 h1:RJzEgQSJQADEPaG1cYuSCKYai/cCVRE2xnkrqhJs/3c=
+ github.com/oapi-codegen/runtime v1.8.0/go.mod h1:GwV7hC2hviaMzj+ITfHVRESK5J2W/GefVwIND/bMGvU=
+ github.com/oasdiff/yaml v0.1.0 h1:0bqZjfKc/8S9urj4JuwepX41WX9EoA6ifhU3SV06cXg=
+ github.com/oasdiff/yaml v0.1.0/go.mod h1:kOlRmMdL2X3vucLCEQO5u61SU22RysnfXvcttrZA1O0=
++github.com/oasdiff/yaml v0.1.3 h1:TdwO8e1G1F+bN++LzHj6IWExcuqMjQ1xK8KRYWTffWE=
++github.com/oasdiff/yaml v0.1.3/go.mod h1:vxzaFi+b+l+FWC/2NZMm+yD4DzyzwPCwaeLj1x1XfMg=
+ github.com/oasdiff/yaml3 v0.0.13 h1:06svmvOHOVBqF81+sY2EUScvUI/iS/vl2VIeUUxZQwg=
+ github.com/oasdiff/yaml3 v0.0.13/go.mod h1:y5+oSEHCPT/DGrS++Wc/479ERge0zTFxaF8PbGKcg2o=
++github.com/oasdiff/yaml3 v0.0.16 h1:NlDF/1oIOhmOvrEb9eH6Sbuubp3gZNS4A+MKST5/p0Q=
++github.com/oasdiff/yaml3 v0.0.16/go.mod h1:csto2xfDjYccdUn/yw/bPjj/cYTdp6HtFA0J4TWG+gg=
+ github.com/oklog/ulid v1.3.1 h1:EGfNDEx6MqHz8B3uNV6QAib1UR2Lm97sHi3ocA6ESJ4=
+ github.com/oklog/ulid v1.3.1/go.mod h1:CirwcVhetQ6Lv90oh/F+FBtV6XMibvdAFo93nm5qn4U=
+ github.com/onsi/ginkgo v1.6.0/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+WWjE=
+@@ -478,6 +491,7 @@ github.com/onsi/gomega v1.17.0/go.mod h1:HnhC7FXeEQY45zxNK3PPoIUhzk/80Xly9PcubAl
+ github.com/onsi/gomega v1.19.0/go.mod h1:LY+I3pBVzYsTBU1AnDwOSxaYi9WoWiqgwooUqq9yPro=
+ github.com/onsi/gomega v1.27.1 h1:rfztXRbg6nv/5f+Raen9RcGoSecHIFgBBLQK3Wdj754=
+ github.com/onsi/gomega v1.27.1/go.mod h1:aHX5xOykVYzWOV4WqQy0sy8BQptgukenXpCXfadcIAw=
++github.com/onsi/gomega v1.44.0 h1:eAiGl3Pw5
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #13785** (2026-11-05): Merge stable/v1.40 into main (@antas-marcin)
-- **PR #13776** (2026-11-05): Merge stable/v1.39 into stable/v1.40 (@antas-marcin)
-- **PR #13775** (2026-11-05): Require every verb of a manage permission before assigning its role (@dirkkul)
-- **PR #13774** (2026-11-05): Merge stable/v1.38 into stable/v1.39 (@antas-marcin)
-- **PR #13773** (2026-11-05): vector index update: a queue can rewind to where it started retaining (@asdine)
-- **PR #13767** (2026-11-05): Answer an empty class in a batch with the per-object error (@dirkkul)
+- **PR #13829** (2026-11-09): Merge stable/v1.38 into stable/v1.39 (@antas-marcin)
+- **PR #13827** (2026-11-09): Close the hnsw commit log on shutdown (@jeroiraz)
+- **PR #13823** (2026-11-09): Require a wildcard to grant a role pattern that uses regex syntax (@dirkkul)
+- **PR #13822** (2026-11-09): fix: flaky test delete entrypoint (@trengrj)
+- **PR #13821** (2026-11-09): vector index update: scan the stored vectors of one named vector (@asdine)
+- **PR #13819** (2026-11-09): cluster: register schema guards before RAFT replay (@etiennedi)
 
 ---
 
@@ -2799,16 +2720,16 @@ vector index update: a queue can rewind to where it started retaining
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #13785 from weaviate/merge-stable-v1.40-into-main
+## X. use NEON instead of SVE dot product on 128-bit SVE cores (Neoverse V2) (#13779)
 
 **RULE**:
-When implementing operations in `adapters/clients/license/client.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in weaviate/weaviate. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `adapters/repos/db/vector/hnsw/distancer/asm/sve_arm64.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in weaviate/weaviate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7e97594b`: Merge pull request #13785 from weaviate/merge-stable-v1.40-into-main. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6498ec79`: use NEON instead of SVE dot product on 128-bit SVE cores (Neoverse V2) (#13779). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `adapters/clients/license/client.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `adapters/repos/db/vector/hnsw/distancer/asm/sve_arm64.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
@@ -2824,39 +2745,12 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 //  CONTACT: hello@weaviate.io
 //
 
-package license
+package asm
 
-import (
-	"bytes"
-	"context"
-	"crypto/ed25519"
-	"encoding/json"
-	"errors"
-	"fmt"
-	"io"
-	"net/http"
-	"strings"
-	"time"
-
-	protocol "github.com/weaviate/weaviate/entities/license"
-)
-
-// DefaultServerURL is the production license service.
-const DefaultServerURL = "https://license.weaviate.io"
-
-// Client performs signed verify calls against the license service. It is the
-// piece Weaviate embeds.
-type Client struct {
-	ServerURL   string // defaults to DefaultServerURL
-	LicenseID   string // from protocol.ParseKey
-	PrivateKey  ed25519.PrivateKey
-	TrustedKeys protocol.ServerKeySet // server public keys embedded in the binary
-	HTTPClient  *http.Client          // defaults to a 10s-timeout client
-	UserAgent   string
-}
-
-// NewClient parses a customer license key and returns a client for it.
-func NewClient(key string, trusted protocol.ServerKeySet) (*Clien
+// SVEVectorLengthBytes returns the SVE vector length of the host in bytes
+// (16 on Neoverse V2, 32 on Neoverse V1), read with RDVL. It executes an SVE
+// instruction, so it must only be called when cpu.ARM64.HasSVE is true.
+func SVEVectorLengthBytes() int
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2866,4 +2760,4 @@ func NewClient(key string, trusted protocol.ServerKeySet) (*Clien
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7e97594b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6498ec79` are properly handled with clean fallback behavior.

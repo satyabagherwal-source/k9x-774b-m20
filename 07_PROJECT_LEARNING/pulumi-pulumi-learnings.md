@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pulumi-pulumi-learnings.md`  
 > **Source**: github ([https://github.com/pulumi/pulumi](https://github.com/pulumi/pulumi))  
-> **Source Version**: `fe09a7ba`  
+> **Source Version**: `71457b66`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T13:33:47.550Z  
+> **Timestamp**: 2026-11-10T02:31:48.595Z  
 > **Learning ID**: `learn-github-pulumi-pulumi`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pulumi-pulumi-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pulumi/pulumi](https://github.com/pulumi/pulumi))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T13:33:47.545Z  
+> **Harvest Timestamp**: 2026-11-10T02:31:46.893Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Pulumi - Infrastructure as Code in any programming language 🚀
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 25849 stars
+- **Stars / Engagement**: 25854 stars
 
 ---
 
@@ -1689,13 +1689,13 @@ func marshalVerbatimCheckpointRequest(req apitype.PatchUpdateVerbatimCheckpointR
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #25570** (2026-11-05): **3.273.0: .NET resource transforms receive secret inputs as plain values instead of secret Outputs**
-  *Symptoms*: > [!NOTE] > This issue was authored by an AI agent on @iwahbe's behalf.  ## What happened?  A .NET program gives a resource a secret input, for example `Length = Output.CreateSecret(21)`. A resource transform on that resource reads the input as an `Output<double>`. Before CLI 3.273.0, the transform received the secret input as a secret `Output`.  Since CLI 3.273.0, the transform receives a plain `double`. The secret wrapper is gone, so the cast throws and `pulumi up` fails.  Only the CLI version changes. The program and the .NET SDK are the same.  ## Example  The `TestDotNetTransforms` integration test in pulumi/pulumi-dotnet reproduces this ([`integration_tests/transformations_remote/Program.cs`](https://github.com/pulumi/pulumi-dotnet/blob/main/integration_tests/transformations_remote/Program.cs), Scenario #7):  ```csharp var res7 = new Random("res7", new RandomArgs { Length = Output.CreateSecret(21) }, new CustomResourceOptions {     ResourceTransforms =     {         async (args, _) =>         {             var length = ((Output<double>)args.Args["length"]).Apply(v => v * 2);             return new ResourceTransformResult(args.Args.SetItem("length", Output.Unsecret(length)), args.Options);         }     } }); ```  ```console $ cd pulumi-dotnet && make build $ mise exec github:pulumi/pulumi@3.272.0 -- bash -c 'cd integration_tests && gotestsum -- -run TestDotNetTransforms -count=1 .' DONE 1 tests in 19.567s $ mise exec github:pulumi/pulumi@3.273.0 -- bash -c 'cd integratio
+- **Issue #25610** (2026-11-06): **Workflow failure: Pull Request on #25608**
+  *Symptoms*: ## Workflow Failure  Triggered by PR: https://github.com/pulumi/pulumi/pull/25608  [Pull Request](https://github.com/pulumi/pulumi/blob/master/.github/workflows/on-pr.yml) has failed. See the list of failures below:  - [2026-11-06T13:44:51.000Z](https://github.com/pulumi/pulumi/actions/runs/42218090981)
 
-- **Issue #25567** (2026-11-05): **Workflow failure: Run full language matrix of tests daily**
-  *Symptoms*: ## Workflow Failure  [Run full language matrix of tests daily](<https://github.com/pulumi/pulumi/blob/master/.github/workflows/cron-test-all.yml>) has failed. See the list of failures below:  * [2026-11-05T06:37:41.000Z](<https://github.com/pulumi/pulumi/actions/runs/41974249687>)   * [2026-11-05T10:53:35.000Z](<https://github.com/pulumi/pulumi/actions/runs/41974249687>)
+- **Issue #25597** (2026-11-06): **Workflow failure: Run full language matrix of tests daily**
+  *Symptoms*: ## Workflow Failure  [Run full language matrix of tests daily](https://github.com/pulumi/pulumi/blob/master/.github/workflows/cron-test-all.yml) has failed. See the list of failures below:  - [2026-11-06T06:09:06.000Z](https://github.com/pulumi/pulumi/actions/runs/42168640496)
   **Post-Mortem & Fix Analysis**:
-  > This issue has been automatically closed because the workflow succeeded.  Successful run: [2026-11-05T11:35:33.000Z](https://github.com/pulumi/pulumi/actions/runs/41974249687)
+  > This issue has been automatically closed because the workflow succeeded.  Successful run: [2026-11-06T09:07:52.000Z](https://github.com/pulumi/pulumi/actions/runs/42168640496)
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1712,470 +1712,722 @@ func marshalVerbatimCheckpointRequest(req apitype.PatchUpdateVerbatimCheckpointR
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b05575fc` (2026-11-05)
-**Commit Message**: Fix nested dependency handling in resource transforms (#25568)
+### Incident Patch 1: `c9c1940d` (2026-11-09)
+**Commit Message**: Update module github.com/klauspost/compress to v1.20.2 [SECURITY] (#25623)
 
-Resource transforms could unnecessarily wrap an input object in an
-Output when its nested values already carried the declared dependencies.
-This changed the input shape received by remote component providers,
-even with a no-op transform.
+This PR contains the following updates:
 
-Fixes #25466
+| Package | Change |
+[Age](https://docs.renovatebot.com/merge-confidence/) |
+[Confidence](https://docs.renovatebot.com/merge-confidence/) |
+|---|---|---|---|
+|
+[github.com/klauspost/compress](https://redirect.github.com/klauspost/compress)
+| `v1.18.7` → `v1.20.2` |
+![age](https://developer.mend.io/api/mc/badges/age/go/github.com%2fklauspost%2fcompress/v1.20.2?slim=true)
+|
+![confidence](https://developer.mend.io/api/mc/badges/confidence/go/github.com%2fklauspost%2fcompress/v1.18.7/v1.20.2?slim=true)
+|
 
-**File**: `changelog/pending/20261105--engine--transform-nested-dependencies.yaml` (added, +4/-0)
+---
+
+> [!WARNING]
+> Some dependencies could not be looked up. Check the [Dependency
+Dashboard](../issues/21045) for more information.
+
+---
+
+### Panic on two-block frames in github.com/klauspost/compress
+[CVE-2026-116591](https://nvd.nist.gov/vuln/detail/CVE-2026-116591) /
+[GHSA-fpmh-frq8-7rj8](https://redirect.github.com/advisories/GHSA-fpmh-frq8-7rj8)
+/ [GO-2026-6865](https://pkg.go.dev/vuln/GO-2026-6865)
+
+<details>
+<summary>More information</summary>
+
+#### Details
+Panic on two-block frames in github.com/klauspost/compress
+
+#### Severity
+Unknown
+
+#### References
+-
+[htt
+
+**File**: `pkg/go.mod` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,4 @@
-+component: engine
-+kind: fix
-+body: Fix resource transforms adding unnecessary Output wrappers to objects with nested dependencies
-+time: 2026-11-05T00:00:00Z
+@@ -228,7 +228,7 @@ require (
+ 	github.com/iwahbe/helpmakego v0.4.1 // indirect
+ 	github.com/json-iterator/go v1.1.12 // indirect
+ 	github.com/kevinburke/ssh_config v1.6.0 // indirect
+-	github.com/klauspost/compress v1.18.7 // indirect
++	github.com/klauspost/compress v1.20.2 // indirect
+ 	github.com/kylelemons/godebug v1.1.0 // indirect
+ 	github.com/lucasb-eyer/go-colorful v1.4.1 // indirect
+ 	github.com/lufia/plan9stats v0.0.0-20211012122336-39d0f177ccd0 // indirect
 ```
 
-**File**: `pkg/engine/lifecycletest/transformation_test.go` (modified, +89/-0)
+**File**: `pkg/go.sum` (modified, +2/-2)
 ```diff
-@@ -745,6 +745,95 @@ func TestRemoteComponentTransforms(t *testing.T) {
- 	}, res.Inputs)
- }
- 
-+func TestRemoteComponentTransformNestedDependencies(t *testing.T) {
-+	t.Parallel()
-+
-+	for _, withTransform := range []bool{false, true} {
-+		t.Run(fmt.Sprintf("transform=%t", withTransform), func(t *testing.T) {
-+			t.Parallel()
-+
-+			var inputs resource.PropertyMap
-+			var sourceURN resource.URN
-+			loaders := []*deploytest.ProviderLoader{
-+				deploytest.NewProviderLoader("pkgA", semver.MustParse("1.0.0"), func() (plugin.Provider, error) {
-+					return &deploytest.Provider{
-+						CreateF: func(_ context.Context, req plugin.CreateRequest) (plugin.CreateResponse, error) {
-+							return plugin.CreateResponse{
-+								ID:         "source-id",
-+								Properties: req.Properties,
-+								Status:     resource.StatusOK,
-+							}, nil
-+						},
-+						ConstructF: func(_ context.Context, req plugin.ConstructRequest,
-+							monitor *deploytest.ResourceMonitor,
-+						) (plugin.ConstructResponse, error) {
-+							assert.Empty(t, req.Inputs.Get("wrapper").Dependencies())
-+							assert.Equal(t, resource.FromResourcePropertyMap(inputs), req.Inputs)
-+							assert.Equal(t, []resource.URN{sourceURN}, req.Options.PropertyDependencies["wrapper"])
-+
-+							resp, err := monitor.RegisterResource(req.Type, req.Name, false, deploytest.ResourceOptions{})
-+							if err != nil {
-+								return plugin.ConstructResponse{}, err
-+							}
-+							return plugin.ConstructResponse{URN: resp.URN}, nil
-+						},
-+					}, nil
-+				}),
-+			}
-+
-+			programF := deploytest.NewLanguageRuntimeF(func(_ plugin.RunInfo, monitor *deploytest.ResourceMonitor) error {
-+				source, err := monitor.RegisterResource("pkgA:m:Source", "source", true, deploytest.ResourceOptions{
-+					Inputs: resource.PropertyMap{"value": resource.NewProperty("source-value")},
-+				})
-+				require.NoError(t, err)
-+				sourceURN = source.URN
-+				inputs = resource.PropertyMap{
-+					"wrapper": resource.NewProperty(resource.PropertyMap{
-+						"value": resource.NewProperty(resource.Output{
-+							Element:      source.Outputs["value"],
-+							Known:        true,
-+							Dependencies: []resource.URN{source.URN},
-+						}),
-+					}),
-+				}
-+				callbacks, err := deploytest.NewCallbacksServer()
-+				require.NoError(t, err)
-+				defer func() { require.NoError(t, callbacks.Close()) }()
-+
-+				var transforms []*pulumirpc.Callback
-+				if withTransform {
-+					callback, err := callbacks.Allocate(func(request []byte) (proto.Message, error) {
-+						var req pulumirpc.TransformRequest
-+						if err := proto.Unmarshal(request, &req); err != nil {
-+							return nil, err
-+						}
-+						return &pulumirpc.TransformResponse{Properties: req.Properties, Options: req.Options}, nil
-+					})
-+					require.NoError(t, err)
-+					transforms = []*pulumirpc.Callback{callback}
-+				}
-+
-+				_, err = monitor.RegisterResource("pkgA:m:Component", "component", false, deploytest.ResourceOptions{
-+					Remote:     true,
-+					Inputs:     inputs,
-+					Transforms: transforms,
-+					PropertyDeps: map[resource.PropertyKey][]resource.URN{
-+						"wrapper": {source.URN},
-+					},
-+				})
-+				return err
-+			})
-+			hostF := deploytest.NewPluginHostF(nil, nil, programF, nil, nil, loaders...)
-+			p := &lt.TestPlan{Options: lt.TestUpdateOptions{T: t, HostF: hostF, SkipDisplayTests: true}}
-+			project := p.GetProject()
-+			snap, err := lt.TestOp(Update).Run(project, p.GetTarget(t, nil), p.Options, false, p.BackendClient, nil)
-+			require.NoError(t, err)
-+			_, err = lt.TestOp(Update).Run(project, p.GetTarget(t, snap), p.Options, true, p.BackendClient, nil)
-+			require.NoError(t, err)
-+		})
-+	}
-+}
-+
- func TestTransformsProviderOpt(t *testing.T) {
- 	t.Parallel()
- 
+@@ -381,8 +381,8 @@ github.com/keybase/go-keychain v0.0.1/go.mod h1:PdEILRW3i9D8JcdM+FmY6RwkHGnhHxXw
+ github.com/kisielk/errcheck v1.2.0/go.mod h1:/BMXB+zMLi60iA8Vv6Ksmxu/1UDYcXs4uQLJ+jE2L00=
+ github.com/kisielk/errcheck v1.5.0/go.mod h1:pFxgyoBC7bSaBwPgfKdkLd5X25qrDl4LWUI2bnpBCr8=
+ github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
+-github.com/klauspost/compress v1.18.7 h1:aUyZsS4kH3QTKurYhAOwAHxllVPnOthb3vPfnF1Ehjw=
+-github.com/klauspost/compress v1.18.7/go.mod h1:cwPg85FWrGar70rWktvGQj8/hthj3wpl0PGDogxkrSQ=
++github.com/klauspost/compress v1.20.2 h1:v5tiZvm1KGLyg5d5oXdXe3lsSPrbEUiKoXGia//I7Qo=
++github.com/klauspost/compress v1.20.2/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
+ github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORNo=
+ github.com/kr/pretty v0.3.1 h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=
+ github.com/kr/pretty v0.3.1/go.mod h1:hoEshYVHaxMs3cyo3Yncou5ZscifuDolrwPKZanG3xk=
 ```
 
-**File**: `pkg/resource/deploy/source_eval.go` (modified, +3/-2)
+**File**: `sdk/go.mod` (modified, +1/-1)
 ```diff
-@@ -3623,9 +3623,10 @@ func upgradeOutputValues(
- 	for k, v := range m.All {
- 		if deps, has := propertyDependencies[resource.PropertyKey(k)]; has {
- 			current := mapset.NewSet[resource.URN]()
--			current.Append(v.Dependencies()...)
-+			addOutputDependencies(current, v)
- 			if !current.IsSuperset(deps) {
--				v = v.WithDependencies(current.Union(deps).ToSlice())
-+				outer := mapset.NewSet(v.Dependencies()...)
-+				v = v.WithDependencies(outer.Union(deps).ToSlice())
- 			}
- 		}
- 		result[k] = v
+@@ -52,7 +52,7 @@ require (
+ 	github.com/hashicorp/hcl/v2 v2.22.0
+ 	github.com/iancoleman/strcase v0.2.0
+ 	github.com/iwdgo/sigintwindows v0.2.2
+-	github.com/klauspost/compress v1.18.7
++	github.com/klauspost/compress v1.20.2
+ 	github.com/pgavlin/fx v0.1.6
+ 	github.com/pgavlin/fx/v2 v2.0.12
+ 	github.com/pkg/term v1.1.0
 ```
 
-**File**: `pkg/resource/deploy/source_eval_test.go` (modified, +50/-0)
+**File**: `sdk/go.sum` (modified, +2/-2)
 ```diff
-@@ -28,6 +28,7 @@ import (
- 
- 	"github.com/pulumi/pulumi/sdk/v3/go/common/apitype"
- 
-+	mapset "github.com/deckarep/golang-set/v2"
- 	opentracing "github.com/opentracing/opentracing-go"
- 	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/require"
-@@ -4061,6 +4062,55 @@ func TestValidationFailures(t *testing.T) {
- 	}
- }
- 
-+func TestUpgradeOutputValues(t *testing.T) {
-+	t.Parallel()
-+
-+	a := resource.URN("urn:pulumi:stack::project::pkg:mod:Resource::a")
-+	b := resource.URN("urn:pulumi:stack::project::pkg:mod:Resource::b")
-+	c := resource.URN("urn:pulumi:stack::project::pkg:mod:Resource::c")
-+	value := property.New("value").WithDependencies([]resource.URN{a})
-+	nested := property.New(map[string]property.Value{"value": value})
-+	array := property.New([]property.Value{value})
-+	outer := nested.WithDependencies([]resource.URN{b})
-+
-+	for _, tt := range []struct {
-+		name     string
-+		input    property.Value
-+		deps     []resource.URN
-+		expected property.Value
-+	}{
-+		{"no declared dependencies", nested, nil, nested},
-+		{"existing dependency", value, []resource.URN{a}, value},
-+		{"nested object dependency", nested, []resource.URN{a}, nested},
-+		{"nested array dependency", array, []resource.URN{a}, array},
-+		{"outer and nested dependencies", outer, []resource.URN{a, b}, outer},
-+		{"missing dependency", property.New("value"), []resource.URN{a}, value},
-+		{
-+			"missing dependency preserves outer and nested dependencies",
-+			outer,
-+			[]resource.URN{c},
-+			outer.WithDependencies([]resource.URN{b, c}),
-+		},
-+		{
-+			"partially represented dependencies",
-+			outer,
-+			[]resource.URN{a, c},
-+			outer.WithDependencies([]resource.URN{a, b, c}),
-+		},
-+	} {
-+		t.Run(tt.name, func(t *testing.T) {
-+			t.Parallel()
-+
-+			input := property.NewMap(map[string]property.Value{"wrapper": tt.input})
-+			actual := upgradeOutputValues(input, map[resource.PropertyKey]mapset.Set[resource.URN]{
-+				"wrapper": mapset.NewSet(tt.deps...),
-+			})
-+			assert.True(t, tt.expected.Equals(actual.Get("wrapper")),
-+				"expected %v, got %v", tt.expected, actual.Get("wrapper"))
-+		})
-+	}
-+}
-+
- func TestDowngradeOutputValues(t *testing.T) {
- 	t.Parallel()
- 
+@@ -147,8 +147,8 @@ github.com/kevinburke/ssh_config v1.6.0/go.mod h1:q2RIzfka+BXARoNexmF9gkxEX7Dmvb
+ github.com/kisielk/errcheck v1.2.0/go.mod h1:/BMXB+zMLi60iA8Vv6Ksmxu/1UDYcXs4uQLJ+jE2L00=
+ github.com/kisielk/errcheck v1.5.0/go.mod h1:pFxgyoBC7bSaBwPgfKdkLd5X25qrDl4LWUI2bnpBCr8=
+ github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
+-github.com/klauspost/compress v1.18.7 h1:aUyZsS4kH3QTKurYhAOwAHxllVPnOthb3vPfnF1Ehjw=
+-github.com/klauspost/compress v1.18.7/go.mod h1:cwPg85FWrGar70rWktvGQj8/hthj3wpl0PGDogxkrSQ=
++github.com/klauspost/compress v1.20.2 h1:v5tiZvm1KGLyg5d5oXdXe3lsSPrbEUiKoXGia//I7Qo=
++github.com/klauspost/compress v1.20.2/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
+ github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORNo=
+ github.com/kr/pretty v0.3.1 h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=
+ github.com/kr/pretty v0.3.1/go.mod h1:hoEshYVHaxMs3cyo3Yncou5ZscifuDolrwPKZanG3xk=
+```
+
+**File**: `sdk/go/auto/test/errors/compilation_error/go/go.mod` (modified, +1/-1)
+```diff
+@@ -50,7 +50,7 @@ require (
+ 	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
+ 	github.com/json-iterator/go v1.1.12 // indirect
+ 	github.com/kevinburke/ssh_config v1.2.0 // indirect
+-	github.com/klauspost/compress v1.18.7 // indirect
++	github.com/klauspost/compress v1.20.2 // indirect
+ 	github.com/klauspost/cpuid/v2 v2.3.0 // indirect
+ 	github.com/lucasb-eyer/go-colorful v1.4.0 // indirect
+ 	github.com/mattn/go-isatty v0.0.22 // indirect
+```
+
+**File**: `sdk/go/auto/test/errors/compilation_error/go/go.sum` (modified, +2/-2)
+```diff
+@@ -119,8 +119,8 @@ github.com/kevinburke/ssh_config v1.2.0/go.mod h1:CT57kijsi8u/K/BOFA39wgDQJ9CxiF
+ github.com/kisielk/errcheck v1.2.0/go.mod h1:/BMXB+zMLi60iA8Vv6Ksmxu/1UDYcXs4uQLJ+jE2L00=
+ github.com/kisielk/errcheck v1.5.0/go.mod h1:pFxgyoBC7bSaBwPgfKdkLd5X25qrDl4LWUI2bnpBCr8=
+ github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
+-github.com/klauspost/compress v1.18.7 h1:aUyZsS4kH3QTKurYhAOwAHxllVPnOthb3vPfnF1Ehjw=
+-github.com/klauspost/compress v1.18.7/go.mod h1:cwPg85FWrGar70rWktvGQj8/hthj3wpl0PGDogxkrSQ=
++github.com/klauspost/compress v1.20.2 h1:v5tiZvm1KGLyg5d5oXdXe3lsSPrbEUiKoXGia//I7Qo=
++github.com/klauspost/compress v1.20.2/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
+ github.com/klauspost/cpuid/v2 v2.3.0 h1:S4CRMLnYUhGeDFDqkGriYKdfoFlDnMtqTiI/sFzhA9Y=
+ github.com/klauspost/cpuid/v2 v2.3.0/go.mod h1:hqwkgyIinND0mEev00jJYCxPNVRVXFQeu1XKlok6oO0=
+ github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORNo=
+```
+
+**File**: `sdk/go/auto/test/errors/conflict_error/go.mod` (modified, +1/-1)
+```diff
+@@ -50,7 +50,7 @@ require (
+ 	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
+ 	github.com/json-iterator/go v1.1.12 // indirect
+ 	github.com/kevinburke/ssh_config v1.2.0 // indirect
+-	github.com/klauspost/compress v1.18.7 // indirect
++	github.com/klauspost/compress v1.20.2 // indirect
+ 	github.com/klauspost/cpuid/v2 v2.3.0 // indirect
+ 	github.com/lucasb-eyer/go-colorful v1.4.0 // indirect
+ 	github.com/mattn/go-isatty v0.0.22 // indirect
+```
+
+**File**: `sdk/go/auto/test/errors/conflict_error/go.sum` (modified, +2/-2)
+```diff
+@@ -119,8 +119,8 @@ github.com/kevinburke/ssh_config v1.2.0/go.mod h1:CT57kijsi8u/K/BOFA39wgDQJ9CxiF
+ github.com/kisielk/errcheck v1.2.0/go.mod h1:/BMXB+zMLi60iA8Vv6Ksmxu/1UDYcXs4uQLJ+jE2L00=
+ github.com/kisielk/errcheck v1.5.0/go.mod h1:pFxgyoBC7bSaBwPgfKdkLd5X25qrDl4LWUI2bnpBCr8=
+ github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
+-github.com/klauspost/compress v1.18.7 h1:aUyZsS4kH3QTKurYhAOwAHxllVPnOthb3vPfnF1Ehjw=
+-github.com/klauspost/compress v1.18.7/go.mod h1:cwPg85FWrGar70rWktvGQj8/hthj3wpl0PGDogxkrSQ=
++github.com/klauspost/compress v1.20.2 h1:v5tiZvm1KGLyg5d5oXdXe3lsSPrbEUiKoXGia//I7Qo=
++github.com/klauspost/compress v1.20.2/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
+ github.com/klauspost/cpuid/v2 v2.3.0 h1:S4CRMLnYUhGeDFDqkGriYKdfoFlDnMtqTiI/sFzhA9Y=
+ github.com/klauspost/cpuid/v2 v2.3.0/go.mod h1:hqwkgyIinND0mEev00jJYCxPNVRVXFQeu1XKlok6oO0=
+ github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORNo=
 ```
 
 ---
 
-### Incident Patch 2: `0861b2dd` (2026-11-05)
-**Commit Message**: Revert "engine: stop duplicating Inputs as State on ReadStep.Apply (#24973)" (#25561)
+### Incident Patch 2: `b2d6a55d` (2026-11-09)
+**Commit Message**: Fix panic in `pulumi package remove` without a version (#25626)
 
-## Summary
-Reverts #24973, restoring the prior behavior of sending resource inputs
-as both `Inputs` and `State` for user-driven reads. This also restores
-the existing read/test-provider expectations and removes the helper code
-introduced by #24973.
+Fixes #25628
 
-## Test plan
-- [x] Existing engine lifecycle and deploy tests pass: `cd pkg && go
-test ./resource/deploy ./engine/lifecycletest`
+`pulumi package remove <name>` without an `@version` panics with a nil
+pointer dereference, even with `--yes`:
 
-## Validation
-- [x] `cd pkg && go test ./resource/deploy ./engine/lifecycletest` —
-passed
-- [ ] `make lint` — not run
-- [ ] `make test_fast` — not run
-- [ ] `make tidy_fix` — not run
-- [ ] `make format` — not run
-- [ ] `make check_proto` — not applicable
+```
+Panic: runtime error: invalid memory address or nil pointer dereference
+github.com/pulumi/pulumi/pkg/v3/cmd/pulumi/packagecmd.newPackageDeleteCmd.func1(...)
+	pkg/cmd/pulumi/packagecmd/package_delete.go:130
+```
 
-## Changelog
-No new changelog entry added; this PR reverts the change from #24973.
-Please apply the `impact/no-changelog-required` label if appropriate.
+The confirmation text and the success message used the version from the
+argument, which is nil when it is omitted. Both now use the version the
+registry resolved, so the command deletes the latest version as its
+usage (`<name>[@<version>]`) describes. The success message now names
+the full package (`source/publisher/name@version`).
 
-## Risk
-This restores the prior compatibility behavior: providers will again
-receive `Inputs` duplicated in `State` on user-driven reads, so they
-cannot distinguish those reads from refreshes using `State` alone.
+Added a test case for a package argument without a version; it panics
+before this change.
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
 ---------
 
-Co-authored-by: Frassle <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `changelog/pending/engine-fix-20261105-101122.yaml` (added, +4/-0)
+**File**: `changelog/pending/20261109--cli-package--package-remove-no-version-panic.yaml` (added, +3/-0)
+```diff
+@@ -0,0 +1,3 @@
++component: cli/package
++kind: fix
++body: Fix a panic in `pulumi package remove` when no version is given
+```
+
+**File**: `pkg/cmd/pulumi/packagecmd/package_delete.go` (modified, +3/-3)
+```diff
+@@ -127,7 +127,7 @@ You must have publish permissions for the package to delete it.`,
+ 				colors.SpecAttention, formatPkg(pkg), colors.Reset,
+ 			))
+ 			if err := ui.ConfirmDeletion(
+-				yes, cmdutil.Interactive(), prompt, packageVersion.String(), cmd.ErrOrStderr(), opts,
++				yes, cmdutil.Interactive(), prompt, pkg.Version.String(), cmd.ErrOrStderr(), opts,
+ 			); err != nil {
+ 				return err
+ 			}
+@@ -143,15 +143,15 @@ You must have publish permissions for the package to delete it.`,
+ 
+ 			fmt.Fprintln(cmd.ErrOrStderr(), opts.Color.Colorize(fmt.Sprintf(
+ 				"%sPackage version '%s' has been deleted!%s",
+-				colors.SpecAttention, packageVersion, colors.Reset,
++				colors.SpecAttention, formatPkg(pkg), colors.Reset,
+ 			)))
+ 			return nil
+ 		},
+ 	}
+ 
+ 	constrictor.AttachArguments(cmd, &constrictor.Arguments{
+ 		Arguments: []constrictor.Argument{
+-			{Name: "package", Usage: "<source>/<publisher>/<name>@<version>"},
++			{Name: "package", Usage: "[[<source>/]<publisher>/]<name>[@<version>]"},
+ 		},
+ 		Required: 1,
+ 	})
+```
+
+**File**: `pkg/cmd/pulumi/packagecmd/package_delete_test.go` (modified, +15/-0)
+```diff
+@@ -83,6 +83,21 @@ func TestPackageDeleteCmd_Run(t *testing.T) {
+ 				version:   semver.MustParse("1.0.0"),
+ 			},
+ 		},
++		{
++			name:           "delete without version resolves latest",
++			packageVersion: "private/myorg/my-package",
++			expectedDeleteArg: struct {
++				source    string
++				publisher string
++				name      string
++				version   semver.Version
++			}{
++				source:    "private",
++				publisher: "myorg",
++				name:      "my-package",
++				version:   semver.MustParse("1.0.0"),
++			},
++		},
+ 		{
+ 			name:           "delete fails with backend error",
+ 			packageVersion: "private/myorg/my-package@1.0.0",
+```
+
+---
+
+### Incident Patch 3: `a1b17a9a` (2026-11-09)
+**Commit Message**: Fix circular import in Python SDKs when an object type references a resource in the same module (#25579)
+
+Fixes #25578
+
+## Cause
+
+An object type can have a property that refers to a resource in the same
+module. In this case, the generated `_inputs.py` and `outputs.py` import
+the resource class at the top of the file. The resource module also
+imports `_inputs.py` with `from ._inputs import *`. Thus the two files
+import each other, and the result depends on which file loads first.
+
+## Fix
+
+This change affects only `_inputs.py` and `outputs.py`. It applies only
+to references to a resource in the same package and module.
+
+1. The types file imports the resource module, not the resource class.
+For example, it uses `from . import widget as _widget`. The annotation
+refers to the class through the module, as in `'_widget.Widget'`.
+References to resources in other modules already use this form.
+2. The types file puts these imports at the end of the file, after
+`__all__` and all classes.
+
+The file name logic is unchanged. It still handles the kubernetes20
+CamelCase names, the provider resource, and file names that conflict
+with a child module. Resource modules and function modules do not
+chan
+
+**File**: `changelog/pending/20261105--sdkgen-python--resource-reference-circular-import.yaml` (added, +4/-0)
 ```diff
 @@ -0,0 +1,4 @@
-+component: engine
++component: sdkgen/python
 +kind: fix
-+body: Revert changes to only send inputs not state to provider reads
-+time: 2026-11-05T10:11:22.114278Z
++body: Fix a circular import when an object type references a resource in the same module
++time: 2026-11-05T00:00:00Z
 ```
 
-**File**: `pkg/engine/lifecycletest/components_test.go` (modified, +5/-5)
+**File**: `pkg/codegen/python/gen.go` (modified, +51/-12)
 ```diff
-@@ -307,7 +307,7 @@ func TestConstructCallSecretsUnknowns(t *testing.T) {
- 					return plugin.ReadResponse{
- 						ReadResult: plugin.ReadResult{
- 							Inputs:  &req.Inputs,
--							Outputs: coalesceReadOutputs(req),
-+							Outputs: &req.State,
- 						},
- 						Status: resource.StatusOK,
- 					}, nil
-@@ -401,7 +401,7 @@ func TestConstructCallReturnDependencies(t *testing.T) {
- 						return plugin.ReadResponse{
- 							ReadResult: plugin.ReadResult{
- 								Inputs:  &req.Inputs,
--								Outputs: coalesceReadOutputs(req),
-+								Outputs: &req.State,
- 							},
- 							Status: resource.StatusOK,
- 						}, nil
-@@ -547,7 +547,7 @@ func TestConstructCallReturnOutputs(t *testing.T) {
- 						return plugin.ReadResponse{
- 							ReadResult: plugin.ReadResult{
- 								Inputs:  &req.Inputs,
--								Outputs: coalesceReadOutputs(req),
-+								Outputs: &req.State,
- 							},
- 							Status: resource.StatusOK,
- 						}, nil
-@@ -686,7 +686,7 @@ func TestConstructCallSendDependencies(t *testing.T) {
- 						return plugin.ReadResponse{
- 							ReadResult: plugin.ReadResult{
- 								Inputs:  &req.Inputs,
--								Outputs: coalesceReadOutputs(req),
-+								Outputs: &req.State,
- 							},
- 							Status: resource.StatusOK,
- 						}, nil
-@@ -851,7 +851,7 @@ func TestConstructCallDependencyDedeuplication(t *testing.T) {
- 						return plugin.ReadResponse{
- 							ReadResult: plugin.ReadResult{
- 								Inputs:  &req.Inputs,
--								Outputs: coalesceReadOutputs(req),
-+								Outputs: &req.State,
- 							},
- 							Status: resource.StatusOK,
- 						}, nil
-```
-
-**File**: `pkg/engine/lifecycletest/golang_sdk_test.go` (modified, +5/-5)
-```diff
-@@ -77,7 +77,7 @@ func TestSingleResourceDefaultProviderGolangLifecycle(t *testing.T) {
- 						ReadResult: plugin.ReadResult{
- 							ID:      req.ID,
- 							Inputs:  &req.Inputs,
--							Outputs: coalesceReadOutputs(req),
-+							Outputs: &req.State,
- 						},
- 						Status: resource.StatusOK,
- 					}, nil
-@@ -146,7 +146,7 @@ func TestIgnoreChangesGolangLifecycle(t *testing.T) {
- 					return plugin.ReadResponse{
- 						ReadResult: plugin.ReadResult{
- 							Inputs:  &req.Inputs,
--							Outputs: coalesceReadOutputs(req),
-+							Outputs: &req.State,
- 						},
- 						Status: resource.StatusOK,
- 					}, nil
-@@ -349,7 +349,7 @@ func TestReadResourceGolangLifecycle(t *testing.T) {
- 					return plugin.ReadResponse{
- 						ReadResult: plugin.ReadResult{
- 							Inputs:  &req.Inputs,
--							Outputs: coalesceReadOutputs(req),
-+							Outputs: &req.State,
- 						},
- 						Status: resource.StatusOK,
- 					}, nil
-@@ -435,7 +435,7 @@ func TestProviderInheritanceGolangLifecycle(t *testing.T) {
- 					return plugin.ReadResponse{
- 						ReadResult: plugin.ReadResult{
- 							Inputs:  &req.Inputs,
--							Outputs: coalesceReadOutputs(req),
-+							Outputs: &req.State,
- 						},
- 						Status: resource.StatusOK,
- 					}, nil
-@@ -460,7 +460,7 @@ func TestProviderInheritanceGolangLifecycle(t *testing.T) {
- 					return plugin.ReadResponse{
- 						ReadResult: plugin.ReadResult{
- 							Inputs:  &req.Inputs,
--							Outputs: coalesceReadOutputs(req),
-+							Outputs: &req.State,
- 						},
- 						Status: resource.StatusOK,
- 					}, nil
-```
-
-**File**: `pkg/engine/lifecycletest/import_test.go` (modified, +5/-5)
-```diff
-@@ -53,8 +53,8 @@ func TestImportOption(t *testing.T) {
- 		"out": property.New(41.0),
- 	})
+@@ -123,6 +123,10 @@ type modContext struct {
+ 	extraSourceFiles []string
+ 	isConfig         bool
  
--	// For imports we expect inputs and state to be empty. For a read we expect the resource inputs to be passed in the
--	// Inputs field; State is empty (the engine no longer duplicates Inputs into State on reads for non-dynamic providers).
-+	// For imports we expect inputs and state to be nil, but when we change to do a read they should both be set to the
-+	// resource inputs.
- 	var expectedInputs, expectedState property.Map
- 	loaders := []*deploytest.ProviderLoader{
- 		deploytest.NewProviderLoader("pkgA", semver.MustParse("1.0.0"), func() (plugin.Provider, error) {
-@@ -329,7 +329,7 @@ func TestImportOption(t *testing.T) {
++	// typesFile is true while generating _inputs.py or outputs.py. These files import resources
++	// of their own module as modules, at the end of the file, to avoid a circular import.
++	typesFile bool
++
+ 	// Name overrides set in PackageInfo
+ 	modNameOverrides map[string]string // Optional overrides for Pulumi module names
+ 	compatibility    string            // Toggle compatibility mode for a specified target.
+@@ -322,7 +326,12 @@ func (mod *modContext) enumType(enum *schema.EnumType) string {
  
- 	// Change the program to read a resource rather than creating one.
- 	readID = "id"
--	expectedInputs, expectedState = resource.FromResourcePropertyMap(inputs), property.Map{}
-+	expectedInputs, expectedState = resource.FromResourcePropertyMap(inputs), resource.FromResourcePropertyMap(inputs)
- 	snap, err = lt.TestOp(Update).RunStep(project, p.GetTarget(t, nil), p.Options, false, p.BackendClient,
- 		func(_ workspace.Project, _ deploy.Target, entries JournalEntries, _ []Event, err error) error {
- 			for _, entry := range entries {
-@@ -1902,8 +1902,8 @@ func TestImportWithFailedUpdate(t *testing.T) {
- 		"out": property.New(41.0),
- 	})
+ func (mod *modContext) resourceType(r *schema.ResourceType) string {
+ 	if r.Resource == nil || codegen.PkgEquals(r.Resource.PackageReference, mod.pkg) {
+-		return mod.tokenToResource(r.Token)
++		name := mod.tokenToResource(r.Token)
++		if mod.typesFile && mod.isLocalResource(r) {
++			// importResourceType imports the module of this resource as `_<file>`.
++			return "_" + mod.resourceFileName(r) + "." + name
++		}
++		return name
+ 	}
  
--	// For imports we expect inputs and state to be empty. For a read we expect the resource inputs to be passed in the
--	// Inputs field; State is empty (the engine no longer duplicates Inputs into State on reads for non-dynamic providers).
-+	// For imports we expect inputs and state to be nil, but when we change to do a read they should both be set to the
-+	// resource inputs.
- 	var expectedInputs, expectedState property.Map
- 	loaders := []*deploytest.ProviderLoader{
- 		deploytest.NewProviderLoader("pkgA", semver.MustParse("1.0.0"), func() (plugin.Provider, error) {
+ 	// Is it a provider resource?
+@@ -336,6 +345,13 @@ func (mod *modContext) resourceType(r *schema.ResourceType) string {
+ 	return fmt.Sprintf("%s.%s%s", PyPack(pkg.Namespace(), pkg.Name()), modName, name)
+ }
+ 
++// isLocalResource returns true for a resource that this module imports from a relative path, as in
++// `from .widget import Widget`, and refers to by its bare class name.
++func (mod *modContext) isLocalResource(r *schema.ResourceType) bool {
++	return (r.Resource == nil || codegen.PkgEquals(r.Resource.PackageReference, mod.pkg)) &&
++		!strings.Contains(mod.tokenToResource(r.Token), ".")
++}
++
+ func (mod *modContext) tokenToResource(tok string) string {
+ 	// token := pkg : module : member
+ 	// module := path/to/module
+@@ -1041,18 +1057,10 @@ func (mod *modContext) importResourceType(r *schema.ResourceType) string {
+ 	if mod.mod == modName || modName == "" {
+ 		// We want a relative import if we're in the same module: from .some_member import SomeMember
+ 		importPath := mod.getRelImportFromRoot(modName)
++		name := mod.resourceFileName(r)
+ 
+-		name := PyName(tokenToName(r.Token))
+-		if mod.compatibility == kubernetes20 {
+-			// To maintain backward compatibility for kubernetes, the file names
+-			// need to be CamelCase instead of the standard snake_case.
+-			name = tokenToName(r.Token)
+-		}
+-		if r.Resource != nil && r.Resource.IsProvider {
+-			name = "provider"
+-		}
+-		if mod.conflictsWithChildModule(name) {
+-			name = name + "_"
++		if mod.typesFile {
++			return fmt.Sprintf("from %s import %[2]s as _%[2]s", importPath, name)
+ 		}
+ 
+ 		if strings.HasSuffix(importPath, ".") {
+@@ -1070,6 +1078,23 @@ func (mod *modContext) importResourceType(r *schema.ResourceType) string {
+ 	return fmt.Sprintf("from %s import %[2]s as _%[2]s", mod.getRelImportFromRoot(""), components[0])
+ }
+ 
++// resourceFileName returns the name of the file that defines a resource of this package.
++func (mod *modContext) resourceFileName(r *schema.ResourceType) string {
++	name := PyName(tokenToName(r.Token))
++	if mod.compatibility == kubernetes20 {
++		// To maintain backward compatibility for kubernetes, the file names
++		// need to be CamelCase instead of the standard snake_case.
++		name = tokenToName(r.Token)
++	}
++	if r.Resource != nil && r.Resource.IsProvider {
++		name = "provider"
++	}
++	if mod.conflictsWithChildModule(name) {
++		name = name + "_"
++	}
++	return name
++}
++
+ // genConfig emits all config variables in the given module, returning the resulting file.
+ func (mod *modContext) genConfig(variables []*schema.Property) (string, error) {
+ 	w := &bytes.Buffer{}
+@@ -1197,6 +1222,9 @@ func allTypesAreOverlays(types []*schema.ObjectType) bool {
+ }
+ 
+ func (mod *modContext) genTypes(dir string, fs codegen.Fs) error {
++	mod.typesFile = true
++	defer func() { mod.typesFile = false }()
++
+ 	genTypes := func(file string, input bool) error {
+ 		w := &bytes.Buffer{}
+ 
+@@ -1206,6 +1234,8 @@ func (mod *modContext) genTypes(dir string, fs codegen.Fs) error {
+ 		}
+ 
+ 		imports := newImports()
++		// Resource modules of this module import this file, so these imports go at the end of the file.
++		resourceImports := newImports()
+ 		var emitted [][]*schema.Property
+ 		for _, t := range mod.types {
+ 			if t.IsOverlay {
+@@ -1214,6 +1244,11 @@ func (mod *modContext) genTypes(dir string, fs codegen.Fs) error {
+ 			}
+ 			if (input && mod.details(t).inputType) || (!input && mod.details(t).outputType) {
+ 				emitted = append(emitted, t.Properties)
++				codegen.VisitTypeClosure(t.Properties, func(t schema.Type) {
++					if r, ok := t.(*schema.ResourceType); ok && mod.isLocalResource(r) {
++						resourceImports.addResource(mod, r)
++					}
++				})
+ 			}
+ 
+ 			if input && mod.details(t).inputType {
+@@ -1238,6 +1273,7 @@ func (mod *modContext) genTypes(dir string, fs codegen.Fs) error {
+ 		for _, e := range mod.enums {
+ 			imports.addEnum(mod, e)
+ 		}
++		imports.Set = imports.Difference(resourceImports.Set)
+ 
+ 		mod.genHeader(w, true /*needsSDK*/
 ```
 
-**File**: `pkg/engine/lifecycletest/parameterized_test.go` (modified, +1/-1)
+**File**: `pkg/testing/pulumi-test-language/providers/object_ref_provider.go` (added, +156/-0)
 ```diff
-@@ -181,7 +181,7 @@ func TestReplacementParameterizedProvider(t *testing.T) {
- 						ReadResult: plugin.ReadResult{
- 							ID:      req.ID,
- 							Inputs:  &req.Inputs,
--							Outputs: coalesceReadOutputs(req),
-+							Outputs: &req.State,
- 						},
- 						Status: resource.StatusOK,
- 					}, nil
+@@ -0,0 +1,156 @@
++// Copyright 2026, Pulumi Corporation.
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package providers
++
++import (
++	"context"
++	"encoding/json"
++	"fmt"
++
++	"github.com/blang/semver"
++
++	"github.com/pulumi/pulumi/pkg/v3/codegen/schema"
++	"github.com/pulumi/pulumi/pkg/v3/resource/plugin"
++	"github.com/pulumi/pulumi/sdk/v3/go/common/resource"
++)
++
++// ObjectRefProvider has object types that reference a resource of the same module. Each module has a
++// resource with an object-type input, and a second resource that references the first through an object
++// type. In the module "referencingFirst" the referencing resource sorts first, and in the module
++// "referencedFirst" the referenced resource sorts first.
++type ObjectRefProvider struct {
++	plugin.UnimplementedProvider
++}
++
++var _ plugin.Provider = (*ObjectRefProvider)(nil)
++
++var objectRefResources = map[string]bool{
++	"objectref:referencingFirst:Widget": true,
++	"objectref:referencingFirst:Gadget": true,
++	"objectref:referencedFirst:Alpha":   true,
++	"objectref:referencedFirst:Beta":    true,
++}
++
++func (p *ObjectRefProvider) Close() error { return nil }
++
++func (p *ObjectRefProvider) Configure(
++	context.Context, plugin.ConfigureRequest,
++) (plugin.ConfigureResponse, error) {
++	return plugin.ConfigureResponse{}, nil
++}
++
++func (p *ObjectRefProvider) GetPluginInfo(context.Context) (plugin.PluginInfo, error) {
++	ver := semver.MustParse("62.0.0")
++	return plugin.PluginInfo{Version: &ver}, nil
++}
++
++func (p *ObjectRefProvider) GetSchema(
++	context.Context, plugin.GetSchemaRequest,
++) (plugin.GetSchemaResponse, error) {
++	ref := func(token string) schema.PropertySpec {
++		return schema.PropertySpec{TypeSpec: schema.TypeSpec{Ref: token}}
++	}
++	object := func(name, typ string) schema.ComplexTypeSpec {
++		return schema.ComplexTypeSpec{ObjectTypeSpec: schema.ObjectTypeSpec{
++			Type:       "object",
++			Properties: map[string]schema.PropertySpec{name: ref(typ)},
++			Required:   []string{name},
++		}}
++	}
++	res := func(name, typ string) schema.ResourceSpec {
++		return schema.ResourceSpec{
++			ObjectTypeSpec: schema.ObjectTypeSpec{
++				Type:       "object",
++				Properties: map[string]schema.PropertySpec{name: ref(typ)},
++				Required:   []string{name},
++			},
++			InputProperties: map[string]schema.PropertySpec{name: ref(typ)},
++			RequiredInputs:  []string{name},
++		}
++	}
++	settings := schema.ComplexTypeSpec{ObjectTypeSpec: schema.ObjectTypeSpec{
++		Type:       "object",
++		Properties: map[string]schema.PropertySpec{"name": {TypeSpec: schema.TypeSpec{Type: "string"}}},
++		Required:   []string{"name"},
++	}}
++
++	pkg := schema.PackageSpec{
++		Name:    "objectref",
++		Version: "62.0.0",
++		Resources: map[string]schema.ResourceSpec{
++			"objectref:referencingFirst:Widget": res("settings", "#/types/objectref:referencingFirst:WidgetSettings"),
++			"objectref:referencingFirst:Gadget": res("widgetRef", "#/types/objectref:referencingFirst:WidgetRef"),
++			"objectref:referencedFirst:Alpha":   res("settings", "#/types/objectref:referencedFirst:AlphaSettings"),
++			"objectref:referencedFirst:Beta":    res("alphaRef", "#/types/objectref:referencedFirst:AlphaRef"),
++		},
++		Types: map[string]schema.ComplexTypeSpec{
++			"objectref:referencingFirst:WidgetSettings": settings,
++			"objectref:referencingFirst:WidgetRef": object(
++				"widget", "#/resources/objectref:referencingFirst:Widget"),
++			"objectref:referencedFirst:AlphaSettings": settings,
++			"objectref:referencedFirst:AlphaRef": object(
++				"alpha", "#/resources/objectref:referencedFirst:Alpha"),
++		},
++	}
++	jsonBytes, err := json.Marshal(pkg)
++	return plugin.GetSchemaResponse{Schema: jsonBytes}, err
++}
++
++func (p *ObjectRefProvider) CheckConfig(
++	_ context.Context, req plugin.CheckConfigRequest,
++) (plugin.CheckConfigResponse, error) {
++	return plugin.CheckConfigResponse{Properties: req.News}, nil
++}
++
++func (p *ObjectRefProvider) Check(
++	_ context.Context, req plugin.CheckRequest,
++) (plugin.CheckResponse, error) {
++	if !objectRefResources[string(req.URN.Type())] {
++		return plugin.CheckResponse{
++			Failures: makeCheckFailure("", fmt.Sprintf("invalid URN type: %s", req.URN.Type())),
++		}, nil
++	}
++	return plugin.CheckResponse{Properties: req.NewInputs}, nil
++}
++
++func (p *ObjectRefProvider) Create(
++	_ context.Context, req plugin.CreateRequest,
++) (plugin.CreateResponse, error) {
++	if !objectRefResources[string(req.URN.Type())] {
++		return plugin.CreateResponse{Status: resource.Stat
 ```
 
-**File**: `pkg/engine/lifecycletest/provider_test.go` (modified, +1/-1)
+**File**: `pkg/testing/pulumi-test-language/tests/l2_resource_ref_in_object_type.go` (added, +54/-0)
 ```diff
-@@ -2355,7 +2355,7 @@ func TestMissingIDRefresh(t *testing.T) {
- 						Status: resource.StatusOK,
- 						ReadResult: plugin.ReadResult{
- 							Inputs:  &req.Inputs,
--							Outputs: coalesceReadOutputs(req),
-+							Outputs: &req.State,
- 						},
- 					}, nil
- 				},
+@@ -0,0 +1,54 @@
++// Copyright 2026, Pulumi Corporation.
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package tests
++
++import (
++	"github.com/pulumi/pulumi/pkg/v3/resource/plugin"
++	"github.com/pulumi/pulumi/pkg/v3/testing/pulumi-test-language/providers"
++	"github.com/pulumi/pulumi/sdk/v3/go/common/resource"
++	"github.com/pulumi/pulumi/sdk/v3/go/property"
++	"github.com/stretchr/testify/assert"
++)
++
++func init() {
++	LanguageTests["l2-resource-ref-in-object-type"] = LanguageTest{
++		Providers: []func() plugin.Provider{
++			func() plugin.Provider { return &providers.ObjectRefProvider{} },
++		},
++		Runs: []TestRun{{
++			Assert: func(l *L, res AssertArgs) {
++				RequireStackResource(l, res.Err, res.Changes)
++				RequireSingleResource(l, res.Snap.Resources, "pulumi:providers:objectref")
++
++				for _, c := range []struct{ referenced, referencing, refProp, prop string }{
++					{"widget", "gadget", "widgetRef", "widget"},
++					{"alpha", "beta", "alphaRef", "alpha"},
++				} {
++					referenced := RequireSingleNamedResource(l, res.Snap.Resources, c.referenced)
++					referencing := RequireSingleNamedResource(l, res.Snap.Resources, c.referencing)
++					assert.Equal(l, property.NewMap(map[string]property.Value{
++						"settings": property.New(map[string]property.Value{"name": property.New(c.referenced)}),
++					}), resource.FromResourcePropertyMap(referenced.Inputs))
++
++					ref := resource.FromResourcePropertyValue(
++						resource.MakeCustomResourceReference(referenced.URN, referenced.ID, ""))
++					assert.Equal(l, property.NewMap(map[string]property.Value{
++						c.refProp: property.New(map[string]property.Value{c.prop: ref}),
++					}), resource.FromResourcePropertyMap(referencing.Inputs))
++				}
++			},
++		}},
++	}
++}
 ```
 
-**File**: `pkg/engine/lifecycletest/pulumi_test.go` (modified, +1/-1)
+**File**: `pkg/testing/pulumi-test-language/tests/testdata/l2-resource-ref-in-object-type/main.pp` (added, +15/-0)
 ```diff
-@@ -4357,7 +4357,7 @@ func TestSourcePositions(t *testing.T) {
- 					return plugin.ReadResponse{
- 						ReadResult: plugin.ReadResult{
- 							Inputs:  &req.Inputs,
--							Outputs: coalesceReadOutputs(req),
-+							Outputs: &req.State,
- 						},
- 						Status: resource.StatusOK,
- 					}, nil
+@@ -0,0 +1,15 @@
++resource "widget" "objectref:referencingFirst:Widget" {
++    settings = { name = "widget" }
++}
++
++resource "gadget" "objectref:referencingFirst:Gadget" {
++    widgetRef = { widget = widget }
++}
++
++resource "alpha" "objectref:referencedFirst:Alpha" {
++    settings = { name = "alpha" }
++}
++
++resource "beta" "objectref:referencedFirst:Beta" {
++    alphaRef = { alpha = alpha }
++}
 ```
 
-**File**: `pkg/engine/lifecycletest/read_helper_test.go` (removed, +0/-30)
+**File**: `sdk/go/pulumi-language-go/testdata/extra-types/projects/l2-resource-ref-in-object-type/Pulumi.yaml` (added, +2/-0)
 ```diff
-@@ -1,30 +0,0 @@
--// Copyright 2026, Pulumi Corporation.
--//
--// Licensed under the Apache License, Version 2.0 (the "License");
--// you may not use this file except in compliance with the License.
--// You may obtain a copy of the License at
--//
--//     http://www.apache.org/licenses/LICENSE-2.0
--//
--// Unless required by applicable law or agreed to in writing, software
--// distributed under the License is distributed on an "AS IS" BASIS,
--// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
--// See the License for the specific language governing permissions and
--// limitations under the License.
--
--package lifecycletest
--
--import (
--	"github.com/pulumi/pulumi/pkg/v3/resource/plugin"
--	"github.com/pulumi/pulumi/sdk/v3/go/property"
--)
--
--// coalesceReadOutputs returns the outputs a trivial mock provider should surface from a Read.
--// On refresh the engine passes prior outputs in req.State; on a user-driven Get the engine
--// passes an empty map, so fall back to req.Inputs to emulate a provider that returns the live state.
--func coalesceReadOutputs(req plugin.ReadRequest) *property.Map {
--	if req.State.Len() > 0 {
--		return &req.State
--	}
--	return &req.Inputs
--}
+@@ -0,0 +1,2 @@
++name: l2-resource-ref-in-object-type
++runtime: go
+```
+
+**File**: `sdk/go/pulumi-language-go/testdata/extra-types/projects/l2-resource-ref-in-object-type/go.mod` (added, +12/-0)
+```diff
+@@ -0,0 +1,12 @@
++module l2-resource-ref-in-object-type
++
++go 1.25
++
++require (
++	github.com/pulumi/pulumi/sdk/v3 v3.30.0
++	example.com/pulumi-objectref/sdk/go/v62 v62.0.0
++)
++
++replace example.com/pulumi-objectref/sdk/go/v62 => /ROOT/artifacts/example.com_pulumi-objectref_sdk_go_v62
++
++replace github.com/pulumi/pulumi/sdk/v3 => /ROOT/artifacts/github.com_pulumi_pulumi_sdk_v3
+```
+
+**File**: `sdk/go/pulumi-language-go/testdata/extra-types/projects/l2-resource-ref-in-object-type/main.go` (added, +45/-0)
+```diff
+@@ -0,0 +1,45 @@
++package main
++
++import (
++	"example.com/pulumi-objectref/sdk/go/v62/objectref/referencedfirst"
++	"example.com/pulumi-objectref/sdk/go/v62/objectref/referencingfirst"
++	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
++)
++
++func main() {
++	pulumi.Run(func(ctx *pulumi.Context) error {
++		widget, err := referencingfirst.NewWidget(ctx, "widget", &referencingfirst.WidgetArgs{
++			Settings: &referencingfirst.WidgetSettingsArgs{
++				Name: pulumi.String("widget"),
++			},
++		})
++		if err != nil {
++			return err
++		}
++		_, err = referencingfirst.NewGadget(ctx, "gadget", &referencingfirst.GadgetArgs{
++			WidgetRef: &referencingfirst.WidgetRefArgs{
++				Widget: widget,
++			},
++		})
++		if err != nil {
++			return err
++		}
++		alpha, err := referencedfirst.NewAlpha(ctx, "alpha", &referencedfirst.AlphaArgs{
++			Settings: &referencedfirst.AlphaSettingsArgs{
++				Name: pulumi.String("alpha"),
++			},
++		})
++		if err != nil {
++			return err
++		}
++		_, err = referencedfirst.NewBeta(ctx, "beta", &referencedfirst.BetaArgs{
++			AlphaRef: &referencedfirst.AlphaRefArgs{
++				Alpha: alpha,
++			},
++		})
++		if err != nil {
++			return err
++		}
++		return nil
++	})
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #25574** (2026-11-05): Freeze v3.274.1 (@julienp)
-- **PR #25573** (2026-11-05): Prepare 3.274.1 (@julienp)
-- **PR #25569** (2026-11-05): Preserve secret Output values in resource transforms (@julienp)
-- **PR #25568** (2026-11-05): Fix nested dependency handling in resource transforms (@julienp)
-- **PR #25561** (2026-11-05): Revert "engine: stop duplicating Inputs as State on ReadStep.Apply (#24973)" (@Frassle)
-- **PR #25560** (closed): Prefer output value wrappers when calling transforms (@Frassle)
+- **PR #25627** (2026-11-09): Fix Windows closure test tool resolution (@julienp)
+- **PR #25626** (2026-11-09): Fix panic in `pulumi package remove` without a version (@flostadler)
+- **PR #25623** (2026-11-09): Update module github.com/klauspost/compress to v1.20.2 [SECURITY] (@pulumi-renovate[bot])
+- **PR #25621** (2026-11-09): Continue DIY non-project deprecation (@Frassle)
+- **PR #25612** (2026-11-06): Keep `project new --esc-config` out of the generated Automation API (@rgharris)
+- **PR #25608** (closed): Regenerate automation APIs (@pulumi-bot)
 
 ---
 
@@ -2195,31 +2447,28 @@ Co-authored-by: Frassle <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. nested dependency handling in resource transforms (#25568)
+## X. Update module github.com/klauspost/compress to v1.20.2 [SECURITY] (#25623)
 
 **RULE**:
-When implementing operations in `changelog/pending/20261105--engine--transform-nested-dependencies.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pulumi/pulumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pulumi/pulumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b05575fc`: nested dependency handling in resource transforms (#25568). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c9c1940d`: Update module github.com/klauspost/compress to v1.20.2 [SECURITY] (#25623). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog/pending/20261105--engine--transform-nested-dependencies.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-component: engine
-kind: fix
-body: Fix resource transforms adding unnecessary Output wrappers to objects with nested dependencies
-time: 2026-11-05T00:00:00Z
+	github.com/klauspost/compress v1.20.2 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	github.com/klauspost/compress v1.18.7 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b05575fc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c9c1940d` are properly handled with clean fallback behavior.

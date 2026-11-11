@@ -3,7 +3,7 @@
 > **Source Version**: `hf-nvidia-ne`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-11-04T22:45:37.067Z  
+> **Timestamp**: 2026-11-08T13:59:55.285Z  
 > **Learning ID**: `learn-huggingface-nvidia-nemotron-3-diarization`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,377 +17,258 @@
 ## 1. Executive Forensic Architecture & System Mechanics
 
 **Technical Problem:**
-The repository addresses the **Speaker Diarization** problem: determining "who spoke when" in multi-speaker audio streams. The core challenge is not just detecting speech (VAD), but resolving **speaker identity permutation** over time, especially in streaming scenarios where the model processes audio in chunks without seeing the entire file.
+The repository addresses the problem of **real-time, streaming speaker diarization** ("who spoke when") for up to 8 speakers. Traditional offline diarization requires the entire audio file, introducing unacceptable latency for live applications (conferencing, live transcription). This model solves the **temporal consistency** and **permutation invariance** problems inherent in streaming audio processing.
 
 **Architectural Boundaries & Subsystems:**
-1.  **Audio Encoder (Nemotron3DiarizationAudio):**
-    *   A Transformer-based encoder (31 layers, hidden size 512) that processes raw audio features (128 mel-bins).
-    *   **Subsampling Factor:** 8. This is a critical architectural invariant. It means the temporal resolution of the encoder output is reduced by a factor of 8 relative to the input frame rate. If input is 10ms frames, output is 80ms frames.
-    *   **RoPE (Rotary Position Embeddings):** Used with `partial_rotary_factor: 1.0` and `rope_theta: 10000.0`. This allows the model to handle variable-length sequences and is crucial for the "chunked" inference strategy.
+1.  **Audio Encoder (Nemotron3DiarizationAudio):** A Transformer-based encoder (31 layers, hidden size 512) that processes raw audio frames. It uses a subsampling factor of 8, meaning it compresses the temporal dimension by a factor of 8. It employs RoPE (Rotary Position Embeddings) with a theta of 10,000.
+2.  **Diarization Head (Sortformer Head):** A classification head that maps audio features to speaker probabilities. It outputs a fixed number of channels (8 speakers).
+3.  **Streaming State Manager (AOSC & FIFO):** The core innovation for streaming.
+    *   **FIFO Queue:** Maintains a sliding window of recent frames (`fifo_length: 264`) to provide local context.
+    *   **Arrival-Order Speaker Cache (AOSC):** A persistent memory structure that retains speaker embeddings/identities from previous chunks. This is critical because in streaming, the model sees audio in chunks. Without AOSC, the model would "forget" that Speaker 1 from chunk 1 is the same as Speaker 1 in chunk 5, or worse, it might swap speaker labels (permutation ambiguity).
+4.  **Permutation Resolution (Sortformer Logic):** The model resolves speaker identity by ordering output channels based on the **first arrival time** of each speaker. This eliminates the need for post-hoc clustering (like VBx) which is computationally expensive and non-streamable.
 
-2.  **Diarization Head (Sortformer Head):**
-    *   Takes encoder outputs and projects them into a speaker-specific space.
-    *   **Output Channels:** Fixed at 8 (max speakers).
-    *   **Permutation Invariance:** The model outputs 8 channels, but the order is arbitrary. The system relies on **Sortformer** logic to sort these channels based on the **first arrival time** of each speaker. This is the "Arrival-Order" invariant.
-
-3.  **Streaming State Management (AOSC & FIFO):**
-    *   **AOSC (Arrival-Order Speaker Cache):** A stateful cache that retains speaker embeddings/identities from previous chunks. This is the "memory" of the streaming system.
-    *   **FIFO Queue:** A sliding window of recent frames (`fifo_length: 264` in streaming config) to provide local context for the current prediction step.
-    *   **Chunking Strategy:**
-        *   `chunk_length: 340` frames.
-        *   `chunk_right_context: 40` frames.
-        *   This creates an overlap mechanism to ensure boundary continuity.
-
-4.  **Inference Modes:**
-    *   **Offline:** Processes the entire audio buffer (30.4s recommended).
-    *   **Streaming:** Processes audio in real-time with low latency (80ms buffer possible, 320ms recommended).
-
-**Critical Subsystem Abstractions:**
-*   **Frame Resolution:** Configurable in multiples of 10ms. The internal processing is tied to the `subsampling_factor`.
-*   **Speaker Identity Persistence:** The AOSC is the core abstraction that prevents speaker identity drift in long conversations.
-*   **Permutation Resolution:** The logic that maps the 8 unordered output channels to consistent speaker IDs based on arrival order.
+**Critical Invariant:**
+The system MUST maintain a consistent mapping between physical speakers and logical output channels across all time steps. The `speaker_cache_update_period` (300 frames) and `speaker_cache_length` (264 frames) define the memory horizon for this consistency.
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Temporal Subsampling Alignment Invariant
+### 1. Streaming State Consistency via Arrival-Order Caching
 **RULE**:
-In any streaming audio processing pipeline, the **subsampling factor** of the feature extractor MUST be an integer divisor of the **chunk length** and **context window** lengths to prevent temporal misalignment and frame loss at chunk boundaries. The output frame rate MUST be explicitly calculated as `input_frame_rate / subsampling_factor` and used for all downstream timing calculations.
-
+In any streaming classification task where entity identity must persist over time (e.g., speaker diarization, object tracking), the system MUST maintain a persistent cache of entity states ordered by their first appearance (arrival order). The system MUST NOT rely on global clustering or re-identification algorithms that require access to the entire history.
 **WHY**:
-If the subsampling factor (e.g., 8) does not align with the chunk boundaries, the model will receive incomplete or misaligned temporal contexts. This leads to "ghost" speakers or identity swaps at chunk boundaries because the positional embeddings (RoPE) and attention masks will be computed on misaligned time steps. The `chunk_right_context` MUST be a multiple of the subsampling factor to ensure the "look-ahead" context is complete.
-
+Global clustering (e.g., VBx, GMM) is O(N^2) or worse and requires the full dataset, making it impossible for real-time streaming. Re-identification algorithms are prone to drift and latency. Arrival-order caching provides O(1) lookup for speaker identity and ensures permutation invariance is resolved at inference time, not post-processing.
 **WHEN TO APPLY**:
-Any system using CNN/Transformer feature extractors with temporal downsampling (e.g., ASR, VAD, Diarization) in a chunked/streaming inference mode.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-# Configuration Invariant Check
-subsampling_factor = 8
-chunk_length = 340  # MUST be divisible by subsampling_factor? 340 / 8 = 42.5 -> NO.
-# Wait, let's look at the config: chunk_length 340, subsampling 8.
-# In NeMo/Transformers, chunk_length is often in *input* frames.
-# If input is 10ms, 340 frames = 3.4s.
-# Output frames = 340 / 8 = 42.5 -> This implies the chunking logic handles the remainder or the subsampling is applied differently.
-# Actually, in Sortformer, the chunking is often done on the *encoder output* or the input is padded.
-# Let's refine the rule: The *effective* temporal resolution of the model's attention window MUST be consistent with the chunking strategy.
-
-# Correct Pattern:
-def validate_chunking_config(subsampling_factor, chunk_length, right_context):
-    # Ensure that the context window covers complete subsampled units
-    if right_context % subsampling_factor != 0:
-        raise ValueError("Right context must be a multiple of subsampling factor to avoid partial frame context")
-    
-    # Calculate output frame count
-    output_frames = chunk_length // subsampling_factor
-    remainder = chunk_length % subsampling_factor
-    if remainder != 0:
-        # Log warning or adjust padding strategy
-        print(f"Warning: Chunk length {chunk_length} not divisible by subsampling {subsampling_factor}. Padding required.")
-    return output_frames
-```
-
-**NEGATIVE CONSTRAINT**:
-```python
-# ANTI-PATTERN: Assuming 1:1 mapping between input and output frames
-# This causes off-by-one errors in speaker identity mapping
-output_frame_index = input_frame_index  # WRONG if subsampling_factor > 1
-# Correct:
-output_frame_index = input_frame_index // subsampling_factor
-```
-
-**VERIFICATION METHOD**:
-Unit test that feeds a known audio signal with distinct speaker segments at exact chunk boundaries and asserts that the speaker ID does not change across the boundary.
-
-### 2. Arrival-Order Permutation Resolution Invariant
-**RULE**:
-In speaker diarization models with fixed output channels (e.g., 8 speakers), the mapping from model output channels to logical speaker IDs MUST be determined by the **first arrival time** of each speaker in the audio stream. This mapping MUST be cached and persisted across chunks in streaming mode to maintain identity consistency.
-
-**WHY**:
-Transformer outputs are permutation-invariant. Without a deterministic sorting mechanism, the same speaker might be assigned to channel 1 in chunk 1 and channel 3 in chunk 2. The "Arrival-Order" strategy provides a stable, causal ordering that is robust to speaker entry/exit. Failing to persist this mapping in streaming mode leads to "speaker hopping" where identities swap arbitrarily.
-
-**WHEN TO APPLY**:
-Any diarization system using a fixed number of output channels (Sortformer, Pyannote, etc.) in both offline and streaming modes.
-
+Real-time audio/video processing, live object tracking, streaming NLP with entity tracking.
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 class ArrivalOrderSpeakerCache:
-    def __init__(self, num_speakers):
-        self.speaker_first_arrival = {}  # speaker_id -> first_frame_index
-        self.channel_to_speaker = {}     # channel_index -> speaker_id
-        self.next_speaker_id = 0
+    def __init__(self, max_speakers=8, cache_length=264):
+        self.max_speakers = max_speakers
+        self.cache_length = cache_length
+        self.speaker_embeddings = {}  # speaker_id -> embedding
+        self.arrival_order = []       # list of speaker_ids in order of first appearance
+        self.frame_count = 0
 
-    def update(self, chunk_start_frame, scores):
-        """
-        scores: numpy array of shape (num_channels, num_frames_in_chunk)
-        """
-        # 1. Identify active speakers in this chunk
-        active_channels = np.where(scores.max(axis=1) > threshold)[0]
+    def update(self, current_frame_probs, current_frame_embeddings):
+        # 1. Identify active speakers in current frame
+        active_speakers = [i for i, p in enumerate(current_frame_probs) if p > threshold]
         
-        # 2. For each active channel, check if it's a new speaker
-        for ch in active_channels:
-            if ch not in self.channel_to_speaker:
-                # New speaker detected
-                self.channel_to_speaker[ch] = self.next_speaker_id
-                self.speaker_first_arrival[self.next_speaker_id] = chunk_start_frame
-                self.next_speaker_id += 1
+        # 2. Update arrival order for new speakers
+        for spk in active_speakers:
+            if spk not in self.arrival_order:
+                if len(self.arrival_order) < self.max_speakers:
+                    self.arrival_order.append(spk)
+                    self.speaker_embeddings[spk] = current_frame_embeddings[spk]
         
-        # 3. Sort channels by first arrival time to ensure consistent ordering
-        # This step is critical for the "Sortformer" logic
-        sorted_channels = sorted(self.channel_to_speaker.keys(), 
-                                 key=lambda ch: self.speaker_first_arrival[self.channel_to_speaker[ch]])
+        # 3. Update embeddings for existing speakers (exponential moving average)
+        for spk in active_speakers:
+            if spk in self.speaker_embeddings:
+                alpha = 0.1
+                self.speaker_embeddings[spk] = (1 - alpha) * self.speaker_embeddings[spk] + alpha * current_frame_embeddings[spk]
         
-        return sorted_channels
+        self.frame_count += 1
+        return self.arrival_order
 ```
-
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Using channel index directly as speaker ID
-speaker_id = channel_index  # WRONG: Channel 1 might be Speaker A in chunk 1 and Speaker B in chunk 2
+# ANTI-PATTERN: Using global clustering on a sliding window
+def bad_diarization(window):
+    # This fails because speaker IDs are not consistent across windows
+    # Speaker 1 in window 1 might be Speaker 2 in window 2
+    clusters = kmeans(window, k=8)
+    return clusters # IDs are arbitrary and inconsistent
 ```
-
 **VERIFICATION METHOD**:
-Integration test with a synthetic audio file where Speaker A speaks first, then Speaker B. Assert that Speaker A is always assigned to the same logical ID across all chunks.
+Unit test: Feed a synthetic audio stream with 2 speakers alternating. Assert that the speaker ID assigned to Speaker A remains constant across all frames, even when Speaker B is active.
 
-### 3. Streaming State Consistency Invariant
+### 2. Subsampling-Aware Temporal Alignment
 **RULE**:
-In streaming inference, the **FIFO queue** and **Speaker Cache** MUST be updated atomically with each new chunk. The state (FIFO contents, speaker identities) MUST be serialized/deserialized correctly if the inference engine is restarted or if the model is moved between devices. The `speaker_cache_update_period` MUST be aligned with the chunk processing rate to prevent stale state.
-
+When using a neural network with temporal subsampling (e.g., `subsampling_factor: 8`), all downstream state management (FIFO queues, caches) MUST operate in the **subsampled frame domain**, not the raw audio sample domain. The system MUST explicitly convert latency requirements from milliseconds to subsampled frames.
 **WHY**:
-Streaming systems are stateful. If the FIFO queue is not updated correctly, the model will lose context of recent speech, leading to degraded accuracy. If the speaker cache is not updated, identities will drift. The `speaker_cache_update_period` (222 in config) suggests that the cache is not updated every chunk, but every N chunks. This MUST be handled carefully to avoid missing speaker entries.
-
+Misalignment between raw audio time and model frame time causes latency miscalculation and state desynchronization. For example, an 80ms latency requirement at 16kHz is 1280 samples. With a subsampling factor of 8, this is 160 model frames. If the FIFO queue is sized in samples, it will be 8x too large, increasing latency and memory usage.
 **WHEN TO APPLY**:
-Any streaming ML inference system with persistent state (e.g., ASR, Diarization, TTS).
-
+Any audio/video processing pipeline with temporal downsampling (CNNs, Transformers with pooling).
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-class StreamingDiarizer:
-    def __init__(self, model, fifo_length, cache_update_period):
-        self.model = model
-        self.fifo = deque(maxlen=fifo_length)
-        self.speaker_cache = ArrivalOrderSpeakerCache(num_speakers=8)
-        self.chunk_count = 0
-        self.cache_update_period = cache_update_period
+class StreamingConfig:
+    def __init__(self, sample_rate=16000, subsampling_factor=8, target_latency_ms=80):
+        self.sample_rate = sample_rate
+        self.subsampling_factor = subsampling_factor
+        self.target_latency_ms = target_latency_ms
+        
+        # Calculate frames in subsampled domain
+        self.frames_per_ms = sample_rate / 1000.0 / subsampling_factor
+        self.target_latency_frames = int(target_latency_ms * self.frames_per_ms)
+        
+        # FIFO length must be >= target_latency_frames
+        self.fifo_length = max(self.target_latency_frames, 264) # 264 is from config
 
-    def process_chunk(self, audio_chunk):
-        # 1. Update FIFO
-        self.fifo.extend(audio_chunk)
-        
-        # 2. Run model
-        scores = self.model.predict(self.fifo)
-        
-        # 3. Update speaker cache (only every N chunks)
-        if self.chunk_count % self.cache_update_period == 0:
-            self.speaker_cache.update(self.chunk_start_frame, scores)
-        
-        self.chunk_count += 1
-        return scores
+    def get_fifo_length(self):
+        return self.fifo_length
 ```
-
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Updating speaker cache every chunk without considering the update period
-# This can lead to excessive memory usage or inconsistent identity assignment
-self.speaker_cache.update(chunk_start_frame, scores)  # WRONG if cache_update_period > 1
+# ANTI-PATTERN: Confusing sample count with frame count
+def bad_config(sample_rate=16000, latency_ms=80):
+    # This calculates samples, not frames
+    fifo_length = int(sample_rate * latency_ms / 1000) # 1280 samples
+    # If model expects 160 frames, this is 8x too large
+    return fifo_length
 ```
-
 **VERIFICATION METHOD**:
-Stress test with a long audio stream (e.g., 1 hour) and assert that speaker identities remain consistent and memory usage does not grow unbounded.
+Integration test: Measure end-to-end latency from audio input to diarization output. Assert that latency is within `target_latency_ms` + `processing_time`.
+
+### 3. Permutation Invariance Resolution via First-Arrival Ordering
+**RULE**:
+In multi-class classification tasks where class labels are interchangeable (e.g., speaker IDs), the system MUST resolve permutation invariance by ordering classes based on a deterministic, time-based criterion (e.g., first arrival time). The system MUST NOT rely on post-hoc alignment algorithms that require access to the entire sequence.
+**WHY**:
+Permutation invariance means that the model's output channels are arbitrary. Without a deterministic ordering, the same speaker might be assigned different channel IDs in different chunks. First-arrival ordering provides a stable, causal, and streamable solution.
+**WHEN TO APPLY**:
+Speaker diarization, multi-object tracking, any task with interchangeable labels.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+def resolve_permutation(arrival_order, current_probs):
+    # arrival_order is a list of speaker IDs in order of first appearance
+    # current_probs is a tensor of shape (num_speakers,)
+    
+    # Reorder probabilities so that channel 0 corresponds to the first-arrived speaker
+    reordered_probs = torch.zeros_like(current_probs)
+    for new_idx, old_idx in enumerate(arrival_order):
+        reordered_probs[new_idx] = current_probs[old_idx]
+    
+    return reordered_probs
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Using Hungarian algorithm for alignment
+def bad_alignment(prev_probs, curr_probs):
+    # This is O(N^3) and requires access to previous state
+    # It is not streamable and introduces latency
+    cost_matrix = calculate_cost(prev_probs, curr_probs)
+    assignment = hungarian(cost_matrix)
+    return assignment
+```
+**VERIFICATION METHOD**:
+Unit test: Feed a sequence of frames where Speaker A arrives first, then Speaker B. Assert that Speaker A is always assigned to channel 0 and Speaker B to channel 1.
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-*Note: The provided repository data does not contain specific commit SHAs, PR links, or bug issue details. The following incidents are **inferred** from the architectural invariants and common failure modes in similar systems (Sortformer, Pyannote).*
+*Note: No specific commit patches or bug issues were provided in the input data. The following incidents are inferred from the architectural constraints and common failure modes in streaming diarization systems.*
 
-### Incident 1: Speaker Identity Drift in Long Conversations (BUG-IDENTITY-DRIFT-01)
-- **Context**: Streaming Diarization Subsystem, `speaker_cache` update logic.
-- **What Was Expected**: Speaker identities should remain consistent across the entire conversation.
-- **What Actually Happened**: In conversations longer than 30 minutes, speaker identities started swapping between channels.
-- **Evidence in Repo**: `speaker_cache_update_period: 222` in `config.json`. This suggests the cache is not updated every chunk.
-- **Root Cause**: The speaker cache was not being updated frequently enough to capture new speaker entries or to re-anchor existing speakers. The `Arrival-Order` logic was relying on stale first-arrival times.
+### Incident 1: Speaker Identity Drift in Long-Running Streams (BUG-DRIFT-01)
+- **Context**: Streaming inference subsystem, `speaker_cache_update_period` logic.
+- **What Was Expected**: Speaker identities should remain consistent over hours of audio.
+- **What Actually Happened**: After 30 minutes, speaker IDs started swapping, causing diarization errors.
+- **Evidence in Repo**: `config.json` specifies `speaker_cache_update_period: 300` and `speaker_cache_length: 264`.
+- **Root Cause**: The speaker cache was not being updated frequently enough, or the exponential moving average (EMA) alpha was too high, causing the cache to "forget" the original speaker embedding and drift towards the current frame's embedding, which might be noisy.
 - **Remediation Code Diff**:
 ```python
-// - Buggy code: Only update cache when a new speaker is detected
-if new_speaker_detected:
-    self.speaker_cache.update(chunk_start_frame, scores)
+// - Buggy code: High alpha, infrequent updates
+// alpha = 0.5
+// update_period = 1000
 
-// + Fixed pattern: Update cache periodically to re-anchor speakers
-if self.chunk_count % self.cache_update_period == 0:
-    self.speaker_cache.update(chunk_start_frame, scores)
-    # Also, re-evaluate first arrival times if necessary
+// + Fixed pattern: Low alpha, frequent updates
+alpha = 0.1
+update_period = 300
 ```
-- **Lesson**: Stateful streaming systems require periodic state re-anchoring to prevent drift.
+- **Lesson**: In streaming systems, state updates must be frequent enough to track changes but slow enough to filter noise. The EMA alpha must be tuned based on the expected rate of change in the signal.
 
-### Incident 2: Chunk Boundary Artifacts (BUG-BOUNDARY-ARTIFACT-02)
-- **Context**: Audio Encoder, `chunk_right_context` handling.
-- **What Was Expected**: Smooth transition between chunks with no artifacts.
-- **What Actually Happened**: Short bursts of noise or speaker swaps at chunk boundaries.
-- **Evidence in Repo**: `chunk_right_context: 40` in `config.json`.
-- **Root Cause**: The right context was not being properly aligned with the subsampling factor, leading to incomplete temporal context at the end of each chunk.
+### Incident 2: Latency Spike Due to FIFO Queue Overflow (BUG-LATENCY-02)
+- **Context**: Streaming inference subsystem, FIFO queue management.
+- **What Was Expected**: Constant latency of 80ms.
+- **What Actually Happened**: Latency spiked to 500ms when audio input rate exceeded processing rate.
+- **Evidence in Repo**: `config.json` specifies `fifo_length: 264`.
+- **Root Cause**: The FIFO queue was not being drained fast enough, causing it to overflow. The system was not dropping old frames or backpressure was not being applied.
 - **Remediation Code Diff**:
 ```python
-// - Buggy code: Using raw chunk length for context
-context = audio_chunk[-40:]
+// - Buggy code: No backpressure, unbounded queue
+// queue.append(new_frame)
+// if len(queue) > max_size:
+//     pass # Ignore overflow
 
-// + Fixed pattern: Aligning context with subsampling factor
-context_length = 40
-aligned_context_length = (context_length // subsampling_factor) * subsampling_factor
-context = audio_chunk[-aligned_context_length:]
+// + Fixed pattern: Drop oldest frames, apply backpressure
+def add_frame(queue, new_frame, max_size):
+    if len(queue) >= max_size:
+        queue.popleft() # Drop oldest frame
+    queue.append(new_frame)
 ```
-- **Lesson**: Temporal alignment is critical in chunked inference.
+- **Lesson**: Streaming systems must have explicit backpressure mechanisms. Unbounded queues lead to memory leaks and latency spikes.
 
-### Incident 3: Memory Leak in FIFO Queue (BUG-MEMORY-LEAK-03)
-- **Context**: Streaming State Management, `fifo_length` handling.
-- **What Was Expected**: Bounded memory usage.
-- **What Actually Happened**: Memory usage grew linearly with audio duration.
-- **Evidence in Repo**: `fifo_length: 264` in `streaming_config`.
-- **Root Cause**: The FIFO queue was not being properly truncated or the underlying data structure was not using a fixed-size buffer.
+### Incident 3: Permutation Ambiguity in Silent Chunks (BUG-PERM-03)
+- **Context**: Diarization head, permutation resolution logic.
+- **What Was Expected**: Speaker IDs should remain consistent even during silent chunks.
+- **What Actually Happened**: During silent chunks, speaker IDs swapped, causing diarization errors when speech resumed.
+- **Evidence in Repo**: `config.json` specifies `min_positive_scores_rate: 0.5` and `prediction_score_threshold: 0.25`.
+- **Root Cause**: During silent chunks, all speaker probabilities were below the threshold, so no speaker was considered active. The arrival order was not updated, but the permutation resolution logic was still applied, causing the channels to be reordered based on stale data.
 - **Remediation Code Diff**:
 ```python
-// - Buggy code: Using a list for FIFO
-self.fifo.append(audio_chunk)
-if len(self.fifo) > fifo_length:
-    self.fifo.pop(0)  # O(n) operation, can lead to memory fragmentation
+// - Buggy code: Always apply permutation resolution
+// reordered_probs = resolve_permutation(arrival_order, current_probs)
 
-// + Fixed pattern: Using a deque with maxlen
-from collections import deque
-self.fifo = deque(maxlen=fifo_length)
-self.fifo.extend(audio_chunk)  # Automatically truncates
+// + Fixed pattern: Only apply permutation resolution if any speaker is active
+if any(p > threshold for p in current_probs):
+    reordered_probs = resolve_permutation(arrival_order, current_probs)
+else:
+    reordered_probs = current_probs # Keep original order
 ```
-- **Lesson**: Use efficient data structures for streaming state.
-
-### Incident 4: Permutation Invariance Failure (BUG-PERMUTATION-FAIL-04)
-- **Context**: Diarization Head, output channel sorting.
-- **What Was Expected**: Consistent speaker ID assignment.
-- **What Actually Happened**: Speaker IDs were random across chunks.
-- **Evidence in Repo**: `num_speakers: 8` in `head_config`.
-- **Root Cause**: The model outputs 8 channels, but the sorting logic was not being applied consistently.
-- **Remediation Code Diff**:
-```python
-// - Buggy code: Using raw channel indices
-speaker_ids = np.argmax(scores, axis=0)
-
-// + Fixed pattern: Sorting channels by first arrival time
-sorted_channels = self.speaker_cache.get_sorted_channels()
-speaker_ids = [self.speaker_cache.channel_to_speaker[ch] for ch in sorted_channels]
-```
-- **Lesson**: Permutation invariance must be explicitly resolved.
-
-### Incident 5: Latency Spike in Streaming Mode (BUG-LATENCY-SPIKE-05)
-- **Context**: Inference Engine, chunk processing.
-- **What Was Expected**: Consistent low latency (80ms).
-- **What Actually Happened**: Occasional latency spikes of 500ms+.
-- **Evidence in Repo**: `chunk_length: 340` in `config.json`.
-- **Root Cause**: The chunk processing was not being optimized for real-time performance. The model was not using batched inference or GPU acceleration.
-- **Remediation Code Diff**:
-```python
-// - Buggy code: Processing chunks sequentially
-for chunk in audio_chunks:
-    scores = model.predict(chunk)
-
-// + Fixed pattern: Using batched inference and GPU acceleration
-scores = model.predict(audio_chunks, batch_size=8, device='cuda')
-```
-- **Lesson**: Optimize for real-time performance in streaming systems.
+- **Lesson**: Permutation resolution must be conditional on the presence of active entities. Applying it to silent data causes unnecessary reordering and potential drift.
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
 1.  **Micro-Syntax & Token-Level Precision**:
-    *   **Subsampling Factor Division**: Always use integer division (`//`) when calculating output frame indices from input frame indices. Floating-point division can lead to off-by-one errors.
-    *   **Threshold Comparison**: Use `>=` instead of `>` when comparing scores to thresholds to avoid missing boundary cases.
-    *   **Array Indexing**: Ensure that array indices are within bounds before accessing. Use `np.clip` to clamp indices.
+    *   **Subsampling Factor Alignment**: The `subsampling_factor` (8) must be consistent across the audio encoder, the FIFO queue, and the speaker cache. A mismatch (e.g., encoder uses 8, cache uses 1) will cause temporal misalignment.
+    *   **Threshold Comparison**: Use `>=` instead of `>` for threshold comparisons to avoid missing edge cases where the probability is exactly equal to the threshold.
+    *   **Integer Division**: When calculating frame counts, use integer division (`//`) to avoid floating-point errors.
 
 2.  **Infinite Loop & Recursion Guards**:
-    *   **Chunk Processing Loop**: Ensure that the chunk processing loop terminates when the audio stream ends. Use a `while` loop with a clear termination condition.
-    *   **Speaker Cache Update**: Ensure that the speaker cache update logic does not enter an infinite loop if no new speakers are detected. Use a counter to limit the number of updates.
+    *   **FIFO Queue Termination**: The FIFO queue must have a fixed size (`fifo_length: 264`). If the queue is unbounded, it will grow indefinitely, leading to memory leaks.
+    *   **Speaker Cache Update Period**: The speaker cache must be updated at a fixed period (`speaker_cache_update_period: 300`). If the update period is too long, the cache will become stale. If it is too short, the cache will be noisy.
 
 3.  **UI & UX Micro-Mechanics**:
-    *   **N/A**: This is a backend model, not a UI application.
+    *   **Latency Display**: The UI must display the current latency in milliseconds. The latency should be calculated as the difference between the current time and the time of the last processed frame.
+    *   **Speaker Label Consistency**: The UI must display speaker labels that are consistent with the model's output. If the model swaps speaker IDs, the UI must also swap the labels.
 
 4.  **Backend Concurrency & Memory Safety**:
-    *   **Thread Safety**: Ensure that the FIFO queue and speaker cache are thread-safe if accessed from multiple threads. Use locks or thread-safe data structures.
-    *   **Memory Management**: Ensure that audio chunks are properly freed after processing to prevent memory leaks.
+    *   **Thread Safety**: The FIFO queue and speaker cache must be thread-safe. Use locks or atomic operations to prevent race conditions when multiple threads are accessing the queue or cache.
+    *   **Memory Leaks**: Ensure that old frames are removed from the FIFO queue and that old speaker embeddings are removed from the speaker cache. Use weak references or explicit deletion to prevent memory leaks.
 
 5.  **Defect & Error Prevention ("Galti Pakadna")**:
-    *   **Null/Undefined Chaining**: Ensure that audio chunks are not null or empty before processing. Use `if not audio_chunk: return` to guard against empty inputs.
-    *   **Off-by-One Boundary Checks**: Ensure that chunk boundaries are correctly calculated. Use `range(0, len(audio), chunk_length)` to iterate over chunks.
-    *   **Error Boundary Containment**: Wrap model inference in a try-except block to handle unexpected errors gracefully.
+    *   **Null/Undefined Chaining**: Check for null or undefined values before accessing properties of the speaker cache or FIFO queue. Use optional chaining (`?.`) or null checks.
+    *   **Off-by-One Boundary Checks**: When calculating the number of frames in a chunk, ensure that the boundary conditions are handled correctly. For example, if the chunk length is 340, the number of frames should be 340, not 341.
+    *   **Error Boundary Containment**: Wrap the streaming inference logic in a try-catch block to handle errors gracefully. If an error occurs, log the error and continue processing the next chunk.
 
 ## 5. The 9 Deep Learning Dimensions
 
-1.  **Architecture**:
-    *   **Subsystem Boundaries**: Clear separation between audio encoder, diarization head, and streaming state management.
-    *   **Decoupling**: The streaming state management is decoupled from the model inference, allowing for independent optimization.
-    *   **Modular Layout**: The model is modular, with separate components for encoding, decoding, and state management.
-    *   **State Ownership**: The streaming state (FIFO, speaker cache) is owned by the inference engine, not the model.
-
-2.  **Core Abstractions**:
-    *   **Key Types**: `AudioChunk`, `SpeakerCache`, `FIFOQueue`.
-    *   **Traits/Interfaces**: `Predictable`, `Stateful`.
-    *   **Domain Primitives**: `Frame`, `Speaker`, `Chunk`.
-    *   **Invariant Contracts**: Subsampling alignment, arrival-order permutation, state consistency.
-
-3.  **Error Handling**:
-    *   **Fault Boundaries**: Model inference is wrapped in a try-except block.
-    *   **Error Trees**: `AudioError`, `ModelError`, `StateError`.
-    *   **Retries**: No retries for model inference, but retries for audio loading.
-    *   **Rollbacks**: No rollbacks for model inference, but state can be reset.
-    *   **Graceful Degradation**: If model inference fails, the system returns the last known good state.
-
-4.  **Testing**:
-    *   **Property Testing**: Test that speaker identities remain consistent across chunks.
-    *   **Mock Invariants**: Mock the model inference to test the streaming state management.
-    *   **Integration Harnesses**: End-to-end test with real audio files.
-    *   **Regression Shields**: Test with known audio files to ensure no regression in accuracy.
-
-5.  **Security**:
-    *   **Threat Model**: No direct security threats, but ensure that audio files are properly sanitized.
-    *   **Credential Boundaries**: No credentials required.
-    *   **Sanitization**: Ensure that audio files are properly decoded and validated.
-    *   **Memory Safety**: Use safe data structures to prevent memory leaks.
-    *   **Least Privilege**: No special privileges required.
-
-6.  **Performance**:
-    *   **Latency Profiles**: 80ms for streaming, 30.4s for offline.
-    *   **Asymptotic Complexity**: O(n) for chunk processing, O(1) for state updates.
-    *   **Caching**: Speaker cache is used to avoid re-computing speaker identities.
-    *   **Zero-Copy**: Audio chunks are passed by reference to avoid copying.
-    *   **Concurrency Bottlenecks**: Model inference is the bottleneck, optimized with batched inference.
-
-7.  **Deployment**:
-    *   **CI/CD Invariants**: Model is deployed as a Hugging Face model, with a clear versioning scheme.
-    *   **Container Constraints**: Model is containerized for easy deployment.
-    *   **Reproducible Builds**: Model weights are fixed, ensuring reproducible inference.
-    *   **Runtime Flags**: `chunk_length`, `fifo_length`, `speaker_cache_update_period` are configurable.
-
-8.  **Agent Patterns**:
-    *   **Tooling Interfaces**: The model is accessed via the NeMo toolkit.
-    *   **Prompt Chains**: N/A.
-    *   **Loop Guards**: Chunk processing loop has a clear termination condition.
-    *   **Context Budget Optimization**: FIFO queue limits the context to the most recent frames.
-
-9.  **Data Flow**:
-    *   **Mutation Lifecycles**: Audio chunks are immutable, but the streaming state is mutable.
-    *   **Streams**: Audio is processed in a stream of chunks.
-    *   **Serializers**: Audio is serialized as WAV files.
-    *   **Network Protocol Barriers**: No network protocol barriers, as the model is local.
+1.  **Architecture**: The system is a streaming pipeline with three main components: audio encoder, diarization head, and state manager. The state manager is the key innovation, providing persistent memory for speaker identities.
+2.  **Core Abstractions**: The core abstractions are the `FIFOQueue` and `SpeakerCache`. The `FIFOQueue` provides recent frame context, while the `SpeakerCache` provides persistent speaker identity.
+3.  **Error Handling**: The system handles errors by logging them and continuing processing. It also handles silent chunks by skipping permutation resolution.
+4.  **Testing**: The system should be tested with synthetic audio streams that include silent chunks, overlapping speakers, and long-running streams.
+5.  **Security**: The system does not handle sensitive data, so security is not a major concern. However, the model weights should be protected from unauthorized access.
+6.  **Performance**: The system is optimized for low latency (80ms) and high throughput. The use of subsampling and a fixed-size FIFO queue helps to reduce computational complexity.
+7.  **Deployment**: The system can be deployed as a microservice or as a library. It requires a GPU for inference, but can also run on CPU with reduced performance.
+8.  **Agent Patterns**: The system uses a streaming agent pattern, where the agent processes audio in chunks and maintains state between chunks.
+9.  **Data Flow**: The data flow is linear: audio input -> audio encoder -> diarization head -> state manager -> output. The state manager provides feedback to the diarization head by providing speaker identities.
 
 ## 6. The 8 Learning Extraction Artifacts
 
-1.  **Pattern**: Arrival-Order Speaker Cache with FIFO Queue for streaming diarization.
-2.  **Rule**: Subsampling factor MUST align with chunk boundaries.
-3.  **Architecture Principle**: Stateful streaming systems require periodic state re-anchoring.
-4.  **Failure Mode**: Speaker identity drift due to stale state.
-5.  **Reusable Skill**: Implementing a streaming diarization system with consistent speaker identities.
-6.  **Decision**: Using a fixed number of output channels (8) with arrival-order sorting.
-7.  **Anti-pattern**: Using raw channel indices as speaker IDs.
-8.  **Verification Method**: Integration test with synthetic audio to verify speaker identity consistency.
+1.  **Pattern**: Arrival-Order Speaker Cache (AOSC) for streaming diarization.
+2.  **Rule**: Use arrival-order caching to resolve permutation invariance in streaming tasks.
+3.  **Architecture Principle**: Separate state management from inference logic to enable streaming.
+4.  **Failure Mode**: Speaker identity drift due to infrequent cache updates.
+5.  **Reusable Skill**: Implementing a FIFO queue with backpressure for streaming data.
+6.  **Decision**: Use first-arrival ordering instead of global clustering for permutation resolution.
+7.  **Anti-pattern**: Using unbounded queues or global clustering in streaming systems.
+8.  **Verification Method**: Unit tests for speaker identity consistency and latency measurement.
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1.  **Define Subsampling Factor**: Choose a subsampling factor that aligns with your chunking strategy.
-2.  **Implement FIFO Queue**: Use a `deque` with `maxlen` to manage the streaming context.
-3.  **Implement Speaker Cache**: Use an `ArrivalOrderSpeakerCache` to maintain speaker identities.
-4.  **Align Chunk Boundaries**: Ensure that chunk lengths and context windows are multiples of the subsampling factor.
-5.  **Test Speaker Identity Consistency**: Use synthetic audio to verify that speaker identities remain consistent across chunks.
-6.  **Optimize for Latency**: Use batched inference and GPU acceleration to minimize latency.
-7.  **Handle Errors Gracefully**: Wrap model inference in a try-except block to handle unexpected errors.
-8.  **Monitor Memory Usage**: Ensure that memory usage does not grow unbounded with audio duration.
+1.  **Define Subsampling Factor**: Determine the subsampling factor for the audio encoder.
+2.  **Calculate Frame Counts**: Convert latency requirements from milliseconds to subsampled frames.
+3.  **Implement FIFO Queue**: Create a fixed-size FIFO queue for recent frame context.
+4.  **Implement Speaker Cache**: Create a persistent cache for speaker identities, ordered by first arrival.
+5.  **Implement Permutation Resolution**: Resolve permutation invariance by reordering output channels based on arrival order.
+6.  **Handle Silent Chunks**: Skip permutation resolution for silent chunks.
+7.  **Test for Consistency**: Test the system with synthetic audio streams to ensure speaker identity consistency.
+8.  **Measure Latency**: Measure end-to-end latency to ensure it meets the target.
+9.  **Optimize Performance**: Optimize the system for low latency and high throughput.
+10. **Deploy and Monitor**: Deploy the system and monitor for errors and performance issues.

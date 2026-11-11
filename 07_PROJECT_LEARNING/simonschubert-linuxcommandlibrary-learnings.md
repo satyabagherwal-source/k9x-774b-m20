@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/simonschubert-linuxcommandlibrary-learnings.md`  
 > **Source**: github ([https://github.com/SimonSchubert/LinuxCommandLibrary](https://github.com/SimonSchubert/LinuxCommandLibrary))  
-> **Source Version**: `564bd77c`  
+> **Source Version**: `bf7f6dc2`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T00:48:46.559Z  
+> **Timestamp**: 2026-11-08T01:17:53.280Z  
 > **Learning ID**: `learn-github-simonschubert-linuxcommandlibrary`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/simonschubert-linuxcommandlibrary-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/SimonSchubert/LinuxCommandLibrary](https://github.com/SimonSchubert/LinuxCommandLibrary))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T00:48:46.228Z  
+> **Harvest Timestamp**: 2026-11-08T01:17:41.449Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 2M+ app downloads, 500k+ monthly website visitors, Linux basics, tips and formatted man pages
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2093 stars
+- **Stars / Engagement**: 2097 stars
 
 ---
 
@@ -826,17 +826,11 @@ private fun showCommandNonInteractive(terminal: Terminal, commandName: String) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #104** (2026-04-28): **Upgrading to 3.7.8 destroyed all bookmarks**
-  *Symptoms*: ### Type  GUI  ### Platform  Android  ### Description  Upgrading to 3.7.8 destroyed all bookmarks  (i probably had about 40)   ### Steps to reproduce  Bookmark 40 commands, then upgrade to 3.7.8
-  **Post-Mortem & Fix Analysis**:
-  > Apologies, I will look into this and hope I will be able to restore you bookmarks  It's something I usually keep an eye. I dont know how this could have happened yet
-  > ✅ next release will have a migration and your bookmarks should get restored and merged with your new ones(if you have any) https://github.com/SimonSchubert/LinuxCommandLibrary/commit/f24b87753fdaddf375fc0ae2bd4c92ab3c702233
+- **Issue #131** (2026-11-07): **When switching to the search tab, the page for 2048 is on**
+  *Symptoms*: ### Type  GUI  ### Platform  Android  ### Description  When I search for a command, 2048's page is always on, which is annoying since I have to press the back button everytime I open the app to search for something. I'm using Android 16, CalyxOS 7.2.2.0, with 280 override density (smallest display size possible without using Developer Options)   ### Steps to reproduce  Open the app Then go to Commands 2048's page will be there by default  <img width="720" height="1600" alt="Screenshot showing the screen after pressing on the search button" src="https://github.com/user-attachments/assets/4c426ce2-24e9-4d3b-88a2-c6d6e8b147a9" />
 
-- **Issue #96** (2026-03-23): **Terminal games/pipes/nbpipes | Empty page**
-  *Symptoms*: ### Type  GUI  ### Platform  Android  ### Description  App version: 3.7.0 Android version: 15  At least since the version above, the page for Terminal games/pipes/nbpipes is empty.  It might be a misplacement since the actual program seems to serve a different purpose than being a game as described on the website :  https://linuxcommandlibrary.com/man/nbpipes  As a side note I thank all the devs for the awesome work done on this app.  ### Steps to reproduce  Open the app and navigate to Terminal games/pipes/nbpipes
-  **Post-Mortem & Fix Analysis**:
-  > Looking into this thanks for the report  Reproduceable: <img width="1080" height="2220" alt="Image" src="https://github.com/user-attachments/assets/f251c43b-1f39-4bc2-bcd1-76cd878cd4b4" />
-  > Fixed ✅ + terminal game previews  will go live with the release later today  <img width="1080" height="2220" alt="Image" src="https://github.com/user-attachments/assets/ab4052bb-6577-4599-b792-6fd9bfef3ef2" /> <img width="1080" height="2220" alt="Image" src="https://github.com/user-attachments/assets/addc9495-54d5-4402-b9a8-ab1fff638643" />
+- **Issue #129** (2026-11-07): **Misnomer: "Binary References" (wrt file permissions)**
+  *Symptoms*: ### Type  GUI  ### Platform  Web  ### Description  Hello,  First, this is an awesome project. Nice work!  I had to raise an issue due to a point of pedantry: "Binary References" is a misnomer when referring to file permissions, e.g here: https://linuxcommandlibrary.com/tips#89400787  The numeric permissions are octal, not binary. Generally these would be called "octal permissions" or "octal notation" (e.g [here](https://en.wikipedia.org/wiki/File-system_permissions#Octal_notation)). I've never heard them called "binary" or "binary references" in >25 years using *nix operating systems. I did a couple of web searches to check whether this was a common thing I wasn't aware of, and I don't see many other places calling them that (and lots of the ones that do are mirrors of your work)  I *do* totally see where the "binary" label comes from - this is an octal representation of 3 binary bits representing r/w/x permissions. But the representation '7' for `rwx` is octal, not binary - binary would be `111`.  I feel pretty strongly that all references to "binary" permissions should be changed to "octal", and "binary references" should be changed to either "octal notation" or "octal permissions". Referring to them as "binary" is teaching people the wrong thing. A note saying that these octal values correspond to 3 binary bits might be a good idea, but otoh that might be too longwinded for this project.  I'd be happy to make this change and submit a PR if that's helpful. I considered just
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -853,435 +847,153 @@ private fun showCommandNonInteractive(terminal: Terminal, commandName: String) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e017714d` (2026-11-04)
-**Commit Message**: Fix text selection crashes in lazy lists
+### Incident Patch 1: `bf7f6dc2` (2026-11-07)
+**Commit Message**: Auto-fix: lintFix and refresh Paparazzi screenshots [skip ci]
 
-Wrap each lazy item in its own SelectionContainer instead of one
-container around the whole LazyColumn, which crashed in SelectionManager
-when items were disposed or reused during a selection.
 
-**File**: `composeApp/src/commonMain/kotlin/com/linuxcommandlibrary/app/ui/screens/basicgroups/BasicEditorScreen.kt` (modified, +16/-16)
-```diff
-@@ -42,24 +42,24 @@ fun BasicEditorContent(
-     onNavigate: (NavEvent) -> Unit,
- ) {
-     val gridState = rememberLazyStaggeredGridState()
--    SelectionContainer {
--        WithScrollbar(
-+    WithScrollbar(
-+        state = gridState,
-+        modifier = Modifier
-+            .background(MaterialTheme.colorScheme.background)
-+            .fillMaxSize(),
-+    ) {
-+        LazyVerticalStaggeredGrid(
-             state = gridState,
--            modifier = Modifier
--                .background(MaterialTheme.colorScheme.background)
--                .fillMaxSize(),
-+            modifier = Modifier.fillMaxSize(),
-+            columns = StaggeredGridCells.Adaptive(minSize = 300.dp),
-+            contentPadding = PaddingValues(horizontal = 4.dp, vertical = 4.dp),
-         ) {
--            LazyVerticalStaggeredGrid(
--                state = gridState,
--                modifier = Modifier.fillMaxSize(),
--                columns = StaggeredGridCells.Adaptive(minSize = 300.dp),
--                contentPadding = PaddingValues(horizontal = 4.dp, vertical = 4.dp),
--            ) {
--                items(
--                    items = groups,
--                    key = { it.id },
--                    contentType = { "editor_group_item" },
--                ) { group ->
-+            items(
-+                items = groups,
-+                key = { it.id },
-+                contentType = { "editor_group_item" },
-+            ) { group ->
-+                SelectionContainer {
-                     RichContentCard(
-                         title = group.description,
-                         sections = group.sections,
-```
-
-**File**: `composeApp/src/commonMain/kotlin/com/linuxcommandlibrary/app/ui/screens/basicgroups/BasicGroupsScreen.kt` (modified, +14/-14)
-```diff
-@@ -78,22 +78,22 @@ fun BasicGroupsContent(
-     toggleCollapse: (Long) -> Unit,
-     onNavigate: (NavEvent) -> Unit,
- ) {
--    SelectionContainer {
--        WithScrollbar(
-+    WithScrollbar(
-+        state = listState,
-+        modifier = Modifier
-+            .fillMaxSize()
-+            .background(MaterialTheme.colorScheme.background),
-+    ) {
-+        LazyColumn(
-             state = listState,
--            modifier = Modifier
--                .fillMaxSize()
--                .background(MaterialTheme.colorScheme.background),
-+            modifier = Modifier.fillMaxSize(),
-         ) {
--            LazyColumn(
--                state = listState,
--                modifier = Modifier.fillMaxSize(),
--            ) {
--                items(
--                    items = uiState.basicGroups,
--                    key = { it.id },
--                    contentType = { "basic_group_item" },
--                ) { basicGroup ->
-+            items(
-+                items = uiState.basicGroups,
-+                key = { it.id },
-+                contentType = { "basic_group_item" },
-+            ) { basicGroup ->
-+                SelectionContainer {
-                     BasicGroupColumn(
-                         basicGroup = basicGroup,
-                         categoryTitle = uiState.categoryTitle,
-```
-
-**File**: `composeApp/src/commonMain/kotlin/com/linuxcommandlibrary/app/ui/screens/commanddetail/CommandDetailScreen.kt` (modified, +42/-38)
-```diff
-@@ -182,49 +182,53 @@ fun CommandDetailContent(
-         }
-     }
- 
--    SelectionContainer {
--        WithScrollbar(
-+    WithScrollbar(
-+        state = listState,
-+        modifier = Modifier
-+            .background(MaterialTheme.colorScheme.background)
-+            .fillMaxSize(),
-+    ) {
-+        LazyColumn(
-             state = listState,
-             modifier = Modifier
--                .background(MaterialTheme.colorScheme.background)
--                .fillMaxSize(),
-+                .fillMaxSize()
-+                .onGloballyPositioned { rootCoords = it },
-         ) {
--            LazyColumn(
--                state = listState,
--                modifier = Modifier
--                    .fillMaxSize()
--                    .onGloballyPositioned { rootCoords = it },
--            ) {
--                itemsIndexed(
--                    items = uiState.sections,
--                    key = { index, _ -> index },
--                    contentType = { _, _ -> "command_section_item" },
--                ) { sectionIndex, section ->
--                    val highlights = remember(matchIndex, sectionIndex, activeMatch) {
--                        matchIndex.elementHighlightsFor(
--                            sectionIndex = sectionIndex,
--                            activeMatch = activeMatch,
--                            color = highlightColor,
--                            activeColor = activeHighlightColor,
--                            onActiveColor = onActiveHighlightColor,
-+            itemsIndexed(
-+                items = uiState.sections,
-+                key = { index, _ -> index },
-+                contentType = { _, _ -> "command_section_item" },
-+            ) { sectionIndex, section ->
-+                val highlights = remember(matchIndex, sectionIndex, activeMatch) {
-+                    matchIndex.elementHighlightsFor(
-+                        sectionIndex = sectionIndex,
-+                        activeMatch = activeMatch,
-+                        color = highlightColor,
-+                        activeColor = activeHighlightColor,
-+                        onActiveColor = onActiveHighlightColor,
-+                    )
-+                }
-+                // Per-item container: one spanning the whole LazyColumn crashed in
-+                // SelectionManager once selected items were recycled (Play vitals, v175).
-+                SelectionContainer {
-+                    Column {
-+                        CommandSectionColumn(
-+                            section = section,
-+                            // While searching everything is forced open so no hit can hide inside a
-+                            // collapsed section. The user's own expand state is left untouched
-+                            // underneath and comes back when the query is cleared.
-+                            isExpanded = isSearching || (uiState.expandedSectionsMap[section.id] ?: false),
-+                            seeAlsoCommands = uiState.seeAlsoCommands,
-+                            resources = uiState.resources,
-+                            installEntries = uiState.installEntries,
-+                            onToggleExpanded = onToggleExpanded,
-+                            onNavigate = onNavigate,
-+                            highlights = highlights,
-+                            onElementPositioned = { elementIndex, coords ->
-+                                elementCoords[ElementPosKey(sectionIndex, elementIndex)] = coords
-+                            },
-                         )
-                     }
--                    CommandSectionColumn(
--                        section = section,
--                        // While searching everything is forced open so no hit can hide inside a
--                        // collapsed section. The user's own expand state is left untouched
--                        // underneath and comes back when the query is cleared.
--                        isExpanded = isSearching || (uiState.expandedSectionsMap[section.id] ?: false),
--                        seeAlsoCommands = uiState.seeAlsoCommands,
--                        resources = uiState.resources,
--                        installEntries = uiState.installEntries,
--                        onToggleExpanded = onToggleExpanded,
--                        onNavigate = onNavigate,
--                        highlights = highlights,
--                        onElementPositioned = { elementIndex, coords ->
--                            elementCoords[ElementPosKey(sectionIndex, elementIndex)] = coords
--                        },
--                    )
-                 }
-             }
-         }
-```
-
-**File**: `composeApp/src/commonMain/kotlin/com/linuxcommandlibrary/app/ui/screens/tips/TipsScreen.kt` (modified, +16/-16)
-```diff
-@@ -39,24 +39,24 @@ fun TipsContent(
-     onNavigate: (NavEvent) -> Unit,
- ) {
-     val gridState = rememberLazyStaggeredGridState()
--    SelectionContainer {
--        WithScrollbar(
-+    WithScrollbar(
-+        state = gridState,
-+        modifier = Modifier
-+            .background(MaterialTheme.colorScheme.background)
-+            .fillMaxSize(),
-+    ) {
-+        LazyVerticalStaggeredGrid(
-             state = gridState,
--            modifier = Modifier
--                .background(MaterialTheme.colorScheme.background)
--                .fillMaxSize(),
-+            modifier = Modifier.fillMaxSize(),
-+            columns = StaggeredGridCells.Adaptive(minSize = 300.dp),
-+            contentPadding = PaddingValues(horizontal = 4.dp, vertical = 4.dp),
-         ) {
--            LazyVerticalStaggeredGrid(
--                state = gridState,
--                modifier = Modifier.fillMaxSize(),
--                columns = StaggeredGridCells.Adaptive(minSize = 300.dp),
--                contentPadding = PaddingValues(horizontal = 4.dp, vertical = 4.dp),
--            ) {
--                items(
--                    items = tips,
--                    key = { it.id },
--                    contentType = { "tip_item" },
--                ) { tip ->
-+            items(
-+                items = tips,
-+                key = { it.id },
-+                contentType = { "tip_item" },
-+            ) { tip ->
-+                SelectionContainer {
-                     RichContentCard(
-                         title = tip.title,
-                         sections = tip.sections,
-```
 
 ---
 
-### Incident Patch 2: `50dd990b` (2026-11-04)
-**Commit Message**: Fix inline formatting in command pages and add psd/cdemu install overrides
+### Incident Patch 2: `54353931` (2026-11-07)
+**Commit Message**: Auto-fix: lintFix and refresh Paparazzi screenshots [skip ci]
 
-**File**: `assets/commands/esp32sim-p4.md` (modified, +4/-4)
-```diff
-@@ -57,14 +57,14 @@ Flags are the same as **esp32sim**, plus the P4-only flags below. Defaults that
- > Commands and data take bus time at the slot's clock and width. Default is instant. With **--coproc**, the SDIO link is timed too.
- 
- **--usb-host** _file_
--> High-speed USB-OTG host. Runs _file_ one command per line from power-up, then continues until **--max-seconds**. A line starting with `?` logs a failure and continues; any other failure stops the file.
-+> High-speed USB-OTG host. Runs _file_ one command per line from power-up, then continues until **--max-seconds**. A line starting with **?** logs a failure and continues; any other failure stops the file.
- 
- **--coproc** _c6:key=value,..._
- > ESP32-C6 on SDIO slot 1, lock-stepped with the P4. **app** is required. **--wifi** and **--net** then use the C6 radio. Native only; the browser build has no co-processor.
- 
- # DESCRIPTION
- 
--**esp32sim-p4** is a fourth alias binary from the **esp32sim** crate (`cli/src/bin/esp32sim-p4.rs`). It calls the same CLI with default chip **p4**: two RISC-V **RV32IMAFC** cores (hart id is the core index), silicon **rev before 3**, CLIC interrupts, and the P4 memory map. UART, USB, timers, GPIO, SPI flash, and the SDMMC host are modelled. The port is a draft. Boards in the table are console-only.
-+**esp32sim-p4** is a fourth alias binary from the **esp32sim** crate (**cli/src/bin/esp32sim-p4.rs**). It calls the same CLI with default chip **p4**: two RISC-V **RV32IMAFC** cores (hart id is the core index), silicon **rev before 3**, CLIC interrupts, and the P4 memory map. UART, USB, timers, GPIO, SPI flash, and the SDMMC host are modelled. The port is a draft. Boards in the table are console-only.
- 
- It boots the real P4 mask ROM, second-stage bootloader, and an unmodified application image built for rev before 3. An image built for rev 3 or later is refused. The ROM file searched like the other chips is:
- 
-@@ -74,9 +74,9 @@ esp32p4_rev0_rom.elf
- 
- That ELF is ECO0. IDF images for v1.x boards link against its jump table; the first console lines are ECO0's, not the board's.
- 
--Wi-Fi is not on the P4 die here. **--coproc** runs an ESP32-C6 slave (ESP-Hosted wiring: CLK 18, CMD 19, D0–D3 14–17, EN on GPIO 54) in the same process. Both consoles share stdout in slice order; the C6 lines are prefixed with `[c6] `. **--max-seconds** rounds up to a whole slice. **--max-insns** does not apply to that co-sim.
-+Wi-Fi is not on the P4 die here. **--coproc** runs an ESP32-C6 slave (ESP-Hosted wiring: CLK 18, CMD 19, D0–D3 14–17, EN on GPIO 54) in the same process. Both consoles share stdout in slice order; the C6 lines are prefixed with **[c6]**. **--max-seconds** rounds up to a whole slice. **--max-insns** does not apply to that co-sim.
- 
--**--usb-host** speaks the firmware's USB device from a text script: attach, mass-storage reads and writes, FAT files, UART injection, and fault injection. What each command did is logged on stderr as `[usb-host]`.
-+**--usb-host** speaks the firmware's USB device from a text script: attach, mass-storage reads and writes, FAT files, UART injection, and fault injection. What each command did is logged on stderr as **[usb-host]**.
- 
- # CAVEATS
- 
-```
 
-**File**: `assets/commands/nanomuse-browser.md` (modified, +6/-3)
+
+---
+
+### Incident Patch 3: `8a21cc1d` (2026-11-07)
+**Commit Message**: Merge pull request #133 from mvanhorn/fix/131-commands-tab-default-detail
+
+Stop the Commands tab from opening the first command
+
+**File**: `android/src/androidTest/java/com/inspiredandroid/linuxcommandbibliotheca/ComposeDeeplinkTests.kt` (modified, +44/-0)
 ```diff
-@@ -93,20 +93,23 @@ POST a body, or switch the **profile**, then close
- nanomuse.bridge.cli:browser_main
- ```
+@@ -3,12 +3,26 @@ package com.inspiredandroid.linuxcommandbibliotheca
+ import android.content.Context
+ import android.content.Intent
+ import android.net.Uri
++import androidx.activity.compose.setContent
++import androidx.compose.runtime.CompositionLocalProvider
++import androidx.compose.runtime.remember
++import androidx.compose.ui.platform.LocalDensity
++import androidx.compose.ui.platform.LocalWindowInfo
++import androidx.compose.ui.platform.WindowInfo
++import androidx.compose.ui.test.assertCountEquals
++import androidx.compose.ui.test.assertIsDisplayed
+ import androidx.compose.ui.test.assertTextEquals
+ import androidx.compose.ui.test.junit4.createAndroidComposeRule
++import androidx.compose.ui.test.onAllNodesWithContentDescription
++import androidx.compose.ui.test.onAllNodesWithText
+ import androidx.compose.ui.test.onNodeWithContentDescription
++import androidx.compose.ui.test.onNodeWithText
+ import androidx.compose.ui.test.performClick
++import androidx.compose.ui.unit.IntSize
++import androidx.compose.ui.unit.dp
+ import androidx.test.core.app.ApplicationProvider
+ import androidx.test.ext.junit.runners.AndroidJUnit4
++import com.linuxcommandlibrary.app.App
+ import org.junit.Before
+ import org.junit.Rule
+ import org.junit.Test
+@@ -77,6 +91,36 @@ class ComposeDeeplinkTests {
+             .assertTextEquals("Commands")
+     }
  
--While **nanomuse serve** runs an agent command, this program posts one JSON request to `/api/bridge/browser` and prints the answer. The action name and its arguments are the JSON body. It uses only the Python standard library.
-+While **nanomuse serve** runs an agent command, this program posts one JSON request to **/api/bridge/browser** and prints the answer. The action name and its arguments are the JSON body. It uses only the Python standard library.
- 
- The bridge URL and token are supplied by the server for that command. The two variable names, which must both be set:
- 
- ```
- NANOMUSE_BRIDGE
-+```
++    @Test
++    fun testCommandListDoesNotSelectFirstCommandOnExpandedLayout() {
++        // Pretend the window is tablet sized so the two-pane list/detail layout is used.
++        composeTestRule.runOnUiThread {
++            composeTestRule.activity.setContent {
++                val windowInfo = LocalWindowInfo.current
++                val density = LocalDensity.current
++                val expandedWindowInfo = remember(windowInfo, density) {
++                    object : WindowInfo by windowInfo {
++                        override val containerSize: IntSize
++                            get() = with(density) { IntSize(1280.dp.roundToPx(), 800.dp.roundToPx()) }
++                    }
++                }
++                CompositionLocalProvider(LocalWindowInfo provides expandedWindowInfo) {
++                    App(initialDeeplink = "https://linuxcommandlibrary.com/")
++                }
++            }
++        }
 +
-+```
- NANOMUSE_BRIDGE_TOKEN
- ```
- 
--A text success prints the `output` field. Image paths are printed as `[image]` lines. Errors go to stderr.
-+A text success prints the **output** field. Image paths are printed as **[image]** lines. Errors go to stderr.
- 
- # CAVEATS
- 
--Outside an agent command from **nanomuse serve**, the bridge variables are unset and the program exits **2**. A bridge error exits **1**. **--json** prints the object either way and exits **1** when `ok` is false.
-+Outside an agent command from **nanomuse serve**, the bridge variables are unset and the program exits **2**. A bridge error exits **1**. **--json** prints the object either way and exits **1** when **ok** is false.
- 
- The request timeout is **600** seconds. This drives the in-app browser the user can see; it is not a separate Playwright process.
- 
-```
-
-**File**: `assets/commands/nanomuse-device.md` (modified, +3/-3)
-```diff
-@@ -36,13 +36,13 @@ _capability_
- > **clipboard**, **calendar**, **alarm**, **timer**, **contacts**, **location**, **notify**, **photo**, or **list**. **list** with no action prints one capability per line.
- 
- _action_
--> **read**, **write**, **list**, **create**, **set**, **search**, **pick**, and similar. Omit it for **notify**, **location**, and **calendars**. If this word contains `=`, it is treated as a _key=value_ and there is no action.
-+> **read**, **write**, **list**, **create**, **set**, **search**, **pick**, and similar. Omit it for **notify**, **location**, and **calendars**. If this word contains an equals sign, it is treated as a _key=value_ and there is no action.
- 
- _key=value_
- > Arguments for that capability. A value that is JSON (a number, **true**, **false**, or an array) is parsed; anything else stays text. A hyphen in a name is normalized before the request.
- 
- **--json**
--> Print the raw result object. Exit **0** when `ok` is true, **1** otherwise.
-+> Print the raw result object. Exit **0** when **ok** is true, **1** otherwise.
- 
- # DESCRIPTION
- 
-@@ -66,7 +66,7 @@ Outside that agent command the bridge variables are unset and the program exits
- 
- # CAVEATS
- 
--This is not a standalone phone client. With no phone connected, **list** prints that and exits **1**. A missing or refused bridge (HTTP error, or the server not reachable) is an error result, exit **1**, unless **--json** is set, which still exits **1** when `ok` is false.
-+This is not a standalone phone client. With no phone connected, **list** prints that and exits **1**. A missing or refused bridge (HTTP error, or the server not reachable) is an error result, exit **1**, unless **--json** is set, which still exits **1** when **ok** is false.
- 
- The request timeout is **600** seconds. The token lasts for that agent command plus a short grace period, then the server forgets it.
- 
-```
-
-**File**: `assets/commands/nanomuse-open.md` (modified, +6/-3)
-```diff
-@@ -22,7 +22,7 @@ _url_
- > Page to open. This is the user's browser in the app (the phone's browser for the root filesystem), for something they have to do themselves.
- 
- **--json**
--> Print the raw result object. Exit **0** when `ok` is true, **1** otherwise.
-+> Print the raw result object. Exit **0** when **ok** is true, **1** otherwise.
- 
- # DESCRIPTION
- 
-@@ -32,16 +32,19 @@ _url_
- nanomuse.bridge.cli:open_main
- ```
- 
--While **nanomuse serve** runs an agent command, it posts `{"url": ...}` to `/api/bridge/open` and prints the answer. It uses only the Python standard library.
-+While **nanomuse serve** runs an agent command, it posts a JSON object whose only field is the URL to **/api/bridge/open** and prints the answer. It uses only the Python standard library.
- 
- The server sets the bridge URL and a one-call token for that command. Both must be present:
- 
- ```
- NANOMUSE_BRIDGE
-+```
++        // Wait for the command list to load before checking that nothing got selected.
++        composeTestRule.waitUntil(timeoutMillis = 10_000) {
++            composeTestRule.onAllNodesWithText("2048").fetchSemanticsNodes().isNotEmpty()
++        }
++        composeTestRule.waitForIdle()
 +
-+```
- NANOMUSE_BRIDGE_TOKEN
- ```
- 
--The request is sent with header `X-Nanomuse-Bridge` and a **600** second timeout. A text success prints the `output` field.
-+The request is sent with header **X-Nanomuse-Bridge** and a **600** second timeout. A text success prints the **output** field.
- 
- # CAVEATS
- 
++        composeTestRule.onNodeWithText("Select a command").assertIsDisplayed()
++        composeTestRule.onAllNodesWithContentDescription("Search in page")
++            .assertCountEquals(0)
++    }
++
+     @Test
+     fun testCommandDetail() {
+         openUrl("https://linuxcommandlibrary.com/man/2048")
 ```
 
-**File**: `assets/commands/treg-worker.md` (modified, +1/-1)
+**File**: `composeApp/src/commonMain/kotlin/com/linuxcommandlibrary/app/LinuxNavGraph.kt` (modified, +0/-1)
 ```diff
-@@ -101,7 +101,7 @@ Fold new ledger rows into daily **spend**
- 
- # DESCRIPTION
- 
--**treg-worker** is the server console script of the Treg registry (`treg.worker:main` in the **tools-registry** package). **treg** is the member-facing client. This binary is the scheduled maintainer: capacity, overflow routes, deferred-task settlement, hub checks, and the read models behind Arena, the catalog, showcase, spend, and the public site.
-+**treg-worker** is the server console script of the Treg registry (**treg.worker:main** in the **tools-registry** package). **treg** is the member-facing client. This binary is the scheduled maintainer: capacity, overflow routes, deferred-task settlement, hub checks, and the read models behind Arena, the catalog, showcase, spend, and the public site.
- 
- It expects the registry server's environment (database and platform keys) and is what upstream runs from cron. It is not part of the request path. Each analytics command is a bounded pass over the audit or ledger table; the web process reads only what these jobs published. A pass that stops on its time or row cap leaves a cursor for the next run.
- 
+@@ -84,7 +84,6 @@ private fun CommandsTab(state: LinuxNavState, withTabStackOverlay: Boolean) {
+             onNavigate = state::onNavigate,
+             stack = commandsStack,
+             onPopStack = { state.popStack(RouteKey.Commands) },
+-            isExpanded = !withTabStackOverlay,
+         )
+         if (withTabStackOverlay) {
+             TabStackTop(
 ```
 
-**File**: `scripts/fetch-package-installs.py` (modified, +24/-0)
+**File**: `composeApp/src/commonMain/kotlin/com/linuxcommandlibrary/app/ui/screens/commands/CommandsPaneScreen.kt` (modified, +0/-16)
 ```diff
-@@ -86,6 +86,10 @@
-     "tte": ["terminaltexteffects"],
-     "vp": ["vite-plus"],
-     "vp-env": ["vite-plus"],
-+    # psd: binary name; distro package is profile-sync-daemon (Debian Contents misses /usr/bin/psd)
-+    "psd": ["profile-sync-daemon"],
-+    # cdemu: binary name; package is cdemu-client (Debian Contents misses arch:all /usr/bin/cdemu)
-+    "cdemu": ["cdemu-client"],
- }
+@@ -36,7 +36,6 @@ import com.linuxcommandlibrary.app.ui.screens.commandlist.CommandListViewModel
+ import kotlinx.collections.immutable.ImmutableList
+ import kotlinx.collections.immutable.ImmutableSet
+ import kotlinx.coroutines.CoroutineScope
+-import kotlinx.coroutines.flow.first
+ import kotlinx.coroutines.launch
+ import org.koin.compose.koinInject
  
- # Full install maps that replace resolver output (known collisions / enrichments).
-@@ -161,6 +165,26 @@
-     "kcc-c2e": {"aur": "kcc", "nix": "kcc"},
-     "kcc-c2p": {"aur": "kcc", "nix": "kcc"},
-     "alembic": {"apk": "py3-alembic", "nix": "python3Packages.alembic"},
-+    # psd: command is psd; package is profile-sync-daemon. Debian Contents-amd64
-+    # omits /usr/bin/psd (arch:all); Fedora repodata snapshot also missed it.
-+    # Verified: packages.debian.org filelist, Fedora pkgs page, Arch extra, openSUSE, nixpkgs.
-+    "psd": {
-+        "apt": "profile-sync-daemon",
-+        "dnf": "profile-sync-daemon",
-+        "pacman": "profile-sync-daemon",
-+        "zypper": "profile-sync-daemon",
-+        "nix": "profile-sync-daemon",
-+    },
-+    # cdemu: command is cdemu; package is cdemu-client. Debian Contents-amd64
-+    # omits /usr/bin/cdemu (arch:all). Fedora default repos have no package
-+    # (COPR rok/cdemu only). Verified: packages.debian.org, Arch extra,
-+    # openSUSE, nixpkgs. No brew/apk hit.
-+    "cdemu": {
-+        "apt": "cdemu-client",
-+        "pacman": "cdemu-client",
-+        "zypper": "cdemu-client",
-+        "nix": "cdemu-client",
-+    },
-     # backintime: CLI binary is in backintime-common on Debian/Fedora (arch:all, missed by Contents-amd64)
-     "backintime": {
-         "apt": "backintime-common",
+@@ -51,7 +50,6 @@ internal fun CommandsPaneScreen(
+     onNavigate: (NavEvent) -> Unit,
+     stack: SnapshotStateList<TabStackEntry>,
+     onPopStack: () -> Unit,
+-    isExpanded: Boolean,
+ ) {
+     val listViewModel: CommandListViewModel = koinInject()
+     val commands by listViewModel.commands.collectAsState()
+@@ -63,20 +61,6 @@ internal fun CommandsPaneScreen(
+         onSelectionConsumed()
+     }
+ 
+-    // Two-pane layouts: pre-select the first command once data loads so the detail
+-    // pane shows real content instead of an empty placeholder. Compact (single-pane)
+-    // skips this — auto-pushing to detail on launch would be jarring.
+-    LaunchedEffect(isExpanded) {
+-        if (!isExpanded) return@LaunchedEffect
+-        val list = listViewModel.commands.first { it.isNotEmpty() }
+-        if (navigator.currentDestination?.contentKey == null &&
+-            stack.isEmpty() &&
+-            pendingSelection == null
+-        ) {
+-            navigator.navigateTo(ListDetailPaneScaffoldRole.Detail, list.first().name)
+-        }
+-    }
+-
+     // Hoisted so the LazyColumn keeps its scroll position across AnimatedPane's
+     // exit/enter cycle. Without hoisting, the pane content's nested rememberSaveable was
+     // intermittently coerced to 0 on re-mount because the bookmark-driven sort re-emits
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #135** (2026-11-07): Correct octal permission terminology (@mvanhorn)
+- **PR #134** (2026-11-07): appman - Revise AppImages and portable programs count in documentation (@hotlittlewhitedog)
+- **PR #133** (2026-11-07): Stop the Commands tab from opening the first command (@mvanhorn)
+- **PR #127** (2026-11-07): mcptoon: replace the unpublished @modelcontextprotocol/server-fetch example (@activeing123)
 - **PR #122** (2026-08-26): docs: fix typo quering -> querying (@vaibhav8a)
 - **PR #120** (closed): Bump json from 2.20.0 to 2.21.2 (@dependabot[bot])
-- **PR #112** (closed): Bump faraday from 1.10.5 to 1.10.6 (@dependabot[bot])
-- **PR #103** (2026-04-28): TMUX: More ctrl + b prefix keys, separated by command type (@Hawkhobo)
-- **PR #102** (2026-04-23): refined 2 `find` commands at the one-liners (@DJCrashdummy)
-- **PR #93** (2026-02-11): Complete vim keys in CLI (@jneidel)
 
 ---
 
@@ -1301,58 +1013,51 @@ when items were disposed or reused during a selection.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. text selection crashes in lazy lists
+## X. Merge pull request #133 from mvanhorn/fix/131-commands-tab-default-detail
 
 **RULE**:
-When implementing operations in `composeApp/src/commonMain/kotlin/com/linuxcommandlibrary/app/ui/screens/basicgroups/BasicEditorScreen.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in SimonSchubert/LinuxCommandLibrary. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `android/src/androidTest/java/com/inspiredandroid/linuxcommandbibliotheca/ComposeDeeplinkTests.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in SimonSchubert/LinuxCommandLibrary. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e017714d`: text selection crashes in lazy lists. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8a21cc1d`: Merge pull request #133 from mvanhorn/fix/131-commands-tab-default-detail. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `composeApp/src/commonMain/kotlin/com/linuxcommandlibrary/app/ui/screens/basicgroups/BasicEditorScreen.kt`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `android/src/androidTest/java/com/inspiredandroid/linuxcommandbibliotheca/ComposeDeeplinkTests.kt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-    WithScrollbar(
-        state = gridState,
-        modifier = Modifier
-            .background(MaterialTheme.colorScheme.background)
-            .fillMaxSize(),
-    ) {
-        LazyVerticalStaggeredGrid(
-            modifier = Modifier.fillMaxSize(),
-            columns = StaggeredGridCells.Adaptive(minSize = 300.dp),
-            contentPadding = PaddingValues(horizontal = 4.dp, vertical = 4.dp),
-            items(
-                items = groups,
-                key = { it.id },
-                contentType = { "editor_group_item" },
-            ) { group ->
-                SelectionContainer {
+import androidx.activity.compose.setContent
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
+import androidx.compose.ui.platform.WindowInfo
+import androidx.compose.ui.test.assertCountEquals
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.onAllNodesWithContentDescription
+import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.dp
+import com.linuxcommandlibrary.app.App
+    @Test
+    fun testCommandListDoesNotSelectFirstCommandOnExpandedLayout() {
+        // Pretend the window is tablet sized so the two-pane list/detail layout is used.
+        composeTestRule.runOnUiThread {
+            composeTestRule.activity.setContent {
+                val windowInfo = LocalWindowInfo.current
+                val density = LocalDensity.current
+                val expandedWindowInfo = remember(windowInfo, density) {
+                    object : WindowInfo by windowInfo {
+                        override val 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-    SelectionContainer {
-        WithScrollbar(
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.background)
-                .fillMaxSize(),
-            LazyVerticalStaggeredGrid(
-                state = gridState,
-                modifier = Modifier.fillMaxSize(),
-                columns = StaggeredGridCells.Adaptive(minSize = 300.dp),
-                contentPadding = PaddingValues(horizontal = 4.dp, vertical = 4.dp),
-            ) {
-                items(
-                    items = groups,
-                    key = { it.id },
-                    contentType = { "editor_group_item" },
-                ) { group ->
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e017714d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8a21cc1d` are properly handled with clean fallback behavior.

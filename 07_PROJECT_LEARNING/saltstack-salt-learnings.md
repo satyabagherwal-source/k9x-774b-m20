@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/saltstack-salt-learnings.md`  
 > **Source**: github ([https://github.com/saltstack/salt](https://github.com/saltstack/salt))  
-> **Source Version**: `4840c2be`  
+> **Source Version**: `944a95d5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T01:27:47.722Z  
+> **Timestamp**: 2026-11-08T03:43:20.883Z  
 > **Learning ID**: `learn-github-saltstack-salt`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/saltstack-salt-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/saltstack/salt](https://github.com/saltstack/salt))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T01:27:47.468Z  
+> **Harvest Timestamp**: 2026-11-08T03:43:20.139Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Software to automate the management and configuration of infrastructure and applications at scale.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml
-- **Stars / Engagement**: 15731 stars
+- **Stars / Engagement**: 15747 stars
 
 ---
 
@@ -2067,8 +2067,8 @@ def start(grains=False, grain_keys=None, pillar=False, pillar_keys=None):
 - **Issue #70661** (2026-11-03): **[Bug]: cmd.run's runas does not switch the current user from root when salt-call is started with sudo, and runas evaluates as the same user calling salt-call**
   *Symptoms*: ### What happened?  Hey folks! This is pretty edge-casey, but I think it could be problematic and I wanted to let you know. PR on it's way 🫡.  ### The Problem  <blockquote>  It's possible, with the current implementation of `cmd.runas` to not change to the `runas` user because `getpass.getuser()` checks environment variables like `LOGNAME` to determine the current user  This happens if `salt-call` is running with sudo, as the same user as the `runas`  ex. ``` # /srv/salt/problem-state.sls  some-command:   cmd.run:     - runas: me ```  ```bash echo $USER me  sudo salt-call state.apply problem-state ```  evaluates `some-command` as root  </blockquote>   ### Replication steps  <blockquote>  The setup is pretty finnicky here, so here's podman setup to replicate it.  ```Containerfile # Containerfile FROM debian:13  RUN apt-get update \     && apt-get install -y --no-install-recommends build-essential python3 python3-dev python3-venv sudo \     && python3 -m venv /opt/salt-venv \     && /opt/salt-venv/bin/pip install --no-cache-dir 'salt==3008.5' \     && useradd -m -s /bin/bash non-root-user \     && printf 'non-root-user ALL=(root) NOPASSWD: ALL\n' > /etc/sudoers.d/salt-demo \     && chmod 0440 /etc/sudoers.d/salt-demo \     && mkdir -p /srv/salt \     && apt-get clean \     && rm -rf /var/lib/apt/lists/*  COPY demo.sls /srv/salt/demo.sls  CMD ["sleep", "infinity"] ```   ```yaml # demo.sls  show_effective_user:   cmd.run:     - name: |         printf 'effective_uid='; id -u     
 
-- **Issue #70599** (2026-11-04): **[Bug]: Several unit tests fail on macOS when run as a non-root user**
-  *Symptoms*: ### What happened?  Running `python -m nox -e "test-3(coverage=False)" -- tests/pytests/unit/` on macOS as a non-root user fails several tests that are not Salt bugs but test portability problems:  - `tests/pytests/unit/fileserver/test_roots.py::test_serve_file_not_in_root` checks `"win" in sys.platform`, which is also true for `"darwin"`, so it expects the Windows `..\bar` path on macOS. - `tests/pytests/unit/test_scripts.py::test_salt_scripts_pins_fork_start_method` and `test_salt_scripts_pin_survives_fresh_interpreter` expect the `fork` start method, but `salt/scripts.py` deliberately does not pin it on macOS. - `tests/pytests/unit/auth/test_pam.py` (2 tests) compares `/var/...` with the resolved `/private/var/...` path (`/var` is a symlink on macOS). - `tests/pytests/unit/cli/test_salt_call.py::test_passing_cachedir_to_extension_modules` points `--config-dir` at a directory with no minion config, so Salt uses the default `/etc/salt` and `/var/log/salt` paths and exits with `SystemExit: 13` (permission denied). It also leaves the global logging options pointing at `/var/log/salt/minion`, so later tests (`test_master.py::test_run_func`, `test_maintenance_duration`, `utils/test_reactor.py` x2, `engines/test_engines.py::test_engine_title_set`) fail with `No permissions to access "/var/log/salt/minion"`. On Linux CI the tests run as root, which hides this.  Each of these passes when run on its own, except the salt_call test.  ### Environment  - Branch: master (522f75a) - OS: m
+- **Issue #70631** (2026-11-06): **[Bug]: salt CLI exits 0 on authentication / authorization failures**
+  *Symptoms*: ### Description  The `salt` CLI's non-batch run path catches `AuthenticationError`, `AuthorizationError`, `SaltInvocationError`, `EauthAuthenticationError`, and `SaltClientError`, prints the message, then falls out of the function.  Because `_output_ret` only calls `sys.exit` when its `ret` argument is falsy (the "No return received" branch), passing an error string short-circuits that exit and the process ends up returning `0` for a clear-cut failure.  This breaks the standard shell-exit-code contract that `salt ... || alert` and CI pipelines rely on, and contradicts the policy at [`doc/topics/return_codes/index.rst`](https://github.com/saltstack/salt/blob/master/doc/topics/return_codes/index.rst) which says `salt` should exit non-zero on these errors.  ### Setup  Standard master + minion with `external_auth` configured.  ### Steps to Reproduce  ```shell # master's /etc/salt/master: # external_auth: #   file: #     ^filename: /etc/salt/users #     alice: #       - test.* # master's /etc/salt/users: #   alice:correctpassword  # From a shell: salt --eauth file -a alice --password=WRONG '*' test.ping ```  ### Expected behavior  ```shell $ salt --eauth file -a alice --password=WRONG '*' test.ping Authentication error occurred. $ echo $? 1   # or any non-zero ```  ### Actual behavior  ```shell $ salt --eauth file -a alice --password=WRONG '*' test.ping Authentication error occurred. $ echo $? 0   # <-- bug ```  Same with `salt-run`: ```shell $ salt-run --eauth file -a alice --pas
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2085,637 +2085,208 @@ def start(grains=False, grain_keys=None, pillar=False, pillar_keys=None):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `02c3fcc3` (2026-11-02)
-**Commit Message**: Use asyncio loops and locks in client channels and pool routing (#70604)
+### Incident Patch 1: `944a95d5` (2026-11-07)
+**Commit Message**: Bugfix 67214 minion swarm (#67783)
 
-* Use native asyncio primitives in client channel factories
+* Fix bugs in minionswarm. Updated help with significant enhancements. Added username to salt-master command. Added ability to turn off open_mode.
 
-* Close publisher resources on failed channel initialization
+* cleaned up some problems with the parser.add_options and added a
+clarificationn to the config-dir help text.
 
-* Associate channel migration changelog with PR 70604
+* added changelog file
 
-* Keep channel coverage mappings beside related entries
+* Eliminated some trailing whitespace errors revealed by nox -e lint-tests
 
-* Deprecate Tornado channel loop arguments for removal in 3009.2
+* Pre-commit black and Pre-commit isort fixed problems with tests/minionswarm.py and tests/support/runtests.py
 
-* Clarify that channel factories default to the current asyncio loop
+* Fix tests/minionswarm.py import + correctness bugs
 
-* Clarify that only Tornado loop arguments are deprecated
+Address review feedback on #67214:
 
-* Preserve channel behavior while sharing native asyncio infrastructure
+* tests/support/runtests.py: restore canonical package-qualified
+  import. ``import support.paths as paths`` only resolved when the
+  CWD was ``tests/`` and broke ``from tests.support.runtests import
+  RUNTIME_VARS`` -- used by 50+ conftests/tests. Use
+  ``from tests.support import paths`` instead. This was the root
+  cause of the 393 failing Test Salt / Test Package jobs.
+* tests/minionswarm.py: use ``from tests.support import runtests``
+  and add a sys.path bootstrap so the script can still be executed
+  directly via ``python tests/minionswarm.py`` (the original
+  ``cd tests/`` reproduction fr
 
-**File**: `changelog/70604.changed.md` (added, +1/-0)
+**File**: `changelog/67214.fixed.md` (added, +1/-0)
 ```diff
 @@ -0,0 +1 @@
-+Use asyncio loops and locks in client channels, and reuse common transport factories while preserving pool transport selection and TLS defaults. Preserve nonblocking connected-event publication and retain initialization errors if transport cleanup also fails.
++Fixed bugs in minionswarm and added ability turn off open-mode.
 ```
 
-**File**: `changelog/70604.deprecated.md` (added, +1/-0)
+**File**: `tests/minionswarm.py` (modified, +181/-37)
 ```diff
-@@ -0,0 +1 @@
-+Passing a Tornado IOLoop as io_loop to client channels and worker-pool transport factories is deprecated and will be removed in Salt 3009.2. Omit io_loop to use the current asyncio event loop, or pass the Tornado loop's asyncio_loop attribute to preserve the selected loop. Native asyncio loop arguments remain supported without warnings.
-```
-
-**File**: `salt/channel/client.py` (modified, +29/-10)
-```diff
-@@ -4,15 +4,12 @@
- This includes client side transport, for the ReqServer and the Publisher
+@@ -6,6 +6,7 @@
  """
+ # pylint: disable=resource-leakage
  
-+import asyncio
- import logging
++import getpass
+ import hashlib
+ import optparse  # pylint: disable=deprecated-module
  import os
+@@ -18,10 +19,20 @@
  import time
  import uuid
  
--import tornado.gen
--import tornado.ioloop
--import tornado.locks
--
- import salt.crypt
- import salt.exceptions
- import salt.payload
-@@ -51,6 +48,10 @@ class AsyncReqChannel:
-     """
-     Factory class to create a asynchronous communication channels to the
-     master's ReqServer. ReqChannels connect to the master's ReqServerChannel.
+-import salt
+-import salt.utils.files
+-import salt.utils.yaml
+-import tests.support.runtests
++# When this module is executed directly (``python tests/minionswarm.py``)
++# the parent of ``tests/`` is not on ``sys.path``, which makes the
++# ``from tests.support import runtests`` import below fail. Pre-pend the
++# repository root so the script remains runnable without ``PYTHONPATH``
++# manipulation. This is a no-op when the module is imported normally
++# (e.g. by pytest) because the repository root is already on ``sys.path``.
++_REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
++if _REPO_ROOT not in sys.path:
++    sys.path.insert(0, _REPO_ROOT)
 +
-+    The factory uses the current thread's asyncio event loop by default.
-+    ``io_loop`` is optional and selects a specific asyncio loop when needed.
-+    Tornado IOLoop arguments are deprecated and will be removed in Salt 3009.2.
++import salt  # noqa: E402
++import salt.utils.files  # noqa: E402
++import salt.utils.yaml  # noqa: E402
++from tests.support import runtests  # noqa: E402
+ 
+ OSES = [
+     "Arch",
+@@ -34,25 +45,40 @@
+     "Solaris",
+ ]
+ VERS = [
+-    "2014.1.6",
+-    "2014.7.4",
+-    "2015.5.5",
+-    "2015.8.0",
++    "3006.1",
++    "3006.5",
++    "3006.9",
++    "3007.1",
+ ]
+ 
+ 
+ def parse():
      """
- 
-     async_methods = [
-@@ -79,7 +80,9 @@ def factory(cls, opts, **kwargs):
-             opts["master_uri"] = kwargs["master_uri"]
-         io_loop = kwargs.get("io_loop")
-         if io_loop is None:
--            io_loop = tornado.ioloop.IOLoop.current()
-+            io_loop = asyncio.get_event_loop()
-+        else:
-+            io_loop = aioloop(io_loop, warn=True)
- 
-         timeout = opts.get("request_channel_timeout", REQUEST_CHANNEL_TIMEOUT)
-         tries = opts.get("request_channel_tries", REQUEST_CHANNEL_TRIES)
-@@ -122,7 +125,7 @@ def __init__(
-         # cache.  Holding this lock across the send + decrypt window makes
-         # the request/reply pair atomic w.r.t. any other coroutine on the
-         # same io_loop.  See issue #69753.
--        self._req_lock = tornado.locks.Lock()
-+        self._req_lock = asyncio.Lock()
- 
-     @property
-     def crypt(self):
-@@ -465,6 +468,10 @@ async def __aexit__(self, *_):
- class AsyncPubChannel:
+     Parse the cli options
      """
-     Factory class to create subscription channels to the master's Publisher
-+
-+    The factory uses the current thread's asyncio event loop by default.
-+    ``io_loop`` is optional and selects a specific asyncio loop when needed.
-+    Tornado IOLoop arguments are deprecated and will be removed in Salt 3009.2.
-     """
- 
-     async_methods = [
-@@ -496,17 +503,28 @@ def factory(cls, opts, **kwargs):
- 
-         io_loop = kwargs.get("io_loop")
-         if io_loop is None:
--            io_loop = tornado.ioloop.IOLoop.current()
-+            io_loop = asyncio.get_event_loop()
-+        else:
-+            io_loop = aioloop(io_loop, warn=True)
- 
-         auth = salt.crypt.AsyncAuth(opts, io_loop=io_loop)
-         host = opts.get("master_ip", "127.0.0.1")
-         port = int(opts.get("publish_port", 4506))
-         transport = salt.transport.publish_client(opts, io_loop, host=host, port=port)
--        return cls(opts, transport, auth, io_loop)
-+        try:
-+            return cls(opts, transport, auth, io_loop)
-+        except BaseException:
-+            try:
-+                transport.close()
-+            except Exception:  # pylint: disable=broad-exception-caught
-+                log.exception("Failed to close transport after channel initialization")
-+            raise
- 
-     def __init__(self, opts, transport, auth, io_loop=None):
-         self.opts = opts
--        self.io_loop = aioloop(io_loop)
-+        self.io_loop = (
-+            asyncio.get_event_loop() if io_loop is None else aioloop(io_loop, warn=True)
-+        )
-         self.auth = auth
-         try:
-             # This loads or generates the minion's public key.
-@@ -559,6 +577,7 @@ def close(self):
-         """
-         Close the channel
-         """
-+        self._closing = True
-         self.transport.close()
-         if self.event is not None:
-             self.event.destroy()
-@@ -732,4 +751,4 @@ async def __aenter__(self):
-         return self
- 
-     async def __aexit__(self, *_):
--        await self.close()
-+        self.close()
-```
-
-**File**: `salt/channel/server.py` (modified, +2/-1)
-```diff
-@@ -1030,6 +1030,7 @@ def post_fork(self, payload_handler, io_loop, **kwargs):
-         from salt.utils.channel import create_request_client
- 
-         self.io_loop = io_loop
-+        client_loop = salt.utils.asynchronous.aioloop(io_loop)
- 
-         # Routing process only (not pool workers): needs cache-backed auth helpers.
-         self._ensure_auth_support()
-@@ -1131,7 +1132,7 @@ def post_fork(self, payload_handler, io_loop, **kwargs):
-                     if async_mworker and per_opts.get("ipc_mode") != "tcp":
-                         per_opts["workers_ipc_name"] = f"workers-{pool_name}-{idx}.ipc"
-                     # Use our dedicated request client factory for routing
--                    clients.append(create_request_client(per_opts, io_loop))
-+                    clients.append(create_request_client(per_opts, client_loop))
-                 self.pool_clients[pool_name] = clients
-                 self.pool_client_next[pool_name] = 0
-                 log.info(
-```
-
-**File**: `salt/utils/asynchronous.py` (modified, +13/-4)
-```diff
-@@ -15,21 +15,30 @@
- import tornado.ioloop
- 
- import salt.utils.resource_warnings
-+import salt.utils.versions
- 
- log = logging.getLogger(__name__)
- 
- 
- def aioloop(io_loop, warn=False):
-     """
-     Ensure the ioloop is an asyncio loop not a tornado ioloop.
-+
-+    With ``warn=True``, deprecate Tornado loop arguments at an API boundary.
-+    Native asyncio loop arguments remain supported without a warning.
-     """
-     if isinstance(io_loop, asyncio.AbstractEventLoop):
-         return io_loop
-     elif isinstance(io_loop, tornado.ioloop.IOLoop):
-         if warn:
--            import traceback
--
--            log.warning("Passed tornado loop %s", "".join(traceback.format_stack()))
-+            salt.utils.versions.warn_until(
-+                (3009, 2),
-+                "Passing a Tornado IOLoop as io_loop is deprecated and will "
-+                "be removed in Salt {version}. Omit io_loop to use the current "
-+                "asyncio event loop, or pass the Tornado loop's asyncio_loop "
-+                "attribute to keep using that loop.",
-+                stacklevel=4,
-+            )
-         return io_loop.asyncio_loop
-     else:
-         raise RuntimeError("Loop must be AbstractEventLoop (prefered) or IOLoop")
-@@ -107,7 +116,7 @@ def __init__(
-         # as the transport classes in ``salt/transport/tcp.py``.
-         self._creator_pid = os.getpid()
-         if loop_kwarg:
--            kwargs[self.loop_kwarg] = self.io_loop
-+            kwargs[self.loop_kwarg] = self.asyncio_loop
-         with current_ioloop(self.io_loop):
-             self.obj = cls(*args, **kwargs)
-         self._async_methods = list(
-```
-
-**File**: `salt/utils/channel.py` (modified, +31/-64)
-```diff
-@@ -1,6 +1,9 @@
-+import asyncio
- import copy
- 
- import salt.master
-+import salt.transport
-+from salt.utils.asynchronous import aioloop
- 
- 
- def iter_transport_opts(opts):
-@@ -32,75 +35,39 @@ def iter_transport_opts(opts):
-         yield transport, t_opts
- 
- 
--def create_server_transport(opts):
--    """
--    Create a server transport based on opts
--    """
-+def _pool_transport_opts(opts):
-+    """Preserve pool selection without mutating options or copying shared secrets."""
-     ttype = opts.get("transport", "zeromq")
--    if ttype == "zeromq":
--        import salt.transport.zeromq
--
--        return salt.transport.zeromq.RequestServer(opts)
--    if ttype == "tcp":
--        import salt.transport.tcp
--
--        return salt.transport.tcp.RequestServer(opts)
--    if ttype == "ws":
--        import salt.transport.ws
-+    if ttype not in salt.transport.TRANSPORTS:
-+        raise ValueError(f"Unsupported transport type: {ttype}")
-+    if "transport" not in opts:
-+        # Common factories also consult pillar; pool routing historically did not.
-+        return dict(opts, transport=ttype)
-+    return opts
- 
--        return salt.transport.ws.RequestServer(opts)
--    raise ValueError(f"Unsupported transport type: {ttype}")
--
--
--def create_client_transport(opts, io_loop):
--    """
--    Create a client transport based on opts.
--    For request routing, this should return a RequestClient, not PublishClient.
--    """
--    ttype = opts.get("transport", "zeromq")
--    if ttype == "zeromq":
--        import salt.transport.zeromq
- 
--        # For worker pool routing we need RequestClient, not PublishClient
--        if opts.get("workers_ipc_name") or opts.get("pool_name"):
--            return salt.transport.zeromq.RequestClient(opts, io_loop=io_loop)
--        return salt.transport.zeromq.PublishClient(opts, io_loop)
--    if ttype == "tcp":
--        import salt.transport.tcp
-+def create_server_transport(opts):
-+    """Create a request server for pool routing."""
-+    opts = _pool_transport_opts(opts)
-+    return salt.transport.request_server(opts)
- 
--        if opts.get("workers_ipc_name") or opts.get("pool_name"):
--            return salt.transport.tcp.RequestClient(opts, io_loop=io_loop)
--        return salt.transport.tcp.PublishClient(opts, io_loop)
--    if ttype == "ws":
--        import salt.transport.ws
- 
--        if opts.get("workers_ipc_name") or opts.get("pool_name"):
--            return salt.transport.ws.RequestClient(opts, io_loop=io_loop)
--        return salt.transport.ws.PublishClient(opts, io_loop)
--    raise ValueError(f"Unsupported transport type: {ttype}")
-+def create_client_transport(opts, io_loop=None):
-+    """Create a request client for pool routing, otherwise a publish client."""
-+    opts = _pool_transport_opts(opts)
-+    io_loop = (
-+        asyncio.get_event_loop() if io_loop is None else aioloop(io_loop, warn=True)
+-    parser = optparse.OptionParser()
++    guidance = (
++        "\n\n   To execute salt commands against minionswarm you must include the configuration\n"
++        "   file using the -c option. For commands such as salt, salt-key, salt-cp,\n"
++        "   and salt-run use -c <temp-dir>/master. For example, when using the\n"
++        "   default for --temp-dir, the configuration directory would be\n"
++        "   /tmp/sroot/master. If the master runs on a different machine you\n"
++        "   must execute the command on that machine using the master config file\n"
++        "   there. For the salt-call command, which is a minion side\n"
++        "   command, use -c <tmp-dir>/<name>-<minion number>. For example to\n"
++        "   execute salt-call on the first minion using the default values for\n"
++        "   temp-dir and name use -c /tmp/sroot/minion-0. The commands salt-api,\n"
++        "   salt-cloud, salt-extend, salt-master, salt-minion, salt-proxy,\n"
++        "   salt-ssh, salt-syndic and spm are not supported."
 +    )
-+    if opts.get("workers_ipc_name") or opts.get("pool_name"):
-+        return salt.transport.request_client(opts, io_loop=io_loop)
-+    # The former direct constructors did not enable TLS from opts here.
-+    return salt.transport.publish_client(opts, io_loop, ssl=None)
- 
- 
- def create_request_client(opts, io_loop=None):
--    """
--    Create a RequestClient for pool routing.
--    This ensures we always get a RequestClient regardless of transport.
--    """
--    ttype = opts.get("transport", "zeromq")
--    if io_loop is None:
--        import tornado.ioloop
--
--        io_loop = tornado.ioloop.IOLoop.current()
--
--    if ttype == "zeromq":
--        import salt.transport.zeromq
--
--        return salt.transport.zeromq.RequestClient(opts, io_loop=io_loop)
--    if ttype == "tcp":
--        import salt.transport.tcp
--
--        return salt.transport.tcp.RequestClient(opts, io_loop=io_loop)
--    if ttype == "ws":
--        import salt.transport.ws
--
--        return salt.transport.ws.RequestClient(opts, io_loop=io_loop)
--    raise ValueError(f"Unsupported transport type: {ttype}")
-+    """Create a request client on the caller's event loop for pool routing."""
-+    opts = _pool_transport_opts(opts)
-+    io_loop = (
-+        asyncio.get_event_loop() if io_loop is None else aioloop(io_loop, warn=True)
-+    )
-+    return salt.transport.request_client(opts, io_loop=io_loop)
++    usage = "usage: python %prog [options]" + guidance
++    parser = optparse.OptionParser(usage)
+     parser.add_option(
+         "-m",
+         "--minions",
+         dest="minions",
+         default=5,
+         type="int",
+-        help="The number of minions to make",
++        help="The number of minions to make (default = %default)",
+     )
+     parser.add_option(
+         "-M",
+@@ -64,19 +90,19 @@ def parse():
+     parser.add_option(
+         "--master",
+         dest="master",
+-        default="salt",
+-        help="The location of the salt master that this swarm will serve",
++        default="localhost",
++        help="The location of the salt master that this swarm will serve. (default = %default) "
++        "The standard port used by daemon masters is 4506. Masters can be specified using "
++        "<IP address>:<port>. For example, 192.168.1.2:4506",
+     )
+     parser.add_option(
+         "--name",
+         "-n",
+         dest="name",
+-        default="ms",
+-        help=(
+-            "Give the minions an alternative id prefix, this is used "
+-            "when minions from many systems are being aggregated onto "
+-            "a single master"
+-        ),
++        default="minion",
++        help="Give the minions an alternative id prefix, this is used "
++        "when minions from many systems are being aggregated onto "
++        "a single master. (default = %default)",
+     )
+     parser.add_option(
+         "--rand-os",
+@@ -111,7 +137,7 @@ def parse():
+         "--keep-modules",
+         dest="keep",
+         default="",
+-        help="A comma delimited list of modules to enable",
++        help="A comma delimited list of modules to enable. (default = %default)",
+     )
+     parser.add_option(
+         "-f",
+@@ -124,26 +150,33 @@ def parse():
+     parser.add_option(
+         "--temp-dir",
+         dest="temp_dir",
+-        default=None,
+-        help="Place temporary files/directories here",
++        default="/tmp/sroot",
++        help="Place temporary files/directories here, (default = %default)",
+     )
+     parser.add_option(
+         "--no-clean",
+         action="store_true",
+         default=False,
+-        help="Don't cleanup temporary files/directories",
++        help="Don't cleanup temporary files/directories. "
++        "If specified, you must manually recursively delete "
++        "the swarm root (see --temp-dir) before running "
++        "minionswarm again, e.g., using the default swarm "
++        "root, rm -fr /tmp/sroot",
+     )
+     parser.add_option(
+         "--root-dir",
+         dest="root_dir",
+         default=None,
+-        help="Override the minion root_dir config",
+
 ```
 
-**File**: `tests/filename_map.yml` (modified, +8/-0)
+**File**: `tests/support/runtests.py` (modified, +1/-1)
 ```diff
-@@ -180,6 +180,10 @@ salt/utils/metrics.py:
-   - pytests.functional.utils.test_metrics_otlp_instances
-   - pytests.unit.utils.test_metrics
+@@ -50,7 +50,7 @@
  
-+salt/utils/channel.py:
-+  - pytests.unit.utils.test_channel
-+  - pytests.unit.channel.test_server
-+
- salt/utils/minions.py:
-   - pytests.integration.cli.test_matcher
+ import salt.utils.path
+ import salt.utils.platform
+-import tests.support.paths as paths
++from tests.support import paths
  
-@@ -320,6 +324,10 @@ salt/utils/vt.py:
- salt/wheel/*:
-   - pytests.integration.wheel.test_client
- 
-+salt/channel/client.py:
-+  - pytests.unit.channel.test_client
-+  - pytests.functional.channel.test_client
-+
- salt/(minion\.py|channel/.+|transport/.+):
-   - pytests.scenarios.multimaster.test_multimaster
-   - pytests.scenarios.multimaster.test_offline_master
-```
-
-**File**: `tests/pytests/functional/channel/test_client.py` (modified, +8/-1)
-```diff
-@@ -13,7 +13,10 @@ async def test_async_pub_channel_connect_cb(minion_opts):
-     """
-     minion_opts["master_uri"] = "tcp://127.0.0.1:4506"
-     minion_opts["master_ip"] = "127.0.0.1"
--    with salt.channel.client.AsyncPubChannel.factory(minion_opts) as channel:
-+    with patch("salt.utils.event.get_event") as event_factory:
-+        event_factory.return_value.fire_event_async = AsyncMock()
-+        channel = salt.channel.client.AsyncPubChannel.factory(minion_opts)
-+    async with channel:
- 
-         async def send_id(*args):
-             return
-@@ -27,5 +30,9 @@ async def send_id(*args):
- 
-         with patch("salt.channel.client.AsyncReqChannel.factory", return_value=mock):
-             await channel.connect_callback(None)
-+            event_factory.return_value.fire_event.assert_called_once_with(
-+                {"master": minion_opts["master"]}, "__master_connected"
-+            )
-+            event_factory.return_value.fire_event_async.assert_not_awaited()
-             mock.send.assert_called_once()
-             mock.__aexit__.assert_called_once()
-```
-
----
-
-### Incident Patch 2: `f0eb131a` (2026-11-03)
-**Commit Message**: Fix failing CI workflows (#70636)
-
-* test: skip test_pkg_removed_with_version_multiple on Windows after choco 7zip side-by-side regression
-
-The chocolatey community-repo dropped side-by-side install support for
-the 7zip 19.00.00.0 / 22.01.00.0 pair, which makes the install_7zip
-fixture's second /qn install fail as a downgrade and leaves this test
-red on every Windows functional run.
-
-Keep the test body intact so the skip can be lifted the moment a
-side-by-side-capable package pair lands in salt-winrepo-ng. A mocked
-unit-scope sister test covers the pkg.removed version-specific
-removal contract in the meantime.
-
-* test: add unit-scope sister test for pkg.removed version-specific removal
-
-Preserves coverage of the pkg.removed state contract that the newly
-skipped functional test_pkg_removed_with_version_multiple exercised:
-when a specific version is targeted and the package has multiple
-versions installed, _find_remove_targets must flag the package as a
-removal target, pkg.remove must be dispatched exactly once scoped to
-the requested version, and the post-check against pkg.list_pkgs must
-report result=True with the removed version absent from the installed
-versions list.
-
-Uses the p
-
-**File**: `changelog/99999.fixed.md` (added, +3/-0)
-```diff
-@@ -0,0 +1,3 @@
-+Skipped `test_pkg_removed_with_version_multiple` on Windows after the chocolatey community-repo dropped side-by-side install support for the 7zip 19.00.00.0 / 22.01.00.0 pair, which made the `install_7zip` fixture's second `/qn` install fail as a downgrade. Added a mocked unit-scope sister test to preserve coverage of the `pkg.removed` state's version-specific removal contract when multiple versions of a package are installed.
-+
-+Fixed `tests/support/pkg.py::SaltPkgInstall.install_previous` not calling `update_process_path()` on macOS, which caused `shutil.which('salt-master')` to return `None` from the non-login shell GH Actions runs under, erroring the Test Package / macOS downgrade jobs with `FileNotFoundError: Salt CLI script 'salt-master' was not found in $PATH`. The `install()` and Windows `install_previous()` branches already call it.
-```
-
-**File**: `tests/pytests/functional/states/test_pkg.py` (modified, +8/-0)
-```diff
-@@ -1144,6 +1144,14 @@ def test_pkg_purged_with_removed_pkg(grains, PKG_TARGETS, states, modules):
-     }
- 
- 
-+@pytest.mark.skip(
-+    reason="chocolatey community-repo dropped side-by-side support for "
-+    "7zip 19.00.00.0 next to 22.01.00.0; the install_7zip fixture's "
-+    "second /qn install is rejected as a downgrade. Sister unit test "
-+    "test_pkg_removed_version_specific_covers_multi_version_installed "
-+    "in tests/pytests/unit/states/test_pkg.py covers the state contract "
-+    "via mocks without requiring a real side-by-side install."
-+)
- @pytest.mark.skip_unless_on_windows()
- def test_pkg_removed_with_version_multiple(install_7zip, modules, states):
-     """
-```
-
-**File**: `tests/pytests/unit/states/test_pkg.py` (modified, +71/-0)
-```diff
-@@ -1312,6 +1312,77 @@ def test_removed_with_single_normalize():
-         assert ret["changes"] == expected
- 
- 
-+def test_pkg_removed_version_specific_covers_multi_version_installed():
-+    """
-+    Sister unit test for the Windows functional
-+    ``test_pkg_removed_with_version_multiple`` (currently skipped on
-+    Windows due to a chocolatey community-repo regression that broke
-+    the 7zip 19.00.00.0 + 22.01.00.0 side-by-side install fixture).
-+
-+    Validates the ``pkg.removed`` state contract when a specific version
-+    is targeted and the package has multiple versions installed:
-+
-+    * ``_find_remove_targets`` must identify the package as a removal
-+      target because the requested version is one of the installed
-+      versions.
-+    * ``pkg.remove`` must be dispatched exactly once with the requested
-+      version so the module-level implementation can scope the
-+      uninstall to that version.
-+    * After the simulated ``pkg.remove``, ``_uninstall``'s post-check
-+      against ``pkg.list_pkgs`` must see the requested version gone
-+      from the installed-versions list and report
-+      ``result=True`` with the expected changes dict.
-+    """
-+    pkg_name = "7zip"
-+    requested_version = "19.00.00.0"
-+    remaining_version = "22.01.00.0"
-+
-+    list_pkgs_mock = MagicMock(
-+        side_effect=[
-+            # _find_remove_targets() asks with versions_as_list=True
-+            {pkg_name: [requested_version, remaining_version]},
-+            # _uninstall() post-check after pkg.remove dispatch
-+            {pkg_name: [remaining_version]},
-+        ]
-+    )
-+    pkg_remove_mock = MagicMock(
-+        return_value={pkg_name: {"old": requested_version, "new": remaining_version}}
-+    )
-+
-+    salt_dict = {
-+        "pkg.list_pkgs": list_pkgs_mock,
-+        "pkg.remove": pkg_remove_mock,
-+        "pkg.normalize_name": lambda pkgname: pkgname,
-+        "pkg.version_cmp": MagicMock(return_value=0),
-+        "pkg_resource.parse_targets": pkg_resource.parse_targets,
-+        "pkg_resource.version_clean": pkg_resource.version_clean,
-+    }
-+
-+    with (
-+        patch.dict(pkg.__salt__, salt_dict),
-+        patch.dict(pkg_resource.__salt__, salt_dict),
-+        patch.dict(pkg.__grains__, {"os": "Windows", "os_family": "Windows"}),
-+        patch.dict(pkg_resource.__grains__, {"os": "Windows"}),
-+    ):
-+        ret = pkg.removed(name=pkg_name, version=requested_version)
-+
-+    assert ret["result"] is True, ret
-+    assert ret["comment"] == "All targeted packages were removed."
-+    assert ret["changes"] == {
-+        pkg_name: {"old": requested_version, "new": remaining_version}
-+    }
-+
-+    # pkg.remove must be invoked exactly once, scoped to the requested
-+    # version (so the module uninstalls only that version and leaves
-+    # the other installed version intact).
-+    pkg_remove_mock.assert_called_once()
-+    call_args, call_kwargs = pkg_remove_mock.call_args
-+    assert call_args[0] == pkg_name
-+    assert call_kwargs.get("version") == requested_version
-+    assert call_kwargs.get("pkgs") is None
-+    assert call_kwargs.get("split_arch") is False
-+
-+
- def test_installed_with_single_normalize_32bit():
-     """
-     Test pkg.installed of 32bit package with preventing multiple package name normalisation
-```
-
-**File**: `tests/support/pkg.py` (modified, +10/-0)
-```diff
-@@ -1370,6 +1370,16 @@ def install_previous(self, downgrade=False):
-                 except subprocess.TimeoutExpired:
-                     log.warning("launchctl timed out stopping %s", svc_name)
- 
-+            # The macOS pkg postinstall drops /etc/paths.d/salt, but that file
-+            # is only honored by /usr/libexec/path_helper, which runs from
-+            # /etc/profile in login shells. GitHub Actions step shells are
-+            # non-login, so the pytest process inherits a PATH without
-+            # /opt/salt and shutil.which('salt-master') returns None in
-+            # saltfactories' get_salt_script_path fallback. install() already
-+            # calls update_process_path() for this reason; install_previous()
-+            # was missing the same call on this branch.
-+            self.update_process_path()
-+
-     def uninstall(self):
-         pkg = self.pkgs[0]
-         if platform.is_windows() and self.file_ext:
-```
-
----
-
-### Incident Patch 3: `3707445f` (2026-11-02)
-**Commit Message**: Fix RequestRouter AES command extraction (#70615)
-
-Motivation: RequestRouter._extract_command decrypted AES payloads with
-Crypticle.decrypt(), which leaves the "pickle::" framing prefix in place.
-The following msgpack decode then failed, logging a CRITICAL
-"Could not deserialize msgpack message" error and returning an empty
-command, so requests with explicit command-to-pool mappings were routed
-to the default pool instead of the mapped pool.
-
-Approach: use Crypticle.loads(), which strips the framing and
-deserializes, returning the request dict. The later bytes/msgpack branch
-is then skipped for AES payloads. Failure handling is unchanged.
-
-Validation: added test_router_extracts_command_from_aes_payload in
-tests/pytests/unit/test_request_router.py. Ran
-`python -m pytest tests/pytests/unit/test_request_router.py`: the new test
-fails without the salt/master.py change and passes with it (9 passed).
-No full master/minion integration run was done.
-
-Impact: affects only routing and log output for AES requests when
-worker_pools maps specific commands; with a single catchall pool only the
-misleading CRITICAL log message was affected.
-
-Report: https://github.com/saltstack/salt/issues/70592
-
-
-
-**File**: `changelog/70592.fixed.md` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+Fixed ``RequestRouter`` failing to extract the command from AES-encrypted requests, which logged a msgpack deserialization error and routed them to the default worker pool.
-```
-
-**File**: `salt/master.py` (modified, +1/-1)
-```diff
-@@ -1832,7 +1832,7 @@ def _extract_command(self, payload):
-                             import salt.crypt
- 
-                             crypticle = salt.crypt.Crypticle(self.opts, key)
--                            load = crypticle.decrypt(load)
-+                            load = crypticle.loads(load)
-                     elif enc == "pub":
-                         # RSA encryption
-                         import salt.crypt
-```
-
-**File**: `tests/pytests/unit/test_request_router.py` (modified, +20/-0)
-```diff
-@@ -2,8 +2,11 @@
- Unit tests for RequestRouter class
- """
- 
-+from types import SimpleNamespace
-+
- import pytest
- 
-+import salt.crypt
- from salt.master import RequestRouter
- 
- 
-@@ -129,3 +132,20 @@ def test_router_fails_no_catchall(self):
-         }
-         with pytest.raises(ValueError, match="exactly one pool with catchall"):
-             RequestRouter(opts)
-+
-+
-+def test_router_extracts_command_from_aes_payload():
-+    """AES payloads are decrypted and unpickled so the command maps to its pool"""
-+    opts = {
-+        "worker_pools": {
-+            "default": {"worker_count": 1, "commands": ["*"]},
-+            "files": {"worker_count": 1, "commands": ["_serve_file"]},
-+        }
-+    }
-+    key = salt.crypt.Crypticle.generate_key_string()
-+    crypticle = salt.crypt.Crypticle(opts, key)
-+    router = RequestRouter(opts, {"aes": {"secret": SimpleNamespace(value=key)}})
-+    payload = {"enc": "aes", "load": crypticle.dumps({"cmd": "_serve_file"})}
-+
-+    assert router._extract_command(payload) == "_serve_file"
-+    assert router.route_request(payload) == "files"
+ try:
+     import pwd
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #70662** (closed): cmd.run determines user from uid instead of getuser (@willjp)
-- **PR #70651** (closed): Document the real default of ipc_write_buffer (@charzl)
-- **PR #70638** (2026-11-03): Bump relenv to 0.22.32 and CI Python to 3.14.10 (3008.x) (@dwoz)
-- **PR #70636** (2026-11-03): Fix failing CI workflows (@dwoz)
-- **PR #70635** (2026-11-04): Merge 3008.x into master (@dwoz)
-- **PR #70629** (2026-11-01): Bulk floor bump for Dependabot security alerts (3008.x) (@dwoz)
+- **PR #70710** (2026-11-07): [3008.x] Log deltaproxy sub-proxy initialization failures at ERROR (@ITJamie)
+- **PR #70707** (2026-11-07): Add resources scaling docs and proxy/deltaproxy direction notes (@dwoz)
+- **PR #70704** (2026-11-06): mmap_cache: fix roster-divergence cascade + add put_many bulk path (@dwoz)
+- **PR #70703** (2026-11-06): Fix quadratic disk use in minion resource-fanout queued payloads (@dwoz)
+- **PR #70702** (2026-11-06): Port 3 bug fixes from 3006.x missing on 3008.x (@dwoz)
+- **PR #70700** (closed): Merge forward 3006.x into 3007.x (@charzl)
 
 ---
 
@@ -2735,28 +2306,74 @@ Report: https://github.com/saltstack/salt/issues/70592
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Use asyncio loops and locks in client channels and pool routing (#70604)
+## X. Bugfix 67214 minion swarm (#67783)
 
 **RULE**:
-When implementing operations in `changelog/70604.changed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in saltstack/salt. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tests/minionswarm.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in saltstack/salt. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `02c3fcc3`: Use asyncio loops and locks in client channels and pool routing (#70604). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `944a95d5`: Bugfix 67214 minion swarm (#67783). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog/70604.changed.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/minionswarm.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-Use asyncio loops and locks in client channels, and reuse common transport factories while preserving pool transport selection and TLS defaults. Preserve nonblocking connected-event publication and retain initialization errors if transport cleanup also fails.
+import getpass
+# When this module is executed directly (``python tests/minionswarm.py``)
+# the parent of ``tests/`` is not on ``sys.path``, which makes the
+# ``from tests.support import runtests`` import below fail. Pre-pend the
+# repository root so the script remains runnable without ``PYTHONPATH``
+# manipulation. This is a no-op when the module is imported normally
+# (e.g. by pytest) because the repository root is already on ``sys.path``.
+_REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
+if _REPO_ROOT not in sys.path:
+    sys.path.insert(0, _REPO_ROOT)
+
+import salt  # noqa: E402
+import salt.utils.files  # noqa: E402
+import salt.utils.yaml  # noqa: E402
+from tests.support import runtests  # noqa: E402
+    "3006.1",
+    "3006.5",
+    "3006.9",
+    "3007.1",
+    guidance = (
+        "\n\n   To execute salt commands against minionswarm you must include the configuration\n"
+        "   file using the -c option. For commands such as salt, salt-key, salt-cp,\n"
+        "   and salt-run use -c <temp-dir>/master. For example, when using the\n"
+        "   default for --temp-dir, the configuration directory would be\n"
+        "   /tmp/sroot/master. If the ma
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+import salt
+import salt.utils.files
+import salt.utils.yaml
+import tests.support.runtests
+    "2014.1.6",
+    "2014.7.4",
+    "2015.5.5",
+    "2015.8.0",
+    parser = optparse.OptionParser()
+        help="The number of minions to make",
+        default="salt",
+        help="The location of the salt master that this swarm will serve",
+        default="ms",
+        help=(
+            "Give the minions an alternative id prefix, this is used "
+            "when minions from many systems are being aggregated onto "
+            "a single master"
+        ),
+        help="A comma delimited list of modules to enable",
+        default=None,
+        help="Place temporary files/directories here",
+        help="Don't cleanup temporary files/directories",
+        help="Override the minion root_dir config",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `02c3fcc3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `944a95d5` are properly handled with clean fallback behavior.

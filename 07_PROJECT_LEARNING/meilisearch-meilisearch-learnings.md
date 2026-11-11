@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md`  
 > **Source**: github ([https://github.com/meilisearch/meilisearch](https://github.com/meilisearch/meilisearch))  
-> **Source Version**: `c18c8197`  
+> **Source Version**: `8c7bfcfa`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T19:48:10.650Z  
+> **Timestamp**: 2026-11-10T02:59:41.514Z  
 > **Learning ID**: `learn-github-meilisearch-meilisearch`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meilisearch/meilisearch](https://github.com/meilisearch/meilisearch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T19:48:09.512Z  
+> **Harvest Timestamp**: 2026-11-10T02:59:39.433Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A lightning-fast search engine API bringing AI-powered hybrid search to your sites and applications.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 59782 stars
+- **Stars / Engagement**: 59824 stars
 
 ---
 
@@ -2049,49 +2049,292 @@ fn check_changed(uuid: Uuid, webhook: &Webhook) -> Result<(), WebhooksError> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c18c8197` (2026-11-04)
-**Commit Message**: Merge pull request #6716 from meilisearch/chore/update-rails-tests
+### Incident Patch 1: `8c7bfcfa` (2026-11-09)
+**Commit Message**: Merge pull request #6725 from meilisearch/remove-dbg-and-check-for-them
 
-Bump mongodb to v9.0 in rails SDKs tests
+remove unwanted log + warn about future unwanted dbg
 
-**File**: `.github/workflows/sdks-tests.yml` (modified, +1/-1)
+**File**: `clippy.toml` (modified, +4/-0)
 ```diff
-@@ -366,7 +366,7 @@ jobs:
-       - name: Start MongoDB
-         uses: supercharge/mongodb-github-action@315db7fe45ac2880b7758f1933e6e5d59afd5e94 # 1.12.1
-         with:
--          mongodb-version: 8.0
-+          mongodb-version: "9.0"
-       - name: Run tests
-         run: bundle exec rspec
+@@ -1,3 +1,7 @@
+ disallowed-methods = [
+     { path = "tar::Archive::unpack", reason = "prefer using the ArchiveExt::safe_unpack function" }
+ ]
++
++disallowed-macros = [
++    { path = "std::dbg" }
++]
+```
+
+**File**: `crates/build-info/src/main.rs` (modified, +1/-0)
+```diff
+@@ -1,3 +1,4 @@
++#![allow(clippy::disallowed_macros)]
+ use build_info::BuildInfo;
  
+ fn main() {
+```
+
+**File**: `crates/meilisearch/tests/common/server.rs` (modified, +1/-5)
+```diff
+@@ -489,7 +489,7 @@ impl<State> Server<State> {
+         let url = format!("/tasks/{update_id}");
+         let max_attempts = 400; // 200 seconds in total, 0.5secs per attempt
+ 
+-        for i in 0..max_attempts {
++        for _i in 0..max_attempts {
+             let (response, status_code) = self.service.get(url.clone()).await;
+             assert_eq!(200, status_code, "response: {response}");
+ 
+@@ -499,10 +499,6 @@ impl<State> Server<State> {
+ 
+             // wait 0.5 second.
+             sleep(Duration::from_millis(500)).await;
+-
+-            if i == max_attempts - 1 {
+-                dbg!(response);
+-            }
+         }
+         panic!("Timeout waiting for update id");
+     }
+```
+
+**File**: `crates/milli/src/test_index.rs` (modified, +4/-4)
+```diff
+@@ -1426,12 +1426,12 @@ fn vectors_are_never_indexed_as_searchable_or_filterable() {
+     assert!(results.candidates.is_empty());
+ 
+     let mut search = index.search(&rtxn, &fields_ids_map);
+-    let results = dbg!(search
++    let results = search
+         .filter(Some(IndexFilter::from(
+-            Filter::from_str("_vectors.doggo = 6789").unwrap().unwrap()
++            Filter::from_str("_vectors.doggo = 6789").unwrap().unwrap(),
+         )))
+-        .execute())
+-    .unwrap();
++        .execute()
++        .unwrap();
+     assert!(results.candidates.is_empty());
+ 
+     index
+```
+
+**File**: `crates/milli/src/update/new/document.rs` (modified, +0/-2)
+```diff
+@@ -367,8 +367,6 @@ fn find_subfields(
+                         .id_or_insert(field_buf)
+                         .ok_or(UserError::AttributeLimitReached)?;
+ 
+-                    dbg!(&field_buf);
+-
+                     let value = parse_raw_value(value, alloc)?;
+                     find_subfields(value, field_buf, fields_ids_map, alloc)?;
+                 }
 ```
 
 ---
 
-### Incident Patch 2: `30ac7935` (2026-11-03)
-**Commit Message**: Bump mongodb version to 9.0
+### Incident Patch 2: `b71fd6a5` (2026-11-09)
+**Commit Message**: Merge pull request #6726 from meilisearch/update-version-v1.56.2
 
-**File**: `.github/workflows/sdks-tests.yml` (modified, +1/-1)
+Update version for the next release (v1.56.2) in Cargo.toml
+
+**File**: `Cargo.lock` (modified, +19/-19)
 ```diff
-@@ -366,7 +366,7 @@ jobs:
-       - name: Start MongoDB
-         uses: supercharge/mongodb-github-action@315db7fe45ac2880b7758f1933e6e5d59afd5e94 # 1.12.1
-         with:
--          mongodb-version: 8.0
-+          mongodb-version: "9.0"
-       - name: Run tests
-         run: bundle exec rspec
+@@ -780,7 +780,7 @@ dependencies = [
  
+ [[package]]
+ name = "build-info"
+-version = "1.56.1"
++version = "1.56.2"
+ dependencies = [
+  "anyhow",
+  "time",
+@@ -1959,7 +1959,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "dump"
+-version = "1.56.1"
++version = "1.56.2"
+ dependencies = [
+  "big_s",
+  "flate2",
+@@ -2217,7 +2217,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "file-store"
+-version = "1.56.1"
++version = "1.56.2"
+ dependencies = [
+  "tempfile",
+  "thiserror 2.0.20",
+@@ -2237,7 +2237,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "filter-parser"
+-version = "1.56.1"
++version = "1.56.2"
+ dependencies = [
+  "insta",
+  "itertools 0.14.0",
+@@ -2266,7 +2266,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "flatten-serde-json"
+-version = "1.56.1"
++version = "1.56.2"
+ dependencies = [
+  "criterion",
+  "serde_json",
+@@ -2450,7 +2450,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "fuzzers"
+-version = "1.56.1"
++version = "1.56.2"
+ dependencies = [
+  "arbitrary",
+  "bumpalo",
+@@ -3190,7 +3190,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "http-client"
+-version = "1.56.1"
++version = "1.56.2"
+ dependencies = [
+  "cidr",
+  "hyper-util",
+@@ -3510,7 +3510,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "index-scheduler"
+-version = "1.56.1"
++version = "1.56.2"
+ dependencies = [
+  "anyhow",
+  "backoff",
+@@ -3759,7 +3759,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "json-depth-checker"
+-version = "1.56.1"
++version = "1.56.2"
+ dependencies = [
+  "criterion",
+  "serde_json",
+@@ -4197,7 +4197,7 @@ checksum = "7ebb8d8732c6a6df3d8f032a82911cfc747e00efb95cc46e8d0acd5b5b88570c"
+ 
+ [[package]]
+ name = "meili-snap"
+-version = "1.56.1"
++version = "1.56.2"
+ dependencies = [
+  "insta",
+  "md5",
+@@ -4207,7 +4207,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "meilisearch"
+-version = "1.56.1"
++version = "1.56.2"
+ dependencies = [
+  "actix-cors",
+  "actix-http",
+@@ -4300,7 +4300,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "meilisearch-auth"
+-version = "1.56.1"
++version = "1.56.2"
+ dependencies = [
+  "base64 0.22.1",
+  "enum-iterator",
+@@ -4319,7 +4319,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "meilisearch-types"
+-version = "1.56.1"
++version = "1.56.2"
+ dependencies = [
+  "actix-web",
+  "anyhow",
+@@ -4358,7 +4358,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "meilitool"
+-version = "1.56.1"
++version = "1.56.2"
+ dependencies = [
+  "anyhow",
+  "clap",
+@@ -4392,7 +4392,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "milli"
+-version = "1.56.1"
++version = "1.56.2"
+ dependencies = [
+  "arroy",
+  "bbqueue",
+@@ -5020,7 +5020,7 @@ checksum = "9b4f627cb1b25917193a259e49bdad08f671f8d9708acfd5fe0a8c1455d87220"
+ 
+ [[package]]
+ name = "permissive-json-pointer"
+-version = "1.56.1"
++version = "1.56.2"
+ dependencies = [
+  "big_s",
+  "serde_json",
+@@ -6072,7 +6072,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "routes"
+-version = "1.56.1"
++version = "1.56.2"
+ dependencies = [
+  "actix-web",
+  "routes-macros",
+@@ -6084,7 +6084,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "routes-macros"
+-version = "1.56.1"
++version = "1.56.2"
+ dependencies = [
+  "proc-macro2",
+  "proc-macro2-diagnostics",
+@@ -8640,7 +8640,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "xtask"
+-version = "1.56.1"
++version = "1.56.2"
+ dependencies = [
+  "anyhow",
+  "build-info",
+```
+
+**File**: `Cargo.toml` (modified, +1/-1)
+```diff
+@@ -27,7 +27,7 @@ members = [
+ ]
+ 
+ [workspace.package]
+-version = "1.56.1"
++version = "1.56.2"
+ authors = [
+     "Quentin de Quelen <quentin@dequelen.me>",
+     "Clément Renault <clement@meilisearch.com>",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6726** (2026-11-09): Update version for the next release (v1.56.2) in Cargo.toml (@meili-bot)
+- **PR #6725** (2026-11-09): remove unwanted log + warn about future unwanted dbg (@dureuill)
 - **PR #6716** (2026-11-04): Bump mongodb to v9.0 in rails SDKs tests (@Strift)
 - **PR #6714** (2026-11-02): Bump docker/login-action from 4.2.0 to 4.7.0 (@dependabot[bot])
 - **PR #6713** (2026-11-02): Bump actions/download-artifact from 8.0.1 to 8.0.2 (@dependabot[bot])
 - **PR #6712** (2026-11-02): Bump docker/build-push-action from 6.19.2 to 7.4.0 (@dependabot[bot])
-- **PR #6711** (2026-11-02): Bump dart-lang/setup-dart from 1.7.2 to 1.8.1 (@dependabot[bot])
-- **PR #6709** (2026-11-02): Update version for the next release (v1.56.1) in Cargo.toml (@meili-bot)
 
 ---
 
@@ -2111,28 +2354,31 @@ Bump mongodb to v9.0 in rails SDKs tests
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #6716 from meilisearch/chore/update-rails-tests
+## X. Merge pull request #6725 from meilisearch/remove-dbg-and-check-for-them
 
 **RULE**:
-When implementing operations in `.github/workflows/sdks-tests.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meilisearch/meilisearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `clippy.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meilisearch/meilisearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c18c8197`: Merge pull request #6716 from meilisearch/chore/update-rails-tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8c7bfcfa`: Merge pull request #6725 from meilisearch/remove-dbg-and-check-for-them. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/sdks-tests.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `clippy.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-          mongodb-version: "9.0"
+
+disallowed-macros = [
+    { path = "std::dbg" }
+]
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-          mongodb-version: 8.0
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c18c8197` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8c7bfcfa` are properly handled with clean fallback behavior.

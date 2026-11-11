@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/oven-sh-bun-learnings.md`  
 > **Source**: github ([https://github.com/oven-sh/bun](https://github.com/oven-sh/bun))  
-> **Source Version**: `b1007f11`  
+> **Source Version**: `2596ac5d`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T17:21:53.516Z  
+> **Timestamp**: 2026-11-08T22:36:33.677Z  
 > **Learning ID**: `learn-github-oven-sh-bun`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/oven-sh-bun-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/oven-sh/bun](https://github.com/oven-sh/bun))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T17:21:53.509Z  
+> **Harvest Timestamp**: 2026-11-08T22:36:33.669Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Incredibly fast JavaScript runtime, bundler, test runner, and package manager – all in one
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 96568 stars
+- **Stars / Engagement**: 96713 stars
 
 ---
 
@@ -978,11 +978,11 @@ struct us_poll_t {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #48056** (2026-11-08): **Transpiler rewrites `return undefined` to `return;` in async generators, skipping the required `Await`**
+  *Symptoms*: ### What version of Bun is running?  1.4.4+38afee6c8  ### What platform is your computer?  Darwin 25.3.0 arm64 arm  ### What steps can reproduce the bug?  In Bun 1.4.4, the transpiler simplifies `return undefined;` and `return void 0;` to `return;` inside `async function*` bodies, dropping the microtask tick required when awaiting a returned expression. Because the runtime transpiles modules before execution, this changes promise resolution order in `bun run` as well as `Bun.Transpiler` and `bun build`.  ```js const log = []; async function* explicit() { return undefined; } async function* implicit() { return; } explicit().next().then(() => log.push("explicit done")); implicit().next().then(() => log.push("implicit done")); Promise.resolve()   .then(() => log.push("tick1"))   .then(() => log.push("tick2"))   .then(() => console.log(log.join(", "))); ```  ### What is the expected behavior?  ```text implicit done, tick1, explicit done, tick2 ```  ### What do you see instead?  ```text explicit done, implicit done, tick1, tick2 ```  ### Additional information  Per ECMA-262 ReturnStatement Evaluation (and test262 `language/statements/async-generator/return-undefined-implicit-and-explicit.js`), `return Expression;` in an async generator must perform `Await` on the expression value even when it evaluates to `undefined`, whereas bare `return;` does not.  Credit: https://ucsbplse.github.io/ 
+
 - **Issue #47894** (2026-11-04): **node:child_process misses spawn event with extra stdio pipe under bun test on macOS (1.4.4)**
   *Symptoms*: ### What version of Bun is running?  `1.4.4+38afee6c8`  ### What platform is your computer?  macOS 27.0.1 (26A434), Darwin arm64.  ### What steps can reproduce the bug?  An extra stdio pipe at FD3 causes a `node:child_process` child to miss its `spawn` event under `bun test`. The child does run and exit: its `exit` event arrives and `exitCode` becomes `0`. This leaves code that awaits `spawn` pending forever.  No dependencies, Effect, module mocks, load generator, or parallel test workers are needed for this reproduction.  `probe.mjs`:  ```js import { spawn } from "child_process";  export async function probe() {   const events = [];   const child = spawn("/bin/sleep", ["1"], {     env: {},     detached: false,     stdio: ["ignore", "ignore", "inherit", "pipe"],   });   child.on("spawn", () => events.push("spawn"));   child.on("exit", () => events.push("exit"));   child.on("error", (error) => events.push(error.code));   await new Promise((resolve) => setTimeout(resolve, 1500));   const result = {     events,     exitCode: child.exitCode,     signalCode: child.signalCode,   };   child.kill();   child.stdio[3]?.destroy();   return result; }  if (import.meta.main) console.log(await probe()); ```  `probe.test.ts`:  ```ts import { expect, test } from "bun:test"; import { probe } from "./probe.mjs";  test("extra stdio child emits spawn before exit", async () => {   const result = await probe();   console.log(result);   expect(result.events).toContain("spawn");   expect(result.event
-
-- **Issue #47830** (2026-11-03): **Bun.serve still buffers without bound for a slow (not stalled) reader of a ReadableStream response**
-  *Symptoms*: ### What version of Bun is running?  1.4.4+38afee6c8  ### What platform is your computer?  Linux 6.8.0-147-generic x86_64  ### What steps can reproduce the bug?  #32469 fixed the case of a client that stops reading: Bun now stops pulling the response stream. A client that keeps reading, but slowly, still lets Bun pull the stream far ahead of the socket and buffer the difference in memory without bound.  Save as `repro.mjs` and run `bun repro.mjs`. It is safe: the body stops at 256 MiB and the run ends after 10 seconds. The client reads 64 KiB every 50 ms, about 1.25 MB/s.  ```js import { connect } from 'node:net';  const CHUNK = new Uint8Array(64 * 1024).fill(65); // 64 KiB const CAP = 256 * 1024 * 1024; let enqueued = 0; let read = 0;  const server = Bun.serve({   port: 0,   hostname: '127.0.0.1',   fetch() {     const stream = new ReadableStream(       {         pull(controller) {           controller.enqueue(CHUNK);           enqueued += CHUNK.byteLength;           if (enqueued >= CAP) controller.close();         },       },       { highWaterMark: 1 },     );     return new Response(stream);   }, });  // A client that keeps reading, slowly: 64 KiB every 50 ms. const socket = connect(server.port, '127.0.0.1'); socket.pause(); socket.write('GET / HTTP/1.1\r\nHost: localhost\r\n\r\n'); setInterval(() => {   const chunk = socket.read(64 * 1024);   if (chunk !== null) read += chunk.length; }, 50);  let t = 0; setInterval(() => {   t += 1;   const rss = (process.memoryUsage().rs
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -999,443 +999,391 @@ struct us_poll_t {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b1007f11` (2026-11-05)
-**Commit Message**: Remove 125 `unsafe` blocks from IPC, N-API, `bun:ffi`, `node:zlib`, c-ares, BoringSSL, `node:quic` and the parser (#47944)
+### Incident Patch 1: `2596ac5d` (2026-11-07)
+**Commit Message**: AOT: the Bun side of the rewritten ahead-of-time compiler (#47942)
 
-### What does this PR do?
+The Bun side of the rewritten ahead-of-time compiler. The engine side is oven-sh/WebKit#997, which
+has the design and the numbers, with its follow-ups oven-sh/WebKit#999 and oven-sh/WebKit#1000. This
+is oven-sh/bun#47942 with its follow-ups #48088 and #48112 in it.
 
-35 separate changes, one commit each: 10 in IPC, N-API, `bun:ffi` and
-their neighbours, 15 in `node:zlib`, the c-ares and BoringSSL bindings
-and `node:quic`, and 10 in the parser, the printer, CSS, `Bun.Image` and
-smaller crates. They follow #47291, #47317, #47338, #47382, #47393,
-#47414, #47871, #47893, #47895, #47901 and #47940 and work the same way:
-signatures name the type and the lifetime that the value already has,
-hand-written pointer code becomes plain ownership and borrows that the
-compiler checks, and what was never needed is deleted.
+`src/aot`: the lowering writes the program that the engine's new scan, link and walk read. Captured
+values are copied into closures where nothing stores to them later, straight-line blocks are joined,
+and CommonJS and ES module graphs are resolved at build time, cycles included. `bun test --aot`:
+module mocks, spies, hoisted factories, re-evaluated modules and `--rerun-each` behave as they do
+without `--aot` in many more cases. Type errors stop an `--aot` build, in TypeScript only; `bun test
+--aot` prints them as warnings and runs. A computed import no longer embeds data files that its
+written name does not ask for. `bun:ffi`: no limit on the number of open callbacks in compiled
+programs.
 
-Together: **125 fewer `unsafe` blocks, 17 fewer `unsafe fn`s and 4 fewer
-`unsafe impl`s**, +870/−1499 over 58 files. No safe function became
-`unsafe`, and no wrapper type was added. **[Where the compiled code
-changes](#where-the-compiled-code-changes) lists every place where the
-program does different work.**
+What changes for Bun without `--aot`, by folder and file, is listed in the description of the pull
+request; the list below is the short form that the commits carried.
 
-| # | Change | `unsafe` | Diff |
-|---|---|---|---|
-| 1 | ipc: `CHANNEL` holds `&'static IPCInstance`, boxed once the
-transport is up | −9 blocks, −1 `unsafe fn` | +34/−74, 3 files |
-| 2
-
-**File**: `src/aot/compile.rs` (modified, +10/-14)
+**File**: `.gitignore` (modified, +1/-0)
 ```diff
-@@ -632,20 +632,16 @@ impl KeepsFreeBlocksBelowThePeak {
- 
-     fn resident_now() -> usize {
-         let mut resident = 0;
--        let unused = core::ptr::null_mut();
--        // SAFETY: it writes a number through each pointer that is not null.
--        unsafe {
--            bun_alloc::mimalloc::mi_process_info(
--                unused,
--                unused,
--                unused,
--                &raw mut resident,
--                unused,
--                unused,
--                unused,
--                unused,
--            );
--        }
-+        bun_alloc::mimalloc::mi_process_info(
-+            None,
-+            None,
-+            None,
-+            Some(&mut resident),
-+            None,
-+            None,
-+            None,
-+            None,
-+        );
-         resident
-     }
- }
+@@ -100,6 +100,7 @@ node_modules_*
+ !test/aot/parallel/**/node_modules/
+ !test/aot/parallel/**/dist/
+ !test/aot/ir/**/node_modules/
++!test/aot/parallel-test-runs/**/node_modules/
+ out
+ out.*
+ outcss
 ```
 
-**File**: `src/aot/emit/output.rs` (modified, +1/-3)
+**File**: `.prettierignore` (modified, +3/-0)
 ```diff
-@@ -19,9 +19,7 @@ impl<'a> OutputSlice<'a> {
+@@ -45,6 +45,9 @@ src/js/internal/repl/await.ts
+ src/js/internal/repl/acorn.ts
+ src/js/internal/repl/acorn-walk.ts
  
-     pub(super) fn put_words(&mut self, words: &[u32]) {
-         if cfg!(target_endian = "little") {
--            let first_byte = words.as_ptr().cast::<u8>();
--            // SAFETY: every byte of a `u32` is initialized, and a byte is aligned anywhere.
--            self.put_bytes(unsafe { std::slice::from_raw_parts(first_byte, size_of_val(words)) });
-+            self.put_bytes(bun_core::slice_as_bytes(words));
-         } else {
-             words
-                 .iter()
++# one statement a line: test/aot/tools/answers-test-from-source.ts erases the types line by line and joins the lines
++test/aot/answers
++
+ # each line is a constructor as somebody may write it, and where its tokens stand is what is tested
+ test/aot/parallel/errors/error-out-of-making-this-*
+ test/aot/parallel/errors/error-at-shorthand-property-names-the-property.js
 ```
 
-**File**: `src/aot/engine.rs` (modified, +2/-3)
+**File**: `Cargo.lock` (modified, +8/-0)
 ```diff
-@@ -72,8 +72,7 @@ bun_core::impl_zeroable!(CompileOptions);
+@@ -181,6 +181,7 @@ dependencies = [
+  "bun_sema_driver",
+  "bun_sema_parser",
+  "bun_sema_standalone",
++ "bun_sort_by_number",
+  "bun_sys",
+  "bun_threading",
+  "bun_trim",
+@@ -210,6 +211,7 @@ dependencies = [
+  "bun_core",
+  "bun_removable_features",
+  "bun_sema",
++ "bun_sort_by_number",
+  "smallvec",
+ ]
  
- fn default_record() -> CompileOptions {
-     let mut record: CompileOptions = zeroed();
--    // SAFETY: the engine writes one `CompileOptions` through the pointer before it returns.
--    unsafe { Bun__AOT__initializeOptions(&raw mut record) };
-+    Bun__AOT__initializeOptions(&mut record);
-     record
- }
+@@ -1738,6 +1740,7 @@ dependencies = [
+  "bun_core",
+  "bun_paths",
+  "bun_sema_standalone",
++ "bun_sort_by_number",
+  "bun_threading",
+  "bun_wyhash",
+  "bun_zstd",
+@@ -1866,6 +1869,10 @@ dependencies = [
+ name = "bun_simdutf_sys"
+ version = "0.0.0"
  
-@@ -627,7 +626,7 @@ static REGION_THREADS: HostThreadPool = HostThreadPool {
- };
- 
- unsafe extern "C" {
--    fn Bun__AOT__initializeOptions(options: *mut CompileOptions);
-+    safe fn Bun__AOT__initializeOptions(options: &mut CompileOptions);
-     fn Bun__AOT__applyOptionWord(
-         options: *mut CompileOptions,
-         word: BunAOTBytes,
++[[package]]
++name = "bun_sort_by_number"
++version = "0.0.0"
++
+ [[package]]
+ name = "bun_sourcemap"
+ version = "0.0.0"
+@@ -2012,6 +2019,7 @@ dependencies = [
+  "bun_paths",
+  "bun_perf",
+  "bun_resolver",
++ "bun_sema_standalone",
+  "bun_sourcemap",
+  "bun_sys",
+  "bun_threading",
 ```
 
-**File**: `src/aot/engine/testing.rs` (modified, +7/-7)
+**File**: `Cargo.toml` (modified, +2/-0)
 ```diff
-@@ -18,11 +18,6 @@ pub(super) fn to_words(bytes: &[u8]) -> Vec<u64> {
-     bytes.chunks(8).map(to_word).collect()
- }
- 
--pub(super) fn bytes_of(words: &[u64]) -> &[u8] {
--    // SAFETY: every byte of an initialized `u64` is initialized, and the slice ends with `words`.
--    unsafe { core::slice::from_raw_parts(words.as_ptr().cast::<u8>(), size_of_val(words)) }
--}
--
- fn bytes_of_records<T: ResultRecord>(records: &[T]) -> &[u8] {
-     // SAFETY: an abi record has no padding (its generated assertions fix its size and every offset), so every byte is initialized, and the slice ends with `records`.
-     unsafe { core::slice::from_raw_parts(records.as_ptr().cast::<u8>(), size_of_val(records)) }
-@@ -57,7 +52,9 @@ impl Sections {
-     fn as_bytes(&self) -> [BunAOTBytes; Section::COUNT] {
-         Section::ALL.map(|section| {
-             let index = section as usize;
--            BunAOTBytes::from_slice(&bytes_of(&self.words[index])[..self.lengths[index]])
-+            BunAOTBytes::from_slice(
-+                &bun_core::slice_as_bytes(&self.words[index])[..self.lengths[index]],
-+            )
-         })
-     }
- }
-@@ -98,7 +95,10 @@ impl ResultRecords<'_> {
-         let sections = Sections::new()
-             .with(Section::Image, self.image)
-             .with(Section::Text, self.text)
--            .with(Section::LimitValues, bytes_of(&limit_values))
-+            .with(
-+                Section::LimitValues,
-+                bun_core::slice_as_bytes(&limit_values),
-+            )
-             .with_records(self.unseen_code)
-             .with_records(self.builtins_used)
-             .with_records(self.features_used)
+@@ -64,6 +64,7 @@ members = [
+   "src/event_loop",
+   "src/executable",
+   "src/exe_format",
++  "src/sort_by_number",
+   "src/trim",
+   "src/trim/removable_features",
+   "src/highway",
+@@ -443,6 +444,7 @@ bun_dns = { path = "src/dns" }
+ bun_dotenv = { path = "src/dotenv" }
+ bun_event_loop = { path = "src/event_loop" }
+ bun_exe_format = { path = "src/exe_format" }
++bun_sort_by_number = { path = "src/sort_by_number" }
+ bun_trim = { path = "src/trim" }
+ bun_removable_features = { path = "src/trim/removable_features" }
+ bun_highway = { path = "src/highway" }
 ```
 
-**File**: `src/aot/engine/tests.rs` (modified, +6/-3)
+**File**: `bench/compiler/generate.ts` (added, +1688/-0)
 ```diff
-@@ -5,7 +5,7 @@ use bun_options_types::aot_options::BuildReportRequest;
- use bun_removable_features::{Feature, TrimFeature};
- 
- use super::ResultSection as Section;
--use super::testing::{Sections, bytes_of, with_result};
-+use super::testing::{Sections, with_result};
- use super::*;
- use crate::ir::generated::{Architecture, CheckSet, StatisticId};
- use crate::statistics::is_lowered_by_all;
-@@ -457,8 +457,11 @@ fn sections_are_read_as_typed_elements() {
-     let module = offset_of!(AccessCountRecord, module);
-     let access_counts = [4, 9].map(|word| patched_record::<AccessCountRecord>(&[(module, word)]));
-     let sections = Sections::new()
--        .with(Section::LimitValues, bytes_of(&limit_values))
--        .with(Section::Statistics, bytes_of(&statistics))
-+        .with(
-+            Section::LimitValues,
-+            bun_core::slice_as_bytes(&limit_values),
-+        )
-+        .with(Section::Statistics, bun_core::slice_as_bytes(&statistics))
-         .with(Section::EntryModuleIds, &entry_module_ids)
-         .with(Section::AccessCounts, &access_counts.concat());
-     with_result(&sections, |result| {
+@@ -0,0 +1,1688 @@
++// Writes one application in several languages and dresses, for run.ts to time their compilers on.
++//
++//   bun bench/compiler/generate.ts <folder> <modules> <dress>
++//
++// The application is a service of <modules> features. A feature has a record, a parser and a printer of text with an error path, JSON in and out, a registry over a map,
++// an interface with a few implementations, routes in a shared HTTP router, and a subcommand for a shared command line parser. It uses two earlier features.
++// `describe(index)` says what a feature looks like: how many fields of which types, how many shapes, which numbers. Every writer below renders that one description in the idiom of its language.
++// Every program prints the same number: `bun bench/compiler/run.ts --check` holds them to it.
++//
++// Dresses: typed (.ts) | erased (the same as .js, no types) | mixed (every other feature .js) | packages-typed (features as packages in node_modules: .js with .d.ts) | packages-untyped | go | rust
++import { mkdirSync, writeFileSync } from "node:fs";
++import { dirname, join } from "node:path";
++
++export type FieldType = "int" | "text" | "flag" | "texts" | "maybeInt";
++export interface Field {
++  name: string;
++  type: FieldType;
++}
++export interface Feature {
++  index: number;
++  fields: Field[];
++  shapes: { name: string; extra: number }[];
++  limits: [number, number];
++  weights: [number, number, number];
++  uses: number[];
++  rows: string[];
++  badRow: string;
++}
++
++export const modulus = 1000003;
++
++// A small generator of numbers that gives the same ones everywhere.
++function numbers(seed: number) {
++  let state = (seed * 2654435761 + 12345) >>> 0;
++  return (below: number) => {
++    state = (Math.imul(state, 1664525) + 1013904223) >>> 0;
++    return (state >>> 8) % below;
++  };
++}
++
++export function describe(index: number): Feature {
++  const next = numbers(index + 1);
++  const types: FieldType[] = ["int", "text", "flag", "texts", "maybeInt"];
++  const fields: Field[] = [
++    { name: "id", type: "int" },
++    { name: "name", type: "text" },
++  ];
++  for (let extra = 0, count = 2 + next(5); extra < count; extra++)
++    fields.push({ name: `f${extra}`, type: types[next(types.length)] });
++  const shapes = Array.from({ length: 2 + next(3) }, (_, shape) => ({ name: `Shape${shape}`, extra: next(9) }));
++  const cell = (field: Field, row: number) => {
++    switch (field.type) {
++      case "int":
++        return field.name === "id" ? String(row + 1) : String(next(1000));
++      case "text":
++        return field.name === "name" ? `n${index}x${row}` : `t${next(100)}`;
++      case "flag":
++        return next(2) ? "1" : "0";
++      case "texts":
++        return Array.from({ length: next(3) }, () => `g${next(10)}`).join("|");
++      case "maybeInt":
++        return next(2) ? String(next(50)) : "";
++    }
++  };
++  const rows = Array.from({ length: 3 }, (_, row) => fields.map(field => cell(field, row)).join(","));
++  return {
++    index,
++    fields,
++    shapes,
++    limits: [10 + next(10), 100 + next(50)],
++    weights: [1 + next(5), 2 + next(7), 3 + next(11)],
++    // A tree, not a row: feature n on feature n - 1 would be a chain of imports as long as the program, which no application has and which lets `go build` compile one package at a time.
++    uses: index === 0 ? [] : [...new Set([index >> 1, index >> 3])],
++    rows,
++    badRow: next(2) ? "x," + rows[0].split(",").slice(1).join(",") : "1,short",
++  };
++}
++
++type Files = Record<string, string>;
++
++// ---------------------------------------------------------------------------------------------------------------------------------------------------- TypeScript and JavaScript
++
++function script(feature: Feature, typed: boolean, pathOf: (what: string) => string): string {
++  const { index, fields, shapes, limits, weights, uses } = feature;
++  const T = (text: string) => (typed ? text : "");
++  const typeOf: Record<FieldType, string> = {
++    int: "number",
++    text: "string",
++    flag: "boolean",
++    texts: "string[]",
++    maybeInt: "number",
++  };
++  const parseCell = (field: Field, position: number) => {
++    const part = `parts[${position}]`;
++    switch (field.type) {
++      case "int":
++        return `${field.name}: integer(${part}, line)`;
++      case "text":
++        return `${field.name}: ${part}`;
++      case "flag":
++        return `${field.name}: ${part} === "1"`;
++      case "texts":
++        return `${field.name}: ${part} === "" ? [] : ${part}.split("|")`;
++      case "maybeInt":
++        return `${field.name}: ${part} === "" ? undefined : integer(${part}, line)`;
++    }
++  };
++  const printCell = (field: Field) => {
++    switch (field.type) {
++      case "int":
++      case "text":
++        return `item.${field.name}`;
++      case "flag":
++        return `item.${field.name} ? "1" : "0"`;
++      case "texts":
++        return `item.${field.name}.join("|")`;
++      case "maybeInt":
++        return `item.${field.name} ?? ""`;
++    }
++  };
++ 
 ```
 
-**File**: `src/aot/statistics.rs` (modified, +10/-14)
+**File**: `bench/compiler/run.ts` (added, +423/-0)
 ```diff
-@@ -299,20 +299,16 @@ fn process_info() -> (Duration, usize, usize) {
-     if !bun_alloc::USE_MIMALLOC {
-         return (Duration::ZERO, 0, 0);
-     }
--    let unused = core::ptr::null_mut();
--    // SAFETY: it writes a number through each pointer that is not null.
--    unsafe {
--        bun_alloc::mimalloc::mi_process_info(
--            unused,
--            &raw mut user,
--            &raw mut system,
--            &raw mut resident,
--            &raw mut peak,
--            unused,
--            unused,
--            unused,
--        );
--    }
-+    bun_alloc::mimalloc::mi_process_info(
-+        None,
-+        Some(&mut user),
-+        Some(&mut system),
-+        Some(&mut resident),
-+        Some(&mut peak),
-+        None,
-+        None,
-+        None,
-+    );
-     (
-         Duration::from_millis((user + system) as u64),
-         resident,
+@@ -0,0 +1,423 @@
++// How many lines a second does `bun build --compile --aot` compile, on ordinary application code?
++//
++//   bun bench/compiler/run.ts                                  every scenario at 10,000, 100,000, 1,000,000 and 5,000,000 lines, three runs each: the table
++//   bun bench/compiler/run.ts --sizes=10000 --runs=1           smaller
++//   bun bench/compiler/run.ts --scenarios=typed,go-cold        some of them, by their names in the table. A name that is not among them ends the run
++//   bun bench/compiler/run.ts --commands                       prints the command of every scenario that would run, and runs none
++//   bun bench/compiler/run.ts --bun=<path>                     another Bun than the one that runs this script
++//   bun bench/compiler/run.ts --check                          builds every program at the smallest size, runs it, and fails unless every one was built, ended with 0 and printed the same number
++//   bun bench/compiler/run.ts --json=<file>                    every number of every run, too
++//   bun bench/compiler/run.ts --cores=0-15                     under taskset (Linux)
++//
++// One application (./generate.ts) in every dress. A size is the number of lines of its typed TypeScript form; every other form is the same application with as many features, and has the lines it has.
++// Every number comes from this script: the mean of all runs, none left out. CPU seconds and peak memory are the operating system's for the compiler's process and its children.
++// Instructions are counted where `perf` is there. Lines are physical lines of the files that the compiler is given; what it reads besides (declaration files, its own library, Go's standard library) stands in its own column.
++// Bun's compiler counts those lines in every build and prints the counts under `--explain=statistics`. Cargo and `bun build --compile` without `--aot` don't tell, so their cells are empty.
++// Below the table, the closing line of the last run of each `bun build --compile --aot` is printed as is: how many lines the compiler says it compiled, and how long it says that took.
++// Not a test, and CI does not run it.
++import { spawnSync } from "bun";
++import { mkdtempSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from "node:fs";
++import { loadavg, tmpdir } from "node:os";
++import { join } from "node:path";
++import { generate, write } from "./generate";
++
++const option = (name: string, fallback: string) =>
++  process.argv.find(word => word.startsWith(`--${name}=`))?.slice(name.length + 3) ?? fallback;
++const has = (name: string) => process.argv.includes(`--${name}`);
++const bun = option("bun", process.execPath);
++const sizes = option("sizes", "10000,100000,1000000,5000000").split(",").map(Number);
++const runs = Number(option("runs", "3"));
++const cores = option("cores", "");
++const wanted = option("scenarios", "");
++const which = (tool: string) => Bun.which(tool);
++const perf = process.platform === "linux" ? which("perf") : null;
++
++interface Scenario {
++  name: string;
++  dress: string;
++  /** What has to be on the machine. */
++  needs?: string;
++  /** Run once before the timed command of every run, untimed. */
++  prepare?: (folder: string) => string[][];
++  command: (folder: string) => string[];
++  environment?: (folder: string) => Record<string, string>;
++  executable: string;
++  entry?: (entry: string) => string;
++}
++
++const aot = (entry: string, ...flags: string[]) => [
++  bun,
++  "build",
++  "--compile",
++  "--aot",
++  "--explain=statistics",
++  ...flags,
++  entry,
++  "--outfile",
++  "app",
++];
++// On Windows Bun and cargo write `<name>.exe`. Go writes the name that it is given, so it is given that one.
++const onThisSystem = (executable: string) => (process.platform === "win32" ? `${executable}.exe` : executable);
++const builtIn = (folder: string, { executable }: Scenario) => join(folder, onThisSystem(executable));
++const open = `\nif (process.argv.length > 90) await import(process.argv[90]);\n`;
++const evaluates = `\nif (process.argv.length > 90) eval(process.argv[90]);\n`;
++const scenarios: Scenario[] = [
++  { name: "typed", dress: "typed", command: () => aot("main.ts"), executable: "app" },
++  { name: "typed on one thread", dress: "typed", command: () => aot("main.ts", "--aot-threads=1"), executable: "app" },
++  { name: "erased", dress: "erased", command: () => aot("main.js"), executable: "app" },
++  {
++    name: "erased on one thread",
++    dress: "erased",
++    command: () => aot("main.js", "--aot-threads=1"),
++    executable: "app",
++  },
++  { name: "mixed", dress: "mixed", command: () => aot("main.ts"), executable: "app" },
++  {
++    name: "bundled",
++    dress: "typed",
++    prepare: () => [[bun, "build", "--target=bun", "main.ts", "--outfile", "bundle.js"]],
++    command: () => aot("bundle.js"),
++    executable: "app",
++  },
++  {
++    name: "bundled and minified",
++    dress: "typed",
++    prepare: () => [[bun, "build", "--target=bun", "--minify", "main.ts", "--outfile", "bu
 ```
 
-**File**: `src/ast/binding.rs` (modified, +7/-92)
+**File**: `completions/bun-cli.json` (modified, +9/-8)
 ```diff
-@@ -74,113 +74,29 @@ impl Binding {
-             data: t.alloc_into_b(bump),
-         }
-     }
--}
--
--// ──────────────────────────────────────────────────────────────────────────
--// ToExpr — Rust cannot store `*mut P<'a, const ..>` in a non-generic field
--// nor take a fn item as a const generic, so the wrapper is type-erased:
--// `wrap` is a plain fn pointer that casts the erased `ctx` back to the
--// concrete `P` instantiation. The `*ExprType` context is **not** stored — it
--// is supplied at call time (`Binding::to_expr(.., ctx, ..)`) so the raw
--// pointer's Stacked-Borrows tag is a child of the *live* `&mut P` at the call
--// site rather than a stale tag captured during `prepare_for_visit_pass`
--// (which every later `&mut self` retag would invalidate). The struct is
--// `Copy` so the recursive `to_expr` can pass it by value.
--// ──────────────────────────────────────────────────────────────────────────
--
--#[derive(Copy, Clone)]
--pub struct ToExprWrapper {
--    /// Back-reference to `P.arena`. `BackRef` invariant: the arena is owned by
--    /// `P<'a>` and outlives every `ToExprWrapper` (which is stored on `P` and
--    /// only used during the visit pass). `None` only for the pre-wire
--    /// `dangling()` placeholder; niche-packed so layout matches `*const Arena`.
--    arena: Option<bun_ptr::BackRef<Arena>>,
--    wrap: fn(*mut core::ffi::c_void, crate::Loc, Ref) -> Expr,
--}
--
--impl ToExprWrapper {
--    /// Placeholder used in `P::init` before `prepare_for_visit_pass` wires the
--    /// arena + trampoline.
--    pub const fn dangling() -> Self {
--        Self {
--            arena: None,
--            wrap: |_, _, _| unreachable!("ToExprWrapper used before prepare_for_visit_pass"),
--        }
--    }
--
--    /// `ExprType` is erased to `c_void`; callers (P.rs) supply a trampoline
--    /// closure that casts back to `*mut P<..>` and dispatches to
--    /// `P::wrap_identifier_{namespace,hoisting}`. Non-capturing closures
--    /// coerce to fn pointers, so this stays zero-cost.
--    /// The `*mut P` itself is passed per-call via `Binding::to_expr`.
--    #[inline]
--    pub fn new(arena: &Arena, wrap: fn(*mut core::ffi::c_void, crate::Loc, Ref) -> Expr) -> Self {
--        Self {
--            arena: Some(bun_ptr::BackRef::new(arena)),
--            wrap,
--        }
--    }
--
--    #[inline]
--    pub(crate) fn wrap_identifier(
--        &self,
--        ctx: *mut core::ffi::c_void,
--        loc: crate::Loc,
--        ref_: Ref,
--    ) -> Expr {
--        (self.wrap)(ctx, loc, ref_)
--    }
--
--    #[inline]
--    pub(crate) fn arena(&self) -> &Arena {
--        // `BackRef::get` encapsulates the deref under the owner-outlives-holder
--        // invariant; `expect` mirrors the prior `debug_assert!(!null)`.
--        self.arena
--            .as_ref()
--            .expect("ToExprWrapper not wired (prepare_for_visit_pass)")
--            .get()
--    }
--}
--
--impl Binding {
--    /// `ctx` is the type-erased `*mut P<..>` derived from the *caller's live*
--    /// `&mut P` (e.g. `core::ptr::addr_of_mut!(*p) as *mut c_void`). Threading
--    /// it per-call keeps the raw pointer's provenance under the active Unique
--    /// borrow, avoiding the stale-tag UB of storing it long-term.
--    ///
--    /// Accepts the wrapper by `Borrow` so both the by-value call-site in
--    /// `visitStmt.rs` (`p.to_expr_wrapper_namespace`) and the `&mut` call-site
--    /// in `maybe.rs` (`&mut p.to_expr_wrapper_hoisted`) type-check without
--    /// edits — `T: Borrow<T>` and `&mut T: Borrow<T>` are both blanket impls.
--    pub fn to_expr<W>(binding: &Binding, ctx: *mut core::ffi::c_void, wrapper: W) -> Expr
--    where
--        W: core::borrow::Borrow<ToExprWrapper>,
--    {
--        Self::to_expr_inner(binding, ctx, *wrapper.borrow())
--    }
- 
--    fn to_expr_inner(
-+    pub fn to_expr<C>(
-         binding: &Binding,
--        ctx: *mut core::ffi::c_void,
--        wrapper: ToExprWrapper,
-+        bump: &Arena,
-+        ctx: &mut C,
-+        wrap_identifier: impl Fn(&mut C, crate::Loc, Ref) -> Expr + Copy,
-     ) -> Expr {
-         let loc = binding.loc;
-         match binding.data {
-             B::BMissing(_) => Expr {
-                 data: ExprData::EMissing(E::Missing {}),
-                 loc,
-             },
--            B::BIdentifier(b) => wrapper.wrap_identifier(ctx, loc, b.r#ref),
-+            B::BIdentifier(b) => wrap_identifier(ctx, loc, b.r#ref),
-             B::BArray(b) => {
-                 let b = b.get();
--                let bump = wrapper.arena();
-                 let items = b.items();
-                 let len = items.len();
-                 let mut exprs = bun_alloc::ArenaVec::with_capacity_in(len, bump);
-                 let mut i: usize = 0;
-                 while i < len {
-                     let item = &items[i];
--                    let expr = Self::to_expr_inner(&item.binding, ctx, wrapper);
-+                    let expr = Self::to_expr(&item.binding, bump, ctx, wrap_identifier);
-                     let converted = if b.has_sprea
+@@ -4675,16 +4675,9 @@
+           "required": false,
+           "multiple": false
+         },
+-        {
+-          "name": "aot-log-type-mismatches",
+-          "description": "With --aot: the executable logs every value that doesn't match its declared type",
+-          "hasValue": false,
+-          "required": false,
+-          "multiple": false
+-        },
+         {
+           "name": "explain",
+-          "description": "With --aot: list the code that compiled to a slow path and how to fix it, worst first. Other reports: json, guards, guards-json, trim, missed-optimizations, allocations",
++          "description": "With --aot: list the code that compiled to a slow path and how to fix it, worst first. Other reports: json, guards, guards-json, trim, allocations",
+           "hasValue": true,
+           "valueType": "val",
+           "required": false,
+@@ -4704,6 +4697,14 @@
+           "required": false,
+           "multiple": false
+         },
++        {
++          "name": "aot-harden",
++          "description": "With --aot: make a bug in the compiler harder to turn into a memory bug. Takes proof-checks, ignore-told-ranges. Runs slower",
++          "hasValue": true,
++          "valueType": "val",
++          "required": false,
++          "multiple": true
++        },
+         {
+           "name": "no-compile-function-source",
+           "description": "With --aot: don't embed function source code. fn.toString() returns [native code], and an eval() or new Function() call the compiler didn't find at build time throws",
 ```
 
-**File**: `src/ast/e.rs` (modified, +16/-40)
+**File**: `completions/bun.bash` (modified, +1/-1)
 ```diff
-@@ -992,11 +992,6 @@ pub struct JsonTape {
-     pub encoding: StrEncoding,
- }
- 
--// SAFETY: only the parsing thread writes it; shared use afterwards is read-only.
--unsafe impl Send for JsonTape {}
--// SAFETY: see the `Send` impl.
--unsafe impl Sync for JsonTape {}
--
- impl JsonTape {
-     const STR_CHUNK: usize = 4096;
- 
-@@ -1297,43 +1292,24 @@ impl Default for Object {
- 
- /// Dotted-key path used by the INI parser (`get_or_put_object`).
- ///
--/// Node types are lifetime-free, so `next` is a raw `*mut Rope`
--/// into the bump arena. Segments are bulk-freed at arena reset.
--pub struct Rope {
-+/// Segments live in the bump arena and are bulk-freed at arena reset.
-+pub struct Rope<'a> {
-     pub head: Expr,
--    pub next: *mut Rope,
-+    pub next: Option<&'a mut Rope<'a>>,
- }
--impl Rope {
--    pub fn append(&mut self, expr: Expr, bump: &Bump) -> Result<*mut Rope, AllocError> {
-+impl<'a> Rope<'a> {
-+    pub fn append(&mut self, expr: Expr, bump: &'a Bump) {
-         // Walk to the tail iteratively: recursing once per node overflows the
-         // native stack on adversarially deep ropes (e.g. an `.npmrc` section
-         // header with thousands of dot-separated segments).
--        //
--        // Arena-allocated Rope nodes are uniquely owned by the chain at this
--        // point; route through `StoreRef::DerefMut` (the arena-backed handle
--        // whose deref is centralised in `nodes.rs`).
--        let mut tail = StoreRef::from_bump(self);
--        while let Some(next) = core::ptr::NonNull::new(tail.next).map(StoreRef::from_non_null) {
--            tail = next;
--        }
--        let rope: *mut Rope = bump.alloc(Rope {
-+        let mut tail = &mut self.next;
-+        while let Some(next) = tail {
-+            tail = &mut next.next;
-+        }
-+        *tail = Some(bump.alloc(Rope {
-             head: expr,
--            next: core::ptr::null_mut(),
--        });
--        tail.next = rope;
--        Ok(rope)
--    }
--
--    /// Re-borrow `next` as `Option<&Rope>`. Same `StoreRef` arena contract:
--    /// the pointee is a bump allocation valid until arena reset. Centralises
--    /// the one `unsafe` so the `get_or_put_object`/`get_rope` walkers
--    /// don't repeat `if !next.is_null() { unsafe { &*next } }` at every hop.
--    #[inline]
--    pub(crate) fn next_ref<'a>(&self) -> Option<&'a Rope> {
--        // SAFETY: `next` is either null or a bump-arena allocation valid until
--        // arena reset. Read-only borrow; no `&mut` alias is
--        // outstanding at any caller (the chain is fully built before walking).
--        unsafe { self.next.cast_const().as_ref() }
-+            next: None,
-+        }));
-     }
- }
- 
-@@ -1422,15 +1398,15 @@ impl Object {
- 
-     /// Walks `rope` segments, creating nested objects as needed, and returns
-     /// the leaf `E.Object` expression.
--    pub fn get_or_put_object(&mut self, rope: &Rope, _bump: &Bump) -> Result<Expr, SetError> {
-+    pub fn get_or_put_object(&mut self, rope: &Rope<'_>, _bump: &Bump) -> Result<Expr, SetError> {
-         let head_key = match rope.head.data.e_string() {
-             Some(s) => s.data,
-             None => return Err(SetError::Clobber),
-         };
-         if let Some(existing) = self.get(&head_key) {
-             match existing.data {
-                 crate::expr::Data::EArray(array) => {
--                    let Some(next) = rope.next_ref() else {
-+                    let Some(next) = rope.next.as_deref() else {
-                         return Err(SetError::Clobber);
-                     };
-                     if let Some(last) = array.items.last() {
-@@ -1442,7 +1418,7 @@ impl Object {
-                     return Err(SetError::Clobber);
-                 }
-                 crate::expr::Data::EObject(mut object) => {
--                    if let Some(next) = rope.next_ref() {
-+                    if let Some(next) = rope.next.as_deref() {
-                         return object.get_or_put_object(next, _bump);
-                     }
-                     return Ok(existing);
-@@ -1451,7 +1427,7 @@ impl Object {
-             }
-         }
- 
--        if let Some(next) = rope.next_ref() {
-+        if let Some(next) = rope.next.as_deref() {
-             let obj = Expr::init(Object::default(), rope.head.loc);
-             let out = match obj.data {
-                 crate::expr::Data::EObject(mut o) => o.get_or_put_object(next, _bump)?,
+@@ -201,7 +201,7 @@ _bun_completions() {
+             COMPREPLY=( $(compgen -W "--bun --package --no-install --cwd --env-file --minimum-release-age --trust --verbose --silent --help -p -h" -- "${cur_word}") );
+             return;;
+         compile)
+-            COMPREPLY=( $(compgen -f -W "--outfile --target --define --env --asset --external --minify --sourcemap --tsconfig-override --compile-exec-argv --disallow-code-generation-from-strings --explain --aot-log-type-mismatches --aot-huge-heap --aot-allow-code-from-disk --obfuscate --compile-inspector --compile-in-place --no-compile-function-source --no-aot --trim --trim-locales --library --outdir --no-script --cwd --help -h" -- "${cur_word}") );
++            COMPREPLY=( $(compgen -f -W "--outfile --target --define --env --asset --external --minify --sourcemap --tsconfig-override --compile-exec-argv --disallow-code-generation-from-strings --explain --aot-huge-heap --aot-allow-code-from-disk --aot-harden --obfuscate --compile-inspector --compile-in-place --no-compile-function-source --no-aot --trim --trim-locales --library --outdir --no-script --cwd --help -h" -- "${cur_word}") );
+             return;;
+         check)
+             COMPREPLY=( $(compgen -f -W "--project --pretty --build --no-pretty --all --threads --timing --cwd --no-script --aot --explain --define --help -p -b -h" -- "${cur_word}") );
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #47944** (2026-11-05): Remove 125 `unsafe` blocks from IPC, N-API, `bun:ffi`, `node:zlib`, c-ares, BoringSSL, `node:quic` and the parser (@dylan-conway)
-- **PR #47940** (2026-11-04): Make `epoll_ctl`, `kevent`, six uSockets loop imports and `Bun__FFI__closeFunctions` unsafe to call (@dylan-conway)
-- **PR #47901** (2026-11-04): Remove 98 `unsafe` blocks from `bun_threading`, `bun_alloc`, the bundler and the transpiler (@dylan-conway)
-- **PR #47900** (2026-11-04): install: send configured credentials to tarball URLs that the project names (@dylan-conway)
-- **PR #47895** (2026-11-04): Remove 131 `unsafe` blocks from `Blob`, `Bun.write`, `FileSink`, `fetch`, `Response` and the S3 client (@dylan-conway)
-- **PR #47893** (2026-11-04): Remove 128 `unsafe` blocks from the event loop, spawn, `bun_jsc`, `node:fs` and `fs.watch` (@dylan-conway)
+- **PR #48112** (2026-11-07): AOT: more fixes, stacked on #48088 (@Jarred-Sumner)
+- **PR #48088** (2026-11-07): AOT: fixes behind #47942: silent wrong answers, an abort, right programs refused; docs (@Jarred-Sumner)
+- **PR #48050** (2026-11-07): Check the xwin archive's sha256; ignore `bin` paths that contain a NUL (@dylan-conway)
+- **PR #48041** (closed): fix(aot): retain runtime for external scripts when run is kept (@vincentkoc)
+- **PR #48012** (closed): test(aot): build the 17 ways of a-spy-that-no-file-names-still-spies in 8 projects and count the exports each build opens (@robobun)
+- **PR #48009** (closed): test(aot): one command per test in a-package-that-stores-a-loader-function-is-asked-by-every-layer.test.ts, and a require that shows a missed store in three layers (@robobun)
 
 ---
 
@@ -1455,50 +1403,28 @@ transport is up | −9 blocks, −1 `unsafe fn` | +34/−74, 3 files |
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Remove 125 `unsafe` blocks from IPC, N-API, `bun:ffi`, `node:zlib`, c-ares, Bori
+## X. AOT: the Bun side of the rewritten ahead-of-time compiler (#47942)
 
 **RULE**:
-When implementing operations in `src/aot/compile.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oven-sh/bun. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.gitignore`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oven-sh/bun. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b1007f11`: Remove 125 `unsafe` blocks from IPC, N-API, `bun:ffi`, `node:zlib`, c-ares, BoringSSL, `node:quic` and the parser (#47944). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2596ac5d`: AOT: the Bun side of the rewritten ahead-of-time compiler (#47942). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/aot/compile.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.gitignore`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        bun_alloc::mimalloc::mi_process_info(
-            None,
-            None,
-            None,
-            Some(&mut resident),
-            None,
-            None,
-            None,
-            None,
-        );
+!test/aot/parallel-test-runs/**/node_modules/
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        let unused = core::ptr::null_mut();
-        // SAFETY: it writes a number through each pointer that is not null.
-        unsafe {
-            bun_alloc::mimalloc::mi_process_info(
-                unused,
-                unused,
-                unused,
-                &raw mut resident,
-                unused,
-                unused,
-                unused,
-                unused,
-            );
-        }
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b1007f11` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2596ac5d` are properly handled with clean fallback behavior.

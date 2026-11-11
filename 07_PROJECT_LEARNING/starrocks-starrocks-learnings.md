@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/starrocks-starrocks-learnings.md`  
 > **Source**: github ([https://github.com/StarRocks/starrocks](https://github.com/StarRocks/starrocks))  
-> **Source Version**: `5366ee35`  
+> **Source Version**: `d1531769`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T23:02:11.713Z  
+> **Timestamp**: 2026-11-09T17:35:06.858Z  
 > **Learning ID**: `learn-github-starrocks-starrocks`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/starrocks-starrocks-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/StarRocks/starrocks](https://github.com/StarRocks/starrocks))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T23:02:10.684Z  
+> **Harvest Timestamp**: 2026-11-09T17:35:06.851Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The world's fastest open query engine for sub-second analytics both on and off the data lakehouse. With the flexibility to support nearly any scenario, StarRocks provides best-in-class performance for multi-dimensional analytics, real-time analytics, and ad-hoc queries. A Linux Foundation project.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 12241 stars
+- **Stars / Engagement**: 12245 stars
 
 ---
 
@@ -1818,301 +1818,155 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b8ae8cbe` (2026-11-05)
-**Commit Message**: [BugFix][RB-225] Fix Iceberg one-sided stats bounds, orphan files on a failed build, and wrong MAX with tiny batches (#82508)
+### Incident Patch 1: `9d686f0a` (2026-11-09)
+**Commit Message**: [UT] Accept the non-finite query vector error and run test_vector_index_query_vector_overflow on shared-data (#82665)
 
-**File**: `be/src/connector/hive/scanner/hdfs_scanner.cpp` (modified, +1/-0)
+Co-authored-by: PengFei Li <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `test/sql/test_vector_index_query_vector_overflow/R/test_vector_index_query_vector_overflow` (modified, +5/-3)
 ```diff
-@@ -72,6 +72,7 @@ Status HdfsScanner::_build_scanner_context() {
-     ctx.format_scan_context.is_first_split = false;
-     ctx.format_scan_context.first_row_id.reset();
-     ctx.format_scan_context.min_max_values.clear();
-+    ctx.format_scan_context.min_max_value_cursors.clear();
-     ctx.format_scan_context.extended_column_exprs.clear();
-     ctx.format_scan_context.predicate_tree = nullptr;
-     ctx.format_scan_context.runtime_filter_scan_range_pruner = nullptr;
+@@ -1,4 +1,4 @@
+--- name: test_vector_index_query_vector_overflow @sequential @native
++-- name: test_vector_index_query_vector_overflow @sequential
+ CREATE TABLE `t_ivfpq_overflow` (
+   `id` bigint(20) NOT NULL COMMENT "",
+   `v` ARRAY<FLOAT> NOT NULL COMMENT "",
+@@ -14,7 +14,9 @@ PROPERTIES (
+ );
+ -- result:
+ -- !result
+-INSERT INTO t_ivfpq_overflow SELECT number, [CAST(number AS FLOAT), 0, 0, 0] FROM TABLE(generate_series(1, 64)) t(number);
++-- nbits=8 trains 256 PQ centroids, so the load must contain at least that many rows
++-- or faiss rejects it ('nx >= k') before the query vector is checked.
++INSERT INTO t_ivfpq_overflow SELECT number, [CAST(number AS FLOAT), 0, 0, 0] FROM TABLE(generate_series(1, 256)) t(number);
+ -- result:
+ -- !result
+ select id from t_ivfpq_overflow order by approx_l2_distance(ARRAY<FLOAT>[1.0, 0.0, 0.0, 0.0], v) limit 1;
+@@ -23,7 +25,7 @@ select id from t_ivfpq_overflow order by approx_l2_distance(ARRAY<FLOAT>[1.0, 0.
+ -- !result
+ select id from t_ivfpq_overflow order by approx_l2_distance(ARRAY<FLOAT>[1e308, 0.0, 0.0, 0.0], v) limit 1;
+ -- result:
+-[REGEX].*invalid query vector element.*
++[REGEX].*(invalid query vector element|query vector contains a non-finite element).*
+ -- !result
+ select id from t_ivfpq_overflow order by approx_l2_distance(ARRAY<TINYINT>[100, 100, 100, 100], v) limit 1;
+ -- result:
 ```
 
-**File**: `be/src/formats/parquet/group_reader.cpp` (modified, +6/-2)
+**File**: `test/sql/test_vector_index_query_vector_overflow/T/test_vector_index_query_vector_overflow` (modified, +4/-2)
 ```diff
-@@ -313,9 +313,13 @@ StatusOr<bool> GroupReader::_evaluate_compound_predicates(const Range<uint64_t>&
+@@ -1,4 +1,4 @@
+--- name: test_vector_index_query_vector_overflow @sequential @native
++-- name: test_vector_index_query_vector_overflow @sequential
+ -- A query-vector element that overflows float range (1e308 > FLT_MAX) used to
+ -- reach an unguarded std::stof in OlapChunkSource::_init_reader_params and abort
+ -- the BE. It must now be rejected with a clean error instead of crashing.
+@@ -15,7 +15,9 @@ PROPERTIES (
+ "replicated_storage" = "false",
+ "compression" = "LZ4"
+ );
+-INSERT INTO t_ivfpq_overflow SELECT number, [CAST(number AS FLOAT), 0, 0, 0] FROM TABLE(generate_series(1, 64)) t(number);
++-- nbits=8 trains 256 PQ centroids, so the load must contain at least that many rows
++-- or faiss rejects it ('nx >= k') before the query vector is checked.
++INSERT INTO t_ivfpq_overflow SELECT number, [CAST(number AS FLOAT), 0, 0, 0] FROM TABLE(generate_series(1, 256)) t(number);
  
-     // Append side columns to active_chunk so compound conjuncts referencing
-     // partition / not-existed / extended slots can be evaluated correctly.
-+    // get_next() appends them again for the output, so this evaluation-only
-+    // copy must not consume the file min/max values the output still has to emit.
-     if (state.active_chunk->num_rows() > 0) {
--        RETURN_IF_ERROR(
--                _param.scan_ctx->append_side_columns_to_chunk(&state.active_chunk, state.active_chunk->num_rows()));
-+        auto saved_min_max_value_cursors = _param.scan_ctx->min_max_value_cursors;
-+        Status st = _param.scan_ctx->append_side_columns_to_chunk(&state.active_chunk, state.active_chunk->num_rows());
-+        _param.scan_ctx->min_max_value_cursors = std::move(saved_min_max_value_cursors);
-+        RETURN_IF_ERROR(st);
-     }
- 
-     // Finalize all active columns to logical form before compound conjunct eval.
-```
-
-**File**: `be/src/formats/scan_context.cpp` (modified, +19/-5)
-```diff
-@@ -312,12 +312,22 @@ MutableColumnPtr FormatScanContext::create_min_max_value_column(SlotDescriptor*
-     if (!is_first_split) {
-         std::reverse(data.begin(), data.end());
-     }
--    for (int i = 0; i < data.size() && row_count > 0; i++) {
-+    // A batch too small to hold every value (chunk_size <= 2, or a tiny row group) continues where the previous
-+    // small batch stopped, so consecutive small batches still emit null/min/max all: always starting over from the
-+    // first value would never emit the last one, e.g. the max.
-+    size_t start = 0;
-+    if (!data.empty() && row_count < data.size()) {
-+        size_t& cursor = min_max_value_cursors[slot_desc->id()];
-+        start = cursor % data.size();
-+        cursor += row_count;
-+    }
-+    for (size_t i = 0; i < data.size() && row_count > 0; i++) {
-         row_count -= 1;
--        if (data[i].is_null()) {
-+        const Datum& datum = data[(start + i) % data.size()];
-+        if (datum.is_null()) {
-             col->append_nulls(1);
-         } else {
--            col->append_datum(data[i]);
-+            col->append_datum(datum);
-         }
-     }
-     if (row_count > 0) {
-@@ -381,9 +391,13 @@ Status FormatScanContext::evaluate_all_predicates(ChunkPtr* chunk) {
- StatusOr<bool> FormatScanContext::should_skip_by_evaluating_not_existed_slots() {
-     if (not_existed_slots.size() == 0) return false;
- 
--    // build chunk for evaluation.
-+    // build chunk for evaluation. It is thrown away, so it must not consume min/max values the output batches still
-+    // have to emit.
-+    auto saved_min_max_value_cursors = min_max_value_cursors;
-     ChunkPtr chunk = std::make_shared<Chunk>();
--    RETURN_IF_ERROR(append_or_update_not_existed_columns_to_chunk(&chunk, 1));
-+    Status st = append_or_update_not_existed_columns_to_chunk(&chunk, 1);
-+    min_max_value_cursors = std::move(saved_min_max_value_cursors);
-+    RETURN_IF_ERROR(st);
-     // do evaluation.
-     {
-         SCOPED_RAW_TIMER(&stats->expr_filter_ns);
-```
-
-**File**: `be/src/formats/scan_context.h` (modified, +2/-0)
-```diff
-@@ -286,6 +286,8 @@ struct FormatScanContext {
-     int64_t scan_range_length = std::numeric_limits<int64_t>::max();
-     int32_t scan_range_id = -1;
-     std::map<int32_t, TExprMinMaxValue> min_max_values;
-+    // Per slot, how many values of its [null?, min, max] the batches too small to hold them all have emitted.
-+    std::unordered_map<int32_t, size_t> min_max_value_cursors;
-     std::map<int32_t, TExpr> extended_column_exprs;
-     std::optional<int64_t> first_row_id;
-     int64_t file_record_count = 0;
-```
-
-**File**: `be/test/connector/hive/scanner/hdfs_scanner_test.cpp` (modified, +37/-0)
-```diff
-@@ -661,6 +661,43 @@ TEST_F(HdfsScannerTest, TestCreateMinMaxValueColumnForDatetimeSupportsNegativeMi
-     ASSERT_EQ("[1969-12-31 23:59:59.999999, 1970-01-01 00:00:00]", col->debug_string());
- }
- 
-+// Batches smaller than [null, min, max] (chunk_size <= 2) still emit every value across consecutive batches,
-+// so MIN/MAX over a file whose other columns are read see the max too.
-+TEST_F(HdfsScannerTest, TestCreateMinMaxValueColumnSpreadsValuesOverSmallBatches) {
-+    SlotDesc descs[] = {{"c1", TYPE_INT_DESC}, {""}};
-+    auto* tuple_desc = _create_tuple_desc(descs);
-+    SlotDescriptor* slot = tuple_desc->slots()[0];
-+
-+    TExprMinMaxValue min_max_value;
-+    min_max_value.__set_type(TExprNodeType::INT_LITERAL);
-+    min_max_value.__set_has_null(true);
-+    min_max_value.__set_all_null(false);
-+    min_max_value.__set_min_int_value(1);
-+    min_max_value.__set_max_int_value(9);
-+
-+    HdfsScannerContext ctx;
-+    ctx.format_scan_context.is_first_split = true;
-+    auto& fsc = ctx.format_scan_context;
-+    // The file-open probe on the not-existed slots builds a 1-row chunk it throws away: it consumes no value.
-+    FormatScannerStats stats;
-+    fsc.stats = &stats;
-+    fsc.options.use_min_max_opt = true;
-+    fsc.not_existed_slots.push_back(slot);
-+    fsc.min_max_values[slot->id()] = min_max_value;
-+    ASSERT_FALSE(fsc.should_skip_by_evaluating_not_existed_slots().value());
-+    ASSERT_EQ("[NULL]", fsc.create_min_max_value_column(slot, min_max_value, 1)->debug_string());
-+    ASSERT_EQ("[1]", fsc.create_min_max_value_column(slot, min_max_value, 1)->debug_string());
-+    ASSERT_EQ("[9]", fsc.create_min_max_value_column(slot, min_max_value, 1)->debug_string());
-+
-+    HdfsScannerContext ctx2;
-+    ctx2.format_scan_context.is_first_split = true;
-+    auto& fsc2 = ctx2.format_scan_context;
-+    ASSERT_EQ("[NULL, 1]", fsc2.create_min_max_value_column(slot, min_max_value, 2)->debug_string());
-+    ASSERT_EQ("[9, NULL]", fsc2.create_min_max_value_column(slot, min_max_value, 2)->debug_string());
-+    // A batch that holds every value is unchanged: null/min/max first, then the min.
-+    ASSERT_EQ("[NULL, 1, 9, 1]", fsc2.create_min_max_value_column(slot, min_max_value, 4)->debug_string());
-+}
-+
- // ========================= ORC SCANNER ============================
- 
- static TTypeDesc create_primitive_type_desc(TPrimitiveType::type type) {
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/connector/iceberg/IcebergMetadata.java` (modified, +5/-5)
-```diff
-@@ -3366,11 +3366,6 @@ private void commitDataOperation(Transaction transaction, org.apache.iceberg.Tab
-             batchWrite.toBranch(branch);
-         }
- 
--        PartitionSpec partitionSpec = nativeTbl.spec();
--        for (TIcebergDataFile dataFile : dataFiles) {
--            batchWrite.addFile(buildDataFile(dataFile, partitionSpec, nativeTbl));
--        }
--
-         if (isRewrite && extra != null) {
-             ((IcebergSinkExtra) extra).getScannedDataFiles().forEach(batchWrite::deleteFile);
-             ((IcebergSinkExtra) extra).getAppliedDeleteFiles().forEach(batchWrite::deleteFile);
-@@ -3400,7 +3395,12 @@ private void commitDataOperation(Transaction transaction, org.apache.iceberg.Tab
-         }
- 
-         try {
-+            // Build the files inside commitWithCleanup so a rejected entry deletes the BE-written files.
-             commitWithCleanup(() -> {
-+                PartitionSpec partitionSpec = nativeTbl.spec();
-+                for (TIcebergDataFile dataFile : dataFiles) {
-+                    batchWrite.addFile(buildDataFile(dataFile, partitionSpec, nativeTbl));
-+                }
-                 batchWrite.commit();
-                 transaction.commitTransaction();
-             }, () -> invalidateCacheAfterCommit(dbName, tableName), dataFiles, dbName, tableName);
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/connector/iceberg/cost/IcebergFileStats.java` (modified, +22/-10)
-```diff
-@@ -46,7 +46,10 @@ public class IcebergFileStats {
-     private Map<Integer, Object> maxValues;
-     private Map<Integer, Long> nullCounts;
-     private Map<Integer, Long> columnSizes;
--    private Set<Integer> corruptedStats;
-+    // Columns whose lower (upper) bound is unknown: a counted file has rows for them but no lower (upper) bound.
-+    // Tracked per side, so a file missing only one bound keeps the other side usable.
-+    private Set<Integer> corruptedMinStats;
-+    private Set<Integer> corruptedMaxStats;
-     private boolean hasValidColumnMetrics;
-     private Map<Integer, Long> columnSizeRecordCounts;
- 
-@@ -70,16 +73,13 @@ public IcebergFileStats(
-             this.maxValues = null;
-             this.nullCounts = null;
-             this.columnSizes = null;
--            corruptedStats = null;
-+            corruptedMinStats = null;
-+            corruptedMaxStats = null;
-         } else {
-             this.minValues = new HashMap<>(minValues);
-             this.maxValues = new HashMap<>(maxValues);
--            // we are assuming if minValues is not present, max will be not be present either.
--            this.corruptedStats = nonPartitionPrimitiveColumns.stream()
--                    .map(Types.NestedField::fieldId)
--                    .filter(id -> !minValues.containsKey(id) &&
--                            (!nullCounts.containsKey(id) || nullCounts.get(id) != recordCount))
--                    .collect(toSet());
-+            this.corruptedMinStats = missingBounds(nonPartitionPrimitiveColumns, minValues, nullCounts, recordCount);
-+            this.corruptedMaxStats = missingBounds(nonPartitionPrimitiveColumns, maxValues, nullCounts, recordCount);
-             this.nullCounts = new HashMap<>(nullCounts);
-             this.columnSizes = columnSizes != null ? new HashMap<>(columnSizes) : new HashMap<>();
-             this.columnSizeRecordCounts = new HashMap<>();
-@@ -92,6 +92,16 @@ public IcebergFileStats(
-         }
-     }
- 
-+    // A bound may be absent only when every value of the column in the file is null.
-+    private static Set<Integer> missingBounds(List<Types.NestedField> columns, Map<Integer, Object> bounds,
-+                                              Map<Integer, Long> nullCounts, long recordCount) {
-+        return columns.stream()
-+                .map(Types.NestedField::fieldId)
-+                .filter(id -> !bounds.containsKey(id) &&
-+                        (!nullCounts.containsKey(id) || nullCounts.get(id) != recordCount))
-+                .collect(toSet());
-+    }
-+
-     public IcebergFileStats(long recordCount) {
-         this.recordCount = recordCount;
-     }
-@@ -157,8 +167,9 @@ public Map<Integer, Long> getColumnSizes() {
-         return columnSizes;
-     }
- 
--    public Set<Integer> getCorruptedStats() {
--        return corruptedStats;
-+    // The corrupted set of the side `bounds` belongs to (getMinValues() or getMaxValues()).
-+    public Set<Integer> getCorruptedStats(Map<Integer, Object> bounds) {
-+        return bounds == maxValues ? corruptedMaxStats : corruptedMinStats;
-     }
- 
-     public boolean hasValidColumnMetrics() {
-@@ -205,6 +216,7 @@ public void updateStats(Map<Integer, Object> current,
-             hasValidColumnMetrics = false;
-             return;
-         }
-+        Set<Integer> corruptedStats = getCorruptedStats(current);
-         for (Types.NestedField column : nonPartitionPrimitiveColumns) {
-             int id = column.fieldId();
- 
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/connector/iceberg/cost/IcebergStatisticProvider.java` (modified, +3/-2)
-```diff
-@@ -462,16 +462,17 @@ private void updatePartitionedStats(
-             return;
-         }
- 
-+        Set<Integer> corruptedStats = icebergFileStats.getCorruptedStats(current);
-         for (PartitionField field : partitionFields) {
-             int id = field.sourceId();
--            if (icebergFileStats.getCorruptedStats().contains(id)) {
-+            if (corruptedStats.contains(id)) {
-                 continue;
-             }
- 
-             Object newValue = newStats.get(id);
-             if (newValue == null) {
-                 current.remove(id);
--                icebergFileStats.getCorruptedStats().add(id);
-+                corruptedStats.add(id);
-                 continue;
-             }
- 
+ -- A well-formed query vector still works and uses the index (nearest is id 1).
+ select id from t_ivfpq_overflow order by approx_l2_distance(ARRAY<FLOAT>[1.0, 0.0, 0.0, 0.0], v) limit 1;
 ```
 
 ---
 
-### Incident Patch 2: `5b00c887` (2026-11-05)
-**Commit Message**: [UT] Let BE UT suites that rely on another suite's global setup run alone (#82525)
+### Incident Patch 2: `df0912a0` (2026-11-09)
+**Commit Message**: [BugFix][RB-97] Create heavy schema change shadow shards in their range PACK groups (#82700)
 
-Signed-off-by: Hyper-FF <[REDACTED_EMAIL]>
+Signed-off-by: xiangguangyxg <[REDACTED_EMAIL]>
+Co-authored-by: xiangguangyxg <[REDACTED_EMAIL]>
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `be/test/column/CMakeLists.txt` (modified, +2/-2)
+**File**: `fe/fe-core/src/main/java/com/starrocks/alter/LakeTableAlterJobV2Builder.java` (modified, +56/-4)
 ```diff
-@@ -96,8 +96,8 @@ set(COLUMN_TEST_LINK_LIBS
- add_library(starrocks_column_test_objs OBJECT ${COLUMN_TEST_FILES})
- target_link_libraries(starrocks_column_test_objs PRIVATE StarRocksPCH)
- set_target_properties(starrocks_column_test_objs PROPERTIES COMPILE_FLAGS "-fno-access-control")
--add_executable(column_test $<TARGET_OBJECTS:starrocks_column_test_objs>)
--target_link_libraries(column_test ${COLUMN_TEST_LINK_LIBS} gtest_main)
-+add_executable(column_test column_test_main.cpp $<TARGET_OBJECTS:starrocks_column_test_objs>)
-+target_link_libraries(column_test ${COLUMN_TEST_LINK_LIBS})
+@@ -18,6 +18,9 @@
+ import com.google.common.base.Preconditions;
+ import com.staros.proto.FileCacheInfo;
+ import com.staros.proto.FilePathInfo;
++import com.starrocks.catalog.ColocateRange;
++import com.starrocks.catalog.ColocateRangeUtils;
++import com.starrocks.catalog.ColocateTableIndex;
+ import com.starrocks.catalog.Column;
+ import com.starrocks.catalog.MaterializedIndex;
+ import com.starrocks.catalog.OlapTable;
+@@ -33,7 +36,9 @@
+ import com.starrocks.thrift.TStorageMedium;
+ import com.starrocks.warehouse.cngroup.ComputeResource;
  
- set(CHUNK_TEST_FILES
-     ../base/cxa_throw_wrap.cpp
++import java.util.ArrayList;
+ import java.util.HashMap;
++import java.util.LinkedHashMap;
+ import java.util.List;
+ import java.util.Map;
+ import java.util.stream.Collectors;
+@@ -78,6 +83,12 @@ public AlterJobV2 build() throws StarRocksException {
+         // would make the scheduler redundantly rebuild the entire existing dataset after the ALTER.
+         boolean inlineBuildsVectorIndex = indexes != null &&
+                 indexes.stream().anyMatch(i -> i.getIndexType() == IndexDef.IndexType.VECTOR);
++        ColocateTableIndex colocateTableIndex = globalStateMgr.getColocateTableIndex();
++        ColocateTableIndex.GroupId rangeColocateGroupId = colocateTableIndex.getRangeColocateGroupId(tableId);
++        List<ColocateRange> colocateRanges = rangeColocateGroupId == null ? null
++                : colocateTableIndex.getColocateRanges(rangeColocateGroupId.grpId);
++        int colocateColumnCount = rangeColocateGroupId == null ? 0
++                : colocateTableIndex.getGroupSchema(rangeColocateGroupId).getColocateColumnCount();
+         for (Map.Entry<Long, List<Column>> entry : newIndexMetaIdToSchema.entrySet()) {
+             long originIndexMetaId = entry.getKey();
+             // 1. get new schema version/schema version hash, short key column count
+@@ -99,10 +110,16 @@ public AlterJobV2 build() throws StarRocksException {
+                 //  revise the code again.
+                 List<Long> originTabletIds = originTablets.stream().map(Tablet::getId).collect(Collectors.toList());
+                 Map<String, String> properties = buildShadowShardProperties(table, physicalPartitionId, shadowIndexId);
+-                List<Long> shadowTabletIds = createShards(originTablets.size(),
+-                        table.getPartitionFilePathInfo(physicalPartitionId),
+-                        table.getPartitionFileCacheInfo(physicalPartitionId), shardGroupId,
+-                        originTabletIds, properties, computeResource);
++                List<Long> shadowTabletIds;
++                if (colocateRanges == null) {
++                    shadowTabletIds = createShards(originTablets.size(),
++                            table.getPartitionFilePathInfo(physicalPartitionId),
++                            table.getPartitionFileCacheInfo(physicalPartitionId), shardGroupId,
++                            originTabletIds, properties, computeResource);
++                } else {
++                    shadowTabletIds = createRangeColocateShadowShards(originTablets, colocateRanges,
++                            colocateColumnCount, physicalPartitionId, shardGroupId, properties);
++                }
+                 Preconditions.checkState(originTablets.size() == shadowTabletIds.size());
+ 
+                 TStorageMedium medium = table.getPartitionInfo().getDataProperty(partitionId).getStorageMedium();
+@@ -144,6 +161,41 @@ public AlterJobV2 build() throws StarRocksException {
+         return schemaChangeJob;
+     }
+ 
++    /**
++     * Creates the shadow shards of a table in a range colocate group, one per origin tablet and in the same order.
++     *
++     * <p>Every tablet of such a table must be in the PACK shard group of the ColocateRange it lies in, as partition
++     * creation, split and merge place it. Otherwise, once the origin shard is deleted, nothing keeps the tablet with
++     * the other tablets of its range, and nothing puts it back while the group stays stable. A shadow tablet copies its
++     * origin tablet's range, so its shard joins the index shard group and the PACK shard group of the origin tablet's
++     * ColocateRange. Like the children of a split, it stays pinned to its origin shard to reuse the warm cache. In a
++     * stable group the origin shard already sits with that PACK shard group; while the group is unstable they may
++     * differ, and the colocate checker settles the placement after the job, as it does after a split.
++     */
++    private List<Long> createRangeColocateShadowShards(List<Tablet> originTablets, List<ColocateRange> colocateRanges,
++                                                       int colocateColumnCount, long physicalPartitionId,
++                                                       long shardGroupId, Map<String, String> properties)
++            throws DdlException {
++        Map<Long, Long> newToOldShardId = new LinkedHashMap<>();
++        Map<Long, List<Long>> newShardIdToGroupIds = new LinkedHashMap<>();
++        for (Tablet originTablet : originTa
 ```
 
-**File**: `be/test/column/column_test_main.cpp` (added, +26/-0)
+**File**: `fe/fe-core/src/test/java/com/starrocks/alter/LakeTableSchemaChangeJobColocateTest.java` (added, +674/-0)
 ```diff
-@@ -0,0 +1,26 @@
+@@ -0,0 +1,674 @@
 +// Copyright 2021-present StarRocks, Inc. All rights reserved.
 +//
 +// Licensed under the Apache License, Version 2.0 (the "License");
@@ -2127,258 +1981,273 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 +// See the License for the specific language governing permissions and
 +// limitations under the License.
 +
-+#include <gtest/gtest.h>
++package com.starrocks.alter;
 +
-+#include "types/time_types.h"
++import com.google.common.collect.Table;
++import com.staros.proto.FileCacheInfo;
++import com.staros.proto.FilePathInfo;
++import com.staros.proto.PlacementPolicy;
++import com.staros.proto.ShardInfo;
++import com.starrocks.alter.reshard.ColocateChecker;
++import com.starrocks.alter.reshard.ReshardingMaterializedIndex;
++import com.starrocks.alter.reshard.ReshardingTablet;
++import com.starrocks.alter.reshard.TabletReshardJob;
++import com.starrocks.alter.reshard.TabletReshardJobMgr;
++import com.starrocks.alter.reshard.presplit.SampleSet;
++import com.starrocks.catalog.ColocateRange;
++import com.starrocks.catalog.ColocateRangeUtils;
++import com.starrocks.catalog.ColocateTableIndex;
++import com.starrocks.catalog.Column;
++import com.starrocks.catalog.Database;
++import com.starrocks.catalog.MaterializedIndex;
++import com.starrocks.catalog.OlapTable;
++import com.starrocks.catalog.PhysicalPartition;
++import com.starrocks.catalog.Tablet;
++import com.starrocks.catalog.TabletMeta;
++import com.starrocks.catalog.TabletRange;
++import com.starrocks.catalog.Tuple;
++import com.starrocks.catalog.Variant;
++import com.starrocks.common.Config;
++import com.starrocks.common.Range;
++import com.starrocks.common.jmockit.Deencapsulation;
++import com.starrocks.lake.LakeTablet;
++import com.starrocks.lake.StarOSAgent;
++import com.starrocks.qe.ConnectContext;
++import com.starrocks.server.GlobalStateMgr;
++import com.starrocks.server.RunMode;
++import com.starrocks.server.WarehouseManager;
++import com.starrocks.sql.common.MetaUtils;
++import com.starrocks.task.AgentBatchTask;
++import com.starrocks.thrift.TStorageMedium;
++import com.starrocks.transaction.GlobalTransactionMgr;
++import com.starrocks.transaction.InsertTxnCommitAttachment;
++import com.starrocks.transaction.TransactionState;
++import com.starrocks.transaction.TransactionStatus;
++import com.starrocks.type.IntegerType;
++import com.starrocks.utframe.StarRocksAssert;
++import com.starrocks.utframe.UtFrameUtils;
++import com.starrocks.warehouse.cngroup.ComputeResource;
++import mockit.Invocation;
++import mockit.Mock;
++import mockit.MockUp;
++import org.junit.jupiter.api.AfterAll;
++import org.junit.jupiter.api.BeforeAll;
++import org.junit.jupiter.api.Test;
 +
-+int main(int argc, char** argv) {
-+    // PARALLEL_TEST cases have no fixture, so initialize the process-wide date cache here instead of relying on
-+    // another suite having done it earlier in the same process.
-+    starrocks::date::init_date_cache();
++import java.util.ArrayList;
++import java.util.HashMap;
++import java.util.HashSet;
++import java.util.LinkedHashMap;
++import java.util.List;
++import java.util.Map;
++import java.util.Set;
++import java.util.stream.Collectors;
 +
-+    ::testing::InitGoogleTest(&argc, argv);
-+    return RUN_ALL_TESTS();
-+}
-```
-
-**File**: `be/test/orchestration/fragment_mgr_test.cpp` (modified, +2/-0)
-```diff
-@@ -42,6 +42,7 @@
- 
- #include "base/time/monotime.h"
- #include "common/config_runtime_fwd.h"
-+#include "common/system/cpu_info.h"
- #include "exec/exec_env.h"
- #include "exec_primitive/data_sink.h"
- #include "gen_cpp/Types_types.h"
-@@ -83,6 +84,7 @@ class FragmentMgrTest : public testing::Test {
-     FragmentMgrTest() = default;
- 
-     static void SetUpTestSuite() {
-+        CpuInfo::init();
-         auto* runtime_env = RuntimeEnv::GetInstance();
-         _previous_process_mem_tracker = runtime_env->_process_mem_tracker;
-         _previous_query_pool_mem_tracker = runtime_env->_query_pool_mem_tracker;
-```
-
-**File**: `be/test/runtime/serde_core_test.cpp` (modified, +9/-0)
-```diff
-@@ -41,6 +41,7 @@
- #include "common/config_local_io_fwd.h"
- #include "common/statusor.h"
- #include "gutil/strings/substitute.h"
-+#include "runtime/memory/mem_chunk_allocator.h"
- #include "runtime/serde/chunk_encode_context.h"
- #include "runtime/serde/protobuf_chunk_serde.h"
- #include "types/hll.h"
-@@ -526,6 +527,14 @@ PARALLEL_TEST(ColumnArraySerdeTest, variant_column_shredded_multiple_paths) {
- 
- // NOLINTNEXTLINE
- PARALLEL_TEST(ColumnArraySerdeTest, hll_column_failed_deserialize) {
-+    // The HLL registers allocator is process-global and normally installed by RuntimeEnv::init(). Install the same
-+    // MemChunkAllocator-backed one so the failpoint below is reachable when this case runs alone.
-+    HyperLogLog::RegistersAllocator allocator;
-+    allocator.allocate = [](size_t size, void*, MemChunk* chunk) { return MemChunkAllocator::allocate(size, chunk); };
-+    allocator.free = [](const MemChunk& chunk, void*) { MemChunkAllocator::free(chunk); };
-+    Status st = HyperLogLog::set_registers_allocator(allocator);
-+    ASSERT_TRUE(st.ok() || st.is_already_exist()) << st;
++import static org.junit.jupiter.api.Assertions.assertEquals;
++import static org.junit.jupiter.api.Assertions.assertFalse;
++import static org.junit.jupiter.api.Assertions.assertInstanceOf;
++import static org.junit.jupiter.api.Assertions.assertNull;
++import static org.junit.jupiter.api.Assertions.assertTrue;
 +
-     auto c1 = HyperLogLogColumn::create();
-     // prepare a sparse-encoded HLL (few non-zero registers)
-     HyperLogLog sparse_hll;
++/**
++ * A heavy schema change of a table in a range colocate group creates every shadow shard in the partition's index shard
++ * group and in the PACK shard group of the ColocateRange its origin tablet lies in, pinned to its origin shard. Tables
++ * outside range colocate groups keep the single index shard group.
++ */
++public class LakeTableSchemaChangeJobColocateTest {
++    private static ConnectContext connectContext;
++    private static StarRocksAssert starRocksAssert;
++    private static boolean savedEnableRangeDistribution;
++
++    @BeforeAll
++    public static void setUp() throws Exception {
++        // Keeps the reshard daemon, and the colocate checker it runs, from acting on the tables of the tests.
++        new MockUp<TabletReshardJobMgr>() {
++            @Mock
++            protected void runAfterLeaseValid() {
++            }
++        };
++        UtFrameUtils.createMinStarRocksCluster(RunMode.SHARED_DATA);
++        // The tests run the schema change jobs themselves; nothing may run them in the background.
++        UtFrameUtils.stopBackgroundSchemaChangeHandler(60000);
++        connectContext = UtFrameUtils.createDefaultCtx();
++        starRocksAssert = new StarRocksAssert(connectContext);
++        starRocksAssert.withDatabase("test").useDatabase("test");
++        savedEnableRangeDistribution = Config.enable_range_distribution;
++        Config.enable_range_distribution = true;
++    }
++
++    @AfterAll
++    public static void tearDown() {
++        Config.enable_range_distribution = savedEnableRangeDistribution;
++    }
++
++    // ----------
 ```
 
 ---
 
-### Incident Patch 3: `9eea2ac7` (2026-11-05)
-**Commit Message**: [BugFix][RB-377] Fix lost wakeup in spill BufferedInputStream::prefetch (#82515)
+### Incident Patch 3: `d67954ce` (2026-11-09)
+**Commit Message**: [BugFix][RB-225] Stop pushing down Delta Lake predicates through a type-changing cast (#82640)
 
-Co-authored-by: stdpain <[REDACTED_EMAIL]>
-Co-authored-by: Hyper-FF <[REDACTED_EMAIL]>
+Co-authored-by: tqqq <[REDACTED_EMAIL]>
+Co-authored-by: tqqq <[REDACTED_EMAIL]>
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `be/src/compute_env/spill/input_stream.cpp` (modified, +35/-12)
+**File**: `fe/fe-core/src/main/java/com/starrocks/connector/delta/ScalarOperationToDeltaLakeExpr.java` (modified, +4/-1)
 ```diff
-@@ -24,7 +24,6 @@
- #include <vector>
+@@ -449,7 +449,10 @@ public String visitVariableReference(ColumnRefOperator operator, Void context) {
  
- #include "base/concurrency/blocking_queue.hpp"
--#include "base/utility/defer_op.h"
- #include "common/status.h"
- #include "compute_env/sorting/sorted_chunks_merger.h"
- #include "compute_env/spill/block_manager.h"
-@@ -165,6 +164,8 @@ class BufferedInputStream : public SpillInputStream {
-     StatusOr<ChunkUniquePtr> read_from_buffer();
- 
- private:
-+    Status _prefetch_one(workgroup::YieldContext& yield_ctx, SerdeContext& ctx);
-+
-     bool _acquire() {
-         bool expected = false;
-         return _is_prefetching.compare_exchange_strong(expected, true);
-@@ -181,6 +182,9 @@ class BufferedInputStream : public SpillInputStream {
-     InputStreamPtr _input_stream;
-     UnboundedBlockingQueue<ChunkUniquePtr> _chunk_buffer;
-     std::atomic_bool _is_prefetching = false;
-+    // Set by every prefetch caller before it tries to take _is_prefetching; the holder re-checks it after
-+    // releasing the flag so that a request which lost the race is never dropped. See prefetch().
-+    std::atomic_bool _prefetch_requested = false;
-     Spiller* _spiller = nullptr;
- };
- 
-@@ -210,17 +214,7 @@ StatusOr<ChunkUniquePtr> BufferedInputStream::get_next(workgroup::YieldContext&
-     return Status::InternalError("spill BufferedInputStream: no buffered chunk and stream is not at EOF");
- }
- 
--Status BufferedInputStream::prefetch(workgroup::YieldContext& yield_ctx, SerdeContext& ctx) {
--    if (is_buffer_full() || eof()) {
--        return Status::OK();
--    }
--    // concurrent prefetch is not allowed, should call _acquire and _release before and after prefetch
--    // to ensure that it doesn't happen.
--    if (!_acquire()) {
--        return Status::OK();
--    }
--    DeferOp defer([this]() { _release(); });
--
-+Status BufferedInputStream::_prefetch_one(workgroup::YieldContext& yield_ctx, SerdeContext& ctx) {
-     auto res = _input_stream->get_next(yield_ctx, ctx);
-     if (res.ok()) {
-         COUNTER_ADD(_spiller->metrics().input_stream_peak_memory_usage, res.value()->memory_usage());
-@@ -233,6 +227,35 @@ Status BufferedInputStream::prefetch(workgroup::YieldContext& yield_ctx, SerdeCo
-     return res.status();
- }
- 
-+Status BufferedInputStream::prefetch(workgroup::YieldContext& yield_ctx, SerdeContext& ctx) {
-+    while (true) {
-+        if (is_buffer_full() || eof()) {
-+            return Status::OK();
-+        }
-+        // Concurrent prefetch is not allowed (it would reorder chunks of an ordered stream), so only the
-+        // task holding _is_prefetching reads. A task that fails to take the flag must not simply drop its
-+        // request: the holder may already have published its chunk and be on its way out, while the reader
-+        // consumes that chunk and triggers new restore tasks that all land in this window. Each of them
-+        // would see the flag held and return, the holder would exit after its single chunk, and the stream
-+        // would be left with an empty buffer, not at EOF, and no restore task in flight -- the source
-+        // operator then waits forever for data nothing will produce.
-+        // So announce the request before trying to take the flag; the holder re-checks it after releasing
-+        // the flag and serves it. The store precedes the CAS and the holder's load follows its release (all
-+        // seq_cst), so either the holder observes the request or the requester's CAS succeeds.
-+        _prefetch_requested.store(true);
-+        if (!_acquire()) {
-+            return Status::OK();
-+        }
-+        _prefetch_requested.store(false);
-+        Status st = _prefetch_one(yield_ctx, ctx);
-+        _release();
-+        RETURN_IF_ERROR(st);
-+        if (!_prefetch_requested.load()) {
-+            return Status::OK();
-+        }
-+    }
-+}
-+
- InputStreamPtr detail::make_buffered_input_stream(int capacity, InputStreamPtr stream, Spiller* spiller) {
-     return std::make_shared<BufferedInputStream>(capacity, std::move(stream), spiller);
- }
+         @Override
+         public String visitCastOperator(CastOperator operator, Void context) {
+-            if (operator.isTruncatingCharCast()) {
++            // Stripping a non-identity cast can change predicate semantics and incorrectly prune files,
++            // e.g. cast(date_col AS datetime) < '2020-01-01 10:00:00' must not become date_col < '2020-01-01'.
++            // Any non-identity cast that still reaches this converter must remain a residual predicate.
++            if (!operator.getType().equals(operator.getChild(0).getType())) {
+                 return null;
+             }
+             return operator.getChild(0).accept(this, context);
 ```
 
-**File**: `be/test/compute_env/spill/spill_test.cpp` (modified, +71/-0)
+**File**: `fe/fe-core/src/test/java/com/starrocks/connector/delta/ScalarOperationToDeltaLakeExprTest.java` (modified, +85/-2)
 ```diff
-@@ -49,6 +49,7 @@
- #include "common/statusor.h"
- #include "common/storage_define.h"
- #include "compute_env/sorting/merge.h"
-+#include "compute_env/spill/input_stream_internal.h"
- #include "compute_env/spill/log_block_manager.h"
- #include "compute_env/spill/mem_table.h"
- #include "compute_env/spill/mem_tracker_guard.h"
-@@ -1569,6 +1570,76 @@ TEST_F(SpillTest, direct_io_open_failure_falls_back_to_buffered) {
-     dummy_rt_st._query_options.spill_enable_direct_io = false;
- }
+@@ -195,10 +195,93 @@ public void testTruncatingCharCastIsNotPushedDown() {
+         Predicate expected = new Predicate("=", cDeltaIntCol, Literal.ofInt(5));
+         Assertions.assertEquals(expected.toString(), converter.convert(List.of(equality, safeEquality), context).toString());
  
-+// Child of a BufferedInputStream whose first get_next blocks until the test opens the gate, so the test
-+// can hold the buffered stream's prefetch flag while another restore task asks for a prefetch.
-+class GatedInputStream final : public spill::SpillInputStream {
-+public:
-+    explicit GatedInputStream(int num_chunks) : _remaining(num_chunks) {}
-+
-+    StatusOr<ChunkUniquePtr> get_next(workgroup::YieldContext& yield_ctx, spill::SerdeContext& ctx) override {
-+        if (_calls.fetch_add(1) == 0) {
-+            _entered.set_value();
-+            _gate.wait();
-+        }
-+        if (_remaining-- <= 0) {
-+            return Status::EndOfFile("end of gated stream");
-+        }
-+        return std::make_unique<Chunk>();
++        // An implicit CHAR cast still changes the type, so it is not stripped either.
+         ScalarOperator implicitEquality = new BinaryPredicateOperator(BinaryType.EQ,
+                 new CastOperator(new CharType(5), cVarcharCol, true), value);
+-        expected = new Predicate("=", cDeltaVarcharCol, Literal.ofString("hello"));
+-        Assertions.assertEquals(expected.toString(), converter.convert(List.of(implicitEquality), context).toString());
++        Assertions.assertEquals(AlwaysTrue.ALWAYS_TRUE, converter.convert(List.of(implicitEquality), context));
 +    }
-+    bool is_ready() override { return true; }
-+    void close() override {}
 +
-+    void wait_entered() { _entered_future.wait(); }
-+    void open_gate() { _gate_promise.set_value(); }
-+    int calls() const { return _calls.load(); }
++    @Test
++    public void testTypeChangingCastIsNotPushedDown() {
++        ScalarOperationToDeltaLakeExpr converter = new ScalarOperationToDeltaLakeExpr();
++        ScalarOperationToDeltaLakeExpr.DeltaLakeContext context =
++                new ScalarOperationToDeltaLakeExpr.DeltaLakeContext(schema, new HashSet<>());
++        ConstantOperator ts = ConstantOperator.createDatetime(LocalDateTime.of(2020, 1, 1, 10, 0, 0));
 +
-+private:
-+    int _remaining;
-+    std::atomic_int _calls{0};
-+    std::promise<void> _entered;
-+    std::future<void> _entered_future = _entered.get_future();
-+    std::promise<void> _gate_promise;
-+    std::shared_future<void> _gate = _gate_promise.get_future().share();
-+};
++        // cast(c_date AS datetime) < '2020-01-01 10:00:00' must not become c_date < 2020-01-01,
++        // which would prune c_date = 2020-01-01 although it satisfies the original predicate.
++        for (BinaryType op : List.of(BinaryType.LT, BinaryType.LE, BinaryType.EQ, BinaryType.GE, BinaryType.GT)) {
++            ScalarOperator predicate = new BinaryPredicateOperator(op,
++                    new CastOperator(com.starrocks.type.DateType.DATETIME, cDateCol), ts);
++            Assertions.assertEquals(AlwaysTrue.ALWAYS_TRUE, converter.convert(List.of(predicate), context), op.toString());
++        }
 +
-+// Regression test for a lost wakeup in BufferedInputStream::prefetch. Restore tasks that found the
-+// prefetch flag held used to return without doing anything; when they all landed while the holder was
-+// on its way out after reading its single chunk, nothing read the next chunk and the spilled sort source
-+// waited forever (row_number() over a force-spilled sort hung until query timeout). A prefetch request
-+// that loses the race must be served by the task holding the flag.
-+TEST_F(SpillTest, buffered_input_stream_serves_prefetch_request_that_lost_the_race) {
-+    ObjectPool pool;
-+    RawSpillerFixture fx(this, &pool, &dummy_rt_st, /*pool_size=*/1);
-+    auto child = std::make_shared<GatedInputStream>(/*num_chunks=*/4);
-+    auto stream = spill::detail::make_buffered_input_stream(/*capacity=*/4, child, fx.spiller.get());
++        // cast(c_date AS varchar) < '2020-01-01 00:00:01' compares strings, so '2020-01-01' matches;
++        // it must not become c_date < 2020-01-01.
++        ScalarOperator toVarchar = new BinaryPredicateOperator(BinaryType.LT,
++                new CastOperator(VarcharType.VARCHAR, cDateCol), ConstantOperator.createVarchar("2020-01-01 00:00:01"));
++        Assertions.assertEquals(AlwaysTrue.ALWAYS_TRUE, converter.convert(List.of(toVarchar), context));
 +
-+    auto holder = std::async(std::launch::async, [&stream]() {
-+        workgroup::YieldContext yield_ctx;
-+        spill::SerdeContext ctx;
-+        return stream->prefetch(yield_ctx, ctx);
-+    });
-+    // The holder owns the prefetch flag and is blocked reading its chunk.
-+    child->wait_entered();
++        // cast(c_long AS int) = 5 must not become c_long = 5: values overflowing int also satisfy it.
++        ScalarOperator narrowing = new BinaryPredicateOperator(BinaryType.EQ,
++                new CastOperator(com.starrocks.type.IntegerType.INT, cLongCol), ConstantOperator.createInt(5));
++        Assertions.assertEquals(AlwaysTrue.ALWAYS_TRUE, converter.convert(List.of(narrowing), context));
 +
-+    workgroup::YieldContext yield_ctx;
-+    spill::SerdeContext ctx;
-+    // This request loses the race for the flag and returns immediately without reading.
-+    ASSERT_OK(stream->prefetch(yield_ctx, ctx));
-+    ASSERT_EQ(child->calls(), 1);
++        // The other conjuncts are still pushed down.
++        ScalarOperator safeEquality = new BinaryPredicateOperator(BinaryType.EQ, cIntCol,
++                ConstantOperator.createInt(5));
++        Predicate expected = new Predicate("=", cDeltaIntCol, Literal.ofInt(5));
++        Assertions.assertEquals(expected.toString(),
++                converter.convert(List.of(narrowing, safeEquality), context).toString());
 +
-+    child->open_gate();
-+    ASSERT_OK(holder.get());
++        // An identity cast is still stripped and pushed down.
++        ScalarOperator identity = new BinaryPredicateOperator(BinaryType.EQ,
++                new CastOperator(com.starrocks.type.IntegerType.INT, cIntCol), ConstantOperator.createInt(5));
++        Assertions.assertEquals(expected.toString(), converter.convert(List.of(identity), context).toString());
++    }
 +
-+    // The holder served the request that lost the race: two chunks were read, not one.
-+    EXPECT_EQ(child->calls(), 2);
-+    ASSERT_TRUE(stream->is_ready());
-+    ASSERT_OK(stream->get_next(yield_ctx, ctx).status());
-+    ASSERT_TRUE(stream->is_ready());
-+    ASSERT_OK(stream->get_next(yield_ctx, ctx).status());
-+    ASSERT_FALSE(stream->is_ready());
-+    ASSERT_FALSE(stream->eof());
-+}
++    @Test
++    public void testTypeChangingCastInNestedAndCompoundPredicates() {
++        ScalarOperationToDeltaLakeExpr converter = new ScalarOperationToDeltaLakeExpr();
++        ScalarOperationToDeltaLakeExpr.DeltaLakeContext context =
++                new ScalarOperationToDeltaLakeExpr.DeltaLakeContext(schema, new HashSet<>());
++        ScalarOperator castToVarcharLt = new BinaryPredicateOperator(BinaryType.LT,
++                new CastOperator(VarcharType.VARCHAR, cDateCol), ConstantOperator.createVarchar("2020-01-01 00:00:01"));
++        ScalarOperator safeEquality = new BinaryPredicateOperator(BinaryType.EQ, cIntCol, ConstantOperator.createInt(5));
++        Predicate expected = new Predicate("=", cDeltaIntCol, Literal.ofInt(5));
 +
- /*
- TEST_F(SpillTest, file_group_test) {
-     auto chunk = std::make_unique<Chunk>();
++        // Nested casts: a type change anywhere in the chain blocks pushdown; a chain of identity casts does not.
++        ScalarOperator nestedNarrowing = new BinaryPredicateOperator(BinaryType.EQ,
++                new CastOperator(com.starrocks.type.IntegerType.INT,
++                        new CastOperator(com.starrocks.type.IntegerType.BIGINT, cIntCol)),
++                ConstantOperator.createInt(5));
++        Assertions.assertEquals(AlwaysTrue.ALWAYS_TRUE, converter.convert(List.of(nestedNarrowing), context));
++        ScalarOperator nestedIdentity = new BinaryPredicateOperator(BinaryType.EQ,
++                new CastOperator(com.starrocks.type.IntegerType.INT,
++
+```
+
+**File**: `test/sql/test_deltalake/R/test_deltalake_cast_predicate_pushdown` (added, +27/-0)
+```diff
+@@ -0,0 +1,27 @@
++-- name: test_deltalake_cast_predicate_pushdown
++create external catalog delta_test_${uuid0} PROPERTIES (
++    "type"="deltalake",
++    "hive.metastore.uris"="${deltalake_catalog_hive_metastore_uris}",
++    "aws.s3.access_key"="${oss_ak}",
++    "aws.s3.secret_key"="${oss_sk}",
++    "aws.s3.endpoint"="${oss_endpoint}"
++);
++-- result:
++-- !result
++select col_date, count(*) from delta_test_${uuid0}.delta_oss_db.delta_lake_par_col_date where cast(col_date as varchar) < '2024-04-25 00:00:01' group by col_date order by col_date;
++-- result:
++2024-04-24	3
++2024-04-25	3
++-- !result
++select col_date, count(*) from delta_test_${uuid0}.delta_oss_db.delta_lake_par_col_date where cast(col_date as varchar) >= '2024-04-25 00:00:01' group by col_date order by col_date;
++-- result:
++2024-04-26	3
++2024-04-27	3
++-- !result
++function: assert_explain_verbose_contains("select * from delta_test_${uuid0}.delta_oss_db.delta_lake_par_col_date where col_date < '2024-04-25'", "partitions=1/4")
++-- result:
++None
++-- !result
++drop catalog delta_test_${uuid0};
++-- result:
++-- !result
+```
+
+**File**: `test/sql/test_deltalake/T/test_deltalake_cast_predicate_pushdown` (added, +20/-0)
+```diff
+@@ -0,0 +1,20 @@
++-- name: test_deltalake_cast_predicate_pushdown
++-- description: A cast that changes the column type must not be stripped when pushing a predicate down to the
++-- Delta kernel. cast(col_date AS varchar) < '2024-04-25 00:00:01' compares strings, so '2024-04-25' matches;
++-- it used to be pushed as col_date < '2024-04-25', which pruned the 2024-04-25 partition.
++-- Fixture (DATE partition, 3 rows for each of 2024-04-24 .. 2024-04-27): delta_oss_db.delta_lake_par_col_date.
++
++create external catalog delta_test_${uuid0} PROPERTIES (
++    "type"="deltalake",
++    "hive.metastore.uris"="${deltalake_catalog_hive_metastore_uris}",
++    "aws.s3.access_key"="${oss_ak}",
++    "aws.s3.secret_key"="${oss_sk}",
++    "aws.s3.endpoint"="${oss_endpoint}"
++);
++
++select col_date, count(*) from delta_test_${uuid0}.delta_oss_db.delta_lake_par_col_date where cast(col_date as varchar) < '2024-04-25 00:00:01' group by col_date order by col_date;
++select col_date, count(*) from delta_test_${uuid0}.delta_oss_db.delta_lake_par_col_date where cast(col_date as varchar) >= '2024-04-25 00:00:01' group by col_date order by col_date;
++-- control: no cast, still pruned
++function: assert_explain_verbose_contains("select * from delta_test_${uuid0}.delta_oss_db.delta_lake_par_col_date where col_date < '2024-04-25'", "partitions=1/4")
++
++drop catalog delta_test_${uuid0};
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #82527** (2026-11-05): [Enhancement][RB-225] TPCDS Q78 Pre-filter the aggregation under a LEFT JOIN chain filtered by an OR (backport #82518) (@mergify[bot])
-- **PR #82525** (2026-11-05): [UT] Let BE UT suites that rely on another suite's global setup run alone (@Hyper-FF)
-- **PR #82524** (2026-11-05): [BugFix][RB-225] Fix Iceberg one-sided stats bounds, orphan files on a failed build, and wrong MAX with tiny batches (backport #82508) (@mergify[bot])
-- **PR #82523** (2026-11-05): [Enhancement] Extrapolate sampled external NDV from its growth over nested partition subsets (backport #82516) (@mergify[bot])
-- **PR #82518** (2026-11-05): [Enhancement][RB-225] TPCDS Q78 Pre-filter the aggregation under a LEFT JOIN chain filtered by an OR (@starrocks-bot[bot])
-- **PR #82517** (2026-11-05): [BugFix][RB-904] Show a multi-statement transaction's statements in full only with SELECT on all its tables (backport #82514) (@mergify[bot])
+- **PR #82708** (2026-11-09): [BugFix][RB-97] Realign stable range colocate groups that received tablets cut against stale ranges (backport #82699) (@mergify[bot])
+- **PR #82707** (2026-11-09): [BugFix][RB-97] Realign stable range colocate groups that received tablets cut against stale ranges (backport #82699) (@mergify[bot])
+- **PR #82706** (2026-11-09): [BugFix][RB-97] Create heavy schema change shadow shards in their range PACK groups (backport #82700) (@mergify[bot])
+- **PR #82705** (2026-11-09): [BugFix][RB-97] Create heavy schema change shadow shards in their range PACK groups (backport #82700) (@mergify[bot])
+- **PR #82700** (2026-11-09): [BugFix][RB-97] Create heavy schema change shadow shards in their range PACK groups (@starrocks-bot[bot])
+- **PR #82699** (2026-11-09): [BugFix][RB-97] Realign stable range colocate groups that received tablets cut against stale ranges (@starrocks-bot[bot])
 
 ---
 
@@ -2398,28 +2267,33 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [BugFix][RB-225] Fix Iceberg one-sided stats bounds, orphan files on a failed bu
+## X. [UT] Accept the non-finite query vector error and run test_vector_index_query_ve
 
 **RULE**:
-When implementing operations in `be/src/connector/hive/scanner/hdfs_scanner.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `test/sql/test_vector_index_query_vector_overflow/R/test_vector_index_query_vector_overflow`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b8ae8cbe`: [BugFix][RB-225] Fix Iceberg one-sided stats bounds, orphan files on a failed build, and wrong MAX with tiny batches (#82508). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9d686f0a`: [UT] Accept the non-finite query vector error and run test_vector_index_query_vector_overflow on shared-data (#82665). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `be/src/connector/hive/scanner/hdfs_scanner.cpp`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `test/sql/test_vector_index_query_vector_overflow/R/test_vector_index_query_vector_overflow`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-    ctx.format_scan_context.min_max_value_cursors.clear();
+-- name: test_vector_index_query_vector_overflow @sequential
+-- nbits=8 trains 256 PQ centroids, so the load must contain at least that many rows
+-- or faiss rejects it ('nx >= k') before the query vector is checked.
+INSERT INTO t_ivfpq_overflow SELECT number, [CAST(number AS FLOAT), 0, 0, 0] FROM TABLE(generate_series(1, 256)) t(number);
+[REGEX].*(invalid query vector element|query vector contains a non-finite element).*
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+INSERT INTO t_ivfpq_overflow SELECT number, [CAST(number AS FLOAT), 0, 0, 0] FROM TABLE(generate_series(1, 64)) t(number);
+[REGEX].*invalid query vector element.*
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b8ae8cbe` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9d686f0a` are properly handled with clean fallback behavior.

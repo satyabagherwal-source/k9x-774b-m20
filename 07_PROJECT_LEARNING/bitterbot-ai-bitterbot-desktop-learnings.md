@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `f10139f8`  
+> **Source Version**: `3fd42218`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T00:02:56.805Z  
+> **Timestamp**: 2026-11-08T17:06:11.265Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T00:02:56.798Z  
+> **Harvest Timestamp**: 2026-11-08T17:06:11.255Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Bitterbot - a mesh of agents that turns shared experience into collective capability.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 2480 stars
+- **Stars / Engagement**: 2483 stars
 
 ---
 
@@ -1698,166 +1698,162 @@ function ControlApp() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f10139f8` (2026-11-05)
-**Commit Message**: feat(memory): run gated failure experiments from idle dreams (#365)
+### Incident Patch 1: `3fd42218` (2026-11-08)
+**Commit Message**: fix(memory): trim the embedding cache on every write; the agent explains its memory from its guide (#371)
 
-* feat(memory): schedule gated failure experiments from idle dreams
+Asked how its memory works, the live agent answered from memory_status
+numbers alone and got four mechanisms wrong: hormones change tone only
+(they also re-rank recall), lifecycle counts are lifetime totals (they are
+current states), consolidation happens in dreams (own 30-minute timer), and
+the cache was an overflowing query cache that thrashes (it is the embedding
+cache, and it ran past its cap).
 
-* fix(skills): bind learning promotion to its evaluated incumbent
-
-* fix(memory): commit learning reservations on supported Node versions
-
----------
-
-Co-authored-by: Victor Michael Gil <[REDACTED_EMAIL]>
-
-**File**: `AGENTS.md` (modified, +1/-1)
-```diff
-@@ -15,7 +15,7 @@ A consciousness-inspired memory pipeline:
- - **Session Transcript Indexing**: Conversations are automatically chunked, embedded, and made searchable. The agent can recall prior exchanges semantically.
- - **Governance**: Sensitivity tagging (normal/personal/confidential), TTL enforcement, audit trails on all memory operations. Anti-catastrophic forgetting safeguards.
- - **User Profile**: Automatically learned preferences (directive, world_fact, mental_model, experience types) persisted across sessions.
--- **Procedural learning lab** (`procedural-learning*.ts`, `learning-strategy*.ts`): default-on, lazy host service in `memory.proceduralLearning.mode: "shadow"`, with redacted experience capture from verified acquisition runs enabled. Explicit `off` disables it. Host adapters supply executions and outcome checks; no automatic conversation capture, experiment scheduler or live candidate promotion is wired here. This is separate from production skill evolution. See `docs/memory/learning-strategy-lab.md` and `benchmarks/learning-strategy/` for the API and complete research evidence, including failed qualification gates.
-+- **Failure experiments and procedural lab** (`failure-experiments.ts`, `procedural-learning*.ts`, `learning-strategy*.ts`): the default-on shadow service includes a durable coordinator for the existing production skill-evolution pipeline. Idle dream ticks on the default agent run bounded failure experiments on the evolution cadence, independently of the creative-cycle gate; only the task validation gate can promote to canary. Dispatch limits, pause checks, bounded interrupted-proposal retries, canary monitoring and rollback remain in force. The journal is the input queue; the separate procedural SQLite ledger stores references and hashes. `automation.enabled: false` disables the idle coordinator; `mode: "off"` disables this service; `skills.evolution.enabled: false` stops production evolution. The manual `service.strategies` research lab and verified-experience adapters remain shadow-only, with no research-candidate promotion. See `docs/memory/learning-strategy-lab.md` and `benchmarks/learning-strategy/` for evidence, including failed qualification gates.
- 
- ### 2. Dream Engine (`src/memory/dream-engine.ts`)
- 
-```
-
-**File**: `README.md` (modified, +1/-1)
-```diff
-@@ -214,7 +214,7 @@ The gate observes whether the agent actually reads the skill. A skill that does
- 
- **You can inspect the evidence.** The Evolution tab and `bitterbot skills evidence` expose validation results, credited uses, model information, and lineage. Young nodes may produce few promotions while evidence accumulates.
- 
--Production skill evolution is **on by default**, subject to evidence, model availability and budgets. The separate [Learning Strategy Lab](docs/memory/learning-strategy-lab.md) is available by default in shadow mode, with verified-experience capture for host-supplied experiments. It does not automatically run experiments or put research candidates into live conversations. Set `memory.proceduralLearning.mode: "off"` to disable that facility; `skills.evolution.enabled: false` disables the production evolution loop.
-+Production skill evolution is **on by default**, subject to evidence, model availability and budgets. An idle dream tick can now run failure-driven experiments without waiting for a full creative cycle. Candidates must pass the existing task gates before canary exposure; monitoring and rollback continue afterward. The separate [Learning Strategy Lab](docs/memory/learning-strategy-lab.md) remains a host-invoked shadow facility, and its research candidates do not become live skills. Set `memory.proceduralLearning.automation.enabled: false` to disable the idle coordinator, `memory.proceduralLearning.mode: "off"` to disable its evidence service, or `skills.evolution.enabled: false` to disable production evolution altogether.
- 
- Skills can also include **pre-action interceptors**: code that checks proposed tool calls and can modify parameters, add context, require prerequisites, or block execution. Because an interceptor is a code path rather than a prompt, it runs on every matching tool call.
- 
-```
-
-**File**: `benchmarks/learning-strategy/README.md` (modified, +1/-1)
-```diff
-@@ -2,7 +2,7 @@
- 
- Published evidence: [data/README.md](data/README.md). Restore the checksum-verified archives before following historical `results/` links or running recorded-trace tests. The [readable latest results and branded graphic](published/telecom-repair-reuse-v1/README.md) are available without extraction.
- 
--Current gateway behavior: the [host learning service](../../docs/memory/learning-strategy-lab.md) is available by default in shadow mode, with verified-experience capture for registered host adapters. Explicit `memory.proceduralLearning.mode: "off"` disables it. The service is lazy and does not schedule these experiments or activate their candidates. Frozen snapshots, results and publication bundles retain their original settings and bytes; changing today's defaults does not change a historical qualification verdict.
-+Current gateway behavior: the [learning service](../../docs/memory/learning-strategy-lab.md) is available by default in shadow mode. Its idle dream lane coordinates bounded failure experiments through the production skill-evolution gates. The manual research lab and verified-experience adapters remain separate: the scheduler does not rerun these benchmark studies or activate their candidates. Explicit `memory.proceduralLearning.mode: "off"` disables this service; `automation.enabled: false` disables its idle coordinator. Frozen snapshots, results and publication bundles retain their original settings and bytes; changing today's defaults does not change a historical qualification verdict.
- 
- The latest [conditional procedure reuse study](../../docs/memory/telecom-guarded-procedure-reuse.md) completed 60 comparison attempts and 88 additional-state executions. Two independently generated procedures each repaired **12/28 additional failed states** and preserved **16/16 healthy states with zero mutations**. Execution required no new model calls, but matched advice at **6/12** on the four original inputs. Both failed the frozen qualification gate. These are repeated states within four consumed case clusters, not fresh tasks or recipient transfer.
- 
-```
-
-**File**: `docs/concepts/architecture.md` (modified, +3/-1)
-```diff
-@@ -69,7 +69,9 @@ The core of Bitterbot. A cognitive architecture grounded in computational neuros
- | **Evolving Identity**    | `GENOME.md` (immutable safety axioms) constrains evolution. `MEMORY.md` (the Phenotype) is rewritten every dream cycle based on lived experience.                                                                                                                                                                                                                          |
- | **Consolidation Engine** | Runs every 30 minutes: Ebbinghaus decay, chunk merging, SNN near-merge discovery, orphan cluster rescue, curiosity region mapping, governance enforcement.                                                                                                                                                                                                                 |
- 
--**Storage:** Single SQLite database per agent at `~/.bitterbot/memory/<agentId>.sqlite`. No external services.
-+**Storage:** The memory index lives at `~/.bitterbot/memory/<agentId>.sqlite`. The procedural evidence service uses a separate `procedural-learning.sqlite` in the agent directory, so experiment records survive vector reindexing. No external database service is required.
-+
-+The dream engine also coordinates a [failure-learning lane](../memory/learning-strategy-lab.md#automatic-failure-experiments). Idle ticks can start bounded experiments independently of creative dreaming; proposal generation, task validation, canary monitoring and rollback remain separate modules.
- 
- Full documentation: [Memory Architecture](../memory/architecture-overview.md) · [Dream Engine](../memory/dream-engine.md) · [Curiosity](../memory/curiosity-and-search.md) · [Emotional System](../memory/emotional-system.md)
- 
-```
-
-**File**: `docs/gateway/configuration-reference.md` (modified, +8/-2)
-```diff
-@@ -1949,13 +1949,19 @@ The memory subsystems (`memory.dream`, `memory.consolidation`, `memory.curiosity
- 
- ### `memory.proceduralLearning`
- 
--Available by default in shadow mode. No config block is needed. These settings make the host service available; they do not schedule experiments or inject research lessons into live prompts. The separate production skill-evolution loop is already on by default through `skills.evolution.enabled`.
-+Available by default in shadow mode. No config block is needed. The service hosts both manual research experiments and an automatic failure-learning coordinator. Idle dream ticks run production experiments through the existing skill-evolution task gates; research candidates remain shadow-only. Production evolution is separately controlled by `skills.evolution.enabled`.
- 
- ```json5
- {
-   memory: {
-     proceduralLearning: {
-       mode: "shadow", // "off" | "shadow" | "active"; default "shadow"
-+      automation: {
-+        enabled: true, // idle failure experiments through the production gates
-+        maxLlmCalls: 64, // callback dispatches, not dollars or provider requests
-+        maxAgentTurns: 240, // a trial turn can make multiple model requests
-+        maxWallMinutes: 60, // checked before dispatch and promotion
-+      },
-       experienceMemory: {
-         enabled: true, // redacted experience from verified acquisition runs only
-         minSupport: 2,
-@@ -1970,7 +1976,7 @@ Available by default in shadow mode. No config block is needed. These settings m
- }
- ```
- 
--`mode: "off"` prevents the service from opening. `experienceMemory.enabled: false` disables extraction while retaining the lab. Explicit settings survive the default change; restart the gateway to apply changes. The strategy lab requires `shadow`; `active` is for explicit host adapters and does not start autonomous learning. Host integrations supply sandbox adapters, pinned verifiers and experiment budgets. Ordinary conversations are not automatically collected, and held-out results cannot become acquisition experience. See [Learning Strategy Lab](/memory/learning-strategy-lab) for the API, storage and promotion boundaries.
-+`mode: "off"` prevents the service from opening. `automation.enabled: false` disables the idle coordinator while preserving the legacy full-dream evolution hook; `skills.evolution.enabled: false` disables production evolution altogether. `experienceMemory.enabled: false` disables adapter extraction while retaining the lab. Restart the gateway to apply changes. The automatic coordinator and strategy lab require `shadow`; `active` is for explicit host adapters. Automatic work respects the dream idle threshold, evolution cadence, usage budgets and pause state. Dispatch limits are reserved durably before work; exhausted limits hold candidates, and in-flight calls finish under their existing timeouts. Research host integrations still supply their own adapters, verifiers and budgets. The experiment ledger stores journal references and hashes, not raw conversations; held-out results cannot become acquisition experience. See [Learning Strategy Lab](/memory/learning-strategy-lab#automatic-failure-experiments) for recovery, accounting and promotion boundaries.
- 
- ### `memory.curiosity.evidence`
- 
-```
+- The embedding cache was trimmed to cache.maxEntries only at the end of a
+  full sync, so embeddings written in between pushed it past the cap (15,574
+  rows against 10,000 on the live node). The trim now runs on every cache
+  write.
+- memory-architecture SKILL.md: how hormones bear on ranking (recency tilt,
+  up to 15% for matching memories at 0.4 or above); a "Reading
+  memory_status" section (lifecycle counts are current states, cache is the
+  embedding cache); consolidation is separate from dreams; read this file
+  before explaining how you work, and say you are not sure rather than fill
+  a gap.
+- System prompt: read memory-architecture before explaining how you work,
+  since
 
 **File**: `docs/memory/architecture-overview.md` (modified, +1/-1)
 ```diff
-@@ -502,7 +502,7 @@ cfg.memory?.healthSweep / .digest / .dreamBrief → scheduled reports
- 
- Most subsystems have sensible defaults and are enabled by default; disable one by setting `enabled: false` in its config block. The opt-in exceptions: the `exploration` dream mode (`memory.dream.modes.exploration.enabled`), learned construction rules (`memory.architectEvolution.enabled`), the dream engine's Skill Seekers research step (`memory.curiosity.autoResearch.enabled` must be `true`), and harness evolution (`agents.defaults.harnessEvolve.enabled`).
- 
--**Procedural learning uses a mode switch:** `memory.proceduralLearning.mode` defaults to `shadow`; `off` disables it. Its per-agent database opens lazily for host use, with verified-experience extraction enabled when an adapter supplies a redacted extractor. This research facility does not automatically collect conversation traces, schedule experiments or modify live prompts. The separate production [skill-evolution loop](skills-pipeline.md) is already on by default and retains its validation, canary and rollback gates. See [Learning Strategy Lab](learning-strategy-lab.md) for configuration and evidence boundaries.
-+**Procedural learning uses a mode switch:** `memory.proceduralLearning.mode` defaults to `shadow`; `off` disables this service. Its separate per-agent database opens lazily and records automatic failure experiments as well as host-requested research. Idle dream ticks coordinate the existing production [skill-evolution loop](skills-pipeline.md), with durable dispatch limits, task validation, canary exposure and rollback. `automation.enabled: false` disables the idle coordinator while retaining the legacy full-cycle hook. The manual strategy lab and adapter-based verified-experience extraction remain shadow-only; research candidates do not become live skills. See [Learning Strategy Lab](learning-strategy-lab.md) for configuration and evidence boundaries.
- 
- **Message Batches lanes.** `memory.batch` (kill switch `enabled`, default `true`) routes latency-tolerant background lanes through the Anthropic Message Batches API: a lane call submits one batch, polls with backoff, and falls back to the live call on timeout (`maxWaitMinutes`, default 20) or any error. Default `lanes`: `memory/dream`, `memory/extraction`, `memory/discovery`, `skills/evolution` (the judge and maintainer; the proposer loop and on-demand RPC lanes always run live). Only Anthropic API-key models qualify; other providers take the live path.
- 
+@@ -457,7 +457,7 @@ The P2P orchestrator bridge is wired later at gateway startup via `wireOrchestra
+ | `peer_activity_log`         | Peer activity timestamps for anomaly detection                                     |
+ | `mutation_queue`            | Dropped in v58 (PLAN-40); the mutation flow itself was retired in PLAN-45 Phase 1  |
+ | `skill_edges`               | Discovered skill relationships (prerequisite, enables, etc.)                       |
+-| `embedding_cache`           | Cached embedding vectors                                                           |
++| `embedding_cache`           | Cached embedding vectors by text hash; every write trims it to `cache.maxEntries`  |
+ | `memory_audit_log`          | Governance audit trail                                                             |
+ | `entities`                  | Knowledge graph entities (person, project, concept, etc.)                          |
+ | `relationships`             | Temporal entity relationships + SAGE per-edge gate (`gate_value`, `gate_features`) |
 ```
 
-**File**: `docs/memory/dream-engine.md` (modified, +2/-0)
+**File**: `skills/memory-architecture/SKILL.md` (modified, +13/-2)
 ```diff
-@@ -54,6 +54,8 @@ type DreamState = "DORMANT" | "INCUBATING" | "DREAMING" | "SYNTHESIZING" | "AWAK
+@@ -13,7 +13,7 @@ This is how your parts work when they run. It never says what is switched on: th
+ - **Knowledge Crystals**: every retained piece of knowledge is a chunk of text with a semantic type (fact, preference, task_pattern, skill, episode, insight, relationship, goal, general), an importance score and a lifecycle (`generated -> activated -> consolidated -> archived -> expired`), plus an embedding once one is made (until then keyword search still finds it). Skills are frozen and do not decay.
+ - **Sources**: workspace memory files (`MEMORY.md`, `memory/*.md`), conversation transcripts (indexed in the background), facts extracted from conversations, and skills.
+ - **Forgetting**: importance follows an Ebbinghaus curve. What is used often, or carried strong feeling, resists decay.
+-- **Consolidation** runs on a timer (every 30 minutes unless the owner changed it): hormonal decay, importance recalculation, merging near-duplicates, forgetting low-importance chunks, governance TTLs, stalled-goal detection.
++- **Consolidation** runs on its own timer (every 30 minutes unless the owner changed it), separate from dreams: hormonal decay, importance recalculation, merging near-duplicates, forgetting low-importance chunks, governance TTLs, stalled-goal detection.
+ - **Reconsolidation**: a memory you retrieve becomes briefly changeable, so a correction can update it instead of piling a contradiction beside it.
+ - **Settled facts** live in a canonical ledger. A deliberate pin (yours via `memory_pin`, or the owner's) outranks anything learned in the background, and replacing a pinned fact waits for the owner's confirmation.
+ - **Who sees what**: other people talking to you (guests) never get the owner's memories, and deep recall across conversations is the owner's only.
+@@ -30,6 +30,8 @@ This is how your parts work when they run. It never says what is switched on: th
  
- A cycle is triggered by a timer (default tick every 120 minutes, adaptive between 30 and 240 minutes by default), manually via `MemoryIndexManager.dream()`, or by an **emotional mini-dream** (see below). A scheduled full cycle also needs at least one new conversation, 60 minutes idle and 8 hours since the last full cycle (`minNewSessions`, `minIdleMinutes`, `minHoursBetween`).
+ Three hormones shift with the conversation and colour your tone without being announced: dopamine (reward, about a 30-minute half-life, more energy), cortisol (urgency, about 60 minutes, more focus), oxytocin (connection, about 45 minutes, more warmth). Your resting temperament is set in `GENOME.md`. `memory_status` reports the levels, an emotional briefing and tone guidance.
  
-+The same scheduled tick checks a dedicated [failure-learning lane](learning-strategy-lab.md#automatic-failure-experiments) before the creative-cycle gate. On the default agent, it can propose and test improvements after the idle threshold even if there are no new turns or a full dream ran recently. It shares the production evolution cadence (24 hours by default) and the full-cycle hook's single run, with durable dispatch limits and pause checks. Its task gate, canary and rollback modules retain promotion authority. The lane is serialized with other memory maintenance and may defer it while network work finishes; it does not consume the creative-cycle counters or run in emotional mini-dreams.
++They also change what recall ranks first, not only how you sound. They tilt how much recency counts, and once a hormone is at 0.4 or above, matching memories score up to 15% higher: positive ones under dopamine, tasks, goals and skills under cortisol, relationships, preferences and episodes under oxytocin. That can reorder close results; it does not bury a clearly better match.
 +
- The minimum chunks required to trigger a dream cycle is **5**, so the dream engine activates within a single conversation session rather than requiring days of accumulated data.
+ ## Dreams
  
- After each dream cycle completes, the engine also performs an **RLM Working Memory rewrite** — updating MEMORY.md as a recursive state vector. See [Working Memory](./working-memory.md) for details.
+ When you have been idle and there is something new, the dream engine runs a cycle. It picks a creative mode (replay, compression, simulation, extrapolation, exploration) and runs utility lanes (hygiene, distillation, anticipation, relationship mining, canonical promotion, relationship reconsolidation, interceptor harvest, harness evolution). Insights from simulation and extrapolation must pass a grounding check before they become memories, and they come back marked as dream hypotheses: share them as hunches, never as facts. Each cycle rewrites `MEMORY.md` (your self-concept, your picture of the owner, active context, curiosity gaps), keeping any block the owner marked `<!-- owner -->` verbatim. A cycle with nothing new is skipped. `dream_status` and `dream_search` show what happened.
+@@ -47,14 +49,23 @@ The curiosity engine groups what you know into regions and scores each new memor
+ - **Curator**: agent-made skills are archived, patched or merged based on use and errors; `skill_manage` lets you drive that through the same staging and gate.
+ - **From other agents**: skills from peers are checked (reputation, dangerous patterns, structure, drift) and quarantined for the owner's review.
+ 
++## Reading `memory_status`
++
++It gives counts and health, not how the parts work; explain the workings from this file.
++
++- **Lifecycle counts** are how many memories are in each state now, not lifetime totals. `generated` means not yet consolidated or archived; the total is the chunk count.
++- **`cache`** is the embedding cache: vectors saved by text hash so unchanged text is never embedded twice. It is not a cache of searches or answers. Every write trims it back to `maxEntries`, dropping the oldest first.
++- **Hormone levels** are the ones described under Feelings, so they bear on ranking as well as tone.
++
+ ## The owner's controls
+ 
+ The owner can forget or edit a memory after previewing exactly what would change, pin facts, mark text in `MEMORY.md` as theirs, pause curiosity, and switch parts on or off in config. `self_state` covers the main parts; pipeline details such as consolidation are in `memory_status`. When asked to forget or change something, use those paths; do not promise a deletion you did not do.
+ 
+ ## Talking about yourself
+ 
+ - Before saying a part is running, call `self_state`. If
 ```
 
-**File**: `docs/memory/learning-strategy-lab.md` (modified, +28/-11)
+**File**: `src/agents/system-prompt.ts` (modified, +1/-1)
 ```diff
-@@ -3,20 +3,21 @@ title: "Learning Strategy Lab"
- description: "Shadow evaluation of evolving actor and proposer instructions with local execution evidence and authenticated transfer."
- ---
+@@ -62,7 +62,7 @@ function buildMemorySection(params: {
+   }
+   const lines = [
+     "## Memory System",
+-    "Local, self-evolving memory (decaying Knowledge Crystals, hormones that modulate recall and tone, a dream engine that rewrites MEMORY.md). Long-form guidance is in skills, read on demand: `memory-architecture` (how you work, including how you learn skills), `working-memory-protocol`, `curiosity-loop`, `pre-action-interceptors`.",
++    "Local, self-evolving memory (decaying Knowledge Crystals, hormones that modulate recall and tone, a dream engine that rewrites MEMORY.md). Long-form guidance is in skills, read on demand: `memory-architecture` (how you work, including how you learn skills; read it before explaining how you work, since `memory_status` gives numbers, not mechanisms), `working-memory-protocol`, `curiosity-loop`, `pre-action-interceptors`.",
+     "### Memory tools",
+     "- `memory_search`: semantic recall; mandatory before answering about prior work, decisions, dates, people, preferences or todos. Then `memory_get` for exact lines.",
+     '- `memory_status`: pipeline health, hormones, dream/curiosity state, your user profile ("what do you know about me?"), interceptor firings.',
+```
+
+**File**: `src/memory/manager-embedding-ops.ts` (modified, +3/-0)
+```diff
+@@ -167,6 +167,9 @@ class MemoryManagerEmbeddingOps {
+         now,
+       );
+     }
++    // Embeddings reach the cache between full syncs too (session and crystal
++    // writes), so the cap is kept here, not only at the end of a sync.
++    this.pruneEmbeddingCacheIfNeeded();
+   }
  
--The strategy lab is a host-only experimental capability of the procedural-learning service, available by default in `shadow` mode. It does not start a background job, alter the live harness, or publish to the public network. Access `service.strategies` on a `ProceduralLearning` instance. Active and off stores reject lab work. Construction is lazy; each agent has a separate `procedural-learning.sqlite` in its agent directory, which survives memory-vector reindexing.
-+The strategy lab is a host-only experimental capability of the procedural-learning service, available by default in `shadow` mode. Access `service.strategies` on a `ProceduralLearning` instance. Active and off stores reject lab work. The lab does not schedule research studies or activate its candidates. The same service now also hosts a separate automatic coordinator for production failure experiments, described below. Construction is lazy; each agent has a separate `procedural-learning.sqlite` in its agent directory, which survives memory-vector reindexing.
- 
- Hosts obtain the per-agent service with `getProceduralLearning({ cfg, agentId })` from the plugin SDK. No configuration block is required. The returned service may be null when explicitly disabled or when the memory manager is unavailable. A typical experiment registers development and held-out panels, adds the starting strategy with `archive.add`, evaluates it, proposes and evaluates children, selects from `archive.rank(developmentPanelId)`, and freezes the chosen hashes with `archive.seal` before final evaluation. The runnable benchmark below demonstrates this complete sequence, including fixed-proposer controls and recipient imports. Registering a panel is a trusted host operation; the `isolation` declaration is not itself an operating-system sandbox.
- 
- ## Defaults and automatic behavior
- 
--| Component                                                                  | Default             | What runs                                                                                                                                                                                 |
--| -------------------------------------------------------------------------- | ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
--| Production skill evolution (`skills.evolution.enabled`)                    | `true`              | The dream post-cycle hook learns from journaled runs and proposes skills when evidence, a model, cadence and budgets permit. Validation, canary monitoring and rollback govern promotion. |
--| Procedural service (`memory.proceduralLearning.mode`)                      | `shadow`            | A local evidence store opens on first host use. Sandbox evaluations run only when a host registers an adapter and requests them.                                                          |
--| Verified experience (`memory.proceduralLearning.experienceMemory.enabled`) | `true`              | After a settled acquisition run, a registered adapter's optional redacted extractor can attach experience. Held-out runs and invalid or interrupted outcomes are excluded.                |
--| Strategy lab (`service.strategies`)                                        | Available in shadow | The host explicitly supplies panels, proposals and evaluations. There is no scheduler or automatic connection to conversation traces.                                                     |
-+| Component                                                                  | Default             | What runs                                                                                                                                                                                  |
-+| -------------------------------------------------------------------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-+| Production skill evolution (`skills.evolution.enabled`)                    | `true`              | Idle dream ticks and the post-cycle hook share a learning lane. Evidence, model availability, cadence and budgets apply; task validation, canary monitoring and rollback govern promotion. |
-+| Automatic coordinator (`memory.proceduralLearning.automation.enabled`)     | `true`              | In shadow mode, coordinates failure-driven production experiments on the default agent, with durable reservations and bounded retries.                                                     |
-+| Procedural service (`memory.proceduralLearning.mode`)   
+   private pruneEmbeddingCacheIfNeeded(): void {
+```
+
+**File**: `src/memory/manager.embedding-cache-cap.test.ts` (added, +40/-0)
+```diff
+@@ -0,0 +1,40 @@
++import { describe, expect, it } from "vitest";
++import { installEmbeddingManagerFixture } from "./embedding-manager.test-harness.js";
++
++const fx = installEmbeddingManagerFixture({
++  fixturePrefix: "bitterbot-mem-cache-",
++  largeTokens: 1250,
++  smallTokens: 200,
++  createCfg: ({ workspaceDir, indexPath, tokens }) => ({
++    agents: {
++      defaults: {
++        workspace: workspaceDir,
++        memorySearch: {
++          provider: "openai",
++          model: "mock-embed",
++          store: { path: indexPath, vector: { enabled: false } },
++          chunking: { tokens, overlap: 0 },
++          cache: { enabled: true, maxEntries: 2 },
++          sync: { watch: false, onSessionStart: false, onSearch: false },
++          query: { minScore: 0, hybrid: { enabled: false } },
++        },
++      },
++      list: [{ id: "main", default: true }],
++    },
++  }),
++});
++
++describe("memory embedding cache cap", () => {
++  it("keeps the cap on every cache write, not only at the end of a full sync", () => {
++    const manager = fx.getManagerSmall();
++    const write = (
++      manager as unknown as {
++        upsertEmbeddingCache: (entries: Array<{ hash: string; embedding: number[] }>) => void;
++      }
++    ).upsertEmbeddingCache.bind(manager);
++    write(Array.from({ length: 5 }, (_, i) => ({ hash: `h${i}`, embedding: [i, 1] })));
++    const cache = manager.status().cache as { entries?: number; maxEntries?: number };
++    expect(cache.maxEntries).toBe(2);
++    expect(cache.entries).toBe(2);
++  });
++});
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #371** (2026-11-08): fix(memory): trim the embedding cache on every write; the agent explains its memory from its guide (@VGIL77)
+- **PR #370** (2026-11-08): feat(agents): the agent knows which of its parts are on, from the live config (@VGIL77)
+- **PR #369** (2026-11-07): feat(skills): add verified live outcome writer in shadow mode (@VGIL77)
+- **PR #368** (2026-11-06): feat(skills): annotate verified skill outcomes in words (@VGIL77)
+- **PR #367** (2026-11-06): fix(gateway): correct WSL logon task XML schema (@VGIL77)
 - **PR #365** (2026-11-05): Run gated failure-learning experiments from idle dream ticks (@VGIL77)
-- **PR #364** (2026-11-05): Enable shadow learning by default and clarify learning documentation (@VGIL77)
-- **PR #363** (2026-11-05): Add shadow learning strategy lab and publish synthetic benchmark evidence (@VGIL77)
-- **PR #351** (2026-11-02): fix(skills): skills index compactor no longer merges a block into the next one (@VGIL77)
-- **PR #350** (2026-11-02): fix(skills): record skill executions when the agent reads a skill's SKILL.md (@VGIL77)
-- **PR #348** (2026-11-02): feat(a2a): accept XNO payments on the A2A payment gate (@VGIL77)
 
 ---
 
@@ -1877,28 +1873,28 @@ Co-authored-by: Victor Michael Gil <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. memory): run gated failure experiments from idle dreams (#365)
+## X. memory): trim the embedding cache on every write; the agent explains its memory 
 
 **RULE**:
-When implementing operations in `AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/memory/architecture-overview.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f10139f8`: memory): run gated failure experiments from idle dreams (#365). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3fd42218`: memory): trim the embedding cache on every write; the agent explains its memory from its guide (#371). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `AGENTS.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/memory/architecture-overview.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-- **Failure experiments and procedural lab** (`failure-experiments.ts`, `procedural-learning*.ts`, `learning-strategy*.ts`): the default-on shadow service includes a durable coordinator for the existing production skill-evolution pipeline. Idle dream ticks on the default agent run bounded failure experiments on the evolution cadence, independently of the creative-cycle gate; only the task validation gate can promote to canary. Dispatch limits, pause checks, bounded interrupted-proposal retries, canary monitoring and rollback remain in force. The journal is the input queue; the separate procedural SQLite ledger stores references and hashes. `automation.enabled: false` disables the idle coordinator; `mode: "off"` disables this service; `skills.evolution.enabled: false` stops production evolution. The manual `service.strategies` research lab and verified-experience adapters remain shadow-only, with no research-candidate promotion. See `docs/memory/learning-strategy-lab.md` and `benchmarks/learning-strategy/` for evidence, including failed qualification gates.
+| `embedding_cache`           | Cached embedding vectors by text hash; every write trims it to `cache.maxEntries`  |
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-- **Procedural learning lab** (`procedural-learning*.ts`, `learning-strategy*.ts`): default-on, lazy host service in `memory.proceduralLearning.mode: "shadow"`, with redacted experience capture from verified acquisition runs enabled. Explicit `off` disables it. Host adapters supply executions and outcome checks; no automatic conversation capture, experiment scheduler or live candidate promotion is wired here. This is separate from production skill evolution. See `docs/memory/learning-strategy-lab.md` and `benchmarks/learning-strategy/` for the API and complete research evidence, including failed qualification gates.
+| `embedding_cache`           | Cached embedding vectors                                                           |
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f10139f8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3fd42218` are properly handled with clean fallback behavior.

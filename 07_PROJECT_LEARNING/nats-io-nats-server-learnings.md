@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nats-io-nats-server-learnings.md`  
 > **Source**: github ([https://github.com/nats-io/nats-server](https://github.com/nats-io/nats-server))  
-> **Source Version**: `8397827b`  
+> **Source Version**: `c1a97cbd`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T22:16:08.145Z  
+> **Timestamp**: 2026-11-09T11:31:12.048Z  
 > **Learning ID**: `learn-github-nats-io-nats-server`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nats-io-nats-server-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nats-io/nats-server](https://github.com/nats-io/nats-server))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T22:16:08.137Z  
+> **Harvest Timestamp**: 2026-11-09T11:31:07.923Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: High-Performance server for NATS.io, the cloud and edge native messaging system.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 21001 stars
+- **Stars / Engagement**: 21017 stars
 
 ---
 
@@ -2726,273 +2726,265 @@ func (l *Logger) Tracef(format string, v ...any) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5c17e8e0` (2026-11-05)
-**Commit Message**: [FIXED] Gateway: A- in interest-only mode stops delivery for the account (#8853)
+### Incident Patch 1: `c1a97cbd` (2026-11-09)
+**Commit Message**: Fix ATS worker shutdown synchronization (#8794)
 
-In interest-only mode a gateway message's arrival can race with removal
-of an account's last subscription. If there are no subscriptions when
-the message arrives `gatewayHandleSubjectNoInterest` calls
-`sendAccountUnsubToGateway` and replaces the `InterestOnly` inbound
-entry with `nil` then sends `A-`. After that the account stops receiving
-messages across the gateway until the connection restarts even if new
-subscriptions are created.
+## Summary
 
-### Trace
-
-Two servers with `NoSystemAccount` `west` and `east` and one client in
-west's `$G`:
-
-```
-west ->> RS- $G hb     last subscription removed
-                       an hb message east sent before receiving the RS- arrives at west
-west ->> A- $G         $G has no subscriptions -> sendAccountUnsubToGateway
-east <<- A- $G         processGatewayAccountUnsub: outsim[$G] InterestOnly entry -> nil
-west ->> A+ $G         new SUB: insim[$G] == nil -> A+, insim entry deleted
-east <<- A+ $G         processGatewayAccountSub: outsim[$G] deleted
-east                   gatewayInterest: !accountInMap && interestOnlyMode -> no interest, forever
-```
-
-West has no inbound entry so i
-
-**File**: `server/gateway.go` (modified, +10/-0)
 ```diff
-@@ -2776,6 +2776,16 @@ func (c *client) sendAccountUnsubToGateway(accName []byte) {
- 	// Check if we have sent the A- or not.
- 	c.mu.Lock()
- 	e, sent := c.gw.insim[string(accName)]
-+	// Once the account has left optimistic mode (interest-only, or switching
-+	// to it), an A- would replace the remote's entry with nil: it then drops
-+	// our RS+ and the switch-complete command, and after the next A+ it never
-+	// sends on this account again. In interest-only mode a message we have
-+	// no interest in crossed our last RS-; while switching, the remote may
-+	// still be sending optimistically. Either way, dropping it is enough.
-+	if e != nil && e.mode != Optimistic {
-+		c.mu.Unlock()
-+		return
-+	}
- 	if e != nil || !sent {
- 		// Add a nil value to indicate that we have sent an A-
- 		// so that we know to send A+ when needed.
+ Unregister
+-  enqueue a shared stop signal
+-  return before the worker exits
++  serialize the lifecycle transition
++  close the current worker's stop channel
++  wait for that worker to exit
 ```
 
-**File**: `server/gateway_test.go` (modified, +96/-0)
+`Register` and the last `Unregister` now serialize ATS worker handoff,
+each worker owns its own stop channel, and `Unregister` joins the
+exiting worker through a `sync.WaitGroup`. This prevents a new worker
+from consuming an older worker's shutdown signal and makes `Unregister`
+guarantee that the ATS goroutine has exited.
+
+Resolves #8363
+
+## Evidence
+
+- **Before:** `go test -count=100 -run '^TestRegisterAndUnregister$'
+./server/ats` failed 8 of 100 runs with an extra goroutine.
+- **After:** the same command passes 100 of 100 runs.
+- `go test -race -count=20 ./server/ats` passes.
+- `RACE=-race ./scripts/runTestsOnTravis.sh store_tests` passes in
+788.317 seconds.
+- `go vet ./...` and Linux amd64/386 builds pass.
+- The regression test no longer sleeps after `Unregister`, so it checks
+synchronous cleanup directly.
+
+## Merge Danger
+
+**Door:** Two-way
+
+**Blast Radius:** Storage lifecycle
+
+The mutex is used only when stores regi
+
+**File**: `server/ats/ats.go` (modified, +20/-9)
 ```diff
-@@ -8078,3 +8078,99 @@ func TestGatewayLogsRemoteURL(t *testing.T) {
- 	s1.Shutdown()
- 	checkNoticeNotContains(t, l, remoteURLLogUser, remoteURLLogPassword)
+@@ -17,6 +17,7 @@
+ package ats
+ 
+ import (
++	"sync"
+ 	"sync/atomic"
+ 	"time"
+ )
+@@ -29,23 +30,28 @@ var (
+ 	utime atomic.Int64
+ 	// How may registered users do we have, controls lifetime of Go routine.
+ 	refs atomic.Int64
++	// Serializes worker startup and shutdown so a new worker cannot consume a
++	// previous worker's stop signal.
++	lifecycleMu sync.Mutex
+ 	// To signal the shutdown of the Go routine.
+-	done chan struct{}
++	done     chan struct{}
++	workerWG sync.WaitGroup
+ )
+ 
+-func init() {
+-	// Initialize our done chan.
+-	done = make(chan struct{}, 1)
+-}
+-
+ // Register usage. This will happen on filestore creation.
+ func Register() {
++	lifecycleMu.Lock()
++	defer lifecycleMu.Unlock()
++
+ 	if v := refs.Add(1); v == 1 {
+ 		// This is the first to register (could also go up and down),
+ 		// so spin up Go routine and grab initial time.
+ 		utime.Store(time.Now().UnixNano())
++		done = make(chan struct{})
++		workerWG.Add(1)
+ 
+-		go func() {
++		go func(done <-chan struct{}) {
++			defer workerWG.Done()
+ 			ticker := time.NewTicker(TickInterval)
+ 			defer ticker.Stop()
+ 			for {
+@@ -56,14 +62,19 @@ func Register() {
+ 					return
+ 				}
+ 			}
+-		}()
++		}(done)
+ 	}
  }
+ 
+ // Unregister usage. We will shutdown the go routine if no more registered users.
+ func Unregister() {
++	lifecycleMu.Lock()
++	defer lifecycleMu.Unlock()
 +
-+// A message can still be in flight from the remote when the last subscription
-+// on an interest-only account goes away. Its arrival must not produce an A-:
-+// that would take the account out of interest-only mode on both sides, the
-+// following A+ would leave the remote with no entry for the account, and an
-+// interest-only remote then never sends on it again.
-+func TestGatewayNoAccountUnsubInInterestOnlyMode(t *testing.T) {
-+	ob := testDefaultOptionsForGateway("B")
-+	sb := runGatewayServer(ob)
-+	defer sb.Shutdown()
-+
-+	oa := testGatewayOptionsFromToWithServers(t, "A", "B", sb)
-+	sa := runGatewayServer(oa)
-+	defer sa.Shutdown()
-+
-+	waitForOutboundGateways(t, sa, 1, time.Second)
-+	waitForOutboundGateways(t, sb, 1, time.Second)
-+	waitForInboundGateways(t, sa, 1, time.Second)
-+	waitForInboundGateways(t, sb, 1, time.Second)
-+
-+	ncA := natsConnect(t, sa.ClientURL())
-+	defer ncA.Close()
-+	sub := natsSubSync(t, ncA, "foo")
-+	natsFlush(t, ncA)
-+	checkGWInterestOnlyModeInterestOn(t, sb, "A", globalAccountName, "foo")
-+
-+	natsUnsub(t, sub)
-+	natsFlush(t, ncA)
-+	checkFor(t, 2*time.Second, 15*time.Millisecond, func() error {
-+		c := sb.getOutboundGatewayConnection("A")
-+		ei, _ := c.gw.outsim.Load(globalAccountName)
-+		if ei == nil {
-+			return fmt.Errorf("no entry for account %q", globalAccountName)
-+		}
-+		if r := ei.(*outsie).sl.Match("foo"); len(r.psubs) != 0 {
-+			return fmt.Errorf("interest on %q still registered", "foo")
-+		}
-+		return nil
-+	})
-+
-+	// Deliver, on A, a message from B that crossed the RS- for "foo": the
-+	// account now has no subscriptions at all.
-+	var gws []*client
-+	sa.getInboundGatewayConnections(&gws)
-+	require_Len(t, len(gws), 1)
-+	acc := sa.globalAccount()
-+	sa.gatewayHandleSubjectNoInterest(gws[0], acc, []byte(acc.Name), []byte("foo"))
-+
-+	sub = natsSubSync(t, ncA, "bar")
-+	natsFlush(t, ncA)
-+	checkGWInterestOnlyMode(t, sb, "A", globalAccountName)
-+	checkGWInterestOnlyModeInterestOn(t, sb, "A", globalAccountName, "bar")
-+
-+	ncB := natsConnect(t, sb.ClientURL())
-+	defer ncB.Close()
-+	natsPub(t, ncB, "bar", []byte("hello"))
-+	natsFlush(t, ncB)
-+	natsNexMsg(t, sub, time.Second)
-+}
-+
-+// Same as above, but the message arrives while the account is switching to
-+// interest-only mode, before the switch completes.
-+func TestGatewayNoAccountUnsubWhileSwitchingToInterestOnlyMode(t *testing.T) {
-+	ob := testDefaultOptionsForGateway("B")
-+	sb := runGatewayServer(ob)
-+	defer sb.Shutdown()
-+
-+	oa := testGatewayOptionsFromToWithServers(t, "A", "B", sb)
-+	sa := runGatewayServer(oa)
-+	defer sa.Shutdown()
-+
-+	waitForOutboundGateways(t, sa, 1, time.Second)
-+	waitForOutboundGateways(t, sb, 1, time.Second)
-+	waitForInboundGateways(t, sa, 1, time.Second)
-+	waitForInboundGateways(t, sb, 1, time.Second)
-+	checkGWInterestOnlyMode(t, sb, "A", globalAccountName)
-+
-+	var gws []*client
-+	sa.getInboundGatewayConnections(&gws)
-+	require_Len(t, len(gws), 1)
-+	gwc := gws[0]
-+	gwc.mu.Lock()
-+	e := gwc.gw.insim[globalAccountName]
-+	require_NotNil(t, e)
-+	e.mode = Transitioning
-+	gwc.mu.Unlock()
-+
-+	acc := sa.globalAccount()
-+	sa.gatewayHandleSubjectNoInterest(gwc, acc, []byte(acc.Name), []byte("foo"))
-+
-+	gwc.mu.Lock()
-+	e = gwc.gw.insim[globalAccountName]
-+	gwc.mu.Unlock()
-+	require_NotNil(t, e)
-+	checkGWInterestOnlyMode(t, sb, "A", globalAccountName)
-+}
+ 	if v := refs.Add(-1); v == 0 {
+-		done <- struct{}{}
++		close(done)
++		workerWG.Wait()
++		done = nil
+ 	} else if v < 0 {
+ 		refs.Store(0)
+ 		panic("unbalanced unregister for access time state")
+```
+
+**File**: `server/ats/ats_test.go` (modified, +0/-1)
+```diff
+@@ -57,7 +57,6 @@ func TestRegisterAndUnregister(t *testing.T) {
+ 	if r := refs.Load(); r != 0 {
+ 		t.Fatalf("Expected refs to be 0, got %d", r)
+ 	}
+-	time.Sleep(TickInterval)
+ 
+ 	at = AccessTime()
+ 	time.Sleep(2 * TickInterval)
 ```
 
 ---
 
-### Incident Patch 2: `96b92df5` (2026-11-04)
-**Commit Message**: [FIXED] Gateway: A- in interest-only mode stops delivery for the account
+### Incident Patch 2: `5c3499b0` (2026-11-09)
+**Commit Message**: [FIXED] Filestore fd leak & account lock order cycle (#8873)
 
-In interest-only mode, a gateway message can still be in flight when the last
-subscription on an account goes away. When it lands on an account with no
-subscriptions, sendAccountUnsubToGateway replaced the interest-only inbound
-entry with nil and sent an A-. The remote then replaced its interest-only
-outbound entry with nil, and the A+ sent for the next subscription deleted it.
-With interestOnlyMode set, an account with no entry gets no messages, and no
-RS+ follows because the inbound entry is gone too, so the account stops
-receiving across that gateway until the connection is re-established.
+Two fixes found with gohawk (https://gohawk.dev/).
 
-In interest-only mode the remote already sends only on registered interest,
-so skip the A-.
-
-Signed-off-by: Paul Wells <[REDACTED_EMAIL]>
-
-**File**: `server/gateway.go` (modified, +8/-0)
+**File**: `locksordering.txt` (modified, +3/-2)
 ```diff
-@@ -2776,6 +2776,14 @@ func (c *client) sendAccountUnsubToGateway(accName []byte) {
- 	// Check if we have sent the A- or not.
- 	c.mu.Lock()
- 	e, sent := c.gw.insim[string(accName)]
-+	// In interest-only mode the remote sends only on interest we registered,
-+	// so a message we have no interest in crossed our last RS-. An A- would
-+	// take the account out of interest-only mode on both sides, and after the
-+	// next A+ the remote would never send on this account again.
-+	if e != nil && e.mode == InterestOnly {
-+		c.mu.Unlock()
-+		return
-+	}
- 	if e != nil || !sent {
- 		// Add a nil value to indicate that we have sent an A-
- 		// so that we know to send A+ when needed.
+@@ -17,9 +17,10 @@ This lock is independent and can be invoked under any other lock: jsAccount -> j
+ 
+ A lock to protect the account's leafnodes list was also introduced to
+ allow that lock to be held and the acquire a client lock which is not
+-possible with the normal account lock.
++possible with the normal account lock. So the account lock must not be
++held while acquiring it.
+ 
+-accountLeafList -> client
++accountLeafList -> client -> Account
+ 
+ AccountResolver interface has various implementations, but assume: AccountResolver -> Server
+ 
 ```
 
-**File**: `server/gateway_test.go` (modified, +61/-0)
+**File**: `server/accounts.go` (modified, +10/-6)
 ```diff
-@@ -8078,3 +8078,64 @@ func TestGatewayLogsRemoteURL(t *testing.T) {
- 	s1.Shutdown()
- 	checkNoticeNotContains(t, l, remoteURLLogUser, remoteURLLogPassword)
- }
-+
-+// A message can still be in flight from the remote when the last subscription
-+// on an interest-only account goes away. Its arrival must not produce an A-:
-+// that would take the account out of interest-only mode on both sides, the
-+// following A+ would leave the remote with no entry for the account, and an
-+// interest-only remote then never sends on it again.
-+func TestGatewayNoAccountUnsubInInterestOnlyMode(t *testing.T) {
-+	ob := testDefaultOptionsForGateway("B")
-+	sb := runGatewayServer(ob)
-+	defer sb.Shutdown()
-+
-+	oa := testGatewayOptionsFromToWithServers(t, "A", "B", sb)
-+	sa := runGatewayServer(oa)
-+	defer sa.Shutdown()
-+
-+	waitForOutboundGateways(t, sa, 1, time.Second)
-+	waitForOutboundGateways(t, sb, 1, time.Second)
-+	waitForInboundGateways(t, sa, 1, time.Second)
-+	waitForInboundGateways(t, sb, 1, time.Second)
-+
-+	ncA := natsConnect(t, sa.ClientURL())
-+	defer ncA.Close()
-+	sub := natsSubSync(t, ncA, "foo")
-+	natsFlush(t, ncA)
-+	checkGWInterestOnlyModeInterestOn(t, sb, "A", globalAccountName, "foo")
-+
-+	natsUnsub(t, sub)
-+	natsFlush(t, ncA)
-+	checkFor(t, 2*time.Second, 15*time.Millisecond, func() error {
-+		c := sb.getOutboundGatewayConnection("A")
-+		ei, _ := c.gw.outsim.Load(globalAccountName)
-+		if ei == nil {
-+			return fmt.Errorf("no entry for account %q", globalAccountName)
-+		}
-+		if r := ei.(*outsie).sl.Match("foo"); len(r.psubs) != 0 {
-+			return fmt.Errorf("interest on %q still registered", "foo")
-+		}
-+		return nil
-+	})
-+
-+	// Deliver, on A, a message from B that crossed the RS- for "foo": the
-+	// account now has no subscriptions at all.
-+	var gws []*client
-+	sa.getInboundGatewayConnections(&gws)
-+	if len(gws) != 1 {
-+		t.Fatalf("Expected 1 inbound gateway connection, got %d", len(gws))
+@@ -527,19 +527,23 @@ func (a *Account) updateRemoteServer(m *AccountNumConns) []*client {
+ 		}
+ 	}
+ 	// Now check leafnodes.
+-	mtlce := a.mleafs != jwt.NoLimit && (a.nleafs+a.nrleafs > a.mleafs)
+-	if mtlce {
++	var overLeafs int
++	if a.mleafs != jwt.NoLimit && (a.nleafs+a.nrleafs > a.mleafs) {
++		overLeafs = int(a.nleafs + a.nrleafs - a.mleafs)
 +	}
-+	acc := sa.globalAccount()
-+	sa.gatewayHandleSubjectNoInterest(gws[0], acc, []byte(acc.Name), []byte("foo"))
++	// Release before the leaf list lock, since that one is held while taking client locks.
++	a.mu.Unlock()
 +
-+	sub = natsSubSync(t, ncA, "bar")
-+	natsFlush(t, ncA)
-+	checkGWInterestOnlyMode(t, sb, "A", globalAccountName)
-+	checkGWInterestOnlyModeInterestOn(t, sb, "A", globalAccountName, "bar")
++	if overLeafs > 0 {
+ 		// Take ones from the end.
+ 		a.lmu.RLock()
+ 		leafs := a.lleafs
+-		over := int(a.nleafs + a.nrleafs - a.mleafs)
+-		if over < len(leafs) {
+-			leafs = leafs[len(leafs)-over:]
++		if overLeafs < len(leafs) {
++			leafs = leafs[len(leafs)-overLeafs:]
+ 		}
+ 		clients = append(clients, leafs...)
+ 		a.lmu.RUnlock()
+ 	}
+-	a.mu.Unlock()
+ 
+ 	// If we have exceeded our max clients this will be populated.
+ 	return clients
+```
+
+**File**: `server/filestore.go` (modified, +1/-0)
+```diff
+@@ -5337,6 +5337,7 @@ func (fs *fileStore) newMsgBlockForWrite() (*msgBlock, error) {
+ 	// Check if encryption is enabled.
+ 	if fs.prf != nil {
+ 		if err := fs.genEncryptionKeysForBlock(mb); err != nil {
++			_ = mb.dirtyCloseWithRemove(true)
+ 			return nil, err
+ 		}
+ 	}
+```
+
+---
+
+### Incident Patch 3: `aa9f52ca` (2026-11-09)
+**Commit Message**: [FIXED] Account and leafnode list lock order cycle
+
+Signed-off-by: Maurice van Veen <[REDACTED_EMAIL]>
+
+**File**: `locksordering.txt` (modified, +3/-2)
+```diff
+@@ -17,9 +17,10 @@ This lock is independent and can be invoked under any other lock: jsAccount -> j
+ 
+ A lock to protect the account's leafnodes list was also introduced to
+ allow that lock to be held and the acquire a client lock which is not
+-possible with the normal account lock.
++possible with the normal account lock. So the account lock must not be
++held while acquiring it.
+ 
+-accountLeafList -> client
++accountLeafList -> client -> Account
+ 
+ AccountResolver interface has various implementations, but assume: AccountResolver -> Server
+ 
+```
+
+**File**: `server/accounts.go` (modified, +10/-6)
+```diff
+@@ -527,19 +527,23 @@ func (a *Account) updateRemoteServer(m *AccountNumConns) []*client {
+ 		}
+ 	}
+ 	// Now check leafnodes.
+-	mtlce := a.mleafs != jwt.NoLimit && (a.nleafs+a.nrleafs > a.mleafs)
+-	if mtlce {
++	var overLeafs int
++	if a.mleafs != jwt.NoLimit && (a.nleafs+a.nrleafs > a.mleafs) {
++		overLeafs = int(a.nleafs + a.nrleafs - a.mleafs)
++	}
++	// Release before the leaf list lock, since that one is held while taking client locks.
++	a.mu.Unlock()
 +
-+	ncB := natsConnect(t, sb.ClientURL())
-+	defer ncB.Close()
-+	natsPub(t, ncB, "bar", []byte("hello"))
-+	natsFlush(t, ncB)
-+	natsNexMsg(t, sub, time.Second)
-+}
++	if overLeafs > 0 {
+ 		// Take ones from the end.
+ 		a.lmu.RLock()
+ 		leafs := a.lleafs
+-		over := int(a.nleafs + a.nrleafs - a.mleafs)
+-		if over < len(leafs) {
+-			leafs = leafs[len(leafs)-over:]
++		if overLeafs < len(leafs) {
++			leafs = leafs[len(leafs)-overLeafs:]
+ 		}
+ 		clients = append(clients, leafs...)
+ 		a.lmu.RUnlock()
+ 	}
+-	a.mu.Unlock()
+ 
+ 	// If we have exceeded our max clients this will be populated.
+ 	return clients
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8855** (2026-11-05): [IMPROVED] Avoid copying filtered messages in single filter scans (@sciascid)
-- **PR #8854** (2026-11-05): [IMPROVED] Avoid copying filtered messages in first/last matching multi (@sciascid)
-- **PR #8853** (2026-11-05): [FIXED] Gateway: A- in interest-only mode stops delivery for the account (@paulwe)
-- **PR #8851** (2026-11-04): [FIXED] Revocations re-check importers on every account update (@MauriceVanVeen)
-- **PR #8850** (2026-11-04): [FIXED] Clustered healthz ignores write errors on R1 streams (@MauriceVanVeen)
-- **PR #8849** (2026-11-04): [FIXED] Recovery scans not persisted & walking every block (@MauriceVanVeen)
+- **PR #8873** (2026-11-09): [FIXED] Filestore fd leak & account lock order cycle (@MauriceVanVeen)
+- **PR #8865** (2026-11-06): Cherry-picks for v2.14.10-RC.2 (@neilalexander)
+- **PR #8864** (2026-11-09): [IMPROVED] Optimized multi filter scan for sparse message blocks (@sciascid)
+- **PR #8863** (2026-11-06): Cherry-picks for 2.15.3-RC.2 (@neilalexander)
+- **PR #8862** (2026-11-09): Fix consumer reset on `last_per_subject` policy (@neilalexander)
+- **PR #8861** (2026-11-06): Update dependencies (@neilalexander)
 
 ---
 
@@ -3012,37 +3004,55 @@ Signed-off-by: Paul Wells <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [FIXED] Gateway: A- in interest-only mode stops delivery for the account (#8853)
+## X. ATS worker shutdown synchronization (#8794)
 
 **RULE**:
-When implementing operations in `server/gateway.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats-server. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `server/ats/ats.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats-server. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5c17e8e0`: [FIXED] Gateway: A- in interest-only mode stops delivery for the account (#8853). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c1a97cbd`: ATS worker shutdown synchronization (#8794). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/gateway.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/ats/ats.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// Once the account has left optimistic mode (interest-only, or switching
-	// to it), an A- would replace the remote's entry with nil: it then drops
-	// our RS+ and the switch-complete command, and after the next A+ it never
-	// sends on this account again. In interest-only mode a message we have
-	// no interest in crossed our last RS-; while switching, the remote may
-	// still be sending optimistically. Either way, dropping it is enough.
-	if e != nil && e.mode != Optimistic {
-		c.mu.Unlock()
-		return
-	}
+	"sync"
+	// Serializes worker startup and shutdown so a new worker cannot consume a
+	// previous worker's stop signal.
+	lifecycleMu sync.Mutex
+	done     chan struct{}
+	workerWG sync.WaitGroup
+	lifecycleMu.Lock()
+	defer lifecycleMu.Unlock()
+
+		done = make(chan struct{})
+		workerWG.Add(1)
+		go func(done <-chan struct{}) {
+			defer workerWG.Done()
+		}(done)
+	lifecycleMu.Lock()
+	defer lifecycleMu.Unlock()
+
+		close(done)
+		workerWG.Wait()
+		done = nil
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	done chan struct{}
+func init() {
+	// Initialize our done chan.
+	done = make(chan struct{}, 1)
+}
+
+		go func() {
+		}()
+		done <- struct{}{}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5c17e8e0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c1a97cbd` are properly handled with clean fallback behavior.

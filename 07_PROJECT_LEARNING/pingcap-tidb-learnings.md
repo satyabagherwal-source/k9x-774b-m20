@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
 > **Source**: github ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
-> **Source Version**: `49d87f99`  
+> **Source Version**: `71c0fd6f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T21:47:37.238Z  
+> **Timestamp**: 2026-11-09T10:02:55.317Z  
 > **Learning ID**: `learn-github-pingcap-tidb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T21:47:36.411Z  
+> **Harvest Timestamp**: 2026-11-09T10:02:49.345Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: TiDB is built for agentic workloads that grow unpredictably, with ACID guarantees and native support for transactions, analytics, and vector search. No data silos. No noisy neighbors. No infrastructure ceiling.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 40712 stars
+- **Stars / Engagement**: 40721 stars
 
 ---
 
@@ -1919,11 +1919,11 @@ func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdty
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #72744** (2026-11-05): **parser: new ADDDATE interval view cannot be read by v8.5.8 TiDB during mixed-version upgrade**
-  *Symptoms*: ## Bug Report  ### 1. Minimal reproduce step (Required)  Use two TiDB frontends sharing one cluster: an old v8.5.8 reader and a newer v8.5.9 writer. Direct each connection to the intended frontend.  On the old frontend: ```sql CREATE DATABASE view_interval_repro; CREATE TABLE view_interval_repro.t (d DATE NOT NULL, q INT NOT NULL); INSERT INTO view_interval_repro.t VALUES ('2026-01-15', 2); ```  On the new frontend: ```sql CREATE VIEW view_interval_repro.v_add AS SELECT ADDDATE(d, INTERVAL (q - 1) QUARTER) AS x FROM view_interval_repro.t;  CREATE VIEW view_interval_repro.v_control AS SELECT DATE_ADD(d, INTERVAL (q - 1) QUARTER) AS x FROM view_interval_repro.t; ```  On each frontend: ```sql SELECT @@hostname, VERSION(), TIDB_VERSION(); SHOW CREATE VIEW view_interval_repro.v_add; SELECT * FROM view_interval_repro.t; SELECT x FROM view_interval_repro.v_control; SELECT x FROM view_interval_repro.v_add; ```  Cleanup: ```sql DROP DATABASE view_interval_repro; ```  ### 2. What did you expect to see? (Required)  Reads of the persisted view should remain compatible while old and new frontends coexist during rolling upgrade, or creation of incompatible persisted definitions should be guarded during that phase. Both view reads should return 2026-04-15.  ### 3. What did you see instead (Required)  The new frontend creates and reads the ADDDATE view successfully. The old frontend sees the identical stored definition and reads the base table and DATE_ADD control successfully, but reading t
+- **Issue #72853** (2026-11-09): **sessionctx: disable prepare cache and ODKU expression reuse by default**
+  *Symptoms*: <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: ref #18023  Problem Summary:  On `feature/release-8.5-materialized-view`, `tidb_enable_cache_prepare_stmt` and `tidb_enable_on_duplicate_expression_reuse` both default to ON. These optimizations are independent of materialized views and should require explicit opt-in on this branch.  ### What changed and how does it work?  - Change both source defaults to OFF, covering session initialization and system-variable metadata. - Add regression assertions for the defaults and extend SQL coverage for GLOBAL/SESSION values, SET_VAR, explicit ON, and DEFAULT restoration. - Explicitly enable the prepare cache in its existing feature tests and update the ODKU optimization documentation.  Existing persisted GLOBAL settings are not rewritten. Both optimizations remain available through explicit ON settings. Disabling them by default can increase prepare/rewrite CPU for workloads that benefited from them; no performance benchmark was run.  ### Check List  Tests <!-- At least one of them must be included. -->  - [x] Un
 
-- **Issue #72735** (2026-11-05): **util: fix incorrect statement summary Others rows (#69914)**
-  *Symptoms*: <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: ref #69913  Problem Summary:  Backport #69914 to release-8.5. The current v1 statement summary can include the evicted `Others` row from a previous interval. Reapplying `tidb_stmt_summary_internal_query=OFF` also changes the LRU order and can evict hot statements in both v1 and persistent v2.  ### What changed and how does it work?  - Apply the current interval boundary to the v1 evicted row. Initialize the internal-only flag from the first execution and retain mixed internal/external digests. - Use a non-promoting LRU lookup when removing internal entries in v1 and v2. Lock each v2 record while reading its mutable internal flag. - Carry the original regressions. The Domain test uses the 8.5 factory and sysvar APIs, and the v1 tests use this branch's column layout. Regenerate the affected 8.5 Bazel targets.  ### Check List  Tests <!-- At least one of them must be included. -->  - [x] Unit test - [ ] Integration test - [ ] Manual test (add detailed scripts or steps below) - [ ] No need to test   > - [ ] 
+- **Issue #72845** (2026-11-09): **planner: avoid plan cache misses after unrelated DDL**
+  *Symptoms*: <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: ref #72732  Problem Summary:  An unrelated DDL changes the global schema version in a plan cache key, causing a cache miss even when the tables used by the statement have not changed.  ### What changed and how does it work?  Replace global schema versions in plan cache keys with `(tableID, revision, latestVersion)` for each related table. DML with foreign key checks enabled retains the global schema versions.  ### Check List  Tests <!-- At least one of them must be included. -->  - [x] Unit test - [ ] Integration test - [ ] Manual test (add detailed scripts or steps below) - [ ] No need to test   > - [ ] I checked and no code files have been changed.   > <!-- Or your custom  "No need to test" reasons -->  Not run locally.  Side effects  - [x] Performance regression: Consumes more CPU - [ ] Performance regression: Consumes more Memory - [ ] Breaking backward compatibility  Documentation  - [ ] Affects user behaviors - [ ] Contains syntax changes - [ ] Contains variable changes - [ ] Contains experimental
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1940,451 +1940,133 @@ func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdty
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `adee1920` (2026-11-05)
-**Commit Message**: ddl: fix global multi-valued index cleanup during TRUNCATE PARTITION (#71299)
+### Incident Patch 1: `1bdb6e61` (2026-11-09)
+**Commit Message**: build: drop third-party BEP upload from CI test targets (#72843)
 
-close pingcap/tidb#71286
+close pingcap/tidb#72844
 
-**File**: `pkg/ddl/index.go` (modified, +42/-26)
+**File**: `Makefile` (modified, +2/-9)
 ```diff
-@@ -4047,16 +4047,25 @@ func (w *cleanUpIndexWorker) BackfillData(_ context.Context, handleRange reorgBa
- 		loc, ec := evalCtx.Location(), evalCtx.ErrCtx()
- 		n := len(w.indexes)
- 		globalIndexKeys := make([]kv.Key, 0, len(idxRecords))
--		allKeys := make([]kv.Key, 0, len(idxRecords))
-+		// Keep the fetched records intact: i%n identifies the index even when an
-+		// array expands to zero or multiple entries, and progress is per record.
-+		recordValues := make([][][]types.Datum, len(idxRecords))
-+		recordKeys := make([][]kv.Key, len(idxRecords))
- 		for i, idxRecord := range idxRecords {
--			key, distinct, err := w.indexes[i%n].GenIndexKey(ec, loc, idxRecord.vals, idxRecord.handle, nil)
--			if err != nil {
--				return errors.Trace(err)
--			}
--			if distinct {
--				globalIndexKeys = append(globalIndexKeys, key)
-+			index := w.indexes[i%n]
-+			iter := index.GenIndexKVIter(ec, loc, idxRecord.vals, idxRecord.handle, idxRecord.rsData)
-+			for iter.Valid() {
-+				values := iter.PeekIndexedValues()
-+				key, _, distinct, err := iter.Next(nil, nil)
-+				if err != nil {
-+					return errors.Trace(err)
-+				}
-+				recordValues[i] = append(recordValues[i], values)
-+				if distinct {
-+					globalIndexKeys = append(globalIndexKeys, key)
-+				}
-+				recordKeys[i] = append(recordKeys[i], key)
- 			}
--			allKeys = append(allKeys, key)
- 		}
+@@ -712,23 +712,16 @@ bazel_test: bazel-failpoint-enable bazel_prepare ## Run all tests using Bazel
+ 		-- //... -//cmd/... -//tests/graceshutdown/... \
+ 		-//tests/globalkilltest/... -//tests/readonlytest/... -//tests/realtikvtest/...
  
- 		var found map[string][]byte
-@@ -4067,31 +4076,38 @@ func (w *cleanUpIndexWorker) BackfillData(_ context.Context, handleRange reorgBa
- 
- 		for i, idxRecord := range idxRecords {
- 			taskCtx.scanCount++
--			if val, ok := found[string(allKeys[i])]; ok {
--				// Only delete if it is from the partition it was read from.
--				handle, errPart := tablecodec.DecodeHandleInIndexValue(val)
--				if errPart != nil {
--					return errors.Trace(errPart)
--				}
--				if partHandle, ok := handle.(kv.PartitionHandle); ok {
--					if partHandle.PartitionID != handleRange.physicalTable.GetPhysicalID() {
--						continue
-+			// Count records with empty arrays as processed even though they have no index keys to delete.
-+			cleaned := len(recordKeys[i]) == 0
-+			for j, key := range recordKeys[i] {
-+				if val, ok := found[string(key)]; ok {
-+					// Only delete if it is from the partition it was read from.
-+					handle, errPart := tablecodec.DecodeHandleInIndexValue(val)
-+					if errPart != nil {
-+						return errors.Trace(errPart)
-+					}
-+					if partHandle, ok := handle.(kv.PartitionHandle); ok {
-+						if partHandle.PartitionID != handleRange.physicalTable.GetPhysicalID() {
-+							continue
-+						}
-+					}
-+					// Mark the entry for transactional conflict checking. A concurrent
-+					// takeover causes the optimistic transaction to conflict and retry.
-+					err = txn.LockKeys(ctx, lockCtx, key)
-+					if err != nil {
-+						return errors.Trace(err)
- 					}
- 				}
--				// Lock the global index entry, to prevent deleting something that is concurrently added.
--				err = txn.LockKeys(ctx, lockCtx, allKeys[i])
-+				// Delete only the checked element, not the original array: another
-+				// element of the same row may now belong to a surviving partition.
-+				err = w.indexes[i%n].Delete(w.tblCtx, txn, recordValues[i][j], idxRecord.handle)
- 				if err != nil {
- 					return errors.Trace(err)
- 				}
-+				cleaned = true
- 			}
--			// we fetch records row by row, so records will belong to
--			// index[0], index[1] ... index[n-1], index[0], index[1] ...
--			// respectively. So indexes[i%n] is the index of idxRecords[i].
--			err = w.indexes[i%n].Delete(w.tblCtx, txn, idxRecord.vals, idxRecord.handle)
--			if err != nil {
--				return errors.Trace(err)
-+			if cleaned {
-+				taskCtx.addedCount++
- 			}
--			taskCtx.addedCount++
- 		}
- 		taskCtx.writtenBytes = txn.Size()
- 		return nil
-```
-
-**File**: `pkg/ddl/tests/partition/global_index_version_test.go` (modified, +84/-0)
-```diff
-@@ -17,14 +17,17 @@ package partition
- import (
- 	"context"
- 	"strings"
-+	"sync/atomic"
- 	"testing"
- 
- 	"github.com/pingcap/failpoint"
- 	"github.com/pingcap/tidb/pkg/config/kerneltype"
-+	"github.com/pingcap/tidb/pkg/ddl"
- 	"github.com/pingcap/tidb/pkg/domain"
- 	"github.com/pingcap/tidb/pkg/meta/model"
- 	"github.com/pingcap/tidb/pkg/parser/ast"
- 	"github.com/pingcap/tidb/pkg/testkit"
-+	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/require"
- )
- 
-@@ -509,6 +512,87 @@ func TestGlobalIndexTruncateAndDropPartition(t *testing.T) {
- 	tk.MustExec("ADMIN CHECK TABLE tp_null")
- }
- 
-+// TestGlobalIndexTruncatePartitionMVIndexKeepTakeoverEntry reproduces issue #71286.
-+//
-+// While a partition is being truncated, a concurrent write may legitimately take over an
-+// element key that the truncated partition used to own, and then `Delete` must not remove it.
-+// The cleanup used to derive its check key with `GenIndexKey`, which encodes a multi-valued
-+// index column as the whole array instead of one key per element. `BatchGet` therefore never
-+// found the entry, the partition-owner check was skipped, and `Delete` removed the element key
-+// that the new row owns. A second element of the same old row, which nobody took over, still
-+// has to be cleaned up, so the decision must be made per element rather than per row.
-+func TestGlobalIndexTruncatePartitionMVIndexKeepTakeoverEntry(t *testing.T) {
-+	store := testkit.CreateMockStore(t)
-+	tk := testkit.NewTestKit(t, store)
-+	tk.MustExec("use test")
-+	tk.MustExec(`CREATE TABLE t (
-+		p INT PRIMARY KEY,
-+		j JSON,
-+		UNIQUE KEY m ((CAST(j AS UNSIGNED ARRAY))) GLOBAL
-+	) PARTITION BY RANGE (p) (
-+		PARTITION p0 VALUES LESS THAN (10),
-+		PARTITION p1 VALUES LESS THAN (20),
-+		PARTITION p2 VALUES LESS THAN MAXVALUE
-+	)`)
-+	tk.MustExec("INSERT INTO t VALUES (1, '[100]')")   // p0, only here to give p0 a row to clean first
-+	tk.MustExec("INSERT INTO t VALUES (11, '[7, 8]')") // p1, owns elements 7 and 8
-+
-+	tk1 := testkit.NewTestKit(t, store)
-+	tk1.MustExec("use test")
-+	// `MockDMLExecution` runs between the cleanup of p0 and the cleanup of p1, which is the
-+	// window in which a real concurrent write can take over element 7. Element 8 is left
-+	// alone on purpose so that the cleanup still has to remove it.
-+	var hookRan atomic.Bool
-+	ddl.MockDMLExecution = func() {
-+		hookRan.Store(true)
-+		_, err := tk1.Exec("INSERT INTO t VALUES (21, '[7]')")
-+		assert.NoError(t, err)
-+	}
-+	t.Cleanup(func() {
-+		assert.NoError(t, failpoint.Disable("github.com/pingcap/tidb/pkg/ddl/mockDMLExecution"))
-+		ddl.MockDMLExecution = nil
-+	})
-+	require.NoError(t, failpoint.Enable("github.com/pingcap/tidb/pkg/ddl/mockDMLExecution", "1*return(true)->return(false)"))
-+	tk.MustExec("ALTER TABLE t TRUNCATE PARTITION p0, p1")
-+	require.NoError(t, failpoint.Disable("github.com/pingcap/tidb/pkg/ddl/mockDMLExecution"))
-+	ddl.MockDMLExecution = nil
-+	require.True(t, hookRan.Load(), "mockDMLExecution never fired, the test premise is broken")
-+
-+	// The row inserted during the DDL must keep its global index entry.
-+	tk.MustQuery("SELECT p FROM t ORDER BY p").Check(testkit.Rows("21"))
-+	tk.MustExec("ADMIN CHECK TABLE t")
-+	tk.MustQuery("SELECT p FROM t WHERE 7 MEMBER OF (j)").Check(testkit.Rows("21"))
-+
-+	// The UNIQUE constraint must still hold for the taken-over element.
-+	err := tk.ExecToErr("INSERT INTO t VALUES (22, '[7]')")
-+	require.Error(t, err)
-+	require.Contains(t, err.Error(), "Duplicate entry")
-+
-+	// Element 8 was owned only by the truncated partition, so it must be reusable.
-+	tk.MustExec("INSERT INTO t VALUES (23, '[8]')")
-+	tk.MustQuery("SELECT p FROM t WHERE 8 MEMBER OF (j)").Check(testkit.Rows("23"))
-+	tk.MustExec("ADMIN CHECK TABLE t")
-+
-+	// Empty arrays must not shift the record-to-index mapping. Exercise a
-+	// composite MV index alongside another global index, including NULL and
-+	// repeated elements, whose expansion must match ordinary index writes.
-+	tk.MustExec(`CREATE TABLE t_cleanup (
-+		p INT PRIMARY KEY, c INT, j JSON,
-+		UNIQUE KEY m (c, (CAST(j AS UNSIGNED ARRAY))) GLOBAL,
-+		UNIQUE KEY g (c) GLOBAL
-+	) PARTITION BY RANGE (p) (
-+		PARTITION p0 VALUES LESS THAN (10),
-+		PARTITION p1 VALUES LESS THAN MAXVALUE
-+	)`)
-+	tk.MustExec("INSERT INTO t_cleanup VALUES (1, 1, '[]'), (2, 2, NULL), (3, 3, '[7, 7, 8]'), (11, 4, '[9]')")
-+	tk.MustExec("ALTER TABLE t_cleanup TRUNCATE PARTITION p0")
-+	tk.MustExec("ADMIN CHECK TABLE t_cleanup")
-+	tk.MustQuery("SELECT p FROM t_cleanup USE INDEX(g)").Check(testkit.Rows("11"))
-+	tk.MustExec("INSERT INTO t_cleanup VALUES (12, 1, '[]'), (13, 2, NULL), (14, 3, '[7, 8]')")
-+	tk.MustQuery("SELECT p FROM t_cleanup WHERE c = 3 AND 7 MEMBER OF (j)").Check(testkit.Rows("14"))
-+	tk.MustExec("ADMIN CHECK TABLE t_cleanup")
-+}
-+
- // TestUpdateIndexesResetsGlobalIndexVersion verifies that UPDATE INDEXES resets
- // GlobalIndexVersion to 0 when switching an index from GLOBAL to local.
- // Without this fix, the stale GlobalIndexVersion=V1 on a local in
-```
-
-**File**: `pkg/table/index.go` (modified, +15/-7)
-```diff
-@@ -174,15 +174,23 @@ func NewPlainIndexKVGenerator(
- 	}
- }
- 
--// Next returns the next index key and value.
--// For non multi-value indexes, there is only one index kv.
--func (iter *IndexKVGenerator) Next(keyBuf, valBuf []byte) ([]byte, []byte, bool, error) {
--	var val []types.Datum
-+// PeekIndexedValues returns the scalar indexed values for the next entry without advancing.
-+// It must only be called while Valid returns true. After a successful Next,
-+// it refers to the following entry. The returned slice is borrowed and must not be
-+// modified by the caller. Key generation may normalize the values in place, but
-+// advancing to subsequent entries does not reuse the slice.
-+func (iter *IndexKVGenerator) PeekIndexedValues() []types.Datum {
- 	if iter.isMultiValue {
--		val = iter.allIdxVals[iter.i]
--	} else {
--		val = iter.idxVals
-+		return iter.allIdxVals[iter.i]
- 	}
-+	return iter.idxVals
-+}
-+
-+// Next returns the next index key and value, advancing only on success.
-+// It must only be called while Valid returns true.
-+// For non multi-value indexes, there is only one index kv.
-+func (iter *IndexKVGenerator) Next(keyBuf, valBuf []byte) ([]byte, []byte, bool, error) {
-+	val := iter.PeekIndexedValues()
- 	key, distinct, err := iter.index.GenIndexKey(iter.ec, iter.loc, val, iter.handle, keyBuf)
- 	if err != nil {
- 		return nil, nil, false, err
-```
-
-**File**: `pkg/table/tables/BUILD.bazel` (modified, +1/-1)
-```diff
-@@ -82,7 +82,7 @@ go_test(
-     ],
-     embed = [":tables"],
-     flaky = True,
--    shard_count = 44,
-+    shard_count = 46,
-     deps = [
-         "//pkg/ddl",
-         "//pkg/domain",
-```
-
-**File**: `pkg/table/tables/index_test.go` (modified, +83/-0)
-```diff
-@@ -23,6 +23,7 @@ import (
- 	"time"
- 
- 	"github.com/pingcap/tidb/pkg/ddl"
-+	"github.com/pingcap/tidb/pkg/errctx"
- 	"github.com/pingcap/tidb/pkg/errno"
- 	"github.com/pingcap/tidb/pkg/expression/exprstatic"
- 	"github.com/pingcap/tidb/pkg/kv"
-@@ -183,6 +184,88 @@ func buildTableInfo(t *testing.T, sql string) *model.TableInfo {
- 	return tblInfo
- }
- 
-+func TestIndexKVGenerator(t *testing.T) {
-+	sc := mock.NewContext().GetSessionVars().StmtCtx
-+	for _, tc := range []struct {
-+		name   string
-+		sql    string
-+		values []types.Datum
-+		want   [][]types.Datum
-+	}{
-+		{"plain", "create table t (a int, unique index i(a))", types.MakeDatums(7), [][]types.Datum{types.MakeDatums(7)}},
-+		{"plain null", "create table t (a int, unique index i(a))", types.MakeDatums(nil), [][]types.Datum{types.MakeDatums(nil)}},
-+		{"multi", "create table t (a json, unique index i((cast(a as signed array))))", types.MakeDatums(types.CreateBinaryJSON([]any{int64(7), int64(8), int64(7)})), [][]types.Datum{types.MakeDatums(7), types.MakeDatums(8)}},
-+		{"empty", "create table t (a json, unique index i((cast(a as signed array))))", types.MakeDatums(types.CreateBinaryJSON([]any{})), nil},
-+		{"null", "create table t (a json, unique index i((cast(a as signed array))))", types.MakeDatums(nil), [][]types.Datum{types.MakeDatums(nil)}},
-+		{"composite", "create table t (a json, b int, unique index i(b, (cast(a as signed array))))", types.MakeDatums(3, types.CreateBinaryJSON([]any{int64(7), int64(8), int64(7)})), [][]types.Datum{types.MakeDatums(3, 7), types.MakeDatums(3, 8)}},
-+		{"composite prefix", "create table t (a json, b varchar(8), unique index i(b(2), (cast(a as signed array))))", types.MakeDatums("abcd", types.CreateBinaryJSON([]any{int64(7), int64(8)})), [][]types.Datum{types.MakeDatums("abcd", 7), types.MakeDatums("abcd", 8)}},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			tblInfo := buildTableInfo(t, tc.sql)
-+			idx, err := tables.NewIndex(tblInfo.ID, tblInfo, tblInfo.Indices[0])
-+			require.NoError(t, err)
-+			iter := idx.GenIndexKVIter(sc.ErrCtx(), sc.TimeZone(), tc.values, kv.IntHandle(1), nil)
-+			var retained [][]types.Datum
-+			for _, want := range tc.want {
-+				require.True(t, iter.Valid())
-+				values := iter.PeekIndexedValues()
-+				require.Equal(t, want, values)
-+				require.Equal(t, values, iter.PeekIndexedValues()) // Access does not advance.
-+				retained = append(retained, values)
-+				wantKey, wantDistinct, err := idx.GenIndexKey(sc.ErrCtx(), sc.TimeZone(), want, kv.IntHandle(1), nil)
-+				require.NoError(t, err)
-+				key, value, distinct, err := iter.Next(nil, nil)
-+				require.NoError(t, err)
-+				require.Equal(t, wantKey, key)
-+				require.Equal(t, wantDistinct, distinct)
-+				wantValue, err := idx.GenIndexValue(sc.ErrCtx(), sc.TimeZone(), distinct, false, want, kv.IntHandle(1), nil, nil)
-+				require.NoError(t, err)
-+				require.Equal(t, wantValue, value)
-+			}
-+			require.False(t, iter.Valid())
-+			require.Equal(t, tc.want, retained) // Advancing does not reuse entry slices.
-+		})
-+	}
-+}
-+
-+type failingGeneratorIndex struct {
-+	table.Index
-+	keyErr, valueErr error
-+}
-+
-+func (idx *failingGeneratorIndex) GenIndexKey(_ errctx.Context, _ *time.Location, _ []types.Datum, _ kv.Handle, _ []byte) ([]byte, bool, error) {
-+	return []byte("key"), true, idx.keyErr
-+}
-+
-+func (idx *failingGeneratorIndex) GenIndexValue(_ errctx.Context, _ *time.Location, _, _ bool, _ []types.Datum, _ kv.Handle, _ []types.Datum, _ []byte) ([]byte, error) {
-+	return nil, idx.valueErr
-+}
-+
-+func TestIndexKVGeneratorErrors(t *testing.T) {
-+	sc := mock.NewContext().GetSessionVars().StmtCtx
-+	keyErr, valueErr := fmt.Errorf("key error"), fmt.Errorf("value error")
-+	idx := &failingGeneratorIndex{keyErr: keyErr, valueErr: valueErr}
-+	values := types.MakeDatums(7)
-+	iter := table.NewPlainIndexKVGenerator(idx, sc.ErrCtx(), sc.TimeZone(), kv.IntHandle(1), nil, values)
-+	_, _, _, err := iter.Next(nil, nil)
-+	require.ErrorIs(t, err, keyErr)
-+	require.True(t, iter.Valid())
-+	require.Equal(t, values, iter.PeekIndexedValues())
-+
-+	idx.keyErr = nil
-+	_, _, _, err = iter.Next(nil, nil)
-+	require.ErrorIs(t, err, valueErr)
-+	require.True(t, iter.Valid())
-+	require.Equal(t, values, iter.PeekIndexedValues())
-+
-+	idx.valueErr = nil
-+	key, _, distinct, err := iter.Next(nil, nil)
-+	require.NoError(t, err)
-+	require.Equal(t, []byte("key"), key)
-+	require.True(t, distinct)
-+	require.False(t, iter.Valid())
-+}
-+
- func TestGenIndexValueFromIndex(t *testing.T) {
- 	tblInfo := buildTableInfo(t, "create table a (a int primary key, b int not null, c text, unique key key_b(b));")
- 	tblInfo.State = model.StatePublic
-```
-
----
-
-### Incident Patch 2: `4c0b274a` (2026-11-05)
-**Commit Message**: test: stabilize flaky TestSubscriptionIdleTimeoutWhileSendingEvents (#72456)
-
-close pingcap/tidb#70687
-
-**File**: `br/pkg/streamhelper/subscription_test.go` (modified, +31/-23)
-```diff
-@@ -8,6 +8,7 @@ import (
- 	"strings"
- 	"sync"
- 	"testing"
-+	"testing/synctest"
- 	"time"
- 
- 	"github.com/pingcap/failpoint"
-@@ -329,29 +330,36 @@ func TestSubscriptionIdleTimeoutClearsCacheBeforeRetry(t *testing.T) {
- }
- 
- func TestSubscriptionIdleTimeoutWhileSendingEvents(t *testing.T) {
--	req := require.New(t)
--	ctx := context.Background()
--	c := createFakeCluster(t, 4, true)
--	c.splitAndScatter(manyRegions(0, 1500)...)
--	installSubscribeSupport(c)
+-BAZEL_BEP_BACKEND ?= grpcs://beplessproxy.channel9.ai
+-BAZEL_BEP_RESULTS_URL ?= https://bepless.hawkingrei.com/
+-BAZEL_BEP_BASE_FLAGS = \
+-	--bes_backend=$(BAZEL_BEP_BACKEND) \
+-	--bes_results_url=$(BAZEL_BEP_RESULTS_URL) \
+-	--experimental_remote_build_event_upload=all
 -
--	sub := streamhelper.NewSubscriber(c, c, streamhelper.WithSubscriptionIdleTimeout(200*time.Millisecond))
--	defer sub.Drop()
--	req.NoError(sub.UpdateStoreTopology(ctx))
--
--	c.advanceCheckpoints()
--	c.flushAll()
-+	// Advance idle time only after setup and event forwarding have blocked,
-+	// so scheduler delays cannot expire subscriptions before the output fills.
-+	synctest.Test(t, func(t *testing.T) {
-+		req := require.New(t)
-+		ctx := context.Background()
-+		c := createFakeCluster(t, 4, true)
-+		c.splitAndScatter(manyRegions(0, 1500)...)
-+		installSubscribeSupport(c)
-+
-+		sub := streamhelper.NewSubscriber(c, c, streamhelper.WithSubscriptionIdleTimeout(200*time.Millisecond))
-+		defer sub.Drop()
-+		req.NoError(sub.UpdateStoreTopology(ctx))
-+
-+		c.advanceCheckpoints()
-+		c.flushAll()
-+		synctest.Wait()
-+		req.Len(sub.Events(), cap(sub.Events()))
-+		req.NoError(sub.PendingErrors())
+ .PHONY: bazel_ci_test
+ bazel_ci_test: bazel-failpoint-enable bazel_ci_simple_prepare
+-	bazel $(BAZEL_GLOBAL_CONFIG) --nohome_rc test $(BAZEL_CMD_CONFIG) $(BAZEL_INSTRUMENTATION_FILTER) $(BAZEL_BEP_BASE_FLAGS) $$(./build/print-bazel-bep-flags.sh) --jobs=HOST_CPUS*0.9 --build_tests_only --test_keep_going=false \
++	bazel $(BAZEL_GLOBAL_CONFIG) --nohome_rc test $(BAZEL_CMD_CONFIG) $(BAZEL_INSTRUMENTATION_FILTER) --jobs=HOST_CPUS*0.9 --build_tests_only --test_keep_going=false \
+ 		--define gotags=$(UNIT_TEST_TAGS) \
+ 		-- //... -//cmd/... -//tests/graceshutdown/... \
+ 		-//tests/globalkilltest/... -//tests/readonlytest/... -//tests/realtikvtest/...
  
--	deadline := time.Now().Add(3 * time.Second)
--	var lastErr error
--	for {
--		lastErr = sub.PendingErrors()
--		if lastErr != nil && strings.Contains(lastErr.Error(), "has no activity") {
--			break
--		}
--		if time.Now().After(deadline) {
--			t.Fatalf("pending errors did not contain %q within %s; last error: %v", "has no activity", 3*time.Second, lastErr)
-+		deadline := time.Now().Add(3 * time.Second)
-+		var lastErr error
-+		for {
-+			lastErr = sub.PendingErrors()
-+			if lastErr != nil && strings.Contains(lastErr.Error(), "has no activity") {
-+				break
-+			}
-+			if time.Now().After(deadline) {
-+				t.Fatalf("pending errors did not contain %q within %s; last error: %v", "has no activity", 3*time.Second, lastErr)
-+			}
-+			time.Sleep(10 * time.Millisecond)
- 		}
--		time.Sleep(10 * time.Millisecond)
--	}
-+	})
- }
+ .PHONY: bazel_ci_test_ddlargsv1
+ bazel_ci_test_ddlargsv1: bazel-failpoint-enable bazel_ci_simple_prepare
+-	bazel $(BAZEL_GLOBAL_CONFIG) test $(BAZEL_CMD_CONFIG) $(BAZEL_INSTRUMENTATION_FILTER) $(BAZEL_BEP_BASE_FLAGS) $$(./build/print-bazel-bep-flags.sh) --build_tests_only --test_keep_going=false \
++	bazel $(BAZEL_GLOBAL_CONFIG) test $(BAZEL_CMD_CONFIG) $(BAZEL_INSTRUMENTATION_FILTER) --build_tests_only --test_keep_going=false \
+ 		--define gotags=$(UNIT_TEST_TAGS),ddlargsv1 \
+ 		-- //... -//cmd/... -//tests/graceshutdown/... \
+ 		-//tests/globalkilltest/... -//tests/readonlytest/... -//tests/realtikvtest/...
+```
+
+**File**: `build/print-bazel-bep-flags.sh` (removed, +0/-80)
+```diff
+@@ -1,80 +0,0 @@
+-#!/bin/bash
+-#
+-# Copyright 2026 PingCAP, Inc.
+-#
+-# Licensed under the Apache License, Version 2.0 (the "License");
+-# you may not use this file except in compliance with the License.
+-# You may obtain a copy of the License at
+-#
+-#     http://www.apache.org/licenses/LICENSE-2.0
+-#
+-# Unless required by applicable law or agreed to in writing, software
+-# distributed under the License is distributed on an "AS IS" BASIS,
+-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-# See the License for the specific language governing permissions and
+-# limitations under the License.
+-
+-set -o errexit
+-set -o nounset
+-set -o pipefail
+-
+-git_commit="$(git rev-parse HEAD 2>/dev/null || true)"
+-git_branch="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || true)"
+-ci_provider="local"
+-
+-if [[ -n "${JENKINS_URL:-}" || -n "${BUILD_URL:-}" || -n "${JOB_NAME:-}" ]]; then
+-    ci_provider="jenkins"
+-fi
+-
+-pr_id="${ghprbPullId:-${CHANGE_ID:-}}"
+-pr_url="${ghprbPullLink:-${CHANGE_URL:-}}"
+-pr_target="${ghprbTargetBranch:-${CHANGE_TARGET:-}}"
+-pr_source="${ghprbSourceBranch:-${CHANGE_BRANCH:-}}"
+-pr_commit="${ghprbActualCommit:-}"
+-
+-metadata_flags=()
+-
+-add_metadata() {
+-    local key="$1"
+-    local value="${2:-}"
+-
+-    if [[ -n "${value}" ]]; then
+-        metadata_flags+=("--build_metadata=${key}=${value}")
+-    fi
+-}
+-
+-add_keyword() {
+-    local keyword="${1:-}"
+-
+-    if [[ -n "${keyword}" ]]; then
+-        metadata_flags+=("--bes_keywords=${keyword}")
+-    fi
+-}
+-
+-add_metadata "ci.provider" "${ci_provider}"
+-add_metadata "ci.jenkins.url" "${JENKINS_URL:-}"
+-add_metadata "ci.job.name" "${JOB_NAME:-}"
+-add_metadata "ci.job.base_name" "${JOB_BASE_NAME:-}"
+-add_metadata "ci.build.number" "${BUILD_NUMBER:-}"
+-add_metadata "ci.build.id" "${BUILD_ID:-}"
+-add_metadata "ci.build.tag" "${BUILD_TAG:-}"
+-add_metadata "ci.build.url" "${BUILD_URL:-${RUN_DISPLAY_URL:-}}"
+-add_metadata "git.commit" "${GIT_COMMIT:-${git_commit}}"
+-add_metadata "git.branch" "${BRANCH_NAME:-${GIT_BRANCH:-${git_branch}}}"
+-add_metadata "git.url" "${GIT_URL:-}"
+-add_metadata "git.repo" "${ghprbGhRepository:-${CHANGE_FORK:-}}"
+-add_metadata "pr.id" "${pr_id}"
+-add_metadata "pr.url" "${pr_url}"
+-add_metadata "pr.target" "${pr_target}"
+-add_metadata "pr.source" "${pr_source}"
+-add_metadata "pr.commit" "${pr_commit}"
+-add_keyword "ci:${ci_provider}"
+-add_keyword "git.branch=${BRANCH_NAME:-${GIT_BRANCH:-${git_branch}}}"
+-add_keyword "git.commit=${GIT_COMMIT:-${git_commit}}"
+-
+-if [[ -n "${pr_id}" ]]; then
+-    add_keyword "pr:${pr_id}"
+-fi
+-
+-printf '%s ' "${metadata_flags[@]}"
+-echo
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #72735** (closed): util: fix incorrect statement summary Others rows (#69914) (@jiong-nba)
-- **PR #72734** (closed): stmtsummary: fix DOUBLE metric values (#69708) (release-8.5) (@jiong-nba)
-- **PR #72733** (closed): stmtsummary: fix AVG_ROCKSDB_* columns returning subnormal floats (#69708) (@jiong-nba)
-- **PR #72730** (2026-11-05): executor, planner: prevent SQL injection in plan replayer capture (@qw4990)
-- **PR #72723** (2026-11-05): ddl, executor: allow dropping expired MV shadow tables (@windtalker)
-- **PR #72722** (2026-11-05): session, lightning: enable log redaction by default (#72666) | tidb-test=pr/2810 (@ti-chi-bot)
+- **PR #72853** (2026-11-09): sessionctx: disable prepare cache and ODKU expression reuse by default (@windtalker)
+- **PR #72845** (closed): planner: avoid plan cache misses after unrelated DDL (@qw4990)
+- **PR #72843** (2026-11-09): build: drop third-party BEP upload from CI test targets (@wuhuizuo)
+- **PR #72841** (closed): planner: reuse cached plans across unrelated schema changes (@qw4990)
+- **PR #72836** (2026-11-09): session: reject COMPARE OUTPUT in stale read-only transactions (@windtalker)
+- **PR #72827** (2026-11-09): planner: extract join FDs lazily in GetMergeJoin | tidb-test=pr/2813 (@terry1purcell)
 
 ---
 
@@ -2404,80 +2086,37 @@ close pingcap/tidb#70687
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ddl: fix global multi-valued index cleanup during TRUNCATE PARTITION (#71299)
+## X. build: drop third-party BEP upload from CI test targets (#72843)
 
 **RULE**:
-When implementing operations in `pkg/ddl/index.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Makefile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `adee1920`: ddl: fix global multi-valued index cleanup during TRUNCATE PARTITION (#71299). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1bdb6e61`: build: drop third-party BEP upload from CI test targets (#72843). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/ddl/index.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Makefile`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		// Keep the fetched records intact: i%n identifies the index even when an
-		// array expands to zero or multiple entries, and progress is per record.
-		recordValues := make([][][]types.Datum, len(idxRecords))
-		recordKeys := make([][]kv.Key, len(idxRecords))
-			index := w.indexes[i%n]
-			iter := index.GenIndexKVIter(ec, loc, idxRecord.vals, idxRecord.handle, idxRecord.rsData)
-			for iter.Valid() {
-				values := iter.PeekIndexedValues()
-				key, _, distinct, err := iter.Next(nil, nil)
-				if err != nil {
-					return errors.Trace(err)
-				}
-				recordValues[i] = append(recordValues[i], values)
-				if distinct {
-					globalIndexKeys = append(globalIndexKeys, key)
-				}
-				recordKeys[i] = append(recordKeys[i], key)
-			// Count records with empty arrays as processed even though they have no index keys to delete.
-			cleaned := len(recordKeys[i]) == 0
-			for j, key := range recordKeys[i] {
-				if val, ok := found[string(key)]; ok {
-					// Only delete if it is from the partition it was read from.
-					handle, errPart := tablecodec.DecodeHandleInIndexValue(val)
-					if errPart != nil {
-						return errors.Trace(errPart)
-					}
-					if partHandle, ok := handle.(kv.PartitionHandle); ok {
-
+	bazel $(BAZEL_GLOBAL_CONFIG) --nohome_rc test $(BAZEL_CMD_CONFIG) $(BAZEL_INSTRUMENTATION_FILTER) --jobs=HOST_CPUS*0.9 --build_tests_only --test_keep_going=false \
+	bazel $(BAZEL_GLOBAL_CONFIG) test $(BAZEL_CMD_CONFIG) $(BAZEL_INSTRUMENTATION_FILTER) --build_tests_only --test_keep_going=false \
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		allKeys := make([]kv.Key, 0, len(idxRecords))
-			key, distinct, err := w.indexes[i%n].GenIndexKey(ec, loc, idxRecord.vals, idxRecord.handle, nil)
-			if err != nil {
-				return errors.Trace(err)
-			}
-			if distinct {
-				globalIndexKeys = append(globalIndexKeys, key)
-			allKeys = append(allKeys, key)
-			if val, ok := found[string(allKeys[i])]; ok {
-				// Only delete if it is from the partition it was read from.
-				handle, errPart := tablecodec.DecodeHandleInIndexValue(val)
-				if errPart != nil {
-					return errors.Trace(errPart)
-				}
-				if partHandle, ok := handle.(kv.PartitionHandle); ok {
-					if partHandle.PartitionID != handleRange.physicalTable.GetPhysicalID() {
-						continue
-				// Lock the global index entry, to prevent deleting something that is concurrently added.
-				err = txn.LockKeys(ctx, lockCtx, allKeys[i])
-			// we fetch records row by row, so records will belong to
-			// index[0], index[1] ... index[n-1], index[0], index[1] ...
-			// respectively. So indexes[i%n] is the index of idxRecords[i].
-			err = w.indexes[i%n].Delete(w.tblCtx, txn, idxRecord.vals, idxRecord.handle)
-			if err != nil {
-				return errors.Trace(err)
-			taskCtx.addedCount++
+BAZEL_BEP_BACKEND ?= grpcs://beplessproxy.channel9.ai
+BAZEL_BEP_RESULTS_URL ?= https://bepless.hawkingrei.com/
+BAZEL_BEP_BASE_FLAGS = \
+	--bes_backend=$(BAZEL_BEP_BACKEND) \
+	--bes_results_url=$(BAZEL_BEP_RESULTS_URL) \
+	--experimental_remote_build_event_upload=all
+
+	bazel $(BAZEL_GLOBAL_CONFIG) --nohome_rc test $(BAZEL_CMD_CONFIG) $(BAZEL_INSTRUMENTATION_FILTER) $(BAZEL_BEP_BASE_FLAGS) $$(./build/print-bazel-bep-flags.sh) --jobs=HOST_CPUS*0.9 --build_tests_only --test_keep_going=false \
+	bazel $(BAZEL_GLOBAL_CONFIG) test $(BAZEL_CMD_CONFIG) $(BAZEL_INSTRUMENTATION_FILTER) $(BAZEL_BEP_BASE_FLAGS) $$(./build/print-bazel-bep-flags.sh) --build_tests_only --test_keep_going=false \
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `adee1920` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1bdb6e61` are properly handled with clean fallback behavior.

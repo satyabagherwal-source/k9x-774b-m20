@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apple-foundationdb-learnings.md`  
 > **Source**: github ([https://github.com/apple/foundationdb](https://github.com/apple/foundationdb))  
-> **Source Version**: `34019fa3`  
+> **Source Version**: `91a45282`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T05:53:18.900Z  
+> **Timestamp**: 2026-11-09T16:26:05.523Z  
 > **Learning ID**: `learn-github-apple-foundationdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apple-foundationdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apple/foundationdb](https://github.com/apple/foundationdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T05:53:18.896Z  
+> **Harvest Timestamp**: 2026-11-09T16:26:05.515Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: FoundationDB - the open source, distributed, transactional key-value store
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 16842 stars
+- **Stars / Engagement**: 16849 stars
 
 ---
 
@@ -1956,52 +1956,374 @@ constexpr std::string_view to_string(WaitState st) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `34019fa3` (2026-11-04)
-**Commit Message**: Scope PeerHealthMonitor event to the if statement and drop comment (#14447)
+### Incident Patch 1: `91a45282` (2026-11-09)
+**Commit Message**: Reject starting a backup at a location used by another running backup (#14451)
 
-**File**: `fdbserver/worker/worker.cpp` (modified, +1/-6)
+Two backups writing the same container corrupt each other, and nothing
+stopped a second tag from starting on a URL that a running backup uses.
+
+- IBackupContainer::getLocation(): where a container's files live,
+  ignoring credentials, URL parameters and proxy. Blobstore uses host,
+  port, bucket (default applied) and the data path built from the
+  normalized prefix and name; file:// uses the normalized path.
+- FileBackupAgent::findRunningBackupAtLocation(): returns the tag of a
+  runnable backup on another tag at the same location, read in the
+  caller's transaction so concurrent submits conflict.
+- submitBackup, fdbbackup modify -d and fdbbackup start -n reject such
+  a location with backup_error. Finished or aborted backups do not hold
+  their location, and the same tag can restart on its own URL.
+- Unit test for the location compare, an opt-in BackupS3BlobCorrectness
+  probe enabled in BackupS3BlobBulkLoadIncrementalRejected.toml, and an
+  fdbbackup step in blob_backup_restore_test.sh.
+
+rdar://191428032
+
+**File**: `documentation/sphinx/source/backups.rst` (modified, +2/-2)
 ```diff
-@@ -1090,12 +1090,7 @@ UpdateWorkerHealthRequest doPeerHealthCheck(const WorkerInterface& interf,
- 		// If peer->lastLoggedTime == 0, we just started monitor this peer and haven't logged it once yet.
- 		double lastLoggedTime = peer->lastLoggedTime <= 0.0 ? peer->lastConnectTime : peer->lastLoggedTime;
+@@ -288,7 +288,7 @@ The following options apply to most subcommands:
+ ``start``
+ ---------
  
--		// .detail() arguments are evaluated by the caller even when the event is filtered out, and
--		// the addressInDbAnd*Dc() predicates each walk ServerDBInfo. This runs once per peer, every
--		// WORKER_HEALTH_MONITOR_INTERVAL, on every process, so guard the whole chain. suppressFor()
--		// does not help: suppression is applied when the event is logged, not when it is built.
--		TraceEvent peerHealthEvent(SevDebug, "PeerHealthMonitor");
--		if (peerHealthEvent.isEnabled()) {
-+		if (TraceEvent peerHealthEvent(SevDebug, "PeerHealthMonitor"); peerHealthEvent.isEnabled()) {
- 			peerHealthEvent.suppressFor(5.0)
- 			    .detail("Peer", address)
- 			    .detail("PeerAddress", address)
+-The ``start`` subcommand is used to start a backup.  If there is already a backup in progress, the command will fail and the current backup will be unaffected.  Otherwise, a backup is started. If the wait option is used, the command will wait for the backup to complete; otherwise, it returns immediately.
++The ``start`` subcommand is used to start a backup.  If there is already a backup in progress on the tag, or a backup on another tag is running at the same location (for a blob store URL, the same host, port, bucket, prefix, and backup name, regardless of credentials and other URL parameters), the command will fail and the current backup will be unaffected.  Otherwise, a backup is started. If the wait option is used, the command will wait for the backup to complete; otherwise, it returns immediately.
+ 
+ ::
+ 
+@@ -329,7 +329,7 @@ The ``modify`` subcommand is used to modify parameters of a running backup.  All
+    user@host$ fdbbackup modify [-t <TAG>] [-d <BACKUP_URL>] [-s <DURATION>] [--active-snapshot-interval <DURATION>] [--verify-uid <UID>]
+ 
+ ``-d <BACKUP_URL>``
+-  Sets a new Backup URL for the backup to write to.  This is most likely to be used to change only URL parameters or account information.  However, it can also be used to start writing to a new destination mid-backup.  The new old location will cease gaining any additional restorability, while the new location will not be restorable until a new snapshot begins and completes.  Full restorability would be regained, however, if the contents of the two destinations were to be combined by the user.
++  Sets a new Backup URL for the backup to write to.  This is most likely to be used to change only URL parameters or account information.  However, it can also be used to start writing to a new destination mid-backup.  The new old location will cease gaining any additional restorability, while the new location will not be restorable until a new snapshot begins and completes.  Full restorability would be regained, however, if the contents of the two destinations were to be combined by the user.  The new location cannot be one that a backup on another tag is running at.
+ 
+ ``-s <DURATION>`` or ``--snapshot-interval <DURATION>``  
+   Sets a new duration for backup snapshots, in seconds.
 ```
 
----
-
-### Incident Patch 2: `76ca8878` (2026-11-04)
-**Commit Message**: AGENTS.md: document apple/ branch naming rule (#14443)
-
-**File**: `AGENTS.md` (modified, +2/-0)
+**File**: `fdbbackup/backup.cpp` (modified, +26/-0)
 ```diff
-@@ -151,6 +151,8 @@ When reviewing, state explicitly: what the change is for, whether it is correct,
+@@ -1872,6 +1872,23 @@ Future<Void> submitDBBackup(Database src,
+ 	}
+ }
  
- PRs target `main`. Release branches receive cherry-picks rather than direct PRs — don't open backport PRs without confirming first.
- 
-+Branches created on apple/foundationdb must start with `apple/` (convention: `apple/<github-username>/<topic>`); a repository ruleset blocks creating any other branch. Branches on personal forks can still be named anything. Stacked PRs (`gh stack`) require their branches to be on apple/foundationdb rather than a fork.
++// Fails with backup_error if a backup on a tag other than tagName is running at bc's location.
++static Future<Void> checkBackupLocationNotInUse(Reference<ReadYourWritesTransaction> tr,
++                                                Reference<IBackupContainer> bc,
++                                                std::string tagName) {
++	Optional<std::string> conflictingTag = co_await FileBackupAgent::findRunningBackupAtLocation(tr, bc, tagName);
++	if (conflictingTag.present()) {
++		TraceEvent(SevWarnAlways, "BackupLocationInUse")
++		    .detail("TagName", tagName)
++		    .detail("ConflictingTag", conflictingTag.get())
++		    .detail("Location", bc->getLocation());
++		fprintf(stderr,
++		        "ERROR: The backup location is already in use by the running backup on tag `%s'.\n",
++		        printable(StringRef(conflictingTag.get())).c_str());
++		throw backup_error();
++	}
++}
 +
- ## Design Docs
+ Future<Void> submitBackup(Database db,
+                           std::string url,
+                           Optional<std::string> proxy,
+@@ -1905,6 +1922,14 @@ Future<Void> submitBackup(Database db,
+ 				}
+ 			}
  
- Before a design doc is considered finished (not at the start), reconcile it against `design/design-doc-template.md`.
++			// submitBackup appends a unique directory to file:// URLs, so only blobstore locations can collide.
++			if (url.find("file://") != 0) {
++				Reference<IBackupContainer> bc = IBackupContainer::openContainer(url, proxy, {}, 0);
++				co_await runRYWTransaction(db, [=](Reference<ReadYourWritesTransaction> tr) {
++					return checkBackupLocationNotInUse(tr, bc, tagName);
++				});
++			}
++
+ 			if (waitForCompletion) {
+ 				printf("Submitted and now waiting for the backup on tag `%s' to complete. (DRY RUN)\n",
+ 				       printable(StringRef(tagName)).c_str());
+@@ -2901,6 +2926,7 @@ Future<Void> modifyBackup(Database db, std::string tagName, BackupModifyOptions
+ 				                         options.proxy,
+ 				                         options.encryptionKeyFile,
+ 				                         prevContainer->getEncryptionBlockSize());
++				co_await checkBackupLocationNotInUse(tr, bc, tagName);
+ 				try {
+ 					co_await timeoutError(bc->create(), 30);
+ 				} catch (Error& e) {
+```
+
+**File**: `fdbbackup/tests/blob_backup_restore_test.sh` (modified, +99/-0)
+```diff
+@@ -179,6 +179,99 @@ function verify_backup_key_prefix_layout {
+   return 0
+ }
+ 
++# Run fdbbackup and check the outcome. Commands expected to fail log to location_in_use_logs, which
++# grep_for_severity40 skips, because fdbbackup traces any failure at Severity 40.
++# $1 build directory, $2 scratch directory, $3 "ok", or the message the command must fail with,
++# $4+ fdbbackup arguments
++function fdbbackup_expect {
++  local local_build_dir="${1}"
++  local local_scratch_dir="${2}"
++  local expected="${3}"
++  local logdir="${local_scratch_dir}"
++  if [[ "${expected}" != "ok" ]]; then
++    logdir="${local_scratch_dir}/location_in_use_logs"
++    mkdir -p "${logdir}"
++  fi
++  local output
++  local exit_code=0
++  output=$("${local_build_dir}/bin/fdbbackup" "${@:4}" --log "--logdir=${logdir}" 2>&1) || exit_code=$?
++  if [[ "${expected}" == "ok" ]]; then
++    if (( exit_code != 0 )); then
++      err "fdbbackup ${*:4} failed: ${output}"
++      return 1
++    fi
++  elif (( exit_code == 0 )) || ! output_contains "${output}" "${expected}"; then
++    err "fdbbackup ${*:4} did not fail with '${expected}': ${output}"
++    return 1
++  fi
++  return 0
++}
++
++# Abort a backup started by test_backup_location_in_use. abort disables idle backup workers
++# concurrently, which can fail its own commit with commit_unknown_result; the retry then finds the
++# backup already aborted, so "not running" counts as aborted.
++# $1 build directory, $2 scratch directory, $3+ fdbbackup abort arguments
++function abort_in_use_backup {
++  local local_build_dir="${1}"
++  local local_scratch_dir="${2}"
++  local logdir="${local_scratch_dir}/location_in_use_logs"
++  mkdir -p "${logdir}"
++  local output
++  local exit_code=0
++  output=$("${local_build_dir}/bin/fdbbackup" abort "${@:3}" --log "--logdir=${logdir}" 2>&1) || exit_code=$?
++  if (( exit_code != 0 )) && ! output_contains "${output}" "A backup was not running on tag"; then
++    err "fdbbackup abort ${*:3} failed: ${output}"
++    return 1
++  fi
++  return 0
++}
++
++# A backup must not start, or be moved by modify, onto a location that a backup on another tag
++# is running at. Once that backup is aborted, the location can be reused by any tag.
++# $1 build directory, $2 scratch directory, $3 credentials file
++function test_backup_location_in_use {
++  local local_build_dir="${1}"
++  local local_scratch_dir="${2}"
++  local credentials="${3}"
++
++  local params="${query_str}"
++  if [[ -n "${BACKUP_URL_KEY_PREFIX}" ]]; then
++    params="${params}&prefix=${BACKUP_URL_KEY_PREFIX}"
++  fi
++  # Nested under this run's container so the existing cleanup removes it too.
++  local name="${url_path_prefix}/${test}/in_use"
++  local in_use_url="blobstore://${host}/${name}?${params}"
++  # The same location with the parameters reversed and a trailing slash on the name.
++  local respelled_url
++  respelled_url="blobstore://${host}/${name}/?$(awk -F'&' '{ for (i = NF; i > 1; i--) printf "%s&", $i; print $1 }' <<< "${params}")"
++  local other_url="blobstore://${host}/${name}_other?${params}"
++  local tag_a="${TAG}_in_use_a"
++  local tag_b="${TAG}_in_use_b"
++  local in_use="already in use by the running backup on tag \`${tag_a}'"
++  local run=(fdbbackup_expect "${local_build_dir}" "${local_scratch_dir}")
++  local abort=(abort_in_use_backup "${local_build_dir}" "${local_scratch_dir}")
++  # abort does not take --blob-credentials.
++  local cluster=("-C" "${local_scratch_dir}/loopback_cluster/fdb.cluster" "${KNOBS[@]}")
++  local args=("${cluster[@]}" "--blob-credentials" "${credentials}")
++
++  "${run[@]}" ok start -z -t "${tag_a}" -d "${in_use_url}" "${args[@]}" || return 1
++  "${run[@]}" "${in_use}" start -z -t "${tag_b}" -d "${in_use_url}" "${args[@]}" || return 1
++  "${run[@]}" "${in_use}" start -n -t "${tag_b}" -d "${in_use_url}" "${args[@]}" || return 1
++  "${run[@]}" "${in_use}" start -z -t "${tag_b}" -d "${respelled_url}" "${args[@]}" || return 1
++  "${run[@]}" ok start -n -t "${tag_b}" -d "${other_url}" "${args[@]}" || return 1
++  "${run[@]}" ok start -z -t "${tag_b}" -d "${other_url}" "${args[@]}" || return 1
++  "${run[@]}" "${in_use}" modify -t "${tag_b}" -d "${in_use_url}" "${args[@]}" || return 1
++  "${abort[@]}" -t "${tag_b}" "${cluster[@]}" || return 1
++  "${abort[@]}" -t "${tag_a}" "${cluster[@]}" || return 1
++  # Aborted backups no longer hold the location, for the same tag or another one.
++  "${run[@]}" ok start -z -t "${tag_a}" -d "${in_use_url}" "${args[@]}" || return 1
++  "${abort[@]}" -t "${tag_a}" "${cluster[@]}" || return 1
++  "${run[@]}" ok start -z -t "${tag_b}" -d "${in_use_url}" "${args[@]}" || return 1
++  "${abort[@]}" -t "${tag_b}" "${cluster[@]}" || return 1
++  log "Verified a backup location in use by another tag is rejected"
++  return 0
++}
++
+ # Run a backup to s3 and then a restore.
+ # $1 The url to use
+ # $2 the scratch directory
+@@ -249,6 +342,12 @@ function test_s3_backup_and_restore {
+     return 1
+   fi
+ 
++  log "Test backup location in use"
++  if ! test_backup_location_in_use "${local_build_dir
+```
+
+**File**: `fdbclient/BackupContainerBlobStore.cpp` (modified, +65/-1)
+```diff
+@@ -27,6 +27,8 @@
+ #include "flow/Platform.h"
+ #include "flow/UnitTest.h"
+ 
++#include <boost/algorithm/string/case_conv.hpp>
++
+ class BackupContainerBlobStoreImpl {
+ public:
+ 	// Backup files to under a single folder prefix with subfolders for each named backup
+@@ -141,7 +143,7 @@ class BackupContainerBlobStoreImpl {
+ const std::string BackupContainerBlobStoreImpl::DATAFOLDER = "data";
+ const std::string BackupContainerBlobStoreImpl::INDEXFOLDER = "backups";
+ 
+-std::string BackupContainerBlobStore::dataPath(const std::string& path) {
++std::string BackupContainerBlobStore::dataPath(const std::string& path) const {
+ 	// if a key prefix was given, the entire layout lives under it.
+ 	// if backup, include the backup data prefix.
+ 	// if m_name ends in a trailing slash, don't add another
+@@ -286,6 +288,22 @@ std::string BackupContainerBlobStore::getPrefix() const {
+ 	return m_prefix;
+ }
+ 
++std::string BackupContainerBlobStore::getLocation() const {
++	// Spell the service as a port, so a URL without one matches the same URL with the default port.
++	std::string service = m_bstore->service.empty() ? m_bstore->defaultService() : m_bstore->service;
++	if (service == "https") {
++		service = "443";
++	} else if (service == "http") {
++		service = "80";
++	}
++	// Bucket names cannot contain '/', so the data path that follows keeps the location unambiguous.
++	return format("blobstore://%s:%s/%s/%s",
++	              boost::algorithm::to_lower_copy(m_bstore->host).c_str(),
++	              service.c_str(),
++	              m_bucket.c_str(),
++	              dataPath("").c_str());
++}
++
+ TEST_CASE("/backup/containers/blobstore/encryptionSetup") {
+ 	std::string keyFile = joinPath(params.getDataDir(), "encryption-key");
+ 	co_await BackupContainerFileSystem::createTestEncryptionKeyFile(keyFile);
+@@ -379,3 +397,49 @@ TEST_CASE("/backup/containers/blobstore/prefix") {
+ 
+ 	return Void();
+ }
++
++TEST_CASE("/backup/containers/location") {
++	// Non-AWS hosts need an explicit region to parse.
++	auto location = [](const std::string& url) {
++		return IBackupContainer::openContainer(url, {}, {}, 0)->getLocation();
++	};
++	const std::string base = location("blobstore://ak:sk@host.example.com:8080/name?bucket=bkt&prefix=p1/p2&region=r1");
++
++	// Credentials, parameter order, other parameters, host case and slashes around the prefix are ignored.
++	for (auto same :
++	     { "blobstore://other:creds@host.example.com:8080/name?bucket=bkt&prefix=p1/p2&region=r1",
++	       "blobstore://host.example.com:8080/name?region=r1&prefix=p1/p2&bucket=bkt",
++	       "blobstore://ak:sk@HOST.example.com:8080/name?bucket=bkt&prefix=/p1/p2/&sc=0&region=r2",
++	       "blobstore://ak:sk@host.example.com:8080/name?bucket=bkt&prefix=p1/p2&region=r1&header=x-a:b&cu=1",
++	       // A trailing slash on the name does not change the data path.
++	       "blobstore://ak:sk@host.example.com:8080/name/?bucket=bkt&prefix=p1/p2&region=r1" }) {
++		ASSERT_EQ(location(same), base);
++	}
++	ASSERT_EQ(location("blobstore://h:80/n?region=r1"), location("blobstore://h:80/n?bucket=FDB_BACKUPS_V2&region=r1"));
++	// A missing port is the default port for the connection type.
++	ASSERT_EQ(location("blobstore://h/n?region=r1"), location("blobstore://h:443/n?region=r1"));
++	ASSERT_EQ(location("blobstore://h/n?region=r1"), location("blobstore://h:https/n?region=r1"));
++	ASSERT_EQ(location("blobstore://h/n?region=r1&sc=0"), location("blobstore://h:80/n?region=r1&sc=0"));
++	ASSERT_NE(location("blobstore://h/n?region=r1"), location("blobstore://h:80/n?region=r1"));
++	ASSERT_NE(location("blobstore://h/n?region=r1&sc=0"), location("blobstore://h:443/n?region=r1&sc=0"));
++	// Different prefix and name splits can address the same data objects.
++	ASSERT_EQ(location("blobstore://h:80/b?prefix=a/data&region=r1"),
++	          location("blobstore://h:80/data/b?prefix=a&region=r1"));
++
++	for (auto different : { "blobstore://ak:sk@other.example.com:8080/name?bucket=bkt&prefix=p1/p2&region=r1",
++	                        "blobstore://ak:sk@host.example.com:8081/name?bucket=bkt&prefix=p1/p2&region=r1",
++	                        "blobstore://ak:sk@host.example.com:8080/name?bucket=bkt2&prefix=p1/p2&region=r1",
++	                        "blobstore://ak:sk@host.example.com:8080/name?bucket=bkt&region=r1",
++	                        "blobstore://ak:sk@host.example.com:8080/name?bucket=bkt&prefix=p1&region=r1",
++	                        "blobstore://ak:sk@host.example.com:8080/name?bucket=bkt&prefix=p1/p3&region=r1",
++	                        "blobstore://ak:sk@host.example.com:8080/name2?bucket=bkt&prefix=p1/p2&region=r1",
++	                        "blobstore://ak:sk@host.example.com:8080/name/sub?bucket=bkt&prefix=p1/p2&region=r1",
++	                        "blobstore://ak:sk@host.example.com:8080//name?bucket=bkt&prefix=p1/p2&region=r1",
++	                        "file:///p1/p2/data/name" }) {
++		ASSERT_NE(location(different), base);
++	}
++
++	ASSERT_EQ(location("file:///backups/a"), location("file:///backups/a/"));
++	AS
+```
+
+**File**: `fdbclient/BackupContainerBlobStore.h` (modified, +3/-1)
+```diff
+@@ -39,7 +39,7 @@ class BackupContainerBlobStore final : public BackupContainerFileSystem, Referen
+ 	// if not used for backup, don't prefix paths with fdbbackup-specific logic
+ 	bool isBackup;
+ 
+-	std::string dataPath(const std::string& path);
++	std::string dataPath(const std::string& path) const;
+ 
+ 	// Get the path of the backups's index entry
+ 	std::string indexEntry();
+@@ -138,6 +138,8 @@ class BackupContainerBlobStore final : public BackupContainerFileSystem, Referen
+ 	std::string getBucket() const;
+ 
+ 	std::string getPrefix() const;
++
++	std::string getLocation() const final;
+ };
+ 
+ #endif
+```
+
+**File**: `fdbclient/BackupContainerLocalDirectory.cpp` (modified, +4/-0)
+```diff
+@@ -355,6 +355,10 @@ Future<Void> BackupContainerLocalDirectory::deleteContainer(int* pNumDeleted) {
+ 	});
+ }
+ 
++std::string BackupContainerLocalDirectory::getLocation() const {
++	return "file://" + m_path;
++}
++
+ TEST_CASE("/backup/containers/localdir/rejectsEscapingPaths") {
+ 	// Nothing is read or written: every name below is rejected before the container directory is touched.
+ 	auto bc = makeReference<BackupContainerLocalDirectory>(
+```
+
+**File**: `fdbclient/BackupContainerLocalDirectory.h` (modified, +2/-0)
+```diff
+@@ -56,6 +56,8 @@ class BackupContainerLocalDirectory : public BackupContainerFileSystem,
+ 
+ 	Future<Void> deleteContainer(int* pNumDeleted) final;
+ 
++	std::string getLocation() const final;
++
+ private:
+ 	std::string m_path;
+ };
+```
+
+**File**: `fdbclient/BlobStoreCommon.cpp` (modified, +1/-1)
+```diff
+@@ -688,7 +688,7 @@ Future<IBlobStoreEndpoint::ReusableConnection> connect_impl(Reference<IBlobStore
+ 			fprintf(stderr, "ERROR: Port can't be empty when using HTTP proxy.\n");
+ 			throw connection_failed();
+ 		}
+-		service = b->knobs.secure_connection ? "https" : "http";
++		service = b->defaultService();
+ 	}
+ 	bool isTLS = b->knobs.isTLS();
+ 	Reference<IConnection> conn;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14450** (closed): Reject starting a backup at a location used by another running backup (@shreechaturvedi)
-- **PR #14447** (2026-11-04): Scope PeerHealthMonitor trace event to its guard (@saintstack)
-- **PR #14443** (2026-11-04): AGENTS.md: document apple/ branch naming rule (@shreechaturvedi)
-- **PR #14421** (2026-11-03): [release-8.0] Reject path traversal in backup, S3, bulk load, profiler, and checkpoint paths (#14341, #14347) (@shreechaturvedi)
-- **PR #14418** (2026-11-05): Allow fdbcli to have dedicated audit trace files and directory (@spraza)
-- **PR #14417** (2026-11-04): [release-8.0] Extend MVC test-suite to catch client version mismatched loading (#14383) (@akshay-v-kaushik)
+- **PR #14471** (2026-11-06): Backup per-URL aws_v4_header (v4) blobstore parameter (@neethuhaneesha)
+- **PR #14470** (2026-11-06): Stop reporting a byte total for bulkdump progress (@saintstack)
+- **PR #14466** (2026-11-06): Remove unused getDatabaseConfiguration() reads from backup and restore (@shreechaturvedi)
+- **PR #14459** (2026-11-06): fdb-kubernetes-monitor: check binary present (@johscheuer)
+- **PR #14458** (2026-11-06): Update go version for fdb-kubernetes-monitor to go 1.27.3 and update go.mod to 1.26.0 (@johscheuer)
+- **PR #14457** (2026-11-05): Allow transaction_profiling_analyzer to have a dedicated audit log directory (@spraza)
 
 ---
 
@@ -2021,33 +2343,30 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Scope PeerHealthMonitor event to the if statement and drop comment (#14447)
+## X. Reject starting a backup at a location used by another running backup (#14451)
 
 **RULE**:
-When implementing operations in `fdbserver/worker/worker.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apple/foundationdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `documentation/sphinx/source/backups.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apple/foundationdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `34019fa3`: Scope PeerHealthMonitor event to the if statement and drop comment (#14447). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `91a45282`: Reject starting a backup at a location used by another running backup (#14451). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `fdbserver/worker/worker.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `documentation/sphinx/source/backups.rst`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-		if (TraceEvent peerHealthEvent(SevDebug, "PeerHealthMonitor"); peerHealthEvent.isEnabled()) {
+The ``start`` subcommand is used to start a backup.  If there is already a backup in progress on the tag, or a backup on another tag is running at the same location (for a blob store URL, the same host, port, bucket, prefix, and backup name, regardless of credentials and other URL parameters), the command will fail and the current backup will be unaffected.  Otherwise, a backup is started. If the wait option is used, the command will wait for the backup to complete; otherwise, it returns immediately.
+  Sets a new Backup URL for the backup to write to.  This is most likely to be used to change only URL parameters or account information.  However, it can also be used to start writing to a new destination mid-backup.  The new old location will cease gaining any additional restorability, while the new location will not be restorable until a new snapshot begins and completes.  Full restorability would be regained, however, if the contents of the two destinations were to be combined by the user.  The new location cannot be one that a backup on another tag is running at.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-		// .detail() arguments are evaluated by the caller even when the event is filtered out, and
-		// the addressInDbAnd*Dc() predicates each walk ServerDBInfo. This runs once per peer, every
-		// WORKER_HEALTH_MONITOR_INTERVAL, on every process, so guard the whole chain. suppressFor()
-		// does not help: suppression is applied when the event is logged, not when it is built.
-		TraceEvent peerHealthEvent(SevDebug, "PeerHealthMonitor");
-		if (peerHealthEvent.isEnabled()) {
+The ``start`` subcommand is used to start a backup.  If there is already a backup in progress, the command will fail and the current backup will be unaffected.  Otherwise, a backup is started. If the wait option is used, the command will wait for the backup to complete; otherwise, it returns immediately.
+  Sets a new Backup URL for the backup to write to.  This is most likely to be used to change only URL parameters or account information.  However, it can also be used to start writing to a new destination mid-backup.  The new old location will cease gaining any additional restorability, while the new location will not be restorable until a new snapshot begins and completes.  Full restorability would be regained, however, if the contents of the two destinations were to be combined by the user.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `34019fa3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `91a45282` are properly handled with clean fallback behavior.

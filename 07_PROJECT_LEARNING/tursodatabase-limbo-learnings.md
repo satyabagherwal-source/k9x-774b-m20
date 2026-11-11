@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md`  
 > **Source**: github ([https://github.com/tursodatabase/limbo](https://github.com/tursodatabase/limbo))  
-> **Source Version**: `3b6bbb46`  
+> **Source Version**: `a7ce4ee0`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T09:44:49.156Z  
+> **Timestamp**: 2026-11-10T01:41:38.498Z  
 > **Learning ID**: `learn-github-tursodatabase-turso`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tursodatabase/limbo](https://github.com/tursodatabase/limbo))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T09:44:49.149Z  
+> **Harvest Timestamp**: 2026-11-10T01:41:38.225Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A SQL database in Rust: SQLite-compatible, now also speaking Postgres (experimental). The LLVM of databases.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 25167 stars
+- **Stars / Engagement**: 25205 stars
 
 ---
 
@@ -1428,11 +1428,13 @@ export class Statement {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #11434** (2026-11-05): **core: reject a rowid in the fraction of percentile_disc and percentile_cont**
-  *Symptoms*: ## Problem  ```sql CREATE TABLE t (a INT); INSERT INTO t VALUES (1); SELECT percentile_disc(oid) WITHIN GROUP (ORDER BY a) FROM t; -- tursopg (Turso's PostgreSQL-compatible server): process panics with --   Cursor not found: CursorKey { table_reference_id: TableInternalId(1), ... } -- PostgreSQL: error ```  The same panic happens in tursopg with `percentile_cont(oid)`, `percentile_disc(rowid)`, `percentile_disc(t.oid)`, `percentile_disc(oid = 1)`, on an empty table, and inside `INSERT ... SELECT`. It also happens in tursodb (the SQLite dialect) with `percentile_disc(rowid)`, `percentile_cont(rowid)` and `percentile_disc(t.rowid)`.  `emit_percentile_fraction_check` compiles the fraction once, before the cursors of the query's tables are open. It rejects a fraction that reads a column of those tables (`Expr::Column`), but not one that reads their rowid (`Expr::RowId`). Compiling the rowid read then looks up a cursor that does not exist yet and panics.  ## Fix  `emit_percentile_fraction_check` now treats `Expr::RowId` like `Expr::Column`. A rowid of a table in this query gives the error that `percentile_disc(a)` already gives:  ``` the fraction argument of percentile_disc() must be a constant expression that does not depend on the aggregated rows ```  A rowid of an outer query in a correlated subquery is still allowed, the same as an outer column.  Not changed in this pull request: - tursopg returns SQLSTATE 42601 for this error. PostgreSQL returns 42803 for a column and 42703 f
+- **Issue #11630** (2026-11-10): **Guide AI agents towards our mode of working**
+  *Symptoms*: Updates AGENTS.md and CONTRIBUTING.md so AI agents point contributors to filing issues instead of sending PRs, and follow our contribution workflow.  🤖 Generated with [Claude Code](https://claude.com/claude-code)
+  **Post-Mortem & Fix Analysis**:
+  > <!-- __CODSPEED_PERFORMANCE_REPORT_COMMENT__ --> ## Merging this PR will **improve performance by 21.15%**  <details> <summary><b>2 warnings, 1 note</b></summary>  > :warning: **Unable to measure the execution of 1 benchmark** > > This benchmark measured no execution time, so its result is not comparable and counts as unchanged. This usually happens when the compiler removes the code under test. > > [Prevent compiler optimizations](https://codspeed.io/docs/troubleshooting?utm_source=github&utm_medium=comment-v2&utm_content=optimized_out#optimized-out-benchmarks) > > [See affected benchmarks](https://app.codspeed.io/tursodatabase/turso/branches/agent-contributing-guidelines?q=has%3Aoptimized_out&utm_source=github&utm_medium=comment-v2&utm_content=affected_benchmarks)  > :warning: **98 benchmarks are dominated by system calls** > > System calls cannot be simulated consistently and are left out of the measure. The reported value understates the real cost. Switch to the Walltime instrument
 
-- **Issue #11424** (2026-11-05): **tursopg: percentile_disc and percentile_cont panic when the fraction reads the rowid**
-  *Symptoms*: ```sql CREATE TABLE t (a INT); INSERT INTO t VALUES (1); SELECT percentile_disc(oid) WITHIN GROUP (ORDER BY a) FROM t; ```  ## Observed  The statement panics. The process stops.  ```text thread 'main' panicked at core/vdbe/builder.rs:2093:32: Cursor not found: CursorKey { table_reference_id: TableInternalId(1), index: None, is_build: false } ```  - `percentile_cont(oid)`, `percentile_disc(rowid)`, `percentile_disc(t.oid)` and `percentile_disc(oid = 1)` panic in the same way. - The table can be empty. The panic also occurs in `INSERT INTO t SELECT percentile_disc(...) ... FROM t`. - A fraction that reads a normal column gives an error, as it must: `percentile_disc(a)` gives `the fraction argument of percentile_disc() must be a constant expression that does not depend on the aggregated rows`.  ## Cause  `emit_percentile_fraction_check` in `core/translate/main_loop/init.rs` looks for `Expr::Column` and subqueries in the fraction. It does not look for `Expr::RowId`. So a rowid reference passes the check. Then `translate_expr` reads the rowid before the cursor of the table is open, and `resolve_cursor_id` panics.  ## Expected  An error and no panic. PostgreSQL rejects the query: a user table has no `oid` column (`column "oid" does not exist`). For a column of the aggregated rows, PostgreSQL gives `direct arguments of an ordered-set aggregate must use only grouped columns`. tursopg can give the same error as for `percentile_disc(a)`.  ## Version  turso commit ff97c22 (ff97c2231a118
+- **Issue #11614** (2026-11-09): **ci: add nightly steps for checkpoint_n_rows and overflow_scan_benchmark**
+  *Symptoms*: The nightly Nyrkiö benchmark job checks that every bench binary cargo builds has its own workflow step, and fails when one is missing. The `checkpoint_n_rows` and `overflow_scan_benchmark` benches were added to the bench crate without a step, so the nightly has failed at that check every night since 2026-10-29 and no benchmark results have been uploaded.  This adds the two missing steps in the alphabetical position the rest of the list uses. Both benches are small (10 to 20 samples, 1 to 5 second measurement windows), so they fit inside the 85 minute budget the script enforces.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1449,642 +1451,178 @@ export class Statement {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3b6bbb46` (2026-11-05)
-**Commit Message**: Merge 'core/time: return NULL instead of panicking when time_date overflows' from 
+### Incident Patch 1: `4b374b40` (2026-11-09)
+**Commit Message**: Merge 'ci: add nightly steps for checkpoint_n_rows and overflow_scan_benchmark' from Pekka Enberg
 
-`SELECT make_date(1, 4, 1453556443)` (and `make_timestamp(2024, 1,
-1453556443, 0, 0, 0)`) panicked with `NaiveDateTime + TimeDelta
-overflowed`.
+The nightly Nyrkiö benchmark job checks that every bench binary cargo
+builds has its own workflow step, and fails when one is missing. The
+`checkpoint_n_rows` and `overflow_scan_benchmark` benches were added to
+the bench crate without a step, so the nightly has failed at that check
+every night since 2026-10-29 and no benchmark results have been
+uploaded.
 
-`Time::time_date` already checks that the day/hour/minute/second values
-fit in a `chrono::Duration` with `try_days` etc., but then adds them
-with `dt += d`, which panics when the result goes past what
-`NaiveDateTime` can hold. I switched each of those additions (and the
-nanosecond one) to `checked_add_signed` and return `Ok(None)` on
-overflow, same as the year and month steps above already do. So these
-calls now give NULL rather than crashing the process.
+This adds the two missing steps in the alphabetical position the rest of
+the list uses. Both benches are small (10 to 20 samples, 1 to 5 second
+measurement windows), so they fit inside the 85 minute budget the script
+enforces.
 
-This also covers the extra cases from your follow-up comment: a negative
-day like `make_date(40, 1, -2147483648)` goes through the same checked
-add, and `year - 1` / `month - 1` / `day - 1` now use `checked_sub` so
-`make_date(-2147483648, 1, 1)` and `make_date(2000, -2147483648, 1)`
-don't hit the subtraction overflow in debug/fuzz builds.
+Closes #11614
 
-The issue mentions Postgres raises `date field value out of range` here.
-I kept it as NULL to match how every other out-of-range input to
-`time_date` behaves today; if 
-
-**File**: `core/time/internal.rs` (modified, +131/-34)
+**File**: `.github/workflows/perf_nightly.yml` (modified, +6/-0)
 ```diff
-@@ -205,7 +205,10 @@ impl Time {
- 
-         match year.cmp(&0) {
-             std::cmp::Ordering::Greater => {
--                let months = match (year - 1).unsigned_abs().checked_mul(12) {
-+                let months = match year
-+                    .checked_sub(1)
-+                    .and_then(|y| y.unsigned_abs().checked_mul(12))
-+                {
-                     Some(m) => m,
-                     None => return Ok(None),
-                 };
-@@ -216,7 +219,10 @@ impl Time {
-                 };
-             }
-             std::cmp::Ordering::Less => {
--                let months = match (year - 1).unsigned_abs().checked_mul(12) {
-+                let months = match year
-+                    .checked_sub(1)
-+                    .and_then(|y| y.unsigned_abs().checked_mul(12))
-+                {
-                     Some(m) => m,
-                     None => return Ok(None),
-                 };
-@@ -231,45 +237,54 @@ impl Time {
- 
-         match month.cmp(&0) {
-             std::cmp::Ordering::Greater => {
--                dt = match dt.checked_add_months(chrono::Months::new((month - 1).unsigned_abs())) {
-+                dt = match month
-+                    .checked_sub(1)
-+                    .and_then(|m| dt.checked_add_months(chrono::Months::new(m.unsigned_abs())))
-+                {
-                     Some(d) => d,
-                     None => return Ok(None),
-                 };
-             }
-             std::cmp::Ordering::Less => {
--                dt = match dt.checked_sub_months(chrono::Months::new((month - 1).unsigned_abs())) {
-+                dt = match month
-+                    .checked_sub(1)
-+                    .and_then(|m| dt.checked_sub_months(chrono::Months::new(m.unsigned_abs())))
-+                {
-                     Some(d) => d,
-                     None => return Ok(None),
-                 };
-             }
-             std::cmp::Ordering::Equal => (),
-         };
- 
--        if let Some(d) = chrono::Duration::try_days(day - 1) {
--            dt += d;
--        } else {
--            return Ok(None);
--        }
-+        dt = match day
-+            .checked_sub(1)
-+            .and_then(chrono::Duration::try_days)
-+            .and_then(|d| dt.checked_add_signed(d))
-+        {
-+            Some(d) => d,
-+            None => return Ok(None),
-+        };
- 
--        if let Some(d) = chrono::Duration::try_hours(hour) {
--            dt += d;
--        } else {
--            return Ok(None);
--        }
-+        dt = match chrono::Duration::try_hours(hour).and_then(|d| dt.checked_add_signed(d)) {
-+            Some(d) => d,
-+            None => return Ok(None),
-+        };
- 
--        if let Some(d) = chrono::Duration::try_minutes(minutes) {
--            dt += d;
--        } else {
--            return Ok(None);
--        }
-+        dt = match chrono::Duration::try_minutes(minutes).and_then(|d| dt.checked_add_signed(d)) {
-+            Some(d) => d,
-+            None => return Ok(None),
-+        };
- 
--        if let Some(d) = chrono::Duration::try_seconds(seconds) {
--            dt += d;
--        } else {
--            return Ok(None);
--        }
-+        dt = match chrono::Duration::try_seconds(seconds).and_then(|d| dt.checked_add_signed(d)) {
-+            Some(d) => d,
-+            None => return Ok(None),
-+        };
- 
--        dt += chrono::Duration::nanoseconds(nano_secs);
-+        dt = match dt.checked_add_signed(chrono::Duration::nanoseconds(nano_secs)) {
-+            Some(d) => d,
-+            None => return Ok(None),
-+        };
- 
-         let dt = dt
-             .and_local_timezone(offset)
-@@ -287,13 +302,17 @@ impl Time {
- 
-         match years.cmp(&0) {
-             std::cmp::Ordering::Greater => {
--                dt = dt
--                    .checked_add_months(chrono::Months::new(years.unsigned_abs() * 12))
-+                dt = years
-+                    .unsigned_abs()
-+                    .checked_mul(12)
-+                    .and_then(|m| dt.checked_add_months(chrono::Months::new(m)))
-                     .ok_or(TimeError::CreationError)?;
-             }
-             std::cmp::Ordering::Less => {
--                dt = dt
--                    .checked_sub_months(chrono::Months::new(years.unsigned_abs() * 12))
-+                dt = years
-+                    .unsigned_abs()
-+                    .checked_mul(12)
-+                    .and_then(|m| dt.checked_sub_months(chrono::Months::new(m)))
-                     .ok_or(TimeError::CreationError)?;
-             }
-             std::cmp::Ordering::Equal => (),
-@@ -313,7 +332,9 @@ impl Time {
-             std::cmp::Ordering::Equal => (),
-         };
- 
--        dt += chrono::Duration::try_days(days).ok_or(TimeError::CreationError)?;
-+        dt = chrono::Duration::try_days(days)
-+            .and_then(|d| dt.checked_add_signed(d))
-+            .ok_or(TimeError::CreationError)?;
- 
-         Ok(dt.into())
-     }
-@@ -342,10 +363,10 @@ impl Time {
-         self.inner.timestamp_nanos_opt()
-     }
- 
--    pub fn add_duration(&self, 
-```
-
-**File**: `core/time/mod.rs` (modified, +52/-6)
-```diff
-@@ -194,13 +194,23 @@ fn time_date_internal(args: &[Value]) -> Value {
-     }
- 
-     if args.len() == 8 {
--        let offset_sec = ok_tri!(args[7].to_integer()) as i32;
--        seconds -= offset_sec as i64;
-+        let offset_sec = ok_tri!(args[7].to_integer());
-+        if i32::try_from(offset_sec).is_err() {
-+            return Value::null();
-+        }
-+        seconds = match seconds.checked_sub(offset_sec) {
-+            Some(s) => s,
-+            None => return Value::null(),
-+        };
-     }
- 
-+    let (Ok(year), Ok(month)) = (i32::try_from(year), i32::try_from(month)) else {
-+        return Value::null();
-+    };
-+
-     let t = Time::time_date(
--        year as i32,
--        month as i32,
-+        year,
-+        month,
-         day,
-         hour,
-         minutes,
-@@ -715,7 +725,10 @@ fn time_add(args: &[Value]) -> Value {
- 
-     let d = Duration::from(d);
- 
--    t.add_duration(d).into_blob()
-+    match t.add_duration(d) {
-+        Some(t) => t.into_blob(),
-+        None => Value::null(),
-+    }
- }
- 
- #[scalar(name = "time_add_date")]
-@@ -757,7 +770,11 @@ fn time_add_date(args: &[Value]) -> Value {
-         days = ok_tri!(args[3].to_integer());
-     }
- 
--    let t: Time = tri!(t.time_add_date(years as i32, months as i32, days));
-+    let (Ok(years), Ok(months)) = (i32::try_from(years), i32::try_from(months)) else {
-+        return Value::error_with_message(TimeError::CreationError.to_string());
-+    };
-+
-+    let t: Time = tri!(t.time_add_date(years, months, days));
- 
-     t.into_blob()
- }
-@@ -1029,3 +1046,32 @@ fn time_parse(args: &[Value]) -> Value {
- 
-     Time::from_datetime(dt.and_utc()).into_blob()
- }
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+
-+    fn ints(v: &[i64]) -> Vec<Value> {
-+        v.iter().map(|&i| Value::from_integer(i)).collect()
-+    }
-+
-+    #[test]
-+    fn time_date_overflowing_args_return_null() {
-+        // seconds - offset_sec overflows i64
-+        let v = time_date_internal(&ints(&[2000, 1, 1, 0, 0, i64::MIN, 0, 1]));
-+        assert_eq!(v.value_type(), ValueType::Null);
-+        let v = time_date_internal(&ints(&[2024, 1, 1, 0, 0, i64::MAX, 0, -1]));
-+        assert_eq!(v.value_type(), ValueType::Null);
-+        // year / month that don't fit in i32 must not be truncated
-+        let v = time_date_internal(&ints(&[4294969297, 1, 1]));
-+        assert_eq!(v.value_type(), ValueType::Null);
-+        let v = time_date_internal(&ints(&[2024, 4294967297, 1]));
-+        assert_eq!(v.value_type(), ValueType::Null);
-+        // offset that doesn't fit in i32
-+        let v = time_date_internal(&ints(&[2024, 1, 1, 0, 0, 0, 0, 4294967296]));
-+        assert_eq!(v.value_type(), ValueType::Null);
-+        // sanity: normal call still returns a blob
-+        let v = time_date_internal(&ints(&[2024, 1, 1, 0, 0, 0, 0, 3600]));
-+        assert_eq!(v.value_type(), ValueType::Blob);
-+    }
-+}
-```
-
-**File**: `sqlite/conformance/sqlite-sqltests/scalar-functions-datetime.sqltest` (modified, +65/-0)
-```diff
-@@ -2220,6 +2220,71 @@ test time_date-overflow-issue-5251 {
- expect {
- }
- 
-+@skip-if sqlite "time_date is a custom Limbo function not supported in standard SQLite"
-+test make_date-day-overflow-issue-11398 {
-+    SELECT make_date(1, 4, 1453556443);
-+}
-+expect {
-+}
-+
-+@skip-if sqlite "time_date is a custom Limbo function not supported in standard SQLite"
-+test make_timestamp-day-overflow-issue-11398 {
-+    SELECT make_timestamp(2024, 1, 1453556443, 0, 0, 0);
-+}
-+expect {
-+}
-+
-+@skip-if sqlite "time_date is a custom Limbo function not supported in standard SQLite"
-+test make_date-year-wider-than-i32 {
-+    SELECT make_date(4294969297, 1, 1);
-+}
-+expect {
-+}
-+
-+@skip-if sqlite "time_date is a custom Limbo function not supported in standard SQLite"
-+test make_date-month-wider-than-i32 {
-+    SELECT make_date(2024, 4294967297, 1);
-+}
-+expect {
-+}
-+
-+@skip-if sqlite "time_date is a custom Limbo function not supported in standard SQLite"
-+test time_date-offset-overflow {
-+    SELECT time_date(2000, 1, 1, 0, 0, -9223372036854775808, 0, 1);
-+}
-+expect {
-+}
-+
-+@skip-if sqlite "time_date is a custom Limbo function not supported in standard SQLite"
-+test time_date-offset-overflow-negative {
-+    SELECT time_date(2024, 1, 1, 0, 0, 9223372036854775807, 0, -1);
-+}
-+expect {
-+}
-+
-+@skip-if sqlite "time_date is a custom Limbo function not supported in standard SQLite"
-+test time_add-overflow {
-+    SELECT time_add(time_date(-262143, 1, 1), -9223372036854775807);
-+}
-+expect {
-+}
-+
-+@skip-if sqlite "time_date is a custom Limbo function not supported in standard SQLite"
-+test time_add_date-day-overflow {
-+    SELECT time_add_date(make_date(2024, 1, 1), 0, 0, 1453556443);
-+}
-+expect error {
-+    time creation error
-+}
-+
-+@skip-if sqlite "time_date is a custom Limbo function not supported in standard SQLite"
-+test time_add_date-year-overflow {
-+    SELECT time_add_date(make_date(2024, 1, 1), 2147483647);
-+}
-+expect error {
-+    time creation error
-+}
-+
- # Invalid date and time
- test invalid-date {
-     SELECT date('2024-07-21 24:00:00');
+@@ -66,6 +66,9 @@ jobs:
+       - name: Bench benchmark
+         if: ${{ !cancelled() }}
+         run: scripts/nightly-bench.sh run benchmark
++      - name: Bench checkpoint_n_rows
++        if: ${{ !cancelled() }}
++        run: scripts/nightly-bench.sh run checkpoint_n_rows
+       - name: Bench count_benchmark
+         if: ${{ !cancelled() }}
+         run: scripts/nightly-bench.sh run count_benchmark
+@@ -96,6 +99,9 @@ jobs:
+       - name: Bench mvcc_recovery_benchmark
+         if: ${{ !cancelled() }}
+         run: scripts/nightly-bench.sh run mvcc_recovery_benchmark
++      - name: Bench overflow_scan_benchmark
++        if: ${{ !cancelled() }}
++        run: scripts/nightly-bench.sh run overflow_scan_benchmark
+       - name: Bench parser_benchmark
+         if: ${{ !cancelled() }}
+         run: scripts/nightly-bench.sh run parser_benchmark
 ```
 
 ---
 
-### Incident Patch 2: `06abd777` (2026-11-05)
-**Commit Message**: core/time: return NULL instead of panicking when time_date overflows
+### Incident Patch 2: `a7883c29` (2026-11-09)
+**Commit Message**: ci: add nightly steps for checkpoint_n_rows and overflow_scan_benchmark
 
-make_date(1, 4, 1453556443) and make_timestamp with a huge day number
-panicked with `NaiveDateTime + TimeDelta overflowed`. The day/hour/
-minute/second offsets were checked to fit in a Duration, but the
-addition itself used `+=`, which panics past NaiveDateTime's range.
-With overflow checks on, `year - 1` / `month - 1` / `day - 1` also
-panicked for the minimum integer value.
+The nightly Nyrkiö benchmark job checks that every bench binary cargo
+builds has its own workflow step, and fails when one is missing. The
+checkpoint_n_rows and overflow_scan_benchmark benches were added to the
+bench crate without a step, so the nightly has failed at that check
+every night since 2026-10-29 and no benchmark results have been
+uploaded.
 
-Use checked arithmetic for each step and return None like the other
-out-of-range paths in Time::time_date.
-
-Fixes #11398
-
-**File**: `core/time/internal.rs` (modified, +86/-25)
+**File**: `.github/workflows/perf_nightly.yml` (modified, +6/-0)
 ```diff
-@@ -205,7 +205,10 @@ impl Time {
- 
-         match year.cmp(&0) {
-             std::cmp::Ordering::Greater => {
--                let months = match (year - 1).unsigned_abs().checked_mul(12) {
-+                let months = match year
-+                    .checked_sub(1)
-+                    .and_then(|y| y.unsigned_abs().checked_mul(12))
-+                {
-                     Some(m) => m,
-                     None => return Ok(None),
-                 };
-@@ -216,7 +219,10 @@ impl Time {
-                 };
-             }
-             std::cmp::Ordering::Less => {
--                let months = match (year - 1).unsigned_abs().checked_mul(12) {
-+                let months = match year
-+                    .checked_sub(1)
-+                    .and_then(|y| y.unsigned_abs().checked_mul(12))
-+                {
-                     Some(m) => m,
-                     None => return Ok(None),
-                 };
-@@ -231,45 +237,54 @@ impl Time {
- 
-         match month.cmp(&0) {
-             std::cmp::Ordering::Greater => {
--                dt = match dt.checked_add_months(chrono::Months::new((month - 1).unsigned_abs())) {
-+                dt = match month
-+                    .checked_sub(1)
-+                    .and_then(|m| dt.checked_add_months(chrono::Months::new(m.unsigned_abs())))
-+                {
-                     Some(d) => d,
-                     None => return Ok(None),
-                 };
-             }
-             std::cmp::Ordering::Less => {
--                dt = match dt.checked_sub_months(chrono::Months::new((month - 1).unsigned_abs())) {
-+                dt = match month
-+                    .checked_sub(1)
-+                    .and_then(|m| dt.checked_sub_months(chrono::Months::new(m.unsigned_abs())))
-+                {
-                     Some(d) => d,
-                     None => return Ok(None),
-                 };
-             }
-             std::cmp::Ordering::Equal => (),
-         };
- 
--        if let Some(d) = chrono::Duration::try_days(day - 1) {
--            dt += d;
--        } else {
--            return Ok(None);
--        }
-+        dt = match day
-+            .checked_sub(1)
-+            .and_then(chrono::Duration::try_days)
-+            .and_then(|d| dt.checked_add_signed(d))
-+        {
-+            Some(d) => d,
-+            None => return Ok(None),
-+        };
- 
--        if let Some(d) = chrono::Duration::try_hours(hour) {
--            dt += d;
--        } else {
--            return Ok(None);
--        }
-+        dt = match chrono::Duration::try_hours(hour).and_then(|d| dt.checked_add_signed(d)) {
-+            Some(d) => d,
-+            None => return Ok(None),
-+        };
- 
--        if let Some(d) = chrono::Duration::try_minutes(minutes) {
--            dt += d;
--        } else {
--            return Ok(None);
--        }
-+        dt = match chrono::Duration::try_minutes(minutes).and_then(|d| dt.checked_add_signed(d)) {
-+            Some(d) => d,
-+            None => return Ok(None),
-+        };
- 
--        if let Some(d) = chrono::Duration::try_seconds(seconds) {
--            dt += d;
--        } else {
--            return Ok(None);
--        }
-+        dt = match chrono::Duration::try_seconds(seconds).and_then(|d| dt.checked_add_signed(d)) {
-+            Some(d) => d,
-+            None => return Ok(None),
-+        };
- 
--        dt += chrono::Duration::nanoseconds(nano_secs);
-+        dt = match dt.checked_add_signed(chrono::Duration::nanoseconds(nano_secs)) {
-+            Some(d) => d,
-+            None => return Ok(None),
-+        };
- 
-         let dt = dt
-             .and_local_timezone(offset)
-@@ -601,3 +616,49 @@ impl Deref for Duration {
-         &self.inner
-     }
- }
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+
-+    fn utc() -> FixedOffset {
-+        FixedOffset::east_opt(0).unwrap()
-+    }
-+
-+    #[test]
-+    fn time_date_out_of_range_returns_none() {
-+        // make_date(1, 4, 1453556443)
-+        assert!(Time::time_date(1, 4, 1453556443, 0, 0, 0, 0, utc())
-+            .unwrap()
-+            .is_none());
-+        // make_timestamp(2024, 1, 1453556443, 0, 0, 0)
-+        assert!(Time::time_date(2024, 1, 1453556443, 0, 0, 0, 0, utc())
-+            .unwrap()
-+            .is_none());
-+        // make_date(40, 1, -2147483648)
-+        assert!(Time::time_date(40, 1, -2147483648, 0, 0, 0, 0, utc())
-+            .unwrap()
-+            .is_none());
-+        // make_date(-2147483648, 1, 1) and make_date(2000, -2147483648, 1)
-+        assert!(Time::time_date(i32::MIN, 1, 1, 0, 0, 0, 0, utc())
-+            .unwrap()
-+            .is_none());
-+        assert!(Time::time_date(2000, i32::MIN, 1, 0, 0, 0, 0, utc())
-+            .unwrap()
-+            .is_none());
-+        assert!(Time::time_date(2000, 1, i64::MIN, 0, 0, 0, 0, utc())
-+            .unwrap()
-+            .is_none());
-+        // the same overflow through the hour argument
-+        assert!(Time::time_date(2024, 1, 1, 24 * 1453556443, 0, 0, 0, utc())
-+            .unwrap()
-+            .is_none());
-+    }
-+
-+    #[test]
-+
+@@ -66,6 +66,9 @@ jobs:
+       - name: Bench benchmark
+         if: ${{ !cancelled() }}
+         run: scripts/nightly-bench.sh run benchmark
++      - name: Bench checkpoint_n_rows
++        if: ${{ !cancelled() }}
++        run: scripts/nightly-bench.sh run checkpoint_n_rows
+       - name: Bench count_benchmark
+         if: ${{ !cancelled() }}
+         run: scripts/nightly-bench.sh run count_benchmark
+@@ -96,6 +99,9 @@ jobs:
+       - name: Bench mvcc_recovery_benchmark
+         if: ${{ !cancelled() }}
+         run: scripts/nightly-bench.sh run mvcc_recovery_benchmark
++      - name: Bench overflow_scan_benchmark
++        if: ${{ !cancelled() }}
++        run: scripts/nightly-bench.sh run overflow_scan_benchmark
+       - name: Bench parser_benchmark
+         if: ${{ !cancelled() }}
+         run: scripts/nightly-bench.sh run parser_benchmark
 ```
 
 ---
 
-### Incident Patch 3: `b0421529` (2026-11-05)
-**Commit Message**: Merge 'postgres: reject array types with more than 7 dimensions, not panic' from app/turso-github-handyman
+### Incident Patch 3: `a7ce4ee0` (2026-11-10)
+**Commit Message**: Merge pull request #11630 from tursodatabase/agent-contributing-guidelines
 
-## Problem
+Guide AI agents towards our mode of working
 
-```sql
-CREATE TABLE v3 (c4 INT[][][][][][][][]);
--- tursopg (Turso's PostgreSQL-compatible server): process stops with
---   panicked at core/schema.rs: array dimensions must be <= 7
--- PostgreSQL 18: CREATE TABLE
+**File**: `AGENTS.md` (modified, +6/-0)
+```diff
+@@ -2,6 +2,12 @@
+ 
+ SQLite rewrite in Rust. 40+ crate workspace.
+ 
++When sending PRs to Turso, keep PRs direct and self-contained. Even within a PR, break it in multiple
++individual logical commits. The goal is to help a reviewer understand what is going on.
++
++If you are not working on behalf of a Turso committer, incentivize filing issues instead of sending PRs.
++Details of the policy are in our CONTRIBUTING.md file and you should point your users toward it if needed.
++
+ ## Quick Reference
+ 
+ ```bash
 ```
 
-The same panic happens with a domain base type
-(`posint[][][][][][][][]`), `ALTER TABLE ... ADD COLUMN`, a cast
-(`'{}'::int[][][][][][][][]`), and a `json_to_recordset(...) AS x(a
-int[][][][][][][][])` column list.
-
-`core` expects an `ast::Type` to have at most
-`ast::MAX_ARRAY_DIMENSIONS` (7) array dimensions, and
-`ColumnInfo::set_array_dimensions` asserts it. The SQLite parser checks
-this limit. The PostgreSQL translator (`postgres/parser/translator.rs`)
-builds `ast::Type` from the `[]` count without checking it.
-
-## Fix
-
-- New `check_array_dimensions` in the translator returns `0A000` "an
-array type with 8 dimensions (at most 7) is not supported".
-- It is called from the two functions that produce array dimensions:
-`map_column_type` (every column type in `CREATE TABLE` and `ALTER TABLE
-ADD COLUMN`) and `pg_type_name_to_ast_type` (casts and column d
-
-**File**: `docs/sql-reference/data-types.mdx` (modified, +2/-0)
+**File**: `CONTRIBUTING.md` (modified, +30/-16)
 ```diff
-@@ -219,6 +219,8 @@ INSERT INTO matrices VALUES (1, ARRAY[ARRAY[1, 2], ARRAY[3, 4]]);
+@@ -35,7 +35,10 @@ This document is a quick helper to get you going.
  
- Every element of an `INTEGER[][]` must be an array (or NULL), and the elements of those are checked as an `INTEGER[]` checks its elements, so `ARRAY[1, 2]` and `ARRAY[ARRAY['abc']]` are errors. Text input has no nested arrays, so build arrays of more than one dimension with `ARRAY[...]`.
+ ## Getting Started
  
-+An array type has at most 7 dimensions. A type with more bracket pairs, such as `INTEGER[][][][][][][][]`, is an error.
+-Turso is a rewrite of SQLite in Rust. If you are new to SQLite, the following articles and books are a good starting point:
++Turso is an embedded in-process relational database. Initially conceived solely as a rewrite of SQLite in Rust, we eventually leveraged SQLite's bytecode-based architecture
++to implement other database frontends, including Postgres.
 +
- Arrays can be inserted using the `ARRAY[...]` constructor or as JSON text:
++If you are new to SQLite, the following articles and books are a good starting point:
  
- ```sql
-```
-
-**File**: `postgres/frontend/tests/embedded_errors.rs` (modified, +28/-0)
-```diff
-@@ -264,6 +264,34 @@ fn errors_report_postgres_sqlstates() {
-     }
- }
+ * [Architecture of SQLite](https://www.sqlite.org/arch.html)
+ * Sibsankar Haldar. [SQLite Database System Design and Implementation (2nd Edition)](https://books.google.com/books/?id=yWzwCwAAQBAJ&redir_esc=y). 2016
+@@ -51,6 +54,32 @@ Examples of contributing
+ * [How to contribute a SQL function implementation](docs/contributing/contributing_functions.md)
+ * [Rickrolling Turso DB](https://avi.im/blag/2025/rickrolling-turso)
  
-+#[test]
-+fn array_types_with_more_than_seven_dimensions_are_not_supported() {
-+    let (_io, conn) = pg_connection();
-+    conn.execute("CREATE DOMAIN posint AS INT").unwrap();
-+    conn.execute("CREATE TABLE seven (a INT[][][][][][][])")
-+        .unwrap();
-+    conn.execute("ALTER TABLE seven ADD COLUMN b posint[][][][][][][]")
-+        .unwrap();
-+    conn.execute("SELECT '{}'::int[][][][][][][]").unwrap();
-+    for sql in [
-+        "CREATE TABLE v3 (c4 INT[][][][][][][][])",
-+        "CREATE TABLE v3 (c4 posint[][][][][][][][])",
-+        "CREATE TABLE v3 (c4 _int4[][][][][][][])",
-+        "ALTER TABLE seven ADD COLUMN c int[][][][][][][][]",
-+        "SELECT '{}'::int[][][][][][][][]",
-+        "SELECT CAST('{}' AS posint[][][][][][][][])",
-+        "SELECT * FROM json_to_recordset('[]') AS x(a int[][][][][][][][])",
-+    ] {
-+        let e = exec_err(&conn, sql);
-+        assert_eq!(e.sqlstate, "0A000", "{sql}: {e:?}");
-+        assert_eq!(
-+            e.to_string(),
-+            "an array type with 8 dimensions (at most 7) is not supported",
-+            "{sql}"
-+        );
-+    }
-+}
 +
- #[test]
- fn nested_begin_keeps_the_open_transaction() {
-     // PostgreSQL warns "there is already a transaction in progress" for BEGIN
-```
-
-**File**: `postgres/parser/translator.rs` (modified, +16/-1)
-```diff
-@@ -6167,10 +6167,12 @@ fn pg_type_name_to_ast_type(
-         _ => &pg_type,
-     };
- 
-+    let array_dimensions = type_name.array_bounds.len() as u32;
-+    check_array_dimensions(array_dimensions)?;
-     Ok(ast::Type {
-         name: name.to_string(),
-         size: None,
--        array_dimensions: type_name.array_bounds.len() as u32,
-+        array_dimensions,
-     })
- }
- 
-@@ -6244,9 +6246,22 @@ fn map_column_type(pg_type: &str, typmods: &[i64]) -> Result<PgTypeMapping, Pars
-     if !typmods.is_empty() && mapping.type_params.is_empty() {
-         return Err(not_supported(format!("a type modifier on {pg_type}")));
-     }
-+    check_array_dimensions(mapping.array_dimensions)?;
-     Ok(mapping)
- }
- 
-+/// PostgreSQL accepts any number of `[]` in a type name, but a Turso column
-+/// or cast holds at most [ast::MAX_ARRAY_DIMENSIONS].
-+fn check_array_dimensions(dimensions: u32) -> Result<(), ParseError> {
-+    if dimensions > ast::MAX_ARRAY_DIMENSIONS {
-+        return Err(not_supported(format!(
-+            "an array type with {dimensions} dimensions (at most {})",
-+            ast::MAX_ARRAY_DIMENSIONS
-+        )));
-+    }
-+    Ok(())
-+}
++## Developing with AI coding agents
 +
- fn extract_key_columns(keys: &[pg_query::protobuf::Node]) -> Result<Vec<String>, ParseError> {
-     use pg_query::protobuf::node::Node;
++At Turso we pride ourselves in our Open Source stance. We started our project as an Open Contribution rewrite of SQLite, where all could have a seat at the table and influence the direction of the project,
++and throughout the years we have done just that. Our intention is to be able to double down on Open Source as the world closes its walls as a result of how agents work. However, it is undeniable that AI has
++changed the way Open Source communities ought to work. The volume is just too high for any group of people to handle.
++
++Therefore, we adopt a constantly evolving set of best-practices.
++
++If you are an external contributor, do recommend you do not send fixes to things that are broken, but open issues instead.
++In our experience, most likely you have just asked your coding agent to fix the issue and sent us the result. If this is all you have done, we could have done that with our coding agent just the same.
++An issue that includes a comprehensive set of tests and other relevant information that may help us fix it is as valuable as code and you will be credited by filing the issue in the commit that eventually fixes it.
++
++Developing new features and architecture work is where humans excel, so this is where PRs are welcome the most.
++
++When you do send a PR, we expect you to understand the code you submit. The best AI-assisted contributions come from people who treat the agent as a collaborator, not a substitute: you direct the work, review it critically, and own the result. A PR you can explain and defend is far more valuable than a large one you can't.
++
++To give your PR the best chance of being merged:
++
++* **Keep it small and focused.** Describe the change in your own words, or heavily edit any AI-generated summary so it reads naturally and accurately.
++* **Break it in individual commits.** Make sure each individual commit does one logical self-contained thing.
++* **Include regression tests.** Verify that your tests actually FAIL without your changes — this is especially important when the tests are AI-generated.
++* **Contribute in areas you understand.** If you spot a bug in something like the MVCC or b-tree layer but aren't familiar with it, the most helpful thing you can do is file a clear bug report rather than submit an AI-generated fix.
++* **Do a self-review.** LLMs tend to make the same mistakes repeatedly: removing existing comments, adding verbose new ones, writing overly elaborate tests instead of using existing test helpers, etc. Always self-review your code before submitting - make sure it's correct and follows the existing code standards in this repo.
++
++
+ To build and run `tursodb` CLI:
  
+ ```shell
+@@ -143,21 +172,6 @@ echo -1 | sudo tee /proc/sys/kernel/perf_event_paranoid
+ cargo bench --profile bench-profile --bench benchmark -- --profile-time=5
+ ```
+ 
+-## Developing with AI coding agents
+-
+-You're welcome to develop Turso with AI coding agents such as Claude Code, Codex, or OpenCode. Used well, they can help you explore the codebase, draft tests, and polish your contributions. To make the most of them — and to get your PRs merged — keep the following in mind.
+-
+-We expect you to understand the code you submit. The best AI-assisted contributions come from people who treat the agent as a collaborator, not a substitute: you direct the work, review it critically, and own the result. A PR you can explain and defend is far more valuable than a large one you can't.
+-
+-To give your PR the best chance of being merged:
+-
+-* **Keep it small and focused.** Describe the change in your own words, or heavily edit any AI-generated summary so it reads naturally and accurately.
+-* **Include regression tests.** Verify that your tests actually FAIL without your changes — this is especially important when the tests are AI-generated.
+-* **Contribute in areas you understand.** If you spot a bug in something like the MVCC or b-tree layer but aren't familiar with it, the most helpful thing you can do is file a
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #11434** (2026-11-05): core: reject a rowid in the fraction of percentile_disc and percentile_cont (@turso-github-handyman[bot])
-- **PR #11423** (2026-11-05): postgres: reject array types with more than 7 dimensions, not panic (@turso-github-handyman[bot])
-- **PR #11422** (2026-11-05): core: make lpad and rpad as fast as repeat for long results (@turso-github-handyman[bot])
-- **PR #11419** (2026-11-05): fix (tursopg/parser): reject mismatched VALUES row lengths (@Surajsuthar)
-- **PR #11418** (2026-11-05): tursopg: match LIKE on the operands' text without copying it (@turso-github-handyman[bot])
-- **PR #11414** (2026-11-05): core/translate: skip DO UPDATE when the table has only a non-unique index (@turso-github-handyman[bot])
+- **PR #11630** (2026-11-10): Guide AI agents towards our mode of working (@glommer)
+- **PR #11614** (2026-11-09): ci: add nightly steps for checkpoint_n_rows and overflow_scan_benchmark (@penberg)
+- **PR #11613** (2026-11-09): core: check the current role's privileges in blob_open (@penberg)
+- **PR #11611** (2026-11-09): core/translate: read a text compared with a custom type as a value of the type (@jussisaurio)
+- **PR #11610** (closed): core/translate: give a CAST to a custom type the type's comparison affinity (@jussisaurio)
+- **PR #11607** (closed): core: refuse a second statement while another is in progress on the connection (@LeMikaelF)
 
 ---
 
@@ -2104,85 +1642,33 @@ ADD COLUMN`) and `pg_type_name_to_ast_type` (casts and column d
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge 'core/time: return NULL instead of panicking when time_date overflows' fro
+## X. Merge 'ci: add nightly steps for checkpoint_n_rows and overflow_scan_benchmark' 
 
 **RULE**:
-When implementing operations in `core/time/internal.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/perf_nightly.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3b6bbb46`: Merge 'core/time: return NULL instead of panicking when time_date overflows' from. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4b374b40`: Merge 'ci: add nightly steps for checkpoint_n_rows and overflow_scan_benchmark' from Pekka Enberg. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/time/internal.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/perf_nightly.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                let months = match year
-                    .checked_sub(1)
-                    .and_then(|y| y.unsigned_abs().checked_mul(12))
-                {
-                let months = match year
-                    .checked_sub(1)
-                    .and_then(|y| y.unsigned_abs().checked_mul(12))
-                {
-                dt = match month
-                    .checked_sub(1)
-                    .and_then(|m| dt.checked_add_months(chrono::Months::new(m.unsigned_abs())))
-                {
-                dt = match month
-                    .checked_sub(1)
-                    .and_then(|m| dt.checked_sub_months(chrono::Months::new(m.unsigned_abs())))
-                {
-        dt = match day
-            .checked_sub(1)
-            .and_then(chrono::Duration::try_days)
-            .and_then(|d| dt.checked_add_signed(d))
-        {
-            Some(d) => d,
-            None => return Ok(None),
-        };
-        dt = match chrono::Duration::try_hours(hour).and_then(|d| dt.checked_add_signed(d)) {
-            Some(d) => d,
-            None => return Ok(None),
-        };
-        dt = match chrono::Duration::try_minutes(minutes).and_then(|d| dt.checked_add_signed(d)) {
-      
+      - name: Bench checkpoint_n_rows
+        if: ${{ !cancelled() }}
+        run: scripts/nightly-bench.sh run checkpoint_n_rows
+      - name: Bench overflow_scan_benchmark
+        if: ${{ !cancelled() }}
+        run: scripts/nightly-bench.sh run overflow_scan_benchmark
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-                let months = match (year - 1).unsigned_abs().checked_mul(12) {
-                let months = match (year - 1).unsigned_abs().checked_mul(12) {
-                dt = match dt.checked_add_months(chrono::Months::new((month - 1).unsigned_abs())) {
-                dt = match dt.checked_sub_months(chrono::Months::new((month - 1).unsigned_abs())) {
-        if let Some(d) = chrono::Duration::try_days(day - 1) {
-            dt += d;
-        } else {
-            return Ok(None);
-        }
-        if let Some(d) = chrono::Duration::try_hours(hour) {
-            dt += d;
-        } else {
-            return Ok(None);
-        }
-        if let Some(d) = chrono::Duration::try_minutes(minutes) {
-            dt += d;
-        } else {
-            return Ok(None);
-        }
-        if let Some(d) = chrono::Duration::try_seconds(seconds) {
-            dt += d;
-        } else {
-            return Ok(None);
-        }
-        dt += chrono::Duration::nanoseconds(nano_secs);
-                dt = dt
-                    .checked_add_months(chrono::Months::new(years.unsigned_abs() * 12))
-                dt = dt
-                    .checked_sub_months(chrono::Months::new(years.unsigned_abs() * 12)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3b6bbb46` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4b374b40` are properly handled with clean fallback behavior.

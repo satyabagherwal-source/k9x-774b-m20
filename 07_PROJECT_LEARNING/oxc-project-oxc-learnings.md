@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/oxc-project-oxc-learnings.md`  
 > **Source**: github ([https://github.com/oxc-project/oxc](https://github.com/oxc-project/oxc))  
-> **Source Version**: `c6ec50b6`  
+> **Source Version**: `a74b7cdb`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T16:52:36.174Z  
+> **Timestamp**: 2026-11-08T21:33:24.255Z  
 > **Learning ID**: `learn-github-oxc-project-oxc`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/oxc-project-oxc-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/oxc-project/oxc](https://github.com/oxc-project/oxc))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T16:52:35.708Z  
+> **Harvest Timestamp**: 2026-11-08T21:33:24.250Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ⚓ A collection of high-performance JavaScript tools.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 23334 stars
+- **Stars / Engagement**: 23378 stars
 
 ---
 
@@ -36,6 +36,69 @@
 ### D1: Architecture & Structural Boundaries
 - Entry configurations inspected via direct stream: package.json, Cargo.toml, README.md.
 - Evaluated system abstractions and modular contracts.
+
+### Core Architecture Module: `apps/oxfmt/conformance/live_worker.ts`
+```
+// Runs one `run_live.ts` comparison (a fixture under one option set) in a `tinypool` worker,
+// Prettier is CPU-bound JS, so the main thread alone serializes it.
+
+import { readFileSync } from "node:fs";
+import prettier from "prettier";
+import * as astroPlugin from "prettier-plugin-astro";
+import * as sveltePlugin from "prettier-plugin-svelte";
+import { format } from "../dist/index.js";
+
+export type LiveTask = {
+  name: string;
+  fullPath: string;
+  isProject: boolean;
+  options: Record<string, unknown>;
+};
+
+/** `null` when both agree, otherwise both outputs (`"ERROR"` for a failed one). */
+export default async function run({ name, fullPath, isProject, options }: LiveTask) {
+  let input = readFileSync(fullPath, "utf8");
+  let expected = await formatWithPrettier(name, input, options);
+  // A project hands over Prettier's output, unless Prettier cannot read it back either
+  if (isProject && expected !== null) {
+    const again = await formatWithPrettier(name, expected, options);
+    if (again !== null) [input, expected] = [expected, again];
+  }
+  const prettierResult = expected ?? "ERROR";
+  const oxfmtResult = await formatWithOxfmt(name, input, options);
+
+  // Both failing to parse is not a pass, the fixture exercised nothing
+  if (oxfmtResult === prettierResult && oxfmtResult !== "ERROR") return null;
+  return { name, oxfmt: oxfmtResult, prettier: prettierResult };
+}
+
+/** `null` when Prettier fails. */
+async function formatWithPrettier(
+  fileName: string,
+  content: string,
+  options: Record<string, unknown>,
+): Promise<string | null> {
+  try {
+    return await prettier.format(content, {
+      ...options,
+      filepath: fileName,
+      plugins: [sveltePlugin, astroPlugin],
+    });
+  } catch {
+    return null;
+  }
+}
+
+async function formatWithOxfmt(
+  fileName: string,
+  content: string,
+  options: Record<string, unknown>,
+): Promise<string> {
+  const res = await format(fileName, content, options);
+  return res.errors.length === 0 ? res.code : "ERROR";
+}
+
+```
 
 ### Core Architecture Module: `apps/oxfmt/src-js/cli-worker.ts`
 ```
@@ -979,251 +1042,23 @@ impl ConfigScopes {
 
 ```
 
-### Core Architecture Module: `apps/oxfmt/src/core/embed/dispatcher.rs`
-```
-//! The `FormatDispatcher` assembly shared by every build, routed by [`route_embedded`].
-//!
-//! Each language maps to a Rust formatter where available;
-//! the [`PrettierLanguage`] set goes to the napi-only Prettier Doc→IR channel ([`super::prettier_doc`]) when one is supplied,
-//! and is deliberately preserved as-is otherwise (pure Rust build); everything else stays as-is in every build.
-
-use std::sync::{Arc, OnceLock};
-
-use tracing::{debug, debug_span};
-
-use oxc_formatter::{
-    CssInJsTemplate, HtmlInJsTemplate, JsEmbeddedIn, JsFormatOptions, MarkdownInJsTemplate,
-};
-use oxc_formatter_core::{
-    DispatchRequest, DispatchResponse, EmbeddedIr, FormatDispatcher, FormatSession,
-};
-use oxc_formatter_core::{FormatOptions, PrinterOptions};
-use oxc_formatter_css::{CssEmbeddedIn, CssFormatOptions, CssVariant};
-use oxc_formatter_graphql::GraphqlFormatOptions;
-use oxc_formatter_htmlish::{
-    CssInHtmlStyleAttribute, HtmlishEmbeddedIn, HtmlishFormatOptions, HtmlishVariant,
-    JsInHtmlEventHandler,
-};
-use oxc_formatter_json::{JsonFormatOptions, JsonVariant};
-use oxc_formatter_markdown::{MarkdownFormatOptions, XxxInMarkdownCodeBlock};
-use oxc_formatter_toml::TomlFormatOptions;
-use oxc_formatter_yaml::YamlFormatOptions;
-
-use super::jsdoc_fence::XxxInJsdocFence;
-use crate::core::{
-    language::{Route, route_embedded},
-    options::{
-        ValidatedOptions, to_oxc_formatter, to_oxc_formatter_css, to_oxc_formatter_graphql,
-        to_oxc_formatter_htmlish, to_oxc_formatter_json, to_oxc_formatter_markdown,
-        to_oxc_formatter_toml, to_oxc_formatter_yaml,
-    },
-    oxfmtrc::FormatConfig,
-    support::{NativeLanguage, PrettierLanguage},
-};
-
-/// Per-root context shared by every embedded service (dispatcher, string embedder, Tailwind sorter):
-/// the host file's resolved config plus lazily-mapped per-language options.
-///
-/// Language options are NOT built up front: an embed-free file pays only for empty cells,
-/// and a host where every language is embeddable (Markdown-scale) maps exactly the languages that actually appear,
-/// once each (`OnceLock` memoizes and is safe under the rayon-parallel format runs).
-pub struct ResolvedDispatchConfig {
-    /// Resolved config of the HOST file (its overrides / editorconfig applied).
-    /// Embedded children inherit it, mirroring Prettier's `textToDoc` (parent-options spread);
-    /// never a re-resolution for a virtual path.
-    config: Arc<FormatConfig>,
-    /// The config-resolution gate's artifacts (`options::validate`), shared with the resolver's cache.
-    /// Holding them pre-validated is what lets the per-language mappers be infallible.
-    /// `sort_imports` is for JS children too: a Markdown code block is a whole program,
-    /// sorted like the host's own imports (and a Vue `<script>`'s).
-    validated: Arc<ValidatedOptions>,
-    js: OnceLock<JsFormatOptions>,
-    graphql: OnceLock<GraphqlFormatOptions>,
-    /// One cell per [`CssVariant`]: JSDoc fences dispatch css/scss/less as-is, while css-in-js always uses Scss.
-    css: [OnceLock<CssFormatOptions>; 3],
-    yaml: OnceLock<YamlFormatOptions>,
-    /// One cell per [`JsonVariant`].
-    json: [OnceLock<JsonFormatOptions>; 4],
-    markdown: OnceLock<MarkdownFormatOptions>,
-    toml: OnceLock<TomlFormatOptions>,
-    htmlish: OnceLock<HtmlishFormatOptions>,
-    /// The options handed to Prettier; see [`PrettierOptions`].
-    #[cfg(feature = "napi")]
-    prettier: PrettierOptions,
-}
-
-/// The lazily-built options JSON handed to Prettier (+ plugins),
-/// consumed by the Doc→IR path and the Tailwind sorter.
-/// `path` is an ingredient, not a sibling datum: it becomes the JSON's `filepath` at last
-/// (see [`crate::core::options::build_prettier_options`]).
-///
-/// NOTE: The late merge is load-bearing: the JSON must derive from the RESOLVED per-file config
-/// (a pre-built Value loses overrides, #18246), and `path` is the one per-file ingredient,
-/// keeping it out of the config is what keeps the config shareable across files.
-/// Lazy so an embed-free file never builds the JSON at all.
-#[cfg(feature = "napi")]
-#[derive(Default)]
-struct PrettierOptions {
-    path: std::path::PathBuf,
-    options: OnceLock<serde_json::Value>,
-}
-
-impl ResolvedDispatchConfig {
-    /// Private so [`Self::for_root`] stays the only construction recipe.
-    fn new(config: Arc<FormatConfig>, validated: Arc<ValidatedOptions>) -> Self {
-        Self {
-            config,
-            validated,
-            js: OnceLock::new(),
-            graphql: OnceLock::new(),
-            css: [OnceLock::new(), OnceLock::new(), OnceLock::new()],
-            yaml: OnceLock::new(),
-            json: [OnceLock::new(), OnceLock::new(), OnceLock::new(), OnceLock::new()],
-            markdown: OnceLock::new(),
-            toml: OnceLock::new(),
-            htmlish: OnceLock::new(),
-            #[cfg(feature = "napi")]
-            prettier: PrettierOptions::default(),
-        }
-    }
-
-    /// The one construction recipe for a root formatter run at `path`:
-    /// [`Self::new`] plus the napi-only path recording
-    /// (the pure build has no JS-side consumers, so `path` goes unused there).
-    /// `validated` is the config-resolution gate's artifacts (`options::validate`),
-    /// carried from resolution so they never get re-derived (or re-fail) here.
-    pub fn for_root(
-        config: Arc<FormatConfig>,
-        validated: Arc<ValidatedOptions>,
-        path: &std::path::Path,
-    ) -> Arc<Self> {
-        let dispatch_config = Self::new(config, validated);
-        #[cfg(feature = "napi")]
-        let dispatch_config = dispatch_config.with_path(path.to_path_buf());
-        #[cfg(not(feature = "napi"))]
-        let _ = path;
-        Arc::new(dispatch_config)
-    }
-
-    /// Assembles the root's `FormatDispatcher` behind the off-gate:
-    /// `None` under `embeddedLanguageFormatting: off`,
-    /// so a root cannot install the registry without honoring the off-semantics.
-    /// `fallback` is the one build-dependent datum (the napi Prettier Doc→IR path).
-    pub fn root_dispatcher(
-        self: &Arc<Self>,
-        fallback: Option<PrettierDocFallback>,
-    ) -> Option<FormatDispatcher> {
-        self.is_embedded_formatting_enabled().then(|| build_dispatcher(Arc::clone(self), fallback))
-    }
-
-    /// The single off-predicate: [`Self::root_dispatcher`] and both build's `services::for_root` definitions consult it,
-    /// so the off-semantics can never diverge between channels or builds.
-    pub fn is_embedded_formatting_enabled(&self) -> bool {
-        self.config.is_embedded_formatting_enabled()
-    }
-
-    pub fn js_options(&self) -> JsFormatOptions {
-        self.js
-            .get_or_init(|| {
-                to_oxc_formatter(
-                    &self.config,
-                    self.validated.core,
-                    self.validated.sort_imports.clone(),
-                )
-            })
-            .clone()
-    }
-
-    pub fn graphql_options(&self) -> GraphqlFormatOptions {
-        *self.graphql.get_or_init(|| to_oxc_formatter_graphql(&self.config, self.validated.core))
-    }
-
-    pub fn css_options(&self, variant: CssVariant) -> CssFormatOptions {
-        let cell = match variant {
-            CssVariant::Css => &self.css[0],
-            CssVariant::Scss => &self.css[1],
-            CssVariant::Less => &self.css[2],
-        };
-        *cell.get_or_init(|| to_oxc_formatter_css(&self.config, self.validated.core, variant))
-    }
-
-    pub fn yaml_options(&self) -> YamlFormatOptions {
-        *self.yaml.get_or_init(|| to_oxc_formatter_yaml(&self.config, self.validated.core))
-    }
-
-    pub fn json_options(&self, variant: JsonVariant) -> JsonFormatOptions {
-        let cell = match variant {
-            JsonVariant::Json => &self.json[0],
-            JsonVariant::Jsonc => &self.json[1],
-            JsonVariant::Json5 => &self.json[2],
-            JsonVariant::JsonStringify => &self.json[3],
-        };
-        *cell.get_or_init(|| to_oxc_formatter_json(&self.config, self.validated.core, variant))
-    }
-
-    pub fn markdown_options(&self) -> MarkdownFormatOptions {
-        *self.markdown.get_or_init(|| to_oxc_formatter_markdown(&self.config, self.validated.core))
-    }
-
-    pub fn toml_options(&self) -> TomlFormatOptions {
-        *self.toml.get_or_init(|| to_oxc_formatter_toml(&self.config, self.validated.core))
-    }
-
-    pub fn htmlish_options(&self, variant: HtmlishVariant) -> HtmlishFormatOptions {
-        let options = self
-            .htmlish
-            .get_or_init(|| to_oxc_formatter_htmlish(&self.config, self.validated.core));
-        HtmlishFormatOptions { variant, ..options.clone() }
-    }
-
-    /// Printer options from the shared resolved core bundle;
-    /// the fence adapter ([`super::jsdoc_fence`]) derives its per-fence options from these
-    /// (width overridden to the fence's effective width).
-    pub fn print_options(&self) -> PrinterOptions {
-        self.validated.core.as_print_options()
-    }
-}
-
-/// Napi-only methods: the [`PrettierOptions`] accessors and the Tailwind predicate.
-#[cfg(feature = "napi")]
-impl ResolvedDispatchConfig {
-    /// Sets the host file path for `filepath` injection into [`Self::prettier_options`];
-    /// chained by [`Self::for_root`].
-    fn with_path(mut self, path: std::path::PathBuf) -> Self {
-        self.prettier.path = path;
-        self
-    }
-
-    /// The single Tailwind predicate, same pattern as
-    /// [`Self::is_embedded_formatting_enabled`]: every sorter-assembly site consults it
-    /// (the sorter is napi-only; the pure build has no JS-side class order source).
-    pub fn is_tailwind_enabled(&self) -> bool {
-        self.config.is_tailwind_enabled()
-    }
-
-    /// [`Self::prettier_options`] for one `language`: its parser, plus the payload of the plugin it needs.
-    /// `None` when that plugin is not enabled (svelte / astro without the config key): the part stays as-is.
-    pub fn prettier_options_for(&self, language: PrettierLanguage) -> Option<serde_json::Value> {
-        if language.missing_plugin(&self.config)
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #28864** (2026-11-05): **fix(linter/vitest/prefer-called-exactly-once-with): preserve neighboring code in autofix**
-  *Symptoms*: The autofix could delete neighboring code on the redundant assertion's line, generate overlapping edits when both assertions shared a line, and leave an empty line with CRLF endings.  Remove the whole line only when the assertion is surrounded by whitespace; otherwise remove just the statement. Handle complete JavaScript line endings and cover nearby code, comments, both matcher orders, and EOF in regression tests.  Fixes #28851 
+- **Issue #29073** (2026-11-08): **docs(mangler): correct naming strategy and pipeline order**
+  *Symptoms*: Describe the fixed frequency-ordered alphabet, reference-frequency-based slot naming, and scope-aware name reuse. Correct the supported preservation options and show compression before identifier mangling in the minifier pipeline.
   **Post-Mortem & Fix Analysis**:
-  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"7b2600c38b6377ec3ad2c41fce2ba63265281365","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  ## Codex Review Summary  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-05T15:26:58.760716Z">2026-11-05T15:26:58.760716Z</relative-time> | `7b2600c` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comment "@codex review" or "@codex security review".  Codex 
-  > ### Merge activity  * **Nov 5, 3:27 PM UTC**: The merge label '0-merge' was detected. This PR will be added to the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc) once it meets the requirements. * **Nov 5, 3:30 PM UTC**: `camc314` added this pull request to the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc). * **Nov 5, 3:39 PM UTC**: Merged by the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc). 
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"622d8059abec3ec19768c175cf22f3fccb37c2d4","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-08T20:48:13.507673Z">2026-11-08T20:48:13.507673Z</relative-time> | `622d805` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comm
+  > ### Merge activity  * **Nov 8, 8:50 PM UTC**: The merge label '0-merge' was detected. This PR will be added to the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc) once it meets the requirements. * **Nov 8, 8:50 PM UTC**: `camc314` added this pull request to the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc). * **Nov 8, 8:54 PM UTC**: Merged by the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc). 
 
-- **Issue #28863** (2026-11-05): **style(lexer): reorder imports**
-  *Symptoms*: Pure refactor - style nit.  Reorder module imports so feature-gated `mod` statements are in their own block, after other `mod`s.
+- **Issue #29072** (2026-11-08): **docs(ecmascript): clarify test locations**
+  *Symptoms*: 
   **Post-Mortem & Fix Analysis**:
-  > * **#28863** <a href="https://app.graphite.com/github/pr/oxc-project/oxc/28863?utm_source=stack-comment-icon" target="_blank"><img src="https://static.graphite.dev/graphite-32x32-black.png" alt="Graphite" width="10px" height="10px"/></a> 👈 <a href="https://app.graphite.com/github/pr/oxc-project/oxc/28863?utm_source=stack-comment-view-in-graphite" target="_blank">(View in Graphite)</a> * `main` <hr />  ## How to use the Graphite Merge Queue  Add either label to this PR to merge it via the merge queue: - <kbd>0-merge</kbd> - adds this PR to the back of the merge queue - <kbd>hotfix</kbd> - for urgent changes, fast-track this PR to the front of the merge queue  You must have a Graphite account in order to use the merge queue. Sign up using [this link](https://app.graphite.com/invite/github/oxc-project?ref=merge-queue-instructions-in-stack-comment&prId=28863).  <h2></h2> <sub>  An organization admin has enabled the [Graphite Merge Queue](https://graphite.dev/docs/graphite-merge-queue) in 
-  > ### Merge activity  * **Nov 5, 3:12 PM UTC**: The merge label '0-merge' was detected. This PR will be added to the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc) once it meets the requirements. * **Nov 5, 3:19 PM UTC**: `overlookmotel` added this pull request to the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc). * **Nov 5, 3:28 PM UTC**: Merged by the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc). 
+  > ## How to use the Graphite Merge Queue  Add either label to this PR to merge it via the merge queue: - <kbd>0-merge</kbd> - adds this PR to the back of the merge queue - <kbd>hotfix</kbd> - for urgent changes, fast-track this PR to the front of the merge queue  You must have a Graphite account in order to use the merge queue. Sign up using [this link](https://app.graphite.com/invite/github/oxc-project?ref=merge-queue-instructions-comment&prId=8815151596).  <h2></h2> <sub>  An organization admin has enabled the [Graphite Merge Queue](https://graphite.dev/docs/graphite-merge-queue) in this repository.  </sub>  <sub>  Please do not merge from GitHub as this will restart CI on PRs being processed by the merge queue.  </sub>
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"4499d4f82c1dbba3d0c3fa1a994e1aa731a57f23","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-08T20:47:58.089941Z">2026-11-08T20:47:58.089941Z</relative-time> | `4499d4f` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comm
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1240,467 +1075,341 @@ impl ResolvedDispatchConfig {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `171ad772` (2026-11-05)
-**Commit Message**: fix(lexer): classify Turbopack magic comments (#28427)
+### Incident Patch 1: `fe66fa77` (2026-11-07)
+**Commit Message**: fix(linter/eslint/no-lone-blocks): report redundant blocks in function bodies (#29043)
 
-Closes #28320
+Report redundant blocks in function bodies even when they have sibling statements or contain multiple statements. Apply the existing lexical-declaration checks and use the nested-block diagnostic consistently with ESLint.
 
-`oxc_lexer` gave Turbopack magic comments such as `/*
-turbopackChunkName: "x" */` `CommentContent::None`, while `oxc_parser`
-classifies them as `CommentContent::Turbopack`.
+Add regressions for declarations, expressions, arrows, methods, async functions, generators, and lexical scopes, including directive-bearing bodies.
 
-This adds the missing case to `classify` in
-`pipeline/carve/comments.rs`, following the parser's `parse_annotation`:
-after leading whitespace, the comment starts with `turbopack`, followed
-by an ASCII uppercase letter. Otherwise it falls back to the `@license`
-/ `@preserve` check, like the other cases. The issue's repro is added as
-the `misc/pass/comment-turbopack.js` fixture (block comments with and
-without spaces, plus a line comment), and `classify` gets a unit test.
+Fixes #28874
 
-Validation:
-
-- `cargo test -p oxc_lexer`: all pass (235 unit, 66 integration), on
-both the host (generic) build and the AVX2 build (`--target
-x86_64-unknown-linux-gnu --config .cargo/lexer-avx2.toml`). With the new
-match arm disabled, the new `turbopack` unit test fails (`left: None,
-right: Turbopack`).
-- Lexer conformance on the new fixture: without the fix it reproduces
-the issue's diff for all 3 comments (`None` vs `Turbopack`); with it,
-`lexer_misc` passes 392/392.
-- `CA
-
-**File**: `crates/oxc_lexer/src/pipeline/carve/comments.rs` (modified, +28/-0)
+**File**: `crates/oxc_linter/src/rules/eslint/no_lone_blocks.rs` (modified, +26/-4)
 ```diff
-@@ -374,6 +374,15 @@ fn classify(bytes: &[u8], is_block: bool, lic: bool, cpu: impl Cpu) -> CommentCo
-             }
-             return if lic { CommentContent::Legal } else { CommentContent::None };
-         }
-+        b't' => {
-+            if bytes[start..].starts_with(b"turbopack")
-+                && start + 9 < bytes.len()
-+                && bytes[start + 9].is_ascii_uppercase()
-+            {
-+                return CommentContent::Turbopack;
-+            }
-+            return if lic { CommentContent::Legal } else { CommentContent::None };
-+        }
-         b'v' | b'c' | b'n' | b'i' => {
-             let rest = &bytes[start..];
-             if rest.starts_with(b"v8 ignore")
-@@ -520,4 +529,23 @@ mod tests {
-             assert_eq!(classify(source, true, false, BASELINE), CommentContent::None);
-         }
-     }
-+
-+    #[test]
-+    fn turbopack() {
-+        for (source, is_block) in [
-+            (b" turbopackChunkName: \"x\" ".as_slice(), true),
-+            (b"turbopackOptional: true".as_slice(), true),
-+            (b"\tturbopackIgnore: true\n".as_slice(), true),
-+            (b" turbopackIgnore: true".as_slice(), false),
-+        ] {
-+            assert_eq!(classify(source, is_block, false, BASELINE), CommentContent::Turbopack);
-+        }
-+
-+        for source in [b" turbopack ".as_slice(), b" turbopack", b" turbopackignore: true"] {
-+            assert_eq!(classify(source, true, false, BASELINE), CommentContent::None);
-+        }
-+
-+        // Without a magic comment, @license or @preserve still makes it legal
-+        assert_eq!(classify(b" turbopack @license ", true, true, BASELINE), CommentContent::Legal);
-+    }
- }
-```
-
-**File**: `tasks/coverage/misc/pass/comment-turbopack.js` (added, +6/-0)
-```diff
-@@ -0,0 +1,6 @@
-+import(/* turbopackChunkName: "x" */ "./a");
-+import(/*turbopackOptional: true*/ "./b");
-+import(
-+  // turbopackIgnore: true
-+  "./c"
-+);
-```
-
-**File**: `tasks/coverage/snapshots/codegen_misc.snap` (modified, +2/-2)
-```diff
-@@ -1,3 +1,3 @@
- codegen_misc Summary:
--AST Parsed     : 133/133 (100.00%)
--Positive Passed: 133/133 (100.00%)
-+AST Parsed     : 134/134 (100.00%)
-+Positive Passed: 134/134 (100.00%)
-```
-
-**File**: `tasks/coverage/snapshots/formatter_misc.snap` (modified, +2/-2)
-```diff
-@@ -1,3 +1,3 @@
- formatter_misc Summary:
--AST Parsed     : 133/133 (100.00%)
--Positive Passed: 133/133 (100.00%)
-+AST Parsed     : 134/134 (100.00%)
-+Positive Passed: 134/134 (100.00%)
-```
-
-**File**: `tasks/coverage/snapshots/lexer_misc.snap` (modified, +2/-2)
-```diff
-@@ -1,3 +1,3 @@
- lexer_misc Summary:
--AST Parsed     : 401/401 (100.00%)
--Positive Passed: 401/401 (100.00%)
-+AST Parsed     : 402/402 (100.00%)
-+Positive Passed: 402/402 (100.00%)
-```
-
-**File**: `tasks/coverage/snapshots/parser_misc.snap` (modified, +2/-2)
-```diff
-@@ -1,6 +1,6 @@
- parser_misc Summary:
--AST Parsed     : 133/133 (100.00%)
--Positive Passed: 133/133 (100.00%)
-+AST Parsed     : 134/134 (100.00%)
-+Positive Passed: 134/134 (100.00%)
- Negative Passed: 270/270 (100.00%)
+@@ -103,7 +103,7 @@ impl Rule for NoLoneBlocks {
  
-   × TS(1275): 'accessor' modifier can only appear on a property declaration.
+         match parent_node.kind() {
+             AstKind::FunctionBody(parent)
+-                if parent.statements.len() == 1 && stmt.body.len() == 1 =>
++                if parent.directives.is_empty() && parent.statements.len() == 1 =>
+             {
+                 report(ctx, node, parent_node);
+             }
+@@ -120,7 +120,7 @@ impl Rule for NoLoneBlocks {
+ 
+ fn report(ctx: &LintContext, node: &AstNode, parent_node: &AstNode) {
+     match parent_node.kind() {
+-        AstKind::BlockStatement(_) | AstKind::StaticBlock(_) => {
++        AstKind::BlockStatement(_) | AstKind::StaticBlock(_) | AstKind::FunctionBody(_) => {
+             ctx.diagnostic(no_nested_lone_blocks_diagnostic(node.span()));
+         }
+         _ => ctx.diagnostic(no_lone_blocks_diagnostic(node.span())),
+@@ -129,7 +129,10 @@ fn report(ctx: &LintContext, node: &AstNode, parent_node: &AstNode) {
+ 
+ fn is_lone_block(node: &AstNode, parent_node: &AstNode) -> bool {
+     match parent_node.kind() {
+-        AstKind::BlockStatement(_) | AstKind::StaticBlock(_) | AstKind::Program(_) => true,
++        AstKind::BlockStatement(_)
++        | AstKind::StaticBlock(_)
++        | AstKind::Program(_)
++        | AstKind::FunctionBody(_) => true,
+         AstKind::SwitchCase(parent_node) => {
+             let consequent = &parent_node.consequent;
+             if consequent.len() != 1 {
+@@ -151,7 +154,6 @@ fn test() {
+         "if (foo) { if (bar) { baz(); } }",
+         "do { bar(); } while (foo)",
+         "function foo() { while (bar) { baz() } }",
+-        "function test() { { console.log(6); console.log(6) } }",
+         "{ let x = 1; }",                      // { "ecmaVersion": 6 },
+         "{ const x = 1; }",                    // { "ecmaVersion": 6 },
+         "'use strict'; { function bar() {} }", // { "ecmaVersion": 6 },
+@@ -222,6 +224,15 @@ fn test() {
+                 // do nothing
+             }
+         ",
++        "function example() { before(); { let value = 1; consume(value); } }",
++        "function example() { { const value = 1; consume(value); } after(); }",
++        "function example() { before(); { class Local {} consume(Local); } }",
++        "function example() { before(); { function local() {} local(); } }",
++        "function example() { before(); { using value = resource(); consume(value); } }",
++        "async function example() { before(); { await using value = resource(); consume(value); } }",
++        "function example() { if (condition) { notify(); } }",
++        "function example() { label: { notify(); } }",
++        r#"function example() { "use strict"; { let value = 1; consume(value); } }"#,
+     ];
+ 
+     let fail = vec![
+@@ -386,6 +397,17 @@ fn test() {
+                 }
+             }
+         ", // { "ecmaVersion": 2022 }
++        "export function example() { before(); { notify(); } }",
++        "function example() { { notify(); } after(); }",
++        "function example() { before(); { var value = 1; notify(value); } after(); }",
++        "function test() { { console.log(6); console.log(6) } }",
++        "const example = function () { before(); { notify(); } };",
++        "const example = () => { before(); { notify(); } };",
++        "class Example { method() { before(); { notify(); } } }",
++        "const example = { method() { before(); { notify(); } } };",
++        "async function example() { before(); { await notify(); } }",
++        "function* example() { before(); { yield value; } }",
++        "function example() { { let value = 1; consume(value); } }",
+     ];
+ 
+     Tester::new(NoLoneBlocks::NAME, NoLoneBlocks::PLUGIN, pass, fail).test_and_snapshot();
 ```
 
-**File**: `tasks/coverage/snapshots/semantic_misc.snap` (modified, +2/-2)
+**File**: `crates/oxc_linter/src/snapshots/eslint_no_lone_blocks.snap` (modified, +85/-8)
 ```diff
-@@ -1,6 +1,6 @@
- semantic_misc Summary:
--AST Parsed     : 133/133 (100.00%)
--Positive Passed: 127/133 (95.49%)
-+AST Parsed     : 134/134 (100.00%)
-+Positive Passed: 128/134 (95.52%)
- semantic Error: tasks/coverage/misc/pass/declare-let-private.ts
- Bindings mismatch:
- after transform: ScopeId(0): ["private"]
-```
-
-**File**: `tasks/coverage/snapshots/transformer_misc.snap` (modified, +2/-2)
-```diff
-@@ -1,3 +1,3 @@
- transformer_misc Summary:
--AST Parsed     : 133/133 (100.00%)
--Positive Passed: 133/133 (100.00%)
-+AST Parsed     : 134/134 (100.00%)
-+Positive Passed: 134/134 (100.00%)
+@@ -23,12 +23,12 @@ source: crates/oxc_linter/src/tester.rs
+    ╰────
+   help: Remove the unnecessary block statement. If you need to limit variable scope, consider using a function or module instead.
+ 
+-  ⚠ eslint(no-lone-blocks): Block is unnecessary.
++  ⚠ eslint(no-lone-blocks): Nested block is redundant.
+    ╭─[no_lone_blocks.tsx:1:19]
+  1 │ function test() { { console.log(6); } }
+    ·                   ───────────────────
+    ╰────
+-  help: Remove the unnecessary block statement. If you need to limit variable scope, consider using a function or module instead.
++  help: Remove the redundant nested block statement.
+ 
+   ⚠ eslint(no-lone-blocks): Nested block is redundant.
+    ╭─[no_lone_blocks.tsx:1:19]
+@@ -52,12 +52,12 @@ source: crates/oxc_linter/src/tester.rs
+    ╰────
+   help: Remove the redundant nested block statement.
+ 
+-  ⚠ eslint(no-lone-blocks): Block is unnecessary.
++  ⚠ eslint(no-lone-blocks): Nested block is redundant.
+    ╭─[no_lone_blocks.tsx:1:25]
+  1 │ function foo() { bar(); {} baz(); }
+    ·                         ──
+    ╰────
+-  help: Remove the unnecessary block statement. If you need to limit variable scope, consider using a function or module instead.
++  help: Remove the redundant nested block statement.
+ 
+   ⚠ eslint(no-lone-blocks): Nested block is redundant.
+    ╭─[no_lone_blocks.tsx:1:15]
+@@ -129,25 +129,25 @@ source: crates/oxc_linter/src/tester.rs
+    ╰────
+   help: Remove the unnecessary block statement. If you need to limit variable scope, consider using a function or module instead.
+ 
+-  ⚠ eslint(no-lone-blocks): Block is unnecessary.
++  ⚠ eslint(no-lone-blocks): Nested block is redundant.
+    ╭─[no_lone_blocks.tsx:3:17]
+  2 │                 function foo () {
+  3 │ ╭─▶                 {
+  4 │ │                       const x = 4;
+  5 │ ╰─▶                 }
+  6 │                 }
+    ╰────
+-  help: Remove the unnecessary block statement. If you need to limit variable scope, consider using a function or module instead.
++  help: Remove the redundant nested block statement.
+ 
+-  ⚠ eslint(no-lone-blocks): Block is unnecessary.
++  ⚠ eslint(no-lone-blocks): Nested block is redundant.
+    ╭─[no_lone_blocks.tsx:3:17]
+  2 │                 function foo () {
+  3 │ ╭─▶                 {
+  4 │ │                       var x = 4;
+  5 │ ╰─▶                 }
+  6 │                 }
+    ╰────
+-  help: Remove the unnecessary block statement. If you need to limit variable scope, consider using a function or module instead.
++  help: Remove the redundant nested block statement.
+ 
+   ⚠ eslint(no-lone-blocks): Nested block is redundant.
+    ╭─[no_lone_blocks.tsx:5:25]
+@@ -258,3 +258,80 @@ source: crates/oxc_linter/src/tester.rs
+  8 │                     }
+    ╰────
+   help: Remove the redundant nested block statement.
++
++  ⚠ eslint(no-lone-blocks): Nested block is redundant.
++   ╭─[no_lone_blocks.tsx:1:39]
++ 1 │ export function example() { before(); { notify(); } }
++   ·                                       ─────────────
++   ╰────
++  help: Remove the redundant nested block statement.
++
++  ⚠ eslint(no-lone-blocks): Nested block is redundant.
++   ╭─[no_lone_blocks.tsx:1:22]
++ 1 │ function example() { { notify(); } after(); }
++   ·                      ─────────────
++   ╰────
++  help: Remove the redundant nested block statement.
++
++  ⚠ eslint(no-lone-blocks): Nested block is redundant.
++   ╭─[no_lone_blocks.tsx:1:32]
++ 1 │ function example() { before(); { var value = 1; notify(value); } after(); }
++   ·                                ─────────────────────────────────
++   ╰────
++  help: Remove the redundant nested block statement.
++
++  ⚠ eslint(no-lone-blocks): Nested block is redundant.
++   ╭─[no_lone_blocks.tsx:1:19]
++ 1 │ function test() { { console.log(6); console.log(6) } }
++   ·                   ──────────────────────────────────
++   ╰────
++  help: Remove the redundant nested block statement.
++
++  ⚠ eslint(no-lone-blocks): Nested block is redundant.
++   ╭─[no_lone_blocks.tsx:1:41]
++ 1 │ const example = function () { before(); { notify(); } };
++   ·                                         ─────────────
++   ╰────
++  help: Remove the redundant nested block statement.
++
++  ⚠ eslint(no-lone-blocks): Nested block is redundant.
++   ╭─[no_lone_blocks.tsx:1:35]
++ 1 │ const example = () => { before(); { notify(); } };
++   ·                                   ─────────────
++   ╰────
++  help: Remove the redundant nested block statement.
++
++  ⚠ eslint(no-lone-blocks): Nested block is redundant.
++   ╭─[no_lone_blocks.tsx:1:38]
++ 1 │ class Example { method() { before(); { notify(); } } }
++   ·                                      ─────────────
++   ╰────
++  help: Remove the redundant nested block statement.
++
++  ⚠ eslint(no-lone-blocks): Nested block is redundant.
++   ╭─[no_lone_blocks.tsx:1:40]
++ 1 │ const example = { method() { before(); { notify(); } } };
++   ·                                        ─────────────
++   ╰────
++  help: Remove the redundant nested block statement.
++
++  ⚠ eslint(no-lone-blo
 ```
 
 ---
 
-### Incident Patch 2: `838d3393` (2026-11-05)
-**Commit Message**: fix(linter/vitest/prefer-called-exactly-once-with): avoid panic on non-ASCII text (#28850)
+### Incident Patch 2: `6448a543` (2026-11-08)
+**Commit Message**: docs(napi/parser): correct parser options and usage guidance (#29065)
 
-Fixes #28849
+Correct the documented `lang` and `sourceType` options, defaults, and precedence. Document the default parenthesized AST nodes and clarify that async parsing still deserializes the AST on the calling thread, with worker threads recommended for parallel parsing.
 
-`get_source_code_line_span` sliced the source text at every byte offset
-back to the line start, and at `statement_span.end + 1`. If a multi-byte
-character was in either place, the rule panicked, also without `--fix`.
-
-This PR finds the line start with `rfind('\n')`, and extends the end by
-the `len_utf8()` of the next char. For ASCII text, the span does not
-change.
-
-Added two fail cases and two fix cases. Each case panics without this
-change.
-
-I used AI assistance (Claude Code) to write this change. I reviewed the
-code and ran the tests.
-
----------
-
-Co-authored-by: Cameron <[REDACTED_EMAIL]>
-
-**File**: `crates/oxc_linter/src/rules/vitest/prefer_called_exactly_once_with.rs` (modified, +19/-6)
+**File**: `napi/parser/README.md` (modified, +8/-4)
 ```diff
-@@ -427,14 +427,15 @@ fn is_mock_reset_call_expression(call_expr: &CallExpression<'_>) -> bool {
-  */
- #[expect(clippy::cast_possible_truncation)]
- fn get_source_code_line_span(statement_span: Span, ctx: &LintContext<'_>) -> Span {
--    let line_end = std::cmp::min(statement_span.end + 1, ctx.source_text().len() as u32);
-+    let source_text = ctx.source_text();
-+    let start = statement_span.start as usize;
-+    let end = statement_span.end as usize;
+@@ -26,6 +26,8 @@ The only differences between Oxc's AST and ESTree / TS-ESTree are:
+   with `'source'` in the `phase` field (as in ESTree spec), where TS-ESLint represents it
+   as a `CallExpression` with `MetaProperty` as its `callee`.
+ - Addition of a non-standard `hashbang` field to `Program`.
++- Non-standard `ParenthesizedExpression` and `TSParenthesizedType` nodes when
++  `preserveParens` is enabled (the default). Set `preserveParens: false` to omit them.
  
--    let column_0_span_index = (0..statement_span.start)
--        .rev()
--        .find(|&index| ctx.source_range(Span::new(index, line_end)).starts_with('\n'))
--        .map_or(statement_span.start, |index| index + 1);
-+    let line_end = source_text[end..].chars().next().map_or(end, |c| end + c.len_utf8());
+ That aside, the AST should completely align with Acorn's ESTree AST or TS-ESLint's TS-ESTree.
+ Any deviation would be considered a bug.
+@@ -85,7 +87,7 @@ Does not produce any errors when `showSemanticErrors` is `false`, which is the d
  
--    Span::new(column_0_span_index, line_end)
-+    let column_0_span_index = source_text[..start].rfind('\n').map_or(start, |index| index + 1);
-+
-+    Span::new(column_0_span_index as u32, line_end as u32)
- }
+ Fast mode is best suited for parser plugins, where other parts of your build pipeline has already checked for errors.
  
- fn get_callback_body<'a>(callback: &'a Expression<'a>) -> Option<&'a FunctionBody<'a>> {
-@@ -571,6 +572,8 @@ fn test() {
- 			      expect(x).toHaveBeenCalledWith<[string]>('hoge');
- 			      ",
-         "expect(x).toHaveBeenCalledOnce();\nexpect(x).toHaveBeenCalledWith('hoge');",
-+        r#"expect(x).toHaveBeenCalledWith("🍣"); expect(x).toHaveBeenCalledOnce();"#,
-+        "expect(x).toHaveBeenCalledWith(1);\nexpect(x).toHaveBeenCalledOnce();\u{a0}",
-     ];
+-Please note that turning off fast mode ​incurs​ a small performance overhead.
++Please note that turning off fast mode incurs a small performance overhead.
  
-     let fix = vec![
-@@ -742,6 +745,16 @@ fn test() {
- 			      ",
+ ### Returns ESM information.
+ 
+@@ -129,7 +131,9 @@ parseSync(filename: string, sourceText: string, options?: ParserOptions): ParseR
+ parse(filename: string, sourceText: string, options?: ParserOptions): Promise<ParseResult>
+ ```
+ 
+-Use `parseSync` for synchronous parsing. Use `parse` for asynchronous parsing, which can be beneficial in I/O-bound or concurrent scenarios, though it adds async overhead.
++Prefer `parseSync` for most workloads. `parse` moves Rust parsing to a worker-pool thread,
++but AST deserialization still runs synchronously on the calling thread and usually accounts
++for most of the work. To parse multiple files in parallel, use `parseSync` in worker threads.
+ 
+ ### Example
+ 
+@@ -178,8 +182,8 @@ console.log(visitations);
+ 
+ All options are optional.
+ 
+-- `lang`: `'js'` | `'jsx'` | `'ts'` | `'tsx'`. Set language of source. If omitted, language is deduced from file extension.
+-- `sourceType`: `'script'` | `'module'` | `'unambiguous'`. Set source type. Defaults to `'module'`.
++- `lang`: `'js'` | `'jsx'` | `'ts'` | `'tsx'` | `'dts'`. Set language of source. If omitted, language is deduced from file extension.
++- `sourceType`: `'script'` | `'module'` | `'commonjs'` | `'unambiguous'`. Override the module kind. When both `sourceType` and `lang` are omitted, `.mjs` / `.mts` use module mode, `.cjs` / `.cts` use CommonJS mode, and `.js` / `.jsx` / `.ts` / `.tsx` use unambiguous mode. An explicit `lang` uses unambiguous mode, except `'dts'`, which uses module mode. An explicit `sourceType` takes precedence.
+ - `astType`: `'js'` | `'ts'`. Set to `'ts'` if you want ASTs of plain JS/JSX files to contain TypeScript-specific properties.
+ - `range`: `true` | `false`. If `true`, AST nodes contain a `range` field. Defaults to `false`.
+ - `preserveParens`: `true` | `false`. If `true`, parenthesized expressions are represented by (non-standard) `ParenthesizedExpression` and `TSParenthesizedType` AST nodes. Defaults to `true`.
+```
+
+---
+
+### Incident Patch 3: `e1694bdc` (2026-11-07)
+**Commit Message**: fix(linter/unicorn/no-useless-undefined): preserve shadowed bindings (#29046)
+
+Require references to the global `undefined` before reporting or removing them, including trailing call arguments. Local bindings named `undefined` can hold values, so removing them changes runtime behavior. Adds regression coverage for local declarations, parameters, returns, yields, arrow bodies, defaults, and calls.
+
+Fixes #28987
+
+**File**: `crates/oxc_linter/src/rules/unicorn/no_useless_undefined.rs` (modified, +18/-3)
+```diff
+@@ -220,7 +220,10 @@ impl Rule for NoUselessUndefined {
+                     fixer.replace(conditional.span, replacement)
+                 });
+             }
+-            AstKind::IdentifierReference(undefined_literal) if undefined_literal.is_undefined() => {
++            AstKind::IdentifierReference(undefined_literal)
++                if undefined_literal.is_undefined()
++                    && ctx.is_reference_to_global_variable(undefined_literal) =>
++            {
+                 let Some(parent_node) = outermost_paren_parent(node, ctx) else {
+                     return;
+                 };
+@@ -356,11 +359,15 @@ impl Rule for NoUselessUndefined {
+                     return;
+                 }
+ 
++                let is_global_undefined = |expression: &Expression| {
++                    matches!(expression, Expression::Identifier(ident)
++                        if ident.is_undefined() && ctx.is_reference_to_global_variable(ident))
++                };
+                 let arguments = &call_expr.arguments;
+                 if !arguments
+                     .last()
+                     .and_then(Argument::as_expression)
+-                    .is_some_and(Expression::is_undefined)
++                    .is_some_and(is_global_undefined)
+                 {
+                     return;
+                 }
+@@ -376,7 +383,7 @@ impl Rule for NoUselessUndefined {
+                 let mut undefined_args_spans = Vec::new();
+                 for i in (0..arguments.len()).rev() {
+                     let arg = &arguments[i];
+-                    if arg.as_expression().is_some_and(Expression::is_undefined) {
++                    if arg.as_expression().is_some_and(is_global_undefined) {
+                         let span = arg.span();
+                         undefined_args_spans.push(span);
+                     } else {
+@@ -835,6 +842,14 @@ fn test() {
+             "function getBackLinks(subject: string, limit = 16, cursor?: string, reverse = false, ttl: number | undefined = undefined) {}",
              None,
          ),
-+        (
-+            "expect(x).toHaveBeenCalledWith(1);\n\u{a0}expect(x).toHaveBeenCalledOnce();",
-+            "expect(x).toHaveBeenCalledExactlyOnceWith(1);\n",
-+            None,
-+        ),
-+        (
-+            "expect(x).toHaveBeenCalledWith(1);\nexpect(x).toHaveBeenCalledOnce();\u{a0}",
-+            "expect(x).toHaveBeenCalledExactlyOnceWith(1);\n",
-+            None,
-+        ),
++        ("function a() { const undefined = 1; let x = undefined; return x; }", None),
++        ("function b(undefined) { { let y = undefined; return y; } }", None),
++        ("function c(undefined) { return undefined; }", None),
++        ("function d(undefined, f) { return f(undefined, undefined); }", None),
++        ("function* e(undefined) { yield undefined; }", None),
++        ("function g(undefined, h = undefined) { return h; }", None),
++        ("const arrow = (undefined) => undefined;", None),
++        ("function defaults(undefined) { const {x = undefined} = {}; }", None),
      ];
-     Tester::new(PreferCalledExactlyOnceWith::NAME, PreferCalledExactlyOnceWith::PLUGIN, pass, fail)
-         .with_vitest_plugin(true)
-```
-
-**File**: `crates/oxc_linter/src/snapshots/vitest_prefer_called_exactly_once_with.snap` (modified, +20/-0)
-```diff
-@@ -231,3 +231,23 @@ source: crates/oxc_linter/src/tester.rs
-    ·                    ╰── Remove this expect
-    ╰────
-   help: Replace with `toHaveBeenCalledExactlyOnceWith` and remove redundant expect
-+
-+  ⚠ vitest(prefer-called-exactly-once-with): Prefer `toHaveBeenCalledExactlyOnceWith` over `toHaveBeenCalledOnce` and `toHaveBeenCalledWith` on the same target.
-+   ╭─[prefer_called_exactly_once_with.tsx:1:1]
-+ 1 │ expect(x).toHaveBeenCalledWith("🍣"); expect(x).toHaveBeenCalledOnce();
-+   · ──────────────────┬─────────────────  ────────────────┬────────────────
-+   ·                   │                                   ╰── Remove this expect
-+   ·                   ╰── Replace with `toHaveBeenCalledExactlyOnceWith`
-+   ╰────
-+  help: Replace with `toHaveBeenCalledExactlyOnceWith` and remove redundant expect
-+
-+  ⚠ vitest(prefer-called-exactly-once-with): Prefer `toHaveBeenCalledExactlyOnceWith` over `toHaveBeenCalledOnce` and `toHaveBeenCalledWith` on the same target.
-+   ╭─[prefer_called_exactly_once_with.tsx:1:1]
-+ 1 │ expect(x).toHaveBeenCalledWith(1);
-+   · ────────────────┬────────────────
-+   ·                 ╰── Replace with `toHaveBeenCalledExactlyOnceWith`
-+ 2 │ expect(x).toHaveBeenCalledOnce(); 
-+   · ─────────────────┬────────────────
-+   ·                  ╰── Remove this expect
-+   ╰────
-+  help: Replace with `toHaveBeenCalledExactlyOnceWith` and remove redundant expect
-```
-
----
-
-### Incident Patch 3: `ebfd40ad` (2026-11-05)
-**Commit Message**: fix(formatter): sort Tailwind calls printed as member chains (#28800)
-
-Stacked on #28798.
-
-## What was wrong
-
-With `sortTailwindcss` on, a Tailwind call with a member callee was not
-sorted when printed as a `MemberChain`:
-
-```js
-// experimentalTailwindcss: { functions: ["cn", "tw"] }
-
-// Input
-tw.style("p-4  flex");
-cn.a("p-4  flex").b("m-2  block").c();
-
-// Before
-tw.style("p-4  flex");
-cn.a("p-4  flex").b("m-2  block").c();
-
-// After
-tw.style("flex p-4");
-cn.a("flex p-4").b("m-2 block").c();
-```
-
-Cause: only the non-`MemberChain` branch of `CallExpression::write`
-pushed the Tailwind context.
-Inside JSX `className` they were sorted by the attribute's context, so
-the existing tests didn't catch it.
-
-## What changed
-
-- The push moves to the call arguments printer (`impl Format for
-AstNode<ArenaVec<Argument>>`),
-  which both `CallExpression` and `MemberChain` go through
-- The call's own context covers only its arguments, so `cn.foo["a
-b"](...)` keeps `"a b"`, like the plugin
-    (an outer context still covers the callee, as the plugin does)
-- `CallExpression::write` only hides the context for a nested
-non-Tailwind call
-- `AGENTS.md` notes the known limitation below
-
-## Not covered he
-
-**File**: `apps/oxfmt/test/api/sort_tailwindcss.test.ts` (modified, +26/-0)
-```diff
-@@ -229,6 +229,32 @@ const A = (
-     expect(result.errors).toStrictEqual([]);
-   });
  
-+  it("should sort classes in calls printed as member chains", async () => {
-+    // Outside JSX, since a `className` context would sort them anyway
-+    const input = `const a = tw.style("p-4  flex");
-+const b = cn.a("p-4  flex").b("m-2  block").c();
-+const c = cn.foo["a  b"]("x  y");
-+const d = cn(x.y("a  b"), cn.x("p-4  flex"));
-+`;
-+    const options = { experimentalTailwindcss: { functions: ["cn", "tw"] } };
-+
-+    const result = await format("test.ts", input, options);
-+
-+    // Like the plugin, only the arguments are sorted, not the computed key `["a  b"]`
-+    expect(result.code).toMatchInlineSnapshot(`
-+      "const a = tw.style("flex p-4");
-+      const b = cn.a("flex p-4").b("m-2 block").c();
-+      const c = cn.foo["a  b"]("x y");
-+      const d = cn(x.y("a  b"), cn.x("flex p-4"));
-+      "
-+    `);
-+    expect(result.errors).toStrictEqual([]);
-+
-+    // Formatting the output again should not change it.
-+    const second = await format("test.ts", result.code, options);
-+    expect(second.code).toBe(result.code);
-+  });
-+
-   it("should preserve whitespace when preserveWhitespace is true", async () => {
-     // Input with leading/trailing whitespace in class string
-     const input = `const A = <div className="  p-4 flex  ">Hello</div>;`;
-```
-
-**File**: `crates/oxc_formatter/AGENTS.md` (modified, +3/-0)
-```diff
-@@ -60,6 +60,9 @@ After changing AST shapes or the generators, regenerate with `just ast`, never h
- - Covered by the Oxfmt API tests (`apps/oxfmt/test/api/sort_tailwindcss.test.ts`), since only the host sorts
- - Deliberately unlike the plugin, nothing in the arguments of a nested non-Tailwind call is sorted
-   (tailwindlabs/prettier-plugin-tailwindcss#426): `cn(x.includes("a  b"))` keeps `"a  b"`, which the plugin rewrites
-+- Known limitation, left since the triggers are rare and a fix would thread Tailwind state through `SimpleArgument`:
-+  a multiline template collapsed by sorting is still judged by its source line breaks in some layouts,
-+  so a Tailwind call with one inside a member chain can take a second pass to settle
- 
- ### Embedded language formatting
- 
-```
-
-**File**: `crates/oxc_formatter/src/print/call_like_expression/arguments.rs` (modified, +21/-1)
-```diff
-@@ -30,13 +30,33 @@ use crate::{
-     utils::{
-         call_expression::is_test_call_expression,
-         expression::as_call_expression_without_chain_wrappers, is_long_curried_call,
--        member_chain::simple_argument::SimpleArgument, typecast::is_cast_target,
-+        member_chain::simple_argument::SimpleArgument, tailwindcss::tailwind_context_for_callee,
-+        typecast::is_cast_target,
-     },
-     write,
- };
- 
- impl<'a> Format<'a, JsFormatContext<'a>> for AstNode<'_, 'a, ArenaVec<'a, Argument<'a>>> {
-     fn fmt(&self, f: &mut JsFormatter<'_, 'a>) {
-+        // Pushed here, so this call's context covers only its arguments, not its callee (e.g. `cn.foo["a  b"](...)`),
-+        // for both a call and the calls a `MemberChain` prints
-+        // (an outer context still covers the callee, as the plugin does)
-+        let tailwind_ctx = match self.parent() {
-+            AstNodes::CallExpression(call) => tailwind_context_for_callee(&call.callee, f),
-+            _ => None,
-+        };
-+        if let Some(ctx) = tailwind_ctx {
-+            f.context_mut().push_tailwind_context(ctx);
-+        }
-+        self.write_arguments(f);
-+        if tailwind_ctx.is_some() {
-+            f.context_mut().pop_tailwind_context();
-+        }
-+    }
-+}
-+
-+impl<'a> AstNode<'_, 'a, ArenaVec<'a, Argument<'a>>> {
-+    fn write_arguments(&self, f: &mut JsFormatter<'_, 'a>) {
-         let l_paren_token = "(";
-         let r_paren_token = ")";
- 
-```
-
-**File**: `crates/oxc_formatter/src/print/call_like_expression/mod.rs` (modified, +6/-18)
-```diff
-@@ -23,20 +23,19 @@ impl<'a> FormatWrite<'a> for AstNode<'_, 'a, CallExpression<'a>> {
-         let type_arguments = self.type_arguments();
-         let arguments = self.arguments();
- 
--        // Check if this is a Tailwind function call (e.g., clsx, cn, tw)
--        let tailwind_ctx_to_push = tailwind_context_for_callee(&self.callee, f);
--
-         // For nested non-Tailwind calls inside a Tailwind context, hide the context
-         // to prevent sorting strings and templates inside the nested call's arguments.
-         // (e.g., `classNames("a", x.includes("\n") ? "b" : "c")` - don't sort "\n")
--        let hides_tailwind_ctx =
--            tailwind_ctx_to_push.is_none() && f.context().tailwind_context().is_some();
-+        // A Tailwind call pushes its own context, around its arguments only
-+        let hides_tailwind_ctx = f.context().tailwind_context().is_some()
-+            && tailwind_context_for_callee(&self.callee, f).is_none();
-         if hides_tailwind_ctx {
-             f.context_mut().hide_tailwind_context();
-         }
- 
--        // NOTE: Decided before this call pushes its Tailwind context, and `MemberChain` pushes none,
--        // so a Tailwind call with a multiline template takes the branch below, which sorts it
-+        // NOTE: Read before the arguments push the Tailwind context,
-+        // so a Tailwind call with a multiline template it collapses stays out of `MemberChain`,
-+        // which would break the chain on the template's line breaks in the source
-         if callee.is_member_expression()
-             && !is_verbatim_multiline_template_sole_arg(arguments.as_slice(), Some(self), f)
-             && !is_simple_module_import(&self.arguments(), f.comments())
-@@ -53,18 +52,7 @@ impl<'a> FormatWrite<'a> for AstNode<'_, 'a, CallExpression<'a>> {
-                         type_arguments
-                     ]
-                 );
--
--                // If this IS a Tailwind function call, push the Tailwind context before formatting arguments
--                if let Some(ctx) = tailwind_ctx_to_push {
--                    f.context_mut().push_tailwind_context(ctx);
--                }
--
-                 write!(f, arguments);
--
--                // Pop Tailwind context after formatting
--                if tailwind_ctx_to_push.is_some() {
--                    f.context_mut().pop_tailwind_context();
--                }
-             });
-             if matches!(callee.as_ref(), Expression::CallExpression(_)) {
-                 write!(f, [group(&format_inner)]);
-```
-
-**File**: `crates/oxc_formatter/src/utils/assignment_like.rs` (modified, +0/-1)
-```diff
-@@ -1249,7 +1249,6 @@ fn is_short_argument(
-     f: &JsFormatter,
- ) -> bool {
-     // Decided by `callee` alone: a Tailwind one pushes its context, a non-Tailwind one hides an outer one
--    // (except for a call printed as a `MemberChain`, which pushes none)
-     let collapses_tailwind_whitespace =
-         || tailwind_context_for_callee(callee, f).is_some_and(|ctx| !ctx.preserve_whitespace);
- 
+     let fail = vec![
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #28864** (2026-11-05): fix(linter/vitest/prefer-called-exactly-once-with): preserve neighboring code in autofix (@camc314)
-- **PR #28863** (2026-11-05): style(lexer): reorder imports (@overlookmotel)
-- **PR #28857** (closed): fix(linter): preserve unrelated code in Vitest autofix (@sainimal1ba-hue)
-- **PR #28856** (2026-11-05): style(lexer): apply consistent attribute order (@overlookmotel)
-- **PR #28854** (2026-11-05): refactor(lexer): derive `Eq` on `Diagnostic` and `StringSpan` (@overlookmotel)
-- **PR #28853** (2026-11-05): docs(lexer): add README to `oxc_lexer_macros` crate (@overlookmotel)
+- **PR #29073** (2026-11-08): docs(mangler): correct naming strategy and pipeline order (@camc314)
+- **PR #29072** (2026-11-08): docs(ecmascript): clarify test locations (@camc314)
+- **PR #29070** (2026-11-08): docs(ast): clarify which AST nodes use arena allocation (@camc314)
+- **PR #29069** (2026-11-08): chore(deps): update dependency playwright to v1.65.0 (@renovate[bot])
+- **PR #29068** (2026-11-08): docs(oxc): correct README APIs and feature requirements (@camc314)
+- **PR #29066** (2026-11-08): docs(allocator): clarify arena storage and memory reclamation (@camc314)
 
 ---
 
@@ -1720,55 +1429,48 @@ non-Tailwind call
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. lexer): classify Turbopack magic comments (#28427)
+## X. linter/eslint/no-lone-blocks): report redundant blocks in function bodies (#2904
 
 **RULE**:
-When implementing operations in `crates/oxc_lexer/src/pipeline/carve/comments.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oxc-project/oxc. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/oxc_linter/src/rules/eslint/no_lone_blocks.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oxc-project/oxc. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `171ad772`: lexer): classify Turbopack magic comments (#28427). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fe66fa77`: linter/eslint/no-lone-blocks): report redundant blocks in function bodies (#29043). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/oxc_lexer/src/pipeline/carve/comments.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/oxc_linter/src/rules/eslint/no_lone_blocks.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        b't' => {
-            if bytes[start..].starts_with(b"turbopack")
-                && start + 9 < bytes.len()
-                && bytes[start + 9].is_ascii_uppercase()
-            {
-                return CommentContent::Turbopack;
-            }
-            return if lic { CommentContent::Legal } else { CommentContent::None };
-        }
-
-    #[test]
-    fn turbopack() {
-        for (source, is_block) in [
-            (b" turbopackChunkName: \"x\" ".as_slice(), true),
-            (b"turbopackOptional: true".as_slice(), true),
-            (b"\tturbopackIgnore: true\n".as_slice(), true),
-            (b" turbopackIgnore: true".as_slice(), false),
-        ] {
-            assert_eq!(classify(source, is_block, false, BASELINE), CommentContent::Turbopack);
-        }
-
-        for source in [b" turbopack ".as_slice(), b" turbopack", b" turbopackignore: true"] {
-            assert_eq!(classify(source, true, false, BASELINE), CommentContent::None);
-        }
-
-        // Without a magic comment, @license or @preserve still makes it legal
-        assert_eq!(classify(b" turbopack @license ", true, true, BASELINE), CommentContent::Legal);
-    }
+                if parent.directives.is_empty() && parent.statements.len() == 1 =>
+        AstKind::BlockStatement(_) | AstKind::StaticBlock(_) | AstKind::FunctionBody(_) => {
+        AstKind::BlockStatement(_)
+        | AstKind::StaticBlock(_)
+        | AstKind::Program(_)
+        | AstKind::FunctionBody(_) => true,
+        "function example() { before(); { let value = 1; consume(value); } }",
+        "function example() { { const value = 1; consume(value); } after(); }",
+        "function example() { before(); { class Local {} consume(Local); } }",
+        "function example() { before(); { function local() {} local(); } }",
+        "function example() { before(); { using value = resource(); consume(value); } }",
+        "async function example() { before(); { await using value = resource(); consume(value); } }",
+        "function example() { if (condition) { notify(); } }",
+        "function example() { label: { notify(); } }",
+        r#"function example() { "use strict"; { let value = 1; consume(value); } }"#,
+        "export function example() { before(); { notify(); } }",
+        "function example() { { notify(); } after(); }",
+        "function example() { before(); { var va
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+                if parent.statements.len() == 1 && stmt.body.len() == 1 =>
+        AstKind::BlockStatement(_) | AstKind::StaticBlock(_) => {
+        AstKind::BlockStatement(_) | AstKind::StaticBlock(_) | AstKind::Program(_) => true,
+        "function test() { { console.log(6); console.log(6) } }",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `171ad772` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fe66fa77` are properly handled with clean fallback behavior.

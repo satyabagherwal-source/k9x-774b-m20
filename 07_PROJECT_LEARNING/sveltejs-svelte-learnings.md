@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sveltejs-svelte-learnings.md`  
 > **Source**: github ([https://github.com/sveltejs/svelte](https://github.com/sveltejs/svelte))  
-> **Source Version**: `628098d2`  
+> **Source Version**: `7775f73b`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T02:12:02.652Z  
+> **Timestamp**: 2026-11-07T20:02:03.798Z  
 > **Learning ID**: `learn-github-sveltejs-svelte`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sveltejs-svelte-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sveltejs/svelte](https://github.com/sveltejs/svelte))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T02:12:01.078Z  
+> **Harvest Timestamp**: 2026-11-07T20:02:02.496Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: web development for the rest of us
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 88552 stars
+- **Stars / Engagement**: 88660 stars
 
 ---
 
@@ -2009,580 +2009,132 @@ export function is_whitespace(cc) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ec8f4ee8` (2026-11-02)
-**Commit Message**: fix: preserve effect tree order across batch traversals (#19132)
+### Incident Patch 1: `7775f73b` (2026-11-04)
+**Commit Message**: fix: remove all of the server-rendered content when hydrating a different branch that contains a failed boundary (#19166)
 
-Fixes https://github.com/sveltejs/svelte/issues/19131
+When hydration has to throw away server-rendered content, for example
+because an `{#if}` takes a different branch on the client, Svelte walks
+forward to the end of that block. It didn't treat the opening comment of
+a boundary whose `failed` snippet was rendered on the server as a nested
+block, so it stopped at that boundary's closing comment instead of the
+real end.
 
-Replacing Svelte Flow's nodes from an effect in the flush that delivers
-their first measurement can leave them permanently hidden. This is an
-effect-ordering regression, rather than a failure to invalidate
-dependencies.
+```svelte
+{#if show}
+	<svelte:boundary>
+		<Child />
+		{#snippet failed()}<p>failed</p>{/snippet}
+	</svelte:boundary>
+	<p>after</p>
+{:else}
+	<p>else</p>
+{/if}
+```
 
-[#18508](https://github.com/sveltejs/svelte/pull/18508) deferred
-ancestor marking until traversal so concurrent batches cannot interfere
-through shared branch markers. That isolation is still needed. However,
-its drain loop concatenates effects collected by successive traversals:
-an each block can schedule a child under a clean branch, while a later
-sibling is collected immediately. The next traversal appends the earlier
-child after that sibling.
+With `show` true on the server and false on the client, the stale
+`<p>after</p>` stayed on the page next to `<p>else</p>`, and unmounting
+left nodes behind. Now the whole server-rendered branch is removed.
 
-In Svelte Flow, this lets Relayout replace the measured nodes before
-NodeWrapper's initialization derived observes the measured state. The
-intermediate true value is lost to its cache, so the observation effect
-never sees the transition that would make it observe the node again.
+### Before submitting the PR, please make sure you do the following
 
-When another traversal is needed, this change requeues already-collected
-effects and recollects them together with the newly 
+- [ ] It's really useful if your PR references an issue where it is
+discussed ahead of time. In many cases, features are absent for a
+reason. For large changes, please create an RFC:
+https://github.com/sveltejs/rfcs
+- [x] Prefix your PR title with `feat:`, `fix:`, `ch
 
-**File**: `.changeset/tidy-effects-measure.md` (added, +5/-0)
+**File**: `.changeset/skip-failed-boundaries.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
 +'svelte': patch
 +---
 +
-+fix: preserve effect tree order across batch traversal passes
++fix: remove all of the server-rendered content when hydrating a different branch that contains a failed boundary
 ```
 
-**File**: `packages/svelte/src/internal/client/reactivity/batch.js` (modified, +10/-0)
+**File**: `packages/svelte/src/internal/client/dom/hydration.js` (modified, +4/-1)
 ```diff
-@@ -368,6 +368,16 @@ export class Batch {
- 					throw e;
- 				}
- 			}
-+
-+			if (this.#scheduled.length > 0) {
-+				// A later traversal may discover effects before ones we already collected.
-+				// Recollect them together so they are flushed in tree order, rather than
-+				// appending earlier effects after their later siblings.
-+				for (const effect of render_effects) this.#scheduled.push(effect);
-+				for (const effect of effects) this.#scheduled.push(effect);
-+				render_effects.length = 0;
-+				effects.length = 0;
-+			}
- 		}
- 
- 		// any writes should take effect in a subsequent batch
+@@ -5,7 +5,8 @@ import {
+ 	HYDRATION_END,
+ 	HYDRATION_ERROR,
+ 	HYDRATION_START,
+-	HYDRATION_START_ELSE
++	HYDRATION_START_ELSE,
++	HYDRATION_START_FAILED
+ } from '../../../constants.js';
+ import * as w from '../warnings.js';
+ import { get_next_sibling } from './operations.js';
+@@ -98,6 +99,8 @@ export function skip_nodes(remove = true) {
+ 			} else if (
+ 				data === HYDRATION_START ||
+ 				data === HYDRATION_START_ELSE ||
++				// "[?" followed by the serialized error, for failed boundaries
++				data.startsWith(HYDRATION_START_FAILED) ||
+ 				// "[1", "[2", etc. for if blocks
+ 				(data[0] === '[' && !isNaN(Number(data.slice(1))))
+ 			) {
 ```
 
-**File**: `packages/svelte/tests/signals/test.ts` (modified, +41/-0)
+**File**: `packages/svelte/tests/runtime-runes/samples/error-boundary-hydrate-skip/_config.js` (added, +13/-0)
 ```diff
-@@ -4,6 +4,7 @@ import * as $ from '../../src/internal/client/runtime';
- import { push, pop } from '../../src/internal/client/context';
- import {
- 	block,
-+	branch,
- 	effect,
- 	effect_root,
- 	render_effect,
-@@ -64,6 +65,46 @@ test.skip = (text: string, fn: (runes: boolean) => any) => {
- };
- 
- describe('signals', () => {
-+	for (const render of [false, true]) {
-+		test(`${render ? 'render' : 'user'} effects scheduled during traversal retain tree order`, () => {
-+			if (render) enable_async_mode_flag();
-+			const create = render ? render_effect : effect;
-+			const value = state(0);
-+			const item = source(0);
-+			const log: string[] = [];
-+			let first = true;
-+
-+			// Model an each block updating the source of an existing item.
-+			block(() => {
-+				internal_set(item, $.get(value));
-+				if (first) {
-+					first = false;
-+					branch(() => {
-+						create(() => {
-+							log.push(`child:${$.get(item)}`);
-+						});
-+					});
-+				}
-+			});
-+
-+			create(() => {
-+				log.push(`sibling:${$.get(value)}`);
-+			});
-+
-+			return () => {
-+				try {
-+					flushSync();
-+					assert.deepEqual(log, ['child:0', 'sibling:0']);
-+					log.length = 0;
-+					flushSync(() => set(value, 1));
-+					assert.deepEqual(log, ['child:1', 'sibling:1']);
-+				} finally {
-+					if (render) disable_async_mode_flag();
-+				}
-+			};
-+		});
-+	}
-+
- 	test('effect with state and derived in it', () => {
- 		const log: string[] = [];
- 
-```
-
----
-
-### Incident Patch 2: `bd8c52ec` (2026-11-02)
-**Commit Message**: fix: don't leak reactive context past nested awaits in production (#19134)
-
-#18694 is meant to pickle every await that runs after a pickled one,
-including at the end, so the context doesn't leak past them. Previously,
-the analyzer decides this before visiting the await's argument. In a
-case like `await f(await g())`, the outer await is visited first:
-nothing is pickled yet and it's the last evaluated expression, so it's
-left as a plain await. Only then is the inner await visited and pickled,
-although it runs before the outer one suspends. (Dev builds hide this,
-because there the outer await goes through track_reactivity_loss, which
-also resets the context.)
-
-The fix is to do the decision whether to pickle or not after having
-transformed the inner expression.
-
-This bug was revealed through a failing test in #19087 after a merge
-(the code in that PR is fine).
-
-**File**: `.changeset/yellow-groups-deny.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+'svelte': patch
-+---
-+
-+fix: don't leak reactive context past nested awaits in production
-```
-
-**File**: `packages/svelte/src/compiler/phases/2-analyze/visitors/AwaitExpression.js` (modified, +17/-15)
-```diff
-@@ -11,21 +11,15 @@ import * as e from '../../../errors.js';
- export function AwaitExpression(node, context) {
- 	const tla = context.state.ast_type === 'instance' && context.state.function_depth === 1;
- 
--	if (
--		is_reactive_expression(
--			context.path,
--			context.state.derived_function_depth === context.state.function_depth
--		)
--	) {
--		const expression = /** @type {ExpressionMetadata} */ (context.state.expression);
--
--		// preserve context for awaits that precede other expressions in template or `$derived(...)`,
--		// and for any await that follows one, so the restored context ends at the next suspension
--		if (expression.has_pickled_await || !is_last_evaluated_expression(context.path, node)) {
--			context.state.analysis.pickled_awaits.add(node);
--			expression.has_pickled_await = true;
--		}
--	}
-+	/** @type {ExpressionMetadata | null} */
-+	var reactive = is_reactive_expression(
-+		context.path,
-+		context.state.derived_function_depth === context.state.function_depth
-+	)
-+		? /** @type {ExpressionMetadata} */ (context.state.expression)
-+		: null;
-+
-+	var last = reactive !== null && is_last_evaluated_expression(context.path, node);
- 
- 	let suspend = tla;
- 
-@@ -48,6 +42,14 @@ export function AwaitExpression(node, context) {
- 	}
- 
- 	context.next();
-+
-+	// Preserve context for awaits that precede other expressions in template or `$derived(...)`, and for any await
-+	// that follows one, so the restored context ends at the next suspension. (Decided after visiting the argument:
-+	// an await inside it, as in `await f(await g())`, suspends before this one does)
-+	if (reactive !== null && (reactive.has_pickled_await || !last)) {
-+		context.state.analysis.pickled_awaits.add(node);
-+		reactive.has_pickled_await = true;
-+	}
- }
- 
- /**
-```
-
-**File**: `packages/svelte/tests/runtime-runes/samples/async-save-foreign-microtask-mutation-nested/_config.js` (added, +21/-0)
-```diff
-@@ -0,0 +1,21 @@
-+import { tick } from 'svelte';
+@@ -0,0 +1,13 @@
 +import { test } from '../../test';
 +
 +export default test({
-+	mode: ['client'],
++	mode: ['hydrate'],
++	server_props: { show: true },
++	props: { show: false },
++	ssrHtml: '<p>failed</p> <p>after</p> <p>end</p>',
++	transformError: () => 'error',
 +
-+	compileOptions: {
-+		dev: false
-+	},
-+
-+	async test({ assert, target, errors }) {
-+		await new Promise((resolve) => setTimeout(resolve, 20));
-+		await tick();
-+
-+		assert.deepEqual(
-+			errors.filter((error) => error.includes('state_unsafe_mutation')),
-+			[]
-+		);
-+		assert.htmlEqual(target.innerHTML, '<p>4 1</p>');
++	test({ assert, target }) {
++		assert.htmlEqual(target.innerHTML, '<p>else</p> <p>end</p>');
 +	}
 +});
 ```
 
-**File**: `packages/svelte/tests/runtime-runes/samples/async-save-foreign-microtask-mutation-nested/main.svelte` (added, +20/-0)
+**File**: `packages/svelte/tests/runtime-runes/samples/error-boundary-hydrate-skip/child.svelte` (added, +3/-0)
 ```diff
-@@ -0,0 +1,20 @@
+@@ -0,0 +1,3 @@
 +<script>
-+	let foreign = $state(0);
++	throw new Error('unlucky');
++</script>
+```
+
+**File**: `packages/svelte/tests/runtime-runes/samples/error-boundary-hydrate-skip/main.svelte` (added, +21/-0)
+```diff
+@@ -0,0 +1,21 @@
++<script>
++	import Child from './child.svelte';
 +
-+	const items = Promise.resolve([1, 2, 3]);
-+
-+	// resolves after the write below, so the outer `await` is still suspended when it lands
-+	function plus_one(n) {
-+		return new Promise((resolve) => setTimeout(() => resolve(n + 1), 10));
-+	}
-+
-+	setTimeout(() => {
-+		foreign += 1;
-+	});
-+
-+	// the inner `await` restores the context for `.length`, the outer one must end it when it suspends —
-+	// in production that await has no dev hook
-+	const total = $derived(await plus_one((await items).length));
++	let { show } = $props();
 +</script>
 +
-+<p>{total} {foreign}</p>
-```
-
----
-
-### Incident Patch 3: `628098d2` (2026-11-03)
-**Commit Message**: fix: parse snippet type parameters containing arrow function types (#19141)
-
-**File**: `.changeset/olive-snippets-parse.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+'svelte': patch
-+---
++{#if show}
++	<svelte:boundary>
++		<Child />
 +
-+fix: parse snippet type parameters containing arrow function types
-```
-
-**File**: `packages/svelte/src/compiler/phases/1-parse/utils/bracket.js` (modified, +6/-0)
-```diff
-@@ -173,6 +173,12 @@ export function match_bracket(parser, start, brackets = default_brackets) {
- 			continue;
- 		}
- 
-+		// the `>` in an arrow function type (e.g. `T extends () => void`) doesn't close
-+		// the type parameter list
-+		if (char === '>' && close.has('>') && parser.template[i - 2] === '=') {
-+			continue;
-+		}
++		{#snippet failed()}
++			<p>failed</p>
++		{/snippet}
++	</svelte:boundary>
 +
- 		if (char in brackets) {
- 			bracket_stack.push(char);
- 		} else if (close.has(char)) {
-```
-
-**File**: `packages/svelte/tests/parser-modern/samples/generic-snippet-arrow-function/input.svelte` (added, +10/-0)
-```diff
-@@ -0,0 +1,10 @@
-+<script lang="ts">
-+</script>
++	<p>after</p>
++{:else}
++	<p>else</p>
++{/if}
 +
-+{#snippet generic<T extends () => void>(val: T)}
-+	{val}
-+{/snippet}
-+
-+{#snippet generic<T extends Array<() => void>>(val: T)}
-+	{val}
-+{/snippet}
-```
-
-**File**: `packages/svelte/tests/parser-modern/samples/generic-snippet-arrow-function/output.json` (added, +336/-0)
-```diff
-@@ -0,0 +1,336 @@
-+{
-+	"css": null,
-+	"js": [],
-+	"start": 0,
-+	"end": 171,
-+	"type": "Root",
-+	"fragment": {
-+		"type": "Fragment",
-+		"nodes": [
-+			{
-+				"type": "Text",
-+				"start": 28,
-+				"end": 30,
-+				"raw": "\n\n",
-+				"data": "\n\n"
-+			},
-+			{
-+				"type": "SnippetBlock",
-+				"start": 30,
-+				"end": 96,
-+				"expression": {
-+					"type": "Identifier",
-+					"name": "generic",
-+					"start": 40,
-+					"end": 47,
-+					"loc": {
-+						"start": {
-+							"line": 4,
-+							"column": 10,
-+							"character": 40
-+						},
-+						"end": {
-+							"line": 4,
-+							"column": 17,
-+							"character": 47
-+						}
-+					}
-+				},
-+				"typeParams": "T extends () => void",
-+				"parameters": [
-+					{
-+						"type": "Identifier",
-+						"start": 70,
-+						"end": 76,
-+						"loc": {
-+							"start": {
-+								"line": 4,
-+								"column": 40
-+							},
-+							"end": {
-+								"line": 4,
-+								"column": 46
-+							}
-+						},
-+						"name": "val",
-+						"typeAnnotation": {
-+							"type": "TSTypeAnnotation",
-+							"start": 73,
-+							"end": 76,
-+							"loc": {
-+								"start": {
-+									"line": 4,
-+									"column": 43
-+								},
-+								"end": {
-+									"line": 4,
-+									"column": 46
-+								}
-+							},
-+							"typeAnnotation": {
-+								"type": "TSTypeReference",
-+								"start": 75,
-+								"end": 76,
-+								"loc": {
-+									"start": {
-+										"line": 4,
-+										"column": 45
-+									},
-+									"end": {
-+										"line": 4,
-+										"column": 46
-+									}
-+								},
-+								"typeName": {
-+									"type": "Identifier",
-+									"start": 75,
-+									"end": 76,
-+									"loc": {
-+										"start": {
-+											"line": 4,
-+											"column": 45
-+										},
-+										"end": {
-+											"line": 4,
-+											"column": 46
-+										}
-+									},
-+									"name": "T"
-+								}
-+							}
-+						}
-+					}
-+				],
-+				"body": {
-+					"type": "Fragment",
-+					"nodes": [
-+						{
-+							"type": "Text",
-+							"start": 78,
-+							"end": 80,
-+							"raw": "\n\t",
-+							"data": "\n\t"
-+						},
-+						{
-+							"type": "ExpressionTag",
-+							"start": 80,
-+							"end": 85,
-+							"expression": {
-+								"type": "Identifier",
-+								"start": 81,
-+								"end": 84,
-+								"loc": {
-+									"start": {
-+										"line": 5,
-+										"column": 2
-+									},
-+									"end": {
-+										"line": 5,
-+										"column": 5
-+									}
-+								},
-+								"name": "val"
-+							}
-+						},
-+						{
-+							"type": "Text",
-+							"start": 85,
-+							"end": 86,
-+							"raw": "\n",
-+							"data": "\n"
-+						}
-+					]
-+				}
-+			},
-+			{
-+				"type": "Text",
-+				"start": 96,
-+				"end": 98,
-+				"raw": "\n\n",
-+				"data": "\n\n"
-+			},
-+			{
-+				"type": "SnippetBlock",
-+				"start": 98,
-+				"end": 171,
-+				"expression": {
-+					"type": "Identifier",
-+					"name": "generic",
-+					"start": 108,
-+					"end": 115,
-+					"loc": {
-+						"start": {
-+							"line": 8,
-+							"column": 10,
-+							"character": 108
-+						},
-+						"end": {
-+							"line": 8,
-+							"column": 17,
-+							"character": 115
-+						}
-+					}
-+				},
-+				"typeParams": "T extends Array<() => void>",
-+				"parameters": [
-+					{
-+						"type": "Identifier",
-+						"start": 145,
-+						"end": 151,
-+						"loc": {
-+							"start": {
-+								"line": 8,
-+								"column": 47
-+							},
-+							"end": {
-+								"line": 8,
-+								"column": 53
-+							}
-+						},
-+						"name": "val",
-+						"typeAnnotation": {
-+							"type": "TSTypeAnnotation",
-+							"start": 148,
-+							"end": 151,
-+							"loc": {
-+								"start": {
-+									"line": 8,
-+									"column": 50
-+								},
-+								"end": {
-+									"line": 8,
-+									"column": 53
-+								}
-+							},
-+							"typeAnnotation": {
-+								"type": "TSTypeReference",
-+								"start": 150,
-+								"end": 151,
-+								"loc": {
-+									"start": {
-+										"line": 8,
-+										"column": 52
-+									},
-+									"end": {
-+										"line": 8,
-+										"column": 53
-+									}
-+								},
-+								"typeName": {
-+									"type": "Identifier",
-+									"start": 150,
-+									"end": 151,
-+									"loc": {
-+										"start": {
-+											"line": 8,
-+											"column": 52
-+										},
-+										"end": {
-+											"line": 8,
-+											"column": 53
-+										}
-+									},
-+									"name": "T"
-+								}
-+							}
-+						}
-+					}
-+				],
-+				"body": {
-+					"type": "Fragment",
-+					"nodes": [
-+						{
-+							"type": "Text",
-+							"start": 153,
-+							"end": 155,
-+							"raw": "\n\t",
-+							"data": "\n\t"
-+						},
-+						{
-+							"type": "ExpressionTag",
-+							"start": 155,
-+							"end": 160,
-+							"expression": {
-+								"type": "Identifier",
-+								"start": 156,
-+								"end": 159,
-+								"loc": {
-+									"start": {
-+										"line": 9,
-+										"column": 2
-+									},
-+									"end": {
-+										"line": 9,
-+										"column": 5
-+									}
-+								},
-+			
++<p>end</p>
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #19148** (2026-11-02): chore: document that a batch's first-value writes have no previous entry (@Rich-Harris)
-- **PR #19147** (2026-11-02): chore: make it explicit that update_derived is called with sources (@Rich-Harris)
-- **PR #19146** (2026-11-02): chore: defer all effects while another batch commits, regardless of async mode (@Rich-Harris)
-- **PR #19145** (2026-11-02): fix: don't let teardowns see a derived's computed value from before an assignment; document teardowns (@Rich-Harris)
-- **PR #19141** (2026-11-03): fix: parse snippet type parameters containing arrow function types (@Huang-404-Q)
-- **PR #19135** (2026-11-02): docs: fix crosslink tags for class and bind: (@teemingc)
+- **PR #19189** (2026-11-06): chore: use `should_record` boolean inside `update_record` (@Rich-Harris)
+- **PR #19185** (2026-11-06): chore: simplify `update_record` (@Rich-Harris)
+- **PR #19182** (2026-11-05): chore: simplify `update_dependencies` (@Rich-Harris)
+- **PR #19178** (closed): chore: share the end of sync and async renders (@elliott-with-the-longest-name-on-github)
+- **PR #19167** (2026-11-04): fix: correctly preserve/discard each item effects in forks (@Rich-Harris)
+- **PR #19166** (2026-11-04): fix: remove all of the server-rendered content when hydrating a different branch that contains a failed boundary (@elliott-with-the-longest-name-on-github)
 
 ---
 
@@ -2602,16 +2154,16 @@ This bug was revealed through a failing test in #19087 after a merge
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. preserve effect tree order across batch traversals (#19132)
+## X. remove all of the server-rendered content when hydrating a different branch that
 
 **RULE**:
-When implementing operations in `.changeset/tidy-effects-measure.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sveltejs/svelte. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changeset/skip-failed-boundaries.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sveltejs/svelte. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ec8f4ee8`: preserve effect tree order across batch traversals (#19132). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7775f73b`: remove all of the server-rendered content when hydrating a different branch that contains a failed boundary (#19166). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/tidy-effects-measure.md`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/skip-failed-boundaries.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
@@ -2620,7 +2172,7 @@ Subsystems managing JavaScript data structures, boundary deserialization, API pa
 'svelte': patch
 ---
 
-fix: preserve effect tree order across batch traversal passes
+fix: remove all of the server-rendered content when hydrating a different branch that contains a failed boundary
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2630,4 +2182,4 @@ fix: preserve effect tree order across batch traversal passes
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ec8f4ee8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7775f73b` are properly handled with clean fallback behavior.

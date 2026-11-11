@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md`  
 > **Source**: github ([https://github.com/max-sixty/worktrunk](https://github.com/max-sixty/worktrunk))  
-> **Source Version**: `79f19f64`  
+> **Source Version**: `a6ebf8b1`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T19:45:19.402Z  
+> **Timestamp**: 2026-11-09T01:12:33.648Z  
 > **Learning ID**: `learn-github-max-sixty-worktrunk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/max-sixty/worktrunk](https://github.com/max-sixty/worktrunk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T19:45:18.119Z  
+> **Harvest Timestamp**: 2026-11-09T01:12:33.100Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Worktrunk is a CLI for Git worktree management, designed for parallel AI agent workflows
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 11434 stars
+- **Stars / Engagement**: 12123 stars
 
 ---
 
@@ -370,7 +370,7 @@ export const register: Register = on => {
       })
     }
     return ran
-  }).catch(($, e, next) => next(e))
+  })
 
   on('turn.complete', async ($, e, next) => {
     const done = await next(e)
@@ -489,7 +489,8 @@ export const register: Register = on => {
               </Button>
             ))}
             {files.map((file, index) => (
-              <Box key={`box:${file.path}`} flexDirection="colu
+              <Box key={`box:${file.path}`} flexDirection="column" marginTop={1}>
+            
 ```
 
 ### Core Architecture Module: `src/cli/hook.rs`
@@ -2018,431 +2019,109 @@ fn no_matching_commands_error(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8d46d6b3` (2026-11-05)
-**Commit Message**: fix(picker): keep a superseded refresh from overwriting the alt-x layout (#4708)
+### Incident Patch 1: `6c240303` (2026-11-08)
+**Commit Message**: Correct stale comments in concurrent output, list rendering, and logging (#4731)
 
-After two quick `alt-r` refreshes in the `wt switch` picker, a
-superseded refresh whose skeleton lands last could overwrite the layout
-that `alt-x` uses, so a later `alt-x` rendered its `/ branch` row on the
-old column grid. `provide_layout` wrote the session-shared `layout_slot`
-unconditionally. `on_skeleton` already guards the other session-shared
-writes (`shared_items` and the shortcut table) with
-`spawn_gen.is_current()`. This change applies the same check inside the
-lock and updates the module summary, which still described three sinks.
+This PR fixes four comments that no longer match the code. It changes no
+behavior and needs no tests.
 
-`superseded_skeleton_leaves_shared_state_alone` now also checks that a
-live spawn publishes its layout and that a superseded one leaves the
-slot empty. The new assertion fails without the guard.
+- **`src/output/concurrent.rs` module doc:** it said "every admitted
+child runs to completion", but `drain_children` kills and reaps admitted
+children when setting up or reading their output pipes fails. The doc
+now names that exception.
+- **`src/commands/list/render.rs` Upstream cell:** the comment cited
+`Divergence::Special`, which doesn't exist. The in-sync case is
+`Divergence::InSync`, which `Divergence::from_counts_with_remote`
+returns.
+- **`src/logging.rs` `init` doc:** step 3 said all four layers are gated
+on `LogSink::is_active()`. Only the three file layers have a sink. The
+stderr layer is filtered by verbosity and `RUST_LOG` alone. A leftover
+"(unchanged)" in step 1 is also gone.
+- **`src/logging.rs` `wt_trace_fields_visit_records_every_type` doc:**
+it said the test covers `_` arms in `record_u64` and `record_str`.
+`record_u64` is an `if` with no `_` arm, and the `_` arm it does
+exercise is in `record_string`.
 
-The nightly sweep (run
-[41980394445](https://github.com/max-sixty/worktrunk/actions/runs/41980394445))
-prepared this fix, but its PR was refused twice because the bot had
-reached its creation allowance (#4706). The daily run review opened it
-from the pushed branch without changes.
+Found during the nightly survey.
 
-Co-authored-by: worktrunk-bot <[REDACTED_EMAIL]>
+Co-authored-by: worktrunk-bot <[REDACTED_EMAIL
 
-**File**: `src/commands/picker/progressive_handler.rs` (modified, +54/-8)
+**File**: `src/commands/list/render.rs` (modified, +3/-2)
 ```diff
-@@ -1,9 +1,11 @@
- //! Progressive-rendering glue between `collect::collect` and the skim picker.
- //!
--//! Each event funnels into three places: skim's item stream (`tx`, consumed
--//! by the skeleton batch — the handler's only send), each item's shared
--//! `rendered` mutex (in-place redraws), and `shared_items` used by
--//! `PickerCollector` for alt-x.
-+//! Rows funnel into skim's item stream (`tx`, consumed by the skeleton
-+//! batch — the handler's only send) and each item's shared `rendered` mutex
-+//! (in-place redraws). The skeleton also publishes session-shared state that
-+//! outlives this spawn — `shared_items`, the shortcut table, and the layout
-+//! `PickerCollector` uses for alt-x — and only the live spawn writes it, so a
-+//! superseded skeleton landing after a rapid second alt-r leaves it alone.
- //!
- //! # Why updates poke a render
- //!
-@@ -639,8 +641,13 @@ impl PickerProgressHandler for PickerHandler {
- 
-     fn provide_layout(&self, layout: &crate::commands::list::layout::LayoutConfig) {
-         // Stow a clone for `PickerCollector` to render the `alt-x` `/ branch`
--        // row on this grid. Overwritten each skeleton (a refresh re-collects).
--        *self.layout_slot.lock().unwrap() = Some(layout.clone());
-+        // row on this grid. Overwritten each skeleton (a refresh re-collects),
-+        // but only by the live spawn — a superseded skeleton's grid would
-+        // misalign the morph row, as in `on_skeleton`'s shared-list guard.
-+        let mut slot = self.layout_slot.lock().unwrap();
-+        if self.spawn_gen.is_current() {
-+            *slot = Some(layout.clone());
-+        }
-     }
- 
-     fn on_collect_complete(&self) {
-@@ -747,6 +754,28 @@ mod tests {
-         crate::commands::list::layout::ColumnGrid::default()
-     }
- 
-+    fn layout(items: &[ListItem]) -> crate::commands::list::layout::LayoutConfig {
-+        use crate::commands::list::layout;
-+        layout::calculate_layout_with_width(
-+            items,
-+            &crate::commands::list::columns::all_tasks(),
-+            layout::Destination {
-+                width: 80,
-+                link_style: layout::LinkStyle::Expanded,
-+            },
-+            std::path::Path::new("/test"),
-+            layout::ColumnSelection {
-+                custom: &[],
-+                selected: None,
-+            },
-+            layout::RepoFacts {
-+                has_remote: true,
-+                url_template: None,
-+                max_pr_number: None,
-+            },
-+        )
-+    }
-+
-     /// `on_skeleton` reads the worktree/branch inventory through the handler's
-     /// own per-spawn `repo`, NOT the orchestrator's startup-cloned repo. `spawn`
-     /// rebuilds `repo` fresh each refresh; reading inventory through the
-@@ -1755,23 +1784,36 @@ mod tests {
-     }
- 
-     /// A handler superseded by a refresh must not publish its skeleton into
--    /// the session-shared row list / shortcut table, nor seed summary hints:
-+    /// the session-shared row list / shortcut table / alt-x layout, nor seed
-+    /// summary hints:
-     /// a rapid second `alt-r` can schedule the new spawn's skeleton before a
-     /// slow prior spawn's, and the stale skeleton landing second would
-     /// otherwise overwrite the live rows (feeding a later `alt-x` resync and
-     /// the `alt-y`/`alt-o` lookups) and write stale-row hint keys into the
-     /// refreshed cache.
+@@ -586,8 +586,9 @@ impl ColumnLayout {
+                     return StyledLine::new(); // Loaded, no active upstream
+                 };
+                 // Show centered | when in sync instead of ⇡0  ⇣0
+-                // Note: This duplicates the InSync check from Divergence::Special, but
+-                // checking counts directly is simpler than threading the enum through.
++                // Note: This duplicates the `Divergence::InSync` check in
++                // `Divergence::from_counts_with_remote`, but checking counts
++                // directly is simpler than threading the enum through.
+                 if active.ahead == 0 && active.behind == 0 {
+                     let mut cell = StyledLine::new();
+                     cell.push_styled("|", Style::new().dimmed());
+```
+
+**File**: `src/logging.rs` (modified, +8/-6)
+```diff
+@@ -446,16 +446,18 @@ where
+ ///
+ /// Stage-by-stage:
+ ///
+-/// 1. Set verbosity for downstream styling code (unchanged).
++/// 1. Set verbosity for downstream styling code.
+ /// 2. Open the file sinks before the subscriber registers, so the
+ ///    `Repository::current()` rev-parse fired by `try_create` doesn't emit
+ ///    records into a half-built pipeline. Pre-tracing-init `log::*` calls
+ ///    are dropped by the default no-op `log` logger, which is the right
+ ///    behavior — there's nothing meaningful to attribute the call to before
+ ///    the subscriber exists.
+-/// 3. Build four layered subscribers, each gated by both a verbosity check
+-///    and the relevant `LogSink::is_active()` so a failed file open turns
+-///    its layer into a no-op rather than silently dropping records.
++/// 3. Build four layers: stderr, filtered by verbosity (or `RUST_LOG`) with
++///    no sink to check, and three file layers, each gated by both a
++///    verbosity check and the relevant
++///    `LogSink::is_active()` so a failed file open turns its layer into a
++///    no-op rather than silently dropping records.
+ /// 4. Bridge `log::*` into tracing via `LogTracer`. Idempotent on
+ ///    re-invocation (init is `.ok()`-discarded).
+ /// 5. Announce the file destinations on stderr at `-vv`.
+@@ -836,8 +838,8 @@ mod tests {
+     /// emit one event per field-type variant under [`WT_TRACE_TARGET`],
+     /// capture the visitor output, and assert the field landed in the
+     /// expected slot. Covers `record_debug` (`err = %display`) — the
+-    /// production path nothing else exercises — plus the unknown-name `_`
+-    /// arms in `record_u64` / `record_str`.
++    /// production path nothing else exercises — plus the unknown-name paths:
++    /// a non-`dur_us` field in `record_u64` and the `_` arm in `record_string`.
      #[test]
-     fn superseded_skeleton_leaves_shared_state_alone() {
-+        // The live spawn publishes its layout for `alt-x`'s morph row.
-+        let (live, _live_test, _live_rx) = make_handler();
-+        let live_items = vec![ListItem::new_branch("abc".into(), "live".into())];
-+        live.provide_layout(&layout(&live_items));
-+        assert!(
-+            live.layout_slot.lock().unwrap().is_some(),
-+            "live skeleton publishes its layout"
-+        );
-+
-         let (handler, test, rx) = make_handler();
-         handler.orchestrator.refresh(test.repo.clone());
- 
-+        let stale_items = vec![ListItem::new_branch("abc".into(), "stale".into())];
-         handler.on_skeleton(
--            vec![ListItem::new_branch("abc".into(), "stale".into())],
-+            stale_items.clone(),
-             vec!["skel".into()],
-             header("hdr"),
-             grid(),
-         );
-+        // `collect` hands over the layout right after the skeleton.
-+        handler.provide_layout(&layout(&stale_items));
-         handler.orchestrator.wait_for_idle();
- 
-         // The rows still stream to this spawn's (dead) skim channel...
-@@ -1790,6 +1832,10 @@ mod tests {
-             handler.preview_cache.is_empty(),
-             "superseded skeleton must not seed hints into the refreshed cache"
-         );
-+        assert!(
-+            handler.layout_slot.lock().unwrap().is_none(),
-+            "superseded skeleton must not overwrite the alt-x layout"
-+        );
-     }
- 
-     /// A superseded handler's `maybe_spawn_comments` is fully inert. Its
+     fn wt_trace_fields_visit_records_every_type() {
+         use std::sync::{Arc, Mutex};
 ```
 
----
-
-### Incident Patch 2: `f7735f2e` (2026-11-05)
-**Commit Message**: fix(shell): treat PowerShell directive paths literally (#4680)
-
-When the PowerShell temporary directory contains wildcard characters
-such as `temp[1]`, `wt switch` can finish without changing the parent
-shell's directory. The directive file is written, but the wrapper treats
-its path as a wildcard during lookup and cleanup, leaving the file
-behind.
-
-Use `-LiteralPath` for all four directive-file operations. Add a
-regression that checks both the directory change and removal of the
-temporary file, and refresh the generated PowerShell snapshot.
-
-Validation: all 4 PowerShell integration tests pass with all features
-enabled, including the new regression. The shell-generation snapshot
-test, pre-commit checks (including clippy), doctests and rustdoc also
-pass. The original template reproduced the failure on Windows PowerShell
-5; the corrected template switches directories and leaves no directive
-file on both Windows PowerShell 5 and PowerShell 7.6.9.
-
-The full `hook pre-merge --yes` gate did not pass on this Windows host:
-4,693 passed, 74 failed, 40 skipped. Failures include
-configuration/statusline snapshots, switch tests and the performance
-helper CLI; those failures and snapshots are o
-
-**File**: `src/shell/snapshots/worktrunk__shell__tests__init_powershell.snap` (modified, +3/-3)
+**File**: `src/output/concurrent.rs` (modified, +3/-1)
 ```diff
-@@ -44,8 +44,8 @@ if ((Get-Command wt -ErrorAction SilentlyContinue) -or $env:WORKTRUNK_BIN) {
-         # Process the directive and clean it up even if cd throws.
-         try {
-             # cd file holds a raw path (no shell escaping needed)
--            if ((Test-Path $cdFile) -and (Get-Item $cdFile).Length -gt 0) {
--                $target = Get-Content -Path $cdFile -Raw
-+            if ((Test-Path -LiteralPath $cdFile) -and (Get-Item -LiteralPath $cdFile).Length -gt 0) {
-+                $target = Get-Content -LiteralPath $cdFile -Raw
-                 if ($target) {
-                     Set-Location -LiteralPath $target
-                     if ($exitCode -eq 0) {
-@@ -56,7 +56,7 @@ if ((Get-Command wt -ErrorAction SilentlyContinue) -or $env:WORKTRUNK_BIN) {
+@@ -20,7 +20,9 @@
+ //! own way; wt's receipt of the key cancels the group once they exit, including
+ //! any remaining output wait. PID-targeted SIGTERM reaches owned direct children.
+ //!
+-//! Every admitted child runs to completion. Spawn failures occupy the same
++//! Every admitted child runs to completion unless output setup or collection
++//! fails; then the drain kills and reaps the admitted children before
++//! returning the I/O error. Spawn failures occupy the same
+ //! per-command outcome slots as child exits; the pipeline owns identity and
+ //! failure policy. Cancellation alone stops admission and drains owned children.
  
-         }
-         finally {
--            Remove-Item $cdFile -ErrorAction SilentlyContinue
-+            Remove-Item -LiteralPath $cdFile -ErrorAction SilentlyContinue
-         }
- 
-         # Propagate the exit code so scripts/CI can read $LASTEXITCODE.
-```
-
-**File**: `templates/powershell.ps1` (modified, +3/-3)
-```diff
-@@ -40,8 +40,8 @@ if ((Get-Command {{ cmd }} -ErrorAction SilentlyContinue) -or $env:WORKTRUNK_BIN
-         # Process the directive and clean it up even if cd throws.
-         try {
-             # cd file holds a raw path (no shell escaping needed)
--            if ((Test-Path $cdFile) -and (Get-Item $cdFile).Length -gt 0) {
--                $target = Get-Content -Path $cdFile -Raw
-+            if ((Test-Path -LiteralPath $cdFile) -and (Get-Item -LiteralPath $cdFile).Length -gt 0) {
-+                $target = Get-Content -LiteralPath $cdFile -Raw
-                 if ($target) {
-                     Set-Location -LiteralPath $target
-                     if ($exitCode -eq 0) {
-@@ -52,7 +52,7 @@ if ((Get-Command {{ cmd }} -ErrorAction SilentlyContinue) -or $env:WORKTRUNK_BIN
- 
-         }
-         finally {
--            Remove-Item $cdFile -ErrorAction SilentlyContinue
-+            Remove-Item -LiteralPath $cdFile -ErrorAction SilentlyContinue
-         }
- 
-         # Propagate the exit code so scripts/CI can read $LASTEXITCODE.
-```
-
-**File**: `tests/integration_tests/shell_powershell.rs` (modified, +55/-0)
-```diff
-@@ -181,6 +181,61 @@ wt list
-     );
- }
- 
-+/// A temp directory containing brackets must not turn directive-file operations
-+/// into wildcard lookups, which silently skips the directory change and cleanup.
-+#[test]
-+fn test_powershell_wrapper_handles_literal_temp_paths() {
-+    let temp_dir = worktrunk::testing::test_tempdir();
-+    let temp_path = temp_dir.path().join("temp[1]");
-+    let target_path = temp_dir.path().join("target");
-+    std::fs::create_dir(&temp_path).unwrap();
-+    std::fs::create_dir(&target_path).unwrap();
-+    let target_path = dunce::canonicalize(target_path).unwrap();
-+
-+    let mock_bin = temp_dir.path().join("mock-wt.ps1");
-+    std::fs::write(
-+        &mock_bin,
-+        r#"
-+if ($env:COMPLETE) { exit 0 }
-+[IO.File]::WriteAllText($env:WORKTRUNK_DIRECTIVE_CD_FILE, $env:WORKTRUNK_TEST_TARGET)
-+exit 0
-+"#,
-+    )
-+    .unwrap();
-+
-+    let wrapper = ShellInit::with_prefix(Shell::PowerShell, "wt".to_string())
-+        .generate()
-+        .unwrap();
-+    let mock_bin_escaped = mock_bin.display().to_string().replace('\'', "''");
-+    let script = format!(
-+        r#"
-+$ErrorActionPreference = 'Stop'
-+$env:WORKTRUNK_BIN = '{mock_bin_escaped}'
-+{wrapper}
-+wt switch feature
-+Write-Output (Get-Location).Path
-+exit $LASTEXITCODE
-+"#
-+    );
-+
-+    let output = Command::new("pwsh")
-+        .args(["-NoProfile", "-NonInteractive", "-Command", &script])
-+        .env("TMP", &temp_path)
-+        .env("TEMP", &temp_path)
-+        .env("TMPDIR", &temp_path)
-+        .env("WORKTRUNK_TEST_TARGET", &target_path)
-+        .output()
-+        .expect("Failed to run pwsh");
-+    let stdout = String::from_utf8_lossy(&output.stdout);
-+    let stderr = String::from_utf8_lossy(&output.stderr);
-+    assert!(
-+        output.status.success(),
-+        "pwsh command failed.\nstdout: {stdout}\nstderr: {stderr}",
-+    );
-+    assert_eq!(stdout.trim(), target_path.to_str().unwrap());
-+    assert_eq!(std::fs::read_dir(&temp_path).unwrap().count(), 0);
-+}
-+
- /// The installed `pwsh` decides where install writes on Unix: with
- /// `XDG_CONFIG_HOME` pointing away from `~/.config`, the profile lands where
- /// PowerShell loads it.
-```
-
----
-
-### Incident Patch 3: `79f19f64` (2026-11-05)
-**Commit Message**: fix(switch): pass a GitHub Enterprise remote's host to gh api when gh is logged in to it (#4710)
-
-`gh api` doesn't take its host from the repository. Without `--hostname`
-it uses gh's default host, which is github.com once more than one host
-is logged in. `fetch_pr_info` passed `--hostname` only when
-`forge.hostname` was set, so on a GitHub Enterprise remote `wt switch
-pr:N` and `wt switch <PR URL>` asked github.com for the PR and got a
-404. With no `forge.hostname`, the lookup now passes the GitHub remote's
-host as `--hostname` if `gh auth token --hostname <host>` succeeds (a
-local check, no network; `choose_pr_forge` already uses the same check).
-An SSH alias such as `github-personal` has no gh login, so it still goes
-to gh's default host. That keeps the #1790 fix in place, the one #1826
-made by removing host detection. A configured `forge.hostname` still
-takes priority. github.com remotes skip the check, so they behave as
-before.
-
-`test_switch_pr_enterprise_remote_passes_hostname` uses an
-`https://github.example.com/...` remote and a mock `gh`. When `gh` is
-logged in to that host, the test expects `--hostname github.example.com`
-on the `api` call; it failed before this change an
-
-**File**: `src/git/remote_ref/github.rs` (modified, +11/-2)
-```diff
-@@ -107,8 +107,17 @@ pub(super) fn fetch_pr_info(pr_number: u32, repo: &Repository) -> anyhow::Result
- 
-     let api_path = format!("repos/{}/{}/pulls/{}", owner, repo_name, pr_number);
- 
--    // Only pass --hostname when explicitly configured (for GHE / self-hosted).
--    let hostname = repo.forge_hostname();
-+    // `gh api` doesn't infer the host from the repository: without
-+    // `--hostname` it asks gh's default host, which is github.com once several
-+    // hosts are logged in. A configured `forge.hostname` wins; otherwise a
-+    // GitHub Enterprise remote's host is the API host when gh holds a login
-+    // for it. An SSH alias (`git@github-personal:…`) has no login, so it keeps
-+    // gh's default (#1790).
-+    let hostname = repo.forge_hostname().or_else(|| {
-+        repo.forge_remote_parsed_url(|u| u.is_github())
-+            .map(|u| u.host().to_string())
-+            .filter(|host| !host.eq_ignore_ascii_case("github.com") && is_authed_for(host))
-+    });
- 
-     let mut args = vec!["api", api_path.as_str()];
-     if let Some(h) = &hostname {
-```
-
-**File**: `tests/integration_tests/switch.rs` (modified, +79/-0)
-```diff
-@@ -6575,6 +6575,85 @@ fn test_switch_pr_self_hosted_defaults_to_github(
-     }
- }
- 
-+/// A GitHub Enterprise remote with no `forge.hostname`: `gh api` sends a
-+/// request without `--hostname` to gh's default host, so the PR lookup must
-+/// name the remote's host when gh holds a login for it, and leave gh's default
-+/// alone when it doesn't (an SSH alias such as `github-personal`, #1790).
-+#[rstest]
-+#[case::authed_host(true)]
-+#[case::unauthed_host(false)]
-+fn test_switch_pr_enterprise_remote_passes_hostname(
-+    #[from(repo_with_remote)] mut repo: TestRepo,
-+    #[case] gh_authed: bool,
-+) {
-+    repo.add_worktree("feature-auth");
-+    repo.run_git(&["push", "origin", "feature-auth"]);
-+
-+    let bare_url = String::from_utf8_lossy(
-+        &repo
-+            .git_command()
-+            .args(["config", "remote.origin.url"])
-+            .run()
-+            .unwrap()
-+            .stdout,
-+    )
-+    .trim()
-+    .to_string();
-+    let ghe_url = "https://github.example.com/owner/test-repo.git";
-+    repo.run_git(&["remote", "set-url", "origin", ghe_url]);
-+    repo.run_git(&["config", &format!("url.{bare_url}.insteadOf"), ghe_url]);
-+
-+    let gh_response = r#"{
-+        "title": "Enterprise PR",
-+        "user": {"login": "alice"},
-+        "state": "open",
-+        "draft": false,
-+        "head": {
-+            "ref": "feature-auth",
-+            "repo": {"name": "test-repo", "owner": {"login": "owner"}}
-+        },
-+        "base": {
-+            "ref": "main",
-+            "repo": {"name": "test-repo", "owner": {"login": "owner"}}
-+        },
-+        "html_url": "https://github.example.com/owner/test-repo/pull/101"
-+    }"#;
-+    let mock_bin = repo.root_path().join("mock-bin");
-+    fs::create_dir_all(&mock_bin).unwrap();
-+    fs::write(mock_bin.join("pr_response.json"), gh_response).unwrap();
-+    let mut gh = MockConfig::new("gh").command("api", MockResponse::file("pr_response.json"));
-+    if gh_authed {
-+        gh = gh.command("auth token --hostname", MockResponse::output("gho_mock"));
-+    }
-+    gh.command("_default", MockResponse::exit(1))
-+        .write(&mock_bin);
-+    let call_log = worktrunk::testing::tempdir().unwrap();
-+
-+    let mut cmd = repo.wt_command();
-+    configure_mock_cli_env(&mut cmd, &mock_bin);
-+    let output = cmd
-+        .args(["switch", "pr:101"])
-+        .env("WORKTRUNK_TEST_MOCK_CALL_LOG_DIR", call_log.path())
-+        .output()
-+        .unwrap();
-+    assert!(
-+        output.status.success(),
-+        "{}",
-+        String::from_utf8_lossy(&output.stderr)
-+    );
-+
-+    let calls = fs::read_to_string(call_log.path().join("gh.calls")).unwrap();
-+    let api_call = calls.lines().find(|line| line.starts_with("api ")).unwrap();
-+    if gh_authed {
-+        assert_eq!(
-+            api_call,
-+            "api repos/owner/test-repo/pulls/101 --hostname github.example.com"
-+        );
-+    } else {
-+        assert_eq!(api_call, "api repos/owner/test-repo/pulls/101");
-+    }
-+}
-+
- /// A configured SSH hostname can differ from the web hostname. tea's login
- /// list supplies both, so an SSH remote must route to the same Gitea account.
- #[rstest]
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4710** (2026-11-05): fix(switch): pass a GitHub Enterprise remote's host to gh api when gh is logged in to it (@worktrunk-bot)
-- **PR #4708** (2026-11-05): fix(picker): keep a superseded refresh from overwriting the alt-x layout (@worktrunk-bot)
-- **PR #4707** (2026-11-05): Ship Codex activity-marker hooks as a separate hooks-only plugin (@worktrunk-bot)
-- **PR #4704** (2026-11-05): fix(switch): clear a stale marker when --create makes the branch (@worktrunk-bot)
-- **PR #4703** (2026-11-05): docs(remove): mention the wt switch picker's Alt-x in wt remove help (@worktrunk-bot)
-- **PR #4701** (2026-11-05): chore: bump taiki-e/install-action from 2.89.0 to 2.89.1 (@dependabot[bot])
+- **PR #4733** (2026-11-08): skills(running-tend): flag doc placement and deprecated names when reviewing PRs (@worktrunk-bot)
+- **PR #4732** (2026-11-08): Label wt list diff columns with @ and ^ instead of HEAD and main (@worktrunk-bot)
+- **PR #4731** (2026-11-08): Correct stale comments in concurrent output, list rendering, and logging (@worktrunk-bot)
+- **PR #4730** (2026-11-08): Escape terminal control bytes in wt list's Summary column (@worktrunk-bot)
+- **PR #4729** (2026-11-08): Stop the fsmonitor orphan sweep killing submodule daemons (@worktrunk-bot)
+- **PR #4725** (2026-11-07): skills(writing-user-outputs): fold a second suggestion into the existing hint (@worktrunk-bot)
 
 ---
 
@@ -2462,55 +2141,31 @@ on the `api` call; it failed before this change an
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. picker): keep a superseded refresh from overwriting the alt-x layout (#4708)
+## X. Correct stale comments in concurrent output, list rendering, and logging (#4731)
 
 **RULE**:
-When implementing operations in `src/commands/picker/progressive_handler.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in max-sixty/worktrunk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/commands/list/render.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in max-sixty/worktrunk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8d46d6b3`: picker): keep a superseded refresh from overwriting the alt-x layout (#4708). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6c240303`: Correct stale comments in concurrent output, list rendering, and logging (#4731). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/commands/picker/progressive_handler.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/commands/list/render.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-//! Rows funnel into skim's item stream (`tx`, consumed by the skeleton
-//! batch — the handler's only send) and each item's shared `rendered` mutex
-//! (in-place redraws). The skeleton also publishes session-shared state that
-//! outlives this spawn — `shared_items`, the shortcut table, and the layout
-//! `PickerCollector` uses for alt-x — and only the live spawn writes it, so a
-//! superseded skeleton landing after a rapid second alt-r leaves it alone.
-        // row on this grid. Overwritten each skeleton (a refresh re-collects),
-        // but only by the live spawn — a superseded skeleton's grid would
-        // misalign the morph row, as in `on_skeleton`'s shared-list guard.
-        let mut slot = self.layout_slot.lock().unwrap();
-        if self.spawn_gen.is_current() {
-            *slot = Some(layout.clone());
-        }
-    fn layout(items: &[ListItem]) -> crate::commands::list::layout::LayoutConfig {
-        use crate::commands::list::layout;
-        layout::calculate_layout_with_width(
-            items,
-            &crate::commands::list::columns::all_tasks(),
-            layout::Destination {
-                width: 80,
-                link_style: layout::LinkStyle::Expa
+                // Note: This duplicates the `Divergence::InSync` check in
+                // `Divergence::from_counts_with_remote`, but checking counts
+                // directly is simpler than threading the enum through.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-//! Each event funnels into three places: skim's item stream (`tx`, consumed
-//! by the skeleton batch — the handler's only send), each item's shared
-//! `rendered` mutex (in-place redraws), and `shared_items` used by
-//! `PickerCollector` for alt-x.
-        // row on this grid. Overwritten each skeleton (a refresh re-collects).
-        *self.layout_slot.lock().unwrap() = Some(layout.clone());
-    /// the session-shared row list / shortcut table, nor seed summary hints:
-            vec![ListItem::new_branch("abc".into(), "stale".into())],
+                // Note: This duplicates the InSync check from Divergence::Special, but
+                // checking counts directly is simpler than threading the enum through.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8d46d6b3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6c240303` are properly handled with clean fallback behavior.

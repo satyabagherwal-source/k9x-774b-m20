@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pubkey-rxdb-learnings.md`  
 > **Source**: github ([https://github.com/pubkey/rxdb](https://github.com/pubkey/rxdb))  
-> **Source Version**: `b41fd6bd`  
+> **Source Version**: `7d46258d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T01:58:22.511Z  
+> **Timestamp**: 2026-11-09T12:49:32.580Z  
 > **Learning ID**: `learn-github-pubkey-rxdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pubkey-rxdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pubkey/rxdb](https://github.com/pubkey/rxdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T01:58:21.900Z  
+> **Harvest Timestamp**: 2026-11-09T12:49:32.014Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The local-first database that runs on every JS runtime and replicates with your existing backend - no vendor, no lock-in - https://rxdb.info/
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 23419 stars
+- **Stars / Engagement**: 23421 stars
 
 ---
 
@@ -883,11 +883,11 @@ export function getRxStorageIpcRenderer(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #9385** (2026-11-03): **test: query correctness for missing/null fields and $regex, $not, $mod (#9371)**
-  *Symptoms*: ## This PR contains: - IMPROVED TESTS  ## Describe the problem you have without this PR Related to https://github.com/pubkey/rxdb/issues/9371. The premium SQLite storage handled `$nin` and `$exists` differently from Dexie when a field is missing or `null`. The shared `rx-storage-query-correctness.test.ts` did not catch this, because `$nin` was only tested against present values and `$exists` only appeared inside `$nor`. Some operators that the query matcher supports also had no correctness test at all: field-level `$not`, `$mod`, and `$regex` on a plain field (it was only tested inside `$elemMatch`).  This PR adds two `testCorrectQueries` blocks:  **`$exists, $nin, $eq and $ne on missing and null fields`**, using documents with a value, `null`, a missing field and an empty string: - `$exists: true` matches `null` values, and `$exists: false` matches only missing fields - `$nin` matches missing and `null` fields, unless `null` is in the list - `$ne`, `$eq: null` and `$ne: null`  **`$regex, $not and $mod on plain fields`**: - `$regex` with and without `$options: 'i'` - field-level `$not` with `$eq`, `$regex`, `$gt` and `$in`, including missing and `null` fields - `$mod`, also combined with a range  The expected results are what the query matcher (mingo) returns. Both blocks pass on the memory and Dexie storages.  Notice: the query matcher matches `{ age: null }` for `$mod: [5, 0]`, because `null % 5 === 0` in JavaScript, while MongoDB would not match it. The `$mod` cases leave 
+- **Issue #9445** (2026-11-09): **Document GITHUB_ACCESS_TOKEN and FIRECRAWL_API env vars in CLAUDE.md**
+  *Symptoms*: ## This PR contains: - SOMETHING ELSE (agent instructions in CLAUDE.md)  ## Describe the problem you have without this PR Agent sessions do not know which API keys are available in the runtime. This adds a `Runtime Environment` section to `CLAUDE.md` that names the env vars `GITHUB_ACCESS_TOKEN` and `FIRECRAWL_API`, says they must never be printed, and says what each is for. `FIRECRAWL_API` is for crawling public web pages and must not be used to scrape GitHub profiles or collect personal data. No key values are in the repo.  ## Assisted by - YES, CLAUDE CODE  🤖 Generated with [Claude Code](https://claude.com/claude-code)  https://claude.ai/code/session_015P6w6gAmWYfSu5WNCxDRzL
 
-- **Issue #9383** (2026-11-03): **FIX flaky RxStorage .cleanup() test with a separate now() instance**
-  *Symptoms*: ## This PR contains: - IMPROVED TESTS  ## Describe the problem you have without this PR `rx-storage-implementations.test.ts` › `.cleanup` › `should have cleaned up the deleted document` fails randomly in the rxdb-premium integration tests. Example: Firefox with the `localstorage-meta-optimizer` storage in https://github.com/pubkey/rxdb-premium-dev/actions/runs/41653141708/job/125976309009 (`must have no documents found because they are cleaned up`).  Cause: the test sets the deletion `_meta.lwt` with its own `now()` and then calls `cleanup(0)` right away. In the integration setup the premium storage imports `rxdb/plugins/core` from `node_modules/rxdb`, which is a different module copy than the test's `../../plugins/core`. So it has another `now()` with its own sub-millisecond counter. When the delete and the cleanup run in the same millisecond, the storage computes a `maxDeletionTime` below the document's `lwt` and keeps the document. Firefox runs fast and has coarse timers, so it hits this more often.  The sibling test `should clean up all deleted documents when multiple are deleted` already waits until `Date.now()` is past the deletion `lwt`. This PR adds the same wait to the failing test.  ## Todos - [x] Tests (`.cleanup` tests pass on the memory storage, lint and `check-types` pass) - [x] Changelog  ## Assisted by - YES, Claude Code  --- _Generated by [Claude Code](https://claude.ai/code/session_015P6w6iBPXTgx6weKLkASE5)_
+- **Issue #9443** (2026-11-09): **chore(deps): update dependency eslint to v10.14.0**
+  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [eslint](https://eslint.org) ([source](https://redirect.github.com/eslint/eslint)) | [`10.13.0` → `10.14.0`](https://renovatebot.com/diffs/npm/eslint/10.13.0/10.14.0) | ![age](https://developer.mend.io/api/mc/badges/age/npm/eslint/10.14.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/eslint/10.13.0/10.14.0?slim=true) |  ---  ### Release Notes  <details> <summary>eslint/eslint (eslint)</summary>  ### [`v10.14.0`](https://redirect.github.com/eslint/eslint/releases/tag/v10.14.0)  [Compare Source](https://redirect.github.com/eslint/eslint/compare/v10.13.0...v10.14.0)  #### Features  - [`d23a7f9`](https://redirect.github.com/eslint/eslint/commit/d23a7f9eed78e2733fa2d17d7d7dbb9891bbb692) feat: fix property descriptor handling in `func-name-matching` ([#&#8203;21400](https://redirect.github.com/eslint/eslint/issues/21400)) (xbinaryx)  #### Bug Fixes  - [`4a12580`](https://redirect.github.com/eslint/eslint/commit/4a12580eefdb240bd9b6ae83428638120e9a5f66) fix: require minimatch `10.2.6` to avoid vulnerable brace-expansion ([#&#8203;21460](https://redirect.github.com/eslint/eslint/issues/21460)) (lumir) - [`827a8f3`](https://redirect.github.com/eslint/eslint/commit/827a8f3cca710d3efd76c1d7088d894deff08434) fix: `no-restricted-globals` crash on global ob
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -904,500 +904,261 @@ export function getRxStorageIpcRenderer(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6a06ac3a` (2026-11-03)
-**Commit Message**: FIX flaky RxStorage .cleanup() test with a separate now() instance (#9383)
+### Incident Patch 1: `e7d8f056` (2026-11-06)
+**Commit Message**: Docs: load the search modal and cookie banner CSS on demand (#9431)
 
-The test "should have cleaned up the deleted document" called cleanup(0)
-right after the delete. In the rxdb-premium integration tests the storage
-uses another copy of rxdb and therefore another now() with its own
-sub-millisecond counter. When the delete and the cleanup ran in the same
-millisecond, the storage computed a maxDeletionTime below the lwt of the
-deleted document and did not remove it (seen on Firefox with the
-localstorage-meta-optimizer storage). Wait until Date.now() is past the
-deletion lwt, like the sibling test already does.
+Docusaurus merges all CSS into one render-blocking styles.css, also the
+CSS of lazy loaded chunks and CSS modules. So the DocSearch modal styles
+and the vanilla-cookieconsent styles were part of the first paint of
+every page, although they are only needed when the search is opened or
+when the cookie banner is shown to EU visitors.
+
+Stylesheets imported with the ?lazy-css query are now excluded from the
+merged file and emitted as their own hashed file. The import returns the
+URL, and loadStylesheet() appends a <link> before the modal or the
+banner is rendered. The DocSearch variables, the button styles and the
+swizzled SearchBar styles stay in styles.css because the search button
+is visible on first paint.
+
+styles.css: 205 KB -> 146 KB raw, 61.0 KB -> 51.8 KB gzip.
+modal.css (4.8 KB gzip) and cookieconsent.css (5.4 KB gzip) load on
+demand. Screenshots of pages, the open search modal, the cookie banner
+and the preferences modal are pixel-identical to the live site.
 
 
-Claude-Session: https://claude.ai/code/session_015P6w6iBPXTgx6weKLkASE5
+Claude-Session: https://claude.ai/code/session_015P6w6i7rSbhg1u7Qqj6d2U
 
 Co-authored-by: Claude <[REDACTED_EMAIL]>
 
-**File**: `orga/changelog/fix-flaky-storage-cleanup-test.json` (added, +6/-0)
+**File**: `docs-src/docusaurus.config.ts` (modified, +28/-1)
 ```diff
-@@ -0,0 +1,6 @@
-+{
-+    "$schema": "./schema.json",
-+    "text": "FIX flaky RxStorage `.cleanup()` test that could fail when the storage uses another instance of `now()` and the deletion happened in the same millisecond",
-+    "links": [],
-+    "priority": 1
+@@ -12,6 +12,12 @@ import { createCssVariablesTheme, ThemeRegistrationAny } from 'shiki';
+ import { EU_EEA_REGION_CODES } from './src/theme/eu-consent';
+ import remarkArticleByline from './src/remark/article-byline';
+ 
++/**
++ * Query for CSS imports that are loaded on demand,
++ * see the custom-webpack-tweaks plugin.
++ */
++const LAZY_CSS_QUERY = /lazy-css/;
++
+ /**
+  * The RxDB version from the root package.json, used for the
+  * softwareVersion field of the JSON-LD structured data so it
+@@ -404,7 +410,20 @@ Topic-specific documentation files:
+         function myWebpackTweaks() {
+             return {
+                 name: 'custom-webpack-tweaks',
+-                configureWebpack(_config, _isServer, _utils) {
++                configureWebpack(webpackConfig, _isServer, _utils) {
++                    /**
++                     * Docusaurus merges all CSS into a single render-blocking
++                     * styles.css, including the CSS of lazy loaded chunks.
++                     * Stylesheets imported with the ?lazy-css query are excluded
++                     * from that and emitted as their own hashed file instead.
++                     * The import returns the URL of that file so the code can
++                     * load it with loadStylesheet() when it is needed.
++                     */
++                    webpackConfig.module.rules.forEach((rule: any) => {
++                        if (rule && rule.test instanceof RegExp && rule.test.test('x.css')) {
++                            rule.resourceQuery = { not: LAZY_CSS_QUERY };
++                        }
++                    });
+                     return {
+                         // Emit source maps in the production build so tools like
+                         // Lighthouse can map the minified bundle back to the source
+@@ -423,6 +442,14 @@ Topic-specific documentation files:
+                              * use html-preload on them.
+                              */
+                             rules: [
++                                {
++                                    test: /\.css$/i,
++                                    resourceQuery: LAZY_CSS_QUERY,
++                                    type: 'asset/resource',
++                                    generator: {
++                                        filename: 'assets/css/[name].[contenthash:8][ext]',
++                                    },
++                                },
+                                 {
+                                     test: /\.(woff(2)?|ttf|eot|otf)$/,
+                                     type: 'asset/resource',
+```
+
+**File**: `docs-src/src/docusaurus-theme.d.ts` (modified, +9/-0)
+```diff
+@@ -12,3 +12,12 @@
+ /// <reference types="@docusaurus/plugin-content-docs" />
+ /// <reference types="@docusaurus/plugin-content-blog" />
+ /// <reference types="@docusaurus/plugin-content-pages" />
++
++/**
++ * A stylesheet imported with the ?lazy-css query is emitted as its own file
++ * instead of being merged into styles.css. The import is the URL of that file.
++ */
++declare module '*.css?lazy-css' {
++    const url: string;
++    export default url;
 +}
 ```
 
-**File**: `test/unit/rx-storage-implementations.test.ts` (modified, +8/-0)
+**File**: `docs-src/src/theme/SearchBar/DocSearch.tsx` (modified, +7/-2)
 ```diff
-@@ -3447,6 +3447,14 @@ describe('rx-storage-implementations.test.ts (implementation: ' + config.storage
-                 const doc = mustBeThereButDeleted[0];
-                 assert.ok(doc._deleted);
+@@ -36,6 +36,12 @@ import type {
+ } from '@docsearch/react';
  
-+                /**
-+                 * cleanup(0) only removes documents with a lwt below the now() of the storage.
-+                 * The storage can use another instance of now() with its own sub-millisecond counter
-+                 * (like the premium storages in the integration tests), so wait until the
-+                 * deletion time is in the past.
-+                 */
-+                await waitUntil(() => Date.now() > doc._meta.lwt);
-+
-                 // clean up the deleted document
-                 while (!await storageInstance.cleanup(0)) { }
+ import { triggerTrackingEvent } from '../../components/trigger-event';
++import { loadStylesheet } from '../load-stylesheet';
++/**
++ * The modal styles are only needed when the search is opened,
++ * so they are not part of the global styles.css.
++ */
++import docSearchModalCssUrl from '@docsearch/css/dist/modal.css?lazy-css';
  
+ import type { AutocompleteState } from '@algolia/autocomplete-core';
+ import type { FacetFilters } from 'algoliasearch/lite';
+@@ -73,8 +79,7 @@ function importDocSearchModalIfNeeded() {
+   }
+   return Promise.all([
+     import('@docsearch/react/modal'),
+-    import('@docsearch/react/style'),
+-    import('./styles.css'),
++    loadStylesheet(docSearchModalCssUrl),
+   ]).then(([{ DocSearchModal: Modal }]) => {
+     DocSearchModal = Modal;
+   });
 ```
 
----
-
-### Incident Patch 2: `4b9769b4` (2026-11-03)
-**Commit Message**: FIX result window buffer applying the change event of a concurrent write twice (#9381)
-
-* FIX result window buffer applying the change event of a concurrent write twice
-
-A storage can make written documents visible to queries before it emits
-their change events (Dexie commits the transaction and emits afterwards).
-When a query ran in that gap, its result already contained the write but
-the change event counter did not, so the event was applied again to the
-result window buffer. The buffer is not idempotent: an insert sorted
-after the last row was appended twice, and an insert sorted before the
-first row was counted twice into the skipped rows, which shifted a
-skipped document into the result.
-
-The wrapped storage instance now tracks its pending bulkWrite() calls and
-_execOverDatabase() waits for them before it compares the counter. The
-storage emits the events before bulkWrite() resolves, so the existing
-rerun check then sees the write and runs the query again.
-
-Found in the CI of the premium SQLite storage.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_015P6w6hDJbLRL1jvB5AfEnt
-
-* Link PR in changelog entry
-
-Co-Authored-By: Claud
-
-**File**: `orga/before-next-major.md` (modified, +13/-0)
+**File**: `docs-src/src/theme/SearchBar/index.tsx` (modified, +3/-0)
 ```diff
-@@ -113,3 +113,16 @@ Most "normal" users do not need premium access so we should name it "RxDB Enterp
- ## Refactor data-migrator
- 
-  - Migration strategies should be defined [like in WatermelonDB](https://nozbe.github.io/WatermelonDB/Advanced/Migrations.html) with a `toVersion` version field. We should also add a `fromVersion` field so people could implement performance shortcuts by directly jumping several versions. The current migration strategies use the array index as `toVersion` which is confusing.
-+
-+## RxStorage: Add a commit sequence to query results and change events
-+
-+A storage can make a write visible to queries before the change event of that write reaches the RxCollection. This always happens with multiInstance (the event of another tab comes over the BroadcastChannel after the commit) and with the remote storage, so it cannot be fixed by pinning the emit timing in the RxStorage contract. When a query runs in that gap, the event is applied again on top of a result that already contains the write. The result window buffer does not tolerate this and can end up with duplicate documents or a skipped document in the result. See [#9381](https://github.com/pubkey/rxdb/pull/9381), which only covers writes of the same JavaScript process by waiting for pending `bulkWrite()` calls in `_execOverDatabase()`.
-+
-+Idea:
-+- Each storage instance keeps a commit sequence number that is incremented in the same transaction as each `bulkWrite()`, for example in a single meta row.
-+- `query()` and `count()` return the sequence they have read in their read transaction: `{ documents, sequence }`.
-+- Each `EventBulk` contains the sequence of its write. Events from other tabs and from the remote storage carry the same number because the storage assigned it on commit.
-+- `__ensureEqual()` drops all events with a sequence that is lower or equal to the sequence of the current result. Then the `pendingWrites` wait and maybe the rerun loop in `_execOverDatabase()` can be removed.
-+- The existing `EventBulk.checkpoint` cannot be used for this because its `lwt` comes from the clock of each tab and is not ordered by commit across tabs.
-+
-+Breaking for RxStorage implementations, not for RxDB users. It can be introduced as an optional field in a minor release (storages without it keep the current behavior) and be made required in the next major.
-```
-
-**File**: `orga/changelog/fix-result-window-buffer-event-applied-twice.json` (added, +11/-0)
-```diff
-@@ -0,0 +1,11 @@
-+{
-+    "$schema": "./schema.json",
-+    "text": "FIX the result window buffer of a query could contain the same document twice, or a document that should be skipped, when a write ran while the query was executed and the storage emitted the change event of that write only after the query had already returned the written document",
-+    "links": [
-+        {
-+            "url": "https://github.com/pubkey/rxdb/pull/9381",
-+            "linkText": "#9381"
-+        }
-+    ],
-+    "priority": 5
-+}
-```
-
-**File**: `src/rx-query.ts` (modified, +10/-0)
-```diff
-@@ -375,7 +375,17 @@ export class RxQueryBase<
-          * convergence more and more under write pressure.
-          *
-          * @link https://github.com/pubkey/rxdb/issues/7067
-+         *
-+         * A write that ran concurrently can already be visible in our result
-+         * while its change event is not emitted yet. Its event would then be applied
-+         * again on top of a result that already contains it, which the result window
-+         * buffer does not tolerate. The storage emits the events before bulkWrite()
-+         * resolves, so we wait for the pending writes before comparing the counter.
-          */
-+        const pendingWrites = this.collection.storageInstance.pendingWrites;
-+        if (pendingWrites && pendingWrites.size > 0) {
-+            await Promise.allSettled(Array.from(pendingWrites));
-+        }
-         if (this.collection._changeEventBuffer.getCounter() !== counterBefore) {
-             await promiseWait(20);
-             return this._execOverDatabase(rerunCount + 1);
-```
-
-**File**: `src/rx-storage-helper.ts` (modified, +19/-4)
-```diff
-@@ -582,6 +582,12 @@ export function flatCloneDocWithMeta<RxDocType>(
- 
- export type WrappedRxStorageInstance<RxDocumentType, Internals, InstanceCreationOptions> = RxStorageInstance<RxDocumentType, any, InstanceCreationOptions> & {
-     originalStorageInstance: RxStorageInstance<RxDocumentType, Internals, InstanceCreationOptions>;
-+    /**
-+     * The bulkWrite() calls to the original storage instance that have not resolved yet.
-+     * A storage can make written documents visible to queries before it emits their
-+     * change events, but it always emits them before bulkWrite() resolves.
-+     */
-+    pendingWrites?: Set<Promise<unknown>>;
- };
+@@ -3,6 +3,9 @@ import { DocSearchButton } from '@docsearch/react/button';
+ import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
+ import translations from '@theme/SearchTranslations';
+ import type { DocSearchV4Props } from './DocSearch';
++import '@docsearch/css/dist/_variables.css';
++import '@docsearch/css/dist/button.css';
++import './styles.css';
  
  /**
-@@ -608,8 +614,17 @@ export function getWrappedStorageInstance<
+  * The DocSearch component, the Algolia hooks and the connection to the
+```
+
+**File**: `docs-src/src/theme/SearchBar/styles.css` (modified, +2/-1)
+```diff
+@@ -9,7 +9,8 @@
+     var(--ifm-transition-timing-default);
+ }
  
-     const primaryPath = getPrimaryFieldOfPrimaryKey(storageInstance.schema.primaryKey);
+-.DocSearch-Container {
++/* Higher specificity because the modal stylesheet is loaded later. */
++html .DocSearch-Container {
+   z-index: calc(var(--ifm-z-index-fixed) + 1);
+ }
  
-+    const pendingWrites = new Set<Promise<unknown>>();
-+    function trackPendingWrite<T>(writePromise: Promise<T>): Promise<T> {
-+        pendingWrites.add(writePromise);
-+        const remove = () => pendingWrites.delete(writePromise);
-+        writePromise.then(remove, remove);
-+        return writePromise;
-+    }
+```
+
+**File**: `docs-src/src/theme/consent-manager.ts` (modified, +8/-3)
+```diff
+@@ -12,6 +12,9 @@
+  *   `setTrackingConsent()` in trigger-event.tsx and the marketing callback.
+  */
+ 
++import cookieConsentCssUrl from 'vanilla-cookieconsent/dist/cookieconsent.css?lazy-css';
++import { loadStylesheet } from './load-stylesheet';
 +
-     const ret: WrappedRxStorageInstance<RxDocType, Internals, InstanceCreationOptions> = {
-         originalStorageInstance: storageInstance,
-+        pendingWrites,
-         schema: storageInstance.schema,
-         internals: storageInstance.internals,
-         collectionName: storageInstance.collectionName,
-@@ -705,12 +720,12 @@ export function getWrappedStorageInstance<
-                 });
-             }
+ export type ConsentState = {
+     analytics: boolean;
+     marketing: boolean;
+@@ -45,9 +48,11 @@ export function updateGoogleConsent(state: ConsentState): void {
+ export async function initEuConsentBanner(
+     onApply: (state: ConsentState) => void,
+ ): Promise<void> {
+-    const CookieConsent = await import('vanilla-cookieconsent');
+-    // The library ships its own stylesheet, theming is added in custom.css.
+-    await import('vanilla-cookieconsent/dist/cookieconsent.css');
++    const [CookieConsent] = await Promise.all([
++        import('vanilla-cookieconsent'),
++        // The library ships its own stylesheet, theming is added in custom.css.
++        loadStylesheet(cookieConsentCssUrl),
++    ]);
  
--            const writeResult = await database.lockedRun(
-+            const writeResult = await trackPendingWrite(database.lockedRun(
-                 () => storageInstance.bulkWrite(
-                     toStorageWriteRows,
-                     context
-                 )
--            );
-+            ));
- 
-             /**
-              * The RxStorageInstance MUST NOT allow to insert already _deleted documents,
-@@ -772,12 +787,12 @@ export function getWrappedStorageInstance<
-                         };
-                     });
- 
--                const subResult = await database.lockedRun(
-+                const subResult = await trackPendingWrite(database.lockedRun(
-                     () => storageInstance.bulkWrite(
-                         reInserts,
-                         context
-                     )
--                );
-+                ));
- 
- 
-                 useWriteResult.error = useWriteResult.error.concat(subResult.error);
+     const readState = (): ConsentState => ({
+         analytics: CookieConsent.acceptedCategory('analytics'),
 ```
 
-**File**: `test/unit/event-reduce.test.ts` (modified, +166/-1)
+**File**: `docs-src/src/theme/load-stylesheet.ts` (added, +22/-0)
 ```diff
-@@ -1,5 +1,6 @@
- import assert from 'assert';
--import { clone } from 'async-test-util';
-+import { clone, wait } from 'async-test-util';
-+import { Subject } from 'rxjs';
- 
- import {
-     schemaObjects,
-@@ -15,6 +16,8 @@ import {
-     rxChangeEventToEventReduceChangeEvent,
-     RxStorageChangeEvent,
-     RxEventReduceOptions,
-+    RxStorage,
-+    RxStorageInstance,
-     defaultResultWindowBuffer
- } from '../../plugins/core/index.mjs';
- 
-@@ -511,6 +514,168 @@ describe('event-reduce.test.js', () => {
- 
-             col.database.close();
-         });
-+        /**
-+         * Wraps a storage so that bulkWrite() commits the documents
-+         * but emits their change events only after openGate() is called.
-+         * This is allowed by the RxStorage contract, which only requires that the
-+         * events are emitted before bulkWrite() resolves. Storages like Dexie
-+         * also commit the transaction before they emit the events.
-+         */
-+        function gatedEventsStorage(storage: RxStorage<any, any>) {
-+            let gate: Promise<void> | undefined;
-+            let openGate = () => { };
-+            let onCommitted = () => { };
-+            let onQueried = () => { };
-+            const ret: RxStorage<any, any> & {
-+                /**
-+                 * Resolves when the next bulkWrite() is committed
-+                 * but its events are not emitted yet.
-+                 */
-+                closeGate(): Promise<void>;
-+                openGate(): void;
-+                /**
-+                 * Resolves when the next query() has returned its result.
-+                 */
-+                waitForQuery(): Promise<void>;
-+            } = {
-+                name: storage.name,
-+                rxdbVersion: storage.rxdbVersion,
-+                async createStorageInstance(params) {
-+                    const instance = await storage.createStorageInstance(params);
-+                    const changes$ = new Subject<any>();
-+                    let held: any[] = [];
-+                    let holding = false;
-+                    instance.changeStream().subscribe(bulk => {
-+                        if (holding) {
-+                            held.push(bulk);
-+                        } else {
-+                            changes$.next(bulk);
-+                        }
-+                    });
-+                    return new Proxy(instance, {
-+                        get(target: any, prop: keyof RxStorageInstance<any, any, any>) {
-+                            if (prop === 'changeStream') {
-+                                return () => changes$.asObservable();
-+                            }
-+                            if (prop === 'bulkWrite') {
-+                                return async (...args: any[]) => {
-+                                    const useGate = gate;
-+                                    if (useGate) {
-+                                        holding = true;
-+                                    }
-+                                    const result = await target.bulkWrite(...args);
-+                                    if (useGate) {
-+                                        onCommitted();
-+                                        await useGate;
-+                                        holding = false;
-+                                        const emit = held;
-+                                        held = [];
-+                                        emit.forEach(bulk => changes$.next(bulk));
-+                                    }
-+                                    return result;
-+                                };
-+                            }
-+                            if (prop === 'query') {
-+                                return async (...args: any[]) => {
-+                                    const result = await target.query(...args);
-+                                    onQueried();
-+                                    return result;
-+                                };
-+                            }
-+                            const value = target[prop];
-+                            return typeof value === 'function' ? value.bind(target) : value;
-+                        }
-+                    });
-+                },
-+                closeGate() {
-+                    gate = new Promise<void>(res => {
-+                        openGate = () => {
-+                            gate = undefined;
-+                            res();
-+                        };
-+                    });
-+                    return new Promise<void>(res => onCommitted = res);
-+                },
-+                openGate() {
-+                    openGate();
-+                },
-+                waitForQuery() {
-+                    return new Promise<void>(res => onQueried = res);
-+                }
-+            };
-+            return ret;
-+        }
-+        it('should not apply the change event of a write twice when the query result already contains the write', async () => {
-+            const storage = gate
-```
-
-**File**: `test/unit/replication.test.ts` (modified, +1/-0)
-```diff
-@@ -2401,6 +2401,7 @@ describe('replication.test.ts', () => {
-             sub2 = collection.findOne('a').$.subscribe((doc) => {
-                 emitted.push(doc);
-             });
-+            await waitUntil(() => emitted.length === 1);
- 
-             const postDoc = { id: 'a', foo: 'changed-after' };
-             pullStream$.next({ documents: [postDoc], checkpoint: {} });
+@@ -0,0 +1,22 @@
++const loading = new Map<string, Promise<void>>();
++
++/**
++ * Appends a <link rel="stylesheet"> for the given URL, once per URL.
++ * Resolves when the stylesheet is loaded, or failed to load, so callers
++ * can wait before they render the elements that need it.
++ */
++export function loadStylesheet(href: string): Promise<void> {
++    let promise = loading.get(href);
++    if (!promise) {
++        promise = new Promise<void>(resolve => {
++            const link = document.createElement('link');
++            link.rel = 'stylesheet';
++            link.href = href;
++            link.onload = () => resolve();
++            link.onerror = () => resolve();
++            document.head.appendChild(link);
++        });
++        loading.set(href, promise);
++    }
++    return promise;
++}
 ```
 
 ---
 
-### Incident Patch 3: `b41fd6bd` (2026-11-03)
-**Commit Message**: test: add query correctness tests for missing/null fields and $regex, $not, $mod (#9385)
+### Incident Patch 2: `b41c7f0c` (2026-11-09)
+**Commit Message**: fix(deps): update dependency js-base64 to v3.9.6 (#9440)
 
-$exists, $nin, $eq and $ne are now tested against missing fields,
-null values and empty strings. $regex on plain fields, field-level $not
-and $mod had no correctness tests before.
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
-Refs #9371
-
-
-Claude-Session: https://claude.ai/code/session_015P6w6icEVvvPDxQ1xm4ize
-
-Co-authored-by: Claude <[REDACTED_EMAIL]>
-
-**File**: `orga/changelog/add-exists-nin-null-query-correctness-tests.json` (added, +11/-0)
+**File**: `package.json` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,11 @@
-+{
-+    "$schema": "./schema.json",
-+    "text": "ADD query correctness tests for `$exists`, `$nin`, `$eq` and `$ne` on missing and `null` fields, and for `$regex`, `$not` and `$mod` on plain fields, so all storages are checked against the same results",
-+    "links": [
-+        {
-+            "url": "https://github.com/pubkey/rxdb/issues/9371",
-+            "linkText": "#9371"
-+        }
-+    ],
-+    "priority": 1
-+}
+@@ -598,7 +598,7 @@
+     "graphql": "17.0.2",
+     "graphql-ws": "6.4.1",
+     "is-my-json-valid": "2.20.6",
+-    "js-base64": "3.9.5",
++    "js-base64": "3.9.6",
+     "jsonschema-key-compression": "1.7.0",
+     "mingo": "7.2.5",
+     "nostr-tools": "2.25.2",
 ```
 
-**File**: `test/unit/rx-storage-query-correctness.test.ts` (modified, +160/-0)
+---
+
+### Incident Patch 3: `8ca469a2` (2026-11-09)
+**Commit Message**: fix(deps): update dependency electron to v44.10.1 (#9439)
+
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+
+**File**: `examples/electron/package.json` (modified, +1/-1)
 ```diff
-@@ -2735,4 +2735,164 @@ describe('rx-storage-query-correctness.test.ts', () => {
-             }
-         ]
-     });
-+
-+    /**
-+     * Missing fields and fields with the value null
-+     * must be handled the same way on all storages.
-+     * @link https://github.com/pubkey/rxdb/issues/9371
-+     */
-+    testCorrectQueries<{ id: string; a?: string | null; b?: string | null; }>({
-+        testTitle: '$exists, $nin, $eq and $ne on missing and null fields',
-+        data: [
-+            { id: 'd1', a: 'x', b: null },
-+            { id: 'd2', a: 'x', b: 'z' },
-+            { id: 'd3' },
-+            { id: 'd4', a: null },
-+            { id: 'd5', a: 'y' },
-+            { id: 'd6', a: '' }
-+        ],
-+        schema: {
-+            version: 0,
-+            primaryKey: 'id',
-+            type: 'object',
-+            properties: {
-+                id: { type: 'string', maxLength: 10 },
-+                a: { type: ['string', 'null'] },
-+                b: { type: ['string', 'null'] }
-+            },
-+            required: ['id']
-+        },
-+        queries: [
-+            {
-+                info: '$exists: true matches fields with the value null',
-+                query: { selector: { a: { $exists: true } }, sort: [{ id: 'asc' }] },
-+                expectedResultDocIds: ['d1', 'd2', 'd4', 'd5', 'd6']
-+            },
-+            {
-+                info: '$exists: false matches only missing fields',
-+                query: { selector: { a: { $exists: false } }, sort: [{ id: 'asc' }] },
-+                expectedResultDocIds: ['d3']
-+            },
-+            {
-+                info: '$exists: true on a field that is null in one document',
-+                query: { selector: { b: { $exists: true } }, sort: [{ id: 'asc' }] },
-+                expectedResultDocIds: ['d1', 'd2']
-+            },
-+            {
-+                info: '$exists: false on a field that is null in one document',
-+                query: { selector: { b: { $exists: false } }, sort: [{ id: 'asc' }] },
-+                expectedResultDocIds: ['d3', 'd4', 'd5', 'd6']
-+            },
-+            {
-+                info: '$nin matches missing and null fields',
-+                query: { selector: { a: { $nin: ['y'] } }, sort: [{ id: 'asc' }] },
-+                expectedResultDocIds: ['d1', 'd2', 'd3', 'd4', 'd6']
-+            },
-+            {
-+                info: '$nin with multiple values matches missing and null fields',
-+                query: { selector: { a: { $nin: ['x', 'y'] } }, sort: [{ id: 'asc' }] },
-+                expectedResultDocIds: ['d3', 'd4', 'd6']
-+            },
-+            {
-+                info: '$nin with null excludes missing and null fields',
-+                query: { selector: { a: { $nin: ['y', null] } }, sort: [{ id: 'asc' }] },
-+                expectedResultDocIds: ['d1', 'd2', 'd6']
-+            },
-+            {
-+                info: '$nin with only null',
-+                query: { selector: { a: { $nin: [null] } }, sort: [{ id: 'asc' }] },
-+                expectedResultDocIds: ['d1', 'd2', 'd5', 'd6']
-+            },
-+            {
-+                info: '$ne matches missing and null fields',
-+                query: { selector: { a: { $ne: 'y' } }, sort: [{ id: 'asc' }] },
-+                expectedResultDocIds: ['d1', 'd2', 'd3', 'd4', 'd6']
-+            },
-+            {
-+                info: '$eq: null matches missing and null fields',
-+                query: { selector: { a: { $eq: null } }, sort: [{ id: 'asc' }] },
-+                expectedResultDocIds: ['d3', 'd4']
-+            },
-+            {
-+                info: '$ne: null matches only fields with a value',
-+                query: { selector: { a: { $ne: null } }, sort: [{ id: 'asc' }] },
-+                expectedResultDocIds: ['d1', 'd2', 'd5', 'd6']
-+            }
-+        ]
-+    });
-+
-+    testCorrectQueries<{ id: string; name?: string | null; age?: number | null; }>({
-+        testTitle: '$regex, $not and $mod on plain fields',
-+        data: [
-+            { id: 'd1', name: 'Alice', age: 10 },
-+            { id: 'd2', name: 'alice', age: 15 },
-+            { id: 'd3', name: 'Bob', age: 20 },
-+            { id: 'd4' },
-+            { id: 'd5', name: null, age: null },
-+            { id: 'd6', name: 'Carol', age: 21 }
-+        ],
-+        schema: {
-+            version: 0,
-+            primaryKey: 'id',
-+            type: 'object',
-+            properties: {
-+                id: { type: 'string', maxLength: 10 },
-+                name: { type: ['string', 'null'] },
-+                age: { type: ['number', 'null'] }
-+            },
-+            required: ['id']
-+        },
-+        queries: [
-+            {
-+                info: '$regex is case sensitive by default',
-+                query: { selector: { name: { $regex: '^a' } }, sort: [{ id: 'asc' }] },
-+                expectedResultDocIds: ['d2']
-+            },
-+            {
-+                info: '$regex with $options i',
-+                query: { selector: { name: { $regex: '^a', $opt
+@@ -13,7 +13,7 @@
+   "//": "NOTICE: For the Github CI we use the local RxDB build (rxdb-local.tgz). In your app should just install 'rxdb' from npm instead",
+   "dependencies": {
+     "rxdb": "file:rxdb-local.tgz",
+-    "electron": "44.10.0",
++    "electron": "44.10.1",
+     "rxjs": "7.8.2"
+   },
+   "devDependencies": {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #9385** (2026-11-03): test: query correctness for missing/null fields and $regex, $not, $mod (#9371) (@pubkey)
-- **PR #9383** (2026-11-03): FIX flaky RxStorage .cleanup() test with a separate now() instance (@pubkey)
-- **PR #9382** (2026-11-03): Fix flaky Tauri example e2e test (@pubkey)
-- **PR #9381** (2026-11-03): FIX result window buffer applying the change event of a concurrent write twice (@pubkey)
-- **PR #9378** (2026-11-03): Update dependency deno to v2.9.8 (@renovate[bot])
-- **PR #9377** (2026-11-03): Update dependency rollup to v4.65.1 (@renovate[bot])
+- **PR #9445** (closed): Document GITHUB_ACCESS_TOKEN and FIRECRAWL_API env vars in CLAUDE.md (@pubkey)
+- **PR #9443** (2026-11-09): chore(deps): update dependency eslint to v10.14.0 (@renovate[bot])
+- **PR #9440** (2026-11-09): fix(deps): update dependency js-base64 to v3.9.6 (@renovate[bot])
+- **PR #9439** (2026-11-09): fix(deps): update dependency electron to v44.10.1 (@renovate[bot])
+- **PR #9438** (2026-11-08): fix(deps): update babel monorepo to v8.0.10 (@renovate[bot])
+- **PR #9437** (2026-11-08): fix(deps): update angular monorepo to v22.2.4 (@renovate[bot])
 
 ---
 
@@ -1417,33 +1178,51 @@ Co-authored-by: Claude <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. flaky RxStorage .cleanup() test with a separate now() instance (#9383)
+## X. Docs: load the search modal and cookie banner CSS on demand (#9431)
 
 **RULE**:
-When implementing operations in `orga/changelog/fix-flaky-storage-cleanup-test.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pubkey/rxdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs-src/docusaurus.config.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pubkey/rxdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6a06ac3a`: flaky RxStorage .cleanup() test with a separate now() instance (#9383). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e7d8f056`: Docs: load the search modal and cookie banner CSS on demand (#9431). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `orga/changelog/fix-flaky-storage-cleanup-test.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs-src/docusaurus.config.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-{
-    "$schema": "./schema.json",
-    "text": "FIX flaky RxStorage `.cleanup()` test that could fail when the storage uses another instance of `now()` and the deletion happened in the same millisecond",
-    "links": [],
-    "priority": 1
-}
+/**
+ * Query for CSS imports that are loaded on demand,
+ * see the custom-webpack-tweaks plugin.
+ */
+const LAZY_CSS_QUERY = /lazy-css/;
+
+                configureWebpack(webpackConfig, _isServer, _utils) {
+                    /**
+                     * Docusaurus merges all CSS into a single render-blocking
+                     * styles.css, including the CSS of lazy loaded chunks.
+                     * Stylesheets imported with the ?lazy-css query are excluded
+                     * from that and emitted as their own hashed file instead.
+                     * The import returns the URL of that file so the code can
+                     * load it with loadStylesheet() when it is needed.
+                     */
+                    webpackConfig.module.rules.forEach((rule: any) => {
+                        if (rule && rule.test instanceof RegExp && rule.test.test('x.css')) {
+                            rule.resourceQuery = { not: LAZY_CSS_QUERY };
+                        }
+                    });
+                                {
+                                    test: /\.css$/i,
+                                    resourceQuery: LAZY_CSS_QUERY,
+                                   
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+                configureWebpack(_config, _isServer, _utils) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6a06ac3a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e7d8f056` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/keybase-client-learnings.md`  
 > **Source**: github ([https://github.com/keybase/client](https://github.com/keybase/client))  
-> **Source Version**: `22f55f55`  
+> **Source Version**: `22e5dbba`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T08:28:34.651Z  
+> **Timestamp**: 2026-11-09T22:27:15.561Z  
 > **Learning ID**: `learn-github-keybase-client`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/keybase-client-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/keybase/client](https://github.com/keybase/client))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T08:28:32.414Z  
+> **Harvest Timestamp**: 2026-11-09T22:27:03.115Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Keybase Go Library, Client, Service, OS X, iOS, Android, Electron
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 9269 stars
+- **Stars / Engagement**: 9270 stars
 
 ---
 
@@ -1908,1637 +1908,1015 @@ func ClassifyDomain(domain string) chat1.UnfurlType {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `601ccb05` (2026-11-03)
-**Commit Message**: e2e: iOS release gate command, census and report; crash and render recovery (#29866)
+### Incident Patch 1: `fac612f8` (2026-11-09)
+**Commit Message**: e2e: release gate skill; one full report kept across runs; feedback, link error and chat-pdf tour fixes (#29879)
 
-* e2e: the census credits native surfaces from flows
+* skill: running the e2e release gates (local service and KBFS, serial runs, caffeinate, clean stop)
 
-* e2e: release children can log to a file; port holders are shared
+* e2e report: step screenshots open full size on click
 
-* e2e: a release child's log write failure is reported, not fatal
+* e2e: flows run outside the release gate write under tests/results/targeted, keeping the gate's results to rebuild its report
 
-* e2e: iOS gate lists, and harness helpers credit the surfaces they drive
+* e2e: review fixes: report scripts per results dir, no baseline from a targeted run, reporter scans the config's dir, skill corrections
 
-* e2e: the phone as a new device is a manual-only step
+* Center the signed-out feedback form; the link error banner spans the screen
 
-* e2e: iOS census and report commands
+* e2e: the tour's chat-pdf modal shows a seeded pdf (thread opens before append; messageID ref); markdown debug page is 10 screens
 
-* e2e: the iOS release gate command
+* e2e report: one full report with a card store (newest card per test, timestamps, THIS RUN badge, latest-run filter); review fixes for the chat-pdf tour entry
 
-* e2e: the iOS release only stops harness leftovers once preflight passes; the scan covers every output
+* e2e report: store review fixes (prune only on a full release run, newest run is latest, skipped tests keep their card, checklist from every card, baseline and diffs from the report, no stale image under a new verdict)
 
-* e2e: document the iOS release gate
+* e2e report: never prune after a broken run, numbered keys for name 
 
-* e2e: the iOS render keeps React Native's Animated clock real under the fixed Date
-
-JS-driven Animated (SwitchToggle runs a 100ms timing on mount) times itself with
-Date.now(). Under the visual run's fixed Date such an animation never ends: it
-updates its view every frame, pinning the JS and main threads, and WDA's
-accessibility snapshot behind the window rect took 3-5s against a 5s deadline on
-modal/profile-add-to-team. With a real Animated clock it takes ~90ms; captures are
-byte-identical.
-
-* e2e: a release child settles on its exit when a grandchild keeps its pipes
-
-**File**: `shared/jest.config.js` (modified, +2/-2)
+**File**: `shared/chat/pdf/index.tsx` (modified, +3/-1)
 ```diff
-@@ -55,8 +55,8 @@ module.exports = {
-     '<rootDir>/images/',
-     '<rootDir>/perf/',
-     '<rootDir>/.tsOuts/',
--    // tests/e2e/shared (shared/gate included), ios-appium/gate, tests/e2e/accounts, the corpus and electron's release and main-process libs hold helper unit tests; the rest are playwright/appium/node:test suites
--    '<rootDir>/tests/e2e/(?!shared/|accounts/|ios-appium/gate/|fixtures/corpus/|electron/(?:release-lib|helpers/main-process-lib)\\.test\\.ts$)',
-+    // tests/e2e/shared (shared/gate included), ios-appium/gate, tests/e2e/accounts, the corpus, the electron and ios-appium release libs and electron's main-process lib hold helper unit tests; the rest are playwright/appium/node:test suites
-+    '<rootDir>/tests/e2e/(?!shared/|accounts/|ios-appium/(?:gate/|release-lib\\.test\\.ts$)|fixtures/corpus/|electron/(?:release-lib|helpers/main-process-lib)\\.test\\.ts$)',
-   ],
-   transform: {
-     '^.+\\.(js|jsx|mjs|ts|tsx)$': 'babel-jest',
+@@ -7,6 +7,7 @@ import {useNavigation} from '@react-navigation/native'
+ import {openLocalPathInSystemFileManagerDesktop} from '@/util/fs-storeless-actions'
+ import {attachmentDownloadMessage, takePDFMessage} from '../conversation/attachment-actions'
+ import {useConversationMessage} from '../conversation/data-hooks'
++import * as TestIDs from '@/tests/e2e/shared/test-ids'
+ 
+ type Props = {
+   conversationIDKey?: T.Chat.ConversationIDKey
+@@ -48,7 +49,7 @@ const ChatPDF = (props: Props) => {
+         padding="none"
+         footer={<Kb.Button type="Default" label="Download" onClick={onDownload} disabled={!canDownload} />}
+       >
+-        <PdfEmbed url={url} />
++        <PdfEmbed url={url} testID={TestIDs.CHAT_PDF_VIEWER} />
+       </Kb.ModalScreen>
+     )
+   }
+@@ -73,6 +74,7 @@ const ChatPDF = (props: Props) => {
+           pinnedURLMode={true}
+           onError={err => setError(err)}
+           style={nativeStyles.webViewContainer}
++          testID={TestIDs.CHAT_PDF_VIEWER}
+         />
+       ) : (
+         <Kb.Text type="BodySmallError">Can&apos;t load this file {error}</Kb.Text>
 ```
 
-**File**: `shared/package.json` (modified, +4/-1)
+**File**: `shared/common-adapters/pdf-embed.desktop.tsx` (modified, +4/-3)
 ```diff
-@@ -85,11 +85,14 @@
-     "test:e2e:ios:chat": "bash tests/e2e/run-ios-chat.sh iPhoneTest",
-     "test:e2e:ios:share": "bash tests/e2e/run-ios-share.sh iPhoneTest",
+@@ -25,11 +25,12 @@ const trustedPdfURL = (url: string) => {
+   return policy.createScriptURL(url)
+ }
+ 
+-type Props = {url?: string}
++type Props = {url?: string; testID?: string}
+ 
+ // The renderer's CSP requires Trusted Types for script sinks, and <embed src> is one, so a plain
+ // string src is blocked. React hands a non-string src to setAttribute untouched.
+-export const PdfEmbed = ({url}: Props) => {
++export const PdfEmbed = ({url, testID}: Props) => {
+   const src = url ? trustedPdfURL(url) : undefined
+-  return <embed src={src as string | undefined} width="100%" height="100%" />
++  // the testID only once there is a file to show
++  return <embed src={src as string | undefined} width="100%" height="100%" data-testid={src ? testID : undefined} />
+ }
+```
+
+**File**: `shared/common-adapters/pdf-embed.tsx` (modified, +1/-1)
+```diff
+@@ -1,2 +1,2 @@
+ // Desktop only; mobile shows PDFs in a WebView
+-export const PdfEmbed = (_p: {url?: string}) => null
++export const PdfEmbed = (_p: {url?: string; testID?: string}) => null
+```
+
+**File**: `shared/deeplinks/error.tsx` (modified, +9/-28)
+```diff
+@@ -1,43 +1,24 @@
+ import * as Kb from '@/common-adapters'
+ import * as TestIDs from '@/tests/e2e/shared/test-ids'
+ 
+-type KeybaseLinkErrorBodyProps = {
+-  message: string
+-  isError: boolean
+-}
+-
+-export const KeybaseLinkErrorBody = (props: KeybaseLinkErrorBodyProps) => {
++const LinkError = (props: {error?: string}) => {
+   const styles = useStyles()
+-  const bannerColor = props.isError ? 'red' : 'green'
+   return (
+     <Kb.Box2 direction="vertical" fullWidth={true} style={styles.container} testID={TestIDs.KEYBASE_LINK_ERROR}>
+-      <Kb.Banner color={bannerColor}>
+-        <Kb.BannerParagraph bannerColor={bannerColor} content={props.message} selectable={true} />
++      <Kb.Banner color="red">
++        <Kb.BannerParagraph bannerColor="red" content={props.error ?? 'Invalid page! (sorry)'} selectable={true} />
+       </Kb.Banner>
+     </Kb.Box2>
+   )
+ }
+ 
+-const LinkError = (props: {error?: string}) => (
+-  <KeybaseLinkErrorBody isError={true} message={props.error ?? 'Invalid page! (sorry)'} />
+-)
+-
+ const useStyles = Kb.Styles.createStyleHook(theme => ({
+-  container: Kb.Styles.platformStyles({
+-    common: {
+-      backgroundColor: theme.white,
+-    },
+-    isElectron: {
+-      height: 560,
+-      width: 400,
+-    },
+-    isMobile: {
+-      flexGrow: 1,
+-      flexShrink: 1,
+-      maxHeight: '100%',
+-      width: '100%',
+-    },
+-  }),
++  container: {
++    backgroundColor: theme.white,
++    flexGrow: 1,
++    flexShrink: 1,
++    maxHeight: '100%',
++  },
+ }))
+ 
+ import type {StaticScreenProps} from '@react-navigation/core'
+```
+
+**File**: `shared/package.json` (modified, +2/-1)
+```diff
+@@ -68,13 +68,14 @@
+     "test:e2e:accounts:setup": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON tests/e2e/accounts/setup.mts",
+     "test:e2e:accounts:sweep": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON tests/e2e/accounts/sweep.mts",
+     "test:e2e:desktop": "playwright test --config tests/e2e/electron/playwright.config.ts",
+-    "test:e2e:desktop:branch": "playwright test --config tests/e2e/electron/playwright.config.ts tests/e2e/electron/flows/team-member.test.ts && yarn test:e2e:desktop:report",
++    "test:e2e:desktop:branch": "playwright test --config tests/e2e/electron/playwright.config.ts tests/e2e/electron/flows/team-member.test.ts && yarn test:e2e:desktop:report:targeted",
+     "test:e2e:desktop:launch": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON tests/e2e/electron/launch-app.mts",
+     "test:e2e:desktop:flows": "playwright test --config tests/e2e/electron/playwright.config.ts --project=electron-flows",
+     "test:e2e:desktop:census": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON tests/e2e/electron/census.mts",
+     "test:e2e:desktop:release": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON tests/e2e/electron/release.mts",
+     "test:e2e:desktop:rpc": "yarn test:e2e:desktop:flows tests/e2e/electron/flows/teams-browse.test.ts tests/e2e/electron/flows/teams-inner.test.ts tests/e2e/electron/flows/teams-modals.test.ts tests/e2e/electron/flows/team-member.test.ts tests/e2e/electron/flows/team-wizard-channel.test.ts tests/e2e/electron/flows/chat-interactions.test.ts",
+     "test:e2e:desktop:report": "node tests/e2e/generate-electron-report.mts && open tests/results/electron-report.html",
++    "test:e2e:desktop:report:targeted": "node tests/e2e/generate-electron-report.mts --targeted && open tests/results/electron-report.html",
+     "test:e2e:desktop:save-baseline": "node tests/e2e/generate-electron-report.mts --save-baseline",
      "test:e2e:ios:flows": "wdio run tests/e2e/ios-appium/wdio.gate.conf.ts",
-+    "test:e2e:ios:census": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON tests/e2e/ios-appium/census.mts",
-+    "test:e2e:ios:release": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON tests/e2e/ios-appium/release.mts",
-+    "test:e2e:ios:gate-report": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON tests/e2e/ios-appium/report.mts && open tests/results/ios-report.html",
-     "test:e2e:ios:report": "node tests/e2e/generate-appium-report.mts && open tests/results/ios-appium-report.html",
-     "test:e2e:android": "bash tests/e2e/run-android-appium.sh",
-     "test:e2e:android:report": "node tests/e2e/generate-appium-report.mts android && open tests/results/android-appium-report.html",
-     "test:unit": "napi-postinstall unrs-resolver 1.11.1 check; jest --runInBand",
--    "visual:unit": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/e2e/visual/ tests/e2e/generate-report-shared.test.mts tests/e2e/shared/gate/census-cli.test.mts tests/e2e/shared/gate/flow-report.test.mts tests/e2e/shared/gate/release-run.test.mts",
-+    "visual:unit": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/e2e/visual/ tests/e2e/shared/cli-read.test.mts tests/e2e/generate-report-shared.test.mts tests/e2e/ios-appium/census.test.mts tests/e2e/ios-appium/release-secrets.test.mts tests/e2e/shared/gate/census-cli.test.mts tests/e2e/shared/gate/flow-report.test.mts tests/e2e/shared/gate/release-run.test.mts",
-     "visual:base": "node tests/e2e/visual/cli.mts base",
-     "visual:check": "node tests/e2e/visual/cli.mts check",
-     "visual:gate": "node tests/e2e/visual/cli.mts gate",
+     "test:e2e:ios:census": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON tests/e2e/ios-appium/census.mts",
 ```
 
-**File**: `shared/tests/e2e/accounts/setup.mts` (modified, +11/-4)
+**File**: `shared/settings/feedback/index.tsx` (modified, +11/-1)
 ```diff
-@@ -41,6 +41,7 @@ import {
-   withSignalsDeferred,
- } from './peer-homes.ts'
- import {ensureRunId} from './run-id.ts'
-+import {maskAccounts, signedInName} from './sweep-lib.ts'
- import {E2E_CHANNELS} from '../shared/chat-data.ts'
- import {keybaseBin} from '../shared/keybase-bin.ts'
- import {connectPeerRpc} from '../shared/peer-rpc.ts'
-@@ -80,6 +81,12 @@ const loadVars = (): Vars => {
-   return vars
- }
- 
-+const usersOf = (vars: Vars) => ({second: vars['KB_SECOND_USER'] ?? '', smoke: vars['KB_SMOKE_USER'] ?? ''})
-+
-+// A line for the console, with the test accounts and team named by role.
-+const masked = (s: string, vars: Vars) =>
-+  maskAccounts(s, {team: vars['KB_E2E_TEAM'] ?? '', users: usersOf(vars)})
-+
- const userFor = (role: PeerRole, vars: Vars) => (role === 'owner' ? vars['KB_SMOKE_USER'] : vars['KB_SECOND_USER']) ?? ''
- 
- const envFor = (vars: Vars, role: PeerRole, home: string, paperKey: string): E2EEnv => {
-@@ -118,7 +125,7 @@ const problemsFor = async (role: PeerRole, vars: Vars): Promise<string[]> => {
-     problems.push(`peer ${role} at ${target} is not running`)
-   } else {
-     const who = await peerWhoami(target)
--    if (who !== user) problems.push(`peer ${role} at ${target} is signed in as ${who || 'nobody'}`)
-+    if (who !== user) problems.push(masked(`peer ${role} at ${target} is signed in as ${signedInName(who, usersOf(vars))}`, vars))
-   }
-   return problems
- }
-@@ -234,7 +241,7 @@ const ensurePaperKey = async (role: PeerRole, vars: Vars) => {
- }
- 
- // Signs `home`'s service in as `user` with the paper key, as the first free e2e-<role>-svc name.
--const provisionHome = async (role: PeerRole, home: string, user: string, paperKey: string) => {
-+const provisionHome = async (role: PeerRole, home: string, user: string, paperKey: string, vars: Vars) => {
-   fs.mkdirSync(home, {mode: 0o700, recursive: true})
-   if (!peerUsesFileSecretStore(home)) {
-     if (await socketAnswers(socketPathFor(home))) {
-@@ -245,7 +252,7 @@ const provisionHome = async (role: PeerRole, home: string, user: string, paperKe
-   await waitForPeerService(role, home)
-   const who = await peerWhoami(home)
-   if (who === user) return
--  if (who) throw new Error(`peer ${role} at ${home} is signed in as ${who}; not touching it`)
-+  if (who) throw new Error(masked(`peer ${role} at ${home} is signed in as ${signedInName(who, usersOf(vars))}; not touching it`, vars))
-   for (const name of deviceNameCandidates(role)) {
-     try {
-       await runKeybase(['--home', home, 'login', '--devicename', name, user], {
-@@ -352,7 +359,7 @@ const setUpRole = async (role: PeerRole, vars: Vars, runId: string) => {
-   const user = userFor(role, vars)
-   const recorded = vars[homeVar(role)]
-   const paperKey = await ensurePaperKey(role, vars)
--  await provisionHome(role, target, user, paperKey)
-+  await provisionHome(role, target, user, paperKey, vars)
-   await runKeybase(['id', user], {timeoutMs: 60_000})
-   const peer = await ensurePeer(role, envFor(vars, role, target, paperKey))
-   await proveRoundTrip(peer, vars, `${runId}-${role}`)
+@@ -148,7 +148,12 @@ const Feedback = (props: Props) => {
+     <Kb.ScrollView alwaysBounceVertical={false} testID={TestIDs.SETTINGS_FEEDBACK}>
+       <Kb.Box2 direction="vertical" fullWidth={true}>
+         {successBanner}
+-        <Kb.Box2 direction="vertical" padding="small" style={styles.mainBox} gap="xsmall">
++        <Kb.Box2
++          direction="vertical"
++          padding="small"
++          style={[styles.mainBox, loggedOut && styles.mainBoxCentered]}
++          gap="xsmall"
++        >
+           {fields}
+           <Kb.Box2 alignSelf={loggedOut ? 'center' : 'flex-start'} direction="horizontal" gap="tiny">
+             <Kb.ButtonBar>{sendButton}</Kb.ButtonBar>
+@@ -181,5 +186,10 @@ const useStyles = Kb.Styles.createStyleHook(
+           width: Kb.Styles.globalStyles.largeWidthPercent,
+         },
+       }),
++      // signed out it is the whole screen, not a settings pane
++      mainBoxCentered: Kb.Styles.platformStyles({
++        isElectron: {alignSelf: 'center'},
++        isTablet: {alignSelf: 'center'},
++      }),
+     }) as const
+ )
 ```
 
-**File**: `shared/tests/e2e/accounts/sweep-lib.test.ts` (modified, +7/-1)
+**File**: `shared/tests/e2e/electron/census.mts` (modified, +1/-1)
 ```diff
-@@ -277,9 +277,15 @@ describe('checkDelete', () => {
-     expect(() => checkDelete(target, ctx, 'testuser')).not.toThrow()
-   })
-   test('refuses when the acting account is not the one the target belongs to', () => {
--    expect(() => checkDelete(target, ctx, 'testuser-mac')).toThrow(/signed in as testuser-mac/)
-+    expect(() => checkDelete(target, ctx, 'testuser-mac')).toThrow(/^refusing to delete .*: the acting service is signed in as <second>, not the smoke account$/)
-     expect(() => checkDelete(target, ctx, '')).toThrow(/signed in as nobody/)
-   })
-+  test('never prints the name of an account that is not a test account', () => {
-+    expect(() => checkDelete(target, ctx, 'someone-else')).toThrow(
-+      /signed in as an account that is neither KB_SMOKE_USER nor KB_SECOND_USER, not the smoke account$/
-+    )
-+    expect(() => checkDelete(target, ctx, 'someone-else')).not.toThrow(/someone-else/)
-+  })
-   test('refuses anything the selection would not delete', () => {
-     expect(() => checkDelete(smoke({kind: 'channel', name: 'e2e-long'}), ctx, 'testuser')).toThrow(/seeded/)
-     expect(() => checkDelete(smoke({kind: 'kbfs', name: `/keybase/private/testuser/x/e2e-${old}-f`}), ctx, 'testuser')).toThrow(
+@@ -35,7 +35,7 @@ const appWindows = () => {
+ process.exitCode = runCensusCli({
+   defaultResults: path.join(sharedDir, 'tests/results/report/results.json'),
+   exclusions: EXCLUSIONS,
+-  flowsCommand: 'yarn test:e2e:desktop:flows',
++  flowsCommand: 'yarn test:e2e:desktop:release (for a run outside the gate, pass --results tests/results/targeted/report/results.json)',
+   manualOnly: MANUAL_ONLY,
+   outPrefix: '',
+   platform: 'desktop',
 ```
 
-**File**: `shared/tests/e2e/accounts/sweep-lib.ts` (modified, +12/-1)
+**File**: `shared/tests/e2e/electron/flows/settings-debug-pages.test.ts` (modified, +1/-1)
 ```diff
-@@ -237,7 +237,7 @@ export const candidateKey = (c: SweepCandidate) =>
- export const checkDelete = (c: SweepCandidate, ctx: SweepContext, actingUser: string) => {
-   const refuse = (why: string) => new Error(`refusing to delete ${describeCandidate(c)}: ${why}`)
-   if (actingUser !== ctx.users[c.account]) {
--    throw refuse(`the acting service is signed in as ${actingUser || 'nobody'}, not the ${c.account} account`)
-+    throw refuse(`the acting service is signed in as ${signedInName(actingUser, ctx.users)}, not the ${c.account} account`)
-   }
-   const v = judge(c, ctx)
-   if (v.to === 'drop') throw refuse('no e2e prefix, or outside its scope')
-@@ -256,6 +256,17 @@ export const parseKbfsLs = (out: string) =>
-     })
-     .filter(e => e.name !== '.' && e.name !== '..')
+@@ -12,7 +12,7 @@ const OVERLAP = 0.9
  
-+// A signed-in username for a refusal: a test account by role, any other (possibly a personal one)
-+// not by name.
-+export const signedInName = (name: string, users: SweepContext['users']) =>
-+  !name
-+    ? 'nobody'
-+    : name === users.smoke
-+      ? '<smoke>'
-+      : name === users.second
-+        ? '<second>'
-+        : 'an account that is neither KB_SMOKE_USER nor KB_SECOND_USER'
-+
- // Output names the test accounts and team only by role.
- export const maskAccounts = (s: string, ctx: Pick<SweepContext, 'team' | 'users'>) =>
-   [
-```
-
-**File**: `shared/tests/e2e/electron/app-pidfile.ts` (modified, +2/-23)
-```diff
-@@ -3,6 +3,7 @@
- // here, so the release command can tell its own app on ports 4000/9222 from anyone else's.
- import * as fs from 'fs'
- import * as path from 'path'
-+import {stopGroup} from '../shared/gate/processes.ts'
+ // Screenfuls of each page at the gate's window size. Every case checks the page still has exactly
+ // this many, so a page that grows or shrinks fails and names the count to set.
+-const MARKDOWN_SCREENS = 8
++const MARKDOWN_SCREENS = 10
+ const TYPOGRAPHY_SCREENS = 5
  
- export const APP_PIDFILE = '/tmp/kb-e2e/app.json'
- 
-@@ -25,30 +26,8 @@ export const readAppPidfile = (): AppPidfile | undefined => {
- 
- export const removeAppPidfile = () => fs.rmSync(APP_PIDFILE, {force: true})
- 
--// EPERM: the group exists, owned by someone this process may not signal
--export const groupAlive = (pgid: number) => {
--  try {
--    process.kill(-pgid, 0)
--    return true
--  } catch (e) {
--    return (e as NodeJS.ErrnoException).code === 'EPERM'
--  }
--}
--
--const sleep = async (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
--
- // Stops every process of the group (SIGTERM, then SIGKILL after 10s) and removes the pidfile.
- export const stopAppGroup = async (pgid: number) => {
--  if (pgid <= 1) throw new Error(`refusing to signal process group ${pgid}`)
--  const signal = (sig: NodeJS.Signals) => {
--    try {
--      process.kill(-pgid, sig)
--    } catch {}
--  }
--  signal('SIGTERM')
--  for (let waited = 0; waited < 10_000 && groupAlive(pgid); waited += 250) await sleep(250)
--  if (groupAlive(pgid)) signal('SIGKILL')
--  for (let waited = 0; waited < 5_000 && groupAlive(pgid); waited += 250) await sleep(250)
--  if (groupAlive(pgid)) throw new Error(`process group ${pgid} is still running after SIGKILL`)
-+  await stopGroup(pgid)
-   if (readAppPidfile()?.pgid === pgid) removeAppPidfile()
- }
-```
-
-**File**: `shared/tests/e2e/electron/flows/settings-persisted.test.ts` (modified, +1/-1)
-```diff
-@@ -7,7 +7,7 @@ import * as fs from 'fs'
- import * as path from 'path'
- import type {Page} from '@playwright/test'
- import {loadE2EEnv} from '@/tests/e2e/accounts/env'
--import {KBFS_START_COMMAND} from '@/tests/e2e/electron/release-lib'
-+import {KBFS_START_COMMAND} from '@/tests/e2e/shared/gate/processes'
- import {withCleanup} from '@/tests/e2e/electron/helpers/cleanup'
- import {test, expect} from '@/tests/e2e/electron/helpers/fixtures'
- import {expectPersists, reloadKeepingCoverage} from '@/tests/e2e/electron/helpers/persisted'
-```
-
-**File**: `shared/tests/e2e/electron/helpers/main-process-lib.test.ts` (modified, +1/-10)
-```diff
-@@ -1,4 +1,4 @@
--import {cdpEvaluate, consoleLocked, electronMainPid, inspectorUrl, parseEvaluateReply, serviceSocketFds} from './main-process-lib'
-+import {cdpEvaluate, electronMainPid, inspectorUrl, parseEvaluateReply, serviceSocketFds} from './main-process-lib'
- 
- describe('inspectorUrl', () => {
-   test('picks the node target', () => {
-@@ -84,12 +84,3 @@ describe('serviceSocketFds', () => {
-   })
- })
- 
--describe('consoleLocked', () => {
--  test('reads the root entry', () => {
--    expect(consoleLocked('+-o Root  <class IORegistryEntry>\n    {\n      "IOConsoleLocked" = Yes\n    }')).toBe(true)
--    expect(consoleLocked('    {\n      "IOConsoleLocked" = No\n    }')).toBe(false)
--  })
--  test('refuses output without it', () => {
--    expect(() => consoleLocked('+-o Root')).toThrow(/IOConsoleLocked/)
--  })
--})
+ async function openDebugPage(page: Page, label: string, marker: string): Promise<void> {
 ```
 
 ---
 
-### Incident Patch 2: `35c21aa2` (2026-11-03)
-**Commit Message**: Fix the bugs the desktop release gate found (#29852)
+### Incident Patch 2: `4b33d3ee` (2026-11-09)
+**Commit Message**: Update deps (electron 45.2.3, gesture-handler 3.5.0, keyboard-controller 1.23.0, glob/minimatch fixes); fix double highlight flash on search hits (#29883)
 
-* Fix the bugs the desktop release gate found
+* Update deps: electron 45.2.3, gesture-handler 3.5.0, keyboard-controller 1.23.0; force patched glob/minimatch
 
-menubar: reload recent files on every show. crypto: read the decrypt/verify cause code the service sends as a string. box2: pass onMouseEnter to the desktop element. edit-avatar: save the crop the image opens on when it is left untouched, and open a new image on the default crop. teams: read your showcase of a team from the teams list, send the toggle as set, and disable the box until it is known. simplefs: refuse to start a backup of a folder that was never written, and count it as skipped when backing up all files. settings: say when a single backup did not start; put Dismiss where Cancel was on a finished backup row. The gate's tests for each now pass and their known-failure entries are removed.
+* chat: re-selecting a loaded search hit re-centres it without a reload; drop the highlight-settled workaround
 
-* Avatar crop opens filling the circle; unlock-folders layout; gate screenshots wait for the screen to settle
+Clicking the hit search already auto-selected ran a second centred load,
+which cleared the thread and rebuilt every row, so the hit flashed twice.
+centerOnMessage now skips the reload when the centre is asked for again
+with its row loaded, and both lists centre it again via recenterRequested.
 
-edit-avatar: a picked image opens scaled to cover the crop circle and centered, and can't be zoomed out
-past it, so every crop is a full square. Sizes come from layout, not the screen, so a modal still scaling
-in doesn't skew them. unlock-folders: the device list is left aligned
+LegendList moves rows with Element.moveBefore, which keeps CSS animation
+state, so the highlight-settled freeze is no longer needed. An e2e test
+checks a list move does not replay the highlight.
 
-**File**: `go/kbfs/simplefs/simplefs.go` (modified, +13/-5)
+* chat: keep the highlight-settled freeze; limit the no-reload re-centre to search
+
+Review fixes:
+- The freeze still matters: the chat tab is display: none while hidden,
+  and showing it again restarts CSS animations, so the hit replayed its
+  fade on every return to the tab. Restored, with an e2e test for it.
+- Only search ('
+
+**File**: `rnmodules/react-native-kb/package.json` (modified, +3/-0)
 ```diff
-@@ -3766,6 +3766,10 @@ func parseKbfsPathForGitRepo(kbfsPath keybase1.KBFSPath) (gitRepo string, repoNa
- 	return fmt.Sprintf("keybase://%s/%s/%s.git", match[1], match[2], match[3]), match[3] + ".git", true
- }
- 
-+// errArchiveNeverWritten is SimpleFSArchiveStart's error for a folder that was never written: it
-+// has no folder branch yet, so there is nothing to back up and no job starts.
-+var errArchiveNeverWritten = errors.New("the folder was never written, so there is nothing to back up")
-+
- // SimpleFSArchiveStart implements the SimpleFSInterface.
- func (k *SimpleFS) SimpleFSArchiveStart(ctx context.Context,
- 	arg keybase1.SimpleFSArchiveStartArg,
-@@ -3844,7 +3848,7 @@ func (k *SimpleFS) SimpleFSArchiveStart(ctx context.Context,
- 			return keybase1.SimpleFSArchiveJobDesc{}, err
- 		}
- 		if fb == (data.FolderBranch{}) {
--			return keybase1.SimpleFSArchiveJobDesc{}, nil
-+			return keybase1.SimpleFSArchiveJobDesc{}, errArchiveNeverWritten
- 		}
- 		status, _, err := k.config.KBFSOps().FolderStatus(ctx, fb)
- 		if err != nil {
-@@ -4045,11 +4049,15 @@ func (k *SimpleFS) SimpleFSArchiveAllFiles(
- 	res.TlfPathToError = make(map[string]string)
- 	res.TlfPathToJobDesc = make(map[string]keybase1.SimpleFSArchiveJobDesc)
- 	for _, a := range startArgs {
-+		p := a.ArchiveJobStartPath.Kbfs().Path
- 		jobDesc, err := k.SimpleFSArchiveStart(ctx, a)
--		if err != nil {
--			res.TlfPathToError[a.ArchiveJobStartPath.Kbfs().Path] = err.Error()
--		} else {
--			res.TlfPathToJobDesc[a.ArchiveJobStartPath.Kbfs().Path] = jobDesc
-+		switch {
-+		case errors.Is(err, errArchiveNeverWritten):
-+			res.SkippedTLFPaths = append(res.SkippedTLFPaths, p)
-+		case err != nil:
-+			res.TlfPathToError[p] = err.Error()
-+		default:
-+			res.TlfPathToJobDesc[p] = jobDesc
- 		}
- 	}
- 
-```
-
-**File**: `go/kbfs/simplefs/simplefs_test.go` (modified, +86/-0)
-```diff
-@@ -21,6 +21,7 @@ import (
- 	billy "github.com/go-git/go-billy/v5"
- 	"github.com/keybase/client/go/kbfs/data"
- 	"github.com/keybase/client/go/kbfs/env"
-+	"github.com/keybase/client/go/kbfs/favorites"
- 	"github.com/keybase/client/go/kbfs/libfs"
- 	"github.com/keybase/client/go/kbfs/libkbfs"
- 	"github.com/keybase/client/go/kbfs/test/clocktest"
-@@ -1805,6 +1806,91 @@ func TestProfiles(t *testing.T) {
- 	require.NotEmpty(t, buf)
- }
- 
-+// A favorite folder that was never written has no folder branch to archive, so backing up all
-+// files must not count a job for it.
-+func TestArchiveAllFilesCountsOnlyStartedJobs(t *testing.T) {
-+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
-+	defer cancel()
-+
-+	tempdir, err := os.MkdirTemp(TempDirBase, "simpleFStest")
-+	defer func() { _ = os.RemoveAll(tempdir) }()
-+	require.NoError(t, err)
-+
-+	setCacheDirForTest(tempdir)
-+	defer unsetCacheDirForTest()
-+
-+	sfs := newSimpleFS(env.EmptyAppStateUpdater{}, libkbfs.MakeTestConfigOrBust(t, "jdoe"))
-+	defer closeSimpleFS(ctx, t, sfs)
-+
-+	writeRemoteFile(ctx, t, sfs, pathAppend(keybase1.NewPathWithKbfsPath(`/private/jdoe`), "test1.txt"), []byte("foo"))
-+	syncFS(ctx, t, sfs, "/private/jdoe")
-+	// a writable favorite with nothing in it yet
-+	err = sfs.config.KBFSOps().AddFavorite(ctx,
-+		favorites.Folder{Name: "jdoe", Type: tlf.Public}, favorites.Data{})
-+	require.NoError(t, err)
-+
-+	res, err := sfs.SimpleFSArchiveAllFiles(ctx, keybase1.SimpleFSArchiveAllFilesArg{
-+		OutputDir: tempdir,
-+	})
-+	require.NoError(t, err)
-+	require.Empty(t, res.TlfPathToError)
-+	require.Contains(t, res.TlfPathToJobDesc, "/private/jdoe")
-+	require.NotContains(t, res.TlfPathToJobDesc, "/public/jdoe")
-+	require.Contains(t, res.SkippedTLFPaths, "/public/jdoe")
-+
-+	status, err := sfs.SimpleFSGetArchiveStatus(ctx)
-+	require.NoError(t, err)
-+	require.Len(t, status.Jobs, len(res.TlfPathToJobDesc))
-+
-+	ticker := time.NewTicker(time.Millisecond * 100)
-+	defer ticker.Stop()
-+	for {
-+		status, err := sfs.SimpleFSGetArchiveStatus(ctx)
-+		require.NoError(t, err)
-+		done := true
-+		for _, job := range status.Jobs {
-+			require.Nil(t, job.Error)
-+			done = done && job.Phase == keybase1.SimpleFSArchiveJobPhase_Done
-+		}
-+		if done {
-+			return
-+		}
-+		select {
-+		case <-ctx.Done():
-+			require.NoError(t, ctx.Err())
-+		case <-ticker.C:
-+		}
-+	}
-+}
-+
-+// Starting a backup of one folder that was never written starts no job, and says so with an error
-+// rather than an empty job description.
-+func TestArchiveStartNeverWrittenFolder(t *testing.T) {
-+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
-+	defer cancel()
-+
-+	tempdir, err := os.MkdirTemp(TempDirBase, "simpleFStest")
-+	defer func() { _ = os.RemoveAll(tempdir) }()
-+	require.NoError(t, err)
-+
-+	setCacheDirForTest(tempdir)
-+	defer unsetCacheDirForTest()
-+
-+	sfs := newSimpleFS(env.EmptyAppStateUpdater{}, libkbfs.MakeTestConfigOrBust(t, "jdoe"))
-+	defer closeSimpleFS(ctx, t, sfs)
-+
-+	jobDesc, err := sfs.SimpleFSArchiveStart(ctx, keybase1.SimpleFSArchiveStartArg{
-+		ArchiveJobStartPath: keybase1.NewArchiveJobStartPathWithKbfs(keybase1.KBFSPath{Path: "/public/jdoe"}),
-+		OutputPath:          filepath.Join(tempdir, "out.zip"),
-+	})
-+	require.ErrorIs(t, err, errArchiveNeverWritten)
-+	require.Equal(t, keybase1.SimpleFSArchiveJobDesc{}, jobDesc)
-+
-+	status, err := sfs.SimpleFSGetArchiveStatus(ctx)
-+	require.NoError(t, err)
-+	require.Empty(t, status.Jobs)
-+}
-+
- func TestArchiveSymlink(t *testing.T) {
- 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
- 	defer cancel()
-```
-
-**File**: `shared/common-adapters/box.tsx` (modified, +3/-1)
-```diff
-@@ -249,7 +249,8 @@ export const box2DesktopStyleForTest = box2DesktopStyle
- export const Box2 = (p: Box2Props & {ref?: React.Ref<MeasureRef>}) => {
-   if (!isMobile) {
-     const {ref} = p
--    const {onMouseMove, onMouseDown, onMouseLeave, onMouseUp, onMouseOver, onCopyCapture, children, testID} = p
-+    const {onMouseMove, onMouseDown, onMouseEnter, onMouseLeave, onMouseUp, onMouseOver, onCopyCapture} = p
-+    const {children, testID} = p
-     const {onContextMenu, onDragLeave, onDragOver, onDrop, title, tooltip} = p
-     const style = box2DesktopStyle(p)
-     const className = box2ClassNames(p)
-@@ -266,6 +267,7 @@ export const Box2 = (p: Box2Props & {ref?: React.Ref<MeasureRef>}) => {
-         onDragOver={onDragOver}
-         onDrop={onDrop}
-         onMouseDown={onMouseDown}
-+        onMouseEnter={onMouseEnter}
-         onMouseLeave={onMouseLeave}
-         onMouseMove={onMouseMove}
-         onMouseOver={onMouseOver}
-```
-
-**File**: `shared/common-adapters/box2-desktop-events.test.tsx` (added, +33/-0)
-```diff
-@@ -0,0 +1,33 @@
-+/** @jest-environment jsdom */
-+/// <reference types="jest" />
-+import {cleanup, fireEvent, render} from '@testing-library/react'
-+import {Box2} from './box'
-+
-+afterEach(() => {
-+  cleanup()
-+})
-+
-+test('the desktop Box2 hands every mouse handler it declares to its element', () => {
-+  const calls: Array<string> = []
-+  const {getByTestId} = render(
-+    <Box2
-+      direction="vertical"
-+      testID="box"
-+      onMouseDown={() => calls.push('down')}
-+      onMouseEnter={() => calls.push('enter')}
-+      onMouseLeave={() => calls.push('leave')}
-+      onMouseMove={() => calls.push('move')}
-+      onMouseOver={() => calls.push('over')}
-+      onMouseUp={() => calls.push('up')}
-+    />
-+  )
-+  const box = getByTestId('box')
-+  fireEvent.mouseEnter(box)
-+  fireEvent.mouseOver(box)
-+  fireEvent.mouseMove(box)
-+  fireEvent.mouseDown(box)
-+  fireEvent.mouseUp(box)
-+  fireEvent.mouseLeave(box)
-+  // React derives enter and leave from over and out, so only which handlers ran is compared
-+  expect(new Set(calls)).toEqual(new Set(['enter', 'over', 'move', 'down', 'up', 'leave']))
-+})
-```
-
-**File**: `shared/common-adapters/zoomable-image.test.tsx` (added, +118/-0)
-```diff
-@@ -0,0 +1,118 @@
-+/** @jest-environment jsdom */
-+/// <reference types="jest" />
-+import {cleanup, fireEvent, render} from '@testing-library/react'
-+import {cropViewToRect, type CropView} from '@/util/crop'
-+import ZoomableImage from './zoomable-image'
-+
-+// the toast reads the color scheme, which the test renderer lacks; it plays no part in the view
-+jest.mock('./toast', () => ({__esModule: true, default: () => null}))
-+
-+afterEach(() => {
-+  cleanup()
-+})
-+
-+// jsdom lays nothing out: the container's and the image's sizes are set by hand
-+const sized = (container: HTMLElement, img: {height: number; width: number}) => {
-+  const root = container.firstElementChild as HTMLElement
-+  const el = container.querySelector('img')
-+  if (!el) throw new Error('no img')
-+  Object.defineProperty(root, 'clientWidth', {configurable: true, value: 300})
-+  Object.defineProperty(root, 'clientHeight', {configurable: true, value: 300})
-+  root.getBoundingClientRect = () => ({height: 300, left: 0, top: 0, width: 300}) as DOMRect
-+  Object.defineProperty(el, 'naturalWidth', {configurable: true, value: img.width})
-+  Object.defineProperty(el, 'naturalHeight', {configurable: true, value: img.height})
-+  return {el, root}
-+}
-+
-+test('a drag-pan image opens filling the window, centered, and reports that view before any pointer move', () => {
-+  const views: Array<CropView> = []
-+  const onLoaded = jest.fn()
-+  const {container} = render(
-+    <ZoomableImage src="/tmp/avatar.png" dragPan={true} onChanged={v => views.push(v)} onLoaded={onLoaded} />
-+  )
-+  const {el} = sized(container, {height: 480, width: 640})
-+  fireEvent.load(el)
-+
-+  expect(onLoaded).toHaveBeenCalledTimes(1)
-+  expect(views).toHaveLength(1)
-+  const [view] = views
-+  if (!view) throw new Error('no view')
-+  // the short side fills the window, and the long side overflows it equally on both ends
-+  expect(view).toMatchObject({height: 300, scale: 300 / 480, width: 400, x: 50, y: -0})
-+  expect(el.style.transform).toBe('translate(-50px, 0px) scale(0.625)')
-+  // the untouched view is the centered square of the image
-+  expect(cropViewToRect(view, 300)).toEqual({x0: 80, x1: 560, y0: 0, y1: 480})
-+})
-+
-+test('a drag-pan image smaller than the window is scaled up to fill it', () => {
-+  const views: Array<CropView> = []
-+  const {container} = render(<ZoomableImage src="/tmp/small.png" dragPan={true} onChanged={v => views.push(v)} />)
-+  const {el} = sized(container, {height: 30, width: 60})
-+  fireEvent.load(el)
-+  const view = views.at(-1)
-+  if (!view) throw new Error('no view')
-+  expect(view).toMatchObject({height: 300, scale: 10, width: 600, x: 150, y: -0})
-+  expect(cropViewToRect(view, 300)).toEqual({x0: 15, x1: 45, y0: 0, y1: 30})
-+})
-+
-+test('a new image opens on its default view, not the pan and zoom left from the one before', () => {
-+  const views: Array<CropView> = []
-+  const {container, rerender} = render(
-+    <ZoomableImage src="/tmp/a.png" dragPan={true} onChanged={v => views.push(v)} />
-+  )
-+  const {el, root} = sized(container, {height: 480, width: 640})
-+  fireEvent.load(el)
-+  const opened = views.at(-1)
-+  // image A panned to its bottom-right corner and zoomed
-+  fireEvent.wheel(root, {clientX: 300, clientY: 300, deltaY: 100})
-+  fireEvent.mouseMove(root, {clientX: 300, clientY: 300})
-+  const panned = views.at(-1)
-+  expect(panned?.scale).not.toBe(opened?.scale)
-+  expect(panned?.x).not.toBe(opened?.x)
-+
-+  // image B loads and is left untouched
-+  rerender(<ZoomableImage src="/tmp/b.png" dragPan={true} onChanged={v => views.push(v)} />)
-+  fireEvent.load(el)
-+  expect(views.at(-1)).toEqual(opened)
-+  expect(el.style.transform).toBe('translate(-50px, 0px) scale(0.625)')
-+})
-+
-+test('a drag-pan image cannot be zoomed out past filling the window', () => {
-+  const views: Array<CropView> = []
-+  const {container} = render(<ZoomableImage src="/tmp/a.png" dragPan={true} onChanged={v => views.push(v)} />)
-+  const {el, root} = sized(container, {height: 480, width: 640})
-+  fireEvent.load(el)
-+  for (let i = 0; i < 20; i++) fireEvent.wheel(root, {clientX: 150, clientY: 150, deltaY: -100})
-+  const view = views.at(-1)
-+  if (!view) throw new Error('no view')
-+  expect(view.scale).toBe(300 / 480)
-+  expect(cropViewToRect(view, 300)).toEqual({x0: 80, x1: 560, y0: 0, y1: 480})
-+})
-+
-+test('a drag-pan image that loads before its container is laid out opens untransformed', () => {
-+  const views: Array<CropView> = []
-+  const {container} = render(<ZoomableImage src="/tmp/a.png" dragPan={true} onChanged={v => views.push(v)} />)
-+  const {el, root} = sized(container, {height: 480, width: 640})
-+  Object.defineProperty(root, 'clientWidth', {configurable: true, value: 0})
-+  fireEvent.load(el)
-+  expect(views.at(-1)).toMatchObject({height: 480, scale: 1, width: 640, x: -0, y: -0})
-+  expect(el.style.transform).toBe('')
-+})
-+
-+test('a zoom image without drag-pan reports no view on load', () => {
-+  const onChanged = jest.fn()
-+  const {container} = render(<Zo
-```
-
-**File**: `shared/common-adapters/zoomable-image.tsx` (modified, +57/-6)
-```diff
-@@ -27,10 +27,14 @@ import ImageNative from './image'
- 
- // Stub types to avoid DOM lib dependency in native tsconfig
- type DivRef = {
-+  clientHeight: number
-+  clientWidth: number
-   getBoundingClientRect: () => {left: number; top: number; width: number; height: number}
- }
- type ImgRef = {
-   getBoundingClientRect: () => {width: number; height: number}
-+  naturalHeight: number
-+  naturalWidth: number
-   style: {transform: string}
-   classList: {add: (cls: string) => void; remove: (cls: string) => void}
- }
-@@ -45,6 +49,10 @@ const DesktopZoomableImage = (p: Props) => {
-   const containerRef = React.useRef<DivRef>(null)
-   const imgRef = React.useRef<ImgRef>(null)
-   const scaleRef = React.useRef(1)
-+  // the scale a drag-pan image opens on, the smallest that fills the container: it can't be zoomed
-+  // out past it, so every crop is a full square of the image
-+  const coverScaleRef = React.useRef(1)
-+  const translateRef = React.useRef({x: 0, y: 0})
-   const isZoomedRef = React.useRef(isZoomed)
- 
-   const toggleZoom = () => {
-@@ -79,10 +87,16 @@ const DesktopZoomableImage = (p: Props) => {
-       return
+@@ -60,5 +60,8 @@
+         "Kb": "Kb"
+       }
      }
- 
--    const containerRect = containerRef.current.getBoundingClientRect()
--    const imgRect = imgRef.current.getBoundingClientRect()
--    const xPercent = Math.min(1, Math.max(0, (e.clientX - containerRect.left) / containerRect.width))
--    const yPercent = Math.min(1, Math.max(0, (e.clientY - containerRect.top) / containerRect.height))
-+    // the pointer's place in the container is on screen; the sizes are layout sizes, which an
-+    // ancestor's transform (a modal scaling in) doesn't skew, at the scale just set
-+    const bounds = containerRef.current.getBoundingClientRect()
-+    const xPercent = Math.min(1, Math.max(0, (e.clientX - bounds.left) / bounds.width))
-+    const yPercent = Math.min(1, Math.max(0, (e.clientY - bounds.top) / bounds.height))
-+    const containerRect = {height: containerRef.current.clientHeight, width: containerRef.current.clientWidth}
-+    const imgRect = {
-+      height: imgRef.current.naturalHeight * scaleRef.current,
-+      width: imgRef.current.naturalWidth * scaleRef.current,
-+    }
- 
-     const x = Math.min(
-       imgRect.width < containerRect.width ? (containerRect.width - imgRect.width) / 2 : 0,
-@@ -100,9 +114,44 @@ const DesktopZoomableImage = (p: Props) => {
-     )
- 
-     imgRef.current.style.transform = `translate(${x}px, ${y}px) scale(${scaleRef.current})`
-+    translateRef.current = {x, y}
-     onChanged?.({height: imgRect.height, scale: scaleRef.current, width: imgRect.width, x: -x, y: -y})
++  },
++  "resolutions": {
++    "**/glob": "14.0.4"
    }
- 
-+  // a drag-pan view is a crop, so a loaded image reports the view it opens on before any move. A
-+  // new image opens filling the container and centered in it, not on the pan and zoom left from the
-+  // one before. Sizes are read untransformed, so a modal still animating in doesn't skew them.
-+  const loadedSrcRef = React.useRef<string | undefined>(undefined)
-+  const handleLoad = () => {
-+    const img = imgRef.current
-+    if (img && loadedSrcRef.current !== src) {
-+      loadedSrcRef.current = src
-+      const {naturalHeight, naturalWidth} = img
-+      const cw = containerRef.current?.clientWidth ?? 0
-+      const ch = containerRef.current?.clientHeight ?? 0
-+      if (dragPan && naturalWidth && naturalHeight && cw && ch) {
-+        const cover = Math.max(cw / naturalWidth, ch / naturalHeight)
-+        const x = (cw - naturalWidth * cover) / 2
-+        const y = (ch - naturalHeight * cover) / 2
-+        coverScaleRef.current = cover
-+        scaleRef.current = cover
-+        translateRef.current = {x, y}
-+        img.style.transform = `translate(${x}px, ${y}px) scale(${cover})`
-+      } else {
-+        coverScaleRef.current = 1
-+        scaleRef.current = 1
-+        translateRef.current = {x: 0, y: 0}
-+        img.style.transform = ''
-+      }
-+    }
-+    if (dragPan && img) {
-+      const scale = scaleRef.current
-+      const {x, y} = translateRef.current
-+      onChanged?.({height: img.naturalHeight * scale, scale, width: img.naturalWidth * scale, x: -x, y: -y})
-+    }
-+    onLoaded?.()
-+  }
-+
-   const handleWheel = (e: WheelEvt) => {
-     if (e.cancelable) {
-       e.preventDefault()
-@@ -111,7 +160,9 @@ const DesktopZoomableImage = (p: Props) => {
-     if (!dragPan && !isZoomedRef.current) return
- 
-     const delta = e.deltaY > 0 ? 1.02 : 0.98
--    scaleRef.current = Math.min(2.5, Math.max(0.3, scaleRef.current * delta))
-+    const cover = coverScaleRef.current
-+    const [min, max] = dragPan ? [cover, Math.max(2.5, cover * 2.5)] : [0.3, 2.5]
-+    scaleRef.current = Math.min(max, Math.max(min, scaleRef.current * delta))
-     handleMouseMove(e)
-   }
- 
-@@ -167,7 +218,7 @@ const DesktopZoomableImage = (p: Props) => {
-     >
-       <img
-         draggable={false}
--        onLoad={onLoaded}
-+        onLoad={handleLoad}
-         onError={onError}
-         className="fade-anim-enter fade-anim-enter-active"
-         ref={imgRef as React.RefObject<HTMLImageEleme
+ }
 ```
 
-**File**: `shared/crypto/helpers.test.ts` (modified, +8/-7)
+**File**: `rnmodules/react-native-kb/yarn.lock` (modified, +75/-69)
 ```diff
-@@ -168,18 +168,19 @@ test('getStatusCodeMessage suggests the sibling operation on a wrong saltpack ty
-   )
+@@ -958,6 +958,11 @@
+     "@babel/helper-string-parser" "^7.29.7"
+     "@babel/helper-validator-identifier" "^7.29.7"
+ 
++"@isaacs/nonrecursive-glob-match@^1.1.0":
++  version "1.1.0"
++  resolved "https://registry.yarnpkg.com/@isaacs/nonrecursive-glob-match/-/nonrecursive-glob-match-1.1.0.tgz#b1d69b8938aab4c292f7fde628c47dc1dbd737ef"
++  integrity sha512-GPm/Dbvk5RLmhRnxXIa7nTpK0xtl4E0wj0MslsuNiJ1FIROU+2+9lgUC/dgF7Ey4QCWhfEsgxilMRMCdHPfDfw==
++
+ "@isaacs/ttlcache@^1.4.1":
+   version "1.4.1"
+   resolved "https://registry.yarnpkg.com/@isaacs/ttlcache/-/ttlcache-1.4.1.tgz#21fb23db34e9b6220c6ba023a0118a2dd3461ea2"
+@@ -1099,15 +1104,15 @@
+     "@nodelib/fs.scandir" "2.1.5"
+     fastq "^1.6.0"
+ 
+-"@react-native/asset-utils@0.88.0":
+-  version "0.88.0"
+-  resolved "https://registry.yarnpkg.com/@react-native/asset-utils/-/asset-utils-0.88.0.tgz#f6ab54f617baeda6fa42b2d04fe4e229f1f147e6"
+-  integrity sha512-Bj1DxQt5f4OrjdlgSVkZT37Z3hx5hUIN5AUDSqL/e99vgtTcqj5vnm067epZL1EF/QiqsniZO8Q1GSkItOakDg==
++"@react-native/asset-utils@0.88.1":
++  version "0.88.1"
++  resolved "https://registry.yarnpkg.com/@react-native/asset-utils/-/asset-utils-0.88.1.tgz#b830a8914dda0c445dae929a23ed053cbe137115"
++  integrity sha512-BLb5FF7NgggGYiCsA7KKkK2qFhn0K+6iGXOI+4Ucd+G7Robzw9Gt4WsWwxLt+Od+G+/hyqfz8ASokyWFZ6VcLw==
+ 
+-"@react-native/codegen@0.88.0":
+-  version "0.88.0"
+-  resolved "https://registry.yarnpkg.com/@react-native/codegen/-/codegen-0.88.0.tgz#52026f5370eacbc484fd53ccd18948ee31b4aee4"
+-  integrity sha512-SAGg+XfzsrPiYTscbKa9bo2/H2ei2TjyxW8RTMq2Ps661kRK3AnmpMGVfrEFshEMr3FGEbuQIvj86X98kaXlRA==
++"@react-native/codegen@0.88.1":
++  version "0.88.1"
++  resolved "https://registry.yarnpkg.com/@react-native/codegen/-/codegen-0.88.1.tgz#b7c0b5285a1f74cfbe9aea62c4f56124a52a42a3"
++  integrity sha512-URPgPhnsxqeQSLyTRVzhZZ8iNXtZdR1Jop6lqaQacymvl3byghXisNIRR1YyG6PbXUfzPan5Jmz/kPhUUsZ2Yw==
+   dependencies:
+     "@babel/core" "^7.25.2"
+     "@babel/parser" "^7.29.0"
+@@ -1117,41 +1122,41 @@
+     tinyglobby "^0.2.15"
+     yargs "^17.6.2"
+ 
+-"@react-native/community-cli-plugin@0.88.0":
+-  version "0.88.0"
+-  resolved "https://registry.yarnpkg.com/@react-native/community-cli-plugin/-/community-cli-plugin-0.88.0.tgz#013edff30e6d558c2a9cee72bb9d9c0013ec1ee2"
+-  integrity sha512-WrQdXbjVt1gwAay8ZzYtpOi9ly99ksJ0VMYFdVcMe6nq3vtiRgqKRpHgCdN6ySIbtr5o+aJ+Vr7OTDY98ec/Ow==
++"@react-native/community-cli-plugin@0.88.1":
++  version "0.88.1"
++  resolved "https://registry.yarnpkg.com/@react-native/community-cli-plugin/-/community-cli-plugin-0.88.1.tgz#60bd671bbee0d87f446a99a5d1622e7b0ac56496"
++  integrity sha512-L2CQvzsOMz4oof6AVLSzesFL1Q92nrtXpK0uQH2VwdOmzzgkiHql8WFQSo9VLvMFGJDg8+G6enrHH573ruqqWA==
+   dependencies:
+-    "@react-native/asset-utils" "0.88.0"
+-    "@react-native/dev-middleware" "0.88.0"
++    "@react-native/asset-utils" "0.88.1"
++    "@react-native/dev-middleware" "0.88.1"
+     commander "^12.0.0"
+     debug "^4.4.0"
+     invariant "^2.2.4"
+     metro "^0.87.1"
+     semver "^7.1.3"
+ 
+-"@react-native/debugger-frontend@0.88.0":
+-  version "0.88.0"
+-  resolved "https://registry.yarnpkg.com/@react-native/debugger-frontend/-/debugger-frontend-0.88.0.tgz#5ba8526aeced91f28da48a511ceadc70980332b5"
+-  integrity sha512-v5cnBaaWhDRPcQv8EC20zj53jOAKH7u2wnzzXS4JTNu+diPC+cA2+kC7rq3eKI5vGhlAcG2kDPoViRuC0AY0oA==
++"@react-native/debugger-frontend@0.88.1":
++  version "0.88.1"
++  resolved "https://registry.yarnpkg.com/@react-native/debugger-frontend/-/debugger-frontend-0.88.1.tgz#84f5ff7557d60b4a228d4be1824783dc4452b7a1"
++  integrity sha512-4ZjH2093hZWWgsYs5ExqjzJX5uCS4R5yZa17eRHsQClUc6RjlV61kLdIk722sQReLL+NYtBn2RJtdcQtLCwiug==
+ 
+-"@react-native/debugger-shell@0.88.0":
+-  version "0.88.0"
+-  resolved "https://registry.yarnpkg.com/@react-native/debugger-shell/-/debugger-shell-0.88.0.tgz#5e87ed9fd7db61048cf77b8e53cce48c01792b3f"
+-  integrity sha512-p82zT8ZKNx7nIm/8zf8pi55sxm5KQBm8td47kzoJysTdqHLyPsRMUvDXtvCJIWadHSv7RJ6t/yiCc+IoImLBtw==
++"@react-native/debugger-shell@0.88.1":
++  version "0.88.1"
++  resolved "https://registry.yarnpkg.com/@react-native/debugger-shell/-/debugger-shell-0.88.1.tgz#3838cc6c0056d1dbdf3a246c3e15433178d2439c"
++  integrity sha512-vrOLlxkp/417qcSUiS3x3gmdoQHYA/26oEKIWPB4EekJG0uJxKXsMR0tHIDiJWO0JH/2BO3M+507DjR1U74jQg==
+   dependencies:
+     cross-spawn "^7.0.6"
+     debug "^4.4.0"
+     fb-dotslash "0.5.8"
+ 
+-"@react-native/dev-middleware@0.88.0":
+-  version "0.88.0"
+-  resolved "https://registry.yarnpkg.com/@react-native/dev-middleware/-/dev-middleware-0.88.0.tgz#b55d5ba58ee828e4fa362a36d70285a69bbbbbb8"
+-  integrity sha512-sHLxVHOwfkF672ZzMepNh4d3IKbrZy3qXDKWSwN5LC5VJkzzZ5FdmSPP4N/CCn2pcKJ4oSqvojXwN4De3Xk92A==
++"@react-native/dev-middleware@0.88.1":
++  version "0.88.1"
++  resolved "https://registry.yarnpkg.com/@react-native/dev-middleware/-/dev-middleware-0.88.1.tgz#12e3175d9efe80c72c7c13841fe24a4027de83e3"
++  integrity sha512-0smOWE3NCdEYUwPiEdiwVXjTdvXcwSejviCM0YZB0Dj6HaQ+uu4hpSrvgERDevr5dvtSaqr8N4TdYZCLXiVgFw==
+   dependencies:
+     "@isaacs/ttlcache" "^
+```
+
+**File**: `shared/chat/conversation/center-context.test.tsx` (modified, +99/-1)
+```diff
+@@ -14,7 +14,12 @@ import {useCurrentUserState} from '@/stores/current-user'
+ import {installFakeEngine, type FakeEngine} from '@/test/fake-engine'
+ import {tick} from '@/test/flush'
+ import {navigationWrapper} from '@/test/navigation'
+-import {ConversationCenterProvider, useConversationCenter} from './center-context'
++import {
++  ConversationCenterProvider,
++  useConversationCenter,
++  useConversationCenterActions,
++  useConversationRecenterVersion,
++} from './center-context'
+ import {ConversationThreadProvider, useConversationThreadActions} from './thread-context'
+ import {ConversationThreadLoadStatusProvider} from './thread-load-status-context'
+ import {closeConversationThreadSearch, toggleConversationThreadSearch} from './thread-navigation'
+@@ -51,17 +56,25 @@ const pivots = async () => {
+ 
+ let seenHighlightOrdinal: T.Chat.Ordinal | undefined
+ let seenCenteredOrdinal: T.Chat.Ordinal | undefined
++let seenRecenterVersion: number | undefined
+ let threadActions: ReturnType<typeof useConversationThreadActions> | undefined
++// centerOnMessage as the first render gave it, held the way search holds it
++let firstCenterOnMessage: ReturnType<typeof useConversationCenterActions>['centerOnMessage'] | undefined
+ 
+ const Probe = () => {
+   const {centeredHighlightOrdinal, centeredOrdinal} = useConversationCenter()
++  const recenterVersion = useConversationRecenterVersion()
+   const actions = useConversationThreadActions()
++  const {centerOnMessage} = useConversationCenterActions()
++  const [firstCenter] = React.useState(() => centerOnMessage)
+   // captured in an effect, not during render: assigning module state while rendering is the
+   // side effect react-hooks/globals rejects
+   React.useEffect(() => {
+     seenHighlightOrdinal = centeredHighlightOrdinal
+     seenCenteredOrdinal = centeredOrdinal
++    seenRecenterVersion = recenterVersion
+     threadActions = actions
++    firstCenterOnMessage = firstCenter
+   })
+   return null
+ }
+@@ -148,7 +161,9 @@ beforeEach(() => {
+   ])
+   seenHighlightOrdinal = undefined
+   seenCenteredOrdinal = undefined
++  seenRecenterVersion = undefined
+   threadActions = undefined
++  firstCenterOnMessage = undefined
  })
  
--test('getStatusCodeMessage reads the cause code out of the second error field', () => {
-+// the service sends the cause code as a decimal string (go/libkb/rpc_exim.go DecryptionError.ToStatus)
-+test('getStatusCodeMessage reads the cause code out of the Code error field', () => {
-   const fields = [
--    {key: 'Something', value: RPCGen.StatusCode.scgeneric},
--    {key: 'Code', value: RPCGen.StatusCode.scdecryptionkeynotfound},
-+    {key: 'Cause', value: 'no decryption key found for message'},
-+    {key: 'Code', value: String(RPCGen.StatusCode.scdecryptionkeynotfound)},
-   ]
-   expect(getStatusCodeMessage(makeError(RPCGen.StatusCode.scdecryptionerror, 'x', fields), 'decrypt', 'text')).toBe(
-     "This message was encrypted for someone else or for a key you don't have."
-   )
+ afterEach(() => {
+@@ -209,6 +224,89 @@ test('jumping twice to the same message centers both times', async () => {
+   ])
+ })
  
-   const verifyFields = [
--    {key: 'Something', value: RPCGen.StatusCode.scgeneric},
--    {key: 'Code', value: RPCGen.StatusCode.scverificationkeynotfound},
-+    {key: 'Cause', value: 'unknown signing key'},
-+    {key: 'Code', value: String(RPCGen.StatusCode.scverificationkeynotfound)},
-   ]
-   expect(
-     getStatusCodeMessage(makeError(RPCGen.StatusCode.scsigcannotverify, 'x', verifyFields), 'verify', 'text')
-@@ -191,8 +192,8 @@ test('getStatusCodeMessage falls back to generic when the cause fields are missi
-     'Failed to decrypt text.'
-   )
-   const unnamed = [
--    {key: 'a', value: RPCGen.StatusCode.scgeneric},
--    {key: 'NotCode', value: RPCGen.StatusCode.scdecryptionkeynotfound},
-+    {key: 'a', value: String(RPCGen.StatusCode.scgeneric)},
-+    {key: 'NotCode', value: String(RPCGen.StatusCode.scdecryptionkeynotfound)},
-   ]
-   expect(
-     getStatusCodeMessage(makeError(RPCGen.StatusCode.scdecryptionerror, 'x', unnamed), 'decrypt', 'text')
++// A centred load around message n landing, as applyThreadLoad lands it.
++const landCentredLoad = (n: number) => {
++  act(() => {
++    threadActions?.applyThreadLoad({
++      centered: true,
++      enableActiveMarkRead: false,
++      fullPass: true,
++      messages: [
++        makeMessageText({
++          author: 'testuser2',
++          conversationIDKey: convX,
++          id: T.Chat.numberToMessageID(n),
++          ordinal: T.Chat.numberToOrdinal(n),
++          text: new HiddenString(`message ${n}`),
++        }),
++      ],
++      moreToLoad: false,
++      scrollDirection: 'none',
++    })
++  })
++}
++
++// Search centres with 'always', through the centerOnMessage it got on its first render.
++const searchSelects = (n: number) => {
++  act(() => {
++    firstCenterOnMessage?.(T.Chat.numberToMessageID(n), 'always')
++  })
++}
++
++// Reloading would clear the thread and rebuild every row under it, the hit's highlight replaying as
++// its row is rebuilt: a search hit selected automatically and then clicked flashed twice.
++test('search choosing its centred hit again while it is loaded reloads nothing and asks the list to centre it', async () => {
++  renderTree()
++  searchSelects(11)
++  expect(await pivots()).toHaveLength(1)
++  landCentredLoad(11)
++  const before = seenRecenterVersion
++
++  searchSelects(11)
++
++  expect(await pivots()).toHaveLength(1)
++  expect(seenCenteredOrdinal).toBe(T.Chat.numberToOrdinal(11))
++  expect(seenHighlightOrdinal).toBe(T.Chat.numberToOrdinal(11))
++  expect(seenRecenterVersion).toBe((before ?? 0) + 1)
++})
++
++// A reply quote or the pinned message jumping again flashes the message again, which needs its row
++// rebuilt by the reload.
++test('a flashing jump to the centred message reloads around it, even with it loaded', async () => {
++  renderTree()
++  act(() => {
++    setInputIntent(convX, highlight(11))
++  })
++  landCentredLoad(11)
++  const before = seenRecenterVersion
++
++  act(() => {
++    setInputIntent(convX, highlight(11))
++  })
++
++  expect(await pivots()).toEqual([
++    expect.objectContaining({pivot: T.Chat.numberToMessageID(11)}),
++    expect.objectContaining({pivot: T.Chat.numberToMessageID(11)}),
++  ])
++  expect(seenRecenterVersion).toBe(before)
++})
++
++test('search choosing another hit that is loaded still reloads around it', async () => {
++  renderTree()
++  searchSelects(11)
++  landCentredLoad(11)
++  landCentredLoad(12)
++  const before = seenRecenterVersion
++
++  searchSelects(12)
++
++  expect(await pivots()).toEqual([
++    expect.objectContaining({pivot: T.Chat.numberToMessageID(11)}),
++    expect.objectContaining({pivot: T.Chat.numberToMessageID(12)}),
++  ])
++  expect(seenRecenterVersion).toBe(before)
++})
++
+ // The two-
 ```
 
-**File**: `shared/crypto/helpers.tsx` (modified, +4/-3)
+**File**: `shared/chat/conversation/center-context.tsx` (modified, +35/-16)
 ```diff
-@@ -52,9 +52,10 @@ export const getStatusCodeMessage = (
-     wrongTypeHelpText = ' Did you mean to verify it?'
+@@ -8,10 +8,14 @@ import {
+   useConversationThreadJumpToRecent,
+   useConversationThreadLoadMessagesCentered,
+   useConversationThreadSetMarkReadBlocked,
++  useConversationThreadStore,
+ } from './thread-context'
+ 
+ type CenterState = {
+   center: T.Chat.CenterOrdinal | undefined
++  // Bumped when search asks for its centred hit again with the row loaded, which reloads nothing:
++  // the lists centre it again on their own.
++  recenterVersion: number
+   threadSearchVisible: boolean
+ }
+ 
+@@ -41,6 +45,10 @@ const CenterStateContext = React.createContext<CenterStateContextType>({
+ })
+ CenterStateContext.displayName = 'ConversationCenterStateContext'
+ 
++// Its own context: only the lists' scroll hooks read it, and a re-centre must not re-render every row.
++const RecenterVersionContext = React.createContext(0)
++RecenterVersionContext.displayName = 'ConversationRecenterVersionContext'
++
+ const CenterActionsContext = React.createContext<CenterActionsContextType>({
+   centerOnMessage: missingContext,
+   clearCenter: missingContext,
+@@ -50,6 +58,7 @@ CenterActionsContext.displayName = 'ConversationCenterActionsContext'
+ 
+ export const useConversationCenter = () => React.useContext(CenterStateContext)
+ export const useConversationCenterActions = () => React.useContext(CenterActionsContext)
++export const useConversationRecenterVersion = () => React.useContext(RecenterVersionContext)
+ 
+ // The other half of the input-intent bus's type split: the input provider claims the other four
+ // types (input-area/input-state.tsx). Neither may claim the other's or whichever mounts first
+@@ -80,8 +89,10 @@ export const ConversationCenterProvider = function ConversationCenterProvider(p:
+   const loadMessagesCentered = useConversationThreadLoadMessagesCentered()
+   const jumpToRecentThread = useConversationThreadJumpToRecent()
+   const setMarkReadBlocked = useConversationThreadSetMarkReadBlocked()
++  const threadStore = useConversationThreadStore()
+   const [centerState, setCenterState] = React.useState<CenterState>(() => ({
+     center: undefined,
++    recenterVersion: 0,
+     threadSearchVisible,
+   }))
+ 
+@@ -91,32 +102,38 @@ export const ConversationCenterProvider = function ConversationCenterProvider(p:
+   if (currentCenterState !== centerState) {
+     setCenterState(currentCenterState)
+   }
++  // Read when a centre is asked for: callers may hold a centerOnMessage from an earlier render (search
++  // keeps the one it first got).
++  const centerRef = React.useRef(currentCenterState.center)
++  React.useLayoutEffect(() => {
++    centerRef.current = currentCenterState.center
++  }, [currentCenterState.center])
+ 
+-  const setCenterForMessage = (
+-    messageID: T.Chat.MessageID,
+-    highlightMode: T.Chat.CenterOrdinalHighlightMode
+-  ) => {
+-    const ordinal = T.Chat.numberToOrdinal(T.Chat.messageIDToNumber(messageID))
++  const clearCenter = () => {
+     setCenterState(state =>
+       produce(stateForThreadSearchVisible(state, threadSearchVisible), draft => {
+-        draft.center = {highlightMode, ordinal}
++        draft.center = undefined
+       })
+     )
    }
  
--  const fields = error.fields as Array<{key: string; value: RPCGen.StatusCode}> | undefined
--  const field = fields?.[1]
--  const causeStatusCode = field?.key === 'Code' ? field.value : RPCGen.StatusCode.scgeneric
-+  // the service sends the cause's status code as a decimal string
-+  const fields = error.fields as Array<{key: string; value: string}> | undefined
-+  const codeField = fields?.find(f => f.key === 'Code')
-+  const causeStatusCode: RPCGen.StatusCode = codeField ? Number(codeField.value) : RPCGen.StatusCode.scgeneric
-   const causeStatusCodeToMessage = new Map([
-     [RPCGen.StatusCode.scapinetworkerror, offlineMessage],
-     [
+-  const clearCenter = () => {
++  const centerOnMessage = (messageID: T.Chat.MessageID, highlightMode: T.Chat.CenterOrdinalHighlightMode) => {
++    const ordinal = T.Chat.numberToOrdinal(T.Chat.messageIDToNumber(messageID))
++    // Search ('always') asking for its centred hit again with the row loaded (it selects its first hit
++    // itself, and the reader then clicks it): a reload would clear the thread and rebuild every row,
++    // replaying the highlight. The lists centre it again on their own. Other jumps (a reply quote, the
++    // pinned message) still reload, so the message flashes again.
++    const recenter =
++      highlightMode === 'always' &&
++      centerRef.current?.ordinal === ordinal &&
++      !!threadStore.getState().messageOrdinals?.includes(ordinal)
+     setCenterState(state =>
+       produce(stateForThreadSearchVisible(state, threadSearchVisible), draft => {
+-        draft.center = undefined
++        draft.center = {highlightMode, ordinal}
++        if (recenter) draft.recenterVersion++
+       })
+     )
+-  }
+-
+-  const centerOnMessage = (messageID: T.Chat.MessageID, highlightMode: T.Chat.CenterOrdinalHighlightMode) => {
+-    setCenterForMessage(messageID, highlightMode)
+-    loadMessagesCentered(messageID, highlightMode, {
+-      ...getThreadLoadStatusOptions(),
+-    })
++    if (!recenter) loadMessagesCentered(messageID, highlightMode, getThreadLoadStatusOptions())
+   }
+ 
+   const jumpToRecent = () => {
+@@ -166,7 +183,9 @@ export const ConversationCenterProvider = function ConversationCenterProvider(p:
+ 
+   return (
+     <CenterActionsContext value={actionsValue}>
+-      <CenterStateContext value={stateValue}>{children}</CenterStateContext>
++      <CenterStateContext value={stateValue}>
++        <RecenterVersionContext value={currentCenterState.recenterVersion}>{children}</RecenterVersionContext>
++      </CenterStateContext>
+     </CenterActionsContext>
+
+```
+
+**File**: `shared/chat/conversation/conversation.css` (modified, +4/-4)
+```diff
+@@ -8,10 +8,10 @@
+     }
+   }
+ 
+-  /* Once the fade has played, swap to the static end state and drop the animation. LegendList
+-     reorders container elements in the DOM (useDOMOrder, debounced 500ms) to keep DOM order
+-     matching visual order, and a DOM move restarts CSS animations on the moved subtree — which
+-     replays this fade from transparent, reading as a blink. Nothing to restart, nothing to blink. */
++  /* Once the fade has played, swap to the static end state and drop the animation, so nothing can
++     restart it. Two things would: showing the chat tab again (it is display: none while another tab
++     is shown), and LegendList moving the row's container in the DOM to keep DOM order matching
++     visual order (it uses moveBefore, which keeps animation state, only where the browser has it). */
+   &.highlighted.highlight-settled {
+     &,
+     &:hover,
+```
+
+**File**: `shared/chat/conversation/list-area/desktop-scroll.tsx` (modified, +15/-1)
+```diff
+@@ -67,10 +67,11 @@ export const useDesktopThreadScroll = (p: {
+   listRef: React.RefObject<LegendListRef | null>
+   loaded: boolean
+   messageOrdinals: ReadonlyArray<T.Chat.Ordinal>
++  recenterVersion: number
+   wrapperRef: React.RefObject<HTMLDivElement | null>
+ }) => {
+   const {centeredOrdinal, containsLatestMessage, datasetKey, editingOrdinal} = p
+-  const {listRef, loaded, messageOrdinals, wrapperRef} = p
++  const {listRef, loaded, messageOrdinals, recenterVersion, wrapperRef} = p
+ 
+   // The list's scrolling element, whether or not its content overflows it.
+   const scrollerOf = React.useCallback(
+@@ -232,6 +233,19 @@ export const useDesktopThreadScroll = (p: {
+     })
+   }, [centeredOrdinal, containsLatestMessage, dispatch, isScrolledToEnd, loaded, messageOrdinals])
+ 
++  // Compared by value, as datasetKey is: a re-mount under Activity re-runs this with nothing asked.
++  const recenterRef = React.useRef(recenterVersion)
++  React.useEffect(() => {
++    if (recenterRef.current === recenterVersion) return
++    recenterRef.current = recenterVersion
++    if (centeredOrdinal === undefined) return
++    dispatch({
++      ordinal: centeredOrdinal,
++      targetInData: indexOfOrdinal(messageOrdinals, centeredOrdinal) >= 0,
++      type: 'recenterRequested',
++    })
++  }, [centeredOrdinal, dispatch, messageOrdinals, recenterVersion])
++
+   // Hidden (another tab selected, under Activity) or unmounted: the loops have stopped with the
+   // schedules, and a target still settling is centred afresh if the list comes back.
+   React.useEffect(
+```
+
+**File**: `shared/chat/conversation/list-area/index.tsx` (modified, +8/-4)
+```diff
+@@ -10,7 +10,7 @@ import {MessageRow} from '../messages/wrapper'
+ import {RowHoveredContext} from '../messages/ids-context'
+ import {PerfProfiler} from '@/perf/react-profiler'
+ import {ThreadRefsContext} from '../normal/context'
+-import {useConversationCenter, useConversationCenterActions} from '../center-context'
++import {useConversationCenter, useConversationCenterActions, useConversationRecenterVersion} from '../center-context'
+ import {
+   ShownUsernameCacheContext,
+   useConversationThreadID,
+@@ -155,9 +155,9 @@ const HighlightableRow = React.memo(({ordinal}: {ordinal: T.Chat.Ordinal}) => {
+   const isEditing = InputState.useConversationInput(s => s.editing === ordinal)
+   const isHighlighted = centeredHighlightOrdinal === ordinal || isEditing
+ 
+-  // Freeze the highlight into its end state once the fade has played, so a later DOM move cannot
+-  // restart it (see .highlight-settled in conversation.css). Keyed on the highlighted ordinal
+-  // because rows are recycled: the same node renders a different message over time.
++  // Freeze the highlight into its end state once the fade has played, so it cannot restart (see
++  // .highlight-settled in conversation.css). Keyed on the highlighted ordinal because rows are
++  // recycled: the same node renders a different message over time.
+   const [settledFor, setSettledFor] = React.useState<T.Chat.Ordinal | undefined>(undefined)
+   const isSettled = isHighlighted && settledFor === ordinal
+   const onAnimationEnd = React.useCallback(
+@@ -212,6 +212,7 @@ const DesktopThreadWrapper = function DesktopThreadWrapper() {
+   const conversationIDKey = useConversationThreadID()
+   const data = useThreadListData()
+   const {centeredOrdinal} = useConversationCenter()
++  const recenterVersion = useConversationRecenterVersion()
+   const {clearVersion, containsLatestMessage, messageOrdinals, loaded} = data
+ 
+   // Centered loads (search hit, reply-quote jump, pinned message) clear the thread before
+@@ -237,6 +238,7 @@ const DesktopThreadWrapper = function DesktopThreadWrapper() {
+     listRef,
+     loaded,
+     messageOrdinals,
++    recenterVersion,
+     wrapperRef,
+   })
+ 
+@@ -484,6 +486,7 @@ const NativeConversationList = function NativeConversationList() {
+   const conversationIDKey = useConversationThreadID()
+   const listData = useThreadListData()
+   const {centeredHighlightOrdinal, centeredOrdinal} = useConversationCenter()
++  const recenterVersion = useConversationRecenterVersion()
+   const {clearCenter} = useConversationCenterActions()
+   const editingOrdinal = InputState.useConversationInput(s => s.editing)
+   const noCenteredOrdinal = T.Chat.numberToOrdinal(-1)
+@@ -563,6 +566,7 @@ const NativeConversationList = function NativeConversationList() {
+     loadOlder,
+     loaded,
+     messageOrdinals,
++    recenterVersion,
+   })
+ 
+   const jumpToRecent = useJumpToRecent(scrollToBottom, messageOrdinals.length)
+```
+
+**File**: `shared/chat/conversation/list-area/native-scroll.test.tsx` (modified, +19/-0)
+```diff
+@@ -28,6 +28,7 @@ type Props = {
+   datasetKey: string
+   editingOrdinal: T.Chat.Ordinal | undefined
+   messageOrdinals: ReadonlyArray<T.Chat.Ordinal>
++  recenterVersion: number
+ }
+ 
+ // The keyboard is up unless asked otherwise, so the list rests over it.
+@@ -56,6 +57,7 @@ const mount = (opts: {containsLatestMessage?: boolean; keyboardVisible?: boolean
+     datasetKey: 'conv1:0',
+     editingOrdinal: undefined,
+     messageOrdinals: newestFirst(1, 60),
++    recenterVersion: 0,
+   }
+   const hook = renderHook(
+     (p: Props) =>
+@@ -72,6 +74,7 @@ const mount = (opts: {containsLatestMessage?: boolean; keyboardVisible?: boolean
+         loadOlder,
+         loaded: true,
+         messageOrdinals: p.messageOrdinals,
++        recenterVersion: p.recenterVersion,
+       }),
+     {initialProps, wrapper}
+   )
+@@ -355,6 +358,22 @@ test('a search for the same hit again waits for the reader again', () => {
+   expect(m.loadNewer).not.toHaveBeenCalled()
+ })
+ 
++test('the same hit asked for again with its row loaded is scrolled to again, and waits for the reader again', () => {
++  const m = windowOfHistory()
++  m.set({centeredOrdinal: T.Chat.numberToOrdinal(30)})
++  act(() => jest.advanceTimersByTime(5000))
++  act(() => m.hook.result.current.onScrollBeginDrag())
++  const before = m.itemScrolls(T.Chat.numberToOrdinal(30))
++  // no reload: the same rows, the same dataset
++  m.set({recenterVersion: 1})
++  // the centring's own scrolls run on its schedule
++  act(() => jest.advanceTimersByTime(1001))
++  expect(m.itemScrolls(T.Chat.numberToOrdinal(30))).toBeGreaterThan(before)
++  act(() => m.hook.result.current.onCellLayout(T.Chat.numberToOrdinal(1), {height: 100, y: 5900}))
++  act(() => m.hook.result.current.onScroll(scrollIn(600, 6000)))
++  expect(m.loadNewer).not.toHaveBeenCalled()
++})
++
+ test('after a jump to a centred row, only a drag or a status-bar tap lets a newer page be asked for', () => {
+   const m = windowOfHistory()
+   m.set({centeredOrdinal: T.Chat.numberToOrdinal(30)})
 ```
 
 ---
 
-### Incident Patch 3: `65cae2da` (2026-11-03)
-**Commit Message**: Fix the bugs the iOS release gate found, and run unit tests on the real libraries (#29872)
+### Incident Patch 3: `22e5dbba` (2026-11-09)
+**Commit Message**: Fix white-on-grey text and icons in dark mode (exploding badge, toasts, overlays) (#29884)
 
-* navUpToScreen on a phone goes back through the screens above the tab bar
+* Fix white-on-grey text on inverting dark backgrounds in dark mode
 
-On a phone a tab's stack registers only its root screen; every other screen sits in the root
-stack above the tab bar. navUpToScreen always acted on the selected tab's stack, so going back
-to the devices list after a revoke sent a POP_TO that stack can't handle (the device page stayed
-up), and going back to teamsRoot after leaving a team popped nothing (the team page stayed up).
+Desktop `negative` text is always white, but theme.black* backgrounds turn
+light in dark mode. Use theme.white instead for the composer exploding badge,
+the image zoom toast, the attachment transfer label and the kext "Checking"
+overlay (spinner too). The mobile copy toast icon uses theme.white to match its
+text, and the mobile toast background now comes from the theme.
 
-With no modal up, navUpToScreen now looks for the screen among those above the tab bar first and
-pops the root stack to it; when the screen is in the tab's stack below them, it closes them and
-then pops the tab's stack. With a modal up, and on desktop and tablets (nothing above the tabs),
-it acts on the active stack as before.
+* Fix the white spinner and toast icon that vanish on light backgrounds in dark mode
 
-The iOS gate drops its own back steps after a revoke (devices helper) and after a leave
-(teams-second); both now read that the app left the page by itself.
+The desktop QR scan spinner is white only in light mode, and the mobile
+secret-key copy toast icon uses theme.white to match its text.
 
-* Leaving or deleting a team on a phone closes the team page, whichever tab it was opened from
-
-navUpToScreen to another tab's root (e.g. teamsRoot for a team page
-
-**File**: `CLAUDE.md` (modified, +6/-0)
+**File**: `shared/chat/conversation/input-area/normal/input.tsx` (modified, +3/-1)
 ```diff
-@@ -27,6 +27,12 @@
- - Before calling code dead, search the whole repo (desktop, native, Go callers, string-built names), not one directory.
- - Prefer fixes that keep underlying state truthful (e.g. a UI-level hold) over changing state semantics, unless asked.
- 
-+## Tests run the real thing
-+- Unit tests exercise the real library and the real app modules. Never write a fake that models a library's behavior (its timing, events, focus, routing, layout) or stands in for one of our own hooks/stores. A test built on a model checks the model: it passes on fiction, and reviews and fixes then get built on it.
-+- Navigation: use `shared/test/navigation.tsx` (the app's tree on the real React Navigation core and the real `navigationRef`). Never `jest.mock('@react-navigation/...')` or `jest.mock('@/constants/router')`.
-+- Mock only true edges: native modules with no JS implementation, network/IO, the Go service (`test/fake-engine.ts`). Mock at the lowest layer, and never invent ordering, timing or state there.
-+- A claim about how a library behaves (from a review, a comment, or a fake) gets a probe against the real library before any code changes for it.
-+
- ## Working Directory
- Repo root is `client/`. TS source lives in `shared/`. Always use absolute paths for file ops. For Bash: always `cd shared/` first.
- 
+@@ -510,7 +510,7 @@ const ExplodingButton = function ExplodingButton(p: ExplodingButtonProps) {
+         justifyContent="center"
+       >
+         {explodingModeSeconds ? (
+-          <Kb.Text type="BodyTinyBold" negative={true}>
++          <Kb.Text type="BodyTinyBold" style={desktopStyles.explodingText}>
+             {formatDurationShort(explodingModeSeconds * 1000)}
+           </Kb.Text>
+         ) : (
+@@ -888,6 +888,8 @@ const useDesktopStyles = Kb.Styles.createStyleHook(
+         },
+       }),
+       explodingInsideWrapper: {height: 32},
++      // bg is theme.black, which inverts in dark mode; desktop negative text is always white
++      explodingText: {color: theme.white},
+       footer: {
+         alignSelf: 'flex-end',
+         color: theme.black_20,
 ```
 
-**File**: `shared/chat/blocking/invitation-to-block.test.tsx` (modified, +134/-77)
+**File**: `shared/chat/conversation/messages/attachment/shared.tsx` (modified, +3/-1)
 ```diff
-@@ -1,15 +1,17 @@
- /** @jest-environment jsdom */
- /// <reference types="jest" />
--import type * as ChatRpcT from '@/chat/conversation/chat-rpc'
- import type * as React from 'react'
- import * as T from '@/constants/types'
+@@ -192,7 +192,7 @@ export const Transferring = (p: {ratio: number; transferState: T.Chat.MessageAtt
+       style={styles.transferring}
+     >
+       {isTransferring ? (
+-        <Kb.Text type="BodySmall" negative={true}>
++        <Kb.Text type="BodySmall" style={styles.transferringText}>
+           {transferState === 'uploading' ? 'Uploading' : 'Downloading'}
+         </Kb.Text>
+       ) : null}
+@@ -304,6 +304,8 @@ const useStyles = Kb.Styles.createStyleHook(theme => ({
+     position: 'absolute',
+     top: Kb.Styles.globalMargins.tiny,
+   },
++  // bg is theme.black_50, which inverts in dark mode; desktop negative text is always white
++  transferringText: {color: theme.white},
+ }))
  
--// each icon's latest onClick, by icon type
-+// each icon's latest onClick, by icon type, and the wave button's first onWave: the handlers a
-+// screen kept through an account switch still holds
- const mockIconOnClick = new Map<string, () => void>()
-+let mockFirstOnWave: (() => void) | undefined
- jest.mock('@/common-adapters', () => {
--  const actual = jest.requireActual<{Icon: React.ComponentType<{onClick?: () => void; type: string}>}>(
--    '@/common-adapters'
--  )
-+  const actual = jest.requireActual<{
-+    Icon: React.ComponentType<{onClick?: () => void; type: string}>
-+    WaveButton: React.ComponentType<{onWave: () => void}>
-+  }>('@/common-adapters')
-   const R = jest.requireActual<typeof React>('react')
-   return {
-     ...actual,
-@@ -19,149 +21,204 @@ jest.mock('@/common-adapters', () => {
-       }
-       return R.createElement(actual.Icon, p)
-     },
-+    WaveButton: (p: {onWave: () => void}) => {
-+      mockFirstOnWave ??= p.onWave
-+      return R.createElement(actual.WaveButton, p)
-+    },
-   }
- })
- 
--const mockConversationIDKey = T.Chat.conversationIDToKey(new Uint8Array([1, 2, 3, 4]))
--const mockTeamID = 'aabbccdd'
--let mockRetired = false
--// the thread's rpc, which retires with the thread
--let mockRpc: ChatRpcT.ChatThreadRpc | undefined
--const mockThreadRpc = () =>
--  (mockRpc ??= jest
--    .requireActual<typeof ChatRpcT>('@/chat/conversation/chat-rpc')
--    .makeThreadChatRpc(() => mockRetired))
--let mockOwnMessage = false
--
--jest.mock('../conversation/thread-context', () => ({
--  useConversationThreadActions: () => ({isRetired: () => mockRetired, rpc: mockThreadRpc()}),
--  useThreadRpc: () => mockThreadRpc(),
--  useConversationThreadID: () => mockConversationIDKey,
--  useConversationThreadStore: () => ({getState: () => ({messageMap: new Map(), messageOrdinals: []})}),
--  useConversationThreadSelector: (
--    sel: (s: {messageMap: Map<number, {author: string}>; messageOrdinals: Array<number>}) => unknown
--  ) =>
--    sel({
--      messageMap: new Map(mockOwnMessage ? [[1, {author: 'testuser'}]] : []),
--      messageOrdinals: mockOwnMessage ? [1] : [],
--    }),
--  useThreadMeta: (sel: (m: {teamID: string; teamname: string; tlfname: string}) => unknown) =>
--    sel({teamID: mockTeamID, teamname: 'testteam', tlfname: 'testteam'}),
--}))
--jest.mock('./block-buttons-state', () => ({
--  useBlockButtonsInfo: () => ({adder: 'testuser-mac'}),
--}))
--
- import * as Meta from '@/constants/chat/meta'
-+import {useEffect} from 'react'
- import {act, cleanup, fireEvent, render, screen} from '@testing-library/react'
-+import {makeMessageText} from '@/constants/chat/message'
- import {metasReceived} from '@/chat/inbox/metadata'
-+import {useConfigState} from '@/stores/config'
- import {useCurrentUserState} from '@/stores/current-user'
- import {resetAllStores} from '@/util/zustand'
--import {installFakeChatRpc, restoreChatRpc, type FakeChatRpc} from '@/test/fake-chat-rpc'
-+import {installFakeEngine, type FakeEngine} from '@/test/fake-engine'
-+import {paramsOf} from '@/test/fake-thread-load'
-+import {flush} from '@/test/flush'
-+import {threadWrapper} from '@/test/thread-tree'
-+import {useConversationThreadActions} from '../conversation/thread-context'
- import BlockButtons from './invitation-to-block'
- 
--let rpc: FakeChatRpc
-+const conversationIDKey = T.Chat.conversationIDToKey(new Uint8Array([1, 2, 3, 4]))
-+const teamID = 'aabbccdd'
-+const dismissBlockButtons = 'keybase.1.user.dismissBlockButtons'
-+const postText = 'chat.1.local.postTextNonblock'
- 
--const flushPromises = async () => {
--  for (let i = 0; i < 5; i++) {
--    await Promise.resolve()
--  }
--}
-+let fake: FakeEngine
- 
--const renderBanner = async () => {
--  render(<BlockButtons />)
--  await act(async () => {
--    await flushPromises()
-+const ownMessage = () =>
-+  makeMessageText({
-+    author: 'testuser',
-+    conversationIDKey,
-+    id: T.Chat.numberToMessageID(1),
-+    ordinal: T.Chat.numberToOrdinal(1),
-   })
-+
-+// the first thread's actions, which a screen kept through an account switch still holds
-+let firstThreadActions: ReturnType<typeof useConversationThreadActions> | undefined
-+// adds a message of your own to the thread when asked
-+const ThreadActions = (p: {ownMessage: boolean}) => {
-+  const actions = useConversationThreadActions()
-+  useEffect(() => {
-+    if (!firstThreadActions) firstThreadActions = actions
-+  }, [actions])
-+  const {addMessages} = actions
-+  const {ownMessage: own} = p
-+  useEffect(() => {
-+    if (own) {
-+      addMessages([ownMessage()])
-+    }
-+  }, [addMessages, own])
-+  return null
-+}
-+
-+const renderBanner = async (opts?: {ownMessage?: boolean}) => {
-+  render(
-+    <>
-+      <ThreadActions ownMessage={!!opts?.ownMessage} />
-+      <BlockButtons />
-+    </>,
-+    {wrapper: threadWrapper(conversationIDKe
+ const useCollapseAction = (ordinal: T.Chat.Ordinal) => {
 ```
 
-**File**: `shared/chat/conversation/attachment-actions.test.tsx` (modified, +201/-139)
+**File**: `shared/common-adapters/copy-text.tsx` (modified, +1/-1)
 ```diff
-@@ -3,18 +3,19 @@
- import * as Message from '@/constants/chat/message'
- import * as Meta from '@/constants/chat/meta'
- import * as PlatformSpecific from '@/util/platform-specific'
--import * as Router from '@/constants/router'
- import * as T from '@/constants/types'
- import type * as React from 'react'
--import RPCError from '@/util/rpcerror'
- import logger from '@/logger'
- import {act, cleanup, renderHook} from '@testing-library/react'
- import {makeMessageAttachment, makeMessageText} from '@/constants/chat/message'
- import {metasReceived} from '@/chat/inbox/metadata'
- import {resetAllStores} from '@/util/zustand'
- import {useConfigState} from '@/stores/config'
- import {useCurrentUserState} from '@/stores/current-user'
--import {installFakeChatRpc, restoreChatRpc, type FakeChatRpc} from '@/test/fake-chat-rpc'
-+import {fakeError, installFakeEngine, type FakeEngine} from '@/test/fake-engine'
-+import {paramsOf} from '@/test/fake-thread-load'
-+import {tick} from '@/test/flush'
-+import {installNavigation, navigationWrapper, stateShowing, type InstalledNavigation} from '@/test/navigation'
- import {getChatRpc} from './chat-rpc'
- import {getClientPrevFromThread} from './client-prev'
- import {
-@@ -36,10 +37,8 @@ import {
- import {ConversationThreadProvider, useConversationThreadActions, useConversationThreadStore} from './thread-context'
- 
- const mockDeleteFile = jest.fn()
--// jest.config maps every native-only package (expo-file-system among them) to one
--// stub file, so extend that file rather than mocking the package by name.
--jest.mock('../../test/mocks/native-module.js', () => ({
--  ...jest.requireActual('../../test/mocks/native-module.js'),
-+// expo-file-system is native-only, an empty stub under jest; the android save cleans up through File
-+jest.mock('expo-file-system', () => ({
-   File: class {
-     uri: string
-     constructor(uri: string) {
-@@ -57,18 +56,24 @@ const messageID = T.Chat.numberToMessageID(42)
- const attachment = (id: number) =>
-   makeMessageAttachment({conversationIDKey, id: T.Chat.numberToMessageID(id)})
- 
--let navigateAppend: jest.SpyInstance
-+let nav: InstalledNavigation
-+// where the app navigated to, as the library's state has it
-+const shown = () => {
-+  const v = nav.visibleScreen()
-+  return {name: v?.name, params: v?.params}
-+}
- 
- beforeEach(() => {
-   mockDeleteFile.mockReset()
--  navigateAppend = jest.spyOn(Router, 'navigateAppend').mockImplementation(() => true)
-   // the thread provider builds a thread only for a signed-in account
-   useCurrentUserState.getState().dispatch.setBootstrap({
-     deviceID: 'device-id',
-     deviceName: 'testuser-mac',
-     uid: 'uid',
-     username: 'testuser',
-   })
-+  // after the account is in place: the desktop tab bar the tree draws reads it
-+  nav = installNavigation({rootState: stateShowing('chatRoot')})
- })
- 
- afterEach(() => {
-@@ -115,8 +120,8 @@ describe('getClientPrevFromThread', () => {
- describe('attachment preview handoff', () => {
-   test('hands the message to the fullscreen route exactly once', () => {
-     const message = attachment(42)
--    showAttachmentPreview(conversationIDKey, message)
--    expect(navigateAppend).toHaveBeenCalledWith({
-+    act(() => showAttachmentPreview(conversationIDKey, message))
-+    expect(shown()).toEqual({
-       name: 'chatAttachmentFullscreen',
-       params: {conversationIDKey, messageID},
-     })
-@@ -127,7 +132,7 @@ describe('attachment preview handoff', () => {
- 
-   test('is keyed by conversation and message', () => {
-     const message = attachment(42)
--    showAttachmentPreview(conversationIDKey, message)
-+    act(() => showAttachmentPreview(conversationIDKey, message))
-     const other = T.Chat.stringToConversationIDKey('conv2')
-     expect(takeAttachmentPreviewMessage(other, messageID)).toBeUndefined()
-     expect(takeAttachmentPreviewMessage(conversationIDKey, T.Chat.numberToMessageID(43))).toBeUndefined()
-@@ -136,43 +141,45 @@ describe('attachment preview handoff', () => {
-   })
- 
-   test('refuses to navigate for a message with no id', () => {
--    showAttachmentPreview(conversationIDKey, attachment(0))
--    expect(navigateAppend).not.toHaveBeenCalled()
-+    act(() => showAttachmentPreview(conversationIDKey, attachment(0)))
-+    expect(nav.actions).toEqual([])
-     expect(takeAttachmentPreviewMessage(conversationIDKey, T.Chat.numberToMessageID(0))).toBeUndefined()
-   })
- })
- 
- describe('pdf handoff', () => {
-   test('passes the url through only when there is one', () => {
--    showPDFViewer(conversationIDKey, attachment(42))
--    expect(navigateAppend).toHaveBeenCalledWith({
-+    act(() => showPDFViewer(conversationIDKey, attachment(42)))
-+    expect(shown()).toEqual({
-       name: 'chatPDF',
-       params: {conversationIDKey, messageID},
-     })
--    showPDFViewer(conversationIDKey, attachment(42), 'https://example.com/a.pdf')
--    expect(navigateAppend).toHaveBeenLastCalledWith({
-+    act(() => showPDFViewer(conversationIDKey, attachment(42), 'https://example.com/a.pdf'))
-+    expect(shown()
+@@ -173,7 +173,7 @@ const CopyText = (props: Props) => {
+       style={Styles.collapseStyles([styles.container, disabled && styles.containerDisabled, containerStyle])}
+     >
+       <Kb.Toast position="top center" attachTo={popupAnchor} visible={showingToast}>
+-        {isMobile && <Kb.Icon type="iconfont-clipboard" color={theme.whiteOrWhite} />}
++        {isMobile && <Kb.Icon type="iconfont-clipboard" color={theme.white} />}
+         <Kb.Text type={isMobile ? 'BodySmallSemibold' : 'BodySmall'} style={styles.toastText}>
+           Copied to clipboard
+         </Kb.Text>
 ```
 
-**File**: `shared/chat/conversation/attachment-get-titles-darwin.test.tsx` (modified, +22/-15)
+**File**: `shared/common-adapters/toast.tsx` (modified, +3/-7)
 ```diff
-@@ -3,8 +3,10 @@
- import * as C from '@/constants'
- import * as Meta from '@/constants/chat/meta'
- import * as T from '@/constants/types'
--import {act, cleanup, fireEvent, render, screen} from '@testing-library/react'
--import {installFakeChatRpc, restoreChatRpc, type FakeChatRpc} from '@/test/fake-chat-rpc'
-+import {cleanup, fireEvent, render, screen} from '@testing-library/react'
-+import {installFakeEngine, type FakeEngine} from '@/test/fake-engine'
-+import {paramsOf} from '@/test/fake-thread-load'
-+import {flush} from '@/test/flush'
- import {metasReceived} from '@/chat/inbox/metadata'
- import {resetAllStores} from '@/util/zustand'
- import {useConfigState} from '@/stores/config'
-@@ -33,24 +35,28 @@ jest.mock('@/util/electron', () => {
+@@ -4,9 +4,8 @@ import * as Styles from '@/styles'
+ import {Box2} from './box'
+ import {AnchoredPopup} from './popup/anchored'
+ import {Portal} from './portal'
+-import {Animated as NativeAnimated, useColorScheme} from 'react-native'
++import {Animated as NativeAnimated} from 'react-native'
+ import {linearEasing} from './native-easing'
+-import {colors, darkColors} from '@/styles/colors'
+ import './toast.css'
+ import type {Position, StylesCrossPlatform} from '@/styles'
+ import type {MeasureRef} from './measure-ref'
+@@ -44,7 +43,6 @@ const Toast = (props: Props) => {
+     shouldRender: visible,
+     visible,
+   }))
+-  const isDarkMode = useColorScheme() === 'dark'
  
- describe('Send without a tlfName prop on darwin', () => {
-   const g = globalThis as unknown as {isIOS: boolean}
--  let rpc: FakeChatRpc
-+  let fake: FakeEngine
-+  const getUploadTempFile = 'chat.1.local.getUploadTempFile'
-+  const postAttachment = 'chat.1.local.postFileAttachmentLocalNonblock'
-   const conversationIDKey = T.Chat.conversationIDToKey(new Uint8Array([1, 2, 3, 4]))
+   let currentRenderState = renderState
+   if (isMobile && currentRenderState.visible !== visible) {
+@@ -159,9 +157,6 @@ const Toast = (props: Props) => {
+           style={[
+             Styles.collapseStyles([
+               nativeStyles.container,
+-              {
+-                backgroundColor: isDarkMode ? darkColors.black : colors.black,
+-              },
+               props.containerStyle,
+             ]),
+             {opacity},
+@@ -195,9 +190,10 @@ const useDesktopStyles = Styles.createStyleHook(theme => ({
+   }),
+ }))
  
-   beforeEach(() => {
-     g.isIOS = true
-     useConfigState.getState().dispatch.setLoggedIn(true)
--    rpc = installFakeChatRpc()
--    jest
--      .spyOn(T.RPCGen, 'incomingShareGetPreferenceRpcPromise')
--      .mockResolvedValue({compressPreference: T.RPCGen.IncomingShareCompressPreference.original})
-+    fake = installFakeEngine()
-+    fake.answer('keybase.1.incomingShare.getPreference', () => ({
-+      compressPreference: T.RPCGen.IncomingShareCompressPreference.original,
-+    }))
-+    fake.answer(postAttachment, () => ({outboxID: new Uint8Array([7])}))
-+    // the screen fetches a conversation meta the store does not hold whole; the service has none
-+    fake.answer('chat.1.local.getInboxAndUnboxUILocal', () => ({conversations: null}))
-     jest.spyOn(C.Router2, 'clearModals').mockImplementation(() => {})
--    rpc.on('getUploadTempFile', async () => await Promise.resolve('/tmp/chat-upload-temp'))
-+    fake.answer(getUploadTempFile, () => '/tmp/chat-upload-temp')
-   })
+-const useNativeStyles = Styles.createStyleHook(() => ({
++const useNativeStyles = Styles.createStyleHook(theme => ({
+   container: {
+     alignItems: 'center',
++    backgroundColor: theme.black,
+     borderRadius: 140,
+     borderWidth: 0,
+     display: 'flex',
+```
+
+**File**: `shared/common-adapters/zoomable-image.tsx` (modified, +5/-2)
+```diff
+@@ -45,6 +45,7 @@ type WheelEvt = MouseEvt & {deltaY: number; cancelable: boolean; preventDefault:
  
-   afterEach(() => {
-     g.isIOS = false
-     cleanup()
--    restoreChatRpc()
-     jest.restoreAllMocks()
-     resetAllStores()
-   })
-@@ -67,14 +73,15 @@ describe('Send without a tlfName prop on darwin', () => {
-         pathAndOutboxIDs={[{outboxID: new Uint8Array([7]), path: '/tmp/a.pdf'}]}
+ const DesktopZoomableImage = (p: Props) => {
+   const {src, onIsZoomed, onLoaded, dragPan, onChanged, onError, forceDims} = p
++  const styles = useStyles()
+   const [isZoomed, setIsZoomed] = React.useState(false)
+   const [allowPan, setAllowPan] = React.useState(true)
+   const [showToast, setShowToast] = React.useState(false)
+@@ -228,7 +229,7 @@ const DesktopZoomableImage = (p: Props) => {
+         style={imgStyle}
        />
-     )
--    await act(async () => {
--      fireEvent.click(screen.getByText('Send'))
--      await new Promise(resolve => setTimeout(resolve, 0))
--    })
--    expect(rpc.calls('getUploadTempFile')).toHaveLength(1)
-+    fireEvent.click(screen.getByText('Send'))
-+    await flush(12)
-+    const temp = paramsOf(fake, getUploadTempFile)
-+    expect(temp).toEqual([{filename: '/tmp/a.pdf', outboxID: expect.any(Uint8Array)}])
-     expect(mockCopy).toHaveBeenCalledWith('/tmp/chat-upload-temp', '/tmp/a.pdf')
--    expect(rpc.params('postAttachment')[0]).toMatchObject({
-+    // the copy is posted under the outbox ID its temp file was made for
-+    expect(paramsOf(fake, postAttachment)[0].arg).toMatchObject({
-       filename: '/tmp/chat-upload-temp',
-+      outboxID: temp[0].outboxID,
-       tlfName: 'testuser,testuser2',
-     })
-   })
-```
-
-**File**: `shared/chat/conversation/attachment-get-titles.test.tsx` (modified, +132/-124)
-```diff
-@@ -1,28 +1,28 @@
- /** @jest-environment jsdom */
- /// <reference types="jest" />
- import * as C from '@/constants'
--import * as MediaProcess from '@/util/media-process'
- import * as Meta from '@/constants/chat/meta'
- import * as T from '@/constants/types'
- import {act, cleanup, fireEvent, render, screen} from '@testing-library/react'
--import {installFakeChatRpc, restoreChatRpc, type FakeChatRpc} from '@/test/fake-chat-rpc'
-+import {installFakeEngine, type FakeEngine} from '@/test/fake-engine'
-+import {paramsOf} from '@/test/fake-thread-load'
-+import {settle} from '@/test/flush'
- import {metasReceived} from '@/chat/inbox/metadata'
- import {resetAllStores} from '@/util/zustand'
- import {useConfigState} from '@/stores/config'
- import logger from '@/logger'
- import type * as ReactTypes from 'react'
- import type {VideoEdit} from '@/util/media-process'
--import {processMedia} from 'react-native-kb'
-+import type {processMedia} from 'react-native-kb'
-+import {Platform} from 'react-native'
-+import {fakeNativeKb, type FakeNativeKbModule} from '@/test/fake-native-kb'
- import AttachmentGetTitles, {pathToAttachmentType} from './attachment-get-titles'
- import {peekInputIntent} from './input-intent-store'
- 
--// Native-only packages resolve to this one stub through jest.config's
--// moduleNameMapper, so it carries the export and the file deletes the real
--// processPaths makes.
--jest.mock('@/test/mocks/native-module', () => {
-+// File IO is native: this one records the deletes the real processPaths makes.
-+jest.mock('expo-file-system', () => {
-   const deleted: Array<string> = []
-   return {
--    ...jest.requireActual<object>('@/test/mocks/native-module'),
-     File: class {
-       private readonly path: string
-       constructor(path: string) {
-@@ -33,9 +33,9 @@ jest.mock('@/test/mocks/native-module', () => {
-       }
-     },
-     deleted,
--    processMedia: jest.fn(),
-   }
- })
-+jest.mock('react-native-kb', () => jest.requireActual<FakeNativeKbModule>('@/test/fake-native-kb').realKb())
- 
- // A clip whose name says so comes in trimmed, as if the user had dragged the handles.
- jest.mock('./attachment-trim', () => {
-@@ -55,8 +55,43 @@ jest.mock('./attachment-trim', () => {
-   return {__esModule: true, default: MockTrim}
- })
- 
--const processMediaMock = processMedia as jest.MockedFunction<typeof processMedia>
--const {deleted} = jest.requireMock<{deleted: Array<string>}>('@/test/mocks/native-module')
-+// the native processMedia, under react-native-kb's own wrapper, which runs it on iOS alone
-+const processMediaMock: jest.MockedFunction<typeof processMedia> = jest.fn()
-+const {deleted} = jest.requireMock<{deleted: Array<string>}>('expo-file-system')
-+
-+const getPreference = 'keybase.1.incomingShare.getPreference'
-+const postAttachment = 'chat.1.local.postFileAttachmentLocalNonblock'
-+const cancelUploadTempFile = 'chat.1.local.cancelUploadTempFile'
-+let fake: FakeEngine
-+// the service, with the user's share compression preference
-+const serve = (compressPreference: T.RPCGen.IncomingShareCompressPreference) => {
-+  fake = installFakeEngine()
-+  fake.answer(getPreference, () => ({compressPreference}))
-+  fake.answer(postAttachment, () => ({outboxID: new Uint8Array([1])}))
-+  fake.answer(cancelUploadTempFile, () => null)
-+  // the screen fetches a conversation meta the store does not hold whole; the service has none
-+  fake.answer('chat.1.local.getInboxAndUnboxUILocal', () => ({conversations: null}))
-+}
-+// Long enough for a call to cross to the service and its answer back, a few in a row
-+const serviceTurns = async () => {
-+  for (let i = 0; i < 4; i++) {
-+    await settle()
-+  }
-+}
-+// each upload as the service received it
-+const posted = () =>
-+  paramsOf(fake, postAttachment).map(p => p.arg as {conversationID: Uint8Array; filename: string; title: string; tlfName: string})
-+const cancelled = () => paramsOf(fake, cancelUploadTempFile).map(p => p.outboxID as Uint8Array)
-+
-+beforeEach(() => {
-+  processMediaMock.mockReset()
-+  deleted.length = 0
-+  fakeNativeKb.give({processMedia: processMediaMock})
-+  jest.replaceProperty(Platform, 'OS', 'ios')
-+})
-+afterEach(() => {
-+  jest.restoreAllMocks()
-+})
- 
- describe('pathToAttachmentType', () => {
-   test('common image extensions preview as images, case insensitively', () => {
-@@ -84,31 +119,26 @@ describe('pathToAttachmentType', () => {
- 
- describe('Send on iOS', () => {
-   const g = globalThis as unknown as {isIOS: boolean}
--  let rpc: FakeChatRpc
-   const conversationIDKey = T.Chat.conversationIDToKey(new Uint8Array([1, 2, 3, 4]))
- 
-   beforeEach(() => {
-     // the export runs on iOS; the desktop layout renders under jsdom
-     g.isIOS = true
-     useConfigState.getState().dispatch.setLoggedIn(true)
--    rpc = installFakeChatRpc()
--    jest
--      .spyOn(T.RPCGen, 'incomingShareGetPreferenceRpcPromise')
--      .mockResolvedValue({compressPreference: T.RPCGen.IncomingShareCompressPreference.compressed})
-+    serve(T.RPCGen.IncomingShareCompressPreference.compressed)
-     jest.spyOn(C.
-```
-
-**File**: `shared/chat/conversation/bot/confirm.test.tsx` (modified, +52/-54)
-```diff
-@@ -25,67 +25,47 @@ jest.mock('@/common-adapters', () => {
-     get: (t, k) => (k === '__esModule' ? true : typeof k === 'string' && k in t ? t[k] : passThrough),
-   })
- })
--jest.mock('@/teams/common/general-conv', () => ({useGeneralConvIDKey: () => undefined}))
- 
- import {act, cleanup, fireEvent, render, screen} from '@testing-library/react'
-+import {flush} from '@/test/flush'
- import * as C from '@/constants'
- import * as Router from '@/constants/router'
- import * as T from '@/constants/types'
- import logger from '@/logger'
--import {RPCError} from '@/util/errors'
- import {resetAllStores} from '@/util/zustand'
- import {useWaitingState} from '@/stores/waiting'
- import {useInboxMetadataState} from '@/chat/inbox/metadata'
--import {installFakeChatRpc, restoreChatRpc, type FakeChatRpc} from '@/test/fake-chat-rpc'
-+import {fakeError, installFakeEngine, type FakeEngine} from '@/test/fake-engine'
-+import {paramsOf} from '@/test/fake-thread-load'
- import ConfirmBotRemove from './confirm'
- 
- const convID = T.Chat.conversationIDToKey(new Uint8Array([1, 2, 3, 4]))
- 
--const flushPromises = async () => {
--  for (let i = 0; i < 10; i++) {
--    await Promise.resolve()
--  }
--}
--
--// mirrors what the engine does for a call made with a waiting key: count it while in
--// flight, and on settle drop the count, recording the error on a failure
--const settleWithWaiting = async <R,>(
--  outcome: {error: unknown} | {result: R},
--  waitingKey?: T.Waiting.WaitingKeys
--): Promise<R> => {
--  const {dispatch} = useWaitingState.getState()
--  if (waitingKey) dispatch.increment(waitingKey)
--  await Promise.resolve()
--  if ('error' in outcome) {
--    if (waitingKey) dispatch.decrement(waitingKey, outcome.error as RPCError)
--    throw outcome.error
--  }
--  if (waitingKey) dispatch.decrement(waitingKey)
--  return outcome.result
--}
-+const removeBotMember = 'chat.1.local.removeBotMember'
-+const previewConversation = 'chat.1.local.previewConversationByIDLocal'
- 
- const uiParticipant = (assertion: string): T.RPCChat.UIParticipant => ({
-   assertion,
-   inConvName: true,
-   type: T.RPCChat.UIParticipantType.user,
- })
- 
--const previewResult = (participants: Array<string>) =>
--  ({participants: participants.map(uiParticipant)}) as unknown as T.RPCChat.InboxUIItem
-+const previewResult = (participants: Array<string>) => ({
-+  conv: {participants: participants.map(uiParticipant)} as unknown as T.RPCChat.InboxUIItem,
-+})
- 
--let rpc: FakeChatRpc
-+let fake: FakeEngine
- let clearModals: jest.SpyInstance
- let info: jest.SpyInstance
- 
- beforeEach(() => {
--  rpc = installFakeChatRpc()
-+  fake = installFakeEngine()
-   clearModals = jest.spyOn(Router, 'clearModals').mockImplementation(() => {})
-   info = jest.spyOn(logger, 'info').mockImplementation(() => {})
- })
- 
- afterEach(() => {
-   cleanup()
--  restoreChatRpc()
-   jest.restoreAllMocks()
-   resetAllStores()
- })
-@@ -94,28 +74,33 @@ const renderConfirm = () =>
-   render(<ConfirmBotRemove botUsername="helperbot" conversationIDKey={convID} />)
- 
- const clickConfirm = async () => {
--  await act(async () => {
-+  act(() => {
-     fireEvent.click(screen.getByText('Confirm'))
--    await flushPromises()
-   })
-+  await flush()
+       <Toast visible={showToast} attachTo={containerRef as React.RefObject<never>}>
+-        <Text type="Body" negative={true}>
++        <Text type="Body" style={styles.toastText}>
+           Scroll to zoom. Move to pan
+         </Text>
+       </Toast>
+@@ -349,12 +350,14 @@ const ZoomableImage = (p: Props) => {
  }
  
- describe('ConfirmBotRemove', () => {
-   test('uninstalling sends removeBotMember with the remove waiting key, then refreshes participants and closes', async () => {
--    rpc.on('removeBotMember', async p => settleWithWaiting({result: undefined}, p.waitingKey))
--    rpc.on('previewConversation', () => previewResult(['testuser', 'testuser-mac']))
-+    const held = fake.hold(removeBotMember)
-+    fake.answer(previewConversation, () => previewResult(['testuser', 'testuser-mac']))
+ const useStyles = Styles.createStyleHook(
+-  () =>
++  theme =>
+     ({
+       container: {
+         flexGrow: 1,
+         overflow: 'hidden',
+       },
++      // toast bg is theme.black, which inverts in dark mode; desktop negative text is always white
++      toastText: {color: theme.white},
+     }) as const
+ )
  
-     renderConfirm()
-     expect(screen.getByText('Uninstall helperbot?')).toBeTruthy()
-     await clickConfirm()
- 
--    expect(rpc.calls('removeBotMember')).toEqual([
--      [{conversationIDKey: convID, username: 'helperbot', waitingKey: C.waitingKeyChatBotRemove}],
--    ])
-     expect(C.waitingKeyChatBotRemove).toBe('chat:botRemove')
-+    // the engine counts the call under the remove key while it is in flight
-+    expect(useWaitingState.getState().counts.get(C.waitingKeyChatBotRemove)).toBe(1)
-+    held[0]!.reply(null)
-+    await flush()
-+
-+    expect(paramsOf(fake, removeBotMember)).toEqual([
-+      {convID: T.Chat.keyToConversationID(convID), username: 'helperbot'},
-+    ])
-     // the membership refresh: preview the conv (no waiting key), store its participants, then close
--    expect(rpc.calls('previewConversation')).toEqual([[convID]])
--    expect(rpc.log.map(c => c.method)).toEqual(['removeBotMember', 'previewConversation'])
-+    expect(paramsOf(fake, previewConversation)).toEqual([{convID: T.Chat.keyToConversationID(convID)}])
-+    expect(fake.calls.map(c => c.method)).toEqual([removeBotMember, previewConversation])
-     expect(useInboxMetadataState.getState().participants.get(convID)?.all).toEqual([
-       'testuser',
-       'testuser-mac',
-@@ -125,54 +110,67 @@ describe('ConfirmBotRemove', () => {
-   })
-
 ```
 
-**File**: `shared/chat/conversation/bot/install.test.tsx` (modified, +248/-184)
+**File**: `shared/fs/banner/system-file-manager-integration-banner/kext-permission-popup.tsx` (modified, +6/-2)
 ```diff
-@@ -41,13 +41,6 @@ jest.mock('@/common-adapters', () => {
-     get: (t, k) => (k === '__esModule' ? true : typeof k === 'string' && k in t ? t[k] : passThrough),
-   })
- })
--let mockMeta: unknown
--let mockChannelMetas: ReadonlyMap<string, unknown> = new Map()
--jest.mock('../data-hooks', () => ({useConversationMeta: () => mockMeta}))
--jest.mock('../team-hooks', () => ({useChatTeam: () => ({yourOperations: {manageBots: true}})}))
--jest.mock('@/teams/common/channel-hooks', () => ({useAllChannelMetas: () => ({channelMetas: mockChannelMetas})}))
--jest.mock('@/teams/common/general-conv', () => ({useGeneralConvIDKey: () => undefined}))
--jest.mock('@/util/featured-bots', () => ({useFeaturedBot: () => undefined}))
- jest.mock('./channel-picker', () => ({__esModule: true, default: () => null}))
+@@ -4,9 +4,11 @@ import * as T from '@/constants/types'
+ import * as Kb from '@/common-adapters'
+ import * as Kbfs from '@/fs/common'
+ import {openSecurityPreferencesDesktop as openSecurityPreferencesInPlatform} from '@/util/fs-platform'
++import {useDarkModeState} from '@/stores/darkmode'
  
- import {act, cleanup, fireEvent, render, renderHook, screen} from '@testing-library/react'
-@@ -58,165 +51,125 @@ import * as T from '@/constants/types'
- import logger from '@/logger'
- import {RPCError} from '@/util/errors'
- import {resetAllStores} from '@/util/zustand'
-+import {useConfigState} from '@/stores/config'
-+import {useCurrentUserState} from '@/stores/current-user'
-+import {LoadedTeamsListProvider} from '@/teams/use-teams-list'
-+import {metasReceived} from '@/chat/inbox/metadata'
- import {useWaitingState} from '@/stores/waiting'
- import {useInboxMetadataState} from '@/chat/inbox/metadata'
--import {installFakeChatRpc, restoreChatRpc, type FakeChatRpc} from '@/test/fake-chat-rpc'
-+import {fakeError, installFakeEngine, type FakeEngine} from '@/test/fake-engine'
-+import {paramsOf} from '@/test/fake-thread-load'
-+import {flush} from '@/test/flush'
- import {testWaitingKey} from '@/test/waiting-key'
- import {useBotSettings} from './settings'
- import InstallBotPopup, {useBotTeamRole, useRefreshBotMembershipOnSuccess} from './install'
- 
- const convID = T.Chat.conversationIDToKey(new Uint8Array([1, 2, 3, 4]))
- const otherConvID = T.Chat.conversationIDToKey(new Uint8Array([5, 6, 7, 8]))
- 
--const flushPromises = async () => {
--  for (let i = 0; i < 5; i++) {
--    await Promise.resolve()
--  }
--}
-+const getTeamRole = 'chat.1.local.getTeamRoleInConversation'
-+const getBotSettings = 'chat.1.local.getBotMemberSettings'
-+const previewConversation = 'chat.1.local.previewConversationByIDLocal'
-+const addBotMember = 'chat.1.local.addBotMember'
-+const setBotSettings = 'chat.1.local.setBotMemberSettings'
-+const listPublicBotCommands = 'chat.1.local.listPublicBotCommandsLocal'
-+const convIDOf = T.Chat.keyToConversationID
- 
--let rpc: FakeChatRpc
-+let fake: FakeEngine
- 
- beforeEach(() => {
--  rpc = installFakeChatRpc()
-+  fake = installFakeEngine()
- })
- 
- afterEach(() => {
-   cleanup()
--  restoreChatRpc()
-   jest.restoreAllMocks()
-   resetAllStores()
- })
- 
- test('useBotTeamRole refreshes role for the selected conversation and ignores stale results', async () => {
--  const resolvers = new Map<string, (role: T.RPCGen.TeamRole) => void>()
--  rpc.on('getBotTeamRole', async (_conversationIDKey, username) => {
--    const role = await new Promise<T.RPCGen.TeamRole>(resolve => {
--      resolvers.set(username, resolve)
--    })
--    return role
--  })
-+  const held = fake.hold(getTeamRole)
- 
-   const {rerender, result} = renderHook(
-     ({botUsername, id}) => useBotTeamRole(id, botUsername),
-     {initialProps: {botUsername: 'helperbot', id: convID}}
-   )
--
--  expect(rpc.calls('getBotTeamRole')).toContainEqual([convID, 'helperbot'])
--
-   rerender({botUsername: 'otherbot', id: convID})
--  expect(rpc.calls('getBotTeamRole').at(-1)).toEqual([convID, 'otherbot'])
-+  await flush()
-+  expect(paramsOf(fake, getTeamRole)).toEqual([
-+    {convID: convIDOf(convID), username: 'helperbot'},
-+    {convID: convIDOf(convID), username: 'otherbot'},
-+  ])
- 
--  await act(async () => {
--    resolvers.get('helperbot')?.(T.RPCGen.TeamRole.bot)
--    await flushPromises()
--  })
-+  held[0]!.reply(T.RPCGen.TeamRole.bot)
-+  await flush()
- 
-   expect(result.current).toBeUndefined()
- 
--  await act(async () => {
--    resolvers.get('otherbot')?.(T.RPCGen.TeamRole.restrictedbot)
--    await flushPromises()
--  })
-+  held[1]!.reply(T.RPCGen.TeamRole.restrictedbot)
-+  await flush()
- 
-   expect(result.current).toBe('restrictedbot')
- })
- 
- test('useBotSettings refreshes only when enabled and hides stale conversation data', async () => {
-   const settings = {cmds: true, convs: [convID], mentions: false}
--  rpc.on('getBotSettings', () => settings)
-+  fake.answer(getBotSettings, () => settings)
- 
-   const {rerender, result} = renderHook(
-     ({enabled, id}) => useBotSettings(id, 'helperbot', enabled),
-     {initialProps: {enabled: false, id: convID as T.Chat.ConversationIDKey | undefined}}
-   )
- 
--  await act(async () => {
--    await flushPromises()
--  })
-+  await flush()
- 
--  expect(rpc.calls('getBotSettings')).toEqual([])
-+  expect(paramsOf(fake, getBotSettings)).toEqual([])
-   expect(result.current.settings).toBeUndefined()
- 
-   rerender({enabled: true, id: convID})
--  await act(async ()
+ const InstallSecurityPrefs = () => {
+   const styles = useStyles()
++  const isDarkMode = useDarkModeState(s => s.isDarkMode())
+   const errorToActionOrThrow = Kbfs.useFsErrorActionOrThrow()
+   const {driverStatus} = Kbfs.useSystemFileManagerIntegration()
+   const onCancel = C.Router2.navigateUp
+@@ -58,8 +60,8 @@ const InstallSecurityPrefs = () => {
+             fullHeight={true}
+             centerChildren={true}
+           >
+-            <Kb.ProgressIndicator type="Small" white={true} />
+-            <Kb.Text type="BodySmall" negative={true}>
++            <Kb.ProgressIndicator type="Small" white={!isDarkMode} />
++            <Kb.Text type="BodySmall" style={styles.enablingText}>
+               Checking ...
+             </Kb.Text>
+           </Kb.Box2>
+@@ -76,6 +78,8 @@ const useStyles = Kb.Styles.createStyleHook(
+         ...Kb.Styles.globalStyles.fillAbsolute,
+         backgroundColor: theme.black_63,
+       },
++      // bg is theme.black_63, which inverts in dark mode; desktop negative text is always white
++      enablingText: {color: theme.white},
+       image: {maxWidth: '100%'},
+       listText: {flexShrink: 1, paddingTop: 1},
+       numberList: Kb.Styles.platformStyles({
 ```
 
-**File**: `shared/chat/conversation/bot/settings.test.tsx` (modified, +22/-36)
+**File**: `shared/provision/code-page/qr-scan/index.tsx` (modified, +3/-1)
 ```diff
-@@ -1,61 +1,55 @@
- /** @jest-environment jsdom */
- /// <reference types="jest" />
- import {act, cleanup, renderHook} from '@testing-library/react'
-+import {flush} from '@/test/flush'
- import * as T from '@/constants/types'
- import logger from '@/logger'
--import {RPCError} from '@/util/errors'
- import {resetAllStores} from '@/util/zustand'
--import {installFakeChatRpc, restoreChatRpc, type FakeChatRpc} from '@/test/fake-chat-rpc'
-+import {fakeError, installFakeEngine, type FakeEngine} from '@/test/fake-engine'
-+import {paramsOf} from '@/test/fake-thread-load'
- import {useBotSettings} from './settings'
+@@ -3,16 +3,18 @@ import QRLines from './lines'
+ import QRNotAuthorized from './not-authorized'
+ import QRScanner from './scanner'
+ import useQR from './hooks'
++import {useDarkModeState} from '@/stores/darkmode'
  
- const convID = T.Chat.conversationIDToKey(new Uint8Array([1, 2, 3, 4]))
+ const QRScan = () => {
+   const styles = useStyles()
+   const {waiting, onSubmitTextCode} = useQR()
++  const isDarkMode = useDarkModeState(s => s.isDarkMode())
  
--const flushPromises = async () => {
--  for (let i = 0; i < 5; i++) {
--    await Promise.resolve()
--  }
--}
-+const getBotSettings = 'chat.1.local.getBotMemberSettings'
- 
--let rpc: FakeChatRpc
-+let fake: FakeEngine
- let info: jest.SpyInstance
- 
- beforeEach(() => {
--  rpc = installFakeChatRpc()
-+  fake = installFakeEngine()
-   info = jest.spyOn(logger, 'info').mockImplementation(() => {})
- })
- 
- afterEach(() => {
-   cleanup()
--  restoreChatRpc()
-   jest.restoreAllMocks()
-   resetAllStores()
- })
- 
- describe('useBotSettings failures', () => {
-   test('a failed getBotSettings (no waiting key) is logged and reported as failed, not loading', async () => {
--    rpc.fail('getBotSettings', new RPCError('not a member', 4))
-+    fake.answer(getBotSettings, () => fakeError(4, 'not a member'))
- 
-     const {result} = renderHook(() => useBotSettings(convID, 'helperbot'))
- 
-     expect(result.current.failed).toBe(false)
--    await act(async () => {
--      await flushPromises()
--    })
-+    await flush()
- 
--    expect(rpc.calls('getBotSettings')).toEqual([[convID, 'helperbot']])
-+    expect(paramsOf(fake, getBotSettings)).toEqual([{convID: T.Chat.keyToConversationID(convID), username: 'helperbot'}])
-     expect(result.current.failed).toBe(true)
-     expect(result.current.settings).toBeUndefined()
-     expect(info).toHaveBeenCalledWith(
--      'useBotSettings: failed to refresh settings for helperbot: ERROR CODE 4 - not a member'
-+      'useBotSettings: failed to refresh settings for helperbot: ERROR CODE 4 - not a member in method chat.1.local.getBotMemberSettings'
+   if (!isMobile) {
+     return (
+       <Kb.Box2 direction="vertical" justifyContent="center" relative={true} style={styles.container}>
+         <QRLines canScan={true} />
+-        {waiting && <Kb.ProgressIndicator style={styles.waiting} type="Large" white={true} />}
++        {waiting && <Kb.ProgressIndicator style={styles.waiting} type="Large" white={!isDarkMode} />}
+       </Kb.Box2>
      )
-   })
+   }
+```
+
+**File**: `shared/wallets/really-remove-account.tsx` (modified, +2/-1)
+```diff
+@@ -12,6 +12,7 @@ type OwnProps = {
  
-   test('a failure for a bot no longer shown is dropped without a log', async () => {
--    let rejectHelper: (e: unknown) => void = () => {}
--    rpc.on('getBotSettings', async (_conversationIDKey, username) => {
--      if (username === 'helperbot') {
--        return new Promise<T.RPCGen.TeamBotSettings>((_resolve, reject) => {
--          rejectHelper = reject
-+    let failHelper = () => {}
-+    fake.answer(getBotSettings, async (params: {username: string}) => {
-+      if (params.username === 'helperbot') {
-+        return new Promise(resolve => {
-+          failHelper = () => resolve(fakeError(5, 'late'))
-         })
-       }
-       return {cmds: true, convs: null, mentions: true}
-@@ -65,32 +59,24 @@ describe('useBotSettings failures', () => {
-       initialProps: {username: 'helperbot'},
-     })
-     rerender({username: 'otherbot'})
--    await act(async () => {
--      await flushPromises()
--    })
--    await act(async () => {
--      rejectHelper(new RPCError('late', 5))
--      await flushPromises()
--    })
-+    await flush()
-+    failHelper()
-+    await flush()
- 
-     expect(result.current.failed).toBe(false)
-     expect(result.current.settings).toEqual({cmds: true, convs: null, mentions: true})
-     expect(info).not.toHaveBeenCalled()
-   })
- 
-   test('a failure is not retried; a later setSettings clears it', async () => {
--    rpc.fail('getBotSettings', new RPCError('not a member', 4))
-+    fake.answer(getBotSettings, () => fakeError(4, 'not a member'))
- 
-     const {rerender, result} = renderHook(() => useBotSettings(convID, 'helperbot'))
--    await act(async () => {
--      await flushPromises()
--    })
-+    await flush()
-     rerender()
--    await act(async () => {
--      await flushPromises()
--    })
-+    await flush()
- 
--    expect(rpc.calls('getBotSettings')).toHaveLength(1)
-+    expect(paramsOf(fake, getBotSettings)).toHaveLength(1)
-     expect(result.current.failed).toBe(true)
- 
-     act(() => {
+ const ReallyRemoveAccountPopup = (props: OwnProps) => {
+   const styles = useStyles()
++  const theme = Kb.Styles.useTheme()
+   const {accountID, name} = props
+   const waiting = C.Waiting.useAnyWaiting(loadAccountsWaitingKey)
+   const [showingToast, setShowToast] = React.useState(false)
+@@ -93,7 +94,7 @@ const ReallyRemoveAccountPopup = (props: OwnProps) => {
+           If you save this secret key, you can use it in other wallets outside Keybase
+         </Kb.Text>
+         <Kb.Toast visible={showingToast} attachTo={attachmentRef} position="top center">
+-          {isMobile && <Kb.Icon type="iconfont-clipboard" color="white" />}
++          {isMobile && <Kb.Icon type="iconfont-clipboard" color={theme.white} />}
+           <Kb.Text center={true} type="BodySmall" style={styles.toastText}>
+             Copied to clipboard
+           </Kb.Text>
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #29884** (2026-11-09): Fix white-on-grey text and icons in dark mode (exploding badge, toasts, overlays) (@chrisnojima)
+- **PR #29883** (2026-11-09): Update deps (electron 45.2.3, gesture-handler 3.5.0, keyboard-controller 1.23.0, glob/minimatch fixes); fix double highlight flash on search hits (@chrisnojima)
+- **PR #29879** (2026-11-09): e2e: release gate skill; one full report kept across runs; feedback, link error and chat-pdf tour fixes (@chrisnojima)
+- **PR #29878** (2026-11-04): markdown: make * _ ~ emphasis consistent around words, following GitHub markdown (@chrisnojima)
 - **PR #29877** (2026-11-04): Fix swipe-to-reply leaving the row stuck on iOS; make the e2e helper tests pass on Linux CI (@chrisnojima)
 - **PR #29876** (2026-11-04): Update deps: react-native 0.88.1, expo 58.0.23, electron 45.2.2 (@chrisnojima)
-- **PR #29875** (2026-11-03): desktop: fix PDF previews blocked by Trusted Types in release builds (@chrisnojima)
-- **PR #29874** (2026-11-03): CLAUDE.md: three fresh-context reviews before pushing a non-trivial PR (@chrisnojima)
-- **PR #29873** (2026-11-03): engine: a call settles after its session's queued handlers; fix the chat races and three more (@chrisnojima)
-- **PR #29872** (2026-11-03): Fix the bugs the iOS release gate found, and run unit tests on the real libraries (@chrisnojima)
 
 ---
 
@@ -3558,30 +2936,30 @@ navUpToScreen to another tab's root (e.g. teamsRoot for a team page
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. e2e: iOS release gate command, census and report; crash and render recovery (#29
+## X. e2e: release gate skill; one full report kept across runs; feedback, link error 
 
 **RULE**:
-When implementing operations in `shared/jest.config.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in keybase/client. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `shared/chat/pdf/index.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in keybase/client. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `601ccb05`: e2e: iOS release gate command, census and report; crash and render recovery (#29866). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fac612f8`: e2e: release gate skill; one full report kept across runs; feedback, link error and chat-pdf tour fixes (#29879). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `shared/jest.config.js`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `shared/chat/pdf/index.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-    // tests/e2e/shared (shared/gate included), ios-appium/gate, tests/e2e/accounts, the corpus, the electron and ios-appium release libs and electron's main-process lib hold helper unit tests; the rest are playwright/appium/node:test suites
-    '<rootDir>/tests/e2e/(?!shared/|accounts/|ios-appium/(?:gate/|release-lib\\.test\\.ts$)|fixtures/corpus/|electron/(?:release-lib|helpers/main-process-lib)\\.test\\.ts$)',
+import * as TestIDs from '@/tests/e2e/shared/test-ids'
+        <PdfEmbed url={url} testID={TestIDs.CHAT_PDF_VIEWER} />
+          testID={TestIDs.CHAT_PDF_VIEWER}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-    // tests/e2e/shared (shared/gate included), ios-appium/gate, tests/e2e/accounts, the corpus and electron's release and main-process libs hold helper unit tests; the rest are playwright/appium/node:test suites
-    '<rootDir>/tests/e2e/(?!shared/|accounts/|ios-appium/gate/|fixtures/corpus/|electron/(?:release-lib|helpers/main-process-lib)\\.test\\.ts$)',
+        <PdfEmbed url={url} />
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `601ccb05` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fac612f8` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source**: github ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
-> **Source Version**: `4ff3fcc6`  
+> **Source Version**: `c37639d3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T17:07:31.524Z  
+> **Timestamp**: 2026-11-09T07:21:01.993Z  
 > **Learning ID**: `learn-github-doobidoo-mcp-memory-service`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T17:07:31.515Z  
+> **Harvest Timestamp**: 2026-11-09T07:21:01.985Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source persistent memory for AI agent pipelines (LangGraph, CrewAI, AutoGen) and Claude. REST API + knowledge graph + autonomous consolidation.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 2087 stars
+- **Stars / Engagement**: 2100 stars
 
 ---
 
@@ -2911,11 +2911,11 @@ Commands:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1861** (2026-11-05): **dashboard restart and update kill a server started with `python -m uvicorn`**
-  *Symptoms*: Restarting from the dashboard leaves the server dead when it was started with `memory launch`. That affects Restart, Update, and both config "save and restart" paths.  All four schedule `_restart_server_delayed` (`web/api/server.py:195`; callers at `server.py:350`, `server.py:434`, `configuration.py:799`, `configuration.py:905`). It re-executes with:  ```python os.execv(sys.executable, [sys.executable] + sys.argv) ```  `memory launch` starts the server as `python -m uvicorn ...` (`cli/lifecycle.py:847`). Under `-m`, `sys.argv[0]` is the path of `uvicorn/__main__.py`, so the new process runs that file as a script instead of `-m uvicorn`. Python then puts the script's directory, `site-packages/uvicorn/`, first on `sys.path`. uvicorn ships its own `logging.py`, which now shadows the standard library, and the new process dies on import:  ``` File ".../site-packages/uvicorn/logging.py", line 14, in <module>     class ColourizedFormatter(logging.Formatter): AttributeError: partially initialized module 'logging' has no attribute 'Formatter' (most likely due to a circular import) ```  That is from `server.err` on 2026-11-04, right after "AUDIT: Server process restart initiated", following a dashboard update. The update itself succeeded (git pull and pip install); only the restart failed, and the server stayed down until it was launched by hand.  The Windows branch has the same problem: it passes the same `sys.argv` to `subprocess.Popen`.  Fix: rebuild the command from `sys.orig_argv`
+- **Issue #1893** (2026-11-08): **Delta-sync logs drop the exception type, so failed peer requests log an empty reason**
+  *Symptoms*: When a delta-sync request to a peer fails, the log says that it failed but not why. This is what my Mac logged on every failed cycle against the hub this morning:  ``` HTTP request failed: GET /api/sync/capabilities -  Delta-sync capability probe failed for peer hub:  ```  Both lines end after the colon. The dashboard showed "Capability probe failed; check peer connectivity and credentials." The same request from a script on the same machine, with the same client code (`RemoteHTTPStorage`) and the same CA bundle, returned 200. With nothing in the log I could not tell whether it was a timeout, a TLS error, a refused connection or a reset, and the cause is now lost. The next cycle succeeded.  ## Cause  The log calls only format the exception's message:  - `src/mcp_memory_service/storage/remote_http.py`, `_request()`: `sanitized_error = _sanitize_log_value(str(e))` - `src/mcp_memory_service/consolidation/scheduler.py`, the capability probe in `_probe_sync_peers()` (`"Delta-sync capability probe failed for peer %s: %s"`) and the cycle failure (`"Delta-sync cycle failed for peer %s: %s"`), both with `_sanitize_log_value(exc)`  Some exceptions have an empty message, so `str(exc)` is `""`. For example `str(httpx.ConnectTimeout(''))` is `''`. The class name is the one piece of information that is always there, and it is not logged.  ## Fix  Log the exception class next to the message in those three places, the way `ingestion/csv_loader.py` already does:  ```python logger.error(     "
 
-- **Issue #1858** (2026-11-04): **harvest: an older session can evolve a newer memory, because the statement time is never kept**
-  *Symptoms*: A harvest over several sessions processes them newest first, and evolution does not compare times. So within one run, a statement from an older session can replace the current version of a memory that a newer session just wrote.  How it happens on `9ad9b7ac`:  1. `TranscriptParser.find_sessions` sorts the session files by mtime, newest first, and returns the first `count` (`harvest/parser.py:190-191`). `harvest_and_store` loops over them in that order (`harvest/harvester.py:211-219`). 2. For every candidate, `_try_evolve` (`harvester.py:307`) retrieves the single most similar memory and, above `similarity_threshold` (0.85), calls `evolve_memory` with the candidate's content. The candidate becomes the new current version. Nothing compares when either statement was made. 3. The time is available but dropped. `ParsedMessage` carries the transcript `timestamp` (`parser.py:22`), but `HarvestCandidate` has no time field (`harvest/models.py:15-25`), `_provenance` records none (`harvester.py:284-305`), and `store_memory` takes no time argument. A harvested memory's `created_at` is the time of the harvest.  Scenario: `memory_harvest` with `{"sessions": 2, "dry_run": false}`. The newer session says "the sync hub runs on port 8020", the older one says "the sync hub runs on port 8010". The newer one is processed first and stored. Then the older one comes along, matches it above 0.85, and evolves it. The current version now says 8010. The same applies to `session_ids` backfills and `force
+- **Issue #1892** (2026-11-08): **Dashboard: browsers keep running a stale app.js after an upgrade**
+  *Symptoms*: After upgrading to v12.7.0, Settings > Sync "Test Connection" still failed for me with the #1839 error:  ``` ✗ Request failed: Failed to execute 'fetch' on 'Window': '[object Object]' is not a valid HTTP method. ```  The server was already serving the fixed `app.js` (`curl https://127.0.0.1:8000/static/app.js` shows the positional `apiCall('/config/credentials/test', 'POST', {...})` from #1841). The browser was running the old copy from its cache. A hard reload fixed it. Every user who upgrades can hit the same thing, and a fixed bug then looks unfixed.  ## Cause  Two things together:  1. `src/mcp_memory_service/web/static/index.html` loads its assets with a hand-maintained cache buster that nobody bumps:     ```html    <link rel="stylesheet" href="static/style.css?v=delta-sync-ui-1">    <script src="static/app.js?v=delta-sync-ui-1"></script>    ```     The string was last changed in b4fa94a9 (#1694). The URL has not changed across the releases since, so the browser treats it as the same file.  2. `/static` is served by `RootPathStaticFiles` in `src/mcp_memory_service/web/app.py`, a Starlette `StaticFiles` subclass. It sends `ETag` and `Last-Modified` but no `Cache-Control`:     ```    $ curl -skI https://127.0.0.1:8000/static/app.js | grep -i "cache\|etag\|last-mod"    last-modified: Sat, 07 Nov 2026 06:44:44 GMT    etag: "a59771174e3c4b1aa20fa2760616e58c"    ```     Without `Cache-Control` the browser may use heuristic freshness (typically 10% of the time since `Last-Modifi
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2932,1072 +2932,543 @@ Commands:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `16a0ae92` (2026-11-05)
-**Commit Message**: fix(storage): mark beliefs/summaries stale when source memory deleted (#1865)
+### Incident Patch 1: `c37639d3` (2026-11-08)
+**Commit Message**: fix(remote_http): honor store in get_by_hash, update and delete (#1879) (#1922)
 
-* fix(storage): mark beliefs and summaries stale when a source is deleted
+* fix(remote_http): honor store in get_by_hash, update and delete (#1879)
 
-Deleting a memory removed its graph edges and left derived_from,
-contradicted_by, merged_from_hashes and source_memory_hashes pointing
-at the hash. The delete transaction now drops the hash from belief
-provenance, flags compression and association memories, and marks a
-belief ungrounded when no sources remain.
+/api/sync/capabilities advertises store_scoped_access from the server
+storage's get_by_hash_is_store_scoped (default False, so an older server
+reads the same as a missing field). RemoteHTTPStorage reads it in
+initialize() and check_sync_compatibility(), reusing one response so the
+scheduler still asks the peer once per cycle, and sets
+get_by_hash_is_store_scoped from it.
 
-Fixes #1857
+get_by_hash, update_memory_metadata (new store kwarg, as in base.py) and
+delete send a named store as ?store=. Against a peer that does not
+advertise the flag they fail closed without a request and log once per
+peer. None, "default" and "all" keep working against older hubs.
 
-Co-authored-by: yuzhou <[REDACTED_EMAIL]>
+Part of #1683.
 
-* fix(storage): restore ungrounded beliefs and sync summary flags
+* fix(remote_http): raise a failed capabilities probe once, do not retry it
 
-Re-deriving a belief whose sources came back promotes it from ungrounded
-to candidate, or to active when the usual floors are met. A delta-sync
-tombstone runs the same citation cleanup as a local delete. Summary
-flags advance updated_at and record an update_metadata event.
+initialize() keeps the request error from /api/sync/capabilities and
+check_sync_compatibility() raises it instead of asking the peer again.
+The scheduler calls the two back to back, so an unreachable peer was
+waited for through two timeouts and logged twice. The error is consumed
+with the response:
 
-Fixes #1857
-
-Co-authored-by: yuzhou <[REDACTED_EMAIL]>
-
-* fix(sync): roll back a tombstone whose citation cleanup fails
-
-A delta-sync delete committed the tombstone and the sync_events row
-before checking that belief and summary cleanup finished. The retry
-then looked like a duplicate. Apply now commits only a finished
-materialize, k
-
-**File**: `changelog.d/1857.fixed.md` (added, +19/-0)
+**File**: `changelog.d/1879.fixed.md` (added, +1/-0)
 ```diff
-@@ -0,0 +1,19 @@
-+- **Deleting a memory left beliefs and consolidation summaries citing it (#1857, ZYZ666-RGB).**
-+  Graph edges were removed in the delete transaction, but `derived_from`,
-+  `contradicted_by` and `metadata.merged_from_hashes` kept the hash, and
-+  compression and association memories kept it in `source_memory_hashes`.
-+  Retention deletes this way all the time, so `get_beliefs` kept returning a
-+  belief whose evidence was gone. The same transaction now drops the hash from
-+  those lists, records `metadata.stale_sources` (how many, and when), and marks
-+  a belief `ungrounded` when nothing is left. That status is not `superseded`.
-+  Confidence is unchanged until the next `challenge_belief`. Summaries are
-+  flagged and not rewritten. A later re-derivation does not union a merged
-+  source that is no longer live. Re-deriving an ungrounded belief promotes it
-+  back to candidate, or to active when the usual floors are met. A tombstone
-+  applied through delta sync runs the same cleanup. A summary flag advances
-+  `updated_at` and records an `update_metadata` event when the sync log is on.
-+  If that cleanup fails, the delta-sync apply rolls the tombstone and the
-+  event back, so a retry can finish instead of sticking as a duplicate. A
-+  local delete rolls that same transaction back before it releases the
-+  connection lock. Re-derivation writes only sources that are still live,
-+  and saves that list with confidence and status together.
+@@ -0,0 +1 @@
++- **`RemoteHTTPStorage` confines `get_by_hash`, `update_memory_metadata` and delete-by-hash to `store` (#1879, part of #1683).** `/api/sync/capabilities` now advertises `store_scoped_access`, taken from the server storage's `get_by_hash_is_store_scoped`. The HTTP client reads it when it initializes (and on each sync handshake) and sends a named store as the `store` query parameter, so a memory in another store comes back as not found. A peer that does not advertise the field (every server before this release) ignores the query parameter, so against it a call naming a store is refused without a request and logged once per peer. **Upgrade the hub before the clients:** once a caller passes a named store to an HTTP peer, an older hub refuses every such call. `None`, `"default"` and `"all"` keep working against an older hub: `"default"` is not sent because the server resolves a missing `store` to `"default"` itself, and `"all"` is passed through for reads.
 ```
 
-**File**: `src/mcp_memory_service/consolidation/belief_service.py` (modified, +227/-32)
+**File**: `src/mcp_memory_service/storage/remote_http.py` (modified, +126/-11)
 ```diff
-@@ -22,6 +22,11 @@
-     should_supersede,
- )
- from ..compat import _sanitize_log_value
-+from ..storage.source_retraction import (
-+    UNGROUNDED_STATUS,
-+    live_memory_hashes,
-+    union_live_merged_sources,
+@@ -113,8 +113,38 @@ def _read_sync_embedding_identity(
+     return remote_model, remote_dimension
+ 
+ 
++_UNSCOPED_PEER_MESSAGE = (
++    "Remote peer does not advertise store_scoped_access; "
++    "upgrade it before sending store-scoped operations"
 +)
- 
- logger = logging.getLogger(__name__)
- 
-@@ -166,6 +171,50 @@ def _hash_content(content: str) -> str:
-     return hashlib.sha256(content.encode()).hexdigest()
- 
- 
-+def _status_after_source_restore(
-+    status: str, confidence: float, support_count: int
-+) -> Optional[str]:
-+    """Next status when derivation rewrites an existing belief's sources.
 +
-+    ``candidate`` promotes to ``active`` once the floors are met.
-+    ``ungrounded`` is that same path once evidence exists again: ``active``
-+    when the floors are met, otherwise ``candidate``. Left at ``ungrounded``,
-+    the belief stays out of the default ``get_beliefs`` read. ``active`` moves
-+    to ``superseded`` when confidence falls through the floor.
++
++def _is_named_store(store: Optional[str]) -> bool:
++    """Whether ``store`` asks a hash-addressed call to be confined to one store.
++
++    ``None`` and ``"all"`` are unscoped. ``"default"`` is not sent either: a peer
++    that confines resolves a missing ``store`` to ``"default"`` itself, and an
++    older peer keeps serving it as before, so default-store sync keeps working
++    against a hub that has not been upgraded yet.
 +    """
-+    if status in ("candidate", "ungrounded") and should_promote(confidence, support_count):
-+        return "active"
-+    if status == "ungrounded":
-+        return "candidate"
-+    if status == "active" and should_supersede(confidence):
-+        return "superseded"
-+    return None
++    return store not in (None, "default", "all")
 +
 +
-+def _status_for_live_evidence(status, confidence, support_count, has_evidence):
-+    """Status to store after a derivation re-checks which sources are still live.
++def _store_params(store: Optional[str]) -> Dict[str, Any]:
++    """Request kwargs that pass ``store`` to the peer when the call names one."""
++    if store in (None, "default"):
++        return {}
++    return {"params": {"store": store}}
 +
-+    No remaining evidence stays ``ungrounded`` (a dedup ``superseded`` row stays
-+    what it is). Live evidence uses the same promotion rules as a candidate.
++
+ class RemoteHTTPStorage(MemoryStorage):
+-    """Remote HTTP storage backend using REST API calls."""
++    """Remote HTTP storage backend using REST API calls.
++
++    ``get_by_hash_is_store_scoped`` starts False and becomes True only after the
++    peer advertises ``store_scoped_access`` on ``/api/sync/capabilities``. Until
++    then a call that names a store is refused here, without a request: an older
++    peer ignores the ``store`` query parameter and would answer from every store.
 +    """
-+    if not has_evidence:
-+        if status == "superseded":
-+            return "superseded"
-+        return UNGROUNDED_STATUS
-+    restored = _status_after_source_restore(status, confidence, support_count)
-+    if restored is None:
-+        return status
-+    return restored
-+
-+
-+def _hash_is_live(source, live) -> bool:
-+    return isinstance(source, str) and bool(source) and source in live
-+
-+
-+def _has_live_hash(items) -> bool:
-+    return any(isinstance(item, str) and item for item in items or [])
-+
-+
- def _sum_numeric_counters(target: dict, source: dict) -> None:
-     """Add source's numeric counters into target in place (bool excluded).
  
-@@ -286,21 +335,20 @@ async def _derive_group_belief(self, group_content, group_obs, now, stats):
-         existing = await self._get_belief(belief_hash)
+     @property
+     def max_content_length(self) -> Optional[int]:
+@@ -167,6 +197,14 @@ def __init__(self, base_url: str, api_key: Optional[str] = None, timeout: float
+         self.basic_user = basic_user
+         self.basic_pass = basic_pass
+         self.expected_embedding_model = expected_embedding_model
++        self.get_by_hash_is_store_scoped = False
++        # The capabilities response, or the error that stopped it, read by
++        # initialize() and handed to the check_sync_compatibility() that the
++        # scheduler calls right after it, so the peer is asked once per cycle
++        # and a timeout is waited through once.
++        self._capabilities_response: Optional[httpx.Response] = None
++        self._capabilities_error: Optional[Exception] = None
++        self._unscoped_peer_logged = False
  
-         if existing:
--            await self._update_belief(
--                belief_hash, confidence, supporting_hashes, contradicting_hashes, now
-+            # Re-read liveness under the connection lock. The observations
-+            # above were loaded earlier; a delete in between has already
-+            # marked this belief ungrounded, and writing the cached hashes
-+            # back would promote it with no live evidence.
-+            outcome = await self._rewrite_belief_from_live_sources(
-+                belief_hash, obs_dicts, contradicting, now
+         # Set up HTTP client with headers
+         headers = {}
+@@ -219,8 +257,63 @@ async def _request(self, method: str, path: str, **kwargs) -> httpx.Response:
              )
-+            if outcome is None:
-+                return
-             stats["updated"] += 1
--
--            # Promote or supersede
--            status = existing["status"]
--            if status == "candidate" and should_promote(confidence, len(supporting_hashes)):
--                stats["promoted"] += await self._set_belief_status(
--                    belief_hash, "active", now, expected_status=status
--                )
--            elif status == "active" and should_supersede(confidence):
--                stats["superseded"] += await self._set_belief_status(
--                    belief_hash, "superseded", now, expected_status=status
--                )
-+            if outcome == "promoted":
-+                stats["promoted"] += 1
-+            elif outcome == "superseded":
-+                stats["superseded"] += 1
-         else:
-             # Create new candidate
-             status = "active" if should_promote(confidence, len(supporting_hashes)) else "candidate"
-@@ -364,7 +412,11 @@ async def challenge_belief(self, belief_hash: str) -> dict:
-     async def get_beliefs(
-         self, status: str = "active", min_confidence: float = CONFIDENCE_FLOOR
-     ) -> List[dict]:
--        """Get beliefs without waiting for the connection lock on the event loop."""
-+        """Get beliefs without waiting for the connection lock on the event loop.
-+
-+        The default status is ``active``. A belief left with no live sources is
-+        stored as ``ungrounded`` and stays out of this read.
-+        """
-         return await asyncio.to_thread(self._get_beliefs_sync, status, min_confidence)
+             raise
  
-     def _get_beliefs_sync(self, status, min_confidence):
-@@ -1048,6 +1100,110 @@ def _insert_belief(
-             )
-             conn.commit()
- 
-+    async def _rewrite_belief_from_live_sources(
-+        self, belief_hash, obs_dicts, contradicting, now
-+    ):
-+        """Write sources, confidence, and status from hashes that are still live.
-+
-+        One connection-lock critical section, so a delete cannot commit between
-+       
-```
-
-**File**: `src/mcp_memory_service/storage/mixins/delete.py` (modified, +63/-7)
-```diff
-@@ -7,6 +7,8 @@
- from datetime import datetime, date
- from typing import List, Tuple, Optional
- 
-+from ..source_retraction import retract_sources_for_deleted_hashes
-+
- 
- logger = logging.getLogger(__name__)
- 
-@@ -22,6 +24,45 @@ def _escape_like(value: str) -> str:
- class DeleteMixin:
-     """Mixin providing memory deletion operations."""
- 
-+    async def _rollback_quietly(self) -> None:
-+        """Drop an open delete transaction after a failure.
-+
-+        The belief/summary retraction runs before commit. A failure there has
-+        to undo the tombstone too, or the next statement inherits it.
-+        """
++    def _peer_label(self) -> str:
++        """The peer's URL without credentials, for log lines."""
 +        try:
-+            await self._run_in_thread(self.conn.rollback)
-+        except sqlite3.OperationalError as exc:
-+            # Best-effort. "no transaction is active" means the failure
-+            # happened before any statement opened one, so there is nothing
-+            # to undo. A connection closed in between raises the same error.
-+            logger.debug("Delete rollback skipped: %s", _sanitize_log_value(exc))
-+
-+    def _abort_open_delete(self) -> None:
-+        """Roll back a delete before the worker releases the connection lock.
-+
-+        Citation cleanup runs after the tombstone update and before commit.
-+        Rolling back only after ``_execute_with_retry`` returns lets another
-+        waiter take ``_conn_lock`` and commit the shared connection first.
-+        The caller then sees a failed delete whose tombstone is already saved.
-+        """
-+        try:
-+            if self.conn is None:
-+                return
-+            # A connection double without in_transaction still gets rollback.
-+            if getattr(self.conn, "in_transaction", True):
-+                self.conn.rollback()
-+        except sqlite3.Error as exc:
-+            logger.error("Could not roll back delete: %s", _sanitize_log_value(exc))
-+
-+    def _guard_delete(self, operation):
-+        """Run a delete body and undo it before the connection lock drops."""
-+        try:
-+            return operation()
++            url = httpx.URL(self.base_url).copy_with(
++                username="", password="", query=None, fragment=None
++            )
 +        except Exception:
-+            self._abort_open_delete()
-+            raise
++            return "remote peer"
++        return _sanitize_log_value(str(url))
 +
-     async def get_sync_state_for_hash(
-         self, content_hash: str
-     ) -> tuple[float | None, float | None] | None:
-@@ -115,6 +156,7 @@ def _apply_remote_tombstone():
-                                     'DELETE FROM memory_graph WHERE source_hash = ? OR target_hash = ?',
-                                     (content_hash, content_hash),
-                                 )
-+                                retract_sources_for_deleted_hashes(self.conn, [content_hash], sync=self)
-                                 if hasattr(self, '_append_sync_event'):
-                                     self._append_sync_event(
-                                         self.conn,
-@@ -205,6 +247,8 @@ def _delete_memory():
-                     update_sql += ' AND store = ?'
-                     update_params.append(store)
-                 cursor = self.conn.execute(update_sql, tuple(update_params))
-+                if cursor.rowcount > 0:
-+                    retract_sources_for_deleted_hashes(self.conn, [content_hash], sync=self)
- 
-                 # Append sync event between UPDATE and commit (ADR-0008)
-                 if hasattr(self, '_append_sync_event') and cursor.rowcount > 0:
-@@ -217,7 +261,10 @@ def _delete_memory():
-                 self.conn.commit()
-                 return cursor.rowcount
- 
--            rowcount = await self._execute_with_retry(_delete_memory)
-+            def _guarded_delete():
-+                return self._guard_delete(_delete_memory)
++    def _note_store_scoping(self, capabilities: Dict[str, Any]) -> None:
++        """Trust store scoping only when the peer says so explicitly."""
++        self.get_by_hash_is_store_scoped = capabilities.get("store_scoped_access") is True
 +
-+            rowcount = await self._execute_with_retry(_guarded_delete)
-             if rowcount is None:
-                 return False, f"Memory with hash {content_hash} not found"
-             if rowcount > 0:
-@@ -227,10 +274,7 @@ def _delete_memory():
-                 return False, f"Memory with hash {content_hash} not found"
- 
-         except Exception as e:
--            try:
--                await self._run_in_thread(self.conn.rollback)
--            except sqlite3.OperationalError:
--                pass
-+            await self._rollback_quietly()
-             error_msg = f"Failed to delete memory: {str(e)}"
-             logger.error("%s", _sanitize_log_value(error_msg))
-             return False, error_msg
-@@ -367,10 +411,15 @@ def _delete_by_tag():
-                     "UPDATE memories SET deleted_at = ? WHERE (',' || tags || ',') LIKE ? ESCAPE '\\' AND deleted_at IS NULL",
-                     (time.time(), exact_match_pattern)
-                 )
-+                if cursor.rowcount > 0:
-+                    retract_sources_for_deleted_hashes(self.conn, content_hashes, sync=self)
-                 self.conn.commit()
-                 return cursor.rowcount
- 
--            count = await self._execute_with_retry(_delete_by_tag)
-+            def _guarded_delete_by_tag():
-+                return self._guard_delete(_delete_by_tag)
++    async def _probe_store_scoping(self) -> None:
++        """Read the peer's capabilities and set ``get_by_hash_is_store_scoped``.
 +
-+            count = await self._execute
++        Any failure leaves the flag False, so store-scoped calls fail closed.
++        A request error is kept, not retried: check_sync_compatibility() raises
++        it, so a peer that times out is waited for once, not twice.
++        """
++        self.get_by_hash_is_store_scoped = False
++        self._capabilities_response = None
++        self._capabilities_error = None
++        try:
++            response = await self._request("GET", "/api/sync/capabilities")
++        except Exception as e:
++            # _request() has already logged it.
++            self._capabilities_error = e
++            return
++        self._capabilities_response = response
++        if response.status_code != 200:
++            return
++        try:
++            capabilities = response.json()
++        except (ValueError, TypeError):
++            return
++        if isinstance(capabilities, dict):
++            self._note_store_scoping(capabilities)
++
++    def _refuses_store(self, store: Optional[str], operation: str) -> bool:
++        """Fail closed on a named store the peer has not confirmed it confines."""
++        if not _is_named_store(store) or self.get_by_hash_is_store_scoped:
++            return False
++        if not self._unscoped_peer_logged:
++            self._unscoped_peer_logged = True
++            logger.warning(
++                "%s does not advertise store_scoped_access; refusing store-scoped "
++                "%s and every later store-scoped call to it. Upgrade the peer.",
++                self._peer_label(), operation,
++            )
++        return True
++
+     async def initialize(self) -> None:
+         """Initialize the HTTP storage backend and validate embedding model if expected."""
++        await self._probe_store_scoping(
 ```
 
-**File**: `src/mcp_memory_service/storage/source_retraction.py` (added, +523/-0)
+**File**: `src/mcp_memory_service/web/api/sync.py` (modified, +8/-0)
 ```diff
-@@ -0,0 +1,523 @@
-+# Copyright 2024 Heinrich Krupp
-+#
-+# Licensed under the Apache License, Version 2.0 (the "License");
-+# you may not use this file except in compliance with the License.
-+# You may obtain a copy of the License at
-+#
-+#     http://www.apache.org/licenses/LICENSE-2.0
-+#
-+# Unless required by applicable law or agreed to in writing, software
-+# distributed under the License is distributed on an "AS IS" BASIS,
-+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+# See the License for the specific language governing permissions and
-+# limitations under the License.
-+
-+"""Drop deleted memory hashes from beliefs and flag consolidation summaries.
-+
-+Beliefs (``derived_from``, ``contradicted_by``, ``metadata.merged_from_hashes``)
-+and compression/association memories (``metadata.source_memory_hashes``) record
-+the content hashes they were built from. Deleting a memory has to act on those
-+receipts in the same transaction as the ``memory_graph`` cleanup. No model call.
-+
-+``ungrounded`` is the status of a belief with no sources left. ``get_beliefs``
-+reads ``status = 'active'`` by default, so the belief drops out of search.
-+``superseded`` stays what dedup uses for a loser absorbed into a canonical.
-+Confidence is left untouched for the next ``challenge_belief``.
-+
-+The liveness check is a pure function. Callers pass the stored source list and
-+the set of hashes that still have a live ``memories`` row. Deleted, invalidated
-+and re-ingested hashes are the same answer. These columns hold memory content
-+hashes only; an id that cannot be resolved is treated as gone when the
-+``memories`` table can be asked, and left alone when it cannot (a belief-only
-+database is not evidence that the hash was deleted).
-+"""
-+
-+import json
-+import logging
-+import sqlite3
-+import time
-+from datetime import datetime, timezone
-+
-+from mcp_memory_service.compat import _sanitize_log_value
-+
-+logger = logging.getLogger(__name__)
-+
-+# Not a dedup outcome. A belief with this status has no remaining evidence.
-+UNGROUNDED_STATUS = "ungrounded"
-+
-+# Statuses get_beliefs / derivation still treat as current knowledge.
-+_GROUNDABLE_STATUSES = frozenset({"active", "candidate", "disputed"})
-+
-+_HASH_TABLE = "mcp_retract_hashes"
-+_SQL_IN_CHUNK = 400
-+
-+_BELIEF_CITE_SQL = """
-+SELECT belief_hash, derived_from, contradicted_by, metadata, status
-+FROM beliefs
-+WHERE EXISTS (
-+    SELECT 1 FROM json_each(
-+        CASE WHEN json_valid(beliefs.derived_from) THEN beliefs.derived_from ELSE NULL END
-+    ) AS je
-+    WHERE je.value IN (SELECT hash FROM mcp_retract_hashes)
-+)
-+OR EXISTS (
-+    SELECT 1 FROM json_each(
-+        CASE WHEN json_valid(beliefs.contradicted_by) THEN beliefs.contradicted_by ELSE NULL END
-+    ) AS je
-+    WHERE je.value IN (SELECT hash FROM mcp_retract_hashes)
-+)
-+OR EXISTS (
-+    SELECT 1 FROM json_each(
-+        CASE WHEN json_valid(beliefs.metadata)
-+             THEN json_extract(beliefs.metadata, '$.merged_from_hashes')
-+             ELSE NULL END
-+    ) AS je
-+    WHERE je.value IN (SELECT hash FROM mcp_retract_hashes)
-+)
-+"""
-+
-+_SUMMARY_CITE_SQL = """
-+SELECT content_hash, metadata, tags
-+FROM memories
-+WHERE deleted_at IS NULL
-+AND json_valid(metadata)
-+AND EXISTS (
-+    SELECT 1 FROM json_each(json_extract(metadata, '$.source_memory_hashes')) AS je
-+    WHERE je.value IN (SELECT hash FROM mcp_retract_hashes)
-+)
-+"""
-+
-+
-+def departed_sources(stored_sources, live_ids) -> list:
-+    """Return stored hashes that are not in ``live_ids``.
-+
-+    Order-preserving, duplicates collapsed. Non-strings are ignored.
-+    """
-+    gone = []
-+    seen = set()
-+    for source in stored_sources or []:
-+        if (
-+            not isinstance(source, str)
-+            or not source
-+            or source in seen
-+            or source in live_ids
-+        ):
-+            continue
-+        seen.add(source)
-+        gone.append(source)
-+    return gone
-+
-+
-+def retract_belief_record(
-+    *,
-+    derived_from,
-+    contradicted_by,
-+    metadata,
-+    status,
-+    live_ids,
-+    updated_at,
-+) -> dict | None:
-+    """Return the fields to write, or None when no provenance hash departed.
-+
-+    Confidence is not part of the result. A belief whose ``derived_from`` and
-+    ``contradicted_by`` are both empty moves to ``ungrounded`` unless it is
-+    already ``superseded`` (or some other non-groundable status).
-+    """
-+    derived = list(derived_from or [])
-+    contradicted = list(contradicted_by or [])
-+    meta = dict(metadata or {})
-+    merged = meta.get("merged_from_hashes")
-+    if not isinstance(merged, list):
-+        merged = []
-+    removed = departed_sources(derived + contradicted + merged, live_ids)
-+    if not removed:
-+        return None
-+    removed_set = set(removed)
-+    new_derived = _without(derived, removed_set)
-+    new_contradicted = _without(contradicted, removed_set)
-+    new_merged = _without(merged, removed_set)
-+    if new_merged:
-+        meta["merged_from_hashes"] = new_mer
-```
-
-**File**: `src/mcp_memory_service/storage/sync/apply.py` (modified, +76/-33)
-```diff
-@@ -17,6 +17,7 @@
- 
- from ..base import MemoryStorage
- from ..mixins.base import _sanitize_log_value
-+from ..source_retraction import retract_sources_for_deleted_hashes
- from .resolver import EventView, reduce_events, _winner_key
- 
- logger = logging.getLogger(__name__)
-@@ -268,37 +269,25 @@ def _apply_remote_event_locked(storage: MemoryStorage, event: Dict[str, Any]) ->
-             if is_winner or op == "update_metadata":
-                 try:
-                     materialized = _materialize_event(storage, event)
-+                    if not materialized:
-+                        # Commit only the skippable empty create. Any other miss,
-+                        # including a tombstone whose citation cleanup returned
-+                        # False, rolls back so the retry is not a duplicate.
-+                        return _unmaterialized_result(s, op, payload)
-                     s.conn.commit()  # durability: persist event + materialization (ADR-0019/§8.5)
--                    if materialized:
--                        reason = ("Remote event won and materialized" if is_winner
--                                  else "update_metadata merged (field-level convergence)")
--                        if locals().get("_is_content_repair"):
--                            reason = "Empty-content create repaired with real content (via resolver)"
--                        return ApplyResult(applied=True, materialized=True, reason=reason)
--                    # A win that fails to materialize is NOT applied. A create whose content
--                    # is empty in BOTH the payload and the source table is permanently
--                    # non-materializable — mark it skippable so the orchestrator advances past
--                    # it instead of fail-stopping the whole feed (a few irrecoverable events
--                    # must not block thousands of good ones). Any other materialization miss
--                    # stays a transient failure the sender keeps retrying (Greptile P1).
--                    if op == "create" and not (payload.get("content") or ""):
--                        return ApplyResult(applied=False, materialized=False,
--                                           reason="Create event has no recoverable content — skipped",
--                                           skippable=True)
--                    return ApplyResult(applied=False, materialized=False, reason="Materialization failed")
-+                    reason = ("Remote event won and materialized" if is_winner
-+                              else "update_metadata merged (field-level convergence)")
-+                    if locals().get("_is_content_repair"):
-+                        reason = "Empty-content create repaired with real content (via resolver)"
-+                    return ApplyResult(applied=True, materialized=True, reason=reason)
-                 except Exception as e:
-                     # Roll back any pending write (e.g. a content-repair UPDATE to
--                    # sync_events) so a transient materialization failure does not leave
--                    # the stored payload mutated — otherwise the next retry would match
--                    # it as a duplicate and never re-attempt the memory write (Greptile
--                    # #1499 apply:181, exception path).
--                    try:
--                        s.conn.rollback()
--                    except Exception:
--                        # Best-effort rollback: if the connection cannot roll back (e.g.
--                        # no open transaction) there is nothing to undo; the original error
--                        # below is what matters.
--                        pass
-+                    # sync_events, or a tombstone whose citation cleanup raised)
-+                    # so a transient materialization failure does not leave the
-+                    # stored payload mutated — otherwise the next retry would match
-+                    # it as a duplicate and never re-attempt the memory write
-+                    # (Greptile #1499 apply:181, and #1865 citation cleanup).
-+                    _rollback_apply(s)
-                     logger.error("Materialization failed: %s", _sanitize_log_value(e))
-                     return ApplyResult(applied=False, materialized=False, reason=f"Materialization error: {e}")
-             else:
-@@ -313,9 +302,21 @@ def _apply_remote_event_locked(storage: MemoryStorage, event: Dict[str, Any]) ->
-                 if op in ("create", "delete"):
-                     try:
-                         _reconcile_liveness(_sqlite(storage), content_hash)
--                    except Exception as e:  # noqa: BLE001 - never fail-stop the feed on reconcile
--                        logger.warning("liveness reconcile (loser) failed for %s: %s",
--                                       _sanitize_log_value(content_hash), _sanitize_log_value(e))
-+                    except Exception as e:  # noqa: BLE001 - partial liveness write must not commit
-+                       
-```
-
-**File**: `tests/consolidation/test_delete_stale_beliefs.py` (added, +910/-0)
-```diff
-@@ -0,0 +1,910 @@
-+"""Deleting a memory retracts it from beliefs and flags consolidation summaries.
-+
-+The graph-edge cleanup already runs inside the delete transaction. These tests
-+drive the real sqlite-vec storage (no mocked delete) and require the same
-+transaction to drop the hash from belief provenance and to mark compression
-+and association memories stale. They fail on main, where only memory_graph
-+is cleaned.
-+"""
-+
-+import asyncio
-+import json
-+import os
-+import sqlite3
-+from datetime import date, datetime, timezone
-+
-+import pytest
-+
-+from mcp_memory_service.consolidation.belief_service import BeliefService, _hash_content
-+from mcp_memory_service.models.memory import Memory
-+from mcp_memory_service.storage.sqlite_vec import SqliteVecMemoryStorage
-+from mcp_memory_service.utils.hashing import generate_content_hash
-+
-+_WHEN = "2026-11-05T02:00:00+00:00"
-+
-+
-+def test_departed_sources_lists_hashes_that_are_not_live():
-+    """One question: is the source still live? Duplicates and non-hashes are ignored."""
-+    from mcp_memory_service.storage.source_retraction import departed_sources
-+
-+    gone = departed_sources(
-+        ["live", "dead", "dead", "", None, 3, "also-dead"],
-+        {"live"},
+@@ -61,6 +61,13 @@ class SyncCapabilitiesResponse(BaseModel):
+     embedding_model: str = Field(description="Embedding model used by the vector storage")
+     embedding_dimension: int = Field(description="Vector dimension used by the storage")
+     version: str = Field(description="Installed MCP Memory Service package version")
++    store_scoped_access: bool = Field(
++        default=False,
++        description=(
++            "Whether get, update and delete by content hash honor the store "
++            "query parameter. An older server omits the field, which reads as False."
++        ),
 +    )
-+    assert gone == ["dead", "also-dead"]
-+
-+
-+def test_retract_belief_record_strips_the_hash_once_and_keeps_confidence():
-+    from mcp_memory_service.storage.source_retraction import retract_belief_record
-+
-+    update = retract_belief_record(
-+        derived_from=["dead", "live"],
-+        contradicted_by=["dead"],
-+        metadata={"merged_from_hashes": ["dead", "live"], "note": "keep"},
-+        status="active",
-+        live_ids={"live"},
-+        updated_at=_WHEN,
-+    )
-+    assert update["derived_from"] == ["live"]
-+    assert update["contradicted_by"] == []
-+    assert update["metadata"]["merged_from_hashes"] == ["live"]
-+    assert update["metadata"]["note"] == "keep"
-+    assert update["metadata"]["stale_sources"] == {"count": 1, "updated_at": _WHEN}
-+    assert update["status"] == "active"
-+    assert "confidence" not in update
-+
-+
-+def test_retract_belief_record_ungrounds_a_belief_with_no_sources_left():
-+    from mcp_memory_service.storage.source_retraction import (
-+        UNGROUNDED_STATUS,
-+        retract_belief_record,
-+    )
-+
-+    update = retract_belief_record(
-+        derived_from=["dead"],
-+        contradicted_by=[],
-+        metadata={},
-+        status="active",
-+        live_ids=set(),
-+        updated_at=_WHEN,
-+    )
-+    assert update["derived_from"] == []
-+    assert update["status"] == UNGROUNDED_STATUS
-+    assert update["status"] == "ungrounded"
-+    assert update["metadata"]["stale_sources"]["count"] == 1
-+
-+
-+def test_retract_belief_record_leaves_superseded_status_alone():
-+    """superseded means a dedup loser, not 'evidence gone'. Do not overload it."""
-+    from mcp_memory_service.storage.source_retraction import retract_belief_record
-+
-+    update = retract_belief_record(
-+        derived_from=["dead"],
-+        contradicted_by=[],
-+        metadata={"merged_from_hashes": ["dead"]},
-+        status="superseded",
-+        live_ids=set(),
-+        updated_at=_WHEN,
-+    )
-+    assert update["status"] == "superseded"
-+    assert update["derived_from"] == []
-+    assert "merged_from_hashes" not in update["metadata"]
-+
-+
-+def test_retract_belief_record_is_a_no_op_when_every_source_is_live():
-+    from mcp_memory_service.storage.source_retraction import retract_belief_record
-+
-+    assert (
-+        retract_belief_record(
-+            derived_from=["live"],
-+            contradicted_by=["other"],
-+            metadata={"merged_from_hashes": ["live"]},
-+            status="active",
-+            live_ids={"live", "other"},
-+            updated_at=_WHEN,
-+        )
-+        is None
-+    )
-+
-+
-+def test_belief_stale_count_accumulates_as_later_sources_depart():
-+    from mcp_memory_service.storage.source_retraction import retract_belief_record
-+
-+    first = retract_belief_record(
-+        derived_from=["a", "b"],
-+        contradicted_by=[],
-+        metadata={},
-+        status="candidate",
-+        live_ids={"b"},
-+        updated_at=_WHEN,
-+    )
-+    assert first["status"] == "candidate"
-+    assert first["metadata"]["stale_sources"]["count"] == 1
-+    second = retract_belief_record(
-+        derived_from=first["derived_from"],
-+        contradicted_by=[],
-+        metadata=first["metadata"],
-+        status=first["status"],
-+        live_ids=set(),
-+        updated_at="2026-11-05T03:00:00+00:00",
-+    )
-+    assert second["status"] == "ungrounded"
-+    assert second["metadata"]["stale_sources"] == {
-+        "count": 2,
-+        "updated_at": "2026-11-05T03:00:00+00:00",
-+    }
-+
-+
-+def test_summary_flag_keeps_the_source_list_and_counts_departed_hashes():
-+    from mcp_memory_service.storage.source_retraction import flag_summary_sources
-+
-+    original = {
-+        "source_memory_hashes": ["dead", "live"],
-+        "compression_ratio": 0.4,
-+    }
-+    flagged =
-```
-
-**File**: `tests/storage/test_delete_mixin_logging.py` (modified, +24/-4)
-```diff
-@@ -78,14 +78,34 @@ def fetchall(self):
-         return [self._row] if self._row else []
  
  
-+def _lookup_cursor(sql: str):
-+    """Memory-id lookups return a row. Citation scans stay empty.
-+
-+    Delete now stages retracted hashes with ``executemany`` and then asks
-+    which beliefs and summaries cite them. This double only covers log
-+    injection, so those scans report nothing.
-+    """
-+    compact = " ".join(sql.split()).upper()
-+    if "MEMORY_EMBEDDINGS" in compact and compact.startswith("DELETE"):
-+        raise RuntimeError(f"corrupted blob\n{FORGED}")
-+    if (
-+        compact.startswith("SELECT")
-+        and " FROM MEMORIES" in compact
-+        and "SQLITE_MASTER" not in compact
-+        and "JSON_" not in compact
-+        and " FROM BELIEFS" not in compact
-+    ):
-+        return _Cursor(row=(1, "abc"))
-+    return _Cursor()
-+
-+
- class _WorkingConn:
-     """A connection whose statements succeed, except for the embedding delete."""
- 
-     def execute(self, sql, *_args):
--        if "memory_embeddings" in sql and sql.lstrip().startswith("DELETE"):
--            raise RuntimeError(f"corrupted blob\n{FORGED}")
--        if sql.lstrip().startswith("SELECT"):
--            return _Cursor(row=(1, "abc"))
-+        return _lookup_cursor(sql)
-+
-+    def executemany(self, _sql, _rows):
-         return _Cursor()
- 
-     def commit(self):
-```
-
----
-
-### Incident Patch 2: `3c67ff07` (2026-11-05)
-**Commit Message**: fix(transport): refuse cross-origin and rebinding requests on unauthenticated HTTP transports
-
-With no API key or OAuth, the loopback-only --streamable-http and --sse
-transports answered every /mcp preflight with a wildcard origin and checked
-neither Host nor Origin. A web page could call any tool cross-origin, and a
-DNS-rebinding domain could read the responses too (GHSA-8p26-g7wp-65jw).
-
-Both transports now get TransportSecuritySettings when no auth is
-configured: Host pinned to loopback names, Origin to loopback plus
-MCP_CORS_ORIGINS. The preflight grants exactly the origins the transport
-accepts. Authenticated servers keep their behaviour, so a reverse proxy
-with a public Host header still works.
-
-The lifespan loop, uvicorn bind, /mcp request handling and OAuth sub-app
-moved out of run_sse/run_streamable_http into shared helpers, which the
-complexity gate required once both functions were touched.
-
-Reported by orshih6.
-
-**File**: `changelog.d/GHSA-8p26-g7wp-65jw.fixed.md` (added, +8/-0)
-```diff
-@@ -0,0 +1,8 @@
-+- **Any web page could drive an unauthenticated local `--streamable-http` or `--sse` server (GHSA-8p26-g7wp-65jw, orshih6).**
-+  With no API key or OAuth on a loopback bind, the `/mcp` preflight answered every origin
-+  with `Access-Control-Allow-Origin: *`, and neither transport checked `Host` or `Origin`,
-+  so a cross-origin page could call `memory_delete` or plant memories, and a DNS-rebinding
-+  domain could also read the results. An unauthenticated server now only accepts loopback
-+  `Host` values and loopback origins plus `MCP_CORS_ORIGINS` (403/421 otherwise), and the
-+  preflight grants exactly those origins. Servers with an API key or OAuth keep their
-+  current behaviour, including behind a reverse proxy.
-```
-
-**File**: `src/mcp_memory_service/utils/startup_orchestrator.py` (modified, +198/-154)
-```diff
-@@ -67,8 +67,7 @@ def _assert_bind_is_authenticated(host: str, port: int) -> None:
-     deployment GHSA-2hh8-qjxc-43x3 describes. Documenting "do not expose SSE"
-     is not a control. Refusing to start is.
-     """
--    from ..config import OAUTH_ENABLED, API_KEY
--    if _is_loopback_host(host) or OAUTH_ENABLED or API_KEY:
-+    if _is_loopback_host(host) or _auth_configured():
-         return
-     raise RuntimeError(
-         f"Refusing to start an MCP transport on {host}:{port} with no authentication "
-@@ -77,6 +76,179 @@ def _assert_bind_is_authenticated(host: str, port: int) -> None:
+ @router.get("/sync/capabilities", response_model=SyncCapabilitiesResponse)
+@@ -77,6 +84,7 @@ async def get_sync_capabilities(
+         embedding_model=embedding_model,
+         embedding_dimension=embedding_dimension,
+         version=__version__,
++        store_scoped_access=bool(getattr(storage, "get_by_hash_is_store_scoped", False)),
      )
  
  
-+def _auth_configured() -> bool:
-+    """True when the HTTP transports check a credential on every MCP request."""
-+    from ..config import OAUTH_ENABLED, API_KEY
-+    return bool(OAUTH_ENABLED or API_KEY)
-+
-+
-+def _configured_cors_origins() -> list:
-+    return [o.strip() for o in os.environ.get("MCP_CORS_ORIGINS", "").split(",") if o.strip()]
-+
-+
-+_LOOPBACK_HOSTS = ["127.0.0.1:*", "localhost:*", "[::1]:*"]
-+_LOOPBACK_ORIGINS = ["http://127.0.0.1:*", "http://localhost:*", "http://[::1]:*"]
-+
-+
-+def _transport_security_settings():
-+    """Host/Origin validation for the SSE and Streamable HTTP transports.
-+
-+    With no auth configured the server is loopback-only (see
-+    _assert_bind_is_authenticated), and the browser is the only way a remote
-+    party can reach it: a cross-origin page, or a DNS-rebinding domain that
-+    resolves to 127.0.0.1 (GHSA-8p26-g7wp-65jw). Both are refused here by
-+    pinning Host to loopback names and Origin to loopback plus
-+    MCP_CORS_ORIGINS. The SDK leaves this off unless it is passed in.
-+
-+    With auth configured this returns None on purpose: every request needs a
-+    credential a browser never attaches on its own, and a server behind a
-+    reverse proxy sees the public hostname in Host, which a loopback
-+    allowlist would answer with 421. Gate on auth, not on the bind address.
-+    """
-+    if _auth_configured():
-+        return None
-+    from mcp.server.transport_security import TransportSecuritySettings  # inline import: only the HTTP transports need it
-+    return TransportSecuritySettings(
-+        enable_dns_rebinding_protection=True,
-+        allowed_hosts=list(_LOOPBACK_HOSTS),
-+        allowed_origins=_LOOPBACK_ORIGINS + _configured_cors_origins(),
-+    )
-+
-+
-+def _origin_matches(origin: str, allowed: list) -> bool:
-+    """Same rule as the SDK's TransportSecurityMiddleware: exact, or `base:*`."""
-+    return any(
-+        origin == a or (a.endswith(":*") and origin.startswith(a[:-1]))
-+        for a in allowed
-+    )
-+
-+
-+def _mcp_preflight_headers(origin: str) -> dict:
-+    """CORS headers for an OPTIONS preflight on /mcp.
-+
-+    An origin is granted only when the transport would also accept its
-+    request, so the preflight and the SDK's Origin check cannot disagree.
-+    Until GHSA-8p26-g7wp-65jw this answered every origin with `*`, which
-+    let any web page drive an unauthenticated local server.
-+    """
-+    configured = _configured_cors_origins()
-+    if _auth_configured() and (not configured or "*" in configured):
-+        # Every request still needs a token the page does not have. Without
-+        # auth an explicit `*` is not honoured: that is the advisory itself.
-+        allow = "*"
-+    else:
-+        settings = _transport_security_settings()
-+        allowed = settings.allowed_origins if settings else configured
-+        allow = origin if origin and _origin_matches(origin, allowed) else None
-+    if allow is None:
-+        return {}
-+    headers = {
-+        "Access-Control-Allow-Origin": allow,
-+        "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
-+        "Access-Control-Allow-Headers": "*",
-+        "Access-Control-Max-Age": "86400",
-+    }
-+    if allow != "*":
-+        headers["Vary"] = "Origin"
-+    return headers
-+
-+
-+async def _serve_lifespan(receive, send, context=None) -> None:
-+    """ASGI lifespan loop shared by the HTTP transports.
-+
-+    `context` is an async context manager held open from startup to shutdown
-+    (the Streamable HTTP session manager); SSE passes none.
-+    """
-+    entered = False
-+    while True:
-+        message = await receive()
-+        if message["type"] == "lifespan.startup":
-+            if context is not None:
-+                await context.__aenter__()
-+                entered = True
-+            await send({"type": "lifespan.startup.complete"})
-+        elif message["type"] == "lifespan.shutdown":
-+            if entered:
-+                await context.__aexit__(None, None, None)
-+            await send({"type": "lifespan.shutdown.complete"})
-+            return
-+
-+
-+async def _answer_health_or_404(path: str, scope, receive, send) -> None:
-+    from starlette.responses import Response  # inline import: only the HTTP transports need it
-+    if path == "/health":
-+        response = Response('{"status":"ok"}', media_type="application/json")
-+    else:
-+        response = Response("Not Found", st
 ```
 
-**File**: `tests/unit/test_remote_transport_guards.py` (modified, +73/-0)
+**File**: `src/mcp_memory_service/web/oauth/middleware.py` (modified, +3/-2)
 ```diff
-@@ -177,3 +177,76 @@ def test_guard_reads_the_address_uvicorn_binds(self, runs):
-         value main() checks; it has to come from MCP_HTTP_HOST."""
-         from mcp_memory_service import mcp_server
-         assert mcp_server.mcp.settings.host == mcp_server.HTTP_HOST
+@@ -112,8 +112,9 @@ def require_store_scope(self, operation: str, store: Optional[str]) -> None:
+         """Raise 403 if ``operation`` on ``store`` is not permitted.
+ 
+         A grant that holds only through ``operation:<store>`` additionally needs
+-        a backend that confines hash lookups to the store. cloudflare, milvus
+-        and remote_http accept ``store`` on get_by_hash and ignore it, so there
++        a backend that confines hash lookups to the store. cloudflare and
++        milvus accept ``store`` on get_by_hash and ignore it (remote_http honors
++        it only against a peer that advertises ``store_scoped_access``), so there
+         a store-restricted credential would read or delete another partition's
+         memory by hash; it is refused until the storage layer enforces
+         ``store`` (#1683). Global grants are unaffected.
+```
+
+**File**: `tests/test_delta_sync_handshake.py` (modified, +48/-0)
+```diff
+@@ -153,6 +153,39 @@ async def test_startup_probe_checks_capabilities_without_syncing(local_storage):
+     assert status["last_sync_at"] is None
+ 
+ 
++@pytest.mark.parametrize("advertised", [True, False, None])
++@pytest.mark.asyncio
++async def test_startup_probe_reads_store_scoping_with_one_request(local_storage, advertised):
++    overrides = {} if advertised is None else {"store_scoped_access": advertised}
++    peer, requested = await _remote_peer(_capabilities(local_storage, **overrides))
++    scheduler = _scheduler(local_storage, peer)
++
++    await scheduler._probe_sync_peers()
++
++    assert requested == [("GET", "/api/sync/capabilities")]
++    assert peer.get_by_hash_is_store_scoped is (advertised is True)
 +
 +
-+class TestBrowserReachability:
-+    """GHSA-8p26-g7wp-65jw: an unauthenticated loopback server was reachable
-+    from any web page (wildcard CORS preflight) and through DNS rebinding (no
-+    Host/Origin check). These pin the allowlists both paths now share."""
++@pytest.mark.asyncio
++async def test_startup_probe_waits_for_an_unreachable_peer_once(local_storage):
++    requested = []
 +
-+    @pytest.fixture
-+    def so(self, monkeypatch):
-+        import mcp_memory_service.config as config  # inline import: patched per test
-+        from mcp_memory_service.utils import startup_orchestrator as so
-+        monkeypatch.setattr(config, "OAUTH_ENABLED", False)
-+        monkeypatch.setattr(config, "API_KEY", None)
-+        monkeypatch.delenv("MCP_CORS_ORIGINS", raising=False)
-+        return so
++    def handler(request):
++        requested.append((request.method, request.url.path))
++        raise httpx.ConnectTimeout("timed out", request=request)
 +
-+    async def _validate(self, settings, host, origin=None):
-+        """Run the SDK's own request check, the one the transports apply."""
-+        from mcp.server.transport_security import TransportSecurityMiddleware
-+        from starlette.requests import Request
-+        headers = [(b"host", host.encode()), (b"content-type", b"application/json")]
-+        if origin:
-+            headers.append((b"origin", origin.encode()))
-+        req = Request({"type": "http", "method": "POST", "path": "/mcp", "headers": headers})
-+        resp = await TransportSecurityMiddleware(settings).validate_request(req, is_post=True)
-+        return resp.status_code if resp else 200
++    peer = RemoteHTTPStorage("https://peer.test")
++    await peer.client.aclose()
++    peer.client = httpx.AsyncClient(transport=httpx.MockTransport(handler))
++    scheduler = _scheduler(local_storage, peer)
 +
-+    @pytest.mark.asyncio
-+    async def test_unauthenticated_server_rejects_rebinding_host(self, so):
-+        assert await self._validate(so._transport_security_settings(), "evil.example:8765") == 421
++    await scheduler._probe_sync_peers()
 +
-+    @pytest.mark.asyncio
-+    async def test_unauthenticated_server_rejects_foreign_origin(self, so):
-+        status = await self._validate(so._transport_security_settings(), "127.0.0.1:8765", "https://evil.example")
-+        assert status == 403
++    assert requested == [("GET", "/api/sync/capabilities")]
++    status = scheduler.get_sync_peer_status()[0]
++    assert status["status"] == "unavailable"
 +
-+    @pytest.mark.asyncio
-+    async def test_unauthenticated_server_serves_local_clients(self, so):
-+        settings = so._transport_security_settings()
-+        assert await self._validate(settings, "127.0.0.1:8765") == 200
-+        assert await self._validate(settings, "localhost:8765", "http://localhost:6274") == 200
 +
-+    def test_authenticated_server_leaves_host_unchecked(self, so, monkeypatch):
-+        """Behind a reverse proxy Host is the public name; the token is the gate."""
-+        import mcp_memory_service.config as config  # inline import: patched per test
-+        monkeypatch.setattr(config, "API_KEY", "a-key")
-+        assert so._transport_security_settings() is None
+ @pytest.mark.parametrize("pull_failed,push_failed", [(1, 0), (0, 2)])
+ @pytest.mark.asyncio
+ async def test_cycle_reports_event_failures_and_preserves_last_success(
+@@ -422,6 +455,7 @@ async def test_capabilities_endpoint_and_sync_status_expose_versions_and_peer_re
+     assert data["embedding_model"] == expected_embedding_model
+     assert data["embedding_dimension"] == expected_embedding_dimension
+     assert data["version"]
++    assert data["store_scoped_access"] is True
+     assert status_response.status_code == 200
+     status = status_response.json()
+     assert status["is_hybrid"] is False
+@@ -433,3 +467,17 @@ async def test_capabilities_endpoint_and_sync_status_expose_versions_and_peer_re
+         model_health_response.json()["embedding_dimension"]
+         == data["embedding_dimension"]
+     )
 +
-+    def test_preflight_grants_no_foreign_origin(self, so):
-+        assert so._mcp_preflight_headers("https://evil.example") == {}
-+        assert so._mcp_preflight_headers("") == {}
 +
-+    def test_preflight_reflects_local_origin(self, so):
-+        headers = so._mcp_preflight_headers("http://localhost:6274")
-+        assert headers["Access-Control-Allow-Origin"] == "http://localhost:6274"
-+        assert headers["Vary"] == "Origin"
++@pytest.mark.asyncio
++async def test_capabilities_endpoint_reports_unconfined_storage(local_storage, monkeypatch):
++    monkeypatch.setattr(local_storage, "get_by_hash_is_store_scoped", False, raising=False)
++    app = FastAPI()
++    app.include_router(sync_router, prefix="/api")
++    app.dependency_overrides[get_storage] = lambda: local_storage
++    app.dependency_overrides[require_read_access] = lambda: None
++    with TestClient(app) as client:
++        response = client.get("/api/sync/capabilities")
 +
-+    def test_configured_origin_is_allowed_on_both_paths(self, so, monkeypatch):
-+        monkeypatch.setenv("MCP_CORS_ORIGINS", "https://app.example")
-+        assert "https://app.example" in so._transport_security_settings().allowed_origins
-+        assert so._mcp_preflight_headers("https://app.example")["Access-Control-Allow-Origin"] == "https://app.example"
-+        assert so._mcp_preflight_headers("https://evil.example") == {}
++    assert response.status_code == 200
++    assert response.json()["store_scoped_access"] is False
+```
+
+**File**: `tests/test_remote_http_store_scope.py` (added, +235/-0)
+```diff
+@@ -0,0 +1,235 @@
++"""RemoteHTTPStorage confines hash-addressed calls to ``store`` (#1879, part of #1683).
 +
-+    def test_authenticated_server_keeps_wildcard_preflight(self, so, monkeypatch):
-+        import mcp_memory_service.config as config  # inline import: patched per test
-+        monkeypatch.setattr(config, "API_KEY", "a-key")
-+        assert so._mcp_preflight_headers("https://anything.example")["Access-Control-Allow-Origin"] == "*"
-+        monkeypatch.setenv("MCP_CORS_ORIGINS", "*")
-+        assert so._mcp_preflight_headers("https://anything.example")["Access-Control-Allow-Origin"] == "*"
++The peer is simulated with an httpx MockTransport that answers like the REST API:
++a missing ``store`` query parameter means ``"default"``, ``"all"`` means every
++store, and a memory in another store is a 404. The older peer ignores ``store``
++and does not advertise ``store_scoped_access``.
++"""
 +
-+    def test_explicit_wildcard_does_not_open_unauthenticated_server(self, so, monkeypatch):
-+        monkeypatch.setenv("MCP_CORS_ORIGINS", "*")
-+        assert so._mcp_preflight_headers("https://evil.example") == {}
++import logging
++
++import httpx
++import pytest
++
++from mcp_memory_service.storage.remote_http import RemoteHTTPStorage
++
++HASH_WORK = "a" * 64
++HASH_DEFAULT = "b" * 64
++
++BASE_CAPABILITIES = {
++    "sync_protocol": 2,
++    "sync_protocol_min": 1,
++    "event_schema_version": 1,
++    "embedding_model": "test-model",
++    "embedding_dimension": 384,
++    "version": "11.14.0",
++}
++
++
++def _memory_json(content_hash, store):
++    return {
++        "content": f"memory in {store}",
++        "content_hash": content_hash,
++        "tags": [],
++        "memory_type": "observation",
++        "metadata": {},
++    }
++
++
++async def _peer(*, scoped):
++    """A peer holding HASH_WORK in store "work" and HASH_DEFAULT in "default"."""
++    stores = {HASH_WORK: "work", HASH_DEFAULT: "default"}
++    requested = []
++
++    def handler(request):
++        store_param = request.url.params.get("store")
++        requested.append((request.method, request.url.path, store_param))
++        path = request.url.path
++        if path == "/api/sync/capabilities":
++            capabilities = dict(BASE_CAPABILITIES)
++            if scoped:
++                capabilities["store_scoped_access"] = True
++            return httpx.Response(200, json=capabilities, request=request)
++        if path.startswith("/api/memories/"):
++            content_hash = path.rsplit("/", 1)[1]
++            owner = stores.get(content_hash)
++            wanted = store_param or "default"
++            if scoped and request.method in ("PUT", "DELETE") and wanted == "all":
++                return httpx.Response(400, json={"detail": "read scopes only"}, request=request)
++            visible = owner is not None and (
++                not scoped or wanted == "all" or owner == wanted
++            )
++            if not visible:
++                return httpx.Response(404, json={"detail": "Memory not found"}, request=request)
++            if request.method == "GET":
++                return httpx.Response(200, json=_memory_json(content_hash, owner), request=request)
++            if request.method == "PUT":
++                return httpx.Response(200, json={"success": True}, request=request)
++            if request.method == "DELETE":
++                del stores[content_hash]
++                return httpx.Response(200, json={"success": True}, request=request)
++        return httpx.Response(404, json={"detail": "not found"}, request=request)
++
++    storage = RemoteHTTPStorage("https://peer.test")
++    await storage.client.aclose()
++    storage.client = httpx.AsyncClient(transport=httpx.MockTransport(handler))
++    return storage, requested, stores
++
++
++def _memory_calls(requested):
++    return [r for r in requested if r[1].startswith("/api/memories/")]
++
++
++@pytest.mark.asyncio
++async def test_flag_follows_the_peer_advertisement():
++    scoped, _, _ = await _peer(scoped=True)
++    older, _, _ = await _peer(scoped=False)
++    assert scoped.get_by_hash_is_store_scoped is False
++    await scoped.initialize()
++    await older.initialize()
++    assert scoped.get_by_hash_is_store_scoped is True
++    assert older.get_by_hash_is_store_scoped is False
++
++
++@pytest.mark.asyncio
++async def test_scoped_peer_receives_store_and_refuses_cross_store_access():
++    storage, requested, stores = await _peer(scoped=True)
++    await storage.initialize()
++
++    assert (await storage.get_by_hash(HASH_WORK, store="work")).content_hash == HASH_WORK
++    assert await storage.get_by_hash(HASH_WORK, store="other") is None
++
++    ok, _ = await storage.update_memory_metadata(HASH_WORK, {"tags": ["x"]}, store="work")
++    assert ok is True
++    ok, message = await storage.update_memory_metadata(HASH_WORK, {"tags": ["x"]}, store="other")
++    assert ok is False and "404" in message
++
++    ok, message = await storage.delete(HASH_WORK, store="other")
++    assert ok is False and "404" in message
++    assert HASH_WORK in stores
++
++    assert _memory_calls(requested) == [
++        ("GET", f"/api/memories/{HASH_WORK}", "work"),
++        ("GET", f"/api/memories/{HASH_WORK}", "other"),
++        ("PUT", f"/api/memories/{HASH_WORK}", "work"),
++        ("PUT", f"/api/memories/{HASH_WORK}", "other"),
++        ("DELETE", f"/api/memories/{HASH_WORK}", "other"),
++    ]
++
++
++@pytest.mark.asyncio
++async def test_older_peer_refuses_named_store_without_a_request(caplog):
++    storage, requested, stores = await _peer(scoped=False)
++    await storage.initialize()
++
++    with caplog.at_level(logging.WARNING, logger="mcp_memory_service.storage.remote_http"):
++        assert await storage.get_by_hash(HASH_WORK, store="work") is None
++     
 ```
 
 ---
 
-### Incident Patch 3: `7e053af2` (2026-11-05)
-**Commit Message**: docs(site): require Python 3.11 on five localized pages (#1868)
+### Incident Patch 2: `bb34002a` (2026-11-08)
+**Commit Message**: fix(web): add Cache-Control: no-cache to static assets and dashboard (#1892) (#1900)
 
-* docs(site): require Python 3.11 on the de, es, fr, ja and zh-cn pages
+* fix(web): add Cache-Control: no-cache to static assets and dashboard
 
-Python 3.10 was retired in #1770, but five localized introductions still
-told readers 3.10 or newer was enough. pt-br, zh-tw and ko already said 3.11.
+* test(web): assert Cache-Control no-cache on dashboard and static assets (#1892)
 
-* docs(changelog): add fragment for #1868
+Add the regression test Greptile asked for and the changelog fragment.
 
-**File**: `changelog.d/1868.fixed.md` (added, +4/-0)
+---------
+
+Co-authored-by: Henry Krupp <[REDACTED_EMAIL]>
+
+**File**: `changelog.d/1892.fixed.md` (added, +1/-0)
 ```diff
-@@ -0,0 +1,4 @@
-+- **Five localized website introductions still allowed Python 3.10 (#1868).** The
-+  German, Spanish, French, Japanese and Simplified Chinese pages said Python 3.10 or
-+  newer was enough after #1770 had retired 3.10. They now say 3.11, like the English,
-+  Brazilian Portuguese, Traditional Chinese and Korean pages.
+@@ -0,0 +1 @@
++- **The dashboard and its static files are served with `Cache-Control: no-cache` (#1892).** Browsers kept running a stale `app.js` after an upgrade because nothing told them to check for a newer copy. They now revalidate every request against the ETag and get a `304` when the file is unchanged.
 ```
 
-**File**: `scripts/maintenance/site_locales/de.json` (modified, +1/-1)
+**File**: `src/mcp_memory_service/web/app.py` (modified, +2/-1)
 ```diff
-@@ -27,7 +27,7 @@
-   "case_3_title": "Selbst hosten",
-   "case_3_text": "Starte lokal mit SQLite und Vektorsuche. Für diesen Betrieb brauchst du weder einen Cloud-Speicherdienst noch einen kostenpflichtigen Embedding-API-Schlüssel.",
-   "install_heading": "In Claude Code einrichten",
--  "install_intro": "Du brauchst Python 3.10 oder neuer und einen installierten Claude-Code-Client. Andere Clients lassen sich ebenfalls über MCP anbinden; die englische Anleitung beschreibt die Konfiguration.",
-+  "install_intro": "Du brauchst Python 3.11 oder neuer und einen installierten Claude-Code-Client. Andere Clients lassen sich ebenfalls über MCP anbinden; die englische Anleitung beschreibt die Konfiguration.",
-   "step_1_title": "Memory Service installieren",
-   "step_1_text": "Installiere das Paket in einer Python-Umgebung, deren Befehle für deinen Client erreichbar sind.",
-   "step_2_title": "Als MCP-Server hinzufügen",
+@@ -114,6 +114,7 @@ async def get_response(self, path: str, scope: Scope):
+                 response.headers["Content-Security-Policy"] = _DASHBOARD_CSP
+             elif path == "sse_test.html":
+                 response.headers["Content-Security-Policy"] = _SAME_ORIGIN_DASHBOARD_CSP
++        response.headers["Cache-Control"] = "no-cache"
+         return response
+ 
+ # Global storage instance
+@@ -516,7 +517,7 @@ async def dashboard():
+                 )
+                 return HTMLResponse(
+                     content=dashboard_html,
+-                    headers={"Content-Security-Policy": _DASHBOARD_CSP},
++                    headers={"Content-Security-Policy": _DASHBOARD_CSP, "Cache-Control": "no-cache"},
+                 )
+             else:
+                 # Fallback to original template if dashboard not found
 ```
 
-**File**: `scripts/maintenance/site_locales/es.json` (modified, +1/-1)
+**File**: `tests/web/test_dashboard_csp.py` (modified, +11/-0)
 ```diff
-@@ -27,7 +27,7 @@
-   "case_3_title": "Aloja el servicio en tu equipo",
-   "case_3_text": "Empieza en local con SQLite y búsqueda vectorial. Para esta configuración no necesitas almacenamiento en la nube ni una API de pago para generar embeddings.",
-   "install_heading": "Configúralo en Claude Code",
--  "install_intro": "Necesitas Python 3.10 o posterior y tener instalado Claude Code. También puedes conectar otros clientes mediante MCP; la guía en inglés explica cómo configurarlos.",
-+  "install_intro": "Necesitas Python 3.11 o posterior y tener instalado Claude Code. También puedes conectar otros clientes mediante MCP; la guía en inglés explica cómo configurarlos.",
-   "step_1_title": "Instala Memory Service",
-   "step_1_text": "Instala el paquete en un entorno de Python cuyos comandos estén disponibles para tu cliente.",
-   "step_2_title": "Añádelo como servidor MCP",
+@@ -33,6 +33,17 @@ def test_dashboard_html_routes_receive_csp_but_api_json_does_not():
+     assert "content-security-policy" not in client.get("/api/docs").headers
+ 
+ 
++def test_dashboard_and_static_assets_are_revalidated_after_upgrades():
++    """Browsers must revalidate app.js instead of reusing a stale copy (#1892)."""
++    client = TestClient(app_module.create_app())
++
++    for path in ("/", "/static/index.html", "/static/app.js"):
++        response = client.get(path)
++
++        assert response.status_code == 200
++        assert response.headers.get("cache-control") == "no-cache", path
++
++
+ def test_index_import_map_is_the_only_hashed_inline_script():
+     client = TestClient(app_module.create_app())
+     response = client.get("/")
 ```
 
-**File**: `scripts/maintenance/site_locales/fr.json` (modified, +1/-1)
-```diff
-@@ -27,7 +27,7 @@
-   "case_3_title": "Hébergez le service sur votre machine",
-   "case_3_text": "Commencez en local avec SQLite et la recherche vectorielle. Cette configuration ne nécessite ni stockage dans le cloud ni API payante pour générer les embeddings.",
-   "install_heading": "Configurez-le dans Claude Code",
--  "install_intro": "Il vous faut Python 3.10 ou une version ultérieure, ainsi que Claude Code installé. Vous pouvez aussi connecter d'autres clients via MCP ; le guide en anglais explique comment les configurer.",
-+  "install_intro": "Il vous faut Python 3.11 ou une version ultérieure, ainsi que Claude Code installé. Vous pouvez aussi connecter d'autres clients via MCP ; le guide en anglais explique comment les configurer.",
-   "step_1_title": "Installez Memory Service",
-   "step_1_text": "Installez le paquet dans un environnement Python dont les commandes sont accessibles à votre client.",
-   "step_2_title": "Ajoutez-le comme serveur MCP",
-```
+---
 
-**File**: `scripts/maintenance/site_locales/ja.json` (modified, +1/-1)
-```diff
-@@ -27,7 +27,7 @@
-   "case_3_title": "セルフホストで運用",
-   "case_3_text": "SQLiteとベクトル検索でローカルに始められます。クラウドのストレージサービスも有償のEmbedding APIキーも不要です。",
-   "install_heading": "Claude Codeにセットアップする",
--  "install_intro": "Python 3.10以降と、インストール済みのClaude Codeクライアントが必要です。他のクライアントもMCP経由で接続できます。設定方法は英語のガイドに記載されています。",
-+  "install_intro": "Python 3.11以降と、インストール済みのClaude Codeクライアントが必要です。他のクライアントもMCP経由で接続できます。設定方法は英語のガイドに記載されています。",
-   "step_1_title": "Memory Serviceをインストール",
-   "step_1_text": "クライアントからコマンドを利用できるPython環境に、パッケージをインストールします。",
-   "step_2_title": "MCPサーバーとして追加",
-```
+### Incident Patch 3: `e65a62fa` (2026-11-08)
+**Commit Message**: test(hybrid): build the mocked-primary hybrid tests on tmp_path, drop stale xfails (#1918)
 
-**File**: `scripts/maintenance/site_locales/zh-cn.json` (modified, +1/-1)
-```diff
-@@ -27,7 +27,7 @@
-   "case_3_title": "放在自己的机器上运行",
-   "case_3_text": "用 SQLite 加向量检索就能在本地起步。这种配置既不需要云存储服务，也不需要付费的 Embedding API 密钥。",
-   "install_heading": "在 Claude Code 中配置",
--  "install_intro": "需要 Python 3.10 或更高版本，以及已经装好的 Claude Code 客户端。其他客户端也可以通过 MCP 接入，配置方法见英文指南。",
-+  "install_intro": "需要 Python 3.11 或更高版本，以及已经装好的 Claude Code 客户端。其他客户端也可以通过 MCP 接入，配置方法见英文指南。",
-   "step_1_title": "安装 Memory Service",
-   "step_1_text": "把这个包安装到客户端能够调用其命令的 Python 环境里。",
-   "step_2_title": "添加为 MCP 服务器",
-```
+test_hybrid_relationship_distribution_with_mock_primary and
+test_hybrid_graph_visualization_with_mock_primary constructed
+HybridMemoryStorage("/fake/path"), which fails with PermissionError for
+any non-root user and was hidden behind an xfail marker. When the suite
+runs as root the first test XPASSes and leaves a /fake directory behind.
 
-**File**: `site/de/index.html` (modified, +1/-1)
-```diff
-@@ -85,7 +85,7 @@ <h2>Projektwissen behalten, statt es immer neu zu erklären</h2>
-   <section class="sec" id="install">
-     <div class="wrap locale-install">
-       <h2>In Claude Code einrichten</h2>
--      <p class="lede">Du brauchst Python 3.10 oder neuer und einen installierten Claude-Code-Client. Andere Clients lassen sich ebenfalls über MCP anbinden; die englische Anleitung beschreibt die Konfiguration.</p>
-+      <p class="lede">Du brauchst Python 3.11 oder neuer und einen installierten Claude-Code-Client. Andere Clients lassen sich ebenfalls über MCP anbinden; die englische Anleitung beschreibt die Konfiguration.</p>
-       <ol class="install-steps">
-         <li><h3>Memory Service installieren</h3><pre><code>pip install 'mcp-memory-service[sqlite]'</code></pre><p>Installiere das Paket in einer Python-Umgebung, deren Befehle für deinen Client erreichbar sind.</p></li>
-         <li><h3>Als MCP-Server hinzufügen</h3><pre><code>claude mcp add memory -- memory server</code></pre><p>Führe den Befehl im Projektverzeichnis aus und starte Claude Code danach neu. Beim ersten Start wird das lokale Embedding-Modell heruntergeladen.</p></li>
-```
+Use pytest's tmp_path instead and remove both markers. With the path fixed,
+the visualization test exposed a stale assertion: hybrid now forwards
+store=None to the primary, so the expected call includes it.
 
-**File**: `site/es/index.html` (modified, +1/-1)
+Co-authored-by: Walid Zeggane <[REDACTED_EMAIL]>
+
+**File**: `tests/storage/test_hybrid_graph_methods.py` (modified, +5/-7)
 ```diff
-@@ -85,7 +85,7 @@ <h2>Conserva el contexto de tu proyecto sin explicarlo cada vez</h2>
-   <section class="sec" id="install">
-     <div class="wrap locale-install">
-       <h2>Configúralo en Claude Code</h2>
--      <p class="lede">Necesitas Python 3.10 o posterior y tener instalado Claude Code. También puedes conectar otros clientes mediante MCP; la guía en inglés explica cómo configurarlos.</p>
-+      <p class="lede">Necesitas Python 3.11 o posterior y tener instalado Claude Code. También puedes conectar otros clientes mediante MCP; la guía en inglés explica cómo configurarlos.</p>
-       <ol class="install-steps">
-         <li><h3>Instala Memory Service</h3><pre><code>pip install 'mcp-memory-service[sqlite]'</code></pre><p>Instala el paquete en un entorno de Python cuyos comandos estén disponibles para tu cliente.</p></li>
-         <li><h3>Añádelo como servidor MCP</h3><pre><code>claude mcp add memory -- memory server</code></pre><p>Ejecuta el comando desde el directorio del proyecto y reinicia Claude Code. En el primer inicio se descargará el modelo local de embeddings.</p></li>
+@@ -166,9 +166,8 @@ async def test_hybrid_relationship_distribution_returns_primary_data(hybrid_with
+     assert distribution["follows"] == 1  # Directed
+ 
+ 
+-@pytest.mark.xfail(reason="Pre-existing bug: Permission denied accessing '/fake' path")
+ @pytest.mark.asyncio
+-async def test_hybrid_relationship_distribution_with_mock_primary():
++async def test_hybrid_relationship_distribution_with_mock_primary(tmp_path):
+     """Test delegation using fully mocked primary storage.
+ 
+     Validates:
+@@ -184,7 +183,7 @@ async def test_hybrid_relationship_distribution_with_mock_primary():
+     mock_secondary = AsyncMock()
+ 
+     # Create hybrid with mocks
+-    hybrid = HybridMemoryStorage("/fake/path")
++    hybrid = HybridMemoryStorage(str(tmp_path / "memory.db"))
+     hybrid.primary = mock_primary
+     hybrid.secondary = mock_secondary
+ 
+@@ -251,9 +250,8 @@ async def test_hybrid_graph_visualization_returns_primary_data(hybrid_with_graph
+     assert "fixes" in rel_types
+ 
+ 
+-@pytest.mark.xfail(reason="Pre-existing bug: Permission denied accessing '/fake' path")
+ @pytest.mark.asyncio
+-async def test_hybrid_graph_visualization_with_mock_primary():
++async def test_hybrid_graph_visualization_with_mock_primary(tmp_path):
+     """Test delegation using fully mocked primary storage.
+ 
+     Validates:
+@@ -273,15 +271,15 @@ async def test_hybrid_graph_visualization_with_mock_primary():
+     mock_secondary = AsyncMock()
+ 
+     # Create hybrid with mocks
+-    hybrid = HybridMemoryStorage("/fake/path")
++    hybrid = HybridMemoryStorage(str(tmp_path / "memory.db"))
+     hybrid.primary = mock_primary
+     hybrid.secondary = mock_secondary
+ 
+     # Call method with parameters
+     result = await hybrid.get_graph_visualization_data(limit=100, min_connections=1)
+ 
+     # Verify delegation with correct parameters
+-    mock_primary.get_graph_visualization_data.assert_called_once_with(100, 1)
++    mock_primary.get_graph_visualization_data.assert_called_once_with(100, 1, store=None)
+     assert result == mock_data
+ 
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1873** (2026-11-05): docs(site): reword the Korean hero headline (@doobidoo)
-- **PR #1872** (2026-11-05): fix(storage): clear conflict:unresolved once the conflict is gone (#1840) (@mbreitkreuz)
-- **PR #1869** (2026-11-05): chore(release): v12.6.0 (@doobidoo)
-- **PR #1868** (2026-11-05): docs(site): require Python 3.11 on five localized pages (@doobidoo)
-- **PR #1867** (2026-11-05): fix(storage): explain the optional sqlite_vec import guard in retrieve.py (@doobidoo)
-- **PR #1866** (2026-11-05): docs: add Korean website introduction (@laozhej)
+- **PR #1922** (2026-11-08): fix(remote_http): honor store in get_by_hash, update and delete (#1879) (@massimiliano1991)
+- **PR #1920** (2026-11-08): Feat/export entity vault (@minaamulhaq)
+- **PR #1919** (2026-11-08): refactor(logging): lazy %-style logger calls in web/oauth/storage/sqlite.py (#1146) (@zegganewalid)
+- **PR #1918** (2026-11-08): test(hybrid): build the mocked-primary hybrid tests on tmp_path, drop stale xfails (@zegganewalid)
+- **PR #1917** (2026-11-08): refactor(logging): lazy %-style logger calls in lm_studio_compat.py (#1146) (@zegganewalid)
+- **PR #1916** (2026-11-08): ci: merge train that updates one auto-merge PR at a time (@doobidoo)
 
 ---
 
@@ -4017,36 +3488,21 @@ told readers 3.10 or newer was enough. pt-br, zh-tw and ko already said 3.11.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. storage): mark beliefs/summaries stale when source memory deleted (#1865)
+## X. remote_http): honor store in get_by_hash, update and delete (#1879) (#1922)
 
 **RULE**:
-When implementing operations in `changelog.d/1857.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog.d/1879.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `16a0ae92`: storage): mark beliefs/summaries stale when source memory deleted (#1865). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c37639d3`: remote_http): honor store in get_by_hash, update and delete (#1879) (#1922). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/1857.fixed.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/1879.fixed.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- **Deleting a memory left beliefs and consolidation summaries citing it (#1857, ZYZ666-RGB).**
-  Graph edges were removed in the delete transaction, but `derived_from`,
-  `contradicted_by` and `metadata.merged_from_hashes` kept the hash, and
-  compression and association memories kept it in `source_memory_hashes`.
-  Retention deletes this way all the time, so `get_beliefs` kept returning a
-  belief whose evidence was gone. The same transaction now drops the hash from
-  those lists, records `metadata.stale_sources` (how many, and when), and marks
-  a belief `ungrounded` when nothing is left. That status is not `superseded`.
-  Confidence is unchanged until the next `challenge_belief`. Summaries are
-  flagged and not rewritten. A later re-derivation does not union a merged
-  source that is no longer live. Re-deriving an ungrounded belief promotes it
-  back to candidate, or to active when the usual floors are met. A tombstone
-  applied through delta sync runs the same cleanup. A summary flag advances
-  `updated_at` and records an `update_metadata` event when the sync log is on.
-  If that cleanup fails, the delta-sync apply rolls the tombstone and the
-  event back, so a retry can finis
+- **`RemoteHTTPStorage` confines `get_by_hash`, `update_memory_metadata` and delete-by-hash to `store` (#1879, part of #1683).** `/api/sync/capabilities` now advertises `store_scoped_access`, taken from the server storage's `get_by_hash_is_store_scoped`. The HTTP client reads it when it initializes (and on each sync handshake) and sends a named store as the `store` query parameter, so a memory in another store comes back as not found. A peer that does not advertise the field (every server before this release) ignores the query parameter, so against it a call naming a store is refused without a request and logged once per peer. **Upgrade the hub before the clients:** once a caller passes a named store to an HTTP peer, an older hub refuses every such call. `None`, `"default"` and `"all"` keep working against an older hub: `"default"` is not sent because the server resolves a missing `store` to `"default"` itself, and `"all"` is passed through for reads.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -4056,4 +3512,4 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `16a0ae92` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c37639d3` are properly handled with clean fallback behavior.

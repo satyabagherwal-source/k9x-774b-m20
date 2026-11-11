@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/a2ui-project-a2ui-learnings.md`  
 > **Source**: github ([https://github.com/a2ui-project/a2ui](https://github.com/a2ui-project/a2ui))  
-> **Source Version**: `f7b795e4`  
+> **Source Version**: `2783d6be`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T22:47:50.251Z  
+> **Timestamp**: 2026-11-09T05:26:04.477Z  
 > **Learning ID**: `learn-github-a2ui-project-a2ui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,17 +17,17 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/a2ui-project-a2ui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/a2ui-project/a2ui](https://github.com/a2ui-project/a2ui))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T22:47:50.046Z  
+> **Harvest Timestamp**: 2026-11-09T05:26:03.945Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
 ## 1. Context & Architectural Overview
 - **Repository / Resource**: `a2ui-project/a2ui`
-- **Description**: Open-source generative UI framework: agents stream declarative JSON, and apps render it with native components in React, Angular, Lit, Flutter, SwiftUI and Jetpack Compose.
+- **Description**: Open-source generative UI framework: agents stream layout data, and apps render it with native components in React, Angular, Lit, Flutter, SwiftUI and Jetpack Compose.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, pyproject.toml, README.md
-- **Stars / Engagement**: 16985 stars
+- **Stars / Engagement**: 17017 stars
 
 ---
 
@@ -1891,8 +1891,6 @@ def map_spec_filename(filename, version_str):
             f'{version_str}-basic-catalog-implementation-guide.md'
         ),
     }
-    if version_str == 'v0.8' and filename == 'a2ui_extension_specification.md':
-        return 'v0.8-a2a-extension.md'
     return mapping.get(filename)
 
 
@@ -2016,11 +2014,11 @@ def on_page_markdown(markdown, page, config, files):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4004** (2026-11-05): **docs: remove 'Early stage public preview' section from README.md**
-  *Symptoms*: Removes the 'Status: Early stage public preview' section from the top-level [`README.md`](https://github.com/a2ui-project/a2ui/blob/51670aef238fb8853c0ed0a859c4f98ae46bee35/README.md?plain=1#L12-L19).
+- **Issue #4068** (2026-11-09): **docs(site): add global Google Analytics integration**
+  *Symptoms*: # Description  Adds global Google Analytics (`G-YX9TPV8DCC`, matching [`mkdocs.yaml`](https://github.com/a2ui-project/a2ui/blob/17c35b91947eee11ffc321bdcfeb555778a716e6/mkdocs.yaml#L22-L25)) to the Astro and Starlight documentation site in `docs/site/` so that every rendered page includes the `gtag.js` loader and configuration snippet inside `<head>` without per-page imports, while skipping local development and pull-request preview builds.  ## Changes  1. Added [`google-analytics.mjs`](https://github.com/abdallahshaban557/a2ui/blob/0a07acbece500875ade85facd0d7cad686650719/docs/site/src/plugins/google-analytics.mjs#L17-L137), an Astro integration and `post` response middleware that injects the Google Analytics `gtag.js` script and `G-YX9TPV8DCC` configuration before `</head>` across all `text/html` pages rendered during production `astro build` runs (covering both Starlight documentation routes and standalone `.astro` pages while skipping `astro dev`, `/pr-preview/` builds, `<meta http-equiv="refresh">` redirect stubs, `3xx` redirects, and empty `204`/`205`/`304` responses). 2. Registered `googleAnalytics('G-YX9TPV8DCC')` in [`astro.config.mjs`](https://github.com/abdallahshaban557/a2ui/blob/0a07acbece500875ade85facd0d7cad686650719/docs/site/astro.config.mjs#L76-L78). 3. Added unit and build-output tests in [`google-analytics.test.mjs`](https://github.com/abdallahshaban557/a2ui/blob/0a07acbece500875ade85facd0d7cad686650719/docs/site/tests/google-analytics.test.mjs#L49-L223) a
 
-- **Issue #3996** (2026-11-05): **chore(skills): mark contributor skills as internal**
-  *Symptoms*: # Description  Follow-up to the discussion on #3935. `npx skills add a2ui-project/a2ui` currently offers every `SKILL.md` in the repo: the contributor skills under `.agents/skills`, `blueprints/skills` and `eval/iterative_format_optimizer/skills` (triage, audit, release, blueprint maintenance, …). End users who want help *using* A2UI see those mixed in with the user-facing `a2ui` skill.  As @gspencergoog suggested, this adds  ```yaml metadata:   internal: true ```  to the frontmatter of all 21 contributor skills. The `skills` CLI hides `metadata.internal: true` skills from default discovery. Contributors can still install them with `INSTALL_INTERNAL_SKILLS=1`, and agents working inside this repo still load them from `.agents/skills` as before.  Verified locally:  - `skills_lint` (0.5.3+1, same as CI) passes. - With this change plus #3935's `skills/a2ui`, `npx skills add . --list` shows only `a2ui`.  No content changes to any skill.  ## Pre-launch Checklist  One time:  - [ ] I signed the [CLA]. - [ ] I read the [Contributors Guide]. - [ ] I read the [Style Guide]. - [ ] I have built and run at least one [sample].  For this PR:  - [ ] I have updated the relevant CHANGELOG.md file. - [ ] I updated/added relevant documentation. - [ ] My code changes (if any) have tests. - [ ] If my branch is on a fork, I have verified that [scripts/e2e_test.sh](https://github.com/a2ui-project/a2ui/blob/main/scripts/e2e_test.sh) passes.  <!-- Links -->  [CLA]: https://cla.developers.google.com/ [C
+- **Issue #4067** (2026-11-09): **docs(site): reorganize Macros, Inference Formats, and Ecosystem sections**
+  *Symptoms*: ### Summary & Rationale  Refines the navigation structure and conceptual boundaries of `docs/site/` (`a2ui.org`):  1. Moves **Macros** out of *Concepts* and places it under *Guides* directly below *How to Define a Catalog* (`/guides/macros/`, with a redirect from `/concepts/macros`), matching its step-by-step integration structure. 2. Moves **Inference Formats** (renamed from *Swappable Inference Formats*) above *SDKs* under *Concepts* and refocuses the page on the conceptual model of decoupled generation formats rather than a step-by-step configuration or custom-format authoring guide, keeping a concise multi-SDK snippet to illustrate `InferenceFormatFactory` pluggability. 3. Reorders the *Ecosystem* sidebar to **Roadmap**, **Community Projects** (renamed from *Ecosystem Renderers & Tools*), and **Get Help**, updating cross-page links and `llms.txt` accordingly.  ### Live PR Preview  - **PR Preview Site**: [https://a2ui.org/pr-preview/pr-4067/](https://a2ui.org/pr-preview/pr-4067/) - **Inference Formats (Concepts)**: [https://a2ui.org/pr-preview/pr-4067/concepts/inference-formats/](https://a2ui.org/pr-preview/pr-4067/concepts/inference-formats/) - **Macros (Guides)**: [https://a2ui.org/pr-preview/pr-4067/guides/macros/](https://a2ui.org/pr-preview/pr-4067/guides/macros/) - **Community Projects (Ecosystem)**: [https://a2ui.org/pr-preview/pr-4067/ecosystem/renderers/](https://a2ui.org/pr-preview/pr-4067/ecosystem/renderers/) - **Roadmap (Ecosystem)**: [https://a2ui.org/pr-prev
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2037,27 +2035,1469 @@ def on_page_markdown(markdown, page, config, files):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `eee79070` (2026-11-05)
-**Commit Message**: docs(site): add Swappable Inference Formats concept guide (#3969)
+### Incident Patch 1: `1d040854` (2026-11-06)
+**Commit Message**: feat(dart): agent functions and RendererToAgentMessageProcessor (#3861)
 
-## Summary
+* feat(dart): implement Agent Function RPC helpers and conformance tests
 
-Replaces the placeholder `docs/site/src/content/docs/concepts/inference-formats.mdx` page with the Swappable Inference Formats concept guide and adds the `<InferencePipeline />` interactive diagram component. The guide explains how server-side inference formats separate model generation from the canonical A2UI wire JSON protocol. It also compares `ExpressFormatFactory` and `DirectJsonFormatFactory` and documents how to implement a custom format.
+Signed-off-by: Nan Yu <[REDACTED_EMAIL]>
 
-Resolves #3897
-Resolves #3599
+* fix(dart-core): tighten how agent functions join a catalog
 
-## Changes
+- AgentFunction.fromApi of a declaration the catalog doesn't have is a
+  catalog error instead of being appended.
+- Agent functions are added with copyWith(agentFunctions:) only; the
+  Catalog constructor no longer takes them (listing them in functions
+  still works).
+- An AgentFunction built with the constructor is always rendererOnly;
+  fromApi keeps rendererOnly or rendererOrAgent and rejects agentOnly.
+- Separate errors for a name given twice in agentFunctions and for a
+  name another catalog function already has.
+- Add Catalog.rendererFunctions.
+- Document that a handler may ignore its context.
 
-- Added `docs/site/src/components/docs/InferencePipeline.astro` to illustrate the 3-stage server-side compilation pipeline (Prompt Synthesis, Model Generation, and Wire Compilation & Validation) with side-by-side cards for `ExpressFormatFactory` and `DirectJsonFormatFactory`.
-- Replaced the placeholder `docs/site/src/content/docs/concepts/inference-formats.mdx` with the full Swappable Inference Formats concept guide:
-  - Side-by-side comparison of an `<a2ui>` Express block and its compiled `v1.0` and `v0.9.1` wire JSON messages.
-  - Decision guidance for choosing between Express (`ExpressFormatFactory`, the default) and
+Signed-off-by: Nan Yu <[REDACTED_EMAIL]>
 
-**File**: `docs/site/src/components/docs/InferencePipeline.astro` (added, +683/-0)
+* refactor(dart-agent): replace the router with RendererToAgentMessageProcessor
+
+- RendererToAgentMessageProcessor takes the catalogs directly, answers
+  callAgentFunction with exactly one reply, and passes action, error and
+  rendererFunctionResponse to optional callbacks, returning a
+  ProcessRes
+
+**File**: `dart/a2ui_agent/CHANGELOG.md` (modified, +8/-0)
 ```diff
-@@ -0,0 +1,683 @@
-+---
+@@ -23,6 +23,14 @@
+   catalog, then the examples under `### Examples:` followed by a blank line.
+   Add your own heading around the snippet if you want one.
+   [#3567](https://github.com/a2ui-project/a2ui/pull/3567)
++- (v1_0) Added `RendererToAgentMessageProcessor`, whose `processMessage` takes
++  one v1.0 message a renderer sent and returns a `ProcessResult` (`handled`,
++  `replies`). It answers `callAgentFunction` with the catalogs' agent
++  functions, and passes `action`, `error` and `rendererFunctionResponse` to the
++  `onAction`, `onError` and `onRendererFunctionResponse` callbacks, which may
++  return `false` to decline a message. The library re-exports the agent
++  function and renderer-to-agent message types from `a2ui_core`
++  ([#3536](https://github.com/a2ui-project/a2ui/issues/3536), [#3861](https://github.com/a2ui-project/a2ui/pull/3861)).
+ 
+ ## 0.1.0
+ 
+```
+
+**File**: `dart/a2ui_agent/README.md` (modified, +60/-0)
+```diff
+@@ -59,6 +59,9 @@ What v1.0 adds to both formats:
+   as [multi_catalog_formats.yaml](../../conformance/agent/multi_catalog_formats.yaml)
+   describes. In Express, a name that several catalogs declare takes a
+   `catalogId` argument.
++- `RendererToAgentMessageProcessor` processes the messages a renderer sends
++  the agent, as described in
++  [Messages from the renderer](#messages-from-the-renderer).
+ - A `callRendererFunction` asks the renderer to run a function.
+   A parser and `processor.parseResponse` accept a call only to a function
+   whose `allowedCallers` lets the agent call it and that needs no user
+@@ -198,6 +201,63 @@ final List<ResponsePart> parts = processor.parseResponse(
+ );
+ ```
+ 
++### Messages from the renderer
++
++From v1.0, a catalog may declare functions that the agent runs: the renderer
++sends a `callAgentFunction` and waits for the `agentFunctionResponse`. Attach
++a handler to such a declaration with `AgentFunction.fromApi`, or define a new
++function with `AgentFunction`, and add it to the catalog with `copyWith`:
++
++```dart
++final CatalogApi withHandlers = catalog.copyWith(
++  agentFunctions: [
++    AgentFunction.fromApi(
++      catalog.functions['verifyProvider']!,
++      (args, _) => providers.isLicensed(args['providerId']! as String),
++    ),
++  ],
++);
++```
++
++`RendererToAgentMessageProcessor` answers each `callAgentFunction` with
++exactly one reply: the handler's value, `INVALID_FUNCTION_CALL` for arguments
++that break the function's schema, the code of an `A2uiRpcError` the handler
++throws, or `EXECUTION_ERROR` for anything else it throws, an
++`A2uiValidationError` included. It passes the other messages a renderer
++sends, `action`, `error` and `rendererFunctionResponse`, to the callbacks you
++give it. A message without a callback, or whose callback returns `false`, is
++left unhandled, so the agent can pass it on, for example to the model's next
++turn:
++
++```dart
++bool onAction(ActionMessage message) {
++  if (message.action.name != 'refresh') return false; // for the model
++  refresh(message.action.surfaceId);
++  return true;
++}
++
++final processor = RendererToAgentMessageProcessor(
++  catalogs: [withHandlers],
++  onAction: onAction,
++  onError: (message) => log(message.error.message), // void: handled
++);
++for (final Object? message in request.messages) {
++  final ProcessResult result = await processor.processMessage(message);
++  sendToRenderer(result.replies);
++  if (!result.handled) {
++    // Start a model turn with it.
++  }
++}
++```
++
++The processor keeps no state between messages, so one processor can serve
++every conversation, or one can be built per request from the active catalogs.
++It takes one message at a time, which leaves the caller to decide whether
++several run one after another or together, and what to do when one fails. A
++message that isn't a v1.0 renderer-to-agent message (its `version` must be
++`'1.0'`), or a `callAgentFunction` without a `functionCallId`, throws
++`A2uiValidationError`.
++
+ ## Tests
+ 
+ [test/conformance](test/conformance) runs every shared agent suite this API
+```
+
+**File**: `dart/a2ui_agent/lib/a2ui_agent.dart` (modified, +17/-0)
+```diff
+@@ -21,6 +21,22 @@
+ /// renderer.
+ library;
+ 
++export 'package:a2ui_core/a2ui_core.dart'
++    show
++        A2uiFunctionResponse,
++        A2uiFunctionResponseError,
++        A2uiRpcError,
++        ActionMessage,
++        AgentFunction,
++        AgentFunctionContext,
++        AgentFunctionHandler,
++        AgentFunctionResponseMessage,
++        CallAgentFunctionMessage,
++        ErrorMessage,
++        RendererFunctionResponseMessage,
++        RendererToAgentMessage,
++        RpcErrorCode;
++
+ export 'src/catalog_transformers/base.dart';
+ export 'src/catalog_transformers/pruning.dart';
+ export 'src/inference_format.dart';
+@@ -46,6 +62,7 @@ export 'src/processor/generator.dart';
+ export 'src/processor/processor.dart';
+ export 'src/processor/streamed_answer.dart';
+ export 'src/prompt/generator.dart';
++export 'src/rpc/renderer_to_agent_message_processor.dart';
+ export 'src/utils/catalog_resolver.dart';
+ export 'src/utils/renderer_state.dart' show RendererState;
+ export 'src/utils/validation.dart';
+```
+
+**File**: `dart/a2ui_agent/lib/src/rpc/agent_function_registry.dart` (added, +647/-0)
+```diff
+@@ -0,0 +1,647 @@
++// Copyright 2024 Google LLC
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     https://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++import 'dart:async';
++import 'dart:developer' as developer;
++
++import 'package:a2ui_core/a2ui_core.dart';
++
++/// Indexes the [AgentFunction]s of a set of catalogs and answers incoming
++/// `callAgentFunction` messages with them.
++///
++/// Internal to this package: `RendererToAgentMessageProcessor` is the public
++/// entry point.
++final class AgentFunctionRegistry {
++  /// How long a handler may run before the call is answered with a timeout
++  /// error, or null for no limit.
++  final Duration? timeout;
++
++  final Map<String, CatalogApi> _catalogs = <String, CatalogApi>{};
++  final Map<(String, String), AgentFunction> _functions =
++      <(String, String), AgentFunction>{};
++  final Map<String, PayloadValidator<ComponentApi, FunctionApi>> _validators =
++      <String, PayloadValidator<ComponentApi, FunctionApi>>{};
++  final Map<(String, String), Map<String, Object?>> _resolvedArgSchemas =
++      <(String, String), Map<String, Object?>>{};
++
++  /// Indexes every [Catalog.agentFunctions] entry of [catalogs].
++  ///
++  /// Throws [ArgumentError] if [timeout] is not positive, and
++  /// [A2uiCatalogError] if two of [catalogs] have the same id.
++  AgentFunctionRegistry(Iterable<CatalogApi> catalogs, {this.timeout}) {
++    if (timeout != null && timeout! <= Duration.zero) {
++      throw ArgumentError.value(
++        timeout,
++        'agentFunctionTimeout',
++        'Must be > Duration.zero or null.',
++      );
++    }
++    for (final catalog in catalogs) {
++      if (_catalogs.containsKey(catalog.id)) {
++        throw A2uiCatalogError(
++          "Two catalogs have the id '${catalog.id}'; give the processor each "
++          'catalog once.',
++          catalogId: catalog.id,
++        );
++      }
++      _catalogs[catalog.id] = catalog;
++      for (final MapEntry<String, AgentFunction> entry
++          in catalog.agentFunctions.entries) {
++        _functions[(catalog.id, entry.key)] = entry.value;
++      }
++    }
++  }
++
++  /// Validates and runs a v1.0 `callAgentFunction` [message] and returns the
++  /// [AgentFunctionResponseMessage] that answers it.
++  ///
++  /// [message] may be a [CallAgentFunctionMessage] or a raw JSON `Map`
++  /// envelope. The processor has already checked its version and that it
++  /// carries no other message.
++  ///
++  /// Throws [A2uiValidationError] if [message] is not a `callAgentFunction`
++  /// message or lacks a non-empty string `functionCallId`, since there is
++  /// nothing to reply to. Every other failure is reported in the returned
++  /// response's `error`.
++  Future<AgentFunctionResponseMessage> handle(Object message) async {
++    final _ParsedCallResult parsed = _parseCall(message);
++    if (parsed.errorResponse != null) {
++      return parsed.errorResponse!;
++    }
++    final _ParsedCall call = parsed.call!;
++
++    String? catalogId = call.catalogId;
++    if (catalogId == null) {
++      final matches = <String>[
++        for (final (String cid, String fnName) in _functions.keys)
++          if (fnName == call.name) cid,
++      ];
++      if (matches.length > 1) {
++        return _errorResponse(
++          call.functionCallId,
++          RpcErrorCode.invalidFunctionCall.wireValue,
++          "The call to '${call.name}' has no catalogId, and several catalogs "
++          'have an agent function of that name: $matches.',
++        );
++      }
++      if (matches.isEmpty) {
++        return _errorResponse(
++          call.functionCallId,
++          RpcErrorCode.unknownFunction.wireValue,
++          "No catalog of the agent has an agent function '${call.name}'.",
++        );
++      }
++      catalogId = matches.first;
++    }
++
++    final CatalogApi? catalog = _catalogs[catalogId];
++    final AgentFunction? fn = _functions[(catalogId, call.name)];
++    if (catalog == null || fn == null) {
++      final detail = catalog == null
++          ? "Unknown catalog '$catalogId' for agent function "
++                "'${call.name}'."
++          : "Unknown agent function '${call.name}' in catalog "
++                "'$catalogId'.";
++      return _errorResponse(
++        call.functionCallId,
++        RpcErrorCode.unknownFunction.wireValue,
++        detail,
++      );
++    }
++
++    // Neither the AgentFunction constructor nor AgentFunction.fromApi builds
++    // an agentOnly function; this guards against a subclass that claims it.
++    if (fn.allowedCallers == AllowedCallers.agentOnly) {
++  
+```
+
+**File**: `dart/a2ui_agent/lib/src/rpc/renderer_to_agent_message_processor.dart` (added, +253/-0)
+```diff
+@@ -0,0 +1,253 @@
++// Copyright 2024 Google LLC
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     https://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++import 'dart:async';
++
++import 'package:a2ui_core/a2ui_core.dart';
++
++import 'agent_function_registry.dart';
++
++/// A callback that receives one kind of message a renderer sent, such as an
++/// [ActionMessage]. It may return a [Future], which is awaited.
++///
++/// Return `false` (or a [Future] that completes with `false`) to decline the
++/// message: the processor then reports it as not handled, so the caller
++/// passes it on, for example to the model's turn. Any other result, including
++/// none, means the callback handled it, so a `void` function works as is.
++typedef RendererMessageCallback<T extends RendererToAgentMessage> =
++    FutureOr<void> Function(T message);
++
++/// What [RendererToAgentMessageProcessor.processMessage] did with a message.
++final class ProcessResult {
++  /// Whether the processor handled the message: it answered a
++  /// `callAgentFunction`, or passed the message to a callback that didn't
++  /// decline it.
++  ///
++  /// False for an `action`, `error` or `rendererFunctionResponse` that has no
++  /// callback, or whose callback returned `false`, which the caller passes
++  /// on, for example to the model's turn.
++  final bool handled;
++
++  /// The messages to send back to the renderer: one
++  /// [AgentFunctionResponseMessage] for a `callAgentFunction`, and none for
++  /// any other message.
++  final List<AgentToRendererMessage> replies;
++
++  /// Creates a result. [replies] is copied into an unmodifiable list.
++  ProcessResult({
++    required this.handled,
++    Iterable<AgentToRendererMessage> replies = const [],
++  }) : replies = List<AgentToRendererMessage>.unmodifiable(replies);
++
++  @override
++  String toString() =>
++      'ProcessResult(handled: $handled, replies: ${replies.length})';
++}
++
++/// Processes the v1.0 messages a renderer sends an agent.
++///
++/// The agent-side counterpart of `a2ui_core`'s `MessageProcessor`:
++///
++/// - A `callAgentFunction` is always handled. The processor runs the matching
++///   [AgentFunction] of its catalogs and replies with exactly one
++///   `agentFunctionResponse`, carrying the value or an error.
++/// - An `action`, `error` or `rendererFunctionResponse` goes to its callback,
++///   [onAction], [onError] or [onRendererFunctionResponse], once validated
++///   against the v1.0 schema. A callback may return `false` to decline the
++///   message. With no callback set, the message is left unhandled, so the
++///   caller can pass it on.
++///
++/// The processor keeps no state between messages, so one instance can serve
++/// every conversation of an agent, or one can be built per request from the
++/// catalogs that are active. It processes one message at a time; a caller
++/// with several runs [processMessage] on each, and so decides how they run
++/// together and what to do when one fails.
++///
++/// ```dart
++/// final processor = RendererToAgentMessageProcessor(
++///   catalogs: [catalog.copyWith(agentFunctions: [fetchQuote])],
++///   // Handles refresh actions and declines the rest, which go to the model.
++///   onAction: (action) => action.action.name == 'refresh',
++/// );
++/// final ProcessResult result = await processor.processMessage(message);
++/// if (!result.handled) {
++///   // Pass the message on to the model.
++/// }
++/// sendToRenderer(result.replies);
++/// ```
++class RendererToAgentMessageProcessor {
++  /// Called with each validated `action` message.
++  final RendererMessageCallback<ActionMessage>? onAction;
++
++  /// Called with each validated `error` message.
++  final RendererMessageCallback<ErrorMessage>? onError;
++
++  /// Called with each validated `rendererFunctionResponse` message.
++  final RendererMessageCallback<RendererFunctionResponseMessage>?
++  onRendererFunctionResponse;
++
++  final AgentFunctionRegistry _agentFunctions;
++
++  /// Creates a processor that answers calls to the agent functions of
++  /// [catalogs] (see [Catalog.agentFunctions]).
++  ///
++  /// A handler that runs longer than [agentFunctionTimeout] is answered with
++  /// an `EXECUTION_ERROR`, and its result is ignored. By default there is no
++  /// limit.
++  ///
++  /// Throws [ArgumentError] if [agentFunctionTimeout] is not positive, and
++  /// [A2uiCatalogError] if two of [catalogs] have the same id.
++  RendererToAgentMessageProcessor({
++    required Iterable<CatalogApi> catalogs,
++    Duration? agentFunctionTimeout,
++    this.onAction,
++    this.onEr
+```
+
+**File**: `dart/a2ui_agent/pubspec.yaml` (modified, +1/-0)
+```diff
+@@ -30,5 +30,6 @@ dependencies:
+ 
+ dev_dependencies:
+   crypto: ^3.0.6
++  json_schema_builder: ^0.1.4
+   test: ^1.26.2
+   yaml: ^3.1.2
+```
+
+**File**: `dart/a2ui_agent/test/conformance/agent_functions_conformance_test.dart` (modified, +460/-26)
+```diff
+@@ -12,42 +12,476 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ 
++import 'dart:async';
++
++import 'package:a2ui_agent/a2ui_agent.dart';
++import 'package:a2ui_core/a2ui_core.dart';
++import 'package:json_schema_builder/json_schema_builder.dart';
+ import 'package:test/test.dart';
+ 
+ import 'suites.dart';
+ 
+-/// Registers the shared `conformance/agent/agent_functions.yaml` suite.
+-///
+-/// The suite covers agent functions and the routing of renderer messages,
+-/// which this SDK does not implement yet, so every case is
+-/// skipped with the reason [_unimplementedActions] gives, and recorded so in
+-/// the executed-case manifest. A case whose action has no reason fails
+-/// instead of passing without running.
+ void main() {
+-  const path = 'agent/agent_functions.yaml';
+-  group('conformance $path', () {
+-    final List<Map<String, Object?>> cases = loadSuite(path);
++  group('conformance agent/agent_functions.yaml', () {
++    final List<Map<String, Object?>> cases = loadSuite(
++      'agent/agent_functions.yaml',
++    );
+     test('suite is not empty', () => expect(cases, isNotEmpty));
+     for (final testCase in cases) {
+-      final action = testCase['action']! as String;
+-      test(testCase['name']! as String, () {
+-        if (_unimplementedActions[action] case final String reason) {
+-          markTestSkipped(reason);
+-          return;
+-        }
+-        fail('Unhandled conformance action: $action');
+-      });
++      test(testCase['name']! as String, () => _runCase(testCase));
+     }
+   });
+ }
+ 
+-/// The suite's actions this SDK has no implementation for, with the reason.
+-const Map<String, String> _unimplementedActions = {
+-  'declare_agent_functions': _notImplemented,
+-  'handle_agent_function': _notImplemented,
+-  'validate_payload': _notImplemented,
+-  'process_renderer_message': _notImplemented,
++/// How many times a handler built by [_handler] ran in the current case.
++int _handlerCalls = 0;
++
++/// The reply error codes for a call the processor refuses before the
++/// handler runs.
++const Set<String> _rejectedCallCodes = {
++  'INVALID_FUNCTION_CALL',
++  'UNKNOWN_FUNCTION',
+ };
+ 
+-const String _notImplemented =
+-    'this SDK does not implement agent functions yet';
++/// Whether [testCase] expects the processor to refuse the call, or to
++/// throw, so that no handler may run.
++bool _expectsRejection(Map<String, Object?> testCase) {
++  if (testCase.containsKey('expect_error')) return true;
++  final Object? expected = testCase['expect'];
++  if (expected is! Map) return false;
++  final Object? replies = expected['replies'];
++  final List<Object?> errors = [
++    if (expected['error'] case {'code': final Object? code}) code,
++    if (replies is List)
++      for (final Object? reply in replies)
++        if (reply case {
++          'agentFunctionResponse': {'error': {'code': final Object? code}},
++        })
++          code,
++  ];
++  return errors.any(_rejectedCallCodes.contains);
++}
++
++Future<void> _runCase(Map<String, Object?> testCase) async {
++  _handlerCalls = 0;
++  await _runAction(testCase);
++  if (_expectsRejection(testCase)) {
++    expect(
++      _handlerCalls,
++      0,
++      reason: 'No handler runs for a call that is refused or fails',
++    );
++  }
++}
++
++Future<void> _runAction(Map<String, Object?> testCase) async {
++  final action = testCase['action']! as String;
++  switch (action) {
++    case 'declare_agent_functions':
++      _runDeclare(testCase);
++    case 'handle_agent_function':
++      await _runHandle(testCase);
++    case 'validate_payload':
++      _runValidate(testCase);
++    case 'process_renderer_message':
++      await _runProcess(testCase);
++    default:
++      fail('Unhandled conformance action: $action');
++  }
++}
++
++/// A handler for [behavior] that counts its runs in [_handlerCalls].
++AgentFunctionHandler _handler(Map<String, Object?> behavior) {
++  final AgentFunctionHandler handler = _behaviorHandler(behavior);
++  return (Map<String, dynamic> args, AgentFunctionContext context) {
++    _handlerCalls++;
++    return handler(args, context);
++  };
++}
++
++AgentFunctionHandler _behaviorHandler(Map<String, Object?> behavior) {
++  if (behavior.containsKey('returns')) {
++    final Object? value = behavior['returns'];
++    return (Map<String, dynamic> args, AgentFunctionContext context) async =>
++        value;
++  }
++  if (behavior['returns_args'] == true) {
++    return (Map<String, dynamic> args, AgentFunctionContext context) async =>
++        args;
++  }
++  if (behavior['returns_context'] == true) {
++    return (Map<String, dynamic> args, AgentFunctionContext context) async =>
++        <String, Object?>{
++          'catalogId': context.catalogId,
++          'surfaceId': context.surfaceId,
++          'functionCallId': context.functionCallId,
++        };
++  }
++  if (behavior['raises'] case final Map<String, Object?> failure) {
++    return (Map<String, dynamic> args, AgentFunctionContext context) async {
++      final message = 
+```
+
+**File**: `dart/a2ui_agent/test/rpc/agent_function_validation_end_to_end_test.dart` (added, +127/-0)
+```diff
+@@ -0,0 +1,127 @@
++// Copyright 2024 Google LLC
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     https://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++import 'dart:async';
++
++import 'package:a2ui_agent/a2ui_agent.dart';
++import 'package:a2ui_core/a2ui_core.dart';
++import 'package:json_schema_builder/json_schema_builder.dart';
++import 'package:test/test.dart';
++
++const String _catId = 'https://example.com/finance.json';
++
++void main() {
++  group('End-to-end agent functions', () {
++    test('round-trips callAgentFunction between MessageProcessor and '
++        'RendererToAgentMessageProcessor', () async {
++      final quote = AgentFunction(
++        name: 'fetchQuote',
++        returnType: A2uiReturnType.string,
++        argumentSchema: Schema.fromMap({
++          'type': 'object',
++          'properties': {
++            'symbol': {'type': 'string'},
++          },
++          'required': ['symbol'],
++        }),
++        handler: (args, ctx) => '${args['symbol']}: \$175.00',
++      );
++      // The agent catalog holds the AgentFunction.
++      final CatalogApi agentCatalog = Catalog(
++        id: _catId,
++        protocolVersion: A2uiProtocolVersion.v1_0,
++        components: [
++          ComponentApi(
++            name: 'Text',
++            schema: Schema.fromMap({
++              'type': 'object',
++              'properties': {
++                'text': {r'$ref': r'common_types.json#/$defs/DynamicString'},
++              },
++              'required': ['text'],
++            }),
++          ),
++        ],
++        functions: [quote],
++      );
++
++      // The renderer catalog doesn't implement fetchQuote, so the renderer
++      // forwards it via callAgentFunction.
++      final rendererCatalog = Catalog<ComponentApi, FunctionImplementation>(
++        id: _catId,
++        protocolVersion: A2uiProtocolVersion.v1_0,
++        components: agentCatalog.components.values.toList(),
++      );
++
++      final agentProcessor = RendererToAgentMessageProcessor(
++        catalogs: [agentCatalog],
++      );
++
++      late MessageProcessor rendererProcessor;
++      rendererProcessor = MessageProcessor(
++        catalogs: [rendererCatalog],
++        outboundListener: (RendererToAgentMessage outbound) async {
++          final ProcessResult result = await agentProcessor.processMessage(
++            outbound,
++          );
++          if (result.replies.isNotEmpty) {
++            rendererProcessor.processMessages(result.replies);
++          }
++        },
++      );
++
++      final outboundPayload = <Map<String, Object?>>[
++        {
++          'version': A2uiProtocolVersion.v1_0.jsonValue,
++          'createSurface': {'surfaceId': 'main', 'catalogId': _catId},
++        },
++        {
++          'version': A2uiProtocolVersion.v1_0.jsonValue,
++          'updateComponents': {
++            'surfaceId': 'main',
++            'components': [
++              {
++                'id': 'root',
++                'component': 'Text',
++                'text': {
++                  '@call': 'fetchQuote',
++                  'args': {'symbol': 'GOOG'},
++                },
++              },
++            ],
++          },
++        },
++      ];
++
++      // 1. Agent-side strict payload validation succeeds.
++      MessageProcessor.forAgent(
++        catalogs: [agentCatalog],
++        validationConfig: ValidationConfig.strict,
++      ).processMessages(outboundPayload);
++
++      // 2. Renderer processes payload, triggers callAgentFunction on the
++      // binding, receives agentFunctionResponse, and updates the resolved node.
++      rendererProcessor.processMessages(outboundPayload);
++      final SurfaceModel<ComponentApi> surface = rendererProcessor.model
++          .getSurface('main')!;
++      final NodeResolver<ComponentApi> resolver = NodeResolver(surface);
++      final ComponentNode rootNode = resolver.rootNode.value!;
++      await Future<void>.delayed(const Duration(milliseconds: 20));
++      final textBinding =
++          rootNode.props.value['text']! as ResolvedBinding<Object?>;
++      expect(textBinding.value, 'GOOG: \$175.00');
++      resolver.dispose();
++    });
++  });
++}
+```
+
+---
+
+### Incident Patch 2: `744276b9` (2026-11-06)
+**Commit Message**: feat(python-agent): call renderer functions from the agent (#3939)
+
+* feat(python-agent): call renderer functions from the agent (#3535)
+
+Restore the agent's calls to renderer functions, split out of #3793-#3795
+during review, on top of RendererToAgentMessageProcessor:
+
+- a2ui.rpc.RendererFunctionCalls (with DEFAULT_RENDERER_CALL_TIMEOUT and
+  RendererFunctionResponseInput) builds callRendererFunction messages and
+  settles their futures. Its resolve method is the processor's
+  on_renderer_function_response callback.
+- Review fixes from #3793: an empty function name is rejected with
+  INVALID_FUNCTION_CALL; an empty surface_id counts as omitted; a malformed
+  rendererFunctionResponse whose functionCallId names a pending call fails
+  that call at once (UNKNOWN_ERROR) instead of leaving it to time out; the
+  timer test asserts timer.cancelled().
+- New is_pending(function_call_id), so a framework settles only responses to
+  its own calls and passes others (such as responses to calls a model wrote
+  through an inference format) to the model's turn, as the review asked.
+- a2ui-adk: a2ui_rpc_callback takes renderer_calls (catalogs becomes
+  optional), settles responses to pending calls t
+
+**File**: `conformance/README.md` (modified, +28/-1)
+```diff
+@@ -37,6 +37,7 @@ The suites that do not depend on an inference format sit directly under `agent/`
+ - `agent/skill.yaml`: Generating skill documents and skill sets from a format and its catalogs, and checking that a monolithic skill's body equals the prompt snippet for the same catalogs (`monolithic_skill_equals_prompt_snippet`).
+ - `agent/multi_catalog_formats.yaml`: Resolving components and function calls across active catalogs (omitting `createSurface.catalogId` when multiple catalogs are active, resolving un-annotated components and function calls by name when unique across active catalogs, and requiring an explicit `catalogId` override when ambiguous), across `direct_json` (and later `express`): compiling, decompiling (including omitting `catalogId` when name lookup is unambiguous), parsing a response, rendering a prompt snippet, and building a format. Component order inside a message carries no meaning, so a harness may compare the `components` of a compiled message by `id`.
+ - `agent/agent_functions.yaml`: Agent functions (v1.0) and the agent's side of the messages a renderer sends. It covers declaring agent functions on the agent's copy of a catalog (including building one from the catalog's own declaration), answering `callAgentFunction` (the response values and error codes, schema defaults, the handler's context, and which catalog a call runs in), validating model output that calls agent functions, and how `RendererToAgentMessageProcessor` routes `action`, `error` and `rendererFunctionResponse` messages to its callbacks. See [Writing cases for the agent function suite](#writing-cases-for-the-agent-function-suite).
++- `agent/renderer_function_calls.yaml`: The agent calling renderer functions with `callRendererFunction` (v1.0): the message it builds, settling calls with responses, ignoring unknown, late and duplicate responses, timeouts, disposal and the limit on pending calls. See [Writing cases for the agent function suite](#writing-cases-for-the-agent-function-suite).
+ - `agent/streamed_answer.yaml`: Reading a streamed answer into a renderer's message processor, for an app that is both the agent and the renderer, and keeping the answer's text, surfaces and rejected blocks in the order the model wrote them. It runs on `direct_json`, the format that streams. The suite belongs to the optional `agent_renderer_app` feature, and only an SDK that implements it runs the suite.
+ 
+ A case names its format with `args.format`, an `InferenceFormatName`: `direct_json` (or `express`).
+@@ -177,7 +178,33 @@ The suite has four actions:
+ 
+ In all four actions, `expect_error` is an `AgentFunctionExpectError`: a required `category`, `CatalogError` or `ValidationError`, and an optional `message`. The harness checks the error's category, and matches `message` as a literal substring of the error's text, not as a regular expression. A harness fails a case whose `expect_error` has any other key, so that an unrelated exception can't pass it.
+ 
+-The TypeScript and Dart agent SDKs do not implement agent functions yet, so their harnesses skip every case of this suite with that reason.
++`agent/renderer_function_calls.yaml` has one action:
++
++- `call_renderer_function` makes calls to renderer functions and settles them, in `steps`. Each step does one thing: `call` makes a call named by its `label` (with `catalogId`, `name`, and optionally `args`, `surfaceId`, `functionCallId` and `timeout_ms`; `args` may be any JSON value, so a case can check that a non-object is refused), `respond` hands over a `rendererFunctionResponse` for a labelled `call` or a literal `functionCallId`, `advance_ms` moves the clock, and `dispose` disposes the calls with an optional `reason`. `args` may set `default_timeout_ms` (otherwise the SDK's default of 30 seconds applies), `max_pending`, and `catalogs`, the agent's catalogs that each `call` is checked against. A case may have `expect_error` (`RendererCallsBuildError`: a required `category`, which is `CatalogError`, and an optional literal-substring `message`) instead of `steps`, when building the calls helper must fail. A harness that hands responses over through a `RendererToAgentMessageProcessor`, with `resolve` as `on_renderer_function_response`, also checks that a response is handled exactly when its call is pending: `resolve` declines unknown, late and duplicate responses.
++
++A `call_renderer_function` harness runs the calls on a fake clock that only `advance_ms` moves, so the cases never wait on real time and a timer fires exactly when the clock reaches it. After each step it lets pending asynchronous work run, then checks:
++
++- `expect_message`, on a `call` step: the `callRendererFunction` message without its `functionCallId`. Separately, the harness checks that every call in a case got a different, non-empty `functionCallId`.
++- `expect_error`, on a `call` step (`RendererCallError`): the call is refused with that RPC error `code`, and, when `message` is set, a message containing it as a litera
+```
+
+**File**: `conformance/agent/renderer_function_calls.yaml` (added, +452/-0)
+```diff
+@@ -0,0 +1,452 @@
++# Copyright 2024 Google LLC
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++#     https://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++
++# The agent's calls to renderer functions with `callRendererFunction` (v1.0):
++# building the message, settling calls with the renderer's responses,
++# timeouts, disposal and the limit on pending calls. Renderer calls run on a
++# fake clock that only an `advance_ms` step moves, so no case waits on real
++# time.
++
++# --- Calling renderer functions ---
++
++- name: test_call_renderer_function_builds_the_message_without_waiting
++  description: >-
++    A call returns its callRendererFunction message at once, with a generated functionCallId and the catalogId the message requires, and stays pending until the renderer answers.
++  action: call_renderer_function
++  steps:
++    - call:
++        label: a
++        catalogId: conformance/agent_functions
++        name: notify
++        args: {message: Saved}
++        surfaceId: s1
++      expect_message:
++        version: "1.0"
++        callRendererFunction:
++          surfaceId: s1
++          callFunction:
++            "@call": notify
++            catalogId: conformance/agent_functions
++            args: {message: Saved}
++      expect_calls:
++        a: pending
++      expect_pending_count: 1
++
++- name: test_call_renderer_function_without_surface_or_args
++  description: >-
++    A call made without a surface leaves surfaceId out of the message, and one made without arguments sends empty args.
++  action: call_renderer_function
++  steps:
++    - call:
++        label: a
++        catalogId: conformance/agent_functions
++        name: now
++      expect_message:
++        version: "1.0"
++        callRendererFunction:
++          callFunction:
++            "@call": now
++            catalogId: conformance/agent_functions
++            args: {}
++      expect_calls:
++        a: pending
++
++- name: test_call_renderer_function_with_an_empty_surface_id
++  description: >-
++    An empty surfaceId counts as no surface: it is left out of the message, which a renderer would otherwise reject.
++  action: call_renderer_function
++  steps:
++    - call:
++        label: a
++        catalogId: conformance/agent_functions
++        name: now
++        surfaceId: ""
++      expect_message:
++        version: "1.0"
++        callRendererFunction:
++          callFunction:
++            "@call": now
++            catalogId: conformance/agent_functions
++            args: {}
++      expect_calls:
++        a: pending
++
++- name: test_call_renderer_function_with_an_empty_name
++  description: >-
++    A call needs a function name: an empty one fails with INVALID_FUNCTION_CALL before anything is registered.
++  action: call_renderer_function
++  steps:
++    - call: {label: a, catalogId: conformance/agent_functions, name: ""}
++      expect_error: {code: INVALID_FUNCTION_CALL}
++      expect_pending_count: 0
++
++- name: test_call_renderer_function_settled_by_its_response
++  description: >-
++    A rendererFunctionResponse settles the call whose functionCallId it copies with its value, and leaves the other calls pending.
++  action: call_renderer_function
++  steps:
++    - call: {label: a, catalogId: conformance/agent_functions, name: getLocale}
++    - call: {label: b, catalogId: conformance/agent_functions, name: getTimezone}
++      expect_pending_count: 2
++    - respond: {call: b, value: Europe/Paris}
++      expect_calls:
++        a: pending
++        b: {value: Europe/Paris}
++      expect_pending_count: 1
++    - respond: {call: a, value: {language: fr, region: FR}}
++      expect_calls:
++        a: {value: {language: fr, region: FR}}
++        b: {value: Europe/Paris}
++      expect_pending_count: 0
++
++- name: test_call_renderer_function_settled_with_a_null_value
++  description: A response whose value is null settles the call with null.
++  action: call_renderer_function
++  steps:
++    - call: {label: a, catalogId: conformance/agent_functions, name: getSelection}
++    - respond: {call: a, value: null}
++      expect_calls:
++        a: {value: null}
++
++- name: test_call_renderer_function_failed_by_an_error_response
++  description: A response that carries an error fails the call with the renderer's code.
++  action: call_renderer_function
++  steps:
++    - call: {label: a, catalogId: conformance/agent_functions, name: getLocation}
++    - respond:
++        call: a
++        error: {code: PERMISSION_DENIED, message: "The user declined."}
++      expect_calls:
++        a: {error: {code: PERMISSION_DENIED, message: "The user declined."}}
++      expect_pe
+```
+
+**File**: `conformance/conformance_harness_implementation_guide.md` (modified, +3/-1)
+```diff
+@@ -159,7 +159,7 @@ Implement the suites in stages so each layer is tested before higher-level compo
+ | A4. Multi-catalog and session pipeline    | `agent/multi_catalog_formats.yaml`, `agent/request_processor.yaml`, `agent/streamed_answer.yaml`                                                                                       | Cross-catalog lookup, `InferenceFormatFactory`, `A2uiGenerator`, `A2uiRequestProcessor`, and `StreamedAnswer`                                |
+ | A5. Specification round-trips             | `catalogs/basic/v1/examples/*.json` (and v0.9 examples if supported)                                                                                                                   | End-to-end `decompile` followed by `compile` across every published basic catalog example                                                    |
+ | A6. Skills, macros, and scaling           | `agent/skill.yaml`, `agent/builder/builder.yaml`, `agent/macros/macros.yaml`, `agent/*/scaling.yaml`                                                                                   | Skill generation, typesafe fluent builders, macros, and linear-time parsing                                                                  |
+-| A7. Agent functions                       | `agent/agent_functions.yaml`                                                                                                                                                           | Agent functions on a catalog, answering `callAgentFunction`, and routing renderer messages through `RendererToAgentMessageProcessor`         |
++| A7. Agent functions                       | `agent/agent_functions.yaml`, `agent/renderer_function_calls.yaml`                                                                                                                     | Agent functions on a catalog, answering `callAgentFunction`, routing renderer messages, and calling renderer functions on a fake clock       |
+ | F1. Framework adapter                     | `core/adapter_conformance.yaml`, `core/accessibility.yaml`                                                                                                                             | Rendered view trees, repeaters, two-way bindings, action and user-activation gating, validation state, accessibility, and unmount cleanup    |
+ 
+ Notice that `agent/express/` has no `response_streaming.yaml` file. Express parses whole buffered blocks and does not implement `openStream`.
+@@ -294,6 +294,8 @@ All four actions in `response_parser.yaml` run against `format.createParser()`:
+ 
+ `agent/agent_functions.yaml` (`declare_agent_functions`, `handle_agent_function`, `validate_payload` and `process_renderer_message`) is described in [Writing cases for the agent function suite](README.md#writing-cases-for-the-agent-function-suite). Turn each declared `behavior` into a handler in the harness (for `raises`, throw the SDK's RPC error with `code`, its validation error with `validation: true`, or an ordinary error otherwise), build a declaration with `from_api: true` from the loaded catalog's own entry for it (or, when the catalog has none, from the declaration's `returnType`, `args` and `description`), pass `requiresUserActivation` to an agent function built from `args`, and run every `callAgentFunction` through `RendererToAgentMessageProcessor`. Count each case's handler runs, and assert none ran when the case expects an `expect_error` or a reply with `error.code` `INVALID_FUNCTION_CALL` or `UNKNOWN_FUNCTION`. For `handle_agent_function`, `validate_payload` and `process_renderer_message`, build the catalogs (and the processor) inside the error check when the case has `expect_error` (building can fail). For `process_renderer_message`, register a recording callback for each entry in `args.callbacks`: a plain kind returns nothing (handled), and `{kind, declines: true}` returns false (declined). An SDK that does not implement agent functions yet registers every case as skipped with that reason.
+ 
++`agent/renderer_function_calls.yaml` (`call_renderer_function`) is described in the same section. Build each `args.catalogs` entry in code as a v1.0 catalog of schema-only functions (arguments `{type: object}`, return type `any`, `allowedCallers` and `requiresUserActivation` only when the entry sets them), and pass the list to the calls helper; a case with a top-level `expect_error` expects building the helper to fail. Pass a `call` step's `functionCallId` to `call` when the step sets it. In a statically typed SDK whose `call` can't take a non-object `args` (Dart), `test_call_renderer_function_with_args_that_are_not_an_object` passes by showing that such a value can't be passed (a type error), with nothing sent or pending. Run its cases on a fake clock: in Python, an event loop whose `time()` returns a counter that `advance_ms` steps add to; in JavaScript, fake timers. Only the Python agent harness runs the suite so far; the TypeScript and Dart agent harne
+```
+
+**File**: `conformance/conformance_schema.json` (modified, +212/-1)
+```diff
+@@ -38,7 +38,8 @@
+       {"$ref": "#/$defs/DeclareAgentFunctionsTest"},
+       {"$ref": "#/$defs/HandleAgentFunctionTest"},
+       {"$ref": "#/$defs/ValidatePayloadTest"},
+-      {"$ref": "#/$defs/ProcessRendererMessageTest"}
++      {"$ref": "#/$defs/ProcessRendererMessageTest"},
++      {"$ref": "#/$defs/CallRendererFunctionTest"}
+     ]
+   },
+   "$defs": {
+@@ -2596,6 +2597,216 @@
+       "required": ["category"],
+       "additionalProperties": false
+     },
++    "CallRendererFunctionTest": {
++      "type": "object",
++      "description": "Calling renderer functions from the agent with callRendererFunction, and settling the calls with the renderer's responses, on a fake clock that only `advance_ms` steps move.",
++      "properties": {
++        "name": {"type": "string"},
++        "description": {"type": "string"},
++        "action": {"const": "call_renderer_function"},
++        "args": {
++          "type": "object",
++          "properties": {
++            "default_timeout_ms": {
++              "type": ["integer", "null"],
++              "exclusiveMinimum": 0,
++              "description": "How long a call waits for its response unless it sets its own timeout. Without it, the SDK's default, 30000. Null waits without a limit."
++            },
++            "max_pending": {
++              "type": "integer",
++              "minimum": 1,
++              "description": "The most calls that may wait for a response at once."
++            },
++            "catalogs": {
++              "type": "array",
++              "description": "The agent's catalogs, which `call` checks each target against. Without them, calls aren't checked.",
++              "items": {"$ref": "#/$defs/RendererCallCatalog"}
++            }
++          },
++          "additionalProperties": false
++        },
++        "steps": {
++          "type": "array",
++          "items": {"$ref": "#/$defs/RendererCallStep"},
++          "minItems": 1
++        },
++        "expect_error": {
++          "$ref": "#/$defs/RendererCallsBuildError",
++          "description": "Building the calls helper fails with this error, such as a CatalogError for two catalogs with one id. The case then has no `steps`."
++        }
++      },
++      "required": ["name", "action"],
++      "oneOf": [{"required": ["steps"]}, {"required": ["expect_error"]}],
++      "additionalProperties": false
++    },
++    "RendererCallCatalog": {
++      "type": "object",
++      "description": "A v1.0 catalog the harness builds in code (not from a catalog document, so it isn't checked against the catalog schema): its id and its functions, by name. Each function takes any object as `args` and returns `any`.",
++      "properties": {
++        "catalogId": {"type": "string"},
++        "functions": {
++          "type": "object",
++          "additionalProperties": {
++            "type": "object",
++            "properties": {
++              "allowedCallers": {
++                "enum": ["rendererOnly", "agentOnly", "rendererOrAgent"],
++                "description": "Omitted means rendererOnly."
++              },
++              "requiresUserActivation": {"type": "boolean"}
++            },
++            "additionalProperties": false
++          }
++        }
++      },
++      "required": ["catalogId", "functions"],
++      "additionalProperties": false
++    },
++    "RendererCallState": {
++      "description": "The state of a call: still pending, settled with a value, or failed with an RPC error code. `error.message` is a substring of the failure's message.",
++      "oneOf": [
++        {"const": "pending"},
++        {
++          "type": "object",
++          "properties": {"value": {}},
++          "required": ["value"],
++          "additionalProperties": false
++        },
++        {
++          "type": "object",
++          "properties": {
++            "error": {
++              "type": "object",
++              "properties": {
++                "code": {"type": "string"},
++                "message": {"type": "string"}
++              },
++              "required": ["code"],
++              "additionalProperties": false
++            }
++          },
++          "required": ["error"],
++          "additionalProperties": false
++        }
++      ]
++    },
++    "RendererCallsBuildError": {
++      "type": "object",
++      "description": "The error building the calls helper fails with: its category and, optionally, a literal substring of its message.",
++      "properties": {
++        "category": {"enum": ["CatalogError"]},
++        "message": {
++          "type": "string",
++          "description": "A literal substring of the error's message, not a regular expression."
++        }
++      },
++      "required": ["category"],
++      "additionalProperties": false
++    },
++    "RendererCallError": {
++      "type": "object",
++      "description": "The RPC error a `call` step is refused with: its code and, optionally, a literal substring of its message.",
++      "properties": {
++        "code": {"type": "string"},
++        "message": {
++          "type
+```
+
+**File**: `dart/a2ui_agent/test/conformance/unsupported_suites_test.dart` (modified, +3/-0)
+```diff
+@@ -66,6 +66,9 @@ const Map<String, String> unsupportedAgentSuites = {
+   'agent/macros/macros.yaml':
+       'The composite macro suite targets the Python macro API, which '
+       'a2ui_agent for Dart does not implement.',
++  'agent/renderer_function_calls.yaml':
++      'a2ui_agent for Dart does not implement calling renderer functions '
++      'yet.',
+   'agent/skill.yaml':
+       'a2ui_agent for Dart does not implement the skill generation API.',
+ };
+```
+
+**File**: `python/a2ui_adk/CHANGELOG.md` (modified, +22/-0)
+```diff
+@@ -1,5 +1,27 @@
+ ## Unreleased
+ 
++- `a2ui_rpc_callback` takes `renderer_calls`, a provider of the session's
++  `RendererFunctionCalls` such as `A2uiRendererCallsStore.get`, and `catalogs`
++  becomes optional (pass one or both). The callback processes each message
++  with a `RendererToAgentMessageProcessor` whose
++  `on_renderer_function_response` is `RendererFunctionCalls.resolve`, and
++  answers the request without running the agent only when every message is
++  handled. A response to a call the session didn't make, such as one the
++  model wrote, is declined and goes to the agent. Responses that answer
++  pending calls always settle them, even in a request that goes to the agent,
++  and a malformed one fails the call it names. It needs the `a2a`
++  extra. [#3535](https://github.com/a2ui-project/a2ui/issues/3535)
++- Add `a2ui_rpc_interceptor`, an `A2aAgentExecutor` interceptor that ends a
++  task `completed` when its request held only `callAgentFunction` and
++  `rendererFunctionResponse` messages and ADK would end it `working` because
++  there was nothing to send back. Other final states are left as they are. It
++  needs the `a2a` extra.
++  [#3535](https://github.com/a2ui-project/a2ui/issues/3535)
++- Add `A2uiRendererCallsStore`, which keeps a `RendererFunctionCalls` for each
++  session. `get` returns the session's instance, creating it on first use, and
++  is the `renderer_calls` provider of `a2ui_rpc_callback`. `remove` disposes a
++  session's instance, which fails its pending calls.
++  [#3535](https://github.com/a2ui-project/a2ui/issues/3535)
+ - Add `a2ui_rpc_callback`, which returns a `before_agent_callback` that
+   answers the renderer's A2UI v1.0 `callAgentFunction` messages without
+   running the agent. When the user content holds only such calls, it builds a
+```
+
+**File**: `python/a2ui_adk/README.md` (modified, +45/-1)
+```diff
+@@ -44,6 +44,10 @@ Available with the base install:
+   since ADK's session services save state as JSON and can't hold one. Its
+   `is_enabled` and `get` methods are the callbacks for the toolset,
+   `A2uiInstruction` and `A2uiEventConverter`.
++- `A2uiRendererCallsStore` keeps each session's `RendererFunctionCalls` (from
++  `a2ui.rpc`), which holds the agent's pending `callRendererFunction` calls.
++  Its `get` method returns the session's instance, creating it on first use,
++  and `remove` disposes it when the session ends.
+ 
+ Available with the `a2a` extra:
+ 
+@@ -60,7 +64,18 @@ Available with the `a2a` extra:
+   catalogs, and returns the `agentFunctionResponse` replies as the agent's
+   response. For any other request, including the renderer's `action`, `error`
+   and `rendererFunctionResponse` messages, it returns None, so the agent runs.
+-  With `A2aAgentExecutor`, the replies reach the client as A2UI parts.
++  With `A2aAgentExecutor`, the replies reach the client as A2UI parts. With
++  `renderer_calls`, its processor's `on_renderer_function_response` is the
++  session's `RendererFunctionCalls.resolve`, which settles a response to a
++  pending call and declines any other, such as one to a call the model wrote.
++  The request is answered without the agent only when every message is
++  handled. A request that goes to the agent still settles the pending calls
++  its responses answer.
++- `a2ui_rpc_interceptor` (also in `a2ui.adk.a2a`) returns an
++  `A2aAgentExecutor` interceptor that ends a task `completed` when its request
++  held only `callAgentFunction` and `rendererFunctionResponse` messages. ADK's
++  executor would otherwise end a task with nothing to send back, such as one
++  holding only `rendererFunctionResponse`, in the `working` state.
+ - `exclude_a2ui_rpc_from_prompt` (also in `a2ui.adk.a2a`) is a
+   `before_model_callback` that removes the `callAgentFunction` and
+   `agentFunctionResponse` messages from the contents sent to the model. The
+@@ -110,6 +125,35 @@ can't answer, such as one without a `functionCallId` or with a `version` other
+ than `"1.0"`, is logged and dropped. A request whose calls are all dropped gets a
+ response with no parts, which `A2aAgentExecutor` ends in the `working` state.
+ 
++To settle the agent's calls to renderer functions, also pass the session's
++`RendererFunctionCalls`, and add the interceptor to the executor so a task that
++held only responses ends `completed`:
++
++```python
++from a2ui.adk import A2uiEventConverter, A2uiRendererCallsStore, a2ui_rpc_interceptor
++
++renderer_calls = A2uiRendererCallsStore()
++agent = LlmAgent(
++    ...,
++    before_agent_callback=a2ui_rpc_callback(
++        catalogs=active_catalogs, renderer_calls=renderer_calls.get
++    ),
++)
++config = A2aAgentExecutorConfig(
++    event_converter=A2uiEventConverter(a2ui_processor=processors.get),
++    execute_interceptors=[a2ui_rpc_interceptor()],
++)
++
++# In a tool
++message, result = renderer_calls.get(tool_context).call(
++    catalog_id=CATALOG_ID, name="getLocation"
++)
++```
++
++The pending calls live in this process's memory, so a deployment whose
++requests for one session may reach different replicas can't settle them this
++way.
++
+ ADK stores the calls and their replies in the session's events like any other
+ turn. `SendA2uiToClientToolset` removes them from the model's prompt; an agent
+ without the toolset passes `before_model_callback=exclude_a2ui_rpc_from_prompt`.
+```
+
+**File**: `python/a2ui_adk/src/a2ui/adk/__init__.py` (modified, +13/-4)
+```diff
+@@ -14,10 +14,11 @@
+ 
+ """A2UI extension for the Agent Development Kit (ADK).
+ 
+-`SendA2uiToClientToolset`, `A2uiInstruction` and `A2uiProcessorStore` only
+-need ADK. The ADK-to-A2A converters (`A2uiPartConverter`,
+-`A2uiEventConverter`), the A2UI RPC helpers (`a2ui_rpc_callback`,
+-`exclude_a2ui_rpc_from_prompt`), the `a2a` subpackage they live in, and the A2A subagent orchestration helpers
++`SendA2uiToClientToolset`, `A2uiInstruction`, `A2uiProcessorStore` and
++`A2uiRendererCallsStore` only need ADK. The ADK-to-A2A converters
++(`A2uiPartConverter`, `A2uiEventConverter`), the A2UI RPC helpers
++(`a2ui_rpc_callback`, `a2ui_rpc_interceptor`, `exclude_a2ui_rpc_from_prompt`),
++the `a2a` subpackage they live in, and the A2A subagent orchestration helpers
+ (`A2uiSubagentMap`, `SurfaceIdAlreadyExistsError`, the `orchestration`
+ subpackage) need the `a2a` extra:
+ 
+@@ -33,6 +34,7 @@
+ 
+ from .instruction import A2uiInstruction
+ from .processor_store import A2uiProcessorStore
++from .renderer_calls_store import A2uiRendererCallsStore
+ from .send_a2ui_to_client_toolset import (
+     A2uiEnabledProvider,
+     A2uiProcessorProvider,
+@@ -47,7 +49,9 @@
+         A2uiPartConverter,
+         A2uiRpcCallback,
+         CatalogsProvider,
++        RendererFunctionCallsProvider,
+         a2ui_rpc_callback,
++        a2ui_rpc_interceptor,
+         exclude_a2ui_rpc_from_prompt,
+     )
+     from .orchestration import A2uiSubagentMap, SurfaceIdAlreadyExistsError
+@@ -62,7 +66,9 @@
+     "A2uiPartConverter": (".a2a", "A2uiPartConverter"),
+     "A2uiRpcCallback": (".a2a", "A2uiRpcCallback"),
+     "CatalogsProvider": (".a2a", "CatalogsProvider"),
++    "RendererFunctionCallsProvider": (".a2a", "RendererFunctionCallsProvider"),
+     "a2ui_rpc_callback": (".a2a", "a2ui_rpc_callback"),
++    "a2ui_rpc_interceptor": (".a2a", "a2ui_rpc_interceptor"),
+     "exclude_a2ui_rpc_from_prompt": (".a2a", "exclude_a2ui_rpc_from_prompt"),
+     "A2uiSubagentMap": (".orchestration", "A2uiSubagentMap"),
+     "SurfaceIdAlreadyExistsError": (
+@@ -114,13 +120,16 @@ def __getattr__(name: str) -> Any:
+     "A2uiPartConverter",
+     "A2uiProcessorProvider",
+     "A2uiProcessorStore",
++    "A2uiRendererCallsStore",
+     "A2uiRpcCallback",
+     "A2uiSubagentMap",
+     "CatalogsProvider",
++    "RendererFunctionCallsProvider",
+     "SendA2uiToClientToolset",
+     "SurfaceIdAlreadyExistsError",
+     "a2a",
+     "a2ui_rpc_callback",
++    "a2ui_rpc_interceptor",
+     "exclude_a2ui_rpc_from_prompt",
+     "orchestration",
+ ]
+```
+
+---
+
+### Incident Patch 3: `bebabcf2` (2026-11-06)
+**Commit Message**: feat(typescript): agent functions and RendererToAgentMessageProcessor (#3862)
+
+* feat(typescript): implement Agent Function RPC helpers and conformance tests
+
+Signed-off-by: Nan Yu <[REDACTED_EMAIL]>
+
+* fix(typescript): tighten how agent functions join a catalog
+
+- AgentFunction.fromApi only binds a function the catalog declares;
+  copyWith rejects one wrapping a foreign declaration.
+- Agent functions are added with copyWith (or in functions), not
+  CatalogOptions.agentFunctions.
+- An AgentFunction built directly is always rendererOnly; fromApi keeps
+  rendererOnly or rendererOrAgent and rejects agentOnly.
+- Separate errors for a name repeated in agentFunctions and a name taken
+  by a catalog function.
+- Add Catalog.rendererFunctions.
+- Document that a handler may take (args) or (args, context).
+- Use a schema-only declaration in the fromApi tests.
+- CHANGELOG entry after the breaking changes, with the PR link.
+
+Signed-off-by: Nan Yu <[REDACTED_EMAIL]>
+
+* refactor(typescript): replace the agent RPC helpers with RendererToAgentMessageProcessor
+
+- Add RendererToAgentMessageProcessor and ProcessResult. It answers
+  callAgentFunction itself and passes action, error and
+  rendererFuncti
+
+**File**: `typescript/agents/a2ui_agent/CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -3,6 +3,7 @@
+ - **BREAKING CHANGE**: Prompt snippets (`PromptGenerator.generate()` and `promptSnippet`) follow one layout across formats and SDKs: the base rules, then the catalog instructions, then the examples under `### Examples:` followed by a blank line. `DirectJsonPromptGenerator` no longer overrides `generate()`, so its snippet loses the `## Workflow Description:` heading; add your own heading around the snippet if you want one. `DirectJsonPromptGenerator.generateBaseRules()` now returns the rules followed by a schema block with the protocol schemas (the agent-to-renderer schema and the common types schema), and `generateCatalogInstructions()` returns one schema block per catalog with only the catalog schema, so output that combines several catalogs' instructions holds the protocol schemas once ([#3562](https://github.com/a2ui-project/a2ui/issues/3562)). [#3567](https://github.com/a2ui-project/a2ui/pull/3567)
+ - **BREAKING CHANGE**: (v1_0) `validatePayload` and `RendererState.apply` check each `callRendererFunction` against the catalogs instead of running it, and reject one the renderer would refuse: a surface that doesn't exist when the call arrives, a catalog that isn't active, a function the catalog doesn't declare, a `rendererOnly` function (the default) or one that requires user activation, arguments that don't match the function's schema, a nested call to an `agentOnly` function or one that requires user activation, a nested `@index` call (the arguments are resolved outside any list template), and a data binding whose `@path` isn't a string or that holds another field. They also reject an `agentOnly` function bound into a component. A state made by `RendererState.of` still hands an accepted call to the renderer's processor. Recommended migration: declare the functions an agent calls with `allowedCallers` set to `agentOnly` or `rendererOrAgent` in the catalog the call names ([#3534](https://github.com/a2ui-project/a2ui/issues/3534), [#4008](https://github.com/a2ui-project/a2ui/pull/4008)).
+ - `ExpressPromptGenerator` teaches `Event(name, context?, userMessage=...)` in rule 8 for v1.0+ catalogs, while keeping the two-argument `Event(name, context)` rule for pre-v1.0 catalogs ([#3690](https://github.com/a2ui-project/a2ui/issues/3690), [#3867](https://github.com/a2ui-project/a2ui/pull/3867)).
++- (v1_0) Add `RendererToAgentMessageProcessor`, which processes the messages a renderer sends an agent. `processMessage(message)` returns a `ProcessResult` of whether it handled the message and the `replies` to send: it answers `callAgentFunction` with the agent functions of its `catalogs`, and passes `action`, `error` and `rendererFunctionResponse` to `onAction`, `onError` and `onRendererFunctionResponse`, which may decline a message by returning `false`. Also re-exports the agent function API and the v1.0 renderer-to-agent message types from `@a2ui/web_core`. [#3536](https://github.com/a2ui-project/a2ui/issues/3536), [#3862](https://github.com/a2ui-project/a2ui/pull/3862)
+ 
+ ## 0.1.0
+ 
+```
+
+**File**: `typescript/agents/a2ui_agent/README.md` (modified, +44/-0)
+```diff
+@@ -121,6 +121,50 @@ const v09Catalog = CatalogConfig.fromPath(
+ );
+ ```
+ 
++## Agent functions
++
++From v1.0, a catalog can declare functions that run on the agent: a renderer that doesn't implement a function sends `callAgentFunction` and waits for the agent's `agentFunctionResponse`. Add agent functions to your copy of a catalog with `copyWith`. `AgentFunction.fromApi` binds a handler to a function the catalog already declares, and `new AgentFunction(...)` adds a new one, with its arguments as a Zod schema (which types the handler) or a JSON Schema object. A v1.0 catalog checks that the parameter names are UAX #31 identifiers when it gets the function. A handler takes `(args)` or `(args, context)`, where `context` has the catalog, surface and call IDs. `withHandler` returns a copy bound to another handler, such as a test double.
++
++```ts
++import {AgentFunction} from '@a2ui/agent';
++import {z} from 'zod';
++
++const catalog = loaded.copyWith({
++  agentFunctions: [
++    AgentFunction.fromApi<{id: string}>(loaded.functions.get('lookupAccount')!, args =>
++      findAccount(args.id),
++    ),
++    new AgentFunction({
++      name: 'fetchFxRate',
++      returnType: 'number',
++      schema: z.object({base: z.string()}),
++      // `base` is a string, and the handler must return a number.
++      handler: async ({base}) => fetchRate(base),
++    }),
++  ],
++});
++```
++
++`RendererToAgentMessageProcessor` takes each message the renderer sends and returns whether it handled it and the messages to send back. It answers `callAgentFunction` itself, and passes `action`, `error` and `rendererFunctionResponse` messages to their callback, after checking them against the v1.0 schema. A message whose callback isn't set, or whose callback returns `false` to decline it, comes back with `handled: false`, so the app can pass it on to the model.
++
++```ts
++const messages = new RendererToAgentMessageProcessor({
++  catalogs: [catalog],
++  agentFunctionTimeoutMs: 10_000,
++  onError: message => log.warn(message.error),
++  // Handle the button that saves locally; let the model answer the others.
++  onAction: message => (message.action.name === 'save' ? save(message) : false),
++});
++
++for (const fromRenderer of request.messages) {
++  const {handled, replies} = await messages.processMessage(fromRenderer);
++  for (const reply of replies) send(reply);
++  if (!handled) runModelTurn(fromRenderer);
++}
++```
++
++The processor handles one message per call, so the app decides whether to process a request's messages one after another or concurrently, and what to do when one of them fails. A message whose `version` isn't `'1.0'` is an `A2uiValidationError`. The processor keeps no state between messages, so build one per agent, or one per request from the catalogs the request uses. Two catalogs with the same id are an `A2uiCatalogError`.
++
+ ## Development
+ 
+ ```sh
+```
+
+**File**: `typescript/agents/a2ui_agent/src/errors.ts` (modified, +2/-0)
+```diff
+@@ -26,6 +26,8 @@ export {
+   A2uiStateError,
+   A2uiIntegrityError,
+   A2uiRecursionError,
++  A2uiRpcError,
++  RpcErrorCode,
+ } from './internal/web-core.js';
+ 
+ /**
+```
+
+**File**: `typescript/agents/a2ui_agent/src/index.ts` (modified, +34/-4)
+```diff
+@@ -17,15 +17,35 @@
+ // Phase 0: Foundations
+ export {type ProtocolVersion} from './types.js';
+ 
+-// The v1.0 agent-to-renderer protocol message. Re-exported because it appears in public
+-// signatures -- notably the `examples` parameter of `A2uiGenerator` -- so callers must be
+-// able to name it.
+-export type {AgentToRendererMessage} from './internal/web-core.js';
++// The v1.0 agent-to-renderer and renderer-to-agent protocol messages. Re-exported because
++// they appear in public signatures -- notably `A2uiGenerator` and
++// `RendererToAgentMessageProcessor`.
++export type {
++  ActionMessage,
++  AgentFunctionResponseMessage,
++  AgentToRendererMessage,
++  CallAgentFunctionMessage,
++  ErrorMessage,
++  RendererFunctionResponseMessage,
++  RendererToAgentMessage,
++} from './internal/web-core.js';
+ 
+ // The renderer capabilities a request is negotiated against. Re-exported because
+ // `A2uiGenerator.createProcessor` and `resolveCatalogs` take it.
+ export type {RendererCapabilities} from './internal/web-core.js';
+ 
++export {
++  AgentFunction,
++  type AgentFunctionContext,
++  type AgentFunctionHandler,
++  type AgentFunctionInit,
++  Catalog,
++  type CatalogApi,
++  type CatalogInterface,
++  type CopyWithCatalogOptions,
++  isAgentFunction,
++} from './internal/web-core.js';
++
+ export {
+   A2uiError,
+   A2uiValidationError,
+@@ -34,6 +54,8 @@ export {
+   A2uiStateError,
+   A2uiIntegrityError,
+   A2uiRecursionError,
++  A2uiRpcError,
++  RpcErrorCode,
+   ParseError,
+   A2uiCompilationError,
+   A2uiCompilationParseError,
+@@ -161,3 +183,11 @@ export {
+   SkillGenerator,
+   SkillSet,
+ } from './skill/index.js';
++
++// Renderer-to-agent messages
++export {
++  type ProcessResult,
++  type RendererMessageCallback,
++  RendererToAgentMessageProcessor,
++  type RendererToAgentMessageProcessorOptions,
++} from './rpc/renderer-to-agent-message-processor.js';
+```
+
+**File**: `typescript/agents/a2ui_agent/src/internal/web-core.ts` (modified, +25/-2)
+```diff
+@@ -23,11 +23,15 @@
+  */
+ 
+ // ./catalog
+-export {Catalog} from '@a2ui/web_core/catalog';
++export {AgentFunction, Catalog, isAgentFunction} from '@a2ui/web_core/catalog';
+ export type {
++  AgentFunctionContext,
++  AgentFunctionHandler,
++  AgentFunctionInit,
+   CatalogApi,
+   CatalogInterface,
+   ComponentApi,
++  CopyWithCatalogOptions,
+   FunctionApi,
+   FunctionImplementation,
+ } from '@a2ui/web_core/catalog';
+@@ -53,18 +57,35 @@ export {
+   DeleteSurfaceMessageSchema as V10DeleteSurfaceMessageSchema,
+   CallRendererFunctionMessageSchema as V10CallRendererFunctionMessageSchema,
+   AgentFunctionResponseMessageSchema as V10AgentFunctionResponseMessageSchema,
++  RendererFunctionResponseMessageSchema as V10RendererFunctionResponseMessageSchema,
++  ActionMessageSchema as V10ActionMessageSchema,
++  ErrorMessageSchema as V10ErrorMessageSchema,
+   AgentToRendererMessageSchema,
+   RendererToAgentMessageSchema,
+   Schemas as V10Schemas,
+   V10RendererCapabilitiesSchema,
+   V10_STANDARD_DEFS,
+ } from '@a2ui/web_core/v1_0';
+ import type {
++  ActionMessage,
++  AgentFunctionResponseMessage,
+   AgentToRendererMessage,
++  CallAgentFunctionMessage,
++  ErrorMessage,
++  RendererFunctionResponseMessage,
+   RendererToAgentMessage,
+   V10RendererCapabilities,
+ } from '@a2ui/web_core/v1_0';
+-export type {AgentToRendererMessage, RendererToAgentMessage, V10RendererCapabilities};
++export type {
++  ActionMessage,
++  AgentFunctionResponseMessage,
++  AgentToRendererMessage,
++  CallAgentFunctionMessage,
++  ErrorMessage,
++  RendererFunctionResponseMessage,
++  RendererToAgentMessage,
++  V10RendererCapabilities,
++};
+ 
+ /**
+  * Version-neutral alias for renderer capabilities across protocol versions.
+@@ -109,6 +130,8 @@ export {
+   A2uiStateError,
+   A2uiIntegrityError,
+   A2uiRecursionError,
++  A2uiRpcError,
++  RpcErrorCode,
+ } from '@a2ui/web_core/errors';
+ 
+ // ./adapters
+```
+
+**File**: `typescript/agents/a2ui_agent/src/rpc/agent-function-registry.ts` (added, +380/-0)
+```diff
+@@ -0,0 +1,380 @@
 +/*
 + * Copyright 2024 Google LLC
 + *
@@ -2065,7 +3505,7 @@ Resolves #3599
 + * you may not use this file except in compliance with the License.
 + * You may obtain a copy of the License at
 + *
-+ *     https://www.apache.org/licenses/LICENSE-2.0
++ *      https://www.apache.org/licenses/LICENSE-2.0
 + *
 + * Unless required by applicable law or agreed to in writing, software
 + * distributed under the License is distributed on an "AS IS" BASIS,
@@ -2073,1358 +3513,427 @@ Resolves #3599
 + * See the License for the specific language governing permissions and
 + * limitations under the License.
 + */
-+---
 +
-+<div
-+  class="ip-root not-content"
-+  data-diagram
-+  data-diagram-title="inference-pipeline"
-+>
-+  <div class="ip-banner">
-+    <div class="ip-banner__left">
-+      <span class="ip-badge">SERVER-SIDE AGENT SDK</span>
-+      <span class="ip-banner__title">
-+        A2uiRequestProcessor: Swappable Generation &rarr; Standard Wire JSON
-+      </span>
-+    </div>
-+    <div class="ip-banner__pills">
-+      <span class="ip-pill ip-pill--teal">Express (Default)</span>
-+      <span class="ip-pill ip-pill--blue">Direct JSON</span>
-+      <span class="ip-pill ip-pill--amber">Custom Formats</span>
-+    </div>
-+  </div>
++import {
++  A2uiCatalogError,
++  A2uiRpcError,
++  A2uiValidationError,
++  AgentFunction,
++  type AgentFunctionContext,
++  type AgentFunctionResponseMessage,
++  type CatalogInterface,
++  type ComponentApi,
++  type FunctionApi,
++  PayloadValidator,
++  RpcErrorCode,
++  STRICT_VALIDATION,
++} from '../internal/web-core.js';
 +
-+  <div class="ip-grid">
-+    <!-- Stage 1: Prompt Synthesis -->
-+    <div class="ip-stage ip-stage--purple">
-+      <div class="ip-stage__head">
-+        <span class="ip-step-num ip-step-num--purple">1</span>
-+        <div class="ip-stage__titles">
-+          <div class="ip-stage__title">Prompt Synthesis</div>
-+          <code class="ip-stage__sub">processor.promptSnippet</code>
-+        </div>
-+      </div>
-+
-+      <div class="ip-box">
-+        <div class="ip-box__label">Active Catalog Contract</div>
-+        <div class="ip-chip-row">
-+          <code class="ip-chip">components</code>
-+          <code class="ip-chip">functions</code>
-+          <code class="ip-chip">instructions</code>
-+          <code class="ip-chip">examples</code>
-+        </div>
-+      </div>
-+
-+      <div class="ip-arrow-down" aria-hidden="true">&darr; PromptGenerator</div>
-+
-+      <div class="ip-code-card">
-+        <div class="ip-code-card__header">
-+          <span class="ip-tag ip-tag--teal">Express Signatures</span>
-+          <span class="ip-tag ip-tag--blue">or JSON Schema</span>
-+        </div>
-+        <div class="ip-code">
-+          <div><span class="ip-c"># Positional signatures</span></div>
-+          <div>
-+            &bull; <span class="ip-fn">Card</span>(<span class="ip-p"
-+              >child</span
-+            >)
-+          </div>
-+          <div>
-+            &bull; <span class="ip-fn">Text</span>(<span class="ip-p">text</span
-+            >, <span class="ip-k">variant?</span>)
-+          </div>
-+          <div>
-+            &bull; <span class="ip-fn">Button</span>(<span class="ip-p"
-+              >child</span
-+            >, <span class="ip-k">variant?</span>, <span class="ip-p"
-+              >action</span
-+            >)
-+          </div>
-+        </div>
-+      </div>
-+    </div>
-+
-+    <!-- Stage 2: Model Generation -->
-+    <div class="ip-stage ip-stage--teal">
-+      <div class="ip-stage__head">
-+        <span class="ip-step-num ip-step-num--teal">2</span>
-+        <div class="ip-stage__titles">
-+          <div class="ip-stage__title">Model Generation</div>
-+          <code class="ip-stage__sub">LLM Response Stream</code>
-+        </div>
-+      </div>
-+
-+      <div class="ip-code-card">
-+        <div class="ip-code-card__header">
-+          <span class="ip-tag ip-tag--teal">Express DSL (~3x fewer tokens)</span
-+          >
-+        </div>
-+        <div class="ip-code">
-+          <div><span class="ip-sentinel">&lt;a2ui&gt;</span></div>
-+          <div>
-+            <span class="ip-p">$/flight/gate</span> = <span class="ip-s"
-+              >"B12"</span
-+            >
-+          </div>
-+          <div>
-+            <span class="ip-k">root</span> = <span class="ip-fn">Card</span>(
-+          </div>
-+          <div class="ip-indent">
-+            <span class="ip-fn">Text</span>(<span class="ip-p"
-+              >$/flight/gate</span
-+            >, <span class="ip-s">"caption"</span>)
-+          </div>
-+          <div>)</div>
-+          <div><span class="ip-sentinel">&lt;/a2ui&gt;</span></div>
-+        </div>
-+      </div>
-+
-+      <div class="ip-alt-card">
-+        <div class="ip-alt-row">
-+          <span class="ip-tag ip-tag--blue">Direct JSON</span>
-+          <code>&lt;a2ui-json&gt;[...]&lt;/a2ui-json&gt;</code>
-+        </div>
-+        <div class="ip-alt-row">
-+          <span class="ip-tag ip-tag--amber">Custom Format</span>
-+          <code>Custom InferenceFormatFactory</code>
-+        </div>
-+      </div>
-+    </div>
-+
-+    <!-- Stage 3: Wire Compilation & Validation -->
-+    <div class="ip-stage ip-stage--amber">
-+      <div class="ip-stage__head">
-+        <span class="ip-step-num ip-step-num--amber">3</span>
-+        <div class="ip-stage__titles">
-+          <d
-```
-
-**File**: `docs/site/src/content/docs/concepts/inference-formats.mdx` (modified, +447/-6)
-```diff
-@@ -1,11 +1,452 @@
- ---
- title: 'Swappable Inference Formats'
--description: 'Compact inference formats (Express DSL, Direct JSON) and latency benchmarks in A2UI.'
-+description: 'How A2UI decouples the wire protocol from LLM generation with Express, Direct JSON, and custom inference formats.'
- ---
- 
--import {Aside} from '@astrojs/starlight/components';
-+import {Tabs, TabItem} from '@astrojs/starlight/components';
-+import InferencePipeline from '@components/docs/InferencePipeline.astro';
- 
--<Aside type="note" title="Work in Progress">
--  This page is currently being authored. Refer to the site outline in the repository for the
--  specification and planned content.
--</Aside>
-+A2UI separates the wire format that [renderer SDKs](/concepts/renderer-sdks/) consume from the inference format that a language model writes. Every client renderer receives the same standard A2UI JSON messages over the wire. On the server, the [agent SDKs](/concepts/agent-sdks/) let you swap how the model generates UI without changing any client code.
-+
-+In the diagram below, `A2uiRequestProcessor` coordinates three stages on the server. First, `PromptGenerator` compiles the active [catalog schemas](/concepts/catalogs/), `instructions`, and few-shot `examples` into a format-specific system prompt snippet. Next, the model emits its response inside sentinel tags such as `<a2ui>` for Express or `<a2ui-json>` for Direct JSON. Finally, `Parser` or `ResponseStream` heals streaming text, compiles the payload into wire JSON, and validates every message against `RendererState`.
-+
-+<InferencePipeline />
-+
-+## Wire standard vs. generation formats
-+
-+Standard JSON is an ideal wire protocol for client renderers. It is human-readable, language-independent, and validated directly by JSON Schema. Asking an LLM to generate raw wire JSON token by token, however, carries a high cost in latency and context window usage:
-+
-+1. Repeated keys such as `"id"`, `"component"`, and `"@path"`, plus hand-written component IDs, make wire JSON roughly 3x longer than Express's positional calls.
-+2. Injecting full JSON Schemas into the system prompt consumes roughly twice as many input tokens as compact function signatures.
-+3. Deeply nested braces, quotes, and manual component IDs increase the chance of syntax mistakes on smaller or faster models.
-+
-+Swappable inference formats solve this problem by treating LLM output as a server-side compilation step. The agent SDKs ship with two supported formats: Express, the default compact DSL, and Direct JSON, where the model emits wire JSON directly. You select a format by passing an `InferenceFormatFactory` to `A2uiGenerator` or `A2uiRequestProcessor`:
-+
-+| Format      | Factory Class             | Sentinel Tags                | SDK Support                        | Summary                                                                                                                |
-+| :---------- | :------------------------ | :--------------------------- | :--------------------------------- | :--------------------------------------------------------------------------------------------------------------------- |
-+| Express     | `ExpressFormatFactory`    | `<a2ui>...</a2ui>`           | TypeScript, Python, Dart (default) | Compact positional DSL that cuts output code tokens by ~3x, halves prompt tokens, and compiles to flat wire JSON.      |
-+| Direct JSON | `DirectJsonFormatFactory` | `<a2ui-json>...</a2ui-json>` | TypeScript, Python, Dart           | Standard A2UI wire JSON emitted directly by the model, with tolerant markdown stripping and incremental chunk healing. |
-+
-+Express is currently the only non-experimental alternative to Direct JSON in the repository. Because `A2uiGenerator` and `A2uiRequestProcessor` program against the `InferenceFormatFactory` interface, you can also write your own format for custom grammars or specialized models.
-+
-+## Side-by-side example: Express vs. wire JSON
-+
-+In Express, the model calls component constructors with positional arguments and sets values in the data model with `$/path = value`. It assigns the entry point of the surface to `root` and nests child components inside parent calls instead of inventing IDs by hand.
-+
-+The example below uses `Card`, `Column`, `Text`, and `Button` from the Basic Catalog, and the Express format derives signatures for any custom `catalog.json` you register. The block is shown indented for clarity; indentation and spaces around `=` and after commas are not required:
-+
-+```text title="Express block (shown indented for clarity)"
-+<a2ui>
-+$/flight/number = "NH 105"
-+$/flight/gate = "B12"
-+root = Card(
-+  Column([
-+    Text($/flight/number),
-+    Text($/flight/gate, "caption"),
-+    Button(Text("Board now"), action=Event("check_in", {flight: $/flight/number}))
-+  ])
-+)
-+</a2ui>
-+```
-+
-+When `parseResponse` or `openStream` reads that `<a2ui>` block, the Express compiler flattens the tree and assigns deterministic IDs (`root`, `root_child`, `root_child_childre
-```
-
----
-
-### Incident Patch 2: `46e35173` (2026-11-04)
-**Commit Message**: fix(web_core,angular): List emits no item for a child that renders nothing (#3957)
-
-* fix(web_core,angular): List emits no item for a child that renders nothing
-
-An unresolved child (pending, unknown type, cyclic) renders nothing, but List
-wrapped every child in an <li> or item div, so it still left an empty marker
-and a gap. That broke the blueprint's "no layout footprint" rule.
-
-- web_core: add A2uiLitElement.childRendersNothing(childRef) and have the
-  universal List skip such children, wrapper included (React and Lit share it).
-- Angular: component-host marks a host that renders nothing with
-  data-a2ui-empty, and ListComponent hides the item around such a host.
-
-Part of #2013.
-
-* test(web_core): cover the List item filter on v1.0 too
-
-* test(web_core): split the List item test into one per protocol version
-
-* Address review: share renderNode's lookup, rename to isChildResolved
-
-- A2uiLitElement: renderNode and the new isChildResolved go through one private
-  resolveChild, so they can't disagree. This covers the context-only path, where
-  an unknown type renders nothing, which the copied lookup missed.
-- Rename childRendersNothing to isChildResolved (what it checks; no double
- 
-
-**File**: `typescript/core/web_core/CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -10,6 +10,7 @@
- - **BREAKING CHANGE**: (v1_0) The basic catalog `TextField` requires `value`, as the other input components do, so a `TextField` without one fails validation instead of accepting input that never reaches the data model. Recommended migration: bind `value` to a data model path, such as `{"@path": "/form/email"}`. The path does not have to exist yet. [#3830](https://github.com/a2ui-project/a2ui/issues/3830), [#3868](https://github.com/a2ui-project/a2ui/pull/3868)
- - **BREAKING CHANGE**: `MessageProcessor.dispose()` now disposes every surface in `model` as well as `rpc`, so read surface state before calling it. Deleting a surface cancels its pending agent calls. [#3735](https://github.com/a2ui-project/a2ui/pull/3735)
- - **BREAKING CHANGE**: `DataContext.resolveAction` resolves the `context` entries and then the `userMessage` of an event action one at a time as an action execution, so a local function that throws there is an `EXECUTION_ERROR` instead of an `EXPRESSION_ERROR` on every protocol version, and returns a Promise of the resolved action when an entry waits on an asynchronous call, instead of an action whose values are Promises. A `userMessage` that resolves to `null` or `undefined` is left out instead of being an `INVALID_ACTION`. It settles to `undefined` when an entry fails, and nothing later in the action is evaluated. `options.userActivation` now applies to event actions as it does to function call actions. `SurfaceModel.dispatchAction` accepts that Promise, does not dispatch when a pending value rejects (a rejection that was not already reported is an `INVALID_ACTION`), and leaves out a `userMessage` that is not a string whether it settled synchronously or not. [#3735](https://github.com/a2ui-project/a2ui/pull/3735)
-+- The universal `List` emits no item for a child that renders nothing (pending, unknown type or cyclic), so it leaves no empty marker or gap. `A2uiLitElement.isChildResolved(childRef)` lets other containers that wrap each child do the same. [#2013](https://github.com/a2ui-project/a2ui/issues/2013)
- - `MessageProcessor` writes an inline `createSurface.dataModel` as one `DataModel.set` per top-level key (`/<escaped_key>`, escaping `~` as `~0` and `/` as `~1` per RFC 6901) instead of a single root `/` write. [#3857](https://github.com/a2ui-project/a2ui/pull/3857)
- - `Catalog.fromJson` applies the `default` of an optional property when parsing, as a `.default()` in a catalog defined in code does, so a function from a catalog document receives its defaults. [#3735](https://github.com/a2ui-project/a2ui/pull/3735)
- - (v1_0) A function call whose function the renderer does not implement (undeclared in the catalog the call resolves to, or declared schema-only) is sent to the agent with `callAgentFunction`, the specification's fallback routing, instead of failing with an `EXPRESSION_ERROR`. This applies to bindings, check rules and actions. It does not apply to `${...}` parts of a `formatString` template or to the arguments of an agent's `callRendererFunction`, where such a call fails with an error naming the function as before, and nothing is sent. A malformed event context value (such as an unrecognized `@` key) is an `EXPRESSION_ERROR` instead of an exception. With a `validationConfig`, a call to an undeclared function is still rejected unless the function is declared schema-only or `allowUnknownElements` is `true`. `MessageProcessor` enables it on v1.0 surfaces when it has an `outboundListener`; without one, such calls fail locally as before. The outbound call names the catalog the call resolved to. A declared function is refused locally when it is `agentOnly`, or requires user activation during a passive evaluation, and its resolved arguments are validated against its schema before sending. Arguments that are not valid JSON fail locally. The value is `undefined` until the answer arrives, and settles to `null` when a call fails; an agent error or a timeout is an `EXPRESSION_ERROR` carrying the failed call's `functionCallId`, and a cancelled call is not reported. A check rule waiting on the agent is pending and counts as valid. Reactive bindings share identical in-flight calls and cache answers per surface (up to 256, keyed by catalog, function and canonical arguments, cleared when the caller changes, evicted on failure) and hand each caller its own copy; actions always send a fresh call. A function whose argument is pending waits for it, and stops without running when an argument fails. Adds `SurfaceModel.agentFunctionCaller`, `SurfaceModel.callAgentFunction` (with the `AgentFunctionCallOptions` type), `SurfaceModel.disposed`, `RpcHandler.cancelSurfaceCalls`, and the `AgentFunctionCall` and `AgentFunctionCaller` types. [#3415](https://github.com/a2ui-project/a2ui/issues/3415), [#3536](https://github.com/a2ui-project/a2ui/issues/3536), [#3735](https://github.com/a2ui-project/a2ui/pull/3735)
-```
-
-**File**: `typescript/core/web_core/src/universal/a2ui-lit-element.ts` (modified, +49/-10)
-```diff
-@@ -41,11 +41,14 @@ import {
-   HostAccessibility,
-   type ResolvedAccessibilityAttributes,
- } from './host_accessibility.js';
--import {renderA2uiNode} from './render-a2ui-node.js';
-+import {canRenderA2uiNode, renderA2uiNode} from './render-a2ui-node.js';
- import type {WebComponentImplementation} from './web_component_implementation.js';
- 
- export type {CheckableResolvedProps, ResolvedAccessibilityAttributes};
- 
-+/** The surface a child renders on, as its data context reports it. */
-+type ChildSurface = NonNullable<ComponentContext['dataContext']['surface']>;
-+
- /**
-  * A reference to a child component to render. Either a string ID, or an object
-  * pairing an ID with an explicit data context path.
-@@ -396,19 +399,57 @@ export abstract class A2uiLitElement<
-    * @returns A Lit template result containing the rendered child component, or `nothing` if the reference is empty.
-    */
-   protected renderNode(childRef?: ComponentNode | A2uiChildRef, customPath?: string) {
--    if (!childRef || !this.context?.dataContext) return nothing;
-+    const child = this.resolveChild(childRef, customPath);
-+    if (!child) return nothing;
-+    if ('node' in child) return renderA2uiNode(child.node);
-+    const childContext = new ComponentContext(child.surface, child.componentId, child.path);
-+    const childCatalog: Catalog<WebComponentImplementation> = childContext.componentModel.catalog;
-+    return renderA2uiNode(childContext, childCatalog);
-+  }
-+
++const ALLOWED_TOP_LEVEL_KEYS = new Set(['version', 'callAgentFunction']);
++const ALLOWED_BODY_KEYS = new Set(['surfaceId', 'functionCallId', 'callFunction']);
++const ALLOWED_CALL_FUNCTION_KEYS = new Set(['@call', 'catalogId', 'args']);
++/**
++ * Options for an {@link AgentFunctionRegistry}.
++ */
++export interface AgentFunctionRegistryOptions {
 +  /**
-+   * Whether the child `renderNode(childRef, customPath)` would render has resolved: its
-+   * component has arrived and its type has an implementation. An unresolved child (pending,
-+   * unknown type or cyclic) renders nothing.
-+   *
-+   * Containers that give each child a slot of their own (an `<li>`, an item `div`) use this to
-+   * leave unresolved children out entirely, wrapper included, so they take no marker or gap.
-+   * It shares `renderNode`'s lookup, so the two always agree.
++   * How long a handler may run, in milliseconds, before the call is answered
++   * with an `EXECUTION_ERROR`. Must be greater than 0. No timeout when
++   * omitted.
 +   */
-+  protected isChildResolved(childRef?: ComponentNode | A2uiChildRef, customPath?: string): boolean {
-+    const child = this.resolveChild(childRef, customPath);
-+    if (!child) return false;
-+    if ('node' in child) return canRenderA2uiNode(child.node);
-+    const model = child.surface.componentsModel.get(child.componentId);
-+    const catalog = model?.catalog as Catalog<WebComponentImplementation> | undefined;
-+    return !!model && !!catalog?.components.get(model.type)?.tagName;
-+  }
++  readonly timeoutMs?: number;
++}
 +
-+  /**
-+   * Finds what `renderNode` renders for a child reference: the child's `ComponentNode` when the
-+   * node tree has one, otherwise the surface, component id and data path to build a context
-+   * from. Returns `undefined` when there is nothing to render.
-+   */
-+  private resolveChild(
-+    childRef?: ComponentNode | A2uiChildRef,
-+    customPath?: string,
-+  ):
-+    | {node: ComponentNode}
-+    | {surface: ChildSurface; componentId: ComponentId; path: string}
-+    | undefined {
-+    if (!childRef || !this.context?.dataContext) return undefined;
-     const {surface, path: parentPath} = this.context.dataContext;
-     if (!surface) {
--      return nothing;
-+      return undefined;
-     }
- 
-     const surfaceContainsComponent = !!surface.componentsModel?.get(this.context.componentModel.id);
-     if (!surfaceContainsComponent) {
--      return nothing;
-+      return undefined;
-     }
- 
-     if (isComponentNode(childRef) && !customPath) {
--      return renderA2uiNode(childRef);
-+      return {node: childRef};
-     }
- 
-     let componentId: ComponentId | undefined;
-@@ -421,21 +462,19 @@ export abstract class A2uiLitElement<
-     }
- 
-     if (!componentId || !surface.componentsModel?.get(componentId)) {
--      return nothing;
-+      return undefined;
-     }
- 
-     path = path ?? parentPath;
- 
-     if (this.node) {
-       const childNode = findChildNode(this.node, componentId, path);
-       if (childNode) {
--        return renderA2uiNode(childNode);
-+        return {node: childNode};
-       }
-     }
- 
--    const childContext = new ComponentContext(surface, componentId, path);
--    const childCatalog: Catalog<WebComponentImplementation> = childContext.componentModel.catalog;
--    return renderA2uiNode(childContext, childCatalog);
-+    return {surface, componentId, path};
-   }
- 
-   /**
-```
-
-**File**: `typescript/core/web_core/src/universal/basic_catalog/components/List.test.ts` (modified, +126/-0)
-```diff
-@@ -25,6 +25,9 @@ import {
-   SurfaceModel,
-   Subscription,
- } from '../../../v0_9/index.js';
-+import {NodeResolver} from '../../../resolution/node-resolver.js';
-+import type {ComponentNode} from '../../../resolution/component-node.js';
-+import {getValue} from '../../../reactivity/signals.js';
- import {
-   type A2uiWebComponentElement,
-   registerUniversalElement,
-@@ -46,6 +49,7 @@ describe('List Component', () => {
-   let surface: SurfaceModel;
-   let element: A2uiWebComponentElement | null = null;
-   let subscription: Subscription | null = null;
-+  let resolver: NodeResolver | null = null;
- 
-   beforeEach(() => {
-     processor = new MessageProcessor([basicCatalog]);
-@@ -87,6 +91,9 @@ describe('List Component', () => {
-   afterEach(() => {
-     subscription?.unsubscribe();
-     subscription = null;
-+    // Disposed here so that a failed assertion doesn't leave it subscribed to the surface.
-+    resolver?.dispose();
-+    resolver = null;
-     if (element) {
-       element.remove();
-       element = null;
-@@ -113,6 +120,125 @@ describe('List Component', () => {
-     assert.strictEqual(el.textContent?.includes('List Item 2'), true);
-   });
- 
-+  /**
-+   * Mounts a List over `root`, whose `late` child has not arrived, and checks it gets no item;
-+   * then runs `sendLate` and checks the item appears in order.
-+   */
-+  async function expectNoItemUntilArrival(root: ComponentNode, sendLate: () => void) {
-+    const el = document.createElement('a2ui-list') as A2uiWebComponentElement;
-+    element = el;
-+    document.body.appendChild(el);
-+    await asyncUpdate(el, e => {
-+      e.node = root;
-+    });
-+
-+    const items = () => el.querySelectorAll('.a2ui-list-item-none');
-+    // `late` has not arrived: no empty item (box, gap) stands in for it.
-+    assert.strictEqual(items().length, 2);
-+    assert.strictEqual(el.querySelectorAll('a2ui-basic-text').length, 2);
-+
-+    sendLate();
-+    await (el as unknown as {updateComplete: Promise<unknown>}).updateComplete;
-+
-+    assert.strictEqual(items().length, 3);
-+    assert.deepStrictEqual(
-+      [...el.querySelectorAll<A2uiWebComponentElement>('a2ui-basic-text')].map(
-+        t => t.node?.componentId,
-+      ),
-+      ['a', 'late', 'b'],
-+    );
-+  }
-+
-+  it('emits no item for a child that has not resolved, then adds it on arrival (v0.9)', async () => {
-+    const nodeProcessor = new MessageProcessor([basicCatalog]);
-+    nodeProcessor.processMessages([
-+      {
-+        version: 'v0.9',
-+        createSurface: {surfaceId: 'node-surface', catalogId: basicCatalog.id},
-+      },
-+      {
-+        version: 'v0.9',
-+        updateComponents: {
-+          surfaceId: 'node-surface',
-+          components: [
-+            {id: 'root', component: 'List', children: ['a', 'late', 'b']},
-+            {id: 'a', component: 'Text', text: 'A'},
-+            {id: 'b', component: 'Text', text: 'B'},
-+          ],
-+        },
-+      },
-+    ]);
-+    resolver = new NodeResolver(nodeProcessor.model.getSurface('node-surface')!, basicCatalog);
-+
-+    await expectNoItemUntilArrival(getValue(resolver.rootNode)!, () =>
-+      nodeProcessor.processMessages([
-+        {
-+          version: 'v0.9',
-+          updateComponents: {
-+            surfaceId: 'node-surface',
-+            components: [{id: 'late', component: 'Text', text: 'Late'}],
-+          },
-+        },
-+      ]),
-+    );
-+  });
-+
-+  it('emits no item for a child that has not resolved, then adds it on arrival (v1.0)', async () => {
-+    // v1.0 uses the same universal List as v0.9.
-+    const v1Catalog = (await import('../../../catalogs/basic/v1/index.js')).basicCatalog;
-+    const nodeProcessor = new MessageProcessor([v1Catalog]);
-+    nodeProcessor.processMessages([
-+      {
-+        version: '1.0',
-+        createSurface: {surfaceId: 'node-surface', catalogId: v1Catalog.id},
-+      },
-+      {
-+        version: '1.0',
-+        updateComponents: {
-+          surfaceId: 'node-surface',
-+          components: [
-+            {id: 'root', component: 'List', children: ['a', 'late', 'b']},
-+            {id: 'a', component: 'Text', text: 'A'},
-+            {id: 'b', component: 'Text', text: 'B'},
-+          ],
-+        },
-+      },
-+    ]);
-+    resolver = new NodeResolver(nodeProcessor.model.getSurface('node-surface')!, v1Catalog);
-+
-+    await expectNoItemUntilArrival(getValue(resolver.rootNode)!, () =>
-+      nodeProcessor.processMessages([
-+        {
-+          version: '1.0',
-+          updateComponents: {
-+            surfaceId: 'node-surface',
-+            components: [{id: 'late', component: 'Text', text: 'Late'}],
-+          },
-+        },
-+      ]),
-+    );
-+  });
-+
-+  it('emits no item for an unknown-type child when rendered from a context alone', async () => {
-+    // Without a node tree, renderNode builds a ComponentContext and renders nothing for a type
-+    // the catalog doesn't implement. The List must agree and leave that child out.
-+    surface.componentsModel.addComponent(
-+      new ComponentModel('weird', 'StarRati
-```
-
-**File**: `typescript/core/web_core/src/universal/basic_catalog/components/List.ts` (modified, +4/-1)
-```diff
-@@ -67,7 +67,10 @@ export class A2uiListElement extends BasicCatalogA2uiLitElement<ListSupportedApi
-     const props = this.controller.props;
-     if (!props) return nothing;
- 
--    const children: ResolvedChildList = Array.isArray(props.children) ? props.children : [];
-+    const children: ResolvedChildList = (Array.isArray(props.children) ? props.children : [])
-+      // An unresolved child renders nothing and gets no item: an empty <li> would still show a
-+      // marker and take a gap.
-+      .filter(child => this.isChildResolved(child));
-     const listStyle = (props as any).listStyle;
-     const direction = props.direction || 'vertical';
-     const alignItems = props.align ? (ALIGN_MAP[props.align] ?? 'stretch') : undefined;
-```
-
-**File**: `typescript/core/web_core/src/universal/render-a2ui-node.test.ts` (modified, +40/-1)
-```diff
-@@ -24,7 +24,7 @@ import {ComponentContext} from '../resolution/component-context.js';
- import {NodeResolver} from '../resolution/node-resolver.js';
- import {getValue} from '../reactivity/signals.js';
- import {MessageProcessor} from '../processing/message-processor.js';
--import {renderA2uiNode} from './render-a2ui-node.js';
-+import {canRenderA2uiNode, renderA2uiNode} from './render-a2ui-node.js';
- import {Catalog} from '../catalog/types.js';
- import type {A2uiWebComponentElement} from './a2ui_web_component_element.js';
- import type {WebComponentImplementation} from './web_component_implementation.js';
-@@ -176,6 +176,45 @@ describe('renderA2uiNode', () => {
-     resolver.dispose();
-   });
- 
-+  it('canRenderA2uiNode is true exactly when renderA2uiNode renders an element', () => {
-+    const p = new MessageProcessor([testCatalog]);
-+    p.processMessages([
-+      {version: 'v0.9', createSurface: {surfaceId: 's', catalogId: 'test-catalog'}},
-+      {
-+        version: 'v0.9',
-+        updateComponents: {
-+          surfaceId: 's',
-+          components: [
-+            {id: 'root', component: 'Button', text: 'Root'},
-+            {id: 'no-tag', component: 'MissingTag'},
-+          ],
-+        },
-+      },
-+    ]);
-+    const resolver = new NodeResolver(p.model.getSurface('s')!, testCatalog);
-+    const root = getValue(resolver.rootNode)!;
-+    assert.strictEqual(canRenderA2uiNode(root), true);
-+    assert.notStrictEqual(renderA2uiNode(root), nothing);
-+
-+    const noTagResolver = new NodeResolver(p.model.getSurface('s')!, testCatalog);
-+    p.model.getSurface('s')!.componentsModel.removeComponent('root');
-+    p.processMessages([
-+      {
-+        version: 'v0.9',
-+        updateComponents: {surfaceId: 's', components: [{id: 'root', component: 'MissingTag'}]},
-+      },
-+    ]);
-+    const noTagRoot = getValue(noTagResolver.rootNode)!;
-+    assert.strictEqual(noTagRoot.isPlaceholder, false);
-+    assert.strictEqual(canRenderA2uiNode(noTagRoot), false);
-+
-+    // A disposed node renders nothing too.
-+    resolver.dispose();
-+    assert.strictEqual(root.disposed, true);
-+    assert.strictEqual(canRenderA2uiNode(root), false);
-+    noTagResolver.dispose();
-+  });
-+
-   it('returns nothing for a node whose implementation has no tagName', () => {
-     const missingTagSurface = new MessageProcessor([testCatalog]);
-     missingTagSurface.processMessages([
-```
-
-**File**: `typescript/core/web_core/src/universal/render-a2ui-node.ts` (modified, +25/-6)
-```diff
-@@ -101,15 +101,34 @@ export function renderA2uiNode(
-   return a2uiElement(implementation.tagName, source);
- }
- 
-+/** A node `renderA2uiNode` renders as an element: resolved, with a context and a tag name. */
-+type RenderableNode = ComponentNode & {
-+  context: ComponentContext;
-+  impl: Partial<WebComponentImplementation> & {tagName: string};
-+};
++interface ParsedCallEnvelope {
++  readonly surfaceId: string;
++  readonly functionCallId: string;
++  readonly name: string;
++  readonly catalogId?: string;
++  readonly args?: Record<string, unknown>;
++}
 +
 +/**
-+ * Whether `renderA2uiNode(node)` renders an element for `node`: it has resolved, is not
-+ * disposed, has a context, and its implementation is a custom element with a tag name.
-+ * Containers use this (through `A2uiLitElement.isChildResolved`) to agree with it exactly.
++ * Indexes the agent functions of catalogs and answers `callAgentFunction`
++ * messages with them. Internal to `RendererToAgentMessageProcessor`.
++ *
++ * A call that fails after its `functionCallId` is known produces an
++ * `agentFunctionResponse` with `error` rather than throwing, so the renderer's
++ * pending `callAgentFunction` promise settles cleanly instead of hanging until
++ * its timeout. A message without a usable `functionCallId` cannot be answered
++ * and throws {@link A2uiValidationError}.
 + */
-+export function canRenderA2uiNode(node: ComponentNode): node is RenderableNode {
-+  return (
-+    !node.isPlaceholder &&
-+    !node.disposed &&
-+    !!node.context &&
-+    !!(node.impl as Partial<WebComponentImplementation> | undefined)?.tagName
-+  );
-+}
++export class AgentFunctionRegistry {
++  private readonly _catalogs = new Map<string, CatalogInterface<ComponentApi, FunctionApi>>();
++  private readonly _functions = new Map<string, Map<string, AgentFunction>>();
++  private readonly _timeoutMs?: number;
 +
- function renderNode(node: ComponentNode) {
--  if (node.isPlaceholder || node.disposed || !node.context) {
--    return nothing;
--  }
--  const implementation = node.impl as Partial<WebComponentImplementation> | undefined;
--  if (!implementation?.tagName) {
--    console.warn(`Component implementation not found or missing tagName for type: ${node.type}`);
-+  if (!canRenderA2uiNode(node)) {
-+    if (!node.isPlaceholder && !node.disposed && node.context) {
-+      console.warn(`Component implementation not found or missing tagName for type: ${node.type}`);
-+    }
-     return nothing;
-   }
-+  const implementation = node.impl;
-   if (isWebComponentImplementation(implementation)) {
-     registerUniversalElement(implementation);
-   }
-```
-
-**File**: `typescript/renderers/angular/CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -2,6 +2,7 @@
- 
- - **BREAKING CHANGE**: `ComponentHostComponent` no longer assigns `element.context` when mounting universal Web Components, and `ComponentBinder.bind(context)` and `AngularWcHost.context` are deprecated in favor of `ComponentBinder.bindNode(node)` and `AngularWcHost.node`. Recommended migration: implement `node` on custom `A2uiWebComponentElement` classes instead of `context`. [#3841](https://github.com/a2ui-project/a2ui/pull/3841)
- - **BREAKING CHANGE**: The host element of an Angular catalog component (`<a2ui-v09-component-host>`, or `<a2ui-ng-<name>>` from `toWebComponent`) applies the component's `accessibility` attributes: `aria-live`, `aria-hidden`, and `inert` on the host, and `aria-label` and `aria-description` on the host with `role="group"` (unless the host already has a `role`). Add `AccessibilityTargetDirective` (`a2uiAccessibilityTarget`), which moves `aria-label` and `aria-description` to the element it marks and adds `aria-invalid="true"` there while a check fails, and `ValidationErrorsDirective` (`a2uiValidationErrors`), which marks the element showing the validation errors so the target gets `aria-describedby` pointing at it. The v0.9 native basic catalog marks the control of `Button`, `CheckBox`, `Slider`, `TextField`, `Image`, `AudioPlayer`, and `Video`, and wraps the error messages of `Slider` and `TextField` in `<div class="a2ui-validation-errors">`. Recommended migration: a component that already sets `aria-label` from `props().accessibility` on an inner element should mark that element with `a2uiAccessibilityTarget`, or the label is announced twice. [#3499](https://github.com/a2ui-project/a2ui/issues/3499), [#3869](https://github.com/a2ui-project/a2ui/pull/3869)
-+- `ListComponent` hides the item of a child that renders nothing, so it leaves no empty marker or gap. `<a2ui-v09-component-host>` carries `data-a2ui-empty` while it renders nothing. [#2013](https://github.com/a2ui-project/a2ui/issues/2013)
- 
- ## 0.14.0
- 
-```
-
-**File**: `typescript/renderers/angular/src/core/component-host.component.ts` (modified, +3/-0)
-```diff
-@@ -133,6 +133,9 @@ function findNodeInList(
-   providers: [provideAccessibilityTargets()],
-   host: {
-     style: 'display: contents;',
-+    // Marks a host that renders nothing (its component has not resolved), so a container that
-+    // wraps each child in an item element can drop that item too (see ListComponent).
-+    '[attr.data-a2ui-empty]': 'componentType() ? null : ""',
-   },
-   // The quotes around the input keys passed to *ngComponentOutlet are critical to survive Closure
-   // minification. Prettier keeps them (`quoteProps: "preserve"` in the root `.prettierrc`).
-```
-
----
-
-### Incident Patch 3: `f077c849` (2026-11-05)
-**Commit Message**: feat(swift): SwiftUI HostedViewDriver, NodeResolver placeholders, and diagnostics (#3872)
-
-## Summary
-
-In the Swift SDK, `NodeResolver` previously returned `nil` whenever a component referenced a missing child ID, an unregistered component type, or a cyclic child reference. The `node_resolution` conformance suite requires materializing placeholder nodes and emitting surface diagnostics instead. In addition, `A2UISwiftUITests` inspected only the intermediate `A2UICore.Node` tree rather than hosting `Surface` in a native window to check rendered controls and accessibility attributes.
-
-This change updates `A2UICore` (`Node`, `NodeResolver`, and `MessageProcessor`) to materialize `.pending`, `.unknownType`, and `.cyclic` placeholder nodes and emit `UNKNOWN_COMPONENT_TYPE` and `CYCLIC_REFERENCE` diagnostics. It also adds `HostedViewDriver` and `a2uiAccessibility` in `A2UISwiftUI` so `AdapterConformanceTests` runs every case against both `AdapterHarness` and a live `NSHostingController`/`UIHostingController` window.
-
-## Changes
-
-### Swift Core `NodeResolver` Placeholders and Diagnostics (`swift/core/`)
-
-- Adds `NodeState` (`resolved`, `pending`, `unknownType = "unknown-type"`, `cyclic`),
-
-**File**: `swift/core/Sources/A2UICore/Models/Node.swift` (modified, +71/-1)
-```diff
-@@ -15,6 +15,14 @@
- import Observation
- import OrderedJSON
- 
-+/// The resolution state of a component ``Node``.
-+public enum NodeState: String, Sendable, Equatable {
-+  case resolved = "resolved"
-+  case pending = "pending"
-+  case unknownType = "unknown-type"
-+  case cyclic = "cyclic"
-+}
-+
- /// A persistent, observable backing store for a resolved component node.
- @MainActor
- package final class NodeBox: Observable {
-@@ -23,6 +31,9 @@ package final class NodeBox: Observable {
-   nonisolated let id: String
-   nonisolated let type: String
-   nonisolated let catalogID: String?
-+  nonisolated let state: NodeState
-+  nonisolated let scopeKey: String?
-+  nonisolated let dataContextPath: String
-   private var _properties: [String: any Resolved]
-   private var _metadata: [String: JSONValue]?
-   package private(set) var revision: UInt64 = 0
-@@ -42,12 +53,18 @@ package final class NodeBox: Observable {
-     id: String,
-     type: String,
-     catalogID: String? = nil,
-+    state: NodeState = .resolved,
-+    scopeKey: String? = nil,
-+    dataContextPath: String = "/",
-     properties: [String: any Resolved],
-     metadata: [String: JSONValue]? = nil
-   ) {
-     self.id = id
-     self.type = type
-     self.catalogID = catalogID
-+    self.state = state
-+    self.scopeKey = scopeKey
-+    self.dataContextPath = dataContextPath
-     self._properties = properties
-     self._metadata = metadata
-   }
-@@ -129,30 +146,77 @@ public struct Node: Identifiable, @preconcurrency Equatable, Sendable {
-   public var id: String { box.id }
-   public var type: String { box.type }
-   public var catalogID: String? { box.catalogID }
-+  public var state: NodeState { box.state }
-+  public var scopeKey: String? { box.scopeKey }
-+  public var dataContextPath: String { box.dataContextPath }
-   @MainActor
-   public var properties: [String: any Resolved] { box.properties }
-   @MainActor
-   public var metadata: [String: JSONValue]? { box.metadata }
-   @MainActor
-   public var extensions: [String: JSONValue]? { MetadataValidator.extensions(from: box.metadata) }
- 
-+  /// The identity of the node's backing store.
-+  ///
-+  /// The resolver updates a node in place while its component keeps its type and state, so two
-+  /// nodes with the same identity are the same node instance at different points in time.
-+  public var identity: ObjectIdentifier { ObjectIdentifier(box) }
-+
-   /// Creates a new resolved component node.
-   public init(
-     id: String,
-     type: String,
-     catalogID: String? = nil,
-+    state: NodeState = .resolved,
-+    scopeKey: String? = nil,
-+    dataContextPath: String = "/",
-     properties: [String: any Resolved],
-     metadata: [String: JSONValue]? = nil
-   ) {
-     self.box = NodeBox(
-       id: id,
-       type: type,
-       catalogID: catalogID,
-+      state: state,
-+      scopeKey: scopeKey,
-+      dataContextPath: dataContextPath,
-       properties: properties,
-       metadata: metadata
-     )
-   }
- 
-+  /// Creates a placeholder node for a referenced component ID that has not arrived yet.
-+  public static func pending(
-+    id: String,
-+    scopeKey: String? = nil,
-+    dataContextPath: String = "/"
-+  ) -> Node {
-+    Node(
-+      id: id,
-+      type: "Placeholder",
-+      state: .pending,
-+      scopeKey: scopeKey,
-+      dataContextPath: dataContextPath,
-+      properties: [:]
-+    )
-+  }
-+
-+  /// Creates a placeholder node for a component reference that closes a cycle.
-+  public static func cyclic(
-+    id: String,
-+    scopeKey: String? = nil,
-+    dataContextPath: String = "/"
-+  ) -> Node {
-+    Node(
-+      id: id,
-+      type: "Placeholder",
-+      state: .cyclic,
-+      scopeKey: scopeKey,
-+      dataContextPath: dataContextPath,
-+      properties: [:]
-+    )
-+  }
-+
-   /// Updates the backing box's resolved properties and metadata in-place.
-   @MainActor
-   func updateProperties(
-@@ -173,7 +237,13 @@ public struct Node: Identifiable, @preconcurrency Equatable, Sendable {
-     if lhs.box === rhs.box {
-       return true
-     }
--    guard lhs.id == rhs.id && lhs.type == rhs.type && lhs.catalogID == rhs.catalogID,
-+    guard
-+      lhs.id == rhs.id,
-+      lhs.type == rhs.type,
-+      lhs.catalogID == rhs.catalogID,
-+      lhs.state == rhs.state,
-+      lhs.scopeKey == rhs.scopeKey,
-+      lhs.dataContextPath == rhs.dataContextPath,
-       MetadataValidator.areEqual(lhs.metadata, rhs.metadata),
-       lhs.properties.count == rhs.properties.count
-     else {
-```
-
-**File**: `swift/core/Sources/A2UICore/Processing/MessageProcessor.swift` (modified, +4/-1)
-```diff
-@@ -1161,7 +1161,10 @@ public final class MessageProcessor: ObservableObject {
-     let held = surface.componentsModel.components
-     let catalogs = surface.catalogs
-     let defaultCatalogID = surface.defaultCatalogID
--    let checksBatch = config.allowDanglingReferences && config.allowMissingRoot
-+    // The bound assumes the graph is acyclic, so a config that admits cycles checks the whole
-+    // surface each time.
-+    let checksBatch =
-+      config.allowDanglingReferences && config.allowMissingRoot && !config.allowCyclicReferences
-     var batch: [String: [String: JSONValue]] = [:]
-     for component in components {
-       guard let id = component["id"]?.stringValue else { continue }
-```
-
-**File**: `swift/core/Sources/A2UICore/Resolution/NodeResolver.swift` (modified, +161/-34)
-```diff
-@@ -44,6 +44,7 @@ public final class NodeResolver: Sendable {
-   private struct ComponentIdentity: Equatable {
-     let type: String
-     let catalogID: String?
-+    let state: NodeState
-   }
- 
-   private struct NodeResolutionRecord {
-@@ -54,18 +55,23 @@ public final class NodeResolver: Sendable {
-     let index: Int?
-     let instanceSuffix: String?
-     let visited: Set<String>
--    var componentSnapshot: ComponentModel
-+    var componentSnapshot: ComponentModel?
-     var childIdentities: [String: ComponentIdentity?]
-     var readValues: [String: JSONValue?]
-     var templateCounts: [String: Int]
-     var directChildInstances: Set<String>
-     var agentCalls: Set<AgentFunctionCall>
-+    /// The keys in `activeCyclicNodes` of the cyclic placeholders this node references.
-+    var cyclicKeys: [String] = []
-   }
- 
-   /// The number of `resolveNode` invocations executed during the most recent `resolveTree()` pass.
-   package private(set) var lastResolvedNodeCount = 0
- 
-   private var activeNodes: [String: Node] = [:]
-+  /// Cyclic placeholder nodes, keyed by the referencing node, the property that holds the
-+  /// reference, the repeated node and the occurrence of that reference within the property.
-+  private var activeCyclicNodes: [String: Node] = [:]
-   private var schemaCache: [String: CachedComponentSchema] = [:]
-   private var nodeRecords: [String: NodeResolutionRecord] = [:]
-   private var nodesByDefinitionID: [String: Set<String>] = [:]
-@@ -82,6 +88,8 @@ public final class NodeResolver: Sendable {
-   private var currentNodeTemplateCounts: [String: Int]?
-   private var currentNodeChildIdentities: [String: ComponentIdentity?]?
-   private var currentNodeDirectChildren: Set<String>?
-+  /// The cyclic placeholder keys the node being resolved references, in order.
-+  private var currentNodeCyclicKeys: [String]?
-   private var reportedExpressionErrors: Set<String> = []
-   /// The error keys each node reported in the current pass, by node key. A node shared by several
-   /// parents resolves once per parent, so these are committed to `reportedExpressionErrors` when
-@@ -311,6 +319,7 @@ public final class NodeResolver: Sendable {
- 
-   private func resetResolutionState() {
-     activeNodes.removeAll()
-+    activeCyclicNodes.removeAll()
-     nodeRecords.removeAll()
-     nodesByDefinitionID.removeAll()
-     parentsByChildDefinitionID.removeAll()
-@@ -371,22 +380,24 @@ public final class NodeResolver: Sendable {
-         for nodeKey in instances {
-           guard let record = nodeRecords[nodeKey] else { continue }
-           if record.componentSnapshot != currentComp || hadClearedErrors {
--            let previousIdentity = ComponentIdentity(
--              type: record.componentSnapshot.type,
--              catalogID: record.componentSnapshot.catalogID ?? defaultCatalogID
--            )
-+            let previousIdentity = record.componentSnapshot.map {
-+              componentIdentity(for: $0)
-+            }
-             if let currentComp,
-+              let previousSnap = record.componentSnapshot,
-               !hadClearedErrors,
-               currentIdentity == previousIdentity,
--              record.componentSnapshot.properties == currentComp.properties
-+              previousSnap.properties == currentComp.properties
-             {
-               var updatedRecord = record
-               updatedRecord.componentSnapshot = currentComp
-               nodeRecords[nodeKey] = updatedRecord
-               if let existing = activeNodes[nodeKey] {
-                 existing.updateMetadata(currentComp.metadata)
-               }
--            } else if currentIdentity == previousIdentity || nodeKey == "root" {
-+            } else if currentIdentity != nil,
-+              currentIdentity == previousIdentity || nodeKey == "root"
-+            {
-               affectedNodeIDs.insert(nodeKey)
-             }
-           }
-@@ -490,9 +501,17 @@ public final class NodeResolver: Sendable {
-     in components: [String: ComponentModel]
-   ) -> ComponentIdentity? {
-     guard let comp = components[definitionID] else { return nil }
-+    return componentIdentity(for: comp)
-+  }
-+
-+  private func componentIdentity(for comp: ComponentModel) -> ComponentIdentity {
-+    let effectiveCatalogID = comp.catalogID ?? defaultCatalogID
-+    let targetCatalog = getCatalog(id: effectiveCatalogID)
-+    let isRegistered = targetCatalog?.components[comp.type] != nil
-     return ComponentIdentity(
-       type: comp.type,
--      catalogID: comp.catalogID ?? defaultCatalogID
-+      catalogID: effectiveCatalogID,
-+      state: isRegistered ? .resolved : .unknownType
-     )
-   }
- 
-@@ -508,9 +527,10 @@ public final class NodeResolver: Sendable {
-       }
-       if var record = nodeRecords[nodeKey],
-         let currentComp,
--        record.componentSnapshot.type == currentComp.type,
--        record.componentSnapshot.catalogID == currentComp.catalogID,
--        record.componentSnapshot.properties == currentComp.properties
-+        let snapshot = record.compon
-```
-
-**File**: `swift/core/Sources/A2UICore/Validation/GraphTopologyValidator.swift` (modified, +8/-2)
-```diff
-@@ -41,6 +41,7 @@ public enum GraphTopologyValidator {
-   ) throws {
-     let (allComponentIDs, adjacencyList) = try buildAdjacencyMap(
-       from: components,
-+      config: config,
-       catalogs: catalogs,
-       defaultCatalogID: defaultCatalogID
-     )
-@@ -234,6 +235,7 @@ public enum GraphTopologyValidator {
- 
-   private static func buildAdjacencyMap(
-     from components: [[String: JSONValue]],
-+    config: ValidationConfig,
-     catalogs: [String: AnyCatalog]?,
-     defaultCatalogID: String?
-   ) throws -> (allIDs: Set<String>, adjacencyList: AdjacencyMap) {
-@@ -264,7 +266,7 @@ public enum GraphTopologyValidator {
- 
-       let references = extractReferences(from: component, schema: componentSchema)
-       for reference in references {
--        if reference.referenceID == componentID {
-+        if reference.referenceID == componentID, !config.allowCyclicReferences {
-           throw A2UIRecursionError(
-             """
-             Self-reference detected: Component '\(componentID)' \
-@@ -327,6 +329,7 @@ public enum GraphTopologyValidator {
-           depth: 0,
-           allIDs: allIDs,
-           adjacencyList: adjacencyList,
-+          allowsCycles: config.allowCyclicReferences,
-           visited: &visited,
-           recursionStack: &recursionStack
-         )
-@@ -340,6 +343,7 @@ public enum GraphTopologyValidator {
-       depth: 0,
-       allIDs: allIDs,
-       adjacencyList: adjacencyList,
-+      allowsCycles: config.allowCyclicReferences,
-       visited: &visited,
-       recursionStack: &recursionStack
-     )
-@@ -356,6 +360,7 @@ public enum GraphTopologyValidator {
-     depth: Int,
-     allIDs: Set<String>,
-     adjacencyList: AdjacencyMap,
-+    allowsCycles: Bool,
-     visited: inout Set<String>,
-     recursionStack: inout Set<String>
-   ) throws {
-@@ -376,11 +381,12 @@ public enum GraphTopologyValidator {
-             depth: depth + 1,
-             allIDs: allIDs,
-             adjacencyList: adjacencyList,
-+            allowsCycles: allowsCycles,
-             visited: &visited,
-             recursionStack: &recursionStack
-           )
-         }
--      } else if recursionStack.contains(neighbor) {
-+      } else if !allowsCycles, recursionStack.contains(neighbor) {
-         throw A2UIRecursionError(
-           "Circular component reference (Circular reference detected) involving component '\(neighbor)'"
-         )
-```
-
-**File**: `swift/core/Sources/A2UICore/Validation/ValidationConfig.swift` (modified, +13/-0)
-```diff
-@@ -36,6 +36,15 @@ public struct ValidationConfig: Sendable, Equatable, Hashable {
-   /// so it is still reported.
-   public var allowUnknownElements: Bool
- 
-+  /// Whether self-references and reference cycles between components are permitted.
-+  ///
-+  /// When this is on, the graph check accepts a component that references itself or one of its
-+  /// ancestors, and the ``NodeResolver`` renders the repeated reference as a `cyclic` placeholder
-+  /// node and reports `CYCLIC_REFERENCE` on the surface. The global depth limit and the catalog
-+  /// composition constraints still apply. ``relaxed`` leaves this off, so a cycle is rejected
-+  /// unless a host opts in.
-+  public var allowCyclicReferences: Bool
-+
-   /// The target protocol version (e.g. `"v0.9.1"`), or `nil` when unspecified.
-   public var targetVersion: String?
- 
-@@ -54,12 +63,14 @@ public struct ValidationConfig: Sendable, Equatable, Hashable {
-     allowDanglingReferences: Bool = false,
-     allowMissingRoot: Bool = false,
-     allowUnknownElements: Bool = false,
-+    allowCyclicReferences: Bool = false,
-     targetVersion: String? = nil
-   ) {
-     self.allowOrphanComponents = allowOrphanComponents
-     self.allowDanglingReferences = allowDanglingReferences
-     self.allowMissingRoot = allowMissingRoot
-     self.allowUnknownElements = allowUnknownElements
-+    self.allowCyclicReferences = allowCyclicReferences
-     self.targetVersion = targetVersion
-   }
- 
-@@ -69,13 +80,15 @@ public struct ValidationConfig: Sendable, Equatable, Hashable {
-     allowDanglingReferences: Bool = false,
-     allowMissingRoot: Bool = false,
-     allowUnknownElements: Bool = false,
-+    allowCyclicReferences: Bool = false,
-     protocolVersion: A2UIProtocolVersion
-   ) {
-     self.init(
-       allowOrphanComponents: allowOrphanComponents,
-       allowDanglingReferences: allowDanglingReferences,
-       allowMissingRoot: allowMissingRoot,
-       allowUnknownElements: allowUnknownElements,
-+      allowCyclicReferences: allowCyclicReferences,
-       targetVersion: protocolVersion.rawValue
-     )
-   }
-```
-
-**File**: `swift/core/Tests/A2UIConformanceTests/NodeResolutionConformanceTests.swift` (modified, +70/-18)
-```diff
-@@ -65,12 +65,7 @@ private final class RecordingFunctionImplementation: FunctionImplementation, @un
- /// Runs the shared `conformance/core/node_resolution.yaml` suite.
- @MainActor
- struct NodeResolutionConformanceTests {
--  static let placeholderKnownIssues: [String: String] = [
--    "cyclic_component_reference_same_scope": "NodeResolver omits placeholder nodes",
--    "pending_child_replacement": "NodeResolver omits placeholder nodes",
--    "shared_definition_independent_instances": "NodeResolver omits placeholder nodes",
--    "unknown_component_type_placeholder": "NodeResolver omits placeholder nodes",
--  ]
-+  static let placeholderKnownIssues: [String: String] = [:]
- 
-   private static let knownCaseKeys: Set<String> = [
-     "action",
-@@ -461,9 +456,6 @@ struct NodeResolutionConformanceTests {
-         rawChildren.indices.contains(idx),
-         let childDefID = rawChildren[idx].stringValue
-       {
--        guard surface.componentsModel.components[childDefID] != nil else {
--          return nil
--        }
-         if let match = nodes.first(where: {
-           $0.id == childDefID || $0.id.hasPrefix("\(childDefID)_")
-             || $0.id.hasPrefix("\(childDefID):")
-@@ -554,6 +546,9 @@ struct NodeResolutionConformanceTests {
-     if let expectedEvents = expect["events"] as? [[String: Any]] {
-       assertExpectedEvents(expectedEvents, actual: capture.events, caseName: caseName)
-     }
-+    if let expectedErrors = expect["errors"] as? [[String: Any]] {
-+      assertExpectedErrors(expectedErrors, actual: capture.errors, caseName: caseName)
-+    }
-     if let expectedFunctions = expect["functions"] as? [[String: Any]] {
-       assertExpectedFunctions(expectedFunctions, actual: capture.functionCalls, caseName: caseName)
-     }
-@@ -580,24 +575,37 @@ struct NodeResolutionConformanceTests {
-         Issue.record("[\(caseName)] Expected resolved node at '\(nodePath)'")
-         continue
-       }
--      assertSingleNodeMatches(node: node, spec: spec, nodePath: nodePath, caseName: caseName)
-+      assertSingleNodeMatches(
-+        node: node,
-+        spec: spec,
-+        surface: surface,
-+        nodePath: nodePath,
-+        caseName: caseName
-+      )
-     }
-   }
- 
-   private func assertSingleNodeMatches(
-     node: Node,
-     spec: [String: Any],
-+    surface: SurfaceViewModel?,
-     nodePath: String,
-     caseName: String
-   ) {
--    let expectedState = spec["state"] as? String ?? "resolved"
--    #expect(
--      expectedState == "resolved",
--      "[\(caseName)] \(nodePath) state mismatch: got 'resolved', expected '\(expectedState)'"
--    )
-+    // Like the other runners, only check `state` when the spec names it: an empty
-+    // spec such as `root/children/0: {}` asserts presence, not a resolved state.
-+    if let expectedState = spec["state"] as? String {
-+      #expect(
-+        node.state.rawValue == expectedState,
-+        """
-+        [\(caseName)] \(nodePath) state mismatch: \
-+        got '\(node.state.rawValue)', expected '\(expectedState)'
-+        """
-+      )
-+    }
-+    let baseID = node.id.split(separator: ":").first.map(String.init) ?? node.id
-+    let strippedID = baseID.split(separator: "_").first.map(String.init) ?? baseID
-     if let expectedCompID = spec["component_id"] as? String {
--      let baseID = node.id.split(separator: ":").first.map(String.init) ?? node.id
--      let strippedID = baseID.split(separator: "_").first.map(String.init) ?? baseID
-       #expect(
-         node.id == expectedCompID || baseID == expectedCompID || strippedID == expectedCompID,
-         """
-@@ -606,8 +614,23 @@ struct NodeResolutionConformanceTests {
-         """
-       )
-     }
-+    if let expectedDataPath = spec["data_path"] as? String {
-+      #expect(
-+        node.dataContextPath == expectedDataPath,
-+        """
-+        [\(caseName)] \(nodePath) data_path mismatch: \
-+        got '\(node.dataContextPath)', expected '\(expectedDataPath)'
-+        """
-+      )
-+    }
-     if let expectedType = spec["type"] as? String {
--      #expect(node.type == expectedType, "[\(caseName)] \(nodePath) type mismatch")
-+      let declaredType =
-+        surface?.componentsModel.components[baseID]?.type
-+        ?? surface?.componentsModel.components[strippedID]?.type
-+      let actualType =
-+        (node.state == .cyclic && node.type == "Placeholder")
-+        ? (declaredType ?? node.type) : node.type
-+      #expect(actualType == expectedType, "[\(caseName)] \(nodePath) type mismatch")
-     }
-     if let expectedIsValid = spec["isValid"] as? Bool {
-       #expect(node.isValid == expectedIsValid, "[\(caseName)] \(nodePath) isValid mismatch")
-@@ -704,6 +727,35 @@ struct NodeResolutionConformanceTests {
-     }
-   }
- 
-+  private func assertExpectedErrors(
-+    _ expectedErrors: [[String: Any]],
-+    actual: [RendererError],
-+    caseName: String
++  /**
++   * Indexes the `agentFunctions` of each catalog by `(catalog.id, name)`.
++   *
++   * @param catalogs Catalogs whose `agentFunctions` should be registered.
++   * @param options Optional handler timeout.
++   * @throws {RangeError} If `timeoutMs <= 0`.
++   * @throws {A2uiCatalogError} If two catalogs have the same id.
++   */
++  constructor(
++    catalogs: Iterable<CatalogInterface<ComponentApi, FunctionApi>>,
++    options?: AgentFunctionRegistryOptions,
 +  ) {
-+    #expect(actual.count >= expectedErrors.count, "[\(caseName)] Error count mismatch")
-+    for expSpec in expectedErrors {
-+      let expCode = expSpec["code"] as? String
-```
-
-**File**: `swift/core/Tests/A2UICoreTests/ComponentGraphBatchCheckTests.swift` (modified, +38/-2)
-```diff
-@@ -212,6 +212,34 @@ struct ComponentGraphBatchCheckTests {
-     try runRandomSequences(catalog: try plainCatalog(), seed: 2)
-   }
- 
-+  @Test func cyclesAcceptedWhenConfigAllowsCyclicReferences() throws {
-+    let processor = try makeProcessor(catalog: try plainCatalog(), allowsCycles: true)
-+    try send([column("root", children: ["a"]), column("a", children: ["root"])], to: processor)
-+    try send([column("a", children: ["a"])], to: processor)
-+    let surface = try #require(processor.surfaceGroupModel.surfacesMap["s"])
-+    #expect(Set(surface.componentsModel.components.keys) == ["root", "a"])
-+  }
++    if (options?.timeoutMs !== undefined) {
++      if (
++        typeof options.timeoutMs !== 'number' ||
++        !Number.isFinite(options.timeoutMs) ||
++        options.timeoutMs <= 0
++      ) {
++        throw new RangeError('The agent function timeout must be greater than 0.');
++      }
++      this._timeoutMs = options.timeoutMs;
++    }
 +
-+  @Test func depthLimitStillAppliesWhenConfigAllowsCyclicReferences() throws {
-+    let processor = try makeProcessor(catalog: try plainCatalog(), allowsCycles: true)
-+    let chain = (0...55).map { column("c\($0)", children: ["c\($0 + 1)"]) }
-+    #expect(throws: A2UIRecursionError.self) {
-+      try send(chain, to: processor)
++    for (const catalog of catalogs) {
++      if (this._catalogs.has(catalog.id)) {
++        throw new A2uiCatalogError(`Two catalogs have the id '${catalog.id}'.`);
++      }
++      this._catalogs.set(catalog.id, catalog);
++      if (catalog.agentFunctions.size > 0) {
++        const byName = new Map<string, AgentFunction>();
++        for (const [name, fn] of catalog.agentFunctions.entries()) {
++          byName.set(name, fn);
++        }
++        this._functions.set(catalog.id, byName);
++      }
 +    }
 +  }
 +
-+  @Test func compositionStillAppliesWhenConfigAllowsCyclicReferences() throws {
-+    let processor = try makeProcessor(catalog: try compositionCatalog(), allowsCycles: true)
-+    do {
-+      try send([card("c", child: "c")], to: processor)
-+      Issue.record("Expected the self-nested Card to break a composition rule")
-+    } catch let error as A2UIValidationError {
-+      // A recursion error is also a validation error, so check that the composition rule fired.
-+      #expect(!(error is A2UIRecursionError))
-+      #expect(error.message.contains("cannot contain child"))
++  /**
++   * Validates, routes, and executes a `callAgentFunction` message, returning
++   * its `agentFunctionResponse` envelope.
++   *
++   * @param message Inbound `callAgentFunction` message.
++   * @returns The outbound `agentFunctionResponse` message.
++   * @throws {A2uiValidationError} If the message lacks a usable `functionCallId`.
++   */
++  async handle(message: unknown): Promise<AgentFunctionResponseMessage> {
++    const parsed = parseCallEnvelope(message);
++    if (parsed.errorResponse !== undefined) {
++      return parsed.errorResponse;
 +    }
-+  }
 +
-   // MARK: - Helpers
- 
-   private func runRandomSequences(catalog: AnyCatalog, seed: UInt64) throws {
-@@ -289,8 +317,16 @@ struct ComponentGraphBatchCheckTests {
-   }
- 
-   /// A processor under the relaxed config holding surface `s` in the catalog `catalog`.
--  private func makeProcessor(catalog: AnyCatalog) throws -> MessageProcessor {
--    let processor = MessageProcessor(catalogs: [catalog], validationConfig: .relaxed)
-+  ///
-+  /// - Parameter allowsCycles: Whether the config also sets
-+  ///   ``ValidationConfig/allowCyclicReferences``.
-+  private func makeProcessor(
-+    catalog: AnyCatalog,
-+    allowsCycles: Bool = false
-+  ) throws -> MessageProcessor {
-+    var config = ValidationConfig.relaxed
-+    config.allowCyclicReferences = allowsCycles
-+    let processor = MessageProcessor(catalogs: [catalog], validationConfig: config)
-     try processor.processMessages(
-       .array([
-         .object([
++    const {surfaceId, functionCallId, name, catalogId, args: rawArgs} = parsed.envelope;
++
++    let resolvedCatalogId: string;
++    if (catalogId === undefined) {
++      const matchingCatalogIds: string[] = [];
++      for (const [cid, fnMap] of this._functions.entries()) {
++        if (fnMap.has(name)) {
++          matchingCatalogIds.push(cid);
++        }
++      }
++      if (matchingCatalogIds.length > 1) {
++        return createErrorResponse(
++          functionCallId,
++          RpcErrorCode.INVALID_FUNCTION_CALL,
++          `The call to '${name}' has no catalogId, and several catalogs have an agent
 ```
 
-**File**: `swift/core/Tests/A2UICoreTests/NodeResolverTests.swift` (modified, +196/-16)
+**File**: `typescript/agents/a2ui_agent/src/rpc/renderer-to-agent-message-processor.ts` (added, +211/-0)
 ```diff
-@@ -126,7 +126,7 @@ struct NodeResolverTests {
-     #expect(children[0].string(for: "text") == "Hello World")
-   }
+@@ -0,0 +1,211 @@
++/*
++ * Copyright 2024 Google LLC
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *      https://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++import type {z} from 'zod';
++
++import {
++  A2uiValidationError,
++  type ActionMessage,
++  type AgentToRendererMessage,
++  type CatalogInterface,
++  type ComponentApi,
++  type ErrorMessage,
++  type FunctionApi,
++  type RendererFunctionResponseMessage,
++  V10ActionMessageSchema,
++  V10ErrorMessageSchema,
++  V10RendererFunctionResponseMessageSchema,
++} from '../internal/web-core.js';
++import {AgentFunctionRegistry} from './agent-function-registry.js';
++
++const MESSAGE_KEYS = ['action', 'callAgentFunction', 'error', 'rendererFunctionResponse'] as const;
++
++/**
++ * What {@link RendererToAgentMessageProcessor.processMessage} did with a
++ * message.
++ */
++export interface ProcessResult {
++  /**
++   * Whether the processor handled the message: always for `callAgentFunction`,
++   * and for `action`, `error` and `rendererFunctionResponse` when their
++   * callback is set. An unhandled message is left for the caller, such as a
++   * framework that passes it on to the model's turn.
++   */
++  readonly handled: boolean;
++  /**
++   * The messages to send back to the renderer: exactly one
++   * `agentFunctionResponse` for a `callAgentFunction`, otherwise none.
++   */
++  readonly replies: AgentToRendererMessage[];
++}
++
++/**
++ * Options for a {@link RendererToAgentMessageProcessor}.
++ */
++export interface RendererToAgentMessageProcessorOptions {
++  /** The catalogs whose `agentFunctions` answer `callAgentFunction` messages. */
++  readonly catalogs: Iterable<CatalogInterface<ComponentApi, FunctionApi>>;
++  /**
++   * How long an agent function may run, in milliseconds, before its call is
++   * answered with an `EXECUTION_ERROR`. No timeout when omitted.
++   */
++  readonly agentFunctionTimeoutMs?: number;
++  /**
++   * Receives each `action` message, validated against the v1.0 schema.
++   * See {@link RendererMessageCallback} for declining one.
++   */
++  readonly onAction?: RendererMessageCallback<ActionMessage>;
++  /**
++   * Receives each `error` message, validated against the v1.0 schema.
++   * See {@link RendererMessageCallback} for declining one.
++   */
++  readonly onError?: RendererMessageCallback<ErrorMessage>;
++  /**
++   * Receives each `rendererFunctionResponse` message, validated against the
++   * v1.0 schema. See {@link RendererMessageCallback} for declining one.
++   */
++  readonly onRendererFunctionResponse?: RendererMessageCallback<RendererFunctionResponseMessage>;
++}
++
++/**
++ * A callback for one kind of renderer message. It handles the message by
++ * returning nothing or `true`, or declines it by returning `false` (directly
++ * or through a `Promise`), so the message comes back with `handled: false`,
++ * as if the callback weren't set: for example, to let a conversational action
++ * reach the model while handling the others locally.
++ */
++export type RendererMessageCallback<T> = (message: T) => boolean | void | Promise<boolean | void>;
++
++/**
++ * Processes the messages a renderer sends an agent (`RendererToAgentMessage`),
++ * the agent-side counterpart of web_core's `MessageProcessor`.
++ *
++ * - `callAgentFunction` runs the agent function of the catalogs and replies
++ *   with its `agentFunctionResponse`. A call that fails after its
++ *   `functionCallId` is known (an empty `surfaceId`, an unknown function, bad
++ *   arguments, a handler error, the timeout) is answered with an `error`
++ *   rather than thrown, so the renderer's pending call settles.
++ * - `action`, `error` and `rendererFunctionResponse` go to their callback,
++ *   when it is set, which may decline the message. Without one the message is
++ *   not handled, and nothing is validated beyond its `version`.
++ *
++ * The processor keeps no state across messages, so build one per agent, or
++ * per request from the active catalogs. It processes one message at a time:
++ * the caller decides whether to process several concurrently, and how to
++ * handle one that fails.
++ */
++export class RendererToAgentMessageProcessor {
++  private readonly _registry: AgentFunctionRegistry;
++  private readonly _onAction?: RendererMessageCallback<ActionMessage>;
++  private readonly _onError?: RendererMessageCallback<ErrorMessage>;
++  private readonly _onRendererFunctionResponse?: RendererMessageCallback<RendererFunctionResponseMessage>;
++
++  /**
++   * Initializes a new `RendererToAgentMessageProcessor`.
++   *
++   * @param options The catalogs, the agent func
+```
+
+**File**: `typescript/agents/a2ui_agent/tests/conformance/agent-functions.test.ts` (modified, +428/-9)
+```diff
+@@ -14,18 +14,421 @@
+  * limitations under the License.
+  */
  
--  @Test func childListSkipsUnarrivedComponents() throws {
-+  @Test func childListMaterializesPendingPlaceholderForUnarrivedComponents() throws {
-     let catalog = try makeCatalog()
-     // child1 not in components dictionary yet
-     let components: [String: ComponentModel] = [
-@@ -152,12 +152,18 @@ struct NodeResolverTests {
++import fs from 'node:fs';
++
++import {type FunctionApi} from '@a2ui/web_core';
+ import {expect, test} from 'vitest';
  
-     let rootNode = try #require(resolver.resolveTree())
-     let children = rootNode.children(for: "children")
--    #expect(children.count == 1)
--    #expect(children[0].id == "child2")
-+    #expect(children.count == 2)
-+    #expect(children[0].id == "child1")
-+    #expect(children[0].type == "Placeholder")
-+    #expect(children[0].state == .pending)
-+    #expect(children[1].id == "child2")
-+    #expect(children[1].type == "Text")
-+    #expect(children[1].state == .resolved)
-   }
- 
--  @Test func cyclicReferencesReturnNilWithoutInfiniteLoop() throws {
-+  @Test func cyclicReferencesReturnCyclicPlaceholderAndReportErrorOnce() throws {
-     let catalog = try makeCatalog()
-+    let handler = ExpressionErrorCaptureHandler()
-     let components: [String: ComponentModel] = [
-       "root": ComponentModel(
-         id: "root",
-@@ -176,19 +182,164 @@ struct NodeResolverTests {
-       ),
-     ]
- 
-+    let dataModel = DataModel()
-     let resolver = NodeResolver(
-       surfaceID: "s1",
-       catalogs: [catalog.id: catalog],
-       defaultCatalogID: catalog.id,
-       componentsModel: SurfaceComponentsModel(components: components),
--      dataModel: DataModel()
-+      dataModel: dataModel,
-+      actionHandler: handler
-     )
- 
-     let rootNode = try #require(resolver.resolveTree())
-     let aNode = try #require(rootNode.children(for: "children").first)
-     let bNode = try #require(aNode.children(for: "children").first)
--    // b's reference back to a is detected as cyclic and omitted
--    #expect(bNode.children(for: "children").isEmpty)
-+    let cyclicChild = try #require(bNode.children(for: "children").first)
-+    #expect(cyclicChild.id == "a")
-+    #expect(cyclicChild.type == "Placeholder")
-+    #expect(cyclicChild.state == .cyclic)
-+    #expect(handler.capturedErrors.count == 1)
-+    if case .generic(let genericError) = handler.capturedErrors.first {
-+      #expect(genericError.code == "CYCLIC_REFERENCE")
-+      #expect(genericError.surfaceID == "s1")
+-import {classify, loadCases} from './loader.js';
+-import {conformancePath, describeSuite} from './suite-helpers.js';
++import {
++  A2uiRpcError,
++  A2uiValidationError,
++  AgentFunction,
++  type AgentFunctionContext,
++  type AgentFunctionHandler,
++  type AgentFunctionResponseMessage,
++  Catalog,
++  type CatalogApi,
++  RendererToAgentMessageProcessor,
++  type RendererToAgentMessageProcessorOptions,
++  validatePayload,
++} from '../../src/index.js';
++import {classify, loadCases, type LoadedCase} from './loader.js';
++import {conformancePath, describeSuite, errorClassFor} from './suite-helpers.js';
++
++const KNOWN_FAILURES = new Map<string, string>();
++
++interface BehaviorSpec {
++  returns?: unknown;
++  returns_args?: boolean;
++  returns_context?: boolean;
++  raises?: {
++    code?: string;
++    validation?: true;
++    message: string;
++  };
++}
++
++interface AgentFunctionSpec {
++  name?: string;
++  from_api?: boolean;
++  returnType?: string;
++  args?: Record<string, unknown>;
++  description?: string;
++  requiresUserActivation?: boolean;
++  behavior?: BehaviorSpec;
++}
++
++interface CatalogWithAgentFunctionsSpec {
++  catalog: string | Record<string, unknown>;
++  agent_functions?: Record<string, AgentFunctionSpec>;
++}
++
++type CallbackKind = 'action' | 'error' | 'rendererFunctionResponse';
++
++/** Counts the calls to the handlers of a case's agent functions. */
++interface HandlerCalls {
++  count: number;
++}
++
++/** Builds the handler `behavior` describes, counting its calls in `calls`. */
++function buildCountingHandler(calls: HandlerCalls, behavior?: BehaviorSpec): AgentFunctionHandler {
++  const handler = buildHandler(behavior);
++  return (args, context) => {
++    calls.count++;
++    return handler(args, context);
++  };
++}
++
++function buildHandler(behavior?: BehaviorSpec): AgentFunctionHandler {
++  if (!behavior) {
++    return () => null;
++  }
++  if (behavior.raises) {
++    const {code, validation, message} = behavior.raises;
++    return () => {
++      if (code) {
++        throw new A2uiRpcError(message, code);
++      }
++      if (validation) {
++        throw new A2uiValidationError(message);
++      }
++      throw new Error(message);
++    };
++  }
++  if (behavior.returns_args) {
++    return (args: Record<string, unknown>) => args;
++  }
++  if (behavior.returns_context) {
++    return (_args: Record<string, unknown>, context: AgentFunctionContext) => ({
++      catalogId: context.catalogId,
++      surfaceId: context.surfaceId,
++      functionCallId: context.functionCallId,
++    });
++  }
++  if (Object.hasOwn(behavior, 'returns')) {
++    const retVal = behavior.returns;
++    return () => structuredClone(retVal);
++  }
++  return () => null;
++}
++
++function buildCatalogWithAgentFunctions(
++  spec: CatalogWithAgentFunctionsSpec,
++  calls: HandlerCalls,
++): CatalogApi {
++  const base =
++    typeof spec.catalog === 'string'
++      ? Catalog.fromJson(
++          JSON.parse(fs.readFileSync(conformancePath(spec.catalog), 'utf-8')) as Record<
++            string,
++            unknown
++          >,
++        )
++      : Catalog.fromJson(spec.catalog);
++
++  const agentFunctions: AgentFunction[] = [];
++  for (const [key, fnSpec] of Object.entries(spec.agent_functions ?? {})) {
++    const name = fnSpec.name ?? key;
++    const handler = buildCountingHandler(calls, fnSpec.behavior);
++    if (fnSpec.from_api) {
++      // The catalog's own declaration, or else a foreign one built from the
++      // case's signature, which the catalog must refuse.
++      let declaration: FunctionApi | undefined = base.functions.get(name);
++      if (declaration === undefined) {
++        const signature = new AgentFunction<Record<string, unknown>, string>({
++          name,
++          returnType: fnSpec.returnType ?? 'any',
++          schema: fnSpec.args,
++          description: fnSpec.description,
++          requiresUserActivation: fnSpec.requiresUserActivation,
++          handler,
++        });
++        declaration = {
++          name,
++          returnType: signature.returnType,
++          schema: signature.schema,
++          description: signature.description,
++          requiresUserActivation: signature.requiresUserActivation,
++        };
++      }
++      agentFunctions.push(AgentFunction.fromApi(declaration, handler));
 +    } else {
-+      Issue.record("Expected CYCLIC_REFERENCE generic error")
++      if (fnSpec.returnType === undefined || fnSpec.args === undefined) {
++        throw new Error(
++          `Direct AgentFunctionDeclaration '${name}' must specify args and returnType.`,
++        );
++      }
++      agentFunctions.push(
++        new AgentFunction<Record<string, unknown>, string>({
++          name,
++          returnType: fnSpec.returnType,
++          schema: fnSpec.args,
++          description: fnSpec.description,
++          requiresUserActivation: fnSpec.requiresUserActivation,
++          handler,
++        }),
++      );
 +    }
-+
-+    // Subsequent incremental passes do not re-emit CYCLIC_REFERENCE for the same cyclic node key.
-+    dataModel.set("/unrelated", value: .string("updated"))
-+    _ = try #require(resolver.resolveTree())
-+    #expect(handler.capturedErrors.count == 1)
 +  }
-+
-+  @Test func repeatedCyclicReferencesGetDistinctPlaceholders() throws {
-+    let catalog = try makeCatalog()
-+    let components: [String: ComponentModel] = [
-+      "root": ComponentModel(
-+        id: "root",
-+        type: "Container",
-+        properties: ["children": .array([.string("card")])]
-+      ),
-+      "card": ComponentModel(
-+        id: "card",
-+        type: "Container",
-+        properties: [
-+          "child": .string("root"),
-+          "children": .array([.string("root"), .string("root")]),
-+        ]
-+      ),
-+    ]
-+    let resolver = NodeResolver(
-+      surfaceID: "s1",
-+      catalogs: [catalog.id: catalog],
-+      defaultCatalogID: catalog.id,
-+      componentsModel: SurfaceComponentsModel(components: components),
-+      dataModel: DataModel()
-+    )
-+
-+    let rootNode = try #require(resolver.resolveTree())
-+    let card = try #require(rootNode.children(for: "children").first)
-+    let single = try #require(card.child(for: "child"))
-+    let listed = card.children(for: "children")
-+    #expect(listed.count == 2)
-+    let placeholders = [single] + listed
-+    #expect(placeholders.allSatisfy { $0.state == .cyclic })
-+    #expect(Set(placeholders.map(\.identity)).count == 3)
-+  }
-+
-+  @Test func cycleRemovedAndRestoredGetsFreshPlaceholder() throws {
-+    let catalog = try makeCatalog()
-+    let componentsModel = SurfaceComponentsModel(components: [
-+      "root": ComponentModel(
-+        id: "root",
-+        type: "Container",
-+        properties: ["children": .array([.string("a")])]
-+      ),
-+      "a": ComponentModel(
-+        id: "a",
-+        type: "Container",
-+        properties: ["children": .array([.string("root")])]
-+      ),
-+    ])
-+    let resolver = NodeResolver(
-+      surfaceID: "s1",
-+      catalogs: [catalog.id: catalog],
-+      defaultCatalogID: catalog.id,
-+      componentsModel: componentsModel,
-+      dataModel: DataModel()
-+    )
-+
-+    func cyclicChild() throws -> Node? {
-+      let rootNode = try #require(resolver.resolveTree())
-+      let aNode = try #require(rootNode.children(for: "children").first)
-+      return aNode.children(for: "children").first
-+    }
-+
-+    let first = try #require(try cyclicChild())
-+    #expect(first.stat
++  r
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4004** (2026-11-05): docs: remove 'Early stage public preview' section from README.md (@yjbanov)
-- **PR #3996** (2026-11-05): chore(skills): mark contributor skills as internal (@innkuika)
-- **PR #3980** (2026-11-04): chore(release): a2ui_agent 0.1.0, a2ui_flutter 0.1.0, a2ui_cli 0.2.0 (@ditman)
-- **PR #3979** (2026-11-04): chore(release): a2ui_core 0.5.0 (@ditman)
-- **PR #3976** (2026-11-04): docs(react): import from package roots in the README (@innkuika)
-- **PR #3970** (2026-11-04): docs(site): fix preview site header regressions (@yjbanov)
+- **PR #4068** (2026-11-09): docs(site): add global Google Analytics integration (@abdallahshaban557)
+- **PR #4067** (2026-11-09): docs(site): reorganize Macros, Inference Formats, and Ecosystem sections (@jacobsimionato)
+- **PR #4066** (2026-11-09): docs(site): add Jetpack Compose and Kotlin SDK samples across a2ui.org (#4002) (@jacobsimionato)
+- **PR #4062** (2026-11-09): docs(skills): update public-documentation authoring skill (@jacobsimionato)
+- **PR #4061** (2026-11-09): Rename migration skill to follow convention. (@polina-c)
+- **PR #4060** (2026-11-08): docs(site): interactive Gen UI spectrum, brand showcase, and Showcase/Get Help pages (@abdallahshaban557)
 
 ---
 
@@ -3444,56 +3953,28 @@ This change updates `A2UICore` (`Node`, `NodeResolver`, and `MessageProcessor`) 
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(site): add Swappable Inference Formats concept guide (#3969)
+## X. dart): agent functions and RendererToAgentMessageProcessor (#3861)
 
 **RULE**:
-When implementing operations in `docs/site/src/components/docs/InferencePipeline.astro`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in a2ui-project/a2ui. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `dart/a2ui_agent/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in a2ui-project/a2ui. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `eee79070`: docs(site): add Swappable Inference Formats concept guide (#3969). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1d040854`: dart): agent functions and RendererToAgentMessageProcessor (#3861). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/site/src/components/docs/InferencePipeline.astro`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `dart/a2ui_agent/CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
----
-/*
- * Copyright 2024 Google LLC
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
----
-
-<div
-  class="ip-root not-content"
-  data-diagram
-  data-diagram-title="inference-pipeline"
->
-  <div class="ip-banner">
-    <div class="ip-banner__left">
-      <span class="ip-badge">SERVER-SIDE AGENT SDK</span>
-      <span class="ip-banner__title">
-        A2uiRequestProcessor: Swappable Generation &rarr; Standard Wire JSON
-      </span>
-    </div>
-    <div class="ip-banner__pills">
-      <span class="ip-pill ip-pill--teal">Express (Default)</span>
-      <span class="ip-pill ip-pill--blue">Direct JSON</span>
-      <span class="ip-pill ip-pill--amber">Custom Formats</span>
-    </div>
-  </d
+- (v1_0) Added `RendererToAgentMessageProcessor`, whose `processMessage` takes
+  one v1.0 message a renderer sent and returns a `ProcessResult` (`handled`,
+  `replies`). It answers `callAgentFunction` with the catalogs' agent
+  functions, and passes `action`, `error` and `rendererFunctionResponse` to the
+  `onAction`, `onError` and `onRendererFunctionResponse` callbacks, which may
+  return `false` to decline a message. The library re-exports the agent
+  function and renderer-to-agent message types from `a2ui_core`
+  ([#3536](https://github.com/a2ui-project/a2ui/issues/3536), [#3861](https://github.com/a2ui-project/a2ui/pull/3861)).
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3503,4 +3984,4 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `eee79070` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1d040854` are properly handled with clean fallback behavior.

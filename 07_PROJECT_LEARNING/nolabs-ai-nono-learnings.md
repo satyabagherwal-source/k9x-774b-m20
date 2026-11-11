@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md`  
 > **Source**: github ([https://github.com/nolabs-ai/nono](https://github.com/nolabs-ai/nono))  
-> **Source Version**: `0e15816b`  
+> **Source Version**: `bac14d41`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T18:42:22.072Z  
+> **Timestamp**: 2026-11-09T22:14:57.091Z  
 > **Learning ID**: `learn-github-nolabs-ai-nono`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nolabs-ai/nono](https://github.com/nolabs-ai/nono))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T18:42:20.867Z  
+> **Harvest Timestamp**: 2026-11-09T22:14:56.882Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: agent runtime security - zero trust, zero setup, zero latency agent sandboxing
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4839 stars
+- **Stars / Engagement**: 4911 stars
 
 ---
 
@@ -2959,11 +2959,13 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2254** (2026-11-03): **fix(proxy): strip hop headers when the colon is spaced**
-  *Symptoms*: ## Linked Issue  Closes #2253  ## Summary  Hop-header detection splits on the colon and trims the name. The forward filters only dropped a line when the name sat against the colon. `Transfer-Encoding : chunked` was decoded, then forwarded as a normal `Transfer-Encoding` next to the `Content-Length` the raw builders write for the decoded body. Those builders also send `Connection: close`.  Stripping now uses that same split-and-trim name match for `Host`, `Content-Length`, `Transfer-Encoding`, `Connection`, `Proxy-Connection`, `Proxy-Authorization`, and the configured credential header. An ordinary header with a space before the colon is still forwarded. An empty name is not forwarded.  The docs already say these headers are stripped. This pull does not change that contract, and it does not add a capability, so there is no NEP.  The trim on detection landed in [#1687](https://github.com/nolabs-ai/nono/pull/1687) ([`05727c51`](https://github.com/nolabs-ai/nono/commit/05727c51)). The prefix strip stayed as it was.  ## Test Plan  Before the strip change, `cargo test -p nono-proxy --lib -- test_filter_headers_strips_spaced_framing_headers test_filter_headers_strips_tab_before_colon_on_transfer_encoding test_filter_headers_strips_spaced_credential_header test_filter_headers_multi_strips_spaced_hop_headers test_filter_headers_drops_empty_header_name` failed all 5 tests. A spaced `Transfer-Encoding` was forwarded as `("Transfer-Encoding", "chunked")`.  After the change, those tests a
+- **Issue #2282** (2026-11-09): **fix(sandbox): scope macOS process-exec to the read set**
+  *Symptoms*: ## Linked Issue  Closes #1865  ## Summary  On macOS nono emitted `(allow process-exec*)` unconditionally but only granted `file-read*` / `file-map-executable` for paths in the read set. A binary that could be exec'd but not read started, then failed obscurely (Go binaries: `SecPolicyCreateSSL error: 0`; Mach-O: killed silently with exit 137), while `nono why --op read` said `path_not_granted`.  Per maintainer direction, exec is now limited to the readable paths. This does not auto-grant reads on exec targets and does not resolve wrapper chains. Exec of an unreadable binary now fails immediately with `Operation not permitted` naming the path. This matches Linux, where Landlock Read already includes Execute.  - `crates/nono`: drop the blanket `process-exec*` allow; emit a scoped allow next to each Read/ReadWrite `file-read*` rule (same filters, original + resolved paths). Extension rules (`com.apple.app-sandbox.read` / `read-write`) also allow exec, so supervisor dynamic grants behave like static ones. `file-map-executable` is deliberately not extended to tokens. - `nono-cli` policy: wherever `deny file-read-data` is emitted (glob denies, `deny.access`, protected roots) also emit `deny process-exec*` and `deny file-map-executable`. `bypass_protection` directory/file overrides re-allow exec. Keychain DB exceptions stay read-only. - Tool-sandbox: remove the blanket exec allow from the outer guard; brokered-binary denies are unchanged. - `system_read_macos`: add `/usr
 
-- **Issue #2239** (2026-11-02): **fix(cli): support kitty release and repeat events in detach matcher**
-  *Symptoms*: Handle advanced kitty keyboard protocol sequences in the PTY proxy and detach matchers. Non-press events (repeats and releases) for keys that are part of a pending match prefix are now ignored instead of invalidating the partial detach sequence.  - Refactor CSI-u escape parsing to handle full subfield formats for modifiers and event types - Strip Lock modifier bits from incoming reports to prevent state mismatches - Add `is_enhanced_key_echo` to identify non-press events for pending match sequences - Add test coverage for kitty release reports and lock modifiers during detach matching  ## Linked Issue  <!-- External and agent-proposed PRs must reference an existing issue. Maintainer-directed routine PRs may leave this blank and explain the exception in the Summary. -->  Closes #  ## Summary  <!-- Briefly describe what this PR does and why. -->  <!-- ## Agent Disclosure (if applicable)  If this PR is generated by an AI agent, per AGENTS.md you must include: - A statement that the contributor is an agent. - References to relevant files or sections consulted. - Explicit confirmation of compliance with repository requirements. -->  ## Test Plan  <!-- How was this tested? Include relevant commands, test cases, or manual verification steps. -->  ## Checklist  - [ ] An issue exists and is linked above, or this is maintainer-directed routine work - [x] All commits are signed-off, using [DCO](https://en.wikipedia.org/wiki/Developer_Certificate_of_Origin) - [x] Code changes follow the 
+- **Issue #2278** (2026-11-06): **fix(docker): create home directory for nono user**
+  *Symptoms*:  ## Linked Issue  <!-- External and agent-proposed PRs must reference an existing issue. Maintainer-directed routine PRs may leave this blank and explain the exception in the Summary. -->  Closes #2275   ## Summary  Add -m to useradd in the CI, standard, and headless Dockerfiles so the runtime user can initialize audit and session state.  <!-- Briefly describe what this PR does and why. -->  <!-- ## Agent Disclosure (if applicable)  If this PR is generated by an AI agent, per AGENTS.md you must include: - A statement that the contributor is an agent. - References to relevant files or sections consulted. - Explicit confirmation of compliance with repository requirements. -->  ## Test Plan  <!-- How was this tested? Include relevant commands, test cases, or manual verification steps. -->  ## Checklist  - [ ] An issue exists and is linked above, or this is maintainer-directed routine work - [ ] All commits are signed-off, using [DCO](https://en.wikipedia.org/wiki/Developer_Certificate_of_Origin) - [ ] Code changes follow the project's coding standards ([AGENTS.md](../AGENTS.md)) and have appropriate test coverage - [ ] Public-facing changes are paired with documentation updates - [ ] If this PR implements a major feature, capability, or security-relevant change, a corresponding accepted NEP is linked  <!-- ## Agent Compliance Check (Required for AI/Automated PRs) - [ ] I am not prohibited from contributing under this policy - [ ] An issue exists and I disclosed that I am an agen
+  **Post-Mortem & Fix Analysis**:
+  > <!-- pr-review-summary -->  ## PR Review Summary  ### Size  | Metric | Value | |--------|-------| | Lines added | +3 | | Lines removed | -3 | | Total changed | 6 | | **Classification** | **Small (< 50 lines)** |  ### Affected crates  No crate source directories are directly affected.  ### Blast radius — Contained  This PR touches: **unknown file types**  --- <sub>Updated automatically on each push to this PR.</sub>
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2980,177 +2982,573 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0e15816b` (2026-11-04)
-**Commit Message**: docs(neps): add nep 0010 for session terminal capture (#2259)
+### Incident Patch 1: `59969be3` (2026-11-09)
+**Commit Message**: fix(sandbox): scope macOS process-exec to the read set (#2282)
 
-* docs(neps): add nep 0010 for session terminal capture
+* fix(sandbox): scope macOS process-exec to the read set
 
-This proposal introduces NEP 0010, which outlines the specification and requirements for capturing session terminal output. It details the proposed architecture, data formats, and integration points for recording CLI interactions within the ecosystem.
+Replace the blanket (allow process-exec*) with per-path rules mirroring
+file-read*, add matching exec/map denies next to read denies, extend
+extension tokens to exec, and add platform helper dirs to
+system_read_macos. Exec of an unreadable binary now fails immediately
+with EPERM instead of dying obscurely.
 
-Signed-off-by: Luke Hinds <[REDACTED_EMAIL]>
+Co-Authored-By: Claude <[REDACTED_EMAIL]>
+Signed-off-by: Leonardo Zanivan <[REDACTED_EMAIL]>
 
-* docs(nep): add NEP-0010 session terminal capture to roadmap
+* fix(sandbox): drop speculative system dirs from system_read_macos
 
-Add NEP-0010 to the project roadmap and NEP index. This proposal details session terminal capture, allowing the nono supervisor to record terminal input and output in a tamper-evident log linked to the audit record.
+/System/Applications and /System/iOSSupport hold GUI apps and Catalyst
+frameworks that a CLI sandbox does not exec directly. Keep /usr/libexec
+(path_helper, java_home).
 
-Signed-off-by: Luke Hinds <[REDACTED_EMAIL]>
+Co-Authored-By: Claude <[REDACTED_EMAIL]>
+Signed-off-by: Leonardo Zanivan <[REDACTED_EMAIL]>
 
 ---------
 
-Signed-off-by: Luke Hinds <[REDACTED_EMAIL]>
+Signed-off-by: Leonardo Zanivan <[REDACTED_EMAIL]>
+Co-authored-by: Claude <[REDACTED_EMAIL]>
 
-**File**: `ROADMAP.md` (modified, +2/-0)
+**File**: `crates/nono-cli/data/policy.json` (modified, +1/-0)
 ```diff
-@@ -40,6 +40,8 @@ _Under active authoring; not yet ready for a decision._
-   Let nono split its supervisor across a virtual-machine boundary.
- - **[NEP-0008: Session flight recorder](neps/0008-session-flight-recorder.md)** — _Breaking: not yet assessed_
-   Make the audit log a complete, self-describing record of an agent session: every access nono denied, from every enforcement layer, with the reason and the process responsible; every grant the agent held; every allowed access to paths an operator marked as sensitive; and a statement of which sources were live, so an operator can tell "nothing happened" apart from "nono could not see it".
-+- **[NEP-0010: Session terminal capture](neps/0010-session-terminal-capture.md)** — _Breaking: not yet assessed_
-+  Let the nono supervisor capture what a session showed and was told: its terminal output, the input sent to it, and the terminal facts around them. nono keeps this as a tamper-evident recording linked into the audit log, and can deliver it, durably and live, to an external receiver over open protocols. nono captures, protects and delivers.
- - **[NEP-0002: Tool Sandbox invocation-scoped filesystem approvals](neps/0002-invocation-scoped-commands.md)** — _Non-breaking_
-   Extend the Tool Sandbox policy model so that a sandboxed command can request a narrowly scoped filesystem capability for one invocation without escaping the filesystem policy selected for that invocation.
- - **[NEP-0005: Windows enforcement backend](neps/0005-windows-enforcement-backend.md)** — _Non-breaking_
+@@ -151,6 +151,7 @@
+           "/sbin",
+           "/usr/bin",
+           "/usr/sbin",
++          "/usr/libexec",
+           "/usr/local/bin",
+           "/usr/lib",
+           "/usr/local/lib",
 ```
 
-**File**: `neps/0010-session-terminal-capture.md` (added, +476/-0)
+**File**: `crates/nono-cli/src/diagnostic/formatter.rs` (modified, +33/-5)
 ```diff
-@@ -0,0 +1,476 @@
-+---
-+nep: 0010
-+title: Session terminal capture
-+authors:
-+  - lukehinds
-+status: draft
-+created: 2026-11-03
-+breaking:
-+superseded-by:
-+---
+@@ -988,14 +988,17 @@ impl<'a> DiagnosticFormatter<'a> {
+             Some(c) => c,
+             None => return true, // no context, assume readable
+         };
+-        let binary_path = &cmd.resolved_path;
++        // Compare canonical paths so symlinks and /tmp vs /private/tmp aliases
++        // do not produce a wrong verdict. `starts_with` is component-based.
++        let binary_path = canonical_or_self(&cmd.resolved_path);
+         for cap in self.caps.fs_capabilities() {
+             if cap.access == AccessMode::Read || cap.access == AccessMode::ReadWrite {
++                let cap_path = canonical_or_self(&cap.resolved);
+                 if cap.is_file {
+-                    if *binary_path == cap.resolved {
++                    if binary_path == cap_path {
+                         return true;
+                     }
+-                } else if binary_path.starts_with(&cap.resolved) {
++                } else if binary_path.starts_with(&cap_path) {
+                     return true;
+                 }
+             }
+@@ -1009,14 +1012,15 @@ impl<'a> DiagnosticFormatter<'a> {
+             Some(c) => c,
+             None => return true,
+         };
+-        let binary_dir = match cmd.resolved_path.parent() {
++        let resolved = canonical_or_self(&cmd.resolved_path);
++        let binary_dir = match resolved.parent() {
+             Some(d) => d,
+             None => return false,
+         };
+         for cap in self.caps.fs_capabilities() {
+             if !cap.is_file
+                 && (cap.access == AccessMode::Read || cap.access == AccessMode::ReadWrite)
+-                && binary_dir.starts_with(&cap.resolved)
++                && binary_dir.starts_with(canonical_or_self(&cap.resolved))
+             {
+                 return true;
+             }
+@@ -1069,6 +1073,13 @@ impl<'a> DiagnosticFormatter<'a> {
+                             );
+                             lines.push(format!("[nono]   nono run --read {} ...", parent_path,));
+                         }
++                        // Exec requires read; a file grant is the narrowest fix.
++                        let canonical = canonical_or_self(&cmd.resolved_path).display().to_string();
++                        lines.push("[nono] Or, for just this binary:".to_string());
++                        lines.push(format!(
++                            "[nono]   nono run --read-file {} ...",
++                            sanitize_for_diagnostic(&canonical)
++                        ));
+                     } else if !self.is_binary_dir_readable() {
+                         // Binary itself is allowed but its directory isn't
+                         // (unlikely but possible with file-level grants)
+@@ -1139,6 +1150,18 @@ impl<'a> DiagnosticFormatter<'a> {
+                         "[nono] may be blocking execution of binaries in that directory."
+                             .to_string(),
+                     );
++                    if !self.is_binary_path_readable() {
++                        // On macOS, exec is only allowed for paths in the read set.
++                        let canonical = canonical_or_self(&cmd.resolved_path).display().to_string();
++                        lines.push("[nono]".to_string());
++                        lines.push(
++                            "[nono] The binary is not in the sandbox read set. Fix:".to_string(),
++                        );
++                        lines.push(format!(
++                            "[nono]   nono run --read-file {} ...",
++                            sanitize_for_diagnostic(&canonical)
++                        ));
++                    }
+                 } else {
+                     lines.push(
+                         "[nono] The command was found but could not be executed.".to_string(),
+@@ -2908,6 +2931,11 @@ fn shell_quote(s: &str) -> String {
+     quoted
+ }
+ 
++/// Canonicalize for comparison, falling back to the path as given.
++fn canonical_or_self(path: &std::path::Path) -> std::path::PathBuf {
++    path.canonicalize().unwrap_or_else(|_| path.to_path_buf())
++}
 +
-+# NEP-0010: Session terminal capture
-+
-+## Summary
-+
-+Let the nono supervisor capture what a session showed and was told: its
-+terminal output, the input sent to it, and the terminal facts around them.
-+nono keeps this as a tamper-evident recording linked into the audit log, and
-+can deliver it, durably and live, to an external receiver over open
-+protocols. nono captures, protects and delivers. It does not analyse the
-+content. NEP-0008 records what an agent *did*. This NEP records what the
-+session *showed and was told*, on the same timeline.
-+
-+## Implementation status
-+
-+Unimplemented as of 2026-11-03. The PTY proxy already keeps an attach
-+scrollback and a vt100 screen model. Neither is persisted or delivered.
-+`breaking` is unassessed.
-+
-+## Motivation
-+
-+The supervisor sits between the agent and its terminal, or its standard
-+streams. It sees every byte the agent prints and every byte sent back to it.
-+Today that stream feeds attach replay and is then discarded. That leaves
-+three gaps:
-+
-+- **Debugging unattended sessions.** A detached session, or one on a CI
-+  runner or a cloud host, that fails leaves an exit code and an audit log of
-+  access decisions. Nothing shows what the agent printed, what it said it was
-+  doing, or the error it reported before it went wrong.
-+- **Audit of the conversation.** Operators need a record of what an agent
-+  displayed and what it was told, to the same integrity standard as the rest
-+  of the audit log, and reviewable away from the host that ran it.
-+- **Getting the record off the host.** Ephemeral hosts (CI runners, batch
-+  containers) are destroyed when the job ends. A record that exists only on
-+  the host is lost with it.
-+
-+A recorder that runs inside the sandbox (`script`, asciinema, an agent's own
-+transcript) does not fill these gaps, because the agent can alter or delete
-+it. The supervisor runs outside the sandbox, so its record is out of the
-+agent's reach.
-+
-+### Goals
-+
-+- Capture output, input, resizes and terminal facts (terminal mode,
-+  foreground process, terminal notifications, lifecycle) for supervised
-+  sessions, with or without a PTY.
-+- Attribute input to the client that sent it.
-+- Before anything is stored or sent:
-+  - remove credential values nono resolved for the session;
-+  - never capture input typed while the terminal is in password mode.
-+- Keep a local recording that can be replayed, rendered as text, and
-+  verified through the audit hash chain.
-+- Deliver the recording to an external receiver durably (ordered,
-+  acknowledged, resumable) and live (best effort, watch-only), over open
-+  protocols, on connections nono opens outbound.
-+- Work on interactive and headless hosts alike, configured at launch.
-+- Let operators require recording, failing closed.
-+- Never let a slow destination stall the agent's terminal.
-+
-+### Non-Goals
-+
-+- **Analysing content.** nono does not classify, search or score recordings,
-+  and ships no secret or PII pattern lists. Receivers can analyse the stream
-+  as they see fit.
-+- **Input sent from receivers.** Live streams are watch-only. Remote input
-+  would need its own NEP.
-+- **Holding or rewriting the session's input.** Capture is passive, apart
-+  from the two fixed protections in §3.
-+- **Receiver storage, indexing or user interfaces.**
-+- **Direct mode (`nono wrap`).** No supervisor remains to capture anything,
-+  as with NEP-0008.
-+
-+## Proposal
-+
-+### 1. Overview
-+
-+```text
-+            ┌─────────── Capture (PTY proxy, or supervised pipes) ───────────┐
-+ agent ───▶ │ output · input{client} · resize · mode · foreground · notify   │
-+            └───────────────────────────────┬────────────────────────────────┘
-+                                            ▼ ordered events
-+                              Fixed protections (§3)
-+                              · remove known credentials
-+                              · drop password-mode input
-+                                            ▼ protected events
-+                                 Sinks (§5), never block capture
-+           ┌──────────┬──────────┬──────────┴──┬──────────────┬───────────┐
-+       recording  audit link    file       delivery         live      scrollback
-+       (chunks)   (hash chain)  (artifact) (durable, §6.1)  (§6.2)    (attach)
-+```
-+
-+Rules that hold across the design:
-+
-+1. Only capture touches the PTY or the standard streams.
-+2. No sink ever receives bytes that have not passed through §3.
-+3. Markers and metadata come from the supervisor. Escape sequences printed by
-+   the agent cannot create them.
-+4. Capture is passive: it never changes what the agent receives.
-+
-+### 2. Capture
-+
-+#### 2.1 Events
-+
-+| Event | Source | Fields |
-+|---|---|---|
-+| `Output` | `PtyProxy::record_output`, or the supervised stdout/stderr pipes | bytes, `stream` (`pty`, `stdout
+ #[cfg(test)]
+ mod tests {
+     use super::*;
 ```
 
-**File**: `neps/README.md` (modified, +1/-0)
+**File**: `crates/nono-cli/src/policy.rs` (modified, +44/-8)
 ```diff
-@@ -108,4 +108,5 @@ CI fails PRs that leave them stale.
- | 0007 | Supervisor decisions, audit and credentials outside a microVM guest | draft | Breaking: not yet assessed |
- | 0008 | Session flight recorder | draft | Breaking: not yet assessed |
- | 0009 | Account sign-in from the CLI (`nono login`) | draft | Non-breaking |
-+| 0010 | Session terminal capture | draft | Breaking: not yet assessed |
- <!-- nep-index:end -->
+@@ -1041,6 +1041,8 @@ pub(crate) fn add_glob_deny_rules(
+         let re = glob_to_seatbelt_regex_with_literal_prefix(&prefix_str, glob_suffix)?;
+         caps.add_platform_rule(format!("(allow file-read-metadata (regex #\"{re}\"))"))?;
+         caps.add_platform_rule(format!("(deny file-read-data (regex #\"{re}\"))"))?;
++        caps.add_platform_rule(format!("(deny process-exec* (regex #\"{re}\"))"))?;
++        caps.add_platform_rule(format!("(deny file-map-executable (regex #\"{re}\"))"))?;
+         caps.add_platform_rule(format!("(deny file-write* (regex #\"{re}\"))"))?;
+         // Unix socket connect(2) is mediated as network-outbound, not file I/O.
+         caps.add_platform_rule(format!("(deny network-outbound (regex #\"{re}\"))"))?;
+@@ -1175,6 +1177,9 @@ pub(crate) fn emit_macos_deny_rules_for_path(path: &Path, caps: &mut CapabilityS
+ 
+     caps.add_platform_rule(format!("(allow file-read-metadata ({}))", file_filter))?;
+     caps.add_platform_rule(format!("(deny file-read-data ({}))", file_filter))?;
++    // A denied read must not stay executable or mappable.
++    caps.add_platform_rule(format!("(deny process-exec* ({}))", file_filter))?;
++    caps.add_platform_rule(format!("(deny file-map-executable ({}))", file_filter))?;
+     caps.add_platform_rule(format!("(deny file-write* ({}))", file_filter))?;
+     caps.add_platform_rule(format!("(deny network-outbound ({}))", network_filter))?;
+     Ok(())
+@@ -1992,6 +1997,8 @@ pub fn apply_deny_overrides(
+ 
+                 if grant_has_read {
+                     caps.add_platform_rule(format!("(allow file-read-data ({}))", filter))?;
++                    caps.add_platform_rule(format!("(allow process-exec* ({}))", filter))?;
++                    caps.add_platform_rule(format!("(allow file-map-executable ({}))", filter))?;
+                 }
+                 if grant_has_write {
+                     caps.add_platform_rule(format!("(allow file-write* ({}))", filter))?;
+@@ -2917,13 +2924,15 @@ mod tests {
+         if cfg!(target_os = "macos") {
+             // On macOS, Seatbelt platform rules should be generated
+             let rules = caps.platform_rules();
+-            assert_eq!(rules.len(), 4);
++            assert_eq!(rules.len(), 6);
+             assert!(rules[0].contains("allow file-read-metadata"));
+             assert!(rules[1].contains("deny file-read-data"));
+-            assert!(rules[2].contains("deny file-write*"));
++            assert!(rules[2].contains("deny process-exec*"));
++            assert!(rules[3].contains("deny file-map-executable"));
++            assert!(rules[4].contains("deny file-write*"));
+             assert!(
+-                rules[3].contains("deny network-outbound")
+-                    && rules[3].contains("subpath \"/nonexistent/test/deny\"")
++                rules[5].contains("deny network-outbound")
++                    && rules[5].contains("subpath \"/nonexistent/test/deny\"")
+             );
+         } else {
+             // On Linux, no platform rules generated (Landlock has no deny semantics)
+@@ -3178,9 +3187,13 @@ mod tests {
+         );
+ 
+         if cfg!(target_os = "macos") {
+-            // Should have 8 rules: 4 for symlink path + 4 for resolved target
++            // Should have 12 rules: 6 for symlink path + 6 for resolved target
+             let rules = caps.platform_rules();
+-            assert_eq!(rules.len(), 8, "expected 8 Seatbelt rules for symlink deny");
++            assert_eq!(
++                rules.len(),
++                12,
++                "expected 12 Seatbelt rules for symlink deny"
++            );
+         }
+     }
+ 
+@@ -3315,8 +3328,8 @@ mod tests {
+                 let rules = caps.platform_rules();
+                 assert_eq!(
+                     rules.len(),
+-                    8,
+-                    "expected 8 Seatbelt rules (4 original + 4 resolved); got: {:?}",
++                    12,
++                    "expected 12 Seatbelt rules (6 original + 6 resolved); got: {:?}",
+                     rules
+                 );
+             }
+@@ -5779,6 +5792,29 @@ mod tests {
+             read_paths.iter().any(|p| p == "/System/Volumes"),
+             "system_read_macos should still grant /System/Volumes for firmlink resolution: {read_paths:?}"
+         );
++        // Exec is scoped to the read set, so platform helper dirs must be readable.
++        assert!(
++            read_paths.iter().any(|p| p == "/usr/libexec"),
++            "system_read_macos must grant /usr/libexec: {read_paths:?}"
++        );
++    }
++
++    #[cfg(target_os = "macos")]
++    #[test]
++    fn test_deny_rules_also_deny_exec_and_map_executable() {
++        let dir = tempfile::tempdir().expect("tempdir");
++        let file = dir.path().join("bin");
++        std::fs::write(&file, b"x").expect("write");
++        let mut caps = CapabilitySet::new();
++        emit_macos_deny_rules_for_path(&file, &mut caps).expect("emit");
++        let rules = caps.platform_rules();
++        assert!(rules.iter().any(|r| r.contains("deny fi
+```
+
+**File**: `crates/nono-cli/src/tool-sandbox/platform/macos.rs` (modified, +5/-6)
+```diff
+@@ -3444,11 +3444,10 @@ fn add_outer_process_exec_gate(caps: &mut CapabilitySet, state: &ToolSandboxStat
+         denied.insert(deny_only.path.clone());
+     }
+     // This sandbox is a routing guard, not the command sandbox selected by policy.
+-    // It permits ordinary agent process execution, then denies configured
+-    // policy command binaries by exact path so those tools must be reached
+-    // through the broker shim on PATH. The supervisor applies the actual
++    // Exec is already scoped to the read set by the library profile; this denies
++    // configured policy command binaries by exact path so those tools must be
++    // reached through the broker shim on PATH. The supervisor applies the actual
+     // command sandbox to the approved grandchild invocation.
+-    caps.add_platform_rule("(allow process-exec*)")?;
+     add_controlled_source_denies(caps, denied)
+ }
+ 
+@@ -6832,7 +6831,7 @@ mod tests {
+     }
+ 
+     #[test]
+-    fn outer_process_exec_gate_allows_exec_but_denies_controlled_paths() -> Result<()> {
++    fn outer_process_exec_gate_has_no_blanket_allow_and_denies_controlled_paths() -> Result<()> {
+         let temp = test_tempdir()?;
+         let bin_dir = temp.path().join("bin");
+         create_dir(&bin_dir)?;
+@@ -6852,7 +6851,7 @@ mod tests {
+ 
+         let rules = caps.platform_rules();
+         assert!(
+-            rules
++            !rules
+                 .iter()
+                 .any(|rule| rule.as_str() == "(allow process-exec*)")
+         );
+```
+
+**File**: `crates/nono-cli/tests/macos_exec_requires_read.rs` (added, +119/-0)
+```diff
+@@ -0,0 +1,119 @@
++//! On macOS, `process-exec*` is scoped to the read set: a binary that is not
++//! readable fails immediately with EPERM instead of dying obscurely at startup.
++
++#![cfg(target_os = "macos")]
++
++use nono_test_support::{Argv, NonoTest, Profile, nono_test};
++use std::fs;
++use std::path::PathBuf;
++use std::process::Command;
++
++fn profile_with_reads(t: &NonoTest, name: &str, reads: &[&PathBuf]) -> Profile {
++    let reads: Vec<String> = reads
++        .iter()
++        .map(|p| format!("\"{}\"", p.display()))
++        .collect();
++    t.write_profile(
++        name,
++        &format!(
++            r#"{{
++                "meta": {{ "name": "{name}-test" }},
++                "filesystem": {{ "allow": ["{workspace}"], "read": [{reads}] }}
++            }}"#,
++            workspace = t.workspace().display(),
++            reads = reads.join(",")
++        ),
++    )
++}
++
++fn workspace_only_profile(t: &NonoTest, name: &str) -> Profile {
++    profile_with_reads(t, name, &[])
++}
++
++/// Ad hoc signed copy of `/bin/echo` placed outside the granted workspace.
++fn ungranted_binary(t: &NonoTest, dir: &str) -> PathBuf {
++    let dir = t.root().join(dir);
++    fs::create_dir_all(&dir).expect("create dir");
++    let bin = dir.join("echo-copy");
++    fs::copy("/bin/echo", &bin).expect("copy echo");
++    let status = Command::new("codesign")
++        .args(["-f", "-s", "-"])
++        .arg(&bin)
++        .output()
++        .expect("run codesign");
++    assert!(status.status.success(), "codesign failed");
++    bin.canonicalize().expect("canonicalize")
++}
++
++#[test]
++fn exec_of_unreadable_binary_fails_fast() {
++    let t = nono_test!("exec-unreadable");
++    let bin = ungranted_binary(&t, "ungranted");
++    let profile = workspace_only_profile(&t, "exec-unreadable");
++
++    t.run()
++        .profile(&profile)
++        .no_rollback()
++        .exec(
++            Argv::new("/bin/sh")
++                .arg("-c")
++                .arg(format!("{} hi", bin.display())),
++        )
++        .assert_failure("exec of a binary outside the read set is denied")
++        .assert_stderr_contains("Operation not permitted")
++        .assert_stdout_lacks("hi");
++}
++
++#[test]
++fn exec_of_binary_succeeds_once_read_granted() {
++    let t = nono_test!("exec-granted");
++    let bin = ungranted_binary(&t, "ungranted");
++    let profile = profile_with_reads(&t, "exec-granted", &[&bin]);
++
++    t.run()
++        .profile(&profile)
++        .no_rollback()
++        .exec(
++            Argv::new("/bin/sh")
++                .arg("-c")
++                .arg(format!("{} hi", bin.display())),
++        )
++        .assert_success("a read-granted binary is executable")
++        .assert_stdout_contains("hi");
++}
++
++#[test]
++fn exec_of_binary_in_granted_dir_succeeds() {
++    let t = nono_test!("exec-dir");
++    let bin = ungranted_binary(&t, "granted-dir");
++    let dir = bin.parent().expect("parent").to_path_buf();
++    let profile = profile_with_reads(&t, "exec-dir", &[&dir]);
++
++    t.run()
++        .profile(&profile)
++        .no_rollback()
++        .exec(
++            Argv::new("/bin/sh")
++                .arg("-c")
++                .arg(format!("{} hi", bin.display())),
++        )
++        .assert_success("a read-granted dir allows exec");
++}
++
++#[test]
++fn default_system_tools_still_run() {
++    let t = nono_test!("exec-system");
++    let profile = workspace_only_profile(&t, "exec-system");
++
++    t.run()
++        .profile(&profile)
++        .no_rollback()
++        .exec(
++            Argv::new("/bin/zsh")
++                .arg("-l")
++                .arg("-c")
++                .arg("echo login-ok"),
++        )
++        .assert_success("login shell runs path_helper")
++        .assert_stdout_contains("login-ok");
++}
+```
+
+**File**: `crates/nono-cli/tests/why_deny.rs` (modified, +11/-6)
+```diff
+@@ -20,12 +20,17 @@ fn fixture() -> (tempfile::TempDir, std::path::PathBuf, std::path::PathBuf) {
+ 
+     fs::write(
+         &profile,
+-        r#"{
+-            "filesystem": {
+-                "allow": ["$WORKDIR"],
+-                "deny": ["$WORKDIR/blocked.txt"]
+-            }
+-        }"#,
++        format!(
++            r#"{{
++                "filesystem": {{
++                    "allow": ["$WORKDIR"],
++                    "read_file": ["{nono}"],
++                    "deny": ["$WORKDIR/blocked.txt"]
++                }}
++            }}"#,
++            // macOS scopes exec to the read set, so the sandboxed binary must be readable.
++            nono = env!("CARGO_BIN_EXE_nono")
++        ),
+     )
+     .expect("write profile");
+ 
+```
+
+**File**: `crates/nono/src/sandbox/linux.rs` (modified, +8/-0)
+```diff
+@@ -4071,6 +4071,14 @@ mod tests {
+         assert!(!info.details.is_empty());
+     }
+ 
++    #[test]
++    fn test_read_access_includes_execute_write_does_not() {
++        let read = access_to_landlock(AccessMode::Read, ABI::V3);
++        assert!(read.effective.contains(AccessFs::Execute));
++        let write = access_to_landlock(AccessMode::Write, ABI::V3);
++        assert!(!write.effective.contains(AccessFs::Execute));
++    }
++
+     #[test]
+     fn test_access_conversion_v3() {
+         let abi = ABI::V3;
+```
+
+**File**: `crates/nono/src/sandbox/macos.rs` (modified, +125/-1)
+```diff
+@@ -526,7 +526,8 @@ fn generate_profile(caps: &CapabilitySet) -> Result<String> {
+     }
+ 
+     // Allow specific process operations needed for execution
+-    profile.push_str("(allow process-exec*)\n");
++    // process-exec* is scoped to the read set below: a binary that can be
++    // exec'd but not read cannot load its own image and dies obscurely.
+     profile.push_str("(allow process-fork)\n");
+ 
+     // Process info: allow self-inspection and same-sandbox inspection for both
+@@ -674,6 +675,7 @@ fn generate_profile(caps: &CapabilitySet) -> Result<String> {
+             AccessMode::Read | AccessMode::ReadWrite => {
+                 for filter in path_filters_for_cap(cap)? {
+                     profile.push_str(&format!("(allow file-read* ({}))\n", filter));
++                    profile.push_str(&format!("(allow process-exec* ({}))\n", filter));
+                 }
+             }
+             AccessMode::Write => {
+@@ -691,6 +693,10 @@ fn generate_profile(caps: &CapabilitySet) -> Result<String> {
+         profile.push_str("(allow file-read* (extension \"com.apple.app-sandbox.read\"))\n");
+         profile.push_str("(allow file-read* (extension \"com.apple.app-sandbox.read-write\"))\n");
+         profile.push_str("(allow file-write* (extension \"com.apple.app-sandbox.read-write\"))\n");
++        // Exec follows read for dynamic grants, same as static grants.
++        profile.push_str("(allow process-exec* (extension \"com.apple.app-sandbox.read\"))\n");
++        profile
++            .push_str("(allow process-exec* (extension \"com.apple.app-sandbox.read-write\"))\n");
+     }
+ 
+     // Add write rules for all capabilities with Write or ReadWrite access.
+@@ -1099,6 +1105,56 @@ mod tests {
+         assert!(profile.contains("(allow file-map-executable (subpath \"/test\"))"));
+     }
+ 
++    #[test]
++    fn test_generate_profile_scopes_exec_to_read_set() {
++        let mut caps = CapabilitySet::new();
++        caps.add_fs(FsCapability {
++            original: PathBuf::from("/readable"),
++            resolved: PathBuf::from("/readable"),
++            access: AccessMode::Read,
++            is_file: false,
++            source: CapabilitySource::User,
++        });
++        caps.add_fs(FsCapability {
++            original: PathBuf::from("/rw-file"),
++            resolved: PathBuf::from("/rw-file"),
++            access: AccessMode::ReadWrite,
++            is_file: true,
++            source: CapabilitySource::User,
++        });
++        caps.add_fs(FsCapability {
++            original: PathBuf::from("/write-only"),
++            resolved: PathBuf::from("/write-only"),
++            access: AccessMode::Write,
++            is_file: false,
++            source: CapabilitySource::User,
++        });
++
++        let profile = generate_profile(&caps).unwrap();
++
++        assert!(!profile.contains("(allow process-exec*)\n"));
++        assert!(profile.contains("(allow process-exec* (subpath \"/readable\"))"));
++        assert!(profile.contains("(allow process-exec* (literal \"/rw-file\"))"));
++        assert!(!profile.contains("process-exec* (subpath \"/write-only\")"));
++    }
++
++    #[test]
++    fn test_generate_profile_exec_covers_original_and_resolved() {
++        let mut caps = CapabilitySet::new();
++        caps.add_fs(FsCapability {
++            original: PathBuf::from("/tmp"),
++            resolved: PathBuf::from("/private/tmp"),
++            access: AccessMode::Read,
++            is_file: false,
++            source: CapabilitySource::User,
++        });
++
++        let profile = generate_profile(&caps).unwrap();
++
++        assert!(profile.contains("(allow process-exec* (subpath \"/tmp\"))"));
++        assert!(profile.contains("(allow process-exec* (subpath \"/private/tmp\"))"));
++    }
++
+     #[test]
+     fn test_generate_profile_with_file() {
+         let mut caps = CapabilitySet::new();
+@@ -1555,6 +1611,74 @@ mod tests {
+         );
+     }
+ 
++    #[test]
++    fn test_generate_profile_extensions_allow_exec() {
++        let caps = CapabilitySet::new().enable_extensions();
++        let profile = generate_profile(&caps).unwrap();
++
++        assert!(
++            profile.contains("(allow process-exec* (extension \"com.apple.app-sandbox.read\"))")
++        );
++        assert!(
++            profile
++                .contains("(allow process-exec* (extension \"com.apple.app-sandbox.read-write\"))")
++        );
++    }
++
++    /// Applies a real sandbox in a forked child: an ungranted binary can be
++    /// exec'd only after its extension token is consumed.
++    #[test]
++    fn test_extension_token_allows_exec_of_ungranted_binary() {
++        use std::os::unix::process::CommandExt;
++        use std::process::Command;
++
++        let dir = tempfile::tempdir().unwrap();
++        let bin = dir.path().join("echo-copy");
++        std::fs::copy("/bin/echo", &bin).unwrap();
++        let signed = Command::new("codesign")
++            .args(["-f", "-s", "-"])
++            .arg(&bin)
++            .output()
++            .unwrap();
++        asse
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2260** (2026-11-03): refactor(cli): simplify remote session display and selector layout (@lukehinds)
-- **PR #2259** (2026-11-04): docs(neps): add nep 0010 for session terminal capture (@lukehinds)
-- **PR #2254** (2026-11-03): fix(proxy): strip hop headers when the colon is spaced (@SebTardif)
-- **PR #2251** (2026-11-02): chore(deps): bump the routine-rust group with 6 updates (@dependabot[bot])
-- **PR #2250** (2026-11-03): feat(cli): add nono login and logout commands (@lukehinds)
-- **PR #2249** (2026-11-02): docs(neps): update implementation status and pre-1.0 compatibility guidance (@SequeI)
+- **PR #2289** (2026-11-09): chore(deps): bump ureq from 3.5.0 to 3.5.1 in the routine-rust group (@dependabot[bot])
+- **PR #2288** (2026-11-09): chore(deps): bump the routine-actions group with 5 updates (@dependabot[bot])
+- **PR #2282** (2026-11-09): fix(sandbox): scope macOS process-exec to the read set (@panga)
+- **PR #2278** (2026-11-06): fix(docker): create home directory for nono user (@SequeI)
+- **PR #2277** (2026-11-09): feat(proxy): select aws_auth signing profile by placeholder access key ID (@nmgrenyi)
+- **PR #2276** (2026-11-06): docs(schema): add command sandbox exec_paths and open_port fields (@daescha)
 
 ---
 
@@ -3170,22 +3568,21 @@ Signed-off-by: Luke Hinds <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(neps): add nep 0010 for session terminal capture (#2259)
+## X. sandbox): scope macOS process-exec to the read set (#2282)
 
 **RULE**:
-When implementing operations in `ROADMAP.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nolabs-ai/nono. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/nono-cli/data/policy.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nolabs-ai/nono. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0e15816b`: docs(neps): add nep 0010 for session terminal capture (#2259). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `59969be3`: sandbox): scope macOS process-exec to the read set (#2282). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `ROADMAP.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/nono-cli/data/policy.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **[NEP-0010: Session terminal capture](neps/0010-session-terminal-capture.md)** — _Breaking: not yet assessed_
-  Let the nono supervisor capture what a session showed and was told: its terminal output, the input sent to it, and the terminal facts around them. nono keeps this as a tamper-evident recording linked into the audit log, and can deliver it, durably and live, to an external receiver over open protocols. nono captures, protects and delivers.
+          "/usr/libexec",
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3195,4 +3592,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0e15816b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `59969be3` are properly handled with clean fallback behavior.

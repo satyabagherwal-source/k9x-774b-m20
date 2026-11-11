@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source**: github ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
-> **Source Version**: `9baea576`  
+> **Source Version**: `16f3ce5c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T22:25:13.502Z  
+> **Timestamp**: 2026-11-09T23:07:29.726Z  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T22:25:13.227Z  
+> **Harvest Timestamp**: 2026-11-09T23:07:28.802Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -104,8 +104,9 @@ impl<N: Network> FromBytes for WorkerPing<N> {
     }
 }
 
-#[cfg(test)]
+#[cfg(any(test, feature = "fuzz-helpers"))]
 pub mod prop_tests {
+    #![cfg_attr(not(test), allow(unused_imports))]
     use crate::{WorkerPing, prop_tests::any_transmission_id};
     use snarkvm::console::prelude::{FromBytes, ToBytes};
 
@@ -1966,11 +1967,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #4615** (2026-11-06): **Gateway handshake has no genesis binding**
+  *Symptoms*: The gateway handshake never checks that a peer shares our genesis, and the first authenticated holder of an address keeps its slot. This requires the committee key; we found no path without it. We have only seen this on a devnet.  The code below is from `staging` at `395f79781`.  **Observed**  Two devnets sharing deterministic dev keys could reach each other, with different genesis blocks: a prover logged `failed (incorrect block header)` against every foreign node. While two of five validators restarted, foreign nodes with those keys connected to the other three. The returning validators were refused with `already connected to the given Aleo address`.  The returning validators then accepted foreign nodes holding the other keys, refusing their real peers too. The chain stopped permanently, while each validator logged `Connected to 4 validators (of 4 bonded validators)`. A rerun of the same commit without the second devnet passed.  The foreign nodes sent no proposals, signatures or primary pings, so no consensus check rejected them. Their traffic kept the connections alive, and the connected-quorum check in `propose_batch` counted them.  **Why**  - `verify_peer_info` in `node/bft/src/gateway.rs` checks version, trusted peers, committee membership, the existing connection and the restrictions ID, but not genesis. - The router handshake does compare genesis headers (`node/router/src/handshake.rs`), which is why only the router side refused these nodes.  **Suggested fix**  Add th
+
 - **Issue #4588** (2026-10-29): **Re-issue block requests that a responsive peer skipped**
   *Symptoms*: ## Motivation  Fixes #4585. Block sync can stall for good when a validator peer drops block requests.  - A validator drops each `BlockRequest` beyond `max_cache_duplicates()` (the committee size squared) per peer within `CACHE_REQUESTS_INTERVAL` (2 s). It sends no reply. - Since 71f5f74c0, `handle_block_request_timeouts` keeps a timed-out request if its peer sent any block response within `BLOCK_REQUEST_TIMEOUT` (60 s). - The peer keeps answering newer requests. So a dropped request never times out, and it is never re-issued. The syncing node stops below the gap.  ### Fix  - For each peer, `last_response_at` also holds the latest timestamp of any request that the peer answered. - A timed-out request is exempt only while an assigned peer is responsive and has answered no request sent after it. Requests are stamped and queued to each peer in send order. So a peer that answered a later request skipped this one. - A skipped request is marked as failed and re-issued. Its peer stays in the sync pool, because the peer still responds. - A backlogged peer that answers requests in order stays exempt, as 71f5f74c0 intends. - The gateway logs each dropped block request at trace level.  ### Commits  - `fix(node/sync): time out block requests that a responsive peer skipped`: the fix, the log line, and three unit tests.  ## Test Plan  - New unit tests in `node/sync/src/block_sync.rs`:   - `test_reissue_skipped_block_request`: a timed-out request whose peer answered a later request is remove
-
-- **Issue #4585** (2026-10-29): **[Bug] Block sync stalls for good when a validator peer drops rate-limited block requests**
-  *Symptoms*: ## 🐛 Bug Report  A validator that syncs blocks from a validator peer can stall for good. Two behaviors combine:  1. **The gateway drops excess block requests without a reply.** A validator counts the `BlockRequest`s from each peer over `CACHE_REQUESTS_INTERVAL` (2 seconds). From the `max_cache_duplicates()`-th request on, it returns `Ok(true)` and does nothing. It sends no response and logs nothing. The limit is the square of the current committee size, so it is 16 on a 4-validator devnet.    - [`gateway.rs#L650-L655`](https://github.com/ProvableHQ/snarkOS/blob/6b124303c094f0a58bdf9f3517d3ac589dd0820f/node/bft/src/gateway.rs#L650-L655)    - [`gateway.rs#L400-L403`](https://github.com/ProvableHQ/snarkOS/blob/6b124303c094f0a58bdf9f3517d3ac589dd0820f/node/bft/src/gateway.rs#L400-L403) 2. **A dropped request never times out while its peer answers other requests.** `handle_block_request_timeouts` keeps a request whose peer sent any block response in the last `BLOCK_REQUEST_TIMEOUT` (60 seconds). It added this exemption in 71f5f74c0 ("do not ban responsive peers"). The peer keeps answering newer requests, so the dropped ones are never re-issued.    - [`block_sync.rs#L1247-L1249`](https://github.com/ProvableHQ/snarkOS/blob/6b124303c094f0a58bdf9f3517d3ac589dd0820f/node/sync/src/block_sync.rs#L1247-L1249)    - [`block_sync.rs#L1384-L1389`](https://github.com/ProvableHQ/snarkOS/blob/6b124303c094f0a58bdf9f3517d3ac589dd0820f/node/sync/src/block_sync.rs#L1384-L1389)  The syncing node the
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1987,173 +1988,143 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9baea576` (2026-11-05)
-**Commit Message**: Merge pull request #4636 from aleo-labs-protocol/snarkworld/gauntlet-report-artifacts
+### Incident Patch 1: `9ee0e3e9` (2026-11-09)
+**Commit Message**: Move the v1-to-v2 migration guide into the repository and link to it
 
-ci: attach interactive Gauntlet reports to stress-test runs
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/stress-test.yml` (modified, +77/-10)
+**File**: `node/rest/MIGRATING_TO_V2.md` (added, +96/-0)
 ```diff
-@@ -142,8 +142,8 @@ jobs:
-           : "${ROLE_ARN:?STRESS_ROLE_ARN must be configured}"
-           # AWS errors quote ARNs that differ from the secret, so mask the account too.
-           echo "::add-mask::$(cut -d: -f5 <<<"$ROLE_ARN")"
--          # The Gauntlet host's gha-gauntlet user can only run the gate: enqueue, status
--          # and cancel. Each connection pushes a key that lives 60 seconds, through the
-+          # The Gauntlet host's gha-gauntlet user can only run the gate: enqueue, status,
-+          # report and cancel. Each connection pushes a key that lives 60 seconds, through the
-           # Instance Connect Endpoint.
-           mkdir -p ~/.ssh && chmod 700 ~/.ssh
-           ssh-keygen -q -t ed25519 -N '' -f ~/.ssh/stress
-@@ -273,19 +273,86 @@ jobs:
-           fi
-           jq -r '[.content[] | select(.type == "text") | .text] | join("\n")' response.json > claude.md
- 
-+      - name: Export the interactive report
-+        id: export
-+        if: steps.follow.outputs.handoff == 'false'
-+        continue-on-error: true
-+        env:
-+          RUN_ID: ${{ steps.req.outputs.run_id }}
-+        run: |
-+          source "$RUNNER_TEMP/gate.sh"
-+          mkdir -p report
-+          gate report "$RUN_ID" html > report/report.html
-+          gate report "$RUN_ID" json > report/report.json
-+          jq -e --arg run "$RUN_ID" '.schema_version == 1 and .run.run_id == $run' report/report.json >/dev/null
-+          # Artifacts bypass GitHub log masking.
-+          python3 - <<'PY'
-+          import ipaddress
-+          import os
-+          import re
-+          from pathlib import Path
+@@ -0,0 +1,96 @@
++# Migrating from the v1 REST API to v2
 +
-+          secrets = (os.environ["MANAGER"], os.environ["ROLE_ARN"], os.environ["ROLE_ARN"].split(":")[4])
-+          cloud = re.compile(
-+              r"\barn:|\bi-[0-9a-f]{8,17}\b|"
-+              r"\b(?:[a-z0-9-]+\.)+(?:compute(?:-\d+)?\.amazonaws\.com(?:\.cn)?|compute\.internal|ec2\.internal)\b",
-+              re.IGNORECASE)
-+          addresses = re.compile(
-+              r"(?<![\w:])(?:[a-f\d]{0,4}:){2,}[a-f\d:.]*(?:%[\w.-]+)?(?![\w:])|"
-+              r"(?<![\w.])(?:\d{1,3}\.){3}\d{1,3}(?![\w.])", re.IGNORECASE)
-+          for name in ("report.html", "report.json"):
-+              content = Path("report", name).read_text()
-+              blocked = any(value and value in content for value in secrets) or cloud.search(content)
-+              for match in addresses.finditer(content):
-+                  try:
-+                      ipaddress.ip_address(match[0])
-+                  except ValueError:
-+                      continue
-+                  blocked = True
-+                  break
-+              if blocked:
-+                  raise SystemExit("::warning::Interactive report contains infrastructure identifiers; skipping upload.")
-+          PY
++The REST API is served under three prefixes: `/v2/<network>`, `/v1/<network>`, and the unversioned `/<network>`.
++The unversioned prefix serves the v1 API.
++The v1 API and the unversioned prefix are deprecated.
++Use `/v2/<network>`.
 +
-+      - name: Upload the report
-+        id: artifact
-+        if: steps.follow.outputs.handoff == 'false' && steps.export.outcome == 'success'
-+        continue-on-error: true
-+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-+        with:
-+          name: gauntlet-${{ steps.req.outputs.run_id }}
-+          path: |
-+            report/report.html
-+            report/report.json
-+          retention-days: 14
-+          if-no-files-found: error
++The alias routes `/peers/count`, `/peers/all`, `/peers/all/metrics` and `/sync_status` are also deprecated, on every version, `/v2` included.
 +
-       - name: Close the check
-         if: steps.follow.outputs.handoff == 'false'
-         env:
-           CHECK_ID: ${{ steps.check.outputs.id }}
-+          REPORT_URL: ${{ steps.artifact.outputs.artifact-url }}
-         run: |
--          summary="$(jq -r .summary status.json)"
--          if [[ -s claude.md ]]; then
--            summary="$summary"$'\n\n### Compared with the last passing run (Claude)\n\n'"$(cat claude.md)"
--          fi
--          jq -n --arg summary "$summary" --slurpfile s status.json \
--            '{status: "completed", conclusion: $s[0].conclusion, output: {title: $s[0].title, summary: $summary}}' \
--            | gh api -X PATCH "repos/$GITHUB_REPOSITORY/check-runs/$CHECK_ID" --input - >/dev/null
--          echo "$summary" >> "$GITHUB_STEP_SUMMARY"
-+          python3 - <<'PY'
-+          import json
-+          import os
-+          from pathlib import Path
++## Timeline
 +
-+          state = json.loads(Path("status.json").read_text())
-+          summary = state["summary"]
-+          if url := os.environ.get("REPORT_URL"):
-+              summary = f"[Download interactive report + JSON]({url}) · Unzip and open report.html locally.\n\n" + summary
-+          extra = Path("claude.md")
-+          if extra.is_file():
-+              note = "\n\n### Compared with the last passing run (Claude)\n\n" + extra.read_text()
-+              if len((summary + note).encode()) <= 65535:
-+                  summary += note
-+          Path("check.json").write_text(json.dumps({"status": "completed", "conclusion": state["conclusion"],
-+                                                  "output": {"title": state["title"], "summary": summary}}))
-+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as o
++The deprecation started on 2026-11-08.
++
++| Release | `/v1/<network>/…`, `/<network>/…` and the alias routes |
++|---|---|
++| The first release with the deprecation (N) | Served as before, plus the deprecation headers |
++| N+1 | Served as before, plus the deprecation headers |
++| N+2 | **`410 Gone`**, with a body that points to `/v2` |
++
++## What to change
++
++1. **Put `/v2` in front of the network name** in every request URL:
++
++   ```text
++   https://node.example/mainnet/block/latest     →  https://node.example/v2/mainnet/block/latest
++   https://node.example/v1/mainnet/block/latest  →  https://node.example/v2/mainnet/block/latest
++   ```
++
++   The routes, query parameters and request bodies are the same on v2.
++
++   Also replace the alias routes:
++
++   | Deprecated | Use |
++   |---|---|
++   | `/peers/count` | `/connections/p2p/count` |
++   | `/peers/all` | `/connections/p2p/all` |
++   | `/peers/all/metrics` | `/connections/p2p/all/metrics` |
++   | `/sync_status` | `/sync/status` |
++
++2. **Successful responses do not change.**
++   Every 2xx response, including `203`, has the same status and body on v2 as on v1.
++
++3. **Error responses change. You must handle the new status codes and the JSON body.**
++
++   - **Status:** v1 answers every error with `500`.
++     v2 uses the status that describes the error:
++
++     | Status | Meaning |
++     |---|---|
++     | `400 Bad Request` | The request is malformed: bad parameters, a body that does not parse, or a body over a size limit |
++     | `404 Not Found` | The resource does not exist on this node, for example a block height it does not have yet |
++     | `422 Unprocessable Entity` | The request is well formed but invalid, for example a transaction that fails verification |
++     | `429 Too Many Requests` | Rate limited. A rate-limit rejection carries `Retry-After` |
++     | `503 Service Unavailable` | The node cannot serve this now, for example because it is syncing or the route needs a validator |
++     | `500 Internal Server Error` | A fault on the node |
++
++     Branch on the status code, not on the error text.
++     Handle any other 4xx or 5xx status by its class: v2 can add more specific codes.
++
++   - **Body:** v1 sends plain text, `message — cause — …`, with an `(HTTP NNN)` suffix when the error did not come from a route.
++     v2 sends JSON with `Content-Type: application/json`:
++
++     ```json
++     { "message": "…", "error_type": "not_found", "chain": ["cause", "…"] }
++     ```
++
++     If you display or parse error text, read `message` and `chain` from the JSON.
++
++## How v2 changes
++
++v2 is the stable API.
++
++These can be added to v2: status codes, JSON fields in error and success bodies, response headers, routes, and query parameters.
++For example, `transaction/broadcast` will use `409 Conflict`, and error bodies will get a machine-readable `code` field.
++
++These do not change in v2: the status and body of an existing success response, and the meaning of an existing field.
++
++Your client must ignore JSON fields and headers that it does not know.
++It must handle an unknown status by its class (4xx or 5xx).
++A change that breaks these rules gets a new API version.
++
++## Detecting a deprecated route
++
++Every response from a deprecated route, success or error, carries these headers ([RFC 9745](https://www.rfc-editor.org/rfc/rfc9745)):
++
++```text
++Deprecation: @1794096000
++Link: <https://github.com/aleo-labs-protocol/snarkOS/blob/staging/node/rest/MIGRATING_TO_V2.md>; rel="deprecation"
++```
++
++`Deprecation` is the date of deprecation, 2026-11-08, as a Unix timestamp.
++CORS exposes both headers, so browser clients can read them.
++
++HTTP libraries do not act on these headers by themselves.
++Check for `Deprecation` in your client and log a warning.
++`snarkos developer` prints a warning for each deprecated response.
 ```
 
----
-
-### Incident Patch 2: `d3ff4bd8` (2026-11-05)
-**Commit Message**: ci: validate Gauntlet reports before upload
-
-**File**: `.github/workflows/stress-test.yml` (modified, +29/-1)
+**File**: `node/rest/README.md` (modified, +2/-0)
 ```diff
-@@ -285,12 +285,40 @@ jobs:
-           gate report "$RUN_ID" html > report/report.html
-           gate report "$RUN_ID" json > report/report.json
-           jq -e --arg run "$RUN_ID" '.schema_version == 1 and .run.run_id == $run' report/report.json >/dev/null
-+          # Artifacts bypass GitHub log masking.
-+          python3 - <<'PY'
-+          import ipaddress
-+          import os
-+          import re
-+          from pathlib import Path
-+
-+          secrets = (os.environ["MANAGER"], os.environ["ROLE_ARN"], os.environ["ROLE_ARN"].split(":")[4])
-+          cloud = re.compile(
-+              r"\barn:|\bi-[0-9a-f]{8,17}\b|"
-+              r"\b(?:[a-z0-9-]+\.)+(?:compute(?:-\d+)?\.amazonaws\.com(?:\.cn)?|compute\.internal|ec2\.internal)\b",
-+              re.IGNORECASE)
-+          addresses = re.compile(
-+              r"(?<![\w:])(?:[a-f\d]{0,4}:){2,}[a-f\d:.]*(?:%[\w.-]+)?(?![\w:])|"
-+              r"(?<![\w.])(?:\d{1,3}\.){3}\d{1,3}(?![\w.])", re.IGNORECASE)
-+          for name in ("report.html", "report.json"):
-+              content = Path("report", name).read_text()
-+              blocked = any(value and value in content for value in secrets) or cloud.search(content)
-+              for match in addresses.finditer(content):
-+                  try:
-+                      ipaddress.ip_address(match[0])
-+                  except ValueError:
-+                      continue
-+                  blocked = True
-+                  break
-+              if blocked:
-+                  raise SystemExit("::warning::Interactive report contains infrastructure identifiers; skipping upload.")
-+          PY
+@@ -8,3 +8,5 @@ The `snarkos-node-rest` crate provides a REST API for the `snarkos` node.
  
-       - name: Upload the report
-         id: artifact
-         if: steps.follow.outputs.handoff == 'false' && steps.export.outcome == 'success'
-         continue-on-error: true
--        uses: actions/upload-artifact@v4
-+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-         with:
-           name: gauntlet-${{ steps.req.outputs.run_id }}
-           path: |
+ REST responses support gzip compression when the client sends `Accept-Encoding: gzip`.
+ Responses smaller than 32 bytes are not compressed.
++
++The v1 API and the unversioned routes are deprecated. See [Migrating from the v1 REST API to v2](./MIGRATING_TO_V2.md).
+```
+
+**File**: `node/rest/src/lib.rs` (modified, +2/-1)
+```diff
+@@ -566,7 +566,8 @@ async fn record_rest_request(request: Request<Body>, next: middleware::Next) ->
+ const DEPRECATION_TIMESTAMP: i64 = 1_794_096_000;
+ 
+ /// Where a client of a deprecated route learns how to migrate.
+-const MIGRATION_GUIDE_URL: &str = "https://github.com/aleo-labs-protocol/snarkOS/pull/4650";
++const MIGRATION_GUIDE_URL: &str =
++    "https://github.com/aleo-labs-protocol/snarkOS/blob/staging/node/rest/MIGRATING_TO_V2.md";
+ 
+ /// The `Deprecation` response header field (RFC 9745).
+ const DEPRECATION: HeaderName = HeaderName::from_static("deprecation");
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4636** (2026-11-05): ci: attach interactive Gauntlet reports to stress-test runs (@snarkworld)
-- **PR #4635** (2026-11-05): Bump snarkVM to aleo-labs-protocol/snarkVM@6d0fb24ac (@aleo-labs-merge-bot[bot])
-- **PR #4634** (2026-11-05): Run the merge job twice a day (@cbeck88)
-- **PR #4632** (2026-11-05): Bump snarkVM to aleo-labs-protocol/snarkVM@2939d66dd (@aleo-labs-merge-bot[bot])
-- **PR #4631** (2026-11-05): Send only the load test options that are filled in (@cbeck88)
-- **PR #4630** (2026-11-05): Run the telemetry tests in CI (@cbeck88)
+- **PR #4656** (2026-11-09): Bump snarkVM to aleo-labs-protocol/snarkVM@aa342cfe7 (@aleo-labs-merge-bot[bot])
+- **PR #4655** (2026-11-09): ci: add a deploy_rate input to the load test (@cbeck88)
+- **PR #4653** (2026-11-09): Bump snarkVM to aleo-labs-protocol/snarkVM@bcf2847b8 (@aleo-labs-merge-bot[bot])
+- **PR #4652** (2026-11-08): Gauntlet load test: inherit secrets (@cbeck88)
+- **PR #4651** (2026-11-08): Gauntlet workflows: the host reports each run's check (@cbeck88)
+- **PR #4650** (2026-11-09): Deprecate the v1 REST API and the unversioned routes (@cbeck88)
 
 ---
 
@@ -2173,62 +2144,61 @@ ci: attach interactive Gauntlet reports to stress-test runs
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #4636 from aleo-labs-protocol/snarkworld/gauntlet-report-arti
+## X. Move the v1-to-v2 migration guide into the repository and link to it
 
 **RULE**:
-When implementing operations in `.github/workflows/stress-test.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `node/rest/MIGRATING_TO_V2.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9baea576`: Merge pull request #4636 from aleo-labs-protocol/snarkworld/gauntlet-report-artifacts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9ee0e3e9`: Move the v1-to-v2 migration guide into the repository and link to it. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/stress-test.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `node/rest/MIGRATING_TO_V2.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-          # The Gauntlet host's gha-gauntlet user can only run the gate: enqueue, status,
-          # report and cancel. Each connection pushes a key that lives 60 seconds, through the
-      - name: Export the interactive report
-        id: export
-        if: steps.follow.outputs.handoff == 'false'
-        continue-on-error: true
-        env:
-          RUN_ID: ${{ steps.req.outputs.run_id }}
-        run: |
-          source "$RUNNER_TEMP/gate.sh"
-          mkdir -p report
-          gate report "$RUN_ID" html > report/report.html
-          gate report "$RUN_ID" json > report/report.json
-          jq -e --arg run "$RUN_ID" '.schema_version == 1 and .run.run_id == $run' report/report.json >/dev/null
-          # Artifacts bypass GitHub log masking.
-          python3 - <<'PY'
-          import ipaddress
-          import os
-          import re
-          from pathlib import Path
+# Migrating from the v1 REST API to v2
 
-          secrets = (os.environ["MANAGER"], os.environ["ROLE_ARN"], os.environ["ROLE_ARN"].split(":")[4])
-          cloud = re.compile(
-              r"\barn:|\bi-[0-9a-f]{8,17}\b|"
-              r"\b(?:[a-z0-9-]+\.)+(?:compute(?:-\d+)?\.amazonaws\.com(?:\.cn)?|compute\.internal|ec2\.internal)\b",
-              re.
+The REST API is served under three prefixes: `/v2/<network>`, `/v1/<network>`, and the unversioned `/<network>`.
+The unversioned prefix serves the v1 API.
+The v1 API and the unversioned prefix are deprecated.
+Use `/v2/<network>`.
+
+The alias routes `/peers/count`, `/peers/all`, `/peers/all/metrics` and `/sync_status` are also deprecated, on every version, `/v2` included.
+
+## Timeline
+
+The deprecation started on 2026-11-08.
+
+| Release | `/v1/<network>/…`, `/<network>/…` and the alias routes |
+|---|---|
+| The first release with the deprecation (N) | Served as before, plus the deprecation headers |
+| N+1 | Served as before, plus the deprecation headers |
+| N+2 | **`410 Gone`**, with a body that points to `/v2` |
+
+## What to change
+
+1. **Put `/v2` in front of the network name** in every request URL:
+
+   ```text
+   https://node.example/mainnet/block/latest     →  https://node.example/v2/mainnet/block/latest
+   https://node.example/v1/mainnet/block/latest  →  https://node.example/v2/mainnet/block/latest
+   ```
+
+   The routes, query parameters and request bodies are the same on v2.
+
+   Also replace the alias routes:
+
+   | Deprecated | Use |
+   |---|-
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-          # The Gauntlet host's gha-gauntlet user can only run the gate: enqueue, status
-          # and cancel. Each connection pushes a key that lives 60 seconds, through the
-          summary="$(jq -r .summary status.json)"
-          if [[ -s claude.md ]]; then
-            summary="$summary"$'\n\n### Compared with the last passing run (Claude)\n\n'"$(cat claude.md)"
-          fi
-          jq -n --arg summary "$summary" --slurpfile s status.json \
-            '{status: "completed", conclusion: $s[0].conclusion, output: {title: $s[0].title, summary: $summary}}' \
-            | gh api -X PATCH "repos/$GITHUB_REPOSITORY/check-runs/$CHECK_ID" --input - >/dev/null
-          echo "$summary" >> "$GITHUB_STEP_SUMMARY"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9baea576` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9ee0e3e9` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tw93-mole-learnings.md`  
 > **Source**: github ([https://github.com/tw93/Mole](https://github.com/tw93/Mole))  
-> **Source Version**: `10f77d75`  
+> **Source Version**: `acd3b387`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T22:52:28.334Z  
+> **Timestamp**: 2026-11-07T22:53:01.861Z  
 > **Learning ID**: `learn-github-tw93-mole`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,17 +17,17 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tw93-mole-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tw93/Mole](https://github.com/tw93/Mole))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T22:52:28.327Z  
+> **Harvest Timestamp**: 2026-11-07T22:53:01.323Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
 ## 1. Context & Architectural Overview
 - **Repository / Resource**: `tw93/Mole`
-- **Description**: 🐹 Keep your Mac and PC clean, light, and running like new. Fast open-source CLI, plus native Mac and Windows apps.
+- **Description**: 🐹 Open-source Mac and PC cleaner. Keep your machine clean, light, and running like new. Fast CLI, plus native Mac and Windows apps.
 - **Primary Language / Ecosystem**: Shell
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 73895 stars
+- **Stars / Engagement**: 74196 stars
 
 ---
 
@@ -170,13 +170,22 @@ func ensureOverviewSnapshotCacheLocked() error {
 	// and each save re-serialized all of them.
 	now := time.Now()
 	for path, snapshot := range snapshots {
-		if snapshot.SchemaVersion != cacheSchemaVersion || snapshot.Size <= 0 || now.Sub(snapshot.Updated) >= overviewCacheTTL {
+		if snapshot.SchemaVersion != cacheSchemaVersion || snapshot.Size <= 0 || !stampWithin(now, snapshot.Updated, overviewCacheTTL) {
 			delete(snapshots, path)
 		}
 	}
 	overviewSnapshotCache = snapshots
 	overviewSnapshotLoaded = true
 	return nil
+}
+
+// stampWithin reports whether a stored wall-clock stamp is inside its freshness
+// window. A stamp from the future (the system clock was set back) has a
+// negative age and reads as expired, so a stale answer is not kept until the
+// clock catches up.
+func stampWithin(now, stamp time.Time, window time.Duration) bool {
+	age := now.Sub(stamp)
+	return age >= 0 && age < window
 }
 
 func getOverviewSizeStorePath() (string, error) {
@@ -205,7 +214,7 @@ func loadStoredOverviewMeasurement(path string) (int64, scanState, error) {
 		return 0, scanComplete, fmt.Errorf("snapshot cache unavailable")
 	}
 	if snapshot, ok := overviewSnapshotCache[path]; ok && snapshot.Size > 0 {
-		if time.Since(snapshot.Updated) < overviewCacheTTL {
+		if stampWithin(time.Now(), snapshot.Updated, overviewCacheTTL) {
 			if snapshot.Partial {
 				return snapshot.Size, scanPartial, nil
 			}
@@ -239,7 +248,7 @@ func storeOverviewMeasurement(path string, size int64, partial bool) error {
 	// while the recorded value still stands; the timestamp is only refreshed
 	// often enough to keep a live entry from aging out.
 	if existing, ok := overviewSnapshotCache[path]; ok && existing.Size == size && existing.Partial == partial &&
-		time.Since(existing.Updated) < overviewCacheTTL/overviewRefreshDivisor {
+		stampWithin(time.Now(), existing.Updated, overviewCacheTTL/overviewRefreshDivisor) {
 		return nil
 	}
 	overviewSnapshotCache[path] = overviewSizeSnapshot{
@@ -338,23 +347,7 @@ func moleCacheRoot(home string) string {
 
 // getMoleCacheRoot is the shared `~/.cache/mole` directory. The shell side
 // keeps its own state files there, so nothing may be swept from it wholesale.
-func getMoleCacheRoot() (string, error) {
-	home, err := os.UserHomeDir()
-	if err != nil {
-		return "", err
-	}
-	return moleCacheRoot(home), nil
-}
-
-// resolvedCacheDir memoizes the analyzer cache directory together with the HOME
-// it was derived from, so a test that repoints HOME still gets a fresh answer.
-type resolvedCacheDir struct {
-	home string
-	dir  string
-	err  error
-}
-
-var cachedAnalyzerDir atomic.Pointer[resolv
+func getMo
 ```
 
 ### Core Architecture Module: `cmd/analyze/cleanable.go`
@@ -1915,11 +1908,11 @@ func jsonFileEntriesFromFileEntries(files []fileEntry) []jsonFileEntry {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1912** (2026-11-04): **[BUG] Not cleaning Spotify cache**
-  *Symptoms*: ## Before submitting  Run `mo update` to install the latest stable version, then check `mo --version`. Reproduce the problem with that version. If updating itself fails, report that failure and your installed version.  - [x] I updated and reproduced the problem, or this report explains why I cannot update.  ## Describe the bug  `mo clean` not removing Spotify cache Located at: _~/Library/Caches/com.spotify.client_ ## Steps to reproduce  1. Run command: `mo clean` 2. Spotify cache still there  ## Expected behavior  Remove Spotify cache  ## Debug logs  Run the command with `--debug` and paste the output:  ```bash mo <command> --debug # Example: mo clean --debug ```  <details> <summary>Debug output</summary>  ```text Clean Your Mac  ◎ Use --dry-run to preview, --whitelist to manage protected paths ✓ Admin access already available  ⚙ Apple Silicon | Free space: 116.16GB ⚙ Whitelist: 22 core patterns active  ➤ System   ⠲ Cleaning system caches...[DEBUG] Finding, sudo, in /Library/Caches: *.cache, age: 7d, type: f   ⠴ Cleaning system caches...[DEBUG] Privileged cleanup scan failed for /Library/Caches (status 1) [DEBUG] System caches cleanup incomplete (status 1)   ⠲ Cleaning system crash reports...[DEBUG] Finding, sudo, in /Library/Logs/DiagnosticReports: *, age: 7d, type: f   ⠲ Cleaning system logs...[DEBUG] Finding, sudo, in /private/var/log: *.log, age: 7d, type: f   ⠖ Cleaning third-party system logs...[DEBUG] Directory does not exist, skipping: /Library/Logs/Adobe   ⠲ Cleaning
+- **Issue #1939** (2026-11-07): **[Mac App Bug] 双风扇macbook只有一个风扇可调节**
+  *Symptoms*: ### Mole Mac app version  1.19.1 (366)  ### macOS version  27.2.0  ### Mac model  Mac16,7 (Apple M4 Pro)  ### Affected area  Status  ### What happened?  作者你好，请问双风扇的macbook两边的风扇都可以调节转速吗，我这里看起来只有一个风扇会被调节。  ### Steps to reproduce  1. 打开软件主面板 2. 打开状态tab 3. 点击“降温”或“强冷” 4. 双风扇macbook看起来只有左边风扇转速被提高  ### Expected behavior  两个风扇都转  ### Screenshots or safe logs  _No response_  ### Before submitting  - [x] I updated to the latest stable Mole Mac app, reopened it, and reproduced this problem (or this report explains why I cannot update). - [x] I did not include license keys, order numbers, or private data.
 
-- **Issue #1896** (2026-11-02): **[BUG] Uninstalling docker yields `line 72: [[: invalid regular expression `': empty (sub)expression` errors**
-  *Symptoms*: ## Before submitting  Run `mo update` to install the latest stable version, then check `mo --version`. Reproduce the problem with that version. If updating itself fails, report that failure and your installed version.  - [X] I updated and reproduced the problem, or this report explains why I cannot update.  ## Describe the bug  I noticed that there's an error on the command line when uninstalling Docker from my mac: ``` /opt/local/libexec/mole/bin/../lib/uninstall/batch.sh: line 72: [[: invalid regular expression `': empty (sub)expression /opt/local/libexec/mole/bin/../lib/uninstall/batch.sh: line 72: [[: invalid regular expression `': empty (sub)expression /opt/local/libexec/mole/bin/../lib/uninstall/batch.sh: line 72: [[: invalid regular expression `': empty (sub)expression /opt/local/libexec/mole/bin/../lib/uninstall/batch.sh: line 72: [[: invalid regular expression `': empty (sub)expression /opt/local/libexec/mole/bin/../lib/uninstall/batch.sh: line 110: [[: invalid regular expression `': empty (sub)expression /opt/local/libexec/mole/bin/../lib/uninstall/batch.sh: line 110: [[: invalid regular expression `': empty (sub)expression  ====================================================================== Uninstall complete Removed 1 app · 2.08GB: Docker ⊙ Kept 3 system-level paths, which Mole never removes ======================================================================  /opt/local/libexec/mole/bin/../lib/uninstall/batch.sh: line 72: [[: invalid regular expression `': e
+- **Issue #1938** (2026-11-07): **[Mac App Bug] 双风扇macbook只有一个风扇可调节**
+  *Symptoms*: ### Mole Mac app version  1.19.1 (366)  ### macOS version  27.2.0  ### Mac model  Mac16,7 (Apple M4 Pro)  ### Affected area  Status  ### What happened?  作者你好，请问双风扇的macbook两边的风扇都可以调节转速吗，我这里看起来只有一个风扇会被调节。  ### Steps to reproduce  1. 打开软件主面板 2. 打开状态tab 3. 点击“降温”或“强冷” 4. 双风扇macbook看起来只有左边风扇转速被提高  ### Expected behavior  两个风扇都转  ### Screenshots or safe logs  _No response_  ### Before submitting  - [x] I updated to the latest stable Mole Mac app, reopened it, and reproduced this problem (or this report explains why I cannot update). - [x] I did not include license keys, order numbers, or private data.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1936,316 +1929,588 @@ func jsonFileEntriesFromFileEntries(files []fileEntry) []jsonFileEntry {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5324a06e` (2026-11-04)
-**Commit Message**: fix(ui): fit CJK names by display width in uninstall --list and spinners
+### Incident Patch 1: `e6120d1d` (2026-11-07)
+**Commit Message**: fix(core): probe timeout backends with kill-after arguments (#1934)
 
-bin/uninstall.sh runs under LC_ALL=C, so the --list UNINSTALL NAME column, the app name when no cask owns it, was cut with a byte slice and padded by bytes: a long CJK name split a character and every CJK row pushed SIZE two to nine cells left. format_spinner_message counted characters or bytes depending on the locale, so a CJK app name either overflowed the line, which breaks the in-place spinner redraw, or was cut mid-character. Both now use get_display_width and truncate_by_display_width, as the NAME column already did; an ASCII spinner message keeps the fork-free path. Same class as the status and analyze width fixes.
+A timeout shim could pass the deadline-only probe yet fail every real call, since run_with_timeout always passes -k 2. Unknown backends are now probed with the same arguments and must also run a quick command.
 
-Verified: the new uninstall --list and format_spinner_message cases fail on the old code (split UTF-8, SIZE at 98 and 105 instead of 107, width 52 over 32) and pass now; ./scripts/check.sh --no-format and the full ./scripts/test.sh pass (2403 Bats, 0 skipped). The uninstall change is in --list rendering only and touches no removal sink.
-
-**File**: `bin/uninstall.sh` (modified, +9/-2)
+**File**: `.claude/rules/shell.md` (modified, +1/-1)
 ```diff
-@@ -1982,26 +1982,33 @@ uninstall_list_apps() {
-         # printf counts bytes (LC_ALL=C), but CJK chars are 3 bytes yet only
-         # 2 display columns wide, so we pad with the extra bytes to land on
-         # the correct visual column.
-+        # The uninstall name is the app name when no cask owns the app, so it
-+        # gets the same treatment: a byte slice would split a CJK character.
-         local name_trunc name_display_w name_byte_count name_printf_w
-+        local un_trunc un_display_w un_byte_count un_printf_w
-         name_trunc=$(truncate_by_display_width "$app_name" 34)
-         name_display_w=$(get_display_width "$name_trunc")
-+        un_trunc=$(truncate_by_display_width "$uninstall_name" 28)
-+        un_display_w=$(get_display_width "$un_trunc")
- 
-         # Get byte count in C locale for printf
-         local old_lc="${LC_ALL:-}"
-         export LC_ALL=C
-         name_byte_count=${#name_trunc}
-+        un_byte_count=${#un_trunc}
-         if [[ -n "$old_lc" ]]; then
-             export LC_ALL="$old_lc"
-         else
-             unset LC_ALL
-         fi
- 
-         name_printf_w=$((36 + name_byte_count - name_display_w))
-+        un_printf_w=$((30 + un_byte_count - un_display_w))
- 
--        printf "%-*s %-30s %-30s %8s\n" \
-+        printf "%-*s %-30s %-*s %8s\n" \
-             "$name_printf_w" "$name_trunc" \
-             "${bundle_id:0:28}" \
--            "${uninstall_name:0:28}" \
-+            "$un_printf_w" "$un_trunc" \
-             "$size_display"
-     done
- 
+@@ -29,6 +29,6 @@ paths:
+ - `run_with_timeout` keeps an early SIGKILL as 137, including fractional budgets. The native timeout backend may translate 137 to timeout only after its deadline plus the `-k` grace period; integer `SECONDS` must not round a sub-second deadline down to immediate expiry. Locked by the fractional-deadline cases in `tests/core_timeout.bats`.
+ - `run_with_timeout`'s own `--debug` notices reach stderr only on a terminal and always land in the debug log, because callers parse `$(run_with_timeout ... cmd 2>&1)`: under `mo purge --debug` the notice read as an lsof warning and every node_modules was kept as unverified. A test of such a parser must run the real wrapper, not a stub. Locked by `run_with_timeout keeps its debug notice out of captured command output` in `tests/core_timeout.bats` and `purge node project process check reads an idle project as idle under --debug` in `tests/purge.bats`.
+ - Every `run_with_timeout` backend hands the command the caller's stdin. The shell fallback starts it with `"$@" <&0 &`, because bash gives a background command `/dev/null` when job control is off; before that, the simulator metadata check read every device as running and the Finder and login item `osascript` here-documents ran an empty script. A caller that must not share stdin passes `< /dev/null` itself. The same rule makes that background command ignore SIGINT, so on Ctrl-C the shell fallback sends TERM, as the perl backend does, then KILL after the two-second grace that matches `-k 2`; forwarding INT left the command running with no deadline. Locked by `run_with_timeout passes the caller's stdin through every backend` and `run_with_timeout shell fallback stops the command when interrupted` in `tests/core_timeout.bats`.
+-- The native timeout backend is a binary that reports its deadline as 124 and takes fractional durations, not whatever `timeout` PATH finds first. GNU coreutils (by `--version`) and `/usr/bin/timeout` are trusted; any other candidate must time out a 0.1s probe with 124 or it is skipped for the next candidate, then perl. A hand-written shim on PATH that exited with its killed child's 143 made every bounded project-cache and deep-system scan read as Ctrl-C, and `mo clean` cancelled the rest of the run on each slow scan. Locked by `timeout.sh skips a PATH timeout shim that reports its deadline as 143`, `timeout.sh skips a PATH timeout shim that rejects fractional durations` and `timeout.sh keeps a PATH timeout that reports its deadline as 124` in `tests/core_timeout.bats`.
++- The native timeout backend is a binary that reports its deadline as 124 and takes fractional durations, not whatever `timeout` PATH finds first. GNU coreutils (by `--version`) and `/usr/bin/timeout` are trusted; any other candidate must run a quick command successfully and time out a 0.1s probe with 124, both using the wrapper's `-k 2` arguments, or it is skipped for the next candidate, then perl. A hand-written shim on PATH that exited with its killed child's 143 made every bounded project-cache and deep-system scan read as Ctrl-C, and `mo clean` cancelled the rest of the run on each slow scan. A shim without `-k` support could pass the old deadline-only probe yet skip every wrapped command. Locked by the `timeout.sh skips a PATH timeout shim` cases and `timeout.sh keeps a PATH timeout that supports the wrapper arguments` in `tests/core_timeout.bats`.
+ - **Judge duplication by body and purpose, not by name.** `scripts/audit_function_duplication.py` hashes normalized bodies and gates new same-body groups, including renamed copies a grep sweep misses. It cannot find two differently written helpers that duplicate one decision, so pair the audit with a caller-and-purpose sweep. Treat generated counts as command output, not durable prose in a rule file.
+ - **Test-orphan pattern:** before declaring a symbol dead, grep `lib`, `bin`, `cmd`, `scripts`, `tests`, and top-level entry/install scripts; check dynamic lookup through `eval`, `declare -f`, and `compgen`; then re-grep after removal. Trace variables and config written by a removed helper. Tests alone are not production callers, and sub-agent reports are leads, not verdicts.
 ```
 
-**File**: `lib/core/ui.sh` (modified, +8/-5)
+**File**: `lib/core/timeout.sh` (modified, +6/-2)
 ```diff
-@@ -369,12 +369,15 @@ format_spinner_message() {
-         available=20
-     fi
- 
--    if [[ ${#message} -gt $available ]]; then
--        if [[ $available -gt 3 ]]; then
--            message="${message:0:$((available - 3))}..."
--        else
--            message="${message:0:$available}"
-+    # An app or file name can make the message non-ASCII. ${#message} then
-+    # counts bytes under LC_ALL=C or characters otherwise, neither of which is
-+    # the width a CJK name takes, and a byte slice splits a character.
-+    if [[ "$message" == *[![:ascii:]]* ]]; then
-+        if (($(get_display_width "$message") > available)); then
-+            message=$(truncate_by_display_width "$message" "$available")
-         fi
-+    elif [[ ${#message} -gt $available ]]; then
-+        message="${message:0:$((available - 3))}..."
-     fi
- 
-     printf "%s" "$message"
-```
-
-**File**: `tests/core_common.bats` (modified, +20/-0)
-```diff
-@@ -25,6 +25,26 @@ setup() {
-     [ "$result" = $'⠖\n⠲\n⠴\n⠦' ]
+@@ -35,15 +35,19 @@ readonly MOLE_TIMEOUT_LOADED=1
+ # the whole run at the first slow step. A shim that rejects fractional
+ # durations (exit 125) breaks every sub-second budget the same way. GNU
+ # coreutils and the system binary are trusted without a probe; any other
+-# candidate must time out a short sleep with 124 or it is skipped.
++# candidate must run a short command successfully and time out a short sleep
++# with 124, both using run_with_timeout's -k arguments, or it is skipped.
+ _mole_timeout_bin_is_compatible() {
+     local bin="$1"
+     [[ "$bin" == "/usr/bin/timeout" ]] && return 0
+     local version_text=""
+     version_text=$("$bin" --version < /dev/null 2> /dev/null) || true
+     [[ "$version_text" == *"GNU coreutils"* ]] && return 0
++    # A shim can report 124 yet reject -k, returning that status without ever
++    # running the command. Check successful execution with the actual syntax.
++    "$bin" -k 2 1 /usr/bin/true < /dev/null > /dev/null 2>&1 || return 1
+     local probe_rc=0
+-    "$bin" 0.1 /bin/sleep 2 < /dev/null > /dev/null 2>&1 || probe_rc=$?
++    "$bin" -k 2 0.1 /bin/sleep 2 < /dev/null > /dev/null 2>&1 || probe_rc=$?
+     [[ $probe_rc -eq 124 ]]
  }
  
-+@test "format_spinner_message fits a CJK name by display width in both locales" {
-+    local locale
-+    for locale in C en_US.UTF-8; do
-+        # shellcheck disable=SC2016  # the inner bash expands these
-+        run env HOME="$HOME" LC_ALL="$locale" PROJECT_ROOT="$PROJECT_ROOT" /bin/bash --noprofile --norc -c '
-+            source "$PROJECT_ROOT/lib/core/common.sh"
-+            tput() { echo 40; }
-+            format_spinner_message "Removing 网易云音乐网易云音乐网易云音乐网易云音乐..."
-+        '
-+        [ "$status" -eq 0 ] || return 1
-+        local msg="$output"
-+        # 40 columns leave 32 for the message; a split character is invalid UTF-8.
-+        printf '%s' "$msg" | /usr/bin/iconv -f UTF-8 -t UTF-8 > /dev/null || { echo "$locale split: $msg"; return 1; }
-+        run python3 -I -c 'import sys, unicodedata; print(sum(2 if unicodedata.east_asian_width(c) in "WF" else 1 for c in sys.argv[1]))' "$msg"
-+        [ "$status" -eq 0 ] || return 1
-+        (( output <= 32 )) || { echo "$locale width $output: $msg"; return 1; }
-+        [[ "$msg" == "Removing 网"*"..." ]] || { echo "$locale: $msg"; return 1; }
-+    done
+```
+
+**File**: `tests/core_timeout.bats` (modified, +32/-1)
+```diff
+@@ -764,6 +764,7 @@ _probe_timeout_backend() {
+         export PATH="$2:/usr/bin:/bin"
+         source "$1/lib/core/timeout.sh"
+         printf "bin=%s\n" "$MO_TIMEOUT_BIN"
++        run_with_timeout 1 /bin/echo COMMAND_RAN
+         rc=0
+         run_with_timeout 1 /bin/sleep 5 || rc=$?
+         printf "rc=%s\n" "$rc"
+@@ -808,9 +809,11 @@ SHIM
+     [[ "$output" == *"rc=124"* ]]
+ }
+ 
+-@test "timeout.sh keeps a PATH timeout that reports its deadline as 124" {
++@test "timeout.sh skips a PATH timeout shim without kill-after support" {
+     local fake_dir="$BATS_TEST_TMPDIR/fake-timeout-124"
+     mkdir -p "$fake_dir"
++    # This passes the old deadline probe, but run_with_timeout's -k 2 makes
++    # it try to execute "2" and report a timeout without running the command.
+     cat > "$fake_dir/timeout" << 'SHIM'
+ #!/bin/bash
+ shift
+@@ -822,8 +825,36 @@ exit 124
+ SHIM
+     chmod +x "$fake_dir/timeout"
+ 
++    _probe_timeout_backend "$fake_dir"
++    [ "$status" -eq 0 ]
++    [[ "$output" != *"bin=$fake_dir/timeout"* ]] || return 1
++    [[ "$output" == *COMMAND_RAN* ]] || return 1
++    [[ "$output" == *"rc=124"* ]]
 +}
 +
- @test "detect_architecture maps current CPU to friendly label" {
-     expected="Intel"
-     if [[ "$(uname -m)" == "arm64" ]]; then
++@test "timeout.sh keeps a PATH timeout that supports the wrapper arguments" {
++    local fake_dir="$BATS_TEST_TMPDIR/fake-timeout-compatible"
++    mkdir -p "$fake_dir"
++    cat > "$fake_dir/timeout" << 'SHIM'
++#!/bin/bash
++[[ "$1" == "-k" && "$2" == "2" ]] || exit 125
++shift 3
++"$@" &
++pid=$!
++(/bin/sleep 0.2; kill -TERM "$pid" 2> /dev/null) &
++killer=$!
++rc=0
++wait "$pid" || rc=$?
++kill "$killer" 2> /dev/null || true
++wait "$killer" 2> /dev/null || true
++[[ $rc -eq 0 ]] && exit 0
++exit 124
++SHIM
++    chmod +x "$fake_dir/timeout"
++
+     _probe_timeout_backend "$fake_dir"
+     [ "$status" -eq 0 ]
+     [[ "$output" == *"bin=$fake_dir/timeout"* ]] || return 1
++    [[ "$output" == *COMMAND_RAN* ]] || return 1
+     [[ "$output" == *"rc=124"* ]]
+ }
 ```
 
-**File**: `tests/uninstall.bats` (modified, +60/-0)
+---
+
+### Incident Patch 2: `4075102a` (2026-11-06)
+**Commit Message**: fix(clean): ask Docker only on a local engine and prune what it rebuilds
+
+With a remote Docker context selected, Mole's Large files row reported
+the remote engine's storage and hid the local Docker Desktop data row,
+and `mo optimize` asked the remote engine about containers (#1922). Each
+probe also waited out its timeout on an unreachable host.
+
+Every Docker query now reads the endpoint first through
+`mole_docker_endpoint_is_local` (`docker context inspect`, local config
+only, honours DOCKER_HOST) and skips anything but a unix socket. No
+config option.
+
+`mo clean` now runs Docker's own prune for what the engine rebuilds:
+`docker builder prune --filter until=168h` and `docker image prune`
+(dangling only), only when the local engine already answers, so a
+stopped Docker Desktop is never started. The build cache prune pins
+BUILDX_BUILDER to the local context's builder, because `docker builder`
+is buildx and would otherwise prune a selected cloud or remote builder.
+Containers, volumes, networks and tagged images are never touched. Every
+successful prune logs REMOVED; a timeout skips it, a signal cancels; the
+Docker Desktop data folder is its whitelist row.
+
+The "Docker unused data · rev
+
+**File**: `.claude/rules/clean-dev.md` (modified, +1/-0)
 ```diff
-@@ -5768,6 +5768,66 @@ INNER
-     [[ "$output" == *'"source": "App"'* ]]
+@@ -22,6 +22,7 @@ General clean target policy, including the owner-command rule, is in `.claude/ru
+ - The Gradle candidate listing puts the small groups before the build cache, which can hold thousands of entries: whitelisted entries are settled before the roughly 10 ms `should_protect_path` probe, and an exhausted filtering budget keeps only the build cache group.
+ - Keep AI-tool cache cleanup conservative. Claude Code, opencode, Copilot CLI, Zed, Warp, Ghostty, and similar developer tools may have active versions, config, credentials, or session state that must not be removed accidentally.
+ - `clean_t3code_desktop_caches` takes only `Cache` and `Code Cache` under `Partitions/t3code-preview-*` of the `t3code-v2` and `T3 Code (Alpha)` profiles, while no T3 Code app runs. `should_protect_path` does not cover these profiles, so that exact list is the whole boundary: sign-ins, IndexedDB and Service Worker data stay, and `~/.t3` is never a target (its worktrees are `mo purge` scope). Locked by the `clean_t3code_desktop_caches` cases in `tests/clean_ai_cli_caches.bats`.
++- **Docker is asked only on a local engine, and Mole prunes only what the engine rebuilds.** Every Docker query (`docker system df` in Large files, `docker ps` in `mo optimize`, the prune) first reads the endpoint through `mole_docker_endpoint_is_local` in `lib/core/common.sh`, which runs `docker context inspect` (local configuration, honours `DOCKER_HOST`, never dials the engine); anything but a `unix://` socket, or an unknown answer, skips the query, so a remote context neither reports another machine's storage nor hides the Docker Desktop data row (#1922). `clean_docker_unused_data` then runs `docker builder prune -f --filter until=168h` and `docker image prune -f` (dangling only) only after `docker info` answers, so a stopped Docker Desktop is never started; containers, volumes, networks and tagged images are never touched, and no config option exists for any of this. The engine serialises prune against running builds, so there is no process guard. `docker builder` is `docker buildx` once the plugin is installed and prunes the selected buildx builder, which can be a cloud or remote one under a local context, so the build cache prune runs with `BUILDX_BUILDER` set to `docker context show` (the local context's own builder; the legacy builder ignores it) and is skipped when that name is unknown. On the classic image store an image pulled only by digest and used by no container counts as dangling and goes too; that is accepted, since a registry pull restores it. Its whitelist row is the Docker Desktop data folder, every prune that exits 0 logs `REMOVED` (with its size when Docker printed one), a timeout skips that one prune and a signal cancels; the dry run says `would prune` without a size, like the other owner rows. Locked by the `clean_dev_docker` cases in `tests/clean_dev_caches.bats` (`clean_dev_docker pins the build cache prune to the local context builder` for the builder), `large files never queries a remote Docker engine (#1922)` in `tests/clean_user_core.bats` and `idle VM never asks a remote Docker engine about containers (#1922)` in `tests/optimize_perf_diagnosis.bats`; `docker` is a fail-loud stub in `tests/helpers/common.bash`, so a test that forgets its double can never prune the host.
+ 
+ ## Recovery contracts
+ 
+```
+
+**File**: `.claude/rules/clean.md` (modified, +1/-1)
+```diff
+@@ -49,7 +49,7 @@ Developer and toolchain caches in `lib/clean/dev.sh` also follow `.claude/rules/
+ - `lib/clean/user.sh` owns user-level cleanup flows, browser caches, cloud/app support cleanup, device firmware, and Apple Silicon caches. Run `MOLE_TEST_NO_AUTH=1 bats tests/clean_user_core.bats tests/clean_browser_versions.bats tests/clean_app_caches.bats tests/clean_cached_device_firmware.bats tests/clean_misc.bats` when touching this area, or `MOLE_TEST_NO_AUTH=1 ./scripts/test.sh` if behavior crosses sections.
+ - Chrome / Edge / Brave old-version cleanup is one table-driven helper (`_clean_chromium_old_versions`) plus three thin public wrappers; the wrapper names are the test surface, so keep them. `clean_edge_updater_old_versions` is deliberately NOT part of it: it prunes staged updater payloads strictly older than the installed Edge (falling back to keep-latest by `sort -V` when the installed version is unreadable), has no `Current` symlink, and never escalates to a sudo removal, so folding it in would silently change its semantics.
+ - Large-files review rows share `_large_candidate_size_kb`: a du exit of 1 means some entry was unreadable and still carries a usable total, while a timeout never does. The E5RT row passes `exact` and drops a status-1 total, because #1631 promised incomplete measurements are never shown as a complete size. Tighten a new row's evidence at that row, not in the shared helper; the compiled-model row once made the helper strict and hid an 11.78GB `Simulator data` row. Locked by `large files keeps a du total that skipped unreadable entries` and `large files skips an E5RT total that missed unreadable entries (#1631)` in `tests/clean_user_core.bats`.
+-- The fixed rows are measured ahead of the report by a pool of at most four workers under one shared deadline (`_large_prefetch_queue_rows`), and the worktree container search runs beside it; a new fixed row belongs in that list too, or it is measured inline after the pool and adds its full time. `large files queue lists every fixed HOME row the report measures` in `tests/clean_user_core.bats` reads every literal `$HOME` row out of the report source and fails when the queue misses one. The Docker Desktop data row stays queued unconditionally, because whether the report skips it depends on the later `docker system df` probe.
++- The fixed rows are measured ahead of the report by a pool of at most four workers under one shared deadline (`_large_prefetch_queue_rows`), and the worktree container search runs beside it; a new fixed row belongs in that list too, or it is measured inline after the pool and adds its full time. `large files queue lists every fixed HOME row the report measures` in `tests/clean_user_core.bats` reads every literal `$HOME` row out of the report source and fails when the queue misses one. The Docker Desktop data row stays queued unconditionally, because whether the report skips it depends on the later `docker system df` probe. That probe runs only on a local engine (`.claude/rules/clean-dev.md`), once, and its row reads `Images 931.5MB, 859.1MB reclaimable`: types and reclaimable figures under 1MB are left out.
+ - The generic Application Support sweep (`clean_application_support_logs`) skips an app folder whose `SingletonLock` (Chromium and Electron write `<host>-<pid>` there while running) names a live pid or cannot be read, and checks again before each cache folder; it cleared Code Cache and GPUCache under running Docker Desktop, VS Code and T3 Code before. A stale lock left by a crash, and apps with no lock, keep the old behaviour. Locked by `clean_application_support_logs keeps caches of a running Electron app` in `tests/clean_user_core.bats`.
+ - Browser signing-clone probes must preserve signal statuses through process checks, metadata, open-handle checks, snapshots, and final guards. A timeout keeps the clone; an interrupt stops later candidates and system cleanup stages. Locked by `tests/browser_clones.bats`, where each snapshot guard has its own case except the two uid ownership checks (a differently owned fixture needs root) and the root-prefix check.
+ - **Leaked automation browsers are identified by a `playwright_chromiumdev_profile` browser root with ppid 1, never by the playwright-cli daemon.** The daemon is spawned detached, so ppid 1 is its normal state for the life of an active session; matching it kills a live session. A profile directory is stale only when `pgrep -f` returns exactly 1; any other status is an unknown state that keeps it. Locked by `tests/clean_automation_browsers.bats`; the story (#1518) is in `.claude/skills/bugs/references/deletion-evidence-and-final-sink.md` section 2.
+```
+
+**File**: `lib/clean/dev.sh` (modified, +152/-20)
+```diff
+@@ -1530,32 +1530,164 @@ find_orbstack_data_dir() {
+     return 1
  }
  
-+@test "uninstall --list text table keeps the size column aligned for CJK uninstall names" {
-+    if ! /usr/bin/script -q /dev/null /usr/bin/true < /dev/null > /dev/null 2>&1; then
-+        skip "script cannot allocate a TTY in this environment"
+-clean_dev_docker() {
+-    if command -v docker > /dev/null 2>&1; then
++# Bytes from the "Total reclaimed space: 1.2GB" (image prune) or "Total:
++# 1.2GB" (builder prune) line of a docker prune. Docker prints decimal units.
++# Prints nothing when no such line parses.
++_docker_prune_reclaimed_bytes() {
++    awk '
++        /^Total( reclaimed space)?:[ \t]/ {
++            v = $NF
++            if (match(v, /^[0-9.]+/) == 0) next
++            n = substr(v, 1, RLENGTH) + 0
++            u = substr(v, RLENGTH + 1)
++            m = 0
++            if (u == "B") m = 1
++            else if (u == "kB" || u == "KB") m = 1000
++            else if (u == "MB") m = 1000000
++            else if (u == "GB") m = 1000000000
++            else if (u == "TB") m = 1000000000000
++            if (m == 0) next
++            printf "%.0f\n", n * m
++            exit
++        }'
++}
++
++# Docker's own prune for what the engine rebuilds on demand: BuildKit cache no
++# build used in the last 7 days, and dangling images (untagged layers a
++# rebuild left behind). Containers, volumes, networks and tagged images are
++# never touched. It runs only against a local engine that already answers,
++# so Mole never starts Docker Desktop or reaches a remote context (#1922).
++# The engine serialises prune against running builds and keeps cache records
++# in use, so no process guard is needed. Docker Desktop's data folder is the
++# whitelist row that turns it off.
++clean_docker_unused_data() {
++    command -v docker > /dev/null 2>&1 || return 0
++    local description="Docker build cache and dangling images"
++    local whitelist_path="$HOME/Library/Containers/com.docker.docker/Data"
++
++    local probe_rc=0
++    mole_docker_endpoint_is_local || probe_rc=$?
++    if mole_rc_signal "$probe_rc"; then
++        _mole_record_clean_cancellation "$probe_rc" "$description"
++        return "$probe_rc"
 +    fi
-+    local apps_cache="$BATS_TEST_TMPDIR/list-cjk.cache"
-+    # 15 CJK characters: 30 cells and 45 bytes, longer than the 28-cell column.
-+    cat > "$apps_cache" << 'CACHE'
-+1700000000|/Applications/Slack.app|Slack|com.tinyspeck.slackmacgap|180MB|Today|184320
-+1700000000|/Applications/Music163.app|网易云音乐网易云音乐网易云音乐|com.netease.163music|90MB|Today|92160
-+1700000000|/Applications/WeChat.app|微信|com.tencent.xinWeChat|20MB|Today|20480
-+CACHE
-+    local driver="$BATS_TEST_TMPDIR/list-cjk.sh"
-+    cat > "$driver" << 'DRIVER'
-+set -euo pipefail
-+source "$PROJECT_ROOT/bin/uninstall.sh"
-+log_operation_session_start() { :; }
-+show_uninstall_help() { :; }
-+hide_cursor() { :; }
-+show_cursor() { :; }
-+clear_screen() { :; }
-+scan_applications() { printf '%s\n' "$APPS_CACHE_FILE"; }
-+load_applications() {
-+    apps_data=()
-+    while IFS='|' read -r epoch app_path app_name bundle_id size last_used size_kb; do
-+        apps_data+=("$epoch|$app_path|$app_name|$bundle_id|$size|$last_used|${size_kb:-0}")
-+    done < "$1"
-+}
-+is_homebrew_available() { return 1; }
-+get_brew_cask_name() { return 1; }
-+uninstall_normalize_size_display() { echo "$1"; }
-+main --list
-+DRIVER
++    if [[ $probe_rc -ne 0 ]]; then
++        debug_log "$description skipped: Docker endpoint is not local (state $probe_rc)"
++        return 0
++    fi
 +
-+    local raw="$BATS_TEST_TMPDIR/list-cjk.raw"
-+    PROJECT_ROOT="$PROJECT_ROOT" HOME="$HOME" MOLE_TEST_NO_AUTH=1 TERM=xterm-256color \
-+        APPS_CACHE_FILE="$apps_cache" LANG=en_US.UTF-8 \
-+        /usr/bin/script -q "$raw" /bin/bash --noprofile --norc "$driver" < /dev/null > /dev/null 2>&1 || true
-+
-+    # Print the display column where each row's size starts; a byte slice or
-+    # byte padding moves the CJK row's size left, and a split character makes
-+    # the table invalid UTF-8.
-+    run python3 -I -c '
-+import sys, unicodedata
-+text = open(sys.argv[1], "rb").read().decode("utf-8", "replace")
-+if "\ufffd" in text:
-+    print("SPLIT")
-+def width(s):
-+    return sum(2 if unicodedata.east_asian_width(c) in "WF" else 1 for c in s)
-+for line in text.replace("\r", "").splitlines():
-+    for size in ("180MB", "90MB", "20MB"):
-+        if line.rstrip().endswith(size):
-+            print(size, width(line.rstrip()))
-+' "$raw"
-+    [ "$status" -eq 0 ] || { echo "$output"; return 1; }
-+    [[ "$output" == *"180MB 107"* ]] || { echo "$output"; return 1; }
-+    [[ "$output" == *"90MB 107"* ]] || { echo "$output"; return 1; }
-+    [[ "$output" == *"20MB 107"* ]] || { echo "$output"; return 1; }
-+    [[ "$output" != *"SPLIT"* ]] || { echo "$output"; return 1; }
-+}
-+
- @test "uninstall --list emits JSON array when stdout is piped" {
-     local apps_cache
-     apps_cache="$(mktemp "${BATS_TEST_TMPDIR:-$BATS_RUN_TMPDIR:-$HOME}/tmp-list-json.XXXXXX")"
-```
-
----
-
-### Incident Patch 2: `c70d4731` (2026-11-04)
-**Commit Message**: fix(status): shorten names by display width, not bytes (#1917)
-
-shorten compared and sliced process names by bytes while its callers pass a display width, so CJK, accented and curly-apostrophe names were cut while they still fit and a cut could split a UTF-8 rune. Measure with ansi.StringWidth and cut with ansi.Truncate; ASCII output is unchanged. Verified by TestShorten (5 of the 6 new cases fail on the old code).
-
-**File**: `cmd/status/view.go` (modified, +7/-2)
-```diff
-@@ -7,6 +7,7 @@ import (
- 	"time"
- 
- 	"github.com/charmbracelet/lipgloss"
-+	"github.com/charmbracelet/x/ansi"
- 
- 	"github.com/tw93/mole/internal/units"
- )
-@@ -1102,11 +1103,15 @@ func humanBytesCompact(v uint64) string {
- 	return units.BytesBinCompact(v)
- }
- 
-+// shorten fits s into maxLen terminal cells, ending a cut with "…". It counts
-+// display width rather than bytes, so a multi-byte name (CJK, accents, the
-+// curly apostrophe in "Kevin’s") is not cut in the middle of a character or
-+// shortened while it still fits.
- func shorten(s string, maxLen int) string {
--	if len(s) <= maxLen {
-+	if ansi.StringWidth(s) <= maxLen {
- 		return s
- 	}
--	return s[:maxLen-1] + "…"
-+	return ansi.Truncate(s, maxLen, "…")
- }
- 
- func remainingLineWidth(width int, prefix string) int {
-```
-
-**File**: `cmd/status/view_test.go` (modified, +9/-0)
-```diff
-@@ -153,6 +153,15 @@ func TestShorten(t *testing.T) {
- 		// Edge cases.
- 		{"maxLen 1", "hello", 1, "…"},
- 		{"maxLen 2", "hello", 2, "h…"},
-+
-+		// Width is counted in terminal cells, not bytes, and a cut never
-+		// splits a multi-byte character.
-+		{"curly apostrophe fits", "Kevin’s Mac", 11, "Kevin’s Mac"},
-+		{"cut after curly apostrophe", "Kevin’s MacBook Pro", 9, "Kevin’s …"},
-+		{"cut inside multi-byte rune", "Kevin’s Mac", 6, "Kevin…"},
-+		{"accented name fits", "Café Helper", 11, "Café Helper"},
-+		{"wide characters fit", "카카오톡", 8, "카카오톡"},
-+		{"wide characters cut", "카카오톡 Helper", 7, "카카오…"},
- 	}
- 
- 	for _, tt := range tests {
-```
-
----
-
-### Incident Patch 3: `364dbba1` (2026-11-04)
-**Commit Message**: fix(core): leave the caller's errexit alone in the shell timeout fallback
-
-The shell fallback of run_with_timeout wrapped its wait in set +e / set -e,
-so a caller that had turned errexit off (clean's per-section loop, the
-uninstall selector, the privileged find preflight in file_ops.sh) came
-back with it on, and a later failing command could end the run. The perl
-and timeout-binary backends never touch errexit, so only Macs without
-either behaved this way.
-
-The wait now records its status with `|| exit_code=$?`, which keeps
-errexit from firing without toggling it.
-
-Verified: "run_with_timeout shell fallback leaves the caller's errexit as
-it was" reads ERREXIT_ON after a set +e caller on the old code and
-ERREXIT_OFF now; tests/core_timeout.bats, tests/manage_sudo.bats, the full
-MOLE_TEST_NO_AUTH=1 ./scripts/test.sh and check.sh --no-format pass.
-
-**File**: `lib/core/timeout.sh` (modified, +4/-5)
-```diff
-@@ -442,12 +442,11 @@ run_with_timeout() {
-         _mole_cleanup_timeout_killer "$killer_pid"
++    if is_path_whitelisted "$whitelist_path"; then
++        if [[ "${DRY_RUN:-false}" == "true" ]]; then
++            echo -e "  ${YELLOW}${ICON_DRY_RUN}${NC} $description · would skip (whitelist)"
++        else
++            echo -e "  ${GREEN}${ICON_SUCCESS}${NC} $description · skipped (whitelist)"
++        fi
+         note_activity
+-        echo -e "  ${GRAY}${ICON_REVIEW}${NC} Docker unused data · review with docker system df -v"
+-        debug_log "Docker daemon-managed cleanup skipped by default"
++        log_operation "${MOLE_CURRENT_COMMAND:-clean}" "SKIPPED" "$whitelist_path" "whitelist"
++        return 0
      fi
  
--    # Wait for command to complete
-+    # Wait for command to complete. `|| exit_code=$?` keeps a failing status
-+    # from tripping errexit without toggling it, so a caller that runs with
-+    # errexit off gets it back off.
-     local exit_code=0
--    set +e
--    wait "$cmd_pid" 2> /dev/null
--    exit_code=$?
--    set -e
-+    wait "$cmd_pid" 2> /dev/null || exit_code=$?
- 
-     _mole_cleanup_timeout_killer "$killer_pid"
- 
++    # A stopped engine stays stopped: the probe fails fast and nothing runs.
++    probe_rc=0
++    run_with_timeout "$MOLE_TIMEOUT_SHORT_QUERY_SEC" docker info --format '{{.ServerVersion}}' > /dev/null 2>&1 || probe_rc=$?
++    if mole_rc_signal "$probe_rc"; then
++        _mole_record_clean_cancellation "$probe_rc" "$description"
++        return "$probe_rc"
++    fi
++    if [[ $probe_rc -ne 0 ]]; then
++        debug_log "$description skipped: Docker engine not answering (exit $probe_rc)"
++        return 0
++    fi
++
++    # `docker builder` is `docker buildx` once the plugin is installed, and it
++    # prunes the selected buildx builder, which can be a cloud or remote one
++    # while the context is local. Pin the builder the local context owns,
++    # named after it; the legacy builder ignores the variable.
++    local context_name="" steps="image"
++    probe_rc=0
++    context_name=$(run_with_timeout "$MOLE_TIMEOUT_SHORT_QUERY_SEC" docker context show 2> /dev/null) || probe_rc=$?
++    if mole_rc_signal "$probe_rc"; then
++        _mole_record_clean_cancellation "$probe_rc" "$description"
++        return "$probe_rc"
++    fi
++    if [[ $probe_rc -eq 0 && "$context_name" =~ ^[A-Za-z0-9][A-Za-z0-9._-]*$ ]]; then
++        steps="builder image"
++    else
++        debug_log "$description: build cache skipped, Docker context name unknown"
++    fi
++
++    if [[ "${DRY_RUN:-false}" == "true" ]]; then
++        if [[ "$steps" == "image" ]]; then
++            echo -e "  ${YELLOW}${ICON_DRY_RUN}${NC} $description · would prune dangling images"
++        else
++            echo -e "  ${YELLOW}${ICON_DRY_RUN}${NC} $description · would prune, build cache unused for 7 days"
++        fi
++        note_activity
++        return 0
++    fi
++
++    [[ -t 1 ]] && start_section_spinner "Pruning Docker build cache..."
++    local total_bytes=0 step output rc bytes
++    for step in $steps; do
++        output="" rc=0
++        if [[ "$step" == "builder" ]]; then
++            output=$(run_with_timeout "$MOLE_TIMEOUT_PKG_CLEANUP_SEC" env BUILDX_BUILDER="$context_name" docker builder prune -f --filter until=168h 2> /dev/null) || rc=$?
++        else
++            output=$(run_with_timeout "$MOLE_TIMEOUT_PKG_CLEANUP_SEC" docker image prune -f 2> /dev/null) || rc=$?
++    
 ```
 
-**File**: `tests/core_timeout.bats` (modified, +20/-0)
+**File**: `lib/clean/user.sh` (modified, +50/-25)
 ```diff
-@@ -696,6 +696,26 @@ EOF
-     [[ "$output" == *"echo CALLER_TRAP"* ]] || { echo "$output"; return 1; }
+@@ -3181,19 +3181,25 @@ report_agent_worktree_candidates() {
+     return "$rc"
  }
  
-+@test "run_with_timeout shell fallback leaves the caller's errexit as it was" {
-+    run env PROJECT_ROOT="${BATS_TEST_DIRNAME}/.." /bin/bash --noprofile --norc << 'EOF'
-+source "$PROJECT_ROOT/lib/core/common.sh"
-+MO_TIMEOUT_BIN="" MO_TIMEOUT_PERL_BIN=""
-+set +e
-+rc=0
-+run_with_timeout 5 /bin/sh -c 'exit 3' || rc=$?
-+[[ $- == *e* ]] && echo "ERREXIT_ON" || echo "ERREXIT_OFF"
-+echo "RC_OFF=$rc"
-+set -e
-+rc=0
-+run_with_timeout 5 /bin/sh -c 'exit 3' || rc=$?
-+[[ $- == *e* ]] && echo "ERREXIT_ON" || echo "ERREXIT_OFF"
-+echo "RC_ON=$rc"
-+EOF
-+
-+    [ "$status" -eq 0 ] || { echo "$output"; return 1; }
-+    [[ "$output" == *"ERREXIT_OFF"$'\n'"RC_OFF=3"$'\n'"ERREXIT_ON"$'\n'"RC_ON=3"* ]] || { echo "$output"; return 1; }
+-# One `docker system df` row for the Large files Docker line. Docker's
+-# Reclaimable is swapped for the active/total count when it contradicts the
+-# row's own counts: something reclaimable while every item is in use, or all
+-# images reclaimable while a container still uses one. Engine 29.0 through
+-# 29.3 reports in-use images as reclaimable (moby/moby#51775), and older
+-# clients count shared layers of in-use images the same way. Rows whose
+-# counts do not parse keep Docker's text.
++# One `docker system df` row for the Large files Docker line, as
++# "Images 931.5MB, 859.1MB reclaimable". Types and reclaimable figures below
++# 1MB are left out. Docker's Reclaimable is swapped for
++# the active/total count when it contradicts the row's own counts: something
++# reclaimable while every item is in use, or all images reclaimable while a
++# container still uses one. Engine 29.0 through 29.3 reports in-use images as
++# reclaimable (moby/moby#51775), and older clients count shared layers of
++# in-use images the same way. Rows whose counts do not parse keep Docker's
++# figure.
+ docker_df_review_segment() {
+     local type="$1"
+     local size="$2"
+     local reclaimable="$3"
+     local total="$4"
+     local active="$5"
++    case "$size" in
++        *MB | *GB | *TB | *PB) ;;
++        *) return 0 ;;
++    esac
+     local contradicts=false
+     if [[ "$total" =~ ^[0-9]+$ && "$active" =~ ^[0-9]+$ ]]; then
+         if [[ $total -gt 0 && $active -eq $total && "$reclaimable" != 0B* ]]; then
+@@ -3202,11 +3208,21 @@ docker_df_review_segment() {
+             contradicts=true
+         fi
+     fi
++    local label="$type"
++    case "$type" in
++        "Build Cache") label="Build cache" ;;
++        "Local Volumes") label="Volumes" ;;
++    esac
+     if [[ "$contradicts" == "true" ]]; then
+-        printf '%s %s (%s/%s in use)\n' "$type" "$size" "$active" "$total"
+-    else
+-        printf '%s %s (%s reclaimable)\n' "$type" "$size" "$reclaimable"
++        printf '%s %s, %s/%s in use\n' "$label" "$size" "$active" "$total"
++        return 0
+     fi
++    local amount="${reclaimable%% (*}"
++    amount="${amount%% *}"
++    case "$amount" in
++        *MB | *GB | *TB | *PB) printf '%s %s, %s reclaimable\n' "$label" "$size" "$amount" ;;
++        *) printf '%s %s\n' "$label" "$size" ;;
++    esac
+ }
+ 
+ # Large file candidates measure a few dozen folders with du, and two or three
+@@ -3666,16 +3682,34 @@ _check_large_file_candidates_body() {
+     fi
+ 
+     local docker_reported=false
+-    if command -v docker > /dev/null 2>&1; then
+-        local docker_output
++    # Only a local engine is this Mac's storage: a remote context would report
++    # another machine's images here and hide the Docker Desktop data row
++    # below (#1922). A stopped daemon or an unknown answer falls back to that
++    # row as well, and the query is not retried.
++    local docker_local_rc=0
++    mole_docker_endpoint_is_local || docker_local_rc=$?
++    if mole_rc_signal "$docker_local_rc"; then
++        stop_section_spinner
++        _mole_record_clean_cancellation "$docker_local_rc"
++        return "$docker_local_rc"
++    fi
++    if [[ $docker_local_rc -eq 0 ]]; then
++        local docker_output="" docker_rc=0
+         # The counts go last: tab is IFS whitespace, so an empty trailing
+         # field cannot shift Size or Reclaimable out of place.
+-        docker_output=$(run_with_timeout "$MOLE_TIMEOUT_SHORT_QUERY_SEC" docker system df --format '{{.Type}}\t{{.Size}}\t{{.Reclaimable}}\t{{.TotalCount}}\t{{.Active}}' 2> /dev/null || true)
+-        if [[ -n "$docker_output" ]]; then
+-            local docker_detail=""
++        docker_output=$(run_with_timeout "$MOLE_TIMEOUT_SHORT_QUERY_SEC" docker system df --format '{{.Type}}\t{{.Size}}\t{{.Reclaimable}}\t{{.TotalCount}}\t{{.Active}}' 2> /dev/null) || docker_rc=$?
++        if mole_rc_signal "$docker_rc"; then
++            stop_section_spinner
++            _mole_record_clean_cancellation "$docker_rc"
++            return "$docker_rc"
++        fi
++        if [[ $docker_rc -eq 0 && -n "$docker_output" ]]; then
++            local docker_detail="" docker_segment=""
+             while IFS=$'\t' read -r dtype dsize dreclaim dtotal dactive; do
+                 [[ -z "$dtype" ]] && continue
+-                docker_detail+="${docker_detail:+ · }$(docker_df_review_segment "$dtype" "$dsize" "$dreclaim" "$dtotal" "$dactive")"
++                docker_segment=$(docker_df_review_segment "$dtype" "$dsize" "$dreclaim" "$dtotal" "$dactive")
++                [[ -n "$docker_segment" ]] || continue
++                docker_detail+="${docker_detail:+ · }$docker_segment"
+             done <<< "$docker_output"
+             if [[ -n "$docker_detail" ]]; then
+                 stop_section_spinner
+@@ -3684,15 +3718,6 @@ _check_large_file_candidates_body() {
+                 docker_reported=true
+                 start_section_spinner "Scanning large files..."
+      
+```
+
+**File**: `lib/core/common.sh` (modified, +19/-0)
+```diff
+@@ -70,6 +70,25 @@ mole_identity_in_list() {
+     return 1
+ }
+ 
++# Every docker command talks to the endpoint the current context or
++# DOCKER_HOST names, which can be a remote engine over TCP or SSH. Mole reports
++# and prunes this Mac only, so each Docker query asks first; `docker context
++# inspect` reads local configuration and never dials the engine (#1922).
++# Returns 0 for a local unix socket, 1 for docker missing or any other
++# endpoint, 2 when the answer is unknown, and a signal status unchanged.
++mole_docker_endpoint_is_local() {
++    command -v docker > /dev/null 2>&1 || return 1
++    local host="" rc=0
++    host=$(run_with_timeout "$MOLE_TIMEOUT_SHORT_QUERY_SEC" docker context inspect --format '{{.Endpoints.docker.Host}}' 2> /dev/null) || rc=$?
++    if [[ $rc -ne 0 ]]; then
++        mole_rc_signal "$rc" && return "$rc"
++        return 2
++    fi
++    [[ -n "$host" && "$host" != *$'\n'* ]] || return 2
++    [[ "$host" == unix:///* ]] && return 0
++    return 1
 +}
 +
- @test "run_with_timeout passes the caller's stdin through every backend" {
-     # The simulator metadata check feeds awk and the Finder and login item
-     # paths feed osascript through stdin; the shell backend used to hand them
+ # True when a launcher entry provably belongs to a REMOVED Homebrew keg: a
+ # dangling symlink into Cellar/mole, or a regular file whose brew-written
+ # SCRIPT_DIR line names a Cellar/mole path that no longer exists (the #1488
+```
+
+**File**: `lib/manage/whitelist.sh` (modified, +1/-0)
+```diff
+@@ -155,6 +155,7 @@ Brave browser cache|$HOME/Library/Caches/BraveSoftware/Brave-Browser/*|browser_c
+ Surge proxy cache|$HOME/Library/Caches/com.nssurge.surge-mac/*|network_tools
+ Surge configuration and data|$HOME/Library/Application Support/com.nssurge.surge-mac/*|network_tools
+ Docker BuildX cache|$HOME/.docker/buildx/cache/*|container_cache
++Docker build cache and dangling images|$HOME/Library/Containers/com.docker.docker/Data|container_cache
+ Podman container storage temp|$HOME/.local/share/containers/storage/tmp/*|container_cache
+ Tart OCI/IPSW cache|$HOME/.tart/cache|container_cache
+ Font cache|$HOME/Library/Caches/com.apple.FontRegistry/*|system_cache
+```
+
+**File**: `lib/optimize/diagnostics.sh` (modified, +5/-1)
+```diff
+@@ -603,8 +603,12 @@ opt_diag_idle_vm() {
+ 
+     # Only claim it is idle if the owner agrees. A probe that cannot answer
+     # must not produce a "safe to quit" recommendation.
++    # A remote Docker context answers for another machine's containers, so
++    # only a local engine's answer can speak for this VM (#1922).
++    # Its caller ignores the status like every sibling check, and Ctrl-C
++    # reaches Mole itself, so an interrupted probe just reads as not local.
+     local running="" docker_output="" container_id
+-    if command -v docker > /dev/null 2>&1; then
++    if mole_docker_endpoint_is_local; then
+         if docker_output=$(run_with_timeout "$MOLE_TIMEOUT_SHORT_QUERY_SEC" docker ps -q 2> /dev/null); then
+             running=0
+             while IFS= read -r container_id; do
+```
+
+**File**: `tests/clean_dev_caches.bats` (modified, +150/-41)
+```diff
+@@ -1619,24 +1619,159 @@ EOF
+     rm -f "$HOME/bun-case.out" # SAFE: test scratch file under the temporary HOME
+ }
+ 
+-@test "clean_dev_docker skips daemon-managed cleanup by default" {
+-    run env HOME="$HOME" PROJECT_ROOT="$PROJECT_ROOT" DRY_RUN=false /bin/bash --noprofile --norc << 'EOF'
++# A docker double on PATH: run_with_timeout execs a binary, so a shell
++# function would never be reached. Every call is logged to $HOME/docker.calls.
++_docker_prune_fake() {
++    # shellcheck disable=SC2016  # Body is written to the fake script verbatim.
++    mole_test_fake_command docker '
++printf "%s\n" "$*" >> "$HOME/docker.calls"
++case "$1 $2" in
++    "context show")
++        [[ "${DOCKER_TEST_CONTEXT:-}" != FAIL ]] || exit 1
++        printf "%s\n" "${DOCKER_TEST_CONTEXT:-desktop-linux}"
++        ;;
++    "context inspect")
++        [[ "${DOCKER_TEST_HOST:-}" != FAIL ]] || exit 1
++        printf "%s\n" "${DOCKER_TEST_HOST:-unix:///Users/me/.docker/run/docker.sock}"
++        ;;
++    "info --format") exit "${DOCKER_TEST_INFO_RC:-0}" ;;
++    "builder prune")
++        printf "BUILDX_BUILDER=%s\n" "${BUILDX_BUILDER:-unset}" >> "$HOME/docker.calls"
++        [[ -z "${DOCKER_TEST_BUILDER_RC:-}" ]] || exit "$DOCKER_TEST_BUILDER_RC"
++        printf "ID\tRECLAIMABLE\tSIZE\tLAST ACCESSED\nabc123\ttrue\t852.6MB\t2 weeks ago\nTotal:\t852.6MB\n"
++        ;;
++    "image prune")
++        printf "Deleted Images:\ndeleted: sha256:abc\n\nTotal reclaimed space: 12MB\n"
++        ;;
++esac
++exit 0'
++}
++
++_run_clean_dev_docker() {
++    local test_home="$1"
++    shift
++    rm -rf "$test_home"
++    mkdir -p "$test_home"
++    run env HOME="$test_home" PROJECT_ROOT="$PROJECT_ROOT" DRY_RUN=false \
++        MOLE_CURRENT_COMMAND=clean MOLE_CLEAN_CANCEL_STATUS=0 "$@" \
++        /bin/bash --noprofile --norc << 'EOF'
+ set -euo pipefail
+ source "$PROJECT_ROOT/lib/core/common.sh"
+ source "$PROJECT_ROOT/lib/clean/dev.sh"
+-clean_tool_cache() { echo "$1|$*"; }
+-safe_clean() { echo "$2"; }
++safe_clean() { echo "BUILDX:$2"; }
+ note_activity() { :; }
+-debug_log() { :; }
+-docker() { echo "docker called"; return 0; }
+-export -f docker
++log_operation() { echo "OPLOG:$2|$3|$4"; }
++log_warning_to_file() { echo "WARN:$*"; }
++total_size_cleaned=0
++rc=0
++clean_dev_docker || rc=$?
++printf 'RC=%s CANCEL=%s FREED_KB=%s\n' "$rc" "$MOLE_CLEAN_CANCEL_STATUS" "$total_size_cleaned"
++EOF
++}
++
++@test "clean_dev_docker prunes only old build cache and dangling images on a local engine" {
++    _docker_prune_fake
++    local test_home="$HOME/docker-prune-local"
++    _run_clean_dev_docker "$test_home"
++
++    [ "$status" -eq 0 ] || { echo "$output"; return 1; }
++    [[ "$output" == *"Docker build cache and dangling images · "*"864.6MB"* ]] || { echo "$output"; return 1; }
++    [[ "$output" == *"OPLOG:REMOVED|docker builder prune|owner command: 852.6MB"* ]] || { echo "$output"; return 1; }
++    [[ "$output" == *"OPLOG:REMOVED|docker image prune|owner command: 12.0MB"* ]] || { echo "$output"; return 1; }
++    [[ "$output" == *"BUILDX:Docker BuildX cache"*"RC=0 CANCEL=0 FREED_KB=844336"* ]] || { echo "$output"; return 1; }
++    local calls
++    calls=$(cat "$test_home/docker.calls")
++    [[ "$calls" == *"builder prune -f --filter until=168h"$'\n'"BUILDX_BUILDER=desktop-linux"* ]] || { echo "$calls"; return 1; }
++    [[ "$calls" == *"image prune -f"* ]] || { echo "$calls"; return 1; }
++    # Never containers, volumes, networks, tagged images or a system prune.
++    [[ "$calls" != *"-a"* && "$calls" != *"--all"* && "$calls" != *"system prune"* ]] || { echo "$calls"; return 1; }
++    [[ "$calls" != *"container"* && "$calls" != *"volume"* && "$calls" != *"network"* ]] || { echo "$calls"; return 1; }
++}
++
++@test "clean_dev_docker pins the build cache prune to the local context builder" {
++    # `docker builder` is buildx, which prunes the selected builder: a cloud
++    # builder chosen through BUILDX_BUILDER must not be the one pruned.
++    _docker_prune_fake
++    _run_clean_dev_docker "$HOME/docker-prune-builder" BUILDX_BUILDER=cloud-org-builder
++    [ "$status" -eq 0 ] || { echo "$output"; return 1; }
++    local calls
++    calls=$(cat "$HOME/docker-prune-builder/docker.calls")
++    [[ "$calls" == *"BUILDX_BUILDER=desktop-linux"* && "$calls" != *"cloud-org-builder"* ]] || { echo "$calls"; return 1; }
++
++    # Without a context name there is no builder to pin: the build cache stays
++    # and the dangling image prune still runs.
++    _run_clean_dev_docker "$HOME/docker-prune-noctx" DOCKER_TEST_CONTEXT=FAIL
++    [ "$status" -eq 0 ] || { echo "$output"; return 1; }
++    calls=$(cat "$HOME/docker-prune-noctx/docker.calls")
++    [[ "$calls" != *"builder prune"* && "$calls" == *"image prune -f"* ]] || { echo "$calls"; return 1; }
++    [[ "$output" == *"OPLOG:REMOVED|docker image prune|owner command: 12.0MB"* ]] || { echo "$output"; return 1; }
++}
++
++@test "clean_dev_docker never prunes a remote, unknown or stopped Docker engine (#1922)" {
++    _docker_prune_fake
++    local host
++    for host in 
+```
+
+---
+
+### Incident Patch 3: `f541d4bc` (2026-11-07)
+**Commit Message**: docs(sync): record the purge editor fix across the products
+
+#1940 changed how mo purge --paths runs EDITOR. The other three products
+were read for the same path and none reads EDITOR, so each row is Not
+applicable. Docs only: audit_incidents passes.
+
+**File**: `SYNC.md` (modified, +10/-0)
+```diff
+@@ -187,3 +187,13 @@ Implemented in source (Mole CLI (macOS), `main`): `4075102a` (Docker, I-38) and
+ - Mole Mac: Not applicable for the endpoint gate and the daemon prune, since it never runs `docker` and a CLI owner command does not transfer by itself. Implemented in source (2026-11-06) for the running-app check: folders named `Code`, `Docker Desktop` and `t3code-v2` already answered to their running apps, and an Application Support folder that matches no running app is now held while the process its `SingletonLock` names is alive. The app-owned record owns the comparison.
+ - Mole CLI (Windows): Not applicable. It never runs `docker`: `Clear-DockerCaches` keeps the build cache, and the running-app check is `Clear-MoleAppCache`'s named owners.
+ - Mole for Windows: Not applicable. It never runs `docker`; its one Docker row is Docker Desktop's log folder, and every cache rule names its owner process.
++
++## 2026-11-07 Purge editor commands
++
++Source: PR #1940. `mo purge --paths` now runs an `EDITOR` that holds arguments, such as `code --wait`, and returns the editor's failure instead of reporting success.
++
++Implemented in source (Mole CLI (macOS), `main`): `4917abd1`, merged in `2cc4f227`.
++
++- Mole CLI (Windows): Not applicable. `bin/purge.ps1` opens `notepad.exe` directly and never reads `EDITOR`.
++- Mole Mac: Not applicable. It has no purge paths editor and never reads `EDITOR`.
++- Mole for Windows: Not applicable. It has no purge paths editor and never reads `EDITOR`.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1917** (2026-11-04): fix(status): shorten names by display width, not bytes (@kevin9327)
-- **PR #1914** (2026-11-04): fix(units): step up a unit when BytesSI rounds to 1000.0 (@kevin9327)
-- **PR #1910** (2026-11-04): docs(readme): document timeout tuning environment variables (@jampueroc)
-- **PR #1909** (closed): docs: propose localized terminal output for the macOS CLI (@dkoryto)
-- **PR #1908** (2026-11-04): docs(readme): add Polish translation (@dkoryto)
-- **PR #1907** (2026-11-03): chore(deps): bump github.com/shirou/gopsutil/v4 from 4.26.9 to 4.26.10 (@dependabot[bot])
+- **PR #1942** (2026-11-07): fix(clean): protect Camoufox browser binaries like Playwright's (@LaansDole)
+- **PR #1940** (2026-11-07): fix(purge): support editor commands with arguments (@po-et)
+- **PR #1937** (closed): Add PAD XML files for software directory submissions (@tw93)
+- **PR #1934** (2026-11-07): fix(core): probe timeout backends with kill-after arguments (@r266-tech)
+- **PR #1932** (2026-11-07): Add Developer directory to default purge paths (@devtobi)
+- **PR #1930** (2026-11-06): fix(core): skip a PATH timeout that does not report its deadline as 124 (@mikeumus)
 
 ---
 
@@ -2265,37 +2530,28 @@ MOLE_TEST_NO_AUTH=1 ./scripts/test.sh and check.sh --no-format pass.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ui): fit CJK names by display width in uninstall --list and spinners
+## X. core): probe timeout backends with kill-after arguments (#1934)
 
 **RULE**:
-When implementing operations in `bin/uninstall.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tw93/Mole. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/rules/shell.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tw93/Mole. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5324a06e`: ui): fit CJK names by display width in uninstall --list and spinners. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e6120d1d`: core): probe timeout backends with kill-after arguments (#1934). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Shell data structures, boundary deserialization, API parsing, or resource lifecycles matching `bin/uninstall.sh`.
+Subsystems managing Shell data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/shell.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```shell
 // Verified production-grade fix pattern:
-        # The uninstall name is the app name when no cask owns the app, so it
-        # gets the same treatment: a byte slice would split a CJK character.
-        local un_trunc un_display_w un_byte_count un_printf_w
-        un_trunc=$(truncate_by_display_width "$uninstall_name" 28)
-        un_display_w=$(get_display_width "$un_trunc")
-        un_byte_count=${#un_trunc}
-        un_printf_w=$((30 + un_byte_count - un_display_w))
-        printf "%-*s %-30s %-*s %8s\n" \
-            "$un_printf_w" "$un_trunc" \
+- The native timeout backend is a binary that reports its deadline as 124 and takes fractional durations, not whatever `timeout` PATH finds first. GNU coreutils (by `--version`) and `/usr/bin/timeout` are trusted; any other candidate must run a quick command successfully and time out a 0.1s probe with 124, both using the wrapper's `-k 2` arguments, or it is skipped for the next candidate, then perl. A hand-written shim on PATH that exited with its killed child's 143 made every bounded project-cache and deep-system scan read as Ctrl-C, and `mo clean` cancelled the rest of the run on each slow scan. A shim without `-k` support could pass the old deadline-only probe yet skip every wrapped command. Locked by the `timeout.sh skips a PATH timeout shim` cases and `timeout.sh keeps a PATH timeout that supports the wrapper arguments` in `tests/core_timeout.bats`.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```shell
 // Anti-pattern to NEVER write (induced failure mode):
-        printf "%-*s %-30s %-30s %8s\n" \
-            "${uninstall_name:0:28}" \
+- The native timeout backend is a binary that reports its deadline as 124 and takes fractional durations, not whatever `timeout` PATH finds first. GNU coreutils (by `--version`) and `/usr/bin/timeout` are trusted; any other candidate must time out a 0.1s probe with 124 or it is skipped for the next candidate, then perl. A hand-written shim on PATH that exited with its killed child's 143 made every bounded project-cache and deep-system scan read as Ctrl-C, and `mo clean` cancelled the rest of the run on each slow scan. Locked by `timeout.sh skips a PATH timeout shim that reports its deadline as 143`, `timeout.sh skips a PATH timeout shim that rejects fractional durations` and `timeout.sh keeps a PATH timeout that reports its deadline as 124` in `tests/core_timeout.bats`.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5324a06e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e6120d1d` are properly handled with clean fallback behavior.

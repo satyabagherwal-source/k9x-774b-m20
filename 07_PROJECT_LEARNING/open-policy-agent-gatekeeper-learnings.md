@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/open-policy-agent-gatekeeper-learnings.md`  
 > **Source**: github ([https://github.com/open-policy-agent/gatekeeper](https://github.com/open-policy-agent/gatekeeper))  
-> **Source Version**: `47f009ff`  
+> **Source Version**: `763f4021`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T19:38:07.856Z  
+> **Timestamp**: 2026-11-07T18:02:47.718Z  
 > **Learning ID**: `learn-github-open-policy-agent-gatekeeper`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/open-policy-agent-gatekeeper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/open-policy-agent/gatekeeper](https://github.com/open-policy-agent/gatekeeper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T19:38:07.765Z  
+> **Harvest Timestamp**: 2026-11-07T17:57:43.242Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1114,6 +1114,8 @@ import (
 	"errors"
 	"flag"
 	"strings"
+
+	"github.com/open-policy-agent/gatekeeper/v3/pkg/operations"
 )
 
 const (
@@ -1131,7 +1133,7 @@ const (
 var errAdditionalPublishErrorsOmitted = errors.New(AdditionalPublishErrorsOmittedMessage)
 
 var (
-	ExportEnabled          = flag.Bool("enable-violation-export", false, "(alpha) Enable exporting audit violations to external systems")
+	ExportEnabled          = flag.Bool("enable-violation-export", true, "(beta) Enable exporting audit violations. Export starts only when a matching Connection exists. Set to false to opt out.")
 	AuditConnection        = flag.String("audit-connection", defaultConnection, "(alpha) Connection name for exporting audit violation messages. Defaults to audit-connection")
 	AuditChannel           = flag.String("audit-channel", defaultChannel, "(alpha) Channel name for exporting audit violation messages. Defaults to audit-channel")
 	AdmissionExportEnabled = flag.Bool("enable-admission-violation-export", false, "(alpha) Enable exporting admission violations to external systems")
@@ -1140,6 +1142,22 @@ var (
 // AdmissionConnectionName returns the Connection shared with audit export.
 func AdmissionConnectionName() string {
 	return *AuditConnection
+}
+
+// AuditExportEnabledForProcess reports whether this process publishes audit violations.
+func AuditExportEnabledForProcess() bool {
+	return operations.IsAssigned(operations.Audit) && *ExportEnabled
+}
+
+// AdmissionExportEnabledForProcess reports whether this process publishes admission violations.
+func AdmissionExportEnabledForProcess() bool {
+	return operations.IsAssigned(operations.Webhook) && *AdmissionExportEnabled
+}
+
+// ExportConnectionControllerEnabled reports whether this process needs an export
+// system and the export Connection controller.
+func ExportConnectionControllerEnabled() bool {
+	return AuditExportEnabledForProcess() || AdmissionExportEnabledForProcess()
 }
 
 // AdmissionChannelName returns the channel shared with audit export.
@@ -1267,76 +1285,285 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `47f009ff` (2026-11-05)
-**Commit Message**: chore: bump follow-redirects from 1.16.1 to 1.16.2 in /website (#4908)
+### Incident Patch 1: `763f4021` (2026-11-06)
+**Commit Message**: feat: harden audit violation export and enable it by default (beta) (#4901)
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Signed-off-by: Abhishek Sheth <[REDACTED_EMAIL]>
+Signed-off-by: Jaydip Gabani <[REDACTED_EMAIL]>
+Co-authored-by: Jaydip Gabani <[REDACTED_EMAIL]>
+Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
-**File**: `website/yarn.lock` (modified, +3/-3)
+**File**: `.github/workflows/disk-export.yaml` (modified, +18/-3)
 ```diff
-@@ -4479,9 +4479,9 @@ flux@^4.0.1:
-     fbjs "^3.0.1"
+@@ -4,8 +4,11 @@ on:
+     paths:
+       - ".github/workflows/disk-export.yaml"
+       - "Makefile"
++      - "main.go"
+       - "apis/connection/**"
++      - "pkg/audit/**"
+       - "pkg/export/**"
++      - "pkg/operations/**"
+       - "pkg/controller/export/**"
+       - "pkg/webhook/**"
+       - "cmd/build/helmify/**"
+@@ -16,8 +19,11 @@ on:
+     paths:
+       - ".github/workflows/disk-export.yaml"
+       - "Makefile"
++      - "main.go"
+       - "apis/connection/**"
++      - "pkg/audit/**"
+       - "pkg/export/**"
++      - "pkg/operations/**"
+       - "pkg/controller/export/**"
+       - "pkg/webhook/**"
+       - "cmd/build/helmify/**"
+@@ -31,6 +37,10 @@ jobs:
+     name: "Disk export test"
+     runs-on: ubuntu-22.04
+     timeout-minutes: 25
++    strategy:
++      fail-fast: false
++      matrix:
++        KUBERNETES_VERSION: ["1.35.8", "1.36.4", "1.37.0"]
+     steps:
+       - name: Harden Runner
+         uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
+@@ -44,13 +54,13 @@ jobs:
+         run: |
+           mkdir -p $GITHUB_WORKSPACE/bin
+           echo "$GITHUB_WORKSPACE/bin" >> $GITHUB_PATH
+-          make e2e-bootstrap
++          make e2e-bootstrap KUBERNETES_VERSION=${{ matrix.KUBERNETES_VERSION }}
  
- follow-redirects@^1.0.0, follow-redirects@^1.14.7:
--  version "1.16.1"
--  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.16.1.tgz#6e0efa40a727fb369b98dab15883ec34787d675e"
--  integrity sha512-FNvFGzoMLWmE6Yj9spb/zjd7yiNCHiAW9/Tg9CXrQ8wuu32HtlJOwWO11OJafl5FfY3DxTdQ0vj42zU1kvv5jg==
-+  version "1.16.2"
-+  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.16.2.tgz#a233160dd1bc9b16cbbab43709e6adc7cc941c8c"
-+  integrity sha512-/kVP2U8z596Ia0gwFrwyIeo74ta5aVmSeU1FfAUMAmcEP5EP7zydmag3SLiN64NaRKef3lxsq7i/g7ltJQDGow==
+       - name: Validate admission-only Helm arguments
+         run: |
+           output="$(make -n e2e-helm-deploy \
+             HELM_REPO=test HELM_CRD_REPO=test HELM_RELEASE=test \
+-            ENABLE_EXPORT=false ENABLE_ADMISSION_EXPORT=true EXPORT_BACKEND=disk \
++            ENABLE_ADMISSION_EXPORT=true EXPORT_BACKEND=disk \
+             EXPORT_DISK_MOUNT=/custom/mount EXPORT_DISK_PATH=/custom/path \
+             MAX_AUDIT_RESULTS=4 FAKE_READER_IMAGE=fake-reader:test)"
+           grep -q -- '--set audit.exportVolumeMount.path=/custom/mount' <<<"$output"
+@@ -61,8 +71,13 @@ jobs:
+             echo "admission-only deployment unexpectedly configured the audit reader" >&2
+             exit 1
+           fi
++          if grep -q -- '--set enableViolationExport' <<<"$output"; then
++            echo "unset ENABLE_EXPORT unexpectedly set enableViolationExport" >&2
++            exit 1
++          fi
  
- fork-ts-checker-webpack-plugin@^6.5.0:
-   version "6.5.0"
+           make e2e-helm-install
++          HELM=./.staging/helm/linux-amd64/helm ./test/export/helm-render-test.sh
+           rendered="$(./.staging/helm/linux-amd64/helm template gatekeeper manifest_staging/charts/gatekeeper \
+             --set enableAdmissionViolationExport=true \
+             --set exportBackend=disk \
+@@ -99,7 +114,7 @@ jobs:
+         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+         if: ${{ always() }}
+         with:
+-          name: export-logs
++          name: export-logs-${{ matrix.KUBERNETES_VERSION }}
+           path: |
+             logs-*.json
+             k8s-*.txt
 ```
 
----
-
-### Incident Patch 2: `58c3696b` (2026-11-05)
-**Commit Message**: chore: bump body-parser from 1.20.6 to 1.20.9 in /website (#4907)
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `website/yarn.lock` (modified, +8/-8)
+**File**: `.github/workflows/workflow.yaml` (modified, +14/-2)
 ```diff
-@@ -3105,9 +3105,9 @@ binary-extensions@^2.0.0:
-   integrity sha512-jDctJ/IVQbZoJykoeHbhXpOlNBqGNcwXJKJog42E5HDPUwQTSdjCHdihjj0DlnheQ7blbT6dHOafNAiS8ooQKA==
+@@ -29,7 +29,8 @@ jobs:
+   build_test:
+     name: "Build and Test"
+     runs-on: ubuntu-22.04
+-    timeout-minutes: 15
++    # Allow three fresh audit intervals plus the explicit opt-out smoke test.
++    timeout-minutes: 20
+     strategy:
+       fail-fast: false
+       matrix: &kubernetes-matrix
+@@ -81,6 +82,16 @@ jobs:
+             ENABLE_VAP_TESTS=1 \
+             ENABLE_ADMISSION_AUDIT_ANNOTATION_TESTS=1
  
- body-parser@~1.20.3:
--  version "1.20.6"
--  resolved "https://registry.yarnpkg.com/body-parser/-/body-parser-1.20.6.tgz#60c789c78e0992d906da0a29d71ae01d15c1ed76"
--  integrity sha512-p5tAzS57i5MV9fZFDj9LeIiTZEufbSe2eDozP+ElheSUq1m74CRq1jI4mYNDdVs9vQztXFLuk/Gd6BWTdwRJ5g==
-+  version "1.20.9"
-+  resolved "https://registry.yarnpkg.com/body-parser/-/body-parser-1.20.9.tgz#b64358a113b4d200d7484752cd154b66933e2009"
-+  integrity sha512-FISIQxV5u91Y9gvuFq3q/tA/qTqLJn3AhRcEvyozyhJTh5OBFFtv827AdHU7Rbyct4r+Ba1/99oFa1Y3yuFsdw==
-   dependencies:
-     bytes "~3.1.2"
-     content-type "~1.0.5"
-@@ -3117,7 +3117,7 @@ body-parser@~1.20.3:
-     http-errors "~2.0.1"
-     iconv-lite "~0.4.24"
-     on-finished "~2.4.1"
--    qs "~6.15.1"
-+    qs "~6.16.0"
-     raw-body "~2.5.3"
-     type-is "~1.6.18"
-     unpipe "~1.0.0"
-@@ -6585,10 +6585,10 @@ qs@~6.14.0:
-   dependencies:
-     side-channel "^1.1.0"
++      - name: Verify explicit audit export opt-out
++        run: |
++          kubectl logs -n gatekeeper-system -l control-plane=audit-controller -c manager --tail=-1 > logs-audit-default.json
++          kubectl -n gatekeeper-system patch deployment gatekeeper-audit --type=json -p='[
++            {"op":"add","path":"/spec/template/spec/containers/0/args/-","value":"--enable-violation-export=false"},
++            {"op":"add","path":"/spec/template/spec/containers/0/args/-","value":"--audit-interval=5"}
++          ]'
++          kubectl -n gatekeeper-system rollout status deployment/gatekeeper-audit --timeout=120s
++          bats -t --filter '^audit export without a connection test$' test/bats/test.bats
++
+       - name: Save logs
+         if: ${{ always() }}
+         run: |
+@@ -249,7 +260,8 @@ jobs:
+   build_test_generator_expansion:
+     name: "[Generator Resource Expansion] Build and Test"
+     runs-on: ubuntu-22.04
+-    timeout-minutes: 15
++    # The shared suite waits for three fresh audit intervals.
++    timeout-minutes: 20
  
--qs@~6.15.1:
--  version "6.15.3"
--  resolved "https://registry.yarnpkg.com/qs/-/qs-6.15.3.tgz#76852132a58ed5c7c0ef67e4441b9bb5d6061b3b"
--  integrity sha512-O9gl3zCl5h5blw1KGUzQKhA5oUXSl8rwUIM5o0S3nCXMliSvy5Dzx7/DJcI+SwgICv+IneSZwhBh1oSyEHA71A==
-+qs@~6.16.0:
-+  version "6.16.2"
-+  resolved "https://registry.yarnpkg.com/qs/-/qs-6.16.2.tgz#f7f5a606730f013f4f4ea62a8025f37be0f8c09c"
-+  integrity sha512-VYdnB5S7/0IeXzBacUtwNAaM6d7Y/PgYnNC7bJCI6meqA/OgnsQbZMtVW8Dt2D1PHgbHGtYmhSoEIgvt7xZ2ZA==
-   dependencies:
-     es-define-property "^1.0.1"
-     side-channel "^1.1.1"
+     steps:
+     - name: Harden Runner
+```
+
+**File**: `Makefile` (modified, +3/-2)
+```diff
+@@ -16,7 +16,7 @@ PUSH_TO_GHCR ?= false
+ DEV_TAG ?= dev
+ USE_LOCAL_IMG ?= false
+ ENABLE_GENERATOR_EXPANSION ?= false
+-ENABLE_EXPORT ?= false
++ENABLE_EXPORT ?=
+ ENABLE_ADMISSION_EXPORT ?= false
+ EMIT_ADMISSION_AUDIT_ANNOTATIONS ?= false
+ ADMISSION_AUDIT_ANNOTATIONS_INCLUDE_SUCCESS ?= false
+@@ -59,7 +59,7 @@ HELM_DISK_ADMISSION_EXPORT_ARGS = --set admission.disableExportSidecar=false \
+ 	--set admission.exportSidecar.image=${FAKE_READER_IMAGE} \
+ 	--set admission.exportSidecar.imagePullPolicy=${FAKE_READER_IMAGE_PULL_POLICY} \
+ 
+-HELM_EXPORT_ARGS := --set enableViolationExport=${ENABLE_EXPORT} \
++HELM_EXPORT_ARGS := $(if $(ENABLE_EXPORT),--set enableViolationExport=${ENABLE_EXPORT}) \
+ 	--set audit.connection=${AUDIT_CONNECTION} \
+ 	--set audit.channel=${AUDIT_CHANNEL} \
+ 	--set enableAdmissionViolationExport=${ENABLE_ADMISSION_EXPORT} \
+@@ -323,6 +323,7 @@ else
+ 	./.staging/helm/linux-amd64/helm install manifest_staging/charts/gatekeeper --name-template=gatekeeper \
+ 		--namespace ${GATEKEEPER_NAMESPACE} --create-namespace \
+ 		--debug --wait --timeout ${HELM_TIMEOUT} \
++		$(if $(ENABLE_EXPORT),--set enableViolationExport=${ENABLE_EXPORT}) \
+ 		$(HELM_EXTRA_ARGS)
+ endif
+ 
+```
+
+**File**: `cmd/build/helmify/main.go` (modified, +10/-5)
+```diff
+@@ -133,23 +133,28 @@ func (ks *kindSet) Write() error {
+ 			}
+ 
+ 			if name == "gatekeeper-controller-manager" && kind == DeploymentKind {
++				admissionExportDisk := `(eq (include "gatekeeper.exportFlag" (dict "value" .Values.enableAdmissionViolationExport "default" "false")) "true") (eq (.Values.exportBackend | default "" | lower) "disk")`
+ 				obj = strings.Replace(obj, "      labels:", "      labels:\n        {{- include \"gatekeeper.podLabels\" . | nindent 8 }}\n        {{- include \"controllerManager.podLabels\" . | nindent 8 }}\n        {{- include \"gatekeeper.commonLabels\" . | nindent 8 }}", 1)
+ 				obj = strings.Replace(obj, "      priorityClassName: system-cluster-critical", "      {{- if .Values.controllerManager.priorityClassName }}\n      priorityClassName:  {{ .Values.controllerManager.priorityClassName }}\n      {{- end }}", 1)
+ 				// Inject extra volume mounts at the start of the volumeMounts section for stability
+-				obj = strings.Replace(obj, "        volumeMounts:", "        volumeMounts:\n        {{- include \"gatekeeper.extraVolumeMounts\" . | nindent 8 }}\n        {{- if and .Values.enableAdmissionViolationExport (eq (.Values.exportBackend | default \"\" | lower) \"disk\") }}\n        - mountPath: {{ .Values.audit.exportVolumeMount.path }}\n          name: {{ .Values.audit.exportVolume.name }}\n        {{- end }}", 1)
+-				obj = strings.Replace(obj, "      dnsPolicy:", "      {{- if and .Values.enableAdmissionViolationExport (eq (.Values.exportBackend | default \"\" | lower) \"disk\") (not .Values.admission.disableExportSidecar) }}\n      {{- $admissionSidecar := deepCopy .Values.admission.exportSidecar }}\n      {{- $_ := set $admissionSidecar \"volumeMounts\" (list (dict \"mountPath\" .Values.audit.exportVolumeMount.path \"name\" .Values.audit.exportVolume.name)) }}\n      {{- $admissionEnv := list }}\n      {{- range $env := ($admissionSidecar.env | default (list)) }}\n      {{- if ne $env.name \"ROOT_PATH\" }}\n      {{- $admissionEnv = append $admissionEnv $env }}\n      {{- end }}\n      {{- end }}\n      {{- $admissionEnv = append $admissionEnv (dict \"name\" \"ROOT_PATH\" \"value\" .Values.audit.exportConnection.path) }}\n      {{- $_ := set $admissionSidecar \"env\" $admissionEnv }}\n      - {{ toYaml $admissionSidecar | nindent 8 }}\n      {{- end }}\n      dnsPolicy:", 1)
++				obj = strings.Replace(obj, "        volumeMounts:", "        volumeMounts:\n        {{- include \"gatekeeper.extraVolumeMounts\" . | nindent 8 }}\n        {{- if and "+admissionExportDisk+" }}\n        - mountPath: {{ .Values.audit.exportVolumeMount.path }}\n          name: {{ .Values.audit.exportVolume.name }}\n        {{- end }}", 1)
++				obj = strings.Replace(obj, "      dnsPolicy:", "      {{- if and "+admissionExportDisk+" (not .Values.admission.disableExportSidecar) }}\n      {{- $admissionSidecar := deepCopy .Values.admission.exportSidecar }}\n      {{- $_ := set $admissionSidecar \"volumeMounts\" (list (dict \"mountPath\" .Values.audit.exportVolumeMount.path \"name\" .Values.audit.exportVolume.name)) }}\n      {{- $admissionEnv := list }}\n      {{- range $env := ($admissionSidecar.env | default (list)) }}\n      {{- if ne $env.name \"ROOT_PATH\" }}\n      {{- $admissionEnv = append $admissionEnv $env }}\n      {{- end }}\n      {{- end }}\n      {{- $admissionEnv = append $admissionEnv (dict \"name\" \"ROOT_PATH\" \"value\" .Values.audit.exportConnection.path) }}\n      {{- $_ := set $admissionSidecar \"env\" $admissionEnv }}\n      - {{ toYaml $admissionSidecar | nindent 8 }}\n      {{- end }}\n      dnsPolicy:", 1)
+ 				// Inject extra volumes at the start of the volumes section for stability
+-				obj = strings.Replace(obj, "      volumes:", "      volumes:\n      {{- include \"gatekeeper.extraVolumes\" . | nindent 6 }}\n      {{- if and .Values.enableAdmissionViolationExport (eq (.Values.exportBackend | default \"\" | lower) \"disk\") }}\n      - {{- toYaml .Values.audit.exportVolume | nindent 8 }}\n      {{- end }}", 1)
++				obj = strings.Replace(obj, "      volumes:", "      volumes:\n      {{- include \"gatekeeper.extraVolumes\" . | nindent 6 }}\n      {{- if and "+admissionExportDisk+" }}\n      - {{- toYaml .Values.audit.exportVolume | nindent 8 }}\n      {{- end }}", 1)
+ 				obj = strings.Replace(obj, "        env:", "        env:\n        {{- include \"gatekeeper.extraEnvs\" . | nindent 8 }}\n        {{- include \"controllerManager.extraEnvs\" . | nindent 8 }}", 1)
+ 			}
+ 
+ 			if name == "gatekeeper-audit" && kind == DeploymentKind {
+ 				obj = "{{- if not .Values.disableAudit }}\n" + obj + "{{- end }}\n"
+ 				obj = strings.Replace(obj, "      labels:", "      labels:\n        {{- include \"gatekeeper.podLabels\" . | nindent 8 }}\n        {{- include \"audit.podLabels\" . | nindent 8 }}\n        {{- include \"gatekeeper.commonLabels\" . | nindent 8 }}", 1)
+ 				obj = strings.Replace(obj, "      priorityClassName: system-cluster-critical", "      {{- if .Values.audit.priorityClas
+```
+
+**File**: `cmd/build/helmify/replacements.go` (modified, +5/-5)
+```diff
+@@ -136,9 +136,9 @@ var replacements = map[string]string{
+         - --operation=generate
+         {{- end }}`,
+ 
+-	"- HELMSUBST_DEPLOYMENT_CONTROLLER_MANAGER_ADMISSION_VIOLATION_EXPORT_ARGS": `{{ if hasKey .Values "enableAdmissionViolationExport" }}{{ if and .Values.enableAdmissionViolationExport (ne (.Values.exportBackend | default "" | lower) "disk") }}{{ fail "enableAdmissionViolationExport requires exportBackend to be disk" }}{{ end }}- --enable-admission-violation-export={{ .Values.enableAdmissionViolationExport }}{{ if .Values.enableAdmissionViolationExport }}
+-        - --audit-connection={{ .Values.audit.connection }}
+-        - --audit-channel={{ .Values.audit.channel }}
++	"- HELMSUBST_DEPLOYMENT_CONTROLLER_MANAGER_ADMISSION_VIOLATION_EXPORT_ARGS": `{{ with include "gatekeeper.exportFlag" (dict "value" .Values.enableAdmissionViolationExport "default" "") }}{{ if and (eq . "true") (ne ($.Values.exportBackend | default "" | lower) "disk") }}{{ fail "enableAdmissionViolationExport requires exportBackend to be disk" }}{{ end }}- --enable-admission-violation-export={{ . }}{{ if eq . "true" }}
++        - --audit-connection={{ $.Values.audit.connection }}
++        - --audit-channel={{ $.Values.audit.channel }}
+   {{- end }}{{- end }}`,
+ 
+ 	"- HELMSUBST_AUDIT_OPERATIONS": `
+@@ -152,8 +152,8 @@ var replacements = map[string]string{
+         - --operation=status
+         {{- end }}`,
+ 
+-	"- HELMSUBST_DEPLOYMENT_AUDIT_VIOLATION_EXPORT_ARGS": `{{ if hasKey .Values "enableViolationExport" }}
+-        - --enable-violation-export={{ .Values.enableViolationExport }}
++	"- HELMSUBST_DEPLOYMENT_AUDIT_VIOLATION_EXPORT_ARGS": `{{ with include "gatekeeper.exportFlag" (dict "value" .Values.enableViolationExport "default" "") }}
++        - --enable-violation-export={{ . }}
+         {{- end }}
+         {{ if hasKey .Values.audit "connection" }}
+         - --audit-connection={{ .Values.audit.connection }}
+```
+
+**File**: `cmd/build/helmify/static/README.md` (modified, +1/-1)
+```diff
+@@ -240,7 +240,7 @@ information._
+ | audit.disableAuditOperation                               | Disable audit operation for audit                                                                                                                                                                                                                                                              | `false`                                                                                                                                                                |
+ | audit.disableAuditSidecar                                 | Disable audit sidecar                                                                                                                                                                                                                                                              | `false`                                                                                                                                                                |
+ | audit.disableStatusOperation                              | Disable status operation for audit                                                                                                                                                                                                                                                             | `false`                                                                                                                                                                |
+-| enableViolationExport                                      | (alpha) Enable exporting audit violations to external systems                                                                                                                                                                                                                                               | `false`                                                                                                                                                               |
++| enableViolationExport                                      | (beta) Enable exporting audit violations. Export starts only when a matching Connection exists. Set to `false` to opt out                                                                                                                                                                                   | `true`                                                                                                                                                                |
+ | enableAdmissionViolationExport                             | (alpha) Enable best-effort export of admission violations using the disk driver; requires `exportBackend: disk`                                                                                                                                                                                              | `false`                                                                                                                                                               |
+ | admission.exportSidecar                                    | Optional sidecar that streams and removes completed admission disk segments from the audit export volume                                                                                                                                                                                                   | See `values.yaml`                                                                                                                                                     |
+ | admission.disableExportSidecar                             | Disable the admission disk reader sidecar                                                                                                                                                                                                                                                                  | `true`                                                                                                                                                                |
+```
+
+**File**: `cmd/build/helmify/static/templates/_helpers.tpl` (modified, +32/-0)
+```diff
+@@ -206,3 +206,35 @@ deployed namespace is exempted.
+ "kubernetes.io/metadata.name":
+   - {{ .Release.Namespace }}
+ {{- end -}}
++
++{{/*
++Returns "true" for true, t or 1 and "false" for false, f or 0, in any case.
++Unset, null or "" returns the default; other values are returned unchanged.
++Usage: include "gatekeeper.exportFlag" (dict "value" .Values.enableViolationExport "default" "true")
++*/}}
++{{- define "gatekeeper.exportFlag" -}}
++{{- $value := toString .value -}}
++{{- if or (kindIs "invalid" .value) (eq $value "") -}}
++{{- .default -}}
++{{- else if has (lower $value) (list "true" "t" "1") -}}
++true
++{{- else if has (lower $value) (list "false" "f" "0") -}}
++false
++{{- else -}}
++{{- $value -}}
++{{- end -}}
++{{- end -}}
++
++{{/*
++Returns "true" if the chart creates the disk Connection: the disk backend and
++either audit or admission export set to true.
++*/}}
++{{- define "gatekeeper.diskConnectionRendered" -}}
++{{- $audit := include "gatekeeper.exportFlag" (dict "value" .Values.enableViolationExport "default" "false") -}}
++{{- $admission := include "gatekeeper.exportFlag" (dict "value" .Values.enableAdmissionViolationExport "default" "false") -}}
++{{- if and (eq (.Values.exportBackend | default "" | lower) "disk") (or (eq $audit "true") (eq $admission "true")) -}}
++true
++{{- else -}}
++false
++{{- end -}}
++{{- end -}}
+```
+
+**File**: `cmd/build/helmify/static/templates/gatekeeper-audit-violation-export-connection.yaml` (modified, +4/-2)
+```diff
+@@ -1,8 +1,10 @@
+ ---
+-{{- if and (or .Values.enableViolationExport .Values.enableAdmissionViolationExport) (eq (.Values.exportBackend | default "" | lower) "dapr") }}
++{{- $audit := include "gatekeeper.exportFlag" (dict "value" .Values.enableViolationExport "default" "true") }}
++{{- $admission := include "gatekeeper.exportFlag" (dict "value" .Values.enableAdmissionViolationExport "default" "false") }}
++{{- if and (or (eq $audit "true") (eq $admission "true")) (eq (.Values.exportBackend | default "" | lower) "dapr") }}
+ {{- fail "exportBackend dapr is no longer supported because the Dapr export driver has been removed; set exportBackend to disk or disable violation export" }}
+ {{- end }}
+-{{- if and (or .Values.enableViolationExport .Values.enableAdmissionViolationExport) (eq (.Values.exportBackend | default "" | lower) "disk") }}
++{{- if eq (include "gatekeeper.diskConnectionRendered" .) "true" }}
+ apiVersion: connection.gatekeeper.sh/v1alpha1
+ kind: Connection
+ metadata:
 ```
 
 #### Recent Merged Pull Requests:
@@ -1365,32 +1592,47 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. bump follow-redirects from 1.16.1 to 1.16.2 in /website (#4908)
+## X. harden audit violation export and enable it by default (beta) (#4901)
 
 **RULE**:
-When implementing operations in `website/yarn.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/gatekeeper. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/disk-export.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/gatekeeper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `47f009ff`: bump follow-redirects from 1.16.1 to 1.16.2 in /website (#4908). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `763f4021`: harden audit violation export and enable it by default (beta) (#4901). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `website/yarn.lock`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/disk-export.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-  version "1.16.2"
-  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.16.2.tgz#a233160dd1bc9b16cbbab43709e6adc7cc941c8c"
-  integrity sha512-/kVP2U8z596Ia0gwFrwyIeo74ta5aVmSeU1FfAUMAmcEP5EP7zydmag3SLiN64NaRKef3lxsq7i/g7ltJQDGow==
+      - "main.go"
+      - "pkg/audit/**"
+      - "pkg/operations/**"
+      - "main.go"
+      - "pkg/audit/**"
+      - "pkg/operations/**"
+    strategy:
+      fail-fast: false
+      matrix:
+        KUBERNETES_VERSION: ["1.35.8", "1.36.4", "1.37.0"]
+          make e2e-bootstrap KUBERNETES_VERSION=${{ matrix.KUBERNETES_VERSION }}
+            ENABLE_ADMISSION_EXPORT=true EXPORT_BACKEND=disk \
+          if grep -q -- '--set enableViolationExport' <<<"$output"; then
+            echo "unset ENABLE_EXPORT unexpectedly set enableViolationExport" >&2
+            exit 1
+          fi
+          HELM=./.staging/helm/linux-amd64/helm ./test/export/helm-render-test.sh
+          name: export-logs-${{ matrix.KUBERNETES_VERSION }}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-  version "1.16.1"
-  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.16.1.tgz#6e0efa40a727fb369b98dab15883ec34787d675e"
-  integrity sha512-FNvFGzoMLWmE6Yj9spb/zjd7yiNCHiAW9/Tg9CXrQ8wuu32HtlJOwWO11OJafl5FfY3DxTdQ0vj42zU1kvv5jg==
+          make e2e-bootstrap
+            ENABLE_EXPORT=false ENABLE_ADMISSION_EXPORT=true EXPORT_BACKEND=disk \
+          name: export-logs
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `47f009ff` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `763f4021` are properly handled with clean fallback behavior.

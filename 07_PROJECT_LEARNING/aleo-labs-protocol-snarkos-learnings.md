@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md`  
 > **Source**: github ([https://github.com/aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS))  
-> **Source Version**: `c250f749`  
+> **Source Version**: `5c7d169f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T19:38:09.834Z  
+> **Timestamp**: 2026-11-10T02:43:57.956Z  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T19:38:09.826Z  
+> **Harvest Timestamp**: 2026-11-10T02:43:57.699Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -104,8 +104,9 @@ impl<N: Network> FromBytes for WorkerPing<N> {
     }
 }
 
-#[cfg(test)]
+#[cfg(any(test, feature = "fuzz-helpers"))]
 pub mod prop_tests {
+    #![cfg_attr(not(test), allow(unused_imports))]
     use crate::{WorkerPing, prop_tests::any_transmission_id};
     use snarkvm::console::prelude::{FromBytes, ToBytes};
 
@@ -1966,11 +1967,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #4615** (2026-11-06): **Gateway handshake has no genesis binding**
+  *Symptoms*: The gateway handshake never checks that a peer shares our genesis, and the first authenticated holder of an address keeps its slot. This requires the committee key; we found no path without it. We have only seen this on a devnet.  The code below is from `staging` at `395f79781`.  **Observed**  Two devnets sharing deterministic dev keys could reach each other, with different genesis blocks: a prover logged `failed (incorrect block header)` against every foreign node. While two of five validators restarted, foreign nodes with those keys connected to the other three. The returning validators were refused with `already connected to the given Aleo address`.  The returning validators then accepted foreign nodes holding the other keys, refusing their real peers too. The chain stopped permanently, while each validator logged `Connected to 4 validators (of 4 bonded validators)`. A rerun of the same commit without the second devnet passed.  The foreign nodes sent no proposals, signatures or primary pings, so no consensus check rejected them. Their traffic kept the connections alive, and the connected-quorum check in `propose_batch` counted them.  **Why**  - `verify_peer_info` in `node/bft/src/gateway.rs` checks version, trusted peers, committee membership, the existing connection and the restrictions ID, but not genesis. - The router handshake does compare genesis headers (`node/router/src/handshake.rs`), which is why only the router side refused these nodes.  **Suggested fix**  Add th
+
 - **Issue #4588** (2026-10-29): **Re-issue block requests that a responsive peer skipped**
   *Symptoms*: ## Motivation  Fixes #4585. Block sync can stall for good when a validator peer drops block requests.  - A validator drops each `BlockRequest` beyond `max_cache_duplicates()` (the committee size squared) per peer within `CACHE_REQUESTS_INTERVAL` (2 s). It sends no reply. - Since 71f5f74c0, `handle_block_request_timeouts` keeps a timed-out request if its peer sent any block response within `BLOCK_REQUEST_TIMEOUT` (60 s). - The peer keeps answering newer requests. So a dropped request never times out, and it is never re-issued. The syncing node stops below the gap.  ### Fix  - For each peer, `last_response_at` also holds the latest timestamp of any request that the peer answered. - A timed-out request is exempt only while an assigned peer is responsive and has answered no request sent after it. Requests are stamped and queued to each peer in send order. So a peer that answered a later request skipped this one. - A skipped request is marked as failed and re-issued. Its peer stays in the sync pool, because the peer still responds. - A backlogged peer that answers requests in order stays exempt, as 71f5f74c0 intends. - The gateway logs each dropped block request at trace level.  ### Commits  - `fix(node/sync): time out block requests that a responsive peer skipped`: the fix, the log line, and three unit tests.  ## Test Plan  - New unit tests in `node/sync/src/block_sync.rs`:   - `test_reissue_skipped_block_request`: a timed-out request whose peer answered a later request is remove
-
-- **Issue #4585** (2026-10-29): **[Bug] Block sync stalls for good when a validator peer drops rate-limited block requests**
-  *Symptoms*: ## 🐛 Bug Report  A validator that syncs blocks from a validator peer can stall for good. Two behaviors combine:  1. **The gateway drops excess block requests without a reply.** A validator counts the `BlockRequest`s from each peer over `CACHE_REQUESTS_INTERVAL` (2 seconds). From the `max_cache_duplicates()`-th request on, it returns `Ok(true)` and does nothing. It sends no response and logs nothing. The limit is the square of the current committee size, so it is 16 on a 4-validator devnet.    - [`gateway.rs#L650-L655`](https://github.com/ProvableHQ/snarkOS/blob/6b124303c094f0a58bdf9f3517d3ac589dd0820f/node/bft/src/gateway.rs#L650-L655)    - [`gateway.rs#L400-L403`](https://github.com/ProvableHQ/snarkOS/blob/6b124303c094f0a58bdf9f3517d3ac589dd0820f/node/bft/src/gateway.rs#L400-L403) 2. **A dropped request never times out while its peer answers other requests.** `handle_block_request_timeouts` keeps a request whose peer sent any block response in the last `BLOCK_REQUEST_TIMEOUT` (60 seconds). It added this exemption in 71f5f74c0 ("do not ban responsive peers"). The peer keeps answering newer requests, so the dropped ones are never re-issued.    - [`block_sync.rs#L1247-L1249`](https://github.com/ProvableHQ/snarkOS/blob/6b124303c094f0a58bdf9f3517d3ac589dd0820f/node/sync/src/block_sync.rs#L1247-L1249)    - [`block_sync.rs#L1384-L1389`](https://github.com/ProvableHQ/snarkOS/blob/6b124303c094f0a58bdf9f3517d3ac589dd0820f/node/sync/src/block_sync.rs#L1384-L1389)  The syncing node the
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1987,170 +1988,143 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cad420b6` (2026-11-05)
-**Commit Message**: Add a devnet entry that crashes all validators with SIGKILL
-
-Validators must be crash safe. The `chaotic-restart-all` entry stops them
-with SIGTERM, which lets each node save its proposal cache, so no CI job
-covers a crash of the whole committee.
-
-Add a `crash` stop mode to `test_restart_all.sh`, and run it as the new
-`chaotic-crash-all` entry of `devnet-release`. The default mode keeps its
-behavior.
-
-`stop_nodes` sends SIGKILL. Bash logs a "Killed" line for each node, which
-is the evidence of the signal. The bare `wait` in `stop_nodes` discards the
-exit statuses, so the script cannot check them.
-
-A height check alone passes if nodes restart from genesis and sync, or if
-they fork. So crash mode also fails if a validator serves a lower height
-after a restart than it served before the crash, or if validators hold
-different blocks at the final height.
+### Incident Patch 1: `9ee0e3e9` (2026-11-09)
+**Commit Message**: Move the v1-to-v2 migration guide into the repository and link to it
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `.ci/test_restart_all.sh` (modified, +63/-2)
+**File**: `node/rest/MIGRATING_TO_V2.md` (added, +96/-0)
 ```diff
-@@ -20,13 +20,21 @@ network_id=$2
- restart_interval=$3
- final_height=$4
- num_restarts=$5
-+# How validators stop before each restart: `graceful` (SIGTERM) or `crash` (SIGKILL).
-+stop_mode=$6
- 
- # Default values if not provided.
- : "${total_validators:=7}"
- : "${network_id:=0}"
- : "${restart_interval:=10}"
- : "${final_height:=100}"
- : "${num_restarts:=3}"
-+: "${stop_mode:=graceful}"
+@@ -0,0 +1,96 @@
++# Migrating from the v1 REST API to v2
 +
-+if [[ "$stop_mode" != graceful && "$stop_mode" != crash ]]; then
-+  log "❌ Unknown stop mode '$stop_mode'."
-+  exit 1
-+fi
- 
- # The time that is used to determine the total timeout for the test.
- max_wait_per_block=10
-@@ -53,6 +61,48 @@ common_flags=(
-   "--dev-num-validators=$total_validators"
- )
- 
-+# Records the height of each validator in `crash_heights`, then kills all validators with SIGKILL.
-+function crash_validators() {
-+  local index
-+  for index in "${!PIDS[@]}"; do
-+    crash_heights[index]=$(get_block_height_by_port $((3030 + index)) "$network_name" 5)
-+    if ! is_integer "${crash_heights[index]}"; then
-+      log "❌ Test failed! Validator $index did not report its height before the crash."
-+      exit 1
-+    fi
-+  done
-+  log "Heights before the crash: ${crash_heights[*]}"
-+  stop_nodes
-+}
++The REST API is served under three prefixes: `/v2/<network>`, `/v1/<network>`, and the unversioned `/<network>`.
++The unversioned prefix serves the v1 API.
++The v1 API and the unversioned prefix are deprecated.
++Use `/v2/<network>`.
 +
-+# Fails unless each validator serves at least the height it held before the crash.
-+function check_resumed_from_ledger() {
-+  local index resumed_height
-+  for index in "${!PIDS[@]}"; do
-+    resumed_height=$(get_block_height_by_port $((3030 + index)) "$network_name" 5)
-+    log "Validator $index resumed at height '$resumed_height' and held ${crash_heights[index]} before the crash"
-+    if ! is_integer "$resumed_height" || (( resumed_height < crash_heights[index] )); then
-+      log "❌ Test failed! Validator $index did not resume from its ledger."
-+      exit 1
-+    fi
-+  done
-+}
++The alias routes `/peers/count`, `/peers/all`, `/peers/all/metrics` and `/sync_status` are also deprecated, on every version, `/v2` included.
 +
-+# Fails unless all validators hold the same block at height $1.
-+function check_same_block() {
-+  local block_height=$1
-+  local index block_hash first_hash=""
-+  for index in "${!PIDS[@]}"; do
-+    block_hash=$(curl -s --max-time 5 "http://$localhost:$((3030 + index))/v2/$network_name/block/$block_height" | jq -r '.block_hash // empty' 2>/dev/null || true)
-+    log "Validator $index holds block '$block_hash' at height $block_height"
-+    : "${first_hash:=$block_hash}"
-+    if [[ -z "$block_hash" || "$block_hash" != "$first_hash" ]]; then
-+      log "❌ Test failed! Validators disagree on the block at height $block_height."
-+      exit 1
-+    fi
-+  done
-+}
++## Timeline
 +
- # Start all validator nodes in the background
- for validator_index in $(seq 0 $((total_validators-1))); do
-   snarkos clean "--dev=$validator_index" "--network=$network_id"
-@@ -79,8 +129,12 @@ for iter in $(seq 1 "$num_restarts"); do
-   fi
-   log "All nodes reached restart height $restart_height. Restarting all validators (iteration $iter/$num_restarts)..."
- 
--  # Gracefully shut down all validators
--  stop_some_nodes "${!PIDS[@]}"
-+  if [[ "$stop_mode" == crash ]]; then
-+    crash_validators
-+  else
-+    # Gracefully shut down all validators
-+    stop_some_nodes "${!PIDS[@]}"
-+  fi
- 
-   # Wait briefly before restarting
-   sleep 5
-@@ -100,10 +154,17 @@ for iter in $(seq 1 "$num_restarts"); do
-     log "❌ Test failed! Not all nodes became ready within $max_restart_wait seconds after restart #$iter."
-     exit 1
-   fi
++The deprecation started on 2026-11-08.
 +
-+  if [[ "$stop_mode" == crash ]]; then
-+    check_resumed_from_ledger
-+  fi
- done
- 
- # Wait for final height
- if wait_for_heights 0 "$total_validators" "$final_height" "$network_name" "$max_wait"; then
-+  if [[ "$stop_mode" == crash ]]; then
-+    check_same_block "$final_height"
-+  fi
-  log "SUCCESS!"
-   exit 0
- else
++| Release | `/v1/<network>/…`, `/<network>/…` and the alias routes |
++|---|---|
++| The first release with the deprecation (N) | Served as before, plus the deprecation headers |
++| N+1 | Served as before, plus the deprecation headers |
++| N+2 | **`410 Gone`**, with a body that points to `/v2` |
++
++## What to change
++
++1. **Put `/v2` in front of the network name** in every request URL:
++
++   ```text
++   https://node.example/mainnet/block/latest     →  https://node.example/v2/mainnet/block/latest
++   https://node.example/v1/mainnet/block/latest  →  https://node.example/v2/mainnet/block/latest
++   ```
++
++   The routes, query parameters and request bodies are the same on v2.
++
++   Also replace the alias routes:
++
++   | Deprecated | Use |
++   |---|---|
++   | `/peers/count` | `/connections/p2p/count` |
++   | `/peers/all` | `/connections/p2p/all` |
++   | `/peers/all/metrics` | `/connections/p2p/all/metrics` |
++   | `/sync_status` | `/sync/status` |
++
++2. **Successful responses do not change.**
++   Every 2xx response, including `203`, has the same status and body on v2 as on v1.
++
++3. **Error responses change. You must handle the new status codes and the JSON body.**
++
++   - **Status:** v1 answers every error with `500`.
++     v2 uses the status that describes the error:
++
++     | Status | Meaning |
++     |---|---|
++     | `400 Bad Request` | The request is malformed: bad parameters, a body that does not parse, or a body over a size limit |
++     | `404 Not Found` | The resource does not exist on this node, for example a block height it does not have yet |
++     | `422 Unprocessable Entity` | The request is well formed but invalid, for example a transaction that fails verification |
++     | `429 Too Many Requests` | Rate limited. A rate-limit rejection carries `Retry-After` |
++     | `503 Service Unavailable` | The node cannot serve this now, for example because it is syncing or the route needs a validator |
++     | `500 Internal Server Error` | A fault on the node |
++
++     Branch on the status code, not on the error text.
++     Handle any other 4xx or 5xx status by its class: v2 can add more specific codes.
++
++   - **Body:** v1 sends plain text, `message — cause — …`, with an `(HTTP NNN)` suffix when the error did not come from a route.
++     v2 sends JSON with `Content-Type: application/json`:
++
++     ```json
++     { "message": "…", "error_type": "not_found", "chain": ["cause", "…"] }
++     ```
++
++     If you display or parse error text, read `message` and `chain` from the JSON.
++
++## How v2 changes
++
++v2 is the stable API.
++
++These can be added to v2: status codes, JSON fields in error and success bodies, response headers, routes, and query parameters.
++For example, `transaction/broadcast` will use `409 Conflict`, and error bodies will get a machine-readable `code` field.
++
++These do not change in v2: the status and body of an existing success response, and the meaning of an existing field.
++
++Your client must ignore JSON fields and headers that it does not know.
++It must handle an unknown status by its class (4xx or 5xx).
++A change that breaks these rules gets a new API version.
++
++## Detecting a deprecated route
++
++Every response from a deprecated route, success or error, carries these headers ([RFC 9745](https://www.rfc-editor.org/rfc/rfc9745)):
++
++```text
++Deprecation: @1794096000
++Link: <https://github.com/aleo-labs-protocol/snarkOS/blob/staging/node/rest/MIGRATING_TO_V2.md>; rel="deprecation"
++```
++
++`Deprecation` is the date of deprecation, 2026-11-08, as a Unix timestamp.
++CORS exposes both headers, so browser clients can read them.
++
++HTTP libraries do not act on these headers by themselves.
++Check for `Deprecation` in your client and log a warning.
++`snarkos developer` prints a warning for each deprecated response.
 ```
 
-**File**: `.github/workflows/ci.yml` (modified, +4/-0)
+**File**: `node/rest/README.md` (modified, +2/-0)
 ```diff
-@@ -367,6 +367,10 @@ jobs:
-             timeout: 45
-             delay: true
-             runs: ./.ci/test_restart_all.sh
-+          - name: chaotic-crash-all
-+            timeout: 45
-+            delay: true
-+            runs: ./.ci/test_restart_all.sh 7 0 10 100 3 crash
-     name: devnet (${{ matrix.name }})
-     steps: *devnet-steps
+@@ -8,3 +8,5 @@ The `snarkos-node-rest` crate provides a REST API for the `snarkos` node.
  
+ REST responses support gzip compression when the client sends `Accept-Encoding: gzip`.
+ Responses smaller than 32 bytes are not compressed.
++
++The v1 API and the unversioned routes are deprecated. See [Migrating from the v1 REST API to v2](./MIGRATING_TO_V2.md).
 ```
 
-**File**: `CI.md` (modified, +1/-0)
+**File**: `node/rest/src/lib.rs` (modified, +2/-1)
 ```diff
-@@ -52,6 +52,7 @@ marked "release" only on the third. The other jobs run on every event.
- | `devnet (upgrade)` | `cpu` | merge | 90 | `test_full_upgrade.sh`, `test_partial_upgrade.sh` |
- | `devnet (upgrade-required)` | `cpu` | release | 30 | `test_upgrade_required.sh` |
- | `devnet (chaotic-restart-all)` | `cpu` | release | 45 | `test_restart_all.sh`, with delays |
-+| `devnet (chaotic-crash-all)` | `cpu` | release | 45 | `test_restart_all.sh` with SIGKILL, with delays |
- | `machete` | hosted | all | | `cargo machete` |
- | `windows` | hosted (Windows) | merge | | `cargo check --examples --benches --tests` in `account`, `cli`, `display`, `node` |
- | `ci-ok` | hosted | all | | fails unless every job a pull request runs succeeded |
+@@ -566,7 +566,8 @@ async fn record_rest_request(request: Request<Body>, next: middleware::Next) ->
+ const DEPRECATION_TIMESTAMP: i64 = 1_794_096_000;
+ 
+ /// Where a client of a deprecated route learns how to migrate.
+-const MIGRATION_GUIDE_URL: &str = "https://github.com/aleo-labs-protocol/snarkOS/pull/4650";
++const MIGRATION_GUIDE_URL: &str =
++    "https://github.com/aleo-labs-protocol/snarkOS/blob/staging/node/rest/MIGRATING_TO_V2.md";
+ 
+ /// The `Deprecation` response header field (RFC 9745).
+ const DEPRECATION: HeaderName = HeaderName::from_static("deprecation");
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4635** (2026-11-05): Bump snarkVM to aleo-labs-protocol/snarkVM@6d0fb24ac (@aleo-labs-merge-bot[bot])
-- **PR #4634** (2026-11-05): Run the merge job twice a day (@cbeck88)
-- **PR #4632** (2026-11-05): Bump snarkVM to aleo-labs-protocol/snarkVM@2939d66dd (@aleo-labs-merge-bot[bot])
-- **PR #4631** (2026-11-05): Send only the load test options that are filled in (@cbeck88)
-- **PR #4630** (2026-11-05): Run the telemetry tests in CI (@cbeck88)
-- **PR #4629** (2026-11-05): Run the upgrade and restart-all devnets in a release-only CI job (@cbeck88)
+- **PR #4657** (2026-11-10): Gauntlet workflows: rename secrets and variables to GAUNTLET_* (@cbeck88-ai-dev)
+- **PR #4656** (2026-11-09): Bump snarkVM to aleo-labs-protocol/snarkVM@aa342cfe7 (@aleo-labs-merge-bot[bot])
+- **PR #4655** (2026-11-09): ci: add a deploy_rate input to the load test (@cbeck88)
+- **PR #4653** (2026-11-09): Bump snarkVM to aleo-labs-protocol/snarkVM@bcf2847b8 (@aleo-labs-merge-bot[bot])
+- **PR #4652** (2026-11-08): Gauntlet load test: inherit secrets (@cbeck88)
+- **PR #4651** (2026-11-08): Gauntlet workflows: the host reports each run's check (@cbeck88)
 
 ---
 
@@ -2170,57 +2144,61 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add a devnet entry that crashes all validators with SIGKILL
+## X. Move the v1-to-v2 migration guide into the repository and link to it
 
 **RULE**:
-When implementing operations in `.ci/test_restart_all.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `node/rest/MIGRATING_TO_V2.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cad420b6`: Add a devnet entry that crashes all validators with SIGKILL. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9ee0e3e9`: Move the v1-to-v2 migration guide into the repository and link to it. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.ci/test_restart_all.sh`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `node/rest/MIGRATING_TO_V2.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# How validators stop before each restart: `graceful` (SIGTERM) or `crash` (SIGKILL).
-stop_mode=$6
-: "${stop_mode:=graceful}"
+# Migrating from the v1 REST API to v2
 
-if [[ "$stop_mode" != graceful && "$stop_mode" != crash ]]; then
-  log "❌ Unknown stop mode '$stop_mode'."
-  exit 1
-fi
-# Records the height of each validator in `crash_heights`, then kills all validators with SIGKILL.
-function crash_validators() {
-  local index
-  for index in "${!PIDS[@]}"; do
-    crash_heights[index]=$(get_block_height_by_port $((3030 + index)) "$network_name" 5)
-    if ! is_integer "${crash_heights[index]}"; then
-      log "❌ Test failed! Validator $index did not report its height before the crash."
-      exit 1
-    fi
-  done
-  log "Heights before the crash: ${crash_heights[*]}"
-  stop_nodes
-}
+The REST API is served under three prefixes: `/v2/<network>`, `/v1/<network>`, and the unversioned `/<network>`.
+The unversioned prefix serves the v1 API.
+The v1 API and the unversioned prefix are deprecated.
+Use `/v2/<network>`.
 
-# Fails unless each validator serves at least the height it held before the crash.
-function check_resumed_from_ledger() {
-  local index resumed_height
-  for index in "${!PIDS[@]}"; do
-    resumed_height=$(get_block_height_by_port $((3030 + index)) "$network_name" 5)
-    log "Validator $index resumed at height '$resumed_height' and held ${crash_heights[index]} before the crash"
-    if ! is_integer "$resumed_height" || (( resumed_height < crash_heigh
+The alias routes `/peers/count`, `/peers/all`, `/peers/all/metrics` and `/sync_status` are also deprecated, on every version, `/v2` included.
+
+## Timeline
+
+The deprecation started on 2026-11-08.
+
+| Release | `/v1/<network>/…`, `/<network>/…` and the alias routes |
+|---|---|
+| The first release with the deprecation (N) | Served as before, plus the deprecation headers |
+| N+1 | Served as before, plus the deprecation headers |
+| N+2 | **`410 Gone`**, with a body that points to `/v2` |
+
+## What to change
+
+1. **Put `/v2` in front of the network name** in every request URL:
+
+   ```text
+   https://node.example/mainnet/block/latest     →  https://node.example/v2/mainnet/block/latest
+   https://node.example/v1/mainnet/block/latest  →  https://node.example/v2/mainnet/block/latest
+   ```
+
+   The routes, query parameters and request bodies are the same on v2.
+
+   Also replace the alias routes:
+
+   | Deprecated | Use |
+   |---|-
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-  # Gracefully shut down all validators
-  stop_some_nodes "${!PIDS[@]}"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cad420b6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9ee0e3e9` are properly handled with clean fallback behavior.

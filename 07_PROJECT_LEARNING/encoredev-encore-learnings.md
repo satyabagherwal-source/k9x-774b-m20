@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/encoredev-encore-learnings.md`  
 > **Source**: github ([https://github.com/encoredev/encore](https://github.com/encoredev/encore))  
-> **Source Version**: `e755a8b6`  
+> **Source Version**: `2f05e83e`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T01:51:20.302Z  
+> **Timestamp**: 2026-11-10T04:44:28.476Z  
 > **Learning ID**: `learn-github-encoredev-encore`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/encoredev-encore-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/encoredev/encore](https://github.com/encoredev/encore))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T01:51:19.840Z  
+> **Harvest Timestamp**: 2026-11-10T04:44:26.792Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Infrastructure orchestration from local to your cloud
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: Cargo.toml, go.mod, README.md
-- **Stars / Engagement**: 12688 stars
+- **Stars / Engagement**: 12701 stars
 
 ---
 
@@ -1768,230 +1768,677 @@ func Get(ctx context.Context, slug string) (*Bit, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e755a8b6` (2026-11-03)
-**Commit Message**: v2/internals/pkginfo: resolve nested modules missing from the module cache
+### Incident Patch 1: `2f05e83e` (2026-11-09)
+**Commit Message**: Revert "runtimes: log in to Cloud SQL with GCP IAM database authentication (#2640)" (#2641)
 
-loadModuleDirs dropped every module that `go list -m -e -json all` reported
-without a Dir, i.e. every module whose source isn't in the module cache yet.
-A package of such a module then matched its parent module instead when the
-parent was on disk, and parsing failed looking for a directory that doesn't
-exist, e.g.
+Reverts #2640 (8c4a7f06705dac7fd85facc15d8b1714e53846a0).
 
-  parse package "cloud.google.com/go/bigquery": open
-  .../cloud.google.com/go@v0.123.0/bigquery: no such file or directory
+Clean `git revert` of the merge commit; no conflicts. Affected Go
+packages (`pkg/rtconfgen`, `proto`, `runtimes/go/storage/sqldb`,
+`runtimes/go/appruntime/exported/config`) build. Rust runtime not built
+locally.
 
-It happens with a module cache restored from an earlier build, which can
-have the parent module but not a nested module the app has since come to
-depend on. With an empty cache neither module has a Dir, so both were
-dropped and resolution fell back to packages.Load, which downloads.
+<!-- codesmith:footer -->
+---
+<a
+href="https://backend.blacksmith.sh/track/enable-autofix?expires=1796830540&installation_model_id=427204&pr_number=2641&ref=codesmith_pr_footer&repository=encoredev%2Fencore&return_to=https%3A%2F%2Fgithub.com%2Fencoredev%2Fencore%2Fpull%2F2641&signature=f6985aa304e80d0f18291503fdd706d9f5848998c6a913eaae244bd95df43efc"><picture><source
+media="(prefers-color-scheme: dark)"
+srcset="https://pr-comments-assets.blacksmith.sh/codesmith/autofix-with-codesmith-dark.svg"><source
+media="(prefers-color-scheme: light)"
+srcset="https://pr-comments-assets.blacksmith.sh/codesmith/autofix-with-codesmith-light.svg"><img
+alt="Autofix with [code]smith"
+src="https://pr-comments-assets.blacksmith.sh/codesmith/autofix-with-codesmith-dark-3x.png"
+width="190" height="28"></picture></a>
+<sup><a
+href="https://app.blac
 
-Keep those modules, with an empty Dir. buildListModuleDir already treats an
-empty Dir as a miss, so their packages now take the packages.Load path too.
-Errored modules are kept the same way rather than dropped.
-
-**File**: `v2/internals/pkginfo/modresolve.go` (modified, +11/-3)
+**File**: `Cargo.lock` (modified, +12/-1)
 ```diff
-@@ -125,11 +125,19 @@ func (l *Loader) loadModuleDirs() {
- 			l.c.Log.Warn().Err(err).Msg("failed to decode go list module output; using partial module list")
- 			break
- 		}
--		// Skip errored modules and any without a resolved directory.
--		if m.Error != nil || m.Path == "" || m.Dir == "" || !paths.ValidModPath(m.Path) {
-+		if m.Path == "" || !paths.ValidModPath(m.Path) {
- 			continue
- 		}
--		l.moduleDirs[paths.MustModPath(m.Path)] = m.Dir
-+		// Keep modules that aren't on disk yet (or failed to load), with an
-+		// empty Dir: dropping them would match their packages to a parent
-+		// module that is on disk, e.g. cloud.google.com/go/bigquery to
-+		// cloud.google.com/go. An empty Dir makes buildListModuleDir report
-+		// a miss, so resolution falls back to packages.Load, which downloads.
-+		dir := m.Dir
-+		if m.Error != nil {
-+			dir = ""
-+		}
-+		l.moduleDirs[paths.MustModPath(m.Path)] = dir
- 	}
+@@ -1073,6 +1073,17 @@ dependencies = [
+  "tokio",
+ ]
  
- 	l.sortedModulePaths = make([]paths.Mod, 0, len(l.moduleDirs))
++[[package]]
++name = "bb8-postgres"
++version = "0.9.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "e570e6557cd0f88d28d32afa76644873271a70dc22656df565b2021c4036aa9c"
++dependencies = [
++ "bb8",
++ "tokio",
++ "tokio-postgres",
++]
++
+ [[package]]
+ name = "bb8-redis"
+ version = "0.26.0"
+@@ -2117,6 +2128,7 @@ dependencies = [
+  "base32",
+  "base64 0.21.7",
+  "bb8",
++ "bb8-postgres",
+  "bb8-redis",
+  "byteorder",
+  "bytes",
+@@ -2136,7 +2148,6 @@ dependencies = [
+  "futures-util",
+  "gjson",
+  "google-cloud-api",
+- "google-cloud-auth 1.11.0",
+  "google-cloud-gax 0.17.0",
+  "google-cloud-googleapis",
+  "google-cloud-monitoring-v3",
 ```
 
-**File**: `v2/internals/pkginfo/modresolve_cache_test.go` (added, +166/-0)
+**File**: `pkg/rtconfgen/convert.go` (modified, +0/-13)
 ```diff
-@@ -0,0 +1,166 @@
-+package pkginfo_test
-+
-+import (
-+	"encoding/json"
-+	"go/token"
-+	"net/url"
-+	"os"
-+	"os/exec"
-+	"path/filepath"
-+	"runtime"
-+	"strings"
-+	"testing"
-+
-+	qt "github.com/frankban/quicktest"
-+	"golang.org/x/mod/module"
-+	modzip "golang.org/x/mod/zip"
-+
-+	"encr.dev/pkg/paths"
-+	"encr.dev/v2/internals/pkginfo"
-+	"encr.dev/v2/internals/testutil"
-+)
-+
-+// TestLoader_NestedModuleNotDownloaded covers a module cache holding a
-+// module's source but not that of a module nested in it, as a module cache
-+// restored from an earlier build can. `go list -m all` reports the nested
-+// module without a Dir; its packages must still resolve to it (and get
-+// downloaded), not to the parent module that is on disk.
-+func TestLoader_NestedModuleNotDownloaded(t *testing.T) {
-+	proxy := writeModuleProxy(t, map[string]map[string]string{
-+		"example.com/a": {
-+			"go.mod": "module example.com/a\n",
-+			"a.go":   "package a\n",
-+		},
-+		"example.com/a/b": {
-+			"go.mod":       "module example.com/a/b\n",
-+			"b.go":         "package b\n",
-+			"blah/blah.go": "package blah\n",
-+		},
-+		// Sorts between example.com/a/b and example.com/a/b/blah.
-+		"example.com/a/b.x": {
-+			"go.mod": "module example.com/a/b.x\n",
-+			"bx.go":  "package bx\n",
-+		},
-+	})
-+
-+	tests := []struct {
-+		name    string
-+		cached  []string // modules downloaded before parsing
-+		pkg     paths.Pkg
-+		wantDir string // relative to the module cache
-+	}{
-+		{
-+			name:    "nested_module",
-+			cached:  []string{"example.com/a"},
-+			pkg:     "example.com/a/b",
-+			wantDir: "example.com/a/b@v1.0.0",
-+		},
-+		{
-+			name:    "package_in_nested_module",
-+			cached:  []string{"example.com/a"},
-+			pkg:     "example.com/a/b/blah",
-+			wantDir: "example.com/a/b@v1.0.0/blah",
-+		},
-+		{
-+			name:    "sibling_module_sorted_in_between",
-+			cached:  []string{"example.com/a", "example.com/a/b.x"},
-+			pkg:     "example.com/a/b/blah",
-+			wantDir: "example.com/a/b@v1.0.0/blah",
-+		},
-+		{
-+			name:    "parent_module",
-+			cached:  []string{"example.com/a"},
-+			pkg:     "example.com/a",
-+			wantDir: "example.com/a@v1.0.0",
-+		},
-+	}
-+
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			c := qt.New(t)
-+			modCache := t.TempDir()
-+			t.Setenv("GOPROXY", proxy)
-+			t.Setenv("GOSUMDB", "off")
-+			t.Setenv("GOWORK", "off")
-+			t.Setenv("GOMODCACHE", modCache)
-+			// -mod=mod fills in go.sum; -modcacherw lets t.TempDir clean up.
-+			t.Setenv("GOFLAGS", "-mod=mod -modcacherw")
-+
-+			tc := testutil.NewContext(c, false, testutil.ParseTxtar(`
-+-- go.mod --
-+module app
-+
-+go 1.22
-+
-+require (
-+	example.com/a v1.0.0
-+	example.com/a/b v1.0.0
-+	example.com/a/b.x v1.0.0
-+)
-+`))
-+			tc.FailTestOnErrors()
-+			defer tc.FailTestOnBailout()
-+
-+			goModDownload(c, tc, tt.cached...)
-+
-+			l := pkginfo.New(tc.Context)
-+			pkg, ok := l.LoadPkg(token.NoPos, tt.pkg)
-+			c.Assert(ok, qt.IsTrue)
-+			c.Check(pkg.FSPath.ToIO(), qt.Equals, filepath.Join(modCache, filepath.FromSlash(tt.wantDir)))
-+		})
-+	}
-+}
-+
-+// writeModuleProxy writes a file:// GOPROXY serving each module, with the
-+// given files, at v1.0.0, and returns its URL.
-+func writeModuleProxy(t *testing.T, modules map[string]map[string]string) string {
-+	t.Helper()
-+	c := qt.New(t)
-+	root := t.TempDir()
-+	for modPath, files := range modules {
-+		src := t.TempDir()
-+		for name, data := range files {
-+			p := filepath.Join(src, filepath.FromSlash(name))
-+			c.Assert(os.MkdirAll(filepath.Dir(p), 0o755), qt.IsNil)
-+			c.Assert(os.WriteFile(p, []byte(data), 0o644), qt.IsNil)
-+		}
-+
-+		mv := module.Version{Path: modPath, Version: "v1.0.0"}
-+		dir := filepath.Join(root, filepath.FromSlash(modPath), "@v")
-+		c.Assert(os.MkdirAll(dir, 0o755), qt.IsNil)
-+
-+		info, err := json.Marshal(map[string]string{"Version": mv.Version, "Time": "2024-01-01T00:00:00Z"})
-+		c.Assert(err, qt.IsNil)
-+		c.Assert(os.WriteFile(filepath.Join(dir, "list"), []byte(mv.Version+"\n"), 0o644), qt.IsNil)
-+		c.Assert(os.WriteFile(filepath.Join(dir, mv.Version+".info"), info, 0o644), qt.IsNil)
-+		c.Assert(os.WriteFile(filepath.Join(dir, mv.Version+".mod"), []byte(files["go.mod"]), 0o644), qt.IsNil)
-+
-+		zf, err := os.Create(filepath.Join(dir, mv.Version+".zip"))
-+		c.Assert(err, qt.IsNil)
-+		c.Assert(modzip.CreateFromDir(zf, mv, src), qt.IsNil)
-+		c.Assert(zf.Close(), qt.IsNil)
-+	}
-+
-+	p := filepath.ToSlash(root)
-+	if !strings.HasPrefix(p, "/") {
-+		p = "/" + p // a Windows drive path
-+	}
-+	return (&url.URL{Scheme: "file", Path: p}).String()
-+}
-+
-+// goModDownload downloads the given modules into the module cache.
-+func goModDownload(c *qt.C, tc *testutil.Context, mods ...string) {
-+	if len(mods) == 0 {
-+		return
-+	}
-+	goBin := tc.Build.GOROOT.Join("bin", "go").ToIO()
-+	if runtime.GOOS == "windows" {
-+		goBin += ".exe"
-+	}
-+	// nosemgrep go.lang.security.audit.dangerous-exec-command.dangerous-exec-command
-+	cmd := exec.Command(goBin, append([]string{"mod", "download"}, mods...)...)
-+	cmd.Dir = tc.MainModuleDir.ToIO()
-+	// nosemgrep
-+	out, err :=
+@@ -221,7 +221,6 @@ func (c *legacyConverter) Convert() (*config.Runtime, error) {
+ 						DatabaseName:   db.CloudName,
+ 						User:           role.Username,
+ 						Password:       c.secretString(role.Password),
+-						AuthMethod:     c.sqlAuthMethod(role.AuthMethod),
+ 						MinConnections: int(pool.MinConnections),
+ 						MaxConnections: int(pool.MaxConnections),
+ 					})
+@@ -598,18 +597,6 @@ func (c *legacyConverter) envCloud() encore.CloudProvider {
+ 	}
+ }
+ 
+-func (c *legacyConverter) sqlAuthMethod(m runtimev1.SQLAuthMethod) config.SQLAuthMethod {
+-	switch m {
+-	case runtimev1.SQLAuthMethod_SQL_AUTH_METHOD_PASSWORD:
+-		return config.SQLAuthPassword
+-	case runtimev1.SQLAuthMethod_SQL_AUTH_METHOD_GCP_IAM:
+-		return config.SQLAuthGCPIAM
+-	default:
+-		c.setErrf("unknown sql auth method %+v", m)
+-		return ""
+-	}
+-}
+-
+ func (c *legacyConverter) authKeys(keys []*runtimev1.EncoreAuthKey) []config.EncoreAuthKey {
+ 	return fns.Map(keys, func(k *runtimev1.EncoreAuthKey) config.EncoreAuthKey {
+ 		return config.EncoreAuthKey{
+```
+
+**File**: `proto/encore/runtime/v1/infra.pb.go` (modified, +97/-166)
+```diff
+@@ -76,59 +76,6 @@ func (ServerKind) EnumDescriptor() ([]byte, []int) {
+ 	return file_encore_runtime_v1_infra_proto_rawDescGZIP(), []int{0}
+ }
+ 
+-type SQLAuthMethod int32
+-
+-const (
+-	// With the role's password, if it has one. A runtime that predates the
+-	// field reads every role as this.
+-	SQLAuthMethod_SQL_AUTH_METHOD_PASSWORD SQLAuthMethod = 0
+-	// With an OAuth2 access token of the Google Cloud service account the
+-	// workload runs as, which Cloud SQL's IAM database authentication takes as
+-	// the password; the role has none of its own. Its username is the service
+-	// account's IAM database user: its email without ".gserviceaccount.com".
+-	// Tokens are only accepted over TLS.
+-	SQLAuthMethod_SQL_AUTH_METHOD_GCP_IAM SQLAuthMethod = 1
+-)
+-
+-// Enum value maps for SQLAuthMethod.
+-var (
+-	SQLAuthMethod_name = map[int32]string{
+-		0: "SQL_AUTH_METHOD_PASSWORD",
+-		1: "SQL_AUTH_METHOD_GCP_IAM",
+-	}
+-	SQLAuthMethod_value = map[string]int32{
+-		"SQL_AUTH_METHOD_PASSWORD": 0,
+-		"SQL_AUTH_METHOD_GCP_IAM":  1,
+-	}
+-)
+-
+-func (x SQLAuthMethod) Enum() *SQLAuthMethod {
+-	p := new(SQLAuthMethod)
+-	*p = x
+-	return p
+-}
+-
+-func (x SQLAuthMethod) String() string {
+-	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+-}
+-
+-func (SQLAuthMethod) Descriptor() protoreflect.EnumDescriptor {
+-	return file_encore_runtime_v1_infra_proto_enumTypes[1].Descriptor()
+-}
+-
+-func (SQLAuthMethod) Type() protoreflect.EnumType {
+-	return &file_encore_runtime_v1_infra_proto_enumTypes[1]
+-}
+-
+-func (x SQLAuthMethod) Number() protoreflect.EnumNumber {
+-	return protoreflect.EnumNumber(x)
+-}
+-
+-// Deprecated: Use SQLAuthMethod.Descriptor instead.
+-func (SQLAuthMethod) EnumDescriptor() ([]byte, []int) {
+-	return file_encore_runtime_v1_infra_proto_rawDescGZIP(), []int{1}
+-}
+-
+ type PubSubTopic_DeliveryGuarantee int32
+ 
+ const (
+@@ -162,11 +109,11 @@ func (x PubSubTopic_DeliveryGuarantee) String() string {
+ }
+ 
+ func (PubSubTopic_DeliveryGuarantee) Descriptor() protoreflect.EnumDescriptor {
+-	return file_encore_runtime_v1_infra_proto_enumTypes[2].Descriptor()
++	return file_encore_runtime_v1_infra_proto_enumTypes[1].Descriptor()
+ }
+ 
+ func (PubSubTopic_DeliveryGuarantee) Type() protoreflect.EnumType {
+-	return &file_encore_runtime_v1_infra_proto_enumTypes[2]
++	return &file_encore_runtime_v1_infra_proto_enumTypes[1]
+ }
+ 
+ func (x PubSubTopic_DeliveryGuarantee) Number() protoreflect.EnumNumber {
+@@ -587,8 +534,6 @@ type SQLRole struct {
+ 	Password *SecretData `protobuf:"bytes,3,opt,name=password,proto3" json:"password,omitempty"`
+ 	// The client cert to use to authenticate, if any.
+ 	ClientCertRid *string `protobuf:"bytes,4,opt,name=client_cert_rid,json=clientCertRid,proto3,oneof" json:"client_cert_rid,omitempty"`
+-	// How the role authenticates to the server.
+-	AuthMethod    SQLAuthMethod `protobuf:"varint,5,opt,name=auth_method,json=authMethod,proto3,enum=encore.runtime.v1.SQLAuthMethod" json:"auth_method,omitempty"`
+ 	unknownFields protoimpl.UnknownFields
+ 	sizeCache     protoimpl.SizeCache
+ }
+@@ -651,13 +596,6 @@ func (x *SQLRole) GetClientCertRid() string {
+ 	return ""
+ }
+ 
+-func (x *SQLRole) GetAuthMethod() SQLAuthMethod {
+-	if x != nil {
+-		return x.AuthMethod
+-	}
+-	return SQLAuthMethod_SQL_AUTH_METHOD_PASSWORD
+-}
+-
+ type SQLDatabase struct {
+ 	state protoimpl.MessageState `protogen:"open.v1"`
+ 	// The unique resource id for this database.
+@@ -2940,14 +2878,12 @@ const file_encore_runtime_v1_infra_proto_rawDesc = "" +
+ 	"ClientCert\x12\x10\n" +
+ 	"\x03rid\x18\x01 \x01(\tR\x03rid\x12\x12\n" +
+ 	"\x04cert\x18\x02 \x01(\tR\x04cert\x12/\n" +
+-	"\x03key\x18\x03 \x01(\v2\x1d.encore.runtime.v1.SecretDataR\x03key\"\xf6\x01\n" +
++	"\x03key\x18\x03 \x01(\v2\x1d.encore.runtime.v1.SecretDataR\x03key\"\xb3\x01\n" +
+ 	"\aSQLRole\x12\x10\n" +
+ 	"\x03rid\x18\x01 \x01(\tR\x03rid\x12\x1a\n" +
+ 	"\busername\x18\x02 \x01(\tR\busername\x129\n" +
+ 	"\bpassword\x18\x03 \x01(\v2\x1d.encore.runtime.v1.SecretDataR\bpassword\x12+\n" +
+-	"\x0fclient_cert_rid\x18\x04 \x01(\tH\x00R\rclientCertRid\x88\x01\x01\x12A\n" +
+-	"\vauth_method\x18\x05 \x01(\x0e2 .encore.runtime.v1.SQLAuthMethodR\n" +
+-	"authMethodB\x12\n" +
++	"\x0fclient_cert_rid\x18\x04 \x01(\tH\x00R\rclientCertRid\x88\x01\x01B\x12\n" +
+ 	"\x10_client_cert_rid\"\xa4\x01\n" +
+ 	"\vSQLDatabase\x12\x10\n" +
+ 	"\x03rid\x18\x01 \x01(\tR\x03rid\x12\x1f\n" +
+@@ -3127,10 +3063,7 @@ const file_encore_runtime_v1_infra_proto_rawDesc = "" +
+ 	"\x17SERVER_KIND_UNSPECIFIED\x10\x00\x12\x17\n" +
+ 	"\x13SERVER_KIND_PRIMARY\x10\x01\x12\x1b\n" +
+ 	"\x17SERVER_KIND_HOT_STANDBY\x10\x02\x12\x1c\n" +
+-	"\x18SERVER_KIND_READ_REPLICA\x10\x03*J\n" +
+-	"\rSQLAuthMethod\x12\x1c\n" +
+-	"\x18SQL_AUTH_METHOD_PASSWORD\x10\x00\x12\x1b\n" +
+-	"\x17SQL_AUTH_METHOD_GCP_IAM\x10\x01B,Z*encr.dev/proto/encore/runtime/v1;runtimev1b\x06proto3"
++	"\x18SERVER_KIND_READ_REPLICA\x10\x03B,Z*encr.dev/proto/encore/runtime/v1;runtimev1b\x06proto3"
+ 
+ var (
+ 	file_encore_runtime_v1_infra_proto_rawDescOnce sync.Once
+@@ -3144,105 +30
+```
+
+**File**: `proto/encore/runtime/v1/infra.proto` (modified, +0/-15)
+```diff
+@@ -112,21 +112,6 @@ message SQLRole {
+ 
+   // The client cert to use to authenticate, if any.
+   optional string client_cert_rid = 4;
+-
+-  // How the role authenticates to the server.
+-  SQLAuthMethod auth_method = 5;
+-}
+-
+-enum SQLAuthMethod {
+-  // With the role's password, if it has one. A runtime that predates the
+-  // field reads every role as this.
+-  SQL_AUTH_METHOD_PASSWORD = 0;
+-  // With an OAuth2 access token of the Google Cloud service account the
+-  // workload runs as, which Cloud SQL's IAM database authentication takes as
+-  // the password; the role has none of its own. Its username is the service
+-  // account's IAM database user: its email without ".gserviceaccount.com".
+-  // Tokens are only accepted over TLS.
+-  SQL_AUTH_METHOD_GCP_IAM = 1;
+ }
+ 
+ message SQLDatabase {
+```
+
+**File**: `runtimes/core/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -79,6 +79,7 @@ base32 = "0.4.0"
+ # We need to vendor openssl to allow cross-compilation on our build systems
+ openssl = { version = "0.10.80", features = ["vendored"] }
+ bb8 = "0.9"
++bb8-postgres = "0.9"
+ bb8-redis = "0.26"
+ redis = { version = "1.0", features = [
+     "tokio-rustls-comp",
+@@ -161,7 +162,6 @@ google-cloud-monitoring-v3 = { version = "1.10.0", default-features = false }
+ google-cloud-api = "1.0.0"
+ google-cloud-wkt = "1.0.0"
+ google-cloud-secretmanager-v1 = { version = "1.10.0", default-features = false }
+-google-cloud-auth = { version = "1.11.0", default-features = false }
+ rustls = { version = "0.23", default-features = false, features = ["ring"] }
+ sysinfo = "0.37.2"
+ aws-sdk-cloudwatch = { version = "1.97.0", default-features = false, features = [
+```
+
+**File**: `runtimes/core/src/infracfg.rs` (modified, +2/-68)
+```diff
+@@ -202,26 +202,8 @@ pub struct SQLDatabase {
+     pub max_connections: Option<i32>,
+     pub min_connections: Option<i32>,
+     pub username: String,
+-    /// Required unless `auth_method` is `gcp_iam`, which has none.
+-    #[serde(default)]
+-    pub password: Option<EnvString>,
++    pub password: EnvString,
+     pub client_cert: Option<ClientCert>,
+-    #[serde(default)]
+-    pub auth_method: SQLAuthMethod,
+-}
+-
+-/// How a database user authenticates to its server.
+-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+-#[serde(rename_all = "snake_case")]
+-pub enum SQLAuthMethod {
+-    /// With `password`.
+-    #[default]
+-    Password,
+-    /// With an access token of the Google Cloud identity the process runs as,
+-    /// through Cloud SQL's IAM database authentication. `username` is that
+-    /// identity's IAM database user (for a service account, its email without
+-    /// ".gserviceaccount.com"), and the server needs TLS.
+-    GcpIam,
+ }
+ 
+ #[derive(Debug, Serialize, Deserialize)]
+@@ -684,19 +666,11 @@ pub fn map_infra_to_runtime(infra: InfraConfig) -> RuntimeConfig {
+                             })
+                             .or_else(|| default_client_cert.clone());
+                         let role_rid = get_next_rid();
+-                        let (password, auth_method) = match db.auth_method {
+-                            SQLAuthMethod::Password => (
+-                                db.password.as_ref().map(map_env_string_to_secret_data),
+-                                pbruntime::SqlAuthMethod::Password,
+-                            ),
+-                            SQLAuthMethod::GcpIam => (None, pbruntime::SqlAuthMethod::GcpIam),
+-                        };
+                         let role = SqlRole {
+                             rid: role_rid.clone(),
+                             client_cert_rid: client_cert,
+                             username: db.username,
+-                            password,
+-                            auth_method: auth_method as i32,
++                            password: Some(map_env_string_to_secret_data(&db.password)),
+                         };
+                         credentials.sql_roles.push(role);
+                         SqlDatabase {
+@@ -1109,44 +1083,4 @@ mod tests {
+             "Converted runtime does not match expected runtime"
+         );
+     }
+-
+-    #[test]
+-    fn a_gcp_iam_database_has_a_role_without_a_password() {
+-        let infra_config: InfraConfig = serde_json::from_value(serde_json::json!({
+-            "sql_servers": [{
+-                "host": "10.0.0.3:5432",
+-                "tls_config": {"ca": "test"},
+-                "databases": {
+-                    "mydb": {
+-                        "username": "my-sa@my-project.iam",
+-                        "auth_method": "gcp_iam",
+-                    },
+-                    "otherdb": {
+-                        "username": "owner",
+-                        "password": "secret",
+-                    },
+-                },
+-            }],
+-        }))
+-        .expect("parse infra config");
+-
+-        let runtime = map_infra_to_runtime(infra_config);
+-        let infra = runtime.infra.expect("infra");
+-        let creds = infra.credentials.expect("credentials");
+-        let role = |user: &str| {
+-            creds
+-                .sql_roles
+-                .iter()
+-                .find(|r| r.username == user)
+-                .unwrap_or_else(|| panic!("no role for {user}"))
+-        };
+-
+-        let iam = role("my-sa@my-project.iam");
+-        assert_eq!(iam.auth_method(), pbruntime::SqlAuthMethod::GcpIam);
+-        assert_eq!(iam.password, None);
+-
+-        let owner = role("owner");
+-        assert_eq!(owner.auth_method(), pbruntime::SqlAuthMethod::Password);
+-        assert!(owner.password.is_some());
+-    }
+ }
+```
+
+**File**: `runtimes/core/src/sqldb/auth.rs` (removed, +0/-185)
+```diff
+@@ -1,185 +0,0 @@
+-use std::sync::{Arc, OnceLock};
+-
+-use anyhow::Context;
+-use google_cloud_auth::credentials::{AccessTokenCredentials, Builder};
+-
+-use crate::encore::runtime::v1 as pb;
+-
+-/// The scope Cloud SQL accepts an access token under as a database password.
+-const GCP_IAM_SCOPE: &str = "https://www.googleapis.com/auth/sqlservice.login";
+-
+-/// How a database's role authenticates to its server.
+-#[derive(Clone)]
+-pub enum Auth {
+-    /// With the role's password, if it has one, which is in the database's
+-    /// connection config already.
+-    Password,
+-    /// With an access token of the Google Cloud identity the process runs as,
+-    /// which Cloud SQL's IAM database authentication takes as the password.
+-    /// Each connection gets a current one: a token only has to be valid when
+-    /// a connection authenticates, and the connection outlives it.
+-    GcpIam(GcpIamTokens),
+-}
+-
+-impl Auth {
+-    pub(crate) fn from_pb(method: pb::SqlAuthMethod) -> Self {
+-        match method {
+-            pb::SqlAuthMethod::Password => Auth::Password,
+-            pb::SqlAuthMethod::GcpIam => Auth::GcpIam(GcpIamTokens::process()),
+-        }
+-    }
+-
+-    pub(crate) fn is_gcp_iam(&self) -> bool {
+-        matches!(self, Auth::GcpIam(_))
+-    }
+-
+-    /// Returns the config to open a connection with: `base`, with the
+-    /// password set to a current token if the role logs in with one.
+-    pub(crate) async fn connect_config(
+-        &self,
+-        base: &Arc<tokio_postgres::Config>,
+-    ) -> anyhow::Result<Arc<tokio_postgres::Config>> {
+-        match self {
+-            Auth::Password => Ok(base.clone()),
+-            Auth::GcpIam(tokens) => {
+-                let token = tokens.token().await?;
+-                let mut config = (**base).clone();
+-                config.password(token);
+-                Ok(Arc::new(config))
+-            }
+-        }
+-    }
+-}
+-
+-/// Access tokens for Cloud SQL IAM database authentication.
+-#[derive(Clone)]
+-pub struct GcpIamTokens {
+-    /// Built on first use, so that a process which never connects never looks
+-    /// for credentials. The credentials cache a token until shortly before it
+-    /// expires, so connections opened in the meantime share it.
+-    credentials: Arc<tokio::sync::OnceCell<AccessTokenCredentials>>,
+-}
+-
+-impl GcpIamTokens {
+-    /// The tokens of the process's Application Default Credentials: on Cloud
+-    /// Run, its service account's, from the metadata server.
+-    fn process() -> Self {
+-        static TOKENS: OnceLock<GcpIamTokens> = OnceLock::new();
+-        TOKENS
+-            .get_or_init(|| GcpIamTokens {
+-                credentials: Arc::new(tokio::sync::OnceCell::new()),
+-            })
+-            .clone()
+-    }
+-
+-    #[cfg(test)]
+-    pub(crate) fn with_credentials(credentials: AccessTokenCredentials) -> Self {
+-        GcpIamTokens {
+-            credentials: Arc::new(tokio::sync::OnceCell::new_with(Some(credentials))),
+-        }
+-    }
+-
+-    async fn token(&self) -> anyhow::Result<String> {
+-        let credentials = self
+-            .credentials
+-            .get_or_try_init(|| async {
+-                Builder::default()
+-                    .with_scopes([GCP_IAM_SCOPE])
+-                    .build_access_token_credentials()
+-                    .context("failed to find Google Cloud credentials")
+-            })
+-            .await?;
+-        let token = credentials
+-            .access_token()
+-            .await
+-            .context("failed to get an access token")?;
+-        Ok(token.token)
+-    }
+-}
+-
+-#[cfg(test)]
+-pub(crate) mod test {
+-    use std::sync::Mutex;
+-
+-    use google_cloud_auth::credentials::{
+-        AccessToken, AccessTokenCredentialsProvider, CacheableResource, CredentialsProvider,
+-    };
+-    use google_cloud_auth::errors::CredentialsError;
+-
+-    use super::*;
+-
+-    /// Hands out the tokens it is given, one per call, and then fails.
+-    #[derive(Debug)]
+-    pub(crate) struct FakeTokens(Mutex<Vec<&'static str>>);
+-
+-    impl FakeTokens {
+-        pub(crate) fn auth(tokens: &[&'static str]) -> Auth {
+-            let mut tokens = tokens.to_vec();
+-            tokens.reverse();
+-            let credentials = AccessTokenCredentials::from(FakeTokens(Mutex::new(tokens)));
+-            Auth::GcpIam(GcpIamTokens::with_credentials(credentials))
+-        }
+-    }
+-
+-    impl CredentialsProvider for FakeTokens {
+-        async fn headers(
+-            &self,
+-            _: http::Extensions,
+-        ) -> Result<CacheableResource<http::HeaderMap>, CredentialsError> {
+-            unimplemented!("only access tokens are used")
+-        }
+-
+-        async fn universe_domain(&self) -> Option<String> {
+-            None
+-        }
+-    }
+-
+-    impl AccessTokenCredentialsProvider for FakeTokens {
+-        async fn access_token(&self) -> Result<AccessToken, CredentialsError> {
+-            match self.0.lock().unwrap().pop() {
+-                Some(token) => Ok(AccessToken {
+-                    token: token.
+```
+
+**File**: `runtimes/core/src/sqldb/client.rs` (modified, +15/-59)
+```diff
+@@ -5,6 +5,7 @@ use std::pin::Pin;
+ use std::sync::{Arc, Mutex, OnceLock, Weak};
+ 
+ use bb8::{ErrorSink, PooledConnection, RunError};
++use bb8_postgres::PostgresConnectionManager;
+ use futures_util::StreamExt;
+ 
+ use tokio_postgres::config::Host;
+@@ -14,42 +15,10 @@ use crate::sqldb::val::RowValue;
+ use crate::trace::{protocol, Tracer};
+ use crate::{model, sqldb};
+ 
+-use super::auth::Auth;
+ use super::manager::PoolConfig;
+ use super::transaction::Transaction;
+ 
+-/// Opens a database's connections, like `bb8_postgres`'s manager, with the
+-/// credentials its [`Auth`] gives each one.
+-pub(crate) struct Mgr {
+-    config: Arc<tokio_postgres::Config>,
+-    tls: postgres_native_tls::MakeTlsConnector,
+-    auth: Auth,
+-}
+-
+-impl bb8::ManageConnection for Mgr {
+-    type Connection = tokio_postgres::Client;
+-    type Error = Error;
+-
+-    async fn connect(&self) -> Result<Self::Connection, Self::Error> {
+-        let config = self
+-            .auth
+-            .connect_config(&self.config)
+-            .await
+-            .map_err(Error::Credentials)?;
+-        let (client, connection) = config.connect(self.tls.clone()).await?;
+-        tokio::spawn(async move { connection.await.map(|_| ()) });
+-        Ok(client)
+-    }
+-
+-    async fn is_valid(&self, conn: &mut Self::Connection) -> Result<(), Self::Error> {
+-        conn.simple_query("").await?;
+-        Ok(())
+-    }
+-
+-    fn has_broken(&self, conn: &mut Self::Connection) -> bool {
+-        conn.is_closed()
+-    }
+-}
++type Mgr = PostgresConnectionManager<postgres_native_tls::MakeTlsConnector>;
+ 
+ /// Identifies a set of interchangeable connections.
+ ///
+@@ -69,7 +38,6 @@ struct PoolKey {
+     dbname: Option<String>,
+     user: Option<String>,
+     password: Option<Vec<u8>>,
+-    gcp_iam: bool,
+     min_conns: u32,
+     max_conns: u32,
+ }
+@@ -84,15 +52,14 @@ impl std::fmt::Debug for PoolKey {
+             .field("dbname", &self.dbname)
+             .field("user", &self.user)
+             .field("password", &self.password.as_ref().map(|_| "_"))
+-            .field("gcp_iam", &self.gcp_iam)
+             .field("min_conns", &self.min_conns)
+             .field("max_conns", &self.max_conns)
+             .finish()
+     }
+ }
+ 
+ impl PoolKey {
+-    fn new(config: &tokio_postgres::Config, auth: &Auth, pool_cfg: &PoolConfig) -> Self {
++    fn new(config: &tokio_postgres::Config, pool_cfg: &PoolConfig) -> Self {
+         Self {
+             hosts: config
+                 .get_hosts()
+@@ -107,7 +74,6 @@ impl PoolKey {
+             dbname: config.get_dbname().map(str::to_owned),
+             user: config.get_user().map(str::to_owned),
+             password: config.get_password().map(<[u8]>::to_vec),
+-            gcp_iam: auth.is_gcp_iam(),
+             min_conns: pool_cfg.min_conns,
+             max_conns: pool_cfg.max_conns,
+         }
+@@ -137,7 +103,7 @@ pub struct Pool {
+ impl Pool {
+     pub fn new<DB: sqldb::Database>(db: &DB, tracer: Tracer) -> anyhow::Result<Self> {
+         let pool_cfg = db.pool_config()?;
+-        let key = PoolKey::new(db.config()?, db.auth()?, &pool_cfg);
++        let key = PoolKey::new(db.config()?, &pool_cfg);
+ 
+         let mut pools = POOLS
+             .get_or_init(Default::default)
+@@ -163,11 +129,8 @@ impl Pool {
+         db: &DB,
+         pool_cfg: &PoolConfig,
+     ) -> anyhow::Result<bb8::Pool<Mgr>> {
+-        let mgr = Mgr {
+-            config: db.config()?.clone(),
+-            tls: db.tls()?.clone(),
+-            auth: db.auth()?.clone(),
+-        };
++        let tls = db.tls()?.clone();
++        let mgr = Mgr::new(db.config()?.clone(), tls);
+ 
+         let mut pool = bb8::Pool::builder()
+             .error_sink(Box::new(RustLoggerSink {
+@@ -198,12 +161,8 @@ struct RustLoggerSink {
+     db_name: String,
+ }
+ 
+-impl ErrorSink<Error> for RustLoggerSink {
+-    fn sink(&self, err: Error) {
+-        let Error::DB(err) = err else {
+-            log::error!("database {}: connection pool error: {}", self.db_name, err);
+-            return;
+-        };
++impl ErrorSink<tokio_postgres::Error> for RustLoggerSink {
++    fn sink(&self, err: tokio_postgres::Error) {
+         let mut msg = format!(
+             "database {}: connection pool error: {:?}",
+             self.db_name, err
+@@ -216,7 +175,7 @@ impl ErrorSink<Error> for RustLoggerSink {
+         log::error!("{msg}");
+     }
+ 
+-    fn boxed_clone(&self) -> Box<dyn ErrorSink<Error>> {
++    fn boxed_clone(&self) -> Box<dyn ErrorSink<tokio_postgres::Error>> {
+         Box::new(self.clone())
+     }
+ }
+@@ -236,18 +195,18 @@ impl Pool {
+         self.tracer
+             .trace(source, query, || async {
+                 let conn = self.pool.get().await.map_err(|e| match e {
+-                    RunError::User(err) => err,
++                    RunError::User(err) => Error::DB(err),
+                     RunError::TimedOut => Error::ConnectTimeout,
+                 })?;
+                 conn.query_raw(query, params).await.map_err(Error::from)
+             })
+             .await
+     }
+ 
+-    pub
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2641** (2026-11-09): Revert "runtimes: log in to Cloud SQL with GCP IAM database authentication (#2640)" (@ekerfelt)
+- **PR #2640** (2026-11-09): runtimes: log in to Cloud SQL with GCP IAM database authentication (@ekerfelt)
 - **PR #2638** (2026-11-03): v2/internals/pkginfo: resolve nested modules missing from the module cache (@eandre)
+- **PR #2637** (2026-11-06): sqldb: add 10 minutes of jitter to connection lifetimes by default (@gmtuca)
 - **PR #2630** (2026-10-29): v2/app/legacymeta: stop metadata keeping the parsed app alive (@twindebank)
 - **PR #2628** (2026-10-29): runtime: keep pubsub topics and buckets from all infra config providers (@jaglyserx)
-- **PR #2623** (2026-10-26): Fix LLM rules setup and update LLM instructions (@marcuskohlberg)
-- **PR #2622** (2026-10-22): Update README.md (@marcuskohlberg)
-- **PR #2620** (2026-10-21): cli: fix WorkspaceRoot looping forever on a .git file (@pujitha24)
 
 ---
 
@@ -2011,40 +2458,39 @@ Errored modules are kept the same way rather than dropped.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. v2/internals/pkginfo: resolve nested modules missing from the module cache
+## X. Revert "runtimes: log in to Cloud SQL with GCP IAM database authentication (#264
 
 **RULE**:
-When implementing operations in `v2/internals/pkginfo/modresolve.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in encoredev/encore. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in encoredev/encore. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e755a8b6`: v2/internals/pkginfo: resolve nested modules missing from the module cache. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2f05e83e`: Revert "runtimes: log in to Cloud SQL with GCP IAM database authentication (#2640)" (#2641). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `v2/internals/pkginfo/modresolve.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		if m.Path == "" || !paths.ValidModPath(m.Path) {
-		// Keep modules that aren't on disk yet (or failed to load), with an
-		// empty Dir: dropping them would match their packages to a parent
-		// module that is on disk, e.g. cloud.google.com/go/bigquery to
-		// cloud.google.com/go. An empty Dir makes buildListModuleDir report
-		// a miss, so resolution falls back to packages.Load, which downloads.
-		dir := m.Dir
-		if m.Error != nil {
-			dir = ""
-		}
-		l.moduleDirs[paths.MustModPath(m.Path)] = dir
+[[package]]
+name = "bb8-postgres"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e570e6557cd0f88d28d32afa76644873271a70dc22656df565b2021c4036aa9c"
+dependencies = [
+ "bb8",
+ "tokio",
+ "tokio-postgres",
+]
+
+ "bb8-postgres",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		// Skip errored modules and any without a resolved directory.
-		if m.Error != nil || m.Path == "" || m.Dir == "" || !paths.ValidModPath(m.Path) {
-		l.moduleDirs[paths.MustModPath(m.Path)] = m.Dir
+ "google-cloud-auth 1.11.0",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e755a8b6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2f05e83e` are properly handled with clean fallback behavior.

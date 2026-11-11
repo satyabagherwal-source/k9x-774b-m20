@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/krishhgg-insomnia-learnings.md`  
 > **Source**: github ([https://github.com/krishhgg/Insomnia](https://github.com/krishhgg/Insomnia))  
-> **Source Version**: `b8e7e20d`  
+> **Source Version**: `1044770e`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T00:52:51.539Z  
+> **Timestamp**: 2026-11-09T10:59:32.579Z  
 > **Learning ID**: `learn-github-krishhgg-insomnia`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/krishhgg-insomnia-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/krishhgg/Insomnia](https://github.com/krishhgg/Insomnia))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T00:52:51.308Z  
+> **Harvest Timestamp**: 2026-11-09T10:59:31.809Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A macOS menu bar app that safely keeps your MacBook awake with the lid closed, for timed agent sessions.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1848 stars
+- **Stars / Engagement**: 2002 stars
 
 ---
 
@@ -202,8 +202,12 @@ final class AppServices {
         sampleBrightnessIfLidOpen()
         let timer = DispatchSource.makeTimerSource(queue: .main)
         timer.schedule(deadline: .now() + Self.sampleInterval, repeating: Self.sampleInterval, leeway: Self.sampleLeeway)
+        // The same tick checks that sleep is still off (`checkSleepHeld`).
         timer.setEventHandler { [weak self] in
-            Task { @MainActor in self?.sampleBrightnessIfLidOpen() }
+            Task { @MainActor in
+                self?.sampleBrightnessIfLidOpen()
+                await self?.manager?.checkSleepHeld()
+            }
         }
         sampleTimer = timer
         timer.resume()
@@ -262,10 +266,43 @@ final class AppServices {
     }
 
     /// One-shot launch diagnostics. This does not start any observer or retry
-    /// timer, so system integrations remain active only during a session.
-    func logStartupSnapshot() {
-        if let closed = LidObserver.readClamshellState() {
-            status.lidClo
+    /// timer, so system integrat
+```
+
+### Core Architecture Module: `Sources/Insomnia/Core/BackstopCommand.swift`
+```
+import Darwin
+import Foundation
+
+/// Launchd starts our signed executable so Login Items can attribute the
+/// recovery agent to Insomnia, then we replace it with the verified script.
+enum BackstopCommand {
+    static let argument = "--backstop"
+
+    static func run(_ arguments: [String], bundle: URL = Bundle.main.bundleURL) -> Int32? {
+        guard arguments.first == argument else { return nil }
+        guard arguments.count == 2, !arguments[1].isEmpty, bundle.pathExtension == "app" else {
+            fputs("usage: Insomnia --backstop <code-requirement> (from Insomnia.app)\n", stderr)
+            return 64
+        }
+        do {
+            try CodeRequirement.verify(codeAt: bundle, satisfies: arguments[1])
+        } catch {
+            let reason = error.localizedDescription.replacingOccurrences(of: "\n", with: " ")
+            Log.error("backstop agent: \(bundle.path) does not satisfy the pinned code requirement; backstop.sh not run. Reinstall Insomnia (scripts/install.sh). \(reason)")
+            return 1
+        }
+        let command = ["/bin/bash", Paths.backstopScript(inBundle: bundle).path]
+        var argv = command.map { strdup($0) } + [nil]
+        defer { for argument in argv { free(argument) } }
+        return argv.withUnsafeMutableBufferPointer {
+            execv("/bin/bash", $0.baseAddress!)
+            perror("Insomnia backstop: exec /bin/bash")
+            return 1
+        }
+    }
+}
+
 ```
 
 ### Core Architecture Module: `Sources/Insomnia/Core/FloorRules.swift`
@@ -444,6 +481,9 @@ import Foundation
 /// signature against the requirement pinned in the plist and only then
 /// execs the script, so a backstop.sh edited on disk is never run by
 /// launchd. Nothing executable lives in a writable support directory.
+/// Before launching the native entry point, launchd enforces SpawnConstraint
+/// against the pinned cdhashes. A replacement binary cannot bypass the check
+/// by declining to verify the script. Older bundles use the external shell.
 ///
 /// What the app pins is the requirement of the code it is itself running
 /// (CodeRequirement.pin), after checking that the bundle on disk still is
@@ -468,6 +508,7 @@ struct BackstopTarget: Sendable, Equatable {
     /// Designated requirement of the bundle's signature, in requirement
     /// language, as `codesign -d -r-` prints it (see CodeRequirement).
     let requirement: String
+    var nativeExecutable: URL? = nil
 
     var script: URL { Paths.backstopScript(inBundle: bundle) }
 }
@@ -479,11 +520,12 @@ struct LaunchdBackstop: BackstopScheduling {
     typealias BundlePinner = @Sendable (_ bundle: URL) throws -> String
 
     static let launchctl = "/bin/launchctl"
+    static let csrutil = "/usr/bin/csrutil"
     /// Seconds between backstop.sh runs while loaded. install.sh writes the same value.
     static let pollInterval = 60
     static let commandTimeout: TimeInterval = 15
 
-    /// What launchd runs: `/bin/sh -c <agentProgram> sh <requirement> <bundle>`.
+    /// The external verifier for bundles without a constrained native command.
     /// The program verifies the bundle ($2) against the requirement ($1) with
     /// codesign and execs the sealed backstop.sh only when that passes; the
     /// resource seal covers the script, so an edited copy fails here. On
@@ -545,10 +587,28 @@ struct LaunchdBackstop: BackstopScheduling {
         } catch {
             throw BackstopError(message: "the recovery agent cannot pin \(bundle.path): \(error.localizedDescription). Reinstall with scripts/install.sh")
         }
-        let desired = Self.plistDictionary(label: label, target: BackstopTarget(bundle: bundle, requirement: requirement))
+        var executable = Self.nativeExecutable(in: bundle)
+        if executable != nil, CodeRequirement.launchHashes(in: requirement) != nil {
+            // Recheck each arm: launch constraints rely on SIP enforcement.
+            do {
+                let status = try await run(Self.csrutil, ["status"])
+                let output = status.stdout.hasSuffix("\n") ? String(status.stdout.dropLast()) : status.stdout
+                if !status.succeeded || !status.stderr.isEmpty || output != "System Integrity Protection status: enabled." {
+                    executable = nil
+                }
+            } catch is CancellationError {
+                throw CancellationError()
+            } catch {
+                executable = nil
+            }
+        }
+        let desired = Self.plistDictionary(label: label, target: BackstopTarget(
+            bundle: bundle, requirement: requirement, nativeExecutable: executable
+        ))
         // Armed when the plist the next login loads is this build's and the
         // loaded job is the one it describes: the same command line, started
-        // every `pollInterval` seconds. A loaded label alone may be another
+        // every `pollInterval` seconds, with the native spawn constraint
+        // present. A loaded label alone may be another
         // build's job, pinning a bundle or requirement this one does not
         // satisfy (install.sh can leave one loaded when it stops between its
         // bootstrap and publishing the plist), or a job loaded from a plist
@@ -571,54 +631,33 @@ struct LaunchdBackstop: BackstopScheduling {
 
     // MARK: Plist
 
+    static func nativeExecutable(in bundle: URL) -> URL? {
+        guard let data = try? Data(contentsOf: bundle.appendingPathComponent("Contents/Info.plist")),
+              let info = try? PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any],
+              info["InsomniaBackstopCommand"] as? String == BackstopCommand.argument,
+              let name = info["CFBundleExecutable"] as? String,
+              !name.isEmpty, name != ".", name != "..", !name.contains("/") else { return nil }
+        return bundle.appendingPathComponent("Contents/MacOS").appendingPathComponent(name)
+    }
+
     /// Pure builder, testable without launchd. Must produce exactly what
     /// install.sh writes, or every arm() reloads the agent.
     static func plistDictionary(label: String, target: BackstopTarget) -> [String: Any] {
-        [
+        var plist: [String: Any] = [
             "Label": label,
             "ProgramArguments": ["/bin/sh", "-c", agentProgram, "sh", target.requirement, target.bundle.path],
             "RunAtLoad": true,
             "StartInterval": pollInterval,
         ]
+        if let executable = target.nativeExecutable, let hashes = CodeRequirement.launchHashes(in: target.requirement) {
+            plist["ProgramArguments"] = [executable.path, BackstopCommand.argument, target.requirement]
+            plist["SpawnConstraint"] = ["cdhash": ["$in": hashes]]
+            plist["AssociatedBundleIdentifiers"] = [Paths.bundleIdentifier]
+        }
+        return plist
     }
 
-    func plistOnDiskMatches(_ desired: [String: Any]) -> Bool {
-        guard let data = try? Data(contentsOf: plistURL),
-              let obj = try? PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any]
-        else { return false }
-        return NSDictionary(dictionary: obj).isEqual(to: desired)
-    }
-
-    /// Candidates are `*.plist` files in a private subdirectory of the
-    /// LaunchAgents directory. launchctl refuses to bootstrap (or boot out)
-    /// any path without a `.plist` suffix with EIO, so the name must end in
-    /// `.plist`; launchd's login-time load of the LaunchAgents directory does
-    /// not descend into subdirectories, so a candidate left behind by a
-    /// crash or an unwritable volume can never be picked up as a second copy
-    /// of the label; and one level below the trusted plist is still the same
-    /// filesystem, so publishing stays a single rename.
-    private var stagingDirectory: URL {
-        plistURL.deletingLastPathComponent().appendingPathComponent(".\(label).staging", isDirectory: true)
-    }
-    private var candidatePrefix: String { "\(label).candidate-" }
-
-    private func writeCandidate(_ desired: [String: Any]) throws -> URL {
-        let data = try PropertyListSerialization.data(fromPropertyList: desired, format: .xml, options: 0)
-        try FileManager.default.createDirectory(at: stagingDirectory, withIntermediateDirectories: true)
-        sweepCandidates()
-        let url = stagingDirectory.appendingPathComponent(candidatePrefix + UUID().uuidString + ".plist")
-        try data.write(to: url)
-        return url
-    }
-
-    /// Atomically replaces the trusted plist with the candidate launchd just
-    /// loaded. Throws when that fails: the agent is running for this login
-    /// session, but the plist launchd reads at the next login is still the
-    /// old one, so the caller must not treat the backstop as configured.
-    private func publish(_ candidate: URL) throws {
-        guard rename(candidate.path, plistURL.path) == 0 else {
-            let reason = String(cString: strerror(errno))
-            throw BackstopError(message: "backstop agent loaded but its plist could not be published to \(plistURL.path): \
+  
 ```
 
 ### Core Architecture Module: `Sources/Insomnia/Core/LidActions.swift`
@@ -694,6 +733,7 @@ final class LidActions {
             Log.info("lid closed: no session, nothing to do")
             return
         }
+        if lidEvents == event { manager.cancelBrightnessReassert() }
         // One lifecycle transaction: journal writes and SIGSTOPs happen
         // under the recovery lock, after any end already in flight.
         let ran = await manager.runExclusive("lid close") { [self, manager] in
@@ -823,8 +863,7 @@ final class LidActions {
     /// A sample of 0, or the value owed after the mode at 0, replaces the
     /// kept one only once a reading above 0 showed that entry's darkening
     /// undone (`RuntimeState.keptDisplayReadLit`): before that, the 0 may
-    /// still be the darkening, and the kept value stays for the open to
-    /// write. A current read of 0 after 
+    /// still be the darkening, and the kept 
 ```
 
 ### Core Architecture Module: `Sources/Insomnia/Core/Log.swift`
@@ -1453,225 +1492,17 @@ enum ResumeFrozenCommand {
 
 ```
 
-### Core Architecture Module: `Sources/Insomnia/Core/SessionManager.swift`
-```
-import Foundation
-import Observation
-
-enum EndReason: String, Sendable {
-    case timer
-    case user
-    case quit
-    case batteryFloor
-    /// Battery present but its level unreadable on two consecutive reads
-    /// while on battery: the end floor could not be applied.
-    case batteryUnreadable
-    case thermalCritical
-    case backstop
-    /// Reconcile found a session on disk but could not arm the recovery
-    /// agent, journal, or hold sleep for it, so it ended the session instead
-    /// of holding sleep with nothing to release it.
-    case recoveryUnavailable
-    /// `pmset disablesleep 1` failed or timed out during start. The setting
-    /// may still have been applied, so the start is undone from the journal
-    /// like an end rather than rolled back from memory.
-    case startFailed
-}
-
-/// What `end` achieved. Callers that are about to quit need to know whether
-/// leaving now abandons anything.
-enum EndOutcome: Sendable, Equatable {
-    /// Journal clean, machine restored. The one entry that may remain is
-    /// the saved volume of an output device that was not connected: it
-    /// waits for the device (`SessionManager.outputDevicesChanged`, or a
-    /// later launch) and the notification and the menu name it.
-    case restored
-    /// Some entries could not be undone and stay journaled. `agentArmed`
-    /// says whether the polling agent is confirmed loaded to retry them.
-    case incomplete(agentArmed: Bool)
-    /// The recovery lock stayed busy; nothing was read or changed and the
-    /// session is still active. An in-process retry is scheduled.
-    case locked
-    /// session.json could not be removed. Whatever the journal held was
-    /// undone, but a relaunch would find a valid session and hold sleep
-    /// again, so the end is retried in process and quit is refused.
-    case sessionRetained
-    /// state.json cannot be read. Nothing was changed: Insomnia does not
-    /// know what to undo and will not guess. The session stays active until
-    /// a person fixes or moves the file.
-    case journalUnreadable
-    /// A `sudo pmset` did not stop on SIGTERM and is still running (pid).
-    /// It is never SIGKILLed: that could leave a root pmset changing power
-    /// state after the journal moved on. Nothing after it was undone, the
-    /// journal keeps every entry it had, and the recovery lock stays held
-    /// until the command exits: by this process, and by the command itself,
-    /// so a crash or force quit cannot free it beside the live pmset. The
-    /// end is retried when the command exits, and quit is refused meanwhile
-    /// so the app is still there to retry it.
-    case privilegedCommandRunning(pid: Int32)
-
-    /// Whether a quit may go ahead after an end with this outcome
-    /// (`AppDelegate.applicationShouldTerminate`): only once nothing is
-    /// left that this process alone can finish.
-    var letsQuitGo: Bool {
-        switch self {
-        case .restored, .incomplete(agentArmed: true): true
-        case .locked, .incomplete(agentArmed: false), .sessionRetained, .journalUnreadable, .privilegedCommandRunning: false
-        }
-    }
-}
-
-/// Why a lifecycle transaction did not run at all. A busy lock and an
-/// unreadable journal carry the line the refusal put in the menu
-/// (`lastError`).
-enum TransactionRefusal: Error, Sendable {
-    case lockBusy(String)
-    case journalUnreadable(String)
-    /// A `sudo pmset` from an earlier transaction is still running and holds
-    /// the recovery lock (see `EndOutcome`).
-    case commandRunning(pid: Int32)
-}
-
-/// Owns the session lifecycle: start / extend / end / reconcile.
-///
-/// Journal-first: every mutation is written to session.json / state.json
-/// *before* the matching side effect, and undo always reads state.json from
-/// disk, never memory (spec section 8 invariants).
-///
-/// One transaction at a time: every operation that reads the journal,
-/// decides, changes the machine and writes the journal runs on a single
-/// queue while holding the cross-process recovery lock shared with
-/// backstop.sh, and starts from the journal as it is on disk at that
-/// moment, never from a copy cached earlier: backstop.sh may have written
-/// it in between. An end requested while a start, extend or Low Power change
-/// is still queued or in flight wins: the older operation abandons itself
-/// before anything irreversible, or leaves its effect journaled for the
-/// end that runs right behind it.
-@MainActor
-@Observable
-final class SessionManager {
-    private(set) var session: Session?
-    private(set) var state: RuntimeState
-    var config: Config
-    /// Minute-granularity remaining time for the popover ("2h 14m").
-    private(set) var remainingText: String = ""
-    /// Live `H:MM:SS` countdown for the status item, updated at 1 Hz.
-    private(set) var countdownText: String = ""
-
-    /// Why the display or the keyboard backlight is left alone on lid close
-    /// on this Mac (a macOS the private calls were not measured on, a
-    /// private class that no longer looks as measured). Empty when both run.
-    /// Shown in Settings next to the darken toggle.
-    var darkenRefusals: [String] {
-        [
-            display.refusal().map { "Display: \($0).\(Self.keptLevelNote(state.savedDisplayBrightness))" },
-            keyboard.refusal().map { "Keyboard backlight: \($0).\(Self.keptLevelNote(state.savedKeyboardBrightness))" },
-        ].compactMap { $0 }
-    }
-
-    /// A refused device cannot have been darkened by this build, so a
-    /// value saved for it was kept after a refused restore.
-    private static func keptLevelNote(_ saved: Float?) -> String {
-        guard let saved else { return "" }
-        return " The level saved before the lid closed, \(saved), was not restored; set it with the brightness keys or Control Center."
-    }
-    /// Last failure worth showing in the menu; cleared on the next success.
-    private(set) var lastError: String?
-    /// How many times `fail` has run, so an undo can tell a line it put up
-    /// from one left by an earlier run.
-    @ObservationIgnored private var failCount = 0
-    /// Reconcile found SleepDisabled set with no session and no journal
-    /// claim: something other than Insomnia disabled sleep. Kept apart from
-    /// `lastError` so a restore failure from the same reconcile stays
-    /// visible beside it. Cleared by a session start, or by
-    /// `recheckForeignSleep()` once the bit reads 0 again.
-    private(set) var foreignSleepWarning: String?
-    /// The sudo pmset left running (`unfinishedCommand`), what it holds up
-    /// and the pid to stop it by hand. Kept apart from `lastError` so the
-    /// command's exit removes it without touching a newer failure: the task
-    /// holding the lock for the command clears it then (`holdLock`).
-    private(set) var commandWarning: String?
-    /// UIDs of output devices whose saved volume could not be restored
-    /// because they were not connected at the last try. Each try decides
-    /// again: a device that came back and then failed to restore is no
-    /// longer in it. In memory: each launch finds them again at its first
-    /// try.
-    private(set) var audioDevicesNotConnected: Set<String> = []
-    /// The menu line (`lastError`) the restore of the saved output volumes
-    /// last put up: a device change or audio retry that was refused, or a
-    /// restore that failed. A later restore that leaves nothing to retry
-    /// takes it down, unless a newer failure has replaced it since
-    /// (`clearAudioWarning`).
-    @ObservationIgnored private var audioWarning: String?
-
-    /// Output devices lid close muted that are still waiting to get their
-    /// volume and mute back because they were not connected. The menu
-    /// names each one, with a way to stop waiting.
-    var outputsWaitingForRestore: [SavedAudioOutput] {
-        state.savedAudioOutputs.filter { audioDevicesNotConnected.contains($0.deviceUID) }
-    }
-
-    var isActive: Bool { session != nil }
-
-    /// Journal edits owed by a freeze that `LidActions` undid because the
-    /// write confirming it failed (`clearUndoneFreeze`).
-    struct UndoneFreeze: Equatable, Sendable {
-        /// Pids whose provisional entry (identity nil) no longer describes
-        /// a stop: resumed, gone, or never stopped by that freeze.
-        var pids: Set<Int32> = []
-        /// That freeze set `dockerFrozen`, and none of it is still stopped.
-        var docker = false
-
-        var isEmpty: Bool { pids.isEmpty && !docker }
-
-        func apply(to s: inout RuntimeState) {
-            s.frozenProcesses.removeAll { $0.identity == nil && pids.contains($0.pid) }
-            if docker { s.dockerFrozen = false }
-        }
-    }
-
-    /// A journal write for a brightness kept after a refused restore, on a
-    /// build whose guard allows the call, that the disk refused. Applied
-    /// only while the entry still holds that value and its flag.
-    private enum KeptEdit: Equatable {
-        /// The level was found set since: the entry goes, with no write.
-        case clear(Float)
-        /// The saved level was written: the entry goes. A display level
-        /// written under Insomnia's Low Power Mode still owes its write
-        /// once the mode is off, as when the clear lands at once
-        /// (`displayRestoredUnderLowPower`).
-        case restored(Float, underLowPower: Bool)
-        /// The write failed: the flag goes, so the entry is an ordinary
-        /// failed restore, retried like any other and counted as dirty by
-        /// backstop.sh and uninstall.sh.
-        case unflag(Float)
-
-        var saved: Float {
-            switch self {
-            case .clear(let value), .restored(let value, _), .unflag(let value): value
-            }
-        }
-
-        var isUnflag: Bool {
-            if case .unflag = self { return true }
-            return false
-        }
-
-        /// A clear, of a level set since or restored, while the journal
-        /// `s` still holds the entry with that value and its
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #149** (2026-10-27): **Session: land #120**
-  *Symptoms*: A session could stay running after its deadline, with 00:00 in the menu bar and sleep still disabled. macOS sometimes steps the wall clock back by a few milliseconds, so the deadline timer can fire while the clock still reads just before the deadline, and the session then never ended. #120 by @hasin023 fixes it: when the timer fires early, it waits out the rest instead of giving up.  #120 is reviewed and tested at 5d8c3dd, but it can't merge on its own right now. GitHub hasn't refreshed #120's test merge since main moved to 2ed30d4, so every CI run on #120 still tests it against the old main.  This pull request lands #120 at 5d8c3dd. Its first commit, 7ceb33a3, is a merge of that head onto main, so GitHub marks #120 merged when this one merges, and its author keeps the credit. That commit's tree is the one GitHub would test for #120 against main today: `git merge-tree --write-tree origin/main 5d8c3dd` gives 6a998c7c. The next three commits, 6d912705, 2582bb34 and 9380c81a, change only `DeadlineTimerTests.swift`.  To @hasin023: please don't push to your branch until this merges. A new commit there isn't in this pull request, so #120 would stay open instead of showing as merged.  ## What #120 changes  - `SessionManager.deadlineTimerFired` reads the deadline when the timer runs. If the clock hasn't reached it yet, it schedules one more timer for the rest (at least 50 ms), and ends the session once the clock is past it. End, start, extend and the launch reconcile still go through
+- **Issue #171** (2026-11-09): **Keyboard backlight: land #136**
+  *Symptoms*: After a lid close, Insomnia could set the keyboard backlight back to 0 when the lid opened, and leave it off. On a MacBook Pro, macOS has already turned the backlight off by the time Insomnia reads it at a close, so Insomnia read 0, saved it, and wrote it back at the open. #136 by @addisonking stops that: a close that reads 0 leaves the keyboard to macOS.  Fixes #121.  This pull request lands #136 at 7fc79c2. Its first commit, b4f0960d, merges that head onto main unchanged, so GitHub marks #136 merged when this one merges, and its author keeps the credit. Git merged it with no conflicts. The second commit, 9293acb9, fixes a case the Codex bot found in #136, e1c663fe brings an older spec paragraph in line with it, c54a95f6 narrows 9293acb9 so a trusted 0 behaves as on main, 10dcb414 fixes the log and spec for a refused zero kept from an older version, and 2ad033d6 and 76a49270 keep the display sleep request when the keyboard journals no level.  To @addisonking: please don't push to your branch until this merges. A new commit there isn't in this pull request, so #136 would stay open instead of showing as merged.  ## What #136 changes  - A close that reads the keyboard at 0 saves nothing and writes nothing, unless a positive restore is already owed from an earlier close. A 0 can come from automatic adjustment or from the user turning it off, and neither should be restored over. - A positive reading is saved if trusted, otherwise a positive sample. A sample of 0 is never used. - 
 
-- **Issue #130** (2026-10-27): **Install, uninstall: ignore Kong's Insomnia API client**
-  *Symptoms*: ## What changes  Kong's Insomnia API client (bundle identifier `com.insomnia.app`) runs an executable named `Insomnia`, so `pgrep -x Insomnia` in `install.sh` and `uninstall.sh` finds it too. With only the client open:  - `install.sh` asks this app to quit (which does nothing to the client), waits 15 s and stops with "Insomnia is still running". It has already installed the sudoers rule by then, so a first install leaves the rule and no app. - Its check under the recovery lock stops with "Insomnia started again". - `uninstall.sh` refuses with "Nothing was removed."  No message names the other app.  Both scripts now check each pid `pgrep` prints with a **code requirement**, a rule that macOS checks against the running process's signature:  ``` codesign --verify -R='anchor apple generic and identifier "com.insomnia.app" and certificate leaf[subject.OU] = "FX44YY62GV"' <pid> ```  The rule asks for code signed through Apple's certificate chain (as Developer ID is), with the client's identifier and Kong's team, FX44YY62GV, in the signing certificate. A pid is skipped only when codesign exits 0. The script then prints one line naming the pid, the identifier and the team. Any other result counts as this app: exit 3 (the requirement is not met; this app is ad hoc signed, so it always gets 3), exit 1 (the process is gone or its signature doesn't verify), any other failure. Under the lock the call goes through `bounded()` like `pgrep`, so one that doesn't answer in 30 s counts as this 
+- **Issue #169** (2026-11-08): **Merge gate: the Codex bot's review replaces Greptile's score**
+  *Symptoms*: Greptile is off for this repository, so `merge-gate/greptile` would stay pending on every new head and nothing could merge. The ChatGPT Codex connector reviews pull requests now, and this replaces that gate with `merge-gate/codex-bot`, which reads the bot's result.  ## How the gate reads the bot  The bot keeps one summary comment per pull request and rewrites it for each review. A hidden state block at its top names the reviewed commit, the review's status and whether it found anything. The gate takes the newest summary the bot wrote and:  - passes when it covers the head, the review completed and it found nothing - waits when there is no review yet, the review covers an older commit, it is still running, or two summaries share a time and disagree - fails on findings, on an open security finding at the head, and on a summary that holds more than one state - fails if anyone but the bot made the newest edit to any comment the bot wrote, summary or not, or if GitHub names no account for that edit. Checking every bot comment means removing the marker from the newest summary can't bring back an older clean one.  GitHub keeps no record of a deleted comment, so deleting the bot's newest summary would bring back an older one if the bot had written two. That takes write access, which only the owner has, and the bot keeps one summary per pull request.  The bot leaves `has_any_findings` set after a finding's conversation is resolved, and the gate reads that flag. A finding therefore cou
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1688,497 +1519,950 @@ final class SessionManager {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `434312d6` (2026-10-19)
-**Commit Message**: Install, uninstall: check Kong's client against a code requirement
+### Incident Patch 1: `1044770e` (2026-11-09)
+**Commit Message**: Merge pull request #154 from krishhgg/integration/recovery-launcher
 
-92430e4 read Identifier= and TeamIdentifier= from `codesign -d -v <pid>`.
-Those lines report what the signature carries. They do not show that
-Apple issued the certificate, and the check depended on parsing
-codesign's text.
+Recovery launcher: land #142
 
-A pid pgrep found is now skipped only when
-
-  codesign --verify -R='anchor apple generic and identifier
-    "com.insomnia.app" and certificate leaf[subject.OU] = "FX44YY62GV"' <pid>
-
-exits 0: the running code has a valid signature from a certificate Apple
-issued, with Kong's identifier and Kong's team in the leaf certificate.
-Any other exit counts as this app: 3 when the requirement is not met, 1
-for a process that is gone or a signature that does not verify, any other
-status, and a call that does not answer under the lock. The call goes
-through bounded() under the lock and is direct before it, as pgrep is.
-There is nothing to parse, so the line counting and signature_of() are
-gone, and the "Ignoring pid" line no longer names a path.
-
-On this Mac, with Kong's requirement: this app's pid exits 3, a missing
-pid exits 1, Finder exits 3, and a /bin/sleep started with argv[0] set to
-Kong's executabl
-
-**File**: `Tests/InsomniaTests/RecoveryScriptTests.swift` (modified, +95/-91)
+**File**: `Resources/Info.plist` (modified, +2/-0)
 ```diff
-@@ -26,6 +26,9 @@ final class RecoveryScriptTests: XCTestCase {
-     }
- 
-     override func tearDown() {
-+        // The fake codesign logs this when a script checks a pid against a
-+        // requirement other than Kong's client's (see writeFakes).
-+        XCTAssertFalse(fx.calls().contains("codesign BAD-REQUIREMENT"), "\(fx.calls())")
-         fx.destroy()
-         fx = nil
-     }
-@@ -6262,48 +6265,40 @@ final class RecoveryScriptTests: XCTestCase {
-     // MARK: - Kong's Insomnia API client
- 
-     /// Kong's Insomnia API client runs an executable named Insomnia too, so
--    /// `pgrep -x Insomnia` finds it. This is its pid and its executable.
-+    /// `pgrep -x Insomnia` finds it. This is its pid.
-     private let clientPid = 7002
--    private let clientExecutable = "/Applications/Insomnia.app/Contents/MacOS/Insomnia"
- 
--    /// What `codesign -d -v` prints for Kong's client: its code signing
--    /// identifier and Kong's team.
--    private var clientSignature: String {
--        ScriptFixture.signature(executable: clientExecutable, identifier: "com.insomnia.app", team: "FX44YY62GV")
-+    /// The check each script makes of a pid pgrep printed. Kong's client,
-+    /// and only it, passes (codesign exits 0).
-+    private func verifyCall(_ pid: Int) -> String {
-+        "codesign --verify -R=\(ScriptFixture.apiClientRequirement) \(pid)"
-     }
- 
-     private var ignoredLine: String {
--        "Ignoring pid \(clientPid) (\(clientExecutable)): it is Kong's Insomnia API client (com.insomnia.app, team FX44YY62GV), not this app."
-+        "Ignoring pid \(clientPid): it is Kong's Insomnia API client (com.insomnia.app, team FX44YY62GV), not this app."
-     }
- 
-     private func count(_ line: String, in text: String) -> Int {
-         text.components(separatedBy: line).count - 1
-     }
- 
--    /// A process named Insomnia whose signature does not show it is Kong's
-+    /// A process named Insomnia that codesign does not pass as Kong's
-     /// client, each set up in a fresh fixture. Every one counts as this app.
-     private var processesThatCountAsThisApp: [(String, () throws -> Void)] {
--        let kong = clientExecutable
--        let process = { (signature: String?) -> () throws -> Void in
--            { try self.fx.insomniaProcesses([(self.clientPid, signature)]) }
-+        let process = { (status: Int32?) -> () throws -> Void in
-+            { try self.fx.insomniaProcesses([(self.clientPid, status)]) }
-         }
-         return [
--            // This app started with argv[0] set to Kong's path: ps would
--            // print that path, and codesign names this app's code.
--            ("this app under Kong's path", process(ScriptFixture.signature(executable: kong, identifier: "com.kgarg.insomnia", team: "not set"))),
--            ("Kong's identifier, ad hoc signed", process(ScriptFixture.signature(executable: kong, identifier: "com.insomnia.app", team: "not set"))),
--            ("Kong's identifier, another team", process(ScriptFixture.signature(executable: kong, identifier: "com.insomnia.app", team: "ABCDE12345"))),
--            ("Kong's team, another identifier", process(ScriptFixture.signature(executable: kong, identifier: "com.insomnia.app.beta", team: "FX44YY62GV"))),
--            ("no Identifier line", process(ScriptFixture.signature(executable: kong, identifier: nil, team: "FX44YY62GV"))),
--            ("no TeamIdentifier line", process(ScriptFixture.signature(executable: kong, identifier: "com.insomnia.app", team: nil))),
--            ("no Executable line", process(ScriptFixture.signature(executable: nil, identifier: "com.insomnia.app", team: "FX44YY62GV"))),
--            // The client's lines last, so reading only the last of each
--            // would take this for the client.
--            ("two Identifier lines", process("Identifier=com.kgarg.insomnia\n" + clientSignature)),
--            ("two TeamIdentifier lines", process("TeamIdentifier=not set\n" + clientSignature)),
--            ("two Executable lines", process("Executable=/usr/local/bin/Insomnia\n" + clientSignature)),
-+            // codesign checks the code a process runs, not its argv[0]: this
-+            // app, ad hoc signed, does not meet the requirement even when
-+            // started with argv[0] set to Kong's path, and neither does code
-+            // with another identifier or team or a certificate Apple did not
-+            // issue.
-+            ("this app, also under Kong's path: requirement not met (exit 3)", process(3)),
-+            ("a signature that does not verify (exit 1)", process(1)),
-+            ("another codesign error (exit 2)", process(2)),
-             ("a codesign that fails", {
--                try self.fx.insomniaProcesses([(self.clientPid, self.clientSignature)])
-+                try self.fx.insomniaProcesses([(self.clientPid, 0)])
-                 self.fx.setMode("codesign-pid", "fail")
-             }),
-             ("a pid codesign does not find", process(nil)),
-@@ -6318,7 +6313,7 @@ final class Recovery
+@@ -38,6 +38,8 @@
+ 	<integer>1</integer>
+ 	<key>InsomniaSessionCommandVersion</key>
+ 	<integer>1</integer>
++	<key>InsomniaBackstopCommand</key>
++	<string>--backstop</string>
+ 	<key>NSHumanReadableCopyright</key>
+ 	<string>Copyright © 2026 Krish Garg. MIT License.</string>
+ </dict>
 ```
 
-**File**: `docs/install.md` (modified, +7/-6)
+**File**: `SECURITY.md` (modified, +16/-2)
 ```diff
-@@ -272,9 +272,10 @@ directory contents. A small shared lock file is retained to keep concurrent
- recovery operations coordinated.
+@@ -47,8 +47,22 @@ a team id. Releases are ad-hoc signed, so both limits stay.
  
- Kong's Insomnia API client also runs a process named `Insomnia`. The
--installer and the uninstaller tell it apart by the code signature of the
--running process (`codesign -d -v <pid>`), not by its path. A process signed
--with the identifier `com.insomnia.app` and Kong's team ID `FX44YY62GV` is the
--client: they print its pid, ignore it, and do not ask it to quit. Any other
--process, including one whose signature they cannot read, counts as this app,
--so they still stop if it does not quit.
-+installer and the uninstaller tell it apart by checking the code signature
-+of the running process against a code requirement (`codesign --verify
-+-R=<requirement> <pid>`), not by its path. A process whose code is signed
-+with a certificate Apple issued, with the identifier `com.insomnia.app` and
-+Kong's team ID `FX44YY62GV`, is the client: they print its pid, ignore it,
-+and do not ask it to quit. Any other process, including one that codesign
-+cannot check, counts as this app, so they still stop if it does not quit.
+ In releases built by the Release workflow and in builds of the current
+ source, the recovery LaunchAgent runs only the `backstop.sh` sealed inside the
+-signed app bundle, after `codesign --verify --strict` passes against the code
+-requirement pinned in its plist (the build's cdhash for an ad-hoc signature).
++signed app bundle, after strict signature and resource validation against the
++code requirement pinned in its plist (the build's cdhash for an ad-hoc
++signature). The native command uses the Security framework and directly
++executes `/bin/bash` with the sealed script path; the external fallback uses
++`codesign --verify --strict`.
++For current ad-hoc builds, launchd first enforces a `SpawnConstraint` with
++those cdhashes before starting `Insomnia --backstop`. A different binary,
++even one re-signed ad-hoc that skips the script verifier, is rejected before
++its entry point. This uses macOS launch-constraint enforcement, with System
++Integrity Protection enabled. The installer and every `arm()` require an
++affirmative `csrutil status` result before selecting native execution;
++disabled, custom, unreadable or timed-out status uses the external
++system-shell verifier, as do older bundles and requirements that cannot
++be represented entirely as cdhashes. After changing SIP, a previously
++registered native job depends on the new OS enforcement state until the
++app next arms it; changing SIP does not itself rewrite the stored plist.
+ An edited bundle or script is refused and logged. The app pins the code it is
+ running (its own designated requirement, after confirming that the bundle on
+ disk is still that code and passes the agent's check), so a bundle edited or
 ```
 
-**File**: `docs/releasing.md` (modified, +1/-1)
+**File**: `Sources/Insomnia/Core/BackstopCommand.swift` (added, +31/-0)
 ```diff
-@@ -318,7 +318,7 @@ below cover what only a real Mac shows.
- - The installed recovery agent on the supported macOS release: launchd bootstraps its plist, loads it at login and runs its verify-then-exec command line, and the agent recovers a session after the app crashes
- - The installed agent's plist is the one install.sh wrote
- - A source install end to end: `./scripts/install.sh` builds, signs and installs the app with the administrator password, and stops while a running app refuses to quit
--- Install and uninstall with Kong's Insomnia API client open: `codesign -d -v <pid>` of the client prints `Identifier=com.insomnia.app` and `TeamIdentifier=FX44YY62GV`; each script prints "Ignoring pid <pid> (/Applications/Insomnia.app/Contents/MacOS/Insomnia): it is Kong's Insomnia API client (com.insomnia.app, team FX44YY62GV), not this app." once, leaves the client running and goes on; with this app running too, each still asks it to quit and stops while it refuses, on a working Mac
-+- Install and uninstall with Kong's Insomnia API client open: `codesign --verify -R='anchor apple generic and identifier "com.insomnia.app" and certificate leaf[subject.OU] = "FX44YY62GV"' <pid>` exits 0 for the client and 3 for this app; each script prints "Ignoring pid <pid>: it is Kong's Insomnia API client (com.insomnia.app, team FX44YY62GV), not this app." once, leaves the client running and goes on; with this app running too, each still asks it to quit and stops while it refuses, on a working Mac
- 
- ### Release channels
- 
+@@ -0,0 +1,31 @@
++import Darwin
++import Foundation
++
++/// Launchd starts our signed executable so Login Items can attribute the
++/// recovery agent to Insomnia, then we replace it with the verified script.
++enum BackstopCommand {
++    static let argument = "--backstop"
++
++    static func run(_ arguments: [String], bundle: URL = Bundle.main.bundleURL) -> Int32? {
++        guard arguments.first == argument else { return nil }
++        guard arguments.count == 2, !arguments[1].isEmpty, bundle.pathExtension == "app" else {
++            fputs("usage: Insomnia --backstop <code-requirement> (from Insomnia.app)\n", stderr)
++            return 64
++        }
++        do {
++            try CodeRequirement.verify(codeAt: bundle, satisfies: arguments[1])
++        } catch {
++            let reason = error.localizedDescription.replacingOccurrences(of: "\n", with: " ")
++            Log.error("backstop agent: \(bundle.path) does not satisfy the pinned code requirement; backstop.sh not run. Reinstall Insomnia (scripts/install.sh). \(reason)")
++            return 1
++        }
++        let command = ["/bin/bash", Paths.backstopScript(inBundle: bundle).path]
++        var argv = command.map { strdup($0) } + [nil]
++        defer { for argument in argv { free(argument) } }
++        return argv.withUnsafeMutableBufferPointer {
++            execv("/bin/bash", $0.baseAddress!)
++            perror("Insomnia backstop: exec /bin/bash")
++            return 1
++        }
++    }
++}
 ```
 
-**File**: `docs/spec.md` (modified, +9/-6)
+**File**: `Sources/Insomnia/Core/LaunchdBackstop.swift` (modified, +55/-8)
 ```diff
-@@ -920,12 +920,15 @@ Backstop, independent of the app:
-   Insomnia`, which also finds Kong's Insomnia API client. They tell the two
-   apart by the signature of the code each process runs, not by a path that
-   argv[0] can set. A pid is skipped, with one line naming it, only when
--  `codesign -d -v <pid>` succeeds and prints exactly one `Executable=` line,
--  one `Identifier=com.insomnia.app` line and one `TeamIdentifier=FX44YY62GV`
--  line (Kong's team). Anything else counts as the app: another identifier or
--  team, `not set` (an ad hoc signature, as this app has), a line missing or
--  repeated, a `codesign` that fails. Under the lock the call is bounded like
--  `pgrep`, and one that does not answer counts as the app.
-+  `codesign --verify -R='anchor apple generic and identifier
-+  "com.insomnia.app" and certificate leaf[subject.OU] = "FX44YY62GV"' <pid>`
-+  exits 0: the running code has a valid signature from a certificate Apple
-+  issued, with Kong's identifier and Kong's team (`FX44YY62GV`) in the leaf
-+  certificate. Any other exit counts as the app: 3 when the requirement is
-+  not met (this app's ad hoc signature, another identifier or team, a
-+  certificate Apple did not issue), 1 for a process that is gone or a
-+  signature that does not verify, any other status. Under the lock the call
-+  is bounded like `pgrep`, and one that does not answer counts as the app.
- - App and script transactions must coordinate through a shared lock. Failure
-   to acquire it must not permit an unprotected journal write or side effect.
- - A `sudo pmset` is sent SIGTERM at its timeout (20 s in the app, 30 s in the
-```
-
-**File**: `scripts/install.sh` (modified, +21/-38)
-```diff
-@@ -281,52 +281,35 @@ pmset_rule_effective() {
+@@ -10,6 +10,9 @@ import Foundation
+ /// signature against the requirement pinned in the plist and only then
+ /// execs the script, so a backstop.sh edited on disk is never run by
+ /// launchd. Nothing executable lives in a writable support directory.
++/// Before launching the native entry point, launchd enforces SpawnConstraint
++/// against the pinned cdhashes. A replacement binary cannot bypass the check
++/// by declining to verify the script. Older bundles use the external shell.
+ ///
+ /// What the app pins is the requirement of the code it is itself running
+ /// (CodeRequirement.pin), after checking that the bundle on disk still is
+@@ -34,6 +37,7 @@ struct BackstopTarget: Sendable, Equatable {
+     /// Designated requirement of the bundle's signature, in requirement
+     /// language, as `codesign -d -r-` prints it (see CodeRequirement).
+     let requirement: String
++    var nativeExecutable: URL? = nil
  
- # Kong's Insomnia API client runs an executable named Insomnia too, so
- # `pgrep -x Insomnia` finds it as well. A pid pgrep found is skipped only
--# when `codesign -d -v <pid>` succeeds and prints exactly one Executable=
--# line, one Identifier= line that is the client's code signing identifier
--# and one TeamIdentifier= line that is Kong's team. codesign describes the
--# code the process runs, so an argv[0] or a path made to look like the
--# client's changes nothing. Anything else counts as this app: another
--# identifier or team ("not set", as for an ad hoc signature like this
--# app's), a line missing or repeated, a codesign that fails (or, under the
--# lock, does not answer in time). A misread the other way would replace the
--# bundle and the LaunchAgent under a running app.
-+# when `codesign --verify` passes it against API_CLIENT_REQUIREMENT: the
-+# code the process runs is signed with a certificate Apple issued (such as
-+# Developer ID), with the client's identifier and Kong's team in the leaf
-+# certificate. codesign checks that signature on the running code, so
-+# neither an argv[0] or path made to look like the client's nor a signature
-+# that only claims that identifier and team passes. Any other exit counts
-+# as this app: 3 when the requirement is not met (this app, ad hoc signed,
-+# is one), 1 for a process that is gone or a signature that does not
-+# verify, anything else, and (under the lock) no answer in time. A misread
-+# the other way would replace the bundle and the LaunchAgent under a
-+# running app.
- API_CLIENT_ID=com.insomnia.app
- API_CLIENT_TEAM=FX44YY62GV
-+API_CLIENT_REQUIREMENT="anchor apple generic and identifier \"$API_CLIENT_ID\" and certificate leaf[subject.OU] = \"$API_CLIENT_TEAM\""
- # The pids already reported as the API client, so each is named once.
- API_CLIENT_SEEN=" "
--# What `codesign -d -v <pid>` printed (on stderr) for api_client(), left in
--# SIGNATURE_OUTPUT. The call is made the way pgrep is at that point: through
--# bounded() under the recovery lock ($2 = bounded), directly before it
--# ($2 = direct).
--SIGNATURE_OUTPUT=""
--signature_of() { # pid bounded|direct
--  local rc=0
--  SIGNATURE_OUTPUT=""
--  if [[ "$2" == bounded ]]; then
--    bounded "$CODESIGN" -d -v "$1" || rc=$?
--    SIGNATURE_OUTPUT="$BOUNDED_OUTPUT"
--  else
--    SIGNATURE_OUTPUT="$("$CODESIGN" -d -v "$1" </dev/null 2>&1)" || rc=$?
--  fi
--  return "$rc"
--}
- # 0 when the process with this pid is the API client (said once per pid),
--# 1 when it counts as this app.
-+# 1 when it counts as this app. codesign is called the way pgrep is at that
-+# point: through bounded() under the recovery lock ($2 = bounded), directly
-+# before it ($2 = direct).
- api_client() { # pid bounded|direct
--  local line path="" id="" team="" paths=0 ids=0 teams=0
-   [[ "$1" =~ ^[0-9]+$ ]] || return 1
--  signature_of "$1" "$2" || return 1
--  while IFS= read -r line; do
--    case "$line" in
--      Executable=*) path="${line#Executable=}"; paths=$(( paths + 1 )) ;;
--      Identifier=*) id="${line#Identifier=}"; ids=$(( ids + 1 )) ;;
--      TeamIdentifier=*) team="${line#TeamIdentifier=}"; teams=$(( teams + 1 )) ;;
--    esac
--  done <<< "$SIGNATURE_OUTPUT"
--  (( paths == 1 && ids == 1 && teams == 1 )) || return 1
--  [[ "$id" == "$API_CLIENT_ID" && "$team" == "$API_CLIENT_TEAM" ]] || return 1
-+  if [[ "$2" == bounded ]]; then
-+    bounded "$CODESIGN" --verify "-R=$API_CLIENT_REQUIREMENT" "$1" || return 1
-+  else
-+    "$CODESIGN" --verify "-R=$API_CLIENT_REQUIREMENT" "$1" </dev/null >/dev/null 2>&1 || return 1
-+  fi
-   if [[ "$API_CLIENT_SEEN" != *" $1 "* ]]; then
--    echo "Ignoring pid $1 ($path): it is Kong's Insomnia API client ($API_CLIENT_ID, team $API_CLIENT_TEAM), not this app."
-+    echo "Ignoring pid $1: it is Kong's Insomnia API client ($API_CLIENT_ID, team $API_CLIENT_TEAM), not this app."
-     API_CLIENT_SEEN+="$1 "
-   fi
-   return 0
-```
-
-**File**: `scripts/uninstall.sh` (modified, +14/-21)
-```diff
-@@ -801,36 +801,29 @@ MSG
- 
- # Kong's Insomnia API client runs an executable named Insomnia too, so
- # `pgrep -x Insomnia` finds it as well. A pid pgrep found is skipped only
--# when `codesign -d -v <pid>` succeeds and prints (on stderr) exactly one
--# Executable= line, one Identifier= line that is the client's code signing
--# identifier and one TeamIdentifier= line that is Kong's team. codesign
--# describes the code the process runs, so an argv[0] or a path made to look
--# like the client's changes nothing. Anything else counts as this app:
--# another identifier or team ("not set", as for an ad hoc signature like
--# this app's), a line missing or repeated, a codesign that fails or does
--# not answer in time. A misread the other way could remove the recovery
--# agent and the sudoers rule while the app has sleep disabled.
-+# when `codesign --verify` passes it against API_CLIENT_REQUIREMENT: the
-+# code the process runs is signed with a certificate Apple issued (such as
-+# Developer ID), with the client's identifier and Kong's team in the leaf
-+# certificate. codesign checks that signature on the running code, so
-+# neither an argv[0] or path made to look like the client's nor a signature
-+# that only claims that identifier and team passes. Any other exit counts
-+# as this app: 3 when the requirement is not met (this app, ad hoc signed,
-+# is one), 1 for a process that is gone or a signature that does not
-+# verify, anything else, and no answer in time. A misread the other way
-+# could remove the recovery agent and the sudoers rule while the app has
-+# sleep disabled.
- API_CLIENT_ID=com.insomnia.app
- API_CLIENT_TEAM=FX44YY62GV
-+API_CLIENT_REQUIREMENT="anchor apple generic and identifier \"$API_CLIENT_ID\" and certificate leaf[subject.OU] = \"$API_CLIENT_TEAM\""
- # The pids already reported as the API client, so each is named once.
- API_CLIENT_SEEN=" "
- # 0 when the process with this pid is the API client (said once per pid),
- # 1 when it counts as this app.
- api_client() { # pid
--  local line path="" id="" team="" paths=0 ids=0 teams=0
-   [[ "$1" =~ ^[0-9]+$ ]] || return 1
--  bounded "$CODESIGN" -d -v "$1" || return 1
--  while IFS= read -r line; do
--    case "$line" in
--      Executable=*) path="${line#Executable=}"; paths=$(( paths + 1 )) ;;
--      Identifier=*) id="${line#Identifier=}"; ids=$(( ids + 1 )) ;;
--      TeamIdentifier=*) team="${line#TeamIdentifier=}"; teams=$(( teams + 1 )) ;;
--    esac
--  done <<< "$BOUNDED_OUTPUT"
--  (( paths == 1 && ids == 1 && teams == 1 )) || return 1
--  [[ "$id" == "$API_CLIENT_ID" && "$team" == "$API_CLIENT_TEAM" ]] || return 1
-+  bounded "$CODESIGN" --verify "-R=$API_CLIENT_REQUIREMENT" "$1" || return 1
-   if [[ "$API_CLIENT_SEEN" != *" $1 "* ]]; then
--    echo "Ignoring pid $1 ($path): it is Kong's Insomnia API client ($API_CLIENT_ID, team $API_CLIENT_TEAM), not this app."
-+    echo "Ignoring pid $1: it is Kong's Insomnia API client ($API_CLIENT_ID, team $API_CLIENT_TEAM), not this app."
-     API_CLIENT_SEEN+="$1 "
-   fi
-   return 0
-```
-
----
-
-### Incident Patch 2: `10254113` (2026-10-18)
-**Commit Message**: Merge pull request #100 from aldikosh23/tests/locale-independent-security-text
-
-Tests: compare Security error text with the system's own wording
-
-**File**: `Tests/InsomniaTests/PackagingTests.swift` (modified, +3/-3)
-```diff
-@@ -250,11 +250,11 @@ final class PackagingTests: XCTestCase {
-         try (String(contentsOf: script, encoding: .utf8) + "echo tampered\n").write(to: script, atomically: true, encoding: .utf8)
-         XCTAssertEqual(try CodeRequirement.designated(ofCodeAt: bundle), requirement, "the requirement alone still reads")
-         XCTAssertThrowsError(try CodeRequirement.verify(codeAt: bundle, satisfies: requirement)) { error in
--            XCTAssertTrue(error.localizedDescription.contains("sealed resource"), error.localizedDescription)
-+            XCTAssertTrue(error.localizedDescription.contains(securityMessage(errSecCSBadResource)), error.localizedDescription)
-         }
-         XCTAssertThrowsError(try CodeRequirement.pin(bundle: bundle)) { error in
-             XCTAssertTrue(error.localizedDescription.contains(bundle.path), error.localizedDescription)
--            XCTAssertTrue(error.localizedDescription.contains("sealed resource"), error.localizedDescription)
-+            XCTAssertTrue(error.localizedDescription.contains(securityMessage(errSecCSBadResource)), error.localizedDescription)
-         }
-     }
- 
-@@ -275,7 +275,7 @@ final class PackagingTests: XCTestCase {
-         XCTAssertNotEqual(replacement, launched.requirement, "re-signing gives the bundle a new cdhash")
-         XCTAssertNoThrow(try CodeRequirement.verify(codeAt: bundle, satisfies: replacement), "the replacement is a valid bundle in its own right")
-         XCTAssertThrowsError(try CodeRequirement.pin(bundle: bundle, running: { launched }, mainBundle: bundle)) { error in
--            XCTAssertTrue(error.localizedDescription.contains("failed to satisfy"), error.localizedDescription)
-+            XCTAssertTrue(error.localizedDescription.contains(securityMessage(errSecCSReqFailed)), error.localizedDescription)
-         }
- 
-         // A process running from one bundle never pins another.
-```
-
-**File**: `Tests/InsomniaTests/TestSupport.swift` (modified, +12/-0)
-```diff
-@@ -1,4 +1,5 @@
- import Foundation
-+import Security
- import XCTest
- import InsomniaTestHome
- @testable import Insomnia
-@@ -761,6 +762,17 @@ final class FakeBackstop: BackstopScheduling, @unchecked Sendable {
-     }
+     var script: URL { Paths.backstopScript(inBundle: bundle) }
  }
+@@ -45,11 +49,12 @@ struct LaunchdBackstop: BackstopScheduling {
+     typealias BundlePinner = @Sendable (_ bundle: URL) throws -> String
  
-+/// The Security framework's message for `status`, in the language the test
-+/// process runs in. `CodeRequirement` and `KeychainError` word their errors
-+/// with it, so a test that checks which failure an error names compares
-+/// against this, not the English text, and passes on a Mac set to another
-+/// language. Not for text a child process prints: `codesign` and the other
-+/// command line tools answer in English whatever the language, so a test
-+/// that reads their output keeps the literal text.
-+func securityMessage(_ status: OSStatus) -> String {
-+    SecCopyErrorMessageString(status, nil) as String? ?? "OSStatus \(status)"
-+}
+     static let launchctl = "/bin/launchctl"
++    static let csrutil = "/usr/bin/csrutil"
+     /// Seconds between backstop.sh runs while loaded. install.sh writes the same value.
+     static let pollInterval = 60
+     static let commandTimeout: TimeInterval = 15
+ 
+-    /// What launchd runs: `/bin/sh -c <agentProgram> sh <requirement> <bundle>`.
++    /// The external verifier for bundles without a constrained native command.
+     /// The program verifies the bundle ($2) against the requirement ($1) with
+     /// codesign and execs the sealed backstop.sh only when that passes; the
+     /// resource seal covers the script, so an edited copy fails here. On
+@@ -111,10 +116,28 @@ struct LaunchdBackstop: BackstopScheduling {
+         } catch {
+             throw BackstopError(message: "the recovery agent cannot pin \(bundle.path): \(error.localizedDescription). Reinstall with scripts/install.sh")
+         }
+-        let desired = Self.plistDictionary(label: label, target: BackstopTarget(bundle: bundle, requirement: requirement))
++        var executable = Self.nativeExecutable(in: bundle)
++        if executable != nil, CodeRequirement.launchHashes(in: requirement) != nil {
++            // Recheck each arm: launch constraints rely on SIP enforcement.
++            do {
++                let status = try await run(Self.csrutil, ["status"])
++                let output = status.stdout.hasSuffix("\n") ? String(status.stdout.dropLast()) : status.stdout
++                if !status.succeeded || !status.stderr.isEmpty || output != "System Integrity Protection status: enabled." {
++                    executable = nil
++                }
++            } catch is CancellationError {
++                throw CancellationError()
++            } catch {
++                executable = nil
++            }
++        }
++        let desired = Self.plistDictionary(label: label, target: BackstopTarget(
++            bundle: bundle, requirement: requirement, nativeExecutable: executable
++        ))
+         // Armed when the plist the next login loads is this build's and the
+         // loaded job is the one it describes: the same command line, started
+-        // every `pollInterval` seconds. A loaded label alone may be another
++        // every `pollInterval` seconds, with the native spawn constraint
++        // present. A loaded label alone may be another
+         // build's job, pinning a bundle or requirement this one does not
+         // satisfy (install.sh can leave one loaded when it stops between its
+         // bootstrap and publishing the plist), or a job loaded from a plist
+@@ -137,15 +160,30 @@ struct LaunchdBackstop: BackstopScheduling {
+ 
+     // MARK: Plist
+ 
++    static func nativeExecutable(in bundle: URL) -> URL? {
++        guard let data = try? Data(contentsOf: bundle.appendingPathComponent("Contents/Info.plist")),
++              let info = try? PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any],
++              info["InsomniaBackstopCommand"] as? String == BackstopCommand.argument,
++              let name = info["CFBundleExecutable"] as? String,
++              !name.isEmpty, name != ".", name != "..", !name.contains("/") else { return nil }
++        return bundle.appendingPathComponent("Contents/MacOS").appendingPathComponent(name)
++    }
 +
- /// A mutable fake clock usable from the @Sendable clock closure.
- final class FakeClock: @unchecked Sendable {
-     private let lock = NSLock()
+     /// Pure builder, testable without launchd. Must produce exactly what
+     /// install.sh writes, or every arm() reloads the agent.
+     static func plistDictionary(label: String, target: BackstopTarget) -> [String: Any] {
+-        [
++        var plist: [String: Any] = [
+             "Label": label,
+             "ProgramArguments": ["/bin/sh", "-c", agentProgram, "sh", target.requirement, target.bundle.path],
+             "RunAtLoad": true,
+             "StartInterval": pollInterval,
+         ]
++        if let executable = target.nativeExecutable,
 ```
 
-**File**: `Tests/InsomniaTests/UIStatusTests.swift` (modified, +1/-1)
+**File**: `Sources/Insomnia/System/CodeRequirement.swift` (modified, +20/-0)
 ```diff
-@@ -401,7 +401,7 @@ final class UIStatusTests: XCTestCase {
-         XCTAssertEqual(KeychainError(status: errSecAuthFailed).problem, .unreadable)
-         XCTAssertEqual(KeychainError(status: errSecInteractionNotAllowed).problem, .unreadable)
-         XCTAssertEqual(KeychainError(status: errSecInvalidOwnerEdit).problem, .unreadable)
--        XCTAssertEqual(KeychainError(status: errSecParam).problem, .error("keychain: One or more parameters passed to a function were not valid."))
-+        XCTAssertEqual(KeychainError(status: errSecParam).problem, .error("keychain: \(securityMessage(errSecParam))"))
+@@ -16,6 +16,26 @@ import Security
+ /// which install.sh reads; the two must agree for the app to recognise the
+ /// plist install.sh wrote (PackagingTests checks this on a scratch bundle).
+ enum CodeRequirement {
++    /// Only a requirement made entirely of cdhash clauses can be enforced
++    /// before executing ad-hoc code. Keep the external shell verifier for
++    /// any other requirement instead of dropping a clause we do not know.
++    static func launchHashes(in requirement: String) -> [Data]? {
++        var hashes: [Data] = []
++        for clause in requirement.components(separatedBy: " or ") {
++            guard clause.hasPrefix("cdhash H\""), clause.hasSuffix("\"") else { return nil }
++            let hex = Array(clause.dropFirst(9).dropLast().utf8)
++            guard hex.count == 40, hex.allSatisfy({ "0123456789abcdefABCDEF".utf8.contains($0) }) else { return nil }
++            var hash = Data()
++            for offset in stride(from: 0, to: hex.count, by: 2) {
++                let pair = String(decoding: hex[offset..<(offset + 2)], as: UTF8.self)
++                guard let byte = UInt8(pair, radix: 16) else { return nil }
++                hash.append(byte)
++            }
++            hashes.append(hash)
++        }
++        return hashes
++    }
++
+     struct ReadError: LocalizedError {
+         let path: String
+         let step: String
+```
+
+**File**: `Sources/Insomnia/main.swift` (modified, +10/-5)
+```diff
+@@ -1,10 +1,15 @@
+ import Foundation
+ 
+-// Entry point. A one-shot command-line mode is answered here, before AppKit
+-// or SwiftUI start: backstop.sh borrows the app's kernel-level identity
+-// check (see ResumeFrozenCommand), which ends itself when its lifetime is
+-// up, and scripts drive the running app's session (see SessionCommandLine).
+-// Anything else starts the menu bar app.
++// Entry point. One-shot command-line modes are answered here, before AppKit
++// or SwiftUI start: the recovery agent's backstop mode execs the verified
++// script (see BackstopCommand), backstop.sh borrows the app's kernel-level
++// identity check (see ResumeFrozenCommand), which ends itself when its
++// lifetime is up, and scripts drive the running app's session (see
++// SessionCommandLine). Anything else starts the menu bar app.
++if let status = BackstopCommand.run(Array(CommandLine.arguments.dropFirst())) {
++    exit(status)
++}
++
+ if let output = ResumeFrozenCommand.run(Array(CommandLine.arguments.dropFirst()), endAfter: ResumeFrozenCommand.endProcess) {
+     for line in output.lines { print(line) }
+     exit(output.status)
+```
+
+**File**: `Tests/InsomniaTests/LaunchdBackstopTests.swift` (modified, +216/-11)
+```diff
+@@ -10,15 +10,21 @@ final class LaunchdBackstopTests: XCTestCase {
+     /// fake reader below hands it out for the fixture bundle.
+     static let requirement = "cdhash H\"0f1e2d3c4b5a69788796a5b4c3d2e1f00f1e2d3c\""
+     var home: TempHome!
+-    /// (exe, args) of every command the backstop ran.
++    /// (exe, args) of every launchctl command the backstop ran.
+     let calls = Locked<[[String]]>([])
++    let integrityStatus = Locked(ShellResult(status: 0, stdout: "System Integrity Protection status: enabled.\n", stderr: ""))
++    let integrityReadFails = Locked(false)
++    let integrityReadCancelled = Locked(false)
++    let integrityReads = Locked(0)
+     /// Whether `launchctl print` reports the job loaded.
+     let loaded = Locked(false)
+     /// The ProgramArguments of the plist the loaded job was bootstrapped
+     /// from, which `launchctl print` lists under `arguments`.
+     let loadedJob = Locked<[String]>([])
+     /// Its StartInterval, which `launchctl print` lists as `run interval`.
+     let loadedInterval = Locked<Int?>(nil)
++    let loadedConstraint = Locked(false)
++    let printedJob = Locked<String?>(nil)
+     let bootstrapFails = Locked(false)
+     /// bootout returns an error and leaves the job loaded, as launchd does
+     /// for a job that is mid-transition.
+@@ -34,9 +40,15 @@ final class LaunchdBackstopTests: XCTestCase {
+     override func setUp() {
+         home = TempHome()
+         calls.value = []
++        integrityStatus.value = ShellResult(status: 0, stdout: "System Integrity Protection status: enabled.\n", stderr: "")
++        integrityReadFails.value = false
++        integrityReadCancelled.value = false
++        integrityReads.value = 0
+         loaded.value = false
+         loadedJob.value = []
+         loadedInterval.value = nil
++        loadedConstraint.value = false
++        printedJob.value = nil
+         bootstrapFails.value = false
+         bootoutFails.value = false
+         onBootout.value = nil
+@@ -56,9 +68,14 @@ final class LaunchdBackstopTests: XCTestCase {
+             let script = home.paths.backstopScript
+             try FileManager.default.createDirectory(at: script.deletingLastPathComponent(), withIntermediateDirectories: true)
+             try Data("#!/bin/bash\n".utf8).write(to: script)
++            let info: [String: Any] = ["InsomniaBackstopCommand": BackstopCommand.argument, "CFBundleExecutable": "Insomnia"]
++            try PropertyListSerialization.data(fromPropertyList: info, format: .xml, options: 0)
++                .write(to: home.paths.appBundle.appendingPathComponent("Contents/Info.plist"))
+         }
+-        let calls = calls, loaded = loaded, loadedJob = loadedJob, loadedInterval = loadedInterval, bootstrapFails = bootstrapFails, bootoutFails = bootoutFails
++        let calls = calls, loaded = loaded, loadedJob = loadedJob, loadedInterval = loadedInterval, loadedConstraint = loadedConstraint, bootstrapFails = bootstrapFails, bootoutFails = bootoutFails
++        let integrityStatus = integrityStatus, integrityReadFails = integrityReadFails, integrityReadCancelled = integrityReadCancelled, integrityReads = integrityReads
+         let onBootout = onBootout, onBootstrapped = onBootstrapped, trustedPlistAtBootstrap = trustedPlistAtBootstrap
++        let printedJob = printedJob
+         let trusted = home.paths.backstopPlist
+         let label = "com.insomnia.backstop"
+         // What launchd itself enforces on a path argument (proven against a
+@@ -85,11 +102,18 @@ final class LaunchdBackstopTests: XCTestCase {
+             return requirement
+         }
+         return LaunchdBackstop(paths: home.paths, bundle: bundle, pin: pin, uid: 501) { exe, args in
++            if exe == LaunchdBackstop.csrutil {
++                integrityReads.value += 1
++                XCTAssertEqual(args, ["status"])
++                if integrityReadCancelled.value { throw CancellationError() }
++                if integrityReadFails.value { throw BackstopError(message: "status unavailable") }
++                return integrityStatus.value
++            }
+             calls.value.append([exe] + args)
+             switch args.first {
+             case "print":
+                 guard loaded.value else { return ShellResult(status: 113, stdout: "", stderr: "Could not find service") }
+-                return ShellResult(status: 0, stdout: Self.printOutput(arguments: loadedJob.value, runInterval: loadedInterval.value), stderr: "")
++                return ShellResult(status: 0, stdout: printedJob.value ?? Self.printOutput(arguments: loadedJob.value, runInterval: loadedInterval.value, hasSpawnConstraint: loadedConstraint.value), stderr: "")
+             case "bootstrap":
+                 trustedPlistAtBootstrap.value.append(try? Data(contentsOf: trusted))
+                 guard args.count == 3, launchdAccepts(args[2]) else {
+@@ -103,6 +127,7 @@ final class LaunchdBackstopTests: XCTestCase {
+                     .flatMap { try? PropertyListSerialization.propertyList(from: $0, format: nil
+```
+
+**File**: `Tests/InsomniaTests/PackagingTests.swift` (modified, +110/-14)
+```diff
+@@ -118,14 +118,16 @@ final class PackagingTests: XCTestCase {
+     /// A throwaway bundle laid out the way install.sh lays out Insomnia.app
+     /// (Mach-O main executable, Info.plist, backstop.sh under
+     /// Contents/Resources), ad-hoc signed afterwards so the resource seal
+-    /// covers the script. The executable is a copy of /usr/bin/true. Nothing
++    /// covers the script. The executable is a copy of the built Insomnia. Nothing
+     /// here touches an installed app, a LaunchAgent or a keychain.
+     private func makeSignedBundle(named name: String = "Insomnia") throws -> URL {
+         let fm = FileManager.default
+         let bundle = scratch.appendingPathComponent("\(name).app", isDirectory: true)
+         try fm.createDirectory(at: bundle.appendingPathComponent("Contents/MacOS"), withIntermediateDirectories: true)
+         try fm.createDirectory(at: bundle.appendingPathComponent("Contents/Resources"), withIntermediateDirectories: true)
+-        try fm.copyItem(atPath: "/usr/bin/true", toPath: bundle.appendingPathComponent("Contents/MacOS/\(name)").path)
++        let binary = Bundle(for: Self.self).bundleURL.deletingLastPathComponent().appendingPathComponent("Insomnia")
++        _ = try XCTUnwrap(fm.isExecutableFile(atPath: binary.path) ? binary : nil, "Build the Insomnia product before running packaging tests; expected \(binary.path)")
++        try fm.copyItem(at: binary, to: bundle.appendingPathComponent("Contents/MacOS/\(name)"))
+         let info: [String: Any] = [
+             "CFBundleExecutable": name, "CFBundleIdentifier": "com.kgarg.insomnia.packaging-test",
+             "CFBundlePackageType": "APPL", "CFBundleShortVersionString": "0.0.1",
+@@ -139,11 +141,72 @@ final class PackagingTests: XCTestCase {
+         return bundle
      }
  
-     /// The relaunch item asks first, since the browser is quit and its
++    /// The two command lines the LaunchAgent can run. `native` is the app's
++    /// `--backstop` mode. `shell` is the external verifier the plist falls
++    /// back to for an older bundle, a requirement without cdhashes, or SIP
++    /// not known to be enabled. Both refuse the same bundles, but the app
++    /// logs through Log with Security's reason and the shell logs to
++    /// ~/Library/Logs/Insomnia with codesign's.
++    private enum AgentLauncher {
++        case native, shell
++
++        var log: String { self == .native ? "Logs/insomnia.log" : "Library/Logs/Insomnia/insomnia.log" }
++        var refusal: String { self == .native ? "[error] insomnia: backstop agent: " : "[error] backstop agent: " }
++        var editedScriptReason: String { self == .native ? securityMessage(errSecCSBadResource) : "sealed resource" }
++        var wrongBuildReason: String { self == .native ? securityMessage(errSecCSReqFailed) : "failed to satisfy specified code requirement" }
++    }
++
+     /// Runs the agent's command line exactly as launchd would, with HOME in
+-    /// the scratch tree so the refusal log lands there.
+-    private func runAgent(requirement: String, bundle: URL, home: URL) throws -> (status: Int32, output: String) {
++    /// the scratch tree so the refusal log lands there. The shell command
++    /// line is the one plistDictionary writes for a target without a native
++    /// executable.
++    private func runAgent(_ launcher: AgentLauncher = .native, requirement: String, bundle: URL, home: URL) throws -> (status: Int32, output: String) {
+         try FileManager.default.createDirectory(at: home, withIntermediateDirectories: true)
+-        return try run("/bin/sh", ["-c", LaunchdBackstop.agentProgram, "sh", requirement, bundle.path], environment: ["HOME": home.path, "PATH": "/usr/bin:/bin"])
++        switch launcher {
++        case .native:
++            return try run(bundle.appendingPathComponent("Contents/MacOS/\(bundle.deletingPathExtension().lastPathComponent)").path,
++                           ["--backstop", requirement], environment: ["HOME": home.path, "INSOMNIA_HOME": home.path, "PATH": "/usr/bin:/bin"])
++        case .shell:
++            let plist = LaunchdBackstop.plistDictionary(label: Paths.backstopLabel, target: BackstopTarget(bundle: bundle, requirement: requirement))
++            let arguments = try XCTUnwrap(plist["ProgramArguments"] as? [String])
++            XCTAssertEqual(arguments.prefix(3), ["/bin/sh", "-c", LaunchdBackstop.agentProgram])
++            return try run(arguments[0], Array(arguments.dropFirst()), environment: ["HOME": home.path, "PATH": "/usr/bin:/bin"])
++        }
++    }
++
++    func testBackstopModeRejectsMalformedArgumentsWithoutStartingTheApp() throws {
++        let bundle = try makeSignedBundle()
++        let executable = bundle.appendingPathComponent("Contents/MacOS/Insomnia").path
++        for arguments in [["--backstop"], ["--backstop", ""], ["--backstop", "x", "extra"]] {
++            let result = try run(executable, arguments)
++            XCTAssertEqual(result.status, 64, result.output)
++            XCTAssertTrue(result.output.contains("usage: Insomnia --backstop"), result.output)
++        }
++        XCTAsse
 ```
 
 ---
 
-### Incident Patch 3: `882142a9` (2026-10-17)
-**Commit Message**: Mac mini CI: build the base VM under a temporary name, bound its shutdown
+### Incident Patch 2: `402f4bb3` (2026-11-09)
+**Commit Message**: Merge pull request #171 from krishhgg/land/pr-136
 
-From the fourth Codex review:
-- mini-base.sh made the final base VM first, so a failed run left a
-  half-made one that mini-runner.sh would clone and a rerun refused to
-  replace. It now builds insomnia-ci-base-unfinished, renames it only
-  after the guest shut down cleanly, and deletes it on any failure. A
-  leftover one from an earlier failed run is deleted at the start.
-- The shutdown request now runs in the background, so the two-minute
-  wait always starts, and the cleanup ends tart run within about 30 s
-  (stop, then TERM, then KILL) instead of waiting on it.
+Keyboard backlight: land #136
 
-Tested with a fake tart under /bin/bash 3.2: success, a failing guest
-script, a VM that never shuts down, a leftover unfinished VM, and an
-existing base.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `.github/scripts/mini-base.sh` (modified, +32/-9)
+**File**: `Sources/Insomnia/Core/LidActions.swift` (modified, +58/-6)
 ```diff
-@@ -20,35 +20,54 @@ RUNNER_SHA256=df4cebda25c86a886ed204e49fee63f5c2e7cec5f447b5c98440a826bbdf9df2
- CPUS=8
- MEMORY_MB=8192
+@@ -69,6 +69,7 @@ final class LidActions {
+             Log.info("lid closed: no session, nothing to do")
+             return
+         }
++        if lidEvents == event { manager.cancelBrightnessReassert() }
+         // One lifecycle transaction: journal writes and SIGSTOPs happen
+         // under the recovery lock, after any end already in flight.
+         let ran = await manager.runExclusive("lid close") { [self, manager] in
+@@ -204,9 +205,13 @@ final class LidActions {
+     /// closing lid. The entry is left undecided, as above, and the open
+     /// does not take a 0 it reads as a level set since: only a reading
+     /// above 0 decides that entry (`SessionManager.restoreDisplay`).
+-    /// The keyboard reads 0 when suppressed by display sleep, so it takes
+-    /// the current read if trusted now, else the last trusted sample, else
+-    /// nothing, since restoring 0 would leave the backlight off for good.
++    /// A keyboard value kept after a refused restore stays undecided unless
++    /// the close reads the keyboard trusted, as for the display.
++    /// A keyboard already at 0 is left alone unless a positive restore is
++    /// already owed. Both manual off and ambient auto-off can read 0, with
++    /// different suppression flags; neither needs another explicit off.
++    /// A positive current read is saved if trusted, otherwise a positive
++    /// sample is used. No zero becomes a new restore obligation.
+     private func darkenSavingCurrent(_ manager: SessionManager) {
+         do {
+             let current = try display.readBrightness()
+@@ -278,12 +283,34 @@ final class LidActions {
+             Log.error("display darken on lid close skipped: \(error.localizedDescription)")
+         }
  
-+# Built under another name and renamed when finished, so mini-runner.sh
-+# never clones a half-made base VM.
-+WORK=$BASE-unfinished
++        var keyboardRead = false
+         do {
+             if let current = try keyboard.readBrightness() {
++                keyboardRead = true
++                let state = manager.effectiveState
++                let trusted = sampler?.keyboardReadIsTrusted ?? !keyboard.isSuppressedOrDimmed()
+                 let value: Float?
+-                if sampler?.keyboardReadIsTrusted ?? !keyboard.isSuppressedOrDimmed() {
++                var keptUndecided: Float?
++                if state.keyboardRestoreRefused, let kept = state.savedKeyboardBrightness, !trusted {
++                    // As for the display above: after a refused restore the
++                    // user was told to set the level by hand. A trusted 0
++                    // is the backlight still dark as the earlier close left
++                    // it, and a trusted level above 0 is the user's; both
++                    // decide the entry below. A suppressed or dimmed
++                    // reading, such as the 0 a real close reads once macOS
++                    // has turned the backlight off, shows neither, and the
++                    // sampler took no keyboard reading while the entry was
++                    // journaled, so its sample is older than the refusal.
++                    // The entry stays undecided and the open reads the
++                    // level again. A kept 0, saved by an older version, is
++                    // obsolete instead: the open discards it without a write.
++                    value = nil
++                    keptUndecided = kept
++                } else if current == 0 {
++                    value = state.savedKeyboardBrightness.flatMap { $0 > 0 ? $0 : nil }
++                } else if trusted {
+                     value = current
+-                } else if let sampled = sampler?.last?.keyboard {
++                } else if let sampled = sampler?.last?.keyboard, sampled > 0 {
+                     value = sampled
+                     Log.info("keyboard backlight read while suppressed or dimmed (\(current)); journaling the last trusted sample \(sampled)")
+                 } else {
+@@ -303,8 +330,14 @@ final class LidActions {
+                     } catch {
+                         Log.error("keyboard backlight off failed: \(error.localizedDescription)")
+                     }
++                } else if let kept = keptUndecided {
++                    Log.info(kept > 0
++                        ? "keyboard backlight reads \(current) at the close; the value kept after a refused restore, \(kept), stays journaled and undecided, and the backlight is left alone, so the open reads it again"
++                        : "keyboard backlight reads \(current) at the close; the zero kept after a refused restore is obsolete, and the backlight is left alone, so the open discards it without a write")
+                 } else {
+-                    Log.info("keyboard backlight suppressed by display sleep and no trusted sample; leaving it to macOS")
++                    Log.info(current == 0
++                        ? "keyboard backlight already reads zero; leaving its automatic or user-off state untouched"
++                        : "keyboard backlight has no positive restore value; leaving it to macOS")
+                 }
+           
+```
+
+**File**: `Sources/Insomnia/Core/SessionManager.swift` (modified, +38/-3)
+```diff
+@@ -208,10 +208,14 @@ final class SessionManager {
+         /// failed restore, retried like any other and counted as dirty by
+         /// backstop.sh and uninstall.sh.
+         case unflag(Float)
++        /// An old keyboard zero needs no hardware undo, even if the
++        /// private-call guard refuses. Its clear still has to reach disk.
++        case discardedZero
+ 
+         var saved: Float {
+             switch self {
+             case .clear(let value), .restored(let value, _), .unflag(let value): value
++            case .discardedZero: 0
+             }
+         }
+ 
+@@ -224,10 +228,18 @@ final class SessionManager {
+         /// `s` still holds the entry with that value and its flag. Lost, it
+         /// leaves that entry for the next launch to read again.
+         func clearsEntry(in s: RuntimeState, saved: KeyPath<RuntimeState, Float?>, flag: KeyPath<RuntimeState, Bool>) -> Bool {
+-            !isUnflag && s[keyPath: flag] && s[keyPath: saved] == self.saved
++            if case .discardedZero = self { return s[keyPath: saved] == 0 }
++            return !isUnflag && s[keyPath: flag] && s[keyPath: saved] == self.saved
+         }
+ 
+         func apply(to s: inout RuntimeState, saved: WritableKeyPath<RuntimeState, Float?>, flag: WritableKeyPath<RuntimeState, Bool>, restoredUnderLowPower: WritableKeyPath<RuntimeState, Float?>? = nil) {
++            if case .discardedZero = self {
++                if s[keyPath: saved] == 0 {
++                    s[keyPath: saved] = nil
++                    s[keyPath: flag] = false
++                }
++                return
++            }
+             guard s[keyPath: flag], s[keyPath: saved] == self.saved else { return }
+             if !isUnflag { s[keyPath: saved] = nil }
+             s[keyPath: flag] = false
+@@ -242,6 +254,7 @@ final class SessionManager {
+             case .clear(let value): "\(what) \(value), set since its refused restore, cleared from the journal"
+             case .restored(let value, _): "\(what) \(value), restored, cleared from the journal"
+             case .unflag(let value): "\(what) \(value), whose restore failed, marked in the journal for retry"
++            case .discardedZero: "\(what) zero restore discarded without a brightness write"
+             }
+         }
+     }
+@@ -298,6 +311,7 @@ final class SessionManager {
+                 switch edit {
+                 case .clear(let value)?: "\(what) \(value), set since its refused restore, still to be cleared from the journal"
+                 case .restored(let value, _)?: "\(what) \(value), restored, still to be cleared from the journal"
++                case .discardedZero?: "\(what) zero restore still to be cleared from the journal"
+                 case .unflag?, nil: nil
+                 }
+             }
+@@ -2318,7 +2332,7 @@ final class SessionManager {
+         } else if let saved = kept.savedDisplayBrightness {
+             restoredDisplay = restoreDisplay(saved: saved, waiting: &waiting, errors: &errors)
+         }
+-        if let saved = kept.savedKeyboardBrightness, let why = keyboard.refusal() {
++        if let saved = kept.savedKeyboardBrightness, saved != 0, let why = keyboard.refusal() {
+             refused.append(keepRefusedRestore("Keyboard backlight", saved: saved, why: why, flag: \.keyboardRestoreRefused))
+         } else if let saved = kept.savedKeyboardBrightness {
+             restoredKeyboard = restoreKeyboard(saved: saved, waiting: &waiting, errors: &errors)
+@@ -2423,6 +2437,19 @@ final class SessionManager {
+ 
+     /// As restoreDisplay, for the keyboard backlight.
+     private func restoreKeyboard(saved: Float, waiting: inout [String], errors: inout [String]) -> Float? {
++        if saved == 0 {
++            do {
++                try journal { s in
++                    s.savedKeyboardBrightness = nil
++                    s.keyboardRestoreRefused = false
++                }
++            } catch {
++                owedEdits.keyboard = .discardedZero
++                errors.append("could not clear the obsolete zero keyboard restore: \(error.localizedDescription); it will be retried")
++            }
++            Log.info("zero keyboard restore discarded without a brightness write")
++            return nil
++        }
+         if effectiveState.keyboardRestoreRefused {
+             switch keptLevel(read: { try keyboard.readBrightness() },
+                              untrusted: { keyboard.isSuppressedOrDimmed() ? "macOS has the backlight suppressed or dimmed" : nil }) {
+@@ -2500,7 +2527,7 @@ final class SessionManager {
+     private func recheckKeptBrightness() async {
+         let kept = effectiveState
+         let rereadDisplay = kept.savedDisplayBrightness != nil && kept.displayRestoreRefused && display.refusal() == nil
+-        let rereadKeyboard = kept.savedKeyboardBrightness != nil && kept.keyboardRestoreRefused && keyboard.refusal() == nil
++        let rereadKeyboard = kept.savedKeyboardBrightness != nil && kept.keyboardRestoreRefused && (kept.savedKeyboardBrig
+```
+
+**File**: `Tests/InsomniaTests/KeyboardBrightnessRestoreTests.swift` (added, +302/-0)
+```diff
+@@ -0,0 +1,302 @@
++import XCTest
++@testable import Insomnia
 +
- if "$TART" list --quiet | grep -qx "$BASE"; then
-   echo "$BASE exists; to remake it, run: $TART delete $BASE" >&2
-   exit 1
- fi
-+# Left by a run that failed part way.
-+"$TART" delete "$WORK" >/dev/null 2>&1 || true
- 
- "$TART" pull "$IMAGE"
--"$TART" clone "$IMAGE" "$BASE"
--"$TART" set "$BASE" --cpu "$CPUS" --memory "$MEMORY_MB"
--"$TART" run --no-graphics "$BASE" >/dev/null 2>&1 &
-+"$TART" clone "$IMAGE" "$WORK"
-+"$TART" set "$WORK" --cpu "$CPUS" --memory "$MEMORY_MB"
-+"$TART" run --no-graphics "$WORK" >/dev/null 2>&1 &
- run_pid=$!
--trap '"$TART" stop "$BASE" >/dev/null 2>&1 || true; wait "$run_pid" 2>/dev/null || true' EXIT
++@MainActor
++final class KeyboardBrightnessRestoreTests: XCTestCase {
++    var h: Harness!
++    var m: SessionManager!
++    var sampler: BrightnessSampler!
++    var actions: LidActions!
++    let idle = Locked<Double>(3)
 +
-+# Ends the VM's tart run within about 30 s, however it is stuck.
-+end_run() {
-+  "$TART" stop "$WORK" --timeout 10 >/dev/null 2>&1 &
-+  for _ in $(seq 25); do
-+    kill -0 "$run_pid" 2>/dev/null || return 0
-+    sleep 1
-+  done
-+  kill -TERM "$run_pid" 2>/dev/null || true
-+  sleep 3
-+  kill -KILL "$run_pid" 2>/dev/null || true
-+}
-+finished=
-+trap 'if [ -z "$finished" ]; then end_run; "$TART" delete "$WORK" >/dev/null 2>&1 || true; echo "deleted the unfinished $WORK" >&2; fi' EXIT
++    override func setUp() async throws {
++        h = Harness()
++        m = h.makeManager(reassertDelay: .milliseconds(150))
++        m.config.freezeList = []
++        m.config.dockerRule = false
++        m.config.muteOnLidClose = false
++        sampler = BrightnessSampler(display: h.display, keyboard: h.keyboard, idleSeconds: { [idle] in idle.value })
++        sampler.follow(m)
++        let freezer = FakeFreezer(apps: [], processes: [], control: h.procs)
++        actions = LidActions(manager: m, freezer: freezer, docker: DockerRule(freezer: freezer, probe: { false }), audio: h.audio, display: h.display, keyboard: h.keyboard, sampler: sampler)
++        await m.start(duration: 3600)
++    }
++
++    override func tearDown() async throws {
++        m.cancelBrightnessReassert()
++        h.home.destroy()
++    }
++
++    func testAmbientZeroDoesNotOverwriteSystemPolicy() async throws {
++        sampler.sample()
++        h.keyboard.brightness = 0
++        sampler.sample()
++        XCTAssertEqual(sampler.last?.keyboard, 0)
++        await actions.onClose()
++        XCTAssertNil(try h.store.loadState()?.savedKeyboardBrightness)
++        await actions.onOpen()
++        try await Task.sleep(for: .milliseconds(300))
++        XCTAssertEqual(h.keyboard.sets, [])
++        XCTAssertEqual(h.display.sets, [0, 0.7, 0.7])
++    }
++
++    func testTrustedCloseZeroDoesNotUseStalePositiveCache() async throws {
++        sampler.sample()
++        h.keyboard.brightness = 0
++        await actions.onClose()
++        await actions.onOpen()
++        XCTAssertEqual(sampler.last?.keyboard, 0.5)
++        XCTAssertEqual(h.keyboard.sets, [])
++        XCTAssertNil(try h.store.loadState()?.savedKeyboardBrightness)
++    }
++
++    func testManualOffWithSuppressionDoesNotResurrectPositiveCache() async throws {
++        sampler.sample()
++        h.keyboard.brightness = 0
++        h.keyboard.suppressedOrDimmed = true
++        await actions.onClose()
++        await actions.onOpen()
++        XCTAssertEqual(h.keyboard.sets, [])
++        XCTAssertEqual(h.keyboard.brightness, 0)
++    }
++
++    func testZeroAtStartupNeedsNoSample() async throws {
++        h.keyboard.brightness = 0
++        await actions.onClose()
++        await actions.onOpen()
++        XCTAssertEqual(h.keyboard.sets, [])
++    }
++
++    func testZeroCacheIsNotUsedForAnUntrustedPositiveRead() async throws {
++        h.keyboard.brightness = 0
++        sampler.sample()
++        h.keyboard.brightness = 0.01
++        idle.value = 40
++        await actions.onClose()
++        XCTAssertEqual(h.keyboard.sets, [])
++        XCTAssertNil(try h.store.loadState()?.savedKeyboardBrightness)
++    }
++
++    func testLegacyZeroClearsWithoutWriteOrReassert() async throws {
++        try m.journal { $0.savedKeyboardBrightness = 0 }
++        await actions.onOpen()
++        try await Task.sleep(for: .milliseconds(300))
++        XCTAssertEqual(h.keyboard.sets, [])
++        XCTAssertNil(try h.store.loadState()?.savedKeyboardBrightness)
++        XCTAssertNil(sampler.last?.keyboard)
++    }
++
++    func testLegacyZeroClearsOnLaunchWithoutASession() async throws {
++        await m.end(reason: .user)
++        try m.journal { $0.savedKeyboardBrightness = 0 }
++        let launched = h.makeManager()
++        defer { launched.cancelBrightnessReassert() }
++        await launched.reconcile()
++        XCTAssertNil(try h.store.loadState()?.savedKeyboardBrightness)
++        XCTAssertEqual(h.keyboard.sets, [])
++    }
++
++    func testRefusedLegacyZeroAlsoClearsWithoutWrite() async throws {
++        let calls = Locked<Int>(0)
++        let unavailable = h.makeManager(keyboard: UnavailableKeyboard(calls: calls))
++        defer { unavailable.cancelBrightnessReassert() }
++        try unavailable.journal {
++            $0.savedKeyboardBrightness = 0
++            $0.keyboardRestoreRefused = true
++        }
++        await unavailable.undoLidActions()
++        XCTAssertNil(try h.store.loadState()?.savedKeyboardBrightness)
++        XCTAssertFalse(unavailable.state.keyboardRestoreRefused)
++        XCTAssertEqual(calls.value, 0)
++    }
++
++    func testLegacyZeroClearFailureRemainsOwedWithoutHardwareWrite() async throws {
++        try m.journal { $0.savedKeyboardBrightness = 0 }
++        let path = h.home.paths.stateFile.path
++        try FileManager.default.setAttributes([.immutable: true], ofItemAtPath: path)
++        defer { try? FileManager.default.setAttributes([.immutable: false], ofItemAtPath: path) }
++        await actions.onOpen()
++        XCTAssertNotNil(m.lastError)
++        XCTAssertEqual(try h.store.loadState()?.savedKeyboardBrightness, 0)
++        XCTAssertNil(m.effectiveState.savedKeyboardBrightness)
++        XCTAssertEqual(h.keyboard.sets, [])
++        try 
+```
+
+**File**: `Tests/InsomniaTests/LidActionsTests.swift` (modified, +8/-8)
+```diff
+@@ -110,9 +110,9 @@ final class LidActionsTests: XCTestCase {
  
- # The guest agent answers once macOS has booted and logged in.
- ready=
- for _ in $(seq 60); do
--  if "$TART" exec "$BASE" true 2>/dev/null; then
-+  if "$TART" exec "$WORK" true 2>/dev/null; then
-     ready=1
-     break
-   fi
-   sleep 5
- done
- if [ -z "$ready" ]; then
--  echo "$BASE did not answer within 5 minutes" >&2
-+  echo "$WORK did not answer within 5 minutes" >&2
-   exit 1
- fi
+     /// The live defect: the lid closes after the panel idle-dimmed and
+     /// slept. The display reads its dim value and the keyboard reads 0.
+-    /// Restoring those would leave a dim panel and a dead backlight; the
+-    /// last trusted sample is journaled instead. Both are still set to 0.
+-    func testAsleepAndSuppressedAtCloseJournalsTheLastTrustedSample() async throws {
++    /// Restore the display sample; leave an already-zero keyboard alone,
++    /// since suppression also describes a keyboard the user turned off.
++    func testAsleepDisplayUsesSampleAndZeroKeyboardIsLeftAlone() async throws {
+         let idle = Locked<Double>(3)
+         let sampler = makeSampler(idle: idle)
+         let (m, actions) = await make(sampler: sampler)
+@@ -128,14 +128,14 @@ final class LidActionsTests: XCTestCase {
  
- # Inside the VM, as the image's admin user. The quoted heredoc reaches the
- # guest's bash unexpanded; the two values come in as arguments.
--"$TART" exec -i "$BASE" /bin/bash -s -- "$RUNNER_VERSION" "$RUNNER_SHA256" <<'GUEST'
-+"$TART" exec -i "$WORK" /bin/bash -s -- "$RUNNER_VERSION" "$RUNNER_SHA256" <<'GUEST'
- set -eu
- version=$1
- sha=$2
-@@ -102,14 +121,18 @@ GUEST
- # asks macOS to shut down, macOS answers with a dialog, and after the
- # timeout tart turns the VM off: writes still in the guest's cache are
- # lost. A base VM made that way had the runner but not tmux or pf.
--"$TART" exec "$BASE" /bin/bash -c 'sync; sudo /sbin/shutdown -h now' >/dev/null 2>&1 || true
-+"$TART" exec "$WORK" /bin/bash -c 'sync; sudo /sbin/shutdown -h now' >/dev/null 2>&1 &
-+shutdown_pid=$!
- for _ in $(seq 60); do
-   kill -0 "$run_pid" 2>/dev/null || break
-   sleep 2
- done
-+kill "$shutdown_pid" 2>/dev/null || true
- if kill -0 "$run_pid" 2>/dev/null; then
--  echo "$BASE did not shut down within 2 minutes; delete it and run this again" >&2
-+  echo "$WORK did not shut down within 2 minutes" >&2
-   exit 1
- fi
+         let s = try XCTUnwrap(try h.store.loadState())
+         XCTAssertEqual(s.savedDisplayBrightness, 0.7, "the idle-dim value was journaled")
+-        XCTAssertEqual(s.savedKeyboardBrightness, 0.5, "the suppressed 0 was journaled")
++        XCTAssertNil(s.savedKeyboardBrightness)
+         XCTAssertEqual(h.display.sets, [0])
+-        XCTAssertEqual(h.keyboard.sets, [0])
++        XCTAssertEqual(h.keyboard.sets, [])
+         XCTAssertNil(m.lastError)
  
-+"$TART" rename "$WORK" "$BASE"
-+finished=1
- echo "made $BASE from $IMAGE with runner $RUNNER_VERSION"
+         await actions.onOpen()
+         XCTAssertEqual(h.display.sets, [0, 0.7])
+-        XCTAssertEqual(h.keyboard.sets, [0, 0.5])
++        XCTAssertEqual(h.keyboard.sets, [])
+     }
+ 
+     /// Nothing trustworthy is known for the keyboard and it reads 0 under
+@@ -157,7 +157,7 @@ final class LidActionsTests: XCTestCase {
+         XCTAssertEqual(try h.store.loadState()?.savedDisplayBrightness, 0.7)
+         XCTAssertEqual(h.procs.suspended.count, 2)
+         XCTAssertNil(m.lastError)
+-        XCTAssertTrue(logText().contains("keyboard backlight suppressed by display sleep and no trusted sample; leaving it to macOS"), logText())
++        XCTAssertTrue(logText().contains("keyboard backlight already reads zero; leaving its automatic or user-off state untouched"), logText())
+ 
+         await actions.onOpen()
+         XCTAssertEqual(h.keyboard.sets, [])
+@@ -649,7 +649,7 @@ final class LidActionsTests: XCTestCase {
+         XCTAssertEqual(h.keyboard.sets, [0, 0.5, 0])
+         XCTAssertEqual(try h.store.loadState()?.savedDisplayBrightness, 0.7, "the second close is journaled")
+         let log = (try? String(contentsOf: h.home.paths.logFile, encoding: .utf8)) ?? ""
+-        XCTAssertTrue(log.contains("display restore re-assert skipped: darkened again"), log)
++        XCTAssertTrue(log.contains("pending brightness re-assert canceled: lid closed again"), log)
+         XCTAssertFalse(log.contains("display restore re-asserted"), log)
+     }
+ 
+```
+
+**File**: `Tests/InsomniaTests/PrivateDisplayGuardTests.swift` (modified, +82/-8)
+```diff
+@@ -221,7 +221,8 @@ final class RefusedDarkeningTests: XCTestCase {
+     /// display's sleep and wake land on `h.display`.
+     private func makeDarkeningOnly(
+         display: any DisplayDimming,
+-        keyboard: any KeyboardBacklighting
++        keyboard: any KeyboardBacklighting,
++        sampler: BrightnessSampler? = nil
+     ) -> (SessionManager, LidActions) {
+         let m = h.makeManager()
+         m.config.muteOnLidClose = false
+@@ -235,7 +236,7 @@ final class RefusedDarkeningTests: XCTestCase {
+             audio: h.audio,
+             display: display,
+             keyboard: keyboard,
+-            sampler: nil
++            sampler: sampler
+         )
+         return (m, actions)
+     }
+@@ -276,6 +277,78 @@ final class RefusedDarkeningTests: XCTestCase {
+         XCTAssertNil(try h.store.loadState()?.savedKeyboardBrightness)
+     }
+ 
++    /// A refused display journals nothing, and a keyboard that reads 0 is
++    /// left to macOS. The 0 is journaled anyway, with no keyboard write, so
++    /// the close still asks the display to sleep, which locks a screen set
++    /// to lock on display sleep. The open wakes the display and discards
++    /// the 0 without a write.
++    func testARefusedDisplayAndAZeroKeyboardStillAskTheDisplayToSleep() async throws {
++        h.keyboard.brightness = 0
++        let (m, actions) = makeDarkeningOnly(display: refusedDisplay, keyboard: h.keyboard)
++        await m.start(duration: 3600)
++
++        await actions.onClose()
++
++        XCTAssertEqual(h.display.sleepRequests, 1)
++        XCTAssertEqual(h.display.sets, [])
++        XCTAssertEqual(h.keyboard.sets, [], "the 0 stays with macOS")
++        let closed = try XCTUnwrap(try h.store.loadState())
++        XCTAssertNil(closed.savedDisplayBrightness)
++        XCTAssertEqual(closed.savedKeyboardBrightness, 0)
++        XCTAssertTrue(logText().contains("keyboard backlight zero journaled with no write, so the open wakes the display this asks to sleep"), logText())
++
++        await actions.onOpen()
++
++        XCTAssertEqual(h.display.wakes, 1, "the display the close asked to sleep is woken")
++        XCTAssertEqual(h.keyboard.sets, [])
++        XCTAssertNil(try h.store.loadState()?.savedKeyboardBrightness)
++        XCTAssertTrue(logText().contains("zero keyboard restore discarded without a brightness write"), logText())
++        XCTAssertNil(m.lastError)
++    }
++
++    /// A positive keyboard reading macOS holds down is not trusted, and a
++    /// last sample of 0 is never restored, so the keyboard journals no
++    /// level. The 0 for the sleep request is journaled all the same.
++    func testARefusedDisplayAndAZeroSampleStillAskTheDisplayToSleep() async throws {
++        h.keyboard.brightness = 0
++        let sampler = BrightnessSampler(display: h.display, keyboard: h.keyboard, idleSeconds: { 3 })
++        let (m, actions) = makeDarkeningOnly(display: refusedDisplay, keyboard: h.keyboard, sampler: sampler)
++        sampler.follow(m)
++        await m.start(duration: 3600)
++        sampler.sample()
++        XCTAssertEqual(sampler.last?.keyboard, 0)
++        h.keyboard.brightness = 0.3
++        h.keyboard.suppressedOrDimmed = true
++
++        await actions.onClose()
++
++        XCTAssertEqual(h.display.sleepRequests, 1)
++        XCTAssertEqual(h.keyboard.sets, [])
++        XCTAssertEqual(try XCTUnwrap(try h.store.loadState()).savedKeyboardBrightness, 0)
++
++        h.keyboard.suppressedOrDimmed = false
++        await actions.onOpen()
++
++        XCTAssertEqual(h.display.wakes, 1)
++        XCTAssertEqual(h.keyboard.sets, [], "the 0 is discarded, and 0.3 stays as macOS has it")
++        XCTAssertNil(try h.store.loadState()?.savedKeyboardBrightness)
++    }
++
++    /// With "Keep the screen on and unlocked" on, the close asks for no
++    /// display sleep, so a keyboard that reads 0 journals nothing.
++    func testKeepScreenAwakeJournalsNoZeroForTheSleepRequest() async throws {
++        h.keyboard.brightness = 0
++        let (m, actions) = makeDarkeningOnly(display: refusedDisplay, keyboard: h.keyboard)
++        m.config.keepScreenAwake = true
++        await m.start(duration: 3600)
++
++        await actions.onClose()
++
++        XCTAssertEqual(h.display.sleepRequests, 0)
++        XCTAssertEqual(h.keyboard.sets, [])
++        XCTAssertFalse(try XCTUnwrap(try h.store.loadState()).brightnessJournaled)
++    }
++
+     /// Both devices refused: nothing is darkened or journaled, so nothing
+     /// on open would wake the display. The close does not ask it to sleep,
+     /// and the open has nothing to wake.
+@@ -608,8 +681,8 @@ final class RefusedDarkeningTests: XCTestCase {
+     /// both come back, still at the 0 the old close left, the sampler takes
+     /// no reading of them while they are journaled, and the re-read's
+     /// restore becomes its sample. A lid close soon after, with the panel
+-    /// pulled down by auto-brightness and the backlight suppressed again,
+-    /// journals 0.8 and 0.3, not 0, and the open restores them.
++    /// 
+```
+
+**File**: `docs/releasing.md` (modified, +1/-0)
+```diff
+@@ -337,6 +337,7 @@ Settings > General opens with the Menu bar picker: Pills (the default), Compact,
+ 
+ ### Display and keyboard backlight
+ 
++- Keyboard already off on close, both manually and through ambient auto-adjustment: no new keyboard save or write, no positive cached level restored over manual off, and macOS still adjusts automatically afterward. A positive restore owed from a previous close must survive. A legacy saved keyboard zero clears without a keyboard write, including after a refused restore or a failed journal clear. Repeat close before the two-second reassertion: no delayed write relights the keyboard. An already-off keyboard is left to macOS and may relight while closed; positive ambient-dimmed levels remain a limitation.
+ - Lid-close display/keyboard darkening and restore
+ - Darkening still runs under the private-call guards on macOS 26 (close the lid during a session: the log shows "display darkened" and "keyboard backlight off" and no "refused" line; Settings shows no note under the darken toggle)
+ - Darkening refused on an unmeasured macOS version (a macOS major other than 26 or 27, or a `KeyboardBrightnessClient` whose methods changed: the log shows the "refused" line once and "skipped" at lid close, nothing is journaled for that device, and Settings names the reason under the darken toggle; with both refused the log shows "display sleep not requested" and the panel is lit when the lid opens; a level saved by the earlier build stays in state.json with `displayRestoreRefused` or `keyboardRestoreRefused` after the first open or launch, the menu says it could not be restored on this macOS build and names each saved level, Settings shows the saved level under the darken toggle, no "Restore incomplete" follows, and the backstop log does not fail for it)
+```
+
+**File**: `docs/spec.md` (modified, +39/-8)
+```diff
+@@ -391,7 +391,12 @@ owed. A write whose clear is owed is done all the same: the second write
+ Mode still owes its write after the mode, as the clear would have
+ journaled. A lid close that can read the device clears the flag too: it
+ keeps the earlier saved value while the device reads 0, and saves the new
+-level when it reads above 0. For the display that level must be trusted:
++level when it reads above 0. For the keyboard the reading itself must be
++trusted: a suppressed or dimmed reading, 0 or above, leaves the entry
++flagged and the backlight as it is, and the last sample is no help, since
++none is taken while an entry is journaled. A kept keyboard 0 from an older
++version is obsolete: a close that reads 0 leaves it flagged, and the open
++discards it without a write. For the display that level must be trusted:
+ the last sample, the value owed after the mode, or a current read taken
+ with the panel awake and Insomnia's Low Power Mode not on at any point in
+ the run, nor over the entry since the Mac last started. Without one, the close leaves the entry flagged and the panel as
+@@ -521,7 +526,9 @@ does) is ignored while any process holds a display assertion, and agents
+ routinely do, so brightness 0 is the primary mechanism and the sleep request
+ is best effort. It is made only when a display or keyboard brightness is
+ journaled, because the wake that undoes it on open, or on reconcile after
+-a relaunch, runs only for such an entry. With "Keep the screen on and
++a relaunch, runs only for such an entry. A keyboard that can be read but
++journals no level is journaled as 0 for it when nothing else is, as
++described below. With "Keep the screen on and
+ unlocked" on it is not made at all: a display that sleeps locks the screen,
+ and Insomnia's own assertion would refuse it anyway. Display brightness 0 does not
+ switch the keyboard backlight off; it is set separately. Both values are journaled before they are changed
+@@ -561,15 +568,39 @@ level not yet decided. Each level the app writes from the journal, or
+ finds set since in place of a kept value, becomes that device's sample,
+ so a close soon after a restore that came late, from the re-read of a
+ kept value or after the mode, journals the restored level and not a 0
+-sampled before it. The keyboard journals the current
+-read if trusted now, else its last sample; when nothing trustworthy is
+-known for it, it is left to macOS entirely (no journal entry, no write),
+-because restoring a suppressed 0 would leave the backlight off. On open the
++sampled before it. A keyboard already reading 0 is left to macOS entirely
++(no new journal entry or write), unless a positive restore is already owed
++from an earlier close. One exception keeps the display sleep request: when
++a close reads the keyboard but journals no level for it, nothing else is
++journaled, as when the display is refused or unreadable, and "Keep the
++screen on and unlocked" is off, the close journals a 0 with no keyboard
++write, so the open still wakes the display it asked to sleep. The open
++discards that 0 as below. Ambient auto-off can read 0 with neither suppression
++nor dimming flagged, while manual off can set the suppression flag; neither
++is a reason to restore an older positive sample over it. For a positive
++current reading, the keyboard journals that reading if trusted now, else a
++positive last sample; without either, it is left alone, apart from the 0
++journaled for the sleep request above. A positive value
++kept after a refused restore is decided only by a trusted reading, as for
++the display: a 0 keeps it and a level above 0 replaces it. A suppressed or
++dimmed reading leaves it journaled and undecided, and the last sample is no
++help, since none is taken while an entry is journaled. A kept 0 is the
++older version's zero below: only a trusted level above 0 replaces it, and
++otherwise the open discards it.
++A saved zero, from an
++older version or journaled for the sleep request, is cleared without a
++keyboard write or reassertion, including
++when the private-call guard refuses; a failed clear stays owed for retry.
++This avoids committing automatic zero as a permanent off setting. It leaves
++macOS free to relight a keyboard that was already off, even while the lid is
++closed, and positive ambient-dimmed readings remain possible restore values.
++On open the
+ restore is written, the entries cleared, and the same values written once
+ more 2 s later, because powerd re-applies its own remembered brightness
+ asynchronously after the wake and can override the first write; that second
+-write is skipped if the lid closed again in the meantime (the close journals
+-fresh values first) and superseded by any newer restore. A display restore
++write is canceled if another current lid close starts in the meantime, even
++when an already-zero keyboard creates no new journal entry, and superseded
++by any newer restore. A display restore
+ written while Insomnia's own Low Power Mode was on is journaled as
+ `disp
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #149** (2026-10-27): Session: land #120 (@krishhgg)
-- **PR #130** (2026-10-27): Install, uninstall: ignore Kong's Insomnia API client (@krishhgg)
-- **PR #129** (2026-10-27): CONTRIBUTING: pictures for pull requests that change what users see (@krishhgg)
-- **PR #127** (2026-10-19): CI: run the Swift tests on the Mac mini, one throwaway VM per job (@krishhgg)
-- **PR #126** (2026-10-19): CI: Bump actions/upload-artifact from 7.0.1 to 7.0.2 (@dependabot[bot])
-- **PR #125** (2026-10-19): CI: Bump actions/download-artifact from 8.0.1 to 8.0.2 (@dependabot[bot])
+- **PR #171** (2026-11-09): Keyboard backlight: land #136 (@krishhgg)
+- **PR #169** (2026-11-08): Merge gate: the Codex bot's review replaces Greptile's score (@krishhgg)
+- **PR #167** (2026-11-08): Session: land #160 (@krishhgg)
+- **PR #166** (2026-11-08): Recovery: land #158 (@krishhgg)
+- **PR #165** (2026-11-07): CI: keep pull requests from forks off the Mac mini (@krishhgg)
+- **PR #160** (2026-11-08): Session: keep the screen on and unlocked during a session (opt-in) (@GridGxly)
 
 ---
 
@@ -2198,58 +2482,29 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Install, uninstall: check Kong's client against a code requirement
+## X. Merge pull request #154 from krishhgg/integration/recovery-launcher
 
 **RULE**:
-When implementing operations in `Tests/InsomniaTests/RecoveryScriptTests.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in krishhgg/Insomnia. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Resources/Info.plist`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in krishhgg/Insomnia. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `434312d6`: Install, uninstall: check Kong's client against a code requirement. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1044770e`: Merge pull request #154 from krishhgg/integration/recovery-launcher. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Tests/InsomniaTests/RecoveryScriptTests.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Resources/Info.plist`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-        // The fake codesign logs this when a script checks a pid against a
-        // requirement other than Kong's client's (see writeFakes).
-        XCTAssertFalse(fx.calls().contains("codesign BAD-REQUIREMENT"), "\(fx.calls())")
-    /// `pgrep -x Insomnia` finds it. This is its pid.
-    /// The check each script makes of a pid pgrep printed. Kong's client,
-    /// and only it, passes (codesign exits 0).
-    private func verifyCall(_ pid: Int) -> String {
-        "codesign --verify -R=\(ScriptFixture.apiClientRequirement) \(pid)"
-        "Ignoring pid \(clientPid): it is Kong's Insomnia API client (com.insomnia.app, team FX44YY62GV), not this app."
-    /// A process named Insomnia that codesign does not pass as Kong's
-        let process = { (status: Int32?) -> () throws -> Void in
-            { try self.fx.insomniaProcesses([(self.clientPid, status)]) }
-            // codesign checks the code a process runs, not its argv[0]: this
-            // app, ad hoc signed, does not meet the requirement even when
-            // started with argv[0] set to Kong's path, and neither does code
-            // with another identifier or team or a certificate Apple did not
-            // issue.
+	<key>InsomniaBackstopCommand</key>
+	<string>--backstop</string>
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-    /// `pgrep -x Insomnia` finds it. This is its pid and its executable.
-    private let clientExecutable = "/Applications/Insomnia.app/Contents/MacOS/Insomnia"
-    /// What `codesign -d -v` prints for Kong's client: its code signing
-    /// identifier and Kong's team.
-    private var clientSignature: String {
-        ScriptFixture.signature(executable: clientExecutable, identifier: "com.insomnia.app", team: "FX44YY62GV")
-        "Ignoring pid \(clientPid) (\(clientExecutable)): it is Kong's Insomnia API client (com.insomnia.app, team FX44YY62GV), not this app."
-    /// A process named Insomnia whose signature does not show it is Kong's
-        let kong = clientExecutable
-        let process = { (signature: String?) -> () throws -> Void in
-            { try self.fx.insomniaProcesses([(self.clientPid, signature)]) }
-            // This app started with argv[0] set to Kong's path: ps would
-            // print that path, and codesign names this app's code.
-            ("this app under Kong's path", process(ScriptFixture.signature(executable: kong, identifier: "com.kgarg.insomnia", team: "not set"))),
-            ("Kong's identifier, ad hoc signed", process(ScriptFixture.signature(ex
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `434312d6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1044770e` are properly handled with clean fallback behavior.

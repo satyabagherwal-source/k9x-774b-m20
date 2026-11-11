@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source**: github ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
-> **Source Version**: `f5be64bb`  
+> **Source Version**: `7c78aabb`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T14:22:48.162Z  
+> **Timestamp**: 2026-11-10T04:59:18.068Z  
 > **Learning ID**: `learn-github-meshery-meshery`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T14:22:48.030Z  
+> **Harvest Timestamp**: 2026-11-10T04:59:17.899Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -25,9 +25,9 @@
 ## 1. Context & Architectural Overview
 - **Repository / Resource**: `meshery/meshery`
 - **Description**: Meshery, the cloud native manager
-- **Primary Language / Ecosystem**: TypeScript
+- **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 12132 stars
+- **Stars / Engagement**: 12160 stars
 
 ---
 
@@ -804,11 +804,11 @@ if __name__ == "__main__":
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #22858** (2026-11-05): **[mesheryctl] Send perf apply durations in whole seconds and reject the rest**
-  *Symptoms*: **Notes for Reviewers**  - This PR fixes #22856  `splitTestDuration` split `--duration` at the first non-numeric character and sent the parts as the `t` and `dur` query params. The server parses `t` as an integer and treats any `dur` other than `h` or `m` as seconds, so `500ms` ran for 8m20s, `1h30m` ran for 1s and `1.5m` ran for 1m, with no warning.  The duration is now parsed with `time.ParseDuration` and always sent in seconds, so combined and fractional values work. A value that can't be expressed as a whole number of seconds of at least 1s fails with a clear error, before it is saved in a new profile or run. A number without a unit still means seconds, and the server is unchanged.  A saved profile with a sub-second duration now fails with that error instead of running for the wrong length.  - Replaced the `splitTestDuration` tests with table tests for valid and rejected values, and added a test that an invalid duration doesn't create a profile.  **[Signed commits](../CONTRIBUTING.md#signing-off-on-commits-developer-certificate-of-origin)** - [x] Yes, I signed my commits.   <!-- This is an auto-generated comment: release notes by coderabbit.ai -->  <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Bug Fixes**   * Performance test durations are now consistently interpreted in seconds, including values with units, whitespace, or no unit.   * Invalid, negative, zero, or sub-second durations are rejected before a test is submitted or a profile is saved.   * B
+- **Issue #23121** (2026-11-10): **[mesheryctl] Enforce exact argument validation in workspace create**
+  *Symptoms*: ### Notes for Reviewers This PR fixes #23120   ### Overview & Root Cause `mesheryctl workspace create` did not validate positional arguments, allowing trailing arguments to be silently ignored.  ### Changes - `mesheryctl/internal/cli/root/workspaces/create.go`:   - Defined `createUsageMsg` with usage instructions.   - Added `Args` validation returning `utils.ErrInvalidArgument` when `len(args) != 0`. - `mesheryctl/internal/cli/root/workspaces/create_test.go`:   - Added test scenario to `TestCreateWorkspace` verifying that passing an unexpected positional argument returns `utils.ErrInvalidArgument`.  ### Test Evidence - Verified with command test scenarios in `mesheryctl/internal/cli/root/workspaces/create_test.go`.  <!-- This is an auto-generated comment: release notes by coderabbit.ai -->  <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Bug Fixes**   * Workspace creation now rejects unexpected positional arguments and displays the command’s usage message, helping clarify how to run the command. Invoking workspace creation without positional arguments continues to pass validation.  <!-- end of auto-generated comment: release notes by coderabbit.ai -->
 
-- **Issue #22856** (2026-11-05): **[mesheryctl] `perf apply --duration` silently runs the wrong test length for values like `500ms`, `1h30m` and `1.5m`**
-  *Symptoms*: ### Current Behavior The `--duration` flag of `mesheryctl perf apply` points users to Go's duration format ("e.g. 10s, 5m, 2h. For more, see https://golang.org/pkg/time/#ParseDuration"), but only a whole number followed by exactly `s`, `m` or `h` works.  `splitTestDuration` splits the value at the first non-numeric character and sends the two parts as the `t` and `dur` query params. The server parses `t` as an integer (a failed parse becomes 1) and treats any `dur` other than `h` or `m` as seconds. Neither side rejects the value, so the test runs for a different length with no warning:  | `--duration` | `t` | `dur` | Test runs for | Expected | |---|---|---|---|---| | `500ms` | `500` | `ms` | 8m20s | 500ms | | `1h30m` | `1` | `h30m` | 1s | 1h30m | | `1.5m` | `1.5` | `m` | 1m | 1m30s |  ### Expected Behavior A valid Go duration runs for that duration. A value that can't be honored fails with a clear error before the test starts, rather than silently running for a different length.  ### Environment - mesheryctl built from master 
+- **Issue #23120** (2026-11-10): **[mesheryctl] workspace create ignores extraneous positional arguments without validation**
+  *Symptoms*: ### Description `mesheryctl workspace create` receives its parameters through flags (`--orgId`, `--name`, `--description`) and takes no positional arguments. However, it does not define an `Args` validation check, meaning extraneous positional arguments are ignored instead of returning an error with usage instructions.  ### Expected Behavior Extraneous positional arguments should return `utils.ErrInvalidArgument` with command usage guidance, consistent with `workspace list`.  ### Proposed Solution 1. Define `createUsageMsg` in `workspaces/create.go`. 2. Add `Args` validation to `createWorkspaceCmd` checking `len(args) != 0`. 3. Add test scenario in `workspaces/create_test.go`.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -825,430 +825,732 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6a0dfa7a` (2026-11-02)
-**Commit Message**: [Server] Harden fd leak tests for Linux /proc/self/fd and decouple live template assertions
+### Incident Patch 1: `7c78aabb` (2026-11-10)
+**Commit Message**: Merge pull request #23121 from madhavzanwar/fix/workspace-create-args
 
-- Verifies open fd count remains unchanged via /proc/self/fd on Linux runners during success and corrupted JSON test cases.
+[mesheryctl] Enforce exact argument validation in workspace create
 
-- Decouples live template tests from volatile color and shape branding strings by asserting non-empty values.
-
-- Directly addresses review feedback from @pontusringblom.
-
-Signed-off-by: Aman Singh <[REDACTED_EMAIL]>
-
-**File**: `server/models/k8s_components_registration_test.go` (modified, +21/-9)
+**File**: `mesheryctl/internal/cli/root/workspaces/create.go` (modified, +8/-0)
 ```diff
-@@ -39,8 +39,14 @@ func TestLoadK8sMeshModelMetadata_Success(t *testing.T) {
- 	err := os.WriteFile(filePath, []byte(validJSON), 0600)
- 	require.NoError(t, err, "failed to write test file")
+@@ -37,6 +37,8 @@ type cmdWorkspaceCreateFlags struct {
  
-+	// Track open file descriptors around the call (effective on Linux /proc/self/fd)
-+	beforeFDs, _ := filepath.Glob("/proc/self/fd/*")
- 	metadata, err := loadK8sMeshModelMetadata(filePath)
- 	require.NoError(t, err, "loadK8sMeshModelMetadata should succeed for valid JSON")
-+	afterFDs, _ := filepath.Glob("/proc/self/fd/*")
-+	if len(beforeFDs) > 0 && len(afterFDs) > 0 {
-+		assert.Equal(t, len(beforeFDs), len(afterFDs), "file descriptor count should remain unchanged after successful load")
-+	}
+ var workspaceCreateFlags cmdWorkspaceCreateFlags
  
- 	assert.Equal(t, "#326CE5", metadata.PrimaryColor)
- 	require.NotNil(t, metadata.SecondaryColor)
-@@ -75,41 +81,47 @@ func TestLoadK8sMeshModelMetadata_CorruptedJSON(t *testing.T) {
- 	err := os.WriteFile(filePath, []byte(malformedJSON), 0600)
- 	require.NoError(t, err, "failed to write corrupt test file")
++var createUsageMsg = "Usage: mesheryctl workspace create --orgId [orgId] --name [name] --description [description]\nRun 'mesheryctl workspace create --help' to see detailed help message"
++
+ var createWorkspaceCmd = &cobra.Command{
+ 	Use:   "create",
+ 	Short: "Create a new workspace under an organization",
+@@ -46,6 +48,12 @@ Find more information at: https://docs.meshery.io/reference/mesheryctl/workspace
+ // Create a new workspace in an organization
+ mesheryctl workspace create --orgId [orgId] --name [name] --description [description]
+ `,
++	Args: func(cmd *cobra.Command, args []string) error {
++		if len(args) != 0 {
++			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", createUsageMsg))
++		}
++		return nil
++	},
+ 	PreRunE: func(cmd *cobra.Command, args []string) error {
+ 		return mesheryctlflags.ValidateCmdFlags(cmd, &workspaceCreateFlags)
+ 	},
+```
+
+**File**: `mesheryctl/internal/cli/root/workspaces/create_test.go` (modified, +11/-0)
+```diff
+@@ -19,6 +19,17 @@ func TestCreateWorkspace(t *testing.T) {
+ 	currDir := filepath.Dir(filename)
  
-+	// Track open file descriptors around the call (effective on Linux /proc/self/fd)
-+	beforeFDs, _ := filepath.Glob("/proc/self/fd/*")
- 	metadata, err := loadK8sMeshModelMetadata(filePath)
- 	assert.Error(t, err, "expected error for corrupted JSON content")
-+	afterFDs, _ := filepath.Glob("/proc/self/fd/*")
-+	if len(beforeFDs) > 0 && len(afterFDs) > 0 {
-+		assert.Equal(t, len(beforeFDs), len(afterFDs), "file descriptor should be closed even on unmarshal error")
-+	}
- 	assert.Empty(t, metadata.PrimaryColor)
- 
--	// Verify deferred close executed despite JSON unmarshal error:
-+	// Verify deferred close executed despite JSON unmarshal error (effective on Windows file locks):
- 	removeErr := os.Remove(filePath)
- 	assert.NoError(t, removeErr, "file descriptor should be closed even on unmarshal error")
- }
- 
- // TestLoadK8sMeshModelMetadata_LiveTemplate verifies that the actual project-relative
--// template file at k8sMeshModelPath can be read and parsed.
-+// template file at k8sMeshModelPath can be read and parsed without coupling to volatile values.
- func TestLoadK8sMeshModelMetadata_LiveTemplate(t *testing.T) {
- 	if _, err := os.Stat(k8sMeshModelPath); os.IsNotExist(err) {
- 		t.Skipf("skipping live template test: %s not found from current directory", k8sMeshModelPath)
- 	}
- 
- 	metadata, err := loadK8sMeshModelMetadata(k8sMeshModelPath)
- 	require.NoError(t, err, "failed to load live model_template.json")
--	assert.Equal(t, "#326CE5", metadata.PrimaryColor)
-+	assert.NotEmpty(t, metadata.PrimaryColor)
- 	require.NotNil(t, metadata.SecondaryColor)
--	assert.Equal(t, "#7aa1f0", *metadata.SecondaryColor)
-+	assert.NotEmpty(t, *metadata.SecondaryColor)
- 	require.NotNil(t, metadata.Shape)
--	assert.Equal(t, "circle", string(*metadata.Shape))
-+	assert.NotEmpty(t, string(*metadata.Shape))
- }
- 
- // TestK8sMeshModelMetadata_PackageVar verifies that the package-level K8sMeshModelMetadata
--// is initialized by init() when the template file is available.
-+// is initialized by init() when the template file is available without coupling to volatile values.
- func TestK8sMeshModelMetadata_PackageVar(t *testing.T) {
- 	if _, err := os.Stat(k8sMeshModelPath); os.IsNotExist(err) {
- 		t.Skipf("skipping package var test: %s not found from current directory", k8sMeshModelPath)
- 	}
- 
--	assert.Equal(t, "#326CE5", K8sMeshModelMetadata.PrimaryColor)
-+	assert.NotEmpty(t, K8sMeshModelMetadata.PrimaryColor)
- 	require.NotNil(t, K8sMeshModelMetadata.SecondaryColor)
--	assert.Equal(t, "#7aa1f0", *K8sMeshModelMetadata.SecondaryColor)
-+	assert.NotEmpty(t, *K8sMeshModelMetadata.SecondaryColor)
- 	require.NotNil(t, K8sMeshModelMetadata.Shape)
--	assert.Equal(t, "circle", string(*K8sMeshModelMetadata.Shape))
-+	assert.NotEmpty(t, string(*K8sMeshModelMetadata.Shape))
- }
+ 	tests := []utils.MesheryCommandTest{
++		{
++			Name:             "given unexpected positional argument when workspace create then throw error",
++			Args:             []string{"create", "extra-arg", "-n", validWorkspaceName, "-d", workspaceDescription, "--orgId", testOrgId},
++			URL:              "/api/workspaces",
++			HttpMethod:       "POST",
++			Fixture:          "",
++			ExpectedResponse: "",
++			ExpectError:      true,
++			IsOutputGolden:   false,
++			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", createUsageMsg)),
++		},
+ 		{
+ 			Name:             "given no flags provided when workspace create throw error",
+ 			Args:             []string{"create"},
 ```
 
 ---
 
-### Incident Patch 2: `864c1b0b` (2026-11-05)
-**Commit Message**: Merge pull request #22850 from harshitsaxena214/fix/21259-stdin-prompt-errors
+### Incident Patch 2: `e2c2821d` (2026-11-10)
+**Commit Message**: Merge pull request #23117 from madhavzanwar/fix/env-view-args
 
-[mesheryctl] Return an error instead of exiting on stdin read failures in prompts
+[mesheryctl] Enforce exact argument validation in environment view
 
-**File**: `mesheryctl/internal/cli/root/perf/apply.go` (modified, +4/-1)
+**File**: `mesheryctl/internal/cli/root/environments/view.go` (modified, +10/-2)
 ```diff
-@@ -224,7 +224,10 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
- 				userResponse = true
- 			} else {
- 				// ask user for confirmation
--				userResponse = utils.AskForConfirmation("Profile with name '" + profileName + "' does not exist. Do you want to create a new one")
-+				userResponse, err = utils.AskForConfirmation("Profile with name '" + profileName + "' does not exist. Do you want to create a new one")
-+				if err != nil {
-+					return err
-+				}
- 			}
+@@ -36,18 +36,26 @@ type environmentViewFlags struct {
  
- 			if userResponse {
-```
-
-**File**: `mesheryctl/internal/cli/root/registry/purge.go` (modified, +4/-1)
-```diff
-@@ -128,7 +128,10 @@ mesheryctl registry purge --retain 2 -y
+ var environmentViewFlagsProvided environmentViewFlags
  
- 		userResponse := utils.SilentFlag
- 		if !userResponse {
--			userResponse = utils.AskForConfirmation(fmt.Sprintf("This will permanently delete %s under %s. Are you sure you want to continue", pluralize(plan.totalToRemove(), "model version directory", "model version directories"), modelsDir))
-+			userResponse, err = utils.AskForConfirmation(fmt.Sprintf("This will permanently delete %s under %s. Are you sure you want to continue", pluralize(plan.totalToRemove(), "model version directory", "model version directories"), modelsDir))
-+			if err != nil {
-+				return err
-+			}
- 		}
- 		if !userResponse {
- 			utils.Log.Info("Purge aborted.")
-```
-
-**File**: `mesheryctl/internal/cli/root/system/channel.go` (modified, +4/-1)
-```diff
-@@ -234,7 +234,10 @@ mesheryctl system channel switch [stable|stable-version|edge|edge-version]
- 			userResponse = true
- 		} else {
- 			// ask user for confirmation
--			userResponse = utils.AskForConfirmation("The Meshery deployment in context '" + focusedContext + "' will be replaced with a new Meshery deployment and channel subscription. Are you sure you want to continue")
-+			userResponse, err = utils.AskForConfirmation("The Meshery deployment in context '" + focusedContext + "' will be replaced with a new Meshery deployment and channel subscription. Are you sure you want to continue")
-+			if err != nil {
-+				return err
-+			}
- 		}
- 
- 		if !userResponse {
-```
-
-**File**: `mesheryctl/internal/cli/root/system/context.go` (modified, +4/-1)
-```diff
-@@ -153,7 +153,10 @@ mesheryctl system context delete [context name]
- 			if utils.SilentFlag {
- 				res = true
- 			} else {
--				res = utils.AskForConfirmation("Are you sure you want to delete the current context")
-+				res, err = utils.AskForConfirmation("Are you sure you want to delete the current context")
-+				if err != nil {
-+					return err
-+				}
- 			}
- 
- 			if !res {
-```
-
-**File**: `mesheryctl/internal/cli/root/system/delete.go` (modified, +4/-1)
-```diff
-@@ -96,7 +96,10 @@ func deleteContainers() error {
- 		if utils.SilentFlag {
- 			userResponse = true
- 		} else {
--			userResponse = utils.AskForConfirmation("Meshery containers will be deleted. Are you sure you want to continue")
-+			userResponse, err = utils.AskForConfirmation("Meshery containers will be deleted. Are you sure you want to continue")
-+			if err != nil {
-+				return err
-+			}
- 		}
- 
- 		if !userResponse {
-```
-
-**File**: `mesheryctl/internal/cli/root/system/provider.go` (modified, +4/-1)
-```diff
-@@ -284,7 +284,10 @@ mesheryctl system provider switch [provider]
- 			userResponse = true
- 		} else {
- 			// ask user for confirmation
--			userResponse = utils.AskForConfirmation("The Meshery deployment in context '" + focusedContext + "' will be replaced with a new Meshery deployment with provider set to '" + args[0] + "'. Are you sure you want to continue")
-+			userResponse, err = utils.AskForConfirmation("The Meshery deployment in context '" + focusedContext + "' will be replaced with a new Meshery deployment with provider set to '" + args[0] + "'. Are you sure you want to continue")
-+			if err != nil {
-+				return err
-+			}
- 		}
- 
- 		if !userResponse {
-```
-
-**File**: `mesheryctl/internal/cli/root/system/reset.go` (modified, +5/-1)
-```diff
-@@ -52,12 +52,16 @@ mesheryctl system reset
- 
- // resets meshery config, skips conirmation if skipConfirmation is true
- func resetMesheryConfig() error {
-+	var err error
- 	userResponse := false
- 	if utils.SilentFlag {
- 		userResponse = true
- 	} else {
- 		// ask user for confirmation
--		userResponse = utils.AskForConfirmation("Meshery config file will be reset to system defaults. Are you sure you want to continue")
-+		userResponse, err = utils.AskForConfirmation("Meshery config file will be reset to system defaults. Are you sure you want to continue")
-+		if err != nil {
-+			return err
++var viewUsageMsg = "Usage: mesheryctl environment view --orgId [orgId]\nRun 'mesheryctl environment view --help' to see detailed help message"
++
+ var viewEnvironmentCmd = &cobra.Command{
+ 	Use:   "view",
+-	Short: "View registered environmnents",
++	Short: "View registered environments",
+ 	Long: `View details of an environment registered in Meshery Server for a specific organization
+ Find more information at: https://docs.meshery.io/reference/mesheryctl/environment/view`,
+ 	Example: `
+ // View details of a specific environment
+ mesheryctl environment view --orgId [orgId]
+ 	`,
++	Args: func(cmd *cobra.Command, args []string) error {
++		if len(args) != 0 {
++			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", viewUsageMsg))
 +		}
- 	}
- 	if !userResponse {
- 		utils.Log.Info("Reset aborted.")
++		return nil
++	},
+ 	PreRunE: func(cmd *cobra.Command, args []string) error {
+ 		if environmentViewFlagsProvided.orgId == "" {
+-			const errMsg = "[ orgId ] isn't specified\n\nUsage: mesheryctl environment view --orgId [orgId]\nRun 'mesheryctl environment view --help' to see detailed help message"
++			errMsg := "[ orgId ] isn't specified\n\n" + viewUsageMsg
+ 			return utils.ErrInvalidArgument(errors.New(errMsg))
+ 		}
+ 
 ```
 
-**File**: `mesheryctl/internal/cli/root/system/restart.go` (modified, +4/-1)
+**File**: `mesheryctl/internal/cli/root/environments/view_test.go` (modified, +7/-0)
 ```diff
-@@ -127,7 +127,10 @@ func restart() error {
- 				userResponse = true
- 			} else {
- 				// ask user for confirmation
--				userResponse = utils.AskForConfirmation("Meshery deployments will be deleted from your cluster. Are you sure you want to continue")
-+				userResponse, err = utils.AskForConfirmation("Meshery deployments will be deleted from your cluster. Are you sure you want to continue")
-+				if err != nil {
-+					return err
-+				}
- 			}
- 			if !userResponse {
- 				utils.Log.Info("Restart aborted.")
+@@ -41,3 +41,10 @@ func TestEnvironmentViewSaveCreatesFile(t *testing.T) {
+ 
+ 	utils.AssertFileExists(t, filepath.Join(mesheryDir, "environment_test-environment.yaml"))
+ }
++
++func TestEnvironmentViewExtraArgsFails(t *testing.T) {
++	run := environmentViewRun(utils.CallerDir(t), []string{"view", "extra-arg", "--orgId", testConstants["orgId"]})
++	if _, err := utils.RunMesheryctlCommand(t, run); err == nil {
++		t.Fatalf("expected error when extra positional argument is passed, got nil")
++	}
++}
 ```
 
 ---
 
-### Incident Patch 3: `f5be64bb` (2026-11-05)
-**Commit Message**: Merge pull request #22858 from Eternity0207/fix/perf-duration
+### Incident Patch 3: `e2a407d8` (2026-11-10)
+**Commit Message**: Merge pull request #23113 from nishant-devv/fix/policy-engine-multi-selector-relationship-validation
 
-[mesheryctl] Send perf apply durations in whole seconds and reject the rest
+[Server] Validate multi-selector relationships and prevent ghost relationship bleed (#23111)
 
-**File**: `mesheryctl/internal/cli/root/perf/apply.go` (modified, +26/-13)
+**File**: `server/policies/eval_rules.go` (modified, +162/-68)
 ```diff
-@@ -23,6 +23,7 @@ import (
- 	"os"
- 	"strconv"
- 	"strings"
-+	"time"
+@@ -23,43 +23,66 @@ func componentDeclarationByID(design *pattern.PatternFile, id string) *component
  
- 	"github.com/asaskevich/govalidator"
- 	"github.com/ghodss/yaml"
-@@ -59,23 +60,27 @@ var linkDocPerfApply = map[string]string{
- 	"caption": "Usage of mesheryctl perf apply",
- }
- 
--func splitTestDuration(duration string) (string, string) {
--	duration = strings.TrimSpace(duration)
--	if duration == "" {
--		return "30", "s"
-+// splitTestDuration converts a Go duration into the value and unit query
-+// params of a test run. The server only reads a whole number of hours, minutes
-+// or seconds, so the duration is always sent in seconds, and one that can't be
-+// expressed that way is rejected rather than run for a different length.
-+func splitTestDuration(duration string) (string, string, error) {
-+	normalized := strings.ToLower(strings.TrimSpace(duration))
-+	if normalized == "" {
-+		return "30", "s", nil
+ // fromComponentID returns the from component ID from a relationship definition.
+ func fromComponentID(rel *relationship.RelationshipDefinition) string {
+-	if rel.Selectors == nil || len(*rel.Selectors) == 0 {
++	if rel == nil || rel.Selectors == nil {
+ 		return ""
  	}
- 
--	unitStart := strings.IndexFunc(duration, func(r rune) bool {
--		return (r < '0' || r > '9') && r != '.'
--	})
--	if unitStart == -1 {
--		return duration, "s"
-+	// A number without a unit means seconds.
-+	if _, err := strconv.Atoi(normalized); err == nil {
-+		normalized += "s"
- 	}
--	if unitStart == 0 {
--		return "30", strings.ToLower(strings.TrimSpace(duration))
-+
-+	parsed, err := time.ParseDuration(normalized)
-+	if err != nil || parsed < time.Second || parsed%time.Second != 0 {
-+		return "", "", utils.ErrFlagsInvalid(fmt.Errorf("invalid test duration %q: use a whole number of seconds of at least 1s, such as 30s, 5m or 1h30m", duration))
- 	}
- 
--	return strings.TrimSpace(duration[:unitStart]), strings.ToLower(strings.TrimSpace(duration[unitStart:]))
-+	return strconv.FormatInt(int64(parsed/time.Second), 10), "s", nil
- }
- 
- var applyCmd = &cobra.Command{
-@@ -315,7 +320,10 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
- 		q.Add("qps", qps)
- 		q.Add("reqBody", loadTestBody)
- 
--		testDurationValue, testDurationUnit := splitTestDuration(testDuration)
-+		testDurationValue, testDurationUnit, err := splitTestDuration(testDuration)
-+		if err != nil {
-+			return err
-+		}
- 		q.Add("dur", testDurationUnit)
- 		q.Add("t", testDurationValue)
- 
-@@ -391,6 +399,11 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
- 		testDuration = "30s"
- 	}
- 
-+	// Reject an invalid duration before it is saved in the profile.
-+	if _, _, err := splitTestDuration(testDuration); err != nil {
-+		return "", "", err
-+	}
-+
- 	if loadGenerator == "" {
- 		loadGenerator = "fortio"
- 	}
-```
-
-**File**: `mesheryctl/internal/cli/root/perf/apply_test.go` (modified, +59/-24)
-```diff
-@@ -166,35 +166,43 @@ import (
- 	"github.com/spf13/viper"
- )
- 
--func TestSplitTestDurationDefaultsEmptyDuration(t *testing.T) {
--	value, unit := splitTestDuration("")
--
--	if value != "30" || unit != "s" {
--		t.Fatalf("expected empty duration to default to 30s, got value=%q unit=%q", value, unit)
+-	ss := (*rel.Selectors)[0]
+-	if len(ss.Allow.From) == 0 {
+-		return ""
 -	}
--}
--
--func TestSplitTestDurationTrimsDuration(t *testing.T) {
--	value, unit := splitTestDuration(" 5m ")
--
--	if value != "5" || unit != "m" {
--		t.Fatalf("expected trimmed duration to split into 5 and m, got value=%q unit=%q", value, unit)
-+func TestSplitTestDuration(t *testing.T) {
-+	tests := []struct {
-+		name     string
-+		duration string
-+		value    string
-+	}{
-+		{name: "empty duration defaults to 30s", duration: "", value: "30"},
-+		{name: "number without a unit means seconds", duration: "30", value: "30"},
-+		{name: "seconds", duration: "10s", value: "10"},
-+		{name: "surrounding spaces are trimmed", duration: " 5m ", value: "300"},
-+		{name: "hours", duration: "2h", value: "7200"},
-+		{name: "uppercase unit", duration: "5M", value: "300"},
-+		{name: "combined units", duration: "1h30m", value: "5400"},
-+		{name: "fractional value that is a whole number of seconds", duration: "1.5m", value: "90"},
-+		{name: "milliseconds that are a whole number of seconds", duration: "2000ms", value: "2"},
- 	}
--}
- 
--func TestSplitTestDurationDefaultsUnitlessDuration(t *testing.T) {
--	value, unit := splitTestDuration("30")
--
--	if value != "30" || unit != "s" {
--		t.Fatalf("expected unitless duration to default to seconds, got value=%q unit=%q", value, unit)
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			value, unit, err := splitTestDuration(tt.duration)
-+			if err != nil {
-+				t.Fatalf("unexpected error: %v", err)
+-	if ss.Allow.From[0].ID == nil {
+-		return ""
++	for _, ss := range *rel.Selectors {
++		for _, item := range ss.Allow.From {
++			if item.ID != nil && item.ID.String() != "" {
++				return item.ID.String()
 +			}
-+			if value != tt.value || unit != "s" {
-+				t.Fatalf("expected %q to be sent as %ss, got value=%q unit=%q", tt.duration, tt.value, value, unit)
-+			}
-+		})
++		}
  	}
+-	return ss.Allow.From[0].ID.String()
++	return ""
  }
  
--func TestSplitTestDurationSupportsMultiCharacterUnit(t *testing.T) {
--	value, unit := splitTestDuration("500ms")
--
--	if value != "500" || unit != "ms" {
--		t.Fatalf("expected multi-character unit to be preserved, got value=%q unit=%q", value, unit)
-+func TestSplitTestDurationRejectsInvalidDuration(t *testing.T) {
-+	for _, duration := range []string{"500ms", "1500ms", "1.5", "0s", "0", "-5s", "abc", "s", "5x"} {
-+		t.Run(duration, func(t *testing.T) {
-+			if value, unit, err := splitTestDuration(duration); err == nil {
-+				t.Fatalf("expected %q to be rejected, got value=%q unit=%q", duration, value, unit)
+ // toComponentID returns the to component ID from a relationship definition.
+ func toComponentID(rel *relationship.RelationshipDefinition) string {
+-	if rel.Selectors == nil || len(*rel.Selectors) == 0 {
++	if rel == nil || rel.Selectors == nil {
+ 		return ""
+ 	}
+-	ss := (*rel.Selectors)[0]
+-	if len(ss.Allow.To) == 0 {
+-		return ""
+-	}
+-	if ss.Allow.To[0].ID == nil {
+-		return ""
++	for _, ss := range *rel.Selectors {
++		for _, item := range ss.Allow.To {
++			if item.ID != nil && item.ID.String() != "" {
++				return item.ID.String()
 +			}
-+		})
++		}
  	}
+-	return ss.Allow.To[0].ID.String()
++	return ""
  }
  
-@@ -290,6 +298,33 @@ func TestCreatePerformanceProfile_ServerErrors(t *testing.T) {
+ // fromAndToComponentsExist checks if both from and to components still exist in the design.
++// It inspects all selectors and all referenced component IDs across From and To clauses
++// to guarantee that no dangling component references linger in multi-component or
++// multi-selector relationships.
+ func fromAndToComponentsExist(rel *relationship.RelationshipDefinition, design *pattern.PatternFile) bool {
+-	fromID := fromComponentID(rel)
+-	toID := toComponentID(rel)
+-	if fromID == "" || toID == "" {
++	if rel == nil || rel.Selectors == nil || len(*rel.Selectors) == 0 || design == nil {
+ 		return false
  	}
- }
- 
-+func TestCreatePerformanceProfile_RejectsInvalidDuration(t *testing.T) {
-+	testContext := utils.InitTestEnvironment(t)
-+	defer utils.StopMockery(t)
-+	_ = utils.SetupMeshkitLoggerTesting(t, false)
+-	return componentDeclarationByID(design, fromID) != nil &&
+-		componentDeclarationByID(design, toID) != nil
 +
-+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-+	if err != nil {
-+		t.Fatalf("failed to get mesheryctl config: %v", err)
++	for _, ss := range *rel.Selectors {
++		if len(ss.Allow.From) == 0 || len(ss.Allow.To) == 0 {
++			return false
++		}
++		for _, fromSel := range ss.Allow.From {
++			if fromSel.ID == nil || fromSel.ID.String() == "" {
++				return false
++			}
++			if componentDeclarationByID(design, fromSel.ID.String()) == nil {
++				return false
++			}
++		}
++		for _, toSel := range ss.Allow.To {
++			if toSel.ID == nil || toSel.ID.String() == "" {
++				return false
++			}
++			if componentDeclarationByID(design, toSel.ID.String()) == nil {
++				return false
++			}
++		}
 +	}
 +
-+	profileURL := testContext.BaseURL + "/api/performance/profiles"
-+	httpmock.RegisterResponder("POST", profileURL, httpmock.NewStringResponder(http.StatusOK, `{}`))
++	return true
+ }
+ 
+ // fromOrToComponentsDontExist returns true when one or both sides are missing.
+@@ -150,55 +173,76 @@ func patchMutatorsAction(rel *relationship.RelationshipDefinition, design *patte
+ 	var actions []PolicyAction
+ 
+ 	for _, ss := range *rel.Selectors {
+-		if len(ss.Allow.From) == 0 || len(ss.Allow.To) == 0 {
++		fromCount := len(ss.Allow.From)
++		toCount := len(ss.Allow.To)
++		if fromCount == 0 || toCount == 0 {
+ 			continue
+ 		}
+-		fromSel := ss.Allow.From[0]
+-		toSel := ss.Allow.To[0]
+-		if fromSel.RelationshipDefinitionSelectorsPatch == nil || toSel.RelationshipDefinitionSelectorsPatch == nil {
+-			continue
++		pairCount := fromCount
++		if toCount < pairCount {
++			pairCount = toCount
+ 		}
+-
+-		fromID := selectorItemID(fromSel)
+-		toID := selectorItemID(toSel)
+-		fromComp := componentDeclarationByID(design, fromID)
+-		toComp := componentDeclarationByID(design, toID)
+-		if fromComp == nil || toComp == nil {
+-			continue
++		// If one side has 1 element and the other side has N elements, fan out across all N targets.
++		if fromCount == 1 || toCount == 1 {
++			pairCount = max(fromCount, toCount)
+ 		}
+ 
+-		mutatorRefs, mutatedRefs, mutatorComp, mutatedComp := resolveMutatorMutatedRefs(fromSel.RelationshipDefinitionSelectorsPatch, toSel.RelationshipDefinitionSelectorsPatch, fromComp, toComp)
+-		if mutatorRefs == nil || mutatedRefs == nil {
+-			continue
+-		}
+-
+-		mutatedID := toID
+-		if mutatedComp.ID == fromComp.ID {
+-			mutatedID = fromID
+-		}
++		for p := 0; p < pairCount; p++ {
++			fromIdx := p
++			if fromIdx >= fromCount {
++				fromIdx = 0
++			}
++			toIdx := p
++			if toIdx >= toCount {
++				toIdx = 0
++			}
++			fromSel := ss.Allow.From[fromIdx]
++			toSel := ss.Allow.To[toIdx]
++			if fromSel.RelationshipDefinitionSelectorsPatch == nil || toSel.RelationshipDefinitionSelectorsPatch == nil {
++				continue
++			}
+ 
+-		count := len(mutatorRefs)
+-		if len(mutatedRefs) < count {
+-			count = len(mutatedRefs)
+-		}
++			fromID := selectorItemID(fromSel)
++			toID := selectorItemID(toSel)
++			fromComp := componentDeclarationByID(design, fromID)
++			toComp := componentDeclarationByID(design, toID)
++			if fromComp == nil || toComp == nil {
++				continue
++			}
+ 
+-		for i := 0; i < count; i++ {
+-			mutatorValue := configurationForComponentAtPath(mutatorRefs[i], mutatorComp, design)
+-			oldValue := configurationForComponentAtPath(mutatedRefs[i], mutat
+```
+
+**File**: `server/policies/eval_rules_test.go` (added, +662/-0)
+```diff
+@@ -0,0 +1,662 @@
++package policies
 +
-+	resetVariables()
-+	defer resetVariables()
-+	profileName = "test-profile"
-+	testURL = "https://meshery.io"
-+	testDuration = "500ms"
++import (
++	"testing"
 +
-+	if _, _, err := createPerformanceProfile(mctlCfg); err == nil {
-+		t.Fatal("expected an invalid duration to be rejected")
-+	}
-+	if calls := httpmock.GetCallCountInfo()["POST "+profileURL]; calls != 0 {
-+		t.Errorf("expected no profile to be created, got %d request(s)", calls)
++	"github.com/gofrs/uuid"
++	"github.com/meshery/schemas/models/v1beta1/component"
++	modelv1beta1 "github.com/meshery/schemas/models/v1beta1/model"
++	"github.com/meshery/schemas/models/v1beta1/pattern"
++	"github.com/meshery/schemas/models/v1beta2/relationship"
++)
++
++func newTestComponent(name, kind string) *component.ComponentDefinition {
++	id := uuid.Must(uuid.NewV4())
++	return &component.ComponentDefinition{
++		ID:          id,
++		DisplayName: name,
++		Component: component.Component{
++			Kind: kind,
++		},
++		ModelReference: modelv1beta1.ModelReference{
++			Name: "kubernetes",
++		},
++		Configuration: map[string]interface{}{
++			"metadata": map[string]interface{}{
++				"name": name,
++			},
++		},
 +	}
 +}
 +
- func TestCreatePerformanceProfile_NullResponseGuardsAgainstPanic(t *testing.T) {
- 	testContext := utils.InitTestEnvironment(t)
- 	defer utils.StopMockery(t)
++// TestFromAndToComponentsExist_MultiComponentRelationship verifies that
++// fromAndToComponentsExist checks all referenced components in a multi-component
++// relationship (such as sibling matchLabels with 3+ components), not just index 0.
++func TestFromAndToComponentsExist_MultiComponentRelationship(t *testing.T) {
++	compA := newTestComponent("pod-a", "Pod")
++	compB := newTestComponent("pod-b", "Pod")
++	compC := newTestComponent("pod-c", "Pod")
++
++	kind := "Pod"
++	rel := &relationship.RelationshipDefinition{
++		ID:               uuid.Must(uuid.NewV4()),
++		Kind:             relationship.RelationshipDefinitionKind("hierarchical"),
++		RelationshipType: "sibling",
++		SubType:          "matchlabels",
++		Model:            modelv1beta1.ModelReference{Name: "kubernetes"},
++		Selectors: &relationship.SelectorSet{
++			{
++				Allow: relationship.Selector{
++					From: []relationship.SelectorItem{
++						{ID: &compA.ID, Kind: &kind},
++						{ID: &compB.ID, Kind: &kind},
++						{ID: &compC.ID, Kind: &kind},
++					},
++					To: []relationship.SelectorItem{
++						{ID: &compA.ID, Kind: &kind},
++						{ID: &compB.ID, Kind: &kind},
++						{ID: &compC.ID, Kind: &kind},
++					},
++				},
++			},
++		},
++	}
++
++	t.Run("all components exist", func(t *testing.T) {
++		design := &pattern.PatternFile{
++			Components:    []*component.ComponentDefinition{compA, compB, compC},
++			Relationships: []*relationship.RelationshipDefinition{rel},
++		}
++		if !fromAndToComponentsExist(rel, design) {
++			t.Fatal("expected fromAndToComponentsExist to be true when all components exist")
++		}
++		if fromOrToComponentsDontExist(rel, design) {
++			t.Fatal("expected fromOrToComponentsDontExist to be false when all components exist")
++		}
++	})
++
++	t.Run("secondary component compC deleted", func(t *testing.T) {
++		// compC is removed from design
++		design := &pattern.PatternFile{
++			Components:    []*component.ComponentDefinition{compA, compB},
++			Relationships: []*relationship.RelationshipDefinition{rel},
++		}
++		if fromAndToComponentsExist(rel, design) {
++			t.Fatal("expected fromAndToComponentsExist to be false when secondary component compC is missing")
++		}
++		if !fromOrToComponentsDontExist(rel, design) {
++			t.Fatal("expected fromOrToComponentsDontExist to be true when secondary component compC is missing")
++		}
++	})
++
++	t.Run("secondary component compB deleted", func(t *testing.T) {
++		// compB is removed from design
++		design := &pattern.PatternFile{
++			Components:    []*component.ComponentDefinition{compA, compC},
++			Relationships: []*relationship.RelationshipDefinition{rel},
++		}
++		if fromAndToComponentsExist(rel, design) {
++			t.Fatal("expected fromAndToComponentsExist to be false when secondary component compB is missing")
++		}
++		if !fromOrToComponentsDontExist(rel, design) {
++			t.Fatal("expected fromOrToComponentsDontExist to be true when secondary component compB is missing")
++		}
++	})
++}
++
++// TestValidateRelationshipsInDesign_OrphanedMultiComponentRelationship verifies
++// that validateRelationshipsInDesign marks a multi-component relationship as deleted
++// when any of its constituent components are removed from the design.
++func TestValidateRelationshipsInDesign_OrphanedMultiComponentRelationship(t *testing.T) {
++	compA := newTestComponent("deploy-a", "Deployment")
++	compB := newTestComponent("deploy-b", "Deployment")
++	compC := newTestComponent("deploy-c", "Deployment")
++
++	kind := "Deployment"
++	rel := &relationship.RelationshipDefinition{
++		ID:               uuid.Must(uuid.NewV4()),
++		Kind:             relationship.RelationshipDefinitionKind("hierarchical"),
++		RelationshipType: "sibling",
++		SubType:          "matchlabels",
++		Model:            modelv1beta1.ModelReference{Name: "kubernetes"},
++		Selectors: &relationship.SelectorSet{
++			{
++				Allow: relationship.Selector{
++					From: []relationship.SelectorItem{
++						{ID: &compA.ID, Kind: &kind},
++						{ID: &compB.ID, Kind: &kind},
++						{ID: &compC.ID, Kind: &kind},
++					},
++					To: []relationship.SelectorItem{
++						{ID: &compA.ID, Kind: &kind},
++						{ID: &compB.ID, Kind: &kind},
++						{ID: &compC.ID, Kind: &kind},
++					},
++				},
++			},
++		},
++	}
++
++	// compC was deleted from the canvas/design
++	des
+```
+
+**File**: `server/policies/policy_alias.go` (modified, +79/-64)
+```diff
+@@ -77,27 +77,33 @@ func isAliasRelationshipValid(rel *relationship.RelationshipDefinition, design *
+ 		return false
+ 	}
+ 
+-	ref := aliasRefFromRelationship(rel)
+-	if ref == nil {
++	refs := aliasRefsFromRelationship(rel)
++	if len(refs) == 0 {
+ 		return false
+ 	}
+ 	config := getComponentConfiguration(toComp, design)
+-	return objectGetNested(config, popFirst(ref), nil) != nil
++	for _, ref := range refs {
++		if objectGetNested(config, popFirst(ref), nil) == nil {
++			return false
++		}
++	}
++	return true
+ }
+ 
+-// aliasRefFromRelationship extracts the mutatorRef path from an alias relationship.
+-func aliasRefFromRelationship(rel *relationship.RelationshipDefinition) []string {
++// aliasRefsFromRelationship extracts the mutatorRef paths from an alias relationship.
++func aliasRefsFromRelationship(rel *relationship.RelationshipDefinition) [][]string {
+ 	if rel.Selectors == nil {
+ 		return nil
+ 	}
++	var refs [][]string
+ 	for _, ss := range *rel.Selectors {
+ 		for _, fromSel := range ss.Allow.From {
+-			if fromSel.RelationshipDefinitionSelectorsPatch != nil && fromSel.RelationshipDefinitionSelectorsPatch.MutatorRef != nil && len(*fromSel.RelationshipDefinitionSelectorsPatch.MutatorRef) > 0 {
+-				return (*fromSel.RelationshipDefinitionSelectorsPatch.MutatorRef)[0]
++			if fromSel.RelationshipDefinitionSelectorsPatch != nil && fromSel.RelationshipDefinitionSelectorsPatch.MutatorRef != nil {
++				refs = append(refs, *fromSel.RelationshipDefinitionSelectorsPatch.MutatorRef...)
+ 			}
+ 		}
+ 	}
+-	return nil
++	return refs
+ }
+ 
+ // identifyAliasRelationships identifies alias relationships for a component.
+@@ -113,41 +119,42 @@ func identifyAliasRelationships(comp *component.ComponentDefinition, relDef *rel
+ 				if fromSel.RelationshipDefinitionSelectorsPatch == nil || fromSel.RelationshipDefinitionSelectorsPatch.MutatorRef == nil || len(*fromSel.RelationshipDefinitionSelectorsPatch.MutatorRef) == 0 {
+ 					continue
+ 				}
+-				ref := (*fromSel.RelationshipDefinitionSelectorsPatch.MutatorRef)[0]
+-				paths := getArrayAwareConfigPaths(ref, comp, design)
+-
+-				for _, path := range paths {
+-					mutatorRef := relationship.MutatorRef{path}
+-					mutatedRef := relationship.MutatedRef{path}
+-					selectorPatch := relationship.RelationshipDefinitionSelectorsPatch{
+-						MutatorRef: &mutatorRef,
+-						MutatedRef: &mutatedRef,
+-					}
+-
+-					compID := staticUUID(map[string]interface{}{"c": comp.ID.String(), "s": path})
+-
+-					newFromSel := fromSel
+-					newFromSel.ID = &compID
+-					newFromSel.RelationshipDefinitionSelectorsPatch = &selectorPatch
+-
+-					newToSel := toSel
+-					newToSel.ID = &comp.ID
+-					newToSel.RelationshipDefinitionSelectorsPatch = &selectorPatch
+-
+-					selectorSetItem := relationship.SelectorSetItem{
+-						Allow: relationship.Selector{
+-							From: []relationship.SelectorItem{newFromSel},
+-							To:   []relationship.SelectorItem{newToSel},
+-						},
++				for _, ref := range *fromSel.RelationshipDefinitionSelectorsPatch.MutatorRef {
++					paths := getArrayAwareConfigPaths(ref, comp, design)
++
++					for _, path := range paths {
++						mutatorRef := relationship.MutatorRef{path}
++						mutatedRef := relationship.MutatedRef{path}
++						selectorPatch := relationship.RelationshipDefinitionSelectorsPatch{
++							MutatorRef: &mutatorRef,
++							MutatedRef: &mutatedRef,
++						}
++
++						compID := staticUUID(map[string]interface{}{"c": comp.ID.String(), "s": path})
++
++						newFromSel := fromSel
++						newFromSel.ID = &compID
++						newFromSel.RelationshipDefinitionSelectorsPatch = &selectorPatch
++
++						newToSel := toSel
++						newToSel.ID = &comp.ID
++						newToSel.RelationshipDefinitionSelectorsPatch = &selectorPatch
++
++						selectorSetItem := relationship.SelectorSetItem{
++							Allow: relationship.Selector{
++								From: []relationship.SelectorItem{newFromSel},
++								To:   []relationship.SelectorItem{newToSel},
++							},
++						}
++
++						decl := deepCopyRelDef(relDef)
++						selectors := relationship.SelectorSet{selectorSetItem}
++						decl.Selectors = &selectors
++						decl.ID = staticUUID(selectorSetItem)
++						setRelStatus(decl, StatusIdentified)
++
++						identified = append(identified, decl)
+ 					}
+-
+-					decl := deepCopyRelDef(relDef)
+-					selectors := relationship.SelectorSet{selectorSetItem}
+-					decl.Selectors = &selectors
+-					decl.ID = staticUUID(selectorSetItem)
+-					setRelStatus(decl, StatusIdentified)
+-
+-					identified = append(identified, decl)
+ 				}
+ 			}
+ 		}
+@@ -190,15 +197,22 @@ func getArrayAwareConfigPaths(ref []string, comp *component.ComponentDefinition,
+ 
+ // aliasRelationshipAlreadyExists checks for duplicate alias relationships.
+ func aliasRelationshipAlreadyExists(design *pattern.PatternFile, rel *relationship.RelationshipDefinition) bool {
++	if rel.Selectors == nil {
++		return false
++	}
+ 	for _, existing := range design.Relationships {
+-		if getRelStatus(existing) == StatusDeleted || !isAliasRelationship(existing) {
++		if getRelStatus(existing) == StatusDeleted 
+```
+
+**File**: `server/policies/policy_binding.go` (modified, +88/-65)
+```diff
+@@ -56,20 +56,18 @@ func patchBindingMatchFields(rel *relationship.RelationshipDefinition, design *p
+ 
+ 	for _, ss := range *rel.Selectors {
+ 		for _, selArr := range [][]relationship.SelectorItem{ss.Allow.From, ss.Allow.To} {
+-			if len(selArr) == 0 {
+-				continue
+-			}
+-			sel := selArr[0]
+-			if sel.Match == nil {
+-				continue
+-			}
+-			compID := selectorItemID(sel)
+-			comp := componentDeclarationByID(design, compID)
+-			if comp == nil {
+-				continue
+-			}
++			for _, sel := range selArr {
++				if sel.Match == nil {
++					continue
++				}
++				compID := selectorItemID(sel)
++				comp := componentDeclarationByID(design, compID)
++				if comp == nil {
++					continue
++				}
+ 
+-			actions = append(actions, patchBindingMatchFieldsForSelector(sel.Match, comp, design, reverse)...)
++				actions = append(actions, patchBindingMatchFieldsForSelector(sel.Match, comp, design, reverse)...)
++			}
+ 		}
+ 	}
+ 	return actions
+@@ -90,53 +88,66 @@ func patchBindingMatchFieldsForSelector(match *relationship.MatchSelector, _ *co
+ 		{match.To, match.From},
+ 	}
+ 	for _, ms := range sides {
+-		if ms.self == nil || len(*ms.self) == 0 {
+-			continue
+-		}
+-		mSel := (*ms.self)[0]
+-		if mSel.MutatorRef == nil {
++		if ms.self == nil || ms.other == nil || len(*ms.self) == 0 || len(*ms.other) == 0 {
+ 			continue
+ 		}
+-		matchComp := findMatchSelectorComponent(mSel, design)
+-		if matchComp == nil {
+-			continue
++		selfLen := len(*ms.self)
++		otherLen := len(*ms.other)
++		pairCount := max(selfLen, otherLen)
++		if selfLen > 1 && otherLen > 1 {
++			pairCount = min(selfLen, otherLen)
+ 		}
++		for p := 0; p < pairCount; p++ {
++			selfIdx := p
++			if selfIdx >= selfLen {
++				selfIdx = 0
++			}
++			otherIdx := p
++			if otherIdx >= otherLen {
++				otherIdx = 0
++			}
++			mSel := (*ms.self)[selfIdx]
++			if mSel.MutatorRef == nil {
++				continue
++			}
++			matchComp := findMatchSelectorComponent(mSel, design)
++			if matchComp == nil {
++				continue
++			}
+ 
+-		if ms.other == nil || len(*ms.other) == 0 {
+-			continue
+-		}
+-		otherSel := (*ms.other)[0]
+-		if otherSel.MutatedRef == nil {
+-			continue
+-		}
+-		otherComp := findMatchSelectorComponent(otherSel, design)
+-		if otherComp == nil {
+-			continue
+-		}
++			otherSel := (*ms.other)[otherIdx]
++			if otherSel.MutatedRef == nil {
++				continue
++			}
++			otherComp := findMatchSelectorComponent(otherSel, design)
++			if otherComp == nil {
++				continue
++			}
+ 
+-		count := min(len(*mSel.MutatorRef), len(*otherSel.MutatedRef))
++			count := min(len(*mSel.MutatorRef), len(*otherSel.MutatedRef))
+ 
+-		for i := range count {
+-			mutatorPath := (*mSel.MutatorRef)[i]
+-			mutatedPath := (*otherSel.MutatedRef)[i]
++			for i := range count {
++				mutatorPath := (*mSel.MutatorRef)[i]
++				mutatedPath := (*otherSel.MutatedRef)[i]
+ 
+-			mutatorValue := configurationForComponentAtPath(mutatorPath, matchComp, design)
+-			oldValue := configurationForComponentAtPath(mutatedPath, otherComp, design)
++				mutatorValue := configurationForComponentAtPath(mutatorPath, matchComp, design)
++				oldValue := configurationForComponentAtPath(mutatedPath, otherComp, design)
+ 
+-			if mutatorValue == nil {
+-				continue
+-			}
+-			if reverse {
+-				if !deepEqual(mutatorValue, oldValue) {
++				if mutatorValue == nil {
+ 					continue
+ 				}
+-				actions = append(actions, cleanupActionForPath(otherComp.ID.String(), mutatedPath, otherComp))
+-				continue
+-			}
+-			if deepEqual(mutatorValue, oldValue) {
+-				continue
++				if reverse {
++					if !deepEqual(mutatorValue, oldValue) {
++						continue
++					}
++					actions = append(actions, cleanupActionForPath(otherComp.ID.String(), mutatedPath, otherComp))
++					continue
++				}
++				if deepEqual(mutatorValue, oldValue) {
++					continue
++				}
++				actions = append(actions, newComponentUpdateAction(getComponentUpdateOp(mutatedPath), otherComp.ID.String(), mutatedPath, mutatorValue))
+ 			}
+-			actions = append(actions, newComponentUpdateAction(getComponentUpdateOp(mutatedPath), otherComp.ID.String(), mutatedPath, mutatorValue))
+ 		}
+ 	}
+ 	return actions
+@@ -318,11 +329,15 @@ func patchBindingSelectorIDsTyped(sel *relationship.SelectorItem, matchFromID, m
+ 	}
+ 	fromUUID, _ := uuidFromString(matchFromID)
+ 	toUUID, _ := uuidFromString(matchToID)
+-	if sel.Match.From != nil && len(*sel.Match.From) > 0 {
+-		(*sel.Match.From)[0].ID = &fromUUID
++	if sel.Match.From != nil {
++		for i := range *sel.Match.From {
++			(*sel.Match.From)[i].ID = &fromUUID
++		}
+ 	}
+-	if sel.Match.To != nil && len(*sel.Match.To) > 0 {
+-		(*sel.Match.To)[0].ID = &toUUID
++	if sel.Match.To != nil {
++		for i := range *sel.Match.To {
++			(*sel.Match.To)[i].ID = &toUUID
++		}
+ 	}
+ }
+ 
+@@ -357,29 +372,37 @@ func isValidBindingTyped(comp1, comp2 *component.ComponentDefinition, sel relati
+ 
+ // extractMutatorFromMatch finds the mutator component and ref paths from a match field.
+ func extractMutatorFromMatch(match *relationship.MatchSelector, comp1, comp2 *component.ComponentDefinition) (*component.ComponentDefinition, [][]string) {
+-	if match.From
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #22858** (2026-11-05): [mesheryctl] Send perf apply durations in whole seconds and reject the rest (@Eternity0207)
-- **PR #22855** (2026-11-05): [mesheryctl] Accept any case of --output-format in the output formatter factories (@Eternity0207)
-- **PR #22852** (closed): [UI] Type ArrayFieldTemplate props and fix fixed-array detection (@dropps07)
-- **PR #22850** (2026-11-05): [mesheryctl] Return an error instead of exiting on stdin read failures in prompts (@harshitsaxena214)
-- **PR #22846** (closed): [UI] Forward options through initiateQuery (@krishbuilds01)
-- **PR #22839** (2026-11-04): [Server] Close each adapter client per host in Provision (@harshitsaxena214)
+- **PR #23121** (2026-11-10): [mesheryctl] Enforce exact argument validation in workspace create (@madhavzanwar)
+- **PR #23117** (2026-11-10): [mesheryctl] Enforce exact argument validation in environment view (@madhavzanwar)
+- **PR #23115** (2026-11-10): [Server] Validate credential ID path parameter in GetUserCredentialByID (@Supersaiyan101)
+- **PR #23113** (2026-11-10): [Server] Validate multi-selector relationships and prevent ghost relationship bleed (#23111) (@nishant-devv)
+- **PR #23109** (2026-11-10): [UI] Honor hideError in widget error indicators (@dropps07)
+- **PR #23105** (2026-11-09): [mesheryctl] Enforce exact argument validation in environment list (@ayushbuilds-code)
 
 ---
 
@@ -1268,55 +1570,35 @@ Signed-off-by: Aman Singh <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [Server] Harden fd leak tests for Linux /proc/self/fd and decouple live template
+## X. Merge pull request #23121 from madhavzanwar/fix/workspace-create-args
 
 **RULE**:
-When implementing operations in `server/models/k8s_components_registration_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `mesheryctl/internal/cli/root/workspaces/create.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6a0dfa7a`: [Server] Harden fd leak tests for Linux /proc/self/fd and decouple live template assertions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7c78aabb`: Merge pull request #23121 from madhavzanwar/fix/workspace-create-args. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/models/k8s_components_registration_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `mesheryctl/internal/cli/root/workspaces/create.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
-```typescript
+```go
 // Verified production-grade fix pattern:
-	// Track open file descriptors around the call (effective on Linux /proc/self/fd)
-	beforeFDs, _ := filepath.Glob("/proc/self/fd/*")
-	afterFDs, _ := filepath.Glob("/proc/self/fd/*")
-	if len(beforeFDs) > 0 && len(afterFDs) > 0 {
-		assert.Equal(t, len(beforeFDs), len(afterFDs), "file descriptor count should remain unchanged after successful load")
-	}
-	// Track open file descriptors around the call (effective on Linux /proc/self/fd)
-	beforeFDs, _ := filepath.Glob("/proc/self/fd/*")
-	afterFDs, _ := filepath.Glob("/proc/self/fd/*")
-	if len(beforeFDs) > 0 && len(afterFDs) > 0 {
-		assert.Equal(t, len(beforeFDs), len(afterFDs), "file descriptor should be closed even on unmarshal error")
-	}
-	// Verify deferred close executed despite JSON unmarshal error (effective on Windows file locks):
-// template file at k8sMeshModelPath can be read and parsed without coupling to volatile values.
-	assert.NotEmpty(t, metadata.PrimaryColor)
-	assert.NotEmpty(t, *metadata.SecondaryColor)
-	assert.NotEmpty(t, string(*metadata.Shape))
-// is initialized by init() when the template file is available without coupling to volatile values.
-	assert.NotEmpty(t, K8sMeshModelMetadata.PrimaryColor)
-	assert.NotEmpty(t, *K8
+var createUsageMsg = "Usage: mesheryctl workspace create --orgId [orgId] --name [name] --description [description]\nRun 'mesheryctl workspace create --help' to see detailed help message"
+
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", createUsageMsg))
+		}
+		return nil
+	},
 ```
 
 **NEGATIVE CONSTRAINT**:
-```typescript
+```go
 // Anti-pattern to NEVER write (induced failure mode):
-	// Verify deferred close executed despite JSON unmarshal error:
-// template file at k8sMeshModelPath can be read and parsed.
-	assert.Equal(t, "#326CE5", metadata.PrimaryColor)
-	assert.Equal(t, "#7aa1f0", *metadata.SecondaryColor)
-	assert.Equal(t, "circle", string(*metadata.Shape))
-// is initialized by init() when the template file is available.
-	assert.Equal(t, "#326CE5", K8sMeshModelMetadata.PrimaryColor)
-	assert.Equal(t, "#7aa1f0", *K8sMeshModelMetadata.SecondaryColor)
-	assert.Equal(t, "circle", string(*K8sMeshModelMetadata.Shape))
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6a0dfa7a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7c78aabb` are properly handled with clean fallback behavior.

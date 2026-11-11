@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md`  
 > **Source**: github ([https://github.com/invertase/react-native-firebase](https://github.com/invertase/react-native-firebase))  
-> **Source Version**: `cac23b87`  
+> **Source Version**: `bfddcf25`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T03:30:36.409Z  
+> **Timestamp**: 2026-11-09T16:10:59.427Z  
 > **Learning ID**: `learn-github-invertase-react-native-firebase`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/invertase/react-native-firebase](https://github.com/invertase/react-native-firebase))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T03:30:35.748Z  
+> **Harvest Timestamp**: 2026-11-09T16:10:59.422Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🔥 A well-tested feature-rich modular Firebase implementation for React Native. Supports both iOS & Android platforms for all Firebase services.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 12325 stars
+- **Stars / Engagement**: 12328 stars
 
 ---
 
@@ -1569,14 +1569,11 @@ extern NSString *const DEFAULT_APP_NAME;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #9411** (2026-11-02): **fix(crashlytics, ios): name the dSYM input after the executable**
-  *Symptoms*: ### Description  The `[RNFB] Crashlytics Configuration` script phase declared its dSYM input as `${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${TARGET_NAME}`. The DWARF file inside a dSYM is named after the binary, so in any app whose target name differs from its executable name, the declared input pointed at a file that doesn't exist. `pod install` regenerates the phase, so fixing it in Xcode didn't stick.  Changes:  - **The input now uses `${EXECUTABLE_NAME}`.** In Xcode's build-setting specs, app targets (`com.apple.package-type.wrapper.application`, based on `com.apple.package-type.wrapper`) default to `EXECUTABLE_NAME = $(EXECUTABLE_PREFIX)$(PRODUCT_NAME)$(EXECUTABLE_VARIANT_SUFFIX)$(EXECUTABLE_SUFFIX)`, and the prefix and both suffixes default to empty. So by default this resolves to the same path Firebase documents (`.../DWARF/${PRODUCT_NAME}`, in their docs and in `CrashlyticsInputFiles.xcfilelist`). It also covers apps that set a custom executable name. - **The test app's regenerated script phase** in `tests/ios/testing.xcodeproj` is updated to match, so `pod install` leaves no diff.  Apps whose target and product names match resolve to the same file as before, so nothing changes for them. Symbol uploads didn't depend on this input: `ios_config.sh` uploads from the dSYM folder. The wrong input affected Xcode's dependency analysis and script sandboxing.  ### Related issues  - Fixes #9404  ### Release Summary  Crashlytics (iOS): the dSYM i
+- **Issue #9448** (2026-11-08): **fix(e2e): harden shared-host e2e scripts for slots, foreign Jet ports and TMPDIR**
+  *Symptoms*: **Stack position: 4 of 4. Stacked on #9444; merge after it.** Stack order: #9446 (cpuset-aware build concurrency) → #9447 (tooling and test fixes) → #9444 (recorded-only e2e release) → this PR. The base is #9444's branch, so the diff shows only this PR's eight commits.  ### Description  Three fixes and two doc changes for e2e scripts on a host shared with other checkouts or users, plus three test-only commits ((5), (6) and (8)). They build on #9444's run record and owner labels. No package source or public API changes.  1. **`fix(e2e): re-apply the selected slot's env for check and release --slot=N`**: `yarn tests:e2e:check --slot=N` and `release --slot=N`, run without that slot's env loaded, used to probe the serial identity (`emulator-5554`, `TestingAVD`, `:8081`). They now load slot N's env first, keep a caller's `RNFB_E2E_PLATFORM` (or `--platform=`) narrowing, and exit 2 before touching anything when `--slot=N` disagrees with an already-loaded slot env. `--all-slots` stays unscoped. 2. **`fix(e2e): fail fast when another user's process holds the Jet port`**: `lsof` only sees the current user's processes, so another user's listener on a Jet port looked free, and the harness waited for a port it could never get. The Android/iOS Detox harness now fails fast in its Jet host-clear and retry drain when the port accepts connections but has no listener it can attribute, naming `owner=unrecorded` and the free-slot hint. `yarn tests:e2e:check` reports the same case as BUSY on ever
 
-- **Issue #9409** (2026-11-02): **chore(deps): bump ruby/setup-ruby from 1.329.0 to 1.334.0**
-  *Symptoms*: Bumps [ruby/setup-ruby](https://github.com/ruby/setup-ruby) from 1.329.0 to 1.334.0. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/ruby/setup-ruby/releases">ruby/setup-ruby's releases</a>.</em></p> <blockquote> <h2>v1.334.0</h2> <h2>What's Changed</h2> <ul> <li>Add ruby-3.3.13,ruby-3.4.12,ruby-4.0.9 by <a href="https://github.com/ruby-builder-bot"><code>@​ruby-builder-bot</code></a> in <a href="https://redirect.github.com/ruby/setup-ruby/pull/956">ruby/setup-ruby#956</a></li> </ul> <p><strong>Full Changelog</strong>: <a href="https://github.com/ruby/setup-ruby/compare/v1.333.0...v1.334.0">https://github.com/ruby/setup-ruby/compare/v1.333.0...v1.334.0</a></p> <h2>v1.333.0</h2> <h2>What's Changed</h2> <ul> <li>Add ruby-4.0.8 by <a href="https://github.com/ruby-builder-bot"><code>@​ruby-builder-bot</code></a> in <a href="https://redirect.github.com/ruby/setup-ruby/pull/955">ruby/setup-ruby#955</a></li> </ul> <p><strong>Full Changelog</strong>: <a href="https://github.com/ruby/setup-ruby/compare/v1.332.0...v1.333.0">https://github.com/ruby/setup-ruby/compare/v1.332.0...v1.333.0</a></p> <h2>v1.332.0</h2> <h2>What's Changed</h2> <ul> <li>Update CRuby releases on Windows (CVE-2026-111943) by <a href="https://github.com/ruby-builder-bot"><code>@​ruby-builder-bot</code></a> in <a href="https://redirect.github.com/ruby/setup-ruby/pull/952">ruby/setup-ruby#952</a></li> </ul> <p><strong>Full Changelog</strong>: <a href="https://github.com/ruby
-  **Post-Mortem & Fix Analysis**:
-  > [![CLA assistant check](https://cla-assistant.io/pull/badge/not_signed)](https://cla-assistant.io/invertase/react-native-firebase?pullRequest=9409) <br/>Thank you for your submission! We really appreciate it. Like many open source projects, we ask that you sign our [Contributor License Agreement](https://cla-assistant.io/invertase/react-native-firebase?pullRequest=9409) before we can accept your contribution.<br/><sub>You have signed the CLA already but the status is still pending? Let us [recheck](https://cla-assistant.io/check/invertase/react-native-firebase?pullRequest=9409) it.</sub>
-  > Superseded by #9420.
+- **Issue #9447** (2026-11-08): **fix: harden ruby:install, lint:android and host-dependent app tests**
+  *Symptoms*: **Stack position: 2 of 4. Stacked on #9446; merge after it.** Stack order: #9446 (cpuset-aware build concurrency) → this PR → #9444 (recorded-only e2e release) → #9448 (shared-host e2e hardening). The base is #9446's branch, so the diff shows only this PR's four commits.  ### Description  Four small fixes for contributor tooling and tests that broke on ordinary hosts. No package source or public API changes.  1. **`fix(scripts): skip ruby:install when host Ruby is too old or bundler cannot run`** — On a stock Mac `/usr/bin/bundle` (system Ruby 2.6) is on `PATH`, so the existing "skip when no bundle" rule never applied and root `yarn` failed with `Could not find 'bundler'`. `yarn ruby:install` now also skips, with one `ruby:install:` line naming why, when the `ruby` on `PATH` is older than 3.3.1 or `bundle --version` fails. A failed `bundle install` still fails. CI is unchanged (Ubuntu jobs have no bundle; macOS jobs use setup-ruby 3). `CONTRIBUTING.md` gains a "Ruby for iOS and macOS work" section; the e2e prerequisites and the agent command docs state the same floor. 2. **`fix(lint): skip the android git diff check outside a git work tree`** — `lint:android`'s `git diff` step failed in a copy of the checkout that is not a git repo (for example an rsync copy). `google-java-format --set-exit-if-changed` still fails on formatting changes. 3. **`fix(tests): skip native build dirs in harness default scan`** — the committed-harness Jest scan walked `tests/ios/build` and other nati
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1593,110 +1590,1160 @@ extern NSString *const DEFAULT_APP_NAME;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cac23b87` (2026-11-02)
-**Commit Message**: fix(crashlytics, ios): name the dSYM input after the executable (#9411)
+### Incident Patch 1: `37a17e7f` (2026-11-08)
+**Commit Message**: build: cap lerna prepare concurrency by memory as well as CPUs
 
-**File**: `packages/crashlytics/__tests__/reactNativeConfig.test.ts` (modified, +50/-0)
+Lerna runs one prepare task per CPU by default. Each task runs bob build (tsc and babel) and can hold well over 1 GiB, and during a cold yarn install the Yarn process itself holds several GiB. On a 16-CPU / 8 GiB Linux machine or container the kernel OOM killer then kills Yarn mid-prepare. Yarn's yarnPath launcher reports a signal-killed child as a bare exit 1, so yarn install --immutable failed with no error text.
+
+scripts/lerna-prepare-concurrency.js replaces the inline node -p in lerna:prepare. It keeps RNFB_LERNA_CONCURRENCY and os.availableParallelism(), and adds a cap of one task per 2.5 GiB of memory (the cgroup limit when one is set), with a floor of 1. Machines with plenty of memory per CPU keep one task per CPU.
+
+**File**: `okf-bundle/monorepo-tooling/prepare-and-cache.md` (modified, +1/-1)
 ```diff
-@@ -5,6 +5,32 @@ import { describe, expect, it } from '@jest/globals';
+@@ -97,7 +97,7 @@ Add `nx.json`; keep the `yarn lerna:prepare` entrypoint name, with `NX_NO_CLOUD`
+ - **`inputs: ["jsSource"]`** scopes the cache key to what `prepare` actually consumes (JS source + plugin sources + the package/base tsconfig + `package.json`, which carries the bob config, plus workspace `yarn.lock` so lockfile-only toolchain bumps bust the cache). Without this, Nx defaults inputs to the whole `{projectRoot}`, so unrelated edits to `__tests__/**`, `e2e/**`, `android/**`, `ios/**`, or docs would needlessly bust the `prepare` cache and — via `^prepare` — every dependent. See [MonoTool-AD-11](architecture-decisions.md#monotool-ad-11--scope-prepare-cache-inputs-with-a-jssource-namedinput--accepted). (`lib/version.ts` is gitignored, so Nx's file hasher excludes it from inputs even though it matches the `lib/**` glob — no self-invalidation.)
+ - **`outputs` must list every file `prepare` writes**, including the _generated, gitignored_ ones, or a cache **hit** restores `dist/**` but leaves those files missing on a clean tree. `genversion` writes `lib/version.ts` in every package (imported by 18 packages' `lib` source), so it is a shared output. See [generated-file outputs](#generated-file-outputs-cache-correctness) and [MonoTool-AD-10](architecture-decisions.md#monotool-ad-10--generated-version-files-are-declared-cache-outputs-not-committed--accepted).
+ - **No-cloud everywhere:** see [MonoTool-AD-1](architecture-decisions.md#monotool-ad-1--nx-local-cache-via-the-lerna-runner-no-turborepo-no-nx-cloud--accepted) + [MonoTool-AD-8](architecture-decisions.md#monotool-ad-8--nxcache-shared-on-ci-not-on-publish--accepted) — `NX_NO_CLOUD=true` on the local entrypoint and every CI job that runs Nx.
+-- **Concurrency:** `lerna:prepare` passes `--concurrency` from `RNFB_LERNA_CONCURRENCY` when it is a positive integer (no leading zero), otherwise from `os.availableParallelism()`, which honours the CPU affinity mask (cpusets). Other values are ignored.
++- **Concurrency:** `lerna:prepare` passes `--concurrency` from `scripts/lerna-prepare-concurrency.js`, which only prints a number (the entrypoint is still the inline `lerna run prepare`). The value is `RNFB_LERNA_CONCURRENCY` when it is a positive integer (no leading zero); other values are ignored. Otherwise it is the smaller of `os.availableParallelism()`, which honours the CPU affinity mask (cpusets), and one task per 2.5 GiB of memory (the cgroup limit when there is one, else total RAM), and at least 1. Lerna's own default is one task per CPU. Each `bob build` task can hold well over 1 GiB, and a cold `yarn install` keeps several GiB resident in Yarn itself, so a 16-CPU / 8 GiB Linux VM or container ran out of memory during `yarn install` and the kernel killed Yarn. Yarn's `yarnPath` launcher turns that signal into a bare exit 1 with no message.
+ - **`patch-package` prepare is not cacheable** — see [below](#patch-package-prepare-must-not-be-nx-cached) and [MonoTool-AD-12](architecture-decisions.md#monotool-ad-12--never-nx-cache-prepare-when-the-script-is-patch-package--accepted).
  
- const config = require('../react-native.config.js');
- 
-+function expandFlatBuildSettings(value: string, settings: Record<string, string>): string {
-+  return value.replace(/\$[{(](\w+)[})]/g, (_match: string, name: string) =>
-+    expandFlatBuildSettings(settings[name] ?? '', settings),
-+  );
+ <a id="patch-package-prepare-must-not-be-nx-cached"></a>
+```
+
+**File**: `package.json` (modified, +1/-1)
+```diff
+@@ -6,7 +6,7 @@
+     "postinstallDev": "yarn prepare && yarn lerna:prepare && yarn ruby:install",
+     "ruby:install": "bash ./scripts/ruby-install.sh",
+     "prepare": "patch-package",
+-    "lerna:prepare": "cross-env NX_NO_CLOUD=true NX_CACHE_DIRECTORY=.nx/cache NX_WORKSPACE_DATA_DIRECTORY=.nx/workspace-data lerna run prepare --concurrency \"$(node -p 'const n = process.env.RNFB_LERNA_CONCURRENCY, os = require(\"os\"); /^[1-9][0-9]*$/.test(n) ? n : os.availableParallelism?.() ?? os.cpus().length')\"",
++    "lerna:prepare": "cross-env NX_NO_CLOUD=true NX_CACHE_DIRECTORY=.nx/cache NX_WORKSPACE_DATA_DIRECTORY=.nx/workspace-data lerna run prepare --concurrency \"$(node scripts/lerna-prepare-concurrency.js)\"",
+     "lerna:clean": "lerna clean",
+     "build:all:clean": "lerna run build:clean",
+     "build:all:build": "lerna run build",
+```
+
+**File**: `packages/app/__tests__/lernaPrepareConcurrency.test.js` (added, +44/-0)
+```diff
+@@ -0,0 +1,44 @@
++const { execFileSync } = require('child_process');
++const path = require('path');
++
++const {
++  lernaPrepareConcurrency,
++  MEMORY_PER_TASK_BYTES,
++} = require('../../../scripts/lerna-prepare-concurrency');
++
++const GiB = 1024 ** 3;
++
++describe('lerna-prepare-concurrency', function () {
++  it('uses one task per CPU when memory allows it', function () {
++    expect(lernaPrepareConcurrency({ override: undefined, cpus: 4, memory: 16 * GiB })).toBe(4);
++  });
++
++  it('caps tasks by memory on a many-CPU, low-memory machine', function () {
++    expect(lernaPrepareConcurrency({ override: undefined, cpus: 16, memory: 8 * GiB })).toBe(
++      Math.floor((8 * GiB) / MEMORY_PER_TASK_BYTES),
++    );
++  });
++
++  it('never goes below one task', function () {
++    expect(lernaPrepareConcurrency({ override: undefined, cpus: 8, memory: 1 * GiB })).toBe(1);
++  });
++
++  it('uses RNFB_LERNA_CONCURRENCY when it is a positive integer', function () {
++    expect(lernaPrepareConcurrency({ override: '12', cpus: 2, memory: 1 * GiB })).toBe(12);
++  });
++
++  it('ignores RNFB_LERNA_CONCURRENCY values that are not positive integers', function () {
++    for (const override of ['', '0', '07', '-1', '2.5', 'four']) {
++      expect(lernaPrepareConcurrency({ override, cpus: 2, memory: 64 * GiB })).toBe(2);
++    }
++  });
++
++  it('prints a positive integer when run as a script', function () {
++    const out = execFileSync(
++      process.execPath,
++      [path.resolve(__dirname, '../../../scripts/lerna-prepare-concurrency.js')],
++      { encoding: 'utf8', env: { ...process.env, RNFB_LERNA_CONCURRENCY: '3' } },
++    );
++    expect(out).toBe('3\n');
++  });
++});
+```
+
+**File**: `scripts/lerna-prepare-concurrency.js` (added, +41/-0)
+```diff
+@@ -0,0 +1,41 @@
++// Prints the --concurrency value for `yarn lerna:prepare`.
++//
++// Each prepare task runs `bob build` (tsc + babel) and can hold well over 1 GiB,
++// on top of Yarn and Lerna themselves during `yarn install`. Running one task per
++// CPU on a many-core, low-memory machine (a 16-CPU / 8 GiB Linux VM or container)
++// gets the install killed by the kernel OOM killer.
++const os = require('os');
++
++const MEMORY_PER_TASK_BYTES = 2.5 * 1024 ** 3;
++
++function cpuCount() {
++  return typeof os.availableParallelism === 'function'
++    ? os.availableParallelism()
++    : os.cpus().length;
 +}
 +
-+const appBuildSettings: Record<string, string> = {
-+  DWARF_DSYM_FOLDER_PATH: '/dsyms',
-+  DWARF_DSYM_FILE_NAME: 'ExampleApp.app.dSYM',
-+  TARGET_NAME: 'ExampleApp',
-+  PRODUCT_NAME: 'Example Development',
-+  EXECUTABLE_PREFIX: '',
-+  EXECUTABLE_VARIANT_SUFFIX: '',
-+  EXECUTABLE_SUFFIX: '',
-+  EXECUTABLE_NAME:
-+    '$(EXECUTABLE_PREFIX)$(PRODUCT_NAME)$(EXECUTABLE_VARIANT_SUFFIX)$(EXECUTABLE_SUFFIX)',
-+};
-+
-+function declaredDwarfInput(): string {
-+  const input = config.dependency.platforms.ios.scriptPhases[0].input_files.find((file: string) =>
-+    file.includes('/DWARF/'),
-+  );
-+  expect(typeof input).toBe('string');
-+  return input;
++// process.constrainedMemory() reports a cgroup memory limit; it returns 0 (or a
++// huge number) when there is none.
++function memoryBytes() {
++  const total = os.totalmem();
++  const constrained =
++    typeof process.constrainedMemory === 'function' ? process.constrainedMemory() : 0;
++  return constrained > 0 && constrained < total ? constrained : total;
 +}
 +
- describe('Crashlytics react-native.config.js', function () {
-   it('declares the iOS script phase that uploads dSYMs', function () {
-     // Without this entry `pod install` silently drops the
-@@ -18,6 +44,30 @@ describe('Crashlytics react-native.config.js', function () {
-     expect(scriptPhases[0].execution_position).toBe('after_compile');
++function lernaPrepareConcurrency({
++  override = process.env.RNFB_LERNA_CONCURRENCY,
++  cpus = cpuCount(),
++  memory = memoryBytes(),
++} = {}) {
++  if (typeof override === 'string' && /^[1-9][0-9]*$/.test(override)) {
++    return Number(override);
++  }
++  return Math.max(1, Math.min(cpus, Math.floor(memory / MEMORY_PER_TASK_BYTES)));
++}
++
++module.exports = { lernaPrepareConcurrency, MEMORY_PER_TASK_BYTES };
++
++if (require.main === module) {
++  process.stdout.write(`${lernaPrepareConcurrency()}\n`);
++}
+```
+
+---
+
+### Incident Patch 2: `bcde2f45` (2026-11-08)
+**Commit Message**: fix(e2e): bound the drain's terminateApp and keep a drained attempt off the next device
+
+- A drained attempt's launch retry now checks for abandonment first, before
+  an Android cold boot, so it cannot reboot the emulator the next attempt
+  uses. Its late launch-ok and orchestrate-failed posts are skipped too.
+- The drain's terminateApp is bounded (15 s, RNFB_DRAIN_TERMINATE_TIMEOUT_MS).
+  Detox's terminateApp has no timeout; on iOS it ran 81 s before the 30 s
+  orchestrate wait could start.
+- e2eRunRecord.test.js no longer reads the host's devices: ps, pgrep and
+  pkill hide qemu and launchd_sim processes this run did not start, and adb
+  and simctl list no devices. Another run of the suite, or a real emulator
+  on an identity serial, changed its results, and release's pkill could stop
+  a same-AVD emulator it did not start.
+- The orphan-listener tests kill their listener by pid, even when they fail.
+
+**File**: `packages/app/__tests__/e2eRunRecord.test.js` (modified, +162/-8)
+```diff
+@@ -69,18 +69,21 @@ function settle(promise, ms) {
+ 
+ /** Long-lived process whose args carry a device token needle (qemu @AVD / launchd_sim UDID). */
+ function startTokenProcess(...tokenArgs) {
+-  const child = spawn(process.execPath, ['-e', 'setTimeout(() => {}, 60000)', ...tokenArgs], {
+-    stdio: 'ignore',
+-  });
++  const child = spawn(
++    process.execPath,
++    ['-e', 'setTimeout(() => {}, 60000)', ...tokenArgs, HOST_MARK],
++    { stdio: 'ignore' },
++  );
+   const exited = new Promise(resolve => child.once('exit', (_code, signal) => resolve(signal)));
+   return { child, exited };
+ }
+ 
+ function startTokenProcessIn(cwd, ...tokenArgs) {
+-  const child = spawn(process.execPath, ['-e', 'setTimeout(() => {}, 60000)', ...tokenArgs], {
+-    stdio: 'ignore',
+-    cwd,
+-  });
++  const child = spawn(
++    process.execPath,
++    ['-e', 'setTimeout(() => {}, 60000)', ...tokenArgs, HOST_MARK],
++    { stdio: 'ignore', cwd },
++  );
+   const exited = new Promise(resolve => child.once('exit', (_code, signal) => resolve(signal)));
+   return { child, exited };
+ }
+@@ -110,9 +113,10 @@ async function waitGone(pid, ms) {
+  * Jest worker: ownership must then come from the run record alone.
+  */
+ function startDetached(argv, cwd = os.tmpdir()) {
++  const marked = argv[0] === process.execPath ? [...argv, HOST_MARK] : argv;
+   const out = execFileSync(
+     '/bin/sh',
+-    ['-c', '"$@" >/dev/null 2>&1 </dev/null & echo $!', 'sh', ...argv],
++    ['-c', '"$@" >/dev/null 2>&1 </dev/null & echo $!', 'sh', ...marked],
+     {
+       encoding: 'utf8',
+       cwd,
+@@ -164,6 +168,78 @@ function realBin(name) {
+   return execFileSync('/bin/sh', ['-c', `command -v ${name}`], { encoding: 'utf8' }).trim();
+ }
+ 
++/*
++ * Host device discovery sees only the fake devices this run started (they carry
++ * HOST_MARK): a real emulator or simulator, or another run of this suite (same fake
++ * names, same cwd), must not change results. ps -ax / pgrep / pkill hide unmarked
++ * qemu-system and launchd_sim processes; adb and simctl list no devices. Tests that
++ * need other answers put their own adb / xcrun earlier on PATH.
++ */
++const HOST_MARK = `rnfb-run-record-test=${process.pid}-${Date.now()}`;
++const hostStubDir = fs.mkdtempSync(path.join(os.tmpdir(), 'rnfb-run-record-host-'));
++const hostPath = process.env.PATH;
++const deviceFilter = `re='qemu-system|launchd_sim'
++foreign_device() { [[ "$1" =~ $re && "$1" != *${JSON.stringify(HOST_MARK)}* ]]; }`;
++writeExecutable(
++  path.join(hostStubDir, 'ps'),
++  `#!/bin/bash
++case " $* " in
++  *" -ax"*) ;;
++  *) exec ${realBin('ps')} "$@" ;;
++esac
++${deviceFilter}
++${realBin('ps')} "$@" | while IFS= read -r line; do
++  foreign_device "$line" || printf '%s\\n' "$line"
++done
++exit "\${PIPESTATUS[0]}"
++`,
++);
++writeExecutable(
++  path.join(hostStubDir, 'pgrep'),
++  `#!/bin/bash
++${deviceFilter}
++out="$(${realBin('pgrep')} "$@")" || exit
++kept=1
++while IFS= read -r line; do
++  [[ -n "$line" ]] || continue
++  foreign_device "$(${realBin('ps')} -p "\${line%% *}" -o args= 2>/dev/null)" && continue
++  printf '%s\\n' "$line"
++  kept=0
++done <<<"$out"
++exit "$kept"
++`,
++);
++writeExecutable(
++  path.join(hostStubDir, 'pkill'),
++  `#!/bin/bash
++sig=TERM
++args=()
++for a in "$@"; do
++  case "$a" in
++    -f) args+=("$a") ;;
++    -[0-9]* | -[A-Z]*) sig="\${a#-}" ;;
++    *) args+=("$a") ;;
++  esac
++done
++pids="$(${JSON.stringify(path.join(hostStubDir, 'pgrep'))} "\${args[@]}")" || exit 1
++kill -s "$sig" $pids
++`,
++);
++writeExecutable(
++  path.join(hostStubDir, 'adb'),
++  `#!/bin/bash\n[[ "$1" == devices ]] && printf 'List of devices attached\\n\\n' && exit 0\nexit 1\n`,
++);
++writeExecutable(
++  path.join(hostStubDir, 'xcrun'),
++  `#!/bin/bash\n[[ "$*" == *-j* ]] && printf '{"devices":{}}\\n'\nexit 0\n`,
++);
++process.env.PATH = `${hostStubDir}:${hostPath}`;
++
++afterAll(function () {
++  process.env.PATH = hostPath;
++  fs.rmSync(hostStubDir, { recursive: true, force: true });
++});
++
+ describe('e2e run record (shell)', function () {
+   let dir;
+ 
+@@ -501,6 +577,7 @@ exit 0
+       '@TestingAVD-1',
+       '-port',
+       '16224',
++      HOST_MARK,
+     ]);
+     const parent = spawn(
+       process.execPath,
+@@ -964,6 +1041,83 @@ setTimeout(() => {}, 60000);`,
+   });
+ });
+ 
++describe('host device discovery in this suite', function () {
++  let dir;
++  const unmarked = [];
++
++  beforeEach(function () {
++    dir = fs.mkdtempSync(path.join(os.tmpdir(), 'rnfb-run-record-host-test-'));
++  });
++
++  afterEach(async function () {
++    for (const p of unmarked.splice(0)) {
++      p.child.kill('SIGKILL');
++      await p.exited;
++    }
++    fs.rmSync(dir, { recursive: true, force: true });
++  });
++
++  // What another run of this suite, or a real emulator / simulator, looks like.
++  function startUnmarked(...args) {
++    const child = spawn(process.execPath, ['-e', 'setTimeout(() => {}, 60000)', ...args], {
++      stdio: 'ignore',
++      cwd: path.join(repoRoot, 'tests'),
++    });
++    const p = { child, exited: new Promise(resolve => child.o
+```
+
+**File**: `packages/app/__tests__/jetAttemptDrain.test.js` (modified, +85/-13)
+```diff
+@@ -14,7 +14,7 @@ const {
+   killJetAfterOrchestrateFailure,
+   killJetForRetry,
+   stopAttemptJet,
+-  waitForOrchestrate,
++  waitAtMost,
+ } = require('../../../tests/e2e/jetAttemptDrain');
+ const { createJetAttemptSession } = require('../../../tests/e2e/jetSession');
+ 
+@@ -88,6 +88,19 @@ function killTree(proc) {
+   }
+ }
+ 
++// Orphaned listeners have no ChildProcess handle; a failed assertion must not leak them.
++function killPids(pids) {
++  for (const pid of pids.splice(0)) {
++    try {
++      process.kill(pid, 'SIGKILL');
++    } catch (err) {
++      if (err.code !== 'ESRCH') {
++        throw err;
++      }
++    }
++  }
++}
++
+ function exited(proc) {
+   return new Promise(resolve => {
+     if (!jetProcessAlive(proc)) {
+@@ -125,11 +138,13 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+ 
+ describe('Jet attempt drain', function () {
+   const procs = [];
++  const pids = [];
+ 
+   afterEach(function () {
+     for (const proc of procs.splice(0)) {
+       killTree(proc);
+     }
++    killPids(pids);
    });
  
-+  it('declares the dSYM DWARF input by executable name', function () {
-+    const inputFiles = config.dependency.platforms.ios.scriptPhases[0].input_files;
+   it('stops the Jet a launch retry respawned, not only the one the attempt started with', async function () {
+@@ -167,6 +182,7 @@ describe('Jet attempt drain', function () {
+     expect(await waitFor(() => portOpen(port))).toBe(true);
+     const listener = execSync(`pgrep -P ${root.pid}`, { encoding: 'utf8' }).trim();
+     expect(listener).toMatch(/^\d+$/);
++    pids.push(Number(listener));
+ 
+     expect(stopAttemptJet({ process: root, abandon() {} }, { killTree })).toBe(root.pid);
+ 
+@@ -185,11 +201,11 @@ describe('Jet attempt drain', function () {
+   it('treats a Jet that was signalled but has not exited as alive', async function () {
+     const proc = spawn(
+       process.execPath,
+-      ['-e', "process.on('SIGTERM', () => {}); setInterval(() => {}, 1000)"],
+-      { stdio: 'ignore' },
++      ['-e', "process.on('SIGTERM', () => {}); console.log('ready'); setInterval(() => {}, 1000)"],
++      { stdio: ['ignore', 'pipe', 'ignore'] },
+     );
+     procs.push(proc);
+-    await sleep(300);
++    await new Promise(resolve => proc.stdout.once('data', resolve));
+     proc.kill('SIGTERM');
+     await sleep(200);
+     expect(proc.killed).toBe(true);
+@@ -376,11 +392,13 @@ describe('a late attempt-1 orchestrate after the drain', function () {
+ 
+ describe('killJetForRetry', function () {
+   const procs = [];
++  const pids = [];
+ 
+   afterEach(function () {
+     for (const proc of procs.splice(0)) {
+       killTree(proc);
+     }
++    killPids(pids);
+   });
+ 
+   it('leaves the port alone when the Jet exited by itself (never signalled)', async function () {
+@@ -413,6 +431,8 @@ describe('killJetForRetry', function () {
+     procs.push(root);
+     expect(await waitFor(() => portOpen(port))).toBe(true);
+     const listener = Number(execSync(`pgrep -P ${root.pid}`, { encoding: 'utf8' }).trim());
++    expect(listener).toBeGreaterThan(0);
++    pids.push(listener);
+     const closePort = jest.fn(async () => {});
+ 
+     expect(await killJetForRetry(root, { killTree, closePort })).toBe(true);
+@@ -431,25 +451,46 @@ describe('killJetForRetry', function () {
+   });
+ });
+ 
+-describe('waitForOrchestrate', function () {
++describe('waitAtMost', function () {
+   afterEach(function () {
+     jest.useRealTimers();
+   });
+ 
+-  it('clears its timer when the orchestrate settles first', async function () {
++  it('clears its timer when the promise settles first', async function () {
+     jest.useFakeTimers();
+-    expect(await waitForOrchestrate(Promise.resolve(), 30000)).toBe(false);
+-    expect(await waitForOrchestrate(Promise.reject(new Error('launch')), 30000)).toBe(false);
++    expect(await waitAtMost(Promise.resolve(), 30000)).toBe(false);
++    expect(await waitAtMost(Promise.reject(new Error('launch')), 30000)).toBe(false);
+     expect(jest.getTimerCount()).toBe(0);
+   });
+ 
+-  it('reports a timeout when the orchestrate is still running', async function () {
++  it('reports a timeout when the promise is still running', async function () {
+     jest.useFakeTimers();
+-    const pending = waitForOrchestrate(new Promise(() => {}), 30000);
++    const pending = waitAtMost(new Promise(() => {}), 30000);
+     jest.advanceTimersByTime(30000);
+     expect(await pending).toBe(true);
+     expect(jest.getTimerCount()).toBe(0);
+   });
 +
-+    expect(inputFiles).toContain(
-+      '${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${EXECUTABLE_NAME}',
++  it('stops waiting for a hung terminateApp and handles its later rejection', async function () {
++    jest.useFakeTimers();
++    let rejectTerminate;
++    const terminate = new Promise((_, reject) => {
++      rejectTerminate = reject;
++    });
++    const pending = waitAtMost(terminate, 15000);
++    jest.advanceTimersByTime(15000);
++    expect(await pending).toBe(true);
++    const unhandled = jest.fn();
++    process.on('unhandledRejection', unhandled);
++    try {
++      rejectTerminate(new Error('detox disconnected'));
++      jest.useRealTimers();
++      await sleep(50);
++      expect(unhandled).not.toHaveBeenCalled();
++    } finally {
++      process.off('unhandledRejection', unhandled);
++    }
++  
+```
+
+**File**: `tests/e2e/firebase.test.js` (modified, +27/-17)
+```diff
+@@ -46,7 +46,7 @@ const {
+   killJetAfterOrchestrateFailure,
+   killJetForRetry,
+   stopAttemptJet,
+-  waitForOrchestrate,
++  waitAtMost,
+ } = require('./jetAttemptDrain');
+ const { createJetAttemptSession } = require('./jetSession');
+ const {
+@@ -214,6 +214,10 @@ const ANDROID_AVD_NAME =
+ const ANDROID_EMULATOR_COLD_BOOT_ARGS = (
+   process.env.RNFB_ANDROID_EMULATOR_BOOT_ARGS || '-no-snapshot-load -no-snapshot-save'
+ ).trim();
++const DRAIN_TERMINATE_TIMEOUT_MS = parseInt(
++  process.env.RNFB_DRAIN_TERMINATE_TIMEOUT_MS || '15000',
++  10,
++);
+ const DRAIN_ORCHESTRATE_TIMEOUT_MS = parseInt(
+   process.env.RNFB_DRAIN_ORCHESTRATE_TIMEOUT_MS || '30000',
+   10,
+@@ -996,24 +1000,22 @@ async function drainJetAttempt(platform) {
+   // Before the orchestrate wait: a launch retry still running must not respawn Jet.
+   ctx?.jetSession?.abandon();
+ 
++  // Detox terminateApp has no timeout of its own and may already be disconnected.
++  if (
++    await waitAtMost(
++      Promise.resolve().then(() => device.terminateApp()),
++      DRAIN_TERMINATE_TIMEOUT_MS,
++    )
++  ) {
++    console.warn(`[rnfb-e2e] drain terminateApp timed out after ${DRAIN_TERMINATE_TIMEOUT_MS}ms`);
++  }
+   if (platform === 'android') {
+-    try {
+-      await device.terminateApp();
+-    } catch (_) {
+-      // Detox may already be disconnected.
+-    }
+     forceStopAndroidTestingApps('drain');
+-  } else {
+-    try {
+-      await device.terminateApp();
+-    } catch (_) {
+-      // No-op
+-    }
+   }
+ 
+   if (
+     ctx?.orchestratePromise &&
+-    (await waitForOrchestrate(ctx.orchestratePromise, DRAIN_ORCHESTRATE_TIMEOUT_MS))
++    (await waitAtMost(ctx.orchestratePromise, DRAIN_ORCHESTRATE_TIMEOUT_MS))
+   ) {
+     console.warn(`[rnfb-e2e] drain orchestrate timed out after ${DRAIN_ORCHESTRATE_TIMEOUT_MS}ms`);
+   }
+@@ -1478,14 +1480,19 @@ async function killJetForLaunchRetry(jetProcess, reason = 'launch-retry') {
+   });
+ }
+ 
+-async function launchAppWithRetry(launchArgs, { testsDir, onBeforeRelaunch } = {}) {
++async function launchAppWithRetry(
++  launchArgs,
++  { testsDir, onBeforeRelaunch, throwIfAbandoned } = {},
++) {
+   const liveMetro = usesLiveMetro();
+   let lastLaunchFailure;
+   let deleteAppAfterColdBoot = false;
+ 
+   for (let launchAttempt = 1; launchAttempt <= LAUNCH_APP_MAX_ATTEMPTS; launchAttempt++) {
+     try {
+       if (launchAttempt > 1) {
++        // Before the cold boot: a drained attempt must not reboot the next attempt's device.
++        throwIfAbandoned?.();
+         console.warn(
+           `[rnfb-e2e] Retrying launchApp after launch failure (attempt ${launchAttempt}/${LAUNCH_APP_MAX_ATTEMPTS}) liveMetro=${liveMetro}`,
+         );
+@@ -1635,14 +1642,15 @@ async function runJetE2eAttempt(attempt) {
+       },
+       {
+         testsDir,
++        throwIfAbandoned: () => jetSession.throwIfAbandoned(),
+         onBeforeRelaunch: async () => {
+           await jetSession.respawnAfterLaunchRetry();
+         },
+       },
+     );
+-    logOrchestrateState('launch-ok');
+-    // A launch that finishes after the drain must not start the next attempt's Jet run.
++    // A launch that finishes after the drain must not post to or start the next attempt's Jet.
+     jetSession.throwIfAbandoned();
++    logOrchestrateState('launch-ok');
+     await signalJetLaunchReady();
+     logOrchestrateState('tests-run-permitted');
+   };
+@@ -1657,7 +1665,9 @@ async function runJetE2eAttempt(attempt) {
+         return awaitJetExitWithStallGuard(jetSession);
+       })
+       .catch(async err => {
+-        logOrchestrateState('orchestrate-failed');
++        if (!jetSession.abandoned) {
++          logOrchestrateState('orchestrate-failed');
++        }
+         await killJetAfterOrchestrateFailure(jetSession, err, killJetForLaunchRetry);
+         err.jetOutput = jetSession.output;
+         throw err;
+```
+
+**File**: `tests/e2e/jetAttemptDrain.js` (modified, +7/-4)
+```diff
+@@ -68,15 +68,18 @@ async function killJetAfterOrchestrateFailure(session, err, killJet) {
+   return true;
+ }
+ 
+-/** Wait at most `timeoutMs` for an orchestrate to settle; true when the wait timed out. */
+-async function waitForOrchestrate(orchestratePromise, timeoutMs) {
++/**
++ * Wait at most `timeoutMs` for a promise (orchestrate, terminateApp) to settle; true when
++ * the wait timed out. A rejection counts as settled.
++ */
++async function waitAtMost(promise, timeoutMs) {
+   let timer;
+   const timedOut = new Promise(resolve => {
+     timer = setTimeout(() => resolve(true), timeoutMs);
+   });
+   try {
+     return await Promise.race([
+-      orchestratePromise.then(
++      promise.then(
+         () => false,
+         () => false,
+       ),
+@@ -93,5 +96,5 @@ module.exports = {
+   killJetAfterOrchestrateFailure,
+   killJetForRetry,
+   stopAttemptJet,
+-  waitForOrchestrate,
++  waitAtMost,
+ };
+```
+
+---
+
+### Incident Patch 3: `164ea54f` (2026-11-08)
+**Commit Message**: fix(e2e): keep a late Jet attempt from killing the next attempt's Jet
+
+The drain waits a bounded time for the failed attempt's orchestrate, so that orchestrate can still be running when the next attempt starts. It could then kill the Jet holding the Jet port, which is the next attempt's: a launch retry killed the old Jet before checking whether the attempt was abandoned, the orchestrate failure handler killed it whatever the error, and the kill only skipped a Jet that had been signalled, so a Jet that exited by itself went on to the port cleanup. A launch finishing late also told the next attempt's Jet to start its run.
+
+The Jet session moves to tests/e2e/jetSession.js with its spawn, kill and respawn wait injected. An abandoned session refuses to respawn before it kills anything and throws before signalling launch-ready. The failure handler skips the kill once the attempt is abandoned. The launch-retry and stall kill goes through killJetForRetry, which acts only on a Jet that is still running and kills its process tree first, with no SIGTERM to the root that would orphan the listener.
+
+The drain's orchestrate wait clears its timer, so it no longer logs a timeout after the orchestr
+
+**File**: `packages/app/__tests__/e2eStartupFailFast.test.js` (modified, +3/-1)
+```diff
+@@ -232,7 +232,9 @@ describe('9-way overlap and latency tolerance (UNI-9way-latency)', function () {
+     const src = fs.readFileSync(path.join(repoRoot, 'tests/e2e/firebase.test.js'), 'utf8');
+     const killJetAt = src.indexOf('async function killJetForLaunchRetry');
+     const drainAt = src.indexOf("await ensureTcpPortClosed(jetRemotePort(), 'drain')");
+-    const retryAt = src.indexOf('await ensureTcpPortClosed(\n      jetRemotePort(),');
++    const retryAt = src.indexOf(
++      'await ensureTcpPortClosed(jetRemotePort(), label, KILL_JET_FOR_LAUNCH_RETRY_TIMEOUT_MS)',
 +    );
-+    expect(inputFiles.some((file: string) => file.includes('${TARGET_NAME}'))).toBe(false);
+     const portOwnership = fs.readFileSync(
+       path.join(repoRoot, 'tests/e2e/portOwnership.js'),
+       'utf8',
+```
+
+**File**: `packages/app/__tests__/jetAttemptDrain.test.js` (modified, +258/-4)
+```diff
+@@ -11,8 +11,12 @@ jest.setTimeout(30000);
+ const {
+   JetAttemptAbandonedError,
+   jetProcessAlive,
++  killJetAfterOrchestrateFailure,
++  killJetForRetry,
+   stopAttemptJet,
++  waitForOrchestrate,
+ } = require('../../../tests/e2e/jetAttemptDrain');
++const { createJetAttemptSession } = require('../../../tests/e2e/jetSession');
+ 
+ function freePort() {
+   return new Promise((resolve, reject) => {
+@@ -219,6 +223,235 @@ describe('Jet attempt drain', function () {
+   });
+ });
+ 
++// Like the harness ensureTcpPortClosed for this run's own listeners: kills whatever
++// listens on the port, which after the drain is the next attempt's Jet.
++function killPortHolders(port) {
++  const pids = execSync(`lsof -nP -iTCP:${port} -sTCP:LISTEN -t 2>/dev/null || true`, {
++    encoding: 'utf8',
++  })
++    .split(/\s+/)
++    .filter(Boolean);
++  for (const pid of pids) {
++    try {
++      process.kill(Number(pid), 'SIGKILL');
++    } catch (_) {
++      // already gone
++    }
++  }
++}
++
++// The harness always races exitPromise; a killed stand-in Jet rejects it.
++function jetAttemptSession(deps) {
++  const session = createJetAttemptSession(deps);
++  session.exitPromise.catch(() => {});
++  return session;
++}
++
++function orphaningRoot(port) {
++  return spawn(
++    '/bin/sh',
++    [
++      '-c',
++      `${JSON.stringify(process.execPath)} -e "require('net').createServer().listen(${port}, '127.0.0.1'); setInterval(() => {}, 1000)" & wait`,
++    ],
++    { stdio: 'ignore' },
++  );
++}
++
++describe('a late attempt-1 orchestrate after the drain', function () {
++  const procs = [];
++
++  afterEach(function () {
++    for (const proc of procs.splice(0)) {
++      killTree(proc);
++    }
 +  });
 +
-+  it('resolves the dSYM DWARF input to the product name for an app by default', function () {
-+    expect(expandFlatBuildSettings(declaredDwarfInput(), appBuildSettings)).toBe(
-+      '/dsyms/ExampleApp.app.dSYM/Contents/Resources/DWARF/Example Development',
++  // Attempt 1's session, drained, with attempt 2's Jet now holding the same port.
++  async function drainedAttemptWithNextJet() {
++    const port = await freePort();
++    const killJet = jest.fn(proc =>
++      killJetForRetry(proc, { killTree, closePort: async () => killPortHolders(port) }),
 +    );
++    const spawned = [];
++    const session = jetAttemptSession({
++      spawnProcess: () => {
++        const proc = spawnStandInJet(port);
++        spawned.push(proc);
++        procs.push(proc);
++        return proc;
++      },
++      killJet,
++      afterRespawn: async () => {},
++    });
++    expect(await waitFor(() => portOpen(port))).toBe(true);
++    const attempt1Jet = session.process;
++    expect(stopAttemptJet(session, { killTree })).toBe(attempt1Jet.pid);
++    await exited(attempt1Jet);
++    expect(await waitFor(async () => !(await portOpen(port)))).toBe(true);
++
++    const attempt2Jet = spawnStandInJet(port);
++    procs.push(attempt2Jet);
++    expect(await waitFor(() => portOpen(port))).toBe(true);
++    return { port, session, killJet, spawned, attempt2Jet };
++  }
++
++  it('does not respawn: a launch retry throws before killing anything', async function () {
++    const { port, session, killJet, spawned, attempt2Jet } = await drainedAttemptWithNextJet();
++
++    await expect(session.respawnAfterLaunchRetry()).rejects.toBeInstanceOf(
++      JetAttemptAbandonedError,
++    );
++
++    expect(killJet).not.toHaveBeenCalled();
++    expect(spawned).toHaveLength(1);
++    await sleep(300);
++    expect(jetProcessAlive(attempt2Jet)).toBe(true);
++    expect(await portOpen(port)).toBe(true);
 +  });
 +
-+  it('resolves the dSYM DWARF input to a custom executable name when overridden', function () {
++  it('kills nothing when its orchestrate then fails', async function () {
++    const { port, session, killJet, attempt2Jet } = await drainedAttemptWithNextJet();
++
 +    expect(
-+      expandFlatBuildSettings(declaredDwarfInput(), {
-+        ...appBuildSettings,
-+        EXECUTABLE_NAME: 'CustomBinary',
-+      }),
-+    ).toBe('/dsyms/ExampleApp.app.dSYM/Contents/Resources/DWARF/CustomBinary');
++      await killJetAfterOrchestrateFailure(session, new Error('launch timeout'), killJet),
++    ).toBe(false);
++    expect(
++      await killJetAfterOrchestrateFailure(session, new JetAttemptAbandonedError(), killJet),
++    ).toBe(false);
++
++    expect(killJet).not.toHaveBeenCalled();
++    await sleep(300);
++    expect(jetProcessAlive(attempt2Jet)).toBe(true);
++    expect(await portOpen(port)).toBe(true);
 +  });
 +
-   it('points the script phase at a script that exists', function () {
-     const scriptPath = join(__dirname, '..', config.dependency.platforms.ios.scriptPhases[0].path);
++  it('does not start the next attempt’s Jet run when its launch finishes late', async function () {
++    const { session } = await drainedAttemptWithNextJet();
++    expect(() => session.throwIfAbandoned()).toThrow(JetAttemptAbandonedError);
++  });
++
++  it('does not spawn when the drain abandons it during the respawn kill', async function () {
++    const port = await freePort();
++    const spawned = [];
++    let session;
++    session = jetAttemptSession({
++      spawnProcess: () => {
++        const proc = spawnStandInJet(port);
++        spawned.push(proc);
++        procs.push(proc);
++        return proc;
++      },
++      killJet: async proc => {
++        session.abandon();
++        killTree(proc);
++      },
++      afterRespawn: async () => {},
++    });
++
++    await expect(session.respawnAfterLaunchRetry()).rejects.toBeInstanceOf(
++      JetAttemptAbandonedError,
++    );
++    expect(spawned).toHaveLength(1);
++  });
++
++  it('still cleans up its own Jet when its orchestrate fails before any drain', async function () {
++    const port = await freePort();
++    const killJet = jest.fn(async () 
+```
+
+**File**: `packages/app/__tests__/jetExitIgnoreKill.test.js` (modified, +3/-2)
+```diff
+@@ -71,8 +71,9 @@ describe('jetExitIgnoreKill (await-exit stall vs exitPromise race)', function ()
+     const guardBody = src.slice(guardStart, guardEnd);
+     expect(guardBody).toMatch(/jetSession\.killIgnoringExit\(/);
+     expect(guardBody).not.toMatch(/killJetForLaunchRetry\(/);
+-    expect(src).toMatch(/require\('\.\/jetExitIgnoreKill'\)/);
+-    expect(src).toMatch(/async killIgnoringExit\(/);
++    const sessionSrc = fs.readFileSync(path.join(repoRoot, 'tests/e2e/jetSession.js'), 'utf8');
++    expect(sessionSrc).toMatch(/require\('\.\/jetExitIgnoreKill'\)/);
++    expect(sessionSrc).toMatch(/async killIgnoringExit\(/);
+     expect(src).toMatch(/stall-kill-jet/);
+     expect(src).toMatch(/stall-diagnostics/);
+   });
+```
+
+**File**: `tests/e2e/firebase.test.js` (modified, +43/-133)
+```diff
+@@ -42,8 +42,13 @@ const {
+   androidAdbSerialAppearTimeoutMs,
+   jetAwaitExitStallTimeoutMs,
+ } = require('./detoxLatencyPolicy');
+-const { killJetIgnoringExit } = require('./jetExitIgnoreKill');
+-const { JetAttemptAbandonedError, stopAttemptJet } = require('./jetAttemptDrain');
++const {
++  killJetAfterOrchestrateFailure,
++  killJetForRetry,
++  stopAttemptJet,
++  waitForOrchestrate,
++} = require('./jetAttemptDrain');
++const { createJetAttemptSession } = require('./jetSession');
+ const {
+   recordAndroidDevice,
+   recordIosSimulator,
+@@ -1006,15 +1011,11 @@ async function drainJetAttempt(platform) {
+     }
+   }
+ 
+-  if (ctx?.orchestratePromise) {
+-    await Promise.race([
+-      ctx.orchestratePromise.catch(() => {}),
+-      sleep(DRAIN_ORCHESTRATE_TIMEOUT_MS).then(() => {
+-        console.warn(
+-          `[rnfb-e2e] drain orchestrate timed out after ${DRAIN_ORCHESTRATE_TIMEOUT_MS}ms`,
+-        );
+-      }),
+-    ]);
++  if (
++    ctx?.orchestratePromise &&
++    (await waitForOrchestrate(ctx.orchestratePromise, DRAIN_ORCHESTRATE_TIMEOUT_MS))
++  ) {
++    console.warn(`[rnfb-e2e] drain orchestrate timed out after ${DRAIN_ORCHESTRATE_TIMEOUT_MS}ms`);
+   }
+ 
+   const stoppedPid = stopAttemptJet(ctx?.jetSession, { killTree: killSpawnedProcessTree });
+@@ -1455,32 +1456,26 @@ async function awaitJetExitWithStallGuard(jetSession, stallMs = jetAwaitExitStal
+ }
+ 
+ async function killJetForLaunchRetry(jetProcess, reason = 'launch-retry') {
+-  if (!jetProcess || jetProcess.killed) {
+-    return;
+-  }
+-
+   const fromStall = reason === 'stall';
+-  logOrchestrateState(fromStall ? 'stall-kill-jet' : 'launch-retry-kill-jet');
+-  console.warn(
+-    fromStall
+-      ? '[rnfb-e2e] stall-kill: killing Jet after await-exit stall'
+-      : '[rnfb-e2e] launch-retry: killing Jet before terminateApp/reboot',
+-  );
+-  jetProcess.kill('SIGTERM');
+-  await sleep(500);
+-  killSpawnedProcessTree(jetProcess);
+-
+-  try {
+-    await ensureTcpPortClosed(
+-      jetRemotePort(),
+-      fromStall ? 'stall-kill' : 'launch-retry',
+-      KILL_JET_FOR_LAUNCH_RETRY_TIMEOUT_MS,
+-    );
+-  } catch (err) {
+-    console.warn(
+-      `[rnfb-e2e] ${fromStall ? 'stall-kill' : 'launch-retry'}: Jet port still open after kill: ${err?.message || err}`,
+-    );
+-  }
++  const label = fromStall ? 'stall-kill' : 'launch-retry';
++  await killJetForRetry(jetProcess, {
++    killTree: killSpawnedProcessTree,
++    onKill: () => {
++      logOrchestrateState(fromStall ? 'stall-kill-jet' : 'launch-retry-kill-jet');
++      console.warn(
++        fromStall
++          ? '[rnfb-e2e] stall-kill: killing Jet after await-exit stall'
++          : '[rnfb-e2e] launch-retry: killing Jet before terminateApp/reboot',
++      );
++    },
++    closePort: async () => {
++      try {
++        await ensureTcpPortClosed(jetRemotePort(), label, KILL_JET_FOR_LAUNCH_RETRY_TIMEOUT_MS);
++      } catch (err) {
++        console.warn(`[rnfb-e2e] ${label}: Jet port still open after kill: ${err?.message || err}`);
++      }
++    },
++  });
+ }
+ 
+ async function launchAppWithRetry(launchArgs, { testsDir, onBeforeRelaunch } = {}) {
+@@ -1557,58 +1552,7 @@ function recordJetListeners() {
+ }
+ 
+ function createJetSession(jetArgs, testsDir) {
+-  let output = '';
+-  let jetProcess;
+-  let ignoreExit = false;
+-  let abandoned = false;
+-  let resolveExit;
+-  let rejectExit;
+-
+-  const exitPromise = new Promise((resolve, reject) => {
+-    resolveExit = resolve;
+-    rejectExit = reject;
+-  });
+-
+-  const bindProcess = proc => {
+-    jetProcess = proc;
+-    proc.stdout.on('data', chunk => {
+-      const text = chunk.toString();
+-      output += text;
+-      process.stdout.write(text);
+-    });
+-    proc.stderr.on('data', chunk => {
+-      const text = chunk.toString();
+-      output += text;
+-      process.stderr.write(text);
+-    });
+-    proc.on('error', err => {
+-      if (ignoreExit) {
+-        console.warn(`[rnfb-e2e] ignoring Jet error during launch-retry: ${err?.message || err}`);
+-        return;
+-      }
+-      err.jetOutput = output;
+-      rejectExit(err);
+-    });
+-    proc.on('close', code => {
+-      if (ignoreExit) {
+-        console.warn(`[rnfb-e2e] ignoring Jet exit code=${code} during launch-retry`);
+-        return;
+-      }
+-      if (code !== 0) {
+-        const err = new Error('Jet tests failed!');
+-        err.jetOutput = output;
+-        err.jetExitCode = code;
+-        rejectExit(err);
+-        return;
+-      }
+-      resolveExit({ output });
+-    });
+-  };
+-
+-  const spawnJet = () => {
+-    if (abandoned) {
+-      throw new JetAttemptAbandonedError();
+-    }
++  const spawnProcess = () => {
+     const jp = jetRemotePort();
+     const mp = metroPortForHost();
+     const jcp = jetControlPort();
+@@ -1625,56 +1569,20 @@ function createJetSession(jetArgs, testsDir) {
+         RNFB_JET_CONTROL_PORT: String(jcp),
+       },
+     });
+-    bindProcess(proc);
+     // Recorded at spawn so its listeners stay owned even if this process dies first.
+     recordPid(proc.pid, `jet:${jp}`);
+     return proc;
  
 ```
 
-**File**: `packages/crashlytics/react-native.config.js` (modified, +1/-1)
+**File**: `tests/e2e/jetAttemptDrain.js` (modified, +51/-0)
 ```diff
-@@ -12,7 +12,7 @@ module.exports = {
-             path: './ios_config.sh',
-             execution_position: 'after_compile',
-             input_files: [
--              '${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${TARGET_NAME}',
-+              '${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${EXECUTABLE_NAME}',
-               '$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)',
-             ],
-           },
+@@ -39,8 +39,59 @@ function stopAttemptJet(session, { killTree }) {
+   return proc.pid;
+ }
+ 
++/**
++ * Stop a Jet this run spawned (launch retry, stall) and wait for the Jet port to close.
++ * A Jet that has already exited is left alone: its pid may be reused, and the Jet port
++ * may already belong to the next attempt's Jet. Tree first, as in stopAttemptJet.
++ * Returns whether a Jet was stopped.
++ */
++async function killJetForRetry(proc, { killTree, closePort, onKill }) {
++  if (!jetProcessAlive(proc)) {
++    return false;
++  }
++  onKill?.();
++  killTree(proc);
++  await closePort();
++  return true;
++}
++
++/**
++ * Cleanup when an attempt's orchestrate fails. Once the drain has abandoned the attempt,
++ * its Jet is already stopped and the Jet port may be the next attempt's, so a late
++ * failure of the old orchestrate kills nothing.
++ */
++async function killJetAfterOrchestrateFailure(session, err, killJet) {
++  if (err?.jetAttemptAbandoned || session.abandoned) {
++    return false;
++  }
++  await killJet(session.process);
++  return true;
++}
++
++/** Wait at most `timeoutMs` for an orchestrate to settle; true when the wait timed out. */
++async function waitForOrchestrate(orchestratePromise, timeoutMs) {
++  let timer;
++  const timedOut = new Promise(resolve => {
++    timer = setTimeout(() => resolve(true), timeoutMs);
++  });
++  try {
++    return await Promise.race([
++      orchestratePromise.then(
++        () => false,
++        () => false,
++      ),
++      timedOut,
++    ]);
++  } finally {
++    clearTimeout(timer);
++  }
++}
++
+ module.exports = {
+   JetAttemptAbandonedError,
+   jetProcessAlive,
++  killJetAfterOrchestrateFailure,
++  killJetForRetry,
+   stopAttemptJet,
++  waitForOrchestrate,
+ };
 ```
 
-**File**: `tests/ios/testing.xcodeproj/project.pbxproj` (modified, +1/-1)
+**File**: `tests/e2e/jetSession.js` (added, +128/-0)
 ```diff
-@@ -410,7 +410,7 @@
- 			files = (
- 			);
- 			inputPaths = (
--				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${TARGET_NAME}",
-+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${EXECUTABLE_NAME}",
- 				"$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
- 			);
- 			name = "[CP-User] [RNFB] Crashlytics Configuration";
+@@ -0,0 +1,128 @@
++/* eslint-disable no-console */
++/*
++ * One Jet attempt's Jet process: output capture, exit promise, launch-retry respawn.
++ *
++ * The harness injects how Jet is spawned, killed and waited for after a respawn. Once the
++ * drain abandons the attempt, its orchestrate may still be running (the drain waits for
++ * it only so long); nothing it does may kill or respawn Jet from then on, because the Jet
++ * port belongs to the next attempt.
++ */
++const { JetAttemptAbandonedError } = require('./jetAttemptDrain');
++const { killJetIgnoringExit } = require('./jetExitIgnoreKill');
++
++/**
++ * @param {{
++ *   spawnProcess: () => import('child_process').ChildProcess,
++ *   killJet: (proc: import('child_process').ChildProcess, reason: string) => Promise<void>,
++ *   afterRespawn: () => Promise<void>,
++ * }} deps
++ */
++function createJetAttemptSession({ spawnProcess, killJet, afterRespawn }) {
++  let output = '';
++  let jetProcess;
++  let ignoreExit = false;
++  let abandoned = false;
++  let resolveExit;
++  let rejectExit;
++
++  const exitPromise = new Promise((resolve, reject) => {
++    resolveExit = resolve;
++    rejectExit = reject;
++  });
++
++  const bindProcess = proc => {
++    jetProcess = proc;
++    proc.stdout?.on('data', chunk => {
++      const text = chunk.toString();
++      output += text;
++      process.stdout.write(text);
++    });
++    proc.stderr?.on('data', chunk => {
++      const text = chunk.toString();
++      output += text;
++      process.stderr.write(text);
++    });
++    proc.on('error', err => {
++      if (ignoreExit) {
++        console.warn(`[rnfb-e2e] ignoring Jet error during launch-retry: ${err?.message || err}`);
++        return;
++      }
++      err.jetOutput = output;
++      rejectExit(err);
++    });
++    proc.on('close', code => {
++      if (ignoreExit) {
++        console.warn(`[rnfb-e2e] ignoring Jet exit code=${code} during launch-retry`);
++        return;
++      }
++      if (code !== 0) {
++        const err = new Error('Jet tests failed!');
++        err.jetOutput = output;
++        err.jetExitCode = code;
++        rejectExit(err);
++        return;
++      }
++      resolveExit({ output });
++    });
++  };
++
++  const throwIfAbandoned = () => {
++    if (abandoned) {
++      throw new JetAttemptAbandonedError();
++    }
++  };
++
++  const spawnJet = () => {
++    throwIfAbandoned();
++    const proc = spawnProcess();
++    bindProcess(proc);
++    return proc;
++  };
++
++  const setIgnoreExit = value => {
++    ignoreExit = value;
++  };
++
++  spawnJet();
++
++  return {
++    get process() {
++      return jetProcess;
++    },
++    get output() {
++      return output;
++    },
++    get abandoned() {
++      return abandoned;
++    },
++    exitPromise,
++    abandon() {
++      abandoned = true;
++    },
++    throwIfAbandoned,
++    /**
++     * Kill Jet with ignoreExit held so exitPromise does not reject and steal an
++     * outer Promise.race from a retryable caller error (await-exit stall).
++     * Leaves ignoreExit true — session is abandoned or respawned next.
++     */
++    async killIgnoringExit(reason = 'launch-retry') {
++      await killJetIgnoringExit({ setIgnoreExit, kill: () => killJet(jetProcess, reason) });
++    },
++    async respawnAfterLaunchRetry() {
++      throwIfAbandoned();
++      try {
++        await killJetIgnoringExit({
++          setIgnoreExit,
++          kill: () => killJet(jetProcess, 'launch-retry'),
++        });
++        output += '\n[rnfb-e2e] --- jet respawn after launch retry ---\n';
++        spawnJet();
++        await afterRespawn();
++      } finally {
++        ignoreExit = false;
++      }
++    },
++  };
++}
++
++module.exports = { createJetAttemptSession };
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #9411** (2026-11-02): fix(crashlytics, ios): name the dSYM input after the executable (@Mastersam07)
-- **PR #9409** (closed): chore(deps): bump ruby/setup-ruby from 1.329.0 to 1.334.0 (@dependabot[bot])
-- **PR #9406** (closed): chore(deps): bump ruby/setup-ruby from 1.329.0 to 1.332.0 (@dependabot[bot])
-- **PR #9400** (closed): chore(deps): bump ruby/setup-ruby from 1.329.0 to 1.331.0 (@dependabot[bot])
-- **PR #9396** (2026-10-23): fix(ci): branch-aware publish (docs gate, dist-tag, recovery) (@mikehardy)
-- **PR #9393** (2026-10-23): fix(app, sdk): bump Firebase iOS SDK to 12.19.3 (@russellwheatley)
+- **PR #9448** (2026-11-08): fix(e2e): harden shared-host e2e scripts for slots, foreign Jet ports and TMPDIR (@mikehardy)
+- **PR #9447** (2026-11-08): fix: harden ruby:install, lint:android and host-dependent app tests (@mikehardy)
+- **PR #9446** (2026-11-08): build: size lerna prepare and gradle workers to the CPUs and memory the build can use (@mikehardy)
+- **PR #9444** (2026-11-08): fix(e2e): release only resources a run recorded; machine wipe is manual-only (@mikehardy)
+- **PR #9442** (2026-11-06): chore: remove accidentally committed .agents/reports/pr-9093 (@mikehardy)
+- **PR #9427** (2026-11-05): ci(android): bump remove-unwanted-software to v5.1 for the ubuntu-26.04 runner (@Mastersam07)
 
 ---
 
@@ -1716,60 +2763,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. crashlytics, ios): name the dSYM input after the executable (#9411)
+## X. build: cap lerna prepare concurrency by memory as well as CPUs
 
 **RULE**:
-When implementing operations in `packages/crashlytics/__tests__/reactNativeConfig.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in invertase/react-native-firebase. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `okf-bundle/monorepo-tooling/prepare-and-cache.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in invertase/react-native-firebase. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cac23b87`: crashlytics, ios): name the dSYM input after the executable (#9411). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `37a17e7f`: build: cap lerna prepare concurrency by memory as well as CPUs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/crashlytics/__tests__/reactNativeConfig.test.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `okf-bundle/monorepo-tooling/prepare-and-cache.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-function expandFlatBuildSettings(value: string, settings: Record<string, string>): string {
-  return value.replace(/\$[{(](\w+)[})]/g, (_match: string, name: string) =>
-    expandFlatBuildSettings(settings[name] ?? '', settings),
-  );
-}
-
-const appBuildSettings: Record<string, string> = {
-  DWARF_DSYM_FOLDER_PATH: '/dsyms',
-  DWARF_DSYM_FILE_NAME: 'ExampleApp.app.dSYM',
-  TARGET_NAME: 'ExampleApp',
-  PRODUCT_NAME: 'Example Development',
-  EXECUTABLE_PREFIX: '',
-  EXECUTABLE_VARIANT_SUFFIX: '',
-  EXECUTABLE_SUFFIX: '',
-  EXECUTABLE_NAME:
-    '$(EXECUTABLE_PREFIX)$(PRODUCT_NAME)$(EXECUTABLE_VARIANT_SUFFIX)$(EXECUTABLE_SUFFIX)',
-};
-
-function declaredDwarfInput(): string {
-  const input = config.dependency.platforms.ios.scriptPhases[0].input_files.find((file: string) =>
-    file.includes('/DWARF/'),
-  );
-  expect(typeof input).toBe('string');
-  return input;
-}
-
-  it('declares the dSYM DWARF input by executable name', function () {
-    const inputFiles = config.dependency.platforms.ios.scriptPhases[0].input_files;
-
-    expect(inputFiles).toContain(
-      '${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${EXECUTABLE_NAME}',
-    );
-    expect(inputFiles.some((fil
+- **Concurrency:** `lerna:prepare` passes `--concurrency` from `scripts/lerna-prepare-concurrency.js`, which only prints a number (the entrypoint is still the inline `lerna run prepare`). The value is `RNFB_LERNA_CONCURRENCY` when it is a positive integer (no leading zero); other values are ignored. Otherwise it is the smaller of `os.availableParallelism()`, which honours the CPU affinity mask (cpusets), and one task per 2.5 GiB of memory (the cgroup limit when there is one, else total RAM), and at least 1. Lerna's own default is one task per CPU. Each `bob build` task can hold well over 1 GiB, and a cold `yarn install` keeps several GiB resident in Yarn itself, so a 16-CPU / 8 GiB Linux VM or container ran out of memory during `yarn install` and the kernel killed Yarn. Yarn's `yarnPath` launcher turns that signal into a bare exit 1 with no message.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+- **Concurrency:** `lerna:prepare` passes `--concurrency` from `RNFB_LERNA_CONCURRENCY` when it is a positive integer (no leading zero), otherwise from `os.availableParallelism()`, which honours the CPU affinity mask (cpusets). Other values are ignored.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cac23b87` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `37a17e7f` are properly handled with clean fallback behavior.

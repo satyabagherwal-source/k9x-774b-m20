@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md`  
 > **Source**: github ([https://github.com/PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb))  
-> **Source Version**: `8a3660f9`  
+> **Source Version**: `f7f8b7e5`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T10:43:46.460Z  
+> **Timestamp**: 2026-11-09T18:11:16.402Z  
 > **Learning ID**: `learn-github-peerdb-io-peerdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T10:43:46.452Z  
+> **Harvest Timestamp**: 2026-11-09T18:11:16.359Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Fast, Simple and a cost effective tool to replicate data from Postgres to Data Warehouses, Queues and Storage
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3315 stars
+- **Stars / Engagement**: 3316 stars
 
 ---
 
@@ -1840,11 +1840,11 @@ func getChainedRoleSessionName() string {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #4902** (2026-11-06): **[Bug]: Postgres → ClickHouse CDC silently missing ~30% of updates on one table, no errors surfaced**
+  *Symptoms*: ### Description  A Postgres → ClickHouse CDC mirror has been silently missing a consistent share of rows on one table.  **Expected**: ClickHouse row state matches Postgres after deduplication to the latest version per PK.  **Actual**: From July 6 onward, ~30% are missing every day (~1000 rows/day). The mirror reports healthy throughout: no errors, no failed syncs, replication slot advancing normally.  **Observations** - Missing rows are absent entirely in CH. - Not occurring after downgrade to stable-v0.32.1:  - Applies to all tables in the same mirror  **How we count:** Same day boundaries on both sides. ClickHouse is deduplicated to the latest version per PK (`LIMIT 1 BY id` ordered by `_peerdb_version DESC`), excluding `_peerdb_is_deleted = 1`. Same result with `FINAL`.  **Environment** - Deployment: self-hosted on K8s, Helm chart - Source: Postgres 17.9, RDS, CDC from replica - `REPLICA IDENTITY` on  affected tables: DEFAULT - TOAST-able columns on table: yes - Destination: ClickHouse 25.12.11.4, self-hosted, `ReplicatedReplacingMergeTree`  **Questions** 1. Are there known cases where an UPDATE is acknowledged (slot advances) but not normalized into ClickHouse, e.g. unchanged-TOAST handling or schema-change replay? 2. Is there a log line or catalog query showing per-table normalize counts per batch, so we can find where rows go missing? 3. Any way to backfill a date range? Resync is table-wide only, and we want to find the trigger before resyncing so we don't recreate the
+
 - **Issue #4843** (2026-10-14): **[Bug]: minio/minio image no longer available on Docker Hub**
   *Symptoms*: ### Description  Minio have removed the image. - https://hub.docker.com/u/minio/minio  ### Steps to reproduce  ```bash bash ./run-peerdb.sh [+] pull 5/10  ⠋ Image ghcr.io/peerdb-io/peerdb-server:stable-v0.37.8                                                                              Pulling                                            1.1s  ⠋ Image ghcr.io/peerdb-io/flow-worker:stable-v0.37.8                                                                                Pulling                                            1.1s  ! Image postgres:18-alpine@sha256:d3e1620b530c944afa6e887d22eb899824da68e19c52024bf98f5220c88a65b2                                  Interrupted                                        1.1s  ⠋ Image ghcr.io/peerdb-io/flow-snapshot-worker:stable-v0.37.8                                                                       Pulling                                            1.1s  ✘ Image minio/minio:latest@sha256:14cea493d9a34af32f524e538b8346cf79f3321eff8e708c1e2960462bd8936e                                  Error pull access denied for minio/minio,...       1.1s  ! Image temporalio/ui:2.54.1@sha256:ff0943fe532b8e33c46cd28b29e81e0ce0b6f55b9ee50a38ef1b437cc4de3fa5                                Interrupted                                        1.1s  ! Image temporalio/admin-tools:1.25.2-tctl-1.18.1-cli-1.1.1@sha256:da0c7a7982b571857173ab8f058e7f139b3054800abb4dcb100445d29a563ee8 Interrupted                                        1.1s  ⠋ Image ghcr.io/peerdb
-
-- **Issue #4664** (2026-08-21): **[Bug]: PG→PG CDC: _peerdb_raw_* table grows indefinitely — no cleanup after normalize**
-  *Symptoms*: ### Description  In a PG→PG CDC mirror (v0.37.0), the `_peerdb_internal._peerdb_raw_<mirror_name>` table on the destination database grows indefinitely. After normalize successfully processes a batch and applies changes to the destination tables, the corresponding rows in the raw table are **never deleted**.   ### Steps to reproduce  ## Steps to Reproduce 1. Create a PG→PG CDC mirror with `do_initial_copy = true` 2. Let it run for a while with active writes on the source 3. Check the raw table size on the destination: ```sql SELECT pg_size_pretty(pg_total_relation_size('_peerdb_internal._peerdb_raw_rzldb_to_lkdb')); ```  ## Expected Behavior  After normalize completes for a batch, the processed rows should be removed from the raw table (or after a configurable retention window).  ## Actual Behavior  The raw table keeps growing. In our production mirror:  * `sync_batch_id = 6249`, `normalize_batch_id = 6249`, **gap = 0** (normalize fully caught up)  * Raw table: **49.5 million live rows**, **0 dead tuples**, **19 GB**  * Source code confirms: `normalizeBatch()` in `postgres_destination.go` only writes to destination tables and updates metadata — no DELETE against the raw table  ### PeerDB version  * PeerDB v0.37.0, Docker Compose   ### Source connector  PostgreSQL  ### Destination connector  PostgreSQL
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1861,413 +1861,730 @@ func getChainedRoleSessionName() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8a3660f9` (2026-11-04)
-**Commit Message**: classify ClickHouse Avro Date out-of-range as destination modified (#5021)
+### Incident Patch 1: `f7f8b7e5` (2026-11-09)
+**Commit Message**: Add signal handling and schema changes to tricky areas doc, organize helpers a bit (#5033)
 
-### Error (sanitized)
+Add review guidance for Temporal signal handling and schema changes,
+with examples from existing good handling and PR discussions.
 
-Postgres to ClickHouse initial load fails when ClickHouse reads a
-pre-1970 date into a `Date` column. Today it emits `errorClass=OTHER`,
-`errorCode=321`.
+Move shared code out of postgres.go so that references are not awkward
+(mechanical change).
 
-```
-failed to sync records: QRepSync Error: ClickHouse exec error: code: 321, message: Input value -1224 exceeds the range of type Date, which is [0, 65535]: (in file/uri ...0000.avro): While executing AvroRowInputFormat: While executing ReadFromObjectStorage
-```
+Closes DBI-1302
 
-### Investigation
-
-PeerDB maps Postgres `date` to `Date32`
-([`kind.go`](https://github.com/PeerDB-io/peerdb/blob/main/flow/shared/types/kind.go#L232)),
-so a `Date` column means the customer created or changed it. ClickHouse
-throws this exact message only for a `Date` target
-([source](https://github.com/ClickHouse/ClickHouse/blob/abbc002369b8bf2b54abbf54dd02a662a685c4db/src/Processors/Formats/Impl/AvroRowInputFormat.cpp#L380-L389)).
-The customer can fix it by switching the column to `Date32` and
-resyncing.
-
-### Change
-
-- New branch in the ClickHouse code 321 case, after the decimal check.
-It matches `"exceeds the range of type Date, "` and returns
-`NOTIFY_DESTINATION_MODIFI
-
-**File**: `flow/alerting/classifier.go` (modified, +6/-0)
+**File**: `docs/tricky-areas.md` (modified, +58/-0)
 ```diff
-@@ -1286,6 +1286,12 @@ func GetErrorClass(ctx context.Context, err error) (ErrorClass, ErrorInfo) {
- 			if ClickHouseDecimalParsingRe.MatchString(chException.Message) {
- 				return ErrorUnsupportedDatatype, chErrorInfo
- 			}
-+			//nolint:lll
-+			// PeerDB maps dates to Date32, so a Date column that rejects a value outside 1970-2149 was set by the user:
-+			// https://github.com/ClickHouse/ClickHouse/blob/abbc002369b8bf2b54abbf54dd02a662a685c4db/src/Processors/Formats/Impl/AvroRowInputFormat.cpp#L380-L389
-+			if strings.Contains(chException.Message, "exceeds the range of type Date, ") {
-+				return ErrorNotifyDestinationModified, chErrorInfo
-+			}
- 		case chproto.ErrBadArguments:
- 			if ClickHouseDecimalInsertRe.MatchString(chException.Message) {
- 				return ErrorUnsupportedDatatype, chErrorInfo
+@@ -13,6 +13,8 @@ repeating them.
+ |---|---|
+ | [Mirror config vs workflow state](#mirror-config-vs-workflow-state) | `flow/workflows/`, `flow/activities/flowable.go`, `flow/activities/flowable_core.go`, `protos/flow.proto` |
+ | [Per-mirror behaviour: versions, flags, settings](#per-mirror-behaviour-versions-flags-settings) | `flow/shared/constants.go`, `flow/internal/dynamicconf.go`, `flow/cmd/handler.go`, `flow/cmd/validate_mirror.go`, `flow/connectors/clickhouse/validate.go` |
++| [Temporal signal handling](#temporal-signal-handling) | `flow/workflows/cdc_flow.go`, `flow/workflows/drop_flow.go`, `flow/model/signals.go` |
++| [Schema changes](#schema-changes) | `flow/activities/flowable_core.go`, `flow/model/cdc_stream.go`, `flow/internal/catalog_schema.go`, `flow/connectors/postgres/cdc.go`, `flow/connectors/mysql/cdc.go`, `flow/connectors/clickhouse/` |
+ 
+ ---
+ 
+@@ -51,3 +53,59 @@ A decision taken from the mechanism with the wrong lifetime changes the output o
+ - Carefully thread all transformations the column value goes through, as it can change at different layers.
+   Changes that are bugfixes (replacing nonsensical data with something more reasonable) are okay without a bump.
+ - Version or flags re-detected outside creation, or a flag that stores a decision rather than a capability.
++
++---
++
++## Temporal signal handling
++
++**Why it is tricky.** Pause, resume, terminate and resync requests can arrive while a workflow waits for an
++activity or child workflow. The workflow must continue to handle the requests that it supports in that phase.
++An interrupting request needs the correct state, even if the current operation is only partly complete.
++For this guidance, small catalog interactions such as status updates or logging do not count as long waits.
++
++**What to watch for in a PR.**
++
++- When you add or move a long-running activity or child workflow, check which requests need handling during the wait.
++  For example, snapshot and table-edit operations handle terminate/resync requests while they wait for completion.
++  A direct `.Get()` on new work can delay those requests until the work finishes.
++- Before continuing as new, wait for cancellation to finish. Then process pending signals for the last time.
++  For example, `startCDC` cancels `SyncFlow`, waits for it, then drains pending signals.
++  Draining means processing the signals that are already waiting.
++  Put new long waits before that drain. This order lets the workflow handle requests that arrive during the wait.
++- If an operation changes state that may be used by termination or resync, check that state before the operation completes.
++  For example, table edits prepare the intended mappings before they handle signals.
++  Thus, an interrupting resync includes added tables and excludes removed tables.
++- If you add work between a decision and its action, check whether signals can change that decision.
++  For example, during resync cleanup, a terminate request means the workflow must fully remove the mirror instead of restarting it.
++  `DropFlowWorkflow` checks for this request again and completes the necessary catalog cleanup.
++- When you add state changes through signals, prevent pause/resume requests from overriding termination or resync.
++  For example, `FlowSignalHandler` applies pause only to a running signal state. It applies resume only to a paused signal state.
++
++---
++
++## Schema changes
++
++**Why it is tricky.** PeerDB passes schema changes from the source connector through Pull, Sync, catalog updates,
++and Normalize. These stages overlap and keep different views of schema and progress. Receiving a change,
++applying destination DDL, updating the catalog, and saving a checkpoint are separate steps. Review the complete
++path when changing one of them.
++
++**What to watch for in a PR.**
++
++- When changing how schema changes are detected or passed between stages, follow them through to destination DDL
++  and catalog updates. Check batches with no rows, excluded columns, and repeated changes. For example, MySQL
++  can emit DDL without row changes to carry it through the usual batch path.
++- When reading schema information, check which stage produced it and which records will use it. The latest
++  source schema can be ahead of Pull. Sync can update the catalog while Normalize uses an earlier copy of the
++  schema. Writing that copy back can erase Sync's changes. A refresh must not make an unprocessed change appear
++  complete or overwrite another stage's changes.
++- When moving a schema update or checkpoint, trace what happens if the next step fails. Check what the retry
++  reads, repeats, and skips. For example, one table can finish Normalize and save its progress while another
++  table in the batch fails. Any associated schema update must remain recoverable.
++- When changing catalog schemas, apply the specific change to the current catalog state.
++  `ReadModifyWriteTableSchemasToCatalog` provides this pattern. Pass the columns to add or remov
 ```
 
-**File**: `flow/alerting/classifier_test.go` (modified, +31/-0)
+**File**: `flow/internal/catalog_schema.go` (added, +161/-0)
 ```diff
-@@ -268,6 +268,37 @@ func TestClickHouseAvroDecimalErrorShouldBeUnsupportedDatatype(t *testing.T) {
- 	}
+@@ -0,0 +1,161 @@
++package internal
++
++import (
++	"context"
++	"fmt"
++	"log/slog"
++	"strings"
++
++	"github.com/jackc/pgx/v5"
++	"go.temporal.io/sdk/log"
++	"google.golang.org/protobuf/proto"
++
++	"github.com/PeerDB-io/peerdb/flow/generated/protos"
++	"github.com/PeerDB-io/peerdb/flow/shared"
++)
++
++func LoadTableSchemaFromCatalog(
++	ctx context.Context,
++	pool shared.CatalogPool,
++	flowName string,
++	tableName string,
++) (*protos.TableSchema, error) {
++	var tableSchemaBytes []byte
++	if err := pool.Pool.QueryRow(
++		ctx,
++		"select table_schema from table_schema_mapping where flow_name = $1 and table_name = $2",
++		flowName,
++		tableName,
++	).Scan(&tableSchemaBytes); err != nil {
++		return nil, err
++	}
++	tableSchema := &protos.TableSchema{}
++	return tableSchema, proto.Unmarshal(tableSchemaBytes, tableSchema)
++}
++
++func ReadModifyWriteTableSchemasToCatalog(
++	ctx context.Context,
++	catalogPool shared.CatalogPool,
++	logger log.Logger,
++	flowName string,
++	tableNames []string,
++	modifyFn func(map[string]*protos.TableSchema) (map[string]*protos.TableSchema, error),
++) error {
++	tx, err := catalogPool.Pool.Begin(ctx)
++	if err != nil {
++		return fmt.Errorf("failed to begin transaction: %w", err)
++	}
++	defer shared.RollbackTx(tx, logger)
++
++	// read
++	tableSchemas, err := LoadTableSchemasFromCatalog(ctx, tx, flowName, tableNames)
++	if err != nil {
++		return fmt.Errorf("failed to load table schemas from catalog: %w", err)
++	}
++	if len(tableSchemas) != len(tableNames) {
++		filteredTableNames := make([]string, 0, len(tableSchemas))
++		for name := range tableSchemas {
++			filteredTableNames = append(filteredTableNames, name)
++		}
++		logger.Warn("not all tables are found in catalog",
++			slog.String("expected", strings.Join(tableNames, ", ")),
++			slog.String("actual", strings.Join(filteredTableNames, ", ")))
++	}
++
++	// modify
++	modifiedTableSchemas, err := modifyFn(tableSchemas)
++	if err != nil {
++		return fmt.Errorf("failed to modify table schemas from catalog: %w", err)
++	}
++
++	// write (in batch)
++	batch := &pgx.Batch{}
++	for tableName, tableSchema := range modifiedTableSchemas {
++		tableSchemaBytes, err := proto.Marshal(tableSchema)
++		if err != nil {
++			return fmt.Errorf("unable to marshal table schema for %s: %w", tableName, err)
++		}
++		batch.Queue(
++			"UPDATE table_schema_mapping SET table_schema=$1 WHERE flow_name=$2 AND table_name=$3",
++			tableSchemaBytes, flowName, tableName,
++		)
++		logger.Info("queued schema delta update",
++			slog.String("flowName", flowName),
++			slog.String("tableName", tableName))
++	}
++	results := tx.SendBatch(ctx, batch)
++	defer results.Close() // Ensure resources are freed in case of early return
++
++	for tableName := range modifiedTableSchemas {
++		if _, err := results.Exec(); err != nil {
++			logger.Error("failed to update table schema in catalog",
++				slog.Any("error", err),
++				slog.String("flowName", flowName),
++				slog.String("tableName", tableName))
++			return fmt.Errorf("failed to update table schema in catalog: %w", err)
++		}
++	}
++
++	// Close results before committing
++	if err := results.Close(); err != nil {
++		logger.Error("failed to close batch results",
++			slog.Any("error", err),
++			slog.String("flowName", flowName))
++		return fmt.Errorf("failed to close batch results: %w", err)
++	}
++
++	if err := tx.Commit(ctx); err != nil {
++		return fmt.Errorf("failed to commit transaction: %w", err)
++	}
++	return nil
++}
++
++// support both catalog pool and pgx.Tx
++type CatalogQuerier interface {
++	Query(ctx context.Context, sql string, args ...any) (pgx.Rows, error)
++}
++
++func LoadTableSchemasFromCatalog(
++	ctx context.Context,
++	querier CatalogQuerier,
++	flowName string,
++	tableNames []string,
++) (map[string]*protos.TableSchema, error) {
++	if len(tableNames) == 0 {
++		return make(map[string]*protos.TableSchema), nil
++	}
++
++	rows, err := querier.Query(
++		ctx,
++		"SELECT table_name, table_schema FROM table_schema_mapping WHERE flow_name = $1 AND table_name = ANY($2)",
++		flowName,
++		tableNames,
++	)
++	if err != nil {
++		return nil, fmt.Errorf("failed to query table schemas: %w", err)
++	}
++	defer rows.Close()
++
++	schemas := make(map[string]*protos.TableSchema)
++
++	for rows.Next() {
++		var tableName string
++		var tableSchemaBytes []byte
++
++		if err := rows.Scan(&tableName, &tableSchemaBytes); err != nil {
++			return nil, fmt.Errorf("failed to scan table schema row: %w", err)
++		}
++
++		tableSchema := &protos.TableSchema{}
++		if err := proto.Unmarshal(tableSchemaBytes, tableSchema); err != nil {
++			return nil, fmt.Errorf("failed to unmarshal table schema for %s: %w", tableName, err)
++		}
++
++		schemas[tableName] = tableSchema
++	}
++	if err := rows.Err(); err != nil {
++		return nil, fmt.Errorf("error iterating table schema rows: %w", err)
++	}
++
++	return schemas, nil
++}
+```
+
+**File**: `flow/internal/flow_configuration_helpers.go` (modified, +21/-0)
+```diff
+@@ -4,7 +4,9 @@ import (
+ 	"context"
+ 	"database/sql"
+ 	"fmt"
++	"log/slog"
+ 
++	"go.temporal.io/sdk/log"
+ 	"google.golang.org/protobuf/proto"
+ 
+ 	"github.com/PeerDB-io/peerdb/flow/generated/protos"
+@@ -27,6 +29,25 @@ func FetchConfigFromDB(ctx context.Context, catalogPool shared.CatalogPool, flow
+ 	return &cfgFromDB, nil
  }
  
-+func TestClickHouseAvroDateOutOfRangeShouldBeDestinationModified(t *testing.T) {
-+	err := &clickhouse.Exception{
-+		Code: int32(chproto.ErrValueIsOutOfRangeOfDataType),
-+		//nolint:lll
-+		Message: `Input value -1224 exceeds the range of type Date, which is [0, 65535]: (in file/uri clickpipes-svc-3bd17e20-1032-4251-bcf3-6d49358a5e4f/clone_mirror_f8d0710c__40e5__4879__b39e__3d93f745477f_public_boughed_46e3147e_4925_4580_b822_b908137eb985/clone_mirror_f8d0710c__40e5__4879__b39e__3d93f745477f_public_boughed_46e3147e_4925_4580_b822_b908137eb985/37800a62-d8c4-4c11-97e4-d7aa76ff8cc3.000000.avro): While executing AvroRowInputFormat: While executing ReadFromObjectStorage`,
++func UpdateCDCConfigInCatalog(ctx context.Context, pool shared.CatalogPool,
++	logger log.Logger, cfg *protos.FlowConnectionConfigsCore,
++) error {
++	logger.Info("syncing state to catalog: updating config_proto in flows", slog.String("flowName", cfg.FlowJobName))
++
++	cfgBytes, err := proto.Marshal(cfg)
++	if err != nil {
++		return fmt.Errorf("unable to marshal flow config: %w", err)
 +	}
-+	errorClass, errInfo := GetErrorClass(t.Context(), fmt.Errorf("failed to sync records: %w",
-+		exceptions.NewClickHouseQRepSyncError(
-+			peerdb_clickhouse.NewExecError(err, peerdb_clickhouse.ExecTraits{}), "boughed", "default")))
-+	assert.Equal(t, ErrorNotifyDestinationModified, errorClass, "Unexpected error class")
-+	assert.Equal(t, ErrorInfo{
-+		Source: ErrorSourceClickHouse,
-+		Code:   strconv.Itoa(int(chproto.ErrValueIsOutOfRangeOfDataType)),
-+	}, errInfo, "Unexpected error info")
++
++	if _, err := pool.Exec(ctx, "UPDATE flows SET config_proto=$1,updated_at=now() WHERE name=$2", cfgBytes, cfg.FlowJobName); err != nil {
++		logger.Error("failed to update catalog", slog.Any("error", err), slog.String("flowName", cfg.FlowJobName))
++		return fmt.Errorf("failed to update catalog: %w", err)
++	}
++
++	logger.Info("synced state to catalog: updated config_proto in flows", slog.String("flowName", cfg.FlowJobName))
++	return nil
 +}
 +
-+func TestClickHouseAvroDate32OutOfRangeShouldBeOther(t *testing.T) {
-+	err := &clickhouse.Exception{
-+		Code:    int32(chproto.ErrValueIsOutOfRangeOfDataType),
-+		Message: `Input value -44641 exceeds the range of type Date32, which is [-25567, 120529]: While executing AvroRowInputFormat`,
-+	}
-+	errorClass, errInfo := GetErrorClass(t.Context(), fmt.Errorf("failed to sync records: %w",
-+		exceptions.NewClickHouseQRepSyncError(
-+			peerdb_clickhouse.NewExecError(err, peerdb_clickhouse.ExecTraits{}), "boughed", "default")))
-+	assert.Equal(t, ErrorOther, errorClass, "Unexpected error class")
-+	assert.Equal(t, ErrorInfo{
-+		Source: ErrorSourceClickHouse,
-+		Code:   strconv.Itoa(int(chproto.ErrValueIsOutOfRangeOfDataType)),
-+	}, errInfo, "Unexpected error info")
-+}
-+
- func TestClickHouseSelectFromDestinationDuringQrepAsMvError(t *testing.T) {
- 	// Simulate an Avro decimal error
- 	err := &clickhouse.Exception{
+ func ApplySnapshotConfigOverrides(config *protos.FlowConnectionConfigsCore, update *protos.CDCFlowConfigUpdate) {
+ 	if update == nil {
+ 		return
+```
+
+**File**: `flow/internal/postgres.go` (modified, +0/-172)
+```diff
+@@ -1,16 +1,9 @@
+ package internal
+ 
+ import (
+-	"context"
+-	"fmt"
+-	"log/slog"
+ 	"net/url"
+ 	"strings"
+ 
+-	"github.com/jackc/pgx/v5"
+-	"go.temporal.io/sdk/log"
+-	"google.golang.org/protobuf/proto"
+-
+ 	"github.com/PeerDB-io/peerdb/flow/generated/protos"
+ 	"github.com/PeerDB-io/peerdb/flow/shared"
+ )
+@@ -91,168 +84,3 @@ func GetPGConnectionString(pgConfig *protos.PostgresConfig, flowName string) str
+ 
+ 	return u.String()
+ }
+-
+-func UpdateCDCConfigInCatalog(ctx context.Context, pool shared.CatalogPool,
+-	logger log.Logger, cfg *protos.FlowConnectionConfigsCore,
+-) error {
+-	logger.Info("syncing state to catalog: updating config_proto in flows", slog.String("flowName", cfg.FlowJobName))
+-
+-	cfgBytes, err := proto.Marshal(cfg)
+-	if err != nil {
+-		return fmt.Errorf("unable to marshal flow config: %w", err)
+-	}
+-
+-	if _, err := pool.Exec(ctx, "UPDATE flows SET config_proto=$1,updated_at=now() WHERE name=$2", cfgBytes, cfg.FlowJobName); err != nil {
+-		logger.Error("failed to update catalog", slog.Any("error", err), slog.String("flowName", cfg.FlowJobName))
+-		return fmt.Errorf("failed to update catalog: %w", err)
+-	}
+-
+-	logger.Info("synced state to catalog: updated config_proto in flows", slog.String("flowName", cfg.FlowJobName))
+-	return nil
+-}
+-
+-func LoadTableSchemaFromCatalog(
+-	ctx context.Context,
+-	pool shared.CatalogPool,
+-	flowName string,
+-	tableName string,
+-) (*protos.TableSchema, error) {
+-	var tableSchemaBytes []byte
+-	if err := pool.Pool.QueryRow(
+-		ctx,
+-		"select table_schema from table_schema_mapping where flow_name = $1 and table_name = $2",
+-		flowName,
+-		tableName,
+-	).Scan(&tableSchemaBytes); err != nil {
+-		return nil, err
+-	}
+-	tableSchema := &protos.TableSchema{}
+-	return tableSchema, proto.Unmarshal(tableSchemaBytes, tableSchema)
+-}
+-
+-func ReadModifyWriteTableSchemasToCatalog(
+-	ctx context.Context,
+-	catalogPool shared.CatalogPool,
+-	logger log.Logger,
+-	flowName string,
+-	tableNames []string,
+-	modifyFn func(map[string]*protos.TableSchema) (map[string]*protos.TableSchema, error),
+-) error {
+-	tx, err := catalogPool.Pool.Begin(ctx)
+-	if err != nil {
+-		return fmt.Errorf("failed to begin transaction: %w", err)
+-	}
+-	defer shared.RollbackTx(tx, logger)
+-
+-	// read
+-	tableSchemas, err := LoadTableSchemasFromCatalog(ctx, tx, flowName, tableNames)
+-	if err != nil {
+-		return fmt.Errorf("failed to load table schemas from catalog: %w", err)
+-	}
+-	if len(tableSchemas) != len(tableNames) {
+-		filteredTableNames := make([]string, 0, len(tableSchemas))
+-		for name := range tableSchemas {
+-			filteredTableNames = append(filteredTableNames, name)
+-		}
+-		logger.Warn("not all tables are found in catalog",
+-			slog.String("expected", strings.Join(tableNames, ", ")),
+-			slog.String("actual", strings.Join(filteredTableNames, ", ")))
+-	}
+-
+-	// modify
+-	modifiedTableSchemas, err := modifyFn(tableSchemas)
+-	if err != nil {
+-		return fmt.Errorf("failed to modify table schemas from catalog: %w", err)
+-	}
+-
+-	// write (in batch)
+-	batch := &pgx.Batch{}
+-	for tableName, tableSchema := range modifiedTableSchemas {
+-		tableSchemaBytes, err := proto.Marshal(tableSchema)
+-		if err != nil {
+-			return fmt.Errorf("unable to marshal table schema for %s: %w", tableName, err)
+-		}
+-		batch.Queue(
+-			"UPDATE table_schema_mapping SET table_schema=$1 WHERE flow_name=$2 AND table_name=$3",
+-			tableSchemaBytes, flowName, tableName,
+-		)
+-		logger.Info("queued schema delta update",
+-			slog.String("flowName", flowName),
+-			slog.String("tableName", tableName))
+-	}
+-	results := tx.SendBatch(ctx, batch)
+-	defer results.Close() // Ensure resources are freed in case of early return
+-
+-	for tableName := range modifiedTableSchemas {
+-		if _, err := results.Exec(); err != nil {
+-			logger.Error("failed to update table schema in catalog",
+-				slog.Any("error", err),
+-				slog.String("flowName", flowName),
+-				slog.String("tableName", tableName))
+-			return fmt.Errorf("failed to update table schema in catalog: %w", err)
+-		}
+-	}
+-
+-	// Close results before committing
+-	if err := results.Close(); err != nil {
+-		logger.Error("failed to close batch results",
+-			slog.Any("error", err),
+-			slog.String("flowName", flowName))
+-		return fmt.Errorf("failed to close batch results: %w", err)
+-	}
+-
+-	if err := tx.Commit(ctx); err != nil {
+-		return fmt.Errorf("failed to commit transaction: %w", err)
+-	}
+-	return nil
+-}
+-
+-// support both catalog pool and pgx.Tx
+-type CatalogQuerier interface {
+-	Query(ctx context.Context, sql string, args ...any) (pgx.Rows, error)
+-}
+-
+-func LoadTableSchemasFromCatalog(
+-	ctx context.Context,
+-	querier CatalogQuerier,
+-	flowName string,
+-	tableNames []string,
+-) (map[string]*protos.TableSchema, error) {
+-	if len(tableNames) == 0 {
+-		return make(map[string]*protos.TableSchema), nil
+-	}
+-
+-	rows, err := querier.Query(
+-		ctx,
+-		"SELECT table_name, table_schema FROM table_schema_mapping WHERE flow_name = $1 AND table_name = ANY($2)",
+-		flowName,
+-		tableNames,
+-	)
+-	if err != nil {
+-		return nil, f
 ```
 
 ---
 
-### Incident Patch 2: `e1761f8c` (2026-11-04)
-**Commit Message**: support server-side changeStreamPreAndPostImages (#4990)
+### Incident Patch 2: `ea3f0748` (2026-11-09)
+**Commit Message**: Classify Google token errors in BigQuery/GCS as retryable (#5017)
 
-On a sharded cluster, native `updateLookup` fetches update sequentially,
-which can lead to perf bottleneck. `changeStreamPreAndPostImages` builds
-post-image from applying updates to locally stored pre-image,
-eliminating the extra mongos-to-shards latency, and improve CDC
-throughput. This PR adds support for this feature by switching from
-`default` to `whenAvailable` when
-`PEERDB_MONGODB_CLIENT_SIDE_UPDATE_LOOKUP=true`.
+`downscope: unable to exchange token, 503: ...` from the BigQuery →
+ClickHouse object sync header provider was classified as `ErrorOther`.
 
-For collections with `changeStreamPreAndPostImages` enabled, MongoDB
-supplies each update's post-image in the event, so PeerDB does not
-perform client-side lookup for those updates. For collections without
-`changeStreamPreAndPostImages` enabled, or for those that are enabled
-but pre-image has expired, updates would arrives without a post-image
-and these documents will be fetched client-side.
+- **Downscope token exchange:** the library returns an untyped string.
+Parse the status into a `googleapi.Error` and wrap as `GCSError`, so the
+existing GCS rules retry 408/429/5xx.
+- **Root token refresh (`*auth.Error`):** classify in the BigQuery and
+GCS branches with code `AUTH_<status>`. 5xx retries (GCS also 408/429);
+BigQuery 401/403 notify as connectivity.
 
-Fixes: DBI-1276
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
-**File**: `flow/connectors/mongo/cdc.go` (modified, +15/-4)
+---------
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `flow/alerting/classifier.go` (modified, +25/-5)
 ```diff
-@@ -455,11 +455,15 @@ func (c *MongoConnector) PullRecords(
- 		// https://www.mongodb.com/docs/manual/reference/method/cursor.batchSize/
- 		SetBatchSize(0)
+@@ -13,6 +13,7 @@ import (
+ 	"strings"
+ 	"syscall"
  
-+	// By default, the change stream looks up each update's document server-side.
-+	fullDocumentMode := options.UpdateLookup
- 	if c.clientUpdateLookup {
--		changeStreamOpts.SetFullDocument(options.Default)
--	} else {
--		changeStreamOpts.SetFullDocument(options.UpdateLookup)
-+		// Collections with changeStreamPreAndPostImages get the post-image for free. Updates without one
-+		// (option disabled, or pre-image expired) arrive with fullDocument: null and are looked up client-side.
-+		fullDocumentMode = options.WhenAvailable
- 	}
-+	changeStreamOpts.SetFullDocument(fullDocumentMode)
-+	c.logger.Info("[mongo] change stream full document mode", slog.String("mode", string(fullDocumentMode)))
- 
- 	if preimageTables := tablesWithDeletePreimage(req.TableNameMapping, c.excludedOps); len(preimageTables) > 0 {
- 		// whenAvailable, never required: a pre-image can be missing even for a collection that has
-@@ -519,7 +523,7 @@ func (c *MongoConnector) PullRecords(
- 		}
- 	}()
- 
--	var recordCount uint32
-+	var recordCount, updatesWithoutPostImage uint32
- 	var deltaBytesProcessed, cumulativeBytesProcessed atomic.Int64
- 	var receiveTime, processTime, parallelProcessTime, addRecordTime atomic.Int64
- 	pullStart := time.Now()
-@@ -543,6 +547,10 @@ func (c *MongoConnector) PullRecords(
- 			slog.Int64("bytes", cumulativeBytesProcessed.Load()),
- 			slog.Int("channelLen", req.RecordStream.ChannelLen()),
- 			slog.Float64("elapsedMinutes", time.Since(pullStart).Minutes()))
-+		if updatesWithoutPostImage > 0 {
-+			c.logger.Info("[mongo] update events without a post-image were looked up client-side",
-+				slog.Uint64("count", uint64(updatesWithoutPostImage)))
-+		}
- 	}()
- 	// Structured ingestion is a per-table setting: resolve each structured table's projector once,
- 	// against the table schema persisted at setup. Decode workers share the projectors, which is safe
-@@ -812,6 +820,9 @@ func (c *MongoConnector) PullRecords(
- 			commitTimeNanos:      commitTimeNanos,
- 			clusterTime:          changeEvent.ClusterTime,
- 		}
-+		if c.clientUpdateLookup && event.operationType == operationTypeUpdate && event.maybeFullDocument == nil {
-+			updatesWithoutPostImage++
-+		}
- 		switch event.operationType {
- 		case operationTypeInsert, operationTypeReplace, operationTypeUpdate, operationTypeDelete:
- 			// Happy path.
-```
-
-**File**: `flow/connectors/mongo/document_lookup.go` (modified, +6/-4)
-```diff
-@@ -50,7 +50,6 @@ const (
- 
- // hydrateUpdateEvents hydrates the update events' `fullDocument` field using client-side lookup.
- func (c *MongoConnector) hydrateUpdateEvents(ctx context.Context, events []encodedMongoEvent) (int64, error) {
--	var requests []*documentLookupRequest
- 	requestsMap := make(map[documentLookupKey]*documentLookupRequest)
- 	for i := range events {
- 		event := &events[i]
-@@ -85,10 +84,13 @@ func (c *MongoConnector) hydrateUpdateEvents(ctx context.Context, events []encod
- 			keyFields:         strings.Join(fields, keyFieldSeparator),
- 		}
- 		requestsMap[key] = request
--		requests = append(requests, request)
- 	}
- 
--	groupedRequests := groupLookupRequests(requests)
-+	if len(requestsMap) == 0 {
-+		return 0, nil
-+	}
-+
-+	groupedRequests := groupLookupRequests(requestsMap)
- 
- 	pref := protoToReadPref[c.config.ReadPreference]
- 	var fetchedSize atomic.Int64
-@@ -164,7 +166,7 @@ func (c *MongoConnector) batchLookup(
- 
- // groupLookupRequests splits requests by source table and key fields into queries of up to
- // lookupQueryBatchSize requests.
--func groupLookupRequests(requests []*documentLookupRequest) [][]*documentLookupRequest {
-+func groupLookupRequests(requests map[documentLookupKey]*documentLookupRequest) [][]*documentLookupRequest {
- 	type batchKey struct{ sourceTable, keyFields string }
- 	var groupedRequests [][]*documentLookupRequest
- 	batches := make(map[batchKey][]*documentLookupRequest)
-```
-
-**File**: `flow/connectors/mongo/document_lookup_test.go` (modified, +44/-7)
-```diff
-@@ -2,6 +2,7 @@ package connmongo
- 
- import (
- 	"slices"
-+	"strconv"
- 	"testing"
- 
- 	"github.com/stretchr/testify/require"
-@@ -94,15 +95,16 @@ func TestRawValueKeyDistinguishesTypes(t *testing.T) {
- 
- func TestGroupLookupQueries(t *testing.T) {
- 	compound := "region" + keyFieldSeparator + "_id"
--	var requests []*documentLookupRequest
-+	requests := make(map[documentLookupKey]*documentLookupRequest)
-+	add := func(request *documentLookupRequest) {
-+		requests[documentLookupKey{sourceTable: request.sourceTable, key: strconv.Itoa(len(requests))}] = request
-+	}
- 	for range lookupQueryBatchSize + 1 {
--		requests = append(requests, &documentLookupRequest{sourceTable: "app.orders", keyFields: idOnlyKeyFields})
-+		add(&documentLookupRequest{sourceTable: "app.orders", keyFields: idOnlyKeyFields})
- 	}
--	requests = append(requests,
--		&documentLookupRequest{sourceTable: "app.users", keyFields: idOnlyKeyFields},
--		&documentLookupRequest{sourceTable: "app.orders", keyFields: compound},
--		&documentLookupRequest{sourceTable: "app.orders", keyFields: compound},
--	)
-+	add(&documentLookupRequest{sourceTable: "app.users", keyFields: idOnlyKeyFields})
-+	add(&documentLookupRequest{sourceTable: "app.orders", keyFields: compound})
-+	add(&documentLookupRequest{sourceTable: "app.orders", keyFields: compound})
- 
- 	queries := groupLookupRequests(requests)
- 
-@@ -176,3 +178,38 @@ func TestDocumentKeyOfMatchesRequestKey(t *testing.T) {
- 	require.Equal(t, requestKey(&documentLookupRequest{documentKey: nullElements}), documentKeyOf(missing, fields),
- 		"a missing shard key field matches a null documentKey value")
- }
-+
-+func TestDecodeEventLeavesMissingPostImageNil(t *testing.T) {
-+	// With fullDocument: "whenAvailable", an update whose pre-image is missing carries fullDocument: null.
-+	// It must decode to nil, because the lookup only fetches updates without a document.
-+	raw, err := bson.Marshal(bson.D{
-+		{Key: "operationType", Value: "update"},
-+		{Key: "documentKey", Value: bson.D{{Key: "_id", Value: int32(1)}}},
-+		{Key: "fullDocument", Value: nil},
-+	})
-+	require.NoError(t, err)
-+	var changeEvent ChangeEvent
-+	require.NoError(t, decodeEvent(raw, &changeEvent))
-+	require.Nil(t, changeEvent.FullDocument)
-+}
-+
-+func TestHydrateUpdateEventsSkipsUpdatesWithPostImage(t *testing.T) {
-+	document, err := bson.Marshal(bson.D{{Key: "_id", Value: int32(1)}, {Key: "v", Value: 2}})
-+	require.NoError(t, err)
-+	postImage := bson.Raw(document)
-+	documentKey, err := bson.Marshal(bson.D{{Key: "_id", Value: int32(1)}})
-+	require.NoError(t, err)
-+	events := []encodedMongoEvent{{
-+		operationType:     operationTypeUpdate,
-+		sourceTableName:   "db.coll",
-+		documentKey:       documentKey,
-+		maybeFullDocument: &postImage,
-+		clusterTime:       bson.Timestamp{T: 1, I: 1},
-+	}}
-+
-+	// The connector has no client, so any lookup query would fail: every update already has its document.
-+	fetched, err := (&MongoConnector{clientUpdateLookup: true}).hydrateUpdateEvents(t.Context(), events)
-+	require.NoError(t, err)
-+	require.Zero(t, fetched)
-+	require.Equal(t, &postImage, events[0].maybeFullDocument)
-+}
-```
-
-**File**: `flow/e2e/mongo_clickhouse/mongo_test.go` (modified, +97/-0)
-```diff
-@@ -1348,6 +1348,103 @@ func (s MongoClickhouseSuite) Test_Delete_Preimage_Validation() {
- 	require.NoError(t, err)
- }
- 
-+func (s MongoClickhouseSuite) Test_CDC_Client_Side_Lookup_Post_Images() {
-+	t := s.T()
-+
-+	const parallelDocumentLookupComment = "PeerDB parallel document lookup"
-+
-+	srcDatabase := e2e.GetTestDatabase(s.Suffix())
-+	srcTable := "test_use_post_images"
-+	dstTable := "test_use_post_images_dst"
-+
-+	connectionGen := e2e.FlowConnectionGenerationConfig{
-+		FlowJobName:   e2e.AddSuffix(s, srcTable),
-+		TableMappings: e2e.TableMappings(s, srcTable, dstTable),
-+		Destination:   s.Peer().Name,
-+	}
-+	flowConnConfig := s.generateFlowConnectionConfigsDefaultEnv(connectionGen)
-+	flowConnConfig.Env["PEERDB_MONGODB_CLIENT_SIDE_UPDATE_LOOKUP"] = "true"
-+
-+	db := s.Source().(*e2e.MongoSource).AdminClient().Database(srcDatabase)
-+	preAndPostImages := options.CreateCollection().SetChangeStreamPreAndPostImages(bson.D{{Key: "enabled", Value: true}})
-+	require.NoError(t, db.CreateCollection(t.Context(), srcTable, preAndPostImages))
-+	collection := db.Collection(srcTable)
-+
-+	// Only PeerDB's lookup queries are profiled, which shows which updates needed a lookup.
-+	require.NoError(t, db.RunCommand(t.Context(), bson.D{
-+		{Key: "profile", Value: 2},
-+		{Key: "filter", Value: bson.D{{Key: "command.comment", Value: parallelDocumentLookupComment}}},
-+	}).Err())
-+	t.Cleanup(func() {
-+		_ = db.RunCommand(context.Background(), bson.D{{Key: "profile", Value: 0}}).Err()
-+	})
-+	lookedUpIDs := func() map[bson.ObjectID]struct{} {
-+		cursor, err := db.Collection("system.profile").Find(t.Context(), bson.D{
-+			{Key: "command.aggregate", Value: srcTable},
-+			{Key: "command.comment", Value: parallelDocumentLookupComment},
-+		})
-+		require.NoError(t, err)
-+		defer cursor.Close(t.Context())
-+		ids := map[bson.ObjectID]struct{}{}
-+		for cursor.Next(t.Context()) {
-+			in, err := cursor.Current.LookupErr("command", "pipeline", "0", "$match", "_id", "$in")
-+			require.NoError(t, err, "expected an _id lookup to batch with $in")
-+			values, err := in.Array().Values()
-+			require.NoError(t, err)
-+			for _, value := range values {
-+				ids[value.ObjectID()] = struct{}{}
++	"cloud.google.com/go/auth"
+ 	"cloud.google.com/go/bigquery"
+ 	chproto "github.com/ClickHouse/ch-go/proto"
+ 	"github.com/ClickHouse/clickhouse-go/v2"
+@@ -1181,6 +1182,16 @@ func GetErrorClass(ctx context.Context, err error) (ErrorClass, ErrorInfo) {
+ 			if _, ok := bigQueryTransientReasons[bqErr.Reason]; ok {
+ 				return ErrorRetryRecoverable, bqErrorInfo
+ 			}
++		} else if authErr, ok := errors.AsType[*auth.Error](err); ok && authErr.Response != nil {
++			// token refresh failure, before the API call
++			statusCode := authErr.Response.StatusCode
++			bqErrorInfo.Code = "AUTH_" + strconv.Itoa(statusCode)
++			switch {
++			case statusCode == 401 || statusCode == 403:
++				return ErrorNotifyConnectivity, bqErrorInfo
++			case statusCode >= 500:
++				return ErrorRetryRecoverable, bqErrorInfo
 +			}
+ 		}
+ 		return ErrorOther, bqErrorInfo
+ 	}
+@@ -1190,13 +1201,22 @@ func GetErrorClass(ctx context.Context, err error) (ErrorClass, ErrorInfo) {
+ 			Source: ErrorSourceGCS,
+ 			Code:   "UNKNOWN",
+ 		}
++		// https://docs.cloud.google.com/storage/docs/retry-strategy#retryable
++		gcsStatusErrorClass := func(statusCode int) ErrorClass {
++			if statusCode == 408 || statusCode == 429 || statusCode >= 500 {
++				return ErrorRetryRecoverable
++			}
++			return ErrorOther
 +		}
-+		require.NoError(t, cursor.Err())
-+		return ids
-+	}
-+
-+	tc := e2e.NewTemporalClient(t)
-+	env := e2e.ExecutePeerflow(t, tc, flowConnConfig)
-+	e2e.SetupCDCFlowStatusQuery(t, env, flowConnConfig)
-+
-+	const numDocs = 300
-+	docs := make([]any, 0, numDocs)
-+	for i := range numDocs {
-+		docs = append(docs, bson.D{{Key: "key", Value: i}, {Key: "v", Value: 0}})
-+	}
-+	insertRes, err := collection.InsertMany(t.Context(), docs)
-+	require.NoError(t, err)
-+	e2e.EnvWaitForEqualTablesWithNames(env, s, "insert events", srcTable, dstTable, "_id,doc")
-+
-+	// Tests that updates with a post-image need no lookup.
-+	updateRes, err := collection.UpdateMany(t.Context(), bson.D{}, bson.D{{Key: "$inc", Value: bson.D{{Key: "v", Value: 1}}}})
-+	require.NoError(t, err)
-+	require.Equal(t, int64(numDocs), updateRes.ModifiedCount)
-+	// The post-image is the document right after the update, so it survives a later delete.
-+	_, err = collection.UpdateOne(t.Context(), bson.D{{Key: "key", Value: 0}},
-+		bson.D{{Key: "$set", Value: bson.D{{Key: "v", Value: -1}}}})
-+	require.NoError(t, err)
-+	_, err = collection.DeleteOne(t.Context(), bson.D{{Key: "key", Value: 0}})
-+	require.NoError(t, err)
-+	e2e.EnvWaitForEqualTablesWithNames(env, s, "updates with post-images", srcTable, dstTable, "_id,doc")
-+	require.Empty(t, lookedUpIDs(), "updates with a post-image must not be looked up")
-+
-+	// Tests that an update without a post-image is looked up instead of written without its document.
-+	require.NoError(t, db.RunCommand(t.Context(), bson.D{
-+		{Key: "collMod", Value: srcTable},
-+		{Key: "changeStreamPreAndPostImages", Value: bson.D{{Key: "enabled", Value: false}}},
-+	}).Err())
-+	const numWithoutPostImage = 10
-+	expectedLookups := make(map[bson.ObjectID]struct{}, numWithoutPostImage)
-+	for i := 1; i <= numWithoutPostImage; i++ {
-+		_, err := collection.UpdateOne(t.Context(), bson.D{{Key: "key", Value: i}},
-+			bson.D{{Key: "$set", Value: bson.D{{Key: "v", Value: 100 + i}}}})
-+		require.NoError(t, err)
-+		expectedLookups[insertRes.InsertedIDs[i].(bson.ObjectID)] = struct{}{}
-+	}
-+	e2e.EnvWaitForEqualTablesWithNames(env, s, "updates without post-images", srcTable, dstTable, "_id,doc")
-+
-+	env.Cancel(t.Context())
-+	e2e.RequireEnvCanceled(t, env)
-+	require.Equal(t, expectedLookups, lookedUpIDs(), "only the updates without a post-image are looked up")
-+}
-+
- func (s MongoClickhouseSuite) Test_Simple_Flow_Partitioned_ObjectID_Uniform() {
- 	t := s.T()
- 	srcDatabase := e2e.GetTestDatabase(s.Suffix())
+ 		if apiErr, ok := errors.AsType[*googleapi.Error](err); ok {
+ 			gcsErrorInfo.Code = strconv.Itoa(apiErr.Code)
+-			// https://docs.cloud.google.com/storage/docs/retry-strategy#retryable
+-			if apiErr.Code == 408 || apiErr.Code == 429 || apiErr.Code >= 500 {
+-				return ErrorRetryRecoverable, gcsErrorInfo
+-			}
+-			return ErrorOther, gcsErrorInfo
++			return gcsStatusErrorClass(apiErr.Code), gcsErrorInfo
++		}
++		if authErr, ok := errors.AsType[*auth.Error](err); ok && authErr.Response != nil {
++			// token refresh failure, before the API call
++			statusCode := authErr.Response.StatusCode
++			gcsErrorInfo.Code = "AUTH_" + strconv.Itoa(statusCode)
++			return gcsStatusErrorClass(statusCode), gcsErrorInfo
+ 		}
+ 		// A lost transport connection never reaches the API layer, so it carries no googleapi.Error
+ 		// and is retried by dialing a new connection.
 ```
 
-**File**: `flow/internal/dynamicconf.go` (modified, +4/-2)
+**File**: `flow/alerting/classifier_test.go` (modified, +56/-0)
 ```diff
-@@ -625,8 +625,10 @@ var DynamicSettings = [...]*protos.DynamicSetting{
- 		TargetForSetting: protos.DynconfTarget_ALL,
- 	},
- 	{
--		Name:             "PEERDB_MONGODB_CLIENT_SIDE_UPDATE_LOOKUP",
--		Description:      "Fetch update documents in bounded parallel batches outside the change stream. ",
-+		Name: "PEERDB_MONGODB_CLIENT_SIDE_UPDATE_LOOKUP",
-+		Description: "If true, PeerDB fetches update documents in bounded parallel batches outside the change stream. " +
-+			"The exception is if the collections already have changeStreamPreAndPostImages enabled, then it will use the " +
-+			"post-image supplied in the change stream event, only missing documents are queried.",
- 		DefaultValue:     "false",
- 		ValueType:        protos.DynconfValueType_BOOL,
- 		ApplyMode:        protos.DynconfApplyMode_APPLY_MODE_AFTER_RESUME,
+@@ -14,6 +14,7 @@ import (
+ 	"testing"
+ 	"time"
+ 
++	"cloud.google.com/go/auth"
+ 	"cloud.google.com/go/bigquery"
+ 	"cloud.google.com/go/storage"
+ 	chproto "github.com/ClickHouse/ch-go/proto"
+@@ -2012,6 +2013,61 @@ func TestGCSUploadHTTP2ConnectionLostShouldBeRecoverable(t *testing.T) {
+ 	}, errInfo)
+ }
+ 
++func TestGCSAuthErrorClassification(t *testing.T) {
++	t.Parallel()
++
++	for _, tc := range []struct {
++		expectedClass ErrorClass
++		code          int
++	}{
++		{code: 502, expectedClass: ErrorRetryRecoverable},
++		{code: 504, expectedClass: ErrorRetryRecoverable},
++		{code: 429, expectedClass: ErrorRetryRecoverable},
++		{code: 401, expectedClass: ErrorOther},
++	} {
++		t.Run(strconv.Itoa(tc.code), func(t *testing.T) {
++			t.Parallel()
++
++			authErr := &auth.Error{Response: &http.Response{StatusCode: tc.code}}
++			err := exceptions.NewGCSError(fmt.Errorf("failed to generate downscoped token: %w",
++				fmt.Errorf("downscope: unable to obtain root token: %w", authErr)))
++			errorClass, errInfo := GetErrorClass(t.Context(), fmt.Errorf("failed to get headers: %w", err))
++			assert.Equal(t, tc.expectedClass, errorClass)
++			assert.Equal(t, ErrorInfo{
++				Source: ErrorSourceGCS,
++				Code:   "AUTH_" + strconv.Itoa(tc.code),
++			}, errInfo)
++		})
++	}
++}
++
++func TestBigQueryAuthErrorClassification(t *testing.T) {
++	t.Parallel()
++
++	for _, tc := range []struct {
++		expectedClass ErrorClass
++		code          int
++	}{
++		{code: 503, expectedClass: ErrorRetryRecoverable},
++		{code: 401, expectedClass: ErrorNotifyConnectivity},
++		{code: 403, expectedClass: ErrorNotifyConnectivity},
++		{code: 400, expectedClass: ErrorOther},
++	} {
++		t.Run(strconv.Itoa(tc.code), func(t *testing.T) {
++			t.Parallel()
++
++			authErr := &auth.Error{Response: &http.Response{StatusCode: tc.code}}
++			err := exceptions.NewBigQueryError(fmt.Errorf("Post \"https://bigquery.googleapis.com\": %w", authErr))
++			errorClass, errInfo := GetErrorClass(t.Context(), fmt.Errorf("export job failed: %w", err))
++			assert.Equal(t, tc.expectedClass, errorClass)
++			assert.Equal(t, ErrorInfo{
++				Source: ErrorSourceBigQuery,
++				Code:   "AUTH_" + strconv.Itoa(tc.code),
++			}, errInfo)
++		})
++	}
++}
++
+ func TestBigQueryUnclassifiedCodeShouldBeOther(t *testing.T) {
+ 	t.Parallel()
+ 
+```
+
+**File**: `flow/connectors/bigquery/gcp.go` (modified, +23/-1)
+```diff
+@@ -5,13 +5,20 @@ import (
+ 	"errors"
+ 	"fmt"
+ 	"net/url"
++	"regexp"
++	"strconv"
+ 	"strings"
+ 
+ 	"cloud.google.com/go/auth"
+ 	"cloud.google.com/go/auth/credentials/downscope"
+ 	"google.golang.org/api/googleapi"
++
++	"github.com/PeerDB-io/peerdb/flow/shared/exceptions"
+ )
+ 
++// downscope returns token exchange failures as an untyped string.
++var downscopeExchangeErrorRe = regexp.MustCompile(`(?s)^downscope: unable to exchange token, (\d{3}): (.*)$`)
++
+ func (c *BigQueryConnector) storageDownScopedToken(ctx context.Context, bucketName string, prefix string) (*auth.Token, error) {
+ 	accessBoundary := []downscope.AccessBoundaryRule{
+ 		{
+@@ -30,11 +37,26 @@ func (c *BigQueryConnector) storageDownScopedToken(ctx context.Context, bucketNa
+ 
+ 	token, err := tp.Token(ctx)
+ 	if err != nil {
+-		return nil, fmt.Errorf("failed to generate downscoped token: %w", err)
++		return nil, exceptions.NewGCSError(fmt.Errorf("failed to generate downscoped token: %w", wrapDownscopeError(err)))
+ 	}
+ 	return token, nil
+ }
+ 
++// wrapDownscopeError extracts the HTTP status into a googleapi.Error for classification.
++func wrapDownscopeError(err error) error {
++	m := downscopeExchangeErrorRe.FindStringSubmatch(err.Error())
++	if m == nil {
++		return err
++	}
++	code, convErr := strconv.Atoi(m[1])
++	if convErr != nil {
++		return err
++	}
++	apiErr := &googleapi.Error{Code: code, Body: m[2]}
++	apiErr.Wrap(err)
++	return apiErr
++}
++
+ func (c *BigQueryConnector) isApiErrorWithStatusCode(err error, code int) bool {
+ 	if apiErr, ok := errors.AsType[*googleapi.Error](err); ok && apiErr.Code == code {
+ 		return true
+```
+
+**File**: `flow/connectors/bigquery/gcp_test.go` (added, +58/-0)
+```diff
+@@ -0,0 +1,58 @@
++package connbigquery
++
++import (
++	"errors"
++	"fmt"
++	"strconv"
++	"testing"
++
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++	"google.golang.org/api/googleapi"
++
++	"github.com/PeerDB-io/peerdb/flow/alerting"
++	"github.com/PeerDB-io/peerdb/flow/shared/exceptions"
++)
++
++func TestDownscopeTokenExchangeErrorClassification(t *testing.T) {
++	t.Parallel()
++
++	for _, tc := range []struct {
++		expectedClass alerting.ErrorClass
++		code          int
++	}{
++		{code: 503, expectedClass: alerting.ErrorRetryRecoverable},
++		{code: 429, expectedClass: alerting.ErrorRetryRecoverable},
++		{code: 400, expectedClass: alerting.ErrorOther},
++	} {
++		t.Run(strconv.Itoa(tc.code), func(t *testing.T) {
++			t.Parallel()
++
++			body := fmt.Sprintf("{\n  \"error\": {\n    \"code\": %d\n  }\n}", tc.code)
++			rawErr := fmt.Errorf("downscope: unable to exchange token, %d: %s", tc.code, body)
++
++			wrapped := wrapDownscopeError(rawErr)
++			apiErr, ok := errors.AsType[*googleapi.Error](wrapped)
++			require.True(t, ok)
++			assert.Equal(t, tc.code, apiErr.Code)
++			assert.Equal(t, body, apiErr.Body)
++			require.ErrorIs(t, wrapped, rawErr)
++
++			err := fmt.Errorf("failed to sync records: failed to insert batch: failed to get headers: %w",
++				exceptions.NewGCSError(fmt.Errorf("failed to generate downscoped token: %w", wrapped)))
++			errorClass, errInfo := alerting.GetErrorClass(t.Context(), err)
++			assert.Equal(t, tc.expectedClass, errorClass)
++			assert.Equal(t, alerting.ErrorInfo{
++				Source: alerting.ErrorSourceGCS,
++				Code:   strconv.Itoa(tc.code),
++			}, errInfo)
++		})
++	}
++}
++
++func TestWrapDownscopeErrorLeavesOtherErrorsUntouched(t *testing.T) {
++	t.Parallel()
++
++	rawErr := errors.New("dial tcp: connection refused")
++	assert.Same(t, rawErr, wrapDownscopeError(rawErr))
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5021** (2026-11-04): classify ClickHouse Avro Date out-of-range as destination modified (@ilidemi)
-- **PR #5018** (2026-11-04): Wrap BigQuery source time and export errors for classification (@dtunikov)
-- **PR #5016** (closed): mongo: kill change stream cursor leaked on context timeout (@dtunikov)
-- **PR #5015** (2026-11-03): classify DocumentDB too many cursors error as recoverable (@dtunikov)
-- **PR #5014** (2026-11-03): feat: upgrade `docker-compose.yml` stable image tags (@github-actions[bot])
-- **PR #5013** (2026-11-04): docs: add tricky-areas.md (@gheorghepucea)
+- **PR #5053** (2026-11-09): ci: raise MariaDB max_connections to 1000 (@gheorghepucea)
+- **PR #5051** (closed): skip partitions dropped after snapshot export in CTID partitioning (@dtunikov)
+- **PR #5037** (closed): [WIP, DO NOT MERGE] Fault-injection tests on main (CI shakedown) (@ilidemi)
+- **PR #5034** (2026-11-07): Make normalize start on pending batches after a SyncFlow restart (@ilidemi)
+- **PR #5033** (2026-11-09): Add signal handling and schema changes to tricky areas doc, organize helpers a bit (@ilidemi)
+- **PR #5032** (2026-11-07): fix(snapshot): add NULL partition when partition key is excluded (@ilidemi)
 
 ---
 
@@ -2287,26 +2604,38 @@ Fixes: DBI-1276
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. classify ClickHouse Avro Date out-of-range as destination modified (#5021)
+## X. Add signal handling and schema changes to tricky areas doc, organize helpers a b
 
 **RULE**:
-When implementing operations in `flow/alerting/classifier.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/tricky-areas.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8a3660f9`: classify ClickHouse Avro Date out-of-range as destination modified (#5021). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f7f8b7e5`: Add signal handling and schema changes to tricky areas doc, organize helpers a bit (#5033). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `flow/alerting/classifier.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/tricky-areas.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-			//nolint:lll
-			// PeerDB maps dates to Date32, so a Date column that rejects a value outside 1970-2149 was set by the user:
-			// https://github.com/ClickHouse/ClickHouse/blob/abbc002369b8bf2b54abbf54dd02a662a685c4db/src/Processors/Formats/Impl/AvroRowInputFormat.cpp#L380-L389
-			if strings.Contains(chException.Message, "exceeds the range of type Date, ") {
-				return ErrorNotifyDestinationModified, chErrorInfo
-			}
+| [Temporal signal handling](#temporal-signal-handling) | `flow/workflows/cdc_flow.go`, `flow/workflows/drop_flow.go`, `flow/model/signals.go` |
+| [Schema changes](#schema-changes) | `flow/activities/flowable_core.go`, `flow/model/cdc_stream.go`, `flow/internal/catalog_schema.go`, `flow/connectors/postgres/cdc.go`, `flow/connectors/mysql/cdc.go`, `flow/connectors/clickhouse/` |
+
+---
+
+## Temporal signal handling
+
+**Why it is tricky.** Pause, resume, terminate and resync requests can arrive while a workflow waits for an
+activity or child workflow. The workflow must continue to handle the requests that it supports in that phase.
+An interrupting request needs the correct state, even if the current operation is only partly complete.
+For this guidance, small catalog interactions such as status updates or logging do not count as long waits.
+
+**What to watch for in a PR.**
+
+- When you add or move a long-running activity or child workflow, check which requests need handling during the wait.
+  For example, snapshot and table-edit operations handle terminate/resync requests while they wait for completion.
+  A direct `.Get()` on new work can delay those requests until the work finishes.
+- Befo
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2316,4 +2645,4 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8a3660f9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f7f8b7e5` are properly handled with clean fallback behavior.

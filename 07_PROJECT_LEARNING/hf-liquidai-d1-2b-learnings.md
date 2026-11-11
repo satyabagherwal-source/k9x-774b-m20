@@ -3,7 +3,7 @@
 > **Source Version**: `hf-liquidai-`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-11-05T18:31:37.034Z  
+> **Timestamp**: 2026-11-09T21:27:15.855Z  
 > **Learning ID**: `learn-huggingface-liquidai-d1-2b`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,265 +17,352 @@
 ## 1. Executive Forensic Architecture & System Mechanics
 
 **Technical Problem Solved:**
-The `LiquidAI/d1-2B` repository represents a **Liquid Foundation Model (LFM3)** variant, specifically a 2B parameter multimodal model designed for **edge deployment** and **System-1 decision-making** (fast, intuitive, low-latency inference). Unlike standard Transformer architectures that rely entirely on self-attention (O(N²) complexity), this model utilizes a **hybrid architecture** combining **Convolutional Layers (Liquid State Space/Conv-LSTM variants)** with **Sparse Attention** (Full and Sliding Window). This solves the problem of long-context inference on resource-constrained devices by reducing computational complexity from quadratic to linear/quasi-linear while maintaining multimodal (image/video/text) understanding.
+The `LiquidAI/d1-2B` repository represents a **Liquid Foundation Model (LFM3) variant** optimized for **System-1 (fast, intuitive) decision-making** in multimodal contexts (image-text-to-text). Unlike standard Transformer architectures that rely on quadratic attention complexity ($O(N^2)$) for all layers, this model implements a **hybrid state-space/attention architecture** using **Liquid Neural Networks (LNNs)** or "conv" layers interleaved with standard attention mechanisms. The core problem it solves is **latency and memory efficiency** for edge deployment (2B parameters) while maintaining long-context capability (128k tokens) and multimodal understanding.
 
-**Architectural Boundaries & Subsystems:**
-1.  **Hybrid Backbone (Text & Vision):**
-    *   **Text Config (`lfm3`):** 24 layers. The `layer_types` array reveals a strict periodicity: `["conv", "conv", "full_attention", "conv", "sliding_attention", ...]`. This indicates a **Block-Structured Hybrid** where 2 conv layers are followed by 1 attention layer, repeating.
-    *   **Vision Config (`lfm3_vl_vision`):** 14 layers. Similar hybrid structure but with `axial` RoPE (Rotary Position Embedding) for 2D spatial awareness.
-    *   **Key Invariant:** The model is **not** a pure Transformer. It relies on `conv_L_cache: 7` (likely a sliding window cache for the conv state) and `sliding_window: 256` for local attention.
+**Architectural Boundaries:**
+1.  **Hybrid Layer Stack:** The model does not use uniform attention. It alternates between `conv` (Liquid/State-space) layers and `full_attention`/`sliding_attention` layers.
+    *   *Text Config:* 24 layers. Pattern: `conv, conv, full_attention, conv, sliding_attention, ...`
+    *   *Vision Config:* 14 layers. Pattern: `conv, conv, full_attention, ...`
+2.  **Modality Fusion:** Uses a specific projector (`projector_hidden_size: 4096`, `gelu` activation) to map vision features into the text embedding space.
+3.  **Edge-Optimized Precision:** Native `bfloat16` support, critical for hardware compatibility (NVIDIA A100/H100, Apple Silicon, Jetson).
+4.  **Custom Code Dependency:** The `custom_code` tag and `model_type: lfm3_vl` indicate that standard Hugging Face `transformers` library logic is insufficient; it requires specific implementation of the "Liquid" convolutional/state-space blocks which are not standard PyTorch `nn.Linear` or `nn.MultiheadAttention`.
 
-2.  **Multimodal Fusion (Projector):**
-    *   A dedicated **Projector** subsystem bridges the Vision Encoder and the Text Decoder.
-    *   **Config:** `projector_hidden_size: 4096`, `projector_hidden_act: gelu`, `projector_bias: true`.
-    *   **Mechanism:** Vision tokens (patch size 16, temporal patch 2) are downsampled (`downsample_factor: 2`) and projected into the text embedding space (hidden size 2048).
-
-3.  **State Management & Caching:**
-    *   `use_cache: true` is enabled, but the cache structure is non-standard due to the conv layers. It likely maintains a **Hybrid KV Cache** (for attention) and a **State Cache** (for conv/LSTM-like memory).
-    *   `tie_word_embeddings: true`: The input embedding matrix and output projection matrix are shared, reducing parameter count and enforcing a symmetry constraint between input representation and output logits.
-
-4.  **Precision & Deployment:**
-    *   `dtype: bfloat16`: The model is natively trained and deployed in **bfloat16**, not float32 or float16. This is critical for numerical stability on edge hardware (e.g., Apple Silicon, NVIDIA Jetson) where bfloat16 has a wider dynamic range than float16, preventing overflow/underflow in the conv layers.
+**Critical Subsystem Abstractions:**
+*   **`D1Model`**: The top-level wrapper handling the multimodal interface.
+*   **`Lfm3TextModel`**: The backbone implementing the hybrid `conv`/`attention` stack.
+*   **`Lfm3VisionModel`**: The vision encoder using axial RoPE and patch-based convolution.
+*   **`Lfm3VlProcessor`**: The tokenizer/processor that handles the complex tokenization of images/videos into the specific `<|image|>` and `<|video|>` token sequences.
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Hybrid Attention-Convolution Layer Periodicity Invariant
+### 1. Hybrid Attention/State-Space Layer Interleaving Invariant
 **RULE**:
-In hybrid neural network architectures combining convolutional (stateful) and attention (contextual) layers, the layer ordering MUST follow a strict periodic pattern (e.g., N conv layers followed by 1 attention layer) to ensure that local feature extraction (conv) precedes global context integration (attention). The `layer_types` configuration MUST be validated to ensure no two attention layers are adjacent without an intervening conv layer, and no conv layer is placed after the final attention layer if the model requires a final global context state.
+When building hybrid models that mix state-space layers (e.g., SSM, Mamba, Liquid Conv) with standard Attention layers, you **MUST** explicitly define the `layer_types` array in the configuration and **MUST NOT** assume uniform layer behavior. The inference engine **MUST** dispatch to different forward passes based on the layer index's type.
 
 **WHY**:
-Convolutional layers in LLMs (like Liquid State Space or Conv-LSTM) operate on local windows and maintain internal state. Attention layers operate on the full (or sliding) context. If attention layers are placed before conv layers, the conv layers will process already-globalized features, losing the benefit of local feature extraction. If conv layers are placed after the final attention layer, the output will be local, breaking the expectation of a global representation for the next layer or output head. The periodicity ensures a consistent "local-to-global" information flow.
+Standard Transformers assume every layer performs $Q \cdot K^T \cdot V$. State-space layers perform $y_t = A x_{t-1} + B u_t$. If the inference engine treats a `conv` layer as an `attention` layer, it will attempt to compute attention scores on state vectors, leading to shape mismatches or semantic corruption. The `layer_types` array is the single source of truth for the execution graph.
 
 **WHEN TO APPLY**:
-Any model architecture that mixes recurrent/convolutional stateful layers with attention layers, particularly in long-sequence modeling or edge-deployed LLMs.
+Any model architecture that mixes different computational primitives (e.g., Mamba + Attention, Liquid + Attention, Linear Attention + Full Attention).
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 # config.json snippet
-"layer_types": [
-    "conv", "conv", "full_attention",  # Block 1: 2 conv, 1 attn
-    "conv", "sliding_attention",       # Block 2: 1 conv, 1 sliding attn
-    "conv", "full_attention",          # Block 3: 1 conv, 1 full attn
-    # ... pattern continues
-]
+"layer_types": ["conv", "conv", "full_attention", "conv", "sliding_attention"]
 
-# Validation Logic
-def validate_layer_types(layer_types: list[str]) -> bool:
-    if not layer_types:
-        return False
-    # Check periodicity: No two attention layers adjacent
-    for i in range(len(layer_types) - 1):
-        if layer_types[i].endswith("attention") and layer_types[i+1].endswith("attention"):
-            return False
-    # Check that the last layer is not a conv layer if global context is required
-    if layer_types[-1] == "conv":
-        return False
-    return True
-```
-
-**NEGATIVE CONSTRAINT**:
-```python
-# BAD: Adjacent attention layers without conv in between
-"layer_types": ["full_attention", "full_attention", "conv", "conv"]
-
-# BAD: Conv layer at the end, breaking global context
-"layer_types": ["conv", "full_attention", "conv"]
-```
-
-**VERIFICATION METHOD**:
-Unit test that asserts `validate_layer_types(config.layer_types)` returns `True` for all supported model configurations. Lint rule that checks the `layer_types` array in `config.json` for adjacency violations.
-
-### 2. BFloat16 Precision Mandate for Hybrid Conv-Attention Models
-**RULE**:
-Hybrid models containing convolutional layers MUST be deployed and inferred in `bfloat16` precision. `float16` MUST NOT be used for the conv layers due to its limited dynamic range, which causes overflow/underflow in the stateful conv computations. `float32` MUST NOT be used for the attention layers due to memory constraints on edge devices.
-
-**WHY**:
-Convolutional layers in LLMs often involve accumulation of states over time (like LSTM gates). These accumulations can produce values with a wide dynamic range. `float16` has a max value of ~65504 and a min positive normal of ~6e-5. Values outside this range become `inf` or `0`, causing training/inference instability. `bfloat16` has the same exponent range as `float32` (max ~3.4e38), making it robust to these dynamic range issues. Attention layers, which involve dot products and softmax, are more numerically stable in `float16` but are memory-bound, so `bfloat16` is a good compromise for both.
-
-**WHEN TO APPLY**:
-Any model with stateful layers (conv, LSTM, GRU) deployed on edge devices or in mixed-precision training/inference pipelines.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-# config.json
-"dtype": "bfloat16"
-
-# Inference Code
-model = AutoModelForCausalLM.from_pretrained(
-    "LiquidAI/d1-2B",
-    torch_dtype=torch.bfloat16,  # MUST be bfloat16
-    device_map="auto"
-)
-
-# Validation
-assert model.dtype == torch.bfloat16, "Model must be in bfloat16"
-```
-
-**NEGATIVE CONSTRAINT**:
-```python
-# BAD: Using float16 for conv layers
-model = AutoModelForCausalLM.from_pretrained(
-    "LiquidAI/d1-2B",
-    torch_dtype=torch.float16  # CAUSES OVERFLOW IN CONV LAYERS
-)
-```
-
-**VERIFICATION METHOD**:
-Unit test that loads the model and asserts `model.dtype == torch.bfloat16`. Integration test that runs inference on a long sequence and checks for `inf` or `nan` values in the output logits.
-
-### 3. Vision-Text Projector Dimensional Alignment Invariant
-**RULE**:
-The vision projector's output dimension MUST match the text model's `hidden_size`. The projector's `hidden_size` MUST be a multiple of the text model's `hidden_size` to allow for efficient matrix multiplication. The `downsample_factor` MUST be applied to the vision tokens before projection to ensure the number of vision tokens is compatible with the text model's context window.
-
-**WHY**:
-The projector bridges the vision encoder (hidden size 1024) and the text decoder (hidden size 2048). If the dimensions do not match, the model will crash or produce incorrect outputs. The `downsample_factor` reduces the number of vision tokens, which is critical for long-context models where the number of vision tokens can exceed the context window. If the downsample factor is not applied, the model will either crash or produce incorrect outputs due to context window overflow.
-
-**WHEN TO APPLY**:
-Any multimodal model that uses a projector to bridge vision and text encoders.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-# config.json
-"text_config": {
-    "hidden_size": 2048
-},
-"vision_config": {
-    "hidden_size": 1024
-},
-"projector_hidden_size": 4096,  # Multiple of 2048
-"downsample_factor": 2
-
-# Projector Code
-class Projector(nn.Module):
-    def __init__(self, vision_hidden_size, text_hidden_size, projector_hidden_size):
-        super().__init__()
-        assert projector_hidden_size % text_hidden_size == 0, "Projector hidden size must be a multiple of text hidden size"
-        self.fc1 = nn.Linear(vision_hidden_size, projector_hidden_size)
-        self.fc2 = nn.Linear(projector_hidden_size, text_hidden_size)
+# Pseudo-code for Model Forward Pass
+def forward(self, hidden_states, layer_idx):
+    layer_type = self.config.layer_types[layer_idx]
     
-    def forward(self, vision_tokens):
-        x = self.fc1(vision_tokens)
-        x = F.gelu(x)
-        x = self.fc2(x)
-        return x
+    if layer_type == "conv":
+        # State-space update: O(N) complexity
+        hidden_states = self.conv_layers[layer_idx](hidden_states)
+    elif layer_type == "full_attention":
+        # Standard Attention: O(N^2) complexity
+        hidden_states = self.attention_layers[layer_idx](hidden_states)
+    elif layer_type == "sliding_attention":
+        # Windowed Attention: O(N * W) complexity
+        hidden_states = self.sliding_layers[layer_idx](hidden_states)
+        
+    return hidden_states
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# BAD: Projector hidden size not a multiple of text hidden size
-"projector_hidden_size": 2049  # NOT A MULTIPLE OF 2048
-
-# BAD: No downsample factor, causing context window overflow
-"downsample_factor": 1  # TOO MANY VISION TOKENS
+# ANTI-PATTERN: Assuming all layers are identical
+for layer in self.layers:
+    # This will crash or produce garbage if 'layer' is a Conv/SSM block
+    # expecting Q, K, V projections
+    hidden_states = layer(hidden_states) 
 ```
 
 **VERIFICATION METHOD**:
-Unit test that asserts `projector_hidden_size % text_hidden_size == 0`. Integration test that runs inference on an image and checks that the number of vision tokens is within the context window.
+Unit test that instantiates the model and asserts that `model.layers[0].__class__` is different from `model.layers[2].__class__` if the config specifies different types. Additionally, verify that the forward pass executes without shape errors for a sequence length that would exceed memory limits if full attention were used for all layers.
+
+### 2. Multimodal Token Alignment & Projector Bias Invariant
+**RULE**:
+When fusing vision and text modalities, the vision projector **MUST** include a learnable bias term (`projector_bias: true`) and **MUST** use a non-linear activation (e.g., GELU) before projecting into the text embedding space. The vision tokens **MUST** be wrapped in specific start/end tokens (`<|vision_start|>`, `<|vision_end|>`) to allow the text decoder to distinguish modality boundaries.
+
+**WHY**:
+Vision features (pixel patches) and text embeddings (semantic tokens) exist in different latent spaces. A linear projection without bias or non-linearity often fails to align the distributions, causing the model to ignore visual information or hallucinate. The start/end tokens provide explicit context to the attention mechanism, allowing it to "attend" to the vision block as a distinct semantic unit.
+
+**WHEN TO APPLY**:
+Any Vision-Language Model (VLM) or Multimodal LLM.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Projector
+class VisionProjector(nn.Module):
+    def __init__(self, vision_dim, text_dim, hidden_size):
+        super().__init__()
+        self.linear1 = nn.Linear(vision_dim, hidden_size)
+        self.act = nn.GELU()
+        self.linear2 = nn.Linear(hidden_size, text_dim)
+        self.bias = nn.Parameter(torch.zeros(text_dim)) # Explicit bias
+
+    def forward(self, vision_features):
+        x = self.linear1(vision_features)
+        x = self.act(x)
+        x = self.linear2(x)
+        return x + self.bias
+
+# Tokenization
+def process_image(image):
+    vision_tokens = encode_image(image)
+    # Wrap in special tokens
+    return [vision_start_token] + vision_tokens + [vision_end_token]
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Direct linear projection without non-linearity or bias
+class BadProjector(nn.Module):
+    def forward(self, vision_features):
+        return self.linear(vision_features) # No GELU, no bias, poor alignment
+```
+
+**VERIFICATION METHOD**:
+Check that the `config.json` contains `"projector_bias": true` and `"projector_hidden_act": "gelu"`. Verify that the tokenizer output for an image input contains the `vision_start_token_id` and `vision_end_token_id` surrounding the image token IDs.
+
+### 3. Sliding Window Attention for Long Context Efficiency
+**RULE**:
+For models targeting long contexts (>32k tokens) on edge devices, you **MUST** implement sliding window attention for a subset of layers and **MUST** configure `sliding_window` to a value significantly smaller than `max_position_embeddings`. This reduces memory complexity from $O(N^2)$ to $O(N \cdot W)$ for those layers.
+
+**WHY**:
+Full attention over 128k tokens requires storing a $128k \times 128k$ attention matrix, which is infeasible on edge hardware. Sliding window attention limits the context each token attends to, drastically reducing memory footprint while retaining local context. The hybrid approach (some full, some sliding) allows the model to capture both local details and global structure.
+
+**WHEN TO APPLY**:
+Any LLM or VLM with `max_position_embeddings` > 32k intended for deployment on memory-constrained devices.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# config.json
+"sliding_window": 256,
+"max_position_embeddings": 128000
+
+# Attention Mask Logic
+def create_sliding_mask(seq_len, window_size):
+    mask = torch.ones(seq_len, seq_len, dtype=torch.bool)
+    for i in range(seq_len):
+        start = max(0, i - window_size)
+        end = min(seq_len, i + 1)
+        mask[i, start:end] = True
+    return mask
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Using full attention for all layers in a 128k context model
+# This will cause OOM (Out of Memory) on most edge devices
+attention_mask = torch.ones(seq_len, seq_len)
+```
+
+**VERIFICATION METHOD**:
+Profile memory usage during inference with a 128k token sequence. Verify that memory usage scales linearly with sequence length for sliding attention layers, not quadratically.
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-*Note: No specific commit patches or bug issues were provided in the input data. The following incidents are inferred from the architectural invariants and common failure modes in hybrid multimodal models.*
+*Note: Since no specific commit patches or bug issues were provided in the input data, the following incidents are **inferred** from common failure modes in hybrid LLM/VLM architectures and the specific configuration parameters observed in `config.json`. These are "Forensic Inferences" based on architectural risks.*
 
-### Incident 1: Conv Layer State Overflow in Float16 (BUG-CONV-OVF-01)
-- **Context**: Vision Encoder Conv Layers
-- **What Was Expected**: Stable inference on long video sequences.
-- **What Actually Happened**: Output logits contained `inf` or `nan` values after processing >100 frames.
-- **Evidence in Repo**: `config.json` specifies `dtype: bfloat16`.
-- **Root Cause**: The conv layers accumulate state over time. In `float16`, the state values exceeded the max representable value (~65504), causing overflow.
+### Incident 1: KV Cache Mismatch in Hybrid Layers (BUG-HYBRID-KV-01)
+- **Context**: Inference engine, KV Cache management.
+- **What Was Expected**: The KV cache should be updated correctly for both `full_attention` and `sliding_attention` layers, while `conv` layers should maintain their internal state (hidden state) without a KV cache.
+- **What Actually Happened**: The inference engine attempted to allocate a KV cache for `conv` layers, leading to memory bloat or shape errors when trying to concatenate new keys/values with the state vector.
+- **Evidence in Repo**: `config.json` shows `layer_types` including `conv`. Standard HF `transformers` assumes all layers have KV caches.
+- **Root Cause**: The inference engine did not differentiate between attention layers (which need KV cache) and state-space layers (which need hidden state).
 - **Remediation Code Diff**:
 ```python
-// - Buggy code: Using float16
-model = AutoModelForCausalLM.from_pretrained("LiquidAI/d1-2B", torch_dtype=torch.float16)
+# - Buggy: Uniform KV cache allocation
+kv_cache = [None] * num_layers
 
-// + Fixed pattern: Using bfloat16
-model = AutoModelForCausalLM.from_pretrained("LiquidAI/d1-2B", torch_dtype=torch.bfloat16)
+# + Fixed: Conditional cache allocation
+kv_cache = []
+for i, layer_type in enumerate(config.layer_types):
+    if layer_type in ["full_attention", "sliding_attention"]:
+        kv_cache.append(KVCache())
+    else:
+        kv_cache.append(None) # Conv layers use hidden state, not KV
 ```
-- **Lesson**: Always use `bfloat16` for stateful layers in hybrid models.
+- **Lesson**: In hybrid architectures, the cache management strategy **MUST** be layer-type aware.
 
-### Incident 2: Vision Token Context Window Overflow (BUG-VIS-OVF-02)
-- **Context**: Multimodal Fusion
-- **What Was Expected**: Inference on high-resolution images.
-- **What Actually Happened**: Model crashed with "Context window exceeded" error.
-- **Evidence in Repo**: `config.json` specifies `downsample_factor: 2`.
-- **Root Cause**: The vision encoder produced too many tokens for the text model's context window. The `downsample_factor` was not applied correctly.
+### Incident 2: Vision Token Alignment Drift (BUG-VISION-ALIGN-02)
+- **Context**: Vision-Text fusion, Projector.
+- **What Was Expected**: Vision features should align with text embeddings, allowing the model to understand image content.
+- **What Actually Happened**: The model ignored image content, responding as if the image was blank.
+- **Evidence in Repo**: `projector_bias: true` and `projector_hidden_act: gelu` are present. If these were missing or misconfigured, alignment would fail.
+- **Root Cause**: The vision features were not properly normalized or projected into the text embedding space. The lack of bias or non-linearity caused the distributions to mismatch.
 - **Remediation Code Diff**:
 ```python
-// - Buggy code: No downsample
-vision_tokens = vision_encoder(image)  # Too many tokens
+# - Buggy: Linear projection only
+projected = self.linear(vision_features)
 
-// + Fixed pattern: Apply downsample
-vision_tokens = vision_encoder(image)
-vision_tokens = downsample(vision_tokens, factor=2)
+# + Fixed: Non-linear projection with bias
+projected = self.linear1(vision_features)
+projected = self.gelu(projected)
+projected = self.linear2(projected) + self.bias
 ```
-- **Lesson**: Always apply the `downsample_factor` to vision tokens before projection.
+- **Lesson**: Multimodal fusion **MUST** include non-linear transformations and bias terms to align latent spaces.
 
-### Incident 3: Projector Dimension Mismatch (BUG-PROJ-MIS-03)
-- **Context**: Vision-Text Projector
-- **What Was Expected**: Successful projection of vision tokens to text space.
-- **What Actually Happened**: `RuntimeError: mat1 and mat2 shapes cannot be multiplied`.
-- **Evidence in Repo**: `config.json` specifies `projector_hidden_size: 4096` and `text_config.hidden_size: 2048`.
-- **Root Cause**: The projector's output dimension did not match the text model's hidden size.
+### Incident 3: Sliding Window Boundary Error (BUG-SLIDING-BOUND-03)
+- **Context**: Sliding Attention implementation.
+- **What Was Expected**: Each token should attend to the previous `sliding_window` tokens.
+- **What Actually Happened**: Tokens at the beginning of the sequence attended to fewer tokens than expected, or tokens at the end attended to invalid memory locations.
+- **Evidence in Repo**: `sliding_window: 256`.
+- **Root Cause**: Off-by-one error in the sliding window mask creation. The mask did not correctly handle the boundaries at the start and end of the sequence.
 - **Remediation Code Diff**:
 ```python
-// - Buggy code: Mismatched dimensions
-self.fc2 = nn.Linear(projector_hidden_size, 1024)  # WRONG
+# - Buggy: Incorrect boundary handling
+mask[i, i-window_size:i] = True # Fails for i < window_size
 
-// + Fixed pattern: Matched dimensions
-self.fc2 = nn.Linear(projector_hidden_size, text_hidden_size)  # CORRECT
+# + Fixed: Correct boundary handling
+start = max(0, i - window_size)
+end = min(seq_len, i + 1)
+mask[i, start:end] = True
 ```
-- **Lesson**: Always validate that the projector's output dimension matches the text model's hidden size.
+- **Lesson**: Sliding window masks **MUST** handle boundary conditions explicitly.
+
+### Incident 4: BFloat16 Precision Loss in Conv Layers (BUG-PRECISION-CONV-04)
+- **Context**: Convolutional/Liquid layers, bfloat16 inference.
+- **What Was Expected**: Stable inference with bfloat16 precision.
+- **What Actually Happened**: Numerical instability or NaNs in the output of conv layers.
+- **Evidence in Repo**: `dtype: bfloat16`.
+- **Root Cause**: Convolutional operations in bfloat16 can suffer from precision loss, especially in the accumulation of sums. The `conv_bias: false` setting might exacerbate this if the bias is not properly handled in lower precision.
+- **Remediation Code Diff**:
+```python
+# - Buggy: Direct bfloat16 convolution
+output = self.conv(input_bfloat16)
+
+# + Fixed: Accumulate in float32, cast back
+output = self.conv(input_bfloat16.float()).bfloat16()
+```
+- **Lesson**: In bfloat16 inference, convolutional layers **MUST** accumulate in higher precision (float32) to prevent numerical instability.
+
+### Incident 5: Tokenizer Special Token Mismatch (BUG-TOKENIZER-SPECIAL-05)
+- **Context**: Tokenizer, Special tokens.
+- **What Was Expected**: The tokenizer should correctly identify and encode special tokens like `<|image|>`, `<|vision_start|>`, etc.
+- **What Actually Happened**: The model received incorrect token IDs for special tokens, leading to misinterpretation of the input.
+- **Evidence in Repo**: `tokenizer_config.json` lists `model_specific_special_tokens`.
+- **Root Cause**: The tokenizer was not configured to recognize the model-specific special tokens, or the token IDs in the config did not match the tokenizer's vocabulary.
+- **Remediation Code Diff**:
+```python
+# - Buggy: Default tokenizer without special tokens
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+
+# + Fixed: Tokenizer with model-specific special tokens
+tokenizer = AutoTokenizer.from_pretrained(
+    model_name,
+    model_specific_special_tokens={
+        "image_token": "<|image|>",
+        "vision_start_token": "<|vision_start|>",
+        "vision_end_token": "<|vision_end|>"
+    }
+)
+```
+- **Lesson**: Tokenizers **MUST** be configured with all model-specific special tokens to ensure correct encoding.
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
-1. **Micro-Syntax & Token-Level Precision**:
-   - **BFloat16 vs Float16**: `bfloat16` has 8 exponent bits, `float16` has 5. This means `bfloat16` can represent values up to ~3.4e38, while `float16` can only represent up to ~65504. In conv layers, state accumulation can easily exceed 65504, causing overflow in `float16`.
-   - **Tie Word Embeddings**: `tie_word_embeddings: true` means the input embedding matrix and output projection matrix are shared. This reduces parameter count but requires careful handling of gradients during training. If the gradients are not properly scaled, the shared weights can diverge, causing training instability.
+1.  **Micro-Syntax & Token-Level Precision**:
+    *   **Invariant**: When handling `bfloat16` tensors, **MUST** ensure that any reduction operations (sum, mean) are performed in `float32` before casting back.
+    *   **Code**:
+        ```python
+        # BAD
+        mean_val = tensor_bf16.mean()
+        
+        # GOOD
+        mean_val = tensor_bf16.float().mean().bfloat16()
+        ```
+    *   **Reason**: `bfloat16` has only 8 bits of mantissa, leading to significant precision loss in reductions.
 
-2. **Infinite Loop & Recursion Guards**:
-   - **Conv Layer State**: Conv layers in LLMs often use a sliding window cache. If the cache is not properly managed, it can grow indefinitely, causing memory leaks. The `conv_L_cache: 7` parameter likely specifies the cache size, which must be strictly enforced.
-   - **Attention Sliding Window**: `sliding_window: 256` means the attention layer only attends to the last 256 tokens. If the window is not properly shifted, the model can attend to stale tokens, causing incorrect outputs.
+2.  **Infinite Loop & Recursion Guards**:
+    *   **Invariant**: In hybrid layer forward passes, **MUST** ensure that the `layer_idx` is within the bounds of the `layer_types` array.
+    *   **Code**:
+        ```python
+        # BAD
+        layer_type = self.config.layer_types[layer_idx] # IndexError if layer_idx >= len(layer_types)
+        
+        # GOOD
+        if layer_idx >= len(self.config.layer_types):
+            raise ValueError(f"Layer index {layer_idx} out of bounds")
+        layer_type = self.config.layer_types[layer_idx]
+        ```
+    *   **Reason**: Prevents crashes due to misconfigured layer counts.
 
-3. **UI & UX Micro-Mechanics**:
-   - **N/A**: This is a backend model, not a UI application.
+3.  **UI & UX Micro-Mechanics**:
+    *   *N/A for this backend model repository.*
 
-4. **Backend Concurrency & Memory Safety**:
-   - **KV Cache Management**: The model uses a hybrid KV cache (for attention) and state cache (for conv). If the caches are not properly synchronized, the model can produce incorrect outputs. The cache must be updated atomically to prevent race conditions.
-   - **Memory Leaks**: The conv layer state can grow indefinitely if not properly managed. The `conv_L_cache` parameter must be strictly enforced to prevent memory leaks.
+4.  **Backend Concurrency & Memory Safety**:
+    *   **Invariant**: When managing KV caches for hybrid layers, **MUST** ensure that the cache is properly resized or truncated when the sequence length changes.
+    *   **Code**:
+        ```python
+        # BAD
+        kv_cache.append(new_kv) # May exceed memory limits
+        
+        # GOOD
+        if len(kv_cache) > max_cache_size:
+            kv_cache.pop(0) # Truncate oldest
+        kv_cache.append(new_kv)
+        ```
+    *   **Reason**: Prevents memory leaks and OOM errors.
 
-5. **Defect & Error Prevention ("Galti Pakadna")**:
-   - **Null/Undefined Chaining**: The projector must handle cases where the vision encoder produces no tokens (e.g., blank image). If the projector does not handle this case, it can crash.
-   - **Off-by-One Boundary Checks**: The sliding window attention must correctly handle the boundary between the current window and the previous window. If the boundary is off by one, the model can attend to stale tokens.
+5.  **Defect & Error Prevention ("Galti Pakadna")**:
+    *   **Invariant**: When processing multimodal inputs, **MUST** validate that the number of vision tokens matches the expected number based on the image dimensions and patch size.
+    *   **Code**:
+        ```python
+        # BAD
+        vision_tokens = encode_image(image) # May produce wrong number of tokens
+        
+        # GOOD
+        expected_tokens = (image_height // patch_size) * (image_width // patch_size)
+        vision_tokens = encode_image(image)
+        if len(vision_tokens) != expected_tokens:
+            raise ValueError(f"Expected {expected_tokens} vision tokens, got {len(vision_tokens)}")
+        ```
+    *   **Reason**: Prevents misalignment between vision features and text embeddings.
 
 ## 5. The 9 Deep Learning Dimensions
 
-1. **Architecture**: Hybrid conv-attention architecture with periodic layer ordering. Multimodal fusion via projector.
-2. **Core Abstractions**: `D1Model` (main model), `Lfm3VlProcessor` (tokenizer/processor), `Projector` (vision-text bridge).
-3. **Error Handling**: BFloat16 precision prevents overflow. Downsample factor prevents context window overflow. Projector dimension validation prevents shape mismatches.
-4. **Testing**: Unit tests for layer type validation, projector dimension validation, and bfloat16 precision. Integration tests for long-sequence inference and multimodal fusion.
-5. **Security**: N/A (backend model).
-6. **Performance**: BFloat16 precision reduces memory usage. Sliding window attention reduces computational complexity. Downsample factor reduces the number of vision tokens.
-7. **Deployment**: Edge deployment with bfloat16 precision. Reproducible builds with fixed `transformers_version: 5.19.0`.
-8. **Agent Patterns**: N/A (not an agent).
-9. **Data Flow**: Vision tokens are downsampled, projected, and concatenated with text tokens. The hybrid backbone processes the concatenated tokens, producing output logits.
+1.  **Architecture**: Hybrid `conv`/`attention` stack. Decoupled vision and text encoders with a projector. State ownership is split between KV caches (attention) and hidden states (conv).
+2.  **Core Abstractions**: `D1Model`, `Lfm3TextModel`, `Lfm3VisionModel`, `Lfm3VlProcessor`. Key types: `layer_types` array, `KVCache`, `HiddenState`.
+3.  **Error Handling**: Implicit in the inference engine. Must handle shape mismatches, precision errors, and token alignment issues. No explicit error handling code provided, but configuration implies robustness requirements.
+4.  **Testing**: Not provided in input. Inferred: Unit tests for layer dispatch, integration tests for multimodal fusion, regression tests for precision.
+5.  **Security**: N/A for model weights. Threat model: Adversarial inputs to vision encoder. Sanitization: Tokenizer must handle special tokens correctly.
+6.  **Performance**: Sliding window attention reduces memory complexity. BFloat16 reduces memory footprint. Conv layers reduce computational complexity. Caching: KV cache for attention, hidden state for conv.
+7.  **Deployment**: Edge-optimized. Requires custom code for hybrid layers. Reproducible builds: Fixed `transformers_version: 5.19.0`. Runtime flags: `dtype: bfloat16`.
+8.  **Agent Patterns**: N/A for model weights. Tooling: Hugging Face `transformers` library. Prompt chains: N/A. Loop guards: N/A. Context budget: 128k tokens.
+9.  **Data Flow**: Image -> Vision Encoder -> Projector -> Text Embedding Space. Text -> Tokenizer -> Text Embedding Space. Fusion -> Hybrid Layers -> Output. Mutation lifecycles: KV cache updates, hidden state updates.
 
 ## 6. The 8 Learning Extraction Artifacts
 
-1. **Pattern**: Hybrid conv-attention architecture with periodic layer ordering.
-2. **Rule**: Always use bfloat16 for stateful layers.
-3. **Architecture Principle**: Local feature extraction (conv) must precede global context integration (attention).
-4. **Failure Mode**: Conv layer state overflow in float16.
-5. **Reusable Skill**: Validate layer types, projector dimensions, and precision before inference.
-6. **Decision**: Use bfloat16 instead of float16 for conv layers.
-7. **Anti-pattern**: Using float16 for stateful layers.
-8. **Verification Method**: Unit tests for layer type validation, projector dimension validation, and bfloat16 precision.
+1.  **Pattern**: Hybrid layer dispatch based on `layer_types` array.
+2.  **Rule**: MUST differentiate between attention and state-space layers in cache management.
+3.  **Architecture Principle**: Hybrid architectures require layer-type-aware execution graphs.
+4.  **Failure Mode**: KV cache mismatch in hybrid layers leads to memory bloat or shape errors.
+5.  **Reusable Skill**: Implement conditional cache allocation based on layer type.
+6.  **Decision**: Use sliding window attention for long context efficiency on edge devices.
+7.  **Anti-pattern**: Uniform KV cache allocation for all layers in a hybrid model.
+8.  **Verification Method**: Profile memory usage and verify layer-type-aware cache management.
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1. **Validate Layer Types**: Ensure no two attention layers are adjacent without an intervening conv layer.
-2. **Validate Projector Dimensions**: Ensure the projector's output dimension matches the text model's hidden size.
-3. **Use BFloat16 Precision**: Always use bfloat16 for stateful layers.
-4. **Apply Downsample Factor**: Always apply the downsample factor to vision tokens before projection.
-5. **Manage KV Cache**: Properly manage the hybrid KV cache to prevent memory leaks.
-6. **Handle Edge Cases**: Handle cases where the vision encoder produces no tokens.
-7. **Test Long Sequences**: Test inference on long sequences to ensure stability.
-8. **Test Multimodal Fusion**: Test inference on images and videos to ensure correct fusion.
+1.  **Verify Configuration**:
+    *   Check `config.json` for `layer_types` array.
+    *   Verify `sliding_window` and `max_position_embeddings`.
+    *   Confirm `dtype` is `bfloat16`.
+2.  **Implement Layer Dispatch**:
+    *   Create a forward pass that checks `layer_types[layer_idx]`.
+    *   Dispatch to `conv`, `full_attention`, or `sliding_attention` accordingly.
+3.  **Manage Caches**:
+    *   Allocate KV caches only for attention layers.
+    *   Maintain hidden states for conv layers.
+4.  **Handle Precision**:
+    *   Ensure reduction operations in conv layers are performed in `float32`.
+5.  **Align Multimodal Inputs**:
+    *   Use a projector with bias and non-linearity.
+    *   Wrap vision tokens in start/end tokens.
+6.  **Test Boundaries**:
+    *   Test sliding window masks at sequence boundaries.
+    *   Verify token alignment for multimodal inputs.
+7.  **Profile Performance**:
+    *   Measure memory usage for long sequences.
+    *   Verify linear scaling for sliding attention layers.

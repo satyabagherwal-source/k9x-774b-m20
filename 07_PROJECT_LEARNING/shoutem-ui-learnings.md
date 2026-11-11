@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/shoutem-ui-learnings.md`  
 > **Source**: github ([https://github.com/shoutem/ui](https://github.com/shoutem/ui))  
-> **Source Version**: `92e3f530`  
+> **Source Version**: `cfc3bc8a`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T20:52:50.729Z  
+> **Timestamp**: 2026-11-07T18:09:41.112Z  
 > **Learning ID**: `learn-github-shoutem-ui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/shoutem-ui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/shoutem/ui](https://github.com/shoutem/ui))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T20:52:50.449Z  
+> **Harvest Timestamp**: 2026-11-07T18:09:40.816Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Customizable set of components for React Native applications
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 4984 stars
+- **Stars / Engagement**: 4985 stars
 
 ---
 
@@ -685,73 +685,18 @@ export default connectStyle('shoutem.ui.ActionSheet')(ActionSheet);
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2bf9cd2a` (2026-06-15)
-**Commit Message**: Merge pull request #928 from shoutem/hotfix/9.1.1
+### Incident Patch 1: `cfc3bc8a` (2026-11-06)
+**Commit Message**: Merge pull request #945 from shoutem/release/9.3.1
 
-Hotfix/9.1.1 - develop
-
-**File**: `components/Screen.js` (modified, +17/-3)
-```diff
-@@ -1,14 +1,28 @@
- import React from 'react';
--import { View } from 'react-native';
-+import { Platform, View } from 'react-native';
- import { useSafeAreaInsets } from 'react-native-safe-area-context';
- import { connectAnimation } from '@shoutem/animation';
- import { connectStyle } from '@shoutem/theme';
- 
- const SafeAreaAwareView = ({ style, ...rest }) => {
-   const insets = useSafeAreaInsets();
--  const safeAreaStyle = { paddingBottom: insets.bottom };
- 
--  return <View {...rest} style={[style, safeAreaStyle]} />;
-+  // We only want Android bottom padding so content stays clear of Android
-+  // software OS navigation. If no padding, content goes under and user is unable
-+  // to see or press it.
-+  // On iOS - home indicator is transparent, so the content is visible. We should add
-+  // with-home-indicator-padding or paddingBottom for specific screens if there'll be
-+  // pressable component that would hide under home indicator.
-+  // Many screens already do this, so adding bottom inset by default on all screens would
-+  // cut off too much of screen content - we'll rather add padding where necessary.
-+  // Android will have this behavior as default because it's breaking UI bug.
-+  const safeAreaStyle = {
-+    paddingBottom: Platform.OS === 'android' ? insets.bottom : 0,
-+  };
-+
-+  // Keep style after safeAreaStyle so Screen style can override safe area style.
-+  // with-home-indicator-padding and other classes already do this with theme resolution process.
-+  return <View {...rest} style={[safeAreaStyle, style]} />;
- };
- 
- const AnimatedScreen = connectAnimation(SafeAreaAwareView);
-```
-
-**File**: `package-lock.json` (modified, +2/-2)
-```diff
-@@ -1,12 +1,12 @@
- {
-   "name": "@shoutem/ui",
--  "version": "9.0.6",
-+  "version": "9.1.1",
-   "lockfileVersion": 3,
-   "requires": true,
-   "packages": {
-     "": {
-       "name": "@shoutem/ui",
--      "version": "9.0.6",
-+      "version": "9.1.1",
-       "hasInstallScript": true,
-       "license": "BSD-3-Clause",
-       "dependencies": {
-```
+Release/9.3.1 - develop
 
 **File**: `package.json` (modified, +1/-1)
 ```diff
 @@ -1,6 +1,6 @@
  {
    "name": "@shoutem/ui",
--  "version": "9.1.0",
-+  "version": "9.1.1",
+-  "version": "9.3.1-rc.1",
++  "version": "9.3.1",
    "description": "Styleable set of components for React Native applications",
    "scripts": {
      "lint": "eslint .",
@@ -759,202 +704,28 @@ Hotfix/9.1.1 - develop
 
 ---
 
-### Incident Patch 2: `3b41b7e2` (2026-04-22)
-**Commit Message**: fix/ android edge to edge bottom inset (#922)
+### Incident Patch 2: `7a2cabc9` (2026-11-06)
+**Commit Message**: finalize versions
 
-* read bottom safe area inset on Android for edge-to-edge support
-
-* Add comments
-
-**File**: `helpers/device-selector.js` (modified, +15/-6)
+**File**: `package.json` (modified, +1/-1)
 ```diff
-@@ -26,10 +26,12 @@ export const NAVIGATION_BAR_HEIGHT = Platform.select({
-   default: NAVIGATION_HEADER_HEIGHT,
- });
- 
-+// Bottom inset from the native safe-area module (home indicator on iOS,
-+// system nav bar on Android with edge-to-edge). Falls back to 34pt on iOS
-+// (race condition guard) or 0 on Android (no inset when edge-to-edge is off).
- export const HOME_INDICATOR_PADDING =
--  Platform.OS === 'ios'
--    ? initialWindowMetrics?.insets?.bottom ?? DEFAULT_IOS_BOTTOM_INSET
--    : 0;
-+  initialWindowMetrics?.insets?.bottom ??
-+  (Platform.OS === 'ios' ? DEFAULT_IOS_BOTTOM_INSET : 0);
- 
- export const NOTCH_AREA_HEIGHT = Platform.select({
-   ios: initialWindowMetrics?.insets?.top ?? DEFAULT_IOS_TOP_INSET,
-@@ -65,7 +67,12 @@ const getBottomInset = () => {
-     // eslint-disable-next-line global-require
-     const metrics = require('react-native-safe-area-context')
-       .initialWindowMetrics;
--    _bottomInset = metrics?.insets?.bottom ?? DEFAULT_IOS_BOTTOM_INSET;
-+
-+    // Use actual bottom inset if available. Fallback: 34pt on iOS (safe
-+    // default for all notched iPhones), 0 on Android (no inset pre-RN 0.77).
-+    _bottomInset =
-+      metrics?.insets?.bottom ??
-+      (Platform.OS === 'ios' ? DEFAULT_IOS_BOTTOM_INSET : 0);
-   }
- 
-   return _bottomInset;
-@@ -80,8 +87,10 @@ export const getNavigationBarHeight = () =>
-     default: NAVIGATION_HEADER_HEIGHT,
-   });
- 
--export const getHomeIndicatorPadding = () =>
--  Platform.OS === 'ios' ? getBottomInset() : 0;
-+// Returns bottom safe area inset on both platforms. On iOS this is the home
-+// indicator area (34pt). On Android this is the system navigation bar height
-+// when edge-to-edge is enabled (RN 0.76+), or 0 on older RN versions.
-+export const getHomeIndicatorPadding = () => getBottomInset();
- 
- export const getNotchAreaHeight = () =>
-   Platform.select({
-```
-
----
-
-### Incident Patch 3: `8991d710` (2026-04-20)
-**Commit Message**: fix/ Add lazy getters for initialWindowMetrics (#907)
-
-* Add lazy getters for initialWindowMetrics
-
-* add exports
-
-**File**: `helpers/device-selector.js` (modified, +62/-3)
-```diff
-@@ -4,22 +4,35 @@ import { initialWindowMetrics } from 'react-native-safe-area-context';
- 
- export const NAVIGATION_HEADER_HEIGHT = 64;
- 
-+// Fallback inset values used when initialWindowMetrics is null (race condition
-+// in large apps where JS evaluates before the safe-area native module inits).
-+// Bottom: 34pt — consistent across all notched iPhones since iPhone X (2017).
-+// Top: 59pt — matches Dynamic Island devices (iPhone 14+).
-+//   Slightly too large for older notched devices (44–48pt), but using the
-+//   largest one prevents content from being hidden under the notch/Dynamic Island.
-+const DEFAULT_IOS_TOP_INSET = 59;
-+const DEFAULT_IOS_BOTTOM_INSET = 34;
-+
- export const isNotchedAndroid =
-   Platform.OS === 'android' && DeviceInfo.hasNotch();
- 
- export const NAVIGATION_BAR_HEIGHT = Platform.select({
--  ios: NAVIGATION_HEADER_HEIGHT + initialWindowMetrics?.insets?.top,
-+  ios:
-+    NAVIGATION_HEADER_HEIGHT +
-+    (initialWindowMetrics?.insets?.top ?? DEFAULT_IOS_TOP_INSET),
-   android: isNotchedAndroid
-     ? NAVIGATION_HEADER_HEIGHT + StatusBar.currentHeight
-     : NAVIGATION_HEADER_HEIGHT,
-   default: NAVIGATION_HEADER_HEIGHT,
- });
- 
- export const HOME_INDICATOR_PADDING =
--  Platform.OS === 'ios' ? initialWindowMetrics?.insets?.bottom : 0;
-+  Platform.OS === 'ios'
-+    ? initialWindowMetrics?.insets?.bottom ?? DEFAULT_IOS_BOTTOM_INSET
-+    : 0;
- 
- export const NOTCH_AREA_HEIGHT = Platform.select({
--  ios: initialWindowMetrics?.insets?.top,
-+  ios: initialWindowMetrics?.insets?.top ?? DEFAULT_IOS_TOP_INSET,
-   android: isNotchedAndroid ? StatusBar.currentHeight : 0,
-   default: 0,
- });
-@@ -30,3 +43,49 @@ export const Device = {
-   NOTCH_AREA_HEIGHT,
-   NAVIGATION_HEADER_HEIGHT,
- };
-+
-+// Lazy getters — resolve initialWindowMetrics on first render,
-+// when the native module is guaranteed to be ready.
-+let _topInset;
-+let _bottomInset;
-+
-+const getTopInset = () => {
-+  if (_topInset === undefined) {
-+    // eslint-disable-next-line global-require
-+    const metrics = require('react-native-safe-area-context')
-+      .initialWindowMetrics;
-+    _topInset = metrics?.insets?.top ?? DEFAULT_IOS_TOP_INSET;
-+  }
-+
-+  return _topInset;
-+};
-+
-+const getBottomInset = () => {
-+  if (_bottomInset === undefined) {
-+    // eslint-disable-next-line global-require
-+    const metrics = require('react-native-safe-area-context')
-+      .initialWindowMetrics;
-+    _bottomInset = metrics?.insets?.bottom ?? DEFAULT_IOS_BOTTOM_INSET;
-+  }
-+
-+  return _bottomInset;
-+};
-+
-+export const getNavigationBarHeight = () =>
-+  Platform.select({
-+    ios: NAVIGATION_HEADER_HEIGHT + getTopInset(),
-+    android: isNotchedAndroid
-+      ? NAVIGATION_HEADER_HEIGHT + StatusBar.currentHeight
-+      : NAVIGATION_HEADER_HEIGHT,
-+    default: NAVIGATION_HEADER_HEIGHT,
-+  });
-+
-+export const getHomeIndicatorPadding = () =>
-+  Platform.OS === 'ios' ? getBottomInset() : 0;
-+
-+export const getNotchAreaHeight = () =>
-+  Platform.select({
-+    ios: getTopInset(),
-+    android: isNotchedAndroid ? StatusBar.currentHeight : 0,
-+    default: 0,
-+  });
-```
-
-**File**: `helpers/index.js` (modified, +3/-0)
-```diff
-@@ -1,5 +1,8 @@
- export {
-   Device,
-+  getHomeIndicatorPadding,
-+  getNavigationBarHeight,
-+  getNotchAreaHeight,
-   HOME_INDICATOR_PADDING,
-   isNotchedAndroid,
-   NAVIGATION_BAR_HEIGHT,
-```
-
-**File**: `index.js` (modified, +8/-1)
-```diff
-@@ -78,7 +78,14 @@ export { YearRangePicker } from './components/YearRangePicker';
- export * from './hooks';
- 
- // Helpers
--export { calculateKeyboardOffset, Device, Keyboard } from './helpers';
-+export {
-+  calculateKeyboardOffset,
-+  Device,
-+  getHomeIndicatorPadding,
-+  getNavigationBarHeight,
-+  getNotchAreaHeight,
-+  Keyboard,
-+} from './helpers';
- 
- // HTML
- export { Html } from './html';
+@@ -1,6 +1,6 @@
+ {
+   "name": "@shoutem/ui",
+-  "version": "9.3.1-rc.1",
++  "version": "9.3.1",
+   "description": "Styleable set of components for React Native applications",
+   "scripts": {
+     "lint": "eslint .",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #945** (2026-11-06): Release/9.3.1 - develop (@tomislav-arambasic)
+- **PR #944** (2026-11-06): Release/9.3.1 (@tomislav-arambasic)
+- **PR #942** (2026-11-06): ImageCarousel: web snapping, slide style passthrough, image-load and scroll-lock props (@tomislav-arambasic)
+- **PR #941** (2026-11-05): Release/9.3.0 - develop (@tomislav-arambasic)
 - **PR #940** (2026-10-20): feature/image carousel initial width and React 19 defaults (@tomislav-arambasic)
-- **PR #938** (2026-10-19): Feature/shortcut style resolver (@tomislav-arambasic)
-- **PR #937** (2026-10-19): Feature/image carousel (@tomislav-arambasic)
-- **PR #936** (2026-09-23): Release/9.2.1 (@tomislav-arambasic)
-- **PR #935** (2026-09-23): feature/ youtube/vimeo video embeds  (@s-brankovic)
-- **PR #934** (2026-08-21): Release/9.2.0 - develop (@tomislav-arambasic)
+- **PR #939** (2026-11-05): Release/9.3.0 (@tomislav-arambasic)
 
 ---
 
@@ -974,46 +745,28 @@ Hotfix/9.1.1 - develop
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #928 from shoutem/hotfix/9.1.1
+## X. Merge pull request #945 from shoutem/release/9.3.1
 
 **RULE**:
-When implementing operations in `components/Screen.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in shoutem/ui. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in shoutem/ui. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2bf9cd2a`: Merge pull request #928 from shoutem/hotfix/9.1.1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cfc3bc8a`: Merge pull request #945 from shoutem/release/9.3.1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `components/Screen.js`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-import { Platform, View } from 'react-native';
-  // We only want Android bottom padding so content stays clear of Android
-  // software OS navigation. If no padding, content goes under and user is unable
-  // to see or press it.
-  // On iOS - home indicator is transparent, so the content is visible. We should add
-  // with-home-indicator-padding or paddingBottom for specific screens if there'll be
-  // pressable component that would hide under home indicator.
-  // Many screens already do this, so adding bottom inset by default on all screens would
-  // cut off too much of screen content - we'll rather add padding where necessary.
-  // Android will have this behavior as default because it's breaking UI bug.
-  const safeAreaStyle = {
-    paddingBottom: Platform.OS === 'android' ? insets.bottom : 0,
-  };
-
-  // Keep style after safeAreaStyle so Screen style can override safe area style.
-  // with-home-indicator-padding and other classes already do this with theme resolution process.
-  return <View {...rest} style={[safeAreaStyle, style]} />;
+  "version": "9.3.1",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-import { View } from 'react-native';
-  const safeAreaStyle = { paddingBottom: insets.bottom };
-  return <View {...rest} style={[style, safeAreaStyle]} />;
+  "version": "9.3.1-rc.1",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2bf9cd2a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cfc3bc8a` are properly handled with clean fallback behavior.

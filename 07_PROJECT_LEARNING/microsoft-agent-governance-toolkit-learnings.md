@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md`  
 > **Source**: github ([https://github.com/microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit))  
-> **Source Version**: `ea260c54`  
+> **Source Version**: `48f04e5a`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T20:06:48.654Z  
+> **Timestamp**: 2026-11-09T21:05:58.459Z  
 > **Learning ID**: `learn-github-microsoft-agent-governance-toolkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T20:06:48.650Z  
+> **Harvest Timestamp**: 2026-11-09T21:05:57.434Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: AI Agent Governance Toolkit — Policy enforcement, zero-trust identity, execution sandboxing, and reliability engineering for autonomous AI agents. Covers 10/10 OWASP Agentic Top 10.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: README.md, Dockerfile
-- **Stars / Engagement**: 6521 stars
+- **Stars / Engagement**: 6545 stars
 
 ---
 
@@ -405,87 +405,109 @@ export function writeHookOutput(payload) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ea260c54` (2026-11-05)
-**Commit Message**: fix(agent-lightning): count only accepted spans in emit_to_store (#4487)
+### Incident Patch 1: `48f04e5a` (2026-11-09)
+**Commit Message**: fix(agent-os): reject max_attempts below 1 and negative backoff in retry (#4492)
 
-FlightRecorderEmitter.emit_to_store returned len(spans), the number of
-spans read from the recorder, even when a span's emit call raised or
-the store had no emit_span/add_span method and nothing was sent. Count
-the spans the store accepted and return that, as the docstring and the
-Fast-Path spec (section 12.1) say.
+With max_attempts=0 the retry wrapper never called the function and
+raised None, which surfaced as "TypeError: exceptions must derive from
+BaseException". A negative backoff_base made the sleep before the first
+retry raise ValueError, hiding the exception being retried. Validate
+both when the decorator is created.
 
 Signed-off-by: Shivam Sharma <[REDACTED_EMAIL]>
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -54,6 +54,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **`agent-runtime` `DockerDeployer.logs` returns what the agent writes to stderr.** Containers are started without a TTY, so `docker logs` replays the agent's stderr on its own stderr, and `logs` returned only the captured stdout. An agent that logs through Python's `logging` (stderr by default) got an empty or partial result. `logs` now merges the two streams in the order Docker writes them. `KubernetesDeployer.logs` was not affected, since `kubectl logs` prints both streams on stdout.
- - **`agent-rag-governance` audits a denied collection with the query's hash.** `RAGGovernor` wrote the `denied` audit entry for a blocked collection with the hash of an empty string, so every denied attempt carried the same `query_hash` and could not be tied to what the agent searched for. The `rate_limited` entry was fixed the same way earlier. The `denied` entry now hashes the actual query (salted by `AGENT_RAG_AUDIT_SALT` when set), for LangChain and LlamaIndex wrappers alike.
- - **`agent-sre` `AgentRollout` CRD keeps a step's analysis criteria.** The CRD schema, in both `k8s.generate_crd_manifest()` and the Helm chart, declared a step's `name`, `weight`, `durationSeconds` and `manualGate` but not `analysis`, although `RolloutSpec.to_dict()` writes it and `k8s.Reconciler` reads it. The API server prunes fields a structural schema does not declare, so every step of an applied `AgentRollout` lost its analysis criteria, and `analyze_step` passed it without checking a metric. The schema now declares `analysis` as a list of `metric`, `threshold` and `comparator` (`gte`, `lte` or `eq`, default `gte`).
-+- **`agent-lightning` `FlightRecorderEmitter.emit_to_store` returns the number of spans it emitted.** It returned the number of spans it read from the recorder, so a span whose `emit_span`/`add_span` call raised was still counted, and a store with neither method got nothing but the return value (and the "Emitted N spans" log line) reported every span as sent. It now counts only the spans the store accepted, as its docstring and the Agent Lightning Fast-Path spec (section 12.1) say.
- - **`agent-sre` `RunbookExecutor` reports a failed rollback.** When a step failed, the executor ran the rollback actions of the steps before it and then marked the execution `rolled_back` whenever any of them had a rollback action, even if that action raised, so an execution left half undone read as cleanly rolled back. The rolled-back steps also kept `success`, and `StepStatus.ROLLED_BACK` was never set. Each step whose rollback succeeds is now marked `rolled_back`; the execution is `rolled_back` only when every rollback succeeded, and otherwise stays `failed`, with the rollback error recorded on the step.
- - **`agent-discovery` saves reconciliation statuses and scan risk tags to the inventory file.** `Reconciler.reconcile` set each agent's status to `registered` or `shadow` but never wrote the inventory back, and `agent-discovery scan` added the `risk_level` and `risk_score` tags after the last save. With a storage path, both were lost when the process ended, so `agent-discovery inventory` showed every agent as `unknown` after `agent-discovery reconcile` and without risk tags after a scan. `AgentInventory.save()` now persists in-place changes, and `reconcile` and `scan` call it.
- - **`agent-sre` `AgentRollout` status matches the CRD schema.** `ResourceStatus.to_dict()` wrote each condition's `lastTransitionTime` as a Unix timestamp (a float), but the CRD schema, in both `k8s.generate_crd_manifest()` and the Helm chart, declares it as a string, so the API server rejects a status update that carries a condition. It also wrote `observedGeneration` and `message`, which the schema did not declare, so they were pruned from every status update. `lastTransitionTime` is now an RFC 3339 UTC time such as `2026-11-01T09:30:00Z`, as Kubernetes conditions use, and the schema declares `status.observedGeneration` (integer) and `status.message` (string).
+@@ -61,6 +61,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - **`agent-rag-governance` rejects a negative `max_retrievals_per_minute`.** `RAGPolicy` accepted any value, and `RateLimiter.check` treats only `0` as "no limit", so a negative limit (such as `-1`, often used to mean "unlimited") could never be met and every retrieval raised `RateLimitExceededError` ("exceeded retrieval limit of -1 per 60s"). `RAGPolicy` now raises `ValueError` for a negative limit when it is created, as it already does for a `rate_limit_window_seconds` that is not positive.
+ - **`a2a-protocol` `TaskEnvelope.fail` leaves the task unchanged when it cannot fail it.** `fail(error)` set `error` before checking the state transition, so calling it on a task that was already complete, failed or canceled raised `ValueError` but still wrote the new error: a completed task serialised as `{"state": "complete", "error": ...}`, and a failed task lost its original error. This also happened through `TrustGate.evaluate_and_gate` when a denied task was already finished. The transition is now checked first, and `error` is set only when the task moves to `failed`.
+ - **`agent-hypervisor` `HypervisorEventBus.query(limit=0)` returns no events.** `query` kept the last `limit` events with `results[-limit:]`, and `results[-0:]` is the whole list, so `limit=0` returned every matching event, and a negative limit such as `-2` returned all but the two oldest. The same happened through `GET /api/v1/events?limit=...`. `limit=0` now returns an empty list, a negative limit raises `ValueError`, and the endpoint rejects a negative `limit` with a 422 validation error.
++- **`agent-os` `retry` rejects `max_attempts` below 1 and a negative `backoff_base`.** With `max_attempts=0` the decorated function was never called, and each call raised `TypeError: exceptions must derive from BaseException` from the wrapper's `raise last_exc` on `None`. A negative `backoff_base` gave a negative delay, so the first retry raised `ValueError: sleep length must be non-negative` in place of the exception being retried. `retry` now raises `ValueError` for both when the decorator is created.
+ 
+ ### Added
+ - **.NET `PolicyEngine.EvaluateAsync`** — added an async evaluation path so external policy backends whose work is I/O-bound (`IExternalPolicyBackend.EvaluateAsync`) are awaited instead of blocked on with `GetAwaiter().GetResult()`. Backends are evaluated sequentially to preserve registration order; the synchronous `Evaluate` keeps its exact prior behavior. The token is honored on entry and before each backend call, so an already-cancelled token throws `OperationCanceledException` (including on the no-backend in-memory path) and no `PolicyDecision` is produced; backend exceptions propagate rather than being turned into a deny, matching `Evaluate` (#3778).
 ```
 
-**File**: `agent-governance-python/agent-lightning/src/agent_lightning_gov/emitter.py` (modified, +8/-3)
+**File**: `agent-governance-python/agent-os/src/agent_os/retry.py` (modified, +12/-0)
 ```diff
-@@ -265,9 +265,12 @@ def emit_to_store(self, store: Any) -> int:
-             store: Agent-Lightning LightningStore instance
+@@ -53,11 +53,23 @@ def retry(
+             shared upstream. Disable only for deterministic tests; production
+             callers should leave this on.
  
-         Returns:
--            Number of spans emitted
-+            Number of spans the store accepted. Spans whose emission
-+            raised, and all spans when the store has no recognised span
-+            emitter, are not counted.
-         """
-         spans = self.get_spans()
-+        emitted = 0
- 
-         for span in spans:
-             try:
-@@ -280,9 +283,11 @@ def emit_to_store(self, store: Any) -> int:
-                     break
-             except Exception as e:
-                 logger.error(f"Failed to emit span: {e}")
-+            else:
-+                emitted += 1
- 
--        logger.info(f"Emitted {len(spans)} spans to LightningStore")
--        return len(spans)
-+        logger.info(f"Emitted {emitted} of {len(spans)} spans to LightningStore")
-+        return emitted
- 
-     def export_to_file(self, filepath: str) -> int:
-         """
++    Raises:
++        ValueError: If ``max_attempts`` is less than 1 or ``backoff_base``
++            is negative.
++
+     Example:
+         @retry(max_attempts=3, exceptions=(ConnectionError, TimeoutError))
+         async def fetch_data(url: str) -> dict:
+             ...
+     """
++    # With no attempts the wrapper would never call the function and would
++    # raise ``None``; a negative delay makes the sleep before the first retry
++    # raise and hide the exception being retried.
++    if max_attempts < 1:
++        raise ValueError(f"max_attempts must be at least 1; got {max_attempts!r}")
++    if backoff_base < 0:
++        raise ValueError(f"backoff_base must be zero or positive; got {backoff_base!r}")
++
+     def decorator(func: Callable) -> Callable:
+         if asyncio.iscoroutinefunction(func):
+             @functools.wraps(func)
 ```
 
-**File**: `agent-governance-python/agent-lightning/tests/test_lightning_comprehensive.py` (modified, +16/-0)
+**File**: `agent-governance-python/agent-os/tests/test_retry.py` (modified, +45/-0)
 ```diff
-@@ -1060,6 +1060,22 @@ def test_emit_to_store_add_span_fallback(self):
-         assert count == 1
-         store.add_span.assert_called_once()
+@@ -259,3 +259,48 @@ async def async_documented():
  
-+    def test_emit_to_store_counts_only_accepted_spans(self):
-+        entries = [_FakeEntry(), _FakeEntry(id="e2"), _FakeEntry(id="e3")]
-+        emitter = FlightRecorderEmitter(_make_recorder(entries))
-+        store = MagicMock(spec=["emit_span"])
-+        store.emit_span.side_effect = [None, RuntimeError("store down"), None]
-+        count = emitter.emit_to_store(store)
-+        # The failing span is logged and skipped; the next one is still sent.
-+        assert store.emit_span.call_count == 3
-+        assert count == 2
+         assert async_documented.__name__ == "async_documented"
+         assert async_documented.__doc__ == "Async docstring."
 +
-+    def test_emit_to_store_without_span_emitter_emits_nothing(self):
-+        entries = [_FakeEntry(), _FakeEntry(id="e2")]
-+        emitter = FlightRecorderEmitter(_make_recorder(entries))
-+        store = MagicMock(spec=[])
-+        assert emitter.emit_to_store(store) == 0
 +
-     def test_export_to_file(self, tmp_path):
-         entries = [_FakeEntry()]
-         emitter = FlightRecorderEmitter(_make_recorder(entries))
++# ============================================================================
++# Argument validation
++# ============================================================================
++
++
++class TestRetryArguments:
++    """``retry`` rejects arguments that would break the wrapper."""
++
++    @pytest.mark.parametrize("max_attempts", [0, -1])
++    def test_rejects_fewer_than_one_attempt(self, max_attempts):
++        with pytest.raises(ValueError, match="max_attempts"):
++            retry(max_attempts=max_attempts)
++
++    def test_rejects_negative_backoff(self):
++        with pytest.raises(ValueError, match="backoff_base"):
++            retry(backoff_base=-1.0)
++
++    def test_single_attempt_calls_function_once(self):
++        calls = 0
++
++        @retry(max_attempts=1, exceptions=(ValueError,))
++        def fails():
++            nonlocal calls
++            calls += 1
++            raise ValueError("boom")
++
++        with pytest.raises(ValueError, match="boom"):
++            fails()
++        assert calls == 1
++
++    def test_zero_backoff_retries_without_waiting(self):
++        calls = 0
++
++        @retry(max_attempts=2, backoff_base=0.0, exceptions=(ValueError,))
++        def flaky():
++            nonlocal calls
++            calls += 1
++            if calls == 1:
++                raise ValueError("transient")
++            return "ok"
++
++        assert flaky() == "ok"
++        assert calls == 2
 ```
 
 #### Recent Merged Pull Requests:
@@ -514,13 +536,13 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. agent-lightning): count only accepted spans in emit_to_store (#4487)
+## X. agent-os): reject max_attempts below 1 and negative backoff in retry (#4492)
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/agent-governance-toolkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ea260c54`: agent-lightning): count only accepted spans in emit_to_store (#4487). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `48f04e5a`: agent-os): reject max_attempts below 1 and negative backoff in retry (#4492). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -528,7 +550,7 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- **`agent-lightning` `FlightRecorderEmitter.emit_to_store` returns the number of spans it emitted.** It returned the number of spans it read from the recorder, so a span whose `emit_span`/`add_span` call raised was still counted, and a store with neither method got nothing but the return value (and the "Emitted N spans" log line) reported every span as sent. It now counts only the spans the store accepted, as its docstring and the Agent Lightning Fast-Path spec (section 12.1) say.
+- **`agent-os` `retry` rejects `max_attempts` below 1 and a negative `backoff_base`.** With `max_attempts=0` the decorated function was never called, and each call raised `TypeError: exceptions must derive from BaseException` from the wrapper's `raise last_exc` on `None`. A negative `backoff_base` gave a negative delay, so the first retry raised `ValueError: sleep length must be non-negative` in place of the exception being retried. `retry` now raises `ValueError` for both when the decorator is created.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -538,4 +560,4 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ea260c54` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `48f04e5a` are properly handled with clean fallback behavior.

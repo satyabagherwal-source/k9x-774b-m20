@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md`  
 > **Source**: github ([https://github.com/tokio-rs/tokio](https://github.com/tokio-rs/tokio))  
-> **Source Version**: `695a07dd`  
+> **Source Version**: `99dbe548`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T22:12:33.950Z  
+> **Timestamp**: 2026-11-08T22:10:39.170Z  
 > **Learning ID**: `learn-github-tokio-rs-tokio`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tokio-rs/tokio](https://github.com/tokio-rs/tokio))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T22:12:33.753Z  
+> **Harvest Timestamp**: 2026-11-08T22:10:38.313Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A runtime for writing reliable asynchronous applications with Rust. Provides I/O, networking, scheduling, timers, ...
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 33576 stars
+- **Stars / Engagement**: 33723 stars
 
 ---
 
@@ -1349,6 +1349,10 @@ impl<T, D> FramedRead<T, D> {
     }
 
     /// Returns a mutable reference to the read buffer.
+    ///
+    /// The decoder may behave incorrectly if the buffer is modified in any way
+    /// other than reserving more space or appending data to the end of the
+    /// buffer.
     pub fn read_buffer_mut(&mut self) -> &mut BytesMut {
         &mut self.inner.state.buffer
     }
@@ -1934,11 +1938,11 @@ where
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #8758** (2026-11-04): **rt: don't leave workers in the sleeper list when the scheduler shuts …**
-  *Symptoms*: ## Problem  A worker that parks can end up in `Idle::sleepers` with `num_unparked` decremented, and then exit the park loop on shutdown without ever being removed from `sleepers`. This happens in two ways:  1. The worker is already in `sleepers` when `close()` runs. `notify_all()` wakes it through the Parker, `maintenance()` sets `is_shutdown = true`, and `transition_from_parked()` returns `false` because `is_parked()` is `true`. The `while !is_shutdown` loop exits with the worker still in `sleepers`. 2. The worker is about to park when `close()` runs. `transition_to_parked()` only checks `has_tasks() || is_traced`, not `is_shutdown`, so it can add the worker to `sleepers` after `maintenance()` has already observed shutdown.  This does not hang the runtime. The invariant `num_unparked + sleepers.len() == num_workers` still holds, because `num_unparked` is also still decremented and nothing reads it again after shutdown. But it leaves `sleepers` in a state that does not match reality, and any future `debug_assert` that assumes a worker which has exited the park loop is not in `sleepers` will fire.  ## Fix  Mirror #8372 by treating a worker woken for shutdown the same as one woken for tracing:  - `transition_to_parked()`: refuse to park when `is_shutdown` is already set. - `transition_from_parked()`: perform the logical unpark when `is_shutdown` is set, so the worker leaves `sleepers` before the park loop exits.  Both changes are one line each. The existing fast paths are uncha
+- **Issue #8766** (2026-11-07): **rt: handle transient windows thread spawn errors**
+  *Symptoms*: On Windows, `ERROR_NO_SYSTEM_RESOURCES` (1450) from thread creation is not mapped to `WouldBlock`. The blocking pool therefore reports the spawn failure even when an existing blocking worker can later pick up the queued task. Treat this Windows error as temporary while preserving the existing-worker requirement.  <!-- Thank you for your Pull Request. Please provide a description above and review the requirements below.  Please read the commit message guidelines when writing your PR description: https://github.com/tokio-rs/tokio/blob/master/docs/contributing/pull-requests.md#commit-message-guidelines  Bug fixes and new features should include tests.  Contributors guide: https://github.com/tokio-rs/tokio/blob/master/CONTRIBUTING.md -->
 
-- **Issue #8740** (2026-11-04): **Cross-thread wakeups wait for the next timer on `wasm32-wasip3`**
-  *Symptoms*: **Version** ``` tokio-wasip3-park-repro v0.1.0 └── tokio v1.54.1 ```  **Platform** This is a WASM issue so a few runtime versions at play here: - Target: `wasm32-wasip3` (tier 3). `rustc --print cfg --target wasm32-wasip3` lists `target_has_atomic` but no `target_feature="atomics"`. - Toolchain: `rustc 1.100.0-nightly (a36d05efa 2026-09-09)` with `-Zbuild-std=std,panic_abort`, linked against the wasi-sdk 34 `experimental-coop-threads` sysroot. - Runtime: `wasmtime 50.0.0 (ebe5e8df1 2026-10-20)` with `-S p3 -W component-model-async -W component-model-threading`. - Host: macOS arm64 (Darwin 25.6.0).  **Description** On `wasm32-wasip3` a thread parked in `park_timeout` does not wake when another thread calls `unpark`. It continues sleeping until the timeout ends. On a current-thread runtime with a pending timer a wakeup from another thread is only triggered when that timer expires.  I tried this code:  ```rust use std::time::{Duration, Instant};  /// Delay before the other thread completes the oneshot. const SEND_AFTER: Duration = Duration::from_millis(100); /// Deadline of the unrelated timer kept pending in the second measurement. const TIMER: Duration = Duration::from_secs(3);  /// Returns how long the runtime took to observe a oneshot completed by a std /// thread after `SEND_AFTER`. If `timer_pending`, an unrelated task sleeps for /// `TIMER` meanwhile, so the runtime parks with a timeout. async fn cross_thread_wake(timer_pending: bool) -> Duration {     let timer = timer_p
+- **Issue #8765** (2026-11-06): **Merge 'tokio-1.54.x' into 'master'**
+  *Symptoms*: 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1955,69 +1959,253 @@ where
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `695a07dd` (2026-11-04)
-**Commit Message**: io: test I/O registration races during driver shutdown (#8631)
+### Incident Patch 1: `c6a62327` (2026-11-08)
+**Commit Message**: stream: cancel stale chunks_timeout timer (#8674)
 
-**File**: `tokio/src/runtime/io/registration_set.rs` (modified, +37/-0)
+**File**: `tokio-stream/src/stream_ext/chunks_timeout.rs` (modified, +6/-1)
 ```diff
-@@ -150,6 +150,7 @@ unsafe impl linked_list::Link for Arc<ScheduledIo> {
- #[cfg(all(test, loom))]
- mod loom_tests {
-     use super::*;
-+    use crate::io::interest::Interest;
-     use crate::io::ready::Ready;
-     use crate::loom::sync::Mutex;
-     use crate::loom::thread;
-@@ -221,4 +222,40 @@ mod loom_tests {
-             assert!(!handle.set.needs_release());
-         });
-     }
-+
-+    #[test]
-+    fn allocation_racing_shutdown_is_included_or_rejected() {
-+        loom::model(|| {
-+            let handle = Arc::new(Registrations::new());
-+            let shutdown_handle = handle.clone();
-+            let shutdown = thread::spawn(move || {
-+                let ios = shutdown_handle
-+                    .set
-+                    .shutdown(&mut shutdown_handle.synced.lock());
-+                for io in &ios {
-+                    io.shutdown();
-+                }
-+                ios
-+            });
-+
-+            let allocation = handle.set.allocate(&mut handle.synced.lock());
-+            let ios = shutdown.join().unwrap();
-+            match allocation {
-+                Ok(io) => {
-+                    assert_eq!(ios.len(), 1);
-+                    assert!(Arc::ptr_eq(&ios[0], &io));
-+                    assert!(io.ready_event(Interest::READABLE).is_shutdown);
-+                }
-+                Err(err) => {
-+                    assert_eq!(err.kind(), io::ErrorKind::Other);
-+                    assert_eq!(
-+                        err.to_string(),
-+                        crate::util::error::RUNTIME_SHUTTING_DOWN_ERROR
-+                    );
-+                    assert!(ios.is_empty());
-+                }
-+            }
-+            assert!(handle.set.is_shutdown(&handle.synced.lock()));
-+        });
-+    }
+@@ -57,10 +57,14 @@ impl<S: Stream> Stream for ChunksTimeout<S> {
+                     }
+                     me.items.push(item);
+                     if me.items.len() >= *me.cap {
++                        // The timer no longer applies to a completed chunk.
++                        me.deadline.set(None);
+                         return Poll::Ready(Some(std::mem::take(me.items)));
+                     }
+                 }
+                 Poll::Ready(None) => {
++                    // No more input can arrive, so the deadline is no longer needed.
++                    me.deadline.set(None);
+                     // Returning Some here is only correct because we fuse the inner stream.
+                     let last = if me.items.is_empty() {
+                         None
+@@ -74,9 +78,10 @@ impl<S: Stream> Stream for ChunksTimeout<S> {
+         }
+ 
+         if !me.items.is_empty() {
+-            if let Some(deadline) = me.deadline.as_pin_mut() {
++            if let Some(deadline) = me.deadline.as_mut().as_pin_mut() {
+                 ready!(deadline.poll(cx));
+             }
++            me.deadline.set(None);
+             return Poll::Ready(Some(std::mem::take(me.items)));
+         }
+ 
+```
+
+**File**: `tokio-stream/tests/chunks_timeout.rs` (modified, +49/-0)
+```diff
+@@ -82,3 +82,52 @@ async fn real_time() {
+     assert_eq!(chunk_stream.next().await, Some(vec![4]));
+     assert_eq!(chunk_stream.next().await, Some(vec![5]));
  }
++
++#[tokio::test(start_paused = true)]
++async fn completed_chunk_cancels_timeout() {
++    let (tx, rx) = tokio::sync::mpsc::unbounded_channel();
++    let chunks = stream::wrappers::UnboundedReceiverStream::new(rx)
++        .chunks_timeout(2, Duration::from_secs(2));
++    let mut chunks = task::spawn(chunks);
++
++    tx.send(1).unwrap();
++    assert_pending!(chunks.poll_next());
++
++    tx.send(2).unwrap();
++    tokio_test::assert_ready_eq!(chunks.poll_next(), Some(vec![1, 2]));
++    assert_pending!(chunks.poll_next());
++
++    time::sleep(Duration::from_secs(3)).await;
++    assert!(
++        !chunks.is_woken(),
++        "completed chunk left its timer registered"
++    );
++
++    // The next partial chunk must still start a fresh timeout.
++    tx.send(3).unwrap();
++    assert_pending!(chunks.poll_next());
++    time::sleep(Duration::from_secs(3)).await;
++    tokio_test::assert_ready_eq!(chunks.poll_next(), Some(vec![3]));
++}
++
++#[tokio::test(start_paused = true)]
++async fn end_of_stream_cancels_timeout() {
++    let (tx, rx) = tokio::sync::mpsc::unbounded_channel();
++    let chunks = stream::wrappers::UnboundedReceiverStream::new(rx)
++        .chunks_timeout(2, Duration::from_secs(2));
++    let mut chunks = task::spawn(chunks);
++
++    tx.send(1).unwrap();
++    assert_pending!(chunks.poll_next());
++
++    // EOF flushes the partial chunk without leaving the registered timer alive.
++    drop(tx);
++    tokio_test::assert_ready_eq!(chunks.poll_next(), Some(vec![1]));
++
++    time::sleep(Duration::from_secs(3)).await;
++    assert!(
++        !chunks.is_woken(),
++        "end of stream left its timer registered"
++    );
++    tokio_test::assert_ready_eq!(chunks.poll_next(), None);
++}
+```
+
+---
+
+### Incident Patch 2: `99dbe548` (2026-11-08)
+**Commit Message**: util: fix `spawn_pinned` source location for console (#8753)
+
+The spawn location of a task is captured through a chain of
+`#[track_caller]` functions. `LocalPoolHandle::spawn_pinned` is missing
+the attribute, so the task behind its `JoinHandle` reports a location
+inside tokio-util instead of the caller, e.g. in tokio-console. Thus,
+add the attribute, as `spawn_pinned_by_idx` already does.
+
+Refs: #5038
+
+**File**: `.github/workflows/ci.yml` (modified, +6/-0)
+```diff
+@@ -316,6 +316,12 @@ jobs:
+           # in order to run doctests for unstable features, we must also pass
+           # the unstable cfg to RustDoc
+           RUSTDOCFLAGS: --cfg tokio_unstable
++      # Run `tokio-util` with "unstable" cfg flag (needed by its task tracing tests).
++      - name: test tokio-util full --cfg unstable
++        run: cargo nextest run --features full
++        working-directory: tokio-util
++        env:
++          RUSTFLAGS: --cfg tokio_unstable -Dwarnings
+ 
+   # Run the test suite with the sharded `spawn_blocking` queue.
+   test-sharded-blocking-queue:
+```
+
+**File**: `tokio-util/Cargo.toml` (modified, +6/-0)
+```diff
+@@ -63,6 +63,12 @@ tempfile = "3.1.0"
+ [target.'cfg(loom)'.dev-dependencies]
+ loom = { version = "0.7", features = ["futures", "checkpoint"] }
+ 
++# Used by tests/tracing_task.rs, which needs threads and so skips WASI.
++[target.'cfg(all(tokio_unstable, target_has_atomic = "64", not(target_os = "wasi")))'.dev-dependencies]
++tokio = { version = "1.0.0", features = ["tracing"] }
++tracing = { version = "0.1.29", default-features = false, features = ["std"] }
++tracing-mock = "= 0.1.0-beta.1"
++
+ [package.metadata.docs.rs]
+ all-features = true
+ # enable unstable features in the documentation
+```
+
+**File**: `tokio-util/src/task/spawn_pinned.rs` (modified, +1/-0)
+```diff
+@@ -122,6 +122,7 @@ impl LocalPoolHandle {
+     /// }
+     /// # }
+     /// ```
++    #[track_caller]
+     pub fn spawn_pinned<F, Fut>(&self, create_task: F) -> JoinHandle<Fut::Output>
+     where
+         F: FnOnce() -> Fut,
+```
+
+**File**: `tokio-util/tests/tracing_task.rs` (added, +50/-0)
+```diff
+@@ -0,0 +1,50 @@
++//! Tests for the instrumentation of tasks spawned by tokio-util.
++//!
++//! These tests live in their own binary because `tracing` caches callsite
++//! interest per process, so spans created by concurrently running tests
++//! can disable the callsites a mock subscriber is waiting for.
++#![warn(rust_2018_idioms)]
++#![cfg(all(tokio_unstable, target_has_atomic = "64", feature = "rt"))]
++#![cfg(not(target_os = "wasi"))] // Wasi doesn't support threads
++
++use tokio::task::JoinHandle;
++use tokio_util::task::LocalPoolHandle;
++use tracing_mock::{expect, subscriber};
++
++/// Tasks spawned with `spawn_pinned` and `spawn_pinned_by_idx` record their
++/// caller as the spawn location (shown by tokio-console), not tokio-util.
++#[tokio::test]
++async fn spawn_pinned_loc_recorded() {
++    let pool = LocalPoolHandle::new(1);
++    // The worker thread creates a task span when it starts its runtime. Wait
++    // for that before installing a mock subscriber: a callsite first reached
++    // on a thread without the mock would be disabled for all threads.
++    pool.spawn_pinned(|| async {}).await.unwrap();
++
++    expect_spawned_at(line!(), || pool.spawn_pinned(|| async {}))
++        .await
++        .unwrap();
++    expect_spawned_at(line!(), || pool.spawn_pinned_by_idx(|| async {}, 0))
++        .await
++        .unwrap();
++}
++
++/// Asserts that `spawn` creates a task span located at `line` of this file.
++///
++/// Each call uses its own mock subscriber with a single expectation, as the
++/// worker thread enters the span of a spawned task concurrently.
++fn expect_spawned_at(line: u32, spawn: impl FnOnce() -> JoinHandle<()>) -> JoinHandle<()> {
++    let location = expect::field("loc.file")
++        .with_value(&file!())
++        .and(expect::field("loc.line").with_value(&line));
++    let task_span = expect::span().named("runtime.spawn").with_fields(location);
++    let (subscriber, handle) = subscriber::mock()
++        // Skip the spans of the oneshot channel that is created first.
++        .with_filter(|meta| meta.target() == "tokio::task")
++        .new_span(task_span)
++        .run_with_handle();
++
++    let task = tracing::subscriber::with_default(subscriber, spawn);
++    handle.assert_finished();
++    task
++}
+```
+
+---
+
+### Incident Patch 3: `67c58565` (2026-11-08)
+**Commit Message**: codec: clarify read buffer mutation requirements (#8690)
+
+**File**: `tokio-util/src/codec/framed.rs` (modified, +4/-0)
+```diff
+@@ -248,6 +248,10 @@ impl<T, U> Framed<T, U> {
+     }
+ 
+     /// Returns a mutable reference to the read buffer.
++    ///
++    /// The decoder may behave incorrectly if the buffer is modified in any way
++    /// other than reserving more space or appending data to the end of the
++    /// buffer.
+     pub fn read_buffer_mut(&mut self) -> &mut BytesMut {
+         &mut self.inner.state.read.buffer
+     }
+```
+
+**File**: `tokio-util/src/codec/framed_read.rs` (modified, +4/-0)
+```diff
+@@ -146,6 +146,10 @@ impl<T, D> FramedRead<T, D> {
+     }
+ 
+     /// Returns a mutable reference to the read buffer.
++    ///
++    /// The decoder may behave incorrectly if the buffer is modified in any way
++    /// other than reserving more space or appending data to the end of the
++    /// buffer.
+     pub fn read_buffer_mut(&mut self) -> &mut BytesMut {
+         &mut self.inner.state.buffer
+     }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8766** (2026-11-07): rt: handle transient windows thread spawn errors (@gimenete)
+- **PR #8765** (2026-11-06): Merge 'tokio-1.54.x' into 'master' (@Darksonn)
+- **PR #8764** (2026-11-06): Merge 'tokio-1.53.x' into 'tokio-1.54.x' (@Darksonn)
+- **PR #8763** (2026-11-06): Merge 'tokio-1.51.x' into 'tokio-1.53.x' (@Darksonn)
+- **PR #8762** (2026-11-06): ci: ignore RUSTSEC-2026-0441 in cargo-deny (@Darksonn)
 - **PR #8758** (closed): rt: don't leave workers in the sleeper list when the scheduler shuts … (@hassanbabayo85-source)
-- **PR #8738** (closed): Chore(deps): Update parking_lot (@PaulDance)
-- **PR #8736** (2026-10-29): rt: fix io_uring shutdown errors (#8634) (@Daksh14)
-- **PR #8734** (closed): stream: prevent duplicate keys in StreamMap::extend (@Ranjeet2063)
-- **PR #8732** (2026-10-28): time: add Interval::deadline (@stackedbyaradhya)
-- **PR #8729** (closed): time: wake the driver when the paused clock advances (@scrieve)
 
 ---
 
@@ -2037,59 +2225,33 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. io: test I/O registration races during driver shutdown (#8631)
+## X. stream: cancel stale chunks_timeout timer (#8674)
 
 **RULE**:
-When implementing operations in `tokio/src/runtime/io/registration_set.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tokio-rs/tokio. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tokio-stream/src/stream_ext/chunks_timeout.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tokio-rs/tokio. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `695a07dd`: io: test I/O registration races during driver shutdown (#8631). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c6a62327`: stream: cancel stale chunks_timeout timer (#8674). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tokio/src/runtime/io/registration_set.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tokio-stream/src/stream_ext/chunks_timeout.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    use crate::io::interest::Interest;
-
-    #[test]
-    fn allocation_racing_shutdown_is_included_or_rejected() {
-        loom::model(|| {
-            let handle = Arc::new(Registrations::new());
-            let shutdown_handle = handle.clone();
-            let shutdown = thread::spawn(move || {
-                let ios = shutdown_handle
-                    .set
-                    .shutdown(&mut shutdown_handle.synced.lock());
-                for io in &ios {
-                    io.shutdown();
-                }
-                ios
-            });
-
-            let allocation = handle.set.allocate(&mut handle.synced.lock());
-            let ios = shutdown.join().unwrap();
-            match allocation {
-                Ok(io) => {
-                    assert_eq!(ios.len(), 1);
-                    assert!(Arc::ptr_eq(&ios[0], &io));
-                    assert!(io.ready_event(Interest::READABLE).is_shutdown);
-                }
-                Err(err) => {
-                    assert_eq!(err.kind(), io::ErrorKind::Other);
-                    assert_eq!(
-                        err.to_string(),
-                        crate::util::error::RUNTIME_SHUTTING_DOWN_ERROR
-                    );
- 
+                        // The timer no longer applies to a completed chunk.
+                        me.deadline.set(None);
+                    // No more input can arrive, so the deadline is no longer needed.
+                    me.deadline.set(None);
+            if let Some(deadline) = me.deadline.as_mut().as_pin_mut() {
+            me.deadline.set(None);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+            if let Some(deadline) = me.deadline.as_pin_mut() {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `695a07dd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c6a62327` are properly handled with clean fallback behavior.

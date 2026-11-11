@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source**: github ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
-> **Source Version**: `0c03d749`  
+> **Source Version**: `51395ef8`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T18:15:29.743Z  
+> **Timestamp**: 2026-11-09T10:07:55.246Z  
 > **Learning ID**: `learn-github-risingwavelabs-risingwave`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T18:15:29.736Z  
+> **Harvest Timestamp**: 2026-11-09T10:02:54.013Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Event streaming platform for agentic AI. Continuously ingest, transform, and serve event streams in real time, at scale.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9399 stars
+- **Stars / Engagement**: 9406 stars
 
 ---
 
@@ -1077,605 +1077,1028 @@ pub(crate) use def_path_lookup;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d603a76c` (2026-11-05)
-**Commit Message**: fix: return an error when a stored definition fails to parse (#27823)
+### Incident Patch 1: `51395ef8` (2026-11-09)
+**Commit Message**: fix(meta): preserve backup and time-travel references during GC (#27744)
+
+Co-authored-by: zwang28 <[REDACTED_EMAIL]>
+
+**File**: `src/meta/src/backup_restore/backup_manager.rs` (modified, +17/-0)
+```diff
+@@ -77,6 +77,13 @@ pub struct BackupManager {
+     meta_metrics: Arc<MetaMetrics>,
+     /// (job id, status, message)
+     latest_job_info: ArcSwap<(MetaBackupJobId, BackupJobStatus, String)>,
++    #[cfg(test)]
++    pub(crate) snapshot_captured: tokio::sync::Mutex<
++        Option<(
++            tokio::sync::oneshot::Sender<()>,
++            tokio::sync::oneshot::Receiver<()>,
++        )>,
++    >,
+ }
+ 
+ impl BackupManager {
+@@ -160,6 +167,8 @@ impl BackupManager {
+             metrics: BackupManagerMetrics::default(),
+             meta_metrics,
+             latest_job_info: ArcSwap::from_pointee((0, BackupJobStatus::NotFound, "".into())),
++            #[cfg(test)]
++            snapshot_captured: Default::default(),
+         }
+     }
+ 
+@@ -356,6 +365,14 @@ impl BackupWorker {
+                 .build(job_id, hummock_version_builder)
+                 .await?;
+             let snapshot = snapshot_builder.finish()?;
++            #[cfg(test)]
++            {
++                let gate = backup_manager_clone.snapshot_captured.lock().await.take();
++                if let Some((captured, publish)) = gate {
++                    captured.send(()).unwrap();
++                    publish.await.unwrap();
++                }
++            }
+             backup_manager_clone
+                 .backup_store
+                 .load()
+```
+
+**File**: `src/meta/src/hummock/manager/commit_epoch.rs` (modified, +1/-0)
+```diff
+@@ -123,6 +123,7 @@ impl HummockManager {
+             &mut versioning.current_version,
+             &mut versioning.hummock_version_deltas,
+             &mut versioning.table_change_log,
++            &self.gc_manager.change_log_retention,
+             self.env.notification_manager(),
+             Some(&self.table_committed_epoch_notifiers),
+             &self.metrics,
+```
+
+**File**: `src/meta/src/hummock/manager/compaction/compaction_group_manager.rs` (modified, +2/-0)
+```diff
+@@ -215,6 +215,7 @@ impl HummockManager {
+             &mut versioning.current_version,
+             &mut versioning.hummock_version_deltas,
+             &mut versioning.table_change_log,
++            &self.gc_manager.change_log_retention,
+             self.env.notification_manager(),
+             None,
+             &self.metrics,
+@@ -307,6 +308,7 @@ impl HummockManager {
+             &mut versioning.current_version,
+             &mut versioning.hummock_version_deltas,
+             &mut versioning.table_change_log,
++            &self.gc_manager.change_log_retention,
+             self.env.notification_manager(),
+             None,
+             &self.metrics,
+```
+
+**File**: `src/meta/src/hummock/manager/compaction/compaction_group_schedule/normalize.rs` (modified, +1/-0)
+```diff
+@@ -204,6 +204,7 @@ impl HummockManager {
+                 &mut versioning.current_version,
+                 &mut versioning.hummock_version_deltas,
+                 &mut versioning.table_change_log,
++                &self.gc_manager.change_log_retention,
+                 self.env.notification_manager(),
+                 None,
+                 &self.metrics,
+```
+
+**File**: `src/meta/src/hummock/manager/compaction/compaction_group_schedule/topology.rs` (modified, +2/-0)
+```diff
+@@ -293,6 +293,7 @@ impl HummockManager {
+             &mut versioning.current_version,
+             &mut versioning.hummock_version_deltas,
+             &mut versioning.table_change_log,
++            &self.gc_manager.change_log_retention,
+             self.env.notification_manager(),
+             None,
+             &self.metrics,
+@@ -536,6 +537,7 @@ impl HummockManager {
+             &mut versioning.current_version,
+             &mut versioning.hummock_version_deltas,
+             &mut versioning.table_change_log,
++            &self.gc_manager.change_log_retention,
+             self.env.notification_manager(),
+             None,
+             &self.metrics,
+```
+
+**File**: `src/meta/src/hummock/manager/compaction/mod.rs` (modified, +2/-0)
+```diff
+@@ -376,6 +376,7 @@ impl HummockManager {
+             &mut versioning.current_version,
+             &mut versioning.hummock_version_deltas,
+             &mut versioning.table_change_log,
++            &self.gc_manager.change_log_retention,
+             self.env.notification_manager(),
+             None,
+             &self.metrics,
+@@ -908,6 +909,7 @@ impl HummockManager {
+             &mut versioning.current_version,
+             &mut versioning.hummock_version_deltas,
+             &mut versioning.table_change_log,
++            &self.gc_manager.change_log_retention,
+             self.env.notification_manager(),
+             None,
+             &self.metrics,
+```
+
+**File**: `src/meta/src/hummock/manager/context.rs` (modified, +3/-0)
+```diff
+@@ -41,9 +41,11 @@ const GC_HISTORY_QUERY_BATCH_SIZE: usize = 1000;
+ 
+ /// `HummockVersionSafePoint` prevents hummock versions GE than it from being GC.
+ /// It's used by meta node itself to temporarily pin versions.
++/// It also keeps changelog references removed during its lifetime in a separate tracker.
+ pub struct HummockVersionSafePoint {
+     pub id: HummockVersionId,
+     event_sender: HummockManagerEventSender,
++    _change_log_guard: super::gc::change_log_retention::ChangeLogObjectGuard,
+ }
+ 
+ impl Drop for HummockVersionSafePoint {
+@@ -468,6 +470,7 @@ impl HummockManager {
+         let safe_point = HummockVersionSafePoint {
+             id: versioning.current_version.id,
+             event_sender: self.event_sender.clone(),
++            _change_log_guard: self.gc_manager.change_log_retention.pin(false),
+         };
+         wl.version_safe_points.push(safe_point.id);
+         trigger_safepoint_stat(&self.metrics, &wl.version_safe_points);
+```
+
+**File**: `src/meta/src/hummock/manager/gc.rs` (modified, +76/-38)
+```diff
+@@ -43,7 +43,12 @@ use crate::hummock::HummockManager;
+ use crate::hummock::error::{Error, Result};
+ use crate::manager::MetadataManager;
+ 
++pub(super) mod change_log_retention;
++
++use change_log_retention::ChangeLogObjectRetention;
++
+ pub(crate) struct GcManager {
++    pub(super) change_log_retention: ChangeLogObjectRetention,
+     store: ObjectStoreRef,
+     path_prefix: String,
+     use_new_object_prefix_strategy: bool,
+@@ -62,6 +67,7 @@ impl GcManager {
+             path_prefix: path_prefix.to_owned(),
+             use_new_object_prefix_strategy,
+             may_delete_object_ids: Default::default(),
++            change_log_retention: Default::default(),
+         }
+     }
+ 
+@@ -234,8 +240,9 @@ impl HummockManager {
+             .read_with_process_name("finalize_objects_to_delete")
+             .await
+             .min_pinned_version_id();
+-        let tracked_object_ids: HashSet<HummockObjectId> =
++        let mut tracked_object_ids: HashSet<HummockObjectId> =
+             versioning.get_tracked_object_ids(min_pinned_version_id);
++        tracked_object_ids.extend(self.gc_manager.change_log_retention.objects());
+         let to_delete = object_ids
+             .filter(|object_id| !tracked_object_ids.contains(object_id))
+             .collect_vec();
+@@ -335,10 +342,6 @@ impl HummockManager {
+         if object_ids.is_empty() {
+             return Ok(0);
+         }
+-        let pinned_by_metadata_backup = match backup_manager.as_ref() {
+-            Some(b) => b.list_pinned_object_ids().await,
+-            None => HashSet::default(),
+-        };
+         // It's crucial to collect_min_uncommitted_object_id (i.e. `min_object_id`) only after LIST object store (i.e. `object_ids`).
+         // Because after getting `min_object_id`, new compute nodes may join and generate new uncommitted objects that are not covered by `min_sst_id`.
+         // By getting `min_object_id` after `object_ids`, it's ensured `object_ids` won't include any objects from those new compute nodes.
+@@ -352,26 +355,42 @@ impl HummockManager {
+         metrics
+             .full_gc_candidate_object_count
+             .observe(candidate_object_number as _);
+-        // filter by metadata backup
++        // Filter the uncommitted-object watermark before scanning references.
+         let object_ids = object_ids
+             .into_iter()
+-            .filter(|s| !pinned_by_metadata_backup.contains(&s.as_raw()))
++            .filter(|id| id.as_raw() < min_object_id)
+             .collect_vec();
+-        let after_metadata_backup = object_ids.len();
+-        // filter by time travel archive
++        let after_min_object_id = object_ids.len();
++        let _change_log_guard = self.gc_manager.change_log_retention.pin(true);
++        // As in minor GC, exclude version/changelog references before scanning time travel
++        // and backups. Even if those owners publish after their scans and the live references
++        // disappear, these objects cannot reenter this batch. No version safe point is needed.
++        let object_ids = {
++            let version_pinned = self.get_gc_tracked_object_ids().await;
++            object_ids
++                .into_iter()
++                .filter(|id| !version_pinned.contains(id))
++                .collect_vec()
++        };
++        let after_initial_version = object_ids.len();
+         let filter_by_time_travel_start_time = Instant::now();
+-        let object_ids = self
++        let mut object_ids = self
+             .filter_out_objects_by_time_travel(object_ids.into_iter())
+             .await?;
+         tracing::info!(elapsed = ?filter_by_time_travel_start_time.elapsed(), "filter out objects by time travel in full GC");
+         let after_time_travel = object_ids.len();
+-        // filter by object id watermark, i.e. minimum id of uncommitted objects reported by compute nodes.
+-        let object_ids = object_ids
+-            .into_iter()
+-            .filter(|id| id.as_raw() < min_object_id)
+-            .collect_vec();
+-        let after_min_object_id = object_ids.len();
+-        // filter by version
++        // The batch pin retains changelog references even if a backup publishes after
++        // this manifest scan and releases its own pin. No backup job lock is needed.
++        if let Some(backup_manager) = &backup_manager {
++            let backup_pinned = backup_manager.list_pinned_object_ids().await;
++            object_ids.retain(|id| !backup_pinned.contains(&id.as_raw()));
++        }
++        let after_metadata_backup = object_ids.len();
++        #[cfg(test)]
++        retention_tests::pause_gc_retention_handoff(self).await;
++        // Recheck references and write history under the same versioning read lock so
++        // commits and compaction reports observe the final deletion decision. Only objects
++        // that passed time-travel and backup filtering may be recorded in GC history.
+         let after_version = self
+             .finalize_objects_to_delete(object_ids.into_iter())
+             
+```
+
+---
+
+### Incident Patch 2: `c6c342ab` (2026-11-09)
+**Commit Message**: fix(stream): clean append-only dedup state by watermark (#27359)
 
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `src/frontend/src/binder/relation/table_or_source.rs` (modified, +39/-2)
+**File**: `e2e_test/streaming/append_only_dedup_state_cleaning.slt` (added, +91/-0)
 ```diff
-@@ -608,8 +608,14 @@ impl Binder {
-             )?;
-         }
+@@ -0,0 +1,91 @@
++# Watermark-driven state cleaning of the append-only dedup executor, which serves `DISTINCT ON`
++# without `ORDER BY`, and `DISTINCT` / `GROUP BY` without aggregates on append-only input.
++
++control substitution on
++
++statement ok
++SET RW_IMPLICIT_FLUSH TO true;
++
++# With parallel upstream actors, idle actors can delay the merged watermark.
++statement ok
++SET streaming_parallelism = 1;
++
++statement ok
++CREATE TABLE t (k INT, ts INT, WATERMARK FOR ts AS ts - 10) APPEND ONLY;
++
++# The watermark column is the first dedup column.
++statement ok
++CREATE MATERIALIZED VIEW mv_first AS SELECT DISTINCT ON (ts, k) ts, k FROM t;
++
++# The watermark column is the second dedup column, and the state table puts it first in the pk.
++statement ok
++CREATE MATERIALIZED VIEW mv_second AS SELECT DISTINCT ON (k, ts) k, ts FROM t;
++
++let first_tname
++SELECT name FROM rw_catalog.rw_internal_table_info
++WHERE job_name = 'mv_first' AND name LIKE '%appendonlydedup%';
++
++let second_tname
++SELECT name FROM rw_catalog.rw_internal_table_info
++WHERE job_name = 'mv_second' AND name LIKE '%appendonlydedup%';
++
++statement ok
++INSERT INTO t VALUES (1, 1), (2, 2), (1, 1);
++
++query II rowsort
++SELECT t_ts, t_k FROM ${first_tname};
++----
++1 1
++2 2
++
++query II rowsort
++SELECT t_k, t_ts FROM ${second_tname};
++----
++1 1
++2 2
++
++# Advance the watermark to 20. Rows below it are cleaned and no longer visible in the state.
++statement ok
++INSERT INTO t VALUES (3, 30);
++
++query II rowsort retry 30 backoff 1s
++SELECT t_ts, t_k FROM ${first_tname};
++----
++30 3
++
++query II rowsort retry 30 backoff 1s
++SELECT t_k, t_ts FROM ${second_tname};
++----
++3 30
++
++# The duplicate is dropped, and the row below the watermark is dropped by the watermark filter.
++statement ok
++INSERT INTO t VALUES (3, 30), (4, 25), (5, 5);
++
++query II rowsort
++SELECT * FROM mv_first;
++----
++1 1
++2 2
++25 4
++30 3
++
++query II rowsort
++SELECT * FROM mv_second;
++----
++1 1
++2 2
++3 30
++4 25
++
++statement ok
++DROP MATERIALIZED VIEW mv_first;
++
++statement ok
++DROP MATERIALIZED VIEW mv_second;
++
++statement ok
++DROP TABLE t;
++
++statement ok
++SET streaming_parallelism = default;
+```
+
+**File**: `e2e_test/streaming/append_only_dedup_state_cleaning_recover.slt.serial` (added, +105/-0)
+```diff
+@@ -0,0 +1,105 @@
++# Duplicates must still be dropped after the append-only dedup state is cleaned by watermark and
++# the cache is gone, so they are checked against the cleaned state. c1 and c2 count every row their
++# dedup emits, so a key emitted twice makes them too large.
++#
++# Each insert has at most 200 rows, so that the watermark only advances between inserts.
++
++control substitution on
++
++statement ok
++SET RW_IMPLICIT_FLUSH TO true;
++
++statement ok
++SET streaming_parallelism = 2;
++
++statement ok
++CREATE TABLE t (k INT, ts INT, WATERMARK FOR ts AS ts - 10) APPEND ONLY;
++
++statement ok
++CREATE MATERIALIZED VIEW c1 AS SELECT count(*) AS cnt FROM (SELECT DISTINCT ON (ts, k) ts, k FROM t);
++
++statement ok
++CREATE MATERIALIZED VIEW c2 AS SELECT count(*) AS cnt FROM (SELECT DISTINCT ON (k, ts) k, ts FROM t);
++
++let c1_tname
++SELECT name FROM rw_catalog.rw_internal_table_info WHERE job_name = 'c1' AND name LIKE '%appendonlydedup%';
++
++let c2_tname
++SELECT name FROM rw_catalog.rw_internal_table_info WHERE job_name = 'c2' AND name LIKE '%appendonlydedup%';
++
++# ts 0..29, watermark 19.
++statement ok
++INSERT INTO t SELECT k, ts FROM generate_series(0, 9) AS k(k), generate_series(0, 19) AS ts(ts);
++
++statement ok
++INSERT INTO t SELECT k, ts FROM generate_series(0, 9) AS k(k), generate_series(10, 29) AS ts(ts);
++
++query II
++SELECT (SELECT cnt FROM c1), (SELECT cnt FROM c2);
++----
++300 300
++
++# Only keys at or above the watermark are left, including the ones on it.
++query II retry 30 backoff 1s
++SELECT count(*), min(t_ts) FROM ${c1_tname};
++----
++110 19
++
++query II retry 30 backoff 1s
++SELECT count(*), min(t_ts) FROM ${c2_tname};
++----
++110 19
++
++statement ok
++RECOVER;
++
++statement ok
++WAIT;
++
++statement ok
++SET RW_IMPLICIT_FLUSH TO true;
++
++# Duplicates of live keys, starting exactly at the watermark.
++statement ok
++INSERT INTO t SELECT k, ts FROM generate_series(0, 9) AS k(k), generate_series(19, 29) AS ts(ts);
++
++query II
++SELECT (SELECT cnt FROM c1), (SELECT cnt FROM c2);
++----
++300 300
++
++# ts 0..39, watermark 29.
++statement ok
++INSERT INTO t SELECT k, ts FROM generate_series(0, 9) AS k(k), generate_series(20, 39) AS ts(ts);
++
++query II
++SELECT (SELECT cnt FROM c1), (SELECT cnt FROM c2);
++----
++400 400
++
++query I
++SELECT count(*) FROM (SELECT DISTINCT ts, k FROM t);
++----
++400
++
++query II retry 30 backoff 1s
++SELECT count(*), min(t_ts) FROM ${c1_tname};
++----
++110 29
++
++query II retry 30 backoff 1s
++SELECT count(*), min(t_ts) FROM ${c2_tname};
++----
++110 29
++
++statement ok
++DROP MATERIALIZED VIEW c1;
++
++statement ok
++DROP MATERIALIZED VIEW c2;
++
++statement ok
++DROP TABLE t;
++
++statement ok
++SET streaming_parallelism = default;
+```
+
+**File**: `src/frontend/planner_test/tests/testdata/input/watermark.yaml` (modified, +12/-0)
+```diff
+@@ -177,3 +177,15 @@
+     select * from (select *, row_number() over (partition by v1 order by ts desc) as rn from t) where rn <= 1;
+   expected_outputs:
+   - stream_plan
++- name: append-only dedup with watermark on the first dedup column
++  sql: |
++    create table t (ts timestamp with time zone, v1 int, v2 int, watermark for ts as ts - INTERVAL '1' SECOND) append only;
++    select distinct on (ts, v1) * from t;
++  expected_outputs:
++  - stream_dist_plan
++- name: append-only dedup with watermark on a non-first dedup column
++  sql: |
++    create table t (ts timestamp with time zone, v1 int, v2 int, watermark for ts as ts - INTERVAL '1' SECOND) append only;
++    select distinct on (v1, ts) * from t;
++  expected_outputs:
++  - stream_dist_plan
+```
+
+**File**: `src/frontend/planner_test/tests/testdata/output/nexmark_watermark.yaml` (modified, +2/-2)
+```diff
+@@ -878,13 +878,13 @@
  
--        let ast = Parser::parse_sql(&view_catalog.sql)
--            .expect("a view's sql should be parsed successfully");
-+        // The error leaves out the SQL and the parser's message, which quotes it, as they can have
-+        // secrets.
-+        let ast = Parser::parse_sql(&view_catalog.sql).map_err(|_| {
-+            ErrorCode::BindError(format!(
-+                "failed to parse the stored definition of view {}",
-+                view_catalog.name
-+            ))
-+        })?;
-         let Statement::Query(query) = Itertools::exactly_one(ast.into_iter())
-             .expect("a view should contain only one statement")
-         else {
-@@ -738,3 +744,34 @@ impl Binder {
-         Ok(())
+     Table 3 { columns: [ $expr6, $expr8, $expr7, _degree, _rw_timestamp ], primary key: [ $0 ASC, $1 ASC, $2 ASC ], value indices: [ 3 ], distribution key: [ 2, 0, 1 ], read pk prefix len hint: 3, clean watermark indices: [0] }
+ 
+-    Table 4 { columns: [ $expr3, $expr4, $expr2, $expr5, _row_id, _rw_timestamp ], primary key: [ $0 ASC, $1 ASC, $2 ASC, $3 ASC ], value indices: [ 0, 1, 2, 3, 4 ], distribution key: [ 0, 1, 2, 3 ], read pk prefix len hint: 4 }
++    Table 4 { columns: [ $expr3, $expr4, $expr2, $expr5, _row_id, _rw_timestamp ], primary key: [ $2 ASC, $0 ASC, $1 ASC, $3 ASC ], value indices: [ 0, 1, 2, 3, 4 ], distribution key: [ 0, 1, 2, 3 ], read pk prefix len hint: 4, clean watermark indices: [2] }
+ 
+     Table 5 { columns: [ vnode, offset, _rw_timestamp ], primary key: [ $0 ASC ], value indices: [ 1 ], distribution key: [ 0 ], read pk prefix len hint: 1, vnode column idx: 0 }
+ 
+     Table 6 { columns: [ partition_id, offset_info, _rw_timestamp ], primary key: [ $0 ASC ], value indices: [ 0, 1 ], distribution key: [], read pk prefix len hint: 1 }
+ 
+-    Table 7 { columns: [ $expr7, $expr6, $expr8, _row_id, _rw_timestamp ], primary key: [ $0 ASC, $1 ASC, $2 ASC ], value indices: [ 0, 1, 2, 3 ], distribution key: [ 0, 1, 2 ], read pk prefix len hint: 3 }
++    Table 7 { columns: [ $expr7, $expr6, $expr8, _row_id, _rw_timestamp ], primary key: [ $1 ASC, $0 ASC, $2 ASC ], value indices: [ 0, 1, 2, 3 ], distribution key: [ 0, 1, 2 ], read pk prefix len hint: 3, clean watermark indices: [1] }
+ 
+     Table 4294967294 { columns: [ id, name, starttime, $expr5, $expr7, $expr6, $expr8, _rw_timestamp ], primary key: [ $0 ASC, $1 ASC, $2 ASC, $3 ASC ], value indices: [ 0, 1, 2, 3, 4, 5, 6 ], distribution key: [ 0, 1, 2, 3 ], read pk prefix len hint: 4 }
+ 
+```
+
+**File**: `src/frontend/planner_test/tests/testdata/output/watermark.yaml` (modified, +78/-0)
+```diff
+@@ -444,3 +444,81 @@
+         └─StreamGroupTopN [append_only] { order: [t.ts DESC], limit: 1, offset: 0, group_key: [t.v1] }
+           └─StreamExchange { dist: HashShard(t.v1) }
+             └─StreamTableScan { table: t, columns: [t.ts, t.v1, t.v2, t._row_id], stream_scan_type: SnapshotBackfill, stream_key: [t._row_id], pk: [_row_id], dist: UpstreamHashShard(t._row_id) }
++- name: append-only dedup with watermark on the first dedup column
++  sql: |
++    create table t (ts timestamp with time zone, v1 int, v2 int, watermark for ts as ts - INTERVAL '1' SECOND) append only;
++    select distinct on (ts, v1) * from t;
++  stream_dist_plan: |+
++    Fragment 0
++    StreamMaterialize { columns: [ts, v1, v2, t._row_id(hidden)], stream_key: [ts, v1], pk_columns: [ts, v1], pk_conflict: NoCheck, watermark_columns: [ts] }
++    └── StreamAppendOnlyDedup { dedup_cols: [t.ts, t.v1] } { tables: [ AppendOnlyDedup: 0 ] }
++        └── StreamExchange Hash([0, 1]) from 1
++
++    Fragment 1
++    StreamTableScan { table: t, columns: [t.ts, t.v1, t.v2, t._row_id], stream_scan_type: SnapshotBackfill, stream_key: [t._row_id], pk: [_row_id], dist: UpstreamHashShard(t._row_id) }
++    ├── tables: [ StreamScan: 1 ]
++    ├── Upstream
++    └── BatchPlanNode
++
++    Table 0
++    ├── columns: [ t_ts, t_v1, t_v2, t__row_id, _rw_timestamp ]
++    ├── primary key: [ $0 ASC, $1 ASC ]
++    ├── value indices: [ 0, 1, 2, 3 ]
++    ├── distribution key: [ 0, 1 ]
++    ├── read pk prefix len hint: 2
++    └── clean watermark indices: [0]
++
++    Table 1
++    ├── columns: [ vnode, epoch, row_count, is_epoch_finished, _row_id, _rw_timestamp ]
++    ├── primary key: [ $0 ASC ]
++    ├── value indices: [ 1, 2, 3, 4 ]
++    ├── distribution key: [ 0 ]
++    ├── read pk prefix len hint: 1
++    └── vnode column idx: 0
++
++    Table 4294967294
++    ├── columns: [ ts, v1, v2, t._row_id, _rw_timestamp ]
++    ├── primary key: [ $0 ASC, $1 ASC ]
++    ├── value indices: [ 0, 1, 2, 3 ]
++    ├── distribution key: [ 0, 1 ]
++    └── read pk prefix len hint: 2
++
++- name: append-only dedup with watermark on a non-first dedup column
++  sql: |
++    create table t (ts timestamp with time zone, v1 int, v2 int, watermark for ts as ts - INTERVAL '1' SECOND) append only;
++    select distinct on (v1, ts) * from t;
++  stream_dist_plan: |+
++    Fragment 0
++    StreamMaterialize { columns: [ts, v1, v2, t._row_id(hidden)], stream_key: [v1, ts], pk_columns: [v1, ts], pk_conflict: NoCheck, watermark_columns: [ts] }
++    └── StreamAppendOnlyDedup { dedup_cols: [t.v1, t.ts] } { tables: [ AppendOnlyDedup: 0 ] }
++        └── StreamExchange Hash([1, 0]) from 1
++
++    Fragment 1
++    StreamTableScan { table: t, columns: [t.ts, t.v1, t.v2, t._row_id], stream_scan_type: SnapshotBackfill, stream_key: [t._row_id], pk: [_row_id], dist: UpstreamHashShard(t._row_id) }
++    ├── tables: [ StreamScan: 1 ]
++    ├── Upstream
++    └── BatchPlanNode
++
++    Table 0
++    ├── columns: [ t_ts, t_v1, t_v2, t__row_id, _rw_timestamp ]
++    ├── primary key: [ $0 ASC, $1 ASC ]
++    ├── value indices: [ 0, 1, 2, 3 ]
++    ├── distribution key: [ 1, 0 ]
++    ├── read pk prefix len hint: 2
++    └── clean watermark indices: [0]
++
++    Table 1
++    ├── columns: [ vnode, epoch, row_count, is_epoch_finished, _row_id, _rw_timestamp ]
++    ├── primary key: [ $0 ASC ]
++    ├── value indices: [ 1, 2, 3, 4 ]
++    ├── distribution key: [ 0 ]
++    ├── read pk prefix len hint: 1
++    └── vnode column idx: 0
++
++    Table 4294967294
++    ├── columns: [ ts, v1, v2, t._row_id, _rw_timestamp ]
++    ├── primary key: [ $1 ASC, $0 ASC ]
++    ├── value indices: [ 0, 1, 2, 3 ]
++    ├── distribution key: [ 1, 0 ]
++    └── read pk prefix len hint: 2
++
+```
+
+**File**: `src/frontend/src/optimizer/plan_node/stream_dedup.rs` (modified, +24/-3)
+```diff
+@@ -50,6 +50,23 @@ impl StreamDedup {
+         StreamDedup { base, core }
      }
+ 
++    /// The dedup columns in the pk order of the state table, and the clean watermark column. The
++    /// first dedup column with a watermark is moved to the front, so that the state is cleaned by a
++    /// pk-prefix watermark.
++    fn state_pk_dedup_cols(&self) -> (Vec<usize>, Option<usize>) {
++        let mut cols = self.core.dedup_cols.clone();
++        let input_watermark_columns = self.core.input.watermark_columns();
++        let pos = cols
++            .iter()
++            .position(|&idx| input_watermark_columns.contains(idx));
++        let clean_col = pos.map(|pos| {
++            let col = cols.remove(pos);
++            cols.insert(0, col);
++            col
++        });
++        (cols, clean_col)
++    }
++
+     pub fn infer_internal_table_catalog(&self) -> TableCatalog {
+         let schema = self.core.schema();
+         let mut builder = TableCatalogBuilder::default();
+@@ -58,9 +75,13 @@ impl StreamDedup {
+             builder.add_column(field);
+         });
+ 
+-        self.core.dedup_cols.iter().for_each(|idx| {
++        let (dedup_cols, clean_col) = self.state_pk_dedup_cols();
++        dedup_cols.iter().for_each(|idx| {
+             builder.add_order_column(*idx, OrderType::ascending());
+         });
++        if let Some(clean_col) = clean_col {
++            builder.set_clean_watermark_indices(vec![clean_col]);
++        }
+ 
+         let read_prefix_len_hint = builder.get_current_pk_len();
+ 
+@@ -96,8 +117,8 @@ impl StreamNode for StreamDedup {
+         PbNodeBody::AppendOnlyDedup(Box::new(DedupNode {
+             state_table: Some(table_catalog.to_internal_table_prost()),
+             dedup_column_indices: self
+-                .core
+-                .dedup_cols
++                .state_pk_dedup_cols()
++                .0
+                 .iter()
+                 .map(|idx| *idx as _)
+                 .collect_vec(),
+```
+
+**File**: `src/stream/src/executor/dedup/append_only_dedup.rs` (modified, +113/-22)
+```diff
+@@ -26,11 +26,17 @@ type Cache = ManagedLruCache<OwnedRow, ()>;
+ 
+ /// [`AppendOnlyDedupExecutor`] drops any message that has duplicate pk columns with previous
+ /// messages. It only accepts append-only input, and its output will be append-only as well.
++///
++/// Keys below the watermark on the state table's clean watermark column are removed from the
++/// state, as the watermark guarantees that they never arrive again.
+ pub struct AppendOnlyDedupExecutor<S: StateStore> {
+     ctx: ActorContextRef,
+ 
+     input: Option<Executor>,
++    /// Input column indices of the dedup key, in the pk order of the state table.
+     dedup_cols: Vec<usize>,
++    /// The input column whose watermark cleans the state.
++    clean_watermark_col: Option<usize>,
+     state_table: StateTable<S>,
+     cache: Cache,
  }
+@@ -46,10 +52,21 @@ impl<S: StateStore> AppendOnlyDedupExecutor<S> {
+     ) -> Self {
+         let metrics_info =
+             MetricsInfo::new(metrics, state_table.table_id(), ctx.id, "AppendOnly Dedup");
++        // The pk of the state table is the dedup columns, so the clean watermark column maps to
++        // the input by its position in the pk.
++        let clean_watermark_col = state_table.clean_watermark_index.map(|idx| {
++            let pk_pos = state_table
++                .pk_indices()
++                .iter()
++                .position(|&i| i == idx)
++                .expect("clean watermark column should be a dedup column");
++            dedup_cols[pk_pos]
++        });
+         Self {
+             ctx,
+             input: Some(input),
+             dedup_cols,
++            clean_watermark_col,
+             state_table,
+             cache: Cache::unbounded(watermark_epoch, metrics_info),
+         }
+@@ -138,6 +155,9 @@ impl<S: StateStore> AppendOnlyDedupExecutor<S> {
+                 }
+ 
+                 Message::Watermark(watermark) => {
++                    if self.clean_watermark_col == Some(watermark.col_idx) {
++                        self.state_table.update_watermark(watermark.val.clone());
++                    }
+                     yield Message::Watermark(watermark);
+                 }
+             }
+@@ -188,47 +208,56 @@ mod tests {
+     use risingwave_common::test_prelude::StreamChunkTestExt;
+     use risingwave_common::util::epoch::test_epoch;
+     use risingwave_common::util::sort_util::OrderType;
++    use risingwave_hummock_sdk::HummockReadEpoch;
+     use risingwave_storage::memory::MemoryStateStore;
++    use risingwave_storage::table::batch_table::BatchTable;
+ 
+     use super::*;
+     use crate::common::table::test_utils::gen_pbtable;
+-    use crate::executor::test_utils::MockSource;
++    use crate::executor::test_utils::{MessageSender, MockSource, StreamExecutorTestExt};
+ 
+-    #[tokio::test]
+-    async fn test_dedup_executor() {
+-        let table_id = TableId::new(1);
+-        let column_descs = vec![
++    const TABLE_ID: TableId = TableId::new(1);
 +
-+#[cfg(test)]
-+mod tests {
-+    use risingwave_common::catalog::{DEFAULT_SUPER_USER_ID, SYS_CATALOG_START_ID};
++    fn column_descs() -> Vec<ColumnDesc> {
++        vec![
+             ColumnDesc::unnamed(ColumnId::new(0), DataType::Int64),
+             ColumnDesc::unnamed(ColumnId::new(1), DataType::Int64),
+-        ];
++        ]
++    }
 +
-+    use super::*;
-+    use crate::binder::test_utils::mock_binder;
++    /// A dedup executor on the first column of `(I, I)` rows, with its state in `store`.
++    async fn create_executor(store: MemoryStateStore) -> (MessageSender, BoxedMessageStream) {
+         let schema = Schema::new(vec![
+             Field::unnamed(DataType::Int64),
+             Field::unnamed(DataType::Int64),
+         ]);
+-        let dedup_col_indices = vec![0];
+-        let pk_indices = dedup_col_indices.clone();
+-        let order_types = vec![OrderType::ascending()];
+-
+-        let state_store = MemoryStateStore::new();
+         let state_table = StateTable::from_table_catalog(
+-            &gen_pbtable(table_id, column_descs, order_types, pk_indices.clone(), 0),
+-            state_store,
++            &gen_pbtable(
++                TABLE_ID,
++                column_descs(),
++                vec![OrderType::ascending()],
++                vec![0],
++                0,
++            ),
++            store,
+             None,
+         )
+         .await;
+-
+-        let (mut tx, source) = MockSource::channel();
+-        let source = source.into_executor(schema, pk_indices);
+-        let mut dedup_executor = AppendOnlyDedupExecutor::new(
++        let (tx, source) = MockSource::channel();
++        let executor = AppendOnlyDedupExecutor::new(
+             ActorContext::for_test(123),
+-            source,
+-            dedup_col_indices,
++            source.into_executor(schema, vec![0]),
++            vec![0],
+             state_table,
+             Arc::new(AtomicU64::new(0)),
+             Arc::new(StreamingMetrics::unused()),
+-        )
+-        .boxed()
+-        .execute();
++        );
++        (tx, executor.boxed().execute())
++    }
 +
 +    #[tokio::test]
-+    async fn test_view_with_unparsable_sql() {
-+        let view = ViewCatalog {
-+            // A system view skips the privilege check.
-+            id: (SYS_CATALOG_START_ID as u32).into(),
-+            name: "v".to_owned(),
-+            schema_id: 0.into(),
-+            database_id: 0.into(),
-+            owner: DEFAULT_SUPER_USER_ID,
-+            properties: Default::default(),
-+            sql: "SELECT 'secret' FROM".to_owned(),
-+            columns: vec![],
-+            created_at_epoch: None,
-+            created_at_cluster_version: None,
-+        };
-+        let error = mock_binder()
-+            .resolve_view_relation(&view)
-+            .unwrap_err()
-+            .to_report_string();
-+        assert!(error.contains("view v"), "{error}");
-+        assert!(!error.contains("secret"), "{error}");
-+    }
-+}
++    async fn test_dedup_executor() {
++        let (mut tx, mut dedup_executor) = create_executor(MemoryStateStore::new()).await;
+ 
+         tx.push_barrier(test_epo
 ```
 
-**File**: `src/meta/src/controller/rename.rs` (modified, +40/-18)
+**File**: `src/stream/src/from_proto/append_only_dedup.rs` (modified, +7/-1)
 ```diff
-@@ -12,6 +12,7 @@
- // See the License for the specific language governing permissions and
- // limitations under the License.
+@@ -42,10 +42,16 @@ impl ExecutorBuilder for AppendOnlyDedupExecutorBuilder {
+             .enable_preload_all_rows_by_config(&params.config)
+             .build()
+             .await;
++        // Unlike the stream key, the dedup columns are in the pk order of the state table.
++        let dedup_cols = node
++            .dedup_column_indices
++            .iter()
++            .map(|&idx| idx as usize)
++            .collect();
+         let exec = AppendOnlyDedupExecutor::new(
+             params.actor_context,
+             input,
+-            params.info.stream_key.clone(), /* TODO(rc): should change to use `dedup_column_indices`, but need to check backward compatibility */
++            dedup_cols,
+             state_table,
+             params.watermark_epoch,
+             params.executor_stats.clone(),
+```
+
+---
+
+### Incident Patch 3: `2e54cbd0` (2026-11-09)
+**Commit Message**: fix(meta): reject a snapshot backfill pending-barrier limit below 2 (#27828)
+
+Co-authored-by: Claude Fable 5.1 <[REDACTED_EMAIL]>
+
+**File**: `src/common/src/config/streaming.rs` (modified, +2/-1)
+```diff
+@@ -43,7 +43,8 @@ pub struct StreamingConfig {
+     pub snapshot_backfill_finish_max_lagged_barriers: usize,
  
-+use anyhow::anyhow;
- use itertools::Itertools;
- use risingwave_pb::expr::expr_node::{self, RexNode};
- use risingwave_pb::expr::{ExprNode, FunctionCall, UserDefinedFunction};
-@@ -24,20 +25,29 @@ use risingwave_sqlparser::ast::{
- };
- use risingwave_sqlparser::parser::Parser;
+     /// The multiplier applied to `in_flight_barrier_nums` when limiting pending barriers in a
+-    /// snapshot backfill partial graph. A value of 0 is treated as 1.
++    /// snapshot backfill partial graph. A value of 0 is treated as 1. The resulting limit must
++    /// be at least 2, so that queued catch-up barriers can still drain.
+     #[serde(default = "default::streaming::snapshot_backfill_barrier_amplification_factor")]
+     pub snapshot_backfill_barrier_amplification_factor: usize,
  
-+use crate::MetaResult;
-+
-+/// A stored definition can come from an older version, so it may not parse anymore. The error leaves
-+/// out the definition and the parser's message, which quotes it, because the connector options in a
-+/// definition can have secrets.
-+fn parse_definition(definition: &str) -> MetaResult<Statement> {
-+    let ast = Parser::parse_sql(definition)
-+        .map_err(|_| anyhow!("failed to parse the stored definition"))?;
-+    Ok(Itertools::exactly_one(ast.into_iter()).expect("should contains only one statement"))
-+}
-+
- /// `alter_relation_rename` renames a relation to a new name in its `Create` statement, and returns
- /// the updated definition raw sql. Note that the `definition` must be a `Create` statement and the
- /// `new_name` must be a valid identifier, it should be validated before calling this function. To
- /// update all relations that depend on the renamed one, use `alter_relation_rename_refs`.
--pub fn alter_relation_rename(definition: &str, new_name: &str) -> String {
-+pub fn alter_relation_rename(definition: &str, new_name: &str) -> MetaResult<String> {
-     // This happens when we try to rename a table that's created by `CREATE TABLE AS`. Remove it
-     // when we support `SHOW CREATE TABLE` for `CREATE TABLE AS`.
-     if definition.is_empty() {
-         tracing::warn!("found empty definition when renaming relation, ignored.");
--        return definition.into();
-+        return Ok(definition.into());
+```
+
+**File**: `src/config/docs.md` (modified, +1/-1)
+```diff
+@@ -362,7 +362,7 @@ This page is automatically generated by `./risedev generate-example-config`
+ | actor_runtime_worker_threads_num | The thread number of the streaming actor runtime in the compute node. The default value is decided by `tokio`. | "" |
+ | async_stack_trace | Enable async stack tracing through `await-tree` for risectl. | "ReleaseVerbose" |
+ | in_flight_barrier_nums | The maximum number of pending barriers in each partial graph. Pending barriers include in-flight, collected but not committed, and currently completing barriers. | 10000 |
+-| snapshot_backfill_barrier_amplification_factor | The multiplier applied to `in_flight_barrier_nums` when limiting pending barriers in a snapshot backfill partial graph. A value of 0 is treated as 1. | 1 |
++| snapshot_backfill_barrier_amplification_factor | The multiplier applied to `in_flight_barrier_nums` when limiting pending barriers in a snapshot backfill partial graph. A value of 0 is treated as 1. The resulting limit must be at least 2, so that queued catch-up barriers can still drain. | 1 |
+ | snapshot_backfill_finish_max_lagged_barriers | The maximum number of lagged barriers allowed when merging a snapshot backfill job into the database graph. | 100 |
+ | unique_user_stream_errors | Max unique user stream errors per actor | 10 |
+ | unsafe_disable_strict_consistency | Disable strict stream consistency checks. | false |
+```
+
+**File**: `src/meta/node/src/lib.rs` (modified, +16/-0)
+```diff
+@@ -31,6 +31,7 @@ use risingwave_common::util::resource_util;
+ use risingwave_common::util::tokio_util::sync::CancellationToken;
+ use risingwave_common::{GIT_SHA, RW_VERSION};
+ use risingwave_common_heap_profiling::HeapProfiler;
++use risingwave_meta::barrier::snapshot_backfill_max_pending_barrier_num;
+ use risingwave_meta::*;
+ use risingwave_meta_service::*;
+ use risingwave_sqlparser::ast::SqlOptionRedaction;
+@@ -650,4 +651,19 @@ fn validate_config(config: &RwConfig) {
+         tracing::error!(error_msg);
+         panic!("{}", error_msg);
      }
--    let ast = Parser::parse_sql(definition).expect("failed to parse relation definition");
--    let mut stmt =
--        Itertools::exactly_one(ast.into_iter()).expect("should contains only one statement");
-+    let mut stmt = parse_definition(definition)?;
- 
-     match &mut stmt {
-         Statement::CreateTable { name, .. }
-@@ -63,15 +73,13 @@ pub fn alter_relation_rename(definition: &str, new_name: &str) -> String {
-         _ => unreachable!(),
-     };
- 
--    stmt.to_string()
-+    Ok(stmt.to_string())
++
++    // A snapshot backfill partial graph drains its queued catch-up barriers only when a new
++    // upstream barrier arrives, and that barrier is queued first, so the queue shrinks by at
++    // most `limit - 1` per upstream barrier. A limit of 1 could never empty the queue.
++    if snapshot_backfill_max_pending_barrier_num(
++        config.streaming.in_flight_barrier_nums,
++        config
++            .streaming
++            .snapshot_backfill_barrier_amplification_factor,
++    ) < 2
++    {
++        let error_msg = "`in_flight_barrier_nums` times `snapshot_backfill_barrier_amplification_factor` must be at least 2";
++        tracing::error!(error_msg);
++        panic!("{}", error_msg);
++    }
  }
+```
+
+**File**: `src/meta/src/barrier/checkpoint/independent_job/creating_job/mod.rs` (modified, +15/-17)
+```diff
+@@ -185,7 +185,10 @@ impl CreatingStreamingJobControl {
+             .opts
+             .snapshot_backfill_finish_max_lagged_barriers;
+         let opts = &partial_graph_manager.control_stream_manager().env.opts;
+-        let max_pending_barrier_num = snapshot_backfill_max_pending_barrier_num(opts);
++        let max_pending_barrier_num = snapshot_backfill_max_pending_barrier_num(
++            opts.in_flight_barrier_nums,
++            opts.snapshot_backfill_barrier_amplification_factor,
++        );
  
- /// `alter_relation_rename_refs` updates all references of renamed-relation in the definition of
- /// target relation's `Create` statement.
--pub fn alter_relation_rename_refs(definition: &str, from: &str, to: &str) -> String {
--    let ast = Parser::parse_sql(definition).expect("failed to parse relation definition");
--    let mut stmt =
--        Itertools::exactly_one(ast.into_iter()).expect("should contains only one statement");
-+pub fn alter_relation_rename_refs(definition: &str, from: &str, to: &str) -> MetaResult<String> {
-+    let mut stmt = parse_definition(definition)?;
+         let mut job = Self {
+             control: IndependentJobControl::new(independent_job_info),
+@@ -736,7 +739,10 @@ impl CreatingStreamingJobControl {
+             .opts
+             .snapshot_backfill_finish_max_lagged_barriers;
+         let opts = &partial_graph_recoverer.control_stream_manager().env.opts;
+-        let max_pending_barrier_num = snapshot_backfill_max_pending_barrier_num(opts);
++        let max_pending_barrier_num = snapshot_backfill_max_pending_barrier_num(
++            opts.in_flight_barrier_nums,
++            opts.snapshot_backfill_barrier_amplification_factor,
++        );
  
-     match &mut stmt {
-         Statement::CreateTable {
-@@ -139,7 +147,7 @@ pub fn alter_relation_rename_refs(definition: &str, from: &str, to: &str) -> Str
-         }
-         _ => unreachable!(),
-     };
--    stmt.to_string()
-+    Ok(stmt.to_string())
- }
- 
- /// Replace the last ident in the `table_name` with the given name, the object name is ensured to be
-@@ -519,24 +527,38 @@ impl IndexItemRewriter {
- 
+         partial_graph_recoverer.recover_graph(
+             partial_graph_id,
+@@ -1105,7 +1111,6 @@ impl CreatingStreamingJobControl {
  #[cfg(test)]
  mod tests {
-+    use thiserror_ext::AsReport;
-+
      use super::*;
+-    use crate::manager::MetaOpts;
  
      #[test]
-     fn test_alter_table_rename() {
-         let definition = "CREATE TABLE foo (a int, b int)";
-         let new_name = "bar";
-         let expected = "CREATE TABLE bar (a INT, b INT)";
--        let actual = alter_relation_rename(definition, new_name);
-+        let actual = alter_relation_rename(definition, new_name).unwrap();
-         assert_eq!(expected, actual);
-     }
+     fn test_finishing_progress_before_first_checkpoint() {
+@@ -1259,20 +1264,13 @@ mod tests {
  
-+    #[test]
-+    fn test_rename_with_unparsable_definition() {
-+        let definition = "CREATE SINK s FROM t WITH (password = 'secret') AND";
-+        for result in [
-+            alter_relation_rename(definition, "s2"),
-+            alter_relation_rename_refs(definition, "t", "t2"),
-+        ] {
-+            let error = result.unwrap_err().to_report_string();
-+            assert!(!error.contains("secret"), "{error}");
-+        }
-+    }
-+
      #[test]
-     fn test_rename_index_refs() {
-         let definition = "CREATE INDEX idx1 ON foo(v1 DESC, v2)";
-         let from = "foo";
-         let to = "bar";
-         let expected = "CREATE INDEX idx1 ON bar(v1 DESC, v2)";
--        let actual = alter_relation_rename_refs(definition, from, to);
-+        let actual = alter_relation_rename_refs(definition, from, to).unwrap();
-         assert_eq!(expected, actual);
+     fn test_snapshot_backfill_max_pending_barrier_num() {
+-        let mut opts = MetaOpts::test(false);
+-        opts.in_flight_barrier_nums = 10;
+-
+-        opts.snapshot_backfill_barrier_amplification_factor = 0;
+-        assert_eq!(snapshot_backfill_max_pending_barrier_num(&opts), 10);
+-
+-        opts.snapshot_backfill_barrier_amplification_factor = 1;
+-        assert_eq!(snapshot_backfill_max_pending_barrier_num(&opts), 10);
+-
+-        opts.snapshot_backfill_barrier_amplification_factor = 10;
+-        assert_eq!(snapshot_backfill_max_pending_barrier_num(&opts), 100);
+-
+-        opts.in_flight_barrier_nums = usize::MAX;
+-        assert_eq!(snapshot_backfill_max_pending_barrier_num(&opts), usize::MAX);
++        assert_eq!(snapshot_backfill_max_pending_barrier_num(10, 0), 10);
++        assert_eq!(snapshot_backfill_max_pending_barrier_num(10, 1), 10);
++        assert_eq!(snapshot_backfill_max_pending_barrier_num(10, 10), 100);
++        assert_eq!(
++            snapshot_backfill_max_pending_barrier_num(usize::MAX, 10),
++            usize::MAX
++        );
      }
  
-@@ -548,7 +570,7 @@ mod tests {
-         let to = "bar";
-         let expected =
-             "CREATE SINK sink_t FROM bar WITH (connector = 'kafka', format = 'append_only')";
--        let actual = alter_relation_rename_refs(definition, from, to);
-+        le
+     #[test]
 ```
 
-**File**: `src/meta/src/controller/utils.rs` (modified, +7/-3)
+**File**: `src/meta/src/barrier/checkpoint/independent_job/iceberg_v3_job/mod.rs` (modified, +6/-2)
 ```diff
-@@ -2097,7 +2097,7 @@ pub fn extract_external_table_name_from_definition(table_definition: &str) -> Op
-                 error = %e.as_report(),
-                 "failed to parse table definition")
-         })
--        .unwrap()
-+        .ok()?
-         .try_into()
-         .unwrap();
-     if let SqlStatement::CreateTable { cdc_table_info, .. } = &mut definition {
-@@ -2134,7 +2134,8 @@ pub async fn rename_relation(
-             let old_name = relation.name.clone();
-             relation.name = object_name.into();
-             if obj.obj_type != ObjectType::View {
--                relation.definition = alter_relation_rename(&relation.definition, object_name);
-+                relation.definition = alter_relation_rename(&relation.definition, object_name)
-+                    .with_context(|| format!("failed to rename {old_name}"))?;
-             }
-             let active_model = $table::ActiveModel {
-                 $identity: Set(relation.$identity),
-@@ -2292,7 +2293,10 @@ pub async fn rename_relation_refer(
-                 .await?
-                 .unwrap();
-             relation.definition =
--                alter_relation_rename_refs(&relation.definition, old_name, object_name);
-+                alter_relation_rename_refs(&relation.definition, old_name, object_name)
-+                    .with_context(|| {
-+                        format!("failed to update the definition of {}", relation.name)
-+                    })?;
-             let active_model = $table::ActiveModel {
-                 $identity: Set(relation.$identity),
-                 definition: Set(relation.definition.clone()),
+@@ -378,8 +378,10 @@ impl IcebergV3JobCheckpointControl {
+             Default::default(),
+         );
+ 
++        let opts = &partial_graph_manager.control_stream_manager().env.opts;
+         let max_pending_barrier_num = super::snapshot_backfill_max_pending_barrier_num(
+-            &partial_graph_manager.control_stream_manager().env.opts,
++            opts.in_flight_barrier_nums,
++            opts.snapshot_backfill_barrier_amplification_factor,
+         );
+         let commit_checkpoint_interval = CommitCheckpointInterval::from_fragment_nodes(
+             fragment_infos.values().map(|fragment| &fragment.nodes),
+@@ -593,8 +595,10 @@ impl IcebergV3JobCheckpointControl {
+             actors_to_create,
+             IcebergV3BarrierStats::new(job_id, snapshot_epoch),
+         )?;
++        let opts = &partial_graph_recoverer.control_stream_manager().env.opts;
+         let max_pending_barrier_num = super::snapshot_backfill_max_pending_barrier_num(
+-            &partial_graph_recoverer.control_stream_manager().env.opts,
++            opts.in_flight_barrier_nums,
++            opts.snapshot_backfill_barrier_amplification_factor,
+         );
+         Ok(Self {
+             control,
 ```
 
----
-
-### Incident Patch 2: `0c03d749` (2026-11-05)
-**Commit Message**: fix(observability): remove obsolete AWS retry logging layer (#27842)
-
-**File**: `Cargo.lock` (modified, +0/-1)
+**File**: `src/meta/src/barrier/checkpoint/independent_job/mod.rs` (modified, +7/-4)
 ```diff
-@@ -14548,7 +14548,6 @@ dependencies = [
-  "tower-layer",
-  "tower-service",
-  "tracing",
-- "tracing-subscriber",
- ]
- 
- [[package]]
-```
-
-**File**: `docs/metrics/inventory.tsv` (modified, +4/-5)
-```diff
-@@ -9,7 +9,6 @@ compute_batch_total_mem	gauge		Total number of memory usage for batch tasks.		sr
- user_compute_error_cnt	counter	error_type,executor_name,fragment_id	Compute errors in the system, queryable by tags		src/common/metrics/src/error_metrics.rs
- user_sink_error_cnt	counter	error_type,sink_id,sink_name,fragment_id	Sink errors in the system, queryable by tags		src/common/metrics/src/error_metrics.rs
- user_source_error_cnt	counter	error_type,source_id,source_name,fragment_id	Source errors in the system, queryable by tags		src/common/metrics/src/error_metrics.rs
--aws_sdk_retry_counts	counter		Total number of aws sdk retry happens		src/common/metrics/src/lib.rs
- connection_count	gauge	connection_type,uri	The number of current existing connection		src/common/metrics/src/monitor/connection.rs
- connection_create_rate	counter	connection_type,uri	Rate on creating new connection		src/common/metrics/src/monitor/connection.rs
- connection_err_rate	counter	connection_type,uri	Error rate on creating new connection		src/common/metrics/src/monitor/connection.rs
-@@ -294,12 +293,12 @@ object_store_operation_latency	histogram	media_type,type	Total latency of operat
- object_store_read_bytes	counter		Total bytes of requests read from object store		src/object_store/src/object/object_metrics.rs
- object_store_request_retry_count	counter	type	The number of retry times of object store request		src/object_store/src/object/object_metrics.rs
- object_store_write_bytes	counter		Total bytes of requests read from object store		src/object_store/src/object/object_metrics.rs
--refill_bytes	counter	type,op	refill bytes		src/storage/src/hummock/event_handler/refiller.rs
--refill_duration	histogram	type,op	refill duration		src/storage/src/hummock/event_handler/refiller.rs
--refill_queue_total	gauge		refill queue total		src/storage/src/hummock/event_handler/refiller.rs
--refill_total	counter	type,op	refill total		src/storage/src/hummock/event_handler/refiller.rs
- recent_filter_items	gauge		Item numbers of the recent filter.		src/storage/src/hummock/recent_filter/mod.rs
- recent_filter_ops	counter	op	Ops of the recent filter.		src/storage/src/hummock/recent_filter/mod.rs
-+refill_bytes	counter	type,op	refill bytes		src/storage/src/monitor/cache_refill_metrics.rs
-+refill_duration	histogram	type,op	refill duration		src/storage/src/monitor/cache_refill_metrics.rs
-+refill_queue_total	gauge		refill queue total		src/storage/src/monitor/cache_refill_metrics.rs
-+refill_total	counter	type,op	refill total		src/storage/src/monitor/cache_refill_metrics.rs
- compactor_compact_sst_duration	histogram		Total time of compact_key_range that have been issued to state store		src/storage/src/monitor/compactor_metrics.rs
- compactor_compact_task_duration	histogram	group,level	Total time of compact that have been issued to state store		src/storage/src/monitor/compactor_metrics.rs
- compactor_compaction_event_consumed_latency	histogram		The latency of each event being consumed		src/storage/src/monitor/compactor_metrics.rs
-```
-
-**File**: `docs/metrics/reference.md` (modified, +6/-2)
-```diff
-@@ -77,6 +77,11 @@ Metric names are stable across releases unless explicitly called out. Histograms
- follow Prometheus conventions — a histogram `foo_bar_duration_seconds` produces
- `foo_bar_duration_seconds_bucket{le="..."}`, `_sum`, and `_count` series.
- 
-+`aws_sdk_retry_counts` is no longer emitted. Its collector depended on the
-+obsolete `aws_smithy_client::retry` log target and did not track retries from the
-+current AWS SDK. `object_store_request_retry_count` covers RisingWave wrapper
-+retries only; it does not provide SDK-internal retry counts.
-+
- Every metric defined in the code is captured in `inventory.tsv` with:
- 
- | Column        | Meaning                                                   |
-@@ -1043,10 +1048,9 @@ after a new version is installed:
- | `object_store_operation_latency`  | histogram         | `media_type`, `type`                 | Per-operation latency histogram. `type` values follow `OperationType` (see §7.3). `media_type` identifies the backend — values include `mem`, `s3` (legacy direct S3), and the OpenDAL-backed names `Fs`, `S3`, `Minio`, `Gcs`, `Azblob`, `Obs`, `Oss`, `Webhdfs` (mixed case is intentional, matches OpenDAL `Scheme` names). |
- | `object_store_operation_bytes`    | histogram         | `type`                               | Per-operation payload size, by operation `type`. |
- | `object_store_failure_count`      | counter        | `type`                               | Failure count — §7.3 / alert in §3.3. |
--| `object_store_request_retry_count`| counter        | `type`                               | RisingWave's object-store wrapper retry counter — incremented by the retry policy in `src/object_store/src/object/mod.rs` when an operation of `type` (the `OperationType` set from §7.3) is retried. Distinct from the underlying AWS SDK's own retry counter (`aws_sdk_retry_counts`). Non-zero sustained rate → degraded upstream. |
-+| `object_store_request_retry_count`| counter        | `type`                               | RisingWave's object-store wrapper retry counter — incremented by the retry policy in `src/object_store/src/object/mod.rs` when an operation of `type` (the `OperationType` set from §7.3) is retried. Retries performed internally by the AWS SDK are not included. Non-zero sustained rate → degraded upstream. |
- | `object_store_read_bytes`         | counter           | —                                    | Total bytes read by the compute/compactor process. |
- | `object_store_write_bytes`        | counter           | —                                    | Total bytes written. |
--| `aws_sdk_retry_counts`            | counter           | —                                    | Global AWS SDK retry counter, incremented by the logger's tracing-event hook on every `aws_smithy_client::retry` event. Covers all AWS SDK clients in the process (S3 / Kinesis / etc.), not S3 only. |
- 
- ### 10.5 Compactor
- 
-```
-
-**File**: `src/common/metrics/Cargo.toml` (modified, +0/-1)
-```diff
-@@ -30,7 +30,6 @@ tonic = { workspace = true }
- tower-layer = "0.3.3"
- tower-service = "0.3.3"
- tracing = "0.1"
--tracing-subscriber = "0.3.20"
- 
- [target.'cfg(not(madsim))'.dependencies]
- http-body = "1"
-```
-
-**File**: `src/common/metrics/src/lib.rs` (modified, +1/-47)
-```diff
-@@ -18,17 +18,9 @@
- #![feature(trait_alias)]
- #![register_tool(rw)]
- 
--use std::ops::Deref;
--use std::sync::LazyLock;
--
- use hytra::TrAdder;
--use prometheus::core::{Atomic, AtomicU64, GenericCounter, GenericGauge};
-+use prometheus::core::{Atomic, GenericGauge};
- use prometheus::proto::Metric;
--use prometheus::register_int_counter_with_registry;
--use tracing::Subscriber;
--use tracing_subscriber::Layer;
--use tracing_subscriber::layer::Context;
--use tracing_subscriber::registry::LookupSpan;
- 
- mod error_metrics;
- mod gauge_ext;
-@@ -74,44 +66,6 @@ impl Atomic for TrAdderAtomic {
- 
- pub type TrAdderGauge = GenericGauge<TrAdderAtomic>;
- 
--/// [`MetricsLayer`] is a struct used for monitoring the frequency of certain specific logs and
--/// counting them using Prometheus metrics. Currently, it is used to monitor the frequency of retry
--/// occurrences of aws sdk.
--pub struct MetricsLayer {
--    pub aws_sdk_retry_counts: GenericCounter<AtomicU64>,
--}
--
--impl<S> Layer<S> for MetricsLayer
--where
--    S: Subscriber + for<'a> LookupSpan<'a>,
--{
--    fn on_event(&self, _event: &tracing::Event<'_>, _ctx: Context<'_, S>) {
--        // Currently one retry will only generate one debug log,
--        // so we can monitor the number of retry only through the metadata target.
--        // Refer to <https://docs.rs/aws-smithy-client/0.55.3/src/aws_smithy_client/retry.rs.html>
--        self.aws_sdk_retry_counts.inc();
--    }
--}
--
--impl MetricsLayer {
--    #[expect(clippy::new_without_default)]
--    pub fn new() -> Self {
--        static AWS_SDK_RETRY_COUNTS: LazyLock<GenericCounter<AtomicU64>> = LazyLock::new(|| {
--            let registry = crate::monitor::GLOBAL_METRICS_REGISTRY.deref();
--            register_int_counter_with_registry!(
--                "aws_sdk_retry_counts",
--                "Total number of aws sdk retry happens",
--                registry
--            )
--            .unwrap()
--        });
--
--        Self {
--            aws_sdk_retry_counts: AWS_SDK_RETRY_COUNTS.deref().clone(),
--        }
--    }
--}
--
- #[derive(Debug, Default, Clone, Copy, serde::Serialize, serde::Deserialize)]
- pub enum MetricLevel {
-     #[default]
-```
-
-**File**: `src/utils/runtime/src/logger.rs` (modified, +0/-7)
-```diff
-@@ -23,7 +23,6 @@ use opentelemetry::trace::TracerProvider;
- use opentelemetry_otlp::SpanExporter;
- use opentelemetry_sdk::Resource;
- use opentelemetry_sdk::trace::TracerProviderBuilder;
--use risingwave_common::metrics::MetricsLayer;
- use risingwave_common::util::deployment::Deployment;
- use risingwave_common::util::env_var::env_var_is_true;
- use risingwave_common::util::query_log::*;
-@@ -598,12 +597,6 @@ pub fn init_risingwave_logger(settings: LoggerSettings) {
-         tracing::info!("opentelemetry exporter for fastrace is set at {endpoint}");
-     }
- 
--    // Metrics layer
--    {
--        let filter = filter::Targets::new().with_target("aws_smithy_client::retry", Level::DEBUG);
--
--        layers.push(Box::new(MetricsLayer::new().with_filter(filter)));
--    }
-     tracing_subscriber::registry().with(layers).init();
-     // TODO: add file-appender tracing subscriber in the future
- }
-```
-
----
-
-### Incident Patch 3: `506c4092` (2026-11-05)
-**Commit Message**: fix(connector): quote Kafka kinit command and drop kinit.cmd option (#27608)
-
-**File**: `src/connector/src/allow_alter_on_fly_fields.rs` (modified, +0/-3)
-```diff
-@@ -127,7 +127,6 @@ pub static SOURCE_ALLOW_ALTER_ON_FLY_FIELDS: LazyLock<HashMap<String, HashSet<St
-             "properties.sasl.kerberos.service.name".to_owned(),
-             "properties.sasl.kerberos.keytab".to_owned(),
-             "properties.sasl.kerberos.principal".to_owned(),
--            "properties.sasl.kerberos.kinit.cmd".to_owned(),
-             "properties.sasl.kerberos.min.time.before.relogin".to_owned(),
-             "properties.sasl.oauthbearer.config".to_owned(),
-             "properties.sasl.oauthbearer.method".to_owned(),
-@@ -258,7 +257,6 @@ pub static SINK_ALLOW_ALTER_ON_FLY_FIELDS: LazyLock<HashMap<String, HashSet<Stri
-             "properties.sasl.kerberos.service.name".to_owned(),
-             "properties.sasl.kerberos.keytab".to_owned(),
-             "properties.sasl.kerberos.principal".to_owned(),
--            "properties.sasl.kerberos.kinit.cmd".to_owned(),
-             "properties.sasl.kerberos.min.time.before.relogin".to_owned(),
-             "properties.sasl.oauthbearer.config".to_owned(),
-             "properties.sasl.oauthbearer.method".to_owned(),
-@@ -378,7 +376,6 @@ pub static CONNECTION_ALLOW_ALTER_ON_FLY_FIELDS: LazyLock<HashMap<String, HashSe
-             "properties.sasl.kerberos.service.name".to_owned(),
-             "properties.sasl.kerberos.keytab".to_owned(),
-             "properties.sasl.kerberos.principal".to_owned(),
--            "properties.sasl.kerberos.kinit.cmd".to_owned(),
-             "properties.sasl.kerberos.min.time.before.relogin".to_owned(),
-             "properties.sasl.oauthbearer.config".to_owned(),
-             "properties.sasl.oauthbearer.method".to_owned(),
-```
-
-**File**: `src/connector/src/connector_common/common.rs` (modified, +61/-9)
-```diff
-@@ -270,19 +270,16 @@ pub struct KafkaConnectionProps {
- 
-     /// Path to client's Kerberos keytab file under SASL/GSSAPI.
-     #[serde(rename = "properties.sasl.kerberos.keytab")]
-+    #[serde(default, deserialize_with = "deserialize_kinit_arg")]
-     #[with_option(allow_alter_on_fly)]
-     sasl_kerberos_keytab: Option<String>,
- 
-     /// Client's Kerberos principal name under SASL/GSSAPI.
-     #[serde(rename = "properties.sasl.kerberos.principal")]
-+    #[serde(default, deserialize_with = "deserialize_kinit_arg")]
-     #[with_option(allow_alter_on_fly)]
-     sasl_kerberos_principal: Option<String>,
- 
--    /// Shell command to refresh or acquire the client's Kerberos ticket under SASL/GSSAPI.
--    #[serde(rename = "properties.sasl.kerberos.kinit.cmd")]
--    #[with_option(allow_alter_on_fly)]
--    sasl_kerberos_kinit_cmd: Option<String>,
--
-     /// Minimum time in milliseconds between key refresh attempts under SASL/GSSAPI.
-     #[serde(rename = "properties.sasl.kerberos.min.time.before.relogin")]
-     #[with_option(allow_alter_on_fly)]
-@@ -503,7 +500,6 @@ impl KafkaConnectionProps {
-             sasl_kerberos_service_name: None,
-             sasl_kerberos_keytab: None,
-             sasl_kerberos_principal: None,
--            sasl_kerberos_kinit_cmd: None,
-             sasl_kerberos_min_time_before_relogin: None,
-             sasl_oathbearer_config: None,
-             sasl_oauthbearer_method: None,
-@@ -574,6 +570,9 @@ impl KafkaConnectionProps {
-         }
- 
-         // SASL/GSSAPI
-+        // Always override librdkafka's unquoted default. It is only run for GSSAPI, which is
-+        // also librdkafka's default mechanism when `sasl.mechanism` is omitted.
-+        config.set("sasl.kerberos.kinit.cmd", KINIT_CMD);
-         if let Some(sasl_kerberos_service_name) = self.sasl_kerberos_service_name.as_ref() {
-             config.set("sasl.kerberos.service.name", sasl_kerberos_service_name);
-         }
-@@ -583,9 +582,6 @@ impl KafkaConnectionProps {
-         if let Some(sasl_kerberos_principal) = self.sasl_kerberos_principal.as_ref() {
-             config.set("sasl.kerberos.principal", sasl_kerberos_principal);
-         }
--        if let Some(sasl_kerberos_kinit_cmd) = self.sasl_kerberos_kinit_cmd.as_ref() {
--            config.set("sasl.kerberos.kinit.cmd", sasl_kerberos_kinit_cmd);
--        }
-         if let Some(sasl_kerberos_min_time_before_relogin) =
-             self.sasl_kerberos_min_time_before_relogin.as_ref()
-         {
-@@ -1367,10 +1363,66 @@ const fn default_tcp_keepalive_count() -> u32 {
-     3
+@@ -55,7 +55,6 @@ use crate::barrier::{
+     BackfillOrderState, BackfillProgress, BarrierKind, FragmentBackfillProgress, TracedEpoch,
+ };
+ use crate::controller::fragment::InflightFragmentInfo;
+-use crate::manager::MetaOpts;
+ use crate::model::StreamJobActorsToCreate;
+ use crate::notification::{CollectionNotifier, NotifierStarter};
+ use crate::stream::ExtendedFragmentBackfillOrder;
+@@ -248,9 +247,13 @@ fn add_initial_partial_graph(
+     )
  }
  
-+/// librdkafka's default `kinit` command, overridden to single-quote the keytab and principal.
-+/// The default leaves them unquoted or double-quoted, so user-supplied values can inject shell
-+/// commands.
-+///
-+/// Default: <https://github.com/confluentinc/librdkafka/blob/v2.10.0/src/rdkafka_conf.c#L950-L960>
-+const KINIT_CMD: &str = "kinit -R -t '%{sasl.kerberos.keytab}' -k '%{sasl.kerberos.principal}' \
-+    || kinit -t '%{sasl.kerberos.keytab}' -k '%{sasl.kerberos.principal}'";
-+
-+/// Rejects values that could escape the quotes in [`KINIT_CMD`] or be parsed as a `kinit` flag.
-+fn deserialize_kinit_arg<'de, D>(deserializer: D) -> Result<Option<String>, D::Error>
-+where
-+    D: serde::Deserializer<'de>,
-+{
-+    let value = Option::<String>::deserialize(deserializer)?;
-+    if let Some(v) = &value
-+        && (v.contains('\'') || v.starts_with('-'))
-+    {
-+        return Err(serde::de::Error::custom(format!(
-+            "invalid Kerberos value `{v}`: must not contain `'` or start with `-`"
-+        )));
-+    }
-+    Ok(value)
-+}
-+
- #[cfg(all(test, not(madsim)))]
- mod tests {
-     use super::*;
+-fn snapshot_backfill_max_pending_barrier_num(opts: &MetaOpts) -> usize {
+-    opts.in_flight_barrier_nums
+-        .saturating_mul(opts.snapshot_backfill_barrier_amplification_factor.max(1))
++/// The maximum number of upstream barriers a snapshot backfill partial graph may queue before
++/// the upstream is back-pressured.
++pub fn snapshot_backfill_max_pending_barrier_num(
++    in_flight_barrier_nums: usize,
++    snapshot_backfill_barrier_amplification_factor: usize,
++) -> usize {
++    in_flight_barrier_nums.saturating_mul(snapshot_backfill_barrier_amplification_factor.max(1))
+ }
  
-+    #[test]
-+    fn test_kinit_cmd_quoted_and_args_validated() {
-+        // The quoted command is set for every mechanism, including an omitted one, which
-+        // librdkafka treats as GSSAPI.
-+        for mechanism in [None, Some("GSSAPI"), Some("PLAIN")] {
-+            let mut props = KafkaConnectionProps::test_default();
-+            props.sasl_mechanism = mechanism.map(str::to_owned);
-+            let mut config = rdkafka::ClientConfig::new();
-+            props.set_security_properties(&mut config);
-+            assert_eq!(
-+                config.config_map().get("sasl.kerberos.kinit.cmd").unwrap(),
-+                KINIT_CMD
-+            );
-+        }
-+
-+        // Values that could escape the quotes or be parsed as a `kinit` flag are rejected.
-+        for key in [
-+            "properties.sasl.kerberos.principal",
-+            "properties.sasl.kerberos.keytab",
-+        ] {
-+            for bad in ["x'; id; '", "'", "-c/tmp/cache", "--help"] {
-+                let map = BTreeMap::from([
-+                    ("properties.bootstrap.server", "localhost:9092"),
-+                    (key, bad),
-+                ]);
-+                let result: Result<KafkaConnectionProps, _> =
-+                    serde_json::from_value(serde_json::to_value(map).unwrap());
-+                assert!(result.is_err(), "{
+ #[derive(Debug)]
 ```
 
-**File**: `src/connector/with_options_connection.yaml` (modified, +0/-5)
+**File**: `src/meta/src/barrier/checkpoint/mod.rs` (modified, +1/-0)
 ```diff
-@@ -289,11 +289,6 @@ KafkaConnection:
-     comments: Client's Kerberos principal name under SASL/GSSAPI.
-     required: false
-     allow_alter_on_fly: true
--  - name: properties.sasl.kerberos.kinit.cmd
--    field_type: String
--    comments: Shell command to refresh or acquire the client's Kerberos ticket under SASL/GSSAPI.
--    required: false
--    allow_alter_on_fly: true
-   - name: properties.sasl.kerberos.min.time.before.relogin
-     field_type: String
-     comments: Minimum time in milliseconds between key refresh attempts under SASL/GSSAPI.
+@@ -21,6 +21,7 @@ pub(super) use control::{
+     CheckpointControl, CheckpointControlEvent, DatabaseCheckpointControl,
+     DatabaseCheckpointControlMetrics,
+ };
++pub use independent_job::snapshot_backfill_max_pending_barrier_num;
+ pub(crate) use independent_job::{
+     BatchRefreshJobCheckpointControl, BatchRefreshLogicalFragments, BatchRefreshRenderResult,
+     CreatingStreamingJobControl, IcebergV3JobCheckpointControl, IcebergV3RenderResult,
 ```
 
-**File**: `src/connector/with_options_sink.yaml` (modified, +0/-5)
+**File**: `src/meta/src/barrier/mod.rs` (modified, +1/-0)
 ```diff
-@@ -1005,11 +1005,6 @@ KafkaConfig:
-     comments: Client's Kerberos principal name under SASL/GSSAPI.
-     required: false
-     allow_alter_on_fly: true
--  - name: properties.sasl.kerberos.kinit.cmd
--    field_type: String
--    comments: Shell command to refresh or acquire the client's Kerberos ticket under SASL/GSSAPI.
--    required: false
--    allow_alter_on_fly: true
-   - name: properties.sasl.kerberos.min.time.before.relogin
-     field_type: String
-     comments: Minimum time in milliseconds between key refresh attempts under SASL/GSSAPI.
-```
-
-**File**: `src/connector/with_options_source.yaml` (modified, +0/-5)
-```diff
-@@ -538,11 +538,6 @@ KafkaProperties:
-     comments: Client's Kerberos principal name under SASL/GSSAPI.
-     required: false
-     allow_alter_on_fly: true
--  - name: properties.sasl.kerberos.kinit.cmd
--    field_type: String
--    comments: Shell command to refresh or acquire the client's Kerberos ticket under SASL/GSSAPI.
--    required: false
--    allow_alter_on_fly: true
-   - name: properties.sasl.kerberos.min.time.before.relogin
-     field_type: String
-     comments: Minimum time in milliseconds between key refresh attempts under SASL/GSSAPI.
+@@ -51,6 +51,7 @@ pub use backfill_order_control::{BackfillNode, BackfillOrderState};
+ use risingwave_common::id::JobId;
+ use risingwave_pb::ddl_service::PbBackfillType;
+ 
++pub use self::checkpoint::snapshot_backfill_max_pending_barrier_num;
+ pub use self::command::{
+     BarrierKind, Command, CreateStreamingJobCommandInfo, CreateStreamingJobType,
+     IcebergPkIndexCompactionOverwrite, IndependentStreamingJobType, ReplaceStreamJobPlan,
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #27842** (2026-11-05): fix(observability): remove obsolete AWS retry logging layer (@Li0k)
-- **PR #27835** (closed): feat(ctl): add object-store and compactor read benchmarks (@Ad-Bean)
-- **PR #27833** (2026-11-05): fix(storage): honor missing TOML compaction settings (@wenym1)
-- **PR #27832** (2026-11-05): fix(storage): use the meta file cache flush buffer default (#27797) (@risingwave-ci)
-- **PR #27831** (2026-11-05): fix(storage): use the meta file cache flush buffer default (#27797) (@risingwave-ci)
-- **PR #27830** (2026-11-05): chore: update version to v3.1.1 (@cyliu0)
+- **PR #27889** (closed): fix(sink): avoid barrier truncation deadlock when decoupled sink is p… (@hemal9102)
+- **PR #27887** (2026-11-07): fix(connector): never send an empty AppendRows request in BigQuery sink (#27885) (@risingwave-ci)
+- **PR #27886** (2026-11-07): fix(connector): never send an empty AppendRows request in BigQuery sink (#27885) (@risingwave-ci)
+- **PR #27885** (2026-11-07): fix(connector): never send an empty AppendRows request in BigQuery sink (@anlowee)
+- **PR #27879** (closed): fix(sink): avoid barrier truncation deadlock when decoupled sink is paused (@hemal9102)
+- **PR #27876** (2026-11-06): fix(meta): allow large meta snapshot manifests (@wenym1)
 
 ---
 
@@ -1695,62 +2118,44 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. return an error when a stored definition fails to parse (#27823)
+## X. meta): preserve backup and time-travel references during GC (#27744)
 
 **RULE**:
-When implementing operations in `src/frontend/src/binder/relation/table_or_source.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/meta/src/backup_restore/backup_manager.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d603a76c`: return an error when a stored definition fails to parse (#27823). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `51395ef8`: meta): preserve backup and time-travel references during GC (#27744). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/frontend/src/binder/relation/table_or_source.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/meta/src/backup_restore/backup_manager.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        // The error leaves out the SQL and the parser's message, which quotes it, as they can have
-        // secrets.
-        let ast = Parser::parse_sql(&view_catalog.sql).map_err(|_| {
-            ErrorCode::BindError(format!(
-                "failed to parse the stored definition of view {}",
-                view_catalog.name
-            ))
-        })?;
-
-#[cfg(test)]
-mod tests {
-    use risingwave_common::catalog::{DEFAULT_SUPER_USER_ID, SYS_CATALOG_START_ID};
-
-    use super::*;
-    use crate::binder::test_utils::mock_binder;
-
-    #[tokio::test]
-    async fn test_view_with_unparsable_sql() {
-        let view = ViewCatalog {
-            // A system view skips the privilege check.
-            id: (SYS_CATALOG_START_ID as u32).into(),
-            name: "v".to_owned(),
-            schema_id: 0.into(),
-            database_id: 0.into(),
-            owner: DEFAULT_SUPER_USER_ID,
-            properties: Default::default(),
-            sql: "SELECT 'secret' FROM".to_owned(),
-            columns: vec![],
-            created_at_epoch: None,
-            created_at_cluster_version: None,
-        };
-        let error = mock_binder()
-            .resolve_view_relation(&view)
-            .un
+    #[cfg(test)]
+    pub(crate) snapshot_captured: tokio::sync::Mutex<
+        Option<(
+            tokio::sync::oneshot::Sender<()>,
+            tokio::sync::oneshot::Receiver<()>,
+        )>,
+    >,
+            #[cfg(test)]
+            snapshot_captured: Default::default(),
+            #[cfg(test)]
+            {
+                let gate = backup_manager_clone.snapshot_captured.lock().await.take();
+                if let Some((captured, publish)) = gate {
+                    captured.send(()).unwrap();
+                    publish.await.unwrap();
+                }
+            }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        let ast = Parser::parse_sql(&view_catalog.sql)
-            .expect("a view's sql should be parsed successfully");
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d603a76c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `51395ef8` are properly handled with clean fallback behavior.

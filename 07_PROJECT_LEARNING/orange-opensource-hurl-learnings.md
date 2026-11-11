@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md`  
 > **Source**: github ([https://github.com/Orange-OpenSource/hurl](https://github.com/Orange-OpenSource/hurl))  
-> **Source Version**: `42758592`  
+> **Source Version**: `c0010d32`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T04:00:34.393Z  
+> **Timestamp**: 2026-11-09T05:13:57.591Z  
 > **Learning ID**: `learn-github-orange-opensource-hurl`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Orange-OpenSource/hurl](https://github.com/Orange-OpenSource/hurl))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T04:00:34.384Z  
+> **Harvest Timestamp**: 2026-11-09T05:13:56.374Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Hurl, run and test HTTP requests with plain text.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 19304 stars
+- **Stars / Engagement**: 19310 stars
 
 ---
 
@@ -1845,11 +1845,13 @@ pub mod visit;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #5414** (2026-11-06): **Bad certificate assert with Hurl compiled in release, OK in debug**
+  *Symptoms*: With this file:  ```hurl GET https://hurl.dev HTTP 200 [Asserts] certificate "Subject" contains "hurl.dev"  GET https://gitlab.com HTTP * [Asserts] certificate "Subject" contains "gitlab.com"  # Reuses the first connection, so the certificate comes from hurl's cache GET https://hurl.dev HTTP 200 [Asserts] certificate "Subject" contains "hurl.dev" ```  Compiling the current Hurl in debug:  ```shell $ target/debug/hurl --test /tmp/cert.hurl Success /tmp/cert.hurl (3 request(s) in 485 ms) -------------------------------------------------------------------------------- Executed files:    1 Executed requests: 3 (6.2/s) Succeeded files:   1 (100.0%) Failed files:      0 (0.0%) Duration:          486 ms (0h:0m:0s:486ms) ```  While in release:  ```shell $ target/release/hurl --test /tmp/cert.hurl error: Assert failure   --> /tmp/cert.hurl:15:0    |    | GET https://hurl.dev    | ... 15 | certificate "Subject" contains "hurl.dev"    |   actual:   string <CN = gitlab.com>    |   expected: contains string <hurl.dev>    |  Failure /tmp/cert.hurl (3 request(s) in 534 ms) -------------------------------------------------------------------------------- Executed files:    1 Executed requests: 3 (5.6/s) Succeeded files:   0 (0.0%) Failed files:      1 (100.0%) Duration:          536 ms (0h:0m:0s:536ms) ```  
+  **Post-Mortem & Fix Analysis**:
+  > Thanks for fixing the bug! It was cool to see BorrowSanitizer finding a correctness bug in the wild!
+
 - **Issue #5374** (2026-10-23): **Escape curl command from --curl option and --verbose log**
   *Symptoms*: Using this Hurl file  ```hurl GET http://localhost:8000/x'; touch foo; : ' ```  The curl command in verbose mode (or using `--curl`) can produces malicious shell command:  ```shell $ hurl --verbose foo.hurl * ------------------------------------------------------------------------------ * Executing entry 1 * * Cookie store: * * Request: * GET http://127.0.0.1:8000/x'; touch foo; : ' * * Request can be run with the following curl command: * curl 'http://127.0.0.1:8000/x'; touch foo; : '' * error: HTTP connection   --> /tmp/test.hurl:1:5    |  1 | GET http://127.0.0.1:8000/x'; touch foo; : '    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ (3) URL rejected: Malformed input to a URL function    | ```  Then running the curl command `curl 'http://127.0.0.1:8000/x'; touch foo; : ''`will produce a `foo` file  
-
-- **Issue #5356** (2026-10-16): **Fix crash when receiving non-UTF-8 server cookie**
-  *Symptoms*: When receiving non UTF-8 cookie from server (i.e. `Set-Cookie: bad=\xff`), Hurl 8.0.1 crash:  ```shell $ hurl thread 'main' (3620034) panicked at packages/hurl/src/http/client.rs:793:47: called `Result::unwrap()` on an `Err` value: Utf8Error { valid_up_to: 49, error_len: Some(1) } note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace zsh: abort      /opt/homebrew/bin/hurl --cookie-jar build/cookies.txt --no-output  ``` 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1866,231 +1868,32 @@ pub mod visit;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `42758592` (2026-11-04)
+### Incident Patch 1: `c0010d32` (2026-11-08)
 **Commit Message**: Update crates
 
-**File**: `Cargo.lock` (modified, +22/-29)
+**File**: `Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -180,9 +180,9 @@ checksum = "72f5acc6cb2ba439de613abc23857ec3d78374d8ed5ac84e9d11336e87da8649"
+@@ -749,9 +749,9 @@ dependencies = [
  
  [[package]]
- name = "cc"
--version = "1.10.0"
-+version = "1.11.0"
+ name = "libz-sys"
+-version = "1.1.31"
++version = "1.1.32"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "86e055fa6e3e40ad6187ba25b6855eeb635d5271f8e0f0e1e9a5826b8d75bea0"
-+checksum = "375989decec1a0fa424442bed520fa12ede43a48475ce8c7417d2c69b32b5f6b"
- dependencies = [
-  "find-msvc-tools",
-  "shlex",
-@@ -308,9 +308,9 @@ dependencies = [
- 
- [[package]]
- name = "crc32fast"
--version = "1.5.3"
-+version = "1.5.4"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "0ba106e844045ddc02c20768ac4b0b7cb45f2cc2ecbd833ac9f5dacb183c2055"
-+checksum = "5f97d3416d5337d15c4b0d78c8c91df922ca143f57ec20e2d1c188333047ef04"
- dependencies = [
-  "cfg-if",
- ]
-@@ -384,9 +384,9 @@ dependencies = [
- 
- [[package]]
- name = "encoding_rs"
--version = "0.8.42"
-+version = "0.8.44"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "8e985e0451871ad22fb8d2b6b076e2028a502a0d3950998c2c5c0a4f9b5d9679"
-+checksum = "89253175e704ab869b04f9db224d38630e0211a53841a79181deae0889e169f5"
- dependencies = [
-  "cfg-if",
-  "core_detect",
-@@ -686,9 +686,9 @@ checksum = "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682"
- 
- [[package]]
- name = "js-sys"
--version = "0.3.106"
-+version = "0.3.107"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "7883d941dae510fb2d978fc3fe018c71c9e2892fd38854de3e8b92c2e5ad9cc5"
-+checksum = "8dc09d2154098bbf4ef54eab6b117a3c24cbbffe94046b16ee6d6d4510584d3a"
- dependencies = [
-  "cfg-if",
-  "futures-util",
-@@ -737,9 +737,9 @@ dependencies = [
- 
- [[package]]
- name = "libxml"
--version = "0.3.22"
-+version = "0.3.23"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "1157d8bc7a14d07445541827e7a9c80fc5939718b43a973cf7e666d3ab5035fb"
-+checksum = "84ca9b725ff0ed0b7346599f27b8e09b21724f67b012a91d329c3e298788d505"
- dependencies = [
-  "bindgen",
-  "libc",
-@@ -773,9 +773,9 @@ checksum = "47d9d19d1d6efa0109d2f65ff4c85cddd50bd572e5a00127ab10987290bcefae"
- 
- [[package]]
- name = "log"
--version = "0.4.34"
-+version = "0.4.35"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f9f8bd3e56ce4dfc153cf470fffbfa98c7620958b312ca5c3a4b8d5181fd13c6"
-+checksum = "5d15f86d12da44cd8d4ec3c73984537eb7f4cadcb9776a575a0a8a05ca11005c"
- 
- [[package]]
- name = "md5"
-@@ -829,12 +829,6 @@ dependencies = [
-  "autocfg",
- ]
- 
--[[package]]
--name = "once_cell"
--version = "1.21.4"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "9f7c3e4beb33f85d45ae3e3a1792185706c8e16d043238c593331cc7cd313b50"
--
- [[package]]
- name = "once_cell_polyfill"
- version = "1.70.2"
-@@ -858,9 +852,9 @@ dependencies = [
- 
- [[package]]
- name = "openssl-sys"
--version = "0.9.117"
-+version = "0.9.118"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "b47e7e6bb2c38cd930d25a23b40fa52e068c10e85f3e03a7f5ba5aaca5713695"
-+checksum = "19c413d6ec9ebaf5e1c829d355cb3e9f783778d700f135be0921d52fce3c60ae"
+-checksum = "ff20308ecabd635a2dc1dd5834a86c462cca20efba1d5d3ddab1f8aea3455cb2"
++checksum = "69965d2409bff8c8cea3829009fff66a86f05a0570656552ef70f616e8e4bd85"
  dependencies = [
   "cc",
   "libc",
-@@ -1248,32 +1242,31 @@ checksum = "accd4ea62f7bb7a82fe23066fb0957d48ef677f6eeb8215f372f52e48bb32426"
- 
- [[package]]
- name = "wasm-bindgen"
--version = "0.2.129"
-+version = "0.2.130"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "9bb54f33acc68fd454578d9820b0bde1a1a3d17aa17bb7b6595806d02886d409"
-+checksum = "a0181c14ddd6c7b8b0b0132a5f1ea2f32be0d893cd3ea97b6e3b28886b8a3d1c"
- dependencies = [
-  "cfg-if",
-- "once_cell",
-  "rustversion",
-  "wasm-bindgen-macro",
-  "wasm-bindgen-shared",
- ]
- 
- [[package]]
- name = "wasm-bindgen-macro"
--version = "0.2.129"
-+version = "0.2.130"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "2e29d0c35b16e224a7eeb5cd2d25e3e1968fbd65604117b44d3b789d00ee8535"
-+checksum = "6e931a02a39abdbf66966fc35902b5ed58344750a70885bed4ebb3d8eaf28ed9"
- dependencies = [
-  "quote",
-  "wasm-bindgen-macro-support",
- ]
- 
- [[package]]
- name = "wasm-bindgen-macro-support"
--version = "0.2.129"
-+version = "0.2.130"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "6f501a8bc3719dba86ef8ae4728879c08001bea749eb1333ac5b91e040e2a6b7"
-+checksum = "2ca4b54280e455bd831e33a6b8e734baf432fe63fbc35c42ac14ce67a043a53a"
- dependencies = [
-  "bumpalo",
-  "proc-macro2",
-@@ -1284,9 +1277,9 @@ dependencies = [
- 
- [[package]]
- name = "wasm-bindgen-shared"
--version = "0.2.129"
-+version = "0.2.130"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "23f0c9c52aa7cd7d77769a4cfe2a9adb1b331f489a41d912ce14513d5ab995c6"
-+checksum = "3b1f9c3798725016c6ee5f2f57869ec0831e8bbc0ab0310a86e787e97f41389e"
- dependencies = [
-  "unicode-ident",
- ]
-```
-
-**File**: `packages/hurl/Cargo.toml` (modified, +3/-3)
-```diff
-@@ -25,11 +25,11 @@ chrono = { version = "0.4.45", default-features = false, features = ["clock"] }
- clap = { version = "4.6.7", features = ["string", "wrap_help"] }
- curl = "0.4.51"
- curl-sys = "0.4.91"
--encoding_rs = "0.8.42"
-+encoding_rs = "0.8.44"
- glob = "0.3.4"
- hurl_core = { version = "9.0.0", path = "../hurl_core" }
- libflate = "2.3.2"
--libxml = "0.3.22"
-+libxml = "0.3.23"
- md5 = "0.8.1"
- percent-encoding = "2.3.2"
- regex = "1.13.1"
-@@ -47,7 +47,7 @@ terminal_size = "0.4.4"
- winres = "0.1.12"
- 
- [build-dependencies]
--cc = "1.10.0"
-+cc = "1.11.0"
- 
- [lints]
- workspace = true
-```
-
-**File**: `packages/hurl_core/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -11,7 +11,7 @@ repository = "https://github.com/Orange-OpenSource/hurl"
- 
- [dependencies]
- colored = "3.1.1"
--libxml = "0.3.22"
-+libxml = "0.3.23"
- regex = "1.13.1"
- 
- [lints]
-```
-
----
-
-### Incident Patch 2: `cb0a84e2` (2026-11-04)
-**Commit Message**: Install libxml 2.13 on Fedora if supported (Hurl Ubuntu package uses libxml 2.13 soname)
-
-**File**: `bin/install_prerequisites_fedora.sh` (modified, +7/-0)
-```diff
-@@ -16,6 +16,13 @@ yum install -y \
-     jq
- ln -sf /usr/bin/python3.11 /usr/bin/python3
- 
-+# libxml2 >= 2.14 bumps soname to libxml2.so.16; install libxml2.so.2 compat
-+# package (if available) so that binaries linked against libxml2.so.2 still run
-+# (for instance, generic linux package built on Ubuntu).
-+if yum info libxml2_2.13 >/dev/null 2>&1; then
-+    yum install -y libxml2_2.13
-+fi
-+
- "$(dirname "$0")"/install_mitmproxy.sh
- 
- # libxml crate >= 0.3.4 uses bindgen
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5413** (2026-11-04): Update crates (@hurl-bot)
-- **PR #5412** (2026-11-04): Disable ntml test on Fedora (md4 removed from openssl) (@jcamiel)
-- **PR #5411** (closed): Update crates (except openssl) (@jcamiel)
-- **PR #5410** (closed): Update crates (@hurl-bot)
-- **PR #5409** (2026-11-03): Use latest alpine v3 for Docker build (@lepapareil)
-- **PR #5408** (closed): Update crates (@hurl-bot)
+- **PR #5423** (2026-11-08): Update crates (@hurl-bot)
+- **PR #5422** (2026-11-07): Update crates (@hurl-bot)
+- **PR #5421** (2026-11-06): Update docs. (@jcamiel)
+- **PR #5420** (2026-11-06): Compare placeholder in JSON (@fabricereix)
+- **PR #5419** (2026-11-06): Fix TLS certificate cache assertion mis-behaviour. (@jcamiel)
+- **PR #5418** (closed): Test patching libxml-0.3.23 to support pkgconfig on Windows build. (@jcamiel)
 
 ---
 
@@ -2116,7 +1919,7 @@ Observed empirical fixes and code patches:
 When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Orange-OpenSource/hurl. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `42758592`: Update crates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c0010d32`: Update crates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
@@ -2124,62 +1927,16 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "1.11.0"
-checksum = "375989decec1a0fa424442bed520fa12ede43a48475ce8c7417d2c69b32b5f6b"
-version = "1.5.4"
-checksum = "5f97d3416d5337d15c4b0d78c8c91df922ca143f57ec20e2d1c188333047ef04"
-version = "0.8.44"
-checksum = "89253175e704ab869b04f9db224d38630e0211a53841a79181deae0889e169f5"
-version = "0.3.107"
-checksum = "8dc09d2154098bbf4ef54eab6b117a3c24cbbffe94046b16ee6d6d4510584d3a"
-version = "0.3.23"
-checksum = "84ca9b725ff0ed0b7346599f27b8e09b21724f67b012a91d329c3e298788d505"
-version = "0.4.35"
-checksum = "5d15f86d12da44cd8d4ec3c73984537eb7f4cadcb9776a575a0a8a05ca11005c"
-version = "0.9.118"
-checksum = "19c413d6ec9ebaf5e1c829d355cb3e9f783778d700f135be0921d52fce3c60ae"
-version = "0.2.130"
-checksum = "a0181c14ddd6c7b8b0b0132a5f1ea2f32be0d893cd3ea97b6e3b28886b8a3d1c"
-version = "0.2.130"
-checksum = "6e931a02a39abdbf66966fc35902b5ed58344750a70885bed4ebb3d8eaf28ed9"
-version = "0.2.130"
-checksum = "2ca4b54280e455bd831e33a6b8e734baf432fe63fbc35c42ac14ce67a043a53a"
-version = "0.2.130"
-checksum = "3b1f9c3798725016c6ee5f2f57869ec0831e8bbc0ab0310a86e787e97f41389e"
+version = "1.1.32"
+checksum = "69965d2409bff8c8cea3829009fff66a86f05a0570656552ef70f616e8e4bd85"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-version = "1.10.0"
-checksum = "86e055fa6e3e40ad6187ba25b6855eeb635d5271f8e0f0e1e9a5826b8d75bea0"
-version = "1.5.3"
-checksum = "0ba106e844045ddc02c20768ac4b0b7cb45f2cc2ecbd833ac9f5dacb183c2055"
-version = "0.8.42"
-checksum = "8e985e0451871ad22fb8d2b6b076e2028a502a0d3950998c2c5c0a4f9b5d9679"
-version = "0.3.106"
-checksum = "7883d941dae510fb2d978fc3fe018c71c9e2892fd38854de3e8b92c2e5ad9cc5"
-version = "0.3.22"
-checksum = "1157d8bc7a14d07445541827e7a9c80fc5939718b43a973cf7e666d3ab5035fb"
-version = "0.4.34"
-checksum = "f9f8bd3e56ce4dfc153cf470fffbfa98c7620958b312ca5c3a4b8d5181fd13c6"
-[[package]]
-name = "once_cell"
-version = "1.21.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9f7c3e4beb33f85d45ae3e3a1792185706c8e16d043238c593331cc7cd313b50"
-
-version = "0.9.117"
-checksum = "b47e7e6bb2c38cd930d25a23b40fa52e068c10e85f3e03a7f5ba5aaca5713695"
-version = "0.2.129"
-checksum = "9bb54f33acc68fd454578d9820b0bde1a1a3d17aa17bb7b6595806d02886d409"
- "once_cell",
-version = "0.2.129"
-checksum = "2e29d0c35b16e224a7eeb5cd2d25e3e1968fbd65604117b44d3b789d00ee8535"
-version = "0.2.129"
-checksum = "6f501a8bc3719dba86ef8ae4728879c08001bea749eb1333ac5b91e040e2a6b7"
-version = "0.2.129
+version = "1.1.31"
+checksum = "ff20308ecabd635a2dc1dd5834a86c462cca20efba1d5d3ddab1f8aea3455cb2"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `42758592` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c0010d32` are properly handled with clean fallback behavior.

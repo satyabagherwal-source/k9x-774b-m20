@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md`  
 > **Source**: github ([https://github.com/Shopify/react-native-skia](https://github.com/Shopify/react-native-skia))  
-> **Source Version**: `280986c1`  
+> **Source Version**: `7a9b20cd`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T09:25:12.956Z  
+> **Timestamp**: 2026-11-09T23:17:46.163Z  
 > **Learning ID**: `learn-github-wcandillon-react-native-skia`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Shopify/react-native-skia](https://github.com/Shopify/react-native-skia))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T09:25:12.323Z  
+> **Harvest Timestamp**: 2026-11-09T23:17:46.033Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: High-performance React Native Graphics using Skia
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 8768 stars
+- **Stars / Engagement**: 8776 stars
 
 ---
 
@@ -921,6 +921,7 @@ private:
 #include "include/core/SkColorSpace.h"
 #include "include/core/SkColorType.h"
 #include "include/gpu/graphite/dawn/DawnBackendContext.h"
+#include "rnwgpu/DawnBlobCache.h"
 #include "utils/RNSkLog.h"
 
 namespace DawnUtils {
@@ -1169,8 +1170,7 @@ getMatchedAdapter(dawn::native::Instance *instance) {
 
 // Where requestDevice() reports what becomes of the device. A loss after
 // creation (a driver reset, the GPU out of memory, a device-level error)
-// goes to onLost with Dawn's reason and message, on whichever thread Dawn
-// detects it: possibl
+// goes to onLost with Dawn's reason and message, on whichever 
 ```
 
 ### Core Architecture Module: `packages/skia/cpp/rnskia/RNSkWindowState.h`
@@ -1434,1497 +1434,876 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b3c17c56` (2026-11-02)
-**Commit Message**: fix(🤖): post main-thread tasks without calling into Java (#4364)
+### Incident Patch 1: `d7df506d` (2026-11-08)
+**Commit Message**: fix(🧵): refactoring frame pacing (#4398)
 
-On Android, runOnMainThread queued the task and, when no dispatch was
-scheduled, called Java's PlatformContext.notifyTaskReady to post the
-queue's run to the main looper, after attaching the posting thread to
-the JVM where it was not. Both steps allocate on Java's heap. When it
-was exhausted, fbjni rethrew the post's OutOfMemoryError as a
-JniException, which ended the app from Recorder's destructor, and
-asserted when the attach failed on a thread such as a render-pool one;
-a caller that caught the throw was left with the dispatch marked as
-scheduled, so nothing posted to the main thread ran again.
+* fix(🧵): check the present thread at the entries of the view and the window surface
 
-The main thread's queue is now MainThreadTasks, one for the process as
-the main looper is, and the looper watches its eventfd, which
-PlatformContext registers once: a task queued off the main thread into
-an empty queue wakes it with a write, which calls no Java, and the main
-thread reads the count before it takes the queue. The tasks run in the
-looper's descriptor dispatch rather than as messages. A task handed over
-on the main thread runs the queue on the spot, as it did when no
-dispatch was pending. MainThreadTasksTest 
+The thread a view presents on, and that its window surface belongs to, was
+a comment in each class. A rnsurface::ThreadChecker now sits at every entry
+that belongs to that thread (RNSkView::redraw, presentFrame, scheduleFrame;
+RNSkWindowSurface::attach, detach, isAttached, showsFrame, readState,
+presentRecordings, presentImage). The platform view injects the thread
+without saying which one it is, so the first entry binds it and every later
+entry must come from the same thread: a debug build aborts on a violation, a
+release build logs it once per call site and carries on, so nothing changes
+for users. RNSkWindowSurface::resize is documented as any thread, which it
+always was: it notes a size under its own mutex and posts the redraw. The
+destructor detaches without the check, as it runs wherever the last owner
+lets go of the window.
 
-**File**: `packages/skia/android/cpp/jni/JniPlatformContext.cpp` (modified, +20/-36)
+The checker is the first piece of the shared rnsurface library (no Skia
+include), with a host test in cpp-tests.
+
+* refactor(🎞️): one frame scheduler in C++ for both platforms
+
+The pacing of a canvas's frames lived twice: Fra
+
+**File**: `apps/docs/docs/webgpu.md` (modified, +13/-0)
 ```diff
-@@ -1,9 +1,15 @@
- #include "JniPlatformContext.h"
+@@ -124,6 +124,19 @@ const Demo = () => {
  
-+#include <fcntl.h>
-+
-+#include <cerrno>
- #include <exception>
-+#include <system_error>
- #include <thread>
- #include <utility>
+ Code sharing the device with React Native WebGPU imports it again the same way, see [sharing the device](#sharing-the-device).
  
-+#include "RNSkMainThreadTasks.h"
++### Pipeline compilation
 +
- #include "include/core/SkData.h"
- #include "include/core/SkRefCnt.h"
- #include "include/core/SkStream.h"
-@@ -18,8 +24,10 @@ using TSelf = jni::local_ref<JniPlatformContext::jhybriddata>;
- void JniPlatformContext::registerNatives() {
-   registerHybrid({
-       makeNativeMethod("initHybrid", JniPlatformContext::initHybrid),
--      makeNativeMethod("notifyTaskReadyNative",
--                       JniPlatformContext::notifyTaskReadyNative),
-+      makeNativeMethod("duplicateMainThreadWakeup",
-+                       JniPlatformContext::duplicateMainThreadWakeup),
-+      makeNativeMethod("runMainThreadTasks",
-+                       JniPlatformContext::runMainThreadTasks),
++The GPU compiles a pipeline for each kind of drawing the first time a canvas calls for it: a solid rounded rectangle, an image, a gradient-filled path, a line of text.
++A compile takes from a few milliseconds to a few hundred on a fresh install, and the frame that needs the pipeline waits for it, so a screen that introduces several at once comes up late the first time it appears.
++React Native Skia compiles these pipelines ahead of the frames, on a thread of its own, while the frames leave the GPU alone.
++On a launch without a record, it compiles a built-in set: solid colors, images and gradients on every shape, text, and drop shadows.
++From then on, it records the pipelines the app actually uses in its cache directory (`rnskia/pipelines.bin`) and compiles those at the next launch, so the screens the app showed come up without a compile on the frame.
++A pipeline the record does not cover is compiled when first needed, as before, and recorded.
++A pipeline whose paint uses a runtime effect, one of Skia's own (a blur, a morphology, the luma color filter) or one of yours, is compiled when first needed too, but not recorded: Graphite can only compile it on the context that drew it.
++The compiled shaders themselves, and on Android the driver's pipeline cache, are kept in the same directory by Dawn's blob cache: the one React Native WebGPU keeps for the devices it creates (see its [pipeline cache](https://wcandillon.github.io/react-native-webgpu/docs/getting-started/native-api#pipeline-cache)), here for Skia's device, so a later launch mostly reads them back.
++Both are caches: clearing the app's cache directory costs the next launch a built-in set and the compiles, and a React Native Skia update that changes what Graphite or Dawn read starts them over.
++The log reports what each launch compiled ahead of the frames.
++
+ ## Sharing the device
+ 
+ Install React Native WebGPU next to React Native Skia, and follow its [installation instructions](https://wcandillon.github.io/react-native-webgpu/docs/getting-started/installation) for the rest of the setup:
+```
+
+**File**: `packages/skia/Package.swift` (modified, +1/-0)
+```diff
+@@ -85,6 +85,7 @@ let package = Package(
+         "cpp/api",
+         "cpp/jsi",
+         "cpp/rnskia",
++        "cpp/rnwgpu",
+         "cpp/utils",
+         // libskottie.a needs skjson and Apple builds no libskjson archive.
+         // CocoaPods compiles this via its cpp/**/*.cpp glob.
+```
+
+**File**: `packages/skia/android/CMakeLists.txt` (modified, +2/-0)
+```diff
+@@ -75,6 +75,8 @@ add_library(
+         "${PROJECT_SOURCE_DIR}/../cpp/rnskia/RNSkWindowSurface.cpp"
+         "${PROJECT_SOURCE_DIR}/../cpp/rnskia/RNDawnInterop.cpp"
+ 
++        "${PROJECT_SOURCE_DIR}/../cpp/rnwgpu/DawnBlobCache.cpp"
++
+         "${PROJECT_SOURCE_DIR}/../cpp/api/third_party/CSSColorParser.cpp"
+         "${PROJECT_SOURCE_DIR}/../cpp/api/third_party/base64.cpp"
+         "${PROJECT_SOURCE_DIR}/../cpp/api/third_party/SkottieUtils.cpp"
+```
+
+**File**: `packages/skia/android/cpp/jni/JniPlatformContext.cpp` (modified, +9/-0)
+```diff
+@@ -32,6 +32,8 @@ void JniPlatformContext::registerNatives() {
+                        JniPlatformContext::runMainThreadTasks),
+       makeNativeMethod("setForegroundNative",
+                        JniPlatformContext::setForegroundNative),
++      makeNativeMethod("setCacheDirectoryNative",
++                       JniPlatformContext::setCacheDirectoryNative),
    });
  }
  
-@@ -85,44 +93,20 @@ void JniPlatformContext::performStreamOperation(
+@@ -40,6 +42,13 @@ void JniPlatformContext::setForegroundNative(jni::alias_ref<jclass>,
+   DawnContext::setForeground(foreground == JNI_TRUE);
  }
  
- void JniPlatformContext::runTaskOnMainThread(std::function<void()> task) {
--  bool shouldSchedule = false;
--  {
--    std::lock_guard<std::mutex> lock(_mainThreadTasksMutex);
--    _mainThreadTasks.push(std::move(task));
--    if (!_mainThreadDispatchScheduled) {
--      _mainThreadDispatchScheduled = true;
--      shouldSchedule = true;
--    }
--  }
--
--  if (shouldSchedule) {
--    notifyTaskReadyExternal();
--  }
--}
--
--void JniPlatformContext::notifyTaskReadyExternal() {
--  jni::ThreadScope ts;
--
--  static auto method =
--      javaPart_->getClass()->getMethod<void()>("notifyTaskReady");
--  method(javaPart_.get());
-+  MainThreadTasks::getInstance().post(std::move(task));
- }
- 
--void JniPlatformContext::notifyTaskReadyNative() {
--  std::queue<std::function<void()>> tasks;
--  {
--    std::lock_guard<std::mutex> lock(_mainThreadTasksMutex);
--    std::swap(tasks, _mainThreadTasks);
--    _mainThreadDispatchScheduled = false;
-+int JniPlatformContext::duplicateMainThreadWakeup(jni::alias_ref<jclass>) {
-+  int duplicate =
-+      fcntl(MainThreadTasks::getInstance().wakeup(), F_DUPFD_CLOEXEC, 0);
-+  if (duplicate == -1) {
-+    throw std::system_error(errno, std::generic_category(), "dup");
-   }
-+  return duplicate;
++void JniPlatformContext::setCacheDirectoryNative(
++    jni::alias_ref<jclass>, jni::alias_ref<jni::JString> directory) {
++  if (directory) {
++    DawnContext::setCacheDirectory(directory->toStdString());
++  }
 +}
- 
--  while (!tasks.empty()) {
--    auto handler = std::move(tasks.front());
--    tasks.pop();
--    if (handler) {
--      handler();
--    }
--  }
-+void JniPlatformContext::runMainThreadTasks(jni::alias_ref<jclass>) {
-+  MainThreadTasks::getInstance().run();
- }
- 
- void JniPlatformContext::raiseError(const std::exception &err) {
++
+ TSelf JniPlatformContext::initHybrid(jni::alias_ref<jhybridobject> jThis,
+                                      float pixelDensity) {
+   return makeCxxInstance(jThis, pixelDensity);
 ```
 
-**File**: `packages/skia/android/cpp/jni/include/JniPlatformContext.h` (modified, +3/-8)
+**File**: `packages/skia/android/cpp/jni/include/JniPlatformContext.h` (modified, +3/-0)
 ```diff
-@@ -6,8 +6,6 @@
- #include <exception>
- #include <functional>
- #include <memory>
--#include <mutex>
--#include <queue>
- #include <string>
+@@ -31,6 +31,9 @@ class JniPlatformContext : public jni::HybridClass<JniPlatformContext> {
+   // and outlives it.
+   static void setForegroundNative(jni::alias_ref<jclass>, jboolean foreground);
  
- #include "RNSkPlatformContext.h"
-@@ -34,11 +32,11 @@ class JniPlatformContext : public jni::HybridClass<JniPlatformContext> {
++  static void setCacheDirectoryNative(jni::alias_ref<jclass>,
++                                      jni::alias_ref<jni::JString> directory);
++
+   void performStreamOperation(
+       const std::string &sourceUri,
+       const std::function<void(std::unique_ptr<SkStreamAsset>)> &op);
+```
+
+**File**: `packages/skia/android/cpp/jni/include/JniSkiaView.h` (modified, +96/-20)
+```diff
+@@ -14,6 +14,7 @@
+ #include "RNSkLog.h"
+ #include "RNSkView.h"
+ #include "RNSkWindowSurface.h"
++#include "rnsurface/FrameScheduler.h"
  
-   void raiseError(const std::exception &err);
+ namespace RNSkia {
+ namespace jni = facebook::jni;
+@@ -26,7 +27,10 @@ namespace jni = facebook::jni;
+  * SkiaView.runOnPresentThread), and the Java view posts the surface
+  * callbacks there too, as the window belongs to that thread (see
+  * RNSkWindowSurface); this object is destroyed there as well (see
+- * SkiaView.dropInstance), so no call below runs under a present.
++ * SkiaView.dropInstance), so no call below runs under a present. The frame
++ * scheduler lives here too (see rnsurface::FrameScheduler): the Java view
++ * hands it the vsync of its Choreographer and the TextureView's draws, and
++ * arms the Choreographer when the scheduler asks (see PresentHost).
+  */
+ class JniSkiaView : public jni::HybridClass<JniSkiaView> {
+ public:
+@@ -51,7 +55,10 @@ class JniSkiaView : public jni::HybridClass<JniSkiaView> {
+                           JniSkiaView::setSurfaceHighBitDepth),
+          makeNativeMethod("registerView", JniSkiaView::registerView),
+          makeNativeMethod("unregisterView", JniSkiaView::unregisterView),
+-         makeNativeMethod("presentFrame", JniSkiaView::presentFrame)});
++         makeNativeMethod("frameCallback", JniSkiaView::frameCallback),
++         makeNativeMethod("frameConsumed", JniSkiaView::frameConsumed),
++         makeNativeMethod("cancelScheduledFrames",
++                          JniSkiaView::cancelScheduledFrames)});
+   }
  
--  void notifyTaskReadyExternal();
+   // The manager is owned by the RNSkiaModule and is destroyed when the module
+@@ -136,12 +143,19 @@ class JniSkiaView : public jni::HybridClass<JniSkiaView> {
+     manager->unregisterSkiaView(_view->getNativeId());
+   }
+ 
+-  // The Java view's frame scheduler, on the thread the view presents on:
+-  // presents the queued recordings, says whether a frame went to the window
+-  // and whether more are waiting (see RNSkView::presentFrame). This object is
+-  // destroyed on that thread too (see SkiaView.dropInstance), never under
+-  // the call.
+-  int presentFrame() { return _view->presentFrame(); }
++  // Present thread: the vsync the scheduler asked the Java view for (see
++  // SkiaView.postFrameCallback, doFrame). This object is destroyed on that
++  // thread too (see SkiaView.dropInstance), never under the call.
++  void frameCallback() { _scheduler->onFrame(); }
++
++  // Present thread: the TextureView drew the frame it was given (see
++  // SkiaView.onSurfaceTextureUpdated).
++  void frameConsumed() { _scheduler->onFrameConsumed(); }
++
++  // Present thread: the view left its window, or the window lost its
++  // surface, and the Java view removed its callbacks (see
++  // SkiaView.cancelFrames).
++  void cancelScheduledFrames() { _scheduler->cancel(); }
+ 
+ private:
+   friend HybridBase;
+@@ -157,7 +171,7 @@ class JniSkiaView : public jni::HybridClass<JniSkiaView> {
+     // a task for a view that is gone is dropped. Called from any thread, the
+     // render thread pool's included, hence the thread scope.
+     auto javaView = std::make_shared<JavaView>(jThis);
+-    _view->setPresentThread([javaView](std::function<void()> task) {
++    auto runOnPresentThread = [javaView](std::function<void()> task) {
+       jni::ThreadScope threadScope;
+       auto javaPart = javaView->weak->lockLocal();
+       if (!javaPart) {
+@@ -168,18 +182,28 @@ class JniSkiaView : public jni::HybridClass<JniSkiaView> {
+               ->getMethod<void(jni::alias_ref<jni::JRunnable::javaobject>)>(
+                   "runOnPresentThread");
+       method(javaPart, jni::JNativeRunnable::newObjectCxxArgs(std::move(task)));
++    };
++    _view->setPresentThread(runOnPresentThread);
++    // The entries of the view and its window that belong to the present
++    // thread are bound to it there (see RNSkView::bindPresentThread), ahead
++    // of the surface callbacks the Java view posts behind this: the thread
++    // runs its tasks in order.
++    runOnPresentThread([surface = _surface, view = _view]() {
++      surface->bindPresentingThread();
++      view->bindPresentThread();
+     });
+-    // A submitted recording arms the Java view's frame callback, on the
+-    // present thread (or presents on the spot, for a window resized since
+-    // the frame it shows: see FrameScheduler.requestFrame).
+-    _view->setFrameScheduler([javaView](bool forResizedWindow) {
+-      auto javaPart = javaView->weak->lockLocal();
+-      if (!javaPart) {
+-        return;
++    // A submitted recording goes to the scheduler, on the present thread,
++    // which arms the Java view's frame callback (or presents on the spot,
++    // for a window resized since the frame it shows: see
++    // rnsurface::FrameScheduler::requestFrame). Weak: the view may outlive
++    // this object in the registry for a moment, with the scheduler gone.
++    _presentHost = std::make_shared<PresentHost>(javaView, _view);
++    _scheduler = std::make_shared<rnsurface::FrameScheduler>(*_presentHost);
++    std::weak_ptr
+```
+
+**File**: `packages/skia/android/src/main/java/com/reactnative/skia/FrameScheduler.java` (removed, +0/-136)
+```diff
+@@ -1,136 +0,0 @@
+-package com.reactnative.skia;
 -
-   void runTaskOnMainThread(std::function<void()> task);
- 
--  void notifyTaskReadyNative();
-+  static int duplicateMainThreadWakeup(jni::alias_ref<jclass>);
-+
-+  static void runMainThreadTasks(jni::alias_ref<jclass>);
- 
-   float getPixelDensity() { return _pixelDensity; }
- 
-@@ -47,9 +45,6 @@ class JniPlatformContext : public jni::HybridClass<JniPlatformContext> {
-   jni::global_ref<JniPlatformContext::javaobject> javaPart_;
- 
-   float _pixelDensity;
--  std::mutex _mainThreadTasksMutex;
--  std::queue<std::function<void()>> _mainThreadTasks;
--  bool _mainThreadDispatchScheduled = false;
- 
-   explicit JniPlatformContext(
-       jni::alias_ref<JniPlatformContext::jhybridobject> jThis,
-```
-
-**File**: `packages/skia/android/cpp/rnskia-android/RNSkMainThreadTasks.h` (added, +79/-0)
-```diff
-@@ -0,0 +1,79 @@
-+#pragma once
-+
-+#include <sys/eventfd.h>
-+#include <unistd.h>
-+
-+#include <cerrno>
-+#include <functional>
-+#include <mutex>
-+#include <queue>
-+#include <system_error>
-+#include <utility>
-+
-+namespace RNSkia {
-+
-+// The main thread's tasks, one queue for the process as the main looper is
-+// one. A task queued off the main thread wakes the looper with a write to an
-+// eventfd it watches (PlatformContext registers it once), which calls no Java:
-+// posting can fail only in the queue's own allocation.
-+class MainThreadTasks {
-+public:
-+  static MainThreadTasks &getInstance() {
-+    // Never destroyed: other threads may still post while the process exits.
-+    static auto *instance = new MainThreadTasks();
-+    return *instance;
-+  }
-+
-+  int wakeup() const { return _wakeup; }
-+
-+  void post(std::function<void()> task) {
-+    bool wasEmpty = false;
-+    {
-+      std::lock_guard<std::mutex> lock(_mutex);
-+      wasEmpty = _tasks.empty();
-+      _tasks.push(std::move(task));
-+    }
-+    // An app's main thread is its process's first thread, and a task handed
-+    // over there runs on the spot with what is queued (see
-+    // RNSkView::setPresentThread).
-+    if (gettid() == getpid()) {
-+      run();
-+    } else if (wasEmpty) {
-+      // A queue that held tasks already has a write made or coming for them.
-+      eventfd_write(_wakeup, 1);
-+    }
-+  }
-+
-+  void run() {
-+    // Read before the queue is taken: a task queued after the read is taken
-+    // with it, or finds the queue empty and writes again.
-+    eventfd_t wakeups;
-+    eventfd_read(_wakeup, &wakeups);
-+    std::queue<std::function<void()>> tasks;
-+    {
-+      std::lock_guard<std::mutex> lock(_mutex);
-+      std::swap(tasks, _tasks);
-+    }
-+
-+    while (!tasks.empty()) {
-+      auto handler = std::move(tasks.front());
-+      tasks.pop();
-+      if (handler) {
-+        handler();
-+      }
-+    }
-+  }
-+
-+private:
-+  MainThreadTasks() : _wakeup(eventfd(0, EFD_CLOEXEC | EFD_NONBLOCK)) {
-+    if (_wakeup == -1) {
-+      throw std::system_error(errno, std::generic_category(), "eventfd");
-+    }
-+  }
-+
-+  std::mutex _mutex;
-+  std::queue<std::function<void()>> _tasks;
-+  int _wakeup;
-+};
-+
-+} // namespace RNSkia
-```
-
-**File**: `packages/skia/android/src/main/java/com/reactnative/skia/PlatformContext.java` (modified, +26/-10)
-```diff
-@@ -2,6 +2,8 @@
- 
- import android.os.Handler;
- import android.os.Looper;
-+import android.os.MessageQueue;
-+import android.os.ParcelFileDescriptor;
- 
- import com.facebook.jni.HybridData;
- import com.facebook.proguard.annotations.DoNotStrip;
-@@ -27,11 +29,32 @@ public class PlatformContext {
- 
-     private final Handler mainHandler = new Handler(Looper.getMainLooper());
- 
-+    // The native side's main-thread queue signals its tasks on this
-+    // descriptor, one for the process, so queuing one from another thread
-+    // calls no Java there.
-+    private static ParcelFileDescriptor sMainThreadWakeup;
-+
-     public PlatformContext(ReactContext reactContext) {
-+        listenForMainThreadTasks();
-         mContext = reactContext;
-         mHybridData = initHybrid(reactContext.getResources().getDisplayMetrics().density);
-     }
- 
-+    private static synchronized void listenForMainThreadTasks() {
-+        if (sMainThreadWakeup != null) {
-+            return;
-+        }
-+        ParcelFileDescriptor wakeup = ParcelFileDescriptor.adoptFd(duplicateMainThreadWakeup());
-+        Looper.getMainLooper().getQueue().addOnFileDescriptorEventListener(
-+                wakeup.getFileDescriptor(),
-+                MessageQueue.OnFileDescriptorEventListener.EVENT_INPUT,
-+                (descriptor, events) -> {
-+                    runMainThreadTasks();
-+                    return MessageQueue.OnFileDescriptorEventListener.EVENT_INPUT;
-+                });
-+        sMainThreadWakeup = wakeup;
-+    }
-+
-     private byte[] getStreamAsBytes(InputStream is) throws IOException {
-         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-         int nRead;
-@@ -105,17 +128,10 @@ public void run() {
-         });
-     }
- 
--    @DoNotStrip
--    public void notifyTaskReady() {
--        if (Looper.myLooper() == Looper.getMainLooper()) {
--            notifyTaskReadyNative();
--        } else {
--            mainHandler.post(this::notifyTaskReadyNative);
+-import androidx.annotation.Nullable;
+-
+-/**
+- * Decides when a SkiaView presents the recordings queued for it. A SurfaceView
+- * presents on the next vsync, when the compositor takes its buffer. A
+- * TextureView shows a frame when its window draws, which takes the latest
+- * frame presented and lets the others go: it presents one frame at a time,
+- * the next once the window drew the previous one (see onFrameConsumed), so
+- * that every draw gets a new frame and no frame is made for nothing; a frame
+- * for a window resized since the one it shows goes on the spot in either case
+- * (see requestFrame). Keeps at most one frame callback outstanding. Lives on
+- * the present thread, whose Choreographer gives the vsync.
+- */
+-final class FrameScheduler {
+-    /** Host.presentFrame: a frame went to the window. */
+-    static final int PRESENTED = 1;
+-    /** Host.presentFrame: recordings are left, more queued or declined (no drawable). */
+-    static final int MORE_QUEUED = 2;
+-
+-    /** What the scheduler asks of the view. */
+-    interface Host {
+-        /** Calls onFrame() on the next Choreographer frame. */
+-        void postFrameCallback();
+-
+-        /** Presents the queued recordings: PRESENTED and MORE_QUEUED, as they apply. */
+-        int presentFrame();
+-    }
+-
+-    private final Host mHost;
+-    private boolean mFrameCallbackPosted = false;
+-    // TextureView: the window has a frame it has not drawn yet, and a request
+-    // arrived while it had.
+-    private boolean mFrameInWindow = false;
+-    private boolean mRequested = false;
+-
+-    FrameScheduler(Host host) {
+-        mHost = host;
+-    }
+-
+-    /** A recording was submitted. Without a backing view there is no surface to present on yet. */
+-    void requestFrame(@Nullable BackingViewKind kind) {
+-        requestFrame(kind, false);
+-    }
+-
+-    /**
+-     * A recording was submitted. With forResizedWindow, the window was resized since
+-     * the frame it shows was made, so it shows that frame stretched to its size, and
+-     * the recording is for its size: it is presented on the spot, ahead of the vsync
+-     * or the draw it would otherwise wait for (a TextureView's window takes it in
+-     * place of the frame it has not drawn yet), so that a window resized on every
+-     * frame is drawn at the right size on every frame.
+-     */
+-    void requestFrame(@Nullable BackingViewKind kind, boolean forResizedWindow) {
+-        if (kind == null) {
+-            return;
+-        }
+-        if (forResizedWindow) {
+-            present(kind);
+-            return;
+-        }
+-        // A frame callback still outstanding (a retry, see present) presents
+-        // the new recording along with the leftovers on that vsync.
+-        if (mFrameCallbackPosted) {
+-            return;
+-        }
+-        switch (kind) {
+-            case SURFACE_VIEW -> postFrameCallback();
+-            case TEXTURE_VIEW -> {
+-                if (mFrameInWindow) {
+-                    mRequested = true;
+-                } else {
+-                    present(kind);
+-                }
+-            }
 -        }
 -    }
 -
-     // Private c++ native methods
-     private native HybridData initHybrid(float pixelDensity);
+-    /** The Choreographer frame asked for with Host.postFrameCallback(). */
+-    void onFrame(@Nullable BackingViewKind kind) {
+-        mFrameCallbackPosted = false;
+-        if (kind == null) {
+-            return;
+-        }
+-        present(kind);
+-    }
+-
+-    /**
+-     * The TextureView drew the frame it was given (or a later one, presented for a
+-     * resized window): the recording waiting for that, if any, goes to it now.
+-     */
+-    void onFrameConsumed(@Nullable BackingViewKind kind) {
+-        mFrameInWindow = false;
+-        if (kind == null || !mRequested) {
+-            return;
+-        }
+-        present(kind);
+-    }
+-
+-    /** The view left its window, or the window lost its surface: the host removed the callbacks. */
+-    void cancel() {
+-        mFrameCallbackPosted = false;
+-        mFrameInWindow = false;
+-        mRequested = false;
+-    }
+-
+-    // Recordings left over are never presented straight away: a TextureView's
+-    // wait for the window to draw the frame just presented; the others (a
+-    // SurfaceView's, or any the window could not take, no drawable) are tried
+-    // again on the next vsync.
+-    private void present(BackingViewKind kind) {
+-        mRequested = false;
+-        final int result = mHost.presentFrame();
+-        final boolean inWindow =
+-                (result & PRESENTED) != 0 && kind == BackingViewKind.TEXTURE_VIEW;
+-        if (inWindow) {
+-            mFrameInWindow = true;
+-        }
+-        if ((result & MORE_QUEUED) == 0) {
+-            return;
+-        }
+-        if (inWindow) {
+-            mRequested = true;
+-        } else {
+-            postFrameCallback();
+-        }
+-    }
+-
+-    private void postFrameCallback() {
+-        if (!mFrameCallbackPosted) {
+-            mFrameCallbackPosted = true;
+-            mHost.postFrameCallback();
+-     
+```
+
+**File**: `packages/skia/android/src/main/java/com/reactnative/skia/PlatformContext.java` (modified, +7/-0)
+```diff
+@@ -13,6 +13,7 @@
  
--    private native void notifyTaskReadyNative();
-+    private static native int duplicateMainThreadWakeup();
+ import java.io.BufferedInputStream;
+ import java.io.ByteArrayOutputStream;
++import java.io.File;
+ import java.io.IOException;
+ import java.io.InputStream;
+ import java.net.MalformedURLException;
+@@ -39,6 +40,9 @@ public class PlatformContext implements LifecycleEventListener {
+     public PlatformContext(ReactContext reactContext) {
+         listenForMainThreadTasks();
+         mContext = reactContext;
++        // Before the GPU is first asked for: where Dawn keeps what it
++        // compiled, for the next launch to find (see DawnContext).
++        setCacheDirectoryNative(new File(reactContext.getCacheDir(), "rnskia").getAbsolutePath());
+         mHybridData = initHybrid(reactContext.getResources().getDisplayMetrics().density);
+         // Skia.gpu.foreground follows the host activity: resumed, or not.
+         setForegroundNative(reactContext.getLifecycleState() == LifecycleState.RESUMED);
+@@ -161,4 +165,7 @@ public void run() {
+ 
+     // Whether the app is in the foreground (DawnContext::setForeground).
+     private static native void setForegroundNative(boolean foreground);
 +
-+    private static native void runMainThreadTasks();
++    // Where Dawn's blob cache keeps its entries (DawnContext::setCacheDirectory).
++    private static native void setCacheDirectoryNative(String directory);
  }
-```
-
-**File**: `packages/skia/cpp-tests/MainThreadTasksTest.cpp` (added, +153/-0)
-```diff
-@@ -0,0 +1,153 @@
-+// Host-side check of RNSkia::MainThreadTasks (see run.sh). This process's
-+// first thread stands in for the main thread, and a poll of the eventfd for
-+// the looper that watches it. The eventfd is Linux's, as on Android and on
-+// CI's runner; elsewhere the check says it is skipped.
-+
-+#if defined(__linux__)
-+
-+#include <poll.h>
-+#include <sched.h>
-+#include <unistd.h>
-+
-+#include <atomic>
-+#include <cstdio>
-+#include <thread>
-+#include <vector>
-+
-+#include "rnskia-android/RNSkMainThreadTasks.h"
-+
-+static int fail(const char *message) {
-+  std::fprintf(stderr, "FAIL: %s\n", message);
-+  return 1;
-+}
-+
-+static bool readable(int descriptor, int timeoutMilliseconds) {
-+  pollfd watched{descriptor, POLLIN, 0};
-+  return poll(&watched, 1, timeoutMilliseconds) == 1;
-+}
-+
-+static int usableCpus() {
-+  cpu_set_t cpus;
-+  return sched_getaffinity(0, sizeof(cpus), &cpus) == 0 ? CPU_COUNT(&cpus) : 1;
-+}
-+
-+int main() {
-+  // A deadlock fails the run rather than hanging it.
-+  alarm(30);
-+  auto &tasks = RNSkia::MainThreadTasks::getInstance();
-+  const auto mainThread = std::this_thread::get_id();
-+  {
-+    // A task queued off the main thread onto an empty queue wakes it, and
-+    // runs there.
-+    std::thread::id ranOn;
-+    std::thread([&] {
-+      tasks.post([&] { ranOn = std::this_thread::get_id(); });
-+    }).join();
-+    if (!readable(tasks.wakeup(), 0)) {
-+      return fail("a task queued off the main thread does not wake it");
-+    }
-+    tasks.run();
-+    if (ranOn != mainThread) {
-+      return fail("a task queued off the main thread does not run on it");
-+    }
-+    if (readable(tasks.wakeup(), 0)) {
-+      return fail("the wakeup stays readable once the queue has run");
-+    }
-+  }
-+  {
-+    // A queue that already holds a task is not written again.
-+    int ran = 0;
-+    std::thread([&] {
-+      tasks.post([&] { ran++; });
-+      tasks.post([&] { ran++; });
-+    }).join();
-+    eventfd_t writes = 0;
-+    eventfd_read(tasks.wakeup(), &writes);
-+    if (writes != 1) {
-+      return fail("two tasks queued together write the wakeup twice");
-+    }
-+    tasks.run();
-+    if (ran != 2) {
-+      return fail("a run does not take every queued task");
-+    }
-+  }
-+  {
-+    // A task handed over on the main thread runs the queue on the spot,
-+    // with what other threads queued, and leaves no wakeup behind.
-+    int ran = 0;
-+    std::thread([&] { tasks.post([&] { ran++; }); }).join();
-+    tasks.post([&] { ran++; });
-+    if (ran != 2) {
-+      return fail("a task handed over on the main thread does not run the "
-+                  "queue on the spot");
-+    }
-+    if (readable(tasks.wakeup(), 0)) {
-+      return fail("a wakeup stays readable after the main thread ran the "
-+                  "queue on the spot");
-+    }
-+  }
-+  {
-+    // A task queued off the main thread while it runs a batch wakes it
-+    // again.
-+    bool queuedDuringBatchRan = false;
-+    std::thread([&] {
-+      tasks.post([&] {
-+        std::thread([&] {
-+          tasks.post([&] { queuedDuringBatchRan = true; });
-+        }).join();
-+      });
-+    }).join();
-+    tasks.run();
-+    if (queuedDuringBatchRan || !readable(tasks.wakeup(), 0)) {
-+      return fail("a task queued during a batch does not wake the main "
-+                  "thread again");
-+    }
-+    tasks.run();
-+    if (!queuedDuringBatchRan) {
-+      return fail("a task queued during a batch does not run");
-+    }
-+  }
-+  if (usableCpus() < 2) {
-+    std::printf("MainThreadTasksTest: one CPU, so threads queuing while the "
-+                "main thread runs the queue go unchecked\n");
-+  } else {
-+    // Many threads queuing while the main thread runs the queue at each
-+    // wakeup: no task is left without one.
-+    constexpr int posters = 8;
-+    constexpr int tasksPerPoster = 20000;
-+    std::atomic<int> ran{0};
-+    std::vector<std::thread> threads;
-+    for (int poster = 0; poster < posters; poster++) {
-+      threads.emplace_back([&] {
-+        for (int task = 0; task < tasksPerPoster; task++) {
-+          tasks.post([&] { ran++; });
-+        }
-+      });
-+    }
-+    while (ran < posters * tasksPerPoster) {
-+      if (!readable(tasks.wakeup(), 1000)) {
-+        for (auto &thread : threads) {
-+          thread.join();
-+        }
-+        return fail("a queued task is left without a wakeup");
-+      }
-+      tasks.run();
-+    }
-+    for (auto &thread : threads) {
-+      thread.join();
-+    }
-+  }
-+  std::printf("MainThreadTasksTest: passed\n");
-+  return 0;
-+}
-+
-+#else
-+
-+#include <cstdio>
-+
-+int main() {
-+  std::printf("MainThreadTasksTest: skipped, it needs Linux's eventfd\n");
-+  return 0;
-+}
-+
-+#endif
-```
-
-**File**: `packages/skia/cpp-tests/run.sh` (modified, +1/-1)
-```diff
-@@ -9,6 +9,6 @@ OUT="$(mktemp -d)"
- trap 'rm -rf "$OUT"' EXIT
- for test in cpp-tests/*.cpp; do
-   name="$(basename "$test" .cpp)"
--  "$CXX" -std=c++20 -I "$SKIA_INCLUDE" -I cpp "$test" -o "$OUT/$name"
-+  "$CXX" -std=c++20 -I "$SKIA_INCLUDE" -I cpp -I android/cpp "$test" -o "$OUT/$name"
-   "$OUT/$name"
- done
 ```
 
 ---
 
-### Incident Patch 2: `d5e32110` (2026-11-02)
-**Commit Message**: fix(🍏): hold GPU work while the app is in the background (#4373)
+### Incident Patch 2: `08c71226` (2026-11-07)
+**Commit Message**: fix(🏞️): don't wait on the CPU in MakeGPUTextureFromImage (#4401)
 
-* fix(🍏): hold GPU work while the app is in the background, and tell JS when it is
+The texture lives on Skia's device, so its reader submits to the same queue
+and the draw is ordered before any read. The CPU sync only blocked the JS
+thread until the GPU drained every queued frame.
 
-iOS refuses GPU work from an app in the background, and Dawn 157 turns the
-refused Metal command buffer into a device loss (#4290): every canvas
-froze until the device was replaced, and everything made on it had to be
-made again.
+Co-authored-by: Maksim Muravev <[REDACTED_EMAIL]>
 
-A Dawn patch (scripts/dawn-patches/metal-suspend-submissions-in-background,
-to ship with the next react-native-webgpu-dawn) adds a device toggle under
-which Dawn holds the commit of command buffers while the app is in the
-background, from UIApplication's own notifications: the work is encoded,
-committed when the app comes back, and presents meanwhile are dropped. On
-entering the background the pending work is committed and waited on to be
-scheduled, as Apple asks. Nothing is lost, reordered or refused, so Dawn's
-bookkeeping, Graphite's completion tracking and JS promises stay right,
-which neither ignoring the refusal (Dawn PR 91, a glyph atlas page refused
-would stay garbage) nor rejecting the submit (Graphite ignores the result)
-could offer. Dawn commits from inside WaitAny too, so only a gate inside
-Dawn
-
-**File**: `apps/docs/docs/webgpu.md` (modified, +33/-1)
+**File**: `packages/skia/cpp/rnskia/RNDawnContext.h` (modified, +5/-2)
 ```diff
-@@ -39,15 +39,47 @@ const { isAvailable, backend, device, description, error } = Skia.gpu;
- | `vendor`, `architecture`, `device`, `description` | The adapter, in the terms of WebGPU's `GPUAdapterInfo` (native only) |
- | `error` | Why the GPU is unavailable; `null` when it is |
- | `lost` | The promise of the loss of the device, see [device loss](#device-loss) |
-+| `foreground` | Whether the app is in the foreground and active, where GPU work runs, see [background and foreground](#background-and-foreground) |
+@@ -675,8 +675,11 @@ class DawnContext {
+     SkCanvas *canvas = surface->getCanvas();
+     canvas->drawImage(image, 0, 0);
  
- ### Availability
+-    // Flush the surface to ensure the image is rendered
+-    submitRecording(recorder, skgpu::graphite::SyncToCpu::kYes);
++    // Submit without waiting on the CPU. A Dawn texture belongs to the device
++    // that made it, so whoever reads this one (adoptTexture() on the imported
++    // device) submits to the same queue, which runs this draw first. Waiting
++    // here blocked the JS thread until the GPU had drained every queued frame.
++    submitRecording(recorder);
  
- On a device without a GPU Skia can render with (on Android, one without Vulkan 1.1, see [the Vulkan section of the installation guide](/docs/getting-started/installation#vulkan)), the app still runs.
- `Skia.gpu.isAvailable` is false and `Skia.gpu.error` says why: every canvas stays blank, CPU work (paths, decoding, raster images) still runs, and the APIs that need the GPU (offscreen surfaces, snapshots, texture images) throw an error with the same message.
+     return texture;
+   }
+```
+
+---
+
+### Incident Patch 3: `0a52a41c` (2026-11-09)
+**Commit Message**: fix(⬆️): Update to Skia m158 (#4419)
+
+* fix(🔨): build an xcframework from the Apple targets that were built
+
+`yarn build-skia apple-ios-arm64-iphoneos` (to test a patch on a device)
+compiled, then failed at the xcframework step: it lipos the simulator and
+Mac Catalyst slices from targets that were not built. Each slice now takes
+the targets of the run, a lipo'd slice keeps the architectures that were
+built, and a slice with none is left out.
+
+* fix(🔨): build the Dawn xcframework from the Apple slices that were built
+
+`yarn build-dawn ios-simulator-arm64 xcframework` (to test on a
+simulator) built the slice, then failed assembling the xcframework: it
+lipos and includes every Apple slice. It now takes the slices present,
+a lipo'd simulator slice keeps the architectures that were built, and
+the slices left out are named in a warning, so an incomplete full build
+still shows in the log.
+
+* fix(⬆️): Update to Skia m158
+
+Moves externals/skia from chrome/m157 to chrome/m158 (tip 75584a9610,
+cut 2026-10-26), whose DEPS pins Dawn 1716e88cc9, so that the next
+binaries carry two Skia changes now under review upstream:
+
+- skia-graphite-deferred-canvas-props.patch: Recorder::makeDeferredCanvas
+
+**File**: `.gitmodules` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ [submodule "externals/skia"]
+ 	path = externals/skia
+ 	url = https://chromium.googlesource.com/skia/
+-	branch = chrome/m157
++	branch = chrome/m158
+ [submodule "externals/depot_tools"]
+ 	path = externals/depot_tools
+ 	url = https://chromium.googlesource.com/chromium/tools/depot_tools.git
+```
+
+**File**: `apps/docs/docs/webgpu.md` (modified, +2/-1)
+```diff
+@@ -149,7 +149,8 @@ Pick the versions of the two packages from one row of this table; the [React Nat
  
-+### Background and foreground
-+
-+iOS refuses GPU work from an app in the background, and refused work used to lose the device.
-+React Native Skia now holds the GPU work submitted while the app is in the background and runs it when the app comes back: nothing is lost and nothing is refused.
-+The same applies to the device `Skia.getNativeDevice()` shares with React Native WebGPU.
-+Canvases present nothing meanwhile and catch up on return.
-+
-+Holding is not free: every frame drawn in the background keeps what it uses in memory until the return.
-+A frame callback or a video player that keeps drawing while the app is in the background should stop instead.
-+`Skia.gpu.foreground` is false from the moment the app starts to resign active (a lock, a swipe home, an incoming call) until it is active again.
-+It can be read synchronously on every runtime, a worklet included, and it flips before any `AppState` event reaches JS.
-+
-+```tsx twoslash
-+import { Skia } from "react-native-skia";
-+import { useFrameCallback } from "react-native-reanimated";
-+
-+const surface = Skia.Surface.MakeOffscreen(256, 256)!;
-+
-+useFrameCallback(() => {
-+  "worklet";
-+  if (!Skia.gpu.foreground) {
-+    // Nothing to show: skip the frame rather than queue it.
-+    return;
-+  }
-+  surface.getCanvas().drawColor(Skia.Color("cyan"));
-+  surface.flush();
-+});
-+```
-+
-+On Android, `Skia.gpu.foreground` is whether the host activity is resumed; on the web, whether the document is visible.
-+
- ### Device loss
- 
--The device can be lost while the app runs: a driver reset, the GPU out of memory, or GPU work refused while the app was in the background on iOS.
-+The device can be lost while the app runs: a driver reset, or the GPU out of memory.
- React Native Skia then replaces it with a new device, and canvases render again on their own.
- Everything made on the lost device is gone for good, though safe to use (it draws nothing): offscreen surfaces and the images taken from them, texture images, snapshots of views, and the device `Skia.getNativeDevice()` returned.
- 
+ | react-native-skia | react-native-webgpu |
+ | --- | --- |
+-| 3.9.0 and later | 0.20.0 and later |
++| 3.10.0 and later | 0.21.3 and later |
++| 3.9.0 to 3.9.2 | 0.20.0 to 0.21.2 |
+ | 3.7.0 to 3.8.1 | 0.17.0 to 0.19.2 |
+ | 3.4.0 to 3.6.3 | 0.13.1 to 0.16.1, or 0.12.1 |
+ | 3.1.0 to 3.3.0 | 0.13.0, or 0.12.1 |
 ```
 
-**File**: `apps/example/src/App.tsx` (modified, +10/-0)
+**File**: `externals/skia` (modified, +1/-1)
 ```diff
-@@ -36,6 +36,7 @@ import {
-   HighBitDepth,
-   Graphite,
-   GraphiteCanvasExample,
-+  BackgroundGpu,
-   AndroidViews,
- } from "./Examples";
- import { CI, Tests } from "./Tests";
-@@ -86,6 +87,7 @@ const linking: LinkingOptions<StackParamList> = {
-       Graphite: "graphite",
-       GraphiteCanvas: "graphite-canvas",
-       AndroidViews: "android-views",
-+      BackgroundGpu: "background-gpu",
-     },
-   },
-   // react-native-test-app registers its bundle id as the iOS URL scheme, and
-@@ -97,6 +99,9 @@ const linking: LinkingOptions<StackParamList> = {
-     "rnskia://",
-     "com.microsoft.ReactTestApp://",
-     "com.microsoft.reacttestapp://",
-+    // Device builds signed with another bundle id register that id instead.
-+    "com.microsoft.ReactTestAppSkia42://",
-+    "com.microsoft.reacttestappskia42://",
-   ],
- };
- 
-@@ -257,6 +262,11 @@ const App = () => {
-               component={GraphiteCanvasExample}
-             />
-             <Stack.Screen name="AndroidViews" component={AndroidViews} />
-+            <Stack.Screen
-+              name="BackgroundGpu"
-+              component={BackgroundGpu}
-+              options={{ title: "🌙 Background GPU" }}
-+            />
-           </Stack.Navigator>
-         </NavigationContainer>
-       </GestureHandlerRootView>
+@@ -1 +1 @@
+-Subproject commit b94213a11b3a2edadfae89f0c57a7f4ab72772c9
++Subproject commit 75584a96108b2bf0b1c74b0536126fa4917b64a8
 ```
 
-**File**: `apps/example/src/Examples/BackgroundGpu/BackgroundGpu.tsx` (added, +374/-0)
+**File**: `package.json` (modified, +2/-1)
 ```diff
-@@ -0,0 +1,374 @@
-+import React, { useEffect, useState } from "react";
-+import {
-+  AppState,
-+  StyleSheet,
-+  Text,
-+  View,
-+  useWindowDimensions,
-+} from "react-native";
-+import type { SkSurface } from "react-native-skia";
-+import { Canvas, Circle, Fill, Skia } from "react-native-skia";
-+import {
-+  useDerivedValue,
-+  useFrameCallback,
-+  useSharedValue,
-+} from "react-native-reanimated";
-+import { importDevice } from "react-native-webgpu";
-+
-+// Reproduces wcandillon/react-native-skia#4290: GPU work submitted while the
-+// app is in the background. Two loops keep submitting without any timer, so
-+// they go on after the app has left the foreground (React Native pauses its
-+// timers there) until iOS suspends the process:
-+//
-+// - the Skia loop draws into an offscreen surface, flushes it and reads the
-+//   snapshot back (the readback settles from Skia's readback thread);
-+// - the WebGPU loop clears a texture on the device imported from Skia and
-+//   awaits onSubmittedWorkDone (settled from React Native WebGPU's waiter).
-+//
-+// A frame callback moves the disc below so a frozen canvas is visible, and the
-+// banner reads Skia.gpu twice a second. Swipe home for a few seconds and come
-+// back: with a Dawn that turns a refused command buffer into a device loss,
-+// "lost" counts up and the loops restart on a replacement device; with the
-+// hold patch, nothing is lost and the loops simply resume.
-+//
-+// The state is also exposed as globalThis.__bgGpu for a driver on the
-+// debugger (Metro's inspector proxy) to read.
-+
-+interface LoopState {
-+  startedAt: number;
-+  skiaIterations: number;
-+  skiaErrors: number;
-+  skiaLastError: string | null;
-+  skiaPending: boolean;
-+  webgpuIterations: number;
-+  webgpuErrors: number;
-+  webgpuLastError: string | null;
-+  webgpuLost: string | null;
-+  webgpuPending: boolean;
-+  lostCount: number;
-+  lastLost: string | null;
-+  foregroundChanges: { t: number; foreground: boolean }[];
-+  appStateChanges: { t: number; state: string }[];
-+  // Iterations completed per second since start, to tell held from executed
-+  // work once the app is back: a held loop shows zeros for the background.
-+  skiaPerSecond: number[];
-+  webgpuPerSecond: number[];
-+}
-+
-+const newState = (): LoopState => ({
-+  startedAt: Date.now(),
-+  skiaIterations: 0,
-+  skiaErrors: 0,
-+  skiaLastError: null,
-+  skiaPending: false,
-+  webgpuIterations: 0,
-+  webgpuErrors: 0,
-+  webgpuLastError: null,
-+  webgpuLost: null,
-+  webgpuPending: false,
-+  lostCount: 0,
-+  lastLost: null,
-+  foregroundChanges: [],
-+  appStateChanges: [],
-+  skiaPerSecond: [],
-+  webgpuPerSecond: [],
-+});
-+
-+const sleep = (ms: number) =>
-+  new Promise<void>((resolve) => setTimeout(resolve, ms));
-+
-+const describe = (error: unknown) =>
-+  error instanceof Error ? error.message : String(error);
-+
-+const SIZE = 1024;
-+// Fragment iterations per pixel: tens of milliseconds of GPU time per command
-+// buffer, so that one is in flight whenever iOS revokes GPU access.
-+const HEAVY = 300;
-+// Command buffers queued per iteration: about half a second of GPU work is
-+// always queued, so some of it is still unscheduled when the app goes to the
-+// background, the case Apple's guidance (waitUntilScheduled) is about.
-+const SKIA_BURST = 10;
-+const WEBGPU_BURST = 20;
-+
-+const heavyEffect = Skia.RuntimeEffect.Make(`
-+uniform float t;
-+half4 main(float2 xy) {
-+  float v = xy.x * 0.001 + t;
-+  for (int i = 0; i < ${HEAVY}; i++) {
-+    v = sin(v * 1.7 + xy.y * 0.0007) + cos(v);
-+  }
-+  return half4(half(v * 0.5 + 0.5), 0.3, 0.6, 1);
-+}`)!;
-+
-+const heavyWGSL = `
-+@vertex fn vs(@builtin(vertex_index) i: u32) -> @builtin(position) vec4f {
-+  var p = array<vec2f, 3>(vec2f(-1, -1), vec2f(3, -1), vec2f(-1, 3));
-+  return vec4f(p[i], 0, 1);
-+}
-+@fragment fn fs(@builtin(position) pos: vec4f) -> @location(0) vec4f {
-+  var v = pos.x * 0.001;
-+  for (var i = 0u; i < ${HEAVY}u; i++) {
-+    v = sin(v * 1.7 + pos.y * 0.0007) + cos(v);
-+  }
-+  return vec4f(v * 0.5 + 0.5, 0.3, 0.6, 1);
-+}`;
-+
-+const tick = (state: LoopState, series: number[]) => {
-+  const second = Math.floor((Date.now() - state.startedAt) / 1000);
-+  series[second] = (series[second] ?? 0) + 1;
-+};
-+
-+const dense = (series: number[]) => Array.from(series, (v) => v ?? 0);
-+
-+const runSkiaLoop = async (state: LoopState, isActive: () => boolean) => {
-+  let surface: SkSurface | null = null;
-+  const paint = Skia.Paint();
-+  paint.setAntiAlias(true);
-+  while (isActive()) {
-+    try {
-+      if (surface === null) {
-+        surface = Skia.Surface.MakeOffscreen(SIZE, SIZE);
-+        if (surface === null) {
-+          throw new Error("MakeOffscreen returned null");
-+        }
-+      }
-+      const canvas = surface.getCanvas();
-+      const i = state.skiaIterations;
-+      for (let k = 0; k < SKIA_BURST; k++) {
-+        paint.setShader(heavyEffect.makeShader([(i * SKIA_BURST + k) / 100]));
-+        canvas.drawRect(Skia.XYWHRect(0, 0, SIZE, SIZE), paint);
-+        surface.flush();
-+      }
-+   
-```
-
-**File**: `apps/example/src/Examples/BackgroundGpu/index.ts` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+export * from "./BackgroundGpu";
-```
-
-**File**: `apps/example/src/Examples/index.ts` (modified, +1/-0)
-```diff
-@@ -31,3 +31,4 @@ export * from "./WebGPU";
- export * from "./HighBitDepth";
- export * from "./Graphite";
- export * from "./AndroidViews";
-+export * from "./BackgroundGpu";
-```
-
-**File**: `apps/example/src/Home/HomeScreen.tsx` (modified, +5/-0)
-```diff
-@@ -158,6 +158,11 @@ export const HomeScreen = () => {
-         description="SurfaceView vs TextureView"
-         route="AndroidViews"
-       />
-+      <HomeScreenButton
-+        title="🌙 Background GPU"
-+        description="GPU work while the app is in the background (#4290)"
-+        route="BackgroundGpu"
-+      />
-     </ScrollView>
-   );
- };
-```
-
-**File**: `apps/example/src/types.ts` (modified, +1/-0)
-```diff
-@@ -38,4 +38,5 @@ export type StackParamList = {
-   Graphite: undefined;
-   GraphiteCanvas: undefined;
-   AndroidViews: undefined;
-+  BackgroundGpu: undefined;
- };
-```
-
-**File**: `package.json` (modified, +1/-0)
-```diff
-@@ -34,6 +34,7 @@
+@@ -34,7 +34,8 @@
    "packageManager": "yarn@3.6.4",
    "resolutions": {
      "@webgpu/types": "^0.1.69",
-+    "react-native-webgpu-dawn": "157.1.0",
-     "react-native-reanimated@4.6.0": "patch:react-native-reanimated@npm%3A4.6.0#./.yarn/patches/react-native-reanimated-npm-4.6.0-f4226872a0.patch"
+-    "react-native-macos@^0.81.8": "patch:react-native-macos@npm%3A0.81.9#./.yarn/patches/react-native-macos-npm-0.81.9-macos-codegen.patch"
++    "react-native-macos@^0.81.8": "patch:react-native-macos@npm%3A0.81.9#./.yarn/patches/react-native-macos-npm-0.81.9-macos-codegen.patch",
++    "react-native-webgpu-dawn": "158.0.0"
    },
    "devDependencies": {
+     "eas-cli": "18.4.0",
 ```
 
----
-
-### Incident Patch 3: `811f603a` (2026-11-03)
-**Commit Message**: fix(🍏): keep a view's native view, and what it shows, out of its superview (#4324)
-
-On iOS and macOS, SkiaView destroyed its native view in removeFromSuperview
-and built a new one in willMoveToSuperview:, while the registry gives a view's
-properties to its first native view only. A canvas or a SkiaGraphiteView taken
-out of its superview while mounted, as a scroll view with removeClippedSubviews
-does to the rows it scrolls away, came back blank. On Android since #4318, a
-canvas asked for a redraw while scrolled away came back blank too: the redraw
-found the window's description, which detach() leaves in place, kept its
-request at canPresent(), and swallowed the request the next attach made.
-
-The native view now lives from the view's first superview until the view is
-recycled, as on Android, where only the window goes. Out of its superview, the
-view lets go of the window's surface and of the layer behind it; back in one,
-it makes a new layer, attaches the surface to it and presents its last frame
-as the layer is made, so the Core Animation commit that carries the layer
-carries the frame. A first mount attaches at layout, and a frame scheduled
-meanwhile waits for that attach. The att
-
-**File**: `apps/example/src/Tests/GpuDevice.ts` (added, +27/-0)
+**File**: `packages/skia/package.json` (modified, +5/-5)
 ```diff
-@@ -0,0 +1,27 @@
-+import { Skia } from "react-native-skia";
-+import { importDevice } from "react-native-webgpu";
-+
-+// The device Skia renders with, as a GPUDevice. Skia replaces a lost device
-+// with a new one: the import is let go of when that happens, so that the next
-+// use imports the new device.
-+let sharedDevice: GPUDevice | null = null;
-+export const getSharedDevice = () => {
-+  if (sharedDevice === null) {
-+    const device = importDevice(Skia.getNativeDevice());
-+    sharedDevice = device;
-+    Skia.gpu.lost.then(() => {
-+      if (sharedDevice === device) {
-+        sharedDevice = null;
-+      }
-+    });
-+  }
-+  return sharedDevice;
+@@ -143,11 +143,11 @@
+   },
+   "dependencies": {
+     "canvaskit-wasm": "0.41.1",
+-    "react-native-skia-graphite-android": "157.1.0",
+-    "react-native-skia-graphite-apple-ios": "157.1.0",
+-    "react-native-skia-graphite-apple-macos": "157.1.0",
+-    "react-native-skia-graphite-apple-tvos": "157.1.0",
+-    "react-native-webgpu-dawn": "157.1.0",
++    "react-native-skia-graphite-android": "158.0.0",
++    "react-native-skia-graphite-apple-ios": "158.0.0",
++    "react-native-skia-graphite-apple-macos": "158.0.0",
++    "react-native-skia-graphite-apple-tvos": "158.0.0",
++    "react-native-webgpu-dawn": "158.0.0",
+     "react-reconciler": "0.33.0"
+   },
+   "eslintIgnore": [
+```
+
+**File**: `packages/skia/scripts/build-skia.ts` (modified, +69/-45)
+```diff
+@@ -153,8 +153,39 @@ export const copyLib = (
+  * - apple-ios: arm64-iphoneos + lipo'd iphonesimulator (arm64 + x64) + lipo'd maccatalyst (arm64 + x64)
+  * - apple-tvos: arm64-tvos + lipo'd tvsimulator (arm64 + x64)
+  * - apple-macos: lipo'd macosx (arm64 + x64)
++ * A slice whose targets were not built (e.g. `yarn build-skia
++ * apple-ios-arm64-iphoneos` to test on a device) is left out, and a lipo'd
++ * slice keeps the architectures that were built.
+  */
+-const buildXCFramework = (platformName: ApplePlatformName) => {
++const xcframeworkSlices: Record<
++  ApplePlatformName,
++  { name: string; targets: string[] }[]
++> = {
++  "apple-ios": [
++    { name: "arm64-iphoneos", targets: ["arm64-iphoneos"] },
++    {
++      name: "iphonesimulator",
++      targets: ["x64-iphonesimulator", "arm64-iphonesimulator"],
++    },
++    {
++      name: "maccatalyst",
++      targets: ["x64-maccatalyst", "arm64-maccatalyst"],
++    },
++  ],
++  "apple-tvos": [
++    { name: "arm64-tvos", targets: ["arm64-tvos"] },
++    {
++      name: "tvsimulator",
++      targets: ["x64-tvsimulator", "arm64-tvsimulator"],
++    },
++  ],
++  "apple-macos": [{ name: "macosx", targets: ["x64-macosx", "arm64-macosx"] }],
 +};
 +
-+// Loses the GPU device on purpose: the device is shared with
-+// react-native-webgpu, whose test hook asks Dawn to lose it.
-+export const forceGpuDeviceLoss = () => {
-+  (
-+    getSharedDevice() as GPUDevice & { forceLossForTesting: () => void }
-+  ).forceLossForTesting();
-+};
-```
-
-**File**: `apps/example/src/Tests/ScreenDone.ts` (added, +8/-0)
-```diff
-@@ -0,0 +1,8 @@
-+import { createContext, useContext } from "react";
-+
-+// A screen whose content settles a chain of native events after it mounts,
-+// one the registry snapshots once done (see Screens), says when it has, and
-+// Tests takes its snapshot from then rather than from the mount.
-+export const ScreenDoneContext = createContext(() => {});
-+
-+export const useScreenDone = () => useContext(ScreenDoneContext);
-```
-
-**File**: `apps/example/src/Tests/Screens/ClippedSubviews.tsx` (added, +171/-0)
-```diff
-@@ -0,0 +1,171 @@
-+import type { RefObject } from "react";
-+import React, { memo, useEffect, useRef, useState } from "react";
-+import type { NativeScrollEvent, NativeSyntheticEvent } from "react-native";
-+import { ScrollView, View } from "react-native";
-+import type { CanvasRef } from "react-native-skia";
-+import {
-+  Canvas,
-+  createPicture,
-+  Fill,
-+  Picture,
-+  Skia,
-+  useCanvasRef,
-+} from "react-native-skia";
-+import { useAnimatedReaction, useSharedValue } from "react-native-reanimated";
-+import { scheduleOnRN } from "react-native-worklets";
-+import { exhaustiveCheck } from "react-native-skia/src/renderer/typeddash";
-+
-+import { forceGpuDeviceLoss } from "../GpuDevice";
-+import { useScreenDone } from "../ScreenDone";
-+
-+import { CyanGraphiteView } from "./GraphiteView";
-+
-+const ROW_HEIGHT = 1000;
-+const AWAY = 4 * ROW_HEIGHT;
-+
-+const cyan = createPicture((canvas) => canvas.drawColor(Skia.Color("cyan")));
-+
-+// A canvas whose content never changes: React leaves it alone when the screen
-+// renders again, so all it is asked for then is a redraw.
-+const PictureCanvasContent = ({
-+  canvasRef,
-+}: {
-+  canvasRef: RefObject<CanvasRef | null>;
-+}) => (
-+  <Canvas ref={canvasRef} style={{ flex: 1 }}>
-+    <Picture picture={cyan} />
-+  </Canvas>
-+);
-+const PictureCanvas = memo(PictureCanvasContent);
-+
-+type Change = "nothing" | "state" | "sharedValue" | "deviceLost";
-+
-+interface ClippedSubviewsProps {
-+  change: Change;
-+  roundTrips: number;
-+}
-+
-+// A canvas (red, or cyan once changed) beside a canvas drawing a picture and
-+// a graphite view (both cyan), at the top of a scroll view that clips its
-+// subviews. They mount unclipped, so that their native views are in the window
-+// first; then clipping is turned on and the scroll view goes away and back,
-+// roundTrips times, each step once the scroll view reports the offset of the
-+// one before. A change is made while away: React state, a shared value, or the
-+// GPU device lost and replaced. React Native flattens the row, so the views
-+// themselves leave their superview while away.
-+const ClippedSubviews = ({ change, roundTrips }: ClippedSubviewsProps) => {
-+  const scrollView = useRef<ScrollView>(null);
-+  const tripsLeft = useRef(roundTrips);
-+  const [clipped, setClipped] = useState(false);
-+  const [color, setColor] = useState("red");
-+  const sharedColor = useSharedValue("red");
-+  const deviceLost = useRef(false);
-+  const pictureCanvas = useCanvasRef();
-+  const done = useScreenDone();
-+  const scrollBack = () =>
-+    scrollView.current?.scrollTo({ y: 0, animated: false });
-+  // Every render asks the picture's canvas for a redraw, so a render while it
-+  // is away asks a view with no window attached for one.
-+  useEffect(() => {
-+    pictureCanvas.current?.redraw();
-+  });
-+  useEffect(() => {
-+    if (!clipped) {
-+      setClipped(true);
-+      return;
-+    }
-+    scrollView.current?.scrollTo({ y: AWAY, animated: false });
-+  }, [clipped]);
-+  // A change React commits while the canvas is away: back once it is drawn.
-+  useEffect(() => {
-+    if (color !== "red") {
-+      scrollBack();
-+    }
-+  }, [color]);
-+  // A shared value set while the canvas is away: back once the UI thread
-+  // has run the canvas's mapper on it, as the scroll back reaches that
-+  // thread after the reaction's frame. Cyan is set only while away, and a
-+  // reaction made again by a render may first see it already set.
-+  useAnimatedReaction(
-+    () => sharedColor.value,
-+    (value) => {
-+      if (value === "cyan") {
-+        scheduleOnRN(scrollBack);
++const buildXCFramework = (
++  platformName: ApplePlatformName,
++  builtTargets: string[]
++) => {
+   const config = configurations[platformName];
+   const { outputNames } = config;
+ 
+@@ -172,39 +203,23 @@ const buildXCFramework = (platformName: ApplePlatformName) => {
+     console.log(`🍏 Building XCFramework for ${name} (${platformName})`);
+ 
+     let xcframeworkCmd = "xcodebuild -create-xcframework ";
+-
+-    if (shortPlatform === "ios") {
+-      // iOS: device + lipo'd simulator (arm64 + x64) + lipo'd Mac Catalyst (arm64 + x64)
+-      $(`mkdir -p ${prefix}/iphonesimulator`);
+-      $(`rm -rf ${prefix}/iphonesimulator/${name}`);
+-      $(
+-        `lipo -create ${prefix}/x64-iphonesimulator/${name} ${prefix}/arm64-iphonesimulator/${name} -output ${prefix}/iphonesimulator/${name}`
+-      );
+-      xcframeworkCmd += `-library ${prefix}/arm64-iphoneos/${name} `;
+-      xcframeworkCmd += `-library ${prefix}/iphonesimulator/${name} `;
+-      $(`mkdir -p ${prefix}/maccatalyst`);
+-      $(`rm -rf ${prefix}/maccatalyst/${name}`);
+-      $(
+-        `lipo -create ${prefix}/x64-maccatalyst/${name} ${prefix}/arm64-maccatalyst/${name} -output ${prefix}/maccatalyst/${name}`
+-      );
+-      xcframeworkCmd += `-library ${prefix}/maccatalyst/${name} `;
+-    } else if (shortPlatform === "tvos") {
+-      // tvOS: device + lipo'd simulator (arm64 + x64)
+-      $(`mkdir -p ${prefix}/tvsimulator`);
+-      $(`rm -rf ${prefix}/tvsimulator/${name}`);
+-      $(
+-        `lipo -create ${prefix}/x64-tvsimulator/${name} ${prefix}/arm64-tvsimulator/${name} -output ${prefix}/tvsimulator/${name}`
+-      );
+-      xcframeworkCmd += `-library ${prefix}/arm64-tvos/${name} `;
+-      xcframeworkCmd += `-library ${prefix}/tvsimulator/${name} `;
+-    } else if (shortPlatform === "macos") {
+-      // macOS: lipo arm64 + x64
+-      $(`mkdir -p ${prefix}/macosx`);
+-      $(`rm -rf ${prefix}/macosx/${name}`);
+-      $(
+-        `lipo -create ${prefix}/x64-macosx/${name} ${prefix}/arm64-macosx/${name} -output ${prefix}/macosx/${name}`
+-      );
+-      xcframeworkCmd += `-library ${prefix}/macosx/${name} `;
++    for (const slice of xcframeworkSlices[platformName]) {
++      const inputs = slice.targets
++        .filter((target) => builtTargets.includes(target))
++        .map((target) => `${prefix}/${target}/${name}`);
++      if (inputs.length === 0) {
++        continue;
 +      }
-+    }
-+  );
-+  const onScroll = ({
-+    nativeEvent,
-+  }: NativeSyntheticEvent<NativeScrollEvent>) => {
-+    // Android can report the offset a fraction of a point short of AWAY.
-+    if (nativeEvent.contentOffset.y > AWAY - 1) {
-+      switch (change) {
-+        case "nothing":
-+          scrollBack();
-+          break;
-+        case "state":
-+          setColor("cyan");
-+          break;
-+        case "sharedValue":
-+          sharedColor.value = "cyan";
-+          break;
-+        case "deviceLost":
-+          // Once: the scroll view may report the offset again.
-+          if (!deviceLost.current) {
-+            deviceLost.current = true;
-+            const { lost } = Skia.gpu;
-+            forceGpuDeviceLoss();
-+            lost.then(scrollBack);
-+          }
-+          break;
-+        default:
-+          exhaustiveCheck(change);
-+      }
-+    } else if (nativeEvent.contentOffset.y === 0 && clipped) {
-+      tripsLeft.current -= 1;
-+      if (tripsLeft.current > 0) {
-+        scrollView.current?.scrollTo({ y: AWAY, animated: false });
++      if (slice.targets.length === 1) {
++        xcframeworkCmd += `-library ${inputs[0]} `;
 +      } else {
-+        done();
++        $(`mkdir -p ${prefix}/${slice.name}`);
++        $(`rm -rf ${prefix}/${slice.name}/${name}`);
++        $(
++          `lipo -create ${inputs.join(" ")} -output ${prefix}/${slice.name}/${name}`
++        );
++        xcframeworkCmd += `-library ${prefix}/${slice.name}/${name} `;
 +      }
-+    }
-+  };
-+  return (
-+    <ScrollView
-+      ref={scrollView}
-+      removeClippedSubviews={clipped}
-+      onScroll={onScroll}
-+      scrollEventThrottle={16}
-+      style={{ flex: 1 }}
-+    >
-+      <View style={{ flexDirection: "row", height: ROW_HEIGHT }}>
-+        <Canvas style={{ flex: 1 }}>
-+          <Fill color={c
-```
-
-**File**: `apps/example/src/Tests/Screens/GraphiteView.tsx` (modified, +1/-1)
-```diff
-@@ -4,7 +4,7 @@ import { Skia, SkiaGraphiteView } from "react-native-skia";
- import type { SkiaGraphiteViewRef } from "react-native-skia";
- 
- // Fills itself in cyan with the one frame it records once mounted.
--const CyanGraphiteView = ({ style }: { style: ViewStyle }) => {
-+export const CyanGraphiteView = ({ style }: { style: ViewStyle }) => {
-   const ref = useRef<SkiaGraphiteViewRef>(null);
-   useEffect(() => {
-     const view = ref.current;
-```
-
-**File**: `apps/example/src/Tests/Screens/index.ts` (modified, +36/-9)
-```diff
-@@ -1,19 +1,46 @@
- import type { FC } from "react";
- 
-+import {
-+  ClippedSubviewsBack,
-+  ClippedSubviewsDeviceLost,
-+  ClippedSubviewsSharedValueChanged,
-+  ClippedSubviewsStateChanged,
-+  ClippedSubviewsTwice,
-+} from "./ClippedSubviews";
- import { GraphiteView, GraphiteViewTransform } from "./GraphiteView";
- import { IsOnMainThread } from "./IsOnMainThread";
- import { OnLayout } from "./OnLayout";
- import { ResizeGrow, ResizeShrink } from "./Resize";
- import { SharedImage } from "./SharedImage";
- import { SharedValueReads } from "./SharedValueReads";
- 
--export const Screens: Record<string, FC> = {
--  GraphiteView,
--  GraphiteViewTransform,
--  IsOnMainThread,
--  OnLayout,
--  ResizeGrow,
--  ResizeShrink,
--  SharedImage,
--  SharedValueReads,
-+// When Tests snapshots a screen: once it is mounted, or once it says it has
-+// settled (see useScreenDone), which it does anew each time it is requested.
-+export interface Screen {
-+  readonly snapshot: "onMount" | "onDone";
-+  readonly component: FC;
-+}
-+
-+const shown = (component: FC): Screen => ({ snapshot: "onMount", component });
-+const settling = (component: FC): Screen => ({
-+  snapshot: "onDone",
-+  component,
-+});
-+
-+export const Screens: Readonly<Record<string, Screen>> = {
-+  ClippedSubviewsBack: settling(ClippedSubviewsBack),
-+  ClippedSubviewsDeviceLost: settling(ClippedSubviewsDeviceLost),
-+  ClippedSubviewsSharedValueChanged: settling(
-+    ClippedSubviewsSharedValueChanged
-+  ),
-+  ClippedSubviewsStateChanged: settling(ClippedSubviewsStateChanged),
-+  ClippedSubviewsTwice: settling(ClippedSubviewsTwice),
-+  GraphiteView: shown(GraphiteView),
-+  GraphiteViewTransform: shown(GraphiteViewTransform),
-+  IsOnMainThread: shown(IsOnMainThread),
-+  OnLayout: shown(OnLayout),
-+  ResizeGrow: shown(ResizeGrow),
-+  ResizeShrink: shown(ResizeShrink),
-+  SharedImage: shown(SharedImage),
-+  SharedValueReads: shown(SharedValueReads),
- };
-```
-
-**File**: `apps/example/src/Tests/Tests.tsx` (modified, +33/-34)
-```diff
-@@ -1,11 +1,13 @@
- /* eslint-disable @typescript-eslint/no-explicit-any */
- import { Canvas, Group, Skia, useCanvasRef } from "react-native-skia";
--import { importDevice } from "react-native-webgpu";
--import React, { useEffect, useRef, useState } from "react";
-+import React, { useCallback, useEffect, useRef, useState } from "react";
- import { PixelRatio, Text, View } from "react-native";
- 
- import type { SerializedNode } from "./deserialize";
- import { parseNode, parseProps } from "./deserialize";
-+import { forceGpuDeviceLoss, getSharedDevice } from "./GpuDevice";
-+import { ScreenDoneContext } from "./ScreenDone";
-+import type { Screen } from "./Screens";
- import { Screens } from "./Screens";
- import { useClient } from "./useClient";
- import { workletSerialization } from "./workletSerialization";
-@@ -33,31 +35,6 @@ const resultMessage = (result: unknown) => {
-     : json;
- };
- 
--// The device Skia renders with, as a GPUDevice. Skia replaces a lost device
--// with a new one: the import is let go of when that happens, so that the next
--// use imports the new device.
--let sharedDevice: GPUDevice | null = null;
--const getSharedDevice = () => {
--  if (sharedDevice === null) {
--    const device = importDevice(Skia.getNativeDevice());
--    sharedDevice = device;
--    Skia.gpu.lost.then(() => {
--      if (sharedDevice === device) {
--        sharedDevice = null;
--      }
--    });
--  }
--  return sharedDevice;
--};
--
--// Loses the GPU device on purpose (the Gpu spec): the device is shared with
--// react-native-webgpu, whose test hook asks Dawn to lose it.
--const forceGpuDeviceLoss = () => {
--  (
--    getSharedDevice() as GPUDevice & { forceLossForTesting: () => void }
--  ).forceLossForTesting();
--};
--
- // The encoded pixels of a native view: React Native WebGPU rasterizes the view
- // into a texture of the shared device, and Skia wraps that texture. This is
- // the one way to snapshot a view with Skia v3 (see docs/webgpu#view-snapshots).
-@@ -98,7 +75,17 @@ export const Tests = ({ assets }: TestsProps) => {
-   const ref = useCanvasRef();
-   const [client, hostname] = useClient();
-   const [drawing, setDrawing] = useState<any>(null);
--  const [screen, setScreen] = useState<any>(null);
-+  // The screen shown and the key it is mounted with. Requested again, a
-+  // screen that settles is mounted again, so that it settles again; any other
-+  // keeps its instance and what it shows.
-+  const [shown, setShown] = useState<{
-+    readonly screen: Screen;
-+    readonly key: number;
-+  } | null>(null);
-+  const screenMounts = useRef(0);
-+  // Whether the screen shown has settled (see useScreenDone).
-+  const [screenDone, setScreenDone] = useState(false);
-+  const markScreenDone = useCallback(() => setScreenDone(true), []);
- 
-   useEffect(() => {
-     if (client !== null) {
-@@ -137,11 +124,15 @@ export const Tests = ({ assets }: TestsProps) => {
-             client.send(errorEnvelope(error));
-           }
-         } else if (typeof tree.screen === "string") {
--          const Screen = Screens[tree.screen];
--          if (!Screen) {
-+          const screen = Screens[tree.screen];
-+          if (!screen) {
-             throw new Error(`Unknown screen: ${tree.screen}`);
-           }
--          setScreen(React.createElement(Screen));
-+          if (screen.snapshot === "onDone") {
-+            screenMounts.current += 1;
-+          }
-+          setScreenDone(false);
-+          setShown({ screen, key: screenMounts.current });
-         } else {
-           const node = parseNode(tree, assets);
-           setDrawing(node as SerializedNode);
-@@ -185,7 +176,11 @@ export const Tests = ({ assets }: TestsProps) => {
-   }, [client, drawing, ref]);
- 
-   useEffect(() => {
--    if (screen && client) {
-+    if (
-+      shown !== null &&
-+      client !== null &&
-+      (shown.screen.snapshot === "onMount" || screenDone)
-+    ) {
-       const it = setTimeout(async () => {
-         try {
-           client.send(await encodeView(viewRef));
-@@ -199,7 +194,7 @@ export const Tests = ({ assets }: TestsProps) => {
-       };
      }
-     return;
--  }, [client, screen]);
-+  }, [client, shown, screenDone]);
  
-   return (
-     <View style={{ flex: 1, backgroundColor: "white" }}>
-@@ -216,7 +211,11 @@ export const Tests = ({ assets }: TestsProps) => {
-         ref={viewRef}
-         collapsable={false}
-       >
--        {screen}
-+        <ScreenDoneContext.Provider value={markScreenDone}>
-+          {shown === null
-+            ? null
-+            : React.createElement(shown.screen.component, { key: shown.key })}
-+        </ScreenDoneContext.Provider>
-       </View>
-     </View>
-   );
+     const [lib] = name.split(".");
+@@ -496,13 +511,21 @@ const buildXCFramework = (platformName: ApplePlatformName) => {
+     // Catalyst uses the macOS SDK with an iOS ABI and deployment target.
+     const catalystPatch = path.join(__dirname, "skia-catalyst.patch");
+     $(`git apply ${catalystPatch}`);
+-    // A runtime effect local named like main's parameters ("pos") broke
+-    // Graphite's SkSL, and the failed pipeline then crashed insertRecording.
+-    const runtimeEffectPatch = path.join(
++    // A pipeline that failed to build crashed insertRecording instead of
++    // failing it (https://skia-review.googlesource.com/c/skia/+/1421717).
++    const nullPipelinePatch = path.join(
+       __dirname,
+-      "skia-graphite-runtime-effect-names.patch"
++      "skia-graphite-null-pipeline.patch"
+     );
+-    $(`git apply ${runtimeEffectPatch}`);
++    $(`git apply ${nullPipelinePatch}`);
++    // Recorder::makeDeferredCanvas takes the surface props the canvas a view
++    // records into draws with, e
 ```
 
-**File**: `packages/skia/apple/SkiaView.mm` (modified, +53/-20)
+**File**: `packages/skia/scripts/dawn-configuration.ts` (modified, +55/-35)
 ```diff
-@@ -56,8 +56,9 @@ static bool appIsBackgrounded() {
- }
- 
- @implementation SkiaView {
--  // The native view, the window surface and the layer it presents into. All
--  // three exist while the view is in the hierarchy (see willMoveToSuperview:).
-+  // The native view and its window surface, from the view's first superview
-+  // until it is recycled, and the layer the surface presents into, while the
-+  // view is in a superview (see willMoveToSuperview:).
-   std::shared_ptr<RNSkia::RNSkView> _view;
-   std::shared_ptr<RNSkia::RNSkWindowSurface> _surface;
- #pragma clang diagnostic push
-@@ -126,9 +127,11 @@ - (instancetype)initWithFrame:(CGRect)frame {
- 
- #pragma mark - Lifecycle
- 
--// The native view lives while the view is in the hierarchy: it is created
--// when the view gets a superview and torn down when it leaves it, so that a
--// view kept around by a transition does not keep a surface.
-+// The native view is created when the view first gets a superview and lives
-+// until the view is recycled, as on Android: what it shows stays with it
-+// while the view is out of its superview, where a scroll view that clips its
-+// subviews keeps the rows scrolled away. The window goes then, the layer with
-+// its drawables included, so that a view out of the hierarchy holds none.
- #if !TARGET_OS_OSX
- - (void)willMoveToSuperview:(UIView *)newSuperView {
-   [super willMoveToSuperview:newSuperView];
-@@ -137,14 +140,37 @@ - (void)viewWillMoveToSuperview:(NSView *)newSuperView {
-   [super viewWillMoveToSuperview:newSuperView];
- #endif // !TARGET_OS_OSX
-   auto manager = _manager.lock();
--  if (newSuperView == nullptr || _view != nullptr || manager == nullptr) {
-+  if (newSuperView == nullptr || manager == nullptr) {
-     return;
-   }
--  auto context = manager->getPlatformContext();
-+  if (_layer == nil) {
- #pragma clang diagnostic push
- #pragma clang diagnostic ignored "-Wunguarded-availability-new"
--  _layer = [CAMetalLayer layer];
-+    _layer = [CAMetalLayer layer];
- #pragma clang diagnostic pop
-+    [self.layer addSublayer:_layer];
-+    // AppKit lays out a view put in a superview only when asked: the layout
-+    // attaches the window's surface to the layer (see layoutSubviews).
-+    [self setNeedsLayout];
-+    // A view put back gets its last frame onto the new layer now: the layout
-+    // comes after the Core Animation commit that carries the layer, which
-+    // would show it empty for a frame or two.
-+    if (_view != nullptr) {
-+      [CATransaction begin];
-+      [CATransaction setDisableActions:YES];
-+      _layer.frame =
-+          CGRectMake(0, 0, self.bounds.size.width, self.bounds.size.height);
-+      [self attachSurface];
-+      [CATransaction commit];
-+      if (!_surface->showsFrame()) {
-+        _view->redraw();
-+      }
-+    }
-+  }
-+  if (_view != nullptr) {
-+    return;
-+  }
-+  auto context = manager->getPlatformContext();
-   _surface = std::make_shared<RNSkia::RNSkWindowSurface>();
-   _surface->setHighBitDepth(_highBitDepth);
-   _surface->setUseP3ColorSpace(usesP3ColorSpace(_colorSpace, context));
-@@ -158,9 +184,8 @@ - (void)viewWillMoveToSuperview:(NSView *)newSuperView {
-            strongSelf->_canPresent;
-   });
-   _view = std::make_shared<RNSkia::RNSkView>(context, _surface);
--  [self.layer addSublayer:_layer];
-   if (_nativeId != 0) {
--    manager->setSkiaView(_nativeId, _view);
-+    manager->registerSkiaView(_nativeId, _view);
-   }
-   // The display link presents whatever is waiting on its next tick, a frame
-   // for a resized window included: nothing shows before it anyway.
-@@ -170,16 +195,11 @@ - (void)viewWillMoveToSuperview:(NSView *)newSuperView {
- 
- - (void)removeFromSuperview {
-   [self stopDisplayLink];
--  if (_view != nullptr) {
--    [_layer removeFromSuperlayer];
--    auto manager = _manager.lock();
--    if (_nativeId != 0 && manager != nullptr) {
--      manager->setSkiaView(_nativeId, nullptr);
+@@ -404,57 +404,77 @@ export const collectDawnHeaders = (buildDir: string) => {
+ /**
+  * Assembles libs/dawn/apple/libwebgpu_dawn.xcframework from the Apple slices
+  * in libs/dawn/apple and the headers in libs/dawn/include, which every slice
+- * embeds so SwiftPM consumers see them without any search path.
++ * embeds so SwiftPM consumers see them without any search path. A slice whose
++ * targets were not built (e.g. `yarn build-dawn ios-simulator-arm64
++ * xcframework` to test on a simulator) is left out, with a warning, and a
++ * lipo'd simulator slice keeps the architectures that were built.
+  */
+ export const createDawnXcframework = () => {
+   const appleDir = path.join(DawnLibs, "apple");
+   const include = path.join(DawnLibs, "include");
+-  const slice = (name: string) => {
+-    const lib = path.join(appleDir, name, dawnLibraryName("apple"));
+-    if (!fs.existsSync(lib)) {
+-      throw new Error(
+-        `Missing Dawn slice ${lib}: build the ${name} target first`
+-      );
 -    }
--    _view = nullptr;
--    _surface = nullptr;
--    _layer = nil;
-+  if (_surface != nullptr) {
-+    _surface->detach();
+-    return lib;
+-  };
+   if (!fs.existsSync(path.join(include, "webgpu", "webgpu.h"))) {
+     throw new Error(`Missing Dawn headers in ${include}`);
    }
-+  [_layer removeFromSuperlayer];
-+  _layer = nil;
-   [super removeFromSuperview];
- }
++  const built = (name: string) =>
++    fs.existsSync(path.join(appleDir, name, dawnLibraryName("apple")));
++  const lib = (name: string) =>
++    path.join(appleDir, name, dawnLibraryName("apple"));
++  const slices: { name: string; targets: string[] }[] = [
++    { name: "ios-arm64", targets: ["ios-arm64"] },
++    {
++      name: "ios-simulator",
++      targets: ["ios-simulator-arm64", "ios-simulator-x86_64"],
++    },
++    { name: "tvos-arm64", targets: ["tvos-arm64"] },
++    {
++      name: "tvos-simulator",
++      targets: ["tvos-simulator-arm64", "tvos-simulator-x86_64"],
++    },
++    { name: "maccatalyst-universal", targets: ["maccatalyst-universal"] },
++    { name: "macos-universal", targets: ["macos-universal"] },
++  ];
  
-@@ -192,7 +212,13 @@ - (void)dealloc {
- - (void)prepareForRecycle {
-   [super prepareForRecycle];
-   [self stopDisplayLink];
-+  // Unregistered first, so that the native view is destroyed here rather than
-+  // under the registry's lock.
-   [self unregisterView];
-+  [_layer removeFromSuperlayer];
-+  _view = nullptr;
-+  _surface = nullptr;
-+  _layer = nil;
- }
+-  const simulator = path.join(appleDir, "ios-simulator");
+-  fs.mkdirSync(simulator, { recursive: true });
+-  const simulatorLib = path.join(simulator, dawnLibraryName("apple"));
+-  console.log("📱 Creating the fat iOS simulator library");
+-  execSync(
+-    `lipo -create ${slice("ios-simulator-arm64")} ${slice("ios-simulator-x86_64")} -output ${simulatorLib}`
+-  );
+-
+-  const tvSimulator = path.join(appleDir, "tvos-simulator");
+-  fs.mkdirSync(tvSimulator, { recursive: true });
+-  const tvSimulatorLib = path.join(tvSimulator, dawnLibraryName("apple"));
+-  console.log("📺 Creating the fat tvOS simulator library");
+-  execSync(
+-    `lipo -create ${slice("tvos-simulator-arm64")} ${slice(
+-      "tvos-simulator-x86_64"
+-    )} -output ${tvSimulatorLib}`
+-  );
++  const libraries: string[] = [];
++  const lipoDirs: string[] = [];
++  const missing: string[] = [];
++  for (const { name, targets } of slices) {
++    const present = targets.filter(built);
++    missing.push(...targets.filter((target) => !built(target)));
++    if (present.length === 0) {
++      continue;
++    }
++    if (targets.length === 1) {
++      libraries.push(lib(name));
++      continue;
++    }
++    const dir = path.join(appleDir, name);
++    fs.mkdirSync(dir, { recursive: true });
++    const fat = path.join(dir, dawnLibraryName("apple"));
++    console.log(`📱 Creating the ${name} library (${present.join(", ")})`);
++    execSync(`lipo -create ${present.map(lib).join(" ")} -output ${fat}`);
++    libraries.push(fat);
++    lipoDirs.push(dir);
++  }
++  if (libraries.length === 0) {
++    throw new Error(
++      `No Dawn slice in ${appleDir}: build an Apple target first`
++    );
++  }
++  if (missing.length > 0) {
++    console.warn(
++      `⚠️ Leaving out the Dawn slices that were not built: ${missing.join(", ")}`
++    );
++  }
  
- - (void)finalizeUpdates:(RNComponentViewUpdateMask)updateMask {
-@@ -205,11 +231,14 @@ - (void)finalizeUpdates:(RNComponentViewUpdateMask)updateMask {
-   }
- }
- 
-+// Once: a recycled view takes its next id from its props, and a pooled one
-+// must not unregister an id another view may have since.
- - (void)unregisterView {
-   auto manager = _manager.lock();
-   if (manager != nullptr && _nativeId != 0) {
-     manager->unregisterSkiaView(_nativeId);
-   }
-+  _nativeId = 0;
- }
- 
- #pragma mark - Application state
-@@ -235,6 +2
+   fileOps.rm(DawnAppleXcframework);
+   console.log(`🍏 Creating ${DawnAppleXcframework}`);
+   execSync(
+     [
+       "xcodebuild -create-xcframework",
+-      `-library ${slice("ios-arm64")} -headers ${include}`,
+-      `-library ${simulatorLib} -headers ${include}`,
+-      `-library ${slice("tvos-arm64")} -headers ${include}`,
+-      `-library ${tvSimulatorLib} -headers ${include}`,
+-      `-library ${slice("maccatalyst-universal")} -headers ${include}`,
+-      `-library ${slice("macos-universal")} -headers ${include}`,
++      ...libraries.map((library) => `-library ${library} -headers ${include}`),
+       `-output ${DawnAppleXcframework}`,
+     ].join(" ")
+   );
+-  fileOps.rm(simulator);
+-  fileOps.rm(tvSimulator);
++  lipoDirs.forEach((dir) => fileOps.rm(dir));
+   console.log(`✅ ${DawnAppleXcframework}`);
+ };
 ```
 
-**File**: `packages/skia/cpp-tests/RedrawRequestTest.cpp` (added, +238/-0)
+**File**: `packages/skia/scripts/dawn-patches/metal-suspend-submissions-in-background.patch` (modified, +18/-18)
 ```diff
-@@ -0,0 +1,238 @@
-+// Host-side check of RNSkia::RNSkRedrawRequest, the request a view's redraw
-+// takes and the window state it reads (see run.sh). What the main thread does
-+// meanwhile (an attach, a detach, the app coming back) lands between the
-+// redraw's steps through the stand-in window below.
-+
-+#include <cstddef>
-+#include <cstdio>
-+#include <functional>
-+#include <vector>
-+
-+#include "rnskia/RNSkRedrawRequest.h"
-+
-+namespace {
-+
-+using RNSkia::RNSkRedrawRequest;
-+using RNSkia::RNSkWindowState;
-+using Start = RNSkRedrawRequest::Start;
-+
-+int failures = 0;
-+
-+void expect(bool condition, const char *what) {
-+  if (!condition) {
-+    std::fprintf(stderr, "FAIL: %s\n", what);
-+    failures++;
-+  }
-+}
-+
-+// A window the main thread changes under a redraw: each read returns the
-+// state the window has, and what the main thread does runs right before or
-+// right after a read, one step per read.
-+struct Window {
-+  RNSkWindowState state = RNSkWindowState::kReady;
-+  std::vector<std::function<void(Window &)>> beforeRead;
-+  std::vector<std::function<void(Window &)>> afterRead;
-+  size_t reads = 0;
-+
-+  RNSkWindowState readState(int *info) {
-+    if (reads < beforeRead.size() && beforeRead[reads]) {
-+      beforeRead[reads](*this);
-+    }
-+    const auto read = state;
-+    if (info != nullptr) {
-+      *info = 1;
-+    }
-+    if (reads < afterRead.size() && afterRead[reads]) {
-+      afterRead[reads](*this);
-+    }
-+    reads++;
-+    return read;
-+  }
-+};
-+
-+void oneRedrawWaitsAtATime() {
-+  RNSkRedrawRequest redraw;
-+  Window window;
-+  expect(redraw.request(), "the first request posts a redraw");
-+  expect(!redraw.request(), "a request while one waits posts nothing");
-+  int info = 0;
-+  expect(redraw.start(window, &info) == Start::kPresent,
-+         "a redraw onto a ready window presents");
-+  expect(redraw.request(),
-+         "a request once the redraw started posts one of its own");
-+}
-+
-+void anAttachWhileARedrawFindsNoWindowIsNotSwallowed() {
-+  RNSkRedrawRequest redraw;
-+  Window window;
-+  window.state = RNSkWindowState::kNone;
-+  expect(redraw.request(), "the request posts a redraw");
-+  bool attachPosted = false;
-+  // The window attaches right after the redraw read that there was none.
-+  window.afterRead = {[&](Window &read) {
-+    read.state = RNSkWindowState::kReady;
-+    attachPosted = redraw.request();
-+  }};
-+  int info = 0;
-+  expect(redraw.start(window, &info) == Start::kSkip,
-+         "a redraw that finds no window presents nothing");
-+  expect(attachPosted,
-+         "an attach while a redraw finds no window posts a redraw of its own");
-+}
-+
-+void aDetachDuringARedrawLetsTheNextAttachAskAgain() {
-+  RNSkRedrawRequest redraw;
-+  Window window;
-+  expect(redraw.request(), "the request posts a redraw");
-+  // The window is detached right after the redraw reads it.
-+  window.afterRead = {
-+      [](Window &read) { read.state = RNSkWindowState::kNone; }};
-+  int info = 0;
-+  expect(redraw.start(window, &info) == Start::kPresent,
-+         "the redraw presents onto the window it read");
-+  window.state = RNSkWindowState::kReady;
-+  expect(redraw.request(), "the attach after a detach during a redraw posts "
-+                           "a redraw of its own");
-+}
-+
-+void aRedrawWithoutADeviceLetsTheReplacementAskAgain() {
-+  RNSkRedrawRequest redraw;
-+  Window window;
-+  window.state = RNSkWindowState::kNoDevice;
-+  expect(redraw.request(), "the request posts a redraw");
-+  int info = 0;
-+  expect(redraw.start(window, &info) == Start::kSkip,
-+         "a redraw without a GPU device presents nothing");
-+  // The device replaced, every view is asked for a redraw (RNSkManager).
-+  window.state = RNSkWindowState::kReady;
-+  expect(redraw.request(), "the device's replacement posts a redraw");
-+}
-+
-+void aWindowThatCannotPresentGetsTheRedrawOnceItCan() {
-+  RNSkRedrawRequest redraw;
-+  Window window;
-+  window.state = RNSkWindowState::kCannotPresent;
-+  expect(redraw.request(), "the request posts a redraw");
-+  int info = 0;
-+  expect(redraw.start(window, &info) == Start::kSkip,
-+         "a redraw onto a window that cannot present presents nothing");
-+  window.state = RNSkWindowState::kReady;
-+  expect(redraw.onCanPresent(),
-+         "the window able to present again gets the redraw it missed");
-+  expect(redraw.isWaiting(), "the redraw posted then finds its request");
-+}
-+
-+// Where the app comes back, the platform view calling onCanPresent(),
-+// against a redraw that finds the window unable to present.
-+enum class CanPresentAt {
-+  kBeforeTheRedraw,
-+  kAfterTheFirstRead,
-+  kBeforeTheSecondRead,
-+  kAfterTheSecondRead,
-+  kAfterTheRedraw,
-+};
-+
-+void aWindowThatCanPresentAgainAroundTheRedrawGetsOneRedraw(
-+    CanPresentAt canPresentAt, const char *what) {
-+  RNSkRedrawRequest redraw;
-+  Window window;
-+  window.state = RNSkWindowState::kCannotPresent;
-+  expect(redraw.request(), "the request posts a redraw");
-+  int posted = 0;
-+  const auto comesBack = [&](Window &read) {
-+    read.stat
+@@ -31,7 +31,7 @@ Dawn carries an equivalent.
+ ---
+ 
+ diff --git a/include/dawn/native/MetalBackend.h b/include/dawn/native/MetalBackend.h
+-index 61fb64fcae..e3a84885b2 100644
++index 61fb64fca..e3a84885b 100644
+ --- a/include/dawn/native/MetalBackend.h
+ +++ b/include/dawn/native/MetalBackend.h
+ @@ -46,6 +46,17 @@ namespace dawn::native::metal {
+@@ -53,7 +53,7 @@ index 61fb64fcae..e3a84885b2 100644
+  // Return the MTLDevice corresponding to the WGPUDevice.
+  DAWN_NATIVE_EXPORT id<MTLDevice> GetMTLDevice(WGPUDevice device);
+ diff --git a/src/dawn/native/ExecutionQueue.cpp b/src/dawn/native/ExecutionQueue.cpp
+-index 7dd279f01c..84ff0dff7c 100644
++index 8aca9b6a6..e8f229e5f 100644
+ --- a/src/dawn/native/ExecutionQueue.cpp
+ +++ b/src/dawn/native/ExecutionQueue.cpp
+ @@ -340,7 +340,7 @@ MaybeError ExecutionQueueBase::EnsureCommandsFlushed(ExecutionSerial serial) {
+@@ -77,7 +77,7 @@ index 7dd279f01c..84ff0dff7c 100644
+      mState.Use<NotifyType::None>([](auto state) { state->mAssumeCompleted = true; });
+  
+ diff --git a/src/dawn/native/ExecutionQueue.h b/src/dawn/native/ExecutionQueue.h
+-index 59f17850a8..bfe42bd473 100644
++index 59f17850a..bfe42bd47 100644
+ --- a/src/dawn/native/ExecutionQueue.h
+ +++ b/src/dawn/native/ExecutionQueue.h
+ @@ -120,6 +120,11 @@ class ExecutionQueueBase : public ApiObjectBase {
+@@ -93,7 +93,7 @@ index 59f17850a8..bfe42bd473 100644
+      // and waiting on a serial that doesn't have a corresponding fence enqueued. Fake serials to
+      // make all commands look completed.
+ diff --git a/src/dawn/native/Toggles.cpp b/src/dawn/native/Toggles.cpp
+-index 26584c560a..18f92a69ea 100644
++index 9d0dfc90a..334e1388c 100644
+ --- a/src/dawn/native/Toggles.cpp
+ +++ b/src/dawn/native/Toggles.cpp
+ @@ -408,6 +408,17 @@ static constexpr ToggleEnumAndInfoList kToggleNameAndInfoList = {{
+@@ -115,7 +115,7 @@ index 26584c560a..18f92a69ea 100644
+       {"use_blit_for_buffer_to_depth_texture_copy",
+        "Use a blit instead of a copy command to copy buffer data to the depth aspect of a "
+ diff --git a/src/dawn/native/Toggles.h b/src/dawn/native/Toggles.h
+-index 1f99a705a6..577d3535fd 100644
++index c8bb00d95..fc3257b1b 100644
+ --- a/src/dawn/native/Toggles.h
+ +++ b/src/dawn/native/Toggles.h
+ @@ -110,6 +110,7 @@ enum class Toggle {
+@@ -127,10 +127,10 @@ index 1f99a705a6..577d3535fd 100644
+      UseBlitForBufferToStencilTextureCopy,
+      UseBlitForStencilTextureWrite,
+ diff --git a/src/dawn/native/metal/DeviceMTL.mm b/src/dawn/native/metal/DeviceMTL.mm
+-index 1eaa6c0c37..55782beb46 100644
++index f1197fc7b..eaf177c91 100644
+ --- a/src/dawn/native/metal/DeviceMTL.mm
+ +++ b/src/dawn/native/metal/DeviceMTL.mm
+-@@ -56,6 +56,23 @@
++@@ -57,6 +57,23 @@
+  #include "src/dawn/platform/tracing/TraceEvent.h"
+  #include "src/utils/platform.h"
+  
+@@ -154,7 +154,7 @@ index 1eaa6c0c37..55782beb46 100644
+  namespace dawn::native::metal {
+  
+  struct KalmanInfo {
+-@@ -118,6 +135,95 @@ void UpdateTimestampPeriod(id<MTLDevice> device,
++@@ -119,6 +136,95 @@ void UpdateTimestampPeriod(id<MTLDevice> device,
+      }
+  }
+  
+@@ -250,7 +250,7 @@ index 1eaa6c0c37..55782beb46 100644
+  }  // namespace
+  
+  // static
+-@@ -187,7 +293,15 @@ void UpdateTimestampPeriod(id<MTLDevice> device,
++@@ -188,7 +294,15 @@ void UpdateTimestampPeriod(id<MTLDevice> device,
+  
+      mCounterSampleBufferAllocator = std::make_unique<CounterSampleBufferAllocator>(this);
+  
+@@ -278,7 +278,7 @@ index 1eaa6c0c37..55782beb46 100644
+      mMtlDevice = nullptr;
+      mMockBlitMtlBuffer = nullptr;
+ diff --git a/src/dawn/native/metal/MetalBackend.mm b/src/dawn/native/metal/MetalBackend.mm
+-index 567994b94b..8570743f8c 100644
++index 567994b94..8570743f8 100644
+ --- a/src/dawn/native/metal/MetalBackend.mm
+ +++ b/src/dawn/native/metal/MetalBackend.mm
+ @@ -42,6 +42,17 @@ void WaitForCommandsToBeScheduled(WGPUDevice device) {
+@@ -300,7 +300,7 @@ index 567994b94b..8570743f8c 100644
+      Device* backendDevice = ToBackend(FromAPI(device));
+      return backendDevice->GetMTLDevice();
+ diff --git a/src/dawn/native/metal/QueueMTL.h b/src/dawn/native/metal/QueueMTL.h
+-index a4cc455471..1fca1f4cfb 100644
++index a4cc45547..1fca1f4cf 100644
+ --- a/src/dawn/native/metal/QueueMTL.h
+ +++ b/src/dawn/native/metal/QueueMTL.h
+ @@ -30,6 +30,8 @@
+@@ -340,7 +340,7 @@ index a4cc455471..1fca1f4cfb 100644
+      // MTLSharedEvent is not available until macOS 10.14+ so use just `id`.
+      NSPRef<id> mMtlSharedEvent;
+ diff --git a/src/dawn/native/metal/QueueMTL.mm b/src/dawn/native/metal/QueueMTL.mm
+-index 9002271a2e..c81a352654 100644
++index 7f990a591..671632dcf 100644
+ --- a/src/dawn/native/metal/QueueMTL.mm
+ +++ b/src/dawn/native/metal/QueueMTL.mm
+ @@ -174,6 +174,34 @@ void Complete(EventCompletionType completionType) override {
+@@ -418,7 +418,7 @@ index 9002271a2e..c81a352654 100644
+  
+          return {};
+ diff --git a/src/dawn/native/metal/SwapChainMTL.mm b/src/dawn/native/metal/SwapChainMTL.mm
+-index b9a9d07b3a..f512d708d9 100644
++index b9a9d07b3..f512d708d 100644
+ --- a/src/dawn/native/meta
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4392** (2026-11-03): chore(🐙): build the macOS example on main only, and check the Apple sources against every SDK on PRs (@wcandillon)
-- **PR #4389** (2026-11-03): fix(🏞️): record every frame of a view on the same render thread (@wcandillon)
-- **PR #4388** (2026-11-03): fix(🍏): ask for the full frame rate again on a recycled view (@wcandillon)
-- **PR #4387** (2026-11-03): chore(🐙): minor correction (@wcandillon)
-- **PR #4386** (2026-11-03): fix(🗿): present one recording per vsync (@wcandillon)
-- **PR #4383** (2026-11-02): chore(⬆️): move the example to react-native-webgpu 0.20.0 (@wcandillon)
+- **PR #4434** (2026-11-09): fix(🤖): latch a TextureView's retained buffer when its window becomes visible again (2.x backport of #4428) (@wcandillon)
+- **PR #4433** (2026-11-09): Exclude ClippedSubviews from Android emulator e2e tests (@wcandillon)
+- **PR #4432** (2026-11-09): fix(🌐): verify the CanvasKit wasm against the bundled glue in development (2.x backport of #4431) (@wcandillon)
+- **PR #4431** (2026-11-09): Add CanvasKit binary verification in development (@wcandillon)
+- **PR #4430** (closed): fix(🤖): redraw a TextureView when its window becomes visible again (2.x backport of #4428) (@wcandillon)
+- **PR #4429** (closed): fix(🌐): make LoadSkiaWeb fail closed and retry after a failed init (2.x backport of #4427) (@wcandillon)
 
 ---
 
@@ -2944,82 +2323,36 @@ meanwhile waits for that attach. The att
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. 🤖): post main-thread tasks without calling into Java (#4364)
+## X. 🧵): refactoring frame pacing (#4398)
 
 **RULE**:
-When implementing operations in `packages/skia/android/cpp/jni/JniPlatformContext.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wcandillon/react-native-skia. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/docs/docs/webgpu.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wcandillon/react-native-skia. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b3c17c56`: 🤖): post main-thread tasks without calling into Java (#4364). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d7df506d`: 🧵): refactoring frame pacing (#4398). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/skia/android/cpp/jni/JniPlatformContext.cpp`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/docs/docs/webgpu.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-#include <fcntl.h>
+### Pipeline compilation
 
-#include <cerrno>
-#include <system_error>
-#include "RNSkMainThreadTasks.h"
-
-      makeNativeMethod("duplicateMainThreadWakeup",
-                       JniPlatformContext::duplicateMainThreadWakeup),
-      makeNativeMethod("runMainThreadTasks",
-                       JniPlatformContext::runMainThreadTasks),
-  MainThreadTasks::getInstance().post(std::move(task));
-int JniPlatformContext::duplicateMainThreadWakeup(jni::alias_ref<jclass>) {
-  int duplicate =
-      fcntl(MainThreadTasks::getInstance().wakeup(), F_DUPFD_CLOEXEC, 0);
-  if (duplicate == -1) {
-    throw std::system_error(errno, std::generic_category(), "dup");
-  return duplicate;
-}
-void JniPlatformContext::runMainThreadTasks(jni::alias_ref<jclass>) {
-  MainThreadTasks::getInstance().run();
+The GPU compiles a pipeline for each kind of drawing the first time a canvas calls for it: a solid rounded rectangle, an image, a gradient-filled path, a line of text.
+A compile takes from a few milliseconds to a few hundred on a fresh install, and the frame that needs the pipeline waits for it, so a screen that introduces several at once comes up late the first time it appears.
+React Native Skia compiles these pipelines ahead of the frames, on a thread of its own, while the frames leave the GPU alone.
+On a launch without a record, it compiles a built-in set: solid colors, images and gradients on every shape, text, and drop shadows.
+From then on, it records the pipelines the app actually uses in its cache directory (`rnskia/pipelines.bin`) and compiles those at the next launch, so the screens the app showed come up without a compile on the frame.
+A pipeline the record does not cover is compiled when first needed, as before, and recorded.
+A pipeline whose paint uses a runtime effect, one of Skia's own (a blur, a morphology, the luma color filter) or one of yours, is compiled when first needed too, but not recorded: Graphite can only compile it on the contex
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-      makeNativeMethod("notifyTaskReadyNative",
-                       JniPlatformContext::notifyTaskReadyNative),
-  bool shouldSchedule = false;
-  {
-    std::lock_guard<std::mutex> lock(_mainThreadTasksMutex);
-    _mainThreadTasks.push(std::move(task));
-    if (!_mainThreadDispatchScheduled) {
-      _mainThreadDispatchScheduled = true;
-      shouldSchedule = true;
-    }
-  }
-
-  if (shouldSchedule) {
-    notifyTaskReadyExternal();
-  }
-}
-
-void JniPlatformContext::notifyTaskReadyExternal() {
-  jni::ThreadScope ts;
-
-  static auto method =
-      javaPart_->getClass()->getMethod<void()>("notifyTaskReady");
-  method(javaPart_.get());
-void JniPlatformContext::notifyTaskReadyNative() {
-  std::queue<std::function<void()>> tasks;
-  {
-    std::lock_guard<std::mutex> lock(_mainThreadTasksMutex);
-    std::swap(tasks, _mainThreadTasks);
-    _mainThreadDispatchScheduled = false;
-  while (!tasks.empty()) {
-    auto handler = std::move(tasks.front());
-    tasks.pop();
-    if (handler) {
-      handler();
-    }
-  }
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b3c17c56` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d7df506d` are properly handled with clean fallback behavior.

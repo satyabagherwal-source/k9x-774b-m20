@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/inikulin-parse5-learnings.md`  
 > **Source**: github ([https://github.com/inikulin/parse5](https://github.com/inikulin/parse5))  
-> **Source Version**: `30da29ba`  
+> **Source Version**: `7bf0fc95`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T22:15:17.155Z  
+> **Timestamp**: 2026-11-07T04:03:13.848Z  
 > **Learning ID**: `learn-github-inikulin-parse5`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/inikulin-parse5-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/inikulin/parse5](https://github.com/inikulin/parse5))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T22:15:16.172Z  
+> **Harvest Timestamp**: 2026-11-07T04:03:12.745Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -974,7 +974,7 @@ export interface ParserStream<T extends TreeAdapterTypeMap = DefaultTreeAdapterM
 
 ### Core Architecture Module: `packages/parse5-plain-text-conversion-stream/lib/index.ts`
 ```
-import { type ParserOptions, type TreeAdapterTypeMap, html } from 'parse5';
+import { type ParserOptions, type TreeAdapterTypeMap, type DefaultTreeAdapterMap, html } from 'parse5';
 import { ParserStream } from 'parse5-parser-stream';
 
 const { TAG_ID: $, TAG_NAMES: TN } = html;
@@ -1000,7 +1000,7 @@ const { TAG_ID: $, TAG_NAMES: TN } = html;
  * file.pipe(converter);
  * ```
  */
-export class PlainTextConversionStream<T extends TreeAdapterTypeMap> extends ParserStream<T> {
+export class PlainTextConversionStream<T extends TreeAdapterTypeMap = DefaultTreeAdapterMap> extends ParserStream<T> {
     constructor(options?: ParserOptions<T>) {
         super(options);
 
@@ -1588,69 +1588,215 @@ export class ParserFeedbackSimulator implements TokenHandler {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fc2cae82` (2026-10-30)
-**Commit Message**: fix: end attribute names when missing whitespace (#1908)
+### Incident Patch 1: `7bf0fc95` (2026-11-06)
+**Commit Message**: fix(tokenizer): bound the duplicate-attribute check for wide tags (#1922)
 
-**File**: `packages/parse5/lib/tokenizer/index.test.ts` (modified, +32/-0)
+Checking every new attribute name against every earlier one makes a tag with many attributes quadratic (#1901). Tags with up to 64 attributes keep the direct scan; once a 65th distinct name is accepted, the names are collected in a Set that is used for the rest of the tag and dropped when the tag is emitted. Duplicate semantics (first wins, parse error) and attribute order are unchanged. The field starts as `null`, so a wide tag does not add a property to the tokenizer; adding one made later tokenizing in the same process 2–5% slower.
+
+The test counts reads of earlier attributes for 2,000 names and checks that the next tag does not see the wide tag's names.
+
+Co-authored-by: Claude Fable 5.1 <[REDACTED_EMAIL]>
+
+**File**: `packages/parse5/lib/tokenizer/index.test.ts` (modified, +44/-0)
 ```diff
-@@ -312,4 +312,36 @@ describe('Tokenizer methods', () => {
-         tokenizer.state = -1 as never;
-         assert.throws(() => tokenizer.write('foo', true), 'Unknown state');
+@@ -345,3 +345,47 @@ describe('Tokenizer methods', () => {
+         );
      });
+ });
 +
-+    it('should end the attribute location when whitespace between attributes is missing', () => {
-+        const html = `<a b="1"c='2'd=3>`;
-+        let token: Token.TagToken | null = null;
++describe('Tokenizer attributes', () => {
++    it('should detect duplicates in a tag with many attributes without scanning them', () => {
++        const names = Array.from({ length: 2000 }, (_, i) => `a${i}`);
++        const duplicates = [...names.slice(0, 100), ...names.slice(-100)];
++        const tags: Token.TagToken[] = [];
++        let duplicateCount = 0;
 +        const tokenizer = new Tokenizer(tokenizerOpts, {
++            onComment: noop,
++            onDoctype: noop,
 +            onStartTag(t): void {
-+                token = t;
++                tags.push(t);
 +            },
 +            onEndTag: noop,
++            onEof: noop,
 +            onCharacter: noop,
 +            onNullCharacter: noop,
 +            onWhitespaceCharacter: noop,
-+            onComment: noop,
-+            onDoctype: noop,
-+            onEof: noop,
++            onParseError(err): void {
++                duplicateCount += Number(err.code === 'duplicate-attribute');
++            },
 +        });
 +
-+        tokenizer.write(html, true);
++        // Count the reads of earlier attributes while the rest of the tag is tokenized.
++        let reads = 0;
++        tokenizer.write('<div ', false);
++        const token = Reflect.get(tokenizer, 'currentToken') as Token.TagToken;
++        token.attrs = new Proxy(token.attrs, {
++            get(target, key, receiver): unknown {
++                if (typeof key === 'string' && /^\d+$/.test(key)) reads++;
++                return Reflect.get(target, key, receiver);
++            },
++        });
++        tokenizer.write(`${names.join('=1 ')}=1 ${duplicates.join('=2 ')}=2><p a0=3>`, true);
 +
-+        const attrs = token!.location!.attrs!;
-+        assert.deepStrictEqual(
-+            Object.entries(attrs).map(([name, { startOffset, endOffset }]) => [
-+                name,
-+                html.slice(startOffset, endOffset),
-+            ]),
-+            [
-+                ['b', 'b="1"'],
-+                ['c', "c='2'"],
-+                ['d', 'd=3'],
-+            ],
-+        );
++        // A scan per attribute would read about `names.length ** 2 / 2` entries.
++        assert.isBelow(reads, names.length * 10);
++        assert.strictEqual(tags[0].attrs.length, names.length);
++        assert.ok(tags[0].attrs.every((attr, i) => attr.name === names[i] && attr.value === '1'));
++        assert.strictEqual(duplicateCount, duplicates.length);
++        // The next tag does not see the names of the wide one.
++        assert.deepStrictEqual(tags[1].attrs, [{ name: 'a0', value: '3' }]);
 +    });
- });
++});
 ```
 
-**File**: `packages/parse5/lib/tokenizer/index.ts` (modified, +1/-0)
+**File**: `packages/parse5/lib/tokenizer/index.ts` (modified, +25/-3)
 ```diff
-@@ -2099,6 +2099,7 @@ export class Tokenizer {
+@@ -23,6 +23,10 @@ import { HtmlEntityDecoder, DecodingMode } from 'entities/decode';
+ import { ERR, type ParserErrorHandler } from '../common/error-codes.js';
+ import { TAG_ID, getTagID } from '../common/html.js';
+ 
++// The few attributes a tag usually has are scanned for a duplicate name; from this many on, the names are
++// collected in a Set instead, so that the check doesn't get quadratic in the number of attributes.
++const ATTR_NAME_SET_THRESHOLD = 64;
++
+ //States
+ const enum State {
+     DATA,
+@@ -224,6 +228,7 @@ export class Tokenizer {
+     protected currentToken: Token | null = null;
+     protected currentAttr: Attribute = { name: '', value: '' };
+     private currentAttrLocation: Location | null = null;
++    private currentAttrNames: Set<string> | null = null;
+     /**
+      * `[start, end)` of `preprocessor.html` still to be appended to the attribute value, comment data or character
+      * token being built (`_flushRun`): input that is used as is is appended as one slice, not a code point at a time.
+@@ -562,8 +567,25 @@ export class Tokenizer {
+ 
+     protected _leaveAttrName(): void {
+         const token = this.currentToken as TagToken;
++        const { name } = this.currentAttr;
++        const names = this.currentAttrNames;
++        let duplicate: boolean;
++
++        if (names === null) {
++            duplicate = getTokenAttr(token, name) !== null;
++            // Build the name set only once a new (65th) name is accepted, so a tag with 64 names and many
++            // duplicates does not build it.
++            if (!duplicate && token.attrs.length === ATTR_NAME_SET_THRESHOLD) {
++                this.currentAttrNames = new Set(token.attrs.map((attr) => attr.name)).add(name);
++            }
++        } else {
++            duplicate = names.has(name);
++            if (!duplicate) names.add(name);
++        }
+ 
+-        if (getTokenAttr(token, this.currentAttr.name) === null) {
++        if (duplicate) {
++            this._err(ERR.duplicateAttribute);
++        } else {
+             token.attrs.push(this.currentAttr);
+ 
+             if (token.location && this.currentAttrLocation) {
+@@ -573,8 +595,6 @@ export class Tokenizer {
+                 // Set end location
+                 this._leaveAttrValue();
              }
-             default: {
-                 this._err(ERR.missingWhitespaceBetweenAttributes);
-+                this._leaveAttrValue();
-                 this.state = State.BEFORE_ATTRIBUTE_NAME;
-                 this._stateBeforeAttributeName(cp);
+-        } else {
+-            this._err(ERR.duplicateAttribute);
+         }
+     }
+ 
+@@ -670,6 +690,8 @@ export class Tokenizer {
+     protected emitCurrentTagToken(): void {
+         const ct = this.currentToken as TagToken;
+ 
++        this.currentAttrNames = null;
++
+         this.prepareToken(ct);
+ 
+         ct.tagID = getTagID(ct.tagName);
+```
+
+---
+
+### Incident Patch 2: `0ef02d3d` (2026-11-06)
+**Commit Message**: fix(plain-text): default to the standard tree adapter types (#1883)
+
+* fix(plain-text): default to the standard tree adapter types
+
+* test(plain-text): drop unused type regression tests
+
+**File**: `packages/parse5-plain-text-conversion-stream/lib/index.ts` (modified, +2/-2)
+```diff
+@@ -1,4 +1,4 @@
+-import { type ParserOptions, type TreeAdapterTypeMap, html } from 'parse5';
++import { type ParserOptions, type TreeAdapterTypeMap, type DefaultTreeAdapterMap, html } from 'parse5';
+ import { ParserStream } from 'parse5-parser-stream';
+ 
+ const { TAG_ID: $, TAG_NAMES: TN } = html;
+@@ -24,7 +24,7 @@ const { TAG_ID: $, TAG_NAMES: TN } = html;
+  * file.pipe(converter);
+  * ```
+  */
+-export class PlainTextConversionStream<T extends TreeAdapterTypeMap> extends ParserStream<T> {
++export class PlainTextConversionStream<T extends TreeAdapterTypeMap = DefaultTreeAdapterMap> extends ParserStream<T> {
+     constructor(options?: ParserOptions<T>) {
+         super(options);
+ 
+```
+
+---
+
+### Incident Patch 3: `edea69b6` (2026-11-06)
+**Commit Message**: fix(parser-stream): require parse5 ^8.1.0 (#1916)
+
+ParserStream#flushCharacters calls tokenizer.flushCharacters, which
+was added in parse5 8.1.0.
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `package-lock.json` (modified, +2/-2)
+```diff
+@@ -3472,7 +3472,7 @@
+             "version": "8.1.0",
+             "license": "MIT",
+             "dependencies": {
+-                "parse5": "^8.0.0"
++                "parse5": "^8.1.0"
+             },
+             "devDependencies": {
+                 "parse5-test-utils": "1.0.0"
+@@ -5140,7 +5140,7 @@
+         "parse5-parser-stream": {
+             "version": "file:packages/parse5-parser-stream",
+             "requires": {
+-                "parse5": "^8.0.0",
++                "parse5": "^8.1.0",
+                 "parse5-test-utils": "1.0.0"
              }
+         },
+```
+
+**File**: `packages/parse5-parser-stream/package.json` (modified, +1/-1)
+```diff
+@@ -28,7 +28,7 @@
+         }
+     },
+     "dependencies": {
+-        "parse5": "^8.0.0"
++        "parse5": "^8.1.0"
+     },
+     "scripts": {},
+     "repository": {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1911** (2026-11-03): chore(deps-dev): bump eslint from 10.13.0 to 10.14.0 (@dependabot[bot])
-- **PR #1909** (2026-11-01): chore: v8.1.0 (@43081j)
-- **PR #1908** (2026-10-30): fix: end attribute names when missing whitespace (@43081j)
-- **PR #1907** (2026-10-30): chore(deps-dev): bump typescript-eslint from 8.72.0 to 8.72.1 (@dependabot[bot])
-- **PR #1906** (2026-10-29): chore: add me to funding (@43081j)
-- **PR #1905** (2026-10-29): chore: update dependabot workflow (@43081j)
+- **PR #1922** (2026-11-06): fix(tokenizer): bound the duplicate-attribute check for wide tags (@fb55)
+- **PR #1919** (2026-11-06): chore(deps-dev): bump vitest from 5.0.5 to 5.1.0 (@dependabot[bot])
+- **PR #1918** (2026-11-06): chore(deps-dev): bump @vitest/coverage-v8 from 5.0.5 to 5.1.0 (@dependabot[bot])
+- **PR #1917** (2026-11-06): chore(deps): bump the codeql group with 2 updates (@dependabot[bot])
+- **PR #1916** (2026-11-06): fix(parser-stream): require parse5 ^8.1.0 (@scttcper)
+- **PR #1915** (2026-11-05): chore(deps): bump tinybench from 6.2.2 to 6.2.3 (@dependabot[bot])
 
 ---
 
@@ -1670,13 +1816,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. end attribute names when missing whitespace (#1908)
+## X. tokenizer): bound the duplicate-attribute check for wide tags (#1922)
 
 **RULE**:
 When implementing operations in `packages/parse5/lib/tokenizer/index.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in inikulin/parse5. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fc2cae82`: end attribute names when missing whitespace (#1908). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7bf0fc95`: tokenizer): bound the duplicate-attribute check for wide tags (#1922). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/parse5/lib/tokenizer/index.test.ts`.
@@ -1685,37 +1831,35 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 ```typescript
 // Verified production-grade fix pattern:
 
-    it('should end the attribute location when whitespace between attributes is missing', () => {
-        const html = `<a b="1"c='2'd=3>`;
-        let token: Token.TagToken | null = null;
+describe('Tokenizer attributes', () => {
+    it('should detect duplicates in a tag with many attributes without scanning them', () => {
+        const names = Array.from({ length: 2000 }, (_, i) => `a${i}`);
+        const duplicates = [...names.slice(0, 100), ...names.slice(-100)];
+        const tags: Token.TagToken[] = [];
+        let duplicateCount = 0;
         const tokenizer = new Tokenizer(tokenizerOpts, {
+            onComment: noop,
+            onDoctype: noop,
             onStartTag(t): void {
-                token = t;
+                tags.push(t);
             },
             onEndTag: noop,
+            onEof: noop,
             onCharacter: noop,
             onNullCharacter: noop,
             onWhitespaceCharacter: noop,
-            onComment: noop,
-            onDoctype: noop,
-            onEof: noop,
+            onParseError(err): void {
+                duplicateCount += Number(err.code === 'duplicate-attribute');
+            },
         });
 
-        tokenizer.write(html, true);
-
-        const attrs = token!.location!.attrs!;
-        assert.deepStrictEqual(
-            Object.entries(attrs).map(([name, { startOffset, endOffset }]) => [
-                name,
-                html.slice(startOffset, endOffset),
-            ]),
-            [
-                ['b', 'b="1"'],
-                ['c', "c='2'"],
-                ['d', 'd=3'],
-            ],
-        );
-    });
+        // Count the reads of earlier attributes while the rest of the tag is tokenized.
+        let reads = 0;
+        tokenizer.write('<div ', false);
+        const token = Reflect.get(tokenizer, 'currentToken') as Token.TagToken;
+        token.attrs = new Proxy(token.attrs, {
+            get(target, key, receiver): unknown {
+              
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1725,4 +1869,4 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fc2cae82` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7bf0fc95` are properly handled with clean fallback behavior.

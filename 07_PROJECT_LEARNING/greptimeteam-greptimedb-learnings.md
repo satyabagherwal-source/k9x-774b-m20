@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md`  
 > **Source**: github ([https://github.com/GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb))  
-> **Source Version**: `5bcb576b`  
+> **Source Version**: `8da533c3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T23:40:02.609Z  
+> **Timestamp**: 2026-11-09T21:06:01.806Z  
 > **Learning ID**: `learn-github-greptimeteam-greptimedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T23:40:02.602Z  
+> **Harvest Timestamp**: 2026-11-09T21:06:01.345Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The open-source observability database. One columnar engine for metrics, logs, and traces, on object storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6789 stars
+- **Stars / Engagement**: 6797 stars
 
 ---
 
@@ -53,18 +53,82 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use std::sync::Weak;
+pub mod tables;
+
+use std::sync::{Arc, Weak};
 
 use common_meta::key::TableMetadataManagerRef;
-use snafu::OptionExt;
+use common_query::logical_plan::is_lossless_substrait_type;
+use datafusion::common::DFSchema;
+use datafusion::common::tree_node::{TreeNode, TreeNodeRecursion};
+use datafusion::logical_expr::ExprSchemable;
+use datafusion::physical_plan::ExecutionPlan;
+use datatypes::schema::SchemaRef;
+use snafu::{OptionExt, ResultExt};
+use store_api::storage::ScanRequest;
 
 use crate::CatalogManager;
-use crate::error::{GetInformationExtensionSnafu, Result, UpgradeWeakCatalogManagerRefSnafu};
-use crate::information_schema::InformationExtensionRef;
+use crate::error::{
+    GetInformationExtensionSnafu, ProjectSchemaSnafu, Result, UpgradeWeakCatalogManagerRefSnafu,
+};
+use crate::information_schema::{
+    DatanodeInspectKind, DatanodeInspectRequest, InformationExtensionRef,
+};
 use crate::kvbackend::KvBackendCatalogManager;
 use crate::system_schema::semantic_graph::EntityGraphProviderRef;
 
-pub mod tables;
+/// Projects an inspection table schema according to the scan request.
+pub(crate) fn projected_schema(schema: &SchemaRef, request: &ScanRequest) -> Result<SchemaRef> {
+    if let Some(p) = request.projection.as_deref() {
+        Ok(Arc::new(schema.try_project(p).context(ProjectSchemaSnafu)?))
+    } else {
+        Ok(schema.clone())
+    }
+}
+
+/// Builds a datanode inspection plan with the requested output schema.
+pub(crate) fn inspect_plan(
+    catalog_manager: &Weak<dyn CatalogManager>,
+    kind: DatanodeInspectKind,
+    schema: &SchemaRef,
+    request: ScanRequest,
+) -> Result<Option<Arc<dyn ExecutionPlan>>> {
+    let projected_schema = projected_schema(schema, &request)?;
+    let info_ext = information_extension(catalog_manager)?;
+    let req = inspect_request(kind, schema, request)?;
+
+    info_ext.inspect_datanode_plan(req, projected_schema)
+}
+
+/// System table predicates are inexact: the frontend keeps a residual filter. Dropping
+/// an unsafe remote filter preserves correctness only if no remote limit truncates it.
+pub(crate) fn inspect_request(
+    kind: DatanodeInspectKind,
+    schema: &SchemaRef,
+    mut scan: ScanRequest,
+) -> Result<DatanodeInspectRequest> {
+    let schema =
+        DFSchema::try_from(schema.arrow_schema().clone()).context(crate::error::DatafusionSnafu)?;
+    let filter_count = scan.filters.len();
+    scan.filters.retain(|filter| {
+        let mut supported = true;
+        let visited = filter.apply(|expr| {
+            if !expr
+                .get_type(&schema)
+                .is_ok_and(|data_type| is_lossless_substrait_type(&data_type))
+            {
+                supported = false;
+                return Ok(TreeNodeRecursion::Stop);
+            }
+            Ok(TreeNodeRecursion::Continue)
+        });
+        visited.is_ok() && supported
+    });
+    if scan.filters.len() != filter_count {
+        scan.limit = None;
+    }
+    Ok(DatanodeInspectRequest { kind, scan })
+}
 
 /// Try to get the entity-graph provider from a `[CatalogManager]` weak reference.
 /// Returns `None` when the manager is not the kv-backed one or the provider has
@@ -1651,11 +1715,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #10203** (2026-11-05): **Region migration and WAL prune can deadlock on the remote WAL topic lock, leaving procedures stuck in Running**
-  *Symptoms*: ### What type of bug is this?  Locking issue (deadlock), Unexpected error  ### What subsystems are affected?  Metasrv (procedure framework, region migration / failover, remote WAL pruning)  ### What happened?  In a distributed cluster with Kafka remote WAL, a rolling restart of datanodes left several regions stuck in `DOWNGRADING` for hours. The cluster was not queryable for those regions.  - Some `RegionMigration` (failover) procedures and the `WalPrune` procedures for two topics stayed in `Running` indefinitely. - Region migrations never finished or timed out. New migrations for the affected regions were rejected with "Another migration procedure is running for region ...". - WAL pruning for the affected topics stopped. - Restarting metasrv cleared the hung procedures. After that, manual `migrate_region` calls completed normally, so the datanodes, Kafka and object storage were fine.  ### Root cause  It is a deadlock between the upgrade step of region migration and `WalPruneProcedure`. Both use the dynamic lock on the remote WAL topic (`RemoteWalLock`):  - [`UpgradeCandidateRegion::upgrade_region_with_retry`](https://github.com/GreptimeTeam/greptimedb/blob/v1.3.0-beta.2/src/meta-srv/src/procedure/region_migration/upgrade_candidate_region.rs#L303-L345) acquires a **shared** `RemoteWalLock` for each topic **inside its retry loop**. It pushes each guard into a `Vec` that is not cleared between attempts, so attempt N holds N−1 shared guards and requests another. The `Vec` came i
+- **Issue #10299** (2026-11-09): **fix(time): avoid i32 overflow when converting an out-of-range date**
+  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  None. Same shape as the "large offsets could overflow before validation" part of #10091, noticed while reading the rest of `common-time`.  ## What's changed and what's your intention?  `Date` keeps days since the Unix epoch in an `i32`. Both `to_chrono_date` and the `Display` impl add `UNIX_EPOCH_FROM_CE` before calling `from_num_days_from_ce_opt`, so a value within 719163 of `i32::MAX` overflows the add instead of returning the `None` its signature promises. `Date::from(i32)` range-checks nothing and the MySQL writer calls `to_chrono_date` on every Date32 column. Switch to `checked_add` and let `Display` reuse `to_chrono_date`.  Release builds leave `overflow-checks` off and the wrapped sum lands outside chrono's range, so the panic only shows up where overflow checks are on: dev, test and the `ci` profile.  Validation: - `cargo nextest run -p common-time`: 90 passed, 0 failed (89 before this change). - `cargo clippy -p common-time --all-targets -- -D warnings` and `cargo fmt -p common-time -- --check`: clean. - Full workspace tests were not run.  ## PR Checklist Please convert it to a draft if some of the following conditions are not met.  - [x] I have written the necessary rustdoc comments. - [x] I have added the necessary unit tests and integration tests. - [ ] This PR requires documentation updates. - [x] API c
 
-- **Issue #10194** (2026-11-05): **docs: tighten README facts and move quick start up**
-  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  ## What's changed and what's your intention?  ### Problem The README had a dead link (`contributor-guide/overview.html` returns 404), linked a nightly docs page for "support windows" it does not describe, and ranked a March 2025 JSONBench result as current. The quick start sat after six evaluation sections, and the Troubleshooting tip ran `docker logs` on a container started with `--rm`.  ### Change - Move Try GreptimeDB after the cross-signal SQL example; fold Getting Started into it; drop Troubleshooting. - Drop the blockquote under the tagline; drop "We invite you to engage and contribute!". - Fold Commercial Support into Limitations and Edition Boundary. The License section stays separate. - Fix the contributor guide link; point the version link at the stable Semantic Versioning page; point the 2026 roadmap link at #7685, matching the header. - Remove index creation from the list of manual operations in the Apache-2.0 build. - Benchmarks: add the Agent RCA Bench scope (168 investigations per interface across six models) and say "estimated cost"; date the JSONBench result. - What's Supported: add native histograms over Remote Write 2.0 and log pipelines. - Architecture: drop the Frontend protocol list duplicated from What's Supported, drop "Elastic.", and replace "security" in Metasrv with the coordination work i
+- **Issue #10272** (2026-11-09): **fix(promql): bound scatter time filter expression depth**
+  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  Fixes #10257.  ## What's changed and what's your intention?  A 30-day PromQL range query with a 2-hour step generates 361 scatter windows. Combining these with a left-nested OR tree exceeds the expression-depth limit of 128, even for a simple query such as `sum(increase(metric[1h]))`.  Merge overlapping or touching windows into one time filter, ending at the last actual evaluation point when the requested end is off-grid. Combine separated windows with a balanced OR tree. Existing broad-scan thresholds, timestamp conversion, offset handling, and the expression-depth guard remain unchanged.  The planner regression reproduced the exact depth-limit error before the fix and passes afterward. It covers `increase` and `sum_over_time` with separated, touching, and overlapping windows. A sparse-data SQL regression checks boundary samples and gaps across 361 evaluation points.  Validation: - Query-crate nextest: 850 passed, 2 skipped. - SQL regression: passed in standalone and distributed modes; generated results reviewed. - Query-crate Clippy with all targets and `-D warnings`: passed. - `cargo fmt --all` and `git diff --check`: passed. - Full workspace tests, workspace Clippy, and unused-dependency checks were not run.  Local macOS ARM64 validation required LLVM's linker and merging `__TEXT,__text_startup` into `__TEXT,__t
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1672,1086 +1736,1133 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ec1ad1f1` (2026-11-05)
-**Commit Message**: fix(datatypes): escape object keys when rendering jsonb as text (#10112)
+### Incident Patch 1: `50a2c4d3` (2026-11-09)
+**Commit Message**: fix(mito2): publish manifest deltas by conditional create under a lease (#10234)
 
-* fix(datatypes): escape object keys when rendering jsonb as text
+* fix(mito2): publish manifest deltas by conditional create under a lease
 
-Signed-off-by: Yvan Wang <[REDACTED_EMAIL]>
+A late old leader and the region's new holder can commit the same manifest
+version. For a region whose writes require a lease and whose WAL is the object
+store WAL, the manifest now behaves as follows. Every other region keeps its
+behaviour and issues no extra request.
 
-* fix(datatypes): skip unicode normalization for escaped jsonb keys
+- Each delta has one fixed name, `{version:020}.json.gz`, written by a
+  conditional create. Without `compress_manifest` the delta is written at gzip
+  level 0, so that all writers share the name.
+- On an existing object, the writer reads it from storage: identical content is
+  a retry of a write that landed, anything else is a retryable
+  `ManifestVersionConflict` that keeps the output files.
+- The version advances only after a successful save.
+- Recovery loads the highest checkpoint found by LIST and uses the checkpoint
+  pointer only for its checksum, because a stale writer's checkpoint task can
+  leave the pointer at an older version.
+- Checkpoint cleanup frees names, so a late create can still succeed on a
+  deleted name. A commit whose save returns after t
 
-Signed-off-by: Yvan Wang <[REDACTED_EMAIL]>
-
-* refactor(datatypes): serialize jsonb to text directly with serde_json
-
-Serialize the binary jsonb with serde_json::to_string(&RawJsonb) so that
-both object keys and string values are escaped by serde_json. This drops
-fix_unicode_point, its regex and the hand-written key escaping. Errors are
-propagated instead of falling back to lossy raw bytes.
-
-Characters such as U+2028 are now emitted as-is, which is still valid
-JSON, so the affected sqlness result lines are regenerated.
-
-Signed-off-by: Yvan Wang <[REDACTED_EMAIL]>
-
-* fix(datatypes): accept JSON text bytes in jsonb_to_string
-
-Some write paths (COPY FROM csv/json/parquet, JSON bound as text via
-MySQL) store JSON text instead of binary jsonb in JSON columns. Re-encode
-such bytes as jsonb before serializing with serde_json, so they still
-render (properly escaped) instead of failing with InvalidJsonb.
-
-Signed-off-by: Yvan Wang <[REDACTED
-
-**File**: `Cargo.lock` (modified, +0/-1)
+**File**: `src/common/datasource/src/compression.rs` (modified, +10/-0)
 ```diff
-@@ -4613,7 +4613,6 @@ dependencies = [
-  "parquet-variant-compute",
-  "parquet-variant-json",
-  "paste",
-- "regex",
-  "serde",
-  "serde_json",
-  "snafu 0.8.6",
-```
-
-**File**: `src/datatypes/Cargo.toml` (modified, +0/-1)
-```diff
-@@ -31,7 +31,6 @@ parquet-variant.workspace = true
- parquet-variant-compute.workspace = true
- parquet-variant-json.workspace = true
- paste.workspace = true
--regex.workspace = true
- serde.workspace = true
- serde_json.workspace = true
- snafu.workspace = true
-```
-
-**File**: `src/datatypes/src/types/json_type.rs` (modified, +112/-107)
-```diff
-@@ -14,12 +14,11 @@
+@@ -16,6 +16,7 @@ use std::fmt::Display;
+ use std::io;
+ use std::str::FromStr;
  
- use std::collections::BTreeMap;
- use std::fmt::{Debug, Display, Formatter};
--use std::sync::{Arc, LazyLock};
-+use std::sync::Arc;
- 
- use arrow::datatypes::DataType as ArrowDataType;
- use arrow_schema::{Field, Fields};
- use common_base::bytes::Bytes;
--use regex::{Captures, Regex};
- use serde::{Deserialize, Serialize};
- 
- use crate::Error;
-@@ -389,16 +388,35 @@ impl Display for JsonType {
- }
- 
- /// Converts a json type value to string
-+///
-+/// The binary jsonb is serialized directly with `serde_json`, so both object keys and
-+/// string values are escaped by `serde_json`. `RawJsonb::to_string()` is deliberately
-+/// avoided, since it falls back to the lossy raw bytes when serialization fails.
-+///
-+/// Some write paths (e.g. `COPY FROM` csv/json/parquet files, or a JSON parameter bound
-+/// as text through the MySQL protocol) currently store the JSON *text* as the column
-+/// bytes instead of binary jsonb, and such data may already be persisted. When the bytes
-+/// are not valid jsonb but are valid JSON text, they are re-encoded as jsonb and then
-+/// serialized the same way, so the output is still escaped by `serde_json`. Anything else
-+/// is reported as an error.
- pub fn jsonb_to_string(val: &[u8]) -> Result<String> {
-     if val.is_empty() {
-         return Ok("".to_string());
-     }
--    match jsonb::from_slice(val) {
--        Ok(jsonb_value) => {
--            let serialized = jsonb_value.to_string();
--            fix_unicode_point(&serialized)
--        }
--        Err(e) => InvalidJsonbSnafu { error: e }.fail(),
-+    match serde_json::to_string(&jsonb::RawJsonb::new(val)) {
-+        Ok(s) => Ok(s),
-+        Err(e) => match jsonb::parse_value_standard_mode(val) {
-+            Ok(json) => serde_json::to_string(&jsonb::RawJsonb::new(&json.to_vec())).map_err(|e| {
-+                InvalidJsonSnafu {
-+                    value: e.to_string(),
-+                }
-+                .build()
-+            }),
-+            Err(_) => InvalidJsonSnafu {
-+                value: e.to_string(),
-+            }
-+            .fail(),
-+        },
-     }
- }
- 
-@@ -409,59 +427,6 @@ pub fn jsonb_to_serde_json(val: &[u8]) -> Result<serde_json::Value> {
-         .map_err(|error| InvalidJsonbSnafu { error }.build())
- }
- 
--/// Normalizes a JSON string by converting Rust-style Unicode escape sequences to JSON-compatible format.
--///
--/// The input is scanned for Rust-style Unicode code
--/// point escapes of the form `\\u{H...}` (a backslash, `u`, an opening brace,
--/// followed by 1–6 hexadecimal digits, and a closing brace). Each such escape is
--/// converted into JSON-compatible UTF‑16 escape sequences:
--///
--/// - For code points in the Basic Multilingual Plane (≤ `0xFFFF`), the escape is
--///   converted to a single JSON `\\uXXXX` sequence with four uppercase hex digits.
--/// - For code points above `0xFFFF` and less than Unicode max code point `0x10FFFF`,
--///   the code point is encoded as a UTF‑16 surrogate pair and emitted as two consecutive
--///   `\\uXXXX` sequences (as JSON format required).
--///
--/// After this normalization, the function returns the normalized string
--fn fix_unicode_point(json: &str) -> Result<String> {
--    static UNICODE_CODE_POINT_PATTERN: LazyLock<Regex> = LazyLock::new(|| {
--        // Match literal "\u{...}" sequences, capturing 1–6 (code point range) hex digits
--        // inside braces.
--        Regex::new(r"\\u\{([0-9a-fA-F]{1,6})}").unwrap_or_else(|e| panic!("{}", e))
--    });
--
--    let v = UNICODE_CODE_POINT_PATTERN.replace_all(json, |caps: &Captures| {
--        // Extract the hex payload (without braces) and parse to a code point.
--        let hex = &caps[1];
--        let Ok(code) = u32::from_str_radix(hex, 16) else {
--            // On parse failure, leave the original escape sequence unchanged.
--            return caps[0].to_string();
--        };
--
--        if code <= 0xFFFF {
--            // Basic Multilingual Plane: JSON can represent this directly as \uXXXX.
--            format!("\\u{:04X}", code)
--        } else if code > 0x10FFFF {
--            // Beyond max Unicode code point
--            caps[0].to_string()
--        } else {
--            // Supplementary planes: JSON needs UTF-16 surrogate pairs.
--            // Convert the code point to a 20-bit value.
--            let code = code - 0x10000;
--
--            // High surrogate: top 10 bits, offset by 0xD800.
--            let high = 0xD800 + ((code >> 10) & 0x3FF);
--
--            // Low surrogate: bottom 10 bits, offset by 0xDC00.
--            let low = 0xDC00 + (code & 0x3FF);
--
--            // Emit two \uXXXX escapes in sequence.
--            format!("\\u{:04X}\\u{:04X}", high, low)
--        }
--    });
--    Ok(v.to_string())
--}
--
- /// Parses a string to a json type value
- pub fn parse_string_to_jsonb(s: &str) -> Result<Vec<u8>> {
-     jsonb::parse_value_standard_mode(s.as_bytes())
-@@ -488,60 +453,100 @@ mod tests {
-         Ok(())
-     }
- 
--    use super::*;
-+    #[test]
-+    fn test_jsonb_to_string_escapes_ob
-```
-
-**File**: `tests/cases/standalone/common/types/json/json.result` (modified, +2/-2)
-```diff
-@@ -99,7 +99,7 @@ SELECT json_to_string(j), t FROM jsons;
- | {"a":null,"foo":"bar"}                                                                                                                                                                                                                                                                                                    | 1970-01-01T00:00:00.009 |
- | [-1]                                                                                                                                                                                                                                                                                                                      | 1970-01-01T00:00:00.010 |
- | {"entities":{"description":{"urls":[{"display_url":"pixiv.net/member.php?id=…","expanded_url":"http://www.pixiv.net/member.php?id=4776","indices":[58,80],"url":"http://t.co/QMLJeFmfMT"},{"display_url":"ask.fm/KATANA77","expanded_url":"http://ask.fm/KATANA77","indices":[95,117],"url":"http://t.co/LU8T7vmU3h"}]}}} | 1970-01-01T00:00:00.011 |
--| {"a":"abc\u2028tom"}                                                                                                                                                                                                                                                                                                      | 1970-01-01T00:00:00.012 |
-+| {"a":"abc tom"}                                                                                                                                                                                                                                                                                                           | 1970-01-01T00:00:00.012 |
- | [null]                                                                                                                                                                                                                                                                                                                    | 1970-01-01T00:00:01     |
- | [true]                                                                                                                                                                                                                                                                                                                    | 1970-01-01T00:00:01.001 |
- | [false]                                                                                                                                                                                                                                                                                                                   | 1970-01-01T00:00:01.002 |
-@@ -113,7 +113,7 @@ SELECT json_to_string(j), t FROM jsons;
- | [-1]                                                                                                                                                                                                                                                                                                                      | 1970-01-01T00:00:01.010 |
- | [-2147483648]                                                                                                                                                                                                                                                                                                             | 1970-01-01T00:00:01.011 |
- | {"entities":{"description":{"urls":[{"display_url":"pixiv.net/member.php?id=…","expanded_url":"http://www.pixiv.net/member.php?id=4776","indices":[58,80],"url":"http://t.co/QMLJeFmfMT"},{"display_url":"ask.fm/KATANA77","expanded_url":"http://ask.fm/KATANA77","indices":[95,117],"url":"http://t.co/LU8T7vmU3h"}]}}} | 1970-01-01T00:00:01.012 |
--| {"a":"abc\u2028tom"}                                                                                                                                                                                                                                                                                                      | 1970-01-01T00:00:01.013 |
-+| {"a":"abc tom"}                                                                                                                                                                                                                                                                                                           | 1970-01-01T00:00:01.013 |
- +---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------+
- 
- --Insert invalid json strings--
-```
-
----
-
-### Incident Patch 2: `4263f5fc` (2026-11-05)
-**Commit Message**: fix(mito): decode cached manifest payloads (#10179)
-
-* test(mito2): cover compressed manifest cache recovery
-
-Signed-off-by: WenyXu <[REDACTED_EMAIL]>
-
-* fix(mito2): decode cached manifest object payloads
-
-Signed-off-by: WenyXu <[REDACTED_EMAIL]>
-
-* fix(mito2): address manifest cache review feedback
-
-Signed-off-by: WenyXu <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: WenyXu <[REDACTED_EMAIL]>
-
-**File**: `src/mito2/src/cache/manifest_cache.rs` (modified, +2/-2)
-```diff
-@@ -237,7 +237,7 @@ impl ManifestCache {
-         join_path(MANIFEST_DIR, key)
-     }
- 
--    /// Gets a manifest file from cache.
-+    /// Gets the encoded object-store payload from cache.
-     /// Returns the file data if found in cache, None otherwise.
-     pub(crate) async fn get_file(&self, key: &str) -> Option<Vec<u8>> {
-         if self.get(key).await.is_none() {
-@@ -259,7 +259,7 @@ impl ManifestCache {
++use async_compression::Level;
+ use async_compression::tokio::bufread::{BzDecoder, GzipDecoder, XzDecoder, ZstdDecoder};
+ use async_compression::tokio::write;
+ use bytes::Bytes;
+@@ -88,6 +89,15 @@ impl CompressionType {
+             Self::Uncompressed => "",
          }
      }
- 
--    /// Puts a manifest file into cache.
-+    /// Caches the object-store payload verbatim, before decompression.
-     pub(crate) async fn put_file(&self, key: String, data: Vec<u8>) {
-         let cache_file_path = self.cache_file_path(&key);
- 
-```
-
-**File**: `src/mito2/src/engine/open_test.rs` (modified, +63/-0)
-```diff
-@@ -1366,3 +1366,66 @@ async fn test_region_hook_on_open() {
-     assert_eq!(hook.closed_count.load(Ordering::Relaxed), 1);
-     assert_eq!(hook.dropped_count.load(Ordering::Relaxed), 0);
++
++    /// Encodes `content` as a gzip stream at level 0, which stores it without compression.
++    pub async fn encode_gzip_stored(content: &[u8]) -> io::Result<Vec<u8>> {
++        let mut buffer = Vec::with_capacity(content.len());
++        let mut encoder = write::GzipEncoder::with_quality(&mut buffer, Level::Precise(0));
++        encoder.write_all(content).await?;
++        encoder.shutdown().await?;
++        Ok(buffer)
++    }
  }
-+
-+#[tokio::test]
-+async fn test_reopen_region_with_compressed_manifest_cache() {
-+    let mut env = TestEnv::new().await;
-+    let engine = env
-+        .create_engine(MitoConfig {
-+            enable_write_cache: true,
-+            compress_manifest: true,
-+            manifest_checkpoint_distance: 1,
-+            ..Default::default()
-+        })
-+        .await;
-+    let region_id = RegionId::new(1, 1);
-+    let request = CreateRequestBuilder::new().build();
-+    let table_dir = request.table_dir.clone();
-+    let schema = rows_schema(&request);
-+    engine
-+        .handle_request(region_id, RegionRequest::Create(request))
-+        .await
-+        .unwrap();
-+    for i in 0..3 {
-+        put_rows(
-+            &engine,
-+            region_id,
-+            Rows {
-+                schema: schema.clone(),
-+                rows: build_rows(i * 3, (i + 1) * 3),
-+            },
-+        )
-+        .await;
-+        flush_region(&engine, region_id, None).await;
-+    }
-+    let region = engine.get_region(region_id).unwrap();
-+    let mut manager = region.manifest_ctx.manifest_manager.write().await;
-+    tokio::time::timeout(
-+        Duration::from_secs(10),
-+        manager.wait_for_pending_checkpoint(),
-+    )
-+    .await
-+    .unwrap();
-+    assert!(manager.checkpointer().last_checkpoint_version() > 0);
-+    drop(manager);
-+    let stream = engine
-+        .scan_to_stream(region_id, ScanRequest::default())
-+        .await
-+        .unwrap();
-+    let expected = RecordBatches::try_collect(stream)
-+        .await
-+        .unwrap()
-+        .pretty_print()
-+        .unwrap();
-+    reopen_region(&engine, region_id, table_dir, true, HashMap::new()).await;
-+    let stream = engine
-+        .scan_to_stream(region_id, ScanRequest::default())
-+        .await
-+        .unwrap();
-+    let actual = RecordBatches::try_collect(stream)
-+        .await
-+        .unwrap()
-+        .pretty_print()
-+        .unwrap();
-+    assert_eq!(expected, actual);
-+}
+ 
+ macro_rules! impl_compression_type {
 ```
 
-**File**: `src/mito2/src/manifest/storage.rs` (modified, +239/-0)
+**File**: `src/mito2/AGENTS.md` (modified, +3/-0)
 ```diff
-@@ -846,4 +846,243 @@ mod tests {
-             .unwrap();
-         assert!(entries.is_empty());
-     }
-+
-+    #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-+    enum CacheSource {
-+        WriteThrough,
-+        RemoteFill,
-+        LegacyDecoded,
-+        Truncated,
-+    }
-+
-+    #[derive(Debug, Clone, Copy)]
-+    enum PayloadKind {
-+        Delta,
-+        Checkpoint { checksum: bool },
-+    }
-+
-+    // Exercise both representations left by older versions, as well as new writes
-+    // and remote fills. Truncation only applies to compression envelopes.
-+    #[rstest::rstest]
-+    #[case::write_through_uncompressed(CacheSource::WriteThrough, CompressionType::Uncompressed)]
-+    #[case::write_through_gzip(CacheSource::WriteThrough, CompressionType::Gzip)]
-+    #[case::write_through_zstd(CacheSource::WriteThrough, CompressionType::Zstd)]
-+    #[case::write_through_xz(CacheSource::WriteThrough, CompressionType::Xz)]
-+    #[case::write_through_bzip2(CacheSource::WriteThrough, CompressionType::Bzip2)]
-+    #[case::remote_fill_uncompressed(CacheSource::RemoteFill, CompressionType::Uncompressed)]
-+    #[case::remote_fill_gzip(CacheSource::RemoteFill, CompressionType::Gzip)]
-+    #[case::remote_fill_zstd(CacheSource::RemoteFill, CompressionType::Zstd)]
-+    #[case::remote_fill_xz(CacheSource::RemoteFill, CompressionType::Xz)]
-+    #[case::remote_fill_bzip2(CacheSource::RemoteFill, CompressionType::Bzip2)]
-+    #[case::legacy_decoded_uncompressed(CacheSource::LegacyDecoded, CompressionType::Uncompressed)]
-+    #[case::legacy_decoded_gzip(CacheSource::LegacyDecoded, CompressionType::Gzip)]
-+    #[case::legacy_decoded_zstd(CacheSource::LegacyDecoded, CompressionType::Zstd)]
-+    #[case::legacy_decoded_xz(CacheSource::LegacyDecoded, CompressionType::Xz)]
-+    #[case::legacy_decoded_bzip2(CacheSource::LegacyDecoded, CompressionType::Bzip2)]
-+    #[case::truncated_gzip(CacheSource::Truncated, CompressionType::Gzip)]
-+    #[case::truncated_zstd(CacheSource::Truncated, CompressionType::Zstd)]
-+    #[case::truncated_xz(CacheSource::Truncated, CompressionType::Xz)]
-+    #[case::truncated_bzip2(CacheSource::Truncated, CompressionType::Bzip2)]
-+    #[tokio::test]
-+    async fn test_manifest_cache_payload(
-+        #[case] source: CacheSource,
-+        #[case] compression: CompressionType,
-+        #[values(PayloadKind::Delta, PayloadKind::Checkpoint { checksum: false }, PayloadKind::Checkpoint { checksum: true })]
-+        payload: PayloadKind,
-+    ) {
-+        use std::sync::atomic::{AtomicUsize, Ordering};
-+
-+        use common_base::readable_size::ReadableSize;
-+        use object_store::layers::mock::MockLayerBuilder;
-+
-+        let remote_dir = create_temp_dir("manifest-cache-remote");
-+        let cache_dir = create_temp_dir("manifest-cache-local");
-+        let remote =
-+            ObjectStore::new(Fs::default().root(remote_dir.path().to_str().unwrap())).unwrap();
-+        let local =
-+            ObjectStore::new(Fs::default().root(cache_dir.path().to_str().unwrap())).unwrap();
-+        let reads = Arc::new(AtomicUsize::new(0));
-+        let observed = reads.clone();
-+        let remote = remote.layer(
-+            MockLayerBuilder::default()
-+                .reader_factory(Arc::new(move |_, _, reader| {
-+                    observed.fetch_add(1, Ordering::Relaxed);
-+                    reader
-+                }))
-+                .build()
-+                .unwrap(),
-+        );
-+        let mut cache = ManifestCache::new(local.clone(), ReadableSize::mb(32), None, true).await;
-+        let mut store = ManifestObjectStore::new(
-+            "region/manifest/",
-+            remote.clone(),
-+            compression,
+@@ -103,6 +103,9 @@ Tests live next to the code as `*_test.rs` (e.g. `src/mito2/src/engine/flush_tes
+ - Sequence numbers are strictly increasing per region; dedup and snapshot reads
+   depend on this. Do not change assignment lightly.
+ - Manifest version is monotonic — never reset or skip it.
++- In regions whose writes require a lease and whose WAL is the object store WAL,
++  each manifest version has one fixed object name and only one writer can create
++  it (`manifest/storage.rs`).
+ - Lock ordering: take the manifest lock before updating `version_control`; the
+   reverse deadlocks against concurrent flush/compaction.
+ - All region I/O runs on tokio workers; never `block_on` inside a worker.
+```
+
+**File**: `src/mito2/src/compaction/compactor.rs` (modified, +1/-0)
+```diff
+@@ -292,6 +292,7 @@ impl CompactionRegionOpener {
+             manifest_manager,
+             RegionRoleState::Leader(RegionLeaderState::Writable),
+             hook,
 +            Default::default(),
-+            (source != CacheSource::RemoteFill).then(|| cache.clone()),
-+        );
-+        let data = br#"{"manifest":"persistent cache payload"}"#;
-+        let key = gen_path(
-+            "region/manifest/",
-+            &if matches!(payload, PayloadKind::Checkpoint { .. }) {
-+                checkpoint_file(3)
-+            } else {
-+                delta_file(3)
-+            },
-+            compression,
-+        );
-+        if matches!(payload, PayloadKind::Checkpoint { .. }) {
-+            store.save_checkpoint(3, data).await.unwrap();
-+        } else {
-+            store.save(3, data, false).await.unwrap();
-+        }
-+        let encoded = remote.read(&key).await.unwrap().to_vec();
-+        if source == CacheSource::LegacyDecoded {
-+            cache.put_file(key.clone(), data.to_vec()).await;
-+        } else if source == CacheSource::Truncated {
-+            cache
-+                .put_file(key.clone(), encoded[..encoded.len() / 2].to_vec())
-+                .await;
-+        }
-+        drop(store);
-+        for iteration in 0..2 {
-+            drop(cache);
-+            cache = ManifestCache::new(local.clone(), ReadableSize::mb(32), None, true).await;
-+            if source != CacheSource::RemoteFill || iteration > 0 {
-+                assert!(
-+                   
+         ));
+ 
+         let file_purger = {
 ```
 
-**File**: `src/mito2/src/manifest/storage/checkpoint.rs` (modified, +26/-21)
+**File**: `src/mito2/src/compaction/scheduler_test.rs` (modified, +2/-0)
 ```diff
-@@ -27,7 +27,7 @@ use crate::error::{
-     CompressObjectSnafu, DecompressObjectSnafu, OpenDalSnafu, Result, SerdeJsonSnafu, Utf8Snafu,
- };
- use crate::manifest::storage::size_tracker::Tracker;
--use crate::manifest::storage::utils::{get_from_cache, put_to_cache, write_and_put_cache};
-+use crate::manifest::storage::utils::{get_from_cache_decoded, write_and_put_cache};
- use crate::manifest::storage::{
-     FALL_BACK_COMPRESS_TYPE, LAST_CHECKPOINT_FILE, checkpoint_checksum, checkpoint_file, gen_path,
-     verify_checksum,
-@@ -102,7 +102,9 @@ impl<T: Tracker> CheckpointStorage<T> {
-         let path = self.checkpoint_file_path(version);
+@@ -2334,6 +2334,7 @@ async fn test_compaction_bypass_in_staging_mode() {
+                 checkpoint_distance: 10,
+                 remove_file_options: Default::default(),
+                 manifest_cache: None,
++                conditional_publication: false,
+             },
+             FormatType::PrimaryKey,
+             false,
+@@ -2345,6 +2346,7 @@ async fn test_compaction_bypass_in_staging_mode() {
+             manager,
+             RegionRoleState::Leader(RegionLeaderState::Staging),
+             None,
++            Default::default(),
+         ))
+     };
  
-         // Try to get from cache first
--        if let Some(data) = get_from_cache(self.manifest_cache.as_ref(), &path).await {
-+        if let Some(data) =
-+            get_from_cache_decoded(self.manifest_cache.as_ref(), &path, self.compress_type).await
-+        {
-             verify_checksum(&data, metadata.checksum)?;
-             self.record_cached_checkpoint_size(version, &path).await;
-             return Ok(Some((version, data)));
-@@ -113,19 +115,21 @@ impl<T: Tracker> CheckpointStorage<T> {
-         let checkpoint_data = match self.object_store.read(&path).await {
-             Ok(checkpoint) => {
-                 let checkpoint_size = checkpoint.len();
--                let decompress_data =
--                    self.compress_type
--                        .decode(checkpoint)
--                        .await
--                        .with_context(|_| DecompressObjectSnafu {
--                            compress_type: self.compress_type,
--                            path: path.clone(),
--                        })?;
-+                let decompress_data = self
-+                    .compress_type
-+                    .decode(checkpoint.clone())
-+                    .await
-+                    .with_context(|_| DecompressObjectSnafu {
-+                        compress_type: self.compress_type,
-+                        path: path.clone(),
-+                    })?;
-                 verify_checksum(&decompress_data, metadata.checksum)?;
-                 // set the checkpoint size
-                 self.size_tracker.record(version, checkpoint_size as u64);
-                 // Add to cache
--                put_to_cache(self.manifest_cache.as_ref(), path, &decompress_data).await;
-+                if let Some(cache) = &self.manifest_cache {
-+                    cache.put_file(path, checkpoint.to_vec()).await;
-+                }
-                 Ok(Some(decompress_data))
-             }
-             Err(e) => {
-@@ -142,8 +146,12 @@ impl<T: Tracker> CheckpointStorage<T> {
-                         );
- 
-                         // Try to get fallback from cache first
--                        if let Some(data) =
--                            get_from_cache(self.manifest_cache.as_ref(), &fall_back_path).await
-+                        if let Some(data) = get_from_cache_decoded(
-+                            self.manifest_cache.as_ref(),
-+                            &fall_back_path,
-+                            FALL_BACK_COMPRESS_TYPE,
-+                        )
-+                        .await
-                         {
-                             verify_checksum(&data, metadata.checksum)?;
-                             self.record_cached_checkpoint_size(version, &fall_back_path)
-@@ -155,7 +163,7 @@ impl<T: Tracker> CheckpointStorage<T> {
-                             Ok(checkpoint) => {
-                                 let checkpoint_size = checkpoint.len();
-                                 let decompress_data = FALL_BACK_COMPRESS_TYPE
--                                    .decode(checkpoint)
-+                                    .decode(checkpoint.clone())
-                                     .await
-                                     .with_context(|_| DecompressObjectSnafu {
-                                         compress_type: FALL_BACK_COMPRESS_TYPE,
-@@ -164,12 +172,9 @@ impl<T: Tracker> CheckpointStorage<T> {
-                                 verify_checksum(&decompress_data, metadata.checksum)?;
-                                 self.size_tracker.record(version, checkpoint_size as u64);
-                                 // Add fallback to cache
--                                put_to_cache(
--                                    self.manifest_cache.as_ref(),
--                                    fall_back_path,
--                                    &decompress_data,
--                                )
--                                .await;
-+                                if let Some(cache) = &self.manifest_cache {
-+                                    cache.put_file(fall_back_path, checkpoint.to_vec()).await;
-+                                }
-                                 Ok(Some(decompress_data))
-                             }
-                             Err(e) if e.kind() == ErrorKind::NotFound => Ok(None),
-@@ -220,7 +225,7 @@ impl<T: Tracker> CheckpointStorage<T> {
-         Ok(Some(che
 ```
 
-**File**: `src/mito2/src/manifest/storage/delta.rs` (modified, +7/-5)
+**File**: `src/mito2/src/engine/object_store_wal_test.rs` (modified, +197/-5)
 ```diff
-@@ -31,7 +31,7 @@ use crate::error::{
- };
- use crate::manifest::storage::size_tracker::Tracker;
- use crate::manifest::storage::utils::{
--    get_from_cache, put_to_cache, sort_manifests, write_and_put_cache,
-+    get_from_cache_decoded, sort_manifests, write_and_put_cache,
- };
- use crate::manifest::storage::{
-     FETCH_MANIFEST_PARALLELISM, delta_file, file_compress_type, file_version, gen_path,
-@@ -206,8 +206,9 @@ impl<T: Tracker> DeltaStorage<T> {
-             let _permit = semaphore.acquire().await.unwrap();
+@@ -17,28 +17,36 @@
+ use std::collections::HashMap;
+ use std::sync::Arc;
+ use std::sync::atomic::Ordering;
++use std::time::{Duration, Instant};
  
-             let cache_key = entry.path();
-+            let compress_type = file_compress_type(entry.name());
-             // Try to get from cache first
--            if let Some(data) = get_from_cache(self.manifest_cache.as_ref(), cache_key).await {
-+            if let Some(data) = get_from_cache_decoded(self.manifest_cache.as_ref(), cache_key, compress_type).await {
-                 let size = entry.metadata().content_length();
-                 if size > 0 {
-                     self.delta_tracker.record(*v, size);
-@@ -221,7 +222,6 @@ impl<T: Tracker> DeltaStorage<T> {
-             }
- 
-             // Fetch from remote object store
--            let compress_type = file_compress_type(entry.name());
-             let bytes = match self.object_store.read(entry.path()).await {
-                 Ok(bytes) => bytes,
-                 Err(error) if error.kind() == ErrorKind::NotFound => {
-@@ -234,15 +234,17 @@ impl<T: Tracker> DeltaStorage<T> {
-             };
-             self.delta_tracker.record(*v, bytes.len() as u64);
-             let data = compress_type
--                .decode(bytes)
-+                .decode(bytes.clone())
-                 .await
-                 .context(DecompressObjectSnafu {
-                     compress_type,
-                     path: entry.path(),
-                 })?;
- 
-             // Add to cache
--            put_to_cache(self.manifest_cache.as_ref(), cache_key.to_string(), &data).await;
-+            if let Some(cache) = &self.manifest_cache {
-+                cache.put_file(cache_key.to_string(), bytes.to_vec()).await;
-+            }
- 
-             Ok((*v, data))
-         });
-```
-
-**File**: `src/mito2/src/manifest/storage/utils.rs` (modified, +29/-21)
-```diff
-@@ -12,6 +12,8 @@
- // See the License for the specific language governing permissions and
- // limitations under the License.
- 
+-use api::v1::Rows;
++use api::v1::region::{StrictWindow, compact_request};
++use api::v1::{ColumnSchema, Rows};
 +use common_datasource::compression::CompressionType;
-+use common_telemetry::debug;
- use object_store::{Entry, ObjectStore};
- use snafu::ResultExt;
- use store_api::ManifestVersion;
-@@ -21,19 +23,29 @@ use crate::error::{OpenDalSnafu, Result};
+ use common_error::ext::ErrorExt;
+ use common_error::status_code::StatusCode;
+ use common_recordbatch::RecordBatches;
+ use common_wal::config::object_store::{ObjectStoreWalConfig, STANDALONE_GENERATION};
+ use common_wal::options::{ObjectStoreWalOptions, WAL_OPTIONS_KEY, WalOptions};
+ use futures::TryStreamExt;
+ use log_store::ObjectStoreLogStore;
++use object_store::ObjectStore;
++use rstest::rstest;
+ use store_api::logstore::LogStore;
+ use store_api::logstore::provider::Provider;
+-use store_api::region_engine::RegionEngine;
++use store_api::region_engine::{RegionEngine, RegionRole};
+ use store_api::region_request::{
+-    PathType, RegionCleanUpRequest, RegionCloseRequest, RegionDropRequest, RegionOpenRequest,
+-    RegionRequest,
++    PathType, RegionCleanUpRequest, RegionCloseRequest, RegionCompactRequest, RegionDropRequest,
++    RegionFlushRequest, RegionOpenRequest, RegionRequest, RegionTruncateRequest,
+ };
+ use store_api::storage::{RegionId, ScanRequest};
  
- const CHUNK_SIZE: usize = 64 * 1024 * 1024; // 64MB
+ use crate::config::MitoConfig;
+ use crate::engine::MitoEngine;
++use crate::manifest::storage::{delta_file, gen_path, manifest_dir};
++use crate::sst::location::region_dir_from_table_dir;
+ use crate::test_util::{
+-    CreateRequestBuilder, TestEnv, build_rows, flush_region, put_rows, reopen_region, rows_schema,
++    CheckpointTaskBlocker, CreateRequestBuilder, TestEnv, build_rows, flush_region, nop_action,
++    put_rows, reopen_region, rows_schema,
+ };
+ use crate::wal::EntryId;
  
--/// Gets a manifest file from cache.
--/// Returns the file data if found in cache, None otherwise.
--pub(crate) async fn get_from_cache(cache: Option<&ManifestCache>, key: &str) -> Option<Vec<u8>> {
-+/// Gets and decodes the object payload cached under `key`.
-+///
-+/// Older remote fills cached decoded content. If decoding fails, discard the
-+/// entry and let the caller refill it from object storage. Remote decode and
-+/// checksum errors are still returned by the caller.
-+pub(crate) async fn get_from_cache_decoded(
-+    cache: Option<&ManifestCache>,
-+    key: &str,
-+    compress_type: CompressionType,
-+) -> Option<Vec<u8>> {
-     let cache = cache?;
--    cache.get_file(key).await
--}
--
--/// Puts a manifest file into cache.
--pub(crate) async fn put_to_cache(cache: Option<&ManifestCache>, key: String, data: &[u8]) {
--    let Some(cache) = cache else {
--        return;
--    };
--    cache.put_file(key, data.to_vec()).await
-+    let raw = cache.get_file(key).await?;
-+    match compress_type.decode(raw.as_slice()).await {
-+        Ok(data) => Some(data),
-+        Err(error) => {
-+            debug!(
-+                "Failed to decode cached manifest {}, removing entry: {}",
-+                key, error
-+            );
-+            cache.remove(key).await;
-+            None
-+        }
+@@ -377,3 +385,187 @@ async fn test_object_store_wal_options_reject_raft_engine_log_store() {
+         .unwrap_err();
+     assert_eq!(StatusCode::InvalidArguments, err.status_code());
+ }
++
++/// Returns a config that starts a checkpoint on every commit.
++fn checkpoint_every_commit_config() -> MitoConfig {
++    MitoConfig {
++        manifest_checkpoint_distance: 1,
++        ..Default::default()
 +    }
- }
- 
- /// Removes a manifest file from cache.
-@@ -44,19 +56,15 @@ pub(crate) async fn remove_from_cache(cache: Option<&ManifestCache>, key: &str)
-     cache.remove(key).await
- }
- 
--/// Writes data to object store and puts it into cache.
-+/// Writes data to object store and caches the same encoded payload.
- pub(crate) async fn write_and_put_cache(
-     object_store: &ObjectStore,
-     cache: Option<&ManifestCache>,
-     path: &str,
-     data: Vec<u8>,
- ) -> Result<()> {
--    // Clone data for cache before writing, only if cache is enabled.
--    let cache_data = if cache.is_some() {
--        Some(data.clone())
--    } else {
--        None
--    };
-+    // Clone only when caching is enabled; retain the owner for the cache write.
-+    let cache_data = cache.map(|cache| (cache, data.clone()));
- 
-     // Write to object store
-     object_store
-@@ -66,8 +74,8 @@ pub(crate) async fn write_and_put_cache(
-         .context(OpenDalSnafu)?;
- 
-     // Put to cache if we cloned the data
--    if let Some(data) = cache_data {
--        put_to_cache(cache, path.to_string(), &data).await;
-+    if let Some((cache, data)) = cache_data {
-+        cache.put_file(path.to_string(), data).await;
-     }
- 
-     Ok(())
++}
++
++/// Creates a region whose writes require a lease. Returns the lease deadline, which the frozen
++/// clock of the lease checks has not reached.
++async fn create_leased_region(
++    env: &mut TestEnv,
++    region_id: RegionId,
++) -> (
++    MitoEngine,
++    Arc<ObjectStoreLogStore>,
++    String,
++    Vec<ColumnSchema>,
++    Instant,
++) {
++    let (engine, log_store) = env
++        .create_engine_with_object_store_wal(checkpoint_every_commit_config(), &wal_config())
++        .await;
++    engine.require_write_lease();
++    engine.freeze_lease_clock(Instant::now());
++    let (table_dir, schema) = create_region(&engine, region_id).await;
++    let deadline = Instant::now() + Duration::from_secs(10);
++    engine
++        .set_region_role_with_lease(region_id, RegionRole::Leader, Instant::now(), deadline)
++        .unwrap();
++    (engine, log_store, table_dir, schema, deadline)
++}
++
++async fn count_ssts(store: &ObjectStore, region_dir: &str) -> usize {
++    let entries = store.list(region_dir).await.unwrap();
++    entries
++        .iter()
++        .filter(|e| e.name().ends_with(".parquet"))
++        .count()
++}
++
++#[rstest]
++#[case::flush(RegionRequest::Flush(RegionFlushRequest::default()), 1)]
++#[case::compaction(
++    RegionRequest::Compact(RegionCompactRequest {
++        options: compact_request::Options::StrictWindow(StrictWindow { window_seconds: 3600 }),
++        ..Default::default()
++    }),
++    1
++)]
++#[case::truncate(RegionRequest::Truncate(RegionTruncateRequest::All), 0)]
++#[tokio::test]
++async fn test_stale_commit_on_deleted_delta_name_conflicts(
++    #[case] commit: RegionRequest,
++    #[case] new_ssts: usize,
++) {
++    common_telemetry::init_default_ut_logging();
++    // The creation is version 0 and the flushes below are versions 1 and 2.
++    const VERSION: u64 = 3;
++    let (blocker, layer) = CheckpointTaskBlocker::block_delta_write(VERSION);
++    let mut env = TestEnv::with_prefix("stale-manifest-commit")
++        .await
++        .with_mock_layer(layer);
++    let region_id = RegionId::new(1, 1);
++    let (old_leader, log_store, table_dir, schema, deadline) =
++        create_leased_region(&mut env, region_id).await;
++    let rows = |start| Rows {
++        schema: schema.clone(),
++        rows: build_rows(start, start + 3),
++    };
++    for start in [0, 3] {
++        put_rows(&old_leader, region_id, rows(start)).await;
++        flush_region(&old_leader, region_id, None).await;
++    }
++    put_rows(&old_leader, region_id, rows(6)).await;
++
++    let region = old_leader.get_region(region_id).unwrap();
++    let (manifest, checkpoint) = {
++        let mut manager = region.manifest_ctx.manifest_manager.write().await;
++        manager.wait_for_pending_checkpoint().await;
++        (
++            manager.manifest(),
++            manager.checkpointer().last_checkpoint_version
 ```
 
-**File**: `src/mito2/src/manifest/tests/checkpoint.rs` (modified, +69/-0)
+**File**: `src/mito2/src/engine/region_hook.rs` (modified, +3/-3)
 ```diff
-@@ -1072,3 +1072,72 @@ impl oio::List for ZeroSizeLister {
-         Ok(Some(oio::Entry::new(&path, builder.build())))
+@@ -120,8 +120,8 @@
+ //! immediately after SST files are written but **before** the manifest is committed.
+ //!
+ //! `on_manifest_updated` is funneled through [`ManifestContext::update_locked`],
+-//! the sole caller of the low-level [`RegionManifestManager::update`], which
+-//! packages each successful write into a [`PendingManifestHook`]. The caller
++//! which calls the low-level [`RegionManifestManager::update_with_verification`]
++//! and packages each successful write into a [`PendingManifestHook`]. The caller
+ //! owns the write lock, drops it, and *then* fires the receipt — the hook must
+ //! never run under the lock. [`ManifestContext::update_manifest`] is the common
+ //! case: it acquires the lock, delegates to `update_locked`, and fires the
+@@ -148,7 +148,7 @@
+ //! [`on_region_dropped`]: RegionHook::on_region_dropped
+ //! [`on_region_files_removed`]: RegionHook::on_region_files_removed
+ //! [`on_region_gc`]: RegionHook::on_region_gc
+-//! [`RegionManifestManager::update`]: crate::manifest::manager::RegionManifestManager::update
++//! [`RegionManifestManager::update_with_verification`]: crate::manifest::manager::RegionManifestManager::update_with_verification
+ //! [`ManifestContext::update_locked`]: crate::region::ManifestContext::update_locked
+ //! [`ManifestContext::update_manifest`]: crate::region::ManifestContext::update_manifest
+ 
+```
+
+**File**: `src/mito2/src/error.rs` (modified, +36/-4)
+```diff
+@@ -147,6 +147,25 @@ pub enum Error {
+         location: Location,
+     },
+ 
++    #[snafu(display("Manifest version {version} conflicts in {manifest_dir}: {reason}"))]
++    ManifestVersionConflict {
++        version: ManifestVersion,
++        manifest_dir: String,
++        reason: String,
++        #[snafu(implicit)]
++        location: Location,
++    },
++
++    #[snafu(display(
++        "Manifest checkpoint {version} in {manifest_dir} was removed after it was listed"
++    ))]
++    ManifestCheckpointVanished {
++        version: ManifestVersion,
++        manifest_dir: String,
++        #[snafu(implicit)]
++        location: Location,
++    },
++
+     #[snafu(display("Failed to serialize manifest, region_id: {}", region_id))]
+     SerializeManifest {
+         region_id: RegionId,
+@@ -1561,9 +1580,11 @@ impl ErrorExt for Error {
+             MultiRegionCompactionResource { .. } => StatusCode::RuntimeResourcesExhausted,
+             SstWriteMemoryExceeded { .. } => StatusCode::RuntimeResourcesExhausted,
+             DataTypeMismatch { source, .. } => source.status_code(),
+-            OpenDal { .. } | ManifestDeltaNotFound { .. } | ReadParquet { .. } => {
+-                StatusCode::StorageUnavailable
+-            }
++            OpenDal { .. }
++            | ManifestDeltaNotFound { .. }
++            | ManifestVersionConflict { .. }
++            | ManifestCheckpointVanished { .. }
++            | ReadParquet { .. } => StatusCode::StorageUnavailable,
+             WriteWal { source, .. }
+             | ReadWal { source, .. }
+             | DeleteWal { source, .. }
+@@ -1784,7 +1805,9 @@ impl ErrorExt for Error {
+             | RegionBusy { .. }
+             | ManualCompactionAlreadyRunning { .. }
+             | FlushableRegionState { .. }
+-            | ManifestDeltaNotFound { .. } => RetryHint::Retryable,
++            | ManifestDeltaNotFound { .. }
++            | ManifestVersionConflict { .. }
++            | ManifestCheckpointVanished { .. } => RetryHint::Retryable,
+ 
+             OpenDal { error, .. }
+             | DeleteSsts { error, .. }
+@@ -2002,5 +2025,14 @@ mod tests {
+         // This can be raised while applying an edit after its manifest file was saved.
+         let error = RegionMetadataNotFoundSnafu {}.build();
+         assert!(error.may_have_persisted_manifest_update());
++
++        let error = ManifestVersionConflictSnafu {
++            version: 1u64,
++            manifest_dir: "manifest/",
++            reason: "test",
++        }
++        .build();
++        assert!(error.may_have_persisted_manifest_update());
++        assert!(error.retry_hint().is_retryable());
      }
  }
+```
+
+**File**: `src/mito2/src/manifest/manager.rs` (modified, +40/-17)
+```diff
+@@ -55,6 +55,9 @@ pub struct RegionManifestOptions {
+     pub remove_file_options: RemoveFileOptions,
+     /// Optional cache for manifest files.
+     pub manifest_cache: Option<ManifestCache>,
++    /// Whether two writers can race for a version, so that deltas are published by conditional
++    /// create under a fixed name and recovery starts from the highest listed checkpoint.
++    pub(crate) conditional_publication: bool,
+ }
+ 
+ impl RegionManifestOptions {
+@@ -71,8 +74,16 @@ impl RegionManifestOptions {
+                 enable_gc: config.gc.enable,
+             },
+             manifest_cache: None,
++            conditional_publication: false,
+         }
+     }
 +
-+#[rstest::rstest]
-+#[case(CompressionType::Uncompressed)]
-+#[case(CompressionType::Gzip)]
-+#[case(CompressionType::Zstd)]
-+#[tokio::test]
-+async fn manifest_cache_write_through_survives_reopen(#[case] compression: CompressionType) {
-+    use common_base::readable_size::ReadableSize;
-+    use common_test_util::temp_dir::create_temp_dir;
-+    use object_store::ObjectStore;
-+    use object_store::services::Fs;
-+
-+    use crate::cache::manifest_cache::ManifestCache;
-+    use crate::manifest::manager::RegionManifestOptions;
-+    use crate::sst::FormatType;
-+
-+    let remote_dir = create_temp_dir("manifest-manager-remote");
-+    let cache_dir = create_temp_dir("manifest-manager-cache");
-+    let remote = ObjectStore::new(Fs::default().root(remote_dir.path().to_str().unwrap())).unwrap();
-+    let local = ObjectStore::new(Fs::default().root(cache_dir.path().to_str().unwrap())).unwrap();
-+    let cache = ManifestCache::new(local.clone(), ReadableSize::mb(32), None, true).await;
-+    // Use a relative prefix, matching production keys and the recovered index.
-+    let mut options = RegionManifestOptions {
-+        manifest_dir: "region/".to_string(),
-+        object_store: remote,
-+        compress_type: compression,
-+        checkpoint_distance: 3,
-+        remove_file_options: Default::default(),
-+        manifest_cache: Some(cache.clone()),
-+    };
-+    let mut writer = RegionManifestManager::new(
-+        Arc::new(basic_region_metadata()),
-+        0,
-+        options.clone(),
-+        FormatType::PrimaryKey,
-+        false,
-+        &Default::default(),
-+    )
-+    .await
-+    .unwrap();
-+    for _ in 0..7 {
-+        writer.update(nop_action(), false).await.unwrap();
-+        wait_for_manifest_checkpoint(&writer).await;
++    /// Sets whether deltas are published by conditional create and recovery starts from the
++    /// highest listed checkpoint.
++    pub(crate) fn with_conditional_publication(mut self, enabled: bool) -> Self {
++        self.conditional_publication = enabled;
++        self
 +    }
-+    let key = gen_path(
-+        "region/",
-+        &checkpoint_file(writer.checkpointer().last_checkpoint_version()),
-+        compression,
-+    );
-+    assert!(cache.get(&key).await.is_some());
-+    let version = writer.manifest().manifest_version;
-+    let usage = writer.manifest_usage();
-+    drop(writer);
-+    drop(cache);
-+    // Release the final old cache handle before recovering a new index.
-+    drop(options.manifest_cache.take());
-+    let cache = ManifestCache::new(local, ReadableSize::mb(32), None, true).await;
-+    assert!(
-+        cache.get(&key).await.is_some(),
-+        "cache recovery missed {key}"
-+    );
-+    options.manifest_cache = Some(cache);
-+    let reopened = RegionManifestManager::open(options, &Default::default())
-+        .await
-+        .unwrap()
-+        .unwrap();
-+    assert_eq!(version, reopened.manifest().manifest_version);
-+    assert_eq!(usage, reopened.manifest_usage());
-+}
+ }
+ 
+ /// Options for updating `removed_files` field in [RegionManifest].
+@@ -181,7 +192,8 @@ impl RegionManifestManager {
+             stats.total_manifest_size.clone(),
+             stats.metric().cloned(),
+             options.manifest_cache.clone(),
+-        );
++        )
++        .with_conditional_publication(options.conditional_publication)?;
+         let manifest_version = stats.manifest_version.clone();
+ 
+         info!(
+@@ -269,7 +281,8 @@ impl RegionManifestManager {
+             stats.total_manifest_size.clone(),
+             stats.metric().cloned(),
+             options.manifest_cache.clone(),
+-        );
++        )
++        .with_conditional_publication(options.conditional_publication)?;
+         let manifest_version = stats.manifest_version.clone();
+ 
+         // recover from storage
+@@ -556,32 +569,30 @@ impl RegionManifestManager {
+     }
+ 
+     /// Updates the manifest. Returns the current manifest version number.
++    ///
++    /// The caller has no Leader deadline to show that its commit returned in time, so a normal
++    /// commit under conditional publication is always verified and starts no checkpoint.
+     pub async fn update(
+         &mut self,
+         action_list: RegionMetaActionList,
+         is_staging: bool,
+     ) -> Result<ManifestVersion> {
+-        self.update_inner(action_list, is_staging, !is_staging)
++        self.update_with_verification(action_list, is_staging, !is_staging, || true)
+             .await
+     }
+ 
+-    /// Updates the normal manifest without starting a checkpoint.
++    /// Updates the manifest. Returns the current manifest version number.
+     ///
+-    /// This is only used while a leader is downgrading. The final flush still
+-    /// publishes its manifest edit, but must not start cleanup after the
+-    /// downgrade checkpoint barrier.
+-    pub(crate) async fn update_normal_without_checkpoint(
+-        &mut self,
+-        action_list: RegionMetaActionList,
+-    ) -> Result<ManifestVersion> {
+-        self.update_inner(action_list, false, false).await
+-    }
+-
+-    async fn update_inner(
++    /// `allow_checkpoint` tells whether a normal commit may start a checkpoint. `must_verify` is
++    /// evaluated after the save returns, for a normal commit under conditional publication. If it
++    /// returns true, the commit may have landed on a name that checkpoint cleanup freed, so it
++    /// only applies when LIST finds no checkpoint that covers it, and it starts no checkpoint.
++    pub(crate) async fn update_with_verification(
+         &mut self,
+         action_list: RegionMetaActionList,
+         is_staging: bool,
+-        allow_checkpoint: bool,
++        mut allow_checkpoint: bool,
++        must_verify: impl FnOnce() -> bool,
+     ) -> Result<ManifestVersion> {
+         let _t = MANIFEST_OP_ELAPSED
+             .with_label_values(&["update"])
+@@ -594,10 +605,22 @@ impl RegionManifestManager {
+             }
+         );
+ 
+-        let version = self.increase_version();
++        let conditional = self.store.is_conditional_publication();
++        let version = if conditional {
++            self.last_version() + 1
++        } else {
++            self.increase_version()
++        };
+         self.store
+             .save(version, &action_list.encode()?, is_staging)
+             .await?;
++        if conditional {
++            if !is_staging && must_verify() {
++                self.store.ensure_version_not_checkpointed(version).await?;
++                allow_checkpoint = false;
++            }
++            self.set_version(version);
++        }
+ 
+         // For a staging region, the manifest is initially inherited from the previous manifest(i.e., `self.manifest`).
+         // When the staging manifest becomes available, it will be used to construct the new manifest.
 ```
 
 ---
 
-### Incident Patch 3: `8e4aa4c8` (2026-11-05)
-**Commit Message**: fix(grafana): correct autopilot counters and show baseline reasons (#10160)
+### Incident Patch 2: `402e4a97` (2026-11-09)
+**Commit Message**: fix(time): avoid i32 overflow when converting an out-of-range date (#10299)
 
-* fix(grafana): correct autopilot counters and show baseline reasons
+Signed-off-by: Arpit Jain <[REDACTED_EMAIL]>
+Co-authored-by: Claude <[REDACTED_EMAIL]>
 
-Signed-off-by: WenyXu <[REDACTED_EMAIL]>
-
-* fix(grafana): retain baseline totals when details are unavailable
-
-Signed-off-by: WenyXu <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: WenyXu <[REDACTED_EMAIL]>
-
-**File**: `grafana/dashboards/metrics/cluster/dashboard.json` (modified, +18/-5)
+**File**: `src/common/time/src/date.rs` (modified, +10/-2)
 ```diff
-@@ -13962,7 +13962,7 @@
-                 "uid": "${metrics}"
-               },
-               "editorMode": "code",
--              "expr": "sum by (result) (\n  changes(greptime_region_balancer_actions_total[$__rate_interval])\n)",
-+              "expr": "sum by (result) (\n  increase(greptime_region_balancer_actions_total[$__rate_interval])\n)",
-               "hide": false,
-               "instant": false,
-               "legendFormat": "{{result}}",
-@@ -14064,7 +14064,7 @@
-                 "uid": "${metrics}"
-               },
-               "editorMode": "code",
--              "expr": "sum by (gate, reason) (changes(greptime_region_balancer_gate_stop_total[$__rate_interval]))",
-+              "expr": "sum by (gate, reason) (increase(greptime_region_balancer_gate_stop_total[$__rate_interval]))",
-               "hide": false,
-               "instant": false,
-               "legendFormat": "{{gate}} / {{reason}}",
-@@ -14399,7 +14399,7 @@
-                 "uid": "${metrics}"
-               },
-               "editorMode": "code",
--              "expr": "sum by (result) (changes(greptime_auto_repartition_actions_total[$__rate_interval]))",
-+              "expr": "sum by (result) (increase(greptime_auto_repartition_actions_total[$__rate_interval]))",
-               "hide": false,
-               "instant": false,
-               "legendFormat": "{{result}}",
-@@ -14415,7 +14415,7 @@
-             "type": "prometheus",
-             "uid": "${metrics}"
-           },
--          "description": "Auto repartition gate stop count by gate and reason",
-+          "description": "Repartition gate stop increments. Baseline failures show detailed reasons when available; otherwise the aggregate invalid_baseline series is retained. Fallback is matched per source before aggregation to avoid double counting across mixed versions.",
-           "fieldConfig": {
-             "defaults": {
-               "color": {
-@@ -14501,12 +14501,25 @@
-                 "uid": "${metrics}"
-               },
-               "editorMode": "code",
--              "expr": "sum by (gate, reason) (changes(greptime_auto_repartition_gate_stop_total[$__rate_interval]))",
-+              "expr": "sum by (gate, reason) (\n  increase(greptime_auto_repartition_gate_stop_total{reason!=\"invalid_baseline\"}[$__rate_interval])\n  or\n  (increase(greptime_auto_repartition_gate_stop_total{reason=\"invalid_baseline\"}[$__rate_interval])\n    unless ignoring (gate, reason)\n    increase(greptime_auto_repartition_invalid_baseline_total[$__rate_interval]))\n)",
-               "hide": false,
-               "instant": false,
-               "legendFormat": "{{gate}} / {{reason}}",
-               "range": true,
-               "refId": "A"
-+            },
-+            {
-+              "datasource": {
-+                "type": "prometheus",
-+                "uid": "${metrics}"
-+              },
-+              "editorMode": "code",
-+              "expr": "sum by (reason) (increase(greptime_auto_repartition_invalid_baseline_total[$__rate_interval]))",
-+              "hide": false,
-+              "instant": false,
-+              "legendFormat": "baseline / {{reason}}",
-+              "range": true,
-+              "refId": "B"
+@@ -55,7 +55,7 @@ impl From<NaiveDate> for Date {
+ impl Display for Date {
+     /// [Date] is formatted according to ISO-8601 standard.
+     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+-        if let Some(abs_date) = NaiveDate::from_num_days_from_ce_opt(UNIX_EPOCH_FROM_CE + self.0) {
++        if let Some(abs_date) = self.to_chrono_date() {
+             write!(f, "{}", abs_date.format("%F"))
+         } else {
+             write!(f, "Date({})", self.0)
+@@ -93,7 +93,9 @@ impl Date {
+     }
+ 
+     pub fn to_chrono_date(&self) -> Option<NaiveDate> {
+-        NaiveDate::from_num_days_from_ce_opt(UNIX_EPOCH_FROM_CE + self.0)
++        UNIX_EPOCH_FROM_CE
++            .checked_add(self.0)
++            .and_then(NaiveDate::from_num_days_from_ce_opt)
+     }
+ 
+     /// Format Date for given format and timezone.
+@@ -217,6 +219,12 @@ mod tests {
+         assert_eq!("1970-02-12", Date::new(42).to_string());
+     }
+ 
++    #[test]
++    fn test_to_chrono_date_out_of_range() {
++        assert_eq!(None, Date::new(i32::MAX).to_chrono_date());
++        assert_eq!("Date(2147483647)", Date::new(i32::MAX).to_string());
++    }
++
+     #[test]
+     pub fn test_date_parse() {
+         assert_eq!(
+```
+
+---
+
+### Incident Patch 3: `8da533c3` (2026-11-09)
+**Commit Message**: fix(mito2): keep rows written during staging in the WAL (#10253)
+
+* fix(mito2): keep rows written during staging in the WAL
+
+A flush during staging committed its SSTs to the staging manifest, then
+dropped the memtable and released the WAL. If staging did not end
+successfully those rows were gone. A flush that committed after staging
+had ended lost its rows even though staging succeeded.
+
+Staging regions no longer flush. They are skipped by memory-pressure,
+periodic and region-limit flushes, and their writes are rejected instead
+of queued at twice the region limit or when the node's staging memtables
+reach half of the engine's flush limit. A manual or repartition flush on
+a staging region with data gets a retryable error; the migration
+pre-flush and the WAL prune flush reply success without flushing. Closing
+a staging region leaves staging first, so skip-WAL rows are flushed to
+the normal manifest.
+
+Signed-off-by: jeremyhi <[REDACTED_EMAIL]>
+
+* fix(mito2): keep accounting and closing staging regions during staged edits
+
+Signed-off-by: jeremyhi <[REDACTED_EMAIL]>
+
+* fix(mito2): track staged edits without relying on the partition info
+
+Signed-off-by: jeremyhi <[REDACTED_EMAIL]>
+
+* tes
+
+**File**: `src/mito2/AGENTS.md` (modified, +3/-0)
+```diff
+@@ -126,6 +126,9 @@ Tests live next to the code as `*_test.rs` (e.g. `src/mito2/src/engine/flush_tes
+ - In flat batches, equal `__primary_key` dictionary keys imply the same series, but
+   not the reverse: `wrap_pk_binary_to_dict` gives every row its own key. Compare key
+   bytes when grouping rows by series.
++- Staging regions never flush: a flush would move rows into the staging manifest and
++  release their WAL, losing them if staging does not end successfully. Every flush
++  trigger in `worker/handle_flush.rs` must skip them, and `handle_close` leaves staging first.
+ 
+ ## Maintenance contract
+ 
+```
+
+**File**: `src/mito2/src/engine/partition_filter_test.rs` (modified, +42/-31)
+```diff
+@@ -20,13 +20,15 @@ use datatypes::arrow::array::AsArray;
+ use datatypes::value::Value;
+ use partition::expr::{Operand, col};
+ use partition::function::IcebergHash;
+-use store_api::region_engine::RegionEngine;
++use store_api::region_engine::{RegionEngine, RemapManifestsRequest};
+ use store_api::region_request::{
+-    EnterStagingRequest, RegionFlushRequest, RegionRequest, StagingPartitionDirective,
++    ApplyStagingManifestRequest, EnterStagingRequest, RegionFlushRequest, RegionRequest,
++    StagingPartitionDirective,
+ };
+ use store_api::storage::{RegionId, ScanRequest};
+ 
+ use crate::config::MitoConfig;
++use crate::engine::MitoEngine;
+ use crate::test_util::{CreateRequestBuilder, TestEnv, build_rows, put_rows, rows_schema};
+ 
+ /// Helper to create a partition expression for testing.
+@@ -39,6 +41,30 @@ fn range_expr_string(col_name: &str, start: f64, end: f64) -> String {
+         .unwrap()
+ }
+ 
++/// Ends staging the way repartition does, importing the region's own files.
++async fn apply_staging(engine: &MitoEngine, region_id: RegionId, partition_expr: String) {
++    let result = engine
++        .remap_manifests(RemapManifestsRequest {
++            region_id,
++            input_regions: vec![region_id],
++            region_mapping: [(region_id, vec![region_id])].into_iter().collect(),
++            new_partition_exprs: [(region_id, partition_expr.clone())].into_iter().collect(),
++        })
++        .await
++        .unwrap();
++    engine
++        .handle_request(
++            region_id,
++            RegionRequest::ApplyStagingManifest(ApplyStagingManifestRequest {
++                partition_expr,
++                central_region_id: region_id,
++                manifest_path: result.manifest_paths[&region_id].clone(),
++            }),
++        )
++        .await
++        .unwrap();
++}
++
+ #[tokio::test]
+ async fn test_partition_filter_basic() {
+     test_partition_filter_basic_with_format(false).await;
+@@ -51,7 +77,7 @@ async fn test_partition_filter_basic() {
+ /// 1. Creates a region with partition expr `tag_0 >= "0"` (covers all data)
+ /// 2. Writes data (tag_0 = "0"..="9") and flushes - SST has old partition expr
+ /// 3. Enters staging mode with partition expr `tag_0 >= "5"` (narrower)
+-/// 4. Writes more data and flushes in staging mode
++/// 4. Writes more data in staging mode
+ /// 5. Exits staging mode - region now has new partition expr
+ /// 6. Scans all data - old SST data not matching new expr should be filtered
+ async fn test_partition_filter_basic_with_format(flat_format: bool) {
+@@ -118,16 +144,7 @@ async fn test_partition_filter_basic_with_format(flat_format: bool) {
+     };
+     put_rows(&engine, region_id, rows_data).await;
+ 
+-    // Flush in staging mode
+-    engine
+-        .handle_request(
+-            region_id,
+-            RegionRequest::Flush(RegionFlushRequest::default()),
+-        )
+-        .await
+-        .unwrap();
+-
+-    // Scan data in staging mode - should only see initial 5 rows (staging SST not visible)
++    // Scan data in staging mode - rows written in staging stay readable in the memtable
+     let projection = Some(vec![1]);
+     let request = ScanRequest {
+         projection,
+@@ -138,20 +155,16 @@ async fn test_partition_filter_basic_with_format(flat_format: bool) {
+     let batches = RecordBatches::try_collect(stream).await.unwrap();
+     let total_rows: usize = batches.iter().map(|rb| rb.num_rows()).sum();
+     assert_eq!(
+-        total_rows, 5,
+-        "Should see 5 rows before exiting staging mode"
++        total_rows, 11,
++        "Should see 11 rows before exiting staging mode"
+     );
+ 
+     // Exit staging mode
+-    use store_api::region_engine::SettableRegionRoleState;
+-    engine
+-        .set_region_role_state_gracefully(region_id, SettableRegionRoleState::Leader)
+-        .await
+-        .unwrap();
++    apply_staging(&engine, region_id, new_partition_expr).await;
+ 
+     // Scan after exiting staging - the old SST (tag_0 = "0".."4") should have
+     // rows filtered by partition expr (tag_0 >= "5"), which means none of them pass.
+-    // But the staging SST (tag_0 = "5".."10") satisfies the partition expr.
++    // But the memtable rows (tag_0 = "5".."10") satisfy the partition expr.
+     let projection = Some(vec![1]);
+     let request = ScanRequest {
+         projection,
+@@ -163,10 +176,10 @@ async fn test_partition_filter_basic_with_format(flat_format: bool) {
+     let total_rows: usize = batches.iter().map(|rb| rb.num_rows()).sum();
+     // After exit:
+     // - Old SST (rows 0-4): partition expr is "tag_0 >= 5", so these are filtered out
+-    // - Staging SST (rows 5-10): These satisfy partition expr, so they're visible
++    // - Memtable (rows 5-10): These satisfy partition expr, so they're visible
+     assert_eq!(
+         total_rows, 6,
+-        "Should see 6 rows after exiting staging (rows 5-10 from staging SST), flat_format: {}",
++        "Should see 6 rows after exiting staging (rows 5-10 from the memtable), flat_format: {}",
+         flat_format
+     )
+```
+
+**File**: `src/mito2/src/engine/staging_test.rs` (modified, +1014/-91)
+```diff
+@@ -14,16 +14,20 @@
+ 
+ //! Integration tests for staging state functionality.
+ 
++use std::collections::HashMap;
+ use std::sync::Arc;
++use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
+ use std::time::Duration;
+ use std::{assert_matches, fs};
+ 
+-use api::v1::{ArrowIpc, Rows};
++use api::v1::{ArrowIpc, ColumnSchema, Rows};
++use async_trait::async_trait;
+ use common_error::ext::{ErrorExt, RetryHint};
+ use common_error::status_code::StatusCode;
+ use common_function::utils::partition_expr_version;
+ use common_grpc::flight;
+ use common_recordbatch::RecordBatches;
++use common_time::util::current_time_millis;
+ use datatypes::arrow::array::{ArrayRef, Float64Array, StringArray, TimestampMillisecondArray};
+ use datatypes::arrow::record_batch::RecordBatch;
+ use datatypes::value::Value;
+@@ -33,28 +37,36 @@ use object_store::layers::mock::{
+     MockLayerBuilder, OpDelete, Result as MockResult, Write, Writer,
+ };
+ use partition::expr::{PartitionExpr, col};
++use store_api::mito_engine_options::WRITE_BUFFER_SIZE_KEY;
+ use store_api::region_engine::{
+-    RegionEngine, RemapManifestsRequest, SetRegionRoleStateResponse, SettableRegionRoleState,
++    RegionEngine, RegionRole, RemapManifestsRequest, SetRegionRoleStateResponse,
++    SettableRegionRoleState,
+ };
+ use store_api::region_request::{
+     ApplyStagingManifestRequest, EnterStagingRequest, RegionAlterRequest, RegionBulkInsertsRequest,
+-    RegionFlushRequest, RegionPutRequest, RegionRequest, RegionTruncateRequest,
+-    StagingPartitionDirective,
++    RegionCloseRequest, RegionFlushReason, RegionFlushRequest, RegionPutRequest, RegionRequest,
++    RegionTruncateRequest, StagingPartitionDirective,
+ };
+-use store_api::storage::{RegionId, ScanRequest};
++use store_api::storage::{FileId, RegionId, ScanRequest};
+ 
+ use crate::config::MitoConfig;
+-use crate::engine::listener::NotifyEnterStagingResultListener;
++use crate::engine::MitoEngine;
++use crate::engine::listener::{EventListener, FlushListener, NotifyEnterStagingResultListener};
+ use crate::error::Error;
++use crate::flush::WriteBufferManager;
+ use crate::manifest::action::{
+     RegionChange, RegionEdit, RegionMetaAction, RegionMetaActionList, RegionPartitionExprChange,
+ };
+-use crate::region::{RegionLeaderState, RegionRoleState, parse_partition_expr};
+-use crate::request::WorkerRequest;
++use crate::region::{MitoRegionRef, RegionLeaderState, RegionRoleState};
++use crate::request::{RegionEditRequest, WorkerRequest};
+ use crate::sst::FormatType;
++use crate::sst::file::FileMeta;
+ use crate::test_util::{
+-    CheckpointTaskBlocker, CreateRequestBuilder, TestEnv, build_rows, put_rows, rows_schema,
++    CheckpointTaskBlocker, CreateRequestBuilder, MockWriteBufferManager, TestEnv, build_rows,
++    flush_region, put_rows, reopen_region, rows_schema,
+ };
++use crate::time_provider::mock::MockTimeProvider;
++use crate::worker::MAX_INITIAL_CHECK_DELAY_SECS;
+ 
+ fn range_expr(col_name: &str, start: i64, end: i64) -> PartitionExpr {
+     col(col_name)
+@@ -436,13 +448,6 @@ async fn test_staging_write_partition_expr_version_with_format(flat_format: bool
+         .await
+         .unwrap();
+     assert_eq!(result.affected_rows, 3);
+-    engine
+-        .handle_request(
+-            region_id,
+-            RegionRequest::Flush(RegionFlushRequest::default()),
+-        )
+-        .await
+-        .unwrap();
+ 
+     let result = engine
+         .remap_manifests(RemapManifestsRequest {
+@@ -551,9 +556,6 @@ async fn test_staging_manifest_directory_with_format(flat_format: bool) {
+     let region_id = RegionId::new(1024, 0);
+     let request = CreateRequestBuilder::new().build();
+ 
+-    // Get column schemas before consuming the request
+-    let column_schemas = rows_schema(&request);
+-
+     // Check manifest files after region creation (before staging mode)
+     // Create region
+     engine
+@@ -637,22 +639,6 @@ async fn test_staging_manifest_directory_with_format(flat_format: bool) {
+         Error::StagingPartitionExprMismatch { .. }
+     );
+ 
+-    // Put some data and flush in staging mode
+-    let rows_data = Rows {
+-        schema: column_schemas.clone(),
+-        rows: build_rows(0, 3),
+-    };
+-    put_rows(&engine, region_id, rows_data).await;
+-
+-    // Force flush to generate manifest files in staging mode
+-    engine
+-        .handle_request(
+-            region_id,
+-            RegionRequest::Flush(RegionFlushRequest::default()),
+-        )
+-        .await
+-        .unwrap();
+-
+     // Check that manifest files are in staging directory
+     let staging_manifest_dir = format!("{}/staging/manifest", region_dir);
+     assert!(
+@@ -708,7 +694,7 @@ async fn test_staging_exit_success_with_manifests_with_format(flat_format: bool)
+         .await
+         .unwrap();
+ 
+-    // Add some data and flush in staging mode to generate staging manifests
++    // This data is flushed when entering staging mode.
+     let rows_data = Rows {
+         schema: column_schemas.clone(),
+         rows: build_rows(0, 3),
+@@ -728,55 +714,55 @@ async fn test_sta
+```
+
+**File**: `src/mito2/src/flush.rs` (modified, +12/-23)
+```diff
+@@ -60,7 +60,7 @@ use crate::read::flat_dedup::{FlatDedupIterator, FlatLastNonNull, FlatLastRow};
+ use crate::read::flat_merge::FlatMergeIterator;
+ use crate::region::options::{IndexOptions, MergeMode, RegionOptions};
+ use crate::region::version::{VersionControlData, VersionControlRef, VersionRef};
+-use crate::region::{ManifestContextRef, RegionLeaderState, RegionRoleState, parse_partition_expr};
++use crate::region::{ManifestContextRef, RegionLeaderState, parse_partition_expr};
+ use crate::request::{
+     BackgroundNotify, DdlRequest, FlushFailed, FlushFinished, OnFailure, OptionOutputTx, OutputTx,
+     SenderBulkRequest, SenderDdlRequest, SenderWriteRequest, WorkerRequest, WorkerRequestWithTime,
+@@ -281,8 +281,6 @@ pub(crate) struct RegionFlushTask {
+     pub(crate) index_options: IndexOptions,
+     /// Semaphore to control flush concurrency.
+     pub(crate) flush_semaphore: Arc<Semaphore>,
+-    /// Whether the region is in staging mode.
+-    pub(crate) is_staging: bool,
+     /// Partition expression of the region.
+     ///
+     /// This is used to generate the file meta.
+@@ -412,7 +410,6 @@ impl RegionFlushTask {
+                     _timer: timer,
+                     edit,
+                     memtables_to_remove,
+-                    is_staging: self.is_staging,
+                 };
+                 WorkerRequest::Background {
+                     region_id: self.region_id,
+@@ -537,10 +534,7 @@ impl RegionFlushTask {
+             flushed_sequence: Some(version_data.committed_sequence),
+             committed_sequence: None,
+         };
+-        info!(
+-            "Applying {edit:?} to region {}, is_staging: {}",
+-            self.region_id, self.is_staging
+-        );
++        info!("Applying {edit:?} to region {}", self.region_id);
+ 
+         let action_list = RegionMetaActionList::with_action(RegionMetaAction::Edit(edit.clone()));
+ 
+@@ -553,17 +547,11 @@ impl RegionFlushTask {
+         let expected_state = if matches!(self.reason, FlushReason::Downgrading) {
+             RegionLeaderState::Downgrading
+         } else {
+-            // Check if region is in staging mode
+-            let current_state = self.manifest_ctx.current_state();
+-            if current_state == RegionRoleState::Leader(RegionLeaderState::Staging) {
+-                RegionLeaderState::Staging
+-            } else {
+-                RegionLeaderState::Writable
+-            }
++            RegionLeaderState::Writable
+         };
+         let manifest_version = match self
+             .manifest_ctx
+-            .update_manifest(expected_state, action_list, self.is_staging)
++            .update_manifest(expected_state, action_list, false)
+             .await
+         {
+             Ok(manifest_version) => {
+@@ -584,9 +572,8 @@ impl RegionFlushTask {
              }
-           ],
-           "title": "Auto Repartition Gate Stops",
+         };
+         info!(
+-            "Successfully update manifest version to {manifest_version}, region: {}, is_staging: {}, reason: {}",
++            "Successfully update manifest version to {manifest_version}, region: {}, reason: {}",
+             self.region_id,
+-            self.is_staging,
+             self.reason.as_str()
+         );
+ 
+@@ -1507,6 +1494,13 @@ impl FlushScheduler {
+         })
+     }
+ 
++    /// Returns true if the region has a close-time flush.
++    pub(crate) fn has_close_time_flush(&self, region_id: RegionId) -> bool {
++        self.region_status
++            .get(&region_id)
++            .is_some_and(|status| status.closing)
++    }
++
+     /// Returns true if the region has pending DDLs or a close-time flush.
+     pub(crate) fn has_pending_ddls(&self, region_id: RegionId) -> bool {
+         self.region_status
+@@ -1713,7 +1707,6 @@ mod tests {
+             manifest_ctx,
+             index_options: IndexOptions::default(),
+             flush_semaphore: Arc::new(Semaphore::new(2)),
+-            is_staging: false,
+             partition_expr: None,
+             durability_barrier: DurabilityBarrier::noop(),
+         }
+@@ -1864,7 +1857,6 @@ mod tests {
+                 .await,
+             index_options: IndexOptions::default(),
+             flush_semaphore: Arc::new(Semaphore::new(2)),
+-            is_staging: false,
+             partition_expr: None,
+             durability_barrier: DurabilityBarrier::noop(),
+         };
+@@ -1950,7 +1942,6 @@ mod tests {
+                     committed_sequence: None,
+                 },
+                 memtables_to_remove: smallvec![],
+-                is_staging: false,
+             }),
+         };
+ 
+@@ -2166,7 +2157,6 @@ mod tests {
+                 manifest_ctx: manifest_ctx.clone(),
+                 index_options: IndexOptions::default(),
+                 flush_semaphore: Arc::new(Semaphore::new(2)),
+-                is_staging: false,
+                 partition_expr: None,
+                 durability_barrier: DurabilityBarrier::noop(),
+             })
+@@ -2473,7 +2463,6 @@ mod tests {
+                 manifest_ctx: manifest_ctx.clone(),
+                 index_options: IndexOptions::default(),
+                 f
 ```
 
-**File**: `grafana/dashboards/metrics/cluster/dashboard.md` (modified, +10/-4)
+**File**: `src/mito2/src/region.rs` (modified, +35/-25)
 ```diff
-@@ -241,14 +241,20 @@ ORDER BY data_size DESC;` | `piechart` | Distribution of leader regions and data
- | Title | Query | Type | Description | Datasource | Unit | Legend Format |
- | --- | --- | --- | --- | --- | --- | --- |
- | Region Balancer Actions | `sum by (result) (
--  changes(greptime_region_balancer_actions_total[$__rate_interval])
-+  increase(greptime_region_balancer_actions_total[$__rate_interval])
- )` | `timeseries` | Region balancer action count | `prometheus` | `short` | `{{result}}` |
--| Region Balancer Gate Stops | `sum by (gate, reason) (changes(greptime_region_balancer_gate_stop_total[$__rate_interval]))` | `timeseries` | Region balancer gate stop count by gate and reason | `prometheus` | `short` | `{{gate}} / {{reason}}` |
-+| Region Balancer Gate Stops | `sum by (gate, reason) (increase(greptime_region_balancer_gate_stop_total[$__rate_interval]))` | `timeseries` | Region balancer gate stop count by gate and reason | `prometheus` | `short` | `{{gate}} / {{reason}}` |
- | Region Balancer Datanodes | `sum by (state) (greptime_region_balancer_datanodes)` | `stat` | Region balancer datanode count by state | `prometheus` | `short` | `{{state}}` |
- | Region Balancer Regions | `sum by (state) (greptime_region_balancer_regions)` | `stat` | Region balancer region count by state | `prometheus` | `short` | `{{state}}` |
- | Region Balancer Datanode Stability | `sum by (state) (greptime_region_balancer_datanode_stability)` | `stat` | Region balancer datanode stability statistics by state | `prometheus` | `binBps` | `{{state}}` |
--| Auto Repartition Actions | `sum by (result) (changes(greptime_auto_repartition_actions_total[$__rate_interval]))` | `timeseries` | Auto repartition action count by result | `prometheus` | `short` | `{{result}}` |
--| Auto Repartition Gate Stops | `sum by (gate, reason) (changes(greptime_auto_repartition_gate_stop_total[$__rate_interval]))` | `timeseries` | Auto repartition gate stop count by gate and reason | `prometheus` | `short` | `{{gate}} / {{reason}}` |
-+| Auto Repartition Actions | `sum by (result) (increase(greptime_auto_repartition_actions_total[$__rate_interval]))` | `timeseries` | Auto repartition action count by result | `prometheus` | `short` | `{{result}}` |
-+| Auto Repartition Gate Stops | `sum by (gate, reason) (
-+  increase(greptime_auto_repartition_gate_stop_total{reason!="invalid_baseline"}[$__rate_interval])
-+  or
-+  (increase(greptime_auto_repartition_gate_stop_total{reason="invalid_baseline"}[$__rate_interval])
-+    unless ignoring (gate, reason)
-+    increase(greptime_auto_repartition_invalid_baseline_total[$__rate_interval]))
-+)`<br/>`sum by (reason) (increase(greptime_auto_repartition_invalid_baseline_total[$__rate_interval]))` | `timeseries` | Repartition gate stop increments. Baseline failures show detailed reasons when available; otherwise the aggregate invalid_baseline series is retained. Fallback is matched per source before aggregation to avoid double counting across mixed versions. | `prometheus` | `short` | `{{gate}} / {{reason}}` |
- | Auto Repartition Sampling P99 | `histogram_quantile(0.99, sum by (le, stage) (rate(greptime_auto_repartition_sampling_elapsed_bucket[$__rate_interval])))` | `timeseries` | Auto repartition sampling elapsed time by stage | `prometheus` | `s` | `{{stage}}` |
- | Auto Repartition Executor P99 | `histogram_quantile(0.99, sum by (le, stage) (rate(greptime_auto_repartition_executor_elapsed_bucket[$__rate_interval])))` | `timeseries` | Auto repartition executor elapsed time by stage | `prometheus` | `s` | `{{stage}}` |
- # Object Store
-```
-
-**File**: `grafana/dashboards/metrics/cluster/dashboard.yaml` (modified, +17/-5)
-```diff
-@@ -1904,7 +1904,7 @@ groups:
-           queries:
-             - expr: |-
-                 sum by (result) (
--                  changes(greptime_region_balancer_actions_total[$__rate_interval])
-+                  increase(greptime_region_balancer_actions_total[$__rate_interval])
-                 )
-               datasource:
-                 type: prometheus
-@@ -1915,7 +1915,7 @@ groups:
-           description: Region balancer gate stop count by gate and reason
-           unit: short
-           queries:
--            - expr: sum by (gate, reason) (changes(greptime_region_balancer_gate_stop_total[$__rate_interval]))
-+            - expr: sum by (gate, reason) (increase(greptime_region_balancer_gate_stop_total[$__rate_interval]))
-               datasource:
-                 type: prometheus
-                 uid: ${metrics}
-@@ -1955,21 +1955,33 @@ groups:
-           description: Auto repartition action count by result
-           unit: short
-           queries:
--            - expr: sum by (result) (changes(greptime_auto_repartition_actions_total[$__rate_interval]))
-+            - expr: sum by (result) (increase(greptime_auto_repartition_actions_total[$__rate_interval]))
-               datasource:
-                 type: prometheus
-                 uid: ${metrics}
-               legendFormat: '{{result}}'
-         - title: Auto Repartition Gate Stops
-           type: timeseries
--          description: Auto repartition gate stop count by gate and reason
-+          description: Repartition gate stop increments. Baseline failures show detailed reasons when available; otherwise the aggregate invalid_baseline series is retained. Fallback is matched per source before aggregation to avoid double counting across mixed versions.
-           unit: short
-           queries:
--            - expr: sum by (gate, reason) (changes(greptime_auto_repartition_gate_stop_total[$__rate_interval]))
-+            - expr: |-
-+                sum by (gate, reason) (
-+                  increase(greptime_auto_repartition_gate_stop_total{reason!="invalid_baseline"}[$__rate_interval])
-+                  or
-+                  (increase(greptime_auto_repartition_gate_stop_total{reason="invalid_baseline"}[$__rate_interval])
-+                    unless ignoring (gate, reason)
-+                    increase(greptime_auto_repartition_invalid_baseline_total[$__rate_interval]))
+@@ -96,7 +96,7 @@ impl RegionUsage {
+ pub enum RegionLeaderState {
+     /// The region is opened and is writable.
+     Writable,
+-    /// The region is in staging mode - writable but no checkpoint/compaction.
++    /// The region is in staging mode - writable but no checkpoint/compaction/flush.
+     Staging,
+     /// The region is entering staging mode. - write requests will be stalled.
+     EnteringStaging,
+@@ -407,6 +407,17 @@ impl MitoRegion {
+         self.manifest_ctx.state.load() == RegionRoleState::Leader(RegionLeaderState::Staging)
+     }
+ 
++    /// Returns whether the region is in staging mode, counting a staged edit in progress.
++    pub(crate) fn is_staging_or_staged_edit(&self) -> bool {
++        match self.manifest_ctx.state.load() {
++            RegionRoleState::Leader(RegionLeaderState::Staging) => true,
++            RegionRoleState::Leader(RegionLeaderState::Editing) => {
++                self.manifest_ctx.staging_partition_info().is_some()
++            }
++            _ => false,
++        }
++    }
++
+     /// Returns whether the region is entering staging mode.
+     pub(crate) fn is_enter_staging(&self) -> bool {
+         self.manifest_ctx.state.load()
+@@ -527,6 +538,29 @@ impl MitoRegion {
+         )
+     }
+ 
++    /// Leaves staging without committing it, abandoning a staged edit in progress.
++    ///
++    /// You should call this method in the worker loop, which is what restores the state of an
++    /// edit, and only when [Self::is_staging_or_staged_edit] holds.
++    pub(crate) fn abort_staging(&self) {
++        let aborted = self
++            .manifest_ctx
++            .state
++            .fetch_update(|state| {
++                matches!(
++                    state,
++                    RegionRoleState::Leader(
++                        RegionLeaderState::Staging | RegionLeaderState::Editing
++                    )
 +                )
-               datasource:
-                 type: prometheus
-                 uid: ${metrics}
-               legendFormat: '{{gate}} / {{reason}}'
-+            - expr: sum by (reason) (increase(greptime_auto_repartition_invalid_baseline_total[$__rate_interval]))
-+              datasource:
-+                type: prometheus
-+                uid: ${metrics}
-+              legendFormat: baseline / {{reason}}
-         - title: Auto Repartition Sampling P99
-           type: timeseries
-           description: Auto repartition sampling elapsed time by stage
++                .then_some(RegionRoleState::Leader(RegionLeaderState::Writable))
++            })
++            .is_ok();
++        if aborted {
++            self.manifest_ctx.clear_staging_partition_info();
++        }
++    }
++
+     /// Sets the region role state gracefully. This acquires the manifest write lock.
+     pub(crate) async fn set_role_state_gracefully(
+         &self,
+@@ -1142,30 +1176,6 @@ impl MitoRegion {
+         Ok(Some(pending))
+     }
+ 
+-    /// Returns the partition expression string for this region.
+-    ///
+-    /// If the region is currently in staging state, this returns the partition expression held in
+-    /// the staging partition field. Otherwise, it returns the partition expression from the primary
+-    /// region metadata (current committed version).
+-    pub fn maybe_staging_partition_expr_str(&self) -> Option<String> {
+-        let is_staging = self.is_staging();
+-        if is_staging {
+-            let staging_partition_info = self.manifest_ctx.staging_partition_info();
+-            if staging_partition_info.is_none() {
+-                warn!(
+-                    "Staging partition expr is none for region {} in staging state",
+-                    self.region_id
+-                );
+-            }
+-            staging_partition_info
+-                .as_ref()
+-                .and_then(|info| info.partition_expr().map(ToString::to_string))
+-        } else {
+-            let version = self.version();
+-            version.metadata.partition_expr.clone()
+-        }
+-    }
+-
+     pub fn expected_partition_expr_version(&self) -> u64 {
+         if self.is_staging() {
+             self.manifest_ctx
 ```
 
-**File**: `grafana/dashboards/metrics/standalone/dashboard.json` (modified, +18/-5)
+**File**: `src/mito2/src/request.rs` (modified, +10/-2)
 ```diff
-@@ -13962,7 +13962,7 @@
-                 "uid": "${metrics}"
-               },
-               "editorMode": "code",
--              "expr": "sum by (result) (\n  changes(greptime_region_balancer_actions_total[$__rate_interval])\n)",
-+              "expr": "sum by (result) (\n  increase(greptime_region_balancer_actions_total[$__rate_interval])\n)",
-               "hide": false,
-               "instant": false,
-               "legendFormat": "{{result}}",
-@@ -14064,7 +14064,7 @@
-                 "uid": "${metrics}"
-               },
-               "editorMode": "code",
--              "expr": "sum by (gate, reason) (changes(greptime_region_balancer_gate_stop_total[$__rate_interval]))",
-+              "expr": "sum by (gate, reason) (increase(greptime_region_balancer_gate_stop_total[$__rate_interval]))",
-               "hide": false,
-               "instant": false,
-               "legendFormat": "{{gate}} / {{reason}}",
-@@ -14399,7 +14399,7 @@
-                 "uid": "${metrics}"
-               },
-               "editorMode": "code",
--              "expr": "sum by (result) (changes(greptime_auto_repartition_actions_total[$__rate_interval]))",
-+              "expr": "sum by (result) (increase(greptime_auto_repartition_actions_total[$__rate_interval]))",
-               "hide": false,
-               "instant": false,
-               "legendFormat": "{{result}}",
-@@ -14415,7 +14415,7 @@
-             "type": "prometheus",
-             "uid": "${metrics}"
-           },
--          "description": "Auto repartition gate stop count by gate and reason",
-+          "description": "Repartition gate stop increments. Baseline failures show detailed reasons when available; otherwise the aggregate invalid_baseline series is retained. Fallback is matched per source before aggregation to avoid double counting across mixed versions.",
-           "fieldConfig": {
-             "defaults": {
-               "color": {
-@@ -14501,12 +14501,25 @@
-                 "uid": "${metrics}"
-               },
-               "editorMode": "code",
--              "expr": "sum by (gate, reason) (changes(greptime_auto_repartition_gate_stop_total[$__rate_interval]))",
-+              "expr": "sum by (gate, reason) (\n  increase(greptime_auto_repartition_gate_stop_total{reason!=\"invalid_baseline\"}[$__rate_interval])\n  or\n  (increase(greptime_auto_repartition_gate_stop_total{reason=\"invalid_baseline\"}[$__rate_interval])\n    unless ignoring (gate, reason)\n    increase(greptime_auto_repartition_invalid_baseline_total[$__rate_interval]))\n)",
-               "hide": false,
-               "instant": false,
-               "legendFormat": "{{gate}} / {{reason}}",
-               "range": true,
-               "refId": "A"
-+            },
-+            {
-+              "datasource": {
-+                "type": "prometheus",
-+                "uid": "${metrics}"
-+              },
-+              "editorMode": "code",
-+              "expr": "sum by (reason) (increase(greptime_auto_repartition_invalid_baseline_total[$__rate_interval]))",
-+              "hide": false,
-+              "instant": false,
-+              "legendFormat": "baseline / {{reason}}",
-+              "range": true,
-+              "refId": "B"
-             }
-           ],
-           "title": "Auto Repartition Gate Stops",
+@@ -1152,8 +1152,6 @@ pub(crate) struct FlushFinished {
+     pub(crate) edit: RegionEdit,
+     /// Memtables to remove.
+     pub(crate) memtables_to_remove: SmallVec<[MemtableId; 2]>,
+-    /// Whether the region is in staging mode.
+-    pub(crate) is_staging: bool,
+ }
+ 
+ impl FlushFinished {
+@@ -1372,6 +1370,9 @@ pub(crate) struct RegionEditRequest {
+     pub(crate) preload_sst_cache: bool,
+     /// The waiters that are waiting for this region edit's result.
+     pub(crate) waiters: Waiters,
++    /// The partition expression of the staging this edit belongs to, if any.
++    /// The edit must not run unless the region is staging for that expression.
++    pub(crate) staging_partition_expr: Option<String>,
+ }
+ 
+ impl RegionEditRequest {
+@@ -1386,8 +1387,15 @@ impl RegionEditRequest {
+             edit,
+             preload_sst_cache,
+             waiters: Waiters::one(waiter),
++            staging_partition_expr: None,
+         }
+     }
++
++    /// Binds the edit to the staging for `partition_expr`.
++    pub(crate) fn for_staging(mut self, partition_expr: String) -> Self {
++        self.staging_partition_expr = Some(partition_expr);
++        self
++    }
+ }
+ 
+ /// Notifies the regin the result of editing region.
 ```
 
-**File**: `grafana/dashboards/metrics/standalone/dashboard.md` (modified, +10/-4)
+**File**: `src/mito2/src/worker.rs` (modified, +9/-0)
 ```diff
-@@ -241,14 +241,20 @@ ORDER BY data_size DESC;` | `piechart` | Distribution of leader regions and data
- | Title | Query | Type | Description | Datasource | Unit | Legend Format |
- | --- | --- | --- | --- | --- | --- | --- |
- | Region Balancer Actions | `sum by (result) (
--  changes(greptime_region_balancer_actions_total[$__rate_interval])
-+  increase(greptime_region_balancer_actions_total[$__rate_interval])
- )` | `timeseries` | Region balancer action count | `prometheus` | `short` | `{{result}}` |
--| Region Balancer Gate Stops | `sum by (gate, reason) (changes(greptime_region_balancer_gate_stop_total[$__rate_interval]))` | `timeseries` | Region balancer gate stop count by gate and reason | `prometheus` | `short` | `{{gate}} / {{reason}}` |
-+| Region Balancer Gate Stops | `sum by (gate, reason) (increase(greptime_region_balancer_gate_stop_total[$__rate_interval]))` | `timeseries` | Region balancer gate stop count by gate and reason | `prometheus` | `short` | `{{gate}} / {{reason}}` |
- | Region Balancer Datanodes | `sum by (state) (greptime_region_balancer_datanodes)` | `stat` | Region balancer datanode count by state | `prometheus` | `short` | `{{state}}` |
- | Region Balancer Regions | `sum by (state) (greptime_region_balancer_regions)` | `stat` | Region balancer region count by state | `prometheus` | `short` | `{{state}}` |
- | Region Balancer Datanode Stability | `sum by (state) (greptime_region_balancer_datanode_stability)` | `stat` | Region balancer datanode stability statistics by state | `prometheus` | `binBps` | `{{state}}` |
--| Auto Repartition Actions | `sum by (result) (changes(greptime_auto_repartition_actions_total[$__rate_interval]))` | `timeseries` | Auto repartition action count by result | `prometheus` | `short` | `{{result}}` |
--| Auto Repartition Gate Stops | `sum by (gate, reason) (changes(greptime_auto_repartition_gate_stop_total[$__rate_interval]))` | `timeseries` | Auto repartition gate stop count by gate and reason | `prometheus` | `short` | `{{gate}} / {{reason}}` |
-+| Auto Repartition Actions | `sum by (result) (increase(greptime_auto_repartition_actions_total[$__rate_interval]))` | `timeseries` | Auto repartition action count by result | `prometheus` | `short` | `{{result}}` |
-+| Auto Repartition Gate Stops | `sum by (gate, reason) (
-+  increase(greptime_auto_repartition_gate_stop_total{reason!="invalid_baseline"}[$__rate_interval])
-+  or
-+  (increase(greptime_auto_repartition_gate_stop_total{reason="invalid_baseline"}[$__rate_interval])
-+    unless ignoring (gate, reason)
-+    increase(greptime_auto_repartition_invalid_baseline_total[$__rate_interval]))
-+)`<br/>`sum by (reason) (increase(greptime_auto_repartition_invalid_baseline_total[$__rate_interval]))` | `timeseries` | Repartition gate stop increments. Baseline failures show detailed reasons when available; otherwise the aggregate invalid_baseline series is retained. Fallback is matched per source before aggregation to avoid double counting across mixed versions. | `prometheus` | `short` | `{{gate}} / {{reason}}` |
- | Auto Repartition Sampling P99 | `histogram_quantile(0.99, sum by (le, stage) (rate(greptime_auto_repartition_sampling_elapsed_bucket[$__rate_interval])))` | `timeseries` | Auto repartition sampling elapsed time by stage | `prometheus` | `s` | `{{stage}}` |
- | Auto Repartition Executor P99 | `histogram_quantile(0.99, sum by (le, stage) (rate(greptime_auto_repartition_executor_elapsed_bucket[$__rate_interval])))` | `timeseries` | Auto repartition executor elapsed time by stage | `prometheus` | `s` | `{{stage}}` |
- # Object Store
+@@ -93,6 +93,7 @@ use crate::sst::index::puffin_manager::PuffinManagerFactory;
+ use crate::temp_file_sweeper;
+ use crate::time_provider::{StdTimeProvider, TimeProviderRef};
+ use crate::wal::Wal;
++use crate::worker::handle_flush::StagingRegionsRef;
+ use crate::worker::handle_manifest::RegionEditQueues;
+ 
+ /// Identifier for a worker.
+@@ -258,6 +259,7 @@ impl WorkerGroup {
+         let sweep_limiter = (config.gc.max_concurrent_gc_job > 0)
+             .then(|| Arc::new(Semaphore::new(config.gc.max_concurrent_gc_job)));
+         let node_lease = Arc::new(NodeLease::default());
++        let staging_regions = StagingRegionsRef::default();
+ 
+         let workers = (0..config.num_workers)
+             .map(|id| {
+@@ -290,6 +292,7 @@ impl WorkerGroup {
+                     #[cfg(feature = "hdfs-object-store")]
+                     sweep_limiter: sweep_limiter.clone(),
+                     node_lease: node_lease.clone(),
++                    staging_regions: staging_regions.clone(),
+                 }
+                 .start()
+             })
+@@ -529,6 +532,7 @@ impl WorkerGroup {
+         let sweep_limiter = (config.gc.max_concurrent_gc_job > 0)
+             .then(|| Arc::new(Semaphore::new(config.gc.max_concurrent_gc_job)));
+         let node_lease = Arc::new(NodeLease::default());
++        let staging_regions = StagingRegionsRef::default();
+         let workers = (0..config.num_workers)
+             .map(|id| {
+                 WorkerStarter {
+@@ -560,6 +564,7 @@ impl WorkerGroup {
+                     #[cfg(feature = "hdfs-object-store")]
+                     sweep_limiter: sweep_limiter.clone(),
+                     node_lease: node_lease.clone(),
++                    staging_regions: staging_regions.clone(),
+                 }
+                 .start()
+             })
+@@ -677,6 +682,7 @@ struct WorkerStarter<S> {
+     /// no concurrent GC job.
+     sweep_limiter: Option<Arc<Semaphore>>,
+     node_lease: Arc<NodeLease>,
++    staging_regions: StagingRegionsRef,
+ }
+ 
+ impl<S: LogStore> WorkerStarter<S> {
+@@ -782,6 +788,7 @@ impl<S: LogStore> WorkerStarter<S> {
+             #[cfg(feature = "hdfs-object-store")]
+             sweep_limiter: self.sweep_limiter,
+             node_lease: self.node_lease,
++            staging_regions: self.staging_regions,
+         };
+         let handle = common_runtime::spawn_global(async move {
+             worker_thread.run().await;
+@@ -1122,6 +1129,8 @@ struct RegionWorkerLoop<S> {
+     /// no concurrent GC job.
+     sweep_limiter: Option<Arc<Semaphore>>,
+     node_lease: Arc<NodeLease>,
++    /// Staging regions of this node that have received writes.
++    staging_regions: StagingRegionsRef,
+ }
+ 
+ impl<S: LogStore> RegionWorkerLoop<S> {
 ```
 
-**File**: `grafana/dashboards/metrics/standalone/dashboard.yaml` (modified, +17/-5)
+**File**: `src/mito2/src/worker/handle_apply_staging.rs` (modified, +2/-1)
 ```diff
-@@ -1904,7 +1904,7 @@ groups:
-           queries:
-             - expr: |-
-                 sum by (result) (
--                  changes(greptime_region_balancer_actions_total[$__rate_interval])
-+                  increase(greptime_region_balancer_actions_total[$__rate_interval])
-                 )
-               datasource:
-                 type: prometheus
-@@ -1915,7 +1915,7 @@ groups:
-           description: Region balancer gate stop count by gate and reason
-           unit: short
-           queries:
--            - expr: sum by (gate, reason) (changes(greptime_region_balancer_gate_stop_total[$__rate_interval]))
-+            - expr: sum by (gate, reason) (increase(greptime_region_balancer_gate_stop_total[$__rate_interval]))
-               datasource:
-                 type: prometheus
-                 uid: ${metrics}
-@@ -1955,21 +1955,33 @@ groups:
-           description: Auto repartition action count by result
-           unit: short
-           queries:
--            - expr: sum by (result) (changes(greptime_auto_repartition_actions_total[$__rate_interval]))
-+            - expr: sum by (result) (increase(greptime_auto_repartition_actions_total[$__rate_interval]))
-               datasource:
-                 type: prometheus
-                 uid: ${metrics}
-               legendFormat: '{{result}}'
-         - title: Auto Repartition Gate Stops
-           type: timeseries
--          description: Auto repartition gate stop count by gate and reason
-+          description: Repartition gate stop increments. Baseline failures show detailed reasons when available; otherwise the aggregate invalid_baseline series is retained. Fallback is matched per source before aggregation to avoid double counting across mixed versions.
-           unit: short
-           queries:
--            - expr: sum by (gate, reason) (changes(greptime_auto_repartition_gate_stop_total[$__rate_interval]))
-+            - expr: |-
-+                sum by (gate, reason) (
-+                  increase(greptime_auto_repartition_gate_stop_total{reason!="invalid_baseline"}[$__rate_interval])
-+                  or
-+                  (increase(greptime_auto_repartition_gate_stop_total{reason="invalid_baseline"}[$__rate_interval])
-+                    unless ignoring (gate, reason)
-+                    increase(greptime_auto_repartition_invalid_baseline_total[$__rate_interval]))
-+                )
-               datasource:
-                 type: prometheus
-                 uid: ${metrics}
-               legendFormat: '{{gate}} / {{reason}}'
-+            - expr: sum by (reason) (increase(greptime_auto_repartition_invalid_baseline_total[$__rate_interval]))
-+              datasource:
-+                type: prometheus
-+                uid: ${metrics}
-+              legendFormat: baseline / {{reason}}
-         - title: Auto Repartition Sampling P99
-           type: timeseries
-           description: Auto repartition sampling elapsed time by stage
+@@ -140,7 +140,8 @@ impl<S: LogStore> RegionWorkerLoop<S> {
+                         region_id, edit,
+                         // we don't need to preload sst cache during repartition, as it may cause extra network overhead.
+                         false, tx,
+-                    ),
++                    )
++                    .for_staging(request.partition_expr),
+                 )))
+                 .await;
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #10194** (2026-11-05): docs: tighten README facts and move quick start up (@killme2008)
-- **PR #10190** (closed): feat: update dashboard to v0.14.4 (@sunchanglong)
-- **PR #10187** (2026-11-05): ci: compare GreptimeDB File and S3 in observability benchmarks (@WenyXu)
-- **PR #10186** (2026-11-05): feat: update dashboard to v0.14.3 (@sunchanglong)
-- **PR #10184** (2026-11-05): docs: add demo link (@sunchanglong)
-- **PR #10182** (closed): fix(common-recordbatch): prune SQL UInt64 predicates in SST manifest scans (@WenyXu)
+- **PR #10299** (2026-11-09): fix(time): avoid i32 overflow when converting an out-of-range date (@arpitjain099)
+- **PR #10272** (2026-11-09): fix(promql): bound scatter time filter expression depth (@evenyag)
+- **PR #10270** (2026-11-09): feat: update dashboard to v0.14.5 (@sunchanglong)
+- **PR #10269** (2026-11-09): feat(log-store): add a read-only object store WAL reader (@WenyXu)
+- **PR #10261** (closed): fix(query): keep PromQL scatter time filters within expression depth (@ump45nose)
+- **PR #10260** (closed): docs(query): state the real reason a CTE does not offer the native PromQL route (@discord9)
 
 ---
 
@@ -2765,3 +2876,43 @@ Signed-off-by: WenyXu <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. mito2): publish manifest deltas by conditional create under a lease (#10234)
+
+**RULE**:
+When implementing operations in `src/common/datasource/src/compression.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GreptimeTeam/greptimedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `50a2c4d3`: mito2): publish manifest deltas by conditional create under a lease (#10234). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/common/datasource/src/compression.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+use async_compression::Level;
+
+    /// Encodes `content` as a gzip stream at level 0, which stores it without compression.
+    pub async fn encode_gzip_stored(content: &[u8]) -> io::Result<Vec<u8>> {
+        let mut buffer = Vec::with_capacity(content.len());
+        let mut encoder = write::GzipEncoder::with_quality(&mut buffer, Level::Precise(0));
+        encoder.write_all(content).await?;
+        encoder.shutdown().await?;
+        Ok(buffer)
+    }
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `50a2c4d3` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/electron-electron-learnings.md`  
 > **Source**: github ([https://github.com/electron/electron](https://github.com/electron/electron))  
-> **Source Version**: `9ec6bc44`  
+> **Source Version**: `ef2710fa`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T22:25:09.848Z  
+> **Timestamp**: 2026-11-09T04:49:36.743Z  
 > **Learning ID**: `learn-github-electron-electron`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/electron-electron-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/electron/electron](https://github.com/electron/electron))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T22:25:08.271Z  
+> **Harvest Timestamp**: 2026-11-09T04:49:36.735Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: :electron: Build cross-platform desktop apps with JavaScript, HTML, and CSS
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 123788 stars
+- **Stars / Engagement**: 123828 stars
 
 ---
 
@@ -327,15 +327,16 @@ export default sharedTexture;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #55632** (2026-11-05): **fix: honor hasShadow: false and focusable for windows in app shims**
-  *Symptoms*: Backport of #55606  See that PR for details.   Notes: Fixed `hasShadow: false` and `focusable` being ignored in macOS app shims.
+- **Issue #55656** (2026-11-06): **fix: limit webRequest redirects across loader restarts to avoid crashes**
+  *Symptoms*: Backport of #55623  See that PR for details.   Notes: Fixed renderer crashes caused by unbounded `webRequest` redirect loops.
   **Post-Mortem & Fix Analysis**:
-  > **Release Notes Persisted**  > Fixed `hasShadow: false` and `focusable` being ignored in macOS app shims.
+  > gn check failure @ https://github.com/electron/electron/actions/runs/42263998915/job/128053983878?pr=55656 looks like it's picking up the wrong image? https://github.com/electron/build-images/actions/runs/39684341789/job/119523409722 indicates the cached headers are for Node 22.23.3 ("Found in cache @ /opt/hostedtoolcache/node/22.23.3/x64") but the image installed Node 22.23.4.
+  > Since nothing else is failing in 45-x-y I'm guessing it's a hiccup :man_shrugging: and re-running
 
-- **Issue #55628** (2026-11-05): **build: update PGO profiles**
-  *Symptoms*: Updates the PGO profile state files to the profiles generated and uploaded by [this workflow run](https://github.com/electron/electron/actions/runs/42078374917).  Notes: none
+- **Issue #55655** (2026-11-06): **fix: limit webRequest redirects across loader restarts to avoid crashes**
+  *Symptoms*: Backport of #55623  See that PR for details.   Notes: Fixed renderer crashes caused by unbounded `webRequest` redirect loops.
   **Post-Mortem & Fix Analysis**:
-  > **No Release Notes**
+  > **Release Notes Persisted**  > Fixed renderer crashes caused by unbounded `webRequest` redirect loops.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -352,527 +353,390 @@ export default sharedTexture;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `622e4ea9` (2026-11-05)
-**Commit Message**: fix(extensions): crash when using chrome.system.storage (#55612)
+### Incident Patch 1: `52bb0270` (2026-11-06)
+**Commit Message**: fix: run local notification callbacks on the main thread on macOS (#55629)
 
-* fix: crash when using chrome.system.storage in extensions
+* fix: run local notification callbacks on the main thread on macOS
 
-Electron never created the global StorageMonitor that the API dereferences without a null check. Create it like Chrome does, and destroy it after browser contexts are gone.
+With a nil queue, NSNotificationCenter runs observer blocks on whichever
+thread posts the notification, and the block called the JS callback
+there. A background thread would block on the isolate's v8::Locker held
+by the main thread, which could hang app.quit(). Keep the callbacks in a
+main-thread-only map and post notifications from other threads to the
+main thread.
 
-Co-Authored-By: Claude <[REDACTED_EMAIL]>
+Also make the detached-frame cppgc fixture collect with async GCs so
+conservative stack scanning (notably ASan fake stacks) cannot keep a
+stale callback holder alive, and disable retries in cpp-heap.spec.ts.
 
-* test: skip chrome.system.storage specs on Linux
+Fixes #55392
 
-Co-Authored-By: Claude <[REDACTED_EMAIL]>
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* fix: address clang-tidy findings in notification dispatch
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* refactor: track notification subscriptions in a single map
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ---------
 
-Co-authored-by: Claude <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `BUILD.gn` (modified, +1/-0)
+**File**: `docs/api/system-preferences.md` (modified, +2/-0)
 ```diff
-@@ -945,6 +945,7 @@ source_set("electron_lib") {
-       "shell/common/extensions/api:extensions_features",
-       "//chrome/browser/resources:component_extension_resources",
-       "//components/guest_view/common:mojom",
-+      "//components/storage_monitor",
-       "//components/update_client",
-       "//components/zoom",
-       "//extensions/browser",
+@@ -100,6 +100,8 @@ Returns `number` - The ID of this subscription
+ 
+ Same as `subscribeNotification`, but uses `NSNotificationCenter` for local defaults.
+ This is necessary for events such as `NSUserDefaultsDidChangeNotification`.
++`callback` is always called on the main thread. Notifications posted on other
++threads are delivered to it asynchronously.
+ 
+ If `event` is null, the `NSNotificationCenter` doesn’t use it as criteria for delivery to the observer. See [docs](https://developer.apple.com/documentation/foundation/nsnotificationcenter/1411723-addobserverforname?language=objc) for more information.
+ 
 ```
 
-**File**: `docs/api/extensions.md` (modified, +6/-0)
+**File**: `shell/browser/api/electron_api_system_preferences_mac.mm` (modified, +80/-35)
 ```diff
-@@ -158,6 +158,12 @@ The following methods of `chrome.storage` are supported:
+@@ -20,6 +20,7 @@
+ #include "base/no_destructor.h"
+ #include "base/strings/sys_string_conversions.h"
+ #include "base/task/bind_post_task.h"
++#include "base/task/single_thread_task_runner.h"
+ #include "base/values.h"
+ #include "chrome/browser/media/webrtc/system_media_capture_permissions_mac.h"
+ #include "net/base/apple/url_conversions.h"
+@@ -83,16 +84,51 @@ static bool FromV8(v8::Isolate* isolate,
  
- See [official documentation](https://developer.chrome.com/docs/extensions/reference/storage) for more information.
+ int g_next_id = 0;
  
-+### `chrome.system.storage`
-+
-+All features of this API are supported.
-+
-+See [official documentation](https://developer.chrome.com/docs/extensions/reference/system/storage) for more information.
-+
- ### `chrome.tabs`
+-// The map to convert |id| to |int|.
+-auto& GetIdMap() {
+-  static base::NoDestructor<base::flat_map<int, id>> g_id_map;
+-  return *g_id_map;
+-}
++struct Subscription {
++  id observer;
++  NotificationCenterKind kind;
++  SystemPreferences::NotificationCallback callback;
++};
  
- The following methods of `chrome.tabs` are supported:
-```
-
-**File**: `shell/browser/browser_process_impl.cc` (modified, +16/-0)
-```diff
-@@ -34,6 +34,7 @@
- #include "content/public/browser/child_process_security_policy.h"
- #include "content/public/browser/network_quality_observer_factory.h"
- #include "content/public/browser/network_service_instance.h"
-+#include "electron/buildflags/buildflags.h"
- #include "extensions/common/constants.h"
- #include "net/proxy_resolution/proxy_config.h"
- #include "net/proxy_resolution/proxy_config_service.h"
-@@ -46,6 +47,10 @@
- #include "shell/common/electron_paths.h"
- #include "shell/common/thread_restrictions.h"
- 
-+#if BUILDFLAG(ENABLE_ELECTRON_EXTENSIONS)
-+#include "components/storage_monitor/storage_monitor.h"
-+#endif
+-auto& GetKindMap() {
+-  static base::NoDestructor<base::flat_map<int, NotificationCenterKind>>
+-      g_kind_map;
+-  return *g_kind_map;
++// Live subscriptions, keyed by request id. Only accessed on the main thread,
++// so a subscription's JS callback is never run or destroyed elsewhere.
++auto& GetSubscriptions() {
++  static base::NoDestructor<base::flat_map<int, Subscription>> g_subscriptions;
++  return *g_subscriptions;
++}
 +
- #if BUILDFLAG(ENABLE_PRINTING)
- #include "chrome/browser/printing/print_job_manager.h"
- #endif
-@@ -242,9 +247,20 @@ void BrowserProcessImpl::PreCreateThreads() {
- void BrowserProcessImpl::PreMainMessageLoopRun() {
-   CreateNetworkQualityObserver();
-   CreateOSCryptAsync();
-+#if BUILDFLAG(ENABLE_ELECTRON_EXTENSIONS)
-+  // chrome.system.storage dereferences the global monitor without a null
-+  // check. Device scanning only starts on first use.
-+  storage_monitor::StorageMonitor::Create();
-+#endif
++void RunNotificationCallback(int request_id,
++                             const std::string& name,
++                             base::Value user_info,
++                             const std::string& object) {
++  auto& subscriptions = GetSubscriptions();
++  auto iter = subscriptions.find(request_id);
++  // The subscription may have been removed while a notification posted on
++  // another thread was waiting to be delivered here.
++  if (iter == subscriptions.end())
++    return;
++  // Run a copy so that the callback can unsubscribe itself.
++  SystemPreferences::NotificationCallback callback = iter->second.callback;
++  callback.Run(name, std::move(user_info), object);
++}
++
++// Runs the subscription's callback now when called on the main thread, and
++// otherwise posts it to |main_task_runner| so the calling thread never waits
++// on the isolate's v8::Locker.
++void DispatchNotification(
++    const scoped_refptr<base::SingleThreadTaskRunner>& main_task_runner,
++    int request_id,
++    std::string name,
++    base::Value user_info,
++    std::string object) {
++  if ([NSThread isMainThread]) {
++    RunNotificationCallback(request_id, name, std::move(user_info), object);
++    return;
++  }
++  main_task_runner->PostTask(
++      FROM_HERE,
++      base::BindOnce(&RunNotificationCallback, request_id, std::move(name),
++                     std::move(user_info), std::move(object)));
  }
  
- void BrowserProcessImpl::PostMainMessageLoopRun() {
-+#if BUILDFLAG(ENABLE_ELECTRON_EXTENSIONS)
-+  // Must outlive browser contexts: removing a chrome.system.storage listener
-+  // when a context shuts down reaches for the monitor.
-+  storage_monitor::StorageMonitor::Destroy();
-+#endif
+ AVMediaType ParseMediaType(const std::string& media_type) {
+@@ -245,9 +281,6 @@ SkColor NSSystemColorToSkColor(NSColor* color) {
+     const NotificationCallback& callback,
+     NotificationCenterKind kind) {
+   int request_id = g_next_id++;
+-  // A copy is needed: the block below would capture a reference by reference.
+-  // NOLINTNEXTLINE(performance-unnecessary-copy-initialization)
+-  __block NotificationCallback copied_callback = callback;
+ 
+   v8::Isolate* isolate = JavascriptEnvironment::GetIsolate();
+   std::string name_str;
+@@ -260,49 +293,61 @@ SkColor NSSystemColorToSkColor(NSColor* color) {
+ 
+   auto* name = maybe_name->IsNull() ? nil : base::SysUTF8ToNSString(name_str);
+ 
+-  GetIdMap()[request_id] = [GetNotificationCenter(kind)
++  // With a nil queue, NSNotificationCenter runs the block synchronously on
++  // whichever thread posted the notification, and many notifications are
++  // posted on background threads. The JS callback may only run on the main
++  // thread, which holds the isolate's v8::Locker for the lifetime of the
++  // JavaScript environment: calling it from another thread blocks that thread
++  // on the lock, which hangs quit if the main thread waits for it. Deliver
++  // those notifications to the main thread asynchronously instead. The block
++  // holds no V8 handles, so releasing it on any thread is safe.
++  // A copy is needed: the block below would capture a reference by reference.
++  // NOLINTNEXTLINE(performance-unnecessary-copy-initialization)
++  scoped_refptr<base::SingleThreadTaskRunner> main_task_runner =
++      base::SingleThreadTaskRunner::GetCurrentDefault();
++  id observer = [GetNotificationCenter(kind)
+       addObserverForName:name
+                   object:nil
+                    queue:nil
+               usingBlock:^(NSNotification* notification) {
+-                std::string object = "";
++                std::string object;
+                 if ([notification.object isKindOfClass:[NSString class]]) {
+                   object = base::SysNSStringToUTF8(notification.object);
+                 }
+-
++                base::DictValue user_info;
+                 if (notification.userInfo) {
+-                  copied_callback.Run(
+-                      base::SysNSStringToUTF8(notification.name),
+-                      base::Value(NSDictionaryToValue(notification.userInfo)),
+-                      object);
+-                } else {
+-                  copied_callback.Run(
+-                   
+```
+
+**File**: `spec/cpp-heap.spec.ts` (modified, +1/-1)
+```diff
+@@ -16,7 +16,7 @@ import {
+ 
+ const fixturesPath = path.join(import.meta.dirname, 'fixtures');
+ 
+-describe('cpp heap', () => {
++describe('cpp heap', { retry: 0 }, () => {
+   ifdescribe(isTestingBindingAvailable())('native callback holders', () => {
+     for (const [mode, description] of [
+       ['call', 'creates callable images through an API retained from a removed iframe'],
+```
+
+**File**: `spec/fixtures/api/cppgc-detached-frame.js` (modified, +5/-2)
+```diff
+@@ -21,13 +21,16 @@ module.exports = async (page, child, snapshotHelper, mode) => {
+     }
+   });
+   const evaluate = (source) => window.webContents.executeJavaScript(source);
++  // Collect from fresh tasks with no native stack. A synchronous collection
++  // scans the stack conservatively, so a stale pointer left by an earlier
++  // native frame (common under ASan's fake stacks) can keep a callback holder
++  // and its realm alive and make the counts below off by one.
+   const collect = () =>
+     evaluate(`
+     (async () => {
+       const v8Util = process._linkedBinding('electron_common_v8_util');
+       for (let i = 0; i < 3; ++i) {
+-        await new Promise(resolve => setTimeout(resolve, 0));
+-        v8Util.requestGarbageCollectionForTesting();
++        await v8Util.requestGarbageCollectionForTesting({ execution: 'async' });
+       }
+       return process._linkedBinding('electron_common_testing')
+         .getLiveCallbackHolderProbeCountForTesting();
+```
+
+---
+
+### Incident Patch 2: `78d4af57` (2026-11-06)
+**Commit Message**: fix: limit webRequest redirects across loader restarts to avoid crashes (#55623)
+
+fix: limit webRequest redirects across loader restarts
+
+Keep a per-request redirect count across target loader restarts.
+Reject redirects beyond Chromium's limit with ERR_TOO_MANY_REDIRECTS.
+
+**File**: `shell/browser/net/proxying_url_loader_factory.cc` (modified, +8/-0)
+```diff
+@@ -22,6 +22,7 @@
+ #include "net/http/http_util.h"
+ #include "net/url_request/redirect_info.h"
+ #include "net/url_request/redirect_util.h"
++#include "net/url_request/url_request.h"
+ #include "services/network/public/cpp/features.h"
+ #include "services/network/public/mojom/early_hints.mojom.h"
+ #include "services/network/public/mojom/url_response_head.mojom.h"
+@@ -722,6 +723,13 @@ void ProxyingURLLoaderFactory::InProgressRequest::ContinueToBeforeRedirect(
+     return;
+   }
+ 
++  if (redirect_count_ >= net::URLRequest::kMaxRedirects) {
++    OnRequestError(
++        network::URLLoaderCompletionStatus(net::ERR_TOO_MANY_REDIRECTS));
++    return;
++  }
++  ++redirect_count_;
 +
-   if (local_state_)
-     local_state_->CommitPendingWrite();
+   info_->AddResponseInfoFromResourceResponse(*current_response_);
+ 
+   if (proxied_client_receiver_.is_bound())
+```
+
+**File**: `shell/browser/net/proxying_url_loader_factory.h` (modified, +1/-0)
+```diff
+@@ -163,6 +163,7 @@ class ProxyingURLLoaderFactory
+     mojo::ScopedDataPipeConsumerHandle current_body_;
+     scoped_refptr<net::HttpResponseHeaders> override_headers_;
+     GURL redirect_url_;
++    int redirect_count_ = 0;
+ 
+     const bool for_cors_preflight_ = false;
  
 ```
 
-**File**: `spec/extensions.spec.ts` (modified, +51/-1)
+**File**: `spec/api-web-request.spec.ts` (modified, +32/-0)
 ```diff
-@@ -24,7 +24,7 @@ import * as path from 'node:path';
- import { pathToFileURL } from 'node:url';
- 
- import { emittedNTimes, emittedUntil } from './lib/events-helpers.ts';
--import { defer, ifit, listen, startRemoteControlApp, waitUntil } from './lib/spec-helpers.ts';
-+import { defer, ifdescribe, ifit, listen, startRemoteControlApp, waitUntil } from './lib/spec-helpers.ts';
- import { expectWarningMessages } from './lib/warning-helpers.ts';
- import { closeAllWindows, closeWindow, cleanupWebContents } from './lib/window-helpers.ts';
- 
-@@ -105,6 +105,56 @@ describe('chrome extensions', () => {
-     expect(info).toMatchObject({ id: extension.id, name: 'chrome-management' });
+@@ -524,6 +524,38 @@ describe('webRequest module', () => {
+       // This is a limitation of the WebRequest API.
+       expect(result).toBe('');
+     });
++
++    it('limits redirects across target loader restarts', async () => {
++      const requestURL = `${defaultURL}redirect-limit`;
++      const filter = { urls: [requestURL] };
++      const terminalEvents: string[] = [];
++      let calls = 0;
++      let redirects = 0;
++      defer(() => {
++        ses.webRequest.onBeforeRedirect(null);
++        ses.webRequest.onErrorOccurred(null);
++        ses.webRequest.onCompleted(null);
++      });
++      ses.webRequest.onBeforeRedirect(filter, () => redirects++);
++      ses.webRequest.onCompleted(filter, () => terminalEvents.push('completed'));
++      const error = new Promise<string>((resolve) => {
++        ses.webRequest.onErrorOccurred(filter, (details) => {
++          terminalEvents.push(details.error);
++          resolve(details.error);
++        });
++      });
++      ses.webRequest.onBeforeRequest(filter, (details, callback) => {
++        // Bound resource use even if the redirect limit regresses.
++        if (++calls > 25) return callback({ cancel: true });
++        setImmediate(() => callback({ redirectURL: details.url }));
++      });
++
++      await expect(ajax(requestURL)).rejects.toThrow();
++      expect(await error).toBe('net::ERR_TOO_MANY_REDIRECTS');
++      expect(calls).toBe(21);
++      expect(redirects).toBe(20);
++      expect(terminalEvents).toEqual(['net::ERR_TOO_MANY_REDIRECTS']);
++    });
    });
  
-+  // On Linux, using this API scans mounted devices. A device with no identifying
-+  // udev properties, as seen on CI, fails DCHECK(!unique_id.empty()) in
-+  // storage_monitor::StorageInfo::MakeDeviceId().
-+  ifdescribe(process.platform !== 'linux')('chrome.system.storage', () => {
-+    let w: BrowserWindow;
-+
-+    beforeEach(async () => {
-+      const customSession = session.fromPartition(`persist:${crypto.randomUUID()}`);
-+      const extension = await customSession.extensions.loadExtension(
-+        path.join(fixtures, 'extensions', 'chrome-system-storage')
-+      );
-+      w = new BrowserWindow({ show: false, webPreferences: { session: customSession } });
-+      await w.loadURL(`${extension.url}page.html`);
-+    });
-+
-+    afterEach(() => {
-+      w.destroy();
-+    });
-+
-+    it('lists storage units', async () => {
-+      const units = await w.webContents.executeJavaScript('chrome.system.storage.getInfo()');
-+      expect(Array.isArray(units)).toBe(true);
-+      for (const unit of units) {
-+        expect(unit).toEqual(
-+          expect.objectContaining({
-+            id: expect.any(String),
-+            name: expect.any(String),
-+            type: expect.any(String),
-+            capacity: expect.any(Number)
-+          })
-+        );
-+      }
-+    });
-+
-+    it('reports an unknown device when ejecting', async () => {
-+      const result = await w.webContents.executeJavaScript("chrome.system.storage.ejectDevice('unknown-device')");
-+      expect(result).toBe('no_such_device');
-+    });
-+
-+    it('accepts device attach and detach listeners', async () => {
-+      // The browser starts watching for devices when the first listener is added.
-+      const units = await w.webContents.executeJavaScript(`
-+        chrome.system.storage.onAttached.addListener(() => {});
-+        chrome.system.storage.onDetached.addListener(() => {});
-+        chrome.system.storage.getInfo();
-+      `);
-+      expect(Array.isArray(units)).toBe(true);
-+    });
-+  });
-+
-   describe('Chrome Web Store origin', () => {
-     // The core //extensions feature files expose some APIs to web pages on the
-     // Chrome Web Store origin. Electron does not support chrome.webstorePrivate
+   describe('webRequest.onBeforeSendHeaders', () => {
 ```
 
-**File**: `spec/fixtures/extensions/chrome-system-storage/manifest.json` (added, +6/-0)
+---
+
+### Incident Patch 3: `4c826c54` (2026-11-06)
+**Commit Message**: fix: apply setHasShadow() to windows in app shims (#55636)
+
+NativeWindowMacRemote::SetHasShadow only stored the value, so after the
+creation-time hasShadow option was honored, a later setHasShadow() left
+the shim's window unchanged while hasShadow() reported the new value.
+Send it to the shim, which sets it on the NSWindow, as NativeWindowMac
+does for in-process windows.
+
+Also tag the app shim focusable spec as serial, since it needs OS-level
+focus and other spec processes' windows can take it.
+
+
+Claude-Session: https://claude.ai/code/session_01KX1hkKqVdmPdED1YaLQEc7
+
+Co-authored-by: Claude <[REDACTED_EMAIL]>
+
+**File**: `shell/app_shim/app_shim_controller.h` (modified, +1/-0)
 ```diff
-@@ -0,0 +1,6 @@
-+{
-+  "name": "chrome-system-storage",
-+  "version": "1.0",
-+  "permissions": ["system.storage"],
-+  "manifest_version": 3
+@@ -109,6 +109,7 @@ class AppShimController : public mojom::AppShim, private AppShimMenu::Client {
+                          const std::string& type,
+                          int32_t duration_ms,
+                          int32_t state) override;
++  void SetWindowHasShadow(uint64_t window_id, bool has_shadow) override;
+   void PerformWindowTabAction(uint64_t window_id,
+                               mojom::AppShimTabAction action) override;
+   void AddTabbedWindow(uint64_t window_id, uint64_t tabbed_window_id) override;
+```
+
+**File**: `shell/app_shim/app_shim_controller.mm` (modified, +5/-0)
+```diff
+@@ -533,6 +533,11 @@ - (BOOL)applicationSupportsSecureRestorableState:(NSApplication*)app {
+             state:static_cast<NSVisualEffectState>(state)];
+ }
+ 
++void AppShimController::SetWindowHasShadow(uint64_t window_id,
++                                           bool has_shadow) {
++  [WindowForId(window_id).GetNativeNSWindow() setHasShadow:has_shadow];
 +}
++
+ void AppShimController::PerformWindowTabAction(uint64_t window_id,
+                                                mojom::AppShimTabAction action) {
+   [[ElectronAppShimWindow forWindowId:window_id] performTabAction:action];
 ```
 
-**File**: `spec/fixtures/extensions/chrome-system-storage/page.html` (added, +2/-0)
+**File**: `shell/browser/native_window_mac_remote.mm` (modified, +2/-0)
 ```diff
-@@ -0,0 +1,2 @@
-+<!doctype html>
-+<title>chrome.system.storage</title>
-```
-
----
-
-### Incident Patch 2: `4d983640` (2026-11-05)
-**Commit Message**: fix: mouse forwarding doesn't track legacy window reparenting (#55098)
-
-* fix: legacy window reparenting
-
-* fix: drop the leave filter in PreHandleMSG
-
-HWNDMessageHandler routes WM_MOUSELEAVE and WM_NCMOUSELEAVE to
-OnMouseRange, so a leave the OS delivers to this window already reaches
-ElectronDesktopWindowTreeHostWin::HandleMouseEvent, where kMouseExited
-is filtered. Keeping the PreHandleMSG case as well skipped the
-active_mouse_tracking_flags_ = 0 reset in
-HandleMouseEventInternal, which left the cached flags set with the OS
-tracking off; after that TrackMouseEvents() no longer arms anything for
-the same flags.
-
-With a single filter both paths behave the same, and the comments at the
-filter and above RearmMouseLeaveTracking() describe what happens now.
-
-Co-authored-by: Charles Kerr <[REDACTED_EMAIL]>
-
-* test: cover a view moved to another window
-
-Chromium moves a live Chrome_RenderWidgetHostHWND with ::SetParent when
-its WebContentsView changes window, which sends no WM_PARENTNOTIFY, so a
-window that gains a view never hears about the HWND it now hosts, and
-cannot filter the mouse leave that HWND reports once forwarding starts.
-
-Load a view in one window, move it, still loaded, i
-
-**File**: `shell/browser/native_window_views.h` (modified, +4/-16)
-```diff
-@@ -197,6 +197,10 @@ class NativeWindowViews : public NativeWindow,
-   void UpdateThickFrame();
-   void SetLayered();
-   bool has_thick_frame() const { return thick_frame_; }
-+  // Whether a mouse leave reported while the window is click-through should be
-+  // dropped: the cursor is still inside, so the leave describes a window the
-+  // cursor never left. See SetForwardMouseMessages().
-+  bool ShouldSwallowForwardedMouseLeave() const;
- #endif
+@@ -743,6 +743,8 @@ explicit RemoteRootView(NativeWindow* window)
  
-   std::optional<SkColor> overlay_button_color() const {
-@@ -253,25 +257,13 @@ class NativeWindowViews : public NativeWindow,
-   void HandleSizeEvent(WPARAM w_param, LPARAM l_param);
-   void ResetWindowControls();
-   void SetRoundedCorners(bool rounded);
--  // Remembers a legacy window (Chrome_RenderWidgetHostHWND) reported by
--  // WM_PARENTNOTIFY, one per web content container.
--  void RememberLegacyWindow(HWND legacy_window);
--  // Adds or removes the mouse leave filter on every remembered legacy window,
--  // depending on whether mouse messages are being forwarded.
--  void UpdateLegacyWindowSubclasses();
-   void SetForwardMouseMessages(bool forward);
-   // Records the cursor position reported by |MouseHookProc| and schedules a
-   // deferred dispatch into the aura window tree.
-   void OnForwardedMouseMove(const gfx::Point& screen_point);
-   // Dispatches the most recent forwarded cursor position, or the mouse leave
-   // that ends it, to the web contents.
-   void FlushForwardedMouseEvent();
--  static LRESULT CALLBACK SubclassProc(HWND hwnd,
--                                       UINT msg,
--                                       WPARAM w_param,
--                                       LPARAM l_param,
--                                       UINT_PTR subclass_id,
--                                       DWORD_PTR ref_data);
-   static LRESULT CALLBACK MouseHookProc(int n_code,
-                                         WPARAM w_param,
-                                         LPARAM l_param);
-@@ -356,10 +348,6 @@ class NativeWindowViews : public NativeWindow,
-   static inline base::NoDestructor<absl::flat_hash_set<NativeWindowViews*>>
-       forwarding_windows_;
-   static HHOOK mouse_hook_;
--  // The legacy windows created inside this window, one per web content
--  // container. They are recreated on navigation and renderer crashes, and the
--  // replacements are reported through WM_PARENTNOTIFY.
--  absl::flat_hash_set<HWND> legacy_windows_;
-   bool forwarding_mouse_messages_ = false;
- 
-   // Cursor position (physical pixels, relative to the client area) that the
-```
-
-**File**: `shell/browser/native_window_views_win.cc` (modified, +18/-111)
-```diff
-@@ -25,12 +25,10 @@
- #include "shell/common/electron_constants.h"
- #include "skia/ext/skia_utils_win.h"
- #include "ui/aura/window.h"
--#include "ui/base/win/internal_constants.h"
- #include "ui/color/win/accent_color_observer.h"
- #include "ui/display/display.h"
- #include "ui/display/screen.h"
- #include "ui/gfx/geometry/resize_utils.h"
--#include "ui/gfx/win/hwnd_util.h"
- 
- // Must be included after other Windows headers.
- #include <UIAutomationClient.h>
-@@ -41,10 +39,8 @@ namespace electron {
- namespace {
- 
- // The OS's TME_LEAVE tracking is one-shot: after WM_MOUSELEAVE it stays off
--// until TrackMouseEvent() is called again. Chromium only updates its cached
--// tracking state (|active_mouse_tracking_flags_|, |mouse_tracking_enabled_|)
--// from the leave handler that mouse forwarding consumes, so re-arm on its
--// behalf to keep the two in sync.
-+// until TrackMouseEvent() is called again, which Chromium only does on a real
-+// mouse move.
- void RearmMouseLeaveTracking(HWND hwnd, DWORD flags) {
-   if (!hwnd)
-     return;
-@@ -307,40 +303,6 @@ bool NativeWindowViews::PreHandleMSG(UINT message,
-   }
- 
-   switch (message) {
--    // A click-through window (see SetForwardMouseMessages) is invisible to
--    // ::WindowFromPoint(), which Chromium uses to tell a genuine mouse leave
--    // from one it reports for a window the cursor never left. While forwarding,
--    // enter/leave comes from the low level mouse hook instead, so drop the OS
--    // reported leave -- but only while the cursor is still inside the window.
--    // Dropping it also strands Chromium's cached tracking state, which
--    // SetForwardMouseMessages() re-arms when it stops.
--    case WM_MOUSELEAVE:
--    case WM_NCMOUSELEAVE: {
--      if (!forwarding_mouse_messages_)
--        return false;
--
--      HWND hwnd = GetAcceleratedWidget();
--      if (!hwnd)
--        return false;
--
--      POINT cursor = {};
--      ::GetCursorPos(&cursor);
--      return PointToClientAndInRect(hwnd, &cursor);
--    }
--
--    case WM_PARENTNOTIFY: {
--      // Chromium creates a dummy window per web content container (see
--      // LegacyRenderWidgetHostHWND), so a window can have several of them; this
--      // is also how the replacements are discovered after a navigation or a
--      // renderer crash.
--      if (LOWORD(w_param) == WM_CREATE) {
--        RememberLegacyWindow(reinterpret_cast<HWND>(l_param));
--      } else if (LOWORD(w_param) == WM_DESTROY) {
--        legacy_windows_.erase(reinterpret_cast<HWND>(l_param));
--      }
--      return false;
--    }
--
-     // Screen readers send WM_GETOBJECT in order to get the accessibility
-     // object, so take this opportunity to push Chromium into accessible
-     // mode if it isn't already, always say we didn't handle the message
-@@ -700,46 +662,6 @@ void NativeWindowViews::SetRoundedCorners(bool rounded) {
-     LOG(WARNING) << "Failed to set rounded corners to " << rounded;
+ void NativeWindowMacRemote::SetHasShadow(bool has_shadow) {
+   has_shadow_ = has_shadow;
++  if (auto* shim = GetAppShim())
++    shim->SetWindowHasShadow(GetRemoteWindowId(), has_shadow);
  }
  
--void NativeWindowViews::RememberLegacyWindow(HWND legacy_window) {
--  if (!legacy_window || legacy_windows_.contains(legacy_window))
--    return;
--
--  // Only the dummy windows Chromium creates for the web content containers arm
--  // mouse tracking for forwarded messages; see LegacyRenderWidgetHostHWND.
--  if (gfx::GetClassName(legacy_window) !=
--      std::wstring(ui::kLegacyRenderWidgetHostHwnd)) {
--    return;
--  }
--
--  legacy_windows_.insert(legacy_window);
--  if (forwarding_mouse_messages_) {
--    SetWindowSubclass(legacy_window, SubclassProc, 1,
--                      reinterpret_cast<DWORD_PTR>(this));
--  }
--}
--
--void NativeWindowViews::UpdateLegacyWindowSubclasses() {
--  for (auto it = legacy_windows_.begin(); it != legacy_windows_.end();) {
--    // Erasing only invalidates iterators to the erased element, and |it| has
--    // already moved past it.
--    HWND legacy_window = *(it++);
--
--    // A renderer crash takes its legacy windows with it; anything gone by now
--    // can be forgotten.
--    if (!::IsWindow(legacy_window)) {
--      legacy_windows_.erase(legacy_window);
--      continue;
--    }
--
--    if (forwarding_mouse_messages_) {
--      SetWindowSubclass(legacy_window, SubclassProc, 1,
--                        reinterpret_cast<DWORD_PTR>(this));
--    } else {
--      RemoveWindowSubclass(legacy_window, SubclassProc, 1);
--    }
--  }
--}
--
- void NativeWindowViews::OnForwardedMouseMove(const gfx::Point& screen_point) {
-   HWND hwnd = GetAcceleratedWidget();
-   if (!hwnd)
-@@ -817,10 +739,6 @@ void NativeWindowViews::SetForwardMouseMessages(bool forward) {
-     cursor_inside_window_ = hwnd && ::GetCursorPos(&cursor) &&
-                             PointToClientAndInRect(hwnd, &cursor);
- 
--    // The OS reports a mouse leave for a click-through window while the cursor
--    // is still inside it, which has to be filtered out; see |SubclassProc|.
--    UpdateLegacyWindowSubclasses();
--
-     if (!mouse_hook_) {
-       mouse_hook_ = SetWindowsHookEx(WH_MOUSE_LL, MouseHookProc, nullptr, 0);
-     }
-@@ -831,20 +749,15 @@ void NativeWindowViews::Set
+ bool NativeWindowMacRemote::HasShadow() const {
 ```
 
-**File**: `shell/browser/ui/win/electron_desktop_window_tree_host_win.cc` (modified, +8/-0)
+**File**: `shell/common/app_shim.mojom` (modified, +1/-0)
 ```diff
-@@ -158,6 +158,14 @@ bool ElectronDesktopWindowTreeHostWin::HandleMouseEventForCaption(
- }
- 
- bool ElectronDesktopWindowTreeHostWin::HandleMouseEvent(ui::MouseEvent* event) {
-+  // Every leave Chromium maps to kMouseExited gets here, whether the OS sent
-+  // it to this window or a Chrome_RenderWidgetHostHWND relayed it, and after
-+  // Chromium has reset its tracking state. See
-+  // ShouldSwallowForwardedMouseLeave().
-+  if (event->type() == ui::EventType::kMouseExited &&
-+      native_window_view_->ShouldSwallowForwardedMouseLeave()) {
-+    return true;
-+  }
-   if (event->is_system_menu() && !native_window_view_->has_frame()) {
-     bool prevent_default = false;
-     native_window_view_->NotifyWindowSystemContextMenu(event->x(), event->y(),
+@@ -144,6 +144,7 @@ interface AppShim {
+   // NSVisualEffectState.
+   SetWindowVibrancy(
+       uint64 window_id, string type, int32 duration_ms, int32 state);
++  SetWindowHasShadow(uint64 window_id, bool has_shadow);
+   PerformWindowTabAction(uint64 window_id, AppShimTabAction action);
+   AddTabbedWindow(uint64 window_id, uint64 tabbed_window_id);
+   PreviewFile(
 ```
 
-**File**: `spec/api-browser-window-ignore-mouse-events.spec.ts` (modified, +57/-0)
+**File**: `spec/api-app-shim.spec.ts` (modified, +1/-1)
 ```diff
-@@ -644,6 +644,63 @@ ifdescribe(hasRealInput && !process.env.ELECTRON_SKIP_NATIVE_MODULE_TESTS)(
-           expect(await count(view, 'mouseleave')).toBe(1);
-         }
-       });
-+
-+      // Chromium moves a live Chrome_RenderWidgetHostHWND between windows with
-+      // ::SetParent, which sends no WM_PARENTNOTIFY, so a window that gains a
-+      // view never learns about the HWND it now hosts.
-+      it('keeps forwarding for a WebContentsView moved to another window', { timeout: 60000 }, async () => {
-+        await moveTo(OUTSIDE);
-+        const from = new BaseWindow({ ...BOUNDS, frame: false, show: false });
-+        const to = new BaseWindow({ ...BOUNDS, frame: false, show: false });
-+        defer(() => {
-+          if (!to.isDestroyed()) to.destroy();
-+          if (!from.isDestroyed()) from.destroy();
-+        });
-+        const view = new WebContentsView();
-+        defer(() => {
-+          if (!view.webContents.isDestroyed()) view.webContents.destroy();
-+        });
-+        view.setBounds({ x: 0, y: 0, width: BOUNDS.width, height: BOUNDS.height });
-+        from.contentView.addChildView(view);
-+        await view.webContents.loadURL(PAGE);
-+
-+        // Show |from| so the view's legacy window is created under it, then
-+        // move the view, still loaded, into the window that forwards.
-+        from.setAlwaysOnTop(true);
-+        from.showInactive();
-+        await setTimeout(500);
-+        from.contentView.removeChildView(view);
-+        to.contentView.addChildView(view);
-+        from.hide();
-+
-+        // Show |to| solid first, so the moved view's legacy window is armed by
-+        // real mouse input. Enabling forwarding while an element is hovered is
-+        // what makes that window report a leave the cursor never made, and this
-+        // window has never seen that HWND, so it cannot filter it by identity.
-+        to.setAlwaysOnTop(true);
-+        to.showInactive();
-+        await nudgeUntil(TARGET_CENTER, () => isHovered(view));
-+        await clearEvents(view);
-+
-+        to.setIgnoreMouseEvents(true, { forward: true });
-+        await settle();
-+        expect(await count(view, 'mouseleave')).toBe(0);
-+
-+        // Moves inside keep being forwarded, and hover is never interrupted:
-+        // with forwarding on, the moved view's legacy window reports a leave at
-+        // the first move even though the cursor never left, and nothing in this
-+        // window knows that HWND well enough to filter it by identity.
-+        await moveInWindow(view, { x: TARGET_CENTER.x + 10, y: TARGET_CENTER.y + 10 });
-+        await settle();
-+        expect(await count(view, 'mouseenter')).toBe(0);
-+        expect(await count(view, 'mouseleave')).toBe(0);
-+        expect(await isHovered(view)).toBe(true);
-+
-+        await moveTo(OUTSIDE);
-+        await waitUntil(async () => !(await isHovered(view)));
-+        await settle();
-+        expect(await count(view, 'mouseleave')).toBe(1);
-+      });
-     });
-   }
- );
-```
-
----
-
-### Incident Patch 3: `f651b8bb` (2026-11-04)
-**Commit Message**: build(deps): bump github/codeql-action/upload-sarif from 4.39.0 to 4.39.1 (#55587)
-
-build(deps): bump github/codeql-action/upload-sarif
-
-Bumps [github/codeql-action/upload-sarif](https://github.com/github/codeql-action) from 4.39.0 to 4.39.1.
-- [Release notes](https://github.com/github/codeql-action/releases)
-- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/github/codeql-action/compare/6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee...9b3254085494b55a0f7c4c2b3d2d52cc712ce370)
-
----
-updated-dependencies:
-- dependency-name: github/codeql-action/upload-sarif
-  dependency-version: 4.39.1
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `.github/workflows/scorecards.yml` (modified, +1/-1)
-```diff
-@@ -51,6 +51,6 @@ jobs:
+@@ -163,7 +163,7 @@ ifdescribe(process.platform === 'darwin' && !process.mas)('app shims', () => {
+     expect(w.isVisible()).toBe(false);
+   });
  
-       # Upload the results to GitHub's code scanning dashboard.
-       - name: "Upload to code-scanning"
--        uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
-+        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
-         with:
-           sarif_file: results.sarif
+-  it('honors focusable for a window in a shim', async () => {
++  it('honors focusable for a window in a shim', { tags: ['serial'] }, async () => {
+     const shim = await launchShim();
+     const w = new BrowserWindow({ appShim: shim, focusable: false });
+     await once(w, 'show');
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #55632** (2026-11-05): fix: honor hasShadow: false and focusable for windows in app shims (@trop[bot])
-- **PR #55628** (2026-11-05): build: update PGO profiles (@electron-pgo-updater[bot])
-- **PR #55626** (closed): fix: emit file-system-access-restricted on programmatic reads of blocked paths (@samirahamed-27)
-- **PR #55625** (2026-11-05): fix(extensions): crash when using chrome.system.storage (@trop[bot])
-- **PR #55624** (2026-11-05): fix(extensions): crash when using chrome.system.storage (@trop[bot])
-- **PR #55621** (2026-11-05): fix: mouse forwarding doesn't track legacy window reparenting (@trop[bot])
+- **PR #55656** (2026-11-06): fix: limit webRequest redirects across loader restarts to avoid crashes (@trop[bot])
+- **PR #55655** (2026-11-06): fix: limit webRequest redirects across loader restarts to avoid crashes (@trop[bot])
+- **PR #55654** (2026-11-06): fix: limit webRequest redirects across loader restarts to avoid crashes (@trop[bot])
+- **PR #55651** (2026-11-07): ci: retry devtools esbuild bundle actions once on "service was stopped" (44-x-y) (@claude[bot])
+- **PR #55650** (2026-11-07): ci: retry devtools esbuild bundle actions once on "service was stopped" (45-x-y) (@claude[bot])
+- **PR #55649** (2026-11-07): ci: retry devtools esbuild bundle actions once on "service was stopped" (46-x-y) (@claude[bot])
 
 ---
 
@@ -892,21 +756,22 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. extensions): crash when using chrome.system.storage (#55612)
+## X. run local notification callbacks on the main thread on macOS (#55629)
 
 **RULE**:
-When implementing operations in `BUILD.gn`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in electron/electron. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/api/system-preferences.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in electron/electron. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `622e4ea9`: extensions): crash when using chrome.system.storage (#55612). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `52bb0270`: run local notification callbacks on the main thread on macOS (#55629). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `BUILD.gn`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/api/system-preferences.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-      "//components/storage_monitor",
+`callback` is always called on the main thread. Notifications posted on other
+threads are delivered to it asynchronously.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -916,4 +781,4 @@ Subsystems managing C++ data structures, boundary deserialization, API parsing, 
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `622e4ea9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `52bb0270` are properly handled with clean fallback behavior.

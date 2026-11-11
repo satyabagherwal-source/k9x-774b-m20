@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gluesql-gluesql-learnings.md`  
 > **Source**: github ([https://github.com/gluesql/gluesql](https://github.com/gluesql/gluesql))  
-> **Source Version**: `0daf9b82`  
+> **Source Version**: `fc736e32`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T04:43:46.380Z  
+> **Timestamp**: 2026-11-09T14:18:09.416Z  
 > **Learning ID**: `learn-github-gluesql-gluesql`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gluesql-gluesql-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gluesql/gluesql](https://github.com/gluesql/gluesql))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T04:43:46.372Z  
+> **Harvest Timestamp**: 2026-11-09T14:13:07.558Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2058,909 +2058,281 @@ impl BigDecimalExt for BigDecimal {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0daf9b82` (2026-11-04)
-**Commit Message**: Expand review policies for testing and code structure (#2062)
+### Incident Patch 1: `d0d26db2` (2026-11-09)
+**Commit Message**: Update storage guides and automate README release links (#2070)
 
-Organize the review policy into dedicated Errors, Testing, and Code
-Structure pages. Update contributor guidance and documentation navigation
-to link the topic policies.
+Add SlateDB to the README and storage overview, and include the missing
+Redis overview. Clarify storage trait responsibilities, metadata queries,
+and the shared test suite's limitations for SELECT-only adapters.
 
-Define unit tests around each implementation's reachable branches.
-Describe SQL fixtures as executable documentation that also tests
-SQL-reachable executor branches. Require independent expected results
-and visible case-specific inputs and setup.
+Fix the storage overview link and use dev documentation URLs in the
+README. Rewrite dev and existing versioned links to the new Cargo
+version during release preparation so published package READMEs point
+to the matching release documentation.
 
-Add minimum visibility rules and guidance for minimizing design margin
-and arranging declarations for top-to-bottom reading. Apply the policies
-to new and modified code while keeping unrelated cleanup separate.
-
-**File**: `AGENTS.md` (modified, +1/-1)
+**File**: `.github/workflows/prepare-release.yml` (modified, +13/-0)
 ```diff
-@@ -1,5 +1,5 @@
- # AGENTS.md
--- Follow [docs/docs/development/review-policy.md](docs/docs/development/review-policy.md) when implementing or reviewing changes.
-+- Follow [docs/docs/development/review-policy.md](docs/docs/development/review-policy.md) and its linked topic policies when implementing or reviewing changes.
- - After editing code, run `cargo clippy --all-targets -- -D warnings`.
- - Then run `cargo fmt --all`.
- - When importing items, group them under a single `use` statement whenever possible.
+@@ -27,6 +27,19 @@ jobs:
+         run: |
+           cargo release version ${{ github.event.inputs.version }} --workspace --execute --no-confirm
+           NEW_VERSION="v$(sed -n 's/^version = "\(.*\)"/\1/p' Cargo.toml | head -n 1)"
++
++          python3 - "${NEW_VERSION#v}" <<'PY'
++          import re
++          import sys
++          from pathlib import Path
++
++          readme = Path("README.md")
++          content = readme.read_text()
++          pattern = r"https://gluesql\.org/docs/(?:dev|[0-9][0-9A-Za-z.+-]*)/"
++          content = re.sub(pattern, f"https://gluesql.org/docs/{sys.argv[1]}/", content)
++          readme.write_text(content)
++          PY
++
+           NEW_BRANCH="prepare-release-$NEW_VERSION"
+           git checkout -b $NEW_BRANCH
+           git config --local user.email "taehoon.moon@outlook.com"
 ```
 
-**File**: `README.md` (modified, +1/-1)
+**File**: `README.md` (modified, +14/-13)
 ```diff
-@@ -121,7 +121,7 @@ GlueSQL is designed to be adaptable to a wide variety of environments, including
+@@ -17,11 +17,11 @@ It is also available for JavaScript applications in the browser and Node.js.
  
- GlueSQL is simpler to contribute to than it may look. Its test suite and continuous integration provide guardrails that catch regressions before changes are merged, so don't hesitate to open an issue or pull request.
+ GlueSQL is quite sticky: it brings SQL to your application's storage. Use a provided storage backend or implement a custom adapter to query existing data without moving it into a separate database. GlueSQL handles SQL parsing, planning, and execution.
  
--Read the [review policy](docs/docs/development/review-policy.md) when implementing or reviewing changes. It defines error naming conventions and how to check the corresponding error paths.
-+Read the [review policy](docs/docs/development/review-policy.md) when implementing or reviewing changes. It covers change scope, code structure, error conventions, and test design.
+-- **Choose a storage backend:** use in-memory storage, embedded databases, local files, or external databases.
++- **Choose a storage backend:** use in-memory storage, embedded databases, local files, object stores, or external databases.
+ - **Work with flexible data:** query schema-defined and schemaless tables together, including MAP and LIST values.
+ - **Choose a query interface:** write SQL or compose queries with the Rust Query Builder, both backed by the same engine.
  
- If you're not sure where to start, explore the [test suite](test-suite). The [SQL fixtures](test-suite/fixtures) are a good starting point for getting a sense of GlueSQL's overall capabilities. Try contributing a feature you'd like to use, or browse the [GitHub issues](https://github.com/gluesql/gluesql/issues) for more ideas.
+-[Explore the documentation →](https://gluesql.org/docs)
++[Explore the documentation →](https://gluesql.org/docs/dev/)
  
-```
-
-**File**: `docs/docs/development/review-policy.md` (modified, +10/-132)
-```diff
-@@ -1,138 +1,16 @@
- # Review Policy
+ ## Installation
  
--Use this policy when implementing and reviewing changes to GlueSQL.
-+Apply this policy to new and modified code and tests in GlueSQL. The linked
-+topic documents are part of this policy; read and apply the rules relevant to
-+the change. Keep unrelated migrations of existing code in separate changes.
+@@ -47,24 +47,25 @@ For more JS library information, check out the [gluesql-js repository](https://g
  
--## Error ownership
--
--For an error created in a module, search that module and then its parents.
--Use the first existing error type declared along that path, adding a variant
--there if needed. A module's own `error.rs` counts as its declaration site;
--imports and re-exports do not.
--
--Choose by declaration location, regardless of feature, SQL statement, or
--user-facing message. Reapply this rule when moving a check to another module.
--
--An error propagated from a call keeps the type chosen where it was created.
--The caller's location does not change its ownership.
--
--Ownership selects the error type. Variants distinguish failures; prefixes
--classify their conditions.
--
--## Error variants
--
--Give independent failure conditions distinct variants, even when their messages
--would be similar. Do not reuse a broad variant across unrelated checks.
--
--Represent distinctions within a variant with enum payloads, not string tags or
--message text. String fields may carry diagnostic data such as table names.
--
--For example, use `CreateIndexTableNotFound(String)` for a missing CREATE INDEX
--target and `CtasSourceTableNotFound(String)` for a missing CTAS source. Each string
--holds the table name; the variants identify the failed checks.
--
--An error produced by the same check in a shared function may be propagated
--unchanged by multiple callers.
--
--## Error prefixes
--
--The following error-variant prefixes have specific meanings. Choose a prefix by
--examining the condition that produces the error and how that condition can be
--reached.
--
--| Prefix | Meaning |
-+| Topic | Rules |
+ ## Supported Reference Storages
+ 
+-GlueSQL provides reference storage implementations for in-memory data, embedded databases, local files, and external databases. Use the table below to choose a storage for your use case.
++GlueSQL provides reference storage implementations for in-memory data, embedded databases, local files, object stores, and external databases. Use the table below to choose a storage for your use case.
+ 
+ | Use case | Recommended storage |
  | --- | --- |
--| `Unreachable` | The branch cannot be reached under the conditions established by the current code. |
--| `Conflict` | Storage state violates an invariant preserved by normal executor operations. Direct storage manipulation can make the error reachable. |
--| `Unplanned` | Planning required before execution has not been completed. |
--| `MalformedPlan` | An execution plan has an invalid structure or internal reference. Direct plan construction or modification can make the error reachable. |
--
--Ordinary error names such as `InvalidSortOrder` and `InvalidJsonString` describe
--invalid values or formats. `Invalid` does not have a special classification
--meaning and is not reserved for malformed plans.
--
--### Unreachable
--
--Use `Unreachable` only when the current code makes the error branch impossible.
--For example:
--
--```rust
--let values = [1, 2, 3];
--let first = values.get(0);
--```
--
--Here, `first` is always `Some`. A branch handling `None` would be unreachable
--because both the array length and the index are fixed by the code.
--
--The claim must hold for the inputs the code accepts. A branch that can be reached
--by constructing an AST or plan directly, or by changing storage contents, does
--not qualify merely because normal SQL execution never reaches it. A planner
--guarantee alone is insufficient when callers can supply their own plans.
--
--During review, identify the code conditions that make the branch impossible. An
--untested branch is not evidence of unreachability.
--
--### Conflict
--
--Use `Conflict` when stored state violates an invariant that normal executor
--operations preserve. For example, a stored row can have fewer values than its
--schema requires if a caller writes it directly through the storage interface.
--Reading a missing column during validation can then produce
--`ConflictOnStorageColumnIndex`.
--
--Test this kind of guard by constructing the inconsistent storage state and
--executing the operation that detects it. Assert the returned error and its
--details. A normal SQL statement rejected before it changes storage does not
--exercise that guard.
--
--### Unplanned
--
--`Unplanned` also names plan states that still need processing by a responsible
--planner. AST conversion or direct plan construction can produce these states.
--The planner consumes them and produces the representation needed for execution.
--
--For custom function calls, the transition is:
--
--```text
--UnplannedCustom { name, exprs }
--    -- custom function planner -->
--Custom { function_id, exprs }
--```
--
--If an unplanned state reaches the executor, return an `Unplanned...` error with
--the information needed to identify the unfinished work. For example,
--`UnplannedCustomFunction` retains the function name. The executor must not perform
--the missing planning step or make the state executable through a fallback.
--
--Test the executor guard with an unplanned value that has not passed through its
--required planner. Also check that the supported planning path consumes that
--state before execution.
--
--### MalformedPlan
--
--Use `MalformedPla
-```
-
-**File**: `docs/docs/development/review-policy/code-structure.md` (added, +102/-0)
-```diff
-@@ -0,0 +1,102 @@
-+# Code Structure
-+
-+## Minimize margin (guidance)
-+
-+Margin is the gap between what a design allows or requires and what the code
-+actually needs. Keep that gap as small as practical when designing types,
-+functions, and modules.
-+
-+### Represent valid states directly
-+
-+Suppose a job has three states: pending, running, and finished. Two boolean
-+fields can represent them, but also allow a fourth combination:
-+
-+```rust
-+struct Job {
-+    started: bool,
-+    finished: bool,
-+}
-+```
-+
-+| `started` | `finished` | Meaning |
-+| --- | --- | --- |
-+| `false` | `false` | Pending |
-+| `true` | `false` | Running |
-+| `true` | `true` | Finished |
-+| `false` | `true` | Invalid: finished without starting |
-+
-+Use an enum to represent the three valid states directly:
-+
-+```rust
-+enum JobState {
-+    Pending,
-+    Running,
-+    Finished,
-+}
-+
-+struct Job {
-+    state: JobState,
-+}
-+```
-+
-+The invalid combination is no longer representable. Callers do not need to
-+preserve a relationship between two independent fields.
-+
-+### Share common work without forcing operations together
-+
-+Suppose tags must be trimmed and lowercased, while titles must only be trimmed.
-+Combining these operations introduces a flag and a branch:
-+
-+```rust
-+fn normalize(text: &str, for_tag: bool) -> String {
-+    let text = text.trim();
-+
-+    if for_tag {
-+        text.to_lowercase()
-+    } else {
-+        text.to_owned()
-+    }
-+}
-+```
-+
-+In this example, callers always pass `true` for tags and `false` for titles.
-+The flag was added only to combine the two operations. Keep them separate:
-+
-+```rust
-+fn normalize_tag(text: &str) -> String {
-+    text.trim().to_lowercase()
-+}
-+
-+fn normalize_title(text: &str) -> String {
-+    text.trim().to_owned()
-+}
-+```
-+
-+Repeating the small `trim()` call keeps each function's behavior explicit and
-+removes the mode flag and branch. Common work can still be shared without
-+combining the operations.
-+
-+Apply the same reasoning to module boundaries. Sharing a helper should not
-+require moving unrelated caller-specific types or dependencies into the shared
-+module.
-+
-+These are design guidelines. Some margin may remain when removing it would
-+make the overall design more complex.
-+
-+## Visibility
-+
-+Use the narrowest visibility needed by callers and the intended API. Apply
-+this to functions, types, fields, and re-exports. Sharing code does not
-+automatically require `pub(crate)` or `pub`.
-+
-+Check both module visibility and re-exports to see who can access an item.
-+For example, a `pub` function in a private module can be exposed through a
-+`pub(super)` re-export.
-+
-+## Declaration order (guidance)
-+
-+Prefer an order that lets readers follow the code from top to bottom with
-+fewer jumps between declarations.
-+
-+Use this as a guide for new modules. Leave unrelated code in place when
-+editing existing files.
-```
-
-**File**: `docs/docs/development/review-policy/errors.md` (added, +134/-0)
-```diff
-@@ -0,0 +1,134 @@
-+# Errors
-+
-+## Error ownership
-+
-+For an error created in a module, search that module and then its parents.
-+Use the first existing error type declared along that path, adding a variant
-+there if needed. A module's own `error.rs` counts as its declaration site;
-+imports and re-exports do not.
-+
-+Choose by declaration location, regardless of feature, SQL statement, or
-+user-facing message. Reapply this rule when moving a check to another module.
-+
-+An error propagated from a call keeps the type chosen where it was created.
-+The caller's location does not change its ownership.
-+
-+Ownership selects the error type. Variants distinguish failures; prefixes
-+classify their conditions.
-+
-+## Error variants
-+
-+Give independent failure conditions distinct variants, even when their messages
-+would be similar. Do not reuse a broad variant across unrelated checks.
-+
-+Represent distinctions within a variant with enum payloads, not string tags or
-+message text. String fields may carry diagnostic data such as table names.
-+
-+For example, use `CreateIndexTableNotFound(String)` for a missing CREATE INDEX
-+target and `CtasSourceTableNotFound(String)` for a missing CTAS source. Each string
-+holds the table name; the variants identify the failed checks.
-+
-+An error produced by the same check in a shared function may be propagated
-+unchanged by multiple callers.
-+
-+## Error prefixes
-+
-+The following error-variant prefixes have specific meanings. Choose a prefix by
-+examining the condition that produces the error and how that condition can be
-+reached.
-+
-+| Prefix | Meaning |
-+| --- | --- |
-+| `Unreachable` | The branch cannot be reached under the conditions established by the current code. |
-+| `Conflict` | Storage state violates an invariant preserved by normal executor operations. Direct storage manipulation can make the error reachable. |
-+| `Unplanned` | Planning required before execution has not been completed. |
-+| `MalformedPlan` | An execution plan has an invalid structure or internal reference. Direct plan construction or modification can make the error reachable. |
-+
-+Ordinary error names such as `InvalidSortOrder` and `InvalidJsonString` describe
-+invalid values or formats. `Invalid` does not have a special classification
-+meaning and is not reserved for malformed plans.
-+
-+### Unreachable
-+
-+Use `Unreachable` only when the current code makes the error branch impossible.
-+For example:
-+
-+```rust
-+let values = [1, 2, 3];
-+let first = values.get(0);
-+```
-+
-+Here, `first` is always `Some`. A branch handling `None` would be unreachable
-+because both the array length and the index are fixed by the code.
-+
-+The claim must hold for the inputs the code accepts. A branch that can be reached
-+by constructing an AST or plan directly, or by changing storage contents, does
-+not qualify merely because normal SQL execution never reaches it. A planner
-+guarantee alone is insufficient when callers can supply their own plans.
-+
-+During review, identify the code conditions that make the branch impossible. An
-+untested branch is not evidence of unreachability.
-+
-+### Conflict
-+
-+Use `Conflict` when stored state violates an invariant that normal executor
-+operations preserve. For example, a stored row can have fewer values than its
-+schema requires if a caller writes it directly through the storage interface.
-+Reading a missing column during validation can then produce
-+`ConflictOnStorageColumnIndex`.
-+
-+Test this kind of guard by constructing the inconsistent storage state and
-+executing the operation that detects it. Assert the returned error and its
-+details. A normal SQL statement rejected before it changes storage does not
-+exercise that guard.
-+
-+### Unplanned
-+
-+`Unplanned` also names plan states that still need processing by a responsible
-+planner. AST conversion or direct plan construction can produce these states.
-+The planner consumes them and produces the representation needed for execution.
-+
-+For custom function calls, the transition is:
-+
-+```text
-+UnplannedCustom { name, exprs }
-+    -- custom function planner -->
-+Custom { function_id, exprs }
-+```
-+
-+If an unplanned state reaches the executor, return an `Unplanned...` error with
-+the information needed to identify the unfinished work. For example,
-+`UnplannedCustomFunction` retains the function name. The executor must not perform
-+the missing planning step or make the state executable through a fallback.
-+
-+Test the executor guard with an unplanned value that has not passed through its
-+required planner. Also check that the supported planning path consumes that
-+state before execution.
-+
-+### MalformedPlan
-+
-+Use `MalformedPlan` when a plan uses an execution representation but violates its
-+structural requirements. For example, a `Custom` call with `function_id: 10`
-+cannot refer to a definition when the statement's function list is empty. The
-+guard returns `MalformedPlanCustomFunctionIndex(10)`.
-+
-+This differs from `UnplannedCustom`: the call alrea
-```
-
-**File**: `docs/docs/development/review-policy/testing.md` (added, +70/-0)
-```diff
-@@ -0,0 +1,70 @@
-+# Testing
-+
-+## Unit tests
-+
-+Test every reachable branch of the implementation. Use inputs that reach each
-+branch, and assert its result or state change. A test that fails earlier in the
-+pipeline does not cover that branch.
-+
-+Put unit tests in an inline `#[cfg(test)] mod tests` in the module that contains
-+the implementation. Do not put them in a separate `tests.rs` file or a module
-+that only re-exports the implementation.
-+
-+Move the tests when you move the implementation. Do not widen production
-+visibility just to let tests access private code.
-+
-+Test the branches of shared code in its own module. Caller tests cover the
-+caller's branches, including how it uses results and handles errors from shared
-+code.
-+
-+For a planner pass, prepare the inputs it needs and call the pass directly.
-+Use separate test cases to check that the full planner pipeline runs the pass.
-+
-+Test an execution entry point's own branches in its unit tests.
-+
-+## SQL fixtures
-+
-+The SQL fixtures in `test-suite/fixtures` are executable documentation for
-+people and tools. Group cases by SQL feature and behavior. Use representative
-+examples that show successful usage and expected errors. Give each case a clear
-+name, and keep its setup, SQL, and expected results easy to read.
-+
-+The fixtures also serve a unit-testing role for the execution layer.
-+For each behavior covered by a fixture, test every executor branch and error
-+path that SQL can reach. Run the cases through the production SQL pipeline and
-+assert their results. When a case tests storage behavior, also check the stored
-+state. Readable examples and branch coverage are both required.
-+
-+One scenario can cover several branches. Different SQL behaviors may need
-+separate examples even when they use the same branch.
-+
-+Constructing an AST or plan directly does not prove that SQL can reach the same
-+behavior. For guards that require a manually constructed plan or inconsistent
-+storage, use the setup and assertions in [Error prefixes](errors.md#error-prefixes).
-+
-+## Expected results
-+
-+Assert the expected result:
-+
-+- For a plan transformation, check the expected plan structure.
-+- For an error, check the variant and its relevant fields.
-+- For formatting, compare the exact output.
-+
-+Use success or failure checks alone only when no result value or structure
-+needs to be verified.
-+
-+Write expected values explicitly. Do not copy or modify the actual output to
-+create them. Do not calculate them with the code being tested.
-+
-+A helper may convert an expected value to the type used by the assertion.
-+For example, a planner test may parse and translate expected SQL into a plan.
-+Do not run the planner being tested to build the expected plan.
-+
-+## Inputs and helpers
-+
-+Keep the inputs and expected results visible in each test case. Also show the
-+setup that determines the behavior being tested.
-+
-+Use helpers for repeated parsing, calls, and assertions. Do not hide choices
-+that the test checks inside a helper, such as variants, IDs, defaults, or
-+traversal rules.
-```
-
-**File**: `docs/zensical.toml` (modified, +6/-1)
-```diff
-@@ -253,7 +253,12 @@ nav = [
-     ]},
-   ]},
-   {"Development" = [
--    "development/review-policy.md",
-+    {"Review Policy" = [
-+      {"Overview" = "development/review-policy.md"},
-+      "development/review-policy/errors.md",
-+      "development/review-policy/testing.md",
-+      "development/review-policy/code-structure.md",
-+    ]},
-   ]},
-   {"Archive" = [
-     {"Articles" = [
-```
-
----
-
-### Incident Patch 2: `943afa57` (2026-11-04)
-**Commit Message**: Move CREATE INDEX validation into the planner (#2061)
-
-Collect the target schema and validate CREATE INDEX definitions in a
-dedicated planner step in both the default and Sled pipelines.
-
-Pass the original index definition directly to storage during execution,
-removing the core executor's last plan_scalar_expr call. Report definition
-errors through PlannerError, with distinct variants for missing tables,
-missing columns, unsupported expressions, and missing column references.
-
-Document error-variant conventions for independent failure conditions,
-enum payloads, and diagnostic strings.
-
-**File**: `core/src/executor/alter.rs` (modified, +0/-2)
-```diff
-@@ -1,7 +1,6 @@
- mod alter_table;
- mod error;
- mod function;
--mod index;
- mod table;
- mod validate;
+-| Persistent embedded database | [Redb](https://gluesql.org/docs/0.20.0/storages/supported-storages/redb-storage/) |
+-| Existing MongoDB or Redis data | [Mongo](https://gluesql.org/docs/0.20.0/storages/supported-storages/mongo-storage/) or [Redis](https://gluesql.org/docs/0.20.0/storages/supported-storages/redis-storage/) |
+-| Temporary data, tests, and prototypes, data across threads | [Memory](https://gluesql.org/docs/0.20.0/storages/supported-storages/memory-storage/), [Shared Memory](https://gluesql.org/docs/0.20.0/storages/supported-storages/shared-memory-storage/) |
+-| Querying CSV, JSON, or Parquet files | [CSV](https://gluesql.org/docs/0.20.0/storages/supported-storages/csv-storage/), [JSON](https://gluesql.org/docs/0.20.0/storages/supported-storages/json-storage/), or [Parquet](https://gluesql.org/docs/0.20.0/storages/supported-storages/parquet-storage/) |
+-| Lightweight filesystem persistence | [File](https://gluesql.org/docs/0.20.0/storages/supported-storages/file-storage/) |
+-| Version-controlled data | [Git](https://gluesql.org/docs/0.20.0/storages/supported-storages/git-storage/) |
+-| Queries across multiple storage backends | [Composite](https://gluesql.org/docs/0.20.0/storages/supported-storages/composite-storage/) |
++| Persistent embedded database | [Redb](https://gluesql.org/docs/dev/storages/supported-storages/redb-storage/) |
++| Persistent database on S3 or Cloudflare R2 | [SlateDB](https://gluesql.org/docs/dev/storages/supported-storages/slatedb-storage/) |
++| Existing MongoDB or Redis data | [Mongo](https://gluesql.org/docs/dev/storages/supported-storages/mongo-storage/) or [Redis](https://gluesql.org/docs/dev/storages/supported-storages/redis-storage/) |
++| Temporary data, tests, and prototypes, data across threads | [Memory](https://gluesql.org/docs/dev/storages/supported-storages/memory-storage/), [Shared Memory](https://gluesql.org/docs/dev/storages/supported-storages/shared-memory-storage/) |
++| Querying CSV, JSON, or Parquet files | [CSV](https://gluesql.org/docs/dev/storages/supported-storages/csv-storage/), [JSON](https://gluesql.org/docs/dev/storages/supported-storages/json-storage/), or [Parquet](https://gluesql.org/docs/dev/storages/supported-storages/parquet-storage/) |
++| Lightweight filesystem persistence | [File](https://gluesql.org/docs/dev/storages/supported-storages/file-storage/) |
++| Version-controlled data | [Git](https://gluesql.org/docs/dev/storages/supported-storages/git-storage/) |
++| Queries across multiple storage backends | [Composite](https://gluesql.org/docs/dev/storages/supported-storages/composite-storage/) |
+ | Browser / JS applications | [JavaScript: memory, local Storage, or OPFS](https://github.com/gluesql/gluesql-js#pick-the-storage-that-matches-your-data) |
  
-@@ -11,6 +10,5 @@ pub use {
-     alter_table::alter_table,
-     error::AlterError,
-     function::{delete_function, insert_function},
--    index::create_index,
-     table::{CreateTableOptions, Referencing, create_table, drop_table},
- };
+-See the [Storage documentation](https://gluesql.org/docs/0.20.0/storages/) for setup, examples, and limitations.
++See the [Storage documentation](https://gluesql.org/docs/dev/storages/intro/) for setup, examples, and limitations.
+ 
+ ## SQL and Query Builder
+ 
+-GlueSQL supports both SQL and a Query Builder. Use SQL for familiar or dynamic queries, and use the Query Builder when composing queries in Rust or controlling execution more precisely. Both interfaces run through the same GlueSQL engine and storage backend. For more information, check out the [Query Builder documentation](https://gluesql.org/docs/0.20.0/query-builder/intro/) and [SQL documentation](https://gl
 ```
 
-**File**: `core/src/executor/alter/error.rs` (modified, +1/-8)
+**File**: `docs/docs/index.md` (modified, +9/-7)
 ```diff
-@@ -18,7 +18,7 @@ pub enum AlterError {
-     #[error("function does not exist: {0}")]
-     FunctionNotFound(String),
+@@ -66,7 +66,7 @@ SELECT * FROM Names JOIN Logs ON Names.id = Logs.id;
+ ```
  
--    // CREATE INDEX, DROP TABLE
-+    // DROP TABLE, ALTER TABLE
-     #[error("table does not exist: {0}")]
-     TableNotFound(String),
+ ## Supported Reference Storages
+-GlueSQL provides a variety of reference storages out of the box, including simple in-memory storage, key-value databases, and log file-based storage like JSON & JSONL. These reference storages are readily available for use and can be easily adapted to a variety of storage systems. Additionally, GlueSQL is constantly expanding its list of supported storages, making it a versatile tool for developers.
++GlueSQL provides reference storages for in-memory data, embedded databases, local files, object stores, and external databases. See the [storage documentation](storages/intro.md) for setup, examples, and limitations.
  
-@@ -32,17 +32,10 @@ pub enum AlterError {
-     #[error("column '{0}' of data type '{1:?}' is unsupported for unique constraint")]
-     UnsupportedDataTypeForUniqueColumn(String, DataType),
+ ### Memory Storage
+ Memory Storage is a foundational storage option designed for in-memory, non-persistent data. It is a simple yet robust storage option that can be used in production environments.
+@@ -77,6 +77,9 @@ Shared Memory Storage is a storage option designed to provide more comfortable u
+ ### Redb Storage
+ Redb Storage leverages the [redb](https://docs.rs/redb) embedded database for persistent storage with transactional support. It keeps all tables in a single database file, offering another simple way to keep your data on disk while enjoying GlueSQL's query capabilities.
  
--    // validate index expr
--    #[error("unsupported index expression")]
--    UnsupportedIndexExpr,
++### SlateDB Storage
++[SlateDB Storage](storages/supported-storages/slatedb-storage.md) stores GlueSQL schemas and rows in an embedded key-value engine backed by object storage, including Amazon S3 and Cloudflare R2. It supports reads, writes, and transactions, while SlateDB manages caching and compaction.
++
+ ### JSON Storage
+ With GlueSQL, you can use JSONL or JSON files as a database that supports SQL and Query Builder, making it a powerful option for developers who need to work with JSON data. JSON Storage is a storage system that uses two types of files: a schema file (optional) and a data file. The schema file is written in Standard SQL and stores the structure of the table, while the data file contains the actual data and supports two file formats: `*.json` and `*.jsonl`. JSON Storage supports all DML features, but is particularly specialized for SELECT and INSERT.
+ 
+@@ -97,17 +100,16 @@ Git Storage is a custom storage option in GlueSQL that integrates seamlessly wit
+ ### Mongo Storage
+ With Mongo storage, you can use mongodb as a storage for SQL queries. You can use all the features supported by GlueSQL, such as aggregations and joins, which were previously difficult to handle on an unstructured database. In particular, you can use GlueSQL's powerful schema system on mongodb, which is as strong as an RDBMS.
+ 
++### Redis Storage
++[Redis Storage](storages/supported-storages/redis-storage.md) stores GlueSQL schemas and rows in a running Redis server. A namespace keeps each database's keys separate within the server.
++
+ ### Composite Storage
+ Composite Storage is a powerful feature of GlueSQL that allows you to bundle together multiple existing storages, enabling you to perform JOIN operations across two distinct storages. This makes it useful for scenarios where data has to be queried or moved across different storage systems through the same SQL interface.
+ 
+ ## Adapting GlueSQL to Your Environment: Creating Custom Storage
+-GlueSQL is designed to be adaptable to a wide variety of environments, including file systems, key-value databases, complex NoSQL databases, and remote APIs. To create a custom storage for GlueSQL, you only need to implement the Store and StoreMut traits provided by GlueSQL. These traits allow you to support SELECT queries and modify data, such as INSERT, UPDATE, and DELETE.
 -
-     // validate index expr
-     #[error("unsupported unnamed argument")]
-     UnsupportedUnnamedArg,
- 
--    #[error("index expression must reference at least one column")]
--    IndexExprRequiresColumnReference,
+-If you want to support additional features, such as schema changes, transactions, or custom functions, you can implement the corresponding traits. However, these traits are optional, and you can choose to implement only the ones that are relevant to your storage system.
 -
-     #[error("duplicate column name: {0}")]
-     DuplicateColumnName(String),
+-To make it even easier to develop custom storages, GlueSQL provides a Test Suite that allows you to test your storage implementation against a set of standard SQL queries. This ensures that your storage system is compatible with GlueSQL and can handle common SQL operations.
++Connect GlueSQL to your files, databases, or APIs through the storage traits. `Store` handles reads and `StoreMut` handles writes. Additional traits support features such as transactions, indexes, and custom functions.
+ 
+-Overall, creating a custom storage for GlueSQL is a straightforward process that allows you to adapt SQL and the Query Builder to your environment with ease.
++See the [custom storage guide](storages/developing-custom-storages/intro.md) for implementation details and the [Test Suite](storages/developing-custom-storages/using-test-suite.md) for shared SQL tests.
+ 
+ ## GlueSQL Custom Storage: Let Us Handle It for You
+ Although anyone can develop a custom storage for GlueSQL with ease, our GlueSQL team can also implement and maintain it for you. This is es
+```
+
+**File**: `docs/docs/storages/developing-custom-storages/intro.md` (modified, +15/-17)
+```diff
+@@ -6,32 +6,30 @@ sidebar_position: 1
+ 
+ With GlueSQL, you can adapt SQL and the Query Builder to a wide variety of environments. This includes file systems, key-value databases, complex NoSQL databases, and even remote APIs. As long as a system supports reading, it can support SELECT queries. If it supports both reading and writing, it can support most SQL operations, including UPDATE and DELETE.
+ 
+-To implement GlueSQL, you only need to know two things:
++Custom storage development has two main parts:
++
+ 1. Understanding Store traits
+ 2. Using the Test Suite
+ 
+ These topics are covered in more detail in their respective pages, but here we will provide a brief overview.
+ 
+ ## Understanding Store Traits
+ 
+-GlueSQL is available in both Rust and JavaScript environments, with plans to expand its support to other languages. Since the GlueSQL project itself is written in Rust, using Rust is essential for developing custom storages. To create a custom storage, you need to implement the Store traits provided by GlueSQL. There are currently 9 traits:
+-
+-* `Store` - A trait for read operations to support SELECT queries.
+-* `StoreMut` - A trait for modifying data, such as INSERT, UPDATE, and DELETE.
+-* `AlterTable` - A trait for supporting schema changes.
+-* `Transaction` - A trait for supporting transactions.
+-* `CustomFunction` - A trait for supporting user-level custom functions.
+-* `CustomFunctionMut` - A trait for creating or deleting user-level custom functions.
+-* `Index` - A trait for supporting non-clustered indexes. This trait allows you to process pre-registered indexes.
+-* `IndexMut` - A trait for creating or deleting non-clustered indexes.
+-* `Metadata` - A trait for querying metadata.
++A Rust storage implements these traits:
+ 
+-To develop a custom storage, you can implement these 9 traits. Although this may seem like a lot of work, don't worry. All traits except for `Store` and `StoreMut` are optional. In other words, you don't have to implement them. If you don't want to support the `AlterTable` trait, simply don't implement it. It's that simple.
++* `Store` - Reads schemas and rows.
++* `StoreMut` - Writes schemas and rows.
++* `AlterTable` - Changes table schemas.
++* `Transaction` - Begins, commits, and rolls back transactions.
++* `CustomFunction` - Reads user-defined functions.
++* `CustomFunctionMut` - Creates and deletes user-defined functions.
++* `Index` - Reads rows through secondary indexes.
++* `IndexMut` - Creates and drops secondary indexes.
++* `Metadata` - Returns table metadata.
++* `Planner` - Plans queries.
+ 
+-Furthermore, if you only want to support SELECT queries, you don't need to implement `StoreMut`. By implementing only the `Store` trait, you can create a custom storage that supports SQL SELECT queries.
++`Store` requires four read methods. For the other traits, start with empty implementations and override the methods your storage needs. For example, `impl Planner for MyStorage {}` uses GlueSQL's default planner. Each trait's page describes its defaults.
+ 
+ ## Using the Test Suite
+ 
+-The minimum requirement for developing a custom storage is implementing the Store traits. However, you may want to verify that your implementation is correct. That's where the Test Suite comes in.
+-
+-GlueSQL provides a test case library to make it easy to validate custom storage development. Developers can implement the desired Store traits and use the Test Suite to verify that their implementation is correct. The line coverage of GlueSQL's core project is almost 99%, which means that passing the Test Suite alone can complete most of the feature verification. All you need to do is ensure your custom storage passes the Test Suite and write additional tests for any specialized features specific to your storage.
+\ No newline at end of file
++The [Test Suite](using-test-suite.md) provides shared tests for the SQL features your storage supports. You can add tests for behavior specific to your implementation, such as persistence across restarts or transaction isolation.
+```
+
+**File**: `docs/docs/storages/developing-custom-storages/store-traits/alter-table.md` (modified, +2/-2)
+```diff
+@@ -4,9 +4,9 @@ sidebar_position: 3
+ 
+ # AlterTable
+ 
+-The `AlterTable` trait corresponds to the SQL ALTER TABLE statement and is used for modifying existing schemas. It is not necessary to implement the `AlterTable` trait. If you are dealing with data that is difficult to modify schema-wise or schemaless data, there is no need to implement the `AlterTable` trait. It is an optional trait that custom storage developers can choose to implement.
++`AlterTable` handles SQL ALTER TABLE statements. Its default methods use `Store` and `StoreMut`. Override them for storage-specific schema changes, such as updating secondary indexes.
+ 
+-Similar to the `Store` & `StoreMut` combination, if you implement the `AlterTable` trait, you can use additional tests in the Test Suite to verify your implementation. There are currently four types of methods supported by `AlterTable`:
++It provides four methods:
+ 
+ 1. `rename_schema`: Corresponds to the SQL statement `ALTER TABLE {table-name} RENAME TO {other-name};`. This method renames a schema.
  
 ```
 
-**File**: `core/src/executor/alter/index.rs` (removed, +0/-57)
+**File**: `docs/docs/storages/developing-custom-storages/store-traits/custom-function.md` (modified, +3/-3)
 ```diff
-@@ -1,57 +0,0 @@
--use {
--    super::AlterError,
--    crate::{
--        ast::{ColumnDef, OrderByExpr},
--        data::Schema,
--        plan::{ExprPlan, FunctionPlan, plan_scalar_expr},
--        result::Result,
--        store::{GStore, GStoreMut},
--    },
--};
--
--pub fn create_index<T: GStore + GStoreMut>(
--    storage: &mut T,
--    table_name: &str,
--    index_name: &str,
--    column: &OrderByExpr,
--) -> Result<()> {
--    let expr = plan_scalar_expr(column.expr.clone());
--    let Schema { column_defs, .. } = storage
--        .fetch_schema(table_name)?
--        .ok_or_else(|| AlterError::TableNotFound(table_name.to_owned()))?;
--    let columns = column_defs
--        .unwrap_or_default()
--        .into_iter()
--        .map(|ColumnDef { name, .. }| name)
--        .collect::<Vec<_>>();
--
--    let (valid, has_ident) = validate_index_expr(&columns, &expr);
--    if !valid {
--        return Err(AlterError::UnsupportedIndexExpr.into());
--    } else if !has_ident {
--        return Err(AlterError::IndexExprRequiresColumnReference.into());
--    }
--
--    storage.create_index(table_name, index_name, column)
--}
--
--fn validate_index_expr(columns: &[String], expr: &ExprPlan) -> (bool, bool) {
--    let validate = |expr| validate_index_expr(columns, expr);
--
--    match expr {
--        ExprPlan::Identifier(ident) => (columns.iter().any(|column| column == ident), true),
--        ExprPlan::Literal(_) | ExprPlan::TypedString { .. } => (true, false),
--        ExprPlan::Nested(expr) | ExprPlan::UnaryOp { expr, .. } => validate(expr),
--        ExprPlan::BinaryOp { left, right, .. } => {
--            let (valid_l, has_ident_l) = validate(left);
--            let (valid_r, has_ident_r) = validate(right);
--
--            (valid_l && valid_r, has_ident_l || has_ident_r)
--        }
--        ExprPlan::Function(func) => match func.as_ref() {
--            FunctionPlan::Cast { expr, .. } => validate(expr),
--            _ => (false, false),
--        },
--        _ => (false, false),
--    }
--}
-```
-
-**File**: `core/src/executor/execute.rs` (modified, +5/-3)
-```diff
-@@ -1,8 +1,8 @@
- use {
-     super::{
-         alter::{
--            CreateTableOptions, alter_table, create_index, create_table, delete_function,
--            drop_table, insert_function,
-+            CreateTableOptions, alter_table, create_table, delete_function, drop_table,
-+            insert_function,
-         },
-         delete::delete,
-         fetch::fetch,
-@@ -176,7 +176,9 @@ fn execute_inner<T: GStore + GStoreMut>(
-             name,
-             table_name,
-             column,
--        } => create_index(storage, table_name, name, column).map(|()| Payload::CreateIndex),
-+        } => storage
-+            .create_index(table_name, name, column)
-+            .map(|()| Payload::CreateIndex),
-         StatementPlanKind::DropIndex { name, table_name } => storage
-             .drop_index(table_name, name)
-             .map(|()| Payload::DropIndex),
-```
-
-**File**: `core/src/planner.rs` (modified, +2/-0)
-```diff
-@@ -12,6 +12,7 @@ mod query;
- mod schema;
- mod schemaless;
- mod validate;
-+mod validate_create_index;
- mod visit;
- mod visit_mut;
+@@ -4,11 +4,11 @@ sidebar_position: 5
  
-@@ -27,4 +28,5 @@ pub use {
-     primary_key::plan as plan_primary_key,
-     schema::fetch_schema_map,
-     schemaless::plan as plan_schemaless,
-+    validate_create_index::validate as validate_create_index,
- };
-```
-
-**File**: `core/src/planner/error.rs` (modified, +12/-0)
-```diff
-@@ -2,6 +2,18 @@ use {serde::Serialize, std::fmt::Debug, thiserror::Error as ThisError};
+ # CustomFunction
  
- #[derive(ThisError, Serialize, Debug, PartialEq, Eq)]
- pub enum PlannerError {
-+    #[error("CREATE INDEX target table does not exist: {0}")]
-+    CreateIndexTableNotFound(String),
-+
-+    #[error("CREATE INDEX column does not exist: {0}")]
-+    CreateIndexColumnNotFound(String),
-+
-+    #[error("unsupported index expression")]
-+    UnsupportedIndexExpr,
-+
-+    #[error("index expression must reference at least one column")]
-+    IndexExprRequiresColumnReference,
-+
-     #[error("CTAS source table does not exist: {0}")]
-     CtasSourceTableNotFound(String),
+-The `CustomFunction` trait is an optional trait for supporting user-level custom functions. Through the `CustomFunction` trait, you can retrieve custom functions stored in the storage system. You can choose to implement the `CustomFunction` trait alone or together with the `CustomFunctionMut` trait.
++`CustomFunction` reads user-defined functions from storage. Override its methods to expose functions; their defaults return unsupported errors.
+ 
+-In some cases, you might want to provide storage-specific functions pre-built and separately available for each storage system. In such cases, you can implement the `CustomFunction` trait and create additional functions stored in advance when using it. To achieve this, the `CustomFunction` and `CustomFunctionMut` traits are provided separately for implementation.
++For example, a storage can provide a fixed set of functions through `CustomFunction`. Use `CustomFunctionMut` to support creating and deleting functions.
+ 
+-There are two methods available:
++It provides two methods:
+ 
+ 1. `fetch_function`: This method retrieves a custom function from the storage system using the provided function name.
  
 ```
 
-**File**: `core/src/planner/schema.rs` (modified, +42/-1)
+**File**: `docs/docs/storages/developing-custom-storages/store-traits/index-mut.md` (modified, +1/-7)
 ```diff
-@@ -50,6 +50,15 @@ pub fn fetch_schema_map<T: Store + ?Sized>(
+@@ -4,11 +4,7 @@ sidebar_position: 8
  
-             Ok(schema_list)
-         }
-+        StatementPlanKind::CreateIndex { table_name, .. } => {
-+            let schema_map = storage
-+                .fetch_schema(table_name)?
-+                .map_or_else(HashMap::new, |schema| {
-+                    HashMap::from([(table_name.to_owned(), schema)])
-+                });
-+
-+            Ok(schema_map)
-+        }
-         StatementPlanKind::DropTable { names, .. } => {
-             let mut schema_map = HashMap::new();
-             for table_name in names {
-@@ -408,7 +417,7 @@ mod tests {
-         crate::{
-             mock::{MockStorage, run},
-             parse_sql::parse,
--            result::Result,
-+            result::{Error, Result},
-             translate::translate,
-         },
-     };
-@@ -447,6 +456,38 @@ mod tests {
-         test("DELETE FROM Foo;", &["Foo"]);
-     }
+ # IndexMut
  
-+    #[test]
-+    fn create_index() {
-+        let storage = run("CREATE TABLE Foo (id INTEGER)");
-+        let test = |sql: &str, expected: &[&str], name: &str| {
-+            let actual = plan(&storage, sql).expect(sql);
-+            assert_eq!(actual.as_slice(), expected, "{name}: {sql}");
-+        };
-+
-+        let actual = "CREATE INDEX idx ON Foo (id)";
-+        let expected = &["Foo"];
-+        test(actual, expected, "index target schema");
-+
-+        let actual = "CREATE INDEX idx ON Missing (id)";
-+        let expected = &[];
-+        test(actual, expected, "missing schema is left to validation");
-+
-+        let actual = "CREATE INDEX idx ON Foo ((SELECT id FROM __Err__))";
-+        let expected = &["Foo"];
-+        test(
-+            actual,
-+            expected,
-+            "unsupported index subquery is not scanned",
-+        );
-+
-+        let sql = "CREATE INDEX idx ON __Err__ (id)";
-+        let actual = plan(&storage, sql);
-+        let expected = Err(Error::StorageMsg(
-+            "[MockStorage] fetch_schema - user triggered error".to_owned(),
-+        ));
-+        assert_eq!(actual, expected, "target schema error propagates: {sql}");
-+    }
-+
-     #[test]
-     fn expr() {
-         let storage = run("
+-The `IndexMut` trait, when implemented along with the `Index` trait, allows custom storage developers to provide users with the ability to create, use, and delete non-clustered indexes. Implementing the `IndexMut` trait enhances the storage system's capabilities by providing support for dynamic index management.
+-
+-Non-clustered indexes can improve query performance by reducing the amount of data that needs to be read during search operations. Users can create multiple non-clustered indexes tailored to their specific use cases, providing a more efficient and optimized experience when working with large datasets.
+-
+-The `IndexMut` trait requires the implementation of two methods:
++`IndexMut` creates and drops secondary indexes. Override its two methods to support CREATE INDEX and DROP INDEX; both return unsupported errors by default.
+ 
+ 1. `create_index`: This method creates a new non-clustered index on the specified column with a given index name for the provided table. The index can be used to speed up queries involving the indexed column.
+ 
+@@ -26,5 +22,3 @@ pub trait IndexMut {
+     fn drop_index(&mut self, table_name: &str, index_name: &str) -> Result<()>;
+ }
+ ```
+-
+-By implementing both the `Index` and `IndexMut` traits, custom storage developers can provide users with the ability to manage non-clustered indexes according to their specific needs, improving overall query performance and providing a more tailored experience.
 ```
 
-**File**: `core/src/planner/validate_create_index.rs` (added, +273/-0)
+**File**: `docs/docs/storages/developing-custom-storages/store-traits/index-trait.md` (modified, +3/-9)
 ```diff
-@@ -0,0 +1,273 @@
-+use {
-+    super::PlannerError,
-+    crate::{
-+        ast::{ColumnDef, Expr, Function},
-+        data::Schema,
-+        plan::{StatementPlan, StatementPlanKind},
-+        result::Result,
-+    },
-+    std::{collections::HashMap, hash::BuildHasher},
-+};
-+
-+pub fn validate<S: BuildHasher>(
-+    schema_map: &HashMap<String, Schema, S>,
-+    statement: &StatementPlan,
-+) -> Result<()> {
-+    if let StatementPlanKind::CreateIndex {
-+        table_name, column, ..
-+    } = &statement.kind
-+    {
-+        let schema = schema_map
-+            .get(table_name)
-+            .ok_or_else(|| PlannerError::CreateIndexTableNotFound(table_name.clone()))?;
-+        let columns = schema.column_defs.as_deref().unwrap_or_default();
-+
-+        let has_ident = validate_index_expr(columns, &column.expr)?;
-+        if !has_ident {
-+            return Err(PlannerError::IndexExprRequiresColumnReference.into());
-+        }
-+    }
-+
-+    Ok(())
-+}
-+
-+fn validate_index_expr(columns: &[ColumnDef], expr: &Expr) -> Result<bool> {
-+    let validate = |expr| validate_index_expr(columns, expr);
-+
-+    match expr {
-+        Expr::Identifier(ident) => {
-+            if columns.iter().any(|column| column.name == *ident) {
-+                Ok(true)
-+            } else {
-+                Err(PlannerError::CreateIndexColumnNotFound(ident.to_owned()).into())
-+            }
-+        }
-+        Expr::Literal(_) | Expr::TypedString { .. } => Ok(false),
-+        Expr::Nested(expr) | Expr::UnaryOp { expr, .. } => validate(expr),
-+        Expr::BinaryOp { left, right, .. } => {
-+            let has_ident_l = validate(left)?;
-+            let has_ident_r = validate(right)?;
-+
-+            Ok(has_ident_l || has_ident_r)
-+        }
-+        Expr::Function(func) => match func.as_ref() {
-+            Function::Cast { expr, .. } => validate(expr),
-+            _ => Err(PlannerError::UnsupportedIndexExpr.into()),
-+        },
-+        _ => Err(PlannerError::UnsupportedIndexExpr.into()),
-+    }
-+}
-+
-+#[cfg(test)]
-+mod tests {
-+    use {
-+        super::{validate, validate_index_expr},
-+        crate::{
-+            ast::{ColumnDef, Expr},
-+            data::Value,
-+            mock::run,
-+            parse_sql::{parse, parse_expr},
-+            plan::StatementPlan,
-+            planner::{PlannerError, fetch_schema_map},
-+            query_builder::ColumnDefNode,
-+            result::Error,
-+            store::Planner,
-+            translate::{NO_PARAMS, translate, translate_expr},
-+        },
-+    };
-+
-+    fn statement(sql: &str) -> StatementPlan {
-+        translate(&parse(sql).expect(sql)[0]).expect(sql).into()
-+    }
-+
-+    #[test]
-+    fn create_index() {
-+        let storage = run("
-+            CREATE TABLE Item (id INTEGER);
-+            CREATE TABLE Documents;
-+        ");
-+        let test = |sql: &str, expected, name: &str| {
-+            let statement = statement(sql);
-+            let schema_map = fetch_schema_map(&storage, &statement).expect(sql);
-+            let actual = validate(&schema_map, &statement);
-+            assert_eq!(actual, expected, "{name}: {sql}");
-+        };
-+
-+        let actual = "CREATE INDEX idx ON Item (id)";
-+        let expected = Ok(());
-+        test(actual, expected, "valid column reference");
-+
-+        let actual = "CREATE INDEX idx ON Missing (ABS(id))";
-+        let expected = Err(Error::Planner(PlannerError::CreateIndexTableNotFound(
-+            "Missing".to_owned(),
-+        )));
-+        test(
-+            actual,
-+            expected,
-+            "missing table precedes invalid expression",
-+        );
-+
-+        let actual = "CREATE INDEX idx ON Item (missing)";
-+        let expected = Err(Error::Planner(PlannerError::CreateIndexColumnNotFound(
-+            "missing".to_owned(),
-+        )));
-+        test(actual, expected, "missing column");
-+
-+        let actual = "CREATE INDEX idx ON Item (ABS(id))";
-+        let expected = Err(Error::Planner(PlannerError::UnsupportedIndexExpr));
-+        test(
-+            actual,
-+            expected,
-+            "invalid expression precedes missing reference",
-+        );
-+
-+        let actual = "CREATE INDEX idx ON Item (100)";
-+        let expected = Err(Error::Planner(
-+            PlannerError::IndexExprRequiresColumnReference,
-+        ));
-+        test(actual, expected, "constant requires a column reference");
-+
-+        let actual = "CREATE INDEX idx ON Documents (id)";
-+        let expected = Err(Error::Planner(PlannerError::CreateIndexColumnNotFound(
-+            "id".to_owned(),
-+        )));
-+        test(actual, expected, "schemaless table has no declared columns");
-+
-+        let actual = "CREATE INDEX idx ON Documents (100)";
-+        let expected = Err(Error::Planner(
-+            PlannerError::IndexExprRequiresColumnReference,
-+        ));
-+        test(
-+            actual,
-+            expected,
-+            "schemaless constant still requires a reference",
-+        );
-+
-+        let actual = "DROP INDEX Missing.idx";
-+        let
+@@ -4,17 +4,11 @@ sidebar_position: 7
+ 
+ # Index
+ 
+-The `Index` trait is designed to support non-clustered indexes. If you only need to support pre-built non-clustered indexes, implementing the `Index` trait without the `IndexMut` trait is sufficient. Note that clustered indexes (PRIMARY KEY) are automatically supported by the `Store` & `StoreMut` implementations. The `Index` trait is specifically for non-clustered index support.
++`Index` reads rows using the secondary index selected in the query plan. Implement `scan_indexed_data` to support index lookups; the default returns an unsupported error.
+ 
+-Currently, GlueSQL's query planner only supports a logical planner, so the performance of finding non-clustered indexes is not optimal yet, but it is being improved. If you want to use non-clustered indexes more precisely, using the Query Builder to directly specify the index you want to use can be a good approach.
++Primary-key lookups use `Store` and do not need secondary-index support.
+ 
+-A brief explanation of non-clustered and clustered indexes:
+-
+-- Non-clustered index: A non-clustered index is an index that doesn't affect the physical ordering of the data rows in the table. Instead, it maintains a separate data structure that contains a reference to the actual data rows, allowing for faster search operations without rearranging the data itself.
+-
+-- Clustered index: A clustered index determines the physical order of the data in the table. In other words, the data rows are stored on disk in the same order as the index. There can be only one clustered index per table, which is usually defined by the PRIMARY KEY constraint.
+-
+-There is one method to implement for the `Index` trait:
++It provides one method:
+ 
+ 1. `scan_indexed_data`: This method retrieves indexed data from the storage system using the provided table name, index name, sorting order, and comparison value.
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2062** (2026-11-04): Expand review policies for testing and code structure (@panarch)
-- **PR #2061** (2026-11-04): Move CREATE INDEX validation into the planner (@panarch)
-- **PR #2060** (2026-11-04): Apply table alias column names when copying CTAS schemas (@chiliec)
-- **PR #2057** (2026-11-04): Move CTAS column default planning out of the executor (@panarch)
-- **PR #2053** (2026-11-03): Plan custom functions before execution (@panarch)
-- **PR #2048** (2026-11-01): Avoid AST conversion during INSERT uniqueness validation (@panarch)
+- **PR #2071** (2026-11-09): Clarify test responsibilities and maintenance costs (@panarch)
+- **PR #2070** (2026-11-09): Update storage guides and automate README release links (@panarch)
+- **PR #2068** (2026-11-09): Add SlateDB storage backed by object stores (@panarch)
+- **PR #2067** (2026-11-08): Align transaction variable names in the redb I/O error test (@panarch)
+- **PR #2066** (2026-11-08): Remove deprecated Sled storage (@panarch)
+- **PR #2065** (2026-11-08): Decouple CLI SQL dump from Sled storage (@panarch)
 
 ---
 
@@ -2980,28 +2352,40 @@ enum payloads, and diagnostic strings.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Expand review policies for testing and code structure (#2062)
+## X. Update storage guides and automate README release links (#2070)
 
 **RULE**:
-When implementing operations in `AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gluesql/gluesql. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/prepare-release.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gluesql/gluesql. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0daf9b82`: Expand review policies for testing and code structure (#2062). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d0d26db2`: Update storage guides and automate README release links (#2070). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `AGENTS.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/prepare-release.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Follow [docs/docs/development/review-policy.md](docs/docs/development/review-policy.md) and its linked topic policies when implementing or reviewing changes.
+
+          python3 - "${NEW_VERSION#v}" <<'PY'
+          import re
+          import sys
+          from pathlib import Path
+
+          readme = Path("README.md")
+          content = readme.read_text()
+          pattern = r"https://gluesql\.org/docs/(?:dev|[0-9][0-9A-Za-z.+-]*)/"
+          content = re.sub(pattern, f"https://gluesql.org/docs/{sys.argv[1]}/", content)
+          readme.write_text(content)
+          PY
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-- Follow [docs/docs/development/review-policy.md](docs/docs/development/review-policy.md) when implementing or reviewing changes.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0daf9b82` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d0d26db2` are properly handled with clean fallback behavior.

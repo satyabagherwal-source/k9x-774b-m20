@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vitejs-vite-learnings.md`  
 > **Source**: github ([https://github.com/vitejs/vite](https://github.com/vitejs/vite))  
-> **Source Version**: `b3cb0575`  
+> **Source Version**: `a579e352`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T02:26:09.042Z  
+> **Timestamp**: 2026-11-07T20:16:25.986Z  
 > **Learning ID**: `learn-github-vitejs-vite`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vitejs-vite-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vitejs/vite](https://github.com/vitejs/vite))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T02:26:07.535Z  
+> **Harvest Timestamp**: 2026-11-07T20:16:24.783Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Next generation frontend tooling. It's fast!
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 83713 stars
+- **Stars / Engagement**: 83859 stars
 
 ---
 
@@ -293,9 +293,12 @@ class WorkerOutputCache {
     childBundleIds.add(childBundleId)
   }
 
-  getLiveAssetFileNames(mainLiveModuleIds: Set<string>): Set<string> {
+  getLiveAssetFileNames(
+    rootBundleId: BundleId,
+    rootLiveModuleIds: Set<string>,
+  ): Set<string> {
     const liveBundles = new Set<string>()
-    const queue: [BundleId, Set<string>][] = [[undefined, mainLiveModuleIds]]
+    const queue: [BundleId, Set<string>][] = [[rootBundleId, rootLiveModuleIds]]
     while (queue.length > 0) {
       const [bundleId, moduleIds] = queue.shift()!
       const referencesByModule = this.bundleReferences.get(bundleId)
@@ -432,9 +435,7 @@ export function recordWorkerReference(
 /**
  * Reference a bundled worker entry as `import.meta.ROLLDOWN_FILE_URL_<id>` from the
  * given build. Thin accessor over `WorkerOutputCache.generateEntryUrlExpr` so
- * both `vite:worker` and `vite:worker-import-meta-url` can share the cache.
- */
-export function generateWorkerEntr
+ * both `vite:worker` and `vite:worker-import-meta-url` can share the cache
 ```
 
 ### Core Architecture Module: `packages/vite/src/node/plugins/workerImportMetaUrl.ts`
@@ -1294,11 +1295,11 @@ self.onmessage = (e) => {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #23980** (2026-11-03): **fix(client): preserve valueless query params in cleanUrl (fix #23979)**
-  *Symptoms*: ### Description  Fixes #23979.  When a `<link rel="stylesheet">` points to a stylesheet with valueless query flags (such as `/src/Comp.vue?vue&type=style&index=0&lang.scss` rendered during SSR by Nuxt), CSS HMR calls `cleanUrl(path)` in `packages/vite/src/client/client.ts` to drop `direct`.  Previously, `cleanUrl` called `url.searchParams.delete('direct')` and read back `url.search`. Because `URLSearchParams.prototype.toString()` serializes valueless parameters as `key=`, flags like `vue` and `lang.scss` became `vue=&...&lang.scss=`. The trailing `=` prevented `CSS_LANGS_RE` from matching the extension on the updated link URL (`...lang.scss=&t=...`), causing the styles to be served as JavaScript or fail scoped CSS compilation.  This change filters out `direct` / `direct=...` directly from the raw `url.search` string without round-tripping through `URLSearchParams`, preserving valueless flags as written while properly removing `direct`.  ### AI Disclosure  Assisted by AI to analyze the reproduction in #23979. The fix was manually reviewed and verified against edge cases (such as URLs with no query, trailing `?`, multiple parameters, parameters prefixed with `direct` like `direction`, and full browser URLs). 
+- **Issue #24007** (2026-11-06): **fix(server): dedupe out-of-root watch registrations (fix #23940)**
+  *Symptoms*: Fixes #23940.  ## What  `ensureWatchedFile` in `packages/vite/src/node/utils.ts` now tracks files it has already added per watcher with a `WeakMap<FSWatcher, Set<string>>`, so `watcher.add(path.resolve(file))` runs once per out-of-root file per watcher instead of on every transform.  ## Why  On macOS, chokidar's FSEvents path does not deduplicate repeated `add()` calls — each `watcher.add()` for an already-watched path registers another `filteredFsEventsListener` and closer. `transformRequest` calls `ensureWatchedFile` on every transform of an out-of-root file (linked packages etc.), so long dev sessions leaked listeners without bound and made each FS event more expensive. The `fs.watch` path dedupes internally, so the leak only showed up with FSEvents.  ## How  - Added `ensuredWatchedFiles` + `getEnsuredWatchedFiles(watcher)` that lazily installs `unwatch`/`close` wrappers once per watcher to keep the dedupe set in sync. A single-path `unwatch` removes that entry; a glob `unwatch` clears the set so a later `ensureWatchedFile` can re-add if still needed; `close` clears it. - `ensureWatchedFile` resolves the path, returns early if already in the set, otherwise calls `watcher.add` and records the path. - `WeakMap` keyed by watcher means server restarts (new watcher) start fresh and closed watchers can be GC'd. No new dependency, no config option.  ## Testing  I ran these locally before opening this PR:  - `pnpm --filter vite run build` — passes (bundle + types check). - `pnpm r
 
-- **Issue #23977** (2026-11-02): **fix(css): preserve quoted image-set spaces (BOYF-266)**
-  *Symptoms*: `image-set("./image  name.svg" 1x)` collapses the two spaces in its quoted filename before asset resolution. When a one-space file also exists, the build silently selects that different asset; otherwise it leaves an unresolved URL. The same issue affects single-quoted candidates.  Keep quoted tokens intact while normalizing candidate separators. The boundary guard preserves normal parsing of apostrophes in unquoted HTML srcset URLs. The candidate matcher and nested-function handling are unchanged. #23521 and #23550 address nested parentheses and retain the whitespace normalization that causes this separate bug.  Added unit coverage for both quote styles, commas, descriptors, CRLF/tabs, escaped whitespace strings, and HTML URL apostrophes. Independently rebuilt the exact base and head, then ran the same four-build fixture matrix: static/dynamic CSS, distinct one/two-space SVG bytes, double-space-only files, and cssMinify=false/lightningcss. Base: 16 failures among 56 declarations; head: 56 correct, zero warnings, all 40 controls retained. Related unit tests (296), type build, Vite typecheck, and changed-file lint/format checks pass. Browser and full repository suites were not run.  AI disclosure: AI coding agents prepared this change and performed a separate automated review of the exact commit. The review checked the full diff, quote boundaries, separator behavior, and emitted asset bytes. No human review or personal production-use experience is claimed. 
+- **Issue #24003** (2026-11-06): **test: use `onTestFinished` for tear downs**
+  *Symptoms*: Use `onTestFinished` to avoid shared variables between tests.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1315,372 +1316,343 @@ self.onmessage = (e) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b3cb0575` (2026-11-02)
-**Commit Message**: fix(deps): update all non-major dependencies (#23966)
+### Incident Patch 1: `eab1dc27` (2026-11-05)
+**Commit Message**: fix(html): remove adjacent module tags on the first line (#23823)
 
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+Co-authored-by: 翠 <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/semgrep.yml` (modified, +1/-1)
+**File**: `.oxfmtrc.json` (modified, +1/-0)
 ```diff
-@@ -14,7 +14,7 @@ jobs:
-     permissions:
-       security-events: write # Required for upload-sarif to upload SARIF files.
-     container:
--      image: semgrep/semgrep:1.182.1@sha256:451b3d875c00dac7ed5db5293e584a07de11449a409c10b3c2d2652f429630b6
-+      image: semgrep/semgrep:1.183.0@sha256:2e45517a85e13a9cca14a2a00df6bb48affd66b8ebfae1b0991cd57578362fb0
-     steps:
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-         with:
+@@ -37,6 +37,7 @@
+     "playground/html/invalidClick.html",
+     "playground/html/invalidEscape.html",
+     "playground/html/valid.html",
++    "playground/html/tag-removal/*.html",
+     "playground/external/public/slash@3.0.0.js",
+     "playground/ssr-html/public/slash@3.0.0.js",
+     "playground/worker/classic-worker.js",
 ```
 
-**File**: `docs/package.json` (modified, +2/-2)
+**File**: `packages/vite/src/node/plugins/html.ts` (modified, +8/-4)
 ```diff
-@@ -14,11 +14,11 @@
-     "@voidzero-dev/vitepress-theme": "^5.0.7",
-     "feed": "^6.0.0",
-     "typescript": "~6.0.3",
--    "vitepress": "^2.0.0-alpha.20",
-+    "vitepress": "^2.0.0-alpha.21",
-     "vitepress-plugin-graphviz": "^0.1.0",
-     "vitepress-plugin-group-icons": "^1.8.1",
-     "vitepress-plugin-llms": "^1.14.0",
-     "vue": "^3.5.44",
--    "vue-tsc": "^3.3.13"
-+    "vue-tsc": "^3.3.14"
-   }
- }
-```
-
-**File**: `package.json` (modified, +4/-4)
-```diff
-@@ -54,11 +54,11 @@
-     "@types/ws": "^8.18.2",
-     "@vitejs/release-scripts": "^1.10.0",
-     "eslint-plugin-n": "^18.5.0",
--    "eslint-plugin-regexp": "^3.3.1",
-+    "eslint-plugin-regexp": "^3.3.2",
-     "execa": "^9.6.1",
-     "lint-staged": "^17.6.0",
--    "oxfmt": "^0.74.0",
--    "oxlint": "^1.89.0",
-+    "oxfmt": "^0.75.0",
-+    "oxlint": "^1.90.0",
-     "oxlint-tsgolint": "^7.0.2005",
-     "picocolors": "^1.1.1",
-     "playwright-chromium": "^1.64.1",
-@@ -87,7 +87,7 @@
-       "oxlint --fix"
-     ]
-   },
--  "packageManager": "pnpm@12.15.0",
-+  "packageManager": "pnpm@12.16.1",
-   "stackblitz": {
-     "startCommand": "pnpm --filter='./packages/vite' run dev"
-   }
-```
-
-**File**: `packages/create-vite/src/index.ts` (modified, +3/-3)
-```diff
-@@ -826,7 +826,7 @@ function pkgFromUserAgent(userAgent: string | undefined): PkgInfo | undefined {
+@@ -486,9 +486,13 @@ export function buildHtmlPlugin(config: ResolvedConfig): Plugin {
+           if (startOffset === 0) return 0
  
- function setupReactCompiler(root: string, isTs: boolean) {
-   // renovate: datasource=npm depName=@rolldown/plugin-babel
--  const babelPluginVersion = '0.2.4'
-+  const babelPluginVersion = '0.3.0'
-   // renovate: datasource=npm depName=babel-plugin-react-compiler
-   const reactCompilerPluginVersion = '1.0.0'
-   // renovate: datasource=npm depName=@babel/core
-@@ -880,15 +880,15 @@ function setupEslint(root: string, isTs: boolean) {
-   // renovate: datasource=npm depName=@eslint/js
-   const eslintJsVersion = '10.0.1'
-   // renovate: datasource=npm depName=eslint
--  const eslintVersion = '10.13.0'
-+  const eslintVersion = '10.14.0'
-   // renovate: datasource=npm depName=eslint-plugin-react-hooks
-   const eslintPluginReactHooksVersion = '7.1.1'
-   // renovate: datasource=npm depName=eslint-plugin-react-refresh
-   const eslintPluginReactRefreshVersion = '0.5.7'
-   // renovate: datasource=npm depName=globals
-   const globalsVersion = '17.13.0'
-   // renovate: datasource=npm depName=typescript-eslint
--  const typescriptEslintVersion = '8.72.0'
-+  const typescriptEslintVersion = '8.72.1'
+           // Gets the offset for the start of the line including the
+-          // newline trailing the previous node
+-          const lineStartOffset =
+-            startOffset - node.sourceCodeLocation!.startCol
++          // newline trailing the previous node.
++          // Columns are one-based and offsets are zero-based, so their difference
++          // is -1 on the first line. Clamp to 0 because there is no preceding newline.
++          const lineStartOffset = Math.max(
++            0,
++            startOffset - node.sourceCodeLocation!.startCol,
++          )
  
-   const eslintConfigForTS = /* js */ `import js from '@eslint/js'
- import globals from 'globals'
+           // <previous-line-node></previous-line-node>
+           // <target-node></target-node>
+@@ -503,7 +507,7 @@ export function buildHtmlPlugin(config: ResolvedConfig): Plugin {
+           // previous newline, we cannot strip it out without risking content deletion.
+           let isLineEmpty = false
+           try {
+-            const line = s.slice(Math.max(0, lineStartOffset), startOffset)
++            const line = s.slice(lineStartOffset, startOffset)
+             isLineEmpty = !line.trim()
+           } catch {
+             // magic-string may throw if there's some content removed in the sliced string,
 ```
 
-**File**: `packages/create-vite/template-preact-ts/package.json` (modified, +1/-1)
+**File**: `playground/html/__tests__/html.spec.ts` (modified, +17/-0)
 ```diff
-@@ -9,7 +9,7 @@
-     "preview": "vite preview"
+@@ -7,6 +7,7 @@ import {
+   isBundled,
+   isServe,
+   page,
++  readFile,
+   serverLogs,
+   untilBrowserLogAfter,
+   viteServer,
+@@ -570,3 +571,19 @@ test.runIf(isServe)(
+     )
    },
-   "dependencies": {
--    "preact": "^11.0.2"
-+    "preact": "^11.1.1"
-   },
-   "devDependencies": {
-     "@preact/preset-vite": "^2.10.6",
+ )
++
++describe.runIf(isBuild)('HTML tag removal', () => {
++  for (const kind of ['module-script', 'stylesheet']) {
++    test(`removes adjacent ${kind} tags (#23819)`, async () => {
++      const path = `/tag-removal/${kind}.html`
++      const html = readFile(`dist${path}`)
++      expect(html).not.toMatch(/(?:main\.js|nested\.js|main\.css)/)
++
++      await page.goto(viteTestUrl + path)
++      expect(await page.textContent('h1')).toBe('keep')
++      if (kind === 'stylesheet') {
++        expect(await getColor('h1')).toBe('blue')
++      }
++    })
++  }
++})
 ```
 
-**File**: `packages/create-vite/template-preact/package.json` (modified, +1/-1)
+**File**: `playground/html/tag-removal/module-script.html` (added, +2/-0)
 ```diff
-@@ -9,7 +9,7 @@
-     "preview": "vite preview"
-   },
-   "dependencies": {
--    "preact": "^11.0.2"
-+    "preact": "^11.1.1"
-   },
-   "devDependencies": {
-     "@preact/preset-vite": "^2.10.6",
+@@ -0,0 +1,2 @@
++<script type="module" src="/main.js"></script><script type="module" src="/nested/nested.js"></script>
++<h1>keep</h1>
 ```
 
-**File**: `packages/create-vite/template-qwik-ts/package.json` (modified, +1/-1)
+**File**: `playground/html/tag-removal/stylesheet.html` (added, +2/-0)
 ```diff
-@@ -15,6 +15,6 @@
-     "vite": "^8.3.5"
-   },
-   "dependencies": {
--    "@builder.io/qwik": "^1.20.2"
-+    "@builder.io/qwik": "^1.20.3"
-   }
- }
+@@ -0,0 +1,2 @@
++<script type="module" src="/main.js"></script><link rel="stylesheet" href="/main.css">
++<h1>keep</h1>
 ```
 
-**File**: `packages/create-vite/template-qwik/package.json` (modified, +1/-1)
+**File**: `playground/html/vite.config.js` (modified, +5/-0)
 ```diff
-@@ -13,6 +13,6 @@
-     "vite": "^8.3.5"
-   },
-   "dependencies": {
--    "@builder.io/qwik": "^1.20.2"
-+    "@builder.io/qwik": "^1.20.3"
-   }
- }
+@@ -35,6 +35,8 @@ const input = {
+   write: resolve(dirname, 'write.html'),
+   'transform-inline-js': resolve(dirname, 'transform-inline-js.html'),
+   malformedUrl: resolve(dirname, 'malformed-url.html'),
++  tagRemovalModuleScript: resolve(dirname, 'tag-removal/module-script.html'),
++  tagRemovalStylesheet: resolve(dirname, 'tag-removal/stylesheet.html'),
+   // resolved from `process.cwd()` by Rolldown (resolved from `root` by vite's resolver first)
+   relativeInput: relative(
+     process.cwd(),
+@@ -75,6 +77,9 @@ export default defineConfig({
+             throw new Error('pre transform applied at wrong time!')
+           }
+ 
++          // Keep adjacent tags on the first line for the tag removal regression.
++          if (filename.includes('/tag-removal/')) return
++
+           const doctypeRE = /<!doctype html>/i
+           if (doctypeRE.test(html)) return
+ 
 ```
 
 ---
 
-### Incident Patch 2: `0105733e` (2026-11-02)
-**Commit Message**: fix(deps): update rolldown-related dependencies (#23967)
+### Incident Patch 2: `a2703910` (2026-11-05)
+**Commit Message**: fix(server): escape HTML attributes (#23995)
 
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-
-**File**: `package.json` (modified, +1/-1)
+**File**: `packages/vite/src/node/server/middlewares/__tests__/indexHtml.spec.ts` (modified, +3/-3)
 ```diff
-@@ -62,7 +62,7 @@
-     "oxlint-tsgolint": "^7.0.2005",
-     "picocolors": "^1.1.1",
-     "playwright-chromium": "^1.64.1",
--    "rolldown": "~1.2.15",
-+    "rolldown": "~1.2.16",
-     "rollup": "^4.59.0",
-     "simple-git-hooks": "^2.14.0",
-     "tsx": "^4.23.15",
+@@ -50,7 +50,7 @@ describe('indexHtml middleware — inline script proxy cache', () => {
+     ).toBeTruthy()
+ 
+     const proxyModuleUrl = browserUrlToModuleUrl(
+-      proxyUrlMatch![1],
++      proxyUrlMatch![1].replaceAll('&amp;', '&'),
+       server.config.decodedBase,
+     )
+     const result =
+@@ -85,7 +85,7 @@ describe('indexHtml middleware — inline script proxy cache', () => {
+     ).toBeTruthy()
+ 
+     const proxyModuleUrl = browserUrlToModuleUrl(
+-      proxyUrlMatch![1],
++      proxyUrlMatch![1].replaceAll('&amp;', '&'),
+       server.config.decodedBase,
+     )
+     const result =
+@@ -108,7 +108,7 @@ describe('indexHtml middleware — inline script proxy cache', () => {
+         'devHtmlHook should have rewritten the inline <script> to a ?html-proxy src',
+       ).toBeTruthy()
+       expect(proxyUrlMatch![1]).toMatchInlineSnapshot(
+-        `"/@id/__x00__/evil.example.com/payload.js?/../../package.json?html-proxy&index=0.js"`,
++        `"/@id/__x00__/evil.example.com/payload.js?/../../package.json?html-proxy&amp;index=0.js"`,
+       )
+       expect(proxyUrlMatch![1]).not.toMatch(/^\/\//)
+     })
 ```
 
-**File**: `packages/create-vite/package.json` (modified, +1/-1)
+**File**: `packages/vite/src/node/server/middlewares/base.ts` (modified, +3/-2)
 ```diff
-@@ -38,7 +38,7 @@
-     "mri": "^1.2.0",
-     "std-env": "^4.3.0",
-     "tinyexec": "^1.3.1",
--    "tsdown": "^0.23.2",
-+    "tsdown": "^0.23.4",
-     "unrun": "^0.3.1"
+@@ -1,3 +1,4 @@
++import escapeHTML from 'escape-html'
+ import type { Connect } from '#dep-types/connect'
+ import {
+   cleanUrl,
+@@ -47,8 +48,8 @@ export function baseMiddleware(
+         'Content-Type': 'text/html',
+       })
+       res.end(
+-        `The server is configured with a public base URL of ${base} - ` +
+-          `did you mean to visit <a href="${redirectPath}">${redirectPath}</a> instead?`,
++        `The server is configured with a public base URL of ${escapeHTML(base)} - ` +
++          `did you mean to visit <a href="${escapeHTML(redirectPath)}">${escapeHTML(redirectPath)}</a> instead?`,
+       )
+       return
+     } else {
+```
+
+**File**: `packages/vite/src/node/server/middlewares/indexHtml.ts` (modified, +2/-1)
+```diff
+@@ -1,6 +1,7 @@
+ import fs from 'node:fs'
+ import fsp from 'node:fs/promises'
+ import path from 'node:path'
++import escapeHTML from 'escape-html'
+ import MagicString from 'magic-string'
+ import type { DefaultTreeAdapterMap, Token } from 'parse5'
+ import type { SourceMapInput } from 'rolldown'
+@@ -280,7 +281,7 @@ const devHtmlHook: IndexHtmlTransformHook = async (
+     s.update(
+       node.sourceCodeLocation!.startOffset,
+       node.sourceCodeLocation!.endOffset,
+-      `<script type="module" src="${browserUrl}"></script>`,
++      `<script type="module" src="${escapeHTML(browserUrl)}"></script>`,
+     )
+     preTransformRequest(server!, moduleUrl)
    }
- }
 ```
 
-**File**: `packages/plugin-legacy/package.json` (modified, +1/-1)
+**File**: `playground/html/__tests__/html.spec.ts` (modified, +1/-1)
 ```diff
-@@ -54,7 +54,7 @@
-   "devDependencies": {
-     "acorn": "^8.19.0",
-     "picocolors": "^1.1.1",
--    "tsdown": "^0.23.2",
-+    "tsdown": "^0.23.4",
-     "unrun": "^0.3.1",
-     "vite": "workspace:*"
-   },
+@@ -538,7 +538,7 @@ test.runIf(!isBundled)(
+     expect(response.status).toBe(200)
+     expect(html).toContain('url(./protocol-relative.png)')
+     expect(html).toContain(
+-      'src="/protocol-relative.html?html-proxy&index=0.js"',
++      'src="/protocol-relative.html?html-proxy&amp;index=0.js"',
+     )
+     expect(html).not.toContain('url(//protocol-relative.png)')
+     expect(html).not.toContain('src="//protocol-relative.html?html-proxy')
 ```
 
-**File**: `packages/vite/package.json` (modified, +2/-2)
-```diff
-@@ -72,7 +72,7 @@
-     "lightningcss": "^1.33.0",
-     "picomatch": "^4.0.7",
-     "postcss": "^8.5.31",
--    "rolldown": "~1.2.15",
-+    "rolldown": "~1.2.16",
-     "tinyglobby": "^0.2.17"
-   },
-   "devDependencies": {
-@@ -120,7 +120,7 @@
-     "postcss-modules": "^9.0.1",
-     "premove": "^4.0.0",
-     "resolve.exports": "^2.0.4",
--    "rolldown-plugin-dts": "^0.28.8",
-+    "rolldown-plugin-dts": "^0.29.0",
-     "rollup": "^4.59.0",
-     "rollup-plugin-license": "^3.7.1",
-     "sass": "^1.106.1",
-```
+---
 
-**File**: `playground/js-sourcemap/package.json` (modified, +1/-1)
+### Incident Patch 3: `7139ef35` (2026-11-05)
+**Commit Message**: fix(worker): keep chunks conflicted with unused workers that are still used by a live worker (#23956)
+
+Co-authored-by: sapphi-red <[REDACTED_EMAIL]>
+
+**File**: `packages/vite/src/node/plugins/worker.ts` (modified, +13/-7)
 ```diff
-@@ -16,6 +16,6 @@
-     "@vitejs/test-dep-optimized-malicious": "file:dep-optimized-malicious",
-     "@vitejs/test-importee-pkg": "file:importee-pkg",
-     "magic-string": "^1.4.3",
--    "oxc-parser": "^0.155.0"
-+    "oxc-parser": "^0.156.0"
+@@ -176,9 +176,12 @@ class WorkerOutputCache {
+     childBundleIds.add(childBundleId)
    }
- }
+ 
+-  getLiveAssetFileNames(mainLiveModuleIds: Set<string>): Set<string> {
++  getLiveAssetFileNames(
++    rootBundleId: BundleId,
++    rootLiveModuleIds: Set<string>,
++  ): Set<string> {
+     const liveBundles = new Set<string>()
+-    const queue: [BundleId, Set<string>][] = [[undefined, mainLiveModuleIds]]
++    const queue: [BundleId, Set<string>][] = [[rootBundleId, rootLiveModuleIds]]
+     while (queue.length > 0) {
+       const [bundleId, moduleIds] = queue.shift()!
+       const referencesByModule = this.bundleReferences.get(bundleId)
+@@ -792,12 +795,18 @@ export function webWorkerPlugin(config: ResolvedConfig): Plugin {
+       // Rolldown later tree-shakes the module that referenced them. This also
+       // needs to run for worker sub-builds so dead nested workers don't become
+       // referenced assets of their parent worker bundle.
+-      if (shouldFilter) {
+-        const rootBundleId = isWorker ? config.bundleChain.at(-1) : undefined
++      const rootBundleId = isWorker ? config.bundleChain.at(-1) : undefined
++      const liveFileNames = shouldFilter
++        ? cache.getLiveAssetFileNames(rootBundleId, liveModuleIds)
++        : undefined
++      if (liveFileNames) {
+         for (const workerBundle of cache.getDeadDirectlyReferencedBundles(
+           rootBundleId,
+           liveModuleIds,
+         )) {
++          // Still used through another live worker (e.g. its importer is
++          // tree-shaken here but kept in a worker).
++          if (liveFileNames.has(workerBundle.entryFilename)) continue
+           const emittedAsset = bundle[workerBundle.entryFilename]
+           if (emittedAsset?.type === 'asset') {
+             delete bundle[workerBundle.entryFilename]
+@@ -807,9 +816,6 @@ export function webWorkerPlugin(config: ResolvedConfig): Plugin {
+ 
+       if (isWorker) return
+ 
+-      const liveFileNames = shouldFilter
+-        ? cache.getLiveAssetFileNames(liveModuleIds)
+-        : undefined
+       for (const asset of cache.getAssets()) {
+         if (liveFileNames && !liveFileNames.has(asset.fileName)) continue
+         if (emittedAssets.has(asset.fileName)) continue
 ```
 
-**File**: `playground/package.json` (modified, +1/-1)
+**File**: `playground/worker/__tests__/es/worker-es.spec.ts` (modified, +10/-0)
 ```diff
-@@ -10,6 +10,6 @@
-     "convert-source-map": "^2.0.0",
-     "css-color-names": "^1.0.1",
-     "kill-port": "^1.6.1",
--    "rolldown": "~1.2.15"
-+    "rolldown": "~1.2.16"
-   }
- }
+@@ -164,6 +164,16 @@ describe.runIf(isBuild)('build', () => {
+       false,
+     )
+ 
++    // The importer of this nested worker is tree-shaken from the main bundle,
++    // but a live worker still uses it, so the nested worker must be emitted.
++    const sharedWorker = files.find((f) => f.includes('dce-test-shared-worker'))
++    expect(sharedWorker).toBeDefined()
++    const nestedWorker = fs
++      .readFileSync(path.resolve(assetsDir, sharedWorker!), 'utf-8')
++      .match(/[\w-]*dce-test-shared-nested-worker[\w-]*\.js/)?.[0]
++    expect(nestedWorker).toBeDefined()
++    expect(files).toContain(nestedWorker)
++
+     // sanity: the worker we DO use is still emitted (`my-worker`).
+     expect(files.some((f) => f.includes('my-worker'))).toBe(true)
+   })
 ```
 
-**File**: `pnpm-lock.yaml` (modified, +253/-185)
+**File**: `playground/worker/dce-test-shared-importer.js` (added, +3/-0)
 ```diff
-@@ -244,8 +244,8 @@ importers:
-         specifier: ^1.64.1
-         version: 1.64.1
-       rolldown:
--        specifier: ~1.2.15
--        version: 1.2.15
-+        specifier: ~1.2.16
-+        version: 1.2.16
-       rollup:
-         specifier: ^4.59.0
-         version: 4.64.9
-@@ -319,8 +319,8 @@ importers:
-         specifier: ^1.3.1
-         version: 1.3.1
-       tsdown:
--        specifier: ^0.23.2
--        version: 0.23.2(@vitejs/devtools@0.8.0)(@volar/typescript@2.4.28)(@vue/language-core@3.3.13)(publint@0.3.25)(tsx@4.23.15)(typescript@7.0.2)(unrun@0.3.1)(vue-tsc@3.3.13)
-+        specifier: ^0.23.4
-+        version: 0.23.4(@vitejs/devtools@0.8.0)(@volar/typescript@2.4.28)(@vue/language-core@3.3.13)(publint@0.3.25)(tsx@4.23.15)(typescript@7.0.2)(unrun@0.3.1)(vue-tsc@3.3.13)
-       unrun:
-         specifier: ^0.3.1
-         version: 0.3.1
-@@ -371,8 +371,8 @@ importers:
-         specifier: ^1.1.1
-         version: 1.1.1
-       tsdown:
--        specifier: ^0.23.2
--        version: 0.23.2(@vitejs/devtools@0.8.0)(@volar/typescript@2.4.28)(@vue/language-core@3.3.13)(publint@0.3.25)(tsx@4.23.15)(typescript@7.0.2)(unrun@0.3.1)(vue-tsc@3.3.13)
-+        specifier: ^0.23.4
-+        version: 0.23.4(@vitejs/devtools@0.8.0)(@volar/typescript@2.4.28)(@vue/language-core@3.3.13)(publint@0.3.25)(tsx@4.23.15)(typescript@7.0.2)(unrun@0.3.1)(vue-tsc@3.3.13)
-       unrun:
-         specifier: ^0.3.1
-         version: 0.3.1
-@@ -392,8 +392,8 @@ importers:
-         specifier: ^8.5.31
-         version: 8.5.31
-       rolldown:
--        specifier: ~1.2.15
--        version: 1.2.15
-+        specifier: ~1.2.16
-+        version: 1.2.16
-       tinyglobby:
-         specifier: ^0.2.17
-         version: 0.2.17
-@@ -531,8 +531,8 @@ importers:
-         specifier: ^2.0.4
-         version: 2.0.4
-       rolldown-plugin-dts:
--        specifier: ^0.28.8
--        version: 0.28.8(@volar/typescript@2.4.28)(@vue/language-core@3.3.13)(rolldown@1.2.15)(typescript@7.0.2)(vue-tsc@3.3.13)
-+        specifier: ^0.29.0
-+        version: 0.29.0(@volar/typescript@2.4.28)(@vue/language-core@3.3.13)(rolldown@1.2.16)(typescript@7.0.2)(vue-tsc@3.3.13)
-       rollup:
-         specifier: ^4.59.0
-         version: 4.64.9
-@@ -731,8 +731,8 @@ importers:
-         specifier: ^1.6.1
-         version: 1.6.1
-       rolldown:
--        specifier: ~1.2.15
--        version: 1.2.15
-+        specifier: ~1.2.16
-+        version: 1.2.16
+@@ -0,0 +1,3 @@
++import DceTestSharedNestedWorker from './dce-test-shared-nested-worker.js?worker'
++
++export { DceTestSharedNestedWorker }
+```
+
+**File**: `playground/worker/dce-test-shared-nested-worker.js` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++self.postMessage('dce-test-shared-nested-worker is live')
+```
+
+**File**: `playground/worker/dce-test-shared-worker.js` (added, +4/-0)
+```diff
+@@ -0,0 +1,4 @@
++import { DceTestSharedNestedWorker } from './dce-test-shared-importer.js'
++
++new DceTestSharedNestedWorker()
++self.postMessage('dce-test-shared-worker is live')
+```
+
+**File**: `playground/worker/worker/main-module.js` (modified, +5/-0)
+```diff
+@@ -4,6 +4,10 @@ import * as depSelfReferenceUrlWorker from '@vitejs/test-dep-self-reference-url-
+ // then skip emitting the dce-test-worker asset (and its nested worker too).
+ import { dceTestWorker as _dceTestWorker } from '../dce-test-importer.js'
+ import DceTestLiveWorker from '../dce-test-live-worker.js?worker'
++// imported but never used, so it's tree-shaken here, but the worker below uses
++// it to start its nested worker, which must still be emitted.
++import { DceTestSharedNestedWorker as _DceTestSharedNestedWorker } from '../dce-test-shared-importer.js'
++import DceTestSharedWorker from '../dce-test-shared-worker.js?worker'
+ import { mode } from '../modules/workerImport'
+ import InlineSharedWorker from '../my-inline-shared-worker?sharedworker&inline'
+ import mySharedWorker from '../my-shared-worker?sharedworker&name=shared'
+@@ -20,6 +24,7 @@ function text(el, text) {
+ document.querySelector('.mode-true').textContent = mode
  
-   playground/alias:
-     dependencies:
-@@ -1135,8 +1135,8 @@ importers:
-         specifier: ^1.4.3
-         version: 1.4.3
-       oxc-parser:
--        specifier: ^0.155.0
--        version: 0.155.0
-+        specifier: ^0.156.0
-+        version: 0.156.0
+ new DceTestLiveWorker()
++new DceTestSharedWorker()
  
-   playground/js-sourcemap/dep-class-field-sourcemap-babel: {}
- 
-@@ -3337,130 +3337,130 @@ packages:
-     resolution: {integrity: sha512-oGB+UxlgWcgQkgwo8GcEGwemoTFt3FIO9ababBmaGwXIoBKZ+GTy0pP185beGg7Llih/NSHSV2XAs1lnznocSg==}
-     engines: {node: '>= 8'}
- 
--  '@oxc-parser/binding-android-arm-eabi@0.155.0':
--    resolution: {integrity: sha512-A6xv7hDtnTm+xlZ7utn6rRQpRMJHRhVr3gjRGqlx0RUX84mNk0pAsy6YN/wWhuOTkaZhRrrzaLxf0NfbH77j2w==}
-+  '@oxc-parser/binding-android-arm-eabi@0.156.0':
-+    resolution: {integrity: sha512-RMq7DKNzEp1T51QKNLTn0NryNEt2IYfh7mZBlIdi2Ju52ltOEDMeIXv0XBpA6dL7j7ChjlcovtGcc1Jv4qMipg==}
-     engines: {node: ^20.19.0 || >=22.12.0}
-     cpu: [arm]
-     os: [android]
- 
--  '@oxc-parser/binding-android-arm64@0.155.0':
--    resolution: {integrity: sha512-T1wWwH9/JI5g7Z4kEQwDOwhToxdDhRyOTklH+uuNpJ16m3MZFmGl+l2rKc0NHQdbVRG2LTOBsNjpW3h1BWytPA==}
-+  '@oxc-parser/binding-android-arm64@0.156.0':
-+    resolution: {integrity: sha512-mwkWKhOBpmh8fWc3m4MiLsmEAtx0YuHmvyo9ff557cnb3QZ2kt2eauSz75wCGIpiZG3gUsJ4WwzEjm4R4/BHig==}
-     engines: {node: ^20.19.0 || >=22.12.0}
-     cpu: [arm64]
-     os: [android]
- 
--  '@oxc-parser/binding-darwin-arm64@0.155.0':
--    resolution: {integrity: sha512-ZoRB3qJxJ8DWA41jHja+YeB0lLfjBy4T+Kr15vnN1k65X3zbJt3rPZftEwN4Ju4tmA4K/T9dWWD7Z8ewQLnrVA==}
-+  '@oxc-parser/binding-darwin-arm64@0.156.0':
-+    resolution: {integrity: sha512-6pGR5fUszM9M4eBBapqpGjCRJolFwuCldx8bRQjqXyM09cQysBTWVF2Ttg4UNJVxYSaw5RRINbveCOOCrsuGvA==}
-     engines: {node: ^20.19.0 || >=22.12.0}
-     cpu: [arm64]
-     os: [darwin]
- 
--  '@oxc-parser/binding-darwin-x64@0.155.0':
--    resolution: {integrity: sha512-vxtL86BtM+IgrpejA86nbTk5j0HKTIMeuaJ1fQciw6p9RfavPtIPjI7gN34owap0yG9txXBaAWpGdxokNwdqIw==}
-+  '@oxc-parser/binding-darwin-x64@0.156.0':
-+    resolution: {integrity: sha512-M9QghL7uCAqMKjYJv1rDGblfEvkeQu3QzTPd7Uwo16gG3uO7m9ikVQ9OL8FZTnKzU4vbCEby6kTlEkqN+JeEMA==}
-     engines: {node: ^20.19.0 || >=22.12.0}
-     cpu: [x64]
-     os: [darwin]
- 
--  '@oxc-parser/binding-freebsd-x64@0.155.0':
--    resolution: {integrity: sha512-tN6Ru5e0UVnWaIuiH8jEwnvxuxg7FvhWwSd3oe5oDhOD4ObsSr9/N6WfHLjilUWlPPj65ptwrSDH0Y7lzwTzmw==}
-+  '@oxc-parser/binding-freebsd-x64@0.156.0':
-+    resolution: {integrity: sha512-lX0ANxSwAOrpOT7NHB+YsrBqDJ8sOVon5m7GS9eQtkuUeNzQMMGpFsJLsStawTbrdwOF5KDVxgPWcKmt/DIZUQ==}
-     engines: {node: ^20.1
+ const worker = new myWorker()
+ worker.postMessage('ping')
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #23980** (closed): fix(client): preserve valueless query params in cleanUrl (fix #23979) (@saiyam-jain-dev)
-- **PR #23977** (closed): fix(css): preserve quoted image-set spaces (BOYF-266) (@boyfeiyu)
-- **PR #23971** (closed): fix: attach plugin and hook name to errors thrown in config and server hooks (#23958) (@praveen-kumary)
-- **PR #23970** (closed): fix(server): close watcher and server resources when createServer rejects (#23965) (@praveen-kumary)
-- **PR #23969** (closed): fix(server): close server resources when a startup hook throws (@simpleqt)
-- **PR #23967** (2026-11-02): fix(deps): update rolldown-related dependencies (@renovate[bot])
+- **PR #24007** (closed): fix(server): dedupe out-of-root watch registrations (fix #23940) (@Sudhakar7J)
+- **PR #24003** (2026-11-06): test: use `onTestFinished` for tear downs (@sapphi-red)
+- **PR #24001** (closed): fix(import-analysis): handle dynamic JSON import attributes (fix #19095) (@Mr-Neutr0n)
+- **PR #23999** (2026-11-05): docs(config): clarify `server.fs.deny` overrides default (@sapphi-red)
+- **PR #23998** (2026-11-05): release: create-vite@9.3.4 (@github-actions[bot])
+- **PR #23997** (2026-11-05): release: plugin-legacy@8.2.4 (@github-actions[bot])
 
 ---
 
@@ -1700,28 +1672,28 @@ Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): update all non-major dependencies (#23966)
+## X. html): remove adjacent module tags on the first line (#23823)
 
 **RULE**:
-When implementing operations in `.github/workflows/semgrep.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vitejs/vite. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.oxfmtrc.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vitejs/vite. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b3cb0575`: deps): update all non-major dependencies (#23966). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `eab1dc27`: html): remove adjacent module tags on the first line (#23823). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/semgrep.yml`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.oxfmtrc.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-      image: semgrep/semgrep:1.183.0@sha256:2e45517a85e13a9cca14a2a00df6bb48affd66b8ebfae1b0991cd57578362fb0
+    "playground/html/tag-removal/*.html",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-      image: semgrep/semgrep:1.182.1@sha256:451b3d875c00dac7ed5db5293e584a07de11449a409c10b3c2d2652f429630b6
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b3cb0575` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `eab1dc27` are properly handled with clean fallback behavior.

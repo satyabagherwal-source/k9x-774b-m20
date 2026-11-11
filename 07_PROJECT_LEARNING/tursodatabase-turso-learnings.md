@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tursodatabase-turso-learnings.md`  
 > **Source**: github ([https://github.com/tursodatabase/turso](https://github.com/tursodatabase/turso))  
-> **Source Version**: `3b6bbb46`  
+> **Source Version**: `e520c28d`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T12:14:38.980Z  
+> **Timestamp**: 2026-11-09T01:26:23.683Z  
 > **Learning ID**: `learn-github-tursodatabase-turso`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tursodatabase-turso-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tursodatabase/turso](https://github.com/tursodatabase/turso))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T12:14:38.881Z  
+> **Harvest Timestamp**: 2026-11-09T01:26:23.582Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A SQL database in Rust: SQLite-compatible, now also speaking Postgres (experimental). The LLVM of databases.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 25170 stars
+- **Stars / Engagement**: 25196 stars
 
 ---
 
@@ -1428,11 +1428,13 @@ export class Statement {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #11434** (2026-11-05): **core: reject a rowid in the fraction of percentile_disc and percentile_cont**
-  *Symptoms*: ## Problem  ```sql CREATE TABLE t (a INT); INSERT INTO t VALUES (1); SELECT percentile_disc(oid) WITHIN GROUP (ORDER BY a) FROM t; -- tursopg (Turso's PostgreSQL-compatible server): process panics with --   Cursor not found: CursorKey { table_reference_id: TableInternalId(1), ... } -- PostgreSQL: error ```  The same panic happens in tursopg with `percentile_cont(oid)`, `percentile_disc(rowid)`, `percentile_disc(t.oid)`, `percentile_disc(oid = 1)`, on an empty table, and inside `INSERT ... SELECT`. It also happens in tursodb (the SQLite dialect) with `percentile_disc(rowid)`, `percentile_cont(rowid)` and `percentile_disc(t.rowid)`.  `emit_percentile_fraction_check` compiles the fraction once, before the cursors of the query's tables are open. It rejects a fraction that reads a column of those tables (`Expr::Column`), but not one that reads their rowid (`Expr::RowId`). Compiling the rowid read then looks up a cursor that does not exist yet and panics.  ## Fix  `emit_percentile_fraction_check` now treats `Expr::RowId` like `Expr::Column`. A rowid of a table in this query gives the error that `percentile_disc(a)` already gives:  ``` the fraction argument of percentile_disc() must be a constant expression that does not depend on the aggregated rows ```  A rowid of an outer query in a correlated subquery is still allowed, the same as an outer column.  Not changed in this pull request: - tursopg returns SQLSTATE 42601 for this error. PostgreSQL returns 42803 for a column and 42703 f
+- **Issue #11577** (2026-11-08): **bindings/rust: expose the progress handler on Connection**
+  *Symptoms*: The core connection already has a step-based progress handler (`sqlite3_progress_handler` semantics), and the C bindings expose it, but the Rust bindings and the SDK kit don't. A Rust caller can only stop a running statement from outside today: `interrupt()` from another thread, or a wall-clock `set_query_timeout`.  This adds `Connection::set_progress_handler(ops, Option<F>)` to the Rust bindings, forwarding through `TursoConnection::set_progress_handler` in the SDK kit. The signature follows rusqlite's `progress_handler`.  Because the callback runs on the thread executing the statement, it stops statements that never yield, such as a scan over cached pages. A caller can tie it to a cancellation signal by checking a token on every call; this is how Android's `SQLiteConnection` implements `CancellationSignal`. We use it to cancel a search query as soon as the user types another character.  Test: `test_progress_handler_interrupts_when_it_returns_true` checks three things: a handler that returns false runs without stopping the statement; flipping the flag it reads from another thread interrupts a runaway statement with `Error::Interrupt`; and removing the handler lets the next statement run normally. 
 
-- **Issue #11424** (2026-11-05): **tursopg: percentile_disc and percentile_cont panic when the fraction reads the rowid**
-  *Symptoms*: ```sql CREATE TABLE t (a INT); INSERT INTO t VALUES (1); SELECT percentile_disc(oid) WITHIN GROUP (ORDER BY a) FROM t; ```  ## Observed  The statement panics. The process stops.  ```text thread 'main' panicked at core/vdbe/builder.rs:2093:32: Cursor not found: CursorKey { table_reference_id: TableInternalId(1), index: None, is_build: false } ```  - `percentile_cont(oid)`, `percentile_disc(rowid)`, `percentile_disc(t.oid)` and `percentile_disc(oid = 1)` panic in the same way. - The table can be empty. The panic also occurs in `INSERT INTO t SELECT percentile_disc(...) ... FROM t`. - A fraction that reads a normal column gives an error, as it must: `percentile_disc(a)` gives `the fraction argument of percentile_disc() must be a constant expression that does not depend on the aggregated rows`.  ## Cause  `emit_percentile_fraction_check` in `core/translate/main_loop/init.rs` looks for `Expr::Column` and subqueries in the fraction. It does not look for `Expr::RowId`. So a rowid reference passes the check. Then `translate_expr` reads the rowid before the cursor of the table is open, and `resolve_cursor_id` panics.  ## Expected  An error and no panic. PostgreSQL rejects the query: a user table has no `oid` column (`column "oid" does not exist`). For a column of the aggregated rows, PostgreSQL gives `direct arguments of an ordered-set aggregate must use only grouped columns`. tursopg can give the same error as for `percentile_disc(a)`.  ## Version  turso commit ff97c22 (ff97c2231a118
+- **Issue #11576** (2026-11-08): **core/dialect: centralize shared SQLite behavior in Dialect defaults**
+  *Symptoms*: #11356  ## Description  Move the shared SQLite parsing, schema handling, catalog registration, table formatting, and builtin function resolution into Dialect trait defaults.  Reduce EngineDialect and SqliteDialect to their dialect names while keeping PostgreSQL-specific overrides in PostgresDialect.  Also remove the production turso_sqlite dependency from turso_pg and call the core table formatter directly. Keep turso_sqlite only for SQLite-specific tests.
+  **Post-Mortem & Fix Analysis**:
+  > ### Autofixer review <sub>🔄 Autofixer updates this comment while the review runs.</sub>  Autofixer reviews pull requests from outside contributors on its own. The review of `ebfe20f95959` is [here](https://github.com/tursodatabase/turso/pull/11576#pullrequestreview-5814403163).  ✅ **Verdict: looks good to merge.**  <sub>Automated review by Autofixer; maintainers decide what to merge. Autofixer started this review on its own, as it does for pull requests from outside contributors. Push a fix to get a re-review (up to 3 reviews in all); a pull request whose blocking findings stay unaddressed for 7 days is closed. Maintainers: add `autofixer: no-review` to stop these reviews, or `autofixer: review-requested` to review it as requested.</sub>  <!-- autofixer:contributor-review:ebfe20f95959155011f3282cda33f0fcd505801a --> <!-- autofixer:contributor-review-recommends:ebfe20f95959155011f3282cda33f0fcd505801a --> <!-- autofixer:contributor-review-state:eyJ2ZXJzaW9uIjoxLCJyZXZpZXdzIjpbeyJoZWFkU
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1449,642 +1451,64 @@ export class Statement {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3b6bbb46` (2026-11-05)
-**Commit Message**: Merge 'core/time: return NULL instead of panicking when time_date overflows' from 
+### Incident Patch 1: `9ce98599` (2026-11-08)
+**Commit Message**: Merge 'core/storage: Ensure b-tree pages do not have overflow cells before use' from app/turso-github-handyman
 
-`SELECT make_date(1, 4, 1453556443)` (and `make_timestamp(2024, 1,
-1453556443, 0, 0, 0)`) panicked with `NaiveDateTime + TimeDelta
-overflowed`.
+Fix for #7741.
 
-`Time::time_date` already checks that the day/hour/minute/second values
-fit in a `chrono::Duration` with `try_days` etc., but then adds them
-with `dt += d`, which panics when the result goes past what
-`NaiveDateTime` can hold. I switched each of those additions (and the
-nanosecond one) to `checked_add_signed` and return `Ok(None)` on
-overflow, same as the year and month steps above already do. So these
-calls now give NULL rather than crashing the process.
+<!-- autofixer:host-part --> Fixes #7741
 
-This also covers the extra cases from your follow-up comment: a negative
-day like `make_date(40, 1, -2147483648)` goes through the same checked
-add, and `year - 1` / `month - 1` / `day - 1` now use `checked_sub` so
-`make_date(-2147483648, 1, 1)` and `make_date(2000, -2147483648, 1)`
-don't hit the subtraction overflow in debug/fuzz builds.
+<sub>Opened by Autofixer. To ask for a change, mention @turso-github-
+handyman in a comment.</sub>
 
-The issue mentions Postgres raises `date field value out of range` here.
-I kept it as NULL to match how every other out-of-range input to
-`time_date` behaves today; if 
+Co-authored-by: avinassh <[REDACTED_EMAIL]>
 
-**File**: `core/time/internal.rs` (modified, +131/-34)
+Closes #11504
+
+**File**: `core/storage/btree.rs` (modified, +18/-1)
 ```diff
-@@ -205,7 +205,10 @@ impl Time {
- 
-         match year.cmp(&0) {
-             std::cmp::Ordering::Greater => {
--                let months = match (year - 1).unsigned_abs().checked_mul(12) {
-+                let months = match year
-+                    .checked_sub(1)
-+                    .and_then(|y| y.unsigned_abs().checked_mul(12))
-+                {
-                     Some(m) => m,
-                     None => return Ok(None),
-                 };
-@@ -216,7 +219,10 @@ impl Time {
-                 };
-             }
-             std::cmp::Ordering::Less => {
--                let months = match (year - 1).unsigned_abs().checked_mul(12) {
-+                let months = match year
-+                    .checked_sub(1)
-+                    .and_then(|y| y.unsigned_abs().checked_mul(12))
-+                {
-                     Some(m) => m,
-                     None => return Ok(None),
-                 };
-@@ -231,45 +237,54 @@ impl Time {
- 
-         match month.cmp(&0) {
-             std::cmp::Ordering::Greater => {
--                dt = match dt.checked_add_months(chrono::Months::new((month - 1).unsigned_abs())) {
-+                dt = match month
-+                    .checked_sub(1)
-+                    .and_then(|m| dt.checked_add_months(chrono::Months::new(m.unsigned_abs())))
-+                {
-                     Some(d) => d,
-                     None => return Ok(None),
-                 };
-             }
-             std::cmp::Ordering::Less => {
--                dt = match dt.checked_sub_months(chrono::Months::new((month - 1).unsigned_abs())) {
-+                dt = match month
-+                    .checked_sub(1)
-+                    .and_then(|m| dt.checked_sub_months(chrono::Months::new(m.unsigned_abs())))
-+                {
-                     Some(d) => d,
-                     None => return Ok(None),
-                 };
-             }
-             std::cmp::Ordering::Equal => (),
-         };
- 
--        if let Some(d) = chrono::Duration::try_days(day - 1) {
--            dt += d;
--        } else {
--            return Ok(None);
--        }
-+        dt = match day
-+            .checked_sub(1)
-+            .and_then(chrono::Duration::try_days)
-+            .and_then(|d| dt.checked_add_signed(d))
-+        {
-+            Some(d) => d,
-+            None => return Ok(None),
-+        };
- 
--        if let Some(d) = chrono::Duration::try_hours(hour) {
--            dt += d;
--        } else {
--            return Ok(None);
--        }
-+        dt = match chrono::Duration::try_hours(hour).and_then(|d| dt.checked_add_signed(d)) {
-+            Some(d) => d,
-+            None => return Ok(None),
-+        };
- 
--        if let Some(d) = chrono::Duration::try_minutes(minutes) {
--            dt += d;
--        } else {
--            return Ok(None);
--        }
-+        dt = match chrono::Duration::try_minutes(minutes).and_then(|d| dt.checked_add_signed(d)) {
-+            Some(d) => d,
-+            None => return Ok(None),
-+        };
- 
--        if let Some(d) = chrono::Duration::try_seconds(seconds) {
--            dt += d;
--        } else {
--            return Ok(None);
--        }
-+        dt = match chrono::Duration::try_seconds(seconds).and_then(|d| dt.checked_add_signed(d)) {
-+            Some(d) => d,
-+            None => return Ok(None),
-+        };
- 
--        dt += chrono::Duration::nanoseconds(nano_secs);
-+        dt = match dt.checked_add_signed(chrono::Duration::nanoseconds(nano_secs)) {
-+            Some(d) => d,
-+            None => return Ok(None),
-+        };
- 
-         let dt = dt
-             .and_local_timezone(offset)
-@@ -287,13 +302,17 @@ impl Time {
- 
-         match years.cmp(&0) {
-             std::cmp::Ordering::Greater => {
--                dt = dt
--                    .checked_add_months(chrono::Months::new(years.unsigned_abs() * 12))
-+                dt = years
-+                    .unsigned_abs()
-+                    .checked_mul(12)
-+                    .and_then(|m| dt.checked_add_months(chrono::Months::new(m)))
-                     .ok_or(TimeError::CreationError)?;
-             }
-             std::cmp::Ordering::Less => {
--                dt = dt
--                    .checked_sub_months(chrono::Months::new(years.unsigned_abs() * 12))
-+                dt = years
-+                    .unsigned_abs()
-+                    .checked_mul(12)
-+                    .and_then(|m| dt.checked_sub_months(chrono::Months::new(m)))
-                     .ok_or(TimeError::CreationError)?;
-             }
-             std::cmp::Ordering::Equal => (),
-@@ -313,7 +332,9 @@ impl Time {
-             std::cmp::Ordering::Equal => (),
-         };
- 
--        dt += chrono::Duration::try_days(days).ok_or(TimeError::CreationError)?;
-+        dt = chrono::Duration::try_days(days)
-+            .and_then(|d| dt.checked_add_signed(d))
-+            .ok_or(TimeError::CreationError)?;
- 
-         Ok(dt.into())
-     }
-@@ -342,10 +363,10 @@ impl Time {
-         self.inner.timestamp_nanos_opt()
+@@ -9385,7 +9385,11 @@ fn find_free_slot(
+ pub fn btree_init_page(page: &PageRef, page_type: PageType, offset: usize, usable_space: usize) {
+     // setup btree page
+     let contents = page.get_contents();
+-    contents.overflow_cells.clear();
++    turso_assert!(
++        contents.overflow_cells.is_empty(),
++        "btree_init_page: page still has overflow cells from an earlier insert or balance",
++        { "page_id": page.get().id(), "overflow_count": contents.overflow_cells.len() }
++    );
+     tracing::debug!(
+         "btree_init_page(id={}, offset={}, usable_space={})",
+         page.get().id(),
+@@ -11520,6 +11524,19 @@ mod tests {
+         payload: crate::alloc::Vec<u8>,
      }
  
--    pub fn add_duration(&self, 
-```
-
-**File**: `core/time/mod.rs` (modified, +52/-6)
-```diff
-@@ -194,13 +194,23 @@ fn time_date_internal(args: &[Value]) -> Value {
-     }
- 
-     if args.len() == 8 {
--        let offset_sec = ok_tri!(args[7].to_integer()) as i32;
--        seconds -= offset_sec as i64;
-+        let offset_sec = ok_tri!(args[7].to_integer());
-+        if i32::try_from(offset_sec).is_err() {
-+            return Value::null();
-+        }
-+        seconds = match seconds.checked_sub(offset_sec) {
-+            Some(s) => s,
-+            None => return Value::null(),
-+        };
-     }
- 
-+    let (Ok(year), Ok(month)) = (i32::try_from(year), i32::try_from(month)) else {
-+        return Value::null();
-+    };
-+
-     let t = Time::time_date(
--        year as i32,
--        month as i32,
-+        year,
-+        month,
-         day,
-         hour,
-         minutes,
-@@ -715,7 +725,10 @@ fn time_add(args: &[Value]) -> Value {
- 
-     let d = Duration::from(d);
- 
--    t.add_duration(d).into_blob()
-+    match t.add_duration(d) {
-+        Some(t) => t.into_blob(),
-+        None => Value::null(),
-+    }
- }
- 
- #[scalar(name = "time_add_date")]
-@@ -757,7 +770,11 @@ fn time_add_date(args: &[Value]) -> Value {
-         days = ok_tri!(args[3].to_integer());
-     }
- 
--    let t: Time = tri!(t.time_add_date(years as i32, months as i32, days));
-+    let (Ok(years), Ok(months)) = (i32::try_from(years), i32::try_from(months)) else {
-+        return Value::error_with_message(TimeError::CreationError.to_string());
-+    };
-+
-+    let t: Time = tri!(t.time_add_date(years, months, days));
- 
-     t.into_blob()
- }
-@@ -1029,3 +1046,32 @@ fn time_parse(args: &[Value]) -> Value {
- 
-     Time::from_datetime(dt.and_utc()).into_blob()
- }
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+
-+    fn ints(v: &[i64]) -> Vec<Value> {
-+        v.iter().map(|&i| Value::from_integer(i)).collect()
-+    }
-+
 +    #[test]
-+    fn time_date_overflowing_args_return_null() {
-+        // seconds - offset_sec overflows i64
-+        let v = time_date_internal(&ints(&[2000, 1, 1, 0, 0, i64::MIN, 0, 1]));
-+        assert_eq!(v.value_type(), ValueType::Null);
-+        let v = time_date_internal(&ints(&[2024, 1, 1, 0, 0, i64::MAX, 0, -1]));
-+        assert_eq!(v.value_type(), ValueType::Null);
-+        // year / month that don't fit in i32 must not be truncated
-+        let v = time_date_internal(&ints(&[4294969297, 1, 1]));
-+        assert_eq!(v.value_type(), ValueType::Null);
-+        let v = time_date_internal(&ints(&[2024, 4294967297, 1]));
-+        assert_eq!(v.value_type(), ValueType::Null);
-+        // offset that doesn't fit in i32
-+        let v = time_date_internal(&ints(&[2024, 1, 1, 0, 0, 0, 0, 4294967296]));
-+        assert_eq!(v.value_type(), ValueType::Null);
-+        // sanity: normal call still returns a blob
-+        let v = time_date_internal(&ints(&[2024, 1, 1, 0, 0, 0, 0, 3600]));
-+        assert_eq!(v.value_type(), ValueType::Blob);
-+    }
-+}
-```
-
-**File**: `sqlite/conformance/sqlite-sqltests/scalar-functions-datetime.sqltest` (modified, +65/-0)
-```diff
-@@ -2220,6 +2220,71 @@ test time_date-overflow-issue-5251 {
- expect {
- }
- 
-+@skip-if sqlite "time_date is a custom Limbo function not supported in standard SQLite"
-+test make_date-day-overflow-issue-11398 {
-+    SELECT make_date(1, 4, 1453556443);
-+}
-+expect {
-+}
++    #[should_panic(expected = "page still has overflow cells")]
++    fn btree_init_page_rejects_page_with_overflow_cells() {
++        let page = get_page(2);
++        let page_contents = page.get_contents();
++        let payload = [1u8; 3000];
++        insert_into_cell(page_contents, &payload, 0, 4096).unwrap();
++        insert_into_cell(page_contents, &payload, 1, 4096).unwrap();
++        assert_eq!(page_contents.overflow_cells.len(), 1);
 +
-+@skip-if sqlite "time_date is a custom Limbo function not supported in standard SQLite"
-+test make_timestamp-day-overflow-issue-11398 {
-+    SELECT make_timestamp(2024, 1, 1453556443, 0, 0, 0);
-+}
-+expect {
-+}
-+
-+@skip-if sqlite "time_date is a custom Limbo function not supported in standard SQLite"
-+test make_date-year-wider-than-i32 {
-+    SELECT make_date(4294969297, 1, 1);
-+}
-+expect {
-+}
-+
-+@skip-if sqlite "time_date is a custom Limbo function not supported in standard SQLite"
-+test make_date-month-wider-than-i32 {
-+    SELECT make_date(2024, 4294967297, 1);
-+}
-+expect {
-+}
-+
-+@skip-if sqlite "time_date is a custom Limbo function not supported in standard SQLite"
-+test time_date-offset-overflow {
-+    SELECT time_date(2000, 1, 1, 0, 0, -9223372036854775808, 0, 1);
-+}
-+expect {
-+}
-+
-+@skip-if sqlite "time_date is a custom Limbo function not supported in standard SQLite"
-+test time_date-offset-overflow-negative {
-+    SELECT time_date(2024, 1, 1, 0, 0, 9223372036854775807, 0, -1);
-+}
-+expect {
-+}
-+
-+@skip-if sqlite "time_date is a custom Limbo function not supported in standard SQLite"
-+test time_add-overflow {
-+    SELECT time_add(time_date(-262143, 1, 1), -9223372036854775807);
-+}
-+expect {
-+}
-+
-+@skip-if sqlite "time_date is a custom Limbo function not supported in standard SQLite"
-+test time_add_date-day-overflow {
-+    SELECT time_add_date(make_date(2024, 1, 1), 0, 0, 1453556443);
-+}
-+expect error {
-+    time creation error
-+}
-+
-+@skip-if sqlite "time_date is a custom Limbo function not supported in standard SQLite"
-+test time_add_date-year-overflow {
-+    SELECT time_add_date(make_date(2024, 1, 1), 2147483647);
-+}
-+expect error {
-+    time creation error
-+}
-+
- # Invalid date and time
- test invalid-date {
-     SELECT date('2024-07-21 24:00:00');
-```
-
----
-
-### Incident Patch 2: `06abd777` (2026-11-05)
-**Commit Message**: core/time: return NULL instead of panicking when time_date overflows
-
-make_date(1, 4, 1453556443) and make_timestamp with a huge day number
-panicked with `NaiveDateTime + TimeDelta overflowed`. The day/hour/
-minute/second offsets were checked to fit in a Duration, but the
-addition itself used `+=`, which panics past NaiveDateTime's range.
-With overflow checks on, `year - 1` / `month - 1` / `day - 1` also
-panicked for the minimum integer value.
-
-Use checked arithmetic for each step and return None like the other
-out-of-range paths in Time::time_date.
-
-Fixes #11398
-
-**File**: `core/time/internal.rs` (modified, +86/-25)
-```diff
-@@ -205,7 +205,10 @@ impl Time {
- 
-         match year.cmp(&0) {
-             std::cmp::Ordering::Greater => {
--                let months = match (year - 1).unsigned_abs().checked_mul(12) {
-+                let months = match year
-+                    .checked_sub(1)
-+                    .and_then(|y| y.unsigned_abs().checked_mul(12))
-+                {
-                     Some(m) => m,
-                     None => return Ok(None),
-                 };
-@@ -216,7 +219,10 @@ impl Time {
-                 };
-             }
-             std::cmp::Ordering::Less => {
--                let months = match (year - 1).unsigned_abs().checked_mul(12) {
-+                let months = match year
-+                    .checked_sub(1)
-+                    .and_then(|y| y.unsigned_abs().checked_mul(12))
-+                {
-                     Some(m) => m,
-                     None => return Ok(None),
-                 };
-@@ -231,45 +237,54 @@ impl Time {
- 
-         match month.cmp(&0) {
-             std::cmp::Ordering::Greater => {
--                dt = match dt.checked_add_months(chrono::Months::new((month - 1).unsigned_abs())) {
-+                dt = match month
-+                    .checked_sub(1)
-+                    .and_then(|m| dt.checked_add_months(chrono::Months::new(m.unsigned_abs())))
-+                {
-                     Some(d) => d,
-                     None => return Ok(None),
-                 };
-             }
-             std::cmp::Ordering::Less => {
--                dt = match dt.checked_sub_months(chrono::Months::new((month - 1).unsigned_abs())) {
-+                dt = match month
-+                    .checked_sub(1)
-+                    .and_then(|m| dt.checked_sub_months(chrono::Months::new(m.unsigned_abs())))
-+                {
-                     Some(d) => d,
-                     None => return Ok(None),
-                 };
-             }
-             std::cmp::Ordering::Equal => (),
-         };
- 
--        if let Some(d) = chrono::Duration::try_days(day - 1) {
--            dt += d;
--        } else {
--            return Ok(None);
--        }
-+        dt = match day
-+            .checked_sub(1)
-+            .and_then(chrono::Duration::try_days)
-+            .and_then(|d| dt.checked_add_signed(d))
-+        {
-+            Some(d) => d,
-+            None => return Ok(None),
-+        };
- 
--        if let Some(d) = chrono::Duration::try_hours(hour) {
--            dt += d;
--        } else {
--            return Ok(None);
--        }
-+        dt = match chrono::Duration::try_hours(hour).and_then(|d| dt.checked_add_signed(d)) {
-+            Some(d) => d,
-+            None => return Ok(None),
-+        };
- 
--        if let Some(d) = chrono::Duration::try_minutes(minutes) {
--            dt += d;
--        } else {
--            return Ok(None);
--        }
-+        dt = match chrono::Duration::try_minutes(minutes).and_then(|d| dt.checked_add_signed(d)) {
-+            Some(d) => d,
-+            None => return Ok(None),
-+        };
- 
--        if let Some(d) = chrono::Duration::try_seconds(seconds) {
--            dt += d;
--        } else {
--            return Ok(None);
--        }
-+        dt = match chrono::Duration::try_seconds(seconds).and_then(|d| dt.checked_add_signed(d)) {
-+            Some(d) => d,
-+            None => return Ok(None),
-+        };
- 
--        dt += chrono::Duration::nanoseconds(nano_secs);
-+        dt = match dt.checked_add_signed(chrono::Duration::nanoseconds(nano_secs)) {
-+            Some(d) => d,
-+            None => return Ok(None),
-+        };
- 
-         let dt = dt
-             .and_local_timezone(offset)
-@@ -601,3 +616,49 @@ impl Deref for Duration {
-         &self.inner
-     }
- }
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+
-+    fn utc() -> FixedOffset {
-+        FixedOffset::east_opt(0).unwrap()
++        btree_init_page(&page, PageType::TableLeaf, 0, 4096);
 +    }
 +
-+    #[test]
-+    fn time_date_out_of_range_returns_none() {
-+        // make_date(1, 4, 1453556443)
-+        assert!(Time::time_date(1, 4, 1453556443, 0, 0, 0, 0, utc())
-+            .unwrap()
-+            .is_none());
-+        // make_timestamp(2024, 1, 1453556443, 0, 0, 0)
-+        assert!(Time::time_date(2024, 1, 1453556443, 0, 0, 0, 0, utc())
-+            .unwrap()
-+            .is_none());
-+        // make_date(40, 1, -2147483648)
-+        assert!(Time::time_date(40, 1, -2147483648, 0, 0, 0, 0, utc())
-+            .unwrap()
-+            .is_none());
-+        // make_date(-2147483648, 1, 1) and make_date(2000, -2147483648, 1)
-+        assert!(Time::time_date(i32::MIN, 1, 1, 0, 0, 0, 0, utc())
-+            .unwrap()
-+            .is_none());
-+        assert!(Time::time_date(2000, i32::MIN, 1, 0, 0, 0, 0, utc())
-+            .unwrap()
-+            .is_none());
-+        assert!(Time::time_date(2000, 1, i64::MIN, 0, 0, 0, 0, utc())
-+            .unwrap()
-+            .is_none());
-+        // the same overflow through the hour argument
-+        assert!(Time::time_date(2024, 1, 1, 24 * 1453556443, 0, 0, 0, utc())
-+            .unwrap()
-+            .is_none());
-+    }
-+
-+    #[test]
-+
-```
-
----
-
-### Incident Patch 3: `b0421529` (2026-11-05)
-**Commit Message**: Merge 'postgres: reject array types with more than 7 dimensions, not panic' from app/turso-github-handyman
-
-## Problem
-
-```sql
-CREATE TABLE v3 (c4 INT[][][][][][][][]);
--- tursopg (Turso's PostgreSQL-compatible server): process stops with
---   panicked at core/schema.rs: array dimensions must be <= 7
--- PostgreSQL 18: CREATE TABLE
-```
-
-The same panic happens with a domain base type
-(`posint[][][][][][][][]`), `ALTER TABLE ... ADD COLUMN`, a cast
-(`'{}'::int[][][][][][][][]`), and a `json_to_recordset(...) AS x(a
-int[][][][][][][][])` column list.
-
-`core` expects an `ast::Type` to have at most
-`ast::MAX_ARRAY_DIMENSIONS` (7) array dimensions, and
-`ColumnInfo::set_array_dimensions` asserts it. The SQLite parser checks
-this limit. The PostgreSQL translator (`postgres/parser/translator.rs`)
-builds `ast::Type` from the `[]` count without checking it.
-
-## Fix
-
-- New `check_array_dimensions` in the translator returns `0A000` "an
-array type with 8 dimensions (at most 7) is not supported".
-- It is called from the two functions that produce array dimensions:
-`map_column_type` (every column type in `CREATE TABLE` and `ALTER TABLE
-ADD COLUMN`) and `pg_type_name_to_ast_type` (casts and column d
-
-**File**: `docs/sql-reference/data-types.mdx` (modified, +2/-0)
-```diff
-@@ -219,6 +219,8 @@ INSERT INTO matrices VALUES (1, ARRAY[ARRAY[1, 2], ARRAY[3, 4]]);
- 
- Every element of an `INTEGER[][]` must be an array (or NULL), and the elements of those are checked as an `INTEGER[]` checks its elements, so `ARRAY[1, 2]` and `ARRAY[ARRAY['abc']]` are errors. Text input has no nested arrays, so build arrays of more than one dimension with `ARRAY[...]`.
- 
-+An array type has at most 7 dimensions. A type with more bracket pairs, such as `INTEGER[][][][][][][][]`, is an error.
-+
- Arrays can be inserted using the `ARRAY[...]` constructor or as JSON text:
- 
- ```sql
-```
-
-**File**: `postgres/frontend/tests/embedded_errors.rs` (modified, +28/-0)
-```diff
-@@ -264,6 +264,34 @@ fn errors_report_postgres_sqlstates() {
-     }
- }
- 
-+#[test]
-+fn array_types_with_more_than_seven_dimensions_are_not_supported() {
-+    let (_io, conn) = pg_connection();
-+    conn.execute("CREATE DOMAIN posint AS INT").unwrap();
-+    conn.execute("CREATE TABLE seven (a INT[][][][][][][])")
-+        .unwrap();
-+    conn.execute("ALTER TABLE seven ADD COLUMN b posint[][][][][][][]")
-+        .unwrap();
-+    conn.execute("SELECT '{}'::int[][][][][][][]").unwrap();
-+    for sql in [
-+        "CREATE TABLE v3 (c4 INT[][][][][][][][])",
-+        "CREATE TABLE v3 (c4 posint[][][][][][][][])",
-+        "CREATE TABLE v3 (c4 _int4[][][][][][][])",
-+        "ALTER TABLE seven ADD COLUMN c int[][][][][][][][]",
-+        "SELECT '{}'::int[][][][][][][][]",
-+        "SELECT CAST('{}' AS posint[][][][][][][][])",
-+        "SELECT * FROM json_to_recordset('[]') AS x(a int[][][][][][][][])",
-+    ] {
-+        let e = exec_err(&conn, sql);
-+        assert_eq!(e.sqlstate, "0A000", "{sql}: {e:?}");
-+        assert_eq!(
-+            e.to_string(),
-+            "an array type with 8 dimensions (at most 7) is not supported",
-+            "{sql}"
-+        );
-+    }
-+}
-+
- #[test]
- fn nested_begin_keeps_the_open_transaction() {
-     // PostgreSQL warns "there is already a transaction in progress" for BEGIN
-```
-
-**File**: `postgres/parser/translator.rs` (modified, +16/-1)
-```diff
-@@ -6167,10 +6167,12 @@ fn pg_type_name_to_ast_type(
-         _ => &pg_type,
-     };
- 
-+    let array_dimensions = type_name.array_bounds.len() as u32;
-+    check_array_dimensions(array_dimensions)?;
-     Ok(ast::Type {
-         name: name.to_string(),
-         size: None,
--        array_dimensions: type_name.array_bounds.len() as u32,
-+        array_dimensions,
-     })
- }
- 
-@@ -6244,9 +6246,22 @@ fn map_column_type(pg_type: &str, typmods: &[i64]) -> Result<PgTypeMapping, Pars
-     if !typmods.is_empty() && mapping.type_params.is_empty() {
-         return Err(not_supported(format!("a type modifier on {pg_type}")));
-     }
-+    check_array_dimensions(mapping.array_dimensions)?;
-     Ok(mapping)
- }
- 
-+/// PostgreSQL accepts any number of `[]` in a type name, but a Turso column
-+/// or cast holds at most [ast::MAX_ARRAY_DIMENSIONS].
-+fn check_array_dimensions(dimensions: u32) -> Result<(), ParseError> {
-+    if dimensions > ast::MAX_ARRAY_DIMENSIONS {
-+        return Err(not_supported(format!(
-+            "an array type with {dimensions} dimensions (at most {})",
-+            ast::MAX_ARRAY_DIMENSIONS
-+        )));
-+    }
-+    Ok(())
-+}
-+
- fn extract_key_columns(keys: &[pg_query::protobuf::Node]) -> Result<Vec<String>, ParseError> {
-     use pg_query::protobuf::node::Node;
- 
+     #[test]
+     fn test_drop_1() {
+         let (db, _temp_dir) = get_database();
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #11434** (2026-11-05): core: reject a rowid in the fraction of percentile_disc and percentile_cont (@turso-github-handyman[bot])
-- **PR #11423** (2026-11-05): postgres: reject array types with more than 7 dimensions, not panic (@turso-github-handyman[bot])
-- **PR #11422** (2026-11-05): core: make lpad and rpad as fast as repeat for long results (@turso-github-handyman[bot])
-- **PR #11419** (2026-11-05): fix (tursopg/parser): reject mismatched VALUES row lengths (@Surajsuthar)
-- **PR #11418** (2026-11-05): tursopg: match LIKE on the operands' text without copying it (@turso-github-handyman[bot])
-- **PR #11414** (2026-11-05): core/translate: skip DO UPDATE when the table has only a non-unique index (@turso-github-handyman[bot])
+- **PR #11577** (2026-11-08): bindings/rust: expose the progress handler on Connection (@KaiserKarel)
+- **PR #11576** (2026-11-08): core/dialect: centralize shared SQLite behavior in Dialect defaults (@Surajsuthar)
+- **PR #11571** (2026-11-07): tursopg: read hex, octal and binary literals that do not fit in int4 (@gaurav0107)
+- **PR #11566** (2026-11-07): core/time: return an error for a time blob whose seconds overflow (@gaurav0107)
+- **PR #11561** (2026-11-08): core: count changes() and total_changes() like SQLite (@Raviikumar001)
+- **PR #11559** (closed): core: count changes like SQLite for CREATE INDEX, OR FAIL and vtab writes (@1AbdullahButt)
 
 ---
 
@@ -2104,85 +1528,45 @@ ADD COLUMN`) and `pg_type_name_to_ast_type` (casts and column d
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge 'core/time: return NULL instead of panicking when time_date overflows' fro
+## X. Merge 'core/storage: Ensure b-tree pages do not have overflow cells before use' 
 
 **RULE**:
-When implementing operations in `core/time/internal.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/storage/btree.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3b6bbb46`: Merge 'core/time: return NULL instead of panicking when time_date overflows' from. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9ce98599`: Merge 'core/storage: Ensure b-tree pages do not have overflow cells before use' from app/turso-github-handyman. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/time/internal.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/storage/btree.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                let months = match year
-                    .checked_sub(1)
-                    .and_then(|y| y.unsigned_abs().checked_mul(12))
-                {
-                let months = match year
-                    .checked_sub(1)
-                    .and_then(|y| y.unsigned_abs().checked_mul(12))
-                {
-                dt = match month
-                    .checked_sub(1)
-                    .and_then(|m| dt.checked_add_months(chrono::Months::new(m.unsigned_abs())))
-                {
-                dt = match month
-                    .checked_sub(1)
-                    .and_then(|m| dt.checked_sub_months(chrono::Months::new(m.unsigned_abs())))
-                {
-        dt = match day
-            .checked_sub(1)
-            .and_then(chrono::Duration::try_days)
-            .and_then(|d| dt.checked_add_signed(d))
-        {
-            Some(d) => d,
-            None => return Ok(None),
-        };
-        dt = match chrono::Duration::try_hours(hour).and_then(|d| dt.checked_add_signed(d)) {
-            Some(d) => d,
-            None => return Ok(None),
-        };
-        dt = match chrono::Duration::try_minutes(minutes).and_then(|d| dt.checked_add_signed(d)) {
-      
+    turso_assert!(
+        contents.overflow_cells.is_empty(),
+        "btree_init_page: page still has overflow cells from an earlier insert or balance",
+        { "page_id": page.get().id(), "overflow_count": contents.overflow_cells.len() }
+    );
+    #[test]
+    #[should_panic(expected = "page still has overflow cells")]
+    fn btree_init_page_rejects_page_with_overflow_cells() {
+        let page = get_page(2);
+        let page_contents = page.get_contents();
+        let payload = [1u8; 3000];
+        insert_into_cell(page_contents, &payload, 0, 4096).unwrap();
+        insert_into_cell(page_contents, &payload, 1, 4096).unwrap();
+        assert_eq!(page_contents.overflow_cells.len(), 1);
+
+        btree_init_page(&page, PageType::TableLeaf, 0, 4096);
+    }
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-                let months = match (year - 1).unsigned_abs().checked_mul(12) {
-                let months = match (year - 1).unsigned_abs().checked_mul(12) {
-                dt = match dt.checked_add_months(chrono::Months::new((month - 1).unsigned_abs())) {
-                dt = match dt.checked_sub_months(chrono::Months::new((month - 1).unsigned_abs())) {
-        if let Some(d) = chrono::Duration::try_days(day - 1) {
-            dt += d;
-        } else {
-            return Ok(None);
-        }
-        if let Some(d) = chrono::Duration::try_hours(hour) {
-            dt += d;
-        } else {
-            return Ok(None);
-        }
-        if let Some(d) = chrono::Duration::try_minutes(minutes) {
-            dt += d;
-        } else {
-            return Ok(None);
-        }
-        if let Some(d) = chrono::Duration::try_seconds(seconds) {
-            dt += d;
-        } else {
-            return Ok(None);
-        }
-        dt += chrono::Duration::nanoseconds(nano_secs);
-                dt = dt
-                    .checked_add_months(chrono::Months::new(years.unsigned_abs() * 12))
-                dt = dt
-                    .checked_sub_months(chrono::Months::new(years.unsigned_abs() * 12)
+    contents.overflow_cells.clear();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3b6bbb46` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9ce98599` are properly handled with clean fallback behavior.

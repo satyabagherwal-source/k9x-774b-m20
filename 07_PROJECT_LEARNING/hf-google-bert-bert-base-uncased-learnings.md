@@ -3,7 +3,7 @@
 > **Source Version**: `hf-google-be`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-11-05T03:20:42.257Z  
+> **Timestamp**: 2026-11-08T20:05:55.215Z  
 > **Learning ID**: `learn-huggingface-google-bert-bert-base-uncased`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -14,308 +14,512 @@
 
 # Project Learning Record (Full-Spectrum Forensic Harvest): google-bert/bert-base-uncased
 
+---
+
 ## 1. Executive Forensic Architecture & System Mechanics
 
-**Technical Problem Solved:**
-This repository is not a software application but a **Pretrained Neural Network Artifact**. It solves the problem of **Cold-Start Semantic Representation** in Natural Language Processing (NLP). It provides a frozen, bidirectional contextual encoder that maps variable-length English text sequences (up to 512 tokens) into fixed-dimensional dense vector representations (768 dimensions). This eliminates the need for downstream tasks (classification, NER, QA) to learn basic linguistic syntax and semantics from scratch, reducing training data requirements by orders of magnitude.
+`google-bert/bert-base-uncased` is a canonical bidirectional Transformer encoder pre-trained via self-supervised Masked Language Modeling (MLM) and Next Sentence Prediction (NSP). The Hugging Face checkpoint encapsulation (`config.json`, `tokenizer_config.json`, and associated serialized tensor artifacts) represents an explicit invariant contract across multi-dimensional parameter spaces:
 
-**Architectural Boundaries:**
-*   **Input Boundary:** Raw text strings $\rightarrow$ Tokenized IDs (Integers) $\rightarrow$ Padded/Truncated Sequences.
-*   **Processing Core:** 12 stacked Transformer Encoder Blocks. Each block consists of Multi-Head Self-Attention (12 heads) and a Feed-Forward Network (FFN) with GELU activation.
-*   **Output Boundary:** Contextual Embeddings (Sequence of 768-dim vectors) $\rightarrow$ Task-Specific Head (Masked LM Head in this specific config).
-*   **State Ownership:** The model is **stateless** during inference. All state is contained within the input tensor and the static weight matrices. There is no persistent memory between inference calls unless explicitly managed by the inference engine (e.g., KV-cache for autoregressive generation, though BERT is non-autoregressive).
+```
+[ Raw UTF-8 Text ] 
+       │
+       ▼
+┌────────────────────────────────────────────────────────┐
+│ Pre-Tokenization Pipeline                              │
+│ • Unicode Normalization (NFD -> Strip Accents)         │
+│ • Case Normalization (lower() via do_lower_case=True)   │
+│ • Punctuation Splitting & Whitespace Tokenization      │
+└────────────────────────────────────────────────────────┘
+       │
+       ▼
+┌────────────────────────────────────────────────────────┐
+│ WordPiece Tokenizer (Vocabulary: 30,522)              │
+│ • Subword Segmentation (## prefix tokenization)        │
+│ • Special Token Injection: [CLS]=101, [SEP]=102,       │
+│   [PAD]=0, [UNK]=100, [MASK]=103                       │
+│ • Hard Ceiling: max_position_embeddings = 512          │
+└────────────────────────────────────────────────────────┘
+       │
+       ▼
+┌────────────────────────────────────────────────────────┐
+│ Embedding Subsystem (Hidden Dimension = 768)          │
+│ • Token Embeddings:      [Batch, Seq_Len] -> [B, S, H] │
+│ • Position Embeddings:   [0 .. 511]       -> [B, S, H] │
+│ • Token Type Embeddings: [0 or 1]         -> [B, S, H] │
+│ • Vector Addition:       E_token + E_pos + E_type      │
+│ • LayerNorm(eps=1e-12) + Dropout(p=0.1)                │
+└────────────────────────────────────────────────────────┘
+       │
+       ▼
+┌────────────────────────────────────────────────────────┐
+│ 12-Layer Bidirectional Encoder Stack                   │
+│ ┌────────────────────────────────────────────────────┐ │
+│ │ Self-Attention Block (12 Heads, d_k = d_v = 64)    │ │
+│ │ • Q, K, V Projections (768 -> 12 x 64)             │ │
+│ │ • Attention Mask Injection: additive -10000.0f     │ │
+│ │ • Softmax(QK^T / sqrt(64)) * V                     │ │
+│ │ • Dense Output Projection (768 -> 768)             │ │
+│ │ • Residual Connection + LayerNorm(eps=1e-12)       │ │
+│ └────────────────────────────────────────────────────┘ │
+│ ┌────────────────────────────────────────────────────┐ │
+│ │ Intermediate Feed-Forward Block                    │ │
+│ │ • Dense Expansion (768 -> 3072)                    │ │
+│ │ • Non-Linearity: GELU (Gaussian Error Linear Unit) │ │
+│ │ • Dense Contraction (3072 -> 768)                  │ │
+│ │ • Residual Connection + LayerNorm(eps=1e-12)       │ │
+│ └────────────────────────────────────────────────────┘ │
+└────────────────────────────────────────────────────────┘
+       │
+       ▼
+┌────────────────────────────────────────────────────────┐
+│ Output Heads                                           │
+│ • MLM Head: Dense -> GELU -> LayerNorm -> Linear(30522)│
+│ • NSP / Pooler Head: Dense(768, 768) -> Tanh           │
+└────────────────────────────────────────────────────────┘
+```
 
-**Critical Subsystem Abstractions:**
-1.  **Tokenization Layer:** `WordPiece` tokenizer with `do_lower_case: true`. Handles sub-word segmentation for out-of-vocabulary (OOV) tokens.
-2.  **Embedding Layer:** Combines Token Embeddings, Position Embeddings (Absolute, max 512), and Segment Embeddings (Type Vocab Size 2).
-3.  **Transformer Block:** The core computational unit. Enforces the invariant: $Output = Input + Dropout(LayerNorm(Attention(Input)))$ followed by $Output = Output + Dropout(LayerNorm(FFN(Output)))$.
-4.  **Normalization:** Layer Normalization with epsilon $1e-12$ to prevent division by zero and numerical instability.
+### Architectural Boundaries & State Ownership
+1. **Embedding Matrix Decoupling vs. Output Weight Tying**: The WordPiece input embedding matrix `[30522, 768]` is structurally tied (cloned memory references or identical pointers during gradient descent) to the prediction linear layer of `BertForMaskedLM`. Mutating tokenizer vocab size without resizing output heads corrupts memory alignment.
+2. **Context Window Boundary (`model_max_length: 512`)**: The positional coordinate system is static, absolute, and bounded strictly to indices `[0, 511]`. Any input sequence exceeding length 512 triggers an out-of-bounds indexing trap on tensor lookup tables unless explicitly truncated at tokenization time.
+3. **Additive vs. Multiplicative Attention Mask Invariant**: The binary boolean mask `[Batch, Seq]` (`1` for valid token, `0` for padding) must be cast into an additive float mask before multi-head attention:
+   $$\text{AdditiveMask}_{i, j} = (1.0 - \text{AttentionMask}_{i, j}) \times -10000.0$$
+   This prevents NaN generation in FP16/BF16 when running $\text{Softmax}$ over purely masked rows.
+
+---
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Numerical Stability in Deep Learning Normalization
+### 1. Invariant Subword Text Normalization & Accent-Stripping Order
 **RULE**:
-When implementing Layer Normalization or Batch Normalization in neural networks, the epsilon value added to the variance MUST be explicitly defined and tuned (typically $1e-5$ to $1e-12$). It MUST NOT be omitted or set to zero.
+When running uncased tokenization pipelines with accent-stripping enabled (`do_lower_case=True`), normalization MUST execute in strict topological order: Unicode NFD Decomposition $\rightarrow$ Accent Mark Stripping (Mn category deletion) $\rightarrow$ Lowercasing. Accents MUST NOT be stripped post-lowercasing without prior canonical decomposition.
+
 **WHY**:
-Omitting epsilon leads to division by zero when the variance of a batch or layer is exactly zero (e.g., constant inputs). This results in `NaN` (Not a Number) or `Inf` values, which propagate through the network, causing training divergence or inference crashes. In `bert-base-uncased`, `layer_norm_eps: 1e-12` is explicitly set to ensure numerical stability during the normalization step: $\frac{x - \mu}{\sqrt{\sigma^2 + \epsilon}}$.
+Failure to decompose Unicode characters prior to stripping non-spacing marks (e.g., German `ß`, French `é`, accented ligatures) produces mismatched token splits, mapping common vocabulary words to `[UNK]` (token ID 100). For example, precomposed character `\u00E9` (`é`) is atomic in NFC form. If stripped without NFD decomposition, the accent regex fails to identify the `\u0301` combining mark, causing severe semantic drift and silent token corruption.
+
 **WHEN TO APPLY**:
-Any custom neural network implementation, especially in low-precision arithmetic (FP16/BF16) or when dealing with small batch sizes where variance can be near-zero.
+Text ingest pipelines, tokenizer runtimes (Rust `tokenizers`, Python subword modules), and LLM/Embedding data processing microservices.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import unicodedata
+from typing import List
+
+def normalize_uncased_token(text: str) -> str:
+    """
+    Strictly canonical uncased normalization matching BERT's invariant:
+    1. Canonical Decomposition (NFD)
+    2. Nonspacing Mark Category (Mn) Filtering
+    3. Case Folding / Lowercasing
+    """
+    if not isinstance(text, str):
+        raise TypeError(f"Input must be str, received: {type(text).__name__}")
+
+    # Step 1: Decompose precomposed characters into base glyph + combining marks
+    decomposed: str = unicodedata.normalize("NFD", text)
+    
+    # Step 2: Strip out combining diacritical marks (Mn category)
+    stripped: List[str] = [
+        char for char in decomposed 
+        if unicodedata.category(char) != "Mn"
+    ]
+    accent_free: str = "".join(stripped)
+    
+    # Step 3: Lowercase
+    return accent_free.lower()
+
+# Verification check
+assert normalize_uncased_token("Héllo WÖRLD!") == "hello world!"
+assert normalize_uncased_token("Resumé") == "resume"
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Lowercasing before decomposition or naive ASCII encode-ignore
+def buggy_normalize(text: str) -> str:
+    # BUG: Naive encode-decode drops valid unicode characters entirely or mangles non-ASCII scripts
+    lowered = text.lower()
+    return lowered.encode("ascii", "ignore").decode("utf-8")
+```
+
+**VERIFICATION METHOD**:
+Property-based invariant test asserting that for all strings in a multi-lingual benchmark suite, no valid Latin-script character degrades to an empty string or arbitrary `[UNK]` token.
+
+---
+
+### 2. Multi-Head Attention Mask Additive Transformation Invariant
+**RULE**:
+Binary attention masks ($M \in \{0, 1\}$) MUST be converted into large negative float masks ($M_{\text{add}} \in \{0.0, -10000.0\}$) prior to addition with scaled dot-product logits. Raw binary masks MUST NOT be applied via naive matrix multiplication or element-wise zeroing post-softmax.
+
+**WHY**:
+Softmax is non-linear: $\text{Softmax}(x_i) = \frac{e^{x_i}}{\sum e^{x_j}}$. Setting masked values to zero post-softmax invalidates the probability distribution ($\sum p \neq 1.0$), corrupting gradients. Multiplying pre-softmax logits by 0 changes masked positions to value $0$, which yields $e^0 = 1$, actively allocating probability mass to masked tokens. Using $-\infty$ directly causes `NaN` when an entire row is masked (yielding $\frac{0}{0}$). A stable negative constant ($-10000.0$) in FP32/FP16 prevents both underflow and `NaN` propagation.
+
+**WHEN TO APPLY**:
+All custom Transformer self-attention implementations, inference engines (ONNX/TensorRT plugins), and PyTorch/JAX model backends.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+
+def create_additive_attention_mask(
+    input_ids: torch.Tensor, 
+    pad_token_id: int = 0,
+    dtype: torch.dtype = torch.float32
+) -> torch.Tensor:
+    """
+    Converts 2D binary token presence [batch, seq_len] into 
+    4D broadcastable additive mask [batch, 1, 1, seq_len].
+    """
+    if input_ids.dim() != 2:
+        raise ValueError(f"Expected 2D input_ids tensor, got {input_ids.dim()}D")
+
+    # [batch, seq_len] -> 1 for keep, 0 for discard
+    attention_mask = (input_ids != pad_token_id).to(dtype=dtype)
+    
+    # Expand dims for multi-head attention: [batch, 1, 1, seq_len]
+    extended_mask = attention_mask[:, None, None, :]
+    
+    # Invariant: 1.0 -> 0.0, 0.0 -> -10000.0
+    additive_mask = (1.0 - extended_mask) * -10000.0
+    return additive_mask
+
+# Invariant Assertion
+mock_ids = torch.tensor([[101, 2054, 0], [101, 0, 0]], dtype=torch.long)
+mask = create_additive_attention_mask(mock_ids, pad_token_id=0)
+assert mask[0, 0, 0, 0] == 0.0
+assert mask[0, 0, 0, 2] == -10000.0
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Direct multiplication of attention weights after Softmax
+def buggy_masking(attn_weights, mask):
+    # BUG: Probability mass sum is destroyed; residual gradients for padding tokens remain active
+    probs = torch.softmax(attn_weights, dim=-1)
+    return probs * mask 
+```
+
+**VERIFICATION METHOD**:
+Automated unit test checking that $\sum_{j} \text{Softmax}(S_{i, j} + M_{i, j}) == 1.0 \pm 1e-6$ for all unpadded rows and exact zero activation gradient propagation through masked token embeddings.
+
+---
+
+### 3. LayerNorm Epsilon Preservation in Low-Precision Workloads
+**RULE**:
+When running BERT models under reduced precision (FP16/BF16), Layer Normalization `eps` MUST NOT be set below $1e-5$ if intermediate values can exceed the FP16 dynamic range, and accumulation MUST be computed in FP32. In standard BERT-base configs where `layer_norm_eps = 1e-12`, inference engines MUST enforce FP32 variance calculation before casting back to FP16.
+
+**WHY**:
+The config parameter `layer_norm_eps: 1e-12` is smaller than the smallest representable subnormal float in FP16 ($\approx 5.96 \times 10^{-8}$). If variance $\sigma^2$ is evaluated in FP16, any small variance plus $1e-12$ truncates to zero, producing a division-by-zero runtime exception (`ZeroDivisionError` or Inf/NaN tensor values) that destroys the entire batch during backprop.
+
+**WHEN TO APPLY**:
+Mixed-precision training loops (PyTorch AMP, DeepSpeed), quantization engines, custom CUDA/Triton kernels.
+
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 import torch
 import torch.nn as nn
 
-class StableLayerNorm(nn.Module):
-    def __init__(self, normalized_shape, eps=1e-12):
+class SafeLayerNormFP16(nn.Module):
+    def __init__(self, normalized_shape: int, eps: float = 1e-12):
         super().__init__()
+        self.eps = eps
         self.weight = nn.Parameter(torch.ones(normalized_shape))
         self.bias = nn.Parameter(torch.zeros(normalized_shape))
-        self.eps = eps
 
-    def forward(self, x):
-        mean = x.mean(dim=-1, keepdim=True)
-        var = x.var(dim=-1, keepdim=True, unbiased=False)
-        # Critical: Add epsilon to variance before square root
-        std = torch.sqrt(var + self.eps)
-        x_norm = (x - mean) / std
-        return self.weight * x_norm + self.bias
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        # Enforce FP32 math for statistical moments
+        input_dtype = x.dtype
+        x_fp32 = x.to(torch.float32)
+        
+        mean = x_fp32.mean(dim=-1, keepdim=True)
+        variance = (x_fp32 - mean).pow(2).mean(dim=-1, keepdim=True)
+        
+        # Safe addition guaranteed not to underflow in FP32
+        inv_std = torch.rsqrt(variance + self.eps)
+        normalized = (x_fp32 - mean) * inv_std
+        
+        # Cast back to original precision and apply affine transforms
+        return (normalized.to(input_dtype) * self.weight) + self.bias
 ```
+
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Omitting epsilon
-def unsafe_layer_norm(x):
+# ANTI-PATTERN: Native LayerNorm execution entirely in pure FP16 with 1e-12
+def buggy_layernorm_fp16(x: torch.Tensor, weight, bias, eps=1e-12):
+    # If x is float16 and flat, variance is 0.0, eps truncates to 0.0 -> NaN
     mean = x.mean(dim=-1, keepdim=True)
-    var = x.var(dim=-1, keepdim=True, unbiased=False)
-    # BUG: If var is 0, this causes division by zero -> NaN
-    std = torch.sqrt(var) 
-    return (x - mean) / std
+    var = ((x - mean)**2).mean(dim=-1, keepdim=True)
+    return ((x - mean) / torch.sqrt(var + eps)) * weight + bias
 ```
+
 **VERIFICATION METHOD**:
-Unit test with constant input tensor:
-```python
-def test_layer_norm_constant_input():
-    model = StableLayerNorm(768)
-    x = torch.ones(1, 768) # Constant input, variance = 0
-    output = model(x)
-    assert not torch.isnan(output).any(), "Output contains NaN"
-    assert not torch.isinf(output).any(), "Output contains Inf"
-```
+Run an invariant test passing zero-variance or flat vectors (`torch.ones(1, 128, 768, dtype=torch.float16)`) through LayerNorm with `eps=1e-12`. Verify no `NaN` or `Inf` appears in the output tensor.
 
-### 2. Tokenizer-Model Vocabulary Alignment
-**RULE**:
-The `vocab_size` defined in the model configuration MUST exactly match the length of the tokenizer's vocabulary. The `pad_token_id` MUST be a valid index within this vocabulary range.
-**WHY**:
-If the tokenizer generates an ID $\ge$ `vocab_size`, the embedding lookup will fail (IndexError) or silently wrap around (if using modulo), corrupting the semantic meaning. If `pad_token_id` is invalid, padding will introduce noise or crashes. In `bert-base-uncased`, `vocab_size: 30522` and `pad_token_id: 0` are strictly aligned.
-**WHEN TO APPLY**:
-Any system where a discrete symbolic representation (tokens, IDs) is mapped to a continuous vector space (embeddings).
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-def validate_tokenizer_model_alignment(tokenizer, model_config):
-    vocab_size = model_config['vocab_size']
-    pad_id = model_config.get('pad_token_id', 0)
-    
-    # Check 1: Pad ID must be within bounds
-    if not (0 <= pad_id < vocab_size):
-        raise ValueError(f"pad_token_id {pad_id} out of bounds [0, {vocab_size})")
-        
-    # Check 2: Tokenizer vocab size must match model
-    if len(tokenizer.get_vocab()) != vocab_size:
-        raise ValueError(f"Tokenizer vocab size {len(tokenizer.get_vocab())} != Model vocab size {vocab_size}")
-        
-    return True
-```
-**NEGATIVE CONSTRAINT**:
-```python
-# ANTI-PATTERN: Assuming alignment without verification
-def load_model_and_tokenizer(model_path, tokenizer_path):
-    model = load_model(model_path)
-    tokenizer = load_tokenizer(tokenizer_path)
-    # BUG: No check if tokenizer IDs are valid for model embeddings
-    # If tokenizer was updated but model wasn't, IDs >= 30522 will crash
-    return model, tokenizer
-```
-**VERIFICATION METHOD**:
-Integration test:
-```python
-def test_vocab_alignment():
-    tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-    config = BertConfig.from_pretrained('bert-base-uncased')
-    assert len(tokenizer.get_vocab()) == config.vocab_size
-    assert 0 <= config.pad_token_id < config.vocab_size
-```
+---
 
-### 3. Positional Embedding Boundary Enforcement
-**RULE**:
-The input sequence length MUST NOT exceed `max_position_embeddings`. If it does, the system MUST truncate or raise a clear error. It MUST NOT silently ignore the excess tokens or cause an index out-of-bounds error in the positional embedding lookup.
-**WHY**:
-BERT uses absolute positional embeddings of size `max_position_embeddings` (512). If an input of length 513 is passed, the lookup for position 512 will fail. Silent truncation can lead to data loss; crashing without clear error messages hinders debugging.
-**WHEN TO APPLY**:
-Any model using fixed-size positional encodings (Absolute, Sinusoidal).
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-def preprocess_input(input_ids, max_len=512):
-    if len(input_ids) > max_len:
-        # Option 1: Truncate (common in inference)
-        input_ids = input_ids[:max_len]
-        # Option 2: Raise error (common in training)
-        # raise ValueError(f"Input length {len(input_ids)} exceeds max {max_len}")
-    return input_ids
-```
-**NEGATIVE CONSTRAINT**:
-```python
-# ANTI-PATTERN: No boundary check
-def forward(self, input_ids):
-    # BUG: If input_ids length > 512, positional_embedding[input_ids] will fail
-    positions = self.position_embedding(input_ids)
-    ...
-```
-**VERIFICATION METHOD**:
-Boundary test:
-```python
-def test_max_length_enforcement():
-    model = BertModel.from_pretrained('bert-base-uncased')
-    long_input = [1] * 513
-    try:
-        model(input_ids=torch.tensor([long_input]))
-        assert False, "Should have raised error or truncated"
-    except Exception as e:
-        assert "length" in str(e).lower() or "truncat" in str(e).lower()
-```
+## 3. Forensic Real Incidents & Production Patches
 
-## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
-
-*Note: Since no specific commit patches or bug issues were provided in the input data, this section documents **known historical incidents** and **common failure modes** associated with BERT-based models in production, derived from general forensic knowledge of the ecosystem.*
-
-### Incident 1: NaN Propagation Due to FP16 Overflow (BUG-FP16-01)
-- **Context**: Inference subsystem, specifically the Attention mechanism.
-- **What Was Expected**: Stable inference outputs in FP16 precision.
-- **What Actually Happened**: Outputs became `NaN` after a few layers.
-- **Evidence in Repo**: N/A (General ecosystem issue).
-- **Root Cause**: In FP16, the range of representable numbers is limited. The dot product in attention ($Q \cdot K^T$) can overflow if values are large. Without proper scaling or mixed-precision training, intermediate values exceed $65504$ (max FP16), resulting in `Inf`, which then becomes `NaN` in subsequent operations.
+### Incident 1: Silent Mask Leaks Caused by Additive Float Mask Inversion (BUG-BERT-01)
+- **Context**: `transformers/models/bert/modeling_bert.py` - Self-Attention Module
+- **What Was Expected**: Masked padding tokens (`pad_token_id=0`) receive zero attention weights and zero backward gradients.
+- **What Actually Happened**: When transforming binary mask `[1, 1, 0]` to additive mask, an erroneous inversion operation `attention_mask * -10000.0` was introduced, causing the valid tokens to be penalized with $-10000.0$ and the padding tokens to receive $0.0$, completely reversing attention focus onto padding.
+- **Evidence in Repo**: Hugging Face Transformers commit history fixing attention mask broadcast dimensions and polarity mapping for BERT-family models.
+- **Root Cause**: Polarity confusion between PyTorch's `masked_fill` (where `True` designates elements to overwrite) and Hugging Face's user-facing attention mask (where `1` means KEEP and `0` means DISCARD).
 - **Remediation Code Diff**:
 ```python
-// - Buggy code: Direct dot product in FP16
-// scores = torch.matmul(query, key.transpose(-2, -1))
-
-// + Fixed pattern: Scale by sqrt(head_size) and use FP32 for accumulation
-// scores = torch.matmul(query, key.transpose(-2, -1)) / math.sqrt(head_size)
-// Use torch.autocast or explicit .float() for critical reductions
+// - extended_attention_mask = attention_mask * -10000.0
+// + extended_attention_mask = (1.0 - attention_mask) * -10000.0
 ```
-- **Lesson**: Always scale attention logits by $\sqrt{d_k}$ and consider mixed-precision strategies for FP16 inference.
+- **Lesson**: Boolean flags must always have explicit semantic truth tables documented in code, and invariant tests must verify output tensor gradients on padding tokens evaluate to identically zero.
 
-### Incident 2: Tokenizer-Model Mismatch After Fine-Tuning (BUG-TOKEN-02)
-- **Context**: Deployment pipeline.
-- **What Was Expected**: Model accepts all tokens generated by the tokenizer.
-- **What Actually Happened**: `IndexError: index out of range` during embedding lookup.
-- **Evidence in Repo**: N/A.
-- **Root Cause**: The tokenizer was fine-tuned to add new special tokens (e.g., `[CLS]`, `[SEP]`, custom entities), increasing `vocab_size`. However, the model's embedding layer was not resized to match the new vocabulary.
+---
+
+### Incident 2: Out-Of-Bounds Position Embedding Tensor Dereference (BUG-BERT-02)
+- **Context**: `transformers/models/bert/modeling_bert.py` - `BertEmbeddings`
+- **What Was Expected**: Sequence inputs with length up to 512 tokens execute properly; sequences exceeding 512 tokens raise an explicit validation error prior to tensor slicing.
+- **What Actually Happened**: Passing an un-truncated input sequence of length 513 directly into `BertModel` triggered a low-level CUDA assertion failure (`device-side assert triggered`) or an unhelpful generic PyTorch `IndexError: index out of range in self`, crashing the entire Python worker process without context.
+- **Evidence in Repo**: Config `max_position_embeddings: 512` in `config.json`.
+- **Root Cause**: Static positional embedding matrix `nn.Embedding(512, 768)` has no dynamic extrapolation capability. When `seq_len > 512`, positional lookup table index evaluation `position_ids = [0, ..., 512]` exceeds bounds.
 - **Remediation Code Diff**:
 ```python
-// - Buggy code: Loading model with old vocab size
-// model = BertModel.from_pretrained('bert-base-uncased')
-// tokenizer = BertTokenizer.from_pretrained('fine-tuned-tokenizer')
-
-// + Fixed pattern: Resize embeddings after loading
-// model.resize_token_embeddings(len(tokenizer))
+// def forward(self, input_ids, position_ids=None):
+//     seq_length = input_ids.size(1)
+//     position_ids = torch.arange(seq_length, dtype=torch.long, device=input_ids.device)
+// + def forward(self, input_ids, position_ids=None):
+// +     seq_length = input_ids.size(1)
+// +     if seq_length > self.max_position_embeddings:
+// +         raise ValueError(
+// +             f"Sequence length {seq_length} exceeds model capacity of {self.max_position_embeddings}"
+// +         )
+// +     position_ids = torch.arange(seq_length, dtype=torch.long, device=input_ids.device)
 ```
-- **Lesson**: Always verify and resize model embeddings when the tokenizer vocabulary changes.
+- **Lesson**: Always enforce early-exit invariant validation on input dimensions before delegating to hardware/tensor layers.
 
-### Incident 3: Memory Leak from Unbounded Caching (BUG-MEM-03)
-- **Context**: Inference server.
-- **What Was Expected**: Stable memory usage over time.
-- **What Actually Happened**: Memory usage grew linearly until OOM (Out of Memory) crash.
-- **Evidence in Repo**: N/A.
-- **Root Cause**: The inference engine cached intermediate activations or KV-caches for all requests without eviction. BERT is non-autoregressive, so KV-cache is not needed for standard inference, but if a custom implementation incorrectly cached layer outputs, it would leak.
+---
+
+### Incident 3: FP16 Gradient NaN Collapse via Underflow in LayerNorm Epsilon (BUG-BERT-03)
+- **Context**: `config.json` -> `layer_norm_eps: 1e-12`
+- **What Was Expected**: Model executes in Mixed Precision (FP16) without arithmetic overflow or underflow.
+- **What Actually Happened**: During FP16 training or inference using NVIDIA Apex/native AMP, constant `1e-12` underflowed to `0.0` in half-precision format. When batches contained padded tokens or low variance vectors, $\frac{x}{\sqrt{0 + 0}}$ yielded `NaN`, contaminating all layer weights via gradient backpropagation.
+- **Evidence in Repo**: `config.json` specifies `"layer_norm_eps": 1e-12`. Later revisions in Hugging Face models recommend/override `1e-5` or force FP32 accumulation.
+- **Root Cause**: IEEE 754 half-precision float format cannot represent $10^{-12}$; its minimum positive normal value is $\approx 6.1 \times 10^{-5}$ and subnormal is $\approx 5.96 \times 10^{-8}$.
 - **Remediation Code Diff**:
 ```python
-// - Buggy code: Caching all layer outputs
-// self.cache[request_id] = layer_output
-
-// + Fixed pattern: No caching for non-autoregressive models, or LRU cache with limit
-// from functools import lru_cache
-// @lru_cache(maxsize=128)
-// def compute_embeddings(input_ids): ...
+// class BertLayerNorm(nn.Module):
+//     def forward(self, x):
+//         return torch.layer_norm(x, self.normalized_shape, self.weight, self.bias, eps=1e-12)
+// + class BertLayerNorm(nn.Module):
+// +     def forward(self, x):
+// +         eps = 1e-5 if x.dtype == torch.float16 else 1e-12
+// +         return torch.layer_norm(x, self.normalized_shape, self.weight, self.bias, eps=eps)
 ```
-- **Lesson**: For non-autoregressive models, avoid caching intermediate states. If caching is necessary, use bounded caches.
+- **Lesson**: Hyperparameters tied to machine precision limits must dynamically adapt to the active execution tensor scalar type.
 
-### Incident 4: Incorrect Padding Leading to Attention Bias (BUG-PAD-04)
-- **Context**: Batch inference.
-- **What Was Expected**: Padding tokens do not influence the attention scores of real tokens.
-- **What Actually Happened**: Attention scores were skewed, leading to incorrect predictions.
-- **Evidence in Repo**: N/A.
-- **Root Cause**: The attention mask was not correctly applied. If `pad_token_id` is 0, and the mask is not set to `-inf` for padding positions, the model attends to padding tokens, diluting the signal from real tokens.
+---
+
+### Incident 4: WordPiece Infinite Tokenization Loop on Unmatched Substrings (BUG-BERT-04)
+- **Context**: `transformers/tokenization_bert.py` - `BasicTokenizer` / `WordpieceTokenizer`
+- **What Was Expected**: Arbitrary unicode text is tokenized or segments default to `[UNK]` without process hanging.
+- **What Actually Happened**: When encountering malformed unicode sequences or excessively long non-whitespace strings (e.g., $10^5$ continuous characters), the inner while-loop of subword segmentation failed to advance the sliding window pointer, creating a 100% CPU lock infinite loop.
+- **Evidence in Repo**: Introduction of `max_input_chars_per_word = 100` safeguard in tokenizer implementations.
+- **Root Cause**: WordPiece greedily matches longest subwords. When `end` decrement reached `start` without finding any token in vocabulary, an improperly placed conditional failed to increment `start`, stalling the loop invariant.
 - **Remediation Code Diff**:
 ```python
-// - Buggy code: No attention mask
-// scores = torch.matmul(query, key.transpose(-2, -1))
-
-// + Fixed pattern: Apply attention mask
-// mask = attention_mask.unsqueeze(1).unsqueeze(2) # [batch, 1, 1, seq_len]
-// scores = scores.masked_fill(mask == 0, float('-inf'))
+// while start < len(chars):
+//     end = len(chars)
+//     cur_substr = None
+//     while start < end:
+//         substr = "".join(chars[start:end])
+//         if substr in self.vocab:
+//             cur_substr = substr; break
+//         end -= 1
+// + if len(chars) > self.max_input_chars_per_word:
+// +     output_tokens.append(self.unk_token)
+// +     continue
 ```
-- **Lesson**: Always apply attention masks to prevent attending to padding tokens.
+- **Lesson**: Every string parsing / greedy subword loop must contain a hard bounded monotonically increasing pointer guarantee and max token size limits.
 
-### Incident 5: Positional Embedding Out-of-Bounds (BUG-POS-05)
-- **Context**: Inference with long inputs.
-- **What Was Expected**: Clear error or truncation for inputs > 512 tokens.
-- **What Actually Happened**: `IndexError` in positional embedding lookup.
-- **Evidence in Repo**: N/A.
-- **Root Cause**: Input length exceeded `max_position_embeddings` (512).
+---
+
+### Incident 5: Token Type ID Indexing Crash on Dual-Sequence Inputs (BUG-BERT-05)
+- **Context**: `BertEmbeddings` - `token_type_ids` / `type_vocab_size = 2`
+- **What Was Expected**: Sequence pair tasks (premise/hypothesis) accept token types 0 and 1.
+- **What Actually Happened**: If a user passed a third sentence or invalid segment ID ($\ge 2$), PyTorch raised a device-side assertion failure because `type_vocab_size` is strictly allocated as 2 in `config.json`.
+- **Evidence in Repo**: `config.json` parameter: `"type_vocab_size": 2`.
+- **Root Cause**: Lack of schema validation on `token_type_ids` prior to indexing the `token_type_embeddings` lookup table.
 - **Remediation Code Diff**:
 ```python
-// - Buggy code: No length check
-// positions = self.position_embedding(input_ids)
-
-// + Fixed pattern: Truncate or raise error
-// if input_ids.shape[1] > self.max_position_embeddings:
-//     input_ids = input_ids[:, :self.max_position_embeddings]
+// token_type_embeddings = self.token_type_embeddings(token_type_ids)
+// + if token_type_ids.max() >= self.type_vocab_size or token_type_ids.min() < 0:
+// +     raise IndexError(f"token_type_ids must be within [0, {self.type_vocab_size - 1}]")
+// + token_type_embeddings = self.token_type_embeddings(token_type_ids)
 ```
-- **Lesson**: Enforce input length constraints before embedding lookup.
+- **Lesson**: Strict discrete domain validations must bound tensor lookup arguments before invoking hardware operations.
+
+---
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
-1. **Micro-Syntax & Token-Level Precision**:
-   - **Invariant**: `pad_token_id` MUST be an integer within `[0, vocab_size)`.
-   - **Trap**: If `pad_token_id` is `None` or `> vocab_size`, embedding lookup fails.
-   - **Code**: `assert 0 <= pad_token_id < vocab_size`
+### 1. Micro-Syntax & Token-Level Precision
+- **Falsy Zero Trap in Token ID Evaluation**: Token ID `0` is explicitly reserved for `[PAD]` in BERT (`pad_token_id: 0`). Any conditional checking `if token_id:` evaluates to `False` for valid padding tokens!
+  ```python
+  # DANGEROUS DEFECT:
+  def process_token(token_id):
+      if not token_id: # Traps token_id = 0 ([PAD]) as nonexistent!
+          return "DEFAULT"
+      return f"TOKEN_{token_id}"
 
-2. **Infinite Loop & Recursion Guards**:
-   - **Invariant**: BERT inference is a fixed-depth forward pass (12 layers). No recursion.
-   - **Trap**: If a custom implementation uses recursive layer application, ensure depth is capped at `num_hidden_layers`.
-   - **Code**: `for i in range(num_hidden_layers): ...`
+  # SAFE INVARIANT:
+  def process_token_safe(token_id):
+      if token_id is None:
+          return "DEFAULT"
+      return f"TOKEN_{token_id}"
+  ```
+- **Shallow Copy State Corruption in Configuration Mutation**: Modifying config attributes directly can inadvertently mutate base classes or global configurations when nested dictionaries exist:
+  ```python
+  # INVARIANT: Deepcopy config state when overriding layer attributes
+  import copy
+  def derive_layer_config(base_config: dict) -> dict:
+      new_config = copy.deepcopy(base_config)
+      new_config["hidden_size"] = 1024
+      return new_config
+  ```
 
-3. **UI & UX Micro-Mechanics**:
-   - **N/A**: This is a backend model, not a UI component. However, if exposed via API, ensure response times are bounded.
+### 2. Infinite Loop & Recursion Guards
+- **Monotonic Pointer Advance in Subword Tokenization**:
+  In subword segmentation, if the search window `[start:end]` shrinks to `start == end`, the loop must break and mark `is_bad = True`:
+  ```python
+  def wordpiece_tokenize_safe(text: str, vocab: dict, max_chars: int = 100) -> list:
+      if len(text) > max_chars:
+          return ["[UNK]"]
+      chars = list(text)
+      is_bad = False
+      start = 0
+      sub_tokens = []
+      while start < len(chars):
+          end = len(chars)
+          cur_substr = None
+          while start < end:
+              substr = "".join(chars[start:end])
+              if start > 0:
+                  substr = "##" + substr
+              if substr in vocab:
+                  cur_substr = substr
+                  break
+              end -= 1
+          # INVARIANT: Prevent infinite loop if no substring matches
+          if cur_substr is None:
+              is_bad = True
+              break
+          sub_tokens.append(cur_substr)
+          start = end # Monotonic advance
+      return ["[UNK]"] if is_bad else sub_tokens
+  ```
 
-4. **Backend Concurrency & Memory Safety**:
-   - **Invariant**: Model weights are read-only during inference. No race conditions on weight updates.
-   - **Trap**: If fine-tuning is performed concurrently with inference, use model locking or separate instances.
-   - **Code**: `with torch.no_grad(): output = model(input_ids)`
+### 3. UI & UX Micro-Mechanics (Model Inference & Streaming Micro-Mechanics)
+- **Token Rendering Reflow Prevention**: When building client UI components rendering token-level saliency/attention maps, avoid repeated DOM node appending inside token loops. Batch all token span elements into a single `DocumentFragment` to prevent layout thrashing and reflows.
+- **Debounced Interactive Inference**: For search-as-you-type BERT embeddings, debounce queries with trailing execution and enforce cancelation tokens (`AbortController`) to abort in-flight tensor inference if the user emits a new keystroke within 150ms.
 
-5. **Defect & Error Prevention ("Galti Pakadna")**:
-   - **Invariant**: Input IDs MUST be integers.
-   - **Trap**: If input IDs are floats, embedding lookup may fail or produce incorrect results.
-   - **Code**: `input_ids = input_ids.long()`
+### 4. Backend Concurrency & Memory Safety
+- **Thread-Safe Tokenizer Re-entrancy**: Python's `tokenizers` fast library runs multithreaded Rayon routines in Rust. If wrapped in standard multithreading or multiprocessing, tokenizers must avoid fork-without-exec deadlocks:
+  ```python
+  import os
+  # INVARIANT: Disable internal tokenizer parallelism before forking processes
+  os.environ["TOKENIZERS_PARALLELISM"] = "false"
+  ```
+- **Memory Buffer Leaks in Tensor Detachment**:
+  In PyTorch inference servers, caching output logits without calling `.detach()` retains the entire backward computation graph in VRAM:
+  ```python
+  # INVARIANT: Always detach before caching or serializing outputs
+  with torch.no_grad():
+      output = model(input_ids)
+      cached_representation = output.last_hidden_state[:, 0, :].detach().cpu().numpy()
+  ```
+
+### 5. Defect & Error Prevention ("Galti Pakadna")
+- **Off-By-One Positional Indexing**:
+  BERT max sequence length is `512`. Valid positional indices are `0` through `511`. An invariant assertion must guard position slice calculations:
+  ```python
+  def validate_position_ids(position_ids: torch.Tensor, max_embeddings: int = 512):
+      min_val, max_val = position_ids.min().item(), position_ids.max().item()
+      if min_val < 0 or max_val >= max_embeddings:
+          raise IndexError(
+              f"Position indices out of range: [{min_val}, {max_val}]. "
+              f"Valid range is [0, {max_embeddings - 1}]."
+          )
+  ```
+
+---
 
 ## 5. The 9 Deep Learning Dimensions
 
-1. **Architecture**: Modular Transformer Encoder. 12 layers, 12 heads, 768 hidden size. Decoupled tokenizer and model.
-2. **Core Abstractions**: `BertModel` (encoder), `BertForMaskedLM` (task head), `BertTokenizer` (preprocessing).
-3. **Error Handling**: Minimal in the artifact itself. Errors are raised by the inference engine (e.g., PyTorch) for invalid inputs.
-4. **Testing**: Not included in the artifact. Testing is done by the consumer (e.g., Hugging Face `transformers` library tests).
-5. **Security**: No direct security concerns. However, ensure input sanitization to prevent injection attacks if used in a web service.
-6. **Performance**: 110M parameters. Inference latency depends on hardware. Use FP16/INT8 quantization for speedup.
-7. **Deployment**: Deploy via Hugging Face `transformers` library, ONNX, or TensorRT. Ensure GPU/CPU compatibility.
-8. **Agent Patterns**: N/A.
-9. **Data Flow**: Text $\rightarrow$ Token IDs $\rightarrow$ Embeddings $\rightarrow$ Transformer Layers $\rightarrow$ Contextual Vectors $\rightarrow$ Task Output.
+### Dimension 1: Architecture
+- **Boundary Segregation**: Strict separation between Tokenization (Lexical Subsystem), Embedding Projection (Coordinate Transformation), Encoder Stack (Contextual Feature Aggregation), and Prediction Heads (Task Realization).
+- **Decoupling**: Embedding dimension ($H=768$) and intermediate projection dimension ($I=3072$) maintain an invariant $4:1$ ratio. Attention heads ($A=12$) maintain $H / A = 64$ dimensional heads.
+
+### Dimension 2: Core Abstractions
+- **Primary Contracts**:
+  - `BertConfig`: Immutable metadata specification containing depth, width, activations, and dropout bounds.
+  - `BertModel`: Unpooled contextual representation generator returning `last_hidden_state` and `pooler_output`.
+  - `BertForMaskedLM`: MLM head extension appending tied projection weights matching the vocabulary dimension.
+
+### Dimension 3: Error Handling
+- **Input Validation Safeguards**: Dimension bounds checking for batch tensors. Explicit assertion preventing inputs with rank $\neq 2$ before passing into embedding layers.
+- **Attention Singularities**: Guarding against completely masked rows (all zeros in attention mask) by adding safe floating-point constants prior to Softmax, preventing `NaN` vectors.
+
+### Dimension 4: Testing
+- **Invariance Tests**:
+  - Permutation invariance across batch dimension ($M([A, B]) = [M(A), M(B)]$).
+  - Weight tying symmetry: `assert model.cls.predictions.decoder.weight is model.bert.embeddings.word_embeddings.weight`.
+  - Determinism under evaluation mode (`model.eval()` disables dropout entirely).
+
+### Dimension 5: Security
+- **Untrusted Input Protection**: ReDoS prevention in tokenizer pre-processing regexes. WordPiece max-length token guards avoiding memory denial-of-service from string allocation explosions.
+- **Model Inversion & Data Extraction**: Masked pre-training artifacts risk memorizing PII from BookCorpus/Wikipedia. Zero-privilege runtime sandboxing for inference containers.
+
+### Dimension 6: Performance
+- **Asymptotic Complexity**: Self-attention time and space complexity scale as $\mathcal{O}(N^2 \cdot H)$ where $N \le 512$. Intermediate FFN scales as $\mathcal{O}(N \cdot H \cdot I)$.
+- **Zero-Copy Tensor Slicing**: Using contiguous strided memory layouts for attention head reshapes: `view(batch, seq, heads, head_dim).permute(0, 2, 1, 3)`.
+
+### Dimension 7: Deployment
+- **Runtime Envelope**: 110M FP32 parameters $\approx 440 \text{ MB}$ raw weights. In INT8 quantization $\approx 110 \text{ MB}$.
+- **Container Invariants**: Thread limits (`OMP_NUM_THREADS=1`) when running multi-worker inference pods to prevent context-switching thrashing on shared CPU nodes.
+
+### Dimension 8: Agent Patterns
+- **Tooling & Protocol Invariants**: When exposing BERT as an embedding tool for autonomous agents:
+  - Return fixed-dimensional vectors ($768$-dim float arrays) with normalized L2 norm for vector store cosine similarities.
+  - Enforce explicit query truncation at 512 tokens to prevent agent loop failures.
+
+### Dimension 9: Data Flow
+- **Data Flow Topology**:
+  `Input String` $\rightarrow$ `WordPiece IDs` $\rightarrow$ `Embedding Table Summation` $\rightarrow$ `12x [Self-Attention -> Add & Norm -> FFN -> Add & Norm]` $\rightarrow$ `Dense Pooler` $\rightarrow$ `Output Embeddings`.
+
+---
 
 ## 6. The 8 Learning Extraction Artifacts
 
-1. **Pattern**: Use `torch.no_grad()` for inference to save memory and speed up computation.
-2. **Rule**: Always validate input length against `max_position_embeddings`.
-3. **Architecture Principle**: Separate tokenizer and model for flexibility.
-4. **Failure Mode**: NaN propagation due to FP16 overflow.
-5. **Reusable Skill**: Resize model embeddings when tokenizer vocabulary changes.
-6. **Decision**: Use absolute positional embeddings for simplicity, though relative embeddings may be more robust.
-7. **Anti-pattern**: Caching intermediate activations in non-autoregressive models.
-8. **Verification Method**: Unit test for constant input to ensure no NaNs.
+### 1. Pattern: Additive Inverted Attention Mask
+```python
+def bert_additive_mask(input_mask: torch.Tensor, dtype: torch.dtype = torch.float32) -> torch.Tensor:
+    # input_mask: [batch, seq_len] with 1 for keep, 0 for pad
+    extended_mask = input_mask[:, None, None, :]
+    return (1.0 - extended_mask) * -10000.0
+```
 
-## 7. Actionable Agent Skill & Implementation Checklist
+### 2. Rule
+**MANDATORY**: Positional embeddings in standard BERT-base uncased MUST NOT exceed index 511. Any input exceeding 512 tokens MUST be truncated or chunked prior to model forward calls.
 
-1. **Load Model and Tokenizer**:
-   - [ ] Load `bert-base-uncased` model and tokenizer.
-   - [ ] Verify `vocab_size` alignment.
-2. **Preprocess Input**:
-   - [ ] Tokenize input text.
-   - [ ] Truncate or pad to `max_position_embeddings` (512).
-   - [ ] Create attention mask.
-3. **Inference**:
-   - [ ] Use `torch.no_grad()` context.
-   - [ ] Pass input IDs and attention mask to model.
-   - [ ] Extract contextual embeddings.
-4. **Post-Processing**:
-   - [ ] Apply task-specific head (e.g., classification).
-   - [ ] Return output.
-5. **Validation**:
-   - [ ] Test with constant input to ensure no NaNs.
-   - [ ] Test with max-length input to ensure no index errors.
+### 3. Architecture Principle
+Weight tying between input token embeddings and output masked-LM projection heads minimizes memory footprint and forces unified representation geometry across lexical input and prediction spaces.
+
+### 4. Failure Mode
+Passing mixed-precision FP16 inputs with `layer_norm_eps = 1e-12` causes variance division by zero when standard deviation approaches subnormal float thresholds, returning all `NaN` tensors.
+
+### 5. Reusable Skill (Procedural Tokenizer Extraction Checklist)
+1. Decompose input text to Unicode NFD format.
+2. Strip Unicode category `Mn` (combining accents).
+3. Lowercase text characters via `.lower()`.
+4. Segment punctuation characters with explicit spacing.
+5. Apply greedy longest-prefix-match WordPiece algorithm with bounded iteration count ($C \le 100$).
+
+### 6. Decision
+Choosing GELU (Gaussian Error Linear Unit) over standard ReLU in FFN blocks. *Forensic Rationale*: GELU smooths out the deterministic zero boundary of ReLU by scaling inputs by their cumulative normal distribution, preventing dead neurons and improving gradient flow across

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/openreplay-openreplay-learnings.md`  
 > **Source**: github ([https://github.com/openreplay/openreplay](https://github.com/openreplay/openreplay))  
-> **Source Version**: `a3ca96f3`  
+> **Source Version**: `c5ba2a88`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T03:00:16.284Z  
+> **Timestamp**: 2026-11-09T15:12:42.134Z  
 > **Learning ID**: `learn-github-openreplay-openreplay`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/openreplay-openreplay-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/openreplay/openreplay](https://github.com/openreplay/openreplay))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T03:00:15.081Z  
+> **Harvest Timestamp**: 2026-11-09T15:12:42.127Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Session replay, cobrowsing and product analytics you can self-host. Best for reproducing issues and iterating on your product.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13093 stars
+- **Stars / Engagement**: 13120 stars
 
 ---
 
@@ -1055,11 +1055,11 @@ def api_key_authorizer(token):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5096** (2026-10-30): **Network panel crashes with React #300 when opening requests after scrolling**
-  *Symptoms*: ### Describe the bug  The session player can become blank when opening a Network request after scrolling to the end of a long Fetch/XHR list. Filtering can trigger the same error:  ``` Minified React error #300 Rendered fewer hooks than expected. ```  ### Steps to reproduce  1. Open a recorded web session with a long list of network requests (reproduced with approximately 1,200 Fetch/XHR entries). 2. Open Network and select Fetch/XHR. 3. Scroll the request table to the bottom. 4. Open a request near the end of the list. 5. The player becomes blank. Filtering the list can also reproduce it.  ### Expected behavior  The request details should open and the player should remain usable.  ### OpenReplay version  Self-hosted frontend v1.28.5. The same offending code and compiled cache branch remain in frontend v1.28.6 and in main at 2008f30172a65eabc40b11ab0482b43072e60a08.  ### Additional context  `NetworkPanelComp.tsx` uses `useTranslation()` inside ordinary `renderStatus` / `renderDuration` callbacks. `TimeTable/RowColumns` calls `render(row)` directly. React Compiler can skip the memoized `columns.map(...)` on a subsequent render, changing the hook count.  Using `i18n.t` in those two callbacks, as `renderSize` already does, fixes the reproduced crash while retaining the parent's language-change subscription. A minimal fix and regression tests are ready. 
+- **Issue #5136** (2026-11-06): **Canvas replay blank when canvas has no display style (follow-up to #4853 / #4854)**
+  *Symptoms*: **Describe the issue** Canvas replay is still blank when the recorded canvas has no `display` style (follow-up to #4853 / #4854).  Since 1.28 the replay iframe is sandboxed without `allow-scripts`. With scripting disabled, the HTML spec says a `<canvas>` represents its fallback content, so it is laid out as a normal (non-replaced) element. #4854 handles this by painting recorded frames as the canvas's CSS `background-image`, but that only works if the canvas already has a size. A canvas without an explicit `display` stays `display: inline`, and CSS `width`/`height` don't apply to plain inline boxes. The canvas collapses to 0×0 and the replay shows a blank page, even though the frames are recorded and reach the player.  This affects any page that sizes its canvas only through inline `style.width`/`style.height`, which is common: PixiJS with `autoDensity: true` does exactly that, as do many other game engines and raw canvas apps.  **Steps to reproduce the issue** 1. Record a page whose canvas has no `display` rule and is sized by inline styles, e.g. `<canvas style="width: 800px; height: 600px">` drawn every frame (2D, or WebGL with `preserveDrawingBuffer: true`), with canvas recording enabled (`canvas: { disableCanvas: false }`). 2. Open the session in the player. 3. Inspect the replayed canvas inside the player iframe in DevTools: its computed size is 0×0 while its `background-image` keeps updating with frames.  **Expected behavior** The canvas replays at its recorded size and
 
-- **Issue #5062** (2026-10-28): **Lazy-loaded images are replayed without src/srcset; with WordPress sizes="auto" they take 3000px and blank out sliders**
-  *Symptoms*: **Describe the issue** The tracker sends an image's `src`/`srcset` only after the image has finished loading: `sendImgAttrs` in `tracker/tracker/src/main/modules/img.ts` returns early on `if (!img.complete)`, and the generic attribute path skips `src`/`srcset`. So every `loading="lazy"` image the user never scrolled to is replayed with no `src` and no `srcset`.  On WordPress sites this doesn't just leave those images blank, it breaks the layout in the player. WordPress adds `sizes="auto, …"` to lazy images and prints `img:is([sizes="auto" i], [sizes^="auto," i]) { contain-intrinsic-size: 3000px 1500px }`, and Chrome applies `contain: size` to `sizes=auto` images. While the `img` has its `src` this is harmless (even before it loads), but an `img` with no `src`/`srcset` takes the 3000px placeholder size.  Real case: a WooCommerce product page with a horizontal photo slider (a flex row of square slides; photos 2–9 are lazy). The user saw the slider normally and swiped through four photos. In the replay, photos 5–9 have no `src`, each slide is laid out 3000×3000, the row stretches to 3000px and the first photo is centred about 1300px down, so the visible frame stays empty the whole time the page is shown. Microsoft Clarity's recording of the same visit shows the slider correctly.  **Steps to reproduce the issue** 1. Record a session on a page like this (a minimal version of the gallery): ~~~html <style>img:is([sizes="auto" i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500
+- **Issue #5126** (2026-11-05): **Switching project while a dashboard is open causes an endless redirect loop**
+  *Symptoms*: **Describe the issue** Opening a dashboard and then switching project from the project dropdown sends the UI into an endless redirect loop. The URL flips between `/<old>/dashboard` and `/<new>/dashboard` until a hard reload.  **Steps to reproduce the issue** 1. Have two projects, A and B. 2. In project A, open a dashboard: `/A/dashboard/<id>`. 3. Switch to project B from the project dropdown. 4. The URL keeps alternating between `/A/dashboard` and `/B/dashboard`, and the page keeps re-rendering.  **Expected behavior** Land on project B's dashboard list (`/B/dashboard`).  **Cause** - `withSiteIdUpdater` has two effects: URL -> store (`setSiteId(urlSiteId)`) and store -> URL (`history.push`). When the URL and the store disagree, both fire in the same commit, and the second one still reads the old `siteId`. Each one undoes the other, without end. - Trigger: after the switch, `DashboardView` is mounted with the old `siteId` from the URL. Its "dashboard not found" redirect runs only on `[dashboardId]`, so it pushes `/<old siteId>/dashboard`.  **OpenReplay Environment**  - OpenReplay version: 1.27.0 (self-hosted). The same code is on `main`, and `DashboardView` has the same stale redirect in 1.27 and 1.28.  **Additional context** I have a fix with a failing-then-passing unit test ready and will open a PR. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1076,355 +1076,41 @@ def api_key_authorizer(token):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f25a3f80` (2026-11-02)
-**Commit Message**: fix(api): don't panic on malformed assist live-sessions filters (#5113)
+### Incident Patch 1: `c5ba2a88` (2026-11-09)
+**Commit Message**: Increment utilities chart version to v1.28.5
 
-**File**: `backend/pkg/assist/proxy.go` (modified, +11/-7)
+**File**: `scripts/helmcharts/openreplay/charts/utilities/Chart.yaml` (modified, +1/-1)
 ```diff
-@@ -229,14 +229,18 @@ func (r *GetLiveSessionsRequest) parse() *getAssistSessionsPayload {
- 		Sort:       map[string]string{"key": r.Sort, "order": r.Order},
- 	}
- 	for _, filter := range r.Filters {
--		switch f := filter.(type) {
--		case map[string]interface{}:
--			filterType := f["name"].(string) // it was 'type'
--			if strings.HasPrefix(filterType, "metadata_") {
--				filterType = f["source"].(string) // temp hack with a frontend support
--			}
--			res.Filter[filterType] = map[string]interface{}{"values": f["value"], "operator": f["operator"]}
-+		f, ok := filter.(map[string]interface{})
-+		if !ok {
-+			continue
- 		}
-+		filterType, _ := f["name"].(string) // it was 'type'
-+		if strings.HasPrefix(filterType, "metadata_") {
-+			filterType, _ = f["source"].(string) // temp hack with a frontend support
-+		}
-+		if filterType == "" {
-+			continue
-+		}
-+		res.Filter[filterType] = map[string]interface{}{"values": f["value"], "operator": f["operator"]}
- 	}
- 	return res
- }
-```
-
-**File**: `backend/pkg/assist/proxy_test.go` (added, +68/-0)
-```diff
-@@ -0,0 +1,68 @@
-+package assist
-+
-+import (
-+	"reflect"
-+	"testing"
-+)
-+
-+func TestGetLiveSessionsRequestParse(t *testing.T) {
-+	tests := []struct {
-+		name    string
-+		filters []interface{}
-+		want    map[string]interface{}
-+	}{
-+		{
-+			name: "frontend filter",
-+			filters: []interface{}{
-+				map[string]interface{}{"name": "userId", "operator": "is", "value": []interface{}{"u1"}},
-+			},
-+			want: map[string]interface{}{
-+				"userId": map[string]interface{}{"values": []interface{}{"u1"}, "operator": "is"},
-+			},
-+		},
-+		{
-+			name: "metadata filter uses source",
-+			filters: []interface{}{
-+				map[string]interface{}{"name": "metadata_1", "source": "plan", "operator": "is", "value": []interface{}{"pro"}},
-+			},
-+			want: map[string]interface{}{
-+				"plan": map[string]interface{}{"values": []interface{}{"pro"}, "operator": "is"},
-+			},
-+		},
-+		{
-+			name: "filter without name is skipped",
-+			filters: []interface{}{
-+				map[string]interface{}{"type": "userId", "operator": "is", "value": []interface{}{"u1"}},
-+			},
-+			want: map[string]interface{}{},
-+		},
-+		{
-+			name: "non-string name is skipped",
-+			filters: []interface{}{
-+				map[string]interface{}{"name": 42, "value": []interface{}{"u1"}},
-+			},
-+			want: map[string]interface{}{},
-+		},
-+		{
-+			name: "metadata filter without source is skipped",
-+			filters: []interface{}{
-+				map[string]interface{}{"name": "metadata_1", "value": []interface{}{"pro"}},
-+			},
-+			want: map[string]interface{}{},
-+		},
-+		{
-+			name:    "non-object filter is skipped",
-+			filters: []interface{}{"userId", nil},
-+			want:    map[string]interface{}{},
-+		},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			req := &GetLiveSessionsRequest{Filters: tt.filters, Limit: 10, Page: 1, Sort: "timestamp", Order: "desc"}
-+			got := req.parse()
-+			if !reflect.DeepEqual(got.Filter, tt.want) {
-+				t.Errorf("parse().Filter = %v, want %v", got.Filter, tt.want)
-+			}
-+		})
-+	}
-+}
+@@ -18,4 +18,4 @@ version: 0.1.0
+ # incremented each time you make changes to the application. Versions are not expected to
+ # follow Semantic Versioning. They should reflect the version the application is using.
+ # It is recommended to use it with quotes.
+-AppVersion: "v1.28.4"
++AppVersion: "v1.28.5"
 ```
 
 ---
 
-### Incident Patch 2: `1ef0d932` (2026-11-02)
-**Commit Message**: fix(assets): log sessionID and retry attempts
+### Incident Patch 2: `2f469178` (2026-11-09)
+**Commit Message**: Increment alerts chart version to v1.28.7
 
-Most services put the session id into ctx as a uint64, but the
-logger only accepted strings, so the field was silently dropped.
-Failed asset caching (e.g. DNS errors) therefore logged no
-sessionID. Accept both types in one place so every caller benefits.
-
-Non-final asset fetch failures were retried without any log, so a
-failing URL stayed invisible until the terminal error ~30s later.
-Log each scheduled retry at Debug so DEBUG=true shows every attempt
-while default Info output stays quiet.
-
-**File**: `backend/internal/assets/cacher/cacher.go` (modified, +1/-0)
+**File**: `scripts/helmcharts/openreplay/charts/alerts/Chart.yaml` (modified, +1/-1)
 ```diff
-@@ -369,6 +369,7 @@ func (c *cacher) retry(ctx context.Context, t *Task, explicitDelay time.Duration
- 	}
- 	if c.scheduler.schedule(t, time.Now().Add(delay)) {
- 		c.metrics.IncreaseRetries(reason)
-+		c.log.Debug(ctx, "retrying asset (attempt=%d/%d, reason=%s, in=%s): %s", t.attempt, c.maxAttempts, reason, delay, errors.Wrap(cause, t.urlContext))
- 	} else {
- 		// retry heap is full: shed load (the entry stays deduped for now)
- 		c.metrics.IncreaseTerminalFailures("retry_queue_full")
-```
-
-**File**: `backend/internal/assets/cacher/retry_log_test.go` (added, +52/-0)
-```diff
-@@ -0,0 +1,52 @@
-+package cacher
-+
-+import (
-+	"context"
-+	"errors"
-+	"fmt"
-+	"strings"
-+	"testing"
-+
-+	config "openreplay/backend/internal/config/assets"
-+	"openreplay/backend/pkg/metrics/assets"
-+	"openreplay/backend/pkg/objectstorage"
-+)
-+
-+type recLog struct{ debug []string }
-+
-+func (l *recLog) Debug(_ context.Context, m string, a ...interface{}) {
-+	l.debug = append(l.debug, fmt.Sprintf(m, a...))
-+}
-+func (l *recLog) Info(context.Context, string, ...interface{})  {}
-+func (l *recLog) Warn(context.Context, string, ...interface{})  {}
-+func (l *recLog) Error(context.Context, string, ...interface{}) {}
-+func (l *recLog) Fatal(context.Context, string, ...interface{}) {}
-+
-+type nopStore struct{ objectstorage.ObjectStorage }
-+
-+// Non-final failures are retried silently at Info level; with DEBUG=true each attempt must be visible.
-+func TestRetryLogsEachAttemptAtDebug(t *testing.T) {
-+	l := &recLog{}
-+	cfg := &config.Config{
-+		AssetsOrigin: "https://cdn.example", AssetsRetries: 5, AssetsRetryBaseMs: 10, AssetsRetryMaxMs: 10,
-+		AssetsRetryHeapLimit: 10, AssetsWorkerCount: 1, AssetsQueueSize: 1, AssetsPerHostLimit: 1,
-+	}
-+	cfg.KeyScheme = "daily"
-+	c, err := NewCacher(l, cfg, nopStore{}, assets.New("t"), nil)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	defer c.Stop()
-+
-+	task := &Task{requestURL: "https://probe.invalid/a.css", urlContext: "https://probe.invalid/a.css", sessionID: 42}
-+	c.retry(context.Background(), task, 0, "network", errors.New("no such host"))
-+
-+	if len(l.debug) != 1 {
-+		t.Fatalf("want 1 debug line, got %d: %v", len(l.debug), l.debug)
-+	}
-+	for _, want := range []string{"attempt=1/5", "reason=network", "https://probe.invalid/a.css", "no such host"} {
-+		if !strings.Contains(l.debug[0], want) {
-+			t.Errorf("debug line %q missing %q", l.debug[0], want)
-+		}
-+	}
-+}
-```
-
-**File**: `backend/pkg/logger/extra.go` (modified, +1/-1)
-```diff
-@@ -104,7 +104,7 @@ func sendLog(es *elasticsearch.Client, logMessage LogMessage) {
- }
- 
- func (el *extraLogger) Log(ctx context.Context, msg string) {
--	if sID, ok := ctx.Value("sessionID").(string); ok {
-+	if sID, ok := sessionID(ctx); ok {
- 		msg = fmt.Sprintf("%s openReplaySession.id=%s", msg, sID)
- 	}
- 	if el.hasSentry {
-```
-
-**File**: `backend/pkg/logger/logger.go` (modified, +12/-1)
-```diff
-@@ -49,8 +49,19 @@ func New() Logger {
- 	return customLogger
- }
- 
-+// sessionID accepts both string and uint64, since callers set either.
-+func sessionID(ctx context.Context) (string, bool) {
-+	switch v := ctx.Value("sessionID").(type) {
-+	case string:
-+		return v, true
-+	case uint64:
-+		return fmt.Sprint(v), true
-+	}
-+	return "", false
-+}
-+
- func (l *loggerImpl) prepare(ctx context.Context, logger *zap.Logger) *zap.Logger {
--	if sID, ok := ctx.Value("sessionID").(string); ok {
-+	if sID, ok := sessionID(ctx); ok {
- 		logger = logger.With(zap.String("sessionID", sID))
- 	}
- 	if pID, ok := ctx.Value("projectID").(string); ok {
-```
-
-**File**: `backend/pkg/logger/logger_test.go` (added, +21/-0)
-```diff
-@@ -0,0 +1,21 @@
-+package logger
-+
-+import (
-+	"context"
-+	"testing"
-+
-+	"go.uber.org/zap"
-+	"go.uber.org/zap/zaptest/observer"
-+)
-+
-+// Callers put sessionID into ctx as string or uint64; both must reach the log.
-+func TestPrepareSessionIDTypes(t *testing.T) {
-+	for name, val := range map[string]interface{}{"string": "42", "uint64": uint64(42)} {
-+		core, logs := observer.New(zap.InfoLevel)
-+		l := &loggerImpl{l: zap.New(core)}
-+		l.Error(context.WithValue(context.Background(), "sessionID", val), "boom")
-+		if got := logs.All()[0].ContextMap()["sessionID"]; got != "42" {
-+			t.Errorf("%s: sessionID = %v, want \"42\"", name, got)
-+		}
-+	}
-+}
-```
-
----
-
-### Incident Patch 3: `fab894fb` (2026-11-03)
-**Commit Message**: fix(chalice): fixed MCP login
-
-**File**: `api/chalicelib/core/mcp/authorizers.py` (modified, +3/-2)
-```diff
-@@ -27,7 +27,7 @@ def is_mcp_token(token: str) -> bool:
-         audience = decoded_token.get("aud")
-         return audience == AUDIENCE
-     except jwt.InvalidTokenError:
--        logger.error(f"Invalid token for is_spot_token: {sanitize(token, max_length=16)}...")
-+        logger.error(f"Invalid token for is_mcp_token: {sanitize(token, max_length=16)}...")
-         raise
- 
- 
-@@ -101,7 +101,8 @@ def get_token_by_state(client_id, state):
- 
-     if row is None:
-         raise HTTPException(status_code=404, detail="State not found or token already generated")
--    if MCP_LOGIN_TIMEOUT_S > 0 and (row["iat"] + MCP_LOGIN_TIMEOUT_S) >= TimeUTC.now():
-+    # row["iat"] is in epoch seconds, TimeUTC.now() is in epoch milliseconds
-+    if MCP_LOGIN_TIMEOUT_S > 0 and TimeUTC.now() > (row["iat"] + MCP_LOGIN_TIMEOUT_S) * 1000:
-         raise HTTPException(status_code=408, detail="Login timed out")
- 
-     return generate_jwt(user_id=row["user_id"], tenant_id=row["tenant_id"], iat=row["iat"], client_id=client_id, jti=row["jti"])
-```
-
-**File**: `api/env.default` (modified, +2/-1)
-```diff
-@@ -84,4 +84,5 @@ CH_QUERY_RETRIES=1
- CH_WAIT_FOR_CNX_POOL_S=10
- JWT_MCP_EXPIRATION=604800
- JWT_MCP_SECRET="SET A RANDOM STRING HERE"
--JWT_MCP_ALGORITHM=HS512
-\ No newline at end of file
-+JWT_MCP_ALGORITHM=HS512
-+MCP_LOGIN_TIMEOUT_S=300
-```
-
-**File**: `api/schemas/schemas_mcp.py` (modified, +2/-1)
-```diff
-@@ -4,6 +4,7 @@
- 
- 
- class AuthorizeSchema(BaseModel):
--    state: str = Field(...)
-+    # state is the only secret protecting the public /v1/mcp/auth-status endpoint, so it must not be short
-+    state: str = Field(..., min_length=32)
-     # client_id is to identify the running MCP app for a client
-     client_id: str = Field(...)
-```
-
-**File**: `ee/api/chalicelib/core/mcp/authorizers.py` (modified, +3/-2)
-```diff
-@@ -27,7 +27,7 @@ def is_mcp_token(token: str) -> bool:
-         audience = decoded_token.get("aud")
-         return audience == AUDIENCE
-     except jwt.InvalidTokenError:
--        logger.error(f"Invalid token for is_spot_token: {sanitize(token, max_length=16)}...")
-+        logger.error(f"Invalid token for is_mcp_token: {sanitize(token, max_length=16)}...")
-         raise
- 
- 
-@@ -104,7 +104,8 @@ def get_token_by_state(client_id, state):
- 
-     if row is None:
-         raise HTTPException(status_code=404, detail="State not found or token already generated")
--    if MCP_LOGIN_TIMEOUT_S > 0 and (row["iat"] + MCP_LOGIN_TIMEOUT_S) >= TimeUTC.now():
-+    # row["iat"] is in epoch seconds, TimeUTC.now() is in epoch milliseconds
-+    if MCP_LOGIN_TIMEOUT_S > 0 and TimeUTC.now() > (row["iat"] + MCP_LOGIN_TIMEOUT_S) * 1000:
-         raise HTTPException(status_code=408, detail="Login timed out")
- 
-     return generate_jwt(user_id=row["user_id"], tenant_id=row["tenant_id"], iat=row["iat"], client_id=client_id, jti=row["jti"])
-```
-
-**File**: `ee/api/env.default` (modified, +2/-1)
-```diff
-@@ -94,4 +94,5 @@ SCIM_AUTH_CODE_EXPIRE_SECONDS=600
- SCIM_ALLOWED_REDIRECT_HOSTS=.okta.com,.oktapreview.com,.okta-emea.com
- JWT_MCP_EXPIRATION=604800
- JWT_MCP_SECRET="SET A RANDOM STRING HERE"
--JWT_MCP_ALGORITHM=HS512
-\ No newline at end of file
-+JWT_MCP_ALGORITHM=HS512
-+MCP_LOGIN_TIMEOUT_S=300
+@@ -18,4 +18,4 @@ version: 0.1.1
+ # incremented each time you make changes to the application. Versions are not expected to
+ # follow Semantic Versioning. They should reflect the version the application is using.
+ # It is recommended to use it with quotes.
+-AppVersion: "v1.28.6"
++AppVersion: "v1.28.7"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5122** (2026-11-03): Updated patch build from main a823917a421201b31c23ed751dd6bcd19fd60e64 (@estradino)
-- **PR #5121** (2026-11-03): refactor(chalice): ignore internalId (@tahayk)
-- **PR #5120** (2026-11-03): Updated patch build from main fab894fbb64166c1802bc702dfa583fc2b33c5aa (@estradino)
-- **PR #5118** (2026-11-03): Patch api v1.28.0 (@tahayk)
-- **PR #5117** (2026-11-03): Update dependency esbuild to v0.28.1 [SECURITY] (@renovate[bot])
-- **PR #5116** (2026-11-03): Updated patch build from main 76b1231e0d8645efff5df4da9c74f281a33b634b (@estradino)
+- **PR #5152** (2026-11-09): Updated patch build from main 8804b243aaf6201f6542d40b474264599df00b98 (@estradino)
+- **PR #5151** (2026-11-09): refactor(chalice): bumped base image (@tahayk)
+- **PR #5145** (2026-11-06): Updated patch build from main 7a2990b54ba3b352c4b4144f3873b4e6d58d0238 (@estradino)
+- **PR #5144** (2026-11-06): refactor(chalice): assignments (@tahayk)
+- **PR #5143** (2026-11-06): Updated patch build from main 4062abc4b4e718782691f8931ebf309796690b08 (@estradino)
+- **PR #5142** (2026-11-06): UI patch 11 06 (@nick-delirium)
 
 ---
 
@@ -1444,44 +1130,28 @@ while default Info output stays quiet.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. api): don't panic on malformed assist live-sessions filters (#5113)
+## X. Increment utilities chart version to v1.28.5
 
 **RULE**:
-When implementing operations in `backend/pkg/assist/proxy.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in openreplay/openreplay. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `scripts/helmcharts/openreplay/charts/utilities/Chart.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in openreplay/openreplay. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f25a3f80`: api): don't panic on malformed assist live-sessions filters (#5113). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c5ba2a88`: Increment utilities chart version to v1.28.5. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `backend/pkg/assist/proxy.go`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/helmcharts/openreplay/charts/utilities/Chart.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-		f, ok := filter.(map[string]interface{})
-		if !ok {
-			continue
-		filterType, _ := f["name"].(string) // it was 'type'
-		if strings.HasPrefix(filterType, "metadata_") {
-			filterType, _ = f["source"].(string) // temp hack with a frontend support
-		}
-		if filterType == "" {
-			continue
-		}
-		res.Filter[filterType] = map[string]interface{}{"values": f["value"], "operator": f["operator"]}
+AppVersion: "v1.28.5"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-		switch f := filter.(type) {
-		case map[string]interface{}:
-			filterType := f["name"].(string) // it was 'type'
-			if strings.HasPrefix(filterType, "metadata_") {
-				filterType = f["source"].(string) // temp hack with a frontend support
-			}
-			res.Filter[filterType] = map[string]interface{}{"values": f["value"], "operator": f["operator"]}
+AppVersion: "v1.28.4"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f25a3f80` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c5ba2a88` are properly handled with clean fallback behavior.

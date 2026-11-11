@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source**: github ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
-> **Source Version**: `bb2da9bb`  
+> **Source Version**: `3fdb5996`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T23:49:00.377Z  
+> **Timestamp**: 2026-11-10T01:58:31.098Z  
 > **Learning ID**: `learn-github-projectdiscovery-nuclei`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T23:48:59.795Z  
+> **Harvest Timestamp**: 2026-11-10T01:58:31.092Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Nuclei is a fast, customizable vulnerability scanner powered by the global security community and built on a simple YAML-based DSL, enabling collaboration to tackle trending vulnerabilities on the internet. It helps you find vulnerabilities in your applications, APIs, networks, DNS, and cloud configurations.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 32615 stars
+- **Stars / Engagement**: 32733 stars
 
 ---
 
@@ -475,19 +475,7 @@ func (e *Engine) ExecuteScanWithOpts(ctx context.Context, templatesList []*templ
 
 	totalReqBeforeCluster := getRequestCount(templatesList) * int(target.Count())
 
-	// attempt to cluster templates if noCluster is false
-	var finalTemplates []*templates.Template
-	clusterCount := 0
-	if !noCluster {
-		var clusterMappings map[string][]string
-		finalTemplates, clusterCount, clusterMappings = templates.ClusterTemplates(templatesList, e.executerOpts)
-		// Store cluster mappings in executerOpts for SDK access (thread-safe)
-		if clusterMappings != nil {
-			e.executerOpts.ClusterMappings = types.NewClusterMappingsMap(clusterMappings)
-		}
-	} else {
-		finalTemplates = templatesList
-	}
+	finalTemplates, clusterCount := e.clusterTemplates(templatesList, noCluster)
 
 	totalReqAfterClustering := getRequestCount(finalTemplates) * int(target.Count())
 
@@ -621,6 +609,20 @@ func (e *Engine) executeHostSpray(ctx context.Context, templatesList []*template
 		return true
 	})
 	return results
+}
+
+// clusterTemplates merges templates that send identical requests unless
+// noCluster is set, and returns the templates to run with the number merged.
+func (e *Engine) clusterTemplates(templatesList []*templates.Template, noCluster bool) ([]*templates.Template, int) {
+	if noCluster {
+		return templatesList, 0
+	}
+	finalTemplates, clusterCount, clusterMappings := templates.ClusterTemplates(templatesList, e.executerOpts)
+	// Store cluster mappings in executerOpts for SDK access (thread-safe)
+	if clusterMappings != nil {
+		e.executerOpts.ClusterMappings = types.NewClusterMappingsMap(clusterMappings)
+	}
+	return finalTemplates, clusterCount
 }
 
 // expectedWork returns the requests and the tasks the target-bound templates
@@ -999,6 +1001,167 @@ func (e *Engine) taskTracker() progress.TaskTracker {
 	tracker, _ := e.executerOpts.Progress
 ```
 
+### Core Architecture Module: `pkg/core/plan.go`
+```
+package core
+
+import (
+	"crypto/sha256"
+	"encoding/hex"
+	"slices"
+	"strings"
+
+	"github.com/projectdiscovery/nuclei/v3/pkg/input/provider"
+	"github.com/projectdiscovery/nuclei/v3/pkg/protocols"
+	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/contextargs"
+	"github.com/projectdiscovery/nuclei/v3/pkg/templates"
+	"github.com/projectdiscovery/nuclei/v3/pkg/templates/types"
+)
+
+// PlanEntry is one unit of work a scan runs: a template, a cluster of
+// templates sharing one request, or a workflow, on one target.
+type PlanEntry struct {
+	// ID identifies the entry across runs of the same plan.
+	ID string `json:"id"`
+	// Target is empty for self-contained templates, which run once.
+	Target string `json:"target,omitempty"`
+	// IP is the address the target is pinned to, when it is.
+	IP        string   `json:"ip,omitempty"`
+	Templates []string `json:"templates"`
+	Protocol  string   `json:"protocol"`
+	// Requests is what the templates declare, the count -stats starts from.
+	// The scan sends fewer when a request needs a value the target lacks,
+	// such as {{DN}} on an ip.
+	Requests int `json:"requests"`
+	// Cost is Requests weighted by how long one request of the protocol
+	// takes, in http requests.
+	Cost int `json:"cost"`
+	// Dynamic marks entries whose requests depend on responses: workflows
+	// (only the root is counted), flows and fuzzing.
+	Dynamic bool `json:"dynamic,omitempty"`
+	// AlternativeTo is the id of an entry running the same origin-scoped
+	// template on the same origin. Workers race for an origin, so the scan
+	// runs whichever of the group claims it first, and another only when
+	// that run fails. Totals count the group once.
+	AlternativeTo string `json:"alternative-to,omitempty"`
+}
+
+// Plan reports the work ExecuteScanWithOpts would do with the same arguments,
+// without sending anything. It applies the same clustering, per-target
+// profiles and once-per-origin rule, so a pair is listed only if the scan
+// would run it. Later targets of an origin-scoped template are listed as
+// alternatives to the first, since the scan retries them when a run fails.
+func (e *Engine) Plan(templatesList []*templates.Template, target provider.InputProvider, noCluster bool, emit func(PlanEntry)) {
+	finalTemplates, _ := e.clusterTemplates(templatesList, noCluster)
+	// clustering does not keep an order; a plan is diffed and edited, so it does
+	finalTemplates = slices.SortedFunc(slices.Values(finalTemplates), func(a, b *templates.Template) int {
+		return strings.Compare(a.ID, b.ID)
+	})
+
+	var targetBound []*templates.Template
+	for _, template := range finalTemplates {
+		if template.SelfContained {
+			emit(withPlanID(planEntry(template, &contextargs.MetaInput{}, nil)))
+		} else {
+			targetBound = append(targetBound, template)
+		}
+	}
+
+	// entries are emitted as they are planned, so memory does not grow with
+	// the plan; only the first id per origin is kept
+	originIDs := make(map[string]string)
+	target.Iterate(func(value *contextargs.MetaInput) bool {
+		selection := e.selectionFor(value)
+		for _, template := range targetBound {
+			if selection != nil && !template.SelectedBy(selection) {
+				continue
+			}
+			entry := withPlanID(planEntry(template, value, selection))
+			if key, scoped := originScopeKey(template, value); scoped {
+				if id, seen := originIDs[key]; seen {
+					entry.AlternativeTo = id
+				} else {
+					originIDs[key] = entry.ID
+				}
+			}
+			emit(entry)
+		}
+		return true
+	})
+}
+
+func withPlanID(entry PlanEntry) PlanEntry {
+	entry.ID = planEntryID(entry)
+	return entry
+}
+
+// protocolCost is how many http requests one request of a protocol is worth
+// in time. Measured per call against a CDN-fronted site, where an http
+// request took about 15ms: a javascript call adds about 150ms of runtime, a
+// headless page load with waitload took about 1s. Unlisted protocols cost
+// about one round trip, like http.
+var protocolCost = map[types.ProtocolType]int{
+	types.JavascriptProtocol: 10,
+	types.HeadlessProtocol:   60,
+}
+
+func planEntry(template *templates.Template, value *contextargs.MetaInput, selection protocols.TemplateSelection) PlanEntry {
+	entry := PlanEntry{
+		Target:    value.Input,
+		IP:        value.CustomIP,
+		Templates: []string{template.ID},
+		Protocol:  template.Type().String(),
+		Requests:  template.TotalRequests,
+		Dynamic:   template.Flow != "" || template.IsFuzzableRequest(),
+	}
+	weight := func(protocol types.ProtocolType) int { return max(protocolCost[protocol], 1) }
+
+	switch {
+	case template.CompiledWorkflow != nil:
+		// only the root of a workflow is certain to run; subtemplates depend
+		// on what it matches
+		entry.Requests = 0
+		for _, workflow := range template.CompiledWorkflow.Workflows {
+			for _, executer := range workflow.Executers {
+				requests := executer.Executer.Requests()
+				entry.Requests += requests
+				entry.Cost += requests * weight(executer.TemplateType)
+			}
+		}
+		entry.Dynamic = true
+	case isCluster(template):
+		cluster := template.Executer.(*templates.ClusterExecuter)
+		entry.Templates = slices.Sorted(slices.Values(cluster.TemplateIDs(selection)))
+		// TotalRequests of a cluster counts only its http and dns requests,
+		// so an ssl cluster would show none
+		entry.Requests = cluster.Requests()
+		entry.Cost = entry.Requests * weight(template.Type())
+	case len(template.RequestsQueue) > 0:
+		// each block is weighted by its own protocol, so a template mixing
+		// http with javascript is not priced as all http
+		for _, request := range template.RequestsQueue {
+			entry.Cost += request.Requests() * weight(request.Type())
+		}
+	default:
+		entry.Cost = entry.Requests * weight(template.Type())
+	}
+	return entry
+}
+
+func isCluster(template *templates.Template) bool {
+	_, ok := template.Executer.(*templates.ClusterExecuter)
+	return ok
+}
+
+// planEntryID derives the id from what the entry runs, so planning the same
+// scan again yields the same ids.
+func planEntryID(entry PlanEntry) string {
+	sum := sha256.Sum256([]byte(entry.Target + "\x00" + entry.IP + "\x00" + strings.Join(entry.Templates, "\x00")))
+	return hex.EncodeToString(sum[:8])
+}
+
+```
+
 ### Core Architecture Module: `pkg/core/workflow_execute.go`
 ```
 package core
@@ -1006,6 +1169,7 @@ package core
 import (
 	"fmt"
 	"net/http/cookiejar"
+	"sync"
 	"sync/atomic"
 
 	"github.com/projectdiscovery/gologger"
@@ -1035,22 +1199,45 @@ func (e *Engine) executeWorkflow(ctx *scan.ScanContext, w *workflows.Workflow) b
 		templateThreads++
 	}
 	swg, _ := syncutil.New(syncutil.WithSize(templateThreads))
+	// pending tracks every started step until it returns. swg only limits
+	// concurrency and its slots can be released early, so completion is
+	// tracked here instead.
+	var pending sync.WaitGroup
 
 	for _, template := range w.Workflows {
 		newCtx := scan.NewScanContext(ctx.Context(), ctx.Input.Clone())
-		if err := e.runWorkflowStep(template, newCtx, results, swg, w); err != nil {
+		// Root steps do not own a waitgroup slot.
+		if err := e.runWorkflowStep(template, newCtx, results, swg, &pending, w, nil); err != nil {
 			gologger.Warning().Msgf(workflowStepExecutionError, template.Template, err)
 		}
 	}
 
-	swg.Wait()
+	pending.Wait()
 
 	return results.Load()
 }
 
+// slotRelease returns a func that gives back one swg slot. It is safe to call
+// from several goroutines and several times; only the first call releases.
+func slotRelease(swg *syncutil.AdaptiveWaitGroup) func() {
+	var once sync.Once
+	return func() {
+		once.Do(swg.Done)
+	}
+}
+
 // runWorkflowStep runs a workflow step for the workflow. It executes the workflow
 // in a recursive manner running all subtemplates and matchers.
-func (e *Engine) runWorkflowStep(template *workflows.WorkflowTemplate, ctx *scan.ScanContext, results *atomic.Bool, swg *syncutil.AdaptiveWaitGroup, w *workflows.Workflow) error {
+//
+// releaseSlot, when non-nil, releases the AdaptiveWaitGroup slot held by the
+// goroutine that is running this step. It must be called before this step
+// blocks on swg.AddWithContext for child steps; otherwise every in-flight
+// parent can hold a slot while waiting for another, which deadlocks when the
+// number of matching nested steps reaches TemplateThreads (see #8074).
+//
+// pending is incremented for every child step before it starts, and each child
+// calls Done when it returns, so the root can wait for the whole tree.
+func (e *Engine) runWorkflowStep(template *workflows.WorkflowTemplate, ctx *scan.ScanContext, results *atomic.Bool, swg *syncutil.AdaptiveWaitGroup, pending *sync.WaitGroup, w *workflows.Workflow, releaseSlot func()) error {
 	var firstMatched bool
 	var err error
 	var mainErr error
@@ -1134,18 +1321,25 @@ func (e *Engine) runWorkflowStep(template *workflows.WorkflowTemplate, ctx *scan
 						continue
 					}
 
+					// Free this step's slot before blocking on child acquires.
+					if releaseSlot != nil {
+						releaseSlot()
+					}
 					for _, subtemplate := range matcher.Subtemplates {
 						if err := swg.AddWithContext(ctx.Context()); err != nil {
 							return
 						}
+						pending.Add(1)
 
 						go func(subtemplate *workflows.WorkflowTemplate) {
-							defer swg.Done()
+							defer pending.Done()
+							release := slotRelease(swg)
+							defer release()
 
 							// create a new context with the same input but with unset callbacks
 							// clone the Input so that other parallel executions won't overwrite the shared variables when subsequent templates are running
 							subCtx := scan.NewScanContext(ctx.Context(), ctx.Input.Clone())
-							if err := e.runWorkflowStep(subtemplate, subCtx, results, swg, w); err != nil {
+							if err := e.runWorkflowStep(subtemplate, subCtx, results, swg, pending, w, release); err != nil {
 								gologger.Warning().Msgf(workflowStepExecutionError, subtemplate.Template, err)
 							}
 						}(subtemplate)
@@ -1165,18 +1359,27 @@ func (e *Engine) runWorkflowStep(template *workflows.WorkflowTemplate, ctx *scan
 		return mainErr
 	}
 	if len(template.Subtemplates) > 0 && firstMatched {
+		// Free this step's slot before blocking on child acquires so nested
+		// matching steps cannot exhaust TemplateThreads and deadlock (#8074).
+		if releaseSlot != nil {
+			releaseSlot()
+		}
 		for _, subtemplate := range template.Subtemplates {
 			if err := swg.AddWithContext(ctx.Context()); err != nil {
 				return err
 			}
+			pending.Add(1)
 
 			go func(template *workflows.WorkflowTemplate) {
+				defer pending.Done()
+				release := slotRelease(swg)
+				defer release()
+
 				// create a new context with the same input but with unset callbacks
 				subCtx := scan.NewScanContext(ctx.Context(), ctx.Input.Clone())
-				if err := e.runWorkflowStep(template, subCtx, results, swg, w); err != nil {
+				if err := e.runWorkflowStep(template, subCtx, results, swg, pending, w, release); err != nil {
 					gologger.Warning().Msgf(workflowStepExecutionError, template.Template, err)
 				}
-				swg.Done()
 			}(subtemplate)
 		}
 	}
@@ -1311,117 +1514,6 @@ type ipOptions struct {
 
 ```
 
-### Core Architecture Module: `pkg/installer/util.go`
-```
-package installer
-
-import (
-	"bufio"
-	"bytes"
-	"fmt"
-	"io"
-	"io/fs"
-	"net/http"
-	"os"
-	"path/filepath"
-	"sort"
-
-	"github.com/Masterminds/semver/v3"
-	"github.com/projectdiscovery/gologger"
-	"github.com/projectdiscovery/nuclei/v3/pkg/catalog/config"
-	"github.com/projectdiscovery/utils/errkit"
-)
-
-// GetNewTemplatesInVersions returns templates path of all newly added templates
-// in these versions
-func GetNewTemplatesInVersions(versions ...string) []string {
-	allTemplates := []string{}
-	for _, v := range versions {
-		if v == config.DefaultConfig.TemplateVersion {
-			allTemplates = append(allTemplates, config.DefaultConfig.GetNewAdditions()...)
-			continue
-		}
-		_, err := semver.NewVersion(v)
-		if err != nil {
-			gologger.Error().Msgf("%v is not a valid semver version. skipping", v)
-			continue
-		}
-		if config.IsOutdatedVersion(v, "v8.8.4") {
-			// .new-additions was added in v8.8.4 any version before that is not supported
-			gologger.Error().Msgf(".new-additions support was added in v8.8.4 older versions are not supported")
-			continue
-		}
-
-		arr, err := getNewAdditionsFileFromGitHub(v)
-		if err != nil {
-			gologger.Error().Msgf("failed to fetch new additions for %v got: %v", v, err)
-			continue
-		}
-		allTemplates = append(allTemplates, arr...)
-	}
-	return allTemplates
-}
-
-func getNewAdditionsFileFromGitHub(version string) ([]string, error) {
-	resp, err := retryableHttpClient.Get(fmt.Sprintf("https://raw.githubusercontent.com/projectdiscovery/nuclei-templates/%s/.new-additions", version))
-	if err != nil {
-		return nil, err
-	}
-	if resp.StatusCode != http.StatusOK {
-		return nil, errkit.New("version not found")
-	}
-	data, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-	templatesList := []string{}
-	scanner := bufio.NewScanner(bytes.NewReader(data))
-	for scanner.Scan() {
-		text := scanner.Text()
-		if text == "" {
-			continue
-		}
-		if config.IsTemplate(text) {
-			templatesList = append(templatesList, text)
-		}
-	}
-	return templatesList, nil
-}
-
-func PurgeEmptyDirectories(dir string) {
-	alldirs := []string{}
-	_ = filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
-		if d.IsDir() {
-			alldirs = append(alldirs, path)
-		}
-		return nil
-	})
-	// sort in ascending order
-	sort.Strings(alldirs)
-	// reverse the order
-	sort.Sort(sort.Reverse(sort.StringSlice(alldirs)))
-
-	for _, d := range alldirs {
-		if isEmptyDir(d) {
-			_ = os.RemoveAll(d)
-		}
-	}
-}
-
-func isEmptyDir(dir string) bool {
-	hasFiles := false
-	_ = filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
-		if !d.IsDir() {
-			hasFiles = true
-			return io.EOF
-		}
-		return nil
-	})
-	return !hasFiles
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1446,398 +1538,537 @@ func isEmptyDir(dir string) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `875b2293` (2026-11-05)
-**Commit Message**: fix(http): read annotations only before the request line (#8062)
+### Incident Patch 1: `54662dc4` (2026-11-09)
+**Commit Message**: Merge pull request #8079 from projectdiscovery/security-context/refresh
 
-Raw requests applied @Host, @tls-sni and @timeout from any matching
-line of the rendered request, headers and body included. A response
-value reused in a later request could carry an "@Host:" line and send
-that request, with its body, to a host the template does not name.
+chore: refresh security context
 
-The raw parser and the docs already define annotations as the "@"
-lines before the request line. raw.SplitAnnotations now holds that
-rule once, and the parser, the request annotations, @once and the
-compile-time @timeout check all read from it.
+**File**: `SECURITY_CONTEXT.md` (modified, +21/-13)
+```diff
+@@ -1,35 +1,40 @@
+-<!-- Generated by securitycontext.dev. Source HEAD: df57ae6d2955864fd92a1bd2565fe9e4e9a7592b. -->
++<!-- Generated by securitycontext.dev. Source HEAD: 40d08ee493f6f84c9a6b3c7f15f22da83853130c. -->
+ # Security Context: projectdiscovery/nuclei @ dev
+ 
+ > Reference context for editing projectdiscovery/nuclei. Before changing any component below, **preserve the listed guards and do not reintroduce these fixed issues**. Each fingerprint is a regression check, and each shared attack surface is a guard that must keep holding on every path.
+ 
+-_Analyzed [df57ae6d29][c-df57ae6d29] on `dev` · 5174 commits, 548 security-relevant examined · generated 2026-11-02_
++_Analyzed [40d08ee493][c-40d08ee493] on `dev` · 5242 commits, 586 security-relevant examined · generated 2026-11-09_
+ 
+ ## Recurring Security Patterns
+ 
+-**7.1% of classified fixes repeat a previously fixed pattern** (1 recurring, 13 first-seen). A recurring pattern means this repository fixed a similar issue before — not that the code is currently vulnerable.
++**12.5% of classified fixes repeat a previously fixed pattern** (2 recurring, 14 first-seen). A recurring pattern means this repository fixed a similar issue before — not that the code is currently vulnerable.
+ 
+ ## Top Risks
+ 
+ Components with the strongest concentration of past fixes for one class.
+ 
+ | # | Class | Component | Severity | Fixes | Evidence |
+ |---|---|---|---|---|---|
+-| 1 | SSRF | `pkg/protocols/common/protocolstate/headless.go` | high | 2 | [d43c1f547f][c-d43c1f547f], [d9dabbb4a1][c-d9dabbb4a1] |
+-| 2 | Arbitrary File Access | `v2/pkg/protocols/common/generators/load.go` | high | 0 (1 component gone, not counted) | [e5154d362a][c-e5154d362a] |
+-| 3 | Arbitrary File Access | `pkg/js/libs/mysql/mysql.go` | high | 1 | [634cecbb28][c-634cecbb28] |
+-| 4 | Code Execution | `pkg/fuzz/execute.go` | high | 1 | [ccbfb12bd0][c-ccbfb12bd0] |
+-| 5 | Code Execution | `pkg/protocols/common/expressions/expressions.go` | high | 1 | [d221732016][c-d221732016] |
+-| 6 | Information Disclosure | `internal/httpapi/apiendpoint.go` | high | 1 | [a20aa26024][c-a20aa26024] |
++| 1 | Code Execution | `pkg/fuzz/execute.go` | high | 2 | [4fed40f75a][c-4fed40f75a], [ccbfb12bd0][c-ccbfb12bd0] |
++| 2 | SSRF | `pkg/protocols/common/protocolstate/headless.go` | high | 2 | [d43c1f547f][c-d43c1f547f], [d9dabbb4a1][c-d9dabbb4a1] |
++| 3 | Arbitrary File Access | `v2/pkg/protocols/common/generators/load.go` | high | 0 (1 component gone, not counted) | [e5154d362a][c-e5154d362a] |
++| 4 | Arbitrary File Access | `pkg/js/libs/mysql/mysql.go` | high | 1 | [634cecbb28][c-634cecbb28] |
++| 5 | Certificate Validation Bypass | `pkg/reporting/exporters/es/elasticsearch.go` | high | 1 | [82d5a8acc2][c-82d5a8acc2] |
++| 6 | Code Execution | `pkg/protocols/common/expressions/expressions.go` | high | 1 | [d221732016][c-d221732016] |
+ 
+ ## Fixed-Issue Fingerprints
+ 
+ Real security fixes mined from git history; use them as regression checks. `verified` fixes are linked to a published advisory, `inferred` fixes were confirmed from the diff evidence alone. Each is identified by its short commit SHA, which the variant-leads report uses to reference it back to this history.
+ 
+ **By component** (directories with the most fixes):
+ 
++- `pkg/fuzz` — 2 fixes: Code Execution (2)
+ - `pkg/protocols/common/protocolstate` — 2 fixes: SSRF (2)
+ 
++- [4fed40f75a][c-4fed40f75a] **fix(fuzz): stop re-rendering evaluated template variables (#8057)** — Code Execution, high [CWE-94] · inferred · 2026-11-05
++  `pkg/fuzz/execute.go` · sink `rule.evaluateVarsWithInteractsh` · fix: safe parser configuration
++- [82d5a8acc2][c-82d5a8acc2] **exporters: verify TLS certificates (#8042)** — Certificate Validation Bypass, high [CWE-295] · inferred · 2026-11-04
++  `pkg/reporting/exporters/es/elasticsearch.go` · sink `DialTLS` · fix: cryptographic verification
+ - [1c0f77d28e][c-1c0f77d28e] **fix(js/net): enforce network policy on proxied target in JS net dial** — SSRF, high [CWE-918] · inferred · 2026-10-18
+   `pkg/js/libs/net/net.go` · sink `dialHTTPProxy` · fix: input validation
+ - [d43c1f547f][c-d43c1f547f] **fix(headless): canonicalize IPv4-mapped IPv6 literals and re-validate dial targets** — SSRF, high [CWE-918] · inferred · 2026-10-13
+@@ -63,11 +68,12 @@ Real security fixes mined from git history; use them as regression checks. `veri
+ 
+ | Class | Fixes | Verified | Most recent fix |
+ |---|---|---|---|
++| Code Execution | 3 | 2 | [2026-11-05][c-4fed40f75a] 4fed40f75a |
+ | SSRF | 3 | 0 | [2026-10-18][c-1c0f77d28e] 1c0f77d28e |
+ | Arbitrary File Access | 1 (1 component gone, not counted) | 2 | [2026-06-19][c-634cecbb28] 634cecbb28 |
+-| Code Execution | 2 | 2 | [2026-06-30][c-ccbfb12bd0] ccbfb12bd0 |
+ | Sandbox Escape | 2 | 0 | [2026-06-24][c-3a8b65cb45] 3a8b65cb45 |
+ | Signature Verification Bypass | 2 | 2 | [2026-07-03][c-fac0b7196d] fac0b7196d |
++| Certificate Validation Bypass | 1 | 0 | [2026-11-04][c-82d5a8acc2] 82d5a8acc2 |
+ | Information Disclosure
+```
 
-Fixes: #8061
+---
 
+### Incident Patch 2: `3fdb5996` (2026-11-10)
+**Commit Message**: fix(js): stop tsgen from panicking on non-struct types (#8102)
+
+* fix(js/tsgen): map non-struct external types to any
+
+tsgen treated every type from another package as a struct and queued
+it to have its fields scraped into a TypeScript interface. The kind
+was checked only at scrape time, as a fatal error, so an interface,
+func, or named basic type in an exported signature or field aborted
+the whole run. make jsupdate-tsgen panicked on net.Conn, which the
+dcerpc, gptransport, mssql, net, and oracle libraries return, and
+never wrote the remaining definitions or index.ts.
+
+Check the kind when the type is first seen instead. Structs are still
+scraped; other types have no fields to describe and become any, as
+external parameter types already do. Names that do not resolve are
+still reported.
+
+Fixes: #8099
 Signed-off-by: Dwi Siswanto <[REDACTED_EMAIL]>
 
-**File**: `pkg/protocols/http/http.go` (modified, +1/-1)
+* fix(js): exclude gptransport and smbsession from codegen
+
+gptransport and smbsession are shared Go adapters for the smb, dcerpc,
+and file protocol code, not JavaScript modules: nothing registers them
+with the runtime, and index.ts does not export them. Without the
+.nuclei-jsgen-ignore marker that goexec already carries, tsgen and
+bindgen
+
+**File**: `pkg/js/devtools/tsgen/parser.go` (modified, +19/-9)
 ```diff
-@@ -402,7 +402,7 @@ func (request *Request) Compile(options *protocols.ExecutorOptions) error {
- 
- 	// If we have request level timeout, ignore http client timeouts
- 	for _, req := range request.Raw {
--		if reTimeoutAnnotation.MatchString(req) {
-+		if hasTimeoutAnnotation(req) {
- 			connectionConfiguration.NoTimeout = true
+@@ -284,8 +284,8 @@ func (p *EntityParser) extractClassProperties(node *ast.StructType) []Property {
+ 					Description: field.Doc.Text(),
+ 				}
+ 				if strings.Contains(property.Type, ".") {
+-					// external struct found
+-					property.Type = p.handleExternalStruct(property.Type)
++					// external type found
++					property.Type = p.handleExternalType(property.Type)
+ 				}
+ 				properties = append(properties, property)
+ 			}
+@@ -349,7 +349,7 @@ func (p *EntityParser) extractReturnType(fn *ast.FuncDecl) (out string) {
+ 		for _, result := range fn.Type.Results.List {
+ 			tmp := exprToString(result.Type)
+ 			if strings.Contains(tmp, ".") && !strings.HasPrefix(tmp, "goja.") {
+-				tmp = p.handleExternalStruct(tmp) + " | null" // external object interfaces can always return null
++				tmp = p.handleExternalType(tmp) + " | null" // external object interfaces can always return null
+ 			}
+ 			returns = append(returns, tmp)
+ 		}
+@@ -374,8 +374,10 @@ func (p *EntityParser) extractReturnType(fn *ast.FuncDecl) (out string) {
+ 			}
+ 		}
+ 		if sliceutil.Contains(returns, "error") {
+-			// add | null to the return type
+-			out = out + " | null"
++			// external types already record that they can be null
++			if !strings.HasSuffix(out, "| null") {
++				out += " | null"
++			}
+ 			return
  		}
  	}
-```
-
-**File**: `pkg/protocols/http/raw/raw.go` (modified, +13/-33)
-```diff
-@@ -14,7 +14,6 @@ import (
- 	"github.com/projectdiscovery/nuclei/v3/pkg/authprovider/authx"
- 	"github.com/projectdiscovery/rawhttp/client"
- 	"github.com/projectdiscovery/utils/errkit"
--	stringsutil "github.com/projectdiscovery/utils/strings"
- 	urlutil "github.com/projectdiscovery/utils/url"
- )
- 
-@@ -193,23 +192,20 @@ func readRawRequest(request string, unsafe bool) (*Request, error) {
- 		Headers: make(map[string]string),
- 	}
- 
-+	_, request = SplitAnnotations(request)
-+
- 	// store body if it is unsafe request
- 	if unsafe {
--		rawRequest.UnsafeRawBytes = stripLeadingAnnotations(request)
-+		rawRequest.UnsafeRawBytes = []byte(request)
- 	}
- 
- 	// parse raw request
- 	source := strings.NewReader(request)
- 	reader := bufio.NewReader(source)
--read_line:
- 	s, err := reader.ReadString('\n')
- 	if err != nil {
- 		return nil, fmt.Errorf("could not read request: %w", err)
- 	}
--	// ignore all annotations
--	if stringsutil.HasPrefixAny(s, "@") {
--		goto read_line
--	}
- 
- 	parts := strings.Fields(s)
- 	if len(parts) > 0 {
-@@ -292,34 +288,18 @@ read_line:
- 
+@@ -413,10 +415,18 @@ func (p *EntityParser) extractParameters(fn *ast.FuncDecl) []Parameter {
+ 	return parameters
  }
  
--func stripLeadingAnnotations(request string) []byte {
--	reader := bufio.NewReader(strings.NewReader(request))
--	buffer := bufferPool.Get().(*bytes.Buffer)
--	buffer.Reset()
--	defer func() {
--		buffer.Reset()
--		bufferPool.Put(buffer)
--	}()
--
--	requestLineFound := false
--	for {
--		line, err := reader.ReadString('\n')
--		if len(line) > 0 {
--			if requestLineFound || !stringsutil.HasPrefixAny(line, "@") {
--				requestLineFound = true
--				_, _ = buffer.WriteString(line)
--			}
--		}
--
--		if err != nil {
--			if err == io.EOF {
--				break
--			}
--			return []byte(request)
--		}
-+// SplitAnnotations splits a raw request into its annotations and the request
-+// that follows them. Annotations are the lines starting with "@" before the
-+// request line. A line starting with "@" after the request line is part of the
-+// request, so text rendered into the headers or the body never becomes an
-+// annotation.
-+func SplitAnnotations(request string) (annotations, rest string) {
-+	rest = request
-+	for strings.HasPrefix(rest, "@") {
-+		_, rest, _ = strings.Cut(rest, "\n")
- 	}
- 
--	return append([]byte(nil), buffer.Bytes()...)
-+	return request[:len(request)-len(rest)], rest
- }
- 
- // TryFillCustomHeaders after the Host header
-```
-
-**File**: `pkg/protocols/http/raw/raw_test.go` (modified, +45/-0)
-```diff
-@@ -310,6 +310,51 @@ Connection: close`, parseURL(t, "http://scanme.sh"), true, false)
- 	require.NotContains(t, string(request.UnsafeRawBytes), "@Host:", "annotation lines must not be present in unsafe raw bytes")
- }
- 
-+func TestSplitAnnotations(t *testing.T) {
-+	tests := []struct {
-+		name        string
-+		request     string
-+		annotations string
-+	}{
-+		{name: "empty"},
-+		{name: "no annotations", request: "GET / HTTP/1.1\r\nHost: a\r\n\r\n"},
-+		{
-+			name:        "leading annotations",
-+			request:     "@Host: b\r\n@timeout: 5s\r\nGET / HTTP/1.1\r\nHost: a\r\n\r\n",
-+			annotations: "@Host: b\r\n@timeout: 5s\r\n",
-+		},
-+		{
-+			name:        "annotation lines after the request line",
-+			request:     "@once\nPOST / HTTP/1.1\n@Host: c\n\nhello\n@Host: d\n",
-+			annotations: "@once\n",
-+		},
-+		{
-+			name:        "annotations without a request line",
-+			request:     "@Host: b\n@once",
-+			annotations: "@Host: b\n@once",
-+		},
+-// typeName is in format ssh.ClientConfig
+-// it first fetches all fields from the struct and creates a new object
+-// with that name and returns name of that object as type
+-func (p *EntityParser) handleExternalStruct(typeName string) string {
++// handleExternalType returns the TypeScript type for typeName, a type from
++// another package such as ssh.ClientConfig. A struct is queued for
++// scrapeAndCreate, which describes its fields in an interface of the same name.
++// Any other type, such as the net.Conn interface, has no fields to describe,
++// so it becomes any. A typeName that does not resolve is queued too, so that
++// scrapeAndCreate reports it.
++func (p *EntityParser) handleExternalType(typeName string) string {
++	obj, err := p.lookupType(typeName)
++	if err == nil && !isStruct(obj.Type()) {
++		return "any"
 +	}
 +
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			annotations, rest := SplitAnnotations(tt.request)
-+			require.Equal(t, tt.annotations, annotations)
-+			require.Equal(t, tt.request, annotations+rest)
-+		})
-+	}
-+}
+ 	baseType := typeName[strings.LastIndex(typeName, ".")+1:]
+ 	p.newObjects[typeName] = &Entity{
+ 		Name:        baseType,
+```
+
+**File**: `pkg/js/devtools/tsgen/parser_external_test.go` (added, +33/-0)
+```diff
+@@ -0,0 +1,33 @@
++package tsgen_test
 +
-+func TestParseUnsafeRequestKeepsAnnotationLinesInBody(t *testing.T) {
-+	const (
-+		head = "POST /foo HTTP/1.1\nHost: {{Hostname}}\n\n"
-+		body = "hello\n@Host: decoy.example\n"
-+	)
-+	request, err := Parse("@Host: honey.scanme.sh\n"+head+body, parseURL(t, "http://scanme.sh"), true, false)
++import (
++	"path/filepath"
++	"testing"
++
++	"github.com/stretchr/testify/require"
++
++	"github.com/projectdiscovery/nuclei/v3/pkg/js/devtools/tsgen"
++)
++
++func TestParseExternalTypes(t *testing.T) {
++	t.Parallel()
++
++	ep, err := tsgen.NewEntityParser(filepath.Join("testdata", "external"))
 +	require.NoError(t, err)
-+	require.Equal(t, head+body, string(request.UnsafeRawBytes))
-+	require.Equal(t, body, request.Data)
-+}
++	require.NoError(t, ep.Parse())
 +
- func TestTryFillCustomHeaders(t *testing.T) {
- 	testValue := "GET /manager/html HTTP/1.1\r\nHost: Test\r\n"
- 	expected := "GET /test/manager/html HTTP/1.1\r\nHost: Test\r\ntest: test\r\n"
++	entities := make(map[string]tsgen.Entity)
++	for _, e := range ep.GetEntities() {
++		entities[e.Name] = e
++	}
++
++	// net.Conn is an interface, so it has no fields to describe.
++	require.Equal(t, "any | null", entities["Dial"].Function.Returns)
++	require.Equal(t, []tsgen.Property{{Name: "Conn", Type: "any", Description: ""}}, entities["Session"].Object.Properties)
++	require.NotContains(t, entities, "Conn")
++
++	// url.URL is a struct, so its fields become an interface.
++	require.Equal(t, "URL | null", entities["Parse"].Function.Returns)
++	require.Equal(t, "interface", entities["URL"].Type)
++	require.NotEmpty(t, entities["URL"].Object.Properties)
++}
 ```
 
-**File**: `pkg/protocols/http/request_annotations.go` (modified, +15/-5)
+**File**: `pkg/js/devtools/tsgen/scrape.go` (modified, +40/-19)
 ```diff
-@@ -11,6 +11,7 @@ import (
- 	"github.com/projectdiscovery/fastdialer/fastdialer"
- 	commoninteractsh "github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/interactsh"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/http/httpclientpool"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/http/raw"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/types/nucleierr"
- 	"github.com/projectdiscovery/retryablehttp-go"
- 	"github.com/projectdiscovery/utils/errkit"
-@@ -54,15 +55,22 @@ func parseFlowAnnotations(rawRequest string) (flowMark, bool) {
- 	var fm flowMark
- 	// parse request for known override annotations
- 	var hasFlowOverride bool
-+	annotations, _ := raw.SplitAnnotations(rawRequest)
- 	// @once
--	if reOnceAnnotation.MatchString(rawRequest) {
-+	if reOnceAnnotation.MatchString(annotations) {
- 		fm = Once
- 		hasFlowOverride = true
- 	}
- 
- 	return fm, hasFlowOverride
- }
- 
-+// hasTimeoutAnnotation reports whether rawRequest has a @timeout annotation.
-+func hasTimeoutAnnotation(rawRequest string) bool {
-+	annotations, _ := raw.SplitAnnotations(rawRequest)
-+	return reTimeoutAnnotation.MatchString(annotations)
-+}
-+
- type annotationOverrides struct {
- 	request        *retryablehttp.Request
- 	cancelFunc     context.CancelFunc
-@@ -72,10 +80,12 @@ type annotationOverrides struct {
- 
- // parseAnnotations and override requests settings
- func (r *Request) parseAnnotations(rawRequest string, request *retryablehttp.Request) (overrides annotationOverrides, modified bool) {
--	// parse request for known override annotations
-+	// rawRequest is rendered, so its headers and body can hold values taken
-+	// from responses. Only the annotation lines may override the request.
-+	annotations, _ := raw.SplitAnnotations(rawRequest)
- 
- 	// @Host:target
--	if hosts := reHostAnnotation.FindStringSubmatch(rawRequest); len(hosts) > 0 {
-+	if hosts := reHostAnnotation.FindStringSubmatch(annotations); len(hosts) > 0 {
- 		value := strings.TrimSpace(hosts[1])
- 		// handle scheme
- 		switch {
-@@ -101,7 +111,7 @@ func (r *Request) parseAnnotations(rawRequest string, request *retryablehttp.Req
- 	}
- 
- 	// @tls-sni:target
--	if hosts := reSniAnnotation.FindStringSubmatch(rawRequest); len(hosts) > 0 {
-+	if hosts := reSniAnnotation.FindStringSubmatch(annotations); len(hosts) > 0 {
- 		value := strings.TrimSpace(hosts[1])
- 		value = stringsutil.TrimPrefixAny(value, "http://", "https://")
- 
-@@ -140,7 +150,7 @@ func (r *Request) parseAnnotations(rawRequest string, request *retryablehttp.Req
- 		modified = true
- 		var ctx context.Context
- 
--		if duration := reTimeoutAnnotation.FindStringSubmatch(rawRequest); len(duration) > 0 {
-+		if duration := reTimeoutAnnotation.FindStringSubmatch(annotations); len(duration) > 0 {
- 			value := strings.TrimSpace(duration[1])
- 			if parsedTimeout, err := time.ParseDuration(value); err == nil {
- 				// Cap at maximum allowed timeout to prevent DoS via extremely large timeout values
-```
-
-**File**: `pkg/protocols/http/request_annotations_test.go` (modified, +132/-0)
-```diff
-@@ -2,13 +2,25 @@ package http
+@@ -1,38 +1,29 @@
+ package tsgen
  
  import (
- 	"context"
-+	"fmt"
-+	"io"
- 	"net/http"
-+	"net/http/httptest"
-+	"strings"
-+	"sync"
-+	"sync/atomic"
- 	"testing"
- 	"time"
++	"errors"
+ 	"fmt"
+ 	"go/types"
+ 	"regexp"
+ 	"strings"
+-
+-	"github.com/projectdiscovery/utils/errkit"
+ )
  
- 	"github.com/projectdiscovery/gologger"
- 	"github.com/projectdiscovery/nuclei/v3/internal/tests/testutils"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/model"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/model/types/severity"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/operators"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/operators/extractors"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/output"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/contextargs"
- 	commoninteractsh "github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/interactsh"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/http/httpclientpool"
- 	"github.com/projectdiscovery/retryablehttp-go"
-@@ -191,3 +203,123 @@ func TestRequestParseAnnotationsTimeout(t *testing.T) {
- 		require.False(t, deadlined, "could not get set request deadline")
- 	})
++// errUnresolvedType is returned by lookupType for a name it cannot resolve.
++var errUnresolvedType = errors.New("unresolved type")
++
+ // scrape.go scrapes all information of exported type from different package
+ 
+ func (p *EntityParser) scrapeAndCreate(typeName string) error {
+ 	if p.newObjects[typeName] == nil {
+ 		return nil
+ 	}
+-	// get package name
+-	pkgName := strings.Split(typeName, ".")[0]
+-	baseTypeName := strings.Split(typeName, ".")[1]
+-	// get package
+-	pkg, ok := p.imports[pkgName]
+-	if !ok {
+-		return errkit.Newf("package %v for type %v not found", pkgName, typeName)
+-	}
+-	// get type
+-	obj := pkg.Types.Scope().Lookup(baseTypeName)
+-	if obj == nil {
+-		return errkit.Newf("type %v not found in package %+v", typeName, pkg)
+-	}
+-	// Ensure the object is a type name
+-	typeNameObj, ok := obj.(*types.TypeName)
+-	if !ok {
+-		return errkit.Newf("%v is not a type name", typeName)
++
++	typeNameObj, err := p.lookupType(typeName)
++	if err != nil {
++		return err
+ 	}
++
++	baseTypeName := typeNameObj.Name()
+ 	// Ensure the type is a named struct type
+ 	namedStruct, ok := typeNameObj.Type().Underlying().(*types.Struct)
+ 	if !ok {
+@@ -72,6 +63,36 @@ func (p *EntityParser) scrapeAndCreate(typeName string) error {
+ 	return nil
  }
+ 
++// lookupType resolves typeName, such as net.Conn, in the packages imported by
++// the parsed files.
++func (p *EntityParser) lookupType(typeName string) (*types.TypeName, error) {
++	pkgName, baseTypeName, _ := strings.Cut(typeName, ".")
 +
-+func TestRequestParseAnnotationsIgnoresLinesAfterRequestLine(t *testing.T) {
-+	req := &Request{connConfiguration: &httpclientpool.Configuration{}}
-+	rawRequest := "POST /probe HTTP/1.1\r\n" +
-+		"Host: example.com\r\n" +
-+		"\r\n" +
-+		"hello\n@Host: http://127.0.0.1:8797\n@tls-sni: decoy.example\n"
-+
-+	httpReq, err := retryablehttp.NewRequest(http.MethodPost, "https://example.com/probe", nil)
-+	require.NoError(t, err)
-+
-+	overrides, modified := req.parseAnnotations(rawRequest, httpReq)
-+	require.False(t, modified)
-+	require.Equal(t, "https://example.com/probe", overrides.request.String())
-+	require.Nil(t, overrides.request.TLS)
-+}
-+
-+// A response value reused in a raw request must stay request content even when
-+// one of its lines looks like an annotation. Annotations are only the lines
-+// before the request line.
-+func TestRawRequestReusingResponseWithAnnotationLine(t *testing.T) {
-+	tests := []struct {
-+		name          string
-+		unsafe        bool
-+		selfContained bool
-+	}{
-+		{name: "raw"},
-+		{name: "unsafe", unsafe: true},
-+		{name: "self-contained", selfContained: true},
++	pkg := p.imports[pkgName]
++	if pkg == nil {
++		return nil, fmt.Errorf("%w: package %v for type %v not found", errUnresolvedType, pkgName, typeName)
 +	}
 +
++	obj := pkg.Types.Scope().Lookup(baseTypeName)
++	if obj == nil {
++		return nil, fmt.Errorf("%w: type %v not found in package %+v", errUnresolvedType, typeName, pkg)
++	}
++
++	typeNameObj, ok := obj.(*types.TypeName)
++	if !ok {
++		return nil, fmt.Errorf("%w: %v is not a type name", errUnresolvedType, typeName)
++	}
++
++	return typeNameObj, nil
++}
++
++// isStruct reports whether t is a struct type.
++func isStruct(t types.Type) bool {
++	_, ok := t.Underlying().(*types.Struct)
++
++	return ok
++}
++
+ type ExtObject struct {
+ 	builtIn map[string]string
+ 	nested  map[string]map[string]*ExtObject // Changed to map of field names to ExtObject
+```
+
+**File**: `pkg/js/devtools/tsgen/testdata/external/external.go` (added, +32/-0)
+```diff
+@@ -0,0 +1,32 @@
++// Package external is a tsgen fixture that references types from other
++// packages, both structs and non-structs.
++package external
++
++import (
++	"context"
++	"net"
++	"net/url"
++)
++
++// Dial returns an external interface type.
++func Dial(network, address string) (net.Conn, error) {
++	return net.Dial(network, address)
++}
++
++// Parse returns an external struct type.
++func Parse(raw string) (*url.URL, error) {
++	return url.Parse(raw)
++}
++
++// Session holds an external interface type in an exported field.
++type Session struct {
++	Conn net.Conn
++}
++
++type dialer struct{}
++
++// DialContext is exported, but its receiver is not.
++func (dialer) DialContext(ctx context.Context, network, address string) (net.Conn, error) {
++	var d net.Dialer
++	return d.DialContext(ctx, network, address)
++}
+```
+
+**File**: `pkg/js/libs/gptransport/.nuclei-jsgen-ignore` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++shared adapter package; not a public JavaScript module
+```
+
+**File**: `pkg/js/libs/smbsession/.nuclei-jsgen-ignore` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++shared adapter package; not a public JavaScript module
+```
+
+---
+
+### Incident Patch 3: `ec6794c2` (2026-11-09)
+**Commit Message**: fix(js/tsgen): report package load errors instead of ignoring them
+
+packages.Load records parse, type, and list errors in Package.Errors
+and still returns a nil error. NewEntityParser and loadPackage checked
+only the returned error, so tsgen accepted packages that do not
+compile. Parse then panicked in extractParameters on the recovered
+syntax tree, or looked up types in an empty package and reported a
+misleading "type not found" error.
+
+Both call sites now load through loadPackage, which returns the
+package errors with the package ID and file positions.
+
+Fixes: #8098
+Signed-off-by: Dwi Siswanto <[REDACTED_EMAIL]>
+
+**File**: `pkg/js/devtools/tsgen/parser.go` (modified, +23/-12)
+```diff
+@@ -38,14 +38,11 @@ func NewEntityParser(dir string) (*EntityParser, error) {
+ 			return parser.ParseFile(fset, filename, src, parser.ParseComments)
+ 		},
+ 	}
+-	pkgs, err := packages.Load(cfg, ".")
++
++	pkg, err := loadPackage(cfg, ".")
+ 	if err != nil {
+ 		return nil, err
+ 	}
+-	if len(pkgs) == 0 {
+-		return nil, errors.New("no packages found")
+-	}
+-	pkg := pkgs[0]
+ 
+ 	return &EntityParser{
+ 		syntax:      pkg.Syntax,
+@@ -513,6 +510,7 @@ func (p *EntityParser) extractVarsNConstants() {
+ 
+ // loadImportedPackages loads all imported packages
+ func (p *EntityParser) loadImportedPackages() error {
++	cfg := &packages.Config{Mode: packages.NeedTypes | packages.NeedSyntax | packages.NeedTypesInfo}
+ 	// get all import statements
+ 	// iterate over all imports
+ 	for _, file := range p.syntax {
+@@ -522,7 +520,7 @@ func (p *EntityParser) loadImportedPackages() error {
+ 			// remove the quotes from the path
+ 			path = path[1 : len(path)-1]
+ 			// load the package
+-			pkg, err := loadPackage(path)
++			pkg, err := loadPackage(cfg, path)
+ 			if err != nil {
+ 				return err
+ 			}
+@@ -543,18 +541,31 @@ func (p *EntityParser) loadImportedPackages() error {
+ 	return nil
+ }
+ 
+-// Load the package containing the type definition
+-// TODO: we don't support named imports yet
+-func loadPackage(pkgPath string) (*packages.Package, error) {
+-	cfg := &packages.Config{Mode: packages.NeedTypes | packages.NeedSyntax | packages.NeedTypesInfo}
+-	pkgs, err := packages.Load(cfg, pkgPath)
++// loadPackage loads the package that pattern names.
++//
++// packages.Load reports parse, type, and list errors in Package.Errors
++// rather than in its returned error, so loadPackage converts them into an
++// error. The parser assumes a complete syntax tree and type information.
++func loadPackage(cfg *packages.Config, pattern string) (*packages.Package, error) {
++	pkgs, err := packages.Load(cfg, pattern)
+ 	if err != nil {
+ 		return nil, err
+ 	}
+ 	if len(pkgs) == 0 {
+ 		return nil, errors.New("no packages found")
+ 	}
+-	return pkgs[0], nil
++
++	pkg := pkgs[0]
++	if len(pkg.Errors) > 0 {
++		errs := make([]error, len(pkg.Errors))
++		for i, e := range pkg.Errors {
++			errs[i] = e
++		}
++
++		return nil, fmt.Errorf("package %s: %w", pkg.ID, errors.Join(errs...))
++	}
++
++	return pkg, nil
+ }
+ 
+ // exprToString converts an expression to a string
+```
+
+**File**: `pkg/js/devtools/tsgen/parser_test.go` (added, +86/-0)
+```diff
+@@ -0,0 +1,86 @@
++package tsgen
++
++import (
++	"go/ast"
++	"go/parser"
++	"go/token"
++	"os"
++	"path/filepath"
++	"testing"
++
++	"github.com/stretchr/testify/require"
++	"golang.org/x/tools/go/packages"
++)
++
++// writeModule writes src as the only package of a new Go module and
++// returns the module directory.
++func writeModule(t *testing.T, src string) string {
++	t.Helper()
++
++	dir := t.TempDir()
++	files := map[string]string{
++		"go.mod":     "module example.com/tsgentest\n\ngo 1.21\n",
++		"example.go": src,
++	}
++
++	for name, content := range files {
++		require.NoError(t, os.WriteFile(filepath.Join(dir, name), []byte(content), 0o600))
++	}
++
++	return dir
++}
++
++func TestNewEntityParser(t *testing.T) {
++	const src = `package example
++
++import "strings"
++
++// Upper returns s in upper case.
++func Upper(s string) string { return strings.ToUpper(s) }
++`
++
++	p, err := NewEntityParser(writeModule(t, src))
++	require.NoError(t, err)
++	require.NoError(t, p.Parse())
++
++	entities := p.GetEntities()
++
++	names := make([]string, 0, len(entities))
++	for _, e := range entities {
++		names = append(names, e.Name)
++	}
++
++	require.Contains(t, names, "Upper")
++}
++
++func TestNewEntityParserPackageErrors(t *testing.T) {
++	tests := []struct {
++		name string
++		src  string
++	}{
++		{name: "syntax error", src: "package example\n\nfunc Broken( {\n\treturn 42\n}\n"},
++		{name: "type error", src: "package example\n\nfunc Broken() int { return undefined }\n"},
++	}
 +	for _, tt := range tests {
 +		t.Run(tt.name, func(t *testing.T) {
-+			var decoyRequests atomic.Int32
-+			decoy := httptest.NewServer(http.HandlerFunc(func(http.ResponseWriter, *http.Request) {
-+				decoyRequests.Add(1)
-+			}))
-+			defer decoy.Close()
-+
-+			responseBody := fmt.Sprintf("hello\n@Host: %s\n", decoy.URL)
-+
-+			var mu sync.Mutex
-+			var probes []string
-+			target := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+				if r.URL.Path == "/source" {
-+					_, _ = io.WriteString(w, responseBody)
-+					return
-+				}
-+				body, _ := io.ReadAll(r.Body)
-+				mu.Lock()
-+				probes = append(probes, r.Method+" "+r.URL.Path+" "+string(body))
-+				mu.Unlock()
-+			}))
-+			defer target.Close()
-+
-+			baseURL, host, input := "", "{{Hostname}}", target.URL
-+			if tt.selfContained {
-+				// A self-contained request names its own target.
-+				baseURL, host, input = target.URL, strings.TrimPrefix(target.URL, "http://"), ""
-+			}
-+			probeHeaders := "Host: " + host + "\nContent-Type: text/plain\n"
-+			if tt.unsafe {
-+				// An unsafe request is sent as written, so it states its own length.
-+				probeHeaders += "Content-Length: {{len(tpl)}}\n"
-+			}
-+			request := &Request{
-+				ID:            "testing-http-response-annotation-line",
-+				Unsafe:        tt.unsafe,
-+				SelfContained: tt.selfContained,
-+				Raw: []string{
-+					"GET " + baseURL + "/source HTTP/1.1\nHost: " + host + "\n\n",
-+					"POST " + baseURL + "/probe HTTP/1.1\n" + probeHeaders + "\n{{tpl}}",
-+				},
-+				Operators: operators.Operators{
-+					Extractors: []*extractors.Extractor{{
-+						Name:     "tpl",
-+						Part:     "body",
-+						Type:     extractors.ExtractorTypeHolder{ExtractorType: extractors.RegexExtractor},
-+						Regex:    []string{`(?s).+`},
-+						Internal: true,
-+					}},
-+				},
-+			}
-+
-+			options := testutils.DefaultOptions
-+			testutils.Init(options)
-+			executerOpts := testutils.NewMockExecuterOptions(options, &testutils.TemplateInfo{
-+				ID:   request.ID,
-+				Info: model.Info{SeverityHolder: severity.Holder{Severity: severity.Info}, Name: "test"},
-+			})
-+			require.NoError(t, request.Compile(executerOpts))
-+
-+			err := request.ExecuteWithResults(
-+				contextargs.NewWithInput(context.Background(), input),
-+				make(output.InternalEvent),
-+				make(output.InternalEvent),
-+				func(*output.InternalWrappedEvent) {},
-+			)
-+			require.NoError(t, err)
-+
-+			require.Zero(t, decoyRequests.Load(), "a response line must not redirect the request")
-+			mu.Lock()
-+			defer mu.Unlock()
-+			require.Equal(t, []string{"POST /probe " + responseBody}, probes)
++			_, err := NewEntityParser(writeModule(t, tt.src))
++			require.ErrorContains(t, err, "example.go:")
 +		})
 +	}
 +}
 +
-+func TestTemplateAnnotationsAfterRequestLine(t *testing.T) {
-+	const request = "GET / HTTP/1.1\r\nHost: {{Hostname}}\r\n\r\n@timeout: 5s\r\n@once\r\n"
++func TestLoadImportedPackagesMissing(t *testing.T) {
++	const src = `package example; import "example.com/tsgentest/missing"`
 +
-+	require.False(t, hasTimeoutAnnotation(request))
++	file, err := parser.ParseFile(token.NewFileSet(), "example.go", src, parser.ImportsOnly)
++	require.NoError(t, err)
++	p := &EntityParser{
++		syntax:  []*ast.File{file},
++		imports: map[string]*packages.Package{},
++	}
++
++	var pkgErr packages.Error
++
++	require.ErrorAs(t, p.loadImportedPackages(), &pkgErr)
++	require.Contains(t, pkgErr.Msg, "example.com/tsgentest/missing")
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8068** (2026-11-05): keep template screenshots in a nuclei directory without local file access (@Mzack9999)
-- **PR #8066** (2026-11-05): send rdap requests through the scan dialer (@Mzack9999)
-- **PR #8064** (2026-11-05): send template doh queries through the scan dialer (@Mzack9999)
-- **PR #8062** (2026-11-05): fix(http): read annotations only before the request line (@dwisiswant0)
-- **PR #8059** (2026-11-05): fix(http): render self-contained raw requests once (@dwisiswant0)
-- **PR #8057** (2026-11-05): fix(fuzz): stop re-rendering evaluated template variables (@dwisiswant0)
+- **PR #8102** (2026-11-10): fix(js): stop tsgen from panicking on non-struct types (@dwisiswant0)
+- **PR #8100** (2026-11-09): fix(js/tsgen): report package load errors instead of ignoring them (@dwisiswant0)
+- **PR #8095** (closed): chore(deps): bump the modules group across 1 directory with 18 updates (@dependabot[bot])
+- **PR #8094** (2026-11-09): chore(deps): bump crate-ci/typos from 1.51.1 to 1.52.0 in the workflows group (@dependabot[bot])
+- **PR #8093** (2026-11-09): fix(templates): never trust cached verification verdicts (#7663) (@hakarrr)
+- **PR #8091** (2026-11-09): fix(deps): bump golang.org/x/net, brotli, and klauspost/compress (@dwisiswant0)
 
 ---
 
@@ -1857,28 +2088,46 @@ Signed-off-by: Dwi Siswanto <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. http): read annotations only before the request line (#8062)
+## X. Merge pull request #8079 from projectdiscovery/security-context/refresh
 
 **RULE**:
-When implementing operations in `pkg/protocols/http/http.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `SECURITY_CONTEXT.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `875b2293`: http): read annotations only before the request line (#8062). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `54662dc4`: Merge pull request #8079 from projectdiscovery/security-context/refresh. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/protocols/http/http.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `SECURITY_CONTEXT.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		if hasTimeoutAnnotation(req) {
+<!-- Generated by securitycontext.dev. Source HEAD: 40d08ee493f6f84c9a6b3c7f15f22da83853130c. -->
+_Analyzed [40d08ee493][c-40d08ee493] on `dev` · 5242 commits, 586 security-relevant examined · generated 2026-11-09_
+**12.5% of classified fixes repeat a previously fixed pattern** (2 recurring, 14 first-seen). A recurring pattern means this repository fixed a similar issue before — not that the code is currently vulnerable.
+| 1 | Code Execution | `pkg/fuzz/execute.go` | high | 2 | [4fed40f75a][c-4fed40f75a], [ccbfb12bd0][c-ccbfb12bd0] |
+| 2 | SSRF | `pkg/protocols/common/protocolstate/headless.go` | high | 2 | [d43c1f547f][c-d43c1f547f], [d9dabbb4a1][c-d9dabbb4a1] |
+| 3 | Arbitrary File Access | `v2/pkg/protocols/common/generators/load.go` | high | 0 (1 component gone, not counted) | [e5154d362a][c-e5154d362a] |
+| 4 | Arbitrary File Access | `pkg/js/libs/mysql/mysql.go` | high | 1 | [634cecbb28][c-634cecbb28] |
+| 5 | Certificate Validation Bypass | `pkg/reporting/exporters/es/elasticsearch.go` | high | 1 | [82d5a8acc2][c-82d5a8acc2] |
+| 6 | Code Execution | `pkg/protocols/common/expressions/expressions.go` | high | 1 | [d221732016][c-d221732016] |
+- `pkg/fuzz` — 2 fixes: Code Executio
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		if reTimeoutAnnotation.MatchString(req) {
+<!-- Generated by securitycontext.dev. Source HEAD: df57ae6d2955864fd92a1bd2565fe9e4e9a7592b. -->
+_Analyzed [df57ae6d29][c-df57ae6d29] on `dev` · 5174 commits, 548 security-relevant examined · generated 2026-11-02_
+**7.1% of classified fixes repeat a previously fixed pattern** (1 recurring, 13 first-seen). A recurring pattern means this repository fixed a similar issue before — not that the code is currently vulnerable.
+| 1 | SSRF | `pkg/protocols/common/protocolstate/headless.go` | high | 2 | [d43c1f547f][c-d43c1f547f], [d9dabbb4a1][c-d9dabbb4a1] |
+| 2 | Arbitrary File Access | `v2/pkg/protocols/common/generators/load.go` | high | 0 (1 component gone, not counted) | [e5154d362a][c-e5154d362a] |
+| 3 | Arbitrary File Access | `pkg/js/libs/mysql/mysql.go` | high | 1 | [634cecbb28][c-634cecbb28] |
+| 4 | Code Execution | `pkg/fuzz/execute.go` | high | 1 | [ccbfb12bd0][c-ccbfb12bd0] |
+| 5 | Code Execution | `pkg/protocols/common/expressions/expressions.go` | high | 1 | [d221732016][c-d221732016] |
+| 6 | Information Disclosure | `internal/httpapi/apiendpoint.go` | high | 1 | [a20aa26024][c-a20aa26024] |
+| Code Execution | 2 | 2 | [2026-06-30][c-ccbfb12bd0] ccbfb12bd0 |
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `875b2293` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `54662dc4` are properly handled with clean fallback behavior.

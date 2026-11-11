@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source**: github ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
-> **Source Version**: `823a3916`  
+> **Source Version**: `6bd1e65d`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T18:45:44.734Z  
+> **Timestamp**: 2026-11-10T00:59:45.774Z  
 > **Learning ID**: `learn-github-zama-ai-tfhe-rs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T18:45:44.431Z  
+> **Harvest Timestamp**: 2026-11-10T00:59:45.093Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: TFHE-rs: A Pure Rust implementation of the TFHE Scheme for Boolean and Integer Arithmetics Over Encrypted Data.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 1678 stars
+- **Stars / Engagement**: 1679 stars
 
 ---
 
@@ -1927,29 +1927,543 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `823a3916` (2026-11-05)
-**Commit Message**: chore(gpu): fix cuda backend tests (#4136)
+### Incident Patch 1: `6bd1e65d` (2026-11-09)
+**Commit Message**: fix(integer): encrypted shift/rotate on narrow amounts
 
-**File**: `backends/tfhe-cuda-backend/cuda/tests_and_benchmarks/tests/CMakeLists.txt` (modified, +0/-2)
+* chore(integer): add TFHE_RADIX_TEST_FAIL_FAST
+
+Failing fast is better to debug
+
+* fix(integer): encrypted shift/rotate on narrow amounts
+
+* Move the default shift/rotate tests (encrypted amount) to the new
+harness.
+* Add the missing _default_ prefix to the tests
+* Introduce a ShiftAmount wrapper to draw more often random values
+  in a range that produce a shifted value (and not 0)
+* Introduce a ShiftAmountOperand wrapper to send to the integer
+  functions some radix encrypting the amount with less blocks
+  than the radix we want to shift/rot
+with ShiftAmount: half below the width, half overshifting, and encrypted
+
+This uncovered 3 bugs:
+
+- Inputs were only cleaned when their carries were not empty
+  (The usual pattern we are hardening)
+
+- With 2_2 parameters, an amount of a single block on a radix of at
+least 3 blocks panicked (e.g FheUin8 << FheUint2) due to an overly
+strict assert. I removed the assert and let the flow of the function
+continue to have correct cleaning of outputs if needed.
+
+- Shifts gave results that are not clean when the amount radix cannot
+hold the shifted width (2^amount_bits <= num_bits, e.g.
+FheUint1
+
+**File**: `tfhe/src/integer/gpu/server_key/radix/tests_signed/legacy_default_tests.rs` (modified, +372/-7)
 ```diff
-@@ -69,8 +69,6 @@ file(
+@@ -2,11 +2,11 @@
+ //!
+ //! FIXME(gpu): the CPU tests for these operations moved to `radix_parallel::test_harness`
+ //! (see `radix_parallel::tests_signed::test_scalar_shift`, `test_scalar_rotate`,
+-//! `test_scalar_add`, `test_scalar_sub`, `test_neg` and `test_comparison`), which also
+-//! exercises inputs at the maximum degree and noise level. The GPU full propagation cannot
+-//! take blocks at the maximum degree yet. The overflowing scalar tests also cover scalars
+-//! that fit the radix blocks but not the signed range, for which the GPU implementations
+-//! return the opposite overflow flag: the CPU fix is `ScalarOverflowFlagSource` in
++//! `test_shift`, `test_rotate`, `test_scalar_add`, `test_scalar_sub`, `test_neg` and
++//! `test_comparison`), which also exercises inputs at the maximum degree and noise level. The GPU
++//! full propagation cannot take blocks at the maximum degree yet. The overflowing scalar tests also
++//! cover scalars that fit the radix blocks but not the signed range, for which the GPU
++//! implementations return the opposite overflow flag: the CPU fix is `ScalarOverflowFlagSource` in
+ //! `radix_parallel::scalar_add`, which the GPU can reuse. Once both are addressed point the
+ //! GPU wrappers at the harness tests and delete this file.
+ use crate::core_crypto::prelude::SignedNumeric;
+@@ -20,9 +20,11 @@ use crate::integer::server_key::radix_parallel::tests_signed::{
+     signed_right_shift_under_modulus,
+ };
+ use crate::integer::server_key::radix_parallel::tests_unsigned::{
+-    nb_tests_smaller_for_params, MAX_NB_CTXT, NB_CTXT,
++    nb_tests_smaller_for_params, panic_if_any_block_is_not_clean_or_trivial, MAX_NB_CTXT, NB_CTXT,
++};
++use crate::integer::{
++    BooleanBlock, IntegerKeyKind, RadixCiphertext, RadixClientKey, SignedRadixCiphertext,
+ };
+-use crate::integer::{BooleanBlock, IntegerKeyKind, RadixClientKey, SignedRadixCiphertext};
+ use crate::shortint::parameters::*;
+ use rand::distributions::Standard;
+ use rand::prelude::*;
+@@ -984,3 +986,366 @@ pub(crate) fn legacy_signed_default_minmax_test<P, T, ClearF, Scalar>(
+         assert_eq!(decrypted_result, expected_result);
+     }
+ }
++
++pub(crate) fn legacy_signed_default_left_shift_test<P, T>(param: P, mut executor: T)
++where
++    P: Into<TestParameters>,
++    T: for<'a> FunctionExecutor<
++        (&'a SignedRadixCiphertext, &'a RadixCiphertext),
++        SignedRadixCiphertext,
++    >,
++{
++    let param = param.into();
++    let nb_tests_smaller = nb_tests_smaller_for_params(param);
++    let (cks, mut sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
++    let cks = RadixClientKey::from((cks, NB_CTXT));
++    sks.set_deterministic_pbs_execution(true);
++    let sks = Arc::new(sks);
++
++    let mut rng = rand::thread_rng();
++
++    executor.setup(&cks, sks.clone());
++
++    let modulus = (cks.parameters().message_modulus().0.pow(NB_CTXT as u32) / 2) as i64;
++
++    assert!(modulus > 0);
++    assert!((modulus as u64).is_power_of_two());
++    let nb_bits = modulus.ilog2() + 1; // We are using signed numbers
++
++    for _ in 0..nb_tests_smaller {
++        let mut clear = rng.gen::<i64>() % modulus;
++
++        let offset = random_non_zero_value(&mut rng, modulus);
++
++        let mut ct = cks.encrypt_signed(clear);
++        sks.unchecked_scalar_add_assign(&mut ct, offset);
++        clear = signed_add_under_modulus(clear, offset, modulus);
++
++        // case when 0 <= shift < nb_bits
++        {
++            // Here we create a encrypted shift value in range O..nb_bits
++            // in a way that the shift ciphertext is seen as having non empty carries
++            let clear_shift = rng.gen::<u32>() % nb_bits;
++            let tmp = cks.encrypt(clear_shift);
++            let mut shift = cks.encrypt(0u32);
++            sks.unchecked_add_assign(&mut shift, &tmp);
++            assert!(!shift.block_carries_are_empty());
++
++            let ct_res = executor.execute((&ct, &shift));
++            panic_if_any_block_is_not_clean_or_trivial(&ct_res, &cks);
++            let dec_res: i64 = cks.decrypt_signed(&ct_res);
++            let clear_res = signed_left_shift_under_modulus(clear, clear_shift, modulus);
++            assert_eq!(
++                clear_res, dec_res,
++                "Invalid left shift result, for '{clear} << {clear_shift}', \
++                expected:  {clear_res}, got: {dec_res}"
++            );
++
++            let ct_res2 = executor.execute((&ct, &shift));
++            assert_eq!(ct_res, ct_res2, "Failed determinism check, \n\n\n msg0: {clear}, msg1: {clear_shift}, \n\n\nct0: {ct:?}, \n\n\nct1: {shift:?}\n\n\n");
++        }
++
++        // case when shift >= nb_bits
++        {
++            // Here we create a encrypted shift value >= nb_bits
++            // in a way that the shift ciphertext is seen as having non empty carries
++            let mut clear_shift = rng.gen::<u32>() % nb_bits;
++            let tmp = cks.encrypt(clear_shift);
++            let mut shift = cks.encrypt(nb_bits);
++            sks.unchecked_add_assi
+```
+
+**File**: `tfhe/src/integer/gpu/server_key/radix/tests_signed/test_rotate.rs` (modified, +9/-7)
+```diff
+@@ -1,9 +1,11 @@
++use super::legacy_default_tests::{
++    legacy_signed_default_rotate_left_test, legacy_signed_default_rotate_right_test,
++};
+ use crate::integer::gpu::server_key::radix::tests_unsigned::{
+     create_gpu_parameterized_test, GpuFunctionExecutor,
+ };
+ use crate::integer::gpu::CudaServerKey;
+ use crate::integer::server_key::radix_parallel::tests_signed::test_rotate::{
+-    signed_default_rotate_left_test, signed_default_rotate_right_test,
+     signed_unchecked_rotate_left_test, signed_unchecked_rotate_right_test,
+ };
+ use crate::shortint::parameters::test_params::*;
+@@ -21,12 +23,12 @@ create_gpu_parameterized_test!(integer_unchecked_rotate_right {
+     TEST_PARAM_MESSAGE_3_CARRY_3_KS_PBS_GAUSSIAN_2M128,
+     TEST_PARAM_GPU_MULTI_BIT_GROUP_4_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
+ });
+-create_gpu_parameterized_test!(integer_rotate_left {
++create_gpu_parameterized_test!(integer_default_rotate_left {
+     PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
+     TEST_PARAM_MESSAGE_3_CARRY_3_KS_PBS_GAUSSIAN_2M128,
+     TEST_PARAM_GPU_MULTI_BIT_GROUP_4_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
+ });
+-create_gpu_parameterized_test!(integer_rotate_right {
++create_gpu_parameterized_test!(integer_default_rotate_right {
+     PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
+     TEST_PARAM_MESSAGE_3_CARRY_3_KS_PBS_GAUSSIAN_2M128,
+     TEST_PARAM_GPU_MULTI_BIT_GROUP_4_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
+@@ -40,12 +42,12 @@ where
+     signed_unchecked_rotate_right_test(param, executor);
+ }
  
- add_executable(${BINARY} ${TEST_SOURCES} ../utils.cpp ../setup_and_teardown.cpp)
+-fn integer_rotate_right<P>(param: P)
++fn integer_default_rotate_right<P>(param: P)
+ where
+     P: Into<TestParameters> + Copy,
+ {
+     let executor = GpuFunctionExecutor::new(&CudaServerKey::rotate_right);
+-    signed_default_rotate_right_test(param, executor);
++    legacy_signed_default_rotate_right_test(param, executor);
+ }
  
--add_test(NAME ${BINARY} COMMAND ${BINARY})
--
- set_target_properties(${BINARY} PROPERTIES CUDA_SEPARABLE_COMPILATION ON CUDA_RESOLVE_DEVICE_SYMBOLS ON)
- target_link_libraries(${BINARY} PUBLIC GTest::gtest_main tfhe_rs_lib tfhe_cuda_backend cudart)
+ fn integer_unchecked_rotate_left<P>(param: P)
+@@ -56,10 +58,10 @@ where
+     signed_unchecked_rotate_left_test(param, executor);
+ }
  
+-fn integer_rotate_left<P>(param: P)
++fn integer_default_rotate_left<P>(param: P)
+ where
+     P: Into<TestParameters> + Copy,
+ {
+     let executor = GpuFunctionExecutor::new(&CudaServerKey::rotate_left);
+-    signed_default_rotate_left_test(param, executor);
++    legacy_signed_default_rotate_left_test(param, executor);
+ }
+```
+
+**File**: `tfhe/src/integer/gpu/server_key/radix/tests_signed/test_shift.rs` (modified, +9/-7)
+```diff
+@@ -1,9 +1,11 @@
++use super::legacy_default_tests::{
++    legacy_signed_default_left_shift_test, legacy_signed_default_right_shift_test,
++};
+ use crate::integer::gpu::server_key::radix::tests_unsigned::{
+     create_gpu_parameterized_test, GpuFunctionExecutor,
+ };
+ use crate::integer::gpu::CudaServerKey;
+ use crate::integer::server_key::radix_parallel::tests_signed::test_shift::{
+-    signed_default_left_shift_test, signed_default_right_shift_test,
+     signed_unchecked_left_shift_test, signed_unchecked_right_shift_test,
+ };
+ use crate::shortint::parameters::test_params::*;
+@@ -21,12 +23,12 @@ create_gpu_parameterized_test!(integer_signed_unchecked_right_shift {
+     TEST_PARAM_MESSAGE_3_CARRY_3_KS_PBS_GAUSSIAN_2M128,
+     TEST_PARAM_GPU_MULTI_BIT_GROUP_4_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
+ });
+-create_gpu_parameterized_test!(integer_signed_left_shift {
++create_gpu_parameterized_test!(integer_signed_default_left_shift {
+     PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
+     TEST_PARAM_MESSAGE_3_CARRY_3_KS_PBS_GAUSSIAN_2M128,
+     TEST_PARAM_GPU_MULTI_BIT_GROUP_4_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
+ });
+-create_gpu_parameterized_test!(integer_signed_right_shift {
++create_gpu_parameterized_test!(integer_signed_default_right_shift {
+     PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
+     TEST_PARAM_MESSAGE_3_CARRY_3_KS_PBS_GAUSSIAN_2M128,
+     TEST_PARAM_GPU_MULTI_BIT_GROUP_4_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
+@@ -40,12 +42,12 @@ where
+     signed_unchecked_right_shift_test(param, executor);
+ }
+ 
+-fn integer_signed_right_shift<P>(param: P)
++fn integer_signed_default_right_shift<P>(param: P)
+ where
+     P: Into<TestParameters> + Copy,
+ {
+     let executor = GpuFunctionExecutor::new(&CudaServerKey::right_shift);
+-    signed_default_right_shift_test(param, executor);
++    legacy_signed_default_right_shift_test(param, executor);
+ }
+ 
+ fn integer_signed_unchecked_left_shift<P>(param: P)
+@@ -56,10 +58,10 @@ where
+     signed_unchecked_left_shift_test(param, executor);
+ }
+ 
+-fn integer_signed_left_shift<P>(param: P)
++fn integer_signed_default_left_shift<P>(param: P)
+ where
+     P: Into<TestParameters> + Copy,
+ {
+     let executor = GpuFunctionExecutor::new(&CudaServerKey::left_shift);
+-    signed_default_left_shift_test(param, executor);
++    legacy_signed_default_left_shift_test(param, executor);
+ }
+```
+
+**File**: `tfhe/src/integer/gpu/server_key/radix/tests_unsigned/legacy_default_tests.rs` (modified, +238/-5)
+```diff
+@@ -2,8 +2,9 @@
+ //!
+ //! FIXME(gpu): the CPU tests for these operations moved to
+ //! `radix_parallel::test_harness` (see `radix_parallel::tests_unsigned::test_add`,
+-//! `test_scalar_add`, `test_scalar_shift`, `test_scalar_rotate`, `test_sum`, `test_neg` and
+-//! `test_comparison`), which also exercises inputs at the maximum degree and noise level.
++//! `test_scalar_add`, `test_scalar_shift`, `test_scalar_rotate`, `test_shift`, `test_rotate`,
++//! `test_sum`, `test_neg` and `test_comparison`), which also exercises inputs at the maximum
++//! degree and noise level.
+ //! The GPU full propagation cannot take blocks at the maximum degree yet.
+ //! Once it is aligned with the CPU one point the GPU wrappers at the harness
+ //! tests and delete this file.
+@@ -14,10 +15,11 @@ use crate::integer::keycache::KEY_CACHE;
+ use crate::integer::server_key::radix_parallel::tests_cases_unsigned::FunctionExecutor;
+ use crate::integer::server_key::radix_parallel::tests_unsigned::{
+     nb_tests_for_params, nb_tests_smaller_for_params, overflowing_add_under_modulus,
+-    panic_if_any_block_is_not_clean, random_non_zero_value, rotate_left_helper,
+-    rotate_right_helper, unsigned_modulus, MAX_NB_CTXT, NB_CTXT,
++    panic_if_any_block_is_not_clean, panic_if_any_block_is_not_clean_or_trivial,
++    random_non_zero_value, rotate_left_helper, rotate_right_helper, unsigned_modulus, MAX_NB_CTXT,
++    NB_CTXT,
+ };
+-use crate::integer::{BooleanBlock, IntegerKeyKind, RadixCiphertext, RadixClientKey};
++use crate::integer::{BooleanBlock, ClientKey, IntegerKeyKind, RadixCiphertext, RadixClientKey};
+ use crate::shortint::parameters::*;
+ use rand::distributions::Standard;
+ use rand::prelude::*;
+@@ -920,3 +922,234 @@ pub(crate) fn legacy_default_minmax_test<P, T, ClearF, Scalar>(
+         assert_eq!(decrypted_result, expected_result);
+     }
+ }
++
++pub(crate) fn legacy_default_left_shift_test<P, T>(param: P, mut executor: T)
++where
++    P: Into<TestParameters>,
++    T: for<'a> FunctionExecutor<(&'a RadixCiphertext, &'a RadixCiphertext), RadixCiphertext>,
++{
++    let param = param.into();
++    let nb_tests = nb_tests_smaller_for_params(param);
++    let (cks, sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
++    let sks = Arc::new(sks);
++    let cks = RadixClientKey::from((cks, NB_CTXT));
++
++    let mut rng = rand::thread_rng();
++
++    executor.setup(&cks, sks);
++
++    let cks: ClientKey = cks.into();
++
++    for num_blocks in 1..MAX_NB_CTXT {
++        // message_modulus^vec_length
++        let modulus = cks.parameters().message_modulus().0.pow(num_blocks as u32);
++        assert!(modulus.is_power_of_two());
++        let nb_bits = modulus.ilog2();
++        for _ in 0..nb_tests {
++            let clear = rng.gen::<u64>() % modulus;
++            let clear_shift = rng.gen::<u32>();
++
++            let ct = cks.encrypt_radix(clear, num_blocks);
++
++            // case when 0 <= shift < nb_bits
++            {
++                let clear_shift = clear_shift % nb_bits;
++                let shift = cks.encrypt_radix(clear_shift as u64, num_blocks);
++
++                let encrypted_result = executor.execute((&ct, &shift));
++                for (i, b) in encrypted_result.blocks.iter().enumerate() {
++                    if b.noise_level() > NoiseLevel::NOMINAL {
++                        println!("{i}: {:?}", b.noise_level());
++                    }
++                }
++                panic_if_any_block_is_not_clean_or_trivial(&encrypted_result, &cks);
++                let decrypted_result: u64 = cks.decrypt_radix(&encrypted_result);
++                assert_eq!((clear << clear_shift) % modulus, decrypted_result);
++            }
++
++            // case when shift >= nb_bits
++            {
++                let clear_shift = rng.gen_range(nb_bits..modulus as u32);
++                let shift = cks.encrypt_radix(clear_shift as u64, num_blocks);
++
++                let encrypted_result = executor.execute((&ct, &shift));
++                panic_if_any_block_is_not_clean_or_trivial(&encrypted_result, &cks);
++                let decrypted_result: u64 = cks.decrypt_radix(&encrypted_result);
++                // A shift >= nb_bits is an overshift and must return 0
++                assert_eq!(0, decrypted_result);
++            }
++        }
++    }
++}
++
++pub(crate) fn legacy_default_right_shift_test<P, T>(param: P, mut executor: T)
++where
++    P: Into<TestParameters>,
++    T: for<'a> FunctionExecutor<(&'a RadixCiphertext, &'a RadixCiphertext), RadixCiphertext>,
++{
++    let param = param.into();
++    let nb_tests = nb_tests_smaller_for_params(param);
++    let (cks, sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
++    let sks = Arc::new(sks);
++    let cks = RadixClientKey::from((cks, NB_CTXT));
++
++    let mut rng = rand::thread_rng();
++
++    executor.setup(&cks, sks);
++
++    let cks: ClientKey = cks.into();
++
++    for num_blocks in 1..MAX_NB_CTXT {
++        // message_modulus^vec_length
++        let modulus = cks.parameters().message_modulus().0.pow
+```
+
+**File**: `tfhe/src/integer/gpu/server_key/radix/tests_unsigned/test_rotate.rs` (modified, +10/-8)
+```diff
+@@ -1,10 +1,12 @@
++use super::legacy_default_tests::{
++    legacy_default_rotate_left_test, legacy_default_rotate_right_test,
++};
+ use crate::integer::gpu::server_key::radix::tests_unsigned::{
+     create_gpu_parameterized_test, GpuFunctionExecutor,
+ };
+ use crate::integer::gpu::CudaServerKey;
+ use crate::integer::server_key::radix_parallel::tests_unsigned::test_rotate::{
+-    default_rotate_left_test, default_rotate_right_test, unchecked_rotate_left_test,
+-    unchecked_rotate_right_test,
++    unchecked_rotate_left_test, unchecked_rotate_right_test,
+ };
+ use crate::shortint::parameters::test_params::*;
+ use crate::shortint::parameters::*;
+@@ -21,13 +23,13 @@ create_gpu_parameterized_test!(integer_unchecked_rotate_right {
+     TEST_PARAM_MESSAGE_3_CARRY_3_KS_PBS_GAUSSIAN_2M128,
+     TEST_PARAM_GPU_MULTI_BIT_GROUP_4_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
+ });
+-create_gpu_parameterized_test!(integer_rotate_left {
++create_gpu_parameterized_test!(integer_default_rotate_left {
+     PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
+     TEST_PARAM_MESSAGE_3_CARRY_3_KS_PBS_GAUSSIAN_2M128,
+     TEST_PARAM_GPU_MULTI_BIT_GROUP_4_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
+     TEST_PARAM_GPU_MULTI_BIT_GROUP_3_MESSAGE_3_CARRY_3_KS_PBS_GAUSSIAN_2M64,
+ });
+-create_gpu_parameterized_test!(integer_rotate_right {
++create_gpu_parameterized_test!(integer_default_rotate_right {
+     PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
+     TEST_PARAM_MESSAGE_3_CARRY_3_KS_PBS_GAUSSIAN_2M128,
+     TEST_PARAM_GPU_MULTI_BIT_GROUP_4_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
+@@ -42,12 +44,12 @@ where
+     unchecked_rotate_right_test(param, executor);
+ }
+ 
+-fn integer_rotate_right<P>(param: P)
++fn integer_default_rotate_right<P>(param: P)
+ where
+     P: Into<TestParameters> + Copy,
+ {
+     let executor = GpuFunctionExecutor::new(&CudaServerKey::rotate_right);
+-    default_rotate_right_test(param, executor);
++    legacy_default_rotate_right_test(param, executor);
+ }
+ 
+ fn integer_unchecked_rotate_left<P>(param: P)
+@@ -58,10 +60,10 @@ where
+     unchecked_rotate_left_test(param, executor);
+ }
+ 
+-fn integer_rotate_left<P>(param: P)
++fn integer_default_rotate_left<P>(param: P)
+ where
+     P: Into<TestParameters> + Copy,
+ {
+     let executor = GpuFunctionExecutor::new(&CudaServerKey::rotate_left);
+-    default_rotate_left_test(param, executor);
++    legacy_default_rotate_left_test(param, executor);
+ }
+```
+
+**File**: `tfhe/src/integer/gpu/server_key/radix/tests_unsigned/test_shift.rs` (modified, +10/-8)
+```diff
+@@ -1,10 +1,12 @@
++use super::legacy_default_tests::{
++    legacy_default_left_shift_test, legacy_default_right_shift_test,
++};
+ use crate::integer::gpu::server_key::radix::tests_unsigned::{
+     create_gpu_parameterized_test, GpuFunctionExecutor,
+ };
+ use crate::integer::gpu::CudaServerKey;
+ use crate::integer::server_key::radix_parallel::tests_unsigned::test_shift::{
+-    default_left_shift_test, default_right_shift_test, unchecked_left_shift_test,
+-    unchecked_right_shift_test,
++    unchecked_left_shift_test, unchecked_right_shift_test,
+ };
+ use crate::shortint::parameters::test_params::*;
+ use crate::shortint::parameters::*;
+@@ -21,12 +23,12 @@ create_gpu_parameterized_test!(integer_unchecked_right_shift {
+     TEST_PARAM_MESSAGE_3_CARRY_3_KS_PBS_GAUSSIAN_2M128,
+     TEST_PARAM_GPU_MULTI_BIT_GROUP_4_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
+ });
+-create_gpu_parameterized_test!(integer_left_shift {
++create_gpu_parameterized_test!(integer_default_left_shift {
+     PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
+     TEST_PARAM_MESSAGE_3_CARRY_3_KS_PBS_GAUSSIAN_2M128,
+     TEST_PARAM_GPU_MULTI_BIT_GROUP_4_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
+ });
+-create_gpu_parameterized_test!(integer_right_shift {
++create_gpu_parameterized_test!(integer_default_right_shift {
+     PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
+     TEST_PARAM_MESSAGE_3_CARRY_3_KS_PBS_GAUSSIAN_2M128,
+     TEST_PARAM_GPU_MULTI_BIT_GROUP_4_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
+@@ -40,12 +42,12 @@ where
+     unchecked_right_shift_test(param, executor);
+ }
+ 
+-fn integer_right_shift<P>(param: P)
++fn integer_default_right_shift<P>(param: P)
+ where
+     P: Into<TestParameters> + Copy,
+ {
+     let executor = GpuFunctionExecutor::new(&CudaServerKey::right_shift);
+-    default_right_shift_test(param, executor);
++    legacy_default_right_shift_test(param, executor);
+ }
+ 
+ fn integer_unchecked_left_shift<P>(param: P)
+@@ -56,10 +58,10 @@ where
+     unchecked_left_shift_test(param, executor);
+ }
+ 
+-fn integer_left_shift<P>(param: P)
++fn integer_default_left_shift<P>(param: P)
+ where
+     P: Into<TestParameters> + Copy,
+ {
+     let executor = GpuFunctionExecutor::new(&CudaServerKey::left_shift);
+-    default_left_shift_test(param, executor);
++    legacy_default_left_shift_test(param, executor);
+ }
+```
+
+**File**: `tfhe/src/integer/server_key/radix_parallel/bit_extractor.rs` (modified, +7/-0)
+```diff
+@@ -115,6 +115,13 @@ impl<'a> BitExtractor<'a> {
+         }
+     }
+ 
++    /// Checks for emptiness
++    ///
++    /// Returns `false` if there's at least a bit left
++    pub(crate) fn is_empty(&self) -> bool {
++        self.buffer.is_empty() && self.input_blocks.as_slice().is_empty()
++    }
++
+     /// Extract the remaining `n` bits in parallel from the current source blocks
+     /// and place them into the internal buffer
+     ///
+```
+
+**File**: `tfhe/src/integer/server_key/radix_parallel/block_shift.rs` (modified, +1/-1)
+```diff
+@@ -64,7 +64,7 @@ impl ServerKey {
+     where
+         T: IntegerRadixCiphertext,
+     {
+-        if d_range.is_empty() {
++        if d_range.is_empty() || shift_bits_extractor.is_empty() {
+             let mut result = ct.clone();
+             result
+                 .blocks_mut()
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4153** (2026-11-09): Am/chore/lock cargo installs (@IceTDrinker)
+- **PR #4146** (2026-11-06): Ts/ci/fix slab ci in 1.8 (@SouchonTheo)
+- **PR #4145** (2026-11-06): Ts/ci/fix slab ci in 1.7 (@SouchonTheo)
 - **PR #4142** (closed): Ns/feat/stream ciphertext list (@nsarlin-zama)
 - **PR #4141** (2026-11-05): chore(ci): setup tailscale ci to make slab work again (@SouchonTheo)
 - **PR #4136** (2026-11-05): chore(gpu): fix cuda_backend tests running twice (@agnesLeroy)
-- **PR #4135** (2026-11-05): chore(zk): add itertools as dev-dependency (@nsarlin-zama)
-- **PR #4127** (2026-11-05): chore(gpu): refactor ci to better cover classical pbs (@agnesLeroy)
-- **PR #4125** (2026-10-30): chore: add some missing dependency tracking in dependabot (@IceTDrinker)
 
 ---
 
@@ -1963,3 +2477,62 @@ Observed empirical fixes and code patches:
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. integer): encrypted shift/rotate on narrow amounts
+
+**RULE**:
+When implementing operations in `tfhe/src/integer/gpu/server_key/radix/tests_signed/legacy_default_tests.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `6bd1e65d`: integer): encrypted shift/rotate on narrow amounts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tfhe/src/integer/gpu/server_key/radix/tests_signed/legacy_default_tests.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+//! `test_shift`, `test_rotate`, `test_scalar_add`, `test_scalar_sub`, `test_neg` and
+//! `test_comparison`), which also exercises inputs at the maximum degree and noise level. The GPU
+//! full propagation cannot take blocks at the maximum degree yet. The overflowing scalar tests also
+//! cover scalars that fit the radix blocks but not the signed range, for which the GPU
+//! implementations return the opposite overflow flag: the CPU fix is `ScalarOverflowFlagSource` in
+    nb_tests_smaller_for_params, panic_if_any_block_is_not_clean_or_trivial, MAX_NB_CTXT, NB_CTXT,
+};
+use crate::integer::{
+    BooleanBlock, IntegerKeyKind, RadixCiphertext, RadixClientKey, SignedRadixCiphertext,
+
+pub(crate) fn legacy_signed_default_left_shift_test<P, T>(param: P, mut executor: T)
+where
+    P: Into<TestParameters>,
+    T: for<'a> FunctionExecutor<
+        (&'a SignedRadixCiphertext, &'a RadixCiphertext),
+        SignedRadixCiphertext,
+    >,
+{
+    let param = param.into();
+    let nb_tests_smaller = nb_tests_smaller_for_params(param);
+    let (cks, mut sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
+    let cks = RadixClientKey::from((cks, NB_CTXT));
+    sks.set_deterministic_pbs_exe
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+//! `test_scalar_add`, `test_scalar_sub`, `test_neg` and `test_comparison`), which also
+//! exercises inputs at the maximum degree and noise level. The GPU full propagation cannot
+//! take blocks at the maximum degree yet. The overflowing scalar tests also cover scalars
+//! that fit the radix blocks but not the signed range, for which the GPU implementations
+//! return the opposite overflow flag: the CPU fix is `ScalarOverflowFlagSource` in
+    nb_tests_smaller_for_params, MAX_NB_CTXT, NB_CTXT,
+use crate::integer::{BooleanBlock, IntegerKeyKind, RadixClientKey, SignedRadixCiphertext};
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `6bd1e65d` are properly handled with clean fallback behavior.

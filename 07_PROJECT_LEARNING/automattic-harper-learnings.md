@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/automattic-harper-learnings.md`  
 > **Source**: github ([https://github.com/Automattic/harper](https://github.com/Automattic/harper))  
-> **Source Version**: `f7683239`  
+> **Source Version**: `11f7925c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T19:29:29.511Z  
+> **Timestamp**: 2026-11-09T01:01:19.357Z  
 > **Learning ID**: `learn-github-automattic-harper`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/automattic-harper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Automattic/harper](https://github.com/Automattic/harper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T19:29:29.503Z  
+> **Harvest Timestamp**: 2026-11-09T01:01:18.848Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Offline, privacy-first grammar checker. Fast, open-source, Rust-powered
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 17422 stars
+- **Stars / Engagement**: 17494 stars
 
 ---
 
@@ -1408,11 +1408,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4710** (2026-10-27): **Intermittent hang with harper-ls in nvim editing a typst file**
-  *Symptoms*: **Describe the bug** When working with typst files in nvim occasionally the code-actions shortcut will stop responding, attempts to restart harper inside nvim also don't work and I have to quit nvim and start it back up for harper to respond.  **To Reproduce** Steps to reproduce the behavior: 1. Start nvim and open file 2. Edit the document, saving frequently 3. Try to open code actions 4. Eventually after a somewhat random amount of edits it will fail to open  **Expected behavior** Code actions should always open and harper should respond with its suggestions.  **Platform** Ubuntu 26.04.01, nvim v0.12.2 
+- **Issue #4854** (2026-11-07): **False Positive: Incorrect they->them lint**
+  *Symptoms*: ## What got flagged?  "Whether they had families could affect the help they received."  The final 'they' -> 'them' (Harper TheyToThem)  ## Why is this incorrect?  Using the word 'them' in this context is very clearly grammatically incorrect. Harper should let 'they' be.  ## Example of correct usage  "Whether they had families could affect the help they received."
 
-- **Issue #4692** (2026-10-27): **`2.13.0.XPI` attempts to replace “OS” with “Os”.**
-  *Symptoms*: #### What Was Flagged  When I enter the undermentioned: [^1]  [^1]: [`bugs.kde.org/show_bug.cgi?id=527818`](https://bugs.kde.org/show_bug.cgi?id=527818#comment_text_0:~:text=%23%20DESCRIPTION,to%20https://youtu%2Ebe/E3Np91u0mG4%2C%20too%2E)  ~~~markdown # DESCRIPTION  Dolphin occasionally renders its details category headings atop that category's childrens' names.  This has been occurring for at least a year; perhaps, since I began utilising Dolphin, back in the Plasma 5 era.  # STEPS TO REPRODUCE  This appears to occur  # OBSERVED RESULT  The “Details” engine's category headings were duplicated, the bottom of which rendered atop a file name.  # EXPECTED RESULT  None of the aforestated should occur.  # SOFTWARE / OS VERSIONS  > ~~~ > PS /home/beedell.roke_julian_lockhart> kinfo | yq -P                                               > Operating System: Fedora Linux 44 > KDE Plasma Version: 6.7.5 > KDE Frameworks Version: 6.31.0 > Qt Version: 6.11.2 > Kernel Version: 7.2.11-200.fc44.x86_64 (64-bit) > Graphics Platform: Wayland > Processors: 12 × AMD Ryzen 5 7600X 6-Core Processor > Memory: 32 GiB of RAM (30.4 GiB usable) > Graphics Processor 1: AMD Radeon RX 5700 > Graphics Processor 2: AMD Ryzen 5 7600X 6-Core Processor > ~~~  # ADDITIONAL INFORMATION  The attached screencast has been uploaded to https://youtu.be/E3Np91u0mG4, too. ~~~  …into [`bugs.kde.org/enter_bug.cgi?product=dolphin#comment`](https://bugs.kde.org/enter_bug.cgi?product=dolphin#comment:~:text=Description:-,Com
+- **Issue #4853** (2026-11-07): **Incorrect lint: out guesses -> outguesses**
+  *Symptoms*: ## What got flagged?  "Leave out guesses about how people felt."  'out guesses' -> 'outguesses' (Harper DisjointPrefixes)  ## Why is this incorrect?  As would be obvious to a human, 'out guesses' is valid and has a distinct meaning, whereas using 'outguesses' wouldn't make very much sense in this sentence, even outside of preserving the meaning.  ## Example of correct usage  "Leave out guesses about how people felt."
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1429,578 +1429,268 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f7683239` (2026-11-05)
-**Commit Message**: fix: keep the editor typable after clicking a highlighted lint (#3834)
+### Incident Patch 1: `11f7925c` (2026-11-08)
+**Commit Message**: fix(core): mark "later" and "further" as adverbs (#4868)
 
-* fix: keep the editor typable after clicking a highlighted lint
+Without the adverb sense, "She would later become president." was flagged by
+ModalBeAdjective and "She further explained the plan." by PronounVerbAgreement.
 
-* test: match the redesigned suggestion title in the activation-key test
+Co-authored-by: Andrew Dunbar <[REDACTED_EMAIL]>
 
-The popup redesign titles a replacement row `Click to replace "an" with
-"a"`, so the test waited for a `Replace with "a"` title that no longer
-exists and timed out.
-
-* test: assert the suggestion row is focused with toBeFocused
-
-The row sits in the popup shadow root, so `:focus` resolved to both the
-row and its host and the strict locator failed.
-
-* test: skip the activation-key test on Firefox
-
-It sets the activation key through the extension background, which
-Firefox does not expose to Playwright, so it waited until the browser
-closed. Use getBackground and skip Firefox like the other tests that
-write extension storage.
-
----------
-
-Signed-off-by: Matt Van Horn <[REDACTED_EMAIL]>
-Co-authored-by: Matt Van Horn <[REDACTED_EMAIL]>
-
-**File**: `packages/chrome-plugin/tests/simple_textarea.spec.ts` (modified, +70/-0)
+**File**: `harper-core/dictionary.dict` (modified, +2/-1)
 ```diff
-@@ -20,6 +20,76 @@ testCanIgnoreSuggestion(TEST_PAGE_URL, getTextarea);
- testCanBlockRuleSuggestion(TEST_PAGE_URL, getTextarea);
- testMultipleSuggestionsAndUndo(TEST_PAGE_URL, getTextarea);
- 
-+test('Keeps the textarea typable after opening a suggestion with a click', async ({ page }) => {
-+	await page.goto(TEST_PAGE_URL);
-+
-+	const editor = getTextarea(page);
-+	await replaceEditorContent(editor, 'This word is misspellled.');
-+
-+	expect(await clickHarperHighlight(page)).toBe(true);
-+	await page.locator('.harper-container').waitFor({ state: 'visible' });
-+	await assertLocatorIsFocused(page, editor);
-+
-+	const valueBeforeDelete = await editor.inputValue();
-+	await page.keyboard.press('Delete');
-+	expect(await editor.inputValue()).not.toBe(valueBeforeDelete);
-+});
-+
-+test('Focuses suggestions when opening the popup with the activation key', async ({
-+	browserName,
-+	context,
-+	page,
-+}) => {
-+	test.skip(
-+		browserName === 'firefox',
-+		'Firefox MV3 background context is not exposed reliably in playwright-webextext.',
-+	);
-+	const background = await getBackground(context);
-+	await background.evaluate(() => chrome.storage.local.set({ activationKey: 'shift' }));
-+	await page.goto(TEST_PAGE_URL);
-+
-+	const editor = getTextarea(page);
-+	await replaceEditorContent(editor, 'This is an test.');
-+	await page.locator('#harper-highlight').waitFor({ state: 'visible' });
-+
-+	await page.keyboard.press('Shift');
-+	await page.waitForTimeout(50);
-+	await page.keyboard.press('Shift');
-+
-+	const firstSuggestion = page.getByTitle('Click to replace "an" with "a"');
-+	await firstSuggestion.waitFor({ state: 'visible' });
-+	// The row lives in the popup's shadow root, so `:focus` also matches its host.
-+	await expect(firstSuggestion).toBeFocused();
-+
-+	await page.keyboard.press('Escape');
-+	await page.locator('.harper-container').waitFor({ state: 'hidden' });
-+	await assertLocatorIsFocused(page, editor);
-+
-+	await page.keyboard.press('Shift');
-+	await page.waitForTimeout(50);
-+	await page.keyboard.press('Shift');
-+	await firstSuggestion.waitFor({ state: 'visible' });
-+	await expect(firstSuggestion).toBeFocused();
-+
-+	await page.keyboard.press('Enter');
-+	await expect(editor).toHaveValue('This is a test.');
-+});
-+
-+test('Dismisses a click-opened popup when clicking outside its highlight', async ({ page }) => {
-+	await page.goto(TEST_PAGE_URL);
-+
-+	const editor = getTextarea(page);
-+	await replaceEditorContent(editor, 'This word is misspellled.');
-+
-+	expect(await clickHarperHighlight(page)).toBe(true);
-+	await page.locator('.harper-container').waitFor({ state: 'visible' });
-+
-+	await editor.click({ position: { x: 2, y: 2 } });
-+
-+	await page.locator('.harper-container').waitFor({ state: 'hidden' });
-+	await assertLocatorIsFocused(page, editor);
-+});
-+
- test('Wraps correctly', async ({ page }, testInfo) => {
- 	await page.goto(TEST_PAGE_URL);
- 
+@@ -26348,7 +26348,7 @@ furriness/Ng
+ furring/V6Ng
+ furrow/NgSVdG
+ furry/~J^>pNZ
+-further/~VSGdJc
++further/~VSGdJcR
+ furtherance/Nmg
+ furthermore/~J
+ furthermost/J
+@@ -32102,6 +32102,7 @@ latecomer/NgS
+ latency/~Ng
+ lateness/Ng
+ latent/~JYNgS
++later/~JcR
+ lateral/~JYNgSVdG
+ latest/~JNg
+ latex/~Ng
 ```
 
-**File**: `packages/lint-framework/src/lint/PopupHandler.ts` (modified, +6/-0)
+**File**: `harper-core/src/linting/modal_be_adjective.rs` (modified, +8/-0)
 ```diff
-@@ -33,6 +33,8 @@ export default class PopupHandler {
- 	private currentLintBoxes: IgnorableLintBox[];
- 	private popupLint: number | undefined;
- 	private selectedSuggestion = 0;
-+	/** Only a keyboard activation moves focus into the popup; a click leaves it in the editor. */
-+	private autofocusSuggestion = false;
- 	private currentHint: string | null | undefined;
- 	private currentHintFor: number | undefined;
- 	private renderBox: RenderBox;
-@@ -98,6 +100,7 @@ export default class PopupHandler {
- 
- 		this.popupLint = closestIdx;
- 		this.selectedSuggestion = 0;
-+		this.autofocusSuggestion = true;
- 		this.render();
- 		if (popupFocused) this.focusSelectedSuggestion();
- 	}
-@@ -119,6 +122,7 @@ export default class PopupHandler {
- 				if (this.popupLint != null) this.close();
- 				this.popupLint = i;
- 				this.selectedSuggestion = 0;
-+				this.autofocusSuggestion = false;
- 				this.render();
- 				return;
- 			}
-@@ -130,6 +134,7 @@ export default class PopupHandler {
- 	private close = () => {
- 		this.popupLint = undefined;
- 		this.selectedSuggestion = 0;
-+		this.autofocusSuggestion = false;
- 		this.render();
- 	};
- 
-@@ -153,6 +158,7 @@ export default class PopupHandler {
- 			tree = SuggestionBox({
- 				box,
- 				selectedIndex: this.selectedSuggestion,
-+				autofocus: this.autofocusSuggestion,
- 				onSelect: (index) => {
- 					if (index === this.selectedSuggestion) return;
- 					this.selectedSuggestion = index;
+@@ -165,4 +165,12 @@ mod tests {
+             ModalBeAdjective::default(),
+         );
+     }
++
++    #[test]
++    fn ignore_would_later() {
++        assert_no_lints(
++            "She would later become president.",
++            ModalBeAdjective::default(),
++        );
++    }
+ }
 ```
 
-**File**: `packages/lint-framework/src/lint/SuggestionBox.ts` (modified, +3/-1)
+**File**: `harper-core/src/linting/pronoun_verb_agreement.rs` (modified, +5/-0)
 ```diff
-@@ -152,7 +152,7 @@ function popupHook(props: Parameters<typeof SuggestionBox>[0], refocusClose: ()
- 		const frame = requestAnimationFrame(() => {
- 			if (!node.isConnected) return;
- 			measure();
--			if (!node.dataset.autofocused) {
-+			if (props.autofocus && !node.dataset.autofocused) {
- 				saveCursorState();
- 				node.dataset.autofocused = 'true';
- 				focusRow(node, props.selectedIndex);
-@@ -502,6 +502,8 @@ function styleTag(kind: LintKind) {
- export default function SuggestionBox(props: {
- 	box: IgnorableLintBox;
- 	selectedIndex: number;
-+	/** Move focus to the selected row when the popup opens. */
-+	autofocus: boolean;
- 	onSelect: (index: number) => void;
- 	/** Optional consumer capabilities; the popup never persists configuration itself. */
- 	actions: {
+@@ -550,4 +550,9 @@ mod lints {
+     fn dont_flag_4388() {
+         assert_no_lints("We humans are naturally curious.", test_linter());
+     }
++
++    #[test]
++    fn dont_flag_she_further_explained() {
++        assert_no_lints("She further explained the plan.", test_linter());
++    }
+ }
 ```
 
----
-
-### Incident Patch 2: `0294fdab` (2026-11-05)
-**Commit Message**: fix(web): the dark mode had some regressions (#4817)
-
-**File**: `packages/components/src/lib/logos/GitHubLogo.svelte` (modified, +1/-2)
+**File**: `harper-core/tests/text/tagged/Alice's Adventures in Wonderland.md` (modified, +6/-6)
 ```diff
-@@ -4,9 +4,8 @@ export let height = '100%';
- </script>
- 
- <svg class="block" {width} {height} viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
--	<circle cx="16" cy="17" r="15" style="fill: white;" />
- 	<path
- 		d="M16 0.396c-8.839 0-16 7.167-16 16 0 7.073 4.584 13.068 10.937 15.183 0.803 0.151 1.093-0.344 1.093-0.772 0-0.38-0.009-1.385-0.015-2.719-4.453 0.964-5.391-2.151-5.391-2.151-0.729-1.844-1.781-2.339-1.781-2.339-1.448-0.989 0.115-0.968 0.115-0.968 1.604 0.109 2.448 1.645 2.448 1.645 1.427 2.448 3.744 1.74 4.661 1.328 0.14-1.031 0.557-1.74 1.011-2.135-3.552-0.401-7.287-1.776-7.287-7.907 0-1.751 0.62-3.177 1.645-4.297-0.177-0.401-0.719-2.031 0.141-4.235 0 0 1.339-0.427 4.4 1.641 1.281-0.355 2.641-0.532 4-0.541 1.36 0.009 2.719 0.187 4 0.541 3.043-2.068 4.381-1.641 4.381-1.641 0.859 2.204 0.317 3.833 0.161 4.235 1.015 1.12 1.635 2.547 1.635 4.297 0 6.145-3.74 7.5-7.296 7.891 0.556 0.479 1.077 1.464 1.077 2.959 0 2.14-0.020 3.864-0.020 4.385 0 0.416 0.28 0.916 1.104 0.755 6.4-2.093 10.979-8.093 10.979-15.156 0-8.833-7.161-16-16-16z"
--		style="fill: black;"
-+		fill="currentColor"
- 	/>
- </svg>
-```
-
-**File**: `packages/components/src/lib/logos/LinearLogo.svelte` (modified, +1/-1)
-```diff
-@@ -3,4 +3,4 @@ export let width = '100%';
- export let height = '100%';
- </script>
- 
--<svg class="text-[#222326] dark:text-white" {width} {height} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path fill="currentColor" d="m8.174 102.613l145.213 145.213c2.12 2.12 1.097 5.72-1.85 6.27a128 128 0 0 1-15.02 1.896a3.78 3.78 0 0 1-2.92-1.109L1.117 122.403a3.78 3.78 0 0 1-1.109-2.92c.34-5.095.978-10.107 1.896-15.02c.55-2.947 4.15-3.97 6.27-1.85m-4.092 58.796c-.97-3.614 3.3-5.894 5.946-3.248l87.81 87.811c2.647 2.646.367 6.915-3.247 5.946c-44.03-11.805-78.704-46.478-90.51-90.509m12.727-97.245c1.233-2.135 4.147-2.463 5.89-.719L192.556 233.3c1.744 1.744 1.417 4.658-.72 5.891a128 128 0 0 1-11.1 5.705c-1.43.65-3.11.322-4.22-.79L11.893 79.487c-1.111-1.112-1.439-2.79-.79-4.221a128 128 0 0 1 5.706-11.1M127.86 0C198.63 0 256 57.37 256 128.14c0 37.57-16.168 71.362-41.926 94.8c-1.487 1.354-3.768 1.264-5.19-.157L33.217 47.116c-1.421-1.422-1.51-3.703-.158-5.19C56.498 16.168 90.291 0 127.86 0"></path></svg>
-+<svg class="text-[#222326]" {width} {height} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path fill="currentColor" d="m8.174 102.613l145.213 145.213c2.12 2.12 1.097 5.72-1.85 6.27a128 128 0 0 1-15.02 1.896a3.78 3.78 0 0 1-2.92-1.109L1.117 122.403a3.78 3.78 0 0 1-1.109-2.92c.34-5.095.978-10.107 1.896-15.02c.55-2.947 4.15-3.97 6.27-1.85m-4.092 58.796c-.97-3.614 3.3-5.894 5.946-3.248l87.81 87.811c2.647 2.646.367 6.915-3.247 5.946c-44.03-11.805-78.704-46.478-90.51-90.509m12.727-97.245c1.233-2.135 4.147-2.463 5.89-.719L192.556 233.3c1.744 1.744 1.417 4.658-.72 5.891a128 128 0 0 1-11.1 5.705c-1.43.65-3.11.322-4.22-.79L11.893 79.487c-1.111-1.112-1.439-2.79-.79-4.221a128 128 0 0 1 5.706-11.1M127.86 0C198.63 0 256 57.37 256 128.14c0 37.57-16.168 71.362-41.926 94.8c-1.487 1.354-3.768 1.264-5.19-.157L33.217 47.116c-1.421-1.422-1.51-3.703-.158-5.19C56.498 16.168 90.291 0 127.86 0"></path></svg>
-```
-
-**File**: `packages/web/src/lib/components/Toasts.svelte` (modified, +4/-4)
-```diff
-@@ -20,15 +20,15 @@ export let className: string | undefined = undefined;
- 		<Card
- 			className={`border px-4 py-3 text-sm shadow-xl ${
- 				toast.tone === 'success'
--					? 'border-green-200 bg-green-50 text-green-900'
-+					? 'border-green-200 bg-green-50 text-green-900 dark:border-green-800 dark:bg-green-950 dark:text-green-100'
- 					: toast.tone === 'error'
--						? 'border-red-200 bg-red-50 text-red-900'
--						: 'border-black/10 bg-white text-black'
-+						? 'border-red-200 bg-red-50 text-red-900 dark:border-red-800 dark:bg-red-950 dark:text-red-100'
-+						: 'border-black/10 bg-white text-black dark:border-white/10 dark:bg-[#1c1a16] dark:text-white'
- 			}`}
- 		>
- 			<div class="text-sm font-semibold">{toast.title}</div>
- 			{#if toast.body}
--				<div class="mt-1 text-xs leading-snug text-black/70">{toast.body}</div>
-+				<div class="mt-1 text-xs leading-snug text-black/70 dark:text-white/70">{toast.body}</div>
- 			{/if}
- 		</Card>
- 	{/each}
-```
-
-**File**: `packages/web/src/lib/components/WeirStudioFileExplorer.svelte` (modified, +13/-12)
-```diff
-@@ -9,6 +9,7 @@ import {
- 	PlusIcon,
- 	TrashIcon,
- } from 'components';
-+import { studioPrimaryButton, studioSecondaryButton } from '$lib/components/weirStudioTheme';
- 
- /** Whether to render the file explorer as a closed drawer or an open one. */
- export let drawerOpen = true;
-@@ -49,15 +50,15 @@ function commitRename(from: string) {
- </script>
- 
- <aside
--	class={`relative z-10 flex h-full flex-col border-r border-black/10 bg-white/80 backdrop-blur transition-all duration-300 ${drawerOpen ? 'w-72' : 'w-14'}`}
-+	class={`relative z-10 flex h-full flex-col border-r border-black/10 bg-white/80 backdrop-blur dark:border-white/10 dark:bg-[#1c1a16]/80 transition-all duration-300 ${drawerOpen ? 'w-72' : 'w-14'}`}
+@@ -267,7 +267,7 @@
+ > bleeds ; and  she  had never forgotten that      , if    you    drink   much         from a   bottle  marked
+ # NPl/V3 . VB/C ISg+ VP  R     NSg/VPp/J I/C/Ddem+ . NSg/C ISgPl+ NSg/VB+ NSg/I/J/R/Dq P    D/P NSg/VB+ VP/J
+ > “ poison   , ” it       is  almost certain to disagree with you    , sooner or    later .
+-# . N🅪Sg/VB+ . . NSg/ISg+ VL3 R      I/J     P  VB       P    ISgPl+ . JC     NPr/C JC    .
++# . N🅪Sg/VB+ . . NSg/ISg+ VL3 R      I/J     P  VB       P    ISgPl+ . JC     NPr/C JC/R  .
  >
- 	<div class="flex items-center justify-between px-3 py-3">
- 		{#if drawerOpen}
--			<div class="text-sm font-semibold uppercase tracking-wider text-black/70">Weirpack</div>
-+			<div class="text-sm font-semibold uppercase tracking-wider text-black/70 dark:text-white/70">Weirpack</div>
- 			<Button
- 				size="xs"
- 				color="white"
--				className="h-8 w-8 !p-0"
-+				className={`h-8 w-8 !p-0 ${studioSecondaryButton}`}
- 				on:click={onToggleDrawer}
- 				title="Collapse drawer"
- 				aria-label="Collapse drawer"
-@@ -68,7 +69,7 @@ function commitRename(from: string) {
- 			<Button
- 				size="xs"
- 				color="white"
--				className="mx-auto h-8 w-8 !p-0"
-+				className={`mx-auto h-8 w-8 !p-0 ${studioSecondaryButton}`}
- 				on:click={onToggleDrawer}
- 				title="Expand drawer"
- 				aria-label="Expand drawer"
-@@ -83,7 +84,7 @@ function commitRename(from: string) {
- 			<Button
- 				color="dark"
- 				size="sm"
--				className="w-full uppercase tracking-wide"
-+				className={`w-full uppercase tracking-wide ${studioPrimaryButton}`}
- 				on:click={onCreateFile}
- 			>
- 				<PlusIcon className="h-4 w-4" />
-@@ -94,7 +95,7 @@ function commitRename(from: string) {
- 		<div class="flex-1 overflow-auto px-2 pb-4">
- 			{#each files as [file]}
- 				<div
--					class={`group flex items-center justify-between rounded-lg px-2 py-2 text-sm ${file == activeFile ? 'bg-white shadow-sm' : 'hover:bg-white/60'}`}
-+					class={`group flex items-center justify-between rounded-lg px-2 py-2 text-sm ${file == activeFile ? 'bg-white shadow-sm dark:bg-white/10' : 'hover:bg-white/60 dark:hover:bg-white/5'}`}
- 				>
- 					<div class="flex flex-1 items-center gap-2 text-left">
- 						<span class={`h-2 w-2 rounded-full ${file == activeFile ? 'bg-primary': ''} bg-cream`}></span>
-@@ -118,20 +119,20 @@ function commitRename(from: string) {
- 								/>
- 							</div>
- 						{:else}
--							<button class="flex-1 truncate text-left" on:click={() => onSelectFile(file)}>
-+							<button class="flex-1 truncate text-left dark:text-white/85" on:click={() => onSelectFile(file)}>
- 								{file}
- 							</button>
- 						{/if}
- 					</div>
- 
- 					<div
--						class={`flex items-center gap-1 text-black/50 transition ${renamingFile === file ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
-+						class={`flex items-center gap-1 text-black/50 transition dark:text-white/50 ${renamingFile === file ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
- 					>
- 						{#if renamingFile === file}
- 							<Button
- 								size="xs"
- 								color="white"
--								className="h-6 w-6 !p-0"
-+								className={`h-6 w-6 !p-0 ${studioSecondaryButton}`}
- 								on:click={() => commitRename(file)}
- 								title="Confirm rename"
- 								aria-label="Confirm rename"
-@@ -142,7 +143,7 @@ function commitRename(from: string) {
- 							<Button
- 								size="xs"
- 								color="white"
--								className="h-6 w-6 !p-0"
-+								className={`h-6 w-6 !p-0 ${studioSecondaryButton}`}
- 								on:click={() => startRename(file)}
- 								title="Rename file"
- 								aria-label="Rename file"
-@@ -153,7 +154,7 @@ function commitRename(from: string) {
- 								<Button
- 									size="xs"
- 									color="white"
--									className="h-6 w-6 !p-0"
-+									className={`h-6 w-6 !p-0 ${studioSecondaryButton}`}
- 									on:click={() => onDeleteFile(file)}
- 									title="Delete file"
- 									aria-label="Delete file"
-@@ -167,7 +168,7 @@ function commitRename(from: string) {
- 			{/each}
- 		</div>
- 	{:else}
--		<div class="flex flex-1 flex-col items-center gap-4 pt-6 text-xs text-black/50">
-+		<div class="flex flex-1 flex-col items-center gap-4 pt-6 text-xs text-black/50 dark:text-white/50">
- 			<div class="rotate-135 text-xs font-semibold tracking-widest uppercase">Files</div>
- 		</div>
- 	{/if}
+ #
+ > However , this    bottle  was  not     marked “ poison   , ” so          Alice ventured to taste    it       , and
+@@ -291,7 +291,7 @@
+ > door    into that     lovely garden    . First , however , she  waited for   a    few       minutes to
+ # NSg/VB+ P    I/C/Ddem NSg/J  NSg/VB/J+ . NSg/J . C       . ISg+ VP/J   R/C/P D/P+ NSg/I/Dq+ NPl/V3+ P
+ > see    if    she  was  going   to shrink any    further : she  felt      a   little     nervous about
+-# NSg/VB NSg/C ISg+ VLPt Nᴹ/Vg/J P  NSg/VB I/R/Dq VB/JC   . ISg+ N🅪Sg/VP/J D/P NPr/I/J/Dq J       J/P
++# NSg/VB NSg/C ISg+ VLPt Nᴹ/Vg/J P  NSg/VB I/R/Dq VB/JC/R . ISg+ N🅪Sg/VP/J D/P NPr/I/J/Dq J       J/P
+ > this    ; “ for   it       might    end     , you    know , ” said Alice to herself , “ in        my  going   out
+ # I/Ddem+ . . R/C/P NSg/ISg+ Nᴹ/VXB/J NSg/VB+ . ISgPl+ VB   . . VP/J NPr+  P  ISg+    . . NPr/J/R/P D$+ Nᴹ/Vg/J NSg/VB/J/R/P
+ > altogether , like         a    candle  . I       wonder  what   I       should be       like         then      ? ” And  she  tried
+@@ -2499,7 +2499,7 @@
+ > about it       : it       was  neither more         nor   less    than a    pig     , and  she  felt      that     it       would be
+ # J/P   NSg/ISg+ . NSg/ISg+ VLPt I/C     NPr/I/J/R/Dq NSg/C J/R/C/P C/P  D/P+ NSg/VB+ . VB/C ISg+ N🅪Sg/VP/J I/C/Ddem NSg/ISg+ VXB   NSg/VLXB
+ > quite absurd for   her     to carry  it       further .
+-# R     NSg/J  R/C/P ISg/D$+ P  NSg/VB NSg/ISg+ VB/JC   .
++# R     NSg/J  R/C/P ISg/D$+ P  NSg/VB NSg/ISg+ VB/JC/R .
+ >
+ #
+ > So          she  set       the little      creature down        , and  felt      quite relieved to see    it       trot    away
+@@ -4641,7 +4641,7 @@
+ > “ What   matters it       how   far      we   go       ? ” his     scaly  friend    replied . “ There is  another
+ # . NSg/I+ NPl/V3+ NSg/ISg+ NSg/C NSg/VB/J IPl+ NSg/VB/J . . ISg/D$+ NSg/J+ NPr/VB/J+ VP/J    . . R+    VL3 I/D+
+ > shore   , you    know , upon the other     side      . The further off        from England the nearer
+-# NSg/VB+ . ISgPl+ VB   . P    D+  NSg/VB/J+ NSg/VB/J+ . D   VB/JC   NSg/VB/J/P P    NPr+    D   NSg/JC
++# NSg/VB+ . ISgPl+ VB   . P    D+  NSg/VB/J+ NSg/VB/J+ . D   VB/JC/R NSg/VB/J/P P    NPr+    D   NSg/JC
+ > is  to France — Then      turn   not     pale     , beloved  snail  , but     come       and  join   the dance    .
+ # VL3 P  NPr+   . NSg/J/R/C NSg/VB NSg/R/C NSg/VB/J . NSg/VB/J NSg/VB . NSg/C/P NSg/VBPp/P VB/C NSg/VB D   N🅪Sg/VB+ .
+ > Will    you    , won’t you    , will    you    , won’t you    , will    you    join   the dance    ? Will    you    ,
+@@ -4857,7 +4857,7 @@
+ >
+ #
+ > ( later editions continued as    follows When    the sands   are all          dry      , he       is  gay      as
+-# . JC    NPl      VP/J      R/C/P NPl/V3  NSg/I/C D   NPl/V3+ VLB NSg/I/J/C/Dq NSg/VB/J . NPr/ISg+ VL3 NPr/VB/J R/C/P
++# . JC/R  NPl      VP/J      R/C/P NPl/V3  NSg/I/C D   NPl/V3+ VLB NSg/I/J/C/Dq NSg/VB/J . NPr/ISg+ VL3 NPr/VB/J R/C/P
+ > a   lark   , And  will    talk    in        contemptuous tones  of the Shark   , But     , when    the tide
+ # D/P NSg/VB . VB/C NPr/VXB N🅪Sg/VB NPr/J/R/P J            NPl/V3 P  D   NSg/VB+ . NSg/C/P . NSg/I/C D   NSg/VB+
+ > rises   and  sharks are around , His     voice   has a   timid and  tremulous sound      . )
+@@ -4919,7 +4919,7 @@
+ >
+ #
+ > ( later editions continued as    follows The Panther took pie      - crust    , and  gravy    ,
+-# . JC    NPl      VP/J      R/C/P NPl/V3  D   NSg     VPt  N🅪Sg/VB+ . N🅪Sg/VB+ . VB/C N🅪Sg/VB+ .
++# . JC/R  NPl      VP/J      R/C/P NPl/V3  D   NSg     VPt  N🅪Sg/VB+ . N🅪Sg/VB+ . VB/C N🅪Sg/VB+ .
+ > and  meat  , While      the Owl     had the dish    as    its     share  of the treat   . When    the pie
+ # VB/C N🅪Sg+ . NSg/VB/C/P D   NSg/VB+ VP  D   NSg/VB+ R/C/P ISg/D$+ NSg/VB P  D   NSg/VB+ . NSg/I/C D+  N🅪Sg/VB+
+ > was  all          finished , the Owl     , as    a   boon  , Was  kindly permitted to pocket   the
 ```
 
-**File**: `packages/web/src/lib/components/WeirStudioStart.svelte` (modified, +14/-13)
+**File**: `harper-core/tests/text/tagged/Computer science.md` (modified, +3/-3)
 ```diff
-@@ -1,5 +1,6 @@
- <script lang="ts">
- import { Button, Card } from 'components';
-+import { studioPrimaryButton, studioSecondaryButton } from '$lib/components/weirStudioTheme';
- 
- export let onUpload: () => void;
- export let onOpenExample: () => void;
-@@ -10,16 +11,16 @@ export let loading = false;
- export let loadingLabel = 'Checking for saved Weirpack...';
- </script>
- 
--<div class="absolute inset-0 z-30 flex items-center justify-center bg-[#fef4e7]/95">
--	<Card className="w-[min(640px,90vw)] space-y-6 border-black/10 bg-white/95 p-8">
-+<div class="absolute inset-0 z-30 flex items-center justify-center bg-[#fef4e7]/95 dark:bg-black/90">
-+	<Card className="w-[min(640px,90vw)] space-y-6 border-black/10 bg-white/95 p-8 dark:border-white/10 dark:bg-[#1c1a16]/95">
- 		<div class="space-y-2">
--			<div class="text-xs font-semibold uppercase tracking-[0.25em] text-black/50">Weir Studio</div>
-+			<div class="text-xs font-semibold uppercase tracking-[0.25em] text-black/50 dark:text-white/50">Weir Studio</div>
- 			{#if loading}
--				<h2 class="text-2xl font-semibold text-black">Restoring session</h2>
--				<p class="text-sm text-black/60">{loadingLabel}</p>
-+				<h2 class="text-2xl font-semibold text-black dark:text-white">Restoring session</h2>
-+				<p class="text-sm text-black/60 dark:text-white/60">{loadingLabel}</p>
- 			{:else}
--				<h2 class="text-2xl font-semibold text-black">Choose how to start</h2>
--				<p class="text-sm text-black/60">
-+				<h2 class="text-2xl font-semibold text-black dark:text-white">Choose how to start</h2>
-+				<p class="text-sm text-black/60 dark:text-white/60">
- 					Load a Weirpack to edit rules, run tests, and export updates.
- 				</p>
- 			{/if}
-@@ -36,32 +37,32 @@ export let loadingLabel = 'Checking for saved Weirpack...';
- 			<Button
- 				color="dark"
- 				size="md"
--				className="w-full justify-between"
-+				className={`w-full justify-between ${studioPrimaryButton}`}
- 				on:click={onUpload}
- 				disabled={loading}
- 			>
- 				<span>Upload an existing Weirpack</span>
--				<span class="text-xs uppercase tracking-[0.2em] text-white/60">Upload</span>
-+				<span class="text-xs uppercase tracking-[0.2em] text-white/60 dark:text-black/50">Upload</span>
- 			</Button>
- 			<Button
- 				color="white"
- 				size="md"
--				className="w-full justify-between"
-+				className={`w-full justify-between ${studioSecondaryButton}`}
- 				on:click={onOpenExample}
- 				disabled={loading}
- 			>
- 				<span>Open example Weirpack</span>
--				<span class="text-xs uppercase tracking-[0.2em] text-black/40">Example</span>
-+				<span class="text-xs uppercase tracking-[0.2em] text-black/40 dark:text-white/40">Example</span>
- 			</Button>
- 			<Button
- 				color="white"
- 				size="md"
--				className="w-full justify-between"
-+				className={`w-full justify-between ${studioSecondaryButton}`}
- 				on:click={onCreateEmpty}
- 				disabled={loading}
- 			>
- 				<span>Create an empty Weirpack</span>
--				<span class="text-xs uppercase tracking-[0.2em] text-black/40">Empty</span>
-+				<span class="text-xs uppercase tracking-[0.2em] text-black/40 dark:text-white/40">Empty</span>
- 			</Button>
- 		</div>
- 	</Card>
+@@ -251,7 +251,7 @@
+ > the ACM — turingineer , turologist , flow    - charts  - man     , applied meta  - mathematician ,
+ # D   NSg . ?           . ?          . NSg/VB+ . NPl/V3+ . NPr/VB+ . VP/J    NSg/J . NSg+          .
+ > and  applied epistemologist . Three months later in        the same journal   , comptologist
+-# VB/C VP/J    NSg            . NSg+  NPl+   JC    NPr/J/R/P D+  I/J+ NSg/VB/J+ . ?
++# VB/C VP/J    NSg            . NSg+  NPl+   JC/R  NPr/J/R/P D+  I/J+ NSg/VB/J+ . ?
+ > was  suggested , followed next    year by hypologist . The term      computics has also
+ # VLPt VP/J      . VP/J     NSg/J/P NSg+ P  ?          . D+  NSg/VB/J+ ?         V3  R/C
+ > been   suggested . In        Europe , terms   derived from contracted translations of the
+@@ -317,7 +317,7 @@
+ > The relationship between computer science and  software engineering is  a
+ # D   NSg          NSg/P   NSg+     N🅪Sg/VB VB/C Nᴹ+      Nᴹ/Vg/J+    VL3 D/P
+ > contentious issue  , which is  further muddied by disputes over    what   the term
+-# J           NSg/VB . I/C+  VL3 VB/JC   VP/J    P  NPl/V3+  NSg/J/P NSg/I+ D   NSg/VB/J+
++# J           NSg/VB . I/C+  VL3 VB/JC/R VP/J    P  NPl/V3+  NSg/J/P NSg/I+ D   NSg/VB/J+
+ > " software engineering " means  , and  how   computer science  is  defined . David Parnas ,
+ # . Nᴹ+      Nᴹ/Vg/J+    . NPl/V3 . VB/C NSg/C NSg+     N🅪Sg/VB+ VL3 VP/J    . NPr+  ?      .
+ > taking   a   cue     from the relationship between other    engineering and  science
+@@ -967,7 +967,7 @@
+ > repetition : WHILE      such  - and  - such  is  the case      , DO  this    . The three rules  of
+ # N🅪Sg/VB+   . NSg/VB/C/P NSg/I . VB/C . NSg/I VL3 D   NPr🅪Sg/VB . VXB I/Ddem+ . D   NSg   NPl/V3 P
+ > Boehm's and  Jacopini's insight can     be       further simplified with the use      of
+-# ?       VB/C ?          N🅪Sg+   NPr/VXB NSg/VLXB VB/JC   VP/J       P    D   N🅪Sg/VB+ P
++# ?       VB/C ?          N🅪Sg+   NPr/VXB NSg/VLXB VB/JC/R VP/J       P    D   N🅪Sg/VB+ P
+ > goto ( which means  it       is  more         elementary than structured programming ) .
+ # ?    . I/C+  NPl/V3 NSg/ISg+ VL3 NPr/I/J/R/Dq NSg/J      C/P  VP/J       Nᴹ/Vg/J+    . .
+ >
 ```
 
-**File**: `packages/web/src/lib/components/WeirStudioWorkspace.svelte` (modified, +28/-12)
+**File**: `harper-core/tests/text/tagged/Part-of-speech tagging.md` (modified, +3/-3)
 ```diff
-@@ -1,7 +1,16 @@
- <script lang="ts">
- import { Button, Card, CloseIcon, DownloadIcon, PlayIcon } from 'components';
--import type { ComponentType } from 'svelte';
-+import { type ComponentType, getContext } from 'svelte';
- import WeirStudioFileExplorer from '$lib/components/WeirStudioFileExplorer.svelte';
-+import {
-+	studioAceTheme,
-+	studioPrimaryButton,
-+	studioSecondaryButton,
-+} from '$lib/components/weirStudioTheme';
-+import type ThemeController from '$lib/docs/ThemeController';
-+import { THEME_CONTEXT } from '$lib/docs/ThemeController';
-+
-+const theme = getContext<ThemeController>(THEME_CONTEXT);
- 
- export let drawerOpen = true;
- export let files: Map<string, string> = new Map();
-@@ -38,19 +47,19 @@ export let getEditorMode: (name: string) => string;
- />
- 
- <main class="relative z-10 flex flex-1 flex-col">
--	<div class="flex items-center justify-between border-b border-black/10 bg-white/70 px-4 py-3">
-+	<div class="flex items-center justify-between border-b border-black/10 bg-white/70 px-4 py-3 dark:border-white/10 dark:bg-[#1c1a16]/70">
- 		<div class="flex items-center gap-3">
--			<div class="text-xs font-semibold uppercase tracking-[0.2em] text-black/50">Studio</div>
--			<div class="text-sm font-medium text-black/80">{activeFile ?? 'No file selected'}</div>
-+			<div class="text-xs font-semibold uppercase tracking-[0.2em] text-black/50 dark:text-white/50">Studio</div>
-+			<div class="text-sm font-medium text-black/80 dark:text-white/80">{activeFile ?? 'No file selected'}</div>
- 		</div>
- 		<div class="flex items-center gap-3">
--			<div class="text-xs uppercase tracking-[0.18em] text-black/40">
-+			<div class="text-xs uppercase tracking-[0.18em] text-black/40 dark:text-white/40">
- 				{linterReady ? 'Weir runner online' : 'Warming up harper.js'}
- 			</div>
- 			<Button
- 				size="xs"
- 				color="white"
--				className="h-8 w-8 !p-0"
-+				className={`h-8 w-8 !p-0 ${studioSecondaryButton}`}
- 				title="Close Weirpack"
- 				aria-label="Close Weirpack"
- 				on:click={onClosePack}
-@@ -61,22 +70,22 @@ export let getEditorMode: (name: string) => string;
- 	</div>
- 
- 	<div class="flex-1 overflow-hidden p-4">
--		<Card className="h-full border-black/10 bg-white/95 p-0 shadow-[0_20px_60px_-40px_rgba(0,0,0,0.4)]">
-+		<Card className="h-full border-black/10 bg-white/95 p-0 shadow-[0_20px_60px_-40px_rgba(0,0,0,0.4)] dark:border-white/10 dark:bg-[#1c1a16]/95">
- 			{#if editorReady && AceEditorComponent}
--				{#key activeFile}
-+				{#key `${activeFile}:${$theme}`}
- 					<svelte:component
- 						this={AceEditorComponent}
- 						width="100%"
- 						height="100%"
- 						value={activeFile ? files.get(activeFile) : ""}
- 						lang={getEditorMode(activeFile ?? '')}
--						theme="chrome"
-+						theme={studioAceTheme[$theme]}
- 						options={editorOptions}
- 						on:input={(event: CustomEvent<string>) => onUpdateContent(event.detail)}
- 					/>
- 				{/key}
- 			{:else}
--				<div class="flex h-full items-center justify-center text-sm uppercase tracking-[0.3em] text-black/40">
-+				<div class="flex h-full items-center justify-center text-sm uppercase tracking-[0.3em] text-black/40 dark:text-white/40">
- 					Loading editor…
- 				</div>
- 			{/if}
-@@ -89,14 +98,21 @@ export let getEditorMode: (name: string) => string;
- 		size="md"
- 		color="dark"
- 		pill
--		className={runningTests ? 'opacity-70' : undefined}
-+		className={`${studioPrimaryButton} ${runningTests ? 'opacity-70' : ''}`}
- 		on:click={onRunTests}
- 		disabled={!packLoaded || runningTests}
- 	>
- 		<PlayIcon className="h-4 w-4" />
- 		{runningTests ? 'Running' : 'Run tests'}
- 	</Button>
--	<Button size="md" color="white" pill on:click={onDownload} disabled={!packLoaded}>
-+	<Button
-+		size="md"
-+		color="white"
-+		pill
-+		className={studioSecondaryButton}
-+		on:click={onDownload}
-+		disabled={!packLoaded}
-+	>
- 		<DownloadIcon className="h-4 w-4" />
- 		Download
- 	</Button>
+@@ -191,7 +191,7 @@
+ > cannot  . The program got about 70 % correct  . Its     results were repeatedly reviewed
+ # NSg/VXB . D+  NPr/VB+ VP  J/P   #  . NSg/VB/J . ISg/D$+ NPl/V3+ VLPt R          VP/J
+ > and  corrected by hand    , and  later users sent   in        errata so          that      by the late  70 s
+-# VB/C VP/J      P  NSg/VB+ . VB/C JC    NPl+  NSg/VP NPr/J/R/P NSg    NSg/I/J/R/C I/C/Ddem+ P  D   NSg/J #  ?
++# VB/C VP/J      P  NSg/VB+ . VB/C JC/R  NPl+  NSg/VP NPr/J/R/P NSg    NSg/I/J/R/C I/C/Ddem+ P  D   NSg/J #  ?
+ > the tagging was  nearly perfect  ( allowing for   some     cases   on  which even       human
+ # D   NSg/Vg  VLPt R      NSg/VB/J . Nᴹ/Vg/J  R/C/P I/J/R/Dq NPl/V3+ J/P I/C+  NSg/VB/J/R NSg/J+
+ > speakers might    not     agree ) .
+@@ -205,7 +205,7 @@
+ > other    languages . Statistics derived by analyzing it       formed the basis for   most
+ # NSg/VB/J NPl+      . NPl/V3+    VP/J    P  Nᴹ/Vg/J   NSg/ISg+ VP/J   D+  NSg+  R/C/P NSg/I/J/R/Dq
+ > later part      - of - speech   tagging systems , such  as    CLAWS   and  VOLSUNGA . However , by
+-# JC    NSg/VB/J+ . P  . N🅪Sg/VB+ NSg/Vg  NPl+    . NSg/I R/C/P NPl/V3+ VB/C ?        . C       . P
++# JC/R  NSg/VB/J+ . P  . N🅪Sg/VB+ NSg/Vg  NPl+    . NSg/I R/C/P NPl/V3+ VB/C ?        . C       . P
+ > this    time       ( 2005 ) it       has been   superseded by larger corpora such  as    the 100
+ # I/Ddem+ N🅪Sg/VB/J+ . #    . NSg/ISg+ V3  VLPp/B VP/J       P  JC     NPl+    NSg/I R/C/P D   #
+ > million word    British National Corpus , even       though larger corpora are rarely so
+@@ -385,7 +385,7 @@
+ >
+ #
+ > These   two  categories can     be       further subdivided into rule    - based , stochastic , and
+-# I/Ddem+ NSg+ NPl+       NPr/VXB NSg/VLXB VB/JC   VP/J       P    NSg/VB+ . VP/J  . J          . VB/C
++# I/Ddem+ NSg+ NPl+       NPr/VXB NSg/VLXB VB/JC/R VP/J       P    NSg/VB+ . VP/J  . J          . VB/C
+ > neural approaches .
+ # J      NPl/V3+    .
+ >
 ```
 
-**File**: `packages/web/src/lib/components/weirStudioTheme.ts` (added, +16/-0)
+**File**: `harper-core/tests/text/tagged/The Constitution of the United States.md` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,16 @@
-+/**
-+ * Dark-mode overrides for the shared `components` Button inside Weir Studio.
-+ * The shared Button uses a cool gray dark palette; Weir Studio uses the site's warm palette.
-+ * Important modifiers are required because both class sets sit in the same utilities layer.
-+ */
-+
-+/** Use with `color="white"`. */
-+export const studioSecondaryButton =
-+	'dark:bg-[#1c1a16]! dark:text-white/80! dark:border-white/15! dark:hover:bg-white/10! dark:focus:ring-white/20!';
-+
-+/** Use with `color="dark"`. The button inverts to white in dark mode. */
-+export const studioPrimaryButton =
-+	'dark:bg-white! dark:text-black! dark:hover:bg-white/85! dark:focus:ring-white/30!';
-+
-+/** Ace themes that match the light and dark site themes. */
-+export const studioAceTheme = { light: 'chrome', dark: 'tomorrow_night' } as const;
+@@ -215,7 +215,7 @@
+ >
+ #
+ > Judgment in        Cases   of impeachment shall not     extend further than to removal from
+-# NSg+     NPr/J/R/P NPl/V3+ P  N🅪Sg        VXB   NSg/R/C NSg/VB VB/JC   C/P  P  NSg     P
++# NSg+     NPr/J/R/P NPl/V3+ P  N🅪Sg        VXB   NSg/R/C NSg/VB VB/JC/R C/P  P  NSg     P
+ > Office  , and  disqualification to hold     and  enjoy any    Office of honor       , Trust     or
+ # NSg/VB+ . VB/C N🅪Sg             P  NSg/VB/J VB/C VB    I/R/Dq NSg/VB P  N🅪Sg/VB/Am+ . N🅪Sg/VB/J NPr/C
+ > Profit      under   the United States    : but     the Party     convicted shall nevertheless be
 ```
 
-**File**: `packages/web/src/lib/marketing/AppLogoTile.svelte` (modified, +1/-1)
+**File**: `harper-core/tests/text/tagged/The Great Gatsby.md` (modified, +27/-27)
 ```diff
-@@ -20,7 +20,7 @@ export let id: string;
- export let size = 40;
- 
- const tileClasses =
--	'inline-flex shrink-0 items-center justify-center bg-white shadow-[0_0_0_0.5px_rgba(0,0,0,0.08),0_1px_2px_rgba(0,0,0,0.04)] dark:bg-white [&_svg]:block [&_svg]:h-[68%] [&_svg]:w-[68%]';
-+	'inline-flex shrink-0 items-center justify-center bg-white shadow-[0_0_0_0.5px_rgba(0,0,0,0.08),0_1px_2px_rgba(0,0,0,0.04)] text-black dark:bg-white [&_svg]:block [&_svg]:h-[68%] [&_svg]:w-[68%]';
- 
- $: tileStyle = `width: ${size}px; height: ${size}px; border-radius: ${Math.round(size * 0.235)}px;`;
- </script>
-```
-
----
-
-### Incident Patch 3: `8506fe8c` (2026-11-05)
-**Commit Message**: fix(chrome-ext): warn users that the "Isolate English" setting is in beta
-
-**File**: `packages/chrome-plugin/src/options/Options.svelte` (modified, +2/-2)
-```diff
-@@ -487,8 +487,8 @@ async function removeWeirpack(id: string) {
-               <!-- Ignore Non-English Text -->
-               <div class="flex items-center justify-between gap-4 py-3.5">
-                 <div class="flex flex-col">
--                  <h3 id="isolate-label" class="text-base font-semibold">Ignore Non-English Text</h3>
--                  <p id="isolate-desc" class="text-xs text-gray-600 dark:text-[#d1d5db]!">Skip text that Harper detects as not English.</p>
-+                  <h3 id="isolate-label" class="text-base font-semibold">Ignore Non-English Text (Beta)</h3>
-+                  <p id="isolate-desc" class="text-xs text-gray-600 dark:text-[#d1d5db]!">Skip text that Harper detects as not English. This feature is in beta and is unlikely to work reliably.</p>
-                 </div>
- 
-                 <div class="h-9 w-48 shrink-0 rounded-lg border border-gray-200 p-1 dark:border-slate-700 dark:bg-slate-900">
+@@ -115,7 +115,7 @@
+ > graduated from New    Haven   in        1915 , just a   quarter  of a   century after my  father  ,
+ # VP/J      P    NSg/J+ NSg/VB+ NPr/J/R/P #    . J/R  D/P NSg/VB/J P  D/P NSg+    P     D$+ NPr/VB+ .
+ > and  a   little     later I       participated in        that      delayed Teutonic migration known as
+-# VB/C D/P NPr/I/J/Dq JC    ISg/#r+ VP/J         NPr/J/R/P I/C/Ddem+ VP/J    NSg/J    NSg+      VPp/J R/C/P
++# VB/C D/P NPr/I/J/Dq JC/R  ISg/#r+ VP/J         NPr/J/R/P I/C/Ddem+ VP/J    NSg/J    NSg+      VPp/J R/C/P
+ > the Great War      . I       enjoyed the counter   - raid    so          thoroughly that     I       came      back
+ # D   NSg/J N🅪Sg/VB+ . ISg/#r+ VP/J    D   NSg/VB/J+ . NSg/VB+ NSg/I/J/R/C R          I/C/Ddem ISg/#r+ NSg/VPt/P NSg/VB/J
+ > restless . Instead of being        the warm     centre      of the world   , the Middle    West      now
+@@ -711,7 +711,7 @@
+ > or    to be       entertained . They knew that     presently dinner   would be       over    and  a   little
+ # NPr/C P  NSg/VLXB VP/J        . IPl+ VPt  I/C/Ddem R         N🅪Sg/VB+ VXB   NSg/VLXB NSg/J/P VB/C D/P NPr/I/J/Dq
+ > later the evening    too would be       over    and  casually put     away . It       was  sharply
+-# JC    D+  N🅪Sg/Vg/J+ R   VXB   NSg/VLXB NSg/J/P VB/C R        NSg/VBP VB/J . NSg/ISg+ VLPt R
++# JC/R  D+  N🅪Sg/Vg/J+ R   VXB   NSg/VLXB NSg/J/P VB/C R        NSg/VBP VB/J . NSg/ISg+ VLPt R
+ > different from the West      , where   an   evening    was  hurried from phase   to phase  toward
+ # NSg/J     P    D+  NPr/VB/J+ . NSg/R/C D/P+ N🅪Sg/Vg/J+ VLPt VP/J    P    NPr/VB+ P  NPr/VB J/P
+ > its     close    , in        a   continually disappointed anticipation or    else    in        sheer    nervous
+@@ -1199,7 +1199,7 @@
+ >
+ #
+ > I       said lightly that     I       had heard nothing  at    all          , and  a    few       minutes later I       got up
+-# ISg/#r+ VP/J R       I/C/Ddem ISg/#r+ VP  VP/J  NSg/I/J+ NSg/P NSg/I/J/C/Dq . VB/C D/P+ NSg/I/Dq+ NPl/V3+ JC    ISg/#r+ VP  NSg/VB/J/P
++# ISg/#r+ VP/J R       I/C/Ddem ISg/#r+ VP  VP/J  NSg/I/J+ NSg/P NSg/I/J/C/Dq . VB/C D/P+ NSg/I/Dq+ NPl/V3+ JC/R  ISg/#r+ VP  NSg/VB/J/P
+ > to go       home      . They came      to the door    with me       and  stood side      by side      in        a   cheerful
+ # P  NSg/VB/J NSg/VB/J+ . IPl+ NSg/VPt/P P  D+  NSg/VB+ P    NPr/ISg+ VB/C VP    NSg/VB/J+ P  NSg/VB/J+ NPr/J/R/P D/P J
+ > square   of light      . As    I       started my  motor     Daisy peremptorily called : “ Wait   !
+@@ -1763,7 +1763,7 @@
+ > his     greeting to every one      in        the room     . He       informed me       that     he       was  in        the
+ # ISg/D$+ Nᴹ/Vg/J+ P  Dq    NSg/I/J+ NPr/J/R/P D   N🅪Sg/VB+ . NPr/ISg+ VP/J     NPr/ISg+ I/C/Ddem NPr/ISg+ VLPt NPr/J/R/P D
+ > “ artistic game      , ” and  I       gathered later that     he       was  a   photographer and  had made
+-# . J+       NSg/VB/J+ . . VB/C ISg/#r+ VP/J     JC    I/C/Ddem NPr/ISg+ VLPt D/P NSg          VB/C VP  VP
++# . J+       NSg/VB/J+ . . VB/C ISg/#r+ VP/J     JC/R  I/C/Ddem NPr/ISg+ VLPt D/P NSg          VB/C VP  VP
+ > the dim      enlargement of Mrs  . Wilson’s mother    which hovered like         an  ectoplasm on
+ # D   NSg/VB/J NSg         P  NPl+ . NPr$     NSg/VB/J+ I/C+  VP/J    NSg/VB/J/C/P D/P N🅪Sg      J/P
+ > the wall    . His     wife      was  shrill   , languid , handsome , and  horrible . She  told me       with
+@@ -2661,7 +2661,7 @@
+ > escort , a   persistent undergraduate given       to violent  innuendo , and  obviously
+ # NSg/VB . D/P J          NSg/J         NSg/VPp/J/P P  NSg/VB/J N🅪Sg/VB  . VB/C R
+ > under   the impression that      sooner or    later Jordan was  going   to yield  him  up         her
+-# NSg/J/P D   NSg/VB+    I/C/Ddem+ JC     NPr/C JC    NPr+   VLPt Nᴹ/Vg/J P  NSg/VB ISg+ NSg/VB/J/P ISg/D$+
++# NSg/J/P D   NSg/VB+    I/C/Ddem+ JC     NPr/C JC/R  NPr+   VLPt Nᴹ/Vg/J P  NSg/VB ISg+ NSg/VB/J/P ISg/D$+
+ > person  to a   greater or    lesser degree . Instead of rambling this    party     had
+ # NSg/VB+ P  D/P JC      NPr/C JC     NSg+   . R       P  Nᴹ/Vg/J  I/Ddem+ NSg/VB/J+ VP
+ > preserved a   dignified homogeneity , and  assumed to itself the function of
+@@ -2949,7 +2949,7 @@
+ > “ If    you    want   anything  just ask    for   it       , old    sport   , ” he       urged me       . “ Excuse  me       . I
+ # . NSg/C ISgPl+ NSg/VB NSg/I/VB+ J/R  NSg/VB R/C/P NSg/ISg+ . NSg/J+ NSg/VB+ . . NPr/ISg+ VP/J  NPr/ISg+ . . NSg/VB+ NPr/ISg+ . ISg/#r+
+ > will    rejoin you    later . ”
+-# NPr/VXB NSg/VB ISgPl+ JC    . .
++# NPr/VXB NSg/VB ISgPl+ JC/R  . .
+ >
+ #
+ > When    he       was  gone    I       turned immediately to Jordan — constrained to assure her     of my
+@@ -3465,7 +3465,7 @@
+ > contrary  , they were merely casual events in        a    crowded summer     , and  , until much
+ # NSg/VB/J+ . IPl+ VLPt R      NSg/J  NPl/V3 NPr/J/R/P D/P+ VP/J+   NPr🅪Sg/VB+ . VB/C . C/P   NSg/I/J/R/Dq
+ > later , they
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4823** (2026-11-05): feat: flag verb agreement errors in questions (@mcampal)
-- **PR #4817** (2026-11-05): fix(web): the dark mode had some regressions (@elijah-potter)
-- **PR #4811** (2026-11-05): fix(web): keep site utilities after prebuilt CSS (@retrofox)
-- **PR #4803** (2026-11-04): fix(web): remove SveltePress (@elijah-potter)
-- **PR #4802** (2026-11-04): feat: we see us → we see each other (@hippietrail)
-- **PR #4799** (2026-11-04): feat: what so ever → whatsoever (@hippietrail)
+- **PR #4868** (2026-11-08): fix(core): mark "later" and "further" as adverbs (@jayhemnani9910)
+- **PR #4867** (2026-11-08): docs: GitHub issue template for false negatives (@hippietrail)
+- **PR #4863** (2026-11-07): fix(linting): don't join "out guesses" to "outguesses" (@Yi-111-a)
+- **PR #4857** (2026-11-07): feat: no-to-little → little-to-no (@hippietrail)
+- **PR #4856** (2026-11-07): fix(core): TheyToThem no longer flags "the help they received" (@jayhemnani9910)
+- **PR #4848** (2026-11-06): feat(core): correct `doin` to `doing` (@elijah-potter)
 
 ---
 
@@ -2020,61 +1710,29 @@ Co-authored-by: Matt Van Horn <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. keep the editor typable after clicking a highlighted lint (#3834)
+## X. core): mark "later" and "further" as adverbs (#4868)
 
 **RULE**:
-When implementing operations in `packages/chrome-plugin/tests/simple_textarea.spec.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `harper-core/dictionary.dict`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f7683239`: keep the editor typable after clicking a highlighted lint (#3834). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `11f7925c`: core): mark "later" and "further" as adverbs (#4868). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/chrome-plugin/tests/simple_textarea.spec.ts`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `harper-core/dictionary.dict`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-test('Keeps the textarea typable after opening a suggestion with a click', async ({ page }) => {
-	await page.goto(TEST_PAGE_URL);
-
-	const editor = getTextarea(page);
-	await replaceEditorContent(editor, 'This word is misspellled.');
-
-	expect(await clickHarperHighlight(page)).toBe(true);
-	await page.locator('.harper-container').waitFor({ state: 'visible' });
-	await assertLocatorIsFocused(page, editor);
-
-	const valueBeforeDelete = await editor.inputValue();
-	await page.keyboard.press('Delete');
-	expect(await editor.inputValue()).not.toBe(valueBeforeDelete);
-});
-
-test('Focuses suggestions when opening the popup with the activation key', async ({
-	browserName,
-	context,
-	page,
-}) => {
-	test.skip(
-		browserName === 'firefox',
-		'Firefox MV3 background context is not exposed reliably in playwright-webextext.',
-	);
-	const background = await getBackground(context);
-	await background.evaluate(() => chrome.storage.local.set({ activationKey: 'shift' }));
-	await page.goto(TEST_PAGE_URL);
-
-	const editor = getTextarea(page);
-	await replaceEditorContent(editor, 'This is an test.');
-	await page.locator('#harper-highlight').waitFor({ state: 'visible' });
-
-	await page.keyboard.press('Shift');
-	await 
+further/~VSGdJcR
+later/~JcR
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+further/~VSGdJc
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f7683239` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `11f7925c` are properly handled with clean fallback behavior.

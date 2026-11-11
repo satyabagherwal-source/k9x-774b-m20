@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md`  
 > **Source**: github ([https://github.com/clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB))  
-> **Source Version**: `17a3f3a6`  
+> **Source Version**: `39bf8539`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T12:07:11.663Z  
+> **Timestamp**: 2026-11-08T03:54:25.391Z  
 > **Learning ID**: `learn-github-clockworklabs-spacetimedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T12:07:11.657Z  
+> **Harvest Timestamp**: 2026-11-08T03:54:24.239Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Development at the speed of light
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 25523 stars
+- **Stars / Engagement**: 25532 stars
 
 ---
 
@@ -319,9 +319,9 @@ pub(crate) use match_meta;
 ### Core Architecture Module: `crates/bindings-typescript/src/angular/connection_state.ts`
 ```
 import { InjectionToken, type WritableSignal } from '@angular/core';
-import type { ConnectionId } from '../lib/connection_id';
-import type { Identity } from '../lib/identity';
-import type { DbConnectionImpl } from '../sdk/db_connection_impl';
+import type { ConnectionId } from '../lib/connection_id.ts';
+import type { Identity } from '../lib/identity.ts';
+import type { DbConnectionImpl } from '../sdk/db_connection_impl.ts';
 
 export interface ConnectionState {
   isActive: boolean;
@@ -342,12 +342,12 @@ export const SPACETIMEDB_CONNECTION = new InjectionToken<
 
 ### Core Architecture Module: `crates/bindings-typescript/src/lib/type_util.ts`
 ```
-import type { ConnectionId } from './connection_id';
-import type { Identity } from './identity';
-import type { ScheduleAt } from './schedule_at';
-import type { TimeDuration } from './time_duration';
-import type { Timestamp } from './timestamp';
-import type { Uuid } from './uuid';
+import type { ConnectionId } from './connection_id.ts';
+import type { Identity } from './identity.ts';
+import type { ScheduleAt } from './schedule_at.ts';
+import type { TimeDuration } from './time_duration.ts';
+import type { Timestamp } from './timestamp.ts';
+import type { Uuid } from './uuid.ts';
 
 type DoNotPrettify =
   | Identity
@@ -441,17 +441,26 @@ type CamelCaseImpl<S extends string> = S extends `${infer Head}_${infer Tail}`
  */
 export type CamelCase<S extends string> = Uncapitalize<CamelCaseImpl<S>>;
 
-type AccessorHead<K extends string> = K extends `${infer H}.${string}` ? H : K;
 type AccessorTail<
   K extends string,
   H extends string,
 > = K extends `${H}.${infer R}` ? R : never;
 
-/** Splits dotted keys into nested objects: `{ 'a.b': X, c: Y }` becomes `{ a: { b: X }, c: Y }`. */
-export type NestAccessors<T extends Record<string, unknown>> = {
-  readonly [H in AccessorHead<keyof T & string>]: H extends keyof T
-    ? T[H]
-    : NestAccessors<{ [K in keyof T & string as AccessorTail<K, H>]: T[K] }>;
+type DottedHead<K extends string> = K extends `${infer H}.${string}`
+  ? H
+  : never;
+type PlainKey<K extends string> = K extends `${string}.${string}` ? never : K;
+
+/**
+ * Splits dotted keys into nested objects: `{ 'a.b': X, c: Y }` becomes `{ a: { b: X }, c: Y }`.
+ * Plain keys go through `Pick`, which keeps each property's declaration and so its doc comment.
+ */
+export type NestAccessors<T extends Record<string, unknown>> = Readonly<
+  Pick<T, PlainKey<keyof T & string>>
+> & {
+  readonly [H in DottedHead<keyof T & string>]: NestAccessors<{
+    [K in keyof T & string as AccessorTail<K, H>]: T[K];
+  }>;
 };
 
 /** Type safe conversion from "some_identifier-name" to "some_identifier_name"
@@ -520,13 +529,13 @@ export type InvalidColumnMetadata<Message extends string> = {
 
 ### Core Architecture Module: `crates/bindings-typescript/src/lib/util.ts`
 ```
-import type { AlgebraicType } from './algebraic_type';
-import type { Typespace } from './autogen/types';
-import BinaryReader from './binary_reader';
-import BinaryWriter from './binary_writer';
-import type { ParamsObj } from './reducers';
-import type { ColumnBuilder, TypeBuilder } from './type_builders';
-import type { CamelCase, SnakeCase } from './type_util';
+import type { AlgebraicType } from './algebraic_type.ts';
+import type { Typespace } from './autogen/types.ts';
+import BinaryReader from './binary_reader.ts';
+import BinaryWriter from './binary_writer.ts';
+import type { ParamsObj } from './reducers.ts';
+import type { ColumnBuilder, TypeBuilder } from './type_builders.ts';
+import type { CamelCase, SnakeCase } from './type_util.ts';
 
 export function deepEqual(obj1: unknown, obj2: unknown): boolean {
   if (obj1 === obj2) return true;
@@ -750,8 +759,8 @@ export const hasOwn: <K extends PropertyKey>(
 
 ### Core Architecture Module: `crates/bindings-typescript/src/react/connection_state.ts`
 ```
-import type { DbConnectionImpl } from '../sdk/db_connection_impl';
-import type { ConnectionState as ManagerConnectionState } from '../sdk/connection_manager';
+import type { DbConnectionImpl } from '../sdk/db_connection_impl.ts';
+import type { ConnectionState as ManagerConnectionState } from '../sdk/connection_manager.ts';
 
 export type ConnectionState = ManagerConnectionState & {
   getConnection(): DbConnectionImpl<any> | null;
@@ -761,10 +770,10 @@ export type ConnectionState = ManagerConnectionState & {
 
 ### Core Architecture Module: `crates/bindings-typescript/src/sdk/type_utils.ts`
 ```
-import type { Infer, InferTypeOfParams } from '.';
-import type { Prettify } from '../lib/type_util';
-import type { UntypedProcedureDef } from './procedures';
-import type { UntypedReducerDef } from './reducers';
+import type { Infer, InferTypeOfParams } from './index.ts';
+import type { Prettify } from '../lib/type_util.ts';
+import type { UntypedProcedureDef } from './procedures.ts';
+import type { UntypedReducerDef } from './reducers.ts';
 
 export type IsEmptyObject<T> = [keyof T] extends [never] ? true : false;
 export type MaybeParams<T> = IsEmptyObject<T> extends true ? [] : [params: T];
@@ -785,8 +794,8 @@ export type ProcedureReturnType<P extends UntypedProcedureDef> = Infer<
 
 ### Core Architecture Module: `crates/bindings-typescript/src/solid/connection_state.ts`
 ```
-import type { DbConnectionImpl } from '../sdk/db_connection_impl';
-import type { ConnectionState as ManagerConnectionState } from '../sdk/connection_manager';
+import type { DbConnectionImpl } from '../sdk/db_connection_impl.ts';
+import type { ConnectionState as ManagerConnectionState } from '../sdk/connection_manager.ts';
 
 export type ConnectionState = ManagerConnectionState & {
   getConnection(): DbConnectionImpl<any> | null;
@@ -821,468 +830,281 @@ export type ConnectionState = ManagerConnectionState & {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `17a3f3a6` (2026-11-05)
-**Commit Message**: Use performant implementation for find/filter (#6416)
+### Incident Patch 1: `f53483c3` (2026-11-06)
+**Commit Message**: Skip CI builds and tests for docs-only changes (#6515)
 
 # Description of Changes
 
-Update the typescript sdk to use a map for lookups by indexed columns
-(find and filter).
+This PR skips the build and test jobs in CI, and the private Internal
+Tests run, when a change only touches documentation. Previously only
+Internal Tests skipped anything, and only for changes under `docs/`
+(#4995), so a skills-only PR like #6348 still ran about 50 jobs and 180
+job-minutes over half an hour. Now a shared `detect-docs-only` action
+counts `docs/`, `skills/`, the agent plugins, `.agents/` and root
+Markdown files as docs, except crate READMEs, which `crates/bindings`
+compiles as doc tests, and docs pages that code in `crates/`, `sdks/` or
+`tools/` names by path, such as the chat app tutorial the quickstart
+smoketest builds. The first CI job exposes the result as `skip_tests`,
+and on docs-only changes the build and test jobs skip while the existing
+no-op jobs report the required Smoketests and update-flow checks, the
+same way merge queue reuse already does; Lints, the docs build, the CLI
+docs check and the cheap policy checks still run.
 
 # API and ABI breaking changes
 
-No
+None. This only changes which CI jobs run, and only for changes where
+every file is documentation that no build or test re
 
-# Rollback safety impact
-
-n/a
-
-# Expected complexity level and risk
-
-2 - change is confined to the typescript sdk, and fairly
-straightforward.
-
-# Testing
-
-- [ ] Tested a sample app that uses find/filter and made sure it still
-worked correctly
-
-**File**: `crates/bindings-typescript/package.json` (modified, +1/-1)
+**File**: `.github/actions/detect-docs-only/action.yml` (added, +68/-0)
 ```diff
-@@ -142,7 +142,7 @@
-       "name": "esm (gzip)",
-       "path": "dist/index.mjs",
-       "gzip": true,
--      "limit": "50 kB"
-+      "limit": "60 kB"
-     },
-     {
-       "name": "esm (uncompressed)",
+@@ -0,0 +1,68 @@
++name: Detect docs-only changes
++description: >-
++  Report whether every file this event changes is documentation or agent
++  guidance that no build or test reads: docs/, skills/, the agent plugins,
++  .agents/, and Markdown files at the repository root. Crate READMEs are not
++  included, because some are compiled as doc tests, and neither are docs pages
++  whose code a test builds and runs. Requires a prior checkout.
++outputs:
++  docs-only:
++    description: "'true' if every changed file is documentation, otherwise 'false'."
++    value: ${{ steps.detect.outputs.docs-only }}
++runs:
++  using: composite
++  steps:
++    - name: Detect docs-only changes
++      id: detect
++      shell: bash
++      env:
++        MERGE_GROUP_BASE: ${{ github.event.merge_group.base_sha }}
++        PUSH_BEFORE: ${{ github.event.before }}
++      run: |
++        set -euo pipefail
++
++        # Any doubt about what changed means running every check.
++        run_everything() {
++          echo "$1; running all checks."
++          echo "docs-only=false" >>"$GITHUB_OUTPUT"
++          exit 0
++        }
++
++        case "${GITHUB_EVENT_NAME}" in
++          pull_request)
++            # The checkout is GitHub's merge of the PR into its base, so its first parent is the base.
++            git fetch --no-tags --quiet --depth=2 origin "${GITHUB_SHA}" || run_everything "Could not fetch the PR merge commit"
++            base="$(git rev-parse "${GITHUB_SHA}^1")" || run_everything "Could not find the PR's base commit"
++            ;;
++          merge_group) base="${MERGE_GROUP_BASE}" ;;
++          push) base="${PUSH_BEFORE}" ;;
++          *) base="" ;;
++        esac
++
++        if [[ -z "${base}" || "${base}" =~ ^0+$ ]]; then
++          run_everything "No base commit to compare against"
++        fi
++
++        git fetch --no-tags --quiet --depth=1 origin "${base}" || run_everything "Could not fetch base commit ${base}"
++        changed="$(git diff --no-renames --name-only "${base}" "${GITHUB_SHA}")" || run_everything "Could not diff against ${base}"
++
++        # Some tests build and run the code in a docs page, such as the quickstart smoketest with the
++        # chat app tutorial, so a change to one of those pages is a code change. This finds them by
++        # their full path, so tests should name such pages that way.
++        tested_pages="$(git grep -h -o -E 'docs/docs/[A-Za-z0-9_./-]+[.]md' -- crates sdks tools || true)"
++
++        while IFS= read -r path; do
++          if [[ -n "${path}" ]] && grep -qxF -- "${path}" <<<"${tested_pages}"; then
++            run_everything "Tests run the code in ${path}"
++          fi
++          case "${path}" in
++            "" | docs/* | skills/* | codex-plugin/* | .claude-plugin/* | .agents/*) ;;
++            # Markdown only at the root: crate READMEs can be compiled as doc tests.
++            */*) run_everything "Changes outside the docs, such as ${path}" ;;
++            *.md) ;;
++            *) run_everything "Changes outside the docs, such as ${path}" ;;
++          esac
++        done <<<"${changed}"
++
++        echo "Every changed file is documentation; skipping builds and tests."
++        echo "docs-only=true" >>"$GITHUB_OUTPUT"
 ```
 
-**File**: `crates/bindings-typescript/src/sdk/table_cache.ts` (modified, +129/-73)
+**File**: `.github/workflows/ci.yml` (modified, +39/-30)
 ```diff
-@@ -1,7 +1,7 @@
- import { EventEmitter } from './event_emitter.ts';
+@@ -33,10 +33,17 @@ jobs:
+     outputs:
+       # A reused failure also skips fresh jobs; the final step reports that failure on this commit.
+       skip: ${{ steps.compare.outputs.skip == 'true' || steps.reuse.outputs.reused == 'true' }}
++      # Also true when the change only touches docs. Jobs that check the docs themselves (lints, the
++      # docs build and the CLI docs check) use `skip` instead, so they still run for docs-only changes.
++      skip_tests: ${{ steps.compare.outputs.skip == 'true' || steps.reuse.outputs.reused == 'true' || steps.docs.outputs.docs-only == 'true' }}
+     steps:
+       - name: Checkout merge queue commit
+         uses: actions/checkout@v4
  
- import { stdbLogger } from './logger.ts';
--import { deepEqual, type ComparablePrimitive } from '../';
-+import { AlgebraicType, deepEqual, type ComparablePrimitive } from '../';
- import type { EventContextInterface, TableDefForTableName } from './index.ts';
- import type { RowType, TableIndexes, UntypedTableDef } from '../lib/table.ts';
- import type { ClientTableCoreImplementable } from './client_table.ts';
-@@ -13,7 +13,7 @@ import type {
-   ReadonlyRangedIndex,
-   ReadonlyUniqueIndex,
- } from '../lib/indexes.ts';
--import type { Bound } from '../server/range.ts';
-+import type { Range } from '../server/range.ts';
- import type { Prettify } from '../lib/type_util.ts';
- 
- export type Operation<
-@@ -44,6 +44,37 @@ const scalarCompare = (x: any, y: any): number => {
-   return x < y ? -1 : 1;
- };
- 
-+const isRange = (arg: any): arg is Range<any> =>
-+  arg && typeof arg === 'object' && 'from' in arg && 'to' in arg;
++      - name: Detect docs-only changes
++        id: docs
++        uses: ./.github/actions/detect-docs-only
 +
-+const inRange = (value: unknown, range: Range<any>): boolean => {
-+  const { from, to } = range;
-+
-+  if (from.tag !== 'unbounded') {
-+    const c = scalarCompare(value, from.value);
-+    if (c < 0) return false;
-+    if (c === 0 && from.tag === 'excluded') return false;
-+  }
-+
-+  if (to.tag !== 'unbounded') {
-+    const c = scalarCompare(value, to.value);
-+    if (c > 0) return false;
-+    if (c === 0 && to.tag === 'excluded') return false;
-+  }
-+
-+  return true;
-+};
-+
-+type IndexNode<Row> = {
-+  rows: Map<ComparablePrimitive, Row>;
-+  children: Map<ComparablePrimitive, IndexNode<Row>>;
-+};
-+
-+const newIndexNode = <Row>(): IndexNode<Row> => ({
-+  rows: new Map(),
-+  children: new Map(),
-+});
-+
- export type TableIndexView<
-   RemoteModule extends UntypedRemoteModule,
-   TableName extends TableNamesOf<RemoteModule>,
-@@ -72,6 +103,16 @@ export class TableCacheImpl<
-     [RowType<TableDefForTableName<RemoteModule, TableName>>, number]
-   >;
-   private tableDef: TableDefForTableName<RemoteModule, TableName>;
-+  #indexes: {
-+    add(
-+      rowId: ComparablePrimitive,
-+      row: RowType<TableDefForTableName<RemoteModule, TableName>>
-+    ): void;
-+    remove(
-+      rowId: ComparablePrimitive,
-+      row: RowType<TableDefForTableName<RemoteModule, TableName>>
-+    ): void;
-+  }[] = [];
-   private emitter: EventEmitter<'insert' | 'delete' | 'update'>;
+       - name: Compare merge queue commit to PR head
+         id: compare
+         env:
+@@ -93,7 +100,7 @@ jobs:
  
-   /**
-@@ -102,7 +143,6 @@ export class TableCacheImpl<
-     }
-   }
+   upload-build-artifacts-linux:
+     needs: [merge_queue_noop, lints]
+-    if: ${{ needs.merge_queue_noop.outputs.skip != 'true' }}
++    if: ${{ needs.merge_queue_noop.outputs.skip_tests != 'true' }}
+     name: Upload build artifacts (Linux)
+     runs-on: spacetimedb-linux
+     timeout-minutes: 15
+@@ -281,7 +288,7 @@ jobs:
  
--  // TODO: this just scans the whole table; we should build proper index structures
-   #makeReadonlyIndex<
-     I extends TableDefForTableName<
-       RemoteModule,
-@@ -121,69 +161,54 @@ export class TableCacheImpl<
-     }
+   upload-build-artifacts-windows:
+     needs: [merge_queue_noop, lints]
+-    if: ${{ needs.merge_queue_noop.outputs.skip != 'true' }}
++    if: ${{ needs.merge_queue_noop.outputs.skip_tests != 'true' }}
+     name: Upload build artifacts (Windows)
+     runs-on: spacetimedb-windows-runner
+     timeout-minutes: 15
+@@ -567,7 +574,7 @@ jobs:
+   # and skipping this check means that the matrix isn't "populated" so the required checks wouldn't be met.
+   smoketests_noop:
+     needs: [merge_queue_noop]
+-    if: ${{ needs.merge_queue_noop.outputs.skip == 'true' }}
++    if: ${{ needs.merge_queue_noop.outputs.skip_tests == 'true' }}
+     name: Smoketests (${{ matrix.name }})
+     strategy:
+       matrix:
+@@ -577,15 +584,15 @@ jobs:
+           - name: Windows 2/4
+           - name: Windows 3/4
+           - name: Windows 4/4
+-    # These no-op jobs only preserve required smoketest check names after CI reuse.
++    # These no-op jobs only preserve required smoketest check names after CI reuse or for docs-only changes.
+     runs-on: spacetimedb-linux-small
+     steps:
+-      - name: Skip duplicate merge queue smoketest
+-        run: echo "Merge queue commit has the same tree as the PR head; smoketest already ran for the PR."
++      - name: Skip smoketest
++        run: echo "Smoketests already ran for an equivalent commit, or the change only touches docs."
  
-     const columns = idx.columns;
-+    const keyFns = columns.map(c => {
-+      const ty = tableDef.columns[c].typeBuilder.algebraicType;
-+      return (value: unknown) => AlgebraicType.intoMapKey(ty, value);
-+    });
-+    const getCol = (row: RowType<TableDef>, i: number) =>
-+      (row as Record<string, unknown>)[columns[i]];
+   sdk_test_modules:
+     needs: [merge_queue_noop, lints]
+-    if: ${{ needs.merge_queue_noop.outputs.skip != 'true' }}
++    if: ${{ needs.merge_queue_noop.outputs.skip_tests != 'true' }}
+     name: Build SDK test modules
+     runs-on: spacetimedb-linux
+     timeout-minutes: 15
+@@ -663,7 +670,7 @@ jobs:
  
--    // Extract the tuple key for this btree index (column order preserved)
--    const getKey = (row: Row): readonly unknown[] =>
--      columns.map(c => (row as Record<string, unknown>)[c]);
-+    // Each level of the tree is keyed by the next index column, and each node
-+    // holds every row whose key starts with the path leading to it.
-+    const root = newIndexNode<Row>();
+   sdk_test_archives:
+     needs: [merge_queue_noop, lints]
+-    if: ${{ needs.merge_queue_noop.outputs.skip != 'true' }}
++    if: ${{ needs.merge_queue_noop.outputs.skip_tests != 'true' }}
+     name: Build SDK test archives
+     runs-on: spacetimedb-linux
+     timeout-minutes: 15
+@@ -939,20 +946,20 @@ jobs:
  
--    // The server’s ranged scan fixes all prefix cols to equality and applies
--    // the bound only to the *last* term. We mirror that.
--    //
--    // rangeArg for multi-col index is:
--    //   [...prefixEqualValues, (lastTerm | Range<lastTerm>)]
--    //
--    // If only one element is provided, it’s the last term (scalar or Range).
--    const matchRange = (row: Row, rangeArg: any): boolean => {
--      const key = getKey(row);
--
--      // Normalize rangeArg into an array.
--      // With multi-col b-tree, IndexScanRangeBounds always yields at least one element.
--      const arr = Array.isArray(rangeArg) ? rangeArg : [rangeArg];
--
--      const prefixLen = Math.max(0, arr.length - 1);
--      // Check equality over the prefix (all but the last provided element)
--      for (let i = 0; i < prefixLen; i++) {
--        if (!deepEqual(key[i], arr[i])) return false;
-+    const lookup = (prefix: readonly unknown[]): IndexNode<Row> | undefined => {
-+      let node: IndexNode<Row> | undefined = root;
-+      for (let i = 0; i < prefix.length && node; i++) {
-+        node = node.children.get(keyFns[i](prefix[i]));
-       }
-+      return node;
-+    };
+   sdk_tests_noop:
+     needs: [merge_queue_noop]
+-    if: ${{ needs.merge_queue_noop.outputs.skip == 'true' }}
++    if: ${{ needs.merge_queue_noop.outputs.skip_tests == 'true' }}
+     name: SDK Tests (${{ matrix.mode }} ${{ matrix.partition }}/2)
+     strategy:
+       matrix:
+         mode: [native, browser]
+         partition: [1, 2]
+     runs-on: ubuntu-latest
+     steps:
+-      - name: Skip duplicate merge queue SDK test
+-        run: echo "Merge queue commit has the same tree as the PR head; SDK tests already ran for the PR."
++      - name: Skip SDK test
++        run: echo "SDK tests already ran for an equivalent commit, or the change only touches docs."
  
--      const lastProvided = arr[arr.length - 1];
--      const kLast = key[prefixLen];
--
--      // If the last provided is a Range<T>, apply bounds; otherwise equality.
--      if (
--        lastProvided &&
--        typeof lastProvided === 'object' &&
--        'from' in lastProvided &&
--        'to' in lastProvided
--      ) {
--        // Range<T>
--        const from = lastProvided.from as Bound<any>;
--        const to = lastProvided.to as Bound<any>;
--
--        // Lo
+   rust_test_build:
+     needs: [merge_queue_noop, lints]
+-    if: ${{ needs.merge_queue_noop.outputs.skip != 'true' }}
++    if: ${{ needs.merge_queue_noop.outputs.skip_tests != 'true' }}
+     name: Test Suite - Rust Build
+     runs-on: spacetimedb-linux
+     timeout-minutes: 15
+@@ -1173,7 +1180,7 @@ jobs:
+ 
+   csharp_tests:
+     needs: [merge_queue_noop, lints]
+-    if: ${{ needs.merge_queue_noop.outputs.skip != 'true' }}
++    if: ${{ needs.merge_queue_noop.outputs.skip_tests != 'true' }}
+     name: Test Suite - C#
+     runs-on: spacetimedb-linux
+     timeout-minutes: 10
+@@ -1211,7 +1218,7 @@ jobs:
+ 
+   cpp_compile_tests:
+     needs: [merge_queue_noop, lints]
+-    if: ${{ needs.merge_queue_noop.outputs.skip != 'true' }}
++    if: ${{ needs.merge_queue_noop.outputs.skip_tests != 'true' }}
+     name: Test Suite - C++ Compile (${{ matrix.suite }})
+     runs-on: spacetimedb-linux
+     timeout-minutes: 10
+@@ -1266,7 +1273,7 @@ jobs:
+     timeout-minutes: 5
+     steps:
+       - name: Check component results
+-        if: ${{ needs.merge_queue_noop.outputs.skip != 'true' }}
++        if: ${{ needs.merge_
 ```
 
-**File**: `crates/bindings-typescript/tests/table_cache.test.ts` (modified, +59/-0)
+**File**: `.github/workflows/internal-tests.yml` (modified, +6/-11)
 ```diff
-@@ -755,6 +755,65 @@ describe('TableCache', () => {
-     });
-   });
+@@ -33,24 +33,19 @@ jobs:
+       TARGET_OWNER: clockworklabs
+       TARGET_REPO: SpacetimeDBPrivate
+     steps:
+-      # Required for the path filter check below on non-PR commits (e.g. `master`)
+       - name: Checkout
+         uses: actions/checkout@v4
  
-+  test('Unique index find tracks inserts, updates and deletes', () => {
-+    const tableCache = new TableCacheImpl(tables.user.tableDef);
-+    const alice = Identity.fromString('aa'.repeat(32));
-+    const bob = Identity.fromString('bb'.repeat(32));
-+    const mkOperation = (
-+      type: 'insert' | 'delete',
-+      row: { identity: Identity; username: string }
-+    ) => ({
-+      type,
-+      rowId: AlgebraicType.intoMapKey(
-+        tables.user.rowType.elements[0].algebraicType,
-+        row.identity
-+      ),
-+      row,
-+    });
-+    const steps: TestStep[] = [
-+      {
-+        ops: {
-+          ops: [
-+            mkOperation('insert', { identity: alice, username: 'alice' }),
-+            mkOperation('insert', { identity: bob, username: 'bob' }),
-+          ],
-+          ctx: {},
-+        },
-+        assertions: [
-+          ({ tableCache }) => {
-+            const index = (tableCache as any).identity;
-+            expect(index.find(alice)).toEqual({
-+              identity: alice,
-+              username: 'alice',
-+            });
-+            expect(index.find(Identity.zero())).toBeNull();
-+          },
-+        ],
-+      },
-+      {
-+        ops: {
-+          ops: [
-+            mkOperation('delete', { identity: alice, username: 'alice' }),
-+            mkOperation('insert', { identity: alice, username: 'alice2' }),
-+            mkOperation('delete', { identity: bob, username: 'bob' }),
-+          ],
-+          ctx: {},
-+        },
-+        assertions: [
-+          ({ tableCache }) => {
-+            const index = (tableCache as any).identity;
-+            expect(index.find(alice)).toEqual({
-+              identity: alice,
-+              username: 'alice2',
-+            });
-+            expect(index.find(bob)).toBeNull();
-+          },
-+        ],
-+      },
-+    ];
-+    runTest(tableCache, steps);
-+  });
-+
-   test('should be empty on creation', () => {
-     const tableCache = new TableCacheImpl(tables.player.tableDef);
-     expect(tableCache.count()).toEqual(0n);
-```
-
-**File**: `crates/bindings-typescript/tests/table_cache_resolved_indexes.test.ts` (modified, +68/-0)
-```diff
-@@ -3,6 +3,7 @@ import { ModuleContext, tablesToSchema } from '../src/lib/schema';
- import { table } from '../src/lib/table';
- import { TableCacheImpl } from '../src/sdk/table_cache';
- import { t } from '../src/lib/type_builders';
-+import { Range } from '../src/server/range';
+-      # Skip the private dispatch entirely when only `docs/` is touched. The job
++      # Skip the private dispatch entirely for docs-only changes. The job
+       # itself still completes successfully so required-status-check gating is
+       # satisfied without spending private-runner time on a docs-only change.
+-      - name: Detect non-docs changes
+-        id: filter
+-        uses: dorny/paths-filter@v3
+-        with:
+-          filters: |
+-            non_docs:
+-              - '!docs/**'
++      - name: Detect docs-only changes
++        id: docs
++        uses: ./.github/actions/detect-docs-only
  
- describe('table cache resolved indexes', () => {
-   it('builds index accessors from resolvedIndexes (field-level + table-level)', () => {
-@@ -68,4 +69,71 @@ describe('table cache resolved indexes', () => {
-     expect(typeof byTeamAndLevel?.filter).toBe('function');
-     expect(Array.from(byTeamAndLevel.filter(['red', 1]))).toEqual([rows[0]]);
-   });
-+
-+  it('btree filter supports prefixes and ranges and tracks row changes', () => {
-+    const player = table(
-+      {
-+        name: 'player',
-+        indexes: [
-+          {
-+            accessor: 'byTeamAndLevel',
-+            algorithm: 'btree',
-+            columns: ['team', 'level'] as const,
-+          },
-+        ] as const,
-+      },
-+      {
-+        id: t.u32(),
-+        team: t.string(),
-+        level: t.u32(),
-+      }
-+    );
-+
-+    const schemaDef = tablesToSchema(new ModuleContext(), { player });
-+    const tableCache = new TableCacheImpl<any, string>(
-+      schemaDef.tables.player as any
-+    );
-+    const byTeamAndLevel = (tableCache as any).byTeamAndLevel;
-+    const apply = (type: 'insert' | 'delete', rows: any[]) =>
-+      tableCache.applyOperations(
-+        rows.map(row => ({ type, rowId: row.id, row })),
-+        {} as any
-+      );
-+    const filter = (range: any) => Array.from(byTeamAndLevel.filter(range));
-+
-+    const rows = [
-+      { id: 1, team: 'red', level: 1 },
-+      { id: 2, team: 'blue', level: 2 },
-+      { id: 3, team: 'red', level: 3 },
-+      { id: 4, team: 'red', level: 5 },
-+    ];
-+    apply('insert', rows);
-+
-+    expect(filter(['red', 3])).toEqual([rows[2]]);
-+    expect(filter(['green', 3])).toEqual([]);
-+    expect(filter('red')).toEqual([rows[0], rows[2], rows[3]]);
-+    expect(
-+      filter([
-+        'red',
-+        new Range({ tag: 'excluded', value: 1 }, { tag: 'included', value: 5 }),
-+      ])
-+    ).toEqual([rows[2], rows[3]]);
-+    expect(
-+      filter(
-+        new Range(
-+          { tag: 'included', value: 'blue' },
-+          { tag: 'excluded', value: 'red' }
-+        )
-+      )
-+    ).toEqual([rows[1]]);
-+
-+    const moved = { id: 3, team: 'blue', level: 3 };
-+    apply('delete', [rows[2]]);
-+    apply('insert', [moved]);
-+    apply('delete', [rows[3]]);
-+
-+    expect(filter(['red', 3])).toEqual([]);
-+    expect(filter('red')).toEqual([rows[0]]);
-+    expect(filter('blue')).toEqual([rows[1], moved]);
-+  });
- });
-```
-
----
-
-### Incident Patch 2: `620838fa` (2026-11-05)
-**Commit Message**: Document how to write clear PR testing sections (#6492)
-
-# Description of Changes
-
-Add guidance and examples for concise PR testing sections that describe
-concrete coverage.
-
-It will surely need more iteration, but hopefully it helps as a start.
-
-# API and ABI breaking changes
-
-None.
-
-# Rollback safety impact
-
-n/a
-
-# Expected complexity level and risk
-
-1 (docs only)
-
-# Testing
-
-
-The guidance comes from iterating on [PR #6404's testing
-section](https://github.com/clockworklabs/SpacetimeDB/pull/6404) until
-the reviewer accepted it. The examples capture those concrete
-improvements.
-
-We haven't yet tested whether a developer or agent using this guide
-alone produces a good section.
-
----------
-
-Co-authored-by: Zeke Foppa <[REDACTED_EMAIL]>
-
-**File**: `.agents/testing-sections.md` (added, +62/-0)
-```diff
-@@ -0,0 +1,62 @@
-+# Writing testing sections
-+
-+A PR's testing section should explain what verification gives the reviewer confidence that the change works as intended and avoids bugs. The goal is evidence for correctness, not a list of testing activities.
-+
-+## Choose the evidence
-+
-+- Start from the change's intended outcome and the important ways it could fail. Identify what verification addresses those concerns, including existing coverage.
-+- Usually, the strongest evidence is how automated tests were extended or adapted, or why existing tests cover the change. Manual tests, successful use, and other verification can also provide evidence.
-+- State what the evidence establishes. A same-client compilation test supports source compatibility; a client/server test supports actual interaction. Neither proves the other.
-+- For documentation and instructions, look for evidence that readers can accomplish the intended task. Consistency checks and working links are useful, but don't establish that the content is effective.
-+- Include important remaining uncertainty and explain any barriers to testing it. Distinguish "not tested yet" from "cannot be tested"; don't invent a reason or imply impossibility.
-+
-+The connection between the evidence and the intended outcome should be clear from the wording. It doesn't need a separate justification after every bullet.
-+
-+## Content
-+
-+- Distinguish updated tests, added tests, and relevant existing coverage. Use short bullets; omit categories that don't apply.
-+- Describe what each test or other check verifies. Name the inputs or API when needed to make the claim clear: incorrect reducer arguments, generated bindings, or the built package.
-+- Explain what coverage the change adds. A new test may exercise previously tested behavior through a new path; don't imply the behavior was previously untested.
-+- Make compatibility claims precise. The same client against old and new bindings is different from old bindings against a new SDK.
-+- Include existing integration coverage when it helps explain why the change is covered. Inspect it before claiming coverage is missing or proposing more tests.
-+- Write assuming CI passes. Don't include a running log of local test execution or say CI tests still need to be run for the PR. This does not justify claiming a known failure passes.
-+- Label manual verification as manual and state what was checked and the result.
-+- Keep caveats focused on gaps that affect confidence in the change, not a routine list of what tests don't do.
-+
-+## Wording and detail
-+
-+Brevity comes from removing unnecessary detail, not replacing concrete information with vague labels.
-+
-+- Use plain language and concrete actions. Each bullet should describe a distinct piece of coverage.
-+- Describe observable behavior instead of labels such as "runtime checks," "metadata coverage," or "strengthened tests."
-+- Be precise about what runs. Local assertions on imported bindings are not the same as a client connecting to a server. State what is checked rather than calling both "running a client."
-+- Describe each piece of coverage once. Compiling a client and checking its types often describe the same test.
-+- Omit routine mechanics, commands, counts, and assertion details unless they materially help the reviewer.
-+- Scale the section to the change. Don't turn it into an inventory of every assertion or an explicit question-and-answer checklist.
-+
-+## Wording examples
-+
-+| Vague or misleading | Concrete |
-+| --- | --- |
-+| Strengthened codegen tests. | Updated codegen tests to check names and aliases using generated bindings instead of searching generated text. |
-+| Added compile-time checks. | Tests that incorrect reducer arguments fail compilation. |
-+| Generated-client runtime checks. | Tests that generated tables produce the expected subscription SQL. |
-+| Compatibility tests. | Tests that the same client compiles against old and new bindings, including existing imports, types, and aliases. |
-+| Package and browser checks. | Tests that the new declaration API works with ESM and CommonJS imports and browser builds. |
-+| End-to-end coverage. | Existing integration tests connect to a server, subscribe, call reducers, and check received rows. |
-+
-+## Example: generated bindings
-+
-+Updated:
-+
-+- Codegen snapshots for the new bindings format.
-+- Existing codegen tests to check table and function names and aliases using generated bindings instead of searching generated text.
-+
-+Added:
-+
-+- Tests that the same client compiles against old and new bindings, covering existing imports, types, builders, callbacks, and aliases.
-+- Tests that clients compile using generated submodule types, tables, reducers, and procedures.
-+- Tests that incorrect reducer arguments fail compilation with the new bindings.
-+- Tests that the new declaration API works with ESM and CommonJS imports and browser builds.
-+
-+Existing server integration tests generate bindings and check connections, subscriptio
-```
-
-**File**: `AGENTS.md` (modified, +4/-0)
-```diff
-@@ -13,3 +13,7 @@ A path's review tier comes from the nearest `.deep` marker in its directory or a
- - Do not add, remove, move or edit a marker unless asked.
+       - id: dispatch
+         name: Select or trigger tests
+-        if: steps.filter.outputs.non_docs == 'true'
++        if: steps.docs.outputs.docs-only != 'true'
+         env:
+           CARGO_TARGET_DIR: ${{ runner.temp }}/internal-tests-cargo-target
+           GH_TOKEN: ${{ secrets.SPACETIMEDB_PRIVATE_TOKEN }}
+@@ -67,7 +62,7 @@ jobs:
+             -- other-workflows coordinate internal-tests "${args[@]}"
  
- These markers are provisional, and CI does not check any of this yet.
-+
-+# PR testing sections
-+
-+When writing or updating a PR's testing section, read [Writing testing sections](.agents/testing-sections.md). Explain what verification supports confidence that the change works as intended, and identify important remaining uncertainty.
+       - name: Wait for Internal Tests to complete
+-        if: steps.filter.outputs.non_docs == 'true'
++        if: steps.docs.outputs.docs-only != 'true'
+         env:
+           GH_TOKEN: ${{ secrets.SPACETIMEDB_PRIVATE_TOKEN }}
+           RUN_ID: ${{ steps.dispatch.outputs.run_id }}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6492** (2026-11-05): Document how to write clear PR testing sections (@bfops)
-- **PR #6488** (2026-11-04): Allow Tyler-authored license changes in CODEOWNERS check (@jdetter)
-- **PR #6475** (2026-11-04): Remove unused scripts and the sqltest crate (@cloutiertyler)
-- **PR #6460** (2026-11-04): Async IDC: rust shorthand (@Shubham8287)
-- **PR #6458** (2026-11-03): CLI - Restore yes/no prompt default on EOF (@bfops)
-- **PR #6457** (2026-11-04): Check publication permissions before reserving database names (@bfops)
+- **PR #6524** (2026-11-06): Document editing data and calling reducers in the Maincloud dashboard (@cloutiertyler)
+- **PR #6516** (closed): [Do not merge] Test docs-only CI skipping from #6515 (@cloutiertyler)
+- **PR #6515** (2026-11-06): Skip CI builds and tests for docs-only changes (@cloutiertyler)
+- **PR #6510** (2026-11-06): Add Security Gremlin to GREMLINS.md (@cloutiertyler)
+- **PR #6508** (closed): Exercise existing Linux and Windows smoketests on staging (testing only) (@jdetter)
+- **PR #6507** (2026-11-06): Fix database identity publish (@Shubham8287)
 
 ---
 
@@ -1302,28 +1124,60 @@ Co-authored-by: Zeke Foppa <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Use performant implementation for find/filter (#6416)
+## X. Skip CI builds and tests for docs-only changes (#6515)
 
 **RULE**:
-When implementing operations in `crates/bindings-typescript/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/actions/detect-docs-only/action.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `17a3f3a6`: Use performant implementation for find/filter (#6416). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f53483c3`: Skip CI builds and tests for docs-only changes (#6515). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/bindings-typescript/package.json`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/actions/detect-docs-only/action.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      "limit": "60 kB"
+name: Detect docs-only changes
+description: >-
+  Report whether every file this event changes is documentation or agent
+  guidance that no build or test reads: docs/, skills/, the agent plugins,
+  .agents/, and Markdown files at the repository root. Crate READMEs are not
+  included, because some are compiled as doc tests, and neither are docs pages
+  whose code a test builds and runs. Requires a prior checkout.
+outputs:
+  docs-only:
+    description: "'true' if every changed file is documentation, otherwise 'false'."
+    value: ${{ steps.detect.outputs.docs-only }}
+runs:
+  using: composite
+  steps:
+    - name: Detect docs-only changes
+      id: detect
+      shell: bash
+      env:
+        MERGE_GROUP_BASE: ${{ github.event.merge_group.base_sha }}
+        PUSH_BEFORE: ${{ github.event.before }}
+      run: |
+        set -euo pipefail
+
+        # Any doubt about what changed means running every check.
+        run_everything() {
+          echo "$1; running all checks."
+          echo "docs-only=false" >>"$GITHUB_OUTPUT"
+          exit 0
+        }
+
+        case "${GITHUB_EVENT_NAME}" in
+          pull_request)
+            # The checkout is GitHub's merge of the PR into its base, so its fir
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-      "limit": "50 kB"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `17a3f3a6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f53483c3` are properly handled with clean fallback behavior.

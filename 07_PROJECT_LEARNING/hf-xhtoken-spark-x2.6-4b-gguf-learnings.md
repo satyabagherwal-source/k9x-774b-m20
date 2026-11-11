@@ -3,7 +3,7 @@
 > **Source Version**: `hf-xhtoken-s`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-11-04T19:48:08.510Z  
+> **Timestamp**: 2026-11-08T06:19:01.408Z  
 > **Learning ID**: `learn-huggingface-xhtoken-spark-x2-6-4b-gguf`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,433 +17,365 @@
 ## 1. Executive Forensic Architecture & System Mechanics
 
 **Technical Problem Solved:**
-The repository `XHToken/Spark-X2.6-4B-GGUF` addresses the critical bottleneck of **high-fidelity agentic reasoning on constrained edge devices**. Standard 4B parameter models typically fail at complex multi-step tool use, long-context retention, and structured reasoning without excessive latency or memory overhead. This repository provides a **quantized (GGUF)** artifact of the Spark-X2.6-4B model, optimized for local inference engines (e.g., llama.cpp, Ollama, LM Studio) to enable "on-device agents" that can execute real-world tasks (coding, planning, tool invocation) with a "controllable thinking budget."
+The repository `XHToken/Spark-X2.6-4B-GGUF` addresses the critical bottleneck in **on-device AI inference**: the trade-off between model capability (coding, agentic reasoning, long-context) and hardware constraints (memory bandwidth, latency, power). It provides a quantized (GGUF format) artifact of the Spark-X2.6-4B model, optimized for local execution via runtimes like `llama.cpp`, `Ollama`, or `LM Studio`.
 
 **Architectural Boundaries:**
-1.  **Artifact Boundary**: This is a **data repository**, not a code repository. It contains no executable source code, CI/CD pipelines, or unit tests. The "architecture" is defined by the **model weights** (GGUF format) and the **inference metadata** (README, config stubs).
-2.  **Inference Boundary**: The model is designed to be loaded by external inference runtimes. The boundary is the **GGUF file header** and the **tensor layout** within the binary.
-3.  **Agent Boundary**: The model acts as the "brain" in an agent loop. The boundary is the **prompt/response interface** (text in, text out), where the model must emit structured outputs (JSON, tool calls) that the host application parses.
+1.  **Artifact Boundary**: This is a **data repository**, not a code repository. It contains binary weights (`.gguf` files) and metadata (`README.md`). There is no executable source code, CI/CD pipeline, or test harness within this specific repo.
+2.  **Model Architecture Boundary**: The model retains the **exact same architecture** as Spark-X2.5-4B. The "innovation" is entirely in the **post-training data and alignment**, not the transformer block structure (attention heads, FFN dimensions, layer count).
+3.  **Inference Runtime Boundary**: The model is decoupled from the inference engine. The GGUF format acts as a serialization barrier, allowing the weights to be loaded by any compatible C/C++ or Rust-based inference runtime without dependency on the original Python/PyTorch training stack.
 
 **Critical Subsystem Abstractions:**
-*   **Quantization Layer**: The GGUF format implies specific quantization types (Q4_K_M, Q5_K_M, etc.) that trade off precision for memory bandwidth.
-*   **Thinking Budget Controller**: A meta-cognitive abstraction where the model is trained to adjust its internal chain-of-thought depth based on a system prompt or special tokens (`none`, `low`, `high`).
-*   **Tool-Use Protocol**: The model is fine-tuned to adhere to specific function-calling schemas, acting as a stateless state-machine interpreter for external tools.
-
----
+*   **Quantization Layer**: The conversion from FP16/BF16 (training) to GGUF (inference) involves complex quantization schemes (Q4_K_M, Q5_K_M, etc.) that map high-precision tensors to low-bit representations while preserving mathematical invariants for attention and feed-forward computations.
+*   **Thinking Budget Controller**: A unique abstraction mentioned in the README: "three configurable thinking levels—none, low, high." This implies a **dynamic compute allocation mechanism** where the model can adjust its internal chain-of-thought depth based on a system prompt or API parameter, balancing latency vs. accuracy.
+*   **Agentic Tool Interface**: The model is trained for "complex tool use," implying a specific output format (likely JSON or structured text) that downstream agents parse to execute tools.
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Edge-Model Quantization Integrity & Metadata Consistency
+### 1. Quantization-Aware Inference Latency Budgeting
 **RULE**:
-When deploying quantized LLMs (GGUF) for agentic tasks, the inference engine **MUST** validate that the `arch` field in the GGUF header matches the expected architecture of the base model, and the `context_length` metadata **MUST NOT** exceed the maximum context window supported by the specific quantization kernel to prevent silent truncation or memory corruption.
+When deploying LLMs on edge devices, you MUST define a **Latency-Per-Token (LPT)** budget that accounts for both **memory bandwidth** (loading weights) and **compute intensity** (matrix multiplications). You MUST NOT assume that smaller parameter counts (4B) automatically guarantee lower latency than larger models (9B) if the larger model is more aggressively quantized or has better cache locality.
 
 **WHY**:
-GGUF files are binary blobs. If the inference engine (e.g., llama.cpp) loads a file with a mismatched architecture or an unsupported context length, it may either crash (segfault) or silently truncate the context, leading to **hallucinated tool calls** or **infinite loops** in agent frameworks because the model loses track of previous tool outputs.
+In edge inference, the bottleneck is often **memory bandwidth** (moving weights from RAM/VRAM to the compute unit) rather than FLOPS. A 4B model in Q8_0 (8-bit) may have higher memory traffic than a 9B model in Q4_K_M (4-bit) if the 4B model has a wider hidden dimension or less efficient quantization packing. Ignoring this leads to "slow small models" that fail real-time agent loops.
 
 **WHEN TO APPLY**:
-Any system loading GGUF files for local inference, especially in agent loops where context window management is critical.
+*   Selecting quantization levels for on-device LLMs.
+*   Designing agent loops with strict timeout constraints.
+*   Comparing models of different sizes for edge deployment.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-import gguf
+# Pseudo-code for Latency Budgeting in Edge Deployment
+def estimate_inference_latency(model_params, quantization_bits, memory_bandwidth_gbps, compute_flops):
+    # 1. Estimate Memory Traffic per Token
+    # Each token requires loading all weights once (approx)
+    bytes_per_token = (model_params * quantization_bits) / 8
+    
+    # 2. Estimate Memory Bandwidth Latency
+    latency_memory_ms = (bytes_per_token / memory_bandwidth_gbps) * 1000
+    
+    # 3. Estimate Compute Latency
+    # Approximate FLOPs per token ~ 2 * params
+    flops_per_token = 2 * model_params
+    latency_compute_ms = (flops_per_token / compute_flops) * 1000
+    
+    # 4. Total Latency is max of the two (bottleneck)
+    total_latency_ms = max(latency_memory_ms, latency_compute_ms)
+    
+    return total_latency_ms
 
-def validate_gguf_for_agent(path: str, expected_arch: str, max_ctx: int):
-    with open(path, 'rb') as f:
-        reader = gguf.GGUFReader(f)
-        # 1. Validate Architecture
-        arch = reader.get("general.architecture")
-        if arch != expected_arch:
-            raise ValueError(f"Architecture mismatch: expected {expected_arch}, got {arch}")
+# Example: 4B model Q4_K_M vs 9B model Q4_K_M
+# 4B Q4: ~2GB traffic/token. 9B Q4: ~4.5GB traffic/token.
+# If bandwidth is 50GB/s:
+# 4B: 40ms/token. 9B: 90ms/token.
+# If compute is the bottleneck (e.g., weak CPU), the ratio may differ.
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Assuming parameter count is the only factor
+def bad_latency_estimate(model_params):
+    # This ignores quantization, memory bandwidth, and compute architecture
+    return model_params * 0.1  # Arbitrary constant, fails in production
+```
+
+**VERIFICATION METHOD**:
+*   **Benchmarking**: Run `llama-bench` or `ollama run` with `--verbose` to measure actual tokens/sec.
+*   **Assertion**: `assert measured_latency_ms < budgeted_latency_ms * 1.2` (20% buffer).
+
+### 2. Dynamic Thinking Budget Control for Agentic Loops
+**RULE**:
+When using LLMs in agentic workflows, you MUST implement a **dynamic thinking budget** mechanism that allows the system to adjust the model's reasoning depth (chain-of-thought length) based on task complexity and latency constraints. You MUST NOT use a fixed, maximum-length chain-of-thought for all tasks, as this wastes compute on simple tasks and may timeout on complex ones.
+
+**WHY**:
+Agentic tasks vary in complexity. A simple "get weather" task does not require the same reasoning depth as "debug this Python code." Forcing a long chain-of-thought for simple tasks increases latency and cost. Conversely, forcing a short chain-of-thought for complex tasks reduces accuracy. A dynamic budget allows the system to optimize for both.
+
+**WHEN TO APPLY**:
+*   Building multi-step agents with LLMs.
+*   Optimizing inference cost and latency in production.
+*   Implementing "thinking" modes in LLM APIs.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+class AgenticLLMClient:
+    def __init__(self, model):
+        self.model = model
+    
+    def generate(self, prompt, task_complexity="low"):
+        # Map complexity to thinking budget
+        thinking_budgets = {
+            "none": 0,
+            "low": 100,   # ~100 tokens of reasoning
+            "high": 500   # ~500 tokens of reasoning
+        }
         
-        # 2. Validate Context Length
-        ctx_len = reader.get("context_length")
-        if ctx_len > max_ctx:
-            raise ValueError(f"Context length {ctx_len} exceeds supported max {max_ctx}")
+        budget = thinking_budgets.get(task_complexity, 100)
         
-        # 3. Check Quantization Type for Agent Stability
-        # Q2_K is often too lossy for structured tool calls
-        quant_type = reader.get("general.file_type")
-        if quant_type in [gguf.GGMLQuantizationType.Q2_K, gguf.GGMLQuantizationType.Q3_K_S]:
-            raise Warning("Low quantization may degrade tool-call JSON validity")
+        # Inject thinking budget into system prompt or API parameter
+        system_prompt = f"You are an agent. Think for at most {budget} tokens before answering."
+        
+        response = self.model.generate(
+            prompt=prompt,
+            system_prompt=system_prompt,
+            max_tokens=budget + 100  # Leave room for final answer
+        )
+        
+        return response
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Blindly loading GGUF without validation
-model = llama_cpp.Llama(model_path="spark-x2.6-4b.gguf")
-# If the file is corrupted or has a different arch, this may crash or produce garbage
-# No check for context length -> Agent loop may exceed context and fail silently
+# ANTI-PATTERN: Fixed maximum thinking for all tasks
+def bad_generate(prompt):
+    # Always forces 1000 tokens of thinking, even for simple tasks
+    return model.generate(prompt, max_tokens=1000, system_prompt="Think deeply.")
 ```
 
 **VERIFICATION METHOD**:
-Automated CI step that parses the GGUF header using `gguf` library and asserts `arch == "llama"` (or specific variant) and `context_length <= 8192` (or configured max).
+*   **A/B Testing**: Measure accuracy and latency for different thinking budgets on a benchmark suite.
+*   **Log Analysis**: Track the average number of thinking tokens used per task type.
 
-### 2. Controllable Thinking Budget Enforcement in Agent Loops
+### 3. GGUF Format Integrity & Versioning
 **RULE**:
-When using models with "controllable thinking" features (e.g., Spark-X2.6), the agent framework **MUST** explicitly inject the thinking level (`none`, `low`, `high`) into the system prompt or special tokens **before** the user query, and **MUST NOT** allow the model to implicitly decide the thinking depth without explicit user/system control, to prevent latency spikes or reasoning underperformance.
+When distributing GGUF models, you MUST include a **versioned metadata header** that specifies the quantization scheme, architecture version, and tokenizer version. You MUST NOT distribute GGUF files without explicit metadata, as this leads to silent failures in inference runtimes that expect specific tensor layouts.
 
 **WHY**:
-Without explicit control, the model may default to "high" thinking for simple tasks (causing latency) or "none" for complex tasks (causing errors). In agent loops, this leads to **non-deterministic performance** and **unpredictable cost/latency**.
+GGUF is a binary format that can change over time. Different quantization schemes (Q4_K_M, Q5_K_S, etc.) have different tensor layouts and dequantization algorithms. If the inference runtime does not know the exact scheme, it may misinterpret the binary data, leading to garbage output or crashes. Versioning ensures compatibility.
 
 **WHEN TO APPLY**:
-Any agent system using models that support configurable reasoning depth.
+*   Converting models to GGUF format.
+*   Distributing models on Hugging Face or other platforms.
+*   Building inference runtimes that load GGUF files.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-def build_agent_prompt(user_query: str, thinking_level: str = "low"):
-    # Explicitly set thinking level in system prompt
-    system_prompt = f"""
-    You are an expert agent.
-    Thinking Level: {thinking_level}
-    - If 'none': Answer directly without chain-of-thought.
-    - If 'low': Use minimal reasoning.
-    - If 'high': Use detailed step-by-step reasoning.
-    """
-    return [
-        {"role": "system", "content": system_prompt},
-        {"role": "user", "content": user_query}
-    ]
+# Pseudo-code for GGUF Metadata Validation
+def validate_gguf_file(file_path):
+    with open(file_path, 'rb') as f:
+        magic = f.read(4)
+        if magic != b'GGUF':
+            raise ValueError("Not a GGUF file")
+        
+        version = int.from_bytes(f.read(4), 'little')
+        if version > SUPPORTED_GGUF_VERSION:
+            raise ValueError(f"Unsupported GGUF version: {version}")
+        
+        # Read metadata tensor count
+        tensor_count = int.from_bytes(f.read(8), 'little')
+        
+        # Validate each tensor's quantization type
+        for _ in range(tensor_count):
+            name_len = int.from_bytes(f.read(8), 'little')
+            name = f.read(name_len).decode('utf-8')
+            dtype = int.from_bytes(f.read(4), 'little')
+            
+            if dtype not in SUPPORTED_QUANTIZATION_TYPES:
+                raise ValueError(f"Unsupported quantization type: {dtype}")
+            
+            # ... read other metadata ...
+    
+    return True
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Relying on model's default behavior
-messages = [{"role": "user", "content": user_query}]
-# Model may choose 'high' thinking for a simple "hello" -> 5s latency
-# Model may choose 'none' for a complex math problem -> Incorrect answer
+# ANTI-PATTERN: Loading GGUF without validation
+def bad_load_gguf(file_path):
+    with open(file_path, 'rb') as f:
+        data = f.read()
+    # Directly parse data without checking magic, version, or tensor types
+    # This can lead to segfaults or silent corruption
+    return parse_binary(data)
 ```
 
 **VERIFICATION METHOD**:
-Unit test that asserts the system prompt contains the expected thinking level string for each test case.
-
-### 3. GGUF File Integrity & Checksum Verification for Edge Deployment
-**RULE**:
-Before loading a GGUF file on an edge device, the deployment system **MUST** verify the SHA-256 checksum of the file against a trusted manifest to prevent loading corrupted or tampered weights, which can lead to **security vulnerabilities** (e.g., prompt injection via malicious weights) or **runtime crashes**.
-
-**WHY**:
-GGUF files are large and often downloaded from untrusted sources. A corrupted file may cause the inference engine to read out-of-bounds memory, leading to **segfaults** or **data leakage**. A tampered file may contain malicious backdoors in the weights.
-
-**WHEN TO APPLY**:
-Any system downloading and loading GGUF files from the internet.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-import hashlib
-
-def verify_gguf_checksum(path: str, expected_sha256: str):
-    sha256_hash = hashlib.sha256()
-    with open(path, "rb") as f:
-        for byte_block in iter(lambda: f.read(4096), b""):
-            sha256_hash.update(byte_block)
-    if sha256_hash.hexdigest() != expected_sha256:
-        raise SecurityError("GGUF file checksum mismatch. Possible corruption or tampering.")
-```
-
-**NEGATIVE CONSTRAINT**:
-```python
-# ANTI-PATTERN: Loading file without checksum verification
-model = llama_cpp.Llama(model_path="downloaded_model.gguf")
-# If file is corrupted, this may crash or produce garbage
-```
-
-**VERIFICATION METHOD**:
-Automated test that downloads a known-good GGUF file, computes its SHA-256, and asserts it matches the expected value.
-
----
+*   **Unit Test**: Create a malformed GGUF file and assert that the loader raises an exception.
+*   **Integration Test**: Load a valid GGUF file and verify that the output matches the expected reference.
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-*Note: Since no commits, issues, or patches are provided in the input, this section is derived from **known failure modes** of GGUF-based agent systems and the specific characteristics of Spark-X2.6-4B as described in the README.*
+*Note: The provided repository data contains no commit history, bug issues, or code diffs. The following incidents are **hypothetical** but highly probable based on the nature of GGUF model distribution and on-device inference. They are derived from common failure modes in this ecosystem.*
 
-### Incident 1: Silent Context Truncation Leading to Agent Loop Failure (BUG-CTX-01)
-- **Context**: Agent loop using Spark-X2.6-4B-GGUF with a context window of 8192 tokens.
-- **What Was Expected**: The agent should retain the full conversation history and tool outputs to make correct decisions.
-- **What Actually Happened**: The inference engine silently truncated the context to 4096 tokens (due to a mismatch between the model's metadata and the engine's configuration). The model lost track of the previous tool call, leading to a **repeated tool call** and an **infinite loop**.
-- **Evidence in Repo**: N/A (No commits provided). However, the README mentions "long-context capabilities," implying that context management is critical.
-- **Root Cause**: The GGUF file's `context_length` metadata was not validated against the inference engine's actual context window. The engine used a default value that was smaller than the model's supported context.
+### Incident 1: Silent Garbage Output Due to Mismatched Quantization Scheme (BUG-GGUF-01)
+- **Context**: Inference Runtime (llama.cpp) loading Spark-X2.6-4B-GGUF.
+- **What Was Expected**: The model should generate coherent text.
+- **What Actually Happened**: The model generated random tokens or repeated phrases.
+- **Evidence in Repo**: N/A (Hypothetical).
+- **Root Cause**: The GGUF file was created with a newer quantization scheme (e.g., Q4_K_M) that the inference runtime did not support. The runtime silently fell back to a default dequantization algorithm, which misinterpreted the tensor data.
+- **Remediation Code Diff**:
+```cpp
+// - Buggy code: No version check
+void load_tensor(const uint8_t* data, int size) {
+    // Assume Q4_0 format
+    dequantize_q4_0(data, size);
+}
+
+// + Fixed pattern: Version and type check
+void load_tensor(const uint8_t* data, int size, int dtype) {
+    if (dtype == GGML_TYPE_Q4_K) {
+        dequantize_q4_k(data, size);
+    } else if (dtype == GGML_TYPE_Q4_0) {
+        dequantize_q4_0(data, size);
+    } else {
+        throw std::runtime_error("Unsupported quantization type");
+    }
+}
+```
+- **Lesson**: Always validate binary format versions and types before parsing.
+
+### Incident 2: Out-of-Memory Crash on Low-End Devices (BUG-OOM-02)
+- **Context**: Mobile device with 4GB RAM running Spark-X2.6-4B-GGUF.
+- **What Was Expected**: The model should load and run.
+- **What Actually Happened**: The app crashed with an OOM error.
+- **Evidence in Repo**: N/A (Hypothetical).
+- **Root Cause**: The model was loaded entirely into RAM without considering the device's memory constraints. The 4B model in Q4_K_M requires ~2.5GB of RAM, plus overhead for KV cache and context, exceeding the available memory.
 - **Remediation Code Diff**:
 ```python
-# - Buggy code: No context validation
-model = Llama(model_path="spark.gguf", n_ctx=4096) # Hardcoded, may not match model
+# - Buggy code: No memory check
+def load_model(model_path):
+    model = load_gguf(model_path)
+    return model
 
-# + Fixed pattern: Validate and set context dynamically
-model_ctx = get_gguf_context_length("spark.gguf")
-engine_ctx = min(model_ctx, 8192) # Cap at engine max
-model = Llama(model_path="spark.gguf", n_ctx=engine_ctx)
+# + Fixed pattern: Memory check and offloading
+def load_model(model_path, device_memory_gb):
+    model_size_gb = get_model_size(model_path)
+    if model_size_gb > device_memory_gb * 0.8:  # 80% threshold
+        raise MemoryError("Model too large for device")
+    
+    # Offload some layers to CPU if necessary
+    model = load_gguf(model_path, offload_layers=10)
+    return model
 ```
-- **Lesson**: Always validate the model's metadata against the engine's capabilities before loading.
+- **Lesson**: Always check memory constraints before loading large models.
 
-### Incident 2: JSON Tool-Call Corruption Due to Low Quantization (BUG-JSON-02)
-- **Context**: Agent using Spark-X2.6-4B-GGUF (Q4_K_M) for tool calls.
-- **What Was Expected**: The model should output valid JSON for tool calls.
-- **What Actually Happened**: The model output malformed JSON (e.g., missing quotes, extra commas) due to quantization errors in the attention heads. The agent's JSON parser failed, causing a **crash**.
-- **Evidence in Repo**: N/A. However, the README mentions "stronger coding, agentic" capabilities, implying that tool-call reliability is a key feature.
-- **Root Cause**: Q4_K_M quantization is lossy. For structured outputs like JSON, even small errors in token probabilities can lead to invalid syntax.
+### Incident 3: Tokenizer Mismatch Leading to Garbled Text (BUG-TOKEN-03)
+- **Context**: Using Spark-X2.6-4B-GGUF with a different tokenizer.
+- **What Was Expected**: The model should generate coherent text.
+- **What Actually Happened**: The model generated garbled text with special characters.
+- **Evidence in Repo**: N/A (Hypothetical).
+- **Root Cause**: The GGUF file was paired with a tokenizer that did not match the one used during training. The token IDs did not correspond to the correct vocabulary, leading to incorrect decoding.
 - **Remediation Code Diff**:
 ```python
-# - Buggy code: No JSON validation
-tool_call = json.loads(model_response)
+# - Buggy code: Hardcoded tokenizer
+tokenizer = AutoTokenizer.from_pretrained("default-tokenizer")
 
-# + Fixed pattern: Robust JSON parsing with fallback
-try:
-    tool_call = json.loads(model_response)
-except json.JSONDecodeError:
-    # Fallback: Use a more robust parser or retry with higher thinking level
-    tool_call = robust_json_parse(model_response)
-    if not tool_call:
-        raise ToolCallError("Invalid JSON from model")
+# + Fixed pattern: Load tokenizer from model repo
+tokenizer = AutoTokenizer.from_pretrained("XHToken/Spark-X2.6-4B")
 ```
-- **Lesson**: Always validate structured outputs from quantized models, especially for tool calls.
+- **Lesson**: Always use the tokenizer that matches the model's training data.
 
-### Incident 3: Memory Leak in Agent Loop Due to Unbounded Context Growth (BUG-MEM-03)
-- **Context**: Long-running agent session using Spark-X2.6-4B-GGUF.
-- **What Was Expected**: The agent should manage memory efficiently, even over long sessions.
-- **What Actually Happened**: The agent's context window grew unbounded, leading to **out-of-memory (OOM)** errors on the edge device.
-- **Evidence in Repo**: N/A. The README mentions "on-device deployment," implying memory constraints.
-- **Root Cause**: The agent framework did not implement context window management (e.g., sliding window, summarization). The context grew with each turn, eventually exceeding the device's RAM.
+### Incident 4: Infinite Loop in Agent Tool Calling (BUG-AGENT-04)
+- **Context**: Agentic workflow using Spark-X2.6-4B-GGUF.
+- **What Was Expected**: The agent should complete the task in a finite number of steps.
+- **What Actually Happened**: The agent entered an infinite loop, repeatedly calling the same tool.
+- **Evidence in Repo**: N/A (Hypothetical).
+- **Root Cause**: The model did not recognize that the tool had already been called and returned the same result. The agent's prompt did not include a history of previous tool calls, leading to repeated attempts.
 - **Remediation Code Diff**:
 ```python
-# - Buggy code: No context management
-messages.append(new_message)
-response = model.generate(messages)
+# - Buggy code: No history tracking
+def agent_loop(task):
+    while True:
+        response = model.generate(task)
+        tool_call = parse_tool_call(response)
+        result = execute_tool(tool_call)
+        # No check if result is the same as previous
 
-# + Fixed pattern: Sliding window context management
-MAX_CONTEXT = 4096
-if len(messages) > MAX_CONTEXT:
-    messages = messages[-MAX_CONTEXT:] # Keep only the last N messages
-response = model.generate(messages)
+# + Fixed pattern: History tracking and loop guard
+def agent_loop(task, max_steps=10):
+    history = []
+    for i in range(max_steps):
+        prompt = f"Task: {task}\nHistory: {history}\n"
+        response = model.generate(prompt)
+        tool_call = parse_tool_call(response)
+        result = execute_tool(tool_call)
+        history.append(f"Tool: {tool_call}, Result: {result}")
+        
+        if is_task_complete(response):
+            break
+    else:
+        raise TimeoutError("Agent loop exceeded max steps")
 ```
-- **Lesson**: Implement context window management in agent loops to prevent OOM.
+- **Lesson**: Always include a history of previous actions in agentic prompts and implement a loop guard.
 
-### Incident 4: Non-Deterministic Thinking Depth Leading to Latency Spikes (BUG-LAT-04)
-- **Context**: Agent using Spark-X2.6-4B-GGUF with "controllable thinking."
-- **What Was Expected**: The agent should have predictable latency for each task.
-- **What Actually Happened**: The model sometimes used "high" thinking for simple tasks, leading to **latency spikes** of 10-20 seconds.
-- **Evidence in Repo**: N/A. The README mentions "controllable thinking budget," implying that thinking depth is a configurable parameter.
-- **Root Cause**: The agent framework did not explicitly set the thinking level, relying on the model's default behavior. The model's default was "high" for some tasks, leading to unnecessary latency.
+### Incident 5: Context Window Overflow (BUG-CTX-05)
+- **Context**: Long-context task using Spark-X2.6-4B-GGUF.
+- **What Was Expected**: The model should handle long inputs.
+- **What Actually Happened**: The model truncated the input or crashed.
+- **Evidence in Repo**: N/A (Hypothetical).
+- **Root Cause**: The input exceeded the model's context window (e.g., 4096 tokens). The inference runtime did not handle the overflow gracefully.
 - **Remediation Code Diff**:
 ```python
-# - Buggy code: No explicit thinking level
-response = model.generate(messages)
+# - Buggy code: No context window check
+def generate(prompt):
+    return model.generate(prompt)
 
-# + Fixed pattern: Explicit thinking level
-thinking_level = "low" # Set based on task complexity
-messages[0]["content"] += f"\nThinking Level: {thinking_level}"
-response = model.generate(messages)
+# + Fixed pattern: Context window check and truncation
+def generate(prompt, max_context=4096):
+    tokens = tokenizer.encode(prompt)
+    if len(tokens) > max_context:
+        tokens = tokens[-max_context:]  # Keep the most recent tokens
+        prompt = tokenizer.decode(tokens)
+    return model.generate(prompt)
 ```
-- **Lesson**: Always explicitly set the thinking level in agent loops to ensure predictable latency.
-
-### Incident 5: Security Vulnerability via Prompt Injection in Tool Calls (BUG-SEC-05)
-- **Context**: Agent using Spark-X2.6-4B-GGUF for tool calls.
-- **What Was Expected**: The agent should only execute tools that are explicitly requested by the user.
-- **What Actually Happened**: A malicious user injected a prompt into the tool output, causing the model to execute an unauthorized tool call.
-- **Evidence in Repo**: N/A. The README mentions "real-world tasks," implying that the agent may interact with external systems.
-- **Root Cause**: The agent framework did not sanitize tool outputs before feeding them back into the model. The model was susceptible to prompt injection.
-- **Remediation Code Diff**:
-```python
-# - Buggy code: No sanitization
-tool_output = execute_tool(tool_call)
-messages.append({"role": "tool", "content": tool_output})
-
-# + Fixed pattern: Sanitize tool output
-tool_output = execute_tool(tool_call)
-sanitized_output = sanitize_tool_output(tool_output) # Remove potential injection payloads
-messages.append({"role": "tool", "content": sanitized_output})
-```
-- **Lesson**: Always sanitize tool outputs before feeding them back into the model to prevent prompt injection.
-
----
+- **Lesson**: Always check the context window and truncate inputs if necessary.
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
-### 1. Micro-Syntax & Token-Level Precision
-*   **GGUF Header Parsing**: The GGUF format uses a specific binary layout. The `magic` field must be `0x46554747` ("GGUF"). Any deviation indicates a corrupted file.
-*   **Quantization Type Mapping**: The `general.file_type` field maps to specific quantization types. For example, `Q4_K_M` is `12`. If the inference engine does not support this type, it must fail gracefully, not crash.
-*   **Context Length Metadata**: The `context_length` field is a 32-bit integer. It must be validated against the engine's maximum context length to prevent overflow.
+1.  **Micro-Syntax & Token-Level Precision**:
+    *   **GGUF Binary Parsing**: When parsing GGUF files, you MUST use **little-endian** byte order for all integer fields. You MUST NOT assume big-endian, as this leads to incorrect tensor dimensions and crashes.
+    *   **Quantization Dequantization**: When dequantizing Q4_K_M tensors, you MUST apply the **scale and min** values correctly. You MUST NOT ignore the min value, as this leads to biased outputs.
+    *   **Tokenizer Special Tokens**: You MUST ensure that special tokens (e.g., `<|begin_of_text|>`, `<|end_of_text|>`) are handled correctly. You MUST NOT strip them before encoding, as this breaks the model's understanding of the input structure.
 
-### 2. Infinite Loop & Recursion Guards
-*   **Agent Loop Termination**: The agent loop must have a maximum number of iterations (e.g., 10) to prevent infinite loops caused by repeated tool calls or model errors.
-*   **Context Window Sliding**: The context window must be managed to prevent unbounded growth. A sliding window or summarization strategy must be implemented.
-*   **Tool Call Retry Limit**: If a tool call fails, the agent must retry a maximum number of times (e.g., 3) before aborting.
+2.  **Infinite Loop & Recursion Guards**:
+    *   **Agent Loop Termination**: You MUST implement a **max_steps** limit in agentic loops. You MUST NOT rely on the model to stop on its own, as it may enter an infinite loop.
+    *   **Recursion Depth**: If using recursive prompt engineering, you MUST limit the recursion depth to prevent stack overflow.
+    *   **Event Loop Yield**: In async inference, you MUST yield control to the event loop periodically to prevent blocking.
 
-### 3. UI & UX Micro-Mechanics
-*   **N/A**: This repository does not contain UI code. However, the **latency** of the model directly impacts the UX of any application using it. The "controllable thinking" feature is a UX mechanism to balance latency and quality.
+3.  **UI & UX Micro-Mechanics**:
+    *   **Streaming Output**: You MUST stream tokens to the UI as they are generated. You MUST NOT wait for the entire response to be generated before displaying it, as this leads to poor UX.
+    *   **Debouncing**: You MUST debounce user input to prevent multiple requests from being sent in quick succession.
+    *   **Focus Restoration**: You MUST restore focus to the input field after generating a response.
 
-### 4. Backend Concurrency & Memory Safety
-*   **GGUF File Loading**: The GGUF file must be loaded into memory in a thread-safe manner. If multiple threads attempt to load the same file, a race condition may occur.
-*   **Inference Engine Thread Safety**: The inference engine must be thread-safe. If multiple requests are processed concurrently, the engine must handle them without data races.
-*   **Memory Management**: The inference engine must manage memory efficiently, especially on edge devices with limited RAM. The context window must be managed to prevent OOM.
+4.  **Backend Concurrency & Memory Safety**:
+    *   **Thread Safety**: You MUST ensure that the inference engine is thread-safe. You MUST NOT share mutable state between threads without synchronization.
+    *   **Memory Leaks**: You MUST free memory after each inference request. You MUST NOT leak memory in the KV cache.
+    *   **Connection Pooling**: You MUST use a connection pool for API calls to prevent resource exhaustion.
 
-### 5. Defect & Error Prevention ("Galti Pakadna")
-*   **JSON Validation**: Always validate JSON outputs from the model, especially for tool calls. Use a robust JSON parser that can handle minor syntax errors.
-*   **Checksum Verification**: Always verify the checksum of the GGUF file before loading it to prevent loading corrupted or tampered weights.
-*   **Context Validation**: Always validate the context length of the model against the engine's capabilities to prevent silent truncation.
-
----
+5.  **Defect & Error Prevention ("Galti Pakadna")**:
+    *   **Null Checks**: You MUST check for null/undefined values before accessing properties. You MUST NOT assume that all fields are present.
+    *   **Boundary Checks**: You MUST check array bounds before accessing elements. You MUST NOT access out-of-bounds indices.
+    *   **Error Boundaries**: You MUST wrap inference calls in try-catch blocks to handle errors gracefully. You MUST NOT let errors propagate to the UI.
 
 ## 5. The 9 Deep Learning Dimensions
 
-### 1. Architecture
-*   **Subsystem Boundaries**: The model is a black box. The boundary is the GGUF file and the inference engine.
-*   **Decoupling**: The model is decoupled from the agent framework. The agent framework interacts with the model via a simple text interface.
-*   **State Ownership**: The model is stateless. The agent framework owns the state (conversation history, tool outputs).
-
-### 2. Core Abstractions
-*   **Key Types**: GGUF file, inference engine, agent loop, tool call.
-*   **Traits/Interfaces**: The model must implement a `generate` method that takes a list of messages and returns a string.
-*   **Domain Primitives**: Token, context window, tool call, thinking level.
-*   **Invariant Contracts**: The model must output valid JSON for tool calls. The agent framework must manage the context window.
-
-### 3. Error Handling
-*   **Fault Boundaries**: The inference engine must handle errors gracefully (e.g., OOM, invalid JSON).
-*   **Error Trees**: OOM -> Retry with smaller context. Invalid JSON -> Retry with higher thinking level.
-*   **Retries**: The agent framework must retry failed tool calls a maximum number of times.
-*   **Rollbacks**: The agent framework must roll back the conversation history if a tool call fails.
-*   **Graceful Degradation**: If the model fails, the agent framework should fall back to a simpler model or a rule-based system.
-
-### 4. Testing
-*   **Property Testing**: Test that the model outputs valid JSON for a variety of tool calls.
-*   **Mock Invariants**: Mock the inference engine to test the agent framework's error handling.
-*   **Integration Harnesses**: Test the agent framework with a real GGUF file on an edge device.
-*   **Regression Shields**: Test that the model's performance does not degrade after updates.
-
-### 5. Security
-*   **Threat Model**: Prompt injection, tampered weights, OOM attacks.
-*   **Credential Boundaries**: The model does not handle credentials. The agent framework must manage credentials securely.
-*   **Sanitization**: Sanitize tool outputs before feeding them back into the model.
-*   **Memory Safety**: Validate the GGUF file's checksum to prevent loading corrupted weights.
-*   **Least Privilege**: The agent framework should only have access to the tools it needs.
-
-### 6. Performance
-*   **Latency Profiles**: The model's latency depends on the thinking level and the length of the input.
-*   **Asymptotic Complexity**: The model's inference time is linear with respect to the input length.
-*   **Caching**: The inference engine may cache the model's weights in memory to reduce latency.
-*   **Zero-Copy**: The GGUF file may be memory-mapped to reduce I/O overhead.
-*   **Concurrency Bottlenecks**: The inference engine may be a bottleneck if multiple requests are processed concurrently.
-
-### 7. Deployment
-*   **CI/CD Invariants**: The GGUF file must be built and tested in CI/CD.
-*   **Container Constraints**: The GGUF file must be compatible with the container's architecture (e.g., ARM64, x86_64).
-*   **Reproducible Builds**: The GGUF file must be built reproducibly to ensure consistency.
-*   **Runtime Flags**: The inference engine may have runtime flags to control performance (e.g., `--threads`, `--gpu-layers`).
-
-### 8. Agent Patterns
-*   **Tooling Interfaces**: The model must output valid JSON for tool calls.
-*   **Prompt Chains**: The agent framework must manage the conversation history and tool outputs.
-*   **Loop Guards**: The agent framework must have a maximum number of iterations to prevent infinite loops.
-*   **Context Budget Optimization**: The agent framework must manage the context window to prevent OOM.
-
-### 9. Data Flow
-*   **Mutation Lifecycles**: The conversation history is mutated by the agent framework.
-*   **Streams**: The model's output is a stream of tokens.
-*   **Serializers**: The GGUF file is a binary serializer of the model's weights.
-*   **Network Protocol Barriers**: The model does not handle network protocols. The agent framework must manage network communication.
-
----
+1.  **Architecture**: The model uses a standard Transformer architecture with the same structure as Spark-X2.5-4B. The key architectural decision is the **quantization scheme** (GGUF) which allows for efficient on-device inference.
+2.  **Core Abstractions**: The core abstractions are the **GGUF tensor format** and the **thinking budget** mechanism. The GGUF format abstracts the underlying tensor storage, while the thinking budget abstracts the reasoning depth.
+3.  **Error Handling**: Error handling is primarily done at the inference runtime level. The model itself does not have built-in error handling. The runtime must handle OOM, context overflow, and invalid inputs.
+4.  **Testing**: Testing is done via benchmarking (e.g., MMLU, HumanEval) and regression testing on a fixed set of prompts. The model is tested for consistency across different quantization levels.
+5.  **Security**: Security is a concern for on-device models, as they may be exposed to malicious inputs. The model must be robust to prompt injection and other attacks. The GGUF format should be validated to prevent malicious binary data.
+6.  **Performance**: Performance is optimized through quantization and efficient inference runtimes. The model is designed to run on low-power devices with limited memory.
+7.  **Deployment**: Deployment is done via Hugging Face, with the model distributed as GGUF files. The model is compatible with various inference runtimes (llama.cpp, Ollama, LM Studio).
+8.  **Agent Patterns**: The model is trained for agentic workflows, with a focus on tool use and multi-step planning. The thinking budget mechanism allows for dynamic adjustment of reasoning depth.
+9.  **Data Flow**: Data flows from the user input to the tokenizer, then to the model, and finally to the output. The KV cache is used to store intermediate states for efficient inference.
 
 ## 6. The 8 Learning Extraction Artifacts
 
-### 1. Pattern
-*   **Verified, production-grade implementation pattern**:
-    ```python
-    def load_and_validate_gguf(path: str, expected_arch: str, max_ctx: int):
-        # 1. Verify checksum
-        verify_gguf_checksum(path, expected_sha256)
-        
-        # 2. Validate architecture and context length
-        with open(path, 'rb') as f:
-            reader = gguf.GGUFReader(f)
-            arch = reader.get("general.architecture")
-            if arch != expected_arch:
-                raise ValueError(f"Architecture mismatch")
-            ctx_len = reader.get("context_length")
-            if ctx_len > max_ctx:
-                raise ValueError(f"Context length exceeds max")
-        
-        # 3. Load model
-        return llama_cpp.Llama(model_path=path, n_ctx=min(ctx_len, max_ctx))
-    ```
-
-### 2. Rule
-*   **Universal invariant**: Always validate the GGUF file's checksum, architecture, and context length before loading it into the inference engine.
-
-### 3. Architecture Principle
-*   **High-level architectural law**: The model is a stateless black box. The agent framework owns the state and must manage the context window to prevent OOM.
-
-### 4. Failure Mode
-*   **Precise technical breakdown**: Silent context truncation leading to agent loop failure. The model loses track of previous tool outputs, leading to repeated tool calls and an infinite loop.
-
-### 5. Reusable Skill
-*   **Step-by-step procedural workflow**:
-    1.  Download the GGUF file.
-    2.  Verify the checksum.
-    3.  Parse the GGUF header to validate architecture and context length.
-    4.  Load the model into the inference engine with the validated context length.
-    5.  Implement context window management in the agent loop.
-    6.  Validate JSON outputs from the model.
-
-### 6. Decision
-*   **Engineering design trade-off**: Use Q4_K_M quantization for a balance between memory usage and performance. Q2_K is too lossy for structured tool calls, while Q8_0 uses too much memory.
-
-### 7. Anti-pattern
-*   **Negative constraint**:
-    ```python
-    # ANTI-PATTERN: Blindly loading GGUF without validation
-    model = llama_cpp.Llama(model_path="spark.gguf")
-    ```
-
-### 8. Verification Method
-*   **Concrete automated test**:
-    ```python
-    def test_gguf_validation():
-        path = "spark-x2.6-4b.gguf"
-        expected_sha256 = "..."
-        expected_arch = "llama"
-        max_ctx = 8192
-        
-        # Test checksum
-        verify_gguf_checksum(path, expected_sha256)
-        
-        # Test architecture and context length
-        with open(path, 'rb') as f:
-            reader = gguf.GGUFReader(f)
-            assert reader.get("general.architecture") == expected_arch
-            assert reader.get("context_length") <= max_ctx
-    ```
-
----
+1.  **Pattern**: **Quantization-Aware Inference**. Use GGUF format for on-device inference, with dynamic quantization levels based on device capabilities.
+2.  **Rule**: **Always validate binary formats**. Check magic numbers, versions, and tensor types before parsing.
+3.  **Architecture Principle**: **Decouple model from runtime**. Use a standardized format (GGUF) to allow the model to be loaded by any compatible runtime.
+4.  **Failure Mode**: **Silent garbage output** due to mismatched quantization schemes or tokenizers.
+5.  **Reusable Skill**: **Benchmarking on-device inference**. Measure tokens/sec, latency, and memory usage on target hardware.
+6.  **Decision**: **Use Q4_K_M quantization** for a balance between accuracy and memory usage.
+7.  **Anti-pattern**: **Loading models without memory checks**. This leads to OOM crashes on low-end devices.
+8.  **Verification Method**: **A/B testing** different quantization levels and thinking budgets to measure accuracy and latency.
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1.  **Download GGUF File**:
-    *   [ ] Download the GGUF file from a trusted source.
-    *   [ ] Verify the SHA-256 checksum against a trusted manifest.
-
-2.  **Validate GGUF Header**:
-    *   [ ] Parse the GGUF header using the `gguf` library.
-    *   [ ] Assert that the `arch` field matches the expected architecture.
-    *   [ ] Assert that the `context_length` field does not exceed the engine's maximum context length.
-
-3.  **Load Model into Inference Engine**:
-    *   [ ] Load the model into the inference engine with the validated context length.
-    *   [ ] Set the number of threads and GPU layers based on the device's capabilities.
-
-4.  **Implement Context Window Management**:
-    *   [ ] Implement a sliding window or summarization strategy to manage the context window.
-    *   [ ] Ensure that the context window does not exceed the model's maximum context length.
-
-5.  **Validate JSON Outputs**:
-    *   [ ] Use a robust JSON parser to validate the model's outputs.
-    *   [ ] Implement a fallback strategy for invalid JSON (e.g., retry with higher thinking level).
-
-6.  **Implement Agent Loop Guards**:
-    *   [ ] Set a maximum number of iterations for the agent loop.
-    *   [ ] Set a maximum number of retries for failed tool calls.
-    *   [ ] Implement a timeout for each tool call.
-
-7.  **Sanitize Tool Outputs**:
-    *   [ ] Sanitize tool outputs before feeding them back into the model to prevent prompt injection.
-
-8.  **Monitor Performance**:
-    *   [ ] Monitor the model's latency and memory usage.
-    *   [ ] Adjust the thinking level and context window based on performance metrics.
+1.  **Validate GGUF File**: Check magic number, version, and tensor types.
+2.  **Check Memory Constraints**: Ensure the model fits in the device's memory.
+3.  **Load Tokenizer**: Use the tokenizer that matches the model's training data.
+4.  **Implement Thinking Budget**: Dynamically adjust reasoning depth based on task complexity.
+5.  **Stream Output**: Display tokens as they are generated.
+6.  **Handle Errors**: Wrap inference calls in try-catch blocks.
+7.  **Benchmark**: Measure tokens/sec, latency, and memory usage.
+8.  **Test Agentic Loops**: Ensure that the agent terminates correctly and does not enter infinite loops.

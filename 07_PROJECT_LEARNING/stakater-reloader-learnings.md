@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/stakater-reloader-learnings.md`  
 > **Source**: github ([https://github.com/stakater/Reloader](https://github.com/stakater/Reloader))  
-> **Source Version**: `41b3ad27`  
+> **Source Version**: `a2e3b24d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T20:04:49.640Z  
+> **Timestamp**: 2026-11-07T06:17:47.967Z  
 > **Learning ID**: `learn-github-stakater-reloader`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/stakater-reloader-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/stakater/Reloader](https://github.com/stakater/Reloader))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T20:04:49.225Z  
+> **Harvest Timestamp**: 2026-11-07T06:17:47.727Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A Kubernetes controller to watch changes in ConfigMap and Secrets and do rolling upgrades on Pods with their associated Deployment, StatefulSet, DaemonSet and DeploymentConfig – [✩Star] if you're using it!
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 10524 stars
+- **Stars / Engagement**: 10551 stars
 
 ---
 
@@ -1460,11 +1460,13 @@ func GenerateSHA(data string) string {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1261** (2026-10-27): **chore: bump Helm chart to 2.2.19 (appVersion v1.4.23)**
-  *Symptoms*: ## Problem `v1.4.23` ships the Go 1.26.10 rebuild (#1258) that distrusts the compromised eMudhra intermediates (CVE-2026-111943), plus the fixes merged since `v1.4.22`. The chart still deploys `v1.4.22`.  ## Solution Point the chart at `v1.4.23` and bump the chart version. The `release/helm-chart` label publishes it on merge.  ## Before/After | | Before | After | |---|---|---| | Chart `version` | `2.2.18` | `2.2.19` | | `appVersion`, `image.tag`, version label | `v1.4.22` | `v1.4.23` |  Example: `helm upgrade reloader stakater/reloader --version 2.2.19` deploys `ghcr.io/stakater/reloader:v1.4.23`.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
+- **Issue #1273** (2026-11-06): **fix: bump golang.org/x/net to v0.62.0 for CVE-2026-78661 and CVE-2026-97045**
+  *Symptoms*: Upgrades the golang.org/x/* module family in lockstep. Fixes the HIGH severity CVE-2026-78661 and the MEDIUM severity CVE-2026-97045 in the html package of golang.org/x/net v0.60.0  Closes #1272 
+  **Post-Mortem & Fix Analysis**:
+  > ## :white_check_mark: Load Test Results (quick)  ## ❌ Load Test Results: 1 TEST(S) FAILED  > 🚀 **Quick Test** (S1, S4, S6) — Use `/loadtest` for full suite  **2/3 passed** (66%)  | | Scenario | Description | Actions | Errors | |:-:|:--------:|-------------|:-------:|:------:| | ✅ | **S1** | S1: 143 burst updates, each triggers 1 dep... | 143/143 | 0 | | ✅ | **S4** | S4: 143 no-op updates, all should be skipped | 0 | 0 | | ❌ | **S6** | S6: Restart test - 142 updates during restart | 145 | 0 |  📦 **[Download detailed results](../artifacts)**   --- **Artifacts:** [Download](https://github.com/stakater/Reloader/actions/runs/42201859659)
 
-- **Issue #1260** (2026-10-27): **chore: bump Go to 1.26.10 for eMudhra CA distrust (CVE-2026-111943)**
-  *Symptoms*: ## Problem Private keys for 8 eMudhra intermediate CAs were compromised ([CVE-2026-111943](https://hol.org/blog/cve-2026-111943-emudhra-ca-key-compromise-go-certifi-node-java), GO-2026-6809). Go 1.26.10 adds a `crypto/x509` denylist so any chain through those intermediates fails verification. The v2 line is on 1.26.8, which still trusts them. Master was bumped in #1258; this brings v2 in line.  ## Solution Bump the `go` directive to 1.26.10. The builder image keeps its floating `golang:1.26` tag: the `golang` image sets `GOTOOLCHAIN=local`, so a stale cached image fails the build (`go.mod requires go >= 1.26.10`) instead of shipping an unpatched binary.  ## Before/After | | Before | After | |---|---|---| | `go.mod` | `go 1.26.8` | `go 1.26.10` |  Example: a TLS call to a server presenting a chain via one of the compromised eMudhra intermediates now fails certificate verification instead of succeeding.  The fix only reaches users after the next v2 release is built and published.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
+- **Issue #1272** (2026-11-06): **[BUG] Multiple CVEs in 1.4.23**
+  *Symptoms*: - [CVE-2026-78661](https://nvd.nist.gov/vuln/detail/cve-2026-78661) - [CVE-2026-97045](https://nvd.nist.gov/vuln/detail/cve-2026-97045)  Suggested fix: upgrade `golang.org/x/net` from v0.60.0 to >= v0.62.0
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1481,99 +1483,105 @@ func GenerateSHA(data string) string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `41b3ad27` (2026-10-27)
-**Commit Message**: Merge pull request #1261 from stakater/chore/chart-2.2.19
+### Incident Patch 1: `a2e3b24d` (2026-11-06)
+**Commit Message**: fix: bump golang.org/x/net to v0.62.0 for CVE-2026-78661 and CVE-2026-97045 (#1273)
 
-chore: bump Helm chart to 2.2.19 (appVersion v1.4.23)
-
-**File**: `deployments/kubernetes/chart/reloader/Chart.yaml` (modified, +2/-2)
+**File**: `go.mod` (modified, +7/-7)
 ```diff
-@@ -1,8 +1,8 @@
- apiVersion: v1
- name: reloader
- description: Reloader chart that runs on kubernetes
--version: 2.2.18
--appVersion: v1.4.22
-+version: 2.2.19
-+appVersion: v1.4.23
- keywords:
-   - Reloader
-   - kubernetes
+@@ -248,15 +248,15 @@ require (
+ 	go.yaml.in/yaml/v3 v3.0.4 // indirect
+ 	golang.org/x/exp/typeparams v0.0.0-20251023183803-a4bb9ffd2546 // indirect
+ 	golang.org/x/mod v0.41.0 // indirect
+-	golang.org/x/net v0.60.0 // indirect
++	golang.org/x/net v0.62.0 // indirect
+ 	golang.org/x/oauth2 v0.36.0 // indirect
+-	golang.org/x/sync v0.23.0 // indirect
+-	golang.org/x/sys v0.48.0 // indirect
+-	golang.org/x/telemetry v0.0.0-20260811182544-a038080d80e5 // indirect
+-	golang.org/x/term v0.46.0 // indirect
+-	golang.org/x/text v0.42.0 // indirect
++	golang.org/x/sync v0.24.0 // indirect
++	golang.org/x/sys v0.49.0 // indirect
++	golang.org/x/telemetry v0.0.0-20260924152758-ed294f943157 // indirect
++	golang.org/x/term v0.47.0 // indirect
++	golang.org/x/text v0.43.0 // indirect
+ 	golang.org/x/time v0.15.0 // indirect
+-	golang.org/x/tools v0.49.0 // indirect
++	golang.org/x/tools v0.51.0 // indirect
+ 	google.golang.org/protobuf v1.36.11 // indirect
+ 	gopkg.in/evanphx/json-patch.v4 v4.13.0 // indirect
+ 	gopkg.in/inf.v0 v0.9.1 // indirect
 ```
 
-**File**: `deployments/kubernetes/chart/reloader/values.yaml` (modified, +2/-2)
+**File**: `go.sum` (modified, +14/-14)
 ```diff
-@@ -19,7 +19,7 @@ fullnameOverride: ""
- image:
-   name: stakater/reloader
-   repository: ghcr.io/stakater/reloader
--  tag: v1.4.22
-+  tag: v1.4.23
-   # digest: sha256:1234567
-   # repository, tag and digest are rendered with tpl, so they may reference other values.
-   pullPolicy: IfNotPresent
-@@ -152,7 +152,7 @@ reloader:
-     labels:
-       provider: stakater
-       group: com.stakater.platform
--      version: v1.4.22
-+      version: v1.4.23
-     # Support for extra environment variables.
-     env:
-       # Open supports Key value pair as environment variables.
-```
-
----
-
-### Incident Patch 2: `242c4c48` (2026-10-27)
-**Commit Message**: chore: bump Helm chart to 2.2.19 (appVersion v1.4.23)
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `deployments/kubernetes/chart/reloader/Chart.yaml` (modified, +2/-2)
-```diff
-@@ -1,8 +1,8 @@
- apiVersion: v1
- name: reloader
- description: Reloader chart that runs on kubernetes
--version: 2.2.18
--appVersion: v1.4.22
-+version: 2.2.19
-+appVersion: v1.4.23
- keywords:
-   - Reloader
-   - kubernetes
-```
-
-**File**: `deployments/kubernetes/chart/reloader/values.yaml` (modified, +2/-2)
-```diff
-@@ -19,7 +19,7 @@ fullnameOverride: ""
- image:
-   name: stakater/reloader
-   repository: ghcr.io/stakater/reloader
--  tag: v1.4.22
-+  tag: v1.4.23
-   # digest: sha256:1234567
-   # repository, tag and digest are rendered with tpl, so they may reference other values.
-   pullPolicy: IfNotPresent
-@@ -152,7 +152,7 @@ reloader:
-     labels:
-       provider: stakater
-       group: com.stakater.platform
--      version: v1.4.22
-+      version: v1.4.23
-     # Support for extra environment variables.
-     env:
-       # Open supports Key value pair as environment variables.
+@@ -619,8 +619,8 @@ golang.org/x/net v0.6.0/go.mod h1:2Tu9+aMcznHK/AK1HMvgo6xiTLG5rD5rZLDS+rp2Bjs=
+ golang.org/x/net v0.10.0/go.mod h1:0qNGK6F8kojg2nk9dLZ2mShWaEBan6FAoqfSigmmuDg=
+ golang.org/x/net v0.15.0/go.mod h1:idbUs1IY1+zTqbi8yxTbhexhEEk5ur9LInksu6HrEpk=
+ golang.org/x/net v0.16.0/go.mod h1:NxSsAGuq816PNPmqtQdLE42eU2Fs7NoRIZrHJAlaCOE=
+-golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
+-golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
++golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
++golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
+ golang.org/x/oauth2 v0.36.0 h1:peZ/1z27fi9hUOFCAZaHyrpWG5lwe0RJEEEeH0ThlIs=
+ golang.org/x/oauth2 v0.36.0/go.mod h1:YDBUJMTkDnJS+A4BP4eZBjCqtokkg1hODuPjwiGPO7Q=
+ golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+@@ -632,8 +632,8 @@ golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4/go.mod h1:RxMgew5VJxzue5/jJ
+ golang.org/x/sync v0.1.0/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.3.0/go.mod h1:FU7BRWz2tNW+3quACPkgCx/L+uEAv1htQ0V83Z9Rj+Y=
+ golang.org/x/sync v0.4.0/go.mod h1:FU7BRWz2tNW+3quACPkgCx/L+uEAv1htQ0V83Z9Rj+Y=
+-golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
+-golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
++golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
++golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
+ golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+ golang.org/x/sys v0.0.0-20190412213103-97732733099d/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+ golang.org/x/sys v0.0.0-20200323222414-85ca7c5b95cd/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+@@ -653,18 +653,18 @@ golang.org/x/sys v0.6.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/sys v0.8.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/sys v0.12.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/sys v0.13.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+-golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
+-golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
+-golang.org/x/telemetry v0.0.0-20260811182544-a038080d80e5 h1:ZUSxONxc981v7AW7QUg+I9WwZzSTTJ019ENBYr5pV/Q=
+-golang.org/x/telemetry v0.0.0-20260811182544-a038080d80e5/go.mod h1:LVehoXe41cL5SCVQilsV7Gg6BNG+Js6P9PhSbYTIUkQ=
++golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
++golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
++golang.org/x/telemetry v0.0.0-20260924152758-ed294f943157 h1:DftxASHKl6JolFPqoN+2WrFO53JvkHwRXvFqf8gsivA=
++golang.org/x/telemetry v0.0.0-20260924152758-ed294f943157/go.mod h1:i+ivNqjDnTF3WTElsdk5g9V5DTSBYgdNo7xTU9SDwYA=
+ golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
+ golang.org/x/term v0.0.0-20210927222741-03fcf44c2211/go.mod h1:jbD1KX2456YbFQfuXm/mYQcufACuNUgVhRMnK/tPxf8=
+ golang.org/x/term v0.5.0/go.mod h1:jMB1sMXY+tzblOD4FWmEbocvup2/aLOaQEp7JmGp78k=
+ golang.org/x/term v0.8.0/go.mod h1:xPskH00ivmX89bAKVGSKKtLOWNx2+17Eiy94tnKShWo=
+ golang.org/x/term v0.12.0/go.mod h1:owVbMEjm3cBLCHdkQu9b1opXd4ETQWc3BhuQGKgXgvU=
+ golang.org/x/term v0.13.0/go.mod h1:LTmsnFJwVN6bCy1rVCoS+qHT1HhALEFxKncY3WNNh4U=
+-golang.org/x/term v0.46.0 h1:3+OXuTbaKDgwk8jTi3aSLHRlmWqHEUDUtxnbFigO4YE=
+-golang.org/x/term v0.46.0/go.mod h1:+K02xbkittuwc0Am4abfA3Fc+XRGXkvBXNO88NCXPoc=
++golang.org/x/term v0.47.0 h1:cpyOwQkr2Nzxe2p6KnrTG7Ei2wtzjsuSjhpXXepZ/BM=
++golang.org/x/term v0.47.0/go.mod h1:efAfAuG6RKABvg1ArGebRkvX6LXul14SM67o2e4mUCY=
+ golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
+ golang.org/x/text v0.3.2/go.mod h1:bEr9sfX3Q8Zfm5fL9x+3itogRgK3+ptLWKqgva+5dAk=
+ golang.org/x/text v0.3.3/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
+@@ -673,8 +673,8 @@ golang.org/x/text v0.3.7/go.mod h1:u+2+/6zg+i71rQMx5EYifcz6MCKuco9NR6JIITiCfzQ=
+ golang.org/x/text v0.7.0/go.mod h1:mrYo+phRRbMaCq/xk9113O4dZlRixOauAjOtrjsXDZ8=
+ golang.org/x/text v0.9.0/go.mod h1:e1OnstbJyHTd6l/uOt8jFFHp6TRDWZR/bV3emEE/zU8=
+ golang.org/x/text v0.13.0/go.mod h1:TvPlkZtksWOMsz7fbANvkp4WM8x/WCo/om8BMLbz+aE=
+-golang.org/x/text v0.42.0 h1:JbOZXgfeCPU9gacVtYliJqOhD+zhrEqK4LfdpmlUZqI=
+-golang.org/x/text v0.42.0/go.mod h1:ojzP1Z+2QtioaF8DTtO8K5q7JWVVYwZKenzujK0Zd0E=
++golang.org/x/text v0.43.0 h1:1QivrlhwAsnMOcqgOdl9my7s9OyZl8O5/UGUTJVXoWc=
++golang.org/x/text v0.43.0/go.mod h1:hbSIYA/amXcRXTFSZqh8tWHEoqRvvbKPJ2uz/KU+a+s=
+ golang.org/x/time v0.15.0 h1:bbrp8t3bGUeFOx08pvsMYRTCVSMk89u4tKbNOZbp88U=
+ golang.org/x/time v0.15.0/go.mod h1:Y4YMaQmXwGQZoFaVFk4YpCt4FLQMYKZe9oeV/f4MSno=
+ golang.org/x/tools v0.0.0-20180917221912-90fa682c2a6e/go.mod h1:n7NCudcB/nEzxVGmLbDW
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1273** (2026-11-06): fix: bump golang.org/x/net to v0.62.0 for CVE-2026-78661 and CVE-2026-97045 (@SyedaFatimaKazmi)
+- **PR #1263** (2026-10-29): chore(chart): bump to 3.0.0-beta.5 for v2.0.0-beta.2 and gateway v0.0.29 (@msafwankarim)
 - **PR #1261** (2026-10-27): chore: bump Helm chart to 2.2.19 (appVersion v1.4.23) (@msafwankarim)
 - **PR #1260** (2026-10-27): chore: bump Go to 1.26.10 for eMudhra CA distrust (CVE-2026-111943) (@msafwankarim)
 - **PR #1259** (2026-10-27): Bump version to 1.4.23 on release-v1.4.23 branch (@github-actions[bot])
 - **PR #1258** (2026-10-26): chore: bump Go to 1.26.10 for eMudhra CA distrust (CVE-2026-111943) (@msafwankarim)
-- **PR #1256** (closed): chore(chart): tighten metadata Role RBAC for reloader-meta-info (@Hrushikesh-ramilla)
-- **PR #1255** (closed): fix(chart): make NetworkPolicy egress ports configurable (@Hrushikesh-ramilla)
 
 ---
 
@@ -1593,30 +1601,40 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #1261 from stakater/chore/chart-2.2.19
+## X. bump golang.org/x/net to v0.62.0 for CVE-2026-78661 and CVE-2026-97045 (#1273)
 
 **RULE**:
-When implementing operations in `deployments/kubernetes/chart/reloader/Chart.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in stakater/Reloader. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in stakater/Reloader. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `41b3ad27`: Merge pull request #1261 from stakater/chore/chart-2.2.19. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a2e3b24d`: bump golang.org/x/net to v0.62.0 for CVE-2026-78661 and CVE-2026-97045 (#1273). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `deployments/kubernetes/chart/reloader/Chart.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-version: 2.2.19
-appVersion: v1.4.23
+	golang.org/x/net v0.62.0 // indirect
+	golang.org/x/sync v0.24.0 // indirect
+	golang.org/x/sys v0.49.0 // indirect
+	golang.org/x/telemetry v0.0.0-20260924152758-ed294f943157 // indirect
+	golang.org/x/term v0.47.0 // indirect
+	golang.org/x/text v0.43.0 // indirect
+	golang.org/x/tools v0.51.0 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-version: 2.2.18
-appVersion: v1.4.22
+	golang.org/x/net v0.60.0 // indirect
+	golang.org/x/sync v0.23.0 // indirect
+	golang.org/x/sys v0.48.0 // indirect
+	golang.org/x/telemetry v0.0.0-20260811182544-a038080d80e5 // indirect
+	golang.org/x/term v0.46.0 // indirect
+	golang.org/x/text v0.42.0 // indirect
+	golang.org/x/tools v0.49.0 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `41b3ad27` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a2e3b24d` are properly handled with clean fallback behavior.

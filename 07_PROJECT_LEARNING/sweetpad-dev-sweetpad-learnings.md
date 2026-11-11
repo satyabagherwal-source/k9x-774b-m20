@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sweetpad-dev-sweetpad-learnings.md`  
 > **Source**: github ([https://github.com/sweetpad-dev/sweetpad](https://github.com/sweetpad-dev/sweetpad))  
-> **Source Version**: `4ffb3b68`  
+> **Source Version**: `7df9d947`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T21:17:22.769Z  
+> **Timestamp**: 2026-11-09T04:00:42.293Z  
 > **Learning ID**: `learn-github-sweetpad-dev-sweetpad`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sweetpad-dev-sweetpad-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sweetpad-dev/sweetpad](https://github.com/sweetpad-dev/sweetpad))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T21:17:22.765Z  
+> **Harvest Timestamp**: 2026-11-09T04:00:41.285Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: xcodebuild for humans and agents: build, run, debug, and test iOS, macOS, tvOS, watchOS, and visionOS apps from your terminal.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 1922 stars
+- **Stars / Engagement**: 1926 stars
 
 ---
 
@@ -37,1553 +37,335 @@
 - Entry configurations inspected via direct stream: package.json, Cargo.toml, README.md.
 - Evaluated system abstractions and modular contracts.
 
-### Core Architecture Module: `sweetpad-cli/src/cli/render.rs`
+### Core Architecture Module: `sweetpad-cli/fixtures/momc/expected/Bad.xcdatamodel/generated/A+CoreDataClass.swift`
 ```
-//! The render contract: a command produces a payload, and the dispatcher in
-//! [`crate::cli::run`] renders it once — choosing human output or the JSON
-//! envelope centrally, so a command never branches on `--json` itself.
-//!
-//! Migrated commands return [`Rendered::Data`] with a typed payload; commands
-//! that stream their own output live (or haven't migrated yet) return
-//! [`Rendered::Streamed`] and the dispatcher renders nothing for them.
+//
+//  A+CoreDataClass.swift
+//  
+//
+//  Created by $(AUTHOR) on $(DATE).
+//
+//  This file was automatically generated and should not be edited.
+//
 
-use crate::cli::output::Output;
+public import Foundation
+public import CoreData
 
-/// A renderable command payload. `human` writes the human view through `out`'s
-/// sinks; `json` returns the DATA only — the `{schema, ok, data}` envelope is
-/// added centrally by the dispatcher, so a payload never knows about it.
-pub trait Render {
-    /// Human-mode rendering. Free to use `out.line`/`out.item`/`out.use_color()`.
-    fn human(&self, out: &Output);
-    /// The `data` field of the success envelope. Pure; no I/O.
-    fn json(&self) -> serde_json::Value;
-}
+public typealias ACoreDataClassSet = NSSet
 
-/// What a command hands back to the dispatcher.
-///
-/// - Query/action commands return [`Rendered::Data`] — rendered once, centrally.
-/// - Streaming commands (and not-yet-migrated ones that self-emit) return
-///   [`Rendered::Streamed`]; the dispatcher emits nothing for them.
-///
-/// The `exit` on `Data` lets a command render its report *and* exit non-zero
-/// (e.g. `doctor` with problems, a red `test` suite) without a separate error
-/// path — process exit is a dispatch concern, not part of the `Render` trait.
-pub enum Rendered {
-    Data { payload: Box<dyn Render>, exit: u8 },
-    Streamed,
-}
+@objc(A)
+public class A: NSManagedObject {
 
-impl Rendered {
-    /// A payload that renders and exits 0.
-    pub fn data(r: impl Render + 'static) -> Self {
-        Self::Data {
-            payload: Box::new(r),
-            exit: 0,
-        }
-    }
-
-    /// A payload that renders but forces a non-zero process exit.
-    pub fn data_with_exit(r: impl Render + 'static, exit: u8) -> Self {
-        Self::Data {
-            payload: Box::new(r),
-            exit,
-        }
-    }
 }
 
 ```
 
-### Core Architecture Module: `sweetpad-cli/src/cli/state.rs`
+### Core Architecture Module: `sweetpad-cli/fixtures/momc/expected/Bad.xcdatamodel/generated/A+CoreDataProperties.swift`
 ```
-//! Machine-managed selection state: `~/.local/state/sweetpad/state.toml`.
-//!
-//! Remembers the user's interactive picks — scheme, configuration, sdk, and
-//! destination, plus a separate testing context, recently-used and most-used
-//! destinations, and the last launched app — per project so the daily loop
-//! doesn't re-prompt. Mirrors the richer context the VS Code extension keeps in
-//! its workspace state. Unlike
-//! [`crate::cli::config`], this file is freely rewritten by the tool — never
-//! hand-author it. Keyed by canonicalized project/workspace path.
-//!
-//! Honors `XDG_STATE_HOME`, falling back to `~/.local/state`.
+//
+//  A+CoreDataProperties.swift
+//  
+//
+//  Created by $(AUTHOR) on $(DATE).
+//
+//  This file was automatically generated and should not be edited.
+//
 
-use std::collections::BTreeMap;
-use std::path::PathBuf;
+public import Foundation
+public import CoreData
 
-use serde::{Deserialize, Serialize};
 
-/// The whole state file: one [`ProjectState`] per project key.
-#[derive(Debug, Default, Deserialize, Serialize)]
-#[serde(default)]
-pub struct State {
-    pub projects: BTreeMap<String, ProjectState>,
-    /// Set when the on-disk file exists but couldn't be *read* (permissions,
-    /// I/O error): the in-memory state is then a guess, and [`save`](State::save)
-    /// becomes a no-op — writing would replace every project's remembered
-    /// context with near-emptiness.
-    #[serde(skip)]
-    pub read_only: bool,
-}
+public typealias ACoreDataPropertiesSet = NSSet
 
-/// Remembered selections for a single project. Scalar fields come first so the
-/// nested tables (testing, recents, usage, last-launched) serialize as valid
-/// TOML after them; the table fields are skipped when empty so simple entries
-/// stay simple.
-#[derive(Debug, Default, Clone, Deserialize, Serialize)]
-#[serde(default)]
-pub struct ProjectState {
-    /// The build/run context — what `build` and `app` use.
-    pub scheme: Option<String>,
-    pub sdk: Option<String>,
-    pub destination: Option<String>,
+extension A {
 
-    /// The configuration picked for each scheme, by scheme name. A scheme with
-    /// no pick builds with the configuration its own `.xcscheme` names, the way
-    /// Xcode keeps one per scheme.
-    #[serde(skip_serializing_if = "BTreeMap::is_empty")]
-    pub configurations: BTreeMap<String, String>,
-
-    /// The testing context, kept separate from the build context (mirrors the
-    /// extension's `testing.*` keys). `test` reads this, falling back to the
-    /// build context where a field is unset.
-    #[serde(skip_serializing_if = "TestingState::is_empty")]
-    pub testing: TestingState,
-
-    /// Destinations selected before, unique by id, in first-seen order — the
-    /// "recent" set. Stored structurally so they survive a device being offline.
-    #[serde(skip_serializing_if = "Vec::is_empty")]
-    pub destination_recents: Vec<SelectedDestination>,
-
-    /// How many times each destination (by id) has been selected — drives the
-    /// most-used-first picker ordering.
-    #[serde(skip_serializing_if = "BTreeMap::is_empty")]
-    pub destination_usage: BTreeMap<String, u32>,
-
-    /// Named destination aliases (`context alias work-phone <UDID>`), resolved
-    /// by `--on NAME`.
-    #[serde(skip_serializing_if = "BTreeMap::is_empty")]
-    pub destination_aliases: BTreeMap<String, String>,
-
-    /// The app launched most recently, for re-launch and inspection.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub last_launched_app: Option<LastLaunchedApp>,
-}
-
-impl ProjectState {
-    /// Whether nothing is remembered at all — used to drop the entry from the
-    /// file once its last field is cleared.
-    #[must_use]
-    pub fn is_empty(&self) -> bool {
-        self.scheme.is_none()
-            && self.configurations.is_empty()
-            && self.sdk.is_none()
-            && self.destination.is_none()
-            && self.testing.is_empty()
-            && self.destination_recents.is_empty()
-            && self.destination_usage.is_empty()
-            && self.destination_aliases.is_empty()
-            && self.last_launched_app.is_none()
-    }
-}
-
-/// The testing context — the test action's own scheme/configuration/target/
-/// destination, independent of the build context.
-#[derive(Debug, Default, Clone, Deserialize, Serialize)]
-#[serde(default)]
-pub struct TestingState {
-    pub scheme: Option<String>,
-    pub target: Option<String>,
-    pub destination: Option<String>,
-    /// The configuration picked for each scheme's tests, by scheme name.
-    #[serde(skip_serializing_if = "BTreeMap::is_empty")]
-    pub configurations: BTreeMap<String, String>,
-}
-
-impl TestingState {
-    /// Whether nothing is set — used to drop the table from the file entirely.
-    #[must_use]
-    pub fn is_empty(&self) -> bool {
-        self.scheme.is_none()
-            && self.configurations.is_empty()
-            && self.target.is_none()
-            && self.destination.is_none()
-    }
-}
-
-/// A destination remembered structurally (id + kind + display name), so recents
-/// and usage stats survive the device being offline. Mirrors the extension's
-/// `SelectedDestination`; `id` is the simulator UDID for simulators.
-#[derive(Debug, Clone, Deserialize, Serialize)]
-pub struct SelectedDestination {
-    pub id: String,
-    /// Destination kind, e.g. `iOSSimulator` / `watchOSSimulator`.
-    pub kind: String,
-    pub name: String,
-}
-
-/// The most recently launched app, kept for re-launch and for inspection by
-/// `context show`. A flat record with a `kind` discriminator (rather than a Rust
-/// enum) so it serializes to a single, TOML-clean table.
-#[derive(Debug, Default, Clone, Deserialize, Serialize)]
-#[serde(default)]
-pub struct LastLaunchedApp {
-    /// `simulator` | `device` | `macos`.
-    pub kind: String,
-    pub app_path: String,
-    pub bundle_identifier: String,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub app_name: Option<String>,
-    /// `CFBundleExecutable` — the process name in os_log (devices).
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub executable_name: Option<String>,
-    /// Simulator UDID (simulator launches).
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub simulator_udid: Option<String>,
-    /// Destination id + kind (device launches).
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub destination_id: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub destination_type: Option<String>,
-    /// The scheme, configuration and `-destination` specifier the launch was
-    /// planned with, so a verb given targeting flags can tell whether they
-    /// name this launch.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub scheme: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub configuration: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub destination: Option<String>,
-}
-
-impl State {
-    /// Standard state path, honoring `XDG_STATE_HOME`.
-    #[must_use]
-    pub fn path() -> Option<PathBuf> {
-        state_dir().map(|d| d.join("sweetpad").join("state.toml"))
+    @nonobjc public class func fetchRequest() -> NSFetchRequest<A> {
+        return NSFetchRequest<A>(entityName: "A")
     }
 
-    /// Load remembered state, preserving what's on disk against both failure
-    /// modes:
-    ///
-    /// - a file that exists but can't be **read** (permissions, I/O error)
-    ///   yields defaults flagged [`read_only`](State::read_only) — saves are
-    ///   skipped for this run, so the unreadable file survives intact;
-    /// - a file that reads but doesn't **parse** is moved aside to a unique
-    ///   `state.toml.corrupt[.N]` backup and a warning names both paths.
-    ///
-    /// Without either guard, the next best-effort [`save`](State::save) would
-    /// rewrite the whole file from the near-empty in-memory state — every
-    /// project's remembered context lost without a trace.
-    #[must_use]
-    pub fn load_or_quarantine() -> (Self, Option<String>) {
-        let Some(path) = Self::path() else {
-            return (Self::default(), None);
-        };
-        let text = match std::fs::read_to_string(&path) {
-            Ok(text) => text,
-            Err(e) if e.kind() == std::io::ErrorKind::NotFound => {
-                return (Self::default(), None);
-            }
-            Err(e) => {
-                let state = Self {
-                    read_only: true,
-                    ..Self::default()
-                };
-                return (
-                    state,
-                    Some(format!(
-                        "cannot read the state file {} ({e}); continuing without remembered \
-                         context, and skipping state saves so it isn't overwritten",
-                        path.display()
-                    )),
-                );
-            }
-        };
-        match toml::from_str(&text) {
-            Ok(state) => (state, None),
-            Err(parse_err) => {
-                let backup = quarantine_path(&path);
-                let warning = match std::fs::rename(&path, &backup) {
-                    Ok(()) => format!(
-                        "state file is corrupt ({}: {parse_err}); moved it to {} and starting fresh",
-                        path.display(),
-                        backup.display()
-                    ),
-                    Err(_) => format!(
-                        "state file is corrupt and will be overwritten on the next save: {}: {parse_err}",
-                        path.display()
-                    ),
-                };
-                (Self::default(), Some(warning))
-            }
-        }
-    }
+    @NSManaged nonisolated public var b: NSManagedObject?
+    @NSManaged nonisolated public var c: A?
 
-    /// Persist state, creating the parent directory as needed. Written to a
-    /// temp file and renamed into place, so a crash or a concurrent session
-    /// can never leave a torn half-written `state.toml` (concurrent saves are
-    /// last-writer-wins with each writer's *complete* file). What lands on disk
-    /// is the [`pruned_view`](State::pruned_view), so the file can't grow
-    /// forever.
-    ///
-    /// In [`read_only`](State::read_only) mode this is an error: best-effort
-    /// callers (`remember`) swallow it with `let _ =`, while commands whose
-    /// whole purpose is the write (`context set`) must not report success for
-    /// a save that never happened.
-    pub fn save(&self) -> Result<(), String> {
-        
-```
+}
 
-### Core Architecture Module: `sweetpad-core/examples/dump_settings.rs`
-```
-//! Scratch diagnostic: resolve a (project, target, config, sdk, arch) tuple
-//! against a versioned xcspec cache and print selected keys (or all).
-//! Usage: cargo run --example dump_settings -- <xcodeproj> <target> <config> <sdk> <arch> <xcspec-ver> [KEY ...]
+extension A : Identifiable {
 
-use sweetpad_core::build_context::{BuildContext, ResolveQuery};
-use sweetpad_lib::xcspec;
-
-fn main() {
-    let args: Vec<String> = std::env::args().skip(1).collect();
-    let [proj, target, config, sdk, arch, ver, ..] = args.as_slice() else {
-        eprintln!(
-            "usage: dump_settings <xcodeproj> <target> <config> <sdk> <arch> <xcspec-ver> [KEY ...]"
-        );
-        std::process::exit(2);
-    };
-    let root = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"));
-    let xcspec_root = root.join(format!("xcspec-cache/xcode-{ver}"));
-    let sdks = xcspec_root.join("sdksettings");
-    let catalog = xcspec::load_catalog(&xcspec_root, Some(&sdks)).unwrap();
-    let ctx = BuildContext::open(std::path::Path::new(proj))
-        .unwrap()
-        .with_xcspec(catalog);
-    let resolved = ctx
-        .resolve(&ResolveQuery::new(target, config, sdk, arch))
-        .unwrap();
-    let keys: Vec<&String> = args.iter().skip(6).collect();
-    for (k, v) in &resolved.settings {
-        if keys.is_empty() || keys.contains(&k) {
-            println!("{k} = {v:?}");
-        }
-    }
 }
 
 ```
 
-### Core Architecture Module: `sweetpad-core/src/app_locator.rs`
+### Core Architecture Module: `sweetpad-cli/fixtures/momc/expected/Bad.xcdatamodel/generated/Bad+CoreDataModel.swift`
 ```
-//! Finding the app a build produced: which of a scheme's targets is the one to
-//! launch, and where its bundle is, from the build settings that build
-//! resolves. The CLI's `app` verbs and the VS Code extension (through the
-//! native addon) both locate the app here, so they launch the same bundle.
+//
+//  Bad+CoreDataModel.swift
+//  
+//
+//  Created by $(AUTHOR) on $(DATE).
+//
+//  This file was automatically generated and should not be edited.
+//
 
-use std::path::{Path, PathBuf};
+public import Foundation
+public import CoreData
 
-use sweetpad_lib::destination::RunDestination;
-use sweetpad_lib::project::{absolutize, canonicalize_sdk_base, standardize};
-use sweetpad_lib::scheme;
+public typealias BadFoundationFrameworkSet = NSSet
+public typealias BadCoreDataFrameworkManagedObject = NSManagedObject
 
-use crate::build_settings::{BuildSettingsOptions, TargetSettings, resolve_build_settings};
-use crate::xcodebuild_args;
 
-/// What a build's command line adds to the build settings `xcodebuild`
-/// resolves, above every project layer: the `-derivedDataPath` that places
-/// the build, the `-xcconfig` overlay, and the `KEY=VALUE` assignments. Each
-/// caller that resolves settings for a build reads them from the same
-/// arguments the build takes, so the locator, `settings show`, the hot-reload
-/// recompiler and the index agree with it.
-#[derive(Debug, Clone, Default, PartialEq, Eq)]
-pub struct CommandLineSettings {
-    pub derived_data_path: Option<PathBuf>,
-    /// `xcodebuild` takes one `-xcconfig` and refuses a second, so this is
-    /// the last one given.
-    pub xcconfig: Option<PathBuf>,
-    pub overrides: Vec<(String, String)>,
-}
 
-impl CommandLineSettings {
-    /// Read them from `args`, the arguments a build passes `xcodebuild`. The
-    /// paths of the two flags resolve against `working_dir` (see
-    /// [`path_value`]). The settings stay as typed: the resolver reads a
-    /// relative `SYMROOT=build` against each target's project directory, as
-    /// `xcodebuild` does.
-    #[must_use]
-    pub fn of(args: &[String], working_dir: Option<&Path>) -> Self {
-        Self {
-            derived_data_path: path_value(args, "-derivedDataPath", working_dir),
-            xcconfig: path_value(args, "-xcconfig", working_dir),
-            overrides: xcodebuild_args::settings(args),
-        }
-    }
-}
-
-/// The value after the last `flag` in `args`, as a path `xcodebuild` running
-/// in `working_dir` reads it (`None` is the current directory). `xcodebuild`
-/// knows that directory by its physical path, so a relative path joins its
-/// [`standardize`] spelling: for a project reached through a symlinked `link`,
-/// `-derivedDataPath dd` is `real/dd` and `../dd` is the real directory's
-/// sibling.
-#[must_use]
-pub fn path_value(args: &[String], flag: &str, working_dir: Option<&Path>) -> Option<PathBuf> {
-    let path = PathBuf::from(xcodebuild_args::last_value(args, flag)?);
-    if path.is_absolute() {
-        return Some(path);
-    }
-    let base = working_dir.unwrap_or_else(|| Path::new("."));
-    Some(absolutize(&standardize(base).join(path)))
-}
-
-/// The launchable product of a build: the `.app` path, its bundle id, and the
-/// executable inside it (used to launch macOS apps directly).
-#[derive(Debug, Clone)]
-pub struct AppBundle {
-    pub path: PathBuf,
-    pub bundle_id: String,
-    /// `TARGET_BUILD_DIR/EXECUTABLE_PATH`, the binary to run for a macOS app.
-    pub executable: PathBuf,
-}
-
-/// What a located target builds.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ProductKind {
-    /// A `.app` bundle with a bundle id: installed and launched on any
-    /// platform it supports.
-    App,
-    /// A macOS command-line tool: a bare executable, run in place on the Mac.
-    /// Its [`AppBundle`] names the executable as its path, and its bundle id
-    /// is empty when the target sets none.
-    Tool,
-}
-
-/// The product [`locate`] found: its bundle, what kind of product it is, and
-/// the resolved settings of the target that builds it.
-#[derive(Debug)]
-pub struct Located {
-    pub app: AppBundle,
-    pub kind: ProductKind,
-    pub settings: TargetSettings,
-}
-
-/// The settings [`pick`] reads. [`locate`] resolves them whatever keys its
-/// caller asks for, and trims the result afterwards.
-const LOCATOR_KEYS: [&str; 7] = [
-    "WRAPPER_NAME",
-    "FULL_PRODUCT_NAME",
-    "TARGET_BUILD_DIR",
-    "PRODUCT_BUNDLE_IDENTIFIER",
-    "PRODUCT_TYPE",
-    "EXECUTABLE_PATH",
-    "SUPPORTED_PLATFORMS",
-];
-
-/// The error when no target builds anything to launch.
-const NOTHING_TO_LAUNCH: &str = "could not find a launchable .app in the resolved build settings";
-
-/// Resolve `opts` and pick the product a build with them writes (see
-/// [`pick`]), from the scheme's Run action and the destination's platform.
-/// `opts.keys` trims the returned target's settings, as it trims a
-/// [`resolve_build_settings`] result.
-///
-/// # Errors
-/// The resolver's error, or one saying no target builds a launchable `.app`.
-pub fn locate(mut opts: BuildSettingsOptions) -> Result<Located, String> {
-    let keys = opts.keys.take();
-    if let Some(wanted) = &keys {
-        let mut all = wanted.clone();
-        all.extend(LOCATOR_KEYS.iter().map(|k| (*k).to_string()));
-        opts.keys = Some(all);
-    }
-    let settings = resolve_build_settings(&opts)?;
-    let container = opts.workspace.as_deref().or(opts.project.as_deref());
-    let launch = container
-        .zip(opts.scheme.as_deref())
-        .and_then(|(container, name)| launch_target(container, name));
-    pick(
-        settings,
-        platform(opts.destination.as_ref(), &opts.sdk).as_deref(),
-        launch.as_deref(),
-        keys.as_deref(),
-    )
-}
-
-/// Pick the product to launch out of a build's resolved `settings`, with the
-/// picked target's settings trimmed to `keys` when given. [`locate`] resolves
-/// the settings in-process; a caller that resolved them some other way
-/// (`xcodebuild -showBuildSettings`) picks with this directly.
-///
-/// Candidates are targets that build a `.app` wrapper and declare a bundle id.
-/// The target the scheme's Run action launches (`launch_target`) wins when it
-/// is a candidate that can run on `platform`: a scheme that builds a helper
-/// app, a second app or a share extension ahead of the one it runs launches
-/// the one Xcode runs. Otherwise one whose `SUPPORTED_PLATFORMS` covers
-/// `platform` (an SDK name, `iphonesimulator`) wins: in an iOS + watchOS
-/// scheme the watch companion builds *first* (dependency order), and blind
-/// first-pick would install the watch app onto the iPhone simulator. Targets
-/// that don't state their platforms (or no `platform`) fall back to
-/// first-candidate order, and when the filter rejects *every* candidate (Mac
-/// Catalyst declaring `iphoneos` under a `platform=macOS` destination), the
-/// first `.app` still wins over a nothing-to-launch error.
-///
-/// With no `.app` at all, on the Mac or with no `platform`, a command-line
-/// tool is the product: the Run action's, else the first.
-///
-/// # Errors
-/// When no target builds a launchable `.app` or, on the Mac, a tool.
-pub fn pick(
-    mut settings: Vec<TargetSettings>,
-    platform: Option<&str>,
-    launch_target: Option<&str>,
-    keys: Option<&[String]>,
-) -> Result<Located, String> {
-    let (index, kind) = pick_index(&settings, platform, launch_target)?;
-    let mut target = settings.swap_remove(index);
-    let app = match kind {
-        ProductKind::App => app_of(&target),
-        ProductKind::Tool => tool_of(&target),
-    }
-    .expect("pick_index picks a target that builds its kind");
-    if let Some(keys) = keys {
-        target.settings.retain(|k, _| keys.iter().any(|w| w == k));
-    }
-    Ok(Located {
-        app,
-        kind,
-        settings: target,
-    })
-}
-
-/// The platform [`pick`] narrows to for a build: the destination's, else the
-/// SDK's, as `SUPPORTED_PLATFORMS` spells it (`iphonesimulator`). `None` when
-/// the build names neither.
-#[must_use]
-pub fn platform(destination: Option<&RunDestination>, sdk: &str) -> Option<String> {
-    destination
-        .map(|d| d.platform.clone())
-        .or_else(|| (!sdk.is_empty()).then(|| canonicalize_sdk_base(sdk)))
-}
-
-/// [`pick`]'s choice, as an index into `settings` and what it builds.
-fn pick_index(
-    settings: &[TargetSettings],
-    platform: Option<&str>,
-    launch_target: Option<&str>,
-) -> Result<(usize, ProductKind), String> {
-    // Whether `t` runs on `platform`: `None` when there is no platform to
-    // match or the target doesn't state its own.
-    let runs_on = |t: &TargetSettings| {
-        let platforms = t.settings.get("SUPPORTED_PLATFORMS")?;
-        let wanted = platform?;
-        Some(platforms.split_whitespace().any(|p| p == wanted))
-    };
-    let of_kind = |test: fn(&TargetSettings) -> Option<AppBundle>| {
-        settings
-            .iter()
-            .enumerate()
-            .filter(move |(_, t)| test(t).is_some())
-    };
-    let launched = |t: &TargetSettings| launch_target.is_some_and(|name| t.target == name);
-    if let Some((i, _)) = of_kind(app_of).find(|(_, t)| launched(t) && runs_on(t) != Some(false)) {
-        return Ok((i, ProductKind::App));
-    }
-    let mut fallback = None;
-    let mut first_app = None;
-    for (i, t) in of_kind(app_of) {
-        first_app.get_or_insert(i);
-        match runs_on(t) {
-            // The target states its platforms and covers the destination: a
-            // definitive pick.
-            Some(true) => return Ok((i, ProductKind::App)),
-            // States its platforms and the destination is not among them:
-            // not this app (the watch-companion case).
-            Some(false) => {}
-            // No filter requested, or the target doesn't say: a candidate in
-            // declaration order.
-            None => {
-                fallback.get_or_insert(i);
-            }
-        }
-    }
-    if let Some(i) = fallback.or(first_app) {
-        return Ok((i, ProductKind::App));
-    }
-    if platform.is_none_or(|p| p == "macosx") {
-        let tool = of_kind(tool_of)
-            .find(|(_, t)| launched(t))
-            .or_else(|| of_kind(tool_of).next());
-        if let Some((i, _)) = tool {
-            return Ok((i, ProductKind::Tool));
-        }
-    }
-    Err(NOTHING_TO_LAUNCH.to_string())
-}
-
-/// The launchable bundle a target's resolved settings
 ```
 
-### Core Architecture Module: `sweetpad-core/src/bin/bsp_server.rs`
+### Core Architecture Module: `sweetpad-cli/fixtures/momc/expected/Gen.xcdatamodel/generated/A+CoreDataClass.swift`
 ```
-//! `bsp-server` — standalone entry point for the Build Server Protocol server
-//! (see DOCS.md §8 (BSP server)).
-//!
-//! Not a user-facing CLI: this exists so the BSP integration tests (and manual
-//! debugging) can exec the stdio server, and so `bsp::write_config` has an
-//! executable to point `buildServer.json`'s `argv` at. In the extension the
-//! same server runs through the N-API addon (`node::bsp`).
+//
+//  A+CoreDataClass.swift
+//  
+//
+//  Created by $(AUTHOR) on $(DATE).
+//
+//  This file was automatically generated and should not be edited.
+//
 
-use std::process::ExitCode;
+public import Foundation
+public import CoreData
 
-const USAGE: &str = "\
-bsp-server — Build Server Protocol server for sourcekit-lsp
+public typealias ACoreDataClassSet = NSSet
 
-USAGE:
-    bsp-server <command> [options]
+@objc(A)
+public class A: NSManagedObject {
 
-COMMANDS:
-    bsp      Run the BSP server loop over stdio
-    config   Write a buildServer.json so sourcekit-lsp finds the server
-             (--project <p> | --workspace <p>) [--xcode <p>]
-             [--derived-data-path <p>] [--output <p>]
-";
-
-fn main() -> ExitCode {
-    let args: Vec<String> = std::env::args().skip(1).collect();
-    let result = match args.first().map(String::as_str) {
-        Some("bsp") => sweetpad_core::bsp::run(&args[1..]),
-        Some("config") => sweetpad_core::bsp::write_config(&args[1..], &["bsp"]),
-        Some("-h" | "--help" | "help") => {
-            print!("{USAGE}");
-            return ExitCode::SUCCESS;
-        }
-        Some(other) => Err(format!("unknown command {other:?}\n\n{USAGE}")),
-        None => Err(USAGE.to_string()),
-    };
-    match result {
-        Ok(()) => ExitCode::SUCCESS,
-        Err(e) => {
-            eprintln!("bsp-server: {e}");
-            ExitCode::FAILURE
-        }
-    }
 }
 
 ```
 
-### Core Architecture Module: `sweetpad-core/src/bsp/control.rs`
+### Core Architecture Module: `sweetpad-cli/fixtures/momc/expected/Gen.xcdatamodel/generated/A+CoreDataProperties.swift`
 ```
-//! The telemetry channel to the SweetPad extension. The BSP server reads all of
-//! its config — including the Unix socket path to bind — from the `bsp.json`
-//! named by `--config` (written by the extension into the host state dir). It
-//! binds that socket, serves `bsp/log` and `bsp/status` to any extension that
-//! connects, and accepts `bsp/setLogLevel` back. Config never flows over this
-//! channel; it lives entirely in `bsp.json`.
+//
+//  A+CoreDataProperties.swift
+//  
+//
+//  Created by $(AUTHOR) on $(DATE).
+//
+//  This file was automatically generated and should not be edited.
+//
 
-use std::io::BufReader;
-use std::os::unix::net::{UnixListener, UnixStream};
-use std::path::{Path, PathBuf};
-use std::sync::{Arc, Mutex};
-use std::time::Duration;
+public import Foundation
+public import CoreData
 
-use serde_json::{Value, json};
 
-use crate::framing::{read_message, write_message};
+public typealias ACoreDataPropertiesSet = NSSet
 
-/// Verbosity of the `bsp/log` stream pushed to the extension. Gates only the
-/// telemetry stream — the `SWEETPAD_BSP_LOG` file always gets everything.
-#[derive(Clone, Copy)]
-pub(crate) enum LogLevel {
-    Off = 0,
-    Error = 1,
-    Info = 2,
-    Debug = 3,
+extension A {
+
+    @nonobjc public class func fetchRequest() -> NSFetchRequest<A> {
+        return NSFetchRequest<A>(entityName: "A")
+    }
+
+    @NSManaged nonisolated public var i16: Int16
+    @NSManaged nonisolated public var i32: NSNumber?
+    @NSManaged nonisolated public var dbl: NSNumber?
+    @NSManaged nonisolated public var flt: Float
+    @NSManaged nonisolated public var flag: NSNumber?
+    @NSManaged nonisolated public var dec: NSDecimalNumber?
+    @NSManaged nonisolated public var when: TimeInterval
+    @NSManaged nonisolated public var link: URL?
+    @NSManaged nonisolated public var list: [String]?
+    @NSManaged nonisolated public var obj: NSObject?
+    @NSManaged nonisolated public var oid: NSObject?
+    @NSManaged nonisolated public var default: String?
+    @NSManaged nonisolated public var tmp: String?
+    @NSManaged nonisolated public var b: BObject?
+    @NSManaged nonisolated public var cs: NSOrderedSet?
+
 }
 
-impl LogLevel {
-    pub(crate) fn as_str(self) -> &'static str {
-        match self {
-            LogLevel::Off => "off",
-            LogLevel::Error => "error",
-            LogLevel::Info => "info",
-            LogLevel::Debug => "debug",
-        }
-    }
+// MARK: Generated accessors for cs
+extension A {
 
-    pub(crate) fn parse(s: &str) -> Self {
-        match s {
-            "off" => LogLevel::Off,
-            "error" => LogLevel::Error,
-            "debug" => LogLevel::Debug,
-            _ => LogLevel::Info,
-        }
-    }
+    @objc(insertObject:inCsAtIndex:)
+    @NSManaged nonisolated public func insertIntoCs(_ value: C, at idx: Int)
+
+    @objc(removeObjectFromCsAtIndex:)
+    @NSManaged nonisolated public func removeFromCs(at idx: Int)
+
+    @objc(insertCs:atIndexes:)
+    @NSManaged nonisolated public func insertIntoCs(_ values: [C], at indexes: NSIndexSet)
+
+    @objc(removeCsAtIndexes:)
+    @NSManaged nonisolated public func removeFromCs(at indexes: NSIndexSet)
+
+    @objc(replaceObjectInCsAtIndex:withObject:)
+    @NSManaged nonisolated public func replaceCs(at idx: Int, with value: C)
+
+    @objc(replaceCsAtIndexes:withCs:)
+    @NSManaged nonisolated public func replaceCs(at indexes: NSIndexSet, with values: [C])
+
+    @objc(addCsObject:)
+    @NSManaged nonisolated public func addToCs(_ value: C)
+
+    @objc(removeCsObject:)
+    @NSManaged nonisolated public func removeFromCs(_ value: C)
+
+    @objc(addCs:)
+    @NSManaged nonisolated public func addToCs(_ values: NSOrderedSet)
+
+    @objc(removeCs:)
+    @NSManaged nonisolated public func removeFromCs(_ values: NSOrderedSet)
+
 }
 
-/// The telemetry socket the BSP binds — at the path the extension assigned in
-/// `bsp.json` — and the connected extensions it pushes `bsp/log` / `bsp/status`
-/// to. Each accepted connection also feeds `bsp/setLogLevel` back through the
-/// `on_set_level` callback.
-pub(crate) struct TelemetryServer {
-    clients: Mutex<Vec<UnixStream>>,
-    socket: PathBuf,
-    /// The last `bsp/status` frame, replayed to each new connection. A status is
-    /// a state, not an event: an extension that connects (or reconnects) after
-    /// the server pushed one would otherwise show nothing until the next change,
-    /// which for a failed prepare could be never.
-    last_status: Mutex<Option<String>>,
-}
+extension A : Identifiable {
 
-impl TelemetryServer {
-    /// Bind `socket` and start accepting extension connections. Reclaims a stale
-    /// socket file (nothing listening there); returns `None` if another live
-    /// server already owns the path — a second BSP for the same project — so the
-    /// caller simply runs without telemetry. `on_set_level` fires for each
-    /// incoming `bsp/setLogLevel`.
-    pub(crate) fn bind(
-        socket: &Path,
-        on_set_level: impl Fn(&str) + Send + Sync + 'static,
-    ) -> Option<Arc<TelemetryServer>> {
-        // A leftover socket file is either a live peer (another BSP owns this
-        // project — stand down) or a crashed one's stale file (reclaim it).
-        if socket.exists() {
-            if UnixStream::connect(socket).is_ok() {
-                return None;
-            }
-            let _ = std::fs::remove_file(socket);
-        }
-        let listener = UnixListener::bind(socket).ok()?;
-        let server = Arc::new(TelemetryServer {
-            clients: Mutex::new(Vec::new()),
-            socket: socket.to_path_buf(),
-            last_status: Mutex::new(None),
-        });
-        let accept = Arc::clone(&server);
-        let on_set_level = Arc::new(on_set_level);
-        std::thread::spawn(move || {
-            for stream in listener.incoming().flatten() {
-                // Keep a write half for broadcasts; the read half drains
-                // `bsp/setLogLevel` until the extension disconnects. The
-                // write timeout is load-bearing: `broadcast` runs on the
-                // request thread, so a connected client that stops reading
-                // (suspended extension host, full socket buffer) would
-                // otherwise block a broadcast forever — wedging the whole
-                // server. A timed-out write fails and drops the client.
-                if let Ok(mut write_half) = stream.try_clone()
-                    && let Ok(mut clients) = accept.clients.lock()
-                {
-                    let _ = write_half.set_write_timeout(Some(Duration::from_secs(1)));
-                    if let Ok(last) = accept.last_status.lock()
-                        && let Some(body) = last.as_deref()
-                    {
-                        let _ = write_message(&mut write_half, body);
-                    }
-                    clients.push(write_half);
-                }
-                let on_set_level = Arc::clone(&on_set_level);
-                std::thread::spawn(move || {
-                    let mut reader = BufReader::new(stream);
-                    while let Ok(Some(msg)) = read_message(&mut reader) {
-                        if let Ok(val) = serde_json::from_str::<Value>(&msg)
-                            && val.get("method").and_then(Value::as_str) == Some("bsp/setLogLevel")
-                            && let Some(level) = val
-                                .get("params")
-                                .and_then(|p| p.get("level"))
-                                .and_then(Value::as_str)
-                        {
-                            on_set_level(level);
-                        }
-                    }
-                });
-            }
-        });
-        Some(server)
-    }
-
-    /// Push a JSON-RPC notification to every connected extension, dropping any
-    /// that errors on write — a disconnected client, or one whose write timed
-    /// out (see the timeout set at accept; this runs on the request thread, so
-    /// a stalled client must cost at most one bounded write, never a wedge).
-    #[allow(clippy::needless_pass_by_value)]
-    pub(crate) fn broadcast(&self, method: &str, params: Value) {
-        let body = json!({ "jsonrpc": "2.0", "method": method, "params": params }).to_string();
-        if method == "bsp/status"
-            && let Ok(mut last) = self.last_status.lock()
-        {
-            *last = Some(body.clone());
-        }
-        if let Ok(mut clients) = self.clients.lock() {
-            clients.retain_mut(|c| {
-                if write_message(c, &body).is_ok() {
-                    return true;
-                }
-                // A failed (or timed-out mid-frame) write may have left half a
-                // frame on the wire, so the stream is unusable. Shut the socket
-                // down — not just drop the write half — so the extension sees
-                // EOF and reconnects instead of blocking forever on the missing
-                // bytes (its reader thread here exits on the same EOF).
-                let _ = c.shutdown(std::net::Shutdown::Both);
-                false
-            });
-        }
-    }
-
-    /// Remove the socket file on a clean shutdown. (A crash leaves it behind; the
-    /// next server reclaims it via the connect-probe in [`Self::bind`].)
-    pub(crate) fn shutdown(&self) {
-        let _ = std::fs::remove_file(&self.socket);
-    }
 }
 
 ```
 
-### Core Architecture Module: `sweetpad-core/src/bsp/mod.rs`
+### Core Architecture Module: `sweetpad-cli/fixtures/momc/expected/Gen.xcdatamodel/generated/BObject+CoreDataProperties.swift`
 ```
-//! The Build Server Protocol server — see `DOCS.md` §8 (BSP server).
-//!
-//! Speaks BSP (JSON-RPC over stdio) to `sourcekit-lsp`, answering the questions
-//! that drive editor intelligence: what targets exist, what files each contains,
-//! and the compiler arguments for a file. The argv comes from the resolver/
-//! generator core (`build_settings::resolve_compiler_arguments`), so it's derived
-//! from the project, not parsed out of a build log.
-//!
-//! This is the walking-skeleton scope: the core requests, per-**target** argv
-//! (⚠️ per-file later — see `DOCS.md` §8 (BSP server)), no `buildTarget/prepare` yet (v2).
+//
+//  BObject+CoreDataProperties.swift
+//  
+//
+//  Created by $(AUTHOR) on $(DATE).
+//
+//  This file was automatically generated and should not be edited.
+//
 
-mod control;
+public import Foundation
+public import CoreData
 
-use std::collections::{BTreeMap, BTreeSet, VecDeque};
-use std::fs::OpenOptions;
-use std::io::{self, Read, Write};
-use std::path::{Path, PathBuf};
-use std::process::{Child, Command, ExitStatus, Stdio};
-use std::sync::atomic::{AtomicBool, AtomicU8, Ordering};
-use std::sync::{Arc, Condvar, Mutex, PoisonError};
-use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
 
-use serde_json::{Value, json};
+public typealias BObjectCoreDataPropertiesSet = NSSet
 
-use crate::app_locator::CommandLineSettings;
-use crate::build_context::BuildContext;
-use crate::build_settings::{self, BuildSettingsOptions};
-use crate::framing::{read_message, write_message};
-use crate::scratch::{ScratchDir, TmpdirLeftovers};
-use crate::xcodebuild_args;
-use control::{LogLevel, TelemetryServer};
-use sweetpad_lib::{compiler_args, derived_data, pif, project, scheme};
+extension BObject {
 
-/// Write a `buildServer.json` so `sourcekit-lsp` discovers and launches this
-/// server. Its `argv` is the current executable followed by
-/// `serve_subcommand` — the caller's spelling of "run the server loop"
-/// (`["bsp"]` for the standalone bsp-server binary, `["bsp", "serve"]` for the
-/// sweetpad CLI) — plus the server flags, dropped into the workspace root (the
-/// `.xcodeproj`'s parent, or `--output`).
-pub fn write_config(args: &[String], serve_subcommand: &[&str]) -> Result<(), String> {
-    let flags = parse_flags(args);
-    // Accept either a `.xcodeproj` (`--project`) or a `.xcworkspace` (`--workspace`);
-    // the BSP server resolves files against a workspace's member projects.
-    let (root_flag, root) = flags
-        .get("workspace")
-        .map(|w| ("--workspace", w))
-        .or_else(|| flags.get("project").map(|p| ("--project", p)))
-        .ok_or(
-            "config: --project <path.xcodeproj> or --workspace <path.xcworkspace> is required",
-        )?;
-    let root_abs = std::fs::canonicalize(root).map_err(|e| format!("{root_flag}: {e}"))?;
-    // A project's embedded workspace is the project: the server keys it that
-    // way, and `buildServer.json` belongs beside the `.xcodeproj`, not in it.
-    let (root_flag, root_abs) = match sweetpad_lib::workspace::embedding_project(&root_abs) {
-        Some(project) => ("--project", project.to_path_buf()),
-        None => (root_flag, root_abs),
-    };
-    let exe = std::env::current_exe().map_err(|e| e.to_string())?;
-
-    let mut server_argv = vec![exe.to_string_lossy().into_owned()];
-    server_argv.extend(serve_subcommand.iter().map(|s| (*s).to_string()));
-    server_argv.push(root_flag.into());
-    server_argv.push(root_abs.to_string_lossy().into_owned());
-    for (flag, key) in [
-        ("--xcode", "xcode"),
-        ("--derived-data-path", "derived-data-path"),
-    ] {
-        if let Some(v) = flags.get(key) {
-            server_argv.push(flag.into());
-            server_argv.push(v.clone());
-        }
+    @nonobjc public class func fetchRequest() -> NSFetchRequest<BObject> {
+        return NSFetchRequest<BObject>(entityName: "B")
     }
-    let config = json!({
-        "name": "sweetpad",
-        "version": env!("CARGO_PKG_VERSION"),
-        "bspVersion": "2.2.0",
-        "languages": LANGUAGE_IDS,
-        "argv": server_argv,
-    });
 
-    let out = build_server_json_path(&root_abs, flags.get("output").map(Path::new));
-    let body = serde_json::to_string_pretty(&config).map_err(|e| e.to_string())?;
-    std::fs::write(&out, format!("{body}\n"))
-        .map_err(|e| format!("write {}: {e}", out.display()))?;
-    eprintln!("wrote {}", out.display());
-    Ok(())
+    @NSManaged nonisolated public var title: String?
+    @NSManaged nonisolated public var as: NSSet?
+
 }
 
-/// Where sourcekit-lsp finds the `buildServer.json` for `container`: the
-/// explicit `output`, else beside the container. A project's embedded
-/// workspace puts it beside the project, not inside the bundle.
-#[must_use]
-pub fn build_server_json_path(container: &Path, output: Option<&Path>) -> PathBuf {
-    output.map_or_else(
-        || {
-            sweetpad_lib::workspace::normalize_stub_workspace(container)
-                .parent()
-                .unwrap_or_else(|| Path::new("."))
-                .join("buildServer.json")
-        },
-        Path::to_path_buf,
-    )
+// MARK: Generated accessors for as
+extension BObject {
+
+    @objc(addAsObject:)
+    @NSManaged nonisolated public func addToAs(_ value: A)
+
+    @objc(removeAsObject:)
+    @NSManaged nonisolated public func removeFromAs(_ value: A)
+
+    @objc(addAs:)
+    @NSManaged nonisolated public func addToAs(_ values: NSSet)
+
+    @objc(removeAs:)
+    @NSManaged nonisolated public func removeFromAs(_ values: NSSet)
+
 }
 
-/// Build settings the project's builds add above every project layer, from
-/// the command line they run `xcodebuild` with: an `-xcconfig` overlay and
-/// `KEY=VALUE` assignments, in order. The sweetpad CLI reads them from the
-/// project's `sweetpad.toml`; a server started from `bsp.json` reads them
-/// from that file's `buildArgs`, which the extension fills from
-/// `sweetpad.build.args`.
-#[derive(Debug, Clone, Default, PartialEq)]
-pub struct CommandLine {
-    pub xcconfig: Option<PathBuf>,
-    pub overrides: Vec<(String, String)>,
+extension BObject : Identifiable {
+
 }
-
-/// The settings a command line layers on every resolution. Its
-/// `-derivedDataPath` is left out: the server fixes DerivedData at startup.
-impl From<CommandLineSettings> for CommandLine {
-    fn from(settings: CommandLineSettings) -> Self {
-        Self {
-            xcconfig: settings.xcconfig,
-            overrides: settings.overrides,
-        }
-    }
-}
-
-/// Run the BSP server loop over stdin/stdout until EOF or `build/exit`.
-pub fn run(args: &[String]) -> Result<(), String> {
-    run_with(args, CommandLine::default())
-}
-
-/// [`run`], resolving every target's settings with `command_line` on top, so
-/// the editor's compiler arguments and the `buildTarget/prepare` build agree
-/// with the project's own builds.
-pub fn run_with(args: &[String], command_line: CommandLine) -> Result<(), String> {
-    let server = Arc::new(Server::resolve(args, command_line)?);
-    let stdin = io::stdin();
-    let mut reader = stdin.lock();
-    // Each write locks the output for one whole frame rather than holding the
-    // lock across the loop, so the worker threads (change-watcher, prepare)
-    // can interleave their messages between requests.
-    let mut watching = false;
-
-    // `buildTarget/prepare` runs `xcodebuild` (seconds-to-minutes), and
-    // sourcekit-lsp blocks the requesting target's semantics until our response
-    // arrives — so run it on a serialized worker and reply by id when the build
-    // finishes, keeping the request loop responsive in the meantime.
-    {
-        let server = Arc::clone(&server);
-        std::thread::spawn(move || {
-            while let Some(job) = server.prepare_queue.take() {
-                server.run_prepare(&job);
-            }
-        });
-    }
-
-    loop {
-        let msg = match read_message(&mut reader) {
-            Ok(Some(msg)) => msg,
-            Ok(None) => break, // clean EOF
-            Err(e) => {
-                // The frame boundary is lost; log why before dying so the
-                // failure is diagnosable instead of a silent exit.
-                server.trace(&format!("fatal framing error: {e}"));
-                server.prepare_queue.close();
-                server.kill_prepare();
-                server.shutdown_telemetry();
-                return Err(e);
-            }
-        };
-        let req = match serde_json::from_str::<Value>(&msg) {
-            Ok(req) => req,
-            Err(e) => {
-                // JSON-RPC: a frame that isn't valid JSON gets a parse-error
-                // response (id null) — silently dropping it would leave a
-                // client that sent an id waiting forever.
-                server.trace(&format!("recv: unparseable frame: {e}"));
-                server.send(&json!({
-                    "jsonrpc": "2.0",
-                    "id": Value::Null,
-                    "error": { "code": -32700, "message": format!("parse error: {e}") },
-                }))?;
-                continue;
-            }
-        };
-        let method = req.get("method").and_then(Value::as_str).unwrap_or("");
-        let id = req.get("id").cloned();
-        let params = req.get("params");
-        server.trace(&format!("recv: {msg}"));
-        match method {
-            "build/initialize" => server.reply(id, server.initialize())?,
-            "build/initialized" => {
-                // The client is now ready for notifications: watch the project
-                // for structure changes and push `buildTarget/didChange`.
-                if !watching {
-                    // The local packages come from a `swift package dump-pif`
-                    // that takes seconds cold, so their targets join once it
-                    // finishes, with a `buildTarget/didChange`.
-                    let loader = Arc::clone(&server);
-                    std::thread::spawn(move || loader.load_packages());
-                    Arc::clone(&server).spawn_change_watcher();
-                    watching = true;
-                    // Warm every target in the background. The cold window —
-                    // the stretch where a target's header maps and generated
-                    // sources don't exist yet, so its ObjC files can't resolve
-                    // their imports — otherwise opens afresh for each target
-                    // the first time somebody opens a file in it. Queued at the
-                    // back, so a target the client actually asks about still
-                    // goes first.
-                    server.prepare_queue.push_back(PrepareJob {
-                        id: None,
-                        targets: server.current_targets(),
-                    });
-                }
-            }
-            "workspace/buildTargets" => server.reply(id, server.build_targets())?,
-            "buildTarget/sources" => server.reply(id, server.sources(params))?,
-            "buildTarget/inverseSources" => server.reply(id, server.inverse_sources(params))?,
- 
-```
-
-### Core Architecture Module: `sweetpad-core/src/devices/devicectl.rs`
-```
-//! `xcrun devicectl` output: the device listing, one device's details and
-//! lock state, and the process list the app's pids come from. The CLI and
-//! the extension each spawn devicectl (it writes to a `--json-output` file,
-//! not stdout) and hand the file's text here.
-//!
-//! The listing comes in two shapes. Through `jsonVersion` 4 a device carried
-//! `hardwareProperties` / `deviceProperties` / `connectionProperties`; version 5
-//! (Xcode 27) adds a `properties` dictionary that supersedes all three and
-//! carries a `_deprecationNotice` saying the old trio will be removed. Both are
-//! read, `properties` first. Xcode 27's listing also holds the simulators
-//! (`reality: "simulated"`), which are dropped: simctl lists them, and as
-//! devices they would get a `platform=iOS` specifier that cannot build for
-//! them.
-
-use serde_json::Value;
-use sweetpad_lib::destination::Platform;
-
-/// Seconds between the Unix epoch and Core Foundation's 2001-01-01 reference
-/// date, which version 5 counts `lastConnectionDate` from.
-const CF_EPOCH_OFFSET_SECONDS: f64 = 978_307_200.0;
-
-/// A physical device paired with this Mac.
-#[derive(Debug, Clone, Default, PartialEq)]
-pub struct Device {
-    /// CoreDevice's own identifier, the one devicectl's `--device` also
-    /// takes.
-    pub identifier: String,
-    /// The hex UDID xcodebuild's `id=` takes. Falls back to `identifier` for
-    /// the entries devicectl lists with an empty hardware section (some USB
-    /// iOS 16 and older devices).
-    pub udid: String,
-    /// Whether `udid` is the hardware UDID rather than the `identifier`
-    /// fallback.
-    pub has_hardware_udid: bool,
-    pub name: String,
-    /// The marketing name, else the product type (`iPhone14,5`): the listing
-    /// leaves the marketing name out for some wireless devices.
-    pub model: String,
-    /// `iPhone 13`; empty when devicectl leaves it out.
-    pub marketing_name: String,
-    /// `iPhone14,5`.
-    pub product_type: String,
-    /// `iPhone`, `iPad`, `appleWatch`, `appleTV`, `appleVision`,
-    /// `realityDevice`; empty when devicectl leaves it out.
-    pub device_type: String,
-    /// devicectl's platform, `iOS` when it reports none.
-    pub platform: String,
-    pub os_version: String,
-    /// devicectl's connection state. An idle device reads `disconnected`:
-    /// xcodebuild and devicectl connect on demand, so it says nothing about
-    /// whether the device can be built to.
-    pub connection: String,
-    /// devicectl's `transportType`: `wired` or `localNetwork`.
-    pub transport: String,
-    /// devicectl's `pairingState`: `paired` once the device trusts this Mac.
-    pub pairing: String,
-    /// When the device last connected, in milliseconds since the Unix epoch.
-    pub last_connection_ms: Option<f64>,
-}
-
-impl Device {
-    /// `"My iPhone (iPhone 15 Pro, iOS 17.0)"`.
-    #[must_use]
-    pub fn label(&self) -> String {
-        format!(
-            "{} ({}, {} {})",
-            self.name, self.model, self.platform, self.os_version
-        )
-    }
-
-    /// How the device reaches this Mac, in a word or two for a listing: `usb`
-    /// or `wifi`, plus `not paired` when it has not trusted this Mac. The
-    /// connection state is left out, since an idle device always reads
-    /// `disconnected`.
-    #[must_use]
-    pub fn link_hint(&self) -> Option<String> {
-        let mut parts: Vec<&str> = Vec::new();
-        match self.transport.as_str() {
-            "" => {}
-            "wired" => parts.push("usb"),
-            "localNetwork" => parts.push("wifi"),
-            other => parts.push(other),
-        }
-        if !self.pairing.is_empty() && self.pairing != "paired" {
-            parts.push("not paired");
-        }
-        (!parts.is_empty()).then(|| parts.join(", "))
-    }
-
-    /// The `-destination platform=` label for this device, e.g. `iOS` or
-    /// `visionOS`. A platform the table doesn't know keeps devicectl's name.
-    #[must_use]
-    pub fn platform_label(&self) -> &str {
-        Platform::device_for_os(&self.platform).map_or(self.platform.as_str(), |p| p.label)
-    }
-
-    /// The `xcodebuild -destination` specifier targeting this device, e.g.
-    /// `platform=iOS,id=<udid>`.
-    #[must_use]
-    pub fn destination(&self) -> String {
-        format!("platform={},id={}", self.platform_label(), self.udid)
-    }
-}
-
-/// One device record as devicectl reports it, in either JSON shape.
-struct Raw<'a>(&'a Value);
-
-impl<'a> Raw<'a> {
-    fn at(&self, path: &[&str]) -> &'a Value {
-        path.iter().fold(self.0, |v, key| &v[*key])
-    }
-
-    fn text(&self, path: &[&str]) -> &'a str {
-        self.at(path).as_str().unwrap_or_default()
-    }
-
-    /// The version-5 value under `properties`, falling back to the deprecated
-    /// one when the listing predates it (or leaves it blank).
-    fn pick(&self, current: &[&str], deprecated: &[&str]) -> &'a str {
-        let value = self.text(current);
-        if value.is_empty() {
-            self.text(deprecated)
-        } else {
-            value
-        }
-    }
-
-    fn reality(&self) -> &'a str {
-        self.pick(
-            &["properties", "hardware", "reality"],
-            &["hardwareProperties", "reality"],
-        )
-    }
-
-    fn boot_state(&self) -> &'a str {
-        self.pick(
-            &["properties", "state", "bootState"],
-            &["deviceProperties", "bootState"],
-        )
-    }
-
-    /// `enabled` / `disabled`, reported only once a connection is made.
-    /// Version 5 spells it as a one-case object (`{"enabled": {"mode": 1}}`),
-    /// the deprecated field as the bare word.
-    fn developer_mode(&self) -> Option<String> {
-        let case = |status: &Value| match status {
-            Value::String(word) if !word.is_empty() => Some(word.clone()),
-            Value::Object(cases) => cases.keys().next().cloned(),
-            _ => None,
-        };
-        case(self.at(&["properties", "state", "developerModeStatus"]))
-            .or_else(|| case(self.at(&["deviceProperties", "developerModeStatus"])))
-    }
-
-    /// Version 5 counts seconds from Core Foundation's reference date; the
-    /// deprecated field is an ISO 8601 string.
-    fn last_connection_ms(&self) -> Option<f64> {
-        if let Some(seconds) = self
-            .at(&["properties", "connection", "lastConnectionDate"])
-            .as_f64()
-            .filter(|s| s.is_finite())
-        {
-            return Some((seconds + CF_EPOCH_OFFSET_SECONDS) * 1000.0);
-        }
-        iso8601_ms(self.text(&["connectionProperties", "lastConnectionDate"]))
-    }
-
-    /// The device this entry describes, or `None` for an entry with no id at
-    /// all and for the simulators Xcode 27 lists alongside the devices.
-    fn to_device(&self) -> Option<Device> {
-        let identifier = self.text(&["identifier"]);
-        let hardware_udid = self.pick(
-            &["properties", "hardware", "udid"],
-            &["hardwareProperties", "udid"],
-        );
-        let udid = if hardware_udid.is_empty() {
-            identifier
-        } else {
-            hardware_udid
-        };
-        if udid.is_empty() || self.reality() == "simulated" {
-            return None;
-        }
-        let marketing_name = self.pick(
-            &["properties", "hardware", "marketingName"],
-            &["hardwareProperties", "marketingName"],
-        );
-        let product_type = self.pick(
-            &["properties", "hardware", "productType"],
-            &["hardwareProperties", "productType"],
-        );
-        let platform = self.pick(
-            &["properties", "hardware", "platform"],
-            &["hardwareProperties", "platform"],
-        );
-        Some(Device {
-            identifier: identifier.to_string(),
-            udid: udid.to_string(),
-            has_hardware_udid: !hardware_udid.is_empty(),
-            name: self
-                .pick(
-                    &["properties", "state", "name"],
-                    &["deviceProperties", "name"],
-                )
-                .to_string(),
-            model: if marketing_name.is_empty() {
-                product_type
-            } else {
-                marketing_name
-            }
-            .to_string(),
-            marketing_name: marketing_name.to_string(),
-            product_type: product_type.to_string(),
-            device_type: self
-                .pick(
-                    &["properties", "hardware", "deviceType"],
-                    &["hardwareProperties", "deviceType"],
-                )
-                .to_string(),
-            platform: if platform.is_empty() { "iOS" } else { platform }.to_string(),
-            os_version: self
-                .pick(
-                    &["properties", "software", "osVersionNumber", "stringValue"],
-                    &["deviceProperties", "osVersionNumber"],
-                )
-                .to_string(),
-            // `properties.connection.state` is version 5's spelling of what
-            // `connectionProperties.tunnelState` said; both report
-            // `connected` / `disconnected` / `unavailable`.
-            connection: self
-                .pick(
-                    &["properties", "connection", "state"],
-                    &["connectionProperties", "tunnelState"],
-                )
-                .to_string(),
-            transport: self
-                .pick(
-                    &["properties", "connection", "transportType"],
-                    &["connectionProperties", "transportType"],
-                )
-                .to_string(),
-            pairing: self
-                .pick(
-                    &["properties", "connection", "pairingState"],
-                    &["connectionProperties", "pairingState"],
-                )
-                .to_string(),
-            last_connection_ms: self.last_connection_ms(),
-        })
-    }
-}
-
-/// Milliseconds since the Unix epoch for an ISO 8601 UTC timestamp as
-/// devicectl writes it (`2026-09-26T21:50:00.000Z`, the fraction optional).
-/// `None` for anything else.
-fn iso8601_ms(text: &str) -> Option<f64> {
-    let (date, 
-```
-
-### Core Architecture Module: `sweetpad-core/src/devices/mod.rs`
-```
-//! Simulators and physical devices as `simctl` and `devicectl` report them.
-//! Parsing only: each frontend runs the tools its own way (the CLI with
-//! timeouts and temp files, the extension through its exec layer) and hands
-//! the output here, so both read the listings, the destination specifiers
-//! and the app's processes the same way.
-
-pub mod devicectl;
-pub mod simctl;
 
 ```
 
-### Core Architecture Module: `sweetpad-core/src/devices/simctl.rs`
+### Core Architecture Module: `sweetpad-cli/fixtures/momc/expected/Gen.xcdatamodel/generated/D+CoreDataClass.swift`
 ```
-//! `xcrun simctl` output: the simulator listing and the host processes a
-//! simulator app runs as. The CLI spawns simctl and `ps`; the extension does
-//! the same and hands the output here through the addon.
+//
+//  D+CoreDataClass.swift
+//  
+//
+//  Created by $(AUTHOR) on $(DATE).
+//
+//  This file was automatically generated and should not be edited.
+//
 
-use std::cmp::Ordering;
+public import Foundation
+public import CoreData
 
-use serde_json::Value;
-use sweetpad_lib::destination::{DestinationSpec, PLATFORMS, Platform};
+public typealias DCoreDataClassSet = NSSet
 
-/// A simulator, with its runtime parsed into a friendly OS + version.
-#[derive(Debug, Clone, Default, PartialEq, Eq)]
-pub struct Simulator {
-    pub udid: String,
-    pub name: String,
-    /// `Booted` / `Shutdown` (as reported by simctl).
-    pub state: String,
-    pub available: bool,
-    /// e.g. `iOS`, `watchOS`, `tvOS`, `xrOS`.
-    pub os: String,
-    /// e.g. `17.0`.
-    pub os_version: String,
-    /// The runtime identifier, e.g. `com.apple.CoreSimulator.SimRuntime.iOS-17-0`.
-    pub runtime: String,
-    /// The device type identifier, e.g.
-    /// `com.apple.CoreSimulator.SimDeviceType.iPhone-17`. Empty when simctl
-    /// leaves it out.
-    pub device_type: String,
+@objc(D)
+public class D: BObject {
+
 }
 
-impl Simulator {
-    #[must_use]
-    pub fn is_booted(&self) -> bool {
-        self.state.eq_ignore_ascii_case("Booted")
+```
+
+### Core Architecture Module: `sweetpad-cli/fixtures/momc/expected/Gen.xcdatamodel/generated/D+CoreDataProperties.swift`
+```
+//
+//  D+CoreDataProperties.swift
+//  
+//
+//  Created by $(AUTHOR) on $(DATE).
+//
+//  This file was automatically generated and should not be edited.
+//
+
+public import Foundation
+public import CoreData
+
+
+public typealias DCoreDataPropertiesSet = NSSet
+
+extension D {
+
+    @nonobjc public class func fetchRequest() -> NSFetchRequest<D> {
+        return NSFetchRequest<D>(entityName: "D")
     }
 
-    /// `"iPhone 15 (17.0)"`.
-    #[must_use]
-    pub fn label(&self) -> String {
-        format!("{} ({})", self.name, self.os_version)
-    }
+    @NSManaged nonisolated public var extra: String?
 
-    /// The simulator platform this OS runs, when the platform table knows it.
-    #[must_use]
-    pub fn platform(&self) -> Option<&'static Platform> {
-        Platform::simulator_for_os(&self.os)
-    }
-
-    /// The `xcodebuild -destination` platform label, e.g. `iOS Simulator`.
-    /// An OS the platform table doesn't know keeps its own name (`fooOS
-    /// Simulator`), the likeliest spelling for a platform newer than the
-    /// table.
-    #[must_use]
-    pub fn platform_label(&self) -> String {
-        self.platform()
-            .map_or_else(|| format!("{} Simulator", self.os), |p| p.label.to_string())
-    }
-
-    /// The `xcodebuild -destination` specifier targeting this simulator,
-    /// e.g. `platform=iOS Simulator,id=<udid>`.
-    #[must_use]
-    pub fn destination(&self) -> String {
-        format!("platform={},id={}", self.platform_label(), self.udid)
-    }
-
-    /// Destination kind for the remembered recents/usage records, e.g.
-    /// `iOSSimulator`. Pairs the OS with the simulator role.
-    #[must_use]
-    pub fn kind(&self) -> String {
-        format!("{}Simulator", self.os)
-    }
 }
 
-/// Parse `simctl list --json devices` output into available simulators in
-/// picker order: platform first (iOS before the rest), then newest OS version,
-/// then device family (iPhone before iPad) and a numeric-aware name sort.
-/// Unavailable devices are dropped (they can't be booted or targeted).
-pub fn parse_list(raw: &str) -> Result<Vec<Simulator>, String> {
-    // simctl's stdout can carry a warning ahead of the JSON (a CoreSimulator
-    // notice); the listing is the first object in it.
-    let json = raw.find('{').map_or(raw, |start| &raw[start..]);
-    let parsed: Value = serde_json::Deserializer::from_str(json)
-        .into_iter::<Value>()
-        .next()
-        .unwrap_or_else(|| serde_json::from_str::<Value>(""))
-        .map_err(|e| format!("parsing simctl output: {e}"))?;
-    let devices = parsed
-        .get("devices")
-        .and_then(Value::as_object)
-        .ok_or("parsing simctl output: it has no 'devices' map")?;
-    let text = |d: &Value, key: &str| d[key].as_str().unwrap_or_default().to_string();
-    let mut sims = Vec::new();
-    for (runtime, list) in devices {
-        let (os, os_version) = parse_runtime(runtime);
-        for d in list.as_array().into_iter().flatten() {
-            let udid = text(d, "udid");
-            if udid.is_empty() || d["isAvailable"].as_bool() != Some(true) {
-                continue;
-            }
-            sims.push(Simulator {
-                udid,
-                name: text(d, "name"),
-                state: text(d, "state"),
-                available: true,
-                os: os.clone(),
-                os_version: os_version.clone(),
-                runtime: runtime.clone(),
-                device_type: text(d, "deviceTypeIdentifier"),
-            });
-        }
-    }
-    sims.sort_by(cmp_for_picker);
-    Ok(sims)
-}
+```
 
-/// `com.apple.CoreSimulator.SimRuntime.iOS-17-0` → (`iOS`, `17.0`). A runtime
-/// without a version keeps its whole tail as the OS.
-#[must_use]
-pub fn parse_runtime(runtime: &str) -> (String, String) {
-    let tail = runtime.rsplit('.').next().unwrap_or(runtime); // iOS-17-0
-    match tail.split_once('-') {
-        Some((os, version)) => (os.to_string(), version.replace('-', ".")),
-        None => (tail.to_string(), String::new()),
-    }
-}
+### Core Architecture Module: `sweetpad-cli/fixtures/momc/expected/Gen.xcdatamodel/generated/Gen+CoreDataModel.swift`
+```
+//
+//  Gen+CoreDataModel.swift
+//  
+//
+//  Created by $(AUTHOR) on $(DATE).
+//
+//  This file was automatically generated and should not be edited.
+//
 
-/// Order simulators for pickers and listings: platform priority, then newest OS
-/// version, then device family, then a numeric-aware name sort. Each tier is
-/// explicit so the order is intentional rather than a byte-compare side effect
-/// (which is what made 17.0 sort before 9.0 and "iPad" before "iPhone").
-fn cmp_for_picker(a: &Simulator, b: &Simulator) -> Ordering {
-    platform_rank(&a.os)
-        .cmp(&platform_rank(&b.os))
-        .then_with(|| version_key(&b.os_version).cmp(&version_key(&a.os_version))) // newest first
-        .then_with(|| device_rank(&a.name).cmp(&device_rank(&b.name)))
-        .then_with(|| natural_cmp(&a.name, &b.name))
-}
+public import Foundation
+public import CoreData
 
-/// Platform display order: the platform table's (iOS, tvOS, watchOS,
-/// visionOS); anything unrecognized sorts last, so a future platform lands in a
-/// defined place rather than wherever its name's bytes happen to fall.
-fn platform_rank(os: &str) -> usize {
-    Platform::simulator_for_os(os)
-        .and_then(|p| PLATFORMS.iter().position(|q| q == p))
-        .unwrap_or(PLATFORMS.len())
-}
+public typealias GenFoundationFrameworkSet = NSSet
+public typealias GenCoreDataFrameworkManagedObject = NSManagedObject
 
-/// Device-family order within a platform: iPhone before iPad (the common pick),
-/// then everything else. Platforms with a single family (Apple TV/Watch/Vision)
-/// all land in the last bucket and fall through to the name sort.
-fn device_rank(name: &str) -> u8 {
-    if name.starts_with("iPhone") {
-        0
-    } else if name.starts_with("iPad") {
-        1
-    } else {
-        2
-    }
-}
 
-/// Parse a dotted version ("26.5") into numeric components so it orders
-/// numerically: 9.0 before 17.0, where a byte compare puts "17.0" first.
-/// Missing or garbled components count as 0.
-#[must_use]
-pub fn version_key(version: &str) -> Vec<u32> {
-    version.split('.').map(|p| p.parse().unwrap_or(0)).collect()
-}
 
-/// Compare names so embedded numbers order numerically: "iPhone 9" before
-/// "iPhone 15", which a plain byte compare reverses. Digit runs compare as
-/// numbers; everything else compares byte-wise.
-fn natural_cmp(a: &str, b: &str) -> Ordering {
-    let (mut a, mut b) = (a.chars().peekable(), b.chars().peekable());
-    loop {
-        match (a.peek().copied(), b.peek().copied()) {
-            (None, None) => return Ordering::Equal,
-            (None, Some(_)) => return Ordering::Less,
-            (Some(_), None) => return Ordering::Greater,
-            (Some(x), Some(y)) if x.is_ascii_digit() && y.is_ascii_digit() => {
-                match take_number(&mut a).cmp(&take_number(&mut b)) {
-                    Ordering::Equal => {}
-                    ord => return ord,
-                }
-            }
-            (Some(x), Some(y)) => {
-                a.next();
-                b.next();
-                match x.cmp(&y) {
-                    Ordering::Equal => {}
-                    ord => return ord,
-                }
-            }
-        }
-    }
-}
+```
 
-/// Consume a leading run of digits as a number (saturating, so a pathologically
-/// long run can't overflow).
-fn take_number(it: &mut std::iter::Peekable<std::str::Chars<'_>>) -> u64 {
-    let mut n: u64 = 0;
-    while let Some(d) = it.peek().and_then(|c| c.to_digit(10)) {
-        n = n.saturating_mul(10).saturating_add(u64::from(d));
-        it.next();
-    }
-    n
-}
+### Core Architecture Module: `sweetpad-cli/fixtures/momc/expected/Kinds.xcdatamodel/generated/Kinds+CoreDataModel.h`
+```
+//
+//  Kinds+CoreDataModel.h
+//  
+//
+//  Created by $(AUTHOR) on $(DATE).
+//
+//  This file was automatically generated and should not be edited.
+//
 
-/// Find a simulator by UDID (case-insensitive) or exact name. When several
-/// share a name, the booted one wins, else the first.
-#[must_use]
-pub fn find<'a>(sims: &'a [Simulator], query: &str) -> Option<&'a Simulator> {
-    if let Some(s) = sims.iter().find(|s| s.udid.eq_ignore_ascii_case(query)) {
-        return Some(s);
-    }
-    let mut by_name: Vec<&Simulator> = sims.iter().filter(|s| s.name == query).collect();
-    by_name.sort_by_key(|s| !s.is_booted());
-    by_name.first().copied()
-}
+#import <Foundation/Foundation.h>
+#import <CoreData/CoreData.h>
 
-/// The simulator a `-destination` names by `name=`, matched the way xcodebuild
-/// matches it: the name exactly, on the destination's platform when it gives
-/// one, at its `OS=` exactly (`27` is not `27.0`), or at the newest OS for
-/// `OS=latest`. A booted simulator wins a tie. `None` when the destination has
-/// no `name=` or nothing matches. Xcode keeps a default set of devices for
-/// every runtime, so `iPhone 17` can name one simulator per installed iOS.
-#[must_use]
-pub fn find_named<'a>(sims: &'a [Simulator], spec: &DestinationSpec) -> Option<&'a Simulator> {
-    let name = spec.name.as_deref()?;
-    let mut matches: Vec<&Simulator> = sims
-        .iter()
-        .filter(|s| s.name == name && spec.platform.is_none_or(|p| s.platform() == Some(p)))
-        .collect();
-    match spec.os.as_deref() {
-        Some(os) if os.eq_ignore_ascii_case("latest") => {
-            let newest = matches.iter().map(|s| version_key(&s.os_version)).max();
-            matches.retain(|s| Some(version_key(&s.os_version)) == newest);
-        }
-        Some(os) => matches.retain(|s| s.os_version == os),
-        None => {}
-    }
-    matches.sort_by_key(|s| !s.is_booted());
-    matches.first().copied()
-}
+#import "P+CoreDataClass.h"
+#import "Q+CoreDataClass.h"
+#import "R+CoreDataProperties.h"
 
-/// The pids in `ps -o pid=,comm=` output of `executable` running out of an
-/// `.app` named `app_dir` on the simulator `udid`. A simulator app is a host
-/// process under the device's data directory, so the host's `ps` sees it
-/// without asking the simulator. The command path runs through
-/// `CoreSimulator/Devices/<udid>/` (simctl prints the udid in upper case, a
-/// typed destination may not) and ends in `<app_dir>/<e
+
+
+
+
 ```
 
 
@@ -1592,14 +374,11 @@ pub fn find_named<'a>(sims: &'a [Simulator], spec: &DestinationSpec) -> Option<&
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #345** (2026-11-03): **BSP puts indexing artifacts inside the xcodeproj directory**
-  *Symptoms*: I noticed an issue using this with one of my projects where indexing artifacts were appearing in my project whenever I would open an editor and the lsp would index the project. I've attached a sample project to this, but the project setup to reproduce is simple:  - Create a new app project (both json and plist project files have the issue) - Add a unit test bundle for the app. This uses the default setup where there's no scheme for the test target and the tests are hosted in the app. - Add a package dependency (the sample project uses a local dependency, but this happens with only remote dependencies as well)  ## Reproduction Steps  With this package setup: - run `sweetpad bsp init`.  - Open the project with an editor that uses sourcekit-lsp and let it index (I was using neovim with the default lsp configuration). - Open up the `.xcodepoj` directory to see an `-Xcc` directory containing indexing artifacts.  <img width="609" height="364" alt="Image" src="https://github.com/user-attachments/assets/0d72665f-7717-45f5-a680-31030ca9552e" />  ## Versions - Xcode 27.2 - sweetpad 0.1.16  [SweetpadBugReproProject.zip](https://github.com/user-attachments/files/34250807/SweetpadBugReproProject.zip)
+- **Issue #348** (2026-11-08): **Document Linux iPhone workflows and macOS CI**
+  *Symptoms*: The Linux guide combines installation, device setup, signing, framework preparation, and runtime limits in one page. Add a dedicated Linux sidebar category with task-focused guides while preserving the current overview URL.  - Focus the main workflow on iOS and iPhone: Ubuntu ARM64 setup, USB trust and transport, development signing, prebuilt tests, archives, and GitHub Actions delivery. - Add separate React Native and Flutter guides with the validated versions, preparation recipes, Hermes requirements, and Linux iOS AOT compiler steps. - Add a macOS CI page with a hosted-Mac build/test workflow and a separate Linux compilation path. Include an architecture diagram and a shared support/configuration reference.  Validation: documentation production build, TypeScript, shell syntax checks, both workflow examples through actionlint, and all nine rendered routes. Headless Chrome checks cover the expanded sidebar, readable architecture diagram, and macOS CI page. The docs use the published CLI 0.1.18 release. 
 
-- **Issue #344** (2026-10-31): **`sweetpad run` fails with `error: no target matched scheme XXX`**
-  *Symptoms*: The app builds fine using the correct scheme with it returns error when installing the app: `error: no target matched scheme XXX`. It only happens on one of my projects, and I think it is because the scheme is a private one (located in `*.xcworkspace/xcuserdata/*.xcuserdatad/xcschemes/myscheme.xcscheme`)
-  **Post-Mortem & Fix Analysis**:
-  > Thanks for the report! I found two cases that cause this exact error and fixed both in 0.1.15 (`brew upgrade sweetpad`): a scheme that still uses a target's old name after a rename, and a scheme that spells the project name with different capitalization. Could you try it and let me know? If it still fails, please paste the `BuildableReference` blocks from your `.xcscheme` file. 
-  > Hi! Tested with latest version and still doesn't work, here is the `BuildableReference` block in `LaunchAction`:  ``` <BuildableReference         BuildableIdentifier = "primary"         BlueprintIdentifier = "259EC44C2C32A4B500FB9CD7"         BuildableName = "TestApp.app"         BlueprintName = "TestApp"         ReferencedContainer = "container:App/TestApp.xcodeproj"> </BuildableReference> ```  I have a `TestApp.xcworkspace` at the project root which is what sweetpad references, the scheme is inside this xcworkspace `xcuserdata` folder. It's weird because on the first run sweetpad detects the schema correctly (I select it from the scheme selection prompt), builds correctly but fails at launch. `App/TestApp.xcodeproj` exists
+- **Issue #347** (2026-11-08): **Close Linux build gaps and package an experimental ARM64 release**
+  *Symptoms*: Linux builds need a release artifact that users can install without compiling Sweetpad, plus regression coverage for the gaps found in real apps and on an iPhone.  - Close corpus, resource, macro, linker, MMKV, debug-symbol, and automatic test-manifest gaps. The patched corpus builds 127 of 128 current schemes; the deliberate missing-package fixture remains a negative test. - Add authenticated direct Linux iPhone USB and Wi-Fi transport, isolated network pairing, and automatic multicast/DNS-SD discovery. - Package an experimental Ubuntu 24.04 ARM64 CLI with an installer, DAP alias, checksums, licenses, a sample app, and public setup sources. Apple SDKs and signing material stay private. Fix macro runtime lookup exposed by the isolated installation check. - Add hosted ARM64 packaging and clean-container checks, plus a manually selected private-SDK integration job. Tag publication waits for verified macOS and Linux packages; manual Linux-only runs publish nothing.  Validation: optimized ARM64 release build; installation in a clean Ubuntu 24.04 ARM64 container; installed sample compiled into an ARM64 Mach-O app with an empty home, fresh DerivedData, no network, and explicit read-only toolchain/SDK prerequisites; 28 Python checks on macOS and ARM64 Linux; actionlint; formatting; documentation production build. Earlier follow-up reports cover native bundle controls, incremental/prebuilt test execution, unshimmed MMKV storage, Flutter AOT, React Native/Hermes, and physical iPhone U
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1616,389 +395,2221 @@ pub fn find_named<'a>(sims: &'a [Simulator], spec: &DestinationSpec) -> Option<&
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9b36d91c` (2026-10-30)
-**Commit Message**: Build the scheme's Run target even when the Build action leaves it out (#344)
+### Incident Patch 1: `e56e699c` (2026-11-08)
+**Commit Message**: Close Linux build gaps and package an ARM64 release (#347)
 
-xcodebuild builds the Launch action's runnable for a run even when no Build action entry builds it for running, as in a scheme with an empty Build action or one that lists the app with buildForRunning="NO". sweetpad resolved only the entries, so the build succeeded but locating the app failed with "no target matched scheme". The run build set, the BSP's scheme targets and the scheme platform check now include the runnable.
+Close Linux corpus, resource, linker, macro, test-manifest, and iPhone transport gaps. Add experimental Ubuntu 24.04 ARM64 packages, install validation, documentation, and gated release CI.
 
-**File**: `sweetpad-core/src/bsp/mod.rs` (modified, +6/-5)
+Validation: all PR checks and the nonpublishing ARM64/private SDK workflow pass. The final hosted artifact also builds the sample app in a fresh isolated Linux home. Optional .omo work and dependency-size cleanup remain deferred.
+
+**File**: `.github/workflows/cli-release.yaml` (modified, +67/-3)
 ```diff
-@@ -2082,16 +2082,17 @@ impl Server {
-         listing
-     }
+@@ -5,6 +5,20 @@ on:
+   # Manual runs build + sign + notarize without publishing, since the release and
+   # tap-bump steps below are gated on a tag ref.
+   workflow_dispatch:
++    inputs:
++      platform:
++        description: Platforms to build without publishing
++        type: choice
++        options: [all, linux-arm64]
++        default: all
++      validate_sdk:
++        description: Validate the ARM64 package with a private Apple SDK runner
++        type: boolean
++        default: false
++      sdk_runner_label:
++        description: Label of the provisioned private SDK runner
++        type: string
++        default: sweetpad-linux
  
--    /// The targets the scheme `name` builds: its build entries, then the
--    /// targets those depend on. A scheme with no file is one Xcode
--    /// autocreates, which builds the target it is named after.
-+    /// The targets the scheme `name` builds: its build entries and the
-+    /// runnable a run adds ([`scheme::Scheme::buildables`]), then the targets
-+    /// those depend on. A scheme with no file is one Xcode autocreates, which
-+    /// builds the target it is named after.
-     fn scheme_targets(&self, name: &str) -> (Vec<String>, Vec<String>) {
-         let entries: Vec<String> = match scheme::locate(&self.project_path, name) {
-             Some(path) => scheme::parse_file(&path)
-                 .map(|s| {
--                    s.build_entries
-+                    s.buildables()
-                         .into_iter()
--                        .map(|e| e.buildable.blueprint_name)
-+                        .map(|b| b.blueprint_name.clone())
-                         .collect()
-                 })
-                 .unwrap_or_default(),
+ permissions:
+   contents: write
+@@ -14,7 +28,24 @@ permissions:
+ 
+ name: Release CLI
+ jobs:
++  linux-arm64:
++    name: Linux ARM64 release package
++    uses: ./.github/workflows/linux-arm64-package.yaml
++  sdk-validation:
++    name: Private SDK install validation
++    if: github.event_name == 'workflow_dispatch' && inputs.validate_sdk
++    needs: linux-arm64
++    permissions:
++      contents: read
++      actions: read
++    uses: ./.github/workflows/linux-apple-build.yaml
++    with:
++      artifact_run_id: ${{ github.run_id }}
++      runner_label: ${{ inputs.sdk_runner_label }}
+   release:
++    if: inputs.platform != 'linux-arm64'
++    outputs:
++      version: ${{ steps.version.outputs.version }}
+     name: Build, sign, notarize CLI (macOS)
+     runs-on: macos-latest
+     steps:
+@@ -33,6 +64,7 @@ jobs:
+         run: rustup show
+ 
+       - name: Resolve version
++        id: version
+         # On a cli-v* tag the version is the tag; manual runs get a -dryrun suffix
+         # off the crate version and skip publishing.
+         run: |
+@@ -52,6 +84,7 @@ jobs:
+             VERSION="$(grep -m1 '^version' Cargo.toml | cut -d'"' -f2)-dryrun"
+           fi
+           echo "VERSION=$VERSION" >> "$GITHUB_ENV"
++          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+           echo "TARBALL=sweetpad-cli-$VERSION-macos-universal.tar.gz" >> "$GITHUB_ENV"
+           echo "Building sweetpad CLI $VERSION"
+ 
+@@ -119,7 +152,7 @@ jobs:
+           tar -C dist -czf "$TARBALL" sweetpad sweetpad-dap
+           echo "SHA256=$(shasum -a 256 "$TARBALL" | cut -d' ' -f1)" >> "$GITHUB_ENV"
+           tar -tvzf "$TARBALL"
+-          shasum -a 256 "$TARBALL"
++          shasum -a 256 "$TARBALL" > "$TARBALL.sha256"
+ 
+       - name: Attest build provenance
+         # mise verifies this attestation when it installs from the release;
+@@ -136,9 +169,35 @@ jobs:
+         uses: actions/upload-artifact@v7
+         with:
+           name: cli-tarball
+-          path: "*.tar.gz"
++          path: |
++            *.tar.gz
++            *.sha256
+           if-no-files-found: error
+ 
++  publish:
++    name: Publish verified macOS and Linux packages
++    needs: [release, linux-arm64]
++    if: startsWith(github.ref, 'refs/tags/cli-v')
++    runs-on: ubuntu-24.04
++    env:
++      VERSION: ${{ needs.release.outputs.version }}
++      TARBALL: sweetpad-cli-${{ needs.release.outputs.version }}-macos-universal.tar.gz
++    steps:
++      - uses: actions/checkout@v7
++        with:
++          fetch-depth: 0
++      - uses: actions/download-artifact@v8
++        with:
++          pattern: cli-tarball*
++          merge-multiple: true
++      - name: Verify all package checksums
++        run: |
++          for checksum in *.sha256; do sha256sum -c "$checksum"; done
++          echo "SHA256=$(sha256sum "$TARBALL" | cut -d' ' -f1)" >> "$GITHUB_ENV"
++      - name: Attest release archives
++        uses: actions/attest@v4
++        with:
++          subject-path: '*.tar.gz'
+       - name: Build release notes
+         # Commit subjects over the tag range, scoped to the paths the CLI ships
+         # from so unrelated monorepo work (docs site, extension) stays out.
+@@ -156,6 +215,9 @@ jobs:
+             echo
+             echo "    mise use -g 'github:sweetpad-dev/sweetpad[version_prefix=cli-v]'"
+             echo
++            echo 'Linux ARM64 (experimental, Ubuntu 24.04): download the linux-arm64 tarball and its .sha256 file, verify it, then run the included install.sh.'
++            echo 'The archive includes public toolchain setup sources. Apple SDKs and signing material are supplied separately.'
++            echo
+             echo '## Changes'
+             echo
+           } > "$NOTES"
+@@ -176,7 +238,9 @@ jobs:
+           tag_name: ${{ github.ref_name }}
+           name: ${{ github.ref_name }}
+           body_path: ${{ runner.temp }}/notes.md
+-          files: "*.tar.gz"
++          files: |
++            *.tar.gz
++            *.sha256
+ 
+       - name: Update Homebrew tap formula
+         if: startsWith(github.ref, 'refs/tags/')
 ```
 
-**File**: `sweetpad-core/src/build_context.rs` (modified, +9/-11)
+**File**: `.github/workflows/linux-apple-build.yaml` (added, +119/-0)
 ```diff
-@@ -549,10 +549,11 @@ impl BuildContext {
-     }
- 
-     /// Turn a scheme's `BuildAction` into a list of [`ResolveQuery`]s
--    /// against this context. One query per entry that participates in
--    /// `build_for` (xcodebuild only builds the entries whose matching
--    /// `buildFor*` flag is set — a testing-only entry is skipped for a
--    /// plain build) and whose `BlueprintName` resolves to a target in
-+    /// against this context. One query per buildable a build for
-+    /// `build_for` builds ([`Scheme::buildables_for`]: xcodebuild only builds
-+    /// the entries whose matching `buildFor*` flag is set — a testing-only
-+    /// entry is skipped for a plain build — plus, for a run, the Run action's
-+    /// runnable) whose `BlueprintName` resolves to a target in
-     /// `self.project`; cross-container entries land in
-     /// [`BuildPlan::skipped`].
-     ///
-@@ -581,13 +582,10 @@ impl BuildContext {
-             .is_some_and(|t| t.code_coverage_enabled);
-         let mut entries = Vec::new();
-         let mut skipped = Vec::new();
--        for entry in &scheme.build_entries {
--            if !entry.builds_for(build_for) {
--                continue;
--            }
--            let name = &entry.buildable.blueprint_name;
-+        for buildable in scheme.buildables_for(build_for) {
-+            let name = &buildable.blueprint_name;
-             let owned = self.project.targets.iter().any(|t| t.name == *name)
--                && container_matches(&entry.buildable.container, &self.project.path);
-+                && container_matches(&buildable.container, &self.project.path);
-             if owned {
-                 let mut q = ResolveQuery::new(name, configuration, sdk, arch)
-                     .with_code_coverage_enabled(code_coverage)
-@@ -597,7 +595,7 @@ impl BuildContext {
-                 }
-                 entries.push(q);
-             } else {
--                skipped.push(entry.buildable.clone());
-+                skipped.push(buildable.clone());
-             }
-         }
-         BuildPlan { entries, skipped }
+@@ -0,0 +1,119 @@
++name: Linux Apple SDK integration
++on:
++  workflow_dispatch:
++    inputs:
++      artifact_run_id:
++        description: Optional run with a verified cli-tarball-linux-arm64 artifact
++        type: string
++        default: ''
++      runner_label:
++        description: Label of the provisioned private SDK runner
++        type: string
++        default: sweetpad-linux
++  workflow_call:
++    inputs:
++      artifact_run_id:
++        type: string
++        default: ''
++      runner_label:
++        type: string
++        default: sweetpad-linux
++permissions:
++  contents: read
++  actions: read
++jobs:
++  hybrid-builds:
++    # The Apple SDK stays on a provisioned Apple-hardware Linux runner.
++    # Never upload or distribute it as a workflow artifact.
++    runs-on: [self-hosted, Linux, ARM64, '${{ inputs.runner_label }}']
++    timeout-minutes: 120
++    env:
++      CARGO_INCREMENTAL: "0"
++      CARGO_PROFILE_DEV_DEBUG: "0"
++    steps:
++      - uses: actions/checkout@v7
++        with:
++          persist-credentials: false
++      - name: Download verified ARM64 package
++        if: inputs.artifact_run_id != ''
++        uses: actions/download-artifact@v8
++        with:
++          name: cli-tarball-linux-arm64
++          run-id: ${{ inputs.artifact_run_id }}
++          github-token: ${{ github.token }}
++          path: ${{ runner.temp }}/release-package
++      - name: Validate package with isolated home and private SDK
++        if: inputs.artifact_run_id != ''
++        env:
++          PACKAGE_ROOT: ${{ runner.temp }}/release-package
++        run: |
++          export PATH="$HOME/bin:$HOME/swift/swift-6.4.2-RELEASE/usr/bin:$PATH"
++          MACROS="$HOME/bin/sweetpad-macros.bin"
++          if [ ! -e "$MACROS" ]; then MACROS="$HOME/bin/sweetpad-macros"; fi
++          python3 sweetpad-cli/ci/check-linux-sdk-install.py \
++            --archive "$(find "$PACKAGE_ROOT" -maxdepth 1 -name '*.tar.gz')" \
++            --out "$RUNNER_TEMP/sdk-package-install" \
++            --swift "$HOME/swift/swift-6.4.2-RELEASE" \
++            --swbuild-products "$HOME/src/swift-build/.build/out/Products/Release-linux-aarch64" \
++            --macros "$(readlink -f "$MACROS")" \
++            --sdk "$HOME/.swiftpm/swift-sdks/darwin.artifactbundle"
++      - name: Build CLI
++        run: |
++          export PATH="$HOME/.cargo/bin:$HOME/bin:$HOME/swift/swift-6.4.2-RELEASE/usr/bin:$PATH"
++          CARGO_TARGET_DIR="$HOME/sweetpad-target" cargo build --locked -p sweetpad-cli --bin sweetpad
++      - name: Install frozen framework tools
++        run: bash sweetpad-lib/ci/linux-framework-tools.sh
++      - name: Fresh Linux dependency and Release build checks
++        run: python3 -B sweetpad-lib/ci/linux-clean-checks.py --out "$RUNNER_TEMP/linux-clean"
++      - name: Generate manifests for Linux XCTest and Swift Testing products
++        run: |
++          export PATH="$HOME/bin:$HOME/swift/swift-6.4.2-RELEASE/usr/bin:$PATH"
++          python3 -B sweetpad-lib/ci/linux-exec-audit.py --out "$RUNNER_TEMP/linux-clean/reports/test-build-audit" -- \
++            "$HOME/sweetpad-target/debug/sweetpad" test build \
++            --project "$PWD/sweetpad-lib/ci/fixture-test-manifest/ManifestProbe.xcodeproj" \
++            --scheme ManifestProbe --configuration Debug --destination 'generic/platform=iOS Simulator' \
++            --json --non-interactive -- -derivedDataPath "$RUNNER_TEMP/manifest-products" \
++            ARCHS=arm64 CODE_SIGNING_ALLOWED=NO > "$RUNNER_TEMP/linux-clean/reports/test-build.json"
++          python3 - "$RUNNER_TEMP/linux-clean/reports/test-build.json" <<'PYCODE'
++          import json, pathlib, plistlib, sys
++          result = json.loads(pathlib.Path(sys.argv[1]).read_text())
++          assert result['ok'] and result['data']['built']
++          path = pathlib.Path(result['data']['xctestrunPath'])
++          targets = plistlib.loads(path.read_bytes())['TestConfigurations'][0]['TestTargets']
++          assert {t['BlueprintName'] for t in targets} == {'LogicXCTests', 'LogicSwiftTests'}
++          assert all(t['EnvironmentVariables']['MANIFEST_VALUE'] == 'Linux tests ü' for t in targets)
++          PYCODE
++      - name: Generate mixed UI and logic test-plan manifests
++        run: |
++          export PATH="$HOME/bin:$HOME/swift/swift-6.4.2-RELEASE/usr/bin:$PATH"
++          "$HOME/sweetpad-target/debug/sweetpad" test build \
++            --project "$PWD/sweetpad-lib/ci/fixture-test-plans/TestPlanProbe.xcodeproj" \
++            --scheme TestPlanProbe --destination 'generic/platform=iOS Simulator' --json --non-interactive \
++            -- -derivedDataPath "$RUNNER_TEMP/plan-products" ARCHS=arm64 CODE_SIGNING_ALLOWED=NO \
++            > "$RUNNER_TEMP/linux-clean/reports/test-plan-build.json"
++          python3 - "$RUNNER_TEMP/linux-clean/reports/test-plan-build.json" <<'PYCODE'
++          import json, pathlib, plistlib, sys
++          result = json.loads(pathlib.Path(sys.argv[1]).read_text())
++          assert result['ok'] and resu
 ```
 
-**File**: `sweetpad-core/src/supported_platforms.rs` (modified, +6/-4)
+**File**: `.github/workflows/linux-arm64-package.yaml` (added, +67/-0)
 ```diff
-@@ -118,17 +118,19 @@ impl SupportedPlatforms {
- /// doesn't resolve. `None` means "don't filter", so a missing file falls back
- /// to every target in the container rather than to an empty set.
- ///
--/// Entries count regardless of which action they build for. A per-action set
-+/// Entries count regardless of which action they build for, and so does the
-+/// Run action's runnable that a run builds
-+/// ([`sweetpad_lib::scheme::Scheme::buildables`]). A per-action set
- /// (Run vs Test vs Archive) could only ever narrow this further, and a
- /// narrower set makes a scheme look *more* platform-specific than it is, the
- /// wrong direction to guess in, since over-narrowing would send a build to a
- /// platform the scheme can't produce.
- fn scheme_build_targets(container: &Path, scheme: &str) -> Option<BTreeSet<String>> {
-     let parsed = find_scheme(container, scheme)?;
-     let names: BTreeSet<String> = parsed
--        .build_entries
--        .iter()
--        .map(|e| e.buildable.blueprint_name.clone())
-+        .buildables()
-+        .into_iter()
-+        .map(|b| b.blueprint_name.clone())
-         .collect();
-     (!names.is_empty()).then_some(names)
- }
+@@ -0,0 +1,67 @@
++name: Linux ARM64 package
++on:
++  pull_request:
++    paths:
++      - "sweetpad-cli/**"
++      - "sweetpad-core/**"
++      - "sweetpad-lib/**"
++      - "Cargo.toml"
++      - "Cargo.lock"
++      - "rust-toolchain.toml"
++      - ".github/workflows/linux-arm64-package.yaml"
++      - ".github/workflows/cli-release.yaml"
++  workflow_dispatch:
++  workflow_call:
++permissions:
++  contents: read
++jobs:
++  package:
++    name: ARM64 archive and clean Ubuntu install
++    runs-on: ubuntu-24.04-arm
++    timeout-minutes: 45
++    env:
++      CARGO_INCREMENTAL: "0"
++      CARGO_PROFILE_RELEASE_DEBUG: "0"
++      CARGO_PROFILE_RELEASE_STRIP: symbols
++    steps:
++      - uses: actions/checkout@v7
++        with:
++          fetch-depth: 0
++      - name: Install build dependencies
++        run: sudo apt-get update -qq && sudo apt-get install -y libssl-dev pkg-config
++      - name: Install pinned Rust
++        run: rustup show
++      - uses: Swatinem/rust-cache@v2
++      - name: Build ARM64 release CLI
++        run: cargo build --release --locked -p sweetpad-cli --bin sweetpad -j 4
++      - name: Package public sources and binary
++        run: |
++          VERSION="$(python3 sweetpad-cli/ci/release-version.py)"
++          export SOURCE_DATE_EPOCH="$(git log -1 --format=%ct)"
++          python3 sweetpad-cli/ci/package-linux.py --binary target/release/sweetpad --version "$VERSION" --out dist
++      - name: Install in a clean Ubuntu 24.04 ARM64 container
++        run: |
++          mkdir -p "$RUNNER_TEMP/package-smoke"
++          docker run --rm --platform linux/arm64 \
++            -v "$PWD/dist:/artifacts:ro" \
++            -v "$PWD/sweetpad-cli/ci/check-linux-package.py:/check.py:ro" \
++            -v "$RUNNER_TEMP/package-smoke:/reports" ubuntu:24.04 bash -euc '
++              apt-get update -qq
++              DEBIAN_FRONTEND=noninteractive apt-get install -yqq python3 ca-certificates libssl3t64 libgcc-s1
++              python3 /check.py --archive "$(find /artifacts -maxdepth 1 -name "*.tar.gz")" --out /reports/install
++            '
++      - name: Upload install evidence
++        if: always()
++        uses: actions/upload-artifact@v7
++        with:
++          name: linux-arm64-install-report
++          path: ${{ runner.temp }}/package-smoke/install/*.json
++          if-no-files-found: warn
++      - name: Upload verified release package
++        uses: actions/upload-artifact@v7
++        with:
++          name: cli-tarball-linux-arm64
++          path: |
++            dist/*.tar.gz
++            dist/*.sha256
++          if-no-files-found: error
 ```
 
-**File**: `sweetpad-core/tests/build_settings.rs` (modified, +24/-7)
+**File**: `.github/workflows/sweetpad-lib.yaml` (modified, +27/-0)
 ```diff
-@@ -442,8 +442,7 @@ fn write_scheme(dir: &PathBuf, name: &str) {
- }
+@@ -35,6 +35,33 @@ on:
+ #   python3 sweetpad-lib/scripts/21_mutation_audit.py [--e2e]
  
- /// [`SCRATCH_SCHEME_XML`] with a Launch action that runs the `Scratch` target.
--fn write_running_scheme(dir: &PathBuf, name: &str) {
--    std::fs::create_dir_all(dir).unwrap();
-+fn running_scheme_xml() -> String {
-     let launch = r#"   <LaunchAction buildConfiguration="Debug">
-       <BuildableProductRunnable runnableDebuggingMode="0">
-          <BuildableReference
-@@ -456,11 +455,12 @@ fn write_running_scheme(dir: &PathBuf, name: &str) {
-       </BuildableProductRunnable>
-    </LaunchAction>
- </Scheme>"#;
--    std::fs::write(
--        dir.join(format!("{name}.xcscheme")),
--        SCRATCH_SCHEME_XML.replace("</Scheme>", launch),
--    )
--    .unwrap();
-+    SCRATCH_SCHEME_XML.replace("</Scheme>", launch)
-+}
-+
-+fn write_running_scheme(dir: &PathBuf, name: &str) {
-+    std::fs::create_dir_all(dir).unwrap();
-+    std::fs::write(dir.join(format!("{name}.xcscheme")), running_scheme_xml()).unwrap();
- }
- 
- #[test]
-@@ -775,6 +775,23 @@ fn workspace_user_scheme_naming_its_project_in_another_case_resolves() {
-     assert_eq!(s.get("TARGET_NAME").map(String::as_str), Some("Scratch"));
- }
- 
-+#[test]
-+fn workspace_user_scheme_running_what_its_build_action_leaves_out_resolves() {
-+    // Issue #344: xcodebuild builds the Run action's target for a run even
-+    // when the Build action has no entries, or lists the target with
-+    // `buildForRunning="NO"`.
-+    let running = running_scheme_xml();
-+    let start = running.find("<BuildActionEntries>").unwrap() + "<BuildActionEntries>".len();
-+    let end = running.find("</BuildActionEntries>").unwrap();
-+    let empty = format!("{}{}", &running[..start], &running[end..]);
-+    let s = resolve_private_workspace_scheme("ws-empty-build-action", &empty);
-+    assert_eq!(s.get("TARGET_NAME").map(String::as_str), Some("Scratch"));
-+
-+    let not_for_running = running.replacen("buildForRunning=\"YES\"", "buildForRunning=\"NO\"", 1);
-+    let s = resolve_private_workspace_scheme("ws-not-for-running", &not_for_running);
-+    assert_eq!(s.get("TARGET_NAME").map(String::as_str), Some("Scratch"));
-+}
-+
- /// Resolve `scheme_xml`, saved as the current user's `Private` scheme in a
- /// workspace whose single member is a copy of the Scratch project.
- fn resolve_private_workspace_scheme(tag: &str, scheme_xml: &str) -> BTreeMap<String, String> {
+ jobs:
++  linux:
++    name: Linux · ${{ matrix.os }}
++    strategy:
++      fail-fast: false
++      matrix:
++        os: [ubuntu-24.04, ubuntu-24.04-arm]
++    runs-on: ${{ matrix.os }}
++    env:
++      CARGO_INCREMENTAL: "0"
++      CARGO_PROFILE_DEV_DEBUG: "0"
++      CARGO_PROFILE_TEST_DEBUG: "0"
++    steps:
++      - uses: actions/checkout@v7
++      - name: Install Linux build prerequisites
++        run: sudo apt-get update -qq && sudo apt-get install -y libssl-dev pkg-config
++      - name: Install pinned Rust toolchain
++        run: rustup show
++      - uses: Swatinem/rust-cache@v2
++      - name: Format
++        run: cargo fmt --all --check
++      - name: Clippy
++        run: cargo clippy --workspace --all-targets -- -D warnings
++      # Xcode subprocess integration tests run in the macOS job below.
++      - name: Unit tests without Apple SDKs
++        run: cargo test --workspace --lib -- --test-threads=1
++      - name: Python regression checks
++        run: python3 -B -m unittest discover -s sweetpad-lib/ci -p 'test_*.py'
+   check:
+     name: fmt · clippy · test
+     runs-on: macos-latest
 ```
 
-**File**: `sweetpad-lib/src/scheme.rs` (modified, +117/-0)
+**File**: `.gitignore` (modified, +9/-0)
 ```diff
-@@ -169,6 +169,20 @@ pub struct BuildableRef {
-     pub container: String,
- }
+@@ -1,4 +1,6 @@
+ out
++# Xcode captures used by the portable Core Data compiler tests.
++!sweetpad-cli/fixtures/momc/expected/*/out/
+ dist
+ node_modules
+ .vscode-test/
+@@ -11,6 +13,13 @@ out-e2e
+ # Rust workspace build output
+ /target
  
-+impl BuildableRef {
-+    /// Whether two references in one scheme name the same target: the same
-+    /// container, and the same ID, or the same name where either has no ID.
-+    #[must_use]
-+    pub fn same_target(&self, other: &BuildableRef) -> bool {
-+        same_path_ignoring_case(Path::new(&self.container), Path::new(&other.container))
-+            && if self.blueprint_identifier.is_empty() || other.blueprint_identifier.is_empty() {
-+                self.blueprint_name == other.blueprint_name
-+            } else {
-+                self.blueprint_identifier == other.blueprint_identifier
-+            }
-+    }
-+}
++# Python helper bytecode
++__pycache__/
++*.pyc
 +
- /// A `<CommandLineArgument>` under `LaunchAction.CommandLineArguments`.
- #[derive(Debug, Clone)]
- pub struct CommandLineArgument {
-@@ -796,6 +810,42 @@ pub struct LaunchSettings {
- }
++# Swift Package Manager build cache
++/.build/
++
+ # N-API addon build outputs (regenerated by build:native:*)
+ sweetpad-vscode/native/*.node
+ sweetpad-vscode/native/index.js
+```
+
+**File**: `Cargo.lock` (modified, +21/-0)
+```diff
+@@ -416,6 +416,16 @@ version = "0.1.14"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "aedcfb3409746eddb02b9e19ebda1c3394f759a152e48ee875a0844d1b955484"
  
- impl Scheme {
-+    /// What a build for `action` builds: the Build action's entries flagged
-+    /// for it, then, for a run, the Run action's runnable when none of them is
-+    /// it. xcodebuild adds the runnable itself, so a scheme whose Build action
-+    /// is empty, or lists the app with `buildForRunning = "NO"`, still builds
-+    /// and runs the app (issue #344).
-+    #[must_use]
-+    pub fn buildables_for(&self, action: BuildFor) -> Vec<&BuildableRef> {
-+        let mut out: Vec<&BuildableRef> = self
-+            .build_entries
-+            .iter()
-+            .filter(|e| e.builds_for(action))
-+            .map(|e| &e.buildable)
-+            .collect();
-+        if action == BuildFor::Running {
-+            self.add_runnable(&mut out);
-+        }
-+        out
-+    }
++[[package]]
++name = "flatbuffers"
++version = "25.12.19"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "35f6839d7b3b98adde531effaf34f0c2badc6f4735d26fe74709d8e513a96ef3"
++dependencies = [
++ "bitflags",
++ "rustc_version",
++]
 +
-+    /// Everything the scheme builds for any action: the Build action's
-+    /// entries, then the runnable a run adds ([`Self::buildables_for`]).
-+    #[must_use]
-+    pub fn buildables(&self) -> Vec<&BuildableRef> {
-+        let mut out: Vec<&BuildableRef> = self.build_entries.iter().map(|e| &e.buildable).collect();
-+        self.add_runnable(&mut out);
-+        out
-+    }
+ [[package]]
+ name = "flate2"
+ version = "1.1.10"
+@@ -1336,6 +1346,15 @@ version = "2.1.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "94300abf3f1ae2e2b8ffb7b58043de3d399c73fa6f4b73826402a5c457614dbe"
+ 
++[[package]]
++name = "rustc_version"
++version = "0.4.1"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "cfcb3a22ef46e85b45de6ee7e79d063319ebb6594faafcf1c225ea92ab6e9b92"
++dependencies = [
++ "semver",
++]
 +
-+    fn add_runnable<'a>(&'a self, buildables: &mut Vec<&'a BuildableRef>) {
-+        if let Some(runnable) = &self.launch_target
-+            && !buildables.iter().any(|b| b.same_target(runnable))
-+        {
-+            buildables.push(runnable);
-+        }
-+    }
+ [[package]]
+ name = "rustix"
+ version = "1.1.5"
+@@ -1578,10 +1597,12 @@ dependencies = [
+  "clap_complete",
+  "des",
+  "dialoguer",
++ "flatbuffers",
+  "flate2",
+  "hayro",
+  "libc",
+  "minreq",
++ "moxcms",
+  "png",
+  "resvg",
+  "rsa",
+```
+
+**File**: `Cargo.toml` (modified, +4/-0)
+```diff
+@@ -34,6 +34,10 @@ png = "0.18"
+ # Gzip, for the image pixels in the actool stand-in's Assets.car; png already
+ # depends on it.
+ flate2 = "1"
++# App Shortcuts' NLU model uses FlatBuffers; use the standard runtime.
++flatbuffers = "25.12.19"
++# ICC color conversion for calibrated Interface Builder colors (already used by image).
++moxcms = "0.8.1"
+ # The actool stand-in draws a catalog's vector images the way Xcode does,
+ # into bitmaps: PDFs with hayro, SVGs and symbol templates with resvg (and
+ # the usvg and roxmltree it re-exports, and svgtypes, which usvg parses
+```
+
+**File**: `sweetpad-cli/CLI_DESIGN.md` (modified, +70/-7)
+```diff
+@@ -810,6 +810,15 @@ sweetpad bsp init [--output-file PATH]  write buildServer.json for sourcekit-lsp
+ sweetpad completions <shell>          clap_complete-generated scripts
+ ```
+ 
++`test run --xctestrun FILE` runs prebuilt Apple test products on a Mac using
++`test-without-building`. The manifest replaces build selection in the Xcode
++command: project, workspace, scheme, and configuration flags are omitted.
++The project still supplies the retained test context and result history.
++Selectors, reports, and result bundles work as usual. A prebuilt run leaves
++build diagnostics intact; `test build`, watch mode, and result read-back verbs
++refuse the flag. A readable result with zero tests fails instead of reporting
++success.
 +
-     /// The target whose resolved build settings expand `$(VAR)` in the launch
-     /// arguments and environment: the Run action's `MacroExpansion`, or else
-     /// the target it launches.
-@@ -1708,4 +1758,71 @@ mod tests {
-         assert!(references.cover(Some(&dir), "Scratch", true));
-         assert!(!references.cover(Some(&dir), "OldName", true));
-     }
+ `app run` gains the full session experience:
+ 
+ - **`--device` / `--device-id <id>`** — build + install + launch on a physical
+@@ -4585,7 +4594,8 @@ the stand-ins at the CLI's version, with nothing more to install. Where the
+ corpus can check, a stand-in's output is Xcode's byte for byte: asset
+ catalogs, nibs, String Catalogs, Core Data models, signatures. What a
+ stand-in doesn't do fails with an error that names it. The stand-ins are
+-`actool`, `ibtool`, `momc`, `xcstringstool`, `intentbuilderc`, `codesign`,
++`actool`, `ibtool`, `momc`, `mapc`, `xcstringstool`, `intentbuilderc`, `extractLocStrings`,
++the App Intents metadata and language-model processors, `codesign`,
+ `derq`, the provisioning tool, `copypng`, `ditto`, `lipo`, `strip`,
+ `embeddedBinaryValidationUtility`, `ld64.lld` and `xcrun`.
+ 
+@@ -4598,12 +4608,13 @@ other `-sdk`, as `xcrun` does, and leaves the script's alone without one.
+ `--find` and the `--show-sdk-*` queries answer from the Darwin SDK.
+ 
+ **Swift Build is patched, as little as it can be.** `linux-setup.sh` builds
+-`swbuild` at the toolchain's tag with `ci/swift-build-linux.patch`. Each
++Swift 6.4.2 with Swift Build 6.4.0 and `ci/swift-build-linux.patch`. Each
+ change is one an upstream pull request could take: a failed `lsregister`
+ start is a note, as a failed run already is; provisioning requests go to the
+ tool `SWEETPAD_PROVISIONING` names; `derq` is looked up on the search path;
+ the Mach-O reader has its structures on every platform; and text encodings
+-are found by name without CoreFoundation.
++are found by name without CoreFoundation, including Unicode byte-order marks.
++LLVM's Darwin libtool is recognized without treating its LLVM version as a cctools version.
+ 
+ **Signing has no keychain.** The identity is a `.p12` file
+ (`SWEETPAD_CODE_SIGN_P12`, its password in `SWEETPAD_CODE_SIGN_P12_PASSWORD`),
+@@ -4615,19 +4626,71 @@ device build signs; a simulator build keeps the linker's ad hoc signature.
+ **Apple's macros come from `sweetpad-macros`.** The Darwin SDK's plugin
+ server has no `SwiftDataMacros`, has `#Preview` only for SwiftUI views, and
+ its `FoundationMacros` expands to `FoundationEssentials`, which the SDK
+-doesn't have. `sweetpad-cli/macros` builds one plugin for all three, which
++doesn't have. `sweetpad-cli/macros` builds one plugin for these modules, SwiftUI `@Entry`, and TipKit, which
+ the toolset loads.
+ 
+-**Linux builds come from source.** The Homebrew release stays a macOS
+-binary. `linux-setup.sh` provisions Ubuntu 24.04, an OrbStack machine on a
+-Mac or a host of its own, and the guide builds sweetpad with cargo.
++**Package macros run on the host.** Local-package schemes include their own test products.
++Tuist-generated macro executables are built with SwiftPM's native build system.
++Their consumers use the resulting host executable. Aggregate workspace schemes exclude those
++prebuilt tools from the Darwin build request. Destination-only SDK settings do not leak into host builds.
 +
-+    /// A scheme whose Run action launches `App` (ID `A1`), with `entries` as
-+    /// its Build action's entries.
-+    fn running_scheme(entries: &str) -> Scheme {
-+        let xml = format!(
-+            r#"<?xml version="1.0" encoding="UTF-8"?>
-+<Scheme version="1.7">
-+   <BuildAction>
-+      <BuildActionEntries>{entries}</BuildActionEntries>
-+   </BuildAction>
-+   <LaunchAction buildConfiguration="Debug">
-+      <BuildableProductRunnable>
-+         <BuildableReference BlueprintIdentifier="A1" BuildableName="App.app"
-+            BlueprintName="App" ReferencedContainer="container:App.xcodeproj"/>
-+      </BuildableProductRunnable>
-+   </LaunchAction>
-+</Scheme>"#
-+        );
-+        from_element(&xcscheme::parse(&xml).unwrap()).unwrap()
-+    }
++**Resolved Git packages expose explicit schemes.** The scheme reader follows the selected
++DerivedData `SourcePackages/workspace-state.json` and reads checkout scheme files.
++It honors a custom DerivedData path and does not fetch packages while listing.
++Package-root PIF reads have separate scratch directories so they preserve the app's graph.
++Already-present package targets need no second root read.
 +
-+    fn entry(id: &str, name: &str, for_running: &str) -> String {
-+        format!(
-+            r#"<BuildActionEntry buildForRunning="{for_running}" buildForTesting="YES">
-+            <BuildableReference BlueprintIdentifier="{id}" BuildableName="{name}"
-+               BlueprintName="{name}" ReferencedContainer="container:App.xcodeproj"/>
-+         </BuildActionEntry>"#
-+        )
-+    }
++**Additional Apple platforms use their own SDKs.** Setup imports tvOS, watchOS, and visionOS
++SDK data, testing frameworks, platform metadata, and companion stubs from the user's Xcode.
++It registers their Swift SDK target triples. SDK-scoped resource directories and
++LLD driver selection keep Linux modules out of Apple builds. Cross-tool settings also
++cover companion targets that use another Apple SDK in the same request.
++Modern standalone simulator apps and the migrated corpus watch apps build on both hosts.
++Runtime and device-signing checks remain unverified for the additional platforms.
 +
-+    fn names(buildables: &[&BuildableRef]) -> Vec<String> {
-+        buildables
-+            .iter()
-+            .map(|b| b.blueprint_name.clone())
-+            .collect()
-+    }
-+
-+    /// xcodebuild builds the Run action's app for a run even when no Build
-+    /// action entry builds it for running (issue #344), and only once when
-+    /// one does.
-+    #[test]
-+    fn a_run_builds_the_runnable_the_build_action_leaves_out() {
-+        let empty = running_scheme("");
-+        assert_eq!(names(&empty.buildables_for(BuildFor::Running)), ["App"]);
-+        assert!(empty.buildables_for(BuildFor::Testing).is_empty());
-+        assert_eq!(names(&empty.buildables()), ["App"]);
-+
-+        let not_for_running = running_scheme(&entry("A1", "App", "NO"));
-+        assert_eq!(
-+            names(&not_for_running.buildables_for(BuildFor::Running)),
-+            ["App"]
-+        );
-+        assert_eq!(names(&not_for_running.buildables()), ["App"]);
-+
-+        let listed = running_scheme(&(entry("K1", "Kit", "YES") + &entry("A1", "App", "YES")));
-+        assert_eq!(
-+            names(&listed.buildables_for(BuildFor::Running)),
-+    
++**Script phases use Bash in a private mount.** Bubblewrap maps the real `/bin/sh` target to Bash
++for the build process. The host's shell configuration is unchanged. SDK C++ headers come from
++its Xcode toolchain. `xcrun clang` translates Apple deployment flags int
 ```
 
 ---
 
-### Incident Patch 2: `0ae51db0` (2026-11-02)
-**Commit Message**: Keep BSP target-build index artifacts in DerivedData (#345)
+### Incident Patch 2: `7df9d947` (2026-11-08)
+**Commit Message**: Document Linux iPhone workflows and macOS CI (#348)
 
-**File**: `sweetpad-core/src/bsp/mod.rs` (modified, +54/-5)
+Add an iPhone-focused Linux documentation section covering architecture, Ubuntu and USB, signing and tests, GitHub Actions, React Native, and Flutter. Include a separate macOS CI guide and shared support reference. Preserve the existing overview URL and link from setup and automation pages.
+
+Validation: production site build, TypeScript, shell syntax, workflow example linting, all nine rendered routes, and headless browser checks.
+
+**File**: `sweetpad-docs/docs/cli/getting-started.md` (modified, +2/-2)
 ```diff
-@@ -1749,13 +1749,25 @@ impl Server {
-         }
-     }
+@@ -6,8 +6,8 @@ sidebar_label: Get started
+ # Get started with the CLI
  
--    /// `SYMROOT` / `OBJROOT` for a `-target` build: the products and
--    /// intermediates roots inside the DerivedData the editor arguments resolve
--    /// against. Empty when that directory can't be located, which leaves
--    /// xcodebuild its own defaults rather than a half-pinned tree.
-+    /// The products, intermediates and index store for a `-target` build,
-+    /// inside the DerivedData the editor reads. Empty when DerivedData can't
-+    /// be located.
-     fn build_roots(&self) -> Vec<(&'static str, PathBuf)> {
-         self.derived_data().map_or_else(Vec::new, |dd| {
--            vec![("SYMROOT", dd.products), ("OBJROOT", dd.intermediates)]
-+            vec![
-+                ("SYMROOT", dd.products),
-+                ("OBJROOT", dd.intermediates),
-+                // A test target without a scheme takes this -target fallback.
-+                // Xcode 27.2 enables indexing for its Swift package dependencies
-+                // but can leave the store path empty; SYMROOT/OBJROOT don't set it.
-+                // The resulting `-index-store-path -Xcc` treats -Xcc as the path
-+                // and writes into <project>.xcodeproj/-Xcc (#345).
-+                // Keep this path aligned with initialize's indexStorePath.
-+                (
-+                    "INDEX_DATA_STORE_DIR",
-+                    dd.folder.join("Index.noindex/DataStore"),
-+                ),
-+            ]
-         })
-     }
+ The `sweetpad` command-line tool builds, runs, and tests your Xcode apps from the terminal, with no editor
+-needed. This page gets you from install to a running app in a few minutes. You need a Mac with Xcode
+-installed.
++needed. This page covers the native Mac workflow with Xcode.
++For iPhone builds on Ubuntu, start with [Linux setup and USB](./linux/ubuntu-usb.md).
  
-@@ -2754,6 +2766,43 @@ mod tests {
-         }
-     }
+ ## 1. Install
  
-+    #[test]
-+    fn a_target_prepare_writes_to_the_advertised_index_store() {
-+        let project = PathBuf::from(format!(
-+            "{}/fixtures/_synthetic-objectversion-110/project/SweetpadCIApp.xcodeproj",
-+            env!("SWEETPAD_LIB_DIR")
-+        ));
-+        let scratch = crate::scratch::ScratchDir::new("sweetpad-bsp-index-store").unwrap();
-+        let flags = parse_flags(&[
-+            "--project".into(),
-+            project.display().to_string(),
-+            "--derived-data-path".into(),
-+            scratch.join("Custom DerivedData").display().to_string(),
-+        ]);
-+        let server = Server::build(
-+            ResolvedConfig::from_flags(project, &flags),
-+            None,
-+            Arc::new(AtomicU8::new(LogLevel::Info as u8)),
-+            CommandLine::default(),
-+            Sent::default().writer(),
-+        )
-+        .unwrap();
-+        let initialized = server.initialize();
-+        let store = initialized["data"]["indexStorePath"].as_str().unwrap();
-+        let (cmd, _) = server.prepare_command("SweetpadCIAppTests");
-+        let args: Vec<_> = cmd.get_args().map(|a| a.to_string_lossy()).collect();
-+        assert!(
-+            args.windows(2)
-+                .any(|w| w == ["-target", "SweetpadCIAppTests"]),
-+            "expected the fallback for a target without a scheme: {args:?}"
-+        );
-+        assert!(
-+            args.iter()
-+                .any(|a| a == &format!("INDEX_DATA_STORE_DIR={store}")),
-+            "prepare must write index data where the client reads it: {args:?}"
-+        );
+```
+
+**File**: `sweetpad-docs/docs/cli/linux.md` (modified, +39/-349)
+```diff
+@@ -1,375 +1,65 @@
+ ---
+-sidebar_position: 10
+-sidebar_label: Building on Linux
++sidebar_label: Linux overview
+ ---
+ 
+-# Building on Linux
++# Build iPhone apps on Linux
+ 
+-`sweetpad build` can build an Xcode project on Linux. It uses Swift Build, Apple's open-source build system, against the
+-Apple SDKs taken from your own copy of Xcode. For the Xcode tools Linux doesn't have, sweetpad
+-runs its own replacements.
+-
+-The command is the same one you run on a Mac:
+-
+-```bash
+-sweetpad build --scheme MyApp --destination "generic/platform=iOS Simulator"
+-```
+-
+-:::warning
+-Linux builds are experimental. Release archives target Ubuntu 24.04 ARM64 on Apple hardware.
+-Homebrew remains macOS only. Other Linux architectures require a source build and remain outside the release support scope.
+-:::
+-
+-## What builds
+-
+-Most of what an iOS or macOS app is made of builds the way Xcode builds it:
+-
+-- iOS and macOS apps, with their app extensions and widgets, frameworks and static libraries.
+-- tvOS, watchOS, and visionOS simulator builds, including modern standalone SwiftUI apps.
+-- Swift packages, local and remote, including packages that ship a binary XCFramework.
+-- Asset catalogs, storyboards and XIBs, String Catalogs and `.strings` files, and Core Data
+-  models and common Core Data mapping models.
+-- SwiftData's macros, `#Predicate`, `#Preview`, SwiftUI `@Entry`, and TipKit macros.
+-- Package macros built for the Linux host, including Tuist-generated macro tools.
+-- Explicit schemes shipped by resolved Git packages, including custom DerivedData locations.
+-- App Intents metadata and language models for the supported intent schemas.
+-- Run script phases, including scripts that call `xcrun`, `ditto` or `lipo`.
+-- Device builds, signed with your development identity (see
+-  [Signing a device build](#signing-a-device-build)).
+-- Development archives and IPA export that preserve the build's signing identity.
+-
+-The real-project suite includes Mastodon, Swiftfin, Wikipedia, Flutter, React Native, and Capacitor.
+-See the repository's `sweetpad-lib/ci/LINUX_PROJECTS.md` for source pins, results, and setup requirements.
+-Framework projects need their generated dependencies before compilation.
+-All seven larger fixtures pass two launches on an iPhone 13.
+-Wikipedia and Mastodon use explicit app-local startup fixtures with omitted extensions and unsupported capabilities.
+-The checks reuse an existing wildcard profile and do not validate those capabilities.
+-Flutter Release uses a Linux-hosted iOS AOT compiler built from pinned Dart sources; its engine remains a prebuilt dependency.
+-
+-## What stays on a Mac
+-
+-Some things need macOS itself, or an Apple tool that exists only for macOS:
+-
+-- Running the app in the Simulator and executing tests. Linux can compile test products with `sweetpad test build`.
+-- Mac Catalyst builds remain unverified.
+-- Metal shaders, Core ML model classes, and SceneKit and RealityKit
+-  assets.
+-- Run scripts that need macOS, like a Swift script that imports Darwin.
+-
+-Other limits include advanced mapping expressions, unsupported App Intents schemas,
+-distribution IPA export, and some Swift/C++ interoperability cases.
+-The fresh MMKV example builds without its former C++ shim.
+-Its device checks pass 14 storage assertions across two launches, including persistence after relaunch.
+-See `sweetpad-lib/ci/LINUX_PROJECTS.md` for source pins and dependency preparation.
+-
+-iOS Icon Composer support produces static light, dark, and tinted appearances.
+-Interactive glass lighting and native material effects remain unsupported.
+-Sticker packs support ordered PNG/GIF/JPEG members and message-extension icons.
+-Sticker sequences and localized sticker-pack strings remain unsupported.
+-
+-A build that needs one of these fails with an error, the same way a broken project would.
+-
+-Current Xcode and Swift Build reject deprecated WatchKit extension products.
+-Use a modern single-target watchOS app. The new platform probes verify compilation and linking;
+-runtime and device-signing checks for tvOS, watchOS, and visionOS remain unverified.
+-
+-## Install the ARM64 release archive
+-
+-Download the `linux-arm64` archive and its `.sha256` file from a [CLI release](https://github.com/sweetpad-dev/sweetpad/releases).
+-The archive contains the CLI, an installer, a sample project, and public toolchain setup sources.
+-It contains no Apple SDKs, signing material, or build caches.
+-
+-Install the runtime dependencies:
+-
+-```bash
+-sudo apt-get update
+-sudo apt-get install ca-certificates libssl3t64 libgcc-s1
+-```
+-
+-Verify and extract the archive into an empty directory:
++SweetPad builds an Xcode project on Linux, signs it with your development identity, and installs it on an iPhone.
++The command uses the same project, scheme, and build settings as the macOS CLI.
+ 
+ ```bash
+-sha256sum -c sweetpad-cli-VERSION-linux-arm64.tar.gz.sha256
+-mkdir sweetpad-install
+-tar -xzf sweetpad-cli-VERSION-linux-arm64.tar.gz -C sweetpad-install
+-bash 
+```
+
+**File**: `sweetpad-docs/docs/cli/linux/flutter.md` (added, +149/-0)
+```diff
+@@ -0,0 +1,149 @@
++---
++sidebar_label: Flutter
++---
++
++# Flutter iPhone apps on Linux
++
++A Flutter iOS app needs both its Xcode project and Dart application code.
++For a Release build, that code includes an iOS AOT snapshot.
++
++The validated workflow uses Flutter 3.47.9 and its matching engine artifacts.
++A Linux-built ARM64 iOS snapshot compiler produces the application snapshot.
++The Flutter engine framework remains a prebuilt dependency.
++
++:::info Prerequisites
++Complete [Ubuntu setup](ubuntu-usb.md) first.
++This recipe supports the pinned Flutter revision and an ARM64 Linux host.
++It does not turn the standard Flutter iOS command into a general Linux build command.
++:::
++
++## Install the matching Flutter SDK
++
++Use the tested Flutter revision:
++
++```bash
++git clone --filter=blob:none https://github.com/flutter/flutter.git "$HOME/src/flutter"
++git -C "$HOME/src/flutter" checkout c197ca5199e9ee5661e865596c9c07294dfab51c
++export PATH="$HOME/src/flutter/bin:$PATH"
++flutter --version
++flutter precache --ios
++```
++
++The cached iOS engine artifacts include a snapshot compiler for a Mac host.
++Downloading those artifacts alone does not provide Linux AOT compilation.
++
++## Get the helper sources
++
++Use an existing checkout of this tag, or create one:
++
++```bash
++git clone --branch cli-v0.1.18 --depth 1 https://github.com/sweetpad-dev/sweetpad.git "$HOME/src/sweetpad"
++cd "$HOME/src/sweetpad"
++bash sweetpad-lib/ci/linux-framework-tools.sh
++source "$HOME/.cache/sweetpad/framework-tools/env.sh"
++sudo apt-get install ninja-build
++```
++
++The frozen preparation recipe expects the documented Node tools even for this sample.
++The compiler recipe also needs Python 3.12 and the Linux Clang installation from toolchain setup.
++
++## Build the iOS snapshot compiler
++
++Use a fresh output directory:
++
++```bash
++python3 sweetpad-lib/ci/linux-flutter-snapshot.py \
++  --flutter-root "$HOME/src/flutter" \
++  --clang-root "$HOME/swift/swift-6.4.2-RELEASE/usr" \
++  --out "$HOME/src/flutter-ios-snapshot" --jobs 4
++```
++
++The recipe checks the Flutter-pinned Dart revision and builds only the product-mode snapshot compiler.
++It records source revisions, downloads, compiler identity, and the resulting executable hash.
++The result is a Linux ARM64 executable that generates iOS ARM64 code.
++
++This step needs a matching Dart source and engine configuration.
++A compiler from another Flutter version can produce a snapshot that the engine rejects.
++
++## Prepare the sample iOS project
++
++The validated app is the platform-design sample.
++Prepare it with a new source directory and the pinned dependency graph:
++
++```bash
++python3 -B sweetpad-lib/ci/linux-project-prepare.py \
++  --only flutter-samples \
++  --corpus-root "$HOME/sweetpad-examples" \
++  --flutter-root "$HOME/src/flutter" \
++  --tool-bin "$HOME/.cache/sweetpad/framework-tools/js/node_modules/.bin" \
++  --out "$HOME/sweetpad-examples/flutter-preparation.json"
++```
++
++The recipe resolves Dart dependencies and writes Linux paths into the generated iOS configuration.
++It also applies the minimum-deployment migration required by the pinned engine.
++
++Flutter's iOS configuration-only command is unavailable on Linux.
++The preparation recipe supplies those inputs for this pinned sample rather than invoking a Mac executable.
++
++## Select the Linux compiler
++
++Create a local-engine directory with the matching cached engine artifacts:
++
++```bash
++python3 sweetpad-lib/ci/linux-flutter-local-engine.py \
++  --flutter-root "$HOME/src/flutter" \
++  --compiler "$HOME/src/flutter-ios-snapshot/out/SweetpadIOS/gen_snapshot_product" \
++  --out "$HOME/builds/flutter-local-engine"
++```
++
++This directory points to the existing engine framework and the new Linux compiler.
++It does not replace the installed Flutter SDK.
++Use a fresh output directory for another preparation.
++
++## Build for the iPhone
++
++Pass the local-engine settings to the Xcode project build:
++
++```bash
++sweetpad build \
++  --project "$HOME/sweetpad-examples/flutter-samples/platform_design/ios/Runner.xcodeproj" \
++  --scheme Runner --configuration Release \
++  --destination 'generic/platform=iOS' --json --non-interactive \
++  -- -derivedDataPath "$HOME/builds/FlutterRunner" \
++  ARCHS=arm64 CODE_SIGNING_ALLOWED=NO \
++  FLUTTER_ROOT="$HOME/src/flutter" \
++  FLUTTER_ENGINE="$HOME/builds/flutter-local-engine" \
++  LOCAL_ENGINE=ios_release LOCAL_ENGINE_HOST=host_release
++```
++
++The unsigned command verifies the build.
++For installation, configure [development signing](signing-and-testing.md#configure-development-signing).
++Remove the unsigned setting. Then rebuild.
++Then use the [USB installation and launch steps](ubuntu-usb.md#build-and-install-the-iphone-app).
++
++The validated Release app launches twice on an iPhone with the Linux-generated snapshot.
++A successful app launch also confirms that the matching engine can load that snapshot.
++
++## Use another Flutter app
++
++Prepare its iOS project, generated configuration, plugin metadata, and nati
+```
+
+**File**: `sweetpad-docs/docs/cli/linux/github-actions.md` (added, +164/-0)
+```diff
+@@ -0,0 +1,164 @@
++---
++sidebar_label: GitHub Actions for iOS
++---
++
++# iOS builds in GitHub Actions
++
++A Linux job can compile iPhone products, generate test manifests, and create development archives.
++Apple test execution still runs on a Mac with Xcode.
++
++## Choose the runner
++
++| Job | Runner |
++| --- | --- |
++| Run the CLI without Apple SDKs | A hosted Ubuntu 24.04 ARM64 runner. |
++| Compile an iOS app on Linux | A provisioned Linux ARM64 runner with your private SDK and compiler toolchain. |
++| Run iOS Simulator tests | A Mac with Xcode and a compatible simulator runtime. |
++| Install on an iPhone | A trusted USB or paired Wi-Fi connection from the selected host. |
++
++The validated app-build setup uses a Linux VM on Apple hardware.
++Use SDK files under [Apple's Xcode agreement](https://www.apple.com/legal/sla/docs/xcode.pdf).
++A hosted Ubuntu runner supplies neither your licensed SDK environment nor a connected iPhone.
++
++Provision the app-build runner using [Ubuntu setup](ubuntu-usb.md).
++Its user needs the Linux Swift toolchain, Swift Build, macro plugin, and extracted SDK on the documented paths.
++The example uses the custom runner label `sweetpad-linux`.
++
++## Build and retain iPhone products
++
++This workflow installs the released CLI into a temporary prefix.
++The toolchain and SDK are existing runner prerequisites.
++
++Replace the project and scheme names with your own:
++
++```yaml
++name: iPhone build on Linux
++on:
++  workflow_dispatch:
++permissions:
++  contents: read
++
++jobs:
++  build:
++    runs-on: [self-hosted, Linux, ARM64, sweetpad-linux]
++    timeout-minutes: 45
++    steps:
++      - uses: actions/checkout@v7
++        with:
++          persist-credentials: false
++      - name: Install SweetPad
++        shell: bash
++        run: |
++          set -euo pipefail
++          CLI_VERSION=0.1.18
++          mkdir "$RUNNER_TEMP/cli"
++          cd "$RUNNER_TEMP/cli"
++          curl -fLO "https://github.com/sweetpad-dev/sweetpad/releases/download/cli-v$CLI_VERSION/sweetpad-cli-$CLI_VERSION-linux-arm64.tar.gz"
++          curl -fLO "https://github.com/sweetpad-dev/sweetpad/releases/download/cli-v$CLI_VERSION/sweetpad-cli-$CLI_VERSION-linux-arm64.tar.gz.sha256"
++          sha256sum -c "sweetpad-cli-$CLI_VERSION-linux-arm64.tar.gz.sha256"
++          tar -xzf "sweetpad-cli-$CLI_VERSION-linux-arm64.tar.gz"
++          bash install.sh --prefix "$RUNNER_TEMP/sweetpad"
++          echo "$RUNNER_TEMP/sweetpad/bin" >> "$GITHUB_PATH"
++          echo "$HOME/bin" >> "$GITHUB_PATH"
++          echo "$HOME/swift/swift-6.4.2-RELEASE/usr/bin" >> "$GITHUB_PATH"
++      - name: Build iPhone products
++        shell: bash
++        run: |
++          set -euo pipefail
++          export PATH="$RUNNER_TEMP/sweetpad/bin:$HOME/swift/swift-6.4.2-RELEASE/usr/bin:$HOME/bin:$PATH"
++          sweetpad build --project MyApp.xcodeproj --scheme MyApp \
++            --configuration Release --destination 'generic/platform=iOS' \
++            --json --non-interactive \
++            -- -derivedDataPath "$RUNNER_TEMP/DerivedData" \
++            ARCHS=arm64 CODE_SIGNING_ALLOWED=NO > "$RUNNER_TEMP/build.json"
++          tar -C "$RUNNER_TEMP/DerivedData/Build" \
++            -czf "$RUNNER_TEMP/Products.tar.gz" Products
++      - uses: actions/upload-artifact@v7
++        with:
++          name: iphone-products
++          path: |
++            ${{ runner.temp }}/Products.tar.gz
++            ${{ runner.temp }}/build.json
++          if-no-files-found: error
++```
++
++The example creates unsigned device products for a build check.
++[Development signing](signing-and-testing.md#configure-development-signing) is required before installation on a phone.
++
++The tar archive preserves executable permissions and framework symbolic links.
++Upload the archive rather than individual app-bundle files.
++Retain build products and reports, not the private SDK or signing keys.
++
++## Add development signing
++
++Store the P12, its password, and profiles in your CI secret store.
++Decode the files into a private directory under `RUNNER_TEMP` with `umask 077`.
++Set these CLI variables for the signed build:
++
++| Variable | CI value |
++| --- | --- |
++| `SWEETPAD_CODE_SIGN_P12` | Path to the decoded identity file. |
++| `SWEETPAD_CODE_SIGN_P12_PASSWORD` | The identity's password from the secret store. |
++| `SWEETPAD_PROVISIONING_PROFILES` | Directory containing matching profiles. |
++
++Remove `CODE_SIGNING_ALLOWED=NO` from the build.
++Remove temporary signing files in a final cleanup step that uses `if: always()`.
++
++This example uses a manual trigger.
++Keep private SDK and signing jobs on trusted code. Untrusted pull-request code can read a self-hosted runner's files.
++GitHub documents [self-hosted runner operation](https://docs.github.com/en/actions/reference/runners/self-hosted-runners) and [runner labels](https://docs.github.com/en/actions/how-tos/write-workflows/choose-where-workflows-run/choose-the-runner-for-a-job).
++
++## Build tests on Linux
++
++Replace the app-build command with a
+```
+
+**File**: `sweetpad-docs/docs/cli/linux/how-it-works.md` (added, +94/-0)
+```diff
+@@ -0,0 +1,94 @@
++---
++sidebar_label: How it works
++---
++
++# How Linux builds work
++
++SweetPad turns an Xcode project into input for Swift Build, Apple's open-source build system.
++Swift Build schedules Linux compilers and portable resource tools against SDK data from your own Xcode.
++
++## The build pipeline
++
++```mermaid
++flowchart TB
++  Project["Xcode project or workspace"] --> Graph["Project graph"]
++  Packages["Resolved Swift packages"] --> Graph
++  Graph --> Build["Swift Build"]
++  Build --> Compiler["Swift, Clang, and LLD"]
++  Build --> Resources["Resource tools"]
++  SDK["Your Apple SDKs"] --> Compiler
++  SDK --> Resources
++  Compiler --> Products["Apps and test products"]
++  Resources --> Products
++  Products --> Phone["iPhone over USB or Wi-Fi"]
++  Products --> Mac["Mac: Simulator or test execution"]
++```
++
++### Read the project
++
++SweetPad reads the workspace, projects, scheme, configurations, and target dependencies.
++It describes them in the Project Interchange Format that Swift Build consumes.
++Swift Package Manager supplies the package graph, including resolved remote packages and binary XCFrameworks.
++
++Schemes from remote packages become available after dependency resolution.
++Listing schemes reads existing checkouts; it does not fetch packages.
++
++### Compile for iOS
++
++The compiler runs on Linux and emits code for the selected Apple destination.
++For an iPhone, that destination uses the iOS device SDK and ARM64 code.
++LLD links the objects into Mach-O executables and libraries.
++
++The compiler toolchain and Apple SDK have different jobs.
++The toolchain supplies executable Linux programs. The SDK supplies headers, modules, frameworks, runtime libraries, and platform metadata.
++
++### Compile resources
++
++SweetPad implements the resource tools that Swift Build expects.
++These tools compile supported asset catalogs, storyboards, XIBs, String Catalogs, Core Data models, and App Intents data.
++
++Many tool names resolve to the same SweetPad executable.
++The executable selects the requested operation from its invocation name.
++
++Supported Apple macros use a Linux plugin.
++SweetPad also builds reachable package macros for the host when their source supports Linux.
++
++## Build products and incremental work
++
++Products use the DerivedData layout that the other CLI commands expect.
++An explicit build directory keeps CI outputs and local experiments easy to find:
++
++```bash
++sweetpad build --project MyApp.xcodeproj --scheme MyApp \
++  --destination 'generic/platform=iOS' --json --non-interactive \
++  -- -derivedDataPath "$HOME/builds/MyApp"
++```
++
++Swift Build tracks inputs and reuses unchanged work.
++Generated project inputs keep their timestamps when their contents do not change.
++A fresh DerivedData directory provides a control when you compare a changed resource processor or toolchain.
++
++Run-script phases execute on Linux.
++The build supplies compatible tools for common Xcode script operations, but a script that depends on macOS still needs adaptation.
++
++## Signing and the phone
++
++Linux signing uses an Apple Development identity from a P12 file and your provisioning profiles.
++The signer seals the app and its embedded bundles before installation.
++
++The device adapter uses `pymobiledevice3==11.50.0` for USB and Wi-Fi.
++It authenticates the selected device before installation or launch.
++The modern adapter establishes its developer-service tunnel in userspace.
++
++These are separate operations: a successful build creates products, and a successful installation transfers a signed product to the phone.
++The [Ubuntu guide](ubuntu-usb.md) walks through both.
++
++## Tests and other Apple platforms
++
++Linux can compile iOS test products and generate an XCTest run manifest.
++Xcode on a Mac supplies the test runtime, including the iPhone test runner.
++[Prebuilt test execution](signing-and-testing.md#run-linux-built-tests) keeps the Linux compilation result intact.
++
++The same engine also builds macOS apps and supported tvOS, watchOS, and visionOS simulator targets.
++Their runtime coverage differs from iPhone coverage.
++See [support and configuration](reference.md) and the separate [macOS CI guide](macos-ci.md).
+```
+
+**File**: `sweetpad-docs/docs/cli/linux/macos-ci.md` (added, +115/-0)
+```diff
+@@ -0,0 +1,115 @@
++---
++sidebar_label: macOS apps in CI
++---
++
++# Build macOS apps in GitHub Actions
++
++Most pages in this section target iOS and iPhone.
++A macOS app has a different execution and distribution path.
++
++A Linux runner can compile a supported macOS app against the extracted macOS SDK.
++A Mac runs the application, executes native tests, and performs Developer ID distribution signing and notarization.
++
++## Use a hosted Mac for a native workflow
++
++A hosted Mac is the direct path when your CI job needs build, test, and macOS execution together.
++This uses SweetPad's normal Xcode engine.
++
++Replace the project and scheme names:
++
++```yaml
++name: macOS app
++on:
++  push:
++    branches: [main]
++  pull_request:
++permissions:
++  contents: read
++
++jobs:
++  macos:
++    runs-on: macos-15
++    timeout-minutes: 45
++    steps:
++      - uses: actions/checkout@v7
++      - name: Install SweetPad
++        run: brew install sweetpad-dev/tap/sweetpad
++      - name: Build
++        run: |
++          sweetpad build --project MyMacApp.xcodeproj --scheme MyMacApp \
++            --configuration Release --on mac --json --non-interactive \
++            -- -derivedDataPath "$RUNNER_TEMP/DerivedData" CODE_SIGNING_ALLOWED=NO
++      - name: Run tests
++        run: |
++          sweetpad test run --project MyMacApp.xcodeproj --scheme MyMacApp \
++            --on mac --json --non-interactive \
++            -- -derivedDataPath "$RUNNER_TEMP/DerivedData" CODE_SIGNING_ALLOWED=NO
++      - name: Package products
++        run: |
++          tar -C "$RUNNER_TEMP/DerivedData/Build" \
++            -czf "$RUNNER_TEMP/macos-products.tar.gz" Products
++      - uses: actions/upload-artifact@v7
++        with:
++          name: macos-products
++          path: ${{ runner.temp }}/macos-products.tar.gz
++          if-no-files-found: error
++```
++
++The scheme must include the tests that this job runs.
++The test command can build its test products on the Mac.
++The example retains unsigned products for CI validation, not a notarized distribution.
++
++GitHub's [runner reference](https://docs.github.com/en/actions/reference/runners/github-hosted-runners) lists the architecture and available labels.
++Use an explicit architecture when your app or dependencies require one.
++
++## Compile the app on Linux
++
++Use this path when compilation is the part that you want on Linux.
++The same [private SDK runner prerequisites](github-actions.md#choose-the-runner) apply.
++
++The destination selects macOS instead of iOS:
++
++```bash
++sweetpad build --project MyMacApp.xcodeproj --scheme MyMacApp \
++  --configuration Release --destination 'generic/platform=macOS' \
++  --json --non-interactive \
++  -- -derivedDataPath "$RUNNER_TEMP/DerivedData" \
++  ARCHS=arm64 CODE_SIGNING_ALLOWED=NO
++```
++
++Build products use the macOS bundle layout, including the Contents directory.
++Keep the complete app and embedded frameworks when you package the result:
++
++```bash
++tar -C "$RUNNER_TEMP/DerivedData/Build" \
++  -czf "$RUNNER_TEMP/macos-products.tar.gz" Products
++```
++
++Upload the tar archive with the artifact action from the iOS workflow.
++A subsequent Mac job can download and extract it for native validation or a separate signing stage.
++
++The Linux build path does not provide a macOS runtime.
++Frameworks, run scripts, or assets that require a native Apple tool can still require a Mac build.
++Check [supported features](reference.md) before moving an existing job.
++
++## Tests and distribution
++
++Automatic Linux XCTest manifests currently cover the documented iOS test forms.
++For a complete macOS test workflow, use the hosted-Mac example or your existing native test pipeline.
++Do not assume that an iOS test-manifest recipe also covers macOS tests.
++
++Developer ID distribution requires the matching certificate, entitlements, hardened-runtime settings, and Apple notarization.
++Keep that release stage on a Mac with its existing signing configuration.
++The unsigned build example does not replace this stage.
++
++The CLI's Linux development IPA export applies to iOS device archives.
++It is not a macOS distribution workflow.
++
++## Verify the actual products
++
++Use the architecture and deployment targets that your application supports.
++After a toolchain change, run the app and its tests on a compatible Mac.
++A successful Linux compilation establishes build coverage; native execution establishes runtime coverage.
++
++The iPhone transport guide does not apply to macOS app execution.
++For shared compiler and SDK behavior, see [how Linux builds work](how-it-works.md).
+```
+
+**File**: `sweetpad-docs/docs/cli/linux/react-native.md` (added, +132/-0)
+```diff
+@@ -0,0 +1,132 @@
++---
++sidebar_label: React Native
++---
++
++# React Native iPhone apps on Linux
++
++SweetPad builds the iOS workspace after JavaScript dependencies, native code generation, and Pods are ready.
++It does not replace those preparation steps.
++
++The validated examples use React Native 0.85.3 with Hermes.
++The MMKV example also uses NitroModules 0.35.9.
++Release products pass iPhone startup checks, and MMKV passes storage and relaunch checks.
++
++:::info Prerequisites
++Complete [Ubuntu and USB setup](ubuntu-usb.md) first.
++The pinned Hermes compiler is a Linux x86_64 executable.
++The validated ARM64 environment runs it through OrbStack's Linux binary translation.
++:::
++
++## Prepare the validated example
++
++The repository includes a pinned preparation recipe for the community template.
++It captures dependency locks and applies the same scene-lifecycle compatibility patch to native and Linux controls.
++
++Get the matching helper sources:
++
++```bash
++git clone --branch cli-v0.1.18 --depth 1 https://github.com/sweetpad-dev/sweetpad.git "$HOME/src/sweetpad"
++cd "$HOME/src/sweetpad"
++bash sweetpad-lib/ci/linux-framework-tools.sh
++source "$HOME/.cache/sweetpad/framework-tools/env.sh"
++```
++
++The helper installs Node 24.22.2, Ruby 3.4.8, Bundler 4.0.20, and the frozen JavaScript tools.
++Its files stay in a private tool directory.
++
++Prepare a fresh template checkout:
++
++```bash
++python3 -B sweetpad-lib/ci/linux-project-prepare.py \
++  --only react-native-template \
++  --corpus-root "$HOME/sweetpad-examples" \
++  --tool-bin "$HOME/.cache/sweetpad/framework-tools/js/node_modules/.bin" \
++  --gem-home "$HOME/.cache/sweetpad/framework-tools/gems" \
++  --out "$HOME/sweetpad-examples/template-preparation.json"
++```
++
++This uses the captured npm, Ruby, and Pod dependency graph.
++Linux metadata adapters supply the Xcode information that dependency preparation expects.
++Generated Pod scripts select the portable signing tool through PATH.
++
++The recipe also records paths for Node and generated dependencies.
++An existing Pods directory from another machine is not a substitute for preparation on this host.
++
++## Build the iOS workspace
++
++Select the Linux Hermes compiler explicitly:
++
++```bash
++APP_ROOT="$HOME/sweetpad-examples/react-native-template/template"
++
++sweetpad build --workspace "$APP_ROOT/ios/HelloWorld.xcworkspace" \
++  --scheme HelloWorld --configuration Release \
++  --destination 'generic/platform=iOS' --json --non-interactive \
++  -- -derivedDataPath "$HOME/builds/ReactNative" \
++  ARCHS=arm64 CODE_SIGNING_ALLOWED=NO \
++  HERMES_CLI_PATH="$APP_ROOT/node_modules/hermes-compiler/hermesc/linux64-bin/hermesc"
++```
++
++This unsigned build verifies compilation.
++For the phone, configure [development signing](signing-and-testing.md#configure-development-signing).
++Remove the unsigned setting. Then rebuild.
++
++Install and launch the resulting app using [the USB workflow](ubuntu-usb.md#build-and-install-the-iphone-app).
++Use the product path from JSON output rather than assuming a bundle name.
++
++## Release and Debug behavior
++
++Release builds embed their JavaScript and Hermes products.
++The validated Release app launches without a Metro server.
++
++Debug builds need a reachable Metro server.
++Start it from the app directory. Configure the iPhone's bundle-server address for your network.
++The VM's loopback address is not the phone's loopback address.
++
++Keep the host compiler and target artifacts distinct.
++The Hermes compiler must execute on Linux; the app and embedded frameworks must target iOS.
++
++## MMKV
++
++The same preparation recipe supports the separate MMKV example:
++
++```bash
++cd "$HOME/src/sweetpad"
++python3 -B sweetpad-lib/ci/linux-project-prepare.py \
++  --only react-native-mmkv \
++  --corpus-root "$HOME/sweetpad-examples" \
++  --tool-bin "$HOME/.cache/sweetpad/framework-tools/js/node_modules/.bin" \
++  --gem-home "$HOME/.cache/sweetpad/framework-tools/gems" \
++  --out "$HOME/sweetpad-examples/mmkv-preparation.json"
++```
++
++Its workspace is in the example's iOS directory, and its scheme is MmkvExample.
++Its Hermes compiler comes from the repository-root dependency directory.
++
++The current build path does not need the former MMKV debug-thunk fixture shim.
++The setup script includes the Swift Build correction for the affected generated C++ bridge helpers.
++This covers the pinned compiler and example; other Swift/C++ combinations can expose different issues.
++
++## Use your own app
++
++Prepare your app's declared Node, Ruby, code-generation, and Pod dependencies.
++Then pass its workspace and scheme to the same build command.
++Adjust the Hermes path for your package layout.
++
++The pinned recipe is a reference workflow, not a generator for arbitrary React Native applications.
++Other versions and native modules need their own validation.
++A preparation script that requires macOS can still require a Mac before Linux compilation.
++
++When you compare native and Linux products, keep the same source and dependency 
+```
+
+**File**: `sweetpad-docs/docs/cli/linux/reference.md` (added, +140/-0)
+```diff
+@@ -0,0 +1,140 @@
++---
++sidebar_label: Support and configuration
++---
++
++# Linux support and configuration
++
++The released archive targets Ubuntu 24.04 ARM64.
++The validated setup uses an Apple-hardware Linux VM, Swift 6.4.2, Swift Build 6.4.0, and SDK data from Xcode.
++
++## Platform coverage
++
++| Operation | Status |
++| --- | --- |
++| Build iOS apps and extensions | Supported by the experimental Linux engine. |
++| Sign development iPhone products | Supported with a P12 identity and matching profiles. |
++| Discover, install, launch, stop, and log an iPhone app | Validated through Linux USB and Wi-Fi. |
++| Build iOS unit and UI test products | Supported, including the documented automatic manifests. |
++| Execute Apple tests | Requires a Mac with Xcode. |
++| Operate an iOS Simulator | Requires a Mac. |
++| Build macOS apps | Supported for the validated resource and compiler paths; native execution requires a Mac. |
++| Build tvOS, watchOS, and visionOS simulator targets | Compilation and linking coverage exists; runtime and device signing remain unverified. |
++| Build Mac Catalyst targets on Linux | Remains unverified. |
++| Export a development iOS IPA | Supported from a signed device archive. |
++| Export distribution IPAs or custom export options | Requires Xcode. |
++| Debug a device or inspect device readiness on Linux | Unsupported. |
++
++Current Xcode and Swift Build reject deprecated WatchKit extension products.
++Use modern standalone watchOS apps for new platform validation.
++
++## Project and resource support
++
++The portable build path covers these common inputs:
++
++- Local and remote Swift packages, including binary XCFrameworks
++- Swift, Objective-C, C, and C++ targets
++- Frameworks, static libraries, app extensions, and widgets
++- Asset catalogs, storyboards, XIBs, String Catalogs, and ordinary strings
++- Core Data models and common mapping models
++- Supported SwiftData, Predicate, Preview, SwiftUI Entry, and TipKit macros
++- Package macros whose sources build for the Linux host
++- Supported App Intents metadata and shortcut language models.
++
++Explicit schemes from resolved Git packages are available after dependency resolution.
++Listing schemes does not fetch missing packages.
++Package manifests run on Linux. Host-only conditions that select Apple resources or libraries can require a compatibility patch.
++
++Metal shaders, Core ML model classes, SceneKit assets, and RealityKit assets require native tools.
++Scripts that import Darwin or call other macOS-only tools need adaptation or a Mac preparation stage.
++Advanced Core Data mapping expressions remain outside the supported mapping-model forms.
++
++Phone startup checks do not validate App Groups, push, payments, or extension behavior.
++Those flows need matching profiles and their own execution checks.
++
++### Modern icons and stickers
++
++Icon Composer support produces static light, dark, and tinted appearances.
++Interactive glass lighting and native material effects remain unsupported.
++
++Sticker packs support ordered PNG, GIF, and JPEG members and message-extension icons.
++Sticker sequences and localized sticker-pack strings remain unsupported.
++
++### Swift and C++ interoperability
++
++The MMKV validation uses the current generated-header correction rather than its former fixture shim.
++The affected bridge helpers use the supported lazy inline-helper behavior.
++Other compiler versions and interoperability forms need separate validation.
++
++## App Intents
++
++The portable processors generate registration metadata, extracted strings, and shortcut language models.
++Supported forms include primitive parameters, optional and array values, file images, dialog or snippet results, enums, basic entities, widget intents, and basic shortcuts.
++
++Dynamic frameworks and embedded extensions retain separate registrations.
++Unsupported schemas, static dependency registration, and unsupported language-model options fail explicitly.
++Siri voice invocation on a physical device remains unverified.
++
++Localized shortcut models use the app's translated names and AppShortcuts string tables.
++The trainer emits per-language models and removes models for deleted shortcuts.
++AssistantIntents catalogs and catalog variations remain unsupported.
++
++### Localized phrase resources
++
++Mac execution of toolchain setup exports the system phrase resources into the private SDK.
++For an independently prepared Ubuntu host, export those resources on the Mac using the setup sources from the archive:
++
++```bash
++python3 /path/to/sweetpad-install/setup/sweetpad-lib/ci/linux-appintents-resources.py \
++  --xcode /Applications/Xcode.app --out /path/to/appintents-phrases.json
++```
++
++Transfer the export privately, then provide it to Linux setup:
++
++```bash
++SWEETPAD_SKIP_RUST=1 \
++  SWEETPAD_APPINTENTS_RESOURCE_EXPORT=/path/to/appintents-phrases.json \
++  XCODE_APP=/path/to/Xcode.app \
++  bash "$HOME/.local/share/sweetpad/setup/sweetpad-lib/ci/linux-setup.sh"
++```
++
++Missing localized resources produc
+```
+
+---
+
+### Incident Patch 3: `f564dbec` (2026-11-06)
+**Commit Message**: Build Xcode projects on Linux with Swift Build
+
+sweetpad build translates the workspace into Swift Build's PIF and builds it against a Darwin SDK taken from the user's Xcode, standing in for the Xcode tools Linux doesn't have. macOS builds still go through xcodebuild.
+
+**File**: `Cargo.lock` (modified, +1093/-20)
+```diff
+@@ -2,6 +2,23 @@
+ # It is not intended for manual editing.
+ version = 4
+ 
++[[package]]
++name = "adler2"
++version = "2.0.1"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "320119579fcad9c21884f5c4861d16174d0e06250625266f50fe6898340abefa"
++
++[[package]]
++name = "aes"
++version = "0.8.4"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "b169f7a6d4742236a0a00c541b845991d0ac43e546831af1249753ab4c3aa3a0"
++dependencies = [
++ "cfg-if",
++ "cipher",
++ "cpufeatures",
++]
++
+ [[package]]
+ name = "anstream"
+ version = "1.0.0"
+@@ -52,18 +69,74 @@ dependencies = [
+  "windows-sys 0.61.2",
+ ]
+ 
++[[package]]
++name = "arrayref"
++version = "0.3.9"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "76a2e8124351fda1ef8aaaa3bbd7ebbcb486bbcd4225aca0aa0d84bb2db8fecb"
++
++[[package]]
++name = "arrayvec"
++version = "0.7.8"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "d3fb67a6e08acf24fdeccbac2cb6ac4305825bd1f117462e0e6f2f193345ad56"
++
++[[package]]
++name = "autocfg"
++version = "1.5.1"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "f2032f911046de80f0a198e0901378627c33f59ea0ac00e363d481118bd70a53"
++
+ [[package]]
+ name = "base64"
+ version = "0.22.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "72b3254f16251a8381aa12e40e3c4d2f0199f8c6508fbecb9d91f575e0fbb8c6"
+ 
++[[package]]
++name = "base64ct"
++version = "1.8.3"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "2af50177e190e07a26ab74f8b1efbfe2ef87da2116221318cb1c2e82baf7de06"
++
+ [[package]]
+ name = "bitflags"
+ version = "2.11.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "c4512299f36f043ab09a583e57bceb5a5aab7a73db1805848e8fef3c9e8c78b3"
+ 
++[[package]]
++name = "bytemuck"
++version = "1.25.2"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "95832e849adfb21180ccb6826a99da14e5d266ae5c2e668e1602cf234f153797"
++dependencies = [
++ "bytemuck_derive",
++]
++
++[[package]]
++name = "bytemuck_derive"
++version = "1.12.1"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "6a1f896587b6f2c069c73d2f0913e2d590c3990285cd2f0b6aa02b786b4c679c"
++dependencies = [
++ "proc-macro2",
++ "quote",
++ "syn 3.0.7",
++]
++
++[[package]]
++name = "byteorder-lite"
++version = "0.1.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "8f1fe948ff07f4bd06c30984e69f5b4899c516a3ef74f34df92a2df2ab535495"
++
++[[package]]
++name = "cassowary"
++version = "0.3.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "df8670b8c7b9dae1793364eafadf7239c40d669904660c5960d74cfd80b46a53"
++
+ [[package]]
+ name = "cc"
+ version = "1.5.1"
+@@ -80,6 +153,16 @@ version = "1.0.4"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "9330f8b2ff13f34540b44e946ef35111825727b38d33286ef986142615121801"
+ 
++[[package]]
++name = "cipher"
++version = "0.4.4"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "773f3b9af64447d2ce9850330c473515014aa235e6a783b02db81ff39e4a3dad"
++dependencies = [
++ "crypto-common",
++ "inout",
++]
++
+ [[package]]
+ name = "clap"
+ version = "4.6.1"
+@@ -120,7 +203,7 @@ dependencies = [
+  "heck",
+  "proc-macro2",
+  "quote",
+- "syn",
++ "syn 2.0.117",
+ ]
+ 
+ [[package]]
+@@ -129,6 +212,15 @@ version = "1.1.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "c8d4a3bb8b1e0c1050499d1815f5ab16d04f0959b233085fb31653fbfc9d98f9"
+ 
++[[package]]
++name = "color"
++version = "0.3.3"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "2ec7c5eb7a16992b1904d76c517d170ab353b0e0b3d5a0c81a8a0cd1037893cf"
++dependencies = [
++ "bytemuck",
++]
++
+ [[package]]
+ name = "colorchoice"
+ version = "1.0.5"
+@@ -148,6 +240,12 @@ dependencies = [
+  "windows-sys 0.59.0",
+ ]
+ 
++[[package]]
++name = "const-oid"
++version = "0.9.6"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "c2459377285ad874054d797f3ccebf984978aa39129f6eafde5cdc8315b612f8"
++
+ [[package]]
+ name = "convert_case"
+ version = "0.11.0"
+@@ -173,12 +271,65 @@ version = "0.8.7"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "773648b94d0e5d620f64f280777445740e61fe701025087ec8b57f45c791888b"
+ 
++[[package]]
++name = "cpufeatures"
++version = "0.2.17"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "59ed5838eebb26a2bb2e58f6d5b5316989ae9d08bab10e0e6d103e656d1b0280"
++dependencies = [
++ "libc",
++]
++
++[[package]]
++name = "crc32fast"
++version = "1.5.2"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "01a7799fd6b852db0e61728dde9a204c423b44d689dbd432522543614b490e78"
++dependencies = [
++ "cfg-if",
++]
++
++[[package]]
++name = "crypto-common"
++version = "0.1.7"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "78c8292055d1c1df0cce5d180393dc8cce0
+```
+
+**File**: `Cargo.toml` (modified, +26/-0)
+```diff
+@@ -20,9 +20,35 @@ sweetpad-core = { path = "sweetpad-core" }
+ # JSON is a well-known standard format, not worth reinventing; hand-rolled
+ # parsing is reserved for Apple's project-domain formats (DOCS.md §3.1).
+ serde_json = "1"
++# Interface Builder stores control characters in Base64-encoded XML strings.
++# minreq's proxy support already depends on this standard-format decoder.
++base64 = "0.22"
++# AppKit's archived frames follow Auto Layout's linear constraints and priorities.
++cassowary = "0.3"
+ # Unicode NFD for the DerivedData path hash (xcode_hash); UAX #15 with a
+ # de-facto crate — not worth hand-rolling the decomposition tables.
+ unicode-normalization = "0.1"
++# PNG, read and written for the app icons and images the Linux build's actool
++# stand-in puts in the bundle; a standard format with a de-facto crate.
++png = "0.18"
++# Gzip, for the image pixels in the actool stand-in's Assets.car; png already
++# depends on it.
++flate2 = "1"
++# The actool stand-in draws a catalog's vector images the way Xcode does,
++# into bitmaps: PDFs with hayro, SVGs and symbol templates with resvg (and
++# the usvg and roxmltree it re-exports, and svgtypes, which usvg parses
++# with). Both are pure Rust; PDF and SVG are standard formats too large to
++# hand-roll.
++hayro = { version = "0.8", default-features = false }
++resvg = { version = "0.48", default-features = false }
++svgtypes = "0.16"
++# The codesign stand-in signs with an identity exported from Keychain Access:
++# RSA signatures, and the Triple DES and AES that a .p12 file's contents are
++# encrypted with. The signature formats around them are Apple's, and
++# hand-rolled.
++rsa = { version = "0.9", default-features = false, features = ["std"] }
++des = "0.8"
++aes = "0.8"
+ # The system calls: the account's home, name and cache directory, read the
+ # way Xcode's tools read them (getpwuid_r, confstr), and the raw-input flags
+ # the CLI's interactive rebuild session flips.
+```
+
+**File**: `sweetpad-cli/CLI_DESIGN.md` (modified, +97/-0)
+```diff
+@@ -4532,6 +4532,103 @@ a second pass changes nothing, that a failed edit leaves the bundle's bytes
+ and signature as they were, and that a bundle without `get-task-allow` is left
+ alone.
+ 
++## 9w. v8 — building on Linux with Swift Build
++
++> `sweetpad build` builds an unmodified Xcode project where there is no
++> Xcode. `PLAN_LINUX.md` is the working record: what builds, what doesn't,
++> the corpus sweeps and the open items. This section keeps the decisions.
++> The user guide is `sweetpad-docs/docs/cli/linux.md`.
++
++**The engine follows the host.** `Engine::for_host` picks xcodebuild on
++macOS and Swift Build everywhere else, so the same command line builds on
++both. A hidden `--engine swift-build` (`SWEETPAD_ENGINE`) runs Swift Build on
++a Mac too, which is how a build is checked against xcodebuild's; it stays
++hidden because nothing else needs it. `build --show-command` prints the
++`swbuild` command line.
++
++**Swift Build gets a PIF and a build request, never a target name.**
++`sweetpad-lib`'s emitter translates the workspace into Swift Build's PIF,
++with GUIDs as `xcodebuild -dumpPIF` derives them. The packages come from
++`swift package dump-pif` over a root manifest naming the workspace's
++packages, pinned by its `Package.resolved`, with the checkouts in
++DerivedData's `SourcePackages` as Xcode keeps them, and are merged into the
++PIF. `--experimental-build-dylibs-as-frameworks` builds a dynamic product as
++the framework Xcode makes of it. The build request names the scheme's
++targets by GUID and carries its parallel and implicit-dependency settings.
++`swbuild` resolves `--target` names before the request replaces them, and
++fails on a name a package's product and module share, so none is passed.
++A scheme without a file names a project target, else a local package's
++product (`<name>-product` in SwiftPM's PIF), else a package's module: the
++scheme Xcode makes for a product builds the product, which shares no name
++with a module when it's made only of binary targets.
++
++**Everything goes where xcodebuild's build would.** The build writes to the
++DerivedData folder xcodebuild would use, so the product locator, `app run`'s
++lookups and the extension find the product unchanged. The PIF, the request,
++the parameters, the toolset and the stand-ins' folder go in
++`Intermediates.noindex/SweetPad`, and a file is rewritten only when its
++contents change, which keeps SwiftPM's manifest cache.
++
++**The Darwin SDK replaces Xcode.** xtool's bundle (`SWEETPAD_DARWIN_SDK`)
++has the Apple SDKs, Xcode's runtime libraries and an `ld64.lld` that writes
++Mach-O. The engine names its platforms in `XCODE_EXTRA_PLATFORM_FOLDERS`,
++adds a toolset with the cross-import overlay flag, the linker stand-in and
++the macro plugin, and overrides the settings that would start an Xcode-only
++step (`DarwinSdk::overrides` lists each with its reason). The Xcode version
++settings come from Xcode's `version.plist`, which `linux-setup.sh` copies
++beside the bundle, since Swift Build reports 99.99.99 without one.
++
++**A stand-in is the sweetpad binary under the tool's name.** The engine
++links the binary into the stand-ins' folder under each name, puts the folder
++on `swbuild`'s `PATH`, and `main` dispatches on `argv[0]`. One binary keeps
++the stand-ins at the CLI's version, with nothing more to install. Where the
++corpus can check, a stand-in's output is Xcode's byte for byte: asset
++catalogs, nibs, String Catalogs, Core Data models, signatures. What a
++stand-in doesn't do fails with an error that names it. The stand-ins are
++`actool`, `ibtool`, `momc`, `xcstringstool`, `intentbuilderc`, `codesign`,
++`derq`, the provisioning tool, `copypng`, `ditto`, `lipo`, `strip`,
++`embeddedBinaryValidationUtility`, `ld64.lld` and `xcrun`.
++
++**`xcrun -sdk macosx` runs a tool for the host.** A run script is a host
++program. A Mac script says `-sdk macosx` to run a tool for the Mac it's on,
++and here the host is Linux, where a Darwin `SDKROOT` breaks the toolchain's
++own builds: a `swift` script fails to build `CDispatch`. So the stand-in
++runs the tool without `SDKROOT` for macOS, gives it the SDK's path for any
++other `-sdk`, as `xcrun` does, and leaves the script's alone without one.
++`--find` and the `--show-sdk-*` queries answer from the Darwin SDK.
++
++**Swift Build is patched, as little as it can be.** `linux-setup.sh` builds
++`swbuild` at the toolchain's tag with `ci/swift-build-linux.patch`. Each
++change is one an upstream pull request could take: a failed `lsregister`
++start is a note, as a failed run already is; provisioning requests go to the
++tool `SWEETPAD_PROVISIONING` names; `derq` is looked up on the search path;
++the Mach-O reader has its structures on every platform; and text encodings
++are found by name without CoreFoundation.
++
++**Signing has no keychain.** The identity is a `.p12` file
++(`SWEETPAD_CODE_SIGN_P12`, its password in `SWEETPAD_CODE_SIGN_P12_PASSWORD`),
++and the profile is picked as automatic signing picks it, from Xcode's
++
+```
+
+**File**: `sweetpad-cli/Cargo.toml` (modified, +11/-0)
+```diff
+@@ -17,6 +17,8 @@ path = "src/bin/sweetpad.rs"
+ sweetpad-lib.workspace = true
+ sweetpad-core.workspace = true
+ serde_json.workspace = true
++base64.workspace = true
++cassowary.workspace = true
+ clap.workspace = true
+ clap_complete.workspace = true
+ dialoguer.workspace = true
+@@ -25,6 +27,15 @@ toml.workspace = true
+ toml_edit.workspace = true
+ libc.workspace = true
+ minreq.workspace = true
++png.workspace = true
++flate2.workspace = true
++hayro.workspace = true
++resvg.workspace = true
++svgtypes.workspace = true
++rsa.workspace = true
++des.workspace = true
++aes.workspace = true
++unicode-normalization.workspace = true
+ 
+ [lints]
+ workspace = true
+```
+
+**File**: `sweetpad-cli/PLAN_LINUX.md` (added, +828/-0)
+```diff
+@@ -0,0 +1,828 @@
++# Building Xcode projects on Linux
++
++Status on 2026-11-01. All the work is on branch `claude/linux-build-pif`, not
++merged into `main` yet.
++
++`sweetpad build` has a Swift Build engine, the default where there's no
++Xcode. It translates the workspace into the PIF that Apple's open-source
++Swift Build takes as input, then runs `swbuild` against a Darwin Swift SDK
++that xtool extracts from the user's own Xcode.app. Xcode tools that Linux
++doesn't have are replaced by the sweetpad binary itself, started under the
++tool's name. lld links. Nothing calls Xcode or xcodebuild at build time.
++
++Items marked *(optional)* can wait until a project needs them.
++
++## Engine
++
++- [x] PIF emitter: `sweetpad pbxproj pif`, GUIDs as `xcodebuild -dumpPIF`
++      derives them, tested against Xcode 27 dumps of a probe fixture and 21
++      corpus projects (`b6398036`, `7284e45b`)
++- [x] The CLI builds and passes its unit tests on Linux; macOS-only FFI has
++      stand-ins that fail clearly (`baedae73`, `180f5091`)
++- [x] `ci/linux-setup.sh` (OrbStack machine or Linux host) and
++      `ci/linux-build.sh` (end-to-end check) (`ca9ba41a`)
++- [x] Swift Build engine: runs swbuild and turns its messages into the
++      events, diagnostics and productPath an xcodebuild build gives
++      (`17c64909`, `bfbbeeb5`)
++- [x] Build requests preserve the scheme's implicit dependency and parallel
++      target policies. The active destination selects the SDK without changing
++      the platforms of implicit dependency candidates
++- [x] Framework module verification uses Swift Build's portable builtin verifier
++- [x] SwiftPM packages through `swift package dump-pif`, merged into the PIF
++      (`42978410`)
++- [x] Cross-import overlays, through a toolset flag (`4e2a25c7`)
++- [x] Apple's macro plugins: SwiftData, `#Predicate` and `#Preview` (see
++      the section below)
++- [x] SwiftPM: dynamic library products as frameworks in
++      `PackageFrameworks`, as Xcode builds them
++      (`--experimental-build-dylibs-as-frameworks`). xtool's linker makes a
++      static archive for `ld -r`, so a stand-in in front of it loads those
++      whole (`-force_load`); otherwise a framework made from a package
++      target alone links none of its code. `corpus/_alamofire-dynamic`
++      (local) embeds `AlamofireDynamic.framework` and passes its checks
++- [ ] SwiftPM: per-test-target products *(optional)*
++- [ ] SwiftPM: a local package's own schemes, which it keeps in its
++      `.swiftpm/xcode` folder: NetNewsWire's `Account` and `Articles` build
++      with Xcode and fail here, since they name no project target
++      *(optional)*
++- [x] SwiftPM: the scheme Xcode makes for a local package's product builds
++      the product's target, `<name>-product` in SwiftPM's PIF, when no
++      project target has the scheme's name. A product shares no name with a
++      module when it's made only of binary targets, like `Foo` in
++      `corpus/_xcframework-app`, which builds here as with Xcode
++- [x] Mach-O on Linux: Swift Build reads Mach-O files only on Darwin
++      (`#if canImport(Darwin)` in `SWBUtil/MachO.swift`), and fails every
++      read elsewhere. It reads a package's binary XCFramework of a framework
++      to decide whether to embed it, a macOS framework from an XCFramework
++      (Sparkle, in NetNewsWire's Mac app) and a watch app's Messages stub.
++      `swift-build-linux.patch` defines the structures it reads in a new
++      `SWBUtil/MachOStructures.swift` and names the architectures, as
++      `macho_arch_name_for_cpu_type` does. `corpus/_xcframework-app` (local,
++      its C framework made by `Vendor/make-xcframework.sh`) embeds a
++      package's binary framework as Xcode does, and NetNewsWire's Mac app
++      embeds Sparkle
++- [x] Text encodings: Swift Build finds an encoding by its name only
++      through CoreFoundation, so it couldn't write a Mac app's `.strings`
++      files, which are UTF-16. The patch names the encodings Foundation
++      converts on every platform; NetNewsWire's 91 `.strings` files come out
++      byte for byte as Xcode's
++- [ ] Macros Tuist builds as macOS tools: its Xcode-project integration of
++      packages makes a macro target a `tool` with `SDKROOT = macosx`, which
++      the targets using it load with `-load-plugin-executable`. That Mach-O
++      can't run here, so the macro isn't found (`swift-case-paths` in a
++      Tuist fixture). Build such a tool for the host
++
++## Apple's macros
++
++Xcode expands the SDK's macros through plugins that are macOS dylibs
++(`iPhoneOS.platform/Developer/usr/lib/swift/host/plugins`). Each macro in
++the SDK's `.swiftinterface` files names its plugin and type in
++`#externalMacro(module:type:)`, which gives the full list. In the Xcode 27
++iOS SDK:
++
++| Plugin | Macros | On Linux |
++|---|---|---|
++| ObservationMacros, SwiftMacros | `@Observable`, `@TaskLocal`, `@DebugDescription`, `_SwiftifyImport` | Swift toolchain |
++| FoundationMacros | `#Predicate`, `#Expression`, `#bu
+```
+
+**File**: `sweetpad-cli/fixtures/actool/expected/index.json` (added, +1141/-0)
+```diff
+@@ -0,0 +1,1141 @@
++{
++ "images": [
++  {
++   "catalogPath": "$(CATALOG)",
++   "objcSymbol": "ACImageName1StImage",
++   "swiftSymbol": "_1St",
++   "relativePath": "./1stImage.imageset"
++  },
++  {
++   "catalogPath": "$(CATALOG)",
++   "objcSymbol": "ACImageNameBigImageView",
++   "swiftSymbol": "bigImageView",
++   "relativePath": "./BigImageView.imageset"
++  },
++  {
++   "catalogPath": "$(CATALOG)",
++   "objcSymbol": "ACImageNameHome",
++   "swiftSymbol": "home",
++   "relativePath": "./my icons/Home.imageset"
++  },
++  {
++   "catalogPath": "$(CATALOG)",
++   "objcSymbol": "ACImageNameImage",
++   "swiftSymbol": "image",
++   "relativePath": "./Image.imageset"
++  },
++  {
++   "catalogPath": "$(CATALOG)",
++   "objcSymbol": "ACImageNameImageName",
++   "swiftSymbol": "imageName",
++   "relativePath": "./Image Name.imageset"
++  },
++  {
++   "catalogPath": "$(CATALOG)",
++   "objcSymbol": "ACImageNameImage2",
++   "swiftSymbol": "image2",
++   "relativePath": "./Image2.imageset"
++  },
++  {
++   "catalogPath": "$(CATALOG)",
++   "objcSymbol": "ACImageNameLeaf",
++   "swiftSymbol": "leaf",
++   "relativePath": "./Nested/Deep/Leaf.imageset"
++  },
++  {
++   "catalogPath": "$(CATALOG)",
++   "objcSymbol": "ACImageNameLogo",
++   "swiftSymbol": "logo",
++   "relativePath": "./Logo.imageset"
++  },
++  {
++   "catalogPath": "$(CATALOG)",
++   "objcSymbol": "ACImageNameLogoImage",
++   "swiftSymbol": "logo",
++   "relativePath": "./LogoImage.imageset"
++  },
++  {
++   "catalogPath": "$(CATALOG)",
++   "objcSymbol": "ACImageNamePadOnly",
++   "swiftSymbol": "padOnly",
++   "relativePath": "./PadOnly.imageset"
++  },
++  {
++   "catalogPath": "$(CATALOG)",
++   "objcSymbol": "ACImageNameStar",
++   "swiftSymbol": "star",
++   "relativePath": "./Icons/Star.imageset"
++  },
++  {
++   "catalogPath": "$(CATALOG)",
++   "objcSymbol": "ACImageNameActions",
++   "swiftSymbol": "actions",
++   "relativePath": "./actions.imageset"
++  },
++  {
++   "catalogPath": "$(CATALOG)",
++   "objcSymbol": "ACImageNameAdd",
++   "swiftSymbol": "add",
++   "relativePath": "./add.imageset"
++  },
++  {
++   "catalogPath": "$(CATALOG)",
++   "objcSymbol": "ACImageNameBranch",
++   "swiftSymbol": "branch",
++   "relativePath": "./branch.imageset"
++  },
++  {
++   "catalogPath": "$(CATALOG)",
++   "objcSymbol": "ACImageNameCheckmark",
++   "swiftSymbol": "checkmark",
++   "relativePath": "./checkmark.imageset"
++  },
++  {
++   "catalogPath": "$(CATALOG)",
++   "objcSymbol": "ACImageNameHighlightedBranch",
++   "swiftSymbol": "highlightedBranch",
++   "relativePath": "./highlightedBranch.imageset"
++  },
++  {
++   "catalogPath": "$(CATALOG)",
++   "objcSymbol": "ACImageNameInit",
++   "swiftSymbol": "`init`",
++   "relativePath": "./init.imageset"
++  },
++  {
++   "catalogPath": "$(CATALOG)",
++   "objcSymbol": "ACImageNameLogoDark",
++   "swiftSymbol": "logoDark",
++   "relativePath": "./logo-dark.imageset"
++  },
++  {
++   "catalogPath": "$(CATALOG)",
++   "objcSymbol": "ACImageNamePhoto",
++   "swiftSymbol": "photo",
++   "relativePath": "./photo.imageset"
++  },
++  {
++   "catalogPath": "$(CATALOG)",
++   "objcSymbol": "ACImageNameRemove",
++   "swiftSymbol": "remove",
++   "relativePath": "./remove.imageset"
++  },
++  {
++   "catalogPath": "$(CATALOG)",
++   "objcSymbol": "ACImageNameSelf",
++   "swiftSymbol": "`self`",
++   "relativePath": "./self.imageset"
++  },
++  {
++   "catalogPath": "$(CATALOG)",
++   "objcSymbol": "ACImageNameStrokedCheckmark",
++   "swiftSymbol": "strokedCheckmark",
++   "relativePath": "./strokedCheckmark.imageset"
++  },
++  {
++   "catalogPath": "$(CATALOG)",
++   "objcSymbol": "ACImageNameSystem",
++   "swiftSymbol": "system",
++   "relativePath": "./system.imageset"
++  }
++ ],
++ "symbols": [],
++ "colors": [
++  {
++   "catalogPath": "$(CATALOG)",
++   "objcSymbol": "ACColorNameHash",
++   "swiftSymbol": "hash",
++   "relativePath": "./#hash.colorset"
++  },
++  {
++   "catalogPath": "$(CATALOG)",
++   "objcSymbol": "ACColorName1StColor",
++   "swiftSymbol": "_1St",
++   "relativePath": "./1stColor.colorset"
++  },
++  {
++   "catalogPath": "$(CATALOG)",
++   "objcSymbol": "ACColorName9",
++   "swiftSymbol": "_9",
++   "relativePath": "./9.colorset"
++  },
++  {
++   "catalogPath": "$(CATALOG)",
++   "objcSymbol": "ACColorNameABCdef",
++   "swiftSymbol": "abCdef",
++   "relativePath": "./ABCdef.colorset"
++  },
++  {
++   "catalogPath": "$(CATALOG)",
++   "objcSymbol": "ACColorNameALLCAPS",
++   "swiftSymbol": "ALLCAPS",
++   "relativePath": "./ALLCAPS.colorset"
++  },
++  {
++   "catalogPath": "$(CATALOG)",
++   "objcSymbol": "ACColorName_A_B",
++   "swiftSymbol": "A_B",
++   "relativePath": "./A_B.colorset"
++  },
++  {
++   "catalogPath": "$(CATALOG)",
++   "objcSymbol": "ACColorNameAccentColor",
++   "swiftSymbol": "accent",
++   "relativePath": "./AccentColor.colorset"
++  },
++  {
++   "catalogPath": "$(CATALOG)",
++   "objcSymbol": "ACColorNameBg",
++   "swiftSymbol": "bg",
++   "relativePath": "./dark-mode/Bg.colorset"
++  },
++  {
++   "catalogPath": "$(CATALOG)",
++   "objcSymbol": "ACColorNameBothIdioms",
++   "swiftSymbol": "bothIdioms",
++   "relativePath"
+```
+
+**File**: `sweetpad-cli/fixtures/actool/expected/no-extensions.swift` (added, +611/-0)
+```diff
+@@ -0,0 +1,611 @@
++import Foundation
++#if canImport(DeveloperToolsSupport)
++import DeveloperToolsSupport
++#endif
++
++#if SWIFT_PACKAGE
++private let resourceBundle = Foundation.Bundle.module
++#else
++private class ResourceBundleClass {}
++private let resourceBundle = Foundation.Bundle(for: ResourceBundleClass.self)
++#endif
++
++// MARK: - Color Symbols -
++
++@available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *)
++extension DeveloperToolsSupport.ColorResource {
++
++    /// The "#hash" asset catalog color resource.
++    static let hash = DeveloperToolsSupport.ColorResource(name: "#hash", bundle: resourceBundle)
++
++    /// The "1stColor" asset catalog color resource.
++    static let _1St = DeveloperToolsSupport.ColorResource(name: "1stColor", bundle: resourceBundle)
++
++    /// The "9" asset catalog color resource.
++    static let _9 = DeveloperToolsSupport.ColorResource(name: "9", bundle: resourceBundle)
++
++    /// The "ABCdef" asset catalog color resource.
++    static let abCdef = DeveloperToolsSupport.ColorResource(name: "ABCdef", bundle: resourceBundle)
++
++    /// The "ALLCAPS" asset catalog color resource.
++    static let ALLCAPS = DeveloperToolsSupport.ColorResource(name: "ALLCAPS", bundle: resourceBundle)
++
++    /// The "A_B" asset catalog color resource.
++    static let A_B = DeveloperToolsSupport.ColorResource(name: "A_B", bundle: resourceBundle)
++
++    /// The "AccentColor" asset catalog color resource.
++    static let accent = DeveloperToolsSupport.ColorResource(name: "AccentColor", bundle: resourceBundle)
++
++    /// The "BothIdioms" asset catalog color resource.
++    static let bothIdioms = DeveloperToolsSupport.ColorResource(name: "BothIdioms", bundle: resourceBundle)
++
++    /// The "Brand Yellow" asset catalog color resource.
++    static let brandYellow = DeveloperToolsSupport.ColorResource(name: "Brand Yellow", bundle: resourceBundle)
++
++    /// The "BrandRed" asset catalog color resource.
++    static let brandRed = DeveloperToolsSupport.ColorResource(name: "BrandRed", bundle: resourceBundle)
++
++    /// The "Color" asset catalog color resource.
++    static let color = DeveloperToolsSupport.ColorResource(name: "Color", bundle: resourceBundle)
++
++    /// The "Color.Dark" asset catalog color resource.
++    static let colorDark = DeveloperToolsSupport.ColorResource(name: "Color.Dark", bundle: resourceBundle)
++
++    #warning("The \"ColorColor\" color asset name resolves to the symbol \"color\" which already exists. Try renaming the asset.")
++
++    /// The "Gray" asset catalog color resource.
++    static let gray = DeveloperToolsSupport.ColorResource(name: "Gray", bundle: resourceBundle)
++
++    /// The "Gray 100" asset catalog color resource.
++    static let gray100 = DeveloperToolsSupport.ColorResource(name: "Gray 100", bundle: resourceBundle)
++
++    /// The "HTML5Color" asset catalog color resource.
++    static let HTML_5 = DeveloperToolsSupport.ColorResource(name: "HTML5Color", bundle: resourceBundle)
++
++    /// The "Icons" asset catalog resource namespace.
++    enum Icons {
++
++        /// The "Icons/Tint" asset catalog color resource.
++        static let tint = DeveloperToolsSupport.ColorResource(name: "Icons/Tint", bundle: resourceBundle)
++
 +    }
 +
-     #[test]
-     fn the_projects_command_line_reaches_resolution_and_the_prepare_build() {
-         let project = format!(
++    /// The "Protocol" asset catalog color resource.
++    static let `protocol` = DeveloperToolsSupport.ColorResource(name: "Protocol", bundle: resourceBundle)
++
++    /// The "Type" asset catalog color resource.
++    static let type = DeveloperToolsSupport.ColorResource(name: "Type", bundle: resourceBundle)
++
++    /// The "UPPER_snake" asset catalog color resource.
++    static let upperSnake = DeveloperToolsSupport.ColorResource(name: "UPPER_snake", bundle: resourceBundle)
++
++    /// The "URLColor" asset catalog color resource.
++    static let URL = DeveloperToolsSupport.ColorResource(name: "URLColor", bundle: resourceBundle)
++
++    /// The "UniPhone" asset catalog color resource.
++    static let uniPhone = DeveloperToolsSupport.ColorResource(name: "UniPhone", bundle: resourceBundle)
++
++    /// The "_private" asset catalog color resource.
++    static let `private` = DeveloperToolsSupport.ColorResource(name: "_private", bundle: resourceBundle)
++
++    /// The "a" asset catalog color resource.
++    static let a = DeveloperToolsSupport.ColorResource(name: "a", bundle: resourceBundle)
++
++    #warning("The \"accent\" color asset name resolves to the symbol \"accent\" which already exists. Try renaming the asset.")
++
++    /// The "alloc" asset catalog color resource.
++    static let alloc = DeveloperToolsSupport.ColorResource(name: "alloc", bundle: resourceBundle)
++
++    /// The "alternateSelectedControl" asset catalog color resource.
++    static let alternateSelectedControl = DeveloperToolsSupport.ColorResource(name: "alternateSelectedControl", bundle: resourceBundle)
++
++    /// The "alternateSelectedControlText" asset catalog color resource.
++    static let alternateSelectedControlText = DeveloperToolsSupport.ColorResource(name: "alternateSelectedControlText
+```
+
+**File**: `sweetpad-cli/fixtures/actool/expected/swiftui.swift` (added, +1588/-0)
+```diff
+@@ -0,0 +1,1588 @@
++import Foundation
++#if canImport(SwiftUI)
++import SwiftUI
++#endif
++#if canImport(DeveloperToolsSupport)
++import DeveloperToolsSupport
++#endif
++
++#if SWIFT_PACKAGE
++private let resourceBundle = Foundation.Bundle.module
++#else
++private class ResourceBundleClass {}
++private let resourceBundle = Foundation.Bundle(for: ResourceBundleClass.self)
++#endif
++
++// MARK: - Color Symbols -
++
++@available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *)
++extension DeveloperToolsSupport.ColorResource {
++
++    /// The "#hash" asset catalog color resource.
++    static let hash = DeveloperToolsSupport.ColorResource(name: "#hash", bundle: resourceBundle)
++
++    /// The "1stColor" asset catalog color resource.
++    static let _1St = DeveloperToolsSupport.ColorResource(name: "1stColor", bundle: resourceBundle)
++
++    /// The "9" asset catalog color resource.
++    static let _9 = DeveloperToolsSupport.ColorResource(name: "9", bundle: resourceBundle)
++
++    /// The "ABCdef" asset catalog color resource.
++    static let abCdef = DeveloperToolsSupport.ColorResource(name: "ABCdef", bundle: resourceBundle)
++
++    /// The "ALLCAPS" asset catalog color resource.
++    static let ALLCAPS = DeveloperToolsSupport.ColorResource(name: "ALLCAPS", bundle: resourceBundle)
++
++    /// The "A_B" asset catalog color resource.
++    static let A_B = DeveloperToolsSupport.ColorResource(name: "A_B", bundle: resourceBundle)
++
++    /// The "AccentColor" asset catalog color resource.
++    static let accent = DeveloperToolsSupport.ColorResource(name: "AccentColor", bundle: resourceBundle)
++
++    /// The "BothIdioms" asset catalog color resource.
++    static let bothIdioms = DeveloperToolsSupport.ColorResource(name: "BothIdioms", bundle: resourceBundle)
++
++    /// The "Brand Yellow" asset catalog color resource.
++    static let brandYellow = DeveloperToolsSupport.ColorResource(name: "Brand Yellow", bundle: resourceBundle)
++
++    /// The "BrandRed" asset catalog color resource.
++    static let brandRed = DeveloperToolsSupport.ColorResource(name: "BrandRed", bundle: resourceBundle)
++
++    /// The "Color" asset catalog color resource.
++    static let color = DeveloperToolsSupport.ColorResource(name: "Color", bundle: resourceBundle)
++
++    /// The "Color.Dark" asset catalog color resource.
++    static let colorDark = DeveloperToolsSupport.ColorResource(name: "Color.Dark", bundle: resourceBundle)
++
++    #warning("The \"ColorColor\" color asset name resolves to the symbol \"color\" which already exists. Try renaming the asset.")
++
++    /// The "Gray" asset catalog color resource.
++    static let gray = DeveloperToolsSupport.ColorResource(name: "Gray", bundle: resourceBundle)
++
++    /// The "Gray 100" asset catalog color resource.
++    static let gray100 = DeveloperToolsSupport.ColorResource(name: "Gray 100", bundle: resourceBundle)
++
++    /// The "HTML5Color" asset catalog color resource.
++    static let HTML_5 = DeveloperToolsSupport.ColorResource(name: "HTML5Color", bundle: resourceBundle)
++
++    /// The "Icons" asset catalog resource namespace.
++    enum Icons {
++
++        /// The "Icons/Tint" asset catalog color resource.
++        static let tint = DeveloperToolsSupport.ColorResource(name: "Icons/Tint", bundle: resourceBundle)
++
++    }
++
++    /// The "PhoneOnly" asset catalog color resource.
++    @available(watchOS, unavailable)
++    static let phoneOnly = DeveloperToolsSupport.ColorResource(thinnableName: "PhoneOnly", bundle: resourceBundle)
++
++    /// The "Protocol" asset catalog color resource.
++    static let `protocol` = DeveloperToolsSupport.ColorResource(name: "Protocol", bundle: resourceBundle)
++
++    /// The "Type" asset catalog color resource.
++    static let type = DeveloperToolsSupport.ColorResource(name: "Type", bundle: resourceBundle)
++
++    /// The "UPPER_snake" asset catalog color resource.
++    static let upperSnake = DeveloperToolsSupport.ColorResource(name: "UPPER_snake", bundle: resourceBundle)
++
++    /// The "URLColor" asset catalog color resource.
++    static let URL = DeveloperToolsSupport.ColorResource(name: "URLColor", bundle: resourceBundle)
++
++    /// The "UniPhone" asset catalog color resource.
++    static let uniPhone = DeveloperToolsSupport.ColorResource(name: "UniPhone", bundle: resourceBundle)
++
++    /// The "_private" asset catalog color resource.
++    static let `private` = DeveloperToolsSupport.ColorResource(name: "_private", bundle: resourceBundle)
++
++    /// The "a" asset catalog color resource.
++    static let a = DeveloperToolsSupport.ColorResource(name: "a", bundle: resourceBundle)
++
++    #warning("The \"accent\" color asset name resolves to the symbol \"accent\" which already exists. Try renaming the asset.")
++
++    /// The "alloc" asset catalog color resource.
++    static let alloc = DeveloperToolsSupport.ColorResource(name: "alloc", bundle: resourceBundle)
++
++    /// The "alternateSelectedControl" asset catalog color resource.
++    static let alternateSelectedControl = DeveloperToolsSupport.ColorR
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #348** (2026-11-08): Document Linux iPhone workflows and macOS CI (@hyzyla)
+- **PR #347** (2026-11-08): Close Linux build gaps and package an experimental ARM64 release (@hyzyla)
+- **PR #346** (2026-11-06): Build Xcode projects on Linux with Swift Build (@hyzyla)
 - **PR #338** (2026-09-19): Launch the simulator app Xcode 27 renamed to DeviceHub (#337) (@hyzyla)
 - **PR #334** (2026-08-26): List schemes from every local Swift package a container reaches (#327) (@hyzyla)
 - **PR #333** (2026-08-25): Show each generic destination with its platform's own icon (@hyzyla)
-- **PR #332** (2026-08-26): Match Xcode's DerivedData folder name when the project name has a space (@hyzyla)
-- **PR #331** (2026-08-25): Rewrite the 0.2.x changelog entries as titles (@hyzyla)
-- **PR #330** (2026-08-25): Pass Xcode's header maps to sourcekit-lsp and prepare every target (@hyzyla)
 
 ---
 
@@ -2018,37 +2629,65 @@ xcodebuild builds the Launch action's runnable for a run even when no Build acti
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Build the scheme's Run target even when the Build action leaves it out (#344)
+## X. Close Linux build gaps and package an ARM64 release (#347)
 
 **RULE**:
-When implementing operations in `sweetpad-core/src/bsp/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sweetpad-dev/sweetpad. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/cli-release.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sweetpad-dev/sweetpad. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9b36d91c`: Build the scheme's Run target even when the Build action leaves it out (#344). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e56e699c`: Close Linux build gaps and package an ARM64 release (#347). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `sweetpad-core/src/bsp/mod.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/cli-release.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    /// The targets the scheme `name` builds: its build entries and the
-    /// runnable a run adds ([`scheme::Scheme::buildables`]), then the targets
-    /// those depend on. A scheme with no file is one Xcode autocreates, which
-    /// builds the target it is named after.
-                    s.buildables()
-                        .map(|b| b.blueprint_name.clone())
+    inputs:
+      platform:
+        description: Platforms to build without publishing
+        type: choice
+        options: [all, linux-arm64]
+        default: all
+      validate_sdk:
+        description: Validate the ARM64 package with a private Apple SDK runner
+        type: boolean
+        default: false
+      sdk_runner_label:
+        description: Label of the provisioned private SDK runner
+        type: string
+        default: sweetpad-linux
+  linux-arm64:
+    name: Linux ARM64 release package
+    uses: ./.github/workflows/linux-arm64-package.yaml
+  sdk-validation:
+    name: Private SDK install validation
+    if: github.event_name == 'workflow_dispatch' && inputs.validate_sdk
+    needs: linux-arm64
+    permissions:
+      contents: read
+      actions: read
+    uses: ./.github/workflows/linux-apple-build.yaml
+    with:
+      artifact_run_id: ${{ github.run_id }}
+      runner_label: ${{ inputs.sdk_runner_label }}
+    if: inputs.platform != 'linux-arm64'
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+        id: version
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          shasum -a 256 "$TARBALL" > "$TARBALL.sha256"
+          path: |
+            *.tar
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    /// The targets the scheme `name` builds: its build entries, then the
-    /// targets those depend on. A scheme with no file is one Xcode
-    /// autocreates, which builds the target it is named after.
-                    s.build_entries
-                        .map(|e| e.buildable.blueprint_name)
+          shasum -a 256 "$TARBALL"
+          path: "*.tar.gz"
+          files: "*.tar.gz"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9b36d91c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e56e699c` are properly handled with clean fallback behavior.

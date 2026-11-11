@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rook-rook-learnings.md`  
 > **Source**: github ([https://github.com/rook/rook](https://github.com/rook/rook))  
-> **Source Version**: `ea53dbf8`  
+> **Source Version**: `ad6e6fc9`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T17:36:39.386Z  
+> **Timestamp**: 2026-11-07T04:44:24.936Z  
 > **Learning ID**: `learn-github-rook-rook`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rook-rook-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rook/rook](https://github.com/rook/rook))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T17:36:39.378Z  
+> **Harvest Timestamp**: 2026-11-07T04:44:24.754Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1406,11 +1406,11 @@ func quanityToInt64(qty string) (*int64, error) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #18621** (2026-11-05): **PVC OSD with a separate metadata PVC is not recreated when wipeDevicesFromOtherClusters is enabled**
+  *Symptoms*: **How to reproduce**  1. Create a CephCluster with the wipe option enabled and a PVC device set with a separate metadata PVC:  ```yaml spec:   cleanupPolicy:     wipeDevicesFromOtherClusters: true   storage:     storageClassDeviceSets:       - name: set1         count: 1         volumeClaimTemplates:           - metadata:               name: data             spec:               volumeMode: Block               # ...           - metadata:               name: metadata             spec:               volumeMode: Block               # ... ```  2. Wait until the OSD is up. 3. Delete the OSD deployment. Rook runs the OSD prepare job again and should recreate the deployment:  ```console kubectl -n rook-ceph delete deploy rook-ceph-osd-0 ```  **Expected**  The OSD comes back up with its data, as it does with `wipeDevicesFromOtherClusters: false`.  **Actual**  The OSD does not come back:  - **Unencrypted OSD:** the OSD's metadata PVC is wiped. The deployment is recreated, but the OSD pod fails to start and the OSD is lost. Its data has to be recovered from other replicas. - **Encrypted OSD:** the deployment is not recreated. The prepare job keeps failing and the OSD stays down. The data is not lost.  In both cases the prepare job wrongly treats the OSD's own metadata PVC as a device from another cluster and wipes it:  ``` cephosd: begin wiping OSD 0 device "/dev/vdc" belonging to a different ceph cluster "" cephosd: zap OSD.0 on device path "/dev/vdc" ```  For the encrypted OSD the wip
+
 - **Issue #18585** (2026-10-19): **RGW pods restart on reconcile without spec change: `rgwCommandFlags` emitted in random order**
   *Symptoms*: **Is this a bug report or feature request?** * Bug Report  **Deviation from expected behavior:**  With two or more `spec.gateway.rgwCommandFlags`, an operator restart can roll the RGW deployment even though nothing in the `CephObjectStore` has changed. The flags are appe nded by ranging over the map, which Go iterates in random order ([spec.go#L580-L583 @ v1.20.8](https://github.com/rook/rook/blob/v1.20.8/pkg/operator/ceph/object/spec.go#L58 0-L583); `master` has the same loop):  ```go for flag, val := range c.store.Spec.Gateway.RgwCommandFlags {         container.Args = append(container.Args, cephconfig.NewFlag(flag, val)) } ```  When the order differs from the last reconcile, the pod template changes and the RGW pods are rolled.  **Expected behavior:**  Same spec, same pod template. Sort the keys:  ```go for _, flag := range slices.Sorted(maps.Keys(c.store.Spec.Gateway.RgwCommandFlags)) { ```  **How to reproduce it (minimal and precise):**  1. Create a `CephObjectStore` with 3 or more `rgwCommandFlags`. 2. Run `kubectl -n rook-ceph rollout restart deploy/rook-ceph-operator`, repeating it a few times. 3. The RGW deployment gets a new ReplicaSet whose only difference is the order of the flags.  **Logs to submit**:  Old and new ReplicaSet after an operator restart. With args sorted, the templates are identical. Unsorted:  ```diff $ diff -U4 <(kubectl -n rook-ceph get rs <old-rs> -o json | jq -r '.spec.template.spec.containers[0].args[]') \            <(kubectl -n rook-ceph get
-
-- **Issue #18559** (2026-10-15): **OSD CRUSH weight is not updated after OSD PVC expansion (Rook v1.19.11) – wrong `MAX AVAIL` / pool `%USED`**
-  *Symptoms*: **Is this a bug report or feature request?** * Bug Report (possibly related to #14430 / #14435)  **Deviation from expected behavior:**  After the OSD PVCs were expanded, the CRUSH weights of the OSDs stayed at their old values. Rook did not correct them, not even after restarting the operator and a full reconcile.  State before the manual fix (`ceph osd df tree`, shortened):  ``` ID   CLASS  WEIGHT   REWEIGHT  SIZE     %USE   VAR   PGS  NAME  0    ssd  0.19530   1.00000  300 GiB  60.00  1.00  145  osd.0  3    ssd  0.04880   1.00000  300 GiB  60.00  1.00  145  osd.3  1    ssd  0.04880   1.00000  300 GiB  60.03  1.00  145  osd.1 ```  The weights correspond to roughly 200 / 50 / 50 GiB, while all three OSDs are 300 GiB (PVC `spec.resources.requests.storage` = `status.capacity.storage` = 300Gi).  Ceph estimates `MAX AVAIL` from CRUSH weights, so it was understated:  ``` ceph df (before):  ceph-filesystem-data0  %USED 77.10  MAX AVAIL 53 GiB ceph df (after manual `ceph osd crush reweight` to 0.29297 on all OSDs):                    ceph-filesystem-data0  %USED 62.73  MAX AVAIL 105 GiB ```  Actual utilization was identical in both cases (~60% on every OSD, `VAR 1.00`), so only the capacity estimate was wrong. This affects CephFS-reported size, pool-usage alerts and the dashboard.  **Expected behavior:**  After an OSD PVC is expanded and the OSD is resized, the OSD CRUSH weight is updated to match the new size (as proposed in #14430 / #14435).  **How to reproduce it (minimal and pre
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1427,591 +1427,269 @@ func quanityToInt64(qty string) (*int64, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9886e5bf` (2026-11-05)
-**Commit Message**: Merge pull request #18648 from billyridgway/wridgway/system-user-fix
+### Incident Patch 1: `eec0baeb` (2026-11-06)
+**Commit Message**: Merge pull request #18702 from travisn/fix-flaky-waitfornostandbys
 
-rgw: create system user when zone has custom endpoints
+test: fix flaky TestWaitForNoStandbys timeout
 
-**File**: `pkg/operator/ceph/object/objectstore.go` (modified, +27/-18)
+**File**: `pkg/daemon/ceph/client/filesystem_test.go` (modified, +6/-1)
 ```diff
-@@ -493,7 +493,7 @@ func createNonMultisiteStore(objContext *Context, endpointArg string, store *cep
- 	return nil
- }
- 
--func JoinMultisite(objContext *Context, endpointArg, zoneEndpoints, namespace string) error {
-+func JoinMultisite(objContext *Context, endpointArg, zoneEndpoints string) error {
- 	log.NamedDebug(objContext.NsName(), logger, "joining zone %v", objContext.Zone)
- 	realmArg := fmt.Sprintf("--rgw-realm=%s", objContext.Realm)
- 	zoneGroupArg := fmt.Sprintf("--rgw-zonegroup=%s", objContext.ZoneGroup)
-@@ -503,21 +503,13 @@ func JoinMultisite(objContext *Context, endpointArg, zoneEndpoints, namespace st
- 	if err != nil {
- 		return err
- 	}
--	zoneGroupIsMaster := false
--
- 	if zoneIsMaster {
- 		// endpoints that are part of a master zone are supposed to be the endpoints for a zone group
- 		_, err := RunAdminCommandNoMultisite(objContext, false, "zonegroup", "modify", realmArg, zoneGroupArg, endpointArg)
- 		if err != nil {
- 			return errorOrIsNotFound(err, "failed to add object store %q in rgw zone group %q", objContext.Name, objContext.ZoneGroup)
+@@ -605,7 +605,12 @@ func TestWaitForNoStandbys(t *testing.T) {
  		}
- 		log.NamedDebug(objContext.NsName(), logger, "endpoints for zonegroup %q are now %q", objContext.ZoneGroup, zoneEndpoints)
--
--		// check if zone group is master only if zone is master for creating the system user
--		zoneGroupIsMaster, err = checkZoneGroupIsMaster(objContext)
--		if err != nil {
--			return errors.Wrapf(err, "failed to find out whether zone group %q in is the master zone group", objContext.ZoneGroup)
--		}
+ 		return "", errors.Errorf("unexpected ceph command %q", args)
  	}
- 	_, err = RunAdminCommandNoMultisite(objContext, false, "zone", "modify", realmArg, zoneGroupArg, zoneArg, endpointArg)
- 	if err != nil {
-@@ -531,17 +523,26 @@ func JoinMultisite(objContext *Context, endpointArg, zoneEndpoints, namespace st
- 
- 	log.NamedInfo(objContext.NsName(), logger, "added object store %q to realm %q, zonegroup %q, zone %q", objContext.Name, objContext.Realm, objContext.ZoneGroup, objContext.Zone)
- 
--	// create system user for realm for master zone in master zonegroup for multisite scenario
--	if zoneIsMaster && zoneGroupIsMaster {
--		err = createSystemUser(objContext, namespace)
--		if err != nil {
--			return err
--		}
--	}
--
- 	return nil
- }
- 
-+// EnsureMultisiteSystemUser creates the realm system user if the zone is the master zone of the
-+// master zone group. It is a no-op for any other zone.
-+func EnsureMultisiteSystemUser(objContext *Context, namespace string) error {
-+	zoneIsMaster, err := CheckZoneIsMaster(objContext)
-+	if err != nil {
-+		return errors.Wrapf(err, "failed to determine if zone %q is master", objContext.Zone)
-+	}
-+	zoneGroupIsMaster, err := checkZoneGroupIsMaster(objContext)
-+	if err != nil {
-+		return errors.Wrapf(err, "failed to determine if zone group %q is master", objContext.ZoneGroup)
-+	}
-+	if !zoneIsMaster || !zoneGroupIsMaster {
-+		return nil
-+	}
-+	return createSystemUser(objContext, namespace)
-+}
-+
- func createSystemUser(objContext *Context, namespace string) error {
- 	uid := objContext.Realm + "-system-user"
- 	uidArg := fmt.Sprintf("--uid=%s", uid)
-@@ -599,12 +600,20 @@ func configureObjectStore(objContext *Context, store *cephv1.CephObjectStore, zo
- 				log.NamedDebug(objContext.NsName(), logger, "Endpoints for zone %q are: %q", objContext.Zone, zoneEndpoints)
- 				endpointArg := fmt.Sprintf("--endpoints=%s", zoneEndpoints)
- 
--				err = JoinMultisite(objContext, endpointArg, zoneEndpoints, store.Namespace)
-+				err = JoinMultisite(objContext, endpointArg, zoneEndpoints)
- 				if err != nil {
- 					return errors.Wrapf(err, "failed join ceph multisite in zone %q", objContext.Zone)
- 				}
- 			}
- 		}
-+		// When custom endpoints are defined the zone's endpoint list is managed by the
-+		// CephObjectZone controller, so the endpoint block above is skipped. The realm system
-+		// user must still exist for the master zone in the master zonegroup regardless.
-+		if zone != nil {
-+			if err := EnsureMultisiteSystemUser(objContext, store.Namespace); err != nil {
-+				return err
-+			}
-+		}
- 	} else {
- 		var endpointArg string
- 		if !store.Spec.Gateway.DisableMultisiteSyncTraffic {
-```
-
-**File**: `pkg/operator/ceph/object/objectstore_test.go` (modified, +93/-0)
-```diff
-@@ -253,6 +253,99 @@ func TestReconcileRealm(t *testing.T) {
- 	assert.Nil(t, err)
- }
- 
-+func TestConfigureObjectStoreWithCustomEndpoints(t *testing.T) {
-+	// zonegroup get returns master zonegroup with master zone
-+	zoneGroupJSON := `{
-+		"id": "fg8ff110-d3fd-49b4-b24f-f6cd3dddfedf",
-+		"name": "zonegroup-a",
-+		"api_name": "zonegroup-a",
-+		"is_master": true,
-+		"endpoints": ["https://custom.endpoint:443"],
-+		"master_zone": "6cb39d2c-3005-49da-9be3-c1a92a97d28a",
-+		"zones": [
-+			{
-+				"id": "6cb39d2c-3005-49da-9be3-c1a92a97d28a",
-+				"name": "zone-a",
-+				"endpoints": ["https://custom.endpoint:443"]
-+			}
-+		],
-+		"realm_id": "237e6250-5f7d-4b85-9359-8cb2b1848507"
-+	}`
-+	// zone get returns zone whose ID matches master_zone above (so it is master)
-+	zoneJSON := `{"id": "6cb39d2c-3005-49da-9be3-c1a92a97d28a", "name": "zone-a"}`
-+
-+	calledUserInfo := false
-+	calledUserCreate := false
-+
-+	ns := "rook-ceph"
-+	realmName := "realm-a"
-+
-+	ctx := t.Context()
-+	secret := &v1.Secret{
-+		ObjectMeta: metav1.ObjectMeta{
-+			Namespace: ns,
-+			Name:      realmName + "-keys",
-+		},
-+		//nolint:gosec // only test values
-+		Data: map[string][]byte{
-+			"access-key": []byte("testAccessKey"),
-+			"secret-key": []byte("testSecretKey"),
-+		},
-+	}
-+	clientset := k8sfake.NewClientset(secret)
-+
-+	executor := &exectest.MockExecutor{
-+		MockExecuteCommandWithTimeout: func(timeout time.Duration, command string, args ...string) (string, error) {
-+			logger.Infof("TestConfigureObjectStoreWithCustomEndpoints: %s %v", command, args)
-+			switch args[0] {
-+			case "zonegroup":
-+				if args[1] == "get" {
-+					return zoneGroupJSON, nil
-+				}
-+			case "zone":
-+				if args[1] == "get" {
-+					return zoneJSON, nil
-+				}
-+			case "user":
-+				if args[1] == "info" {
-+					calledUserInfo = true
-+					// EINVAL signals user not found → triggers user create
-+					return "", exectest.MockExecCommandReturns(t, "", "", int(syscall.EINVAL))
-+				}
-+				if args[1] == "create" {
-+					calledUserCreate = true
-+					return `{"user_id": "realm-a-system-user"}`, nil
-+				}
-+			}
-+			return "", nil
-+		},
-+	}
-+
-+	clusterCtx := &clusterd.Context{Executor: executor, Clientset: clientset}
-+	clusterInfo := &client.ClusterInfo{Namespace: ns, Context: ctx}
-+	objContext := NewContext(clusterCtx, clusterInfo, "my-store")
-+	objContext.Realm = realmName
-+	objContext.ZoneGroup = "zonegroup-a"
-+	objContext.Zone = "zone-a"
-+
-+	store := &cephv1.CephObjectStore{
-+		ObjectMeta: metav1.ObjectMeta{Namespace: ns, Name: "my-store"},
-+		Spec: cephv1.ObjectStoreSpec{
-+			Zone: cephv1.ZoneSpec{Name: "zone-a"},
-+		},
-+	}
-+	zone := &cephv1.CephObjectZone{
-+		Spec: cephv1.ObjectZoneSpec{
-+			CustomEndpoints: []string{"https://custom.endpoint:443"},
-+		},
-+	}
-+
-+	err := configureObjectStore(objContext, store, zone)
-+	assert.NoError(t, err)
-+	assert.True(t, calledUserInfo, "expected user info to be called for system user")
-+	assert.True(t, calledUserCreate, "expected user create to be called for system user")
-+}
-+
- func TestConfigureStoreWithSharedPools(t *testing.T) {
- 	sharedMetaPoolAlreadySet, sharedDataPoolAlreadySet := "", ""
- 	zoneGetCalled := false
-```
-
-**File**: `pkg/operator/ceph/object/zone/controller.go` (modified, +5/-1)
-```diff
-@@ -337,7 +337,11 @@ func (r *ReconcileObjectZone) createZoneIfNotExists(objContext *object.Context,
- 			zoneEndpoints := strings.Join(zone.Spec.CustomEndpoints, ",")
- 			log.NamedDebug(objContext.NsName(), logger, "Updating endpoints for zone %q are: %q", objContext.Zone, zoneEndpoints)
- 			endpointArg := fmt.Sprintf("--endpoints=%s", zoneEndpoints)
--			err = object.JoinMultisite(objContext, endpointArg, zoneEndpoints, zone.Namespace)
-+			err = object.JoinMultisite(objContext, endpointArg, zoneEndpoints)
-+			if err != nil {
-+				return err
-+			}
-+			err = object.EnsureMultisiteSystemUser(objContext, zone.Namespace)
- 			if err != nil {
- 				return err
- 			}
-```
-
-**File**: `tests/scripts/github-action-helper.sh` (modified, +4/-1)
-```diff
-@@ -944,10 +944,13 @@ function nudge_multisite_secondary() {
- # sync state machine wedged in "init" without ever erroring. Restarting the gateways once the
- # join has settled makes sync initialize from the final period, mirroring ceph's own multisite
- # QA, which restarts zone gateways after committing period changes.
-+#
-+# Restart the master first and wait for it: if the secondary starts while the master is down, its
-+# metadata sync fails once at startup and never retries.
- function restart_multisite_rgws() {
-   kubectl -n rook-ceph rollout restart deploy/rook-ceph-rgw-multisite-store-a
--  kubectl -n rook-ceph-secondary rollout restart deploy/rook-ceph-rgw-zone-b-multisite-store-a
-   kubectl -n rook-ceph rollout status deploy/rook-ceph-rgw-multisite-store-a --timeout=120s
-+  kubectl -n rook-ceph-secondary rollout restart deploy/rook-ceph-rgw-zone-b-multisite-store-a
-   kubectl -n rook-ceph-secondary rollout status deploy/rook-ceph-rgw-zone-b-multisite-store-a --timeout=120s
+-	err = WaitForNoStandbys(context, AdminTestClusterInfo("mycluster"), fsName, time.Millisecond, 5*time.Millisecond)
++	// Use a generous timeout here: this case must poll at least twice (the first
++	// dump reports a standby, subsequent dumps report none) before it can succeed.
++	// A tight timeout makes the test flaky under CI scheduling jitter. The poll
++	// returns as soon as the condition is met, so a large timeout keeps the test
++	// fast while eliminating the race.
++	err = WaitForNoStandbys(context, AdminTestClusterInfo("mycluster"), fsName, time.Millisecond, 10*time.Second)
+ 	assert.NoError(t, err)
  }
  
 ```
 
 ---
 
-### Incident Patch 2: `dd3750da` (2026-11-05)
-**Commit Message**: Merge pull request #18627 from taaahaaa/fix-cephnfs-bootstrap-overrides
+### Incident Patch 2: `fb9755c7` (2026-11-06)
+**Commit Message**: build(deps): bump github/codeql-action/upload-sarif
 
-nfs: include cluster config overrides in client config
+Bumps [github/codeql-action/upload-sarif](https://github.com/github/codeql-action) from 4.39.1 to 4.39.2.
+- [Release notes](https://github.com/github/codeql-action/releases)
+- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/github/codeql-action/compare/9b3254085494b55a0f7c4c2b3d2d52cc712ce370...1fc58d04a4d4374f921bdac573c3811c240f9c26)
 
-**File**: `Documentation/Storage-Configuration/Advanced/ceph-configuration.md` (modified, +2/-1)
+---
+updated-dependencies:
+- dependency-name: github/codeql-action/upload-sarif
+  dependency-version: 4.39.2
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/scorecards.yml` (modified, +1/-1)
 ```diff
-@@ -223,7 +223,7 @@ a number of very advanced settings that cannot be modified easily via the CLI or
- dashboard. In order to set configurations before monitors are available or to set advanced
- configuration settings, the `rook-config-override` ConfigMap exists, and the `config` field can be
- set with the contents of a `ceph.conf` file. The contents will be propagated to all mon, mgr, OSD,
--MDS, and RGW daemons as an `/etc/ceph/ceph.conf` file.
-+MDS, RGW, and NFS daemons as an `/etc/ceph/ceph.conf` file.
- 
- !!! warning
-     Rook performs no validation on the config, so the  validity of the settings is the
-@@ -240,6 +240,7 @@ has been initialized, each daemon will need to be restarted where you want the s
- between each restart to ensure the cluster goes back to "active/clean" state.
- * RGW: the pods are stateless and can be restarted as needed.
- * MDS: the pods are stateless and can be restarted as needed.
-+* NFS: the pods are stateless and can be restarted as needed.
- 
- After the pod restart, the new settings should be in effect. Note that if the ConfigMap in the Ceph
- cluster's namespace is created before the cluster is created, the daemons will pick up the settings
+@@ -65,6 +65,6 @@ jobs:
+       # Upload the results to GitHub's code scanning dashboard (optional).
+       # Commenting out will disable upload of results to your repo's Code Scanning dashboard
+       - name: "Upload to code-scanning"
+-        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
++        uses: github/codeql-action/upload-sarif@1fc58d04a4d4374f921bdac573c3811c240f9c26 # v4.39.2
+         with:
+           sarif_file: results.sarif
 ```
 
-**File**: `pkg/operator/ceph/controller/spec.go` (modified, +25/-14)
+---
+
+### Incident Patch 3: `31d074e9` (2026-11-05)
+**Commit Message**: build(deps): bump the github-dependencies group with 4 updates
+
+Bumps the github-dependencies group with 4 updates: [github.com/IBM/go-sdk-core/v5](https://github.com/IBM/go-sdk-core), [github.com/IBM/keyprotect-go-client](https://github.com/IBM/keyprotect-go-client), [github.com/aws/aws-sdk-go-v2/config](https://github.com/aws/aws-sdk-go-v2) and [github.com/aws/aws-sdk-go-v2/credentials](https://github.com/aws/aws-sdk-go-v2).
+
+
+Updates `github.com/IBM/go-sdk-core/v5` from 5.23.5 to 5.25.2
+- [Release notes](https://github.com/IBM/go-sdk-core/releases)
+- [Changelog](https://github.com/IBM/go-sdk-core/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/IBM/go-sdk-core/compare/v5.23.5...v5.25.2)
+
+Updates `github.com/IBM/keyprotect-go-client` from 1.0.1 to 1.1.0
+- [Release notes](https://github.com/IBM/keyprotect-go-client/releases)
+- [Changelog](https://github.com/IBM/keyprotect-go-client/blob/master/CHANGELOG.md)
+- [Commits](https://github.com/IBM/keyprotect-go-client/compare/v1.0.1...v1.1.0)
+
+Updates `github.com/aws/aws-sdk-go-v2/config` from 1.33.12 to 1.33.13
+- [Release notes](https://github.com/aws/aws-sdk-go-v2/releases)
+- [Commits](https://github.com/aws/aws-sdk-go-v2/compar
+
+**File**: `go.mod` (modified, +13/-13)
 ```diff
-@@ -131,9 +131,9 @@ done
- `
+@@ -10,11 +10,11 @@ replace (
  )
  
--// return the volume and matching volume mount for mounting the config override ConfigMap into
--// containers as "/etc/ceph/ceph.conf".
--func configOverrideConfigMapVolumeAndMount() (v1.Volume, v1.VolumeMount) {
-+// ConfigOverrideConfigMapVolumeAndMount returns the volume and matching mount for the optional
-+// override ConfigMap as "/etc/ceph/ceph.conf".
-+func ConfigOverrideConfigMapVolumeAndMount() (v1.Volume, v1.VolumeMount) {
- 	secretAndConfigMapVolumeProjections := []v1.VolumeProjection{}
- 	name := k8sutil.ConfigOverrideName // configmap name and name of volume
- 	dir := opconfig.EtcCephDir
-@@ -149,7 +149,10 @@ func configOverrideConfigMapVolumeAndMount() (v1.Volume, v1.VolumeMount) {
- 	// won't be able to read the ceph.conf and the container will die, the "restart" count will increase in k8s
- 	// This will mislead users into thinking something went wrong, but it's a false positive
- 	mode := int32(0o444)
--	projectionConfigMap := &v1.ConfigMapProjection{Items: []v1.KeyToPath{{Key: k8sutil.ConfigOverrideVal, Path: file, Mode: &mode}}}
-+	projectionConfigMap := &v1.ConfigMapProjection{
-+		Items:    []v1.KeyToPath{{Key: k8sutil.ConfigOverrideVal, Path: file, Mode: &mode}},
-+		Optional: ptr.To(true),
-+	}
- 	projectionConfigMap.Name = name
- 	configMapProjection := v1.VolumeProjection{
- 		ConfigMap: projectionConfigMap,
-@@ -199,7 +202,7 @@ func PodVolumes(dataPaths *opconfig.DataPathMap, dataDirHostPath string, exporte
- 	}
- 	hostPathType := v1.HostPathDirectoryOrCreate
- 	sockDirSource := v1.VolumeSource{HostPath: &v1.HostPathVolumeSource{Path: path.Join(exporterHostPath, daemonSocketsSubPath), Type: &hostPathType}}
--	configVolume, _ := configOverrideConfigMapVolumeAndMount()
-+	configVolume, _ := ConfigOverrideConfigMapVolumeAndMount()
- 	if confGeneratedInPod {
- 		configVolume, _ = ConfGeneratedInPodVolumeAndMount()
- 	}
-@@ -217,7 +220,7 @@ func PodVolumes(dataPaths *opconfig.DataPathMap, dataDirHostPath string, exporte
- // CephVolumeMounts returns the common list of Kubernetes volume mounts for Ceph containers.
- // This function is only used for OSDs.
- func CephVolumeMounts(dataPaths *opconfig.DataPathMap, confGeneratedInPod bool) []v1.VolumeMount {
--	_, configMount := configOverrideConfigMapVolumeAndMount()
-+	_, configMount := ConfigOverrideConfigMapVolumeAndMount()
- 	if confGeneratedInPod {
- 		_, configMount = ConfGeneratedInPodVolumeAndMount()
- 	}
-@@ -241,7 +244,7 @@ func RookVolumeMounts(dataPaths *opconfig.DataPathMap, confGeneratedInPod bool)
- 
- // DaemonVolumesBase returns the common / static set of volumes.
- func DaemonVolumesBase(dataPaths *opconfig.DataPathMap, keyringResourceName string, dataDirHostPath string) []v1.Volume {
--	configOverrideVolume, _ := configOverrideConfigMapVolumeAndMount()
-+	configOverrideVolume, _ := ConfigOverrideConfigMapVolumeAndMount()
- 	vols := []v1.Volume{
- 		configOverrideVolume,
- 	}
-@@ -313,7 +316,7 @@ func DaemonVolumes(dataPaths *opconfig.DataPathMap, keyringResourceName string,
- // volume mounts are shared by most all Ceph daemon containers, both init and standard. If keyring
- // resource name is empty, there will be no keyring mounted in the container.
- func DaemonVolumeMounts(dataPaths *opconfig.DataPathMap, keyringResourceName string, dataDirHostPath string) []v1.VolumeMount {
--	_, configOverrideMount := configOverrideConfigMapVolumeAndMount()
-+	_, configOverrideMount := ConfigOverrideConfigMapVolumeAndMount()
- 	mounts := []v1.VolumeMount{
- 		configOverrideMount,
- 	}
-@@ -594,8 +597,8 @@ func ChownCephDataDirsInitContainer(
- }
- 
- // GenerateMinimalCephConfInitContainer returns an init container that will generate the most basic
--// Ceph config for connecting non-Ceph daemons to a Ceph cluster (e.g., nfs-ganesha). Effectively
--// what this means is that it generates '/etc/ceph/ceph.conf' with 'mon_host' populated and a
-+// Ceph config for connecting non-Ceph daemons to a Ceph cluster (e.g., nfs-ganesha). It includes
-+// cluster config overrides and generates '/etc/ceph/ceph.conf' with 'mon_host' populated and a
- // keyring path associated with the user given. 'mon_host' is determined by the 'ROOK_CEPH_MON_HOST'
- // env var present in other Ceph daemon pods, and the keyring is expected to be mounted into the
- // container with a Kubernetes pod volume+mount.
-@@ -608,12 +611,22 @@ func GenerateMinimalCephConfInitContainer(
- 	securityContext *v1.SecurityContext,
- ) v1.Container {
- 	cfgPath := client.DefaultConfigFilePath()
-+	_, overrideMount := ConfigOverrideConfigMapVolumeAndMount()
-+	// Keep the read-only overrides separate from the writable /etc/ceph emptyDir, where the
-+	// init container combines them with the generated monitor endpoints and client keyring path.
-+	overrideMount.MountPath = "/etc/rook-config-override"
- 	// Note that parameters like $(PARAM) will be replaced by Kubernetes with env var content before
- 	// container creation.
- 	confScript := `
- set -xEeuo pipefail
- 
--cat << EOF > ` + cfgPath + `
-+if [ -s ` + overrideMount.
+ require (
+-	github.com/IBM/go-sdk-core/v5 v5.23.5
+-	github.com/IBM/keyprotect-go-client v1.0.1
++	github.com/IBM/go-sdk-core/v5 v5.25.2
++	github.com/IBM/keyprotect-go-client v1.1.0
+ 	github.com/aws/aws-sdk-go-v2 v1.47.5
+-	github.com/aws/aws-sdk-go-v2/config v1.33.12
+-	github.com/aws/aws-sdk-go-v2/credentials v1.20.12
++	github.com/aws/aws-sdk-go-v2/config v1.33.13
++	github.com/aws/aws-sdk-go-v2/credentials v1.20.13
+ 	github.com/aws/aws-sdk-go-v2/service/s3 v1.114.6
+ 	github.com/aws/aws-sdk-go-v2/service/sns v1.47.7
+ 	github.com/aws/smithy-go v1.28.7
+@@ -79,9 +79,9 @@ require (
+ 	github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.11.9 // indirect
+ 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.8 // indirect
+ 	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.8 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/signin v1.12.0 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/sso v1.39.0 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.44.0 // indirect
++	github.com/aws/aws-sdk-go-v2/service/signin v1.12.1 // indirect
++	github.com/aws/aws-sdk-go-v2/service/sso v1.39.1 // indirect
++	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.44.1 // indirect
+ 	github.com/aws/aws-sdk-go-v2/service/sts v1.51.6 // indirect
+ 	github.com/beorn7/perks v1.0.1 // indirect
+ 	github.com/blang/semver/v4 v4.0.0 // indirect
+@@ -95,15 +95,15 @@ require (
+ 	github.com/evanphx/json-patch/v5 v5.9.11 // indirect
+ 	github.com/fsnotify/fsnotify v1.9.0 // indirect
+ 	github.com/fxamacker/cbor/v2 v2.9.3 // indirect
+-	github.com/gabriel-vasile/mimetype v1.4.15 // indirect
++	github.com/gabriel-vasile/mimetype v1.4.16 // indirect
+ 	github.com/gemalto/flume v1.0.0 // indirect
+ 	github.com/go-errors/errors v1.5.1 // indirect
+ 	github.com/go-jose/go-jose/v4 v4.1.6 // indirect
+ 	github.com/go-logr/zapr v1.3.0 // indirect
+-	github.com/go-openapi/errors v0.22.8 // indirect
++	github.com/go-openapi/errors v0.22.9 // indirect
+ 	github.com/go-openapi/jsonpointer v1.0.0 // indirect
+ 	github.com/go-openapi/jsonreference v1.0.1 // indirect
+-	github.com/go-openapi/strfmt v0.27.2 // indirect
++	github.com/go-openapi/strfmt v0.27.4 // indirect
+ 	github.com/go-openapi/swag v0.29.1 // indirect
+ 	github.com/go-openapi/swag/cmdutils v0.29.1 // indirect
+ 	github.com/go-openapi/swag/conv v0.29.1 // indirect
+@@ -116,9 +116,9 @@ require (
+ 	github.com/go-openapi/swag/stringutils v0.29.1 // indirect
+ 	github.com/go-openapi/swag/typeutils v0.29.1 // indirect
+ 	github.com/go-openapi/swag/yamlutils v0.29.1 // indirect
+-	github.com/go-playground/locales v0.14.1 // indirect
+-	github.com/go-playground/universal-translator v0.18.1 // indirect
+-	github.com/go-playground/validator/v10 v10.30.4 // indirect
++	github.com/go-playground/locales v0.14.2 // indirect
++	github.com/go-playground/universal-translator v0.18.2 // indirect
++	github.com/go-playground/validator/v10 v10.30.5 // indirect
+ 	github.com/go-viper/mapstructure/v2 v2.5.0 // indirect
+ 	github.com/gogo/protobuf v1.3.2 // indirect
+ 	github.com/golang-jwt/jwt/v5 v5.3.1 // indirect
 ```
 
-**File**: `pkg/operator/ceph/controller/spec_test.go` (modified, +125/-0)
+**File**: `go.sum` (modified, +32/-32)
 ```diff
-@@ -20,9 +20,14 @@ import (
- 	"errors"
- 	"fmt"
- 	"math"
-+	"os"
-+	"os/exec"
-+	"path/filepath"
- 	"reflect"
-+	"strings"
- 	"testing"
- 
-+	"github.com/go-ini/ini"
- 	cephv1 "github.com/rook/rook/pkg/apis/ceph.rook.io/v1"
- 	rookclient "github.com/rook/rook/pkg/client/clientset/versioned/fake"
- 	"github.com/rook/rook/pkg/clusterd"
-@@ -33,6 +38,7 @@ import (
- 	"github.com/rook/rook/pkg/operator/test"
- 	exectest "github.com/rook/rook/pkg/util/exec/test"
- 	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
- 	appsv1 "k8s.io/api/apps/v1"
- 	v1 "k8s.io/api/core/v1"
- 	discoveryv1 "k8s.io/api/discovery/v1"
-@@ -84,6 +90,44 @@ func TestMountsMatchVolumes(t *testing.T) {
- 	volsMountsTestDef.TestMountsMatchVolumes(t)
- }
- 
-+func TestConfigOverrideVolumeIsOptional(t *testing.T) {
-+	dataPaths := config.NewDatalessDaemonDataPathMap("rook-ceph-test", "/var/lib/rook")
-+	override, _ := ConfigOverrideConfigMapVolumeAndMount()
-+
-+	for _, tt := range []struct {
-+		name    string
-+		volumes []v1.Volume
-+	}{
-+		{name: "direct helper", volumes: []v1.Volume{override}},
-+		{name: "OSD volumes", volumes: PodVolumes(dataPaths, "", "", false)},
-+		{name: "daemon base volumes", volumes: DaemonVolumesBase(dataPaths, "", "")},
-+		{name: "daemon volumes", volumes: DaemonVolumes(dataPaths, "", "")},
-+	} {
-+		t.Run(tt.name, func(t *testing.T) {
-+			found := false
-+			for _, volume := range tt.volumes {
-+				if volume.Name != k8sutil.ConfigOverrideName {
-+					continue
-+				}
-+				found = true
-+				require.NotNil(t, volume.Projected)
-+				require.Len(t, volume.Projected.Sources, 1)
-+				projection := volume.Projected.Sources[0].ConfigMap
-+				require.NotNil(t, projection)
-+				require.NotNil(t, projection.Optional)
-+				assert.True(t, *projection.Optional)
-+				assert.Equal(t, k8sutil.ConfigOverrideName, projection.Name)
-+				require.Len(t, projection.Items, 1)
-+				assert.Equal(t, k8sutil.ConfigOverrideVal, projection.Items[0].Key)
-+				assert.Equal(t, "ceph.conf", projection.Items[0].Path)
-+				require.NotNil(t, projection.Items[0].Mode)
-+				assert.Equal(t, int32(0o444), *projection.Items[0].Mode)
-+			}
-+			assert.True(t, found)
-+		})
-+	}
-+}
-+
- func TestCheckPodMemory(t *testing.T) {
- 	// This value is in MB
- 	const PodMinimumMemory uint64 = 1024
-@@ -822,3 +866,84 @@ func TestGetDaemonsToSkipReconcile(t *testing.T) {
- 		})
- 	}
- }
-+
-+func TestGenerateMinimalCephConfInitContainer(t *testing.T) {
-+	const clientID = "client.nfs-ganesha.my-nfs.a"
-+	const keyringPath = "/etc/ceph/keyring-store/keyring"
-+	const monHost = "[v2:127.0.0.1:3300]"
-+
-+	for _, tt := range []struct {
-+		name            string
-+		overrides       string
-+		missingOverride bool
-+	}{
-+		{
-+			name: "empty overrides",
-+		},
-+		{
-+			name:      "preserve RDMA settings without trailing newline",
-+			overrides: "[global]\nms_public_type = async+rdma\nms_async_rdma_device_name = mlx5_bond_0\nms_async_rdma_gid_idx = 7\nms_async_rdma_roce_ver = 2",
-+		},
-+		{
-+			name:      "generated values override stale client settings",
-+			overrides: "[global]\nmon_host = stale-host\n[" + clientID + "]\nkeyring = stale-keyring",
-+		},
-+		{
-+			name:      "generated values override stale global settings",
-+			overrides: "[global]\nmon_host = stale-host\nkeyring = stale-keyring\n",
-+		},
-+		{
-+			name:      "preserve literal shell content",
-+			overrides: "[global]\nlog_file = $(touch injected) `touch injected` $HOME",
-+		},
-+		{
-+			name:            "missing override file",
-+			missingOverride: true,
-+		},
-+	} {
-+		t.Run(tt.name, func(t *testing.T) {
-+			container := GenerateMinimalCephConfInitContainer(clientID, keyringPath, "ceph", v1.PullIfNotPresent,
-+				[]v1.VolumeMount{{Name: "generated-config", MountPath: "/etc/ceph"}}, v1.ResourceRequirements{}, nil)
-+			require.Len(t, container.VolumeMounts, 2)
-+			overrideMount := container.VolumeMounts[1]
-+			assert.Equal(t, k8sutil.ConfigOverrideName, overrideMount.Name)
-+			assert.True(t, overrideMount.ReadOnly)
-+			assert.NotEqual(t, "/etc/ceph", overrideMount.MountPath)
-+
-+			dir := t.TempDir()
-+			overrideDir := filepath.Join(dir, "overrides")
-+			require.NoError(t, os.Mkdir(overrideDir, 0o700))
-+			if !tt.missingOverride {
-+				require.NoError(t, os.WriteFile(filepath.Join(overrideDir, "ceph.conf"), []byte(tt.overrides), 0o600))
-+			}
-+			cfgPath := filepath.Join(dir, "ceph.conf")
-+			script := strings.ReplaceAll(container.Command[2], cephclient.DefaultConfigFilePath(), cfgPath)
-+			script = strings.ReplaceAll(script, overrideMount.MountPath, overrideDir)
-+			// Kubernetes expands this reference before starting the container.
-+			script = strings.ReplaceAll(script, "$(ROOK_CEPH_MON_HOST)", monHost)
-+			cmd := exec.Command("bash", "-c", script)
-+			cmd.Dir = dir
-+			out, err := cmd.CombinedOutput()
-+			require.NoError(t, err, string(out))
-+
-+			cfg, err := ini.Load(cfgPath)
-+			require.NoError(t, err)
-+			assert.Equal(t, monHost, cfg.Section("global").Key("mon_host").String())
-+			assert.Equal(t, keyringPath, cfg.Section(clientID
+@@ -450,11 +450,11 @@ github.com/AzureAD/microsoft-authentication-library-for-go v1.3.2 h1:kYRSnvJju5g
+ github.com/AzureAD/microsoft-authentication-library-for-go v1.3.2/go.mod h1:wP83P5OoQ5p6ip3ScPr0BAq0BvuPAvacpEuSzyouqAI=
+ github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
+ github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
+-github.com/IBM/go-sdk-core/v5 v5.23.5 h1:ZJeheBX3Wq01c1Mw0uYtf4SwXB9Oy11hGlx4nZUrB0A=
+-github.com/IBM/go-sdk-core/v5 v5.23.5/go.mod h1:STTfOZKIy3y4WowRDXYQTXb24nrAnIcm0dcxRXrinTk=
++github.com/IBM/go-sdk-core/v5 v5.25.2 h1:WBB+kbsYsF3Qn2kMuJPZBXPFtH53fyi3UNUaq+VFutY=
++github.com/IBM/go-sdk-core/v5 v5.25.2/go.mod h1:83BKM+mYr4eUlkiCJWf36wjF7PSdOOAxeIjTfoSCnTg=
+ github.com/IBM/keyprotect-go-client v0.5.1/go.mod h1:5TwDM/4FRJq1ZOlwQL1xFahLWQ3TveR88VmL1u3njyI=
+-github.com/IBM/keyprotect-go-client v1.0.1 h1:aAMQeN3UjwTOhKtE5ZVJCs/WL0xPVOP26MGowlEKEKU=
+-github.com/IBM/keyprotect-go-client v1.0.1/go.mod h1:aZgNOvyjZPWD6Q9QPm/eVqJcRuZUDucjJ2/Sz2eI/AE=
++github.com/IBM/keyprotect-go-client v1.1.0 h1:TmPeEviEEE5fsQK8TpNZ/fblud9PCV7ZrhuQKjWhaQM=
++github.com/IBM/keyprotect-go-client v1.1.0/go.mod h1:q5beQeQA0ChFa46s31+aK2YuojCukitDaMYNBJgmJkY=
+ github.com/Masterminds/semver/v3 v3.4.0 h1:Zog+i5UMtVoCU8oKka5P7i9q9HgrJeGzI9SA1Xbatp0=
+ github.com/Masterminds/semver/v3 v3.4.0/go.mod h1:4V+yj/TJE1HU9XfppCwVMZq3I84lprf4nC11bSS5beM=
+ github.com/NYTimes/gziphandler v0.0.0-20170623195520-56545f4a5d46/go.mod h1:3wb06e3pkSAbeQ52E9H9iFoQsEEwGN64994WTCIhntQ=
+@@ -494,10 +494,10 @@ github.com/aws/aws-sdk-go-v2 v1.47.5 h1:5yA+A+BiXbDq1ZLbYwPViwhEGDMdR0MEhL8Jh2Ln
+ github.com/aws/aws-sdk-go-v2 v1.47.5/go.mod h1:iNIkogrRvFwm+1OQIUOP2lPBtlXZboOIUWiCa+pHEMw=
+ github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.25 h1:MW0Iql1SOTgQPj8mCxrU/eH/K/AIDWi08ItOsXaWRLU=
+ github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.25/go.mod h1:+ucVYmHYB3JqVueY0E1RHahdXAnKQbIHqybSbvOUbOM=
+-github.com/aws/aws-sdk-go-v2/config v1.33.12 h1:IV1YARaXahwCqUIyP8IlWsP85Lil+5ozTozDQXPumRk=
+-github.com/aws/aws-sdk-go-v2/config v1.33.12/go.mod h1:h51R06bzMVwNBRZOX5ylHhNDnkB/azZeq/LvxM6q2pQ=
+-github.com/aws/aws-sdk-go-v2/credentials v1.20.12 h1:6P7Q7yH/GIwHg6MLKv3ySsBqaCoE1z+C0OTzYMenhEY=
+-github.com/aws/aws-sdk-go-v2/credentials v1.20.12/go.mod h1:Kw/SaoW/wc7IqJErqXJIzKo8b7Aelxfbuc6XlbrRnsc=
++github.com/aws/aws-sdk-go-v2/config v1.33.13 h1:u52x6ISQOx172tpwM0VRxhJzEsTJYpMcEYUGM2A1wrw=
++github.com/aws/aws-sdk-go-v2/config v1.33.13/go.mod h1:/ixtz6XPHb42zekjQ0LqD9XjTpTysNWhIGwufY1OzI4=
++github.com/aws/aws-sdk-go-v2/credentials v1.20.13 h1:j4z41OtspmQ3ftQycaDunJ26b69a9SHfaSVUPqgRv8k=
++github.com/aws/aws-sdk-go-v2/credentials v1.20.13/go.mod h1:SgPA1oS3b+dlMxZb618jDmGNscpXSCaxz15igS52OlE=
+ github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.5 h1:iXjy2SFhGYNB1jWZBhQqq8HbhsbPF23w+/zbMvPXsTg=
+ github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.5/go.mod h1:k0RUiBnyXU0AXRJ9tJmY2jQke6XUIX2PNVnWtvgaPtc=
+ github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.8 h1:gzIWc3DTPfPbWKrQnmL6BV6WD7NPD1htxzgdk/bQ/Z4=
+@@ -516,14 +516,14 @@ github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.8 h1:RS1Wt+K0r4X0ci
+ github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.8/go.mod h1:adMnTy5kyoUW86jhXnGSVc/mvMQI4GZd1qYWMeaS8M8=
+ github.com/aws/aws-sdk-go-v2/service/s3 v1.114.6 h1:to7+Vr3rLkpYRwVKJ5QRriI0eE306vrVN/6TnVHgxvY=
+ github.com/aws/aws-sdk-go-v2/service/s3 v1.114.6/go.mod h1:Jc89ASa2k7HMAskj3bSnt8bf+k+p2IApzkoXnEjkgUw=
+-github.com/aws/aws-sdk-go-v2/service/signin v1.12.0 h1:3vu/eUqh0rjh7Zy4N4YKcpZX4Aud+zinB3VsLhhlQFw=
+-github.com/aws/aws-sdk-go-v2/service/signin v1.12.0/go.mod h1:wxAk0D2oVBSjuXEIzvcKxTZfM90zticdAbh/VD42L0Y=
++github.com/aws/aws-sdk-go-v2/service/signin v1.12.1 h1:WZLC+k/CZx11kZGQDqu9mpA8yhiXGX2I//jhuJE1FDo=
++github.com/aws/aws-sdk-go-v2/service/signin v1.12.1/go.mod h1:wxAk0D2oVBSjuXEIzvcKxTZfM90zticdAbh/VD42L0Y=
+ github.com/aws/aws-sdk-go-v2/service/sns v1.47.7 h1:XKmyF18UU2dk5/7uMWy6ik50hTp4Y/bu7tesKYUoWpY=
+ github.com/aws/aws-sdk-go-v2/service/sns v1.47.7/go.mod h1:Djs3JnE1OSVXBQcOy9uZNKbyrBJfw1QCC6uJRL57wAk=
+-github.com/aws/aws-sdk-go-v2/service/sso v1.39.0 h1:kIEpD5dUry7VET3Ybl7zj7PPHRB4lb52G9iTz+a1Tqk=
+-github.com/aws/aws-sdk-go-v2/service/sso v1.39.0/go.mod h1:UGsEYgWz4Gi+46vDQ5zkFLqUgJziyOE2SXjZjgmfmHc=
+-github.com/aws/aws-sdk-go-v2/service/ssooidc v1.44.0 h1:WfFev+HgTodggcNon5HieiLxxwWwb8Br8R2+nDkixvk=
+-github.com/aws/aws-sdk-go-v2/service/ssooidc v1.44.0/go.mod h1:gJSdIY6YUzDvqQLcMtPVZgBRHrFwzHryvpE8Igzbxps=
++github.com/aws/aws-sdk-go-v2/service/sso v1.39.1 h1:4VB/dnDo7pmXSLQMszSoBzWndENuc7mzwTpD6lQn77A=
++github.com/aws/aws-sdk-go-v2/service/sso v1.39.1/go.mod h1:UGsEYgWz4Gi+46vDQ5zkFLqUgJziyOE2SXjZjgmfmHc=
++github.com/aws/aws-sdk-go-v2/service/ssooidc v1.44.1 h1:w8yui2ZqdHmGwVBDGvazoIvKw/DnLENBLkYnN8q8iqo=
++github.com/aws/aws-sdk-go-v2/service/ssooidc v1.44.1/go.mod h1:gJSdIY6YUzDvqQLcMtPVZgBRHrFwzHryvpE8Igzbxps
 ```
 
-**File**: `pkg/operator/ceph/nfs/spec.go` (modified, +3/-4)
+**File**: `pkg/apis/go.mod` (modified, +3/-3)
 ```diff
-@@ -121,6 +121,7 @@ func (r *ReconcileCephNFS) makeDeployment(nfs *cephv1.CephNFS, cfg daemonConfig)
- 	nfs.Spec.Server.Labels.ApplyToObjectMeta(&deployment.ObjectMeta)
- 
- 	cephConfigVol, _ := cephConfigVolumeAndMount()
-+	cephOverrideVol, _ := controller.ConfigOverrideConfigMapVolumeAndMount()
- 	nfsConfigVol, _ := nfsConfigVolumeAndMount(cfg.ConfigConfigMap)
- 	dbusVol, _ := dbusVolumeAndMount()
- 	podSpec := v1.PodSpec{
-@@ -133,11 +134,9 @@ func (r *ReconcileCephNFS) makeDeployment(nfs *cephv1.CephNFS, cfg daemonConfig)
- 		},
- 		RestartPolicy: v1.RestartPolicyAlways,
- 		Volumes: []v1.Volume{
--			// do not mount usual daemon volumes, as no data is stored for this daemon, and the ceph
--			// config file is generated by the init container. we don't need to worry about missing
--			// override configs, because nfs-ganesha is not a Ceph daemon; it wouldn't observe any
--			// overrides anyway
-+			// The init container combines cluster overrides with NFS client connection settings.
- 			cephConfigVol,
-+			cephOverrideVol,
- 			keyring.Volume().Resource(resourceName),
- 			nfsConfigVol,
- 			dbusVol,
+@@ -44,7 +44,7 @@ require (
+ 	github.com/go-openapi/swag/stringutils v0.29.1 // indirect
+ 	github.com/go-openapi/swag/typeutils v0.29.1 // indirect
+ 	github.com/go-openapi/swag/yamlutils v0.29.1 // indirect
+-	github.com/go-openapi/testify/v2 v2.7.0 // indirect
++	github.com/go-openapi/testify/v2 v2.8.0 // indirect
+ 	github.com/gogo/protobuf v1.3.2 // indirect
+ 	github.com/google/gnostic-models v0.7.1 // indirect
+ 	github.com/google/uuid v1.6.0 // indirect
+@@ -65,8 +65,8 @@ require (
+ 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
+ 	github.com/modern-go/reflect2 v1.0.3-0.20250322232337-35a7c28c31ee // indirect
+ 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
+-	github.com/onsi/ginkgo/v2 v2.32.2 // indirect
+-	github.com/onsi/gomega v1.43.0 // indirect
++	github.com/onsi/ginkgo/v2 v2.33.1 // indirect
++	github.com/onsi/gomega v1.44.0 // indirect
+ 	github.com/ryanuber/go-glob v1.0.0 // indirect
+ 	github.com/sirupsen/logrus v1.9.4 // indirect
+ 	github.com/x448/float16 v0.8.4 // indirect
 ```
 
-**File**: `pkg/operator/ceph/nfs/spec_test.go` (modified, +41/-0)
+**File**: `pkg/apis/go.sum` (modified, +6/-6)
 ```diff
-@@ -30,6 +30,7 @@ import (
- 	optest "github.com/rook/rook/pkg/operator/test"
- 	exectest "github.com/rook/rook/pkg/util/exec/test"
- 	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
- 	v1 "k8s.io/api/core/v1"
- 	"k8s.io/apimachinery/pkg/api/resource"
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-@@ -582,3 +583,43 @@ func TestGetGaneshaConfigNFSPort(t *testing.T) {
- 	cfg = getGaneshaConfig(nfs, cephver.Squid, "a")
- 	assert.Contains(t, cfg, "NFS_Port = 12049;")
- }
-+
-+func TestDeploymentConfigOverrides(t *testing.T) {
-+	r, cfg := newDeploymentSpecTest(t)
-+	nfs := baseCephNFS("my-nfs", "rook-ceph-test-ns")
-+	d, err := r.makeDeployment(nfs, cfg)
-+	require.NoError(t, err)
-+
-+	var overrideVolume *v1.Volume
-+	for i := range d.Spec.Template.Spec.Volumes {
-+		volume := &d.Spec.Template.Spec.Volumes[i]
-+		if volume.Name == k8sutil.ConfigOverrideName {
-+			overrideVolume = volume
-+		}
-+	}
-+	require.NotNil(t, overrideVolume)
-+	require.NotNil(t, overrideVolume.Projected)
-+	require.Len(t, overrideVolume.Projected.Sources, 1)
-+	projection := overrideVolume.Projected.Sources[0].ConfigMap
-+	require.NotNil(t, projection)
-+	require.NotNil(t, projection.Optional)
-+	assert.True(t, *projection.Optional)
-+	assert.Equal(t, k8sutil.ConfigOverrideName, projection.Name)
-+	require.Len(t, projection.Items, 1)
-+	assert.Equal(t, k8sutil.ConfigOverrideVal, projection.Items[0].Key)
-+	assert.Equal(t, "ceph.conf", projection.Items[0].Path)
-+
-+	init := d.Spec.Template.Spec.InitContainers[0]
-+	assert.Equal(t, "generate-minimal-ceph-conf", init.Name)
-+	var overrideMount *v1.VolumeMount
-+	for i := range init.VolumeMounts {
-+		mount := &init.VolumeMounts[i]
-+		if mount.Name == overrideVolume.Name {
-+			overrideMount = mount
-+		}
-+	}
-+	require.NotNil(t, overrideMount)
-+	assert.True(t, overrideMount.ReadOnly)
-+	assert.NotEqual(t, cephclient.DefaultConfigDir, overrideMount.MountPath)
-+	optest.NewPodSpecTester(t, &d.Spec.Template.Spec).AssertVolumesAndMountsMatch()
-+}
+@@ -308,8 +308,8 @@ github.com/go-openapi/swag/yamlutils v0.29.1 h1:69w3tsBajm7MR/fejLy7HD/3J68Ys1Se
+ github.com/go-openapi/swag/yamlutils v0.29.1/go.mod h1:rgsp3vT/QdWzKwn43CigDwjOGIenPyTZMKnxEM8jZOA=
+ github.com/go-openapi/testify/enable/yaml/v2 v2.6.1 h1:Jm+/ze2rMtbD98yen92AhATGLGREDYXG56Xr4gMjEtE=
+ github.com/go-openapi/testify/enable/yaml/v2 v2.6.1/go.mod h1:YDPnwCRDu38/oJBVMBVXOUDiJ9cIeBHWvfImHaXqnv4=
+-github.com/go-openapi/testify/v2 v2.7.0 h1:bycOreEj6wfBvijg3YFogZ/sFjTCDmQnwSodSzHa3X8=
+-github.com/go-openapi/testify/v2 v2.7.0/go.mod h1:SgsVHtfooshd0tublTtJ50FPKhujf47YRqauXXOUxfw=
++github.com/go-openapi/testify/v2 v2.8.0 h1:19QDx5b57p8KjO2E4sgs/woL4Akp+FGLRlVm2xn0Rho=
++github.com/go-openapi/testify/v2 v2.8.0/go.mod h1:4gUN8jC+RqOE2qjW/vDmfyTvl5BCht4qL7oca0odrak=
+ github.com/go-openapi/validate v0.18.0/go.mod h1:Uh4HdOzKt19xGIGm1qHf/ofbX1YQ4Y+MYsct2VUrAJ4=
+ github.com/go-openapi/validate v0.19.2/go.mod h1:1tRCw7m3jtI8eNWEEliiAqUIcBztB2KDnRCRMUi7GTA=
+ github.com/go-openapi/validate v0.19.5/go.mod h1:8DJv2CVJQ6kGNpFW6eV9N3JviE1C85nY1c2z52x1Gk4=
+@@ -633,8 +633,8 @@ github.com/onsi/ginkgo/v2 v2.3.0/go.mod h1:Eew0uilEqZmIEZr8JrvYlvOM7Rr6xzTmMV8Ay
+ github.com/onsi/ginkgo/v2 v2.4.0/go.mod h1:iHkDK1fKGcBoEHT5W7YBq4RFWaQulw+caOMkAt4OrFo=
+ github.com/onsi/ginkgo/v2 v2.5.0/go.mod h1:Luc4sArBICYCS8THh8v3i3i5CuSZO+RaQRaJoeNwomw=
+ github.com/onsi/ginkgo/v2 v2.6.0/go.mod h1:63DOGlLAH8+REH8jUGdL3YpCpu7JODesutUjdENfUAc=
+-github.com/onsi/ginkgo/v2 v2.32.2 h1:2o6vyFvR6snrJWgRVztC+OwuqqPEMI1UzYl2s2iU7Cg=
+-github.com/onsi/ginkgo/v2 v2.32.2/go.mod h1:+aXOY+vzZ5mu2iI2HpTZUPmM//oQfsNFX6gU9kNcA44=
++github.com/onsi/ginkgo/v2 v2.33.1 h1:62XfWJbEIjPSCSDYrsCPP/SHcmH7O0M8ne8zfqQ2iz4=
++github.com/onsi/ginkgo/v2 v2.33.1/go.mod h1:+aXOY+vzZ5mu2iI2HpTZUPmM//oQfsNFX6gU9kNcA44=
+ github.com/onsi/gomega v0.0.0-20170829124025-dcabb60a477c/go.mod h1:C1qb7wdrVGGVU+Z6iS04AVkA3Q65CEZX59MT0QO5uiA=
+ github.com/onsi/gomega v1.4.2/go.mod h1:ex+gbHU/CVuBBDIJjb2X0qEXbFg53c61hWP/1CpauHY=
+ github.com/onsi/gomega v1.7.0/go.mod h1:ex+gbHU/CVuBBDIJjb2X0qEXbFg53c61hWP/1CpauHY=
+@@ -648,8 +648,8 @@ github.com/onsi/gomega v1.22.1/go.mod h1:x6n7VNe4hw0vkyYUM4mjIXx3JbLiPaBPNgB7PRQ
+ github.com/onsi/gomega v1.23.0/go.mod h1:Z/NWtiqwBrwUt4/2loMmHL63EDLnYHmVbuBpDr2vQAg=
+ github.com/onsi/gomega v1.24.0/go.mod h1:Z/NWtiqwBrwUt4/2loMmHL63EDLnYHmVbuBpDr2vQAg=
+ github.com/onsi/gomega v1.24.1/go.mod h1:3AOiACssS3/MajrniINInwbfOOtfZvplPzuRSmvt1jM=
+-github.com/onsi/gomega v1.43.0 h1:VlG/1FxqNxhSO+lq/OHBNaaqwiBK/mO8JbVkX9Y+FeU=
+-github.com/onsi/gomega v1.43.0/go.mod h1:REff/hsDsodHoKlWsP2mAPhu1+5/6hVYNf9rIEBpeSg=
++github.com/onsi/gomega v1.44.0 h1:eAiGl3Pw5jz5GQdDff0BcxYpAX1JxW8xD7mFUuwNfZQ=
++github.com/onsi/gomega v1.44.0/go.mod h1:e/C2HwaZ1DhvjzXXuFhcR7hY7Sh9pl7MmoWKEjzwcdA=
+ github.com/openshift/api v0.0.0-20210105115604-44119421ec6b/go.mod h1:aqU5Cq+kqKKPbDMqxo9FojgDeSpNJI7iuskjXjtojDg=
+ github.com/openshift/api v0.0.0-20241216151652-de9de05a8e43 h1:3lcB5nqOOfsJzY4JD12AMKyg3+yQhAdJzNDenbmbMQg=
+ github.com/openshift/api v0.0.0-20241216151652-de9de05a8e43/go.mod h1:Shkl4HanLwDiiBzakv+con/aMGnVE2MAGvoKp5oyYUo=
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #18688** (closed): Wrong repo D: (@BlaineEXE)
-- **PR #18685** (2026-11-04): test: summarize most Secrets in collected logs instead of dumping them (backport #18668) (@mergify[bot])
-- **PR #18684** (2026-11-04): test: summarize most Secrets in collected logs instead of dumping them (backport #18668) (@mergify[bot])
-- **PR #18683** (2026-11-05): object: add VAULT_TRANSIT_BACKEND_PATH for the RGW SSE-S3 transit mount (backport #18598) (@mergify[bot])
-- **PR #18680** (2026-11-03): operator: disable msgr1 on osd, mgr, and mds when msgr2 is required (backport #18557) (@mergify[bot])
-- **PR #18678** (2026-11-05): build: bump golang.org/x/net to v0.62.0 (@jhoblitt)
+- **PR #18747** (2026-11-06): core: keep additional volume mounts inside their root directory (backport #18714) (@mergify[bot])
+- **PR #18737** (2026-11-06): build: bump indirect dependencies to match release branches (@jhoblitt)
+- **PR #18735** (2026-11-06): mds: honor the do-not-reconcile label on mds deployments (backport #18708) (@mergify[bot])
+- **PR #18733** (2026-11-06): osd: report error when duplicate osd id is detected (backport #17275) (@mergify[bot])
+- **PR #18732** (closed): build(deps): bump the all-dependencies group across 1 directory with 89 updates (@dependabot[bot])
+- **PR #18731** (closed): build(deps): bump the all-dependencies group across 1 directory with 91 updates (@dependabot[bot])
 
 ---
 
@@ -2031,70 +1709,33 @@ nfs: include cluster config overrides in client config
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #18648 from billyridgway/wridgway/system-user-fix
+## X. Merge pull request #18702 from travisn/fix-flaky-waitfornostandbys
 
 **RULE**:
-When implementing operations in `pkg/operator/ceph/object/objectstore.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rook/rook. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/daemon/ceph/client/filesystem_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rook/rook. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9886e5bf`: Merge pull request #18648 from billyridgway/wridgway/system-user-fix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `eec0baeb`: Merge pull request #18702 from travisn/fix-flaky-waitfornostandbys. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/operator/ceph/object/objectstore.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/daemon/ceph/client/filesystem_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-func JoinMultisite(objContext *Context, endpointArg, zoneEndpoints string) error {
-// EnsureMultisiteSystemUser creates the realm system user if the zone is the master zone of the
-// master zone group. It is a no-op for any other zone.
-func EnsureMultisiteSystemUser(objContext *Context, namespace string) error {
-	zoneIsMaster, err := CheckZoneIsMaster(objContext)
-	if err != nil {
-		return errors.Wrapf(err, "failed to determine if zone %q is master", objContext.Zone)
-	}
-	zoneGroupIsMaster, err := checkZoneGroupIsMaster(objContext)
-	if err != nil {
-		return errors.Wrapf(err, "failed to determine if zone group %q is master", objContext.ZoneGroup)
-	}
-	if !zoneIsMaster || !zoneGroupIsMaster {
-		return nil
-	}
-	return createSystemUser(objContext, namespace)
-}
-
-				err = JoinMultisite(objContext, endpointArg, zoneEndpoints)
-		// When custom endpoints are defined the zone's endpoint list is managed by the
-		// CephObjectZone controller, so the endpoint block above is skipped. The realm system
-		// user must still exist for the master zone in the master zonegroup regardless.
-		if zone != nil {
-			if err := EnsureMultisiteSystemUser(objContext, store.Namespace); err != nil {
-				return err
-		
+	// Use a generous timeout here: this case must poll at least twice (the first
+	// dump reports a standby, subsequent dumps report none) before it can succeed.
+	// A tight timeout makes the test flaky under CI scheduling jitter. The poll
+	// returns as soon as the condition is met, so a large timeout keeps the test
+	// fast while eliminating the race.
+	err = WaitForNoStandbys(context, AdminTestClusterInfo("mycluster"), fsName, time.Millisecond, 10*time.Second)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-func JoinMultisite(objContext *Context, endpointArg, zoneEndpoints, namespace string) error {
-	zoneGroupIsMaster := false
-
-
-		// check if zone group is master only if zone is master for creating the system user
-		zoneGroupIsMaster, err = checkZoneGroupIsMaster(objContext)
-		if err != nil {
-			return errors.Wrapf(err, "failed to find out whether zone group %q in is the master zone group", objContext.ZoneGroup)
-		}
-	// create system user for realm for master zone in master zonegroup for multisite scenario
-	if zoneIsMaster && zoneGroupIsMaster {
-		err = createSystemUser(objContext, namespace)
-		if err != nil {
-			return err
-		}
-	}
-
-				err = JoinMultisite(objContext, endpointArg, zoneEndpoints, store.Namespace)
+	err = WaitForNoStandbys(context, AdminTestClusterInfo("mycluster"), fsName, time.Millisecond, 5*time.Millisecond)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9886e5bf` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `eec0baeb` are properly handled with clean fallback behavior.

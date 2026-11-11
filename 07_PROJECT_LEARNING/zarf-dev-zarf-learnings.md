@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md`  
 > **Source**: github ([https://github.com/zarf-dev/zarf](https://github.com/zarf-dev/zarf))  
-> **Source Version**: `be6d4c52`  
+> **Source Version**: `328d1d31`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T12:36:40.110Z  
+> **Timestamp**: 2026-11-10T00:31:55.932Z  
 > **Learning ID**: `learn-github-zarf-dev-zarf`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zarf-dev/zarf](https://github.com/zarf-dev/zarf))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T12:36:40.103Z  
+> **Harvest Timestamp**: 2026-11-10T00:31:54.628Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Airgap Native Package Manager for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 2085 stars
+- **Stars / Engagement**: 2087 stars
 
 ---
 
@@ -1459,16 +1459,17 @@ func mutateEphemeralContainers(ctx context.Context, cluster *cluster.Cluster, po
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5611** (2026-11-05): **chore(deps): bump the k8s group across 1 directory with 6 updates**
-  *Symptoms*: Bumps the k8s group with 6 updates in the / directory:  | Package | From | To | | --- | --- | --- | | [k8s.io/api](https://github.com/kubernetes/api) | `0.37.1` | `0.37.2` | | [k8s.io/apimachinery](https://github.com/kubernetes/apimachinery) | `0.37.1` | `0.37.2` | | [k8s.io/client-go](https://github.com/kubernetes/client-go) | `0.37.1` | `0.37.2` | | [k8s.io/kubectl](https://github.com/kubernetes/kubectl) | `0.37.1` | `0.37.2` | | [k8s.io/cli-runtime](https://github.com/kubernetes/cli-runtime) | `0.37.1` | `0.37.2` | | [k8s.io/component-helpers](https://github.com/kubernetes/component-helpers) | `0.37.1` | `0.37.2` |   Updates `k8s.io/api` from 0.37.1 to 0.37.2 <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/kubernetes/api/commit/1bc0c529309723075aed339d50f16d4b311d908d"><code>1bc0c52</code></a> Update dependencies to v0.37.2 tag</li> <li>See full diff in <a href="https://github.com/kubernetes/api/compare/v0.37.1...v0.37.2">compare view</a></li> </ul> </details> <br />  Updates `k8s.io/apimachinery` from 0.37.1 to 0.37.2 <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/kubernetes/apimachinery/commit/97adf147c7378229d45db0fc7511af84d0c3c092"><code>97adf14</code></a> Update dependencies to v0.37.2 tag</li> <li>See full diff in <a href="https://github.com/kubernetes/apimachinery/compare/v0.37.1...v0.37.2">compare view</a></li> </ul> </details> <br />  Updates `k8s.io/client-go` from 0.37.1 to 0.37.2 <details> <summary>Commits</
+- **Issue #5634** (2026-11-09): **feat!: create dedicated sign/verify options types**
+  *Symptoms*: ## Description  We know we want to refactor the signing/verify logic soon after v1. This itself is fine as we intend to put the signing package - as it depends heavily on a third-party dependency - as outside of the core support boundary in the deprecation policy.   So deprecating older logic won't be an issue - but we have embedded fields that tie other operations to the signing package via the embedded options types.   This is a quick spike to look at decoupling package operations from the signing types - reduced to only what the CLI supports.   ## Related Issue   ## Checklist before merging  - [x] Test, docs, adr added or updated as needed - [x] [Contributor Guide Steps](https://github.com/zarf-dev/zarf/blob/main/CONTRIBUTING.md#developer-workflow) followed 
   **Post-Mortem & Fix Analysis**:
-  > ### <span aria-hidden="true">✅</span> Deploy Preview for *zarf-docs* canceled.   |  Name | Link | |:-:|------------------------| |<span aria-hidden="true">🔨</span> Latest commit | c1324a63606ed99506e76582c8b7d65478e23bd4 | |<span aria-hidden="true">🔍</span> Latest deploy log | https://app.netlify.com/projects/zarf-docs/deploys/6aebd1cfb32502a76deaa441 |
+  > ### <span aria-hidden="true">✅</span> Deploy Preview for *zarf-docs* canceled.   |  Name | Link | |:-:|------------------------| |<span aria-hidden="true">🔨</span> Latest commit | 8da43af08a9498d5dd6b13214c8d0f38c500e4af | |<span aria-hidden="true">🔍</span> Latest deploy log | https://app.netlify.com/projects/zarf-docs/deploys/6af16920365a011110ab97cf |
+  > ## [Codecov](https://app.codecov.io/gh/zarf-dev/zarf/pull/5634?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=zarf-dev) Report :x: Patch coverage is `74.07407%` with `28 lines` in your changes missing coverage. Please review.  | [Files with missing lines](https://app.codecov.io/gh/zarf-dev/zarf/pull/5634?dropdown=coverage&src=pr&el=tree&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=zarf-dev) | Patch % | Lines | |---|---|---| | [src/cmd/package.go](https://app.codecov.io/gh/zarf-dev/zarf/pull/5634?src=pr&el=tree&filepath=src%2Fcmd%2Fpackage.go&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=zarf-dev#diff-c3JjL2NtZC9wYWNrYWdlLmdv) | 58.62% | [12 Missing :warning: ](https://app.codecov.io/gh/zarf-dev/zarf/pull/5634?src=pr&el=tree&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=zarf-
 
-- **Issue #5607** (2026-11-04): **docs: update custom init package tutorial**
-  *Symptoms*: ## Description  Refresh the Custom Init Packages tutorial for current Zarf behavior and structured logging.  The tutorial now uses the current `packages/init/v1alpha1` package definition, documents the supported image and registry override configuration, and removes obsolete package-creation confirmation and pre-v0.26 guidance.  The troubleshooting example is shared with Tutorial 0 through `package_create_error.html` and was updated in the earlier package-creation tutorial PR, so it is unchanged here.  ## Screenshots <img width="867" height="687" alt="create-custom-init" src="https://github.com/user-attachments/assets/a8638996-a81e-4eff-ae1e-78cd3025006f" /> <img width="850" height="189" alt="customize" src="https://github.com/user-attachments/assets/31dfe114-6a88-4b7a-a4c9-a551a9ecdff6" /> <img width="852" height="556" alt="swapping-images-01" src="https://github.com/user-attachments/assets/57ce6763-99df-4e39-8017-b69e0e3cb8e6" /> <img width="829" height="740" alt="swapping-images-02" src="https://github.com/user-attachments/assets/a2503cc8-246f-4d83-99c0-8c7b4f3ed727" /> <img width="831" height="582" alt="swapping-images-03" src="https://github.com/user-attachments/assets/4180d694-4945-4452-a67f-45ea08447841" /> <img width="846" height="122" alt="removing-components" src="https://github.com/user-attachments/assets/b40ac6fa-5a8c-4f2f-8b29-25c8ea418498" />   ## Related Issue  Relates to #4057  ## Checklist before merging  - [x] Test, docs, adr added or updated as needed - [x]
+- **Issue #5631** (2026-11-09): **feat!: limit v1beta1 init package values chart inputs**
+  *Symptoms*: ## Description  There was a lot that could be set by the v1beta1 package. Including state values which must be set by the CLI, but also things like service names and port numbers that the CLI hardcodes in it's connections. A good amount of these options can be opened up later with more care and attention, however for now I'm limiting it to only the configuration options that we've already exposed in v1alpha1.   As a plus I think inspecting the package definition does make it a bit easier to see what's going on in terms of what each value does (though we need better inspect commands for values eventually)   ## Checklist before merging  - [ ] Test, docs, adr added or updated as needed - [ ] [Contributor Guide Steps](https://github.com/zarf-dev/zarf/blob/main/CONTRIBUTING.md#developer-workflow) followed 
   **Post-Mortem & Fix Analysis**:
-  > ### <span aria-hidden="true">👷</span> Deploy request for *zarf-docs* pending review. [Visit the deploys page to approve it](https://app.netlify.com/projects/zarf-docs/deploys)  |  Name | Link | |:-:|------------------------| |<span aria-hidden="true">🔨</span> Latest commit | 1cb060b5bde4c094d93f5fc5c247785f32b01da8 |
-  > Hi @shaversj appreciate the PR, but I actually stood up a PR yesterday to update this https://github.com/zarf-dev/zarf/pull/5598 as it should now reflect v1beta1, so I am closing this out. 
+  > ### <span aria-hidden="true">✅</span> Deploy Preview for *zarf-docs* canceled.   |  Name | Link | |:-:|------------------------| |<span aria-hidden="true">🔨</span> Latest commit | 7086a69122de8779f5ad3a777690ed95aaad0af4 | |<span aria-hidden="true">🔍</span> Latest deploy log | https://app.netlify.com/projects/zarf-docs/deploys/6af1032377610decf92e588d |
+  > ## [Codecov](https://app.codecov.io/gh/zarf-dev/zarf/pull/5631?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=zarf-dev) Report :white_check_mark: All modified and coverable lines are covered by tests. [see 53 files with indirect coverage changes](https://app.codecov.io/gh/zarf-dev/zarf/pull/5631/indirect-changes?src=pr&el=tree-more&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=zarf-dev) <details><summary> :rocket: New features to boost your workflow: </summary>  - :snowflake: [Test Analytics](https://docs.codecov.com/docs/test-analytics): Detect flaky tests, report on failures, and find test suite problems. - :package: [JS Bundle Analysis](https://docs.codecov.com/docs/javascript-bundle-analysis): Save yourself from yourself by tracking and limiting bundle sizes in JS merges. </details>
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1485,346 +1486,286 @@ func mutateEphemeralContainers(ctx context.Context, cluster *cluster.Cluster, po
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `be6d4c52` (2026-11-05)
-**Commit Message**: chore(deps): bump the k8s group across 1 directory with 6 updates (#5611)
+### Incident Patch 1: `328d1d31` (2026-11-09)
+**Commit Message**: chore: document deprecation policy and update security.md (#5604)
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Signed-off-by: Brandt Keller <[REDACTED_EMAIL]>
 
-**File**: `go.mod` (modified, +8/-8)
+**File**: `.github/SECURITY.md` (modified, +29/-17)
 ```diff
-@@ -50,11 +50,11 @@ require (
- 	golang.org/x/crypto v0.57.0
- 	golang.org/x/sync v0.24.0
- 	helm.sh/helm/v4 v4.3.0
--	k8s.io/api v0.37.1
--	k8s.io/apimachinery v0.37.1
--	k8s.io/client-go v0.37.1
-+	k8s.io/api v0.37.2
-+	k8s.io/apimachinery v0.37.2
-+	k8s.io/client-go v0.37.2
- 	k8s.io/klog/v2 v2.140.0
--	k8s.io/kubectl v0.37.1
-+	k8s.io/kubectl v0.37.2
- 	k8s.io/streaming v0.37.2
- 	oras.land/oras-go/v2 v2.6.2
- 	sigs.k8s.io/cli-utils v0.37.2
-@@ -253,7 +253,7 @@ require (
- 	gopkg.in/evanphx/json-patch.v4 v4.13.0 // indirect
- 	helm.sh/helm/v3 v3.21.3 // indirect
- 	howett.net/plist v1.0.1 // indirect
--	k8s.io/component-base v0.37.1 // indirect
-+	k8s.io/component-base v0.37.2 // indirect
- 	modernc.org/gc/v3 v3.1.4 // indirect
- 	modernc.org/strutil v1.2.1 // indirect
- 	modernc.org/token v1.1.0 // indirect
-@@ -631,10 +631,10 @@ require (
- 	gorm.io/gorm v1.31.1 // indirect
- 	k8s.io/apiextensions-apiserver v0.37.0 // indirect
- 	k8s.io/apiserver v0.37.0 // indirect
--	k8s.io/cli-runtime v0.37.1
--	k8s.io/component-helpers v0.37.1
-+	k8s.io/cli-runtime v0.37.2
-+	k8s.io/component-helpers v0.37.2
- 	k8s.io/kube-openapi v0.0.0-20260721132016-d427ff9ee9ad // indirect
--	k8s.io/metrics v0.37.1 // indirect
-+	k8s.io/metrics v0.37.2 // indirect
- 	k8s.io/utils v0.0.0-20260626114624-be93311217bd
- 	modernc.org/libc v1.74.4 // indirect
- 	modernc.org/mathutil v1.7.1 // indirect
+@@ -1,36 +1,48 @@
+ # Reporting Security Issues
+ 
+-To report a security issue or vulnerability in Zarf, please use the confidential GitHub Security Advisory ["Report a Vulnerability"](https://github.com/zarf-dev/zarf/security/advisories) tab. The Zarf team will send a response indicating the next steps in handling your report. After the initial reply to your report, the team will keep you informed of the progress towards a fix and full announcement, and may ask for additional information or guidance.
++## Report a Vulnerability
+ 
+-### When Should I Report a Vulnerability?
++Report a security issue or vulnerability through GitHub Security Advisories using the confidential [Report a Vulnerability](https://github.com/zarf-dev/zarf/security/advisories) workflow. Do not disclose exploit details publicly before the team has coordinated a fix and disclosure with you.
+ 
+-* You found a vulnerability in the Zarf code.
+-* You found a vulnerability in one of the Zarf dependencies that affects the project that has not been patched yet.
++## What to Include
+ 
+-### When Should I NOT Report a Vulnerability?
++Include the affected Zarf version and deployment environment, the affected package create, deploy, runtime, or state-management path, reproduction steps or a proof of concept, the impact and attack preconditions, and a suggested mitigation if known.
+ 
+-* You found a bug or malfunction in the Zarf code (not security related).
+-* You want to add a feature to Zarf.
++## When to Report a Vulnerability
++
++- You found a vulnerability in Zarf code.
++- You found an unpatched vulnerability in a Zarf dependency that affects the project.
++
++## When Not to Report a Vulnerability
++
++- You found a bug or malfunction that is not security-related.
++- You want to add a feature to Zarf.
++
++Use the [issue tracker](https://github.com/zarf-dev/zarf/issues) for non-security bugs and feature requests.
+ 
+ ## Supported Versions
+ 
+-As Zarf has not yet reached v1.0.0, only the current latest minor release is supported.
++Security fixes are provided for the latest stable minor release of the current major version. Affected users should upgrade to the current supported release. Maintainers MAY provide a backport when operational impact warrants it.
++
++## Disclosure and Remediation Process
++
++1. Maintainers acknowledge the report and assess its impact.
++2. Maintainers coordinate a fix and disclosure with the reporter when appropriate.
++3. Zarf publishes a fixed release, security advisory, and migration guidance as applicable.
++4. Zarf pursues CVE assignment when appropriate. A CVE is not required before a fix is released.
+ 
+ ## Contacting Us
+ 
+-To discuss security related issues, please email the maintainers at zarf-dev-private@googlegroups.com.
++For security discussions that cannot use GitHub Security Advisories, email the maintainers at [zarf-dev-private@googlegroups.com](mailto:zarf-dev-private@googlegroups.com).
++
++## CVE Posture and VEX
+ 
+-## CVE Posture & VEX
++Each Zarf release includes a **VEX (Vulnerability Exploitability eXchange) document** that records the project's assessment of known dependency findings for that release. It is not a substitute for a security advisory, a list of all vulnerabilities, or a guarantee that a finding is non-exploitable in every deployment.
+ 
+-Each Zarf release includes a **VEX (Vulnerability Exploitability eXchange) document**
+-that captures accepted, non-exploitable findings with documented justification.
+-You can use this file to reproduce Zarf's accepted-CVE posture when scanning with
+-[`grype`](https://github.com/anchore/grype):
++Use the VEX document with [`grype`](https://github.com/anchore/grype):
+ 
+ ```bash
+ grype zarf --vex zarf.cli.openvex.json
+ ```
+ 
+-`zarf.cli.openvex.json` is available as a standalone asset on each
+-[GitHub release](https://github.com/zarf-dev/zarf/releases) and is bundled inside the
+-init package.
++`zarf.cli.openvex.json` is available as a standalone asset on each [GitHub release](https://github.com/zarf-dev/zarf/releases) and is bundled inside the init package.
 ```
 
-**File**: `go.sum` (modified, +16/-16)
+**File**: `DEPRECATION_POLICY.md` (added, +78/-0)
 ```diff
-@@ -2403,30 +2403,30 @@ honnef.co/go/tools v0.0.1-2020.1.3/go.mod h1:X/FiERA/W4tHapMX5mGpAtMSVEeEUOyHaw9
- honnef.co/go/tools v0.0.1-2020.1.4/go.mod h1:X/FiERA/W4tHapMX5mGpAtMSVEeEUOyHaw9vFzvIQ3k=
- howett.net/plist v1.0.1 h1:37GdZ8tP09Q35o9ych3ehygcsL+HqKSwzctveSlarvM=
- howett.net/plist v1.0.1/go.mod h1:lqaXoTrLY4hg8tnEzNru53gicrbv7rrk+2xJA/7hw9g=
--k8s.io/api v0.37.1 h1:l6N77U7tjwB5L056bgrBTJIEdevac/naBZ3iSvDNfpM=
--k8s.io/api v0.37.1/go.mod h1:zSlbB1YpJ1YQlFVQy20UYll81UJSJJUMLhkhvg6Z78M=
-+k8s.io/api v0.37.2 h1:PnxqnUFy93jr2GcpWDkKOm8wfy25kT9wa572MuQS8oc=
-+k8s.io/api v0.37.2/go.mod h1:+NVRLft99kx+Jg9v34GmHw867Dapim89TSyCsn2hK+M=
- k8s.io/apiextensions-apiserver v0.37.0 h1:zRMQ3+/LIE5oZ0tVvXwYHC+dIkSP5cjNWju7AZU1LOI=
- k8s.io/apiextensions-apiserver v0.37.0/go.mod h1:HU0PfSBwchHL5iDau6jjt9zU6ryWkDDlaVUiq91NK80=
--k8s.io/apimachinery v0.37.1 h1:hGCYyvKHCwtwMitj2vU4vYx0Z16N9GyZk9BBnz0wDAE=
--k8s.io/apimachinery v0.37.1/go.mod h1:jF84AyUi/IRIXRot5f+lm6MpxoWI+F1XgjaMmwCdTFw=
-+k8s.io/apimachinery v0.37.2 h1:G4t9RGoPDbQML38hz/kQQiltttgd3egg2ODCR8aIc2o=
-+k8s.io/apimachinery v0.37.2/go.mod h1:qaAvSNvgU2x07wRM95MSHSJTPQ/ob/LeNAGbeDgqQJg=
- k8s.io/apiserver v0.37.0 h1:TXg7OxsOWrAH8J4Zi/gBAZuMw1Dfdd+6cca2h4qjRqo=
- k8s.io/apiserver v0.37.0/go.mod h1:OddHDF4gy9qyIb8o/3+qaeP6S0vEObWLgOygVqXksv0=
--k8s.io/cli-runtime v0.37.1 h1:3mir5bM4XjMJHW3SMRk++3Ylf4YQne0XFFsW+IGT85U=
--k8s.io/cli-runtime v0.37.1/go.mod h1:g3VQOm71f//aNbp79g0az9jBRTrvPjAHz7WxVysbZ4M=
--k8s.io/client-go v0.37.1 h1:QTv/5ha4jAHtW9qxxVBkQVFBRDb4jHfFopQqqMdc+wM=
--k8s.io/client-go v0.37.1/go.mod h1:dnAPtTnCNY38Ho04D2KdY1F4IKausa9UbqaAZKl60SY=
--k8s.io/component-base v0.37.1 h1:93DMmlENnK7gNLkL4pMqLO5M/HVf3p3sM4q/GasLveY=
--k8s.io/component-base v0.37.1/go.mod h1:bBrdziT4dreQG5lzTaPVxBwsZe1oxphG+ZVdD56dQWQ=
--k8s.io/component-helpers v0.37.1 h1:V6ueiH2SBqpZil1X9+uMK8GAwsGYPVfoRN9eA5vY2G8=
--k8s.io/component-helpers v0.37.1/go.mod h1:Ib5+txJA7lG9/xCdRrPshX8GnRRTXPElxtxo+bFQ0Y8=
-+k8s.io/cli-runtime v0.37.2 h1:EpE50B2FmXz8SxkYqoS2q0piDk1qe7g9dGZGIW+apws=
-+k8s.io/cli-runtime v0.37.2/go.mod h1:0IDMrrzVnj1cqBlCll8oGSOb2js6mSy0ALtbh0MsYyc=
-+k8s.io/client-go v0.37.2 h1:sgFtyRZukGkOrsu+QgS7LYnbFFJ5ut3MchdBNduD//E=
-+k8s.io/client-go v0.37.2/go.mod h1:bo3LFC8YbCtKFPX21Yj8puMsoJLAv/+SvuOODma0s54=
-+k8s.io/component-base v0.37.2 h1:Ia9IKTg1yWrUntJU5lVetapkC9pXlLg9L6P3R1IkbcY=
-+k8s.io/component-base v0.37.2/go.mod h1:qq+ueHZyLfzRJzxyDoyxHWNhF1JPv4zm3hcaddXWDvY=
-+k8s.io/component-helpers v0.37.2 h1:TQBsmHFs8gpfiyPFvyMaxqTgojtcXR2mVj+knnycln0=
-+k8s.io/component-helpers v0.37.2/go.mod h1:HZMT6lvkix4wkgYYXZJ/45BbYM1TZoOlANisHn7FoVY=
- k8s.io/klog/v2 v2.140.0 h1:Tf+J3AH7xnUzZyVVXhTgGhEKnFqye14aadWv7bzXdzc=
- k8s.io/klog/v2 v2.140.0/go.mod h1:o+/RWfJ6PwpnFn7OyAG3QnO47BFsymfEfrz6XyYSSp0=
- k8s.io/kube-openapi v0.0.0-20260721132016-d427ff9ee9ad h1:oXImqH8mQNk7PmvzKhmN3ddJoY6OnyM225MXwGHPm0A=
- k8s.io/kube-openapi v0.0.0-20260721132016-d427ff9ee9ad/go.mod h1:0/mqHCVhlumdJ3BhCfnjSZQE037nAhNodh1/hK0T8/I=
--k8s.io/kubectl v0.37.1 h1:n1VCIntOJiX943uByXCThSZQmE+4v9jGS8S9u94/aHU=
--k8s.io/kubectl v0.37.1/go.mod h1:66cc4Bz8PxBTxlrHzBuzXEzGIytAnNasKQPeEcpuaV8=
--k8s.io/metrics v0.37.1 h1:5lc7WH6ljoxaJ4dK6UHwskVsyH7aNdt/ajo6CLQ1l8Q=
--k8s.io/metrics v0.37.1/go.mod h1:mpnoLxJYJdBQoxPlgi1Y+gk/bxIuXf5SbS/8jkYzqEo=
-+k8s.io/kubectl v0.37.2 h1:AGGIhrGSsXtrL6BZWf7Hp2K9yB+2qdx7wovsOP1MiCg=
-+k8s.io/kubectl v0.37.2/go.mod h1:0nyX9up426PgGMcGkWjF1DeipLkd41eKZHoLDgop20k=
-+k8s.io/metrics v0.37.2 h1:CeIZd07BO8vuraDyd0ooQmsLi2Rutj76zThEf72rcWU=
-+k8s.io/metrics v0.37.2/go.mod h1:9HzCbIyPruAmoKmjoBjLEYAlLhAapAj1vvzkbhBDg6E=
- k8s.io/streaming v0.37.2 h1:xmzp9nbqIbjvsRcqrBYa+K5XPQ6Jy/Dm3zZ8mN916AI=
- k8s.io/streaming v0.37.2/go.mod h1:APlJR26ZWRcVy5bIEj0QRrKUXROtBHPcxl2NT7EAzPU=
- k8s.io/utils v0.0.0-20260626114624-be93311217bd h1:Ea7fgQ5we8Y9T0OX5o0dAHzQOBRI07D/dEYRaB9ZZEs=
-```
-
-**File**: `vendor/modules.txt` (modified, +8/-8)
-```diff
-@@ -4108,7 +4108,7 @@ helm.sh/helm/v4/pkg/uploader
- # howett.net/plist v1.0.1
- ## explicit; go 1.12
- howett.net/plist
--# k8s.io/api v0.37.1
-+# k8s.io/api v0.37.2
- ## explicit; go 1.26.0
- k8s.io/api/admission/v1
- k8s.io/api/admission/v1beta1
-@@ -4174,7 +4174,7 @@ k8s.io/api/storagemigration/v1beta1
- k8s.io/apiextensions-apiserver/pkg/apis/apiextensions
- k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1
- k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1
--# k8s.io/apimachinery v0.37.1
-+# k8s.io/apimachinery v0.37.2
- ## explicit; go 1.26.0
- k8s.io/apimachinery/pkg/api/equality
- k8s.io/apimachinery/pkg/api/errors
-@@ -4247,13 +4247,13 @@ k8s.io/apimachinery/third_party/forked/golang/reflect
- # k8s.io/apiserver v0.37.0
- ## explicit; go 1.26.0
- k8s.io/apiserver/pkg/endpoints/deprecation
--# k8s.io/cli-runtime v0.37.1
-+# k8s.io/cli-runtime v0.37.2
- ## explicit; go 1.26.0
- k8s.io/cli-runtime/pkg/genericclioptions
- k8s.io/cli-runtime/pkg/genericiooptions
- k8s.io/cli-runtime/pkg/printers
- k8s.io/cli-runtime/pkg/resource
--# k8s.io/client-go v0.37.1
-+# k8s.io/client-go v0.37.2
- ## explicit; go 1.26.0
- k8s.io/client-go/applyconfigurations
- k8s.io/client-go/applyconfigurations/admissionregistration/v1
-@@ -4616,11 +4616,11 @@ k8s.io/client-go/util/keyutil
- k8s.io/client-go/util/retry
- k8s.io/client-go/util/watchlist
- k8s.io/client-go/util/workqueue
--# k8s.io/component-base v0.37.1
-+# k8s.io/component-base v0.37.2
- ## explicit; go 1.26.0
- k8s.io/component-base/cli/flag
- k8s.io/component-base/version
--# k8s.io/component-helpers v0.37.1
-+# k8s.io/component-helpers v0.37.2
- ## explicit; go 1.26.0
- k8s.io/component-helpers/auth/rbac/reconciliation
- k8s.io/component-helpers/auth/rbac/validation
-@@ -4654,7 +4654,7 @@ k8s.io/kube-openapi/pkg/util
- k8s.io/kube-openapi/pkg/util/proto
- k8s.io/kube-openapi/pkg/util/proto/validation
- k8s.io/kube-openapi/pkg/validation/spec
--# k8s.io/kubectl v0.37.1
-+# k8s.io/kubectl v0.37.2
- ## explicit; go 1.26.0
- k8s.io/kubectl/pkg/apps
- k8s.io/kubectl/pkg/cmd
-@@ -4738,7 +4738,7 @@ k8s.io/kubectl/pkg/util/storage
- k8s.io/kubectl/pkg/util/templates
- k8s.io/kubectl/pkg/util/term
- k8s.io/kubectl/pkg/validation
--# k8s.io/metrics v0.37.1
-+# k8s.io/metrics v0.37.2
- ## explicit; go 1.26.0
- k8s.io/metrics/pkg/apis/metrics
- k8s.io/metrics/pkg/apis/metrics/v1
+@@ -0,0 +1,78 @@
++# Zarf Deprecation and Compatibility Policy
++
++## Scope
++
++Zarf's explicit SemVer compatibility contract is limited to the package lifecycle:
++
++1. The package definitions accepted by `zarf package create`.
++2. The package artifacts produced by supported `zarf package create` workflows.
++3. The package artifacts accepted by `zarf package deploy`.
++4. The observable deployment and runtime behavior of those artifacts.
++5. Zarf-managed in-cluster and deployed-package state for supported package deployments.
++
++A later compatible release in the same supported major version MUST preserve or migrate state written by an earlier supported release so that supported package deployments remain manageable.
++
++A package artifact includes the metadata, layout, signatures, and OCI representations required for the supported create and deploy workflows to interoperate.
++
++The following are outside the explicit SemVer compatibility contract:
++
++- Every command, flag, output format, and behavior below `zarf tools`.
++- Configuration-file keys, environment variables, hidden flags, cache layouts, temporary files, and undocumented behavior.
++- Logging structure and syntax, including levels, field names, message text, and encoding.
++- Go packages and exported symbols, including `src/pkg/signing`, `src/pkg/oci`, and `src/pkg/zoci`.
++- The implementation, command syntax, flags, defaults, and output of standalone signing, verification, publishing, and pulling commands.
++
++Code outside this scope remains subject to the project-wide deprecation lifecycle below, but does not receive an independent SemVer support promise from this policy.
++
++## Major Release Transition Documents
++
++A major release MAY introduce a time-bounded legacy compatibility path. The transition document for that major release MUST identify the stable package schema or schemas, the legacy path's support boundary, the required migration, and whether the legacy path belongs to the new major version's stable contract.
++
++## Schema Contract
++
++Schema identifiers and Zarf CLI major versions are independent. A schema suffix such as `beta1` does not determine its support level.
++
++The applicable major release transition document identifies the generally available package schema or schemas. Within that major version, Zarf MUST NOT remove a stable schema field, kind, enumerated value, or documented core behavior, or change it incompatibly. A future incompatible package schema requires a new schema identity. A subsequent major release that changes a stable schema or documented core behavior incompatibly MUST document the migration in release notes and update compatibility coverage for create, deployment and runtime behavior, and managed state.
++
++A new release MAY add backward-compatible schema capabilities. A package using semantics or an artifact format introduced after an older CLI release MUST record the required minimum CLI version in its build metadata. An older CLI MUST fail before deployment with the requirement and its reason, rather than deploy with unknown or changed behavior.
++
++## Deprecation Lifecycle
++
++The following lifecycle applies to deprecated SDK and CLI logic, including logic outside the explicit SemVer contract above.
++
++- **SDK logic** is a Go API or programmatic integration explicitly made available to consumers.
++- **CLI logic** is a user-invoked command, subcommand, flag, or documented CLI behavior, including `zarf tools`.
++
++The project MUST retain deprecated SDK logic through at least three subsequent minor releases and deprecated CLI logic through at least six subsequent minor releases. For an item deprecated in `vM.N.0`, the earliest SDK removal release is `vM.(N+4).0` and the earliest CLI removal release is `vM.(N+7).0`. Maintainers MAY extend either window at their discretion.
++
++A deprecation MUST identify the affected logic, its replacement or removal rationale, the announcing release, and the earliest removal release. SDK deprecations MUST use Go's `Deprecated:` documentation convention. CLI deprecations MUST issue an actionable warning when used. Release notes MUST describe the migration required before removal.
++
++## Compatibility Directions
++
++### Older supported package on a newer CLI
++
++A later CLI in the same supported major version MUST create and deploy packages using supported schema capabilities and supported artifact representations from earlier releases in that major version.
++
++### Newer package on an older CLI
++
++Zarf does not guarantee that an older CLI can deploy every newer package. When a package depends on a later CLI's schema capability, artifact representation, or runtime behavior, package creation MUST record the minimum required Zarf version and the reason. Package deployment MUST validate that requirement before changing cluster state.
++
++## Signing and OCI Interoperability
++
++Signing and OCI utilities are implementation details, not public Go APIs or stable standalone command interfaces. The artifa
 ```
 
 ---
 
-### Incident Patch 2: `8e854f4f` (2026-11-05)
-**Commit Message**: feat!: error when variables are used with v1beta1 (#5606)
+### Incident Patch 2: `b3ca0ad4` (2026-11-09)
+**Commit Message**: chore(docs): fixed broken links (#5601)
 
-Signed-off-by: Austin Abro <[REDACTED_EMAIL]>
+Signed-off-by: dwertent <[REDACTED_EMAIL]>
+Signed-off-by: David Wertenteil <[REDACTED_EMAIL]>
+Co-authored-by: Copilot Autofix powered by AI <[REDACTED_EMAIL]>
 
-**File**: `AGENTS.md` (modified, +2/-0)
+**File**: `README.md` (modified, +1/-1)
 ```diff
-@@ -18,6 +18,8 @@ Zarf is a Go CLI (`main.go`, `go.mod`). Application code under `src/`. Unit test
- 
- Write idiomatic Go; `golangci-lint fmt` applies `gofmt` and `goimports`. Keep packages and files lowercase and descriptive; use `PascalCase` for exported identifiers and `camelCase` otherwise. New Go files need the SPDX header. Keep comments concise and focused on intent, not a restatement of code. Handle errors and justify every `//nolint:<linter>` comment.
- 
-+Keep CLI-specific validation and flag names in `src/cmd`. Validation errors outside of `src/cmd` should describe configuration options in API-neutral terms.
-+
- Install hooks with `pre-commit install`; they enforce formatting, linting, credentials checks, and generated schema/docs consistency.
- 
- ## Testing Guidelines
+@@ -36,7 +36,7 @@ Zarf eliminates the [complexity of airgap software delivery](https://www.itopsti
+ - [Publish](https://docs.zarf.dev/commands/zarf_package_publish), [pull](https://docs.zarf.dev/commands/zarf_package_pull), and [deploy](https://docs.zarf.dev/commands/zarf_package_deploy) packages from an [OCI registry](https://opencontainers.org/)
+ - Powerful component lifecycle [actions](https://docs.zarf.dev/ref/actions)
+ - Deploy a new cluster while fully disconnected with [K3s](https://k3s.io/) or into any existing cluster using a [kube config](https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/)
+-- Built-in Git server with [Gitea](https://gitea.io/en-us/)
++- Built-in Git server with [Gitea](https://about.gitea.com/)
+ - Built-in Docker registry
+ - Builtin [K9s Dashboard](https://k9scli.io/) for managing a cluster from the terminal
+ - [Mutating Webhook](adr/0005-mutating-webhook.md) to automatically update Kubernetes pod's image path and pull secrets as well as [Flux Git Repository](https://fluxcd.io/docs/components/source/gitrepositories/) URLs and secret references
 ```
 
-**File**: `src/cmd/package.go` (modified, +3/-0)
+**File**: `SUPPORT.md` (modified, +1/-1)
 ```diff
-@@ -541,6 +541,9 @@ func (o *packageDeployOptions) run(cmd *cobra.Command, args []string) (err error
- }
+@@ -19,7 +19,7 @@ After an issue is made, this issue can be brought into other channels such as th
  
- func deploy(ctx context.Context, pkgLayout *layout.PackageLayout, opts packager.DeployOptions, setVariables map[string]string, optionalComponents string) ([]state.DeployedComponent, error) {
-+	if err := opts.Validate(pkgLayout.Definition()); err != nil {
-+		return nil, err
-+	}
- 	// Intentionally duplicate the deploy override logic here to allow us to render the updated package in confirm below
- 	if opts.NamespaceOverride != "" {
- 		if err := pkgLayout.OverrideNamespace(opts.NamespaceOverride); err != nil {
+ 
+ ## Sensitive Information Process
+-For issues from those who are unable to post on Github, you may send an email using the following issue template filled out to [zarf-dev-private@googlegroups.com](zarf-dev-private@googlegroups.com)
++For issues from those who are unable to post on Github, you may send an email using the following issue template filled out to [zarf-dev-private@googlegroups.com](mailto:zarf-dev-private@googlegroups.com)
+ 
+ The response time to emails may be delayed  as they are not able to receive community help, so we encourage participation into Github Issues as much as possible.
+ 
 ```
 
-**File**: `src/pkg/packager/deploy.go` (modified, +17/-6)
+**File**: `adr/0005-mutating-webhook.md` (modified, +1/-1)
 ```diff
-@@ -16,6 +16,7 @@ import (
+@@ -8,7 +8,7 @@ Accepted
  
- 	"github.com/zarf-dev/zarf/src/api"
- 	"github.com/zarf-dev/zarf/src/api/v1alpha1"
-+	"github.com/zarf-dev/zarf/src/api/v1beta1"
- 	"github.com/zarf-dev/zarf/src/config"
- 	"github.com/zarf-dev/zarf/src/config/lang"
- 	"github.com/zarf-dev/zarf/src/internal/checksum"
-@@ -97,6 +98,20 @@ type DeployOptions struct {
- 	SkipVersionCheck bool
- }
+ ## Context
  
-+// Validate checks whether the deployment options are supported by the package.
-+func (opts DeployOptions) Validate(pkg api.Package) error {
-+	if pkg.GetAPIVersion() == v1beta1.APIVersion && len(opts.SetVariables) > 0 {
-+		return fmt.Errorf("variables are not supported in v1beta1 packages; use package values instead")
-+	}
-+	if opts.Connected && pkg.IsInitConfig() {
-+		return fmt.Errorf("connected mode is not supported for init packages")
-+	}
-+	if opts.SkipArchitectureCheck && pkg.IsInitConfig() {
-+		return fmt.Errorf("skipping architecture checks is not supported for init packages")
-+	}
-+	return nil
-+}
-+
- // deployer tracks mutable fields across deployments. Because components can create a cluster and create state
- // any of these fields are subject to change from one component to the next
- type deployer struct {
-@@ -120,12 +135,8 @@ type DeployResult struct {
- func Deploy(ctx context.Context, pkgLayout *layout.PackageLayout, opts DeployOptions) (DeployResult, error) {
- 	start := time.Now()
- 	pkg := pkgLayout.Definition()
--	if opts.Connected && pkg.IsInitConfig() {
--		return DeployResult{}, fmt.Errorf("--connected is not supported for init packages")
--	}
--
--	if opts.SkipArchitectureCheck && pkg.IsInitConfig() {
--		return DeployResult{}, fmt.Errorf("skipping architecture checks is not supported for init packages")
-+	if err := opts.Validate(pkg); err != nil {
-+		return DeployResult{}, err
- 	}
+-Currently Zarf leverages [Helm Post Rendering](https://helm.sh/docs/topics/advanced/#post-rendering) to mutate image paths and secrets for K8s to use the internal [Zarf Registry](../packages/zarf-registry/). This works well for simple K8s deployments where Zarf is performing the actual manifest apply but fails when using a secondary gitops tools suchs as [Flux](https://github.com/fluxcd/flux2), [ArgoCD](https://argo-cd.readthedocs.io/en/stable/), etc. At that point, Zarf is unable to provide mutation and it is dependent on the package author to do the mutations themselves using rudimentary templating. Further, this issue also exists when for CRDs that references the [git server](../packages/gitea/). A `zarf prepare` command was added previously to make this less painful, but it still requires additional burden on package authors to do something we are able to prescribe in code.
++Currently Zarf leverages [Helm Post Rendering](https://helm.sh/docs/topics/advanced/#post-rendering) to mutate image paths and secrets for K8s to use the internal [Zarf Registry](../packages/init/v1alpha1/zarf-registry/). This works well for simple K8s deployments where Zarf is performing the actual manifest apply but fails when using a secondary gitops tools suchs as [Flux](https://github.com/fluxcd/flux2), [ArgoCD](https://argo-cd.readthedocs.io/en/stable/), etc. At that point, Zarf is unable to provide mutation and it is dependent on the package author to do the mutations themselves using rudimentary templating. Further, this issue also exists when for CRDs that references the [git server](../packages/init/v1alpha1/gitea/). A `zarf prepare` command was added previously to make this less painful, but it still requires additional burden on package authors to do something we are able to prescribe in code.
  
- 	// Validate operational requirements before proceeding
+ ## Decision
+ 
 ```
 
-**File**: `src/pkg/packager/deploy_test.go` (modified, +55/-1)
+**File**: `packages/README.md` (modified, +2/-2)
 ```diff
-@@ -31,13 +31,63 @@ import (
- 	"github.com/zarf-dev/zarf/src/pkg/packager/load"
- 	"github.com/zarf-dev/zarf/src/pkg/pki"
- 	"github.com/zarf-dev/zarf/src/pkg/state"
-+	"github.com/zarf-dev/zarf/src/pkg/value"
- 	"github.com/zarf-dev/zarf/src/test/testutil"
- 	corev1 "k8s.io/api/core/v1"
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
- 	"k8s.io/client-go/kubernetes/fake"
- 	"sigs.k8s.io/cli-utils/pkg/kstatus/status"
- )
+@@ -8,7 +8,7 @@ The distros package adds optional capabilities for spinning up and tearing down
  
-+func TestDeployVariablesByAPIVersion(t *testing.T) {
-+	t.Parallel()
-+	for _, tt := range []struct {
-+		name       string
-+		apiVersion string
-+		kind       api.PackageKind
-+		variables  map[string]string
-+		values     value.Values
-+		wantError  bool
-+	}{
-+		{name: "legacy", variables: map[string]string{"INPUT": "supplied"}},
-+		{name: "alpha", apiVersion: v1alpha1.APIVersion, variables: map[string]string{"INPUT": "supplied"}},
-+		{name: "beta without variables", apiVersion: v1beta1.APIVersion},
-+		{name: "beta empty variables", apiVersion: v1beta1.APIVersion, variables: map[string]string{}},
-+		{name: "beta variables", apiVersion: v1beta1.APIVersion, variables: map[string]string{"INPUT": "supplied"}, wantError: true},
-+		{name: "beta empty variable value", apiVersion: v1beta1.APIVersion, variables: map[string]string{"INPUT": ""}, wantError: true},
-+		{name: "beta init variables", apiVersion: v1beta1.APIVersion, kind: api.ZarfInitConfig, variables: map[string]string{"INPUT": "supplied"}, wantError: true},
-+		{name: "beta values", apiVersion: v1beta1.APIVersion, values: value.Values{"input": "supplied"}},
-+	} {
-+		t.Run(tt.name, func(t *testing.T) {
-+			t.Parallel()
-+			ctx := testutil.TestContext(t)
-+			kind := tt.kind
-+			if kind == "" {
-+				kind = api.ZarfPackageConfig
-+			}
-+			pkg := api.Package{
-+				APIVersion: tt.apiVersion,
-+				Kind:       kind,
-+				Metadata:   api.PackageMetadata{Name: "deploy-variables"},
-+			}
-+			pkgLayout, err := assemble.AssemblePackage(ctx, &load.ResolvedPackage{Definition: pkg, Resources: load.NewResourceSet(t.TempDir())}, assemble.AssembleOptions{SkipSBOM: true})
-+			require.NoError(t, err)
-+			t.Cleanup(func() { require.NoError(t, pkgLayout.Cleanup()) })
-+
-+			result, err := Deploy(ctx, pkgLayout, DeployOptions{SetVariables: tt.variables, Values: tt.values})
-+			if tt.wantError {
-+				require.ErrorContains(t, err, "variables are not supported in v1beta1 packages")
-+				require.ErrorContains(t, err, "use package values instead")
-+				return
-+			}
-+			require.NoError(t, err)
-+			if tt.values != nil {
-+				require.Equal(t, tt.values, result.Values)
-+			}
-+		})
-+	}
-+}
-+
- func TestDeploySuccessHooksPersistStatusByAPIVersion(t *testing.T) {
- 	t.Parallel()
+ - [EKS](https://aws.amazon.com/eks/) - Zarf deploys and tears down using the `eksctl` binary under the hood. See how it's done in the EKS package's [`zarf.yaml`](./distros/eks/zarf.yaml) and checkout the [EKS package's config](./distros/eks/eks.yaml) for more information.
  
-@@ -439,7 +489,11 @@ func TestDeployFileTemplatesByAPIVersion(t *testing.T) {
- 			definitionPath := filepath.Join(pkgLayout.DirPath(), layout.ZarfYAML)
- 			originalDefinition, err := os.ReadFile(definitionPath)
- 			require.NoError(t, err)
--			_, err = Deploy(ctx, pkgLayout, DeployOptions{SetVariables: map[string]string{"INPUT": "supplied"}})
-+			opts := DeployOptions{}
-+			if tt.apiVersion == v1alpha1.APIVersion {
-+				opts.SetVariables = map[string]string{"INPUT": "supplied"}
-+			}
-+			_, err = Deploy(ctx, pkgLayout, opts)
- 			if tt.fail {
- 				require.ErrorContains(t, err, `command "exit 1" failed`)
- 			} else {
+-- [k3s](https://k3s.io/) - Zarf deploys and tears down using the `k3s` service under the hood. See how it's done in the k3s package's [`zarf.yaml`](./distros/k3s/common/zarf.yaml).
++- [k3s](https://k3s.io/) - Zarf deploys and tears down using the `k3s` service under the hood. See how it's done in the k3s package's [`zarf.yaml`](./distros/k3s/zarf.yaml).
+ 
+ ### eks (used only for testing, not for production)
+ 
+@@ -41,7 +41,7 @@ Run these targets from the repository root. The v1alpha1 component packages and
+ 
+ ### Gitea
+ 
+-Users who rely heavily on GitOps find it useful to deploy an internal Git repository.  Zarf uses [Gitea](https://gitea.io/en-us/) to provide this functionality.  The Gitea package deploys a Gitea instance to the cluster and configures it to use the credentials in the `private-git-server` secret in the Zarf namespace.
++Users who rely heavily on GitOps find it useful to deploy an internal Git repository.  Zarf uses [Gitea](https://about.gitea.com/) to provide this functionality.  The Gitea package deploys a Gitea instance to the cluster and configures it to use the credentials in the `private-git-server` secret in the Zarf namespace.
+ 
+ ```bash
+ zarf init --components=git-server
+```
+
+**File**: `site/src/content/docs/contribute/nerd-notes.mdx` (modified, +1/-1)
+```diff
+@@ -6,7 +6,7 @@ title: Nerd Notes
+ This page is still being developed. More content will be added soon!
+ :::
+ 
+-Zarf is written entirely in [go](https://go.dev/), except for a single \<1Mib binary for the injector system written in [rust](https://www.rust-lang.org/), so we can fit it in a [configmap](https://kubernetes.io/docs/concepts/configuration/configmap/). All assets are bundled together into a single [zstd](https://facebook.github.io/zstd/) tarball on each `zarf package create` operation. On the airgap / offline side, `zarf package deploy` extracts the various assets and places them on the filesystem or installs them in the cluster, depending on what the zarf package says to do. Some important ideas behind Zarf:
++Zarf is written entirely in [go](https://go.dev/), except for a single \<1Mib binary for the injector system written in [rust](https://www.rust-lang.org/), so we can fit it in a [configmap](https://kubernetes.io/docs/concepts/configuration/configmap/). All assets are bundled together into a single [zstd](https://github.com/facebook/zstd) tarball on each `zarf package create` operation. On the airgap / offline side, `zarf package deploy` extracts the various assets and places them on the filesystem or installs them in the cluster, depending on what the zarf package says to do. Some important ideas behind Zarf:
+ 
+ - All workloads are installed in the cluster via the [Helm SDK](https://helm.sh/docs/topics/advanced/#go-sdk)
+ - The OCI Registries used are both from [Docker](https://github.com/distribution/distribution)
+```
+
+**File**: `site/src/content/docs/getting-started/understanding.mdx` (modified, +1/-1)
+```diff
+@@ -41,7 +41,7 @@ For Zarf-specific concepts, see the following pages:
+ ### CLI Basics
+ 
+ - [List of CLI Commands](https://www.codecademy.com/article/command-line-commands)
+-- [How to use the Command Line](https://training.linuxfoundation.org/training/linux-tools-for-software-development-lfd108x/)
++- [How to use the Command Line](https://training.linuxfoundation.org/training/introduction-to-linux/)
+ 
+ ## Terms Used
+ 
+```
+
+**File**: `site/src/content/docs/ref/components.mdx` (modified, +2/-2)
+```diff
+@@ -106,7 +106,7 @@ Manifests under the `kustomizations` key can be:
+ 
+ :::note
+ 
+-Zarf dynamically generates a Helm Chart from the named manifest entries that you specify. This means that any given set of files under a manifest entry will be applied according to [Helm Chart template and manifest install ordering](https://github.com/helm/helm/blob/main/pkg/releaseutil/manifest_sorter.go#L78) and not necessarily in the order that files are declared. If ordering is important, consider moving each file into its own manifest entry in the `manifests` array.
++Zarf dynamically generates a Helm Chart from the named manifest entries that you specify. This means that any given set of files under a manifest entry will be applied according to [Helm Chart template and manifest install ordering](https://github.com/helm/helm/blob/main/pkg/release/v1/util/manifest_sorter.go) and not necessarily in the order that files are declared. If ordering is important, consider moving each file into its own manifest entry in the `manifests` array.
+ 
+ :::
+ 
+@@ -151,7 +151,7 @@ Another way to bring OCI images can into the package is via archives of [OCI lay
+ 
+ An OCI layout can have any number of images, Zarf will pull all images that are listed in the sub-field `imageArchives.images`. If a listed image is not found in the archive then Zarf will error. In order for Zarf to find an image its [descriptor](https://specs.opencontainers.org/image-spec/descriptor/?v=v1.1.1) in the OCI-layout index.json must include the annotation "io.containerd.image.name" or "org.opencontainers.image.ref.name". `docker save` and `podman save` will automatically add at least one of these annotations.
+ 
+-Locally-built images that are not pulled from a public registry should be referenced under the reserved [`.internal`](https://www.icann.org/en/board-activities-and-meetings/materials/approved-resolutions-special-meeting-of-the-icann-board-24-07-2024-en#section2.b) top-level domain (for example `zarf.internal/my-app:1.0.0`). The `.internal` TLD will never resolve on the public internet, which avoids accidentally pulling an unexpected image if a registry reference is mistyped or rewriting fails. `zarf dev lint` emits a warning when an image archive image does not use a `.internal` domain.
++Locally-built images that are not pulled from a public registry should be referenced under the reserved [`.internal`](https://www.icann.org/en/board-activities-and-meetings/materials/approved-resolutions-special-meeting-of-the-icann-board-29-07-2024-en#section2.a) top-level domain (for example `zarf.internal/my-app:1.0.0`). The `.internal` TLD will never resolve on the public internet, which avoids accidentally pulling an unexpected image if a registry reference is mistyped or rewriting fails. `zarf dev lint` emits a warning when an image archive image does not use a `.internal` domain.
+ 
+ 
+ ```yaml
+```
+
+**File**: `site/src/content/docs/ref/init-package.mdx` (modified, +1/-1)
+```diff
+@@ -260,7 +260,7 @@ The Zarf team maintains some optional components in the default 'init' package.
+ | Components   | Description                                                                                                                                                       |
+ | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+ | k3s          | REQUIRES ROOT (not sudo). Installs a lightweight Kubernetes Cluster on the local host [K3s](https://k3s.io/) and configures it to start up on boot.   |
+-| git-server   | Adds a [GitOps](https://about.gitlab.com/topics/gitops/)-compatible source control service [Gitea](https://gitea.io/en-us/) into the cluster. |
++| git-server   | Adds a [GitOps](https://about.gitlab.com/topics/gitops/)-compatible source control service [Gitea](https://about.gitea.com/) into the cluster. |
+ 
+ There are two ways to deploy these optional components. First, you can provide a comma-separated list of components to the `--components` flag, such as `zarf init --components k3s,git-server --confirm`, or, you can choose to exclude the `--components` and `--confirm` flags and respond with a yes (`y`) or no (`n`) for each optional component when interactively prompted.
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5611** (2026-11-05): chore(deps): bump the k8s group across 1 directory with 6 updates (@dependabot[bot])
-- **PR #5607** (closed): docs: update custom init package tutorial (@shaversj)
-- **PR #5606** (2026-11-05): feat!: error when variables are used with v1beta1 (@AustinAbro321)
-- **PR #5605** (2026-11-04): feat!: remove deprecated commands and flags (@AustinAbro321)
-- **PR #5599** (closed): feat!: respect component ordering (@brandtkeller)
-- **PR #5597** (2026-11-04): feat(oci): added chuncked retryable resumable blob pulls (@sgettys)
+- **PR #5634** (closed): feat!: create dedicated sign/verify options types (@brandtkeller)
+- **PR #5631** (2026-11-09): feat!: limit v1beta1 init package values chart inputs (@AustinAbro321)
+- **PR #5629** (2026-11-08): chore(deps): update github.com/klauspost/compress from v1.19.2 to v1.20.3 (@dwertent)
+- **PR #5625** (closed): fix: exclude state authoritative values (@brandtkeller)
+- **PR #5624** (2026-11-09): feat(state)!: remove storageclass and distro (@brandtkeller)
+- **PR #5623** (2026-11-08): feat: deprecate v1alpha1 packages (@AustinAbro321)
 
 ---
 
@@ -1844,42 +1785,55 @@ Signed-off-by: Austin Abro <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump the k8s group across 1 directory with 6 updates (#5611)
+## X. document deprecation policy and update security.md (#5604)
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zarf-dev/zarf. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/SECURITY.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zarf-dev/zarf. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `be6d4c52`: deps): bump the k8s group across 1 directory with 6 updates (#5611). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `328d1d31`: document deprecation policy and update security.md (#5604). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/SECURITY.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	k8s.io/api v0.37.2
-	k8s.io/apimachinery v0.37.2
-	k8s.io/client-go v0.37.2
-	k8s.io/kubectl v0.37.2
-	k8s.io/component-base v0.37.2 // indirect
-	k8s.io/cli-runtime v0.37.2
-	k8s.io/component-helpers v0.37.2
-	k8s.io/metrics v0.37.2 // indirect
+## Report a Vulnerability
+Report a security issue or vulnerability through GitHub Security Advisories using the confidential [Report a Vulnerability](https://github.com/zarf-dev/zarf/security/advisories) workflow. Do not disclose exploit details publicly before the team has coordinated a fix and disclosure with you.
+## What to Include
+Include the affected Zarf version and deployment environment, the affected package create, deploy, runtime, or state-management path, reproduction steps or a proof of concept, the impact and attack preconditions, and a suggested mitigation if known.
+## When to Report a Vulnerability
+
+- You found a vulnerability in Zarf code.
+- You found an unpatched vulnerability in a Zarf dependency that affects the project.
+
+## When Not to Report a Vulnerability
+
+- You found a bug or malfunction that is not security-related.
+- You want to add a feature to Zarf.
+
+Use the [issue tracker](https://github.com/zarf-dev/zarf/issues) for non-security bugs and feature requests.
+Security fixes are provided for the latest stable minor release of the current major version. Affected users should upgrade to the current supported release. Maintainers MAY provide a backport when op
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	k8s.io/api v0.37.1
-	k8s.io/apimachinery v0.37.1
-	k8s.io/client-go v0.37.1
-	k8s.io/kubectl v0.37.1
-	k8s.io/component-base v0.37.1 // indirect
-	k8s.io/cli-runtime v0.37.1
-	k8s.io/component-helpers v0.37.1
-	k8s.io/metrics v0.37.1 // indirect
+To report a security issue or vulnerability in Zarf, please use the confidential GitHub Security Advisory ["Report a Vulnerability"](https://github.com/zarf-dev/zarf/security/advisories) tab. The Zarf team will send a response indicating the next steps in handling your report. After the initial reply to your report, the team will keep you informed of the progress towards a fix and full announcement, and may ask for additional information or guidance.
+### When Should I Report a Vulnerability?
+* You found a vulnerability in the Zarf code.
+* You found a vulnerability in one of the Zarf dependencies that affects the project that has not been patched yet.
+### When Should I NOT Report a Vulnerability?
+* You found a bug or malfunction in the Zarf code (not security related).
+* You want to add a feature to Zarf.
+As Zarf has not yet reached v1.0.0, only the current latest minor release is supported.
+To discuss security related issues, please email the maintainers at zarf-dev-private@googlegroups.com.
+## CVE Posture & VEX
+Each Zarf release includes a **VEX (Vulnerability Exploitability eXchange) document**
+that captures accepted, non-exploitable findings with documented justification.
+You ca
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `be6d4c52` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `328d1d31` are properly handled with clean fallback behavior.

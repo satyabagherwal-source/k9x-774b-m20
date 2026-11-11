@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/laurent22-joplin-learnings.md`  
 > **Source**: github ([https://github.com/laurent22/joplin](https://github.com/laurent22/joplin))  
-> **Source Version**: `a7663045`  
+> **Source Version**: `d468bb8e`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T00:17:24.766Z  
+> **Timestamp**: 2026-11-09T07:55:21.904Z  
 > **Learning ID**: `learn-github-laurent22-joplin`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/laurent22-joplin-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/laurent22/joplin](https://github.com/laurent22/joplin))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T00:17:23.311Z  
+> **Harvest Timestamp**: 2026-11-09T07:55:21.899Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Joplin - the privacy-focused note taking app with sync capabilities for Windows, macOS, Linux, Android and iOS.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 57010 stars
+- **Stars / Engagement**: 57109 stars
 
 ---
 
@@ -930,11 +930,11 @@ export {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #16998** (2026-11-03): **Desktop: Fixes #16998: Fix fatal startup error caused by CallbackUrlCommand const enum**
-  *Symptoms*: # Summary  Fixes a fatal startup crash in the desktop application caused by `CallbackUrlCommand` being erased at compile time.  # Problem  When starting the desktop application on the latest `dev` branch (`cd packages/app-desktop && yarn start`), the app crashes on startup with the following fatal error:  ```text An error occurred: Fatal error: Cannot read properties of undefined (reading 'OpenNote')  TypeError: Cannot read properties of undefined (reading 'OpenNote')     at packages/app-desktop/gui/MainScreen/handleCallbackUrl.ts:101:21     at init_handleCallbackUrl (packages/app-desktop/main-html.bundle.js:1:524)     at packages/app-desktop/gui/MainScreen.tsx:27:1 ```  ### Root Cause In `packages/lib/callbackUrlUtils.ts`, `CallbackUrlCommand` was declared using `export const enum`: ```typescript export const enum CallbackUrlCommand { ... } ``` Because of `const enum`, TypeScript strips the enum object completely when emitting JavaScript (`packages/lib/callbackUrlUtils.js`). Since `packages/app-desktop/tools/bundleJs.ts` configures esbuild to resolve `@joplin/lib` imports from pre-compiled `.js` files via `joplin--prefer-js-imports`, `CallbackUrlCommand` was `undefined` at runtime.   Accessing `CallbackUrlCommand.OpenNote` at top-level on startup in `handleCallbackUrl.ts:101` immediately threw a fatal `TypeError`.  # Solution  Changed `export const enum CallbackUrlCommand` to standard `export enum CallbackUrlCommand` in `packages/lib/callbackUrlUtils.ts` (matching other enum
+- **Issue #17054** (2026-11-07): **Desktop: Fixes #17008: Keep a list that follows another list separate when converting to Markdown**
+  *Symptoms*: AI tools assisted with this contribution.  A checklist followed by a bullet list is converted to:  ```md - [ ] task  - bullet ```  Both lists use `-`, so the Markdown is one list, and the renderer turns it into a single checklist (`data-is-checklist`). After the next save, the bullet comes back as `- [ ] bullet`. The same happens to any two lists of the same kind in a row: they merge into one list.  CommonMark starts a new list when the marker changes, so this counts how many lists of the same kind come right before the current one, and every second one uses the other marker: `*` instead of `-` (also for checkboxes), and `1)` instead of `1.`. Lists with anything between them are not touched.  ```md - [ ] task  * bullet ```  Testing: - New fixture `html_to_md/adjacent_lists` (checklist, bullet list, bullet list, ordered list, ordered list). It fails without the change. - All 83 `html_to_md` fixtures pass with the change. I ran them with a small script that calls the built turndown with the same options as `HtmlToMd`, not through the app-cli Jest setup. - Checklist + bullet HTML through turndown and then `@joplin/renderer`: on dev one `<ul data-is-checklist="1">` holds both items; with the change there are two lists and the bullet has no checkbox. - I did not run the desktop app. 
 
-- **Issue #16977** (2026-10-30): **Desktop: Fixes #16976: Refresh spellcheck underlines on note load and document edit in Markdown editor**
-  *Symptoms*: # Summary Fixes #16976: In the Markdown editor (CodeMirror 6), spellcheck underlines for misspelled words did not appear upon opening or switching to a note until a space character was typed. While editing, actions such as backspacing or modifying words destroyed existing spelling markers and caused all squiggly underlines to disappear without re-appearing until a space was typed.  ### Root Cause Chromium/Electron's Blink layout engine only schedules spellcheck passes when native keyboard input events contain word delimiters (e.g. spaces, punctuation, enter). In CodeMirror 6, document text is injected programmatically upon note switching, and editing actions like backspacing are intercepted by CodeMirror (`preventDefault()`) which mutates and replaces DOM text nodes. When text nodes are replaced without a native word-boundary input event, Chromium destroys previous spelling markers and skips running its spellcheck pipeline. Consequently, red squiggly underlines never appear on note switch or disappear entirely on backspace until a space character is typed.  ### Solution 1. **`spellCheckRefreshExtension`**:    - Implemented a lightweight `ViewPlugin` registered in the CodeMirror 6 extensions pipeline.    - Schedules a 100ms quick refresh on initial editor creation, note switch (`setNoteIdEffect`), or editor focus gain (`focusChanged && hasFocus`).    - Schedules a 500ms debounced refresh on document edits (`docChanged`). If the user continues typing, the timer resets, ensuring
+- **Issue #17029** (2026-11-05): **All: Translation: Update eo.po**
+  *Symptoms*:  Small follow-up review of the Esperanto translation (29 strings changed, nothing else touched).  - Fixed wrong meanings: "Dropbox Login" / "OneDrive Login" were translated as "username" (-salutnomo); now "Ensaluto al …" - Consistency: on/off settings now all use ŝalti/malŝalti (some used ebligi); "Restore" now uses restaŭri (restarigi is already used for "Reset"); Malvalida → Nevalida to match the rest of the file; "Label" was "Etikedo" (same as "tag"), now "Surskribo" - Grammar: "molajn linisaltojn", "Eliras el la aplikaĵo", "Ŝanĝi al nota/taska tipo", and added the missing "Ĉu" to two yes/no questions  All placeholders unchanged and verified. <!--  Before contributing, please read the contribution guidelines: https://github.com/laurent22/joplin/blob/dev/readme/dev/index.md  If this is a Google Summer of Code pull request, please read the [GSoC pull request guidelines](https://github.com/joplin/gsoc/blob/master/pull_request_guidelines.md).  ---  **Pull request title**: Please prefix the title with the area you are targeting, then add the issue you are addressing.  The format is:      <Prefix>: <Fixes|Resolves> #<issue>: <description>  Use "Resolves #123" for new features or improvements, and "Fixes #123" for bug fixes.  Examples of good titles:  - Desktop: Resolves #123: Added new setting to change font - Mobile, Desktop: Fixes #456: Fixed config screen error - Mobile, Desktop, Cli: Resolves #777: Improved note search performance  Valid prefixes:  - `Desktop` — the Windows/
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -951,387 +951,77 @@ export {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `be60c3a2` (2026-11-02)
-**Commit Message**: Desktop, Cli: Fix ENEX import failing when an unescaped ampersand is directly followed by a tag
+### Incident Patch 1: `d468bb8e` (2026-11-08)
+**Commit Message**: Chore: Fix flaky compactCss performance test on loaded machines
 
-**File**: `packages/app-cli/tests/enex_to_md/unescaped_ampersand.enex` (modified, +2/-0)
+**File**: `packages/lib/utils/compactCss.test.ts` (modified, +2/-1)
 ```diff
-@@ -13,6 +13,8 @@
-     <updated>20260914T100000Z</updated>
-     <note-attributes>
-       <application-data key="evernote.caption">Phase 1: Mobilize & Measure, which involves forming an advocacy group.</application-data>
-+      <application-data key="evernote.caption">Caption truncated after Polars &</application-data>
-+      <application-data key="evernote.captionSource">AI</application-data>
-     </note-attributes>
-   </note>
-   <note>
-```
-
-**File**: `packages/fork-sax/lib/sax.js` (modified, +7/-0)
-```diff
-@@ -1494,6 +1494,13 @@
-             parser.state = returnState
-           } else if (isMatch(parser.entity.length ? entityBody : entityStart, c)) {
-             parser.entity += c
-+          } else if (c === '<' && parser.state === S.TEXT_ENTITY) {
-+            // Joplin: Treat "<" as the start of a tag, otherwise the tag would be swallowed as text
-+            strictFail(parser, 'Invalid character in entity name')
-+            parser[buffer] += '&' + parser.entity
-+            parser.entity = ''
-+            parser.state = S.OPEN_WAKA
-+            parser.startTagPosition = parser.position
-           } else {
-             strictFail(parser, 'Invalid character in entity name')
-             parser[buffer] += '&' + parser.entity + c
-```
-
-**File**: `packages/lib/services/interop/InteropService_Importer_EnexToMd.test.ts` (modified, +2/-2)
-```diff
-@@ -70,7 +70,7 @@ describe('InteropService_Importer_EnexToMd', () => {
- 		expect(notes[1].body).toContain('Mobilize & Measure');
- 
- 		// Reported, but flagged so it's not presented as a failed import.
--		expect(errors.length).toBe(1);
--		expect(isRecoverableError(errors[0])).toBe(true);
-+		expect(errors.length).toBe(2);
-+		expect(errors.every(isRecoverableError)).toBe(true);
+@@ -36,6 +36,7 @@ describe('compactCss', () => {
+ 	])('should compact many %s quickly', (_case, css) => {
+ 		const startTime = Date.now();
+ 		compactCss(css);
+-		expect(Date.now() - startTime).toBeLessThan(1000);
++		// Takes ~50ms normally. A quadratic implementation would take minutes, so a generous limit avoids failing on a loaded CI machine.
++		expect(Date.now() - startTime).toBeLessThan(10_000);
  	});
  });
 ```
 
 ---
 
-### Incident Patch 2: `8beabc12` (2026-11-03)
-**Commit Message**: chore(deps): update dependency css-loader to v7 (#16996)
+### Incident Patch 2: `73394294` (2026-11-07)
+**Commit Message**: fix(deps): update dependency adm-zip to v0.6.0 (#17057)
 
 Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
-**File**: `packages/pdf-viewer/package.json` (modified, +1/-1)
+**File**: `packages/lib/package.json` (modified, +1/-1)
 ```diff
-@@ -31,7 +31,7 @@
-     "@types/react-dom": "19.1.7",
-     "@types/styled-components": "5.1.32",
-     "babel-jest": "29.7.0",
--    "css-loader": "6.11.0",
-+    "css-loader": "7.1.4",
-     "jest": "29.7.0",
-     "jest-environment-jsdom": "29.7.0",
-     "style-loader": "3.3.4",
+@@ -59,7 +59,7 @@
+     "@joplin/turndown": "^4.0.88",
+     "@joplin/turndown-plugin-gfm": "^1.0.70",
+     "@joplin/utils": "^3.7.3",
+-    "adm-zip": "0.5.18",
++    "adm-zip": "0.6.0",
+     "async-mutex": "0.5.0",
+     "base-64": "1.0.0",
+     "base64-stream": "1.0.0",
 ```
 
-**File**: `yarn.lock` (modified, +44/-2)
+**File**: `yarn.lock` (modified, +5/-5)
 ```diff
-@@ -13025,7 +13025,7 @@ __metadata:
-     "@types/styled-components": "npm:5.1.32"
+@@ -12979,7 +12979,7 @@ __metadata:
+     "@types/react": "npm:19.1.10"
+     "@types/react-dom": "npm:19.1.7"
+     "@types/uuid": "npm:11.0.0"
+-    adm-zip: "npm:0.5.18"
++    adm-zip: "npm:0.6.0"
      async-mutex: "npm:0.5.0"
-     babel-jest: "npm:29.7.0"
--    css-loader: "npm:6.11.0"
-+    css-loader: "npm:7.1.4"
-     jest: "npm:29.7.0"
-     jest-environment-jsdom: "npm:29.7.0"
-     pdfjs-dist: "npm:2.16.105"
-@@ -27206,7 +27206,31 @@ __metadata:
+     base-64: "npm:1.0.0"
+     base64-stream: "npm:1.0.0"
+@@ -21414,10 +21414,10 @@ __metadata:
    languageName: node
    linkType: hard
  
--"css-loader@npm:6.11.0, css-loader@npm:^6.11.0":
-+"css-loader@npm:7.1.4":
-+  version: 7.1.4
-+  resolution: "css-loader@npm:7.1.4"
-+  dependencies:
-+    icss-utils: "npm:^5.1.0"
-+    postcss: "npm:^8.4.40"
-+    postcss-modules-extract-imports: "npm:^3.1.0"
-+    postcss-modules-local-by-default: "npm:^4.0.5"
-+    postcss-modules-scope: "npm:^3.2.0"
-+    postcss-modules-values: "npm:^4.0.0"
-+    postcss-value-parser: "npm:^4.2.0"
-+    semver: "npm:^7.6.3"
-+  peerDependencies:
-+    "@rspack/core": 0.x || ^1.0.0 || ^2.0.0-0
-+    webpack: ^5.27.0
-+  peerDependenciesMeta:
-+    "@rspack/core":
-+      optional: true
-+    webpack:
-+      optional: true
-+  checksum: 10/4a37f3bd5db6d7d13a71f6ffff6d7afc3b243d4e2105c98dd1df9c1ae719cf95c3b46c47aeb6c5fd3675caf60bdb144e9baeba979a432df0906613e8f07b7623
-+  languageName: node
-+  linkType: hard
-+
-+"css-loader@npm:^6.11.0":
-   version: 6.11.0
-   resolution: "css-loader@npm:6.11.0"
-   dependencies:
-@@ -48882,6 +48906,17 @@ __metadata:
+-"adm-zip@npm:0.5.18":
+-  version: 0.5.18
+-  resolution: "adm-zip@npm:0.5.18"
+-  checksum: 10/6eaa298828b92e543241fa24d01af774ad8709b80539b3fa60d4ba6f69fd5a15a19d8177e6d739f18f4e0933610ed555215dc6553b51c532534414702c255167
++"adm-zip@npm:0.6.0":
++  version: 0.6.0
++  resolution: "adm-zip@npm:0.6.0"
++  checksum: 10/6a49ab39055d8f716958d3a2055491ab86fe3359c4afeed9b14bbce78fb847bcd3cbaa0ff4921aaa19824aaa29d06691def1f53263db5224d06c068f922c5ba2
    languageName: node
    linkType: hard
  
-+"postcss@npm:^8.4.40":
-+  version: 8.5.32
-+  resolution: "postcss@npm:8.5.32"
-+  dependencies:
-+    nanoid: "npm:^3.3.20"
-+    picocolors: "npm:^1.1.1"
-+    source-map-js: "npm:^1.2.2"
-+  checksum: 10/c86fd279d9f29d34bbec6482e01f54effe00eaf8f4dadbe17f8345d11eac68439da45d642b04bfb5d704886f665d2c31f9a0904f2a3f1b9f8098ee0894f76cea
-+  languageName: node
-+  linkType: hard
-+
- "postcss@npm:^8.5.1, postcss@npm:^8.5.6":
-   version: 8.5.6
-   resolution: "postcss@npm:8.5.6"
-@@ -54595,6 +54630,13 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
-+"source-map-js@npm:^1.2.2":
-+  version: 1.2.2
-+  resolution: "source-map-js@npm:1.2.2"
-+  checksum: 10/4807c894bb6280c8b84886159b96080e3996f42c6e8015e647881edfd4f955f6024ceebb8bb40d33ce8b106e24b2e29c133575e1c60c01c8aae57a05fdf17761
-+  languageName: node
-+  linkType: hard
-+
- "source-map-loader@npm:5.0.0":
-   version: 5.0.0
-   resolution: "source-map-loader@npm:5.0.0"
-```
-
----
-
-### Incident Patch 3: `f95f3012` (2026-11-02)
-**Commit Message**: All: Keep all the CSS of clipped pages, and compact it in linear time
-
-**File**: `.gitignore` (modified, +2/-0)
-```diff
-@@ -2056,6 +2056,8 @@ packages/lib/urlUtils.js
- packages/lib/utils/ActionLogger.test.js
- packages/lib/utils/ActionLogger.js
- packages/lib/utils/attachedResources.js
-+packages/lib/utils/compactCss.test.js
-+packages/lib/utils/compactCss.js
- packages/lib/utils/credentialFiles.js
- packages/lib/utils/dom/makeSandboxedIframe.js
- packages/lib/utils/focusHandler.js
-```
-
-**File**: `.ignore.eslint` (modified, +2/-0)
-```diff
-@@ -2082,6 +2082,8 @@ packages/lib/urlUtils.js
- packages/lib/utils/ActionLogger.test.js
- packages/lib/utils/ActionLogger.js
- packages/lib/utils/attachedResources.js
-+packages/lib/utils/compactCss.test.js
-+packages/lib/utils/compactCss.js
- packages/lib/utils/credentialFiles.js
- packages/lib/utils/dom/makeSandboxedIframe.js
- packages/lib/utils/focusHandler.js
-```
-
-**File**: `packages/app-mobile/web/webpack.config.ts` (modified, +0/-1)
-```diff
-@@ -74,7 +74,6 @@ const buildSharedConfig = (hotReload: boolean): webpack.Configuration => {
- 				'react-native-fingerprint-scanner': emptyLibraryMock,
- 				'@joplin/react-native-saf-x': emptyLibraryMock,
- 				'react-native-quick-actions': emptyLibraryMock,
--				'uglifycss': emptyLibraryMock,
- 				'react-native-share': emptyLibraryMock,
- 				'react-native-camera': emptyLibraryMock,
- 				'react-native-zip-archive': emptyLibraryMock,
-```
-
-**File**: `packages/lib/package.json` (modified, +0/-1)
-```diff
-@@ -103,7 +103,6 @@
-     "string-to-stream": "3.0.1",
-     "tar": "7.5.22",
-     "tcp-port-used": "1.0.3",
--    "uglifycss": "0.0.29",
-     "undici": "8.10.0",
-     "url-parse": "1.5.10",
-     "uuid": "11.1.1",
-```
-
-**File**: `packages/lib/services/rest/routes/notes.ts` (modified, +8/-8)
-```diff
-@@ -34,6 +34,7 @@ import { NoteEntity, ResourceEntity } from '../../database/types';
- import { DownloadController } from '../../../downloadController';
- import { FetchBlobOptions } from '../../../types';
- import RevisionService from '../../RevisionService';
-+import compactCss from '../../../utils/compactCss';
- 
- const logger = Logger.create('routes/notes');
- 
-@@ -122,16 +123,15 @@ async function requestNoteToNote(requestNote: RequestNote): Promise<NoteEntity>
- 				// Need to remove all whitespaces because whitespace at a beginning of a line
- 				// means a code block in Markdown.
- 				collapseWhitespace: true,
--				minifyCSS: true,
-+				// Also for the CSS, but without the minifier's own, which drops CSS it does not know about and is slow on
-+				// some inputs
-+				minifyCSS: compactCss,
- 				maxLineLength: 300,
-+				// Only needed for templates such as PHP, and looking for them is slow on some inputs
-+				ignoreCustomFragments: [] as RegExp[],
- 			};
- 
--			const uglifycss = require('uglifycss');
--			const styleString = uglifycss.processString(style.join('\n'), {
--				// Need to set a max length because Ace Editor takes forever
--				// to display notes with long lines.
--				maxLineLen: 200,
--			});
-+			const styleString = compactCss(style.join('\n'));
- 
- 			const styleTag = style.length ? `<style>${styleString}</style>` + '\n' : '';
- 			let minifiedHtml = '';
-@@ -145,7 +145,7 @@ async function requestNoteToNote(requestNote: RequestNote): Promise<NoteEntity>
- 				minifiedHtml = requestNote.body_html;
- 			}
- 			output.body = styleTag + minifiedHtml;
--			output.body = htmlUtils.prependBaseUrl(output.body, baseUrl);
-+			if (baseUrl) output.body = htmlUtils.prependBaseUrl(output.body, baseUrl);
- 			output.markup_language = MarkupToHtml.MARKUP_LANGUAGE_HTML;
- 		} else {
- 			// Convert to Markdown
-```
-
-**File**: `packages/lib/utils/compactCss.test.ts` (added, +41/-0)
-```diff
-@@ -0,0 +1,41 @@
-+import compactCss from './compactCss';
-+
-+describe('compactCss', () => {
-+
-+	test.each([
-+		['  .a  >  b {\n    color : red ;\n    margin: 0 auto;\n  }\n', '.a > b{color : red;margin: 0 auto;}'],
-+		['a :hover { color: red; }', 'a :hover{color: red;}'],
-+		['/* comment */ a { /* inner */ color: red; }', 'a{color: red;}'],
-+		['a::before { content: "  two  /* not a comment */  spaces  "; }', 'a::before{content: "  two  /* not a comment */  spaces  ";}'],
-+		['a::before { content: \'it\\\'s  fine\'; }', 'a::before{content: \'it\\\'s  fine\';}'],
-+		['@layer base { a { color: red; } }\n.after { color: green; }', '@layer base{a{color: red;}\n}\n.after{color: green;}'],
-+		['@container (min-width: 400px) { .c { display: grid; } }', '@container (min-width: 400px){.c{display: grid;}\n}'],
-+		['.a { color: red; &:hover { color: blue; } }', '.a{color: red;&:hover{color: blue;}\n}'],
-+		['* { --tw-ring-inset: ; --x: 1px; }', '*{--tw-ring-inset: ;--x: 1px;}'],
-+		['a { background: url(data:image/png;base64,iVBORw0KGgo=) no-repeat; }', 'a{background: url(data:image/png;base64,iVBORw0KGgo=) no-repeat;}'],
-+		['color:   red ;   margin:0', 'color: red;margin:0'],
-+		['screen   and  (max-width: 600px)', 'screen and (max-width: 600px)'],
-+		['a { content: "unterminated\n  b { color: red; }', 'a{content: "unterminated\nb{color: red;}'],
-+		['', ''],
-+	])('should compact %j', (css, expected) => {
-+		expect(compactCss(css)).toBe(expected);
-+	});
-+
-+	test('should not indent any line, and end a line after each rule', () => {
-+		const css = Array.from({ length: 50 }, (_, i) => `\t\t.c${i} {\n\t\t\tcolor: red;\n\t\t}`).join('\n\n');
-+		const lines = compactCss(css).split('\n');
-+		expect(lines.length).toBe(50);
-+		expect(lines.filter(line => /^\s/.test(line))).toEqual([]);
-+	});
-+
-+	test.each([
-+		['strings', '"" '.repeat(500_000)],
-+		['opening braces', '{'.repeat(1_000_000)],
-+		['comments', '/*'.repeat(500_000)],
-+		['whitespace', ' '.repeat(1_000_000)],
-+	])('should compact many %s quickly', (_case, css) => {
-+		const startTime = Date.now();
-+		compactCss(css);
-+		expect(Date.now() - startTime).toBeLessThan(1000);
-+	});
-+});
-```
-
-**File**: `packages/lib/utils/compactCss.ts` (added, +50/-0)
-```diff
-@@ -0,0 +1,50 @@
-+// Makes the CSS of a clipped page or an email fit in a note: comments are removed, and every run of whitespace outside
-+// strings becomes a single space, so that no line is indented, which could make it render as a code block. Each
-+// closing brace ends a line, so that lines stay short enough for editors. Nothing else is changed, so unlike a
-+// minifier, it keeps any CSS it does not know about, such as newer at-rules or nesting, and it takes linear time.
-+const compactCss = (css: string) => {
-+	const output: string[] = [];
-+	let lastChar = '';
-+	let pendingSpace = false;
-+	let i = 0;
-+
-+	const append = (text: string) => {
-+		if (pendingSpace && lastChar && !'\n{};'.includes(lastChar)) output.push(' ');
-+		pendingSpace = false;
-+		output.push(text);
-+		lastChar = text[text.length - 1];
-+	};
-+
-+	while (i < css.length) {
-+		const c = css[i];
-+
-+		if (c === '/' && css[i + 1] === '*') {
-+			const end = css.indexOf('*/', i + 2);
-+			i = end === -1 ? css.length : end + 2;
-+			pendingSpace = true;
-+		} else if (c === ' ' || c === '\t' || c === '\n' || c === '\r' || c === '\f') {
-+			pendingSpace = true;
-+			i++;
-+		} else if (c === '"' || c === '\'') {
-+			// A string ends at its closing quote, or at an unescaped line break, as in a browser
-+			let end = i + 1;
-+			while (end < css.length && css[end] !== c && css[end] !== '\n') {
-+				end += css[end] === '\\' ? 2 : 1;
-+			}
-+			append(css.substring(i, Math.min(end + 1, css.length)));
-+			i = end + 1;
-+		} else if (c === '{' || c === '}' || c === ';') {
-+			// Except in an empty custom property, which older browsers only accept with a space
-+			if (lastChar !== ':') pendingSpace = false;
-+			append(c === '}' ? '}\n' : c);
-+			i++;
-+		} else {
-+			append(c);
-+			i++;
-+		}
-+	}
-+
-+	return output.join('').trim();
-+};
-+
-+export default compactCss;
-```
-
-**File**: `yarn.lock` (modified, +0/-10)
-```diff
-@@ -12993,7 +12993,6 @@ __metadata:
-     tcp-port-used: "npm:1.0.3"
-     tesseract.js: "npm:7.0.0"
-     typescript: "npm:5.9.3"
--    uglifycss: "npm:0.0.29"
-     undici: "npm:8.10.0"
-     url-parse: "npm:1.5.10"
-     uuid: "npm:11.1.1"
-@@ -58338,15 +58337,6 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"uglifycss@npm:0.0.29":
--  version: 0.0.29
--  resolution: "uglifycss@npm:0.0.29"
--  bin:
--    uglifycss: ./uglifycss
--  checksum: 10/6304fc0f36c3b656d3b87265b6738daf0663aceb4d614fa0c8214ec77ca333f4ab3dc540399531a1bcb5d5fe606c84ca33dc738e0bf74c46c0e086451ea8678d
--  languageName: node
--  linkType: hard
--
- "uid-number@npm:0.0.6":
-   version: 0.0.6
-   resolution: "uid-number@npm:0.0.6"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #17002** (2026-11-03): chore(deps): update dependency style-loader to v4 (@renovate[bot])
-- **PR #17000** (2026-11-03): chore(deps): update dependency react-tooltip to v5 (@renovate[bot])
-- **PR #16999** (2026-11-03): All: Translation: Update ja_JP.po (@akiratamcat)
-- **PR #16998** (closed): Desktop: Fixes #16998: Fix fatal startup error caused by CallbackUrlCommand const enum (@saqibmanzoor-dev)
-- **PR #16997** (2026-11-03): chore(deps): update dependency gulp to v5 (@renovate[bot])
-- **PR #16996** (2026-11-03): chore(deps): update dependency css-loader to v7 (@renovate[bot])
+- **PR #17057** (2026-11-07): fix(deps): update dependency adm-zip to v0.6.0 (@renovate[bot])
+- **PR #17055** (closed): Desktop: Fixes #17051: Show when Markdown editor search has no results (@MaybeSomeone-arc18)
+- **PR #17054** (closed): Desktop: Fixes #17008: Keep a list that follows another list separate when converting to Markdown (@jayhemnani9910)
+- **PR #17049** (closed): fix(deps): update dependency yosay to v3 (@renovate[bot])
+- **PR #17048** (closed): fix(deps): update dependency uuid to v14 (@renovate[bot])
+- **PR #17047** (closed): fix(deps): update dependency reselect to v5 (@renovate[bot])
 
 ---
 
@@ -1351,29 +1041,29 @@ Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Desktop, Cli: Fix ENEX import failing when an unescaped ampersand is directly fo
+## X. Fix flaky compactCss performance test on loaded machines
 
 **RULE**:
-When implementing operations in `packages/app-cli/tests/enex_to_md/unescaped_ampersand.enex`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in laurent22/joplin. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/lib/utils/compactCss.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in laurent22/joplin. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `be60c3a2`: Desktop, Cli: Fix ENEX import failing when an unescaped ampersand is directly followed by a tag. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d468bb8e`: Fix flaky compactCss performance test on loaded machines. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/app-cli/tests/enex_to_md/unescaped_ampersand.enex`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/lib/utils/compactCss.test.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-      <application-data key="evernote.caption">Caption truncated after Polars &</application-data>
-      <application-data key="evernote.captionSource">AI</application-data>
+		// Takes ~50ms normally. A quadratic implementation would take minutes, so a generous limit avoids failing on a loaded CI machine.
+		expect(Date.now() - startTime).toBeLessThan(10_000);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+		expect(Date.now() - startTime).toBeLessThan(1000);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `be60c3a2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d468bb8e` are properly handled with clean fallback behavior.

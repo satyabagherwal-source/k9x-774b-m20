@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/1jehuang-jcode-learnings.md`  
 > **Source**: github ([https://github.com/1jehuang/jcode](https://github.com/1jehuang/jcode))  
-> **Source Version**: `f21e0197`  
+> **Source Version**: `47e426e5`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T00:02:42.835Z  
+> **Timestamp**: 2026-11-09T04:49:30.242Z  
 > **Learning ID**: `learn-github-1jehuang-jcode`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/1jehuang-jcode-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/1jehuang/jcode](https://github.com/1jehuang/jcode))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T00:02:41.713Z  
+> **Harvest Timestamp**: 2026-11-09T04:49:30.233Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: High performance coding agent harness written in Rust, built for heavy multi-agent dev workflows
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 21526 stars
+- **Stars / Engagement**: 21629 stars
 
 ---
 
@@ -2268,11 +2268,11 @@ impl Agent {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2054** (2026-11-02): **Fresh sessions pin spent/lower-tier pool logins when default_model binds an OAuth account (post #1901)**
-  *Symptoms*: ### Summary  Since #1901 was fixed in 5e7e0457c, a successfully applied `default_model` is preserved unconditionally on fresh sessions. That protection also covers defaults that bind an OAuth account the pool owns, so a spent or lower-tier login stays pinned for every new session instead of letting the account pool rotate it.  Related refinement in PR #2026.  ### Steps to reproduce  1. Log in with multiple pool accounts, with one spent or lower-priority (or make it spent mid-way). 2. Set `default_model` in config.toml to a bare model of a pool-owned OAuth login (e.g. an OpenAI or Claude pool model, no provider prefix). 3. Start a fresh session (no provider override). 4. The session binds the login the default resolved to, even when a ready higher-priority account could serve the same pool.  ### Expected  A default that binds a pool-owned OAuth login keeps pool selection in charge of which login serves the session (same rotation as the no-default case). A default that routes to a named profile, API key, or non-pool provider is preserved as a deliberate routing choice.  ### Actual  The successfully applied default always wins, including pool-owned OAuth logins. Rotation to ready accounts does not happen for those sessions.  ### Proposed fix  Classify the applied default in `provider_init` (`crates/jcode-base/src/provider/startup.rs`): pool-owned OAuth-account bindings keep `select_fresh_session_pool_route` active, everything else preserves the default. PR #2026 carries this cla
+- **Issue #2086** (2026-11-06): **tests/e2e: remote disconnect tests assert the pre-f21e0197a close contract and fail once e2e compiles again**
+  *Symptoms*: ## Problem  Once tests/e2e compiles again (see #2083 for the current E0063), the e2e suite fails 5 disconnect tests deterministically on both ubuntu-latest and macos-latest CI runners:  ``` disconnect::remote_disconnect_after_done_closes_session disconnect::remote_disconnect_finishes_without_reattach_and_closes_session disconnect::remote_disconnect_reattaches_and_cancels_original_turn disconnect::remote_disconnect_reattaches_twice_and_finishes_original_turn disconnect::remote_disconnect_while_idle_closes_session ```  Each fails with `Error: deadline has elapsed` after a 10s poll.  ## Cause  f21e0197a (fix(server): retain remote sessions after client disconnect) intentionally changed the `continue_on_disconnect` contract: cleanup now returns early and keeps idle sessions Active, per the new wire.rs doc ("Idle sessions remain available for swarm reports and wake turns"). The five e2e tests above subscribe with `continue_on_disconnect: true` and then poll `Session::load` until the session leaves `Active`, which is the pre-f21e0197a behavior.  The unit tests were updated (client_disconnect_grace_tests.rs gained continued_coordinator_survives_disconnect_without_reconnect_grace), but the e2e assertions in tests/e2e/disconnect.rs were not.  ## Evidence  These same five tests passed on the Nov-4 CI runs (e.g. run 41813836036, job 126519519348) and fail identically on trees that carry f21e0197a plus the e2e compile fix.  ## Fix  Update tests/e2e/disconnect.rs: the `remote_*` abrupt-di
 
-- **Issue #2043** (2026-11-02): **Composer does not auto-scroll while drag-selecting with the mouse**
-  *Symptoms*: ## Problem When selecting text inside the composer with a mouse drag, the view does not auto-scroll when the pointer reaches the top/bottom edge of the composer pane.  ## Steps to reproduce 1. Paste/type a long multi-line prompt so the composer content overflows the visible composer area. 2. Click at the top of the composer and drag the selection toward the bottom edge (or vice versa). 3. Hold the pointer at the edge.  ## Actual behavior The selection stops at the last visible row; rows outside the view cannot be included in the selection. The view only jumps after release (caret-follow), so the copied selection silently misses the invisible part.  ## Expected behavior Like any text editor: holding the drag at the pane edge scrolls the composer and keeps extending the selection into the newly revealed rows, so the copied text matches what was visually swept. Click-to-move-caret inside the composer must keep working exactly as before.
+- **Issue #2083** (2026-11-06): **tests/e2e: client_name missing in test support constructors breaks full-workspace builds**
+  *Symptoms*: ## Problem  A full-workspace `cargo test` fails to compile on current `master` (c22c4aa9):  ``` error[E0063]: missing field `client_name` in initializer of `Request`   --> tests/e2e/test_support/mod.rs:367    |    |             Request::Subscribe { ... }    |                                     ^^^ missing `client_name`  error[E0063]: missing field `client_name` in initializer of `Request`   --> tests/e2e/test_support/mod.rs:411    |    |             Request::ResumeSession { ... }    |                                        ^^^ missing `client_name` ```  ## Repro  ``` cargo test --workspace --no-run ```  ## Cause  `765f9e4c1` (client_name on wire requests) added the `client_name: Option<String>` field to `Request::Subscribe` and `Request::ResumeSession` in `crates/jcode-protocol/src/wire.rs` but did not update the e2e test support constructors in `tests/e2e/test_support/mod.rs`. The CI workflow compiles `--lib --bins`, so `tests/e2e` never compiles there and the breakage only shows on a local full workspace build.  ## Fix  Set `client_name: None` in both constructors in `tests/e2e/test_support/mod.rs`.  I have this ready as a one-line-per-request branch and can open a PR if wanted. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2289,859 +2289,245 @@ impl Agent {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `42cd9972` (2026-11-05)
-**Commit Message**: tui: mutate incremental body base in place instead of deep-cloning on append
+### Incident Patch 1: `f979a0ad` (2026-11-08)
+**Commit Message**: ratatui-jcode: Buffer::diff skips unchanged narrow rows wholesale
 
-Drop stale full-prep frames and the last drawn frame that still reference
-the base before Arc::make_mut, so appending to a 4000-message transcript
-no longer clones ~24k wrapped lines (39ms -> 4.7ms per append frame).
-Also make the test cache switch and body-path probe thread-local so the
-prepend regression test is not clobbered by parallel tests.
-
-**File**: `crates/jcode-tui/src/tui/ui.rs` (modified, +37/-0)
+**File**: `vendor/ratatui-jcode/ratatui-core/src/buffer/buffer.rs` (modified, +21/-1)
 ```diff
-@@ -1401,6 +1401,43 @@ fn full_prep_cache() -> &'static Mutex<FullPrepCacheState> {
-     FULL_PREP_CACHE.get_or_init(|| Mutex::new(FullPrepCacheState::default()))
- }
- 
-+/// Drop every frame-level reference to `base` except the caller's, so the
-+/// incremental body build can mutate it in place. Otherwise `Arc::make_mut`
-+/// deep-clones the whole wrapped transcript (tens of ms on long sessions) on
-+/// every appended message.
-+///
-+/// The base was just taken out of the body cache because no body entry matched
-+/// the current key, so any full-prep frame embedding it is keyed on an older
-+/// transcript and cannot be hit again. The last drawn frame is republished by
-+/// the draw that triggered this build.
-+pub(super) fn release_frame_refs_to_body(base: &Arc<PreparedMessages>) {
-+    let holds = |frame: &Arc<PreparedChatFrame>| {
-+        frame
-+            .sections
-+            .iter()
-+            .any(|section| Arc::ptr_eq(&section.prepared, base))
-+    };
-+    if let Ok(mut cache) = full_prep_cache().lock() {
-+        cache.entries.retain(|entry| !holds(&entry.prepared));
-+        cache
-+            .oversized_entries
-+            .retain(|entry| !holds(&entry.prepared));
-+    }
-+    #[cfg(test)]
-+    TEST_LAST_CHAT_FRAME.with(|slot| {
-+        let mut slot = slot.borrow_mut();
-+        if slot.as_ref().is_some_and(holds) {
-+            *slot = None;
-+        }
-+    });
-+    #[cfg(not(test))]
-+    if let Ok(mut slot) = last_chat_frame_state().lock()
-+        && slot.as_ref().is_some_and(holds)
-+    {
-+        *slot = None;
-+    }
-+}
-+
- /// Drop only reconstructible presentation data. Call after retaining a bounded
- /// terminal frame so idle repaints cannot immediately recreate these caches.
- pub(crate) fn release_idle_render_caches() {
+@@ -509,7 +509,26 @@ impl Buffer {
+         let mut to_skip: usize = 0;
+         // ratatui-jcode: measure each symbol once per cell (upstream measured
+         // the current symbol up to three times) and use the ASCII fast path.
+-        for (i, (current, previous)) in next_buffer.iter().zip(previous_buffer.iter()).enumerate() {
++        // ratatui-jcode: whole-row fast path. When no wide-grapheme state
++        // carries into a row and every cell is unchanged and at most one byte
++        // wide (so width <= 1 and the state stays zero), the row produces no
++        // updates and can be skipped without the per-cell width logic.
++        let row_width = usize::from(self.area.width).max(1);
++        let len = next_buffer.len().min(previous_buffer.len());
++        let mut i = 0;
++        while i < len {
++            if i % row_width == 0 && invalidated == 0 && to_skip == 0 {
++                let end = (i + row_width).min(len);
++                let unchanged = next_buffer[i..end]
++                    .iter()
++                    .zip(&previous_buffer[i..end])
++                    .all(|(c, p)| c.symbol_len_le1() && c == p);
++                if unchanged {
++                    i = end;
++                    continue;
++                }
++            }
++            let (current, previous) = (&next_buffer[i], &previous_buffer[i]);
+             let current_width = crate::fast::symbol_width(current.symbol());
+             if !current.skip && (invalidated > 0 || current != previous) && to_skip == 0 {
+                 let (x, y) = self.pos_of(i);
+@@ -545,6 +564,7 @@ impl Buffer {
+             };
+             let affected_width = cmp::max(current_width, previous_width);
+             invalidated = cmp::max(affected_width, invalidated).saturating_sub(1);
++            i += 1;
+         }
+         updates
+     }
 ```
 
-**File**: `crates/jcode-tui/src/tui/ui_frame_metrics.rs` (modified, +27/-5)
+**File**: `vendor/ratatui-jcode/ratatui-core/src/buffer/cell.rs` (modified, +7/-0)
 ```diff
-@@ -612,6 +612,7 @@ pub(super) fn note_body_cache_miss() {
- }
- 
- pub(super) fn note_body_incremental_reuse(base_messages: usize) {
-+    note_test_body_last(None, Some(base_messages));
-     with_frame_perf_stats_mut(|stats| {
-         stats.body_incremental_reuses += 1;
-         stats.body_last_incremental_base_messages = Some(base_messages);
-@@ -624,6 +625,7 @@ pub(super) fn note_body_built(
-     elapsed: Duration,
-     build_path: &'static str,
- ) {
-+    note_test_body_last(Some(build_path), None);
-     with_frame_perf_stats_mut(|stats| {
-         let elapsed_ms = duration_ms(elapsed);
-         stats.body_build_ms += elapsed_ms;
-@@ -1446,11 +1448,31 @@ mod draw_call_tests {
+@@ -189,6 +189,13 @@ impl Cell {
+         self
      }
- }
  
-+#[cfg(test)]
-+#[cfg(test)]
-+thread_local! {
-+    // Per-thread copy of the last body path, so assertions are not clobbered by
-+    // tests drawing on other threads into the process-global stats.
-+    static TEST_BODY_LAST: std::cell::RefCell<(String, Option<usize>)> =
-+        const { std::cell::RefCell::new((String::new(), None)) };
-+}
-+
- #[cfg(test)]
- pub(crate) fn body_last_path_for_tests() -> (String, Option<usize>) {
--    let stats = frame_perf_stats_snapshot();
--    (
--        stats.body_last_path,
--        stats.body_last_incremental_base_messages,
--    )
-+    TEST_BODY_LAST.with(|last| last.borrow().clone())
-+}
-+
-+fn note_test_body_last(path: Option<&str>, base: Option<usize>) {
-+    #[cfg(test)]
-+    TEST_BODY_LAST.with(|last| {
-+        let mut last = last.borrow_mut();
-+        if let Some(path) = path {
-+            last.0 = path.to_string();
-+        }
-+        if base.is_some() {
-+            last.1 = base;
-+        }
-+    });
-+    #[cfg(not(test))]
-+    let _ = (path, base);
- }
-```
-
-**File**: `crates/jcode-tui/src/tui/ui_prepare.rs` (modified, +11/-4)
-```diff
-@@ -1026,6 +1026,10 @@ fn prepare_body_cached(app: &dyn TuiState, width: u16) -> Arc<PreparedMessages>
- 
-     drop(cache);
- 
-+    if let Some((base, _, _)) = incremental_base.as_ref() {
-+        super::release_frame_refs_to_body(base);
++    /// ratatui-jcode: true when the symbol is empty or a single byte, which
++    /// guarantees display width <= 1 without a width lookup.
++    #[inline]
++    pub(crate) fn symbol_len_le1(&self) -> bool {
++        self.symbol.as_ref().is_none_or(|s| s.len() <= 1)
 +    }
 +
-     let build_start = Instant::now();
-     let (prepared, build_path) = match incremental_base {
-         Some((prev, prev_count, prev_prompt_offset)) => {
-@@ -2734,21 +2738,24 @@ fn wrap_lines_with_map(
- mod tests;
- 
- #[cfg(test)]
--static ENABLE_PREP_CACHE_IN_TESTS: std::sync::atomic::AtomicBool =
--    std::sync::atomic::AtomicBool::new(false);
-+thread_local! {
-+    // Thread-local so a probe that opts into the caches does not make tests
-+    // running in parallel share (and clobber) its cache entries and metrics.
-+    static ENABLE_PREP_CACHE_IN_TESTS: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
-+}
- 
- /// Tests bypass the prep caches by default for determinism. Perf probes opt in
- /// so they measure the production cached path.
- #[cfg(test)]
- pub(crate) fn set_prep_cache_enabled_for_tests(enabled: bool) {
--    ENABLE_PREP_CACHE_IN_TESTS.store(enabled, std::sync::atomic::Ordering::SeqCst);
-+    ENABLE_PREP_CACHE_IN_TESTS.with(|flag| flag.set(enabled));
- }
- 
- #[inline]
- fn prep_cache_bypassed() -> bool {
-     #[cfg(test)]
-     {
--        !ENABLE_PREP_CACHE_IN_TESTS.load(std::sync::atomic::Ordering::SeqCst)
-+        !ENABLE_PREP_CACHE_IN_TESTS.with(|flag| flag.get())
-     }
-     #[cfg(not(test))]
-     {
+     /// Resets the cell to the empty state.
+     pub fn reset(&mut self) {
+         *self = Self::EMPTY;
 ```
 
 ---
 
-### Incident Patch 2: `d8483169` (2026-11-05)
-**Commit Message**: fix(providers): stop impersonating Claude Code and Codex CLI on OAuth
+### Incident Patch 2: `7c697549` (2026-11-08)
+**Commit Message**: tui: skip width measurement for left-aligned pane snapshot lines, ASCII width fast path
 
-Live probes (Opus/Sonnet, two ChatGPT accounts, HTTPS + websocket) show
-none of these are needed for acceptance, billing bucket, or caching:
-- Anthropic: Claude CLI User-Agent, x-app, X-Stainless-*, session id,
-  browser-access header, claude-code-20250219 beta, outbound PascalCase
-  tool renaming, sidecar 'You are Claude Code' identity
-- ChatGPT: originator=codex_cli_rs (now 'jcode')
-
-The Anthropic billing system block is the only required piece and stays.
-Inbound PascalCase tool names still map back for old transcripts.
-Findings and probe scripts in docs/ANTHROPIC_OAUTH_IDENTITY_PROBE_2026_11_05.md.
-
-**File**: `crates/jcode-base/src/auth/oauth.rs` (modified, +1/-1)
+**File**: `crates/jcode-tui/src/tui/ui.rs` (modified, +6/-1)
 ```diff
-@@ -713,7 +713,7 @@ async fn fetch_claude_profile_at_url(
-             "User-Agent",
-             crate::provider::anthropic::CLAUDE_CLI_USER_AGENT,
-         )
--        .header("anthropic-beta", "oauth-2025-04-20,claude-code-20250219")
-+        .header("anthropic-beta", "oauth-2025-04-20")
-         .bearer_auth(access_token)
-         .send()
-         .await?;
-```
-
-**File**: `crates/jcode-base/src/provider/anthropic.rs` (modified, +22/-20)
-```diff
-@@ -18,10 +18,7 @@ use std::sync::atomic::{AtomicU8, Ordering};
- use uuid::Uuid;
- 
- pub use jcode_provider_core::CredentialMode as AnthropicCredentialMode;
--use jcode_provider_core::{
--    ANTHROPIC_OAUTH_BETA_HEADERS, anthropic_effectively_1m,
--    anthropic_stainless_arch as stainless_arch, anthropic_stainless_os as stainless_os,
--};
-+use jcode_provider_core::{ANTHROPIC_OAUTH_BETA_HEADERS, anthropic_effectively_1m};
- 
- // 0 follows persisted configuration, 1/2 are explicit process-local overrides.
- static CACHE_TTL_1H: AtomicU8 = AtomicU8::new(0);
-@@ -40,8 +37,21 @@ pub fn is_cache_ttl_1h() -> bool {
-     }
- }
- 
--/// User-Agent for OAuth requests, matching the official Claude Code CLI.
--pub const CLAUDE_CLI_USER_AGENT: &str = "claude-cli/2.1.280 (external, sdk-cli)";
-+/// User-Agent for Claude subscription (OAuth) requests.
-+///
-+/// This identifies Jcode honestly. It used to mimic the official Claude Code
-+/// CLI (`claude-cli/x.y.z (external, sdk-cli)`) along with `x-app: cli`,
-+/// `X-Stainless-*`, `X-Claude-Code-Session-Id` and
-+/// `anthropic-dangerous-direct-browser-access`. Live probes on 2026-11-05
-+/// showed none of those are needed: Opus and Sonnet accept OAuth requests with
-+/// a plain Jcode User-Agent, bill them to the same subscription bucket
-+/// (identical `anthropic-ratelimit-unified-*` headers), and cache prompts
-+/// normally. The only required piece is the billing attribution system block,
-+/// see `jcode_provider_anthropic::OAUTH_BILLING_HEADER` and
-+/// docs/ANTHROPIC_OAUTH_IDENTITY_PROBE_2026_11_05.md.
-+///
-+/// The name is kept so existing call sites don't churn.
-+pub const CLAUDE_CLI_USER_AGENT: &str = concat!("jcode/", env!("CARGO_PKG_VERSION"));
- 
- pub const OAUTH_BETA_HEADERS: &str = ANTHROPIC_OAUTH_BETA_HEADERS;
- 
-@@ -54,24 +64,16 @@ pub fn new_oauth_request_id() -> String {
-     Uuid::new_v4().to_string()
- }
- 
--/// Attach the OAuth attribution headers the official Claude CLI sends.
--/// Shared by the runtime crate's request path and base's usage probes.
-+/// Attach per-request headers for Claude subscription (OAuth) calls.
-+///
-+/// Only a request id is sent. The Claude Code CLI impersonation headers that
-+/// used to live here were not needed, see [`CLAUDE_CLI_USER_AGENT`].
-+/// `_session_id` is kept for call-site compatibility.
- pub fn apply_oauth_attribution_headers(
-     req: reqwest::RequestBuilder,
--    session_id: &str,
-+    _session_id: &str,
- ) -> reqwest::RequestBuilder {
-     req.header("x-client-request-id", new_oauth_request_id())
--        .header("x-app", "cli")
--        .header("X-Claude-Code-Session-Id", session_id)
--        .header("X-Stainless-Arch", stainless_arch())
--        .header("X-Stainless-Lang", "js")
--        .header("X-Stainless-OS", stainless_os())
--        .header("X-Stainless-Package-Version", "0.81.0")
--        .header("X-Stainless-Retry-Count", "0")
--        .header("X-Stainless-Runtime", "node")
--        .header("X-Stainless-Runtime-Version", "v24.3.0")
--        .header("X-Stainless-Timeout", "600")
--        .header("anthropic-dangerous-direct-browser-access", "true")
- }
- 
- /// Available models
-```
-
-**File**: `crates/jcode-base/src/sidecar.rs` (modified, +22/-18)
-```diff
-@@ -27,20 +27,24 @@ const SIDECAR_CLAUDE_MODEL: &str = "claude-haiku-4-5-20251001";
- const OPENAI_API_BASE: &str = "https://api.openai.com/v1";
- const CHATGPT_API_BASE: &str = "https://chatgpt.com/backend-api/codex";
- const OPENAI_RESPONSES_PATH: &str = "responses";
--const OPENAI_ORIGINATOR: &str = "codex_cli_rs";
-+/// See `ORIGINATOR` in jcode-provider-openai-runtime: Jcode identifies itself.
-+const OPENAI_ORIGINATOR: &str = "jcode";
- 
- /// Claude Messages API endpoint (with beta=true for OAuth)
- const CLAUDE_API_URL: &str = "https://api.anthropic.com/v1/messages?beta=true";
- 
- /// Claude Messages API endpoint for direct API-key access (no OAuth beta flag).
- const CLAUDE_API_KEY_URL: &str = "https://api.anthropic.com/v1/messages";
- 
--/// Beta headers required for OAuth
--const OAUTH_BETA_HEADERS: &str = "oauth-2025-04-20,claude-code-20250219";
-+/// Beta headers required for OAuth. No `claude-code-*` beta, see
-+/// `ANTHROPIC_OAUTH_BETA_HEADERS` in jcode-provider-core.
-+const OAUTH_BETA_HEADERS: &str = "oauth-2025-04-20";
- 
--/// Claude Code identity block required for OAuth direct API access
--const CLAUDE_CODE_IDENTITY: &str = "You are Claude Code, Anthropic's official CLI for Claude.";
--const CLAUDE_CODE_JCODE_NOTICE: &str = "You are jcode, powered by Claude Code. You are a third-party CLI, not the official Claude Code CLI.";
-+/// Billing attribution block that Claude subscription (OAuth) requests need.
-+/// Anthropic strips it before the model sees it. No identity sentence is sent,
-+/// see `OAUTH_BILLING_HEADER` in jcode-provider-anthropic.
-+const CLAUDE_OAUTH_BILLING_BLOCK: &str =
-+    "x-anthropic-billing-header: cc_version=2.1.280; cc_entrypoint=sdk-cli; cch=33f85;";
- 
- /// Maximum tokens for sidecar responses (keep small for speed/cost)
- const DEFAULT_MAX_TOKENS: u32 = 1024;
-@@ -1151,11 +1155,7 @@ fn build_claude_system_param(system: &str) -> Option<ClaudeApiSystem<'_>> {
-     let mut blocks = Vec::new();
-     blocks.push(ClaudeApiSystemBlock {
-         block_type: "text",
--        text: CLAUDE_CODE_IDENTITY,
--    });
--    blocks.push(ClaudeApiSystemBlock {
--        block_type: "text",
--        text: CLAUDE_CODE_JCODE_NOTICE,
-+        text: CLAUDE_OAUTH_BILLING_BLOCK,
-     });
-     if !system.is_empty() {
-         blocks.push(ClaudeApiSystemBlock {
-@@ -1168,9 +1168,8 @@ fn build_claude_system_param(system: &str) -> Option<ClaudeApiSystem<'_>> {
- 
- /// Build the system param for the direct API-key path.
- ///
--/// The "You are Claude Code" identity spoof and jcode notice are only valid
--/// for the OAuth/subscription endpoint; a direct API key talks to the standard
--/// Messages API and must not impersonate the official CLI. So this only carries
-+/// The OAuth billing block is only valid for the subscription endpoint; a
-+/// direct API key talks to the standard Messages API. So this only carries
- /// the caller's own system prompt (if any).
- fn build_claude_api_key_system_param(system: &str) -> Option<ClaudeApiSystem<'_>> {
-     if system.is_empty() {
-@@ -1712,7 +1711,7 @@ mod tests {
- 
-     #[test]
-     fn test_build_claude_api_key_system_param_omits_identity_spoof() {
--        // API-key path must NOT impersonate the official Claude Code CLI.
-+        // API-key path carries no OAuth billing block.
-         let none = build_claude_api_key_system_param("");
-         assert!(none.is_none(), "empty system => no system param");
- 
-@@ -1721,12 +1720,17 @@ mod tests {
-         assert_eq!(blocks.len(), 1, "only the caller's system prompt is sent");
-         assert_eq!(blocks[0].text, "be terse");
- 
--        // The OAuth builder, by contrast, injects the Claude Code identity spoof.
-+        // The OAuth builder adds only the billing block, no identity sentence.
-         let ClaudeApiSystem::Blocks(oauth_blocks) =
-             build_claude_system_param("be terse").expect("oauth system present");
-+        assert_eq!(oauth_blocks.len(), 2);
-+        assert_eq!(oauth_blocks[0].text, CLAUDE_OAUTH_BILLING_BLOCK);
-+        assert_eq!(oauth_blocks[1].text, "be terse");
-         assert!(
--            oauth_blocks.iter().any(|b| b.text == CLAUDE_CODE_IDENTITY),
--            "oauth path keeps the identity block"
-+            !oauth_blocks
-+                .iter()
-+                .any(|b| b.text.contains("You are Claude Code") || b.text.contains("Agent SDK")),
-+            "oauth path must not inject a Claude identity sentence"
-         );
-     }
- 
-```
-
-**File**: `crates/jcode-base/src/usage.rs` (modified, +1/-1)
-```diff
-@@ -124,7 +124,7 @@ async fn fetch_anthropic_usage_data_uncached(
-                 crate::provider::anthropic::CLAUDE_CLI_USER_AGENT,
-             )
-             .header("Authorization", format!("Bearer {}", access_token))
--            .header("anthropic-beta", "oauth-2025-04-20,claude-code-20250219"),
-+            .header("anthropic-beta", "oauth-2025-04-20"),
-         &crate::provider::anthropic::new_oauth_request_id(),
-     )
-     .send()
-```
-
-**File**: `crates/jcode-base/src/usage/anthropic_reset.rs` (modified, +1/-1)
-```diff
-@@ -67,7 +67,7 @@ fn authorize(request: reqwest::RequestBuilder, access_token: &str) -> reqwest::R
-                 "User-Agent",
-                 crate::provider::anthropic::CLAUDE_CLI_USER_AGENT,
-             )
--            .header("anthropic-beta", "oauth-2025-04-20,claude-code-20250219"),
-+            .header("anthropic-beta", "oauth-2025-04-20"),
-         &crate::provider::anthropic::new_oauth_request_id(),
-     )
- }
-```
-
-**File**: `crates/jcode-provider-anthropic/src/lib.rs` (modified, +11/-8)
-```diff
-@@ -1176,8 +1176,8 @@ mod cache_prefix_invariant_tests {
-         let formatted = format_tools(&registry, true, false);
-         let names: Vec<&str> = formatted.iter().map(|t| t.name.as_str()).collect();
- 
--        // Curated builtins are present under their OAuth names.
--        for builtin in ["Bash", "Read", "Agent", "Write", "Edit", "Glob", "Grep"] {
-+        // Builtins are present under their own Jcode names (no Claude Code rename).
-+        for builtin in ["bash", "read", "subagent", "write", "edit", "glob", "grep"] {
-             assert!(
-                 names.contains(&builtin),
-                 "missing builtin {builtin} in {names:?}"
-@@ -1190,10 +1190,13 @@ mod cache_prefix_invariant_tests {
-                 "custom tool {custom} was dropped on OAuth; got {names:?}"
-             );
-         }
--        // No duplicate Agent/Bash/Read from the registry remap.
--        assert_eq!(names.iter().filter(|n| **n == "Agent").count(), 1);
--        assert_eq!(names.iter().filter(|n| **n == "Bash").count(), 1);
--        assert_eq!(names.iter().filter(|n| **n == "Read").count(), 1);
-+        // No duplicates from the registry.
-+        assert_eq!(names.iter().filter(|n| **n == "subagent").count(), 1);
-+        assert_eq!(names.iter().filter(|n| **n == "bash").count(), 1);
-+        assert_eq!(names.iter().filter(|n| **n == "read").count(), 1);
-+        for legacy in ["Bash", "Read", "Agent"] {
-+            assert!(!names.contains(&legacy), "legacy Claude Code name {legacy} sent");
-+        }
-     }
- 
-     #[test]
-@@ -1210,13 +1213,13 @@ mod cache_prefix_invariant_tests {
-         let formatted = format_tools(&registry, true, false);
-         let names: Vec<&str> = formatted.iter().map(|t| t.name.as_str()).collect();
- 
--        for ghost in ["Agent", "Glob", "Grep", "Skill"] {
-+        for ghost in ["Agent", "Glob", "Grep", "Skill", "subagent", "glob", "grep"] {
-             assert!(
-                 !names.contains(&ghost),
-                 "advertised ghost builtin {ghost} without a backing registry tool: {names:?}"
-             );
-         }
--        for present in ["Bash", "Read", "Write", "Edit", "agentgrep"] {
-+        for present in ["bash", "read", "write", "edit", "agentgrep"] {
-             assert!(names.contains(&present), "missing {present} in {names:?}");
-         }
-     }
-```
-
-**File**: `crates/jcode-provider-anthropic/src/oauth_tool_schema_tests.rs` (modified, +10/-10)
-```diff
-@@ -50,7 +50,7 @@ fn oauth_bash_forwards_registered_schema_and_timeout_units() {
-         let formatted = format_tools(std::slice::from_ref(&registry_bash), is_oauth, false);
-         assert_eq!(formatted.len(), 1, "Bash must be advertised exactly once");
-         let bash = &formatted[0];
--        assert_eq!(bash.name, if is_oauth { "Bash" } else { "bash" });
-+        assert_eq!(bash.name, "bash");
-         assert_eq!(bash.input_schema, registry_bash.input_schema);
-         assert_eq!(bash.description, registry_bash.description);
-         assert!(
-@@ -87,8 +87,8 @@ fn oauth_schedule_wakeup_forwards_the_real_schedule_schema() {
-     let formatted = format_tools(&registry, true, false);
-     let scheduled = formatted
+@@ -2310,9 +2310,14 @@ pub(crate) fn line_left_margins_for_area(lines: &[Line<'static>], area_width: u1
+     lines
          .iter()
--        .find(|t| t.name == "ScheduleWakeup")
--        .expect("schedule must be advertised under its OAuth name");
-+        .find(|t| t.name == "schedule")
-+        .expect("schedule must be advertised under its own name");
- 
-     let props = scheduled.input_schema["properties"]
-         .as_object()
-@@ -101,7 +101,7 @@ fn oauth_schedule_wakeup_forwards_the_real_schedule_schema() {
-     assert_eq!(
-         formatted
-             .iter()
--            .filter(|t| t.name == "ScheduleWakeup")
-+            .filter(|t| t.name == "schedule")
-             .count(),
-         1,
-         "schedule must not be advertised twice"
-@@ -115,7 +115,7 @@ fn oauth_bash_schema_advertises_the_justification_escape_hatch() {
-     let formatted = format_tools(&[bash_registry_definition()], true, false);
-     let bash = formatted
-         .iter()
--        .find(|t| t.name == "Bash")
-+        .find(|t| t.name == "bash")
-         .expect("Bash must be advertised");
-     assert!(
-         bash.input_schema["properties"]
-@@ -131,12 +131,12 @@ fn oauth_builtins_forward_registry_schemas_including_intent() {
-     // The OAuth route used to swap in hand-curated Claude-Code schemas for
-     // Edit/Write/Read/..., which silently dropped registry options such as
-     // `intent`. Every route must advertise the registry definition verbatim,
--    // only renamed.
-+    // under the same name.
-     for (local, oauth) in [
--        ("edit", "Edit"),
--        ("write", "Write"),
--        ("read", "Read"),
--        ("bash", "Bash"),
-+        ("edit", "edit"),
-+        ("write", "write"),
-+        ("read", "read"),
-+        ("bash", "bash"),
-     ] {
-         let def = ToolDefinition {
-             name: local.to_string(),
+         .map(|line| {
++            let alignment = line.alignment.unwrap_or(Alignment::Left);
++            if alignment == Alignment::Left {
++                // Left-aligned lines never have a margin, so skip measuring them.
++                return 0;
++            }
+             let used = line.width().min(area_width as usize) as u16;
+             let total_margin = area_width.saturating_sub(used);
+-            match line.alignment.unwrap_or(Alignment::Left) {
++            match alignment {
+                 Alignment::Left => 0,
+                 Alignment::Center => total_margin / 2,
+                 Alignment::Right => total_margin,
 ```
 
-**File**: `crates/jcode-provider-core/src/anthropic.rs` (modified, +30/-41)
+**File**: `crates/jcode-tui/src/tui/ui/display_width.rs` (modified, +3/-0)
 ```diff
-@@ -1,8 +1,13 @@
--/// Claude Code OAuth beta headers used by the Anthropic transport.
--pub const ANTHROPIC_OAUTH_BETA_HEADERS: &str = "claude-code-20250219,oauth-2025-04-20,interleaved-thinking-2025-05-14,context-management-2025-06-27,prompt-caching-scope-2026-01-05,advisor-tool-2026-03-01,advanced-tool-use-2025-11-20,effort-2025-11-24";
-+/// Anthropic betas used on Claude subscription (OAuth) requests.
-+///
-+/// `claude-code-20250219` used to be first in this list to look like the
-+/// official Claude Code CLI. Live probes on 2026-11-05 showed it is not needed
-+/// for acceptance, billing or caching, so it was removed. `oauth-2025-04-20` is
-+/// required. See docs/ANTHROPIC_OAUTH_IDENTITY_PROBE_2026_11_05.md.
-+pub const ANTHROPIC_OAUTH_BETA_HEADERS: &str = "oauth-2025-04-20,interleaved-thinking-2025-05-14,context-management-2025-06-27,prompt-caching-scope-2026-01-05,advisor-tool-2026-03-01,advanced-tool-use-2025-11-20,effort-2025-11-24";
- 
--/// Claude Code OAuth beta headers with Anthropic's explicit 1M context beta.
--pub const ANTHROPIC_OAUTH_BETA_HEADERS_1M: &str = "claude-code-20250219,oauth-2025-04-20,interleaved-thinking-2025-05-14,context-management-2025-06-27,prompt-caching-scope-2026-01-05,advisor-tool-2026-03-01,advanced-tool-use-2025-11-20,effort-2025-11-24,context-1m-2025-08-07";
-+/// OAuth betas plus Anthropic's explicit 1M context beta.
-+pub const ANTHROPIC_OAUTH_BETA_HEADERS_1M: &str = "oauth-2025-04-20,interleaved-thinking-2025-05-14,context-management-2025-06-27,prompt-caching-scope-2026-01-05,advisor-tool-2026-03-01,advanced-tool-use-2025-11-20,effort-2025-11-24,context-1m-2025-08-07";
- 
- /// How a Claude model exposes its 1M-token long-context window.
- ///
-@@ -380,22 +385,21 @@ pub fn anthropic_reasoning_caps(model: &str) -> AnthropicReasoningCaps {
-     }
+@@ -1,4 +1,7 @@
+ pub(super) fn line_display_width(text: &str) -> usize {
++    if text.bytes().all(|b| (0x20..0x7f).contains(&b)) {
++        return text.len();
++    }
+     unicode_width::UnicodeWidthStr::width(text)
  }
  
-+/// Tool name sent to Anthropic on the OAuth path.
-+///
-+/// Jcode used to rename its tools to Claude Code's PascalCase names (`bash` to
-+/// `Bash`, `subagent` to `Agent`, ...) on the way out. Live probes on
-+/// 2026-11-05 showed OAuth requests with Jcode's own tool names are accepted,
-+/// so tools now go out under their real names. Kept as a function so call
-+/// sites don't churn. [`anthropic_map_tool_name_from_oauth`] still accepts the
-+/// old PascalCase names, so a model that emits them out of habit, or a resumed
-+/// transcript that contains them, still resolves.
- pub fn anthropic_map_tool_name_for_oauth(name: &str) -> String {
--    match name {
--        "bash" => "Bash",
--        "read" => "Read",
--        "write" => "Write",
--        "edit" => "Edit",
--        "glob" => "Glob",
--        "grep" => "Grep",
--        "subagent" => "Agent",
--        "schedule" => "ScheduleWakeup",
--        "skill_manage" => "Skill",
--        _ => name,
--    }
--    .to_string()
-+    name.to_string()
- }
- 
-+/// Map a tool name returned by Anthropic back to Jcode's local name. Accepts
-+/// the legacy Claude Code PascalCase names for compatibility.
- pub fn anthropic_map_tool_name_from_oauth(name: &str) -> String {
-     match name {
-         "Bash" => "bash",
-@@ -412,23 +416,6 @@ pub fn anthropic_map_tool_name_from_oauth(name: &str) -> String {
-     .to_string()
- }
- 
--pub fn anthropic_stainless_arch() -> &'static str {
--    match std::env::consts::ARCH {
--        "x86_64" => "x64",
--        "aarch64" => "arm64",
--        other => other,
--    }
--}
--
--pub fn anthropic_stainless_os() -> &'static str {
--    match std::env::consts::OS {
--        "linux" => "Linux",
--        "macos" => "MacOS",
--        "windows" => "Windows",
--        other => other,
--    }
--}
--
- #[cfg(test)]
- mod tests {
-     use super::*;
-@@ -493,24 +480,26 @@ mod tests {
-     }
- 
-     #[test]
--    fn oauth_tool_name_mapping_is_reversible_for_known_tools() {
--        for (local, oauth) in [
-+    fn oauth_tool_names_go_out_unchanged_and_legacy_names_map_back() {
-+        for (local, legacy) in [
-             ("bash", "Bash"),
-             ("read", "Read"),
-             ("subagent", "Agent"),
-             ("schedule", "ScheduleWakeup"),
-             ("skill_manage", "Skill"),
-         ] {
--            assert_eq!(anthropic_map_tool_name_for_oauth(local), oauth);
--            assert_eq!(anthropic_map_tool_name_from_oauth(oauth), local);
-+            assert_eq!(anthropic_map_tool_name_for_oauth(local), local);
-+            assert_eq!(anthropic_map_tool_name_from_oauth(legacy), local);
-+            assert_eq!(anthropic_map_tool_name_from_oauth(local), local);
-         }
-         assert_eq!(anthropic_map_tool_name_for_oauth("custom"), "custom");
-     }
- 
-     #[test]
--    fn stainless_labels_are_non_empty() {
--        assert!(!anthropic_stainless_arch().is_empty());
--        assert!(!anthropic_stainless_os().is_empty());
-+    fn oauth_betas_do_not_claim_claude_code() {
-+        assert!(ANTHROPIC_OAUTH_BETA_HEADERS.contains("oauth-2025-04-20"));
-+        assert!(!ANTHROPIC_OAUTH_BETA_HEADERS.contains("claude-code-"));
-+        assert!(!ANTHROPIC_OAUTH_BETA_HEADERS_1M.contains("claude-code-")
 ```
 
 ---
 
-### Incident Patch 3: `fd0ea599` (2026-11-05)
-**Commit Message**: fix(anthropic): drop Claude Agent SDK identity sentence from OAuth prompt
+### Incident Patch 3: `e950aeed` (2026-11-08)
+**Commit Message**: tui: stream justrust status from one long-lived --watch process instead of spawning a query every second
 
-Live probes on Opus/Sonnet show the billing attribution block alone is
-enough for OAuth acceptance, and Anthropic strips it before the model sees
-it. The identity sentence made the model claim Jcode is built on the
-Claude Agent SDK. Document the probe matrix and add a re-run script.
-
-**File**: `crates/jcode-provider-anthropic-runtime/src/anthropic_tests.rs` (modified, +18/-11)
+**File**: `crates/jcode-tui/src/tui/justrust_status.rs` (modified, +165/-121)
 ```diff
-@@ -962,22 +962,29 @@ fn test_system_param_split_oauth() {
-     let result = build_system_param_split(static_content, dynamic_content, true);
+@@ -4,13 +4,12 @@
  
-     if let Some(ApiSystem::Blocks(blocks)) = result {
--        // Should have 4 blocks: identity, notice, static (cached), dynamic (not cached)
--        assert_eq!(blocks.len(), 4);
-+        // 3 blocks: billing attribution, static (cached), dynamic (not cached).
-+        // No identity sentence: it made the model claim Jcode is built on the
-+        // Claude Agent SDK, and the billing block alone is enough for OAuth.
-+        assert_eq!(blocks.len(), 3);
+ use serde::Deserialize;
+ use std::path::Path;
++use std::sync::Arc;
+ use std::time::{Duration, Instant};
+-use tokio::io::AsyncReadExt;
+-use tokio::sync::oneshot;
++use tokio::io::AsyncReadExt as _;
  
--        // Block 0: identity (no cache)
-+        // Block 0: billing attribution (no cache)
-         assert!(blocks[0].cache_control.is_none());
-+        assert!(blocks[0].text.starts_with("x-anthropic-billing-header: "));
+-const POLL_INTERVAL: Duration = Duration::from_secs(1);
+ const RETRY_INTERVAL: Duration = Duration::from_secs(10);
+-const QUERY_TIMEOUT: Duration = Duration::from_secs(2);
++const FIRST_LINE_TIMEOUT: Duration = Duration::from_secs(5);
+ const MAX_RESPONSE: usize = 512 * 1024;
+ const COMPLETION_RETENTION: Duration = Duration::from_secs(10 * 60);
  
--        // Block 1: notice (no cache)
--        assert!(blocks[1].cache_control.is_none());
-+        // Block 1: static (cached)
-+        assert!(blocks[1].cache_control.is_some());
-+        assert!(blocks[1].text.contains("static"));
- 
--        // Block 2: static (cached)
--        assert!(blocks[2].cache_control.is_some());
--        assert!(blocks[2].text.contains("static"));
-+        // Block 2: dynamic (not cached)
-+        assert!(blocks[2].cache_control.is_none());
-+        assert!(blocks[2].text.contains("dynamic"));
- 
--        // Block 3: dynamic (not cached)
--        assert!(blocks[3].cache_control.is_none());
--        assert!(blocks[3].text.contains("dynamic"));
-+        assert!(
-+            !blocks.iter().any(|b| b.text.contains("Agent SDK")
-+                || b.text.contains("You are a Claude agent")
-+                || b.text.contains("You are Claude Code")),
-+            "OAuth system blocks must not inject a Claude identity sentence"
-+        );
-     } else {
-         panic!("Expected Blocks variant");
+@@ -236,64 +235,80 @@ impl Snapshot {
      }
-```
-
-**File**: `crates/jcode-provider-anthropic/src/lib.rs` (modified, +25/-7)
-```diff
-@@ -12,10 +12,31 @@ use history_repair::*;
+ }
  
- /// Claude Code billing attribution text observed in the official CLI's system
- /// prompt blocks.
-+///
-+/// On Claude subscription (OAuth) requests this is sent as the first system
-+/// block, as plain text, not as an HTTP header despite the name. Anthropic
-+/// strips it server-side before the model sees it: on 2026-11-05 adding it
-+/// changed `usage.input_tokens` by 0, while the identity sentence below added
-+/// 16, and the model reported no `cc_version`/`cch` in its context.
-+///
-+/// This block alone is what gets larger models (Opus, Sonnet) accepted on the
-+/// OAuth path. Live probes on 2026-11-05 (Opus 4.5 x3, Sonnet 4.5) showed:
-+/// - billing block only: accepted
-+/// - "Claude Agent SDK" identity sentence only: accepted
-+/// - both: accepted
-+/// - neither: rejected with HTTP 429 `rate_limit_error` every time
-+/// - Haiku 4.5 accepted all variants, so it is not a useful probe model.
-+///
-+/// We therefore send only the billing block and no identity sentence. The
-+/// identity sentence ("You are a Claude agent, built on Anthropic's Claude
-+/// Agent SDK.") was added in 96cdd995b and removed on 2026-11-05 because it
-+/// made the model tell users that Jcode is built on the Claude Agent SDK,
-+/// which is false. Do not add an identity sentence back unless a fresh probe
-+/// shows the billing block alone is rejected. If you change this, re-run
-+/// `scripts/anthropic_oauth_identity_probe.py claude-opus-4-5` (not Haiku).
-+/// Full write-up: docs/ANTHROPIC_OAUTH_IDENTITY_PROBE_2026_11_05.md
- pub const OAUTH_BILLING_HEADER: &str = "cc_version=2.1.280; cc_entrypoint=sdk-cli; cch=33f85;";
+-async fn query(program: &std::ffi::OsStr) -> Option<Snapshot> {
+-    query_with_timeout(program, QUERY_TIMEOUT).await
++/// One long-lived `justrust status --json --watch` per client. justrust
++/// prints a line only when the status changes and sleeps on inotify while no
++/// build runs, so an idle client costs nothing (a one-shot query per second
++/// used to spawn a process every second in every window).
++fn spawn_stream(
++    program: std::ffi::OsString,
++) -> tokio::sync::watch::Receiver<Option<Option<Arc<Snapshot>>>> {
++    let (sender, receiver) = tokio::sync::watch::channel(None);
++    if let Ok(runtime) = tokio::runtime::Handle::try_current() {
++        runtime.spawn(async move {
++            if let Err(error) = stream(&program, &sender).await {
++                crate::logging::debug(&format!("Build status stream ended: {error:#}"));
++            }
++            // Some(None) tells the poller the stream is gone.
++            let _ = sender.send(Some(None));
++        });
++    }
++    receiver
+ }
  
--const CLAUDE_CODE_IDENTITY: &str = "You are a Claude agent, built on Anthropic's Claude Agent SDK.";
--
- /// Minimal user turn appended when a formatted conversation would otherwise end
- /// on an assistant message, which Anthropic rejects on non-prefill models.
- pub(crate) const CONTINUATION_USER_TURN: &str = "Continue.";
-@@ -678,16 +699,13 @@ pub fn build_system_param_split(
- ) -> Option<ApiSystem> {
-     if is_oauth {
-         let mut blocks = Vec::new();
-+        // Billing attribution block. Required for OAuth acceptance on larger
-+        // models. Intentionally no identity sentence, see OAUTH_BILLING_HEADER.
-         blocks.push(ApiSystemBlock {
-             block_type: "text",
-             text: format!("x-anthropic-billing-header: {}", OAUTH_BILLING_HEADER),
-             cache_control: None,
-         });
--        blocks.push(ApiSystemBlock {
--            block_type: "text",
--            text: CLAUDE_CODE_IDENTITY.to_string(),
--            cache_control: None,
--        });
-         // Static content - CACHED (instruction files, base prompt, skills)
-         if !static_part.is_empty() {
-             blocks.push(ApiSystemBlock {
-```
-
-**File**: `docs/ANTHROPIC_OAUTH_IDENTITY_PROBE_2026_11_05.md` (added, +87/-0)
-```diff
-@@ -0,0 +1,87 @@
-+# Anthropic OAuth identity probe (2026-11-05)
-+
-+## Why this exists
-+
-+On Claude subscription (OAuth) requests, Jcode used to put this sentence near
-+the top of the system prompt:
-+
-+> You are a Claude agent, built on Anthropic's Claude Agent SDK.
-+
-+It was added in `96cdd995b` (2026-04-16, "Fix Claude OAuth third-party request
-+path"). That commit also replaced the older "You are Claude Code..." sentence
-+and the "You are jcode, powered by Claude Code..." line, moved the billing tag
-+from an HTTP header into the system prompt, and bumped its version, all at once.
-+The commit message doesn't say which of those changes fixed the request path.
-+
-+Side effect: the model believed the sentence. When a user asked "who are you",
-+it said Jcode is built on the Claude Agent SDK, which is false. Nothing in the
-+prompt told it otherwise, because the jcode line had been removed.
-+
-+## What was tested
-+
-+Raw requests to `https://api.anthropic.com/v1/messages?beta=true` with the
-+claude-otter OAuth token. Each request kept Jcode's normal OAuth headers
-+(Bearer auth, Claude CLI User-Agent, `claude-code-20250219,oauth-2025-04-20`
-+betas, `x-app: cli`, session id). Only the system blocks changed. Prompt: "Who
-+are you, in one sentence?"
-+
-+The billing tag is this first system block:
-+
-+```
-+x-anthropic-billing-header: cc_version=2.1.280; cc_entrypoint=sdk-cli; cch=33f85;
-+```
-+
-+| Variant | Opus 4.5 (x3) and Sonnet 4.5 | Model's answer |
-+|---|---|---|
-+| A. Billing tag + SDK sentence (old current) | works | Sometimes "built on Anthropic's Claude Agent SDK" |
-+| B. Billing tag, no identity sentence | works | "I'm Jcode..." with no SDK claim |
-+| C. SDK sentence, no billing tag | works | Claims it's built on the Agent SDK |
-+| D. Neither | rejected every time, HTTP 429 `rate_limit_error` | n/a |
-+| E. Billing + SDK + "you are actually Jcode" note | works | mixed |
-+| F. Old setup (billing + "Claude Code" + jcode note) | works | "I'm Jcode..." |
-+| G. Billing + jcode prompt, then SDK sentence | works | "I'm Jcode..." |
-+
-+Haiku 4.5 accepted every variant, including D, so it can't be used to tell the
-+variants apart. Use Opus or Sonnet.
-+
-+The 429 on D isn't a real rate limit, because the other variants run right
-+before and after it succeeded. It looks like Anthropic's way of turning away
-+OAuth traffic that doesn't look like Claude Code.
-+
-+## Does the model see the billing tag?
-+
-+No. Anthropic strips it on the server:
-+
-+| System blocks | `usage.input_tokens` |
-+|---|---|
-+| SDK sentence + short prompt | 34 |
-+| Billing tag + short prompt | 18 |
-+| Billing tag + SDK sentence + short prompt | 34 |
-+
-+The billing tag adds 0 tokens and the SDK sentence adds 16. When asked, Sonnet
-+also said there was no `cc_version` or `cch` in its context.
-+
-+## Decision
-+
-+Send only the billing tag and no identity sentence. Either one is enough to get
-+accepted, and the billing tag is invisible to the model, so it can't make the
-+model misdescribe itself.
-+
-+## Not covered
-+
-+- These were short prompts with no tools. A full Jcode session (long prompt,
-+  tools, thinking) could be checked differently. Check a real session on Opus
-+  after any change here.
-+- Anthropic can change these checks at any time. Re-run the probe if OAuth
-+  requests start getting 429s right away.
-+- The sidecar (`crates/jcode-base/src/sidecar.rs`) still sends "You are Claude
-+  Code..." followed by a jcode note. It wasn't changed.
-+
-+## Re-running
-+
-+```
-+scripts/anthropic_oauth_identity_probe.py claude-opus-4-5
-+```
-+
-+Uses the first Anthropic account in `~/.jcode/auth.json`. Each variant costs
-+one small request.
-```
-
-**File**: `scripts/anthropic_oauth_identity_probe.py` (added, +42/-0)
-```diff
-@@ -0,0 +1,42 @@
-+#!/usr/bin/env python3
-+"""Probe which system-prompt blocks Anthropic requires on the Claude OAuth path.
-+
-+Sends one tiny request per variant using the first account in
-+~/.jcode/auth.json and prints accept/reject plus the model's self-description.
-+Use an Opus or Sonnet model; Haiku accepts every variant. See the doc comment on
-+OAUTH_BILLING_HEADER in crates/jcode-provider-anthropic/src/lib.rs.
-+
-+Usage: scripts/anthropic_oauth_identity_probe.py [model]   (default haiku)
-+"""
-+import json,uuid,urllib.request,urllib.error,os,sys
-+d=json.load(open(os.path.expanduser('~/.jcode/auth.json')))
-+tok=d['anthropic_accounts'][0]['access']
-+BILL="x-anthropic-billing-header: cc_version=2.1.280; cc_entrypoint=sdk-cli; cch=33f85;"
-+SDK="You are a Claude agent, built on Anthropic's Claude Agent SDK."
-+CC="You are Claude Code, Anthropic's official CLI for Claude."
-+JC="You are jcode, powered by Claude Code. You are a third-party CLI, not the official Claude Code CLI."
-+JPROMPT="You are Jcode, an open-source coding agent. Use tools to edit files and run builds. "*20
-+BETA="claude-code-20250219,oauth-2025-04-20,interleaved-thinking-2025-05-14"
-+model=sys.argv[1] if len(sys.argv)>1 else "claude-haiku-4-5"
-+variants={
-+ "A current (bill+SDK+jcode)":[BILL,SDK,JPROMPT],
-+ "B no identity (bill+jcode)":[BILL,JPROMPT],
-+ "C no bill, SDK":[SDK,JPROMPT],
-+ "D neither":[JPROMPT],
-+ "E bill+SDK+jcode-notice":[BILL,SDK,"Note: you are actually Jcode, a third-party harness, not built on the Agent SDK.",JPROMPT],
-+ "F old (bill+CC+JC notice)":[BILL,CC,JC,JPROMPT],
-+ "G bill+jcode first then SDK":[BILL,JPROMPT,SDK],
-+}
-+sid=str(uuid.uuid4())
-+for name,blocks in variants.items():
-+  body={"model":model,"max_tokens":60,"system":[{"type":"text","text":t} for t in blocks],
-+        "messages":[{"role":"user","content":"Who are you, in one sentence?"}]}
-+  req=urllib.request.Request("https://api.anthropic.com/v1/messages?beta=true",data=json.dumps(body).encode(),method="POST",headers={
-+   "Authorization":"Bearer "+tok,"content-type":"application/json","anthropic-version":"2023-06-01",
-+   "anthropic-beta":BETA,"User-Agent":"claude-cli/2.1.280 (external, sdk-cli)","x-app":"cli",
-+   "X-Claude-Code-Session-Id":sid,"anthropic-dangerous-direct-browser-access":"true"})
-+  try:
-+    r=json.load(urllib.request.urlopen(req,timeout=60))
-+    print(f"{name}: OK -> {r['content'][0]['text'][:110]!r}")
-+  except urllib.error.HTTPError as e:
-+    print(f"{name}: HTTP {e.code} -> {e.read().decode()[:160]}")
+-async fn query_with_timeout(program: &std::ffi::OsStr, timeout: Duration) -> Option<Snapshot> {
++async fn stream(
++    program: &std::ffi::OsStr,
++    sender: &tokio::sync::watch::Sender<Option<Option<Arc<Snapshot>>>>,
++) -> anyhow::Result<()> {
+     use anyhow::Context;
+-    let result = tokio::time::timeout(timeout, async {
+-        let mut child = tokio::process::Command::new(program)
+-            .args(["status", "--json"])
+-            .stdin(std::process::Stdio::null())
+-            .stdout(std::process::Stdio::piped())
+-            .stderr(std::process::Stdio::null())
+-            .kill_on_drop(true)
+-            .spawn()
+-            .context("start justrust status query")?;
+-        let mut bytes = Vec::new();
+-        child
+-            .stdout
+-            .take()
+-            .context("justrust status stdout was not piped")?
+-            .take((MAX_RESPONSE + 1) as u64)
+-            .read_to_end(&mut bytes)
+-            .await
+-            .context("read justrust status response")?;
+-        if bytes.len() > MAX_RESPONSE {
+-            child
+-                .kill()
+-                .await
+-                .context("terminate oversized justrust status response")?;
+-            anyhow::bail!("justrust status response exceeds {MAX_RESPONSE} bytes");
+-        }
+-        let status = child
+-            .wait()
+-            .await
+-            .context("wait for justrust status query")?;
+-        anyhow::ensure!(status.success(), "justrust status exited with {status}");
+-        serde_json::from_slice(&bytes).context("decode justrust status response")
+-    })
+-    .await;
+-    match result {
+-        Ok(Ok(snapshot)) => Some(snapshot),
+-        Ok(Err(error)) => {
+-            crate::logging::debug(&format!("Build status unavailable: {error:#}"));
+-            None
+-        }
+-        Err(error) => {
+-            crate::logging::debug(&format!("Build status query timed out: {error}"));
+-            None
++    use tokio::io::AsyncBufReadExt;
++    let mut child = tokio::process::Command::new(program)
++        .args(["status", "--json", "--watch", "1"])
++        .stdin(std::process::Stdio::null())
++        .stdout(std::process::Stdio::piped())
++        .stderr(std::process::Stdio::null())
++        .kill_on_drop(true)
++        .spawn()
++        .context("start justrust status stream")?;
++    let stdout = child.stdout.take().context("stdout was not piped")?;
++    let mut reader = tokio::io::BufReader::new(stdout);
++    let mut line = Vec::new();
++    let mut first = true;
++    loop {
++        line.clear();
++        let limit = if first {
++            FIRST_LINE_TIMEOUT
++        } else {
++            Duration::from_secs(365 * 24 * 3600)
++        };
++        let mut limited = (&mut reader).take((MAX_RESPONSE + 1) as u64);
++        let next = limited.read_until(b'\n', &mut line);
++        let read = tokio::select! {
++            read = tokio::time::timeout(limit, next) => {
++                read.context("first status line timed out")?
++            }
++            () = sender.closed() => return Ok(()),
++        };
++        first = false;
++        let n = read.context("read justrust status stream")?;
++        anyhow::ensure!(n > 0, "justrust status stream closed");
++        anyhow::ensure!(
++            line.ends_with(b"\n") || n <= MAX_RESPONSE,
++            "justrust status line exceeds {MAX_RESPONSE} byte
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2026** (closed): fix: keep pool rotation for OAuth-bound config defaults on fresh sessions (@alecuba16)
-- **PR #2025** (closed): Add interactive /config settings wizard to the TUI (@remedialchaos)
-- **PR #2011** (closed): fix(patch): apply unified hunks to CRLF files (@jaeminbird)
-- **PR #2005** (closed): fix: close provider profile and emoji copy review gaps (@SiavZ)
-- **PR #2001** (closed): Never auto-background the ask_user chooser (@alecuba16)
-- **PR #1996** (closed): feat: extend plugins, rewind, and agent workflows (@SiavZ)
+- **PR #2098** (closed): fix(webfetch): Report truncation length in bytes (@tayoonabule)
+- **PR #2080** (closed): fix: preserve runtime context when opening swarm agents (@fardjad)
+- **PR #2078** (closed): fix(tui): emit OSC 52 before native clipboard in SSH sessions (@osmanaksu)
+- **PR #2072** (2026-11-06): fix(browser): keep requested browser across scoped handoff inputs (@ptlnextdoor)
+- **PR #2065** (closed): fix(build): sweep stale launcher backups on Windows publish (@gdamprint-cmyk)
+- **PR #2063** (closed): feat(tui): copy session ID from picker (@Aafimalek)
 
 ---
 
@@ -3161,56 +2547,48 @@ Claude Agent SDK. Document the probe matrix and add a re-run script.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tui: mutate incremental body base in place instead of deep-cloning on append
+## X. ratatui-jcode: Buffer::diff skips unchanged narrow rows wholesale
 
 **RULE**:
-When implementing operations in `crates/jcode-tui/src/tui/ui.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 1jehuang/jcode. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `vendor/ratatui-jcode/ratatui-core/src/buffer/buffer.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 1jehuang/jcode. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `42cd9972`: tui: mutate incremental body base in place instead of deep-cloning on append. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f979a0ad`: ratatui-jcode: Buffer::diff skips unchanged narrow rows wholesale. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/jcode-tui/src/tui/ui.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `vendor/ratatui-jcode/ratatui-core/src/buffer/buffer.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// Drop every frame-level reference to `base` except the caller's, so the
-/// incremental body build can mutate it in place. Otherwise `Arc::make_mut`
-/// deep-clones the whole wrapped transcript (tens of ms on long sessions) on
-/// every appended message.
-///
-/// The base was just taken out of the body cache because no body entry matched
-/// the current key, so any full-prep frame embedding it is keyed on an older
-/// transcript and cannot be hit again. The last drawn frame is republished by
-/// the draw that triggered this build.
-pub(super) fn release_frame_refs_to_body(base: &Arc<PreparedMessages>) {
-    let holds = |frame: &Arc<PreparedChatFrame>| {
-        frame
-            .sections
-            .iter()
-            .any(|section| Arc::ptr_eq(&section.prepared, base))
-    };
-    if let Ok(mut cache) = full_prep_cache().lock() {
-        cache.entries.retain(|entry| !holds(&entry.prepared));
-        cache
-            .oversized_entries
-            .retain(|entry| !holds(&entry.prepared));
-    }
-    #[cfg(test)]
-    TEST_LAST_CHAT_FRAME.with(|slot| {
-        let mut slot = slot.borrow_mut();
-        if slot.as_ref().is_some_and(holds) {
-            *slot = None;
-        }
-    });
+        // ratatui-jcode: whole-row fast path. When no wide-grapheme state
+        // carries into a row and every cell is unchanged and at most one byte
+        // wide (so width <= 1 and the state stays zero), the row produces no
+        // updates and can be skipped without the per-cell width logic.
+        let row_width = usize::from(self.area.width).max(1);
+        let len = next_buffer.len().min(previous_buffer.len());
+        let mut i = 0;
+        while i < len {
+            if i % row_width == 0 && invalidated == 0 && to_skip == 0 {
+                let end = (i + row_width).min(len);
+                let unchanged = next_buffer[i..end]
+                    .iter()
+                    .zip(&previous_buffer[i..end])
+                    .all(|(c, p)| c.symbol_len_le1() && c == p);
+                if unchanged {
+                    i = end;
+                    continue;
+                }
+            }
+            let (current, previous) = (&next_buffer[i], &previous_buffer[i]);
+            i += 1;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        for (i, (current, previous)) in next_buffer.iter().zip(previous_buffer.iter()).enumerate() {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `42cd9972` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f979a0ad` are properly handled with clean fallback behavior.

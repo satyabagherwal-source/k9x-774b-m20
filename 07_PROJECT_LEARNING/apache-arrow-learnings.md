@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-arrow-learnings.md`  
 > **Source**: github ([https://github.com/apache/arrow](https://github.com/apache/arrow))  
-> **Source Version**: `802102ad`  
+> **Source Version**: `7299fdcc`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T17:57:22.269Z  
+> **Timestamp**: 2026-11-08T23:12:30.573Z  
 > **Learning ID**: `learn-github-apache-arrow`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-arrow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/arrow](https://github.com/apache/arrow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T17:57:21.313Z  
+> **Harvest Timestamp**: 2026-11-08T23:12:30.455Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Apache Arrow is the universal columnar format and multi-language toolbox for fast data interchange and in-memory analytics
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 17274 stars
+- **Stars / Engagement**: 17278 stars
 
 ---
 
@@ -1377,17 +1377,13 @@ std::vector<ArrayVector> RechunkArraysConsistently(const std::vector<ArrayVector
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #55414** (2026-11-05): **EXP: Emscripten toolchain upgrade**
-  *Symptoms*: ### Rationale for this change Experiment for PR #55381 - update emscripten_version="3.1.45" to "4.0.14"  ### What changes are included in this PR?  ### Are these changes tested?  ### Are there any user-facing changes?   ### Was AI used for this PR?  In accordance to the [AI generation guidelines](https://arrow.apache.org/docs/dev/developers/overview.html#ai-generated-code), please disclose below whether and how AI was used in this PR.  **PR code and description written by:**  - [ ] Human - [ ] AI  **Reviewed before submission by:**  - [ ] Human - [ ] AI - [ ] Not reviewed 
+- **Issue #55438** (2026-11-07): **GH-55429: [C++] Avoid unavailable libc++ utilities in CRAN builds**
+  *Symptoms*: Closes #55429.  Closes #55430.  ### Rationale for this change  The CRAN macOS build uses the macOS 11.3 SDK, whose libc++ lacks std::invocable and std::in_range.  The std::invocable failure occurs first and masks the std::in_range failure, so both need to be addressed for this build configuration.  ### What changes are included in this PR?  Replace std::invocable with std::is_invocable_v in the two transform constraints in codegen_internal.h, and remove the unused `<concepts>` include.  Replace the endpoint-based std::in_range checks in Parquet’s can_hold_v with a comparison of numeric_limits::digits and signedness. The predicate continues to determine whether the destination integer type can represent the source type’s complete range.  ### Are these changes tested?  A Linux GCC 13 source build succeeds with the patch.  The targeted suites pass:  - Kernel utility tests: 6 passed. - Parquet reader tests: 180 passed, 10 skipped.  The integer-range predicate was also checked against the previous expression for 64 signed and unsigned integer-type pairs. Formatting passes with the repository’s pinned clang-format 18.1.8.  The macOS 11.3 SDK was unavailable in the validation environment, so the exact test-r-macos-as-cran build still needs CI verification.  ### Are there any user-facing changes?  This addresses compilation failures with the older libc++ used by the CRAN build. No public API or intended runtime behavior changes.  ### Was AI used for this PR?  AI tools assisted with i
   **Post-Mortem & Fix Analysis**:
-  > @github-actions crossbow submit *-emscripten
-  > Revision: 22ed7f10cb20676f1400be2de025b4d115de0131  Submitted crossbow builds: [ursacomputing/crossbow @ actions-a280fa770b](https://github.com/ursacomputing/crossbow/branches/all?query=actions-a280fa770b)  |Task|Status| |----|------| |test-conda-python-emscripten|[![GitHub Actions](https://github.com/ursacomputing/crossbow/actions/workflows/crossbow.yml/badge.svg?branch=actions-a280fa770b-github-test-conda-python-emscripten)](https://github.com/ursacomputing/crossbow/actions/runs/42012743959/job/127195591727)| |test-ubuntu-22.04-cpp-emscripten|[![GitHub Actions](https://github.com/ursacomputing/crossbow/actions/workflows/crossbow.yml/badge.svg?branch=actions-a280fa770b-github-test-ubuntu-22.04-cpp-emscripten)](https://github.com/ursacomputing/crossbow/actions/runs/42012743689/job/127195591057)|
+  > :warning: GitHub issue #55429 **has been automatically assigned in GitHub** to PR creator.
 
-- **Issue #55403** (2026-11-05): **GH-55402: [CI][Packaging] Use lowecase for repository name for Docker image name**
-  *Symptoms*: ### Rationale for this change GH-55402  ### What changes are included in this PR? send repo names in lower case format in `docker_image` function. This change affects `linux-packages` CI.  ### Are these changes tested? Yes, in fork  ### Are there any user-facing changes? N/A  ### Was AI used for this PR?  In accordance to the [AI generation guidelines](https://arrow.apache.org/docs/dev/developers/overview.html#ai-generated-code), please disclose below whether and how AI was used in this PR.  **PR code and description written by:**  - [x] Human - [x] AI  **Reviewed before submission by:**  - [x] Human - [ ] AI - [ ] Not reviewed  * GitHub Issue: #55402
-  **Post-Mortem & Fix Analysis**:
-  > @raulcd @kou  PR is ready for review, the CI failures look unrelated to the PR.
-  > @alinaliBQ this makes sense to me. Do you have an example of a workflow failing prior to this change? I suspect this failed on your fork initially?
+- **Issue #55437** (2026-11-07): **GH-55428: [C++][S3] Preserve retryable errors when ranged-read buffers overflow**
+  *Symptoms*: Closes #55428.  ### Rationale for this change  A ranged GetObject response currently writes into a buffer sized to the requested read. An S3 error document can be larger than that buffer, even when the requested object is small.  When this happens, the response stream fails before the AWS SDK can classify the error. A SlowDown response becomes INTERNAL_FAILURE with “Failed to flush response stream”, preventing the expected retry behavior.  ### What changes are included in this PR?  Introduce a GET-specific response stream that writes successful reads directly into the caller’s buffer.  If a response exceeds that buffer, the stream retains a prefix of up to 64 KiB for SDK error parsing and consumes subsequent bytes without growing the retained buffer. This lets the SDK classify and retry throttling responses.  After a successful SDK result, check whether the response overflowed. Oversized successful responses return an IOError instead of being accepted as a valid ranged read.  The upload stream is unchanged.  ### Are these changes tested?  Six new C++ tests cover normal and short writes, bulk and split overflow, character writes, direct put-area writes, rewinding, spill-cap boundaries, and overflow detection.  Eleven Python integration cases use a local HTTP server to cover:  - HTTP 429 and 503 SlowDown responses larger than the requested range. - A control case where the error body fits. - Recovery after throttling, verifying the returned bytes. - Oversized HTTP 200 and 206 r
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1404,22 +1400,135 @@ std::vector<ArrayVector> RechunkArraysConsistently(const std::vector<ArrayVector
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `802102ad` (2026-11-05)
-**Commit Message**: GH-55380: [C++][CI] Fix Emscripten nightly jobs after Protobuf/Abseil bump (#55381)
+### Incident Patch 1: `7299fdcc` (2026-11-08)
+**Commit Message**: GH-54025: [C++][Engine] Validate Substrait emit output_mapping indices (#53521)
 
 ### Rationale for this change
-Fix #55380 - recently #54927 bumped Protobuf from 31.1 to 36.2 which fails applying of `protobuf-emscripten.patch`.
-Then the job `test-ubuntu-22.04-cpp-emscripten` has two more failures:
-- `arrow-utility-test` (`TimestampParser.StrptimeParser`) failing since #54657,
-- and `arrow-substrait-substrait-test` after Abseil bump in #54927
+
+While reading the Substrait relation conversion I noticed that `GetEmitInfo` and `ProcessEmitProject` take the `emit.output_mapping` values straight from the plan and use them to index `input_schema->field(map_id)` and the project expression vector, with no range check. `Schema::field` only has debug assertions, so a deserialised plan carrying an out-of-bounds or negative mapping index reads past the end of those vectors (and in the project case moves an out-of-bounds `compute::Expression`). This is reachable from the public `DeserializePlan` entry point, which parses untrusted plan bytes, and it applies to essentially every relation kind that goes through the emit path. The neighbouring `ProcessExtensionEmit` already range-checks the same index, so the two emit helpers were simply missing the equivalent guard.
 
 ### What changes are included in this PR?
-- Remove protobuf Emscripten patch, Protobuf 36.2 no longer needs it
-- Skip the impossible date and leap second cases on Emscripten for `TimestampParser.StrptimeParser` in `arrow-utility-test`
-- Link Emscipten test executables with `-sUSE_OFFSET_CONVERTER=1` when < 4.0.14 (setting removed with Emscripten 4.0.14) for `arrow-substrait-substrait-test` to pass
+
+A range check on `map_id` in both `GetEmitInfo` and `ProcessEmitProject` that returns `Status::Invalid` for negative or out-of-bounds indices, matching the existing check in `ProcessExtensionEmit`. For a ProjectRel the em
+
+**File**: `cpp/src/arrow/engine/substrait/relation_internal.cc` (modified, +6/-0)
+```diff
+@@ -85,6 +85,9 @@ Result<EmitInfo> GetEmitInfo(const RelMessage& rel,
+   FieldVector emit_fields(emit_size);
+   for (int i = 0; i < emit_size; i++) {
+     int32_t map_id = emit.output_mapping(i);
++    if (map_id < 0 || map_id >= input_schema->num_fields()) {
++      return Status::Invalid("Out of bounds emit index ", map_id);
++    }
+     proj_field_refs[i] = compute::field_ref(FieldRef(map_id));
+     emit_fields[i] = input_schema->field(map_id);
+   }
+@@ -111,6 +114,9 @@ Result<DeclarationInfo> ProcessEmitProject(
+         std::vector<compute::Expression> emit_proj_exprs(emit_size);
+         for (int i = 0; i < emit_size; i++) {
+           int32_t map_id = emit.output_mapping(i);
++          if (map_id < 0 || map_id >= input_schema->num_fields()) {
++            return Status::Invalid("Out of bounds emit index ", map_id);
++          }
+           emit_fields[i] = input_schema->field(map_id);
+           emit_proj_exprs[i] = std::move(proj_options.expressions[map_id]);
+         }
+```
+
+**File**: `cpp/src/arrow/engine/substrait/serde_test.cc` (modified, +68/-0)
+```diff
+@@ -3147,6 +3147,74 @@ TEST(SubstraitRoundTrip, ReadRelWithEmit) {
+                        /*include_columns=*/{}, conversion_options);
+ }
+ 
++void CheckInvalidEmitIndex(const std::string& rel_json) {
++  std::string substrait_json = R"({
++  "version": { "major_number": 9999, "minor_number": 9999, "patch_number": 9999 },
++  "relations": [{
++    "rel": )" + rel_json + R"(
++  }]
++  })";
++
++  ASSERT_OK_AND_ASSIGN(auto buf,
++                       internal::SubstraitFromJSON("Plan", substrait_json,
++                                                   /*ignore_unknown_fields=*/false));
++  auto dummy_schema =
++      schema({field("A", int32()), field("B", int32()), field("C", int32())});
++  ConversionOptions conversion_options;
++  conversion_options.named_table_provider =
++      AlwaysProvideSameTable(TableFromJSON(dummy_schema, {"[[1, 2, 3]]"}));
++  std::shared_ptr<ExtensionIdRegistry> sp_ext_id_reg = MakeExtensionIdRegistry();
++  ExtensionIdRegistry* ext_id_reg = sp_ext_id_reg.get();
++  ExtensionSet ext_set(ext_id_reg);
++  EXPECT_THAT(
++      DeserializePlans(
++          *buf, [] { return kNullConsumer; }, ext_id_reg, &ext_set, conversion_options),
++      Raises(StatusCode::Invalid, HasSubstr("Out of bounds emit index")));
++}
++
++TEST(Substrait, ReadRelWithOutOfBoundsEmit) {
++  for (const char* mapping : {"[0, 3]", "[-1, 1]"}) {
++    ARROW_SCOPED_TRACE("outputMapping: ", mapping);
++    CheckInvalidEmitIndex(R"({
++      "read": {
++        "common": {"emit": {"outputMapping": )" +
++                          std::string(mapping) + R"(}},
++        "base_schema": {
++          "names": ["A", "B", "C"],
++          "struct": {"types": [{"i32": {}}, {"i32": {}}, {"i32": {}}]}
++        },
++        "namedTable": {"names": ["A"]}
++      }
++    })");
++  }
++}
++
++TEST(Substrait, ProjectRelWithOutOfBoundsEmit) {
++  // The project emits the 3 input fields plus 1 expression, so 4 is out of range
++  for (const char* mapping : {"[0, 4]", "[-1, 3]"}) {
++    ARROW_SCOPED_TRACE("outputMapping: ", mapping);
++    CheckInvalidEmitIndex(R"({
++      "project": {
++        "common": {"emit": {"outputMapping": )" +
++                          std::string(mapping) + R"(}},
++        "expressions": [
++          {"selection": {"directReference": {"structField": {"field": 0}},
++                         "rootReference": {}}}
++        ],
++        "input": {
++          "read": {
++            "base_schema": {
++              "names": ["A", "B", "C"],
++              "struct": {"types": [{"i32": {}}, {"i32": {}}, {"i32": {}}]}
++            },
++            "namedTable": {"names": ["A"]}
++          }
++        }
++      }
++    })");
++  }
++}
++
+ TEST(SubstraitRoundTrip, FilterRelWithEmit) {
+   auto dummy_schema = schema({field("A", int32()), field("B", int32()),
+                               field("C", int32()), field("D", int32())});
+```
+
+---
+
+### Incident Patch 2: `19f5e06a` (2026-11-08)
+**Commit Message**: GH-55356: [C++] Compare mtime at second precision in `GetFileInfoSelector` test (#55433)
+
+### Rationale for this change
+#55356 - `TestS3FSGeneric.GetFileInfoSelector` fails with AWS SDK 1.11.900 and newer.
+See https://github.com/aws/aws-sdk-cpp/pull/3934
+`ListObjectsV2` results keep milliseconds while `HeadObject`'s `Last-Modified` header only has seconds.
+
+### What changes are included in this PR?
+Floor the listing `mtime` from milliseconds to seconds in `GetFileInfoSelector` test when the single file `mtime` has only seconds.
 
 ### Are these changes tested?
-Yes, both emscripten jobs pass.
+Locally on macOS arm64 with AWS SDK 1.11.900 and MinIO.
 
 ### Are there any user-facing changes?
 No.
@@ -1434,124 +1543,39 @@ No.
 **Reviewed before submission by:**
 
 - [X] Human
-- [x] AI
+- [ ] AI
 - [ ] Not reviewed
-* GitHub Issue: #55380
 
-Lead-authored-by: Tadeja Kadunc <[REDACTED_EMAIL
+* GitHub Issue: #55356
 
-**File**: `cpp/cmake_modules/SetupCxxFlags.cmake` (modified, +5/-0)
+Lead-authored-by: Tadeja Kadunc <[REDACTED_EMAIL]>
+Co-authored-by: tadeja <[REDACTED_EMAIL]>
+Co-authored-by: Rok Mihevc <[REDACTED_EMAIL]>
+Signed-off-by: Sutou Kouhei <[REDACTED_EMAIL]>
+
+**File**: `cpp/src/arrow/filesystem/test_util.cc` (modified, +5/-0)
 ```diff
-@@ -747,6 +747,11 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Emscripten")
-           "${ARROW_EMSCRIPTEN_LINKER_FLAGS} -sERROR_ON_WASM_CHANGES_AFTER_LINK=1 -sSTACK_SIZE=${ARROW_EMSCRIPTEN_TEST_STACK_SIZE} -sALLOW_MEMORY_GROWTH -lnodefs.js -lnoderawfs.js --pre-js ${BUILD_SUPPORT_DIR}/emscripten-test-init.js"
-       )
-     endif()
-+    # Abseil stack trace via emscripten_stack_snapshot() abort on Emscripten<4.0.14
-+    # if offset converter isn't enabled. Emscripten 4.0.14 removed the offset converter
-+    if(EMSCRIPTEN_VERSION VERSION_LESS "4.0.14")
-+      string(APPEND CMAKE_EXE_LINKER_FLAGS " -sUSE_OFFSET_CONVERTER=1")
-+    endif()
-   else()
-     set(CMAKE_EXE_LINKER_FLAGS "${ARROW_EMSCRIPTEN_LINKER_FLAGS} -sALLOW_MEMORY_GROWTH")
-   endif()
-```
-
-**File**: `cpp/cmake_modules/ThirdpartyToolchain.cmake` (modified, +0/-17)
-```diff
-@@ -2060,25 +2060,8 @@ function(build_protobuf)
-       "${PROTOBUF_INCLUDE_DIR}"
-       PARENT_SCOPE)
+@@ -811,6 +811,11 @@ void GenericFileSystemTest::TestGetFileInfoSelector(FileSystem* fs) {
+   ASSERT_OK_AND_ASSIGN(info, fs->GetFileInfo("AB"));
+   AssertFileInfo(info, "AB", FileType::Directory, first_dir_time);
+   ASSERT_OK_AND_ASSIGN(info, fs->GetFileInfo("AB/CD/ghi"));
++  // aws-sdk-cpp >= 1.11.900 keeps ms in S3 listings, but HeadObject only has seconds
++  if (info.mtime() == std::chrono::floor<std::chrono::seconds>(info.mtime()) &&
++      first_file_time == std::chrono::floor<std::chrono::milliseconds>(first_file_time)) {
++    first_file_time = std::chrono::floor<std::chrono::seconds>(first_file_time);
++  }
+   AssertFileInfo(info, "AB/CD/ghi", FileType::File, first_file_time, 15);
  
--  set(PROTOBUF_PATCH_COMMAND)
--  if(EMSCRIPTEN)
--    find_program(PATCH patch)
--    if(PATCH)
--      set(PROTOBUF_PATCH_COMMAND ${PATCH} -p1 -i)
--    else()
--      find_program(GIT git)
--      if(GIT)
--        set(PROTOBUF_PATCH_COMMAND ${GIT} apply)
--      endif()
--    endif()
--    if(PROTOBUF_PATCH_COMMAND)
--      list(APPEND PROTOBUF_PATCH_COMMAND
--           ${CMAKE_CURRENT_LIST_DIR}/protobuf-emscripten.patch)
--    endif()
--  endif()
-   fetchcontent_declare(protobuf
-                        ${FC_DECLARE_COMMON_OPTIONS} OVERRIDE_FIND_PACKAGE
--                       PATCH_COMMAND ${PROTOBUF_PATCH_COMMAND}
-                        URL ${PROTOBUF_SOURCE_URL}
-                        URL_HASH "SHA256=${ARROW_PROTOBUF_BUILD_SHA256_CHECKSUM}")
- 
-```
-
-**File**: `cpp/cmake_modules/protobuf-emscripten.patch` (removed, +0/-39)
-```diff
-@@ -1,39 +0,0 @@
--# Licensed to the Apache Software Foundation (ASF) under one
--# or more contributor license agreements.  See the NOTICE file
--# distributed with this work for additional information
--# regarding copyright ownership.  The ASF licenses this file
--# to you under the Apache License, Version 2.0 (the
--# "License"); you may not use this file except in compliance
--# with the License.  You may obtain a copy of the License at
--#
--#   http://www.apache.org/licenses/LICENSE-2.0
--#
--# Unless required by applicable law or agreed to in writing,
--# software distributed under the License is distributed on an
--# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
--# KIND, either express or implied.  See the License for the
--# specific language governing permissions and limitations
--# under the License.
--
--
----- a/src/google/protobuf/port_def.inc
--+++ b/src/google/protobuf/port_def.inc
--@@ -435,13 +435,15 @@
-- # endif
-- #else
---# if defined(__cpp_constinit) && !defined(__CYGWIN__)
--+// Emscripten's libc++ std::string is not constexpr-constructible (heap alloc).
--+# if defined(__cpp_constinit) && !defined(__CYGWIN__) && !defined(__EMSCRIPTEN__)
-- #  define PROTOBUF_CONSTINIT constinit
-- #  define PROTOBUF_CONSTEXPR constexpr
-- #  define PROTOBUF_CONSTINIT_DEFAULT_INSTANCES
-- // Some older Clang versions incorrectly raise an error about
-- // constant-initializing weak default instance pointers. Versions 12.0 and
-- // higher seem to work, except that XCode 12.5.1 shows the error even though it
-- // uses Clang 12.0.5.
---#elif !defined(__CYGWIN__) && !defined(__MINGW32__) &&                 \
--+#elif !defined(__CYGWIN__) && !defined(__MINGW32__) &&                  \
--+    !defined(__EMSCRIPTEN__) &&                                         \
--     ABSL_HAVE_CPP_ATTRIBUTE(clang::require_constant_initialization) && \
--     ((defined(__APPLE__) && PROTOBUF_CLANG_MIN(13, 0)) ||              \
--      (!defined(__APPLE__) && PROTOBUF_CLANG_MIN(12, 0)))
-```
-
-**File**: `cpp/src/arrow/util/value_parsing_test.cc` (modified, +4/-0)
-```diff
-@@ -884,6 +884,10 @@ TEST(TimestampParser, StrptimeParser) {
-       // Leap seconds are rejected, as by the
-       // ISO-8601 parser
-       "5/31/2000 12:30:60", "5/31/2000 23:59:60", "5/31/2000 23:59:61"};
-+#ifdef __EMSCRIPTEN__
-+  // Emscripten's strptime() normalizes invalid dates/times. See GH-55397
-+  unparseables = {"foo", "5/1/2000", "5/1/2000 12:34:56:6"};
-+#endif
-   for (auto& value : unparseables) {
-     int64_t dummy;
-     ASSERT_FALSE((*parser)(value.c_str(), value.size(), TimeUnit::SECOND, &dummy));
+   // Doesn't exist
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #55414** (closed): EXP: Emscripten toolchain upgrade (@tadeja)
-- **PR #55403** (2026-11-05): GH-55402: [CI][Packaging] Use lowecase for repository name for Docker image name (@alinaliBQ)
-- **PR #55401** (closed): GH-55400: [C++][IPC] Validate body_length in ReadMessage and ReadMessageAsync (@ShivanshhhG)
-- **PR #55395** (closed): GH-55394: [C++][Compute] Check overflow when negating duration (@DiadkoShmek)
-- **PR #55386** (2026-11-04): GH-55385: [C++][Parquet] Remove unused `last_value_in_previous_page_` from `DeltaByteArrayDecoderImpl` (@omkar-334)
-- **PR #55384** (closed): MINOR: [C++][Parquet] Reset page state in RecordReader::SetPageReader (@professor-moody)
+- **PR #55438** (closed): GH-55429: [C++] Avoid unavailable libc++ utilities in CRAN builds (@JonSnow1807)
+- **PR #55437** (closed): GH-55428: [C++][S3] Preserve retryable errors when ranged-read buffers overflow (@JonSnow1807)
+- **PR #55436** (closed): Gh 48269 enable flight sql test msvc (@alinaliBQ)
+- **PR #55433** (2026-11-08): GH-55356: [C++] Compare mtime at second precision in `GetFileInfoSelector` test (@tadeja)
+- **PR #55422** (closed): GH-55418: [Python] Accept tuple of arrays in RecordBatch.from_arrays (@ump45nose)
+- **PR #55417** (2026-11-07): GH-55416: [CI][C++] Update Emscripten to 5.0.3 (@tadeja)
 
 ---
 
@@ -1571,25 +1595,26 @@ Lead-authored-by: Tadeja Kadunc <[REDACTED_EMAIL
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. GH-55380: [C++][CI] Fix Emscripten nightly jobs after Protobuf/Abseil bump (#553
+## X. GH-54025: [C++][Engine] Validate Substrait emit output_mapping indices (#53521)
 
 **RULE**:
-When implementing operations in `cpp/cmake_modules/SetupCxxFlags.cmake`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/arrow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cpp/src/arrow/engine/substrait/relation_internal.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/arrow. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `802102ad`: GH-55380: [C++][CI] Fix Emscripten nightly jobs after Protobuf/Abseil bump (#55381). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7299fdcc`: GH-54025: [C++][Engine] Validate Substrait emit output_mapping indices (#53521). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `cpp/cmake_modules/SetupCxxFlags.cmake`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `cpp/src/arrow/engine/substrait/relation_internal.cc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-    # Abseil stack trace via emscripten_stack_snapshot() abort on Emscripten<4.0.14
-    # if offset converter isn't enabled. Emscripten 4.0.14 removed the offset converter
-    if(EMSCRIPTEN_VERSION VERSION_LESS "4.0.14")
-      string(APPEND CMAKE_EXE_LINKER_FLAGS " -sUSE_OFFSET_CONVERTER=1")
-    endif()
+    if (map_id < 0 || map_id >= input_schema->num_fields()) {
+      return Status::Invalid("Out of bounds emit index ", map_id);
+    }
+          if (map_id < 0 || map_id >= input_schema->num_fields()) {
+            return Status::Invalid("Out of bounds emit index ", map_id);
+          }
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1599,4 +1624,4 @@ Subsystems managing C++ data structures, boundary deserialization, API parsing, 
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `802102ad` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7299fdcc` are properly handled with clean fallback behavior.

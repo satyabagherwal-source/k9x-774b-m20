@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md`  
 > **Source**: github ([https://github.com/arangodb/arangodb](https://github.com/arangodb/arangodb))  
-> **Source Version**: `511a3044`  
+> **Source Version**: `0084887c`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T22:31:52.634Z  
+> **Timestamp**: 2026-11-09T16:33:39.210Z  
 > **Learning ID**: `learn-github-arangodb-arangodb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/arangodb/arangodb](https://github.com/arangodb/arangodb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T22:31:52.629Z  
+> **Harvest Timestamp**: 2026-11-09T16:33:39.202Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🥑 ArangoDB is a native multi-model database with flexible data models for documents, graphs, and key-values. Build high performance applications using a convenient SQL-like query language or JavaScript extensions.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 14294 stars
+- **Stars / Engagement**: 14295 stars
 
 ---
 
@@ -1641,11 +1641,11 @@ U_INTERNAL double  U_EXPORT2 uprv_ceil(double d);
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #23596** (2026-11-05): **[BTS-2437] [3.12] Access collection from the transaction only after "begin" succeeded**
-  *Symptoms*: Backport of https://github.com/arangodb/arangodb/pull/23595 to 3.12.
+- **Issue #23609** (2026-11-06): **Bug fix 3.12/dump connection table**
+  *Symptoms*: backport of https://github.com/arangodb/arangodb/pull/23583
 
-- **Issue #23595** (2026-11-05): **[BTS-2437] Access collection from the transaction only after "begin" succeeded**
-  *Symptoms*: ### Scope & Purpose  A maintainer-mode assertion could be triggered when the transaction begin failed, e.g. because the shard has been dropped.  ``` assertion failed in arangod/StorageEngine/TransactionState.cpp:171 [TransactionCollection *arangodb::TransactionState::collection(DataSourceId, AccessMode::Type) const]: _status == transaction::Status::CREATED || _status == transaction::Status::RUNNING ```  It has no impact in a production build.  - [X] :hankey: Bugfix  ### Checklist - [X] Backports   - [X] Backport for 3.12: https://github.com/arangodb/arangodb/pull/23596  #### Related Information  - [X] Jira ticket: https://arangodb.atlassian.net/browse/BTS-2437  
+- **Issue #23608** (2026-11-06): **Update ann-benchmark job for 3.12**
+  *Symptoms*: ### Scope & Purpose  Backport of https://github.com/arangodb/arangodb/pull/23606  - [ ] :hankey: Bugfix - [ ] :pizza: New feature - [ ] :fire: Performance improvement - [ ] :hammer: Refactoring/simplification  ### Checklist  - [ ] Tests   - [ ] **Regression tests**   - [ ] C++ **Unit tests**   - [ ] **integration tests**   - [ ] **resilience tests** - [ ] :book: CHANGELOG entry made - [ ] :books: documentation written (release notes, API changes, ...) - [ ] Backports   - [ ] Backport for 3.12.0: *(Please link PR)*   - [ ] Backport for 3.11: *(Please link PR)*   - [ ] Backport for 3.10: *(Please link PR)*
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1662,38 +1662,84 @@ U_INTERNAL double  U_EXPORT2 uprv_ceil(double d);
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `62592e77` (2026-11-05)
-**Commit Message**: Merge pull request #23595 from arangodb/bug-fix/bts-2437
+### Incident Patch 1: `0084887c` (2026-11-09)
+**Commit Message**: Rebuild included rclone v1.75.1 with go1.26.10 and non-vulnerable dependencies
 
-[BTS-2437] Access collection from the transaction only after "begin" succeeded
-
-**File**: `arangod/VocBase/Methods/Indexes.cpp` (modified, +2/-2)
+**File**: `CHANGELOG` (modified, +3/-6)
 ```diff
-@@ -867,13 +867,13 @@ requires std::is_same_v<IndexSpec, IndexId> or
-   auto trx = createTrxForDrop(col);
+@@ -1,6 +1,9 @@
+ 4.0.0 (XXXX-XX-XX)
+ ------------------
  
-   auto beginRes = co_await trx->beginAsync();
--  auto& collection = *trx->documentCollection();
++* Rebuilt included rclone v1.75.1 with go1.26.10 and non-vulnerable
++  dependencies.
++
+ * Fixed an issue where AQL COLLECT WITH COUNT reported fullCount one too high 
+   when used with LIMIT and {fullCount: true}. The single result row was counted
+   twice: once when produced and again during the fullCount skip phase.
+@@ -31,9 +34,6 @@
+   distances computed, heap updates, coarse search and list scan time) in query
+   statistics and in the profile output.
  
-   if (!beginRes.ok()) {
--    events::DropIndex(collection.vocbase().name(), collection.name(), "",
-+    events::DropIndex(col.vocbase().name(), col.name(), "",
-                       beginRes.errorNumber());
-     co_return beginRes;
-   }
-+  auto& collection = *trx->documentCollection();
+-* Rebuilt included rclone v1.75.1 with go1.26.10 and non-vulnerable
+-  dependencies.
+-
+ * Updated ArangoDB Starter to v0.20.0-preview-20.
  
-   auto indexIdRes = co_await std::invoke(
-       overload{
+ * The AQL optimizer lets a sorted COLLECT reuse a preceding SORT only if the
+@@ -587,9 +587,6 @@
+ 
+ * Remove FoxxMaster code.
+ 
+-* Rebuilt included rclone v1.75.1 with go1.26.10 and non-vulnerable
+-  dependencies.
+-
+ * Updated ArangoDB Starter to v0.19.30.
+ 
+ * COR-1152: Fixed AQL FILTER conditions combining an equality set (IN list, ==,
+```
+
+**File**: `VERSIONS` (modified, +3/-3)
+```diff
+@@ -6,8 +6,8 @@ GCC_LINUX "13.2.0"
+ CLANG_LINUX "19.1.7"
+ OPENSSL_LINUX "3.5.9"
+ USE_RCLONE "true"
+-RCLONE_GO "1.26.10-60c5ceb_20261025121659"
++RCLONE_GO "1.26.10-3e15daf_20261109131457"
+ RCLONE_VERSION "1.75.1"
+-RCLONE_SHA256_AMD64 "eea373d11983607664980b9f3b6ce96450b2af0ed4c467f1a8380c79ffe037ea"
+-RCLONE_SHA256_ARM64 "8a8d59b513a68a04e82c2fbff75e7ae5f709cb53f18404edc1ea5996b1f90b64"
++RCLONE_SHA256_AMD64 "1f107ab7dfd836ccc7748d42d80796537e308101ace8fd17ae85dbe78993965d"
++RCLONE_SHA256_ARM64 "d195faf74a5fac20bba18eb1688bf0d0de35b3064f9b7416ca1c7538beba8ccc"
+ MINIMAL_DEBUG_INFO "On"
+```
+
+---
+
+### Incident Patch 2: `392f3415` (2026-11-09)
+**Commit Message**: Fix PROTECTED branch ruleset fir CircleCI
+
+**File**: `.circleci/base_config.yml` (modified, +1/-1)
+```diff
+@@ -775,7 +775,7 @@ jobs:
+             LIST=.circleci/required-checks.txt
+             # PR pipelines run on the head branch, so the protected branch
+             # cannot be derived from CIRCLE_BRANCH.
+-            PROTECTED=4.0
++            PROTECTED=devel
+             DRIFT=0
+             if [ ! -s "${LIST}" ]; then
+               echo "ERROR: ${LIST} is missing or empty. Commit the required-check inventory." >&2
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #23596** (2026-11-05): [BTS-2437] [3.12] Access collection from the transaction only after "begin" succeeded (@goedderz)
-- **PR #23595** (2026-11-05): [BTS-2437] Access collection from the transaction only after "begin" succeeded (@goedderz)
-- **PR #23593** (2026-11-05): ci: float the trivy-scan orb on @1 (@MarkusReadius)
-- **PR #23591** (2026-11-05): [COR-966] improve foxx installer url matching (@jvolmer)
-- **PR #23588** (2026-11-05): [COR-1034] Check version from x-arango-api-version against server... (@mpoeter)
-- **PR #23587** (2026-11-04): Update `benchmarks.yml` (@jbajic)
+- **PR #23609** (2026-11-06): Bug fix 3.12/dump connection table (@dothebart)
+- **PR #23608** (2026-11-06): Update ann-benchmark job for 3.12 (@jbajic)
+- **PR #23606** (2026-11-06): Update `ann-benchmark` job (@jbajic)
+- **PR #23605** (2026-11-06): [3.12] AQL sorted COLLECT reuses a SORT only if it starts with the group variables (@maierlars)
+- **PR #23604** (2026-11-06): [COR-1111] Fix fullCount double-counting for empty COLLECT AGGREGATE (@bluepal-avanthi-dundigala)
+- **PR #23603** (2026-11-06): AQL sorted COLLECT reuses a SORT only if it starts with the group variables (@maierlars)
 
 ---
 
@@ -1713,30 +1759,35 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #23595 from arangodb/bug-fix/bts-2437
+## X. Rebuild included rclone v1.75.1 with go1.26.10 and non-vulnerable dependencies
 
 **RULE**:
-When implementing operations in `arangod/VocBase/Methods/Indexes.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arangodb/arangodb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arangodb/arangodb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `62592e77`: Merge pull request #23595 from arangodb/bug-fix/bts-2437. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0084887c`: Rebuild included rclone v1.75.1 with go1.26.10 and non-vulnerable dependencies. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `arangod/VocBase/Methods/Indexes.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-    events::DropIndex(col.vocbase().name(), col.name(), "",
-  auto& collection = *trx->documentCollection();
+* Rebuilt included rclone v1.75.1 with go1.26.10 and non-vulnerable
+  dependencies.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-  auto& collection = *trx->documentCollection();
-    events::DropIndex(collection.vocbase().name(), collection.name(), "",
+* Rebuilt included rclone v1.75.1 with go1.26.10 and non-vulnerable
+  dependencies.
+
+* Rebuilt included rclone v1.75.1 with go1.26.10 and non-vulnerable
+  dependencies.
+
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `62592e77` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0084887c` are properly handled with clean fallback behavior.

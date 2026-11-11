@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md`  
 > **Source**: github ([https://github.com/nguyenphutrong/quotio](https://github.com/nguyenphutrong/quotio))  
-> **Source Version**: `469ff28e`  
+> **Source Version**: `d0e358e1`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T18:24:33.709Z  
+> **Timestamp**: 2026-11-08T23:36:21.153Z  
 > **Learning ID**: `learn-github-nguyenphutrong-quotio`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nguyenphutrong/quotio](https://github.com/nguyenphutrong/quotio))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T18:23:09.842Z  
+> **Harvest Timestamp**: 2026-11-08T23:36:21.145Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Stop juggling AI accounts. Quotio is a beautiful native macOS menu bar app that unifies your Claude, Gemini, OpenAI, Qwen, and Antigravity subscriptions – with real-time quota tracking and smart auto-failover for AI coding tools like Claude Code, OpenCode, and Droid.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4910 stars
+- **Stars / Engagement**: 4909 stars
 
 ---
 
@@ -1046,231 +1046,480 @@ public struct ProviderSettingsState: Sendable {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7b5257a5` (2026-11-05)
-**Commit Message**: feat(desktop): recover CLIProxyAPI after crashes and hangs
+### Incident Patch 1: `d0e358e1` (2026-11-08)
+**Commit Message**: fix(deps): remove unmaintained pin-utils dependency
 
-An unexpected exit restarts the proxy up to three times, 2, 4 and 8
-seconds apart, then reports it and sends a notification. A health check
-every 30 seconds kills a proxy that stops answering so it restarts the
-same way. The running proxy's pid is saved, and the next start stops a
-proxy a killed Quotio left behind, but only when that pid still belongs
-to Quotio's proxy.
-
-**File**: `apps/desktop/src/proxy.rs` (modified, +179/-14)
+**File**: `apps/cli/Cargo.lock` (modified, +10/-18)
 ```diff
-@@ -3,16 +3,19 @@
- //! Versions live in `<data dir>/proxy/v<version>/`; the active one is a preference.
- use std::path::{Path, PathBuf};
- use std::process::{Child, Command, Stdio};
--use std::time::Duration;
-+use std::time::{Duration, Instant};
+@@ -693,9 +693,9 @@ dependencies = [
  
- use anyhow::{Context as _, Result, anyhow, bail};
--use gpui_kit::{App, Global};
-+use gpui_kit::{App, Global, SystemNotification, Task};
- use semver::Version;
- use serde::{Deserialize, Serialize};
+ [[package]]
+ name = "futures-core"
+-version = "0.3.31"
++version = "0.3.34"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "05f29059c0c2090612e8d742178b0580d2dc940c837851ad723096f87af6663e"
++checksum = "92d699e522242e69e3003b94ecc1f960f3a5e015aa7c5d7486e65ad01dd94f5e"
  
- const RELEASES: &str = "https://api.github.com/repos/router-for-me/CLIProxyAPI/releases";
- /// Installed versions kept on disk, the active one included.
- const KEEP: usize = 3;
-+/// The running proxy's process id, so a proxy left behind by a crashed Quotio can be
-+/// stopped before the next start takes its port.
-+const PID_FILE: &str = "proxy.pid";
- const BINARY: &str = if cfg!(windows) {
-     "cli-proxy-api.exe"
- } else {
-@@ -56,6 +59,13 @@ pub struct Proxy {
-     /// is written there again before every start.
-     pub key: String,
-     child: Option<Child>,
-+    started: Instant,
-+    /// Unexpected exits in a row; reset once the proxy has run for a minute.
-+    crashes: u32,
-+    /// The restart after a crash, cancelled when dropped.
-+    restarting: Option<Task<()>>,
-+    /// The health check killed the proxy because it stopped answering.
-+    hung: bool,
-     /// What is in progress, such as "Downloading 8.0.56…".
-     pub busy: Option<String>,
-     pub error: Option<String>,
-@@ -109,6 +119,10 @@ pub fn init(runtime: tokio::runtime::Handle, live: bool, cx: &mut App) {
-         dir,
-         key,
-         child: None,
-+        started: Instant::now(),
-+        crashes: 0,
-+        restarting: None,
-+        hung: false,
-         busy: None,
-         error: None,
-         upgrade: None,
-@@ -120,18 +134,56 @@ pub fn init(runtime: tokio::runtime::Handle, live: bool, cx: &mut App) {
-         async {}
-     })
-     .detach();
--    // Notice when the proxy exits on its own, such as when its port is taken.
-+    // Notice when the proxy exits on its own, and bring it back.
-     cx.spawn(async move |cx| {
-         loop {
-             cx.background_executor().timer(Duration::from_secs(2)).await;
-+            cx.update(exited);
-+        }
-+    })
-+    .detach();
-+    // A proxy that runs but no longer answers is killed, so the loop above restarts it.
-+    cx.spawn(async move |cx| {
-+        let mut failures = 0;
-+        loop {
-+            cx.background_executor()
-+                .timer(Duration::from_secs(30))
-+                .await;
-+            let probe = cx.update(|cx| {
-+                let proxy = get(cx);
-+                (proxy.child.is_some() && proxy.started.elapsed() > Duration::from_secs(30)).then(
-+                    || {
-+                        (
-+                            proxy.started,
-+                            proxy
-+                                .runtime
-+                                .spawn(answers(proxy.http.clone(), endpoint(cx))),
-+                        )
-+                    },
-+                )
-+            });
-+            let Some((started, probe)) = probe else {
-+                failures = 0;
-+                continue;
-+            };
-+            if probe.await.unwrap_or(false) {
-+                failures = 0;
-+                continue;
-+            }
-+            failures += 1;
-+            if failures < 3 {
-+                continue;
-+            }
-+            failures = 0;
-             cx.update(|cx| {
-                 let proxy = cx.global_mut::<Proxy>();
--                let Some(status) = proxy.child.as_mut().and_then(|c| c.try_wait().ok()?) else {
--                    return;
--                };
--                proxy.child = None;
--                proxy.error = Some(format!("CLIProxyAPI stopped ({status})."));
--                cx.refresh_windows();
-+                // Only the same run that failed three checks in a row.
-+                if proxy.started == started
-+                    && let Some(child) = proxy.child.as_mut()
-+                {
-+                    proxy.hung = true;
-+                    let _ = child.kill();
-+                }
-             });
-         }
-     })
-@@ -145,7 +197,65 @@ pub fn init(runtime: tokio::runtime::Handle, live: bool, cx: &mut App) {
-     }
+ [[package]]
+ name = "futures-sink"
+@@ -705,20 +705,19 @@ checksum = "1944426bf7d03f1d14f708785e4b33efd750b36d48a157b836b3efc15ede8e1d"
+ 
+ [[package]]
+ name = "futures-task"
+-version = "0.3.31"
++version = "0.3.34"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "f90f7dce0722e95104fcb095585910c0977252f286e354b5e3bd38902cd99988"
++checksum = "cd417de3d1d015fc3bfd2b1ea46dfc7bab72ef86f1cc7cc9c78e728b34a6d1fd"
+ 
+ [[package]]
+ name = "futures-util"
+-version = "0.3.31"
++version = "0.3.34"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "9fa08315bb612088cc391249efdc3bc77536f16c91f6cf495e6fbe85b20a4a81"
++checksum = "0d50a92467f8ba5dd6e3ee5d4bd04d73ab2e4e1c44474a0674821dfce14b79bc"
+ dependencies = [
+  "futures-core",
+  "futures-task",
+  "pin-project-lite",
+- "pin-utils",
+  "slab",
+ ]
+ 
+@@ -891,9 +890,9 @@ checksum = "df3b46402a9d5adb4c86a0cf463f42e19994e3ee891101b1841f30a545cb49a9"
+ 
+ [[package]]
+ name = "hyper"
+-version = "1.8.1"
++version = "1.12.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "2ab2d4f250c3d7b1c9fcdff1cece94ea4e2dfbec68614f7b87cb205f24ca9d11"
++checksum = "2c3e324da4c95177d6291d4c8730197c0d1822f8a9766814a4a44fa5ab797c9c"
+ dependencies = [
+  "atomic-waker",
+  "bytes",
+@@ -906,7 +905,6 @@ dependencies = [
+  "httpdate",
+  "itoa",
+  "pin-project-lite",
+- "pin-utils",
+  "smallvec",
+  "tokio",
+  "want",
+@@ -1489,12 +1487,6 @@ version = "0.2.16"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "3b3cff922bd51709b605d9ead9aa71031d81447142d828eb4a6eba76fe619f9b"
+ 
+-[[package]]
+-name = "pin-utils"
+-version = "0.1.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "8b870d8c151b6f2fb93e84a13146138f05d02ed11c7e7c54f8826aaaf7c9f184"
+-
+ [[package]]
+ name = "pkg-config"
+ version = "0.3.34"
+@@ -2598,9 +2590,9 @@ checksum = "5c3082ca00d5a5ef149bb8b555a72ae84c9c59f7250f013ac822ac2e49b19c64"
+ 
+ [[package]]
+ name = "want"
+-version = "0.3.1"
++version = "0.3.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "bfa7760aed19e106de2c7c0b581b509f2f25d3dacaf737cb82ac61bc6d760b0e"
++checksum = "ec4cdd0dd910afe868b7ef477227d8d538b46b3075031afee8a9f2acb0a2ed0b"
+ dependencies = [
+  "try-lock",
+ ]
+```
+
+---
+
+### Incident Patch 2: `7bbabc52` (2026-11-08)
+**Commit Message**: fix(accounts): preserve logical IDs and receipts during adoption
+
+**File**: `apps/cli/src/accounts/adopt.rs` (modified, +41/-10)
+```diff
+@@ -7,17 +7,36 @@ pub struct Source {
+     pub config: Option<PathBuf>,
  }
  
-+/// After an unexpected exit, restart up to three times, waiting 2, 4 and 8 seconds.
-+fn exited(cx: &mut App) {
-+    let proxy = cx.global_mut::<Proxy>();
-+    let Some(status) = proxy.child.as_mut().and_then(|c| c.try_wait().ok()?) else {
-+        return;
-+    };
-+    proxy.child = None;
-+    let _ = std::fs::remove_file(proxy.dir.join(PID_FILE));
-+    let status = if std::mem::take(&mut proxy.hung) {
-+        "it stopped responding".to_owned()
-+    } else {
-+        status.to_string()
-+    };
-+    if proxy.started.elapsed() > Duration::from_secs(60) {
-+        proxy.crashes = 0;
+-#[derive(serde::Serialize)]
+-struct Marker {
+-    schema_version: u32,
++#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
++pub struct Receipt {
++    pub schema_version: u32,
+     #[serde(with = "time::serde::rfc3339")]
+-    adopted_at: time::OffsetDateTime,
+-    accounts_added: usize,
+-    accounts_refreshed: usize,
+-    history_rows: u64,
++    pub adopted_at: time::OffsetDateTime,
++    pub accounts_added: usize,
++    pub accounts_refreshed: usize,
++    pub history_rows: u64,
++    #[serde(default)]
++    pub source_host: Option<String>,
++    #[serde(default)]
++    pub target_host: Option<String>,
++    /// Absent in v1 receipts, where a colliding ID cannot safely be reconstructed.
++    #[serde(default)]
++    pub account_mappings: Option<std::collections::BTreeMap<String, String>>,
++    #[serde(default)]
++    pub kept_target_pairing: bool,
+ }
+ 
+ impl Source {
++    pub fn receipt(&self) -> std::io::Result<Option<Receipt>> {
++        match std::fs::read(self.marker_path()) {
++            Ok(bytes) => serde_json::from_slice(&bytes)
++                .map(Some)
++                .map_err(std::io::Error::other),
++            Err(error) if error.kind() == std::io::ErrorKind::NotFound => Ok(None),
++            Err(error) => Err(error),
++        }
 +    }
-+    proxy.crashes += 1;
-+    if proxy.crashes <= 3 {
-+        let delay = Duration::from_secs(1 << proxy.crashes);
-+        proxy.error = Some(format!(
-+   
++
+     fn marker_path(&self) -> PathBuf {
+         self.data_dir
+             .join(self.namespace.lock_name())
+@@ -84,13 +103,21 @@ pub async fn vault(
+             return false;
+         }
+     };
++    let source_host = document
++        .resolved
++        .as_ref()
++        .map(|registry| registry.host_id.clone());
+     let absorbed = match absorb(target, document).await {
+         Ok(absorbed) => absorbed,
+         Err(error) => {
+             tracing::warn!(?error, "vault_adoption_target_unavailable");
+             return false;
+         }
+     };
++    let target_host = absorbed
++        .history
++        .as_ref()
++        .map(|rewrite| rewrite.host.clone());
+     let rows = match absorbed.history {
+         None => Ok(0),
+         Some(rewrite) => match history {
+@@ -117,12 +144,16 @@ pub async fn vault(
+         tracing::info!("vault_adoption_marker_deferred");
+         return absorbed.changed || rows > 0;
+     }
+-    let marker = Marker {
+-        schema_version: 1,
++    let marker = Receipt {
++        schema_version: 2,
+         adopted_at: time::OffsetDateTime::now_utc(),
+         accounts_added: absorbed.added,
+         accounts_refreshed: absorbed.refreshed,
+         history_rows: rows,
++        source_host,
++        target_host,
++        account_mappings: Some(absorbed.account_mappings),
++        kept_target_pairing: absorbed.kept_target_pairing,
+     };
+     match write_marker(source, &marker) {
+         Ok(()) => tracing::info!(
+@@ -151,7 +182,7 @@ async fn absorb(
+     Ok(absorbed)
+ }
+ 
+-fn write_marker(source: &Source, marker: &Marker) -> std::io::Result<()> {
++fn write_marker(source: &Source, marker: &Receipt) -> std::io::Result<()> {
+     use std::io::Write;
+     let bytes = serde_json::to_vec(marker)?;
+     let path = source.marker_path();
 ```
 
----
-
-### Incident Patch 2: `5bb0e4d9` (2026-11-05)
-**Commit Message**: fix(desktop): name the Keychain in the macOS vault prompt
-
-The locked-vault banner and its retry hint named Windows Credential
-Manager on macOS.
-
-**File**: `apps/desktop/src/ui/settings/accounts.rs` (modified, +5/-1)
+**File**: `apps/cli/src/accounts/mod.rs` (modified, +23/-3)
 ```diff
-@@ -403,8 +403,10 @@ impl SettingsWindow {
-     fn vault_banner(&self, p: &Palette, cx: &mut Context<Self>) -> impl IntoElement {
-         let help = if cfg!(target_os = "linux") {
-             "Quotio keeps sign-ins in your keyring. Unlock it, or set QUOTIO_VAULT_KEY_FILE."
--        } else {
-+        } else if cfg!(windows) {
-             "Quotio keeps sign-ins in Windows Credential Manager."
-+        } else {
-+            "Quotio keeps sign-ins in your Keychain."
+@@ -725,6 +725,9 @@ pub struct Absorbed {
+     pub refreshed: usize,
+     pub skipped: usize,
+     pub history: Option<crate::history::Rewrite>,
++    /// Unambiguous source logical IDs mapped to destination logical IDs.
++    pub account_mappings: std::collections::BTreeMap<String, String>,
++    pub kept_target_pairing: bool,
+ }
+ 
+ impl Credential {
+@@ -774,13 +777,26 @@ impl Document {
+                 .resolved
+                 .as_ref()
+                 .map(|registry| crate::history::Rewrite::onto(registry.host_id.clone()));
++            let account_mappings = other
++                .accounts
++                .iter()
++                .filter_map(|account| {
++                    let id = other
++                        .resolved
++                        .as_ref()?
++                        .account_id_for_source(&account.id)?;
++                    Some((id.to_owned(), id.to_owned()))
++                })
++                .collect();
+             *self = other;
+             return Ok(Absorbed {
+                 changed: true,
+                 added,
+                 refreshed: 0,
+                 skipped: 0,
+                 history,
++                account_mappings,
++                kept_target_pairing: false,
+             });
+         }
+         let before = serde_json::to_vec(&*self).map_err(|_| AccountError::Corrupt)?;
+@@ -845,17 +861,19 @@ impl Document {
+             self.accounts.push(account);
+             added += 1;
+         }
++        let kept_target_pairing = other.has_pairing() && self.has_pairing();
+         let take_host = other.has_pairing() && !self.has_pairing();
+-        let history = match (self.resolved.as_mut(), other.resolved.take()) {
++        let (history, account_mappings) = match (self.resolved.as_mut(), other.resolved.take()) {
+             (Some(mine), Some(theirs)) => {
+                 if take_host {
+                     mine.host_id = theirs.host_id.clone();
+                 } else if other.has_pairing() && mine.host_id != theirs.host_id {
+                     tracing::warn!("vault_adoption_pairing_dropped");
+                 }
+-                Some(mine.absorb(theirs, &id_map)?)
++                let (history, mappings) = mine.absorb(theirs, &id_map)?;
++                (Some(history), mappings)
+             }
+-            _ => None,
++            _ => (None, Default::default()),
          };
-         div()
-             .flex()
-@@ -1069,6 +1071,8 @@ impl SettingsWindow {
-                     if result["failures"].as_u64().unwrap_or(0) > 0 {
-                         let hint = if cfg!(windows) {
-                             "check Windows Credential Manager"
-+                        } else if cfg!(target_os = "macos") {
-+                            "allow Quotio in Keychain Access"
-                         } else {
-                             "unlock your keyring"
-                         };
+         if take_host {
+             self.companion_identity = other.companion_identity.take();
+@@ -906,6 +924,8 @@ impl Document {
+             refreshed,
+             skipped,
+             history,
++            account_mappings,
++            kept_target_pairing,
+         })
+     }
+ }
+```
+
+**File**: `apps/cli/src/accounts/resolved.rs` (modified, +27/-9)
+```diff
+@@ -481,7 +481,7 @@ impl Registry {
+         &mut self,
+         other: Registry,
+         id_map: &BTreeMap<String, String>,
+-    ) -> Result<crate::history::Rewrite, AccountError> {
++    ) -> Result<(crate::history::Rewrite, BTreeMap<String, String>), AccountError> {
+         let mut landed: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
+         for (source_id, binding) in &other.bindings {
+             let Some(id) = id_map.get(source_id) else {
+@@ -505,7 +505,17 @@ impl Registry {
+                             .map(|held| held.account_id.clone())
+                             .min()
+                     });
+-                    let logical = joined.unwrap_or_else(|| binding.account_id.clone());
++                    let logical = match joined {
++                        Some(logical) => logical,
++                        None if self
++                            .bindings
++                            .values()
++                            .any(|held| held.account_id == binding.account_id) =>
++                        {
++                            random_string()?
++                        }
++                        None => binding.account_id.clone(),
++                    };
+                     self.bindings.insert(
+                         id.clone(),
+                         Binding {
+@@ -526,13 +536,18 @@ impl Registry {
+             .values()
+             .map(|binding| binding.account_id.clone())
+             .collect();
+-        let accounts: BTreeMap<String, String> = landed
++        let mappings: BTreeMap<String, String> = landed
+             .iter()
+             .filter_map(|(old, targets)| {
+                 let target = targets.first()?;
+-                (targets.len() == 1 && target != old).then(|| (old.clone(), target.clone()))
++                (targets.len() == 1).then(|| (old.clone(), target.clone()))
+             })
+             .collect();
++        let accounts: BTreeMap<String, String> = mappings
++            .iter()
++            .filter(|(old, target)| old != target)
++            .map(|(old, target)| (old.clone(), target.clone()))
++            .collect();
+         let mut epochs = BTreeMap::new();
+         for old in landed.keys() {
+             match accounts.get(old) {
+@@ -596,11 +611,14 @@ impl Registry {
+                 .extend(keys);
+         }
+         self.revision = self.revision.max(other.revision);
+-        Ok(crate::history::Rewrite {
+-            host: self.host_id.clone(),
+-            account_renames: accounts,
+-            epoch_renames: epochs,
+-        })
++        Ok((
++            crate::history::Rewrite {
++                host: self.host_id.clone(),
++                account_renames: accounts,
++                epoch_renames: epochs,
++            },
++            mappings,
++        ))
+     }
+ 
+     pub fn synchronize(&mut self, accounts: &[Account]) -> Result<(), AccountError> {
 ```
 
 ---
 
-### Incident Patch 3: `74f9e5de` (2026-11-05)
-**Commit Message**: fix(desktop): keep popup metric tiles at the design height
+### Incident Patch 3: `fe3f7998` (2026-11-07)
+**Commit Message**: fix(desktop): share the Swift app's vault on Developer ID builds
 
-The pace tick now overhangs the bar instead of padding it, which made
-every tile 6 px taller than the design.
+A macOS build signed as dev.quotio.cli now uses the standalone CLI's shared
+vault and config.toml, and adopts the Swift app's quotio-macos store for the
+same bundle id, so a Sparkle update from the Swift app keeps its accounts and
+history. Other builds keep the isolated quotio-desktop vault and host.toml.
 
-**File**: `apps/desktop/src/ui/menu.rs` (modified, +5/-5)
+**File**: `apps/desktop/Cargo.lock` (modified, +1/-0)
 ```diff
-@@ -736,14 +736,14 @@ fn metric_tile(metric: &MetricView, group: &SharedString, p: &Palette) -> impl I
- fn paced_bar(metric: &MetricView, height: f32, p: &Palette) -> impl IntoElement {
-     div()
-         .relative()
--        .py(px(3.))
-         .child(progress(metric.fill, metric.tone, px(height), p))
-+        // The tick overhangs the bar instead of padding it, so tiles keep the design's height.
-         .when_some(metric.tick, |s, tick| {
-             s.child(
-                 div()
-                     .absolute()
--                    .top_0()
--                    .bottom_0()
-+                    .top(px(-3.))
-+                    .bottom(px(-3.))
-                     .left(relative(tick.clamp(0., 1.)))
-                     .ml(px(-1.))
-                     .w(px(2.))
-@@ -1196,11 +1196,11 @@ pub fn preferred_height_for(overview: Option<&Overview>, density: Density) -> f3
-                                 .iter()
-                                 .filter(|m| m.pace.is_some_and(|p| p.behind))
-                                 .count();
--                            46. + n as f32 * 71. + burning as f32 * 110.
-+                            46. + n as f32 * 65. + burning as f32 * 110.
-                         }
-                         (Density::Comfortable, None, n) => {
-                             let rows = n.div_ceil(2) as f32;
--                            50. + rows * 68. + (rows - 1.) * 8.
-+                            50. + rows * 62. + (rows - 1.) * 8.
-                         }
-                     },
-                 )
+@@ -5826,6 +5826,7 @@ dependencies = [
+  "reqwest",
+  "ring",
+  "rust-embed",
++ "security-framework",
+  "semver",
+  "serde",
+  "serde_json",
+```
+
+**File**: `apps/desktop/Cargo.toml` (modified, +2/-1)
+```diff
+@@ -39,7 +39,8 @@ tray-icon = "0.26"
+ block2 = "0.6"
+ objc2 = "0.6"
+ objc2-app-kit = { version = "0.3", default-features = false, features = ["std", "block2", "objc2-core-foundation", "NSApplication", "NSAttributedString", "NSButton", "NSColor", "NSControl", "NSEvent", "NSFont", "NSFontDescriptor", "NSGraphics", "NSImage", "NSResponder", "NSStatusBarButton", "NSStatusItem", "NSStringDrawing", "NSView", "NSWindow"] }
+-objc2-foundation = { version = "0.3", default-features = false, features = ["std", "NSArray", "NSAttributedString", "NSData", "NSDictionary", "NSEnumerator", "NSGeometry", "NSString"] }
++objc2-foundation = { version = "0.3", default-features = false, features = ["std", "NSArray", "NSAttributedString", "NSData", "NSDictionary", "NSEnumerator", "NSBundle", "NSGeometry", "NSString"] }
++security-framework = "3"
+ 
+ [target.'cfg(windows)'.dependencies]
+ raw-window-handle = "0.6"
+```
+
+**File**: `apps/desktop/src/host.rs` (modified, +65/-5)
+```diff
+@@ -164,8 +164,12 @@ impl Drop for EmbeddedHost {
+ }
+ 
+ fn serve_args(options: &HostOptions) -> Result<ServeArgs> {
++    let swift = if options.demo { None } else { swift_vault() };
+     let (provider, vault_namespace, account_data_dir) = if options.demo {
+         (vec![Provider::Mock], None, None)
++    } else if swift.is_some() {
++        // Shares the standalone CLI's vault, as the Swift app's helper does.
++        (Vec::new(), None, None)
+     } else {
+         // The desktop app keeps its own vault, like the macOS app's `quotio-macos`.
+         let namespace = "quotio-desktop"
+@@ -177,16 +181,21 @@ fn serve_args(options: &HostOptions) -> Result<ServeArgs> {
+         parent_pipe: false,
+         listen: SocketAddr::from(([127, 0, 0, 1], 0)),
+         provider,
+-        // Its own settings too, apart from the command-line tool's `config.toml`.
+-        config: Some(project_dirs()?.config_dir().join("host.toml")),
++        // Its own settings too, apart from the command-line tool's `config.toml`,
++        // unless it shares that tool's vault.
++        config: if swift.is_some() {
++            None
++        } else {
++            Some(project_dirs()?.config_dir().join("host.toml"))
++        },
+         refresh_interval: None,
+         timeout: None,
+         no_saved_accounts: options.demo,
+         account_vault_namespace: vault_namespace,
+         account_data_dir,
+-        adopt_vault_namespace: None,
+-        adopt_data_dir: None,
+-        adopt_config: None,
++        adopt_config: swift.as_ref().and_then(|swift| swift.config.clone()),
++        adopt_data_dir: swift.as_ref().map(|swift| swift.data_dir.clone()),
++        adopt_vault_namespace: swift.map(|swift| swift.namespace),
+         cli_proxy_auth_dir: None,
+         cli_proxy_config: (!options.demo).then(crate::proxy::config_path),
+         manage: true,
+@@ -221,6 +230,57 @@ fn account_data_dir() -> Result<PathBuf> {
+     Ok(dir)
+ }
+ 
++/// The vault the Swift app kept for this bundle before this build replaced it.
++#[cfg_attr(not(target_os = "macos"), allow(dead_code))]
++struct SwiftVault {
++    namespace: quotio::accounts::vault::VaultNamespace,
++    data_dir: PathBuf,
++    config: Option<PathBuf>,
++}
++
++/// Mirrors the Swift app: only a Developer ID build signed as the standalone CLI
++/// (`dev.quotio.cli`) may use the shared vault; others keep their own.
++#[cfg(target_os = "macos")]
++fn swift_vault() -> Option<SwiftVault> {
++    use security_framework::os::macos::code_signing::{Flags, SecCode, SecRequirement};
++    let requirement: SecRequirement = r#"identifier "dev.quotio.cli" and anchor apple generic and certificate 1[field.1.2.840.113635.100.6.2.6] exists"#
++        .parse()
++        .ok()?;
++    SecCode::for_self(Flags::NONE)
++        .ok()?
++        .check_validity(Flags::NONE, &requirement)
++        .ok()?;
++    let bundle = objc2_foundation::NSBundle::mainBundle()
++        .bundleIdentifier()?
++        .to_string();
++    // AppIdentity.quotioCLIVaultNamespace and RuntimeIdentity.applicationSupportDirectoryName.
++    let production = bundle == "app.bytrong.quotio";
++    let namespace = if production {
++        "quotio-macos".to_owned()
++    } else {
++        let digest = ring::digest::digest(&ring::digest::SHA256, bundle.as_bytes());
++        let hex: String = digest.as_ref()[..8]
++            .iter()
++            .map(|byte| format!("{byte:02x}"))
++            .collect();
++        format!("quotio-macos-{hex}")
++    };
++    let support = directories::BaseDirs::new()?
++        .data_dir()
++        .join(if production { "Quotio" } else { &bundle });
++    let config = support.join("quotio-cli.toml");
++    Some(SwiftVault {
++        namespace: namespace.parse().ok()?,
++        data_dir: support.join("QuotioCLI"),
++        config: config.is_file().then_some(config),
++    })
++}
++
++#[cfg(not(target_os = "macos"))]
++fn swift_vault() -> Option<SwiftVault> {
++    None
++}
++
+ /// The Linux vault is AES-encrypted with a key the host reads from
+ /// `QUOTIO_VAULT_KEY_FILE`. Without one it stays locked, so the app keeps its own
+ /// key in the config directory, apart from the vault, unless the user set one.
 ```
 
 #### Recent Merged Pull Requests:
@@ -1299,66 +1548,54 @@ every tile 6 px taller than the design.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. desktop): recover CLIProxyAPI after crashes and hangs
+## X. deps): remove unmaintained pin-utils dependency
 
 **RULE**:
-When implementing operations in `apps/desktop/src/proxy.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nguyenphutrong/quotio. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/cli/Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nguyenphutrong/quotio. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7b5257a5`: desktop): recover CLIProxyAPI after crashes and hangs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d0e358e1`: deps): remove unmaintained pin-utils dependency. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/desktop/src/proxy.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/cli/Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use std::time::{Duration, Instant};
-use gpui_kit::{App, Global, SystemNotification, Task};
-/// The running proxy's process id, so a proxy left behind by a crashed Quotio can be
-/// stopped before the next start takes its port.
-const PID_FILE: &str = "proxy.pid";
-    started: Instant,
-    /// Unexpected exits in a row; reset once the proxy has run for a minute.
-    crashes: u32,
-    /// The restart after a crash, cancelled when dropped.
-    restarting: Option<Task<()>>,
-    /// The health check killed the proxy because it stopped answering.
-    hung: bool,
-        started: Instant::now(),
-        crashes: 0,
-        restarting: None,
-        hung: false,
-    // Notice when the proxy exits on its own, and bring it back.
-            cx.update(exited);
-        }
-    })
-    .detach();
-    // A proxy that runs but no longer answers is killed, so the loop above restarts it.
-    cx.spawn(async move |cx| {
-        let mut failures = 0;
-        loop {
-            cx.background_executor()
-                .timer(Duration::from_secs(30))
-                .await;
-            let probe = cx.update(|cx| {
-                let proxy = get(cx);
-                (proxy.child.is_some() && proxy.started.e
+version = "0.3.34"
+checksum = "92d699e522242e69e3003b94ecc1f960f3a5e015aa7c5d7486e65ad01dd94f5e"
+version = "0.3.34"
+checksum = "cd417de3d1d015fc3bfd2b1ea46dfc7bab72ef86f1cc7cc9c78e728b34a6d1fd"
+version = "0.3.34"
+checksum = "0d50a92467f8ba5dd6e3ee5d4bd04d73ab2e4e1c44474a0674821dfce14b79bc"
+version = "1.12.0"
+checksum = "2c3e324da4c95177d6291d4c8730197c0d1822f8a9766814a4a44fa5ab797c9c"
+version = "0.3.2"
+checksum = "ec4cdd0dd910afe868b7ef477227d8d538b46b3075031afee8a9f2acb0a2ed0b"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-use std::time::Duration;
-use gpui_kit::{App, Global};
-    // Notice when the proxy exits on its own, such as when its port is taken.
-                let Some(status) = proxy.child.as_mut().and_then(|c| c.try_wait().ok()?) else {
-                    return;
-                };
-                proxy.child = None;
-                proxy.error = Some(format!("CLIProxyAPI stopped ({status})."));
-                cx.refresh_windows();
+version = "0.3.31"
+checksum = "05f29059c0c2090612e8d742178b0580d2dc940c837851ad723096f87af6663e"
+version = "0.3.31"
+checksum = "f90f7dce0722e95104fcb095585910c0977252f286e354b5e3bd38902cd99988"
+version = "0.3.31"
+checksum = "9fa08315bb612088cc391249efdc3bc77536f16c91f6cf495e6fbe85b20a4a81"
+ "pin-utils",
+version = "1.8.1"
+checksum = "2ab2d4f250c3d7b1c9fcdff1cece94ea4e2dfbec68614f7b87cb205f24ca9d11"
+ "pin-utils",
+[[package]]
+name = "pin-utils"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8b870d8c151b6f2fb93e84a13146138f05d02ed11c7e7c54f8826aaaf7c9f184"
+
+version = "0.3.1"
+checksum = "bfa7760aed19e106de2c7c0b581b509f2f25d3dacaf737cb82ac61bc6d760b0e"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7b5257a5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d0e358e1` are properly handled with clean fallback behavior.

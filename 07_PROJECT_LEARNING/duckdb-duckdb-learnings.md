@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/duckdb-duckdb-learnings.md`  
 > **Source**: github ([https://github.com/duckdb/duckdb](https://github.com/duckdb/duckdb))  
-> **Source Version**: `e15e8959`  
+> **Source Version**: `23221edf`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T09:12:32.668Z  
+> **Timestamp**: 2026-11-10T00:45:07.616Z  
 > **Learning ID**: `learn-github-duckdb-duckdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/duckdb-duckdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/duckdb/duckdb](https://github.com/duckdb/duckdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T09:12:32.661Z  
+> **Harvest Timestamp**: 2026-11-10T00:45:07.366Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: DuckDB is a high-performance analytical database system
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 42833 stars
+- **Stars / Engagement**: 42950 stars
 
 ---
 
@@ -2004,11 +2004,15 @@ struct ModeState {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #28378** (2026-11-04): **Update extension_entries.hpp for sirius**
-  *Symptoms*: Fixes the `check-extension-entries` failure seen in https://github.com/duckdb/duckdb/actions/runs/41835675960: adds the `gpu_execution` (function and setting) and `sirius_status` entries provided by the sirius extension.
+- **Issue #28601** (2026-11-09): **Parse schema-qualified table functions named describe, summarize, show, pivot or unpivot**
+  *Symptoms*: Table macros in a schema can no longer be called when their name is a reserved keyword: `SELECT * FROM g.describe('a')`, and the same with `summarize`, `show`, `pivot` or `unpivot`, fails on 2.0 with "Parser Error: syntax error at or near "("", while v1.5 accepts it. Creating the macro still works, and quoting the name (`g."describe"('a')`) is the only way to call it.  The PEG grammar reads the name of a table function as a `TableFunctionName`, which rejects reserved keywords, also after a qualification. Scalar function calls already allow a reserved keyword after a qualification (`CatalogReservedSchemaFunctionName`).  This adds the same rule for table functions, `CatalogReservedSchemaTableFunctionName`, so a reserved keyword can name a table function after a catalog or schema qualification. Unqualified names are unchanged. The generated parser files are regenerated with `scripts/parser/build_grammar.sh`.  This is a v2.0 regression, could it get the `backport v2.0-cyanoptera` label? 
+  **Post-Mortem & Fix Analysis**:
+  > Thanks!
 
-- **Issue #28373** (2026-11-04): **Footer statistics for multi-file parquet scans: maximum_files_for_stats**
-  *Symptoms*: Exposes the footer-statistics behavior of duckdb/duckdb-aws-glue#165 through SQL, and exports the pieces an extension needs for it.  `read_parquet(files, maximum_files_for_stats=N)`: when the scan has 2..N files (fully listed), all footers are opened in parallel at bind (schema unchanged, unlike `maximum_sample_files`/`union_by_name`). The scan then reports the exact row count and merged min/max/NULL statistics, so the optimizer can prune and order joins by them. Default 0 (off). An unreadable footer, a column missing from a non-empty file, or a different stored type means no statistics; the query never fails because of it.  Core changes: - `UnionByName::ReadUnionData`: the parallel per-file read `UnionCols` already did, without combining schemas; optionally tolerates unreadable files and picks the scheduler type. - Multi-file stats/cardinality use the opened readers whenever they cover every file, not only with `union_by_name`. - The option is not serialized (only used at bind).  Differences from the Glue PR: reads at bind rather than lazily at planning, and has no hard cap or per-query footer cache.  Follow-ups from duckdb/duckdb-aws-glue#165 review: - The count from the opened files is reported as both estimate and max (exact), so the optimizer can drop a `LIMIT` above it. Applies to multi-file scans (and `union_by_name`); a single file still honors `explicit_cardinality`. - Files known to be empty are skipped when merging column statistics. - The first file's bound reader
+- **Issue #28600** (2026-11-09): **Keep the DECIMAL type of a windowed sum in the window self-join rewrite**
+  *Symptoms*: A windowed `sum` over a DECIMAL fails at planning time with "INTERNAL Error: Failed to bind column reference "s" [39.1]: inequal types (DECIMAL(38,2) != HUGEINT)" when the query also has a filter that references several bindings, for example:  ```sql CREATE TABLE t AS SELECT i % 7 AS k, (i % 50 + 1)::DECIMAL(12,2) AS d FROM range(1000) t(i); SELECT (SELECT max(s) FROM (SELECT sum(d) OVER (PARTITION BY k) AS s FROM t)),        (SELECT count(*) FROM range(10) r(x) WHERE x = 3 OR x IN (SELECT 1)); ```  Such a filter makes the filter statistics pass run statistics propagation before the window self-join rewrite. Propagating the window's statistics specializes the DECIMAL sum into `sum_no_overflow`, which returns a HUGEINT, while the window expression stays DECIMAL(38,2). `TranslateAggregate` took the type of the aggregate it builds from that function.  This gives the aggregate the type of the window expression it replaces, as a regular aggregate keeps its type when statistics propagation swaps in `sum_no_overflow`.  This is a v2.0 regression, could it get the `backport v2.0-cyanoptera` label? 
+  **Post-Mortem & Fix Analysis**:
+  > Thanks!
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2025,435 +2029,264 @@ struct ModeState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `94f8c7a6` (2026-11-04)
-**Commit Message**: Keep the NULL rows of segments written by v1.x in filters that accept NULL (#28355)
+### Incident Patch 1: `8f203aed` (2026-11-09)
+**Commit Message**: Fix dangling segment node link when appending a segment runs out of memory (#28583)
 
-DuckDB 2.0 can miss `NULL` rows when reading databases written by 1.5.6
-(#27566). With 1024 ones and 1024 `NULL`s, `SELECT count(*) FROM t WHERE
-x IS NULL OR x > 2` returns 0 instead of 1024; `coalesce(x, 5) > 2` and
-`x IS DISTINCT FROM 1` have the same problem. DuckLake encounters this
-when reading its catalog, returning 1904 instead of 4500 rows
-(duckdb/ducklake#1871).
+`tools/shell/tests/test_address_space_limit.py` (300 MB case) flakes
+with a SIGSEGV on CI, e.g.
+https://github.com/duckdb/duckdb/actions/runs/42591764034/job/129078685582
+and run 42588548027. This also happens on `main`.
 
-Before storage version 2.0, `NULL` statistics live only in validity
-segments. `ColumnData::CheckZonemap` checks the data segments, sees
-neither `NULL`s nor values above 2, and prunes vectors containing the
-matching rows. The rows are still there: `count(*) FILTER (x IS NULL)`
-counts all 1024.
+## Cause
 
-We now mark data segments without `byte_size` as possibly `NULL` in
-`StandardColumnData::InitializeColumn` when a validity pointer in the
-column can hold `NULL`s. This is simpler than franz101's #27632, which
-marks only overlapping segments, but can prune less when a row group
-contains several validity segments. On 20,000,000 rows written by 1.5.6
-with default blocks, both mark the same segments: the filter accepting
-`NULL` takes 9.02 ± 0.07
+`SegmentTree::AppendSegmentInternal` pointed the previous node's `next`
+at the new node *before* `nodes.push_back(...)`. If `push_back` throws
+(out of memory while growing the vector), the new node is destroyed but
+the previous node keeps a dangling `next`. The failed `CREATE TABLE AS`
+then rolls back, and `LocalTableStorage::Rollback` -> `CommitDropTable`
+-> `ColumnData::VisitBlockIds` walks the `next` chain into freed memory.
 
-**File**: `src/storage/table/standard_column_data.cpp` (modified, +15/-0)
+## Fix
+
+Add the node to `nodes` first, and only then link the previous node to
+it.
+
+## Testing
+
+Reproduced on `main` under `RLIMIT_AS` of 298-310 MB (4 CPUs, many
+parallel runs): ~4 SIGSEGVs per ~7200 runs, with the backtrace above.
+With this change: 0 in 7200 runs. The existing shell test covers the
+scenario; the failure is a low-probability race against the memory
+limit, so I did not add a new deterministic test.
+
+Note: I also hit a rarer, sepa
+
+**File**: `src/include/duckdb/storage/table/segment_tree.hpp` (modified, +5/-3)
 ```diff
-@@ -325,6 +325,21 @@ PersistentColumnData StandardColumnData::Serialize() {
- void StandardColumnData::InitializeColumn(PersistentColumnData &column_data, BaseStatistics &target_stats) {
- 	ColumnData::InitializeColumn(column_data, target_stats);
- 	validity->InitializeColumn(column_data.child_columns[0], target_stats);
-+	// segments without a byte size come from older storage, which may record NULLs only in the validity statistics
-+	bool legacy_segments = false;
-+	for (auto &pointer : column_data.pointers) {
-+		legacy_segments = legacy_segments || !pointer.byte_size;
+@@ -482,10 +482,12 @@ class SegmentTree {
+ 		D_ASSERT(segment);
+ 		// add the node to the list of nodes
+ 		auto node = make_uniq<SegmentNode<T>>(row_start, std::move(segment), nodes.size());
+-		if (!nodes.empty()) {
+-			nodes.back()->SetNext(*node);
+-		}
++		auto &new_node = *node;
++		optional_ptr<SegmentNode<T>> previous_node = nodes.empty() ? nullptr : nodes.back().get();
+ 		nodes.push_back(std::move(node));
++		if (previous_node) {
++			previous_node->SetNext(new_node);
++		}
+ 	}
+ 	void AppendSegmentInternal(SegmentLock &l, shared_ptr<T> segment) const {
+ 		idx_t row_start;
+```
+
+---
+
+### Incident Patch 2: `c93ae535` (2026-11-09)
+**Commit Message**: Keep the window type when the window self-join rewrite builds its aggregate
+
+When a filter references several bindings, statistics propagation runs before the window self-join
+rewrite and can specialize the window's aggregate, e.g. the sum of a DECIMAL to sum_no_overflow,
+which returns a HUGEINT. The rewrite took the aggregate's type from that function, so planning
+failed with "Failed to bind column reference ... inequal types (DECIMAL(38,2) != HUGEINT)".
+
+Give the aggregate the type of the window expression it replaces.
+
+**File**: `src/optimizer/window_self_join.cpp` (modified, +2/-0)
+```diff
+@@ -105,6 +105,8 @@ static unique_ptr<Expression> TranslateAggregate(ClientContext &client, const Bo
+ 	const auto aggr_ordered = (agg_func.GetOrderDependent() == AggregateOrderDependent::ORDER_DEPENDENT);
+ 	auto result = make_uniq<BoundAggregateExpression>(std::move(agg_func), std::move(children), std::move(filter),
+ 	                                                  std::move(bind_info), aggr_type);
++	// statistics propagation may already have specialized the function, e.g. sum_no_overflow returns a HUGEINT
++	result->SetReturnType(w_expr.GetReturnType());
+ 
+ 	if (!aggr_ordered) {
+ 		//	ORDER BY is a NOP, so drop it.
+```
+
+**File**: `test/sql/optimizer/test_window_self_join.test` (modified, +10/-0)
+```diff
+@@ -484,3 +484,13 @@ ORDER BY i LIMIT 2;
+ ----
+ 0	[2, 0, 3, 1]
+ 1	[2, 0, 3, 1]
++
++# a filter on two bindings runs statistics propagation first, which turns the DECIMAL sum into sum_no_overflow (HUGEINT)
++statement ok
++CREATE TABLE decimals AS SELECT i % 7 AS k, (i % 50 + 1)::DECIMAL(12,2) AS d FROM range(1000) t(i);
++
++query II
++SELECT (SELECT max(s) FROM (SELECT sum(d) OVER (PARTITION BY k) AS s FROM decimals)),
++       (SELECT count(*) FROM range(10) r(x) WHERE x = 3 OR x IN (SELECT 1));
++----
++3664.00	2
+```
+
+---
+
+### Incident Patch 3: `d6bf1469` (2026-11-09)
+**Commit Message**: Implement select for uncompressed fixed-size segments (#28492)
+
+Implements the `select` compression function for uncompressed fixed-size
+segments (all fixed-width numeric types, INTERVAL, LIST offsets): a
+plain gather of the selected rows from the segment, instead of the
+per-row-run scan fallback.
+
+Tests: `test/sql/storage/compression/select_fixed_size.test`
+(TINYINT..HUGEINT, UBIGINT, DOUBLE, FLOAT, NULLs, selections at vector
+boundaries); `test/sql/storage/compression/*` passes.
+
+## Speed-ups (RelWithDebInfo, 1 thread, min of 5 runs, loaded shared box
+so +-10%)
+
+Sparse UPDATE of an uncompressed column on 2M rows, with the base-row
+fetch of duckdb/duckdb#28206 applied on top of main (without `select` vs
+with):
+
+| UPDATE ... WHERE id % N = 0 | no select | select | change |
+|---|---:|---:|---:|
+| `i` INT, N=2 | 0.095s | 0.082s | -14% |
+| `d` DOUBLE, N=2 | 0.162s | 0.142s | -12% |
+| `b` BIGINT, N=2 | 0.101s | 0.084s | -17% |
+| `i` INT, N=8 | 0.044s | 0.038s | -14% |
+| `i` INT, N=64 | 0.033s | 0.032s | same |
+| `i` INT, N=4 (isolated, 7 runs) | 0.201s | 0.202s | same |
+
+(In a sequence of updates of the same column, one N=4 measurement was
+slower with select; re-measured in isolation i
+
+**File**: `src/storage/compression/fixed_size_uncompressed.cpp` (modified, +26/-6)
+```diff
+@@ -186,6 +186,24 @@ void FixedSizeScan(ColumnSegment &segment, ColumnScanState &state, idx_t scan_co
+ 	FlatVector::SetData(result, data_ptr_cast(const_cast<T *>(source_data.data())), count_t(scan_count));
+ }
+ 
++//===--------------------------------------------------------------------===//
++// Select
++//===--------------------------------------------------------------------===//
++template <class T>
++void FixedSizeSelect(ColumnSegment &segment, ColumnScanState &state, idx_t vector_count, Vector &result,
++                     const SelectionVector &sel, idx_t sel_count, idx_t result_offset, ScanVectorType scan_type) {
++	auto &scan_state = state.scan_state->Cast<FixedSizeScanState>();
++	auto start = state.GetPositionInSegment();
++
++	auto source_data = scan_state.reader.GetArraySlice<T>(0, start, vector_count);
++
++	result.SetVectorType(VectorType::FLAT_VECTOR);
++	auto result_data = FlatVector::GetDataMutable<T>(result) + result_offset;
++	for (idx_t i = 0; i < sel_count; i++) {
++		result_data[i] = source_data[sel.get_index(i)];
 +	}
-+	bool validity_has_null = false;
-+	for (auto &pointer : column_data.child_columns[0].pointers) {
-+		validity_has_null = validity_has_null || pointer.statistics.CanHaveNull();
-+	}
-+	if (!legacy_segments || !validity_has_null) {
++}
++
+ //===--------------------------------------------------------------------===//
+ // Append
+ //===--------------------------------------------------------------------===//
+@@ -265,12 +283,14 @@ idx_t FixedSizeFinalizeAppend(ColumnSegment &segment, BaseStatistics &stats) {
+ //===--------------------------------------------------------------------===//
+ template <class T, class APPENDER = StandardFixedSizeAppend>
+ CompressionFunction FixedSizeGetFunction(PhysicalType data_type) {
+-	return CompressionFunction(CompressionType::COMPRESSION_UNCOMPRESSED, data_type, FixedSizeInitAnalyze,
+-	                           FixedSizeAnalyze, FixedSizeFinalAnalyze<T>, UncompressedFunctions::InitCompression,
+-	                           UncompressedFunctions::Compress, UncompressedFunctions::FinalizeCompress,
+-	                           FixedSizeInitScan, FixedSizeScan<T>, FixedSizeScanPartial<T>,
+-	                           UncompressedFunctions::EmptySkip, nullptr, FixedSizeInitAppend,
+-	                           FixedSizeAppend<T, APPENDER>, FixedSizeFinalizeAppend<T>);
++	auto function =
++	    CompressionFunction(CompressionType::COMPRESSION_UNCOMPRESSED, data_type, FixedSizeInitAnalyze,
++	                        FixedSizeAnalyze, FixedSizeFinalAnalyze<T>, UncompressedFunctions::InitCompression,
++	                        UncompressedFunctions::Compress, UncompressedFunctions::FinalizeCompress, FixedSizeInitScan,
++	                        FixedSizeScan<T>, FixedSizeScanPartial<T>, UncompressedFunctions::EmptySkip, nullptr,
++	                        FixedSizeInitAppend, FixedSizeAppend<T, APPENDER>, FixedSizeFinalizeAppend<T>);
++	function.select = FixedSizeSelect<T>;
++	return function;
+ }
+ 
+ CompressionFunction FixedSizeUncompressed::GetFunction(PhysicalType data_type) {
+```
+
+**File**: `src/storage/table/standard_column_data.cpp` (modified, +7/-0)
+```diff
+@@ -119,6 +119,13 @@ void StandardColumnData::Select(TransactionData transaction, idx_t vector_index,
+ 		ColumnData::Select(transaction, vector_index, state, result, sel, sel_count);
+ 		return;
+ 	}
++	// a scan references uncompressed data without copying it: slicing beats gathering unless few rows are selected
++	static constexpr idx_t UNCOMPRESSED_SELECT_DENSITY = 5;
++	if (compression->type == CompressionType::COMPRESSION_UNCOMPRESSED &&
++	    sel_count * UNCOMPRESSED_SELECT_DENSITY > target_count) {
++		ColumnData::Select(transaction, vector_index, state, result, sel, sel_count);
 +		return;
 +	}
-+	for (auto &node : data.SegmentNodes()) {
-+		node.GetNode().GetStatsMutable().SetHasNull();
-+	}
+ 	SelectVector(state, result, target_count, sel, sel_count, scan_type);
+ 	validity->SelectVector(state.child_states[0], result, target_count, sel, sel_count, scan_type);
  }
- 
- void StandardColumnData::GetColumnSegmentInfo(const QueryContext &context, duckdb::idx_t row_group_index,
 ```
 
-**File**: `test/sql/storage/bc/null_rows_v1_5_or_filter.test` (added, +44/-0)
+**File**: `test/sql/storage/compression/select_fixed_size.test` (added, +50/-0)
 ```diff
-@@ -0,0 +1,44 @@
-+# name: test/sql/storage/bc/null_rows_v1_5_or_filter.test
-+# description: A filter that accepts NULL keeps the NULL rows of segments written by v1.x, which record NULLs only in their validity
-+# group: [bc]
+@@ -0,0 +1,50 @@
++# name: test/sql/storage/compression/select_fixed_size.test
++# description: Select on uncompressed fixed-size segments
++# group: [compression]
 +
-+# data/storage/null_rows_v1_5.db.gz was written by DuckDB v1.5.6 with
-+# CREATE TABLE f(id INTEGER, end_snapshot BIGINT);
-+# INSERT INTO f SELECT i, CASE WHEN i % 2048 < 1500 THEN 3 END FROM range(250000) r(i);
-+# CHECKPOINT;
-+# so every full vector of the three row groups ends with 548 NULL rows
-+require exact_vector_size 2048
-+
-+unzip data/storage/null_rows_v1_5.db.gz {TEST_DIR}/null_rows_v1_5.db
-+
-+load {TEST_DIR}/null_rows_v1_5.db readonly
-+
-+query I
-+SELECT count(*) FROM f WHERE end_snapshot IS NULL
-+----
-+66856
-+
-+query I
-+SELECT count(*) FROM f WHERE end_snapshot IS NULL OR end_snapshot > 1000000
-+----
-+66856
-+
-+query II
-+SELECT min(id), max(id) FROM f WHERE end_snapshot IS NULL OR end_snapshot > 1000000
-+----
-+1500	249855
-+
-+query I
-+SELECT count(*) FROM f WHERE end_snapshot IS NULL OR end_snapshot = 3
-+----
-+250000
-+
-+query I
-+SELECT count(*) FROM f WHERE end_snapshot > 1000000 OR end_snapshot IS NULL
-+----
-+66856
-+
-+query I
-+SELECT count(*) FROM f WHERE end_snapshot IS NOT NULL AND end_snapshot > 1
-+----
-+183144
-```
-
-**File**: `test/sql/storage/bc/test_null_stats_v1_5.test` (added, +123/-0)
-```diff
-@@ -0,0 +1,123 @@
-+# name: test/sql/storage/bc/test_null_stats_v1_5.test
-+# description: Filters that accept NULL keep the NULL rows of segments written by v1.5
-+# group: [bc]
-+
-+# data/storage/null_stats_v1_5.db.gz was written by DuckDB v1.5.6 with
-+# CREATE TABLE t AS SELECT CASE WHEN i >= 1024 THEN NULL ELSE 1 END::INTEGER AS x FROM range(2048) r(i);
-+# CREATE TABLE no_null AS SELECT 1::INTEGER AS x FROM range(2048) r(i);
-+# CHECKPOINT;
-+require exact_vector_size 2048
-+
-+unzip data/storage/null_stats_v1_5.db.gz {TEST_DIR}/null_stats_v1_5.db
++require vector_size 2048
 +
 +statement ok
-+ATTACH '{TEST_DIR}/null_stats_v1_5.db' AS old
-+
-+# an appended row joins the old segments
-+statement ok
-+INSERT INTO old.t VALUES (NULL)
-+
-+loop i 0 2
-+
-+query I
-+SELECT count(*) FROM old.t WHERE x IS NULL OR x > 2
-+----
-+1025
-+
-+query I
-+SELECT count(*) FROM old.t WHERE coalesce(x, 5) > 2
-+----
-+1025
-+
-+query I
-+SELECT count(*) FROM old.t WHERE x IS DISTINCT FROM 1
-+----
-+1025
-+
-+query II
-+SELECT count(*) FILTER (x > 2), count(*) FILTER (x IS NOT NULL) FROM old.t
-+----
-+0	1024
-+
-+query I
-+SELECT count(*) FROM old.no_null WHERE x IS NULL OR x > 2
-+----
-+0
-+
-+# a checkpoint by this version keeps the answers
-+statement ok
-+UPDATE old.t SET x = 1 WHERE x = 1
++ATTACH '{TEST_DIR}/select_fixed_size.db' AS db;
 +
 +statement ok
-+CHECKPOINT old
++SET threads=1;
++
++statement ok
++CREATE MACRO expected(i) AS CASE WHEN i % 13 = 0 THEN NULL ELSE hash(i) % 1000003 END;
++
++foreach type TINYINT SMALLINT INTEGER BIGINT HUGEINT UBIGINT DOUBLE FLOAT
++
++statement ok
++CREATE TABLE db.t_{type}(id INTEGER, g2 TINYINT, g7 TINYINT, g97 TINYINT, g1000 SMALLINT, v {type} USING COMPRESSION uncompressed);
++
++statement ok
++INSERT INTO db.t_{type} SELECT i, hash(i*3)%2, hash(i*11)%7, hash(i*13)%97, hash(i*17)%1000, (expected(i) % 100)::{type} FROM range(100000) t(i);
 +
 +endloop
 +
-+# the rewritten segments keep the answers after the database is attached again
 +statement ok
-+DETACH old
++CHECKPOINT db;
 +
-+statement ok
-+ATTACH '{TEST_DIR}/null_stats_v1_5.db' AS old
++foreach type TINYINT SMALLINT INTEGER BIGINT HUGEINT UBIGINT DOUBLE FLOAT
 +
 +query I
-+SELECT count(*) FROM old.t WHERE x IS NULL OR x > 2
++SELECT bool_and(compression='Uncompressed') FROM pragma_storage_info('db.t_{type}') WHERE column_name='v' AND segment_type != 'VALIDITY';
 +----
-+1025
++true
 +
-+# a checkpoint keeps the answers after the database is attached again, whether it writes the segment metadata
-+# again or reuses it
-+loop reuse 0 2
-+
-+unzip data/storage/null_stats_v1_5.db.gz {TEST_DIR}/null_stats_v1_5_reuse.db
-+
-+statement ok
-+SET experimental_metadata_reuse = {reuse}::BOOLEAN
-+
-+statement ok
-+ATTACH '{TEST_DIR}/null_stats_v1_5_reuse.db' AS reuse (STORAGE_VERSION 'v2.0.0')
-+
-+statement ok
-+CREATE TABLE reuse.touch (i INTEGER)
-+
-+statement ok
-+CHECKPOINT reuse
-+
-+statement ok
-+DETACH reuse
-+
-+statement ok
-+ATTACH '{TEST_DIR}/null_stats_v1_5_reuse.db' AS reuse
++foreach col g2 g7 g97 g1000
 +
 +query I
-+SELECT count(*) FROM reuse.t WHERE x IS NULL OR x > 2
++SELECT count(*) > 0 AND bool_and(v IS NOT DISTINCT FROM (expected(id) % 100)::{type}) FROM db.t_{type} WHERE {col} = 0;
 +----
-+1024
-+
-+statement ok
-+DETACH reuse
++true
 +
 +endloop
 +
-+# segments rewritten with the 2.0 storage version carry their own statistics
-+unzip data/storage/null_stats_v1_5.db.gz {TEST_DIR}/null_stats_v1_5_rewrite.db
-+
-+statement ok
-+ATTACH '{TEST_DIR}/null_stats_v1_5_rewrite.db' AS rewrite (STORAGE_VERSION 'v2.0.0')
-+
-+statement ok
-+UPDATE rewrite.t SET x = 1 WHERE x = 1
-+
-+statement ok
-+CHECKPOINT rewrite
-+
-+statement ok
-+DETACH rewrite
-+
-+statement ok
-+ATTACH '{TEST_DIR}/null_stats_v1_5_rewrite.db' AS rewrite
-+
 +query I
-+SELECT count(*) FROM rewrite.t WHERE x IS NULL OR x > 2
++SELECT count(*) = 8 AND bool_and(v IS NOT DISTINCT FROM (expected(id) % 100)::{type}) FROM db.t_{type} WHERE id IN (0, 1, 2047, 2048, 4095, 50000, 99998, 99999);
 +----
-+1024
-```
-
----
-
-### Incident Patch 2: `df6fbb78` (2026-11-04)
-**Commit Message**: Let NULL table function arguments match any parameter under legacy_disable_null_type (#28141)
-
-With `legacy_disable_null_type` enabled, a NULL table function argument
-is bound as INTEGER, so it no longer matches a VARCHAR parameter:
-
-```sql
-SET legacy_disable_null_type = true;
-SELECT * FROM query(NULL);
--- Binder Error: No function matches the given name and argument types 'query(INTEGER)'
-```
-
-Without the setting, the same query raises `Cannot use NULL as function
-argument`.
-
-Before v2.0, table function arguments used to be folded to constants
-before overload selection, and a NULL constant was matched as SQLNULL.
-So for v1.5.x versions where null type disabling was default, NULL type
-bound to the table function param. Now that overload selection works on
-the bound expressions, the INTEGER cast that the legacy setting adds
-reaches it. This binds table function arguments with NULLs allowed, as
-GROUP BY already does, so a NULL argument keeps the NULL type until the
-overload is chosen. Behavior without the setting is unchanged.
-
-**File**: `src/planner/binder/tableref/bind_table_function.cpp` (modified, +4/-0)
-```diff
-@@ -149,7 +149,11 @@ bool Binder::BindTableFunctionParameters(TableFunctionCatalogEntry &table_functi
- 		}
- 
- 		TableFunctionBinder binder(*this, context, table_function.name.GetIdentifierName());
-+		// a NULL argument keeps the NULL type, so that it can still match any overload
-+		auto prev_can_contain_nulls = CanContainNulls();
-+		SetCanContainNulls(true);
- 		auto expr = binder.Bind(child);
-+		SetCanContainNulls(prev_can_contain_nulls);
- 		if (expr->HasParameter()) {
- 			throw ParameterNotResolvedException();
- 		}
-```
-
-**File**: `test/sql/binder/legacy_null_type.test` (modified, +11/-0)
-```diff
-@@ -12,3 +12,14 @@ query I
- SELECT TYPEOF(c) FROM t
- ----
- INTEGER
++true
 +
-+# a NULL table function argument still matches a VARCHAR parameter
-+statement error
-+SELECT * FROM query(NULL);
-+----
-+Binder Error: Cannot use NULL as function argument
-+
-+statement error
-+SELECT * FROM query_table(NULL);
-+----
-+Binder Error: Cannot use NULL as function argument
-```
-
----
-
-### Incident Patch 3: `dfc66305` (2026-11-04)
-**Commit Message**: Fix Parquet page bounds and scratch buffer reuse (#28348)
-
- Fix two buffer handling issues in the Parquet reader:
-
-- Keep the padding byte out of the page length. A corrupt page could
-otherwise use it as part of the definition levels and cause an
-out-of-bounds read.
-- Reset the scratch buffer before reading dictionary offsets. A previous
-delta-binary-packed page could leave the pointer advanced, causing a
-write past the end of the buffer.
-
-**File**: `extension/parquet/column_reader.cpp` (modified, +9/-5)
-```diff
-@@ -603,7 +603,7 @@ void ColumnReader::ResetPage() {
- void ColumnReader::PreparePageV2(PageHeader &page_hdr) {
- 	D_ASSERT(page_hdr.type == PageType::DATA_PAGE_V2);
- 
--	AllocateBlock(NumericCast<idx_t>(page_hdr.uncompressed_page_size) + 1);
-+	AllocateBlock(NumericCast<idx_t>(page_hdr.uncompressed_page_size));
- 	const auto page_body_size = GetPageBodySize(page_hdr);
- 	bool uncompressed = false;
- 	if (page_hdr.data_page_header_v2.__isset.is_compressed && !page_hdr.data_page_header_v2.is_compressed) {
-@@ -702,16 +702,20 @@ uint32_t ColumnReader::GetPageBodySize(const PageHeader &page_hdr) const {
- 	return page_body_size;
- }
- 
--void ColumnReader::AllocateBlock(idx_t size) {
-+void ColumnReader::AllocateBlock(idx_t payload_size) {
-+	const auto allocation_size = payload_size + 1;
- 	if (!block) {
--		block = make_shared_ptr<ResizeableBuffer>(GetAllocator(), size);
-+		block = make_shared_ptr<ResizeableBuffer>(GetAllocator(), allocation_size);
- 	} else {
--		block->resize(GetAllocator(), size);
-+		block->resize(GetAllocator(), allocation_size);
- 	}
-+	// Keep a zeroed guard byte for decoder lookahead, but exclude it from the payload.
-+	block->ptr[payload_size] = 0;
-+	block->len = payload_size;
- }
- 
- void ColumnReader::PreparePage(PageHeader &page_hdr) {
--	AllocateBlock(NumericCast<idx_t>(page_hdr.uncompressed_page_size) + 1);
-+	AllocateBlock(NumericCast<idx_t>(page_hdr.uncompressed_page_size));
- 	const auto compressed_page_size = GetPageBodySize(page_hdr);
- 
- 	if (chunk->meta_data.codec == CompressionCodec::UNCOMPRESSED) {
-```
-
-**File**: `extension/parquet/decoder/byte_stream_split_decoder.cpp` (modified, +1/-3)
-```diff
-@@ -36,9 +36,7 @@ static idx_t GetValueWidth(const ParquetColumnSchema &schema) {
- 
- void ByteStreamSplitDecoder::InitializePage() {
- 	auto &block = reader.block;
--	// Subtract 1 from length as the block is allocated with 1 extra byte,
--	// but the byte stream split encoder needs to know the correct data size.
--	bss_decoder = make_uniq<BssDecoder>(block->ptr, block->len - 1, GetValueWidth(reader.Schema()));
-+	bss_decoder = make_uniq<BssDecoder>(block->ptr, block->len, GetValueWidth(reader.Schema()));
- 	block->inc(block->len);
- }
- 
-```
-
-**File**: `extension/parquet/decoder/dictionary_decoder.cpp` (modified, +1/-0)
-```diff
-@@ -125,6 +125,7 @@ idx_t DictionaryDecoder::Read(uint8_t *defines, idx_t read_count, Vector &result
- 		}
- 	} else if (valid_count > 0) {
- 		// for the valid entries - decode the offsets
-+		offset_buffer.reset();
- 		offset_buffer.resize(reader.reader.allocator, sizeof(uint32_t) * valid_count);
- 		dict_decoder->GetBatch<uint32_t>(offset_buffer.ptr, NumericCast<uint32_t>(valid_count));
- 		ConvertDictToSelVec(reinterpret_cast<uint32_t *>(offset_buffer.ptr), valid_sel, valid_count);
-```
-
-**File**: `extension/parquet/include/column_reader.hpp` (modified, +1/-1)
-```diff
-@@ -386,7 +386,7 @@ class ColumnReader {
- 	virtual void ResetPage();
- 
- private:
--	void AllocateBlock(idx_t size);
-+	void AllocateBlock(idx_t payload_size);
- 	void PrepareRead(optional_ptr<const TableFilter> filter, optional_ptr<TableFilterState> filter_state,
- 	                 idx_t rows_to_skip = 0);
- 	void PreparePage(PageHeader &page_hdr);
-```
-
-**File**: `test/parquet/corrupt/bss_level_slicing_overread.test` (added, +11/-0)
-```diff
-@@ -0,0 +1,11 @@
-+# name: test/parquet/corrupt/bss_level_slicing_overread.test
-+# description: Reject definition levels that consume BSS page padding
-+# group: [corrupt]
-+
-+require parquet
-+
-+# The definition-level section extends one byte beyond the page payload.
-+statement error
-+SELECT * FROM read_parquet('data/parquet-testing/corrupt/bss_level_slicing_overread.parquet');
-+----
-+Out of buffer
-```
-
-**File**: `test/parquet/corrupt/f1_scratch_buffer_stale_ptr.test` (added, +21/-0)
-```diff
-@@ -0,0 +1,21 @@
-+# name: test/parquet/corrupt/f1_scratch_buffer_stale_ptr.test
-+# description: Reuse scratch storage safely across Parquet page encoding transitions
-+# group: [corrupt]
-+
-+require parquet
-+
-+# The DBP page consumes the scratch buffer before dictionary decoding reuses it.
-+# The file contains 2048 values of 42, followed by 1024 NULLs and 1024 dictionary values of 0.
-+query IIII
-+SELECT count(*), count(x), count(*) FILTER (WHERE x IS NULL), sum(x)
-+FROM read_parquet('data/parquet-testing/corrupt/f1_scratch_buffer_stale_ptr.parquet');
-+----
-+4096	3072	1024	86016
-+
-+# Dictionary filtering also reads the decoded offsets after the batch.
-+query II
-+SELECT count(*), sum(x)
-+FROM read_parquet('data/parquet-testing/corrupt/f1_scratch_buffer_stale_ptr.parquet')
-+WHERE x = 0;
-+----
-+1024	0
++endloop
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #28378** (2026-11-04): Update extension_entries.hpp for sirius (@Robinho-MR)
-- **PR #28373** (2026-11-04): Footer statistics for multi-file parquet scans: maximum_files_for_stats (@Robinho-MR)
-- **PR #28360** (2026-11-04): Encode VARIANT number exponents in a single byte when possible (@Robinho-MR)
-- **PR #28356** (2026-11-04): Do not fail on planning when a foldable throws (@EtgarDev)
-- **PR #28355** (2026-11-04): Keep the NULL rows of segments written by v1.x in filters that accept NULL (@PeterVanHolland)
-- **PR #28348** (2026-11-04): Fix Parquet page bounds and scratch buffer reuse (@HendrikLambert)
+- **PR #28601** (2026-11-09): Parse schema-qualified table functions named describe, summarize, show, pivot or unpivot (@ywelsch)
+- **PR #28600** (2026-11-09): Keep the DECIMAL type of a windowed sum in the window self-join rewrite (@ywelsch)
+- **PR #28595** (2026-11-09): Refresh search path after 'require' in SQLLogic tests (@Flogex)
+- **PR #28593** (2026-11-09): Push single-side conjuncts of non-inner join conditions with subqueries (@kryonix)
+- **PR #28584** (2026-11-09): Pass `.shell` command lines to the system shell verbatim (@Dtenwolde)
+- **PR #28583** (2026-11-09): Fix dangling segment node link when appending a segment runs out of memory (@Robinho-MR)
 
 ---
 
@@ -2473,42 +2306,34 @@ write past the end of the buffer.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Keep the NULL rows of segments written by v1.x in filters that accept NULL (#283
+## X. dangling segment node link when appending a segment runs out of memory (#28583)
 
 **RULE**:
-When implementing operations in `src/storage/table/standard_column_data.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duckdb/duckdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/include/duckdb/storage/table/segment_tree.hpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duckdb/duckdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `94f8c7a6`: Keep the NULL rows of segments written by v1.x in filters that accept NULL (#28355). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8f203aed`: dangling segment node link when appending a segment runs out of memory (#28583). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/storage/table/standard_column_data.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/include/duckdb/storage/table/segment_tree.hpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-	// segments without a byte size come from older storage, which may record NULLs only in the validity statistics
-	bool legacy_segments = false;
-	for (auto &pointer : column_data.pointers) {
-		legacy_segments = legacy_segments || !pointer.byte_size;
-	}
-	bool validity_has_null = false;
-	for (auto &pointer : column_data.child_columns[0].pointers) {
-		validity_has_null = validity_has_null || pointer.statistics.CanHaveNull();
-	}
-	if (!legacy_segments || !validity_has_null) {
-		return;
-	}
-	for (auto &node : data.SegmentNodes()) {
-		node.GetNode().GetStatsMutable().SetHasNull();
-	}
+		auto &new_node = *node;
+		optional_ptr<SegmentNode<T>> previous_node = nodes.empty() ? nullptr : nodes.back().get();
+		if (previous_node) {
+			previous_node->SetNext(new_node);
+		}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+		if (!nodes.empty()) {
+			nodes.back()->SetNext(*node);
+		}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `94f8c7a6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8f203aed` are properly handled with clean fallback behavior.

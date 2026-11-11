@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/k3s-io-k3s-learnings.md`  
 > **Source**: github ([https://github.com/k3s-io/k3s](https://github.com/k3s-io/k3s))  
-> **Source Version**: `f5cba99a`  
+> **Source Version**: `dca306c8`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T04:07:19.108Z  
+> **Timestamp**: 2026-11-07T05:58:15.325Z  
 > **Learning ID**: `learn-github-k3s-io-k3s`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/k3s-io-k3s-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/k3s-io/k3s](https://github.com/k3s-io/k3s))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T04:07:19.104Z  
+> **Harvest Timestamp**: 2026-11-07T05:58:15.319Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Lightweight Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 34333 stars
+- **Stars / Engagement**: 34351 stars
 
 ---
 
@@ -884,11 +884,13 @@ func AddFeatureGate(current, toAdd string) string {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #14951** (2026-11-04): **Update stable channel to `v1.37.2+k3s1`**
-  *Symptoms*: <!-- HTML Comments can be left in place or removed. --> <!-- Please see our contributing guide at https://github.com/k3s-io/k3s/blob/main/CONTRIBUTING.md for guidance on opening pull requests -->  #### Proposed Changes ####  Update stable channel to `v1.37.2+k3s1` when finishing October release cycle.  #### Types of Changes ####  <!-- What types of changes does your code introduce to K3s? Bugfix, New Feature, Breaking Change, etc -->  #### Verification ####  <!-- How can the changes be verified? Please provide whatever additional information necessary to help verify the proposed changes. -->  #### Testing ####  <!-- Is this change covered by testing? If not, consider adding a Unit or Integration test. --> <!-- See https://github.com/k3s-io/k3s/blob/main/tests/TESTING.md for more info -->  #### Linked Issues ####  <!-- Link any related issues, pull-requests, or commit hashes that are relevant to this pull request. If you are opening a PR without a corresponding issue please consider creating one first, at https://github.com/k3s-io/k3s/issues . A functional example will greatly help QA with verifying/reproducing a bug or testing new features. -->  #### User-Facing Change #### <!-- Does this PR introduce a user-facing change? If no, just write "NONE" in the release-note block below. If the PR requires additional action from users switching to the new release, include the string "action required". --> ```release-note  ```  #### Further Comments ####  <!-- If this is a relatively 
+- **Issue #14968** (2026-11-06): **[main] Bump Klipper LB version**
+  *Symptoms*:    <Actions>     <action id="e0a9fe32db8e9db3e5cb4c4ccdd32d3e665fa59c307ebb2fa091d7a938f65869">         <h3>Bump Klipper LB version</h3>         <details id="11a0b411d5881733470a0714e2147a7156f2f76194c76db3775c9df96024686e">             <summary>Update rancher/klipper-lb image versions</summary>             <p>2 file(s) updated with &#34;rancher/klipper-lb:v0.4.18&#34;:&#xA;&#xA;* pkg/cloudprovider/servicelb.go&#xA;* scripts/airgap/image-list.txt&#xA;</p>             <details>                 <summary>v0.4.18</summary>             </details>             <details>                 <summary>v0.4.17</summary>                 <pre>## What&#39;s Changed&#xD;&#xA;* Remove unnecessary apks by @brandond in https://github.com/k3s-io/klipper-lb/pull/93&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;**Full Changelog**: https://github.com/k3s-io/klipper-lb/compare/v0.4.16...v0.4.17</pre>             </details>             <details>                 <summary>v0.4.16</summary>             </details>             <details>                 <summary>v0.4.15</summary>                 <pre>* v0.4.15</pre>             </details>             <details>                 <summary>v0.4.14</summary>                 <pre>## What&#39;s Changed&#xD;&#xA;* Bump alpine from 3.21 to 3.22 by @dependabot[bot] in https://github.com/k3s-io/klipper-lb/pull/82&#xD;&#xA;* Bump alpine from 3.22 to 3.23 by @dependabot[bot] in https://github.com/k3s-io/klipper-lb/pull/86&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;**Full Changelog**: https://github.com/
 
-- **Issue #14950** (2026-11-04): **Agentless servers (--disable-agent) open remotedialer tunnels to every apiserver endpoint, which nothing uses**
-  *Symptoms*: **Environmental Info:** K3s Version: k3s version v1.37.2+k3s1 (f6973cb8) Also reproduced on v1.36.6+k3s1 (fa45d6a5); seen in production on v1.36.5+k3s1. The code path is unchanged on `main`.  Node(s) CPU architecture, OS, and Version: x86_64, rancher/k3s image in Docker 29.9.3 (reproduction); servers as Kubernetes pods (production)  Cluster Configuration: Reproduction: 1 server, `--disable-agent`, no agents. Production: 3 servers with `disable-agent: true`, embedded etcd, `egress-selector-mode: cluster`, agents on separate hosts. Each server's `advertise-address` is an external load balancer address that only admits the agents' source IPs.  **Describe the bug:** Every agentless server runs the agent tunnel through `agent.RunStandalone` -> `tunnelSetup` -> `tunnel.Setup` -> `startWatches` -> `watchEndpointSlices`. It opens a remotedialer websocket to every address in the `kubernetes` EndpointSlice, its own included, and reconnects forever.  On an agentless server these tunnels have no user: - The tunnel server (`pkg/daemons/control/tunnel.go`, `dialBackend`) chooses a session by the Node whose addresses contain the destination, or by a hostname dialed as a kubelet. An agentless server has no Node object, so its session is never chosen. - #7331 already skips the tunnel authorizer when `ContainerRuntimeEndpoint` is `/dev/null`. The authorizer then allows only the loopback kubelet and stream ports, and nothing listens on either. - On a server that runs an apiserver, `DisableLoadB
+- **Issue #14967** (2026-11-06): **[main] Bump Klipper Helm and Helm Controller version**
+  *Symptoms*:    <Actions>     <action id="f3ef93e2e26c39fd6a612f8f436b6127da34796d634f8902655d8b1a9c8f1f01">         <h3>Bump Klipper Helm and Helm Controller version</h3>         <details id="05473a80b95353b4bba0b1793ea2348d1c4f94f2036bbd576f5f078d3d4d795a">             <summary>Bump to latest klipper-helm version in scripts/version.sh</summary>             <p>1 file(s) updated with &#34;VERSION_HELM_JOB=\&#34;v0.14.0-build20261106\&#34;&#34;:&#xA;&#xA;* scripts/version.sh&#xA;</p>             <details>                 <summary>v0.14.0-build20261106</summary>             </details>         </details>         <details id="8cc5acf0cc00b5a6ef3c81556a0733972833478428ffc3bb5db482078c19b9c6">             <summary>Update rancher/klipper-helm image version</summary>             <p>1 file(s) updated with &#34;rancher/klipper-helm:v0.14.0-build20261106&#34;:&#xA;&#xA;* scripts/airgap/image-list.txt&#xA;</p>             <details>                 <summary>v0.14.0-build20261106</summary>             </details>         </details>         <a href="https://github.com/k3s-io/k3s/actions/runs/42268865934">GitHub Action workflow link</a>     </action> </Actions>  ---  <table>   <tr>     <td width="77">       <img src="https://www.updatecli.io/images/updatecli.png" alt="Updatecli logo" width="50" height="50" />     </td>     <td>       <p>         Created automatically by <a href="https://www.updatecli.io/">Updatecli</a>       </p>       <details><summary>Options:</summary>         <br />         <p>Most of
+  **Post-Mortem & Fix Analysis**:
+  > ## [Codecov](https://app.codecov.io/gh/k3s-io/k3s/pull/14967?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=k3s-io) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 51.96%. Comparing base ([`3ddfb9f`](https://app.codecov.io/gh/k3s-io/k3s/commit/3ddfb9fded547e9fa66d5daa79b39b98bda8c045?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=k3s-io)) to head ([`1ba51a8`](https://app.codecov.io/gh/k3s-io/k3s/commit/1ba51a85e32450037d0e185e2b7465839a93da44?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=k3s-io)).  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##             main   #14967   +/-   ## =======================================   Covera
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -905,512 +907,86 @@ func AddFeatureGate(current, toAdd string) string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f5cba99a` (2026-11-05)
-**Commit Message**: Bump Spegel to v0.8.1 (#14931)
+### Incident Patch 1: `dca306c8` (2026-11-06)
+**Commit Message**: chore: Update rancher/klipper-lb image versions (#14968)
 
-**File**: `go.mod` (modified, +41/-43)
+Made with ❤️️ by updatecli
+
+Co-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+
+**File**: `pkg/cloudprovider/servicelb.go` (modified, +1/-1)
 ```diff
-@@ -19,7 +19,6 @@ replace (
- 	github.com/opencontainers/selinux => github.com/opencontainers/selinux v1.15.1
- 	github.com/prometheus/client_golang => github.com/prometheus/client_golang v1.23.2
- 	github.com/prometheus/common => github.com/prometheus/common v0.70.0
--	github.com/spegel-org/spegel => github.com/k3s-io/spegel v0.7.2-k3s1
- 	github.com/spf13/cobra => github.com/spf13/cobra v1.10.2
- 	github.com/spf13/pflag => github.com/spf13/pflag v1.0.10
- 	github.com/spf13/viper => github.com/spf13/viper v1.21.0
-@@ -73,13 +72,13 @@ replace (
+@@ -55,7 +55,7 @@ const (
  )
  
- require (
--	github.com/Microsoft/hcsshim v0.15.0-rc.1
-+	github.com/Microsoft/hcsshim v0.15.0-rc.4
- 	github.com/Mirantis/cri-dockerd v0.3.19
- 	github.com/blang/semver/v4 v4.0.0
- 	github.com/cloudnativelabs/kube-router/v2 v2.0.0-00010101000000-000000000000
- 	github.com/containerd/cgroups/v3 v3.1.3
--	github.com/containerd/containerd/api v1.11.1
--	github.com/containerd/containerd/v2 v2.2.3
-+	github.com/containerd/containerd/api v1.12.0
-+	github.com/containerd/containerd/v2 v2.4.2
- 	github.com/containerd/errdefs v1.0.0
- 	github.com/containerd/fuse-overlayfs-snapshotter/v2 v2.1.7
- 	github.com/containerd/stargz-snapshotter v0.18.2
-@@ -90,7 +89,7 @@ require (
- 	github.com/dustin/go-humanize v1.0.1
- 	github.com/erikdubbelboer/gspt v0.0.0-20210805194459-ce36a5128377
- 	github.com/flannel-io/flannel v0.28.10
--	github.com/fsnotify/fsnotify v1.9.0
-+	github.com/fsnotify/fsnotify v1.10.1
- 	github.com/go-logr/logr v1.4.4
- 	github.com/go-test/deep v1.0.7
- 	github.com/google/cadvisor/lib v0.60.5
-@@ -106,11 +105,11 @@ require (
- 	github.com/k3s-io/api v0.2.1
- 	github.com/k3s-io/helm-controller v0.17.9
- 	github.com/k3s-io/kine v0.17.1
--	github.com/klauspost/compress v1.20.0
--	github.com/libp2p/go-libp2p v0.48.0
-+	github.com/klauspost/compress v1.20.1
-+	github.com/libp2p/go-libp2p v0.50.0
- 	github.com/minio/minio-go/v7 v7.1.0
- 	github.com/moby/sys/reexec v0.1.0
--	github.com/moby/sys/userns v0.1.0
-+	github.com/moby/sys/userns v0.2.1
- 	github.com/mwitkow/go-http-dialer v0.0.0-20161116154839-378f744fb2b8
- 	github.com/natefinch/lumberjack v2.0.0+incompatible
- 	github.com/onsi/ginkgo/v2 v2.33.0
-@@ -121,8 +120,8 @@ require (
- 	github.com/opencontainers/selinux v1.15.1
- 	github.com/otiai10/copy v1.14.1
- 	github.com/pdtpartners/nix-snapshotter v0.4.0
--	github.com/prometheus/client_golang v1.24.1
--	github.com/prometheus/common v0.70.1
-+	github.com/prometheus/client_golang v1.25.0
-+	github.com/prometheus/common v0.72.0
- 	github.com/rancher/dynamiclistener v0.9.1-0.20260710234258-e4a1908ede0d
- 	github.com/rancher/lasso v0.2.9
- 	github.com/rancher/permissions v0.0.0-20240523180510-4001d3d637f7
-@@ -132,7 +131,7 @@ require (
- 	github.com/robfig/cron/v3 v3.0.1
- 	github.com/rootless-containers/rootlesskit/v3 v3.2.0
- 	github.com/sirupsen/logrus v1.10.2
--	github.com/spegel-org/spegel v0.7.0
-+	github.com/spegel-org/spegel v0.8.1
- 	github.com/spf13/afero v1.15.0
- 	github.com/spf13/pflag v1.0.10
- 	github.com/stretchr/testify v1.12.1
-@@ -148,10 +147,10 @@ require (
- 	go.uber.org/zap v1.28.0
- 	golang.org/x/crypto v0.57.0
- 	golang.org/x/mod v0.41.0
--	golang.org/x/net v0.58.0
--	golang.org/x/sync v0.23.0
-+	golang.org/x/net v0.59.0
-+	golang.org/x/sync v0.24.0
- 	golang.org/x/sys v0.48.0
--	google.golang.org/grpc v1.83.2
-+	google.golang.org/grpc v1.84.0
- 	gopkg.in/yaml.v2 v2.4.0
- 	k8s.io/api v0.37.2
- 	k8s.io/apiextensions-apiserver v0.36.0
-@@ -193,10 +192,10 @@ require (
- 	dario.cat/mergo v1.0.2 // indirect
- 	filippo.io/bigmod v0.1.1-0.20260103110540-f8a47775ebe5 // indirect
- 	filippo.io/edwards25519 v1.2.0 // indirect
--	filippo.io/keygen v0.0.0-20260114151900-8e2790ea4c5b // indirect
-+	filippo.io/keygen v1.0.0 // indirect
- 	github.com/Azure/go-ansiterm v0.0.0-20250102033503-faa5f7b0171c // indirect
- 	github.com/DataDog/zstd v1.5.7 // indirect
--	github.com/HdrHistogram/hdrhistogram-go v1.2.0 // indirect
-+	github.com/HdrHistogram/hdrhistogram-go v1.4.0 // indirect
- 	github.com/JeffAshton/win_pdh v0.0.0-20161109143554-76bb4ee9f0ab // indirect
- 	github.com/MakeNowJust/heredoc v1.0.0 // indirect
- 	github.com/Masterminds/semver/v3 v3.5.0 // indirect
-@@ -234,7 +233,7 @@ require (
- 	github.com/containerd/go-dmverity v0.1.0 // indirect
- 	github.com/containerd/go-runc v1.1.0 // indirect
- 	github.com/containerd/imgcrypt/v2 v2.0.2 // indirect
--	github.com/containerd/log v0.1.0 // indirect
-+	github.com/containerd/log v0.2.0 // indirect
- 	github.com/containerd/nri v0.12.2 // indirect
- 	github.com/containerd/otelttrpc v0.1.0 // indirect
- 	github.com/containerd/platforms v1.0.0-rc.5 // indirect
-@@ -260,7 +259,7 @@ require (
- 	github.com/docker/go-events v0.0.0-20190806004212-e31b211e4f1c // indirect
- 	github.com/docker/go-metrics v0.0.1 // indirect
- 	github.com/docker/go-units v0.5.0 // indirect
--	github.com/dunglas/httpsfv v1.1.0 // indirect
-+	github.com/dunglas/httpsfv v1.1.1 // indirect
- 	github.com/emicklei/go-restful v2.16.0+incompatible // indirect
- 	github.com/emicklei/go-restful/v3 v3.13.0 // indirect
- 	github.com/erofs/go-ero
-```
-
-**File**: `go.sum` (modified, +86/-91)
-```diff
-@@ -344,8 +344,8 @@ filippo.io/bigmod v0.1.1-0.20260103110540-f8a47775ebe5 h1:JA0fFr+kxpqTdxR9LOBiTW
- filippo.io/bigmod v0.1.1-0.20260103110540-f8a47775ebe5/go.mod h1:OjOXDNlClLblvXdwgFFOQFJEocLhhtai8vGLy0JCZlI=
- filippo.io/edwards25519 v1.2.0 h1:crnVqOiS4jqYleHd9vaKZ+HKtHfllngJIiOpNpoJsjo=
- filippo.io/edwards25519 v1.2.0/go.mod h1:xzAOLCNug/yB62zG1bQ8uziwrIqIuxhctzJT18Q77mc=
--filippo.io/keygen v0.0.0-20260114151900-8e2790ea4c5b h1:REI1FbdW71yO56Are4XAxD+OS/e+BQsB3gE4mZRQEXY=
--filippo.io/keygen v0.0.0-20260114151900-8e2790ea4c5b/go.mod h1:9nnw1SlYHYuPSo/3wjQzNjSbeHlq2NsKo5iEtfJPWP0=
-+filippo.io/keygen v1.0.0 h1:u0/Fhxlgz3uPv+XxhfgTq3BJt5VesIPM5ue/OuG7qjQ=
-+filippo.io/keygen v1.0.0/go.mod h1:9nnw1SlYHYuPSo/3wjQzNjSbeHlq2NsKo5iEtfJPWP0=
- gioui.org v0.0.0-20210308172011-57750fc8a0a6/go.mod h1:RSH6KIUZ0p2xy5zHDxgAM4zumjgTw83q2ge/PI+yyw8=
- gioui.org v0.0.0-20210822154628-43a7030f6e0b/go.mod h1:jmZ349gZNGWyc5FIv/VWLBQ32Ki/FOvTgEz64kh9lnk=
- gioui.org v0.2.0/go.mod h1:1H72sKEk/fNFV+l0JNeM2Dt3co3Y4uaQcD+I+/GQ0e4=
-@@ -385,8 +385,8 @@ github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/cloudmock v0
- github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/resourcemapping v0.48.1/go.mod h1:viRWSEhtMZqz1rhwmOVKkWl6SwmVowfL9O2YR5gI2PE=
- github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/resourcemapping v0.49.0/go.mod h1:wRbFgBQUVm1YXrvWKofAEmq9HNJTDphbAaJSSX01KUI=
- github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/resourcemapping v0.50.0/go.mod h1:otE2jQekW/PqXk1Awf5lmfokJx4uwuqcj1ab5SpGeW0=
--github.com/HdrHistogram/hdrhistogram-go v1.2.0 h1:XMJkDWuz6bM9Fzy7zORuVFKH7ZJY41G2q8KWhVGkNiY=
--github.com/HdrHistogram/hdrhistogram-go v1.2.0/go.mod h1:CiIeGiHSd06zjX+FypuEJ5EQ07KKtxZ+8J6hszwVQig=
-+github.com/HdrHistogram/hdrhistogram-go v1.4.0 h1:JdU0squ73hT0G45GVKzZ8KXS8ImiFuPHAA36aWaCfMM=
-+github.com/HdrHistogram/hdrhistogram-go v1.4.0/go.mod h1:CiIeGiHSd06zjX+FypuEJ5EQ07KKtxZ+8J6hszwVQig=
- github.com/JeffAshton/win_pdh v0.0.0-20161109143554-76bb4ee9f0ab h1:UKkYhof1njT1/xq4SEg5z+VpTgjmNeHwPGRQl7takDI=
- github.com/JeffAshton/win_pdh v0.0.0-20161109143554-76bb4ee9f0ab/go.mod h1:3VYc5hodBMJ5+l/7J4xAyMeuM2PNuepvHlGs8yilUCA=
- github.com/JohnCGriffin/overflow v0.0.0-20211019200055-46fa312c352c/go.mod h1:X0CRv0ky0k6m906ixxpzmDRLvX58TFUKS2eePweuyxk=
-@@ -557,8 +557,8 @@ github.com/cockroachdb/logtags v0.0.0-20230118201751-21c54148d20b h1:r6VH0faHjZe
- github.com/cockroachdb/logtags v0.0.0-20230118201751-21c54148d20b/go.mod h1:Vz9DsVWQQhf3vs21MhPMZpMGSht7O/2vFW2xusFUVOs=
- github.com/cockroachdb/pebble v1.1.5 h1:5AAWCBWbat0uE0blr8qzufZP5tBjkRyy/jWe1QWLnvw=
- github.com/cockroachdb/pebble v1.1.5/go.mod h1:17wO9el1YEigxkP/YtV8NtCivQDgoCyBg5c4VR/eOWo=
--github.com/cockroachdb/pebble/v2 v2.1.5 h1:1ziHpaSau6qCXnFpQX3EBOH14yPHA8W66vKxsyrgXgs=
--github.com/cockroachdb/pebble/v2 v2.1.5/go.mod h1:Reo1RTniv1UjVTAu/Fv74y5i3kJ5gmVrPhO9UtFiKn8=
-+github.com/cockroachdb/pebble/v2 v2.1.6 h1:GDo7Z2+LgFZ7LJLdLmBXhDeTVIwgSPGxIT15hE7vGqM=
-+github.com/cockroachdb/pebble/v2 v2.1.6/go.mod h1:Reo1RTniv1UjVTAu/Fv74y5i3kJ5gmVrPhO9UtFiKn8=
- github.com/cockroachdb/redact v1.1.5 h1:u1PMllDkdFfPWaNGMyLD1+so+aq3uUItthCFqzwPJ30=
- github.com/cockroachdb/redact v1.1.5/go.mod h1:BVNblN9mBWFyMyqK1k3AAiSxhvhfK2oOZZ2lK+dpvRg=
- github.com/cockroachdb/swiss v0.0.0-20251224182025-b0f6560f979b h1:VXvSNzmr8hMj8XTuY0PT9Ane9qZGul/p67vGYwl9BFI=
-@@ -594,8 +594,8 @@ github.com/containerd/go-runc v1.1.0 h1:OX4f+/i2y5sUT7LhmcJH7GYrjjhHa1QI4e8yO0gG
- github.com/containerd/go-runc v1.1.0/go.mod h1:xJv2hFF7GvHtTJd9JqTS2UVxMkULUYw4JN5XAUZqH5U=
- github.com/containerd/imgcrypt/v2 v2.0.2 h1:WOEaE33CaSxzuRF8YLfAjHWuu1Xh27aPPQtqtALqfuM=
- github.com/containerd/imgcrypt/v2 v2.0.2/go.mod h1:8r4JW1b83jkDhaioOUZ7idxIYp+Wn1k4E4KXwy2oSNI=
--github.com/containerd/log v0.1.0 h1:TCJt7ioM2cr/tfR8GPbGf9/VRAX8D2B4PjzCpfX540I=
--github.com/containerd/log v0.1.0/go.mod h1:VRRf09a7mHDIRezVKTRCrOq78v577GXq3bSa3EhrzVo=
-+github.com/containerd/log v0.2.0 h1:BewD/umNgVnoczglOpX8eRMyEy5t5iPlu5AIpnWDONc=
-+github.com/containerd/log v0.2.0/go.mod h1:/M7L7CXKcPTfNC74XzaK+5H5KbO5+4lJVpuVI6vRLoM=
- github.com/containerd/nri v0.12.2 h1:piA7h2QUm0m3+e994qWFPYwnoXXwAphwDc1Ydx1eWi4=
- github.com/containerd/nri v0.12.2/go.mod h1:o6Pz0I/iks9g2KlH3WdgvFtc9rB7k0aeoZCAH01xOGk=
- github.com/containerd/otelttrpc v0.1.0 h1:UOX68eVTE8H/T45JveIg+I22Ev2aFj4qPITCmXsskjw=
-@@ -672,8 +672,8 @@ github.com/docker/go-metrics v0.0.1/go.mod h1:cG1hvH2utMXtqgqqYE9plW6lDxS3/5ayHz
- github.com/docker/go-units v0.5.0 h1:69rxXcBk27SvSaaxTtLh/8llcHD8vYHT7WSdRZ/jvr4=
- github.com/docker/go-units v0.5.0/go.mod h1:fgPhTUdO+D/Jk86RDLlptpiXQzgHJF7gydDDbaIK4Dk=
- github.com/docopt/docopt-go v0.0.0-20180111231733-ee0de3bc6815/go.mod h1:WwZ+bS3ebgob9U8Nd0kOddGdZWjyMGR8Wziv+TBNwSE=
--github.com/dunglas/httpsfv v1.1.0 h1:Jw76nAyKWKZKFrpMMcL76y35tOpYHqQPzHQiwDvpe54=
--github.com/dunglas/httpsfv v1.1.0/go.mod h1:zID2mqw9mFsnt7YC3vYQ9/cjq30q41W+1AnDwH8TiMg=
-+github.com/dunglas/httpsfv v1.1.1 h1:HoSs101zIE9I23DlqlmljJ/OIi
-```
-
-**File**: `pkg/agent/config/config.go` (modified, +1/-2)
-```diff
-@@ -17,7 +17,6 @@ import (
- 	"os"
- 	"path/filepath"
- 	"regexp"
--	"strconv"
- 	"strings"
- 	"time"
- 
-@@ -720,7 +719,7 @@ func get(ctx context.Context, envInfo *cmds.Agent, proxy proxy.Proxy) (*config.N
- 		conf := spegel.DefaultRegistry
- 		conf.ExternalAddress = nodeConfig.AgentConfig.NodeIP
- 		conf.InternalAddress = controlConfig.Loopback(false)
--		conf.RegistryPort = strconv.Itoa(controlConfig.SupervisorPort)
-+		conf.RegistryPort = controlConfig.SupervisorPort
- 		conf.ClientCAFile = clientCAFile
- 		conf.ClientCertFile = clientK3sControllerCert
- 		conf.ClientKeyFile = clientK3sControllerKey
-```
-
-**File**: `pkg/agent/containerd/config.go` (modified, +2/-1)
-```diff
-@@ -7,6 +7,7 @@ import (
- 	"net/url"
- 	"os"
- 	"path/filepath"
-+	"strconv"
- 	"strings"
- 
- 	"github.com/containerd/containerd/v2/core/remotes/docker"
-@@ -72,7 +73,7 @@ func writeContainerdConfig(cfg *config.Node, containerdConfig templates.Containe
- 
- // writeContainerdHosts merges registry mirrors/configs, and renders and saves hosts.toml from the filled template
- func writeContainerdHosts(cfg *config.Node, containerdConfig templates.ContainerdConfig) error {
--	mirrorAddr := net.JoinHostPort(spegel.DefaultRegistry.InternalAddress, spegel.DefaultRegistry.RegistryPort)
-+	mirrorAddr := net.JoinHostPort(spegel.DefaultRegistry.InternalAddress, strconv.Itoa(spegel.DefaultRegistry.RegistryPort))
- 	hosts := getHostConfigs(containerdConfig.PrivateRegistryConfig, containerdConfig.NoDefaultEndpoint, mirrorAddr)
- 
- 	// Clean up previous configuration templates
-```
-
-**File**: `pkg/agent/containerd/config_test.go` (modified, +4/-1)
-```diff
-@@ -5,6 +5,7 @@ import (
- 	"net/url"
- 	"os"
- 	"path/filepath"
-+	"strconv"
- 	"strings"
- 	"testing"
- 
-@@ -1498,7 +1499,9 @@ func Test_UnitGetHostConfigs(t *testing.T) {
- 				conf.ServerCAFile = "server-ca"
- 				conf.ClientKeyFile = "client-key"
- 				conf.ClientCertFile = "client-cert"
--				conf.InternalAddress, conf.RegistryPort, _ = net.SplitHostPort(tt.args.mirrorAddr)
-+				var port string
-+				conf.InternalAddress, port, _ = net.SplitHostPort(tt.args.mirrorAddr)
-+				conf.RegistryPort, _ = strconv.Atoi(port)
- 				conf.InjectMirror(nodeConfig)
- 			}
- 
-```
-
-**File**: `pkg/spegel/bootstrap.go` (modified, +19/-13)
-```diff
-@@ -16,7 +16,7 @@ import (
- 	"github.com/k3s-io/k3s/pkg/version"
- 	"github.com/libp2p/go-libp2p/core/peer"
- 	"github.com/sirupsen/logrus"
--	"github.com/spegel-org/spegel/pkg/routing"
-+	routinglibp2p "github.com/spegel-org/spegel/pkg/routing/libp2p"
- 	"golang.org/x/sync/errgroup"
- 	v1 "k8s.io/api/core/v1"
- 	"k8s.io/apimachinery/pkg/labels"
-@@ -25,18 +25,24 @@ import (
+ var (
+-	DefaultLBImage = "rancher/klipper-lb:v0.4.17"
++	DefaultLBImage = "rancher/klipper-lb:v0.4.18"
  )
  
- // explicit interface checks
--var _ routing.Bootstrapper = &selfBootstrapper{}
--var _ routing.Bootstrapper = &notSelfBootstrapper{}
--var _ routing.Bootstrapper = &agentBootstrapper{}
--var _ routing.Bootstrapper = &serverBootstrapper{}
--var _ routing.Bootstrapper = &chainingBootstrapper{}
-+var _ Bootstrapper = &selfBootstrapper{}
-+var _ Bootstrapper = &notSelfBootstrapper{}
-+var _ Bootstrapper = &agentBootstrapper{}
-+var _ Bootstrapper = &serverBootstrapper{}
-+var _ Bootstrapper = &chainingBootstrapper{}
-+
-+// Bootstrapper adds node address publication to Spegel's peer discovery interface.
-+type Bootstrapper interface {
-+	routinglibp2p.Bootstrapper
-+	Run(context.Context, peer.AddrInfo) error
-+}
- 
- type selfBootstrapper struct {
- 	id *peer.AddrInfo
- }
- 
- // NewSelfBootstrapper returns a stub p2p bootstrapper that just returns its own ID
--func NewSelfBootstrapper() routing.Bootstrapper {
-+func NewSelfBootstrapper() Bootstrapper {
- 	return &selfBootstrapper{}
- }
- 
-@@ -54,14 +60,14 @@ func (s *selfBootstrapper) Get(ctx context.Context) ([]peer.AddrInfo, error) {
- 
- type notSelfBootstrapper struct {
- 	id *peer.AddrInfo
--	b  routing.Bootstrapper
-+	b  Bootstrapper
- }
- 
- // NewNotSelfBootstrapper wraps an existing bootstrapper,
- // and will never return a list of peers containing only itself.
- // This is best used to prevent the spegel router from considering
- // itself as "Ready" when it has no peers.
--func NewNotSelfBootstrapper(b routing.Bootstrapper) routing.Bootstrapper {
-+func NewNotSelfBootstrapper(b Bootstrapper) Bootstrapper {
- 	return &notSelfBootstrapper{
- 		b: b,
- 	}
-@@ -90,7 +96,7 @@ type agentBootstrapper struct {
- }
- 
- // NewAgentBootstrapper returns a p2p bootstrapper that retrieves a peer address from its server
--func NewAgentBootstrapper(server, token, dataDir string) routing.Bootstrapper {
-+func NewAgentBootstrapper(server, token, dataDir string) Bootstrapper {
- 	return &agentBootstrapper{
- 		clientCert: filepath.Join(dataDir, "agent", "client-kubelet.crt"),
- 		clientKey:  filepath.Join(dataDir, "agent", "client-kubelet.key"),
-@@ -179,7 +185,7 @@ type serverBootstrapper struct {
- }
- 
- // NewServerBootstrapper returns a p2p bootstrapper that returns an address from the Kubernetes node list
--func NewServerBootstrapper(controlConfig *config.Control) routing.Bootstrapper {
-+func NewServerBootstrapper(controlConfig *config.Control) Bootstrapper {
- 	return &serverBootstrapper{
- 		controlConfig: controlConfig,
- 	}
-@@ -237,14 +243,14 @@ func (s *serverBootstrapper) Get(ctx context.Context) ([]peer.AddrInfo, error) {
- }
- 
- type chainingBootstrapper struct {
--	bootstrappers []routing.Bootstrapper
-+	bootstrappers []Bootstrapper
- }
- 
- // NewChainingBootstrapper returns a p2p bootstrapper that passes through to a list of bootstrappers.
- // Addressess are returned from the first bootstrapper that returns successfully, to prevent infinite
- // recursion if this chains through an agentBootstrapper when the server URL is set to an external
- // loadbalancer that points back at this node.
--func NewChainingBootstrapper(bootstrappers ...routing.Bootstrapper) routing.Bootstrapper {
-+func NewChainingBootstrapper(bootstrappers ...Bootstrapper) Bootstrapper {
- 	return &chainingBootstrapper{
- 		bootstrappers: bootstrappers,
- 	}
+ var lbPodSelector labels.Selector
 ```
 
-**File**: `pkg/spegel/registry.go` (modified, +2/-1)
+**File**: `scripts/airgap/image-list.txt` (modified, +1/-1)
 ```diff
-@@ -2,6 +2,7 @@ package spegel
- 
- import (
- 	"net"
-+	"strconv"
- 
- 	"github.com/containerd/containerd/v2/core/remotes/docker"
- 	"github.com/k3s-io/k3s/pkg/daemons/config"
-@@ -11,7 +12,7 @@ import (
- // InjectMirror configures TLS for the registry mirror client, and  adds the mirror address as an endpoint
- // to all configured registries.
- func (c *Config) InjectMirror(nodeConfig *config.Node) error {
--	mirrorAddr := net.JoinHostPort(c.InternalAddress, c.RegistryPort)
-+	mirrorAddr := net.JoinHostPort(c.InternalAddress, strconv.Itoa(c.RegistryPort))
- 	mirrorURL := "https://" + mirrorAddr + "/v2"
- 	registry := nodeConfig.AgentConfig.Registry
- 
-```
-
-**File**: `pkg/spegel/spegel.go` (modified, +36/-25)
-```diff
-@@ -29,15 +29,18 @@ import (
- 	"github.com/k3s-io/k3s/pkg/version"
- 	"github.com/libp2p/go-libp2p"
- 	"github.com/libp2p/go-libp2p/core/crypto"
-+	"github.com/libp2p/go-libp2p/core/host"
- 	"github.com/libp2p/go-libp2p/p2p/host/peerstore/pstoreds"
- 	"github.com/libp2p/go-libp2p/p2p/transport/tcp"
- 	"github.com/rancher/dynamiclistener/cert"
- 	"github.com/sirupsen/logrus"
- 	"github.com/spegel-org/spegel/pkg/metrics"
- 	"github.com/spegel-org/spegel/pkg/oci"
-+	"github.com/spegel-org/spegel/pkg/oci/containerd"
- 	"github.com/spegel-org/spegel/pkg/registry"
- 	"github.com/spegel-org/spegel/pkg/routing"
--	"github.com/spegel-org/spegel/pkg/state"
-+	routinglibp2p "github.com/spegel-org/spegel/pkg/routing/libp2p"
-+	"golang.org/x/sync/errgroup"
- 	"k8s.io/apimachinery/pkg/util/wait"
- 	"k8s.io/component-base/metrics/legacyregistry"
- )
-@@ -84,18 +87,18 @@ type Config struct {
- 	InternalAddress string
- 
- 	// RegistryPort is the port for the registry API.
--	RegistryPort string
-+	RegistryPort int
- 
- 	// PSK is the preshared key required to join the p2p network.
- 	PSK []byte
- 
- 	// Bootstrapper is the bootstrapper that will be used to discover p2p peers.
--	Bootstrapper routing.Bootstrapper
-+	Bootstrapper Bootstrapper
- 
- 	// HandlerFunc will be called to add the registry API handler to an existing router.
- 	Router https.RouterFunc
- 
--	router *routing.P2PRouter
-+	router *routinglibp2p.Router
- }
- 
- // These values are not currently configurable
-@@ -114,7 +117,7 @@ func init() {
- 
- // Start starts the embedded p2p router, and binds the registry API to an existing HTTP router.
- func (c *Config) Start(ctx context.Context, nodeConfig *config.Node, criReadyChan <-chan struct{}) error {
--	localAddr := net.JoinHostPort(c.InternalAddress, c.RegistryPort)
-+	localAddr := net.JoinHostPort(c.InternalAddress, strconv.Itoa(c.RegistryPort))
- 	// distribute images for all configured mirrors. there doesn't need to be a
- 	// configured endpoint, just having a key for the registry will do.
- 	urls := []string{}
-@@ -151,11 +154,11 @@ func (c *Config) Start(ctx context.Context, nodeConfig *config.Node, criReadyCha
- 		filters = append(filters, oci.RegexFilter{Regex: regexp.MustCompile(`:latest$`)})
- 	}
- 
--	logrus.Infof("Starting distributed registry mirror at https://%s:%s/v2 for registries %v",
-+	logrus.Infof("Starting distributed registry mirror at https://%s:%d/v2 for registries %v",
- 		c.ExternalAddress, c.RegistryPort, registries)
- 
- 	// set up the various logging logging frameworks
--	ctx = logger.NewContext(ctx, "spegel")
-+	ctx = logger.NewContext(ctx, "spegel", logger.WithMessageFilter("failed to run bootstrap"))
- 	level := ipfslog.LevelInfo
- 	if logrus.IsLevelEnabled(logrus.DebugLevel) {
- 		level = ipfslog.LevelDebug
-@@ -184,9 +187,9 @@ func (c *Config) Start(ctx context.Context, nodeConfig *config.Node, criReadyCha
- 		return err
- 	}
- 
--	storeOpts := []oci.ContainerdOption{
--		oci.WithContentEvents(false),
--		oci.WithContentPath(filepath.Join(nodeConfig.Containerd.Root, "io.containerd.content.v1.content")),
-+	storeOpts := []containerd.ContainerdOption{
-+		containerd.WithContentPath(filepath.Join(nodeConfig.Containerd.Root, "io.containerd.content.v1.content")),
-+		containerd.WithFilters(filters),
- 	}
- 	ociStore, err := NewDeferredContainerd(ctx, nodeConfig.Containerd.Address, registryNamespace, storeOpts...)
- 	if err != nil {
-@@ -240,20 +243,31 @@ func (c *Config) Start(ctx context.Context, nodeConfig *config.Node, criReadyCha
- 	routerAddr := net.JoinHostPort(c.ExternalAddress, routerPort)
- 
- 	logrus.Infof("Starting distributed registry P2P node at %s", routerAddr)
--	opts := []routing.P2PRouterOption{
--		routing.WithLogBootstrapErr(false),
--		routing.WithLibP2POptions(
-+	opts := []routinglibp2p.RouterOption{
-+		routinglibp2p.WithLibP2POptions(
- 			libp2p.Identity(p2pKey),
- 			libp2p.Peerstore(ps),
- 			libp2p.PrivateNetwork(c.PSK),
- 			libp2p.ChainOptions(libp2p.NoTransports, libp2p.Transport(tcp.NewTCPTransport)),
- 		),
- 	}
--	c.router, err = routing.NewP2PRouter(ctx, routerAddr, NewNotSelfBootstrapper(c.Bootstrapper), c.RegistryPort, opts...)
-+	bootstrapper := NewNotSelfBootstrapper(c.Bootstrapper)
-+	c.router, err = routinglibp2p.NewRouter(ctx, routerAddr, bootstrapper, routing.PeerMetadata{RegistryPort: uint16(c.RegistryPort)}, opts...)
- 	if err != nil {
- 		return errors.WithMessage(err, "failed to create P2P router")
- 	}
--	go c.router.Run(ctx)
-+	go func() {
-+		group, groupCtx := errgroup.WithContext(ctx)
-+		group.Go(func() error {
-+			return bootstrapper.Run(groupCtx, *host.InfoFromHost(c.router.Host()))
-+		})
-+		group.Go(func() error {
-+			return c.router.Run(groupCtx)
-+		})
-+		if err := group.Wait(); err != nil && !errors.Is(err, context.Canceled) {
-+			logrus.Errorf("Distributed registry P2P router exited: %v", err)
-+		}
-+	}()
- 
- 	metrics.Register()
- 	registryOpts := []registry.RegistryOption{
-@@ -267,14 +281,10 @@ func (c *Config) Start(ctx context.Context, nodeConfig *config.Node, criReadyCha
- 		return errors.WithMessage(err, "failed to crea
+@@ -1,5 +1,5 @@
+ docker.io/rancher/klipper-helm:v0.14.0-build20261106
+-docker.io/rancher/klipper-lb:v0.4.17
++docker.io/rancher/klipper-lb:v0.4.18
+ docker.io/rancher/local-path-provisioner:v0.0.37
+ docker.io/rancher/mirrored-coredns-coredns:1.15.0
+ docker.io/rancher/mirrored-library-busybox:1.37.0
 ```
 
 ---
 
-### Incident Patch 2: `f0b80582` (2026-11-04)
-**Commit Message**: Update stable channel to v1.37.2+k3s1 (#14951)
+### Incident Patch 2: `0e39df29` (2026-11-06)
+**Commit Message**: [main] Bump rancher/mirrored-library-traefik image version (#14932)
 
-Signed-off-by: Rafael Breno <[REDACTED_EMAIL]>
+* chore: Update Traefik image version in manifests/traefik.yaml
 
-**File**: `channel.yaml` (modified, +1/-1)
+Made with ❤️️ by updatecli
+
+* chore: Update Traefik image version in scripts/airgap/image-list
+
+Made with ❤️️ by updatecli
+
+---------
+
+Co-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+
+**File**: `manifests/traefik.yaml` (modified, +1/-1)
 ```diff
-@@ -1,7 +1,7 @@
- # Example channels config
- channels:
- - name: stable
--  latest: v1.36.5+k3s1
-+  latest: v1.37.2+k3s1
- - name: latest
-   latestRegexp: .*
-   excludeRegexp: (^[^+]+-|v1\.25\.5\+k3s1|v1\.26\.0\+k3s1)
+@@ -32,7 +32,7 @@ spec:
+     priorityClassName: "system-cluster-critical"
+     image:
+       repository: "rancher/mirrored-library-traefik"
+-      tag: "3.7.15"
++      tag: "3.7.17"
+     tolerations:
+     - key: "CriticalAddonsOnly"
+       operator: "Exists"
+```
+
+**File**: `scripts/airgap/image-list.txt` (modified, +1/-1)
+```diff
+@@ -3,6 +3,6 @@ docker.io/rancher/klipper-lb:v0.4.17
+ docker.io/rancher/local-path-provisioner:v0.0.37
+ docker.io/rancher/mirrored-coredns-coredns:1.15.0
+ docker.io/rancher/mirrored-library-busybox:1.37.0
+-docker.io/rancher/mirrored-library-traefik:3.7.15
++docker.io/rancher/mirrored-library-traefik:3.7.17
+ docker.io/rancher/mirrored-metrics-server:v0.9.1
+ docker.io/rancher/mirrored-pause:3.10.2
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14951** (2026-11-04): Update stable channel to `v1.37.2+k3s1` (@rafaelbreno)
-- **PR #14948** (2026-11-03): Fix bashisms in install.sh (@ricardobranco777)
-- **PR #14944** (closed): Add network-policy controller on Windows (@ChuDucAnh242002)
-- **PR #14943** (2026-10-30): Fix typos and smart quotes (@brandond)
-- **PR #14940** (2026-10-30): Fix dead community meeting and shell style guide links (@sarankumar1325)
-- **PR #14939** (2026-10-30): Allow configuring flannel vxlan vni and port via env var (@brandond)
+- **PR #14968** (2026-11-06): [main] Bump Klipper LB version (@github-actions[bot])
+- **PR #14967** (2026-11-06): [main] Bump Klipper Helm and Helm Controller version (@github-actions[bot])
+- **PR #14966** (2026-11-06): [release-1.36] Bump Klipper LB version (@github-actions[bot])
+- **PR #14965** (2026-11-06): [release-1.35] Bump Klipper LB version (@github-actions[bot])
+- **PR #14964** (2026-11-06): [release-1.36] Bump Klipper Helm and Helm Controller version (@github-actions[bot])
+- **PR #14963** (2026-11-06): [release-1.35] Bump Klipper Helm and Helm Controller version (@github-actions[bot])
 
 ---
 
@@ -1430,61 +1006,28 @@ Signed-off-by: Rafael Breno <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Bump Spegel to v0.8.1 (#14931)
+## X. Update rancher/klipper-lb image versions (#14968)
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in k3s-io/k3s. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/cloudprovider/servicelb.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in k3s-io/k3s. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f5cba99a`: Bump Spegel to v0.8.1 (#14931). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dca306c8`: Update rancher/klipper-lb image versions (#14968). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/cloudprovider/servicelb.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/Microsoft/hcsshim v0.15.0-rc.4
-	github.com/containerd/containerd/api v1.12.0
-	github.com/containerd/containerd/v2 v2.4.2
-	github.com/fsnotify/fsnotify v1.10.1
-	github.com/klauspost/compress v1.20.1
-	github.com/libp2p/go-libp2p v0.50.0
-	github.com/moby/sys/userns v0.2.1
-	github.com/prometheus/client_golang v1.25.0
-	github.com/prometheus/common v0.72.0
-	github.com/spegel-org/spegel v0.8.1
-	golang.org/x/net v0.59.0
-	golang.org/x/sync v0.24.0
-	google.golang.org/grpc v1.84.0
-	filippo.io/keygen v1.0.0 // indirect
-	github.com/HdrHistogram/hdrhistogram-go v1.4.0 // indirect
-	github.com/containerd/log v0.2.0 // indirect
-	github.com/dunglas/httpsfv v1.1.1 // indirect
+	DefaultLBImage = "rancher/klipper-lb:v0.4.18"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	github.com/spegel-org/spegel => github.com/k3s-io/spegel v0.7.2-k3s1
-	github.com/Microsoft/hcsshim v0.15.0-rc.1
-	github.com/containerd/containerd/api v1.11.1
-	github.com/containerd/containerd/v2 v2.2.3
-	github.com/fsnotify/fsnotify v1.9.0
-	github.com/klauspost/compress v1.20.0
-	github.com/libp2p/go-libp2p v0.48.0
-	github.com/moby/sys/userns v0.1.0
-	github.com/prometheus/client_golang v1.24.1
-	github.com/prometheus/common v0.70.1
-	github.com/spegel-org/spegel v0.7.0
-	golang.org/x/net v0.58.0
-	golang.org/x/sync v0.23.0
-	google.golang.org/grpc v1.83.2
-	filippo.io/keygen v0.0.0-20260114151900-8e2790ea4c5b // indirect
-	github.com/HdrHistogram/hdrhistogram-go v1.2.0 // indirect
-	github.com/containerd/log v0.1.0 // indirect
-	github.com/dunglas/httpsfv v1.1.0 // indirect
+	DefaultLBImage = "rancher/klipper-lb:v0.4.17"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f5cba99a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dca306c8` are properly handled with clean fallback behavior.

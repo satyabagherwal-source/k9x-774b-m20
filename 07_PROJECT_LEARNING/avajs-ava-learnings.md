@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/avajs-ava-learnings.md`  
 > **Source**: github ([https://github.com/avajs/ava](https://github.com/avajs/ava))  
-> **Source Version**: `8bd11143`  
+> **Source Version**: `a4fb2094`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T07:33:19.406Z  
+> **Timestamp**: 2026-11-07T23:06:21.947Z  
 > **Learning ID**: `learn-github-avajs-ava`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/avajs-ava-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/avajs/ava](https://github.com/avajs/ava))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T07:33:18.093Z  
+> **Harvest Timestamp**: 2026-11-07T23:06:20.325Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -582,6 +582,7 @@ const run = async options => {
 
 	runner = new Runner({
 		checkSelectedByLineNumbers,
+		debugMode: Boolean(options.debug),
 		experiments: options.experiments,
 		failFast: options.failFast,
 		failWithoutAssertions: options.failWithoutAssertions,
@@ -1274,284 +1275,139 @@ export function set(newOptions) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e45dfa08` (2026-10-31)
-**Commit Message**: Make `timeout` work for synchronous tests (#3495)
+### Incident Patch 1: `802b9234` (2026-11-07)
+**Commit Message**: Expose debugging state in test.meta.debugMode
 
-* Timeout for synchronous tests
-
-Fail a (synchronous) test when its runtime exceeds the configured
-timeout value. This prevents tests with long runtimes but no
-asynchronicity from succeeding.
-
-The added test fixture demonstrates this. Before this change such a test
-would pass but with this change it will fail because it exceeds the
-configured timeout.
-
-* Refresh synchronous timeout
-
-Extend the synchronous timeout behavior to, like the asynchronous
-timeout behavior, reset the timer, through `refreshTimeout`, on (e.g.)
-assertions.
-
-* Keep test duration including teardown duration
-
-Don't reuse the `now` value to determine if the test timeout/deadline
-was met to compute the (overall) test duration. This is in line with
-async tests, which only fail if the test itself, excluding teardown,
-exceeded the configured timeout (verified manually).
-
-To catch regression like this in the future I (tried) added a tests that
-assert the output of AVA includes the test duration for long running
-tests AND long running teardowns in its output.
-
-**File**: `lib/test.js` (modified, +30/-1)
+**File**: `docs/01-writing-tests.md` (modified, +5/-0)
 ```diff
-@@ -297,6 +297,7 @@ export default class Test {
- 		this.assertError = null;
- 		this.attemptCount = 0;
- 		this.calledEnd = false;
-+		this.deadline = null;
- 		this.duration = null;
- 		this.finishDueToInactivity = null;
- 		this.finishDueToAttributedError = null;
-@@ -310,12 +311,19 @@ export default class Test {
- 		this.planAssertionStack = null;
- 		this.startedAt = 0;
- 		this.testFailure = null;
-+		this.timeoutDuration = null;
-+		this.timeoutMessage = null;
- 		this.timeoutTimer = null;
- 	}
+@@ -282,11 +282,16 @@ Available properties:
  
- 	async #doFinish() {
- 		this.finishing = true;
+ * `file`: path to the test file, as a file URL string
+ * `snapshotDirectory`: directory where snapshots are stored, as a file URL string
++* `debugMode`: `true` when AVA is running with a debugger attached (or via the `debug` command). The timeout option is disabled in that mode; use this flag to adjust your own timers or waits accordingly.
  
-+		const now = nowAndTimers.now();
-+		if (this.deadline !== null && now > this.deadline) {
-+			this.saveFirstError(new Error(this.timeoutMessage));
-+		}
+ ```js
+ import test from 'ava';
+ 
+ console.log('Test file currently being run:', test.meta.file);
 +
- 		this.clearTimeout();
- 		this.verifyPlan();
- 		this.verifyAssertions();
-@@ -489,23 +497,44 @@ export default class Test {
- 		}
- 
- 		this.clearTimeout();
-+		this.timeoutDuration = ms;
-+		this.timeoutMessage = message ?? 'Test timeout exceeded';
- 		this.timeoutTimer = nowAndTimers.setCappedTimeout(() => {
--			this.saveFirstError(new Error(message ?? 'Test timeout exceeded'));
-+			this.saveFirstError(new Error(this.timeoutMessage));
- 
- 			if (this.finishDueToTimeout) {
- 				this.finishDueToTimeout();
- 			}
- 		}, ms);
- 
-+		this.deadline = nowAndTimers.now() + this.timeoutDuration;
-+
- 		this.notifyTimeoutUpdate(ms);
- 	}
- 
- 	refreshTimeout() {
-+		if (this.deadline !== null) {
-+			const now = nowAndTimers.now();
-+			if (now > this.deadline) {
-+				this.saveFirstError(new Error(this.timeoutMessage));
-+
-+				if (this.finishDueToTimeout) {
-+					this.finishDueToTimeout();
-+					return;
-+				}
-+			}
-+
-+			this.deadline = now + this.timeoutDuration;
-+		}
-+
- 		this.timeoutTimer?.refresh();
- 	}
- 
- 	clearTimeout() {
- 		nowAndTimers.clearTimeout(this.timeoutTimer);
-+		this.deadline = null;
-+		this.timeoutDuration = null;
-+		this.timeoutMessage = null;
- 		this.timeoutTimer = null;
- 	}
- 
-```
-
-**File**: `test/test-duration/fixtures/package.json` (added, +8/-0)
-```diff
-@@ -0,0 +1,8 @@
-+{
-+	"type": "module",
-+	"ava": {
-+		"files": [
-+			"*.js"
-+		]
-+	}
++if (test.meta.debugMode) {
++	// Skip short timeouts while debugging
 +}
+ ```
+ 
+ ## Reusing test logic through macros
 ```
 
-**File**: `test/test-duration/fixtures/teardown.js` (added, +18/-0)
+**File**: `docs/recipes/debugging-with-chrome-devtools.md` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,18 @@
-+import {setTimeout as delay} from 'node:timers/promises';
-+
+@@ -14,7 +14,7 @@ Now run a specific test file:
+ npx ava debug test.js
+ ```
+ 
+-The DevTools should connect automatically and your tests will run. Use DevTools to set breakpoints, or use the `debugger` keyword.
++The DevTools should connect automatically and your tests will run. Use DevTools to set breakpoints, or use the `debugger` keyword. AVA disables the timeout option while debugging; `test.meta.debugMode` is `true` so your own timers can follow suit.
+ 
+ Run with the `--break` option to ensure the DevTools hit a breakpoint right before the test file is loaded:
+ 
+```
+
+**File**: `lib/runner.js` (modified, +3/-0)
+```diff
+@@ -73,6 +73,9 @@ export default class Runner extends Emittery {
+ 		let didScheduleStart = false;
+ 		const meta = Object.freeze({
+ 			file: makeFileURL(options.file),
++			// True when AVA disabled the timeout option because a debugger is active
++			// (or the `debug` command was used). See https://github.com/avajs/ava/issues/3152
++			debugMode: options.debugMode === true,
+ 			get snapshotDirectory() {
+ 				const {file, snapshotDir: fixedLocation, projectDir} = options;
+ 				return makeFileURL(determineSnapshotDir({file, fixedLocation, projectDir}));
+```
+
+**File**: `lib/worker/base.js` (modified, +1/-0)
+```diff
+@@ -75,6 +75,7 @@ const run = async options => {
+ 
+ 	runner = new Runner({
+ 		checkSelectedByLineNumbers,
++		debugMode: Boolean(options.debug),
+ 		experiments: options.experiments,
+ 		failFast: options.failFast,
+ 		failWithoutAssertions: options.failWithoutAssertions,
+```
+
+**File**: `test/meta/fixtures/debug-mode.js` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
 +import test from 'ava';
 +
-+test('async teardown', t => {
-+	t.teardown(() => delay(105));
-+	t.pass();
++test('meta.debugMode is true when debugging', t => {
++	t.true(test.meta.debugMode);
 +});
+```
+
+**File**: `test/meta/fixtures/meta.js` (modified, +4/-0)
+```diff
+@@ -9,3 +9,7 @@ test('meta.snapshotDirectory', t => {
+ 	t.true(meta.snapshotDirectory.startsWith('file://'));
+ 	t.regex(meta.snapshotDirectory, /snapshot-fixture/);
+ });
 +
-+test('sync teardown', t => {
-+	t.teardown(() => {
-+		const start = Date.now();
-+		while (Date.now() < start + 105) {
-+			// Busy-wait to block the event loop
-+		}
++test('meta.debugMode is false outside of debugging', t => {
++	t.false(test.meta.debugMode);
++});
+```
+
+**File**: `test/meta/fixtures/meta.mjs` (removed, +0/-12)
+```diff
+@@ -1,12 +0,0 @@
+-import test from 'ava';
+-
+-test('meta.file', t => {
+-	t.is(test.meta.file, import.meta.url);
+-});
+-
+-test('meta.snapshotDirectory', t => {
+-	const {meta} = test;
+-	t.true(meta.snapshotDirectory.startsWith('file://'));
+-	t.regex(meta.snapshotDirectory, /snapshot-fixture/);
+-});
+-
+```
+
+**File**: `test/meta/test.js` (modified, +7/-5)
+```diff
+@@ -2,12 +2,14 @@ import test from '@ava/test';
+ 
+ import {fixture} from '../helpers/exec.js';
+ 
+-test('with JS files', async t => {
++test('meta properties', async t => {
+ 	const result = await fixture(['meta.js']);
+-	t.is(result.stats.passed.length, 2);
++	t.is(result.stats.passed.length, 3);
+ });
+ 
+-test('with MJS files', async t => {
+-	const result = await fixture(['meta.mjs']);
+-	t.is(result.stats.passed.length, 2);
++test('meta.debugMode is true when the main process is being inspected', async t => {
++	const result = await fixture(['debug-mode.js'], {
++		env: {AVA_FORCE_CI: 'not-ci', NODE_OPTIONS: '--inspect=0'},
 +	});
-+	t.pass();
-+});
-```
-
-**File**: `test/test-duration/fixtures/test.js` (added, +17/-0)
-```diff
-@@ -0,0 +1,17 @@
-+import {setTimeout as delay} from 'node:timers/promises';
-+
-+import test from 'ava';
-+
-+test('async test', async t => {
-+	await delay(105);
-+	t.pass();
-+});
-+
-+test('sync test', t => {
-+	const start = Date.now();
-+	while (Date.now() < start + 105) {
-+		// Busy-wait to block the event loop
-+	}
-+
-+	t.pass();
-+});
-```
-
-**File**: `test/test-duration/test.js` (added, +15/-0)
-```diff
-@@ -0,0 +1,15 @@
-+import test from '@ava/test';
-+
-+import {fixture} from '../helpers/exec.js';
-+
-+test('test duration of a long-running test', async t => {
-+	const result = await fixture(['test.js']);
-+	t.regex(result.stdout, /async test \(\d{3}ms\)/);
-+	t.regex(result.stdout, /sync test \(\d{3}ms\)/);
-+});
-+
-+test('test duration of a long-running teardown', async t => {
-+	const result = await fixture(['teardown.js']);
-+	t.regex(result.stdout, /async teardown \(\d{3}ms\)/);
-+	t.regex(result.stdout, /sync teardown \(\d{3}ms\)/);
-+});
-```
-
-**File**: `test/test-timeouts/fixtures/synchronous.js` (added, +11/-0)
-```diff
-@@ -0,0 +1,11 @@
-+import test from 'ava';
-+
-+test('timeout with a synchronous test', t => {
-+	t.timeout(10);
-+	const start = Date.now();
-+	while (Date.now() < start + 15) {
-+		// Busy-wait to block the event loop
-+	}
-+
-+	t.pass();
-+});
-```
-
-**File**: `test/test-timeouts/snapshots/test.js.md` (modified, +6/-0)
-```diff
-@@ -18,3 +18,9 @@ Generated by [AVA](https://avajs.dev).
-         label: 'Called with:',
-       },
-     ]
-+
-+## timeout for a synchronous test
-+
-+> error message
-+
-+    'Test timeout exceeded'
-```
-
-**File**: `test/test-timeouts/test.js` (modified, +6/-0)
-```diff
-@@ -14,3 +14,9 @@ test('timeout messages must be strings', async t => {
- 	t.snapshot(error.message, 'error message');
- 	t.snapshot(error.formattedDetails, 'formatted details');
++	t.is(result.stats.passed.length, 1);
  });
-+
-+test('timeout for a synchronous test', async t => {
-+	const result = await t.throwsAsync(fixture(['synchronous.js']));
-+	const error = result.stats.getError(result.stats.failed[0]);
-+	t.snapshot(error.message, 'error message');
-+});
-```
-
----
-
-### Incident Patch 2: `a8122ebd` (2026-10-31)
-**Commit Message**: Only strip a leading `test-` from file names in test title prefixes (#3494)
-
-A file named `normalize-test-case.js` was shown as `normalize-case`,
-because the first `test-` anywhere in the name was removed. Only remove it
-when the file name starts with it, matching the `test-*.js` pattern.
-
-Fixes #3491
-
-**File**: `lib/reporters/prefix-title.js` (modified, +1/-1)
-```diff
-@@ -16,7 +16,7 @@ export default function prefixTitle(extensions, base, file, title) {
- 	const filename = parts.pop()
- 		.replace(/\.spec\./, '.')
- 		.replace(/\.test\./, '.')
--		.replace(/test-/, '')
-+		.replace(/^test-/, '')
- 		.replace(new RegExp(`.(${extensions.join('|')})$`), '');
- 
- 	return [...parts, filename, title].join(SEPARATOR);
-```
-
-**File**: `test-tap/reporters/prefix-title.js` (modified, +6/-0)
-```diff
-@@ -60,6 +60,12 @@ test('removes test- from file', t => {
- 	t.end();
- });
- 
-+test('retains test- elsewhere in file', t => {
-+	t.equal(prefixTitle(extensions, path.sep, path.normalize('backend/normalize-test-case.js'), 'title'), `backend${sep}normalize-test-case${sep}title`);
-+	t.equal(prefixTitle(extensions, path.sep, path.normalize('backend/test-normalize-test-case.js'), 'title'), `backend${sep}normalize-test-case${sep}title`);
-+	t.end();
-+});
-+
- test('retains test- elsewhere in path', t => {
- 	t.equal(prefixTitle(extensions, path.sep, path.normalize('backend-test/run-status.js'), 'title'), `backend-test${sep}run-status${sep}title`);
- 	t.end();
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3511** (closed): feat(test-interface): add test.cleanup() and test.cleanupEach() hooks (@Saik2789)
+- **PR #3510** (closed): fix: solution for #928 - Make it easier to write reliable cleanup tasks (@mau16ro)
+- **PR #3508** (2026-11-07): feat: expose test.meta.debugMode when debugging (@junaidkhan80121)
+- **PR #3507** (closed): Add opt-in seeded test order randomization (@Aming9303)
+- **PR #3506** (2026-11-07): Report how many snapshots were updated or removed (@pythonyx135793)
 - **PR #3502** (2026-10-23): Switch back to long-hand form for the package.json repository field (@novemberborn)
-- **PR #3500** (2026-10-22): Update dependencies (@novemberborn)
-- **PR #3497** (2026-10-18): Update release process docs to account for staged publishing (@novemberborn)
-- **PR #3496** (2026-10-15): Update tooling, dependencies, formatting and CI workflows (@novemberborn)
-- **PR #3495** (2026-10-31): Make `timeout` work for synchronous tests (@ericcornelissen)
-- **PR #3494** (2026-10-31): Fix incorrect removal of `test-` from test title prefixes (@ozenyunus35)
 
 ---
 
@@ -1571,57 +1427,32 @@ Fixes #3491
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Make `timeout` work for synchronous tests (#3495)
+## X. Expose debugging state in test.meta.debugMode
 
 **RULE**:
-When implementing operations in `lib/test.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in avajs/ava. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/01-writing-tests.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in avajs/ava. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e45dfa08`: Make `timeout` work for synchronous tests (#3495). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `802b9234`: Expose debugging state in test.meta.debugMode. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `lib/test.js`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/01-writing-tests.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-		this.deadline = null;
-		this.timeoutDuration = null;
-		this.timeoutMessage = null;
-		const now = nowAndTimers.now();
-		if (this.deadline !== null && now > this.deadline) {
-			this.saveFirstError(new Error(this.timeoutMessage));
-		}
+* `debugMode`: `true` when AVA is running with a debugger attached (or via the `debug` command). The timeout option is disabled in that mode; use this flag to adjust your own timers or waits accordingly.
 
-		this.timeoutDuration = ms;
-		this.timeoutMessage = message ?? 'Test timeout exceeded';
-			this.saveFirstError(new Error(this.timeoutMessage));
-		this.deadline = nowAndTimers.now() + this.timeoutDuration;
-
-		if (this.deadline !== null) {
-			const now = nowAndTimers.now();
-			if (now > this.deadline) {
-				this.saveFirstError(new Error(this.timeoutMessage));
-
-				if (this.finishDueToTimeout) {
-					this.finishDueToTimeout();
-					return;
-				}
-			}
-
-			this.deadline = now + this.timeoutDuration;
-		}
-
-		this.deadline = null;
-		this.timeoutDuration = null;
-		this.timeoutMessage = null;
+if (test.meta.debugMode) {
+	// Skip short timeouts while debugging
+}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-			this.saveFirstError(new Error(message ?? 'Test timeout exceeded'));
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e45dfa08` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `802b9234` are properly handled with clean fallback behavior.

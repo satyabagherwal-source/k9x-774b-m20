@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/skyzh-mini-lsm-learnings.md`  
 > **Source**: github ([https://github.com/skyzh/mini-lsm](https://github.com/skyzh/mini-lsm))  
-> **Source Version**: `2f7ce315`  
+> **Source Version**: `df2120d7`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T01:07:24.978Z  
+> **Timestamp**: 2026-11-07T18:57:18.400Z  
 > **Learning ID**: `learn-github-skyzh-mini-lsm`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/skyzh-mini-lsm-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/skyzh/mini-lsm](https://github.com/skyzh/mini-lsm))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T01:07:24.971Z  
+> **Harvest Timestamp**: 2026-11-07T18:57:17.680Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: learn database internals by building a storage engine in Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4186 stars
+- **Stars / Engagement**: 4211 stars
 
 ---
 
@@ -1223,11 +1223,11 @@ impl TieredCompactionController {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #235** (2026-11-07): **Update Rust to 1.99.1 and refresh dependencies**
+  *Symptoms*: <!-- stamp:review:v1 --> <sup><img src="https://api.raft.build/api/avatars/pixel/dmlzb3I.svg" width="16" height="16" align="absmiddle" alt=""> <b>Tuner</b> from skyzh opened this pull request through Stamp</sup><br><sup><a href="https://stamp.build/review?receipt=prc_79b806c78834b02661d149cc969c05fd"><picture><source media="(prefers-color-scheme: dark)" srcset="https://stamp.build/assets/brand/stamp-glyph-dark.d907ffcadb44.svg"><img src="https://stamp.build/assets/brand/stamp-glyph-light.58a2c10ed108.svg" width="13" height="12" align="absmiddle" alt=""></picture> View in Stamp →</a></sup>  --- <!-- /stamp:review:v1 -->  Mini-LSM now selects Rust 1.99.1, the [latest stable release](https://blog.rust-lang.org/releases/1.99.1/), consistently for local development and CI. Both minimum-version declarations match the pin, and CI installs the repository-selected toolchain instead of updating unrelated toolchains.  Refresh 43 locked dependencies and move all three crates to Rustyline 19. Nineteen of the twenty direct Rust dependencies now resolve to the latest stable release. Keep Parking_lot at 0.12.5: [0.13 changes lock APIs and removes automatic eventual fairness](https://github.com/Amanieu/parking_lot/blob/master/CHANGELOG.md#0130-parking_lot-0100-parking_lot_core-050-lock_api---2026-10-21), which warrants a separate concurrency-focused change.  On macOS ARM64 with Rust 1.99.1:  - `cargo fmt --all -- --check` passes. - `cargo clippy --workspace --all-targets --locked -- -D warnin
+
 - **Issue #234** (2026-09-23): **Move memtable freeze question to Week 1 Day 6**
   *Symptoms*: ## Summary  Move the stale-snapshot memtable question from Week 1 Day 1 to Day 6. The Day 6 version asks learners to inspect the state read-lock scope in `put` and reason about the cached-`Arc` failure case after they have completed the Week 1 write path.  This is a book-only, two-line change: one question removed and one question added. No code, starter, test, or navigation file changes.  ## Validation  - The mdBook build passed with output directed to a temporary directory, and the rendered Day 1 and Day 6 placements were checked. - Independent factual/concurrency review: GO on commit `a0a3418b28315949ebb1658a70ab83fd44c53484`. - Independent learner review: WALKABLE on the same commit.  AI-Assisted: GPT-6 Sol + Sentinel 
-
-- **Issue #232** (2026-09-11): **fix: repair two broken links and a malformed solutions entry**
-  *Symptoms*: Three small, independent documentation repairs found while link-checking the book and repo docs. All three are user-visible on the published site.  ### 1. `mini-lsm-book/src/00-preface.md` — the CMU 15-445 link does not resolve  The href is missing its `.edu` top-level domain:  - before: `https://15445.courses.cs.cmu` - after: `https://15445.courses.cs.cmu.edu/`  The same sentence already links two working `https://15445.courses.cs.cmu.edu/...` pages, so this is a truncation rather than an intentional short link. The truncated host does not resolve at all, and the broken href is live on <https://skyzh.github.io/mini-lsm/00-preface.html>.  ### 2. `mini-lsm-book/src/week3-06-serializable.md` — the BadgerDB citation is a 404  `https://dgraph.io/blog/post/badger-txn/` now returns 404; the entire `/blog/` path is gone, so there is no live replacement for that specific post. I pointed the link at the project repository instead, which matches how the other links in the same paragraph reference projects ([RisingLight](https://github.com/risinglightdb/risinglight), [type-exercise-in-rust](https://github.com/skyzh/type-exercise-in-rust), [write-you-a-vector-db](https://github.com/skyzh/write-you-a-vector-db)). Happy to use an archived copy of the original post instead if you would rather preserve the exact citation.  ### 3. `SOLUTIONS.md` — malformed list entry  The `tiny-lsm` entry added in #176 has a duplicated leading `* ` and a stray `)`, so it renders as `* mehrdad3301/tiny-lsm): 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1648,12 +1648,12 @@ Assisted-by: Codex
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #235** (2026-11-07): Update Rust to 1.99.1 and refresh dependencies (@stamp-build[bot])
 - **PR #234** (2026-09-23): Move memtable freeze question to Week 1 Day 6 (@skyzh)
+- **PR #233** (2026-11-07): refactor: remove redundant block metadata checksum check (@cuiyeshuai)
 - **PR #232** (2026-09-11): fix: repair two broken links and a malformed solutions entry (@dajiaohuang)
 - **PR #231** (2026-09-11): Clarify Week 1 Day 1 memtable ownership (@skyzh)
 - **PR #230** (2026-09-05): chore: advance course crates after 0.3 publication (@skyzh)
-- **PR #229** (2026-08-09): Add agent-track link to Mini-LSM sponsor page (@skyzh)
-- **PR #228** (2026-08-08): Add CTA links to the Sponsor page (@skyzh)
 
 ---
 

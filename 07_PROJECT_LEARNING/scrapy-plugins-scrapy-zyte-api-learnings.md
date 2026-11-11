@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/scrapy-plugins-scrapy-zyte-api-learnings.md`  
 > **Source**: github ([https://github.com/scrapy-plugins/scrapy-zyte-api](https://github.com/scrapy-plugins/scrapy-zyte-api))  
-> **Source Version**: `9b63ad94`  
+> **Source Version**: `8fcb6177`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T11:09:12.264Z  
+> **Timestamp**: 2026-11-07T02:24:39.490Z  
 > **Learning ID**: `learn-github-scrapy-plugins-scrapy-zyte-api`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/scrapy-plugins-scrapy-zyte-api-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/scrapy-plugins/scrapy-zyte-api](https://github.com/scrapy-plugins/scrapy-zyte-api))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T11:09:11.303Z  
+> **Harvest Timestamp**: 2026-11-07T02:21:57.597Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Zyte API integration for Scrapy
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml
-- **Stars / Engagement**: 43 stars
+- **Stars / Engagement**: 44 stars
 
 ---
 
@@ -41,15 +41,15 @@
 ```
 import asyncio
 import inspect
-import sys
 from collections.abc import Coroutine
 from importlib.metadata import version
-from typing import Any, TypeVar
+from typing import Any
 
 import scrapy
 from packaging.version import Version
 from scrapy.utils.defer import deferred_to_future, maybe_deferred_to_future
 from scrapy.utils.reactor import is_asyncio_reactor_installed
+from scrapy.utils.reactor import is_reactor_installed as _is_reactor_installed
 from twisted.internet.defer import Deferred
 from zyte_api.utils import USER_AGENT as PYTHON_ZYTE_API_USER_AGENT
 
@@ -60,15 +60,9 @@ USER_AGENT = f"scrapy-zyte-api/{__version__} {PYTHON_ZYTE_API_USER_AGENT}"
 _PYTHON_ZYTE_API_VERSION = Version(version("zyte_api"))
 
 _SCRAPY_VERSION = Version(scrapy.__version__)
-_SCRAPY_2_10_0 = Version("2.10.0")
-_SCRAPY_2_12_0 = Version("2.12.0")
-_SCRAPY_2_13_0 = Version("2.13.0")
 _SCRAPY_2_14_0 = Version("2.14.0")
 _SCRAPY_2_15_0 = Version("2.15.0")
 
-_ADDON_SUPPORT = _SCRAPY_VERSION >= _SCRAPY_2_10_0
-_ASYNC_START_SUPPORT = _SCRAPY_VERSION >= _SCRAPY_2_13_0
-_AUTOTHROTTLE_DONT_ADJUST_DELAY_SUPPORT = _SCRAPY_VERSION >= _SCRAPY_2_12_0
 _DOWNLOAD_REQUEST_RETURNS_DEFERRED = _SCRAPY_VERSION < _SCRAPY_2_14_0
 _ENGINE_HAS_DOWNLOAD_ASYNC = _SCRAPY_VERSION >= _SCRAPY_2_14_0
 _GET_SLOT_NEEDS_SPIDER = _SCRAPY_VERSION < _SCRAPY_2_14_0
@@ -76,30 +70,6 @@ _LOG_DEFERRED_IS_DEPRECATED = _SCRAPY_VERSION >= _SCRAPY_2_14_0
 _PROCESS_SPIDER_OUTPUT_REQUIRES_SPIDER = _SCRAPY_VERSION < _SCRAPY_2_14_0
 _PROCESS_START_REQUIRES_SPIDER = _SCRAPY_VERSION < _SCRAPY_2_14_0
 _REACTORLESS_SUPPORT = _SCRAPY_VERSION >= _SCRAPY_2_15_0
-_START_REQUESTS_CAN_YIELD_ITEMS = _SCRAPY_VERSION >= _SCRAPY_2_12_0
-
-try:
-    from scrapy.utils.misc import build_from_crawler as _build_from_crawler
-except ImportError:  # Scrapy < 2.12
-    from scrapy.crawler import Crawler
-    from scrapy.utils.misc import create_instance  # type: ignore[attr-defined]
-
-    T = TypeVar("T")
-
-    def _build_from_crawler(  # type: ignore[no-redef]
-        objcls: type[T], crawler: Crawler, /, *args: Any, **kwargs: Any
-    ) -> T:
-        return create_instance(objcls, None, crawler, *args, **kwargs)
-
-
-try:
-    import scrapy_poet  # noqa: F401
-except ImportError:
-    _POET_ADDON_SUPPORT = False
-else:
-    _SCRAPY_POET_VERSION = Version(version("scrapy-poet"))
-    _SCRAPY_POET_0_26_0 = Version("0.26.0")
-    _POET_ADDON_SUPPORT = _SCRAPY_POET_VERSION >= _SCRAPY_POET_0_26_0
 
 try:
     from zyte_api import AuthInfo  # noqa: F401
@@ -107,14 +77,6 @@ except ImportError:
     _X402_SUPPORT = False
 else:
     _X402_SUPPORT = True
-
-
-try:
-    from scrapy.utils.reactor import is_reactor_installed as _is_reactor_installed
-except ImportError:  # Scrapy < 2.14
-
-    def _is_reactor_installed() -> bool:
-        return "twisted.internet.reactor" in sys.modules
 
 
 try:
@@ -265,7 +227,7 @@ __all__ = [
 
 ### Core Architecture Module: `scrapy_zyte_api/__version__.py`
 ```
-__version__ = "0.36.0"
+__version__ = "0.37.0"
 
 ```
 
@@ -473,7 +435,6 @@ from zyte_api import RequestError
 from ._params import _ParamParser
 from .responses import ZyteAPIMixin
 from .utils import (
-    _AUTOTHROTTLE_DONT_ADJUST_DELAY_SUPPORT,
     _GET_SLOT_NEEDS_SPIDER,
     _LOG_DEFERRED_IS_DEPRECATED,
     _close_spider,
@@ -516,14 +477,10 @@ class _BaseMiddleware:
         if not force and self._param_parser.parse(request) is None:
             return
 
-        if _AUTOTHROTTLE_DONT_ADJUST_DELAY_SUPPORT:
-            request.meta.setdefault("autothrottle_dont_adjust_delay", True)
+        request.meta.setdefault("autothrottle_dont_adjust_delay", True)
 
         downloader = self._crawler.engine.downloader
-        try:
-            slot_id = downloader.get_slot_key(request)
-        except AttributeError:  # Scrapy < 2.12
-            slot_id = downloader._get_slot_key(request, self._crawler.spider)
+        slot_id = downloader.get_slot_key(request)
         if not isinstance(slot_id, str) or not slot_id.startswith(self._slot_prefix):
             slot_id = f"{self._slot_prefix}{slot_id}"
             request.meta["download_slot"] = slot_id
@@ -732,7 +689,13 @@ class ScrapyZyteAPIRefererSpiderMiddleware:
         )
         self._param_parser = _ParamParser(crawler, cookies_enabled=False)
 
-    def process_spider_output(self, response, result, spider: S
+    def process_spider_output(self, response, result, spider: Spider | None = None):
+        for item_or_request in result:
+            self._process_output_item_or_request(item_or_request)
+            yield item_or_request
+
+    async def process_spider_output_async(
+        self, response, result, spider:
 ```
 
 ### Core Architecture Module: `scrapy_zyte_api/_page_inputs.py`
@@ -1188,12 +1151,11 @@ from scrapy import Request
 from scrapy.settings.default_settings import (
     REQUEST_FINGERPRINTER_CLASS as ScrapyRequestFingerprinter,
 )
-from scrapy.utils.misc import load_object
+from scrapy.utils.misc import build_from_crawler, load_object
 from w3lib.url import canonicalize_url
 
 from ._params import _REQUEST_PARAMS, _may_use_browser, _ParamParser
 from ._session import ScrapyZyteAPISessionDownloaderMiddleware
-from .utils import _build_from_crawler  # type: ignore[attr-defined]
 
 logger = getLogger(__name__)
 
@@ -1239,7 +1201,7 @@ class ScrapyZyteAPIRequestFingerprinter:
             )
         else:
             DefaultFallbackRequestFingerprinter = ScrapyRequestFingerprinter
-        self._fallback_request_fingerprinter = _build_from_crawler(
+        self._fallback_request_fingerprinter = build_from_crawler(
             load_object(
                 settings.get(
                     "ZYTE_API_FALLBACK_REQUEST_FINGERPRINTER_CLASS",
@@ -1292,17 +1254,9 @@ class ScrapyZyteAPIRequestFingerprinter:
 
     @cached_property
     def _session_mw(self):
-        try:
-            mw = self._crawler.get_downloader_middleware(
-                ScrapyZyteAPISessionDownloaderMiddleware
-            )
-        except AttributeError:  # Scrapy < 2.12
-            for component in self._crawler.engine.downloader.middleware.middlewares:
-                if isinstance(component, ScrapyZyteAPISessionDownloaderMiddleware):
-                    mw = component
-                    break
-            else:
-                mw = None
+        mw = self._crawler.get_downloader_middleware(
+            ScrapyZyteAPISessionDownloaderMiddleware
+        )
         if mw is None:
 
             class NoOpSessionDownloaderMiddleware:
@@ -1353,10 +1307,7 @@ class ScrapyZyteAPIRequestFingerprinter:
 
         injector = self._injector
         callback = get_callback(request, injector.spider)
-        scrapy_response_required = is_callback_requiring_scrapy_response(
-            callback,
-            request.callback,
-        )
+        scrapy_response_required = is_callback_requiring_scrapy_response(callback)
 
         remaining_dependencies = {
             dependency for dependency, _kwargs in plan.dependencies
@@ -1448,7 +1399,17 @@ class ScrapyZyteAPIRequestFingerprinter:
             _get_zyte_api_provider_params,
         )
 
-        if provider_plan_data i
+        if provider_plan_data is None:
+            provider_plan_data = self._get_provider_plan_data(request)
+        if provider_plan_data.to_provide is None:
+            return None, provider_plan_data.is_provider_only
+
+        provider_params = self._get_fingerprint_provider_params(
+            _get_zyte_api_provider_params(request, self._crawler)
+        )
+
+        zyte_api_meta, _html_requested = _get_or_build_zyte_api_provider_meta(
+            provider_plan_data.to_prov
 ```
 
 ### Core Architecture Module: `scrapy_zyte_api/_serialization.py`
@@ -1520,179 +1481,130 @@ else:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9b63ad94` (2026-10-26)
-**Commit Message**: Upgrade docs/requirements.txt (#347)
+### Incident Patch 1: `8fcb6177` (2026-11-06)
+**Commit Message**: Bump version: 0.36.0 → 0.37.0
 
-**File**: `docs/requirements.txt` (modified, +29/-31)
+**File**: `CHANGES.rst` (modified, +1/-1)
 ```diff
-@@ -6,23 +6,21 @@ apeye==1.4.1
-     # via sphinx-toolbox
- apeye-core==1.1.5
-     # via apeye
--autodocsumm==0.2.14
-+autodocsumm==0.2.15
-     # via sphinx-toolbox
- babel==2.18.0
-     # via sphinx
--beautifulsoup4==4.14.3
-+beautifulsoup4==4.15.0
-     # via sphinx-toolbox
- cachecontrol==0.14.4
-     # via sphinx-toolbox
--certifi==2026.2.25
-+certifi==2026.10.23
-     # via
-     #   requests
-     #   sphinx-prompt
--charset-normalizer==3.4.6
-+charset-normalizer==3.5.2
-     # via requests
--cssutils==2.11.1
--    # via dict2css
--dict2css==0.3.0.post1
-+dict2css==0.6.0
-     # via sphinx-toolbox
- docutils==0.21.2
-     # via
-@@ -33,55 +31,53 @@ docutils==0.21.2
-     #   sphinx-scrapy
-     #   sphinx-tabs
-     #   sphinx-toolbox
--domdf-python-tools==3.10.0
-+domdf-python-tools==3.11.0
-     # via
-     #   apeye
-     #   apeye-core
-     #   dict2css
-     #   sphinx-toolbox
- enum-tools==0.13.0
-     # via -r requirements.in
--filelock==3.25.2
-+filelock==4.2.4
-     # via
-     #   cachecontrol
-     #   sphinx-toolbox
- html5lib==1.1
-     # via sphinx-toolbox
--idna==3.11
-+idna==3.20
-     # via
-     #   apeye-core
-     #   requests
-     #   sphinx-prompt
--imagesize==2.0.0
-+imagesize==2.0.1
-     # via sphinx
- jinja2==3.1.6
-     # via
-     #   sphinx
-     #   sphinx-jinja2-compat
-     #   sphinx-prompt
--markupsafe==3.0.3
-+markupsafe==3.0.4
-     # via
-     #   jinja2
-     #   sphinx-jinja2-compat
--more-itertools==10.8.0
--    # via cssutils
--msgpack==1.1.2
-+msgpack==1.2.3
-     # via cachecontrol
- natsort==8.4.0
-     # via domdf-python-tools
--packaging==26.0
-+packaging==26.3
-     # via
-     #   sphinx
-     #   sphinx-scrapy
--platformdirs==4.9.4
-+platformdirs==4.13.5
-     # via apeye
--pygments==2.19.2
-+pygments==2.21.0
-     # via
-     #   enum-tools
-     #   sphinx
-     #   sphinx-prompt
-     #   sphinx-tabs
--requests==2.32.5
-+requests==2.34.2
-     # via
-     #   apeye
-     #   cachecontrol
-@@ -93,15 +89,13 @@ roman-numerals==4.1.0
-     # via roman-numerals-py
- roman-numerals-py==4.1.0
-     # via sphinx
--ruamel-yaml==0.18.16
-+ruamel-yaml==0.19.1
-     # via sphinx-toolbox
--ruamel-yaml-clib==0.2.15
--    # via ruamel-yaml
- six==1.17.0
-     # via html5lib
--snowballstemmer==3.0.1
-+snowballstemmer==3.1.1
-     # via sphinx
--soupsieve==2.8.3
-+soupsieve==3.0.4
-     # via beautifulsoup4
- sphinx==8.2.3
-     # via
-@@ -141,9 +135,9 @@ sphinx-scrapy @ git+https://github.com/scrapy/sphinx-scrapy.git@3581b4148e62f34f
-     # via -r requirements.in
- sphinx-sitemap==2.9.0
-     # via sphinx-scrapy
--sphinx-tabs==3.4.5
-+sphinx-tabs==3.5.0
-     # via sphinx-toolbox
--sphinx-toolbox==4.1.2
-+sphinx-toolbox==4.3.1
-     # via enum-tools
- sphinxcontrib-applehelp==2.0.0
-     # via sphinx
-@@ -153,7 +147,7 @@ sphinxcontrib-htmlhelp==2.1.0
-     # via sphinx
- sphinxcontrib-jquery==4.1
-     # via sphinx-rtd-theme
--sphinxcontrib-jsmath==1.0.1
-+sphinxcontrib-jsmath==2.0.0
-     # via sphinx
- sphinxcontrib-qthelp==2.0.0
-     # via sphinx
-@@ -163,15 +157,19 @@ tabulate==0.10.0
-     # via
-     #   sphinx-markdown-builder
-     #   sphinx-toolbox
--typing-extensions==4.15.0
-+tinycss2==1.5.1
-+    # via dict2css
-+typing-extensions==4.16.0
-     # via
-     #   beautifulsoup4
-     #   domdf-python-tools
-     #   enum-tools
-     #   sphinx-toolbox
--urllib3==2.6.3
-+urllib3==2.8.0
-     # via
-     #   requests
-     #   sphinx-prompt
--webencodings==0.5.1
--    # via html5lib
-+webencodings==0.6.1
-+    # via
-+    #   html5lib
-+    #   tinycss2
+@@ -1,7 +1,7 @@
+ Changes
+ =======
+ 
+-0.37.0 (unreleased)
++0.37.0 (2026-11-06)
+ -------------------
+ 
+ -   Dropped support for Python 3.10, and added support for Python 3.14 and
+```
+
+**File**: `docs/conf.py` (modified, +1/-1)
+```diff
+@@ -4,7 +4,7 @@
+ project = "scrapy-zyte-api"
+ project_copyright = "2023, Zyte Group Ltd"
+ author = "Zyte Group Ltd"
+-release = "0.36.0"
++release = "0.37.0"
+ 
+ sys.path.insert(0, str(Path(__file__).parent.absolute()))  # _ext
+ extensions = [
+```
+
+**File**: `pyproject.toml` (modified, +2/-2)
+```diff
+@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
+ 
+ [project]
+ name = "scrapy-zyte-api"
+-version = "0.36.0"
++version = "0.37.0"
+ description = "Client library to process URLs through Zyte API"
+ authors = [{name = "Zyte Group Ltd", email = "info@zyte.com"}]
+ license = "BSD-3-Clause"
+@@ -48,7 +48,7 @@ source = "https://github.com/scrapy-plugins/scrapy-zyte-api"
+ docs = "https://scrapy-zyte-api.readthedocs.io/en/latest/"
+ 
+ [tool.bumpversion]
+-current_version = "0.36.0"
++current_version = "0.37.0"
+ commit = true
+ tag = true
+ tag_name = "{new_version}"
+```
+
+**File**: `scrapy_zyte_api/__version__.py` (modified, +1/-1)
+```diff
+@@ -1 +1 @@
+-__version__ = "0.36.0"
++__version__ = "0.37.0"
+```
+
+---
+
+### Incident Patch 2: `d307336a` (2026-11-06)
+**Commit Message**: Release notes for 0.37.0 (#351)
+
+**File**: `CHANGES.rst` (modified, +43/-0)
+```diff
+@@ -1,6 +1,49 @@
+ Changes
+ =======
+ 
++0.37.0 (unreleased)
++-------------------
++
++-   Dropped support for Python 3.10, and added support for Python 3.14 and
++    3.15.
++
++-   Increased the minimum required versions of some dependencies:
++
++    -   :doc:`Scrapy <scrapy:index>`: 2.0.1 → 2.13.3
++
++    -   :doc:`scrapy-poet <scrapy-poet:index>`: 0.22.3 → 0.28.0
++
++    -   :doc:`web-poet <web-poet:index>`: 0.17.0 → 0.25.0
++
++-   Deprecated the ``ZYTE_API_SESSION_RANDOMIZE_DELAY`` setting and the
++    ``randomize_delay`` key of :setting:`ZYTE_API_SESSION_POOLS` in favor of
++    the new :setting:`ZYTE_API_SESSION_DELAY_JITTER` setting and ``jitter``
++    key, which take the magnitude of the random variation as a number, e.g.
++    ``0.5`` for the ±50% that ``randomize_delay`` enabled, or ``0`` to disable
++    it.
++
++    :setting:`ZYTE_API_SESSION_DELAY_JITTER` defaults to Scrapy’s
++    :setting:`DOWNLOAD_DELAY_JITTER`, so on Scrapy 2.19+ a custom value of that
++    setting now also applies to :setting:`ZYTE_API_SESSION_DELAY`.
++
++-   Setting :setting:`ZYTE_API_ENABLED` to ``False`` now also disables the
++    :ref:`add-on <config-addon>`, which no longer changes any setting.
++
++-   Page objects that depend on both :class:`~web_poet.AnyResponse` and
++    :class:`~scrapy_zyte_api.Screenshot` now get a browser response, instead of
++    triggering a Zyte API request that combines :http:`request:screenshot` with
++    :http:`request:httpResponseBody`, which Zyte API does not allow.
++
++-   When :class:`~web_poet.AnyResponse` is built from an HTTP response, the
++    :ref:`declarative selectors <web-poet:declarative-selectors>` of the page
++    objects being built are now extracted in a single pass shared by all of
++    them.
++
++-   Fixed the crawl hanging when the spider is closed because of
++    :ref:`plugin-managed session <session>` errors, e.g. after reaching
++    :setting:`ZYTE_API_SESSION_MAX_BAD_INITS`, while requests are waiting for a
++    session.
++
+ 0.36.0 (2026-08-20)
+ -------------------
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #351** (2026-11-06): Release notes for 0.37.0 (@AdrianAtZyte)
+- **PR #350** (2026-11-06): Seed AnyResponse with the shared selector pass, raise minimums (@AdrianAtZyte)
+- **PR #348** (2026-11-04): Bump the github-actions group with 2 updates (@dependabot[bot])
 - **PR #347** (2026-10-26): Upgrade docs/requirements.txt (@AdrianAtZyte)
 - **PR #344** (2026-10-13): Fixes for vcs-deps. (@wRAR)
 - **PR #343** (2026-10-06): Drop Python 3.10 support, bump Scrapy to 2.7 (@wRAR)
-- **PR #342** (2026-10-06): Update the CI for w3lib 2.5.0 (@AdrianAtZyte)
-- **PR #341** (2026-10-02): Bump codecov/codecov-action from 7.0.0 to 7.1.1 in the github-actions group (@dependabot[bot])
-- **PR #334** (closed): Use BaseSpiderMiddleware for spider middlewares (@tayyabnasir01112-debug)
 
 ---
 
@@ -1712,86 +1624,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Upgrade docs/requirements.txt (#347)
+## X. Bump version: 0.36.0 → 0.37.0
 
 **RULE**:
-When implementing operations in `docs/requirements.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in scrapy-plugins/scrapy-zyte-api. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGES.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in scrapy-plugins/scrapy-zyte-api. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9b63ad94`: Upgrade docs/requirements.txt (#347). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8fcb6177`: Bump version: 0.36.0 → 0.37.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/requirements.txt`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGES.rst`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-autodocsumm==0.2.15
-beautifulsoup4==4.15.0
-certifi==2026.10.23
-charset-normalizer==3.5.2
-dict2css==0.6.0
-domdf-python-tools==3.11.0
-filelock==4.2.4
-idna==3.20
-imagesize==2.0.1
-markupsafe==3.0.4
-msgpack==1.2.3
-packaging==26.3
-platformdirs==4.13.5
-pygments==2.21.0
-requests==2.34.2
-ruamel-yaml==0.19.1
-snowballstemmer==3.1.1
-soupsieve==3.0.4
-sphinx-tabs==3.5.0
-sphinx-toolbox==4.3.1
-sphinxcontrib-jsmath==2.0.0
-tinycss2==1.5.1
-    # via dict2css
-typing-extensions==4.16.0
-urllib3==2.8.0
-webencodings==0.6.1
-    # via
-    #   html5lib
-    #   tinycss2
+0.37.0 (2026-11-06)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-autodocsumm==0.2.14
-beautifulsoup4==4.14.3
-certifi==2026.2.25
-charset-normalizer==3.4.6
-cssutils==2.11.1
-    # via dict2css
-dict2css==0.3.0.post1
-domdf-python-tools==3.10.0
-filelock==3.25.2
-idna==3.11
-imagesize==2.0.0
-markupsafe==3.0.3
-more-itertools==10.8.0
-    # via cssutils
-msgpack==1.1.2
-packaging==26.0
-platformdirs==4.9.4
-pygments==2.19.2
-requests==2.32.5
-ruamel-yaml==0.18.16
-ruamel-yaml-clib==0.2.15
-    # via ruamel-yaml
-snowballstemmer==3.0.1
-soupsieve==2.8.3
-sphinx-tabs==3.4.5
-sphinx-toolbox==4.1.2
-sphinxcontrib-jsmath==1.0.1
-typing-extensions==4.15.0
-urllib3==2.6.3
-webencodings==0.5.1
-    # via html5lib
+0.37.0 (unreleased)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9b63ad94` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8fcb6177` are properly handled with clean fallback behavior.

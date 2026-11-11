@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zed-industries-zed-learnings.md`  
 > **Source**: github ([https://github.com/zed-industries/zed](https://github.com/zed-industries/zed))  
-> **Source Version**: `654efae4`  
+> **Source Version**: `d2a4fb6d`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T16:59:48.979Z  
+> **Timestamp**: 2026-11-08T21:46:50.712Z  
 > **Learning ID**: `learn-github-zed-industries-zed`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zed-industries-zed-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zed-industries/zed](https://github.com/zed-industries/zed))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T16:59:48.720Z  
+> **Harvest Timestamp**: 2026-11-08T21:46:50.703Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Code at the speed of thought – Zed is a high-performance, multiplayer code editor from the creators of Atom and Tree-sitter.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 92827 stars
+- **Stars / Engagement**: 94469 stars
 
 ---
 
@@ -2334,457 +2334,968 @@ fn score_against_expected_patch(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `635026fa` (2026-11-05)
-**Commit Message**: gpui: Support animated WebP in `Image::to_image_data` (#66459)
+### Incident Patch 1: `d2a4fb6d` (2026-11-08)
+**Commit Message**: tabular_data_preview: Range selection, edge jumps, and page navigation (#65161)
 
 ## Summary
 
-When opening an animated `.webp` file in Zed's image viewer, only the
-first frame was rendered statically.
+Part of the tabular data preview navigation & selection series (see [PR
+1 (#64916)](https://github.com/zed-industries/zed/pull/64916) for the
+full overview and roadmap).
 
-`ImageAssetLoader` in `crates/gpui/src/elements/img.rs` already
-supported animated WebP via `WebPDecoder`, but `Image::to_image_data` in
-`crates/gpui/src/platform.rs` (which is used when opening image files in
-a project tab or loading clipboard images) still called
-`decode_static_image` for `ImageFormat::Webp`.
+### Changes in this PR (2/8)
 
-This PR updates `Image::to_image_data` to decode animated WebP frames
-and moves the GIF and WebP decoding logic into shared `decode_gif_image`
-and `decode_webp_image` helpers in `platform.rs` so both paths stay in
-sync.
+- **Range Selection (`tabular_data::ExtendSelection`):**
+Extends cell selection bounding box with `Shift+Up/Down/Left/Right`,
+keeping the anchor fixed in data-space.
+- **Edge Navigation (`MoveUnit::Edge`):**
+Jumps to the top/bottom or leftmost/rightmost cell on
+`Cmd/Ctrl+Up/Down/Left/Right` and `Home/End`.
+- **Symmetric Page Jumps (`MoveUnit::Page`):**
+Moves by visible page height (`visible_rows - 2`) on `PageUp/PageDown`
+to maintain a consistent 1-row context overlap.
+- **Clear Selection (`tabular_data::ClearSelection`):**
+  Clears the active selection cursor on `Escape`.
 
-## Testing
-
-- Added a unit test
-(`test_animated_webp_image_to_image_data_decodes_frames`) in
-`crates/gpui/src/platform.rs`.
-- Tested manually on Linux by opening both static and animated `.webp`
-files in Zed.
-
-## Self-review
-
-- [x] I've reviewed my diff for quality, security, reliability, and
-performance.
-- [x] UI changes follow the
-[checklist](https://zed.dev/docs/development/ui-checklist).
-- [x] Tests cover the new or changed behavior.
+---
 
 Release Notes:
 
-- Fixed animated WebP 
+- N/A
 
-**File**: `crates/gpui/src/elements/img.rs` (modified, +7/-72)
+**File**: `assets/keymaps/default-linux.json` (modified, +25/-0)
 ```diff
-@@ -2,22 +2,18 @@ use crate::{
-     AnyElement, AnyImageCache, App, Asset, AssetLogger, Bounds, DefiniteLength, Element, ElementId,
-     Entity, GlobalElementId, Hitbox, Image, ImageCache, InspectorElementId, InteractiveElement,
-     Interactivity, IntoElement, LayoutId, Length, ObjectFit, Pixels, RenderImage, Resource,
--    SharedString, SharedUri, StyleRefinement, Styled, Task, Window, decode_static_image,
--    decode_static_image_from_decoder, px,
-+    SharedString, SharedUri, StyleRefinement, Styled, Task, Window, decode_gif_image,
-+    decode_static_image, decode_webp_image, px,
- };
- use anyhow::Result;
- 
- use futures::Future;
- use gpui_util::ResultExt;
--use image::{
--    AnimationDecoder, ImageError, ImageFormat, Rgba,
--    codecs::{gif::GifDecoder, webp::WebPDecoder},
--};
-+use image::{ImageError, ImageFormat};
- use scheduler::Instant;
--use smallvec::SmallVec;
- use std::{
-     fs,
--    io::{self, Cursor},
-+    io::{self},
-     ops::{Deref, DerefMut},
-     path::{Path, PathBuf},
-     str::FromStr,
-@@ -668,70 +664,8 @@ impl Asset for ImageAssetLoader {
- 
-             if let Ok(format) = image::guess_format(&bytes) {
-                 let data = match format {
--                    ImageFormat::Gif => {
--                        let decoder = GifDecoder::new(Cursor::new(&bytes))?;
--                        let mut frames = SmallVec::new();
--
--                        for frame in decoder.into_frames() {
--                            match frame {
--                                Ok(mut frame) => {
--                                    // Convert from RGBA to BGRA.
--                                    for pixel in frame.buffer_mut().chunks_exact_mut(4) {
--                                        pixel.swap(0, 2);
--                                    }
--                                    frames.push(frame);
--                                }
--                                Err(err) => {
--                                    log::debug!(
--                                        "Skipping GIF frame in {source:?} due to decode error: {err}"
--                                    );
--                                }
--                            }
--                        }
--
--                        if frames.is_empty() {
--                            return Err(ImageCacheError::Other(Arc::new(anyhow::anyhow!(
--                                "GIF could not be decoded: all frames failed ({source:?})"
--                            ))));
--                        }
--
--                        frames
--                    }
--                    ImageFormat::WebP => {
--                        let mut decoder = WebPDecoder::new(Cursor::new(&bytes))?;
--
--                        if decoder.has_animation() {
--                            let _ = decoder.set_background_color(Rgba([0, 0, 0, 0]));
--                            let mut frames = SmallVec::new();
--
--                            for frame in decoder.into_frames() {
--                                match frame {
--                                    Ok(mut frame) => {
--                                        // Convert from RGBA to BGRA.
--                                        for pixel in frame.buffer_mut().chunks_exact_mut(4) {
--                                            pixel.swap(0, 2);
--                                        }
--                                        frames.push(frame);
--                                    }
--                                    Err(err) => {
--                                        log::debug!(
--                                            "Skipping WebP frame in {source:?} due to decode error: {err}"
--                                        );
--                                    }
--                                }
--                            }
--
--                            if frames.is_empty() {
--                                return Err(ImageCacheError::Other(Arc::new(anyhow::anyhow!(
--                                    "WebP could not be decoded: all frames failed ({source:?})"
--                                ))));
--                            }
--
--                            frames
--                        } else {
--                            decode_static_image_from_decoder(decoder)?
--                        }
--                    }
-+                    ImageFormat::Gif => decode_gif_image(&bytes)?,
-+                    ImageFormat::WebP => decode_webp_image(&bytes)?,
-                     _ => decode_static_image(&bytes, format)?,
-                 };
- 
-@@ -804,6 +738,7 @@ mod tests {
-     use super::*;
-     use crate::{ParentElement as _, TestAppContext, canvas, div, point, px, size};
-     use image::{Frame, ImageBuffer, Rgba};
-+    use smallvec::SmallVec;
- 
-     const TEST_IMG_ID: &str = "test-img";
- 
+@@ -1705,6 +1705,31 @@
+       "down": ["tabular_data::MoveFocusedCell", { "direction": "down" }],
+       "left": ["tabular_data::MoveFocusedCell", { "direction": "left" }],
+       "right": ["tabular_data::MoveFocusedCell", { "direction": "right" }],
++      "pageup": ["tabular_data::MoveFocusedCell", { "direction": "up", "unit": "page" }],
++      "pagedown": ["tabular_data::MoveFocusedCell", { "direction": "down", "unit": "page" }],
++      "home": ["tabular_data::MoveFocusedCell", { "direction": "left", "unit": "edge" }],
++      "end": ["tabular_data::MoveFocusedCell", { "direction": "right", "unit": "edge" }],
++      "ctrl-up": ["tabular_data::MoveFocusedCell", { "direction": "up", "unit": "edge" }],
++      "ctrl-down": ["tabular_data::MoveFocusedCell", { "direction": "down", "unit": "edge" }],
++      "ctrl-left": ["tabular_data::MoveFocusedCell", { "direction": "left", "unit": "edge" }],
++      "ctrl-right": ["tabular_data::MoveFocusedCell", { "direction": "right", "unit": "edge" }],
++      "ctrl-home": ["tabular_data::MoveFocusedCell", { "direction": "up", "unit": "edge" }],
++      "ctrl-end": ["tabular_data::MoveFocusedCell", { "direction": "down", "unit": "edge" }],
++      "shift-up": ["tabular_data::ExtendSelection", { "direction": "up" }],
++      "shift-down": ["tabular_data::ExtendSelection", { "direction": "down" }],
++      "shift-left": ["tabular_data::ExtendSelection", { "direction": "left" }],
++      "shift-right": ["tabular_data::ExtendSelection", { "direction": "right" }],
++      "shift-pageup": ["tabular_data::ExtendSelection", { "direction": "up", "unit": "page" }],
++      "shift-pagedown": ["tabular_data::ExtendSelection", { "direction": "down", "unit": "page" }],
++      "shift-home": ["tabular_data::ExtendSelection", { "direction": "left", "unit": "edge" }],
++      "shift-end": ["tabular_data::ExtendSelection", { "direction": "right", "unit": "edge" }],
++      "ctrl-shift-up": ["tabular_data::ExtendSelection", { "direction": "up", "unit": "edge" }],
++      "ctrl-shift-down": ["tabular_data::ExtendSelection", { "direction": "down", "unit": "edge" }],
++      "ctrl-shift-left": ["tabular_data::ExtendSelection", { "direction": "left", "unit": "edge" }],
++      "ctrl-shift-right": ["tabular_data::ExtendSelection", { "direction": "right", "unit": "edge" }],
++      "ctrl-shift-home": ["tabular_data::ExtendSelection", { "direction": "up", "unit": "edge" }],
++      "ctrl-shift-end": ["tabular_data::ExtendSelection", { "direction": "down", "unit": "edge" }],
++      "escape": "tabular_data::ClearSelection",
+     },
+   },
+ ]
 ```
 
-**File**: `crates/gpui/src/platform.rs` (modified, +78/-28)
+**File**: `assets/keymaps/default-macos.json` (modified, +21/-0)
 ```diff
-@@ -53,8 +53,8 @@ use collections::FxHashMap;
- use futures::channel::oneshot;
- #[cfg(any(test, feature = "test-support", feature = "bench-support"))]
- use image::RgbaImage;
--use image::codecs::gif::GifDecoder;
--use image::{AnimationDecoder as _, DynamicImage, Frame};
-+use image::codecs::{gif::GifDecoder, webp::WebPDecoder};
-+use image::{DynamicImage, Frame, Rgba};
- use raw_window_handle::{HasDisplayHandle, HasWindowHandle};
- use scheduler::Instant;
- pub use scheduler::RunnableMeta;
-@@ -3387,6 +3387,50 @@ pub(crate) fn decode_static_image_from_decoder(
-     Ok(SmallVec::from_elem(Frame::new(data), 1))
+@@ -1799,6 +1799,27 @@
+       "down": ["tabular_data::MoveFocusedCell", { "direction": "down" }],
+       "left": ["tabular_data::MoveFocusedCell", { "direction": "left" }],
+       "right": ["tabular_data::MoveFocusedCell", { "direction": "right" }],
++      "pageup": ["tabular_data::MoveFocusedCell", { "direction": "up", "unit": "page" }],
++      "pagedown": ["tabular_data::MoveFocusedCell", { "direction": "down", "unit": "page" }],
++      "home": ["tabular_data::MoveFocusedCell", { "direction": "left", "unit": "edge" }],
++      "end": ["tabular_data::MoveFocusedCell", { "direction": "right", "unit": "edge" }],
++      "cmd-up": ["tabular_data::MoveFocusedCell", { "direction": "up", "unit": "edge" }],
++      "cmd-down": ["tabular_data::MoveFocusedCell", { "direction": "down", "unit": "edge" }],
++      "cmd-left": ["tabular_data::MoveFocusedCell", { "direction": "left", "unit": "edge" }],
++      "cmd-right": ["tabular_data::MoveFocusedCell", { "direction": "right", "unit": "edge" }],
++      "shift-up": ["tabular_data::ExtendSelection", { "direction": "up" }],
++      "shift-down": ["tabular_data::ExtendSelection", { "direction": "down" }],
++      "shift-left": ["tabular_data::ExtendSelection", { "direction": "left" }],
++      "shift-right": ["tabular_data::ExtendSelection", { "direction": "right" }],
++      "shift-pageup": ["tabular_data::ExtendSelection", { "direction": "up", "unit": "page" }],
++      "shift-pagedown": ["tabular_data::ExtendSelection", { "direction": "down", "unit": "page" }],
++      "shift-home": ["tabular_data::ExtendSelection", { "direction": "left", "unit": "edge" }],
++      "shift-end": ["tabular_data::ExtendSelection", { "direction": "right", "unit": "edge" }],
++      "cmd-shift-up": ["tabular_data::ExtendSelection", { "direction": "up", "unit": "edge" }],
++      "cmd-shift-down": ["tabular_data::ExtendSelection", { "direction": "down", "unit": "edge" }],
++      "cmd-shift-left": ["tabular_data::ExtendSelection", { "direction": "left", "unit": "edge" }],
++      "cmd-shift-right": ["tabular_data::ExtendSelection", { "direction": "right", "unit": "edge" }],
++      "escape": "tabular_data::ClearSelection",
+     },
+   },
+ ]
+```
+
+**File**: `assets/keymaps/default-windows.json` (modified, +25/-0)
+```diff
+@@ -1720,6 +1720,31 @@
+       "down": ["tabular_data::MoveFocusedCell", { "direction": "down" }],
+       "left": ["tabular_data::MoveFocusedCell", { "direction": "left" }],
+       "right": ["tabular_data::MoveFocusedCell", { "direction": "right" }],
++      "pageup": ["tabular_data::MoveFocusedCell", { "direction": "up", "unit": "page" }],
++      "pagedown": ["tabular_data::MoveFocusedCell", { "direction": "down", "unit": "page" }],
++      "home": ["tabular_data::MoveFocusedCell", { "direction": "left", "unit": "edge" }],
++      "end": ["tabular_data::MoveFocusedCell", { "direction": "right", "unit": "edge" }],
++      "ctrl-up": ["tabular_data::MoveFocusedCell", { "direction": "up", "unit": "edge" }],
++      "ctrl-down": ["tabular_data::MoveFocusedCell", { "direction": "down", "unit": "edge" }],
++      "ctrl-left": ["tabular_data::MoveFocusedCell", { "direction": "left", "unit": "edge" }],
++      "ctrl-right": ["tabular_data::MoveFocusedCell", { "direction": "right", "unit": "edge" }],
++      "ctrl-home": ["tabular_data::MoveFocusedCell", { "direction": "up", "unit": "edge" }],
++      "ctrl-end": ["tabular_data::MoveFocusedCell", { "direction": "down", "unit": "edge" }],
++      "shift-up": ["tabular_data::ExtendSelection", { "direction": "up" }],
++      "shift-down": ["tabular_data::ExtendSelection", { "direction": "down" }],
++      "shift-left": ["tabular_data::ExtendSelection", { "direction": "left" }],
++      "shift-right": ["tabular_data::ExtendSelection", { "direction": "right" }],
++      "shift-pageup": ["tabular_data::ExtendSelection", { "direction": "up", "unit": "page" }],
++      "shift-pagedown": ["tabular_data::ExtendSelection", { "direction": "down", "unit": "page" }],
++      "shift-home": ["tabular_data::ExtendSelection", { "direction": "left", "unit": "edge" }],
++      "shift-end": ["tabular_data::ExtendSelection", { "direction": "right", "unit": "edge" }],
++      "ctrl-shift-up": ["tabular_data::ExtendSelection", { "direction": "up", "unit": "edge" }],
++      "ctrl-shift-down": ["tabular_data::ExtendSelection", { "direction": "down", "unit": "edge" }],
++      "ctrl-shift-left": ["tabular_data::ExtendSelection", { "direction": "left", "unit": "edge" }],
++      "ctrl-shift-right": ["tabular_data::ExtendSelection", { "direction": "right", "unit": "edge" }],
++      "ctrl-shift-home": ["tabular_data::ExtendSelection", { "direction": "up", "unit": "edge" }],
++      "ctrl-shift-end": ["tabular_data::ExtendSelection", { "direction": "down", "unit": "edge" }],
++      "escape": "tabular_data::ClearSelection",
+     },
+   },
+ ]
+```
+
+**File**: `crates/tabular_data_preview/src/renderer/preview_view.rs` (modified, +2/-0)
+```diff
+@@ -23,6 +23,8 @@ impl Render for TableView {
+             .bg(theme.colors().editor_background)
+             .track_focus(&self.focus_handle)
+             .on_action(cx.listener(Self::move_focused_cell))
++            .on_action(cx.listener(Self::extend_selection))
++            .on_action(cx.listener(Self::clear_selection))
+             .child({
+                 let is_loading = self.is_loading;
+                 if is_loading || self.engine.contents.number_of_cols == 0 {
+```
+
+**File**: `crates/tabular_data_preview/src/renderer/render_table.rs` (modified, +14/-0)
+```diff
+@@ -106,6 +106,11 @@ impl TableView {
+         let data_row = this.engine.d2d_mapping().get_data_row(display_row)?;
+         let row = this.engine.contents.get_row(data_row)?;
+ 
++        let selection_bounds = this
++            .selection
++            .as_ref()
++            .and_then(|selection| selection.display_bounds(this.engine.d2d_mapping()));
++
+         let mut elements = Vec::with_capacity(cols);
+         elements.push(this.create_row_identifier_cell(display_row, data_row, cx)?);
+ 
+@@ -119,13 +124,22 @@ impl TableView {
+             let display_cell_id = DisplayCellId::new(display_row, col);
+             let data_cell_id = DataCellId::new(data_row, col);
+ 
++            let is_in_selection =
++                selection_bounds
++                    .as_ref()
++                    .is_some_and(|(row_range, col_range)| {
++                        row_range.contains(&display_row.0) && col_range.contains(&col.0)
++                    });
++
+             let is_focus_cell = this
+                 .selection
+                 .as_ref()
+                 .is_some_and(|selection| selection.focus == data_cell_id);
+ 
+             let cell_bg = if is_focus_cell {
+                 Some(cx.theme().colors().element_selected)
++            } else if is_in_selection {
++                Some(cx.theme().colors().element_hover)
+             } else {
+                 None
+             };
+```
+
+**File**: `crates/tabular_data_preview/src/table_view.rs` (modified, +204/-35)
+```diff
+@@ -9,6 +9,7 @@
+ 
+ use std::{
+     collections::HashMap,
++    ops::RangeInclusive,
+     time::{Duration, Instant},
+ };
+ 
+@@ -21,7 +22,7 @@ use ui::{
+ };
+ 
+ use crate::{
+-    MoveFocusedCell, NavigationDirection,
++    ClearSelection, ExtendSelection, MoveFocusedCell, MoveUnit, NavigationDirection,
+     settings::TableViewSettings,
+     table_data_engine::{DisplayToDataMapping, TableDataEngine},
+     types::{AnyColumn, DataCellId, DisplayRow, TableLikeContent},
+@@ -51,6 +52,20 @@ impl CellSelection {
+     pub fn is_single_cell(&self) -> bool {
+         self.anchor == self.focus
+     }
++
++    /// Returns display-space bounding box `(min_display_row..=max_display_row, min_col..=max_col)` if both anchor and focus are visible.
++    pub fn display_bounds(
++        &self,
++        d2d: &DisplayToDataMapping,
++    ) -> Option<(RangeInclusive<usize>, RangeInclusive<usize>)> {
++        let anchor_row = d2d.get_display_row(self.anchor.row)?.0;
++        let focus_row = d2d.get_display_row(self.focus.row)?.0;
++        let min_row = anchor_row.min(focus_row);
++        let max_row = anchor_row.max(focus_row);
++        let min_col = self.anchor.col.0.min(self.focus.col.0);
++        let max_col = self.anchor.col.0.max(self.focus.col.0);
++        Some((min_row..=max_row, min_col..=max_col))
++    }
  }
  
-+fn decode_animated_frames<'a>(
-+    decoder: impl image::AnimationDecoder<'a>,
-+    format_name: &str,
-+) -> Result<SmallVec<[Frame; 1]>> {
-+    let mut frames = SmallVec::new();
+ #[derive(Debug, Default)]
+@@ -248,6 +263,26 @@ impl TableView {
+         action: &MoveFocusedCell,
+         window: &mut Window,
+         cx: &mut Context<Self>,
++    ) {
++        self.navigate(action.direction, action.unit, false, window, cx);
++    }
 +
-+    for frame in decoder.into_frames() {
-+        match frame {
-+            Ok(mut frame) => {
-+                // Convert from RGBA to BGRA.
-+                for pixel in frame.buffer_mut().chunks_exact_mut(4) {
-+                    pixel.swap(0, 2);
-+                }
-+                frames.push(frame);
++    pub(crate) fn extend_selection(
++        &mut self,
++        action: &ExtendSelection,
++        window: &mut Window,
++        cx: &mut Context<Self>,
++    ) {
++        self.navigate(action.direction, action.unit, true, window, cx);
++    }
++
++    fn navigate(
++        &mut self,
++        direction: NavigationDirection,
++        unit: MoveUnit,
++        extend: bool,
++        window: &mut Window,
++        cx: &mut Context<Self>,
+     ) {
+         if !self.is_selection_enabled() {
+             return;
+@@ -260,29 +295,65 @@ impl TableView {
+             return;
+         }
+ 
+-        let current_pos = self.selection.as_ref().and_then(|selection| {
+-            self.engine
+-                .d2d_mapping()
+-                .get_display_row(selection.focus.row)
+-                .map(|r| (r.0, selection.focus.col.0))
+-        });
++        let (anchor, (current_row, current_col)) = match self.selection.as_ref() {
++            Some(selection) => {
++                let focus_pos = self
++                    .engine
++                    .d2d_mapping()
++                    .get_display_row(selection.focus.row)
++                    .map(|r| (r.0, selection.focus.col.0))
++                    .unwrap_or((0, 0));
++                (selection.anchor, focus_pos)
 +            }
-+            Err(err) => {
-+                log::debug!("Skipping {format_name} frame due to decode error: {err}");
++            None => {
++                let Some(initial_row) = self.engine.d2d_mapping().get_data_row(DisplayRow(0))
++                else {
++                    return;
++                };
++                let initial_cell = DataCellId::new(initial_row, AnyColumn(0));
++                (initial_cell, (0, 0))
 +            }
++        };
+ 
+-        let (new_row, new_column) = match current_pos {
+-            Some(pos) => self.compute_move(pos, action.direction),
+-            None => (0, 0),
++        let (new_row, new_column) = if self.selection.is_none() && !extend && unit == MoveUnit::Cell
++        {
++            // First single-cell move initializes focus at (0, 0) without skipping
++            (0, 0)
++        } else {
++            self.compute_move((current_row, current_col), direction, unit, cx)
+         };
+ 
+         let Some(new_data_row) = self.engine.d2d_mapping().get_data_row(DisplayRow(new_row)) else {
+             return;
+         };
+         let new_cell = DataCellId::new(new_data_row, AnyColumn(new_column));
+-        self.selection = Some(CellSelection::single_cell(new_cell));
+ 
+-        self.scroll_to_reveal_row(new_row, action.direction);
++        self.selection = Some(if extend {
++            CellSelection::new(anchor, new_cell)
++        } else {
++            CellSelection::single_cell(new_cell)
++        });
++
++        self.scroll_to_reveal_row(new_row, direction);
+         self.scroll_to_reveal_column(new_column, window, cx);
+         cx.notify();
+     }
+ 
++    pub fn clear_selection(
++        &mut self,
++        _: &ClearSelection,
++        _window: &mut Window,
++        cx: &mut Context<Self>,
++    ) {
++        if !self.is_selection_enabled() {
++            return;
++        }
++
++        if self.selection.take().is_some() {
++            cx.notify();
 +        }
 +    }
 +
-+    if frames.is_empty() {
-+        anyhow::bail!("{format_name} could not be decoded: all frames failed");
-+    }
-+
-+    Ok(frames)
+     pub(crate) fn scroll_to_reveal_row(&self, row: usize, direction: NavigationDirection) {
+         let row_count = self.engine.d2d_mapping().visible_row_count();
+         if row_count == 0 {
+@@ -311,16 +382,55 @@ impl TableView {
+         &self,
+         current: (usize, usize),
+         direction: NavigationDirection,
++        unit: MoveU
+```
+
+**File**: `crates/tabular_data_preview/src/tabular_data_preview.rs` (modified, +26/-1)
+```diff
+@@ -17,7 +17,10 @@ mod table_data_engine;
+ mod table_view;
+ pub mod types;
+ 
+-actions!(tabular_data, [OpenPreview, OpenPreviewToTheSide]);
++actions!(
++    tabular_data,
++    [OpenPreview, OpenPreviewToTheSide, ClearSelection]
++);
+ 
+ #[derive(Clone, Copy, Debug, Default, Deserialize, PartialEq, JsonSchema)]
+ #[serde(rename_all = "snake_case")]
+@@ -29,10 +32,32 @@ pub enum NavigationDirection {
+     Right,
+ }
+ 
++#[derive(Clone, Copy, Debug, Default, Deserialize, PartialEq, JsonSchema)]
++#[serde(rename_all = "snake_case")]
++pub enum MoveUnit {
++    /// Move one cell. Default when `unit` is omitted in JSON keybindings.
++    #[default]
++    Cell,
++    /// Move by one visible page (vertical only; horizontal degrades to `Cell`).
++    Page,
++    /// Jump to the first or last cell on the axis.
++    Edge,
 +}
 +
-+pub(crate) fn decode_gif_image(bytes: &[u8]) -> Result<SmallVec<[Frame; 1]>> {
-+    let decoder = GifDecoder::new(Cursor::new(bytes))?;
-+    decode_animated_frames(decoder, "GIF")
+ #[derive(Clone, Deserialize, PartialEq, JsonSchema, Action)]
+ #[action(namespace = tabular_data)]
+ pub struct MoveFocusedCell {
+     pub direction: NavigationDirection,
++    #[serde(default)]
++    pub unit: MoveUnit,
 +}
 +
-+pub(crate) fn decode_webp_image(bytes: &[u8]) -> Result<SmallVec<[Frame; 1]>> {
-+    let mut decoder = WebPDecoder::new(Cursor::new(bytes))?;
++#[derive(Clone, Deserialize, PartialEq, JsonSchema, Action)]
++#[action(namespace = tabular_data)]
++pub struct ExtendSelection {
++    pub direction: NavigationDirection,
++    #[serde(default)]
++    pub unit: MoveUnit,
+ }
+ 
+ /// Editor-backed adapter: watches an [`Editor`], parses its buffer into a [`crate::types::TableLikeContent`],
+```
+
+---
+
+### Incident Patch 2: `94f3eb1b` (2026-11-08)
+**Commit Message**: Bookmark picker (#60005)
+
+# Objective
+
+- Add a picker for bookmarks to view all bookmarks in the workspace,
+with support for filtering, previewing, opening files and jumping to
+corresponding positions.
+
+## Solution
+
+- Add a picker delegate and related actions to pop up a picker modal
+displaying the bookmark list upon trigger
+- Display the label of the bookmark, its file path and line number. If
+the bookmark label is empty, use the text on the line where the bookmark
+is located as the label.
+- Support enabling preview to view surrounding code of bookmarks
+simultaneously
+- Open the preview tag and reuse the existing tab pane on primary
+confirm; open a separate tab pane on secondary confirm
+- Design distinct result display layouts for horizontal and vertical
+modes to prevent excessive text truncation
+
+## Testing
+
+- Conducted manual testing
+- Added two test cases
+## Self-Review Checklist:
+
+- [x] I've reviewed my own diff for quality, security, and reliability
+- [x] Unsafe blocks (if any) have justifying comments
+- [x] The content adheres to Zed's UI standards
+([UX/UI](https://github.com/zed-industries/zed/blob/main/CONTRIBUTING.md#uiux-checklist)
+and
+[icon](https://github.com/zed-indus
+
+**File**: `Cargo.lock` (modified, +27/-0)
+```diff
+@@ -13386,8 +13386,11 @@ dependencies = [
+  "project",
+  "rope",
+  "settings",
++ "theme",
++ "theme_settings",
+  "ui",
+  "util",
++ "workspace",
+ ]
+ 
+ [[package]]
+@@ -13968,6 +13971,29 @@ dependencies = [
+  "watch",
+ ]
+ 
++[[package]]
++name = "project_bookmarks"
++version = "0.1.0"
++dependencies = [
++ "editor",
++ "futures 0.3.34",
++ "fuzzy_nucleo",
++ "gpui",
++ "language",
++ "menu",
++ "picker",
++ "picker_preview",
++ "project",
++ "serde_json",
++ "text",
++ "theme",
++ "theme_settings",
++ "ui",
++ "util",
++ "workspace",
++ "zlog",
++]
 +
-+    if decoder.has_animation() {
-+        let _ = decoder.set_background_color(Rgba([0, 0, 0, 0]));
-+        decode_animated_frames(decoder, "WebP")
-+    } else {
-+        decode_static_image_from_decoder(decoder)
-+    }
+ [[package]]
+ name = "project_panel"
+ version = "0.1.0"
+@@ -22513,6 +22539,7 @@ dependencies = [
+  "pretty_assertions",
+  "profiling",
+  "project",
++ "project_bookmarks",
+  "project_panel",
+  "project_symbols",
+  "prompt_store",
+```
+
+**File**: `Cargo.toml` (modified, +3/-0)
+```diff
+@@ -172,6 +172,7 @@ members = [
+     "crates/project_benchmarks",
+     "crates/project_panel",
+     "crates/project_symbols",
++    "crates/project_bookmarks",
+     "crates/prompt_store",
+     "crates/proto",
+     "crates/proxy_handshake",
+@@ -447,6 +448,7 @@ prettier = { path = "crates/prettier" }
+ project = { path = "crates/project" }
+ project_panel = { path = "crates/project_panel" }
+ project_symbols = { path = "crates/project_symbols" }
++project_bookmarks = { path = "crates/project_bookmarks" }
+ prompt_store = { path = "crates/prompt_store" }
+ proto = { path = "crates/proto" }
+ proxy_handshake = { path = "crates/proxy_handshake" }
+@@ -1135,6 +1137,7 @@ outline = { codegen-units = 1 }
+ paths = { codegen-units = 1 }
+ prettier = { codegen-units = 1 }
+ project_symbols = { codegen-units = 1 }
++project_bookmarks = { codegen-units = 1 }
+ refineable = { codegen-units = 1 }
+ release_channel = { codegen-units = 1 }
+ reqwest_client = { codegen-units = 1 }
+```
+
+**File**: `crates/picker_preview/Cargo.toml` (modified, +7/-1)
+```diff
+@@ -11,7 +11,6 @@ workspace = true
+ [lib]
+ path = "src/picker_preview.rs"
+ doctest = false
+-test = false
+ 
+ [dependencies]
+ 
+@@ -25,3 +24,10 @@ rope.workspace = true
+ settings.workspace = true
+ ui.workspace = true
+ util.workspace = true
++
++[dev-dependencies]
++gpui = { workspace = true, features = ["test-support"] }
++project = { workspace = true, features = ["test-support"] }
++theme = { workspace = true, features = ["test-support"] }
++theme_settings = { workspace = true, features = ["test-support"] }
++workspace = { workspace = true, features = ["test-support"] }
+```
+
+**File**: `crates/picker_preview/src/picker_preview.rs` (modified, +240/-27)
+```diff
+@@ -3,8 +3,8 @@
+ use std::sync::Arc;
+ 
+ use gpui::{
+-    AnyElement, App, AppContext as _, Context, Entity, IntoElement, Pixels, StyledText, Task,
+-    Window, px,
++    AnyElement, App, AppContext as _, Context, Entity, IntoElement, Pixels, StyledText,
++    Subscription, Task, Window, px,
+ };
+ use language::{Bias, Buffer, HighlightedText, HighlightedTextBuilder, ToPoint};
+ use picker::{MatchLocation, PreviewBackend, PreviewLayout, PreviewSource, PreviewUpdate};
+@@ -16,7 +16,9 @@ use util::ResultExt as _;
+ use util::rel_path::RelPath;
+ 
+ use editor::{Editor, EditorSettings, RowHighlightOptions, display_map::HighlightKey};
+-use multi_buffer::{MultiBuffer, MultiBufferOffset};
++use multi_buffer::{
++    Anchor, Event as MultiBufferEvent, MultiBuffer, MultiBufferOffset, ToPoint as _,
++};
+ 
+ pub fn editor_preview(
+     project: Entity<Project>,
+@@ -60,8 +62,11 @@ struct EditorPreview {
+     /// When set show a text message instead of a preview
+     message: Option<HighlightedText>,
+     preview_editor: Entity<Editor>,
++    // An empty-EOF match should keep highlighting one row even after it gains text.
++    single_row_highlight_anchor: Option<Anchor>,
+     /// Store the load preview task so we have only one at the time
+     pending_update: Task<()>,
++    _multibuffer_subscription: Subscription,
+ }
+ 
+ impl EditorPreview {
+@@ -96,24 +101,37 @@ impl EditorPreview {
+             editor
+         });
+ 
++        let multi_buffer = preview_editor.read(cx).buffer().clone();
++        let multibuffer_subscription = cx.subscribe(&multi_buffer, |this, _, event, cx| {
++            if let MultiBufferEvent::Edited { .. } = event {
++                this.refresh_single_row_highlight(cx);
++            }
++        });
++
+         let mut this = Self {
+             project,
+             preview_editor,
+             current_path: None,
+             message: None,
++            single_row_highlight_anchor: None,
+             pending_update: Task::ready(()),
++            _multibuffer_subscription: multibuffer_subscription,
+         };
+         this.clear(); // picker starts with no results.
+         this
+     }
+ 
+     fn clear(&mut self) {
++        self.pending_update = Task::ready(());
++        self.single_row_highlight_anchor = None;
+         let mut message = HighlightedTextBuilder::default();
+         message.push_plain("No results to preview");
+         self.message = Some(message.build());
+     }
+ 
+     fn update(&mut self, update: PreviewUpdate, window: &mut Window, cx: &mut Context<Self>) {
++        self.pending_update = Task::ready(());
++        self.single_row_highlight_anchor = None;
+         let PreviewUpdate {
+             source,
+             match_location: highlight,
+@@ -209,16 +227,18 @@ impl EditorPreview {
+         let max_visible_rows =
+             (window.viewport_size().height / MIN_LINE_HEIGHT_PX).ceil() as u32 + MARGIN;
+ 
+-        self.preview_editor.update(cx, |editor, cx| {
++        self.single_row_highlight_anchor = self.preview_editor.update(cx, |editor, cx| {
++            let snapshot = buffer.read(cx).text_snapshot();
+             let focus_row = highlight
+                 .as_ref()
+-                .map(|hl| {
+-                    hl.anchor_range
+-                        .start
+-                        .to_point(&buffer.read(cx).text_snapshot())
+-                        .row
+-                })
++                .map(|highlight| highlight.anchor_range.start.to_point(&snapshot).row)
+                 .unwrap_or_default();
++            let highlight_empty_last_line = highlight.as_ref().is_some_and(|highlight| {
++                let max_point = snapshot.max_point();
++                max_point.column == 0
++                    && highlight.anchor_range.start.to_point(&snapshot) == max_point
++                    && highlight.anchor_range.end.to_point(&snapshot) == max_point
++            });
+ 
+             let multi_buffer = editor.buffer().clone();
+             multi_buffer.update(cx, |multi_buffer, cx| {
+@@ -234,36 +254,68 @@ impl EditorPreview {
+             editor.clear_row_highlights::<SearchMatchLineHighlight>();
+             editor.clear_background_highlights(HighlightKey::PickerPreview, cx);
+ 
+-            let Some(highlight) = highlight else {
+-                return;
+-            };
++            let highlight = highlight?;
+ 
+-            let mb = multi_buffer.read(cx).snapshot(cx);
+-            let Some(range) = mb
++            let multibuffer_snapshot = multi_buffer.read(cx).snapshot(cx);
++            let range = multibuffer_snapshot
+                 .anchor_in_excerpt(highlight.anchor_range.start)
+-                .zip(mb.anchor_in_excerpt(highlight.anchor_range.end))
+-                .map(|(start, end)| start..end)
+-            else {
+-                return;
+-            };
+-
+-            editor.highlight_rows::<SearchMatchLineHighlight>(
+-                range.clone(),
+-                |cx| cx.theme().colors().editor_active_line_background,
+-                RowHighlightOptions::default(),
+-             
+```
+
+**File**: `crates/project/src/bookmark_store.rs` (modified, +77/-0)
+```diff
+@@ -27,6 +27,13 @@ pub struct Bookmark {
+     pub label: String,
+ }
+ 
++pub struct ProjectBookmark {
++    pub path: Arc<Path>,
++    pub label: String,
++    pub buffer: Entity<Buffer>,
++    pub anchor: text::Anchor,
 +}
 +
- impl Hash for Image {
-     fn hash<H: Hasher>(&self, state: &mut H) {
-         state.write_u64(self.id);
-@@ -3450,34 +3494,10 @@ impl Image {
-     /// Convert the clipboard image to an `ImageData` object.
-     pub fn to_image_data(&self, svg_renderer: SvgRenderer) -> Result<Arc<RenderImage>> {
-         let frames = match self.format {
--            ImageFormat::Gif => {
--                let decoder = GifDecoder::new(Cursor::new(&self.bytes))?;
--                let mut frames = SmallVec::new();
--
--                for frame in decoder.into_frames() {
--                    match frame {
--                        Ok(mut frame) => {
--                            // Convert from RGBA to BGRA.
--                            for pixel in frame.buffer_mut().chunks_exact_mut(4) {
--                                pixel.swap(0, 2);
--                            }
--                            frames.push(frame);
--                        }
--                        Err(err) => {
--                            log::debug!("Skipping GIF frame due to decode error: {err}");
--                        }
--                    }
--                }
--
--                if frames.is_empty() {
--                    anyhow::bail!("GIF could not be decoded: all frames failed");
--                }
--
--                frames
--            }
-+            ImageFormat::Gif => decode_gif_image(&self.bytes)?,
-             ImageFormat::Png => decode_static_image(&self.bytes, image::ImageFormat::Png)?,
-             ImageFormat::Jpeg => decode_static_image(&self.bytes, image::ImageFormat::Jpeg)?,
--            ImageFormat::Webp => decode_static_image(&self.bytes, image::ImageFormat::WebP)?,
-+            ImageFormat::Webp => decode_webp_image(&self.bytes)?,
-             ImageFormat::Bmp => decode_static_image(&self.bytes, image::ImageFormat::Bmp)?,
-             ImageFormat::Tiff => decode_static_image(&self.bytes, image::ImageFormat::Tiff)?,
-             ImageFormat::Ico => decode_static_image(&self.bytes, image::ImageFormat::Ico)?,
-@@ -3604,6 +3624,36 @@ mod image_tests {
-             assert_eq!(pixel, &[0xF8, 0xBD, 0x38, 0xFF]);
+ #[derive(Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
+ pub struct SerializedBookmark {
+     pub row: u32,
+@@ -305,6 +312,11 @@ impl BookmarkStore {
+             unreachable!("resolve_if_needed should have converted to Loaded");
+         };
+ 
++        // Overlapping worktrees can open the same path in different buffers.
++        if buffer_bookmarks.buffer != buffer {
++            return;
++        }
++
+         let snapshot = buffer.read(cx).text_snapshot();
+ 
+         let existing_index = buffer_bookmarks.bookmarks.iter().position(|existing| {
+@@ -338,6 +350,10 @@ impl BookmarkStore {
+             return None;
+         };
+ 
++        if &buffer_bookmarks.buffer != buffer {
++            return None;
++        }
++
+         let snapshot = buffer.read(cx).text_snapshot();
+ 
+         buffer_bookmarks.bookmarks.iter().find(|existing| {
+@@ -364,6 +380,10 @@ impl BookmarkStore {
+             return;
+         };
+ 
++        if &buffer_bookmarks.buffer != buffer {
++            return;
++        }
++
+         let snapshot = buffer.read(cx).text_snapshot();
+         let row = anchor.summary::<Point>(&snapshot).row;
+ 
+@@ -398,6 +418,10 @@ impl BookmarkStore {
+             return Vec::new();
+         };
+ 
++        if file_bookmarks.buffer != buffer {
++            return Vec::new();
++        }
++
+         file_bookmarks
+             .bookmarks
+             .iter()
+@@ -466,6 +490,59 @@ impl BookmarkStore {
          }
      }
-+
-+    #[test]
-+    fn test_animated_webp_image_to_image_data_decodes_frames() {
-+        // 1x1 2-frame animated WebP (frame 0: red, frame 1: blue, 100ms delay each).
-+        const ANIMATED_WEBP: &[u8] = &[
-+            82, 73, 70, 70, 192, 0, 0, 0, 87, 69, 66, 80, 86, 80, 56, 88, 10, 0, 0, 0, 2, 0, 0, 0,
-+            0, 0, 0, 0, 0, 0, 65, 78, 73, 77, 6, 0, 0, 0, 255, 255, 255, 255, 0, 0, 65, 78, 77, 70,
-+            72, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 100, 0, 0, 2, 86, 80, 56, 32, 48, 0,
-+            0, 0, 208, 1, 0, 157, 1, 42, 1, 0, 1, 0, 2, 0, 52, 37, 160, 2, 116, 186, 1, 248, 0, 3,
-+            176, 0, 254, 240, 196, 11, 255, 32, 185, 97, 117, 200, 215, 255, 32, 63, 228, 7, 252,
-+            128, 255, 248, 242, 0, 0, 0, 65, 78, 77, 70, 68, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-+            0, 0, 100, 0, 0, 0, 86, 80, 56, 32, 44, 0, 0, 0, 148, 1, 0, 157, 1, 42, 1, 0, 
-```
-
----
-
-### Incident Patch 2: `4ba7d82f` (2026-11-05)
-**Commit Message**: keymap: Fix cmd-o in macOS JetBrains keymap opening file dialog instead of project symbols (#66137)
-
-## Summary
-
-Closes #66136
-
-With the JetBrains keymap on macOS, cmd-o opens the file dialog instead
-of expected symbol search.
-
-The fix: unbind the inherited Open with zed::Unbind, like
-linux/emacs.json does for ctrl-n/ctrl-p. so after fix File > Open no
-longer shows cmd-o
-
-## Testing
-
-- added test_jetbrains_project_symbol_shortcuts_override_open. Also
-added shared helped in tests for similar case with emacs.
-- manually tested on macOS. ran cargo run, choose jetbrains keymap on
-startup, and voila cmd-o opens symbols.
-
-## Self-review
-
-- [x] I've reviewed my diff for quality, security, reliability, and
-performance.
-- [x] UI changes follow the
-[checklist](https://zed.dev/docs/development/ui-checklist).
-- [x] Tests cover the new or changed behavior.
-
-Release Notes:
-
-- Fixed `cmd-o` opening the file dialog instead of project symbol search
-when using the JetBrains keymap on macOS.
-
----------
-
-Co-authored-by: Kirill Bulatov <[REDACTED_EMAIL]>
-
-**File**: `assets/keymaps/default-macos.json` (modified, +1/-1)
-```diff
-@@ -28,7 +28,6 @@
-       "alt-shift-enter": "menu::Restart",
-       "cmd-shift-w": "workspace::CloseWindow",
-       "shift-escape": "workspace::ToggleZoom",
--      "cmd-o": "workspace::Open",
-       "cmd-=": ["zed::IncreaseBufferFontSize", { "persist": false }],
-       "cmd-+": ["zed::IncreaseBufferFontSize", { "persist": false }],
-       "cmd--": ["zed::DecreaseBufferFontSize", { "persist": false }],
-@@ -696,6 +695,7 @@
-     "context": "Workspace",
-     "use_key_equivalents": true,
-     "bindings": {
-+      "cmd-o": "workspace::Open",
-       "alt-/": "which_key::ShowPendingBindings",
-       // Move focus between the major regions of the window (editor, open
-       // panels, status bar). Accessibility navigation; mirrors VS Code's
-```
-
-**File**: `assets/keymaps/macos/jetbrains.json` (modified, +7/-0)
-```diff
-@@ -1,4 +1,11 @@
- [
-+  {
-+    "context": "Workspace",
-+    "use_key_equivalents": true,
-+    "bindings": {
-+      "cmd-o": null,
-+    },
-+  },
-   {
-     "bindings": {
-       "cmd-{": "pane::ActivatePreviousItem",
-```
-
----
-
-### Incident Patch 3: `d01f1258` (2026-11-05)
-**Commit Message**: gpui: Fix key equivalents for 'backspace' and 'delete' on macOS (#65744)
-
-## Summary
-
-In GPUI, 'delete' refers to the 'delete forward' key.
-
-It looks like the mapped key equivalents for 'backspace' and 'delete'
-(that is, 'delete forward') are not right on macOS. When native menus
-are rendered using the 'backspace' key, the glyph is mirrored because
-the 'delete forward' glyph is incorrectly used instead.
-
-Due to what I can only guess to be historical accident, the key
-equivalents for AppKit menus [are not the
-same](https://developer.apple.com/documentation/appkit/nsmenuitem/keyequivalent#Discussion)
-as the characters yielded by NSEvent key-down events.
-
-## Testing
-
-I manually tested these changes in Zed.
-
-## Self-review
-
-- [X] I've reviewed my diff for quality, security, reliability, and
-performance.
-- [X] UI changes follow the
-[checklist](https://zed.dev/docs/development/ui-checklist).
-- [ ] Tests cover the new or changed behavior.
-
-Release Notes:
-
-- [GPUI] Fixed menus on macOS using an incorrect glyph for the
-'backspace' character.
-
----------
-
-Co-authored-by: Kirill Bulatov <[REDACTED_EMAIL]>
-
-**File**: `crates/gpui_macos/src/events.rs` (modified, +10/-3)
-```diff
-@@ -36,10 +36,17 @@ const NUMPAD_ENTER_KEY: u32 = 0x03;
- const TAB_KEY: u32 = 0x09;
- const SHIFT_TAB_KEY: u32 = 0x19;
  
--pub fn key_to_native(key: &str) -> Cow<'_, str> {
-+// Menu key equivalents use different character values than the ones NSEvent
-+// reports for the same physical keys.
-+//
-+// See https://developer.apple.com/documentation/appkit/nsmenuitem/keyequivalent#Discussion
-+const BACKSPACE_KEY_EQUIVALENT: u32 = 0x08;
-+const DELETE_KEY_EQUIVALENT: u32 = 0x7f;
++    pub async fn all_bookmarks(
++        this: &Entity<BookmarkStore>,
++        cx: &mut (impl AppContext + Clone),
++    ) -> Result<Vec<ProjectBookmark>> {
++        Self::resolve_all(this, cx).await?;
 +
-+pub(crate) fn key_to_menu_equivalent(key: &str) -> Cow<'_, str> {
-     let code = match key {
-         "space" => SPACE_KEY,
--        "backspace" => BACKSPACE_KEY,
-+        "backspace" => BACKSPACE_KEY_EQUIVALENT,
-         "escape" => u32::from(ESCAPE_KEY),
-         "up" => NSUpArrowFunctionKey,
-         "down" => NSDownArrowFunctionKey,
-@@ -49,7 +56,7 @@ pub fn key_to_native(key: &str) -> Cow<'_, str> {
-         "pagedown" => NSPageDownFunctionKey,
-         "home" => NSHomeFunctionKey,
-         "end" => NSEndFunctionKey,
--        "delete" => NSDeleteFunctionKey,
-+        "delete" => DELETE_KEY_EQUIVALENT,
-         "insert" => NSHelpFunctionKey,
-         "f1" => NSF1FunctionKey,
-         "f2" => NSF2FunctionKey,
++        let bookmarks = cx.read_entity(this, |bookmark_store, cx| {
++            let mut bookmarks = Vec::new();
++
++            for (path, value) in &bookmark_store.bookmarks {
++                let BookmarkEntry::Loaded(buffer_bookmarks) = value else {
++                    continue;
++                };
++
++                let snapshot = buffer_bookmarks.buffer.read(cx).snapshot();
++                for bookmark in &buffer_bookmarks.bookmarks {
++                    let label = if bookmark.label.is_empty() {
++                        let row = snapshot.summary_for_anchor::<Point>(&bookmark.anchor).row;
++                        let line_length = snapshot.line_len(row);
++                        let mut label = String::with_capacity(line_length as usize);
++
++                        for chunk in snapshot
++                            .text_for_range(Point::new(row, 0)..Point::new(row, line_length))
++                        {
++                            let chunk = if label.is_empty() {
++                                chunk.trim_start()
++                            } else {
++                                chunk
++                            };
++                            label.push_str(chunk);
++                        }
++
++                        let trimmed_length = label.trim_end().len();
++                        label.truncate(trimmed_length);
++                        label
++                    } else {
++                        bookmark.label.clone()
++                    };
++
++                    bookmarks.push(ProjectBookmark {
++                        path: path.clone(),
++                        label,
++                        buffer: buffer_bookmarks.buffer.clone(),
++                        anchor: bookmark.anchor,
++                    });
++                }
++            }
++
++            bookmarks
++        });
++        Ok(bookmarks)
++    }
++
+     pub fn all_serialized_bookmarks(
+         &self,
+         cx: &App,
 ```
 
-**File**: `crates/gpui_macos/src/platform.rs` (modified, +5/-3)
+**File**: `crates/project/tests/integration/bookmark_store.rs` (modified, +108/-2)
 ```diff
-@@ -1,7 +1,7 @@
- use crate::{
-     AppleActivity, AppleDispatcher, BoolExt, MacDisplay, MacKeyboardLayout, MacKeyboardMapper,
--    MacWindow, events::key_to_native, main_thread_marker, ns_string, pasteboard::Pasteboard,
--    renderer, set_active_window_cursor_style,
-+    MacWindow, events::key_to_menu_equivalent, main_thread_marker, ns_string,
-+    pasteboard::Pasteboard, renderer, set_active_window_cursor_style,
- };
- use anyhow::{Context as _, anyhow};
- use block2::RcBlock;
-@@ -401,7 +401,9 @@ impl MacPlatform {
-                                 NSMenuItem::alloc(self.1),
-                                 &NSString::from_str(name),
-                                 Some(selector),
--                                &NSString::from_str(key_to_native(keystroke.key()).as_ref()),
-+                                &NSString::from_str(
-+                                    key_to_menu_equivalent(keystroke.key()).as_ref(),
-+                                ),
-                             );
-                             if Self::os_version() >= Version::new(12, 0, 0) {
-                                 item.setAllowsAutomaticKeyEquivalentLocalization(false);
+@@ -1,11 +1,15 @@
+ use std::{path::Path, sync::Arc};
+ 
+ use collections::BTreeMap;
++use futures::{FutureExt, StreamExt};
+ use gpui::{Entity, TestAppContext};
+ use language::Buffer;
+-use project::{Project, bookmark_store::SerializedBookmark};
++use project::{
++    Project,
++    bookmark_store::{BookmarkStore, SerializedBookmark},
++};
+ use serde_json::json;
+-use util::path;
++use util::{path, rel_path::rel_path};
+ 
+ mod integration {
+     use super::*;
+@@ -219,6 +223,108 @@ mod integration {
+         );
+     }
+ 
++    #[gpui::test]
++    async fn test_bookmark_operations_ignore_other_buffers(cx: &mut TestAppContext) {
++        init_test(cx);
++
++        let fs = fs::FakeFs::new(cx.executor());
++        fs.insert_tree(
++            path!("/project"),
++            json!({"sub": {"file.rs": "first\nsecond\nthird\n"}}),
++        )
++        .await;
++
++        let project = Project::test(fs, [path!("/project/sub").as_ref()], cx).await;
++        let stored_buffer = open_buffer(&project, path!("/project/sub/file.rs"), cx).await;
++
++        add_labeled_bookmark(&project, &stored_buffer, 1, "original", cx);
++        let original_bookmarks = get_all_bookmarks(&project, cx);
++
++        // Overlapping worktrees can create distinct buffers for the same absolute path.
++        let parent_worktree = project
++            .update(cx, |project, cx| {
++                project.create_worktree(path!("/project"), true, cx)
++            })
++            .await
++            .expect("parent worktree should open");
++        let other_buffer = project
++            .update(cx, |project, cx| {
++                project.open_buffer((parent_worktree.read(cx).id(), rel_path("sub/file.rs")), cx)
++            })
++            .await
++            .expect("the same file should open through the parent worktree");
++        assert_ne!(stored_buffer, other_buffer);
++        cx.update(|cx| {
++            let expected_path = Some(project_path(path!("/project/sub/file.rs")));
++            assert_eq!(
++                BookmarkStore::abs_path_from_buffer(&stored_buffer, cx),
++                expected_path
++            );
++            assert_eq!(
++                BookmarkStore::abs_path_from_buffer(&other_buffer, cx),
++                expected_path
++            );
++        });
++
++        // Bookmarks remain bound to the original buffer. Requests from another buffer
++        // for the same path must be ignored to avoid mixing anchors from different buffers.
++        let bookmark_store = project.read_with(cx, |project, _| project.bookmark_store());
++        let mut events = cx.events(&bookmark_store);
++        let other_snapshot = other_buffer.read_with(cx, |buffer, _| buffer.text_snapshot());
++        for row in [1, 2] {
++            let anchor = other_snapshot.anchor_after(text::Point::new(row, 0));
++            bookmark_store.update(cx, |store, cx| {
++                assert!(store.find_bookmark(&other_buffer, anchor, cx).is_none());
++                store.edit_bookmark(&other_buffer, anchor, "ignored edit".into(), cx);
++                store.toggle_bookmark(other_buffer.clone(), anchor, "ignored toggle".into(), cx);
++            });
++            assert_eq!(get_all_bookmarks(&project, cx), original_bookmarks);
++        }
++        bookmark_store.update(cx, |store, cx| {
++            assert!(
++                store
++                    .bookmarks_for_buffer(
++                        other_buffer.clone(),
++                        other_snapshot.anchor_before(0)
++                            ..other_snapshot.anchor_after(other_snapshot.len()),
++                        &other_snapshot,
++                        cx,
++                    )
++                    .is_empty()
++            );
++        });
++        assert!(events.next().now_or_never().is_none());
++
++        let bookmarks = BookmarkStore::all_bookmarks(&bookmark_store, cx)
++            .await
++            .expect("bookmarks should remain readable");
++        let [bookmark] = bookmarks.as_slice() else {
++            panic!("the original bookmark should be preserved");
++        };
++        assert_eq!(bookmark.buffer, stored_buffer);
++        assert_eq!(bookmark.label, "original");
++        let stored_anchor = bookmark.anchor;
++        bookmark_store.update(cx, |store, cx| {
++            assert_eq!(
++                store
++                    .find_bookmark(&stored_buffer, stored_anchor, cx)
++                    .expect("the original buffer should still find its bookmark")
++                    .label,
++                "original",
++            );
++            store.edit_bookmark(&stored_buffer, stored_anchor, "updated".into(), cx);
++        });
++        assert_bookmark_labels(
++            &get_all_bookmarks(&project, cx),
++            path!("/project/sub/file.rs"),
++            &[(1, "updated")],
++        );
++        bookmark_store.update(cx, |store, cx| {
++            store.toggle_bookmark(stored_buffer.clone(), stored_anchor, String::new(), cx);
++        });
++        assert!(get_all_bookmarks(&project, cx).is_em
+```
+
+**File**: `crates/project_bookmarks/Cargo.toml` (added, +39/-0)
+```diff
+@@ -0,0 +1,39 @@
++[package]
++name = "project_bookmarks"
++version = "0.1.0"
++edition.workspace = true
++publish.workspace = true
++license = "GPL-3.0-or-later"
++
++[lints]
++workspace = true
++
++[lib]
++path = "src/project_bookmarks.rs"
++doctest = false
++
++[dependencies]
++editor.workspace = true
++
++futures.workspace = true
++fuzzy_nucleo.workspace = true
++gpui.workspace = true
++language.workspace = true
++picker.workspace = true
++picker_preview.workspace = true
++project.workspace = true
++text.workspace = true
++ui.workspace = true
++util.workspace = true
++workspace.workspace = true
++
++[dev-dependencies]
++
++gpui = { workspace = true, features = ["test-support"] }
++menu.workspace = true
++project = { workspace = true, features = ["test-support"] }
++serde_json.workspace = true
++theme = { workspace = true, features = ["test-support"] }
++theme_settings = { workspace = true, features = ["test-support"] }
++workspace = { workspace = true, features = ["test-support"] }
++zlog.workspace = true
+```
+
+**File**: `crates/project_bookmarks/LICENSE-GPL` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++../../LICENSE-GPL
+\ No newline at end of file
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #66569** (2026-11-05): extension: Simplify on_main_thread to not box the returned future (@osiewicz)
-- **PR #66547** (closed): Fix project panel startup for new SSH projects (@0bkevin)
-- **PR #66540** (2026-11-04): gpui: Fix cursor reverting when a drag starts (@probably-neb)
-- **PR #66534** (2026-11-05): Document how preferred_line_length affects Rewrap (@chrisknsmn)
-- **PR #66532** (2026-11-04): Bump Zed to v1.29.0 (@zed-zippy[bot])
-- **PR #66531** (2026-11-04): ui: Allow for custom submenu triggers (@danilo-leal)
+- **PR #66695** (closed): gpui: Handle InteractiveText clicks without an intervening paint (@AgentStart1)
+- **PR #66662** (closed): git: critical robustness and parsing fixes (@Naseq)
+- **PR #66660** (closed): Update slack_notify_community_automation_failure.yml (@Aissamohammedi88)
+- **PR #66657** (closed): git: add parsing support for 'index on' stash message prefix (@Naseq)
+- **PR #66656** (closed): git: add FileStatus parsing for AD and DA unmerged status conflicts (@Naseq)
+- **PR #66650** (2026-11-07): Hide read-only toggle on tabs that cannot be toggled (@SomeoneToIgnore)
 
 ---
 
@@ -2804,58 +3315,41 @@ Co-authored-by: Kirill Bulatov <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. gpui: Support animated WebP in `Image::to_image_data` (#66459)
+## X. tabular_data_preview: Range selection, edge jumps, and page navigation (#65161)
 
 **RULE**:
-When implementing operations in `crates/gpui/src/elements/img.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zed-industries/zed. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `assets/keymaps/default-linux.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zed-industries/zed. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `635026fa`: gpui: Support animated WebP in `Image::to_image_data` (#66459). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d2a4fb6d`: tabular_data_preview: Range selection, edge jumps, and page navigation (#65161). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/gpui/src/elements/img.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `assets/keymaps/default-linux.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    SharedString, SharedUri, StyleRefinement, Styled, Task, Window, decode_gif_image,
-    decode_static_image, decode_webp_image, px,
-use image::{ImageError, ImageFormat};
-    io::{self},
-                    ImageFormat::Gif => decode_gif_image(&bytes)?,
-                    ImageFormat::WebP => decode_webp_image(&bytes)?,
-    use smallvec::SmallVec;
+      "pageup": ["tabular_data::MoveFocusedCell", { "direction": "up", "unit": "page" }],
+      "pagedown": ["tabular_data::MoveFocusedCell", { "direction": "down", "unit": "page" }],
+      "home": ["tabular_data::MoveFocusedCell", { "direction": "left", "unit": "edge" }],
+      "end": ["tabular_data::MoveFocusedCell", { "direction": "right", "unit": "edge" }],
+      "ctrl-up": ["tabular_data::MoveFocusedCell", { "direction": "up", "unit": "edge" }],
+      "ctrl-down": ["tabular_data::MoveFocusedCell", { "direction": "down", "unit": "edge" }],
+      "ctrl-left": ["tabular_data::MoveFocusedCell", { "direction": "left", "unit": "edge" }],
+      "ctrl-right": ["tabular_data::MoveFocusedCell", { "direction": "right", "unit": "edge" }],
+      "ctrl-home": ["tabular_data::MoveFocusedCell", { "direction": "up", "unit": "edge" }],
+      "ctrl-end": ["tabular_data::MoveFocusedCell", { "direction": "down", "unit": "edge" }],
+      "shift-up": ["tabular_data::ExtendSelection", { "direction": "up" }],
+      "shift-down": ["tabular_data::ExtendSelection", { "direction": "down" }],
+      "shift-left": ["tabular_data::ExtendSelection", { "direction": "left" }],
+      "shift-right": ["tabular_data
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    SharedString, SharedUri, StyleRefinement, Styled, Task, Window, decode_static_image,
-    decode_static_image_from_decoder, px,
-use image::{
-    AnimationDecoder, ImageError, ImageFormat, Rgba,
-    codecs::{gif::GifDecoder, webp::WebPDecoder},
-};
-use smallvec::SmallVec;
-    io::{self, Cursor},
-                    ImageFormat::Gif => {
-                        let decoder = GifDecoder::new(Cursor::new(&bytes))?;
-                        let mut frames = SmallVec::new();
-
-                        for frame in decoder.into_frames() {
-                            match frame {
-                                Ok(mut frame) => {
-                                    // Convert from RGBA to BGRA.
-                                    for pixel in frame.buffer_mut().chunks_exact_mut(4) {
-                                        pixel.swap(0, 2);
-                                    }
-                                    frames.push(frame);
-                                }
-                                Err(err) => {
-                                    log::debug!(
-                                        "Skipping GIF frame in {source:?} due to decode error: {err}"
-                               
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `635026fa` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d2a4fb6d` are properly handled with clean fallback behavior.

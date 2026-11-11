@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md`  
 > **Source**: github ([https://github.com/salvo-rs/salvo](https://github.com/salvo-rs/salvo))  
-> **Source Version**: `066ea4e4`  
+> **Source Version**: `ec427f83`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T08:57:32.729Z  
+> **Timestamp**: 2026-11-09T15:12:38.177Z  
 > **Learning ID**: `learn-github-salvo-rs-salvo`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/salvo-rs/salvo](https://github.com/salvo-rs/salvo))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T08:57:31.686Z  
+> **Harvest Timestamp**: 2026-11-09T15:12:36.729Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A powerful web framework built with a simplified design.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4457 stars
+- **Stars / Engagement**: 4461 stars
 
 ---
 
@@ -735,11 +735,13 @@ use crate::fuse::{ArcFusePolicy, FuseConfig};
 use crate::http::Version;
 use crate::service::HyperHandler;
 
+mod admission;
 mod proto;
 pub use proto::HttpBuilder;
 mod ctrl;
 pub use ctrl::ConnCtrl;
 mod tls;
+mod upgrades;
 pub use tls::TlsInfo;
 mod stream;
 pub use stream::*;
@@ -870,6 +872,8 @@ where
     ///
     /// Created when the connection is accepted and shared with its stream, protocol driver,
     /// and handlers so any of them can abort, gracefully shut down, or relax the fuse timers.
+    /// Each physical connection must have its own control; unrelated accepted
+    /// connections must not reuse clones of one control.
     pub conn_ctrl: ConnCtrl,
     /// The local address this connection was accepted on.
     ///
@@ -964,6 +968,8 @@ where
 ///     println!("Listening on {}", holding);
 /// }
 /// ```
+/// Each physical connection returned by an acceptor must receive a distinct [`ConnCtrl`].
+/// Its clones are shared only within that connection, including after an upgrade.
 pub trait Acceptor: Send {
     /// The coupler type used for HTTP protocol handling.
     type Coupler: Coupler<Stream = Self::Stream> + Unpin + Send + 'static;
@@ -976,15 +982,7 @@ pub trait Acceptor: Send {
     /// each bound address, supported HTTP versions, and scheme.
     fn holdings(&self) -> &[Holding];
 
-    /// Accepts the next incoming connection.
-    ///
-    /// This method waits for a new connection and returns an [`Accepted`] struct
-    /// containing the connection stream and metadata.
-    ///
-    /// # Parameters
-    ///
-    /// - `fuse_policy`: Optional factory for creating fuse_configs to protect against slow HTTP
-    ///   attacks and
+    //
 ```
 
 ### Core Architecture Module: `crates/core/src/conn/addr.rs`
@@ -1190,6 +1188,80 @@ mod tests {
 
 ```
 
+### Core Architecture Module: `crates/core/src/conn/admission.rs`
+```
+//! Connection-owned progress for asynchronous admission.
+
+use std::fmt::{self, Debug, Formatter};
+
+use futures_util::future::{BoxFuture, FutureExt};
+
+use super::ConnCtrl;
+use crate::fuse::{ArcConnObserver, ArcFusePolicy, FuseAction, FuseConfig, FuseInfo, TransProto};
+
+pub(super) struct Admitted {
+    pub(super) config: Option<FuseConfig>,
+    pub(super) observer: Option<ArcConnObserver>,
+}
+
+/// Retains both the transport and its decision across cancellation of `accept`.
+/// The policy selected when this value is created owns admission until it finishes.
+pub(super) struct PendingAdmission<T> {
+    pub(super) incoming: T,
+    pub(super) info: FuseInfo,
+    pub(super) conn_ctrl: ConnCtrl,
+    decision: Option<BoxFuture<'static, Option<Admitted>>>,
+}
+
+impl<T> PendingAdmission<T> {
+    pub(super) fn new(incoming: T, info: FuseInfo, policy: Option<ArcFusePolicy>) -> Self {
+        let conn_ctrl = ConnCtrl::new();
+        let decision = policy.map(|policy| {
+            let info = info.clone();
+            let conn_ctrl = conn_ctrl.clone();
+            async move {
+                match policy.decide(&info).await {
+                    FuseAction::Accept(config) => Some(Admitted {
+                        config: Some(config),
+                        // QUIC has no byte-stream observer; keep its existing behavior.
+                        observer: (info.trans_proto == TransProto::Tcp)
+                            .then(|| policy.observe(&info, &conn_ctrl))
+                            .flatten(),
+                    }),
+                    FuseAction::Reject => None,
+                }
+            }
+            .boxed()
+        });
+        Self {
+            incoming,
+            info,
+            conn_ctrl,
+            decision,
+        }
+    }
+
+    pub(super) async fn decide(&mut self) -> Option<Admitted> {
+        match &mut self.decision {
+            Some(decision) => decision.await,
+            None => Some(Admitted {
+                config: None,
+                observer: None,
+            }),
+        }
+    }
+}
+
+impl<T> Debug for PendingAdmission<T> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        f.debug_struct("PendingAdmission")
+            .field("info", &self.info)
+            .finish_non_exhaustive()
+    }
+}
+
+```
+
 ### Core Architecture Module: `crates/core/src/conn/ctrl.rs`
 ```
 use std::fmt::{self, Debug, Formatter};
@@ -1197,6 +1269,8 @@ use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, AtomicU8, Ordering};
 
 use tokio::sync::Notify;
+
+use super::upgrades::UpgradeTask;
 
 const RUNNING: u8 = 0;
 const GRACEFUL_SHUTDOWN: u8 = 1;
@@ -1207,6 +1281,8 @@ const ABORT: u8 = 2;
 /// A control is shared by every request multiplexed over the same connection.
 /// Shutting down an HTTP/2 or HTTP/3 connection therefore also affects its
 /// other in-flight request streams.
+/// Create a separate control for each physical connection; only clone it for
+/// the driver, streams, and handlers belonging to that same connection.
 #[derive(Clone)]
 pub struct ConnCtrl {
     inner: Arc<Inner>,
@@ -1216,6 +1292,7 @@ struct Inner {
     state: AtomicU8,
     notify: Notify,
     relax: AtomicBool,
+    upgrades: std::sync::OnceLock<tokio::sync::mpsc::UnboundedSender<UpgradeTask>>,
     // Reuse the connection state already exposed on Request. Request dispatch
     // needs no additional extension insertion, certificate clone, or synchronization.
     // Boxing keeps connections without TLS from reserving a full TlsInfo.
@@ -1246,10 +1323,39 @@ impl ConnCtrl {
                 state: AtomicU8::new(RUNNING),
                 notify: Notify::new(),
                 relax: AtomicBool::new(false),
+                upgrades: std::sync::OnceLock::new(),
                 #[cfg(feature = "rustls")]
                 tls_info: std::sync::OnceLock::new(),
             }),
         }
+    }
+
+    /// Registers an upgraded-protocol task with its transport connection.
+    ///
+    /// Call this before returning the upgrade response. The server retains the
+    /// connection's capacity permit until the task finishes. Graceful shutdown
+    /// drains registered tasks; forceful shutdown, [`abort`](Self::abort), and
+    /// dropping the serving future cancel them. A task registered after its
+    /// connection scope has ended is discarded.
+    ///
+    /// For a control used outside a `Server`, the task is spawned
+    /// on the current Tokio runtime without server lifetime tracking.
+    pub fn spawn_upgrade(&self, task: impl Future<Output = ()> + Send + 'static) {
+        if let Some(upgrades) = self.inner.upgrades.get() {
+            let _ = upgrades.send(Box::pin(task));
+        } else {
+            tokio::spawn(task);
+        }
+    }
+
+    #[cfg(feature = "server")]
+    pub(crate) fn upgrade_scope(&self) -> super::upgrades::UpgradeScope {
+        let (sender, receiver) = tokio::sync::mpsc::unbounded_channel();
+        assert!(
+            self.inner.upgrades.set(sender).is_ok(),
+            "a connection control cannot belong to multiple server connections"
+        );
+        super::upgrades::UpgradeScope::new(self.clone(), receiver)
     }
 
     #[cfg(feature = "rustls")]
@@ -1431,12 +1537,7 @@ mod tests {
             assert_eq!(request_waiter_a.await.unwrap(), ConnState::Abort);
             assert_eq!(request_waiter_b.await.unwrap(), ConnState::Abort);
         };
-        tokio::time::timeout(std::time::Duration::from_secs(1), all_waiters)
-            .await
-            .expect("abort must wake every registered waiter");
-    }
-}
-
+        tokio::time::timeout(std::tim
 ```
 
 ### Core Architecture Module: `crates/core/src/conn/joined.rs`
@@ -1758,130 +1859,6 @@ mod tests {
 
 ```
 
-### Core Architecture Module: `crates/core/src/conn/native_tls/config.rs`
-```
-//! native_tls module
-use std::fmt::{self, Debug, Formatter};
-use std::fs::File;
-use std::io::{Error as IoError, Result as IoResult, Read};
-use std::path::{Path, PathBuf};
-use std::future::{ready, Ready};
-
-use futures_util::stream::{once, Once, Stream};
-
-pub use tokio_native_tls::native_tls::Identity;
-
-use crate::conn::IntoConfigStream;
-
-/// Builder to set the configuration for the TLS server.
-#[non_exhaustive]
-pub struct NativeTlsConfig {
-    pkcs12_path: Option<PathBuf>,
-    /// The pkcs12 data.
-    pub pkcs12: Vec<u8>,
-    /// The password for the pkcs12 data.
-    pub password: String,
-}
-
-impl Debug for NativeTlsConfig {
-    #[inline]
-    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
-        f.debug_struct("NativeTlsConfig").finish()
-    }
-}
-
-impl Default for NativeTlsConfig {
-    #[inline]
-    fn default() -> Self {
-        Self::new()
-    }
-}
-impl NativeTlsConfig {
-    /// Creates a new `NativeTlsConfig`.
-    #[inline]
-    #[must_use]
-    pub fn new() -> Self {
-        Self {
-            pkcs12_path: None,
-            pkcs12: vec![],
-            password: String::new(),
-        }
-    }
-
-    /// Sets the pkcs12 via File Path, returns [`std::io::Error`] if the file cannot be opened
-    #[inline]
-    #[must_use]
-    pub fn pkcs12_path(mut self, path: impl AsRef<Path>) -> Self {
-        self.pkcs12_path = Some(path.as_ref().into());
-        self
-    }
-
-    /// Sets the pkcs12 via bytes slice
-    #[inline]
-    #[must_use]
-    pub fn pkcs12(mut self, pkcs12: impl Into<Vec<u8>>) -> Self {
-        self.pkcs12 = pkcs12.into();
-        self
-    }
-    /// Sets the password
-    #[inline]
-    #[must_use]
-    pub fn password(mut self, password: impl Into<String>) -> Self {
-        self.password = password.into();
-        self
-    }
-
-    /// Build identity
-    pub fn build_identity(mut self) -> IoResult<Identity> {
-        if self.pkcs12.is_empty()
-            && let Some(path) = &self.pkcs12_path
-        {
-            let mut file = File::open(path)?;
-            file.read_to_end(&mut self.pkcs12)?;
-        }
-        Identity::from_pkcs12(&self.pkcs12, &self.password).map_err(IoError::other)
-    }
-}
-
-impl TryInto<Identity> for NativeTlsConfig {
-    type Error = IoError;
-
-    fn try_into(self) -> IoResult<Identity> {
-        self.build_identity()
-    }
-}
-
-impl IntoConfigStream<Self> for NativeTlsConfig {
-    type Stream = Once<Ready<Self>>;
-
-    fn into_stream(self) -> Self::Stream {
-        once(ready(self))
-    }
-}
-impl<T> IntoConfigStream<NativeTlsConfig> for T
-where
-    T: Stream<Item = NativeTlsConfig> + Send + 'static,
-{
-    type Stream = T;
-
-    fn into_stream(self) -> Self {
-        self
-    }
-}
-
-impl<T> IntoConfigStream<Identity> for T
-where
-    T: Stream<Item = Identity> + Send + 'static,
-{
-    type Stream = T;
-
-    fn into_stream(self) -> Self {
-        self
-    }
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1906,76 +1883,289 @@ where
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `066ea4e4` (2026-11-03)
-**Commit Message**: build(deps): update saysion requirement from 0.2 to 0.4 (#1838)
+### Incident Patch 1: `ec427f83` (2026-11-09)
+**Commit Message**: Run performance benchmarks for implementation changes (#1842)
 
-Updates the requirements on [saysion](https://github.com/salvo-rs/saysion) to permit the latest version.
-- [Release notes](https://github.com/salvo-rs/saysion/releases)
-- [Changelog](https://github.com/salvo-rs/saysion/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/salvo-rs/saysion/compare/v0.2.0...v0.4.0)
-
----
-updated-dependencies:
-- dependency-name: saysion
-  dependency-version: 0.4.0
-  dependency-type: direct:production
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `Cargo.toml` (modified, +1/-1)
+**File**: `.github/scripts/test_performance_paths.py` (added, +39/-0)
 ```diff
-@@ -117,7 +117,7 @@ ring = "0.17"
- rust_decimal = "1"
- rustls = { version = "0.23.46", default-features = false }
- rust-embed = { version = ">= 6, <= 9" }
--saysion = "0.2"
-+saysion = "0.4"
- serde = "1"
- serde_json = "1"
- serde-xml-rs = "0.8"
+@@ -0,0 +1,39 @@
++#!/usr/bin/env python3
++"""Verify that edits to benchmarked implementations trigger both benchmark events."""
++
++import pathlib
++import unittest
++
++import yaml
++
++
++class PerformancePathsTests(unittest.TestCase):
++    def test_implementation_and_benchmark_changes_trigger_both_events(self):
++        workflow = pathlib.Path(__file__).parents[1] / "workflows" / "performance.yml"
++        # BaseLoader keeps the GitHub Actions `on` key as a string (not a YAML 1.1 bool).
++        config = yaml.load(workflow.read_text(encoding="utf-8"), Loader=yaml.BaseLoader)
++        for event in ("pull_request", "push"):
++            patterns = config["on"][event]["paths"]
++            for path in (
++                "crates/core/src/routing/router.rs",
++                "crates/core/src/service.rs",
++                "crates/core/src/http/request.rs",
++                "crates/macros/src/handler.rs",
++                "crates/core/benches/router_detect.rs",
++                "crates/core/benches/service_dispatch.rs",
++                "Cargo.toml",
++                "crates/core/Cargo.toml",
++                "crates/macros/Cargo.toml",
++                ".github/workflows/performance.yml",
++                ".github/scripts/test_performance_paths.py",
++            ):
++                with self.subTest(event=event, path=path):
++                    # The workflow uses only literal paths and recursive directory prefixes.
++                    self.assertTrue(any(
++                        path.startswith(pattern[:-2]) if pattern.endswith("/**")
++                        else path == pattern for pattern in patterns
++                    ), f"{event} does not run benchmarks for {path}")
++
++
++if __name__ == "__main__":
++    unittest.main()
+```
+
+**File**: `.github/workflows/performance.yml` (modified, +10/-0)
+```diff
+@@ -7,19 +7,25 @@ on:
+   workflow_dispatch:
+   pull_request:
+     paths:
++      - 'crates/core/src/**'
++      - 'crates/macros/src/**'
+       - 'crates/core/benches/**'
+       - 'Cargo.toml'
+       - 'crates/core/Cargo.toml'
+       - 'crates/macros/Cargo.toml'
+       - '.github/workflows/performance.yml'
++      - '.github/scripts/test_performance_paths.py'
+   push:
+     branches: [main]
+     paths:
++      - 'crates/core/src/**'
++      - 'crates/macros/src/**'
+       - 'crates/core/benches/**'
+       - 'Cargo.toml'
+       - 'crates/core/Cargo.toml'
+       - 'crates/macros/Cargo.toml'
+       - '.github/workflows/performance.yml'
++      - '.github/scripts/test_performance_paths.py'
+ 
+ jobs:
+   criterion:
+@@ -31,6 +37,10 @@ jobs:
+       CARGO_TERM_COLOR: always
+     steps:
+       - uses: actions/checkout@v6
++      - name: Check benchmark trigger coverage
++        run: |
++          python3 -m pip install 'PyYAML==6.0.3'
++          python3 .github/scripts/test_performance_paths.py
+       - uses: dtolnay/rust-toolchain@master
+         with:
+           toolchain: '1.95.0'
 ```
 
 ---
 
-### Incident Patch 2: `c0b75141` (2026-11-03)
-**Commit Message**: build(deps): update certon requirement from 0.3 to 0.4 (#1837)
+### Incident Patch 2: `9b6a5f6d` (2026-11-09)
+**Commit Message**: Preserve user predicates when deriving Extractible (#1841)
 
-Updates the requirements on [certon](https://github.com/salvo-rs/certon) to permit the latest version.
-- [Release notes](https://github.com/salvo-rs/certon/releases)
-- [Commits](https://github.com/salvo-rs/certon/compare/v0.3.0...v0.4.0)
-
----
-updated-dependencies:
-- dependency-name: certon
-  dependency-version: 0.4.0
-  dependency-type: direct:production
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `Cargo.toml` (modified, +1/-1)
+**File**: `crates/core/tests/extract_where_bounds.rs` (added, +137/-0)
 ```diff
-@@ -47,7 +47,7 @@ salvo-craft = { version = "1.1.0", path = "crates/craft", default-features = fal
- salvo-craft-macros = { version = "1.1.0", path = "crates/craft-macros", default-features = false }
- salvo-tus = { version = "1.1.0", path = "crates/tus", default-features = false }
+@@ -0,0 +1,137 @@
++//! Deriving an extractor must preserve the type's original where predicates.
++
++#![cfg(feature = "test")]
++
++use salvo_core::Depot;
++use salvo_core::extract::Extractible;
++use salvo_core::test::TestClient;
++use serde::Deserialize;
++
++#[derive(Clone, Debug, Deserialize, salvo_core::macros::Extractible)]
++#[salvo(extract(default_source(from = "query")))]
++struct QueryValue {
++    value: String,
++}
++
++#[derive(Debug, Deserialize, salvo_core::macros::Extractible)]
++struct WhereBound<T>
++where
++    T: Clone,
++{
++    #[salvo(extract(flatten))]
++    inner: T,
++}
++
++#[derive(Debug, Deserialize, salvo_core::macros::Extractible)]
++struct InlineBound<T: Clone> {
++    #[salvo(extract(flatten))]
++    inner: T,
++}
++
++#[tokio::test]
++async fn inline_and_where_bounds_extract_the_same_request() {
++    let mut req = TestClient::get("http://localhost/?value=expected").build();
++    let mut depot = Depot::new();
++    let value = WhereBound::<QueryValue>::extract(&mut req, &mut depot)
++        .await
++        .expect("where-bound extractor");
++    assert_eq!(value.inner.value, "expected");
++
++    let mut req = TestClient::get("http://localhost/?value=expected").build();
++    let value = InlineBound::<QueryValue>::extract(&mut req, &mut depot)
++        .await
++        .expect("inline-bound extractor");
++    assert_eq!(value.inner.value, "expected");
++}
++
++trait Named {
++    type Name;
++}
++
++impl Named for QueryValue {
++    type Name = String;
++}
++
++#[derive(Debug, Deserialize, salvo_core::macros::Extractible)]
++struct AssociatedBound<T>
++where
++    T: Named,
++    T::Name: Clone,
++{
++    #[salvo(extract(flatten))]
++    inner: T,
++}
++
++#[tokio::test]
++async fn associated_type_where_predicates_are_preserved() {
++    let mut req = TestClient::get("http://localhost/?value=associated").build();
++    let value = AssociatedBound::<QueryValue>::extract(&mut req, &mut Depot::new())
++        .await
++        .expect("associated bound extractor");
++    assert_eq!(value.inner.value, "associated");
++}
++
++#[derive(Debug, Deserialize, salvo_core::macros::Extractible)]
++struct MultipleBounds<T, U>
++where
++    T: Clone,
++    U: Clone,
++{
++    #[salvo(extract(flatten))]
++    first: T,
++    #[salvo(extract(flatten))]
++    second: U,
++}
++
++#[tokio::test]
++async fn generated_predicates_for_multiple_types_form_a_valid_where_clause() {
++    let mut req = TestClient::get("http://localhost/?value=both").build();
++    let value = MultipleBounds::<QueryValue, QueryValue>::extract(&mut req, &mut Depot::new())
++        .await
++        .expect("multiple type parameters");
++    assert_eq!(value.first.value, "both");
++    assert_eq!(value.second.value, "both");
++}
++
++#[derive(Debug, Deserialize, salvo_core::macros::Extractible)]
++#[salvo(extract(default_source(from = "query")))]
++struct LifetimeBound<'a, 'b>
++where
++    'a: 'b,
++{
++    #[serde(borrow)]
++    first: &'a str,
++    #[serde(borrow)]
++    second: &'b str,
++}
++
++#[tokio::test]
++async fn lifetime_only_where_clause_keeps_borrowing_supported() {
++    let mut req = TestClient::get("http://localhost/?first=one&second=two").build();
++    let mut depot = Depot::new();
++    let value: LifetimeBound<'_, '_> = LifetimeBound::extract(&mut req, &mut depot)
++        .await
++        .expect("borrowed extractor");
++    assert_eq!((value.first, value.second), ("one", "two"));
++}
++
++trait SupportedSize {}
++impl SupportedSize for [(); 2] {}
++
++#[derive(Debug, Deserialize, salvo_core::macros::Extractible)]
++#[salvo(extract(default_source(from = "query")))]
++struct ConstBound<const N: usize>
++where
++    [(); N]: SupportedSize,
++{
++    value: String,
++}
++
++#[tokio::test]
++async fn const_generic_where_clause_without_type_parameters_is_preserved() {
++    let mut req = TestClient::get("http://localhost/?value=constant").build();
++    let value = ConstBound::<2>::extract(&mut req, &mut Depot::new())
++        .await
++        .expect("const-bound extractor");
++    assert_eq!(value.value, "constant");
++}
+```
+
+**File**: `crates/macros/src/extract.rs` (modified, +13/-17)
+```diff
+@@ -274,23 +274,19 @@ fn metadata_source(salvo: &Ident, source: &SourceInfo) -> TokenStream {
+ pub(crate) fn generate(args: DeriveInput) -> Result<TokenStream, Error> {
+     let mut args: ExtractibleArgs = ExtractibleArgs::from_derive_input(&args)?;
+     let salvo = salvo_crate();
+-    let (_, ty_generics, _where_clause) = args.generics.split_for_impl();
+-
+-    let where_predicate = args.generics.type_params().map(|t| {
+-        let ty = &t.ident;
+-        quote! {
+-            #ty: #salvo::extract::Extractible<'__macro_gen_ex> + #salvo::serde::Deserialize<'__macro_gen_ex>,
+-        }
+-    }).collect::<Punctuated<_, Token![,]>>();
+-
+-    let where_clause = if where_predicate.is_empty() {
+-        None
+-    } else {
+-        Some(quote! {
+-            where
+-                #where_predicate
+-        })
+-    };
++    let (_, ty_generics, _) = args.generics.split_for_impl();
++    let mut bounded_generics = args.generics.clone();
++    for param in args.generics.type_params() {
++        let ty = &param.ident;
++        bounded_generics
++            .make_where_clause()
++            .predicates
++            .push(syn::parse_quote! {
++                #ty: #salvo::extract::Extractible<'__macro_gen_ex>
++                    + #salvo::serde::Deserialize<'__macro_gen_ex>
++            });
++    }
++    let where_clause = &bounded_generics.where_clause;
  
--certon = "0.3"
-+certon = "0.4"
- 
- aead = "0.6"
- aes-gcm = "0.11"
+     let name = &args.ident;
+     let mut default_sources = Vec::new();
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1838** (2026-11-03): build(deps): update saysion requirement from 0.2 to 0.4 (@dependabot[bot])
-- **PR #1837** (2026-11-03): build(deps): update certon requirement from 0.3 to 0.4 (@dependabot[bot])
-- **PR #1836** (2026-11-02): Make dependency audits advisory in CI (@chrislearn)
-- **PR #1835** (2026-11-01): Fix StaticDir dot-file access through resolved path aliases (@chrislearn)
-- **PR #1834** (2026-10-30): Accept OpenAPI documents without optional paths (@chrislearn)
-- **PR #1833** (2026-10-30): Preserve repeated values in aggregate header extraction (@chrislearn)
+- **PR #1845** (2026-11-09): Keep upgraded connections within server lifecycle and capacity limits (@chrislearn)
+- **PR #1844** (2026-11-09): Preserve asynchronous admission progress across accept cancellation (@chrislearn)
+- **PR #1843** (2026-11-09): Isolate generic extractor metadata by flattened children (@chrislearn)
+- **PR #1842** (2026-11-09): Run performance benchmarks for implementation changes (@chrislearn)
+- **PR #1841** (2026-11-09): Preserve user predicates when deriving Extractible (@chrislearn)
+- **PR #1840** (2026-11-09): Keep OpenAPI header representations mutually exclusive (@chrislearn)
 
 ---
 
@@ -1995,28 +2185,55 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): update saysion requirement from 0.2 to 0.4 (#1838)
+## X. Run performance benchmarks for implementation changes (#1842)
 
 **RULE**:
-When implementing operations in `Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in salvo-rs/salvo. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/scripts/test_performance_paths.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in salvo-rs/salvo. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `066ea4e4`: build(deps): update saysion requirement from 0.2 to 0.4 (#1838). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ec427f83`: Run performance benchmarks for implementation changes (#1842). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/scripts/test_performance_paths.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-saysion = "0.4"
+#!/usr/bin/env python3
+"""Verify that edits to benchmarked implementations trigger both benchmark events."""
+
+import pathlib
+import unittest
+
+import yaml
+
+
+class PerformancePathsTests(unittest.TestCase):
+    def test_implementation_and_benchmark_changes_trigger_both_events(self):
+        workflow = pathlib.Path(__file__).parents[1] / "workflows" / "performance.yml"
+        # BaseLoader keeps the GitHub Actions `on` key as a string (not a YAML 1.1 bool).
+        config = yaml.load(workflow.read_text(encoding="utf-8"), Loader=yaml.BaseLoader)
+        for event in ("pull_request", "push"):
+            patterns = config["on"][event]["paths"]
+            for path in (
+                "crates/core/src/routing/router.rs",
+                "crates/core/src/service.rs",
+                "crates/core/src/http/request.rs",
+                "crates/macros/src/handler.rs",
+                "crates/core/benches/router_detect.rs",
+                "crates/core/benches/service_dispatch.rs",
+                "Cargo.toml",
+                "crates/core/Cargo.toml",
+                "crates/macros/Cargo.toml",
+                ".github/workflows/performance.yml",
+                ".github/scripts/test_performa
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-saysion = "0.2"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `066ea4e4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ec427f83` are properly handled with clean fallback behavior.

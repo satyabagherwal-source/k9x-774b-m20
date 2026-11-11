@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/syntax-tree-hast-util-from-html-learnings.md`  
 > **Source**: github ([https://github.com/syntax-tree/hast-util-from-html](https://github.com/syntax-tree/hast-util-from-html))  
-> **Source Version**: `1ade8935`  
+> **Source Version**: `3bf56434`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T23:28:17.131Z  
+> **Timestamp**: 2026-11-07T04:44:19.458Z  
 > **Learning ID**: `learn-github-syntax-tree-hast-util-from-html`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/syntax-tree-hast-util-from-html-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/syntax-tree/hast-util-from-html](https://github.com/syntax-tree/hast-util-from-html))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T23:28:16.256Z  
+> **Harvest Timestamp**: 2026-11-07T04:44:18.597Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -351,7 +351,7 @@ import {errors} from './errors.js'
 const base = 'https://html.spec.whatwg.org/multipage/parsing.html#parse-error-'
 
 const dashToCamelRe = /-[a-z]/g
-const formatCRe = /%c(?:([-+])(\d+))?/g
+const formatCRe = /%c(?:([+-])(\d+))?/g
 const formatXRe = /%x/g
 
 const fatalities = {2: true, 1: false, 0: null}
@@ -371,7 +371,7 @@ const emptyOptions = {}
  */
 export function fromHtml(value, options) {
   const settings = options || emptyOptions
-  const onerror = settings.onerror
+  const {onerror} = settings
   const file = value instanceof VFile ? value : new VFile(value)
   const parseFunction = settings.fragment ? parseFragment : parse
   const document = String(file)
@@ -400,10 +400,10 @@ export function fromHtml(value, options) {
    *   Nothing.
    */
   function internalOnerror(error) {
-    const code = error.code
+    const {code} = error
     const name = camelcase(code)
     const setting = settings[name]
-    const config = setting === null || setting === undefined ? true : setting
+    const config = setting ?? true
     const level = typeof config === 'number' ? config : config ? 1 : 0
 
     if (level) {
@@ -464,8 +464,7 @@ export function fromHtml(value, options) {
        *   Formatted.
        */
       function formatC(_, $1, $2) {
-        const offset =
-          ($2 ? Number.parseInt($2, 10) : 0) * ($1 === '-' ? -1 : 1)
+        const offset = ($2 ? Number($2) : 0) * ($1 === '-' ? -1 : 1)
         const char = document.charAt(error.startOffset + offset)
         return visualizeCharacter(char)
       }
@@ -484,6 +483,8 @@ export function fromHtml(value, options) {
 }
 
 /**
+ * Turn an error code from dash case into camelcase.
+ *
  * @param {string} value
  *   Error code in dash case.
  * @returns {ErrorCode}
@@ -495,6 +496,8 @@ function camelcase(value) {
 }
 
 /**
+ * Turn a dash and a letter into an uppercase letter.
+ *
  * @param {string} $0
  *   Match.
  * @returns {string}
@@ -505,6 +508,8 @@ function dashToCamel($0) {
 }
 
 /**
+ * Show a character in a message.
+ *
  * @param {string} char
  *   Character.
  * @returns {string}
@@ -515,6 +520,8 @@ function visualizeCharacter(char) {
 }
 
 /**
+ * Show a character code in a message.
+ *
  * @param {number} charCode
  *   Character code.
  * @returns {string}
@@ -631,9 +638,15 @@ const ignoreFixture = {
   surrogateInInputStream: true
 }
 
-/** @satisfies {Plugin<[], Root>} */
+/**
+ * Generate the list of parse errors in the readme.
+ *
+ * @satisfies {Plugin<[], Root>}
+ */
 export default function remarkParseErrors() {
   /**
+   * Transform.
+   *
    * @param {Root} tree
    *   Tree to transform.
    * @returns {undefined}
@@ -694,6 +707,78 @@ export default function remarkParseErrors() {
 
 ```
 
+### Core Architecture Module: `xo.config.js`
+```
+/**
+ * @import {FlatXoConfig} from 'xo'
+ */
+
+/** @type {FlatXoConfig} */
+const xoConfig = [
+  {
+    name: 'default',
+    prettier: 'compat',
+    rules: {
+      'import-x/order': 'off',
+      'jsdoc/check-indentation': 'off',
+      'jsdoc/check-line-alignment': 'off',
+      'jsdoc/informative-docs': 'off',
+      'jsdoc/require-asterisk-prefix': 'off',
+      'no-shadow': 'off',
+      'prefer-arrow-callback': 'off',
+      'regexp/prefer-named-capture-group': 'off',
+      'require-unicode-regexp': 'off',
+      'unicorn/better-dom-traversing': 'off',
+      'unicorn/max-nested-calls': 'off',
+      'unicorn/no-array-sort': 'off',
+      'unicorn/no-computed-property-existence-check': 'off',
+      'unicorn/no-immediate-mutation': 'off',
+      // Wrong for replacer functions.
+      'unicorn/no-unsafe-string-replacement': 'off',
+      'unicorn/prefer-code-point': 'off',
+      'unicorn/prefer-continue': 'off',
+      'unicorn/prefer-string-replace-all': 'off',
+      'unicorn/require-array-sort-compare': 'off',
+      'unicorn/single-line-block-comment-style': 'off'
+    },
+    space: true
+  },
+  // Wrong.
+  {ignores: ['**/*.md']},
+  // Broken on purpose.
+  {ignores: ['test/parse-error/']},
+  {
+    files: ['**/*.ts'],
+    rules: {
+      '@typescript-eslint/array-type': ['error', {default: 'generic'}],
+      '@typescript-eslint/consistent-type-definitions': ['error', 'interface'],
+      // `null` is allowed in options.
+      '@typescript-eslint/no-restricted-types': 'off'
+    }
+  },
+  {
+    files: ['test/**/*.js'],
+    rules: {
+      'no-await-in-loop': 'off',
+      // Wrong for generated files.
+      'node-test/no-import-test-files': 'off'
+    }
+  },
+  {
+    files: ['package.json'],
+    rules: {
+      'package-json/no-orphan-types': 'off',
+      'package-json/require-engines': 'off',
+      'package-json/sort-files': 'off',
+      'package-json/sort-properties': 'off'
+    }
+  }
+]
+
+export default xoConfig
+
+```
+
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -721,136 +806,20 @@ export default function remarkParseErrors() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8fa74110` (2023-08-08)
-**Commit Message**: Change to require Node.js 16
+### Incident Patch 1: `773e1559` (2026-11-06)
+**Commit Message**: Fix typo
 
-**File**: `readme.md` (modified, +2/-2)
+**File**: `readme.md` (modified, +1/-1)
 ```diff
-@@ -475,8 +475,8 @@ versions of Node.js.
+@@ -148,7 +148,7 @@ type ErrorCode =
+   | 'abandonedHeadElementChild'
+   | 'abruptClosingOfEmptyComment'
+   | 'abruptDoctypePublicIdentifier'
+-  // … see readme on `options[key in ErrorCode]` above.
++  // … see readme on `options[key in ErrorCode]` below.
+ ```
  
- When we cut a new major release, we drop support for unmaintained versions of
- Node.
--This means we try to keep the current release line, `hast-util-from-html@^1`,
--compatible with Node.js 12.
-+This means we try to keep the current release line, `hast-util-from-html@^2`,
-+compatible with Node.js 16.
- 
- ## Security
- 
-```
-
-**File**: `tsconfig.json` (modified, +2/-2)
-```diff
-@@ -5,10 +5,10 @@
-     "declaration": true,
-     "emitDeclarationOnly": true,
-     "exactOptionalPropertyTypes": true,
--    "lib": ["es2020"],
-+    "lib": ["es2022"],
-     "module": "node16",
-     "strict": true,
--    "target": "es2020"
-+    "target": "es2022"
-   },
-   "exclude": ["coverage/", "node_modules/"],
-   "include": ["**/*.js"]
-```
-
----
-
-### Incident Patch 2: `6e1de192` (2024-09-17)
-**Commit Message**: Add `.tsbuildinfo` to `.gitignore`
-
-**File**: `.gitignore` (modified, +1/-0)
-```diff
-@@ -2,6 +2,7 @@
- *.d.ts.map
- *.d.ts
- *.log
-+*.tsbuildinfo
- coverage/
- node_modules/
- yarn.lock
-```
-
----
-
-### Incident Patch 3: `76cce54d` (2024-09-17)
-**Commit Message**: Fix types accidentally destroyed by `xo`
-
-Related-to: 21f345e.
-
-**File**: `lib/types.d.ts` (modified, +7/-6)
-```diff
-@@ -27,12 +27,14 @@ export type OnError = (error: VFileMessage) => undefined | void
- /**
-  * Options that define the severity of errors.
-  */
--export type ErrorOptions = Partial<Record<ErrorCode, ErrorSeverity | undefined>>
-+export type ErrorOptions = Partial<
-+  Record<ErrorCode, ErrorSeverity | null | undefined>
-+>
- 
- /**
-  * Configuration.
-  */
--export type Options = {
-+export interface Options extends ErrorOptions, FromParse5Options {
-   /**
-    * The `file` field from `hast-util-from-parse5` is not supported.
-    */
-@@ -44,7 +46,7 @@ export type Options = {
-    * In document mode, unopened `html`, `head`, and `body` elements are opened
-    * in just the right places.
-    */
--  fragment?: boolean | undefined
-+  fragment?: boolean | null | undefined
-   /**
-    * Call `onerror` with parse errors while parsing (optional).
-    *
-@@ -57,6 +59,5 @@ export type Options = {
-    * that rules emit as warnings.
-    * Rules can also be configured with `2`, to turn them into fatal errors.
-    */
--  onerror?: OnError | undefined
--} & ErrorOptions &
--  FromParse5Options
-+  onerror?: OnError | null | undefined
-+}
-```
-
-**File**: `package.json` (modified, +23/-0)
-```diff
-@@ -88,6 +88,29 @@
-   },
-   "xo": {
-     "overrides": [
-+      {
-+        "files": [
-+          "**/*.d.ts"
-+        ],
-+        "rules": {
-+          "@typescript-eslint/array-type": [
-+            "error",
-+            {
-+              "default": "generic"
-+            }
-+          ],
-+          "@typescript-eslint/ban-types": [
-+            "error",
-+            {
-+              "extendDefaults": true
-+            }
-+          ],
-+          "@typescript-eslint/consistent-type-definitions": [
-+            "error",
-+            "interface"
-+          ]
-+        }
-+      },
-       {
-         "files": "test/**/*.js",
-         "rules": {
+ ### `ErrorSeverity`
 ```
 
 #### Recent Merged Pull Requests:
@@ -875,13 +844,13 @@ Related-to: 21f345e.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Change to require Node.js 16
+## X. Empirical Invariant Guard in readme.md
 
 **RULE**:
 When implementing operations in `readme.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in syntax-tree/hast-util-from-html. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8fa74110`: Change to require Node.js 16. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `773e1559`: typo. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `readme.md`.
@@ -889,16 +858,14 @@ Subsystems managing JavaScript data structures, boundary deserialization, API pa
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-This means we try to keep the current release line, `hast-util-from-html@^2`,
-compatible with Node.js 16.
+  // … see readme on `options[key in ErrorCode]` below.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-This means we try to keep the current release line, `hast-util-from-html@^1`,
-compatible with Node.js 12.
+  // … see readme on `options[key in ErrorCode]` above.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8fa74110` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `773e1559` are properly handled with clean fallback behavior.

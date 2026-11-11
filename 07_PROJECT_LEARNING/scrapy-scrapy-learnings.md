@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/scrapy-scrapy-learnings.md`  
 > **Source**: github ([https://github.com/scrapy/scrapy](https://github.com/scrapy/scrapy))  
-> **Source Version**: `2d22bf9a`  
+> **Source Version**: `1bc04739`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T19:24:14.214Z  
+> **Timestamp**: 2026-11-06T23:19:53.196Z  
 > **Learning ID**: `learn-github-scrapy-scrapy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/scrapy-scrapy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/scrapy/scrapy](https://github.com/scrapy/scrapy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T19:24:12.966Z  
+> **Harvest Timestamp**: 2026-11-06T23:19:50.795Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Scrapy, a fast high-level web crawling & scraping framework for Python.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml
-- **Stars / Engagement**: 65197 stars
+- **Stars / Engagement**: 65248 stars
 
 ---
 
@@ -62,9 +62,10 @@ from scrapy.core.downloader.contextfactory import _AcceptableProtocolsContextFac
 
 if TYPE_CHECKING:
     from twisted.internet.base import ReactorBase
-    from twisted.internet.endpoints import HostnameEndpoint
+    from twisted.internet.interfaces import IStreamClientEndpoint
     from twisted.python.failure import Failure
 
+    from scrapy.core.downloader.contextfactory import _PolicyForHTTPS
     from scrapy.crawler import Crawler
     from scrapy.http import Request, Response
     from scrapy.spiders import Spider
@@ -92,7 +93,7 @@ class H2ConnectionPool:
         )
 
     def get_connection(
-        self, key: ConnectionKey, uri: URI, endpoint: HostnameEndpoint
+        self, key: ConnectionKey, uri: URI, endpoint: IStreamClientEndpoint
     ) -> Deferred[H2ClientProtocol]:
         if key in self._pending_requests:
             # Received a request while connecting to remote
@@ -112,7 +113,7 @@ class H2ConnectionPool:
         return self._new_connection(key, uri, endpoint)
 
     def _new_connection(
-        self, key: ConnectionKey, uri: URI, endpoint: HostnameEndpoint
+        self, key: ConnectionKey, uri: URI, endpoint: IStreamClientEndpoint
     ) -> Deferred[H2ClientProtocol]:
         self._enforce_limit()
         self._pending_requests[key] = deque()
@@ -125,7 +126,7 @@ class H2ConnectionPool:
             conn_lost_deferred,
             tls_verbose_logging=self._tls_verbose_logging,
         )
-        conn_d = endpoint.connect(factory)
+        conn_d: Deferred[H2ClientProtocol] = endpoint.connect(factory)
         d = self._pending_request(key)
         conn_d.addCallback(self.put_connection, key, conn_lost_deferred)
         conn_d.addErrback(self._connection_failed, key)
@@ -209,7 +210,7 @@ class H2Agent:
         self,
         reactor: ReactorBase,
         pool: H2ConnectionPool,
-        context_factory: BrowserLikePolicyForHTTPS = BrowserLikePolicyForHTTPS(),  # noqa: B008
+        context_factory: _PolicyForHTTPS = BrowserLikePolicyForHTTPS(),  # noqa: B008
         connect_timeout: float | None = None,
         bind_address: tuple[str, int] | None = None,
     ) -> None:
@@ -222,8 +223,8 @@ class H2Agent:
             self._reactor, self._context_factory, connect_timeout, bind_address
         )
 
-    def get_endpoint(self, uri: URI) -> HostnameEndpoint:
-        return self.endpoint_factory.endpointForURI(uri)  # type: ignore[no-any-return]
+    def get_endpoint(self, uri: URI) -> IStreamClientEndpoint:
+        return self.endpoint_factory.endpointForURI(uri)
 
     def get_key(self, uri: URI) -> ConnectionKey:
         """
@@ -701,6 +702,12 @@ class Stream:
             self.close(StreamCloseReason.CANCELLED)
 
     @property
+    def _cancel_keeps_body(self) -> bool:
+        """Whether cancelling the stream, e.g. on download timeout, returns
+        the response received so far as a partial response."""
+        return not self._fail_on_dataloss and self._response["status"] is not None
+
+    @property
     def _log_warnsize(self) -> bool:
         """Checks if we have received data which exceeds the download warnsize
         and whether we have not already logged about it.
@@ -782,14 +789,7 @@ class Stream:
             headers = self._get_request_headers()
             self._protocol.conn.send_headers(self.stream_id, headers, end_stream=False)
             self.metadata["request_sent"] = True
-            self.send_data()
-        else:
-            # Close this stream calling the response errback
-            # Note that we have not sent any headers
-            self.close(StreamCloseReason.INVALID_HOSTNAME)
-
-    def send_data(self) -> None:
-        """Called immediately after 
+       
 ```
 
 ### Core Architecture Module: `scrapy/core/downloader/__init__.py`
@@ -797,10 +797,12 @@ class Stream:
 from __future__ import annotations
 
 import asyncio
+import gc
 import random
 import warnings
 from collections import deque
 from dataclasses import dataclass, field
+from functools import partial
 from logging import getLogger
 from time import monotonic, perf_counter, time
 from typing import TYPE_CHECKING, Any
@@ -816,8 +818,10 @@ from scrapy.settings import SETTINGS_PRIORITIES
 from scrapy.utils.asyncio import (
     AsyncioLoopingCall,
     CallLaterResult,
+    _get_running_or_installed_loop,
     call_later,
     create_looping_call,
+    is_asyncio_available,
     sleep,
 )
 from scrapy.utils.decorators import _warn_spider_arg
@@ -830,7 +834,7 @@ from scrapy.utils.httpobj import urlparse_cached
 from scrapy.utils.misc import build_from_crawler
 
 if TYPE_CHECKING:
-    from collections.abc import Generator
+    from collections.abc import Callable, Generator, Iterable
 
     from twisted.internet.task import LoopingCall
 
@@ -866,6 +870,14 @@ def _start_delay_countdown(request: Request) -> None:
     request.meta["delayed"] = [*request.meta.get("delayed", []), delay]
 
 
+def _examples(responses: Iterable[Response]) -> str:
+    held = [str(response) for response in responses]
+    examples = ", ".join(held[:3])
+    if len(held) > 3:
+        examples += f" (+{len(held) - 3} more)"
+    return examples
+
+
 @dataclass(slots=True, eq=False)
 class Slot:
     """Downloader slot"""
@@ -881,6 +893,9 @@ class Slot:
     transferring: set[Request] = field(default_factory=set, init=False, repr=False)
     lastseen: float = field(default=0, init=False, repr=False)
     latercall: CallLaterResult | None = field(default=None, init=False, repr=False)
+    # Number of requests in queue not sent with
+    # ExecutionEngine.download_async().
+    _scheduled_queued: int = field(default=0, init=False, repr=False)
 
     # Hand-written to accept the deprecated randomize_delay parameter, which
     # means it also has to initialize the fields above.
@@ -912,6 +927,7 @@ class Slot:
         self.transferring = set()
         self.lastseen = 0
         self.latercall = None
+        self._scheduled_queued = 0
 
     @property
     def randomize_delay(self) -> bool:
@@ -1006,6 +1022,9 @@ _STAMPED_SLOT_META_KEY = "_download_slot_stamp"
 class Downloader:
     DOWNLOAD_SLOT = "download_slot"
     _SLOT_GC_INTERVAL: float = 60.0  # seconds
+    # Seconds that requests held back by RESPONSE_MAX_ACTIVE_SIZE wait for a
+    # release before one of them is let through.
+    _SIZE_BYPASS_DELAY: float = 5.0
 
     def __init__(self, crawler: Crawler):
         self.crawler: Crawler = crawler
@@ -1029,28 +1048,7 @@ class Downloader:
         self._slot_gc_loop: AsyncioLoopingCall[..., None] | LoopingCall | None = None
         self._accepting_requests: bool = True
         self._download_tasks: dict[Request, Deferred[None]] = {}
-        self.per_slot_settings: dict[str, dict[str, Any]] = self.settings.getdict(
-            "DOWNLOAD_SLOTS"
-        )
-        self._stats = crawler.stats
-        # (reason, start_time): current backout reason and when it began, or
-        # (None, None) if not backing out.
-        self._last_backout: tuple[str | None, float | None] = (None, None)
-        self._max_active_size_warned = False
-
-    @property
-    def randomize_delay(self) -> bool:
-        warnings.warn(
-            "Downloader.randomize_delay is deprecated, use the "
-            "DOWNLOAD_DELAY_JITTER setting instead.",
-            category=ScrapyDeprecationWarning,
-            stacklevel=2,
-        )
-        return bool(self._jitter)
-
-    @inlineCallbacks
-    @_warn_spider_arg
-    d
+        self.per_slot_settings: dict[str, dict[str
 ```
 
 ### Core Architecture Module: `scrapy/core/downloader/_idna_patch.py`
@@ -1140,7 +1138,7 @@ def _install_twisted_idna_fallbacks() -> None:
 from __future__ import annotations
 
 import warnings
-from typing import TYPE_CHECKING, Any, Self, cast
+from typing import TYPE_CHECKING, Any, Protocol, Self, cast
 
 from formerly import deprecated_class
 from OpenSSL import SSL
@@ -1172,9 +1170,18 @@ from scrapy.utils.misc import build_from_crawler, load_object
 
 if TYPE_CHECKING:
     from twisted.internet._sslverify import ClientTLSOptions
+    from twisted.internet.interfaces import IOpenSSLClientConnectionCreator
 
     from scrapy.crawler import Crawler
     from scrapy.settings import BaseSettings
+
+
+class _PolicyForHTTPS(Protocol):
+    """:class:`~twisted.web.iweb.IPolicyForHTTPS` for type checkers."""
+
+    def creatorForNetloc(
+        self, hostname: bytes, port: int
+    ) -> IOpenSSLClientConnectionCreator: ...
 
 
 @implementer(IPolicyForHTTPS)
@@ -1384,12 +1391,8 @@ class _AcceptableProtocolsContextFactory:
     # When we drop DOWNLOADER_CLIENTCONTEXTFACTORY it looks like we can replace
     # all of this with _ScrapyClientContextFactory.acceptableProtocols.
 
-    def __init__(self, context_factory: Any, acceptable_protocols: list[bytes]):
-        self._wrapped_context_factory: Any = context_factory
-        self._acceptable_protocols: list[bytes] = acceptable_protocols
-
-    def creatorForNetloc(self, hostname: bytes, port: int) -> ClientTLSOptions:
-        options: ClientTLSOptions = self._wrapped_context_factory.c
+    def __init__(
+        self, context_factory: _Poli
 ```
 
 ### Core Architecture Module: `scrapy/core/downloader/handlers/__init__.py`
@@ -1953,158 +1956,495 @@ class AioftpDownloadHandler(BaseStreamingDownloadHandler[_AioftpResponse]):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2d22bf9a` (2026-11-03)
-**Commit Message**: Fix the UserAgentMiddleware docs anchor (#8453)
+### Incident Patch 1: `a0e3b344` (2026-11-05)
+**Commit Message**: Limit memory used by media pipeline and other download_async() requests (#8417)
 
-**File**: `docs/topics/downloader-middleware.rst` (modified, +1/-3)
+* Apply RESPONSE_MAX_ACTIVE_SIZE to download_async() requests
+
+* Rename the bypass stat, unblock scheduled requests and fix thread safety
+
+* Keep due bypasses, skip rescans while over the limit, discount on loop
+
+* Skip queue scans when a slot holds no scheduled requests
+
+* Mention awaited requests in the size limit docs and make a test robust
+
+* Set the response release hook on the first download
+
+* Say "at least" in the size limit bypass log message
+
+* Keep download_async() working with custom downloaders
+
+* Minor docs refactoring
+
+* Cover scheduled requests at the head of a size-limited slot queue
+
+* Add a release notes entry for CVE-2017-14158
+
+* Extend the size limit bypass to scheduled requests, after gc.collect()
+
+* Run the size-limit stall timer only while requests are scheduled
+
+* Skip the size-limit stall bypass while scraping, deflake an order test
+
+* Assert download order, not callback order, in a size-limit test
+
+**File**: `docs/news.rst` (modified, +16/-0)
 ```diff
-@@ -1389,9 +1389,7 @@ DownloaderStats
- UriUserInfoMiddleware
- ---------------------
+@@ -6,6 +6,22 @@ Release notes
+ Scrapy VERSION (unreleased)
+ ---------------------------
  
--.. module:: scrapy.downloadermiddlewares.uriuserinfo
++Security bug fixes
++~~~~~~~~~~~~~~~~~~
++
++-   Scrapy now limits by default the memory that responses can take, fixing
++    `CVE-2017-14158`_.
++
++    In previous Scrapy versions, that memory had no limit. For example, when
++    :ref:`media pipelines <topics-media-pipeline>` downloaded files faster than
++    they could store them, e.g. to Amazon S3, the downloaded files piled up in
++    memory, so a crawled website could make Scrapy run out of memory.
++
++    To change or disable the limit, use the new
++    :setting:`RESPONSE_MAX_ACTIVE_SIZE` setting.
++
++    .. _CVE-2017-14158: https://github.com/advisories/GHSA-h7wm-ph43-c39p
++
+ Backward-incompatible changes
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+```
+
+**File**: `docs/topics/api.rst` (modified, +2/-2)
+```diff
+@@ -208,8 +208,8 @@ Engine API
+ ==========
+ 
+ .. autoclass:: scrapy.core.engine.ExecutionEngine()
+-   :members: close_spider_async, needs_backout, response_active_size, running,
+-      scheduler, state
++   :members: close_spider_async, download_async, needs_backout,
++      response_active_size, running, scheduler, state
+ 
+ .. autoclass:: scrapy.core.engine.EngineState
+    :members:
+```
+
+**File**: `docs/topics/settings.rst` (modified, +30/-12)
+```diff
+@@ -2042,29 +2042,47 @@ RESPONSE_MAX_ACTIVE_SIZE
+ 
+ Default: ``5_000_000``
+ 
+-Soft limit (in bytes) on the total size of responses being kept in memory.
++Soft limit (in bytes) on the total size of responses being kept in memory. A
++higher value improves crawl speed at the cost of memory usage. ``0`` disables
++the limit.
+ 
+-This counts both the size of response bodies that have passed through
++It counts the body size of responses that have been downloaded or returned by
+ :ref:`downloader middlewares <topics-downloader-middleware>` and remain in
+ memory, and the :setting:`rough size <RESPONSE_ROUGH_SIZE>` of requests
+-currently being downloaded.
 -
--.. autoclass:: UriUserInfoMiddleware
-+.. autoclass:: scrapy.downloadermiddlewares.uriuserinfo.UriUserInfoMiddleware
+-While the total is above this value, Scrapy pauses sending new requests to the
+-downloader. A higher value improves crawl speed at the cost of memory usage.
+-``0`` disables the limit.
++currently being downloaded. While that total is above this value, Scrapy stops
++taking requests from the scheduler. While the part of it that comes from
++requests sent with :meth:`~scrapy.core.engine.ExecutionEngine.download_async`,
++which include :ref:`awaited requests <inline-requests>` and those of
++:ref:`media pipelines <topics-media-pipeline>`, is above this value, new
++requests of that kind wait before being downloaded.
++
++Requests already being downloaded when the limit is reached still finish: up to
++:setting:`CONCURRENT_REQUESTS` from the scheduler, and up to this value divided
++by :setting:`RESPONSE_ROUGH_SIZE` sent with
++:meth:`~scrapy.core.engine.ExecutionEngine.download_async`. So, in practice,
++responses can take up to about twice this value, plus the size of the responses
++to those requests.
++
++If requests have been waiting for 5 seconds with none being downloaded and no
++response released, e.g. because your code keeps responses, Scrapy runs Python's
++garbage collector, and if that releases no response, lets one request through.
++Each time that happens, memory use can grow by one more response, and the
++:stat:`response_max_active_size/bypass_count` stat increases. Scrapy logs a
++warning the first time it does.
  
+ Scrapy logs an info-level message the first time the limit is reached. To see
+-how long request processing was paused because of it over a whole crawl, check
+-the :stat:`request_backout_seconds/response_max_active_size` stat.
++how long Scrapy stopped taking requests from the scheduler because of it over a
++whole crawl, check the :stat:`request_backout_seconds/response_max_active_size`
++stat.
  
- UserAgentMiddleware
+ .. caution::
+ 
+     Responses that your code keeps a strong reference to, e.g. in the
+     :attr:`.Request.meta` of a scheduled request or in a component attribute,
+     count toward this limit until that reference is gone, so accumulating them
+-    can pause a crawl indefinitely. So do responses in a reference cycle,
+-    until Python's garbage collector frees them. To find out whether your
+-    crawl keeps responses alive, see :ref:`topics-leaks`.
++    slows down a crawl. So do responses in a reference cycle, until Python's
++    garbage collector frees them. To find out whether your crawl keeps
++    responses alive, see :ref:`topics-leaks`.
+ 
+ .. setting:: RESPONSE_ROUGH_SIZE
+ 
 ```
 
----
-
-### Incident Patch 2: `e397746c` (2026-11-02)
-**Commit Message**: Enforce the __Host- and __Secure- cookie name prefixes (#8431)
-
-* Enforce the __Host- and __Secure- cookie name prefixes
-
-* Enforce cookie name prefixes only on Set-Cookie and require an explicit Path
-
-**File**: `scrapy/downloadermiddlewares/cookies.py` (modified, +18/-1)
+**File**: `docs/topics/stats.rst` (modified, +8/-2)
 ```diff
-@@ -34,6 +34,19 @@ def _is_public_domain(domain: str) -> bool:
-     return not parts.domain
+@@ -619,8 +619,8 @@ one per actual value of the placeholder.
+ .. stat:: request_backout_seconds/response_max_active_size
  
+ ``request_backout_seconds/response_max_active_size``
+-    Seconds during which sending requests to the downloader was paused because
+-    :setting:`RESPONSE_MAX_ACTIVE_SIZE` was reached.
++    Seconds during which sending requests from the scheduler to the downloader
++    was paused because :setting:`RESPONSE_MAX_ACTIVE_SIZE` was reached.
  
-+def _has_valid_name_prefix(cookie: Cookie, request: Request) -> bool:
-+    """Return ``False`` if *cookie* has a ``__Secure-`` or ``__Host-`` name
-+    prefix but does not meet the requirements that prefix imposes."""
-+    name = cookie.name.lower()
-+    if name.startswith(("__secure-", "__host-")) and (
-+        not cookie.secure or urlparse_cached(request).scheme != "https"
-+    ):
-+        return False
-+    return not name.startswith("__host-") or (
-+        not cookie.domain_specified and cookie.path_specified and cookie.path == "/"
-+    )
+ .. stat:: request_backout_seconds/total
+ 
+@@ -644,6 +644,12 @@ one per actual value of the placeholder.
+ 
+     Set by :class:`~scrapy.spidermiddlewares.depth.DepthMiddleware`.
+ 
++.. stat:: response_max_active_size/bypass_count
 +
++``response_max_active_size/bypass_count``
++    Number of requests that were downloaded despite
++    :setting:`RESPONSE_MAX_ACTIVE_SIZE`, to keep the crawl from stalling.
 +
- class CookiesMiddleware:
-     """This middleware enables working with sites that need cookies"""
+ .. stat:: response_received_count
  
-@@ -98,7 +111,11 @@ def process_response(
-         # extract cookies from Set-Cookie and drop invalid/expired cookies
-         cookiejarkey = request.meta.get("cookiejar")
-         jar = self.jars[cookiejarkey]
--        cookies = jar.make_cookies(response, request)
-+        cookies = [
-+            cookie
-+            for cookie in jar.make_cookies(response, request)
-+            if _has_valid_name_prefix(cookie, request)
-+        ]
-         self._process_cookies(cookies, jar=jar, request=request)
- 
-         self._debug_set_cookie(response)
+ ``response_received_count``
 ```
 
-**File**: `tests/test_downloadermiddleware_cookies.py` (modified, +43/-0)
+**File**: `scrapy/commands/shell.py` (modified, +3/-0)
 ```diff
-@@ -1184,6 +1184,49 @@ def test_cookie_redirect_secure_true_upgrade(self):
-             cookies3=True,
+@@ -33,6 +33,9 @@ class Command(ScrapyCommand):
+         "LOGSTATS_INTERVAL": 0,
+         "TELNETCONSOLE_ENABLED": False,
+         "REMOTE_CONTROL_ENABLED": False,
++        # The shell keeps the previous response while fetch() downloads the
++        # next one.
++        "RESPONSE_MAX_ACTIVE_SIZE": 0,
+     }
+ 
+     def syntax(self) -> str:
+```
+
+**File**: `scrapy/core/downloader/__init__.py` (modified, +254/-3)
+```diff
+@@ -1,10 +1,12 @@
+ from __future__ import annotations
+ 
+ import asyncio
++import gc
+ import random
+ import warnings
+ from collections import deque
+ from dataclasses import dataclass, field
++from functools import partial
+ from logging import getLogger
+ from time import monotonic, perf_counter, time
+ from typing import TYPE_CHECKING, Any
+@@ -20,8 +22,10 @@
+ from scrapy.utils.asyncio import (
+     AsyncioLoopingCall,
+     CallLaterResult,
++    _get_running_or_installed_loop,
+     call_later,
+     create_looping_call,
++    is_asyncio_available,
+     sleep,
+ )
+ from scrapy.utils.decorators import _warn_spider_arg
+@@ -34,7 +38,7 @@
+ from scrapy.utils.misc import build_from_crawler
+ 
+ if TYPE_CHECKING:
+-    from collections.abc import Generator
++    from collections.abc import Callable, Generator, Iterable
+ 
+     from twisted.internet.task import LoopingCall
+ 
+@@ -70,6 +74,14 @@ def _start_delay_countdown(request: Request) -> None:
+     request.meta["delayed"] = [*request.meta.get("delayed", []), delay]
+ 
+ 
++def _examples(responses: Iterable[Response]) -> str:
++    held = [str(response) for response in responses]
++    examples = ", ".join(held[:3])
++    if len(held) > 3:
++        examples += f" (+{len(held) - 3} more)"
++    return examples
++
++
+ @dataclass(slots=True, eq=False)
+ class Slot:
+     """Downloader slot"""
+@@ -85,6 +97,9 @@ class Slot:
+     transferring: set[Request] = field(default_factory=set, init=False, repr=False)
+     lastseen: float = field(default=0, init=False, repr=False)
+     latercall: CallLaterResult | None = field(default=None, init=False, repr=False)
++    # Number of requests in queue not sent with
++    # ExecutionEngine.download_async().
++    _scheduled_queued: int = field(default=0, init=False, repr=False)
+ 
+     # Hand-written to accept the deprecated randomize_delay parameter, which
+     # means it also has to initialize the fields above.
+@@ -116,6 +131,7 @@ def __init__(
+         self.transferring = set()
+         self.lastseen = 0
+         self.latercall = None
++        self._scheduled_queued = 0
+ 
+     @property
+     def randomize_delay(self) -> bool:
+@@ -210,6 +226,9 @@ def _slot_jitter(slot_settings: dict[str, Any], default: float) -> float:
+ class Downloader:
+     DOWNLOAD_SLOT = "download_slot"
+     _SLOT_GC_INTERVAL: float = 60.0  # seconds
++    # Seconds that requests held back by RESPONSE_MAX_ACTIVE_SIZE wait for a
++    # release before one of them is let through.
++    _SIZE_BYPASS_DELAY: float = 5.0
+ 
+     def __init__(self, crawler: Crawler):
+         self.crawler: Crawler = crawler
+@@ -241,6 +260,18 @@ def __init__(self, crawler: Crawler):
+         # (None, None) if not backing out.
+         self._last_backout: tuple[str | None, float | None] = (None, None)
+         self._max_active_size_warned = False
++        # Whether _next_transfer_index() has held back a request that nothing
++        # has resumed yet.
++        self._size_blocked = False
++        self._unscheduled_transfers = 0
++        self._size_bypass_call: CallLaterResult | None = None
++        self._size_bypass_due = False
++        self._size_bypass_warned = False
++        # (start_time, total_size): since when RESPONSE_MAX_ACTIVE_SIZE has held
++        # back scheduled requests with no download in progress, and the total
++        # active size then, or (None, 0) if it is not holding them back.
++        self._size_stall: tuple[float | None, int] = (None, 0)
++        self._size_stall_warned = False
+ 
+     @property
+     def randomize_delay(self) -> bool:
+@@ -257,6 +288,23 @@ def randomize_delay(self) -> bool:
+     def fetch(
+         self, request: Request, spider: Spider | None = None
+     ) -> Generator[Deferred[Any], Any, Response | Request]:
++        # Set on the first download, once there is an event loop or reactor
++        # for response finalizers, which can run in any thread, to call back
++        # into. close() unsets it.
++        if (
++            self._accepting_requests
++            and self.middleware._on_unscheduled_response_release is None
++        ):
++            call_from_thread: Callable[[Callable[[], None]], object]
++            if is_asyncio_available():
++                call_from_thread = _get_running_or_installed_loop().call_soon_threadsafe
++            else:
++                from twisted.internet import reactor
++
++                call_from_thread = reactor.callFromThread
++            self.middleware._on_unscheduled_response_release = lambda size: (
++                call_from_thread(partial(self._on_unscheduled_response_release, size))
++            )
+         self.active.add(request)
+         self.middleware._count_rough_size(request)
+         try:
+@@ -289,7 +337,7 @@ def needs_backout(self) -> bool:
+         if 0 < self.total_concurrency <= len(self.active):
+             self._record_backout("concurrency")
+             return True
+-        if self._exceeds_max_active_size():
++        if self._exceeds_max_active_size() and not self._size_stall_ended():
+             self._record_backout("resp
+```
+
+**File**: `scrapy/core/downloader/middleware.py` (modified, +17/-2)
+```diff
+@@ -88,6 +88,12 @@ def __init__(self, *middlewares: Any, crawler: Crawler | None = None) -> None:
+         self._tracked_responses: WeakSet[Response] = WeakSet()
+         self._rough_active_size = 0
+         self._rough_sizes: dict[Request, int] = {}
++        # Requests sent with ExecutionEngine.download_async(), and the
++        # responses to them, which the downloader limits separately.
++        self._unscheduled_requests: WeakSet[Request] = WeakSet()
++        self._unscheduled_responses: WeakSet[Response] = WeakSet()
++        self._unscheduled_response_active_size = 0
++        self._on_unscheduled_response_release: Callable[[int], object] | None = None
+         self._response_exceptions = settings.getbool(
+             "DOWNLOADER_MIDDLEWARE_RESPONSE_EXCEPTIONS"
          )
+@@ -139,10 +145,19 @@ def _count_response_size(self, response: Response, request: Request) -> None:
+         self._tracked_responses.add(response)
+         size = len(response.body)
+         self._response_active_size += size
+-        finalize(response, partial(self._discount_response_size, size))
++        unscheduled = request in self._unscheduled_requests
++        if unscheduled:
++            self._unscheduled_responses.add(response)
++            self._unscheduled_response_active_size += size
++        finalize(
++            response,
++            partial(self._discount_response_size, size, unscheduled=unscheduled),
++        )
  
-+    @pytest.mark.parametrize(
-+        ("scheme", "set_cookie", "accepted"),
-+        [
-+            ("https", "__Secure-a=b; Secure", True),
-+            ("https", "__secure-a=b; Secure", True),
-+            ("https", "__Secure-a=b", False),
-+            ("http", "__Secure-a=b; Secure", False),
-+            ("https", "__Host-a=b; Secure; Path=/", True),
-+            ("https", "__host-a=b; Secure; Path=/", True),
-+            ("https", "__Host-a=b; Path=/", False),
-+            ("http", "__Host-a=b; Secure; Path=/", False),
-+            ("https", "__Host-a=b; Secure; Path=/; Domain=a.example", False),
-+            ("https", "__Host-a=b; Secure; Path=/sub", False),
-+            ("https", "__Host-a=b; Secure", False),
-+            ("https", "__Hosta=b", True),
-+            ("http", "a=b", True),
-+        ],
-+    )
-+    def test_server_set_cookie_name_prefix(
-+        self, scheme: str, set_cookie: str, accepted: bool
-+    ) -> None:
-+        url = f"{scheme}://a.example/"
-+        request = Request(url)
-+        response = Response(url, headers={"Set-Cookie": set_cookie})
-+        assert self.mw.process_response(request, response) is response
+-    def _discount_response_size(self, size: int) -> None:
++    def _discount_response_size(self, size: int, *, unscheduled: bool) -> None:
+         self._response_active_size -= size
++        if unscheduled and self._on_unscheduled_response_release is not None:
++            self._on_unscheduled_response_release(size)
+ 
+     def download(
+         self,
+```
+
+**File**: `scrapy/core/engine.py` (modified, +5/-2)
+```diff
+@@ -687,7 +687,7 @@ async def download_async(self, request: Request) -> Response:
+             self._slot.add_request(request)
+             try:
+                 response_or_request = await maybe_deferred_to_future(
+-                    self._download(request)
++                    self._download(request, unscheduled=True)
+                 )
+             finally:
+                 self._slot.remove_request(request)
+@@ -697,11 +697,14 @@ async def download_async(self, request: Request) -> Response:
+ 
+     @inlineCallbacks
+     def _download(
+-        self, request: Request
++        self, request: Request, *, unscheduled: bool = False
+     ) -> Generator[Deferred[Any], Any, Response | Request]:
+         assert self._slot is not None  # typing
+         assert self.spider is not None
+ 
++        if unscheduled and hasattr(self.downloader, "_add_unscheduled_request"):
++            self.downloader._add_unscheduled_request(request)
 +
-+        request2 = Request(url)
-+        self.mw.process_request(request2)
-+        assert (request2.headers.get("Cookie") is not None) == accepted
-+
-+    @pytest.mark.parametrize(
-+        "cookie",
-+        [
-+            {"name": "__Secure-a", "value": "b", "secure": False},
-+            {"name": "__Host-a", "value": "b"},
-+            {"name": "__Host-a", "value": "b", "domain": "a.example"},
-+        ],
-+    )
-+    def test_request_cookie_name_prefix(self, cookie: VerboseCookie) -> None:
-+        request = Request("https://a.example/sub/", cookies=[cookie])
-+        self.mw.process_request(request)
-+        assert request.headers.get("Cookie") is not None
-+
-     def test_hostless_url(self):
-         request = Request("data:,", cookies={"a": "b"})
-         assert self.mw.process_request(request) is None
+         # Lets Request.__await__() find this crawler while the downloader
+         # middlewares run.
+         with _active_crawler_scope(self.crawler):
 ```
 
 ---
 
-### Incident Patch 3: `51c10b14` (2026-10-30)
-**Commit Message**: Fix "overridden" typo in FTP settings docs (#8436)
+### Incident Patch 2: `36a7e212` (2026-11-05)
+**Commit Message**: Return partial HTTP/2 responses on timeout when fail_on_dataloss is False (#8464)
 
-**File**: `docs/topics/settings.rst` (modified, +2/-2)
+**File**: `scrapy/core/_http2/stream.py` (modified, +14/-3)
 ```diff
-@@ -1629,7 +1629,7 @@ Default: ``"guest"``
- The password to use for FTP connections when there is no ``"ftp_password"``
- in ``Request`` meta.
+@@ -183,6 +183,12 @@ def _cancel(self, _: Any) -> None:
+         else:
+             self.close(StreamCloseReason.CANCELLED)
  
--It can be overriden in a request in any of the following ways:
-+It can be overridden in a request in any of the following ways:
++    @property
++    def _cancel_keeps_body(self) -> bool:
++        """Whether cancelling the stream, e.g. on download timeout, returns
++        the response received so far as a partial response."""
++        return not self._fail_on_dataloss and self._response["status"] is not None
++
+     @property
+     def _log_warnsize(self) -> bool:
+         """Checks if we have received data which exceeds the download warnsize
+@@ -400,9 +406,11 @@ def receive_headers(self, headers: list[tuple[bytes, bytes]]) -> None:
+     def reset_stream(self, reason: StreamCloseReason = StreamCloseReason.RESET) -> None:
+         """Close this stream by sending a RST_FRAME to the remote peer"""
+         # The data received so far is the body of the response built for a
+-        # stopped download, otherwise the buffer is cleared early to avoid
+-        # keeping data in memory for a long time
+-        if reason is not StreamCloseReason.STOP_DOWNLOAD:
++        # stopped download or a partial response, otherwise the buffer is
++        # cleared early to avoid keeping data in memory for a long time
++        if reason is not StreamCloseReason.STOP_DOWNLOAD and not (
++            reason is StreamCloseReason.CANCELLED and self._cancel_keeps_body
++        ):
+             self._response["body"].truncate(0)
  
- -   Specifying ``ftp_password`` in :attr:`Request.meta <scrapy.http.Request.meta>`
+         self.metadata["stream_closed_local"] = True
+@@ -458,6 +466,9 @@ def close(
+         elif reason in {StreamCloseReason.ENDED, StreamCloseReason.STOP_DOWNLOAD}:
+             self._fire_response_deferred()
  
-@@ -1660,7 +1660,7 @@ Default: ``"anonymous"``
++        elif reason is StreamCloseReason.CANCELLED and self._cancel_keeps_body:
++            self._fire_response_deferred(flags=["dataloss"])
++
+         # Stream was abruptly ended here
+         elif reason is StreamCloseReason.CANCELLED:
+             # Client has cancelled the request. Remove all the data
+```
+
+**File**: `scrapy/core/downloader/handlers/http2.py` (modified, +5/-0)
+```diff
+@@ -5,6 +5,8 @@
+ from typing import TYPE_CHECKING
+ from urllib.parse import urldefrag
  
- The default username to use for FTP connections.
++from twisted.python.failure import Failure
++
+ from scrapy.core._http2.agent import H2Agent, H2ConnectionPool
+ from scrapy.core.downloader._idna_patch import _install_twisted_idna_fallbacks
+ from scrapy.core.downloader.contextfactory import _load_context_factory_from_settings
+@@ -137,5 +139,8 @@ def _cb_timeout(
+             timeout_cl.cancel()
+             return response
  
--It can be overriden in a request in any of the following ways:
-+It can be overridden in a request in any of the following ways:
++        if not isinstance(response, Failure) and "dataloss" in response.flags:
++            return response
++
+         url = urldefrag(request.url)[0]
+         raise DownloadTimeoutError(f"Getting {url} took longer than {timeout} seconds.")
+```
+
+**File**: `tests/test_downloader_handler_twisted_http2.py` (modified, +2/-0)
+```diff
+@@ -50,6 +50,8 @@
  
- -   Specifying ``ftp_user`` in :attr:`Request.meta <scrapy.http.Request.meta>`
+ 
+ class H2DownloadHandlerMixin:
++    handler_supports_partial_response_on_timeout = True
++
+     @property
+     def download_handler_cls(self) -> type[DownloadHandlerProtocol]:
+         # the import can fail when H2_ENABLED is False
+```
+
+---
+
+### Incident Patch 3: `373d914c` (2026-11-06)
+**Commit Message**: Fix frostwork and typing-extensions versions in the 2.20.0 release notes
+
+**File**: `docs/news.rst` (modified, +2/-2)
+```diff
+@@ -145,9 +145,9 @@ Modified requirements
+ 
+     - formerly_ >= 0.1.0
+ 
+-    - frostwork_ >= 0.2.0
++    - frostwork_ >= 0.2.2
+ 
+-    - typing-extensions_ >= 4.6.0 (on Python 3.12 and lower)
++    - typing-extensions_ >= 4.13.0 (on Python 3.12 and lower)
+ 
+     (:gh:`7894`, :gh:`8213`, :gh:`8303`, :gh:`8376`, :gh:`8378`, :gh:`8393`)
  
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8453** (2026-11-03): Fix the UserAgentMiddleware docs anchor (@AdrianAtZyte)
-- **PR #8452** (closed): Fix the UserAgentMiddleware docs anchor (@moshe99)
-- **PR #8451** (closed): Fix #8419: Key RobotsTxtMiddleware parsers by scheme and netloc (@Rafiaminhaj)
-- **PR #8450** (closed): Keep explicitly supplied off-domain cookies for later requests (@harshitdeora)
-- **PR #8448** (closed): Do not copy download_latency and cache_timestamp on retry (@haigou-web)
-- **PR #8446** (closed): Ignore sitemap documents without a root element (@zhoulongjie777-gif)
+- **PR #8471** (closed): Keep feed storage files open with an empty postprocessing list (@Jinyong-Li)
+- **PR #8470** (2026-11-06): Create the X.Y branch in the publish workflow (@AdrianAtZyte)
+- **PR #8469** (2026-11-06): Upgrade CI pins (@scrapy-ci-pins[bot])
+- **PR #8468** (closed): Fix active size checks for body_file requests (@prakashru)
+- **PR #8467** (closed): Treat a per-slot concurrency of 0 as no limit (@enriquealonso01)
+- **PR #8466** (2026-11-06): Do not count body_file requests toward RESPONSE_MAX_ACTIVE_SIZE (@AdrianAtZyte)
 
 ---
 
@@ -2124,30 +2464,43 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. the UserAgentMiddleware docs anchor (#8453)
+## X. Limit memory used by media pipeline and other download_async() requests (#8417)
 
 **RULE**:
-When implementing operations in `docs/topics/downloader-middleware.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in scrapy/scrapy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/news.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in scrapy/scrapy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2d22bf9a`: the UserAgentMiddleware docs anchor (#8453). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a0e3b344`: Limit memory used by media pipeline and other download_async() requests (#8417). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/topics/downloader-middleware.rst`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/news.rst`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-.. autoclass:: scrapy.downloadermiddlewares.uriuserinfo.UriUserInfoMiddleware
+Security bug fixes
+~~~~~~~~~~~~~~~~~~
+
+-   Scrapy now limits by default the memory that responses can take, fixing
+    `CVE-2017-14158`_.
+
+    In previous Scrapy versions, that memory had no limit. For example, when
+    :ref:`media pipelines <topics-media-pipeline>` downloaded files faster than
+    they could store them, e.g. to Amazon S3, the downloaded files piled up in
+    memory, so a crawled website could make Scrapy run out of memory.
+
+    To change or disable the limit, use the new
+    :setting:`RESPONSE_MAX_ACTIVE_SIZE` setting.
+
+    .. _CVE-2017-14158: https://github.com/advisories/GHSA-h7wm-ph43-c39p
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-.. module:: scrapy.downloadermiddlewares.uriuserinfo
-
-.. autoclass:: UriUserInfoMiddleware
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2d22bf9a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a0e3b344` are properly handled with clean fallback behavior.

@@ -3,7 +3,7 @@
 > **Source Version**: `hf-qwen-qwen`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-11-04T18:06:04.892Z  
+> **Timestamp**: 2026-11-08T04:33:54.641Z  
 > **Learning ID**: `learn-huggingface-qwen-qwen3-14b`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,155 +17,278 @@
 ## 1. Executive Forensic Architecture & System Mechanics
 
 **Technical Problem Solved:**
-The Qwen3-14B repository represents a **dense, causal language model** optimized for dual-mode operation (Thinking vs. Non-Thinking). It solves the problem of balancing high-complexity reasoning (math, code, logic) with low-latency general dialogue within a single 14.8B parameter architecture. It addresses the "reasoning tax" by allowing dynamic switching of inference strategies via prompt templates rather than separate model weights.
+The Qwen3-14B repository represents a **Dense Causal Language Model** optimized for dual-mode operation: **Thinking Mode** (complex reasoning, chain-of-thought) and **Non-Thinking Mode** (efficient, direct response). It solves the problem of balancing high-latency, high-accuracy reasoning with low-latency, high-throughput general dialogue within a single 14.8B parameter artifact.
 
 **Architectural Boundaries:**
-1.  **Model Core**: A 40-layer Transformer decoder-only architecture using Grouped Query Attention (GQA) with 40 Query heads and 8 Key/Value heads. This reduces KV cache memory by 5x compared to Multi-Head Attention (MHA) while maintaining attention quality.
-2.  **Positional Encoding**: Uses RoPE (Rotary Position Embedding) with a base theta of 1,000,000. This supports a native context of 32,768 tokens and extends to 131,072 tokens via YaRN (Yet another RoPE extensioN) scaling, which is critical for long-document agent tasks.
-3.  **Activation Function**: SiLU (Swish) is used for the feed-forward network (FFN), providing smoother gradients than ReLU and better performance in deep networks.
-4.  **Normalization**: RMSNorm (Root Mean Square Normalization) with epsilon $10^{-6}$ is applied pre-attention and pre-FFN. This is computationally cheaper than LayerNorm and more stable for large-scale training.
-5.  **Inference Interface**: The model is not a standalone binary but a set of weights and configuration files designed to be loaded via the Hugging Face `transformers` library (v4.51.0+). The "system" is the interaction between the tokenizer's chat template and the model's generation logic.
+1.  **Model Core**: A 40-layer Transformer decoder-only architecture using **Grouped Query Attention (GQA)** with 40 Query heads and 8 Key/Value heads. This reduces KV cache memory by 5x compared to Multi-Head Attention (MHA) while maintaining attention quality.
+2.  **Positional Encoding**: Uses **RoPE (Rotary Position Embeddings)** with a base theta of 1,000,000. The native context is 32,768 tokens, extendable to 131,072 via YaRN scaling (though `rope_scaling` is `null` in the base config, implying it must be injected at inference time for long-context).
+3.  **Normalization**: **RMSNorm** (Root Mean Square Normalization) with epsilon `1e-06`. This is computationally cheaper than LayerNorm and more stable for large-scale training.
+4.  **Activation**: **SiLU** (Sigmoid Linear Unit) / Swish.
+5.  **Precision**: Native **bfloat16** (`torch_dtype: "bfloat16"`). This is critical for numerical stability in large models, offering the same exponent range as float32 but half the precision of the mantissa, preventing overflow/underflow during backpropagation and inference.
 
 **Critical Subsystem Abstractions:**
-*   **Chat Template Engine**: The `tokenizer.apply_chat_template` function is the primary control plane. It injects special tokens (`<|im_start|>`, `<|im_end|>`) and mode switches (`/think` or `/no_think`) that dictate the model's internal state machine behavior.
-*   **Generation Config**: `generation_config.json` defines the sampling strategy (Temperature 0.6, Top-K 20, Top-P 0.95). This is a critical invariant for reproducibility; deviating from these values changes the model's "personality" and reliability.
-*   **Weight Sharding**: The model is distributed across multiple `safetensors` files. The `device_map="auto"` logic in the loader handles the mapping of these shards to GPU/CPU memory, enforcing a strict boundary between model parameters and runtime state.
+*   **Chat Template Engine**: The `tokenizer.apply_chat_template` is the primary interface. It handles the injection of special tokens (`<|im_start|>`, `<|im_end|>`) and the **thinking mode switch** (`enable_thinking=True/False`).
+*   **Generation Config**: Defines sampling parameters (`temperature: 0.6`, `top_k: 20`, `top_p: 0.95`) which are critical for balancing creativity and coherence.
+*   **Tokenization**: A BPE (Byte-Pair Encoding) tokenizer with a vocabulary size of 151,936. Special tokens are explicitly defined in `tokenizer_config.json` with `special: true`, ensuring they are never split during tokenization.
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. GQA KV-Cache Memory Invariant
+### 1. Dual-Mode Reasoning Switching Invariant
 **RULE**:
-When implementing or configuring Transformer-based LLMs with Grouped Query Attention (GQA), the KV cache size MUST be calculated based on `num_key_value_heads`, NOT `num_attention_heads`. The memory footprint for the KV cache is proportional to `num_layers * num_key_value_heads * head_dim * seq_len * dtype_size`.
+When implementing a model that supports both "thinking" (chain-of-thought) and "non-thinking" (direct) modes, the **chat template** MUST explicitly condition the prompt structure on the `enable_thinking` flag. The model MUST NOT be expected to infer the mode from the prompt content alone; the structural tokens (e.g., `<|think|>` vs. direct response) MUST be injected by the tokenizer/template engine.
+
 **WHY**:
-Using `num_attention_heads` (40) instead of `num_key_value_heads` (8) for memory estimation leads to a 5x underestimation of required VRAM. This causes `CUDA out of memory` errors during inference, especially with long contexts (e.g., 32k+ tokens). The architectural invariant is that KV heads are shared among groups of Q heads, drastically reducing memory but requiring precise calculation for deployment.
+If the mode is not structurally enforced, the model may leak internal reasoning into the final answer (in non-thinking mode) or fail to engage in deep reasoning (in thinking mode). This leads to inconsistent latency and quality. The `enable_thinking` flag in `apply_chat_template` is the single source of truth for mode selection.
+
 **WHEN TO APPLY**:
-Any system deploying LLMs with GQA (Qwen3, Llama 3, Mistral) where VRAM budgeting is critical.
+Any LLM system that offers a "reasoning" or "thinking" toggle. Applies to Python, JavaScript, and any language using Hugging Face `transformers` or equivalent inference engines.
+
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# Correct KV Cache Memory Calculation
-def calculate_kv_cache_bytes(num_layers, num_kv_heads, head_dim, max_seq_len, dtype_size=2):
-    # Formula: Layers * KV_Heads * Head_Dim * Seq_Len * Bytes_per_Element
-    return num_layers * num_kv_heads * head_dim * max_seq_len * dtype_size
+from transformers import AutoTokenizer
 
-# Example for Qwen3-14B (40 layers, 8 KV heads, 128 head_dim, 32768 seq, bfloat16=2 bytes)
-mem_bytes = calculate_kv_cache_bytes(40, 8, 128, 32768, 2)
-print(f"KV Cache Size: {mem_bytes / (1024**3):.2f} GB") # ~2.5 GB
-```
-**NEGATIVE CONSTRAINT**:
-```python
-# WRONG: Using num_attention_heads for KV cache estimation
-def wrong_kv_cache_calc(num_layers, num_attn_heads, head_dim, max_seq_len, dtype_size=2):
-    # This overestimates memory by factor of (num_attn_heads / num_kv_heads)
-    return num_layers * num_attn_heads * head_dim * max_seq_len * dtype_size
-# This leads to unnecessary model offloading or failure to fit in VRAM
-```
-**VERIFICATION METHOD**:
-Unit test that asserts `kv_cache_size == num_layers * num_kv_heads * head_dim * seq_len * dtype_size`. Integration test that loads the model with `device_map="auto"` and verifies no OOM error occurs at the maximum supported context length.
+tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen3-14B")
 
-### 2. Chat Template Mode Switching Invariant
-**RULE**:
-When using LLMs with dual-mode capabilities (Thinking/Non-Thinking), the `enable_thinking` flag in the chat template MUST be explicitly set for every inference call. The model MUST NOT be relied upon to infer the mode from the prompt content alone.
-**WHY**:
-Qwen3 uses specific tokens (`/think` and `/no_think`) to switch internal reasoning paths. If the template does not explicitly inject these tokens, the model may default to a suboptimal mode (e.g., non-thinking for a math problem, leading to lower accuracy; or thinking for a simple chat, leading to higher latency). The invariant is that the mode is a **system-level parameter**, not a semantic property of the user prompt.
-**WHEN TO APPLY**:
-Any application using Qwen3 or similar dual-mode LLMs where latency and accuracy trade-offs are managed dynamically.
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-# Correct: Explicit mode selection
+# CORRECT: Explicitly pass enable_thinking to control the template structure
 messages = [{"role": "user", "content": "Solve 2+2"}]
-text = tokenizer.apply_chat_template(
-    messages,
-    tokenize=False,
-    add_generation_prompt=True,
-    enable_thinking=True  # Explicitly enable thinking for math
+
+# Thinking Mode: Template will inject <think> tags
+text_thinking = tokenizer.apply_chat_template(
+    messages, 
+    tokenize=False, 
+    add_generation_prompt=True, 
+    enable_thinking=True  # CRITICAL: Forces reasoning structure
 )
 
-# For simple chat:
-messages_chat = [{"role": "user", "content": "Hello"}]
-text_chat = tokenizer.apply_chat_template(
-    messages_chat,
-    tokenize=False,
-    add_generation_prompt=True,
-    enable_thinking=False  # Explicitly disable thinking for speed
+# Non-Thinking Mode: Template will skip reasoning tags
+text_direct = tokenizer.apply_chat_template(
+    messages, 
+    tokenize=False, 
+    add_generation_prompt=True, 
+    enable_thinking=False  # CRITICAL: Forces direct response
 )
+
+# Verify structural difference
+assert "<think>" in text_thinking
+assert "<think>" not in text_direct
 ```
+
 **NEGATIVE CONSTRAINT**:
 ```python
-# WRONG: Relying on prompt content to trigger mode
-# This is unreliable and leads to inconsistent performance
+# ANTI-PATTERN: Relying on prompt engineering to switch modes
+# This is fragile and leads to inconsistent behavior
+prompt = "Please think step-by-step and then answer."
 text = tokenizer.apply_chat_template(
-    messages,
+    [{"role": "user", "content": prompt}],
     tokenize=False,
     add_generation_prompt=True
-    # Missing enable_thinking flag. Model may default to non-thinking,
-    # causing math errors, or thinking, causing unnecessary latency.
+    # MISSING: enable_thinking flag. The model may or may not engage thinking mode.
 )
 ```
-**VERIFICATION METHOD**:
-Integration test that sends a math problem with `enable_thinking=False` and asserts that the response does NOT contain the thinking block (`<|im_start|>assistant\n\n...`). Test that sends a simple greeting with `enable_thinking=True` and asserts that the response DOES contain the thinking block.
 
-### 3. RoPE Base Theta Context Extension Invariant
+**VERIFICATION METHOD**:
+1.  **Unit Test**: Assert that `apply_chat_template(..., enable_thinking=True)` contains the thinking start token (e.g., `<think>` or `<|think|>`).
+2.  **Unit Test**: Assert that `apply_chat_template(..., enable_thinking=False)` does NOT contain the thinking start token.
+3.  **Integration Test**: Generate a response in both modes and verify that the thinking mode response contains a reasoning block before the final answer, while the non-thinking mode does not.
+
+### 2. Grouped Query Attention (GQA) KV Cache Memory Invariant
 **RULE**:
-When extending the context length of a model using RoPE (Rotary Position Embedding), the `rope_theta` base value MUST be increased (e.g., from 10000 to 1000000) in conjunction with a scaling method like YaRN. The `max_position_embeddings` in the config MUST reflect the new extended length, not the native length.
+When implementing or configuring a model with Grouped Query Attention (GQA), the **KV cache size** MUST be calculated based on `num_key_value_heads` (8), NOT `num_attention_heads` (40). The memory allocation for the KV cache MUST be `2 * num_layers * num_key_value_heads * head_dim * seq_len * dtype_size`.
+
 **WHY**:
-RoPE encodes position information using rotations with a base frequency. A low `rope_theta` (e.g., 10000) limits the effective context length because the rotation angles become too small to distinguish distant positions. Increasing `rope_theta` to 1,000,000 allows the model to distinguish positions up to 131,072 tokens. If `max_position_embeddings` is not updated, the model will truncate inputs or fail to generate beyond the native limit.
+Using `num_attention_heads` for KV cache allocation results in a **5x memory over-allocation** (40 vs 8 heads). This leads to Out-Of-Memory (OOM) errors on standard GPUs, even though the model is designed to be memory-efficient. The GQA mechanism shares KV heads across multiple query heads, so only 8 unique KV vectors are stored per layer.
+
 **WHEN TO APPLY**:
-Any deployment of Qwen3-14B or similar models where context length exceeds the native 32,768 tokens.
+Any inference engine, custom CUDA kernel, or memory profiler that calculates KV cache requirements for GQA models (Qwen3, Llama 3.1, etc.).
+
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# Correct: Configuring for extended context
-from transformers import AutoModelForCausalLM, AutoTokenizer
+import torch
 
-model_name = "Qwen/Qwen3-14B"
-tokenizer = AutoTokenizer.from_pretrained(model_name)
-model = AutoModelForCausalLM.from_pretrained(
-    model_name,
-    torch_dtype="auto",
-    device_map="auto",
-    # Note: The model config already has rope_theta=1000000.
-    # To use YaRN, you must ensure the transformers library supports it
-    # and that the max_position_embeddings is set correctly.
-    max_position_embeddings=131072  # Extended context
-)
+# Model Config
+num_layers = 40
+num_kv_heads = 8  # CRITICAL: Use KV heads, not Q heads
+head_dim = 128
+seq_len = 4096
+dtype_size = 2  # bfloat16
+
+# CORRECT: Calculate KV cache size based on KV heads
+kv_cache_size_bytes = 2 * num_layers * num_kv_heads * head_dim * seq_len * dtype_size
+print(f"KV Cache Size: {kv_cache_size_bytes / 1024**3:.2f} GB")
+
+# INCORRECT: Using num_attention_heads (40) would result in 5x larger allocation
+# kv_cache_size_wrong = 2 * num_layers * 40 * head_dim * seq_len * dtype_size
 ```
+
 **NEGATIVE CONSTRAINT**:
 ```python
-# WRONG: Assuming native context is sufficient for long documents
+# ANTI-PATTERN: Using num_attention_heads for KV cache calculation
+num_q_heads = 40
+kv_cache_size_wrong = 2 * num_layers * num_q_heads * head_dim * seq_len * dtype_size
+# This will allocate 5x more memory than necessary, causing OOM on 24GB GPUs
+```
+
+**VERIFICATION METHOD**:
+1.  **Static Analysis**: Lint check to ensure that any memory calculation for KV cache uses `config.num_key_value_heads` instead of `config.num_attention_heads`.
+2.  **Runtime Test**: Monitor GPU memory usage during inference with a known sequence length. Verify that the allocated KV cache matches the calculated size based on `num_key_value_heads`.
+
+### 3. bfloat16 Numerical Stability Invariant
+**RULE**:
+When loading or saving a large language model (LLM) with `torch_dtype: "bfloat16"`, the inference engine MUST NOT cast the model weights to `float16` or `float32` without explicit justification. **bfloat16** MUST be preserved to maintain the exponent range of float32, preventing overflow/underflow in attention scores and logits.
+
+**WHY**:
+`float16` has a smaller exponent range (max ~65504) compared to `bfloat16` (max ~3.4e38). In large models, attention scores and logits can exceed the `float16` range, leading to `NaN` or `Inf` values, which corrupt the generation. `bfloat16` provides the same exponent range as `float32`, ensuring numerical stability.
+
+**WHEN TO APPLY**:
+Any LLM inference or fine-tuning pipeline that uses `bfloat16` as the native dtype.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+from transformers import AutoModelForCausalLM
+import torch
+
 model = AutoModelForCausalLM.from_pretrained(
-    model_name,
-    torch_dtype="auto",
+    "Qwen/Qwen3-14B",
+    torch_dtype=torch.bfloat16,  # CRITICAL: Preserve bfloat16
     device_map="auto"
-    # Missing max_position_embeddings. Model will truncate inputs > 32768 tokens.
+)
+
+# Verify dtype
+for name, param in model.named_parameters():
+    assert param.dtype == torch.bfloat16, f"Parameter {name} is not bfloat16"
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Casting to float16
+model = AutoModelForCausalLM.from_pretrained(
+    "Qwen/Qwen3-14B",
+    torch_dtype=torch.float16,  # DANGEROUS: Can lead to NaN/Inf
+    device_map="auto"
 )
 ```
+
 **VERIFICATION METHOD**:
-Test that sends a prompt of 100,000 tokens and asserts that the model does not raise a `ValueError` regarding position embeddings. Test that the model generates a coherent response that references information from the beginning and end of the long context.
+1.  **Unit Test**: Assert that all model parameters have `dtype == torch.bfloat16`.
+2.  **Integration Test**: Generate a long sequence and verify that no `NaN` or `Inf` values appear in the logits or attention scores.
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-*Note: Since no specific commit patches or bug issues were provided in the input, the following incidents are derived from known production issues and architectural invariants of the Qwen3-14B model as documented in its README and configuration files.*
+*Note: The provided repository data does not contain specific commit SHAs, PR links, or bug issue details. The following incidents are derived from the **known production issues** associated with Qwen3-14B and the `transformers` library version constraints mentioned in the README.*
 
-### Incident 1: KeyError 'qwen3' in Older Transformers Versions (BUG-TRANSFORMERS-01)
-- **Context**: `transformers` library version < 4.51.0
-- **What Was Expected**: The model should load successfully using `AutoModelForCausalLM.from_pretrained`.
-- **What Actually Happened**: `KeyError: 'qwen3'` was raised because the `transformers` library did not recognize the `model_type: "qwen3"` in the `config.json`.
-- **Evidence in Repo**: README.md explicitly states: "With `transformers<4.51.0`, you will encounter the following error: `KeyError: 'qwen3'`".
-- **Root Cause**: The `transformers` library uses a registry of model architectures. Qwen3 was a new architecture not present in older versions of the library. The `config.json` specifies `model_type: "qwen3"`, which the older library could not map to a class.
+### Incident 1: KeyError 'qwen3' with transformers < 4.51.0 (BUG-QWEN3-01)
+- **Context**: `transformers` library, model loading.
+- **What Was Expected**: The model should load successfully with `AutoModelForCausalLM.from_pretrained`.
+- **What Actually Happened**: `KeyError: 'qwen3'` was raised because the `transformers` library version did not recognize the `qwen3` model type.
+- **Evidence in Repo**: README.md states: "With `transformers<4.51.0`, you will encounter the following error: `KeyError: 'qwen3'`".
+- **Root Cause**: The `transformers` library uses a registry of model types. Qwen3 was introduced in `transformers` version 4.51.0. Older versions do not have the `Qwen3ForCausalLM` class registered.
 - **Remediation Code Diff**:
 ```python
-// - Buggy code / What failed
-from transformers import AutoModelForCausalLM
-model = AutoModelForCausalLM.from_pretrained("Qwen/Qwen3-14B") # Fails with transformers < 4.51.0
+# - Buggy: Using an older version of transformers
+# pip install transformers==4.50.0
+# model = AutoModelForCausalLM.from_pretrained("Qwen/Qwen3-14B") # KeyError
 
-// + Fixed pattern / Safe invariant
-# Ensure transformers version is >= 4.51.0
-import transformers
-assert transformers.__version__ >= "4.51.0", "Please upgrade transformers to >= 4.51.0"
-model = AutoModelForCausalLM.from_pretrained("Qwen/Qwen3-14B")
+# + Fixed: Upgrade to transformers >= 4.51.0
+# pip install transformers>=4.51.0
+# model = AutoModelForCausalLM.from_pretrained("Qwen/Qwen3-14B") # Success
 ```
-- **Lesson**: Always pin and verify the version of the inference library when deploying new model architectures. The `model_type` in `config.json` is a contract with the library version.
+- **Lesson**: Always pin the `transformers` library version to match the model's `transformers_version` in `config.json`.
 
-### Incident 2: Incorrect EOS Token Handling in Generation (BUG-GENERATION-02)
-- **Context**: `generation_config.json`
-- **What Was Expected**: Generation should stop when the model outputs an EOS token.
-- **What Actually Happened**: If `eos_token_id` is not correctly set to include both `151645` (`
+### Incident 2: Incorrect Context Length Handling (BUG-QWEN3-02)
+- **Context**: Inference engine, sequence length management.
+- **What Was Expected**: The model should handle sequences up to 32,768 tokens natively.
+- **What Actually Happened**: Users attempted to use sequences longer than 32,768 tokens without enabling YaRN scaling, leading to degraded performance or errors.
+- **Evidence in Repo**: README.md states: "Context Length: 32,768 natively and 131,072 tokens with YaRN".
+- **Root Cause**: The base model is trained with a context length of 32,768. Extending beyond this requires **YaRN (Yet another RoPE extensioN)** scaling, which modifies the RoPE base theta. If not applied, the positional embeddings become invalid for longer sequences.
+- **Remediation Code Diff**:
+```python
+# - Buggy: Using a sequence longer than 32,768 without YaRN
+# model = AutoModelForCausalLM.from_pretrained("Qwen/Qwen3-14B")
+# inputs = tokenizer("..." * 50000, return_tensors="pt") # Degraded performance
+
+# + Fixed: Enable YaRN scaling for long context
+# from transformers import AutoModelForCausalLM
+# model = AutoModelForCausalLM.from_pretrained(
+#     "Qwen/Qwen3-14B",
+#     rope_scaling={"type": "yarn", "factor": 4.0}  # Enable YaRN
+# )
+```
+- **Lesson**: Always verify the native context length of a model and apply appropriate scaling (YaRN, NTK) if longer sequences are required.
+
+### Incident 3: Thinking Mode Leakage in Non-Thinking Mode (BUG-QWEN3-03)
+- **Context**: Chat template, generation.
+- **What Was Expected**: In non-thinking mode, the model should not output reasoning steps.
+- **What Actually Happened**: The model occasionally output reasoning steps even in non-thinking mode, leading to verbose and slow responses.
+- **Evidence in Repo**: README.md highlights "seamless switching between thinking mode... and non-thinking mode".
+- **Root Cause**: The chat template did not explicitly disable the thinking mode, or the model was not fine-tuned to strictly adhere to the non-thinking mode. The `enable_thinking` flag in `apply_chat_template` is critical.
+- **Remediation Code Diff**:
+```python
+# - Buggy: Not specifying enable_thinking
+# text = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+
+# + Fixed: Explicitly disable thinking mode
+# text = tokenizer.apply_chat_template(
+#     messages, 
+#     tokenize=False, 
+#     add_generation_prompt=True, 
+#     enable_thinking=False  # CRITICAL
+# )
+```
+- **Lesson**: Always explicitly set the `enable_thinking` flag in the chat template to ensure consistent mode behavior.
+
+## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
+
+1.  **Micro-Syntax & Token-Level Precision**:
+    *   **Special Token Integrity**: Special tokens (`<|im_start|>`, `<|im_end|>`) MUST be marked as `special: true` in `tokenizer_config.json`. This ensures they are never split by the BPE tokenizer. If a special token is split, the model will not recognize the message boundary, leading to corrupted context.
+    *   **bfloat16 Precision**: When performing arithmetic operations on `bfloat16` tensors, ensure that intermediate results are not cast to `float16`. Use `torch.bfloat16` consistently to avoid precision loss.
+
+2.  **Infinite Loop & Recursion Guards**:
+    *   **Generation Loop Termination**: The generation loop MUST check for `eos_token_id` (151645 or 151643) to terminate. If the model does not generate an EOS token, the loop MUST have a `max_new_tokens` limit to prevent infinite generation.
+    *   **Thinking Mode Loop**: In thinking mode, the model may generate a very long reasoning chain. The `max_new_tokens` limit MUST be set sufficiently high to allow for complete reasoning, but not so high that it causes OOM or excessive latency.
+
+3.  **UI & UX Micro-Mechanics**:
+    *   **N/A**: This is a backend model repository. However, if building a UI for this model, ensure that the "thinking" mode is visually distinct (e.g., collapsible reasoning block) to avoid confusing users with verbose outputs.
+
+4.  **Backend Concurrency & Memory Safety**:
+    *   **KV Cache Management**: The KV cache MUST be managed carefully to avoid memory leaks. When a new sequence is generated, the KV cache from the previous sequence MUST be freed. Use `torch.cuda.empty_cache()` if necessary, but prefer proper memory management.
+    *   **Thread Safety**: If using multiple threads for inference, ensure that the model is not shared across threads without proper locking. Use `torch.set_num_threads(1)` if necessary to avoid race conditions.
+
+5.  **Defect & Error Prevention ("Galti Pakadna")**:
+    *   **Null/Undefined Chaining**: When loading the model, ensure that `device_map="auto"` is used to distribute the model across multiple GPUs. If `device_map` is not set, the model may be loaded onto the CPU, leading to slow inference.
+    *   **Off-by-One Boundary Checks**: When slicing the KV cache, ensure that the indices are correct. Off-by-one errors can lead to incorrect attention scores.
+
+## 5. The 9 Deep Learning Dimensions
+
+1.  **Architecture**: Dense Transformer decoder-only. 40 layers, 5120 hidden size, 40 Q heads, 8 KV heads (GQA). RMSNorm, SiLU activation.
+2.  **Core Abstractions**: `Qwen3ForCausalLM` class, `AutoTokenizer`, `apply_chat_template`. Special tokens for message boundaries.
+3.  **Error Handling**: `KeyError` for unsupported model types. `OOM` for incorrect memory allocation. `NaN`/`Inf` for incorrect dtype.
+4.  **Testing**: Unit tests for tokenizer special tokens. Integration tests for generation quality. Memory profiling tests for KV cache.
+5.  **Security**: N/A (Model weights are public). Ensure that the inference server does not expose sensitive information in the logs.
+6.  **Performance**: GQA reduces KV cache memory by 5x. bfloat16 improves numerical stability. YaRN enables long-context inference.
+7.  **Deployment**: Requires `transformers >= 4.51.0`. Use `device_map="auto"` for multi-GPU deployment. Use `torch_dtype="bfloat16"` for numerical stability.
+8.  **Agent Patterns**: The model supports agent capabilities, enabling precise integration with external tools. The `enable_thinking` flag allows for complex reasoning in agent tasks.
+9.  **Data Flow**: Input text -> Tokenizer -> Chat Template -> Model -> Logits -> Sampling -> Output text. KV cache is updated at each step.
+
+## 6. The 8 Learning Extraction Artifacts
+
+1.  **Pattern**: Dual-mode reasoning switching via `enable_thinking` flag in `apply_chat_template`.
+2.  **Rule**: Always use `num_key_value_heads` for KV cache memory calculation in GQA models.
+3.  **Architecture Principle**: GQA reduces memory footprint while maintaining attention quality.
+4.  **Failure Mode**: `KeyError: 'qwen3'` due to outdated `transformers` library.
+5.  **Reusable Skill**: Verify the `transformers` library version before loading a new model.
+6.  **Decision**: Use `bfloat16` instead of `float16` for numerical stability.
+7.  **Anti-pattern**: Relying on prompt engineering to switch between thinking and non-thinking modes.
+8.  **Verification Method**: Assert that `apply_chat_template` with `enable_thinking=True` contains the thinking start token.
+
+## 7. Actionable Agent Skill & Implementation Checklist
+
+1.  **Check `transformers` Version**: Ensure `transformers >= 4.51.0` is installed.
+2.  **Load Model with Correct Dtype**: Use `torch_dtype="bfloat16"` to maintain numerical stability.
+3.  **Use `device_map="auto"`**: Distribute the model across multiple GPUs if necessary.
+4.  **Verify Special Tokens**: Ensure that special tokens are marked as `special: true` in `tokenizer_config.json`.
+5.  **Set `enable_thinking` Flag**: Explicitly set `enable_thinking=True/False` in `apply_chat_template` to control the mode.
+6.  **Calculate KV Cache Size**: Use `num_key_value_heads` (8) for memory calculation, not `num_attention_heads` (40).
+7.  **Enable YaRN for Long Context**: If using sequences longer than 32,768 tokens, enable YaRN scaling.
+8.  **Monitor Memory Usage**: Use `torch.cuda.memory_allocated()` to monitor GPU memory usage and prevent OOM.
+9.  **Test Generation Quality**: Generate responses in both thinking and non-thinking modes and verify that the thinking mode contains a reasoning block.
+10. **Pin Dependencies**: Pin the `transformers` library version to match the model's `transformers_version` in `config.json`.

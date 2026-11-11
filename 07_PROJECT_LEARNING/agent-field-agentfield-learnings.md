@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/agent-field-agentfield-learnings.md`  
 > **Source**: github ([https://github.com/Agent-Field/agentfield](https://github.com/Agent-Field/agentfield))  
-> **Source Version**: `118b90ba`  
+> **Source Version**: `296fac67`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T22:05:19.072Z  
+> **Timestamp**: 2026-11-09T23:17:47.746Z  
 > **Learning ID**: `learn-github-agent-field-agentfield`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/agent-field-agentfield-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Agent-Field/agentfield](https://github.com/Agent-Field/agentfield))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T22:05:19.067Z  
+> **Harvest Timestamp**: 2026-11-09T23:17:47.736Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Build, run and scale AI agents like API and microservices
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2644 stars
+- **Stars / Engagement**: 2651 stars
 
 ---
 
@@ -1418,219 +1418,82 @@ func (ds *DefaultDevService) GetDevStatus(path string) (*domain.DevStatus, error
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2d6250d1` (2026-11-04)
-**Commit Message**: fix(agentic): honor limit and offset for resource=runs in /agentic/query (#1152)
+### Incident Patch 1: `0dc4f14a` (2026-11-09)
+**Commit Message**: fix(go-sdk): accept CRLF delimiters and 'data:' without space in SSE decoder (#1166)
 
-queryRuns never copied req.Limit/req.Offset into the ExecutionFilter, so the
-storage layer always returned its default page of 20 starting at 0 while the
-response echoed the requested values. Forward both to the filter.
+The SSEDecoder only split events on "\n\n" and required the literal
+prefix "data: ", so a server using CRLF line endings or "data:" with no
+space yielded zero chunks and StreamComplete silently lost the whole stream.
 
-**File**: `control-plane/internal/handlers/agentic/query.go` (modified, +1/-1)
+**File**: `sdk/go/ai/client.go` (modified, +5/-3)
 ```diff
-@@ -74,7 +74,7 @@ func QueryHandler(store storage.StorageProvider) gin.HandlerFunc {
- }
+@@ -383,14 +383,16 @@ func NewSSEDecoder(r io.Reader) *SSEDecoder {
+ func (d *SSEDecoder) Decode() (StreamChunk, error) {
+ 	for {
+ 		// First check if we already have a complete message in accumulated buffer
+-		data := string(d.accumulated)
++		// SSE allows CRLF line endings; normalize so "\r\n\r\n" separates events too.
++		data := strings.ReplaceAll(string(d.accumulated), "\r\n", "\n")
+ 		if idx := strings.Index(data, "\n\n"); idx >= 0 {
+ 			message := data[:idx]
+ 			d.accumulated = []byte(data[idx+2:])
  
- func queryRuns(c *gin.Context, ctx context.Context, store storage.StorageProvider, req QueryRequest) {
--	filter := types.ExecutionFilter{}
-+	filter := types.ExecutionFilter{Limit: req.Limit, Offset: req.Offset}
- 	if req.Filters.Status != "" {
- 		filter.Status = &req.Filters.Status
- 	}
+ 			// Parse SSE message
+-			if strings.HasPrefix(message, "data: ") {
+-				jsonData := strings.TrimPrefix(message, "data: ")
++			// The SSE field is "data:" with an optional single space after the colon.
++			if strings.HasPrefix(message, "data:") {
++				jsonData := strings.TrimPrefix(message, "data:")
+ 				jsonData = strings.TrimSpace(jsonData)
+ 
+ 				// Check for stream end
 ```
 
-**File**: `control-plane/internal/handlers/agentic/query_handler_test.go` (modified, +24/-0)
+**File**: `sdk/go/ai/client_test.go` (modified, +30/-0)
 ```diff
-@@ -417,3 +417,27 @@ func TestQueryHandler_OffsetPastEndReturnsEmptyPage(t *testing.T) {
- 		})
- 	}
+@@ -769,3 +769,33 @@ func TestStreamComplete_TimeoutAppliesWhileWaitingForResponse(t *testing.T) {
+ 	assert.Error(t, streamErr)
+ 	assert.Less(t, time.Since(start), 2*time.Second)
  }
 +
-+func TestQueryHandler_RunsForwardsLimitAndOffset(t *testing.T) {
-+	var got types.ExecutionFilter
-+	store := &handlerTestStorage{
-+		mockStatusStorage: &mockStatusStorage{},
-+		queryRunSummariesFn: func(_ context.Context, filter types.ExecutionFilter) ([]*storage.RunSummaryAggregation, int, error) {
-+			got = filter
-+			return []*storage.RunSummaryAggregation{{RunID: "run-1"}}, 1, nil
-+		},
++func TestSSEDecoder_CRLFAndNoSpaceDataField(t *testing.T) {
++	tests := []struct {
++		name  string
++		input string
++	}{
++		{"CRLF delimiters", "data: {\"id\":\"a\"}\r\n\r\ndata: {\"id\":\"b\"}\r\n\r\ndata: [DONE]\r\n\r\n"},
++		{"no space after data colon", "data:{\"id\":\"a\"}\n\ndata:{\"id\":\"b\"}\n\ndata:[DONE]\n\n"},
++		{"CRLF and no space", "data:{\"id\":\"a\"}\r\n\r\ndata:{\"id\":\"b\"}\r\n\r\n"},
 +	}
-+
-+	router := gin.New()
-+	router.POST("/query", QueryHandler(store))
-+
-+	body := `{"resource":"runs","limit":5,"offset":10}`
-+	req := httptest.NewRequest(http.MethodPost, "/query", bytes.NewBufferString(body))
-+	req.Header.Set("Content-Type", "application/json")
-+	rec := httptest.NewRecorder()
-+	router.ServeHTTP(rec, req)
-+
-+	require.Equal(t, http.StatusOK, rec.Code)
-+	assert.Equal(t, 5, got.Limit)
-+	assert.Equal(t, 10, got.Offset)
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			decoder := NewSSEDecoder(strings.NewReader(tt.input))
++			var ids []string
++			for {
++				chunk, err := decoder.Decode()
++				if err == io.EOF {
++					break
++				}
++				if err != nil {
++					t.Fatalf("unexpected error: %v", err)
++				}
++				ids = append(ids, chunk.ID)
++			}
++			if len(ids) != 2 || ids[0] != "a" || ids[1] != "b" {
++				t.Fatalf("expected chunks [a b], got %v", ids)
++			}
++		})
++	}
 +}
 ```
 
----
-
-### Incident Patch 2: `462d1cd3` (2026-11-04)
-**Commit Message**: fix(python-sdk): preserve boolean defaults in agent CLI calls (#1151)
-
-**File**: `sdk/python/agentfield/agent_cli.py` (modified, +5/-0)
-```diff
-@@ -116,6 +116,11 @@ def _parse_function_args(
-                 parser.add_argument(
-                     f"--{param_name}",
-                     action="store_true",
-+                    default=(
-+                        False
-+                        if param.default is inspect.Parameter.empty
-+                        else param.default
-+                    ),
-                     help=f"{param_name} (boolean flag)",
-                 )
-             elif param_type is int:
-```
-
-**File**: `sdk/python/tests/test_agent_cli.py` (modified, +20/-0)
-```diff
-@@ -2,6 +2,8 @@
- Tests for agent_cli.py CLI functionality.
- """
- 
-+import json
-+
- import pytest
- from unittest.mock import MagicMock, patch, Mock
- from agentfield.agent_cli import AgentCLI
-@@ -269,6 +271,24 @@ def test_run_cli_call_command(mock_agent):
-                 mock_call.assert_called_once_with("func1", ["--arg", "value"])
- 
- 
-+@pytest.mark.parametrize(
-+    ("cli_args", "verbose"),
-+    [([], False), (["--verbose"], True)],
-+)
-+def test_run_cli_call_preserves_boolean_defaults(
-+    mock_agent, monkeypatch, capsys, cli_args, verbose
-+):
-+    def skill1(safe: bool = True, verbose: bool = False) -> dict:
-+        return {"safe": safe, "verbose": verbose}
-+
-+    mock_agent.skill1 = skill1
-+    monkeypatch.setattr("sys.argv", ["script", "call", "skill1", *cli_args])
-+
-+    AgentCLI(mock_agent).run_cli()
-+
-+    assert json.loads(capsys.readouterr().out) == {"safe": True, "verbose": verbose}
-+
-+
- def test_run_cli_help_command(mock_agent):
-     """Test running CLI with help command."""
-     cli = AgentCLI(mock_agent)
-```
-
----
-
-### Incident Patch 3: `762d53c6` (2026-11-04)
-**Commit Message**: fix(sdk-python): request stream usage for more LiteLLM providers (#1150)
-
-app.ai(stream=True) only set stream_options.include_usage for openrouter/
-and openai/ models, so azure, groq, deepseek, xai and together_ai streams
-ended with usage_status=missing. LiteLLM accepts stream_options for these.
-
-Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
-**File**: `sdk/python/agentfield/agent_ai.py` (modified, +15/-1)
-```diff
-@@ -171,6 +171,18 @@ def _reset_litellm_http_clients(litellm_module: Any) -> None:
- 
- _AI_TIMEOUT_RETRIES_DEFAULT = 2
- 
-+# Providers whose chat API (via LiteLLM) accepts ``stream_options``; requesting
-+# ``include_usage`` makes the final streamed chunk carry token usage.
-+_STREAM_USAGE_PROVIDER_PREFIXES = (
-+    "openrouter/",
-+    "openai/",
-+    "azure/",
-+    "groq/",
-+    "deepseek/",
-+    "xai/",
-+    "together_ai/",
-+)
-+
- 
- def _resolve_timeout_retries() -> int:
-     """How many times to retry an LLM call that hit the wall-clock safety-net
-@@ -839,7 +851,9 @@ def has_untrimmable_media(messages_to_check: List[dict]) -> bool:
-             else getattr(self.agent.async_config, "llm_call_timeout", 120.0)
-         )
-         litellm_params.setdefault("timeout", effective_timeout)
--        if final_config.stream and final_config.model.startswith(("openrouter/", "openai/")):
-+        if final_config.stream and final_config.model.startswith(
-+            _STREAM_USAGE_PROVIDER_PREFIXES
-+        ):
-             litellm_params.setdefault("stream_options", {"include_usage": True})
- 
-         if schema:
-```
-
-**File**: `sdk/python/tests/test_agent_ai_comprehensive.py` (modified, +39/-0)
-```diff
-@@ -154,6 +154,45 @@ async def stream_generator():
-     assert hasattr(result, "__aiter__") or hasattr(result, "__iter__")
- 
- 
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize(
-+    "model,expected",
-+    [
-+        ("openai/gpt-4o", True),
-+        ("openrouter/openai/gpt-4o", True),
-+        ("azure/my-deployment", True),
-+        ("groq/llama-3.3-70b-versatile", True),
-+        ("deepseek/deepseek-chat", True),
-+        ("xai/grok-3", True),
-+        ("together_ai/meta-llama/Llama-3-8b", True),
-+        # LiteLLM rejects stream_options for these providers.
-+        ("mistral/mistral-large-latest", False),
-+        ("anthropic/claude-3-opus", False),
-+    ],
-+)
-+async def test_ai_streaming_requests_usage_for_supported_providers(
-+    monkeypatch, agent_with_ai, model, expected
-+):
-+    """stream_options include_usage is only requested where LiteLLM accepts it."""
-+    litellm_module = setup_litellm_stub(monkeypatch)
-+
-+    async def stream_generator():
-+        yield SimpleNamespace(
-+            choices=[SimpleNamespace(delta=SimpleNamespace(content="x"))]
-+        )
-+
-+    litellm_module.acompletion.return_value = stream_generator()
-+
-+    ai = AgentAI(agent_with_ai)
-+    await ai.ai("test", model=model, stream=True)
-+
-+    kwargs = litellm_module.acompletion.call_args[1]
-+    if expected:
-+        assert kwargs["stream_options"] == {"include_usage": True}
-+    else:
-+        assert "stream_options" not in kwargs
-+
-+
- @pytest.mark.asyncio
- async def test_ai_multimodal_input_processing(monkeypatch, agent_with_ai):
-     """Test multimodal input processing."""
-```
-
 #### Recent Merged Pull Requests:
-- **PR #1152** (2026-11-04): fix(agentic): honor limit and offset for resource=runs in /agentic/query (@pcbeingused333)
-- **PR #1151** (2026-11-04): fix(python-sdk): preserve boolean defaults in agent CLI calls (@remote-controlled-man)
-- **PR #1150** (2026-11-04): fix(sdk-python): request stream usage for more LiteLLM providers (@pcbeingused333)
-- **PR #1149** (2026-11-03): feat(sdk/go/ai): support the Runcrate provider (@heydryft)
-- **PR #1148** (2026-11-03): fix(python-sdk): preserve Unicode separators in harness JSONL (@remote-controlled-man)
-- **PR #1147** (2026-11-03): fix(sdk/go): don't cut active streams with Client.Timeout (@pcbeingused333)
+- **PR #1176** (2026-11-09): ci: move macOS jobs from macos-14 to macos-15 (@AbirAbbas)
+- **PR #1174** (2026-11-09): WorkAF harness watch: node link, relay pipe and steer, streamed only for owned runs (@AbirAbbas)
+- **PR #1172** (closed): perf(control-plane): fast Runs list and run page under live traffic (@santoshkumarradha)
+- **PR #1170** (closed): fix(control-plane): store execution VC created_at in UTC on SQLite (@santoshkumarradha)
+- **PR #1169** (closed): fix(web): send the API key on direct fetches; fix Playground replay and View run (@santoshkumarradha)
+- **PR #1167** (2026-11-09): feat(examples): add optional Outcrawl search backend to deep_research (@heydryft)
 
 ---
 
@@ -1650,28 +1513,34 @@ Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. agentic): honor limit and offset for resource=runs in /agentic/query (#1152)
+## X. go-sdk): accept CRLF delimiters and 'data:' without space in SSE decoder (#1166)
 
 **RULE**:
-When implementing operations in `control-plane/internal/handlers/agentic/query.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Agent-Field/agentfield. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `sdk/go/ai/client.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Agent-Field/agentfield. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2d6250d1`: agentic): honor limit and offset for resource=runs in /agentic/query (#1152). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0dc4f14a`: go-sdk): accept CRLF delimiters and 'data:' without space in SSE decoder (#1166). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `control-plane/internal/handlers/agentic/query.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `sdk/go/ai/client.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	filter := types.ExecutionFilter{Limit: req.Limit, Offset: req.Offset}
+		// SSE allows CRLF line endings; normalize so "\r\n\r\n" separates events too.
+		data := strings.ReplaceAll(string(d.accumulated), "\r\n", "\n")
+			// The SSE field is "data:" with an optional single space after the colon.
+			if strings.HasPrefix(message, "data:") {
+				jsonData := strings.TrimPrefix(message, "data:")
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	filter := types.ExecutionFilter{}
+		data := string(d.accumulated)
+			if strings.HasPrefix(message, "data: ") {
+				jsonData := strings.TrimPrefix(message, "data: ")
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2d6250d1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0dc4f14a` are properly handled with clean fallback behavior.

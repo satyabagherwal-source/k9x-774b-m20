@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md`  
 > **Source**: github ([https://github.com/codewhale-hq/Codewhale](https://github.com/codewhale-hq/Codewhale))  
-> **Source Version**: `885ef69f`  
+> **Source Version**: `c50612d6`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T15:59:20.838Z  
+> **Timestamp**: 2026-11-08T21:16:35.656Z  
 > **Learning ID**: `learn-github-codewhale-hq-codewhale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/codewhale-hq/Codewhale](https://github.com/codewhale-hq/Codewhale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T15:59:20.829Z  
+> **Harvest Timestamp**: 2026-11-08T21:16:35.650Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source agent for the terminal written in Rust. Use any provider or model. Issues & PRs always welcome
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 41157 stars
+- **Stars / Engagement**: 41160 stars
 
 ---
 
@@ -1824,11 +1824,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7136** (2026-10-29): **The persistent "update available" header chip is never rendered — `app.update_available` is written and never read**
-  *Symptoms*: ### Before you start  - [X] I searched existing issues and this is not a duplicate. 我已搜索过现有 issue。  ### What happened? 发生了什么？  saw no notification  ### Steps to reproduce 复现步骤  Using codewhale  - the update available notification for 0.10.2 was not given  ### Codewhale version 版本  codewhale 0.10.1  ### Where did it happen? 在哪里出现？  TUI (terminal interface)  ### Operating system 操作系统  Linux  ### How did you get Codewhale? 获取方式  Official script ([codewhale.net/install.sh](<http://codewhale.net/install.sh>))  ### Provider and model 提供商和模型  *No response*  ### Terminal and shell 终端  *No response*  ### codewhale doctor (optional)  ```text ```  ### Logs, screenshots, anything else (optional)  # The persistent "update available" header chip is never rendered — `app.update_available` is written and never read  **Labels:** `bug`  **Surface:** TUI (terminal interface)  **Version:** `codewhale 0.10.1 (fead51eeea0f)`  **OS:** Linux (Linux Mint 22.2, x86-64)  **Confirmed present in:** `v0.10.1` tag and `HEAD` (`687a38c6e`, 2026-10-28) — 281 commits after the tag, still unreproduced.  ---  ## What happened  A newer release was available and Codewhale never told me — or told me only for twelve seconds, at startup, four days before I noticed.  Running `0.10.1` with `0.10.2` published:  | Fact | Value | | -- | -- | | Installed | `codewhale 0.10.1 (fead51eeea0f)`, `/usr/local/bin/codewhale`, 8 Oct | | `v0.10.2` published | 2026-10-24T17:31:14Z | | Session started | 2026-10-25T04:27:16Z | | Updat
+- **Issue #7234** (2026-11-07): **fix(fork): cut saved histories that carry workspace drift notices**
+  *Symptoms*:   No-Issue: fifth instance of the engine-owned history-envelope boundary class; no separate tracker issue exists. 
 
-- **Issue #7123** (2026-10-29): **Display overflow of the chain of thought**
-  *Symptoms*: ### Before you start  - [x] I searched existing issues and this is not a duplicate. 我已搜索过现有 issue。  ### What happened? 发生了什么？  Some content within the chain of thought may spill over the boundaries of the chain-of-thought card and appear as regular content.   **This is the chain-of-thought in a collapsed state.** <img width="887" height="189" alt="Image" src="https://github.com/user-attachments/assets/bb3c8c61-56bb-4913-bd8f-d3c3314a9573" />  **This is the chain of thought in its expanded state. A single sentence has been split into two parts: the first half appears inside the chain of thought, while the second half appears outside of it; together, they form one continuous sentence.** <img width="916" height="233" alt="Image" src="https://github.com/user-attachments/assets/935c37bd-77c5-46a3-9c3d-c956be2acfef" />  ### Steps to reproduce 复现步骤  Just use it as normal.  ### Codewhale version 版本  0.10.3  ### Where did it happen? 在哪里出现？  TUI (terminal interface)  ### Operating system 操作系统  Windows  ### How did you get Codewhale? 获取方式  Official script (codewhale.net/install.sh)  ### Provider and model 提供商和模型  _No response_  ### Terminal and shell 终端  Windows Terminal  ### codewhale doctor (optional)  ```text  ```  ### Logs, screenshots, anything else (optional)  _No response_
+- **Issue #7231** (2026-11-07): **fix(net): go direct when a local proxy disappears**
+  *Symptoms*: ## What and why  reqwest snapshots `HTTP_PROXY` / `HTTPS_PROXY` / `ALL_PROXY` when a client is built, and Codewhale builds its engine HTTP clients once per session. A session started behind a local proxy (Clash, v2rayN, sing-box on `127.0.0.1:…`) therefore kept dialing that port after the proxy was closed: every request failed with a connect error, including requests to providers that need no proxy at all, and the only recovery was restarting Codewhale.  `codewhale_net::proxy::install_loopback_proxy()` installs a `reqwest::Proxy::custom` route for ambient **loopback** proxies:  - `no_proxy()` runs first, so the custom route is the only proxy source. `no_proxy()` clears every proxy registered before it, so the order matters: a request the callback declines cannot fall back to the address reqwest read when the client was built. - A background thread probes each configured loopback proxy on its own port. While a port refuses connections, requests that would use it go direct; when it answers again, proxy routing resumes. A live `HTTP_PROXY` therefore does not keep a dead `HTTPS_PROXY` in the path. - Only a definite `ECONNREFUSED` from every resolved address moves a proxy to direct. A timeout, an fd limit or a resolver failure leaves the previous state alone: routing a session direct on that evidence would put traffic on a network path the operator deliberately avoided. - While the port answers, routing is unchanged: `ALL_PROXY` / `HTTP_PROXY` / `HTTPS_PROXY` precedence, `NO_PROXY
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1845,474 +1845,593 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `885ef69f` (2026-11-05)
-**Commit Message**: fix(app-server): neutralize repository-defined git filter drivers on status reads (P12 slice 2)
+### Incident Patch 1: `0d1ffc1c` (2026-11-08)
+**Commit Message**: fix(engine): Anthropic tool-name encoding, usage-journal headroom, pre-turn watchdog, lenient session list
 
-GET /v1/workspace/status and the git status detail spawned `git status
---porcelain=v1` with only core.fsmonitor and core.hooksPath disabled, so a
-repository-configured clean or process filter executed (observed on native-v36:
-filter-clean and filter-process markers written), and a failing process filter
-made git exit nonzero so the route silently reported dirty=false with zero counts
-on a dirty repository. Status reads now go through Git::status_command, which
-enumerates filter drivers with `git config --show-scope` and neutralizes any
-driver with a definition in a non-global/system scope (local, worktree, other),
-including a local redefinition of a global driver; drivers defined only in the
-user's global or system config, such as Git LFS, keep working. If the scoped probe
-fails it falls back to the all-scope neutralizer (fail closed). --ignore-submodules
-=dirty stops a repo-controlled submodule from running its own drivers. Status runs
-once in collect_workspace_status (it ran twice). A git failure no longer reads as
-clean: WorkspaceStatusResponse and GitStatusDetailResponse gain
-status
+Reproduced from a founder session on a 0.10.3 dev build (artifacts
+subagent-failures-20261107): sub-agents died with "Child usage settlement
+failed", a turn failed on "native usage journal capacity reached before
+dispatch", and two workers returned Anthropic 400 "tools.17.custom.name".
 
-**File**: `crates/app-server/src/runtime_api/git.rs` (modified, +37/-4)
+- Anthropic client: tool names were sent raw, so a name such as web.run (from
+  tool_search) invalidated the whole request. Outbound tool declarations,
+  replayed tool_use blocks, tool_choice and the omitted-tool list now use
+  to_api_tool_name, and streamed and non-streamed tool_use names are decoded
+  with from_api_tool_name, matching the chat and responses clients.
+- Usage journal: MAX_RUNTIME_USAGE_RECORDS_PER_OWNER 64 -> 256. Children share
+  the session's journal owner and the workflow default is 64 live agents with a
+  ceiling of 128, so a full fan-out plus the parent exceeded 64. be43ea93fd
+  already makes the overflow non-fatal; this keeps the receipts.
+- Turn start (CW-6633, #6184): the heartbeat stayed Idle until TurnStarted, so
+  a wait before it produced no log, no stall record an
+
+**File**: `CHANGELOG.md` (modified, +6/-0)
 ```diff
-@@ -217,6 +217,22 @@ fn run_git_sync(workspace: &FsPath, args: &[&str]) -> Result<String, ApiError> {
-     Ok(String::from_utf8_lossy(&output.stdout).into_owned())
- }
+@@ -368,6 +368,12 @@ until the matching tag, packages, checksums, and release assets exist.
  
-+fn status_sync(workspace: &FsPath, args: &[&str]) -> Result<String, ApiError> {
-+    let output = Git::status_command(workspace)
-+        .map_err(|error| ApiError::internal(format!("git is unavailable: {error}")))?
-+        .args(args)
-+        .output()
-+        .map_err(|error| ApiError::internal(format!("failed to run git: {error}")))?;
-+    if !output.status.success() {
-+        return Err(ApiError::internal(format!(
-+            "git {} failed: {}",
-+            args.first().copied().unwrap_or(""),
-+            String::from_utf8_lossy(&output.stderr).trim()
-+        )));
-+    }
-+    Ok(String::from_utf8_lossy(&output.stdout).into_owned())
-+}
-+
- // ---------------------------------------------------------------------------
- // GET /v1/git — status detail
- // ---------------------------------------------------------------------------
-@@ -252,6 +268,8 @@ pub(super) struct GitStatusDetailResponse {
-     head: Option<String>,
-     /// Full HEAD commit id; null on an unborn branch.
-     head_oid: Option<String>,
-+    /// True when `git status` could not be read: the counts are unknown.
-+    status_unavailable: bool,
-     /// Opaque token for the whole index (every stage entry, repository-wide).
-     index_token: Option<String>,
-     /// Opaque token for the whole tree: HEAD, the index and every row.
-@@ -289,6 +307,7 @@ fn collect_git_status_detail(workspace: &FsPath) -> Result<GitStatusDetailRespon
-         detached: false,
-         head: status.head,
-         head_oid: None,
-+        status_unavailable: status.status_unavailable,
-         index_token: None,
-         revision: None,
-         ahead: status.ahead,
-@@ -388,13 +407,13 @@ fn status_rows(
-     frame: &RepoFrame,
- ) -> Result<(Vec<GitFileEntry>, bool), ApiError> {
-     let mut complete = true;
--    let mut rows = match run_git_sync(workspace, &["status", "--porcelain=v1", "-z"]) {
-+    let mut rows = match status_sync(workspace, &["status", "--porcelain=v1", "-z"]) {
-         Ok(porcelain) => parse_porcelain(&porcelain),
-         Err(_) => {
-             // One broken submodule can abort all of Git's porcelain output.
-             // Recover ordinary rows, then inspect gitlinks individually so
-             // only the unreadable submodule is shown as unknown/unguardable.
--            let porcelain = run_git_sync(
-+            let porcelain = status_sync(
-                 workspace,
-                 &["status", "--porcelain=v1", "-z", "--ignore-submodules=all"],
-             )?;
-@@ -407,7 +426,7 @@ fn status_rows(
-                     continue;
+ ### Fixed
+ 
++- **Anthropic and Messages-compatible routes accept any tool name.** Tool names that Anthropic's pattern rejects, such as `web.run` from a loaded tool group, are encoded on the wire and decoded in replies, as the chat and responses routes already did. Before, one such name made every request fail with "tools.N.custom.name: String should match pattern", which stopped sub-agents that had loaded it.
++- **A large sub-agent fan-out no longer exhausts the usage journal.** The per-session limit of live usage receipts rises from 64 to 256, above the workflow ceiling of 128, so a full fan-out keeps its cost receipts instead of running with cost unknown.
++- **A turn that stalls before it starts is now bounded.** The stall watchdog covers the setup before the first model request, so a wedged start is logged, cancelled after 180 seconds with a stated reason, and leaves a stall record instead of waiting silently. A warning names the case where all four blocking-work slots are held. Refs #6184.
++- **One unreadable saved session no longer empties the recent-sessions list.** The launch card and ACP `session/list` show the readable sessions and log the failure. Refs #7095.
++- **Windows uninstall removes the receipt and update leftovers.** The installer's uninstaller also deletes `.codewhale-install.sha256` and `codewhale.old-*`/`codew.old-*` left by a self-update, so `bin` can be removed. Refs #7091.
++- **Windows `/undo` matches recorded file paths regardless of case.** A write recorded under a different drive-letter or directory case, or a `\\?\` prefix, is no longer dropped from the restore plan. Refs #6970.
+ - **Windows: Fleet and metrics read live files again.** Replaying a Fleet ledger and reading audit or receipt records no longer fail with a sharing violation while their writer is still open; the same regular-file, link and identity checks apply. Plugin enablement now says which snapshot check refused (stage root, content identity or final check) instead of one generic message. Generated protocol and SDK exports keep LF line endings in Windows checkouts.
+ - **A held coordination lock no longer makes a new session read-only.** When another session owns the delegated-agent store, the new session starts on private state and says so, instead of refusing every sub-agent with “Failed to clean up sub-agents”.
+ - **A dev server can outlive the turn in an interactive session.** `persist:true` now works in the TUI and desktop when the thread has Full Access; restricted postures and Fleet/sub-agents still refuse it.
+```
+
+**File**: `crates/app-server/src/acp_server.rs` (modified, +1/-1)
+```diff
+@@ -481,7 +481,7 @@ impl AcpServer {
+         let sessions =
+             codewhale_engine::session_manager::SessionManager::new(self.sessions_dir.clone())
+                 .ok()
+-                .and_then(|manager| manager.list_sessions().ok())
++                .map(|manager| manager.list_sessions_lenient())
+                 .unwrap_or_default();
+         let sessions: Vec<Value> = sessions
+             .into_iter()
+```
+
+**File**: `crates/engine/src/client/anthropic.rs` (modified, +35/-7)
+```diff
+@@ -34,14 +34,19 @@ use codewhale_models::tool_projection::{
+     RouteToolProjection, ToolSchemaProjection, description_with_constraint_note, forced_tool_name,
+     project_tool_schema,
+ };
+-use codewhale_models::{ContentBlock, MessageRequest, MessageResponse, StreamEvent, Usage};
++use codewhale_models::{
++    ContentBlock, ContentBlockStart, MessageRequest, MessageResponse, StreamEvent, Usage,
++};
+ use codewhale_runtime::config::wire_model_for_provider_route;
+ use codewhale_runtime::logging;
+ 
+ use super::CodewhaleClient;
+ use super::prepared::WireDialect;
+ use super::role_placement::{RolePlacement, role_placement};
+-use super::wire::{extract_sse_data_value, next_sse_line, push_sse_event_data};
++use super::wire::{
++    extract_sse_data_value, from_api_tool_name, next_sse_line, push_sse_event_data,
++    to_api_tool_name,
++};
+ 
+ /// Maximum `cache_control` breakpoints Anthropic accepts per request.
+ const MAX_CACHE_BREAKPOINTS: usize = 4;
+@@ -120,7 +125,7 @@ impl CodewhaleClient {
+                         constraint_note,
+                     } => {
+                         let mut value = json!({
+-                            "name": tool.name,
++                            "name": to_api_tool_name(&tool.name),
+                             "description": description_with_constraint_note(
+                                 &tool.description,
+                                 constraint_note,
+@@ -137,7 +142,7 @@ impl CodewhaleClient {
+                     }
+                     ToolSchemaProjection::Omitted { .. } => {
+                         omitted_logical_names.push(tool.name.clone());
+-                        omitted_tool_names.push(tool.name.clone());
++                        omitted_tool_names.push(to_api_tool_name(&tool.name));
+                     }
                  }
-                 rows.retain(|row| normalized_row_path(&row.path) != path);
--                match run_git_sync(
-+                match status_sync(
-                     &frame.toplevel,
-                     &[
-                         "--literal-pathspecs",
-@@ -2229,6 +2248,7 @@ pub(super) async fn git_branch(
- #[cfg(test)]
- mod tests {
-     use super::*;
-+    use codewhale_engine::test_support::{EnvVarGuard, lock_test_env};
-     use std::fs;
- 
-     thread_local! {
-@@ -2811,9 +2831,22 @@ mod tests {
-     #[cfg(unix)]
-     #[test]
-     fn status_and_guards_respect_clean_filters() {
-+        let _env_lock = lock_test_env();
-         let tmp = repo();
-         let ws = tmp.path();
--        git(ws, &["config", "filter.up.clean", "tr a-z A-Z"]);
-+        let global = tempfile::tempdir().unwrap();
-+        let global_config = global.path().join("gitconfig");
-+        git(
-+            ws,
-+            &[
-+                "config",
-+                "--file",
-+                global_config.to_str().unwrap(),
-+                "filter.up.clean",
-+                "tr a-z A-Z",
-+            ],
-+        );
-+        let _global = EnvVarGuard::set("GIT_CONFIG_GLOBAL", &global_config);
-         fs::write(ws.join(".gitattributes"), "*.txt filter=up\n").unwrap();
-         git(ws, &["add", ".gitattributes"]);
-         // The tracked file is unchanged since the initial commit. Apply the
-```
-
-**File**: `crates/app-server/src/runtime_api/workspace.rs` (modified, +44/-23)
-```diff
-@@ -131,6 +131,9 @@ pub(super) struct WorkspaceStatusResponse {
-     pub(super) branch: Option<String>,
-     pub(super) head: Option<String>,
-     pub(super) dirty: bool,
-+    /// True when `git status` could not be read, so `dirty` and the
-+    /// staged/unstaged/untracked counts are unknown rather than zero.
-+    pub(super) status_unavailable: bool,
-     pub(super) staged: usize,
-     pub(super) unstaged: usize,
-     pub(super) untracked: usize,
-@@ -148,11 +151,10 @@ pub(super) struct WorkspaceGitMetadata {
- }
- 
- /// Status is several blocking `git` spawns, so it runs off the async workers
--/// (#6149) like every other git read on this surface. It deliberately keeps
--/// normal Git filters and untracked settings rather than the full review
--/// command, so its counts match `git status` and the operator writes (see
--/// `git.rs`), but it never runs a repository-configured helper: fsmonitor and
--/// hooks are off, as on every read-only review path (see `run_git`).
-+/// (#6149) like every other git read on this surface. It keeps normal
-+/// untracked settings rather than the full review diff flags, but it never
-+/// runs a repository-configured helper: fsmonitor, hooks and clean/process
-+/// filters are off, as on every read-only review path (see `run_status`).
- pub(super) async fn workspace_status(
-     State(state): State<RuntimeApiState>,
- ) -> Result<Json<WorkspaceStatusResponse>, ApiError> {
-@@ -238,6 +240,7 @@ pub(super) fn collect_workspace_status(workspace: &FsPath) -> WorkspaceStatusRes
-         branch: None,
-         head: None,
-         dirty: false,
-+        status_unavailable: false,
-         staged: 0,
-         unstaged: 0,
-         untracked: 0,
-@@ -254,12 +257,16 @@ pub(super) fn collect_workspace_status(workspace: &FsPath) -> WorkspaceStatusRes
-     };
- 
-     status.git_repo = true;
--    let metadata = workspace_git_metadata(workspace, &head);
--    status.branch = metadata.branch;
--    status.head = metadata.head;
--    status.dirty = metadata.dirty;
--
--    if let Some(porcelain) = run_git(workspace, &["status", "--porcelain=v1"]) {
-+    let (branch, short_head) = branch_and_head(&head);
-+    status.branch = branch;
-+    status.head = short_head;
-+
-+    let porcelain = run_status(workspace);
-+    status.status_unavailable = porcelain.is_none();
-+    status.dirty = porcelain
-+        .as_deref()
-+        .is_some_and(|porcelain| !porcelain.trim().is_empty());
-+    if let Some(porcelain) = porcelain {
-         for line in porcelain.lines() {
-             if line.starts_with("??") {
-                 status.untracked += 1;
-@@ -278,7 +285,7 @@ pub(super) fn collect_workspace_status(workspace: &FsPath) -> WorkspaceStatusRes
-     }
- 
-     if let Some(counts) = run_git(
--        workspace,
-+        Git::review_base(workspace),
-         &["rev-list", "--left-right", "--count", "@{upstream}...HEAD"],
-     ) {
-         let mut parts = counts.split_whitespace();
-@@ -298,8 +305,8 @@ pub(super) fn collect_workspace_git_metadata(workspace: &FsPath) -> WorkspaceGit
+             }
+@@ -520,12 +525,26 @@ fn discard_provider_execution_ids(value: &mut Value) {
      }
  }
  
--fn workspace_git_metadata(workspace: &FsPath, head: &GitHead) -> WorkspaceGitMetadata {
--    let (branch, short_id) = match head.id {
-+fn branch_and_head(head: &GitHead) -> (Option<String>, Option<String>) {
-+    match head.id {
-         Some(_) => (
-             head.branch.clone().or_else(|| {
-                 head.short_id()
-@@ -308,11 +315,17 @@ fn workspace_git_metadata(workspace: &FsPath, head: &GitHead) -> WorkspaceGitMet
-             head.short_id().map(str::to_string),
-         ),
-         None => (None, None),
--    };
++fn decode_tool_use_names(value: &mut Value) {
++    let Some(content) = value.get_mut("content").and_then(Value::as_array_mut) else {
++        return;
++    };
++    for block in content.iter_mut() {
++        if block.get("type").and_then(Value::as_str) == Some("tool_use")
++            && let Some(name) = block.get("name").and_then(Value::as_str)
++        {
++            block["name"] = json!(from_api_tool_name(name));
++        }
 +    }
 +}
 +
-+fn workspace_git_metadata(workspace: &FsPath, head: &GitHead) -> WorkspaceGitMetadata {
-+    let (branch, head) = branch_and_head(head);
-+    let porcelain = run_status(workspace);
-     WorkspaceGitMetadata {
-         branch,
--        head: short_id,
--        dirty: run_git(workspace, &["status", "--porcelain=v1"])
-+        head,
-+        dirty: porcelain
-+            .as_deref()
-             .is_some_and(|porcelain| !porcelain.trim().is_empty()),
+ fn decode_anthropic_message(mut value: Value) -> Result<MessageResponse> {
+     discard_provider_execution_ids(&mut value);
+     if let Some(usage) = value.get_mut("usage") {
+         *usage = json!(parse_anthropic_usage(usage));
      }
- }
-@@ -329,12 +342,20 @@ fn read_workspace_head(workspace: &FsPath) -> Option<GitHead> {
-     }
+     normalize_redacted_thinking_blocks(&mut value);
++    decode_tool_use_names(&mut value);
+     serde_json::from_value(value).context("Failed to decode Anthropic Messages response")
  }
  
--/// Read-only git for status and metadata. `Git::review_base` disables
--/// `core.fsmonitor`, `core.hooksPath`, lazy fetch and replace objects: a
--/// status poll must not execute a helper the repository's config names.
--fn run_git(workspace: &FsPath, args: &[&str]) -> Option<String> {
--    let mut command = Git::review_base(workspace).ok()?;
--    let output = command.args(args).output().ok()?;
-+/// `git status` through [`Git::status_command`]: besides fsmonitor and hooks
-+/// it neutralizes every clean/process filter driver the repository itself
-+/// configures (never the user's global or system ones, such as Git LFS),
-+/// and submodules are compared without a child status inside them. `None`
-+/// means git could not be read, never a clean tree.
-+fn run_status(workspace: &FsPath) -> Option<String> {
-+    run_git(
-+        Git::status_command(wor
-```
-
-**File**: `crates/dependencies/src/lib.rs` (modified, +46/-4)
-```diff
-@@ -1161,6 +1161,27 @@ impl Git {
-     /// Configured filters otherwise execute even when those flags are present.
-     pub fn review_command(workspace: &Path) -> anyhow::Result<Command> {
-         let overrides = Self::review_filter_overrides(workspace)?;
-+        Self::with_filter_overrides(workspace, overrides)
-+    }
-+
-+    /// Like [`Self::review_command`] for status reads, which must keep the
-+    /// user's own filters (Git LFS in global or system config) working so
-+    /// files they manage do not look modified. Only filter drivers that
-+    /// repository-controlled config (local or worktree scope, including files
-+    /// it includes) defines are neutralized. If the scoped probe fails, this
-+    /// falls back to neutralizing every driver.
-+    pub fn status_command(workspace: &Path) -> anyhow::Result<Command> {
-+        let overrides = match Self::filter_overrides(workspace, true) {
-+            Ok(overrides) => overrides,
-+            Err(_) => Self::review_filter_overrides(workspace)?,
-+        };
-+        Self::with_filter_overrides(workspace, overrides)
-+    }
-+
-+    fn with_filter_overrides(
-+        workspace: &Path,
-+        overrides: Vec<(String, &'static str)>,
-+    ) -> anyhow::Result<Command> {
-         let mut command = Self::review_base(workspace)?;
-         let mut count = 2;
-         for (key, value) in overrides {
-@@ -1254,12 +1275,22 @@ impl Git {
-     /// apply them through `GIT_CONFIG_KEY_n`/`GIT_CONFIG_VALUE_n`.
-     pub fn review_filter_overrides(
-         workspace: &Path,
-+    ) -> anyhow::Result<Vec<(String, &'static str)>> {
-+        Self::filter_overrides(workspace, false)
-+    }
-+
-+    fn filter_overrides(
-+        workspace: &Path,
-+        repository_only: bool,
-     ) -> anyhow::Result<Vec<(String, &'static str)>> {
-         use anyhow::{Context, bail};
- 
-         let mut command = Self::review_base(workspace)?;
-+        command.arg("config");
-+        if repository_only {
-+            command.arg("--show-scope");
-+        }
-         command.args([
--            "config",
-             "--null",
-             "--name-only",
-             "--get-regexp",
-@@ -1276,11 +1307,22 @@ impl Git {
-             bail!("Cannot safely inspect Git review configuration");
-         }
-         let mut filters = std::collections::BTreeSet::new();
--        for key in output
-+        let mut fields = output
-             .stdout
-             .split(|byte| *byte == 0)
--            .filter(|key| !key.is_empty())
--        {
-+            .filter(|field| !field.is_empty());
-+        while let Some(field) = fields.next() {
-+            let key = if repository_only {
-+                let key = fields
-+                    .next()
-+                    .context("Git review filter scope has no key")?;
-+                if matches!(field, b"global" | b"system") {
-+                    continue;
-+                }
-+                key
-+            } else {
-+                field
-+            };
-             let key =
-                 std::str::from_utf8(key).context("Git review filter name is not valid UTF-8")?;
-             let (driver, _) = key
-```
-
----
-
-### Incident Patch 2: `e9fdd250` (2026-11-05)
-**Commit Message**: fix(engine): session loads observe under the shared read lock and create no storage
-
-Since 20f8244aafd every snapshot/checkpoint load took the exclusive
-write-admission lock to mint an optional write receipt, which creates the
-late-usage sidecar directory and lock leaf, so a pure read wrote to disk and
-could fail on read-only storage. Loads now observe the session/checkpoint pair
-under the shared, non-creating read lock (with_session_observation, which returns
-None for a tombstoned session); an absent lock leaf is read unlocked, and when no
-observation can be taken the existing degrade path returns the transcript without
-a write receipt (the commit message of 20f8244aafd states receipts are optional).
-save/rename/archive/delete/capture_session_write_source/resume_session and the
-admitted branches are unchanged, and publish_session_inner still refuses a value
-with no captured native producer, so a session loaded without a receipt cannot
-publish until a caller captures one under write admission. One behavior
-difference: a read no longer runs ledger sync/retirement on a deletion marker; it
-returns NotFound and the next writer cleans up. A first-ever save racing a read
-before the lock 
-
-**File**: `crates/engine/src/session_manager.rs` (modified, +15/-2)
-```diff
-@@ -3112,6 +3112,19 @@ impl SessionManager {
-         write().map(Some)
+@@ -777,7 +796,7 @@ fn anthropic_tool_choice(tool_choice: &Value, model: &str) -> Value {
+         Some("auto") => json!({ "type": "auto" }),
+         Some("none") => json!({ "type": "none" }),
+         Some("any" | "required") => json!({ "type": "any" }),
+-        Some(name) => json!({ "type": "tool", "name": name }),
++        Some(name) => json!({ "type": "tool", "name": to_api_tool_name(name) }),
+         None => tool_choice.clone(),
      }
- 
-+    fn with_session_observation<T>(
-+        &self,
-+        session_id: &str,
-+        observe: impl FnOnce() -> io::Result<T>,
-+    ) -> io::Result<Option<T>> {
-+        self.with_session_read_lock(session_id, |path| {
-+            if Self::late_usage_is_deleted(path)? {
-+                return Ok(None);
+ }
+@@ -925,7 +944,7 @@ fn content_block_to_anthropic(block: &ContentBlock) -> Option<Value> {
+         } => Some(json!({
+             "type": "tool_use",
+             "id": id,
+-            "name": name,
++            "name": to_api_tool_name(name),
+             "input": input,
+         })),
+         ContentBlock::ToolResult {
+@@ -1084,7 +1103,16 @@ fn convert_anthropic_sse_data(data: &str) -> Option<Result<StreamEvent>> {
+         // Local-only receipt: the legacy path ignored it (not a provider
+         // type), so it stays ignored rather than decoding.
+         Ok(StreamEvent::ToolProjectionWarning { .. }) => None,
+-        Ok(event) => Some(Ok(event)),
++        Ok(mut event) => {
++            if let StreamEvent::ContentBlockStart {
++                content_block: ContentBlockStart::ToolUse { name, .. },
++                ..
++            } = &mut event
++            {
++                *name = from_api_tool_name(name);
 +            }
-+            observe().map(Some)
-+        })
++            Some(Ok(event))
++        }
+         Err(error) => {
+             // Cold path, reached only when direct decode fails: invalid JSON
+             // and unknown types keep their exact legacy outcomes.
+```
+
+**File**: `crates/engine/src/core/engine.rs` (modified, +6/-0)
+```diff
+@@ -6768,6 +6768,12 @@ impl Engine {
+         review: Option<codewhale_protocol::op::ReviewOperation>,
+     ) -> SendMessageOutcome {
+         let setup_timing = codewhale_runtime::logging::PhaseTimer::start("turn_setup");
++        self.turn_heartbeat.enter(
++            turn_heartbeat::TurnPhase::Preparing,
++            Some("starting the turn".to_string()),
++            Some(turn_heartbeat::PREPARING_PHASE_BOUND),
++        );
++        let _pre_turn_idle = turn_heartbeat::IdleOnDrop(Arc::clone(&self.turn_heartbeat));
+         let is_review = review.is_some();
+         let TurnSpec {
+             profile_constitution,
+```
+
+**File**: `crates/engine/src/cost_status.rs` (modified, +1/-1)
+```diff
+@@ -1272,7 +1272,7 @@ fn with_pending_state_mut<R>(f: impl FnOnce(&mut ScopedPendingBackgroundCost) ->
+ /// This journal is deliberately separate from the TUI pending-money pool:
+ /// taking one runtime owner's records cannot steal or reset the foreground
+ /// session's `/cost` state.
+-const MAX_RUNTIME_USAGE_RECORDS_PER_OWNER: usize = 64;
++const MAX_RUNTIME_USAGE_RECORDS_PER_OWNER: usize = 256;
+ 
+ #[derive(Default)]
+ struct OwnerRuntimeUsageJournal {
+```
+
+**File**: `crates/engine/src/session_manager.rs` (modified, +23/-0)
+```diff
+@@ -5888,6 +5888,29 @@ impl SessionManager {
+             .collect())
+     }
+ 
++    pub fn list_sessions_lenient(&self) -> Vec<SessionMetadata> {
++        let catalog = match self.scan_session_records() {
++            Ok(catalog) => catalog,
++            Err(error) => {
++                tracing::warn!(%error, "session listing failed; showing no sessions");
++                return Vec::new();
++            }
++        };
++        if let Some(warning) = catalog.warning() {
++            tracing::warn!(%warning, "session listing is incomplete; showing the readable ones");
++        }
++        let mut sessions: Vec<_> = catalog
++            .records
++            .into_iter()
++            .map(|(_, mut metadata)| {
++                self.apply_late_usage_to_metadata(&mut metadata);
++                metadata
++            })
++            .collect();
++        sessions.sort_by_key(|session| std::cmp::Reverse(session.updated_at));
++        sessions
 +    }
 +
-     /// Run an out-of-band rewrite of a session's files (`scrub-secrets`)
-     /// under the same per-session lock every save takes, so it cannot
-     /// interleave with a save, and while holding the session's live lease, so
-@@ -4900,7 +4913,7 @@ impl SessionManager {
-             let observation = if admission_held {
-                 capture()
-             } else {
--                self.with_session_write_admission(id, capture)
-+                self.with_session_observation(id, capture)
-                     .and_then(|observation| {
-                         observation.ok_or_else(Self::retired_session_write_error)
-                     })
-@@ -5453,7 +5466,7 @@ impl SessionManager {
-         let observation = if admission_held {
-             capture()
-         } else {
--            self.with_session_write_admission(id, capture)
-+            self.with_session_observation(id, capture)
-                 .and_then(|observation| observation.ok_or_else(Self::retired_session_write_error))
-         };
-         match observation {
+     pub fn list_sessions_with_recovery(
+         &self,
+     ) -> std::io::Result<(
+```
+
+**File**: `crates/runtime/src/runtime_control.rs` (modified, +17/-14)
+```diff
+@@ -20,20 +20,23 @@ where
+     static SLOTS: std::sync::OnceLock<std::sync::Arc<tokio::sync::Semaphore>> =
+         std::sync::OnceLock::new();
+     const PERMIT_WAIT: std::time::Duration = std::time::Duration::from_secs(60);
+-    let permit = tokio::time::timeout(
+-        PERMIT_WAIT,
+-        SLOTS
+-            .get_or_init(|| std::sync::Arc::new(tokio::sync::Semaphore::new(4)))
+-            .clone()
+-            .acquire_owned(),
+-    )
+-    .await
+-    .map_err(|_| {
+-        anyhow::anyhow!(
+-            "blocking work is queued behind earlier jobs that have not finished within {}s",
+-            PERMIT_WAIT.as_secs()
+-        )
+-    })??;
++    let slots = SLOTS
++        .get_or_init(|| std::sync::Arc::new(tokio::sync::Semaphore::new(4)))
++        .clone();
++    if slots.available_permits() == 0 {
++        tracing::warn!(
++            target: "turn",
++            "owner_work is waiting: all 4 blocking slots are held by earlier jobs"
++        );
++    }
++    let permit = tokio::time::timeout(PERMIT_WAIT, slots.acquire_owned())
++        .await
++        .map_err(|_| {
++            anyhow::anyhow!(
++                "blocking work is queued behind earlier jobs that have not finished within {}s",
++                PERMIT_WAIT.as_secs()
++            )
++        })??;
+     tokio::task::spawn_blocking(move || {
+         #[cfg(any(test, feature = "test-support"))]
+         let _membership = crate::test_support::join_env_scope(env_ticket);
+```
+
+**File**: `crates/tui/CHANGELOG.md` (modified, +6/-0)
+```diff
+@@ -368,6 +368,12 @@ until the matching tag, packages, checksums, and release assets exist.
+ 
+ ### Fixed
+ 
++- **Anthropic and Messages-compatible routes accept any tool name.** Tool names that Anthropic's pattern rejects, such as `web.run` from a loaded tool group, are encoded on the wire and decoded in replies, as the chat and responses routes already did. Before, one such name made every request fail with "tools.N.custom.name: String should match pattern", which stopped sub-agents that had loaded it.
++- **A large sub-agent fan-out no longer exhausts the usage journal.** The per-session limit of live usage receipts rises from 64 to 256, above the workflow ceiling of 128, so a full fan-out keeps its cost receipts instead of running with cost unknown.
++- **A turn that stalls before it starts is now bounded.** The stall watchdog covers the setup before the first model request, so a wedged start is logged, cancelled after 180 seconds with a stated reason, and leaves a stall record instead of waiting silently. A warning names the case where all four blocking-work slots are held. Refs #6184.
++- **One unreadable saved session no longer empties the recent-sessions list.** The launch card and ACP `session/list` show the readable sessions and log the failure. Refs #7095.
++- **Windows uninstall removes the receipt and update leftovers.** The installer's uninstaller also deletes `.codewhale-install.sha256` and `codewhale.old-*`/`codew.old-*` left by a self-update, so `bin` can be removed. Refs #7091.
++- **Windows `/undo` matches recorded file paths regardless of case.** A write recorded under a different drive-letter or directory case, or a `\\?\` prefix, is no longer dropped from the restore plan. Refs #6970.
+ - **Windows: Fleet and metrics read live files again.** Replaying a Fleet ledger and reading audit or receipt records no longer fail with a sharing violation while their writer is still open; the same regular-file, link and identity checks apply. Plugin enablement now says which snapshot check refused (stage root, content identity or final check) instead of one generic message. Generated protocol and SDK exports keep LF line endings in Windows checkouts.
+ - **A held coordination lock no longer makes a new session read-only.** When another session owns the delegated-agent store, the new session starts on private state and says so, instead of refusing every sub-agent with “Failed to clean up sub-agents”.
+ - **A dev server can outlive the turn in an interactive session.** `persist:true` now works in the TUI and desktop when the thread has Full Access; restricted postures and Fleet/sub-agents still refuse it.
 ```
 
 ---
 
-### Incident Patch 3: `f11f7c42` (2026-11-05)
-**Commit Message**: test(engine): fix the 201-round backstop, LRU and RLM batch-pin fixtures
+### Incident Patch 2: `5bc1dff7` (2026-11-08)
+**Commit Message**: fix(cost): late background usage also drops settled "outcome unknown" labels
 
-productive_tool_results_do_not_hit_no_user_input_backstop, enforce_lru_capacity_does_not_loop_when_all_threads_are_active (its fixed child id was already terminal in the shared temp-dir sub-agent store from an earlier run; it now uses a unique child name) and rlm::bridge llm_batch_dispatch_pins_configured_child_model are repaired as stale fixtures; no product code, caps or accounting semantics changed.
+Refs CW-7882 (item 1). The previous commit made the cost labels follow
+the unresolved sources when a usage record is projected, but late
+background usage takes another path: SessionCostSnapshot's
+absorb_late_background_cost and the TUI's absorb_pending_background_cost
+reconcile resolved sources out of missing_usage_sources and add the batch's
+own reasons, without pruning. When a late receipt settled the last source
+behind "request outcome unknown" (or "provider omitted usage"), the label
+stayed while another turn was unpriced for a different reason.
 
-Verified (local, source only): full workspace nextest run after these edits: 19068 run, 19063 passed, 5 failed (67 -> 37 -> 11 -> 8 -> 5 across the series). Still failing and unresolved, stated plainly: child_host child_cancelled_dispatched_open_keeps_unknown_origin (now 2 vs 1 unpriced turns after the fixture fix) and child_step_timeout (usage receipt settle times out), the auto_review guardian missing-coverage receipt check (2 vs 1), event_capacity_cancelled_repl_child (provider source admission fails with the writer's attempted fixture, reverted), and session_manager late_usage_reads_do_not_create_accounting_storage (product decision: reads now create the sidecar directory since 20f8244aafd). The partial ed
+The prune now lives in one helper,
+cost_status::prune_settled_missing_reasons, called from all three places:
+the record projection (replacing its inline block), the engine's late
+absorb and the TUI's late absorb. The rule is unchanged: each label stays
+only while an unresolved, non-running source carries it or the source map
+has overflowed, and "request in progress" only while an in-flight source
+is still unresolved.
 
-**File**: `crates/engine/src/core/engine/tests/test_cases_07.rs` (modified, +10/-6)
+Not covered: a turn audit can carry a reason label of its own, but no
+production audit uses these two reasons (only missing-source records do),
+
+**File**: `crates/engine/src/cost_status.rs` (modified, +34/-0)
 ```diff
-@@ -1525,19 +1525,23 @@ async fn productive_tool_results_do_not_hit_no_user_input_backstop() {
-     let usage_owner = format!("productive-backstop:{}", uuid::Uuid::new_v4());
-     crate::cost_status::register_runtime_usage_sink(&usage_owner, std::sync::Arc::new(|_| true));
-     let mut engine_config = deterministic_engine_config(workspace.path());
--    engine_config.compaction.runtime_cost_owner = Some(usage_owner);
-+    engine_config.compaction.runtime_cost_owner = Some(usage_owner.clone());
-     let (engine, handle) = Engine::new_with_model_client(
-         engine_config,
-         &Config::default(),
-         client,
-     );
-     let task = tokio::spawn(engine.run());
-+    let mut op = external_user_message_op(
-+        "Read every distinct fixture, then report completion.",
-+        AppMode::Agent,
-+        &Config::default(),
-+    );
-+    if let Op::SendMessage(spec) = &mut op {
-+        spec.compaction.runtime_cost_owner = Some(usage_owner);
+@@ -3883,6 +3883,40 @@ pub fn reconcile_missing_usage_sources(
+     }
+ }
+ 
++pub fn prune_settled_missing_reasons(
++    missing: &BTreeMap<String, MissingUsageCoverage>,
++    overflowed: bool,
++    in_flight: &mut BTreeSet<String>,
++    unpriced: u32,
++    cny_unpriced: u32,
++    reasons: &mut BTreeSet<String>,
++    cny_reasons: &mut BTreeSet<String>,
++) {
++    in_flight.retain(|source| missing.contains_key(source));
++    for reason in [
++        RuntimeUsageMissingReason::RequestOutcomeUnknown,
++        RuntimeUsageMissingReason::SuccessWithoutUsage,
++    ] {
++        let unresolved = overflowed
++            || missing
++                .iter()
++                .any(|(source, coverage)| coverage.reason == reason && !in_flight.contains(source));
++        if unpriced == 0 || !unresolved {
++            reasons.remove(reason.label());
++        }
++        if cny_unpriced == 0 || !unresolved {
++            cny_reasons.remove(reason.label());
++        }
 +    }
-     handle
--        .send(external_user_message_op(
--            "Read every distinct fixture, then report completion.",
--            AppMode::Agent,
--            &Config::default(),
--        ))
-+        .send(op)
-         .await
-         .expect("send productive tool trajectory");
- 
++    let in_progress = crate::pricing::UnpricedReason::RequestInProgress.label();
++    if unpriced == 0 || in_flight.is_empty() {
++        reasons.remove(in_progress);
++    }
++    if cny_unpriced == 0 || in_flight.is_empty() {
++        cny_reasons.remove(in_progress);
++    }
++}
++
+ /// Apply bounded unresolved metadata to an existing cost projection. The
+ /// returned batch omits exact identities whose missing slots overflowed; a
+ /// real receipt for such an id can still settle once, but cannot erase the gap.
 ```
 
-**File**: `crates/engine/src/rlm/bridge.rs` (modified, +3/-2)
+**File**: `crates/engine/src/session_manager.rs` (modified, +18/-26)
 ```diff
-@@ -984,12 +984,13 @@ mod tests {
- 
-         match response {
-             RpcResponse::Batch(batch) => {
--                let texts: Vec<_> = batch
-+                let mut texts: Vec<_> = batch
-                     .results
-                     .iter()
-                     .map(|result| result.text.as_str())
-                     .collect();
--                assert_eq!(texts, ["one", "two", "three"]);
-+                texts.sort_unstable();
-+                assert_eq!(texts, ["one", "three", "two"]);
-                 assert!(batch.results.iter().all(|result| result.error.is_none()));
+@@ -1577,32 +1577,15 @@ impl SessionCostSnapshot {
+                 self.in_flight_usage_sources.remove(&key);
              }
-             other => panic!("expected batch response, got {other:?}"),
+         }
+-        let missing_sources = &self.missing_usage_sources;
+-        self.in_flight_usage_sources
+-            .retain(|source| missing_sources.contains_key(source));
+-        let in_flight = &self.in_flight_usage_sources;
+-        for reason in [
+-            crate::cost_status::RuntimeUsageMissingReason::RequestOutcomeUnknown,
+-            crate::cost_status::RuntimeUsageMissingReason::SuccessWithoutUsage,
+-        ] {
+-            let unresolved = self.missing_usage_overflowed
+-                || missing_sources.iter().any(|(source, missing)| {
+-                    missing.reason == reason && !in_flight.contains(source)
+-                });
+-            if self.unpriced_turns == 0 || !unresolved {
+-                self.unpriced_reasons.remove(reason.label());
+-            }
+-            if self.cny_unpriced_turns == 0 || !unresolved {
+-                self.cny_unpriced_reasons.remove(reason.label());
+-            }
+-        }
+-        let in_progress = crate::pricing::UnpricedReason::RequestInProgress.label();
+-        if self.unpriced_turns == 0 || in_flight.is_empty() {
+-            self.unpriced_reasons.remove(in_progress);
+-        }
+-        if self.cny_unpriced_turns == 0 || in_flight.is_empty() {
+-            self.cny_unpriced_reasons.remove(in_progress);
+-        }
++        crate::cost_status::prune_settled_missing_reasons(
++            &self.missing_usage_sources,
++            self.missing_usage_overflowed,
++            &mut self.in_flight_usage_sources,
++            self.unpriced_turns,
++            self.cny_unpriced_turns,
++            &mut self.unpriced_reasons,
++            &mut self.cny_unpriced_reasons,
++        );
+         self.usage_source_fingerprints.insert(key.clone());
+         self.accounted_usage_sources.insert(key, next);
+         let total = self.total_estimate();
+@@ -1636,6 +1619,15 @@ impl SessionCostSnapshot {
+             .extend(pool.unpriced_reasons.iter().map(ToString::to_string));
+         self.cny_unpriced_reasons
+             .extend(pool.cny_unpriced_reasons.iter().map(ToString::to_string));
++        crate::cost_status::prune_settled_missing_reasons(
++            &self.missing_usage_sources,
++            self.missing_usage_overflowed,
++            &mut self.in_flight_usage_sources,
++            self.unpriced_turns,
++            self.cny_unpriced_turns,
++            &mut self.unpriced_reasons,
++            &mut self.cny_unpriced_reasons,
++        );
+         self.unpriced_classes
+             .extend(pool.unpriced_classes.iter().map(ToString::to_string));
+         self.pricing_provenances
 ```
 
-**File**: `crates/engine/src/runtime_threads/tests.rs` (modified, +1/-1)
+**File**: `crates/tui/src/tui/app.rs` (modified, +9/-0)
 ```diff
-@@ -8433,7 +8433,7 @@ fn enforce_lru_capacity_does_not_loop_when_all_threads_are_active() {
-             .with_store_transaction(|workers| {
-                 workers
-                     .insert_test_running_direct_child_in_origin(
--                        "lru_child",
-+                        &format!("lru_child_{}", Uuid::new_v4().simple()),
-                         &std::env::temp_dir(),
-                         &std::env::temp_dir(),
-                         "thr_a",
+@@ -4698,6 +4698,15 @@ impl App {
+                 }
+             }
+         }
++        codewhale_engine::cost_status::prune_settled_missing_reasons(
++            &self.session.missing_usage_sources,
++            self.session.missing_usage_overflowed,
++            &mut self.session.in_flight_usage_sources,
++            self.session.cost_unpriced_turns,
++            self.session.cost_cny_unpriced_turns,
++            &mut self.session.cost_unpriced_reasons,
++            &mut self.session.cost_cny_unpriced_reasons,
++        );
+         runtime_usage_arrived || source_arrived
+     }
+ 
+```
+
+---
+
+### Incident Patch 3: `faa4244b` (2026-11-08)
+**Commit Message**: fix(windows): read live Fleet and diagnostic files with shared access; name the plugin snapshot refusal
+
+Hosted Windows run 42381817495 (549ff01) failed 221 cases. Fleet ledger replay
+and state rebuild, and the CLI metrics diagnostic reader, opened files through
+the protected reader that denies concurrent writers, so a live writer caused
+OS error 32. They now use WorkspaceFile::open_file_shared, which keeps the
+regular-file, link and identity checks. Plugin enablement now reports which
+snapshot check refused (stage root, content identity, final root check) so the
+118 snapshot rejections can be diagnosed from the next hosted run; the refusal
+itself is unchanged. .gitattributes keeps LF on the generated protocol schema
+and SDK exports.
+
+Verified on macOS only: plugins lib 201 passed/0 failed; engine fleet:: 435
+passed/0 failed; cli metrics:: 42 passed/0 failed; cargo fmt clean. The Windows
+effect is unproven until hosted CI runs. The 2 MiB stack-overflow case is not
+addressed.
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+**File**: `.gitattributes` (modified, +4/-0)
+```diff
+@@ -80,3 +80,7 @@ scripts/release/*.sh text eol=lf
+ 
+ # Preserve the qualified upstream font license, including its trailing space.
+ web/public/brand/fonts/OFL.txt text eol=lf whitespace=-blank-at-eol
++
++# Generated protocol and SDK exports are compared byte for byte; keep LF on Windows checkouts.
++crates/app-server-protocol/schema/** text eol=lf
++npm/runtime-sdk/generated/** text eol=lf
+```
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -361,6 +361,7 @@ until the matching tag, packages, checksums, and release assets exist.
+ 
+ ### Fixed
+ 
++- **Windows: Fleet and metrics read live files again.** Replaying a Fleet ledger and reading audit or receipt records no longer fail with a sharing violation while their writer is still open; the same regular-file, link and identity checks apply. Plugin enablement now says which snapshot check refused (stage root, content identity or final check) instead of one generic message. Generated protocol and SDK exports keep LF line endings in Windows checkouts.
+ - **A held coordination lock no longer makes a new session read-only.** When another session owns the delegated-agent store, the new session starts on private state and says so, instead of refusing every sub-agent with “Failed to clean up sub-agents”.
+ - **A dev server can outlive the turn in an interactive session.** `persist:true` now works in the TUI and desktop when the thread has Full Access; restricted postures and Fleet/sub-agents still refuse it.
+ - **`codewhale exec --add-dir <path>`** (repeatable) and `addDirs` on `POST /v1/threads` let the file tools read and write a sibling directory, a second checkout or a shared scratch root without turning on Full Access.
+```
+
+**File**: `crates/cli/src/metrics.rs` (modified, +1/-1)
+```diff
+@@ -519,7 +519,7 @@ fn open_diagnostic_file(path: &Path) -> io::Result<std::fs::File> {
+         )
+     })?;
+     codewhale_util::files::WorkspaceFile::open_resolved_root(parent, Path::new(name), false)?
+-        .open_file()
++        .open_file_shared()
+ }
+ 
+ fn read_diagnostic_text(path: &Path) -> io::Result<String> {
+```
+
+**File**: `crates/engine/src/fleet/ledger.rs` (modified, +2/-2)
+```diff
+@@ -1681,7 +1681,7 @@ impl FleetLedger {
+         let mut events = Vec::new();
+         let mut replay_epoch = "legacy".to_string();
+         let mut history_compacted = false;
+-        let file = match self.ledger_file.open_file() {
++        let file = match self.ledger_file.open_file_shared() {
+             Ok(file) => file,
+             Err(error) if error.kind() == std::io::ErrorKind::NotFound => {
+                 return Ok((false, events, history_compacted));
+@@ -1737,7 +1737,7 @@ impl FleetLedger {
+ 
+     fn rebuild_state_unlocked(&self) -> Result<FleetLedgerState> {
+         let mut state = FleetLedgerState::default();
+-        let file = match self.ledger_file.open_file() {
++        let file = match self.ledger_file.open_file_shared() {
+             Ok(file) => file,
+             Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(state),
+             Err(error) => return Err(error).context("Opening Fleet ledger for state rebuild"),
+```
+
+**File**: `crates/plugins/src/registry.rs` (modified, +26/-9)
+```diff
+@@ -803,11 +803,15 @@ impl PluginRegistry {
+                 plugin.trust_status.as_str()
+             ));
+         }
+-        if plugin.staged_root.as_deref().is_none_or(|root| {
+-            !staged_bundle_matches(root, &plugin.content_hash, &plugin.capability_hash)
+-        }) {
++        let snapshot_rejection = match plugin.staged_root.as_deref() {
++            None => Some("no staged snapshot".to_string()),
++            Some(root) => {
++                staged_bundle_rejection(root, &plugin.content_hash, &plugin.capability_hash)
++            }
++        };
++        if let Some(reason) = snapshot_rejection {
+             return Err(format!(
+-                "Plugin bundle `{}` has no verified Codewhale runtime snapshot; review and trust it again before enablement",
++                "Plugin bundle `{}` has no verified Codewhale runtime snapshot ({reason}); review and trust it again before enablement",
+                 plugin.name()
+             ));
+         }
+@@ -1671,12 +1675,25 @@ fn runtime_stage_path(state_path: &Path, id: &PluginId, content_hash: &str) -> P
+         .join(content_hash)
+ }
+ 
+-fn staged_bundle_matches(root: &Path, content_hash: &str, capability_hash: &str) -> bool {
+-    let Ok(finalized) = verify_finalized_stage_root(root, None) else {
+-        return false;
++fn staged_bundle_rejection(
++    root: &Path,
++    content_hash: &str,
++    capability_hash: &str,
++) -> Option<String> {
++    let finalized = match verify_finalized_stage_root(root, None) {
++        Ok(finalized) => finalized,
++        Err(reason) => return Some(format!("stage root: {reason}")),
+     };
+-    staged_bundle_content_matches(root, content_hash, capability_hash)
+-        && verify_finalized_stage_root(root, Some(&finalized)).is_ok()
++    if !staged_bundle_content_matches(root, content_hash, capability_hash) {
++        return Some("content or capability identity differs".to_string());
++    }
++    verify_finalized_stage_root(root, Some(&finalized))
++        .err()
++        .map(|reason| format!("final root check: {reason}"))
++}
++
++fn staged_bundle_matches(root: &Path, content_hash: &str, capability_hash: &str) -> bool {
++    staged_bundle_rejection(root, content_hash, capability_hash).is_none()
+ }
+ 
+ pub(super) fn verify_finalized_stage_root(
+```
+
+**File**: `crates/tui/CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -361,6 +361,7 @@ until the matching tag, packages, checksums, and release assets exist.
+ 
+ ### Fixed
+ 
++- **Windows: Fleet and metrics read live files again.** Replaying a Fleet ledger and reading audit or receipt records no longer fail with a sharing violation while their writer is still open; the same regular-file, link and identity checks apply. Plugin enablement now says which snapshot check refused (stage root, content identity or final check) instead of one generic message. Generated protocol and SDK exports keep LF line endings in Windows checkouts.
+ - **A held coordination lock no longer makes a new session read-only.** When another session owns the delegated-agent store, the new session starts on private state and says so, instead of refusing every sub-agent with “Failed to clean up sub-agents”.
+ - **A dev server can outlive the turn in an interactive session.** `persist:true` now works in the TUI and desktop when the thread has Full Access; restricted postures and Fleet/sub-agents still refuse it.
+ - **`codewhale exec --add-dir <path>`** (repeatable) and `addDirs` on `POST /v1/threads` let the file tools read and write a sibling directory, a second checkout or a shared scratch root without turning on Full Access.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7219** (closed): fix(workspace): exempt the home state directory from link confinement (@SparkofSpike)
-- **PR #7204** (closed): fix(ci): qualify session ownership and terminal regressions after #7138 (@zhuowp)
-- **PR #7202** (2026-11-03): fix(runtime): remove the isolated test state root at process exit (@Lstarsky0)
-- **PR #7201** (2026-11-03): fix(tui): keep escaped characters and named delimiters in math (@Lstarsky0)
-- **PR #7200** (2026-11-03): fix(tui): resolve /save and /load paths against the workspace (@Lstarsky0)
-- **PR #7199** (2026-11-03): fix(engine): read text files that start with BM as text (@Lstarsky0)
+- **PR #7246** (2026-11-07): chore(deps): bump similar from 3.2.0 to 3.2.1 (@dependabot[bot])
+- **PR #7245** (2026-11-07): chore(deps): bump rusqlite from 0.40.2 to 0.41.1 (@dependabot[bot])
+- **PR #7244** (2026-11-07): chore(deps): bump rmcp from 3.7.0 to 3.8.0 (@dependabot[bot])
+- **PR #7243** (2026-11-07): chore(deps): bump unicode-normalization from 0.1.25 to 0.1.26 (@dependabot[bot])
+- **PR #7242** (2026-11-07): chore(deps): bump actions/setup-java from 4.7.1 to 6.1.0 (@dependabot[bot])
+- **PR #7241** (2026-11-07): chore(deps): bump webpki-roots from 1.0.10 to 1.0.11 (@dependabot[bot])
 
 ---
 
@@ -2332,57 +2451,32 @@ Verified (local, source only): full workspace nextest run after these edits: 190
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. app-server): neutralize repository-defined git filter drivers on status reads (P
+## X. engine): Anthropic tool-name encoding, usage-journal headroom, pre-turn watchdog
 
 **RULE**:
-When implementing operations in `crates/app-server/src/runtime_api/git.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `885ef69f`: app-server): neutralize repository-defined git filter drivers on status reads (P12 slice 2). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0d1ffc1c`: engine): Anthropic tool-name encoding, usage-journal headroom, pre-turn watchdog, lenient session list. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/app-server/src/runtime_api/git.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-fn status_sync(workspace: &FsPath, args: &[&str]) -> Result<String, ApiError> {
-    let output = Git::status_command(workspace)
-        .map_err(|error| ApiError::internal(format!("git is unavailable: {error}")))?
-        .args(args)
-        .output()
-        .map_err(|error| ApiError::internal(format!("failed to run git: {error}")))?;
-    if !output.status.success() {
-        return Err(ApiError::internal(format!(
-            "git {} failed: {}",
-            args.first().copied().unwrap_or(""),
-            String::from_utf8_lossy(&output.stderr).trim()
-        )));
-    }
-    Ok(String::from_utf8_lossy(&output.stdout).into_owned())
-}
-
-    /// True when `git status` could not be read: the counts are unknown.
-    status_unavailable: bool,
-        status_unavailable: status.status_unavailable,
-    let mut rows = match status_sync(workspace, &["status", "--porcelain=v1", "-z"]) {
-            let porcelain = status_sync(
-                match status_sync(
-    use codewhale_engine::test_support::{EnvVarGuard, lock_test_env};
-        let _env_lock = lock_test_env();
-        let global = tempfile::tempdir().unwrap();
-        let global_config = global.path().join("gitconfig");
-        git(
+- **Anthropic and Messages-compatible routes accept any tool name.** Tool names that Anthropic's pattern rejects, such as `web.run` from a loaded tool group, are encoded on the wire and decoded in replies, as the chat and responses routes already did. Before, one such name made every request fail with "tools.N.custom.name: String should match pattern", which stopped sub-agents that had loaded it.
+- **A large sub-agent fan-out no longer exhausts the usage journal.** The per-session limit of live usage receipts rises from 64 to 256, above the workflow ceiling of 128, so a full fan-out keeps its cost receipts instead of running with cost unknown.
+- **A turn that stalls before it starts is now bounded.** The stall watchdog covers the setup before the first model request, so a wedged start is logged, cancelled after 180 seconds with a stated reason, and leaves a stall record instead of waiting silently. A warning names the case where all four blocking-work slots are held. Refs #6184.
+- **One unreadable saved session no longer empties the recent-sessions list.** The launch card and ACP `session/list` show the readable sessions and log the failure. Refs #7095.
+- **Windows uninstall remove
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    let mut rows = match run_git_sync(workspace, &["status", "--porcelain=v1", "-z"]) {
-            let porcelain = run_git_sync(
-                match run_git_sync(
-        git(ws, &["config", "filter.up.clean", "tr a-z A-Z"]);
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `885ef69f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0d1ffc1c` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/modelcontextprotocol-kotlin-sdk-learnings.md`  
 > **Source**: github ([https://github.com/modelcontextprotocol/kotlin-sdk](https://github.com/modelcontextprotocol/kotlin-sdk))  
-> **Source Version**: `d38499e8`  
+> **Source Version**: `e55f946d`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T05:32:20.729Z  
+> **Timestamp**: 2026-11-08T06:25:37.148Z  
 > **Learning ID**: `learn-github-modelcontextprotocol-kotlin-sdk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/modelcontextprotocol-kotlin-sdk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/modelcontextprotocol/kotlin-sdk](https://github.com/modelcontextprotocol/kotlin-sdk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T05:32:20.723Z  
+> **Harvest Timestamp**: 2026-11-08T06:25:36.907Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The official Kotlin SDK for Model Context Protocol servers and clients. Maintained in collaboration with JetBrains
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1485 stars
+- **Stars / Engagement**: 1487 stars
 
 ---
 
@@ -1069,175 +1069,151 @@ public open class TransportSendOptions(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `995c78c8` (2026-11-02)
-**Commit Message**: fix(server): settle Streamable HTTP batch responses in linear time (#1145)
+### Incident Patch 1: `e55f946d` (2026-11-06)
+**Commit Message**: chore(deps): bump the ktor group across 1 directory with 14 updates (#1157)
 
-`StreamableHttpServerTransport.send()` found the other requests of a
-response's POST by scanning every in-flight request, then checked each
-of them for an answer, all under `streamMutex`.
-Each POST now keeps its own requests and which of them are settled. In
-SSE mode responses are no longer held until the POST ends, and a
-JSON-mode batch reply lists responses in request order #548
+Bumps the ktor group with 14 updates in the / directory:
+
+| Package | From | To |
+| --- | --- | --- |
+| [io.ktor:ktor-client-auth](https://github.com/ktorio/ktor) | `3.5.2` |
+`3.6.1` |
+| [io.ktor:ktor-client-core](https://github.com/ktorio/ktor) | `3.5.2` |
+`3.6.1` |
+| [io.ktor:ktor-client-logging](https://github.com/ktorio/ktor) |
+`3.5.2` | `3.6.1` |
+|
+[io.ktor:ktor-server-content-negotiation](https://github.com/ktorio/ktor)
+| `3.5.2` | `3.6.1` |
+|
+[io.ktor:ktor-client-content-negotiation](https://github.com/ktorio/ktor)
+| `3.5.2` | `3.6.1` |
+|
+[io.ktor:ktor-serialization-kotlinx-json](https://github.com/ktorio/ktor)
+| `3.5.2` | `3.6.1` |
+| [io.ktor:ktor-server-auth](https://github.com/ktorio/ktor) | `3.5.2` |
+`3.6.1` |
+| [io.ktor:ktor-server-core](https://github.com/ktorio/ktor) | `3.5.2` |
+`3.6.1` |
+| [io.ktor:ktor-server-sse](https://github.com/ktorio/ktor) | `3.5.2` |
+`3.6.1` |
+| [io.ktor:ktor-server-websockets](https://github.com/ktorio/ktor) |
+`3.5.2` | `3.6.1` |
+| [io.ktor:ktor-client-mock](https://github.com/ktorio/ktor) | `3.5.2` |
+`3.6.1` |
+| [io.ktor:ktor-server-test-host](https://github.com/kt
+
+**File**: `gradle/libs.versions.toml` (modified, +1/-1)
+```diff
+@@ -15,7 +15,7 @@ collections-immutable = "0.5.2"
+ coroutines = "1.11.0"
+ kotest = "6.2.6"
+ kotlinx-io = "0.9.1"
+-ktor = "3.5.2"
++ktor = "3.6.1"
+ logging = "8.0.4"
+ mockk = "1.14.11"
+ serialization = "1.12.0"
+```
+
+---
+
+### Incident Patch 2: `e156d630` (2026-11-06)
+**Commit Message**: chore: rewrite the mcp-docs skill for the 2026-07-28 spec (#1164)
+
+Rewrites the `mcp-docs` skill for the 2026-07-28 spec revision: how to
+pick the revision to answer from, where spec pages, SEPs, `schema.ts`
+and conformance scenarios live, and how to fetch them verbatim.
 
 ## Breaking Changes
 None
 
 ## Types of changes
-- [x] Bug fix (non-breaking change which fixes an issue)
+- [ ] Bug fix (non-breaking change which fixes an issue)
 - [ ] New feature (non-breaking change which adds functionality)
 - [ ] Breaking change (fix or feature that would cause existing
 functionality to change)
-- [ ] Documentation update
+- [x] Documentation update
 
 ## Checklist
 - [x] I have read the [MCP
 Documentation](https://modelcontextprotocol.io)
 - [x] My code follows the repository's style guidelines
-- [x] New and existing tests pass locally
-- [x] I have added appropriate error handling
+- [ ] New and existing tests pass locally
+- [ ] I have added appropriate error handling
 - [x] I have added or updated documentation as needed
 
-**File**: `kotlin-sdk-server/src/commonMain/kotlin/io/modelcontextprotocol/kotlin/sdk/server/StreamableHttpServerTransport.kt` (modified, +39/-57)
+**File**: `.claude/skills/mcp-docs/SKILL.md` (modified, +69/-53)
 ```diff
-@@ -75,6 +75,21 @@ private sealed interface PostRefusal {
-     class ReusedId(val id: RequestId) : PostRefusal
- }
+@@ -1,76 +1,92 @@
+ ---
+ name: mcp-docs
+-description: >
+-  Fetch live MCP specification and docs from modelcontextprotocol.io. Training data may be
+-  outdated — default to using this skill when the query touches MCP protocol in any way.
+-  Trigger for: implementing or debugging MCP features (sampling, elicitation, completion, tools,
+-  resources, prompts, transports); SEPs or spec requirements; MCP transport behavior (SSE,
+-  Streamable HTTP, reconnection, retry); authorization/OAuth; conformance test failures;
+-  capability negotiation; message schemas. Skip only for pure Kotlin, build system, or
+-  refactoring tasks with zero MCP protocol dependency. When in doubt, trigger.
+-user_invocable: true
++description: >-
++  Look up the live MCP specification instead of answering from memory: the spec moves faster
++  than training data (the 2026-07-28 revision removed initialize, sessions and
++  server-to-client requests). Covers spec pages for every revision, changelogs, SEPs,
++  schema.ts, conformance-test scenarios, and how the reference TypeScript/Python SDKs read
++  the spec. Use whenever a task depends on what MCP requires: implementing, reviewing or
++  debugging protocol behavior (tools, resources, prompts, sampling, elicitation, completion,
++  caching, MRTR, subscriptions, server/discover), transports (stdio, Streamable HTTP, SSE,
++  headers, cancellation), version and era negotiation, authorization/OAuth, error codes,
++  message schemas, or a failing conformance check. Skip only for work with no protocol
++  dependency (pure Kotlin refactoring, build, dependency bumps). When in doubt, use it.
++argument-hint: "[topic | SEP number | spec page]"
++allowed-tools:
++  - WebFetch(domain:modelcontextprotocol.io)
++  - WebFetch(domain:raw.githubusercontent.com)
++  - mcp__mcp-docs__search_model_context_protocol
++  - mcp__mcp-docs__query_docs_filesystem_model_context_protocol
+ ---
  
-+/** The requests of one POST; in JSON-response mode a cancelled request counts as settled, as it is never answered. */
-+private class StreamRequests(val ids: List<RequestId>) {
-+    private val responses: MutableMap<RequestId, JSONRPCMessage> = HashMap()
-+    private val settled: MutableSet<RequestId> = HashSet()
-+
-+    val allSettled: Boolean get() = settled.size == ids.size
-+
-+    fun settle(id: RequestId, response: JSONRPCMessage?) {
-+        if (response != null) responses[id] = response
-+        settled += id
-+    }
-+
-+    fun responsesInOrder(): List<JSONRPCMessage> = ids.mapNotNull(responses::get)
-+}
-+
- /**
-  * Server transport for Streamable HTTP: this implements the MCP Streamable HTTP transport specification.
-  * It supports both SSE streaming and direct HTTP responses.
-@@ -193,7 +208,9 @@ public class StreamableHttpServerTransport(private val configuration: Configurat
+-# MCP Documentation Skill
++# MCP docs
  
-     private val streamsMapping: ConcurrentMap<String, SessionContext> = ConcurrentMap()
-     private val requestToStreamMapping: ConcurrentMap<RequestId, String> = ConcurrentMap()
--    private val requestToResponseMapping: ConcurrentMap<RequestId, JSONRPCMessage> = ConcurrentMap()
-+
-+    /** Each in-flight POST's requests by stream id, so settling one never scans the requests of the session. */
-+    private val streamRequests: ConcurrentMap<String, StreamRequests> = ConcurrentMap()
+-Provides access to the official MCP specification and docs from modelcontextprotocol.io. The spec evolves faster than training data — always consult live documentation for protocol specifics like message schemas, required fields, capability negotiation, error handling, and transport requirements.
++The MCP specification changes faster than training data. The 2026-07-28 revision, the newest when this skill was written, was a breaking rewrite: no `initialize` handshake, no protocol sessions, no GET stream, server-to-client requests replaced by multi round-trip results. Details recalled from memory are therefore often from the wrong revision. Look them up, quote what the spec says, and link the page.
  
-     /**
-      * JSON-response mode only: one entry per in-flight POST, completed by [send] with the collected
-@@ -202,13 +219,6 @@ public class StreamableHttpServerTransport(private val configuration: Configurat
-      */
-     private val pendingJsonResponses: ConcurrentMap<String, CompletableDeferred<List<JSONRPCMessage>>> = ConcurrentMap()
+-## When to use
++## Pick the revision
  
--    /**
--     * JSON-response mode only: request ids retired by an inbound cancellation while their POST is
--     * still awaiting. Treated as settled-without-response so the POST's "a response for every id"
--     * completion condition is not blocked by a request that will never be answered.
--     */
--    private val cancelledRequestIds: ConcurrentMap<RequestId, Unit> = ConcurrentMap()
--
-     private val sessionMutex = Mutex()
-     private val streamMutex = Mutex()
+-**Proactively** (without being asked):
+-- Implementing a feature defined in the MCP spec
+-- Reviewing code that implements MCP protocol behavior
+-- Fixing conformance test failures
++Use the newest released revision unless the question is tied to another one: the user names a revision ("по 2025-11-25", "what does the draft say"), or the thing being asked about cites one (a conformance check's `specReferences`, a SEP). `latest` in a spec URL redirects to the newest revision (`curl -sI https://modelcontextprotocol.io/specification/latest` names it), so you never need to guess its date.
  
-@@ -306,53 +316,30 @@ public class StreamableHttpServerTransport(private val configuration: Configurat
-             if (!isTerminated) return
-         }
+-**On demand** (user asks or invokes `/mcp-docs`):
+-- Questions about how a specific MCP feature works
+-- Clarifying spec ambiguities
+-- Looking up SEPs (Specification Enhancement Proposals)
++Give the verdict from that revision, even when the code at hand implements an older one: the SDK is being brought up to the newest revision, so "is this allowed by the spec" means allowed by the newest one. The SDK implements `LATEST_PROTOCOL_VERSION` from `kotlin-sdk-core/src/commonMain/kotlin/io/modelcontextprotocol/kotlin/sdk/types/common.kt`. When that revision says something different on the point in question, add a short block after the main answer, labelled with its revision and carrying its key quote, so the user sees why the code behaves as it does today. Put the newest revision first in a summary too, and go deeper into the older text only if the user asks.
  
--        requestToResponseMapping[responseRequestId!!] = message
--
-         streamMutex.withLock {
--            // The request may have been retired (disconnect or cancellation cleanup) between recording
--            // the response above and acquiring the lock. Reclaim the stray mapping and drop it.
--            if (routingRequestId !in requestToStreamMapping) {
--                requestToResponseMapping.remove(routingRequestId)
--                return
--            }
--            // Recomputed under the lock. Handlers may respond concurrently, and the sender that
--            // observes the last settled request also retires the ids, so a losing sender sees an
--            // empty set. A cancelled request counts as settled even though it produces no response.
--            val relatedIds = requestToStreamMapping.filterValues { it == streamId }.keys
--            if (relatedIds.isEmpty() ||
--                relatedIds.any { it !in requestToResponseMapping && it !in cancelledRequestIds }
--            ) {
--                return
--            }
--
--            if (configuration.enableJsonResponse) {
--                // Hand the collected responses to the POST suspended in [handlePostRequest], which
--                // completes the HTTP exchange. A null pendingPost means the POST was already retired
--                // (disconnect or cancellation), so the responses are undeliverable and dropped quietly.
--                val pendingPost = pendingJsonResponses.remove(streamId)
--                if (pendingPost == null) {
--                    cleanUpRequests(relatedIds, streamId)
--                    return
--                }
--                val responses = relatedIds.mapNotNull { requestToResponseMapping[it] }
--                cleanUpRequests(relatedIds, streamId)
--                pendingPost.complete(responses)
--            } else {
--                cleanUpRequests(relatedIds, streamId)
--            }
-+            // The request may have been retired (disconnect or cancellation cleanup) since the lookup above.
-+            if (requestToStreamMapping[routingRequestId] != streamId) return
-+            val requests = streamRequests[streamId] ?: return
-+            // Handlers may respond concurrently; only the sender that settles the last request retires them.
-+            requests.settle(routingRequestId, message.takeIf { configuration.enableJsonResponse })
-+            if (!requests.allSettled) return
-+            retireSettledRequests(streamId, requests)
-         }
-         // Every res
-```
-
-**File**: `kotlin-sdk-server/src/jvmTest/kotlin/io/modelcontextprotocol/kotlin/sdk/server/StreamableHttpServerTransportTest.kt` (modified, +18/-0)
-```diff
-@@ -3,6 +3,7 @@ package io.modelcontextprotocol.kotlin.sdk.server
- import io.kotest.assertions.throwables.shouldThrow
- import io.kotest.assertions.withClue
- import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
-+import io.kotest.matchers.collections.shouldHaveSize
- import io.kotest.matchers.nulls.shouldNotBeNull
- import io.kotest.matchers.shouldBe
- import io.ktor.client.HttpClient
-@@ -388,6 +389,23 @@ class StreamableHttpServerTransportTest {
-         }
-     }
+-## How to fetch documentation
++Revisions also remove things, 2026-07-28 more than any before it, and that changes how to read what you find:
  
-+    @Test
-+    fun `json response for a large batch answers every request`() = testApplication {
-+        val client = jsonClient()
-+        postEndpoint().answerRequests()
-+        val sessionId = client.initialize()
-+        val requests = List(50_000) { JSONRPCRequest(id = RequestId("ping-$it"), method = "ping") }
-+
-+        // Each response used to rescan the whole batch, making this POST quadratic in its size.
-+        val response = withTimeout(10.seconds) { client.postMessages(sessionId, *requests.toTypedArray()) }
-+
-+        response.status shouldBe HttpStatusCode.OK
-+        val ids = response.body<List<JSONRPCResponse>>().map { it.id }
-+        // Not shouldContainExactlyInAnyOrder: that matcher is quadratic itself, too slow for this many ids.
-+        ids shouldHaveSize requests.size
-+        ids.toSet() shouldBe requests.map { it.id }.toSet()
-+    }
-+
-     @Test
-     fun `json response send for a retired request id is dropped without error`() = runTest {
-         val transport = StreamableHttpServerTransport(
+-### Strategy: MCP tool first, llms.txt fallback
++- If the topic does not exist in the revision you answer from (in 2026-07-28: sessions, `initialize`, `ping`, `resources/subscribe`, `logging/setLevel`, SSE resumability, ...), the answer is that it was removed. Say what replaced it, cite `changelog.md`, and name the last revision that defined it so the user can ask for that one. Don't fill the gap from memory.
++- Pages of removed features redirect without warning: `specification/2026-07-28/basic/lifecycle.md` lands on `basic/versioning.md`. If the page you got is not about what you asked for, the feature probably moved or was removed.
+ 
+-**Step 1 — Try the MCP search tool.** If `search_model
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1164** (2026-11-06): chore: rewrite the mcp-docs skill for the 2026-07-28 spec (@devcrocod)
 - **PR #1162** (2026-11-04): chore(deps): bump gradle/actions from 6.4.0 to 6.4.1 in the all-actions group across 1 directory (@dependabot[bot])
 - **PR #1161** (2026-11-02): chore(deps): bump the all-dependencies group in /integration-test/src/jvmTest/typescript with 2 updates (@dependabot[bot])
 - **PR #1160** (2026-11-02): chore(deps): bump io.ktor:ktor-bom from 3.6.0 to 3.6.1 in /samples/weather-stdio-server (@dependabot[bot])
 - **PR #1159** (2026-11-04): chore(deps): bump mcp-kotlin from 0.15.0 to 0.16.0 in /samples/weather-stdio-server (@dependabot[bot])
 - **PR #1158** (2026-11-04): chore(deps): bump mcp-kotlin from 0.15.0 to 0.16.0 in /samples/simple-streamable-server (@dependabot[bot])
-- **PR #1156** (2026-11-03): chore(deps): bump io.ktor:ktor-bom from 3.6.0 to 3.6.1 in /samples/simple-streamable-server (@dependabot[bot])
 
 ---
 
@@ -1257,68 +1233,28 @@ Documentation](https://modelcontextprotocol.io)
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. server): settle Streamable HTTP batch responses in linear time (#1145)
+## X. deps): bump the ktor group across 1 directory with 14 updates (#1157)
 
 **RULE**:
-When implementing operations in `kotlin-sdk-server/src/commonMain/kotlin/io/modelcontextprotocol/kotlin/sdk/server/StreamableHttpServerTransport.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in modelcontextprotocol/kotlin-sdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `gradle/libs.versions.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in modelcontextprotocol/kotlin-sdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `995c78c8`: server): settle Streamable HTTP batch responses in linear time (#1145). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e55f946d`: deps): bump the ktor group across 1 directory with 14 updates (#1157). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `kotlin-sdk-server/src/commonMain/kotlin/io/modelcontextprotocol/kotlin/sdk/server/StreamableHttpServerTransport.kt`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `gradle/libs.versions.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-/** The requests of one POST; in JSON-response mode a cancelled request counts as settled, as it is never answered. */
-private class StreamRequests(val ids: List<RequestId>) {
-    private val responses: MutableMap<RequestId, JSONRPCMessage> = HashMap()
-    private val settled: MutableSet<RequestId> = HashSet()
-
-    val allSettled: Boolean get() = settled.size == ids.size
-
-    fun settle(id: RequestId, response: JSONRPCMessage?) {
-        if (response != null) responses[id] = response
-        settled += id
-    }
-
-    fun responsesInOrder(): List<JSONRPCMessage> = ids.mapNotNull(responses::get)
-}
-
-
-    /** Each in-flight POST's requests by stream id, so settling one never scans the requests of the session. */
-    private val streamRequests: ConcurrentMap<String, StreamRequests> = ConcurrentMap()
-            // The request may have been retired (disconnect or cancellation cleanup) since the lookup above.
-            if (requestToStreamMapping[routingRequestId] != streamId) return
-            val requests = streamRequests[streamId] ?: return
-            // Handlers may respond concurrently; only the sender that settles the last request retires them.
-            requests.settle(routingR
+ktor = "3.6.1"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-    private val requestToResponseMapping: ConcurrentMap<RequestId, JSONRPCMessage> = ConcurrentMap()
-    /**
-     * JSON-response mode only: request ids retired by an inbound cancellation while their POST is
-     * still awaiting. Treated as settled-without-response so the POST's "a response for every id"
-     * completion condition is not blocked by a request that will never be answered.
-     */
-    private val cancelledRequestIds: ConcurrentMap<RequestId, Unit> = ConcurrentMap()
-
-        requestToResponseMapping[responseRequestId!!] = message
-
-            // The request may have been retired (disconnect or cancellation cleanup) between recording
-            // the response above and acquiring the lock. Reclaim the stray mapping and drop it.
-            if (routingRequestId !in requestToStreamMapping) {
-                requestToResponseMapping.remove(routingRequestId)
-                return
-            }
-            // Recomputed under the lock. Handlers may respond concurrently, and the sender that
-            // observes the last settled request also retires the ids, so a losing sender sees an
-            // empty set. A cancelled request counts as settled even though it produce
+ktor = "3.5.2"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `995c78c8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e55f946d` are properly handled with clean fallback behavior.

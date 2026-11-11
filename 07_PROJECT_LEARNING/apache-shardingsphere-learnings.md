@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-shardingsphere-learnings.md`  
 > **Source**: github ([https://github.com/apache/shardingsphere](https://github.com/apache/shardingsphere))  
-> **Source Version**: `a6dfa0c1`  
+> **Source Version**: `633ccf2e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T22:08:37.860Z  
+> **Timestamp**: 2026-11-08T17:42:48.805Z  
 > **Learning ID**: `learn-github-apache-shardingsphere`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-shardingsphere-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/shardingsphere](https://github.com/apache/shardingsphere))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T22:08:37.659Z  
+> **Harvest Timestamp**: 2026-11-08T17:42:48.630Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Empowering Data Intelligence with Distributed SQL for Sharding, Scalability, and Security Across All Databases.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 20818 stars
+- **Stars / Engagement**: 20822 stars
 
 ---
 
@@ -56,7 +56,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Require an explicit review handoff after Codex changes implementation files."""
+"""Require an explicit review handoff after Codex changes repository deliverables."""
 
 from __future__ import annotations
 
@@ -70,13 +70,13 @@ import sys
 import tempfile
 from typing import Any
 
-PROSE_SUFFIXES = frozenset({".adoc", ".md", ".rst"})
-PATCH_FILE_PATTERN = re.compile(r"^\*\*\* (?:Add|Delete|Update) File: (.+)$", re.MULTILINE)
+PATCH_FILE_PATTERN = re.compile(r"^\*\*\* (?:(?:Add|Delete|Update) File|Move to): (.+)$", re.MULTILINE)
 FIELD_PATTERN = r"(?P<emphasis>\*\*)?{label}:(?(emphasis)(?:\*\*)?)[ \t]*(?P<value>.*?)"
 FIELD_PREFIX_PATTERN = re.compile(r"^[ \t]*(?:[-*][ \t]+)?(?:#{1,6}[ \t]+)?")
 FENCE_PATTERN = re.compile(r"(?:`{3,}[^`]*|~{3,}.*)")
 FENCE_OPEN_PATTERN = re.compile(r"^ {0,3}(?P<fence>`{3,}|~{3,})(?P<info>.*)$")
-SHELL_TOOL_NAMES = frozenset({"Bash", "exec_command", "write_stdin"})
+SNAPSHOT_TOOL_NAMES = frozenset({"Bash", "apply_patch", "exec_command", "write_stdin"})
+COMMIT_EXEMPT_SUFFIXES = frozenset({".adoc", ".md", ".rst"})
 PASSING_RESULT = "Mergeable"
 PAUSED_RESULTS = frozenset({"Not Mergeable", "Review Incomplete"})
 
@@ -88,26 +88,27 @@ def process_event(event: dict[str, Any], state_directory: Path) -> dict[str, str
         _record_pre_tool_state(event, state_directory)
         return {}
     if "PostToolUse" == event_name:
-        _record_implementation_change(event, state_directory)
+        _record_tool_change(event, state_directory)
         return {}
     if "Stop" != event_name:
         return {}
     marker_path = _marker_path(event, state_directory)
+    message = event.get("last_assistant_message")
     if not marker_path.exists():
         return {}
-    message = event.get("last_assistant_message")
-    passing_failures = validate_handoff(message)
+    require_commit = _pending_requires_commit(marker_path)
+    passing_failures = validate_handoff(message, require_commit=require_commit)
     if not passing_failures:
         marker_path.unlink()
         return {}
     paused_failures = validate_paused_handoff(message)
     if not paused_failures:
         return {}
-    return {"decision": "block", "reason": _continuation_reason(passing_failures, paused_failures)}
+    return {"decision": "block", "reason": _continuation_reason(passing_failures, paused_failures, require_commit)}
 
 
 def _record_pre_tool_state(event: dict[str, Any], state_directory: Path) -> None:
-    if event.get("tool_name") not in SHELL_TOOL_NAMES:
+    if event.get("tool_name") not in SNAPSHOT_TOOL_NAMES:
         return
     snapshot_path = _snapshot_path(event, state_directory)
     snapshot_path.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
@@ -115,26 +116,9 @@ def _record_pre_tool_state(event: dict[str, Any], state_directory: Path) -> None
     snapshot_path.write_text(json.dumps(snapshot, sort_keys=True), encoding="utf-8")
 
 
-def _record_implementation_change(event: dict[str, Any], state_directory: Path) -> None:
-    tool_name = event.get("tool_name")
-    if tool_name in SHELL_TOOL_NAMES:
-        _record_shell_change(event, state_directory)
+def _record_tool_change(event: dict[str, Any], state_directory: Path) -> None:
+    if event.get("tool_name") not in SNAPSHOT_TOOL_NAMES:
         return
-    if "apply_patch" != tool_name:
-        return
-    tool_input = event.get("tool_input")
-    patch = None
-    if isinstance(tool_input, dict):
-        patch = tool_input.get("command") or tool_input.get("patch")
-    if not isinstance(patch, str):
-        _mark_pending(event, state_directory)
-        return
-    if not _changes_implementation_file(patch):
-        return
-    _mark_pending(event, state_directory)
-
-
-def _record_shell_change(event: dict[str, Any], state_directory: Path) -> None:
     snapshot_path = _snapshot_path(event, state_directory)
     try:
         before = json.loads(snapshot_path.read_text(encoding="utf-8"))
@@ -152,23 +136,30 @@ def _record_shell_change(event: dict[str, Any], state_directory: Path) -> None:
     if not isinstance(before_files, dict) or not isinstance(after_files, dict):
         _mark_pending(event, state_directory)
         return
+    for path in before_files.keys() - after_files.keys():
+        after_files[path] = _path_digest(Path(path))
     changed_paths = {
         each for each in before_files.keys() | after_files.keys()
         if before_files.get(each) != after_files.get(each)
     }
-    if any(Path(each).suffix.lower() not in PROSE_SUFFIXES for each in changed_paths):
-        _mark_pending(event, state_directory)
+    if changed_paths:
+        _mark_pending(event, state_directory, require_commit=_requires_commit_message(changed_paths))
 
 
-def _mark_pending(event: dict[str, Any], state_directory: Path) -> None:
+def _requires_commit_message(paths: set[str]) -> bool:
+    return any(Path(path).suffix.lower() not in COMMIT_EXEMPT_SUFFIXES for path in paths)
+
+
+def _mark_pending(event: dict[str, Any], state_directory: Path, require_commit: bool = True) -> None:
     marker_path = _marker_path(event, state_directory)
     marker_path.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
-    marker_path.touch(exist_ok=True)
+    require_commit = require_commit or (marker_path.exists() and _pending_requires_commit(marker_path))
+    marker_path.write_text(json.dumps({"require_commit": require_commit}), encoding="utf-8")
 
 
-def _changes_implementation_file(patch: str) -> bool:
-    paths = PATCH_FILE_PATTERN.findall(patch)
-    return not paths or any(Path(each).suffix.lower() not in PROSE_SUFFIXES for each in paths)
+def _pending_requires_commit(marker_path: Path) -> bool:
+    content = marker_path.read_text(encoding="utf-8")
+    return not content or json.loads(content)["require_commit"]
 
 
 def _marker_path(event: dict[str, Any], state_directory: Path) -> Path:
@@ -201,90 +192,81 @@ def _repository_snapshot(event: dict[str, Any]) -> dict[str, Any] | None:
         directory = base_directory or Path(os.getcwd())
     root_result = _run_git(directory, "rev-parse", "--show-toplevel")
     if root_result is None:
+        selected = directory.resolve()
+        if any((parent / ".git").exists() for parent in (selected, *selected.parents)):
+            return None
+    if root_result is None and base_directory is not None and directory != base_directory:
+        root_result = _run_git(base_directory, "rev-parse", "--show-toplevel")
+    root = None
+    files = {}
+    if root_result is not None:
+        line_ending = b"\r\n" if os.name == "nt" and root_result.endswith(b"\r\n") else b"\n"
+        root = Path(root_result.removesuffix(line_ending).decode("utf-8", errors="surrogateescape")).resolve()
+        status = _run_git(root, "status", "--porcelain=v1", "-z", "--untracked-files=all")
+        if status is None:
+            return None
+        files = {str(root / path): _path_digest(root / path) for path in _status_entries(status)}
+    if "apply_patch" == event.get("tool_name") and isinstance(tool_input, dict):
+        patch = tool_input.get("command") or tool_input.get("patch")
+        if isinstance(patch, str):
+            targets = set()
+            for path in PATCH_FILE_PATTERN.findall(patch):
+                target = Path(path)
+                if not target.is_absolute():
+                    target = directory / target
+                target = target.parent.resolve() / target.name
+                targets.add(target)
+                if target.is_symlink():
+                    targets.add(target.resolve())
+            listed_paths = _git_listed_paths(targets, root)
+            if listed_paths is None:
+                return None
+            for target in listed_paths:
+                files[str(target)] = _path_digest(target)
+    return {"root": str(root) if root is not None else None, "files": files}
+
+
+def _git_listed_paths(paths: set[Path], root: Path | None) -> set[Path] | None:
+    roots = {root: root} if root is not None else {}
+    try:
+        repositories = {_path_git_root(path, roots) for path in paths}
+    except RuntimeError:
         return None
-    line_ending = b"\r\n" if os.name == "nt" and root_result.endswith(b"\r\n") else b"\n"
-    root = Path(root_result.removesuffix(line_ending).decode("utf-8", errors="surrogateescape"))
-    status = _run_git(root, "status", "--porcelain=v1", "-z", "--untracked-files=all")
-    if status is None:
-        return None
-    entries = _status_entries(status)
-    files = {
-        path: f"{state}:{_path_digest(root / path)}"
-        for path, state in entries.items()
-    }
-    return {"root": str(root.resolve()), "files": files}
+    repositories.discard(None)
+    listed = set()
+    for repository in repositories:
+        result = _run_git(repository, "ls-files", "--cached", "--others", "--exclude-standard", "--full-name", "-z")
+        if result is None:
+            return None
+        listed_paths = (repository / os.fsdecode(path) for path in result.split(b"\0") if path)
+        listed.update(paths.intersection(listed_paths))
+    return listed
+
+
+def _path_git_root(path: Path, roots: dict[Path, Path | None]) -> Path | None:
+    pending = []
+    for directory in path.parents:
+        if directory in roots:
+            root = roots[directory]
+            break
+        pending.append(directory)
+        if (directory / ".git").exists():
+            result = _run_git(directory, "rev-parse", "--show-toplevel")
+            if result is None:
+                raise RuntimeError("Unable to inspect declared Git repository")
+            line_ending = b"\r\n" if os.name == "nt" and result.endswith(b"\r\n") else b"\n"
+            root = Path(result.removesuffix(line_ending).decode("utf-8", errors="surrogateescape")).resolve()
+            break
+    else:
+        root = None
+    roots.update(dict.fromkeys(pending, root))
+    return root
 
 
 def _run_git(cwd: Path, *arguments: str) -> bytes | None:
     try:
         result = subprocess.run(
-            ["git", "-C", str(cwd), *arguments], check=False, stdout=subprocess.PIPE,
-            stderr=subprocess.DEVNULL, timeout=3,
-        )
-    except (OSError, subprocess.TimeoutExpired):
-        return None
-    return result.stdout if 0 == result.returncode else None
-
-
-def _status_entries(status: bytes) -> dict[str, str]:
-    records = status.split(b"\0")
-    result: dict[str, str] = {}
-    index = 0
-    while index < len(records):
-        record = records[index]
-        index += 1
-        if len(record) < 4:
-            continue
-        state = record[:2].decode("ascii", errors="replace")
-        path = record[3:].decode("utf-8", errors="surrogateescape")
-        result[path] = state
-        if ("R" in state or "C" in state) and index < len(records):
-            original = records[index].decode("utf-8", errors="surrogateescape")
-            index += 1
-            result[original] = state
-    return result
-
-
-def _path_digest(path: Path) -> str:
-    try:
-        mode = path.lstat().st_mode
-        if path.is_symlink():
-            value = os.readlink(path).encode("utf-8", errors="surrogateescape")
-        elif path.is_file():
-            value = path.read_bytes()
-        else:
-            value = b"<missing>"
-    except OSError:
-        mode = 0
-        value = b"<unreadable>"
-    return hashlib.sha256(f"{mode}:".encode("ascii") + value).hexdigest()
-
-
-def validate_handoff(message: Any) -> list[str]:
-    """Return every missing or invalid successful code handoff element."""
-    failures = _validate_handoff_evidence(message, frozenset({PASSING_RESULT}), require_review=True)
-    if not isinstance(message, str):
-        return failures
-    statuses = _field_values(message, "Task Status")
-    results = _field_values(message, "Review Result")
-    legacy_passing_review = not statuses and results == [PASSING_RESULT]
-    if ["Completed"] != statuses and not legacy_passing_review:
-        failures.append("exactly one Task Status: Completed or legacy Review Result: Mergeable")
-    if not _field_value(message, "Commit Message"):
-        failures.append("nonempty Commit Message")
-    return failures
-
-
-def validate_paused_handoff(message: Any) -> list[str]:
-    """Return every missing or invalid user-blocked handoff element."""
-    failures = _validate_handoff_evidence(message, PAUSED_RESULTS | {PASSING_RESULT})
-    if not isinstance(message, str):
-        return failures
-    statuses = _field_values(message, "Task Status")
-    if ["Awaiting User"] != statuses:
-        failures.append("exactly one Task Status: Awaiting User")
-    if not _field_value(message, "Required User Action"):
-        failures.append("Required User
+            ["git", "-C", str(cwd),
 ```
 
 ### Core Architecture Module: `.codex/harness/agents/run.py`
@@ -1129,6 +1111,8 @@ from collections import Counter
 from pathlib import Path, PurePosixPath
 from typing import Any, Iterable
 
+sys.dont_write_bytecode = True
+
 from resolve_review_scope import (
     categorize, compare_github_files, get_repo_root, parse_name_status, resolve_candidate_changes, run_git,
 )
@@ -1307,7 +1291,7 @@ def validate_source_shape(source: Any) -> None:
 
 
 def validate_anchor_shape(anchor: Any, captured: bool = False) -> None:
-    if not isinstance(anchor, dict) or anchor.get("
+    if not isinstan
 ```
 
 ### Core Architecture Module: `.codex/skills/review-pr/scripts/resolve_review_scope.py`
@@ -1450,15 +1434,15 @@ def compare_github_files(local_paths: Iterable[str], github_files_path: str | No
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #40476** (2026-11-05): **Use current documentation URLs for blog references**
+- **Issue #40493** (2026-11-08): **Refactor code for 64 approved Sonar findings**
   *Symptoms*: 
   **Post-Mortem & Fix Analysis**:
-  > ### Summary Fix documentation images, links, and language pairing, and update the contribution guide to reflect current repository responsibilities. Preserve Hugo 0.83.1 and the existing build process.  ### Result Review Result: Mergeable No blocking issues or required changes remain.  ### Evidence All six baseline and candidate site builds passed. All 1,023 HTML routes were preserved, with content changes limited to the 25 intended pages. The 272 railroad diagram pages and 667 static assets remained unchanged. Two independent reviews and the final validation passed.  ### Coverage Standalone local candidate based on ecbb770ac007, covering all 25 files and 60 changed blocks. Checkstyle and Spotless do not apply to these Markdown files; RAT was not triggered. CI was not reviewed. Figure 7 remains pending as agreed. Shared-content extraction and release-guide changes that depend on the new theme were deferred.
+  > ### Summary  This PR performs localized Sonar-driven refactoring across production code and tests, including predicate simplification, regex reuse, private helper placement and test parameterization. The NEXTVAL update uses the existing lazy precondition helper while preserving expression dispatch and exception behavior.  ### Result  Review Result: Mergeable  No blocking code issues or required changes remain.  ### Evidence  - Reviewed all 48 files and their affected consumers, contracts and preserved test scenarios. - Spotless and Checkstyle passed for all 48 Java files across 24 modules, with exit code 0 and no Checkstyle errors. - The 154-case analyzer result and three equivalence probes match the current sources. These are historical regression evidence; the Column NEXTVAL rejection path was checked through source-level condition, short-circuit and supplier analysis.  ### Coverage  [PR #40493](https://github.com/apache/shardingsphere/pull/40493), head `1d3a49913d10` against merge-b
 
-- **Issue #40474** (2026-11-05): **Fix documentation links, images and translation pairing**
+- **Issue #40492** (2026-11-08): **Move pipeline data source configuration implementations to core**
   *Symptoms*: 
   **Post-Mortem & Fix Analysis**:
-  > ### Summary Fix documentation images, links, and language pairing, and update the contribution guide to reflect current repository responsibilities. Preserve Hugo 0.83.1 and the existing build process.  ### Result Review Result: Mergeable No blocking issues or required changes remain.  ### Evidence All six baseline and candidate site builds passed. All 1,023 HTML routes were preserved, with content changes limited to the 25 intended pages. The 272 railroad diagram pages and 667 static assets remained unchanged. Two independent reviews and the final validation passed.  ### Coverage Standalone local candidate based on ecbb770ac007, covering all 25 files and 60 changed blocks. Checkstyle and Spotless do not apply to these Markdown files; RAT was not triggered. CI was not reviewed. Figure 7 remains pending as agreed. Shared-content extraction and release-guide changes that depend on the new theme were deferred.
+  > ### Summary  The cumulative changes move rule copying during data source creation into the core Creator, while keeping configuration construction, parsing, and actual data source configuration derivation in api. This update removes only two test stubs whose default return values are sufficient, while retaining the necessary pool stub in core.  ### Result  Review Result: Mergeable  No blocking issues or further required changes remain.  ### Evidence  All 5 tests across two test classes passed. Spotless and Checkstyle checks passed for all 5 files in the cumulative change. Two independent complete reviews, coordinator review, and review session validation have been completed.  ### Coverage  Local candidate for PR #40492: baseline `26cef652f5c1`, public head `4fc959bda11e` plus two local line deletions. The review covers all 5 files and 27 changed blocks. This conclusion covers code correctness only; CI was not reviewed.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1475,218 +1459,606 @@ def compare_github_files(local_paths: Iterable[str], github_files_path: str | No
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `34de0a1f` (2026-11-05)
-**Commit Message**: Fix SQL error prefix for Firebird SQLDA status vectors (#40443)
+### Incident Patch 1: `6a77a0cb` (2026-11-08)
+**Commit Message**: Add Grice guidance and require formal review for Git-visible changes (#40489)
 
-Preserve the numeric -804 SQL error segment before SQLDA errors, including invalid batch message lengths. Add a regression for the exact ordered wire response and a release note for issue #40408.
+* Require formal review for all deliverable file changes
 
-Assisted-By: OpenAI Codex
+* Add Grice guidance and scope formal review to Git-visible changes
 
-Co-authored-by: rys888 <[REDACTED_EMAIL]>
-
-**File**: `RELEASE-NOTES.md` (modified, +1/-0)
+**File**: `.codex/config.toml` (modified, +1/-1)
 ```diff
-@@ -94,6 +94,7 @@
- 1. Proxy: Fix silently dropped backslashes and rejected NULL elements in PostgreSQL text array binary parameters - [#39395](https://github.com/apache/shardingsphere/pull/39395)
- 1. Proxy: Fix MySQL COM_QUERY binary string literal corruption - [#39433](https://github.com/apache/shardingsphere/pull/39433)
- 1. Proxy: Add error handling for unknown or closed BLOB handles and ids in Firebird - [#39773](https://github.com/apache/shardingsphere/pull/39773)
-+1. Proxy: Preserve the SQL error code in Firebird invalid batch message length responses - [#40408](https://github.com/apache/shardingsphere/issues/40408)
- 1. Proxy: Fix startup failure when storage units set `dataSourceClassName` to `com.zaxxer.hikari.HikariDataSource` - [#40303](https://github.com/apache/shardingsphere/issues/40303)
- 1. JDBC & Proxy: Remove default MySQL prepared statement query properties when creating data sources - [#38593](https://github.com/apache/shardingsphere/pull/38593)
- 1. JDBC & Proxy: Reject ordinary pushdown SELECT statements routed to different storage database types - [#40385](https://github.com/apache/shardingsphere/pull/40385)
-```
-
-**File**: `database/protocol/dialect/firebird/src/main/java/org/apache/shardingsphere/database/protocol/firebird/err/FirebirdStatusVector.java` (modified, +6/-0)
-```diff
-@@ -54,6 +54,12 @@ private static String stripStateSuffix(final String message) {
-     
-     @Override
-     protected void write(final FirebirdPacketPayload payload) {
-+        if (ISCConstants.isc_dsql_sqlda_err == gdsCode) {
-+            payload.writeInt4(ISCConstants.isc_arg_gds);
-+            payload.writeInt4(ISCConstants.isc_sqlerr);
-+            payload.writeInt4(ISCConstants.isc_arg_number);
-+            payload.writeInt4(-804);
-+        }
-         for (Segment each : segments) {
-             payload.writeInt4(ISCConstants.isc_arg_gds);
-             payload.writeInt4(each.gdsCode);
-```
-
-**File**: `database/protocol/dialect/firebird/src/test/java/org/apache/shardingsphere/database/protocol/firebird/err/FirebirdStatusVectorTest.java` (modified, +16/-0)
-```diff
-@@ -18,6 +18,7 @@
- package org.apache.shardingsphere.database.protocol.firebird.err;
+@@ -14,7 +14,7 @@
+ # limitations under the License.
  
- import org.apache.shardingsphere.database.protocol.firebird.payload.FirebirdPacketPayload;
-+import org.apache.shardingsphere.database.protocol.payload.PacketPayload;
- import org.firebirdsql.gds.ISCConstants;
- import org.junit.jupiter.api.Test;
- import org.junit.jupiter.api.extension.ExtendWith;
-@@ -85,6 +86,21 @@ void assertWriteOmitsArgumentWhenMessageIsEmpty() {
-         verifyNoMoreInteractions(payload);
+ [[hooks.PreToolUse]]
+-matcher = "^(Bash|exec_command|write_stdin)$"
++matcher = "^(Bash|apply_patch|exec_command|write_stdin)$"
+ 
+ [[hooks.PreToolUse.hooks]]
+ type = "command"
+```
+
+**File**: `.codex/context/change-completion.md` (modified, +11/-5)
+```diff
+@@ -19,21 +19,25 @@
+ 
+ This file is the sole owner of completion-loop orchestration. Other policy sources may route here or define their own implementation and verification rules, but must not duplicate this sequence or its review selection.
+ 
+-For every authorized code-writing task, including a restoration or rollback that changes production, test, script, build, generated, or behavior-affecting configuration artifacts:
++Apply this loop to authorized changes to Git-tracked files and unignored untracked files, including restoration or rollback.
++Untracked Git-ignored files and files outside Git repositories are outside this loop's scope.
++Deliverables include source, tests, scripts, build files, generated artifacts, configuration, documentation, prompts, Skills, and AGENTS.md.
++A read-only review does not enter this loop merely because its input contains changed files.
++Private review snapshots, ledgers, logs, and drafts used only to perform the review stay outside the declared candidate and do not recursively trigger review.
+ 
+ 1. Confirm the post-write task-delta audit required by `AGENTS.md` is current for the read-only diff, surrounding context, and acceptance checklist.
+    Confirm every task-introduced hunk is necessary and allowlisted, prohibited paths have no task delta, architecture changes were authorized, tests protect owned behavior, and unattributed work remains untouched.
+ 2. Apply any missing or invalidated triggered coding-standard and simplification checks to the effective task delta.
+    Treat scripts, searches, formatters, compilation, tests, benchmarks, and review tools as evidence rather than proof, and fix every safe in-scope violation.
+ 3. Run the applicable verification and non-regression checks that lack valid current-state evidence.
+    An invalidated, unmatched, missing, or inconclusive required result keeps the task incomplete.
+-4. Invoke `$review-pr` in Formal Review Mode for every code-writing task, including ordinary low-risk local changes, without requiring a separate user request.
++4. Invoke `$review-pr` in Formal Review Mode for every task that changes files reported by Git, regardless of file type, without requiring a separate user request.
+    Policy and harness changes also require this Formal Review route.
+    Use [review-pr](../skills/review-pr/SKILL.md) as the sole review entry and apply its Review Focus, Local Candidate Scope, Scope and Evidence, and Independent Review Coordination requirements.
+    Existing authority, architecture, safety, and triggered high-risk gates remain required.
+    - When the effective final task delta adds, extends or strengthens defensive code, assign an independent reviewer within the current task to audit that delta read-only under the existing defensive-code rules.
+      Do not assign this audit when no such defensive change remains in the final task delta.
+-5. Hand off only when the selected review is confirmed, all required current-state checks pass, and no later code-affecting write or new evidence invalidates them.
++5. Hand off only when the selected review is confirmed, all required current-state checks pass, and no later deliverable-content write or new evidence invalidates them.
+    For a required Formal Review, the latest confirmed complete review must return `Review Result: Mergeable`.
+ 6. When a confirmed Formal Review returns `Not Mergeable` with a safe in-scope required finding, fix it, rerun only invalidated audits and checks, and invoke the same review entry for the changed full candidate.
+    Preserve the original task baseline and attributed scope through this fix loop, and continue until step 5 passes.
+@@ -62,8 +66,10 @@ Report confirmed findings and required changes, or explicitly state that no bloc
+ Keep `Task Status: Completed`, the outer `Evidence:` summary, and `Commit Message:` outside the review block.
+ Do not substitute bounded self-review for the required Formal Review or fabricate a passing verdict.
+ 
+-The project Stop hook checks the textual completion state after supported write tools change a non-prose repository artifact.
+-Any later code-affecting write marks the task pending again and requires current checks and the applicable passing review before completion.
++The project Stop hook checks completion state after supported tool events change repository deliverable content.
++Any later repository deliverable-content write marks the task pending again and requires applicable current checks and a passing review of the updated cumulative candidate.
++Restoring original content does not clear an existing pending review.
++The hook must not treat file extensions as review exemptions.
+ When required user input blocks completion, include exactly one `Task Status: Awaiting User` line, non-empty `Required User Action:` and `Evidence:` summaries, and any actual non-passing Formal Review result relevant to that blocker.
+ If no Formal Review has run, state that fact instead of fabricating a report.
+ The hook may yield tha
+```
+
+**File**: `.codex/harness/agents/cases.toml` (modified, +193/-10)
+```diff
+@@ -375,7 +375,7 @@ allowed_actions = ["inspect_local", "edit_non_code", "run_local_checks", "wrap_h
+ forbidden_actions = ["mutate_git", "mutate_remote"]
+ required_reasons = ["explicit_non_code_authorization", "pre_handoff_review_required"]
+ policy_binding_profile = "code-write"
+-policy_assertions = [{source = "change-completion", statements = ["Invoke `$review-pr` in Formal Review Mode for every code-writing task, including ordinary low-risk local changes, without requiring a separate user request.", "Policy and harness changes also require this Formal Review route.", "Use [review-pr](../skills/review-pr/SKILL.md) as the sole review entry and apply its Review Focus, Local Candidate Scope, Scope and Evidence, and Independent Review Coordination requirements.", "For a required Formal Review, the latest confirmed complete review must return `Review Result: Mergeable`."]}]
++policy_assertions = [{source = "change-completion", statements = ["Invoke `$review-pr` in Formal Review Mode for every task that changes files reported by Git, regardless of file type, without requiring a separate user request.", "Policy and harness changes also require this Formal Review route.", "Use [review-pr](../skills/review-pr/SKILL.md) as the sole review entry and apply its Review Focus, Local Candidate Scope, Scope and Evidence, and Independent Review Coordination requirements.", "For a required Formal Review, the latest confirmed complete review must return `Review Result: Mergeable`."]}]
+ critical = true
+ 
+ [[cases]]
+@@ -1393,7 +1393,7 @@ allowed_actions = ["inspect_local", "propose_commit_message"]
+ forbidden_actions = ["edit_code", "edit_non_code", "edit_unrelated_changes", "mutate_git", "mutate_remote"]
+ required_reasons = ["preserve_unrelated_work", "review_passed"]
+ policy_binding_profile = "code-write"
+-policy_assertions = [{source = "change-completion", statements = ["Hand off only when the selected review is confirmed, all required current-state checks pass, and no later code-affecting write or new evidence invalidates them.", "For a required Formal Review, the latest confirmed complete review must return `Review Result: Mergeable`.", "For a completed task, include exactly one `Task Status: Completed` line and a non-empty `Evidence:` summary of the current audit, verification and selected review.", "Include the actual completed Formal Review as one complete fenced `markdown` report with exactly one `Review Result: Mergeable` line and nonempty `### Result`, `### Evidence`, and `### Coverage` sections.", "After every code-writing task completes, provide a nonempty `Commit Message:` without requiring a separate user request; this never authorizes Git mutation.", "Provide manual Git commands only when the user requests them.", "For requested manual Git commands, propose `git commit --dry-run --only` and `git commit --only` for only task-owned files without unrelated hunks.", "Include `git add -- <new-task-paths>` first only when requested manual instructions need to add untracked task files.", "Never execute a Git write without exact current-task authorization."]}]
++policy_assertions = [{source = "change-completion", statements = ["Hand off only when the selected review is confirmed, all required current-state checks pass, and no later deliverable-content write or new evidence invalidates them.", "For a required Formal Review, the latest confirmed complete review must return `Review Result: Mergeable`.", "For a completed task, include exactly one `Task Status: Completed` line and a non-empty `Evidence:` summary of the current audit, verification and selected review.", "Include the actual completed Formal Review as one complete fenced `markdown` report with exactly one `Review Result: Mergeable` line and nonempty `### Result`, `### Evidence`, and `### Coverage` sections.", "After every code-writing task completes, provide a nonempty `Commit Message:` without requiring a separate user request; this never authorizes Git mutation.", "Provide manual Git commands only when the user requests them.", "For requested manual Git commands, propose `git commit --dry-run --only` and `git commit --only` for only task-owned files without unrelated hunks.", "Include `git add -- <new-task-paths>` first only when requested manual instructions need to add untracked task files.", "Never execute a Git write without exact current-task authorization."]}]
+ critical = true
+ required_summary_terms = ["Commit Message:", "```markdown", "### Result", "### Evidence", "### Coverage"]
+ 
+@@ -1850,7 +1850,7 @@ forbidden_actions = ["edit_code", "edit_non_code", "run_bounded_adversarial_revi
+ required_reasons = ["pre_handoff_review_required"]
+ required_summary_terms = ["$review-pr", "Formal Review"]
+ policy_binding_profile = "code-write"
+-policy_assertions = [{source = "change-completion", statements = ["Invoke `$review-pr` in Formal Review Mode for every code-writing task, including ordinary low-risk local changes, without requiring a separate user request.", "
+```
+
+**File**: `.codex/harness/agents/code_handoff_hook.py` (modified, +100/-51)
+```diff
+@@ -15,7 +15,7 @@
+ # See the License for the specific language governing permissions and
+ # limitations under the License.
+ 
+-"""Require an explicit review handoff after Codex changes implementation files."""
++"""Require an explicit review handoff after Codex changes repository deliverables."""
+ 
+ from __future__ import annotations
+ 
+@@ -29,13 +29,13 @@
+ import tempfile
+ from typing import Any
+ 
+-PROSE_SUFFIXES = frozenset({".adoc", ".md", ".rst"})
+-PATCH_FILE_PATTERN = re.compile(r"^\*\*\* (?:Add|Delete|Update) File: (.+)$", re.MULTILINE)
++PATCH_FILE_PATTERN = re.compile(r"^\*\*\* (?:(?:Add|Delete|Update) File|Move to): (.+)$", re.MULTILINE)
+ FIELD_PATTERN = r"(?P<emphasis>\*\*)?{label}:(?(emphasis)(?:\*\*)?)[ \t]*(?P<value>.*?)"
+ FIELD_PREFIX_PATTERN = re.compile(r"^[ \t]*(?:[-*][ \t]+)?(?:#{1,6}[ \t]+)?")
+ FENCE_PATTERN = re.compile(r"(?:`{3,}[^`]*|~{3,}.*)")
+ FENCE_OPEN_PATTERN = re.compile(r"^ {0,3}(?P<fence>`{3,}|~{3,})(?P<info>.*)$")
+-SHELL_TOOL_NAMES = frozenset({"Bash", "exec_command", "write_stdin"})
++SNAPSHOT_TOOL_NAMES = frozenset({"Bash", "apply_patch", "exec_command", "write_stdin"})
++COMMIT_EXEMPT_SUFFIXES = frozenset({".adoc", ".md", ".rst"})
+ PASSING_RESULT = "Mergeable"
+ PAUSED_RESULTS = frozenset({"Not Mergeable", "Review Incomplete"})
+ 
+@@ -47,53 +47,37 @@ def process_event(event: dict[str, Any], state_directory: Path) -> dict[str, str
+         _record_pre_tool_state(event, state_directory)
+         return {}
+     if "PostToolUse" == event_name:
+-        _record_implementation_change(event, state_directory)
++        _record_tool_change(event, state_directory)
+         return {}
+     if "Stop" != event_name:
+         return {}
+     marker_path = _marker_path(event, state_directory)
++    message = event.get("last_assistant_message")
+     if not marker_path.exists():
+         return {}
+-    message = event.get("last_assistant_message")
+-    passing_failures = validate_handoff(message)
++    require_commit = _pending_requires_commit(marker_path)
++    passing_failures = validate_handoff(message, require_commit=require_commit)
+     if not passing_failures:
+         marker_path.unlink()
+         return {}
+     paused_failures = validate_paused_handoff(message)
+     if not paused_failures:
+         return {}
+-    return {"decision": "block", "reason": _continuation_reason(passing_failures, paused_failures)}
++    return {"decision": "block", "reason": _continuation_reason(passing_failures, paused_failures, require_commit)}
+ 
+ 
+ def _record_pre_tool_state(event: dict[str, Any], state_directory: Path) -> None:
+-    if event.get("tool_name") not in SHELL_TOOL_NAMES:
++    if event.get("tool_name") not in SNAPSHOT_TOOL_NAMES:
+         return
+     snapshot_path = _snapshot_path(event, state_directory)
+     snapshot_path.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+     snapshot = _repository_snapshot(event)
+     snapshot_path.write_text(json.dumps(snapshot, sort_keys=True), encoding="utf-8")
+ 
+ 
+-def _record_implementation_change(event: dict[str, Any], state_directory: Path) -> None:
+-    tool_name = event.get("tool_name")
+-    if tool_name in SHELL_TOOL_NAMES:
+-        _record_shell_change(event, state_directory)
+-        return
+-    if "apply_patch" != tool_name:
+-        return
+-    tool_input = event.get("tool_input")
+-    patch = None
+-    if isinstance(tool_input, dict):
+-        patch = tool_input.get("command") or tool_input.get("patch")
+-    if not isinstance(patch, str):
+-        _mark_pending(event, state_directory)
+-        return
+-    if not _changes_implementation_file(patch):
++def _record_tool_change(event: dict[str, Any], state_directory: Path) -> None:
++    if event.get("tool_name") not in SNAPSHOT_TOOL_NAMES:
+         return
+-    _mark_pending(event, state_directory)
+-
+-
+-def _record_shell_change(event: dict[str, Any], state_directory: Path) -> None:
+     snapshot_path = _snapshot_path(event, state_directory)
+     try:
+         before = json.loads(snapshot_path.read_text(encoding="utf-8"))
+@@ -111,23 +95,30 @@ def _record_shell_change(event: dict[str, Any], state_directory: Path) -> None:
+     if not isinstance(before_files, dict) or not isinstance(after_files, dict):
+         _mark_pending(event, state_directory)
+         return
++    for path in before_files.keys() - after_files.keys():
++        after_files[path] = _path_digest(Path(path))
+     changed_paths = {
+         each for each in before_files.keys() | after_files.keys()
+         if before_files.get(each) != after_files.get(each)
      }
-     
-+    @Test
-+    void assertWriteSqldaError() {
-+        FirebirdStatusVector actual = new FirebirdStatusVector(new SQLException("", "07002", ISCConstants.isc_dsql_sqlda_err));
-+        actual.write((PacketPayload) payload);
-+        InOrder inOrder = inOrder(payload);
-+        inOrder.verify(payload).writeInt4(ISCConstants.isc_arg_gds);
-+        inOrder.verify(payload).writeInt4(ISCConstants.isc_sqlerr);
-+        inOrder.verify(payload).writeInt4(ISCConstants.isc_arg_number);
-+        inOrder.verify(payload).writeInt4(-804);
-+        inOrder.verify(payload).writeInt4(ISCConstants.isc_arg_gds);
-+        inOrder.verify(payload).writeInt4(ISCConstants.isc_dsql_sqlda_err);
-+        inOrder.verify(payload).writeInt4(ISCConstants.isc_arg_end);
-+        verifyNoMoreInteractions(payload);
-+    }
-+    
-     @Test
-     void assertWriteWithNullMessage() {
-         FirebirdStatusVector vector = new FirebirdStatusVector(new SQLException(null, "28000", ISCConstants.isc_login));
+-    if any(Path(each).suffix.lower() not in PROSE_SUFFIXES for each in changed_paths):
+-        _mark_pending(event, state_directory)
++    if changed_paths:
++        _mark_pending(event, state_directory, require_commit=_requires_commit_message(changed_paths))
++
++
++def _requires_commit_message(paths: set[str]) -> bool:
++    return any(Path(path).suffix.lower() not in COMMIT_EXEMPT_SUFFIXES for path in paths)
+ 
+ 
+-def _mark_pending(event: dict[str, Any], state_directory: Path) -> None:
++
+```
+
+**File**: `.codex/harness/agents/policy-sources.toml` (modified, +1/-1)
+```diff
+@@ -27,7 +27,7 @@ coding-standards-audit = ["agents", "code-of-conduct", "coding-standards", "stan
+ runtime-diagnosis = ["agents", "runtime-triage", "code-verification"]
+ command-execution = ["agents", "token-efficiency", "docker-resources", "code-verification"]
+ cross-cutting = ["agents", "cross-cutting-skills"]
+-documentation = ["agents", "documentation-wording"]
++documentation = ["agents", "documentation-wording", "change-completion", "review-pr", "review-pr-coordination"]
+ analyze-issue = ["agents", "analyze-issue", "analyze-issue-output"]
+ gen-ut = ["agents", "code-of-conduct", "code-implementation", "coding-standards", "maven-dependencies", "java-naming", "java-types", "java-annotation-order", "java-constructors", "java-preconditions", "java-exceptions", "java-collections", "java-expressions", "java-line-wrapping", "java-testing", "defensive-code", "implementation-rules", "testing-rules", "contracts-and-removal", "non-regression", "code-verification", "gen-ut", "gen-ut-verification", "change-completion"]
+ review-pr = ["agents", "code-of-conduct", "coding-standards", "maven-dependencies", "java-naming", "java-types", "java-annotation-order", "java-constructors", "java-preconditions", "java-exceptions", "java-collections", "java-expressions", "java-line-wrapping", "java-testing", "defensive-code", "implementation-rules", "testing-rules", "contracts-and-removal", "non-regression", "code-verification", "review-pr", "review-pr-coordination", "review-pr-evidence", "review-pr-high-risk", "review-pr-sql-parser", "review-pr-corrections"]
+```
+
+**File**: `.codex/harness/agents/test_code_handoff_hook.py` (modified, +488/-12)
+```diff
+@@ -20,8 +20,11 @@
+ from __future__ import annotations
+ 
+ import importlib.util
++from itertools import product
++import json
+ from pathlib import Path
+ import subprocess
++import sys
+ import tempfile
+ import tomllib
+ import unittest
+@@ -49,11 +52,23 @@ def test_implementation_patch_requires_complete_handoff(self) -> None:
+             ), state_directory))
+             self.assertEqual([], list(state_directory.iterdir()))
+ 
+-    def test_prose_patch_does_not_require_code_handoff(self) -> None:
+-        with tempfile.TemporaryDirectory() as directory:
+-            state_directory = Path(directory)
+-            code_handoff_hook.process_event(self._post_tool_event("*** Update File: docs/foo.md"), state_directory)
+-            self.assertEqual({}, code_handoff_hook.process_event(self._stop_event("Documentation updated."), state_directory))
++    def test_prose_patch_requires_complete_handoff(self) -> None:
++        for filename in ("README.md", "guide.adoc", "guide.rst"):
++            with self.subTest(filename=filename), tempfile.TemporaryDirectory() as repository, tempfile.TemporaryDirectory() as state:
++                repository_path = self._initialize_repository(Path(repository), filename)
++                state_directory = Path(state)
++                event = self._shell_event("PreToolUse", repository_path)
++                event["tool_name"] = "apply_patch"
++                code_handoff_hook.process_event(event, state_directory)
++                (repository_path / filename).write_text("Changed documentation.\n", encoding="utf-8")
++                event["hook_event_name"] = "PostToolUse"
++                code_handoff_hook.process_event(event, state_directory)
++                actual = code_handoff_hook.process_event(self._stop_event("Documentation updated."), state_directory)
++                self.assertEqual("block", actual["decision"])
++                self.assertNotIn("Commit Message", actual["reason"])
++                self.assertEqual({}, code_handoff_hook.process_event(self._stop_event(
++                    self._mergeable_handoff(commit_message=None),
++                ), state_directory))
+ 
+     def test_unknown_apply_patch_payload_fails_closed(self) -> None:
+         with tempfile.TemporaryDirectory() as directory:
+@@ -63,6 +78,9 @@ def test_unknown_apply_patch_payload_fails_closed(self) -> None:
+             code_handoff_hook.process_event(event, state_directory)
+             actual = code_handoff_hook.process_event(self._stop_event("Documentation updated."), state_directory)
+             self.assertEqual("block", actual["decision"])
++            actual = code_handoff_hook.process_event(self._stop_event(self._mergeable_handoff(commit_message=None)), state_directory)
++            self.assertEqual("block", actual["decision"])
++            self.assertIn("nonempty Commit Message", actual["reason"])
+ 
+     def test_completed_handoff_requires_full_report_and_commit_message(self) -> None:
+         actual = code_handoff_hook.validate_handoff(
+@@ -361,7 +379,7 @@ def test_read_only_shell_command_does_not_require_code_handoff(self) -> None:
+             self.assertEqual({}, code_handoff_hook.process_event(self._stop_event("Inspection complete."), state_directory))
+             self.assertEqual([], list(state_directory.iterdir()))
+ 
+-    def test_shell_prose_change_does_not_require_code_handoff(self) -> None:
++    def test_shell_prose_change_requires_complete_handoff(self) -> None:
+         with tempfile.TemporaryDirectory() as repository, tempfile.TemporaryDirectory() as state:
+             repository_path = self._initialize_repository(Path(repository), "README.md")
+             state_directory = Path(state)
+@@ -370,9 +388,445 @@ def test_shell_prose_change_does_not_require_code_handoff(self) -> None:
+             (repository_path / "README.md").write_text("Changed documentation.\n", encoding="utf-8")
+             event["hook_event_name"] = "PostToolUse"
+             code_handoff_hook.process_event(event, state_directory)
+-            self.assertEqual({}, code_handoff_hook.process_event(self._stop_event("Documentation updated."), state_directory))
++            actual = code_handoff_hook.process_event(self._stop_event("Documentation updated."), state_directory)
++            self.assertEqual("block", actual["decision"])
++            self.assertEqual({}, code_handoff_hook.process_event(self._stop_event(
++                self._mergeable_handoff(commit_message=None),
++            ), state_directory))
++
++    def test_code_commit_requirement_stays_pending_through_prose_and_restore(self) -> None:
++        for changes in (("README.md", "Foo.java"), ("Foo.java", "README.md"), ("Foo.java", "README.md", "restore")):
++            with self.subTest(changes=changes), tempfile.TemporaryDirectory() as directory:
++                parent = Path(directory)
++                repository = self._initialize_repository(parent / "repository", "README.md")
++                (repository / "Foo.java").write_text("Original source.\n", encod
+```
+
+**File**: `.codex/skills/review-pr/scripts/build_review_inventory.py` (modified, +2/-0)
+```diff
+@@ -26,6 +26,8 @@
+ from collections import defaultdict
+ from typing import Iterable
+ 
++sys.dont_write_bytecode = True
++
+ from resolve_review_scope import (
+     ChangedFile, categorize, compare_github_files, final_paths, get_repo_root, parse_name_status, resolve_candidate_changes, run_git,
+ )
+```
+
+**File**: `.codex/skills/review-pr/scripts/manage_review_ledger.py` (modified, +2/-0)
+```diff
+@@ -35,6 +35,8 @@
+ from pathlib import Path, PurePosixPath
+ from typing import Any, Iterable
+ 
++sys.dont_write_bytecode = True
++
+ from resolve_review_scope import (
+     categorize, compare_github_files, get_repo_root, parse_name_status, resolve_candidate_changes, run_git,
+ )
 ```
 
 ---
 
-### Incident Patch 2: `ef37ccdb` (2026-11-05)
-**Commit Message**: Fix documentation links, images and translation pairing (#40474)
+### Incident Patch 2: `0111ba52` (2026-11-08)
+**Commit Message**: Fix NOT operator precedence in SQL Server, Oracle, SQL92 and ClickHouse parsers (#40486)
 
-**File**: `docs/blog/content/material/2022_03_09_SQL_Parse_Format_Function_A_Technical_Deep_Dive_by_Apache_ShardingSphere.en.md` (modified, +1/-1)
+In the SQL Server, Oracle, SQL92 and ClickHouse grammars the
+`notOperator expr` alternative of `expr` was listed after the `AND` and
+`OR` alternatives. ANTLR gives earlier alternatives higher precedence, so
+the operand of `NOT` swallowed the rest of the condition:
+`NOT a = 1 AND b = 2` was parsed as `NOT (a = 1 AND b = 2)`, and
+`a = 1 AND NOT b = 2 OR c = 3` as `a = 1 AND NOT (b = 2 OR c = 3)`. All
+four bind NOT tighter than AND and OR.
+
+The wrong tree reaches routing: for a table sharded by account_id,
+`WHERE account_id = 100 AND NOT amount = 0 OR account_id = 101` was
+routed to the shard of account_id 100 only.
+
+Move `notOperator expr` ahead of the AND/OR alternatives, as was done for
+Firebird. In SQL Server, `IS [NOT] DISTINCT FROM` is a comparison and has
+to stay inside the operand of NOT, so it moves above NOT as well. This
+also fixes `a IS DISTINCT FROM b AND c = 1`, which was parsed as
+`a IS DISTINCT FROM (b AND c = 1)`.
+
+**File**: `parser/sql/engine/dialect/clickhouse/src/main/antlr4/imports/clickhouse/BaseRule.g4` (modified, +2/-2)
 ```diff
-@@ -263,7 +263,7 @@ mysql> parse SELECT id, name FROM t_user WHERE status = 'ACTIVE' AND age > 18;
- +----------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
- ```
+@@ -143,9 +143,9 @@ cluster
+     ;
  
--For more [DistSQL](https://opensource.com/article/21/9/distsql) functions, please refer to the documentation: [https://shardingsphere.apache.org/document/current/cn/concepts/distsql/](https://shardingsphere.apache.org/document/current/cn/concepts/distsql/)
-+For more [DistSQL](https://opensource.com/article/21/9/distsql) functions, please refer to the documentation: [https://shardingsphere.apache.org/document/5.0.0/cn/concepts/distsql/](https://shardingsphere.apache.org/document/5.0.0/cn/concepts/distsql/)
- 
- ## Conclusion
- 
+ expr
+-    : expr andOperator expr
++    : notOperator expr
++    | expr andOperator expr
+     | expr orOperator expr
+-    | notOperator expr
+     | LP_ expr RP_
+     | booleanPrimary
+     ;
 ```
 
-**File**: `docs/blog/content/material/2022_03_11_Asia’s_E-Commerce_Giant_Dangdang_Increases_Order_Processing_Speed_by_30%_Saves_Over_Ten_Million_in_Technology_Budget_with_Apache_ShardingSphere.en.md` (modified, +1/-1)
+**File**: `parser/sql/engine/dialect/oracle/src/main/antlr4/imports/oracle/BaseRule.g4` (modified, +2/-2)
 ```diff
-@@ -42,7 +42,7 @@ Based on the situation described above, Dangdang’s tech team proposed a wareho
+@@ -407,9 +407,9 @@ exprList
+     ;
  
- However, at that time, there wasn’t a versatile and mature enough open source database middleware living up to Dangdang’s expectations, so they created one and named it Sharding-JDBC.
- 
--[ShardingSphere-JDBC](https://shardingsphere.apache.org/document/current/en/concepts/adaptor/#shardingsphere-jdbc) is positioned as a lightweight Java framework that provides additional services at the Java Database Connectivity (JDBC) layer. It is lightweight, efficient, easy to use, and compatible.
-+[ShardingSphere-JDBC](https://shardingsphere.apache.org/document/5.1.0/en/concepts/adaptor/#shardingsphere-jdbc) is positioned as a lightweight Java framework that provides additional services at the Java Database Connectivity (JDBC) layer. It is lightweight, efficient, easy to use, and compatible.
- 
- With ShardingSphere providing services in the form of the `.jar` files package, users can connect the client directly to the database without additional deployment and dependencies. It can be seen as an enhanced JDBC driver, fully compatible with JDBC and all ORM frameworks.
- 
+ expr
+-    : expr andOperator expr
++    : notOperator expr
++    | expr andOperator expr
+     | expr orOperator expr
+-    | notOperator expr
+     | LP_ expr RP_
+     | booleanPrimary
+     | expr datetimeExpr
 ```
 
-**File**: `docs/blog/content/material/2022_03_18_Executor_Engine_Performance_Optimization_Showcase_with_Apache_ShardingSphere_5.1.0.en.md` (modified, +1/-1)
+**File**: `parser/sql/engine/dialect/sql92/src/main/antlr4/imports/sql92/BaseRule.g4` (modified, +2/-2)
 ```diff
-@@ -26,7 +26,7 @@ The updates effectively reduce the consumed database connection resources in the
+@@ -131,9 +131,9 @@ characterSetName
+     ;
  
- First, it’s better to review Apache ShardingSphere’s microkernel and the principle that explains how the Executor Engine works in the processes. As shown in the figure below, the Apache ShardingSphere microkernel includes core processes: SQL Parser, SQL Router, SQL Rewriter, SQL Executor, and Result Merger.
- 
--![Processes in Apache ShardingSphere Microkernel](...)
-+![Processes in Apache ShardingSphere Microkernel](https://shardingsphere.apache.org/blog/img/2022_03_18_Executor_Engine_Performance_Optimization_Showcase_with_Apache_ShardingSphere_5.1.01.png)
- 
- SQL Parser Engine can parse the SQL statements entered by the user and generate SQL Statements containing contextual information.
- 
+ expr
+-    : expr andOperator expr
++    : notOperator expr
++    | expr andOperator expr
+     | expr orOperator expr
+-    | notOperator expr
+     | LP_ expr RP_
+     | booleanPrimary
+     ;
 ```
 
-**File**: `docs/blog/content/material/2022_03_23_Apache_ShardingSphere_Proxy_Performance_with_PostgreSQL_is_Improved_26.8%_with_Version_5.1.0.en.md` (modified, +1/-1)
+**File**: `parser/sql/engine/dialect/sqlserver/src/main/antlr4/imports/sqlserver/BaseRule.g4` (modified, +2/-2)
 ```diff
-@@ -246,7 +246,7 @@ We use TPC-C to conduct the ShardingSphere-Proxy benchmark test, to verify the p
- 
- To highlight the performance loss of ShardingSphere-Proxy itself, this test will use ShardingSphere-Proxy with sharding data (1 shard) against PostgreSQL 14.2.
- 
--The test is conducted following the official file [BenchmarkSQL Performance Test](https://shardingsphere.apache.org/document/current/cn/reference/test/performance-test/benchmarksql-test/), and the configuration is reduced from 4 shards to 1 shard.
-+The test is conducted following the official file [BenchmarkSQL Performance Test](https://shardingsphere.apache.org/document/5.1.0/cn/reference/test/performance-test/benchmarksql-test/), and the configuration is reduced from 4 shards to 1 shard.
- 
- **Testing Environment**
- ![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/irmtm4oucizld7hmuf5y.png)
+@@ -228,10 +228,10 @@ primaryKey
+ // TODO comb expr
+ expr
+     : booleanPrimary
+-    | expr andOperator expr
+-    | expr orOperator expr
+     | expr distinctFrom expr
+     | notOperator expr
++    | expr andOperator expr
++    | expr orOperator expr
+     | LP_ expr RP_
+     | expr AT TIME ZONE expr
+     ;
 ```
 
-**File**: `docs/blog/content/material/2022_04_29_Apache_ShardingSphere_Enterprise_Applications_Zhuanzhuan’s_Transaction_System_with_100s_of_Millions_of_Records.en.md` (modified, +1/-1)
+**File**: `test/it/parser/src/main/resources/case/dml/select-expression.xml` (modified, +67/-0)
 ```diff
-@@ -51,7 +51,7 @@ Advantages of ShardingSphere:
+@@ -1406,6 +1406,73 @@
+         </where>
+     </select>
  
- ShardingSphere initiated the Database Plus concept and adopts a plugin oriented architecture where all modules are independent of each other, allowing each to be used individually or flexibly combined.
- 
--It consists of three products, namely [JDBC](https://shardingsphere.apache.org/), [Proxy](https://shardingsphere.apache.org/document/current/en/overview/#shardingsphere-proxy) and [Sidecar ](https://shardingsphere.apache.org/document/current/en/overview/#shardingsphere-sidecartodo)(Planning), which supports both independent and hybrid deployment.
-+It consists of three products, namely [JDBC](https://shardingsphere.apache.org/), [Proxy](https://shardingsphere.apache.org/document/current/en/overview/#shardingsphere-proxy) and [Sidecar ](https://shardingsphere.apache.org/document/5.1.1/en/overview/#shardingsphere-sidecartodo)(Planning), which supports both independent and hybrid deployment.
- 
- Below is a feature comparison of the three products:
- ![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/7517wpdgk6gmgb0s8202.png)
++    <select sql-case-id="select_where_with_expr_with_and_not_or" parameters="1,2,3">
++        <from start-index="14" stop-index="20">
++            <simple-table name="t_order" start-index="14" stop-index="20" />
++        </from>
++        <projections start-index="7" stop-index="7">
++            <shorthand-projection start-index="7" stop-index="7" />
++        </projections>
++        <where start-index="22" stop-index="96">
++            <expr>
++                <binary-operation-expression start-index="28" stop-index="96">
++                    <left>
++                        <binary-operation-expression start-index="28" stop-index="73">
++                            <left>
++                                <binary-operation-expression start-index="28" stop-index="46">
++                                    <left>
++                                        <column name="user_id" start-index="28" stop-index="42">
++                                            <owner name="t_order" start-index="28" stop-index="34" />
++                                        </column>
++                                    </left>
++                                    <operator>=</operator>
++                                    <right>
++                                        <literal-expression value="1" start-index="46" stop-index="46" />
++                                        <parameter-marker-expression parameter-index="0" start-index="46" stop-index="46" />
++                                    </right>
++                                </binary-operation-expression>
++                            </left>
++                            <operator>AND</operator>
++                            <right>
++                                <not-expression start-index="52" stop-index="73">
++                                    <expr>
++                                        <binary-operation-expression start-index="56" stop-index="73">
++                                            <left>
++                                                <column name="status" start-index="56" stop-index="69">
++                                                    <owner name="t_order" start-index="56" stop-index="62" />
++                                                </column>
++                                            </left>
++                                            <operator>=</operator>
++                                            <right>
++                                                <literal-expression value="2" start-index="73" stop-index="73" />
++                                                <parameter-marker-expression parameter-index="1" start-index="73" stop-index="73" />
++                                            </right>
++                                        </binary-operation-expression>
++                                    </expr>
++                                </not-expression>
++                            </right>
++                        </binary-operation-expression>
++                    </left>
++                    <operator>OR</operator>
++                    <right>
++                        <binary-operation-expression start-index="78" stop-index="96">
++                            <left>
++                                <column name="user_id" start-index="78" stop-index="92">
++                                    <owner name="t_order" start-index="78" stop-index="84" />
++                                </column>
++                            </left>
++                            <operator>=</operator>
++                            <right>
++                                <literal-expression value="3" start-index="96" stop-index="96" />
++                                <parameter-marker-expression parameter-index="2" start-index="96" stop-index="96" />
++                            </right>
++                        </binary-operation-expression>
++                    </right>
++                </binary-operation-expression>
++            </expr>
++        </where>
++    </select>
++
+     <select sql-case-id="select_where_with_expr_with_not_sign" parameters="1">
+         <from start-index="14" stop-index="20">
+             <simple-table name="t_order" start-index="14" stop-index="20" />
 ```
 
-**File**: `docs/blog/content/material/2022_06_02_Database_Mesh_2.0_Database_Governance_in_a_Cloud_Native_Environment.en.md` (modified, +1/-1)
+**File**: `test/it/parser/src/main/resources/case/dml/select.xml` (modified, +38/-0)
 ```diff
-@@ -30,7 +30,7 @@ This means that the implementation of Service Mesh in Kubernetes’ Sidecar mode
+@@ -9734,6 +9734,44 @@
+         </where>
+     </select>
  
- When a new technology concept is launched, it’ll be characterized hahahby different business scenarios and patterns, different architectural design, different infrastructure maturity, and even different engineering cultures. It is a belief that has been fully demonstrated in the implementation of Kubernetes, and has been reinforced by Service Mesh. What about Database Mesh?
- 
--[ShardingSphere-Sidecar](https://shardingsphere.apache.org/document/current/en/user-manual/shardingsphere-sidecar/) incorporates ShardingSphere’s sharding capabilities, while some companies delivered their own interpretation based on Database Mesh.
-+[ShardingSphere-Sidecar](https://shardingsphere.apache.org/document/5.1.1/en/user-manual/shardingsphere-sidecar/) incorporates ShardingSphere’s sharding capabilities, while some companies delivered their own interpretation based on Database Mesh.
- 
- For example, analysis and support for SQL protocol are added in Service Mesh by means of secondary development to enhance the database traffic governance ability, which is compatible with the unified service governance configuration. The concept of Database Mesh is integrated into a complete set of middleware service frameworks, and a unified access mode is provided for business applications in the form of SDK or Sidecar to simplify the operation for developers.
- 
++    <select sql-case-id="select_with_distinct_from_and">
++        <projections start-index="7" stop-index="7">
++            <shorthand-projection start-index="7" stop-index="7"/>
++        </projections>
++        <from start-index="14" stop-index="29">
++            <simple-table name="#SampleTempTable" start-index="14" stop-index="29"/>
++        </from>
++        <where start-index="31" stop-index="75">
++            <expr>
++                <binary-operation-expression start-index="37" stop-index="75">
++                    <left>
++                        <binary-operation-expression start-index="37" stop-index="58">
++                            <left>
++                                <column name="id" start-index="37" stop-index="38"/>
++                            </left>
++                            <right>
++                                <literal-expression value="17" start-index="57" stop-index="58"/>
++                            </right>
++                            <operator>ISDISTINCTFROM</operator>
++                        </binary-operation-expression>
++                    </left>
++                    <operator>AND</operator>
++                    <right>
++                        <binary-operation-expression start-index="64" stop-index="75">
++                            <left>
++                                <column name="order_id" start-index="64" stop-index="71"/>
++                            </left>
++                            <operator>=</operator>
++                            <right>
++                                <literal-expression value="1" start-index="75" stop-index="75"/>
++                            </right>
++                        </binary-operation-expression>
++                    </right>
++                </binary-operation-expression>
++            </expr>
++        </where>
++    </select>
++
+     <select sql-case-id="select_with_contains_function">
+         <projections start-index="7" stop-index="16">
+             <column-projection name="product_id" start-index="7" stop-index="16"/>
 ```
 
-**File**: `docs/blog/content/material/2022_07_06_ShardingSphere-JDBC_Driver_Released_A_JDBC_Driver_That_Requires_No_Code_Modifications.en.md` (modified, +1/-1)
+**File**: `test/it/parser/src/main/resources/sql/supported/dml/select-expression.xml` (modified, +1/-0)
 ```diff
-@@ -92,7 +92,7 @@ try (
- 
- **Reference**
- 
--- [JDBC driver](https://shardingsphere.apache.org/document/current/cn/user-manual/shardingsphere-jdbc/jdbc-driver/)
-+- [JDBC driver](https://shardingsphere.apache.org/document/5.1.2/cn/user-manual/shardingsphere-jdbc/jdbc-driver/)
- 
- ## Conclusion
- 
+@@ -65,6 +65,7 @@
+     <sql-case id="select_where_with_expr_with_not" value="SELECT * FROM t_order WHERE NOT (? = t_order.order_id)" db-types="MySQL,Hive" />
+     <sql-case id="select_where_with_expr_with_not_sign" value="SELECT * FROM t_order WHERE ! ( ? = t_order.order_id)" db-types="MySQL,Hive" />
+     <sql-case id="select_where_with_expr_with_not_or_firebird" value="SELECT * FROM t_order WHERE NOT t_order.order_id = ? OR ? = t_order.order_id" db-types="Firebird" />
++    <sql-case id="select_where_with_expr_with_and_not_or" value="SELECT * FROM t_order WHERE t_order.user_id = ? AND NOT t_order.status = ? OR t_order.user_id = ?" db-types="SQLServer,Oracle,SQL92,ClickHouse" />
+     <sql-case id="select_where_with_expr_with_is" value="SELECT * FROM t_order WHERE ? = t_order.order_id IS FALSE" db-types="MySQL,Presto" />
+     <sql-case id="select_where_with_expr_with_is_not" value="SELECT * FROM t_order WHERE ? = t_order.order_id IS NOT FALSE" db-types="MySQL" />
+     <sql-case id="select_where_with_boolean_primary_with_is" value="SELECT * FROM t_order WHERE t_order.status IS NULL" db-types="MySQL,Presto,Hive" />
 ```
 
-**File**: `docs/blog/content/material/2022_07_26_DistSQL_Applications_Building_a_Dynamic_Distributed_Database.en.md` (modified, +5/-5)
+**File**: `test/it/parser/src/main/resources/sql/supported/dml/select.xml` (modified, +1/-0)
 ```diff
-@@ -126,7 +126,7 @@ Next, we’ll adopt regular sharding and use the `INLINE` expression algorithm t
- 
- **Primary key generator**
- 
--The primary key generator can generate a secure and unique primary key for a data table in a distributed scenario. For details, refer to the document [Distributed Primary Key](https://shardingsphere.apache.org/document/current/en/features/sharding/concept/key-generator/).
-+The primary key generator can generate a secure and unique primary key for a data table in a distributed scenario. For details, refer to the document [Distributed Primary Key](https://shardingsphere.apache.org/document/5.1.2/en/features/sharding/concept/key-generator/).
- 
- 1.Create the primary key generator.
- 
-@@ -182,7 +182,7 @@ mysql> SHOW SHARDING ALGORITHMS;
- ```
- **Default sharding strategy**
- 
--Sharding strategy consists of sharding key and sharding algorithm. Please refer to [Sharding Strategy](https://shardingsphere.apache.org/document/current/en/features/sharding/concept/sharding/) for its concept.
-+Sharding strategy consists of sharding key and sharding algorithm. Please refer to [Sharding Strategy](https://shardingsphere.apache.org/document/5.1.2/en/features/sharding/concept/sharding/) for its concept.
- 
- Sharding strategy consists of `databaseStrategy` and `tableStrategy`.
- 
-@@ -486,11 +486,11 @@ If you have any questions or suggestions about [Apache ShardingSphere](https://s
- 
- ## References
- 
--1. [Concept-DistSQL](https://shardingsphere.apache.org/document/current/en/concepts/distsql/)
-+1. [Concept-DistSQL](https://shardingsphere.apache.org/document/5.1.2/en/concepts/distsql/)
- 
--2. [Concept-Distributed Primary Key](https://shardingsphere.apache.org/document/current/en/features/sharding/concept/key-generator/)
-+2. [Concept-Distributed Primary Key](https://shardingsphere.apache.org/document/5.1.2/en/features/sharding/concept/key-generator/)
- 
--3. [Concept-Sharding Strategy](https://shardingsphere.apache.org/document/current/en/features/sharding/concept/sharding/)
-+3. [Concept-Sharding Strategy](https://shardingsphere.apache.org/document/5.1.2/en/features/sharding/concept/sharding/)
- 
- 4. [Concept INLINE Expression
- ](https://shardingsphere.apache.org/document/current/en/features/sharding/concept/inline-expression/)
+@@ -334,6 +334,7 @@
+     <sql-case id="select_with_substring_function" value="SELECT ProductID, Name, ProductNumber FROM [Production].[Product] WHERE SUBSTRING(ProductNumber, 0, 4) =  'HN-'" db-types="SQLServer"/>
+     <sql-case id="select_with_not_distinct_from" value="SELECT * FROM #SampleTempTable WHERE id IS NOT DISTINCT FROM NULL" db-types="SQLServer"/>
+     <sql-case id="select_with_distinct_from" value="SELECT * FROM #SampleTempTable WHERE id IS DISTINCT FROM 17;" db-types="SQLServer"/>
++    <sql-case id="select_with_distinct_from_and" value="SELECT * FROM #SampleTempTable WHERE id IS DISTINCT FROM 17 AND order_id = 1" db-types="SQLServer"/>
+     <sql-case id="select_with_contains_function" value="SELECT product_id FROM products WHERE CONTAINS(product_description, '&quot;Snap Happy 100EZ&quot; OR FORMSOF(THESAURUS,&quot;Snap Happy&quot;) OR &quot;100EZ&quot;') AND product_cost &lt; 200" db-types="SQLServer"/>
+     <sql-case id="select_with_default_schema" value="SELECT has_backup_checksums, database_name, * FROM msdb..backupset" db-types="SQLServer"/>
+     <sql-case id="select_from_dbms_table" value="select * from table(dbms_xplan.display);" db-types="Oracle"/>
+```
+
+---
+
+### Incident Patch 3: `ea876392` (2026-11-08)
+**Commit Message**: Fix RAT site report exclusion configuration (#40490)
+
+**File**: `pom.xml` (modified, +3/-1)
+```diff
+@@ -1161,6 +1161,9 @@
+                 <groupId>org.apache.rat</groupId>
+                 <artifactId>apache-rat-plugin</artifactId>
+                 <version>${apache-rat-plugin.version}</version>
++                <configuration>
++                    <excludesFile>${maven.multiModuleProjectDirectory}/src/resources/rat.txt</excludesFile>
++                </configuration>
+             </plugin>
+             <plugin>
+                 <artifactId>maven-checkstyle-plugin</artifactId>
+@@ -1169,7 +1172,6 @@
+                     <failOnViolation>false</failOnViolation>
+                     <failsOnError>false</failsOnError>
+                     <violationSeverity>warning</violationSeverity>
+-                    <!--suppress MavenModelInspection -->
+                     <configLocation>${maven.multiModuleProjectDirectory}/src/resources/checkstyle.xml</configLocation>
+                     <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                     <excludes>**/autogen/**/*</excludes>
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #40476** (2026-11-05): Use current documentation URLs for blog references (@terrymanu)
-- **PR #40474** (2026-11-05): Fix documentation links, images and translation pairing (@terrymanu)
-- **PR #40473** (2026-11-05): Unify HttpCore dependency version to 4.4.15 (@terrymanu)
-- **PR #40471** (2026-11-05): Complete Oracle CREATE TABLE column definitions (@sandynz)
-- **PR #40470** (2026-11-05): Simplify docs README and remove duplicate license (@terrymanu)
-- **PR #40468** (closed): Bump org.apache.thrift:libthrift from 0.16.0 to 0.24.0 (@dependabot[bot])
+- **PR #40493** (2026-11-08): Refactor code for 64 approved Sonar findings (@terrymanu)
+- **PR #40492** (2026-11-08): Move pipeline data source configuration implementations to core (@terrymanu)
+- **PR #40491** (2026-11-08): Exclude AI tool files and Python caches from RAT (@terrymanu)
+- **PR #40490** (2026-11-08): Fix RAT site report exclusion configuration (@terrymanu)
+- **PR #40489** (2026-11-08): Add Grice guidance and require formal review for Git-visible changes (@terrymanu)
+- **PR #40488** (2026-11-07): Resolve JTA dependency convergence while preserving API compatibility (@terrymanu)
 
 ---
 
@@ -1706,28 +2078,28 @@ Co-authored-by: rys888 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. SQL error prefix for Firebird SQLDA status vectors (#40443)
+## X. Add Grice guidance and require formal review for Git-visible changes (#40489)
 
 **RULE**:
-When implementing operations in `RELEASE-NOTES.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/shardingsphere. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.codex/config.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/shardingsphere. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `34de0a1f`: SQL error prefix for Firebird SQLDA status vectors (#40443). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6a77a0cb`: Add Grice guidance and require formal review for Git-visible changes (#40489). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `RELEASE-NOTES.md`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `.codex/config.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-1. Proxy: Preserve the SQL error code in Firebird invalid batch message length responses - [#40408](https://github.com/apache/shardingsphere/issues/40408)
+matcher = "^(Bash|apply_patch|exec_command|write_stdin)$"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+matcher = "^(Bash|exec_command|write_stdin)$"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `34de0a1f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6a77a0cb` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/transact-rs-sqlx-learnings.md`  
 > **Source**: github ([https://github.com/transact-rs/sqlx](https://github.com/transact-rs/sqlx))  
-> **Source Version**: `7908fe79`  
+> **Source Version**: `ae659a0c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-01T02:15:54.614Z  
+> **Timestamp**: 2026-11-09T13:21:43.732Z  
 > **Learning ID**: `learn-github-transact-rs-sqlx`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/transact-rs-sqlx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/transact-rs/sqlx](https://github.com/transact-rs/sqlx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-01T02:15:54.406Z  
+> **Harvest Timestamp**: 2026-11-09T13:21:42.939Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🧰 The Rust SQL Toolkit. An async, pure Rust SQL crate featuring compile-time checked queries without a DSL. Supports PostgreSQL, MySQL, and SQLite.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 17616 stars
+- **Stars / Engagement**: 17641 stars
 
 ---
 
@@ -981,83 +981,690 @@ impl FromStr for AnyKind {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7908fe79` (2026-10-31)
-**Commit Message**: fix(mysql): handle empty passwords during authentication switches. (#4493)
+### Incident Patch 1: `ae659a0c` (2026-11-08)
+**Commit Message**: fix(mysql): decode DECIMAL columns into integer types correctly (#4503)
 
-**File**: `sqlx-mysql/src/connection/auth.rs` (modified, +6/-0)
+MySQL sends DECIMAL/NEWDECIMAL as ASCII text even over the binary
+protocol, but int_decode/uint_decode read those bytes as a little-endian
+integer. Decoding e.g. SUM(int_col) into u64 via a type override or
+try_get_unchecked silently produced garbage (b"13" read as 0x3331 =
+13105 instead of 13).
+
+Parse the text for DECIMAL columns and require it to be integral:
+integral values decode correctly, while fractional ones now return an
+error instead of a corrupted result.
+
+Type::compatible is left unchanged, so query! inference still maps
+DECIMAL columns to Decimal/BigDecimal.
+
+**File**: `sqlx-mysql/src/types/int.rs` (modified, +22/-0)
 ```diff
-@@ -17,6 +17,12 @@ impl AuthPlugin {
-         nonce: &Chain<Bytes, Bytes>,
-     ) -> Result<Vec<u8>, Error> {
-         match self {
-+            // Empty passwords require an empty auth response, including after an auth switch.
-+            AuthPlugin::CachingSha2Password | AuthPlugin::MySqlNativePassword
-+                if password.is_empty() =>
-+            {
-+                Ok(Vec::new())
-+            }
-             // https://mariadb.com/kb/en/caching_sha2_password-authentication-plugin/
-             AuthPlugin::CachingSha2Password => Ok(scramble_sha256(password, nonce).to_vec()),
+@@ -90,7 +90,29 @@ impl Encode<'_, MySql> for i64 {
+     }
+ }
+ 
++/// Integer part of a textual `DECIMAL`, erroring if it has a nonzero fraction.
++pub(super) fn integral_decimal_str(s: &str) -> Result<&str, BoxDynError> {
++    let (int_part, frac_part) = s.split_once('.').unwrap_or((s, ""));
++
++    if frac_part.bytes().any(|b| b != b'0') {
++        return Err(format!("DECIMAL value `{s}` has a fractional part").into());
++    }
++
++    Ok(int_part)
++}
++
+ fn int_decode(value: MySqlValueRef<'_>) -> Result<i64, BoxDynError> {
++    // DECIMAL is ASCII text even over the binary protocol, so parse the digits
++    // instead of reading the bytes as a little-endian integer.
++    if matches!(
++        value.type_info.r#type,
++        ColumnType::Decimal | ColumnType::NewDecimal
++    ) {
++        return integral_decimal_str(value.as_str()?)?
++            .parse()
++            .map_err(Into::into);
++    }
++
+     Ok(match value.format() {
+         MySqlValueFormat::Text => value.as_str()?.parse()?,
+         MySqlValueFormat::Binary => {
+```
+
+**File**: `sqlx-mysql/src/types/uint.rs` (modified, +12/-0)
+```diff
+@@ -1,3 +1,4 @@
++use super::int::integral_decimal_str;
+ use crate::collation::Collation;
+ use crate::decode::Decode;
+ use crate::encode::{Encode, IsNull};
+@@ -115,6 +116,17 @@ fn uint_decode(value: MySqlValueRef<'_>) -> Result<u64, BoxDynError> {
+         return Ok(value);
+     }
+ 
++    // DECIMAL is ASCII text even over the binary protocol (e.g. `SUM()` over
++    // integers yields one); parse the digits rather than the raw bytes.
++    if matches!(
++        value.type_info.r#type,
++        ColumnType::Decimal | ColumnType::NewDecimal
++    ) {
++        return integral_decimal_str(value.as_str()?)?
++            .parse()
++            .map_err(Into::into);
++    }
++
+     Ok(match value.format() {
+         MySqlValueFormat::Text => value.as_str()?.parse()?,
  
 ```
 
-**File**: `tests/mysql/mysql.rs` (modified, +25/-0)
+**File**: `tests/mysql/types.rs` (modified, +37/-0)
 ```diff
-@@ -40,6 +40,31 @@ async fn it_connects_without_password() -> anyhow::Result<()> {
-     Ok(())
- }
+@@ -31,6 +31,43 @@ test_type!(i32(MySql, "2141512" == 2141512_i32));
+ test_type!(u64(MySql, "CAST(2141512 AS UNSIGNED)" == 2141512_u64));
+ test_type!(i64(MySql, "2141512" == 2141512_i64));
  
++// A DECIMAL (e.g. `SUM()` over integers) is sent as text even over the binary
++// protocol, so decoding one into an integer must parse the digits rather than
++// read the ASCII bytes as a little-endian integer.
 +#[sqlx_macros::test]
-+async fn it_connects_without_password_after_auth_switch() -> anyhow::Result<()> {
-+    setup_if_needed();
++async fn decode_integer_from_decimal() -> anyhow::Result<()> {
++    let mut conn = new::<MySql>().await?;
 +
-+    let mut url = Url::parse(&env::var("DATABASE_URL").context("expected DATABASE_URL")?)
-+        .context("error parsing DATABASE_URL")?;
++    // Prepared statement => binary protocol; b"13" read as LE would be 13105.
++    let row = sqlx::query("SELECT CAST(13 AS DECIMAL(4, 0))")
++        .fetch_one(&mut conn)
++        .await?;
++    assert_eq!(row.try_get_unchecked::<u64, _>(0)?, 13);
++    assert_eq!(row.try_get_unchecked::<i64, _>(0)?, 13);
 +
-+    url.set_username("no_password_native").unwrap();
-+    url.set_password(None).unwrap();
++    // Integral value with a nonzero scale.
++    let row = sqlx::query("SELECT CAST(13.00 AS DECIMAL(6, 2))")
++        .fetch_one(&mut conn)
++        .await?;
++    assert_eq!(row.try_get_unchecked::<u64, _>(0)?, 13);
 +
-+    let options = MySqlConnectOptions::from_url(&url)?;
++    // Negative values are signed-only.
++    let row = sqlx::query("SELECT CAST(-7 AS DECIMAL(4, 0))")
++        .fetch_one(&mut conn)
++        .await?;
++    assert_eq!(row.try_get_unchecked::<i64, _>(0)?, -7);
++    assert!(row.try_get_unchecked::<u64, _>(0).is_err());
 +
-+    for options in [options.clone(), options.password("")] {
-+        let mut conn = options.connect().await?;
-+
-+        let vars = sqlx::raw_sql("SHOW VARIABLES").fetch_all(&mut conn).await?;
-+
-+        assert!(!vars.is_empty());
-+
-+        conn.close().await?;
-+    }
++    // A real fraction errors instead of silently corrupting.
++    let row = sqlx::query("SELECT CAST(13.5 AS DECIMAL(4, 1))")
++        .fetch_one(&mut conn)
++        .await?;
++    let err = row.try_get_unchecked::<u64, _>(0).unwrap_err().to_string();
++    assert!(err.contains("fractional"), "unexpected error: {err}");
 +
 +    Ok(())
 +}
 +
- #[sqlx_macros::test]
- async fn it_maths() -> anyhow::Result<()> {
-     let mut conn = new::<MySql>().await?;
+ test_type!(f64(MySql, "3.14159265e0" == 3.14159265_f64));
+ 
+ // NOTE: This behavior can be very surprising. MySQL implicitly widens FLOAT bind parameters
 ```
 
-**File**: `tests/mysql/setup.sql` (modified, +6/-0)
+---
+
+### Incident Patch 2: `4df44151` (2026-11-08)
+**Commit Message**: fix(mysql): quote charset/collation/time_zone in connect-time SET (#4496)
+
+Fixes #4491
+
+Co-authored-by: Nacl-HCl <[REDACTED_EMAIL]>
+
+**File**: `sqlx-mysql/src/options/connect.rs` (modified, +159/-13)
 ```diff
-@@ -30,3 +30,9 @@ CREATE USER 'no_password'@'%';
- -- Granting no privileges, or just `GRANT USAGE`, gives an "access denied" error.
- -- https://github.com/launchbadge/sqlx/issues/3484#issuecomment-2350901546
- GRANT SELECT ON sqlx.* TO 'no_password'@'%';
+@@ -27,6 +27,30 @@ impl ConnectOptions for MySqlConnectOptions {
+         // After the connection is established, we initialize by configuring a few
+         // connection parameters
+ 
++        if let Some(statement) = self.connect_init_statement() {
++            conn.execute(AssertSqlSafe(statement)).await?;
++        }
 +
-+-- Force a plugin switch on MySQL 8.0; MariaDB ignores the MySQL-only clause.
-+CREATE USER 'no_password_native'@'%'
-+    /*!50700 IDENTIFIED WITH mysql_native_password BY '' */;
++        Ok(conn)
++    }
 +
-+GRANT SELECT ON sqlx.* TO 'no_password_native'@'%';
++    fn log_statements(mut self, level: LevelFilter) -> Self {
++        self.log_settings.log_statements(level);
++        self
++    }
++
++    fn log_slow_statements(mut self, level: LevelFilter, duration: Duration) -> Self {
++        self.log_settings.log_slow_statements(level, duration);
++        self
++    }
++}
++
++impl MySqlConnectOptions {
++    /// Build the `SET ...;` statement sent right after connecting.
++    ///
++    /// Kept as a pure function of the options (no I/O) so it can be
++    /// unit-tested without a live connection.
++    fn connect_init_statement(&self) -> Option<String> {
+         // https://mariadb.com/kb/en/sql-mode/
+ 
+         // PIPES_AS_CONCAT - Allows using the pipe character (ASCII 124) as string concatenation operator.
+@@ -66,38 +90,160 @@ impl ConnectOptions for MySqlConnectOptions {
+         }
+ 
+         if let Some(timezone) = &self.timezone {
+-            options.push(format!(r#"time_zone='{}'"#, timezone));
++            options.push(format!("time_zone={}", quote_string_literal(timezone)));
+         }
+ 
+         if self.set_names {
+             // As it turns out, we don't _have_ to set a collation if we don't want to.
+             // We can let the server choose the default collation for the charset.
+             let set_names = if let Some(collation) = &self.collation {
+-                format!(r#"NAMES {} COLLATE {collation}"#, self.charset,)
++                format!(
++                    "NAMES {} COLLATE {}",
++                    quote_string_literal(&self.charset),
++                    quote_string_literal(collation),
++                )
+             } else {
+                 // Leaves the default collation up to the server,
+                 // but ensures statements and results are encoded using the proper charset.
+-                format!("NAMES {}", self.charset)
++                format!("NAMES {}", quote_string_literal(&self.charset))
+             };
+ 
+             options.push(set_names);
+         }
+ 
+-        if !options.is_empty() {
+-            conn.execute(AssertSqlSafe(format!(r#"SET {};"#, options.join(","))))
+-                .await?;
++        if options.is_empty() {
++            None
++        } else {
++            Some(format!(r#"SET {};"#, options.join(",")))
+         }
++    }
++}
+ 
+-        Ok(conn)
++/// Render `value` as a MySQL string literal: wrapped in single quotes with
++/// embedded backslashes and single quotes escaped.
++///
++/// `charset`, `collation` and `time_zone` are taken from the connection URL
++/// (or the builder methods) and used to be interpolated into the connect-time
++/// `SET` statement without quoting, so a crafted value could break out of the
++/// statement and inject arbitrary SQL. Quoting them as string literals closes
++/// that hole.
++///
++/// Doubling single quotes is safe regardless of the `NO_BACKSLASH_ESCAPES`
++/// sql mode; backslashes are escaped as well so one cannot combine with a
++/// following quote into an escape sequence.
++fn quote_string_literal(value: &str) -> String {
++    let mut quoted = String::with_capacity(value.len() + 2);
++    quoted.push('\'');
++    for ch in value.chars() {
++        match ch {
++            '\\' => quoted.push_str(r#"\\"#),
++            '\'' => quoted.push_str("''"),
++            _ => quoted.push(ch),
++        }
++    }
++    quoted.push('\'');
++    quoted
++}
++
++#[cfg(test)]
++mod tests {
++    use super::*;
++    use crate::MySqlConnectOptions;
++    use std::str::FromStr;
++
++    fn statement_for(url: &str) -> String {
++        MySqlConnectOptions::from_str(url)
++            .expect("valid URL")
++            .connect_init_statement()
++            .expect("connect-time SET statement")
+     }
+ 
+-    fn log_statements(mut self, level: LevelFilter) -> Self {
+-        self.log_settings.log_statements(level);
+-        self
++    #[test]
++    fn init_statement_quotes_charset_and_collation() {
++        let stmt = statement_for("mysql://user:password@localhost/database");
++
++        // Defaults (`pipes_as_concat`, `no_engine_substitution`, `+00:00`,
++        // `utf8mb4`) are preserved; `NAMES` charset is quoted as a string literal.
++        assert_eq!(
++            stmt,
++            "SET sql_mode=(SELECT CONCAT(@@sql_mode, ',PIPES_AS_CONCAT,NO_ENGINE_SUBSTITUTION')),\
++             time_zone='+00:00',NAMES 'utf8mb4';"
++        );
+     }
+ 
+-    fn log_slow_statements(mut self, level: LevelFilter, duration: Duration) -> Self {
+-        self.log_settings.log_slow_statements(level, duration);
+-        self
++    #[test]
++    fn init_statement_quotes_time_zone() {
++        let stmt = statement_for("mysql://user:password@localhost/database?timezone=%2B08:00");
++
++      
+```
+
+---
+
+### Incident Patch 3: `a07bb1ea` (2026-11-08)
+**Commit Message**: fix(postgres): make `hostaddr` semantics match `libpq` (#4514)
+
+* refactor(test): generate TLS certs on-demand
+
+* fix(postgres): implement proper `hostaddr` semantics
+
+* fix: `hostaddr` unit test
+
+* chore: add certificate printout to `gen-certs.sh`
+
+* fix(tests): don't use query macro in `tests/postgres/postgres.rs`
+
+* fix(tests): force x509v3 generation in `gen-certs.sh`
+
+* fix(tests): set unique subject lines for generated certs
+
+* fix(tests): set unique subject lines for generated certs (2)
+
+* fix(tests): re-enable `mysql_native_password` plugin on MySQL 8.4+
+
+**File**: `.github/workflows/sqlx.yml` (modified, +39/-0)
+```diff
+@@ -277,6 +277,10 @@ jobs:
+           --no-default-features
+           --features postgres,_unstable-all-types,runtime-${{ matrix.runtime }},tls-${{ matrix.tls }},macros,migrate
+ 
++      # Generate TLS certificates
++      - run: ./gen-certs.sh
++        working-directory: tests/certs
++
+       - run: |
+           docker compose -f tests/docker-compose.yml run -d -p 5432:5432 --name postgres_${{ matrix.postgres }} postgres_${{ matrix.postgres }}
+ 
+@@ -388,6 +392,10 @@ jobs:
+ 
+       - uses: Swatinem/rust-cache@v2
+ 
++      # Generate TLS certificates
++      - run: ./gen-certs.sh
++        working-directory: tests/certs
++
+       - run: |
+           docker compose -f tests/docker-compose.yml run -d -p 5432:5432 --name postgres_${{ matrix.postgres }}_client_ssl postgres_${{ matrix.postgres }}_client_ssl
+ 
+@@ -408,6 +416,21 @@ jobs:
+           DATABASE_URL: postgres://postgres@localhost:5432/sqlx?sslmode=verify-ca&sslrootcert=.%2Ftests%2Fcerts%2Fca.crt&sslkey=.%2Ftests%2Fcerts%2Fkeys%2Fclient.key&sslcert=.%2Ftests%2Fcerts%2Fclient.crt
+           RUSTFLAGS: -D warnings --cfg postgres="${{ matrix.postgres }}"
+ 
++      # Test with `hostaddr` and `verify-full`
++      - run: |
++          SKIP_ARGS=()
++          for test in $PG_ISOLATED_TESTS; do
++            SKIP_ARGS+=(--skip "$test")
++          done
++          cargo test \
++            --no-default-features \
++            --features any,postgres,macros,_unstable-all-types,runtime-${{ matrix.runtime }},tls-${{ matrix.tls }} \
++            -- \
++            "${SKIP_ARGS[@]}"
++        env:
++          DATABASE_URL: postgres://postgres@sqlx.test:5432/sqlx?hostaddr=127.0.0.1&sslmode=verify-full&sslrootcert=.%2Ftests%2Fcerts%2Fca.crt&sslkey=.%2Ftests%2Fcerts%2Fkeys%2Fclient.key&sslcert=.%2Ftests%2Fcerts%2Fclient.crt
++          RUSTFLAGS: -D warnings --cfg postgres="${{ matrix.postgres }}"
++
+   postgres-isolated:
+     name: Postgres Isolated
+     runs-on: ubuntu-24.04
+@@ -421,6 +444,10 @@ jobs:
+ 
+       - uses: Swatinem/rust-cache@v2
+ 
++      # Generate TLS certificates
++      - run: ./gen-certs.sh
++        working-directory: tests/certs
++
+       - run: |
+           docker compose -f tests/docker-compose.yml run -d -p 5432:5432 --name postgres_17 postgres_17
+           docker exec postgres_17 bash -c "until pg_isready; do sleep 1; done"
+@@ -460,6 +487,10 @@ jobs:
+ 
+       - run: cargo build --features mysql,_unstable-all-types,runtime-${{ matrix.runtime }},tls-${{ matrix.tls }}
+ 
++      # Generate TLS certificates
++      - run: ./gen-certs.sh
++        working-directory: tests/certs
++
+       - run: docker compose -f tests/docker-compose.yml run -d -p 3306:3306 --name mysql_${{ matrix.mysql }} mysql_${{ matrix.mysql }}
+       - name: Wait for MySQL
+         run: |
+@@ -595,6 +626,10 @@ jobs:
+ 
+       - uses: Swatinem/rust-cache@v2
+ 
++      # Generate TLS certificates
++      - run: ./gen-certs.sh
++        working-directory: tests/certs
++
+       - run: docker compose -f tests/docker-compose.yml run -d -p 3306:3306 --name mysql_8 mysql_8
+       - name: Wait for MySQL
+         run: |
+@@ -640,6 +675,10 @@ jobs:
+ 
+       - run: cargo build --features mysql,_unstable-all-types,runtime-${{ matrix.runtime }},tls-${{ matrix.tls }}
+ 
++      # Generate TLS certificates
++      - run: ./gen-certs.sh
++        working-directory: tests/certs
++
+       - run: docker compose -f tests/docker-compose.yml run -d -p 3306:3306 --name mariadb_${{ matrix.mariadb }} mariadb_${{ matrix.mariadb }}
+       - name: Wait for MariaDB
+         run: |
+```
+
+**File**: `sqlx-core/src/net/mod.rs` (modified, +2/-1)
+```diff
+@@ -2,5 +2,6 @@ mod socket;
+ pub mod tls;
+ 
+ pub use socket::{
+-    connect_tcp, connect_uds, BufferedSocket, Socket, SocketIntoBox, WithSocket, WriteBuffer,
++    connect_tcp, connect_uds, BufferedSocket, Socket, SocketHost, SocketIntoBox, WithSocket,
++    WriteBuffer,
+ };
+```
+
+**File**: `sqlx-core/src/net/socket/mod.rs` (modified, +37/-7)
+```diff
+@@ -1,5 +1,7 @@
++use std::fmt::Display;
+ use std::future::Future;
+ use std::io;
++use std::net::{AddrParseError, IpAddr};
+ use std::path::Path;
+ use std::pin::Pin;
+ use std::task::{ready, Context, Poll};
+@@ -181,14 +183,45 @@ impl<S: Socket + ?Sized> Socket for Box<S> {
+     }
+ }
+ 
++#[derive(Clone, Copy)]
++pub enum SocketHost<'a> {
++    Name(&'a str),
++    Addr(IpAddr),
++}
++
++impl TryFrom<SocketHost<'_>> for IpAddr {
++    type Error = AddrParseError;
++
++    fn try_from(host: SocketHost<'_>) -> Result<Self, Self::Error> {
++        match host {
++            // IPv6 addresses in URLs will be wrapped in brackets and the `url` crate doesn't trim those.
++            SocketHost::Name(name) => name.trim_matches(&['[', ']'][..]).parse(),
++            SocketHost::Addr(addr) => Ok(addr),
++        }
++    }
++}
++
++impl Display for SocketHost<'_> {
++    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
++        match self {
++            SocketHost::Name(name) => name.fmt(f),
++            SocketHost::Addr(addr) => addr.fmt(f),
++        }
++    }
++}
++
+ pub async fn connect_tcp<Ws: WithSocket>(
+-    host: &str,
++    host: SocketHost<'_>,
+     port: u16,
+     with_socket: Ws,
+ ) -> crate::Result<Ws::Output> {
+     #[cfg(feature = "_rt-tokio")]
+     if crate::rt::rt_tokio::available() {
+-        let socket = tokio::net::TcpStream::connect((host, port)).await?;
++        let socket = match host {
++            SocketHost::Name(name) => tokio::net::TcpStream::connect((name, port)).await?,
++            SocketHost::Addr(addr) => tokio::net::TcpStream::connect((addr, port)).await?,
++        };
++
+         socket.set_nodelay(true)?;
+         return Ok(with_socket.with_socket(socket).await);
+     }
+@@ -208,14 +241,11 @@ pub async fn connect_tcp<Ws: WithSocket>(
+ ///
+ /// This implements the same behavior as [`tokio::net::TcpStream::connect()`] and additionally sets the `TCP_NODELAY` flag.
+ #[cfg(feature = "_rt-async-io")]
+-async fn connect_tcp_async_io(host: &str, port: u16) -> crate::Result<impl Socket> {
++async fn connect_tcp_async_io(host: SocketHost<'_>, port: u16) -> crate::Result<impl Socket> {
+     use async_io::Async;
+     use std::net::{IpAddr, TcpStream, ToSocketAddrs};
+ 
+-    // IPv6 addresses in URLs will be wrapped in brackets and the `url` crate doesn't trim those.
+-    let host = host.trim_matches(&['[', ']'][..]);
+-
+-    if let Ok(addr) = host.parse::<IpAddr>() {
++    if let Ok(addr) = IpAddr::try_from(host) {
+         let socket = Async::<TcpStream>::connect((addr, port)).await?;
+         socket.get_ref().set_nodelay(true)?;
+         return Ok(socket);
+```
+
+**File**: `sqlx-mysql/src/connection/establish.rs` (modified, +7/-4)
+```diff
+@@ -1,6 +1,3 @@
+-use bytes::buf::Buf;
+-use bytes::Bytes;
+-
+ use crate::common::StatementCache;
+ use crate::connection::{tls, MySqlConnectionInner, MySqlStream, MAX_PACKET_SIZE};
+ use crate::error::Error;
+@@ -10,14 +7,20 @@ use crate::protocol::connect::{
+ };
+ use crate::protocol::Capabilities;
+ use crate::{MySqlConnectOptions, MySqlConnection, MySqlSslMode};
++use bytes::buf::Buf;
++use bytes::Bytes;
++use sqlx_core::net::SocketHost;
+ 
+ impl MySqlConnection {
+     pub(crate) async fn establish(options: &MySqlConnectOptions) -> Result<Self, Error> {
+         let do_handshake = DoHandshake::new(options)?;
+ 
+         let handshake = match &options.socket {
+             Some(path) => crate::net::connect_uds(path, do_handshake).await?,
+-            None => crate::net::connect_tcp(&options.host, options.port, do_handshake).await?,
++            None => {
++                crate::net::connect_tcp(SocketHost::Name(&options.host), options.port, do_handshake)
++                    .await?
++            }
+         };
+ 
+         let stream = handshake?;
+```
+
+**File**: `sqlx-postgres/src/connection/stream.rs` (modified, +16/-7)
+```diff
+@@ -2,11 +2,6 @@ use std::collections::BTreeMap;
+ use std::ops::{ControlFlow, Deref, DerefMut};
+ use std::str::FromStr;
+ 
+-use futures_channel::mpsc::UnboundedSender;
+-use futures_util::SinkExt;
+-use log::Level;
+-use sqlx_core::bytes::Buf;
+-
+ use crate::connection::tls::MaybeUpgradeTls;
+ use crate::error::Error;
+ use crate::message::{
+@@ -15,6 +10,11 @@ use crate::message::{
+ };
+ use crate::net::{self, BufferedSocket, Socket};
+ use crate::{PgConnectOptions, PgDatabaseError, PgSeverity};
++use futures_channel::mpsc::UnboundedSender;
++use futures_util::SinkExt;
++use log::Level;
++use sqlx_core::bytes::Buf;
++use sqlx_core::net::SocketHost;
+ 
+ // the stream is a separate type from the connection to uphold the invariant where an instantiated
+ // [PgConnection] is a **valid** connection to postgres
+@@ -42,9 +42,18 @@ pub struct PgStream {
+ 
+ impl PgStream {
+     pub(super) async fn connect(options: &PgConnectOptions) -> Result<Self, Error> {
+-        let socket_result = match options.fetch_socket() {
++        let socket_result = match options.make_socket_path() {
+             Some(ref path) => net::connect_uds(path, MaybeUpgradeTls(options)).await?,
+-            None => net::connect_tcp(&options.host, options.port, MaybeUpgradeTls(options)).await?,
++            None => {
++                net::connect_tcp(
++                    options
++                        .hostaddr
++                        .map_or_else(|| SocketHost::Name(&options.host), SocketHost::Addr),
++                    options.port,
++                    MaybeUpgradeTls(options),
++                )
++                .await?
++            }
+         };
+ 
+         let socket = socket_result?;
+```
+
+**File**: `sqlx-postgres/src/options/doc.md` (modified, +2/-2)
+```diff
+@@ -29,7 +29,7 @@ if a parameter is not passed in via URL, it is populated by reading
+ | `password`         | `PGPASSWORD`         | Read from [`passfile`], if it exists.                       |
+ | [`passfile`]       | `PGPASSFILE`         | `~/.pgpass` or `%APPDATA%\postgresql\pgpass.conf` (Windows) |
+ | `host`             | `PGHOST`             | See [Note: Default Host](#note-default-host).               |
+-| `hostaddr`         | `PGHOSTADDR`         | See [Note: Default Host](#note-default-host).               |
++| `hostaddr`         | `PGHOSTADDR`         | Unset.               |
+ | `port`             | `PGPORT`             | `5432`                                                      |
+ | `dbname`           | `PGDATABASE`         | Unset; defaults to the username server-side.                |
+ | `sslmode`          | `PGSSLMODE`          | `prefer`. See [`PgSslMode`] for details.                    |
+@@ -214,4 +214,4 @@ let pool = PgPool::connect_with(opts).await?;
+ [`date_trunc`]: https://www.postgresql.org/docs/current/functions-datetime.html#FUNCTIONS-DATETIME-TRUNC
+ [`now`]: https://www.postgresql.org/docs/current/functions-datetime.html#FUNCTIONS-DATETIME-CURRENT
+ [`current_time`]: https://www.postgresql.org/docs/current/functions-datetime.html#FUNCTIONS-DATETIME-CURRENT
+-[`AT TIME ZONE`]: https://www.postgresql.org/docs/current/functions-datetime.html#FUNCTIONS-DATETIME-ZONECONVERT
+\ No newline at end of file
++[`AT TIME ZONE`]: https://www.postgresql.org/docs/current/functions-datetime.html#FUNCTIONS-DATETIME-ZONECONVERT
+```
+
+**File**: `sqlx-postgres/src/options/mod.rs` (modified, +24/-5)
+```diff
+@@ -1,6 +1,7 @@
+ use std::borrow::Cow;
+ use std::env::var;
+ use std::fmt::{self, Display, Write};
++use std::net::IpAddr;
+ use std::path::{Path, PathBuf};
+ use std::sync::{Arc, OnceLock};
+ 
+@@ -19,6 +20,7 @@ mod ssl_mode;
+ pub struct PgConnectOptions {
+     pub(crate) host: String,
+     pub(crate) port: u16,
++    pub(crate) hostaddr: Option<IpAddr>,
+     pub(crate) socket: Option<PathBuf>,
+     pub(crate) username: String,
+     pub(crate) password: Option<String>,
+@@ -67,10 +69,7 @@ impl PgConnectOptions {
+             .and_then(|v| v.parse().ok())
+             .unwrap_or(5432);
+ 
+-        let host = var("PGHOSTADDR")
+-            .ok()
+-            .or_else(|| var("PGHOST").ok())
+-            .unwrap_or_else(|| default_host(port));
++        let host = var("PGHOST").ok().unwrap_or_else(|| default_host(port));
+ 
+         let username = if let Ok(username) = var("PGUSER") {
+             username
+@@ -86,6 +85,9 @@ impl PgConnectOptions {
+         PgConnectOptions {
+             port,
+             host,
++            hostaddr: var("PGHOSTADDR")
++                .ok()
++                .and_then(|hostaddr| hostaddr.parse().ok()),
+             socket: None,
+             username,
+             password: var("PGPASSWORD").ok(),
+@@ -161,6 +163,23 @@ impl PgConnectOptions {
+         self
+     }
+ 
++    /// Override hostname resolution with a preset IP address.
++    ///
++    /// [`Self::host()`] is still used for TLS server name identification (SNI) if
++    /// [`Self::ssl_mode()`] is [`PgSslMode::VerifyFull`].
++    ///
++    /// This avoids DNS lookup overhead if the server IP is already known,
++    /// allows connecting to a host through a proxy,
++    /// or allows using SNI when connecting to a host that is not listed in DNS.
++    ///
++    /// Defaults to `None`.
++    ///
++    /// Has no effect if [`Self::socket()`] is set.
++    pub fn hostaddr(mut self, hostaddr: impl Into<IpAddr>) -> Self {
++        self.hostaddr = Some(hostaddr.into());
++        self
++    }
++
+     /// Sets a custom path to a directory containing a unix domain socket,
+     /// switching the connection method from TCP to the corresponding socket.
+     ///
+@@ -475,7 +494,7 @@ impl PgConnectOptions {
+ 
+     /// We try using a socket if hostname starts with `/` or if socket parameter
+     /// is specified.
+-    pub(crate) fn fetch_socket(&self) -> Option<String> {
++    pub(crate) fn make_socket_path(&self) -> Option<String> {
+         match self.socket {
+             Some(ref socket) => {
+                 let full_path = format!("{}/.s.PGSQL.{}", socket.display(), self.port);
+```
+
+**File**: `sqlx-postgres/src/options/parse.rs` (modified, +3/-3)
+```diff
+@@ -75,8 +75,7 @@ impl PgConnectOptions {
+                 }
+ 
+                 "hostaddr" => {
+-                    value.parse::<IpAddr>().map_err(Error::config)?;
+-                    options = options.host(&value)
++                    options = options.hostaddr(value.parse::<IpAddr>().map_err(Error::config)?);
+                 }
+ 
+                 "port" => options = options.port(value.parse().map_err(Error::config)?),
+@@ -203,7 +202,8 @@ fn it_parses_hostaddr_correctly_from_parameter() {
+     let opts = PgConnectOptions::from_str(url).unwrap();
+ 
+     assert_eq!(None, opts.socket);
+-    assert_eq!("8.8.8.8", &opts.host);
++    assert_eq!("localhost", &opts.host);
++    assert_eq!(Some("8.8.8.8".parse().unwrap()), opts.hostaddr);
+ }
+ 
+ #[test]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4515** (closed): fix(sqlite): reset transaction depth after SQLite rolls back on its own (@yxshee)
+- **PR #4514** (2026-11-08): fix(postgres): make `hostaddr` semantics match `libpq` (@abonander)
+- **PR #4503** (2026-11-08): fix(mysql): decode DECIMAL columns into integer types correctly (@Map130)
+- **PR #4502** (2026-11-08): Bump the upper bound on libsqlite3-sys to allow 0.39.x (@joshtriplett)
+- **PR #4496** (2026-11-08): fix(mysql): quote charset/collation/time_zone in connect-time SET (@Nacl-HCl)
 - **PR #4493** (2026-10-31): fix(mysql): handle empty passwords during authentication switches. (@lmont19)
-- **PR #4486** (closed): Fix typo: Auxilliary -> Auxiliary (@pei711)
-- **PR #4485** (2026-10-27): fix(postgres): ignore notifications on connections that aren't listening.  fixes #4484. (@luketpeterson)
-- **PR #4478** (2026-10-27): feat: add Type for MySQL, Sqlite, and Any byte arrays (@daimond113)
-- **PR #4477** (2026-10-27): fix(postgres): Bind encodes result-format count from the wrong field (@prostomarkeloff)
-- **PR #4474** (closed): breaking: Make the embedded TLS root certs opt in (@markuskobler)
 
 ---
 
@@ -1077,26 +1684,42 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. mysql): handle empty passwords during authentication switches. (#4493)
+## X. mysql): decode DECIMAL columns into integer types correctly (#4503)
 
 **RULE**:
-When implementing operations in `sqlx-mysql/src/connection/auth.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in transact-rs/sqlx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `sqlx-mysql/src/types/int.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in transact-rs/sqlx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7908fe79`: mysql): handle empty passwords during authentication switches. (#4493). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ae659a0c`: mysql): decode DECIMAL columns into integer types correctly (#4503). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `sqlx-mysql/src/connection/auth.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `sqlx-mysql/src/types/int.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            // Empty passwords require an empty auth response, including after an auth switch.
-            AuthPlugin::CachingSha2Password | AuthPlugin::MySqlNativePassword
-                if password.is_empty() =>
-            {
-                Ok(Vec::new())
-            }
+/// Integer part of a textual `DECIMAL`, erroring if it has a nonzero fraction.
+pub(super) fn integral_decimal_str(s: &str) -> Result<&str, BoxDynError> {
+    let (int_part, frac_part) = s.split_once('.').unwrap_or((s, ""));
+
+    if frac_part.bytes().any(|b| b != b'0') {
+        return Err(format!("DECIMAL value `{s}` has a fractional part").into());
+    }
+
+    Ok(int_part)
+}
+
+    // DECIMAL is ASCII text even over the binary protocol, so parse the digits
+    // instead of reading the bytes as a little-endian integer.
+    if matches!(
+        value.type_info.r#type,
+        ColumnType::Decimal | ColumnType::NewDecimal
+    ) {
+        return integral_decimal_str(value.as_str()?)?
+            .parse()
+            .map_err(Into::into);
+    }
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1106,4 +1729,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7908fe79` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ae659a0c` are properly handled with clean fallback behavior.

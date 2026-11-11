@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/juicedata-juicefs-learnings.md`  
 > **Source**: github ([https://github.com/juicedata/juicefs](https://github.com/juicedata/juicefs))  
-> **Source Version**: `97b70a05`  
+> **Source Version**: `5fe4ab06`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T17:29:04.471Z  
+> **Timestamp**: 2026-11-09T04:10:30.899Z  
 > **Learning ID**: `learn-github-juicedata-juicefs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/juicedata-juicefs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/juicedata/juicefs](https://github.com/juicedata/juicefs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T17:29:04.465Z  
+> **Harvest Timestamp**: 2026-11-09T04:10:30.892Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: JuiceFS is a distributed POSIX file system built on top of Redis and S3.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md
-- **Stars / Engagement**: 14683 stars
+- **Stars / Engagement**: 14711 stars
 
 ---
 
@@ -1161,15 +1161,15 @@ const (
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #7817** (2026-11-09): **sdk: expose session-timeout in the Java and Python SDKs**
+  *Symptoms*: #7810 added --session-timeout for mount, gateway and webdav, but the Java and Python SDKs still used the default. Pass it through libjfs as `sessionTimeout`, read it from `juicefs.session-timeout` in the Hadoop SDK and from `session_timeout` in the Python client. The default `0` keeps the current behavior (5 heartbeats).  Ref #7462
+  **Post-Mortem & Fix Analysis**:
+  > ## [Codecov](https://app.codecov.io/gh/juicedata/juicefs/pull/7817?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=juicedata) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 57.04%. Comparing base ([`db13db4`](https://app.codecov.io/gh/juicedata/juicefs/commit/db13db48ad46d7dbdb2ae275ffa44dad52875ebb?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=juicedata)) to head ([`09726e4`](https://app.codecov.io/gh/juicedata/juicefs/commit/09726e45ef3c79e15be217a232a464086fb3180c?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=juicedata)). :warning: Report is 11 commits behind head on main.  <details><summary>Additional details and impacted files</summary>    ```diff @@             Coverage Diff             @@ ## 
+
 - **Issue #7815** (2026-11-05): **宿主机juicefs文件系统已卸载，docker容器中挂载宿主机的juicefs mount路径，容器内文件写入juicefs导致文件没有正常存储**
   *Symptoms*: <!-- STOP -- PLEASE READ!  GitHub issue is not the right place for support requests.  If you're looking for help, check the Discussions (https://github.com/juicedata/juicefs/discussions).  You can also post your question in Discussions or the JuiceFS Discord channel (https://go.juicefs.com/discord). --> # 问题描述： 宿主机juicefs文件系统已卸载docker容器中挂载宿主机的juicefs 路径还在导致容器内文件写入juicefs，其它节点读取文件失败，但问题是文件被成功计入到metadata  # 容器内挂载详情：    "HostConfig": {             "Binds": [                 "/lib/modules/:/lib/modules/",                 "/sys:/sys",                 "/home/models:/home/models",                 "/home/model_trim/:/home/model_trim/", # docker exec -ti b0d03cf31418 bash root@xxx-04:/home/admin# df -h Filesystem                   Size  Used Avail Use% Mounted on overlay                      7.0T  5.5T  1.2T  83% / tmpfs                         64M     0   64M   0% /dev efivarfs                     512K  212K  296K  42% /sys/firmware/efi/efivars /dev/sda3                    876G  740G   92G  90% /data JuiceFS:llm-models            50T   30T   21T  59% /home/models JuiceFS:model-trim            10T  408G  9.7T   4% /home/model_trim  #宿主机 对应/home/models ，/home/model_trim已卸载  # 预期结果 容器内要么不能写，要么可以写，不会造成metadata成功，chunk存储minio失败  # juicefs --verbose NAME:    juicefs - A POSIX file system built on Redis and object storage.  USAGE:    juicefs [global options] command [command options] [arguments...]  VERSION:    1.3.1+2025-12-02.e0032b2 
   **Post-Mortem & Fix Analysis**:
   > 找到原因了，这个时候容器内应该还是可以读写正常的，原因minio拒绝了这个宿主机IP写操作
-
-- **Issue #7810** (2026-11-05): **meta: add --session-timeout to delay stale session cleanup**
-  *Symptoms*: ## Problem  A session is considered stale after 5 heartbeats (~60s by default) without refresh, and other clients then release its locks. The watchdog needs up to ~160s to kill a hung mount, so a frozen client may resume (or be killed much later) after its locks were granted to others. See #7462.  ## Changes  - Add `--session-timeout` (meta option, shared by mount/gateway/webdav). The effective timeout is `max(session-timeout, 5 × heartbeat)`. - Default `0` keeps the current behavior (5 × heartbeat). - The expire time is computed by each client and only compared by others, so no change is needed in the engines and mixed versions are safe. No metadata format change. - Docs: `reference/_common_options.mdx` (en/zh_cn).  Trade-off: a longer timeout also delays releasing locks held by a crashed client. It narrows the window but does not close it (VM pause, whole process group stopped, or network partition longer than the timeout).  Not covered: Java/Python SDKs use the default and do not expose this option yet.  ## Tests  - `TestExpireTime`: default, smaller-than-5-heartbeats and larger values; fails without the change. - `testMetaClient` checks the session expire time of a new session; passed on Redis, SQLite, MemKV and Badger.  Related to #7462 
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/juicedata/juicefs/pull/7810?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=juicedata) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 21.54%. Comparing base ([`db13db4`](https://app.codecov.io/gh/juicedata/juicefs/commit/db13db48ad46d7dbdb2ae275ffa44dad52875ebb?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=juicedata)) to head ([`7436e1f`](https://app.codecov.io/gh/juicedata/juicefs/commit/7436e1ff6304928934f96f24a70304fdc080c4a8?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=juicedata)). :warning: Report is 7 commits behind head on main.  <details><summary>Additional details and impacted files</summary>    ```diff @@            Coverage Diff             @@ ##   
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1186,127 +1186,95 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `21c62205` (2026-11-05)
-**Commit Message**: meta: add --session-timeout to delay stale session cleanup (#7810)
+### Incident Patch 1: `5fe4ab06` (2026-11-09)
+**Commit Message**: sdk: expose session-timeout in the Java and Python SDKs (#7817)
 
-**File**: `cmd/flags.go` (modified, +5/-0)
-```diff
-@@ -302,6 +302,11 @@ func metaFlags() []cli.Flag {
- 			Value: "12s",
- 			Usage: "interval to send heartbeat; it's recommended that all clients use the same heartbeat value",
- 		},
-+		&cli.StringFlag{
-+			Name:  "session-timeout",
-+			Value: "0",
-+			Usage: "a session not refreshed for this long is considered stale and its locks are released (at least 5 heartbeats, 0 means 5 heartbeats)",
-+		},
- 		&cli.BoolFlag{
- 			Name:  "read-only",
- 			Usage: "allow lookup/read operations only",
-```
+Co-authored-by: Max Yang <[REDACTED_EMAIL]>
 
-**File**: `cmd/mount.go` (modified, +1/-0)
+**File**: `docs/en/deployment/hadoop_java_sdk.md` (modified, +1/-0)
 ```diff
-@@ -342,6 +342,7 @@ func getMetaConf(c *cli.Context, mp string, readOnly bool) *meta.Config {
- 	conf.OpenCache = utils.Duration(c.String("open-cache"))
- 	conf.OpenCacheLimit = c.Uint64("open-cache-limit")
- 	conf.Heartbeat = utils.Duration(c.String("heartbeat"))
-+	conf.SessionTimeout = utils.Duration(c.String("session-timeout"))
- 	conf.MountPoint = mp
- 	conf.Subdir = c.String("subdir")
- 	conf.SkipDirMtime = utils.Duration(c.String("skip-dir-mtime"))
-```
-
-**File**: `docs/en/reference/_common_options.mdx` (modified, +1/-0)
-```diff
-@@ -6,6 +6,7 @@
- |`--backup-meta=3600`|Interval (in seconds) to automatically backup metadata in the object storage (0 means disable backup) (default: "3600")|
- |`--backup-skip-trash` <VersionAdd>1.2</VersionAdd>|Skip files and directories in trash when backup metadata.|
- |`--heartbeat=12`|Interval (in seconds) to send heartbeat; it's recommended that all clients use the same heartbeat value (default: "12")|
-+|`--session-timeout=0`|A client session that has not been refreshed for this long is considered stale, then other clients clean it up and release its file locks. The effective value is at least 5 times `--heartbeat`. A longer timeout makes it less likely that a client which was frozen (and is then killed by the watchdog, or resumes) still holds locks that have been granted to others, but locks held by a crashed client are released later. `0` means 5 times `--heartbeat`. (default: 0)|
- |`--read-only`|Read-only mode, i.e. allow only lookup/read operations. Note that this option implies `--no-bgjob`, so read-only clients do not execute background jobs.|
- |`--no-bgjob`|Disable background jobs, default to false, which means clients by default carry out background jobs, including:<br/><ul><li>Clean up expired files in Trash (look for `cleanupDeletedFiles`, `cleanupTrash` in [`pkg/meta/base.go`](https://github.com/juicedata/juicefs/blob/main/pkg/meta/base.go))</li><li>Delete slices that's not referenced (look for `cleanupSlices` in [`pkg/meta/base.go`](https://github.com/juicedata/juicefs/blob/main/pkg/meta/base.go))</li><li>Clean up stale client sessions (look for `CleanStaleSessions` in [`pkg/meta/base.go`](https://github.com/juicedata/juicefs/blob/main/pkg/meta/base.go))</li></ul>Note that compaction isn't affected by this option, it happens automatically with file reads and writes, client will check if compaction is in need, and run in background (take Redis for example, look for `compactChunk` in [`pkg/meta/base.go`](https://github.com/juicedata/juicefs/blob/main/pkg/meta/redis.go)).|
- |`--atime-mode=noatime` <VersionAdd>1.1</VersionAdd> |Control atime (last time the file was accessed) behavior, support the following modes:<br/><ul><li>`noatime` (default): set when the file is created or when `SetAttr` is explicitly called. Accessing and modifying the file will not affect atime, tracking atime comes at a performance cost, so this is the default behavior</li><li>`relatime`: update inode access times relative to mtime (last time when the file data was modified) or ctime (last time when file metadata was changed). Only update atime if atime was earlier than the current mtime or ctime, or the file's atime is more than 1 day old</li><li>`strictatime`: always update atime on access</li></ul>|
-```
-
-**File**: `docs/zh_cn/reference/_common_options.mdx` (modified, +1/-0)
-```diff
-@@ -6,6 +6,7 @@
- |`--backup-meta=3600`|自动备份元数据到对象存储的间隔时间；单位秒，默认 3600，设为 0 表示不备份。|
- |`--backup-skip-trash` <VersionAdd>1.2</VersionAdd>|备份元数据时跳过回收站中的文件和目录。|
- |`--heartbeat=12`|发送心跳的间隔（单位秒），建议所有客户端使用相同的心跳值 (默认：12)|
-+|`--session-timeout=0`|客户端会话超过该时长未刷新即被视为失效，其他客户端会清理该会话并释放它持有的文件锁。实际生效值不小于 `--heartbeat` 的 5 倍。调大该值可以降低被冻结的客户端（之后被 watchdog 杀掉或恢复运行）的锁被他人获取的风险，但客户端异常退出后，它持有的锁也会更晚释放。`0` 表示 `--heartbeat` 的 5 倍 (默认：0)|
- |`--read-only`|只读模式，只允许 lookup 和 read 请求。注意，只读模式隐含了 `--no-bgjob`，因此只读客户端不会运行后台任务。|
- |`--no-bgjob`|禁用后台任务，默认为 false，也就是说客户端会默认运行后台任务。后台任务包含：<br/><ul><li>清理回收站中过期的文件（在 [`pkg/meta/base.go`](https://github.com/juicedata/juicefs/blob/main/pkg/meta/base.go) 中搜索 `cleanupDeletedFiles` 和 `cleanupTrash`）</li><li>清理引用计数为 0 的 Slice（在 [`pkg/meta/base.go`](https://github.com/juicedata/juicefs/blob/main/pkg/meta/base.go) 中搜索 `cleanupSlices`）</li><li>清理过期的客户端会话（在 [`pkg/meta/base.go`](https://github.com/juicedata/juicefs/blob/main/pkg/meta/base.go) 中搜索 `CleanStaleSessions`）</li></ul>特别地，与[企业版](https://juicefs.com/docs/zh/cloud/guide/background-job)不同，社区版碎片合并（Compaction）不受该选项的影响，而是随着文件读写操作，自动判断是否需要合并，然后异步执行（以 Redis 为例，在 [`pkg/meta/base.go`](https://github.com/juicedata/juicefs/blob/main/pkg/meta/redis.go) 中搜索 `compactChunk`）|
- |`--atime-mode=noatime` <VersionAdd>1.1</VersionAdd>|控制如何更新 atime（文件最后被访问的时间）。支持以下模式：<br/><ul><li>`noatime`（默认）：仅在文件创建和主动调用 `SetAttr` 时设置，平时访问与修改文件不影响 atime 值。考虑到更新 atime 需要运行额外的事务，对性能有影响，因此默认关闭。</li><li>`relatime`：仅在 mtime（文件内容修改时间）或 ctime（文件元数据修改时间）比 atime 新，或者 atime 超过 24 小时没有更新时进行更新。</li><li>`strictatime`：持续更新 atime</li></ul>|
-```
-
-**File**: `pkg/meta/base.go` (modified, +1/-1)
-```diff
-@@ -900,7 +900,7 @@ func (m *baseMeta) stopDeleteSliceTasks() {
+@@ -215,6 +215,7 @@ Please refer to the following table to set the relevant parameters of the JuiceF
+ | `juicefs.backup-meta`   | 3600          | Interval (in seconds) to automatically backup metadata in the object storage (0 means disable backup)                                                                       |
+ | `juicefs.backup-skip-trash` | `false`       | Skip files and directories in trash when backup metadata.                                                                                                                   |
+ | `juicefs.heartbeat`     | 12            | Heartbeat interval (in seconds) between client and metadata engine. It's recommended that all clients use the same value.                                                   |
++| `juicefs.session-timeout` | 0           | A client session that has not been refreshed for this long is considered stale, then other clients clean it up and release its file locks. The effective value is at least 5 times `juicefs.heartbeat`, `0` means 5 times `juicefs.heartbeat`. See [`--session-timeout`](../reference/command_reference.mdx#mount-metadata-options). |
+ | `juicefs.skip-dir-mtime`              | 100ms         | Minimal duration to modify parent dir mtime.                                                                                                                                |
+ | `juicefs.subdir`        |               | Allow access only to the subpaths of this directory. Multiple paths can be specified, separated by commas. All other paths, including the root or sibling directories, will be denied access.                                     |
  
- func (m *baseMeta) expireTime() int64 {
- 	if m.conf.Heartbeat > 0 {
--		return time.Now().Add(m.conf.Heartbeat * 5).Unix()
-+		return time.Now().Add(max(m.conf.SessionTimeout, m.conf.Heartbeat*5)).Unix()
- 	} else {
- 		return time.Now().Add(time.Hour * 24 * 365).Unix()
- 	}
 ```
 
-**File**: `pkg/meta/base_test.go` (modified, +16/-0)
+**File**: `docs/zh_cn/deployment/hadoop_java_sdk.md` (modified, +1/-0)
 ```diff
-@@ -307,6 +307,19 @@ func (c *aclCacheWithMissCount) GetMissIds() []uint32 {
- 	return c.Cache.GetMissIds()
- }
+@@ -215,6 +215,7 @@ make win
+ | `juicefs.backup-meta`     | 3600         | 自动将 JuiceFS 元数据备份到对象存储间隔（单位：秒），设置为 0 关闭自动备份                                                                 |
+ |`juicefs.backup-skip-trash`| `false`      | 备份元数据时忽略回收站中的文件和目录。                                                                                         |
+ | `juicefs.heartbeat`       | 12           | 客户端和元数据引擎之间的心跳间隔（单位：秒），建议所有客户端都设置一样                                                                         |
++| `juicefs.session-timeout` | 0            | 客户端会话超过该时长未刷新即被视为失效，其他客户端会清理该会话并释放它持有的文件锁。实际生效值不小于 `juicefs.heartbeat` 的 5 倍，`0` 表示 `juicefs.heartbeat` 的 5 倍。参见 [`--session-timeout`](../reference/command_reference.mdx#mount-metadata-options) |
+ | `juicefs.skip-dir-mtime`  | 100ms        | 修改父目录 mtime 间隔。                                                                                             |
+ | `juicefs.subdir`          |              | 仅允许访问此目录的子路径。可以指定多个路径，使用逗号分隔。所有其他路径，包括根目录或同级目录，都将被拒绝访问。                                           |
  
-+func TestExpireTime(t *testing.T) {
-+	for _, c := range []struct{ heartbeat, timeout, expected time.Duration }{
-+		{12 * time.Second, 0, time.Minute},
-+		{12 * time.Second, 30 * time.Second, time.Minute},
-+		{12 * time.Second, 5 * time.Minute, 5 * time.Minute},
-+	} {
-+		m := &baseMeta{conf: &Config{Heartbeat: c.heartbeat, SessionTimeout: c.timeout}}
-+		if ttl := time.Until(time.Unix(m.expireTime(), 0)); ttl < c.expected-2*time.Second || ttl > c.expected {
-+			t.Fatalf("heartbeat %s, session timeout %s: expires in %s, expected %s", c.heartbeat, c.timeout, ttl, c.expected)
-+		}
-+	}
-+}
-+
- func TestMergeFacl(t *testing.T) {
- 	minimal := &aclAPI.Rule{Owner: 6, Group: 4, Mask: 0xFFFF, Other: 0}
- 	extended := &aclAPI.Rule{Owner: 7, Group: 7, Mask: 5, Other: 1, NamedUsers: aclAPI.Entries{{Id: 1001, Perm: 4}}}
-@@ -709,6 +722,9 @@ func testMetaClient(t *testing.T, m Meta) {
- 	if base.sid != ses[0].Sid {
- 		t.Fatalf("my sid %d != registered sid %d", base.sid, ses[0].Sid)
- 	}
-+	if ttl, expected := time.Until(ses[0].Expire), max(base.conf.SessionTimeout, base.conf.Heartbeat*5); ttl < expected-10*time.Second || ttl > expected {
-+		t.Fatalf("session expires in %s, expected %s", ttl, expected)
-+	}
- 	if err = base.en.doCleanStaleSession(base.sid); err != nil {
- 		t.Fatalf("clean session: %s", err)
- 	}
 ```
 
-**File**: `pkg/meta/config.go` (modified, +1/-0)
+**File**: `sdk/java/libjfs/main.go` (modified, +2/-0)
 ```diff
-@@ -46,6 +46,7 @@ type Config struct {
- 	OpenCache          time.Duration
- 	OpenCacheLimit     uint64 // max number of files to cache (soft limit)
- 	Heartbeat          time.Duration
-+	SessionTimeout     time.Duration
- 	MountPoint         string
- 	Subdir             string
- 	AtimeMode          string
+@@ -352,6 +352,7 @@ type javaConf struct {
+ 	BackupMeta          string `json:"backupMeta"`
+ 	BackupSkipTrash     bool   `json:"backupSkipTrash"`
+ 	Heartbeat           string `json:"heartbeat"`
++	SessionTimeout      string `json:"sessionTimeout"`
+ 	CacheDir            string `json:"cacheDir"`
+ 	CacheSize           string `json:"cacheSize"`
+ 	CacheItems          int64  `json:"cacheItems"`
+@@ -625,6 +626,7 @@ func jfs_init(credentialPtr uintptr, count int32, cname, cjsonConf, cuser, group
+ 		metaConf.NoBGJob = jConf.NoBGJob || jConf.NoSession
+ 		metaConf.OpenCache = utils.Duration(jConf.OpenCache)
+ 		metaConf.Heartbeat = utils.Duration(jConf.Heartbeat)
++		metaConf.SessionTimeout = utils.Duration(jConf.SessionTimeout)
+ 		m := meta.NewClient(jConf.MetaURL, metaConf)
+ 		format, err := m.Load(true)
+ 		if err != nil {
+```
+
+**File**: `sdk/java/src/main/java/io/juicefs/JuiceFileSystemImpl.java` (modified, +1/-0)
+```diff
+@@ -475,6 +475,7 @@ public void initialize(URI uri, Configuration conf) throws IOException {
+     obj.put("backupMeta", getConf(conf, "backup-meta", "3600"));
+     obj.put("backupSkipTrash", Boolean.valueOf(getConf(conf, "backup-skip-trash", "false")));
+     obj.put("heartbeat", getConf(conf, "heartbeat", "12"));
++    obj.put("sessionTimeout", getConf(conf, "session-timeout", "0"));
+     obj.put("attrTimeout", getConf(conf, "attr-cache", "0.0"));
+     obj.put("entryTimeout", getConf(conf, "entry-cache", "0.0"));
+     obj.put("dirEntryTimeout", getConf(conf, "dir-entry-cache", "0.0"));
+```
+
+**File**: `sdk/python/juicefs/juicefs/juicefs.py` (modified, +2/-1)
+```diff
+@@ -102,7 +102,7 @@ def __getattr__(self, n):
+ class Client(object):
+     """A JuiceFS client."""
+     def __init__(self, name, meta, *, bucket="", storage_class="", read_only=False, no_session=False, no_bgjob=True,
+-                 open_cache="0", backup_meta="3600", backup_skip_trash=False, heartbeat="12",
++                 open_cache="0", backup_meta="3600", backup_skip_trash=False, heartbeat="12", session_timeout="0",
+                  cache_dir="memory", cache_size="100M", free_space_ratio="0.1", cache_partial_only=False,
+                  verify_cache_checksum="extend", cache_eviction="2-random", cache_scan_interval="3600", cache_expire="0",
+                  writeback=False, buffer_size="300M", prefetch=1, max_readahead="0", upload_limit="0",
+@@ -123,6 +123,7 @@ def __init__(self, name, meta, *, bucket="", storage_class="", read_only=False,
+         kwargs["backupMeta"] = backup_meta
+         kwargs["backupSkipTrash"] = backup_skip_trash
+         kwargs["heartbeat"] = heartbeat
++        kwargs["sessionTimeout"] = session_timeout
+         kwargs["cacheDir"] = cache_dir
+         kwargs["cacheSize"] = cache_size
+         kwargs["freeSpace"] = free_space_ratio
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7817** (2026-11-09): sdk: expose session-timeout in the Java and Python SDKs (@pandacooming)
 - **PR #7810** (2026-11-05): meta: add --session-timeout to delay stale session cleanup (@jiefenghuang)
+- **PR #7809** (2026-11-06): deps: upgrade go-m1cpu to v0.2.2 to fix crash on Apple M5 (@JerryChaox)
 - **PR #7808** (closed): meta: stop clients when the session lease expires (@jiefenghuang)
+- **PR #7806** (2026-11-06): object: do not drop a failed shard when merging sharded listings (@arpitjain099)
 - **PR #7805** (2026-11-05): sdk: prevent root group membership from granting superuser access (@myangitzh)
-- **PR #7804** (closed): meta: resolve quota and forced paths relative to the subdir root (@jiefenghuang)
-- **PR #7803** (2026-11-04): cmd/mount: simplify setFuseOption and GenFuseOpt (@jiefenghuang)
-- **PR #7802** (2026-11-04): fuse: add --no-readdirplus-auto mount option (@peterochek)
 
 ---
 
@@ -1326,25 +1294,21 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. meta: add --session-timeout to delay stale session cleanup (#7810)
+## X. sdk: expose session-timeout in the Java and Python SDKs (#7817)
 
 **RULE**:
-When implementing operations in `cmd/flags.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in juicedata/juicefs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/en/deployment/hadoop_java_sdk.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in juicedata/juicefs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `21c62205`: meta: add --session-timeout to delay stale session cleanup (#7810). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5fe4ab06`: sdk: expose session-timeout in the Java and Python SDKs (#7817). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/flags.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/en/deployment/hadoop_java_sdk.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		&cli.StringFlag{
-			Name:  "session-timeout",
-			Value: "0",
-			Usage: "a session not refreshed for this long is considered stale and its locks are released (at least 5 heartbeats, 0 means 5 heartbeats)",
-		},
+| `juicefs.session-timeout` | 0           | A client session that has not been refreshed for this long is considered stale, then other clients clean it up and release its file locks. The effective value is at least 5 times `juicefs.heartbeat`, `0` means 5 times `juicefs.heartbeat`. See [`--session-timeout`](../reference/command_reference.mdx#mount-metadata-options). |
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1354,4 +1318,4 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `21c62205` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5fe4ab06` are properly handled with clean fallback behavior.

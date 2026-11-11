@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md`  
 > **Source**: github ([https://github.com/pixeltable/pixeltable](https://github.com/pixeltable/pixeltable))  
-> **Source Version**: `87375562`  
+> **Source Version**: `c23311a8`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T03:23:44.877Z  
+> **Timestamp**: 2026-11-08T14:00:00.250Z  
 > **Learning ID**: `learn-github-pixeltable-pixeltable`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pixeltable/pixeltable](https://github.com/pixeltable/pixeltable))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T03:23:44.016Z  
+> **Harvest Timestamp**: 2026-11-08T13:59:59.962Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The backend agents build with - Multimodal database, orchestration, and serving in one file
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 1656 stars
+- **Stars / Engagement**: 1659 stars
 
 ---
 
@@ -264,9 +264,11 @@ from pixeltable.metadata import schema
 
 from .column import Column
 from .globals import IndexSpec, MediaValidation
+from .path import Path
 from .types import TableVersionKey, TableVersionMd
 
 if TYPE_CHECKING:
+    from .table_metadata import TableMetadata
     from .table_version import TableVersion
 
 
@@ -503,11 +505,7 @@ def create_table_version_md(
         schema_version=0,
         user=user,
         update_status=None,
-        additional_md={},
-    )
-
-    schema_version_md = schema.SchemaVersionMd(
-        
+        additional_m
 ```
 
 ### Core Architecture Module: `pixeltable/functions/util.py`
@@ -938,12 +936,11 @@ from types import ModuleType
 from typing import TYPE_CHECKING, Any
 
 from pixeltable import exceptions as excs
-from pixeltable.catalog import ProhibitedWriteError, is_valid_identifier, model
+from pixeltable.catalog import Catalog, ProhibitedWriteError, is_valid_identifier, model
 from pixeltable.catalog.model import diff
 from pixeltable.config import Config
 from pixeltable.env import Env
 from pixeltable.func import FunctionRegistry
-from pixeltable.runtime import get_runtime
 from pixeltable.utils.project import in_environment
 from pixeltable_cli.types import CheckReport, RouteSpec, ServiceSpec
 
@@ -988,11 +985,9 @@ def load_app_module(file: str, *, subject: str) -> ModuleType:
     path = Path(file).resolve()
     name = module_name(file, subject=subject)
 
-    # resolve the catalog first: initializing it writes, which freeze() would refuse
-    catalog = get_runtime().catalog
     try:
         registry = FunctionRegistry.get()
-        with _lock, catalog.freeze():
+        with _lock, Catalog.freeze():
             _evict_project_modules()
             # a file written after this process started is invisible to a finder that cached its directory
             importlib.invalidate_caches()
@@ -1147,7 +1142,9 @@ def check_udf_references(bases: list[model.TableModelMeta]) -> list[str]:
 
 
 def udf_source_files(bases: list[model.TableModelMeta]) -> set[str]:
-    """The local
+    """The local project files containing the udfs referenced by bases, relative to the project root."""
+    project_root = Config.get().project_root
+    assert project_ro
 ```
 
 
@@ -1156,13 +1153,11 @@ def udf_source_files(bases: list[model.TableModelMeta]) -> set[str]:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1899** (2026-11-04): **Module refactor**
-  *Symptoms*: Generic `globals.py` and `util(s).py` modules make it difficult to find code. This refactor moves their contents into modules named for their responsibilities, separating model support, media metadata, schema normalization, export preparation, and file writing. Function implementations and existing comments and docstrings are preserved.  No breaking changes to the public API.  All paths below are relative to `pixeltable/`.  #### `globals.py` to `api.py`  Identifies the implementation of the top-level SDK API.  Moved: `init()`, `create_table()`, `create_view()`, `create_snapshot()`, `get_table()`, `move()`, `drop_table()`, `get_dir_contents()`, `get_dir_tree()`, `list_tables()`, `create_dir()`, `drop_dir()`, `ls()`, `list_dirs()`, `list_functions()`, `tools()`, `tool()`, `array()`, `home()`; private helpers `_assemble_dir_contents()`, `_create_path_map()`, `_get_subtree()`, `_extract_paths()`; type aliases `RowData` and `TableDataSource`.  #### `func/globals.py` to `func/symbols.py`  Groups Python symbol resolution, validation, and introspection.  Moved: `resolve_symbol()`, `import_error_msg()`, `validate_symbol_path()`, `get_caller_module_path()`.  #### `exec/expr_eval/globals.py` to `exec/expr_eval/interfaces.py`  Names the shared execution contracts and context used by evaluators and schedulers.  Moved: `FnCallArgs`, `Scheduler`, `Dispatcher`, `Evaluator`, `ExprEvalCtx`.  #### `exprs/globals.py` to `exprs/operators.py`  Groups expression operator enums.  Moved: `Compa
+- **Issue #1920** (2026-11-07): **docs: make the README hero the homepage's slider, readable in any theme**
+  *Symptoms*: ## Summary  The README hero is now pixeltable.com's before/after slider (`StackSlider.tsx` in pixeltable/pixeltable-cloud#636), redrawn as an animated SVG. It runs full width under the badges, replacing the small table animation that sat to the right of the tagline.  The PR also fixes washed-out images when the system's color scheme and the GitHub theme differ. `<picture>` picks its file from the browser's `prefers-color-scheme`, not the GitHub theme. On the live page with a dark system and GitHub set to light, both the logo and the hero loaded their dark files onto a white page. GitHub's `#gh-dark-mode-only` fragments do follow the theme, but PyPI renders this README too, strips `<source>`, and would show both copies. So each file now carries its own background.  ## Hero  - **Both sides of the slider.** The usual side shows 12 systems wired to the 13 jobs and "Your app talks to each system". The Pixeltable side shows the README's `app.py` from the class down, wired to the jobs, plus a `videos` table and the APIs the other jobs use (`EmbeddingIndex`, `--otel`, `invoke_tools`, `pxt errors` and more). - **Data.** The job list and the system wiring copy the homepage's `request-lifecycle.ts` and `SYSTEMS`. A comment in the generator says to keep them in step. - **Sweep.** It follows `StackSlider`'s timing: rest, the Pixeltable side whole, the usual side whole, then rest. Here it loops every 14 s. The resting frame is the base style, so reduced motion and PyPI show both sides. - *
 
-- **Issue #1898** (2026-11-03): **unpin the miniforge version**
-  *Symptoms*: miniforge [released](https://github.com/conda-forge/miniforge/releases/tag/26.9.4-1) a fix for the windows issue
-  **Post-Mortem & Fix Analysis**:
-  > agents review
+- **Issue #1915** (2026-11-07): **Add VLM Run Gateway integration (OCR, VQA, segmentation, embeddings, transcription) (takes over #1893)**
+  *Symptoms*: Replaces pixeltable/pixeltable#1893 by wbrennan899, which was approved but comes from an organization's fork that maintainers can't push to. This branch is #1893's commits plus a merge of `main`. The merge resolves the conflicts with #1892: both PRs added entries side by side in `docs/public_api.opml`, `docs/release/docs.json`, `configuration.mdx`, `pixeltable/config.py`, `pixeltable/functions/__init__.py` and `scripts/prepare-nb-tests.sh`, and both are kept. The `VLMRUN_API_KEY` line that #1893 added to `pytest.yml` is already on `main`, from #1892; the repo secret still has to be added for the live tests and the notebook to run in CI.  After the merge, `ruff check`, `ruff format` and `mypy` pass on the touched files, and the notebook checks pass. The tests weren't run locally; CI runs them.  The rest is #1893's description, by its author.  ## Summary  Adds `pixeltable.functions.vlmrun_gateway`, an integration with the [VLM Run Gateway](https://docs.vlm.run/gateway/introduction). The Gateway is an OpenAI-compatible API in front of vision and speech models (open-weight models plus paid partner models such as Gemini): OCR and document parsing, visual question answering, segmentation, pose estimation, multimodal embeddings, and speech-to-text. Most calls cost $0.001, and each response reports its cost in `usage.cost`.  | UDF | What it does | |---|---| | `chat_completions(messages, *, model, ...)` | Chat over image columns referenced in messages, and PDF and video by http(s) or 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1179,692 +1174,352 @@ def udf_source_files(bases: list[model.TableModelMeta]) -> set[str]:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `77772fc4` (2026-11-03)
-**Commit Message**: PXT-1715/1726: Close query resources when a query stops; fix export_lancedb() with lancedb 0.41 (#1868)
+### Incident Patch 1: `c23311a8` (2026-11-08)
+**Commit Message**: Update README.md
 
-PXT-1715: a query over a frame view left the video file open until
-garbage collection, so on Windows the file could not be deleted and
-test_frame_iterator_seek[proxy] hung.
-
-PXT-1726: lancedb 0.41 advances the export iterator on its own threads.
-export_lancedb() left an event loop open on one of them, and an export
-with a query UDF column failed partway through.
-
-Fixes
-- A query over a frame view closes the video file when it finishes,
-stops early or fails.
-- A query that stops early (a cursor loop that breaks, Ctrl-C during
-collect()) or fails releases its resources right away instead of at
-garbage collection.
-- When a query runs inside a running event loop (eg, Jupyter), a cursor
-that stops early cancels the batch in progress instead of waiting for
-it.
-- A filter with a limit no longer fetches another input batch after
-reaching the limit.
-- export_lancedb() runs the query on a thread of its own, so lancedb's
-threads only receive finished batches.
-
-Tests
-- Queries, computed columns, failures, early stops, Ctrl-C and query
-UDFs over a frame view leave no video file open.
-- expor
-
-**File**: `pixeltable/_query.py` (modified, +8/-8)
+**File**: `README.md` (modified, +1/-1)
 ```diff
-@@ -1,5 +1,6 @@
- from __future__ import annotations
+@@ -5,7 +5,7 @@
  
-+import contextlib
- import copy
- import hashlib
- import json
-@@ -9,7 +10,7 @@
- from typing import (
-     TYPE_CHECKING,
-     Any,
--    AsyncIterator,
-+    AsyncGenerator,
-     Callable,
-     Generator,
-     Hashable,
-@@ -451,15 +452,16 @@ def _exec(self, args: dict[str, Any] | None = None) -> Iterator[exprs.DataRow]:
-             get_runtime().stop_progress()
-             yield row
+ # The backend agents build with
  
--    async def _aexec(self, args: dict[str, Any] | None = None) -> AsyncIterator[exprs.DataRow]:
-+    async def _aexec(self, args: dict[str, Any] | None = None) -> AsyncGenerator[exprs.DataRow, None]:
-         """Run the query and yield rows."""
-         args = args or {}
-         self._validate_bound_args(args)
-         if self._resolved_limit(args) == 0:
-             return
-         plan = self._ensure_plan()
--        async for row in plan.aexec(args):
--            yield row
-+        async with contextlib.aclosing(plan.aexec(args)) as rows:
-+            async for row in rows:
-+                yield row
+-### Multimodal database, orchestration, and serving in one file, by the co-creators of Apache Parquet and Impala.
++### Multimodal database, orchestration, and serving in one file
  
-     def _ensure_plan(self) -> exec.ExecPlan:
-         assert get_runtime().in_xact
-@@ -744,10 +746,8 @@ async def _acollect(self, args: dict[str, Any] | None = None) -> ResultSet:
-         columns = {name: i for i, name in enumerate(schema)}
-         try:
-             planned_exprs = self._compiled_select_list()
--            result = [
--                Row(tuple(row[e.slot_idx] for e in planned_exprs), columns, schema)
--                async for row in self._aexec(args=args)
--            ]
-+            async with contextlib.aclosing(self._aexec(args=args)) as rows:
-+                result = [Row(tuple(row[e.slot_idx] for e in planned_exprs), columns, schema) async for row in rows]
-             return ResultSet(result, schema)
-         except excs.ExprEvalError as e:
-             self._raise_expr_eval_err(e)
+ Pixeltable is an open-source multimodal database you use from Python. Build AI apps on video, images, audio and documents without writing scripts to keep files, model outputs and search indexes in sync.
+ 
 ```
 
-**File**: `pixeltable/exec/aggregation_node.py` (modified, +27/-25)
+---
+
+### Incident Patch 2: `1d77fdf3` (2026-11-07)
+**Commit Message**: docs: make the README hero the homepage's slider, readable in any theme (#1920)
+
+## Summary
+
+The README hero is now pixeltable.com's before/after slider
+(`StackSlider.tsx` in pixeltable/pixeltable-cloud#636), redrawn as an
+animated SVG. It runs full width under the badges, replacing the small
+table animation that sat to the right of the tagline.
+
+The PR also fixes washed-out images when the system's color scheme and
+the GitHub theme differ. `<picture>` picks its file from the browser's
+`prefers-color-scheme`, not the GitHub theme. On the live page with a
+dark system and GitHub set to light, both the logo and the hero loaded
+their dark files onto a white page. GitHub's `#gh-dark-mode-only`
+fragments do follow the theme, but PyPI renders this README too, strips
+`<source>`, and would show both copies. So each file now carries its own
+background.
+
+## Hero
+
+- **Both sides of the slider.** The usual side shows 12 systems wired to
+the 13 jobs and "Your app talks to each system". The Pixeltable side
+shows the README's `app.py` from the class down, wired to the jobs, plus
+a `videos` table and the APIs the other jobs use (`EmbeddingIndex`,
+`--otel`, `invoke_tools`, `pxt errors` and more).
+- 
+
+**File**: `README.md` (modified, +9/-7)
 ```diff
-@@ -1,8 +1,9 @@
- from __future__ import annotations
+@@ -1,15 +1,10 @@
+ <picture>
+-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/pixeltable/pixeltable/main/docs/release/_logo/pxt-dark.svg">
+-  <img alt="Pixeltable" src="https://raw.githubusercontent.com/pixeltable/pixeltable/main/docs/release/_logo/pxt-light.svg" width="40%">
++  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/pixeltable/pixeltable/main/docs/_hero/logo-dark.svg">
++  <img alt="Pixeltable" src="https://raw.githubusercontent.com/pixeltable/pixeltable/main/docs/_hero/logo-light.svg" width="40%">
+ </picture>
  
-+import contextlib
- import logging
- import sys
--from typing import Any, AsyncIterator, Iterable, cast
-+from typing import Any, AsyncGenerator, Iterable, cast
+ # The backend agents build with
  
- from pixeltable import catalog, exceptions as excs, exprs, telemetry
- 
-@@ -82,37 +83,38 @@ def _update_agg_state(self, row: exprs.DataRow, row_num: int) -> None:
-                 input_vals = [row[d.slot_idx] for d in fn_call.dependencies()]
-                 raise excs.ExprEvalError(fn_call, expr_msg, exc, exc_tb, input_vals, row_num) from exc
- 
--    async def __aiter__(self) -> AsyncIterator[DataRowBatch]:
-+    async def __aiter__(self) -> AsyncGenerator[DataRowBatch, None]:
-         limit = self._resolve_positive_int(self.limit, 'limit') if self.limit is not None else None
-         if limit == 0:
-             return
-         prev_row: exprs.DataRow | None = None
-         current_group: list[Any] | None = None  # the values of the group-by exprs
-         num_input_rows = 0
-         num_output_rows = 0
--        async for row_batch in self.input:
--            self.set_var_slots(row_batch)
--            num_input_rows += len(row_batch)
--            for row in row_batch:
--                group = [row[e.slot_idx] for e in self.group_by] if self.group_by is not None else None
+-<picture>
+-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/pixeltable/pixeltable/main/docs/_hero/table-build-dark.svg">
+-  <img align="right" width="420" src="https://raw.githubusercontent.com/pixeltable/pixeltable/main/docs/_hero/table-build-light.svg" alt="Animation: app.py declares a videos table one line at a time. Three videos are inserted, the transcript and summary columns fill in for each row, and a POST to /search returns the matching video from the same table.">
+-</picture>
 -
--                if current_group is None:
--                    current_group = group
--                    self._reset_agg_state(0)
--
--                if group != current_group:
--                    # we're entering a new group, emit a row for the previous one
--                    with telemetry.span('pixeltable.agg.finalize', level=telemetry.DEBUG):
--                        self.row_builder.eval(prev_row, self.agg_fn_eval_ctx, profile=self.ctx.profile)
--                    self.output_batch.add_row(prev_row)
--                    num_output_rows += 1
--                    if limit is not None and num_output_rows == limit:
--                        yield self.output_batch
--                        return
--                    current_group = group
--                    self._reset_agg_state(0)
--                self._update_agg_state(row, 0)
--                prev_row = row
-+        async with contextlib.aclosing(aiter(self.input)) as input_iter:
-+            async for row_batch in input_iter:
-+                self.set_var_slots(row_batch)
-+                num_input_rows += len(row_batch)
-+                for row in row_batch:
-+                    group = [row[e.slot_idx] for e in self.group_by] if self.group_by is not None else None
-+
-+                    if current_group is None:
-+                        current_group = group
-+                        self._reset_agg_state(0)
-+
-+                    if group != current_group:
-+                        # we're entering a new group, emit a row for the previous one
-+                        with telemetry.span('pixeltable.agg.finalize', level=telemetry.DEBUG):
-+                            self.row_builder.eval(prev_row, self.agg_fn_eval_ctx, profile=self.ctx.profile)
-+                        self.output_batch.add_row(prev_row)
-+                        num_output_rows += 1
-+                        if limit is not None and num_output_rows == limit:
-+                            yield self.output_batch
-+                            return
-+                        current_group = group
-+                        self._reset_agg_state(0)
-+                    self._update_agg_state(row, 0)
-+                    prev_row = row
+ ### Multimodal database, orchestration, and serving in one file, by the co-creators of Apache Parquet and Impala.
  
-         if prev_row is not None:
-             # emit the last group
+ Pixeltable is an open-source multimodal database you use from Python. Build AI apps on video, images, audio and documents without writing scripts to keep files, model outputs and search indexes in sync.
+@@ -32,6 +27,13 @@ pip install -U 'pixeltable[serve]'
+ [![PyPI Package](https://img.shields.io/pypi/v/pixeltable?color=4D148C)](https://pypi.org/project/pixeltable/)
+ [![Python](https://img.shields.io/pypi/pyversions/pixeltable)](https://pypi.org/project/pixeltable/)
+ 
++<picture>
++  <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/pixeltable/pixeltable/main/docs/_hero/stack-slider-narrow-dark.svg">
++  <source media="(max-width: 600px)" srcset="https://raw.githubusercontent.com/pixeltable/pixeltable/main/docs/_hero/stack-slider-narrow-light.svg">
++  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/pixeltable/pixeltable/main/docs/_hero/stack-slider-dark.svg">
++  <img width="100%" src="https://raw.githubusercontent.com/pixeltable/pixeltable/main/docs/_hero/stack-slider-light.svg" alt="Animation: a handle sweeps between two drawings of the same 13 jobs a request needs. Usually, they run across 12 systems (a bucket, a metadata database, queues and workers, a vector database, an API service and more) that your app talks to one by one. With Pixeltable, they live in one app.py, with its videos table and the APIs the other jobs use.">
++</picture>
++
+ You declare tables, computed columns and HTTP routes in `app.py`. Insert a row and Pixeltable runs the computations, stores the results and updates the indexes.
+ 
+ You can also use Pixeltable directly from Python or a notebook without an HTTP server. Start with the [10-minute tour](https://docs.pixeltable.com/overview/ten-minute-tour).
 ```
 
-**File**: `pixeltable/exec/cache_prefetch_node.py` (modified, +36/-32)
+**File**: `docs/_hero/build-readme-images.mjs` (added, +363/-0)
 ```diff
-@@ -1,12 +1,13 @@
- from __future__ import annotations
- 
-+import contextlib
- import dataclasses
- import itertools
- import logging
- from collections import deque
- from concurrent import futures
- from pathlib import Path
--from typing import AsyncIterator, Iterator
-+from typing import AsyncGenerator, AsyncIterator, Iterator
- from uuid import UUID
- 
- from pixeltable import exceptions as excs, exprs, telemetry, telemetry_schemas
-@@ -95,37 +96,40 @@ async def get_input_batch(self, input_iter: AsyncIterator[DataRowBatch]) -> Data
-             self.input_finished = True
-             return None
- 
--    async def __aiter__(self) -> AsyncIterator[DataRowBatch]:
--        input_iter = aiter(self.input)
--        with futures.ThreadPoolExecutor(max_workers=self.MAX_WORKERS) as executor:
--            while True:
--                # Create work to fill the queue to the high water mark ... ?without overrunning the in-flight row limit.
--                while not self.input_finished and self.queued_work < self.QUEUE_DEPTH_HIGH_WATER:
--                    input_batch = await self.get_input_batch(input_iter)
--                    if input_batch is not None:
--                        self.__process_input_batch(input_batch, executor)
--
--                # Wait for enough completions to enable more queueing or if we're done
--                while self.queued_work > self.QUEUE_DEPTH_LOW_WATER or (self.input_finished and self.queued_work > 0):
--                    done, _ = futures.wait(self.in_flight_requests, return_when=futures.FIRST_COMPLETED)
--                    self.__process_completions(done, ignore_errors=self.ctx.ignore_errors)
--
--                # Emit results to meet batch size requirements or empty the in-flight row queue
--                if self.__has_ready_batch() or (
--                    len(self.ready_rows) > 0 and self.input_finished and self.queued_work == 0
--                ):
--                    # create DataRowBatch from the first BATCH_SIZE ready rows
--                    batch = DataRowBatch(self.row_builder)
--                    rows = [self.ready_rows.popleft() for _ in range(min(self.BATCH_SIZE, len(self.ready_rows)))]
--                    for row in rows:
--                        assert row is not None
--                        batch.add_row(row)
--                    self.num_returned_rows += len(rows)
--                    _logger.debug(f'returning {len(rows)} rows')
--                    yield batch
--
--                if self.input_finished and self.queued_work == 0 and len(self.ready_rows) == 0:
--                    return
-+    async def __aiter__(self) -> AsyncGenerator[DataRowBatch, None]:
-+        async with contextlib.aclosing(aiter(self.input)) as input_iter:
-+            with futures.ThreadPoolExecutor(max_workers=self.MAX_WORKERS) as executor:
-+                while True:
-+                    # Create work to fill the queue to the high water mark,
-+                    # without overrunning the in-flight row limit.
-+                    while not self.input_finished and self.queued_work < self.QUEUE_DEPTH_HIGH_WATER:
-+                        input_batch = await self.get_input_batch(input_iter)
-+                        if input_batch is not None:
-+                            self.__process_input_batch(input_batch, executor)
+@@ -0,0 +1,363 @@
++// Renders the README's images, each in a light and a dark file chosen with <picture>:
++// - the hero, pixeltable.com's before/after slider (StackSlider.tsx in pixeltable-cloud) as an animated SVG, with
++//   the README's app.py on the Pixeltable side
++// - a narrow hero for phones (<picture>'s max-width sources): the jobs as one list, each wiping from the systems it
++//   usually takes to the line it takes in Pixeltable (RequestLifecycle.tsx's content)
++// - the logo, on a plate of the page color
++// <picture> follows the browser's color scheme, not the GitHub theme, and PyPI drops <source>, so either file can
++// land on either page color; each one carries its own background. GitHub shows README SVGs as images: CSS
++// animations play, scripts and web fonts do not. Every element's base style is the resting frame, so reduced
++// motion (animations off) and PyPI show it whole.
++//
++//   node build-readme-images.mjs        writes stack-slider{,-narrow}-{light,dark}.svg and logo-{light,dark}.svg here
 +
-+                    # Wait for enough completions to enable more queueing or if we're done
-+                    while self.queued_work > self.QUEUE_DEPTH_LOW_WATER or (
-+                        self.input_finished and self.queued_work > 0
-+                    ):
-+                        done, _ = futures.wait(self.in_flight_requests, return_when=futures.FIRST_COMPLETED)
-+                        self.__process_completions(done, ignore_errors=self.ctx.ignore_errors)
++import { readFileSync, writeFileSync } from 'node:fs';
++import { dirname, join } from 'node:path';
++import { fileURLToPath } from 'node:url';
 +
-+                    # Emit results to meet batch size requirements or empty the in-flight row queue
-+                    if self.__has_ready_batch() or (
-+                        len(self.ready_rows) > 0 and self.input_finished and self.queued_work == 0
-+                    ):
-+                        # create DataRowBatch from the first BATCH_SIZE ready rows
-+                        batch = DataRowBatch(self.row_builder)
-+                        rows = [self.ready_rows.popleft() for _ in range(min(self.BATCH_SIZE, len(self.ready_rows)))]
-+                        for row in rows:
-+                            assert row is not None
-+                            batch.add_row(row)
-+                        self.num_returned_rows += len(rows)
-+                        _logger.debug(f'returning {len(rows)} rows')
-+                        yield batch
++const HERE = dirname(fileURLToPath(import.meta.url));
 +
-+                    if self.input_finished and self.queued_work == 0 and len(self.ready_rows) == 0:
-+                        return
- 
-     def __has_ready_batch(self) -> bool:
-         """True if there are >= BATCH_SIZES entries in ready_rows and the first BATCH_SIZE ones are all non-None"""
++// the README's "Why we built it" table: each step, the systems it usually takes and its line in Pixeltable; keep in
++// step with pixeltable-cloud's frontend/src/data/request-lifecycle.ts (two lines are cut to fit 360px)
++const STEPS = [
++  ['Store files and their results', ['bucket', 'sync script', 'metadata DB'], 'video: pxt.Video'],
++  ['Split documents or sample frames', ['queue', 'preprocessing job'], 'iterator=frame_iterator(video, fps=1)'],
++  ['Call models', ['queue', 'workers', 'status table'], 'transcript = openai.transcriptions(audio, …)'],
++  ['Explore and query the results', ['download script', 'notebook', 'local copies'], 'frames.select(frames.frame, frames.detections)'],
++  ['Search the results', ['embed job', 'vector DB'], 'pxt.EmbeddingIndex(summary, embedding=embed)'],
++  ['Serve the results', ['API service', 'metadata DB', 'vector DB'], "api.add_query_route(path='/search', …)"],
++  ['Let an agent call tools', ['agent framework', 'tool logs'], 'tool_output = invoke_tools(tools, response)'],
++  ['Remember across sessions', ['chat cache', 'vector store'], 'memories = recall_memories(user_id, message)'],
++  ['Trace a running app', ['tracing SDK', 'log store'], 'pxt service update app.py my_app --otel'],
++  ['Evaluate model output', ['log export', 'eval notebook'], 'assistant.select(assistant.response.usage)'],
++  ['Rerun what failed', ['dead-letter queue', 'retry script'], 'pxt errors my_app/docs'],
++  ['Send results elsewhere', ['ETL job', 'second database', 'bucket sync'], "pxt.io.export_sql(q, 'dets', db_connect_str=…)"],
++  ['Analyze and audit', ['ETL job', 'warehouse'], 'videos.history()'],
++];
++// each box on the usual side and the systems it stands for (StackSlider.tsx's SYSTEMS)
++const SYSTEMS = [
++  ['bucket', ['bucket']],
++  ['metadata DB', ['metadata DB', 'status table']],
++  ['queue + workers', ['queue', 'workers', 'dead-letter queue']],
++  ['preprocess + embed jobs', ['preprocessing job', 'embed job']],
++  ['vector DB', ['vector DB', 'vector store']],
++  ['API service', ['API service']],
++  ['agent framework', ['agent framework']],
++  ['chat cache', ['chat cache']],
++  ['tracing + log store', ['tracing SDK', 'log store', 'tool logs', 'log export']],
++  ['notebooks + local copies', ['notebook', 'eval notebook', 'local copies']],
++  ['ETL + warehouse', ['ETL job', 'second database', 'warehouse']],
++  ['sync + retry scripts', ['sync script', 'download script', 'retry script', 'bucket sync']],
++];
++const jobSystems = (i) => [...new Set(STEPS[i][1].map((chip) => SYSTEMS.findIndex(([, chips]) => chips.includes(chip))))];
++
++// the README's app.py from the class down, rewrapped to 54 columns
++const CODE_LINES = `class Videos(TableModel, name='videos'):
++    video: pxt.Video
++    audio = extract_audio(video, format='mp3')
++    transcript = openai.transcriptions(
++        audio, model='whisper-1')
++    summary = openai.chat_completions(
++        model='gpt-4o-mini',
++        messages=[
++            {'role': 'system', 'content':
++            'Summarize this video in two sentences.'},
++            {'role': 'user',
++             'content': transcript.text},
++        ],
++    ).choices[0].message.content.astype(pxt.String)
++
++    __indexes__ = [pxt.EmbeddingIndex(
++        summary, embedding=embed)]
++
++@pxt.query
++def search(query: str):
++    sim = Videos.summary.similarity(string=query)
++    return (Videos.order_by(sim, asc=False).limit(3)
++            .select(Videos.video, Videos.summary))
++
++api = FastAPIRouter(name='video-api')
++api.add_insert_route(
++    Videos, path='/videos',
++    uploadfile_inputs=[Videos.video],
++    outputs=[Videos.summary])
++api.add_query_route(path='/search', query=search)`.split('\n');
++const ROWS = [
++  ['tour-1.mp4', 'A table of images'],
++  ['tou
 ```
 
-**File**: `pixeltable/exec/cell_materialization_node.py` (modified, +32/-30)
+**File**: `docs/_hero/build-table-svg.mjs` (removed, +0/-173)
 ```diff
-@@ -1,13 +1,14 @@
- from __future__ import annotations
- 
- import asyncio
-+import contextlib
- import dataclasses
- import io
- import os
- from collections import deque
- from concurrent import futures
- from pathlib import Path
--from typing import Any, AsyncIterator
-+from typing import Any, AsyncGenerator
- 
- import numpy as np
- import PIL.Image
-@@ -101,35 +102,36 @@ def _init_exec_state(self) -> None:
-     def _open(self) -> None:
-         self._init_exec_state()
- 
--    async def __aiter__(self) -> AsyncIterator[DataRowBatch]:
--        async for batch in self.input:
--            for row in batch:
--                for col, slot_idx in self.output_col_info.items():
--                    if row.has_exc(slot_idx):
--                        continue
+@@ -1,173 +0,0 @@
+-// Renders the README hero, app.py's videos table filling in, as two animated SVGs (light and dark, chosen
+-// with <picture>). GitHub shows README SVGs as images: CSS animations play, scripts and web fonts do not.
+-// Every element's base style is the finished frame, so reduced motion (animations off) shows it whole.
+-// The code lines are the README's app.py, shortened to fit. The rows are illustrative, named after parts of
+-// docs/resources/10-minute tour of Pixeltable.mp3.
+-//
+-//   node build-table-svg.mjs        writes table-build-light.svg and table-build-dark.svg here
 -
--                    val = row[slot_idx]
--                    if val is None:
--                        row.cell_vals[col.id] = sql.sql.null() if col.col_type.is_json_type() else None
--                        row.cell_md[col.id] = None
--                        continue
+-import { writeFileSync } from 'node:fs';
+-import { dirname, join } from 'node:path';
+-import { fileURLToPath } from 'node:url';
 -
--                    if col.col_type.is_json_type():
--                        self._materialize_json_cell(row, col, slot_idx, val)
--                    elif col.col_type.is_array_type():
--                        assert isinstance(val, np.ndarray)
--                        self._materialize_array_cell(row, col, val)
--                    else:
--                        assert col.col_type.is_binary_type()
--                        assert isinstance(val, bytes)
--                        self._materialize_binary_cell(row, col, val)
+-const HERE = dirname(fileURLToPath(import.meta.url));
 -
--                    # continue with only the currently open chunk
--                    self.chunks = self.chunks[-1:] if self.buffered_writer is not None else []
+-const STEPS = [
+-  { at: 0, job: 'database', line: "class Videos(TableModel, name='videos'):" },
+-  { at: 2600, job: 'orchestration', line: 'transcript = openai.transcriptions(', tail: '…)' },
+-  { at: 5400, job: 'orchestration', line: 'summary = openai.chat_completions(', tail: '…)' },
+-  { at: 8200, job: 'serving', line: "api.add_query_route(path='/search',", tail: ' …)' },
+-];
+-const ROWS = [
+-  { video: 'tour-1.mp4', transcript: 'First, we create a table with an image column', summary: 'A table of images' },
+-  { video: 'tour-2.mp4', transcript: 'Next, a computed column runs object detection', summary: 'Detection as a column' },
+-  { video: 'tour-3.mp4', transcript: 'Then we ask GPT-4o about each image', summary: 'GPT-4o on each image' },
+-];
+-const QUERY = 'object detection';
+-const ANSWER_ROW = 1;
 -
--                await self._wait_for_uploads(self.MAX_PENDING_UPLOADS)
+-const ROW_GAP = 450;
+-const COMPUTE_LAG = 500;
+-const COMPUTE_TIME = 700;
+-const REQUEST_AT = STEPS[3].at + 700;
+-const ANSWER_AT = REQUEST_AT + 900;
+-const FADE_IN = 500;
+-const FADE_OUT = 700;
+-const LOOP = ANSWER_AT + 4200;
+-const END = LOOP - FADE_OUT;
+-const rowAt = (row) => 600 + row * ROW_GAP;
+-const fillAt = (step, row) => STEPS[step].at + COMPUTE_LAG + row * ROW_GAP;
+-const filledAt = (step) => fillAt(step, ROWS.length - 1) + COMPUTE_TIME;
 -
--            yield batch
-+    async def __aiter__(self) -> AsyncGenerator[DataRowBatch, None]:
-+        async with contextlib.aclosing(aiter(self.input)) as input_iter:
-+            async for batch in input_iter:
-+                for row in batch:
-+                    for col, slot_idx in self.output_col_info.items():
-+                        if row.has_exc(slot_idx):
-+                            continue
-+
-+                        val = row[slot_idx]
-+                        if val is None:
-+                            row.cell_vals[col.id] = sql.sql.null() if col.col_type.is_json_type() else None
-+                            row.cell_md[col.id] = None
-+                            continue
-+
-+                        if col.col_type.is_json_type():
-+                            self._materialize_json_cell(row, col, slot_idx, val)
-+                        elif col.col_type.is_array_type():
-+                            assert isinstance(val, np.ndarray)
-+                            self._materialize_array_cell(row, col, val)
-+                        else:
-+                            assert col.col_type.is_binary_type()
-+                            assert isinstance(val, bytes)
-+                            self._materialize_binary_cell(row, col, val)
-+
-+                        # continue with only the currently open chunk
-+                        self.chunks = self.chunks[-1:] if self.buffered_writer is not None else []
-+
-+                    await self._wait_for_uploads(self.MAX_PENDING_UPLOADS)
-+
-+                yield batch
- 
-         self._flush_buffer(finalize=True)
-         # the rows reference the chunks' urls, so they can't be committed before all uploads have succeeded
+-// every text color clears 4.5:1 on GitHub's page background (#ffffff light, #0d1117 dark)
+-const THEMES = {
+-  light: { text: '#1f2328', muted: '#59636e', faint: '#6e7781', border: 'rgba(31,35,40,0.15)', rule: 'rgba(31,35,40,0.08)', bar: '#f6f8fa', accent: '#b45309', route: '#1d4ed8', hit: 'rgba(31,35,40,0.05)' },
+-  dark: { text: '#e6edf3', muted: '#9198a1', faint: '#7d8590', border: 'rgba(240,246,252,0.14)', rule: 'rgba(240,246,252,0.07)', bar: 'rgba(240,246,252,0.04)', accent: '#f1ae03', route: '#93c5fd', hit: 'rgba(240,246,252,0.05)' },
+-};
+-
+-// drawn at the 420px the README shows it at (W plus the 1px stroke margin on each side), so sizes are CSS pixels
+-const W = 418;
+-const MONO = "ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace";
+-const SANS = "-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif";
+-
+-const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+-// cuts at a word boundary, since a cell holds about 20 characters of 13px text
+-function clip(s, n) {
+-  if (s.length <= n) return s;
+-  const head = s.slice(0, n - 1);
+-  const cut = s[n - 1] === ' ' ? head : head.slice(0, head.lastIndexOf(' '));
+-  return `${cut.trimEnd()}…`;
+-}
+-
+-// One CSS animation per visibility window: opacity 0 → 1 at `from`, 1 → 0 at `to`, over `fade` ms.
+-const animations = [];
+-function shown(from, to, { fade = 400, finished = true } = {}) {
+-  const pct = (ms) => `${Math.min(100, Math.max(0, (ms / LOOP) * 100)).toFixed(3)}%`;
+-  const name = `a${animations.length}`;
+-  const stops = [
+-    ['0%', 0],
+-    [pct(from), 0],
+-    [pct(from + fade), 1],
+-    [pct(to), 1],
+-    [pct(to + fade), 0],
+-    ['100%', 0],
+-  ];
+-  animations.push(`@keyframes ${name}{${stops.map(([at, o]) => `${at}{opacity:${o}}`).join('')}}`);
+-  // The base opacity is the finished frame, which reduced motion keeps.
+-  return `class="${name}" style="opacity:${finished ? 1 : 0}"`;
+-}
+-
+-function render(themeName) {
+-  animations.length = 0;
+-  const c = THEMES[themeName];
+-  const out = [];
+-  const text = (x, y, body, { size = 13, font = SANS, fill = c.text, anim = '', anchor = 'start', weight = 400 } = {}) =>
+-    `<text x="${x}" y="${y}" font-family="${font}" font-size="${size}" font-weight="${weight}" fill="${fill}" text-anchor="${anchor}" ${anim}>${body}</text>`;
+-
+-  // Line bar: the app.py line being declared.
+-  out.push(`<rect x="0.5" y="0.5" width="${W - 1}" height="39" rx="8" fill="${c.bar}" stroke="${c.border}"/>`);
+-  out.push(`<path d="M13 13h6l4 4v10h-10z M19 13v4h4" fill="none" stroke="${c.muted}" stroke-width="1.2" stroke-linejoin="round"/>`);
+-  out.push(text(30, 25, 'app.py', { font: MONO, size: 12, fill: c.muted }));
+-  STEPS.forEach((step, i) => {
+-    const from = Math.max(step.at, FADE_IN);
+-    const to = i < STEPS.length - 1 ? STEPS[i + 1].at : END;
+-    const tail = step.tail ? `<tspan fill="${c.
 ```
 
-**File**: `pixeltable/exec/cell_reconstruction_node.py` (modified, +48/-42)
+**File**: `docs/_hero/logo-dark.svg` (added, +12/-0)
 ```diff
-@@ -1,12 +1,13 @@
- from __future__ import annotations
- 
- import asyncio
-+import contextlib
- import io
- import itertools
- from concurrent import futures
- from pathlib import Path
- from types import NoneType
--from typing import IO, Any, AsyncIterator, Iterable
-+from typing import IO, Any, AsyncGenerator, Iterable
- 
- import numpy as np
- import PIL.Image
-@@ -232,47 +233,52 @@ def _init_exec_state(self) -> None:
-     def _open(self) -> None:
-         self._init_exec_state()
- 
--    async def __aiter__(self) -> AsyncIterator[DataRowBatch]:
--        async for batch in self.input:
--            urls = self._chunk_urls(batch)
--            self.reader.release(keep=urls)
--            await self.reader.prefetch(urls)
--            for row in batch:
--                for col_ref in self.json_refs:
--                    val = row[col_ref.slot_idx]
--                    if val is None:
--                        continue
--                    cell_md = row.slot_md.get(col_ref.slot_idx)
--                    if cell_md is None or cell_md.file_urls is None or not json_has_inlined_objs(row[col_ref.slot_idx]):
--                        continue
--                    row[col_ref.slot_idx] = reconstruct_json(val, cell_md.file_urls, self.reader)
--
--                for col_ref in self.json_path_anchors:
--                    val = row[col_ref.slot_idx]
--                    if val is None:
--                        continue
--                    cell_md = row.slot_md.get(col_ref.slot_idx)
--                    if cell_md is None or cell_md.file_urls is None or not json_has_inlined_objs(val):
--                        continue
--                    row[col_ref.slot_idx] = load_remote_objects(val, cell_md.file_urls, self.reader)
--
--                for col_ref in self.array_refs:
--                    cell_md = row.slot_md.get(col_ref.slot_idx)
--                    if cell_md is not None and cell_md.array_md is not None:
--                        assert row[col_ref.slot_idx] is None
--                        row[col_ref.slot_idx] = self._reconstruct_array(cell_md)
--                    else:
--                        assert isinstance(row[col_ref.slot_idx], (NoneType, np.ndarray))
--
--                for col_ref in self.binary_refs:
--                    cell_md = row.slot_md.get(col_ref.slot_idx)
--                    if cell_md is not None and cell_md.binary_md is not None:
--                        assert row[col_ref.slot_idx] is None
--                        row[col_ref.slot_idx] = self._reconstruct_binary(cell_md)
--                    else:
--                        assert isinstance(row[col_ref.slot_idx], (NoneType, bytes))
--
--            yield batch
-+    async def __aiter__(self) -> AsyncGenerator[DataRowBatch, None]:
-+        async with contextlib.aclosing(aiter(self.input)) as input_iter:
-+            async for batch in input_iter:
-+                urls = self._chunk_urls(batch)
-+                self.reader.release(keep=urls)
-+                await self.reader.prefetch(urls)
-+                for row in batch:
-+                    for col_ref in self.json_refs:
-+                        val = row[col_ref.slot_idx]
-+                        if val is None:
-+                            continue
-+                        cell_md = row.slot_md.get(col_ref.slot_idx)
-+                        if (
-+                            cell_md is None
-+                            or cell_md.file_urls is None
-+                            or not json_has_inlined_objs(row[col_ref.slot_idx])
-+                        ):
-+                            continue
-+                        row[col_ref.slot_idx] = reconstruct_json(val, cell_md.file_urls, self.reader)
-+
-+                    for col_ref in self.json_path_anchors:
-+                        val = row[col_ref.slot_idx]
-+                        if val is None:
-+                            continue
-+                        cell_md = row.slot_md.get(col_ref.slot_idx)
-+                        if cell_md is None or cell_md.file_urls is None or not json_has_inlined_objs(val):
-+                            continue
-+                        row[col_ref.slot_idx] = load_remote_objects(val, cell_md.file_urls, self.reader)
-+
-+                    for col_ref in self.array_refs:
-+                        cell_md = row.slot_md.get(col_ref.slot_idx)
-+                        if cell_md is not None and cell_md.array_md is not None:
-+                            assert row[col_ref.slot_idx] is None
-+                            row[col_ref.slot_idx] = self._reconstruct_array(cell_md)
-+                        else:
-+                            assert isinstance(row[col_ref.slot_idx], (NoneType, np.ndarray))
-+
-+                    for col_ref in self.binary_refs:
-+                        cell_md = row.slot_md.get(col_ref.slot_idx)
-+                        if cell_md is not None and cell_md.binary_md is not None:
-+                            assert row[col_ref.slot_idx] is None
-+                            row[col_ref.slot_idx] = self._reconstruct_bi
+@@ -0,0 +1,12 @@
++<svg width="392" height="107" viewBox="0 0 392 107" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="Pixeltable">
++<rect width="392" height="107" rx="12" fill="#0d1117"/>
++<g transform="translate(12 12)">
++<rect width="368" height="83" fill="url(#pattern0_2_50)"/>
++<defs>
++<pattern id="pattern0_2_50" patternContentUnits="objectBoundingBox" width="1" height="1">
++<use xlink:href="#image0_2_50" transform="matrix(0.00139224 0 0 0.00617284 -0.000511608 0)"/>
++</pattern>
++<image id="image0_2_50" width="719" height="162" xlink:href="data:image/png;base64,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
 ```
 
-**File**: `pixeltable/exec/component_iteration_node.py` (modified, +29/-27)
+**File**: `docs/_hero/logo-light.svg` (added, +12/-0)
 ```diff
-@@ -1,4 +1,5 @@
--from typing import AsyncIterator, Iterator
-+import contextlib
-+from typing import AsyncGenerator, Iterator
- 
- from pixeltable import catalog, exceptions as excs, exprs, telemetry
- from pixeltable.func.iterator import GeneratingFunctionCall
-@@ -67,34 +68,35 @@ def _instrumented_iter(self, iterator: Iterator[dict]) -> Iterator[dict]:
-                     return
-             yield item
- 
--    async def __aiter__(self) -> AsyncIterator[DataRowBatch]:
-+    async def __aiter__(self) -> AsyncGenerator[DataRowBatch, None]:
-         telemetry_active = telemetry.active()
-         output_batch = DataRowBatch(self.row_builder)
--        async for input_batch in self.input:
--            for input_row in input_batch:
--                # usually computed by the input plan, which then garbage-collected the intermediates they depend on
--                if not input_row.has_val[self.iterator_args_expr.slot_idx]:
--                    self.row_builder.eval(input_row, self.iterator_args_ctx)
--                iterator_args = input_row[self.iterator_args_expr.slot_idx]
--                assert isinstance(iterator_args, dict)
--                # We need to ensure that all of the required (non-nullable) parameters of the iterator are
--                # specified and are not null. If any of them are null, then we skip this row (i.e., we emit 0
--                # output rows for this input row).
--                if self.__non_nullable_args_specified(iterator_args):
--                    iterator = self.view.get().iterator_call.eval(iterator_args)
--                    try:
--                        steps = self._instrumented_iter(iterator) if telemetry_active else iterator
--                        for pos, component_dict in enumerate(steps):
--                            output_row = self.row_builder.make_row()
--                            input_row.copy(output_row)
--                            # we're expanding the input and need to add the iterator position to the pk
--                            self.__populate_output_row(output_row, pos, component_dict)
--                            output_batch.add_row(output_row)
--                            if len(output_batch) == self.__OUTPUT_BATCH_SIZE:
--                                yield output_batch
--                                output_batch = DataRowBatch(self.row_builder)
--                    finally:
--                        iterator.close()
-+        async with contextlib.aclosing(aiter(self.input)) as input_iter:
-+            async for input_batch in input_iter:
-+                for input_row in input_batch:
-+                    # usually computed by the input plan, which then garbage-collected the intermediates they depend on
-+                    if not input_row.has_val[self.iterator_args_expr.slot_idx]:
-+                        self.row_builder.eval(input_row, self.iterator_args_ctx)
-+                    iterator_args = input_row[self.iterator_args_expr.slot_idx]
-+                    assert isinstance(iterator_args, dict)
-+                    # We need to ensure that all of the required (non-nullable) parameters of the iterator are
-+                    # specified and are not null. If any of them are null, then we skip this row (i.e., we emit 0
-+                    # output rows for this input row).
-+                    if self.__non_nullable_args_specified(iterator_args):
-+                        iterator = self.view.get().iterator_call.eval(iterator_args)
-+                        try:
-+                            steps = self._instrumented_iter(iterator) if telemetry_active else iterator
-+                            for pos, component_dict in enumerate(steps):
-+                                output_row = self.row_builder.make_row()
-+                                input_row.copy(output_row)
-+                                # we're expanding the input and need to add the iterator position to the pk
-+                                self.__populate_output_row(output_row, pos, component_dict)
-+                                output_batch.add_row(output_row)
-+                                if len(output_batch) == self.__OUTPUT_BATCH_SIZE:
-+                                    yield output_batch
-+                                    output_batch = DataRowBatch(self.row_builder)
-+                        finally:
-+                            iterator.close()
- 
-         if len(output_batch) > 0:
-             yield output_batch
+@@ -0,0 +1,12 @@
++<svg width="318" height="75" viewBox="0 0 318 75" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="Pixeltable">
++<rect width="318" height="75" rx="9" fill="#ffffff"/>
++<g transform="translate(9 9)">
++<rect width="300" height="57" fill="url(#pattern0_3_47)"/>
++<defs>
++<pattern id="pattern0_3_47" patternContentUnits="objectBoundingBox" width="1" height="1">
++<use xlink:href="#image0_3_47" transform="scale(0.00333333 0.0175439)"/>
++</pattern>
++<image id="image0_3_47" width="300" height="57" xlink:href="data:image/png;base64,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
 ```
 
-**File**: `pixeltable/exec/exec_node.py` (modified, +100/-19)
+**File**: `docs/_hero/stack-slider-dark.svg` (added, +18/-0)
 ```diff
-@@ -2,10 +2,12 @@
- 
- import abc
- import asyncio
-+import contextlib
- import queue
-+import signal
- import threading
--from types import TracebackType
--from typing import Any, AsyncIterator, Iterable, Iterator, Self, TypeVar
-+from types import FrameType, TracebackType
-+from typing import Any, AsyncGenerator, Generator, Iterable, Iterator, Self, TypeVar
- 
- import pixeltable.exceptions as excs
- import pixeltable.type_system as ts
-@@ -27,6 +29,15 @@ class ExecNode(abc.ABC):
-     3. bind_params()/iter() can then be called repeatedly to execute the same plan with different parameters
-     4. _open() initializes per-iteration execution state
- 
-+    Closing: an iteration can stop before its last batch (eg, a cursor loop that breaks), and its cleanup (eg,
-+    ColumnRef.release()) has to run right then, not at garbage collection.
-+    - __aiter__() returns an async generator, which Python doesn't close when its last reference goes away: it
-+      hands the generator to the event loop, which closes it later, if at all. Callers must therefore close it with
-+      aclose(), also after an early stop, and an implementation that iterates over self.input must close
-+      aiter(self.input) the same way, eg, with contextlib.aclosing().
-+    - __iter__() returns a generator, which CPython closes as soon as its last reference goes away, eg, when the for
-+      loop over it exits. Callers don't close it explicitly.
-+
-     Not thread-safe.
-     """
- 
-@@ -108,28 +119,72 @@ def set_var_slots(self, rows: Iterable[exprs.DataRow]) -> None:
-                 row[v.slot_idx] = val
- 
-     @abc.abstractmethod
--    def __aiter__(self) -> AsyncIterator[DataRowBatch]: ...
-+    def __aiter__(self) -> AsyncGenerator[DataRowBatch, None]:  # noqa: PYI058
-+        """Yield this node's output batches.
- 
--    def __iter__(self) -> Iterator[DataRowBatch]:
--        try:
--            running = asyncio.get_running_loop()
--        except RuntimeError:
--            running = None
-+        Callers must close the generator with aclose(); see the class docstring.
-+        """
- 
--        if running is None:
-+    def __iter__(self) -> Generator[DataRowBatch, None, None]:
-+        if asyncio._get_running_loop() is None:
-             # if we don't already have a running loop, we can run the async iterator directly and avoid the extra
-             # overhead introduced by _thread_iter()
-             loop = get_runtime().event_loop
-             aiter = self.__aiter__()
-+            step: asyncio.Future[DataRowBatch] | None = None
-             try:
-                 while True:
--                    batch: DataRowBatch = loop.run_until_complete(aiter.__anext__())
--                    yield batch
-+                    # wrap the next step in a Task, which the finally block can cancel
-+                    step = asyncio.ensure_future(aiter.__anext__(), loop=loop)
-+                    yield self._run_step(loop, step)
-             except StopAsyncIteration:
-                 pass
-+            finally:
-+                # skip the cleanup where run_until_complete() raises:
-+                # - the loop is closed: Runtime.close() has already closed aiter
-+                # - another loop is running in this thread (eg, async code closes this generator): the runtime loop's
-+                #   async generator finalizer schedules aiter.aclose() once aiter is garbage-collected
-+                if not loop.is_closed() and asyncio._get_running_loop() is None:
-+                    if step is not None and not step.done():
-+                        # an exception (eg, KeyboardInterrupt) left run_until_complete() while step was still running,
-+                        # and aclose() raises for a generator in the middle of __anext__(): cancel step and wait first
-+                        step.cancel()
-+                        loop.run_until_complete(asyncio.wait([step]))
-+                    loop.run_until_complete(aiter.aclose())
-         else:
-             yield from self._thread_iter()
- 
-+    def _run_step(self, loop: asyncio.AbstractEventLoop, step: asyncio.Future[DataRowBatch]) -> DataRowBatch:
-+        """Run step on loop; if SIGINT arrives, cancel step and raise KeyboardInterrupt once it has finished.
-+
-+        Like asyncio.Runner, this keeps KeyboardInterrupt out of tasks: one raised inside a task can leave a stop()
-+        call queued in loop, which then stops the cleanup in __iter__().
-+        """
-+        if threading.current_thread() is not threading.main_thread() or (
-+            signal.getsignal(signal.SIGINT) is not signal.default_int_handler
-+        ):
-+            return loop.run_until_complete(step)
-+
-+        interrupted = False
-+
-+        def on_sigint(signum: int, frame: FrameType | None) -> None:
-+            nonlocal interrupted
-+            if interrupted:
-+                raise KeyboardInterrupt
-+            interrupted = True
-+            step.cancel()
-+            # wake up the loop if it waits in select()
-+            loop.call_soon_threadsafe(lambda: None)
-
+@@ -0,0 +1,18 @@
++<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 624" width="920" height="624" role="img" aria-labelledby="t">
++<title id="t">Usually, the 13 jobs of a request run across 12 systems that your app talks to one by one. With Pixeltable, the same 13 jobs live in one app.py, with its videos table and the APIs the other jobs use. A handle sweeps between the two sides.</title>
++<style>@keyframes clip{0.00%{clip-path:inset(0 0 0 644px);animation-timing-function:cubic-bezier(.65,0,.35,1)}21.43%{clip-path:inset(0 0 0 644px);animation-timing-function:cubic-bezier(.65,0,.35,1)}28.57%{clip-path:inset(0 0 0 0px);animation-timing-function:cubic-bezier(.65,0,.35,1)}57.14%{clip-path:inset(0 0 0 0px);animation-timing-function:cubic-bezier(.65,0,.35,1)}64.29%{clip-path:inset(0 0 0 888px);animation-timing-function:cubic-bezier(.65,0,.35,1)}78.57%{clip-path:inset(0 0 0 888px);animation-timing-function:cubic-bezier(.65,0,.35,1)}85.71%{clip-path:inset(0 0 0 644px);animation-timing-function:cubic-bezier(.65,0,.35,1)}100.00%{clip-path:inset(0 0 0 644px);animation-timing-function:cubic-bezier(.65,0,.35,1)}}@keyframes move{0.00%{transform:translateX(644px);animation-timing-function:cubic-bezier(.65,0,.35,1)}21.43%{transform:translateX(644px);animation-timing-function:cubic-bezier(.65,0,.35,1)}28.57%{transform:translateX(0px);animation-timing-function:cubic-bezier(.65,0,.35,1)}57.14%{transform:translateX(0px);animation-timing-function:cubic-bezier(.65,0,.35,1)}64.29%{transform:translateX(888px);animation-timing-function:cubic-bezier(.65,0,.35,1)}78.57%{transform:translateX(888px);animation-timing-function:cubic-bezier(.65,0,.35,1)}85.71%{transform:translateX(644px);animation-timing-function:cubic-bezier(.65,0,.35,1)}100.00%{transform:translateX(644px);animation-timing-function:cubic-bezier(.65,0,.35,1)}}.pixeltable{clip-path:inset(0 0 0 644px);animation:clip 14s infinite}.handle{transform:translateX(644px);animation:move 14s infinite}@media (prefers-reduced-motion:reduce){.pixeltable,.handle{animation:none}}</style>
++<rect x="0.5" y="0.5" width="919" height="623" rx="12" fill="#070807" stroke="#383838"/>
++<path d="M24 17l-4 4 4 4" fill="none" stroke="#a6a6a6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><text x="32" y="26" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="13" font-weight="600" fill="#a6a6a6" text-anchor="start" >Usually</text>
++<text x="888" y="26" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="13" font-weight="600" fill="#a6a6a6" text-anchor="end" >With Pixeltable</text><path d="M896 17l4 4 -4 4" fill="none" stroke="#a6a6a6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
++<g transform="translate(16 44)">
++<g><path d="M396 103.5 C284 103.5 284 74.5 172 74.5" fill="none" stroke="#a6a6a6" stroke-opacity="0.45"/><path d="M396 103.5 C284 103.5 284 426.5 172 426.5" fill="none" stroke="#a6a6a6" stroke-opacity="0.45"/><path d="M396 103.5 C284 103.5 284 106.5 172 106.5" fill="none" stroke="#a6a6a6" stroke-opacity="0.45"/><path d="M396 130.5 C284 130.5 284 138.5 172 138.5" fill="none" stroke="#a6a6a6" stroke-opacity="0.45"/><path d="M396 130.5 C284 130.5 284 170.5 172 170.5" fill="none" stroke="#a6a6a6" stroke-opacity="0.45"/><path d="M396 157.5 C284 157.5 284 138.5 172 138.5" fill="none" stroke="#a6a6a6" stroke-opacity="0.45"/><path d="M396 157.5 C284 157.5 284 106.5 172 106.5" fill="none" stroke="#a6a6a6" stroke-opacity="0.45"/><path d="M396 184.5 C284 184.5 284 426.5 172 426.5" fill="none" stroke="#a6a6a6" stroke-opacity="0.45"/><path d="M396 184.5 C284 184.5 284 362.5 172 362.5" fill="none" stroke="#a6a6a6" stroke-opacity="0.45"/><path d="M396 211.5 C284 211.5 284 170.5 172 170.5" fill="none" stroke="#a6a6a6" stroke-opacity="0.45"/><path d="M396 211.5 C284 211.5 284 202.5 172 202.5" fill="none" stroke="#a6a6a6" stroke-opacity="0.45"/><path d="M396 238.5 C284 238.5 284 234.5 172 234.5" fill="none" stroke="#a6a6a6" stroke-opacity="0.45"/><path d="M396 238.5 C284 238.5 284 106.5 172 106.5" fill="none" stroke="#a6a6a6" stroke-opacity="0.45"/><path d="M396 238.5 C284 238.5 284 202.5 172 202.5" fill="none" stroke="#a6a6a6" stroke-opacity="0.45"/><path d="M396 265.5 C284 265.5 284 266.5 172 266.5" fill="none" stroke="#a6a6a6" stroke-opacity="0.45"/><path d="M396 265.5 C284 265.5 284 330.5 172 330.5" fill="none" stroke="#a6a6a6" stroke-opacity="0.45"/><path d="M396 292.5 C284 292.5 284 298.5 172 298.5" fill="none" stroke="#a6a6a6" stroke-opacity="0.45"/><path d="M396 292.5 C284 292.5 284 202.5 172 202.5" fill="none" stroke="#a6a6a6" stroke-opacity="0.45"/><path d="M396 319.5 C284 319.5 284 330.5 172 330.5" fill="none" stroke="#a6a6a6" stroke-opacity="0.45"/><path d="M396 346.5 C284 346.5 284 330.5 172 330.5" fill="none" stroke="#a6a6a6" stroke-opacity="0.45"/><path d="M396 346.5 C284 346.5 284 362.5 172 362.5" fill="none" stroke="#a6a6a6" stroke-
 ```
 
-**File**: `pixeltable/exec/exec_plan.py` (modified, +10/-10)
+**File**: `docs/_hero/stack-slider-light.svg` (added, +18/-0)
 ```diff
-@@ -1,8 +1,9 @@
- from __future__ import annotations
- 
- import asyncio
-+import contextlib
- from types import TracebackType
--from typing import Any, AsyncIterator, Iterator, Self
-+from typing import Any, AsyncGenerator, Iterator, Self
- from uuid import UUID
- 
- import pixeltable.exceptions as excs
-@@ -138,9 +139,6 @@ def __exit__(
-     def __iter__(self) -> Iterator[DataRowBatch]:
-         return iter(self.exec_root)
- 
--    def __aiter__(self) -> AsyncIterator[DataRowBatch]:
--        return self.exec_root.__aiter__()
--
-     def exec(self, args: dict[str, Any]) -> Iterator[exprs.DataRow]:
-         """Bind args, open the plan, and yield rows. Synchronous path.
- 
-@@ -158,16 +156,17 @@ def exec(self, args: dict[str, Any]) -> Iterator[exprs.DataRow]:
-             self._is_executing = False
-             raise
-         with self:
-+            # only the for loop references the batch iterator, so the iterator closes before __exit__()
-             for batch in self.exec_root:
-                 yield from batch
- 
--    async def aexec(self, args: dict[str, Any]) -> AsyncIterator[exprs.DataRow]:
-+    async def aexec(self, args: dict[str, Any]) -> AsyncGenerator[exprs.DataRow, None]:
-         """Bind args, open the plan, and yield rows. Async path.
- 
-         Holds iter_lock for the lifetime of the iteration so concurrent async callers (e.g. a
-         per-row inner-query template invoked from an outer ExprEvalNode) don't interleave their
--        bind+iterate cycles on the same cached plan. Callers must drain the generator (or aclose
--        it); standard async-generator finalization releases the lock when the generator is closed.
-+        bind+iterate cycles on the same cached plan. Callers must drain the generator or aclose() it;
-+        both release the lock.
-         """
-         if self._iter_lock is None:
-             self._iter_lock = asyncio.Lock()
-@@ -179,6 +178,7 @@ async def aexec(self, args: dict[str, Any]) -> AsyncIterator[exprs.DataRow]:
-                 self._is_executing = False
-                 raise
-             with self:
--                async for batch in self.exec_root:
--                    for row in batch:
--                        yield row
-+                async with contextlib.aclosing(aiter(self.exec_root)) as batches:
-+                    async for batch in batches:
-+                        for row in batch:
-+                            yield row
+@@ -0,0 +1,18 @@
++<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 624" width="920" height="624" role="img" aria-labelledby="t">
++<title id="t">Usually, the 13 jobs of a request run across 12 systems that your app talks to one by one. With Pixeltable, the same 13 jobs live in one app.py, with its videos table and the APIs the other jobs use. A handle sweeps between the two sides.</title>
++<style>@keyframes clip{0.00%{clip-path:inset(0 0 0 644px);animation-timing-function:cubic-bezier(.65,0,.35,1)}21.43%{clip-path:inset(0 0 0 644px);animation-timing-function:cubic-bezier(.65,0,.35,1)}28.57%{clip-path:inset(0 0 0 0px);animation-timing-function:cubic-bezier(.65,0,.35,1)}57.14%{clip-path:inset(0 0 0 0px);animation-timing-function:cubic-bezier(.65,0,.35,1)}64.29%{clip-path:inset(0 0 0 888px);animation-timing-function:cubic-bezier(.65,0,.35,1)}78.57%{clip-path:inset(0 0 0 888px);animation-timing-function:cubic-bezier(.65,0,.35,1)}85.71%{clip-path:inset(0 0 0 644px);animation-timing-function:cubic-bezier(.65,0,.35,1)}100.00%{clip-path:inset(0 0 0 644px);animation-timing-function:cubic-bezier(.65,0,.35,1)}}@keyframes move{0.00%{transform:translateX(644px);animation-timing-function:cubic-bezier(.65,0,.35,1)}21.43%{transform:translateX(644px);animation-timing-function:cubic-bezier(.65,0,.35,1)}28.57%{transform:translateX(0px);animation-timing-function:cubic-bezier(.65,0,.35,1)}57.14%{transform:translateX(0px);animation-timing-function:cubic-bezier(.65,0,.35,1)}64.29%{transform:translateX(888px);animation-timing-function:cubic-bezier(.65,0,.35,1)}78.57%{transform:translateX(888px);animation-timing-function:cubic-bezier(.65,0,.35,1)}85.71%{transform:translateX(644px);animation-timing-function:cubic-bezier(.65,0,.35,1)}100.00%{transform:translateX(644px);animation-timing-function:cubic-bezier(.65,0,.35,1)}}.pixeltable{clip-path:inset(0 0 0 644px);animation:clip 14s infinite}.handle{transform:translateX(644px);animation:move 14s infinite}@media (prefers-reduced-motion:reduce){.pixeltable,.handle{animation:none}}</style>
++<rect x="0.5" y="0.5" width="919" height="623" rx="12" fill="#fafaf9" stroke="#e0e0e0"/>
++<path d="M24 17l-4 4 4 4" fill="none" stroke="#595959" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><text x="32" y="26" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="13" font-weight="600" fill="#595959" text-anchor="start" >Usually</text>
++<text x="888" y="26" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="13" font-weight="600" fill="#595959" text-anchor="end" >With Pixeltable</text><path d="M896 17l4 4 -4 4" fill="none" stroke="#595959" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
++<g transform="translate(16 44)">
++<g><path d="M396 103.5 C284 103.5 284 74.5 172 74.5" fill="none" stroke="#595959" stroke-opacity="0.45"/><path d="M396 103.5 C284 103.5 284 426.5 172 426.5" fill="none" stroke="#595959" stroke-opacity="0.45"/><path d="M396 103.5 C284 103.5 284 106.5 172 106.5" fill="none" stroke="#595959" stroke-opacity="0.45"/><path d="M396 130.5 C284 130.5 284 138.5 172 138.5" fill="none" stroke="#595959" stroke-opacity="0.45"/><path d="M396 130.5 C284 130.5 284 170.5 172 170.5" fill="none" stroke="#595959" stroke-opacity="0.45"/><path d="M396 157.5 C284 157.5 284 138.5 172 138.5" fill="none" stroke="#595959" stroke-opacity="0.45"/><path d="M396 157.5 C284 157.5 284 106.5 172 106.5" fill="none" stroke="#595959" stroke-opacity="0.45"/><path d="M396 184.5 C284 184.5 284 426.5 172 426.5" fill="none" stroke="#595959" stroke-opacity="0.45"/><path d="M396 184.5 C284 184.5 284 362.5 172 362.5" fill="none" stroke="#595959" stroke-opacity="0.45"/><path d="M396 211.5 C284 211.5 284 170.5 172 170.5" fill="none" stroke="#595959" stroke-opacity="0.45"/><path d="M396 211.5 C284 211.5 284 202.5 172 202.5" fill="none" stroke="#595959" stroke-opacity="0.45"/><path d="M396 238.5 C284 238.5 284 234.5 172 234.5" fill="none" stroke="#595959" stroke-opacity="0.45"/><path d="M396 238.5 C284 238.5 284 106.5 172 106.5" fill="none" stroke="#595959" stroke-opacity="0.45"/><path d="M396 238.5 C284 238.5 284 202.5 172 202.5" fill="none" stroke="#595959" stroke-opacity="0.45"/><path d="M396 265.5 C284 265.5 284 266.5 172 266.5" fill="none" stroke="#595959" stroke-opacity="0.45"/><path d="M396 265.5 C284 265.5 284 330.5 172 330.5" fill="none" stroke="#595959" stroke-opacity="0.45"/><path d="M396 292.5 C284 292.5 284 298.5 172 298.5" fill="none" stroke="#595959" stroke-opacity="0.45"/><path d="M396 292.5 C284 292.5 284 202.5 172 202.5" fill="none" stroke="#595959" stroke-opacity="0.45"/><path d="M396 319.5 C284 319.5 284 330.5 172 330.5" fill="none" stroke="#595959" stroke-opacity="0.45"/><path d="M396 346.5 C284 346.5 284 330.5 172 330.5" fill="none" stroke="#595959" stroke-opacity="0.45"/><path d="M396 346.5 C284 346.5 284 362.5 172 362.5" fill="none" stroke="#595959" stroke-
+```
+
+**File**: `docs/_hero/stack-slider-narrow-dark.svg` (added, +13/-0)
+```diff
+@@ -0,0 +1,13 @@
++<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 372 676" width="372" height="676" role="img" aria-labelledby="t">
++<title id="t">The 13 jobs a request needs. Under each, a handle sweeps between the systems it usually takes and the one line of app.py or pxt command it takes with Pixeltable.</title>
++<style>@keyframes clip{0.00%{clip-path:inset(0 0 0 346px);animation-timing-function:cubic-bezier(.65,0,.35,1)}21.43%{clip-path:inset(0 0 0 346px);animation-timing-function:cubic-bezier(.65,0,.35,1)}28.57%{clip-path:inset(0 0 0 0px);animation-timing-function:cubic-bezier(.65,0,.35,1)}78.57%{clip-path:inset(0 0 0 0px);animation-timing-function:cubic-bezier(.65,0,.35,1)}85.71%{clip-path:inset(0 0 0 346px);animation-timing-function:cubic-bezier(.65,0,.35,1)}100.00%{clip-path:inset(0 0 0 346px);animation-timing-function:cubic-bezier(.65,0,.35,1)}}@keyframes move{0.00%{transform:translateX(346px);animation-timing-function:cubic-bezier(.65,0,.35,1)}21.43%{transform:translateX(346px);animation-timing-function:cubic-bezier(.65,0,.35,1)}28.57%{transform:translateX(0px);animation-timing-function:cubic-bezier(.65,0,.35,1)}78.57%{transform:translateX(0px);animation-timing-function:cubic-bezier(.65,0,.35,1)}85.71%{transform:translateX(346px);animation-timing-function:cubic-bezier(.65,0,.35,1)}100.00%{transform:translateX(346px);animation-timing-function:cubic-bezier(.65,0,.35,1)}}.pixeltable{clip-path:inset(0 0 0 0px);animation:clip 14s infinite}.handle{transform:translateX(0px);animation:move 14s infinite}@media (prefers-reduced-motion:reduce){.pixeltable,.handle{animation:none}}</style>
++<rect x="0.5" y="0.5" width="371" height="675" rx="12" fill="#070807" stroke="#383838"/>
++<path d="M20 17l-4 4 4 4" fill="none" stroke="#a6a6a6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><text x="28" y="26" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="13" font-weight="600" fill="#a6a6a6" text-anchor="start" >Usually</text>
++<text x="344" y="26" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="13" font-weight="600" fill="#a6a6a6" text-anchor="end" >With Pixeltable</text><path d="M352 17l4 4 -4 4" fill="none" stroke="#a6a6a6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
++<rect x="12.5" y="40.5" width="347" height="575" rx="10" fill="#0e110e" stroke="#383838"/><path d="M12.5 70 V50.5 a10 10 0 0 1 10 -10 H349.5 a10 10 0 0 1 10 10 V70 Z" fill="#171b17"/><line x1="13" y1="70" x2="359" y2="70" stroke="#383838"/><text x="24" y="60" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="13" font-weight="600" fill="#f2f2f2" text-anchor="start" >What a request needs</text><text x="24" y="87" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="11" font-weight="400" fill="#a6a6a6" text-anchor="start" >01</text><text x="46" y="87" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="12" font-weight="400" fill="#f2f2f2" text-anchor="start" >Store files and their results</text><line x1="13" y1="112" x2="359" y2="112" stroke="#383838" stroke-opacity="0.5"/><text x="24" y="129" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="11" font-weight="400" fill="#a6a6a6" text-anchor="start" >02</text><text x="46" y="129" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="12" font-weight="400" fill="#f2f2f2" text-anchor="start" >Split documents or sample frames</text><line x1="13" y1="154" x2="359" y2="154" stroke="#383838" stroke-opacity="0.5"/><text x="24" y="171" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="11" font-weight="400" fill="#a6a6a6" text-anchor="start" >03</text><text x="46" y="171" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="12" font-weight="400" fill="#f2f2f2" text-anchor="start" >Call models</text><line x1="13" y1="196" x2="359" y2="196" stroke="#383838" stroke-opacity="0.5"/><text x="24" y="213" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="11" font-weight="400" fill="#a6a6a6" text-anchor="start" >04</text><text x="46" y="213" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="12" font-weight="400" fill="#f2f2f2" text-anchor="start" >Explore and query the results</text><line x1="13" y1="238" x2="359" y2="238" stroke="#383838" stroke-opacity="0.5"/><text x="24" y="255" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="11" font-weight="400" fill="#a6a6a6" text-anchor="start" >05</text><text x="46" y="
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1899** (2026-11-04): Module refactor (@sergey-mkhitaryan)
-- **PR #1898** (2026-11-03): unpin the miniforge version (@sergey-mkhitaryan)
-- **PR #1897** (2026-11-03): cleanup the remaining arrays with pixeltable type dtypes in the docs … (@sergey-mkhitaryan)
-- **PR #1894** (2026-11-03): PXT-1735: Compare ImagesResponse adherence to SDK model fields (@pierrebrunelle)
-- **PR #1891** (2026-11-03): docs: add a DSPy retriever integration page (@pierrebrunelle)
-- **PR #1890** (2026-11-03): Automatic restart of CLI daemon after new package installs (@mkornacker)
+- **PR #1920** (2026-11-07): docs: make the README hero the homepage's slider, readable in any theme (@pierrebrunelle)
+- **PR #1915** (2026-11-07): Add VLM Run Gateway integration (OCR, VQA, segmentation, embeddings, transcription) (takes over #1893) (@aaron-siegel)
+- **PR #1914** (closed): Fix is_deterministic default when @pxt.udf() has keyword arguments (@sergey-mkhitaryan)
+- **PR #1913** (2026-11-07): Fix UDF and iterator issues found during #1907 review (@sergey-mkhitaryan)
+- **PR #1912** (2026-11-07): PXT-1748: Mirror OpenAI ImagesResponse.svg_usage (openai 3.46) (@pierrebrunelle)
+- **PR #1911** (closed): Require Pillow >= 13.0 (CVE-2026-112900) (@jacobweiss2305)
 
 ---
 
@@ -1884,42 +1539,28 @@ UDFs over a frame view leave no video file open.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. PXT-1715/1726: Close query resources when a query stops; fix export_lancedb() wi
+## X. Update README.md
 
 **RULE**:
-When implementing operations in `pixeltable/_query.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pixeltable/pixeltable. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pixeltable/pixeltable. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `77772fc4`: PXT-1715/1726: Close query resources when a query stops; fix export_lancedb() with lancedb 0.41 (#1868). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c23311a8`: Update README.md. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pixeltable/_query.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-import contextlib
-    AsyncGenerator,
-    async def _aexec(self, args: dict[str, Any] | None = None) -> AsyncGenerator[exprs.DataRow, None]:
-        async with contextlib.aclosing(plan.aexec(args)) as rows:
-            async for row in rows:
-                yield row
-            async with contextlib.aclosing(self._aexec(args=args)) as rows:
-                result = [Row(tuple(row[e.slot_idx] for e in planned_exprs), columns, schema) async for row in rows]
+### Multimodal database, orchestration, and serving in one file
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-    AsyncIterator,
-    async def _aexec(self, args: dict[str, Any] | None = None) -> AsyncIterator[exprs.DataRow]:
-        async for row in plan.aexec(args):
-            yield row
-            result = [
-                Row(tuple(row[e.slot_idx] for e in planned_exprs), columns, schema)
-                async for row in self._aexec(args=args)
-            ]
+### Multimodal database, orchestration, and serving in one file, by the co-creators of Apache Parquet and Impala.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `77772fc4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c23311a8` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ataraxy-labs-sem-learnings.md`  
 > **Source**: github ([https://github.com/Ataraxy-Labs/sem](https://github.com/Ataraxy-Labs/sem))  
-> **Source Version**: `be77b50a`  
+> **Source Version**: `290a9d94`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T17:17:51.880Z  
+> **Timestamp**: 2026-11-09T22:34:13.509Z  
 > **Learning ID**: `learn-github-ataraxy-labs-sem`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ataraxy-labs-sem-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Ataraxy-Labs/sem](https://github.com/Ataraxy-Labs/sem))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T17:17:51.673Z  
+> **Harvest Timestamp**: 2026-11-09T22:34:12.402Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Semantic version control => entity-level diffs, blame, and impact analysis on top of git. 28 languages via tree-sitter. Built for coding agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 3440 stars
+- **Stars / Engagement**: 3446 stars
 
 ---
 
@@ -1820,13 +1820,13 @@ fn main() {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #544** (2026-11-06): **Add jq support behind an opt-in lang-jq feature**
+  *Symptoms*: Adds jq (`.jq`) via `tree-sitter-jq` 1.0.2. Because that grammar is GPL-3.0-or-later, the feature is opt-in and **not** in `grammar-all`, pending your answer on #543. Moving it into `grammar-all` is a one-line change.  - Each top-level `def` is a `function` entity. A nested `def` stays inside its parent. A `def` after a top-level pipeline is still found. The trailing program is not an entity, so edits to it show up as orphan changes. - New `StripStrategy::HashLine` for jq. `//` is jq's alternative operator, so the generic stripper blanked every reference after `.x // …` on a line. - Edges come from the existing same-file word scan: `f(args)` is `calls`, a bare `f` is `TypeRef`. - Known limits: builtins and defs in other files are not resolved, and a `$name` variable that shares a def's name creates a false edge. That last one is an `#[ignore]`d test with the reason attached.  Tested on a real jq codebase: 11 defs across 6 files, no parse errors.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
+
 - **Issue #542** (2026-11-04): **Parse Quarto documents (.qmd) as Markdown**
   *Symptoms*: Quarto's `.qmd` files are Markdown with a YAML header and executable code blocks. This registers `.qmd` with the Markdown plugin, so they get heading-based sections like `.md` and `.mdx`.  weave's merge setup reads its supported extensions from sem-core, so this is the change weave needs for Ataraxy-Labs/weave#216 (thanks @athyfr for the request).  Adds a test that `report.qmd` routes to the Markdown plugin and that its headings become entities, and lists `.qmd` in the README and docs.
   **Post-Mortem & Fix Analysis**:
   > [vc]: #VN8V8fvOIKoaR/1j8q2gWwkjIwlhqRq5irF5PPhvmSo=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0eXBlIjoiZ2l0aHViIiwicHJvamVjdHMiOlt7Im5hbWUiOiJzZW0tZG9jcyIsInByb2plY3RJZCI6InByal9MT1JiN29SSjBTbUZGUnlGUEw1eE1ha3FVcjRrIiwiaW5zcGVjdG9yVXJsIjoiaHR0cHM6Ly92ZXJjZWwuY29tL3JzNTQ1ODM3cy1wcm9qZWN0cy9zZW0tZG9jcy9HYW1RalQzbTg5OXdWZDlYNk1EVmMyUU56VDVMIiwicHJldmlld1VybCI6InNlbS1kb2NzLWdpdC1xbWQtbWFya2Rvd24tcnM1NDU4MzdzLXByb2plY3RzLnZlcmNlbC5hcHAiLCJuZXh0Q29tbWl0U3RhdHVzIjoiUEVORElORyIsImxpdmVGZWVkYmFjayI6eyJyZXNvbHZlZCI6MCwidW5yZXNvbHZlZCI6MCwidG90YWwiOjAsImxpbmsiOiJzZW0tZG9jcy1naXQtcW1kLW1hcmtkb3duLXJzNTQ1ODM3cy1wcm9qZWN0cy52ZXJjZWwuYXBwIn19XSwicmVxdWVzdFJldmlld1VybCI6Imh0dHBzOi8vdmVyY2VsLmNvbS92ZXJjZWwtYWdlbnQvcmVxdWVzdC1yZXZpZXc/b3duZXI9QXRhcmF4eS1MYWJzJnJlcG89c2VtJnByPTU0MiJ9 The latest updates on your projects. Learn more about [Vercel for GitHub](https://vercel.link/github-learn-more).  | Project | Deployment | Actions | Updated | | :--- | :----- | :------ | :------ | | <a href="https://vercel.com/rs545837s-p
-
-- **Issue #541** (2026-11-02): **chore(release): prepare Sem 0.29.1**
-  *Symptoms*: ## Changes Release Sem 0.29.1 with the already-merged intent-search ranking and agent hook fixes from #540. Plain-language lookup ranks code by body, name and path; scratch/log writes are no longer incorrectly rejected by the agent edit hook.  Synchronizes workspace crate versions, internal dependency versions, Cargo.lock and the npm wrapper, and records the patch release in the changelog. No additional runtime changes.  ## Validation - 9 package metadata and checksum tests passed. - git diff --check passed. - Existing main passed Windows, shared MCP lifecycle, lockfile and semver CI. - Modal: all 3 intent-search regression tests passed; the CLI tool-hook regression suite passed. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1843,292 +1843,38 @@ fn main() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `be77b50a` (2026-11-04)
-**Commit Message**: Parse Quarto documents (.qmd) as Markdown (#542)
+### Incident Patch 1: `290a9d94` (2026-11-09)
+**Commit Message**: ci(release): build macOS on macos-15 (macos-14 runners are retired)
 
-Quarto's `.qmd` files are Markdown with a YAML header and executable
-code blocks. This registers `.qmd` with the Markdown plugin, so they get
-heading-based sections like `.md` and `.mdx`.
-
-weave's merge setup reads its supported extensions from sem-core, so
-this is the change weave needs for Ataraxy-Labs/weave#216 (thanks
-@athyfr for the request).
-
-Adds a test that `report.qmd` routes to the Markdown plugin and that its
-headings become entities, and lists `.qmd` in the README and docs.
-
-**File**: `CHANGELOG.md` (modified, +4/-0)
+**File**: `.github/workflows/release.yml` (modified, +4/-4)
 ```diff
-@@ -4,6 +4,10 @@ All notable changes to sem are documented in this file.
- 
- ## [Unreleased]
- 
-+### Added
-+
-+- Quarto documents (`.qmd`) are parsed as Markdown, by heading. Thanks @athyfr for the request (Ataraxy-Labs/weave#216).
-+
- ## [0.29.1] - 2026-11-02
- 
- ### Fixed
-```
-
-**File**: `README.md` (modified, +1/-1)
-```diff
-@@ -572,7 +572,7 @@ Plus structured data formats:
- | TOML | `.toml` | sections, properties |
- | EDN | `.edn` | top-level map entries (keyword keys) |
- | CSV | `.csv` `.tsv` | rows (first column as identity) |
--| Markdown | `.md` `.mdx` | heading-based sections |
-+| Markdown | `.md` `.mdx` `.qmd` | heading-based sections |
- | LaTeX | `.tex` `.latex` `.cls` `.sty` | sections (part/chapter/section/…), plus theorem/lemma/proof/figure/table/algorithm and other tracked environments |
- 
- Everything else falls back to chunk-based diffing.
-```
-
-**File**: `crates/sem-core/src/parser/plugins/markdown.rs` (modified, +10/-1)
-```diff
-@@ -13,7 +13,7 @@ impl SemanticParserPlugin for MarkdownParserPlugin {
-     }
- 
-     fn extensions(&self) -> &[&str] {
--        &[".md", ".mdx"]
-+        &[".md", ".mdx", ".qmd"]
-     }
- 
-     fn extract_entities(&self, content: &str, file_path: &str) -> Vec<SemanticEntity> {
-@@ -204,6 +204,15 @@ impl SemanticParserPlugin for MarkdownParserPlugin {
- mod tests {
-     use super::*;
- 
-+    #[test]
-+    fn quarto_documents_are_markdown() {
-+        let registry = crate::parser::plugins::create_default_registry();
-+        let plugin = registry.get_plugin("report.qmd").expect("a plugin for .qmd");
-+        assert_eq!(plugin.id(), "markdown");
-+        let entities = registry.extract_entities("report.qmd", "---\ntitle: Report\n---\n\n# Results\n\nbody\n");
-+        assert!(entities.iter().any(|e| e.name == "Results"));
-+    }
-+
-     #[test]
-     fn unique_heading_keeps_legacy_id() {
-         let content = "# Overview\n\nbody\n";
-```
-
-**File**: `docs/details.html` (modified, +1/-1)
-```diff
-@@ -635,7 +635,7 @@ <h2>All supported formats</h2>
-           <tr><td>YAML</td><td>.yml .yaml</td><td>sections, properties (dot paths)</td></tr>
-           <tr><td>TOML</td><td>.toml</td><td>sections, properties</td></tr>
-           <tr><td>CSV</td><td>.csv .tsv</td><td>rows (first column as ID)</td></tr>
--          <tr><td>Markdown</td><td>.md .mdx</td><td>heading-based sections</td></tr>
-+          <tr><td>Markdown</td><td>.md .mdx .qmd</td><td>heading-based sections</td></tr>
-         </tbody>
-       </table>
-     </section>
-```
-
-**File**: `docs/llms.txt` (modified, +1/-1)
-```diff
-@@ -154,7 +154,7 @@ Plus structured data formats:
- | YAML | .yml .yaml | sections, properties (dot paths) |
- | TOML | .toml | sections, properties |
- | CSV | .csv .tsv | rows (first column as ID) |
--| Markdown | .md .mdx | heading-based sections |
-+| Markdown | .md .mdx .qmd | heading-based sections |
- 
- Everything else falls back to chunk-based diffing.
- 
-```
-
----
-
-### Incident Patch 2: `04f6990c` (2026-11-02)
-**Commit Message**: chore(release): prepare Sem 0.29.1 (#541)
-
-## Changes
-Release Sem 0.29.1 with the already-merged intent-search ranking and
-agent hook fixes from #540. Plain-language lookup ranks code by body,
-name and path; scratch/log writes are no longer incorrectly rejected by
-the agent edit hook.
-
-Synchronizes workspace crate versions, internal dependency versions,
-Cargo.lock and the npm wrapper, and records the patch release in the
-changelog. No additional runtime changes.
-
-## Validation
-- 9 package metadata and checksum tests passed.
-- git diff --check passed.
-- Existing main passed Windows, shared MCP lifecycle, lockfile and
-semver CI.
-- Modal: all 3 intent-search regression tests passed; the CLI tool-hook
-regression suite passed.
-
-**File**: `CHANGELOG.md` (modified, +2/-0)
-```diff
-@@ -4,6 +4,8 @@ All notable changes to sem are documented in this file.
- 
- ## [Unreleased]
- 
-+## [0.29.1] - 2026-11-02
-+
- ### Fixed
- 
- - **Describing code finds it.** `sem_find` with `intent` matched the whole description against entity names, so a plain sentence returned nothing. It now ranks code by the words in its body, name and path, weighting rare words like a language name over common ones like "entity", and leaves out docs, licences and container blocks. C#, C++ and F# are understood.
-```
-
-**File**: `crates/Cargo.lock` (modified, +5/-5)
-```diff
-@@ -2300,7 +2300,7 @@ checksum = "94143f37725109f92c262ed2cf5e59bce7498c01bcc1502d7b9afe439a4e9f49"
- 
- [[package]]
- name = "sem-cli"
--version = "0.29.0"
-+version = "0.29.1"
- dependencies = [
-  "axum",
-  "ciborium",
-@@ -2330,7 +2330,7 @@ dependencies = [
- 
- [[package]]
- name = "sem-cloud-client"
--version = "0.29.0"
-+version = "0.29.1"
- dependencies = [
-  "serde",
-  "serde_json",
-@@ -2339,7 +2339,7 @@ dependencies = [
- 
- [[package]]
- name = "sem-core"
--version = "0.29.0"
-+version = "0.29.1"
- dependencies = [
-  "ciborium",
-  "criterion",
-@@ -2405,7 +2405,7 @@ dependencies = [
- 
- [[package]]
- name = "sem-mcp"
--version = "0.29.0"
-+version = "0.29.1"
- dependencies = [
-  "axum",
-  "git2",
-@@ -2433,7 +2433,7 @@ dependencies = [
- 
- [[package]]
- name = "sem-plugin"
--version = "0.29.0"
-+version = "0.29.1"
- dependencies = [
-  "sem-core",
-  "serde",
-```
-
-**File**: `crates/sem-cli/Cargo.toml` (modified, +4/-4)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "sem-cli"
--version = "0.29.0"
-+version = "0.29.1"
- edition = "2021"
- license = "MIT OR Apache-2.0"
- description = "Semantic version control CLI. Shows what entities changed (functions, classes, methods) instead of lines."
-@@ -15,9 +15,9 @@ path = "src/main.rs"
- 
- [dependencies]
- tempfile = "3.24.0"
--sem-core = { path = "../sem-core", version = "0.29.0", features = ["disk-cache", "topology"] }
--sem-mcp = { path = "../sem-mcp", version = "0.29.0" }
--sem-cloud-client = { path = "../sem-cloud-client", version = "0.29.0" }
-+sem-core = { path = "../sem-core", version = "0.29.1", features = ["disk-cache", "topology"] }
-+sem-mcp = { path = "../sem-mcp", version = "0.29.1" }
-+sem-cloud-client = { path = "../sem-cloud-client", version = "0.29.1" }
- serde = { version = "1", features = ["derive"] }
- clap = { version = "4", features = ["derive", "env"] }
- colored = "2"
-```
-
-**File**: `crates/sem-cloud-client/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "sem-cloud-client"
--version = "0.29.0"
-+version = "0.29.1"
- edition = "2021"
- license = "MIT OR Apache-2.0"
- description = "Shared client for sem-cloud: credentials, repo resolution, caching, and the metered graph API. Used by both the sem CLI and the sem MCP server."
-```
-
-**File**: `crates/sem-core/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "sem-core"
--version = "0.29.0"
-+version = "0.29.1"
- edition = "2021"
- license = "MIT OR Apache-2.0"
- description = "Entity-level semantic diff engine. Extracts functions, classes, and methods from 28 languages via tree-sitter and diffs at the entity level."
-```
-
-**File**: `crates/sem-mcp/Cargo.toml` (modified, +3/-3)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "sem-mcp"
--version = "0.29.0"
-+version = "0.29.1"
- edition = "2021"
- license = "MIT OR Apache-2.0"
- description = "MCP server for entity-level semantic code intelligence. 6 tools: sem_entities, sem_diff, sem_blame, sem_impact, sem_log, sem_context."
-@@ -14,8 +14,8 @@ name = "sem-mcp"
- path = "src/main.rs"
- 
- [dependencies]
--sem-core = { path = "../sem-core", version = "0.29.0", features = ["disk-cache"] }
--sem-cloud-client = { path = "../sem-cloud-client", version = "0.29.0" }
-+sem-core = { path = "../sem-core", version = "0.29.1", features = ["disk-cache"] }
-+sem-cloud-client = { path = "../sem-cloud-client", version = "0.29.1" }
- git2 = { version = "0.20", default-features = false }
- lru = "0.16"
- rmcp = { version = "1", features = ["server", "transport-io", "transport-streamable-http-server"] }
-```
-
-**File**: `crates/sem-plugin/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "sem-plugin"
--version = "0.29.0"
-+version = "0.29.1"
- edition = "2021"
- license = "MIT OR Apache-2.0"
- description = "WASI component plugin for semantic entity-level change detection"
-```
-
-**File**: `package.json` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- {
-   "name": "@ataraxy-labs/sem",
-   "mcpName": "io.github.Ataraxy-Labs/sem",
--  "version": "0.29.0",
-+  "version": "0.29.1",
-   "description": "npm wrapper for the sem CLI. Downloads the matching release binary and exposes the sem command in node_modules/.bin.",
-   "license": "MIT OR Apache-2.0",
-   "type": "module",
+@@ -97,13 +97,13 @@ jobs:
+             cross_linker: aarch64-linux-gnu-gcc
+             vendor_openssl: true
+           - target: aarch64-apple-darwin
+-            os: macos-14
++            os: macos-15
+             name: sem-darwin-arm64
+           - target: x86_64-apple-darwin
+             # Cross-compile on Apple Silicon: macOS clang targets x86_64 natively,
+-            # and macos-14 runners are plentiful (Intel macos-13 runners are scarce
+-            # and being retired, which can leave the build queued indefinitely).
+-            os: macos-14
++            # and Apple Silicon runners are plentiful (Intel runners are scarce and
++            # being retired). macos-14 was retired in Nov 2026 ("configuration not supported").
++            os: macos-15
+             name: sem-darwin-x86_64
+             # Cross-compiling can't find a target-arch OpenSSL, so vendor + build
+             # it from source for x86_64 (same as the Linux arm64 cross-build).
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #544** (2026-11-06): Add jq support behind an opt-in lang-jq feature (@alycda)
 - **PR #542** (2026-11-04): Parse Quarto documents (.qmd) as Markdown (@rs545837)
 - **PR #541** (2026-11-02): chore(release): prepare Sem 0.29.1 (@rs545837)
 - **PR #540** (2026-10-31): Intent search ranks code by meaning; edit hook stops refusing scratch writes (@rs545837)
 - **PR #539** (2026-10-30): release: Sem 0.29.0 (@rs545837)
 - **PR #538** (2026-10-30): fix(core): extract definitions sem used to miss across 7 languages (@rs545837)
-- **PR #537** (2026-10-29): release: Sem 0.28.3 (@rs545837)
 
 ---
 
@@ -2148,31 +1894,34 @@ regression suite passed.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Parse Quarto documents (.qmd) as Markdown (#542)
+## X. ci(release): build macOS on macos-15 (macos-14 runners are retired)
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ataraxy-Labs/sem. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/release.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ataraxy-Labs/sem. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `be77b50a`: Parse Quarto documents (.qmd) as Markdown (#542). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `290a9d94`: ci(release): build macOS on macos-15 (macos-14 runners are retired). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-### Added
-
-- Quarto documents (`.qmd`) are parsed as Markdown, by heading. Thanks @athyfr for the request (Ataraxy-Labs/weave#216).
-
+            os: macos-15
+            # and Apple Silicon runners are plentiful (Intel runners are scarce and
+            # being retired). macos-14 was retired in Nov 2026 ("configuration not supported").
+            os: macos-15
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+            os: macos-14
+            # and macos-14 runners are plentiful (Intel macos-13 runners are scarce
+            # and being retired, which can leave the build queued indefinitely).
+            os: macos-14
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `be77b50a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `290a9d94` are properly handled with clean fallback behavior.

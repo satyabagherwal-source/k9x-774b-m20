@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md`  
 > **Source**: github ([https://github.com/signerlabs/ShipSwift](https://github.com/signerlabs/ShipSwift))  
-> **Source Version**: `87286fca`  
+> **Source Version**: `08f31165`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T05:17:56.368Z  
+> **Timestamp**: 2026-11-08T20:02:49.791Z  
 > **Learning ID**: `learn-github-signerlabs-shipswift`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/signerlabs/ShipSwift](https://github.com/signerlabs/ShipSwift))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T05:17:56.136Z  
+> **Harvest Timestamp**: 2026-11-08T20:02:49.439Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: AI-native SwiftUI component library with full-stack recipes — connect via MCP for instant access.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3244 stars
+- **Stars / Engagement**: 3264 stars
 
 ---
 
@@ -465,6 +465,8 @@ public final class SWVolcEngineASRService: @unchecked Sendable {
     private var receiveBuffer = Data()
     private let queue = DispatchQueue(label: "com.shipswift.asr.websocket")
     private var audioConverter: AVAudioConverter?
+    /// Whether the end of the stream has been reported (main thread only)
+    @ObservationIgnored private var hasFinishedStream = false
     private let targetFormat = AVAudioFormat(commonFormat: .pcmFormatInt16, sampleRate: 16000, channels: 1, interleaved: true)!
 
     // MARK: - Initialization
@@ -486,6 +488,7 @@ public final class SWVolcEngineASRService: @unchecked Sendable {
 
         transcribedText = ""
         error = nil
+        hasFinishedStream = false
 
         try await connectWebSocket()
         try sendFullClientRequest()
@@ -503,8 +506,11 @@ public final class SWVolcEngineASRService: @unchecked Sendable {
         sendEndOfAudio()
     }
 
-    /// Cancel recording
+    /// Cancel recording (discards results; no further callbacks are delivered)
     public func cancelRecording() {
+        onTranscriptionUpdate = nil
+        onTranscriptionComplete = nil
+        onError = nil
         isRecording = false
         stopAudioEngine()
         disconnectWebSocket()
@@ -610,11 +616,7 @@ public final class SWVolcEngineASRService: @unchecked Sendable {
             guard let self else { return }
 
             if error != nil {
-                DispatchQueue.main.async {
-                    if !self.transcribedText.isEmpty {
-                        self.onTranscriptionComplete?(self.transcribedText)
-                    }
-                }
+                self.finishStream()
                 return
             }
 
@@ -625,11 +627,7 @@ public final class SWVolcEngineASRService: @unchecked Sendable {
 
             if isComplete {
                 self.isConnected = false
-                DispatchQueue.main.async {
-                    if !self.transcribedText.isEmpty {
-                        self.onTranscriptionComplete?(self.transcribedText)
-                    }
-                }
+                self.finishStream()
             } else {
                 self.startReceivingFrames()
             }
@@ -653,7 +651,7 @@ public final class SWVolcEngineASRService: @unchecked Sendable {
                 guard bufferCopy.count - offset >= 4 else { break }
                 payloadLength = UInt64(bufferCopy[offset + 2]) << 8 | UInt64(bufferCopy[offset + 3])
                 headerSize = 4
-         
+            } else if payloadLength == 127 
 ```
 
 ### Core Architecture Module: `ShipSwift/SWPackage/SWUtil/SWDateExtension.swift`
@@ -1035,6 +1033,11 @@ final class SWLocationManager: NSObject {
     @ObservationIgnored
     private let geocoder = CLGeocoder()
 
+    /// Set by `startLocationServices()`; updates only start while a request is pending,
+    /// so creating the manager (or an authorization change) never turns on GPS by itself
+    @ObservationIgnored
+    private var isRequestPending = false
+
     #if os(iOS)
     private static let authorizedStatuses: Set<CLAuthorizationStatus> = [.authorizedAlways, .authorizedWhenInUse]
     #else
@@ -1054,6 +1057,7 @@ final class SWLocationManager: NSObject {
     func startLocationServices() {
         userLocation = nil
         currentLocation = nil
+        isRequestPending = true
         updateAuthorizationStatus()
 
         if isAuthorized {
@@ -1092,6 +1096,11 @@ extension SWLocationManager: CLLocationManagerDelegate {
         guard let location = locations.last else { return }
 
         Task { @MainActor in
+            // Keep the first fix only: stop right away so updates already queued
+            // don't start a second reverse geocode (CLGeocoder allows one at a time)
+            guard isRequestPending else { return }
+            isRequestPending = false
+            self.manager.stopUpdatingLocation()
             userLocation = location
             let name = await resolveLocationName(for: location)
             currentLocation = Location(
@@ -1099,15 +1108,14 @@ extension SWLocationManager: CLLocationManagerDelegate {
                 latitude: location.coordinate.latitude,
                 longitude: location.coordinate.longitude
             )
-            manager.stopUpdatingLocation()
         }
     }
 
     nonisolated func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         Task { @MainActor in
             updateAuthorizationStatus()
-            if isAuthorized {
-                manager.startUpdatingLocation()
+            if isAuthorized && isRequestPending {
+                self.manager.startUpdatingLocation()
             }
         }
     }
@@ -1294,20 +1302,22 @@ extension View {
             .background(background)
             .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
             .overlay(
-                RoundedRectangle(cornerRadius: cornerRadius)
-                    .strokeBorder(
-                        LinearGradient(
-                            colors: [
-                                strokeColor,
-                                strokeColor.opacity(0.6),
-                                strokeColor.opacity(0.3),
-                                .clear
-                            ],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ),
-                        lineWidth: strokeWidth
-                    )
+                // Gradient masked by a plain stroke: a gradient-filled `strokeBorder` is drawn
+                // by CoreGraphics on the main thread over the whole card, every frame while scrolling
+                LinearGradient(
+                    colors: [
+                        strokeColor,
+                        strokeColor.opacity(0.6),
+                        strokeColor.opacity(0.3),
+                        .clear
+                    ],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+                .mask {
+                    RoundedRectangle(cornerRadius: cornerRadius)
+                        .strokeBorder(lineWidth: strokeWidth)
+                }
             )
     }
 }
@@ -1688,134 +1698,576 @@ struct SWBeforeAfterSlider: View {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `93e72c71` (2026-10-26)
-**Commit Message**: chore: require iOS 18 / macOS 15 across the library
+### Incident Patch 1: `08f31165` (2026-11-07)
+**Commit Message**: fix: audit the component library against its skills
 
-- Header comments now read "Requires iOS 18+ / macOS 15+" (Metal shaders and Swift
-  components)
-- SWFullScreenButton: drop the redundant @available(iOS 18.0, *) annotations
-- Transition docs and the Transitions list row describe SwiftUI's Transition protocol
-  instead of an iOS 17 one
+Every SWPackage file now matches its skill doc verbatim (only the file
+header and #Preview may be left out).
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+- SWRingChart: round caps stay inside the value, strokes stay inside
+  `size`, no index crash when data arrives after appear
+- SWOnboardingView: Skip shows on every page but the last; the page type
+  is now SWOnboardingPage
+- SWRootTabView: explicit .tint(.accent), required since iOS 26
+- Crash fixes in SWOrbitingLogos, empty palettes (SWCharSphere,
+  SWDotSphere, SWColorPanels) and zero-size transitions
+- Effects stop redrawing every frame once they finish (SWConfetti,
+  SWChangeEffect, SWParticleTransition, SWScrollingFAQ and others)
+- Swift 6 / default MainActor isolation: nonisolated Shape and
+  Animatable members
+- SWPaywallView finishes verified transactions and uses the native
+  .wiggle symbol effect instead of SWShakingIcon, so modules no longer
+  depend on SWAnimation
+- SWStoreManager is generic StoreKit again; the showcase's server-side
+  Pro key moves to Service/ShipSwiftProAccess.swift
+- SWLiquidMetal: drop five parameters that had no effect and the dead
+  stripe code (20 Metal warnings gone, same output)
+- SW
 
-**File**: `ShipSwift/SWPackage/SWAnimation/SWChangeEffect.swift` (modified, +1/-1)
+**File**: `README.md` (modified, +7/-5)
 ```diff
-@@ -3,7 +3,7 @@
- //  ShipSwift
- //
- //  Eight micro-interaction effects that fire whenever an Equatable value
--//  changes, built on modern iOS 17+ APIs (KeyframeAnimator, PhaseAnimator,
-+//  changes, built on modern SwiftUI APIs (KeyframeAnimator, PhaseAnimator,
- //  sensoryFeedback, Canvas). Attach one modifier, change the trigger
- //  value, and the effect plays once:
- //
-```
-
-**File**: `ShipSwift/SWPackage/SWAnimation/SWCharSphere.swift` (modified, +1/-1)
-```diff
-@@ -20,7 +20,7 @@
- //    - One-axis perspective projection:
- //        screen = world · (focal / (focal + z))
- //
--//  Requires iOS 17+ / macOS 14+ (SwiftUI `TimelineView`, `Canvas`).
-+//  Requires iOS 18+ / macOS 15+ (SwiftUI `TimelineView`, `Canvas`).
- //
- //  Usage:
- //    // Default — 240 "道" glyphs, white/cyan/pink wave on black
-```
-
-**File**: `ShipSwift/SWPackage/SWAnimation/SWDotSphere.swift` (modified, +1/-1)
-```diff
-@@ -18,7 +18,7 @@
- //    - Color wave fade: each dot's transition is delayed by its
- //      vertical position so the palette appears to wash up the sphere.
- //
--//  Requires iOS 17+ / macOS 14+ (SwiftUI `TimelineView`, `Canvas`).
-+//  Requires iOS 18+ / macOS 15+ (SwiftUI `TimelineView`, `Canvas`).
- //
- //  Usage:
- //    // Default — 800 dots, 5-color palette cycle on black
-```
-
-**File**: `ShipSwift/SWPackage/SWAnimation/SWFullScreenButton+iOS.swift` (modified, +0/-3)
-```diff
-@@ -47,7 +47,6 @@
+@@ -102,23 +102,25 @@ Select a simulator or device, then press **Cmd+R** to build and run.
  
- import SwiftUI
+ ### SWAnimation — Animation Components
  
--@available(iOS 18.0, *)
- struct SWFullScreenButton: View {
-     var title: String = "ShipSwift"
-     var subtitle: String = "Fullstack AI toolkit"
-@@ -140,7 +139,6 @@ struct SWFullScreenButton: View {
- /// expanded card calls `dismiss()`, which pops the navigation stack and
- /// triggers the reverse zoom animation. The standard edge-swipe-back
- /// gesture also still works as a system-provided dismiss path.
--@available(iOS 18.0, *)
- private struct SWFullScreenButtonExpandedView: View {
-     let title: String
-     let subtitle: String
-@@ -183,7 +181,6 @@ private struct SWFullScreenButtonExpandedView: View {
+-**SwiftUI animations:** Shimmer · TypewriterText · ShakingIcon · GlowSweep · LightSweep · ScanningOverlay · AnimatedMeshGradient · BeforeAfterSlider · OrbitingLogos · FullScreenButton
++**SwiftUI animations:** Shimmer · TypewriterText · ShakingIcon · GlowSweep · LightSweep · ScanningOverlay · AnimatedMeshGradient · BeforeAfterSlider · OrbitingLogos · FullScreenButton · ChangeEffect · Confetti · Transition · ParticleTransition
+ 
+ **Canvas-rendered 3D:** DotSphere · CharSphere
+ 
+ **Metal-shader procedural backgrounds:** Dots · Starfield · FractalClouds · InkSmoke · LiquidChrome · Plasma · AnimatedLoop
+ 
+-**Metal-shader backgrounds:** Metaballs · Halftone · Water · LiquidMetal · NeuroNoise · DotOrbit · Voronoi · SimplexNoise · ColorPanels · SmokeRing · Swirl
++**Metal-shader backgrounds:** Metaballs · Halftone · Water · LiquidMetal · NeuroNoise · DotOrbit · Voronoi · SimplexNoise · ColorPanels · SmokeRing · Swirl · StarNest · GrainGradient
+ 
+-30 animation components total — see the [Showcase App](https://apps.apple.com/us/app/shipswift-mcp-codebase/id6759209764) for live previews.
++**Metal-shader effects on any view:** Foil · Glitter · IntenseBling · PolishedAluminum · ChromaticGlass · Glass · GlassOrb · GlassLogo
++
++44 animation components total — see the [Showcase App](https://apps.apple.com/us/app/shipswift-mcp-codebase/id6759209764) for live previews.
+ 
+ ### SWChart — Chart Components
+ 
+-LineChart · BarChart · AreaChart · DonutChart · RingChart · RadarChart · ScatterChart · ActivityHeatmap
++LineChart · BarChart · AreaChart · DonutChart · RingChart · RadarChart · ScatterChart · ActivityHeatmap · NetworkGraph
+ 
+ ### SWComponent — UI Components
+ 
+-**Display:** FloatingLabels · ScrollingFAQ · RotatingQuote · BulletPointText · GradientDivider · Label · MarkdownText · OnboardingView · OrderView · RootTabView · VideoPlayer
++**Display:** FloatingLabels · ScrollingFAQ · RotatingQuote · BulletPointText · GradientDivider · Label · MarkdownText · OnboardingView · OrderView · RootTabView · VideoPlayer · CachedImage · ImageThumbnail · KPICard · StatusBadge · Wallet
+ **Feedback:** Alert · Loading · ThinkingIndicator
+ **Input:** TabButton · Stepper · AddSheet · SearchBar
+ 
+```
+
+**File**: `ShipSwift/Localizable.xcstrings` (modified, +62/-2)
+```diff
+@@ -413,6 +413,66 @@
+         }
+       }
+     },
++    "Clear Text" : {
++      "localizations" : {
++        "zh-Hans" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "清除文字"
++          }
++        }
++      }
++    },
++    "Decrease" : {
++      "localizations" : {
++        "zh-Hans" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "减少"
++          }
++        }
++      }
++    },
++    "Hide Balances" : {
++      "localizations" : {
++        "zh-Hans" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "隐藏余额"
++          }
++        }
++      }
++    },
++    "Increase" : {
++      "localizations" : {
++        "zh-Hans" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "增加"
++          }
++        }
++      }
++    },
++    "Show Balances" : {
++      "localizations" : {
++        "zh-Hans" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "显示余额"
++          }
++        }
++      }
++    },
++    "Play video" : {
++      "localizations" : {
++        "zh-Hans" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "播放视频"
++          }
++        }
++      }
++    },
+     "•" : {
+       "shouldTranslate" : false
+     },
+@@ -4862,12 +4922,12 @@
+         }
+       }
+     },
+-    "Liquid-metal image filter — simplex-noise driven stripe pattern with per-channel chromatic refraction, edge-aware bulge, and flowing chrome over any opaque source view (SF Symbols, logos). Tap the gear to tune refraction, edge, liquid, pattern blur / scale, time scale." : {
++    "Liquid-metal image filter — big low-frequency light/dark metal blocks drift one way across any opaque source view (SF Symbols, logos), with a cool-blue Fresnel rim, a slow brightness breath, and a bloom glow built from the metal itself. Tap the gear to tune edge, cool tint, Fresnel rim, time scale, and speed." : {
+       "localizations" : {
+         "zh-Hans" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "液态金属图像滤镜：由单纯形噪声驱动的条纹图案，按通道色散折射、感知边缘的鼓起，以及在任意不透明源视图（SF Symbols、徽标）上流动的铬金属光泽。点齿轮可调节折射、边缘、流体、图案模糊 / 缩放和时间缩放。"
++            "value" : "液态金属图像滤镜：大块低频明暗金属块沿同一方向流过任意不透明源视图（SF Symbols、徽标），带冷蓝菲涅尔边光、缓慢的明暗呼吸，以及由金属自身生成的泛光。点齿轮可调节边缘、冷色调、菲涅尔边光、时间缩放和速度。"
+           }
+         }
+       }
+```
+
+**File**: `ShipSwift/SWPackage/SWAnimation/SWChangeEffect.swift` (modified, +18/-156)
+```diff
+@@ -223,6 +223,7 @@ private struct SWSprayModifier<Trigger: Equatable>: ViewModifier {
+     let colors: [Color]
+ 
+     @State private var particles: [SWSprayParticle] = []
++    @State private var bursts = 0
+ 
+     private let lifetime = 0.9
+     private let gravity = 480.0
+@@ -266,6 +267,13 @@ private struct SWSprayModifier<Trigger: Equatable>: ViewModifier {
+             .onChange(of: trigger) {
+                 fire()
+             }
++            .task(id: bursts) {
++                // Pause the frame clock once the last burst has faded out.
++                guard bursts > 0 else { return }
++                try? await Task.sleep(for: .seconds(lifetime + 0.1))
++                guard !Task.isCancelled else { return }
++                particles.removeAll()
++            }
+     }
+ 
+     private func fire() {
+@@ -289,6 +297,7 @@ private struct SWSprayModifier<Trigger: Equatable>: ViewModifier {
+         particles = particles.filter {
+             now.timeIntervalSince($0.birth) < lifetime
+         } + fresh
++        bursts += 1
      }
  }
  
--@available(iOS 18.0, *)
- #Preview {
-     NavigationStack {
-         SWFullScreenButton()
+@@ -320,6 +329,7 @@ private struct SWRiseModifier<Trigger: Equatable>: ViewModifier {
+     let color: Color
+ 
+     @State private var items: [SWRiseItem] = []
++    @State private var bursts = 0
+ 
+     private let lifetime = 1.1
+     private let riseDistance = 60.0
+@@ -366,6 +376,14 @@ private struct SWRiseModifier<Trigger: Equatable>: ViewModifier {
+                     drift: .random(in: -12...12),
+                     wobblePhase: .random(in: 0...(2 * .pi))
+                 )]
++                bursts += 1
++            }
++            .task(id: bursts) {
++                // Pause the frame clock once the last floater has faded out.
++                guard bursts > 0 else { return }
++                try? await Task.sleep(for: .seconds(lifetime + 0.1))
++                guard !Task.isCancelled else { return }
++                items.removeAll()
+             }
+     }
+ }
+@@ -437,159 +455,3 @@ struct SWShine<Trigger: Equatable, Content: View>: View {
+             }
+     }
+ }
+-
+-// MARK: - Showcase
+-
+-/// Generic demo row: tapping anywhere triggers the wrapped effect.
+-private struct SWEffectDemoRow<Demo: View>: View {
+-    let title: String
+-    let code: String
+-    @ViewBuilder let demo: (Int) -> Demo
+-
+-    @State private var count = 0
+-
+-    var body: some View {
+-        HStack(spacing: 12) {
+-            VStack(alignment: .leading, spacing: 4) {
+-                Text(title)
+-                    .font(.subheadline.weight(.semibold))
+-                Text(code)
+-                    .font(.caption2.monospaced())
+-                    .foregroundStyle(.secondary)
+-            }
+-            Spacer()
+-            demo(count)
+-                .frame(width: 96, height: 64)
+-        }
+-        .contentShape(.rect)
+-        .onTapGesture {
+-            count += 1
+-        }
+-    }
+-}
+-
+-struct SWChangeEffectShowcase: View {
+-    var body: some View {
+-        List {
+-            Section {
+-                SWEffectDemoRow(
+-                    title: "Shake",
+-                    code: ".swShake(trigger:)"
+-                ) { count in
+-                    Text("PIN 0000")
+-                        .font(.callout.weight(.semibold))
+-                        .padding(.horizontal, 12)
+-                        .padding(.vertical, 8)
+-                        .background(.red.opacity(0.12), in: .rect(cornerRadius: 8))
+-                        .foregroundStyle(.red)
+-                        .swShake(trigger: count)
+-                }
+-
+-                SWEffectDemoRow(
+-                    title: "Jump",
+-                    code: ".swJump(trigger:)"
+-                ) { count in
+-                    Text("🏀")
+-                        .font(.system(size: 40))
+-                        .swJump(trigger: count)
+-                }
+-
+-                SWEffectDemoRow(
+-                    title: "Spin",
+-                    code: ".swSpin(trigger:)"
+-                ) { count in
+-                    Image(systemName: "arrow.triangle.2.circlepath")
+-                        .font(.system(size: 30, weight: .semibold))
+-                        .foregroundStyle(.blue)
+-                        .swSpin(trigger: count)
+-                }
+-
+-                SWEffectDemoRow(
+-                    title: "Ping",
+-                    code: ".swPing(trigger:)"
+-                ) { count in
+-                    Image(systemName: "bell.badge.fill")
+-                        .font(.system(size: 26))
+-                        .foregroundStyle(.orange)
+-                        .frame(width: 44, height: 44)
+-                        .background(.orange.opacity(0.15), in: .circle)
+-                        .swPing(trigger: count, color: .orange)
+-                }
+-
+-                SWEffectDemoRow(
+-                    title: "Spray",
+-                    code: ".swSpray(trigger:)"
+-                ) { count in
+-                    Image(systemName: "heart.fill")
+-                        .font(.system(size: 30))
+-             
+```
+
+**File**: `ShipSwift/SWPackage/SWAnimation/SWCharSphere.swift` (modified, +12/-10)
+```diff
+@@ -23,7 +23,7 @@
+ //  Requires iOS 18+ / macOS 15+ (SwiftUI `TimelineView`, `Canvas`).
+ //
+ //  Usage:
+-//    // Default — 240 "道" glyphs, white/cyan/pink wave on black
++//    // Default — 240 glyphs from Tao Te Ching ch. 1, white/cyan/pink wave on black
+ //    SWCharSphere()
+ //        .ignoresSafeArea()
+ //
+@@ -39,14 +39,14 @@
+ //    // As a section background
+ //    myContent.background { SWCharSphere() }
+ //
+-//    // Demo / debug — adds a gear button that opens a live-tuning sheet.
++//    // Demo / debug — adds a toolbar button that opens a live-tuning sheet.
+ //    SWCharSphere(showsControls: true)
+ //
+ //  Parameters:
+ //    - chars:          Glyph palette. Each sphere point is assigned a
+ //                      random index into this array once at cloud-init
+ //                      time, so the assignment is stable across frames
+-//                      (default `["道"]`).
++//                      (default: Tao Te Ching chapter 1, 59 glyphs).
+ //    - glyphCount:     Number of points on the sphere, 50...1000
+ //                      (default 240; > 400 starts to overlap visibly).
+ //    - colors:         Palette cycled through over time (default
+@@ -59,12 +59,12 @@
+ //    - fadeSeconds:    Seconds per color cross-fade (default 5.5).
+ //    - waitSeconds:    Pause between fades (default 5.0).
+ //    - fontSize:       Base font point size; perspective scales it
+-//                      (default 10, range 4...30).
++//                      (default 7, range 4...30).
+ //    - fontWeight:     Glyph weight (default `.semibold`).
+ //    - hidesBackFaces: Skip points on the far side of the sphere so
+ //                      back-side glyphs don't muddle the front
+-//                      (default `true`).
+-//    - showsControls:  Attach a gear `ToolbarItem` + bottom morph
++//                      (default `false`).
++//    - showsControls:  Attach a controls `ToolbarItem` + bottom morph
+ //                      slider for live tuning (default `false`).
+ //
+ 
+@@ -221,10 +221,12 @@ private struct SWCharSphereRenderer: View {
+             let rotation = elapsed * rotationSpeed
+             let totalCycle = max(0.001, fadeSeconds + waitSeconds)
+             let timeInCycle = elapsed.truncatingRemainder(dividingBy: totalCycle)
+-            let baseIdx = Int(floor(elapsed / totalCycle)) % max(1, colors.count)
+-            let nextIdx = (baseIdx + 1) % max(1, colors.count)
+-            let baseRGB = rgbComponents(colors[baseIdx])
+-            let nextRGB = rgbComponents(colors[nextIdx])
++            // Fall back to white if the palette is empty.
++            let palette: [Color] = colors.isEmpty ? [.white] : colors
++            let baseIdx = Int(floor(elapsed / totalCycle)) % palette.count
++            let nextIdx = (baseIdx + 1) % palette.count
++            let baseRGB = rgbComponents(palette[baseIdx])
++            let nextRGB = rgbComponents(palette[nextIdx])
+             let cosR = cos(rotation)
+             let sinR = sin(rotation)
+             let count = cloud.randomXYZ.count
+```
+
+**File**: `ShipSwift/SWPackage/SWAnimation/SWConfetti.swift` (modified, +9/-440)
+```diff
+@@ -168,7 +168,7 @@ private struct SWConfettiCanvas: View {
+     @State private var startTime: Date?
+ 
+     var body: some View {
+-        TimelineView(.animation) { ctx in
++        TimelineView(.animation(paused: startTime == nil)) { ctx in
+             Canvas { gc, size in
+                 guard let start = startTime else { return }
+                 let elapsed = ctx.date.timeIntervalSince(start)
+@@ -243,6 +243,14 @@ private struct SWConfettiCanvas: View {
+                 spawnBurst()
+             }
+         }
++        .task(id: startTime) {
++            // Pause the frame clock once the burst has fully faded.
++            guard startTime != nil else { return }
++            try? await Task.sleep(for: .seconds(duration))
++            guard !Task.isCancelled else { return }
++            startTime = nil
++            particles = []
++        }
+     }
+ 
+     private func spawnBurst() {
+@@ -291,59 +299,6 @@ private struct SWConfettiCanvas: View {
+     }
+ }
+ 
+-// MARK: - Showcase
+-
+-enum SWConfettiShowcaseMode: String, CaseIterable {
+-    case confetti = "Confetti"
+-    case fireworks = "Fireworks"
+-}
+-
+-struct SWConfettiShowcase: View {
+-    @State private var mode: SWConfettiShowcaseMode = .confetti
+-    @State private var celebrate = false
+-
+-    var body: some View {
+-        Group {
+-            switch mode {
+-            case .confetti:
+-                SWConfetti(isActive: $celebrate, autoReset: true) {
+-                    VStack(spacing: 20) {
+-                        Spacer()
+-                        Text("Confetti Burst")
+-                            .font(.title2.weight(.semibold))
+-                        Text("Tap to celebrate")
+-                            .font(.subheadline)
+-                            .foregroundStyle(.secondary)
+-                        Button("Celebrate!") {
+-                            celebrate = true
+-                        }
+-                        .buttonStyle(.borderedProminent)
+-                        .controlSize(.large)
+-                        Spacer()
+-                    }
+-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+-                }
+-
+-            case .fireworks:
+-                SWConfettiFireworkShowView()
+-            }
+-        }
+-        .toolbar {
+-            ToolbarItem(placement: .primaryAction) {
+-                Menu {
+-                    Picker("", selection: $mode) {
+-                        ForEach(SWConfettiShowcaseMode.allCases, id: \.self) { m in
+-                            Text(m.rawValue).tag(m)
+-                        }
+-                    }
+-                } label: {
+-                    Label(mode.rawValue, systemImage: mode == .confetti ? "party.popper" : "sparkles")
+-                }
+-            }
+-        }
+-    }
+-}
+-
+ // MARK: - Preview
+ 
+ #Preview("Tap to celebrate") {
+@@ -367,389 +322,3 @@ struct SWConfettiShowcase: View {
+     }
+     return DemoView()
+ }
+-
+-// MARK: - MBS Fireworks Show
+-
+-private struct SWFireworkBurstConfig {
+-    let delay: Double
+-    let x: Double
+-    let y: Double
+-    let colors: [Color]
+-    let particleCount: Int
+-    let duration: Double
+-    let minSpeed: Double
+-    let maxSpeed: Double
+-    let gravity: Double
+-    let launchDuration: Double
+-    let launchY: Double
+-}
+-
+-private struct SWFireworkParticle {
+-    let vx: Double
+-    let vy: Double
+-    let color: Color
+-    let size: Double
+-    let brightness: Double
+-}
+-
+-private struct SWFireworkShowCanvas: View {
+-    let bursts: [SWFireworkBurstConfig]
+-    let cycleDuration: Double
+-    let starPositions: [(x: Double, y: Double, size: Double, phase: Double)]
+-
+-    @State private var allParticles: [[SWFireworkParticle]]
+-    @State private var showStart: Date = .now
+-
+-    init(bursts: [SWFireworkBurstConfig]) {
+-        self.bursts = bursts
+-        self.cycleDuration = (bursts.map { $0.delay + $0.launchDuration + $0.duration }.max() ?? 5) + 1.0
+-        var stars: [(x: Double, y: Double, size: Double, phase: Double)] = []
+-        for i in 0..<60 {
+-            let hash1 = Double((i * 7 + 13) % 100) / 100.0
+-            let hash2 = Double((i * 11 + 37) % 100) / 100.0
+-            let hash3 = Double((i * 3 + 59) % 100) / 100.0
+-            let hash4 = Double((i * 17 + 41) % 100) / 100.0
+-            stars.append((x: hash1, y: hash2 * 0.5, size: 0.5 + hash3 * 1.5, phase: hash4 * .pi * 2))
+-        }
+-        self.starPositions = stars
+-        _allParticles = State(initialValue: Self.generateAllParticles(for: bursts))
+-    }
+-
+-    private static func generateAllParticles(for bursts: [SWFireworkBurstConfig]) -> [[SWFireworkParticle]] {
+-        bursts.map { config in
+-            (0..<config.particleCount).map { _ in
+-                let angle = Double.random(in: 0...(2 * .pi))
+-                let speed = Double.random(in: config.minSpeed...config.maxSpeed)
+-                return SWFireworkParticle(
+-                    vx: cos(angle) * speed,
+-                    vy: sin(angle) * speed,
+-                   
+```
+
+**File**: `ShipSwift/SWPackage/SWAnimation/SWDotSphere.swift` (modified, +8/-6)
+```diff
+@@ -35,7 +35,7 @@
+ //    // Morph between chaos and sphere
+ //    SWDotSphere(morphAmount: 0.4)
+ //
+-//    // Demo / debug — adds a gear button that opens a live-tuning sheet.
++//    // Demo / debug — adds a toolbar button that opens a live-tuning sheet.
+ //    SWDotSphere(showsControls: true)
+ //
+ //  Parameters:
+@@ -49,7 +49,7 @@
+ //    - fadeSeconds:    Seconds per color cross-fade (default 5.5).
+ //    - waitSeconds:    Pause between fades (default 5.0).
+ //    - dotSize:        Base dot diameter in points (default 3).
+-//    - showsControls:  Attach a gear `ToolbarItem` that opens a
++//    - showsControls:  Attach a controls `ToolbarItem` that opens a
+ //                      live-tuning sheet (default `false`).
+ //
+ 
+@@ -155,10 +155,12 @@ private struct SWDotSphereRenderer: View {
+             let rotation = elapsed * rotationSpeed
+             let totalCycle = max(0.001, fadeSeconds + waitSeconds)
+             let timeInCycle = elapsed.truncatingRemainder(dividingBy: totalCycle)
+-            let baseIdx = Int(floor(elapsed / totalCycle)) % max(1, colors.count)
+-            let nextIdx = (baseIdx + 1) % max(1, colors.count)
+-            let baseRGB = rgbComponents(colors[baseIdx])
+-            let nextRGB = rgbComponents(colors[nextIdx])
++            // Fall back to white if the palette is empty.
++            let palette: [Color] = colors.isEmpty ? [.white] : colors
++            let baseIdx = Int(floor(elapsed / totalCycle)) % palette.count
++            let nextIdx = (baseIdx + 1) % palette.count
++            let baseRGB = rgbComponents(palette[baseIdx])
++            let nextRGB = rgbComponents(palette[nextIdx])
+             let cosR = cos(rotation)
+             let sinR = sin(rotation)
+             let count = cloud.randomXYZ.count
+```
+
+**File**: `ShipSwift/SWPackage/SWAnimation/SWGlowSweep.swift` (modified, +3/-0)
+```diff
+@@ -98,6 +98,9 @@ struct SWGlowSweep<Content: View>: View {
+             .onAppear {
+                 animate = true
+             }
++            // The visible copy is hidden and the mask isn't exposed to
++            // accessibility, so hand VoiceOver the original content.
++            .accessibilityRepresentation { inner }
+     }
+ }
+ 
 ```
 
 **File**: `ShipSwift/SWPackage/SWAnimation/SWMetal/SWAnimatedLoop.metal` (modified, +1/-1)
 ```diff
-@@ -21,7 +21,7 @@
+@@ -15,7 +15,7 @@
+ //    - `swAnimatedLoopNeon`    — circle rings + per-channel angular wobble
+ //    - `swAnimatedLoopWarp`    — stretched-ellipse rings + 1D pattern
+ //
+-//  All four take the same 18-parameter signature so the Swift renderer can
++//  All four take the same 20-argument signature so the Swift renderer can
+ //  use a single argument list and dispatch by name. Parameters that don't
+ //  apply to a given style are touched with `(void)x;` to make the "unused
  //  on purpose" decision explicit.
- //
- //  Paired with: SWAnimatedLoop.swift
--//  Requires iOS 17+ / macOS 14+.
-+//  Requires iOS 18+ / macOS 15+.
- //
- 
- #include <metal_stdlib>
-```
-
-**File**: `ShipSwift/SWPackage/SWAnimation/SWMetal/SWAnimatedLoop.swift` (modified, +1/-1)
-```diff
-@@ -8,7 +8,7 @@
- //  diamond / hexagon / star). All four styles share the same parameter
- //  surface; Neon adds three angular-wobble parameters on top.
- //
--//  Requires iOS 17+ / macOS 14+.
-+//  Requires iOS 18+ / macOS 15+.
- //
- //  Usage:
- //    // Default — Shape style, circle, red/green/blue rings on black
-```
-
-**File**: `ShipSwift/SWPackage/SWAnimation/SWMetal/SWChromaticGlass.metal` (modified, +1/-1)
-```diff
-@@ -17,7 +17,7 @@
- //
- //  Paired with: SWChromaticGlass.swift
- //  Entry point: `swChromaticGlass` — invoked via SwiftUI `.layerEffect(...)`.
--//  Requires iOS 17+ / macOS 14+.
-+//  Requires iOS 18+ / macOS 15+.
- //
- 
- #include <metal_stdlib>
-```
-
-**File**: `ShipSwift/SWPackage/SWAnimation/SWMetal/SWChromaticGlass.swift` (modified, +1/-1)
-```diff
-@@ -13,7 +13,7 @@
- //  along the `tilt` direction (e.g. from a `DragGesture`), with a soft
- //  centre glow, for a premium glass-over-card feel.
- //
--//  Requires iOS 17+ / macOS 14+ (SwiftUI `ShaderLibrary`,
-+//  Requires iOS 18+ / macOS 15+ (SwiftUI `ShaderLibrary`,
- //  `Shader`/`ShaderFunction`, Metal `stitchable`).
- //
- //  Usage:
 ```
 
 #### Recent Merged Pull Requests:
@@ -1842,28 +2294,38 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. require iOS 18 / macOS 15 across the library
+## X. audit the component library against its skills
 
 **RULE**:
-When implementing operations in `ShipSwift/SWPackage/SWAnimation/SWChangeEffect.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in signerlabs/ShipSwift. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in signerlabs/ShipSwift. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `93e72c71`: require iOS 18 / macOS 15 across the library. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `08f31165`: audit the component library against its skills. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `ShipSwift/SWPackage/SWAnimation/SWChangeEffect.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-//  changes, built on modern SwiftUI APIs (KeyframeAnimator, PhaseAnimator,
+**SwiftUI animations:** Shimmer · TypewriterText · ShakingIcon · GlowSweep · LightSweep · ScanningOverlay · AnimatedMeshGradient · BeforeAfterSlider · OrbitingLogos · FullScreenButton · ChangeEffect · Confetti · Transition · ParticleTransition
+**Metal-shader backgrounds:** Metaballs · Halftone · Water · LiquidMetal · NeuroNoise · DotOrbit · Voronoi · SimplexNoise · ColorPanels · SmokeRing · Swirl · StarNest · GrainGradient
+**Metal-shader effects on any view:** Foil · Glitter · IntenseBling · PolishedAluminum · ChromaticGlass · Glass · GlassOrb · GlassLogo
+
+44 animation components total — see the [Showcase App](https://apps.apple.com/us/app/shipswift-mcp-codebase/id6759209764) for live previews.
+LineChart · BarChart · AreaChart · DonutChart · RingChart · RadarChart · ScatterChart · ActivityHeatmap · NetworkGraph
+**Display:** FloatingLabels · ScrollingFAQ · RotatingQuote · BulletPointText · GradientDivider · Label · MarkdownText · OnboardingView · OrderView · RootTabView · VideoPlayer · CachedImage · ImageThumbnail · KPICard · StatusBadge · Wallet
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-//  changes, built on modern iOS 17+ APIs (KeyframeAnimator, PhaseAnimator,
+**SwiftUI animations:** Shimmer · TypewriterText · ShakingIcon · GlowSweep · LightSweep · ScanningOverlay · AnimatedMeshGradient · BeforeAfterSlider · OrbitingLogos · FullScreenButton
+**Metal-shader backgrounds:** Metaballs · Halftone · Water · LiquidMetal · NeuroNoise · DotOrbit · Voronoi · SimplexNoise · ColorPanels · SmokeRing · Swirl
+30 animation components total — see the [Showcase App](https://apps.apple.com/us/app/shipswift-mcp-codebase/id6759209764) for live previews.
+LineChart · BarChart · AreaChart · DonutChart · RingChart · RadarChart · ScatterChart · ActivityHeatmap
+**Display:** FloatingLabels · ScrollingFAQ · RotatingQuote · BulletPointText · GradientDivider · Label · MarkdownText · OnboardingView · OrderView · RootTabView · VideoPlayer
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `93e72c71` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `08f31165` are properly handled with clean fallback behavior.

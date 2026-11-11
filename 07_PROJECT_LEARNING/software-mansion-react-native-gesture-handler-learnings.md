@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-gesture-handler-learnings.md`  
 > **Source**: github ([https://github.com/software-mansion/react-native-gesture-handler](https://github.com/software-mansion/react-native-gesture-handler))  
-> **Source Version**: `754229cb`  
+> **Source Version**: `ba126f38`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T10:45:24.276Z  
+> **Timestamp**: 2026-11-10T01:58:24.354Z  
 > **Learning ID**: `learn-github-software-mansion-react-native-gesture-handler`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-gesture-handler-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/software-mansion/react-native-gesture-handler](https://github.com/software-mansion/react-native-gesture-handler))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T10:45:23.968Z  
+> **Harvest Timestamp**: 2026-11-10T01:58:24.348Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Declarative API exposing platform native touch and gesture system to React Native.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 6800 stars
+- **Stars / Engagement**: 6804 stars
 
 ---
 
@@ -1388,79 +1388,119 @@ class LongPressGestureHandler(context: Context) : GestureHandler() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bf440870` (2026-11-02)
-**Commit Message**: [Android] Keep `HasChildPressedStateDelay` in minified builds (#4654)
+### Incident Patch 1: `7de893dc` (2026-11-09)
+**Commit Message**: [iOS] Fix callback crashes from detached gesture recognizers (#4679)
 
 ## Description
 
-On Android, `delaysChildPressedState={false}` has no effect in a release
-build that R8 minifies. A `Touchable` inside such a `ScrollView` still
-enters its pressed state only after the tap timeout, exactly like one in
-a `ScrollView` that keeps the delay.
+Fixes a rare crash during native screen detachment on iOS:
 
-`NativeViewGestureHandler` looks up
-`HasChildPressedStateDelay.setHasChildPressedStateDelay` by reflection,
-since the interface only exists since React Native 0.87. Nothing else
-references it, so R8 renames the interface and drops its methods.
-`getMethod` then throws, the setter stays `null` and the option becomes
-a no-op.
+```text
+Tag should be defined when dispatching an event
+```
 
-This adds a consumer ProGuard rule that keeps the interface and its
-setter, and lists it in the package `files` so it is published.
+This crash may occur one in hundreds of times when navigation removes a
+gesture-containing screen from its window while its React component
+remains mounted. This detachment still triggers gesture-handler cleanup.
 
-Fixes #4652
+> When dismissing screen with gesture (or a native back button), the
+native screen will be removed before React component unmount. If it
+still remains (not unmounted yet in that short time), it will trigger
+crash. So it occurs very rarely, I've reproduced it multiple times by
+torture testing the hover gesture.
 
-## Test plan
+<details>
+  <summary>Crash Log 1</summary>
 
-Tested on an API 34 emulator with `basic-example` (RN 0.88.0) in release
-builds, with a `ScrollView` of each kind holding a `Touchable`. I logged
-the time from the raw touch-down to `onPressIn` after a 400 ms hold
-(`adb shell input swipe x y x y 400`):
+```
+0   APP.debug.dylib                    0x000000010f0c7f60 -[RNGestureHandler handleGesture:inState:fromManualStateChange:] + 320
+1   APP.debug.dylib                    0x000000010f0c7aec -[RNGestureHandler handleGesture:fromReset:fromManualStateChange:] + 860
+2   APP.debug.dylib                    0x000000010f0c7750 -[RNGestureHandler handleGesture:fromReset:] + 84
+3   APP.debug.dylib                    0x000000010
 
-| | minified, before | minified, after | not minified |
-|---|---|---|---|
-| `delaysChildPressedState={false}` | +102 m
-
-**File**: `packages/react-native-gesture-handler/android/build.gradle` (modified, +1/-0)
+**File**: `packages/react-native-gesture-handler/apple/RNGestureHandler.mm` (modified, +6/-0)
 ```diff
-@@ -170,6 +170,7 @@ android {
-     defaultConfig {
-         minSdkVersion safeExtGet('minSdkVersion', 24)
-         targetSdkVersion safeExtGet('targetSdkVersion', 33)
-+        consumerProguardFiles 'consumer-rules.pro'
+@@ -410,6 +410,12 @@ - (void)handleGesture:(UIGestureRecognizer *)recognizer
+     return;
+   }
  
-         externalNativeBuild {
-             cmake {
++  // UIKit can invoke the action synchronously during removeGestureRecognizer:, after clearing view.
++  // unbindFromView already finalizes the gesture while attached, therefore we can ignore the stale callback.
++  if (recognizer.view == nil) {
++    return;
++  }
++
+   RNGHUIView *view = [self chooseViewForInteraction:recognizer];
+ 
+   // it may happen that the gesture recognizer is reset after it's been unbound from the view,
 ```
 
-**File**: `packages/react-native-gesture-handler/android/consumer-rules.pro` (added, +4/-0)
-```diff
-@@ -0,0 +1,4 @@
-+# Reached only by reflection in NativeViewGestureHandler, so R8 would otherwise strip it.
-+-keep interface com.facebook.react.uimanager.HasChildPressedStateDelay {
-+  void setHasChildPressedStateDelay(java.lang.Boolean);
-+}
-```
+---
 
-**File**: `packages/react-native-gesture-handler/package.json` (modified, +1/-0)
+### Incident Patch 2: `ba126f38` (2026-11-09)
+**Commit Message**: Bump brace-expansion from 1.1.18 to 1.1.21 in /packages/docs-gesture-handler (#4684)
+
+Bumps [brace-expansion](https://github.com/juliangruber/brace-expansion)
+from 1.1.18 to 1.1.21.
+<details>
+<summary>Commits</summary>
+<ul>
+<li><a
+href="https://github.com/juliangruber/brace-expansion/commit/8e81e187b6e9c6c723d16c042657c00acefc2483"><code>8e81e18</code></a>
+1.1.21</li>
+<li><a
+href="https://github.com/juliangruber/brace-expansion/commit/ffdfa3e3806bed17c0874b8f1439b084de354a7e"><code>ffdfa3e</code></a>
+Merge commit from fork</li>
+<li><a
+href="https://github.com/juliangruber/brace-expansion/commit/c6513ad31e08edb56dc414a629e39cba724b7548"><code>c6513ad</code></a>
+1.1.20</li>
+<li><a
+href="https://github.com/juliangruber/brace-expansion/commit/1efee7c397c191da6287a78ec19512476a966a7b"><code>1efee7c</code></a>
+Merge commit from fork</li>
+<li><a
+href="https://github.com/juliangruber/brace-expansion/commit/a34340a053abb475cc226aeb3f71887018e71bd0"><code>a34340a</code></a>
+1.1.19</li>
+<li><a
+href="https://github.com/juliangruber/brace-expansion/commit/0bcbfc0a5928c3073d48f42999d1ce4fc1c42fbc"><code>0bcbfc0</code></a>
+Merge commit from fork</li>
+<li>See full diff in <a
+href="https://github.c
+
+**File**: `packages/docs-gesture-handler/yarn.lock` (modified, +6/-6)
 ```diff
-@@ -34,6 +34,7 @@
-     "android/build.gradle",
-     "android/gradle.properties",
-     "android/CMakeLists.txt",
-+    "android/consumer-rules.pro",
-     "android/src/main/AndroidManifest.xml",
-     "android/src/main/java/",
-     "android/src/main/jni/",
+@@ -4961,17 +4961,17 @@ boxen@^7.0.0:
+     wrap-ansi "^8.1.0"
+ 
+ brace-expansion@^1.1.7:
+-  version "1.1.18"
+-  resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-1.1.18.tgz#3ce74d89885136be1535341f8c3d4425c29a5cab"
+-  integrity sha512-Edep/X9fGqVNmzKBVsDYIOtD+z1tuezV70LBjdCst9Tqu76lsnvRiZ6oTic1n+/BIwX6QDGAO94PN4N2SADvtw==
++  version "1.1.21"
++  resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-1.1.21.tgz#edf4fab5c64d051aea5a8def49aba1c7522279f3"
++  integrity sha512-9zeA+KLZNNzglF2TPKRQEDyx6Yby7daAkuy8MiPzpXPsYDWi/DRM8jmwUDxokQjYqBpv5DgPiwD4h4ZZSy1Ujw==
+   dependencies:
+     balanced-match "^1.0.0"
+     concat-map "0.0.1"
+ 
+ brace-expansion@^2.0.1, brace-expansion@^2.0.2:
+-  version "2.1.4"
+-  resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-2.1.4.tgz#589dab11c0018d0366be64cd8bf12c8dbecc8326"
+-  integrity sha512-hGfVzPxthbf3+2yjg/RBs60cB0FhqBS/zvdV/4wn4/BmN0bNMMHPc4V/BbFieqf1TKAGGAHnY4eSjajCl0f2Xg==
++  version "2.1.7"
++  resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-2.1.7.tgz#14ea3836731823bb24740225ea43b941b436f9d1"
++  integrity sha512-uZbew1NqdmPDTMJ8ah1y+b+9QEJrfkXFk3RcTQw3X0jW/xRUvFKsg1CfQdSYGdTbXZWExtU3J3ccxtnfw1Fi0g==
+   dependencies:
+     balanced-match "^1.0.0"
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4665** (2026-11-04): [iOS] Skip `accessibilityElementsHidden` children when inferring button label (@m-bert)
-- **PR #4663** (2026-11-04): Remove unused `enabled` listener from `useJSResponderHandler` (@m-bert)
-- **PR #4662** (2026-11-03): Bump follow-redirects from 1.16.1 to 1.16.2 in /packages/docs-gesture-handler (@dependabot[bot])
-- **PR #4661** (2026-11-03): Bump joi from 17.13.8 to 17.13.9 in /packages/docs-gesture-handler (@dependabot[bot])
-- **PR #4660** (2026-11-02): [Jest] Add opt-out for the `GestureHandlerRootView` check (@m-bert)
-- **PR #4659** (2026-11-02): Bump node-forge from 1.4.0 to 1.4.2 (@dependabot[bot])
+- **PR #4684** (2026-11-09): Bump brace-expansion from 1.1.18 to 1.1.21 in /packages/docs-gesture-handler (@dependabot[bot])
+- **PR #4683** (2026-11-09): Restore the scroll responder claim for `ScrollView` with `keyboardShouldPersistTaps="handled"` (@m-bert)
+- **PR #4682** (2026-11-09): [Web] Skip config updates for a dropped handler (@chocky335)
+- **PR #4681** (2026-11-09): [Web] Track velocity separately for each pointer (@ChandraChaan)
+- **PR #4679** (2026-11-09): [iOS] Fix callback crashes from detached gesture recognizers (@theeket)
+- **PR #4678** (2026-11-09): Bump example apps to React Native 0.88.1 (@m-bert)
 
 ---
 
@@ -1480,21 +1520,26 @@ the time from the raw touch-down to `onPressIn` after a 400 ms hold
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [Android] Keep `HasChildPressedStateDelay` in minified builds (#4654)
+## X. [iOS] Fix callback crashes from detached gesture recognizers (#4679)
 
 **RULE**:
-When implementing operations in `packages/react-native-gesture-handler/android/build.gradle`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-gesture-handler. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/react-native-gesture-handler/apple/RNGestureHandler.mm`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-gesture-handler. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bf440870`: [Android] Keep `HasChildPressedStateDelay` in minified builds (#4654). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7de893dc`: [iOS] Fix callback crashes from detached gesture recognizers (#4679). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native-gesture-handler/android/build.gradle`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native-gesture-handler/apple/RNGestureHandler.mm`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-        consumerProguardFiles 'consumer-rules.pro'
+  // UIKit can invoke the action synchronously during removeGestureRecognizer:, after clearing view.
+  // unbindFromView already finalizes the gesture while attached, therefore we can ignore the stale callback.
+  if (recognizer.view == nil) {
+    return;
+  }
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1504,4 +1549,4 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bf440870` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7de893dc` are properly handled with clean fallback behavior.

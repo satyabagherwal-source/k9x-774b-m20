@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md`  
 > **Source**: github ([https://github.com/ntex-rs/ntex](https://github.com/ntex-rs/ntex))  
-> **Source Version**: `0b7efd36`  
+> **Source Version**: `c1668355`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T10:09:00.382Z  
+> **Timestamp**: 2026-11-09T16:33:27.108Z  
 > **Learning ID**: `learn-github-ntex-rs-ntex`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ntex-rs/ntex](https://github.com/ntex-rs/ntex))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T10:08:54.834Z  
+> **Harvest Timestamp**: 2026-11-09T16:33:25.075Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: framework for composable networking services 
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 2545 stars
+- **Stars / Engagement**: 2547 stars
 
 ---
 
@@ -1177,17 +1177,7 @@ impl RunnableQueue {
 
         // Aborts if the notifier unwinds, producers coalesced behind this
         // wakeup would never be woken.
-        struct AbortOnUnwind;
-
-        impl Drop for AbortOnUnwind {
-            /// Prevents unwinding from abandoning a coalesced driver wakeup.
-            fn drop(&mut self) {
-                log::error!(target: LOG_TARGET, "Runtime notifier panicked; aborting");
-                std::process::abort();
-            }
-        }
-
-        let guard = AbortOnUnwind;
+        let guard = crate::AbortOnUnwind("Runtime notifier panicked");
         // Keep responsibility for this wakeup: other producers may already
         // have coalesced behind it, even if no later submission arrives.
         while let Err(err) = self.handle.notify() {
@@ -1195,7 +1185,7 @@ impl RunnableQueue {
                 failed(&err);
             }
         }
-        std::mem::forget(guard);
+        guard.disarm();
     }
 
     /// Reserves a submission or wake before publication or acquiring a task queue reference.
@@ -1224,6 +1214,15 @@ impl RunnableQueue {
                         }),
                     });
                 }
+                Err(v) => state = v,
+            }
+        }
+    }
+
+    /// Runs bounded local, submission, and wake batches; returns whether work remains.
+    pub(super) fn run(&self) -> bool {
+        // cleared before draining the sync queues, a task enqueued after the
+        // drain notifies the d
 ```
 
 ### Core Architecture Module: `ntex-server/src/state.rs`
@@ -1394,6 +1393,11 @@ use crate::readiness::ReadyScope;
 /// All bindings share one readiness cache and checker, including bindings with
 /// different state values. Readiness may inspect state, but must describe the
 /// shared pipeline-wide gate. Independent gates require separate pipelines.
+///
+/// Shutdown is advisory, as for [`crate::Pipeline`]: readiness checks return
+/// `Ok(())` once shutdown has started, and calls are still forwarded to the
+/// service. Callers that must stop admitting work check
+/// [`PipelineState::is_shutdown`].
 pub struct PipelineState<St, Req, Res, Err> {
     api: Rc<dyn PipelineStateApi<St, Req, Res, Err>>,
 }
@@ -1436,8 +1440,9 @@ where
     /// own future, and other waiters wait for it. Like a held lock, a pending
     /// future must be polled or dropped: keeping it alive without polling stalls
     /// every other readiness waiter on this pipeline.
+    /// Returns successfully if pipeline shutdown has started.
     pub async fn ready(&self, st: &St) -> Result<(), Err> {
-        if self.is_ready() {
+        if self.is_ready() || self.is_shutdown() {
             Ok(())
         } else {
             self.api.ready(0, st).await
@@ -1456,7 +1461,8 @@ where
     #[inline]
     /// Waits for readiness, then calls the service with `st`.
     ///
-    /// Reuses valid shared readiness without consuming it.
+    /// Reuses valid shared readiness without consuming it. Calls are forwarded
+    /// even after shutdown has started; see [`PipelineState`].
     pub async fn call(&self, req: Req, st: &St) -> Result<Res, Err> {
         let pl = self.binding();
         self.api.call(pl.idx, req, st).await
@@ -1464,8 +1470,20 @@ where
 
     #[inline]
     /// Shuts down the enclosed service.
+    ///
+    /// Marks the pipeline as shutting down, then waits for the service's
+    /// shutdown. Later calls are not rejected; see [`PipelineState`].
     pub async fn shutdown(&self, st: &St) {
         self.api.shutdown(0, st).await;
+    }
+
+    #[inline]
+    /// Checks whether pipeline shutdown has been initiated.
+    ///
+    /// The pipeline does not reject calls after shutdown; callers use this to
+    /// stop admitting new work.
+    pub fn is_shutdown(&self) -> bool {
+        self.api.is_shutdown()
     }
 
     #[inline]
@@ -1477,16 +1495,17 @@ where
     /// The retained check and its wake sources run on this pipeline's thread.
     /// Its checker wakers must also be finally dropped on that thread, even
     /// after the pipeline is dropped; foreign wakes or final drops panic.
-    ///
-    /// # Panics
-    ///
-    /// Panics if `.shutdown()` has been called. Unlike [`crate::Pipeline::poll_ready`],
-    /// it does not return `Ready(Ok(()))` after shutdown.
+    /// Returns `Ready(Ok(()))` if pipeline shutdown has started, like
+    /// [`crate::Pipeline::poll_ready`].
     pub fn poll_ready(&self, cx: &mut Context<'_>, st: &St) -> Poll<Result<(), Err>>
     where
         St: Clone,
     {
-        self.api.poll_ready(cx, st)
+        if self.is_shutdown() {
+            Poll::Ready(Ok(()))
+        } else {
+            self.api.poll_ready(cx, st)
+        }
     }
 
     fn binding(&self) -> Binding<'_, St, Req, Res, Err> {
@@ -1608,12 +1627,21 @@ where
     /// Waits for readiness, then calls the service with `st`.
     ///
     /// Reuses valid shared readiness without consuming it, regardless of `st`.
+    /// Calls are forwarded even after shutdown has started; see [`PipelineState`].
     pub async fn call(&self, req: Req, st: &St) -> Result<Res, Err> {
         let pl = Binding {
             idx: self.api.reg(),
             api: self.api.as_ref(),
         };
         pl.api.call(pl.idx, req, st).await
+    }
+
+    #[inline]
+    /// Checks whether pipeline shutdown has been initiated.
+    ///
+    /// See [`PipelineState::is_shutdown`].
+    pub fn is_shutdown(&self) -> bool {
+        self.api.is_shutdown()
     }
 
     #[inline]
@@ -1638,56 +1666,7 @@ where
     ///
     /// See [`PipelineState::readiness_link`] and [`ReadyLink`].
     pub fn readiness_link(&self) -> ReadyLink {
-        self.api.scope().readiness_link()
-    }
-}
-
-// ========================== `PipelineApi` ===========================
-
-struct PipelineInternal<St, Req, Res, Err> {
-    st: St,
-    api: Rc<dyn PipelineStateApi<St, Req, Res, Err>>,
-}
-
-impl<St, Req, Res, Err> PipelineInternalApi<Req, Res, Err> for PipelineInternal<St, Req, Res, Err> {
-    fn scope(&self) -> &ReadyScope {
-        self.api.scope()
-    }
-
-    fn reg(&self) -> u32 {
-        self.api.reg()
-    }
-
-    fn unreg(&self, idx: u32) {
-        self.api.unreg(idx);
-    }
-
-    fn ready(&self, idx: u32) -> BoxFuture<'_, Result<(), Err>> {
-        self.api.ready(idx, &self.st)
-    }
-
-    fn call(&self, idx: u32, req: Req) -> BoxFuture<'_, Result<Res, Err>> {
-        self.api.call(idx, req, &self.st)
-    }
-
-    fn poll_ready(&self, _: &mut Context<'_>) -> Poll<Result<(), Err>> {
-        unreachable!()
-    }
-
-    fn poll_shutdown(&self, _: &mut Context<'_>) -> Poll<()> {
-        unreachable!()
-    }
-
-    fn is_shutdown(&self) -> bool {
-        self.api.is_shutdown()
-    }
-}
-
-// ========================== `PipelineStateApi` ===========================
-
-struct PipelineInner<S, E> {
-    s: S,
-    w
+ 
 ```
 
 ### Core Architecture Module: `ntex-service/src/state.rs`
@@ -2036,7 +2015,7 @@ pub(crate) mod testing {
 
     use ntex::codec::BytesCodec;
     use ntex_bytes::Bytes;
-    use ntex_io::{Filter, Handle, IoContext, IoStream, Readiness};
+    use ntex_io::{Filter, Handle, IoContext, IoRef, IoStream, Readiness, types::HttpProtocol};
     use ntex_service::cfg::SharedCfg;
 
     use super::*;
@@ -2044,6 +2023,31 @@ pub(crate) mod testing {
     thread_local! {
         static TLS_BORROWS: Cell<usize> = const { Cell::new(0) };
         static ON_WAKE: RefCell<Option<Box<dyn FnOnce()>>> = RefCell::default();
+        static CALLBACK_IO: RefCell<Vec<IoRef>> = RefCell::default();
+        static CALLBACK_QUERIES: RefCell<Vec<(usize, bool)>> = RefCell::default();
+    }
+
+    /// Registers an io for handshake callbacks, which must be `Send + Sync`
+    /// and therefore refer to it by the returned index.
+    pub(crate) fn callback_io(io: IoRef) -> usize {
+        CALLBACK_IO.with_borrow_mut(|ios| {
+            ios.push(io);
+            ios.len() - 1
+        })
+    }
+
+    /// Queries a registered io from a handshake callback and records whether
+    /// the always-available `HttpProtocol` item was answered.
+    pub(crate) fn query_from_callback(idx: usize) {
+        let io = CALLBACK_IO.with_borrow(|ios| ios[idx].clone());
+        let answered = io.query::<HttpProtocol>().as_ref().is_some();
+        CALLBACK_QUERIES.with_borrow_mut(|queries| queries.push((idx, answered)));
+    }
+
+    /// Returns the recorded callback queries and clears the registry.
+    pub(crate) fn callback_queries() -> Vec<(usize, bool)> {
+        CALLBACK_IO.with_borrow_mut(Vec::clear);
+        CALLBACK_QUERIES.take()
     }
 
     /// Tracks TLS reference scopes so a regression fails before reentrant
@@ -2177,42 +2181,7 @@ pub(crate) mod testing {
         );
         // Let the runtime retire deferred write notifications after the drain.
         ntex_util::time::sleep(Millis(1)).await;
-        for ctx in [sender_ctx, receiver_ctx.as_ref()] {
-            ctx.update_write_status(Ok(0));
-            let _ = ctx.poll_read_ready(&mut cx);
-            let ready = ctx.poll_write_ready(&mut cx);
-            assert!(
-                matches!(ready, Poll::Ready(Readiness::Close)),
-                "{}: {ready:?}, {:?}",
-                ctx.tag(),
-                ctx.flags()
-            );
-            ctx.stopped(None);
-        }
-        assert!(matches!(
-            sender.poll_status_update(&mut cx),
-            Poll::Ready(ntex_io::IoStatusUpdate::PeerGone(None))
-        ));
-        assert!(matches!(
-            receiver.poll_status_update(&mut cx),
-            Poll::Ready(ntex_io::IoStatusUpdate::PeerGone(None))
-        ));
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use std::{cell::Cell, pin::pin, task::Poll};
-
-    use ntex_util::future::lazy;
-
-    use super::*;
-
-    /// STATEMENT: Clean transport EOF succeeds only if the final handshake state is complete.
-    ///
-    /// HOW:
-    /// - Poll a handshake until it waits for input, then report EOF with completed or pending state.
-    /// - Check completed negotiation succeeds and incomplete negotiati
+        for ctx in [sender_ctx, receiver_ctx.as_ref
 ```
 
 
@@ -2242,754 +2211,550 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0b7efd36` (2026-11-05)
-**Commit Message**: Add framework guide page on http client
+### Incident Patch 1: `9eb2d0e0` (2026-11-09)
+**Commit Message**: Default OpenSSL HTTP client (`Client::new()`, `ClientBuilder::new()`) now verifies server certificates
 
-**File**: `docs/13-client.md` (added, +711/-0)
+* Security: the default OpenSSL HTTP client (`Client::new()`, `ClientBuilder::new()`) now
+  verifies server certificates against the system trust store and checks the hostname;
+  previously it accepted any certificate. To trust a private root or a self-signed test
+  certificate, pass your own `SslConnector` to `ClientBuilder::openssl()`
+
+**File**: `docs/10-tls.md` (modified, +4/-3)
 ```diff
-@@ -0,0 +1,711 @@
-+# Making HTTP Requests
-+
-+Very few services live alone. Sooner or later yours will need to talk to a
-+payment provider, an internal API, an object store, or someone's webhook.
-+`ntex::client` is the tool for that job.
-+
-+If you have built a server with ntex, the client will feel familiar. It is
-+made of the same pieces: [services](1-service.md), the
-+[I/O layer](7-io.md), and shared configuration. It speaks HTTP/1.1 and HTTP/2,
-+keeps connections open and reuses them, and supports TLS through OpenSSL or
-+rustls. Optional features add response decompression and cookies, and
-+middleware lets you hook your own logic into every request.
-+
-+Making a request comes down to three steps: build it, send it, and read what
-+comes back.
-+
-+```rust,no_run
-+use ntex::client::Client;
-+
-+#[ntex::main]
-+async fn main() -> Result<(), Box<dyn std::error::Error>> {
-+    let client = Client::new();
-+
-+    let response = client
-+        .get("http://127.0.0.1:8080/")
-+        .header("user-agent", "ntex-guide")
-+        .send()
-+        .await?;
-+
-+    println!("status: {}", response.status());
-+    let body = response.body().await?;
-+    println!("body: {}", String::from_utf8_lossy(&body));
-+    Ok(())
-+}
-+```
-+
-+That is all you need for simple cases. The rest of this chapter looks at each
-+step more closely, starting with what happens inside the client.
-+
-+## How the client works
-+
-+A `Client` is not meant to be created per request. It owns connection pools
-+and configuration, and its value comes from reusing them. An application
-+usually creates one client for each kind of outgoing traffic, such as one for
-+the payment provider and another for an internal API, each with its own
-+timeouts and limits. It then keeps those clients for its whole lifetime.
-+
-+A `Client` is a lightweight handle. Cloning it is cheap, and all clones share
-+the same connection pools, so you can hand copies to every part of your code
-+that needs one. The handle is not `Send`, though: it belongs to the thread
-+that created it. In a server, the usual pattern is to create the clients once
-+per worker, for example in the application factory, and keep them in
-+application state.
-+
-+When you send a request, it passes through a short chain of services:
-+
-+```text
-+ClientRequest ─► middleware ─► Sender ─► Connector ─┬─► plain pool ─► HTTP/1.1 connections
-+                                                    └─► TLS pool   ─► HTTP/1.1 or HTTP/2 connections
-+```
-+
-+It starts as a `ClientRequest`, the builder you get from `client.get(...)`
-+and friends, which collects the method, URL, headers, and body. Next comes
-+any [middleware](#middleware) you installed; it can inspect or change the
-+request on its way out and the response on its way back. Then the `Sender`
-+takes over. It asks the `Connector` for a connection, writes the request, and
-+waits for the response head.
-+
-+The `Connector` chooses a pool based on the URL scheme: `http` goes to
-+the plain pool, `https` to the TLS pool. Each pool keeps
-+connections grouped by host. An idle HTTP/1.1 connection is reused for the
-+next request to the same host. An HTTP/2 connection can carry many requests
-+at once, so concurrent requests to the same host share it.
-+
-+You don't pick the HTTP version yourself. For `https` URLs, client and server
-+settle it during the TLS handshake using ALPN: the client offers `h2` and
-+`http/1.1`, and the server chooses. Plain `http` URLs always use HTTP/1.1.
-+
-+One detail is worth remembering. An HTTP/1.1 connection goes back to the
-+pool only after its response body has been read to the end. If you drop a
-+response without reading the body, the client can't tell what is left on the
-+wire, so it closes the connection instead. If you want connections reused,
-+read the body, even when you don't care what's in it.
-+
-+You don't have to shut the client down explicitly. Once the last clone and
-+every request made with it are dropped, the pools close idle connections in
-+the background, and HTTP/2 connections close gracefully after their in-flight
-+requests finish.
-+
-+The client is for requests and responses. WebSockets have their own client,
-+`ntex::ws::WsClient`, covered in
-+[WebSocket Support](8.6-web-app.md#clients-with-ntexws).
-+
-+## Configuration
-+
-+`Client::new()` uses sensible defaults, and for a quick script they are
-+fine. For a real service you will want to tune at least the timeouts.
-+
-+Configuration works the same way as on an ntex server. You put
-+configuration objects into a [`SharedCfg`] and build the client from it. A
-+single `SharedCfg` can hold several configuration types, and each part of the
-+client picks out the one it cares about:
-+
-+| Configuration | Read by | What it controls |
-+|---|---|---|
-+| [`ClientConfig`] | The client | Timeouts, payload limits, pool sizes, default headers |
-+| [`IoConfig`] | Connector and connections | Connect timeout, buffer sizes, backpressure, shutdown timeout |
-+| [`TlsConfig`] | TLS connectors | TLS handshake timeout |
-+| [
+@@ -505,9 +505,10 @@ fn client() -> ntex::client::Client {
+ Do not confuse this with `ClientBuilder::connector`: that method configures
+ **unsecured** connections and leaves the HTTPS connector unchanged.
+ 
+-> **Configure verification explicitly.** The built-in default OpenSSL HTTP
+-> connector currently disables certificate verification. Supply a verifying
+-> configuration, such as the OpenSSL configuration above, instead.
++The built-in default OpenSSL connector verifies server certificates against
++OpenSSL's default trust store (the system roots) and checks the request host.
++To trust a private root, supply your own configuration, such as the OpenSSL
++configuration above.
+ 
+ The default rustls configuration uses webpki roots and sends no client identity.
+ If you enable both backend features, the default HTTP client selects OpenSSL.
 ```
 
-**File**: `docs/SUMMARY.md` (modified, +2/-1)
+**File**: `docs/13-client.md` (modified, +7/-5)
 ```diff
-@@ -16,7 +16,8 @@
-   - [Extractors and Responders](8.4-web-app.md)
-   - [Error Handling](8.5-web-app.md)
-   - [WebSocket Support](8.6-web-app.md)
--- [Protocols]()
-+- [Integrations]()
-+  - [HTTP Client](13-client.md)
-   - [Building gRPC Services and Clients](11-grpc.md)
- - [Securing Connections with TLS](10-tls.md)
- - [Byte Buffers](9-bytes.md)
+@@ -218,9 +218,10 @@ does depends on the backend:
+ 
+ - **rustls** checks server certificates against the webpki root
+   certificates, as you would expect.
+-- **OpenSSL** does **not** verify certificates by default. That is handy
+-  when testing against a server with a self-signed certificate, but it is not
+-  safe in production. Give the client your own configuration instead.
++- **OpenSSL** checks server certificates against OpenSSL's default trust
++  store (the system roots) and checks that the certificate matches the
++  request host. To trust a private root, or to accept a self-signed
++  certificate while testing, give the client your own configuration.
+ 
+ If both features are enabled, OpenSSL wins. If neither is, `https` requests
+ fail with `ConnectError::SslIsNotSupported`.
+@@ -728,8 +729,9 @@ simply build the request again.
+   connection pools.
+ - Tune the client with `ClientConfig`, `IoConfig`, and friends in a
+   `SharedCfg`. Always set a connect timeout.
+-- With OpenSSL, provide your own TLS configuration so certificates are
+-  verified, and set ALPN if you want HTTP/2.
++- The default secure connector verifies certificates. Provide your own TLS
++  configuration for private roots or testing, and set ALPN on it if you want
++  HTTP/2.
+ - Pick the body format by picking the method: `send`, `send_body`,
+   `send_json`, `send_form`, or `send_stream`.
+ - Buffer small bodies with `body()` or `json()`, and stream large ones.
 ```
 
-**File**: `docs/index.md` (modified, +2/-1)
+**File**: `docs/llms.txt` (modified, +1/-1)
 ```diff
-@@ -17,7 +17,8 @@ build web applications.
-   - [Extractors and Responders](./8.4-web-app.md)
-   - [Error Handling](./8.5-web-app.md)
-   - [WebSocket Support](./8.6-web-app.md)
--- Protocols
-+- Integrations
-+  - [HTTP Client](./13-client.md)
-   - [Building gRPC Services and Clients](11-grpc.md)
- - [Securing Connections with TLS](./10-tls.md)
- - [Byte Buffers](./9-bytes.md)
-```
-
-**File**: `docs/llms.txt` (modified, +1/-0)
-```diff
-@@ -483,6 +483,7 @@ async fn main() -> std::io::Result<()> {
- - [WebSocket Support](https://docs.ntex.rs/8.6-web-app.html)
- - [Byte Buffers](https://docs.ntex.rs/9-bytes.html)
- - [Securing Connections with TLS](https://docs.ntex.rs/10-tls.html): backend and component configuration, identities, peer certificates, and mutual authentication
-+- [Making HTTP Requests](https://docs.ntex.rs/13-client.html): the `ntex::client` HTTP/1.1 and HTTP/2 client, connection pooling, `ClientConfig` and timeouts, TLS connectors, request bodies, reading responses, and client middleware
- - [Timers and Time Utilities](https://docs.ntex.rs/12-time.html): timer wheel design and precision, `Millis` and `Seconds`, `sleep`, `deadline`, `timeout`, `interval`, and callback timers
- 
- ## API
-```
-
----
-
-### Incident Patch 2: `b12e0e2e` (2026-11-05)
-**Commit Message**: Add framework guide page on timers
-
-**File**: `docs/12-time.md` (added, +586/-0)
-```diff
-@@ -0,0 +1,586 @@
-+# Timers and Time Utilities
-+
-+A network server is full of deadlines. A connection must finish its TLS
-+handshake in time, a client that stops sending must eventually be dropped,
-+an idle keep-alive connection must be closed, and an upstream request must
-+not wait forever. Almost none of these timers ever fire: the handshake
-+completes, the next request arrives, the upstream answers. Each one is armed,
-+then cancelled or pushed further into the future, thousands of times per
-+second.
-+
-+`ntex-util` provides the timer functionality for ntex. The `ntex` crate
-+re-exports it as [`ntex::time`], and it works the same with every runtime
-+backend. It contains:
-+
-+- [`Millis`] and [`Seconds`], compact duration types used throughout the ntex
-+  configuration APIs;
-+- asynchronous utilities: [`sleep`], [`deadline`], [`timeout`],
-+  [`timeout_checked`] and [`interval`];
-+- [`CallbackTimer`], which runs a short closure on expiry without a task;
-+- [`now`] and [`system_time`], cheap cached clocks.
-+
-+## How the timer works
-+
-+The ntex timer implementation is ported from the Linux kernel
-+[timer wheel](https://github.com/torvalds/linux/blob/master/kernel/time/timer.c).
-+The kernel faces the same problem as a network server: most of its timers
-+are timeouts for events that are expected to arrive, such as a network packet
-+or an I/O completion, and are cancelled long before they expire.
-+[Reinventing the timer wheel](https://lwn.net/Articles/646950/) on LWN
-+describes the design and the reasoning behind it.
-+
-+### A wheel of buckets
-+
-+Keeping timers in a sorted list or a binary heap gives exact ordering, but
-+every insert and cancel costs `O(log n)` or more. A **timer wheel** works
-+more like a clock face. It is an array of buckets, and each bucket collects
-+all timers that expire during the same slice of time. Adding a timer means
-+computing a bucket index and pushing an entry; cancelling it means removing
-+that entry. Both are `O(1)`, however many timers there are.
-+
-+The wheel doesn't count time in milliseconds but in *units*, and **one unit
-+is 16 milliseconds**. Every delay is converted to units before it is stored,
-+so 16 ms is the finest resolution an ntex timer can have.
-+
-+Each bucket on the first level covers one unit, so 64 buckets reach only
-+about one second ahead. To cover longer delays, ntex stacks 8 levels of 64
-+buckets, and each level is 8 times coarser than the one below it:
-+
-+| Level | Granularity | Range            |
-+|-------|-------------|------------------|
-+| 0     | 16 ms       | 0 .. ~1 s        |
-+| 1     | 128 ms      | ~1 s .. ~8 s     |
-+| 2     | ~1 s        | ~8 s .. ~64 s    |
-+| 3     | ~8 s        | ~64 s .. ~8.6 m  |
-+| 4     | ~65 s       | ~8.6 m .. ~69 m  |
-+| 5     | ~8.7 m      | ~69 m .. ~9.2 h  |
-+| 6     | ~70 m       | ~9.2 h .. ~3 d   |
-+| 7     | ~9.3 h      | ~3 d .. ~24.5 d  |
-+
-+A timer goes on the first level that can hold its delay: a 100 ms timeout
-+lands on level 0, a 30-second keep-alive on level 2. Anything longer than
-+the whole wheel, about 24 days, is clamped to that maximum.
-+
-+### No cascading
-+
-+In a classic hierarchical wheel, timers *cascade*: when a coarse bucket
-+comes due, its timers are moved down into finer levels so that each one
-+fires at its exact time. That work comes in bursts, and most of it is wasted,
-+because by then most of those timers would have been cancelled anyway.
-+
-+The modified wheel, added to Linux in 2016 and used by ntex, skips cascading
-+entirely. A timer stays in the bucket where it was placed, and its expiry is
-+**rounded up** to that level's granularity. As a result:
-+
-+- **A timer never fires early.** The delay counts from the moment the timer
-+  is armed, and is then rounded up.
-+- **A timer may fire a little late**, by at most one granularity of its
-+  level. For delays over one second this is less than about 13%: a 5-second
-+  timer can be up to 128 ms late, a 30-second timer up to about a second.
-+- **Every operation is `O(1)`**, including expiry processing.
-+
-+### Finding the next expiry
-+
-+Each level keeps a 64-bit bitmap with one bit per non-empty bucket. To find
-+the next timer that is due, the wheel rotates the bitmap to the current
-+position and counts the trailing zeros. Empty buckets are never scanned.
-+
-+### One driver per thread
-+
-+Every runtime thread, such as each server worker, has its own wheel. Timer
-+operations therefore need no locks or atomics. This is also why timer
-+handles are `!Send`: create a timer on the thread that awaits it.
-+
-+Each thread runs a single driver task. It sleeps until the earliest
-+non-empty bucket is due, then wakes every timer in that bucket. The driver
-+moves the wheel clock to the time the bucket was *scheduled* for, not the
-+time it actually woke up, so one late wakeup doesn't delay the timers that
-+come after it. The driver starts with the first timer, so a thread that
-+never uses timers never wakes up for them. When the runtime stops, every
-+pending timer is 
-```
-
-**File**: `docs/4-runtime.md` (modified, +2/-0)
-```diff
-@@ -320,6 +320,8 @@ ntex timers are intended for scheduling and timeouts, not high-resolution
- measurement. Their granularity is roughly 16 milliseconds. A zero-duration
- `sleep` or `timeout` still waits for at least one timer tick.
- `timeout_checked` is the variant that treats a zero timeout as disabled.
-+See [Timers and Time Utilities](12-time.md) for the timer design and the
-+full API.
- 
- ## System lifecycle
- 
-```
-
-**File**: `docs/SUMMARY.md` (modified, +1/-0)
-```diff
-@@ -20,6 +20,7 @@
-   - [Building gRPC Services and Clients](11-grpc.md)
- - [Securing Connections with TLS](10-tls.md)
- - [Byte Buffers](9-bytes.md)
-+- [Timers and Time Utilities](12-time.md)
- 
- # Migration
- 
-```
-
-**File**: `docs/index.md` (modified, +1/-0)
-```diff
-@@ -21,6 +21,7 @@ build web applications.
-   - [Building gRPC Services and Clients](11-grpc.md)
- - [Securing Connections with TLS](./10-tls.md)
- - [Byte Buffers](./9-bytes.md)
-+- [Timers and Time Utilities](./12-time.md)
- 
- ## API reference
- 
-```
-
-**File**: `docs/llms.txt` (modified, +1/-0)
-```diff
-@@ -483,6 +483,7 @@ async fn main() -> std::io::Result<()> {
- - [WebSocket Support](https://docs.ntex.rs/8.6-web-app.html)
- - [Byte Buffers](https://docs.ntex.rs/9-bytes.html)
- - [Securing Connections with TLS](https://docs.ntex.rs/10-tls.html): backend and component configuration, identities, peer certificates, and mutual authentication
-+- [Timers and Time Utilities](https://docs.ntex.rs/12-time.html): timer wheel design and precision, `Millis` and `Seconds`, `sleep`, `deadline`, `timeout`, `interval`, and callback timers
- 
- ## API
- 
-```
-
----
-
-### Incident Patch 3: `08de30af` (2026-11-04)
-**Commit Message**: Add grpc framework guide
-
-**File**: `docs/11-grpc.md` (added, +1515/-0)
-```diff
-@@ -0,0 +1,1515 @@
-+# Building gRPC Services and Clients
-+
-+Once a system grows past a single process, its parts need a way to call each
-+other. [gRPC] is one of the most common answers. You describe an API once, in
-+a `.proto` file, and clients and servers written in any language can talk to
-+each other through it. Messages are compact Protocol Buffers, calls travel
-+over HTTP/2, and one connection carries many calls at the same time.
-+
-+[ntex-grpc] brings gRPC to ntex. It is a separate crate, built on the
-+[service model](1-service.md) you already know and on [`ntex-h2`], the ntex
-+HTTP/2 implementation. A gRPC client is a service you call, and a gRPC server
-+is a service the ntex [server](5-server.md) runs for every connection.
-+
-+ntex-grpc takes a different route from most gRPC libraries: **it does not use
-+derive macros or build scripts.** The protocol is described with ordinary
-+traits, and Rust's type system does the wiring. A message knows how to encode
-+itself because each of its fields does. A method is a type that knows its
-+request path and its input and output messages. A client is generic over the
-+transport that carries its calls. What remains is boilerplate: one struct per
-+message, one type per method, a typed client per service. A code generator,
-+`ntex-grpc-codegen`, writes that for you once. You commit its output and read
-+it like the rest of your code. Nothing is generated during the build. The only
-+macro you will meet is the `#[server]` attribute, a thin layer that connects
-+the methods of a `.proto` service to the methods of your type.
-+
-+Because every piece is a trait, every piece can be replaced. You can use your
-+own Rust types for message fields, put your own transport between a client
-+and the network, or handle raw, undecoded calls on the server.
-+
-+This chapter starts with a running example, then follows a call from the
-+`.proto` file through the client to the server. Depending on where you are
-+starting from:
-+
-+- **New to ntex-grpc?** Run the [quick start](#quick-start-hello-grpc), skim
-+  [gRPC in a nutshell](#grpc-in-a-nutshell), then read
-+  [from .proto to Rust](#from-proto-to-rust) and
-+  [implementing a service](#implementing-a-service).
-+- **Want stricter types in your messages?** Read
-+  [using your own field types](#using-your-own-field-types).
-+- **Calling gRPC services from ntex?** Start with
-+  [calling services](#calling-services) and
-+  [errors, deadlines and retries](#errors-deadlines-and-retries).
-+- **Running a server in production?** Read
-+  [tuning the server](#tuning-the-server) and
-+  [running over TLS](#running-over-tls), then go through the
-+  [checklist](#production-checklist).
-+- **Something does not work?** See [troubleshooting](#troubleshooting).
-+
-+The snippets come from the [gRPC examples][examples]. Each example is a
-+complete program, and its README has the run commands and a `grpcurl`
-+session to try:
-+
-+| Example | What it shows |
-+| --- | --- |
-+| [grpc-helloworld][helloworld-example] | the smallest service, server and client |
-+| [grpc-custom-types][custom-types-example] | your own Rust types for message fields |
-+| [grpc-routing-client][routing-example] | a custom client transport that routes calls to different servers |
-+| [grpc-server][server-example] | all four kinds of methods, several services, a fallback, server tuning |
-+| [grpc-tls][tls-example] | gRPC over TLS with rustls |
-+
-+## Quick start: hello, gRPC
-+
-+The helloworld example is a greeting service with a single method. Clone the
-+examples repository and start the server:
-+
-+```sh
-+git clone https://github.com/ntex-rs/examples
-+cd examples/protocols/grpc-helloworld
-+cargo run --bin grpc-helloworld-server
-+```
-+
-+In a second terminal, call it:
-+
-+```sh
-+cargo run --bin grpc-helloworld-client -- ntex
-+```
-+
-+The client prints `Hello ntex!`. The server speaks standard gRPC, so other
-+tools can call it too. With [grpcurl] it looks like this:
-+
-+```sh
-+grpcurl -plaintext -proto helloworld.proto -d '{"name": "ntex"}' \
-+    127.0.0.1:50051 helloworld.Greeter/SayHello
-+```
-+
-+The whole service is a dozen lines:
-+
-+```rust,no_run
-+#[server(crate::helloworld::Greeter)]
-+impl GreeterServer {
-+    #[method(SayHello)]
-+    async fn say_hello(&self, req: HelloRequest) -> HelloReply {
-+        let name = if req.name.is_empty() { "world" } else { &req.name };
-+        HelloReply {
-+            message: format!("Hello {name}!").into(),
-+        }
-+    }
-+}
-+```
-+
-+and the client call is a few more:
-+
-+```rust,no_run
-+let client = connect(ADDR);
-+let msg = HelloRequest { name: "ntex".into() };
-+
-+let mut req = client.say_hello(&msg);
-+req.timeout(Duration::from_secs(3));
-+let reply = req.send().await?;
-+println!("{}", reply.message);
-+```
-+
-+`HelloRequest`, `HelloReply`, the `Greeter` service definition and the
-+`say_hello` client method all come from the generated file
-+`src/helloworld.rs`. The rest of the chapter explains where they come from
-+and how each part works.
-+
-+To use ntex-grpc in y
-```
-
-**File**: `docs/SUMMARY.md` (modified, +3/-1)
-```diff
-@@ -16,8 +16,10 @@
-   - [Extractors and Responders](8.4-web-app.md)
-   - [Error Handling](8.5-web-app.md)
-   - [WebSocket Support](8.6-web-app.md)
--- [Byte Buffers](9-bytes.md)
-+- [Protocols]()
-+  - [Building gRPC Services and Clients](11-grpc.md)
- - [Securing Connections with TLS](10-tls.md)
-+- [Byte Buffers](9-bytes.md)
- 
- # Migration
- 
-```
-
-**File**: `docs/index.md` (modified, +3/-1)
-```diff
-@@ -17,8 +17,10 @@ build web applications.
-   - [Extractors and Responders](./8.4-web-app.md)
-   - [Error Handling](./8.5-web-app.md)
-   - [WebSocket Support](./8.6-web-app.md)
--- [Byte Buffers](./9-bytes.md)
-+- Protocols
-+  - [Building gRPC Services and Clients](11-grpc.md)
- - [Securing Connections with TLS](./10-tls.md)
-+- [Byte Buffers](./9-bytes.md)
- 
- ## API reference
- 
-```
-
-**File**: `docs/llms.txt` (modified, +129/-5)
-```diff
-@@ -31,6 +31,14 @@ Rules for generated code:
+@@ -28,7 +28,7 @@ Rules for generated code:
+ - Service factories for `server::test_server`, `http::test::server`, and `web::test::server` take `async |_| service_or_app`, with `&()` as the argument. `server::TestServerBuilder::with(cfg, factory)` passes `&Cfg::State` to the service factory. State-initialization closures remain zero-argument: `async || Ok(state)`. Use the test server's address, not a fixed port.
+ - Client send/body errors do not automatically convert into `std::io::Error`. Use a concrete application error or `Result<_, Box<dyn std::error::Error>>` to preserve them with `?`. If only a message is needed, explicitly use `.map_err(|err| std::io::Error::other(err.to_string()))?`; this loses the original error and diagnostic context. Do not require `Send + Sync` on the boxed error: client errors can be worker-local.
+ - TLS belongs in connection setup, not protocol logic. Compose acceptors/connectors with services over `Io`; use generic filters, `seal()`, or `boxed()` to keep protocol code independent of TLS backends.
+-- HTTP clients use `openssl`, `rustls`, or `secure_connector` for HTTPS; `ClientBuilder::connector` configures unsecured connections. Supply verifying TLS configurations explicitly: the built-in OpenSSL HTTP-client default currently disables certificate verification.
++- HTTP clients use `openssl`, `rustls`, or `secure_connector` for HTTPS; `ClientBuilder::connector` configures unsecured connections. The built-in defaults verify certificates (OpenSSL: system trust store plus hostname; rustls: `webpki-roots`). Never disable verification with `SslVerifyMode::NONE` outside tests; trust private roots with `set_ca_file` instead.
+ - `WsClient` needs an explicit TLS connector even for `wss://`: use `openssl`, `rustls`, or `connector`, and offer HTTP/1.1 rather than h2. Server-side WebSocket handlers work unchanged behind an HTTPS listener.
  - Read peer certificates with `PeerCertDer` / `PeerCertChainDer`, then parse with `x509::PeerCerts`. Certificate presence or parsing is not trust verification or authorization. Schannel's `request_client_cert(true)` neither requires a certificate nor validates its trust; reject missing/untrusted identities before protected handling.
  - See the [TLS guide](https://docs.ntex.rs/10-tls.html) and [runnable TLS examples](https://github.com/ntex-rs/examples/tree/main/tls) for backend, component, identity, and mutual-authentication configuration.
- 
-+## Testing rules
-+
-+- Test the application the server runs. Register routes in `fn config(cfg: &mut web::ServiceConfig)` (or `&mut web::ServiceConfig<St>`), call `App::new().configure(config)` in both `main` and the tests, and keep tests in `#[cfg(test)] mod tests` at the bottom of the file.
-+- Prefer in-process tests: `web::test::init_service(App::new()...)` with `TestRequest` and `call_service` opens no socket. Use `init_service_st(state.clone(), App::<St>::new()...)` for stateful apps and keep a clone of shared handles to inspect state.
-+- Use a real server (`web::test::server`, `http::test::server`, `server::test_server`) only for WebSocket, streaming, client, TLS, or connection behavior; it binds an available port. Never use fixed ports, external services, or sleeps for synchronization.
-+- Test a `Service` directly with `Pipeline::new(state, service).call(req).await`. Test codecs and `Io` protocols in memory with `ntex::io::testing::IoTest`.
-+- Assert the status and the body; for failures, assert the status code a client sees. Use `read_body` for bytes and `read_response_json` for JSON.
-+
- ## Templates
- 
- Function service executed by a pipeline:
-@@ -277,11 +285,6 @@ Network test with `test_server` and `Client`:
- use ntex::client::Client;
- use ntex::http::{HttpService, Response};
- 
--/// STATEMENT: A test server serves an HTTP response to `Client`.
--///
--/// HOW:
--/// - Start a server on an available port with an async factory accepting unit state.
--/// - Send `GET /`, then check the status and body using `?` for client errors.
- #[ntex::test]
- async fn http_roundtrip() -> Result<(), Box<dyn std::error::Error>> {
-     let srv = ntex::server::test_server(async |_| {
-@@ -295,6 +298,127 @@ async fn http_roundtrip() -> Result<(), Box<dyn std::error::Error>> {
- }
- ```
- 
-+In-process route test that uses the application's config:
-+
-+```rust
-+use ntex::http::StatusCode;
-+use ntex::web::{self, App, HttpResponse, test};
-+use serde::{Deserialize, Serialize};
-+
-+#[derive(Debug, PartialEq, Serialize, Deserialize)]
-+struct User {
-+    name: String,
-+}
-+
-+async fn create(user: web::types::Json<User>) -> HttpResponse {
-+    HttpResponse::Created().json(&user.into_inner())
-+}
-+
-+pub fn config(cfg: &mut web::ServiceConfig) {
-+    cfg.route("/users", web::post().to(create));
-+}
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+
-+    #[ntex::test]
-+    async fn create_user() {
-+        let app = test::init_service(App::new().configure(config)).await;
-+
-+        let user = User { name: "alice".into() };
-+        let req = test::TestRequest::post().uri("/users").json(&user).to_request();
-+        let res = test::call_service(&app, req).await;
-+        assert_eq!(res.status(), StatusCode::CREATED);
-+        let body: User = serde_json::from_slice(&test::read_body(res).await).unwrap();
-+        assert_eq!(body, user);
-+
-+        let req = test::TestRequest::post().uri("/users").header("content-type", "application/json").payload("{").to_request();
-+        let res = test::call_service(&app, req).await;
-+        assert_eq!(res.status(), StatusCode::BAD_REQUEST);
-+    }
-+}
-+```
-+
-+Stateful route test (keep a clone of the shared handle to inspect state):
-+
-+```rust
-+use std::{cell::Cell, rc::Rc};
-+
-+use ntex::web::{self, App, AppState, test};
-+
-+type Hits = AppState<Rc<Cell<usize>>>;
-+
-+async fn hit(hits: &Hits, (): ()) -> String {
-+    hits.set(hits.get() + 1);
-+    hits.get().to_string()
-+}
-+
-+pub fn config(cfg: &mut web::ServiceConfig<Hits>) {
-+    cfg.route("/hit", web::post().to_with_state(hit));
-+}
-+
-+#[ntex::test]
-+async fn counts_hits() {
-+    let hits = Hits::default();
-+    let app = test::init_service_st(hits.clone(), App::<Hits>::new().configure(config)).await;
-+
-+    for expected in ["1", "2"] {
-+        let req = test::TestRequest::post().uri("/hit").to_request();
-+        let res = test::call_service(&app, req).await;
-+        assert!(res.status().is_success());
-+        assert_eq!(test::read_body(res).await, expected);
-+    }
-+    assert_eq!(hits.get(), 2);
-+}
-+```
-+
-+WebSocket test against a real test server:
-+
-+```rust
-+use ntex::util::Bytes;
-+use ntex::web::{self, App, HttpRequest, test, ws};
-+
-+async fn echo(frame: ws::Frame) -> Result<Option<ws::Message>, std::io::Error> {
-+    Ok(match frame {
-+        ws::Frame::Text(text) => Some(ws::Message::Text(String::from_utf8_lossy(&text).as_ref().into())),
-+        ws::Frame::Ping(msg) 
 ```
 
-**File**: `ntex/tests/llms_templates.rs` (modified, +144/-2)
+**File**: `ntex/CHANGES.md` (modified, +5/-0)
 ```diff
-@@ -211,6 +211,23 @@ mod tcp_server {
-         assert_eq!(io.recv(&BytesCodec).await?.unwrap(), "x");
-         Ok(())
-     }
+@@ -2,6 +2,11 @@
+ 
+ ## [4.7.0] - 2026-11-xx
+ 
++* Security: the default OpenSSL HTTP client (`Client::new()`, `ClientBuilder::new()`) now
++  verifies server certificates against the system trust store and checks the hostname;
++  previously it accepted any certificate. To trust a private root or a self-signed test
++  certificate, pass your own `SslConnector` to `ClientBuilder::openssl()`
 +
-+    use ntex::io::testing::IoTest;
-+
-+    /// STATEMENT: The in-memory protocol template echoes bytes through `echo` without sockets.
+ * Document that `HttpService` application and control factories are
+   instantiated per connection; build expensive or shared state per worker
+ 
+```
+
+**File**: `ntex/src/client/builder.rs` (modified, +17/-1)
+```diff
+@@ -36,6 +36,18 @@ impl Default for ClientBuilder<Identity> {
+ impl ClientBuilder<Identity> {
+     #[must_use]
+     /// Creates a client builder with default connectors.
 +    ///
-+    /// HOW:
-+    /// - Create an `IoTest` pair and run `echo` on the server side.
-+    /// - Write `ping` from the client side and assert the same bytes are read back.
-+    #[ntex::test]
-+    async fn echo_in_memory() {
-+        let (client, server) = IoTest::create();
-+        client.remote_buffer_cap(1024);
-+        let _task = ntex::rt::spawn(echo(Io::from(server)));
-+
-+        client.write(b"ping");
-+        assert_eq!(client.read().await.unwrap(), b"ping"[..]);
-+    }
- }
++    /// # TLS defaults
++    ///
++    /// With the `openssl` feature enabled (it takes precedence over `rustls`),
++    /// HTTPS connections verify the peer certificate against OpenSSL's default
++    /// trust store (the system roots) and check that it matches the request
++    /// host. With only the `rustls` feature, peers are verified against the
++    /// bundled `webpki-roots`. Without either feature, HTTPS is unavailable.
++    ///
++    /// To trust private roots, or to skip verification for testing, pass your
++    /// own configuration to [`openssl`](Self::openssl),
++    /// [`rustls`](Self::rustls) or [`secure_connector`](Self::secure_connector).
+     pub fn new() -> Self {
+         let svc = ConnectorPipeline::new(
+             apply_fn(TcpConnector::new(), async move |msg: Connect, svc| {
+@@ -59,7 +71,6 @@ impl ClientBuilder<Identity> {
+             let _ = ssl
+                 .set_alpn_protos(b"\x02h2\x08http/1.1")
+                 .map_err(|e| log::error!("Cannot set ALPN protocol: {e:?}"));
+-            ssl.set_verify(tls_openssl::ssl::SslVerifyMode::NONE);
  
- #[rustfmt::skip]
-@@ -309,6 +326,126 @@ mod http_client {
+             builder.openssl(ssl.build())
+         }
+@@ -89,6 +100,11 @@ impl<M> ClientBuilder<M> {
+     #[must_use]
+     #[cfg(feature = "openssl")]
+     /// Uses an OpenSSL connector for secure connections.
++    ///
++    /// The connector's verification settings are used as given. Hostname
++    /// verification follows the connector's `configure()` defaults, so it is
++    /// enabled unless `set_verify(SslVerifyMode::NONE)` disables verification
++    /// altogether.
+     pub fn openssl(self, config: OpensslConnector) -> Self {
+         use crate::connect::openssl::SslConnector;
+ 
+```
+
+**File**: `ntex/src/client/mod.rs` (modified, +3/-0)
+```diff
+@@ -108,6 +108,9 @@ impl Default for Client {
+ 
+ impl Client {
+     /// Creates a client with default settings.
++    ///
++    /// HTTPS peers are verified by default; see the TLS defaults of
++    /// [`ClientBuilder::new`].
+     pub fn new() -> Client {
+         ClientBuilder::new().build(SharedCfg::default())
      }
+```
+
+**File**: `ntex/tests/http_client_openssl.rs` (modified, +107/-0)
+```diff
+@@ -400,3 +400,110 @@ async fn test_h2_request_body_dropped_after_response_is_reset() {
+     .await
+     .expect("request body upload is not stopped");
  }
- 
-+#[rustfmt::skip]
-+mod route_test {
-+    use ntex::http::StatusCode;
-+    use ntex::web::{self, App, HttpResponse, test};
-+    use serde::{Deserialize, Serialize};
 +
-+    #[derive(Debug, PartialEq, Serialize, Deserialize)]
-+    struct User {
-+        name: String,
-+    }
-+
-+    async fn create(user: web::types::Json<User>) -> HttpResponse {
-+        HttpResponse::Created().json(&user.into_inner())
-+    }
-+
-+    pub fn config(cfg: &mut web::ServiceConfig) {
-+        cfg.route("/users", web::post().to(create));
-+    }
-+
-+    #[cfg(test)]
-+    mod tests {
-+        use super::*;
-+
-+        /// STATEMENT: The route-test template exercises the shared `config` in process.
-+        ///
-+        /// HOW:
-+        /// - Build the app with `init_service(App::new().configure(config))`.
-+        /// - Post a JSON user and assert `201 Created` with the same user in the body.
-+        /// - Post an invalid JSON body and assert `400 Bad Request`.
-+        #[ntex::test]
-+        async fn create_user() {
-+            let app = test::init_service(App::new().configure(config)).await;
-+
-+            let user = User { name: "alice".into() };
-+            let req = test::TestRequest::post().uri("/users").json(&user).to_request();
-+            let res = test::call_service(&app, req).await;
-+            assert_eq!(res.status(), StatusCode::CREATED);
-+            let body: User = serde_json::from_slice(&test::read_body(res).await).unwrap();
-+            assert_eq!(body, user);
-+
-+            let req = test::TestRequest::post().uri("/users").header("content-type", "application/json").payload("{").to_request();
-+            let res = test::call_service(&app, req).await;
-+            assert_eq!(res.status(), StatusCode::BAD_REQUEST);
-+        }
-+    }
++fn verify_server() -> http::test::TestServer {
++    test_server(async |_| {
++        http::openssl(
++            ssl_acceptor(),
++            HttpService::h2(
++                App::new().service(web::resource("/").route(web::to(async || HttpResponse::Ok()))),
++            ),
++        )
++    })
 +}
 +
-+#[rustfmt::skip]
-+mod stateful_route_test {
-+    use std::{cell::Cell, rc::Rc};
-+
-+    use ntex::web::{self, App, AppState, test};
-+
-+    type Hits = AppState<Rc<Cell<usize>>>;
-+
-+    async fn hit(hits: &Hits, (): ()) -> String {
-+        hits.set(hits.get() + 1);
-+        hits.get().to_string()
-+    }
-+
-+    pub fn config(cfg: &mut web::ServiceConfig<Hits>) {
-+        cfg.route("/hit", web::post().to_with_state(hit));
-+    }
-+
-+    /// STATEMENT: The stateful route-test template observes handler changes through a
-+    /// cloned state handle.
-+    ///
-+    /// HOW:
-+    /// - Build the app with `init_service_st` and a clone of the `Rc` counter.
-+    /// - Post twice and assert success with bodies `1` and `2`.
-+    /// - Assert the test's own handle reads `2`.
-+    #[ntex::test]
-+    async fn counts_hits() {
-+        let hits = Hits::default();
-+        let app = test::init_service_st(hits.clone(), App::<Hits>::new().configure(config)).await;
-+
-+        for expected in ["1", "2"] {
-+            let req = test::TestRequest::post().uri("/hit").to_request();
-+            let res = test::call_service(&app, req).await;
-+            assert!(res.status().is_success());
-+            assert_eq!(test::read_body(res).await, expected);
-+        }
-+        assert_eq!(hits.get(), 2);
-+    }
++/// Connector that trusts the self-signed test certificate (`CN=www.example.com`).
++fn trusting_connector() -> SslConnector {
++    let mut builder = SslConnector::builder(SslMethod::tls()).unwrap();
++    builder.set_ca_file("./tests/cert.pem").unwrap();
++    builder.set_alpn_protos(b"\x02h2\x08http/1.1").unwrap();
++    builder.build()
 +}
 +
-+#[rustfmt::skip]
-+mod websocket_test {
-+    use ntex::util::Bytes;
-+    use ntex::web::{self, App, HttpRequest, test, ws};
++/// STATEMENT: The default OpenSSL HTTP client verifies peer certificates and
++/// rejects an untrusted one.
++///
++/// HOW:
++/// - Serve HTTPS with the self-signed test certificate.
++/// - Send a request with `Client::new()` and assert it fails with a certificate
++///   verification error.
++#[ntex::test]
++async fn test_default_client_rejects_untrusted_certificate() {
++    let srv = verify_server();
 +
-+    async fn echo(frame: ws::Frame) -> Result<Option<ws::Message>, std::io::Error> {
-+        Ok(match frame {
-+            ws::Frame::Text(text) => Some(ws::Message::Text(String::from_utf8_lossy(&text).as_ref().into())),
-+            ws::Frame::Ping(msg) => Some(ws::Message::Pong(msg)),
-+            ws::Frame::Close(reason) => Some(ws::Message::Close(reason)),
-+            _ => None,
-+        })
++    let err = Client::new().get(srv.surl("/")).send().await.unwrap_err();
++    assert!(
++        format!("{err:?}").contains("certificate verify failed"),
++        "{err:?}"
++    );
++}
++
++/// STATEMENT: An OpenSSL client that trusts the peer's certificate connects
++/// when the request host matches it.
++///
++/// HOW:
++/// - Trust the self-signed test certificate as a root.
++/// - Request `https://www.example.com` routed to the test server with
++///   `address()` and assert a successful HTTP/2 response.
++#[ntex::test]
++async fn test_trusted_peer_is_verified() {
++    let srv = verify_server();
++    let client = Client::builder()
++        .openssl(trusting_connector())
++        .build(SharedCfg::default());
++
++    let url = format!("https://www.example.com:{}/", srv.addr().port());
++    let response = client.get(url).address(srv.addr()).send().await.unwrap();
++    assert!(response.status().is_success());
++    assert_eq!(response.version(), Version::HTTP_2);
++}
++
++/// STATEMENT: An OpenSSL client rejects a trusted certificate issued for a
++/// different host.
++///
++/// HOW:
++/// - Trust the self-signed `www.example.com` test certificate as a root.
++/// - Request `https://localhost` on the test server and assert it fails with a
++///   certificate verification error.
++#[ntex::test]
++async fn test_hostname_mismatch_is_rejected() {
++    let srv = verify_server();
++    let client = Client::builder()
++        .openssl(trusting_connector())
++        .build(SharedCfg::default());
++
++    let url = format!("https://localhost:{}/", srv.addr().port());
++    let err = client
++        .get(url)
++        .address(srv.addr())
++        .send()
++        .await
++        .unwrap_err();
++    assert!(
++        format!("{err:?}").contains("certificate verify failed"),
++        "{err:?}"
++    );
++}
++
++/// STATEMENT: Certificate verification is skipped only through an explicitly
++/// insecure connector.
++///
++/// HOW:
++/// - Build a connector with `SslVerifyMode::NONE` and pass it to
++///   `ClientBuilder::openssl`.
++/// - Request the self-signed test server through a mismatched host and assert
++///   success.
++#[ntex::test]
++async fn test_explicit_insecure_connector() {
++    let srv = verify_server();
++    let mut builder = SslConnector::builder(SslMethod::tls()).unwrap();
++    builder.set_verify(SslVerifyMode::NONE);
++    builder.set_alpn_protos(b"\x02h2\x08http/1.1").unwrap();
++    let client = Client::builder()
++        .openssl(builder.build())
++        .build(SharedCfg::default());
++
++    let url = format!("https://localhost:{}/", srv.addr().port());
++    let response = client.get(url).address(srv.addr()).send().await.unwrap();
++    assert!(response.status().is_success());
++}
+```
+
+---
+
+### Incident Patch 2: `771e089b` (2026-11-09)
+**Commit Message**: Fix urly escape normalization
+
+* Requoting decodes only unreserved escapes (`A-Z a-z 0-9 - . _ ~`); escapes of
+  reserved characters such as `%2F` and `%3B` are kept, so decoding can no longer
+  change how a path or query is split
+
+* Normalization removes the scheme's default port, so `https://h:443/` and
+  `https://h/` are equal. `Url::parse_target()` keeps the port as received
+
+* `Url::push_segments()` and `Url / segment` resolve `.` and `..` only within the
+  appended segments, so they can no longer escape the base path
+
+**File**: `Cargo.toml` (modified, +1/-1)
+```diff
+@@ -64,7 +64,7 @@ ntex-server = "4.5.0"
+ ntex-service = "5.8.0"
+ ntex-tls = "4.8.0"
+ ntex-util = "4.9.0"
+-urly = "1.2.2"
++urly = "1.3.0"
+ 
+ ntex-io-uring = "1.0.0"
+ ntex-httparse = "2.3.0"
+```
+
+**File**: `ntex/CHANGES.md` (modified, +4/-0)
+```diff
+@@ -2,6 +2,10 @@
+ 
+ ## [4.7.0] - 2026-11-xx
+ 
++* With request-target normalization enabled, absolute-form targets lose the
++  scheme's default port (`https://h:443/` becomes `https://h/`) and escapes of
++  reserved characters such as `%3B` are no longer decoded (urly 1.3.0)
++
+ * `middleware::DefaultHeaders` no longer implements `Clone`, and configuring it
+   after creating a middleware from it no longer panics. A header set several
+   times now emits all its values when the response lacks that name; previously
+```
+
+**File**: `ntex/src/http/h1/decoder.rs` (modified, +1/-1)
+```diff
+@@ -1507,7 +1507,7 @@ mod tests {
+         assert!(reader.decode(&mut buf).unwrap().is_none());
+         buf.extend_from_slice(b"%74est?q=%7e HTTP/1.1\r\n\r\n");
+         let (req, _) = reader.decode(&mut buf).unwrap().unwrap();
+-        assert_eq!(req.uri().as_str(), "https://example.com:443/test?q=~");
++        assert_eq!(req.uri().as_str(), "https://example.com/test?q=~");
+ 
+         let target = format!("/{}", "[".repeat(22000));
+         let mut buf = BytesMut::from(format!("GET {target} HTTP/1.1\r\n\r\n").as_str());
+```
+
+**File**: `ntex/tests/http_server.rs` (modified, +1/-1)
+```diff
+@@ -167,7 +167,7 @@ async fn test_h1_request_target_normalization() {
+                         .filter(async move |req: WebRequest<()>| {
+                             assert_eq!(req.uri().path_and_query(), expected);
+                             if req.uri().authority().is_some() {
+-                                assert_eq!(req.connection_info().host(), "example.com:443");
++                                assert_eq!(req.connection_info().host(), "example.com");
+                                 assert_eq!(req.connection_info().scheme(), "https");
+                             }
+                             Ok::<_, Infallible>(req)
+```
+
+**File**: `urly/CHANGES.md` (modified, +11/-1)
+```diff
+@@ -1,6 +1,16 @@
+ # Changes
+ 
+-## [1.2.2] - 2026-11-09
++## [1.3.0] - 2026-11-xx
++
++* Requoting decodes only unreserved escapes (`A-Z a-z 0-9 - . _ ~`); escapes of
++  reserved characters such as `%2F` and `%3B` are kept, so decoding can no longer
++  change how a path or query is split
++
++* Normalization removes the scheme's default port, so `https://h:443/` and
++  `https://h/` are equal. `Url::parse_target()` keeps the port as received
++
++* `Url::push_segments()` and `Url / segment` resolve `.` and `..` only within the
++  appended segments, so they can no longer escape the base path
+ 
+ * Return `ErrorKind::TooLong` from `Builder::build` instead of panicking when
+   the path, query or fragment makes the URL longer than 65535 bytes
+```
+
+**File**: `urly/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ name = "urly"
+-version = "1.2.2"
++version = "1.3.0"
+ authors = ["ntex contributors <team@ntex.rs>"]
+ description = "Yet another URL library"
+ keywords = ["ntex", "url", "uri"]
+```
+
+**File**: `urly/README.md` (modified, +2/-1)
+```diff
+@@ -65,7 +65,8 @@ URL is normalized and parsing a normalized URL returns it unchanged:
+ 
+ * valid `%XX` escapes are kept and their hex digits are uppercased
+ * escapes of unreserved characters (`A-Z a-z 0-9 - . _ ~`) are decoded
+-* `%2F` in a path is kept encoded, so it doesn't become a path separator
++* escapes of reserved characters are kept, so `%2F` in a path doesn't become a
++  path separator and `%3B` doesn't become `;`
+ * any other character that isn't allowed in the component is percent-encoded,
+   including non-ASCII characters (as UTF-8) and a `%` that doesn't start a
+   valid escape
+```
+
+**File**: `urly/src/builder.rs` (modified, +1/-1)
+```diff
+@@ -26,7 +26,7 @@ use crate::{parse, path::PathAndQuery, query::Fragment, scheme::Scheme, url::Url
+ /// assert_eq!(url, "https://user:p%40ss@example.com:8443/search?q=a+b#top");
+ ///
+ /// let url = urly::Builder::from(url).port(443).fragment("").build().unwrap();
+-/// assert_eq!(url, "https://user:p%40ss@example.com:443/search?q=a+b#");
++/// assert_eq!(url, "https://user:p%40ss@example.com/search?q=a+b#");
+ /// ```
+ #[derive(Debug, Default, Clone)]
+ pub struct Builder {
+```
+
+---
+
+### Incident Patch 3: `d9083a18` (2026-11-09)
+**Commit Message**: Fix client dropping header values when merging
+
+every value of a multi-value `ClientConfig::set_header()` default is now sent (previously
+only the first), and `ClientRequest::cookie()` merges all raw `Cookie`
+headers into the single `Cookie` header instead of keeping only the first
+
+**File**: `ntex/CHANGES.md` (modified, +5/-0)
+```diff
+@@ -12,6 +12,11 @@
+   with another address (or none) no longer reuses a connection to a
+   different server
+ 
++* Fix client dropping header values when merging: every value of a
++  multi-value `ClientConfig::set_header()` default is now sent (previously
++  only the first), and `ClientRequest::cookie()` merges all raw `Cookie`
++  headers into the single `Cookie` header instead of keeping only the first
++
+ * HTTP/1 client requests now honor settings that were silently ignored:
+   `version(Version::HTTP_10)` is sent as `HTTP/1.0` (other versions are sent
+   as `HTTP/1.1`; HTTP/2 connections always use `HTTP/2`); the `close`,
+```
+
+**File**: `ntex/src/client/cfg.rs` (modified, +4/-1)
+```diff
+@@ -263,7 +263,10 @@ impl ClientConfig {
+ 
+     /// Adds a header to every request.
+     ///
+-    /// A request-specific header with the same name takes precedence.
++    /// Repeated calls with the same name add values; every value is sent. A
++    /// request replaces the default values with
++    /// [`ClientRequest::set_header()`](super::ClientRequest::set_header), while
++    /// [`ClientRequest::header()`](super::ClientRequest::header) appends to them.
+     pub fn set_header<K, V>(mut self, key: K, value: V) -> Result<Self, HttpError>
+     where
+         HeaderName: TryFrom<K>,
+```
+
+**File**: `ntex/src/client/mod.rs` (modified, +2/-1)
+```diff
+@@ -147,8 +147,9 @@ impl Client {
+         <Url as TryFrom<U>>::Error: Into<InvalidUrl>,
+     {
+         let mut req = ClientRequest::new(method, url, self.cfg.clone(), self.svc.bind());
++        // the request has no headers yet, every value of a multi-value default is copied
+         for (key, value) in self.cfg.headers() {
+-            req = req.set_header_if_none(key.clone(), value.clone());
++            req.headers_mut().append(key.clone(), value.clone());
+         }
+         req
+     }
+```
+
+**File**: `ntex/src/client/request.rs` (modified, +49/-6)
+```diff
+@@ -330,6 +330,9 @@ impl ClientRequest {
+     #[cfg(feature = "cookie")]
+     /// Set a cookie.
+     ///
++    /// When the request is sent, all cookies and every raw `Cookie` header
++    /// value are merged into a single `Cookie` header.
++    ///
+     /// ```rust
+     /// use coo_kie as cookie;
+     /// use ntex::client::Client;
+@@ -504,15 +507,20 @@ impl ClientRequest {
+             None => return Err(ClientError::from(InvalidUrl::MissingScheme).into()),
+         }
+ 
+-        // set cookies, appended to an existing `Cookie` header
++        // set cookies, merged with all existing `Cookie` headers into a single header
+         #[cfg(feature = "cookie")]
+         {
+             if let Some(ref jar) = self.cookies {
+                 let headers = &mut self.request.head.headers;
+-                let mut cookie = headers
+-                    .get(header::COOKIE)
+-                    .map(|v| v.as_bytes().to_vec())
+-                    .unwrap_or_default();
++                let mut cookie = Vec::new();
++                for v in headers.get_all(header::COOKIE) {
++                    if !v.is_empty() {
++                        if !cookie.is_empty() {
++                            cookie.extend_from_slice(b"; ");
++                        }
++                        cookie.extend_from_slice(v.as_bytes());
++                    }
++                }
+                 for c in jar.iter() {
+                     crate::http::helpers::push_cookie(&mut cookie, c.name(), c.value());
+                 }
+@@ -622,10 +630,11 @@ mod tests {
+         let _ = req.send_body("").await;
+     }
+ 
+-    /// STATEMENT: Request cookies combine with one another and extend a preexisting cookie header.
++    /// STATEMENT: Request cookies combine with one another and with every preexisting `Cookie` header into a single header.
+     ///
+     /// HOW:
+     /// - Prepare requests with two builder cookies and with a raw header plus one cookie, then compare header entries.
++    /// - Add three raw `Cookie` headers, one empty, plus a builder cookie, and check that a single header joins all non-empty values in order.
+     #[cfg(feature = "cookie")]
+     #[crate::rt_test]
+     async fn cookies_extend_cookie_header() {
+@@ -651,6 +660,40 @@ mod tests {
+             .header(header::COOKIE, "c0=v0")
+             .cookie(Cookie::build(("c1", "v1")));
+         assert_eq!(cookie_header(&mut req), "c0=v0; c1=v1");
++
++        let mut req = Client::new()
++            .get("http://localhost/")
++            .header(header::COOKIE, "a=1")
++            .header(header::COOKIE, "")
++            .header(header::COOKIE, "b=2; c=3")
++            .cookie(Cookie::build(("c1", "v1")));
++        assert_eq!(cookie_header(&mut req), "a=1; b=2; c=3; c1=v1");
++        assert_eq!(req.headers().get_all(header::COOKIE).count(), 1);
 +    }
 +
-+    async fn socket(req: HttpRequest) {
-+        let _ = ws::start(&req, None, echo).await;
-+    }
-+
-+    /// STATEMENT: The WebSocket test template echoes a text frame over a real connection.
++    /// STATEMENT: Every value of a multi-value client default header is copied into new requests.
 +    ///
 +    /// HOW:
-+    /// - Start the app with `web::test::server` and connect with `ws_at("/ws")`.
-+    /// - Send a `hello` text message and assert the same text frame is received.
-+    #[ntex::test]
-+    async fn ws_echo() -> Result<(), Box<dyn std::error::Error>> {
-+        let srv = test::server(async |_| App::new().route("/ws", web::get().to(socket)));
-+        let (i
++    /// - Configure two default `Accept` values and check that a new request carries both, in order.
++    /// - Replace them with `set_header` and check that only the request value remains.
++    #[crate::rt_test]
++    async fn test_client_multi_value_default_header() {
++        let client = Client::builder().build(
++            SharedCfg::new("H").add(
++                ClientConfig::new()
++                    .set_header(header::ACCEPT, "text/html")
++                    .unwrap()
++                    .set_header(header::ACCEPT, "text/plain")
++                    .unwrap(),
++            ),
++        );
++        let req = client.get("/");
++        let accept: Vec<_> = req.headers().get_all(header::ACCEPT).collect();
++        assert_eq!(accept, ["text/html", "text/plain"]);
++
++        let req = client.get("/").set_header(header::ACCEPT, "*/*");
++        let accept: Vec<_> = req.headers().get_all(header::ACCEPT).collect();
++        assert_eq!(accept, ["*/*"]);
+     }
+ 
+     /// STATEMENT: Client-wide default headers are copied into new requests.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1184** (2026-11-05): Add framework guide page on http client (@fafhrd91)
-- **PR #1183** (2026-11-05): Add framework guide page on timers (@fafhrd91)
-- **PR #1182** (2026-11-04): Add grpc framework guide (@fafhrd91)
-- **PR #1181** (2026-11-04): Add a section on TLS support to the framework guide (@fafhrd91)
-- **PR #1180** (2026-11-04): Various improvements for llms (@fafhrd91)
-- **PR #1179** (2026-11-03): Use native CNG (`BCrypt`) hashing on Windows and drop the `symcrypt` dependency (@fafhrd91)
+- **PR #1199** (2026-11-09): Add bytes storage cache fallback (@fafhrd91)
+- **PR #1198** (2026-11-09): More api fixes (@fafhrd91)
+- **PR #1197** (2026-11-09): Add `Ordered` service (@fafhrd91)
+- **PR #1196** (2026-11-09): Various api consistency fixes (@fafhrd91)
+- **PR #1195** (2026-11-07): Update server version (@fafhrd91)
+- **PR #1194** (2026-11-07): Allow to spawn multiple accept threads (@fafhrd91)
 
 ---
 
@@ -3009,64 +2774,33 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add framework guide page on http client
+## X. Default OpenSSL HTTP client (`Client::new()`, `ClientBuilder::new()`) now verifi
 
 **RULE**:
-When implementing operations in `docs/13-client.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ntex-rs/ntex. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/10-tls.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ntex-rs/ntex. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0b7efd36`: Add framework guide page on http client. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9eb2d0e0`: Default OpenSSL HTTP client (`Client::new()`, `ClientBuilder::new()`) now verifies server certificates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/13-client.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/10-tls.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# Making HTTP Requests
-
-Very few services live alone. Sooner or later yours will need to talk to a
-payment provider, an internal API, an object store, or someone's webhook.
-`ntex::client` is the tool for that job.
-
-If you have built a server with ntex, the client will feel familiar. It is
-made of the same pieces: [services](1-service.md), the
-[I/O layer](7-io.md), and shared configuration. It speaks HTTP/1.1 and HTTP/2,
-keeps connections open and reuses them, and supports TLS through OpenSSL or
-rustls. Optional features add response decompression and cookies, and
-middleware lets you hook your own logic into every request.
-
-Making a request comes down to three steps: build it, send it, and read what
-comes back.
-
-```rust,no_run
-use ntex::client::Client;
-
-#[ntex::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let client = Client::new();
-
-    let response = client
-        .get("http://127.0.0.1:8080/")
-        .header("user-agent", "ntex-guide")
-        .send()
-        .await?;
-
-    println!("status: {}", response.status());
-    let body = response.body().await?;
-    println!("body: {}", String::from_utf8_lossy(&body));
-    Ok(())
-}
-```
-
-That is all you need for 
+The built-in default OpenSSL connector verifies server certificates against
+OpenSSL's default trust store (the system roots) and checks the request host.
+To trust a private root, supply your own configuration, such as the OpenSSL
+configuration above.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+> **Configure verification explicitly.** The built-in default OpenSSL HTTP
+> connector currently disables certificate verification. Supply a verifying
+> configuration, such as the OpenSSL configuration above, instead.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0b7efd36` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9eb2d0e0` are properly handled with clean fallback behavior.

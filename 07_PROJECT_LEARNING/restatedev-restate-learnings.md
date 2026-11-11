@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/restatedev-restate-learnings.md`  
 > **Source**: github ([https://github.com/restatedev/restate](https://github.com/restatedev/restate))  
-> **Source Version**: `9886a813`  
+> **Source Version**: `4733a867`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T13:27:02.709Z  
+> **Timestamp**: 2026-11-10T01:46:25.396Z  
 > **Learning ID**: `learn-github-restatedev-restate`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/restatedev-restate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/restatedev/restate](https://github.com/restatedev/restate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T13:27:02.571Z  
+> **Harvest Timestamp**: 2026-11-10T01:41:23.170Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Restate is the platform for building resilient applications that tolerate all infrastructure faults w/o the need for a PhD.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4665 stars
+- **Stars / Engagement**: 4684 stars
 
 ---
 
@@ -1634,111 +1634,41 @@ async fn list(env: &CliEnv, opts: &List) -> Result<()> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `49053364` (2026-11-02)
-**Commit Message**: [release] Document the hotfix release process
+### Incident Patch 1: `edcaf8be` (2026-11-09)
+**Commit Message**: [Bifrost] Let read stream counters wrap the same way in every build
 
-A hotfix of vX.Y.Z is the SemVer pre-release X.Y.Z-hotfix.N, built from a
-hotfix/X.Y.Z-hotfix.N branch cut from the release tag. Pushing the tag
-vX.Y.Z-hotfix.N publishes it through release.yml like a release
-candidate; an image-only hotfix is a manual Docker build of the branch
-without a tag. The pre-release label keeps hotfixes off "latest" in every
-channel, while still passing the X.Y.Z-dev feature gates.
+records_read and bytes_read used plain additions, which wrap in release
+builds and panic on overflow in debug and test builds. They now wrap at
+2^64 in every build, like the partitions' byte offsets. A stream would
+need to read 16 EiB to get there, so this only makes the behavior
+explicit.
 
-Also list the CI trigger for hotfix/* branches.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-[release] Shorten the hotfix runbook
-
-Keep the general process and leave out details that were specific to the
-v1.8.1-hotfix.2 release.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `docs/dev/README.md` (modified, +2/-0)
+**File**: `crates/bifrost/src/read_stream.rs` (modified, +5/-3)
 ```diff
-@@ -16,4 +16,6 @@ This directory contains documentation relevant for Restate developers.
+@@ -527,9 +527,11 @@ impl Stream for LogReadStream {
+                                     // record and fast-forward.
+                                     continue;
+                                 }
+-                                *this.records_read += 1;
+-                                *this.bytes_read +=
+-                                    data_record.encoded_body_size().unwrap_or_default() as u64;
++                                // Wrap at 2^64 the same way in every build.
++                                *this.records_read = this.records_read.wrapping_add(1);
++                                *this.bytes_read = this.bytes_read.wrapping_add(
++                                    data_record.encoded_body_size().unwrap_or_default() as u64,
++                                );
+                             }
  
- [release-testing.md](release-testing.md) contains the release testing checklist and process for testing before a major/minor release.
- 
-+[hotfix.md](hotfix.md) explains how to release a hotfix of a released version.
-+
- [bilrost-migration-guidelines](bilrost-migration-guidelines.md) guidelines on how to create bilrost messages and how to migrate current serde messages to bilrost without breaking compatibility
-\ No newline at end of file
-```
-
-**File**: `docs/dev/build-and-ci.md` (modified, +1/-1)
-```diff
-@@ -112,7 +112,7 @@ The dev-tools image is versioned and pinned in consuming workflows. When updatin
- 
- ### Main CI Pipeline (`ci.yml`)
- 
--Triggered on: PRs, pushes to `main` and `release/*` branches, and as part of releases. Existing `release-*` maintenance branches remain supported during the naming transition.
-+Triggered on: PRs, pushes to `main`, `release/*`, and `hotfix/*` branches, and as part of releases. Existing `release-*` maintenance branches remain supported during the naming transition.
- 
- `ci.yml` is maintained directly. Cargo-dist generates `release.yml`, which calls `ci.yml` through the `local-artifacts-jobs = ["./ci", ...]` configuration in `dist-workspace.toml`.
- 
-```
-
-**File**: `docs/dev/hotfix.md` (added, +34/-0)
-```diff
-@@ -0,0 +1,34 @@
-+# Hotfix Releases
-+
-+Prefer a regular patch release that follows the [release process](release.md). Use a hotfix when users need fixes on top of a released version `vX.Y.Z` before the next patch release is available.
-+
-+A hotfix is released as the SemVer pre-release `X.Y.Z-hotfix.N`, so it never becomes the latest release. Don't use `X.Y.Z+hotfix.N`: npm and Docker can't publish build metadata as a separate version, and the release tooling would treat the hotfix as a stable release. As a pre-release, a hotfix still passes the `X.Y.Z-dev` feature gates, so it can enable every feature of `X.Y.Z`.
-+
-+## Naming
-+
-+| Item | Name |
-+| --- | --- |
-+| Branch | `hotfix/X.Y.Z-hotfix.N` |
-+| Cargo and Helm version | `X.Y.Z-hotfix.N` |
-+| Git tag | `vX.Y.Z-hotfix.N` |
-+
-+Use the next unused `N` for every hotfix of the same release.
-+
-+## Releasing a hotfix
-+
-+1. Create `hotfix/X.Y.Z-hotfix.N` from `vX.Y.Z` and cherry-pick the fixes with `git cherry-pick -x`.
-+1. Set the version to `X.Y.Z-hotfix.N` in [/Cargo.toml](/Cargo.toml) and [charts/restate-helm/Chart.yaml](/charts/restate-helm/Chart.yaml), run `cargo check` to update [Cargo.lock](/Cargo.lock), and commit.
-+1. Push the branch. CI runs on the push.
-+1. Tag the tested commit as `vX.Y.Z-hotfix.N` and push the tag. The [release.yml](/.github/workflows/release.yml) workflow publishes the hotfix like a release candidate: a GitHub pre-release with binaries, Docker images, npm packages (dist-tag `next`), and the Helm chart. Homebrew is skipped.
-+1. Verify that the artifacts are available and add the list of fixes to the description of the GitHub release.
-+1. Include the fixes in the next regular patch release.
-+
-+## Image-only hotfix
-+
-+To ship only a GHCR image, prepare the branch the same way but don't push a tag, since any tag containing `X.Y.Z` starts the full release. Instead, run the `Build Docker image` workflow on the branch:
-+
-+```sh
-+gh workflow run docker.yml --repo restatedev/restate --ref hotfix/X.Y.Z-hotfix.N
-+```
-+
-+The image is pushed as `ghcr.io/restatedev/restate:hotfix-X.Y.Z-hotfix.N`. Give users its digest and keep the branch, which is the only reference to the image's source.
-```
-
-**File**: `docs/dev/release.md` (modified, +2/-0)
-```diff
-@@ -24,6 +24,8 @@ Runtime and SDKs follow independent artifact versioning. Restate server and SDK
- 
- Use `release/X.Y` for release branches across repositories (for example, `release/1.8`). Keep patch and release-candidate versions in tags.
- 
-+When users need fixes on top of a released version before the next patch release, release a hotfix `X.Y.Z-hotfix.N` from a `hotfix/X.Y.Z-hotfix.N` branch, following the [hotfix process](hotfix.md).
-+
- ## Pre-release
- 
- Before releasing, make sure all the issues tagged with release-blocker have either been solved, or PRs are ready to solve them:
+                             update_shared_state(&this);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5763** (2026-11-05): Enable serde_json preserve_order explicitly (@AhmedSoliman)
-- **PR #5762** (2026-11-05): Bump bilrost to 0.1016.3 (@AhmedSoliman)
-- **PR #5760** (2026-11-05): Bump networking and TLS dependencies (@AhmedSoliman)
-- **PR #5759** (2026-11-05): Bump Arrow to 59.3.2 and DataFusion to 55.2.0 (@AhmedSoliman)
-- **PR #5757** (closed): Enable serde_json preserve_order explicitly (@AhmedSoliman)
-- **PR #5756** (2026-11-05): Bump zstd 0.13 to 0.13.4, drop RUSTSEC-2026-0391 ignore (@AhmedSoliman)
+- **PR #5792** (2026-11-09): [restatectl] Show who reads each log and how many bytes per second (@AhmedSoliman)
+- **PR #5791** (2026-11-09): [Bifrost] Let read stream counters wrap the same way in every build (@AhmedSoliman)
+- **PR #5790** (2026-11-09): [Bifrost] Let read stream owners name their streams and show their role (@AhmedSoliman)
+- **PR #5788** (2026-11-09): [Bifrost] Count the records and bytes each read stream delivers (@AhmedSoliman)
+- **PR #5787** (2026-11-09): [worker] Let max-command-batch-bytes bound the committed write batch (@AhmedSoliman)
+- **PR #5786** (2026-11-09): [worker] Add a histogram of partition processor write batch sizes (@AhmedSoliman)
 
 ---
 
@@ -1758,29 +1688,34 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [release] Document the hotfix release process
+## X. [Bifrost] Let read stream counters wrap the same way in every build
 
 **RULE**:
-When implementing operations in `docs/dev/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in restatedev/restate. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/bifrost/src/read_stream.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in restatedev/restate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `49053364`: [release] Document the hotfix release process. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `edcaf8be`: [Bifrost] Let read stream counters wrap the same way in every build. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/dev/README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/bifrost/src/read_stream.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-[hotfix.md](hotfix.md) explains how to release a hotfix of a released version.
-
+                                // Wrap at 2^64 the same way in every build.
+                                *this.records_read = this.records_read.wrapping_add(1);
+                                *this.bytes_read = this.bytes_read.wrapping_add(
+                                    data_record.encoded_body_size().unwrap_or_default() as u64,
+                                );
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+                                *this.records_read += 1;
+                                *this.bytes_read +=
+                                    data_record.encoded_body_size().unwrap_or_default() as u64;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `49053364` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `edcaf8be` are properly handled with clean fallback behavior.

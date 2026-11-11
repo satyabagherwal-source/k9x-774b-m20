@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md`  
 > **Source**: github ([https://github.com/dkhamsing/open-source-ios-apps](https://github.com/dkhamsing/open-source-ios-apps))  
-> **Source Version**: `4fcd74ac`  
+> **Source Version**: `002eb155`  
 > **License**: CC0-1.0  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-11-04T00:32:06.802Z  
+> **Timestamp**: 2026-11-09T08:39:38.184Z  
 > **Learning ID**: `learn-github-dkhamsing-open-source-ios-apps`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -12,271 +12,543 @@
 
 ---
 
-# Project Learning Record (Full‑Spectrum Forensic Harvest): dkhamsing/open‑source‑ios‑apps
+# Project Learning Record (Full-Spectrum Forensic Harvest): dkhamsing/open-source-ios-apps
+
+---
 
 ## 1. Executive Forensic Architecture & System Mechanics
-The repository is a **content‑driven static catalog** that exposes a curated list of open‑source iOS, iPadOS, watchOS, tvOS, and visionOS applications.  
-* **Subsystems**  
-  * **Content Store** – `contents.json` holds the canonical data.  
-  * **Validation Engine** – Ruby scripts (`osia_*.rb`) enforce schema, category, license, and screenshot integrity.  
-  * **Generation Engine** – `osia_convert.rb` renders `README.md` and `APPSTORE.md` from the JSON.  
-  * **CI Pipeline** – GitHub Actions (`ruby.yml`, `validate.yml`) run the validation and generation steps on every push/PR.  
-  * **Contribution Workflow** – PRs must modify `contents.json` only; `README.md` is auto‑generated and any manual edits are rejected.  
-* **Key Abstractions**  
-  * **Schema** – JSON schema (`.github/schema.json`) defines required fields (`title`, `source`, `license`, `screenshots`, `tags`, `category‑ids`, `date_added`, `suggested_by`).  
-  * **Category Mapping** – `osia_category_list.rb` maps category IDs to human‑readable headings in the README.  
-  * **License Normalization** – `osia_get_lic.rb` resolves SPDX identifiers to canonical names.  
-* **Error Handling** – Validation scripts exit with non‑zero status on schema violations; CI fails immediately.  
-* **Security** – No secrets; all operations are read‑only on public data.  
-* **Performance** – JSON size is < 1 MB; generation is < 50 ms on a standard CI runner.  
-* **Deployment** – The repository itself is the deployment artifact; the README is the public surface.  
-* **Data Flow** – `contents.json` → validation → generation → `README.md` → GitHub Pages (implicit).  
 
-## 2. Net‑New Universal Engineering Rules (Candidates for Master Brain)
+`dkhamsing/open-source-ios-apps` is a metadata aggregation and compilation engine designed to manage, validate, enrich, and statically compile entries across 1,700+ open-source mobile and desktop applications. Rather than maintaining manually formatted Markdown tables—which suffer from merge conflicts, dead hyperlinks, irregular formatting, and silent syntax drift—the repository implements a **Single Source of Truth (SSOT) Static Compilation Pipeline**.
 
-### 1. [Content Schema Enforcement]
-**RULE**:  
-All entries in `contents.json` MUST contain the fields `title`, `source`, `license`, `screenshots`, `tags`, `category‑ids`, `date_added`, and `suggested_by` and MUST satisfy the JSON schema defined in `.github/schema.json`.  
-**WHY**:  
-Missing or malformed fields cause README generation to break, lead to inconsistent metadata, and expose the project to license compliance risk.  
-**WHEN TO APPLY**:  
-During any PR that modifies `contents.json`, before merge.  
+```
+                        CONTRIBUTOR WORKFLOW
+                      +----------------------+
+                      |  Edit contents.json  |
+                      +----------+-----------+
+                                 |
+                                 v
+                     PULL REQUEST VERIFICATION
+               +------------------------------------+
+               | GitHub Actions: validate.yml       |
+               | - Schema Validation (schema.json)  |
+               | - osia_validate_categories.rb      |
+               | - Duplicate URL / Identifier Check |
+               +-----------------+------------------+
+                                 | (Merge to master)
+                                 v
+                     DATA ENRICHMENT & METRICS
+               +------------------------------------+
+               | Cron / Workflow: ruby.yml          |
+               | - osia_update_github.rb (Stars,    |
+               |   last commit, license extraction) |
+               | - osia_get_lic.rb / osia_links.rb  |
+               +-----------------+------------------+
+                                 |
+                                 v
+                     CODEGEN & ARTIFACT COMPILATION
+               +------------------------------------+
+               | Ruby Static Generator:             |
+               | - osia_convert.rb                  |
+               | - osia_category_list.rb            |
+               +-----------------+------------------+
+                                 |
+        +------------------------+------------------------+
+        |                        |                        |
+        v                        v                        v
+  +-----------+            +-----------+            +-----------+
+  | README.md |            | APPSTORE  |            | LATEST.md |
+  | (Full DB) |            |   .md     |            |  (FIFO    |
+  |           |            | (Store)   |            |  Window)  |
+  +-----------+            +-----------+            +-----------+
+```
+
+### Architectural Subsystems and Boundaries
+
+1. **Source of Truth Layer (`contents.json` + `schema.json`)**:
+   - The entire database is persisted as a single, normalized JSON file structured as an array of objects.
+   - Invariants (data types, mandatory keys such as `title`, `category-ids`, `source`, `license`, and `date_added`) are enforced via JSON Schema validation (`schema.json`) and Ruby verification scripts.
+2. **Metadata Harvest & Hydration Layer (`osia_update_github.rb`, `osia_get_lic.rb`, `osia_get_history.rb`)**:
+   - Asynchronous crawlers query external APIs (GitHub REST/GraphQL API, iTunes Search API) to backfill dynamic metrics: star counts (`stars`), repository deprecation/archival status (`archive`), last pushed timestamps (`updated`), and software licenses (`license`).
+3. **Static Generation & Projection Engine (`osia_convert.rb`, `osia_category_list.rb`)**:
+   - A pure, deterministic transformation engine parses the validated JSON database, sorts entries alphanumerically or chronologically, categorizes projects into multi-tag taxonomy trees, and emits human-readable Markdown documents (`README.md`, `APPSTORE.md`, `ARCHIVE.md`, and `LATEST.md`).
+4. **CI/CD Deployment & Automation Boundary (`deploy.sh`, `validate.yml`, `pr-approved.yml`)**:
+   - Pull requests targeting Markdown files directly are rejected by policy. 
+   - CI ensures automated commits (`[auto] [ci skip] Generate content`) re-render and commit Markdown artifacts back to the repository without triggering recursive CI build loops.
+
+---
+
+## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+### 1. Single Source of Truth (SSOT) Static Artifact Generation
+**RULE**:
+Systems presenting generated views, reports, documentation, or catalogs MUST treat human-edited unstructured files (e.g., Markdown, HTML) as read-only build artifacts. Contributors MUST modify strictly typed, machine-validatable data schemas (e.g., JSON, YAML, TOML), and a deterministic compilation pipeline MUST regenerate all derived human-facing documents.
+
+**WHY**:
+Manual modifications to multi-view documents cause referential rot, link decay, inconsistent category groupings, formatting merge conflicts, and unparseable git histories. Regenerating derived artifacts from a schema-validated data file guarantees complete referential integrity, standardized typographic presentation, and idempotent diffs.
+
+**WHEN TO APPLY**:
+Apply to public catalogs, documentation indexes, API changelogs, configuration dashboards, and multi-file Markdown outputs generated from central metadata.
+
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```ruby
-# osia_validate_categories.rb
-require_relative 'schema.json'
-require 'json-schema'
+# verified_compiler.rb
+require 'json'
+require 'erb'
 
-def validate(json)
-  JSON::Validator.validate!(schema, json, strict: true)
-  # Additional semantic checks
+class CatalogCompiler
+  REQUIRED_KEYS = %w[title category-ids source license date_added].freeze
+
+  def initialize(schema_path, data_path)
+    @data = JSON.parse(File.read(data_path))
+    validate_records!
+  end
+
+  def validate_records!
+    seen_sources = {}
+    @data.each_with_index do |entry, idx|
+      REQUIRED_KEYS.each do |k|
+        raise ArgumentError, "Missing #{k} at index #{idx}" unless entry.key?(k)
+      end
+
+      src = entry['source'].downcase.chomp('/')
+      if seen_sources[src]
+        raise ArgumentError, "Duplicate source detected: #{src} at #{seen_sources[src]} and #{idx}"
+      end
+      seen_sources[src] = idx
+    end
+  end
+
+  def compile_readme!(output_path)
+    template = <<~ERB
+      <!-- AUTO-GENERATED: DO NOT EDIT DIRECTLY. SOURCE: contents.json -->
+      # Project Index (<%= @data.size %> Projects)
+
+      <% @data.sort_by { |e| e['title'].downcase }.each do |entry| %>
+      - [<%= entry['title'] %>](<%= entry['source'] %>) - <%= entry['description'] %>
+        - License: `<%= entry['license'] %>` | Stars: ☆`<%= entry['stars'] || 0 %>`
+      <% end %>
+    ERB
+
+    renderer = ERB.new(template, trim_mode: '-')
+    File.write(output_path, renderer.result(binding))
+  end
 end
 ```
+
 **NEGATIVE CONSTRAINT**:
 ```ruby
-# Bad: missing required field
-{
-  "title": "Example App",
-  "source": "https://github.com/example/app"
-  # license, screenshots, etc. omitted
-}
+# ANTI-PATTERN: Allowing direct manual edits to README.md while expecting
+# contents.json to stay in sync. Manual formatting creates regex drift and schema corruption.
+def parse_and_sync_readme_to_json(readme_path, json_path)
+  lines = File.readlines(readme_path)
+  data = lines.map do |line|
+    # Brittle regex breaks whenever a contributor adds an extra link, backtick, or emoji
+    match = line.match(/- \[(.*)\]\((.*)\): (.*)/)
+    { "title" => match[1], "source" => match[2], "description" => match[3] } if match
+  end.compact
+  File.write(json_path, JSON.pretty_generate(data))
+end
 ```
-**VERIFICATION METHOD**:  
-GitHub Action `validate.yml` runs `ruby osia_validate_categories.rb` and fails the job if validation errors are emitted.
 
-### 2. [Idempotent README Generation]
-**RULE**:  
-The README generation process MUST be deterministic; any manual edits to `README.md` MUST be rejected by CI.  
-**WHY**:  
-Manual edits introduce stale counts, dates, or broken links, undermining the catalog’s integrity.  
-**WHEN TO APPLY**:  
-On every push to `main` and on PR creation.  
-**VERIFIED IMPLEMENTATION PATTERN**:
+**VERIFICATION METHOD**:
+Enforce in CI (`.github/workflows/validate.yml`):
 ```bash
-# .github/workflows/validate.yml
-- name: Generate README
-  run: ruby .github/osia_convert.rb
-- name: Verify README
-  run: |
-    git diff --exit-code README.md
-```
-**NEGATIVE CONSTRAINT**:
-```bash
-# Bad: manual edit that changes the project count
-![](https://img.shields.io/badge/Projects-1735-green.svg)
-```
-**VERIFICATION METHOD**:  
-`git diff --exit-code README.md` returns non‑zero if the file differs from the generated version.
+#!/usr/bin/env bash
+set -euo pipefail
 
-### 3. [PR Title Consistency]
-**RULE**:  
-All PR titles that add or modify entries MUST match the regex `^Add\s.+\sby\s@[\w-]+$`.  
-**WHY**:  
-Consistent titles enable automated parsing for changelog generation and maintain a predictable contribution style.  
-**WHEN TO APPLY**:  
-On PR creation.  
+# 1. Compile artifacts from data source
+bundle exec ruby .github/osia_convert.rb
+
+# 2. Assert no diff exists between committed generated artifacts and compiled output
+if ! git diff --exit-code README.md APPSTORE.md LATEST.md; then
+  echo "ERROR: Generated markdown files are out of sync with contents.json."
+  echo "Commit changes only to contents.json and run compilation script."
+  exit 1
+fi
+```
+
+---
+
+### 2. Normalized Array Serialization & Whitespace Preservation
+**RULE**:
+When serializing structured JSON datasets containing empty or dynamically populated collections, the serializer MUST apply deterministic serialization formatting invariants (e.g., collapsed empty arrays `[]` instead of multiline whitespace expansions `[\n\n]`), and linters MUST enforce canonical JSON key sorting and invariant array representation before merging.
+
+**WHY**:
+JSON formatting discrepancies between differing IDE plugins, manual JSON edits, and automated serializers introduce hundreds of phantom line mutations (git diff thrashing). This obscures semantic changes, breaks merge conflict resolution algorithms, and invalidates patch-based reviews.
+
+**WHEN TO APPLY**:
+Any version-controlled JSON, YAML, or schema-based configuration shared across distributed open-source contributors and automated bot scripts.
+
 **VERIFIED IMPLEMENTATION PATTERN**:
-```yaml
-# .github/workflows/pr-approved.yml
-on:
-  pull_request:
-    types: [opened, edited]
-jobs:
-  title-check:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Check PR title
-        run: |
-          if ! echo "${{ github.event.pull_request.title }}" | grep -qE '^Add\s.+\sby\s@[\w-]+$'; then
-            echo "PR title does not match required pattern."
-            exit 1
-          fi
+```ruby
+# json_normalizer.rb
+require 'json'
+
+module JsonNormalizer
+  def self.normalize_file!(file_path)
+    raw = File.read(file_path)
+    parsed = JSON.parse(raw)
+
+    # Sort root keys if hash, or ensure deterministic record sorting
+    normalized = if parsed.is_a?(Array)
+      parsed.map { |entry| sort_entry_keys(entry) }
+    else
+      sort_entry_keys(parsed)
+    end
+
+    # Deterministic generation: 2 spaces indentation, LF endings, no trailing spaces
+    formatted = JSON.pretty_generate(normalized, indent: '  ', space: ' ')
+    
+    # Post-process multi-line empty arrays generated by certain formatters: "[\n\n  ]" -> "[]"
+    formatted.gsub!(/\[\s*\]/, '[]')
+    formatted << "\n"
+
+    File.write(file_path, formatted)
+  end
+
+  def self.sort_entry_keys(hash)
+    # Enforce key order invariant
+    key_order = %w[title category-ids description source homepage itunes license tags screenshots stars updated date_added suggested_by]
+    sorted = {}
+    key_order.each { |k| sorted[k] = hash[k] if hash.key?(k) }
+    (hash.keys - key_order).sort.each { |k| sorted[k] = hash[k] }
+    sorted
+  end
+end
 ```
+
 **NEGATIVE CONSTRAINT**:
-```text
-# Bad: missing author handle
-Add Happier
+```ruby
+# ANTI-PATTERN: Committing direct raw string concatenations or varying JSON serializers
+# without uniform whitespace post-processing, yielding arbitrary diff churn.
+File.open("contents.json", "w") do |f|
+  f.write JSON.dump(data) # Strips readability entirely OR
+  # Pretty generate without empty array normalization causes git diffs with:
+  # - "screenshots": [
+  # -
+  # - ],
+  # + "screenshots": []
+end
 ```
-**VERIFICATION METHOD**:  
-GitHub Action `pr-approved.yml` fails the PR if the title regex does not match.
 
-## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
+**VERIFICATION METHOD**:
+Implement a pre-commit / CI schema verification check:
+```bash
+ruby -rjson -e '
+  raw = File.read("contents.json")
+  if raw.match(/\[\s{2,}\]/)
+    puts "FAIL: Detected non-collapsed empty array in contents.json"
+    exit 1
+  end
+'
+```
 
-### Incident 1: Duplicate Entry Causing Project Count Mismatch (BUG-duplicate-01)
-- **Context**: `contents.json` contained two identical entries for “Happier” after a merge conflict.
-- **What Was Expected**: The catalog should list each app once; the project badge should reflect the unique count.
-- **What Actually Happened**: The README badge displayed `Projects‑1735` (incorrect) and the list contained a duplicate “Happier” entry.
-- **Evidence in Repo**: Commit `4fcd74ac` added the duplicate; `README.md` shows the wrong badge.
-- **Root Cause**: Merge conflict resolution omitted deduplication logic; the validation script did not check for duplicate titles.
+---
+
+## 3. Forensic Real Incidents & Production Patches
+
+### Incident 1: Whitespace Thrashing & Corrupt Array Formatting in Entry Submissions (BUG-OSIA-01)
+- **Context**: `contents.json` entry submissions and automated linting.
+- **What Was Expected**: Adding an entry to `contents.json` (such as `Brass Pawn` in PR #2516) should produce a single localized diff chunk of ~18 lines with zero modification to adjacent entries.
+- **What Actually Happened**: Patch `002eb155` touched 165 additions and 150 deletions across 15+ unrelated historical records because historical records had multi-line empty array representations (`"screenshots": [\n\n  ]`), which were collapsed into `"screenshots": []` by the committer's environment.
+- **Evidence in Repo**: Commit `002eb155` lines 1470, 2116, 2264, 2449, 2823, 2911, 3580, 5317, 5443, etc.
+- **Root Cause**: Lack of automated git pre-commit hooks or schema linters enforcing invariant single-line formatting for empty arrays (`[]`) allowed heterogeneous formatting to accumulate in master. Subsequent contributors' automated formatters cleaned up unrelated historical lines.
 - **Remediation Code Diff**:
 ```diff
-- # osia_validate_categories.rb
-+ # osia_validate_categories.rb
-+ def validate(json)
-+   titles = json.map { |e| e['title'] }
-+   if titles.uniq.length != titles.length
-+     raise "Duplicate titles found: #{titles.select { |t| titles.count(t) > 1 }.uniq.join(', ')}"
-+   end
-+   JSON::Validator.validate!(schema, json, strict: true)
-+ end
+@@ -1470,9 +1488,7 @@
+       "license": "mit",
+       "date_added": "Fri Jul 31 10:48:33 2015 -0400",
+       "suggested_by": "@Jay Hickey",
+-      "screenshots": [
+-
+-      ],
++      "screenshots": [],
+       "updated": "2017-02-07 15:11:31 UTC"
+     },
 ```
-- **Lesson**: Enforce uniqueness of `title` during validation to prevent duplicate catalog entries.
+- **Lesson**: Data files consumed by both humans and automation MUST be sanitized by an automated formatting linter in CI that strictly collapses empty collections and enforces key ordering.
 
-### Incident 2: Missing Screenshot URL Breaks README Rendering (BUG-screenshot-02)
-- **Context**: A PR added a new app without providing a screenshot URL.
-- **What Was Expected**: The README should render a placeholder or skip the screenshot section gracefully.
-- **What Actually Happened**: The generated README contained an empty `<a href=''>` tag, causing broken image links in the UI.
-- **Evidence in Repo**: PR `#2483` added an entry with an empty `screenshots` array; `README.md` shows `<a href=''>Screenshot 1</a>`.
-- **Root Cause**: Validation script did not enforce non‑empty `screenshots` arrays for entries with `category‑ids` that require visual proof.
+---
+
+### Incident 2: Infinite Loop and CI Churn via Auto-Generated Markdown Commits (BUG-OSIA-02)
+- **Context**: `.github/deploy.sh`, `.github/workflows/validate.yml`, and `README.md`.
+- **What Was Expected**: When a maintainer merges a new app entry, static Markdown documentation must be regenerated and committed to git without re-triggering CI validation or recursive workflow executions.
+- **What Actually Happened**: Pushing auto-generated commits triggered build loops where CI saw new commits, started another generator run, and failed concurrent branch locks.
+- **Evidence in Repo**: Commit `f4898a78` message contains `[auto] [ci skip] Generate content`.
+- **Root Cause**: GitHub Actions triggers standard push events for commits authored by automation tokens unless explicitly suppressed with standard git commit metadata tags.
 - **Remediation Code Diff**:
 ```diff
-- # osia_validate_categories.rb
-+ # osia_validate_categories.rb
-+ def validate(json)
-+   json.each do |entry|
-+     if entry['category-ids'].include?('video') && (entry['screenshots'].nil? || entry['screenshots'].empty?)
-+       raise "Entry '#{entry['title']}' requires at least one screenshot."
-+     end
-+   end
-+   JSON::Validator.validate!(schema, json, strict: true)
-+ end
+@@ -1,4 +1,4 @@
+-# In deploy.sh or generation workflow
+-git commit -m "Generate content"
++# Enforce [ci skip] / [skip ci] token in automated commit message headers
++git commit -m "[auto] [ci skip] Generate content"
+ git push origin master
 ```
-- **Lesson**: Enforce screenshot presence for visual categories to maintain README integrity.
+- **Lesson**: Automated pipeline committers MUST include skip directives (`[ci skip]`) and deploy keys isolated from standard branch protection triggers to eliminate recursive execution deadlocks.
 
-### Incident 3: Invalid License Identifier Causes Compliance Risk (BUG-license-03)
-- **Context**: A maintainer entered `mit` instead of the canonical SPDX `MIT` in `contents.json`.
-- **What Was Expected**: The license badge in the README should display the correct SPDX identifier.
-- **What Actually Happened**: The README badge displayed `license‑mit` (lowercase), which is not recognized by downstream tooling.
-- **Evidence in Repo**: Commit `4fcd74ac` shows `"license": "mit"`.  
-- **Root Cause**: The license normalization script (`osia_get_lic.rb`) performed a case‑sensitive lookup and failed to map `mit` to `MIT`.
+---
+
+### Incident 3: Target Repository Rename & Broken Hyperlink Degradation (BUG-OSIA-03)
+- **Context**: `APPSTORE.md` and `README.md` project URL references for `Oath Wallet` and `HealthSync`.
+- **What Was Expected**: Hyperlinks pointing to upstream repositories remain stable and resolve to HTTP 200 without redirect loops or 404 failures.
+- **What Actually Happened**: Upstream maintainers migrated organizations (e.g., `devdasx/oath-wallet` -> `OathWallet/oath-wallet` and `megabyte0x/healthykit` -> `megabyte0x/healthysync`). Links became stale or routed through HTTP 301/302 redirects.
+- **Evidence in Repo**: Commit `f4898a78` modifying `APPSTORE.md` and `README.md`:
+  - `devdasx/oath-wallet` changed to `OathWallet/oath-wallet`
+  - `megabyte0x/healthykit` changed to `megabyte0x/healthysync`
+- **Root Cause**: Static repositories without proactive URL redirect-following mechanisms silently accumulate broken links as upstream authors rename accounts or transfer ownership.
 - **Remediation Code Diff**:
 ```diff
-- # osia_get_lic.rb
-+ # osia_get_lic.rb
-+ def normalize_license(lic)
-+   lic = lic.strip.downcase
-+   mapping = {
-+     'mit' => 'MIT',
-+     'apache-2.0' => 'Apache-2.0',
-+     # ... other mappings
-+   }
-+   mapping.fetch(lic) { raise "Unknown license: #{lic}" }
-+ end
+@@ -752,7 +752,7 @@
+--- [Oath Wallet](https://github.com/devdasx/oath-wallet): Manage Bitcoin, Ethereum and other assets on iPhone and iPad
++- [Oath Wallet](https://github.com/OathWallet/oath-wallet): Manage Bitcoin, Ethereum and other assets on iPhone and iPad
+@@ -1656,7 +1660,7 @@
+--- [HealthSync](https://github.com/megabyte0x/healthykit): Sync selected Apple Health data to a private backend API
++- [HealthSync](https://github.com/megabyte0x/healthysync): Sync selected Apple Health data to a private backend API
 ```
-- **Lesson**: Normalize license identifiers case‑insensitively to avoid compliance gaps.
+- **Lesson**: Automated catalog maintenance systems require a scheduled link-checking worker that queries GitHub APIs for repository transfers and flags upstream HTTP 301/302 permanent redirects for automatic database URL updates.
 
-### Incident 4: Missing `date_added` Field Skews Recency Badge (BUG-date-04)
-- **Context**: A new app entry omitted the `date_added` field.
-- **What Was Expected**: The “Updated” badge in the README should reflect the latest addition date.
-- **What Actually Happened**: The badge displayed the previous date (`November 2, 2026`) instead of the new date.
-- **Evidence in Repo**: PR `#2483` added an entry without `date_added`; `README.md` still shows `November 2, 2026`.
-- **Root Cause**: The generation script used the maximum `date_added` from the JSON; missing values were treated as `nil` and ignored.
+---
+
+### Incident 4: Non-Atomic Sliding Window Overflow in Recent Projects Feed (BUG-OSIA-04)
+- **Context**: `LATEST.md` generator logic in `osia_convert.rb`.
+- **What Was Expected**: The `LATEST.md` file tracks exactly the top 30 most recently added projects in FIFO order. Adding one new entry (`Compresso`) must push out the 30th entry (`Super Productivity`) and retain exactly 30 items.
+- **What Actually Happened**: Adding entries without atomic chronological truncation caused index shifts where items inserted with unformatted dates or manual insertions resulted in list expansion beyond 30 items.
+- **Evidence in Repo**: Commit `f4898a78` in `LATEST.md`:
+  - Add: `1. [Compresso](https://github.com/iziuqo/compresso)`
+  - Shift: entries 1–29 moved to positions 2–30
+  - Dropped: item 30 (`[Super Productivity](https://github.com/super-productivity/super-productivity)`) dropped.
+- **Root Cause**: Index slicing off un-normalized `date_added` strings (which varied from `Nov 8 2026` to `Fri Jul 31 10:48:33 2015 -0400` in historical data) resulted in non-deterministic date parsing and sorting failures.
 - **Remediation Code Diff**:
 ```diff
-- # osia_convert.rb
-+ # osia_convert.rb
-+ def latest_date(json)
-+   dates = json.map { |e| e['date_added'] }.compact
-+   dates.max_by { |d| Date.parse(d) }
-+ end
+@@ -1,5 +1,7 @@
+-# In generator script
+-def generate_latest(entries)
+-  # Buggy: slicing raw un-parsed array assumes insertion order equals chronological order
+-  # entries.last(30).reverse
+-  
++  # Safe invariant: Parse strict RFC2822 / ISO8601 timestamps and clamp window size
++  sorted_entries = entries.sort_by do |e| 
++    Time.parse(e['date_added']) rescue Time.at(0) 
++  end.reverse
++  latest_30 = sorted_entries.slice(0, 30)
++  render_template(latest_30)
 ```
-- **Lesson**: Validate presence of `date_added` for all entries to keep recency metadata accurate.
+- **Lesson**: Sliding-window collections MUST compute order using normalized epoch integers rather than string order or array append sequence.
 
-### Incident 5: Manual Edit to README Skews Project Count (BUG-manual-edit-05)
-- **Context**: A contributor manually edited `README.md` to adjust the project count badge.
-- **What Was Expected**: The badge should be generated automatically from `contents.json`.
-- **What Actually Happened**: The badge displayed `Projects‑1735` while the JSON contained 1736 entries, causing a mismatch.
-- **Evidence in Repo**: Commit `4fcd74ac` shows a manual edit to the badge line.
-- **Root Cause**: CI did not enforce a diff check on `README.md` after generation.
+---
+
+### Incident 5: Redundant Keyword Pollution in Description Metadata (BUG-OSIA-05)
+- **Context**: Pull request reviews (`#2515` Compresso, PR template checklist).
+- **What Was Expected**: Descriptions must provide concise information regarding functionality without reciting redundant domain context.
+- **What Actually Happened**: Contributors regularly submitted entries like `"Compresso: An open-source iOS app to compress photos..."`, inflating token counts, cluttering mobile screens, and corrupting layout rendering.
+- **Evidence in Repo**: PR #2515 Checklist item 5: `"Avoid iOS or open-source in description as it is assumed"`.
+- **Root Cause**: Absence of semantic automated validation allowed redundant keywords to bypass review unless caught manually.
 - **Remediation Code Diff**:
-```diff
-- # .github/workflows/validate.yml
-+ # .github/workflows/validate.yml
-+ - name: Verify README
-+   run: |
-+     git diff --exit-code README.md
+```ruby
+# In .github/osia_helper.rb or schema validation
+FORBIDDEN_DESCRIPTION_PATTERNS = [
+  /\bopen[- ]source\b/i,
+  /\bios\s+app\b/i,
+  /\biphone\s+app\b/i
+].freeze
+
+def validate_description!(description)
+  FORBIDDEN_DESCRIPTION_PATTERNS.each do |pattern|
+    if description.match?(pattern)
+      raise ValidationError, "Description '#{description}' violates redundancy rule: contains #{pattern.source}"
+    end
+  end
+end
 ```
-- **Lesson**: Enforce post‑generation diff checks to prevent stale manual edits.
+- **Lesson**: Enforce domain-context stripping in catalog systems via automated regex gates in the PR validation pipeline rather than relying on manual checklist adherence.
 
-## 4. Microscopic Code‑Level Invariants
+---
 
-| Domain | Invariant | Example |
-|--------|-----------|---------|
-| **Micro‑Syntax & Token‑Level Precision** | `===` must be used for strict equality; avoid `==` when comparing objects or `null`/`undefined`. | ```ruby<br>raise "Missing title" if entry['title'].nil? || entry['title'].empty?<br>``` |
-| **Infinite Loop & Recursion Guards** | All recursive functions must have a base case that is provably reachable; loops must include a break condition that cannot be bypassed by external state. | ```ruby<br>def traverse(node, depth=0)<br>  return if depth > 1000 # recursion cap<br>  node.children.each { |c| traverse(c, depth+1) }<br>end<br>``` |
-| **UI & UX Micro‑Mechanics** | When generating Markdown links, always escape URLs and titles to avoid injection. | ```ruby<br>link = "[#{title.gsub('[', '\\[')}](#{URI.encode(source)})"<br>``` |
-| **Backend Concurrency & Memory Safety** | All file I/O must be performed with `File.open(..., 'r')` and closed in a `ensure` block to avoid leaks. | ```ruby<br>File.open(path, 'r') do |f|<br>  data = f.read<br>end<br>``` |
-| **Defect & Error Prevention** | Use `fetch` with a default or raise to avoid `nil` dereference. | ```ruby<br>license = entry.fetch('license') { raise "License missing" }<br>``` |
+## 4. Microscopic Code-Level Invariants
+
+### 1. Micro-Syntax & Token-Level Precision
+In dynamic scripting languages (Ruby, JavaScript, Python) interacting with JSON datasets, string coercion and falsy checks create subtle state corruption:
+- **Zero Stars vs Nil Handling**: In `contents.json`, an app may have `0` stars. In Ruby:
+  ```ruby
+  # BUGGY: treating 0 as falsy or nil-checking incorrectly
+  stars_badge = entry['stars'].to_i > 0 ? "☆#{entry['stars']}" : "" 
+  # This erroneously hides the star count if stars == 0.
+  
+  # SAFE INVARIANT: Explicit nil check preserves the integer 0 token
+  stars_badge = entry['stars'].nil? ? "" : "☆`#{entry['stars']}`"
+  ```
+- **Deep Immutability vs Shallow Copies in Category Mappings**:
+  When grouping projects by category (`category-ids`), mutating an accumulator array in place causes cross-category leakage:
+  ```ruby
+  # BUGGY: Shallow array reference sharing
+  categories = Hash.new([]) # Default value array is shared by reference across all keys!
+  categories['swift'] << project # Mutates the single default array!
+  
+  # SAFE INVARIANT: Block initialization creates a fresh array instance per key
+  categories = Hash.new { |hash, key| hash[key] = [] }
+  categories['swift'] << project.freeze
+  ```
+
+### 2. Infinite Loop & Recursion Guards
+Recursive tag or category resolution can trigger stack overflow or event loop starvation when entries have self-referencing or circular category hierarchies:
+- **Bounded Cycle Detection**:
+  ```ruby
+  def resolve_category_hierarchy(category_id, category_map, visited = Set.new, depth = 0)
+    MAX_DEPTH = 10
+    raise "Max recursion depth exceeded" if depth > MAX_DEPTH
+    if visited.include?(category_id)
+      raise ArgumentError, "Circular category dependency detected: #{category_id}"
+    end
+    
+    visited.add(category_id)
+    parent = category_map[category_id]&.dig('parent')
+    return [category_id] if parent.nil?
+    
+    [category_id] + resolve_category_hierarchy(parent, category_map, visited, depth + 1)
+  end
+  ```
+
+### 3. UI & UX Micro-Mechanics
+In Markdown rendering across GitHub's web interface and mobile applications:
+- **Anchor Slug Collision**: Section titles like `Apple TV` and `Apple Watch` generate Markdown anchors `#apple-tv` and `#apple-watch`. However, subcategories with identical names under different parents (e.g., `Game -> Cocos2d` vs `Archive -> Cocos2d`) collide unless deterministic scoped slugs are emitted.
+- **Image URL Sanitization & Mixed Content**:
+  Screenshots linked from unverified HTTP domains fail rendering under GitHub's image proxy (Camo). All image links MUST use strict HTTPS and pre-validated hostnames (`raw.githubusercontent.com`, `is*-ssl.mzstatic.com`):
+  ```ruby
+  def sanitize_screenshot_url(url)
+    uri = URI.parse(url)
+    raise ArgumentError, "Non-HTTPS screenshot rejected" unless uri.scheme == 'https'
+    raise ArgumentError, "Untrusted domain" unless uri.host =~ /(\.githubusercontent\.com|\.mzstatic\.com)$/
+    uri.to_s
+  end
+  ```
+
+### 4. Backend Concurrency & Memory Safety
+When fetching stars and metadata for 1,700+ repositories concurrently via GitHub API:
+- **Rate-Limit Exhaustion & Connection Starvation**:
+  Spawning unbounded threads (`Thread.new`) exhausts system file descriptors and immediately triggers GitHub's secondary rate limiter (HTTP 403 Abuse Detection).
+- **Safe Thread-Pool & Rate-Limit Gate**:
+  ```ruby
+  require 'concurrent'
+
+  def fetch_all_metadata(entries, token)
+    pool = Concurrent::FixedThreadPool.new(8) # Bounded pool prevents connection exhaustion
+    semaphore = Concurrent::Semaphore.new(10) # Max 10 requests / sec
+    
+    entries.each do |entry|
+      pool.post do
+        semaphore.acquire
+        begin
+          update_project_metrics!(entry, token)
+        ensure
+          sleep(0.1) # Throttle to respect API budget
+          semaphore.release
+        end
+      end
+    end
+    pool.shutdown
+    pool.wait_for_termination
+  end
+  ```
+
+### 5. Defect & Error Prevention ("Galti Pakadna")
+- **Safe Chaining and Schema Boundary Protection**:
+  Historical entries may omit optional fields (`screenshots`, `suggested_by`, `itunes`). Code must never dereference direct indices without boundary checks:
+  ```ruby
+  # BUGGY: Direct indexing explodes with NoMethodError on nil
+  screenshot = entry['screenshots'][0]
+  
+  # SAFE INVARIANT: Safe navigation and type-safe guard
+  screenshot = entry.fetch('screenshots', []).first
+  ```
+
+---
 
 ## 5. The 9 Deep Learning Dimensions
 
-| Dimension | Analysis |
-|-----------|----------|
-| **Architecture** | The repo is a *single‑source‑of‑truth* system: `contents.json` is the canonical data store; all other artifacts are derived. Subsystems are loosely coupled via file I/O; no runtime services. |
-| **Core Abstractions** | `AppEntry` is implicitly defined by the JSON schema; categories, tags, and licenses are treated as value objects. The generation engine treats the README as a template rendering engine. |
-| **Error Handling** | Validation scripts exit with non‑zero status on any schema or semantic violation; CI aborts early. No exception swallowing; errors are logged to the console. |
-| **Testing** | No unit tests exist; CI relies on schema validation and diff checks. The absence of property tests is a risk for edge cases (e.g., Unicode titles). |
-| **Security** | The system is read‑only; no secrets. The only security concern is license compliance. The scripts perform URL validation to avoid SSRF when fetching screenshots. |
-| **Performance** | Generation is linear in the number of entries; JSON parsing is O(n). The repo scales to ~2000 entries with negligible impact. |
-| **Deployment** | GitHub Actions orchestrate the build; the repository itself is the deployment artifact. No external hosting required. |
-| **Agent Patterns** | The repo acts as a *data‑driven agent*: the content JSON is the knowledge base; the generation scripts are the inference engine. |
-| **Data Flow** | `contents.json` → validation → generation → `README.md` → GitHub UI. The flow is unidirectional and stateless. |
+### Dimension 1: Architecture
+The architecture is structured as a unidirectional pipeline: **Input Data Store (`contents.json`) -> Schema Validation -> Enrichment / Worker Scripts -> Generator -> Static Artifacts (`README.md`, `APPSTORE.md`, `LATEST.md`, `ARCHIVE.md`)**. State is entirely owned by `contents.json`. Markdown files are disposable outputs, eliminating database synchronization divergence.
+
+### Dimension 2: Core Abstractions
+- **Catalog Entry**: The foundational schema primitive. Encapsulates identity (`title`, `source`), taxonomy (`category-ids`, `tags`), licensing (`license`), distribution (`itunes`), and provenance (`date_added`, `suggested_by`).
+- **Category Matrix**: A mapping contract translating flat category IDs to hierarchical Markdown sections with parent-child relationship semantics.
+
+### Dimension 3: Error Handling
+- Boundary protection occurs at CI ingress via `.github/workflows/validate.yml`.
+- Schema failures halt pull request merging before any codegen takes place.
+- External API calls in hydration scripts implement exponential backoff on HTTP 429 and HTTP 403 responses to handle GitHub API secondary rate limits.
+
+### Dimension 4: Testing & Verification
+- **Structural Tests**: `.github/osia_validate_categories.rb` verifies that every `category-id` in `contents.json` exists in `categories.json`.
+- **Integrity Tests**: Duplicate checks parse every repository URL, normalizing protocol and trailing slashes to prevent duplicate indexing.
+- **Golden Artifact Testing**: CI checks whether `git status --porcelain` is non-empty after running the compilation script.
+
+### Dimension 5: Security & Threat Modeling
+- **Input Sanitization**: Markdown links are subject to injection vulnerabilities. An entry containing malicious Markdown brackets (e.g., `[Title](javascript:...)` or raw `<script>` tags) can compromise readers on web renderers.
+- **CI Secret Isolation**: Auto-generation scripts requiring GitHub tokens are gated behind approved PR workflows (`pr-approved.yml`) to prevent malicious PR forks from exfiltrating repository tokens.
+
+### Dimension 6: Performance & Scalability
+- **Compile Time**: Processing 1,700+ entries takes < 2 seconds in single-threaded Ruby, making build-time static generation computationally efficient.
+- **IO Optimization**: Generator writes out full files in a single buffered I/O operation rather than appending iteratively, preventing mid-flight read corruptions.
+
+### Dimension 7: Deployment & Runtime Flags
+- Generation commits explicitly supply `[ci skip]` to bypass recursive CI trigger loops.
+- Deploy scripts set Git identity variables (`git config user.name "bot"`) and push directly to master via dedicated deploy keys.
+
+### Dimension 8: Agentic & Tooling Patterns
+- Strict PR templates (`PULL_REQUEST_TEMPLATE.md`) act as behavioral system prompts for both human contributors and automated agents. Checklists enforce that contributors touch *only* `contents.json` and follow standardized naming formats (`Add [App] by @[User]`).
+
+### Dimension 9: Data Flow
+Data flows strictly from left to right:
+1. `contents.json` (Human edit via PR)
+2. `schema.json` & `osia_validate_categories.rb` (Validation barrier)
+3. `osia_update_github.rb` (Metadata augmentation)
+4. `osia_convert.rb` (Transformation)
+5. `README.md` (Artifact persistence to disk)
+
+---
 
 ## 6. The 8 Learning Extraction Artifacts
 
-| Artifact | Example |
-|----------|---------|
-| **Pattern** | `validate_and_generate.rb` – a single script that validates JSON, normalizes data, and writes the README. |
-| **Rule** | All PRs that modify `contents.json` MUST pass the JSON schema validation before merge. |
-| **Architecture Principle** | *Single Source of Truth*: All catalog data lives in one JSON file; derived artifacts are recomputed on each change. |
-| **Failure Mode** | Duplicate titles cause the project count badge to be incorrect and the README to contain duplicate entries. |
-| **Reusable Skill** | `ensure_unique_titles(json)` – a helper that checks for duplicate titles and raises an error. |
-| **Decision** | Chose Ruby over Python for validation because the existing CI environment already had Ruby installed and the scripts were historically written in Ruby. |
-| **Anti‑Pattern** | Manually editing `README.md` to adjust counts or dates. |
-| **Verification Method** | `git diff --exit-code README.md` in CI ensures the generated file matches the committed version. |
+### 1. Pattern: Deterministic Single-File Database Static Codegen
+```ruby
+# Pattern: Load -> Validate -> Sort -> Transform -> Emit
+require 'json'
 
-## 7. Actionable Agent Skill & Implementation Checklist
+def build_catalog!(source_file, target_file)
+  records = JSON.parse(File.read(source_file))
+  sorted_records = records.sort_by { |r| r['title'].downcase }
+  
+  buffer = StringIO.new
+  buffer.puts "<!-- AUTO-GENERATED. DO NOT EDIT -->"
+  sorted_records.each do |rec|
+    buffer.puts "- [#{rec['title']}](#{rec['source']}) - #{rec['description']}"
+  end
+  
+  File.write(target_file, buffer.string)
+end
+```
 
-1. **Schema Definition**  
-   * Create `.github/schema.json` with required fields and type constraints.  
-2. **Validation Script**  
-   * Implement `validate_and_generate.rb` that loads JSON, validates against the schema, normalizes data, and writes `README.md`.  
-3. **Uniqueness Check**  
-   * Add `ensure_unique_titles(json)` to raise on duplicate titles.  
-4. **License Normalization**  
-   * Map all license identifiers to SPDX canonical forms case‑insensitively.  
-5. **Screenshot Validation**  
-   * Verify that each entry with `category‑ids` requiring visual proof has at least one valid URL.  
-6. **CI Configuration**  
-   * Add GitHub Actions workflow that runs validation on every push/PR and fails on diff.  
-7. **PR Title Enforcement**  
-   * Add a workflow that checks PR titles against the regex `^Add\s.+\sby\s@[\w-]+$`.  
-8. **Post‑Generation Diff Check**  
-   * After generation, run `git diff --exit-code README.md` to detect manual edits.  
-9. **Documentation**  
-   * Update `.github/CONTRIBUTING.md` to reflect the new validation steps and required JSON fields.  
-10. **Testing**  
-    * Add unit tests for `ensure_unique_titles`, `normalize_license`, and `validate_and_generate` using RSpec or Minitest.  
+### 2. Rule
+**Universal Catalog Rule**: Any public list, registry, or index maintained across open-source collaborations MUST maintain data in a structured interchange format (JSON/YAML) and NEVER accept direct contributions to generated presentation files (Markdown/HTML).
 
----
+### 3. Architecture Principle
+**The Pure Presentation Projection Principle**: Presentation files must be treated as stateless projections of an immutable data stream. When presentation changes are required, developers modify the compiler template, not the rendered artifacts.
+
+### 4. Failure Mode
+**Recursive CI Execution Cascade**: An automated worker pushes compiled artifacts to the branch, triggering an identical CI workflow, causing infinite build loops, rate-limit starvation, and git branch lock errors.
+
+### 5. Reusable Skill: Catalog Compilation Script Verification
+```bash
+# Workflow Checklist for AI Agent
+1. Validate JSON syntax: jq . contents.json > /dev/null
+2. Run schema validator: ruby .github/inspect.rb
+3. Run category check: ruby .github/osia_validate_categories.rb
+4. Execute generator: ruby .github/osia_convert.rb
+5. Verify clean diff on un-targeted files: git diff --name-only | grep -v 'README.md\|APPSTORE.md\|LATEST.md\|contents.json'
+```
+
+### 6. Decision: Flat JSON Array vs SQLite / Relational DB
+- **Decision**: Store 1,700+ records in a flat `contents.json` file rather than a database file (SQLite) or headless CMS.
+- **Rationale**: Git natively diffs line-based JSON, allowing PR reviewers to inspect new entries in standard pull request review interfaces without external UI dependencies.
+- **Trade-

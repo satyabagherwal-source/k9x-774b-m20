@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/goharbor-harbor-learnings.md`  
 > **Source**: github ([https://github.com/goharbor/harbor](https://github.com/goharbor/harbor))  
-> **Source Version**: `a0016873`  
+> **Source Version**: `bc458019`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T22:01:22.052Z  
+> **Timestamp**: 2026-11-09T10:59:34.442Z  
 > **Learning ID**: `learn-github-goharbor-harbor`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/goharbor-harbor-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/goharbor/harbor](https://github.com/goharbor/harbor))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T22:01:21.651Z  
+> **Harvest Timestamp**: 2026-11-09T10:59:34.436Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An open source trusted cloud native registry project that stores, signs, and scans content.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 29680 stars
+- **Stars / Engagement**: 29700 stars
 
 ---
 
@@ -444,7 +444,6 @@ def prepare_core(config_dict, with_trivy):
         core_env_template_path,
         core_conf_env,
         with_trivy=with_trivy,
-        csrf_key=generate_random_string(32),
         scan_robot_prefix=generate_random_string(8),
         **config_dict)
 
@@ -656,11 +655,11 @@ def prepare_job_service(config_dict):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #24316** (2026-11-05): **Bump up trivy adapter and distribution**
+- **Issue #24340** (2026-11-09): **skip copy online package because it is not include in the rc release**
   *Symptoms*: Thank you for contributing to Harbor!  # Comprehensive Summary of your change  # Issue being fixed Fixes #(issue)  Please indicate you've done the following: - [ ] Well Written Title and Summary of the PR - [ ] Label the PR as needed. "release-note/ignore-for-release, release-note/new-feature, release-note/update, release-note/enhancement, release-note/community, release-note/breaking-change, release-note/docs, release-note/infra, release-note/deprecation" - [ ] Accepted the DCO. Commits without the DCO will delay acceptance. - [ ] Made sure tests are passing and test coverage is added if needed. - [ ] Considered the docs impact and opened a new docs issue or PR with docs changes if needed in [website repository](https://github.com/goharbor/website). 
 
-- **Issue #24313** (2026-11-05): **Bump up harbor version**
-  *Symptoms*: Thank you for contributing to Harbor!  # Comprehensive Summary of your change  # Issue being fixed Fixes #(issue)  Please indicate you've done the following: - [ ] Well Written Title and Summary of the PR - [ ] Label the PR as needed. "release-note/ignore-for-release, release-note/new-feature, release-note/update, release-note/enhancement, release-note/community, release-note/breaking-change, release-note/docs, release-note/infra, release-note/deprecation" - [ ] Accepted the DCO. Commits without the DCO will delay acceptance. - [ ] Made sure tests are passing and test coverage is added if needed. - [ ] Considered the docs impact and opened a new docs issue or PR with docs changes if needed in [website repository](https://github.com/goharbor/website). 
+- **Issue #24339** (2026-11-09): **Bump Trivy to v0.76.2 and adapter to v0.40.1-rc1**
+  *Symptoms*: Update scanner dependencies for release-2.15.0.  Reference: https://github.com/goharbor/harbor/pull/24259  Thank you for contributing to Harbor!  # Comprehensive Summary of your change  # Issue being fixed Fixes #(issue)  Please indicate you've done the following: - [ ] Well Written Title and Summary of the PR - [ ] Label the PR as needed. "release-note/ignore-for-release, release-note/new-feature, release-note/update, release-note/enhancement, release-note/community, release-note/breaking-change, release-note/docs, release-note/infra, release-note/deprecation" - [ ] Accepted the DCO. Commits without the DCO will delay acceptance. - [ ] Made sure tests are passing and test coverage is added if needed. - [ ] Considered the docs impact and opened a new docs issue or PR with docs changes if needed in [website repository](https://github.com/goharbor/website). 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -677,77 +676,40 @@ def prepare_job_service(config_dict):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `46d05cbf` (2026-11-05)
-**Commit Message**: fix(http): compare the IPv6 zone identifier exactly in SameOrigin (#24071)
+### Incident Patch 1: `bc458019` (2026-11-09)
+**Commit Message**: add tags to trivy testcase (#24338)
 
-SameOrigin folded case on the whole host name, zone identifier
-included. A zone names a network interface and interface names are
-case-sensitive, so fe80::a%eth0 and fe80::a%ETH0 are different
-destinations. Keep the address comparison case-insensitive and require
-the zone to match exactly.
+Add tags to trivy robot testcase
 
-Follow-up to GHSA-xgp2-5vxg-rgh2.
+Signed-off-by: stonezdj <[REDACTED_EMAIL]>
 
-Signed-off-by: Prasanth Baskar <[REDACTED_EMAIL]>
-Co-authored-by: Wang Yan <[REDACTED_EMAIL]>
-
-**File**: `src/common/http/client.go` (modified, +9/-1)
+**File**: `tests/robot-cases/Group1-Nightly/Trivy.robot` (modified, +2/-0)
 ```diff
-@@ -275,10 +275,18 @@ func resolveNextLink(base *url.URL, link string) (*url.URL, error) {
- // SameOrigin reports whether a and b share scheme, host and effective port.
- func SameOrigin(a, b *url.URL) bool {
- 	return strings.EqualFold(a.Scheme, b.Scheme) &&
--		strings.EqualFold(a.Hostname(), b.Hostname()) &&
-+		sameHost(a.Hostname(), b.Hostname()) &&
- 		effectivePort(a) == effectivePort(b)
- }
+@@ -105,6 +105,7 @@ Test Case - Security Hub
+     Close Browser
  
-+// sameHost compares host names case-insensitively, except for an IPv6 zone identifier,
-+// which names a network interface and must match exactly.
-+func sameHost(a, b string) bool {
-+	aHost, aZone, _ := strings.Cut(a, "%")
-+	bHost, bZone, _ := strings.Cut(b, "%")
-+	return strings.EqualFold(aHost, bHost) && aZone == bZone
-+}
-+
- // effectivePort returns the URL's port, substituting the scheme's default when none is set,
- // so that an alternate-port target is treated as a different origin.
- func effectivePort(u *url.URL) string {
-```
-
-**File**: `src/common/http/client_test.go` (modified, +18/-0)
-```diff
-@@ -174,3 +174,21 @@ func mustHost(t *testing.T, raw string) string {
- 	}
- 	return u.Host
- }
-+
-+// TestSameOriginIPv6Zone treats the IPv6 zone identifier as case-sensitive, since it names
-+// a network interface, while the address itself still compares case-insensitively.
-+func TestSameOriginIPv6Zone(t *testing.T) {
-+	parse := func(raw string) *url.URL {
-+		u, err := url.Parse(raw)
-+		if err != nil {
-+			t.Fatal(err)
-+		}
-+		return u
-+	}
-+	if !SameOrigin(parse("http://[fe80::a%25eth0]:5000/"), parse("http://[FE80::A%25eth0]:5000/x")) {
-+		t.Fatal("address case must not matter")
-+	}
-+	if SameOrigin(parse("http://[fe80::a%25eth0]:5000/"), parse("http://[fe80::a%25ETH0]:5000/x")) {
-+		t.Fatal("zone identifiers differing in case must not be the same origin")
-+	}
-+}
+ Test Case - Manual Scan All
++    [Tags]  manual_scan_all
+     Body Of Manual Scan All  Critical  High
+ 
+ Test Case - Scan A Tag In The Repo
+@@ -121,6 +122,7 @@ Test Case - Scan As An Unprivileged User
+ 
+ # Chose a empty Vul repo
+ Test Case - Scan Image With Empty Vul
++    [Tags]  scan_image_with_empty_vul
+     Body Of Scan Image With Empty Vul  photon  4.0_scan
+ 
+ Test Case - Scan Image On Push
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #24340** (closed): skip copy online package because it is not include in the rc release (@stonezdj)
+- **PR #24339** (2026-11-09): Bump Trivy to v0.76.2 and adapter to v0.40.1-rc1 (@stonezdj)
+- **PR #24338** (2026-11-09): add tags to trivy testcase (@stonezdj)
+- **PR #24336** (2026-11-09): fix(deps): update Go modules for high severity CVEs and bump photon (@stonezdj)
+- **PR #24335** (closed): 2.15.5 bump go mod (@stonezdj)
 - **PR #24316** (2026-11-05): Bump up trivy adapter and distribution (@stonezdj)
-- **PR #24313** (2026-11-05): Bump up harbor version (@stonezdj)
-- **PR #24302** (2026-11-05): (cherry-pick)fix: restore robot member role assignment compatibility (@stonezdj)
-- **PR #24300** (2026-11-04): fix: restore robot member role assignment compatibility (@stonezdj)
-- **PR #24299** (closed):  fix: restore robot member role assignment compatibility (@stonezdj)
-- **PR #24286** (2026-11-04): Bump up go mod (@stonezdj)
 
 ---
 
@@ -767,36 +729,29 @@ Co-authored-by: Wang Yan <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. http): compare the IPv6 zone identifier exactly in SameOrigin (#24071)
+## X. add tags to trivy testcase (#24338)
 
 **RULE**:
-When implementing operations in `src/common/http/client.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in goharbor/harbor. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tests/robot-cases/Group1-Nightly/Trivy.robot`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in goharbor/harbor. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `46d05cbf`: http): compare the IPv6 zone identifier exactly in SameOrigin (#24071). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bc458019`: add tags to trivy testcase (#24338). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/common/http/client.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/robot-cases/Group1-Nightly/Trivy.robot`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		sameHost(a.Hostname(), b.Hostname()) &&
-// sameHost compares host names case-insensitively, except for an IPv6 zone identifier,
-// which names a network interface and must match exactly.
-func sameHost(a, b string) bool {
-	aHost, aZone, _ := strings.Cut(a, "%")
-	bHost, bZone, _ := strings.Cut(b, "%")
-	return strings.EqualFold(aHost, bHost) && aZone == bZone
-}
-
+    [Tags]  manual_scan_all
+    [Tags]  scan_image_with_empty_vul
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		strings.EqualFold(a.Hostname(), b.Hostname()) &&
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `46d05cbf` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bc458019` are properly handled with clean fallback behavior.

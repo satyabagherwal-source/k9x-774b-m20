@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/graphprotocol-graph-node-learnings.md`  
 > **Source**: github ([https://github.com/graphprotocol/graph-node](https://github.com/graphprotocol/graph-node))  
-> **Source Version**: `cc31bc78`  
+> **Source Version**: `3b2f05d4`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T05:40:24.884Z  
+> **Timestamp**: 2026-11-09T22:55:25.899Z  
 > **Learning ID**: `learn-github-graphprotocol-graph-node`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/graphprotocol-graph-node-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/graphprotocol/graph-node](https://github.com/graphprotocol/graph-node))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T05:40:24.878Z  
+> **Harvest Timestamp**: 2026-11-09T22:55:24.916Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Graph Node indexes data from blockchains such as Ethereum and serves it over GraphQL
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 3153 stars
+- **Stars / Engagement**: 3166 stars
 
 ---
 
@@ -881,274 +881,229 @@ impl<S> Drop for GraphmanExecutionTracker<S> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cc31bc78` (2026-10-20)
-**Commit Message**: graph, chain/ethereum, gnd, store: default a missing sha3Uncles in block headers (#6737)
+### Incident Patch 1: `3b2f05d4` (2026-11-09)
+**Commit Message**: core: Hash each WASM module once instead of once per data source (#6732)
 
-Signed-off-by: Tomás Migone <[REDACTED_EMAIL]>
+* core: Hash each WASM module once instead of once per data source
 
-**File**: `chain/ethereum/src/codec.rs` (modified, +2/-2)
+`SubgraphInstance::new_host` computed keccak256 over the full module bytes
+for every data source before looking up `module_cache`. Data sources
+created from the same template share one `Arc` of module bytes, so on a
+subgraph with millions of dynamic data sources this rehashed the same
+bytes millions of times at every runner start.
+
+Memoize the hash by the identity of the `Arc` holding the bytes, keeping a
+clone of the `Arc` so its address cannot be reused while the entry exists.
+The `module_cache` key is still the keccak256 of the module contents.
+
+* core: Keep ModuleCache as plain data
+
+Drop the `Arc::ptr_eq` check and the `hashes_computed` test counter, and
+move spawning back to `new_host`. The memo keeps its clone of the `Arc`,
+which is what makes the address a safe key.
+
+* core: Drop module cache test checks that don't exercise the memo
+
+**File**: `core/src/subgraph/context/instance/mod.rs` (modified, +5/-5)
 ```diff
-@@ -9,7 +9,7 @@ use graph::{
-         self, Block as BlockchainBlock, BlockPtr, BlockTime, ChainStoreBlock, ChainStoreData,
-     },
-     components::ethereum::{
--        AnyBlock, AnyHeader, AnyRpcHeader, AnyTransactionReceiptBare, AnyTxEnvelope,
-+        AnyBlock, AnyHeader, AnyTransactionReceiptBare, AnyTxEnvelope, LenientHeader,
-     },
-     prelude::{
-         BlockNumber, Error, EthereumBlock, EthereumBlockWithCalls, EthereumCall,
-@@ -564,7 +564,7 @@ impl TryInto<AnyBlock> for &Block {
+@@ -1,7 +1,7 @@
+ mod hosts;
++mod module_cache;
  
-         use alloy::rpc::types::Block;
+ use anyhow::ensure;
+-use graph::futures01::sync::mpsc::Sender;
+ use graph::{
+     blockchain::{Blockchain, TriggerData as _},
+     data_source::{
+@@ -11,7 +11,7 @@ use graph::{
+     prelude::*,
+ };
+ use hosts::{OffchainHosts, OnchainHosts};
+-use std::collections::HashMap;
++use module_cache::ModuleCache;
  
--        let any_header: AnyRpcHeader = rpc_header.map(AnyHeader::from);
-+        let any_header = rpc_header.map(|h| LenientHeader::from(AnyHeader::from(h)));
+ pub(crate) struct SubgraphInstance<C: Blockchain, T: RuntimeHostBuilder<C>> {
+     subgraph_id: DeploymentHash,
+@@ -36,7 +36,7 @@ pub(crate) struct SubgraphInstance<C: Blockchain, T: RuntimeHostBuilder<C>> {
+     offchain_hosts: OffchainHosts<C, T>,
  
-         Ok(Block {
-             header: any_header,
+     /// Maps the hash of a module to a channel to the thread in which the module is instantiated.
+-    module_cache: HashMap<[u8; 32], Sender<T::Req>>,
++    module_cache: ModuleCache<T::Req>,
+ 
+     /// This manages the sequence of causality regions for the subgraph.
+     causality_region_seq: CausalityRegionSeq,
+@@ -85,7 +85,7 @@ where
+             onchain_hosts: OnchainHosts::new(),
+             subgraph_hosts: OnchainHosts::new(),
+             offchain_hosts: OffchainHosts::new(),
+-            module_cache: HashMap::new(),
++            module_cache: ModuleCache::new(),
+             templates,
+             host_metrics,
+             causality_region_seq,
+@@ -104,7 +104,7 @@ where
+         };
+ 
+         let mapping_request_sender = {
+-            let module_hash = alloy::primitives::keccak256(module_bytes.as_ref()).0;
++            let module_hash = self.module_cache.hash(&module_bytes);
+             if let Some(sender) = self.module_cache.get(&module_hash) {
+                 sender.clone()
+             } else {
 ```
 
-**File**: `gnd/src/commands/test/trigger.rs` (modified, +2/-1)
+**File**: `core/src/subgraph/context/instance/module_cache.rs` (added, +181/-0)
 ```diff
-@@ -487,7 +487,8 @@ fn create_block_with_triggers(
-             parent_hash,
-             timestamp,
-             ..Default::default()
--        }),
-+        })
-+        .into(),
-         total_difficulty: None,
-         size: None,
-     })
-```
-
-**File**: `graph/src/components/ethereum/header.rs` (added, +119/-0)
-```diff
-@@ -0,0 +1,119 @@
-+use alloy::consensus::BlockHeader;
-+use alloy::network::AnyHeader;
-+use alloy::primitives::{Address, B64, B256, BlockNumber, Bloom, Bytes, U256};
-+use serde::{Deserialize, Deserializer, Serialize};
-+use serde_json::Value;
-+use std::ops::{Deref, DerefMut};
+@@ -0,0 +1,181 @@
++use graph::futures01::sync::mpsc::Sender;
++use std::collections::HashMap;
++use std::sync::Arc;
 +
-+/// Alloy's [`AnyHeader`], except that a missing `sha3Uncles` deserializes as
-+/// the zero hash, as it did with graph-node's rust-web3 fork.
-+/// The zero hash is kept for compatibility: mappings can read it as
-+/// `ethereum.Block.unclesHash`. Serializes exactly like `AnyHeader`.
-+#[derive(Clone, Debug, Default, PartialEq, Eq, Hash, Serialize)]
-+#[serde(transparent)]
-+pub struct LenientHeader(pub AnyHeader);
++/// Maps the hash of a module to a channel to the thread in which the module
++/// is instantiated.
++///
++/// Hashing a module reads all of its bytes, and a subgraph can have millions
++/// of data sources that share a handful of modules. The hash is therefore
++/// memoized by the identity of the `Arc` that holds the bytes: every data
++/// source created from the same manifest mapping or template shares that
++/// mapping's `Arc`. The memo holds a clone of the `Arc`, so the allocation
++/// lives as long as the entry and an address found in the memo always
++/// designates that same `Arc`. Bytes in another `Arc` are hashed again: equal
++/// contents give the same hash, hence the same module.
++pub(super) struct ModuleCache<R> {
++    senders: HashMap<[u8; 32], Sender<R>>,
++    hashes: HashMap<usize, (Arc<Vec<u8>>, [u8; 32])>,
++}
 +
-+impl<'de> Deserialize<'de> for LenientHeader {
-+    fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
-+        let mut header = Value::deserialize(deserializer)?;
-+        if let Value::Object(fields) = &mut header
-+            && !fields.contains_key("sha3Uncles")
-+        {
-+            fields.insert("sha3Uncles".to_string(), B256::ZERO.to_string().into());
++impl<R> ModuleCache<R> {
++    pub fn new() -> Self {
++        ModuleCache {
++            senders: HashMap::new(),
++            hashes: HashMap::new(),
 +        }
-+        AnyHeader::deserialize(header)
-+            .map(LenientHeader)
-+            .map_err(serde::de::Error::custom)
 +    }
-+}
 +
-+impl Deref for LenientHeader {
-+    type Target = AnyHeader;
-+
-+    fn deref(&self) -> &AnyHeader {
-+        &self.0
++    /// The keccak256 hash of `module_bytes`, computed once per `Arc`.
++    pub fn hash(&mut self, module_bytes: &Arc<Vec<u8>>) -> [u8; 32] {
++        let key = Arc::as_ptr(module_bytes) as usize;
++        if let Some((_, hash)) = self.hashes.get(&key) {
++            return *hash;
++        }
++        let hash = alloy::primitives::keccak256(module_bytes.as_slice()).0;
++        self.hashes.insert(key, (module_bytes.clone(), hash));
++        hash
 +    }
-+}
 +
-+impl DerefMut for LenientHeader {
-+    fn deref_mut(&mut self) -> &mut AnyHeader {
-+        &mut self.0
++    pub fn get(&self, module_hash: &[u8; 32]) -> Option<&Sender<R>> {
++        self.senders.get(module_hash)
 +    }
-+}
 +
-+impl From<AnyHeader> for LenientHeader {
-+    fn from(header: AnyHeader) -> Self {
-+        LenientHeader(header)
-+    }
-+}
-+
-+macro_rules! delegate {
-+    ($($method:ident -> $ret:ty),* $(,)?) => {
-+        $(fn $method(&self) -> $ret { self.0.$method() })*
-+    };
-+}
-+
-+impl BlockHeader for LenientHeader {
-+    delegate! {
-+        parent_hash -> B256,
-+        ommers_hash -> B256,
-+        beneficiary -> Address,
-+        state_root -> B256,
-+        transactions_root -> B256,
-+        receipts_root -> B256,
-+        withdrawals_root -> Option<B256>,
-+        logs_bloom -> Bloom,
-+        difficulty -> U256,
-+        number -> BlockNumber,
-+        gas_limit -> u64,
-+        gas_used -> u64,
-+        timestamp -> u64,
-+        mix_hash -> Option<B256>,
-+        nonce -> Option<B64>,
-+        base_fee_per_gas -> Option<u64>,
-+        blob_gas_used -> Option<u64>,
-+        excess_blob_gas -> Option<u64>,
-+        parent_beacon_block_root -> Option<B256>,
-+        requests_hash -> Option<B256>,
-+        block_access_list_hash -> Option<B256>,
-+        slot_number -> Option<u64>,
-+        extra_data -> &Bytes,
++    pub fn insert(&mut self, module_hash: [u8; 32], sender: Sender<R>) {
++        self.senders.insert(module_hash, sender);
 +    }
 +}
 +
 +#[cfg(test)]
 +mod tests {
 +    use super::*;
-+    use crate::components::ethereum::AnyBlock;
++    use graph::futures01::sync::mpsc::{Receiver, channel};
 +
-+    /// Celo mainnet block 18946750 (before Gingerbread), as returned by
-+    /// forno.celo.org. It has no `sha3Uncles` field.
-+    const CELO_PRE_GINGERBREAD_BLOCK: &str = r#"{"baseFeePerGas":"0x12a05f200","difficulty":"0x0","epochSnarkData":null,"extraData":"0xd983010700846765746889676f312e31372e3133856c696e7578000000000000f8ccc0c080b841a2dabeefc7d980e7da2dc0279a009f071892f2da13513fad2c78564b02ac62ad1846f48b2c374cecdb3008fbe58d3381809d62d0542a8468b94f4e9b22be904300f8418e303ed3fcd8eaff6d5f7fbc5f79bcb0f84388e266f10d9cb40a8aa194fd4d496e0481f03e0f0115b090c8510253278495ea59cd861dfd688fd62a7a263d290180f8418e3fffffffffffffffffffefffffffb0450595e2afb27d47dbababe99a3f093d4c0f9e7a4b555fff11980cf43ca2a7a5583c75877c4ed993908a49a1b8d4290080","gasLimit":"0x1312d00","gasUsed":"0xd647e","hash":"0x8e4a323d009fdd25a67f58d883abbc5b5f029f213a2e64f39dd73e0efecc083a","logsBloom":"0x00800000000200000000240040020000000000000000000000000000000000000000080000000000000000002000000800000000000000000000000000200000000000100002000200000008000000000840002004000000000000000000000000000000000400000004400000008008000000000000000040910010000001000402000080000000400080000400000800000000000040800000000000008100000000800000000000000000000010000000000000000000000000000400010000000002000000020000100000002000000800000000000000000000400000000000000000000000020004020000000000000240000020000000000000000000","miner":"0x8e5db67c3ca13c3487fa291953ade27b503ed6bd","number":"0x1211abe","parentHash":"0x265cb829255b379e0812f857b162450e8330dd34cd21082af15b502afb960539","randomness":{"committed":"0x5a6dd907afeb4dbe106605e77f3eee2d8778dee1e99d9bc74705fec15540d61c","revealed":"0xf8158ddf7f63993ecefc39d4ca064aeb987c15d62b24807b079a1c8b29d3d8f6"},"receiptsRoot":"0xf06c82b478ebd9f5281756a1876d7526a6a952e7ecad6b040748c700378bfca2","size":"0x64b","stateRoot":"0x55d3594e686901a30be71777d8cc11575da5cfa2c78c57303933a3db6cf18b87","timestamp":"0x64476aa4","totalDifficulty":"0x1211abf","transactions":["0xc06b5d3f226083ea603fdfffaf910aef6794709f0b7ac2226f828ba053fbc015","0xd46049a51bbd0baf617d63cc264694d2c9ea4cda11ac348ea5bb813844611d0a","0x2422aea2e4815963e7c6d2fefa0698cb827ef180dd662364203cf416262419f8","0x973372c269483c298d40d111d5b342f6d30d66bb46cfab6cf910e5252ab9cb9e"],"transactionsRoot":"0x7fc667ab6e2
-```
-
-**File**: `graph/src/components/ethereum/mod.rs` (modified, +3/-1)
-```diff
-@@ -1,12 +1,14 @@
-+mod header;
- pub mod json_patch;
- mod network;
- mod types;
- 
-+pub use self::header::LenientHeader;
- pub use self::network::AnyNetworkBare;
- pub use self::types::{
-     AnyBlock, AnyTransaction, AnyTransactionReceiptBare, CachedBlock, EthereumBlock,
-     EthereumBlockWithCalls, EthereumCall, LightEthereumBlock, LightEthereumBlockExt,
- };
- 
- // Re-export Alloy network types for convenience
--pub use alloy::network::{AnyHeader, AnyRpcHeader, AnyTxEnvelope};
-+pub use alloy::network::{AnyHeader, AnyTxEnvelope};
-```
-
-**File**: `graph/src/components/ethereum/network.rs` (modified, +7/-6)
-```diff
-@@ -1,9 +1,9 @@
- use alloy::consensus::BlobTransactionSidecarVariant;
- use alloy::eips::eip7702::SignedAuthorization;
- use alloy::network::{
--    AnyHeader, AnyReceiptEnvelope, AnyRpcTransaction, AnyTxEnvelope, AnyTxType,
--    AnyTypedTransaction, BuildResult, Network, NetworkTransactionBuilder, NetworkWallet,
--    TransactionBuilder, TransactionBuilder4844, TransactionBuilder7702, TransactionBuilderError,
-+    AnyReceiptEnvelope, AnyRpcTransaction, AnyTxEnvelope, AnyTxType, AnyTypedTransaction,
-+    BuildResult, Network, NetworkTransactionBuilder, NetworkWallet, TransactionBuilder,
-+    TransactionBuilder4844, TransactionBuilder7702, TransactionBuilderError,
- };
- use alloy::primitives::{Address, Bytes, ChainId, TxKind, U256};
- use alloy::providers::fillers::{
-@@ -17,6 +17,7 @@ use alloy::serde::WithOtherFields;
- use serde::{Deserialize, Serialize};
- use std::ops::{Deref, DerefMut};
- 
-+use super::header::LenientHeader;
- use super::types::AnyTransaction;
- 
- /// Like alloy's [`AnyNetwork`] but without [`WithOtherFields`] on response types.
-@@ -95,13 +96,13 @@ impl Network for AnyNetworkBare {
-     type TxEnvelope = AnyTxEnvelope;
-     type UnsignedTx = AnyTypedTransaction;
-     type ReceiptEnvelope = AnyReceiptEnvelope;
--    type Header = AnyHeader;
-+    type Header = LenientHeader;
- 
-     type TransactionRequest = AnyTransactionRequest;
-     type TransactionResponse = AnyTransaction;
-     type ReceiptResponse = TransactionReceipt<AnyReceiptEnvelope<Log>>;
--    type HeaderResponse = Header<AnyHeader>;
--    type BlockResponse = Block<AnyTransaction, Header<AnyHeader>>;
-+    type HeaderResponse = Header<LenientHeader>;
-+    type BlockResponse = Block<AnyTransaction, Header<LenientHeader>>;
- }
- 
- impl RecommendedFillers for AnyNetworkBare {
-```
-
-**File**: `graph/src/components/ethereum/types.rs` (modified, +4/-6)
-```diff
-@@ -1,8 +1,5 @@
- use alloy::{
--    network::{
--        AnyHeader, AnyReceiptEnvelope, AnyRpcHeader, AnyTxEnvelope, ReceiptResponse,
--        TransactionResponse,
--    },
-+    network::{AnyReceiptEnvelope, AnyTxEnvelope, ReceiptResponse, TransactionResponse},
-     primitives::{Address, B256, Bytes, U256},
-     rpc::types::{
-         Block, Header, Log, Transaction, TransactionReceipt,
-@@ -17,10 +14,11 @@ use crate::{
-     prelude::BlockNumber,
- };
- 
-+use super::header::LenientHeader;
- use super::json_patch;
- 
- pub type AnyTransaction = Transaction<AnyTxEnvelope>;
--pub type AnyBlock = Block<AnyTransaction, Header<AnyHeader>>;
-+pub type AnyBlock = Block<AnyTransaction, Header<LenientHeader>>;
- /// Like alloy's `AnyTransactionReceipt` but without the `WithOtherFields` wrapper,
- /// avoiding `#[serde(flatten)]` overhead during deserialization.
- pub type AnyTransactionReceiptBare = TransactionReceipt<AnyReceiptEnvelope<Log>>;
-@@ -34,7 +32,7 @@ impl Default for LightEthereumBlock {
-         use alloy::rpc::types::BlockTransactions;
- 
-         Self(Block {
--            header: AnyRpcHeader::default(),
-+            header: Default::default(),
-             transactions: BlockTransactions::Full(vec![]),
-             uncles: vec![],
-             withdrawals: None,
-```
-
-**File**: `graph/src/util/test_utils.rs` (modified, +1/-1)
-```diff
-@@ -18,7 +18,7 @@ pub fn create_minimal_block_for_test(block_number: u64, block_hash: B256) -> Any
-     // Create RPC header with the specific hash and wrap in AnyHeader
-     let rpc_header = Header {
-         hash: block_hash,
--        inner: AnyHeader::from(consensus_header),
-+        inner: AnyHeader::from(consensus_header).into(),
-         total_difficulty: None,
-         size: None,
-     };
-```
-
-**File**: `store/test-store/src/block_store.rs` (modified, +1/-1)
-```diff
-@@ -117,7 +117,7 @@ impl FakeBlock {
- 
-         let rpc_header = Header {
-             hash: block_hash,
--            inner: graph::components::ethereum::AnyHeader::from(consensus_header),
-+            inner: graph::components::ethereum::AnyHeader::from(consensus_header).into(),
-             total_difficulty: None,
-             size: None,
-         };
++    /// A cache used like `new_host` uses it, whose spawns are recorded: the
++    /// receivers, by spawn order.
++    struct Spawns {
++        cache: ModuleCache<u32>,
++        receivers: Vec<Receiver<u32>>,
++    }
++
++    impl Spawns {
++        fn new() -> Self {
++            Spawns {
++                cache: ModuleCache::new(),
++                receivers: Vec::new(),
++            }
++        }
++
++        /// Memoize `mark` as the hash of `bytes`.
++        fn seed(&mut self, bytes: &Arc<Vec<u8>>, mark: [u8; 32]) {
++            let key = Arc::as_ptr(bytes) as usize;
++            self.cache.hashes.insert(key, (bytes.clone(), mark));
++        }
++
++        fn sender(&mut self, bytes: &Arc<Vec<u8>>) -> Sender<u32> {
++            let module_hash = self.cache.hash(bytes);
++            if let Some(sender) = self.cache.get(&module_hash) {
++                return sender.clone();
++            }
++            let (tx, rx) = channel(1);
++            self.receivers.push(rx);
++            self.cache.insert(module_hash, tx.clone());
++            tx
++        }
++    }
++
++    /// Whether `sender` sends to the receiver of spawn `idx`: drop that
++    /// receiver and see if the sender is disconnected.
++    fn sends_to(mut spawns: Spawns, sender: &mut Sender<u32>, idx: usize) -> bool {
++        drop(spawns.receivers.remove(idx));
++        sender.try_send(0).is_err_and(|e| e.is_disconnected())
++    }
++
++    fn module(n: u8) -> Vec<u8> {
++        (0..66_000u32).map(|i| (i as u8) ^ n).collect()
++    }
++
++    #[test]
++    fn two_templates_two_hashes() {
++        let a = Arc::new(module(1));
++        let b = Arc::new(module(2));
++        let mut s = Spawns::new();
++        let ha = s.cache.hash(&a);
++        let hb = s.cache.hash(&b);
++        assert_eq!(ha, alloy::primitives::keccak256(a.as_slice()).0);
++        assert_eq!(hb, alloy::primitives::keccak256(b.as_slice()).0);
++
++        s.sender(&a);
++        let mut sb = s.sender(&b);
++        assert_eq!(s.receivers.len(), 2, "one module per template");
++        assert!(sends_to(s, &mut sb, 1));
++    }
++
++    #[test]
++    fn sources_of_one_template_share_hash_and_sender() {
++        let template = Arc::new(module(1));
++        let other = Arc::new(module(2));
++        let mut s = Spawns::new();
++        s.sender(&other);
++        s.sender(&template);
++        let mut second = s.sender(&template.clone());
++        assert_eq!(s.cache.hashes.len(), 2);
++        assert_eq!(s.receivers.len(), 2);
++        assert!(sends_to(s, &mut second, 1), "the template's sender");
++    }
++
++    #[test]
++    fn many_sources_hash_once_per_template() {
++        const N: usize = 100_000;
++        // A recomputed hash overwrites its entry, which `hashes.len()` can't
++        // show. Marks are not real hashes on purpose: only a hit returns them.
++        let (mark_a, mark_b) = ([0xaa; 32], [0xbb; 32]);
++        let a = Arc::new(module(1));
++        let b = Arc::new(module(2));
++        let mut s = Spawns::new();
++        s.seed(&a, mark_a);
++        s.seed(&b, mark_b);
++        for i in 0..N {
++      
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #6743** (closed): fix(ethereum): default missing sha3Uncles for pre-Gingerbread Celo blocks (@HusseinAdeiza)
 - **PR #6737** (2026-10-20): graph, chain/ethereum, gnd, store: default a missing sha3Uncles in block headers (@tmigone)
 - **PR #6733** (closed): ci: Build a CI image with the toolchain and system packages (@mangas)
+- **PR #6732** (2026-11-09): core: Hash each WASM module once instead of once per data source (@madumas)
 - **PR #6730** (closed): core: Keep the subgraph runner alive through transient store errors (@cargopete)
 - **PR #6729** (2026-10-19): Restore eth_getLogs range reduction after alloy migration (@datanexus-vincent)
-- **PR #6723** (closed): chain/ethereum: Restore eth_getLogs block range reduction under alloy (@datanexus-vincent)
 
 ---
 
@@ -1168,30 +1123,36 @@ Signed-off-by: Tomás Migone <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. graph, chain/ethereum, gnd, store: default a missing sha3Uncles in block headers
+## X. core: Hash each WASM module once instead of once per data source (#6732)
 
 **RULE**:
-When implementing operations in `chain/ethereum/src/codec.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in graphprotocol/graph-node. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/src/subgraph/context/instance/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in graphprotocol/graph-node. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cc31bc78`: graph, chain/ethereum, gnd, store: default a missing sha3Uncles in block headers (#6737). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3b2f05d4`: core: Hash each WASM module once instead of once per data source (#6732). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `chain/ethereum/src/codec.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/src/subgraph/context/instance/mod.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        AnyBlock, AnyHeader, AnyTransactionReceiptBare, AnyTxEnvelope, LenientHeader,
-        let any_header = rpc_header.map(|h| LenientHeader::from(AnyHeader::from(h)));
+mod module_cache;
+use module_cache::ModuleCache;
+    module_cache: ModuleCache<T::Req>,
+            module_cache: ModuleCache::new(),
+            let module_hash = self.module_cache.hash(&module_bytes);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        AnyBlock, AnyHeader, AnyRpcHeader, AnyTransactionReceiptBare, AnyTxEnvelope,
-        let any_header: AnyRpcHeader = rpc_header.map(AnyHeader::from);
+use graph::futures01::sync::mpsc::Sender;
+use std::collections::HashMap;
+    module_cache: HashMap<[u8; 32], Sender<T::Req>>,
+            module_cache: HashMap::new(),
+            let module_hash = alloy::primitives::keccak256(module_bytes.as_ref()).0;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cc31bc78` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3b2f05d4` are properly handled with clean fallback behavior.

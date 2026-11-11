@@ -1,10 +1,10 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/shifthackz-stable-diffusion-kmp-learnings.md`  
 > **Source**: github ([https://github.com/ShiftHackZ/Stable-Diffusion-KMP](https://github.com/ShiftHackZ/Stable-Diffusion-KMP))  
-> **Source Version**: `4b060c7e`  
+> **Source Version**: `7431c4b6`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T18:23:17.549Z  
-> **Learning ID**: `learn-github-shifthackz-stable-diffusion-kmp`  
+> **Timestamp**: 2026-11-08T15:28:18.145Z  
+> **Learning ID**: `learn-github-shifthackz-sdai-kmp`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -12,22 +12,22 @@
 
 ---
 
-# Forensic Learning Record (Deep Inspection): ShiftHackZ/Stable-Diffusion-KMP
+# Forensic Learning Record (Deep Inspection): ShiftHackZ/SDAI-KMP
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/shifthackz-stable-diffusion-kmp-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ShiftHackZ/Stable-Diffusion-KMP](https://github.com/ShiftHackZ/Stable-Diffusion-KMP))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T18:23:17.542Z  
+> **Harvest Timestamp**: 2026-11-08T15:28:18.141Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
 ## 1. Context & Architectural Overview
-- **Repository / Resource**: `ShiftHackZ/Stable-Diffusion-KMP`
+- **Repository / Resource**: `ShiftHackZ/SDAI-KMP`
 - **Description**: Stable Diffusion AI client app for Android and iOS
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1277 stars
+- **Stars / Engagement**: 1286 stars
 
 ---
 
@@ -827,175 +827,141 @@ internal actual fun platformCurrentTimeMillis(): Long = System.currentTimeMillis
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `60ff1c39` (2026-07-19)
-**Commit Message**: Merge release 1.1.2 fixes back into develop
+### Incident Patch 1: `abb338f1` (2026-11-07)
+**Commit Message**: Fix release signing metadata and align the F-Droid SDK path (#728)
 
-**File**: `CITATION.cff` (modified, +2/-2)
+* Fix Android release package metadata parsing
+
+* Align Android SDK installation path with F-Droid
+
+**File**: `.github/workflows/release_android.yml` (modified, +5/-1)
 ```diff
-@@ -2,8 +2,8 @@ cff-version: 1.2.0
- message: "If you use this software, please cite it using the metadata below."
- title: "SDAI"
- type: software
--version: "1.1.1"
--date-released: "2026-07-16"
-+version: "1.1.2"
-+date-released: "2026-07-19"
- abstract: >-
-   SDAI is an open-source, cross-platform AI image generation client for
-   Android and iOS. It provides a unified mobile workflow for self-hosted
+@@ -127,7 +127,11 @@ jobs:
+           persist-credentials: false
+ 
+       - name: Install pinned native Linux toolchain
+-        run: bash ci/scripts/release/setup.sh build "$RUNNER_TEMP/release-tools"
++        run: |
++          # Keep NDK header paths consistent with the F-Droid build environment.
++          test ! -e /opt/android-sdk
++          sudo install -d -o "$(id -u)" -g "$(id -g)" /opt/android-sdk
++          bash ci/scripts/release/setup.sh build "$RUNNER_TEMP/release-tools" /opt/android-sdk
+ 
+       - name: Build unsigned artifact
+         env:
 ```
 
-**File**: `README.md` (modified, +2/-2)
+**File**: `scripts/release/README.md` (modified, +9/-2)
 ```diff
-@@ -225,7 +225,7 @@ Machine-readable citation metadata is available in [`CITATION.cff`](CITATION.cff
+@@ -104,6 +104,11 @@ installing the pinned SDK. Android archive checksums were calculated from the
+ official downloads and cross-checked against Google's repository metadata. JDK,
+ Gradle and bundletool checksum sources are recorded in the profile.
  
- If you mention SDAI in research, articles, benchmarks, tutorials, app collections, or public project documentation, please cite it as:
++Build jobs install the SDK at `/opt/android-sdk`, matching the F-Droid build
++environment. Native debug information can include NDK header paths, which can
++affect linker build IDs even after debug sections are stripped from the APK.
++Signing and verification jobs use their own temporary SDK directory.
++
+ Gradle runs with a 4 GiB heap, at most two workers, no parallel project execution,
+ and the Kotlin compiler inside the Gradle process. Native Ninja compilation is limited
+ to two workers, including direct Ninja invocations from AGP. Each selected output
+@@ -121,15 +126,17 @@ For a local native Linux build, use a clean source checkout with initialized
+ submodules and a separate checkout containing these workflow tools:
  
--> SDAI, version 1.1.1, an open-source cross-platform AI image generation client by Dmytro Moroz (Moroz Inc.). https://github.com/ShiftHackZ/Stable-Diffusion-KMP
-+> SDAI, version 1.1.2, an open-source cross-platform AI image generation client by Dmytro Moroz (Moroz Inc.). https://github.com/ShiftHackZ/Stable-Diffusion-KMP
- 
- BibTeX:
- 
-@@ -235,6 +235,6 @@ BibTeX:
-   author = {Moroz, Dmytro},
-   year = {2026},
-   howpublished = {GitHub repository: https://github.com/ShiftHackZ/Stable-Diffusion-KMP},
--  note = {Version 1.1.1; open-source cross-platform AI image generation client}
-+  note = {Version 1.1.2; open-source cross-platform AI image generation client}
- }
+ ```sh
+-bash /path/to/ci/scripts/release/setup.sh build /path/to/empty-toolchain-directory
++bash /path/to/ci/scripts/release/setup.sh build /path/to/empty-toolchain-directory /opt/android-sdk
+ source /path/to/empty-toolchain-directory/environment.sh
+ bash /path/to/ci/scripts/release/build.sh \
+   /path/to/source foss apk /path/to/output FULL_SOURCE_COMMIT_SHA
  ```
-```
-
-**File**: `feature/benchmark/src/androidMain/cpp/CMakeLists.txt` (modified, +5/-0)
-```diff
-@@ -6,6 +6,11 @@ set(CMAKE_CXX_STANDARD 17)
- set(CMAKE_CXX_STANDARD_REQUIRED ON)
- set(CMAKE_POSITION_INDEPENDENT_CODE ON)
  
-+add_compile_options(
-+    "-ffile-prefix-map=${CMAKE_SOURCE_DIR}=."
-+    "-ffile-prefix-map=${CMAKE_BINARY_DIR}=."
-+)
-+
- add_library(
-     sdai_benchmark
-     SHARED
-```
-
-**File**: `feature/bonsai/src/androidMain/cpp/CMakeLists.txt` (modified, +5/-0)
-```diff
-@@ -6,6 +6,11 @@ set(CMAKE_CXX_STANDARD 17)
- set(CMAKE_CXX_STANDARD_REQUIRED ON)
- set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+ The build helper rejects local SDK and signing configuration in the source
+ checkout. It applies the SDK/NDK/CMake profile through a Gradle init script without
+-changing tracked source files.
++changing tracked source files. The optional third setup argument selects an empty,
++writable SDK directory; create `/opt/android-sdk` with the build user's ownership
++before setup. Without it, the SDK is installed inside the toolchain directory.
  
-+add_compile_options(
-+    "-ffile-prefix-map=${CMAKE_SOURCE_DIR}=."
-+    "-ffile-prefix-map=${CMAKE_BINARY_DIR}=."
-+)
-+
- add_library(
-     sdai_bonsai
-     SHARED
-```
-
-**File**: `gradle/libs.versions.toml` (modified, +2/-2)
-```diff
-@@ -1,6 +1,6 @@
- [versions]
--versionName = "1.1.1"
--versionCode = "208"
-+versionName = "1.1.2"
-+versionCode = "209"
- targetSdk = "36"
- compileSdk = "36"
- minSdk = "24"
-```
-
----
-
-### Incident Patch 2: `db8910d7` (2026-07-19)
-**Commit Message**: fix: Normalize Bonsai native build paths
-
-**File**: `feature/benchmark/src/androidMain/cpp/CMakeLists.txt` (modified, +5/-0)
-```diff
-@@ -6,6 +6,11 @@ set(CMAKE_CXX_STANDARD 17)
- set(CMAKE_CXX_STANDARD_REQUIRED ON)
- set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+ ## First signed run and local F-Droid comparison
  
-+add_compile_options(
-+    "-ffile-prefix-map=${CMAKE_SOURCE_DIR}=."
-+    "-ffile-prefix-map=${CMAKE_BINARY_DIR}=."
-+)
-+
- add_library(
-     sdai_benchmark
-     SHARED
 ```
 
-**File**: `feature/bonsai/src/androidMain/cpp/CMakeLists.txt` (modified, +5/-0)
+**File**: `scripts/release/setup.sh` (modified, +13/-5)
 ```diff
-@@ -6,6 +6,11 @@ set(CMAKE_CXX_STANDARD 17)
- set(CMAKE_CXX_STANDARD_REQUIRED ON)
- set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+@@ -1,10 +1,10 @@
+ #!/usr/bin/env bash
+ # Install the release toolchain into a new directory without using runner SDK caches.
+-# Usage: setup.sh <build|sign> <empty-toolchain-directory>
++# Usage: setup.sh <build|sign> <empty-toolchain-directory> [empty-android-sdk-directory]
+ set -euo pipefail
  
-+add_compile_options(
-+    "-ffile-prefix-map=${CMAKE_SOURCE_DIR}=."
-+    "-ffile-prefix-map=${CMAKE_BINARY_DIR}=."
-+)
-+
- add_library(
-     sdai_bonsai
-     SHARED
+ fail() { printf 'Toolchain setup: %s\n' "$*" >&2; exit 1; }
+-[[ $# == 2 ]] || fail 'expected build or sign mode and an empty directory'
++[[ $# == 2 || $# == 3 ]] || fail 'expected mode, empty toolchain directory and optional empty SDK directory'
+ [[ $(uname -s) == Linux && $(uname -m) == x86_64 ]] || fail 'Linux x86_64 is required'
+ mode=$1
+ [[ $mode == build || $mode == sign ]] || fail 'mode must be build or sign'
+@@ -17,16 +17,24 @@ profile="$script_dir/toolchain.json"
+ mkdir -p -- "$2"
+ toolchain_root=$(cd -- "$2" && pwd)
+ [[ -z $(ls -A -- "$toolchain_root") ]] || fail 'toolchain directory must be empty'
++mkdir -p -- "${3:-$toolchain_root/android-sdk}"
++android_sdk_root=$(cd -- "${3:-$toolchain_root/android-sdk}" && pwd)
++[[ -z $(ls -A -- "$android_sdk_root") ]] || fail 'Android SDK directory must be empty'
+ work=$(mktemp -d "$toolchain_root/.download.XXXXXX")
+ trap 'rm -rf -- "$work"' EXIT
+ 
+ # Every download is checked before extraction. SHA-256 values for Android archives
+ # were calculated after validating Google's repository XML SHA-1 checksums.
+ install_artifact() {
+-  local name=$1 url digest archive_root destination archive stage expected actual
++  local name=$1 url digest archive_root destination relative_destination archive stage expected actual
+   url=$(jq -er --arg name "$name" '.artifacts[$name].url' "$profile")
+   digest=$(jq -er --arg name "$name" '.artifacts[$name].sha256' "$profile")
+-  destination="$toolchain_root/$(jq -er --arg name "$name" '.artifacts[$name].destination' "$profile")"
++  relative_destination=$(jq -er --arg name "$name" '.artifacts[$name].destination' "$profile")
++  if [[ $relative_destination == android-sdk/* ]]; then
++    destination="$android_sdk_root/${relative_destination#android-sdk/}"
++  else
++    destination="$toolchain_root/$relative_destination"
++  fi
+   archive="$work/$name.archive"
+   printf 'Installing %s\n' "$name"
+   curl --fail --location --retry 3 --proto '=https' --tlsv1.2 --output "$archive" "$url"
+@@ -67,7 +75,7 @@ if [[ $mode == build ]]; then
+ fi
+ 
+ export JAVA_HOME="$toolchain_root/jdk"
+-export ANDROID_HOME="$toolchain_root/android-sdk"
++export ANDROID_HOME="$android_sdk_root"
+ export ANDROID_SDK_ROOT="$ANDROID_HOME"
+ export SDAI_TOOLCHAIN_DIR="$toolchain_root"
+ export BUNDLETOOL_JAR="$toolchain_root/bundletool.jar"
 ```
 
----
-
-### Incident Patch 3: `21861852` (2026-07-14)
-**Commit Message**: fix: F-Droid build reproducibility, SDCPP source dir prefixes, non arm64-v8a binaries from FOSS build
-
-**File**: `app/android/build.gradle.kts` (modified, +9/-0)
+**File**: `scripts/release/sign.sh` (modified, +2/-2)
 ```diff
-@@ -49,6 +49,15 @@ android {
-         manifestPlaceholders["excludePermissions"] = "true"
-     }
- 
-+    productFlavors {
-+        getByName("foss") {
-+            ndk {
-+                //noinspection ChromeOsAbiSupport
-+                abiFilters += "arm64-v8a"
-+            }
-+        }
-+    }
-+
-     val signingPropertiesFile = rootProject.file("app/keystore/signing.properties")
-     if (signingPropertiesFile.exists()) {
-         val props = Properties()
-```
-
-**File**: `feature/sdxl/src/androidMain/cpp/CMakeLists.txt` (modified, +5/-0)
-```diff
-@@ -64,6 +64,11 @@ set(CMAKE_CXX_STANDARD 17)
- set(CMAKE_CXX_STANDARD_REQUIRED ON)
- set(CMAKE_POSITION_INDEPENDENT_CODE ON)
- 
-+add_compile_options(
-+    "-ffile-prefix-map=${CMAKE_SOURCE_DIR}=."
-+    "-ffile-prefix-map=${CMAKE_BINARY_DIR}=."
-+)
-+
- set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
- set(SD_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
- set(SD_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+@@ -78,8 +78,8 @@ if [[ "$extension" == apk ]]; then
+   "$build_tools/aapt2" dump badging "$unsigned_file" > "$signing_dir/badging.txt" 2> "$signing_dir/aapt2.log" \
+     || fail 'Could not inspect APK metadata.'
+   package_line="$(sed -n '/^package: /{p;q;}' "$signing_dir/badging.txt")"
+-  actual_id="$(printf '%s\n' "$package_line" | sed -n "s/.*name='\([^']*\)'.*/\1/p")"
+-  actual_version="$(printf '%s\n' "$package_line" | sed -n "s/.*versionName='\([^']*\)'.*/\1/p")"
++  actual_id="$(printf '%s\n' "$package_line" | sed -n "s/^package: name='\([^']*\)'.*/\1/p")"
++  actual_version="$(printf '%s\n' "$package_line" | sed -n "s/.* versionName='\([^']*\)'.*/\1/p")"
+   [[ "$actual_id" == "$application_id" && "$actual_version" == "$version_name" ]] \
+     || fail 'APK application ID or version does not match the release request.'
+   if grep -q '^application-debuggable' "$signing_dir/badging.txt"; then
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #715** (closed): Bump gradle-wrapper from 8.13 to 9.8.0 (@dependabot[bot])
-- **PR #714** (closed): Bump org.jetbrains.compose from 1.11.1 to 1.12.1 (@dependabot[bot])
-- **PR #709** (closed): Bump com.microsoft.onnxruntime:onnxruntime-android from 1.26.0 to 1.30.0 (@dependabot[bot])
-- **PR #708** (closed): Bump androidx.navigation:navigation-compose from 2.9.8 to 2.10.1 (@dependabot[bot])
-- **PR #703** (closed): Bump kotlin from 2.3.21 to 2.4.20 (@dependabot[bot])
-- **PR #702** (closed): Bump com.google.protobuf:protobuf-java from 4.26.1 to 4.36.1 (@dependabot[bot])
+- **PR #731** (2026-11-07): Prepare SDAI 1.2.0 (220) release (@ShiftHackZ)
+- **PR #730** (2026-11-07): Rebranding (@ShiftHackZ)
+- **PR #729** (2026-11-07): Document Python 3.12 for APK verification (@ShiftHackZ)
+- **PR #728** (2026-11-07): Fix release signing metadata and align the F-Droid SDK path (@ShiftHackZ)
+- **PR #727** (2026-11-07): Add reproducible Android release workflow (@ShiftHackZ)
+- **PR #725** (2026-11-07): Add German localization (@mijnders)
 
 ---
 
@@ -1015,30 +981,32 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge release 1.1.2 fixes back into develop
+## X. release signing metadata and align the F-Droid SDK path (#728)
 
 **RULE**:
-When implementing operations in `CITATION.cff`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ShiftHackZ/Stable-Diffusion-KMP. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/release_android.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ShiftHackZ/SDAI-KMP. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `60ff1c39`: Merge release 1.1.2 fixes back into develop. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `abb338f1`: release signing metadata and align the F-Droid SDK path (#728). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `CITATION.cff`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release_android.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-version: "1.1.2"
-date-released: "2026-07-19"
+        run: |
+          # Keep NDK header paths consistent with the F-Droid build environment.
+          test ! -e /opt/android-sdk
+          sudo install -d -o "$(id -u)" -g "$(id -g)" /opt/android-sdk
+          bash ci/scripts/release/setup.sh build "$RUNNER_TEMP/release-tools" /opt/android-sdk
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-version: "1.1.1"
-date-released: "2026-07-16"
+        run: bash ci/scripts/release/setup.sh build "$RUNNER_TEMP/release-tools"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `60ff1c39` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `abb338f1` are properly handled with clean fallback behavior.

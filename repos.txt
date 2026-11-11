@@ -4892,3 +4892,93 @@ https://github.com/davila7/claude-code-templates
 # --- Automatically Discovered by AI Scout Engine [2026-11-05T22:47:38.836Z] ---
 # [MOBILE-CROSS-PLATFORM] a2ui-project/a2ui (9353 score) - Open-source generative UI framework: agents stream declarative JSON, and apps re
 https://github.com/a2ui-project/a2ui
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-06T13:26:59.511Z] ---
+# [AI-AGENTS] milind-soni/OpenMausBot (8235 score) - Open-source Grok Bot alternative with a virtual machine that bots can use
+https://github.com/milind-soni/OpenMausBot
+# [HUGGINGFACE-AI-MODELS] microsoft/Florence-2-base (6350 score) - Verified Hugging Face Model: microsoft/Florence-2-base (435 likes, 9212981 downl
+https://huggingface.co/microsoft/Florence-2-base
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-06T14:05:13.988Z] ---
+# [HUGGINGFACE-AI-MODELS] webAI-Official/TwIL-8B (3520 score) - Verified Hugging Face Model: webAI-Official/TwIL-8B (152 likes, 8209 downloads)
+https://huggingface.co/webAI-Official/TwIL-8B
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-06T14:40:21.811Z] ---
+# [HUGGINGFACE-AI-MODELS] unsloth/Qwen3.8-Flash-Next-GGUF (16430 score) - Verified Hugging Face Model: unsloth/Qwen3.8-Flash-Next-GGUF (1443 likes, 130904
+https://huggingface.co/unsloth/Qwen3.8-Flash-Next-GGUF
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-06T20:30:27.454Z] ---
+# [HUGGINGFACE-AI-MODELS] baidu/ERNIE-5.5-Flash-Base (2616 score) - Verified Hugging Face Model: baidu/ERNIE-5.5-Flash-Base (209 likes, 526 download
+https://huggingface.co/baidu/ERNIE-5.5-Flash-Base
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-06T23:02:25.147Z] ---
+# [AI-AGENTS] github/squad (2269 score) - Squad: AI agent teams for any project
+https://github.com/github/squad
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-07T17:22:15.363Z] ---
+# [DEVOPS-CLOUD-INFRASTRUCTURE] aquasecurity/trivy-operator (1542 score) - Kubernetes-native security toolkit
+https://github.com/aquasecurity/trivy-operator
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-07T17:40:28.234Z] ---
+# [HUGGINGFACE-AI-MODELS] xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic (5179 score) - Verified Hugging Face Model: xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-her
+https://huggingface.co/xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic
+# [HUGGINGFACE-AI-MODELS] NousResearch/Arete-27B (2709 score) - Verified Hugging Face Model: NousResearch/Arete-27B (172 likes, 989 downloads)
+https://huggingface.co/NousResearch/Arete-27B
+# [HUGGINGFACE-AI-MODELS] PrunaAI/P-H3-Image (2359 score) - Verified Hugging Face Model: PrunaAI/P-H3-Image (157 likes, 789 downloads)
+https://huggingface.co/PrunaAI/P-H3-Image
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-07T19:16:31.075Z] ---
+# [HUGGINGFACE-AI-MODELS] Viggle/Viggle-Remake (3570 score) - Verified Hugging Face Model: Viggle/Viggle-Remake (157 likes, 64942 downloads)
+https://huggingface.co/Viggle/Viggle-Remake
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-07T19:23:25.797Z] ---
+# [AI-AGENTS] alchaincyf/nuwa-skill (20639 score) - 你想蒸馏的下一个员工，何必是同事。蒸馏任何人的思维方式——心智模型、决策启发式、表达DNA。Distill how anyone thinks.
+https://github.com/alchaincyf/nuwa-skill
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-07T21:43:38.266Z] ---
+# [MOBILE-CROSS-PLATFORM] ShiftHackZ/SDAI-KMP (1137 score) - Stable Diffusion AI client app for Android and iOS
+https://github.com/ShiftHackZ/SDAI-KMP
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-08T02:40:24.194Z] ---
+# [AI-AGENTS] qybaihe/bla (1806 score) - 🛡️ BLA (Blind LLM Agents) — Adversarial defense shield that protects binaries, 
+https://github.com/qybaihe/bla
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-08T09:51:40.703Z] ---
+# [FULLSTACK-UI] untitleduico/react (1243 score) - Untitled UI React is the world’s largest collection of open-source React compone
+https://github.com/untitleduico/react
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-08T10:20:16.883Z] ---
+# [HUGGINGFACE-AI-MODELS] audio-cpp/audio.cpp-gguf (5060 score) - Verified Hugging Face Model: audio-cpp/audio.cpp-gguf (306 likes, 8872939 downlo
+https://huggingface.co/audio-cpp/audio.cpp-gguf
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-08T13:59:37.597Z] ---
+# [HUGGINGFACE-AI-MODELS] mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF (3710 score) - Verified Hugging Face Model: mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-
+https://huggingface.co/mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-08T22:19:31.431Z] ---
+# [HUGGINGFACE-AI-MODELS] Scantist/GLM-5.3-SLIM-GGUF (13130 score) - Verified Hugging Face Model: Scantist/GLM-5.3-SLIM-GGUF (1113 likes, 4938 downlo
+https://huggingface.co/Scantist/GLM-5.3-SLIM-GGUF
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-08T22:26:04.379Z] ---
+# [MOBILE-CROSS-PLATFORM] wquguru/cicada (1310 score) - 知了 Cicada · 任何会议和直播的实时字幕、同声传译、AI 会议纪要，Mac、Windows、Linux、Android 免费开源。Live subtit
+https://github.com/wquguru/cicada
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-09T04:59:28.126Z] ---
+# [AI-AGENTS] heymrun/heym (947 score) - Build agentic systems. Run them with confidence. Orchestrate agents, automate bu
+https://github.com/heymrun/heym
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-09T09:23:50.200Z] ---
+# [HUGGINGFACE-AI-MODELS] autotrust/Qwen3.8-Flash-Next-E384-FP4-V2 (25700 score) - Verified Hugging Face Model: autotrust/Qwen3.8-Flash-Next-E384-FP4-V2 (2370 like
+https://huggingface.co/autotrust/Qwen3.8-Flash-Next-E384-FP4-V2
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-09T21:26:39.937Z] ---
+# [MOBILE-CROSS-PLATFORM] sceneview/sceneview (1206 score) - 3D & AR SDK for Jetpack Compose (Filament, ARCore), Compose Multiplatform, Swift
+https://github.com/sceneview/sceneview
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-09T21:55:22.233Z] ---
+# [HUGGINGFACE-AI-MODELS] tencent/Qwen3.8-27B-DSpine-b16 (2914 score) - Verified Hugging Face Model: tencent/Qwen3.8-27B-DSpine-b16 (145 likes, 1464 dow
+https://huggingface.co/tencent/Qwen3.8-27B-DSpine-b16
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-10T06:04:56.535Z] ---
+# [HUGGINGFACE-AI-MODELS] VideoRebirthAI/hyperflow-h3-flash (3380 score) - Verified Hugging Face Model: VideoRebirthAI/hyperflow-h3-flash (138 likes, 64221
+https://huggingface.co/VideoRebirthAI/hyperflow-h3-flash

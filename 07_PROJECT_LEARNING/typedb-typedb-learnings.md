@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/typedb-typedb-learnings.md`  
 > **Source**: github ([https://github.com/typedb/typedb](https://github.com/typedb/typedb))  
-> **Source Version**: `bcf527e4`  
+> **Source Version**: `145de9c4`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T19:06:58.695Z  
+> **Timestamp**: 2026-11-07T18:24:56.782Z  
 > **Learning ID**: `learn-github-typedb-typedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/typedb-typedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/typedb/typedb](https://github.com/typedb/typedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T19:06:58.544Z  
+> **Harvest Timestamp**: 2026-11-07T18:24:56.422Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: TypeDB: Built for systems, not records
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4502 stars
+- **Stars / Engagement**: 4503 stars
 
 ---
 
@@ -863,6 +863,7 @@ impl MonitoringSection for CoreMetrics {
 use std::{collections::HashMap, fmt::Debug, sync::Arc};
 
 use async_trait::async_trait;
+use concept::thing::thing_manager::ConceptPersistenceGuarantees;
 use concurrency::TokioTaskSpawner;
 use database::{
     Database, DatabaseDeleteError, DatabaseOpenError,
@@ -870,7 +871,7 @@ use database::{
     database_manager::DatabaseManager,
     migration::{
         MigrationOperationError,
-        database_importer::{DatabaseImporter, DatabaseImporterHandle},
+        database_importer::{DatabaseImporter, DatabaseImporterHandle, ImporterConfiguration},
         importing_database_handle::{
             ImportingDatabaseHandle, open_import_schema_transaction, open_import_write_transaction,
         },
@@ -980,8 +981,11 @@ impl ImportingDatabaseHandle for ImportingLocalDatabaseHandle {
         open_import_schema_transaction(&self.staged_database)
     }
 
-    fn open_write(&self) -> Result<TransactionWrite<WALClient>, TransactionError> {
-        open_import_write_transaction(&self.staged_database)
+    fn open_write(
+        &self,
+        concept_persistence_guarantees: Option<Box<dyn ConceptPersistenceGuarantees>>,
+    ) -> Result<TransactionWrite<WALClient>, TransactionError> {
+        open_import_write_transaction(&self.staged_database, concept_persistence_guarantees)
     }
 
     fn commit_schema(&self, intent: SchemaCommitIntent<WALClient>) -> Result<(), MigrationOperationError> {
@@ -1059,12 +1063,8 @@ impl LocalDatabaseOperator {
 
     pub fn start_importer(&self, importing_database: Arc<dyn ImportingDatabaseHandle>) -> DatabaseImporterHandle {
         let scratch_directory = self.database_manager.import_directory().to_owned();
-        DatabaseImporter::start(
-            importing_database,
-            scratch_directory,
-            IMPORT_MESSAGE_BUFFER_SIZE,
-            &self.background_task_spawner,
-        )
+        let configuration = ImporterConfiguration::new(scratch_directory).with_buffer_size(IMPORT_MESSAGE_BUFFER_SIZE);
+        DatabaseImporter::start(importing_database, configuration, &self.background_task_spawner)
     }
 
     pub fn prepare_imported_database(&self, name: String) -> Result<Arc<Database<WALClient>>, ArcServerStateError> {
@@ -1108,14 +1108,7 @@ pub fn get_database_type_schema<D: DurabilityClient>(
     let transaction = TransactionRead::open(database, options::TransactionOptions::default())
         .map_err(|typedb_source| LocalServerStateError::FailedToOpenPrerequisiteTransaction { typedb_source })?;
     let type_schema = transaction
-        .type_schema()
-        .map_err(|error| LocalServerStateError::DatabaseExport { typedb_source: error.into() })?;
-    Ok(type_schema)
-}
-
-#[async_trait]
-impl DatabaseOperator for LocalDatabaseOperator {
-    async fn all(&self) -> Result<Vec<String>, ArcServer
+        .type_
 ```
 
 ### Core Architecture Module: `server/state/mod.rs`
@@ -1834,11 +1827,11 @@ impl UserOperator for LocalUserOperator {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #8048** (2026-11-05): **Make NotInitialised error classified as Unavailable**
-  *Symptoms*: ## Product change and motivation  Make the `NotInitialised` error classified as `Unavailable`, which is specified in the gRPC error code and can be handled by TypeDB Drivers to retry automatically after a recovery (when the server may become initialised).  ## Implementation  Change one error's classification.
+- **Issue #8053** (2026-11-06): **Bump dependencies to merged commit**
+  *Symptoms*: ## Implementation because I forgot
 
-- **Issue #8047** (2026-11-05): **Update README to feature high availability**
-  *Symptoms*: ## Product change and motivation  Feature high availability and update the used open-source software in `README.md`.  ## Implementation  
+- **Issue #8052** (2026-11-06): **Make concept Bazel target public**
+  *Symptoms*: ## Product change and motivation  `concept` package is sometimes require usages in dependent crates, and it's impossible to set it through Bazel without making the Bazel target public.  ## Implementation  
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1855,530 +1848,184 @@ impl UserOperator for LocalUserOperator {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bcf527e4` (2026-11-05)
-**Commit Message**: Make NotInitialised error classified as Unavailable (#8048)
+### Incident Patch 1: `5bf0231e` (2026-11-06)
+**Commit Message**: Replace unimplemented panic with error for Cascade (#8049)
 
 ## Product change and motivation
+Setting/Unsetting cascade annotation returns an error instead of panicking.
 
-Make the `NotInitialised` error classified as `Unavailable`, which is
-specified in the gRPC error code and can be handled by TypeDB Drivers to
-retry automatically after a recovery (when the server may become
-initialised).
-
-## Implementation
-
-Change one error's classification.
-
-**File**: `server/error.rs` (modified, +2/-3)
+**File**: `concept/error.rs` (modified, +2/-0)
 ```diff
-@@ -166,8 +166,7 @@ impl ServerStateError for LocalServerStateError {
- 
-             Self::ConceptReadError { .. } | Self::FunctionReadError { .. } => Internal,
- 
--            Self::NotInitialised { .. }
--            | Self::DatabaseSchemaCommitFailed { .. }
-+            Self::DatabaseSchemaCommitFailed { .. }
-             | Self::DatabaseDataCommitFailed { .. }
-             | Self::DatabaseCommitRecordExistsFailed { .. }
-             | Self::FailedToOpenPrerequisiteTransaction { .. }
-@@ -183,7 +182,7 @@ impl ServerStateError for LocalServerStateError {
-             | Self::DatabaseImportPrepareFailed { .. }
-             | Self::DatabaseImportFinaliseFailed { .. }
-             | Self::DatabaseImportDiscardFailed { .. } => InvalidRequest,
--            Self::ConcurrentImportLimitReached { .. } => Unavailable,
-+            Self::NotInitialised { .. } | Self::ConcurrentImportLimitReached { .. } => Unavailable,
-         }
+@@ -41,6 +41,8 @@ typedb_error!(
+         UnsetHasOrderedOwnsUnordered(10, "Concept write failed, cannot unset an ordered owns when the ownership is unordered."),
+         UnsetHasUnorderedOwnsOrdered(11, "Concept write failed, cannot unset an unordered owns when the ownership is ordered"),
+         SetPlayersOrderedRoleUnordered(12, "Concept write failed, cannot set relation's ordered role players as unordered."),
++
++        UnimplementedLanguageFeatureCascade(254,"The cascade feature is not yet implemented."),
      }
+ );
+ 
+```
+
+**File**: `concept/type_/type_manager.rs` (modified, +2/-2)
+```diff
+@@ -3191,7 +3191,7 @@ impl TypeManager {
+         _thing_manager: &ThingManager,
+         _relation_type: RelationType,
+     ) -> Result<(), Box<ConceptWriteError>> {
+-        unimplemented!("Cascade is temporarily turned off");
++        Err(Box::new(ConceptWriteError::UnimplementedLanguageFeatureCascade {}))
+         // let annotation = Annotation::Cascade(AnnotationCascade);
+         //
+         // self.validate_set_type_annotation_general(snapshot, relation_type.clone(), annotation.clone())?;
+@@ -3214,7 +3214,7 @@ impl TypeManager {
+         _snapshot: &mut impl WritableSnapshot,
+         _type_: RelationType,
+     ) -> Result<(), Box<ConceptWriteError>> {
+-        unimplemented!("Cascade is temporarily turned off");
++        Err(Box::new(ConceptWriteError::UnimplementedLanguageFeatureCascade {}))
+         // let annotation_category = AnnotationCategory::Cascade;
+         // self.unset_type_annotation(snapshot, type_, annotation_category)
+     }
+```
+
+**File**: `server/error.rs` (modified, +2/-0)
+```diff
+@@ -408,6 +408,8 @@ fn concept_write_origin(error: &ConceptWriteError) -> ErrorOrigin {
+         ConceptWriteError::Encoding { .. } => ErrorOrigin::Internal,
+ 
+         ConceptWriteError::ConceptRead { typedb_source } => concept_read_origin(typedb_source),
++
++        ConceptWriteError::UnimplementedLanguageFeatureCascade { .. } => ErrorOrigin::Request,
+     }
+ }
  
 ```
 
 ---
 
-### Incident Patch 2: `45dbd86c` (2026-11-05)
-**Commit Message**: Avoid writing tombstones for keys deleted in concurrent commit (#8045)
+### Incident Patch 2: `0712a5ca` (2026-11-06)
+**Commit Message**: Fix serialization of deletes in commit record (#8050)
 
 ## Product change and motivation
 
-We add a check during concurrent commit dependency resolution to skip
-writing tombstones for a deleted concept or edge that was also deleted
-in parallel by another commit. This slightly reduces the number of dead
-keys in storage and prevents us from double counting deletes when
-calculating commit deltas.
+Fix crash on loading an older commit record without delete resolution.
 
 ## Implementation
 
-Resolves #8026.
+#8045 introduced a flag for deletes in a commit that would be unset if a
+parallel transaction deleted that same key. This flag was not intended
+to be serialized into a commit record in the WAL as that write happens
+before resolving cross-commit dependencies. The derived
+[de]serialization trait however attempts to read the field that does not
+exist for deletes in older commit records, causing a crash.
 
-**File**: `Cargo.lock` (modified, +11/-0)
+**File**: `storage/snapshot/write.rs` (modified, +42/-20)
 ```diff
-@@ -1278,6 +1278,7 @@ dependencies = [
-  "serde_json",
-  "storage",
-  "test_utils",
-+ "test_utils_database",
-  "test_utils_storage",
-  "tokio",
-  "tracing",
-@@ -5427,6 +5428,16 @@ dependencies = [
-  "storage",
- ]
+@@ -22,11 +22,20 @@ use serde::{
+ #[derive(Serialize, Deserialize, Clone)]
+ pub enum Write {
+     // Insert KeyValue with a new version. Never conflicts. May represent a brand new key or re-inserting an existing key blindly
+-    Insert { value: ByteArray<BUFFER_VALUE_INLINE> },
++    Insert {
++        value: ByteArray<BUFFER_VALUE_INLINE>,
++    },
+     // Insert KeyValue with new version if a concurrent Txn deletes Key. Boolean indicates requires re-insertion. Never conflicts.
+-    Put { value: ByteArray<BUFFER_VALUE_INLINE>, action: Arc<AtomicPutAction>, known_to_exist: KnownToExist },
++    Put {
++        value: ByteArray<BUFFER_VALUE_INLINE>,
++        action: Arc<AtomicPutAction>,
++        known_to_exist: KnownToExist,
++    },
+     // Delete with a new version. Conflicts with Require.
+-    Delete { action: Arc<AtomicDeleteAction> },
++    Delete {
++        #[serde(skip_serializing)] // WAL compatibility: the default action is to always delete.
++        action: Arc<AtomicDeleteAction>,
++    },
+ }
  
-+[[package]]
-+name = "test_utils_database"
-+version = "0.0.0"
-+dependencies = [
-+ "database",
-+ "diagnostics",
-+ "options",
-+ "storage",
-+]
-+
- [[package]]
- name = "test_utils_encoding"
- version = "0.0.0"
-```
-
-**File**: `Cargo.toml` (modified, +6/-1)
-```diff
-@@ -83,7 +83,7 @@
- 		workspace = true
- 
- [workspace]
--	members = ["admin", "admin/client", "answer", "common/bytes", "common/cache", "common/concurrency", "common/error", "common/fail_point", "common/iterator", "common/lending_iterator", "common/logger", "common/options", "common/primitive", "common/structural_equality", "compiler", "concept", "concept/tests", "database", "database/tools", "diagnostics", "durability", "durability/tests/common", "durability/tests/crash/recoverer", "durability/tests/crash/streamer", "encoding", "encoding/tests", "executor", "function", "ir", "query", "resource", "server", "server/service/admin/proto", "storage", "storage/tests", "system", "tests/behaviour/service/http/http_steps", "tests/behaviour/steps", "tests/behaviour/steps/params", "user", "util/project", "util/test"]
-+	members = ["admin", "admin/client", "answer", "common/bytes", "common/cache", "common/concurrency", "common/error", "common/fail_point", "common/iterator", "common/lending_iterator", "common/logger", "common/options", "common/primitive", "common/structural_equality", "compiler", "concept", "concept/tests", "database", "database/tests", "database/tools", "diagnostics", "durability", "durability/tests/common", "durability/tests/crash/recoverer", "durability/tests/crash/streamer", "encoding", "encoding/tests", "executor", "function", "ir", "query", "resource", "server", "server/service/admin/proto", "storage", "storage/tests", "system", "tests/behaviour/service/http/http_steps", "tests/behaviour/steps", "tests/behaviour/steps/params", "user", "util/project", "util/test"]
- 	resolver = "2"
- 
- 	[workspace.dependencies]
-@@ -483,6 +483,11 @@
- 			features = []
- 			path = "concept/tests"
- 
-+		[workspace.dependencies.test_utils_database]
-+			default-features = false
-+			features = []
-+			path = "database/tests"
-+
- 		[workspace.dependencies.test_utils_encoding]
- 			default-features = false
- 			features = []
-```
-
-**File**: `concept/thing/statistics/deltas.rs` (modified, +10/-20)
-```diff
-@@ -14,6 +14,7 @@ use storage::{
-     durability_client::{DurabilityRecord, UnsequencedDurabilityRecord},
-     record::{CommitRecord, CommitType},
-     sequence_number::SequenceNumber,
-+    snapshot::write::WriteIntent,
- };
- 
- use crate::{
-@@ -148,42 +149,31 @@ impl CommitDeltas {
-         let mut links_index_deltas = DoubleHashMap::<_, _, Delta>::new();
- 
-         for (key, write) in commit_record.operations().iterate_writes() {
--            let update = |delta: &mut Delta| {
--                if write.is_delete() {
--                    delta.deletes += 1
--                } else if write.intends_insert() {
--                    delta.inserts += 1
--                } else if write.is_overwrite() {
--                    delta.overwrites += 1
--                } else {
--                    #[cfg(debug_assertions)]
--                    match write {
--                        storage::snapshot::write::Write::Put { action, .. }
--                            if action.load(std::sync::atomic::Ordering::Relaxed)
--                                == storage::snapshot::write::PutAction::Nop => {}
--                        write => unreachable!("Not a delete, insert, an overwrite, or a no-op: {write:?}"),
--                    }
--                }
-+            let update = |delta: &mut Delta| match write.intent() {
-+                WriteIntent::NewKey => delta.inserts += 1,
-+                WriteIntent::Overwrite => delta.overwrites += 1,
-+                WriteIntent::Tombstone => delta.deletes += 1,
-+                WriteIntent::Nop => (),
-             };
- 
-             match DecodableKey::try_decode(key.bytes()) {
-                 Some(DecodableKey::VertexEntityType(entity_type)) => {
--                    if write.is_delete() {
-+                    if write.intent() == WriteIntent::Tombstone {
-                         undefined_entities.insert(EntityType::new(entity_type));
-                     }
-                 }
-                 Some(DecodableKey::VertexRelationType(relation_type)) => {
--                    if write.is_delete() {
-+                    if write.intent() == WriteIntent::Tombstone {
-                         undefined_relations.insert(RelationType::new(relation_type));
-                     }
-                 }
-                 Some(DecodableKey::VertexAttributeType(attribute_type)) => {
--                    if write.is_delete() {
-+                    if write.intent() == WriteIntent::Tombstone {
-                         undefined_attributes.insert(AttributeType::new(attribute_type));
-                     }
-                 }
-                 Some(DecodableKey::VertexRoleType(role_type)) => {
--                    if write.is_delete() {
-+                    if write.intent() == WriteIntent::Tombstone {
-                         undefined_roles.insert(RoleType::new(role_type));
-                     }
-                 }
-```
-
-**File**: `concept/thing/statistics/mod.rs` (modified, +1/-1)
-```diff
-@@ -815,7 +815,7 @@ fn write_to_delta<D>(
- ) -> Result<i64, MVCCReadError> {
-     match write {
-         Write::Insert { .. } => Ok(1),
--        Write::Delete => {
-+        Write::Delete { .. } => {
-             if open_sequence_number.next() >= commit_sequence_number {
-                 // no concurrent commit could have occurred - this is a real DELETE
-                 Ok(-1)
-```
-
-**File**: `concept/thing/thing_manager.rs` (modified, +13/-12)
-```diff
-@@ -1798,7 +1798,7 @@ impl ThingManager {
-         snapshot.get_write(key).map(|write| match write {
-             Write::Insert { .. } => ConceptStatus::Inserted,
-             Write::Put { .. } => ConceptStatus::Put,
--            Write::Delete => ConceptStatus::Deleted,
-+            Write::Delete { .. } => ConceptStatus::Deleted,
-         })
+ impl fmt::Debug for Write {
+@@ -314,27 +323,12 @@ impl AtomicDeleteAction {
      }
+ }
  
-@@ -1826,7 +1826,7 @@ impl ThingManager {
-         );
-         snapshot.visit_writes_in_range(&objects, |snapshot, key, write| match write {
-             Write::Insert { .. } => visit(snapshot, Object::new(ObjectVertex::decode(key.bytes()))),
--            Write::Delete => Ok(()),
-+            Write::Delete { .. } => Ok(()),
-             Write::Put { .. } => unreachable!("Encountered a Put for an object"),
-         })
+-impl Serialize for AtomicDeleteAction {
+-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+-    where
+-        S: serde::Serializer,
+-    {
+-        // serializing as AtomicBool to preserve compat with old `reinsert: AtomicBool`
+-        AtomicBool::new(self.load(Ordering::Relaxed) != DeleteAction::Nop).serialize(serializer)
+-    }
+-}
+-
+ impl<'de> Deserialize<'de> for AtomicDeleteAction {
+     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+     where
+         D: serde::Deserializer<'de>,
+     {
+-        // deserializing as AtomicBool to preserve compat with old `reinsert: AtomicBool`
+-        if AtomicBool::deserialize(deserializer)?.load(Ordering::Relaxed) {
+-            Ok(Self::new(DeleteAction::Delete))
+-        } else {
+-            Ok(Self::new(DeleteAction::Nop))
+-        }
++        Ok(Self::new(DeleteAction::Delete))
      }
-@@ -1846,7 +1846,7 @@ impl ThingManager {
-             |snapshot, key, _| {
-                 let edge = ThingEdgeHas::decode(Bytes::Reference(key.byte_array()));
-                 let owner = Object::new(edge.from());
--                if !group.as_ref().is_some_and(|modified| modified.owner == owner) {
-+                if group.as_ref().is_none_or(|modified| modified.owner != owner) {
-                     flush(snapshot, group.take())?;
-                     group = Some(ModifiedOwnerHas { owner, modified_attribute_types: HashSet::new() });
-                 }
-@@ -1872,7 +1872,7 @@ impl ThingManager {
-             |snapshot, key, write| {
-                 let edge = ThingEdgeLinks::decode(Bytes::reference(key.bytes()));
-                 let relation = Relation::new(edge.relation());
--                if !group.as_ref().is_some_and(|modified| modified.relation == relation) {
-+                if group.as_ref().is_none_or(|modified| modified.relation != relation) {
-                     flush(snapshot, group.take())?;
-                     group = Some(ModifiedRelationLinks {
-                         relation,
-@@ -1884,7 +1884,7 @@ impl ThingManager {
-                 let role_type = RoleType::build_from_type_id(edge.role_id());
-                 let modified = group.as_mut().unwrap();
-                 modified.modified_role_types.insert(role_type);
--                if matches!(write, Write::Delete) {
-+                if write.is_delete() {
-                     modified.removed_role_players.insert((player, role_type));
-                 }
-                 Ok(())
-@@ -1908,7 +1908,7 @@ impl ThingManager {
-             |snapshot, key, _| {
-                 let edge = ThingEdgeLinks::decode(Bytes::reference(key.bytes()));
-                 let player = Object::new(edge.player());
--                if !group.as_ref().is_some_and(|modified| modified.player == player) {
-+                if group.as_ref().is_none_or(|modified| modified.player != player) {
-                     flush(snapshot, group.take())?;
-                     group = Some(ModifiedPlayerLinks { player, modified_role_types: HashSet::new() });
-                 }
-@@ -2133,7 +2133,7 @@ impl ThingManager {
-     fn collect_cleanup_intervals(snapshot: &impl ReadableSnapshot) -> CleanupIntervals {
-         let mut cleanup_intervals = CleanupIntervals::new();
-         for (key, write) in snapshot.iterate_writes() {
--            if matches!(write, Write::Delete) {
-+            if write.is_delete() {
-                 register_delete_in_cleanup_intervals(&mut cleanup_intervals, StorageKeyArray::from(key));
+ }
+ 
+@@ -349,7 +343,7 @@ mod tests {
+     use resource::constants::snapshot::BUFFER_VALUE_INLINE;
+     use serde::{Deserialize, Serialize};
+ 
+-    use crate::snapshot::write::{AtomicPutAction, KnownToExist, PutAction, Write};
++    use crate::snapshot::write::{AtomicDeleteAction, AtomicPutAction, DeleteAction, KnownToExist, PutAction, Write};
+ 
+     #[derive(Serialize, Deserialize, Debug, Clone)]
+     pub enum V1Write {
+@@ -473,4 +467,32 @@ mod tests {
              }
          }
-@@ -2400,17 +2400,18 @@ impl ThingManager {
-                 TypeVertexProperty::build_prefix(),
-                 TypeVertexProperty::FIXED_WIDTH_ENCODING,
-             ))
--            .filter_map(|(key, write)| match write {
--                Write::Delete => {
-+            .filter_map(|(key, write)| {
-+                if write.is_delete() {
-                     let bytes = Bytes::reference(key.bytes());
-                     if <AnnotationIndependent as TypeVertexPropertyEncoding>::is_decodable_from(bytes.clone()) {
-                         let decoded = TypeVertexProperty::decode(bytes);
-                         AttributeType::from_vertex(decoded.type_vertex()).ok()
-                     } else {
-                         None
-                     }
-+                } else {
-+                    None
-                 }
--                _ => None,
-             })
-         {
-             if !self.type_exists(snapshot, attribute_type, storage_counters.clone())? {
-@@ -3441,7 +3442,7 @@ impl ThingManager {
-     ) -> Option<ByteArray<BUFFER_VALUE_INLINE>> {
-         match snapshot.get_write(key).cloned()? {
-             Write::Put { value, .. } => Some(value),
--            Write::Delete => None,
-+            Write::Delete { .. } => None,
-             Write::Insert { .. } => {
-                 unreachable!("Encountered an `insert` while a `put` was expected in the snapshot.")
-             }
-@@ -3559,7 +3560,7 @@ impl ObjectOrigin {
-         snapshot.get_write(key.as_reference()).map_or(Self::UnknownTransaction, |write| match write {
-             Write::Insert { .. } => Self::ThisTransac
-```
-
-**File**: `concept/thing/thing_manager/validation/cardinality_validation.rs` (modified, +5/-5)
-```diff
-@@ -522,7 +522,7 @@ impl ModifiedCapabilityTypes {
-                 Write::Insert { .. } | Write::Put { .. } => {
-                     updated_attribute_types.insert(attribute_type);
-                 }
--                Write::Delete => {
-+                Write::Delete { .. } => {
-                     updated_attribute_types.extend(TypeAPI::chain_types(
-                         attribute_type,
-                         attribute_type.get_supertypes_transitive(snapshot, type_manager)?.into_iter().cloned(),
-@@ -542,7 +542,7 @@ impl ModifiedCapabilityTypes {
-                 Write::Insert { .. } | Write::Put { .. } => {
-                     updated_role_types.insert(role_type);
-                 }
--                Write::Delete => {
-+                Write::Delete { .. } => {
-                     updated_role_types.extend(TypeAPI::chain_types(
-                         role_type,
-                         role_type.get_supertypes_transitive(snapshot, type_manager)?.into_iter().cloned(),
-@@ -562,7 +562,7 @@ impl ModifiedCapabilityTypes {
-                 Write::Insert { .. } | Write::Put { .. } => {
-                     updated_role_types.insert(role_type);
-                 }
--                Write::Delete => {
-+                Write::Delete { .. } => {
-                     updated_role_types.extend(TypeAPI::chain_types(
-                         role_type,
-                         role_type.get_supertypes_transitive(snapshot, type_manager)?.into_iter().cloned(),
-@@ -591,7 +591,7 @@ impl ModifiedCapabilityTypes {
-                             updated_attribute_types.insert(attribute_subtype);
-                         }
-                     }
--                    Write::Delete => {
-+                    Write::Delete { .. } => {
-                         let attribute_supertype = AttributeType::new(supertype);
-                         for attribute_type in TypeAPI::chain_types(
-                             attribute_supertype,
-@@ -617,7 +617,7 @@ impl ModifiedCapabilityTypes {
-                             updated_role_types.insert(role_subtype);
-                         }
-                     }
--                    Write::Delete => {
-+                    Write::Delete { .. } => {
-                         let role_supertype = RoleType::new(supertype);
-                         for role_type in TypeAPI::chain_types(
-                             role_supertype,
-```
-
-**File**: `database/Cargo.toml` (modified, +7/-0)
-```diff
-@@ -92,6 +92,9 @@
- 	[dev-dependencies.test_utils]
- 		workspace = true
- 
-+	[dev-dependencies.test_utils_database]
-+		workspace = true
+     }
 +
- 	[dev-dependencies.test_utils_storage]
- 		workspace = true
- 
-@@ -115,6 +118,10 @@
- 	name = "test_migration"
- 	path = "tests/migration.rs"
- 
-+[[test]]
-+	name = "test_statistics_backwards_compatibility"
-+	path = "tests/statistics_backwards_compatibility.rs"
++    #[test]
++    fn delete_serializes_the_same_as_v1() {
++        for delete_action in [DeleteAction::Nop, DeleteAction::Delete] {
++            let old_write = V1Write::Delete;
++            let new_write = Write::Delete { action: Arc::new(AtomicDeleteAction::new(delete_action)) };
 +
- [[test]]
- 	name = "test_statistics_synchronization"
- 	path = "tests/statistics_synchronization.rs"
-```
-
-**File**: `database/tests/BUILD` (modified, +52/-10)
-```diff
-@@ -3,23 +3,35 @@
- # file, You can obtain one at https://mozilla.org/MPL/2.0/.
- 
- load("@typedb_dependencies//tool/checkstyle:rules.bzl", "checkstyle_test")
--load("@rules_rust//rust:defs.bzl", "rust_test", "rustfmt_test")
-+load("@rules_rust//rust:defs.bzl", "rust_library", "rust_test", "rustfmt_test")
- package(default_visibility = ["//visibility:public",])
- 
-+rust_library(
-+    name = "test_utils_database",
-+    srcs = ["test_utils_database.rs"],
-+    deps = [
-+        "//common/options",
-+        "//database",
-+        "//diagnostics",
-+        "//storage",
-+    ]
-+)
++            let serialized_old = bincode::serialize(&old_write).unwrap();
++            let serialized_new = bincode::serialize(&new_write).unwrap();
 +
- rust_test(
-     name = "test_database",
-     srcs = glob([
-         "database.rs",
-     ]),
-     deps = [
--        "//common/logger",
-         "//common/options",
-         "//database",
-         "//diagnostics",
-         "//durability",
-         "//encoding",
-         "//storage",
-         "//storage/tests:test_utils_storage",
++            assert_eq!(serialized_old, serialized_new);
 +
-+        ":test_utils_database",
-         "//util/test:test_utils",
- 
-         "@crates//:rocksdb",
-@@ -33,10 +45,9 @@ rust_test(
-         "import.rs",
-     ]),
-     deps = [
--        "//common/logger",
--        "//common/options",
-         "//database",
--        "//diagnostics",
++            let new_deserialized_as_old: V1Write = bincode::deserialize(&serialized_new).unwrap();
++            let old_deserialized_as_new: Write = bincode::deserialize(&serialized_old).unwrap();
 +
-+        ":test_utils_database",
-         "//util/test:test_utils",
- 
-         "@crates//:tracing",
-@@ -52,10 +63,11 @@ rust_test(
-         "//common/concurrency",
-         "//common/options",
-         "//database",
--        "//diagnostics",
-         "//encoding",
-         "//resource",
-         "//storage",
++            match (old_write, new_deserialized_as_old) {
++                (V1Write::Delete, V1Write::Delete) => (),
++                _ => unreachable!(),
++            }
 +
-+        ":test_utils_database",
-         "//util/test:test_utils",
- 
-         "@crates//:tokio",
-@@ -68,12 +80,13 @@ rust_test(
-         "transaction.rs",
-     ]),
-     deps = [
--        "//common/logger",
-         "//common/options",
-         "//database",
-         "//diagnostics",
-         "//encoding",
-         "//storage",
-+
-+        ":test_utils_database",
-         "//util/test:test_utils",
- 
-         "@crates//:rocksdb",
-@@ -83,9 +96,9 @@ rust_test(
- )
- 
- rust_test(
--    name = "test_statistics_synchronization",
-+    name = "test_statistics_backwards_compatibility",
-     srcs = glob([
--        "statistics_synchronization.rs",
-+        "statistics_backwards_compatibility.rs",
-     ]),
-     deps = [
-         "//common/options",
-@@ -96,6 +109,29 @@ rust_test(
-         "//executor",
-         "//query",
-         "//storage",
-+
-+        ":test_utils_database",
-+        "//util/test:test_utils",
-+
-+        "@typeql//rust:typeql",
-+    ]
-+)
-+
-+rust_test(
-+    name = "test_statistics_synchronization",
-+    srcs = glob([
-+        "statistics_synchronization.rs",
-+    ]),
-+    deps = [
-+        "//common/options",
-+        "//concept",
-+        "//database",
-+        "//executor",
-+        "//query",
-+        "//resource",
-+        "//storage",
-+
-+        ":test_utils_database",
-         "//util/test:test_utils",
- 
-         "@typeql//rust:typeql",
-@@ -115,6 +151,8 @@ rust_test(
-         "//executor",
-         "//query",
-         "//storage",
-+
-+        ":test_utils_database",
-         "//util/test:test_utils",
- 
-         "@typeql//rust:typeql",
-@@ -129,11 +167,12 @@ rust_test(
-     deps = [
-         "//common/options",
-         "//database",
--        "//diagnostics",
-         "//encoding",
-         "//executor",
-         "//query",
-         "//storage",
-+
-+        ":test_utils_database",
-         "//util/test:test_utils",
- 
-         "@typeql//rust:typeql",
-@@ -169,5 +208,8 @@ rustfmt_test(
- checkstyle_test(
-     name = "checkstyle",
-     include = glob(["*", "*/*", "*/*/*"]),
-+    exclude = glob([
-+        "Cargo.*",
-+    ]),
-     license_type = "mpl-header",
- )
++            match old_deserialized_as_new {
++                Write::Delete { action: actual_action } => {
++                    assert_eq!(actual_action.load(Ordering::Relaxed), DeleteAction::Delete);
++                }
++                _ => unreachable!(),
++            }
++        }
++    }
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8053** (2026-11-06): Bump dependencies to merged commit (@krishnangovindraj)
+- **PR #8052** (2026-11-06): Make concept Bazel target public (@genovoselov)
+- **PR #8051** (2026-11-06): Bump behaviour for testing IsSet constraints in analyze responses (@krishnangovindraj)
+- **PR #8050** (2026-11-06): Fix serialization of deletes in commit record (@dmitrii-ubskii)
+- **PR #8049** (2026-11-06): Replace unimplemented panic with error for Cascade (@krishnangovindraj)
 - **PR #8048** (2026-11-05): Make NotInitialised error classified as Unavailable (@genovoselov)
-- **PR #8047** (2026-11-05): Update README to feature high availability (@genovoselov)
-- **PR #8046** (2026-11-04): Prepare release 3.14.2 (@dmitrii-ubskii)
-- **PR #8045** (2026-11-05): Avoid writing tombstones for keys deleted in concurrent commit (@dmitrii-ubskii)
-- **PR #8044** (2026-11-05): Type-inference & optional dereference safety improvements (@krishnangovindraj)
-- **PR #8040** (2026-10-29): Don't let transaction services excessively hold query manager refs (@genovoselov)
 
 ---
 
@@ -2398,31 +2045,29 @@ Resolves #8026.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Make NotInitialised error classified as Unavailable (#8048)
+## X. Replace unimplemented panic with error for Cascade (#8049)
 
 **RULE**:
-When implementing operations in `server/error.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in typedb/typedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `concept/error.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in typedb/typedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bcf527e4`: Make NotInitialised error classified as Unavailable (#8048). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5bf0231e`: Replace unimplemented panic with error for Cascade (#8049). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/error.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `concept/error.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            Self::DatabaseSchemaCommitFailed { .. }
-            Self::NotInitialised { .. } | Self::ConcurrentImportLimitReached { .. } => Unavailable,
+
+        UnimplementedLanguageFeatureCascade(254,"The cascade feature is not yet implemented."),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-            Self::NotInitialised { .. }
-            | Self::DatabaseSchemaCommitFailed { .. }
-            Self::ConcurrentImportLimitReached { .. } => Unavailable,
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bcf527e4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5bf0231e` are properly handled with clean fallback behavior.

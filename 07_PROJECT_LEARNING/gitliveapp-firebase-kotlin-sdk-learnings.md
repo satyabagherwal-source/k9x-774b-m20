@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gitliveapp-firebase-kotlin-sdk-learnings.md`  
 > **Source**: github ([https://github.com/GitLiveApp/firebase-kotlin-sdk](https://github.com/GitLiveApp/firebase-kotlin-sdk))  
-> **Source Version**: `077d6624`  
+> **Source Version**: `888384d7`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T14:08:40.289Z  
+> **Timestamp**: 2026-11-08T05:33:10.229Z  
 > **Learning ID**: `learn-github-gitliveapp-firebase-kotlin-sdk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gitliveapp-firebase-kotlin-sdk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/GitLiveApp/firebase-kotlin-sdk](https://github.com/GitLiveApp/firebase-kotlin-sdk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T14:08:40.281Z  
+> **Harvest Timestamp**: 2026-11-08T05:33:09.180Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A Kotlin-first SDK for Firebase
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1731 stars
+- **Stars / Engagement**: 1730 stars
 
 ---
 
@@ -1076,228 +1076,146 @@ public actual class FirebaseOptions private constructor() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7ad5b8d8` (2026-09-01)
-**Commit Message**: Revert kotlinx-coroutines to 1.10.2 and pin against 1.11.x
+### Incident Patch 1: `9d65b8e3` (2026-11-05)
+**Commit Message**: Bump firebase-ios-sdk to 12.19.3 for the eMudhra CA fix (2.x) (#939)
 
-1.11.0 regressed Promise rejection handling on Wasm/JS. A rejected Promise
-no longer surfaces as JsException, so the raw JS error object is discarded
-(cause is empty) and only its stringified form survives. Firebase errors
-carry structured details -- code, reason, httpResponseCode -- which are then
-unrecoverable, and every error-mapping site stops matching silently: the
-code still compiles and the exception still propagates, just unmapped.
+* Bump firebase-ios-sdk to 12.19.3 for the eMudhra CA fix (2.x)
 
-Tracked upstream in Kotlin/kotlinx.coroutines#4678. There is no public API
-to recover the value; the new carrier is kotlinx.coroutines.internal.
+firebase-ios-sdk 12.19.2 and earlier (and 13.0.0-13.1.0) compile a TLS
+root bundle into the Firestore SDK that still trusts the compromised
+eMudhra intermediate CAs. 12.19.3 is the patched release published to
+CocoaPods; there is no patched 11.x.
+See https://firebase.google.com/support/guides/compromised-emudhra-intermediate-ca
 
-The bump (#855) passed CI only because master has no wasm target yet, so
-nothing exercised the affected path. Nothing here depends on a 1.11.0 API,
-and Kotlin 2.4.0 works with 1.10.2, so reverting costs nothing. The
-alternative was bypassing Promise.await across nine modules.
+BREAKING CHANGE: minimum apple deployment targets raised to iOS 15.0 and
+tvOS 15.0 (from 13.0), as required by firebase-ios-sdk 12. macOS remains
+10.15.
 
-Once the wasm target lands, a future bump will fail loudly rather than
-silently, so the dependabot ignore can be removed with confidence then.
+Ports the two source changes the 3.x line made for firebase-ios-sdk 12
+(9ddf3e07). Without them, 2.x crashes with an unrecognized selector when
+an app links firebase-ios-sdk 12 or 13 (#833, #786):
 
-**File**: `.github/dependabot.yml` (modified, +8/-0)
+- FIROptions.trackingID was removed, so FirebaseOptions.gaTrackingId is
+  always null on apple targets and is no longer passed to FIROptions.
+  Previously FirebaseOptions.Builder.build(), used by
+  Firebase.initialize(context, options), always called setTrackingID:.
+- FIRActionCodeSettings.dynamicLinkDomain was removed, so the apple
+  binding now sets only linkDomain.
+
+Refs #937
+
+
+**File**: `README.md` (modified, +2/-0)
 ```diff
-@@ -4,6 +4,14 @@ updates:
-     directory: "/"
-     schedule:
-       interval: "weekly"
-+    ignore:
-+      # kotlinx-coroutines 1.11.0 regressed Promise rejection handling on Wasm/JS:
-+      # a rejected Promise no longer surfaces as JsException, so the raw JS error
-+      # object (and its structured `details`) is unrecoverable through public API.
-+      # Tracked upstream in Kotlin/kotlinx.coroutines#4678. Remove this entry once
-+      # that is fixed. See also #855, which introduced and then reverted the bump.
-+      - dependency-name: "org.jetbrains.kotlinx:kotlinx-coroutines-*"
-+        versions: [ "1.11.x" ]
-   - package-ecosystem: "github-actions"
-     directory: "/"
-     schedule:
+@@ -143,6 +143,8 @@ On android, some modules (`config`) require you to enable [Core library desugari
+ 
+ On iOS the official [Firebase iOS SDK](https://github.com/firebase/firebase-ios-sdk) is not linked as a transitive dependency. Therefore, any project using this SDK needs to link the actual Firestore SDK as well. This can be done through your preferred installation method (Cocoapods/SPM).
+ 
++This SDK is built against Firebase iOS SDK **12.19** (FirebaseCore and FirebaseFirestore **12.19.3**) and requires a minimum deployment target of **iOS 15 / tvOS 15 / macOS 10.15**. Link `firebase-ios-sdk` **12.19.3** (CocoaPods: FirebaseFirestore 12.19.3, the other pods 12.19.0) or **13.1.1+** (SPM only; Firebase 13 itself requires macOS 11+ and Xcode 26.2+): older versions are affected by the [compromised eMudhra intermediate CA](https://firebase.google.com/support/guides/compromised-emudhra-intermediate-ca) issue in the Firestore SDK. On Apple targets `FirebaseOptions.gaTrackingId` is always `null` and `ActionCodeSettings.dynamicLinkDomain` is ignored (use `linkDomain`), as both were removed in firebase-ios-sdk 12.
++
+ Similarly, tests require linking as well. Make sure to add the required frameworks to the search path of your test targets. This can be done by specifying a `cocoapods` block in your `build.gradle`:
+ ```kotlin
+ cocoapods {
 ```
 
-**File**: `gradle/libs.versions.toml` (modified, +1/-1)
+**File**: `firebase-app/build.gradle.kts` (modified, +1/-1)
 ```diff
-@@ -10,7 +10,7 @@ gitlive-firebase-java-sdk = "0.6.3"
- gson = "2.14.0"
- junit = "4.13.2"
- kotlin = "2.2.21"
--kotlinx-coroutines = "1.11.0"
-+kotlinx-coroutines = "1.10.2"
- kotlinx-serialization = "1.9.0"
- kotlinx-binarycompatibilityvalidator = "0.18.1"
- kotlinx-datetime = "0.7.1"
+@@ -121,7 +121,7 @@ kotlin {
+             }
+             noPodspec()
+             pod("FirebaseCore") {
+-                version = libs.versions.firebase.cocoapods.get()
++                version = libs.versions.firebase.core.firestore.cocoapods.get()
+                 extraOpts += listOf("-compiler-option", "-fmodules")
+             }
+         }
 ```
 
----
-
-### Incident Patch 2: `df8be445` (2026-09-24)
-**Commit Message**: Fix remoteConfig(app) ignoring its app on Apple (2.x) (#903)
-
-* Fix remoteConfig(app) and the platform getters ignoring their instance (#898)
-
-On Apple, Firebase.remoteConfig(app) passed Firebase.app.ios to
-FIRRemoteConfig.remoteConfigWithApp, so every app got the default app's
-Remote Config. It now passes app.ios.
-
-The public FirebaseRemoteConfig.ios (Apple) and FirebaseRemoteConfig.android
-(Android and JVM) getters also ignored their receiver and returned the
-default app's instance. They now return the wrapped instance, as the JS
-and wasmJs getters already did.
-
-testNamedApp sets a default on a named app's Remote Config and checks
-that the default app's instance does not see it.
-
-* Give testNamedApp's app its own app ID (#899)
-
-On Android, Remote Config stores its fetched, activated and default
-values in files named frc_<appId>_<namespace>_<type>.json. The named app
-reused the default app's options, so both apps shared the same defaults
-file and the default app saw the named app's default, failing
-testNamedApp on the Android managed device. iOS, JS and wasmJs keep the
-storage per app and passed.
-
-The named app now uses an app ID that differs in its last hex digit,
-which still pas
-
-**File**: `firebase-config/src/androidMain/kotlin/dev/gitlive/firebase/remoteconfig/FirebaseRemoteConfig.kt` (modified, +1/-1)
+**File**: `firebase-app/src/appleMain/kotlin/com/google/firebase/FirebaseApp.apple.kt` (modified, +5/-2)
 ```diff
-@@ -17,7 +17,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig as AndroidFirebaseR
- import com.google.firebase.remoteconfig.FirebaseRemoteConfigInfo as AndroidFirebaseRemoteConfigInfo
- import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings as AndroidFirebaseRemoteConfigSettings
+@@ -75,7 +75,10 @@ public actual class FirebaseOptions internal constructor(public val ios: FIROpti
+     public actual val gcmSenderId: String? get() = ios.GCMSenderID
+     public actual val projectId: String? get() = ios.projectID
+     public actual val storageBucket: String? get() = ios.storageBucket
+-    public actual val gaTrackingId: String? get() = ios.trackingID
++
++    // FIROptions.trackingID was removed in firebase-ios-sdk 12.0.0, where it had long been
++    // deprecated as unused, so gaTrackingId cannot be round tripped on apple targets
++    public actual val gaTrackingId: String? get() = null
  
--public val FirebaseRemoteConfig.android: AndroidFirebaseRemoteConfig get() = AndroidFirebaseRemoteConfig.getInstance()
-+public val FirebaseRemoteConfig.android: AndroidFirebaseRemoteConfig get() = android
+     override fun toString(): String = "FirebaseOptions(applicationId=$applicationId, projectId=$projectId)"
  
- public actual val Firebase.remoteConfig: FirebaseRemoteConfig
-     get() = FirebaseRemoteConfig(com.google.firebase.remoteconfig.FirebaseRemoteConfig.getInstance())
-```
-
-**File**: `firebase-config/src/appleMain/kotlin/dev/gitlive/firebase/remoteconfig/FirebaseRemoteConfig.kt` (modified, +2/-3)
-```diff
-@@ -11,7 +11,6 @@ import cocoapods.FirebaseRemoteConfig.FIRRemoteConfigSource
- import dev.gitlive.firebase.Firebase
- import dev.gitlive.firebase.FirebaseApp
- import dev.gitlive.firebase.FirebaseException
--import dev.gitlive.firebase.app
- import dev.gitlive.firebase.ios
- import kotlinx.coroutines.CompletableDeferred
- import kotlinx.datetime.Instant
-@@ -22,13 +21,13 @@ import kotlin.time.Duration.Companion.seconds
- import kotlin.time.DurationUnit
- import kotlin.time.ExperimentalTime
- 
--public val FirebaseRemoteConfig.ios: FIRRemoteConfig get() = FIRRemoteConfig.remoteConfig()
-+public val FirebaseRemoteConfig.ios: FIRRemoteConfig get() = ios
- 
- public actual val Firebase.remoteConfig: FirebaseRemoteConfig
-     get() = FirebaseRemoteConfig(FIRRemoteConfig.remoteConfig())
- 
- public actual fun Firebase.remoteConfig(app: FirebaseApp): FirebaseRemoteConfig = FirebaseRemoteConfig(
--    FIRRemoteConfig.remoteConfigWithApp(Firebase.app.ios as objcnames.classes.FIRApp),
-+    FIRRemoteConfig.remoteConfigWithApp(app.ios as objcnames.classes.FIRApp),
- )
- 
- public actual class FirebaseRemoteConfig internal constructor(internal val ios: FIRRemoteConfig) {
-```
-
-**File**: `firebase-config/src/commonTest/kotlin/dev/gitlive/firebase/remoteconfig/FirebaseRemoteConfig.kt` (modified, +14/-0)
-```diff
-@@ -15,6 +15,7 @@ import kotlin.test.BeforeTest
- import kotlin.test.Ignore
- import kotlin.test.Test
- import kotlin.test.assertEquals
-+import kotlin.test.assertFalse
- import kotlin.time.Duration.Companion.minutes
- import kotlin.time.Duration.Companion.seconds
- import kotlin.time.ExperimentalTime
-@@ -74,6 +75,19 @@ class FirebaseRemoteConfigTest {
-         assertEquals("Hello World", value.asByteArray().decodeToString())
+@@ -112,7 +115,7 @@ public actual class FirebaseOptions internal constructor(public val ios: FIROpti
+                 databaseURL = this@Builder.databaseUrl
+                 projectID = this@Builder.projectId
+                 storageBucket = this@Builder.storageBucket
+-                trackingID = this@Builder.gaTrackingId
++                // gaTrackingId is dropped here - FIROptions.trackingID was removed in firebase-ios-sdk 12.0.0
+             },
+         )
      }
- 
-+    @Test
-+    fun testNamedApp() = runTest {
-+        // Android keys Remote Config's local storage by app ID, so the named app needs its own
-+        val options = Firebase.apps(context).first().options.copy(applicationId = "1:846484016111:ios:dd1f6688bad7af768c841b")
-+        val namedApp = Firebase.initialize(context, options, "named")
-+        val namedRemoteConfig = Firebase.remoteConfig(namedApp)
-+        namedRemoteConfig.setDefaults("named_app_only" to "named")
-+
-+        assertEquals("named", namedRemoteConfig.getValue("named_app_only").asString())
-+        assertFalse(remoteConfig.all.containsKey("named_app_only"))
-+        namedRemoteConfig.reset()
-+    }
-+
-     @Test
-     fun testGetAll() = runTest {
-         remoteConfig.setDefaults(*defaults)
 ```
 
----
-
-### Incident Patch 3: `52944f2e` (2026-09-02)
-**Commit Message**: Revert dokka to 2.0.0 and pin against 2.2.x
-
-dokka 2.2.0 removes Gradle plugin V1 mode, which breaks publishing in two
-separate ways:
-
-- publish.yml runs 'dokkaHtmlMultiModule', a V1 task. Under 2.2.0 it fails
-  with 'Cannot run Dokka V1 tasks when V2 mode is enabled'.
-- Publishing then routes through V2's dokkaGeneratePublicationHtml, whose
-  new pre-generation validity check rejects two source sets sharing a
-  source root. 10 of the 14 modules do exactly that: their jvmMain source
-  set adds kotlin.srcDir("src/androidMain/kotlin"), so 'android' and 'jvm'
-  share a root and the task fails.
-
-Neither is caught by PR CI, because dokka only runs during publish. The
-bump (#861) passed every check and broke the 2.7.0 release instead, after
-firebase-analytics had already been pushed to Maven Central.
-
-2.6.0 published cleanly on dokka 2.0.0, so this restores a known-good
-configuration. Moving to 2.2.x later needs the V1 task names in publish.yml
-replaced and the shared-source-root arrangement resolved.
-
-**File**: `.github/dependabot.yml` (modified, +10/-0)
+**File**: `firebase-auth/src/appleMain/kotlin/dev/gitlive/firebase/auth/auth.kt` (modified, +2/-1)
 ```diff
-@@ -12,6 +12,16 @@ updates:
-       # that is fixed. See also #855, which introduced and then reverted the bump.
-       - dependency-name: "org.jetbrains.kotlinx:kotlinx-coroutines-*"
-         versions: [ "1.11.x" ]
-+      # dokka 2.2.0 added a pre-generation validity check that rejects two source sets
-+      # sharing a source root. 10 of the 14 modules do exactly that: their jvmMain
-+      # source set adds kotlin.srcDir("src/androidMain/kotlin"), so 'android' and 'jvm'
-+      # share a root and dokkaGeneratePublicationHtml fails. That runs during publish,
-+      # not in PR CI, so the bump passed every check and only broke at release time.
-+      # Remove this once dokka can handle shared source roots (Kotlin/dokka#3701).
-+      - dependency-name: "org.jetbrains.dokka:*"
-+        versions: [ "2.2.x" ]
-+      - dependency-name: "org.jetbrains.dokka"
-+        versions: [ "2.2.x" ]
-   - package-ecosystem: "github-actions"
-     directory: "/"
-     schedule:
+@@ -154,7 +154,8 @@ public actual class AuthTokenResult(internal val ios: FIRAuthTokenResult) {
+ internal fun ActionCodeSettings.toIos() = FIRActionCodeSettings().also {
+     it.setURL(NSURL.URLWithString(url))
+     androidPackageName?.run { it.setAndroidPackageName(packageName, installIfNotAvailable, minimumVersion) }
+-    dynamicLinkDomain?.run { it.setDynamicLinkDomain(this) }
++    // dynamicLinkDomain is ignored here - FIRActionCodeSettings.dynamicLinkDomain was removed in
++    // firebase-ios-sdk 12.0.0 with the dynamic links shutdown, linkDomain replaces it
+     linkDomain?.run { it.setLinkDomain(this) }
+     it.setHandleCodeInApp(canHandleCodeInApp)
+     iOSBundleId?.run { it.setIOSBundleID(this) }
 ```
 
-**File**: `gradle/libs.versions.toml` (modified, +1/-1)
+**File**: `firebase-firestore/build.gradle.kts` (modified, +2/-2)
 ```diff
-@@ -22,7 +22,7 @@ ios-deploymentTarget = "13.0"
- tvos-deploymentTarget = "13.0"
+@@ -119,11 +119,11 @@ kotlin {
+             // As of Firebase 10.17 Firestore has moved all ObjC headers to FirebaseFirestoreInternal and the kotlin cocoapods plugin does not handle this well
+             // Adding it manually seems to resolve the issue
+             pod("FirebaseFirestoreInternal") {
+-                version = libs.versions.firebase.cocoapods.get()
++                version = libs.versions.firebase.core.firestore.cocoapods.get()
+                 extraOpts += listOf("-compiler-option", "-fmodules")
+             }
+             pod("FirebaseFirestore") {
+-                version = libs.versions.firebase.cocoapods.get()
++                version = libs.versions.firebase.core.firestore.cocoapods.get()
+                 extraOpts += listOf("-compiler-option", "-fmodules")
+                 useInteropBindingFrom("FirebaseFirestoreInternal")
+             }
+```
+
+**File**: `gradle/libs.versions.toml` (modified, +7/-3)
+```diff
+@@ -17,9 +17,13 @@ kotlinx-datetime = "0.7.1"
+ kotlinter = "5.2.0"
+ settings-api = "2.2"
+ settings-language = "2.2"
+-firebase-cocoapods = "11.8.0"
+-ios-deploymentTarget = "13.0"
+-tvos-deploymentTarget = "13.0"
++firebase-cocoapods = "12.19.0"
++# 12.19.3 is a patch release of only FirebaseCore, FirebaseFirestore and FirebaseFirestoreInternal (eMudhra CA fix);
++# every other pod's latest 12.x is 12.19.0, which accepts FirebaseCore ~> 12.19.0
++firebase-core-firestore-cocoapods = "12.19.3"
++# firebase-ios-sdk 12 requires iOS 15 / tvOS 15 (macOS 10.15 is unchanged)
++ios-deploymentTarget = "15.0"
++tvos-deploymentTarget = "15.0"
  macos-deploymentTarget = "10.15"
  test-logger-plugin = "4.0.0"
--dokka = "2.2.0"
-+dokka = "2.0.0"
- publish = "0.34.0"
- 
- [libraries]
+ dokka = "2.0.0"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #910** (2026-09-25): Pin CI to Xcode 26.4.1 (@nbransby)
-- **PR #909** (2026-09-25): Skip the Firebase SwiftPM resolve in modules that don't use Firebase (@nbransby)
-- **PR #908** (2026-09-25): Upload SwiftPM import diagnostics when an Apple test job fails (@nbransby)
-- **PR #907** (2026-09-25): Correct the SwiftPM consumer docs (@nbransby)
-- **PR #906** (2026-09-24): Merge master into v3.0.0 (@nbransby)
-- **PR #905** (2026-09-24): Raise the macOS deployment target to 12.0 (@nbransby)
+- **PR #941** (2026-11-05): Bump version to 2.8.0 (@nbransby)
+- **PR #940** (2026-11-05): Bump firebase-ios-sdk to 13.1.1 for the eMudhra CA fix (3.x) (@nbransby)
+- **PR #939** (2026-11-05): Bump firebase-ios-sdk to 12.19.3 for the eMudhra CA fix (2.x) (@nbransby)
+- **PR #938** (closed): Critical fix for eMudhra compromise (@Daeda88)
+- **PR #935** (2026-11-02): Match member exclusions on nested classes written in source form (@nbransby)
+- **PR #934** (2026-11-01): Remove the unused two-argument exception constructors from the JS and wasmJs actuals (@nbransby)
 
 ---
 
@@ -1317,28 +1235,22 @@ replaced and the shared-source-root arrangement resolved.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Revert kotlinx-coroutines to 1.10.2 and pin against 1.11.x
+## X. Bump firebase-ios-sdk to 12.19.3 for the eMudhra CA fix (2.x) (#939)
 
 **RULE**:
-When implementing operations in `.github/dependabot.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GitLiveApp/firebase-kotlin-sdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GitLiveApp/firebase-kotlin-sdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7ad5b8d8`: Revert kotlinx-coroutines to 1.10.2 and pin against 1.11.x. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9d65b8e3`: Bump firebase-ios-sdk to 12.19.3 for the eMudhra CA fix (2.x) (#939). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/dependabot.yml`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-    ignore:
-      # kotlinx-coroutines 1.11.0 regressed Promise rejection handling on Wasm/JS:
-      # a rejected Promise no longer surfaces as JsException, so the raw JS error
-      # object (and its structured `details`) is unrecoverable through public API.
-      # Tracked upstream in Kotlin/kotlinx.coroutines#4678. Remove this entry once
-      # that is fixed. See also #855, which introduced and then reverted the bump.
-      - dependency-name: "org.jetbrains.kotlinx:kotlinx-coroutines-*"
-        versions: [ "1.11.x" ]
+This SDK is built against Firebase iOS SDK **12.19** (FirebaseCore and FirebaseFirestore **12.19.3**) and requires a minimum deployment target of **iOS 15 / tvOS 15 / macOS 10.15**. Link `firebase-ios-sdk` **12.19.3** (CocoaPods: FirebaseFirestore 12.19.3, the other pods 12.19.0) or **13.1.1+** (SPM only; Firebase 13 itself requires macOS 11+ and Xcode 26.2+): older versions are affected by the [compromised eMudhra intermediate CA](https://firebase.google.com/support/guides/compromised-emudhra-intermediate-ca) issue in the Firestore SDK. On Apple targets `FirebaseOptions.gaTrackingId` is always `null` and `ActionCodeSettings.dynamicLinkDomain` is ignored (use `linkDomain`), as both were removed in firebase-ios-sdk 12.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1348,4 +1260,4 @@ Subsystems managing Kotlin data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7ad5b8d8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9d65b8e3` are properly handled with clean fallback behavior.

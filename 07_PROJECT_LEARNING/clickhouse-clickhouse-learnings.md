@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md`  
 > **Source**: github ([https://github.com/ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse))  
-> **Source Version**: `39b9f2d5`  
+> **Source Version**: `f51f86e5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T09:25:40.096Z  
+> **Timestamp**: 2026-11-10T00:59:49.816Z  
 > **Learning ID**: `learn-github-clickhouse-clickhouse`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T09:20:38.933Z  
+> **Harvest Timestamp**: 2026-11-10T00:59:49.068Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ClickHouse® is a real-time analytics database management system
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 50751 stars
+- **Stars / Engagement**: 50837 stars
 
 ---
 
@@ -1317,11 +1317,11 @@ private:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #129022** (2026-11-03): **Merges of Wide parts issue a prefetch for every column stream, ignoring `filesystem_prefetches_limit`**
-  *Symptoms*: During a merge, `MergeTreeReaderWide::readRows` calls `prefetchForAllColumns`, which calls `prefetch` on every `.bin` stream of every column in every source part. The only check is `remote_filesystem_read_prefetch` (default 1), which merges get from the global context.  `SELECT` queries skip these prefetches when the number of columns exceeds `filesystem_prefetches_limit` (default 200). Merges don't have this limit: `MergeTreeReaderSettings::createForMergeMutation` does not copy `filesystem_prefetches_limit`, so it stays 0 (unlimited).  This happens in horizontal merges too, where `MergeTask` passes `prefetch=false`, because the per-column `prefetch` in `readRows` doesn't depend on that flag.  ### Proposal  Apply `filesystem_prefetches_limit` (or a separate MergeTree setting) to merges and mutations in `createForMergeMutation`, or disable the per-column `prefetch` in `readRows` for merges. The next-column prefetch in vertical merges (`vertical_merge_remote_filesystem_prefetch`) is a separate mechanism and should stay as is.
+- **Issue #129895** (2026-11-09): **Column alias shadows a named-collection key in table function arguments: `Required keys (database, db) are not specified`**
+  *Symptoms*: ### Company or project name  _(left empty)_  ### Describe what's wrong  When a query has a column alias with the same name as a key of a named-collection override in a table function, the key is lost. `postgresql(pg, database = 'd', table = 't')` fails with `Required keys (database, db) are not specified` as soon as the same `SELECT` has an expression aliased `database`. The analyzer seems to resolve the identifier `database` in the `key = value` argument to the alias, so the pair is no longer read as a key.  The synonym `db = 'd'` works, and so does the same query without the alias. An alias `table` did not break the `table` key in our tests.  ### Does it reproduce on the most recent release?  Yes. It reproduces on 26.10.3.7 and on `clickhouse/clickhouse-server:head` 26.11.1.1560, with `enable_analyzer` 1 and 0.  ### How to reproduce  Server config, `config.d/collection.xml`:  ```xml <clickhouse>     <named_collections>         <pg>             <host>localhost</host>             <port>5432</port>             <user>u</user>             <password>p</password>         </pg>     </named_collections> </clickhouse> ```  No PostgreSQL is needed: a correct call reaches the connection attempt and fails there with code 614. The broken call fails earlier, at key validation, with code 36.  ```sql -- Code 614 (connection), as expected: the key is read SELECT 1 FROM postgresql(pg, database = 'd', table = 't');  -- Code 36: Required keys (database, db) are not specified SELECT 'd' AS datab
 
-- **Issue #128872** (2026-11-04): **Refreshable materialized view reading a database-qualified parameterized view into a ReplicatedMergeTree table fails with UNKNOWN_FUNCTION**
-  *Symptoms*: ### Company or project name  Halter https://github.com/halter-corp  ### Describe what's wrong  A refreshable materialized view whose top-level `FROM` is a database-qualified parameterized view call, `db.param_view(...)`, fails on refresh when the target is a `Replicated*MergeTree` table and the view lives in a `Replicated` database:  ``` Code: 730. DB::Exception: Refresh failed (on replica r1): Code: 46. DB::Exception: Unknown table function db.param_view:  or incorrect parameterized view. (UNKNOWN_FUNCTION). (REFRESH_FAILED) ```  The same view into a plain `MergeTree` table works. In an `Atomic` database it works until the server restarts, then fails the same way.  The stored query reads `` FROM `db.param_view`(...) ``: once formatted, the qualified name becomes one quoted identifier. `Context::executeTableFunction`, reached through `JoinedTables::getLeftTableStorage` on the replicated `INSERT ... SELECT` path, then looks for a table literally named `db.param_view`:  ``` 4. DB::TableFunctionFactory::get(...) 5. DB::Context::executeTableFunction(...) 6. DB::JoinedTables::getLeftTableStorage() 7. DB::InterpreterInsertQuery::execute() 8. DB::RefreshTask::executeRefreshUnlocked(...) ```  ### Does it reproduce on the most recent release?  Yes. Reproduced on 25.8.33.6, 25.10.7.6, 26.10.3.7 and `head` (26.11.1.1154).  ### How to reproduce  Single server with embedded Keeper. Copy and run as is:  ```bash cat > keeper.xml <<'XML' <clickhouse>   <keeper_server>     <tcp_port>9181</tcp
+- **Issue #129586** (2026-11-07): **toDecimalString(Decimal, 0) leaves a trailing decimal point when the scale is above 0**
+  *Symptoms*: ### Describe what's wrong  `toDecimalString(x, 0)` on a `Decimal` with a scale above 0 returns the whole part followed by a bare `.`, for example `1.` instead of `1`. The same call on an integer, a `Float`, or a `Decimal` with scale 0 returns no point. The documentation says the result has exactly the specified number of fractional digits, so with 0 there should be no point.  ### Does it reproduce on the most recent release?  Yes. Reproduces on master, version 26.11.1.1436.  ### How to reproduce  ```sql SELECT     toDecimalString(toDecimal32(1.2, 1), 0),     toDecimalString(toDecimal32(1.5, 1), 0),     toDecimalString(toDecimal32(-1.2, 1), 0),     toDecimalString(toDecimal64(-0.4, 1), 0),     toDecimalString(toDecimal32(5, 0), 0),     toDecimalString(1.5, 0); ```  Output on 26.11.1.1436:  ``` 1.	2.	-1.	-0.	5	2 ```  It happens for every `Decimal` width (`Decimal32`, `Decimal64`, `Decimal128`, `Decimal256`).  ### Expected behavior  ``` 1	2	-1	-0	5	2 ```  The `-0` for `-0.4` is a separate question. `toDecimalString(-0.4, 0)` on a `Float` also returns `-0`, so it is left as is here.  ### Additional context  In `src/IO/WriteHelpers.h`, `writeText(Decimal<T>, ...)` rounds the value to `fractional_length` digits and sets `rounded_scale = fractional_length`, which is 0 here. The check that decides whether to write the fractional part still tests the original `scale` instead of `rounded_scale`, so `writeDecimalFractional` is called with zero digits and writes only the point.   <!-- ch
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1338,102 +1338,389 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bdbd1b83` (2026-11-05)
-**Commit Message**: Merge pull request #129202 from groeneai/fix-05043-fault-main-thread
+### Incident Patch 1: `01d88bca` (2026-11-09)
+**Commit Message**: Merge pull request #129914 from nihalzp/fix-volume-jbod-round-robin-race
 
-Send the fault in test `05043_crash_report_without_global_context` to the parked thread
+Fix concurrent round-robin reservations on a `JBOD` volume failing while another disk has room
 
-**File**: `tests/queries/0_stateless/05043_crash_report_without_global_context.sh` (modified, +14/-2)
+**File**: `src/Disks/VolumeJBOD.cpp` (modified, +23/-10)
 ```diff
-@@ -158,6 +158,18 @@ report_checks() {
-         || echo "$label: no null dereference"
- }
+@@ -99,9 +99,8 @@ DiskPtr VolumeJBOD::getDisk(size_t /* index */) const
+     {
+         case VolumeLoadBalancing::ROUND_ROBIN:
+         {
+-            size_t start_from = last_used.fetch_add(1u, std::memory_order_acq_rel);
+-            size_t index = start_from % disks.size();
+-            return disks[index];
++            const size_t turn = last_used.fetch_add(1u, std::memory_order_acq_rel);
++            return disks[turn % disks.size()];
+         }
+         case VolumeLoadBalancing::LEAST_USED:
+         {
+@@ -152,15 +151,29 @@ ReservationPtr VolumeJBOD::reserveImpl(UInt64 bytes, const std::optional<Reserva
+     {
+         case VolumeLoadBalancing::ROUND_ROBIN:
+         {
+-            size_t disks_num = disks.size();
+-            for (size_t i = 0; i < disks_num; ++i)
++            /// Every attempt takes the next turn, like a reservation of its own, so that concurrent
++            /// reservations spread over the disks in the order of their turns. When other threads take turns
++            /// between two attempts, the turn of a reservation can fall on a disk it has already tried. It
++            /// then takes one of the disks it has not tried, picked by the round of the turn so that such
++            /// attempts spread over them evenly. So a reservation tries every disk once.
++            const size_t disks_num = disks.size();
++            const size_t first_disk = last_used.fetch_add(1u, std::memory_order_acq_rel) % disks_num;
++            if (ReservationPtr reservation = try_reserve(disks[first_disk]))
++                return reservation;
++
++            /// The first attempt cannot fall on a tried disk, so the untried disks are tracked only after it
++            /// fails, and a reservation that succeeds at once copies nothing.
++            Disks untried = disks;
++            untried.erase(untried.begin() + first_disk);
++            while (!untried.empty())
+             {
+-                size_t start_from = last_used.fetch_add(1u, std::memory_order_acq_rel);
+-                size_t index = start_from % disks_num;
+-
+-                ReservationPtr reservation = try_reserve(disks[index]);
+-                if (reservation)
++                const size_t turn = last_used.fetch_add(1u, std::memory_order_acq_rel);
++                auto disk = std::ranges::find(untried, disks[turn % disks_num]);
++                if (disk == untried.end())
++                    disk = untried.begin() + (turn / disks_num) % untried.size();
++                if (ReservationPtr reservation = try_reserve(*disk))
+                     return reservation;
++                untried.erase(disk);
+             }
+             return {};
+         }
+```
+
+**File**: `src/Disks/VolumeJBOD.h` (modified, +1/-1)
+```diff
+@@ -95,7 +95,7 @@ class VolumeJBOD : public IVolume
+     };
  
-+# The fault belongs in the parked thread, which is the main one. `kill` signals the whole process, so
-+# any thread not blocking the signal can take it, the signal listener included, and a handler running
-+# on the listener waits for itself and reports nothing.
-+fault_main_thread() {
-+    python3 -c "
-+import ctypes, signal, sys
-+pid = int(sys.argv[1])
-+if ctypes.CDLL(None, use_errno=True).tgkill(pid, pid, int(signal.SIGSEGV)) != 0:
-+    sys.exit('tgkill failed: errno %d' % ctypes.get_errno())
-+" "$1"
+     mutable std::mutex mutex;
+-    /// Index of last used disk, for load_balancing=round_robin
++    /// The next turn of load_balancing=round_robin: turn `t` goes to the disk `disks[t % disks.size()]`
+     mutable std::atomic<size_t> last_used = 0;
+     /// Disks with their unreserved space, in no particular order, for load_balancing=least_used
+     mutable std::vector<DiskWithSize> disks_with_size TSA_GUARDED_BY(mutex);
+```
+
+**File**: `src/Disks/tests/gtest_volume_jbod_round_robin.cpp` (added, +133/-0)
+```diff
+@@ -0,0 +1,133 @@
++#include <Disks/VolumeJBOD.h>
++#include <Disks/tests/gtest_disk.h>
++
++#include <gtest/gtest.h>
++
++#include <algorithm>
++#include <atomic>
++#include <latch>
++#include <optional>
++#include <thread>
++
++using namespace DB;
++
++namespace
++{
++
++/// A disk without room. Its first reservation pauses until `resume`, so that a test can let other
++/// reservations take turns between the first attempt of a reservation and its next one. It does not reserve
++/// through `DiskLocal`, whose global reservation mutex would block the other disks during the pause.
++class FullDisk : public DiskLocal
++{
++public:
++    using DiskLocal::DiskLocal;
++    using DiskLocal::reserve;
++
++    ReservationPtr reserve(UInt64 /* bytes */) override
++    {
++        if (first_reservation.exchange(false))
++        {
++            paused.count_down();
++            resumed.wait();
++        }
++        return {};
++    }
++
++    void waitUntilPaused() { paused.wait(); }
++
++    void resume() { resumed.count_down(); }
++
++private:
++    std::atomic<bool> first_reservation = true;
++    std::latch paused{1};
++    std::latch resumed{1};
++};
++
++class VolumeJBODRoundRobin : public testing::Test
++{
++protected:
++    /// Creates a round-robin volume of `disks_num` disks, of which disk 0 has no room.
++    void createVolume(size_t disks_num)
++    {
++        /// The full disk uses the directory of a disk made by `createDisk`, which `destroyDisk` removes.
++        created_disks.push_back(createDisk("full"));
++        full_disk = std::make_shared<FullDisk>("full", created_disks.back()->getPath());
++        disks.push_back(full_disk);
++        for (size_t i = 1; i < disks_num; ++i)
++        {
++            created_disks.push_back(createDisk());
++            disks.push_back(created_disks.back());
++        }
++        volume = std::make_shared<VolumeJBOD>(
++            "volume",
++            disks,
++            /* max_data_part_size_= */ 0,
++            /* are_merges_avoided_= */ false,
++            /* perform_ttl_move_on_insert_= */ false,
++            VolumeLoadBalancing::ROUND_ROBIN,
++            /* least_used_ttl_ms_= */ 0);
++    }
++
++    void TearDown() override
++    {
++        volume.reset();
++        disks.clear();
++        full_disk.reset();
++        for (auto & disk : created_disks)
++            destroyDisk(disk);
++    }
++
++    /// The position of the disk of `reservation` in the volume, or nothing without a reservation.
++    std::optional<size_t> diskOf(const ReservationPtr & reservation) const
++    {
++        if (!reservation)
++            return {};
++        return std::ranges::find(disks, reservation->getDisk()) - disks.begin();
++    }
++
++    /// Reservation A takes the first turn, which falls on the full disk, and pauses in its attempt there.
++    /// Then `others_num` reservations take the next turns, each on the disk of its turn, and A goes on.
++    /// Returns the position of the disk that A takes.
++    std::optional<size_t> reserveAroundPausedReservation(size_t others_num)
++    {
++        ReservationPtr paused_reservation;
++        std::thread paused_thread([&] { paused_reservation = volume->reserve(1); });
++        full_disk->waitUntilPaused();
++        for (size_t turn = 1; turn <= others_num; ++turn)
++            EXPECT_EQ(diskOf(volume->reserve(1)), turn % disks.size());
++        full_disk->resume();
++        paused_thread.join();
++        return diskOf(paused_reservation);
++    }
++
++    std::shared_ptr<FullDisk> full_disk;
++    Disks created_disks;
++    Disks disks;
++    VolumePtr volume;
++};
++
 +}
 +
- ##########################################################################################
- # Arm 1: keeper. The UUID is read before the global context is created, so the context is absent.
- ##########################################################################################
-@@ -225,7 +237,7 @@ done
- # process has not passed that point.
- grep -q 'Initializing DateLUT' "$klog" && { echo "keeper: the global context already exists"; exit 1; }
++TEST_F(VolumeJBODRoundRobin, NextAttemptTakesNextTurn)
++{
++    /// A takes turn 0 on the full disk, and B takes turn 1 and disk 1. The next attempt of A takes turn 2 and
++    /// disk 2, as a reservation of its own would, so that disk 1 does not take both reservations.
++    createVolume(3);
++    EXPECT_EQ(reserveAroundPausedReservation(1), 2u);
++}
++
++TEST_F(VolumeJBODRoundRobin, TurnOnTriedDiskTakesUntriedDisk)
++{
++    /// A takes turn 0 on the full disk, and B takes turn 1 and disk 1. Turn 2 of A falls on the full disk
++    /// again, which A has already tried, so A takes the disk it has not tried yet.
++    createVolume(2);
++    EXPECT_EQ(reserveAroundPausedReservation(1), 1u);
++}
++
++TEST_F(VolumeJBODRoundRobin, RoundOfTurnPicksUntriedDisk)
++{
++    /// A takes turn 0 on the full disk, and B and C take turns 1 and 2. Turn 3 of A falls on the full disk
++    /// again. It is in round 1, so A takes the second of its untried disks 1 and 2.
++    createVolume(3);
++    EXPECT_EQ(reserveAroundPausedReservation(2), 2u);
++}
+```
+
+**File**: `tests/integration/test_tmp_policy/test.py` (modified, +36/-0)
+```diff
+@@ -77,6 +77,42 @@ def test_multiple_local_disk_distinct():
+     )
  
--kill -SEGV "$keeper_pid"
-+fault_main_thread "$keeper_pid"
- report_checks "$kdir" "keeper" "$keeper_pid" "$kerr" "$klog"
  
- ##########################################################################################
-@@ -296,5 +308,5 @@ done
- [ -s "$sdir/data/status" ] || { echo "server: the global context does not exist yet"; exit 1; }
- grep -q 'Initializing DateLUT' "$slog" && { echo "server: the server UUID is already loaded"; exit 1; }
- 
--kill -SEGV "$server_pid"
-+fault_main_thread "$server_pid"
- report_checks "$sdir" "server" "$server_pid" "$serr" "$slog"
++def test_multiple_local_disk_full_disk():
++    # With `disk1` nearly full, every spill of the external sort reserves its bytes on `disk2`. The threshold
++    # of the external sort is split among the 16 sorting threads: 32 KiB each, less than a block, so every
++    # thread spills every block it sorts. The threads reserve at the same time, and a reservation must try
++    # every disk of the volume even when the other threads reserve between its attempts.
++    filler = "/test_tmp_policy_disk1/filler"
++    node_local.exec_in_container(
++        [
++            "bash",
++            "-c",
++            f"fallocate -l $(( $(df --output=avail -B1 /test_tmp_policy_disk1 | tail -1) - 8192 )) {filler}",
++        ]
++    )
++    try:
++        query_id = str(uuid.uuid4())
++        settings = {
++            "max_threads": 16,
++            "max_threads_min_free_memory_per_thread": 0,
++            "max_block_size": 8192,
++            "max_bytes_ratio_before_external_sort": 0,
++            "max_bytes_before_external_sort": 1 << 19,
++        }
++        node_local.query(
++            "SELECT number FROM numbers_mt(2000000) ORDER BY number DESC FORMAT Null",
++            settings=settings,
++            query_id=query_id,
++        )
++        node_local.query("SYSTEM FLUSH LOGS query_log")
++        assert node_local.query(
++            "SELECT ProfileEvents['ExternalSortWritePart'] > 100 "
++            f"FROM system.query_log WHERE query_id = '{query_id}' AND type = 'QueryFinish'"
++        ) == "1\n"
++    finally:
++        node_local.exec_in_container(["rm", "-f", filler])
++
++
+ def test_remote_disk():
+     query = "SELECT count(ignore(*)) FROM (SELECT * FROM system.numbers LIMIT 1e7) GROUP BY number"
+     settings = {
 ```
 
 ---
 
-### Incident Patch 2: `39b9f2d5` (2026-11-05)
-**Commit Message**: Merge pull request #129259 from ClickHouse/arsenmuk/fix-seaweedfs-local-run
+### Incident Patch 2: `a353af14` (2026-11-09)
+**Commit Message**: Merge pull request #128049 from groeneai/fix-join-using-kv-storage-join-use-nulls
 
-Fix SeaweedFS setup failing on a repeated local stateless run
+Fix JOIN USING onto a key-value table with join_use_nulls casting the right key twice
 
-**File**: `ci/jobs/scripts/functional_tests/setup_seaweedfs.sh` (modified, +3/-1)
+**File**: `src/Processors/QueryPlan/JoinStepLogical.cpp` (modified, +16/-0)
 ```diff
-@@ -140,7 +140,9 @@ start_seaweedfs() {
- }
- 
- setup_seaweedfs() {
--  echo "s3.bucket.create -name test" | weed shell -master "localhost:11112"
-+  if ! echo "s3.bucket.list" | weed shell -master "localhost:11112" | awk '$1 == "test" { found = 1 } END { exit !found }'; then
-+    echo "s3.bucket.create -name test" | weed shell -master "localhost:11112"
-+  fi
-   # writes fail until the initial volume allocation is done on a cold start,
-   # so wait until a real write succeeds
-   local counter=0
+@@ -2350,6 +2350,22 @@ static QueryPlanNode buildPhysicalJoinImpl(
+         {
+             if (right_nullable_from_prepared_storage && JoinActionRef(action, expression_actions).fromRight())
+             {
++                if (prepared_join_storage.storage_key_value)
++                {
++                    /// The whole action is merged into the right-side DAG below, so the DAG gets only its inputs.
++                    std::stack<const ActionsDAG::Node *> stack;
++                    stack.push(action);
++                    while (!stack.empty())
++                    {
++                        const auto * node = stack.top();
++                        stack.pop();
++                        if (node->type == ActionsDAG::ActionType::INPUT)
++                            used_expressions.emplace_back(node, expression_actions);
++                        for (const auto * child : node->children)
++                            stack.push(child);
++                    }
++                    continue;
++                }
+                 /// x (Alias) -> toNullable(x) -> x (Input)
+                 action = action->children.at(0)->children.at(0);
+                 /// toNullable(x) -> x (Input)
+```
+
+**File**: `tests/queries/0_stateless/05453_join_using_key_value_storage_join_use_nulls.reference` (added, +20/-0)
+```diff
+@@ -0,0 +1,20 @@
++1	Nullable(Int64)
++2	Nullable(Int64)
++3	Nullable(Int64)
++5	Nullable(Int64)
++1	1	Nullable(Int64)	a
++2	2	Nullable(Int64)	b
++5	\N	Nullable(Int64)	\N
++a	Nullable(String)
++b	Nullable(String)
++c	Nullable(String)
++x	Nullable(String)
++a	a	Nullable(String)	1
++b	b	Nullable(String)	2
++x	\N	Nullable(String)	\N
++a	a	Nullable(String)	1
++b	b	Nullable(String)	2
++x	\N	Nullable(String)	\N
++a	a	Nullable(String)	1
++b	b	Nullable(String)	2
++x	\N	Nullable(String)	\N
+```
+
+**File**: `tests/queries/0_stateless/05453_join_using_key_value_storage_join_use_nulls.sql` (added, +36/-0)
+```diff
+@@ -0,0 +1,36 @@
++-- Tags: use-rocksdb
++-- JOIN USING with join_use_nulls onto a key-value table whose USING column type differs from the left one.
++
++SET allow_suspicious_low_cardinality_types = 1;
++SET join_use_nulls = 1;
++
++DROP TABLE IF EXISTS l_i64;
++DROP TABLE IF EXISTS l_str;
++DROP TABLE IF EXISTS r_u32;
++DROP TABLE IF EXISTS r_str;
++DROP TABLE IF EXISTS r_str_mt;
++
++CREATE TABLE l_i64 (k Int64) ENGINE = Memory;
++INSERT INTO l_i64 VALUES (1), (2), (5);
++CREATE TABLE l_str (k String) ENGINE = Memory;
++INSERT INTO l_str VALUES ('a'), ('b'), ('x');
++
++CREATE TABLE r_u32 (k LowCardinality(UInt32), v String) ENGINE = EmbeddedRocksDB PRIMARY KEY k;
++INSERT INTO r_u32 VALUES (1, 'a'), (2, 'b'), (3, 'c');
++CREATE TABLE r_str (k LowCardinality(String), v UInt32) ENGINE = EmbeddedRocksDB PRIMARY KEY k;
++INSERT INTO r_str VALUES ('a', 1), ('b', 2), ('c', 3);
++CREATE TABLE r_str_mt (k LowCardinality(String), v UInt32) ENGINE = MergeTree ORDER BY k;
++INSERT INTO r_str_mt VALUES ('a', 1), ('b', 2), ('c', 3);
++
++SELECT k, toTypeName(k) FROM l_i64 FULL JOIN r_u32 USING (k) ORDER BY k SETTINGS join_algorithm = 'hash';
++SELECT k, r.k, toTypeName(r.k), r.v FROM l_i64 AS l LEFT JOIN r_u32 AS r USING (k) ORDER BY k SETTINGS join_algorithm = 'hash';
++SELECT k, toTypeName(k) FROM l_str FULL JOIN r_str USING (k) ORDER BY k SETTINGS join_algorithm = 'hash';
++SELECT k, r.k, toTypeName(r.k), r.v FROM l_str AS l LEFT JOIN r_str AS r USING (k) ORDER BY k SETTINGS join_algorithm = 'hash';
++SELECT k, r.k, toTypeName(r.k), r.v FROM l_str AS l LEFT JOIN r_str AS r USING (k) ORDER BY k SETTINGS join_algorithm = 'direct';
++SELECT k, r.k, toTypeName(r.k), r.v FROM l_str AS l LEFT JOIN r_str_mt AS r USING (k) ORDER BY k SETTINGS join_algorithm = 'direct';
++
++DROP TABLE l_i64;
++DROP TABLE l_str;
++DROP TABLE r_u32;
++DROP TABLE r_str;
++DROP TABLE r_str_mt;
 ```
 
 ---
 
-### Incident Patch 3: `f37c6e75` (2026-11-05)
-**Commit Message**: Merge pull request #129206 from groeneai/fix-01111-random-table-names
+### Incident Patch 3: `286dc10e` (2026-11-09)
+**Commit Message**: Merge pull request #129869 from lazerg/fix/issue-129829-test-tags-docs
 
-Fix repeated table names in `01111_create_drop_replicated_db_stress`
+Docs: remove obsolete `no-backward-compatibility-check` tag from the testing guide
 
-**File**: `tests/queries/0_stateless/01111_create_drop_replicated_db_stress.sh` (modified, +3/-1)
+**File**: `docs/resources/develop-contribute/contribute/tests.mdx` (modified, +1/-1)
 ```diff
-@@ -56,8 +56,10 @@ function create_table()
-     while [ $SECONDS -lt "$TIMELIMIT" ]; do
-         database=$($CLICKHOUSE_CLIENT -q "select name from system.databases where name like '${CLICKHOUSE_DATABASE}%' order by rand() limit 1")
-         if [ -z "$database" ]; then continue; fi
-+        # Expanded outside the pipeline: bash reseeds $RANDOM in every pipeline child, so names would repeat.
-+        local table="rmt_${RANDOM}_${RANDOM}_${RANDOM}"
-         $CLICKHOUSE_CLIENT --lock_acquire_timeout=120 --distributed_ddl_task_timeout=0 -q \
--        "create table $database.rmt_${RANDOM}_${RANDOM}_${RANDOM} (n int) engine=ReplicatedMergeTree order by tuple() -- suppress $CLICKHOUSE_TEST_ZOOKEEPER_PREFIX" \
-+        "create table $database.$table (n int) engine=ReplicatedMergeTree order by tuple() -- suppress $CLICKHOUSE_TEST_ZOOKEEPER_PREFIX" \
-         2>&1| grep -Fa "Exception: " | grep -Fv "Macro 'uuid' in engine arguments is" | grep -Fv "Cannot enqueue query" | grep -Fv "ZooKeeper session expired" | grep -Fv UNKNOWN_DATABASE | grep -Fv TABLE_IS_DROPPED | grep -Fv UNFINISHED | grep -Fv TIMEOUT_EXCEEDED | grep -Fv QUERY_WAS_CANCELLED
-         sleep 0.$RANDOM
-     done
+@@ -245,7 +245,7 @@ List of available tags:
+ | `no-release` | Disables tests in Release builds ||
+ | `no-darwin` | Disables test on macOS (Darwin) | Test relies on Linux-specific features such as distributed queries, `procfs`, or HTTP server |
+ 
+-The following options are also supported: `no-polymorphic-parts`, `no-random-settings`, `no-random-merge-tree-settings`, `no-backward-compatibility-check`, `no-cpu-x86_64`, `no-cpu-aarch64`, `no-cpu-ppc64le`, `no-s3-storage`.
++The following options are also supported: `no-polymorphic-parts`, `no-random-settings`, `no-random-merge-tree-settings`, `no-cpu-x86_64`, `no-cpu-aarch64`, `no-cpu-ppc64le`, `no-s3-storage`.
+ 
+ In addition to above settings, you can use `USE_*` flags from `system.build_options` to define usage of particular ClickHouse features.
+ For example, if your test uses a MySQL table, you should add a tag `use-mysql`.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #129427** (2026-11-05): Backport #127416 to 26.10: Fix `Cannot fold actions for projection` when the join order optimizer reorders an outer join converted to INNER (@robot-clickhouse-ci-1)
-- **PR #129413** (2026-11-05): Backport #120110 to 26.10: Make DPsub the default join order algorithm, with the CD-C conflict detector (@robot-ch-test-poll2)
-- **PR #129406** (2026-11-05): Backport #122526 to 26.10: Keep an OR without join keys as one JOIN ON condition (@robot-clickhouse-ci-1)
-- **PR #129397** (2026-11-04): Run `xmllint` in the style check without a shell (@fm4v)
-- **PR #129390** (2026-11-05): Praktika: update submodules in parallel when creating the submodule cache (@groeneai)
-- **PR #129388** (2026-11-05): Keep the no-early-exit `bitmapHasAny` operands of the `bitmap_cardinality` performance test in the L1 cache (@groeneai)
+- **PR #130387** (2026-11-10): Backport #125026 to 26.10: Log a lost Iceberg metadata commit race at Debug, not Error (@robot-clickhouse-ci-1)
+- **PR #130361** (2026-11-09): Backport #126952 to 26.10: Fix lightweight `UPDATE` skipping rows fetched during the `update_sequential_consistency` wait (@robot-clickhouse)
+- **PR #130360** (2026-11-09): Backport #126952 to 26.9: Fix lightweight `UPDATE` skipping rows fetched during the `update_sequential_consistency` wait (@robot-clickhouse)
+- **PR #130359** (2026-11-09): Backport #129529 to 26.3: Fix unbounded JIT memory growth with distinct literals (@robot-clickhouse)
+- **PR #130356** (2026-11-09): Backport #127625 to 26.10: Speed up merging large `uniqExact` states: grow the Robin Hood hash set before the merge (@robot-clickhouse)
+- **PR #130352** (2026-11-09): Backport #130171 to 26.10: Cast an ORC list, map or struct requested as another type instead of reading default values (@robot-ch-test-poll3)
 
 ---
 
@@ -1453,42 +1740,53 @@ Fix repeated table names in `01111_create_drop_replicated_db_stress`
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #129202 from groeneai/fix-05043-fault-main-thread
+## X. Merge pull request #129914 from nihalzp/fix-volume-jbod-round-robin-race
 
 **RULE**:
-When implementing operations in `tests/queries/0_stateless/05043_crash_report_without_global_context.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/Disks/VolumeJBOD.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bdbd1b83`: Merge pull request #129202 from groeneai/fix-05043-fault-main-thread. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `01d88bca`: Merge pull request #129914 from nihalzp/fix-volume-jbod-round-robin-race. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/queries/0_stateless/05043_crash_report_without_global_context.sh`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/Disks/VolumeJBOD.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-# The fault belongs in the parked thread, which is the main one. `kill` signals the whole process, so
-# any thread not blocking the signal can take it, the signal listener included, and a handler running
-# on the listener waits for itself and reports nothing.
-fault_main_thread() {
-    python3 -c "
-import ctypes, signal, sys
-pid = int(sys.argv[1])
-if ctypes.CDLL(None, use_errno=True).tgkill(pid, pid, int(signal.SIGSEGV)) != 0:
-    sys.exit('tgkill failed: errno %d' % ctypes.get_errno())
-" "$1"
-}
+            const size_t turn = last_used.fetch_add(1u, std::memory_order_acq_rel);
+            return disks[turn % disks.size()];
+            /// Every attempt takes the next turn, like a reservation of its own, so that concurrent
+            /// reservations spread over the disks in the order of their turns. When other threads take turns
+            /// between two attempts, the turn of a reservation can fall on a disk it has already tried. It
+            /// then takes one of the disks it has not tried, picked by the round of the turn so that such
+            /// attempts spread over them evenly. So a reservation tries every disk once.
+            const size_t disks_num = disks.size();
+            const size_t first_disk = last_used.fetch_add(1u, std::memory_order_acq_rel) % disks_num;
+            if (ReservationPtr reservation = try_reserve(disks[first_disk]))
+                return reservation;
 
-fault_main_thread "$keeper_pid"
-fault_main_thread "$server_pid"
+            /// The first attempt cannot fall on a tried disk, so the untried disks are tracked only after it
+            /// fails, and a reservation that succeeds at once copies nothing.
+            Disks untried = disks;
+            untried.erase(untried.begin() + first_disk);
+     
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-kill -SEGV "$keeper_pid"
-kill -SEGV "$server_pid"
+            size_t start_from = last_used.fetch_add(1u, std::memory_order_acq_rel);
+            size_t index = start_from % disks.size();
+            return disks[index];
+            size_t disks_num = disks.size();
+            for (size_t i = 0; i < disks_num; ++i)
+                size_t start_from = last_used.fetch_add(1u, std::memory_order_acq_rel);
+                size_t index = start_from % disks_num;
+
+                ReservationPtr reservation = try_reserve(disks[index]);
+                if (reservation)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bdbd1b83` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `01d88bca` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `00354062`  
+> **Source Version**: `51e49a9a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T19:00:23.008Z  
+> **Timestamp**: 2026-11-10T01:41:35.920Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T19:00:23.003Z  
+> **Harvest Timestamp**: 2026-11-10T01:41:34.598Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25781 stars
+- **Stars / Engagement**: 25806 stars
 
 ---
 
@@ -1259,14 +1259,15 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #49864** (2026-11-05): **mtu: Don't warn about the route MTU with portmap chaining**
-  *Symptoms*: With portmap chaining, cilium-cni stays the main plugin and sets the Pod route MTU, so a Pod on kind with VXLAN gets "mtu 1450" on its default route. Yet every agent there logs the warning added in d91ed8e6e68c. Kind Envoy Embedded has probably logged it since that commit merged, but check-log-errors only catches it once it reads the lines the kubelet rotated away [1][2].  This commit skips the warning for portmap, as it does for no chaining.  Fixes: d91ed8e6e68c ("mtu: warn when CNI chaining lacks route MTU") 1: https://github.com/cilium/cilium/actions/runs/41838471630/job/126603491311 2: https://github.com/cilium/cilium/pull/49542  This PR was prepared with AIL:3. I personally checked the warning and the Pod route MTU on kind before and after this commit.  cc @smagnani96 
-
-- **Issue #49863** (2026-11-05): **Revert "ci: Clear legacy SPIRE values during upgrade tests"**
-  *Symptoms*: This reverts #49856. Since it merged, every Cilium E2E Upgrade leg whose cilium-cli predates #48942 fails in the Upgrade Cilium step with "failed parsing --set-string data" [[1]](https://github.com/cilium/cilium/actions/runs/42032900871/job/127263818052) [[2]](https://github.com/cilium/cilium/actions/runs/42031847346) [[3]](https://github.com/cilium/cilium/actions/runs/42033949971).
+- **Issue #49923** (2026-11-09): **v1.19 Backports 2026-11-09**
+  *Symptoms*:  * [ ] #47746 (@ajmmm)  * [x] #48207 (@pchaigno)  * [ ] #48491 (@ajmmm)  * [ ] #49066 (@maxskokov) :warning: resolved conflicts  * [ ] #48313 (@SatyamPandey-07)  Once this PR is merged, a GitHub action will update the labels of these PRs: ```upstream-prs  47746 48207 48491 49066 48313 ``` 
   **Post-Mortem & Fix Analysis**:
   > /test
-  > Closing. With #48942 on main, this revert would make every E2E Upgrade leg fail on the validate.yaml SPIRE check; PRs based before #48942 merged only need a rebase.
+
+- **Issue #49919** (2026-11-09): **cilium-cli: restore v2alpha1 BGP deprecation log exception**
+  *Symptoms*: The log exception for the v2alpha1 BGP deprecation warnings was removed in #49329. However, cilium-cli from main is also used in the upgrade/downgrade tests of older stable branches. There, v1.17 agents and operator run against v1.18 CRDs, which mark v2alpha1 as deprecated, so the apiserver warnings make the no-errors-in-logs check fail. This broke ci-e2e-upgrade on the v1.18 branch (seen in #49903).  Restore the exception. It can be removed once v1.20, the last release serving v2alpha1 BGP resources, is out of support.  Fixes: 64f76d337c40 ("k8s: drop v2alpha1 version from BGP CRDs")  
+  **Post-Mortem & Fix Analysis**:
+  > /test
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1283,389 +1284,36 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `00354062` (2026-11-05)
-**Commit Message**: clustermesh: add port validations
+### Incident Patch 1: `21c11924` (2026-10-28)
+**Commit Message**: policy: fix mapstate entry equality check condition ordering
 
-Add more validation to ports for MCS and EndpointSlice covering checks for
-port name, protocol and app protocol.
+This commit fixes a minor performance issue in policy mapstate entry
+euqality check due to condition ordering.
+When checking mapstate entry equality, first process rule metadata unique
+handle to short circuit early.
 
-Suggested-by: Marco Iorio <[REDACTED_EMAIL]>
-Signed-off-by: Arthur Outhenin-Chalandre <[REDACTED_EMAIL]>
+Signed-off-by: Deepesh Pathak <[REDACTED_EMAIL]>
 
-**File**: `pkg/clustermesh/mcsapi/types/mcsapiservicespec.go` (modified, +17/-0)
+**File**: `pkg/policy/mapstate.go` (modified, +1/-1)
 ```diff
-@@ -185,6 +185,23 @@ func (s *MCSAPIServiceSpec) validate() error {
- 	if ipv4Count > 1 || ipv6Count > 1 {
- 		return errors.New("ipFamilies contain duplicate families")
- 	}
-+	for _, port := range s.Ports {
-+		if len(port.Name) > 0 {
-+			if errs := validation.IsDNS1123Label(port.Name); len(errs) != 0 {
-+				return fmt.Errorf("invalid port name %q: %v", port.Name, errs)
-+			}
-+		}
-+		switch port.Protocol {
-+		case "", corev1.ProtocolTCP, corev1.ProtocolUDP, corev1.ProtocolSCTP:
-+		default:
-+			return fmt.Errorf("invalid port protocol %q", port.Protocol)
-+		}
-+		if port.AppProtocol != nil {
-+			if errs := validation.IsQualifiedName(*port.AppProtocol); len(errs) != 0 {
-+				return fmt.Errorf("invalid app protocol %q: %v", *port.AppProtocol, errs)
-+			}
-+		}
-+	}
+@@ -861,7 +861,7 @@ func (ms mapState) String() (res string) {
  
- 	return nil
+ // Equal returns true of two entries are equal.
+ func (e mapStateEntry) Equal(o mapStateEntry) bool {
+-	return e.equivalent(o) && e.derivedFromRules == o.derivedFromRules
++	return e.derivedFromRules == o.derivedFromRules && e.equivalent(o)
  }
-```
-
-**File**: `pkg/clustermesh/mcsapi/types/mcsapiservicespec_test.go` (modified, +55/-0)
-```diff
-@@ -67,6 +67,61 @@ func TestMCSAPIServiceSpecValidate(t *testing.T) {
- 			},
- 			assert: assert.NoError,
- 		},
-+		{
-+			name: "valid default TCP port",
-+			mcsAPISvcSpec: MCSAPIServiceSpec{
-+				Cluster: "foo", Namespace: "bar", Name: "qux",
-+				ExportCreationTimestamp: exportTime,
-+				Type:                    mcsapiv1beta1.ClusterSetIP, SessionAffinity: corev1.ServiceAffinityNone,
-+				IPFamilies: []corev1.IPFamily{corev1.IPv4Protocol},
-+				Ports:      []mcsapiv1beta1.ServicePort{{Port: 80, AppProtocol: new("kubernetes.io/h2c")}},
-+			},
-+			assert: assert.NoError,
-+		},
-+		{
-+			name: "valid named UDP port",
-+			mcsAPISvcSpec: MCSAPIServiceSpec{
-+				Cluster: "foo", Namespace: "bar", Name: "qux",
-+				ExportCreationTimestamp: exportTime,
-+				Type:                    mcsapiv1beta1.ClusterSetIP, SessionAffinity: corev1.ServiceAffinityNone,
-+				IPFamilies: []corev1.IPFamily{corev1.IPv4Protocol},
-+				Ports:      []mcsapiv1beta1.ServicePort{{Name: "http-udp", Protocol: corev1.ProtocolUDP, Port: 80}},
-+			},
-+			assert: assert.NoError,
-+		},
-+		{
-+			name: "invalid port name",
-+			mcsAPISvcSpec: MCSAPIServiceSpec{
-+				Cluster: "foo", Namespace: "bar", Name: "qux",
-+				ExportCreationTimestamp: exportTime,
-+				Type:                    mcsapiv1beta1.ClusterSetIP, SessionAffinity: corev1.ServiceAffinityNone,
-+				IPFamilies: []corev1.IPFamily{corev1.IPv4Protocol},
-+				Ports:      []mcsapiv1beta1.ServicePort{{Name: "not.valid", Protocol: corev1.ProtocolTCP, Port: 80}},
-+			},
-+			assert: assert.Error,
-+		},
-+		{
-+			name: "invalid port protocol",
-+			mcsAPISvcSpec: MCSAPIServiceSpec{
-+				Cluster: "foo", Namespace: "bar", Name: "qux",
-+				ExportCreationTimestamp: exportTime,
-+				Type:                    mcsapiv1beta1.ClusterSetIP, SessionAffinity: corev1.ServiceAffinityNone,
-+				IPFamilies: []corev1.IPFamily{corev1.IPv4Protocol},
-+				Ports:      []mcsapiv1beta1.ServicePort{{Name: "http", Protocol: corev1.Protocol("ICMP"), Port: 80}},
-+			},
-+			assert: assert.Error,
-+		},
-+		{
-+			name: "invalid app protocol",
-+			mcsAPISvcSpec: MCSAPIServiceSpec{
-+				Cluster: "foo", Namespace: "bar", Name: "qux",
-+				ExportCreationTimestamp: exportTime,
-+				Type:                    mcsapiv1beta1.ClusterSetIP, SessionAffinity: corev1.ServiceAffinityNone,
-+				IPFamilies: []corev1.IPFamily{corev1.IPv4Protocol},
-+				Ports:      []mcsapiv1beta1.ServicePort{{Port: 80, AppProtocol: new("bad protocol")}},
-+			},
-+			assert: assert.Error,
-+		},
- 		{
- 			name: "invalid service name syntax",
- 			mcsAPISvcSpec: MCSAPIServiceSpec{
-```
-
-**File**: `pkg/clustermesh/types/endpointslice/endpointslice.go` (modified, +15/-0)
-```diff
-@@ -16,6 +16,7 @@ import (
- 	"k8s.io/apimachinery/pkg/util/validation"
  
- 	"github.com/cilium/cilium/pkg/clustermesh/types/endpointslice/internal"
-+	slim_core_v1 "github.com/cilium/cilium/pkg/k8s/slim/k8s/api/core/v1"
- 	slim_discovery_v1 "github.com/cilium/cilium/pkg/k8s/slim/k8s/api/discovery/v1"
- 	slim_metav1 "github.com/cilium/cilium/pkg/k8s/slim/k8s/apis/meta/v1"
- 	"github.com/cilium/cilium/pkg/kvstore"
-@@ -189,6 +190,20 @@ func (eps *ClusterEndpointSlice) validate() error {
- 			}
- 		}
- 	}
-+	for _, port := range eps.Ports {
-+		if port.Name != nil && len(*port.Name) > 0 {
-+			if errs := validation.IsDNS1123Label(*port.Name); len(errs) != 0 {
-+				return fmt.Errorf("invalid port name %q: %v", *port.Name, errs)
-+			}
-+		}
-+		if port.Protocol != nil {
-+			switch *port.Protocol {
-+			case slim_core_v1.ProtocolTCP, slim_core_v1.ProtocolUDP, slim_core_v1.ProtocolSCTP:
-+			default:
-+				return fmt.Errorf("invalid port protocol %q", *port.Protocol)
-+			}
-+		}
-+	}
- 
- 	return nil
- }
-```
-
-**File**: `pkg/clustermesh/types/endpointslice/endpointslice_test.go` (modified, +33/-0)
-```diff
-@@ -10,6 +10,7 @@ import (
- 	"github.com/stretchr/testify/require"
- 	discoveryv1 "k8s.io/api/discovery/v1"
- 
-+	slim_corev1 "github.com/cilium/cilium/pkg/k8s/slim/k8s/api/core/v1"
- 	slim_discovery_v1 "github.com/cilium/cilium/pkg/k8s/slim/k8s/api/discovery/v1"
- )
- 
-@@ -78,6 +79,7 @@ func TestClusterEndpointSliceValidate(t *testing.T) {
- 				Endpoints: []slim_discovery_v1.Endpoint{{
- 					Addresses: []string{"10.1.2.3"},
- 				}},
-+				Ports: []slim_discovery_v1.EndpointPort{{Port: new(int32(80))}},
- 			},
- 		},
- 		{
-@@ -86,6 +88,37 @@ func TestClusterEndpointSliceValidate(t *testing.T) {
- 				Cluster: "foo", Namespace: "bar", Name: "slice.example", AddressType: slim_discovery_v1.AddressTypeIPv4,
- 			},
- 		},
-+		{
-+			name: "valid named UDP port",
-+			eps: ClusterEndpointSlice{
-+				Cluster: "foo", Namespace: "bar", Name: "slice", AddressType: slim_discovery_v1.AddressTypeIPv4,
-+				Ports: []slim_discovery_v1.EndpointPort{{Name: new("http-udp"), Protocol: new(slim_corev1.ProtocolUDP)}},
-+			},
-+		},
-+		{
-+			name: "invalid port name",
-+			eps: ClusterEndpointSlice{
-+				Cluster: "foo", Namespace: "bar", Name: "slice", AddressType: slim_discovery_v1.AddressTypeIPv4,
-+				Ports: []slim_discovery_v1.EndpointPort{{Name: new("not.valid")}},
-+			},
-+			errcontains: "invalid port name",
-+		},
-+		{
-+			name: "port name too long",
-+			eps: ClusterEndpointSlice{
-+				Cluster: "foo", Namespace: "bar", Name: "slice", AddressType: slim_discovery_v1.AddressTypeIPv4,
-+				Ports: []slim_discovery_v1.EndpointPort{{Name: new(strings.Repeat("a", 64))}},
-+			},
-+			errcontains: "invalid port name",
-+		},
-+		{
-+			name: "invalid port protocol",
-+			eps: ClusterEndpointSlice{
-+				Cluster: "foo", Namespace: "bar", Name: "slice", AddressType: slim_discovery_v1.AddressTypeIPv4,
-+				Ports: []slim_discovery_v1.EndpointPort{{Protocol: new(slim_corev1.Protocol("ICMP"))}},
-+			},
-+			errstr: "invalid port protocol \"ICMP\"",
-+		},
- 		{
- 			name: "invalid EndpointSlice name",
- 			eps: ClusterEndpointSlice{
-```
-
----
-
-### Incident Patch 2: `eb4e097a` (2026-11-04)
-**Commit Message**: clustermesh: add more validations on names for MCS and EndpointSlice
-
-Check Name / Namespace / Service name are valid as per Kubernetes rules
-on MCSAPIServiceSpec and ClusterEndpointSlice.
-
-Suggested-by: Marco Iorio <[REDACTED_EMAIL]>
-Signed-off-by: Arthur Outhenin-Chalandre <[REDACTED_EMAIL]>
-
-**File**: `pkg/clustermesh/mcsapi/types/mcsapiservicespec.go` (modified, +7/-0)
-```diff
-@@ -12,6 +12,7 @@ import (
- 	corev1 "k8s.io/api/core/v1"
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
- 	"k8s.io/apimachinery/pkg/types"
-+	"k8s.io/apimachinery/pkg/util/validation"
- 	"k8s.io/utils/ptr"
- 	mcsapiv1beta1 "sigs.k8s.io/mcs-api/pkg/apis/v1beta1"
- 
-@@ -164,6 +165,12 @@ func (s *MCSAPIServiceSpec) validate() error {
- 		*s.TrafficDistribution != corev1.ServiceTrafficDistributionPreferSameNode:
- 		return fmt.Errorf("traffic distribution is unknown: %s", *s.TrafficDistribution)
- 	}
-+	if errs := validation.IsDNS1123Label(s.Namespace); len(errs) != 0 {
-+		return fmt.Errorf("invalid namespace %q: %v", s.Namespace, errs)
-+	}
-+	if errs := validation.IsDNS1123Label(s.Name); len(errs) != 0 {
-+		return fmt.Errorf("invalid service name %q: %v", s.Name, errs)
-+	}
- 	var ipv4Count, ipv6Count int
- 	for _, ipFamily := range s.IPFamilies {
- 		switch ipFamily {
-```
-
-**File**: `pkg/clustermesh/mcsapi/types/mcsapiservicespec_test.go` (modified, +20/-0)
-```diff
-@@ -67,6 +67,26 @@ func TestMCSAPIServiceSpecValidate(t *testing.T) {
- 			},
- 			assert: assert.NoError,
- 		},
-+		{
-+			name: "invalid service name syntax",
-+			mcsAPISvcSpec: MCSAPIServiceSpec{
-+				Cluster: "foo", Namespace: "bar", Name: "not.valid",
-+				ExportCreationTimestamp: exportTime,
-+				Type:                    mcsapiv1beta1.ClusterSetIP, SessionAffinity: corev1.ServiceAffinityNone,
-+				IPFamilies: []corev1.IPFamily{corev1.IPv4Protocol},
-+			},
-+			assert: assert.Error,
-+		},
-+		{
-+			name: "invalid namespace syntax",
-+			mcsAPISvcSpec: MCSAPIServiceSpec{
-+				Cluster: "foo", Namespace: "not.valid", Name: "qux",
-+				ExportCreationTimestamp: exportTime,
-+				Type:                    mcsapiv1beta1.ClusterSetIP, SessionAffinity: corev1.ServiceAffinityNone,
-+				IPFamilies: []corev1.IPFamily{corev1.IPv4Protocol},
-+			},
-+			assert: assert.Error,
-+		},
- 		{
- 			name: "empty IP families",
- 			mcsAPISvcSpec: MCSAPIServiceSpec{
-```
-
-**File**: `pkg/clustermesh/types/endpointslice/endpointslice.go` (modified, +13/-0)
-```diff
-@@ -11,7 +11,9 @@ import (
- 	"sync"
- 
- 	"github.com/klauspost/compress/zstd"
-+	discoveryv1 "k8s.io/api/discovery/v1"
- 	"k8s.io/apimachinery/pkg/types"
-+	"k8s.io/apimachinery/pkg/util/validation"
- 
- 	"github.com/cilium/cilium/pkg/clustermesh/types/endpointslice/internal"
- 	slim_discovery_v1 "github.com/cilium/cilium/pkg/k8s/slim/k8s/api/discovery/v1"
-@@ -159,6 +161,17 @@ func (eps *ClusterEndpointSlice) validate() error {
- 	case eps.AddressType != slim_discovery_v1.AddressTypeIPv4 && eps.AddressType != slim_discovery_v1.AddressTypeIPv6:
- 		return errors.New("address type is invalid")
- 	}
-+	if errs := validation.IsDNS1123Label(eps.Namespace); len(errs) != 0 {
-+		return fmt.Errorf("invalid namespace %q: %v", eps.Namespace, errs)
-+	}
-+	if errs := validation.IsDNS1123Subdomain(eps.Name); len(errs) != 0 {
-+		return fmt.Errorf("invalid endpoint slice name %q: %v", eps.Name, errs)
-+	}
-+	if serviceName := eps.Labels[discoveryv1.LabelServiceName]; serviceName != "" {
-+		if errs := validation.IsDNS1123Label(serviceName); len(errs) != 0 {
-+			return fmt.Errorf("invalid service name %q: %v", serviceName, errs)
-+		}
-+	}
- 
- 	for _, endpoint := range eps.Endpoints {
- 		for _, address := range endpoint.Addresses {
-```
-
-**File**: `pkg/clustermesh/types/endpointslice/endpointslice_test.go` (modified, +45/-3)
-```diff
-@@ -4,9 +4,11 @@
- package endpointslice
- 
- import (
-+	"strings"
- 	"testing"
- 
- 	"github.com/stretchr/testify/require"
-+	discoveryv1 "k8s.io/api/discovery/v1"
- 
- 	slim_discovery_v1 "github.com/cilium/cilium/pkg/k8s/slim/k8s/api/discovery/v1"
- )
-@@ -46,9 +48,10 @@ func TestClusterEndpointSlice(t *testing.T) {
- 
- func TestClusterEndpointSliceValidate(t *testing.T) {
- 	tests := []struct {
--		name   string
--		eps    ClusterEndpointSlice
--		errstr string
-+		name        string
-+		eps         ClusterEndpointSlice
-+		errstr      string
-+		errcontains string
- 	}{
- 		{
- 			name:   "empty",
-@@ -77,6 +80,41 @@ func TestClusterEndpointSliceValidate(t *testing.T) {
- 				}},
- 			},
- 		},
-+		{
-+			name: "valid dotted EndpointSlice name",
-+			eps: ClusterEndpointSlice{
-+				Cluster: "foo", Namespace: "bar", Name: "slice.example", AddressType: slim_discovery_v1.AddressTypeIPv4,
-+			},
-+		},
-+		{
-+			name: "invalid EndpointSlice name",
-+			eps: ClusterEndpointSlice{
-+				Cluster: "foo", Namespace: "bar", Name: "Slice", AddressType: slim_discovery_v1.AddressTypeIPv4,
-+			},
-+			errcontains: "invalid endpoint slice name",
-+		},
-+		{
-+			name: "EndpointSlice name too long",
-+			eps: ClusterEndpointSlice{
-+				Cluster: "foo", Namespace: "bar", Name: strings.Repeat("a", 254), AddressType: slim_discovery_v1.AddressTypeIPv4,
-+			},
-+			errcontains: "invalid endpoint slice name",
-+		},
-+		{
-+			name: "invalid namespace",
-+			eps: ClusterEndpointSlice{
-+				Cluster: "foo", Namespace: "not.valid", Name: "slice", AddressType: slim_discovery_v1.AddressTypeIPv4,
-+			},
-+			errcontains: "invalid namespace",
-+		},
-+		{
-+			name: "invalid service label",
-+			eps: ClusterEndpointSlice{
-+				Cluster: "foo", Namespace: "bar", Name: "slice", AddressType: slim_discovery_v1.AddressTypeIPv4,
-+				Labels: map[string]string{discoveryv1.LabelServiceName: "not.valid"},
-+			},
-+			errcontains: "invalid service name",
-+		},
- 		{
- 			name: "valid IPv6",
- 			eps: ClusterEndpointSlice{
-@@ -138,6 +176,10 @@ func TestClusterEndpointSliceValidate(t *testing.T) {
- 				require.EqualError(t, err, tt.errstr)
- 				return
- 			}
-+			if tt.errcontains != "" {
-+				require.ErrorContains(t, err, tt.errcontains)
-+				return
-+			}
- 
- 			require.NoError(t, err)
- 		})
+ // equivalent returns true if two entries have the same policy effect,
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #49864** (2026-11-05): mtu: Don't warn about the route MTU with portmap chaining (@aanm)
-- **PR #49863** (closed): Revert "ci: Clear legacy SPIRE values during upgrade tests" (@aanm)
-- **PR #49856** (2026-11-05): ci: Clear legacy SPIRE values during upgrade tests (@mhofstetter)
-- **PR #49853** (closed): datapath: Revert the ENABLE_NODEPORT runtime config (@aanm)
-- **PR #49847** (2026-11-05): network driver: add RX queue traffic selectors (@aarcamp)
-- **PR #49845** (2026-11-05): clustermesh: add more validations on names for MCS and EndpointSlice (@MrFreezeex)
+- **PR #49923** (2026-11-09): v1.19 Backports 2026-11-09 (@pippolo84)
+- **PR #49919** (2026-11-09): cilium-cli: restore v2alpha1 BGP deprecation log exception (@martonra)
+- **PR #49918** (2026-11-09): chore(deps): update dependency cilium/cilium-cli to v0.20.2 (v1.19) (@cilium-renovate[bot])
+- **PR #49916** (2026-11-09): network driver: support mlx5 RX queue preparation (@aarcamp)
+- **PR #49910** (2026-11-08): chore(deps): update github/codeql-action action to v4.39.2 (v1.20) (@cilium-renovate[bot])
+- **PR #49908** (2026-11-08): chore(deps): update ghcr.io/renovatebot/renovate docker tag to v44.222.4 (main) (@cilium-renovate[bot])
 
 ---
 
@@ -1685,44 +1333,28 @@ Signed-off-by: Arthur Outhenin-Chalandre <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. clustermesh: add port validations
+## X. policy: fix mapstate entry equality check condition ordering
 
 **RULE**:
-When implementing operations in `pkg/clustermesh/mcsapi/types/mcsapiservicespec.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/policy/mapstate.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `00354062`: clustermesh: add port validations. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `21c11924`: policy: fix mapstate entry equality check condition ordering. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/clustermesh/mcsapi/types/mcsapiservicespec.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/policy/mapstate.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	for _, port := range s.Ports {
-		if len(port.Name) > 0 {
-			if errs := validation.IsDNS1123Label(port.Name); len(errs) != 0 {
-				return fmt.Errorf("invalid port name %q: %v", port.Name, errs)
-			}
-		}
-		switch port.Protocol {
-		case "", corev1.ProtocolTCP, corev1.ProtocolUDP, corev1.ProtocolSCTP:
-		default:
-			return fmt.Errorf("invalid port protocol %q", port.Protocol)
-		}
-		if port.AppProtocol != nil {
-			if errs := validation.IsQualifiedName(*port.AppProtocol); len(errs) != 0 {
-				return fmt.Errorf("invalid app protocol %q: %v", *port.AppProtocol, errs)
-			}
-		}
-	}
+	return e.derivedFromRules == o.derivedFromRules && e.equivalent(o)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	return e.equivalent(o) && e.derivedFromRules == o.derivedFromRules
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `00354062` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `21c11924` are properly handled with clean fallback behavior.

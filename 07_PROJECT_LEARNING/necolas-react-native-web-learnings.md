@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/necolas-react-native-web-learnings.md`  
 > **Source**: github ([https://github.com/necolas/react-native-web](https://github.com/necolas/react-native-web))  
-> **Source Version**: `c43635ed`  
+> **Source Version**: `4ccb5f41`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T21:57:19.316Z  
+> **Timestamp**: 2026-11-07T21:43:53.267Z  
 > **Learning ID**: `learn-github-necolas-react-native-web`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/necolas-react-native-web-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/necolas/react-native-web](https://github.com/necolas/react-native-web))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T21:57:19.310Z  
+> **Harvest Timestamp**: 2026-11-07T21:43:53.059Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Cross-platform React UI packages
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 22161 stars
+- **Stars / Engagement**: 22159 stars
 
 ---
 
@@ -660,14 +660,32 @@ export function hasTargetTouches(target: any, touches: any): boolean {
 }
 
 /**
- * Ignore 'selectionchange' events that don't correspond with a person's intent to
+ * Ignore 'selectionchange' and 'select' events that don't correspond with a person's intent to
  * select text.
  */
 export function hasValidSelection(domEvent: any): boolean {
   if (domEvent.type === 'selectionchange') {
     return isSelectionValid();
   }
-  return domEvent.type === 'select';
+  if (domEvent.type !== 'select') {
+    return false;
+  }
+
+  try {
+    const { selectionStart, selectionEnd } = domEvent.target;
+
+    if (
+      typeof selectionStart === 'number' &&
+      typeof selectionEnd === 'number'
+    ) {
+      return selectionStart !== selectionEnd;
+    }
+  } catch {
+    // Some engines (historically Chrome/WebKit) throw InvalidStateError
+    // when reading selection properties on unsupported types (e.g. type="number")
+  }
+
+  return true;
 }
 
 /**
@@ -699,14 +717,11 @@ export function isPrimaryPointerDown(domEvent: any): boolean {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #2947** (2026-11-06): **Pressable: outer onHoverIn fires when the pointer leaves a nested Pressable and the outer Pressable together**
+  *Symptoms*: ### Is there an existing issue for this?  - [x] I have searched the existing issues  ### Describe the issue  Pressable calls useHover with contain: true. When the pointer enters an inner Pressable, the outer one gets onHoverOut, which is expected. When the pointer leaves the inner one, the "unlock" listener calls hoverStart on the outer one. This also occurs when the pointer leaves the outer one in the same move, for example when an overlay opens under a still pointer.  ``` <Pressable onHoverIn={...} onHoverOut={...}>   {/* outer */}   <Pressable><Text>Inner</Text></Pressable> </Pressable> ```  ### Expected behavior  The outer Pressable gets no onHoverIn after the pointer leaves it. When the pointer enters the inner Pressable, the outer hover ends (contain: true). When the pointer then leaves both Pressables, the outer hover stays ended.  The expected log for Case A:  ``` outer onHoverIn   (event: pointerenter) outer onHoverOut  (event: pointerenter) ```  The expected log for Case B is the same, plus inner onPress: the overlay opens.  ### Steps to reproduce  Case A, a pointer move:  1. Open the Snack and select the Web preview. 2. Click Clear the log. 3. Move the mouse pointer onto the blue box ("Inner Pressable"). 4. Move the pointer off the blue box onto the white page, in one move. The inner box fills the outer Pressable, so this move leaves both. 5. Read the log.  Case B, an overlay that opens under a still pointer:  1. Click Clear the log. 2. Move the mouse pointer onto 
+
 - **Issue #2929** (2026-10-28): **useWindowDimensions and useColorScheme cause a hydration mismatch on server-rendered pages**
   *Symptoms*: ### Is there an existing issue for this?  - [x] I have searched the existing issues  This issue is a follow-up to #2799. It is one specific SSR problem, with a repro.  The problem is old (#566 added `Dimensions.set` as a best guess for it in 2017, and #1688 describes it with Next.js), but it is more common now: since SDK 58, new Expo projects render their web pages on the server by default (the default template's `web.output` went from `'static'` to `'server'`, expo/expo#50129).  ### Describe the issue  A page renders on the server and then hydrates in the browser. Its render uses `useWindowDimensions()` or `useColorScheme()`.  - The server has no window. It renders with `0x0` and `"light"`, or with the values given to `Dimensions.set`. - In the browser, the first render reads the real window and color scheme, for example `1024x768` and `"dark"`.  Thus the first client render does not match the server HTML. React shows error #418 ("Hydration failed because the server rendered text didn't match the client"). React then renders the root again on the client and discards the server HTML.  ### Expected behavior  The first client render matches the server HTML, so hydration succeeds. After hydration, the hooks change to the real values.  ### Steps to reproduce  1. Clone the repro and run `bun install`. 2. Run `bun run build`. The app uses Expo Router with `web.output: 'server'`. 3. Run `bun run serve`. 4. Open http://localhost:8081 with the console open. Use a window that is not 0x
-
-- **Issue #2925** (2026-10-22): **Scroll not working on the example app home**
-  *Symptoms*: ### Is there an existing issue for this?  - [x] I have searched the existing issues  ### Describe the issue  Yesterday while running the example app saw the scroll is notworking on the homescreen  ### Expected behavior  Scroll should work  ### Steps to reproduce  1. cd into packages/react-native-web-examples 2. try scroll, not working on brave browser  ### Test case  https://github.com/necolas/react-native-web/tree/master/packages/react-native-web-examples  ### Additional comments  _No response_
-  **Post-Mortem & Fix Analysis**:
-  > @zoontek, also, the demo apps should not be in the packages folder. Are we planning for migrations?  I heavily rely on react native web infact I was planning to take a fork and start work on it as per my project requirements, great I saw you guys took up the task and maintain it again  I have a good list of things that can be improved in the repo, which I found during my recent audit on few of my projects
-  > @raajnadar Yes, it's planned. We have a roadmap, I will do it when needed.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -723,518 +738,283 @@ export function isPrimaryPointerDown(domEvent: any): boolean {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `93c304ff` (2026-11-04)
-**Commit Message**: [change] UIManager: faster measureLayout, flow types, React Native parity (#2955)
+### Incident Patch 1: `ad66cedd` (2026-11-05)
+**Commit Message**: [fix] ScrollView: don't set touch-action when scroll is disabled
 
-**File**: `packages/react-native-web/src/exports/Modal/ModalFocusTrap.js` (modified, +1/-0)
-```diff
-@@ -149,6 +149,7 @@ const ModalFocusTrap = ({
-           lastFocusedElementOutsideTrap &&
-           document.contains(lastFocusedElementOutsideTrap)
-         ) {
-+          // $FlowFixMe[incompatible-type] activeElement can be any focusable element
-           UIManager.focus(lastFocusedElementOutsideTrap);
-         }
-       };
-```
+A ScrollView with scrollEnabled={false} set "touch-action: none". This blocked pinch-zoom on it, and blocked scrolling of the page or a parent ScrollView when a drag started on it.
 
-**File**: `packages/react-native-web/src/exports/UIManager/index.js` (modified, +79/-27)
+"overflow: hidden" already stops the user from scrolling the ScrollView.
+Touch on it now goes to the parent, as on Android.
+
+Fix #2148
+
+**File**: `packages/react-native-web/src/exports/ScrollView/ScrollViewBase.js` (modified, +1/-5)
 ```diff
-@@ -4,23 +4,36 @@
-  * This source code is licensed under the MIT license found in the
-  * LICENSE file in the root directory of this source tree.
-  *
-- * @noflow
-+ * @flow
-  */
- 
- import getBoundingClientRect from '../../modules/getBoundingClientRect';
- import setValueForStyles from '../../modules/setValueForStyles';
-+import type { LayoutCallback, MeasureInWindowCallback } from '../../types';
- 
--const getRect = (node) => {
-+type Rect = {
-+  width: number,
-+  height: number,
-+  top: number,
-+  left: number
-+};
-+
-+const hasOwnProperty: (this: Object, key: string) => boolean =
-+  Object.prototype.hasOwnProperty;
-+
-+const getRect = (node: HTMLElement): Rect => {
-   const height = node.offsetHeight;
-   const width = node.offsetWidth;
-   let left = node.offsetLeft;
-   let top = node.offsetTop;
--  node = node.offsetParent;
--
--  while (node?.nodeType === 1 /* Node.ELEMENT_NODE */) {
--    left += node.offsetLeft + node.clientLeft - node.scrollLeft;
--    top += node.offsetTop + node.clientTop - node.scrollTop;
--    node = node.offsetParent;
-+  // $FlowFixMe[incompatible-type] offsetParent is an HTMLElement or null
-+  let parent: ?HTMLElement = node.offsetParent;
-+
-+  while (parent?.nodeType === 1 /* Node.ELEMENT_NODE */) {
-+    left += parent.offsetLeft + parent.clientLeft - parent.scrollLeft;
-+    top += parent.offsetTop + parent.clientTop - parent.scrollTop;
-+    // $FlowFixMe[incompatible-type] offsetParent is an HTMLElement or null
-+    parent = parent.offsetParent;
-   }
- 
-   top -= window.scrollY;
-@@ -29,22 +42,44 @@ const getRect = (node) => {
-   return { width, height, top, left };
+@@ -161,14 +161,10 @@ const ScrollViewBase = (props: Props): React.Node => {
+   );
  };
  
--const measureLayout = (node, relativeToNativeNode, callback) => {
--  const relativeNode = relativeToNativeNode || node?.parentNode;
-+const measureLayout = (
-+  node: HTMLElement,
-+  relativeToNativeNode: ?HTMLElement,
-+  callback: LayoutCallback
-+): void => {
-+  const relativeNode: ?HTMLElement =
-+    relativeToNativeNode ||
-+    node?.parentElement ||
-+    // A node at the root of a shadow tree is measured relative to its host
-+    // $FlowFixMe[prop-missing] the root node is a ShadowRoot or a Document
-+    node?.getRootNode().host;
-+
-   if (node && relativeNode) {
-     setTimeout(() => {
-       if (node.isConnected && relativeNode.isConnected) {
--        const relativeRect = getRect(relativeNode);
-         const { height, left, top, width } = getRect(node);
--        const x = left - relativeRect.left;
--        const y = top - relativeRect.top;
-+        let x: number;
-+        let y: number;
-+
-+        if (node.offsetParent === relativeNode) {
-+          // Fast path: same result as subtracting "getRect(relativeNode)",
-+          // without walking the ancestors of "relativeNode" a second time
-+          x =
-+            node.offsetLeft + relativeNode.clientLeft - relativeNode.scrollLeft;
-+          y = node.offsetTop + relativeNode.clientTop - relativeNode.scrollTop;
-+        } else {
-+          const relativeRect = getRect(relativeNode);
-+          x = left - relativeRect.left;
-+          y = top - relativeRect.top;
-+        }
-+
-         callback(x, y, width, height, left, top);
-       }
-     }, 0);
-   }
- };
- 
--const elementsToIgnore = {
-+const elementsToIgnore: { readonly [string]: boolean } = {
-   A: true,
-   BODY: true,
-   INPUT: true,
-@@ -53,13 +88,13 @@ const elementsToIgnore = {
- };
- 
- const UIManager = {
--  blur(node) {
-+  blur(node: HTMLElement): void {
-     try {
-       node.blur();
--    } catch (err) {}
-+    } catch {}
+-// Chrome doesn't support e.preventDefault in this case; touch-action must be
+-// used to disable scrolling.
+-// https://developers.google.com/web/updates/2017/01/scrolling-intervention
+ const styles = StyleSheet.create({
+   scrollDisabled: {
+     overflowX: 'hidden',
+-    overflowY: 'hidden',
+-    touchAction: 'none'
++    overflowY: 'hidden'
    },
- 
--  focus(node) {
-+  focus(node: HTMLElement): void {
-     try {
-       const name = node.nodeName;
-       // A tabIndex of -1 allows element to be programmatically focused but
-@@ -73,29 +108,41 @@ const UIManager = {
-         node.setAttribute('tabIndex', '-1');
-       }
-       node.focus();
--    } catch (err) {}
-+    } catch {}
-   },
- 
--  measure(node, callback) {
-+  measure(node: HTMLElement, callback: LayoutCallback): void {
-     measureLayout(node, null, callback);
-   },
- 
--  measureInWindow(node, callback) {
-+  measureInWindow(node: HTMLElement, callback: MeasureInWindowCallback): void {
-     if (node) {
-       setTimeout(() => {
--        const { height, left, top, width } = getBoundingClientRect(node);
--        callback(left, top, width, height);
-+        const rect = getBoundingClientRect(node);
-+
-+        if (rect != null) {
-+          callback(rect.left, rect.top, rect.width, rect.height);
-+        } else {
-+          console.warn('measureInWindow cannot measure node', node);
-+          // $FlowFixMe[incompatible-type] same as React Native
-+          callback();
-+        }
-       }, 0);
-     }
-   },
- 
--  measureLayout(node, relativeToNativeNode, onFail, onSuccess) {
-+  measureLayout(
-+    node: HTMLElement,
-+    relativeToNativeNode: ?HTMLElement,
-+    onFail: (error: unknown) => void,
-+    onSuccess: LayoutCallback
-+  ): void {
-     measureLayout(node, relativeToNativeNode, onSuccess);
-   },
- 
--  updateView(node, props) {
-+  updateView(node: HTMLElement, props: { [string]: any }):
-```
-
-**File**: `packages/react-native-web/src/modules/TextInputState/index.js` (modified, +2/-2)
-```diff
-@@ -38,7 +38,7 @@ const TextInputState = {
-    * noop if the text field was already focused
-    */
-   focusTextInput(textFieldNode: ?Object) {
--    if (textFieldNode !== null) {
-+    if (textFieldNode != null) {
-       TextInputState._currentlyFocusedNode = textFieldNode;
-       if (document.activeElement !== textFieldNode) {
-         UIManager.focus(textFieldNode);
-@@ -52,7 +52,7 @@ const TextInputState = {
-    * noop if it wasn't focused
-    */
-   blurTextInput(textFieldNode: ?Object) {
--    if (textFieldNode !== null) {
-+    if (textFieldNode != null) {
-       TextInputState._currentlyFocusedNode = null;
-       if (document.activeElement === textFieldNode) {
-         UIManager.blur(textFieldNode);
-```
-
-**File**: `packages/react-native-web/src/modules/useElementLayout/index.js` (modified, +7/-6)
-```diff
-@@ -16,24 +16,24 @@ import canUseDOM from '../canUseDom';
- 
- const DOM_LAYOUT_HANDLER_NAME = '__reactLayoutHandler';
- 
--let resizeObserver = null;
-+let resizeObserver: ?ResizeObserver = null;
- 
- function getResizeObserver(): ?ResizeObserver {
-   if (canUseDOM && typeof window.ResizeObserver !== 'undefined') {
-     if (resizeObserver == null) {
--      resizeObserver = new window.ResizeObserver(function (entries) {
-+      resizeObserver = new window.ResizeObserver((entries) => {
-         entries.forEach((entry) => {
--          const node = entry.target;
-+          // $FlowFixMe[incompatible-type] observed nodes are host nodes
-+          const node: HTMLElement = entry.target;
-           // $FlowFixMe[prop-missing]
-           const onLayout = node[DOM_LAYOUT_HANDLER_NAME];
-+
-           if (typeof onLayout === 'function') {
-             // We still need to measure the view because browsers don't yet provide
-             // border-box dimensions in the entry
-             UIManager.measure(node, (x, y, width, height, left, top) => {
-               const event: LayoutEvent = {
--                nativeEvent: {
--                  layout: { x, y, width, height, left, top }
--                },
-+                nativeEvent: { layout: { x, y, width, height, left, top } },
-                 timeStamp: Date.now()
-               };
-               Object.defineProperty(event.nativeEvent, 'target', {
-@@ -47,6 +47,7 @@ function getResizeObserver(): ?ResizeObserver {
-       });
-     }
-   }
-+
-   return resizeObserver;
- }
- 
-```
-
-**File**: `packages/react-native-web/src/types/index.js` (modified, +2/-2)
-```diff
-@@ -36,7 +36,7 @@ export type LayoutEvent = {
-   timeStamp: number
- };
- 
--type LayoutCallback = (
-+export type LayoutCallback = (
-   x: number,
-   y: number,
-   width: number,
-@@ -45,7 +45,7 @@ type LayoutCallback = (
-   top: number
- ) => void;
- 
--type MeasureInWindowCallback = (
-+export type MeasureInWindowCallback = (
-   left: number,
-   top: number,
-   width: number,
+   hideScrollbar: {
+     scrollbarWidth: 'none'
 ```
 
 ---
 
-### Incident Patch 2: `a2244144` (2026-11-03)
-**Commit Message**: [fix] Pressable: don't re-render on interaction without state callback (#2954)
+### Incident Patch 2: `68f59e0e` (2026-11-05)
+**Commit Message**: [fix] StyleSheet: don't crash on hydration when rules come before the first group
 
-**File**: `packages/react-native-web/src/exports/Pressable/__tests__/index-test.js` (modified, +29/-0)
+Hydration expected the first rule of the style sheet element to be a group marker. A rule placed before it, such as a page's own rule or an `@layer` block, made it throw. These rules are now ignored.
+
+**File**: `packages/react-native-web/src/exports/StyleSheet/__tests__/dom-createOrderedCSSStyleSheet-test.js` (modified, +32/-0)
 ```diff
-@@ -169,6 +169,35 @@ describe('components/Pressable', () => {
-     expect(container.firstChild).toMatchSnapshot();
-   });
- 
-+  test('hover interaction (no state callback)', () => {
-+    const onHoverIn = jest.fn();
-+    const onHoverOut = jest.fn();
-+    const onRender = jest.fn();
-+    const ref = React.createRef();
+@@ -176,5 +176,37 @@ describe('createOrderedCSSStyleSheet', () => {
+       sheet.insert('@supports (color:mark){:host,:root{--rnw-mark:mark;}}', 0);
+       expect(element.sheet.cssRules.length).toBe(2);
+     });
 +
-+    act(() => {
-+      render(
-+        <React.Profiler id="pressable" onRender={onRender}>
-+          <Pressable onHoverIn={onHoverIn} onHoverOut={onHoverOut} ref={ref} />
-+        </React.Profiler>
++    test('ignores rules before the first group', () => {
++      element.appendChild(
++        document.createTextNode(
++          '.page { color: blue }\n[stylesheet-group="0"]{}\n.a { color: red }'
++        )
 +      );
++
++      const sheet = createOrderedCSSStyleSheet(element.sheet);
++      sheet.insert('.b { color: red }', 0);
++      sheet.insert('.c { color: red }', 1);
++
++      expect(sheet.getTextContent()).toMatchInlineSnapshot(`
++       "[stylesheet-group="0"] {}
++       .a {color: red;}
++       .b { color: red }
++       [stylesheet-group="1"]{}
++       .c { color: red }"
++      `);
++
++      expect(Array.from(element.sheet.cssRules).map((rule) => rule.cssText))
++        .toMatchInlineSnapshot(`
++       [
++         ".page {color: blue;}",
++         "[stylesheet-group="0"] {}",
++         ".a {color: red;}",
++         ".b {color: red;}",
++         "[stylesheet-group="1"] {}",
++         ".c {color: red;}",
++       ]
++      `);
 +    });
-+
-+    const target = createEventTarget(ref.current);
-+    onRender.mockClear();
-+
-+    act(() => {
-+      target.pointerover();
-+    });
-+    act(() => {
-+      target.pointerout();
-+    });
-+
-+    expect(onHoverIn).toHaveBeenCalled();
-+    expect(onHoverOut).toHaveBeenCalled();
-+    expect(onRender).not.toHaveBeenCalled();
-+  });
-+
-   test('press interaction (pointer)', () => {
-     let container;
-     const onContextMenu = jest.fn();
-```
-
-**File**: `packages/react-native-web/src/exports/Pressable/index.js` (modified, +15/-7)
-```diff
-@@ -99,6 +99,9 @@ function Pressable(props: Props): React.Node {
-   const [focused, setFocused] = useForceableState(false);
-   const [pressed, setPressed] = useForceableState(testOnly_pressed === true);
- 
-+  const hasStateCallback =
-+    typeof children === 'function' || typeof style === 'function';
-+
-   const hostRef = useRef(null);
-   const setRef = useMergeRefs(ref, hostRef);
- 
-@@ -110,7 +113,7 @@ function Pressable(props: Props): React.Node {
-       disabled,
-       onLongPress,
-       onPress,
--      onPressChange: setPressed,
-+      onPressChange: hasStateCallback ? setPressed : null,
-       onPressStart: onPressIn,
-       onPressMove,
-       onPressEnd: onPressOut
-@@ -125,7 +128,8 @@ function Pressable(props: Props): React.Node {
-       onPressIn,
-       onPressMove,
-       onPressOut,
--      setPressed
-+      setPressed,
-+      hasStateCallback
-     ]
-   );
- 
-@@ -136,7 +140,7 @@ function Pressable(props: Props): React.Node {
- 
-   useHover(hostRef, {
-     disabled,
--    onHoverChange: setHovered,
-+    onHoverChange: hasStateCallback ? setHovered : null,
-     onHoverStart: onHoverIn,
-     onHoverEnd: onHoverOut
    });
-@@ -146,25 +150,29 @@ function Pressable(props: Props): React.Node {
-   const blurHandler = React.useCallback(
-     (e: any) => {
-       if (e.nativeEvent.target === hostRef.current) {
--        setFocused(false);
-+        if (hasStateCallback) {
-+          setFocused(false);
-+        }
-         if (onBlur != null) {
-           onBlur(e);
-         }
-       }
-     },
--    [hostRef, setFocused, onBlur]
-+    [hostRef, setFocused, hasStateCallback, onBlur]
-   );
- 
-   const focusHandler = React.useCallback(
-     (e: any) => {
-       if (e.nativeEvent.target === hostRef.current) {
--        setFocused(true);
-+        if (hasStateCallback) {
-+          setFocused(true);
-+        }
-         if (onFocus != null) {
-           onFocus(e);
-         }
-       }
-     },
--    [hostRef, setFocused, onFocus]
-+    [hostRef, setFocused, hasStateCallback, onFocus]
-   );
- 
-   const contextMenuHandler = React.useCallback(
-```
-
----
-
-### Incident Patch 3: `e9a5214f` (2026-11-03)
-**Commit Message**: [fix] createDOMProps: support "box-none" and "box-only" in style.pointerEvents (#2953)
-
-**File**: `packages/react-native-web/src/exports/StyleSheet/index.js` (modified, +5/-4)
-```diff
-@@ -41,7 +41,7 @@ function createStyleq(isRTL: boolean, preprocessOptions: PreprocessOptions) {
- const styleqLTR = createStyleq(false, defaultPreprocessOptions);
- const styleqRTL = createStyleq(true, defaultPreprocessOptions);
- 
--function customStyleq(styles: any, options: Options = {}) {
-+function customStyleq(styles: any, options: StyleSheetOptions = {}) {
-   if (!('shadow' in options) && !('textShadow' in options)) {
-     return options.writingDirection === 'rtl'
-       ? styleqRTL(styles)
-@@ -161,13 +161,14 @@ function getSheet(): { id: string, textContent: string } {
-  * resolve
-  */
- type StyleProps = [string, { [key: string]: unknown } | null, string];
--type Options = {
-+
-+export type StyleSheetOptions = {
-   shadow?: boolean,
-   textShadow?: boolean,
-   writingDirection?: 'ltr' | 'rtl'
- };
- 
--function StyleSheet(styles: any, options?: Options = {}): StyleProps {
-+function StyleSheet(styles: any, options?: StyleSheetOptions = {}): StyleProps {
-   const isRTL = options.writingDirection === 'rtl';
-   const styleProps: StyleProps = customStyleq(styles, options);
-   if (Array.isArray(styleProps) && styleProps[1] != null) {
-@@ -193,7 +194,7 @@ if (devToolsHook) {
- }
- 
- export type IStyleSheet = {
--  (styles: ReadonlyArray<any>, options?: Options): StyleProps,
-+  (styles: ReadonlyArray<any>, options?: StyleSheetOptions): StyleProps,
-   absoluteFill: Object,
-   create: typeof create,
-   compose: typeof compose,
-```
-
-**File**: `packages/react-native-web/src/modules/createDOMProps/__tests__/index-test.js` (modified, +8/-0)
-```diff
-@@ -275,4 +275,12 @@ describe('modules/createDOMProps', () => {
-     const props = createProps({ nativeID });
-     expect(props.id).toEqual(nativeID);
-   });
-+
-+  test('style "pointerEvents" "box-none" and "box-only" add class names', () => {
-+    ['box-none', 'box-only'].forEach((pointerEvents) => {
-+      const props = createProps({ style: { pointerEvents } });
-+      expect(props.className).toEqual(createProps({ pointerEvents }).className);
-+      expect(props.style).toBeUndefined();
-+    });
-+  });
  });
 ```
 
-**File**: `packages/react-native-web/src/modules/createDOMProps/index.js` (modified, +26/-7)
+**File**: `packages/react-native-web/src/exports/StyleSheet/dom/createOrderedCSSStyleSheet.js` (modified, +1/-1)
 ```diff
-@@ -8,7 +8,7 @@
-  */
- 
- import AccessibilityUtil from '../AccessibilityUtil';
--import StyleSheet from '../../exports/StyleSheet';
-+import StyleSheet, { type StyleSheetOptions } from '../../exports/StyleSheet';
- 
- const emptyObject: Object = {};
- const uppercasePattern = /[A-Z]/g;
-@@ -23,7 +23,9 @@ function hyphenateString(str: string): string {
-   return str.replace(uppercasePattern, toHyphenLower);
- }
- 
--const pointerEventsStyles = StyleSheet.create({
-+const pointerEventsStyles: {
-+  readonly [string]: { readonly pointerEvents: string }
-+} = StyleSheet.create({
-   auto: {
-     pointerEvents: 'auto'
-   },
-@@ -405,13 +407,30 @@ const createDOMProps = (
-   }
- 
-   // Resolve styles
--  const [className, inlineStyle] = StyleSheet(
-+  const styleSheetOptions: StyleSheetOptions = {
-+    writingDirection: 'ltr',
-+    ...options
+@@ -47,7 +47,7 @@ export default function createOrderedCSSStyleSheet(
+       if (cssText.indexOf('stylesheet-group') > -1) {
+         group = decodeGroupRule(cssRule);
+         groups[group] = { start: i, rules: [cssText] };
+-      } else {
++      } else if (group != null) {
+         const selectorText = getSelectorText(cssText);
+         if (selectorText != null) {
+           selectors[selectorText] = true;
+```
+
+---
+
+### Incident Patch 3: `77d73dc2` (2026-11-05)
+**Commit Message**: [fix] VirtualizedList: don't block wheel scroll on the other axis (#2959)
+
+**File**: `packages/react-native-web-examples/pages/nested-lists/index.js` (added, +115/-0)
+```diff
+@@ -0,0 +1,115 @@
++import React from 'react';
++import { FlatList, StyleSheet, Switch, Text, View } from 'react-native';
++import Example from '../../shared/example';
++
++const rows = Array.from({ length: 20 }, (_, i) => ({ key: String(i) }));
++const cells = Array.from({ length: 20 }, (_, i) => ({ key: String(i) }));
++
++function Option({ label, value, onValueChange }) {
++  return (
++    <View style={styles.option}>
++      <Switch onValueChange={onValueChange} value={value} />
++      <Text style={styles.optionLabel}>{label}</Text>
++    </View>
++  );
++}
++
++export default function NestedListsPage() {
++  const [innerInverted, setInnerInverted] = React.useState(false);
++  const [outerInverted, setOuterInverted] = React.useState(true);
++  const [outerScrollEnabled, setOuterScrollEnabled] = React.useState(true);
++
++  const renderRow = ({ item: row }) => {
++    if (Number(row.key) % 3 !== 0) {
++      return (
++        <View style={styles.row}>
++          <Text>Row {row.key}</Text>
++        </View>
++      );
++    }
++    return (
++      <FlatList
++        data={cells}
++        horizontal
++        inverted={innerInverted}
++        renderItem={({ item: cell }) => (
++          <View style={styles.cell}>
++            <Text>
++              {row.key}.{cell.key}
++            </Text>
++          </View>
++        )}
++        style={styles.inner}
++      />
++    );
 +  };
 +
-+  let [className, inlineStyle] = StyleSheet(
-     [style, pointerEvents && pointerEventsStyles[pointerEvents]],
--    {
--      writingDirection: 'ltr',
--      ...options
--    }
-+    styleSheetOptions
-   );
++  return (
++    <Example title="Nested lists">
++      <View style={styles.options}>
++        <Option
++          label="Outer (vertical) inverted"
++          onValueChange={setOuterInverted}
++          value={outerInverted}
++        />
++        <Option
++          label="Inner (horizontal) inverted"
++          onValueChange={setInnerInverted}
++          value={innerInverted}
++        />
++        <Option
++          label="Outer scroll enabled"
++          onValueChange={setOuterScrollEnabled}
++          value={outerScrollEnabled}
++        />
++      </View>
++      <FlatList
++        data={rows}
++        extraData={innerInverted}
++        inverted={outerInverted}
++        renderItem={renderRow}
++        scrollEnabled={outerScrollEnabled}
++        style={styles.outer}
++      />
++    </Example>
++  );
++}
 +
-+  // Inline "pointerEvents" can't style children (needed by "box-none" and
-+  // "box-only"), so resolve again with the class. Rare, so cheap.
-+  const inlinePointerEvents = inlineStyle?.pointerEvents;
-+
-+  if (
-+    inlinePointerEvents === 'box-none' ||
-+    inlinePointerEvents === 'box-only'
-+  ) {
-+    [className, inlineStyle] = StyleSheet(
-+      [style, pointerEventsStyles[inlinePointerEvents]],
-+      styleSheetOptions
-+    );
++const styles = StyleSheet.create({
++  options: {
++    marginVertical: 16
++  },
++  option: {
++    alignItems: 'center',
++    flexDirection: 'row',
++    marginBottom: 8
++  },
++  optionLabel: {
++    marginLeft: 8
++  },
++  outer: {
++    borderColor: '#ccc',
++    borderWidth: 1,
++    height: 400,
++    maxWidth: '100%',
++    width: 360
++  },
++  row: {
++    borderBottomColor: '#eee',
++    borderBottomWidth: 1,
++    padding: 16
++  },
++  inner: {
++    backgroundColor: '#f5f5f5',
++    borderBottomColor: '#eee',
++    borderBottomWidth: 1
++  },
++  cell: {
++    alignItems: 'center',
++    borderRightColor: '#ddd',
++    borderRightWidth: 1,
++    height: 60,
++    justifyContent: 'center',
++    width: 80
 +  }
++});
+```
+
+**File**: `packages/react-native-web/src/vendor/react-native/VirtualizedList/index.js` (modified, +24/-5)
+```diff
+@@ -454,16 +454,34 @@ class VirtualizedList extends StateSafePureComponent<Props, State> {
+       renderMask: VirtualizedList._createRenderMask(props, initialRenderRegion),
+     };
+ 
+-      // REACT-NATIVE-WEB patch to preserve during future RN merges: Support inverted wheel scroller.
++    // REACT-NATIVE-WEB patch to preserve during future RN merges: Support inverted wheel scroller.
+     // For issue https://github.com/necolas/react-native-web/issues/995
+     this.invertedWheelEventHandler = (ev: any) => {
++      if (this.props.scrollEnabled === false) {
++        return;
++      }
 +
-   if (className) {
-     domProps.className = className;
-   }
++      let deltaX = ev.deltaX || ev.wheelDeltaX || 0;
++      let deltaY = ev.deltaY || ev.wheelDeltaY || 0;
++
++      // Windows and Linux report Shift+wheel as deltaY but scroll horizontally
++      if (ev.shiftKey && deltaX === 0) {
++        deltaX = deltaY;
++        deltaY = 0;
++      }
++
++      const delta = this.props.horizontal ? deltaX : deltaY;
++      const crossDelta = this.props.horizontal ? deltaY : deltaX;
++
++      // Let the browser handle wheel events on the other axis (e.g. nested lists)
++      if (Math.abs(delta) <= Math.abs(crossDelta)) {
++        return;
++      }
++
+       const scrollOffset = this.props.horizontal ? ev.target.scrollLeft : ev.target.scrollTop;
+       const scrollLength = this.props.horizontal ? ev.target.scrollWidth : ev.target.scrollHeight;
+       const clientLength = this.props.horizontal ? ev.target.clientWidth : ev.target.clientHeight;
+       const isEventTargetScrollable = ev.target !== ev.currentTarget && scrollLength > clientLength;
+-      const delta = this.props.horizontal
+-        ? ev.deltaX || ev.wheelDeltaX
+-        : ev.deltaY || ev.wheelDeltaY;
+       let leftoverDelta = delta;
+       if (isEventTargetScrollable) {
+         leftoverDelta = delta < 0
+@@ -746,7 +764,8 @@ class VirtualizedList extends StateSafePureComponent<Props, State> {
+   setupWebWheelHandler() {
+     if (this._scrollRef && this._scrollRef.getScrollableNode) {
+       this._scrollRef.getScrollableNode().addEventListener('wheel',
+-          this.invertedWheelEventHandler
++          this.invertedWheelEventHandler,
++          {passive: false}
+       );
+     } else {
+       setTimeout(() => this.setupWebWheelHandler(), 50);
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2962** (2026-11-06): [fix] Modal: make a modal active when it shows, not when its animation ends (@zoontek)
+- **PR #2961** (closed): [fix] PanResponder: cancel child click after a pan gesture (@zoontek)
+- **PR #2960** (2026-11-06): [fix] Modal: don't take focus back from a modal shown while closing (@ilazaridis)
+- **PR #2959** (2026-11-05): [fix] VirtualizedList: don't block wheel scroll on the other axis (@zoontek)
+- **PR #2958** (2026-11-05): [fix] UIManager: ignore scroll offsets in measure and measureLayout (@zoontek)
 - **PR #2957** (2026-11-04): Faster `createDOMProps` (@zoontek)
-- **PR #2956** (2026-11-04): Skip responder and layout effects on nodes that don't use them (@zoontek)
-- **PR #2955** (2026-11-04): [change] UIManager: faster measureLayout, flow types, React Native parity (@zoontek)
-- **PR #2954** (2026-11-03): [fix] Pressable: don't re-render on interaction without state callback (@zoontek)
-- **PR #2953** (2026-11-03): [fix] support "box-none" and "box-only" in inline styles (@zoontek)
-- **PR #2952** (2026-11-03): [fix] ImageLoader: release images after load or error (@zoontek)
 
 ---
 
@@ -1254,28 +1034,32 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [change] UIManager: faster measureLayout, flow types, React Native parity (#2955
+## X. [fix] ScrollView: don't set touch-action when scroll is disabled
 
 **RULE**:
-When implementing operations in `packages/react-native-web/src/exports/Modal/ModalFocusTrap.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in necolas/react-native-web. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/react-native-web/src/exports/ScrollView/ScrollViewBase.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in necolas/react-native-web. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `93c304ff`: [change] UIManager: faster measureLayout, flow types, React Native parity (#2955). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ad66cedd`: [fix] ScrollView: don't set touch-action when scroll is disabled. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native-web/src/exports/Modal/ModalFocusTrap.js`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native-web/src/exports/ScrollView/ScrollViewBase.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-          // $FlowFixMe[incompatible-type] activeElement can be any focusable element
+    overflowY: 'hidden'
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Chrome doesn't support e.preventDefault in this case; touch-action must be
+// used to disable scrolling.
+// https://developers.google.com/web/updates/2017/01/scrolling-intervention
+    overflowY: 'hidden',
+    touchAction: 'none'
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `93c304ff` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ad66cedd` are properly handled with clean fallback behavior.

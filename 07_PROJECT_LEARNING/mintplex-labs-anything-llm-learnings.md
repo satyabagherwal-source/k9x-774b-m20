@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md`  
 > **Source**: github ([https://github.com/Mintplex-Labs/anything-llm](https://github.com/Mintplex-Labs/anything-llm))  
-> **Source Version**: `cbaf3357`  
+> **Source Version**: `ace9dad3`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T10:23:18.330Z  
+> **Timestamp**: 2026-11-10T02:44:01.719Z  
 > **Learning ID**: `learn-github-mintplex-labs-anything-llm`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Mintplex-Labs/anything-llm](https://github.com/Mintplex-Labs/anything-llm))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T10:23:18.324Z  
+> **Harvest Timestamp**: 2026-11-10T02:44:01.443Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Stop renting your intelligence. Own it with AnythingLLM. Everything you need for a powerful local-first agent experience 
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 67963 stars
+- **Stars / Engagement**: 68117 stars
 
 ---
 
@@ -1288,11 +1288,11 @@ module.exports = {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #7039** (2026-11-09): **[BUG]: division by zero panic in lance-encoding during RAG queries**
+  *Symptoms*: ### How are you running AnythingLLM?  Docker (remote machine)  ### What happened?  When attempting to query the vector database (RAG) with certain documents, the backend service crashes with a `division by zero` panic. This occurs because the underlying `lance-encoding` library (version `0.22.0`) fails to handle normalization for vectors with a zero length.  The following logs were captured from the `anythingllm` container: ```text [192.168.1.106] thread 'tokio-runtime-worker' panicked at /home/build_user/.cargo/registry/src/index.crates.io-6f17d22bba15001f/lance-encoding-0.22.0/src/data.rs:425:9: [192.168.1.106] attempt to divide by zero [192.168.1.106] thread 'tokio-runtime-worker' panicked at /home/build_user/.cargo/registry/src/index.crates.io-6f17d22bba15001f/lance-encoding-0.22.0/src/decoder.rs:1489:65: [192.168.1.106] called `Result::unwrap()` on an `Err` value: JoinError::Panic(Id(158), "attempt to divide by zero", ...) ```  **Root Cause Analysis:** The crash is caused by a known bug in the `lance-encoding` crate version `0.22.0`. Specifically, the normalization logic does not check for zero-length vectors before performing division, leading to a panic when the query vector is empty or improperly formatted.  This issue is documented in the **LanceDB** project, which provides the `lance-encoding` crate: - **Issue Report:** https://github.com/lancedb/lancedb/issues/3026 - **Fix Pull Request:** https://github.com/lancedb/lancedb/pull/3613  The fix was implemented in the 
+
 - **Issue #6951** (2026-11-02): **Browser extension API keys keep working after the owner is demoted to the default role**
   *Symptoms*: ### Bug  In multi-user mode, only admins and managers can create browser extension API keys. If an admin or manager with a key is later demoted to the `default` role, the key keeps working. They can still use the extension's `upload-content` and `embed-content` endpoints for workspaces they belong to, even though their normal session can no longer do this.  `validBrowserExtensionApiKey` checks that the key's owner exists and is not suspended. It does not check the owner's role.  Deleting or suspending a user already disables their keys. Deleting removes them through the database cascade, and the middleware rejects keys whose owner is suspended. Only a role change leaves them working.  ### Steps to reproduce 1. In multi-user mode, create a manager and add them to a workspace. 2. As the manager, create a browser extension API key. 3. As an admin, change the manager's role to `default`. 4. Use the key to call `POST /api/browser-extension/embed-content` for that workspace. The call succeeds.  ### Expected The key stops working once its owner no longer has a role that is allowed to create keys. 
-
-- **Issue #6854** (2026-10-27): **[BUG]: OpenAI fallback model gpt-4.1-nano was shut down**
-  *Symptoms*: ### How are you running AnythingLLM?  All versions  ### What happened?  `gpt-4.1-nano` and `gpt-4` were shut down on October 23, 2026 (https://developers.openai.com/api/docs/deprecations). `gpt-4.1-nano` is still the fallback model when no OpenAI model is set, for both chat and agents:  - `server/models/systemSettings.js` - `server/utils/AiProviders/openAi/index.js` - `server/utils/agents/aibitat/providers/openai.js` - `server/utils/agents/ephemeral.js` - `server/utils/agents/index.js` (2 places) - `# OPEN_MODEL_PREF` in `server/.env.example` and `docker/.env.example`  OpenAI's listed replacement is `gpt-5.6-luna`. The generic OpenAI agent provider also defaults to `gpt-4.1-nano` in `server/utils/agents/aibitat/providers/genericOpenAi.js`.  ### Are there known steps to reproduce?  Select OpenAI as the LLM provider without picking a model, then send a chat or run an agent. The request goes out with `gpt-4.1-nano`, which OpenAI no longer serves.  ### LLM Provider & Model (if applicable)  OpenAI / `gpt-4.1-nano` (default fallback)  ### Embedder Provider & Model (if applicable)  _No response_ 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1309,360 +1309,440 @@ module.exports = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2b1b81d6` (2026-11-04)
-**Commit Message**: fix: honour the workspace chat mode in the mobile stream-chat command (#6983)
+### Incident Patch 1: `194b8f03` (2026-11-09)
+**Commit Message**: fix: bump lancedb to 0.30.0 and reject empty vectors before insert (#7093)
 
-* fix: honour the workspace chat mode in the mobile stream-chat command
+* fix: bump lancedb to 0.30.0 and reject empty vectors before insert
 
-The mobile stream-chat command passed a literal mode of "chat" to
-ApiChatHandler.streamChat, so a workspace configured as Automatic or
-Query behaved as plain Chat from the phone and tools never ran unless
-the message was prefixed with @agent.
+Rows with an empty vector made LanceDB 0.15.0 create a table with a
+0-dimension vector column. Every later read of that table panicked in
+lance-encoding (data.rs: attempt to divide by zero), which can take down
+the backend.
 
-Pass workspace.chatMode, as the web stream endpoint and the developer
-API thread endpoints already do for the same handler.
+- Bump @lancedb/lancedb 0.15.0 -> 0.30.0 (still supports Node >= 18). It
+  refuses to create a 0-dim table, and a panic on an existing one comes
+  back as a catchable JS error.
+- LanceDb.updateOrCreateCollection now rejects any row with a missing or
+  empty vector, covering both fresh embeds and the vector cache.
 
-* fix: await the mobile command handler so a rejected chat cannot crash the server
+Refs #7039
 
-The /mobile/send/:command route returned the handler's promise without
-awaiting it, so its try/catch never saw a rejection. With the workspace
-chat mode honoured, an "automatic" workspace runs the agent pre-flight on
-every mobile message, which can reject on a misconfigured provider; that
-rejection would escape as an unhandled promise rejection. Await the call,
-and when the stream headers are already out just end the response rather
-than attempting a 500 after the fact.
+* remove comment in lance updateOrCreateCollection
 
-* test: trim mobile stream-chat tests to happy path plus input edge cases
+* fix: use import attributes in verifyPackageVersions for Node 22+
 
----------
+Node 22 removed the 'assert' import syntax, so the check failed to parse
+on the workflow's Node 24 runner.
 
-Co-authored-by: Timothy Carambat 
-
-**File**: `server/__tests__/endpoints/mobile/utils/index.test.js` (modified, +79/-1)
+**File**: `extras/scripts/verifyPackageVersions.mjs` (modified, +2/-2)
 ```diff
-@@ -12,13 +12,14 @@ jest.mock("../../../../models/workspaceThread", () => ({
- }));
- jest.mock("../../../../models/mobileDevice", () => ({ MobileDevice: {} }));
- jest.mock("../../../../utils/chats/apiChatHandler", () => ({
--  ApiChatHandler: {},
-+  ApiChatHandler: { streamChat: jest.fn() },
- }));
- jest.mock("../../../../endpoints/utils", () => ({ getModelTag: () => "test" }));
+@@ -1,5 +1,5 @@
+-import serverPackageJson from '../../server/package.json' assert { type: 'json' };
+-import collectorPackageJson from '../../collector/package.json' assert { type: 'json' };
++import serverPackageJson from '../../server/package.json' with { type: 'json' };
++import collectorPackageJson from '../../collector/package.json' with { type: 'json' };
+ const { dependencies: serverDependencies } = serverPackageJson;
+ const { dependencies: collectorDependencies } = collectorPackageJson;
  
- const prisma = require("../../../../utils/prisma");
- const { WorkspaceChats } = require("../../../../models/workspaceChats");
- const { Workspace } = require("../../../../models/workspace");
-+const { ApiChatHandler } = require("../../../../utils/chats/apiChatHandler");
- const {
-   handleMobileCommand,
- } = require("../../../../endpoints/mobile/utils/index");
-@@ -125,4 +126,81 @@ describe("handleMobileCommand: stream-chat", () => {
-     expect(response.status).toHaveBeenCalledWith(404);
-     expect(response.json).toHaveBeenCalledWith({ error: "Thread not found" });
-   });
-+
-+  function streamResponse(user = null) {
-+    return {
-+      locals: { user },
-+      status: jest.fn().mockReturnThis(),
-+      json: jest.fn().mockReturnThis(),
-+      setHeader: jest.fn(),
-+      flushHeaders: jest.fn(),
-+      end: jest.fn(),
-+    };
-+  }
-+
-+  function streamChat(body, response) {
-+    return handleMobileCommand(
-+      { params: { command: "stream-chat" }, body },
-+      response
-+    );
-+  }
-+
-+  it("chats in the workspace's configured mode", async () => {
-+    Workspace.get.mockResolvedValue({ ...workspace, chatMode: "automatic" });
-+    const response = streamResponse();
-+
-+    await streamChat({ workspaceSlug: "my-ws", message: "hi" }, response);
-+
-+    expect(ApiChatHandler.streamChat).toHaveBeenCalledWith(
-+      expect.objectContaining({
-+        mode: "automatic",
-+        message: "hi",
-+        thread: null,
-+      })
-+    );
-+    expect(response.end).toHaveBeenCalled();
-+  });
-+
-+  it("uses the mode of the workspace resolved for the signed-in user", async () => {
-+    const user = { id: 3 };
-+    Workspace.getWithUser.mockResolvedValue({
-+      ...workspace,
-+      chatMode: "query",
-+    });
-+    const response = streamResponse(user);
-+
-+    await streamChat({ workspaceSlug: 123, message: "hi" }, response);
-+
-+    expect(Workspace.get).not.toHaveBeenCalled();
-+    expect(Workspace.getWithUser).toHaveBeenCalledWith(user, { slug: "123" });
-+    expect(ApiChatHandler.streamChat).toHaveBeenCalledWith(
-+      expect.objectContaining({ mode: "query", user })
-+    );
-+  });
-+
-+  it.each([
-+    [{ workspaceSlug: "my-ws" }, "Message is required"],
-+    [{ workspaceSlug: "my-ws", message: "" }, "Message is required"],
-+    [{ message: "hi" }, "Workspace ID is required"],
-+  ])("rejects %j before opening the stream", async (body, error) => {
-+    const response = streamResponse();
-+
-+    await streamChat(body, response);
-+
-+    expect(response.status).toHaveBeenCalledWith(400);
-+    expect(response.json).toHaveBeenCalledWith({ error });
-+    expect(response.flushHeaders).not.toHaveBeenCalled();
-+    expect(ApiChatHandler.streamChat).not.toHaveBeenCalled();
-+  });
-+
-+  it("propagates a chat handler failure to the route instead of ending the stream", async () => {
-+    ApiChatHandler.streamChat.mockRejectedValue(new Error("bad provider"));
-+    const response = streamResponse();
-+
-+    await expect(
-+      streamChat({ workspaceSlug: "my-ws", message: "hi" }, response)
-+    ).rejects.toThrow("bad provider");
-+    expect(response.flushHeaders).toHaveBeenCalled();
-+    expect(response.end).not.toHaveBeenCalled();
-+  });
- });
 ```
 
-**File**: `server/endpoints/mobile/index.js` (modified, +2/-1)
+**File**: `server/package.json` (modified, +1/-1)
 ```diff
-@@ -148,9 +148,10 @@ function mobileEndpoints(app) {
-     [validDeviceToken],
-     async (request, response) => {
-       try {
--        return handleMobileCommand(request, response);
-+        return await handleMobileCommand(request, response);
-       } catch (e) {
-         console.error(e);
-+        if (response.headersSent) return response.end();
-         response.sendStatus(500).end();
-       }
-     }
+@@ -24,7 +24,7 @@
+     "@breejs/later": "4.2.0",
+     "@datastax/astra-db-ts": "^0.1.3",
+     "@ladjs/graceful": "^3.2.2",
+-    "@lancedb/lancedb": "0.15.0",
++    "@lancedb/lancedb": "0.30.0",
+     "@langchain/anthropic": "0.1.16",
+     "@langchain/community": "0.0.53",
+     "@langchain/core": "0.1.61",
 ```
 
-**File**: `server/endpoints/mobile/utils/index.js` (modified, +1/-1)
+**File**: `server/utils/vectorDbProviders/lance/index.js` (modified, +5/-0)
 ```diff
-@@ -182,7 +182,7 @@ async function handleMobileCommand(request, response) {
-       workspace,
-       thread,
-       message,
--      mode: "chat",
-+      mode: workspace.chatMode,
-       user: user,
-       sessionId: null,
-       attachments: [],
+@@ -253,6 +253,11 @@ class LanceDb extends VectorDatabase {
+    * @returns
+    */
+   async updateOrCreateCollection(client, data = [], namespace) {
++    if (data.some((record) => !record.vector?.length))
++      throw new Error(
++        "Embedder returned an empty vector for one or more chunks. Check your embedding provider and model, then try again."
++      );
++
+     const hasNamespace = await this.hasNamespace(namespace);
+     if (hasNamespace) {
+       const collection = await client.openTable(namespace);
+```
+
+**File**: `server/yarn.lock` (modified, +46/-52)
+```diff
+@@ -671,61 +671,55 @@
+     lil-http-terminator "^1.2.2"
+     p-is-promise "3"
+ 
+-"@lancedb/lancedb-darwin-arm64@0.15.0":
+-  version "0.15.0"
+-  resolved "https://registry.npmjs.org/@lancedb/lancedb-darwin-arm64/-/lancedb-darwin-arm64-0.15.0.tgz"
+-  integrity sha512-e6eiS1dUdSx3G3JXFEn5bk6I26GR7UM2QwQ1YMrTsg7IvGDqKmXc/s5j4jpJH0mzm7rwqh+OAILPIjr7DoUCDA==
+-
+-"@lancedb/lancedb-darwin-x64@0.15.0":
+-  version "0.15.0"
+-  resolved "https://registry.yarnpkg.com/@lancedb/lancedb-darwin-x64/-/lancedb-darwin-x64-0.15.0.tgz#ea54f35732ac6b0858f23ef361c4c8021c5df8cd"
+-  integrity sha512-kEgigrqKf954egDbUdIp86tjVfFmTCTcq2Hydw/WLc+LI++46aeT2MsJv0CQpkNFMfh/T2G18FsDYLKH0zTaow==
+-
+-"@lancedb/lancedb-linux-arm64-gnu@0.15.0":
+-  version "0.15.0"
+-  resolved "https://registry.yarnpkg.com/@lancedb/lancedb-linux-arm64-gnu/-/lancedb-linux-arm64-gnu-0.15.0.tgz#81e3b4f8a64566cf24d8d5a166cf05a0f497612e"
+-  integrity sha512-TnpbBT9kaSYQqastJ+S5jm4S5ZYBx18X8PHQ1ic3yMIdPTjCWauj+owDovOpiXK9ucjmi/FnUp8bKNxGnlqmEg==
+-
+-"@lancedb/lancedb-linux-arm64-musl@0.15.0":
+-  version "0.15.0"
+-  resolved "https://registry.yarnpkg.com/@lancedb/lancedb-linux-arm64-musl/-/lancedb-linux-arm64-musl-0.15.0.tgz#de46e61d0bf1fa3c4bbf015d83e8b2689b3e3bc0"
+-  integrity sha512-fe8LnC9YKbLgEJiLQhyVj+xz1d1RgWKs+rLSYPxaD3xQBo3kMC94Esq+xfrdNkSFvPgchRTvBA9jDYJjJL8rcg==
+-
+-"@lancedb/lancedb-linux-x64-gnu@0.15.0":
+-  version "0.15.0"
+-  resolved "https://registry.yarnpkg.com/@lancedb/lancedb-linux-x64-gnu/-/lancedb-linux-x64-gnu-0.15.0.tgz#5e4ddce1b8cae80fdac9c24cc3d755a13a524292"
+-  integrity sha512-0lKEc3M06ax3RozBbxHuNN9qWqhJUiKDnRC3ttsbmo4VrOUBvAO3fKoaRkjZhAA8q4+EdhZnCaQZezsk60f7Ag==
+-
+-"@lancedb/lancedb-linux-x64-musl@0.15.0":
+-  version "0.15.0"
+-  resolved "https://registry.yarnpkg.com/@lancedb/lancedb-linux-x64-musl/-/lancedb-linux-x64-musl-0.15.0.tgz#d33bf662ebef2881c9256e7ad4cb1b0f6a91685f"
+-  integrity sha512-ls+ikV7vWyVnqVT7bMmuqfGCwVR5JzPIfJ5iZ4rkjU4iTIQRpY7u/cTe9rGKt/+psliji8x6PPZHpfdGXHmleQ==
+-
+-"@lancedb/lancedb-win32-arm64-msvc@0.15.0":
+-  version "0.15.0"
+-  resolved "https://registry.yarnpkg.com/@lancedb/lancedb-win32-arm64-msvc/-/lancedb-win32-arm64-msvc-0.15.0.tgz#6704025bf968bf82c49c565d1aab816ad3dc5baf"
+-  integrity sha512-C30A+nDaJ4jhjN76hRcp28Eq+G48SR9wO3i1zGm0ZAEcRV1t9O1fAp6g18IPT65Qyu/hXJBgBdVHtent+qg9Ng==
+-
+-"@lancedb/lancedb-win32-x64-msvc@0.15.0":
+-  version "0.15.0"
+-  resolved "https://registry.yarnpkg.com/@lancedb/lancedb-win32-x64-msvc/-/lancedb-win32-x64-msvc-0.15.0.tgz#aa9b6516d75652b71cfbbff52ffc6e645268caa4"
+-  integrity sha512-amXzIAxqrHyp+c9TpIDI8ze1uCqWC6HXQIoXkoMQrBXoUUo8tJORH2yGAsa3TSgjZDDjg0HPA33dYLhOLk1m8g==
+-
+-"@lancedb/lancedb@0.15.0":
+-  version "0.15.0"
+-  resolved "https://registry.npmjs.org/@lancedb/lancedb/-/lancedb-0.15.0.tgz"
+-  integrity sha512-qm3GXLA17/nFGUwrOEuFNW0Qg2gvCtp+yAs6qoCM6vftIreqzp8d4Hio6eG/YojS9XqPnR2q+zIeIFy12Ywvxg==
++"@lancedb/lancedb-darwin-arm64@0.30.0":
++  version "0.30.0"
++  resolved "https://registry.yarnpkg.com/@lancedb/lancedb-darwin-arm64/-/lancedb-darwin-arm64-0.30.0.tgz#861ae7809a4c1df9c52ba47e9f08884555bdc2a8"
++  integrity sha512-x6dmsjRIv0xumELYnFAEfyFDxqcO/n4rHYCJvC27RbRez0UmbByi6OMTgbSoSTatrQSPRCL7JJSa5pwNeawnIg==
++
++"@lancedb/lancedb-linux-arm64-gnu@0.30.0":
++  version "0.30.0"
++  resolved "https://registry.yarnpkg.com/@lancedb/lancedb-linux-arm64-gnu/-/lancedb-linux-arm64-gnu-0.30.0.tgz#d78f5a0255b2aa3c1d81fa622e41e12724074b63"
++  integrity sha512-CWUex7hRNiLkXFeTQlUGPyy5VktbXoUmQdZuiVCETZ6ggljEC7c7Qvzu2ge+jEZML+UE7tXL2lVC3klRFGczng==
++
++"@lancedb/lancedb-linux-arm64-musl@0.30.0":
++  version "0.30.0"
++  resolved "https://registry.yarnpkg.com/@lancedb/lancedb-linux-arm64-musl/-/lancedb-linux-arm64-musl-0.30.0.tgz#0b9f71e92df1eafb6f34f25f99ffeb8b955c4464"
++  integrity sha512-2MHmAS4tKePNVbwfgDrjCFj6BVuAgXlL2c9iWk7TfcwL+jcSxo52LFx03O0+ArpVCF2sI6aoDqZaQNre5zMniQ==
++
++"@lancedb/lancedb-linux-x64-gnu@0.30.0":
++  version "0.30.0"
++  resolved "https://registry.yarnpkg.com/@lancedb/lancedb-linux-x64-gnu/-/lancedb-linux-x64-gnu-0.30.0.tgz#1b0b5cb3ecf5b1db350ebcf18445165fcb7320eb"
++  integrity sha512-0OpDNxsDE4OXD+PIFd7KdE42xhYIE+fZL+jCm1v3dTug4UEhumWBuSgbUIBP7t0yJZHwh62/QivVh/V1cPB2Bg==
++
++"@lancedb/lancedb-linux-x64-musl@0.30.0":
++  version "0.30.0"
++  resolved "https://registry.yarnpkg.com/@lancedb/lancedb-linux-x64-musl/-/lancedb-linux-x64-musl-0.30.0.tgz#b3d0fd9d76a610d7ec292ae1fcced0d6f999c08c"
++  integrity sha512-4Bq7VngQt+lyxIcu79EN8nYJs8gvUnrIT6I/t2MSlpG/BXWHZG2A+PRii1Zq4GCUlRTTG+RlieCv8CBGSPm8bw==
++
++"@lancedb/lancedb-win32-arm64-msvc@0.30.0":
++  version "0.30.0"
++  resolved "https://registry.yarnpkg.com/@lancedb/lancedb-win32-arm64-msvc/-/lancedb-win32-arm64-msvc-0.30.0.tgz#8e522af8d36cd9d16a4fae3483ed80602725e02c"
++  integrity sha512-N2DQg2XBWZirn5jS6kRJUxF679t3sKcIxBwP9zY4Idq5OVLAj0yfLueWIKhYxv8en7pBFYWdgw5j9dTS7XajyQ==
++
++"@lancedb/lancedb-win32-x64-msvc@0.30.0":
++  version "0.30.0"
++  resolved "https://registry.yarnpkg.com/@lancedb/lancedb-win32-x64-msvc/-/lancedb-win32-x64-msvc-0
 ```
 
 ---
 
-### Incident Patch 2: `83a3db61` (2026-11-04)
-**Commit Message**: fix: auto-name threads first messaged via the mobile app or developer API (#6982)
+### Incident Patch 2: `ace9dad3` (2026-11-09)
+**Commit Message**: fix: cap concurrent Paperless-ngx document downloads (#7096)
 
-* fix: auto-name threads first messaged via the mobile app or developer API
+* fix: cap concurrent Paperless-ngx document downloads
 
-The first-message rename of a thread (WorkspaceThread.autoRenameThread)
-was only wired into the web UI stream endpoint and the agent chat-history
-plugin. Threads whose first message arrived through the mobile stream-chat
-command or the developer API thread chat/stream-chat endpoints kept the
-default "Thread" name indefinitely.
+Downloading every document at once with Promise.all exhausted the
+Paperless-ngx Postgres connection pool on larger instances, so most
+downloads returned 500 and were silently dropped. Downloads now run
+through a fixed pool of workers on the shared loader, and documents
+that fail to download are logged by ID.
 
-Call autoRenameThread after the chat handler returns at those three sites,
-mirroring server/endpoints/chat.js. The model's own guards (default name,
-exactly one chat) are unchanged, so explicitly named threads are untouched.
+Fixes #7094
 
-* Emit rename_thread on streamed thread renames, drop narrow tests
+* fix: time out and retry Paperless-ngx document downloads
 
-Match the web chat endpoint: API stream-chat and mobile stream-chat now pass onRename to autoRenameThread and write a rename_thread action chunk. Removes the new endpoint/model test files and the added mobile test cases.
+A stalled download held one of the pool's workers forever, and a single
+transient failure dropped the document from the import. Each download now
+times out after 120s, and network errors, timeouts, 429s and 5xx responses
+are retried twice with a 1s then 3s delay.
 
----------
-
-Co-authored-by: Timothy Carambat <[REDACTED_EMAIL]>
-
-**File**: `server/endpoints/api/workspaceThread/index.js` (modified, +22/-0)
+**File**: `collector/__tests__/extensions/resync/paperless.resync.test.js` (modified, +17/-5)
 ```diff
-@@ -455,6 +455,12 @@ function apiWorkspaceThreadEndpoints(app) {
-           attachments,
-           reset,
-         });
-+        await WorkspaceThread.autoRenameThread({
-+          thread,
-+          workspace,
-+          user,
-+          prompt: message,
-+        });
-         await Telemetry.sendTelemetry("sent_chat", {
-           LLMSelection: process.env.LLM_PROVIDER || "openai",
-           Embedder: process.env.EMBEDDING_ENGINE || "inherit",
-@@ -643,6 +649,22 @@ function apiWorkspaceThreadEndpoints(app) {
-           attachments,
-           reset,
-         });
-+        // If thread was renamed emit event to the client via special `action` response.
-+        await WorkspaceThread.autoRenameThread({
-+          thread,
-+          workspace,
-+          user,
-+          prompt: message,
-+          onRename: (thread) => {
-+            writeResponseChunk(response, {
-+              action: "rename_thread",
-+              thread: {
-+                slug: thread.slug,
-+                name: thread.name,
-+              },
-+            });
-+          },
-+        });
-         await Telemetry.sendTelemetry("sent_chat", {
-           LLMSelection: process.env.LLM_PROVIDER || "openai",
-           Embedder: process.env.EMBEDDING_ENGINE || "inherit",
+@@ -82,7 +82,10 @@ describe("resyncPaperlessNgx", () => {
+     expect(fetchMock).toHaveBeenCalledTimes(1);
+     expect(fetchMock).toHaveBeenCalledWith(
+       "https://paperless.example.com/api/documents/123/download/",
+-      { headers: { Authorization: `Token ${API_TOKEN}` } }
++      expect.objectContaining({
++        headers: { Authorization: `Token ${API_TOKEN}` },
++        signal: expect.any(AbortSignal),
++      })
+     );
+     expect(status).toHaveBeenCalledWith(200);
+     expect(json).toHaveBeenCalledWith({
+@@ -103,7 +106,10 @@ describe("resyncPaperlessNgx", () => {
+ 
+     expect(fetchMock).toHaveBeenCalledWith(
+       "https://my.domain.com/paperless/api/documents/123/download/",
+-      { headers: { Authorization: `Token ${API_TOKEN}` } }
++      expect.objectContaining({
++        headers: { Authorization: `Token ${API_TOKEN}` },
++        signal: expect.any(AbortSignal),
++      })
+     );
+     expect(json).toHaveBeenCalledWith({
+       success: true,
+@@ -150,7 +156,10 @@ describe("resyncPaperlessNgx", () => {
+     expect(json).toHaveBeenCalledWith({ success: false, content: null });
+   });
+ 
+-  test("a network level failure is reported as an unsuccessful resync", async () => {
++  test("a network level failure is retried, then reported as an unsuccessful resync", async () => {
++    // Skip the real backoff delays between attempts
++    jest.spyOn(global, "setTimeout").mockImplementation((fn) => fn());
++    jest.spyOn(console, "warn").mockImplementation(() => {});
+     fetchMock.mockRejectedValue(
+       new Error("ECONNREFUSED paperless.example.com")
+     );
+@@ -162,7 +171,7 @@ describe("resyncPaperlessNgx", () => {
+ 
+     await handler({ chunkSource }, response);
+ 
+-    expect(fetchMock).toHaveBeenCalledTimes(1);
++    expect(fetchMock).toHaveBeenCalledTimes(3);
+     expect(json).toHaveBeenCalledWith({ success: false, content: null });
+   });
+ 
+@@ -182,7 +191,10 @@ describe("resyncPaperlessNgx", () => {
+ 
+     expect(fetchMock).toHaveBeenCalledWith(
+       "https://paperless.example.com/api/documents//download/",
+-      { headers: { Authorization: `Token ${API_TOKEN}` } }
++      expect.objectContaining({
++        headers: { Authorization: `Token ${API_TOKEN}` },
++        signal: expect.any(AbortSignal),
++      })
+     );
+     expect(json).toHaveBeenCalledWith({ success: false, content: null });
+   });
 ```
 
-**File**: `server/endpoints/mobile/utils/index.js` (modified, +17/-0)
+**File**: `collector/utils/extensions/PaperlessNgx/PaperlessNgxLoader/index.js` (modified, +86/-14)
 ```diff
-@@ -2,6 +2,7 @@ const { Workspace } = require("../../../models/workspace");
- const { WorkspaceChats } = require("../../../models/workspaceChats");
- const { WorkspaceThread } = require("../../../models/workspaceThread");
- const { ApiChatHandler } = require("../../../utils/chats/apiChatHandler");
-+const { writeResponseChunk } = require("../../../utils/helpers/chat/responses");
- const { reqBody } = require("../../../utils/http");
- const prisma = require("../../../utils/prisma");
- const { getModelTag } = require("../../utils");
-@@ -187,6 +188,22 @@ async function handleMobileCommand(request, response) {
-       attachments: [],
-       reset: false,
-     });
-+    // If thread was renamed emit event to the client via special `action` response.
-+    await WorkspaceThread.autoRenameThread({
-+      thread,
-+      workspace,
-+      user,
-+      prompt: message,
-+      onRename: (thread) => {
-+        writeResponseChunk(response, {
-+          action: "rename_thread",
-+          thread: {
-+            slug: thread.slug,
-+            name: thread.name,
-+          },
-+        });
-+      },
-+    });
-     return response.end();
+@@ -2,6 +2,10 @@ const { htmlToText } = require("html-to-text");
+ const pdf = require("pdf-parse");
+ 
+ class PaperlessNgxLoader {
++  maxConcurrentDownloads = 5;
++  downloadTimeoutMs = 120_000;
++  downloadRetryDelaysMs = [1_000, 3_000];
++
+   constructor({ baseUrl, apiToken }) {
+     const url = new URL(baseUrl);
+     this.baseUrl = `${url.origin}${url.pathname.replace(/\/+$/, "")}`;
+@@ -73,12 +77,18 @@ class PaperlessNgxLoader {
+         })`
+       );
+ 
+-      const documentsWithContent = await Promise.all(
+-        documents.map(async (doc) => {
+-          const content = await this.fetchDocumentContent(doc.id);
+-          return { ...doc, content };
+-        })
++      const documentsWithContent = await this.fetchAllDocumentContent(
++        documents
+       );
++      const failedIds = documentsWithContent
++        .filter((doc) => !doc.content)
++        .map((doc) => doc.id);
++      if (failedIds.length)
++        console.warn(
++          `Could not fetch content for ${failedIds.length} of ${
++            documents.length
++          } Paperless-ngx documents: ${failedIds.join(", ")}`
++        );
+ 
+       return documentsWithContent.filter((doc) => !!doc.content);
+     } catch (error) {
+@@ -89,21 +99,84 @@ class PaperlessNgxLoader {
+   }
+ 
+   /**
+-   * Fetches the content of a document from Paperless-ngx
++   * Fetches the content of every document with at most `maxConcurrentDownloads`
++   * requests in flight, since each download holds a database connection on the
++   * Paperless-ngx side and an unbounded burst exhausts its Postgres pool.
++   * @param {{[key: string]: any, id: number}[]} documents
++   * @returns {Promise<{[key: string]: any, content: string}[]>} In input order
++   */
++  async fetchAllDocumentContent(documents) {
++    const results = new Array(documents.length);
++    let next = 0;
++    const worker = async () => {
++      while (next < documents.length) {
++        const index = next++;
++        const doc = documents[index];
++        results[index] = {
++          ...doc,
++          content: await this.fetchDocumentContent(doc.id),
++        };
++      }
++    };
++
++    const workerCount = Math.min(this.maxConcurrentDownloads, documents.length);
++    await Promise.all(Array.from({ length: workerCount }, worker));
++    return results;
++  }
++
++  /**
++   * Fetches the content of a document from Paperless-ngx, retrying network
++   * errors, timeouts, 429s and 5xx responses with a growing delay.
+    * @param {string} documentId - The ID of the document to fetch
+-   * @returns {Promise<string>} The content of the document
++   * @returns {Promise<string>} The content of the document, or "" on failure
+    */
+   async fetchDocumentContent(documentId) {
++    for (let attempt = 0; ; attempt++) {
++      try {
++        return await this.downloadDocumentContent(documentId);
++      } catch (error) {
++        if (error.retryable && attempt < this.downloadRetryDelaysMs.length) {
++          const delay = this.downloadRetryDelaysMs[attempt];
++          console.warn(
++            `Retrying document ${documentId} in ${delay}ms: ${error.message}`
++          );
++          await new Promise((resolve) => setTimeout(resolve, delay));
++          continue;
++        }
++
++        console.error(
++          `Failed to fetch content for document ${documentId}:`,
++          error
++        );
++        return "";
++      }
++    }
++  }
++
++  /**
++   * A single download attempt. Throws on failure, with `retryable` set when
++   * another attempt could succeed.
++   * @param {string} documentId
++   * @returns {Promise<string>}
++   */
++  async downloadDocumentContent(documentId) {
+     try {
+       const response = await fetch(
+         `${this.baseUrl}/api/documents/${documentId}/download/`,
+         {
+           headers: this.baseHeaders,
++          // Also bounds reading the body, so a stalled transfer frees its worker
++          signal: AbortSignal.timeout(this.downloadTimeoutMs),
+         }
+       );
+ 
+-      if (!response.ok)
+-        throw new Error(`Failed to fetch document content: ${response.status}`);
++      if (!response.ok) {
++        const error = new Error(
++          `Failed to fetch document content: ${response.status}`
++        );
++        error.retryable = response.status === 429 || response.status >= 500;
++        throw error;
++      }
+ 
+       // The media type without parameters such as `; charset=utf-8`
+       const contentType = response.headers
+@@ -126,11 +199,10 @@ class PaperlessNgxLoader {
+           return await response.text();
+       }
+     } catch (error) {
+-      console.error(
+-        `Failed to fetch content for document ${documentId}:`,
+-        error
+-      );
+-      return "";
++      // Network failures and timeouts reject from fetch or the body read
++      // rather than producing a status code
++      if (error.retryable === undefined) error.retryable = true;
++      throw error;
+     }
    }
  
 ```
 
 ---
 
-### Incident Patch 3: `5c872bad` (2026-11-04)
-**Commit Message**: test: fix mobile stream-chat mock and skip host-dependent suites locally (#7012)
+### Incident Patch 3: `45c0c538` (2026-11-09)
+**Commit Message**: fix: ignore stale thread history responses when switching threads (#7070)
 
-The mobile stream-chat test mocked WorkspaceThread as an empty object, so
-the autoRenameThread call after streaming threw and failed CI.
+* fix: ignore stale thread history responses in WorkspaceChat
 
-The embedded lemonade boot and CUDA suites spawn a #!/bin/sh stand-in and
-rely on POSIX file modes, so skip them on Windows. The ffmpeg suite now
-also skips when no ffmpeg binary is on PATH, so yarn jest passes on a
-fresh machine.
+* drop unreachable cancelled check in sync branch
 
-**File**: `collector/__tests__/utils/WhisperProviders/ffmpeg/index.test.js` (modified, +6/-4)
+* remove comment
+
+---------
+
+Co-authored-by: Sean Hatfield <[REDACTED_EMAIL]>
+Co-authored-by: Timothy Carambat <[REDACTED_EMAIL]>
+
+**File**: `frontend/src/components/WorkspaceChat/index.jsx` (modified, +8/-0)
 ```diff
-@@ -1,14 +1,18 @@
- process.env.STORAGE_DIR = "test-storage";
- const fs = require("fs");
- const path = require("path");
-+const { spawnSync } = require("child_process");
+@@ -61,6 +61,8 @@ export default function WorkspaceChat({ loading, workspace }) {
+   }
  
- // Mock fix-path as a noop to prevent SIGSEGV (segfault)
- // Returns ESM-style default export for dynamic import()
- jest.mock("fix-path", () => ({ default: jest.fn() }));
- 
- const { FFMPEGWrapper } = require("../../../../utils/WhisperProviders/ffmpeg");
- 
--const describeRunner = process.env.GITHUB_ACTIONS ? describe.skip : describe;
-+// Needs a real ffmpeg on PATH, so skip in CI and on machines without one.
-+const hasFFMPEG = !spawnSync("ffmpeg", ["-version"]).error;
-+const describeRunner =
-+  process.env.GITHUB_ACTIONS || !hasFFMPEG ? describe.skip : describe;
- 
- describeRunner("FFMPEGWrapper", () => {
-   /** @type { import("../../../../utils/WhisperProviders/ffmpeg/index").FFMPEGWrapper } */
-@@ -50,9 +54,7 @@ describeRunner("FFMPEGWrapper", () => {
- 
-     const response = await fetch(sampleUrl);
-     if (!response.ok)
--      throw new Error(
--        `Failed to download sample file: ${response.statusText}`
--      );
-+      throw new Error(`Failed to download sample file: ${response.statusText}`);
- 
-     const buffer = await response.arrayBuffer();
-     fs.writeFileSync(inputPath, Buffer.from(buffer));
-```
-
-**File**: `server/__tests__/endpoints/mobile/utils/index.test.js` (modified, +1/-1)
-```diff
-@@ -8,7 +8,7 @@ jest.mock("../../../../models/workspace", () => ({
-   Workspace: { get: jest.fn(), getWithUser: jest.fn() },
- }));
- jest.mock("../../../../models/workspaceThread", () => ({
--  WorkspaceThread: {},
-+  WorkspaceThread: { autoRenameThread: jest.fn() },
- }));
- jest.mock("../../../../models/mobileDevice", () => ({ MobileDevice: {} }));
- jest.mock("../../../../utils/chats/apiChatHandler", () => ({
-```
-
-**File**: `server/__tests__/utils/AiProviders/embeddedLemonade/engine.test.js` (modified, +6/-2)
-```diff
-@@ -52,7 +52,11 @@ afterEach(() => {
-   jest.restoreAllMocks();
- });
- 
--describe("EmbeddedLemonadeEngine boot", () => {
-+// These suites spawn a `#!/bin/sh` stand-in for lemond and rely on POSIX file
-+// modes, neither of which Windows supports, so they only run on POSIX hosts.
-+const describePosix = process.platform === "win32" ? describe.skip : describe;
+   useEffect(() => {
++    let cancelled = false;
 +
-+describePosix("EmbeddedLemonadeEngine boot", () => {
-   it("reports a lemond that cannot be executed instead of crashing the server", async () => {
-     installLemond("#!/bin/sh\nsleep 30\n", 0o644);
+     async function getHistory() {
+       if (loading) return;
+       if (!workspace?.slug) {
+@@ -72,6 +74,8 @@ export default function WorkspaceChat({ loading, workspace }) {
+         ? await Workspace.threads.chatHistory(workspace.slug, threadSlug)
+         : await Workspace.chatHistory(workspace.slug);
  
-@@ -151,7 +155,7 @@ describe("EmbeddedLemonadeEngine boot", () => {
-   });
- });
++      if (cancelled) return;
++
+       setLoaded({
+         key: `${workspace.slug}:${threadSlug ?? "default"}`,
+         workspace,
+@@ -80,6 +84,10 @@ export default function WorkspaceChat({ loading, workspace }) {
+       });
+     }
+     getHistory();
++
++    return () => {
++      cancelled = true;
++    };
+   }, [workspace, loading, threadSlug]);
  
--describe("EmbeddedLemonadeEngine CUDA selection", () => {
-+describePosix("EmbeddedLemonadeEngine CUDA selection", () => {
-   // These lemonds are running - wait for them to exit so their exit log lands while console.log is still mocked.
-   afterEach(() => EmbeddedLemonadeEngine.stop());
- 
+   const hasPendingMessage = !!sessionStorage.getItem(PENDING_HOME_MESSAGE);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7012** (2026-11-04): test: fix mobile stream-chat mock and skip host-dependent suites locally (@timothycarambat)
-- **PR #7011** (2026-11-04): fix: reject nested folder names and move destinations in document storage (@timothycarambat)
-- **PR #7010** (2026-11-04): fix: use SambaNova completion_tokens_per_sec for non-streaming outputTps (@timothycarambat)
-- **PR #7009** (2026-11-04): fix: resolve local $ref pointers to other properties in dereferenceSchema (@Fahmid-Arman)
-- **PR #7007** (2026-11-05): Add workspace and thread search to the mobile sidebar drawer (@shatfield4)
-- **PR #7006** (2026-11-04): fix: accept null and JSON string arguments in prompt-based tool calls (@Fahmid-Arman)
+- **PR #7096** (2026-11-09): fix: cap concurrent Paperless-ngx document downloads (@timothycarambat)
+- **PR #7095** (2026-11-09): fix: escape double quotes in Telegram link hrefs (@timothycarambat)
+- **PR #7093** (2026-11-09): fix: bump lancedb to 0.30.0 and reject empty vectors before insert (@timothycarambat)
+- **PR #7091** (2026-11-09): feat: live elapsed timer while the model is thinking (@timothycarambat)
+- **PR #7090** (2026-11-09): docs: remove unsupported "all" target from push notification JSDoc (@timothycarambat)
+- **PR #7089** (2026-11-09): fix: show agent skill settings button on mobile (@timothycarambat)
 
 ---
 
@@ -1682,69 +1762,30 @@ fresh machine.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. honour the workspace chat mode in the mobile stream-chat command (#6983)
+## X. bump lancedb to 0.30.0 and reject empty vectors before insert (#7093)
 
 **RULE**:
-When implementing operations in `server/__tests__/endpoints/mobile/utils/index.test.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Mintplex-Labs/anything-llm. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `extras/scripts/verifyPackageVersions.mjs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Mintplex-Labs/anything-llm. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2b1b81d6`: honour the workspace chat mode in the mobile stream-chat command (#6983). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `194b8f03`: bump lancedb to 0.30.0 and reject empty vectors before insert (#7093). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/__tests__/endpoints/mobile/utils/index.test.js`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `extras/scripts/verifyPackageVersions.mjs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-  ApiChatHandler: { streamChat: jest.fn() },
-const { ApiChatHandler } = require("../../../../utils/chats/apiChatHandler");
-
-  function streamResponse(user = null) {
-    return {
-      locals: { user },
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn().mockReturnThis(),
-      setHeader: jest.fn(),
-      flushHeaders: jest.fn(),
-      end: jest.fn(),
-    };
-  }
-
-  function streamChat(body, response) {
-    return handleMobileCommand(
-      { params: { command: "stream-chat" }, body },
-      response
-    );
-  }
-
-  it("chats in the workspace's configured mode", async () => {
-    Workspace.get.mockResolvedValue({ ...workspace, chatMode: "automatic" });
-    const response = streamResponse();
-
-    await streamChat({ workspaceSlug: "my-ws", message: "hi" }, response);
-
-    expect(ApiChatHandler.streamChat).toHaveBeenCalledWith(
-      expect.objectContaining({
-        mode: "automatic",
-        message: "hi",
-        thread: null,
-      })
-    );
-    expect(response.end).toHaveBeenCalled();
-  });
-
-  it("uses the mode of the workspace resolved for the signed-in user", async () => {
-    const user = { id: 3 };
-    Workspace.getWithUser.mockResolvedValue({
-      ...workspace,
-    
+import serverPackageJson from '../../server/package.json' with { type: 'json' };
+import collectorPackageJson from '../../collector/package.json' with { type: 'json' };
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-  ApiChatHandler: {},
+import serverPackageJson from '../../server/package.json' assert { type: 'json' };
+import collectorPackageJson from '../../collector/package.json' assert { type: 'json' };
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2b1b81d6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `194b8f03` are properly handled with clean fallback behavior.

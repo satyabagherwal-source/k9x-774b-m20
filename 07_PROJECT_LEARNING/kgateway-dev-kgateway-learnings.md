@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md`  
 > **Source**: github ([https://github.com/kgateway-dev/kgateway](https://github.com/kgateway-dev/kgateway))  
-> **Source Version**: `a723f1e0`  
+> **Source Version**: `7490cf4b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T08:50:18.674Z  
+> **Timestamp**: 2026-11-09T15:51:35.026Z  
 > **Learning ID**: `learn-github-kgateway-dev-kgateway`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kgateway-dev/kgateway](https://github.com/kgateway-dev/kgateway))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T08:50:15.026Z  
+> **Harvest Timestamp**: 2026-11-09T15:51:34.474Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -570,6 +570,396 @@ func subtract(a, b reflect.Value) (any, error) {
 
 ```
 
+### Core Architecture Module: `hack/utils/crdbounds/bounds.go`
+```
+package main
+
+import (
+	"cmp"
+	"fmt"
+	"math"
+	"regexp"
+	"slices"
+	"strconv"
+	"strings"
+)
+
+// The Go types behind a CRD decode with encoding/json, which fails a whole List
+// when one item holds a number that does not fit its Go field. The API server
+// enforces a `format: int32` bound only from Kubernetes 1.36, never a
+// `format: int64` bound, and never a bound on an int-or-string node, so one
+// object with an oversized number stops the informer for its kind from ever
+// syncing. Explicit `minimum`/`maximum` bounds make the API server reject such
+// values at admission on every Kubernetes version.
+//
+// The tool edits the manifests as text rather than re-encoding them, so it
+// works on Helm-templated CRDs and leaves the rest of the file byte-for-byte
+// unchanged.
+
+// maxExactInt64 is the largest int64 that a float64 holds exactly and that
+// does not round up past math.MaxInt64.
+const maxExactInt64 = math.MaxInt64 - 1023
+
+type intRange struct {
+	min, max         float64
+	minText, maxText string
+}
+
+func newRange(lo, hi int64) intRange {
+	return intRange{
+		min: float64(lo), max: float64(hi),
+		minText: strconv.FormatInt(lo, 10), maxText: strconv.FormatInt(hi, 10),
+	}
+}
+
+var (
+	int32Range = newRange(math.MinInt32, math.MaxInt32)
+	// The API server holds bounds as float64. math.MaxInt64 rounds up to 2^63,
+	// which some versions (1.33 at least) convert back to int64 as
+	// math.MinInt64, rejecting every value; and kube-openapi rejects a bound
+	// of exactly -2^63 as not an int64. ±(2^63-1024) round-trips exactly.
+	int64Range   = newRange(-maxExactInt64, maxExactInt64)
+	formatRanges = map[string]intRange{
+		"int32": int32Range,
+		"int64": int64Range,
+		// Set explicitly with +kubebuilder:validation:Format=uint32, so a uint32
+		// keeps its full range instead of the int32 one controller-gen implies.
+		"uint32": newRange(0, math.MaxUint32),
+	}
+)
+
+var (
+	// A mapping key line: optional "- " sequence marker, then `key:` and an optional value.
+	keyLineRE = regexp.MustCompile(`^( *)(- )?([A-Za-z0-9_$-]+):(?: (.*))?$`)
+	// A block scalar indicator (`|`, `|-`, `>`, ...).
+	blockScalarRE = regexp.MustCompile(`^[|>][-+]?[0-9]?$`)
+)
+
+type line struct {
+	text string
+	// indent is the column of the key on this line; a leading "- " counts as
+	// indentation, so the first key of a sequence item has the same indent as
+	// the keys below it.
+	indent int
+	key    string
+	value  string
+	// dash is true when the line starts a sequence item.
+	dash bool
+	// isKey is false for blank lines, block scalar content, scalar sequence
+	// items and continuation lines.
+	isKey bool
+}
+
+func parseLines(src string) []line {
+	raw := strings.Split(src, "\n")
+	out := make([]line, len(raw))
+	blockIndent := -1
+	for i, t := range raw {
+		out[i].text = t
+		trimmed := strings.TrimLeft(t, " ")
+		if blockIndent >= 0 {
+			if trimmed == "" || len(t)-len(trimmed) > blockIndent {
+				continue
+			}
+			blockIndent = -1
+		}
+		m := keyLineRE.FindStringSubmatch(t)
+		if m == nil {
+			continue
+		}
+		l := &out[i]
+		l.isKey = true
+		l.dash = m[2] != ""
+		l.indent = len(m[1]) + len(m[2])
+		l.key = m[3]
+		l.value = strings.TrimSpace(m[4])
+		if blockScalarRE.MatchString(l.value) {
+			blockIndent = l.indent
+		}
+	}
+	return out
+}
+
+// node is one mapping in the schema: the keys that share an indentation level.
+type node struct {
+	indent int
+	// keys maps each key of the mapping to its line index.
+	keys map[string]int
+	// order is the key line indexes in file order.
+	order []int
+	// end is the index of the first line after the mapping.
+	end int
+}
+
+// nodeAt returns the mapping that contains the key at line i.
+//
+// controller-gen writes sequences without extra indentation: the items of a
+// sequence under a key at column K start with "- " at column K, so the first
+// key of each item sits at column K+2. Because parseLines records that column
+// as the key's indent, a sibling's sequence items look like children here.
+func nodeAt(lines []line, i int) (node, error) {
+	ind := lines[i].indent
+	n := node{indent: ind, keys: map[string]int{}}
+	start := i
+	if !lines[i].dash {
+		for j := i - 1; j >= 0; j-- {
+			l := lines[j]
+			if !l.isKey || l.indent > ind {
+				continue
+			}
+			if l.indent < ind {
+				break
+			}
+			start = j
+			if l.dash {
+				break
+			}
+		}
+	}
+	n.end = len(lines)
+	for j := start; j < len(lines); j++ {
+		l := lines[j]
+		if !l.isKey {
+			trimmed := strings.TrimLeft(l.text, " ")
+			if trimmed != "" && len(l.text)-len(trimmed) < ind {
+				n.end = j
+				break
+			}
+			continue
+		}
+		if j > start && (l.indent < ind || (l.indent == ind && l.dash)) {
+			n.end = j
+			break
+		}
+		if l.indent == ind {
+			if _, dup := n.keys[l.key]; dup {
+				return n, fmt.Errorf("line %d: duplicate key %q in mapping", j+1, l.key)
+			}
+			n.keys[l.key] = j
+			n.order = append(n.order, j)
+		}
+	}
+	return n, nil
+}
+
+// required returns the range a mapping must be bounded to, if any.
+func required(lines []line, n node) (intRange, bool) {
+	// An enum already limits the value to a fixed set, so bounds would only repeat it.
+	if _, ok := n.keys["enum"]; ok {
+		return intRange{}, false
+	}
+	if i, ok := n.keys["x-kubernetes-int-or-string"]; ok && lines[i].value == "true" {
+		// resource.Quantity is also int-or-string, but it carries a pattern and
+		// decodes numbers of any size, so it needs no bound. intstr.IntOrString
+		// holds its number in an int32.
+		if _, hasPattern := n.keys["pattern"]; hasPattern {
+			return intRange{}, false
+		}
+		return int32Range, true
+	}
+	t, ok := n.keys["type"]
+	if !ok || lines[t].value != "integer" {
+		return intRange{}, false
+	}
+	f, ok := n.keys["format"]
+	if !ok {
+		return intRange{}, false
+	}
+	r, ok := formatRanges[lines[f].value]
+	return r, ok
+}
+
+// isTrigger reports whether a line identifies its mapping as a possible
+// integer schema.
+func isTrigger(l line) bool {
+	return l.isKey && ((l.key == "type" && l.value == "integer") ||
+		(l.key == "x-kubernetes-int-or-string" && l.value == "true"))
+}
+
+// integerNodes calls fn once for every mapping that is an integer schema with
+// a known range.
+func integerNodes(lines []line, fn func(n node, r intRange) error) error {
+	seen := map[int]bool{}
+	for i, l := range lines {
+		if !isTrigger(l) {
+			continue
+		}
+		n, err := nodeAt(lines, i)
+		if err != nil {
+			return err
+		}
+		if seen[n.order[0]] {
+			continue
+		}
+		seen[n.order[0]] = true
+		if r, ok := required(lines, n); ok {
+			if err := fn(n, r); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
+// Process adds any missing `minimum`/`maximum` to every int32, int64 and
+// int-or-string schema in a CRD manifest that has no enum. Existing bounds are kept; Check
+// reports any that fall outside the Go type.
+func Process(src string) (string, error) {
+	lines := parseLines(src)
+	inserts := map[int][]string{}
+	err := integerNodes(lines, func(n node, r intRange) error {
+		for _, add := range []struct{ key, val string }{{"maximum", r.maxText}, {"minimum", r.minText}} {
+			if _, ok := n.keys[add.key]; ok {
+				continue
+			}
+			// controller-gen sorts keys, so keep them sorted.
+			at := n.end
+			for _, j := range n.order {
+				if lines[j].key > add.key {
+					at = j
+					break
+				}
+			}
+			if at != n.end && lines[at].dash {
+				return fmt.Errorf("line %d: cannot insert %s before the first key of a sequence item", at+1, add.key)
+			}
+			if at == n.end {
+				for at > n.order[0] && strings.TrimSpace(lines[at-1].text) == "" {
+					at--
+				}
+			}
+			inserts[at] = append(inserts[at], strings.Repeat(" ", n.indent)+add.key+": "+add.val)
+		}
+		return nil
+	})
+	if err != nil {
+		return "", err
+	}
+	if len(inserts) == 0 {
+		return src, nil
+	}
+	var b strings.Builder
+	for i, l := range lines {
+		for _, s := range inserts[i] {
+			b.WriteString(s)
+			b.WriteString("\n")
+		}
+		b.WriteString(l.text)
+		if i < len(lines)-1 {
+			b.WriteString("\n")
+		}
+	}
+	for _, s := range inserts[len(lines)] {
+		b.WriteString("\n")
+		b.WriteString(s)
+	}
+	return b.String(), nil
+}
+
+// Violation is an integer schema whose bounds do not keep values decodable.
+type Violation struct {
+	Line   int
+	Reason string
+}
+
+func (v Violation) String() string { return fmt.Sprintf("line %d: %s", v.Line, v.Reason) }
+
+// Check reports every int32, int64 and int-or-string schema without an enum that lacks a
+// bound, or whose bound lies outside the range of its Go type.
+func Check(src string) ([]Violation, error) {
+	lines := parseLines(src)
+	var out []Violation
+	err := integerNodes(lines, func(n node, r intRange) error {
+		for _, k := range []string{"minimum", "maximum"} {
+			j, ok := n.keys[k]
+			if !ok {
+				out = append(out, Violation{Line: n.order[0] + 1, Reason: "missing " + k})
+				continue
+			}
+			v, err := strconv.ParseFloat(lines[j].value, 64)
+			if err != nil {
+				out = append(out, Violation{Line: j + 1, Reason: fmt.Sprintf("unparsable %s %q", k, lines[j].value)})
+				continue
+			}
+			if v < r.min || v > r.max {
+				out = append(out, Violation{Line: j + 1, Reason: fmt.Sprintf("%s %s is outside [%s, %s]", k, lines[j].value, r.minText, r.maxText)})
+			}
+		}
+		return nil
+	})
+	slices.SortStableFunc(out, func(a, b Violation) int { return cmp.Compare(a.Line, b.Line) })
+	return out, err
+}
+
+```
+
+### Core Architecture Module: `hack/utils/crdbounds/main.go`
+```
+// Command crdbounds adds explicit minimum/maximum bounds to every int32, int64
+// and int-or-string schema in CRD manifests, so the API server rejects numbers
+// that the controller's Go types cannot decode. See bounds.go for why.
+//
+// Usage:
+//
+//	crdbounds [-check] FILE...
+//
+// Without -check, files are rewritten in place. With -check, nothing is
+// written and the command fails if any schema is unbounded.
+package main
+
+import (
+	"flag"
+	"fmt"
+	"os"
+)
+
+func main() {
+	check := flag.Bool("check", false, "report unbounded integer schemas instead of fixing them")
+	flag.Parse()
+	failed := false
+	for _, path := range flag.Args() {
+		if err := run(path, *check); err != nil {
+			fmt.Fprintf(os.Stderr, "%s: %v\n", path, err)
+			failed = true
+		}
+	}
+	if failed {
+		os.Exit(1)
+	}
+}
+
+func run(path string, check bool) error {
+	b, err := os.ReadFile(path)
+	if err != nil {
+		return err
+	}
+	if check {
+		v, err := Check(string(b))
+		if err != nil {
+			return err
+		}
+		if len(v) > 0 {
+			return fmt.Errorf("%d unbounded integer schemas, first: %s", len(v), v[0])
+		}
+		return nil
+	}
+	out, err := Process(string(b))
+	if err != nil {
+		return err
+	}
+	if out == string(b) {
+		return nil
+	}
+	info, err := os.Stat(path)
+	if err != nil {
+		return err
+	}
+	// The paths are CRD manifests named by the generate scripts.
+	return os.WriteFile(path, []byte(out), info.Mode()) //nolint:gosec // G703: trusted build-time input
+}
+
+```
+
 ### Core Architecture Module: `hack/utils/jwt/jwt-generator.go`
 ```
 package main
@@ -724,217 +1114,17 @@ const (
 
 ```
 
-### Core Architecture Module: `pkg/kgateway/extensions2/plugins/trafficpolicy/utils.go`
-```
-package trafficpolicy
-
-import (
-	set_metadata "github.com/envoyproxy/go-control-plane/envoy/extensions/filters/http/set_metadata/v3"
-	"google.golang.org/protobuf/types/known/structpb"
-
-	"github.com/kgateway-dev/kgateway/v2/api/v1alpha1/kgateway"
-	"github.com/kgateway-dev/kgateway/v2/pkg/pluginsdk/filters"
-	"github.com/kgateway-dev/kgateway/v2/pkg/pluginsdk/ir"
-)
-
-type ProviderNeededMap struct {
-	// map filter_chain name -> providers
-	Providers map[string][]Provider
-}
-
-type Provider struct {
-	Name        string
-	Extension   *TrafficPolicyGatewayExtensionIR
-	FilterStage filters.FilterStage[filters.WellKnownFilterStage]
-}
-
-func (p *ProviderNeededMap) Add(filterChain, providerName string, provider *TrafficPolicyGatewayExtensionIR, filterStage filters.FilterStage[filters.WellKnownFilterStage]) {
-	if p.Providers == nil {
-		p.Providers = make(map[string][]Provider)
-	}
-	p.Providers[filterChain] = append(p.Providers[filterChain], Provider{
-		Name:        providerName,
-		Extension:   provider,
-		FilterStage: filterStage,
-	})
-}
-
-func AddDisableFilterIfNeeded(
-	stagedFilters []filters.StagedHttpFilter,
-	disableFilterName string,
-	disableFilterMetadataNamespace string,
-) []filters.StagedHttpFilter {
-	for _, f := range stagedFilters {
-		if f.Filter.GetName() == disableFilterName {
-			return stagedFilters
-		}
-	}
-
-	f := filters.MustNewStagedFilter(
-		disableFilterName,
-		newSetMetadataConfig(disableFilterMetadataNamespace),
-		filters.BeforeStage(filters.FaultStage),
-	)
-	f.Filter.Disabled = true
-	stagedFilters = append(stagedFilters, f)
-	return stagedFilters
-}
-
-func newSetMetadataConfig(metadataNamespace string) *set_metadata.Config {
-	return &set_metadata.Config{
-		Metadata: []*set_metadata.Metadata{
-			{
-				MetadataNamespace: metadataNamespace,
-				Value: &structpb.Struct{Fields: map[string]*structpb.Value{
-					globalFilterDisableMetadataKey: structpb.NewBoolValue(true),
-				}},
-			},
-		},
-	}
-}
-
-func AddAuthEnabledFilterIfNeeded(
-	stagedFilters []filters.StagedHttpFilter,
-	filterName string,
-	enableAuthMetadata bool,
-) []filters.StagedHttpFilter {
-	if !enableAuthMetadata {
-		return stagedFilters
-	}
-	for _, f := range stagedFilters {
-		if f.Filter.GetName() == filterName {
-			return stagedFilters
-		}
-	}
-
-	f := filters.MustNewStagedFilter(filterName,
-		GenerateBlankTransformationConfig(),
-		filters.AfterStage(filters.AuthNStage),
-	)
-	f.Filter.Disabled = true
-	stagedFilters = append(stagedFilters, f)
-	return stagedFilters
-}
-
-// AddAuthMetadataIfNeeded sets the `dev.kgateway.auth_policy:auth_succeeded=true` dynamic metadata
-// via the transformation filter when enableAuthMetadata is true
-func AddAuthMetadataIfNeeded(perFilterConfig *ir.TypedFilterConfigMap, filterName string, enableAuthMetadata bool) {
-	if !enableAuthMetadata {
-		return
-	}
-	perFilterConfig.AddTypedConfig(filterName, generateDynamicMetadata(AuthPolicyMetadataNamespace, map[string]kgateway.InjaTemplate{
-		AuthSucceededMetadataKey: kgateway.InjaTemplate("true"),
-	}))
-}
-
-// AddBlankTransformationIfNeeded sets a blank (no-op) per-route transformation on the named filter when
-// enableAuthMetadata is true. This prevents auth metadata from being set on routes
-// where auth is explicitly disabled or not configured.
-func AddBlankTransformationIfNeeded(perFilterConfig *ir.TypedFilterConfigMap, filterName string, enableAuthMetadata bool) {
-	if !enableAuthMetadata {
-		return
-	}
-	perFilterConfig.AddTypedConfig(filterName, GenerateBlankTransformationConfigPerRoute())
-}
-
-```
-
-### Core Architecture Module: `pkg/kgateway/extensions2/pluginutils/envoy_tls.go`
-```
-package pluginutils
-
-import (
-	"crypto/tls"
-
-	envoycorev3 "github.com/envoyproxy/go-control-plane/envoy/config/core/v3"
-	envoytlsv3 "github.com/envoyproxy/go-control-plane/envoy/extensions/transport_sockets/tls/v3"
-	"k8s.io/client-go/util/cert"
-)
-
-// ResolveUpstreamSslConfigFromCA creates an UpstreamTlsContext from a CA certificate string.
-func ResolveUpstreamSslConfigFromCA(caCert string, validation *envoytlsv3.CertificateValidationContext, sni string) (*envoytlsv3.UpstreamTlsContext, error) {
-	common, err := ResolveCommonSslConfigFromCA(caCert, validation)
-	if err != nil {
-		return nil, err
-	}
-
-	return &envoytlsv3.UpstreamTlsContext{
-		CommonTlsContext: common,
-		Sni:              sni,
-	}, nil
-}
-
-// ResolveCommonSslConfigFromCA creates a CommonTlsContext from a CA certificate string.
-func ResolveCommonSslConfigFromCA(caCert string, validation *envoytlsv3.CertificateValidationContext) (*envoytlsv3.CommonTlsContext, error) {
-	caCrtData := InlineStringDataSource(caCert)
-
-	tlsContext := &envoytlsv3.CommonTlsContext{
-		// default params
-		TlsParams: &envoytlsv3.TlsParameters{},
-	}
-	validation.TrustedCa = caCrtData
-	validationCtx := &envoytlsv3.CommonTlsContext_ValidationContext{
-		ValidationContext: validation,
-	}
-
-	tlsContext.ValidationContextType = validationCtx
-	return tlsContext, nil
-}
-
-// CleanedSslKeyPair validates and cleans a certificate and key pair.
-func CleanedSslKeyPair(certChain, privateKey string) (cleanedChain string, err error) {
-	// validate that the cert and key are a valid pair
-	_, err = tls.X509KeyPair([]byte(certChain), []byte(privateKey))
-	if err != nil {
-		return "", err
-	}
-
-	// validate that the parsed piece is valid
-	// this is still faster than a call out to openssl despite this second parsing pass of the cert
-	// pem parsing in go is permissive while envoy is not
-	// this might not be needed once we have larger envoy validation
-	candidateCert, err := cert.ParseCertsPEM([]byte(certChain))
-	if err != nil {
-		// return err rather than sanitize. This is to maintain UX with older versions and to keep in line with gateway2 pkg.
-		return "", err
-	}
-	cleanedChainBytes, err := cert.EncodeCertificates(candidateCert...)
-	cleanedChain = string(cleanedChainBytes)
-
-	return cleanedChain, err
-}
-
-// InlineStringDataSource returns an Envoy data source that uses the given string as an inline data source.
-func InlineStringDataSource(s string) *envoycorev3.DataSource {
-	return &envoycorev3.DataSource{
-		Specifier: &envoycorev3.DataSource_InlineString{
-			InlineString: s,
-		},
-	}
-}
-
-// FileDataSource returns an Envoy data source that uses the given string as a file path.
-func FileDataSource(s string) *envoycorev3.DataSource {
-	return &envoycorev3.DataSource{
-		Specifier: &envoycorev3.DataSource_Filename{
-			Filename: s,
-		},
-	}
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #14980** (2026-11-05): **e2e: add Gateway.SendWithResponse and Gateway.Do, and fix ExecuteRequest body truncation**
-  *Symptoms*: # Description  Adds two methods to `common.Gateway` and uses them to move the last plain-HTTP Gateway requests that read the response off `kubectl exec` curl. Also fixes a `curl.ExecuteRequest` bug that truncated response bodies.  **What changed:** - `Gateway.SendWithResponse`: `Send` that also returns the matching response. The body is buffered, so the caller can read it after the matcher did. - `Gateway.Do`: sends one unchecked request, for callers that inspect the response with their own logic inside their own `Eventually`/`Consistently` loops. - Migrated to these methods:   - `transformation`: all 25 subtests go through one request site, which parses the echoed request body. The suite no longer deploys the curl pod.   - `xds_starvation` (`gatewayResponse`): it no longer deploys the curl pod either.   - `xds_warming` (`assertGatewayEventuallyServes`, `gatewayResponse`): it uses `common.BaseGateway` and keeps the curl pod for the controller `/metrics` scrape. - **Fix:** `curl.ExecuteRequest` with `WithConnectionTimeout` wrapped the request in a context timeout and canceled it on return. A caller reading a body larger than one read chunk then got `context canceled` partway through (a 100 KB body was cut off at about 12 KB). The client's `Timeout` already bounds the whole exchange, including the body read, so the context timeout is gone. Includes a regression test. - `curl.ExecuteRequest` now disables keep-alives. It builds a fresh transport for every request and never reuses
+- **Issue #15002** (2026-11-09): **test: fix five flakes that only passed in CI on rerun**
+  *Symptoms*: # Description  Fixes the five tests that still needed gotestsum's `--rerun-fails` to pass in CI between Oct 16 and Nov 8. In that window they failed on the first run and passed on a rerun in both PR CI and the merge queue. One commit per flake:  - **`TestParkedNackIsRetried`** (unit, `pkg/kgateway/setup`): the test shortened the NACK retry to 100ms, so the second NACK backed off only 200ms. On a loaded runner the retry timer answered the parked watch before the test saw it, or before the v2 correction went out. The test now raises the retry delay to a minute before the second NACK. Under the same CPU load: 43/320 failures before, 1/320 after (an unrelated receive timeout). - **`TestDereferenceWindowClosingDuringASlowInstallIsNotExtendedByALaterOne`** (unit, `pkg/kgateway/proxy_syncer`): a 1ns prune armed during the slow install could reach the fake cache's `SetSnapshot` before the test reset the delay, and sleep another grace. The fake now delays a single install (`Swap(0)`), and the manual resets are gone. Test-only change. - **`TestControllerSuite/TestGatewayClass/default GatewayClass…`** (envtest, `pkg/kgateway/controller`): the subtest asserted that a user's description edit to the default GatewayClass sticks. On every generation change the reconciler re-applies its desired spec via SSA, so it restores the description (the ParametersRef subtest already asserts this). The test passed only when its first Get beat the reconcile. It now asserts what the reconciler actually do
 
-- **Issue #14978** (2026-11-04): **test(e2e): apply and delete test manifests without shelling out to kubectl**
-  *Symptoms*: # Description  **Motivation:** e2e suites shelled out to `kubectl` to apply and delete test manifests. That is slow, and a namespace set in the local kubeconfig changes where unnamespaced resources land, so tests can pass in CI and fail locally (one of the items in #12981).  **What changed:** - New `cluster.Context.Manifests()` helper (`test/e2e/testutils/cluster/manifests.go`) that applies and deletes YAML through the API server:   - Apply is a server-side apply with the same `istio-ci` field manager the kubectl helpers use, so the two can be mixed on the same objects. Files apply in order, documents within a file in order.   - Delete ignores objects that are already gone and waits (bounded at 2 minutes) for the rest to disappear, matching `kubectl delete`.   - `InNamespace`, `WithGracePeriod` and `WithoutWait` replace the `-n`, `--grace-period 0` and `--wait=false` flags callers passed.   - Unnamespaced resources resolve to the client's default namespace (`default`), never the kubeconfig's. - Every kubectl `ApplyFile`/`DeleteFile`/`DeleteFileSafe`/`Apply`/`Delete`/`Create` call in the e2e suites (~80 calls, 23 files) moves onto it. The httproute suite's TCPRoute CRD save/restore uses a client `Get`/`Create` instead of `kubectl get -o yaml` + `kubectl create`. - Unit test for the delete path: missing objects, namespace defaulting, namespace conflicts, `WithoutWait`.  **Related issues:** part of #12981  # Change Type  /kind test  # Changelog  ```release-n
+- **Issue #14996** (2026-11-08): **fix: scope redirect status code annotation to the named rule**
+  *Symptoms*: # Description  Fixes #14995  A rule-scoped value of `kgateway.dev/http-redirect-status-code`, such as `rule1=301`, was also applied to unnamed rules. A space before the equals sign also stopped the value from matching its rule.  - Do not apply a rule-scoped value when the rule has no name. - Trim whitespace around the rule name. - Make `TestParseRedirectStatusCodeAnnotation` always assert the returned code. Previously, cases expecting nil could not fail. - Add test cases for multiple scoped values on an unnamed rule, and for a space before the equals sign.  # Change Type  /kind fix  # Changelog  ```release-note Fixed the kgateway.dev/http-redirect-status-code annotation applying rule-scoped values to unnamed rules, and failing to match a rule when its name was followed by a space. ```  # Additional Notes  Routes that unintentionally relied on a rule-scoped value applying to an unnamed rule will now use the rule's `statusCode` from the `RequestRedirect` filter, or the default of 302.  Tested with `go test ./pkg/krtcollections/...` and `go test ./pkg/kgateway/translator/gateway/`. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -951,502 +1141,339 @@ func FileDataSource(s string) *envoycorev3.DataSource {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a723f1e0` (2026-11-05)
-**Commit Message**: e2e: add Gateway.SendWithResponse and Gateway.Do, and fix ExecuteRequest body truncation (#14980)
+### Incident Patch 1: `7490cf4b` (2026-11-09)
+**Commit Message**: test: fix five flakes that only passed in CI on rerun (#15002)
 
 Signed-off-by: omar <[REDACTED_EMAIL]>
 
-**File**: `pkg/utils/requestutils/curl/native_request.go` (modified, +7/-7)
+**File**: `pkg/kgateway/controller/controller_test.go` (modified, +12/-6)
 ```diff
-@@ -70,16 +70,13 @@ func (c *requestConfig) executeNative() (*http.Response, error) {
+@@ -528,7 +528,7 @@ func (s *ControllerSuite) TestGatewayClass() {
  		}
- 	}
+ 	})
  
--	// Create context with timeout
-+	// connectionTimeout is enforced by the client's Timeout, which also covers reading the
-+	// body. A context timeout here would be canceled when this function returns, cutting off
-+	// a body the caller has not read yet.
- 	ctx := c.ctx
- 	if ctx == nil {
- 		ctx = context.Background()
- 	}
--	if c.connectionTimeout > 0 {
--		var cancel context.CancelFunc
--		ctx, cancel = context.WithTimeout(ctx, time.Duration(c.connectionTimeout)*time.Second)
--		defer cancel()
--	}
- 	if method == "" {
- 		method = "GET"
- 	}
-@@ -159,8 +156,11 @@ func (c *requestConfig) buildURL() string {
- }
+-	s.Run("default GatewayClass should not be overwritten when it is updated", func() {
++	s.Run("default GatewayClass managed fields should be restored and user fields kept when it is updated", func() {
+ 		t := s.T()
+ 		r := require.New(t)
+ 		gwc := &gwv1.GatewayClass{}
+@@ -539,19 +539,25 @@ func (s *ControllerSuite) TestGatewayClass() {
+ 			assert.NoError(c, err)
+ 		}, defaultPollTimeout, 500*time.Millisecond, "timed out waiting for GatewayClass %s to be created", gatewayClassName)
  
- func (c *requestConfig) buildHTTPClient() *http.Client {
-+	// Each request gets its own transport that is never reused, so a kept-alive connection
-+	// would only sit idle in its pool until the server closed it.
- 	transport := &http.Transport{
--		DialContext: c.buildDialer(),
-+		DialContext:       c.buildDialer(),
-+		DisableKeepAlives: true,
- 	}
+-		// Update it
++		// Update a field the controller manages (description) and one it does not (a user annotation)
+ 		original := gwc.DeepCopy()
+-		updatedDesc := "updated description"
+-		gwc.Spec.Description = new(updatedDesc)
++		userAnnotation := "example.com/user-annotation"
++		if gwc.Annotations == nil {
++			gwc.Annotations = map[string]string{}
++		}
++		gwc.Annotations[userAnnotation] = "kept"
++		gwc.Spec.Description = new("updated description")
+ 		err := s.client.Patch(ctx, gwc, client.MergeFrom(original))
+ 		r.NoError(err)
  
- 	// Configure TLS
+-		// Verify it is not overwritten
++		// The generation bump makes the controller re-apply its desired spec via SSA, which restores
++		// the description. Waiting for that proves the re-apply ran, so the user annotation must have survived it.
+ 		r.EventuallyWithTf(func(c *assert.CollectT) {
+ 			err := s.client.Get(ctx, types.NamespacedName{Name: gatewayClassName}, gwc)
+ 			assert.NoError(c, err)
+ 			assert.NotNil(c, gwc.Spec.Description)
+-			assert.Equal(c, updatedDesc, *gwc.Spec.Description)
++			assert.Equal(c, "default GatewayClass", *gwc.Spec.Description)
++			assert.Equal(c, "kept", gwc.Annotations[userAnnotation])
+ 		}, defaultPollTimeout, 500*time.Millisecond, "timed out waiting for GatewayClass %s", gatewayClassName)
+ 	})
+ 
 ```
 
-**File**: `pkg/utils/requestutils/curl/native_request_test.go` (modified, +49/-0)
+**File**: `pkg/kgateway/proxy_syncer/flip_release_timing_test.go` (modified, +7/-10)
 ```diff
-@@ -2,9 +2,12 @@ package curl
+@@ -15,8 +15,11 @@ import (
+ 	"github.com/stretchr/testify/require"
+ )
+ 
+-// slowInstallCache delays SetSnapshot while delay is set, standing in for an
+-// install blocked on a stream. It counts installs and keeps the slow ones.
++// slowInstallCache delays the next SetSnapshot by delay, standing in for an
++// install blocked on a stream. It counts installs and keeps the slow ones. The
++// delay applies once: a re-publish the slow install arms (such as an immediate
++// prune) can install before the test goroutine runs again, and must not be
++// slowed too.
+ type slowInstallCache struct {
+ 	envoycache.SnapshotCache
+ 	delay    atomic.Int64
+@@ -28,7 +31,7 @@ type slowInstallCache struct {
+ 
+ func (c *slowInstallCache) SetSnapshot(ctx context.Context, node string, snapshot envoycache.ResourceSnapshot) error {
+ 	c.installs.Add(1)
+-	if delay := time.Duration(c.delay.Load()); delay > 0 {
++	if delay := time.Duration(c.delay.Swap(0)); delay > 0 {
+ 		c.mu.Lock()
+ 		c.slow = append(c.slow, snapshot)
+ 		c.mu.Unlock()
+@@ -38,7 +41,7 @@ func (c *slowInstallCache) SetSnapshot(ctx context.Context, node string, snapsho
+ }
+ 
+ // firstSlowInstallClusters returns the clusters of the first snapshot installed
+-// while delay was set.
++// with a delay.
+ func (c *slowInstallCache) firstSlowInstallClusters(t *testing.T) map[string]envoycachetypes.ResourceWithTTL {
+ 	t.Helper()
+ 	c.mu.Lock()
+@@ -59,7 +62,6 @@ func TestFlipRelease_BudgetStartsAfterTheHeldSnapshotIsInstalled(t *testing.T) {
+ 
+ 	cache.delay.Store(int64(2 * budget))
+ 	pt.syncXds(context.Background(), flipWrap)
+-	cache.delay.Store(0)
+ 
+ 	require.Never(t, func() bool {
+ 		return snapshotReferencesCluster(servedSnapshot(t, pt), "cluster-new")
+@@ -126,7 +128,6 @@ func TestDereferenceGraceStartsAfterASlowInstall(t *testing.T) {
+ 	pt.syncXds(ctx, routedBuild(t, "v1", "old", "old"))
+ 	cache.delay.Store(int64(2 * grace))
+ 	pt.syncXds(ctx, routedBuild(t, "v2", "new", "new")) // stops naming old, installed slowly
+-	cache.delay.Store(0)
+ 	pt.syncXds(ctx, routedBuild(t, "v3", "new", "new"))
+ 	assert.Contains(t, publishedClusterNames(t, pt), "old", "old keeps its grace after the slow installation")
+ 	require.Eventually(t, func() bool { return !slices.Contains(publishedClusterNames(t, pt), "old") }, 2*time.Second, 5*time.Millisecond,
+@@ -152,7 +153,6 @@ func TestDereferenceGraceStartsAfterASlowFlipReleaseInstall(t *testing.T) {
+ 	cache.delay.Store(int64(2 * grace))
+ 	require.Eventually(t, func() bool { return publishedListenerVersionOf(t, pt) == "v2" }, 3*time.Second, 5*time.Millisecond,
+ 		"the budget releases the flip")
+-	cache.delay.Store(0)
+ 	pt.syncXds(ctx, routedBuild(t, "v3", "new", "new"))
+ 	assert.Contains(t, publishedClusterNames(t, pt), "old", "old keeps its grace after the slow installation")
+ 	require.Eventually(t, func() bool { return !slices.Contains(publishedClusterNames(t, pt), "old") }, 2*time.Second, 5*time.Millisecond,
+@@ -175,7 +175,6 @@ func TestDereferencePruneQueuedDuringASlowInstallKeepsTheNewerBuild(t *testing.T
+ 	time.Sleep(grace / 2)
+ 	cache.delay.Store(int64(grace))
+ 	pt.syncXds(ctx, routedBuild(t, "v3", "new", "new")) // still keeps old, and installs past its deadline
+-	cache.delay.Store(0)
+ 	require.Contains(t, cache.firstSlowInstallClusters(t), "old", "v3 must begin inside old's window, or its prune runs before v3")
+ 
+ 	require.Eventually(t, func() bool { return !slices.Contains(publishedClusterNames(t, pt), "old") }, 2*time.Second, 5*time.Millisecond,
+@@ -199,7 +198,6 @@ func TestDereferenceWindowClosingDuringASlowInstallIsNotExtendedByALaterOne(t *t
+ 	time.Sleep(grace / 2)
+ 	cache.delay.Store(int64(grace))
+ 	pt.syncXds(ctx, routedBuild(t, "v3", "c", "c")) // b's window opens; a's closes during the installation
+-	cache.delay.Store(0)
+ 	require.Contains(t, cache.firstSlowInstallClusters(t), "a", "v3 must begin inside a's window, or a's prune runs before v3")
+ 
+ 	require.Eventually(t, func() bool { return !slices.Contains(publishedClusterNames(t, pt), "a") }, grace/2, 5*time.Millisecond,
+@@ -228,7 +226,6 @@ func TestDereferenceWindowClosingDuringASlowHeldInstallIsPrunedOnce(t *testing.T
+ 	time.Sleep(grace / 2)
+ 	cache.delay.Store(int64(grace))
+ 	pt.syncXds(ctx, routedBuild(t, "v3", "n", "c", "n")) // held for n; a's window closes during the installation
+-	cache.delay.Store(0)
+ 	require.Contains(t, cache.firstSlowInstallClusters(t), "a", "v3 must begin inside a's window, or a's prune runs before v3")
+ 	installed := cache.installs.Load()
+ 
+```
+
+**File**: `pkg/kgateway/setup/cache_watch_policy_test.go` (modified, +2/-0)
+```diff
+@@ -377,6 +377,8 @@ func TestParkedNackIsRetried(t *testing.T) {
+ 			require.NotEqual(t, first.GetNonce(), again.GetNonce(), "the retry is a new response")
+ 
+ 			// Rejected again: parked again, and a correction still goes out at once.
++			// A long delay keeps the retry from answering the parked watch first.
++			shortenNackRetry(t, time.Minute, time.Minute)
+ 			h.nack(again, "")
+ 			h.waitForOpenWatches(1)
+ 			h.setSnapshot(nackSnapshot("2"))
+```
+
+**File**: `test/e2e/features/faultinjection/suite.go` (modified, +24/-14)
+```diff
+@@ -4,10 +4,12 @@ package faultinjection
  
  import (
  	"context"
-+	"io"
- 	"net"
++	"fmt"
  	"net/http"
- 	"net/http/httptest"
-+	"strconv"
-+	"strings"
- 	"testing"
+ 	"time"
  
- 	"github.com/stretchr/testify/assert"
-@@ -34,3 +37,49 @@ func TestExecuteRequestWithDialContext(t *testing.T) {
- 	assert.Equal(t, http.StatusTeapot, resp.StatusCode)
- 	assert.Equal(t, "unreachable.invalid:8080", dialed, "dialer should get the URL's host and port")
- }
-+
-+// WithConnectionTimeout must still let the caller read a body larger than one read chunk after
-+// ExecuteRequest returns.
-+func TestExecuteRequestWithConnectionTimeoutReadsWholeBody(t *testing.T) {
-+	body := strings.Repeat("x", 100_000)
-+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		_, _ = w.Write([]byte(body))
-+	}))
-+	defer server.Close()
-+
-+	host, port, err := net.SplitHostPort(server.Listener.Addr().String())
-+	require.NoError(t, err)
-+	portNum, err := strconv.Atoi(port)
-+	require.NoError(t, err)
-+
-+	resp, err := ExecuteRequest(WithHost(host), WithPort(portNum), WithConnectionTimeout(5))
-+	require.NoError(t, err)
-+	defer resp.Body.Close()
-+
-+	got, err := io.ReadAll(resp.Body)
-+	require.NoError(t, err, "reading the body should not be cut off by the timeout")
-+	assert.Len(t, got, len(body))
-+}
-+
-+// WithFormBody sends the body with a form Content-Type, as `curl -d` does.
-+func TestExecuteRequestWithFormBody(t *testing.T) {
-+	var gotContentType, gotBody string
-+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		gotContentType = r.Header.Get("Content-Type")
-+		b, _ := io.ReadAll(r.Body)
-+		gotBody = string(b)
-+	}))
-+	defer server.Close()
-+
-+	host, port, err := net.SplitHostPort(server.Listener.Addr().String())
-+	require.NoError(t, err)
-+	portNum, err := strconv.Atoi(port)
-+	require.NoError(t, err)
-+
-+	resp, err := ExecuteRequest(WithHost(host), WithPort(portNum), WithFormBody("hello"))
-+	require.NoError(t, err)
-+	defer resp.Body.Close()
-+
-+	assert.Equal(t, "application/x-www-form-urlencoded", gotContentType)
-+	assert.Equal(t, "hello", gotBody)
-+}
-```
-
-**File**: `pkg/utils/requestutils/curl/option.go` (modified, +9/-0)
-```diff
-@@ -216,6 +216,15 @@ func WithPostBody(body string) Option {
- 	}
- }
+ 	"github.com/stretchr/testify/suite"
++	"istio.io/istio/pkg/test/util/retry"
  
-+// WithFormBody returns the Option to send body with a form Content-Type, the way `curl -d` does.
-+// ExecuteRequest sends no Content-Type for a plain WithBody, which some servers treat as binary.
-+func WithFormBody(body string) Option {
-+	return func(config *requestConfig) {
-+		WithBody(body)(config)
-+		WithContentType("application/x-www-form-urlencoded")(config)
+ 	"github.com/kgateway-dev/kgateway/v2/pkg/utils/requestutils/curl"
+ 	"github.com/kgateway-dev/kgateway/v2/test/e2e"
+@@ -60,21 +62,29 @@ func (s *testingSuite) TestFaultInjectionAbortDoesNotAffectOtherRoutes() {
+ // TestFaultInjectionDelayOnRoute verifies that a TrafficPolicy with delay configured
+ // still returns a successful response (delay is applied but request is not aborted).
+ // It also verifies the response takes at least the configured delay duration.
++//
++// The route can serve 200s before the delay policy reaches Envoy, so the latency is
++// checked per attempt inside the retry loop rather than once across all attempts.
+ func (s *testingSuite) TestFaultInjectionDelayOnRoute() {
+-	start := time.Now()
+-
+-	common.BaseGateway.Send(
+-		s.T(),
+-		&testmatchers.HttpResponse{
+-			StatusCode: http.StatusOK,
+-		},
+-		curl.WithPort(80),
+-		curl.WithPath("/fault/status/200"),
+-		curl.WithHostHeader("example.com"),
+-	)
+-
+-	elapsed := time.Since(start)
+-	s.GreaterOrEqual(elapsed, 100*time.Millisecond, "expected response to take at least 100ms due to fault delay injection")
++	match := &testmatchers.HttpResponse{
++		StatusCode: http.StatusOK,
 +	}
-+}
-+
- // WithBody returns the Option to configure the body for a curl request
- // https://curl.se/docs/manpage.html#-d
- func WithBody(body string) Option {
-```
-
-**File**: `test/e2e/common/gateway.go` (modified, +52/-7)
-```diff
-@@ -8,6 +8,7 @@ import (
- 	"fmt"
- 	"io"
- 	"net"
-+	"net/http"
- 	"strconv"
- 	"sync"
- 	"testing"
-@@ -41,6 +42,9 @@ const (
- 	defaultConsistencyPoll   = 1 * time.Second
- )
- 
-+// defaultAttemptTimeoutSeconds bounds a single request attempt.
-+const defaultAttemptTimeoutSeconds = 8
-+
- // Send curls the gateway and waits until the response matches using Istio default retry options (10s timeout, 100ms delay).
- func (g *Gateway) Send(t *testing.T, match *matchers.HttpResponse, opts ...curl.Option) {
- 	t.Helper()
-@@ -61,6 +65,34 @@ func (g *Gateway) SendWithRetry(ctx context.Context, t *testing.T, match *matche
- 	}, retryOpts...)
- }
- 
-+// SendWithResponse is Send plus access to the matching response. Its body is buffered,
-+// so it can be read even though the matcher already did; the caller must close it.
-+func (g *Gateway) SendWithResponse(t *testing.T, match *matchers.HttpResponse, opts ...curl.Option) *http.Response {
-+	t.Helper()
-+	ctx := t.Context()
-+	fullOpts := g.curlOpts(opts)
-+	var resp *http.Response
-+	retry.UntilSuccessOrFail(t, func() error {
-+		if err := ctx.Err(); err != nil {
-+			t.Fatalf("send retry interrupted by ctx: %v", err)
-+		}
-+		//nolint:bodyclose // returned to the caller, who closes it
-+		r, err := g.matchResponse(ctx, fullOpts, match)
-+		if err != nil {
++	retry.UntilSuccessOrFail(s.T(), func() error {
++		start := time.Now()
++		if err := common.BaseGateway.SendOnce(
++			s.Ctx,
++			match,
++			curl.WithPort(80),
++			curl.WithPath("/fault/status/200"),
++			curl.WithHostHeader("example.com"),
++		); err != nil {
 +			return err
 +		}
-+		resp = r
++		if elapsed := time.Since(start); elapsed < 100*time.Millisecond {
++			return fmt.Errorf("expected response to take at least 100ms due to fault delay injection, took %v", elapsed)
++		}
 +		return nil
 +	})
-+	return resp
-+}
-+
-+// Do sends one request to the gateway and returns the response unchecked, for callers that
-+// inspect it with their own logic. The caller must close the body.
-+func (g *Gateway) Do(ctx context.Context, opts ...curl.Option) (*http.Response, error) {
-+	return curl.ExecuteRequest(curl.Extend(g.curlOpts(opts), curl.WithContext(ctx))...)
-+}
-+
- // SendOnce curls the gateway once and returns an error if the response does not match,
- // for callers that poll inside their own Eventually loop.
- func (g *Gateway) SendOnce(ctx context.Context, match *matchers.HttpResponse, opts ...curl.Option) error {
-@@ -118,27 +150,38 @@ func (g *Gateway) SendConsistentlyFor(ctx context.Context, t *testing.T, match *
- // (the underlying gomega HaveHttpResponse matcher does not print the actual body —
- // see test/gomega/matchers/have_http_response.go).
- func (g *Gateway) matchOnce(ctx context.Context, fullOpts []curl.Option, match *matchers.HttpResponse) error {
--	r, err := curl.ExecuteRequest(curl.Extend(fullOpts, curl.WithContext(ctx))...)
-+	r, err := g.matchResponse(ctx, fullOpts, match)
- 	if err != nil {
- 		return err
- 	}
--	defer r.Body.Close()
-+	return r.Body.Close()
-+}
- 
-+// matchResponse is matchOnce, returning the matching response with its body buffered so it
-+// can be read again.
-+func (g *Gateway) matchResponse(ctx context.Context, fullOpts []curl.Option, match *matchers.HttpResponse) (*http.Response, error) {
-+	r, err := curl.ExecuteRequest(curl.Extend(fullOpts, curl.WithContext(ctx))...)
-+	if err != nil {
-+		return nil, err
-+	}
- 	body, err := io.ReadAll(r.Body)
-+	r.Body.Close()
- 	if err != nil {
--		return fmt.Errorf("reading response body: %w", err)
-+		return nil, fmt.Errorf("reading response body: %w", err)
- 	}
- 	r.Body = io.NopCloser(bytes.NewReader(body))
- 
- 	mm := matchers.HaveHttpResponse(match)
- 	success, matchErr := mm.Match(r)
- 	if matchErr != nil {
--		return matchErr
-+		return nil, matchErr
- 	}
- 	if !success {
--		return fmt.Errorf("%s\nactual: status=%d body=%q", mm.FailureMessage(r), r.StatusCode, string(body))
-+		return nil, fmt.Errorf("%s\nactual: status=%d body=%q", mm.FailureMessage(r), r.StatusCode, string(body))
- 	}
--	return nil
-+	// The matcher may have read the body; hand back a fresh reader.
-+	r.Body = io.NopCloser(bytes.NewReader(body))
-+	return r, nil
  }
  
- func (g *Gateway) curlOpts(opts []curl.Option) []curl.Option {
-@@ -148,7 +191,9 @@ func (g *Gateway) curlOpts(opts []curl.Option) []curl.Option {
+ // TestFaultInjectionAbortOnGateway verifies that a TrafficPolicy with abort attached
+```
+
+**File**: `test/e2e/features/session_persistence/suite.go` (modified, +18/-11)
+```diff
+@@ -225,35 +225,42 @@ func (s *testingSuite) assertSessionPersistenceWithCookie(gatewayName, persisten
+ 		curl.WithRetryConnectionRefused(true),
+ 	}
+ 
+-	firstResp, err := s.TestInstallation.ClusterContext.Cli.CurlFromPod(s.Ctx, testdefaults.CurlPodExecOpt, firstCurlOpts...)
+-	s.Require().NoError(err, "first request should succeed")
+-
+-	firstPodName := s.extractPodNameFromResponse(firstResp.StdOut)
+-	s.Require().NotEmpty(firstPodName, "should be able to extract pod name from first response")
++	// The gateway can take a moment to serve traffic after its pod turns ready, so poll the first request
++	// until it reaches a backend and carries the session cookie or header.
++	var firstPodName, sessionValue string
++	s.TestInstallation.AssertionsT(s.T()).Gomega.Eventually(func(g gomega.Gomega) {
++		firstResp, err := s.TestInstallation.ClusterContext.Cli.CurlFromPod(s.Ctx, testdefaults.CurlPodExecOpt, firstCurlOpts...)
++		g.Expect(err).NotTo(gomega.HaveOccurred(), "first request should succeed")
++		firstPodName = s.extractPodNameFromResponse(firstResp.StdOut)
++		g.Expect(firstPodName).NotTo(gomega.BeEmpty(), "should be able to extract pod name from first response")
++		if persistenceType == "cookie" {
++			sessionValue = extractCookie(firstResp.StdOut, cookieName)
++			g.Expect(sessionValue).NotTo(gomega.BeEmpty(), "should have received a session cookie")
++		} else {
++			sessionValue = s.extractSessionHeaderFromResponse(firstResp.StdOut)
++			g.Expect(sessionValue).NotTo(gomega.BeEmpty(), "should have received a session header")
++		}
++	}).WithTimeout(60 * time.Second).WithPolling(2 * time.Second).Should(gomega.Succeed())
+ 
+ 	var subsequentCurlOpts []curl.Option
+ 	if persistenceType == "cookie" {
+-		cookie := extractCookie(firstResp.StdOut, cookieName)
+-		s.Require().NotEmpty(cookie, "should have received a session cookie")
+ 		subsequentCurlOpts = []curl.Option{
+ 			curl.WithHost(kubeutils.ServiceFQDN(gatewayService)),
+ 			curl.WithHostHeader("echo.local"),
+ 			curl.WithPort(8080),
+ 			curl.Silent(),
+-			curl.WithHeader("Cookie", cookie),
++			curl.WithHeader("Cookie", sessionValue),
+ 			curl.WithConnectionTimeout(10),
+ 			curl.WithRetries(5, 0, 10),
+ 			curl.WithRetryConnectionRefused(true),
+ 		}
  	} else {
- 		hostOpt = curl.WithHost(g.Address)
- 	}
--	base := []curl.Option{hostOpt}
-+	// Bound each attempt well below the retry budget, so one hung request (e.g. a cold
-+	// upstream connection) cannot use it all up. Callers may override it with their own.
-+	base := []curl.Option{hostOpt, curl.WithConnectionTimeout(defaultAttemptTimeoutSeconds)}
- 	if g.forwards != nil {
- 		base = append(base, curl.WithDialContext(g.forwards.dial))
- 	}
+-		headerValue := s.extractSessionHeaderFromResponse(firstResp.StdOut)
+-		s.Require().NotEmpty(headerValue, "should have received a session header")
+ 		subsequentCurlOpts = []curl.Option{
+ 			curl.WithHost(kubeutils.ServiceFQDN(gatewayService)),
+ 			curl.WithHostHeader("echo.local"),
+ 			curl.WithPort(8080),
+ 			curl.Silent(),
+-			curl.WithHeader("session-a", headerValue),
++			curl.WithHeader("session-a", sessionValue),
+ 			curl.WithConnectionTimeout(10),
+ 			curl.WithRetries(3, 0, 10),
+ 			curl.WithRetryConnectionRefused(true),
 ```
 
-**File**: `test/e2e/features/transformation/suite.go` (modified, +27/-29)
+---
+
+### Incident Patch 2: `fbeac220` (2026-11-08)
+**Commit Message**: fix: scope redirect status code annotation to the named rule (#14996)
+
+Signed-off-by: Daksha1611 <[REDACTED_EMAIL]>
+
+**File**: `pkg/krtcollections/builtin.go` (modified, +3/-3)
 ```diff
-@@ -15,16 +15,17 @@ import (
- 	"github.com/stretchr/testify/suite"
- 	"k8s.io/apimachinery/pkg/api/meta"
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/apimachinery/pkg/types"
- 	"sigs.k8s.io/controller-runtime/pkg/client"
- 	gwv1 "sigs.k8s.io/gateway-api/apis/v1"
+@@ -608,12 +608,12 @@ func parseRedirectStatusCode(
  
- 	"github.com/kgateway-dev/kgateway/v2/api/v1alpha1/kgateway"
- 	"github.com/kgateway-dev/kgateway/v2/api/v1alpha1/shared"
- 	reports "github.com/kgateway-dev/kgateway/v2/pkg/pluginsdk/reporter"
- 	"github.com/kgateway-dev/kgateway/v2/pkg/utils/fsutils"
--	"github.com/kgateway-dev/kgateway/v2/pkg/utils/kubeutils"
- 	"github.com/kgateway-dev/kgateway/v2/pkg/utils/requestutils/curl"
- 	"github.com/kgateway-dev/kgateway/v2/test/e2e"
-+	"github.com/kgateway-dev/kgateway/v2/test/e2e/common"
- 	"github.com/kgateway-dev/kgateway/v2/test/e2e/defaults"
- 	"github.com/kgateway-dev/kgateway/v2/test/e2e/tests/base"
- 	"github.com/kgateway-dev/kgateway/v2/test/e2e/testutils/helper"
-@@ -70,7 +71,6 @@ var (
- 	// test cases
- 	setup = base.TestCase{
- 		Manifests: []string{
--			defaults.CurlPodManifest,
- 			simpleServiceManifest,
- 			gatewayManifest,
- 			transformForCustomFunctionsManifest,
-@@ -156,7 +156,7 @@ func selectTestCases(indices ...int) []transformationTestCase {
- 			name:      "basic",
- 			routeName: "headers",
- 			opts: []curl.Option{
--				curl.WithBody("hello"),
-+				curl.WithFormBody("hello"),
- 				curl.WithHeader("cookie", "foo=bar"),
- 				curl.WithHeader("User-Agent", "curl/8.18.0"),
- 			},
-@@ -207,7 +207,7 @@ func selectTestCases(indices ...int) []transformationTestCase {
- 			name:      "remove headers",
- 			routeName: "headers",
- 			opts: []curl.Option{
--				curl.WithBody("hello"),
-+				curl.WithFormBody("hello"),
- 				curl.WithHeader("x-remove-me", "test"),
- 				curl.WithHeader("x-dont-remove-me", "in request"),
- 			},
-@@ -236,7 +236,7 @@ func selectTestCases(indices ...int) []transformationTestCase {
- 			name:      "set headers with headers already exists multiple times",
- 			routeName: "headers",
- 			opts: []curl.Option{
--				curl.WithBody("hello"),
-+				curl.WithFormBody("hello"),
- 				// The 2 x-foo-bar headers will be replaced with a single one when we set the header
- 				// to a value using transformation
- 				curl.WithMultiHeader("x-foo-bar", []string{"original_1", "original_2"}),
-@@ -272,7 +272,7 @@ func selectTestCases(indices ...int) []transformationTestCase {
- 			name:      "conditional set by request header", // inja and the request_header function in use
- 			routeName: "headers",
- 			opts: []curl.Option{
--				curl.WithBody("hello-world"),
-+				curl.WithFormBody("hello-world"),
- 				curl.WithHeader("x-add-bar", "super"),
- 			},
- 			resp: &testmatchers.HttpResponse{
-@@ -374,7 +374,7 @@ func selectTestCases(indices ...int) []transformationTestCase {
- 			name:      "match-header-and-query",
- 			routeName: "match",
- 			opts: []curl.Option{
--				curl.WithBody("hello"),
-+				curl.WithFormBody("hello"),
- 				curl.WithHeader("foo", "bar"),
- 				curl.WithQueryParameters(map[string]string{"test": "123"}),
- 			},
-@@ -409,7 +409,7 @@ func selectTestCases(indices ...int) []transformationTestCase {
- 			name:      "match-query",
- 			routeName: "match",
- 			opts: []curl.Option{
--				curl.WithBody("hello"),
-+				curl.WithFormBody("hello"),
- 				curl.WithQueryParameters(map[string]string{"test": "123"}),
- 			},
- 			resp: &testmatchers.HttpResponse{
-@@ -445,7 +445,7 @@ func selectTestCases(indices ...int) []transformationTestCase {
- 			name:      "match-none",
- 			routeName: "match",
- 			opts: []curl.Option{
--				curl.WithBody("hello"),
-+				curl.WithFormBody("hello"),
- 			},
- 			resp: &testmatchers.HttpResponse{
- 				StatusCode: http.StatusNotFound,
-@@ -482,7 +482,7 @@ func selectTestCases(indices ...int) []transformationTestCase {
- 			name:      "custom-functions",
- 			routeName: "custom-functions",
- 			opts: []curl.Option{
--				curl.WithBody(`{"foo":"\"bar\""}`),
-+				curl.WithFormBody(`{"foo":"\"bar\""}`),
- 				curl.WithHeader("x-nested-call", "my name is andy"),
- 			},
- 			resp: &testmatchers.HttpResponse{
-@@ -537,7 +537,7 @@ func selectTestCases(indices ...int) []transformationTestCase {
- 			name:      "pull-json-info", // shows we parse the body as json
- 			routeName: "route-for-body-json",
- 			opts: []curl.Option{
--				curl.WithBody(`{"mykey": {"myinnerkey": "myinnervalue"}}`),
-+				curl.WithFormBody(`{"mykey": {"myinnerkey": "myinnervalue"}}`),
- 				curl.WithHeader("X-Incoming-Stuff", "super"),
- 			},
- 			resp: &testmatchers.HttpResponse{
-@@ -566,7 +566,7 @@ func selectTestCases(indices ...int) []transformationTestCase {
- 			name:      "dont pull info if we dont parse json",
- 			routeName: "route-for-body",
- 			opts: []curl.Option{
--				curl.WithBody(`{"mykey": {"myinnerkey": "myinnervalue"}}`),
-+				curl.WithFormBody(`{"mykey": {"myinnerkey": "myinnervalue"}}`),
- 				curl.WithHeader("X-Incoming-Stuff", "super"),
- 			},
- 			resp: &testmatchers.HttpResponse{
-@@ -581,7 +581,7 @@ func selectTestCases(indices ...int) []transformationTestCase {
- 			
+ 	var forRule string
+ 	if len(ruleVals) == 2 {
+-		forRule = ruleVals[0]
++		forRule = strings.TrimSpace(ruleVals[0])
+ 		val = strings.TrimSpace(ruleVals[1])
+ 	}
+ 
+-	if ruleName != nil && forRule != "" && forRule != string(*ruleName) {
+-		// The annotation does not apply to this rule specified by ruleName
++	// A rule-scoped value only applies to the rule it names, so it can never match an unnamed rule.
++	if forRule != "" && (ruleName == nil || forRule != string(*ruleName)) {
+ 		return nil, nil
+ 	}
+ 
 ```
 
-**File**: `test/e2e/features/xds_starvation/suite.go` (modified, +14/-8)
+**File**: `pkg/krtcollections/builtin_test.go` (modified, +13/-3)
 ```diff
-@@ -29,14 +29,14 @@ import (
- 	"github.com/onsi/gomega"
- 	"github.com/stretchr/testify/suite"
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/apimachinery/pkg/types"
- 
- 	"github.com/kgateway-dev/kgateway/v2/pkg/utils/fsutils"
--	"github.com/kgateway-dev/kgateway/v2/pkg/utils/kubeutils"
- 	"github.com/kgateway-dev/kgateway/v2/pkg/utils/requestutils/curl"
- 	"github.com/kgateway-dev/kgateway/v2/test/e2e"
-+	"github.com/kgateway-dev/kgateway/v2/test/e2e/common"
- 	testdefaults "github.com/kgateway-dev/kgateway/v2/test/e2e/defaults"
- 	"github.com/kgateway-dev/kgateway/v2/test/e2e/tests/base"
--	"github.com/kgateway-dev/kgateway/v2/test/gomega/transforms"
- 	"github.com/kgateway-dev/kgateway/v2/test/testutils"
- )
- 
-@@ -48,7 +48,6 @@ var (
- 
- 	setup = base.TestCase{
- 		Manifests: []string{
--			testdefaults.CurlPodManifest,
- 			setupManifest,
+@@ -272,6 +272,18 @@ func TestParseRedirectStatusCodeAnnotation(t *testing.T) {
+ 			rule:     nil,
+ 			wantCode: nil,
  		},
++		{
++			name:     "nil rule with multiple rule-specific values",
++			value:    "rule1=308,rule2=307",
++			rule:     nil,
++			wantCode: nil,
++		},
++		{
++			name:     "space before equals in rule-specific format",
++			value:    "rule1 =301",
++			rule:     sectionName("rule1"),
++			wantCode: new(301),
++		},
  	}
-@@ -75,6 +74,17 @@ var proxyObjectMeta = metav1.ObjectMeta{
  
- type testingSuite struct {
- 	*base.BaseTestingSuite
-+
-+	// gw is the suite's Gateway, resolved once in SetupSuite so it lives as long as the suite.
-+	gw common.Gateway
-+}
-+
-+func (s *testingSuite) SetupSuite() {
-+	s.BaseTestingSuite.SetupSuite()
-+	s.gw = common.NewGateway(s.Ctx, s.T(), s.TestInstallation, types.NamespacedName{
-+		Name:      proxyObjectMeta.Name,
-+		Namespace: proxyObjectMeta.Namespace,
-+	})
- }
+ 	for _, tc := range tests {
+@@ -287,9 +299,7 @@ func TestParseRedirectStatusCodeAnnotation(t *testing.T) {
+ 			}
  
- func NewTestingSuite(ctx context.Context, testInst *e2e.TestInstallation) suite.TestingSuite {
-@@ -163,10 +173,8 @@ func (s *testingSuite) assertEventuallyStatusAtLeast(host string, status int, ti
- }
- 
- func (s *testingSuite) gatewayResponse(host string) (int, string, error) {
--	curlResponse, err := s.TestInstallation.ClusterContext.Cli.CurlFromPod(
-+	response, err := s.gw.Do(
- 		s.Ctx,
--		testdefaults.CurlPodExecOpt,
--		curl.WithHost(kubeutils.ServiceFQDN(proxyObjectMeta)),
- 		curl.WithHostHeader(host),
- 		curl.WithPort(8080),
- 		curl.WithPath("/"),
-@@ -175,8 +183,6 @@ func (s *testingSuite) gatewayResponse(host string) (int, string, error) {
- 	if err != nil {
- 		return 0, "", err
+ 			// Check code
+-			if tc.wantCode != nil {
+-				a.Equal(tc.wantCode, code)
+-			}
++			a.Equal(tc.wantCode, code)
+ 		})
  	}
--
--	response := transforms.WithCurlResponse(curlResponse)
- 	defer response.Body.Close()
- 
- 	body, err := io.ReadAll(response.Body)
-```
-
-**File**: `test/e2e/features/xds_warming/suite.go` (modified, +5/-12)
-```diff
-@@ -24,6 +24,7 @@ import (
- 	"github.com/kgateway-dev/kgateway/v2/pkg/utils/kubeutils"
- 	"github.com/kgateway-dev/kgateway/v2/pkg/utils/requestutils/curl"
- 	"github.com/kgateway-dev/kgateway/v2/test/e2e"
-+	"github.com/kgateway-dev/kgateway/v2/test/e2e/common"
- 	testdefaults "github.com/kgateway-dev/kgateway/v2/test/e2e/defaults"
- 	"github.com/kgateway-dev/kgateway/v2/test/e2e/tests/base"
- 	"github.com/kgateway-dev/kgateway/v2/test/envoyutils/admincli"
-@@ -452,14 +453,13 @@ func (s *testingSuite) assertActiveClusterIsPresent(clusterName string) {
  }
- 
- func (s *testingSuite) assertGatewayEventuallyServes(host, bodySubstring string) {
--	s.TestInstallation.AssertionsT(s.T()).AssertEventualCurlResponse(
--		s.Ctx,
--		testdefaults.CurlPodExecOpt,
--		s.gatewayCurlOptions(host),
-+	common.BaseGateway.Send(
-+		s.T(),
- 		&testmatchers.HttpResponse{
- 			StatusCode: http.StatusOK,
- 			Body:       gomega.ContainSubstring(bodySubstring),
- 		},
-+		s.gatewayCurlOptions(host)...,
- 	)
- }
- 
-@@ -513,16 +513,10 @@ func (s *testingSuite) assertGatewayEventuallyServesAll(host string, bodySubstri
- }
- 
- func (s *testingSuite) gatewayResponse(host string) (int, string, error) {
--	curlResponse, err := s.TestInstallation.ClusterContext.Cli.CurlFromPod(
--		s.Ctx,
--		testdefaults.CurlPodExecOpt,
--		s.gatewayCurlOptions(host)...,
--	)
-+	response, err := common.BaseGateway.Do(s.Ctx, s.gatewayCurlOptions(host)...)
- 	if err != nil {
- 		return 0, "", err
- 	}
--
--	response := transforms.WithCurlResponse(curlResponse)
- 	defer response.Body.Close()
- 
- 	body, err := io.ReadAll(response.Body)
-@@ -534,7 +528,6 @@ func (s *testingSuite) gatewayResponse(host string) (int, string, error) {
- 
- func (s *testingSuite) gatewayCurlOptions(host string) []curl.Option {
- 	return []curl.Option{
--		curl.WithHost(kubeutils.ServiceFQDN(proxyObjectMeta)),
- 		curl.WithHostHeader(host),
- 		curl.WithPort(80),
- 		curl.WithPath("/"),
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14980** (2026-11-05): e2e: add Gateway.SendWithResponse and Gateway.Do, and fix ExecuteRequest body truncation (@puertomontt)
-- **PR #14978** (2026-11-04): test(e2e): apply and delete test manifests without shelling out to kubectl (@puertomontt)
-- **PR #14976** (closed): [2.1] tests: Update expired certs (@kristin-kronstain-brown)
-- **PR #14972** (2026-11-03): [2.5] fix(deployer): drop removed Envoy runtime guard and deprecated bootstrap field (#14971) (@puertomontt)
-- **PR #14971** (2026-11-03): fix(deployer): drop removed Envoy runtime guard and deprecated bootstrap field (@puertomontt)
-- **PR #14969** (2026-11-03): ci: prime the Go build cache from empty so it stops growing (@puertomontt)
+- **PR #15002** (2026-11-09): test: fix five flakes that only passed in CI on rerun (@puertomontt)
+- **PR #14996** (2026-11-08): fix: scope redirect status code annotation to the named rule (@Daksha1611)
+- **PR #14994** (2026-11-06): [2.5] ci: cache the Rust module build in GHCR (#14982) (@puertomontt)
+- **PR #14993** (2026-11-06): e2e: scrape controller metrics through the API server pod proxy (@chandler-solo)
+- **PR #14992** (2026-11-06): [2.5] fix: bound CRD integer fields so oversized values fail admission (@davidjumani)
+- **PR #14991** (2026-11-06): [2.5] fix: Roll the proxy deployment when the bootstrap config is changed (@davidjumani)
 
 ---
 
@@ -1466,40 +1493,44 @@ Signed-off-by: omar <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. e2e: add Gateway.SendWithResponse and Gateway.Do, and fix ExecuteRequest body tr
+## X. test: fix five flakes that only passed in CI on rerun (#15002)
 
 **RULE**:
-When implementing operations in `pkg/utils/requestutils/curl/native_request.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kgateway-dev/kgateway. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/kgateway/controller/controller_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kgateway-dev/kgateway. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a723f1e0`: e2e: add Gateway.SendWithResponse and Gateway.Do, and fix ExecuteRequest body truncation (#14980). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7490cf4b`: test: fix five flakes that only passed in CI on rerun (#15002). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/utils/requestutils/curl/native_request.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/kgateway/controller/controller_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// connectionTimeout is enforced by the client's Timeout, which also covers reading the
-	// body. A context timeout here would be canceled when this function returns, cutting off
-	// a body the caller has not read yet.
-	// Each request gets its own transport that is never reused, so a kept-alive connection
-	// would only sit idle in its pool until the server closed it.
-		DialContext:       c.buildDialer(),
-		DisableKeepAlives: true,
+	s.Run("default GatewayClass managed fields should be restored and user fields kept when it is updated", func() {
+		// Update a field the controller manages (description) and one it does not (a user annotation)
+		userAnnotation := "example.com/user-annotation"
+		if gwc.Annotations == nil {
+			gwc.Annotations = map[string]string{}
+		}
+		gwc.Annotations[userAnnotation] = "kept"
+		gwc.Spec.Description = new("updated description")
+		// The generation bump makes the controller re-apply its desired spec via SSA, which restores
+		// the description. Waiting for that proves the re-apply ran, so the user annotation must have survived it.
+			assert.Equal(c, "default GatewayClass", *gwc.Spec.Description)
+			assert.Equal(c, "kept", gwc.Annotations[userAnnotation])
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	// Create context with timeout
-	if c.connectionTimeout > 0 {
-		var cancel context.CancelFunc
-		ctx, cancel = context.WithTimeout(ctx, time.Duration(c.connectionTimeout)*time.Second)
-		defer cancel()
-	}
-		DialContext: c.buildDialer(),
+	s.Run("default GatewayClass should not be overwritten when it is updated", func() {
+		// Update it
+		updatedDesc := "updated description"
+		gwc.Spec.Description = new(updatedDesc)
+		// Verify it is not overwritten
+			assert.Equal(c, updatedDesc, *gwc.Spec.Description)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a723f1e0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7490cf4b` are properly handled with clean fallback behavior.

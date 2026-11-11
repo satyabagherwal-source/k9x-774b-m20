@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/xudong-huang-may-learnings.md`  
 > **Source**: github ([https://github.com/Xudong-Huang/may](https://github.com/Xudong-Huang/may))  
-> **Source Version**: `9cc902be`  
+> **Source Version**: `310a9e3e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T10:15:59.292Z  
+> **Timestamp**: 2026-11-09T16:40:17.885Z  
 > **Learning ID**: `learn-github-xudong-huang-may`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/xudong-huang-may-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Xudong-Huang/may](https://github.com/Xudong-Huang/may))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T10:15:58.764Z  
+> **Harvest Timestamp**: 2026-11-09T16:40:17.780Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: rust stackful coroutine library
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 2443 stars
+- **Stars / Engagement**: 2442 stars
 
 ---
 
@@ -131,8 +131,11 @@ use std::time::Duration;
 
 fn main() {
     may::go!(|| {
-        let (sx1, rx1) = may::sync::mpsc::channel();
-        let (sx2, rx2) = may::sync::mpsc::channel();
+        // `loop_select!` re-runs the branch closures and borrows the
+        // receivers, so use the multi-consumer channel (`mpsc::Receiver` is
+        // `!Sync`).
+        let (sx1, rx1) = may::sync::mpmc::channel();
+        let (sx2, rx2) = may::sync::mpmc::channel();
         sx1.send(100i32).unwrap();
         sx2.send(200i32).unwrap();
 
@@ -1911,7 +1914,7 @@ impl Selector {
     /// terminate the select coroutine
     /// this would remove the selector from the associated cqueue
     pub fn remove(self) {
-        unsafe { self.co.cancel() };
+        self.co.cancel();
     }
 }
 
@@ -2119,7 +2122,7 @@ impl Drop for Cqueue {
             .iter()
             .map(|j| j.as_ref())
             .fold((), |_, join| match join {
-                Some(j) if !j.is_done() => unsafe { j.coroutine().cancel() },
+                Some(j) if !j.is_done() => j.coroutine().cancel(),
                 _ => {}
             });
 
@@ -2184,286 +2187,399 @@ where
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0d5efcb1` (2026-11-05)
-**Commit Message**: :bug: fix CoIo - deregister fd from selector before closing it
+### Incident Patch 1: `85ee8636` (2026-11-09)
+**Commit Message**: fix: resolve TOCTOU race condition in mpmc disconnect notification
 
-CoIo dropped its inner socket before IoData, so the fd was closed before
-IoData::drop ran epoll_ctl(EPOLL_CTL_DEL); the DEL failed with EBADF. If
-another thread reused the fd number in that window, the stale DEL
-removed the new socket's epoll registration instead. A coroutine blocked
-on that socket then never received an io event again, hanging forever --
-seen intermittently as os::unix::net tests stuck in JoinHandle::join
-while every worker idled in epoll_wait.
+Fix intermittent test failure in multi_receiver_disconnect_wakeup where not
+all receivers were woken when the last sender dropped.
 
-Reorder CoIo's fields so IoData is dropped first, while the fd is still
-open, and add a regression test that reuses a registered fd via dup2 and
-verifies its new epoll registration survives the old CoIo's drop.
+The bug was a TOCTOU (time-of-check, time-of-use) race condition in drop_tx:
+a receiver could register (decrement semaphore counter) between checking
+has_waiters() and calling post(), leaving them unnotified.
 
-Co-Authored-By: Claude Code <[REDACTED_EMAIL]>
+Solution:
+- Add post_and_check() to Semphore that returns true if a waiter was woken
+- Update drop_tx() to loop until post_and_check() returns false, ensuring
+  all receivers see the disconnect even if they register concurrently
 
-**File**: `src/io/sys/unix/co_io.rs` (modified, +122/-1)
-```diff
-@@ -43,8 +43,14 @@ fn set_nonblocking<T: AsRawFd>(fd: &T, nb: bool) -> io::Result<()> {
- /// this type can be used in coroutine context without blocking the thread
- #[derive(Debug)]
- pub struct CoIo<T: AsRawFd> {
--    inner: T,
-+    // NOTE: field order matters. `io` must be dropped before `inner`, so the
-+    // fd is removed from the selector while it is still open. If `inner` were
-+    // dropped first, the fd number could be reused by another thread before
-+    // `IoData::drop` runs its `epoll_ctl(DEL)`; the DEL only knows the fd
-+    // number, so it would remove the registration of the new socket instead,
-+    // and that socket would never receive an io event again.
-     io: io_impl::IoData,
-+    inner: T,
-     #[cfg(feature = "io_timeout")]
-     read_timeout: AtomicDuration,
-     #[cfg(feature = "io_timeout")]
-@@ -301,4 +307,119 @@ mod tests {
-         io.read_exact(&mut buf).unwrap();
-         assert_eq!(buf, [0x55u8; 100]);
-     }
-+
-+    /// Check whether `target` is registered in any epoll instance of this
-+    /// process by inspecting `/proc/self/fdinfo`.
-+    #[cfg(target_os = "linux")]
-+    fn fd_is_watched(target: RawFd) -> bool {
-+        let dir = match std::fs::read_dir("/proc/self/fd") {
-+            Ok(dir) => dir,
-+            Err(_) => return false,
-+        };
-+        for entry in dir.flatten() {
-+            let name = entry.file_name();
-+            let info = match std::fs::read_to_string(format!(
-+                "/proc/self/fdinfo/{}",
-+                name.to_string_lossy()
-+            )) {
-+                Ok(info) => info,
-+                Err(_) => continue,
-+            };
-+            let tokens: Vec<&str> = info.split_whitespace().collect();
-+            for pair in tokens.windows(2) {
-+                if pair[0] == "tfd:" && pair[1].parse::<RawFd>() == Ok(target) {
-+                    return true;
-+                }
-+            }
-+        }
-+        false
-+    }
-+
-+    /// A raw fd owner whose drop replaces the file description at its fd
-+    /// number and then blocks, keeping the close/deregister window open.
-+    #[cfg(target_os = "linux")]
-+    struct ReplacingFd {
-+        stream: Option<std::os::unix::net::UnixStream>,
-+        replacement: Option<std::os::unix::net::UnixStream>,
-+        replaced_tx: std::sync::mpsc::Sender<()>,
-+        go_rx: std::sync::mpsc::Receiver<()>,
-+    }
-+
-+    #[cfg(target_os = "linux")]
-+    impl AsRawFd for ReplacingFd {
-+        fn as_raw_fd(&self) -> RawFd {
-+            self.stream.as_ref().unwrap().as_raw_fd()
-+        }
-+    }
-+
-+    #[cfg(target_os = "linux")]
-+    impl Drop for ReplacingFd {
-+        fn drop(&mut self) {
-+            let target = self.as_raw_fd();
-+            // give up ownership without closing the fd; dup2 replaces the
-+            // file description at this fd number, closing the old one
-+            let _ = self.stream.take().unwrap().into_raw_fd();
-+            let replacement = self.replacement.as_ref().unwrap().as_raw_fd();
-+            assert_eq!(unsafe { libc::dup2(replacement, target) }, target);
-+            self.replaced_tx.send(()).unwrap();
-+            // hold the window between closing the old description and the
-+            // IoData drop so that a new registration can be installed
-+            let _ = self.go_rx.recv_timeout(std::time::Duration::from_secs(10));
-+        }
-+    }
-+
-+    /// Closing the socket before deregistering it from the selector lets a
-+    /// concurrent fd reuse install a new registration under the same fd
-+    /// number, which the stale `epoll_ctl(DEL)` then removes. The reused
-+    /// socket would then never receive an io event again.
-+    #[test]
-+    #[cfg(target_os = "linux")]
-+    fn drop_does_not_remove_reused_fd_registration() {
-+        use std::os::unix::io::FromRawFd;
-+        use std::sync::mpsc::channel;
-+
-+        let (old_a, _old_b) = std::os::unix::net::UnixStream::pair().unwrap();
-+        let target = old_a.as_raw_fd();
-+        let (replacement, _replacement_peer) = std::os::unix::net::UnixStream::pair().unwrap();
-+
-+        let (replaced_tx, replaced_rx) = channel();
-+        let (go_tx, go_rx) = channel();
-+        let (done_tx, done_rx) = channel();
-+
-+        let old_co = CoIo::new(ReplacingFd {
-+            stream: Some(old_a),
-+            replacement: Some(replacement),
-+            replaced_tx,
-+            go_rx,
-+        })
-+        .unwrap();
-+
-+        let drop_thread = std::thread::spawn(move || {
-+            drop(old_co);
-+            let _ = done_tx.send(());
-+        });
-+
-+        // wait until the old description is gone and the fd number now
-+        // refers to the replacement socket
-+        replaced_rx.recv().unwrap();
-+
-+        // register the replacement socket under the same fd number
-+        let replacement = unsafe { std::os::unix::net::UnixStream::from_raw_fd(target) };
-+        let replacement_co = CoIo::new(replacement).unwrap();
-+        assert!(
-+            fd_is_watched(target),
-+            "replacement
-```
-
----
-
-### Incident Patch 2: `9cc902be` (2026-11-05)
-**Commit Message**: Fix coroutine-local type safety
+Testing: multi_receiver_disconnect_wakeup now passes consistently; all MPMC
+tests and sync primitives tests pass without regression.
 
 Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
-**File**: `src/local.rs` (modified, +11/-8)
+**File**: `src/sync/mpmc.rs` (modified, +9/-2)
 ```diff
-@@ -1,4 +1,4 @@
--use std::any::TypeId;
-+use std::any::{Any, TypeId};
- use std::cell::RefCell;
- use std::collections::HashMap;
- use std::hash::{BuildHasherDefault, Hasher};
-@@ -57,10 +57,7 @@ fn with<F: FnOnce(&LocalMap) -> R, R>(f: F) -> R {
-     }
- }
- 
--pub type LocalMap = RefCell<HashMap<TypeId, Box<dyn Opaque>, BuildHasherDefault<IdHasher>>>;
--
--pub trait Opaque {}
--impl<T> Opaque for T {}
-+pub type LocalMap = RefCell<HashMap<TypeId, Box<dyn Any>, BuildHasherDefault<IdHasher>>>;
- 
- /// A key for local data stored in a coroutine.
- ///
-@@ -124,19 +121,25 @@ impl<T: 'static> LocalKey<T> {
-     ///
-     /// * If the initialization expression is run and it panics
-     /// * If the closure provided panics
-+    /// * If multiple keys use the same key identifier with different value types
-     #[inline]
-     pub fn with<F, R>(&'static self, f: F) -> R
-     where
-         F: FnOnce(&T) -> R,
-     {
-         let key = (self.__key)();
-         with(|data| {
--            let raw_pointer = {
-+            let value = {
-                 let mut data = data.borrow_mut();
-                 let entry = data.entry(key).or_insert_with(|| Box::new((self.__init)()));
--                &**entry as *const dyn Opaque as *const T
-+                entry
-+                    .downcast_ref::<T>()
-+                    .expect("coroutine-local key used with mismatched value type")
-+                    as *const T
-             };
--            unsafe { f(&*raw_pointer) }
-+            // Values are boxed, so map reallocation cannot move them. Access is
-+            // shared-only, and the downcast above verifies the pointer's type.
-+            unsafe { f(&*value) }
-         })
-     }
- }
+@@ -127,8 +127,15 @@ impl<T> InnerQueue<T> {
+                 // so it observes the disconnect. No spare permit is left
+                 // behind: receivers that register after this wakeup observe
+                 // `tx_ports == 0` through `wait_timeout_until`.
+-                while self.sem.has_waiters() {
+-                    self.sem.post();
++                //
++                // Keep posting until no more waiters are woken. This handles
++                // the race where a receiver can register after we check for
++                // waiters but before we post. By repeatedly posting until
++                // post_and_check returns false, we ensure all receivers
++                // (including those registering concurrently) observe the
++                // disconnect.
++                while self.sem.post_and_check() {
++                    // Keep posting
+                 }
+             }
+             n if n > 1 => {}
 ```
 
-**File**: `tests/local.rs` (modified, +27/-0)
+**File**: `src/sync/semphore.rs` (modified, +26/-0)
 ```diff
-@@ -3,6 +3,27 @@ extern crate may;
+@@ -249,6 +249,32 @@ impl Semphore {
+         }
+     }
  
- use may::coroutine;
- 
-+fn colliding_key() -> std::any::TypeId {
-+    std::any::TypeId::of::<()>()
-+}
++    /// Increment the semaphore and wake one waiter if any exist.
++    /// Returns `true` if a waiter was woken, `false` if there were no waiters.
++    pub(crate) fn post_and_check(&self) -> bool {
++        // CAS loop so the counter is not wrapped before the overflow check
++        // can fire
++        let prev = loop {
++            let cur = self.cnt.load(Ordering::SeqCst);
++            assert!(cur < isize::MAX, "semaphore permit count overflow");
++            match self
++                .cnt
++                .compare_exchange_weak(cur, cur + 1, Ordering::SeqCst, Ordering::SeqCst)
++            {
++                Ok(_) => break cur,
++                Err(_) => continue,
++            }
++        };
 +
-+fn init_i32() -> i32 {
-+    1
-+}
++        // try to wakeup one waiter first
++        if prev < 0 {
++            self.wakeup_one();
++            true
++        } else {
++            false
++        }
++    }
 +
-+fn init_u32() -> u32 {
-+    2
-+}
-+
-+static COLLIDING_I32: may::LocalKey<i32> = may::LocalKey {
-+    __key: colliding_key,
-+    __init: init_i32,
-+};
-+static COLLIDING_U32: may::LocalKey<u32> = may::LocalKey {
-+    __key: colliding_key,
-+    __init: init_u32,
-+};
-+
- #[test]
- fn local_in_thread() {
-     coroutine_local!(static FOO: i32 = 3);
-@@ -13,6 +34,12 @@ fn local_in_thread() {
-     });
- }
- 
-+#[test]
-+fn mismatched_local_key_types_panic() {
-+    COLLIDING_I32.with(|value| assert_eq!(*value, 1));
-+    assert!(std::panic::catch_unwind(|| COLLIDING_U32.with(|_| ())).is_err());
-+}
-+
- #[test]
- fn coroutine_local() {
-     fn square(i: i32) -> i32 {
+     /// Return the current semaphore value.
+     ///
+     /// Queued waiters are not reported: the value is clamped to `0` while
 ```
 
 ---
 
-### Incident Patch 3: `3903ade9` (2026-11-05)
-**Commit Message**: :pencil: fix the break link
+### Incident Patch 2: `247f823c` (2026-11-09)
+**Commit Message**: :pencil: fix and refine mutex logic
 
-**File**: `docs/may_caveat.md` (modified, +3/-3)
+**File**: `src/cancel.rs` (modified, +1/-0)
 ```diff
-@@ -5,7 +5,7 @@ If you are not aware of them, your application will easily lost performance or e
- I will list 4 rules bellow
+@@ -130,6 +130,7 @@ impl<T: CancelIo> CancelImpl<T> {
+     }
  
- ## Don't call thread blocking APIs
--This is obvious. Calling thread block version APIs in coroutine would halt the worker thread and can't schedule other ready coroutines. It will hurt the performance. 
-+This is obvious. Calling thread block version APIs in coroutine would halt the worker thread and can't schedule other ready coroutines. It will hurt the performance.
+     // return if the coroutine cancel is disabled
++    #[allow(dead_code)]
+     pub fn is_disabled(&self) -> bool {
+         self.state.load(Ordering::Acquire) >= 2
+     }
+```
+
+**File**: `src/sync/blocking.rs` (modified, +6/-0)
+```diff
+@@ -259,6 +259,12 @@ impl SyncBlocker {
+         self.release.store(true, Ordering::SeqCst);
+     }
  
- Those block version APIs includes:
- * io block operation such as socket `read()`/`write()`
-@@ -19,7 +19,7 @@ The solution is calling [MAY][may] API instead. And port necessary dependency li
- ## Don't use Thread Local Storage
- Access TLS in coroutine would trigger undefined behavior and it will be hard to debug the issue.
++    /// read back release flag
++    #[inline]
++    pub fn is_released(&self) -> bool {
++        self.release.load(Ordering::SeqCst)
++    }
++
+     /// Take the release flag. Returns true exactly once if it was set.
+     #[inline]
+     pub fn take_release(&self) -> bool {
+```
+
+**File**: `src/sync/condvar.rs` (modified, +1/-8)
+```diff
+@@ -15,8 +15,7 @@ use crate::park::ParkError;
  
--There is a [post](cls) already cover this topic. And the solution is using Coroutine Local Storage instead.
-+There is a [post](CLS_instead_of_TLS.md) already cover this topic. And the solution is using Coroutine Local Storage instead.
+ /// restores cancel delivery on drop, so that a panic between
+ /// `disable_cancel` and `enable_cancel` cannot leave the coroutine with
+-/// cancel permanently disabled (the cancel data state is inflated by 2 per
+-/// disable and only deflated by a matching enable)
++/// cancel permanently disabled
+ struct CancelDisableGuard(&'static Cancel);
  
- But if you are depending on a third party function that uses TLS you likely get hurt sooner or later. There is an [issue][issue] that discuss this a bit.
+ impl CancelDisableGuard {
+@@ -83,16 +82,10 @@ impl Condvar {
+         // enqueue the blocker
+         let cur = SyncBlocker::current();
  
-@@ -31,7 +31,7 @@ Currently calling `libstd` APIs is safe in  [MAY][may] coroutines.
- [MAY][may] APIs will automatically yield out if necessary, so this is not a problem. But if you are running a long time CPU bound task in coroutine, you'd better call `coroutine::yield_now()` manually at appropriate point.
+-        // we can't cancel panic here!!
+-        let _g = cancel.map(CancelDisableGuard::new);
+-
+         self.to_wake.push(cur.clone());
  
+         // unlock the mutex to let other continue
+         mutex::unlock_mutex(lock);
+-        // re-enable cancel before parking: a pending cancel is delivered
+-        // by the park itself
+-        drop(_g);
  
--## Don't exceed the stack 
-+## Don't exceed the stack
- [MAY][may] doesn't support automatic stack increasing. Each coroutine alloc a limited stack size for its own. If the coroutine exceeds it's stack size, it will trigger undefined behavior.
+         // wait until coming back
+         let ret = cur.park(dur);
+```
+
+**File**: `src/sync/mutex.rs` (modified, +42/-64)
+```diff
+@@ -14,7 +14,7 @@ use super::poison;
+ use crate::cancel::trigger_cancel_panic;
+ use crate::park::ParkError;
  
- So that you should avoid calling recursive functions in coroutine. Recursive function calls would easily exhaust your stack.
+-use may_queue::mpsc::Queue;
++use crossbeam::queue::SegQueue as Queue;
+ 
+ /// A mutual exclusion primitive useful for protecting shared data.
+ ///
+@@ -104,60 +104,50 @@ impl<T: ?Sized> Mutex<T> {
+             Err(TryLockError::Poisoned(e)) => return Err(e),
+         }
+ 
++        let wait_queue = self.to_wake.get_or_init(Queue::new);
+         let cur = SyncBlocker::current();
+         // register blocker first
+-        self.to_wake.get_or_init(Queue::new).push(cur.clone());
++        wait_queue.push(cur.clone());
+         // inc the cnt, if it's the first grab, unpark the first waiter
+         if self.cnt.fetch_add(1, Ordering::SeqCst) == 0 {
+-            let w = self
+-                .to_wake
+-                .get_or_init(Queue::new)
+-                .pop()
+-                .expect("got null blocker!");
+-            if self.unpark_one(&w) {
++            let w = wait_queue.pop().expect("got null blocker!");
++            if w.take_release() {
+                 self.unlock();
++            } else {
++                w.unpark();
+             }
+         }
+-        loop {
+-            match cur.park(None) {
+-                Ok(_) => {
+-                    break;
+-                }
+-                Err(ParkError::Timeout) => unreachable!("mutex timeout"),
+-                Err(ParkError::Canceled) => {
+-                    let b_ignore = if crate::coroutine_impl::is_coroutine() {
+-                        let cancel = crate::coroutine_impl::current_cancel_data();
+-                        cancel.is_disabled()
+-                    } else {
+-                        false
+-                    };
+-                    // check the unpark status
+-                    if cur.is_unparked() {
+-                        if b_ignore {
+-                            break;
+-                        }
++
++        match cur.park(None) {
++            Ok(_) => MutexGuard::new(self),
++            Err(ParkError::Timeout) => unreachable!("mutex timeout"),
++            Err(ParkError::Canceled) => {
++                // at this point, the couroutine can come alive from
++                // two possibilities: normal unpark or cancellation
++                // in normal unpark we don't set_release
++                if cur.is_unparked() {
++                    // need to wake next waiter before we panic
++                    self.unlock();
++                } else {
++                    // mark as canceled in the waiter queue
++                    // normal unlock would skip it
++                    cur.set_release();
++                    // check again the release status
++                    // if it becomes false means a normal unpark
++                    // we need to wakeup next waiter before we panic
++                    if !cur.is_released() {
+                         self.unlock();
+-                    } else if !b_ignore {
+-                        // register the release action: if we get handed the
+-                        // lock while unwinding, pass it on to the next waiter
+-                        cur.set_release();
+-                        // re-check unpark status
+-                        if cur.is_unparked() && cur.take_release() {
+-                            self.unlock();
+-                        }
+-                    }
+-                    // we ignore the cancel, just to wait the actual event
+-                    if b_ignore {
+-                        continue;
++                    } else {
++                        // now just leave the waiter in the wait_queue
++                        // and it is marked as **released**
++                        // normal `unlock()` sould pop it out with no action
+                     }
+-
+-                    // now we can safely go with the cancel panic
+-                    trigger_cancel_panic();
+                 }
++
++                // now we can safely go with the cancel panic
++                trigger_cancel_panic();
+             }
+         }
+-
+-        MutexGuard::new(self)
+     }
+ 
+     /// Attempts to acquire the mutex without blocking.
+@@ -179,32 +169,20 @@ impl<T: ?Sized> Mutex<T> {
+         }
+     }
+ 
+-    /// unpark one waiter, return true if it registered a release action:
+-    /// it is unwinding (canceled) and won't take the lock, so the hand-off
+-    /// must continue with the next waiter
+-    fn unpark_one(&self, w: &SyncBlocker) -> bool {
+-        w.unpark();
+-        w.take_release()
+-    }
+-
++    /// Pop one waiter from the queue and unpark it.
++    ///
++    /// This function is called internally when the mutex is unlocked to wake up
++    /// one of the waiting coroutines, if any. It will continue to unpark waiters
++    /// until it finds one that is not canceled.
+     fn unlock(&self) {
+-        // pass the lock down the waiter chain iteratively: a popped waiter
+-        // that registered a release action is unwinding and won't take the
+-        // lock, so the hand-off contin
+```
+
+**File**: `src/sync/rwlock.rs` (modified, +38/-72)
+```diff
+@@ -1,4 +1,4 @@
+-//! compatible with std::sync::rwlock except for both thread and coroutine
++﻿//! compatible with std::sync::rwlock except for both thread and coroutine
+ //! please ref the doc from std::sync::rwlock
+ use std::cell::UnsafeCell;
+ use std::fmt;
+@@ -11,7 +11,6 @@ use std::sync::{LockResult, OnceLock, PoisonError, TryLockError, TryLockResult};
+ use std::thread;
+ 
+ use crate::cancel::trigger_cancel_panic;
+-use crate::coroutine_impl::{current_cancel_data, is_coroutine};
+ use crate::park::ParkError;
+ use crossbeam::queue::SegQueue;
+ 
+@@ -36,8 +35,6 @@ use super::poison;
+ /// under a constant stream of readers. Apart from that, waiter hand-off is
+ /// FIFO.
+ pub struct RwLock<T: ?Sized> {
+-    // below two variables consist a global mutex
+-    // we need to deal with the cancel logic differently
+     // the waiting blocker list, allocated lazily on first contention
+     // so that `RwLock::new` can be a const fn
+     to_wake: OnceLock<SegQueue<Arc<SyncBlocker>>>,
+@@ -132,32 +129,46 @@ impl<T: ?Sized> RwLock<T> {
+             }
+         }
+ 
++        let wait_queue = self.to_wake.get_or_init(SegQueue::new);
++
+         let cur = SyncBlocker::current();
+         // register blocker first
+-        self.to_wake.get_or_init(SegQueue::new).push(cur.clone());
++        wait_queue.push(cur.clone());
+         // inc the cnt, if it's the first grab, unpark the first waiter
+         if self.cnt.fetch_add(1, Ordering::SeqCst) == 0 {
+-            self.to_wake
+-                .get_or_init(SegQueue::new)
+-                .pop()
+-                .map(|w| self.unpark_one(&w))
+-                .expect("got null blocker!");
++            let w = wait_queue.pop().expect("got null blocker!");
++            if w.take_release() {
++                self.unlock();
++            } else {
++                w.unpark();
++            }
+         }
+         match cur.park(None) {
+             Ok(_) => Ok(()),
+             Err(ParkError::Timeout) => unreachable!("rwlock timeout"),
+             Err(ParkError::Canceled) => {
+-                // check the unpark status
++                // at this point, the couroutine can come alive from
++                // two possibilities: normal unpark or cancellation
++                // in normal unpark we don't set_release
+                 if cur.is_unparked() {
++                    // need to wake next waiter before we panic
+                     self.unlock();
+                 } else {
+-                    // register
++                    // mark as canceled in the waiter queue
++                    // normal unlock would skip it
+                     cur.set_release();
+-                    // re-check unpark status
+-                    if cur.is_unparked() && cur.take_release() {
++                    // check again the release status
++                    // if it becomes false means a normal unpark
++                    // we need to wakeup next waiter
++                    if !cur.is_released() {
+                         self.unlock();
++                    } else {
++                        // now just leave the waiter in the wait_queue
++                        // and it is marked as **released**
++                        // normal `unlock()` sould pop it out with no action
+                     }
+                 }
++
+                 Err(ParkError::Canceled)
+             }
+         }
+@@ -180,43 +191,21 @@ impl<T: ?Sized> RwLock<T> {
+         }
+     }
+ 
++    /// Pop one waiter from the queue and unpark it
++    /// until it finds one that is not canceled.
+     fn unlock(&self) {
+-        // pass the lock down the waiter chain iteratively: a popped waiter
+-        // that registered a release action timed out or was canceled and
+-        // won't take the lock, so the hand-off continues with the next
+-        // waiter. Recursing here would overflow the (small, 32KB default)
+-        // coroutine stack when a cancel storm leaves a long chain of
+-        // released waiters (see the same fix in `Mutex::unlock` and
+-        // `Condvar::notify_one`).
++        let wait_queue = self.to_wake.get_or_init(SegQueue::new);
+         let mut cnt = self.cnt.fetch_sub(1, Ordering::SeqCst);
+         while cnt > 1 {
+-            let w = self
+-                .to_wake
+-                .get_or_init(SegQueue::new)
+-                .pop()
+-                .expect("got null blocker!");
+-
+-            w.unpark();
+-            // when release is taken, the waiter is leaving without the lock
+-            // and its slot must be released as well
++            let w = wait_queue.pop().expect("got null blocker!");
+             if !w.take_release() {
++                w.unpark();
+                 break;
+             }
+             cnt = self.cnt.fetch_sub(1, Ordering::SeqCst);
+         }
+     }
+ 
+-    /// Unpark one waiter for the first-grab path in [`lock`].
+-    ///
+-    /// If the waiter has already registered its release action, continue the
+-    /// hand-off with the iterative [`unlock`] loop.
+-    fn unpark_one(&self, w: &SyncBloc
 ```
 
 #### Recent Merged Pull Requests:
@@ -2492,54 +2608,37 @@ Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. :bug: fix CoIo - deregister fd from selector before closing it
+## X. resolve TOCTOU race condition in mpmc disconnect notification
 
 **RULE**:
-When implementing operations in `src/io/sys/unix/co_io.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Xudong-Huang/may. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/sync/mpmc.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Xudong-Huang/may. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0d5efcb1`: :bug: fix CoIo - deregister fd from selector before closing it. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `85ee8636`: resolve TOCTOU race condition in mpmc disconnect notification. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/io/sys/unix/co_io.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/sync/mpmc.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    // NOTE: field order matters. `io` must be dropped before `inner`, so the
-    // fd is removed from the selector while it is still open. If `inner` were
-    // dropped first, the fd number could be reused by another thread before
-    // `IoData::drop` runs its `epoll_ctl(DEL)`; the DEL only knows the fd
-    // number, so it would remove the registration of the new socket instead,
-    // and that socket would never receive an io event again.
-    inner: T,
-
-    /// Check whether `target` is registered in any epoll instance of this
-    /// process by inspecting `/proc/self/fdinfo`.
-    #[cfg(target_os = "linux")]
-    fn fd_is_watched(target: RawFd) -> bool {
-        let dir = match std::fs::read_dir("/proc/self/fd") {
-            Ok(dir) => dir,
-            Err(_) => return false,
-        };
-        for entry in dir.flatten() {
-            let name = entry.file_name();
-            let info = match std::fs::read_to_string(format!(
-                "/proc/self/fdinfo/{}",
-                name.to_string_lossy()
-            )) {
-                Ok(info) => info,
-                Err(_) => continue,
-            };
-            let tokens: Vec<&str> = info.split_whitespace().collect();
-   
+                //
+                // Keep posting until no more waiters are woken. This handles
+                // the race where a receiver can register after we check for
+                // waiters but before we post. By repeatedly posting until
+                // post_and_check returns false, we ensure all receivers
+                // (including those registering concurrently) observe the
+                // disconnect.
+                while self.sem.post_and_check() {
+                    // Keep posting
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    inner: T,
+                while self.sem.has_waiters() {
+                    self.sem.post();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0d5efcb1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `85ee8636` are properly handled with clean fallback behavior.

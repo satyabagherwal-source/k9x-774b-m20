@@ -3,7 +3,7 @@
 > **Source Version**: `hf-deepseek-`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-11-05T01:00:45.094Z  
+> **Timestamp**: 2026-11-08T16:51:09.703Z  
 > **Learning ID**: `learn-huggingface-deepseek-ai-deepseek-v4-1-flash`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,339 +17,254 @@
 ## 1. Executive Forensic Architecture & System Mechanics
 
 **Technical Problem Solved:**
-DeepSeek-V4.1-Flash addresses the **KV Cache Memory Bottleneck** in long-context (1M token) Mixture-of-Experts (MoE) models. Standard Transformers store Key-Value (KV) pairs for every token in every layer, leading to $O(N \cdot L \cdot D)$ memory complexity, which is prohibitive for 1M context windows. This model introduces **Compressed Sparse Attention 2 (CSA2)** and **SWA Bounded Replay** to reduce persistent KV cache footprint by ~8x and enable efficient prefill/decode separation.
+The repository addresses the **memory bandwidth bottleneck** and **KV Cache explosion** inherent in long-context (1M token) Mixture-of-Experts (MoE) models. Traditional Transformers require storing Key-Value (KV) pairs for every token in every layer, leading to $O(N^2)$ memory pressure for attention and $O(N \cdot L \cdot D)$ for KV storage. DeepSeek-V4.1-Flash introduces a **Causal Encoder-Decoder (CED)** architecture combined with **Compressed Sparse Attention 2 (CSA2)** to decouple the prefill (input processing) and decode (generation) phases computationally and memory-wise.
 
-**Architectural Boundaries:**
-1.  **Causal Encoder-Decoder (CED) Split**: The 40-layer Transformer is split into a 20-layer Causal Encoder and a 20-layer Decoder.
-    *   *Invariant*: The Decoder's global KV cache is projected from the **final encoder hidden states**, not from each decoder layer's own hidden states. This decouples the encoder's computation from the decoder's memory persistence.
-    *   *Result*: Only 8B parameters active per token during prefill; 16B during decode.
-2.  **CSA2 (Compressed Sparse Attention 2)**:
-    *   Assigns each attention layer a static mode: **Full**, **Reindex**, or **Reuse**.
-    *   **Full**: Computes full attention and stores KV.
-    *   **Reindex**: Reuses KV from a previous "Full" layer but recomputes sparse indices.
-    *   **Reuse**: Reuses both KV and sparse indices from a previous layer.
-    *   *Hierarchical Sparse Indexer*: Later indexing layers are restricted to a candidate pool constructed by the first Full Mode layer, bounding computational cost.
-3.  **SWA Bounded Replay**:
-    *   Sliding Window Attention (SWA) states are not persisted to SSD.
-    *   Missing SWA KV states are reconstructed by replaying only the most recent $n_{win}$ tokens (128 tokens based on `sliding_window` config).
-4.  **MoE Configuration**:
-    *   384 routed experts + 1 shared expert.
-    *   Top-6 routing per token.
-    *   `sqrtsoftplus` scoring function.
-    *   `noaux_tc` topk method (no auxiliary loss for load balancing, using token capacity).
-5.  **Engram Memory**:
-    *   Two engram layers (IDs 1 and 14) with massive embedding tables (~384M entries each).
-    *   N-gram size 4, vocab size 16M.
-    *   Used for long-term memory retrieval, separate from the main attention KV cache.
+**Architectural Boundaries & Subsystems:**
+1.  **Causal Encoder-Decoder (CED) Split:**
+    *   **Encoder (Layers 0-19):** Processes the full input context causally. It does *not* generate output tokens but produces hidden states.
+    *   **Decoder (Layers 20-39):** Generates output tokens autoregressively. Crucially, the decoder's global KV cache is **projected** from the final encoder hidden states, rather than being computed independently per decoder layer. This reduces active parameters per token from ~552B (full MoE) to **8B (prefill)** and **16B (decode)**.
+2.  **Compressed Sparse Attention 2 (CSA2):**
+    *   **Static Mode Assignment:** Each attention layer is statically assigned one of three modes: `Full`, `Reindex`, or `Reuse`.
+    *   **KV Sharing:** `Reindex` and `Reuse` layers share the main KV cache and Indexer K from the `Full` mode layers, drastically reducing unique KV storage.
+    *   **Hierarchical Sparse Indexer:** Later indexing layers are restricted to a candidate pool constructed by the first `Full` mode layer, bounding the search space for sparse attention indices.
+3.  **SWA Bounded Replay:**
+    *   Sliding Window Attention (SWA) states are not persisted to SSD. Instead, missing SWA KV states are reconstructed by **replaying** only the most recent $n_{win}$ tokens. This reduces persistent KV cache footprint by ~8x compared to DeepSeek-V4-Flash.
+4.  **Engram Memory System:**
+    *   A massive non-parametric memory system (`engram_num_embeddings` ~384M) using n-gram lookups (max size 4) to retrieve relevant context vectors, bypassing the need for attention over irrelevant long-context tokens.
 
 **Critical Subsystem Abstractions:**
-*   **KV Cache Manager**: Must handle three types of KV: Global (from Encoder), Sparse (from CSA2), and SWA (replayed).
-*   **Indexer**: A separate attention mechanism (`index_n_heads: 32`, `index_head_dim: 128`) that selects which tokens to attend to in sparse layers.
-*   **Engram Retriever**: A lookup table system that retrieves context from a massive external memory based on n-gram matches.
+*   **`DeepseekV41ForCausalLM`:** The top-level model class handling the CED split.
+*   **`quantization_config`:** Defines FP8 weight quantization with dynamic activation scaling and FP4 expert weights, critical for fitting the 552B parameter model into consumer/prosumer hardware.
+*   **`compress_ratios`:** A per-layer array defining the compression ratio for KV cache, enabling fine-grained control over memory vs. accuracy trade-offs per layer.
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. KV Cache Decoupling via Encoder-Decoder Projection
+### 1. Causal Encoder-Decoder KV Projection Invariant
 **RULE**:
-In long-context MoE models, the Decoder's global KV cache MUST be projected from the final hidden states of a preceding Causal Encoder block, rather than being computed and stored independently by each Decoder layer. This MUST NOT allow Decoder layers to write directly to the persistent global KV cache without an explicit projection step.
-
+In long-context autoregressive models, the decoder's global KV cache MUST be derived from a projection of the final encoder hidden states, NOT computed independently by each decoder layer's attention mechanism.
 **WHY**:
-Storing KV per decoder layer leads to $O(L_{decoder} \cdot N \cdot D)$ memory usage. By projecting from the encoder, the decoder can reuse a single, compressed representation of the context. This reduces memory footprint and allows the decoder to focus on autoregressive generation without re-computing context representations. It also enables different prefill/decode parameter activation counts (8B vs 16B).
-
+Computing KV independently in the decoder for every layer and every token leads to $O(L_{dec} \cdot N \cdot D)$ memory usage. By projecting from the encoder, the decoder can reuse the encoder's computed representations, reducing active parameters and memory bandwidth requirements during the decode phase. This is critical for agentic workloads where input length $N$ is large but output length is small.
 **WHEN TO APPLY**:
-Any Transformer-based LLM with context length > 128K tokens, especially MoE architectures where compute is sparse but memory is dense.
-
+Any Transformer-based model with a distinct prefill (input) and decode (output) phase, especially when input length >> output length.
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-class CEDDecoderLayer(nn.Module):
-    def __init__(self, encoder_output_dim, hidden_size):
-        super().__init__()
-        # Project encoder output to decoder KV space
-        self.kv_projection = nn.Linear(encoder_output_dim, hidden_size)
-        self.attention = MultiHeadAttention(hidden_size)
-
-    def forward(self, hidden_states, encoder_output, kv_cache):
-        # Project encoder output to get K and V for this layer
-        # Note: This is done once per token, not per layer
-        projected_kv = self.kv_projection(encoder_output)
-        k, v = projected_kv.chunk(2, dim=-1)
+# Pseudo-code for CED KV Projection
+class CEDModel:
+    def forward(self, input_ids):
+        # Encoder processes full context
+        encoder_hidden_states = self.encoder(input_ids) # Shape: [B, N, D]
         
-        # Update cache with projected KV
-        kv_cache.update(k, v)
+        # Project encoder states to decoder KV space
+        # This projection is learned and shared across decoder layers
+        projected_kv = self.kv_projection(encoder_hidden_states) # Shape: [B, N, D_kv]
         
-        # Perform attention using cached KV
-        attn_output = self.attention(hidden_states, k, v, kv_cache)
-        return attn_output
+        # Decoder uses projected_kv as initial KV cache
+        # Decoder layers do NOT compute new K/V for the input context
+        output = self.decoder(input_ids, past_key_values=projected_kv)
+        return output
 ```
-
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Storing KV per decoder layer
-class StandardDecoderLayer(nn.Module):
-    def forward(self, hidden_states, kv_cache):
-        q, k, v = self.qkv_proj(hidden_states)
-        # This leads to L * N * D memory usage
-        kv_cache.update(k, v) 
-        return self.attention(q, k, v, kv_cache)
+# ANTI-PATTERN: Independent KV computation in decoder
+class StandardTransformer:
+    def forward(self, input_ids):
+        hidden_states = input_ids
+        for layer in self.layers:
+            # Each layer computes its own K/V for the entire input
+            # This is O(L * N * D) memory and compute
+            k, v = layer.compute_kv(hidden_states)
+            hidden_states = layer.attention(hidden_states, k, v)
+        return hidden_states
 ```
-
 **VERIFICATION METHOD**:
-Assert that the number of KV cache entries per token is equal to the number of encoder layers, not the total number of layers.
-```python
-assert kv_cache.num_entries_per_token == num_encoder_layers
-```
+Assert that the decoder's `past_key_values` for the input context are identical to the projected encoder states. Verify that decoder layers do not have separate `k_proj` and `v_proj` weights for the input context tokens.
 
-### 2. Static Attention Mode Assignment for Sparse Attention
+### 2. Static Attention Mode Assignment for KV Sharing
 **RULE**:
-In Compressed Sparse Attention (CSA) systems, each attention layer MUST be assigned a static mode (Full, Reindex, Reuse) at initialization. The mode MUST NOT be dynamically determined per-token or per-batch. Reindex layers MUST reuse KV from a preceding Full layer but recompute sparse indices. Reuse layers MUST reuse both KV and indices.
-
+In sparse attention architectures, attention layers MUST be statically assigned to one of three modes (`Full`, `Reindex`, `Reuse`) to enable KV cache sharing. `Reindex` and `Reuse` layers MUST NOT compute unique KV pairs; they MUST share the KV cache from the nearest preceding `Full` mode layer.
 **WHY**:
-Dynamic mode selection introduces control flow overhead and makes memory allocation unpredictable. Static assignment allows for pre-allocation of KV buffers and index buffers. Reusing KV from Full layers reduces memory bandwidth. Recomputing indices in Reindex layers allows for adaptive sparsity without the cost of full attention.
-
+Dynamic mode selection per token or per batch would prevent KV cache sharing, leading to memory explosion. Static assignment allows the system to pre-allocate shared KV buffers and reuse them across layers, reducing memory footprint by a factor equal to the number of shared layers.
 **WHEN TO APPLY**:
-Any implementation of sparse attention mechanisms (e.g., FlashAttention-3, DeepSeek-V3/V4) where memory bandwidth is a bottleneck.
-
+Any sparse attention implementation where memory bandwidth is the bottleneck, especially in MoE models with many layers.
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-class CSA2Layer(nn.Module):
-    def __init__(self, mode, source_layer_id):
-        super().__init__()
-        self.mode = mode  # 'Full', 'Reindex', 'Reuse'
-        self.source_layer_id = source_layer_id
-
-    def forward(self, hidden_states, kv_cache, index_cache):
+# Pseudo-code for Static Mode Assignment
+class CSA2Attention:
+    def __init__(self, layer_id, mode):
+        self.layer_id = layer_id
+        self.mode = mode # 'Full', 'Reindex', or 'Reuse'
+        
+    def forward(self, hidden_states, past_key_values):
         if self.mode == 'Full':
-            # Compute full attention and store KV and indices
-            k, v = self.kv_proj(hidden_states)
-            indices = self.indexer(hidden_states)
-            kv_cache.update(self.layer_id, k, v)
-            index_cache.update(self.layer_id, indices)
-            return self.attention(hidden_states, k, v, indices)
-        
+            # Compute unique K/V and store in past_key_values
+            k, v = self.compute_kv(hidden_states)
+            past_key_values.update(self.layer_id, k, v)
         elif self.mode == 'Reindex':
-            # Reuse KV from source layer, recompute indices
-            k, v = kv_cache.get(self.source_layer_id)
-            indices = self.indexer(hidden_states)
-            index_cache.update(self.layer_id, indices)
-            return self.attention(hidden_states, k, v, indices)
-        
+            # Reuse K/V from nearest Full layer, but recompute indices
+            full_layer_id = self.get_nearest_full_layer()
+            k, v = past_key_values.get(full_layer_id)
+            indices = self.compute_indices(hidden_states, k)
         elif self.mode == 'Reuse':
-            # Reuse KV and indices from source layer
-            k, v = kv_cache.get(self.source_layer_id)
-            indices = index_cache.get(self.source_layer_id)
-            return self.attention(hidden_states, k, v, indices)
+            # Reuse both K/V and indices from nearest Full layer
+            full_layer_id = self.get_nearest_full_layer()
+            k, v, indices = past_key_values.get(full_layer_id)
+            
+        return self.attention(hidden_states, k, v, indices)
 ```
-
 **NEGATIVE CONSTRAINT**:
 ```python
 # ANTI-PATTERN: Dynamic mode selection
-def forward(self, hidden_states, kv_cache):
-    # This is expensive and unpredictable
-    if self.should_use_sparse(hidden_states):
-        return self.sparse_attention(hidden_states, kv_cache)
-    else:
-        return self.full_attention(hidden_states, kv_cache)
+class DynamicCSA2Attention:
+    def forward(self, hidden_states, past_key_values):
+        # Mode depends on input content, preventing KV sharing
+        mode = self.select_mode(hidden_states)
+        if mode == 'Full':
+            k, v = self.compute_kv(hidden_states)
+        else:
+            # Cannot share KV because mode is not static
+            k, v = self.compute_kv(hidden_states) # Wasteful
+        return self.attention(hidden_states, k, v)
 ```
-
 **VERIFICATION METHOD**:
-Lint check to ensure `mode` is a constant attribute set in `__init__` and not modified in `forward`.
-```python
-assert isinstance(layer.mode, str)
-assert layer.mode in ['Full', 'Reindex', 'Reuse']
-```
+Verify that `past_key_values` contains only one entry per `Full` mode layer, and that `Reindex`/`Reuse` layers reference the same KV tensors. Assert that KV memory usage is proportional to the number of `Full` mode layers, not the total number of layers.
 
-### 3. SWA Bounded Replay for Sliding Window Attention
+### 3. SWA Bounded Replay Invariant
 **RULE**:
-Sliding Window Attention (SWA) KV states MUST NOT be persisted to long-term storage (SSD/HBM). Instead, missing SWA KV states MUST be reconstructed by replaying only the most recent $n_{win}$ tokens. The replay window size MUST be fixed and small (e.g., 128 tokens).
-
+Sliding Window Attention (SWA) states MUST NOT be persisted to long-term storage (SSD/HBM). Instead, missing SWA KV states MUST be reconstructed by replaying only the most recent $n_{win}$ tokens from the input sequence.
 **WHY**:
-Persisting SWA KV states leads to high I/O costs and memory fragmentation. Since SWA only attends to the last $n_{win}$ tokens, the KV states for older tokens are never used. By replaying only the recent tokens, we avoid storing the entire SWA KV cache. This reduces persistent KV cache footprint by ~8x.
-
+Persisting SWA states for every token leads to $O(N \cdot n_{win})$ memory usage, which is prohibitive for long contexts. Bounded replay reduces this to $O(n_{win})$ by recomputing the SWA states on-the-fly, trading compute for memory. This is critical for reducing persistent KV cache footprint.
 **WHEN TO APPLY**:
-Any model using Sliding Window Attention (e.g., Mistral, DeepSeek-V3) where the window size is much smaller than the context length.
-
+Any model using Sliding Window Attention where the window size $n_{win}$ is small relative to the total context length $N$.
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-class SWAReplayLayer(nn.Module):
+# Pseudo-code for SWA Bounded Replay
+class SWAWithReplay:
     def __init__(self, window_size):
-        super().__init__()
         self.window_size = window_size
-
-    def forward(self, hidden_states, input_ids, kv_cache):
-        # Get the last window_size tokens
-        recent_tokens = input_ids[-self.window_size:]
         
-        # Replay these tokens to reconstruct KV
-        recent_hidden = self.embedding(recent_tokens)
-        k, v = self.kv_proj(recent_hidden)
-        
-        # Update cache with replayed KV
-        kv_cache.update_swa(k, v)
-        
-        # Perform attention
-        return self.attention(hidden_states, k, v, kv_cache)
+    def forward(self, hidden_states, past_key_values):
+        # If SWA state is missing, replay the last window_size tokens
+        if self.swa_state is None:
+            recent_tokens = hidden_states[-self.window_size:]
+            self.swa_state = self.compute_swa(recent_tokens)
+            
+        # Use SWA state for attention
+        return self.attention(hidden_states, self.swa_state)
 ```
-
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Persisting SWA KV
-def forward(self, hidden_states, kv_cache):
-    k, v = self.kv_proj(hidden_states)
-    # This stores KV for all tokens, even though only last 128 are used
-    kv_cache.update_swa(k, v) 
-    return self.attention(hidden_states, k, v, kv_cache)
+# ANTI-PATTERN: Persisting SWA states
+class SWAPersisted:
+    def forward(self, hidden_states, past_key_values):
+        # Store SWA state for every token
+        self.swa_state = self.compute_swa(hidden_states)
+        past_key_values.store_swa(self.swa_state) # Memory explosion
+        return self.attention(hidden_states, self.swa_state)
 ```
-
 **VERIFICATION METHOD**:
-Assert that the SWA KV cache size is bounded by `window_size * batch_size * num_heads * head_dim`.
-```python
-assert kv_cache.swa_size <= self.window_size * batch_size * num_heads * head_dim
-```
+Assert that `past_key_values` does not contain SWA states for tokens older than $n_{win}$. Verify that SWA states are recomputed on-the-fly when accessed.
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-*Note: No specific commit patches or bug issues were provided in the input data. The following incidents are inferred from the architectural invariants and common failure modes in similar systems (DeepSeek-V3, Mistral).*
+*Note: No specific commit patches or bug issues were provided in the input. The following incidents are inferred from the architectural invariants and common failure modes in similar systems.*
 
-### Incident 1: KV Cache Memory Explosion in Long Context (BUG-KV-01)
-- **Context**: KV Cache Manager, `kv_cache.py`
-- **What Was Expected**: KV cache memory usage should scale linearly with context length, but with a reduced constant factor due to compression.
-- **What Actually Happened**: Memory usage exceeded GPU limits for contexts > 128K tokens, causing OOM errors.
-- **Evidence in Repo**: `config.json` shows `max_position_embeddings: 1048576` and `quantization_config` with `fp8` weights.
-- **Root Cause**: The initial implementation stored KV for all layers and all tokens without compression. The `fp8` quantization was applied to weights but not to KV cache.
+### Incident 1: KV Cache Memory Explosion in Decoder (BUG-KV-01)
+- **Context**: Decoder layers computing independent KV pairs for input context.
+- **What Was Expected**: Decoder to reuse encoder's KV cache, reducing memory usage.
+- **What Actually Happened**: Memory usage grew linearly with input length, causing OOM errors for long contexts.
+- **Evidence in Repo**: `config.json` shows `num_hidden_layers: 40`, but CED architecture implies only 20 decoder layers. If decoder layers computed independent KV, memory would be $2 \times$ higher than expected.
+- **Root Cause**: Decoder layers were not configured to project KV from encoder hidden states.
 - **Remediation Code Diff**:
 ```python
-# - Buggy code: Storing KV in fp16
-kv_cache = torch.zeros(num_layers, max_seq_len, num_heads, head_dim, dtype=torch.float16)
-
-# + Fixed pattern: Storing KV in fp8 with dynamic scaling
-kv_cache = torch.zeros(num_layers, max_seq_len, num_heads, head_dim, dtype=torch.float8_e4m3fn)
-scale = torch.ones(num_layers, max_seq_len, num_heads, dtype=torch.float32)
+# - Buggy code: Decoder computes independent KV
+# + Fixed pattern: Decoder projects KV from encoder
 ```
-- **Lesson**: KV cache must be quantized separately from weights, and dynamic scaling must be used to handle varying magnitudes.
+- **Lesson**: Always verify that decoder layers reuse encoder KV cache in CED architectures.
 
-### Incident 2: Indexer Divergence in Reindex Layers (BUG-INDEX-02)
-- **Context**: CSA2 Indexer, `indexer.py`
-- **What Was Expected**: Reindex layers should produce sparse indices that are consistent with the Full layer's indices.
-- **What Actually Happened**: Reindex layers produced indices that were significantly different from the Full layer, leading to degraded attention quality.
-- **Evidence in Repo**: `config.json` shows `index_n_heads: 32`, `index_head_dim: 128`, `index_topk: 512`.
-- **Root Cause**: The indexer in Reindex layers was not initialized with the same weights as the Full layer, leading to different attention patterns.
+### Incident 2: Dynamic Mode Selection Preventing KV Sharing (BUG-MODE-02)
+- **Context**: CSA2 attention layers dynamically selecting mode per token.
+- **What Was Expected**: Static mode assignment to enable KV sharing.
+- **What Actually Happened**: KV cache could not be shared across layers, leading to memory explosion.
+- **Evidence in Repo**: `config.json` does not explicitly list modes, but CSA2 implies static assignment.
+- **Root Cause**: Mode selection logic was dynamic, preventing pre-allocation of shared KV buffers.
 - **Remediation Code Diff**:
 ```python
-# - Buggy code: Independent indexer weights
-self.indexer = MultiHeadAttention(index_n_heads, index_head_dim)
-
-# + Fixed pattern: Shared indexer weights with Full layer
-self.indexer = shared_indexer  # Reference to Full layer's indexer
+# - Buggy code: Dynamic mode selection
+# + Fixed pattern: Static mode assignment
 ```
-- **Lesson**: Indexer weights must be shared across Full and Reindex layers to ensure consistency in sparse attention patterns.
+- **Lesson**: Static mode assignment is critical for KV sharing in sparse attention.
 
-### Incident 3: Engram Memory Lookup Latency Spike (BUG-ENGRAM-03)
-- **Context**: Engram Retriever, `engram.py`
-- **What Was Expected**: Engram lookup should be O(1) with low latency.
-- **What Actually Happened**: Engram lookup latency spiked to > 10ms for long contexts, causing bottlenecks in the decode phase.
-- **Evidence in Repo**: `config.json` shows `engram_num_embeddings: [384006168, 384016682]`, `engram_vocab_size: 16000000`.
-- **Root Cause**: The engram lookup was implemented as a linear scan over the embedding table, leading to O(N) complexity.
+### Incident 3: SWA State Persistence to SSD (BUG-SWA-03)
+- **Context**: SWA states being persisted to long-term storage.
+- **What Was Expected**: SWA states to be reconstructed via bounded replay.
+- **What Actually Happened**: SSD I/O bottleneck and memory usage grew with context length.
+- **Evidence in Repo**: `config.json` shows `sliding_window: 128`, implying small window size.
+- **Root Cause**: SWA states were not being recomputed on-the-fly.
 - **Remediation Code Diff**:
 ```python
-# - Buggy code: Linear scan
-for i in range(engram_vocab_size):
-    if ngram == engram_table[i]:
-        return engram_table[i]
-
-# + Fixed pattern: Hash-based lookup
-engram_hash = hash(ngram)
-return engram_table[engram_hash]
+# - Buggy code: Persisting SWA states
+# + Fixed pattern: Bounded replay
 ```
-- **Lesson**: Engram lookup must use a hash-based data structure to achieve O(1) complexity.
-
-### Incident 4: SWA Replay Window Misalignment (BUG-SWA-04)
-- **Context**: SWA Replay, `swa_replay.py`
-- **What Was Expected**: SWA replay should reconstruct KV states for the last $n_{win}$ tokens.
-- **What Actually Happened**: SWA replay reconstructed KV states for the wrong tokens, leading to incorrect attention.
-- **Evidence in Repo**: `config.json` shows `sliding_window: 128`.
-- **Root Cause**: The replay window was misaligned with the input token positions, causing off-by-one errors.
-- **Remediation Code Diff**:
-```python
-# - Buggy code: Misaligned window
-recent_tokens = input_ids[-self.window_size - 1:]
-
-# + Fixed pattern: Aligned window
-recent_tokens = input_ids[-self.window_size:]
-```
-- **Lesson**: SWA replay window must be precisely aligned with the input token positions to avoid off-by-one errors.
-
-### Incident 5: MoE Routing Imbalance (BUG-MOE-05)
-- **Context**: MoE Router, `moe_router.py`
-- **What Was Expected**: MoE routing should balance load across experts.
-- **What Actually Happened**: Some experts were overloaded while others were underutilized, leading to inefficient compute.
-- **Evidence in Repo**: `config.json` shows `n_routed_experts: 384`, `num_experts_per_tok: 6`, `topk_method: "noaux_tc"`.
-- **Root Cause**: The `noaux_tc` topk method did not include an auxiliary loss for load balancing, leading to routing imbalance.
-- **Remediation Code Diff**:
-```python
-# - Buggy code: No auxiliary loss
-topk_indices = torch.topk(router_scores, k=6).indices
-
-# + Fixed pattern: Auxiliary loss for load balancing
-topk_indices = torch.topk(router_scores, k=6).indices
-aux_loss = compute_load_balance_loss(router_scores, topk_indices)
-```
-- **Lesson**: MoE routing must include an auxiliary loss for load balancing to prevent expert imbalance.
+- **Lesson**: Bounded replay is essential for reducing persistent KV cache footprint.
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
-1.  **Micro-Syntax & Token-Level Precision**:
-    *   **Type Coercion Pitfall**: `fp8` quantization requires careful handling of scale factors. The scale factor must be stored in `fp32` to avoid precision loss.
-    *   **Falsy 0 Trap**: `rms_norm_eps: 1e-20` is a very small epsilon. Using `0.0` instead of `1e-20` can lead to division by zero in RMSNorm.
-    *   **Deep Immutability**: KV cache tensors must be immutable during the forward pass. Any in-place modification can lead to race conditions in multi-batch inference.
+1. **Micro-Syntax & Token-Level Precision**:
+   *   **FP8/FP4 Quantization**: Ensure that `quantization_config` specifies `weight_block_size: [32, 32]` and `scale_fmt: "ue8m0"`. Incorrect block sizes can lead to precision loss.
+   *   **RMS Norm Epsilon**: `rms_norm_eps: 1e-20` is extremely small. Ensure that numerical stability is maintained to avoid division by zero.
 
-2.  **Infinite Loop & Recursion Guards**:
-    *   **Recursion Depth Cap**: The CSA2 hierarchical indexer must have a maximum depth to prevent infinite recursion in the candidate pool construction.
-    *   **Loop Termination Invariant**: The SWA replay loop must terminate after exactly $n_{win}$ tokens. A `for` loop with a fixed range is preferred over a `while` loop.
+2. **Infinite Loop & Recursion Guards**:
+   *   **Sinkhorn Iterations**: `hc_sinkhorn_iters: 20` is a fixed iteration count. Ensure that the Sinkhorn algorithm converges within this limit to avoid infinite loops.
+   *   **Engram Lookup**: `engram_max_ngram_size: 4` limits the lookup depth. Ensure that n-gram generation does not exceed this limit.
 
-3.  **UI & UX Micro-Mechanics**:
-    *   *Not applicable* (Backend model).
+3. **UI & UX Micro-Mechanics**:
+   *   **N/A**: This is a backend model, not a UI application.
 
-4.  **Backend Concurrency & Memory Safety**:
-    *   **TOCTOU Race Condition**: The KV cache update must be atomic. If multiple threads update the same KV cache entry, a race condition can occur. Use a mutex or atomic operations.
-    *   **Connection Pool Starvation**: The engram lookup must not block the main thread. Use a separate thread pool for engram lookups.
+4. **Backend Concurrency & Memory Safety**:
+   *   **KV Cache Sharing**: Ensure that shared KV buffers are not modified concurrently by multiple layers. Use read-only access for shared KV.
+   *   **Engram Memory**: Ensure that engram lookups are thread-safe to avoid race conditions.
 
-5.  **Defect & Error Prevention ("Galti Pakadna")**:
-    *   **Null/Undefined Chaining**: The indexer output must be checked for null values before being used in the attention mechanism.
-    *   **Off-by-One Boundary Check**: The SWA replay window must be checked to ensure it does not exceed the input sequence length.
-    *   **Error Boundary Containment**: The MoE router must handle cases where the top-k selection fails (e.g., all scores are NaN).
+5. **Defect & Error Prevention ("Galti Pakadna")**:
+   *   **Null/Undefined Chaining**: Ensure that `past_key_values` is not null when accessed by decoder layers.
+   *   **Off-by-One Boundary Checks**: Ensure that `compress_ratios` array length matches `num_hidden_layers`.
 
 ## 5. The 9 Deep Learning Dimensions
 
-1.  **Architecture**: CED split, CSA2 static modes, SWA replay, Engram memory.
-2.  **Core Abstractions**: KV Cache Manager, Indexer, Engram Retriever, MoE Router.
-3.  **Error Handling**: Graceful degradation in MoE routing, error containment in engram lookup.
-4.  **Testing**: Property testing for KV cache consistency, integration tests for CSA2 modes.
-5.  **Security**: Least privilege for engram memory access, sanitization of input tokens.
-6.  **Performance**: FP8 quantization, sparse attention, bounded replay, hash-based engram lookup.
-7.  **Deployment**: Container constraints for GPU memory, reproducible builds for quantization.
-8.  **Agent Patterns**: Tooling interfaces for KV cache management, prompt chains for engram retrieval.
-9.  **Data Flow**: Mutation lifecycles for KV cache, streams for engram lookup, serializers for FP8 tensors.
+1. **Architecture**: CED split, CSA2 static modes, SWA bounded replay.
+2. **Core Abstractions**: `DeepseekV41ForCausalLM`, `quantization_config`, `compress_ratios`.
+3. **Error Handling**: N/A (not provided in input).
+4. **Testing**: N/A (not provided in input).
+5. **Security**: N/A (not provided in input).
+6. **Performance**: 8B params prefill, 16B params decode, 1/8 KV cache footprint.
+7. **Deployment**: FP8/FP4 quantization, MIT license.
+8. **Agent Patterns**: Input-heavy agentic workloads, 1M token context.
+9. **Data Flow**: Encoder hidden states -> KV projection -> Decoder attention.
 
 ## 6. The 8 Learning Extraction Artifacts
 
-1.  **Pattern**: CED split with KV projection from encoder.
-2.  **Rule**: KV cache MUST be projected from encoder, not stored per decoder layer.
-3.  **Architecture Principle**: Decouple encoder and decoder memory to reduce KV cache footprint.
-4.  **Failure Mode**: OOM error due to per-layer KV storage.
-5.  **Reusable Skill**: Implement KV projection in decoder layers.
-6.  **Decision**: Use CED split to reduce memory footprint.
-7.  **Anti-pattern**: Storing KV per decoder layer.
-8.  **Verification Method**: Assert KV cache size is bounded by encoder layers.
+1. **Pattern**: CED KV Projection, CSA2 Static Modes, SWA Bounded Replay.
+2. **Rule**: Decoder KV MUST be projected from encoder; Attention modes MUST be static; SWA states MUST NOT be persisted.
+3. **Architecture Principle**: Decouple prefill and decode phases to optimize memory and compute.
+4. **Failure Mode**: KV cache memory explosion, dynamic mode selection preventing KV sharing, SWA state persistence to SSD.
+5. **Reusable Skill**: Verify CED KV projection, static mode assignment, and SWA bounded replay.
+6. **Decision**: Use CED architecture to reduce active parameters per token.
+7. **Anti-pattern**: Independent KV computation in decoder, dynamic mode selection, persisting SWA states.
+8. **Verification Method**: Assert KV cache sharing, static mode assignment, and SWA bounded replay.
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1.  **Verify CED Split**: Ensure the model is split into 20 encoder and 20 decoder layers.
-2.  **Implement KV Projection**: Project encoder output to decoder KV space.
-3.  **Assign CSA2 Modes**: Assign static modes (Full, Reindex, Reuse) to each attention layer.
-4.  **Implement SWA Replay**: Replay last $n_{win}$ tokens to reconstruct SWA KV states.
-5.  **Implement Engram Lookup**: Use hash-based lookup for engram memory.
-6.  **Quantize KV Cache**: Use FP8 quantization for KV cache with dynamic scaling.
-7.  **Balance MoE Routing**: Include auxiliary loss for load balancing.
-8.  **Test KV Cache Consistency**: Assert KV cache size and consistency.
-9.  **Test CSA2 Modes**: Verify that Reindex and Reuse layers produce consistent indices.
-10. **Test SWA Replay**: Verify that SWA replay reconstructs correct KV states.
+1. **Verify CED Architecture**:
+   *   Check that the model has a distinct encoder and decoder.
+   *   Verify that the decoder's KV cache is projected from the encoder's hidden states.
+2. **Verify CSA2 Static Modes**:
+   *   Check that each attention layer is assigned a static mode (`Full`, `Reindex`, `Reuse`).
+   *   Verify that `Reindex` and `Reuse` layers share KV cache with the nearest `Full` mode layer.
+3. **Verify SWA Bounded Replay**:
+   *   Check that SWA states are not persisted to long-term storage.
+   *   Verify that SWA states are reconstructed by replaying the most recent $n_{win}$ tokens.
+4. **Verify Quantization Config**:
+   *   Check that `quantization_config` specifies FP8 weights and FP4 experts.
+   *   Verify that `weight_block_size` and `scale_fmt` are correctly set.
+5. **Verify Engram Memory**:
+   *   Check that `engram_num_embeddings` is large enough to cover the vocabulary.
+   *   Verify that `engram_max_ngram_size` is set to a reasonable value.

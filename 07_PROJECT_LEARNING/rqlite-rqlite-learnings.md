@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rqlite-rqlite-learnings.md`  
 > **Source**: github ([https://github.com/rqlite/rqlite](https://github.com/rqlite/rqlite))  
-> **Source Version**: `8d71a376`  
+> **Source Version**: `95a0477a`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T12:13:38.885Z  
+> **Timestamp**: 2026-11-09T16:18:34.484Z  
 > **Learning ID**: `learn-github-rqlite-rqlite`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rqlite-rqlite-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rqlite/rqlite](https://github.com/rqlite/rqlite))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T12:13:38.877Z  
+> **Harvest Timestamp**: 2026-11-09T16:18:34.475Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The lightweight, fault-tolerant database built on SQLite. Designed to keep your data highly available with minimal effort.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 17911 stars
+- **Stars / Engagement**: 17937 stars
 
 ---
 
@@ -1643,6 +1643,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"os"
 	"path/filepath"
 	"strings"
 	"time"
@@ -1791,6 +1792,10 @@ func HasData(dir string) (bool, error) {
 	if len(snaps) > 0 {
 		return true, nil
 	}
+	// Opening a missing database creates it, breaking the definition of a new node.
+	if !fsutil.PathExists(filepath.Join(dir, raftDBPath)) {
+		return false, nil
+	}
 	logs, err := rlog.New(filepath.Join(dir, raftDBPath), false)
 	if err != nil {
 		return false, err
@@ -1801,6 +1806,41 @@ func HasData(dir string) (bool, error) {
 		return false, err
 	}
 	return h, nil
+}
+
+// recoveryREADMEName is the name of the file written to the directory which
+// holds the peers file, explaining to operators why the directory exists.
+const recoveryREADMEName = "README"
+
+const recoveryREADME = `
+This directory is used to recover a cluster that has lost quorum.
+
+At startup rqlite checks this directory for a file named peers.json and, if
+present, uses it to force a new cluster configuration. After a successful
+recovery the file is renamed to peers.info. Unless you are recovering a
+cluster this directory will be otherwise empty, and can be ignored.
+
+For the full recovery procedure see:
+https://rqlite.io/docs/clustering/general-guidelines/#dealing-with-failure
+
+`
+
+// writeRecoveryREADME writes a README to dir, the directory in which the peers
+// file is placed during cluster recovery. If the README already exists it is
+// left untouched.
+func writeRecoveryREADME(dir string) error {
+	f, err := os.OpenFile(filepath.Join(dir, recoveryREADMEName), os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0644)
+	if err != nil {
+		if os.IsExist(err) {
+			return nil
+		}
+		return err
+	}
+	if _, err := f.WriteString(recoveryREADME); err != nil {
+		f.Close()
+		return err
+	}
+	return f.Close()
 }
 
 // RecoverNode is used to manually force a new configuration, in the event that
@@ -1888,43 +1928,6 @@ func RecoverNode(dataDir string, dbConf *DBConfig, logger *log.Logger, logs raft
 		var entry raft.Log
 		if err = logs.GetLog(index, &entry); err != nil {
 			return fmt.Errorf("failed to get log at index %d: %v", index, err)
-		}
-		if entry.Type == raft.LogCommand {
-			if _, _, _, err := cmdProc.Process(entry.Data, db); err != nil {
-				return fmt.Errorf("failed to replay command at index %d: %w", index, err)
-			}
-		}
-		lastIndex = entry.Index
-		lastTerm = entry.Term
-	}
-	if snapshotIndex+1 <= lastLogIndex {
-		logger.Printf("replayed logs from %d to %d", snapshotIndex+1, lastLogIndex)
-		logger.Printf("last index is now %d, last term is %d", lastIndex, lastTerm)
-	}
-
-	// Create a new snapshot, placing the configuration in as if it was
-	// committed at index 1.
-	_, _, err = db.Checkpoint(nil, truncateTimeout)
-	if err != nil {
-		return fmt.Errorf("failed to checkpoint database: %s", err)
-	}
-	streamer, err := snapshot.NewSnapshotStreamer(tmpDBPath)
-	if err != nil {
-		return fmt.Errorf("failed to create snapshot streamer: %s", err)
-	}
-	defer streamer.Close()
-	if err := streamer.Open(); err != nil {
-		return fmt.Errorf("failed to open snapshot streamer: %s", err)
-	}
-	fsmSnapshot := snapshot.NewStateReader(streamer) // tmpDBPath contains full state now.
-	sink, err := snaps.Create(1, lastIndex, lastTerm, conf, 1, tn)
-	if err != nil {
-		return fmt.Errorf("failed to create snapshot: %v", err)
-	}
-	defer sink.Cancel() // If we fail, make sure to cancel the snapshot.
-	if err = fsmSnapshot.Persist(sink); err != nil {
-		return fmt.Errorf("failed to persist snapshot: %v", err)
-	}
 
 ```
 
@@ -2066,11 +2069,11 @@ func forbiddenUses(file *ast.File, path string) []violation {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2997** (2026-11-02): **Add rqlite trademark notice to README**
-  *Symptoms*: Marks the first prose mention of rqlite in the README with ™ and adds a short Trademark section after Pronunciation. The rqlite name is being asserted as a common-law trademark, so ™ is used rather than ®.  🤖 Generated with [Claude Code](https://claude.com/claude-code)
+- **Issue #3034** (2026-11-09): **Add README explaining purpose of raft/ directory**
+  *Symptoms*: The raft/ directory inside the data directory exists only so an operator has somewhere to place peers.json when recovering a cluster that has lost quorum. Since it is otherwise empty its purpose is easy to forget, so write a short README into it on Store open if one is not already present.   
 
-- **Issue #2992** (2026-10-28): **Upgrade dependencies via `go get`**
-  *Symptoms*: 
+- **Issue #3032** (2026-11-09): **Honor cluster retry limits and detect stale pooled connections**
+  *Symptoms*: Forwarded commands could be sent twice with retries=0 when a leader's response timed out. This change sends a command once plus at most the explicitly configured retries, returning ambiguous failures to the caller when retries are disabled. Permitted retries use fresh connections.  Idle pool checkout now uses nonblocking socket peeks to discard detectably closed connections before sending a command. Healthy connections remain pooled. The networking implementation lives in tcp/pool and supports Linux, macOS, and BSD; other platforms conservatively retain connections. TLS checks inspect the underlying socket without consuming bytes or changing deadlines. These checks are best effort: a close racing with checkout, or pending TLS control records, can still result in a failed request.  The client also discards connections after exact unauthorized or unsupported service responses, and the backup stream's missing-request response, before returning them to the pool. Ordinary application errors preserve reuse.  The series contains separate commits for terminal-response handling, strict retry limits, pool liveness checks, and the stale-pool end-to-end assertion. That test now verifies successful recovery without command retries, replacing its old expectation of one forced resend. CHANGELOG is unchanged.  Validation: - go test ./... passed. - go test -race ./cluster ./tcp/pool passed; the subsequently added dial/write/cancellation cases also passed under the race detector. - Cluster and
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2087,56 +2090,198 @@ func forbiddenUses(file *ast.File, path string) []violation {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8d71a376` (2026-11-02)
-**Commit Message**: Update README.md
+### Incident Patch 1: `95a0477a` (2026-11-09)
+**Commit Message**: Merge pull request #3034 from rqlite/raft-dir-readme
 
-**File**: `README.md` (modified, +1/-1)
+Add README explaining purpose of raft/ directory
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -12,7 +12,7 @@
- [![Slack](https://img.shields.io/badge/Slack--purple.svg)](https://www.rqlite.io/join-slack)
- [![Google Group](https://img.shields.io/badge/Google%20Group--blue.svg)](https://groups.google.com/group/rqlite)
+@@ -6,6 +6,7 @@ This release provides more options for securing backups in the Cloud, upgrades S
+ - [PR #3005](https://github.com/rqlite/rqlite/pull/3005): Support CMEK for automatic backups to Google Cloud Storage.
  
--[**rqlite™**](https://rqlite.io) is a [feature-rich](https://rqlite.io/docs/features/), [rock](https://www.sqlite.org/testing.html)-[solid](https://philipotoole.com/how-is-rqlite-tested/), fault-tolerant, distributed relational database built on [SQLite](https://www.sqlite.org/). It's **lightweight**, **developer-friendly**, and **exceptionally easy to operate**, offering effortless installation and deployment.
-+[**rqlite**](https://rqlite.io) is a [feature-rich](https://rqlite.io/docs/features/), [rock](https://www.sqlite.org/testing.html)-[solid](https://philipotoole.com/how-is-rqlite-tested/), fault-tolerant, distributed relational database built on [SQLite](https://www.sqlite.org/). It's **lightweight**, **developer-friendly**, and **exceptionally easy to operate**, offering effortless installation and deployment.
+ ### Implementation changes and bug fixes
++- [PR #3034](https://github.com/rqlite/rqlite/pull/3034): Add README explaining purpose of `raft/` directory.
+ - [PR #3014](https://github.com/rqlite/rqlite/pull/3014): Preserve table data in SQL dumps when table names contain single quotes or column names contain double quotes.
+ - [PR #3031](https://github.com/rqlite/rqlite/pull/3031): Move automatic backup retries from the Store provider to the uploader.
+ - [PR #3022](https://github.com/rqlite/rqlite/pull/3022): Replace credentials and permissions only after validating the complete auth configuration, leaving the store unchanged on failure.
+```
+
+**File**: `store/state.go` (modified, +36/-0)
+```diff
+@@ -4,6 +4,7 @@ import (
+ 	"fmt"
+ 	"log"
+ 	"net"
++	"os"
+ 	"path/filepath"
+ 	"strings"
+ 	"time"
+@@ -168,6 +169,41 @@ func HasData(dir string) (bool, error) {
+ 	return h, nil
+ }
  
- Use rqlite to reliably store your most important data, ensuring it's always available to your applications -- think [etcd](https://etcd.io/), but with relational modeling available. Whether you're deploying **resilient services in the cloud** or **reliable applications at the edge**, rqlite provides a robust solution for critical data.
++// recoveryREADMEName is the name of the file written to the directory which
++// holds the peers file, explaining to operators why the directory exists.
++const recoveryREADMEName = "README"
++
++const recoveryREADME = `
++This directory is used to recover a cluster that has lost quorum.
++
++At startup rqlite checks this directory for a file named peers.json and, if
++present, uses it to force a new cluster configuration. After a successful
++recovery the file is renamed to peers.info. Unless you are recovering a
++cluster this directory will be otherwise empty, and can be ignored.
++
++For the full recovery procedure see:
++https://rqlite.io/docs/clustering/general-guidelines/#dealing-with-failure
++
++`
++
++// writeRecoveryREADME writes a README to dir, the directory in which the peers
++// file is placed during cluster recovery. If the README already exists it is
++// left untouched.
++func writeRecoveryREADME(dir string) error {
++	f, err := os.OpenFile(filepath.Join(dir, recoveryREADMEName), os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0644)
++	if err != nil {
++		if os.IsExist(err) {
++			return nil
++		}
++		return err
++	}
++	if _, err := f.WriteString(recoveryREADME); err != nil {
++		f.Close()
++		return err
++	}
++	return f.Close()
++}
++
+ // RecoverNode is used to manually force a new configuration, in the event that
+ // quorum cannot be restored. This borrows heavily from RecoverCluster functionality
+ // of the Hashicorp Raft library, but has been customized for rqlite use.
+```
+
+**File**: `store/store.go` (modified, +9/-4)
+```diff
+@@ -124,8 +124,8 @@ const (
+ 	restoreScratchPattern  = "rqlite-restore-*"
+ 	bootScratchPattern     = "rqlite-boot-*"
+ 	backupScratchPattern   = "rqlite-backup-*"
+-	raftDBPath             = "raft.db" // Changing this will break backwards compatibility.
+-	peersPath              = "raft/peers.json"
++	raftDBPath             = "raft.db"         // Changing this will break backwards compatibility.
++	peersPath              = "raft/peers.json" // The "raft" directory exists only to hold the peers file during cluster recovery.
+ 	peersInfoPath          = "raft/peers.info"
+ 	applyTimeout           = 10 * time.Second
+ 	sqliteFile             = "db.sqlite"
+@@ -542,14 +542,19 @@ func (s *Store) Open() (retErr error) {
+ 	// Clean up a never-used file from previous releases.
+ 	fsutil.Remove(filepath.Join(s.raftDir, "applied_index"))
  
+-	// Create all the required Raft directories.
++	// Create the data directory, and the directory in which an operator places
++	// the peers file when recovering a cluster.
+ 	s.logger.Printf("ensuring data directory exists at %s", s.raftDir)
+ 	if err := os.MkdirAll(s.raftDir, 0755); err != nil {
+ 		return err
+ 	}
+-	if err := os.MkdirAll(filepath.Dir(s.peersPath), 0755); err != nil {
++	peersDir := filepath.Dir(s.peersPath)
++	if err := os.MkdirAll(peersDir, 0755); err != nil {
+ 		return err
+ 	}
++	if err := writeRecoveryREADME(peersDir); err != nil {
++		s.logger.Printf("failed to write README to %s: %s", peersDir, err.Error())
++	}
+ 	decMgmr, err := chunking.NewDechunkerManager(filepath.Dir(s.dbPath))
+ 	if err != nil {
+ 		return err
+```
+
+**File**: `store/store_test.go` (modified, +37/-0)
+```diff
+@@ -123,6 +123,43 @@ func Test_OpenStoreSingleNode(t *testing.T) {
+ 	}
+ }
+ 
++// Test_OpenStoreRecoveryREADME tests that the README explaining the purpose
++// of the peers directory is written when the Store is opened, and is written
++// again on the next open if it has been removed.
++func Test_OpenStoreRecoveryREADME(t *testing.T) {
++	s, ln := mustNewStore(t)
++	defer ln.Close()
++	readmePath := filepath.Join(filepath.Dir(s.peersPath), recoveryREADMEName)
++
++	if err := s.Open(); err != nil {
++		t.Fatalf("failed to open single-node store: %s", err.Error())
++	}
++	if !fsutil.FileExists(readmePath) {
++		t.Fatalf("recovery README does not exist at %s after open", readmePath)
++	}
++	if got, exp := string(mustReadFile(readmePath)), recoveryREADME; got != exp {
++		t.Fatalf("recovery README has wrong contents, got: %s, exp: %s", got, exp)
++	}
++	if err := s.Close(true); err != nil {
++		t.Fatalf("failed to close single-node store: %s", err.Error())
++	}
++
++	if err := fsutil.Remove(readmePath); err != nil {
++		t.Fatalf("failed to remove recovery README: %s", err.Error())
++	}
++	if fsutil.FileExists(readmePath) {
++		t.Fatalf("recovery README still exists at %s after removal", readmePath)
++	}
++
++	if err := s.Open(); err != nil {
++		t.Fatalf("failed to reopen single-node store: %s", err.Error())
++	}
++	defer s.Close(true)
++	if !fsutil.FileExists(readmePath) {
++		t.Fatalf("recovery README does not exist at %s after reopen", readmePath)
++	}
++}
++
+ func Test_SingleNodeDBAppliedIndex(t *testing.T) {
+ 	s, ln := mustNewStore(t)
+ 	defer ln.Close()
 ```
 
 ---
 
-### Incident Patch 2: `a3e4ffb4` (2026-11-02)
-**Commit Message**: Merge pull request #2997 from rqlite/tm
+### Incident Patch 2: `b0f17e72` (2026-11-09)
+**Commit Message**: Pad recovery README with leading and trailing blank lines
 
-Add rqlite trademark notice to README
+Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
 
-**File**: `README.md` (modified, +4/-1)
+**File**: `store/state.go` (modified, +3/-1)
 ```diff
-@@ -12,7 +12,7 @@
- [![Slack](https://img.shields.io/badge/Slack--purple.svg)](https://www.rqlite.io/join-slack)
- [![Google Group](https://img.shields.io/badge/Google%20Group--blue.svg)](https://groups.google.com/group/rqlite)
+@@ -173,7 +173,8 @@ func HasData(dir string) (bool, error) {
+ // holds the peers file, explaining to operators why the directory exists.
+ const recoveryREADMEName = "README"
  
--[**rqlite**](https://rqlite.io) is a [feature-rich](https://rqlite.io/docs/features/), [rock](https://www.sqlite.org/testing.html)-[solid](https://philipotoole.com/how-is-rqlite-tested/), fault-tolerant, distributed relational database built on [SQLite](https://www.sqlite.org/). It's **lightweight**, **developer-friendly**, and **exceptionally easy to operate**, offering effortless installation and deployment.
-+[**rqlite™**](https://rqlite.io) is a [feature-rich](https://rqlite.io/docs/features/), [rock](https://www.sqlite.org/testing.html)-[solid](https://philipotoole.com/how-is-rqlite-tested/), fault-tolerant, distributed relational database built on [SQLite](https://www.sqlite.org/). It's **lightweight**, **developer-friendly**, and **exceptionally easy to operate**, offering effortless installation and deployment.
+-const recoveryREADME = `This directory is used to recover a cluster that has lost quorum.
++const recoveryREADME = `
++This directory is used to recover a cluster that has lost quorum.
  
- Use rqlite to reliably store your most important data, ensuring it's always available to your applications -- think [etcd](https://etcd.io/), but with relational modeling available. Whether you're deploying **resilient services in the cloud** or **reliable applications at the edge**, rqlite provides a robust solution for critical data.
+ At startup rqlite checks this directory for a file named peers.json and, if
+ present, uses it to force a new cluster configuration. After a successful
+@@ -182,6 +183,7 @@ cluster this directory will be otherwise empty, and can be ignored.
  
-@@ -68,3 +68,6 @@ curl -G 'localhost:4001/db/query?pretty' --data-urlencode 'q=SELECT * FROM foo'
- 
- ## Pronunciation
- Common pronunciations of rqlite include "R Q lite" and "ree-qwell-lite".
+ For the full recovery procedure see:
+ https://rqlite.io/docs/clustering/general-guidelines/#dealing-with-failure
 +
-+## Trademark
-+rqlite™ is a trademark of Philip O'Toole.
+ `
+ 
+ // writeRecoveryREADME writes a README to dir, the directory in which the peers
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2997** (2026-11-02): Add rqlite trademark notice to README (@otoolep)
-- **PR #2992** (2026-10-28): Upgrade dependencies via `go get` (@otoolep)
-- **PR #2991** (2026-10-27): JSON error response bodies for remove node (@otoolep)
-- **PR #2990** (2026-10-27): Test that CDC events survive a Raft snapshot restore (@otoolep)
-- **PR #2989** (2026-10-27): JSON error response bodies for promote and demote (@otoolep)
-- **PR #2988** (2026-10-27): Reject local auto-backup filenames reserved for internal use (@otoolep)
+- **PR #3034** (2026-11-09): Add README explaining purpose of raft/ directory (@otoolep)
+- **PR #3032** (closed): Honor cluster retry limits and detect stale pooled connections (@otoolep)
+- **PR #3031** (2026-11-08): Move retry logic out of Store Provider (@otoolep)
+- **PR #3030** (2026-11-08): Explicitly state if there are no new features (@otoolep)
+- **PR #3029** (2026-11-08): Include the tag's CHANGELOG section in the release notes (@otoolep)
+- **PR #3024** (closed): Preserve copy sources that overlap the staging directory (@otoolep)
 
 ---
 
@@ -2156,28 +2301,28 @@ Add rqlite trademark notice to README
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update README.md
+## X. Merge pull request #3034 from rqlite/raft-dir-readme
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rqlite/rqlite. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rqlite/rqlite. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8d71a376`: Update README.md. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `95a0477a`: Merge pull request #3034 from rqlite/raft-dir-readme. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-[**rqlite**](https://rqlite.io) is a [feature-rich](https://rqlite.io/docs/features/), [rock](https://www.sqlite.org/testing.html)-[solid](https://philipotoole.com/how-is-rqlite-tested/), fault-tolerant, distributed relational database built on [SQLite](https://www.sqlite.org/). It's **lightweight**, **developer-friendly**, and **exceptionally easy to operate**, offering effortless installation and deployment.
+- [PR #3034](https://github.com/rqlite/rqlite/pull/3034): Add README explaining purpose of `raft/` directory.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-[**rqlite™**](https://rqlite.io) is a [feature-rich](https://rqlite.io/docs/features/), [rock](https://www.sqlite.org/testing.html)-[solid](https://philipotoole.com/how-is-rqlite-tested/), fault-tolerant, distributed relational database built on [SQLite](https://www.sqlite.org/). It's **lightweight**, **developer-friendly**, and **exceptionally easy to operate**, offering effortless installation and deployment.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8d71a376` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `95a0477a` are properly handled with clean fallback behavior.

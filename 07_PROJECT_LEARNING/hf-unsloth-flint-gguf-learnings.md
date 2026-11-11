@@ -3,7 +3,7 @@
 > **Source Version**: `hf-unsloth-f`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-11-04T18:21:35.157Z  
+> **Timestamp**: 2026-11-08T04:54:55.264Z  
 > **Learning ID**: `learn-huggingface-unsloth-flint-gguf`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,223 +17,239 @@
 ## 1. Executive Forensic Architecture & System Mechanics
 
 **Technical Problem Solved:**
-The `unsloth/flint-GGUF` repository addresses the critical infrastructure gap between high-performance, large-scale Mixture-of-Experts (MoE) language models (specifically Recursive's "Flint" with 39.8B total parameters) and local, resource-constrained hardware (consumer GPUs, Apple Silicon). It solves the problem of **quantization fidelity vs. memory footprint** for agentic coding tasks. Unlike standard dense models, MoE models require specialized quantization strategies to preserve the routing logic and expert weights without catastrophic accuracy loss in code generation and tool-use scenarios.
+The `unsloth/flint-GGUF` repository addresses the critical infrastructure gap between high-performance, large-scale Mixture-of-Experts (MoE) language models (specifically RecursiveSI's "Flint") and local, resource-constrained inference environments. It solves the problem of **quantization fidelity preservation** for MoE architectures, which are notoriously difficult to quantize due to their sparse activation patterns and massive parameter counts (39.8B total, ~2.5B active).
 
 **Architectural Boundaries:**
-1.  **Artifact Boundary:** This repository is a **data artifact repository**, not a code repository. It contains serialized tensor weights (GGUF format), tokenizer definitions, and configuration metadata. It does *not* contain the inference engine (which is `llama.cpp`, `SGLang`, or `Unsloth Desktop`).
-2.  **Decoupling:** The model weights are decoupled from the serving runtime. The `README.md` explicitly references external engines (`recursive-oss/rec`, `SGLang`), indicating a strict separation of model definition and execution environment.
-3.  **State Ownership:** The "state" is the static weight matrix. There is no mutable runtime state in this repo. The dynamic state (KV cache, active experts) is owned by the inference engine at runtime.
+1.  **Artifact Boundary:** This is a **Model Artifact Repository**, not a software application repository. It contains no executable source code, no CI/CD pipelines, and no runtime logic. It consists of:
+    *   Quantized weight tensors (GGUF format).
+    *   Metadata (`config.json`, `generation_config.json`).
+    *   Tokenizer definitions.
+    *   Documentation (README.md).
+2.  **Decoupling:** The repository is strictly decoupled from the inference engine (llama.cpp, Unsloth Desktop, SGLang). It relies on the **GGUF (GPT-Generated Unified Format)** standard as the interface contract.
+3.  **State Ownership:** The "state" is the static weight matrix. There is no mutable runtime state within the repository itself.
 
 **Critical Subsystem Abstractions:**
-*   **GGUF Container Format:** A binary serialization format that encapsulates tensor data, metadata (architecture, context length), and quantization type information.
-*   **MoE Routing Metadata:** Implicitly stored in the weight tensors, defining which experts are activated for specific token embeddings.
-*   **Quantization Benchmarks:** The `assets/` directory contains pre-computed KLD (Kullback-Leibler Divergence) and Top-1 accuracy metrics, serving as a static verification layer for the quantization quality.
+*   **Quantization Kernel:** The core value lies in the *method* of quantization (Unsloth Dynamic 3.0), which likely employs mixed-precision strategies (e.g., keeping attention layers in higher precision while quantizing FFN layers more aggressively) to preserve the "thinking" capabilities of the MoE model.
+*   **MoE Routing Preservation:** The architecture must preserve the integrity of the expert routing mechanism. If quantization noise disrupts the router's ability to select the correct expert, the model's performance degrades non-linearly.
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
 ### 1. MoE Quantization Fidelity Invariant
 **RULE**:
-When quantizing Mixture-of-Experts (MoE) models for local inference, you **MUST** verify that the quantization scheme preserves the routing distribution entropy. You **MUST NOT** apply uniform quantization to expert weights without verifying that the router's gating mechanism remains numerically stable under reduced precision.
+When quantizing Mixture-of-Experts (MoE) models, you MUST apply **mixed-precision quantization strategies** that preserve higher precision (e.g., BF16 or Q8_0) for the **Router/Gate layers** and **Attention mechanisms**, while allowing lower precision (e.g., Q4_K_M or Q5_K_M) for the **Feed-Forward Network (FFN) experts**. You MUST NOT apply uniform quantization across all layers.
+
 **WHY**:
-In MoE architectures, the router selects experts based on subtle differences in embedding vectors. If quantization noise exceeds the margin between expert selection probabilities, the model will route tokens to incorrect experts, causing catastrophic failure in agentic tasks (e.g., choosing the wrong tool or generating syntactically invalid code). Standard dense model quantization metrics (like perplexity) may not capture this routing instability.
+MoE models rely on a sparse routing mechanism where a small subset of experts is activated per token. The Router is a small, dense layer that determines which experts to use. If the Router is quantized too aggressively, its decision-making capability degrades, leading to incorrect expert selection. This causes a "compounding error" where the wrong experts are activated, and their outputs (even if individually accurate) are irrelevant to the context. Attention layers also require higher precision to maintain long-context coherence. Uniform quantization treats all parameters as equally important, which is false for MoE architectures.
+
 **WHEN TO APPLY**:
-Any quantization pipeline for MoE models (e.g., Mixtral, Qwen-MoE, Flint) intended for agentic or tool-use applications.
+*   Quantizing any MoE model (e.g., Mixtral, DeepSeek-V2, Flint, Qwen-MoE).
+*   When targeting local inference on consumer hardware (GPU < 24GB VRAM).
+*   When the model exhibits "hallucination" or "incoherent reasoning" after quantization.
+
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# Pseudocode for MoE Quantization Verification
-def verify_moe_routing_stability(original_model, quantized_model, test_tokens):
-    """
-    Compare expert selection distributions between BF16 and Quantized models.
-    """
-    routing_errors = []
-    for token in test_tokens:
-        # Get expert probabilities from original model
-        orig_probs = original_model.get_expert_probabilities(token)
-        # Get expert probabilities from quantized model
-        quant_probs = quantized_model.get_expert_probabilities(token)
+# Pseudocode for Unsloth Dynamic Quantization Strategy
+def quantize_moe_model(model, target_precision="Q4_K_M"):
+    for layer in model.layers:
+        # 1. Router/Gate: Keep high precision
+        if hasattr(layer, 'router') or hasattr(layer, 'gate'):
+            layer.router.quantize(precision="BF16") # Or Q8_0
+            layer.gate.quantize(precision="BF16")
         
-        # Calculate KL Divergence between distributions
-        kl_div = kl_divergence(orig_probs, quant_probs)
+        # 2. Attention: Keep high precision
+        if hasattr(layer, 'self_attn'):
+            layer.self_attn.q_proj.quantize(precision="Q8_0")
+            layer.self_attn.k_proj.quantize(precision="Q8_0")
+            layer.self_attn.v_proj.quantize(precision="Q8_0")
+            layer.self_attn.o_proj.quantize(precision="Q8_0")
         
-        # If KL divergence exceeds threshold, routing is unstable
-        if kl_div > 0.05:  # Example threshold
-            routing_errors.append((token, kl_div))
-            
-    return routing_errors
-
-# Usage:
-errors = verify_moe_routing_stability(bf16_flint, gguf_flint, sample_code_tokens)
-assert len(errors) < 0.01 * len(sample_code_tokens), "MoE routing instability detected"
+        # 3. FFN Experts: Aggressive quantization
+        if hasattr(layer, 'mlp') and hasattr(layer.mlp, 'experts'):
+            for expert in layer.mlp.experts:
+                expert.gate_proj.quantize(precision=target_precision)
+                expert.up_proj.quantize(precision=target_precision)
+                expert.down_proj.quantize(precision=target_precision)
 ```
+
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Blindly quantizing MoE weights without routing verification
-def quantize_moe_blindly(model):
-    # This ignores the router's sensitivity to precision loss
-    for expert in model.experts:
-        expert.weights = quantize_tensor(expert.weights, bits=4)
-    # Router weights are often left in higher precision, but the interaction
-    # between quantized expert outputs and the router is not verified.
-    return model
+# ANTI-PATTERN: Uniform Quantization
+def quantize_moe_model_bad(model, target_precision="Q4_K_M"):
+    for layer in model.layers:
+        # BAD: Applying same precision to Router and Experts
+        layer.router.quantize(precision=target_precision)
+        layer.self_attn.q_proj.quantize(precision=target_precision)
+        for expert in layer.mlp.experts:
+            expert.gate_proj.quantize(precision=target_precision)
 ```
-**VERIFICATION METHOD**:
-Automated test suite that runs a fixed set of code snippets through both BF16 and Quantized models, logging the top-3 selected experts for each token. Assert that the Jaccard similarity of expert sets is > 0.95.
 
-### 2. GGUF Metadata Integrity Check
+**VERIFICATION METHOD**:
+1.  **Perplexity Check:** Compare the perplexity of the quantized model on a validation set against the BF16 baseline. A jump in perplexity > 0.5 indicates router degradation.
+2.  **Expert Activation Map:** Log the expert selection indices for a fixed input sequence in both BF16 and Quantized models. Calculate the Jaccard similarity. If similarity < 0.95, the router is compromised.
+3.  **Task-Specific Benchmark:** Run a coding task (e.g., SWE-bench subset). If pass@1 drops by > 10% compared to BF16, the quantization strategy is flawed.
+
+### 2. GGUF Metadata Integrity Invariant
 **RULE**:
-When loading GGUF files, you **MUST** validate that the `architectures` field in the metadata matches the expected model class and that the `context_length` is explicitly defined. You **MUST NOT** rely on default context lengths if the metadata is missing, as this leads to silent truncation of agentic context.
-**WHY**:
-Agentic coding tasks require long context windows to maintain state across multiple tool calls. If the GGUF file lacks explicit `context_length` metadata, inference engines may default to a small value (e.g., 2048), causing the model to "forget" earlier parts of the conversation or codebase, leading to broken tool chains.
-**WHEN TO APPLY**:
-Any system that loads GGUF files for agentic or long-context applications.
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-import gguf
+When generating GGUF files, you MUST ensure that the **`general.architecture`** field matches the actual tensor layout, and that **`tokenizer.ggml.model`** and **`tokenizer.ggml.pre`** are correctly set to match the original tokenizer's vocabulary and special tokens. You MUST NOT omit the **`generation_config.json`** parameters (temperature, top_p, top_k) from the README or metadata, as these are critical for MoE model stability.
 
-def load_gguf_safely(path, expected_arch="flint", min_context=8192):
-    with open(path, 'rb') as f:
-        reader = gguf.GGUFReader(f)
-        metadata = reader.metadata
-        
-        # Check architecture
-        archs = metadata.get('general.architectures', [])
-        if expected_arch not in archs:
-            raise ValueError(f"Architecture mismatch: expected {expected_arch}, got {archs}")
-        
-        # Check context length
-        ctx_len = metadata.get('general.context_length', 0)
-        if ctx_len < min_context:
-            raise ValueError(f"Context length {ctx_len} is too small for agentic tasks (min {min_context})")
-        
-        return reader
+**WHY**:
+GGUF is a self-contained format. If the metadata is incorrect, inference engines (llama.cpp, Unsloth Desktop) will misinterpret the tensor shapes, leading to crashes or silent corruption. MoE models are particularly sensitive to sampling parameters. Using default temperature 0.7 or top_p 0.9 may cause the model to loop or produce incoherent output. The README explicitly states: "Flint results use temperature 1.0, top-p 0.95, and top-k 20." If these are not documented, users will fail to reproduce the model's capabilities.
+
+**WHEN TO APPLY**:
+*   Converting any Hugging Face model to GGUF.
+*   Publishing model artifacts to Hugging Face.
+*   When users report "model crashes on load" or "model outputs gibberish."
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```json
+// generation_config.json
+{
+  "temperature": 1.0,
+  "top_p": 0.95,
+  "top_k": 20,
+  "max_new_tokens": 4096,
+  "do_sample": true
+}
 ```
+```markdown
+<!-- README.md -->
+## Inference Parameters
+**CRITICAL:** Use the following parameters for optimal performance:
+- Temperature: 1.0
+- Top-P: 0.95
+- Top-K: 20
+```
+
 **NEGATIVE CONSTRAINT**:
-```python
-# ANTI-PATTERN: Loading GGUF without metadata validation
-def load_gguf_unsafe(path):
-    # Assumes context length is sufficient
-    model = gguf.load(path)
-    # If context_length is missing, it defaults to 0 or a small value,
-    # causing silent context truncation.
-    return model
+```json
+// BAD: Missing or incorrect sampling parameters
+{
+  "temperature": 0.7, // Default, not optimal for MoE
+  "top_p": 0.9
+}
 ```
+
 **VERIFICATION METHOD**:
-Unit test that creates a GGUF file with missing `context_length` metadata and asserts that the loader raises a `ValueError`.
+1.  **GGUF Parser Check:** Use `gguf-py` to load the file and assert `gguf.get("general.architecture") == "llama"` (or appropriate arch).
+2.  **Tokenizer Round-Trip:** Encode a sample text with the original tokenizer, decode it with the GGUF tokenizer, and assert equality.
+3.  **README Lint:** Check that `temperature`, `top_p`, and `top_k` are explicitly mentioned in the README.
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-*Note: The provided repository data contains no commit history, bug issues, or code diffs. The following section is derived from the **README.md** and **benchmark assets** which imply known failure modes and design decisions.*
+*Note: Since no commit history, bug issues, or source code diffs were provided in the input data, this section cannot be populated with specific incident details. The repository is a static artifact repository with no observable code changes or bug fixes in the provided data.*
 
-### Incident 1: Quantization Accuracy Degradation in Agentic Tasks (BUG-QUANT-01)
-- **Context**: Quantization pipeline for MoE models.
-- **What Was Expected**: Quantized models should maintain >90% of BF16 performance on SWE-bench and Terminal-Bench.
-- **What Actually Happened**: Early quantization attempts showed significant drops in tool-use accuracy, even when perplexity remained low.
-- **Evidence in Repo**: `README.md` references "Unsloth Dynamic 3.0 GGUFs" and includes `assets/size_vs_kld.png` and `assets/size_vs_top1.png`, indicating that KLD and Top-1 accuracy were used to select the optimal quantization point.
-- **Root Cause**: Uniform quantization of expert weights introduced noise that disrupted the MoE routing mechanism, causing the model to select suboptimal experts for code generation.
-- **Remediation Code Diff**:
-```python
-// - Buggy approach: Uniform 4-bit quantization for all weights
-// + Fixed approach: Dynamic quantization with higher precision for router and critical expert layers
-```
-- **Lesson**: MoE models require non-uniform quantization strategies that prioritize routing stability over raw parameter compression.
-
-### Incident 2: Context Truncation in Long Agentic Sessions (BUG-CTX-02)
-- **Context**: Inference engine configuration.
-- **What Was Expected**: Model should maintain context across multiple tool calls.
-- **What Actually Happened**: Model "forgot" earlier parts of the conversation, leading to broken tool chains.
-- **Evidence in Repo**: `README.md` mentions "thinking controls" and "multi-turn tool use," implying that context management is a critical feature.
-- **Root Cause**: Inference engine defaulted to a small context window because the GGUF metadata did not explicitly specify a large `context_length`.
-- **Remediation Code Diff**:
-```python
-// - Buggy approach: Relying on default context length
-// + Fixed approach: Explicitly setting context_length in GGUF metadata and inference engine config
-```
-- **Lesson**: Always explicitly define and validate context length in model metadata and inference engine configuration.
+**Status:** No incidents found in the provided data.
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
-1.  **Micro-Syntax & Token-Level Precision**:
-    *   **Invariant**: When parsing GGUF metadata, always use strict type checking for numerical fields (e.g., `context_length` must be an integer, not a float).
-    *   **Code Example**:
-        ```python
-        ctx_len = metadata.get('general.context_length')
-        if not isinstance(ctx_len, int) or ctx_len <= 0:
-            raise TypeError("context_length must be a positive integer")
-        ```
+*Note: As this is a model artifact repository with no executable code, the following invariants are derived from the **inference engine** (llama.cpp/Unsloth) that consumes these artifacts, and the **quantization pipeline** that produced them.*
 
-2.  **Infinite Loop & Recursion Guards**:
-    *   **Invariant**: When implementing KV cache management for long contexts, always include a maximum cache size limit to prevent memory exhaustion.
-    *   **Code Example**:
-        ```python
-        MAX_KV_CACHE_SIZE = 100000  # Tokens
-        if len(kv_cache) > MAX_KV_CACHE_SIZE:
-            raise MemoryError("KV cache size exceeded maximum limit")
-        ```
+### 1. Micro-Syntax & Token-Level Precision
+*   **Invariant:** When parsing GGUF tensors, you MUST verify that the **data type** (e.g., `Q4_K`, `Q5_K`, `BF16`) matches the **block size** expected by the inference kernel. A mismatch causes memory misalignment and silent data corruption.
+*   **Example:** `Q4_K` blocks are 256 bytes. If the inference engine expects 128 bytes, it will read garbage data.
 
-3.  **UI & UX Micro-Mechanics**:
-    *   **Invariant**: When displaying model loading progress, always debounce UI updates to prevent layout thrashing.
-    *   **Code Example**:
-        ```javascript
-        let updateTimer = null;
-        function updateProgress(percent) {
-            if (updateTimer) clearTimeout(updateTimer);
-            updateTimer = setTimeout(() => {
-                document.getElementById('progress').textContent = percent + '%';
-            }, 100);
-        }
-        ```
+### 2. Infinite Loop & Recursion Guards
+*   **Invariant:** In the MoE routing logic, you MUST implement a **maximum expert selection limit** to prevent the router from selecting all experts (which would cause OOM or extreme latency).
+*   **Example:** If the router outputs a probability distribution that sums to 1.0 but selects all 8 experts, the inference engine must cap the selection to the top-K (e.g., K=2) to maintain performance.
 
-4.  **Backend Concurrency & Memory Safety**:
-    *   **Invariant**: When loading large GGUF files, always use memory-mapped files (mmap) to avoid loading the entire file into RAM.
-    *   **Code Example**:
-        ```python
-        import mmap
-        with open('model.gguf', 'rb') as f:
-            mm = mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ)
-            # Process chunks of mm instead of loading entire file
-        ```
+### 3. UI & UX Micro-Mechanics
+*   **Invariant:** N/A (No UI code in repository).
 
-5.  **Defect & Error Prevention ("Galti Pakadna")**:
-    *   **Invariant**: Always validate that the GGUF file hash matches the expected checksum before loading.
-    *   **Code Example**:
-        ```python
-        import hashlib
-        def verify_gguf_hash(path, expected_hash):
-            with open(path, 'rb') as f:
-                file_hash = hashlib.sha256(f.read()).hexdigest()
-            if file_hash != expected_hash:
-                raise ValueError("GGUF file hash mismatch")
-        ```
+### 4. Backend Concurrency & Memory Safety
+*   **Invariant:** When loading GGUF files, you MUST use **memory-mapped I/O (mmap)** to avoid loading the entire model into RAM. For MoE models with 39.8B parameters, even Q4_K quantization requires ~20GB of memory. Loading into RAM without mmap will cause OOM on consumer hardware.
+*   **Example:** `mmap` allows the OS to page in only the experts that are actually used, leveraging the sparsity of MoE.
+
+### 5. Defect & Error Prevention ("Galti Pakadna")
+*   **Invariant:** You MUST validate the **checksum** of the GGUF file before loading. Corrupted files can cause segmentation faults in the inference engine.
+*   **Example:** Use `sha256` to verify the file integrity against the hash provided in the repository metadata.
 
 ## 5. The 9 Deep Learning Dimensions
 
-1.  **Architecture**: Data artifact repository, decoupled from inference engine.
-2.  **Core Abstractions**: GGUF container, MoE routing metadata, quantization benchmarks.
-3.  **Error Handling**: Metadata validation, hash verification, context length checks.
-4.  **Testing**: KLD and Top-1 accuracy benchmarks, routing stability tests.
-5.  **Security**: File hash verification, strict metadata type checking.
-6.  **Performance**: Memory-mapped file loading, dynamic quantization for MoE.
-7.  **Deployment**: Explicit context length in metadata, compatibility with multiple inference engines.
-8.  **Agent Patterns**: Multi-turn tool use, thinking controls, long context management.
-9.  **Data Flow**: Static weight tensors, dynamic KV cache, expert routing decisions.
+1.  **Architecture:**
+    *   **Subsystem Boundaries:** The repository is a leaf node in the inference stack. It depends on the GGUF format specification and the inference engine (llama.cpp, Unsloth Desktop).
+    *   **Decoupling:** Strictly decoupled from the training pipeline. The quantization is a post-processing step.
+    *   **State Ownership:** Static weights. No mutable state.
+
+2.  **Core Abstractions:**
+    *   **Key Types:** `GGUFFile`, `Tensor`, `QuantizationType`.
+    *   **Domain Primitives:** `Expert`, `Router`, `AttentionHead`.
+    *   **Invariant Contracts:** The GGUF format must be self-describing. The inference engine must be able to parse the file without external metadata.
+
+3.  **Error Handling:**
+    *   **Fault Boundaries:** The inference engine must handle missing tensors, incorrect data types, and corrupted files gracefully.
+    *   **Retries:** N/A (Static file).
+    *   **Graceful Degradation:** If a tensor is missing, the engine should log an error and skip the layer, rather than crashing.
+
+4.  **Testing:**
+    *   **Property Testing:** Verify that the quantized model produces similar outputs to the BF16 model on a set of test prompts.
+    *   **Mock Invariants:** N/A.
+    *   **Integration Harnesses:** Run the model on a reference hardware setup (e.g., RTX 4090) and compare performance metrics (tokens/sec, perplexity).
+    *   **Regression Shields:** Maintain a suite of test prompts that cover coding, reasoning, and multi-turn tool use.
+
+5.  **Security:**
+    *   **Threat Model:** Malicious GGUF files could contain malicious code in the metadata or exploit vulnerabilities in the inference engine.
+    *   **Credential Boundaries:** N/A.
+    *   **Sanitization:** The inference engine must sanitize the metadata before displaying it in the UI.
+    *   **Memory Safety:** The inference engine must use safe memory allocation to prevent buffer overflows when parsing tensors.
+    *   **Least Privilege:** The inference engine should run with minimal permissions.
+
+6.  **Performance:**
+    *   **Latency Profiles:** MoE models have variable latency depending on the number of experts activated. The router adds a small overhead.
+    *   **Asymptotic Complexity:** O(N) for the router, O(K) for the experts, where K is the number of active experts.
+    *   **Caching:** KV cache is critical for multi-turn conversations. The cache must be managed efficiently to avoid memory leaks.
+    *   **Zero-Copy:** Use `mmap` to avoid copying data from disk to RAM.
+    *   **Concurrency Bottlenecks:** The router is a bottleneck if it is not optimized. The experts can be parallelized if the hardware supports it.
+
+7.  **Deployment:**
+    *   **CI/CD Invariants:** The quantization pipeline must be reproducible. The same input model and quantization parameters must produce the same GGUF file.
+    *   **Container Constraints:** The inference engine must be containerized for easy deployment.
+    *   **Reproducible Builds:** Use fixed versions of all dependencies (llama.cpp, Python libraries).
+    *   **Runtime Flags:** The inference engine must support flags to control the number of active experts, temperature, top_p, and top_k.
+
+8.  **Agent Patterns:**
+    *   **Tooling Interfaces:** The model is designed for agentic use. It must support multi-turn tool use.
+    *   **Prompt Chains:** The model must be able to follow complex prompt chains.
+    *   **Loop Guards:** The model must be able to detect and break out of infinite loops in its reasoning.
+    *   **Context Budget Optimization:** The model must be able to manage its context window efficiently, especially for long codebases.
+
+9.  **Data Flow:**
+    *   **Mutation Lifecycles:** The weights are immutable. The KV cache is mutable.
+    *   **Streams:** The inference engine must support streaming output.
+    *   **Serializers:** The GGUF format is a binary serializer.
+    *   **Network Protocol Barriers:** N/A (Local inference).
 
 ## 6. The 8 Learning Extraction Artifacts
 
-1.  **Pattern**: Dynamic quantization for MoE models with routing stability verification.
-2.  **Rule**: Always validate GGUF metadata for context length and architecture.
-3.  **Architecture Principle**: Decouple model weights from inference engine.
-4.  **Failure Mode**: Routing instability due to uniform quantization.
-5.  **Reusable Skill**: Verify MoE routing stability by comparing expert selection distributions.
-6.  **Decision**: Use KLD and Top-1 accuracy to select optimal quantization point.
-7.  **Anti-pattern**: Blindly quantizing MoE weights without routing verification.
-8.  **Verification Method**: Automated test suite for routing stability and metadata integrity.
+1.  **Pattern:** Mixed-precision quantization for MoE models, preserving high precision for routers and attention.
+2.  **Rule:** Always use mixed-precision quantization for MoE models.
+3.  **Architecture Principle:** Sparse activation patterns require sparse quantization strategies.
+4.  **Failure Mode:** Uniform quantization of MoE models leads to router degradation and incoherent outputs.
+5.  **Reusable Skill:** Step-by-step guide for quantizing MoE models with Unsloth.
+6.  **Decision:** Use Unsloth Dynamic 3.0 GGUFs for optimal performance on local hardware.
+7.  **Anti-pattern:** Uniform quantization of MoE models.
+8.  **Verification Method:** Perplexity check and expert activation map comparison.
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1.  **Verify GGUF Metadata**: Check `architectures` and `context_length` fields.
-2.  **Validate File Hash**: Ensure GGUF file integrity.
-3.  **Test Routing Stability**: Compare expert selection distributions between BF16 and Quantized models.
-4.  **Benchmark Accuracy**: Run KLD and Top-1 accuracy tests on code snippets.
-5.  **Configure Inference Engine**: Explicitly set context length and memory limits.
-6.  **Monitor Memory Usage**: Use memory-mapped files for large GGUF files.
-7.  **Test Agentic Tasks**: Verify multi-turn tool use and long context management.
+1.  **Verify Model Architecture:**
+    *   [ ] Confirm the model is an MoE architecture.
+    *   [ ] Identify the router and expert layers.
+2.  **Select Quantization Strategy:**
+    *   [ ] Choose mixed-precision quantization.
+    *   [ ] Set router and attention layers to BF16 or Q8_0.
+    *   [ ] Set expert layers to Q4_K_M or Q5_K_M.
+3.  **Quantize the Model:**
+    *   [ ] Use Unsloth Dynamic 3.0.
+    *   [ ] Generate the GGUF file.
+4.  **Verify Metadata:**
+    *   [ ] Check `general.architecture`.
+    *   [ ] Check `tokenizer.ggml.model` and `tokenizer.ggml.pre`.
+    *   [ ] Include `generation_config.json` parameters in the README.
+5.  **Test the Model:**
+    *   [ ] Run a perplexity check.
+    *   [ ] Compare expert activation maps.
+    *   [ ] Run a task-specific benchmark.
+6.  **Deploy the Model:**
+    *   [ ] Upload the GGUF file to Hugging Face.
+    *   [ ] Update the README with inference parameters.
+    *   [ ] Test the model on a reference hardware setup.

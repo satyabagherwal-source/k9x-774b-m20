@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md`  
 > **Source**: github ([https://github.com/matrixorigin/matrixone](https://github.com/matrixorigin/matrixone))  
-> **Source Version**: `74efd351`  
+> **Source Version**: `e2459cc5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T16:52:49.556Z  
+> **Timestamp**: 2026-11-09T07:01:05.617Z  
 > **Learning ID**: `learn-github-matrixorigin-matrixone`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/matrixorigin/matrixone](https://github.com/matrixorigin/matrixone))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T16:52:49.224Z  
+> **Harvest Timestamp**: 2026-11-09T07:01:04.432Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2349,11 +2349,11 @@ func runWorker(ctx context.Context, r WorkerRequest, control *workerControl) (ou
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #32257** (2026-11-05): **perf(plan): optimize point-update index maintenance with missing statistics**
-  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [ ] BUG - [x] Improvement - [ ] Documentation - [ ] Feature - [ ] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  Related to #32221  ## What this PR does / why we need it:  When statistics are missing, a single-row primary-key update can estimate hundreds of build keys, reject runtime filters, and scan each secondary-index table. Retry the existing benefit check for eligible point-sourced joins and cap the newly admitted optional filter at one distinct key. The existing HashBuild fallback sends PASS if the actual key set is larger, preserving complete join results.  On a local 50,000-row table with two indexes, each index scan fell from 50,000 to 1 logical input row. A 20-sample transaction benchmark measured 18.86 ms before versus 2.14 ms with the final change (separate sequential local runs; the final run overlapped a race test).  Validation: full planner and HashBuild unit packages; full planner race and targeted HashBuild and broadcast-topology race tests; SQL BVT (29/29); real DATE-key and two-CN update/rollback, cancellation, and concurrent-write checks; and a two-CN split-key PASS counterexample with diagnostic admission. Incremental gofmt, vet, molint, and golangci-lint passed. 
+- **Issue #32409** (2026-11-09): **[Bug]: CREATE CDC silently returns success but no task is created (post-upgrade 4.0.7 instance)**
+  *Symptoms*: ### Is there an existing issue for the same bug?  - [x] I have checked the existing issues.  ### Branch Name  main  ### Commit ID  c6683bd2f531dcaa80e153c0924dac619c49dc9d (instance reports kernel version 4.0.7, upgrade offset 41, upgraded in-place on 2026-11-05; `git_version()` returns `unknown`)  ### Other Environment Information  - macOS arm64 (MacBook Pro, 8 cores, 4 GB free RAM); single-process local instance (**standalone launch: 1 LOG + 1 TN + CN in one `mo-service` process), SHARED storage on local disk. - Instance was booted from a `main` checkout at the commit above and later went through the **built-in upgrade framework** from an older catalog (offline upgrade on 2026-11-05, `mo_catalog.mo_version` shows `4.0.7` / `offset 41`). SQL frontend still reports `8.0.30-MatrixOne-v1.3.0` via `VERSION()`. - No product code modified. CDC source and sink are both this same instance (MO-to-MO via `sink_type = 'matrixone'`), following the official BVT recipe from `test/distributed/cases/dml/show/cdc.test` (including the `mo_ctl('cn','syncCommit','')` step).  ### Actual Behavior  `CREATE CDC` returns success (rc=0, no output, no warning), but **no CDC task is ever created**:  - `mo_catalog.mo_cdc_task` stays at 0 rows; `mo_catalog.mo_cdc_watermark` stays at 0 rows. - `SHOW CDC ALL` returns empty. - The task framework table `mo_task.sys_async_task` only contains the two system tasks (`StorageUsage`, `mo_table_stats`); no CDC task record ever appears. - Server-side, the `create cd
 
-- **Issue #32255** (2026-11-05): **vectorindex: IVF-PQ and CAGRA model tars through the index-file layer**
-  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [ ] BUG - [x] Improvement - [ ] Documentation - [ ] Feature - [ ] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  issue #31051 (index-file layer; IVF-PQ and CAGRA adopt it after FULLTEXT2 in #31773)  ## What this PR does / why we need it:  **Problem.** IVF-PQ and CAGRA streamed each sub-index's model tar from its chunk rows over SQL into a temp file and MD5-hashed it on every load, so every CN restart re-read every tar.  **Change.** The model tar now goes through the index-file layer (`pkg/vectorindex/indexfile`), following FULLTEXT2 (`pkg/fulltext2/indexfile.go`). - **Load:** `FetchArtifact` opens the tar from the CN's index-file cache, or rebuilds it there from the chunk rows and verifies the recorded size and MD5. The model holds the file through admission and `Unpack`, then releases it. A refused or failed load releases every tar it holds. A cache hit is not re-hashed; the full check after a restart follows `index-file-check-on-startup`. - **Write:** CREATE/REINDEX write the tar through `indexfile.Write` in their transaction (`PersistFiles` replaces `PersistChunks`), caching it under its MD5 on the building CN. The streamed bytes are checked against the recorded size and MD5, as FULLTEXT2 checks its segments. - **Unchanged:** the checksum stays MD5, the CDC event log (tag 1) stays chunk rows, and sync is unchanged. These are recorded as decisions in `docs/design/20261024-index-file-io.md` ("IVF-PQ and C
+- **Issue #32380** (2026-11-09): **docs: design early runtime filtering and dictionary vector execution**
+  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [ ] BUG - [ ] Improvement - [x] Documentation - [ ] Feature - [ ] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  Related to #32379, #30844, #30845 and #30850.  ## What this PR does / why we need it:  Define the approved execution series for reducing intermediate TPC-H work. The early-filter design derives necessary integer domains from independent filtered scan sources, validates complete local delivery and acyclic dependencies, and filters before shuffle while preserving exact joins and the existing query memory bound.  Define dictionary vectors over immutable backing and accounted shared selections, their logical read and copy-on-write contracts, explicit compatibility boundaries and staged consumer/producer rollout. Keep persisted/wire vectors flat and separate neutral foundations from producer changes that must demonstrate target-query speedups.  ## Design review  Scope and contracts approved by the requester on 2026-11-09. Reviewed version: `adebe845cb`. The documents close owners, state transitions, compatibility, cost/negative controls and the seven-PR delivery/acceptance sequence. Implementation reviews must use the versioned design and document material deviations.  ## Validation  Documentation-only change. Whitespace and the required latest-main pre-push gate passed. No implementation, benchmark or performance-acceptance result is claimed.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2370,8 +2370,8 @@ func runWorker(ctx context.Context, r WorkerRequest, control *workerControl) (ou
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `36d1ac51` (2026-11-05)
-**Commit Message**: fix(plan): validate literal defaults in new DDL (#32139)
+### Incident Patch 1: `692b50a3` (2026-11-09)
+**Commit Message**: fix(group): preserve evaluated inputs across spill retries (#32368)
 
 ## What type of PR is this?
 
@@ -2380,313 +2380,124 @@ Observed empirical fixes and code patches:
 - [ ] Improvement
 - [ ] Documentation
 - [ ] Feature
-- [x] Test and CI
+- [ ] Test and CI
 - [ ] Code Refactoring
 
 ## Which issue(s) this PR fixes:
 
-Fixes #31860
-Fixes #31894
+Fixes #32369
+
+This bug was found while investigating #32060; the PR does not fix that
+issue's performance report.
 
 ## What this PR does / why we need it:
 
-Reject bare numeric DEFAULT values that exceed the destination
-CHAR/VARCHAR width in new DDL, and report bare numeric/string literal
-conversion failures in the invalid-value or out-of-range domain as
-ER_INVALID_DEFAULT (1067/42000). This covers CREATE TABLE, ADD, MODIFY,
-CHANGE and SET DEFAULT, including a single authored unary plus or minus.
-The width probe uses the real unbounded TEXT cast and constant fold, so
-the converted value is measured before capacity truncation; exact-fit
-CHAR(255) and VARCHAR(65535) COLLATE binary remain admissible while
-their overflowing controls are rejected.
+A Group can publish part of an input batch, hit a retryable
+memory-capacity rejection, and spill that prefix. The retry currently
+reevaluates every group expression and aggregate argument for the whole
+batch. A volatile expression can consequently contribute values from two
+evaluations to the same input batch, producing incorrect groups or
+aggregates.
 
-Preserve the existing owners for parenthesized expression defaults,
-hex/bit literals, persisted defaults and unrelated context, internal or
-resource errors. Bare signed decimals bind in the numeric domain and
-retain their actual sign and bare origin through subsequent
-INSERT-default binding, A
+Keep the successfully evaluated vectors and grouping-set sentinels alive
+while recovering the resident group state, and retry from the
+unpublished chunk. If evaluation itself fails partway through, return
+the original error rather than replaying expressions that may already
+have side effects. Ordinary post-batch spill, merge, reload, and cleanup
+retain their existing lifecycle.
 
-**File**: `pkg/frontend/back_exec.go` (modified, +4/-4)
+Retaining the input consumes memory until the batch fin
+
+**File**: `docs/design/20261108-group-capacity-retry.md` (added, +143/-0)
 ```diff
-@@ -443,9 +443,9 @@ func doComQueryInBack(
- 	proc.Base.Lim.MaxMsgSize = pu.SV.MaxMessageSize
- 	proc.Base.Lim.PartitionRows = pu.SV.ProcessLimitationPartitionRows
- 	proc.Base.SessionInfo = process.SessionInfo{
--		User:          backSes.respr.GetStr(USERNAME),
-+		User:          backSes.GetResponser().GetStr(USERNAME),
- 		Host:          pu.SV.Host,
--		Database:      backSes.respr.GetStr(DBNAME),
-+		Database:      backSes.GetResponser().GetStr(DBNAME),
- 		Version:       makeServerVersion(pu, serverVersion.Load().(string)),
- 		TimeZone:      backSes.GetTimeZone(),
- 		StorageEngine: pu.StorageEngine,
-@@ -1236,7 +1236,7 @@ func (backSes *backSession) initFeSes(
- 	backSes.derivedStmt = false
- 	backSes.label = make(map[string]string)
- 	backSes.timeZone = ses.GetTimeZone()
--	backSes.respr = defResper
-+	backSes.setResponser(defResper)
- 	backSes.service = ses.GetService()
- 	if parent, ok := ses.(*backSession); ok {
- 		backSes.parentBackSession = parent
-@@ -1391,7 +1391,7 @@ func (backSes *backSession) getNextProcessId() string {
- 		temporary method:
- 		routineId + sqlCount
- 	*/
--	routineId := backSes.respr.GetU32(CONNID)
-+	routineId := backSes.GetResponser().GetU32(CONNID)
- 	// Optimize: use strconv instead of fmt.Sprintf
- 	var buf [24]byte
- 	b := strconv.AppendUint(buf[:0], uint64(routineId), 10)
-```
-
-**File**: `pkg/frontend/internal_executor.go` (modified, +1/-1)
-```diff
-@@ -39,7 +39,7 @@ func applyOverride(sess *Session, opts ie.SessionOverrideOptions) {
- 	}
- 
- 	if opts.Username != nil {
--		sess.respr.SetStr(USERNAME, *opts.Username)
-+		sess.GetResponser().SetStr(USERNAME, *opts.Username)
- 	}
- 
- 	if opts.IsInternal != nil {
-```
-
-**File**: `pkg/frontend/mysql_cmd_executor.go` (modified, +2/-2)
-```diff
-@@ -306,8 +306,8 @@ var RecordStatement = func(ctx context.Context, ses *Session, proc *process.Proc
- 	stm.RoleId = tenant.GetDefaultRoleID()
- 	//stm.RoleId = proc.GetSessionInfo().RoleId
- 	stm.User = tenant.GetUser()
--	stm.Host = ses.respr.GetStr(PEER)
--	stm.Database = ses.respr.GetStr(DBNAME)
-+	stm.Host = ses.GetResponser().GetStr(PEER)
-+	stm.Database = ses.GetResponser().GetStr(DBNAME)
- 	stm.StatementFingerprint = "" // fixme= (Reserved)
- 	stm.StatementTag = ""         // fixme= (Reserved)
- 	stm.SqlSourceType = sqlType
-```
-
-**File**: `pkg/frontend/session.go` (modified, +4/-4)
-```diff
-@@ -2288,7 +2288,7 @@ func (ses *Session) Close() {
- 	defer ses.mu.Unlock()
- 	ses.feSessionImpl.Close()
- 	ses.feSessionImpl.Clear()
--	ses.respr = nil
-+	ses.feSessionImpl.setResponser(nil)
- 	ses.mrs = nil
- 	ses.data = nil
- 	ses.ep = nil
-@@ -2756,7 +2756,7 @@ func (ses *Session) GetShareTxnBackgroundExec(ctx context.Context, newRawBatch b
- 		callback = fakeDataSetFetcher2
- 	}
- 
--	be := ses.InitBackExec(txnOp, ses.respr.GetStr(DBNAME), callback)
-+	be := ses.InitBackExec(txnOp, ses.GetResponser().GetStr(DBNAME), callback)
- 	//the derived statement execute in a shared transaction in background session
- 	be.(*backExec).backSes.ReplaceDerivedStmt(true)
- 	return be
-@@ -3232,8 +3232,8 @@ func (ses *Session) getPrepareStmt(ctx context.Context, name string, allowInvali
- 		return prepareStmt, nil
- 	}
- 	var connID uint32
--	if ses.respr != nil {
--		connID = ses.respr.GetU32(CONNID)
-+	if r := ses.GetResponser(); r != nil {
-+		connID = r.GetU32(CONNID)
- 	}
- 	ses.Errorf(ctx, "prepared statement '%s' does not exist on connection %d", name, connID)
- 	return nil, moerr.NewInvalidStatef(ctx, "prepared statement '%s' does not exist", name)
-```
-
-**File**: `pkg/frontend/types.go` (modified, +20/-5)
-```diff
-@@ -1407,6 +1407,7 @@ type feSessionImpl struct {
- 	uuid         uuid.UUID
- 	debugStr     string
- 	respr        Responser
-+	resprMu      sync.RWMutex
- 	runSQLTokens []uint64
- 	//refreshed once
- 	staticTxnInfo string
-@@ -1484,8 +1485,10 @@ func (ses *feSessionImpl) currentRunSQLToken() uint64 {
- // Close releases all reference.
- // close txn handler also
- func (ses *feSessionImpl) Close() {
--	if ses.respr != nil && !ses.reserveConn {
--		ses.respr.Close()
-+	if !ses.reserveConn {
-+		if r := ses.GetResponser(); r != nil {
-+			r.Close()
-+		}
- 	}
- 	ses.Reset()
- }
-@@ -1539,16 +1542,16 @@ func (ses *feSessionImpl) Clear() {
- }
- 
- func (ses *feSessionImpl) SetDatabaseName(db string) {
--	ses.respr.SetStr(DBNAME, db)
-+	ses.GetResponser().SetStr(DBNAME, db)
- 	ses.txnCompileCtx.SetDatabase(db)
- }
- 
- func (ses *feSessionImpl) GetDatabaseName() string {
--	return ses.respr.GetStr(DBNAME)
-+	return ses.GetResponser().GetStr(DBNAME)
- }
- 
- func (ses *feSessionImpl) GetUserName() string {
--	return ses.respr.GetStr(USERNAME)
-+	return ses.GetResponser().GetStr(USERNAME)
- }
- 
- func (ses *feSessionImpl) SetMemPool(mp *mpool.MPool) {
-@@ -2189,12 +2192,24 @@ func (ses *feSessionImpl) GetUUIDString() string {
- }
- 
- func (ses *feSessionImpl) ReplaceResponser(resper Responser) Responser {
-+	ses.resprMu.Lock()
-+	defer ses.resprMu.Unlock()
- 	old := ses.respr
- 	ses.respr = resper
- 	return old
- }
- 
-+// setResponser is the single locked writer for the embedded Responser, used
-+// by teardown/copy paths that previously wrote ses.respr directly.
-+func (ses *feSessionImpl) setResponser(resper Responser) {
-+	ses.resprMu.Lock()
-+	defer ses.resprMu.Unlock()
-+	ses.respr = resper
-+}
+@@ -0,0 +1,143 @@
++# Preserve evaluated input during Group capacity recovery
 +
- func (ses *feSessionImpl) GetResponser() Responser {
-+	ses.resprMu.RLock()
-+	defer ses.resprMu.RUnlock()
- 	return ses.respr
- }
- 
++Tracking issue: [#32369](https://github.com/matrixorigin/matrixone/issues/32369).
++Implementation PR: [#32368](https://github.com/matrixorigin/matrixone/pull/32368).
++Discovery: [#32060](https://github.com/matrixorigin/matrixone/issues/32060).
++Reviewed baseline: `89ca3dbbf6d594d7614b8e1ca80f6b0300ed3cd2`.
++Design decision: **PASS** for the scope below; implementation and validation
++must be reviewed against this design.
++
++## Problem and scope
++
++Group evaluates one complete child batch before committing it in chunks of at
++most `hashmap.UnitLimit` rows. On an accounted capacity rejection, it can drain
++exact DISTINCT state or spill the committed prefix before retrying an
++unpublished chunk. Currently, spilling resets expression executors and the
++retry path clears `evaluated`. Group consequently evaluates the entire batch
++again, even if an earlier chunk was already published.
++
++An operator test rejects one real allocation after 256 groups are published.
++For 512 rows with an incrementing side-effecting expression, the clean
++baseline spills and reloads, evaluates the root twice, invokes 1,024 side
++effects, and returns group keys `1..256` and `769..1024`. The correct result
++for this input is one evaluation, 512 side effects, and keys `1..512`. The
++test uses the existing allocation-account controller, not a production hook.
++
++This fix is owned by Group's batch and spill lifecycle. It does not fix the
++integer DISTINCT performance reported in #32060, PAD SPACE equality, ordinary
++PK/FD assumptions, or expression replay elsewhere in the pipeline.
++
++## Contract
++
++- Once all group roots, aggregate-argument roots, and rollup sentinels for one
++  child batch are evaluated, every pre-publication retry reuses those exact
++  vectors and the current chunk offset. A committed prefix is never replayed.
++- If the initial `evaluateBuildInput` fails, return its error without retrying
++  that partially evaluated batch. A failed root may already have produced
++  side effects; the same is true when a later root or sentinel allocation
++  fails after an earlier root succeeded. Effects from a failed query are not
++  rolled back, but Group must not automatically repeat them.
++- Only an existing retryable allocation-capacity error at an existing
++  pre-publication boundary may trigger the existing drain or spill recovery.
++  Reuse its progress checks and error handling. Errors after publication,
++  cancellation, failed drain, and failed spill remain terminal.
++- No input expression is shared merely because another expression has an
++  equal AST. The invariant applies to the already evaluated occurrence.
++
++## Design
++
++Factor `container.resetForSpill` in `pkg/sql/colexec/group/types2.go` into a
++resident-state reset and an evaluated-input reset. Resident reset retains the
++existing `distinctGroupReset` transition, releases the hash and accounted
++iterator scratch, detaches the reusable iterator, and releases group-by batches and
++resident and spill aggregate lists. Input reset resets
++the group and aggregate-argument executors and frees the Group-owned rollup
++sentinels. Keep `resetForSpill` as the existing full-reset wrapper.
++
++Keep `spillDataToDisk` in `helper.go` as the full-reset entry point. Factor a
++private variant, or private mode parameter, which after a successful spill
++resets only resident state. The retaining mode has one production caller:
++`Group.retryBuildBatchAfterCapacity`, after the batch evaluation completed.
++Preserve existing spill accounting, recovery floor, measurable-progress
++checks, hash reconstruction, and aggregate-list rebuild.
++
++In `Group.buildOneBatch` in `exec2.go`, return immediately if
++`evaluateBuildInput` fails. After it succeeds, retain the evaluated input through
++both adaptive-growth recovery and ordinary preflight recovery. Exact DISTINCT
++drain does not reset the evaluation. On a successful retaining spill, retry
++the same `i` with a fresh hash preview and the same evaluated vectors. Retain
++the current distinction between explicitly pre-publication commit errors and
++terminal failures in group publication, `GroupGrow`, or `BatchFill`.
++
++`H0` has no group key: initial evaluation already fails directly; later
++aggregate preflight may use exact DISTINCT drain and must keep the evaluated
++argument vectors. It must not start ordinary group spill. SORT ROLLUP has a
++separate call path and is outside this change.
++
++| Existing operation | Evaluation state | Reset after spill |
++| --- | --- | --- |
++| Group capacity retry after successful batch evaluation | Current batch remains live; prefix may be committed | Resident only |
++| Group post-batch spill, end-of-input spill, `vm.EvalReset` | No active build batch | Full |
++| MergeGroup post-batch, end-of-input, and capacity-retry spill | No Group expression-root batch | Full |
++| Spill reload entry, record retry, adaptive respill, and final respill | Replay i
 ```
 
-**File**: `pkg/sql/plan/build_util.go` (modified, +315/-1)
+**File**: `pkg/sql/colexec/group/capacity_retry_evaluation_test.go` (added, +583/-0)
 ```diff
-@@ -952,6 +952,24 @@ const (
- 	defaultExprForPersistedLegacyZero
- )
- 
-+// buildDefaultExprWithColumnsObserved binds one default through the purpose's
-+// owning chain, and first discriminates the two producers of a persisted
-+// parenthesized signed plain-decimal origin into CHAR/VARCHAR: an older tree
-+// admitted the expression default and stored its historical fold (DEFAULT
-+// (-0.25) into VARCHAR(1) stores '0'; that expression owner keeps admitting
-+// it), while this tree authored the bare literal whose origin formatter
-+// parenthesizes the stored text ('-1.25' as '(-1.25)')). The stored value is
-+// the producer's witness: the historical expression binding is reproduced
-+// first, and only its inner conversion failure (bad value / out of range,
-+// raised at any stage of the chain, including constant folding) falls back
-+// to this tree's numeric-domain rebinding. When BOTH producers bind legally —
-+// a leading-zero raw text folds to its destination-truncated width with no
-+// error while this tree stored the normalized number — a first success
-+// cannot decide, so both witnesses are compared against the reader's real
-+// stored payload with the same expression equality the dump verifier uses,
-+// and the matching one wins; without a stored witness the reader keeps the
-+// historical order. A mismatched or tampered stored payload keeps failing
-+// the caller's comparison either way.
- func buildDefaultExprWithColumnsObserved(
- 	bindCtx context.Context,
- 	col *tree.ColumnTableDef,
-@@ -960,6 +978,80 @@ func buildDefaultExprWithColumnsObserved(
- 	columns []*ColDef,
- 	purpose defaultExprBindingPurpose,
- 	observe func(source, assigned *plan.Expr),
-+) (*plan.Default, error) {
-+	if purpose != defaultExprForDDL {
-+		var originExpr tree.Expr
-+		for _, attr := range col.Attributes {
-+			if attrDefault, ok := attr.(*tree.AttributeDefault); ok {
-+				originExpr = attrDefault.Expr
-+				break
-+			}
-+		}
-+		if _, isParenthesized := originExpr.(*tree.ParenExpr); isParenthesized &&
-+			bareSignedDecimalCharFamilyDefault(typ, unwrapParenExpr(originExpr)) {
-+			legacy, legacyErr := buildDefaultExprWithColumnsForceDomain(
-+				bindCtx, col, typ, proc, columns, purpose, observe, false)
-+			if legacyErr != nil {
-+				if moerr.IsMoErrCode(legacyErr, moerr.ErrInvalidArg) ||
-+					moerr.IsMoErrCode(legacyErr, moerr.ErrOutOfRange) {
-+					return buildDefaultExprWithColumnsForceDomain(
-+						bindCtx, col, typ, proc, columns, purpose, observe, true)
-+				}
-+				return nil, legacyErr
-+			}
-+			// Both legal producers of this shape bind without an error and
-+			// fold differently: the historical destination cast truncates a
-+			// leading-zero raw text to the column width and folds the
-+			// integer remainder ('(-000001.25)' into VARCHAR(5) folds '0'),
-+			// while this tree stores the normalized value ('-1.25'). Route
-+			// both witnesses through the real stored-expression comparison
-+			// and return the matching one; the caller re-verifies it.
-+			numeric, numericErr := buildDefaultExprWithColumnsForceDomain(
-+				bindCtx, col, typ, proc, columns, purpose, observe, true)
-+			if numericErr == nil && !sameTableDumpBoundExpression(legacy.Expr, numeric.Expr) {
-+				if stored := persistedStoredDefaultExpr(col, columns); stored != nil &&
-+					!sameTableDumpBoundExpression(legacy.Expr, stored) {
-+					return numeric, nil
-+				}
-+			}
-+			return legacy, nil
-+		}
-+	}
-+	return buildDefaultExprWithColumnsForceDomain(bindCtx, col, typ, proc, columns, purpose, observe, false)
-+}
-+
-+// persistedStoredDefaultExpr returns the catalog-stored default expression
-+// of the named column for the persisted reading owners; exactly this payload
-+// is the witness that discriminates the two legal producers of a
-+// parenthesized signed-decimal origin.
-+func persistedStoredDefaultExpr(col *tree.ColumnTableDef, columns []*ColDef) *plan.Expr {
-+	if columns == nil {
-+		return nil
-+	}
-+	name := col.Name.ColNameOrigin()
-+	for _, column := range columns {
-+		if column != nil && column.Default != nil && column.Default.Expr != nil &&
-+			column.Name == name {
-+			return column.Default.Expr
-+		}
-+	}
-+	return nil
-+}
-+
-+// buildDefaultExprWithColumnsForceDomain is the single-chain binder behind
-+// buildDefaultExprWithColumnsObserved. With signedDecimalLiteralDomain the
-+// bare signed-decimal shape takes the numeric literal domain regardless of the
-+// parenthesized expression form; every other purpose keeps the chain that the
-+// existing owner verdicts already describe.
-+func buildDefaultExprWithColumnsForceDomain(
-+	bindCtx context.Context,
-+	col *tree.ColumnTableDef,
-+	typ plan.Type,
-+	proc *process.Process,
-+	columns []*ColDef,
-+	purpose defaultExprBindingPurpose,
-+	observe func(source, assigned *plan.Expr),
-+	signedDecimalLiteralDomain bool,
- ) (*plan.Default, error) {
- 	nullAbility := true
- 	var expr tree.Expr = nil
-@@ -1015,10 +1107,45 @@ func buildDefaultExprWithColumnsObserved(
- 	if isAttributedDecimalPlanType(typ) {
- 		binder.baseBinder.suppres
-```
-
-**File**: `pkg/sql/plan/literal_default_ddl_admission_test.go` (added, +683/-0)
-```diff
-@@ -0,0 +1,683 @@
+@@ -0,0 +1,583 @@
 +// Copyright 2026 Matrix Origin
 +//
 +// Licensed under the Apache License, Version 2.0 (the "License");
@@ -2694,6 +2505,724 @@ INSERT-default binding, A
 +// You may obtain a copy of the License at
 +//
 +//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package group
++
++import (
++	"fmt"
++	"strconv"
++	"strings"
++	"testing"
++
++	"github.com/matrixorigin/matrixone/pkg/common/mpool"
++	"github.com/matrixorigin/matrixone/pkg/container/batch"
++	"github.com/matrixorigin/matrixone/pkg/container/types"
++	"github.com/matrixorigin/matrixone/pkg/container/vector"
++	"github.com/matrixorigin/matrixone/pkg/pb/plan"
++	"github.com/matrixorigin/matrixone/pkg/sql/colexec"
++	"github.com/matrixorigin/matrixone/pkg/sql/colexec/aggexec"
++	"github.com/matrixorigin/matrixone/pkg/testutil"
++	"github.com/matrixorigin/matrixone/pkg/vm"
++	"github.com/matrixorigin/matrixone/pkg/vm/process"
++	"github.com/stretchr/testify/require"
++)
++
++type retryStringExpression struct {
++	colexec.ExpressionExecutor
++	vec         *vector.Vector
++	mp          *mpool.MPool
++	selection   *vector.AllocationAccountSelection
++	borrowed    bool
++	calls, rows int
++}
++
++func (e *retryStringExpression) Eval(proc *process.Process, inputs []*batch.Batch, selectList []bool) (*vector.Vector, error) {
++	if e.borrowed {
++		e.calls++
++		result, err := e.ExpressionExecutor.Eval(proc, inputs, selectList)
++		if err == nil {
++			e.rows += inputs[0].RowCount()
++		}
++		return result, err
++	}
++	if e.vec != nil {
++		e.vec.Free(proc.Mp())
++	}
++	e.mp = proc.Mp()
++	e.calls++
++	var err error
++	e.vec, err = vector.NewOffHeapVecWithTypeAndAllocation(types.T_varchar.ToType(), e.selection)
++	if err != nil {
++		return nil, err
++	}
++	for range inputs[0].RowCount() {
++		e.rows++
++		value := fmt.Sprintf("%05d-%s", e.rows, strings.Repeat("x", 96))
++		if err := vector.AppendBytes(e.vec, []byte(value), false, proc.Mp()); err != nil {
++			return nil, err
++		}
++	}
++	return e.vec, nil
++}
++func (e *retryStringExpression) ResetForNextQuery() {
++	if e.vec != nil {
++		e.vec.Free(e.mp)
++		e.vec = nil
++	}
++	e.ExpressionExecutor.ResetForNextQuery()
++}
++func (e *retryStringExpression) Free() {
++	if e.vec != nil {
++		e.vec.Free(e.mp)
++		e.vec = nil
++	}
++	e.ExpressionExecutor.Free()
++}
++
++type retryIntExpression struct {
++	colexec.ExpressionExecutor
++	vec         *vector.Vector
++	mp          *mpool.MPool
++	selection   *vector.AllocationAccountSelection
++	calls, rows int
++}
++
++func (e *retryIntExpression) Eval(proc *process.Process, inputs []*batch.Batch, _ []bool) (*vector.Vector, error) {
++	if e.vec != nil {
++		e.vec.Free(proc.Mp())
++	}
++	e.mp = proc.Mp()
++	e.calls++
++	var err error
++	e.vec, err = vector.NewOffHeapVecWithTypeAndAllocation(types.T_int32.ToType(), e.selection)
++	if err != nil {
++		return nil, err
++	}
++	for range inputs[0].RowCount() {
++		e.rows++
++		if err = vector.AppendFixed(e.vec, int32(e.rows), false, proc.Mp()); err != nil {
++			return nil, err
++		}
++	}
++	return e.vec, nil
++}
++func (e *retryIntExpression) ResetForNextQuery() {
++	if e.vec != nil {
++		e.vec.Free(e.mp)
++		e.vec = nil
++	}
++	e.ExpressionExecutor.ResetForNextQuery()
++}
++func (e *retryIntExpression) Free() {
++	if e.vec != nil {
++		e.vec.Free(e.mp)
++		e.vec = nil
++	}
++	e.ExpressionExecutor.Free()
++}
++
++type observingBudgetController struct {
++	*process.ExecutionResourceGeneration
++	onAcquire func()
++}
++
++func (c *observingBudgetController) AcquireAllocationCapacity(size uint64) error {
++	if c.onAcquire != nil {
++		c.onAcquire()
++	}
++	return c.ExecutionResourceGeneration.AcquireAllocationCapacity(size)
++}
++
++func TestGroupCapacityRecoveryRetainsEvaluatedInput(t *testing.T) {
++	for _, tc := range []struct {
++		name         string
++		rollup       bool
++		partial      bool
++		distinct     bool
++		borrowed     bool
++		adaptive     bool
++		failRecovery bool
++	}{
++		{name: "final"},
++		{name: "rollup", rollup: true},
++		{name: "partial-and-merge", partial: true},
++		{name: "distinct-drain", distinct: true},
++		{name: "borrowed-input", borrowed: true},
++		{name: "adaptive-spill", adaptive: true},
++		{name: "capacity-exhausted-after-spill", rollup: true, failRecovery: true},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			proc := testutil.NewProcess(t)
++			t.Cleanup(func() {
++				proc.Free()
++				require.Zero(t, proc.Mp().CurrNB())
++			})
++			input := batch.NewWithSize(3)
++			t.Cleanup(func() { input.Clean(proc.Mp()) })
++			keys := make([]string, 512)
++			if tc.borrowed {
++				for i := range keys {
++					keys[i] = fmt.Sprintf("%05d-%s", i+1, strings.Repeat("x", 96))
++				}
++			}
++			input.Vecs[0] = testutil.MakeVarcharVector(keys, nil, proc.Mp())
++			input.Vecs[1] = testuti
+```
+
+**File**: `pkg/sql/colexec/group/exec2.go` (modified, +8/-14)
+```diff
+@@ -657,14 +657,20 @@ func (group *Group) buildOneBatch(proc *process.Process, bat *batch.Batch) (bool
+ 		// here is a strange loop.   our hash table exposed something called
+ 		// hashmap.UnitLimit -- which limits per iteration insert mini batch size.
+ 		count := bat.RowCount()
+-		evaluated := false
+ 		var hashBytesBefore int64
+ 		var compactHitRows int64
+ 		compactEligible := !group.DynamicGrouping && !group.ctr.groupingAware && !group.ctr.legacyH8CharSemantics &&
+ 			compactGroupExpressions(group.GroupBy)
+ 		if !group.ctr.hr.IsEmpty() {
+ 			hashBytesBefore = group.ctr.hr.Hash.Size()
+ 		}
++		if count > 0 {
++			if err = group.evaluateBuildInput(proc, bat); err != nil {
++				// A failed expression may already have side effects. There is
++				// no general safe way to replay a partially evaluated batch.
++				return false, err
++			}
++		}
+ 		for i := 0; i < count; i += hashmap.UnitLimit {
+ 			n := min(count-i, hashmap.UnitLimit)
+ 			var preview groupInsertPreview
+@@ -677,16 +683,6 @@ func (group *Group) buildOneBatch(proc *process.Process, bat *batch.Batch) (bool
+ 			}
+ 			for {
+ 				err = nil
+-				if !evaluated {
+-					if err = group.evaluateBuildInput(proc, bat); err != nil {
+-						if retried, retryErr := group.retryBuildBatchAfterCapacity(proc, err); retried {
+-							continue
+-						} else {
+-							return false, retryErr
+-						}
+-					}
+-					evaluated = true
+-				}
+ 				if group.ctr.hr.IsEmpty() {
+ 					err = group.ctr.buildHashTable(proc.Ctx, 0)
+ 					if err == nil {
+@@ -723,7 +719,6 @@ func (group *Group) buildOneBatch(proc *process.Process, bat *batch.Batch) (bool
+ 									proc, mpool.ErrAllocationAccountCapacity); !retried {
+ 									return false, retryErr
+ 								}
+-								evaluated = false
+ 								continue
+ 							}
+ 						}
+@@ -809,7 +804,6 @@ func (group *Group) buildOneBatch(proc *process.Process, bat *batch.Batch) (bool
+ 					}
+ 				}
+ 				if retried, retryErr := group.retryBuildBatchAfterCapacity(proc, err); retried {
+-					evaluated = false
+ 					continue
+ 				} else {
+ 					return false, retryErr
+@@ -968,7 +962,7 @@ func (group *Group) retryBuildBatchAfterCapacity(
+ 		return false, cause
+ 	}
+ 	before := group.ctr.hr.Hash.GroupCount()
+-	bytes, rows, err := group.ctr.spillDataToDisk(proc, group.OpAnalyzer, nil)
++	bytes, rows, err := group.ctr.spillDataToDiskWithInput(proc, group.OpAnalyzer, nil, true)
+ 	if err != nil {
+ 		return false, err
+ 	}
+```
+
+**File**: `pkg/sql/colexec/group/helper.go` (modified, +6/-1)
+```diff
+@@ -870,6 +870,11 @@ func (ctr *container) writeSpillRecord(
+ }
+ 
+ func (ctr *container) spillDataToDisk(proc *process.Process, opAnalyzer process.Analyzer, parentBkt *spillBucket) (int64, int64, error) {
++	return ctr.spillDataToDiskWithInput(proc, opAnalyzer, parentBkt, false)
++}
++
++// retainInput is used only when retrying a partially consumed input batch.
++func (ctr *container) spillDataToDiskWithInput(proc *process.Process, opAnalyzer process.Analyzer, parentBkt *spillBucket, retainInput bool) (int64, int64, error) {
+ 	if err, canceled := vm.CancelCheck(proc); canceled {
+ 		return 0, 0, err
+ 	}
+@@ -1109,7 +1114,7 @@ func (ctr *container) spillDataToDisk(proc *process.Process, opAnalyzer process.
+ 	}
+ 
+ 	// reset ctr for next spill
+-	ctr.resetForSpill()
++	ctr.resetSpillState(retainInput)
+ 	return totalBytes, totalRows, nil
+ }
+ 
+```
+
+**File**: `pkg/sql/colexec/group/types2.go` (modified, +15/-8)
+```diff
+@@ -813,21 +813,28 @@ func (ctr *container) reset() {
+ }
+ 
+ func (ctr *container) resetForSpill() {
++	ctr.resetSpillState(false)
++}
++
++// resetSpillState releases resident aggregation state after a spill. A build
++// retry must keep the current input vectors until its unpublished chunk has
++// been consumed; other spill callers can release the expression state too.
++func (ctr *container) resetSpillState(retainInput bool) {
+ 	if ctr.distinctSpill != nil {
+ 		ctr.distinctGroupReset = true
+ 	}
+ 	// Reset also frees the hash related stuff.
+ 	ctr.hr.Free0()
+ 
+-	ctr.groupByEvaluate.ResetForNextQuery()
+-
+-	for i := range ctr.aggArgEvaluate {
+-		ctr.aggArgEvaluate[i].ResetForNextQuery()
++	if !retainInput {
++		ctr.groupByEvaluate.ResetForNextQuery()
++		for i := range ctr.aggArgEvaluate {
++			ctr.aggArgEvaluate[i].ResetForNextQuery()
++		}
++		// Grouping-set sentinel vectors are owned outside the expression
++		// executors. Release them before recovery reload borrows capacity.
++		ctr.freeGroupingRollups()
+ 	}
+-	// Grouping-set sentinel vectors are owned outside the expression
+-	// executors. Release the just-consumed input's sentinels before recovery
+-	// reload borrows the same account capacity.
+-	ctr.freeGroupingRollups()
+ 	// free group by batches, agg list and spill buckets, do not reuse for now.
+ 	ctr.freeGroupByBatches()
+ 	ctr.currBatchIdx = 0
+```
+
+---
+
+### Incident Patch 2: `93a17bb7` (2026-11-09)
+**Commit Message**: fix(plan): prune correlated composite primary-key points (#32377)
+
+## What type of PR is this?
+
+- [x] BUG
+- [x] Improvement
+
+## Which issue(s) this PR fixes:
+
+issue #32365
+
+Related 4.2-dev implementation: #32371.
+
+## What this PR does / why we need it:
+
+A predicate like `tenant = ? AND ((session = ? AND request = ?) OR ...)`
+describes a small set of complete composite primary keys, but previously
+scanned the entire tenant prefix. Derive a bounded set of correlated
+keys as a necessary scan filter and retain the full original predicates.
+
+- Reuse existing composite-key encoding, index and join selection, and
+reader filtering. Publish points only if the same scan, key, snapshot
+and predicate witnesses survive the existing rewrites. Unsafe
+comparisons or residuals, unsupported shapes, and exhausted query-wide
+admission budgets keep the existing access path.
+- Defer execution-value inspection until a point candidate actually
+survives access selection. This preserves the existing prepared-plan
+cache for index plans that discard the candidate; surviving or
+value-dependently rejected candidates use the existing value-dependent
+replanning policy. A reused ordinary plan can miss an optimizat
+
+**File**: `docs/design/20261109-correlated-composite-primary-key-points.md` (added, +255/-0)
+```diff
+@@ -0,0 +1,255 @@
++# Correlated composite-primary-key point pruning
++
++Issue: [#32365](https://github.com/matrixorigin/matrixone/issues/32365)
++Implementation: [#32377](https://github.com/matrixorigin/matrixone/pull/32377)
++Related 4.2 implementation: [#32371](https://github.com/matrixorigin/matrixone/pull/32371)
++
++## Problem and contract
++
++For a composite key `(tenant, session, request)`, a query may request a few
++correlated identities:
++
++```sql
++WHERE tenant = ? AND
++      ((session = ? AND request = ?) OR (session = ? AND request = ?))
++```
++
++On main at `d7185c9a92`, both SQL-prepared and binary-prepared executions
++returned correct results, but the first form scanned 100,001 rows in the
++persisted test table. The comparable factored single-session `IN` form read
++only the two matching rows. A 50-identity prepared UPDATE showed the same
++access-path problem. This is an optimization issue, not a demonstrated wrong
++result.
++
++A further prepared-plan control has a complete point-shaped predicate but
++selects a secondary-index backfill. The eager implementation marked the plan
++value dependent even though no point filter survived; the baseline plan was
++otherwise eligible for the frontend's type-keyed cache. This is a cache-eligibility
++regression for the observed execution, not proof that index selection is
++independent of every possible binding.
++
++For original scan predicate `F` and derived point predicate `C`, a candidate is
++legal only when **every row where `F` is SQL TRUE also satisfies `C`**. It is a
++necessary condition, not a replacement for `F`. Pruning must not suppress or
++introduce observable errors, warnings, or effects, and must preserve parameter
++identity, SQL NULL behavior, duplicate handling, transaction semantics, and
++access control. SQL equality with NULL is unknown, not true; MySQL's documented
++NULL comparison behavior is relevant to MatrixOne's MySQL interface
++([MySQL 8.0 manual](https://dev.mysql.com/doc/refman/8.0/en/working-with-null.html)).
++Physical tuple equality is only usable when the resolved SQL equality domain
++has the same relevant semantics. In particular, a residual cannot recover a
++SQL-equal row excluded by an incorrectly encoded point.
++
++The goal is to avoid broad prefix scans for bounded, provable sets of complete
++correlated primary-key points, including prepared SELECT and DML. The original
++predicate and normal fallback remain authoritative. General OR index union,
++Cartesian expansion of independent ORs, new tuple-lookup storage APIs, and
++changing secondary-index or join costing are not goals.
++
++## Alternatives and ownership
++
++1. **Keep the existing prefix scan and ask users to factor queries.** It has no
++   new planning cost and is correct, but does not solve cross-session batches.
++2. **Normalize all ORs into a general union or publish points before costing.**
++   This could cover more expressions, but needs a broader cost model and can
++   change join, vector-index, covering-index, and limit decisions. Independent
++   OR expansion can also grow combinatorially. That work is outside this fix.
++3. **Capture a bounded proposal before composite-key lowering and publish it
++   after access selection if its proof survives.** This retains the existing
++   optimizer, encoding and reader owners while covering the reported workload.
++   It adds transient proof, planning work, and value-dependent replanning; the
++   tradeoffs and limits below are part of the decision.
++
++The existing scan `FilterList` owns SQL semantics; `BlockFilterList` is derived
++pruning state. Existing composite-key lowering owns encoding, existing access
++selection owns index decisions, and `readutil` owns PK filter selection and
++vector cleanup. The query planner owns only a short-lived proposal and shared
++admission budget. See the preceding
++[secondary-index and composite-key design](20261024-secondary-index-primary-prefix.md)
++for the existing early/late lowering boundary. No catalog, on-disk, wire, or
++client API is added.
++
++## Analysis and publication
++
++After scan predicate pushdown and before ordinary composite-key lowering, walk
++eligible scan predicates and collect facts on the physical primary-key parts.
++Each selected OR arm must, together with inherited conjunctions, imply one
++complete tuple for the same scan. Select one independently sufficient OR; do
++not multiply separate ORs. Incomplete arms, unsupported expressions, malformed
++metadata, absent proof, or exhausted budget leave the established access path
++in place. This phase must not inspect execution values or change prepared-binding
++state. Before copying, charge the shape and metadata. Freeze one independently
++owned typed copy per distinct source expression, and let tuple positions refer
++to those copies. Capture every recognized equality that may be skipped, not
++just selected tuple facts. Preserve original parameter ordinals, type/collation,
++casts, and literal provenance; do not retain mutable original-expre
+```
+
+**File**: `pkg/frontend/prepared_composite_point_test.go` (added, +300/-0)
+```diff
+@@ -0,0 +1,300 @@
++// Copyright 2026 Matrix Origin
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     https://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package frontend
++
++import (
++	"strings"
++	"testing"
++	"time"
++
++	"github.com/matrixorigin/matrixone/pkg/catalog"
++	"github.com/matrixorigin/matrixone/pkg/container/types"
++	"github.com/matrixorigin/matrixone/pkg/container/vector"
++	"github.com/matrixorigin/matrixone/pkg/defines"
++	"github.com/matrixorigin/matrixone/pkg/pb/plan"
++	pbstats "github.com/matrixorigin/matrixone/pkg/pb/statsinfo"
++	"github.com/matrixorigin/matrixone/pkg/sql/compile"
++	plan2 "github.com/matrixorigin/matrixone/pkg/sql/plan"
++	"github.com/stretchr/testify/require"
++)
++
++func preparedCompositePointTable(t *testing.T) (*plan2.MockCompilerContext, *plan.TableDef) {
++	t.Helper()
++	base := plan2.NewMockCompilerContext(true, newPlanTestProcess(t))
++	_, table, err := base.Resolve("tpch", "partsupp", nil)
++	require.NoError(t, err)
++	keys := []string{"ps_partkey", "ps_suppkey", "ps_comment"}
++	for _, col := range table.Cols {
++		for _, key := range keys {
++			if col.Name == key {
++				col.Typ = plan.Type{Id: int32(types.T_varchar), Width: 16, NotNullable: true, Charset: uint32(types.CharsetUTF8)}
++			}
++		}
++	}
++	hidden := plan2.MakeHiddenColDefByName(catalog.CPrimaryKeyColName)
++	table.Pkey = &plan.PrimaryKeyDef{PkeyColName: catalog.CPrimaryKeyColName, Names: keys, CompPkeyCol: hidden}
++	table.ClusterBy = nil
++	rowID := table.Cols[len(table.Cols)-1]
++	table.Cols[len(table.Cols)-1] = hidden
++	table.Cols = append(table.Cols, rowID)
++	table.Name2ColIndex = make(map[string]int32)
++	for i, col := range table.Cols {
++		table.Name2ColIndex[col.Name] = int32(i)
++	}
++	return base, table
++}
++
++func preparedCompositePointPositions(t *testing.T, p *plan.Plan) [][]int32 {
++	t.Helper()
++	for _, node := range p.GetQuery().Nodes {
++		if node.NodeType != plan.Node_TABLE_SCAN || node.TableDef == nil {
++			continue
++		}
++		for _, expr := range node.FilterList {
++			fn := expr.GetF()
++			if fn == nil || fn.Func == nil || fn.Func.ObjName != "in" || len(fn.Args) != 2 {
++				continue
++			}
++			col := fn.Args[0].GetCol()
++			if col == nil || !strings.HasSuffix(col.Name, catalog.CPrimaryKeyColName) || fn.Args[1].GetList() == nil {
++				continue
++			}
++			var tuples [][]int32
++			for _, tuple := range fn.Args[1].GetList().List {
++				var positions []int32
++				require.NoError(t, plan.VisitExprTree(tuple, func(e *plan.Expr) error {
++					if p := e.GetP(); p != nil {
++						positions = append(positions, p.Pos)
++					}
++					return nil
++				}))
++				tuples = append(tuples, positions)
++			}
++			return tuples
++		}
++	}
++	return nil
++}
++
++func setPreparedCompositePointParams(t *testing.T, prepared *PrepareStmt, cw *TxnComputationWrapper, values ...any) {
++	t.Helper()
++	cw.proc.SetPrepareParams(nil)
++	if prepared.params != nil {
++		prepared.params.Free(cw.proc.Mp())
++	}
++	prepared.params = vector.NewVec(types.T_text.ToType())
++	prepared.ParamTypes = nil
++	for _, value := range values {
++		var data []byte
++		switch v := value.(type) {
++		case nil:
++		case string:
++			data = []byte(v)
++		case []byte:
++			data = v
++		default:
++			t.Fatalf("unsupported test parameter %T", value)
++		}
++		require.NoError(t, vector.AppendBytes(prepared.params, data, value == nil, cw.proc.Mp()))
++		prepared.ParamTypes = append(prepared.ParamTypes, byte(defines.MYSQL_TYPE_VAR_STRING), 0)
++	}
++}
++
++func executePreparedCompositePoint(t *testing.T, ses *Session, prepared *PrepareStmt, cw *TxnComputationWrapper, execCtx *ExecCtx, ctx plan2.CompilerContext) *plan.Plan {
++	t.Helper()
++	_, result, clone, _, owned, err := initExecuteStmtParamWithResolverInSession(execCtx, ses, ses, cw, nil, prepared.Name, ctx.Resolve, ctx)
++	if owned && clone != nil {
++		clone.Free()
++	}
++	require.NoError(t, err)
++	return result
++}
++
++func TestPreparedCompositePointRetryKeepsBindings(t *testing.T) {
++	base, table := preparedCompositePointTable(t)
++	ctx := &preparedStatsTestCompiler{
++		preparedTestCompiler: &preparedTestCompiler{CompilerContext: base, proc: base.GetProcess()},
++		stats:                &pbstats.StatsInfo{TableCnt: 128}, table: table,
++	}
++	query := "select ps_availqty from partsupp where ps_partkey=? and ((ps_suppkey=? and ps_comment=?) or (ps_suppkey=? and ps_comment=?))"
++	ses, prepared, cw, execCtx := newPreparedExecuteEnvForSQLWithCompilerContext(t, 32365, query, ctx)
++	ctx.proc, prepared.proc = cw.proc, cw.proc
++	prepared.defaultDatabase = "tpch"
++	t.Cleanup(func() {
++		cw.proc.SetPreparePa
+```
+
+**File**: `pkg/sql/plan/composite_key_points.go` (added, +862/-0)
+```diff
+@@ -0,0 +1,862 @@
++// Copyright 2026 Matrix Origin
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     https://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package plan
++
++import (
++	"bytes"
++	"context"
++	"errors"
++	"unicode/utf8"
++
++	"github.com/gogo/protobuf/proto"
++	"github.com/matrixorigin/matrixone/pkg/catalog"
++	"github.com/matrixorigin/matrixone/pkg/container/types"
++	"github.com/matrixorigin/matrixone/pkg/pb/plan"
++	"github.com/matrixorigin/matrixone/pkg/sql/plan/function"
++	"github.com/matrixorigin/matrixone/pkg/vm/process"
++)
++
++// These limits bound analysis and the added candidate data per query. String
++// values are charged using their actual bytes, not the column's declared width.
++const (
++	maxCompositePointNodes = 2048
++	maxCompositePointDepth = 256
++	maxCompositePoints     = 128
++	compositePointCopies   = 4
++	// The budget is shared by all candidates in one query, not per scan. The
++	// charge below allows for the row and block filters and their working copies.
++	// Execution fan-out can still multiply memory across readers and nodes.
++	maxCompositePointBytes = 8 << 20
++)
++
++type compositePointAnalysis struct {
++	ctx     context.Context
++	proc    *process.Process
++	tag     int32
++	parts   map[int32]int
++	types   []plan.Type
++	values  []*plan.Expr
++	visited int
++}
++
++type compositePointSet struct {
++	values     [][]*plan.Expr
++	checked    []*plan.Expr
++	shapeBytes uint64
++}
++
++// compositePointCandidate identifies a value-independent shape. Its references
++// must be frozen before ordinary lowering can mutate the original predicates.
++// A nil result keeps the existing access path.
++func compositePointCandidate(ctx context.Context, node *plan.Node, remaining uint64) *compositePointSet {
++	if node == nil || node.TableDef == nil || node.TableDef.Pkey == nil ||
++		len(node.BindingTags) == 0 || node.TableDef.ClusterBy != nil ||
++		remaining < 2*compositePointCopies*types.DefaultPackerCapacity() {
++		return nil
++	}
++	table := node.TableDef
++	key := table.Pkey
++	if len(key.Names) < 2 || len(key.Names) > maxCompositePointNodes ||
++		key.PkeyColName != catalog.CPrimaryKeyColName || key.CompPkeyCol == nil ||
++		tableDefHasNativeUnicodeKeyPart(table, key.Names) {
++		return nil
++	}
++	// Most composite-key scans contain no disjunction. Avoid allocating the
++	// fact map or examining scalar expressions on that common path.
++	nodesRemaining := maxCompositePointNodes
++	hasDisjunction := false
++	for _, filter := range node.FilterList {
++		if compositePointHasOr(filter, 0, &nodesRemaining) {
++			hasDisjunction = true
++			break
++		}
++	}
++	if !hasDisjunction {
++		return nil
++	}
++	keyPos, ok := table.Name2ColIndex[key.PkeyColName]
++	if !ok || keyPos < 0 || int(keyPos) >= len(table.Cols) || table.Cols[keyPos] == nil ||
++		!table.Cols[keyPos].Hidden || table.Cols[keyPos].Name != key.PkeyColName ||
++		types.T(table.Cols[keyPos].Typ.Id) != types.T_varchar {
++		return nil
++	}
++	a := compositePointAnalysis{
++		ctx:   ctx,
++		tag:   node.BindingTags[0],
++		parts: make(map[int32]int, len(key.Names)),
++		types: make([]plan.Type, len(key.Names)),
++	}
++	for i, name := range key.Names {
++		pos, found := table.Name2ColIndex[name]
++		if !found || pos < 0 || int(pos) >= len(table.Cols) || table.Cols[pos] == nil || table.Cols[pos].Name != name {
++			return nil
++		}
++		if _, duplicate := a.parts[pos]; duplicate || !compositePointType(table.Cols[pos].Typ) {
++			return nil
++		}
++		a.parts[pos], a.types[i] = i, table.Cols[pos].Typ
++	}
++	points, ok := a.conjunction(node.FilterList, make([]*plan.Expr, len(key.Names)), false, 0)
++	if !ok || len(points) < 2 {
++		return nil
++	}
++	// The point count is known without inspecting parameter values. If even
++	// the minimum packers do not fit, the fallback is not value-dependent.
++	if uint64(len(points)) > remaining/(compositePointCopies*types.DefaultPackerCapacity()) {
++		return nil
++	}
++	// A point candidate can suppress evaluation on rows it prunes. Prove every
++	// predicate's shape is safe before any execution-bound value is inspected.
++	for _, filter := range node.FilterList {
++		if !a.safePredicate(filter, 0) {
++			return nil
++		}
++	}
++	// Charge independently owned value expressions and tuple references before
++	// copying them. Values used only by an unselected equality are needed too:
++	// early pruning must not suppress a fallible evaluation of that equality.
++	var bytes uint64
++	checked := make([]*plan.Expr, 0, len(a.values))
++	seen := make(map[*plan.Expr]struct{}, len(a.values))
++	for _, value := range a.values {
++		i
+```
+
+**File**: `pkg/sql/plan/composite_key_points_test.go` (added, +867/-0)
+```diff
+@@ -0,0 +1,867 @@
++// Copyright 2026 Matrix Origin
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     https://www.apache.org/licenses/LICENSE-2.0
 +//
 +// Unless required by applicable law or agreed to in writing, software
 +// distributed under the License is distributed on an "AS IS" BASIS,
@@ -2705,121 +3234,254 @@ INSERT-default binding, A
 +
 +import (
 +	"context"
-+	"crypto/sha256"
-+	"encoding/json"
-+	"fmt"
-+	"os"
++	"errors"
 +	"strings"
 +	"testing"
++	"time"
 +
 +	"github.com/gogo/protobuf/proto"
-+	"github.com/matrixorigin/matrixone/pkg/common/moerr"
++	"github.com/matrixorigin/matrixone/pkg/catalog"
 +	"github.com/matrixorigin/matrixone/pkg/container/types"
-+	"github.com/matrixorigin/matrixone/pkg/pb/plan"
-+	"github.com/matrixorigin/matrixone/pkg/sql/parsers"
-+	"github.com/matrixorigin/matrixone/pkg/sql/parsers/dialect"
++	"github.com/matrixorigin/matrixone/pkg/container/vector"
++	pb "github.com/matrixorigin/matrixone/pkg/pb/plan"
 +	"github.com/matrixorigin/matrixone/pkg/sql/parsers/dialect/mysql"
-+	"github.com/matrixorigin/matrixone/pkg/sql/parsers/tree"
-+	"github.com/matrixorigin/matrixone/pkg/testutil"
-+	"github.com/matrixorigin/matrixone/pkg/vm/process"
 +	"github.com/stretchr/testify/require"
 +)
 +
-+// parseDDLDefaultColumn parses a single-column CREATE TABLE declaration and
-+// returns its column definition. Callers own the parsed statement.
-+func parseDDLDefaultColumn(t testing.TB, decl string) *tree.ColumnTableDef {
-+	t.Helper()
-+	stmt, err := mysql.ParseOne(context.Background(), "create table t ("+decl+")", 1)
++func TestCompositePointCandidate(t *testing.T) {
++	ctx := NewMockCompilerContext(true, newPlanTestProcess(t))
++	table := makeExprOptThreePartCompositeSortKeyTableDef()
++	delete(table.Name2ColIndex, table.Pkey.PkeyColName)
++	table.Cols[3].Name = catalog.CPrimaryKeyColName
++	table.Cols[3].Hidden = true
++	table.Name2ColIndex[catalog.CPrimaryKeyColName] = 3
++	table.Pkey.PkeyColName = catalog.CPrimaryKeyColName
++	table.Pkey.CompPkeyCol = table.Cols[3]
++	const tag = 10
++	eq := func(pos int32, value int64) *pb.Expr {
++		return makeExprOptBinaryInt64Expr(t, ctx, "=", makeExprOptInt64Col(tag, pos, table.Cols[pos].Name), value)
++	}
++	logical := func(name string, args ...*pb.Expr) *pb.Expr {
++		expr, err := BindFuncExprImplByPlanExpr(ctx.GetContext(), name, args[:2])
++		require.NoError(t, err)
++		expr.GetF().Args = args
++		return expr
++	}
++	and := func(args ...*pb.Expr) *pb.Expr { return logical("and", args...) }
++	or := func(args ...*pb.Expr) *pb.Expr { return logical("or", args...) }
++	point := func(b, c int64) *pb.Expr { return and(eq(1, b), eq(2, c)) }
++	first, second := point(2, 3), point(4, 5)
++	commuted, err := BindFuncExprImplByPlanExpr(ctx.GetContext(), "=", []*pb.Expr{
++		MakePlan2Int64ConstExprWithType(7), makeExprOptInt64Col(tag, 1, "b"),
++	})
 +	require.NoError(t, err)
-+	createTable, ok := stmt.(*tree.CreateTable)
-+	require.True(t, ok)
-+	colDef, ok := createTable.Defs[0].(*tree.ColumnTableDef)
-+	require.True(t, ok)
-+	return colDef
-+}
++	foreign := makeExprOptBinaryInt64Expr(t, ctx, "=", makeExprOptInt64Col(tag+1, 1, "b"), 2)
++	rangeFilter := makeExprOptBinaryInt64Expr(t, ctx, ">", makeExprOptInt64Col(tag, 2, "c"), 0)
++	dynamicLiteral := eq(1, 4)
++	dynamicLiteral.GetF().Args[1].GetLit().Src = &pb.Expr{Expr: &pb.Expr_P{P: &pb.ParamRef{Pos: 1}}}
++	for _, tc := range []struct {
++		name    string
++		filters []*pb.Expr
++		want    [][]int64
++	}{
++		{"correlated", []*pb.Expr{eq(0, 1), or(first, second)}, [][]int64{{1, 2, 3}, {1, 4, 5}}},
++		{"shared suffix and reversed equality", []*pb.Expr{eq(0, 1), eq(2, 9), or(commuted, eq(1, 8))}, [][]int64{{1, 7, 9}, {1, 8, 9}}},
++		{"nested", []*pb.Expr{eq(0, 1), or(first, and(eq(1, 4), or(eq(2, 5), eq(2, 6))))}, [][]int64{{1, 2, 3}, {1, 4, 5}, {1, 4, 6}}},
++		{"contradictory branch", []*pb.Expr{eq(0, 1), or(and(eq(0, 9), eq(1, 2), eq(2, 3)), second)}, [][]int64{{1, 2, 3}, {1, 4, 5}}},
++		{"incomplete branch", []*pb.Expr{eq(0, 1), or(first, eq(1, 4))}, nil},
++		{"foreign column", []*pb.Expr{eq(0, 1), or(first, and(foreign, eq(2, 5)))}, nil},
++		{"independent ORs are not multiplied", []*pb.Expr{eq(0, 1), or(eq(1, 2), eq(1, 4)), or(eq(2, 3), eq(2, 5))}, nil},
++		{"failed OR does not leak points into later OR", []*pb.Expr{eq(0, 1), or(first, eq(1, 4)), or(point(6, 7), point(8, 9))}, [][]int64{{1, 6, 7}, {1, 8, 9}}},
++		{"safe range residual", []*pb.Expr{eq(0, 1), or(first, second), rangeFilter}, [][]int64{{1, 2, 3}, {1, 4, 5}}},
++		{"dynamic folded literal", []*pb.Expr{eq(0, 1), or(first, and(dynamicLiteral, eq(2, 5)))}, nil},
++		{"existing single point", []*pb.Expr{eq(0, 1), eq(1, 2), eq(2, 3), or(eq(1, 2), eq(1, 4))}, nil},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			before := DeepCopyExprList(tc.filters)
++			node := &pb.Node{NodeType: pb.Node_TABLE_SCAN, TableDef: table, BindingTags: []int32{tag}, FilterList: tc.filters}
++			got := compositePointCandidate(ctx.GetContext(), node, maxCompositePointBytes)
++			if tc.want == nil {
++				require.Nil(t, got)
++			} else {
++				require.NotNil(t, got)
++				require.Len(t, got.values, len(tc.want))
++				for i := range got.values {
++					for j := range got.values[i] {
++						require.Equal(t, tc.want[i][j], got.values[i][j].GetLit().GetI64Val())
++					}
++				}
++			}
++			for i := range before {
++				require.True(t, proto.Equal(before[i], tc.filters[i]), "analysis changed the SQL predicate")
++			}
++		})
++	}
 +
-+func buildDDLColumnDefault(t testing.TB, proc *process.Process, decl string) (*plan.Default, error) {
-+	t.Helper()
-+	colDef := parseDDLDefaultColumn(t, decl)
-+	typ, err := getTypeFromAst(context.Background(), colDef.Type)
-+	require.NoError(t, err)
-+	return buildDefaultExpr(proc.Ctx, colDef, typ, proc)
-+}
-+
-+// #31860: a bare numeric literal DEFAULT whose converted value does not fit the
-+// destination CHAR/VARCHAR width must be rejected with ER_INVALID_DEFAULT, like
-+// an over-long string literal, instead of silently storing truncated text. The
-+// stored length is decided by the converted value, never by the source SQL text
-+// (signs, exponents and decimal scale make text length unrelated to the value).
-+func TestDDLNumericLiteralDefaultRejectsCharWidthOverflow(t *testing.T) {
-+	for _, mode := range []string{"STRICT_TRANS_TABLES", ""} {
-+		for _, tc := range []struct {
-+			name string
-+			decl string
-+			want string // folded stored default for admitted cases
-+			fail bool
-+		}{
-+			{name: "int wider than varchar", decl: "v varchar(3) default 12345", fail: true},
-+			{name: "int wider than char", decl: "v char(3) default 12345", fail: true},
-+			{name: "decimal wider than varchar", decl: "v varchar(3) default 1.25", fail: true},
-+			{name: "signed decimal wider than varchar", decl: "v varchar(3) default -1.25", fail: true},
-+			{name: "int one over boundary", decl: "v varchar(3) default 1234", fail: true},
-+			{name: "decimal scale keeps digits", decl: "v varchar(4) default 1.250", fail: true},
-+			{name: "int fits exactly", decl: "v varchar(3) default 123", want: "123"},
-+			{name: "decimal fits", decl: "v varchar(4) default 1.25", want: "1.25"},
-+			{name: "int fits char", decl: "v char(5) default 12345", want: "12345"},
-+			{name: "zero fits one char", decl: "v varchar(1) default 0", want: "0"},
-+			// #31860 P1: uint64 and scientific float64 literals bind raw
-+			// (baseBinder.bindNumVal returns uncast numeric), so the width probe
-+			// must measure the real destination conversion, not GetSval of a
-+			// numeric literal. Pairs cover overflow/exact-fit on both families.
-+			{name: "uint64 wider than varchar", decl: "v varchar(19) default 18446744073709551615", fail: true},
-+			{name: "uint64 fits varchar exactly", decl: "v varchar(20) default 18446744073709551615", want: "18446744073709551615"},
-+			{name: "uint64 wider than char", decl: "v char(19) default 18446744073709551615", fail: true},
-+			{name: "uint64 fits char exactly", decl: "v char(20) default 18446744073709551615", want: "18446744073709551615"},
-+			{name: "scientific wider than varchar", decl: "v varchar(5) default 1e5", fail: true},
-+			{name: "scientific fits varchar exactly", decl: "v varchar(6) default 1e5", want: "100000"},
-+			{name: "scientific wider than char", decl: "v char(5) default 1e5", fail: true},
-+			{name: "scientific fits char exactly", decl: "v char(6) default 1e5", want: "100000"},
-+			{name: "negative scientific wider than varchar", decl: "v varchar(6) default -1e5", fail: true},
-+			{name: "negative scientific fits varchar exactly", decl: "v varchar(7) default -1e5", want: "-100000"},
-+			{name: "sig
++	t.Run("bounded points", func(t *testing.T) {
++		arms := make([]*pb.Expr, maxCompositePoints+1)
++		for i := range arms {
++			arms[i] = point(int64(i), int64(i))
++		}
++		node := &pb.Node{TableDef: table, BindingTags: []int32{tag}, FilterList
 ```
 
-**File**: `pkg/sql/plan/testdata/legacy_numeric_width_literal_default_ea184ad906.json` (added, +18/-0)
+**File**: `pkg/sql/plan/explain/explain_expr.go` (modified, +4/-0)
 ```diff
-@@ -0,0 +1,18 @@
-+{
-+  "base_commit": "ea184ad90624ae3dba8ced628ac019271a6c309c",
-+  "generator": "TestGenerateLegacyNumericWidthLiteralDefaultFixture",
-+  "go_version": "go1.27.1",
-+  "generated_at": "2026-11-02T05:04:14Z",
-+  "cases": {
-+    "wide_decimal": "create table t(v varchar(3) default 1.25)",
-+    "wide_int": "create table t(v varchar(3) default 12345)"
-+  },
-+  "stored_values": {
-+    "wide_decimal": "1.2",
-+    "wide_int": "123"
-+  },
-+  "fixtures": {
-+    "wide_decimal": "EgF0Ii4SAXYgASoGCD0gA0ADOhsKEQoICD0QASADQAMSBVoDMS4yEgQxLjI1GAGaAQF2IiIIARIQX19tb19mYWtlX3BrX2NvbBgBKgQIHBgBMAE6AGgBWiQiEF9fbW9fZmFrZV9wa19jb2wqEF9fbW9fZmFrZV9wa19jb2zKAVEKTwoMCgdyZWxraW5kEgFyCj8KDXJlbF9jcmVhdGVzcWwSLmNyZWF0ZSB0YWJsZSBgdGAgKGB2YCB2YXJjaGFyKDMpIGRlZmF1bHQgMS4yNSm4AgM=",
-+    "wide_int": "EgF0Ii8SAXYgASoGCD0gA0ADOhwKEQoICD0QASADQAMSBVoDMTIzEgUxMjM0NRgBmgEBdiIiCAESEF9fbW9fZmFrZV9wa19jb2wYASoECBwYATABOgBoAVokIhBfX21vX2Zha2VfcGtfY29sKhBfX21vX2Zha2VfcGtfY29sygFSClAKDAoHcmVsa2luZBIBcgpACg1yZWxfY3JlYXRlc3FsEi9jcmVhdGUgdGFibGUgYHRgIChgdmAgdmFyY2hhcigzKSBkZWZhdWx0IDEyMzQ1KbgCAw=="
-+  }
+@@ -636,6 +636,10 @@ func funcExprExplain(ctx context.Context, funcExpr *plan.Function, Typ *plan.Typ
+ 			if err != nil {
+ 				return err
+ 			}
++		} else {
++			// A hidden-key value is deliberately redacted. An empty pair of
++			// parentheses would instead suggest an empty IN set.
++			buf.WriteString("<opaque>")
+ 		}
+ 		buf.WriteString(")")
+ 	case function.EXISTS_ANY_PREDICATE:
+```
+
+**File**: `pkg/sql/plan/explain/explain_expr_serialized_test.go` (modified, +26/-0)
+```diff
+@@ -156,6 +156,32 @@ func TestSerializedLiteralRedactionAppliesAcrossExpressionLayouts(t *testing.T)
+ 	}
+ }
+ 
++func TestCompositeKeyInExplainShowsRedaction(t *testing.T) {
++	mp := mpool.MustNew(t.Name())
++	vec := vector.NewVec(types.T_varchar.ToType())
++	defer vec.Free(mp)
++	require.NoError(t, vector.AppendBytes(vec, []byte{0, 1, 2}, false, mp))
++	data, err := vec.MarshalBinary()
++	require.NoError(t, err)
++	registered, err := function.GetFunctionByName(context.Background(), "in",
++		[]types.Type{types.T_varchar.ToType(), types.T_varchar.ToType()})
++	require.NoError(t, err)
++	expr := &planpb.Expr{Expr: &planpb.Expr_F{F: &planpb.Function{
++		Func: &planpb.ObjectRef{Obj: registered.GetEncodedOverloadID(), ObjName: "in"},
++		Args: []*planpb.Expr{
++			{Typ: planpb.Type{Id: int32(types.T_varchar)}, Expr: &planpb.Expr_Col{Col: &planpb.ColRef{Name: catalog.CPrimaryKeyColName}}},
++			{Typ: planpb.Type{Id: int32(types.T_varchar)}, Expr: &planpb.Expr_Vec{Vec: &planpb.LiteralVec{Data: data, Len: 1, IsSerialized: true}}},
++		},
++	}}}
++	var text bytes.Buffer
++	require.NoError(t, describeExpr(context.Background(), expr, NewExplainDefaultOptions(), &text))
++	require.Equal(t, catalog.CPrimaryKeyColName+" in (<opaque>)", text.String())
++	var jsonText bytes.Buffer
++	require.NoError(t, describeExpr(context.Background(), expr, &ExplainOptions{CompleteLiteralVectors: true}, &jsonText))
++	require.Contains(t, jsonText.String(), "serialized_vec(")
++	require.Contains(t, jsonText.String(), "0x000102")
 +}
-\ No newline at end of file
++
+ func TestBinaryLiteralExplainUsesHex(t *testing.T) {
+ 	got := describeComparisonForLiteralTest(t, "payload", "=", "AB", types.T_varchar, true, false)
+ 	if want := "(payload = 0x4142)"; got != want {
+```
+
+**File**: `pkg/sql/plan/expr_opt.go` (modified, +5/-2)
+```diff
+@@ -678,11 +678,11 @@ type compositePartBlockFilter struct {
+ 	copy     *plan.Expr
+ }
+ 
+-func (builder *QueryBuilder) collectCompositePartBlockFilters(nodeID int32, deferredOnly bool) (map[int32][]compositePartBlockFilter, bool) {
++func (builder *QueryBuilder) collectCompositePartBlockFilters(nodeID int32, deferredOnly bool, points *compositePointCapture) (map[int32][]compositePartBlockFilter, bool) {
+ 	var ret map[int32][]compositePartBlockFilter
+ 	needsLate := false
+ 	blockDisabled := builder.optimizerHints != nil && builder.optimizerHints.blockFilter == 2
+-	if blockDisabled && !deferredOnly {
++	if blockDisabled && !deferredOnly && points == nil {
+ 		return nil, false
+ 	}
+ 	visited := make(map[int32]struct{})
+@@ -699,6 +699,9 @@ func (builder *QueryBuilder) collectCompositePartBlockFilters(nodeID int32, defe
+ 			}
+ 			return
+ 		}
++		if points != nil {
++			points.collect(builder, id, node)
++		}
+ 
+ 		if deferredOnly {
+ 			if len(node.FilterList) == 0 || len(node.BindingTags) == 0 || node.TableDef.Pkey == nil || !compositeKeyFiltersNeedIndexSelection(node.TableDef) {
+```
+
+**File**: `pkg/sql/plan/expr_opt_test.go` (modified, +7/-7)
+```diff
+@@ -705,7 +705,7 @@ func TestCompositeKeyFoldedInVectorRetainsPartBlockFilters(t *testing.T) {
+ 		FilterList:  []*planpb.Expr{aEq, bIn},
+ 	}}
+ 
+-	parts, _ := builder.collectCompositePartBlockFilters(0, false)
++	parts, _ := builder.collectCompositePartBlockFilters(0, false, nil)
+ 	builder.qry.Nodes[0].FilterList = builder.doMergeFiltersOnCompositeKey(true, tableDef, tag, aEq, bIn)
+ 	builder.retainConsumedCompositePartBlockFilters(parts)
+ 	foldTableScanFilters(ctx.GetProcess(), builder.qry, 0, true)
+@@ -1012,7 +1012,7 @@ func TestCompositeKeyPushesCompoundAndPartBlockFilters(t *testing.T) {
+ 		FilterList:  []*planpb.Expr{aEq, bGt, bLt},
+ 	}}
+ 
+-	parts, _ := builder.collectCompositePartBlockFilters(0, false)
++	parts, _ := builder.collectCompositePartBlockFilters(0, false, nil)
+ 	builder.qry.Nodes[0].FilterList = builder.doMergeFiltersOnCompositeKey(true, tableDef, tag, aEq, bGt, bLt)
+ 	builder.retainConsumedCompositePartBlockFilters(parts)
+ 	foldTableScanFilters(builder.compCtx.GetProcess(), builder.qry, 0, true)
+@@ -1034,7 +1034,7 @@ func TestCompositeKeyPushesCompoundAndPartBlockFilters(t *testing.T) {
+ 
+ 	// Rebuilding statistics must not lose constituent filters from an
+ 	// indexed scan whose row filter is already compounded.
+-	parts, _ = builder.collectCompositePartBlockFilters(0, false)
++	parts, _ = builder.collectCompositePartBlockFilters(0, false, nil)
+ 	require.Len(t, parts[0], 3, "consumed predicates survive only in the block filters")
+ 	for _, candidate := range parts[0] {
+ 		require.NotSame(t, candidate.original, candidate.copy)
+@@ -1067,7 +1067,7 @@ func TestCompositeKeyPartBlockFiltersRespectDisableHint(t *testing.T) {
+ 		},
+ 	}}
+ 
+-	parts, _ := builder.collectCompositePartBlockFilters(0, false)
++	parts, _ := builder.collectCompositePartBlockFilters(0, false, nil)
+ 	require.Empty(t, parts)
+ 	builder.qry.Nodes[0].FilterList = builder.doMergeFiltersOnCompositeKey(true,
+ 		tableDef, tag, builder.qry.Nodes[0].FilterList...)
+@@ -1088,7 +1088,7 @@ func TestCompositeKeyPreservesPartWhenRewriteMutatesPredicateInPlace(t *testing.
+ 		FilterList:  []*planpb.Expr{aEq},
+ 	}}
+ 
+-	parts, _ := builder.collectCompositePartBlockFilters(0, false)
++	parts, _ := builder.collectCompositePartBlockFilters(0, false, nil)
+ 	builder.mergeFiltersOnCompositeKey(0, true)
+ 	builder.retainConsumedCompositePartBlockFilters(parts)
+ 	builder.appendCompoundKeyBlockFilters(0)
+@@ -1122,7 +1122,7 @@ func TestCompositeKeyPartBlockFiltersDoNotRestoreUnchangedPredicates(t *testing.
+ 		FilterList:  []*planpb.Expr{filter},
+ 	}}
+ 
+-	candidates, _ := builder.collectCompositePartBlockFilters(0, false)
++	candidates, _ := builder.collectCompositePartBlockFilters(0, false, nil)
+ 	builder.retainConsumedCompositePartBlockFilters(candidates)
+ 	require.Empty(t, candidates, "unchanged predicates must be left to later rewrites and stats")
+ }
+@@ -1140,7 +1140,7 @@ func TestCompositeKeyPartBlockFiltersTrackCanonicalizedPredicateIdentity(t *test
+ 		FilterList:  []*planpb.Expr{filter},
+ 	}}
+ 
+-	candidates, _ := builder.collectCompositePartBlockFilters(0, false)
++	candidates, _ := builder.collectCompositePartBlockFilters(0, false, nil)
+ 	builder.mergeFiltersOnCompositeKey(0, true)
+ 	builder.retainConsumedCompositePartBlockFilters(candidates)
+ 	require.Empty(t, candidates, "an in-place canonicalized predicate was not consumed")
 ```
 
 ---
 
-### Incident Patch 2: `611f2777` (2026-11-05)
-**Commit Message**: fix(frontend): reject top-level JSON null in JSONLINE OUTFILE export (#32225)
+### Incident Patch 3: `90e905a3` (2026-11-09)
+**Commit Message**: fix(frontend): reduce disconnect scan stalls during KILL (#32378)
 
 ## What type of PR is this?
 
 - [ ] API-change
 - [x] BUG
-- [ ] Improvement
+- [x] Improvement
 - [ ] Documentation
 - [ ] Feature
 - [ ] Test and CI
@@ -2827,31 +3489,174 @@ INSERT-default binding, A
 
 ## Which issue(s) this PR fixes:
 
-Related to #31277
+Part of #32362; keep the issue open. The 4.2-dev change is #32364; main
+already has a one-second disconnect probe without the 30-second grace
+described in that issue.
 
 ## What this PR does / why we need it:
 
-### Root cause
+On main, an idle connection's `KILL CONNECTION` can hold the routine
+request mutex while closing its protocol. A disconnect scan that has
+already snapshotted that routine can then wait behind a slow close
+before it reaches another disconnected request. This change removes that
+lock-held close when the routine and its lifecycle controller are
+uncontended and idle. It seals the existing lifecycle controller before
+releasing the locks, so a reset or migration cannot acquire the session
+while the protocol is closing. Busy or contended paths retain their
+previous behavior; this does not guarantee that every disconnect scan is
+nonblocking.
 
-`pkg/frontend/export.go` `constructJSONLine` encodes a SQL NULL as
-`row[col]=nil`, while `vectorValueToJSON` encodes a top-level JSON
-literal `null` as `json.RawMessage("null")`; `json.Marshal` writes both
-as the identical member value `null`. The JSON-null/SQL-NULL distinction
-is therefore destroyed at export time (a representation collision in the
-format). The jsonline reader (`pkg/sql/colexec/external/reader_csv.go`
-`transJsonObject2Lines`/`transJsonArray2Lines`) converts every bare
-`null` into SQL NULL, so a `SELECT ... INTO OUTFILE ... FORMAT
-'jsonline'` followed by `LOAD DATA ... FORMAT 'jsonline'` silently
-changes a stored JSON literal `null` into SQL NULL — the exact
-round-trip reported in #31277.
+A request finishing concurrently with KILL now hands connection closure
+to the existing connection
 
-One jsonline member cannot carry two states. Reinterpreting bare nulls
-on load would break SQL NULL round-trips, whose contract is pinned by
-exist
-
-**File**: `pkg/embed/jsonline_json_null_test.go` (added, +182/-0)
+**File**: `pkg/frontend/routine.go` (modified, +64/-21)
 ```diff
-@@ -0,0 +1,182 @@
+@@ -18,6 +18,7 @@ import (
+ 	"context"
+ 	"errors"
+ 	"fmt"
++	"io"
+ 	"strings"
+ 	"sync"
+ 	"sync/atomic"
+@@ -146,15 +147,29 @@ func (rt *Routine) shouldCloseConnection() bool {
+ 	return routineCtx != nil && context.Cause(routineCtx) != nil
+ }
+ 
+-func (rt *Routine) setInProcessRequest(b bool) {
++func (rt *Routine) beginClientRequest() bool {
+ 	rt.mu.Lock()
+ 	defer rt.mu.Unlock()
+-	rt.inProcessRequest = b
+-	if b {
+-		rt.requestStartedAt.Store(clientRequestClockValue(time.Now()))
+-	} else {
+-		rt.requestStartedAt.Store(0)
++	if rt.isCancelled() {
++		return false
++	}
++	rt.inProcessRequest = true
++	rt.requestStartedAt.Store(clientRequestClockValue(time.Now()))
++	return true
++}
++
++// endClientRequest hands a concurrent KILL to the connection owner after the
++// response has been attempted, without replacing an existing error.
++func (rt *Routine) endClientRequest(err error) error {
++	rt.mu.Lock()
++	rt.inProcessRequest = false
++	rt.requestStartedAt.Store(0)
++	cancelled := rt.isCancelled()
++	rt.mu.Unlock()
++	if err == nil && cancelled {
++		return io.EOF
+ 	}
++	return err
+ }
+ 
+ func (rt *Routine) requestRunningLongerThan(nowValue int64, minimum time.Duration) bool {
+@@ -183,9 +198,10 @@ func (rt *Routine) execCallbackBasedOnRequest(want bool, callback func()) {
+ 
+ func (rt *Routine) releaseRoutineCtx() {
+ 	rt.mu.Lock()
+-	defer rt.mu.Unlock()
+-	if rt.cancelRoutineFunc != nil {
+-		rt.cancelRoutineFunc()
++	cancel := rt.cancelRoutineFunc
++	rt.mu.Unlock()
++	if cancel != nil {
++		cancel()
+ 	}
+ }
+ 
+@@ -234,7 +250,7 @@ func (rt *Routine) getSession() *Session {
+ func (rt *Routine) setCancelRequestFunc(cf context.CancelFunc) {
+ 	rt.mu.Lock()
+ 	rt.cancelRequestFunc = cf
+-	closing := rt.closing.Load()
++	closing := rt.closing.Load() || rt.isCancelled()
+ 	rt.mu.Unlock()
+ 	if closing && cf != nil {
+ 		cf()
+@@ -434,7 +450,11 @@ func (rt *Routine) countConnectionIfNeeded(ses *Session) {
+ // handleSessionCommand executes commands that replace the Session generation.
+ // They cannot run through handleRequest because request admission pins the old
+ // generation until that function returns.
+-func (rt *Routine) handleSessionCommand(ctx context.Context, req *Request) error {
++func (rt *Routine) handleSessionCommand(ctx context.Context, req *Request) (retErr error) {
++	if !rt.beginClientRequest() {
++		return io.EOF
++	}
++	defer func() { retErr = rt.endClientRequest(retErr) }()
+ 	oldSession := rt.getSession()
+ 	if oldSession == nil {
+ 		return moerr.NewInternalError(ctx, "cannot reset a missing session")
+@@ -448,8 +468,6 @@ func (rt *Routine) handleSessionCommand(ctx context.Context, req *Request) error
+ 	)
+ 	defer cancel()
+ 
+-	rt.setInProcessRequest(true)
+-	defer rt.setInProcessRequest(false)
+ 	v2.StartHandleRequestCounter.Inc()
+ 	defer v2.EndHandleRequestCounter.Inc()
+ 
+@@ -631,18 +649,43 @@ func (rt *Routine) killConnection(killMyself bool) {
+ 		//will be closed finally.
+ 		rt.releaseRoutineCtx()
+ 
+-		//If it is in processing the request, it responds to the client normally
+-		//before closing the network to avoid the mysql client to be hung.
+-		closeConn := func() {
+-			//If it is not in processing the request, just close the network
+-			proto := rt.getProtocol()
+-			if proto != nil {
++		// If the controller and request are idle, seal admission and close the
++		// protocol without holding the request lock across network I/O.
++		if rt.tryCloseIdleAfterKill() {
++			return
++		}
++		rt.execCallbackBasedOnRequest(false, func() {
++			if proto := rt.getProtocol(); proto != nil {
+ 				proto.Close()
+ 			}
+-		}
++		})
++	}
++}
+ 
+-		rt.execCallbackBasedOnRequest(false, closeConn)
++// tryCloseIdleAfterKill only claims an idle session when neither lifecycle nor
++// request admission can race the protocol close.
++func (rt *Routine) tryCloseIdleAfterKill() bool {
++	if !rt.mc.TryLock() {
++		return false
++	}
++	if rt.mc.inProgress || rt.mc.requestInProgress || rt.mc.resetWaiterPending || !rt.mu.TryLock() {
++		rt.mc.Unlock()
++		return false
++	}
++	if rt.inProcessRequest {
++		rt.mu.Unlock()
++		rt.mc.Unlock()
++		return false
++	}
++	rt.mc.closed = true
++	rt.mc.cond.Broadcast()
++	proto := rt.getProtocol()
++	rt.mu.Unlock()
++	rt.mc.Unlock()
++	if proto != nil {
++		proto.Close()
+ 	}
++	return true
+ }
+ 
+ // cleanup When the io is closed, the cleanup will be called in callback Closed().
+```
+
+**File**: `pkg/frontend/routine_kill_handoff_test.go` (added, +425/-0)
+```diff
+@@ -0,0 +1,425 @@
 +// Copyright 2026 Matrix Origin
 +//
 +// Licensed under the Apache License, Version 2.0 (the "License");
@@ -2866,911 +3671,371 @@ exist
 +// See the License for the specific language governing permissions and
 +// limitations under the License.
 +
-+package embed
++package frontend
 +
 +import (
 +	"context"
-+	"database/sql"
 +	"errors"
-+	"fmt"
-+	"os"
-+	"path/filepath"
-+	"strings"
++	"io"
++	"sync"
++	"sync/atomic"
 +	"testing"
 +	"time"
 +
++	"github.com/golang/mock/gomock"
++	"github.com/matrixorigin/matrixone/pkg/config"
 +	"github.com/stretchr/testify/require"
 +)
 +
-+// TestJSONLineOutfileRejectsTopLevelJSONNullRoundTrip pins the #31277
-+// contract at SQL level. A JSON column can hold both a top-level JSON literal
-+// null and a SQL NULL, but a JSONLINE line carries both as the same bare
-+// null, which the loader reads back as SQL NULL. The export must therefore
-+// fail loudly for a top-level JSON null instead of silently changing the
-+// value, keep every representable value (SQL NULL, nested null, the JSON
-+// string "null", ordinary JSON) exactly round-trippable in both reader
-+// modes, and leave CSV as the lossless path for the full value space.
-+func TestJSONLineOutfileRejectsTopLevelJSONNullRoundTrip(t *testing.T) {
-+	RunSingleCNBaseClusterTests(t, func(c Cluster) {
-+		ctx, cancel := context.WithTimeout(t.Context(), 3*time.Minute)
-+		defer cancel()
-+		cn, err := c.GetCNService(0)
-+		require.NoError(t, err)
-+		db, err := sql.Open("mysql", fmt.Sprintf("dump:111@tcp(127.0.0.1:%d)/", cn.GetServiceConfig().CN.Frontend.Port))
-+		require.NoError(t, err)
-+		defer db.Close()
-+		conn, err := db.Conn(ctx)
-+		require.NoError(t, err)
-+		defer conn.Close()
-+		exec := func(stmt string) {
-+			t.Helper()
-+			_, err := conn.ExecContext(ctx, stmt)
-+			require.NoError(t, err, stmt)
-+		}
-+		query := func(stmt string) *sql.Rows {
-+			t.Helper()
-+			rows, err := conn.QueryContext(ctx, stmt)
-+			require.NoError(t, err, stmt)
-+			return rows
-+		}
-+
-+		const database = "issue_31277_json_null"
-+		exec("create database " + database)
-+		defer func() { _, _ = conn.ExecContext(ctx, "drop database if exists "+database) }()
-+		exec("create table " + database + ".src (id int primary key, j json)")
-+		exec("insert into " + database + ".src values " +
-+			"(1, 'null'), (2, null), (3, '{\"a\":null}'), (4, '\"null\"'), (5, '{\"a\":1}')")
-+
-+		type jsonRow struct {
-+			ID     int
-+			IsNull bool
-+			Text   string
-+		}
-+		readRows := func(table string) []jsonRow {
-+			t.Helper()
-+			rows := query("select id, j is null, coalesce(cast(j as char), '#NULL') from " + database + "." + table + " order by id")
-+			defer rows.Close()
-+			var got []jsonRow
-+			for rows.Next() {
-+				var row jsonRow
-+				require.NoError(t, rows.Scan(&row.ID, &row.IsNull, &row.Text))
-+				got = append(got, row)
-+			}
-+			require.NoError(t, rows.Err())
-+			return got
-+		}
-+		// MO renders JSON objects MySQL-style with spaces after ':'; the
-+		// value identity and the IS NULL flag are what this test pins.
-+		wantSrc := []jsonRow{
-+			{ID: 1, IsNull: false, Text: "null"},
-+			{ID: 2, IsNull: true, Text: "#NULL"},
-+			{ID: 3, IsNull: false, Text: `{"a": null}`},
-+			{ID: 4, IsNull: false, Text: `"null"`},
-+			{ID: 5, IsNull: false, Text: `{"a": 1}`},
-+		}
-+		require.Equal(t, wantSrc, readRows("src"))
-+
-+		dir := t.TempDir()
-+
-+		// Exporting the whole table must fail on the top-level JSON null
-+		// instead of writing a line that loads back as SQL NULL.
-+		rejectPath := filepath.Join(dir, "reject.jsonl")
-+		failCtx, failCancel := context.WithTimeout(ctx, 15*time.Second)
-+		started := time.Now()
-+		_, err = conn.ExecContext(failCtx, fmt.Sprintf(
-+			"select id, j from %s.src order by id into outfile '%s' format 'jsonline'", database, rejectPath))
-+		failCancel()
-+		require.Error(t, err)
-+		require.Contains(t, strings.ToLower(err.Error()), "jsonline")
-+		require.Contains(t, strings.ToLower(err.Error()), "json null")
-+		t.Logf("top-level JSON null OUTFILE error after %s: %v", time.Since(started), err)
-+		if rejectBytes, readErr := os.ReadFile(rejectPath); readErr == nil {
-+			t.Logf("failed top-level JSON null target bytes=%x text=%q", rejectBytes, string(rejectBytes))
-+			require.NotContains(t, string(rejectBytes), `"id":1`,
-+				"the ambiguous row must not be published by a failed export")
-+		} else {
-+			require.True(t, errors.Is(readErr, os.ErrNotExist), "unexpected failed-target read error: %v", readErr)
-+		}
-+
-+		// The session stays usable after the rejected export.
-+		var sessionCheck int
-+		require.NoError(t, conn.QueryRowContext(ctx, "select 1").Scan(&sessionCheck))
-+		require.Equal(t, 1, sessionCheck)
-+
-+		// Every representable value exports with its exact encoding.
-+		jsonPath := filepath.Join(dir, "roundtrip.jsonl")
-+		exec(fmt.Spr
-```
-
-**File**: `pkg/frontend/export.go` (modified, +8/-0)
-```diff
-@@ -2131,6 +2131,14 @@ func vectorValueToJSON(vec *vector.Vector, i int, ss *Session, backSes *backSess
- 	switch vec.GetType().Oid {
- 	case types.T_json:
- 		val := types.DecodeJson(vec.GetBytesAt(i))
-+		// #31277: a top-level JSON null marshals to the same "null" member
-+		// value as a SQL NULL, and the jsonline loader reads every bare null
-+		// back as SQL NULL, so the format cannot carry the distinction.
-+		// Reject the export instead of silently changing the value.
-+		if val.IsNull() {
-+			return nil, moerr.NewNotSupported(context.Background(),
-+				"JSONLINE OUTFILE cannot encode a top-level JSON null; it would load back as SQL NULL; use CSV to preserve the distinction")
-+		}
- 		// Return as raw JSON string to be embedded
- 		return json.RawMessage(val.String()), nil
- 	case types.T_bool:
-```
-
-**File**: `pkg/frontend/export_lifecycle_test.go` (modified, +62/-0)
-```diff
-@@ -362,6 +362,68 @@ func TestExportAuditPartialSplitFailureKeepsConfirmedLowerBoundAndAllowsReuse(t
- 	require.False(t, fs.closed.Load(), "the shared file service is borrowed")
- }
- 
-+// TestExportJSONLineNullRejectKeepsCompletedSplits pins the #31277 failure
-+// semantics when file splitting has already published earlier batches: the
-+// top-level JSON null rejection fails the statement loudly, splits completed
-+// before the failing batch keep their faithful rows, the split active at the
-+// rejection is never installed, and no published line silently rewrites the
-+// JSON null as SQL NULL. Every export failure follows this
-+// completed-progress contract (see
-+// TestExportAuditPartialSplitFailureKeepsConfirmedLowerBoundAndAllowsReuse);
-+// the rejection does not weaken it.
-+func TestExportJSONLineNullRejectKeepsCompletedSplits(t *testing.T) {
-+	mp := mpool.MustNewZero()
-+	dir := t.TempDir()
-+	mrs := &MysqlResultSet{}
-+	column := &MysqlColumn{}
-+	column.SetName("value")
-+	mrs.AddColumn(column)
-+	ep := &ExportConfig{ctx: context.Background(), proc: sysFileAccessTestProcess(), userConfig: newDiffCSVUserConfig(), mrs: mrs}
-+	ep.userConfig.ExportFormat = "jsonline"
-+	ep.userConfig.FilePath = filepath.Join(dir, "out.jsonl")
-+	// One 12-byte line exactly fills a split: the second batch rotates the
-+	// first split out, and the third batch's rejection lands while the second
-+	// split is active.
-+	ep.userConfig.SplitSize = 12
-+	initExportFileParam(ep, mrs)
-+	ep.init()
-+	defer ep.Close()
-+	require.NoError(t, openNewFile(ep.ctx, ep, ep.mrs))
-+
-+	ses := &backSession{feSessionImpl: feSessionImpl{pool: mp}}
-+	convert := func(text string, index int32) {
-+		bat := batch.NewOffHeapWithSize(1)
-+		bat.Vecs[0] = vector.NewOffHeapVecWithType(types.T_json.ToType())
-+		defer bat.Clean(mp)
-+		require.NoError(t, vector.AppendBytes(bat.Vecs[0], encodeJSONForExportTest(t, text), false, mp))
-+		bat.SetRowCount(1)
-+		constructJSONLine(ep.ctx, ses, bat, index, ep.ByteChan, ep)
-+	}
-+	convert("1", 1)
-+	convert("2", 2)
-+	convert("null", 3)
-+	ep.Index.Store(3)
-+
-+	err := exportAllDataFromBatches(ep)
-+	require.Error(t, err)
-+	require.True(t, moerr.IsMoErrCode(err, moerr.ErrNotSupported), "%v", err)
-+	require.Contains(t, err.Error(), "top-level JSON null")
-+	require.ErrorIs(t, ep.finish(err), err)
-+	require.Zero(t, mp.CurrNB())
-+
-+	// The completed split keeps its faithful row.
-+	completed, readErr := os.ReadFile(filepath.Join(dir, "out.jsonl"))
-+	require.NoError(t, readErr)
-+	require.Equal(t, "{\"value\":1}\n", string(completed))
-+	// The active split is aborted: the row already written to it is never
-+	// installed, and no further output exists.
-+	_, statErr := os.Stat(filepath.Join(dir, "out.jsonl.1"))
-+	require.True(t, os.IsNotExist(statErr), "the active split must not be installed: %v", statErr)
-+	paths, globErr := filepath.Glob(filepath.Join(dir, "out.jsonl*"))
-+	require.NoError(t, globErr)
-+	require.Equal(t, []string{filepath.Join(dir, "out.jsonl")}, paths)
++type observedKillProtocol struct {
++	*testMysqlWriter
++	closed chan struct{}
++	once   sync.Once
 +}
 +
- func TestExportAuditCountsCSVHeaderAndJSONLines(t *testing.T) {
- 	for _, tc := range []struct {
- 		name, format, payload, want string
-```
-
-**File**: `pkg/frontend/export_test.go` (modified, +120/-0)
-```diff
-@@ -18,6 +18,7 @@ import (
- 	"bytes"
- 	"context"
- 	"encoding/csv"
-+	"encoding/json"
- 	"errors"
- 	"io"
- 	"os"
-@@ -34,6 +35,7 @@ import (
- 	"github.com/matrixorigin/matrixone/pkg/common/moerr"
- 	"github.com/matrixorigin/matrixone/pkg/common/mpool"
- 	"github.com/matrixorigin/matrixone/pkg/container/batch"
-+	"github.com/matrixorigin/matrixone/pkg/container/bytejson"
- 	"github.com/matrixorigin/matrixone/pkg/container/types"
- 	"github.com/matrixorigin/matrixone/pkg/container/vector"
- 	"github.com/matrixorigin/matrixone/pkg/defines"
-@@ -1063,6 +1065,124 @@ func TestConstructJSONLineRejectsInvalidUTF8AndReleasesBatch(t *testing.T) {
- 	require.Zero(t, mp.CurrNB(), "successful batch must release its worker allocation")
- }
- 
-+// encodeJSONForExportTest encodes JSON text the same way the storage layer
-+// stores a JSON column value, for building export test vectors.
-+func encodeJSONForExportTest(t *testing.T, text string) []byte {
-+	t.Helper()
-+	var bj bytejson.ByteJson
-+	require.NoError(t, bj.UnmarshalJSON([]byte(text)))
-+	data, err := types.EncodeJson(bj)
-+	require.NoError(t, err)
-+	return data
-+}
++func (p *observedKillProtocol) Close() { p.once.Do(func() { close(p.closed) }) }
 +
-+// TestVectorValueToJSONTopLevelJSONNull pins the #31277 contract: a top-level
-+// JSON literal null has no JSONLINE encoding that loads back as a JSON value,
-+// so the converter must reject it instead of colliding with SQL NULL, while
-+// nested nulls, the JSON string "null" and every other JSON value keep their
-+// exact raw encoding.
-+func TestVectorValueToJSONTopLevelJSONNull(t *testing.T) {
-+	mp := mpool.MustNewZero()
-+
-+	t.Run("top-level JSON null is rejected", func(t *testing.T) {
-+		nullViaEncode, err := types.EncodeJson(bytejson.Null)
-+		require.NoError(t, err)
-+		for _, encoded := range [][]byte{
-+			encodeJSONForExportTest(t, "null"),
-+			nullViaEncode,
-+		} {
-+			func() {
-+				vec := vector.NewVec(types.T_json.ToType())
-+				defer func() {
-+					vec.Free(mp)
-+					require.Zero(t, mp.CurrNB())
-+				}()
-+				require.NoError(t, vector.AppendBytes(vec, encoded, false, mp))
-+				_, err := vectorValueToJSON(vec, 0, nil, nil)
-+				require.Error(t, err)
-+				require.True(t, moerr.IsMoErrCode(err, moerr.ErrNotSupported), "%v", err)
-+				require.Contains(t, err.Error(), "JSONLINE")
-+				require.Contains(t, err.Error(), "JSON null")
-+			}()
-+		}
-+	})
-+
-+	t.Run("nested null, string null and other JSON values still encode", func(t *testing.T) {
-+		for _, tc := range []struct{ in, want string }{
-+			{`{"a":null}`, `{"a":null}`},
-+			{`[null]`, `[null]`},
-+			{`"null"`, `"null"`},
-+			{`true`, `true`},
-+			{`false`, `false`},
-+			{`0`, `0`},
-+			{`{"a":1}`, `{"a":1}`},
-+		} {
-+			func() {
-+				vec := vector.NewVec(types.T_json.ToType())
-+				defer func() {
-+					vec.Free(mp)
-+					require.Zero(t, mp.CurrNB())
-+				}()
-+				require.NoError(t, vector.AppendBytes(vec, encodeJSONForExportTest(t, tc.in), false, mp))
-+				got, err := vectorValueToJSON(vec, 0, nil, nil)
-+				require.NoError(t, err)
-+				// constructJSONLine embeds the value in a row map and marshals
-+				// it with encoding/json, which compacts the raw message; pin
-+				// the exact bytes that land in the export file.
-+				wire, err := json.Marshal(got)
-+				require.NoError(t, err)
-+				require.Equal(t, tc.want, string(wire))
-+			}()
-+		}
-+	})
-+}
-+
-+// TestConstructJSONLineRejectsTopLevelJSONNullAndReleasesBatch proves the
-+// batch worker reports the top-level JSON null error without publishing a
-+// partial prefix, releases the batch, and still exports SQL NULL, nested JSON
-+// null, the JSON string "null" and ordinary JSON with distinct encodings.
-+func TestConstructJSONLineRejectsTopLevelJSONNullAndReleasesBatch(t *testing.T) {
-+	mp := mpool.MustNewZero()
-+	mrs := &MysqlResultSet{}
-+	column := &MysqlColumn{}
-+	column.SetName("value")
-+	mrs.AddColumn(column)
-+	ep := &ExportConfig{proc: sysFileAccessTestProcess(), mrs: mrs}
-+	ses := &backSession{feSessionImpl: feSessionImpl{pool: mp}}
-+	bytesChan := make(chan *BatchByte, 2)
-+
-+	badBatch := batch.NewOffHeapWithSize(1)
-+	badVec := vector.NewOffHeapVecWithType(types.T_json.ToType())
-+	badBatch.Vecs[0] = badVec
-+	defer badBatch.Clean(mp)
-+	require.NoError(t, vector.AppendBytes(badVec, encodeJSONForExportTest(t, `{"a":1}`), false, mp))
-+	require.NoError(t, vector.AppendBytes(badVec, encodeJSONForExportTest(t, `null`), false, mp))
-+	badBatch.SetRowCount(2)
-+	require.Positive(t, mp.CurrNB())
-+	constructJSONLine(context.Background(), ses, badBatch, 0, bytesChan, ep)
-+	failed := <-bytesChan
-+	require.Error(t, failed.err)
-+	require.True(t, moerr.IsMoErrCode(failed.err, moerr.ErrNotSupported), "%v", failed.err)
-+	require.Contains(t, failed.err.Error(), "JSON null")
-+	require.Zero(t, len(failed.writeByte), "do not publish a partial batch containing a valid prefix")
-+	require.Zero(t, mp.CurrNB(), "conversion failure must release the worker batch")
-+
-+	goodBatch := batch.NewOffHeapWithSize(1)
-+	goodVec := vector.NewOffHeapVecWithType(types.T_json.ToType())
-+	goodBatch.Vecs[0] = goodVec
-+	defer goodBatch.Clean(mp)
-+	require.N
-```
-
-**File**: `test/distributed/cases/load_data/issue_31277_jsonline_json_null.result` (added, +65/-0)
-```diff
-@@ -0,0 +1,65 @@
-+drop database if exists issue_31277;
-+create database issue_31277;
-+use issue_31277;
-+create table src (id int primary key, j json);
-+insert into src values (1, 'null'), (2, null), (3, '{"a":null}'), (4, '"null"'), (5, '{"a":1}');
-+select id, j, j is null from src order by id;
-+➤ id[4,32,0]  ¦  j[-1,2147483647,0]  ¦  j is null[-6,8,0]  𝄀
-+1  ¦  null  ¦  0  𝄀
-+2  ¦  null  ¦  1  𝄀
-+3  ¦  {"a": null}  ¦  0  𝄀
-+4  ¦  "null"  ¦  0  𝄀
-+5  ¦  {"a": 1}  ¦  0
-+select id, j from src order by id into outfile '$resources/into_outfile/issue_31277.jsonl' format 'jsonline';
-+-- @regex("JSONLINE OUTFILE cannot encode a top-level JSON null", true)
-+not supported: JSONLINE OUTFILE cannot encode a top-level JSON null; it would load back as SQL NULL; use CSV to preserve the distinction
-+select id, j from src where id <> 1 order by id into outfile '$resources/into_outfile/issue_31277.jsonl' format 'jsonline';
-+select load_file(cast('file://$resources/into_outfile/issue_31277.jsonl' as datalink)) as jsonl_content;
-+➤ jsonl_content[-1,16383,0]  𝄀
-+{"id":2,"j":null}
-+{"id":3,"j":{"a":null}}
-+{"id":4,"j":"null"}
-+{"id":5,"j":{"a":1}}
-+
-+create table object_dst (id int primary key, j json);
-+load data infile {'filepath'='$resources/into_outfile/issue_31277.jsonl','format'='jsonline','jsondata'='object'} into table object_dst;
-+select id, j, j is null from object_dst order by id;
-+➤ id[4,32,0]  ¦  j[-1,2147483647,0]  ¦  j is null[-6,8,0]  𝄀
-+2  ¦  null  ¦  1  𝄀
-+3  ¦  {"a": null}  ¦  0  𝄀
-+4  ¦  "null"  ¦  0  𝄀
-+5  ¦  {"a": 1}  ¦  0
-+create table array_dst (id int primary key, j json);
-+load data infile {'filepath'='$resources/load_data/issue_31277_jsonline_json_null_array.jl','format'='jsonline','jsondata'='array'} into table array_dst;
-+select id, j, j is null from array_dst order by id;
-+➤ id[4,32,0]  ¦  j[-1,2147483647,0]  ¦  j is null[-6,8,0]  𝄀
-+2  ¦  null  ¦  1  𝄀
-+3  ¦  {"a": null}  ¦  0  𝄀
-+4  ¦  "null"  ¦  0  𝄀
-+5  ¦  {"a": 1}  ¦  0
-+create table not_null_dst (j json not null);
-+load data infile {'filepath'='$resources/load_data/issue_31277_jsonline_json_null_nullonly.jl','format'='jsonline','jsondata'='object'} into table not_null_dst;
-+-- @regex("cannot be null", true)
-+constraint violation: Column 'j' cannot be null
-+select count(*) as rows_after_rejected_null from not_null_dst;
-+➤ rows_after_rejected_null[-5,64,0]  𝄀
-+0
-+select id, j from src where id <> 4 order by id into outfile '$resources/into_outfile/issue_31277.csv' fields terminated by ',' optionally enclosed by '"' header 'false';
-+select load_file(cast('file://$resources/into_outfile/issue_31277.csv' as datalink)) as csv_content;
-+➤ csv_content[-1,16383,0]  𝄀
-+1,"null"
-+2,\N
-+3,"{""a"": null}"
-+5,"{""a"": 1}"
-+
-+create table csv_dst (id int primary key, j json);
-+load data infile '$resources/into_outfile/issue_31277.csv' into table csv_dst fields terminated by ',' optionally enclosed by '"';
-+select id, j, j is null from csv_dst order by id;
-+➤ id[4,32,0]  ¦  j[-1,2147483647,0]  ¦  j is null[-6,8,0]  𝄀
-+1  ¦  null  ¦  0  𝄀
-+2  ¦  null  ¦  1  𝄀
-+3  ¦  {"a": null}  ¦  0  𝄀
-+5  ¦  {"a": 1}  ¦  0
-+drop database issue_31277;
-+show databases like 'issue_31277';
-+➤ Database[12,5000,0]
-```
-
-**File**: `test/distributed/cases/load_data/issue_31277_jsonline_json_null.sql` (added, +55/-0)
-```diff
-@@ -0,0 +1,55 @@
-+-- Issue #31277: a JSON column can hold both a top-level JSON literal null
-+-- and a SQL NULL, but a JSONLINE line encodes both as the same bare null,
-+-- which the jsonline loader always reads back as SQL NULL. JSONLINE OUTFILE
-+-- must reject the unrepresentable top-level JSON null loudly instead of
-+-- silently changing the value, while SQL NULL, nested JSON null, the JSON
-+-- string "null" and ordinary JSON keep round-tripping exactly in both reader
-+-- modes. CSV OUTFILE/LOAD stays the lossless path for the full value space.
-+
-+drop database if exists issue_31277;
-+create database issue_31277;
-+use issue_31277;
-+
-+create table src (id int primary key, j json);
-+insert into src values (1, 'null'), (2, null), (3, '{"a":null}'), (4, '"null"'), (5, '{"a":1}');
-+-- Five distinct states: JSON literal null, SQL NULL, nested JSON null, the
-+-- JSON string "null" and ordinary JSON.
-+select id, j, j is null from src order by id;
-+
-+-- The full export is rejected: no JSONLINE line can carry id=1 faithfully.
-+-- @regex("JSONLINE OUTFILE cannot encode a top-level JSON null", true)
-+select id, j from src order by id into outfile '$resources/into_outfile/issue_31277.jsonl' format 'jsonline';
-+
-+-- Every representable row exports with an exact, loadable encoding.
-+select id, j from src where id <> 1 order by id into outfile '$resources/into_outfile/issue_31277.jsonl' format 'jsonline';
-+select load_file(cast('file://$resources/into_outfile/issue_31277.jsonl' as datalink)) as jsonl_content;
-+
-+-- Object mode loads every line back with the source semantics.
-+create table object_dst (id int primary key, j json);
-+load data infile {'filepath'='$resources/into_outfile/issue_31277.jsonl','format'='jsonline','jsondata'='object'} into table object_dst;
-+select id, j, j is null from object_dst order by id;
-+
-+-- The array-mode reader keeps the same bare-null -> SQL NULL contract.
-+create table array_dst (id int primary key, j json);
-+load data infile {'filepath'='$resources/load_data/issue_31277_jsonline_json_null_array.jl','format'='jsonline','jsondata'='array'} into table array_dst;
-+select id, j, j is null from array_dst order by id;
-+
-+-- A bare null into a NOT NULL JSON column is rejected and leaves no rows.
-+create table not_null_dst (j json not null);
-+-- @regex("cannot be null", true)
-+load data infile {'filepath'='$resources/load_data/issue_31277_jsonline_json_null_nullonly.jl','format'='jsonline','jsondata'='object'} into table not_null_dst;
-+select count(*) as rows_after_rejected_null from not_null_dst;
-+
-+-- CSV is the lossless path for this issue's value space: the top-level JSON
-+-- null and the SQL NULL stay distinct tokens and objects round-trip exactly.
-+-- Top-level JSON string scalars are excluded: the pre-existing CSV JSON
-+-- loader trims surrounding quotes from every field, a separate contract
-+-- outside this issue.
-+select id, j from src where id <> 4 order by id into outfile '$resources/into_outfile/issue_31277.csv' fields terminated by ',' optionally enclosed by '"' header 'false';
-+select load_file(cast('file://$resources/into_outfile/issue_31277.csv' as datalink)) as csv_content;
-+create table csv_dst (id int primary key, j json);
-+load data infile '$resources/into_outfile/issue_31277.csv' into table csv_dst fields terminated by ',' optionally enclosed by '"';
-+select id, j, j is null from csv_dst order by id;
-+
-+drop database issue_31277;
-+show databases like 'issue_31277';
-```
-
-**File**: `test/distributed/resources/load_data/issue_31277_jsonline_json_null_array.jl` (added, +4/-0)
-```diff
-@@ -0,0 +1,4 @@
-+[2,null]
-+[3,{"a":null}]
-+[4,"null"]
-+[5,{"a":1}]
-```
-
-**File**: `test/distributed/resources/load_data/issue_31277_jsonline_json_null_nullonly.jl` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+{"j":null}
-```
-
----
-
-### Incident Patch 3: `d37c4ba5` (2026-11-05)
-**Commit Message**: fix(planner): account for probe fanout in join index costing (#32231)
-
-## What type of PR is this?
-
-- [ ] API-change
-- [x] BUG
-- [ ] Improvement
-- [ ] Documentation
-- [ ] Feature
-- [ ] Test and CI
-- [ ] Code Refactoring
-
-## Which issue(s) this PR fixes:
-
-Fixes #32013
-
-## What this PR does / why we need it:
-
-A small semijoin build can match many rows of a low-NDV probe index.
-Admitting index backfill based on build cardinality alone can overflow
-the backfill runtime filter, leaving a full table scan behind an extra
-dependency and a single-CN placement constraint.
-
-Estimate matching probe rows before publishing join-index candidates,
-then apply the existing backfill capacity and preparation-cost model.
-Preserve selective indexes, FORCE/IGNORE hints, and the existing
-fallback for unavailable statistics. Composite-key estimates do not
-assume independent columns. Only reject an existing index path when
-every probe-scan residual has proven stable evaluation; otherwise retain
-the path so invalid JSON on nonmatching rows is not newly evaluated. No
-runtime-filter execution protocol changes are needed.
-
-Validation (Go 1.27.1, darwin/arm64):
-- SQL-to-plan regressions cover low-NDV costing and
-
-**File**: `pkg/sql/plan/apply_indices.go` (modified, +72/-0)
-```diff
-@@ -4094,6 +4094,69 @@ func regularIndexBackfillPrepareWork(keys, packedWidth, readers float64) float64
- 	return keys * ((2*float64(sliceBytes)+packedWidth)*readers + regularIndexKeyEncodingWork)
- }
- 
-+// shouldSkipJoinIndexBackfill prices the rows returned by a lookup, not just
-+// the build keys. A small build can match most of a non-unique probe index and
-+// overflow the backfill filter, leaving a full scan behind an extra dependency.
-+func (ctx *encodedRegularIndexCostContext) shouldSkipJoinIndexBackfill(idxDef *IndexDef, buildRows float64) bool {
-+	if !ctx.valid || ctx.force || IsDefaultStats(ctx.node.Stats) || !finitePositive(buildRows) {
-+		return false
-+	}
-+	// Removing index pruning exposes scan residuals to more rows. Preserve
-+	// the established path unless evaluating every residual is provably safe.
-+	if !regularIndexFiltersHaveStableEvaluation(ctx.node) {
-+		return false
-+	}
-+	matches := min(ctx.node.Stats.TableCnt, buildRows)
-+	if !idxDef.Unique {
-+		wrapper := ctx.builder.getStatsInfoByTableID(ctx.node.TableDef.TblId)
-+		if wrapper == nil || wrapper.GetStats() == nil || !finitePositive(wrapper.GetStats().TableCnt) {
-+			return false
-+		}
-+		stats := wrapper.GetStats()
-+		keyNDV := 1.0
-+		// The final part of a non-unique index is the appended PK, not a
-+		// lookup key. Do not multiply component NDVs: they can be correlated.
-+		for _, part := range idxDef.Parts[:len(idxDef.Parts)-1] {
-+			ndv := stats.NdvMap[catalog.ResolveAlias(part)]
-+			if !finitePositive(ndv) || ndv > stats.TableCnt {
-+				return false // Unknown statistics retain the established fallback.
++func TestKillRequestFinishHandsCloseToConnectionOwner(t *testing.T) {
++	for _, priorError := range []bool{false, true} {
++		t.Run(map[bool]string{false: "successful response", true: "existing error"}[priorError], func(t *testing.T) {
++			protocol := &observedKillProtocol{testMysqlWriter: &testMysqlWriter{}, closed: make(chan struct{})}
++			rt := NewRoutine(context.Background(), protocol, &config.FrontendParameters{})
++			require.True(t, rt.mc.tryBeginRequest())
++			require.True(t, rt.beginClientRequest())
++			// The request's last connection check wins just before KILL.
++			require.False(t, rt.shouldCloseConnection())
++			rt.killConnection(false)
++			select {
++			case <-protocol.closed:
++				t.Fatal("an active request must finish its response before close")
++			default:
 +			}
-+			keyNDV = max(keyNDV, ndv)
-+		}
-+		// Build rows bound distinct lookup keys, including when the build has
-+		// duplicates. Its input selectivity does not describe the probe domain.
-+		matches = min(ctx.node.Stats.TableCnt, buildRows*(ctx.node.Stats.TableCnt/keyNDV))
-+	}
-+	if ctx.backfillCapacityExceeded(matches) {
-+		return true
-+	}
-+	if ctx.node.Stats.TableCnt < 50000 {
-+		return false
-+	}
-+	pkPos, ok := ctx.node.TableDef.Name2ColIndex[ctx.node.TableDef.Pkey.PkeyColName]
-+	if !ok || pkPos < 0 || int(pkPos) >= len(ctx.columnWidths) {
-+		return false
-+	}
-+	encodedWidth := 0.0
-+	for _, part := range idxDef.Parts {
-+		colPos, ok := ctx.node.TableDef.Name2ColIndex[catalog.ResolveAlias(part)]
-+		if !ok || colPos < 0 || int(colPos) >= len(ctx.columnWidths) {
-+			return false
-+		}
-+		if len(idxDef.Parts) == 1 {
-+			encodedWidth += ctx.columnWidths[colPos]
-+		} else {
-+			encodedWidth += ctx.serialWidths[colPos]
-+		}
-+	}
-+	// Compare an optimistic lookup: index keys plus PKs, per-reader filter
-+	// preparation, and only matching base rows. Do not assume scattered PKs
-+	// or charge a second full scan; selective lookups must remain eligible.
-+	work := matches*(encodedWidth+ctx.columnWidths[pkPos]+ctx.baseWidth) +
-+		regularIndexBackfillPrepareWork(matches, ctx.serialWidths[pkPos], ctx.backfillReaders())
-+	return finitePositive(work) && work >= ctx.baseWork
-+}
-+
- func (ctx *encodedRegularIndexCostContext) score(
- 	idxDef *IndexDef,
- 	leadingPos []int32,
-@@ -5367,6 +5430,7 @@ func (builder *QueryBuilder) applyIndicesForJoins(nodeID int32, node *plan.Node,
- 
- 	indexes := builder.filterRegularIndexesByJoinHints(leftChild, leftChild.TableDef.Indexes)
- 	condIdx := make([]indexJoinCondition, 0, len(col2Cond))
-+	var costCtx *encodedRegularIndexCostContext
- 	for _, idxDef := range indexes {
- 		if idxDef == nil || !idxDef.TableExist ||
- 			!catalog.IsRegularIndexAlgo(idxDef.IndexAlgo) ||
-@@ -5401,6 +5465,14 @@ func (builder *QueryBuilder) applyIndicesForJoins(nodeID int32, node *plan.Node,
- 		if len(condIdx) < numKeyParts {
- 			continue
- 		}
-+		if !forceJoinIndex {
-+			if costCtx == nil {
-+				costCtx = builder.newEncodedRegularIndexCostContext(leftChild, colRefCnt)
++			var input error
++			if priorError {
++				input = errors.New("response failed")
 +			}
-+			if costCtx.shouldSkipJoinIndexBackfill(idxDef, rightChild.Stats.Outcnt) {
-+				continue
++			result := rt.endClientRequest(input)
++			if input == nil {
++				require.ErrorIs(t, result, io.EOF)
++			} else {
++				require.ErrorIs(t, result, input)
 +			}
-+		}
- 
- 		idxObjRef, idxTableDef, err := builder.compCtx.ResolveIndexTableByRef(leftChild.ObjRef, idxDef.IndexTableName, scanSnapshot)
- 		if err != nil {
-```
-
-**File**: `pkg/sql/plan/index_pruning_cost_regression_test.go` (modified, +132/-0)
-```diff
-@@ -24,6 +24,138 @@ import (
- 	"github.com/stretchr/testify/require"
- )
- 
-+func TestJoinIndexCostsProbeFanout(t *testing.T) {
-+	for _, tc := range []struct {
-+		name      string
-+		ndv       float64
-+		hint      string
-+		residual  string
-+		wantIndex bool
-+	}{
-+		{name: "many matches from few build keys", ndv: 1_000},
-+		{name: "selective index control", ndv: 600_000, wantIndex: true},
-+		{name: "force retains broad lookup", ndv: 1_000, hint: "force index(idx_membership)", wantIndex: true},
-+		{name: "ignore retains scan", ndv: 600_000, hint: "ignore index(idx_membership)"},
-+		{name: "safe residual permits costing", ndv: 1_000, residual: " and amount > 0"},
-+		{name: "JSON cast retains evaluation domain", ndv: 1_000, residual: " and cast(payload as json) is not null", wantIndex: true},
-+		{name: "JSON function retains evaluation domain", ndv: 1_000, residual: " and json_extract(payload, '$.x') is not null", wantIndex: true},
-+		{name: "nested unsafe residual retains evaluation domain", ndv: 1_000, residual: " and (amount > 0 or cast(payload as json) is not null)", wantIndex: true},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			ctx := newEncodedExistsPlanTestContext(t, tc.ndv)
-+			// Isolate probe fanout from per-reader preparation costs and host CPU count.
-+			base := *ctx.MockCompilerContext
-+			ctx.ResolveVariableFunc = func(name string, system, global bool) (interface{}, error) {
-+				if name == "max_dop" {
-+					return int64(1), nil
-+				}
-+				return base.ResolveVariable(name, system, global)
-+			}
-+			activity := ctx.tables["cost_activity"]
-+			activity.Cols[2].Typ = activity.Cols[0].Typ
-+			activity.Name2ColIndex["payload"] = int32(len(activity.Cols))
-+			activity.Cols = append(activity.Cols, &planpb.ColDef{
-+				Name: "payload", Typ: planpb.Type{Id: int32(types.T_varchar), Width: 16}, Default: &planpb.Default{},
-+			})
-+			activity.Indexes = nil
-+			addCostActivityRegularIndex(t, ctx, "idx_membership", []string{
-+				"state", catalog.CreateAlias(catalog.CPrimaryKeyColName),
-+			}, false)
-+			buildStats := ctx.statsByID[ctx.tables["cost_tags"].TblId]
-+			buildStats.TableCnt = 100_000
-+			buildStats.NdvMap["tenant_id"] = 50_000
-+			buildStats.MinValMap["tenant_id"] = 0
-+			buildStats.MaxValMap["tenant_id"] = 49_999
-+			ctx.statsCache.Set(ctx.tables["cost_tags"].TblId, buildStats)
-+			optimizer := &encodedIndexPlanTestOptimizer{ctx: ctx}
-+			query, err := runOneStmt(optimizer, t, "select count(*) from cost_activity "+tc.hint+
-+				" where state in (select tenant_id from cost_tags where tenant_id < 100)"+tc.residual)
-+			require.NoError(t, err)
-+			require.Equal(t, int64(1), query.GetQuery().MaxDop)
-+			require.True(t, reachablePlanHasJoinType(query.GetQuery(), planpb.Node_SEMI))
-+			require.Equal(t, tc.wantIndex, planHasIndexJoin(query))
-+			if !tc.wantIndex {
-+				require.Empty(t, findFirstIndexScanName(query))
-+			}
++			rt.mc.endRequest()
++			require.False(t, rt.beginClientRequest())
++			late, cancel := context.WithCancel(context.Background())
++			defer cancel()
++			rt.setCancelRequestFunc(cancel)
++			require.ErrorIs(t, late.Err(), context.Canceled)
 +		})
 +	}
++	t.Run("self KILL preserves the response", func(t *testing.T) {
++		protocol := &observedKillProtocol{testMysqlWriter: &testMysqlWriter{}, closed: make(chan struct{})}
++		rt := NewRoutine(context.Background(), protocol, &config.FrontendParameters{})
++		require.True(t, rt.beginClientRequest())
++		rt.killConnection(true)
++		select {
++		case <-protocol.closed:
++			t.Fatal("self KILL closed before the response was finished")
++		default:
++		}
++		require.ErrorIs(t, rt.endClientRequest(nil), io.EOF)
++	})
 +}
 +
-+func TestJoinIndexBackfillAdmission(t *testing.T) {
-+	for _, tc := range []struct {
-+		name         string
-+		ndv          float64
-+		buildRows    float64
-+		tableRows    float64
-+		secondNDV    float64
-+		unique       bool
-+		hiddenPK     bool
-+		force        bool
-+		missingStats bool
-+		defaultStats bool
-+		wantSkip     bool
-+	}{
-+		{name: "broad lookup preparation", ndv: 1_000, buildRows: 200, wantSkip: true},
-+		{name: "selective lookup", ndv: 1_000_000, buildRows: 200},
-+		{name: "unique lookup bounds fanout", ndv: 1_000, buildRows: 200, unique: true},
-+		{name: "correlated composite keys", ndv: 1_000, secondNDV: 1_000, buildRows: 200, wantSkip: true},
-+		{name: "selective composite component", ndv: 1_000, secondNDV: 1_000_000, buildRows: 200},
-+		{name: "hidden PK below capacity", ndv: 20_000, buildRows: 199, hiddenPK: true},
-+		{name: "hidden PK at capacity", ndv: 20_000, buildRows: 200, hiddenPK: true},
-+		{name: "hidden PK above capacity", ndv: 20_000, buildRows: 201, hiddenPK: true, wantSkip: true},
-+		{name: "small table preference", ndv: 10, buildRows: 200, tableRows: 10_000},
-+		{name: "force bypasses cost", ndv: 1_000, buildRows: 200, force: true},
-+		{name: "unknown NDV", buildRows: 200},
-+		{name: "negative NDV", ndv: -1, buildRows: 200},
-+		{name: "NaN NDV", ndv: math.NaN(), buildRows: 200},
-+		{name: "infinite NDV", ndv: math.Inf(1), buildRows: 200},
-+		{name: "inconsistent NDV", ndv: 1_000_001, buildRows: 200},
-+		{name: "missing statistics", ndv: 1_000, buildRows: 200, missingStats: true},
-+		{name: "default statistics", ndv: 1_000, buildRows: 200, defaultStats: true},
-+		{name: "empty build", ndv: 1_000},
-+		{name: "NaN build", ndv: 1_000, buildRows: math.NaN()},
-+		{name: "infinite build", ndv: 1_000, buildRows: math.Inf(1)},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			rows := tc.tableRows
-+			if rows == 0 {
-+				rows = 1_000_000
++func TestKillIdleDoesNotWaitForBusyController(t *testing.T) {
++	protocol := &observedKillProtocol{testMysqlWriter: &testMysqlWriter{}, closed: make(chan struct{})}
++	rt := NewRoutine(context.Background(), protocol, &config.FrontendParameters{})
++	rt.mc.Lock()
++	var releaseOnce sync.Once
++	release := func() { releaseOnce.Do(rt.mc.Unlock) }
++	done := make(chan struct{})
++	go func() { rt.killConnection(false); close(done) }()
++	t.Cleanup(func() {
++		release()
++		select {
++		case <-done:
++		case <-time.After(3 * time.Second):
++			t.Error("idle KILL did not stop during cleanup")
++		}
++	})
++	select {
++	case <-protocol.closed:
++	case <-time.After(3 * time.Second):
++		t.Fatal("idle KILL waited for the lifecycle controller")
++	}
++	release()
++	select {
++	case <-done:
++	case <-time.After(3 * time.Second):
++		t.Fatal("idle KILL did not return")
++	}
++}
++
++func TestKillPreservesActiveControllerOperation(t *testing.T) {
++	protocol := &observedKillProtocol{testMysqlWriter: &testMysqlWriter{}, closed: make(chan struct{})}
++	rt := NewRoutine(context.Background(), protocol, &config.FrontendParameters{})
++	operation, admitted := rt.mc.beginOperationWithContext(context.Background())
++	require.True(t, admitted)
++	rt.killConnection(false)
++	require.NoError(t, operation.Err(), "account KILL must not newly cancel an admitted proxy operation")
++	rt.mc.Lock()
++	closed := rt.mc.closed
++	rt.mc.Unlock()
++	require.False(t, closed, "the busy controller must retain the original KILL behavior")
++	rt.mc.endOperation()
++}
++
++func TestAccountKillAllowsKillQueryWhileRequestFinishes(t *testing.T) {
++	rt, _ := newUnitTestRoutine(t, 100)
++	owner := killTestIdentity("acme", 10, "owner", 7, "public")
++	rt.setSession(&Session{tenant: owner})
++	require.True(t, rt.mc.tryBeginRequest())
++	require.True(t, rt.beginClientRequest())
++	requestCtx, cancel := context.WithCancel(context.Background())
++	defer cancel()
++	rt.setCancelRequestFunc(cancel)
++	rt.killConnection(false)
++	require.NoError(t, requestCtx.Err())
++	rm := &RoutineManager{routinesByConnID: map[uint32]*Routine{100: rt}}
++	found, err := rm.killLocal(context.Background(), killPrincipal(owner), 1, 100, false, "")
+
+```
+
+**File**: `pkg/frontend/routine_kill_monitor_unix_test.go` (added, +145/-0)
+```diff
+@@ -0,0 +1,145 @@
++// Copyright 2026 Matrix Origin
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++//go:build darwin || linux
++
++package frontend
++
++import (
++	"context"
++	"net"
++	"sync"
++	"testing"
++	"time"
++
++	"github.com/matrixorigin/matrixone/pkg/config"
++	"github.com/stretchr/testify/require"
++)
++
++type blockedKillProtocol struct {
++	*testMysqlWriter
++	entered     chan struct{}
++	release     chan struct{}
++	once        sync.Once
++	releaseOnce sync.Once
++}
++
++func (p *blockedKillProtocol) Close() {
++	p.once.Do(func() { close(p.entered) })
++	<-p.release
++}
++
++func (p *blockedKillProtocol) unblock() { p.releaseOnce.Do(func() { close(p.release) }) }
++
++func TestKillCloseDoesNotBlockDisconnectMonitor(t *testing.T) {
++	clients := make(map[*Conn]*Routine)
++	protocols := make(map[*Conn]*blockedKillProtocol)
++	contexts := make(map[*Conn]context.Context)
++	for range 2 {
++		server, client := tcpConnectionPair(t)
++		t.Cleanup(func() { _ = server.Close(); _ = client.Close() })
++		protocol := &blockedKillProtocol{testMysqlWriter: &testMysqlWriter{}, entered: make(chan struct{}), release: make(chan struct{})}
++		t.Cleanup(protocol.unblock)
++		rt := NewRoutine(context.Background(), protocol, &config.FrontendParameters{})
++		require.True(t, rt.mc.tryBeginRequest())
++		require.True(t, rt.beginClientRequest())
++		ctx, cancel := context.WithCancel(context.Background())
++		t.Cleanup(cancel)
++		rt.setCancelRequestFunc(cancel)
++		conn := &Conn{conn: server, livenessProbe: newSocketLivenessProbe(server)}
++		clients[conn], protocols[conn], contexts[conn] = rt, protocol, ctx
++		require.NoError(t, client.(*net.TCPConn).SetLinger(0))
++		require.NoError(t, client.Close())
++		require.Eventually(t, func() bool {
++			closed, err := connectionPeerClosed(conn)
++			return err == nil && closed
++		}, 3*time.Second, time.Millisecond)
++	}
++	now := time.Now()
++	rm := &RoutineManager{clients: clients}
++	selected := make(chan *Conn, 1)
++	killStarted := make(chan struct{})
++	killDone := make(chan struct{})
++	done := make(chan struct{})
++	t.Cleanup(func() {
++		for _, protocol := range protocols {
++			protocol.unblock()
++		}
++		select {
++		case <-done:
++		case <-time.After(5 * time.Second):
++			t.Error("monitor did not stop during cleanup")
++		}
++		select {
++		case <-killStarted:
++			select {
++			case <-killDone:
++			case <-time.After(5 * time.Second):
++				t.Error("KILL did not stop during cleanup")
 +			}
-+			builder, scanID, index, refs := newEncodedIndexCostTestCase(t,
-+				[]string{"tenant_id", catalog.CreateAlias(catalog.CPrimaryKeyColName)}, nil,
-+				&planpb.Stats{TableCnt: rows, Outcnt: rows, Cost: rows,
++		default:
++		}
++	})
++	go func() {
++		defer close(done)
++		first := true
++		rm.cancelDisconnectedRequests(now, 0, func(conn *Conn) (bool, error) {
++			if first {
++				first = false
++				// The request ended after the monitor captured its snapshot.
++				_ = clients[conn].endClientRequest(nil)
++				clients[conn].mc.endRequest()
++				close(killStarted)
++				go func() { clients[conn].killConnection(false); close(killDone) }()
++				<-protocols[conn].entered
++				selected <- conn
++			}
++			return connectionPeerClosed(conn)
++		})
++	}()
++	var first *Conn
++	select {
++	case first = <-selected:
++	case <-time.After(5 * time.Second):
++		t.Fatal("KILL did not reach protocol close")
++	}
++	var later *Conn
++	for conn := range clients {
++		if conn != first {
++			later = conn
++		}
++	}
++	select {
++	case <-contexts[later].Done():
++	case <-time.After(3 * time.Second):
++		t.Fatal("the monitor waited for an unrelated protocol close")
++	}
++	// The KILL call still owns the blocked close while the monitor progresses.
++	select {
++	case <-killDone:
++		t.Fatal("protocol close unexpectedly finished before release")
++	default:
++	}
++	protocols[first].unblock()
++	select {
++	case <-done:
++	case <-time.After(3 * time.Second):
++		t.Fatal("monitor did not finish")
++	}
++	select {
++	case <-killDone:
++	case <-time.After(3 * time.Second):
++		t.Fatal("KILL did not finish after the protocol close returned")
++	}
++}
 ```
 
-**File**: `test/distributed/cases/optimizer/nopk_index_mem_runtime_filter.result` (modified, +98/-0)
+**File**: `pkg/frontend/routine_manager.go` (modified, +6/-4)
 ```diff
-@@ -13,6 +13,35 @@ select id,k,payload from t ignore index(idx_k) where k in (7,8) order by id;
- 1  ¦  7  ¦  a  𝄀
- 2  ¦  7  ¦  b  𝄀
- 3  ¦  8  ¦  c
-+create table members (k int);
-+insert into members values (7),(7),(8),(null);
-+select id,k,payload from t where k in (select k from members where k < 9) order by id;
-+➤ id[4,32,0]  ¦  k[4,32,0]  ¦  payload[12,16,0]  𝄀
-+1  ¦  7  ¦  a  𝄀
-+2  ¦  7  ¦  b  𝄀
-+3  ¦  8  ¦  c
-+select id,k,payload from t ignore index(idx_k) where k in (select k from members where k < 9) order by id;
-+➤ id[4,32,0]  ¦  k[4,32,0]  ¦  payload[12,16,0]  𝄀
-+1  ¦  7  ¦  a  𝄀
-+2  ¦  7  ¦  b  𝄀
-+3  ¦  8  ¦  c
-+select id,k,payload from t force index(idx_k) where k in (select k from members where k < 9) order by id;
-+➤ id[4,32,0]  ¦  k[4,32,0]  ¦  payload[12,16,0]  𝄀
-+1  ¦  7  ¦  a  𝄀
-+2  ¦  7  ¦  b  𝄀
-+3  ¦  8  ¦  c
-+select t.id,t.k,t.payload from t join (select distinct k from members where k < 9) m on t.k=m.k order by t.id;
-+➤ id[4,32,0]  ¦  k[4,32,0]  ¦  payload[12,16,0]  𝄀
-+1  ¦  7  ¦  a  𝄀
-+2  ¦  7  ¦  b  𝄀
-+3  ¦  8  ¦  c
-+select id,k,payload from t where k in (select k from members) order by id;
-+➤ id[4,32,0]  ¦  k[4,32,0]  ¦  payload[12,16,0]  𝄀
-+1  ¦  7  ¦  a  𝄀
-+2  ¦  7  ¦  b  𝄀
-+3  ¦  8  ¦  c
-+select id,k,payload from t where k in (select k from members where k > 9) order by id;
-+➤ id[4,32,0]  ¦  k[4,32,0]  ¦  payload[12,16,0]
- prepare idx_points from 'select id,k,payload from t force index(idx_k) where k in (?, ?) order by id';
- set @k1='7';
- set @k2='8';
-@@ -56,4 +85,73 @@ select id,k,payload from t ignore index(idx_k) where k in (7,8) order by id;
- ➤ id[4,32,0]  ¦  k[4,32,0]  ¦  payload[12,16,0]  𝄀
- 1  ¦  7  ¦  a  𝄀
- 2  ¦  7  ¦  updated
-+select id,k,payload from t where k in (select k from members where k < 9) and payload = 'updated' order by id;
-+➤ id[4,32,0]  ¦  k[4,32,0]  ¦  payload[12,16,0]  𝄀
-+2  ¦  7  ¦  updated
-+select id,k,payload from t ignore index(idx_k) where k in (select k from members where k < 9) and payload = 'updated' order by id;
-+➤ id[4,32,0]  ¦  k[4,32,0]  ¦  payload[12,16,0]  𝄀
-+2  ¦  7  ¦  updated
-+select id,k,payload from t force index(idx_k) where k in (select k from members where k < 9) and payload = 'updated' order by id;
-+➤ id[4,32,0]  ¦  k[4,32,0]  ¦  payload[12,16,0]  𝄀
-+2  ¦  7  ¦  updated
-+truncate table t;
-+truncate table members;
-+insert into t values (1,1,'{"x":1}');
-+insert into t select result,10,'bad' from generate_series(2,10)g;
-+insert into members values (1),(10),(10);
-+select mo_ctl('dn', 'flush', 'nopk_index_mem_runtime_filter.t');
-+➤ mo_ctl(dn, flush, nopk_index_mem_runtime_filter.t)[12,65535,0]  𝄀
-+{
-+  "method": "Flush",
-+  "result": [
-+    {
-+      "returnStr": "OK"
-+    }
-+  ]
-+}
-+
-+select mo_ctl('dn', 'flush', 'nopk_index_mem_runtime_filter.members');
-+➤ mo_ctl(dn, flush, nopk_index_mem_runtime_filter.members)[12,65535,0]  𝄀
-+{
-+  "method": "Flush",
-+  "result": [
-+    {
-+      "returnStr": "OK"
-+    }
-+  ]
-+}
-+
-+analyze table t(k) fullscan;
-+➤ table_name[12,0,0]  ¦  mode[12,0,0]  ¦  coverage[12,0,0]  ¦  columns_analyzed[-5,0,0]  ¦  population_rows[-5,0,0]  ¦  population_exact[-6,0,0]  ¦  sample_rows[-5,0,0]  ¦  sample_blocks[-5,0,0]  ¦  sample_bytes[-5,0,0]  ¦  status[12,0,0]  ¦  message[12,0,0]  𝄀
-+nopk_index_mem_runtime_filter.t  ¦  FULLSCAN  ¦  SNAPSHOT_VISIBLE_V1  ¦  1  ¦  10  ¦  1  ¦  10  ¦  2  ¦  280  ¦  OK  ¦  q=1/1
-+analyze table members(k) fullscan;
-+➤ table_name[12,0,0]  ¦  mode[12,0,0]  ¦  coverage[12,0,0]  ¦  columns_analyzed[-5,0,0]  ¦  population_rows[-5,0,0]  ¦  population_exact[-6,0,0]  ¦  sample_rows[-5,0,0]  ¦  sample_blocks[-5,0,0]  ¦  sample_bytes[-5,0,0]  ¦  status[12,0,0]  ¦  message[12,0,0]  𝄀
-+nopk_index_mem_runtime_filter.members  ¦  FULLSCAN  ¦  SNAPSHOT_VISIBLE_V1  ¦  1  ¦  3  ¦  1  ¦  3  ¦  2  ¦  84  ¦  OK  ¦  q=1/1
-+set @saved_join_in_limit = @@session.runtime_filter_limit_in;
-+set runtime_filter_limit_in = 1;
-+select count(*) from t where k in (select k from members where k < 2) and cast(payload as json) is not null;
-+➤ count(*)[-5,64,0]  𝄀
-+1
-+select count(*) from t force index(idx_k) where k in (select k from members where k < 2) and cast(payload as json) is not null;
-+➤ count(*)[-5,64,0]  𝄀
-+1
-+select count(*) from t where k in (select k from members where k < 2) and json_extract(payload, '$.x') is not null;
-+➤ count(*)[-5,64,0]  𝄀
-+1
-+select count(*) from t force index(idx_k) where k in (select k from members where k < 2) and json_extract(payload, '$.x') is not null;
-+➤ count(*)[-5,64,0]  𝄀
-+1
-+select count(*) from t where k in (select k from members where k < 2) and payload = '{"x":1}';
-+➤ count(*)[-5,64,0]  𝄀
-+1
-+update t set payload = 'bad' where id = 1;
-+select count(*) from t where k in (select k from members where k < 2) and cast(payload as json) is not null;
-+invalid input: json text bad
-+select count(*) from t where k in (select k from members where k < 2) and json_extract(payload, '$.x') is not null;
-+invalid input: json text bad
-+set runtime_filter_limit_in = cas
+@@ -19,6 +19,7 @@ import (
+ 	"crypto/tls"
+ 	"crypto/x509"
+ 	"fmt"
++	"io"
+ 	"math"
+ 	"os"
+ 	"sync"
+@@ -402,12 +403,11 @@ func getConnectionInfo(rs *Conn) string {
+ 	return fmt.Sprintf("connection from %s", rs.RemoteAddress())
+ }
+ 
+-func (rm *RoutineManager) Handler(rs *Conn, msg []byte) error {
++func (rm *RoutineManager) Handler(rs *Conn, msg []byte) (err error) {
+ 	logutil.Debugf("get request from %d:%s", rs.ID(), rs.RemoteAddress())
+ 	defer func() {
+ 		logutil.Debugf("request from %d:%s has been processed", rs.ID(), rs.RemoteAddress())
+ 	}()
+-	var err error
+ 	ctx, span := trace.Start(rm.getCtx(), "RoutineManager.Handler",
+ 		trace.WithKind(trace.SpanKindStatement))
+ 	defer span.End()
+@@ -429,8 +429,10 @@ func (rm *RoutineManager) Handler(rs *Conn, msg []byte) error {
+ 		return moerr.NewInternalError(ctx, "cannot process request as routine is closed or busy")
+ 	}
+ 	defer routine.mc.endRequest()
+-	routine.setInProcessRequest(true)
+-	defer routine.setInProcessRequest(false)
++	if !routine.beginClientRequest() {
++		return io.EOF
++	}
++	defer func() { err = routine.endClientRequest(err) }()
+ 	ses := routine.getSession()
+ 
+ 	//handle request
 ```
 
-**File**: `test/distributed/cases/optimizer/nopk_index_mem_runtime_filter.sql` (modified, +46/-0)
+**File**: `pkg/frontend/routine_test.go` (modified, +1/-1)
 ```diff
-@@ -13,6 +13,16 @@ insert into t values (1,7,'a'),(2,7,'b'),(3,8,'c'),(4,null,'n'),(5,9,'x');
- select id,k,payload from t force index(idx_k) where k in (7,8) order by id;
- select id,k,payload from t ignore index(idx_k) where k in (7,8) order by id;
+@@ -194,7 +194,7 @@ func TestRoutineRequestCallbacksAndCancelContexts(t *testing.T) {
+ 	})
+ 	require.Equal(t, int32(1), called)
  
-+-- 子查询的重复键不放大外表结果，NULL 不产生匹配。
-+create table members (k int);
-+insert into members values (7),(7),(8),(null);
-+select id,k,payload from t where k in (select k from members where k < 9) order by id;
-+select id,k,payload from t ignore index(idx_k) where k in (select k from members where k < 9) order by id;
-+select id,k,payload from t force index(idx_k) where k in (select k from members where k < 9) order by id;
-+select t.id,t.k,t.payload from t join (select distinct k from members where k < 9) m on t.k=m.k order by t.id;
-+select id,k,payload from t where k in (select k from members) order by id;
-+select id,k,payload from t where k in (select k from members where k > 9) order by id;
-+
- prepare idx_points from 'select id,k,payload from t force index(idx_k) where k in (?, ?) order by id';
- set @k1='7';
- set @k2='8';
-@@ -30,4 +40,40 @@ select mo_ctl('dn', 'flush', 'nopk_index_mem_runtime_filter.t');
- select id,k,payload from t force index(idx_k) where k in (7,8) order by id;
- select id,k,payload from t ignore index(idx_k) where k in (7,8) order by id;
+-	rt.setInProcessRequest(true)
++	require.True(t, rt.beginClientRequest())
+ 	rt.execCallbackBasedOnRequest(false, func() {
+ 		atomic.AddInt32(&called, 1)
+ 	})
+```
+
+**File**: `pkg/frontend/server.go` (modified, +5/-6)
+```diff
+@@ -919,16 +919,15 @@ func (mo *MOServer) handleRequest(rs *Conn) error {
  
-+-- 同一半连接在持久化数据和残余谓词上保持结果等价。
-+select id,k,payload from t where k in (select k from members where k < 9) and payload = 'updated' order by id;
-+select id,k,payload from t ignore index(idx_k) where k in (select k from members where k < 9) and payload = 'updated' order by id;
-+select id,k,payload from t force index(idx_k) where k in (select k from members where k < 9) and payload = 'updated' order by id;
-+
-+-- 降低容量，在小数据上覆盖会扩大残余谓词求值范围的成本拒绝。
-+truncate table t;
-+truncate table members;
-+insert into t values (1,1,'{"x":1}');
-+insert into t select result,10,'bad' from generate_series(2,10)g;
-+insert into members values (1),(10),(10);
-+select mo_ctl('dn', 'flush', 'nopk_index_mem_runtime_filter.t');
-+select mo_ctl('dn', 'flush', 'nopk_index_mem_runtime_filter.members');
-+-- 物理采样块数和字节数不是本用例契约，保留总体行数和完成状态检查。
-+-- @ignore:7,8
-+analyze table t(k) fullscan;
-+-- @ignore:7,8
-+analyze table members(k) fullscan;
-+set @saved_join_in_limit = @@session.runtime_filter_limit_in;
-+set runtime_filter_limit_in = 1;
-+
-+-- 非匹配行的非法 JSON 不得因访问路径替换而被求值。
-+select count(*) from t where k in (select k from members where k < 2) and cast(payload as json) is not null;
-+select count(*) from t force index(idx_k) where k in (select k from members where k < 2) and cast(payload as json) is not null;
-+select count(*) from t where k in (select k from members where k < 2) and json_extract(payload, '$.x') is not null;
-+select count(*) from t force index(idx_k) where k in (select k from members where k < 2) and json_extract(payload, '$.x') is not null;
-+select count(*) from t where k in (select k from members where k < 2) and payload = '{"x":1}';
-+
-+-- 匹配行上的真实转换错误仍必须报告。
-+update t set payload = 'bad' where id = 1;
-+select count(*) from t where k in (select k from members where k < 2) and cast(payload as json) is not null;
-+select count(*) from t where k in (select k from members where k < 2) and json_extract(payload, '$.x') is not null;
-+set runtime_filter_limit_in = cast(@saved_join_in_limit as signed);
-+select @@session.runtime_filter_limit_in = @saved_join_in_limit as restored_limit;
-+set @saved_join_in_limit = null;
-+
- drop database nopk_index_mem_runtime_filter;
+ 	err = mo.rm.Handler(rs, msg)
+ 	if err != nil {
+-		if skipClientQuit(err.Error()) {
++		if err == io.EOF || skipClientQuit(err.Error()) {
+ 			// COM_QUIT is terminal on the wire: the client has finished the
+ 			// session and waits for the server to close the connection, so
+-			// the read loop must not keep waiting for a next command.
+-			// Ending like a clean EOF lets handleConn close the connection
+-			// and run the routine/session cleanup once, on the owning path.
++			// the read loop must not keep waiting for a next command. A killed
++			// request can also hand off a clean EOF after its response. Both
++			// paths let handleConn own connection and session cleanup.
+ 			return io.EOF
+-		} else {
+-			logutil.LogConnectionCloseEvent(frontendSessionHandleEvents, err)
+ 		}
++		logutil.LogConnectionCloseEvent(frontendSessionHandleEvents, err)
+ 		return err
+ 	}
+ 	return nil
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #32257** (2026-11-05): perf(plan): optimize point-update index maintenance with missing statistics (@XuPeng-SH)
-- **PR #32255** (2026-11-05): vectorindex: IVF-PQ and CAGRA model tars through the index-file layer (@cpegeric)
-- **PR #32252** (2026-11-05): fix: rebuild indexes when COPY ALTER changes primary keys (@iamlinjunhong)
-- **PR #32239** (2026-11-05): fix: stabilize Top typed-NULL layout on 4.1.6-hotfix (@ck89119)
-- **PR #32231** (2026-11-05): fix(planner): account for probe fanout in join index costing (@ck89119)
-- **PR #32230** (2026-11-05): fix(plan): push outer pagination into derived-table sorts (@ck89119)
+- **PR #32380** (2026-11-09): docs: design early runtime filtering and dictionary vector execution (@aunjgr)
+- **PR #32378** (2026-11-09): fix(frontend): reduce disconnect scan stalls during KILL (@XuPeng-SH)
+- **PR #32377** (2026-11-09): fix(plan): prune correlated composite primary-key points (@XuPeng-SH)
+- **PR #32376** (2026-11-08): test: guard aggregate input behavior on 4.2 (@XuPeng-SH)
+- **PR #32375** (2026-11-08): fix(plan): preserve BIT types and widths in set operations (@aptend)
+- **PR #32372** (2026-11-08): fix(sql): preserve MIN/MAX DISTINCT input values (@XuPeng-SH)
 
 ---
 
@@ -3790,34 +4055,49 @@ Validation (Go 1.27.1, darwin/arm64):
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. plan): validate literal defaults in new DDL (#32139)
+## X. group): preserve evaluated inputs across spill retries (#32368)
 
 **RULE**:
-When implementing operations in `pkg/frontend/back_exec.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matrixorigin/matrixone. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/design/20261108-group-capacity-retry.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matrixorigin/matrixone. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `36d1ac51`: plan): validate literal defaults in new DDL (#32139). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `692b50a3`: group): preserve evaluated inputs across spill retries (#32368). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/frontend/back_exec.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/design/20261108-group-capacity-retry.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		User:          backSes.GetResponser().GetStr(USERNAME),
-		Database:      backSes.GetResponser().GetStr(DBNAME),
-	backSes.setResponser(defResper)
-	routineId := backSes.GetResponser().GetU32(CONNID)
+# Preserve evaluated input during Group capacity recovery
+
+Tracking issue: [#32369](https://github.com/matrixorigin/matrixone/issues/32369).
+Implementation PR: [#32368](https://github.com/matrixorigin/matrixone/pull/32368).
+Discovery: [#32060](https://github.com/matrixorigin/matrixone/issues/32060).
+Reviewed baseline: `89ca3dbbf6d594d7614b8e1ca80f6b0300ed3cd2`.
+Design decision: **PASS** for the scope below; implementation and validation
+must be reviewed against this design.
+
+## Problem and scope
+
+Group evaluates one complete child batch before committing it in chunks of at
+most `hashmap.UnitLimit` rows. On an accounted capacity rejection, it can drain
+exact DISTINCT state or spill the committed prefix before retrying an
+unpublished chunk. Currently, spilling resets expression executors and the
+retry path clears `evaluated`. Group consequently evaluates the entire batch
+again, even if an earlier chunk was already published.
+
+An operator test rejects one real allocation after 256 groups are published.
+For 512 rows with an incrementing side-effecting expression, the clean
+baseline spills and reloads, evaluates the root twice, invokes 1,024 side
+effects, and returns group keys `1..256`
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		User:          backSes.respr.GetStr(USERNAME),
-		Database:      backSes.respr.GetStr(DBNAME),
-	backSes.respr = defResper
-	routineId := backSes.respr.GetU32(CONNID)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `36d1ac51` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `692b50a3` are properly handled with clean fallback behavior.

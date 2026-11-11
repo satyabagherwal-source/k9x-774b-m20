@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/karakeep-app-karakeep-learnings.md`  
 > **Source**: github ([https://github.com/karakeep-app/karakeep](https://github.com/karakeep-app/karakeep))  
-> **Source Version**: `46e80093`  
+> **Source Version**: `d1514c25`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T01:20:36.074Z  
+> **Timestamp**: 2026-11-09T11:31:09.016Z  
 > **Learning ID**: `learn-github-karakeep-app-karakeep`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/karakeep-app-karakeep-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/karakeep-app/karakeep](https://github.com/karakeep-app/karakeep))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T01:20:35.085Z  
+> **Harvest Timestamp**: 2026-11-09T11:31:05.155Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A self-hostable bookmark-everything app (links, notes and images) with AI-based automatic tagging and full text search
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 30270 stars
+- **Stars / Engagement**: 30420 stars
 
 ---
 
@@ -370,7 +370,7 @@ export default function usePluginSettings() {
     await STORAGE.set({ settings: newVal });
   };
 
-  return { settings, setSettings, isPending: isInit };
+  return { settings, setSettings, isLoaded: isInit };
 }
 
 export async function getPluginSettings() {
@@ -732,11 +732,11 @@ export function cleanupApiClient() {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #3288** (2026-11-07): **Highlight popup covers the selected text in the preview modal**
+  *Symptoms*: ### Describe the Bug  When selecting text in the reader view of the bookmark preview modal, the highlight popup appears on top of the selection and covers it (see screenshot).  This makes it hard to see what’s being highlighted and to adjust the selection, which gets in the way when highlighting while reading.  ### Steps to Reproduce  1. Open a preview of any bookmark 2. Highlight some text 3. Highlight pop-up is covering actual text selection  ### Expected Behaviour  Expected: the popup is placed above or below the selection without overlapping it (like the fullscreen reader)  ### Screenshots or Additional Context  # Actual  <img width="860" height="352" alt="Image" src="https://github.com/user-attachments/assets/d6c23bc8-192f-44cd-9e64-d77cb296852d" />  # Expected  <img width="822" height="360" alt="Image" src="https://github.com/user-attachments/assets/04f32f54-4df5-46b5-a183-99cba951d030" />  ### Device Details  Firefox, Safari, Zen (Desktop)  ### Exact Karakeep Version  0.34.1  ### Environment Details  Docker on Ubuntu 22.04 behind Caddy  ### Debug Logs  _No response_  ### Have you checked the troubleshooting guide?  - [x] I have checked the troubleshooting guide and I haven't found a solution to my problem
+
 - **Issue #3257** (2026-11-01): **Index / Caching**
   *Symptoms*: ### Describe the Bug  After a couple of hours, the cache or index is gone and it takes over 1 minute for a simple search like "json" on about 400 bookmarks. after the first search is done and the results show up, the following searches work as expected (fast) in realtime when typing in. tryed several AI session on this bug, added DB_WAL_MODE: "true" to the compose.yml which seemed to help a bit, but not really. after one day or so the index / cache is gone.  ### Steps to Reproduce  search for something after 1-2 days of not using karakeep, with a fresh browser. 1st search takes very long over a minute for 1 search term like "json" on about 400 bookmarks  ### Expected Behaviour  caching or keeping the index so the search works fast  ### Screenshots or Additional Context  _No response_  ### Device Details  _No response_  ### Exact Karakeep Version  v0.34.1  ### Environment Details  _No response_  ### Debug Logs  _No response_  ### Have you checked the troubleshooting guide?  - [x] I have checked the troubleshooting guide and I haven't found a solution to my problem
-
-- **Issue #3246** (2026-10-29): **Release v2.11.6 has not matching asset when running the script**
-  *Symptoms*: ### Describe the Bug  ### Script `karakeep` (`ct/karakeep.sh` / `install/karakeep-install.sh`)  ### OS & Version Debian 13 (Trixie) — Default LXC configuration  ### Issue Description During a fresh installation of the Karakeep LXC, two issues occur right after the `Installing Dependencies` step that cause the installation to either hang or fail silently in non-verbose mode:  1. **`monolith` v2.11.6 Missing Compatible Release Asset (Interactive Prompt Hang)**    When `fetch_and_deploy_gh_release` attempts to pull the latest release of `monolith` (`v2.11.6`), it fails to find a matching precompiled binary asset and triggers an interactive fallback prompt:    ```text    💡 Release v2.11.6 has no matching asset. Previous release v2.11.2 has a compatible asset.```  ### Steps to Reproduce  run the script bash -c "$(curl -fsSL https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/ct/karakeep.sh)"  go through the default steps    ### Expected Behaviour  When run without interruption, the script creates a fresh Debian LXC container on your Proxmox server, installs base system packages (like Chromium and FFmpeg), and downloads helper tools (Monolith, yt-dlp, Deno, and Meilisearch). It then installs Node.js and pnpm, downloads the Karakeep source code, compiles the web application and background workers, and sets up the local database. Finally, it generates your configuration file (`/etc/karakeep/karakeep.env`), starts the background services (`karakeep-web`, `karakeep-work
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -753,486 +753,1236 @@ export function cleanupApiClient() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1c6aa6c4` (2026-11-02)
-**Commit Message**: feat(docker): drop Linux capabilities and set no_new_privs for the app processes (#3276)
+### Incident Patch 1: `d1514c25` (2026-11-09)
+**Commit Message**: fix(web): fix bugs found in pre-release QA
 
-* feat(docker): drop Linux capabilities and set no_new_privs for the app processes
+Bookmarks and preview:
+- Esc in a bulk-mode dialog no longer exits bulk mode
+- The archive shortcut shows "Bookmark archived" with Undo
+- PDF cards fall back to the file icon when the screenshot fails to load
+- Page overview shows the bookmark's own title
+- Highlight colour buttons have labels; the popover keeps off the screen edge
+- Compact layout dates line up; checklist items lose the extra bullet
+- Empty search shows "No matches"
 
-The web server, workers and db migration in the all-in-one image ran as
-root with Docker's full default capability set. A compromise of node, or
-of anything the workers spawn on untrusted content (yt-dlp, ghostscript,
-graphicsmagick, ffmpeg, monolith), got all of it.
+Lists, tags and app shell:
+- "Delete all unused tags" says it deletes every unused tag
+- List counts refresh after creating or editing a list
+- Merge list is hidden for smart lists; long names truncate in the picker
+- Share dialog no longer nests block elements in a <p>
+- The smart list builder understands #tag
+- Tag name sort ignores case
+- Unknown URLs show the app's not-found page
+- Sign-in (credentials and OAuth) honours redirectUrl
+- Bad invite links fail fast; /verify-email errors link back to sign in
+- Autofocus and labels on auth forms, nav icons and list chevrons
+- Page titles for home, lists, search, feeds and backups
 
-They now start through a small wrapper that, without needing any change
-to users' compose files:
+Settings and admin:
+- Subscription, rules and background jobs fit on mobile
+- Re
 
-- sets no_new_privs, so setuid binaries and file capabilities can't
-  grant them more privileges;
-- when running as root, drops every capability except DAC_OVERRIDE and
-  FOWNER (so a data directory owned by another uid, e.g. a bind-mounted
-  host directory, keeps working) and NET_BIND_SERVICE when PORT or
-  WORKERS_PORT is below 1024.
-
-File ownership is never touched. The wrapper checks the capabilities a
-dry run actually ends up with (bookworm's setpriv silently skips the
-bounding set without CAP_SETPCAP) and falls back to no_new_privs only,
-then to the old behaviour, with a warning, rather than failing to start.
-KARAKEEP_DISABLE_PRIVILEGE_DROP=true
-
-**File**: `docker/root/etc/s6-overlay/s6-rc.d/init-db-migration/run` (modified, +1/-1)
+**File**: `apps/web/app/dashboard/bookmarks/page.tsx` (modified, +10/-0)
 ```diff
-@@ -3,4 +3,4 @@
- 
- echo "Running db migration script";
- cd /db_migrations;
--exec node index.js;
-+exec /etc/s6-overlay/scripts/drop-privileges node index.js;
-```
-
-**File**: `docker/root/etc/s6-overlay/s6-rc.d/svc-web/run` (modified, +1/-1)
-```diff
-@@ -2,4 +2,4 @@
- # shellcheck shell=bash
- 
- cd /app/apps/web;
--exec node server.js;
-+exec /etc/s6-overlay/scripts/drop-privileges node server.js;
-```
-
-**File**: `docker/root/etc/s6-overlay/s6-rc.d/svc-workers/run` (modified, +1/-1)
-```diff
-@@ -2,4 +2,4 @@
- # shellcheck shell=bash
- 
- cd /app/apps/workers;
--exec node dist/index.js
-+exec /etc/s6-overlay/scripts/drop-privileges node dist/index.js
-```
-
-**File**: `docker/root/etc/s6-overlay/scripts/drop-privileges` (added, +73/-0)
-```diff
-@@ -0,0 +1,73 @@
-+#!/bin/sh
-+# Runs the given command with the fewest privileges this container allows.
-+#
-+# - no_new_privs is set, so setuid binaries and file capabilities can't grant
-+#   the process (or anything it spawns, e.g. yt-dlp, ghostscript or ffmpeg)
-+#   more privileges.
-+# - When running as root, every Linux capability is dropped except:
-+#     * DAC_OVERRIDE and FOWNER, so root can keep using a data directory owned
-+#       by another user (e.g. a bind-mounted host directory), and CHOWN, which
-+#       SQLite uses to keep its -wal/-shm files owned by the database file's
-+#       owner. Everything else in the image is owned by root anyway, so these
-+#       grant little beyond that.
-+#     * NET_BIND_SERVICE, unless PORT and WORKERS_PORT are known to be at
-+#       least 1024 (or unset).
-+#
-+# File ownership is never changed. If the runtime doesn't allow dropping
-+# capabilities (e.g. the container already runs without CAP_SETPCAP), it falls
-+# back to only setting no_new_privs, and then to running the command as is.
-+#
-+# Set KARAKEEP_DISABLE_PRIVILEGE_DROP=true to skip all of this.
+@@ -1,5 +1,15 @@
++import type { Metadata } from "next";
+ import React from "react";
+ import Bookmarks from "@/components/dashboard/bookmarks/Bookmarks";
++import { useTranslation } from "@/lib/i18n/server";
 +
-+if [ "${KARAKEEP_DISABLE_PRIVILEGE_DROP:-false}" = "true" ]; then
-+  exec "$@"
-+fi
-+
-+# Whether a port setting might end up below 1024. The app is lenient when
-+# parsing ports (" 80 ", "+80" and "8e1" all mean 80), so only an unset or
-+# zero (random) port, or a plain number of at least 1024, is known not to need
-+# NET_BIND_SERVICE. Anything else keeps it.
-+may_be_privileged_port() {
-+  case "$1" in
-+    "" | 0) return 1 ;;
-+    *[!0-9]*) return 0 ;;
-+  esac
-+  [ "$1" -lt 1024 ]
++export async function generateMetadata(): Promise<Metadata> {
++  // oxlint-disable-next-line rules-of-hooks
++  const { t } = await useTranslation();
++  return {
++    title: `${t("common.home")} | Karakeep`,
++  };
++}
+ 
+ export default async function BookmarksPage() {
+   return (
+```
+
+**File**: `apps/web/app/dashboard/feeds/[feedId]/page.tsx` (modified, +20/-1)
+```diff
+@@ -1,8 +1,27 @@
++import type { Metadata } from "next";
+ import { notFound } from "next/navigation";
+ import Bookmarks from "@/components/dashboard/bookmarks/Bookmarks";
++import { PageHeader } from "@/components/ui/page-header";
+ import { api } from "@/server/api/client";
+ import { TRPCError } from "@trpc/server";
+ 
++export async function generateMetadata(props: {
++  params: Promise<{ feedId: string }>;
++}): Promise<Metadata> {
++  const params = await props.params;
++  try {
++    const feed = await api.feeds.get({ feedId: params.feedId });
++    return {
++      title: `${feed.name} | Karakeep`,
++    };
++  } catch (e) {
++    if (e instanceof TRPCError && e.code === "NOT_FOUND") {
++      notFound();
++    }
++    throw e;
++  }
 +}
 +
-+if [ "$(id -u)" = "0" ]; then
-+  # Capability numbers: CHOWN=0, DAC_OVERRIDE=1, FOWNER=3, NET_BIND_SERVICE=10.
-+  KEEP_CAPS="+chown,+dac_override,+fowner"
-+  KEEP_MASK=$(((1 << 0) | (1 << 1) | (1 << 3)))
-+  if may_be_privileged_port "${PORT:-}" || may_be_privileged_port "${WORKERS_PORT:-}"; then
-+    KEEP_CAPS="${KEEP_CAPS},+net_bind_service"
-+    KEEP_MASK=$((KEEP_MASK | (1 << 10)))
-+  fi
-+  SETPRIV_DROP_CAPS="setpriv --no-new-privs --inh-caps=-all --ambient-caps=-all --bounding-set=-all,${KEEP_CAPS}"
-+
-+  # Dry run that checks the capabilities the process actually ends up with:
-+  # some setpriv versions skip the bounding set without failing when
-+  # CAP_SETPCAP is missing. If the drop didn't take, fall through instead of
-+  # failing the service.
-+  DROPPED=false
-+  CAPS=$(${SETPRIV_DROP_CAPS} awk '/^Cap(Bnd|Eff):/ { print $2 }' /proc/self/status 2>/dev/null)
-+  if [ -n "${CAPS}" ]; then
-+    DROPPED=true
-+    for CAP in ${CAPS}; do
-+      if [ $((0x${CAP} & ~KEEP_MASK)) -ne 0 ]; then
-+        DROPPED=false
-+      fi
-+    done
-+  fi
-+  if [ "${DROPPED}" = "true" ]; then
-+    exec ${SETPRIV_DROP_CAPS} "$@"
-+  fi
-+  echo "WARNING: couldn't drop Linux capabilities, $1 keeps the container's full set." >&2
-+fi
-+
-+if setpriv --no-new-privs true 2>/dev/null; then
-+  exec setpriv --no-new-privs "$@"
-+fi
-+
-+echo "WARNING: couldn't set no_new_privs for $1." >&2
-+exec "$@"
+ export default async function FeedPage(props: {
+   params: Promise<{ feedId: string }>;
+ }) {
+@@ -24,7 +43,7 @@ export default async function FeedPage(props: {
+       query={{ rssFeedId: feed.id }}
+       showDivider={true}
+       showEditorCard={false}
+-      header={<div className="text-2xl">{feed.name}</div>}
++      header={<PageHeader title={feed.name} />}
+     />
+   );
+ }
 ```
 
-**File**: `docs/docs/03-configuration/01-environment-variables.md` (modified, +1/-0)
+**File**: `apps/web/app/dashboard/lists/page.tsx` (modified, +9/-0)
 ```diff
-@@ -31,6 +31,7 @@ The app is mainly configured by environment variables. All the used environment
- | RULE_ENGINE_NUM_WORKERS                | No                                    | 1               | Number of concurrent workers for rule engine processing. Increase this if you have complex automation rules that need to be processed quickly.                                                                                                                                                                                                   |
- | MAX_RSS_FEEDS_PER_USER                 | No                                    | 1000            | The maximum number of RSS feeds a user can create.                                                                                                                                                                                                                                                                                               |
- | MAX_WEBHOOKS_PER_USER                  | No                                    | 100             | The maximum number of webhooks a user can create.                                                                                                                                                                                                                                                                                                |
-+| KARAKEEP_DISABLE_PRIVILEGE_DROP        | No                                    | false           | Docker image only. By default, the server and workers processes in the image start with all Linux capabilities dropped (except the ones needed to use a data directory owned by another user, or to listen on a port below 1024) and with `no_new_privs` set. This is best-effort: if the container runtime doesn't allow it, they start with fewer restrictions and a `WARNING: couldn't ...` line is logged. File ownership is never changed. Set this to `true` to run them with the container's full privileges, as older versions did. |
+@@ -1,10 +1,19 @@
++import type { Metadata } from "next";
+ import AllListsView from "@/components/dashboard/lists/AllListsView";
+ import { NewListButton } from "@/components/dashboard/lists/NewListButton";
+ import { PendingInvitationsCard } from "@/components/dashboard/lists/PendingInvitationsCard";
+ import { PageHeader } from "@/components/ui/page-header";
+ import { useTranslation } from "@/lib/i18n/server";
+ import { api } from "@/server/api/client";
  
- ## Asset Storage
- 
-```
-
-**File**: `packages/e2e_tests/tests/docker/privileges.test.ts` (added, +69/-0)
-```diff
-@@ -0,0 +1,69 @@
-+import { execFileSync } from "child_process";
-+import * as path from "path";
-+import { fileURLToPath } from "url";
-+import { describe, expect, it } from "vitest";
-+
-+// The directory holding the e2e docker-compose.yml.
-+const composeDir = path.resolve(
-+  path.dirname(fileURLToPath(import.meta.url)),
-+  "../..",
-+);
-+
-+// Prints "<name> <uid> <CapEff> <CapBnd> <NoNewPrivs>" for the web server and
-+// the workers. Matching on the start of the command line keeps this script
-+// (whose own command line mentions both names) out of the results.
-+const inspectScript = `
-+for d in /proc/[0-9]*; do
-+  c=$(tr "\\0" " " < "$d/cmdline" 2>/dev/null)
-+  case "$c" in
-+    "node dist/index.js"*) name=workers ;;
-+    next-server*) name=web ;;
-+    *) continue ;;
-+  esac
-+  echo "$name $(awk '/^Uid:/ { u = $2 } /^CapEff:/ { e = $2 } /^CapBnd:/ { b = $2 } /^NoNewPrivs:/ { n = $2 } END { print u, e, b, n }' "$d/status")"
-+done
-+`;
-+
-+interface ProcessPrivileges {
-+  name: string;
-+  uid: string;
-+  capEff: string;
-+  capBnd: string;
-+  noNewPrivs: string;
++export async function generateMetadata(): Promise<Metadata> {
++  // oxlint-disable-next-line rules-of-hooks
++  const { t } = await useTranslation();
++  return {
++    title: `${t("lists.all_lists")} | Karakeep`,
++  };
 +}
 +
-+function inspectAppProcesses(): ProcessPrivileges[] {
-+  const output = execFileSync(
-+    "docker",
-+    ["compose", "exec", "-T", "web", "sh", "-c", inspectScript],
-+    { cwd: composeDir, encoding: "utf8" },
+ export default async function ListsPage() {
+   // oxlint-disable-next-line rules-of-hooks
+   const { t } = await useTranslation();
+```
+
+**File**: `apps/web/app/dashboard/not-found.tsx` (modified, +5/-5)
+```diff
+@@ -8,7 +8,7 @@ import { ArrowLeft, FileQuestion, Home } from "lucide-react";
+ export default function NotFound() {
+   const { t } = useTranslation();
+   return (
+-    <div className="flex flex-1 items-center justify-center rounded-lg bg-slate-50 p-8 shadow-sm dark:border dark:bg-card dark:shadow-none">
++    <div className="flex flex-1 items-center justify-center rounded-lg bg-muted/50 p-8 shadow-sm dark:border dark:bg-card dark:shadow-none">
+       <div className="w-full max-w-md space-y-8 text-center">
+         {/* Not Found Icon */}
+         <div className="flex justify-center">
+@@ -35,12 +35,12 @@ export default function NotFound() {
+             {t("errors.go_back")}
+           </Button>
+ 
+-          <Link href="/" className="block">
+-            <Button variant="outline" className="w-full">
++          <Button variant="outline" className="w-full" asChild>
++            <Link href="/">
+               <Home className="h-4 w-4" />
+               {t("errors.go_home")}
+-            </Button>
+-          </Link>
++            </Link>
++          </Button>
+         </div>
+       </div>
+     </div>
+```
+
+**File**: `apps/web/app/dashboard/search/layout.tsx` (added, +19/-0)
+```diff
+@@ -0,0 +1,19 @@
++import type { Metadata } from "next";
++import { useTranslation } from "@/lib/i18n/server";
++
++// The page is a client component, so its title is set here.
++export async function generateMetadata(): Promise<Metadata> {
++  // oxlint-disable-next-line rules-of-hooks
++  const { t } = await useTranslation();
++  return {
++    title: `${t("common.search")} | Karakeep`,
++  };
++}
++
++export default function SearchLayout({
++  children,
++}: {
++  children: React.ReactNode;
++}) {
++  return children;
++}
+```
+
+**File**: `apps/web/app/dashboard/search/page.tsx` (modified, +1/-0)
+```diff
+@@ -37,6 +37,7 @@ function SearchComp() {
+           fetchNextPage={fetchNextPage}
+           isFetchingNextPage={isFetchingNextPage}
+           bookmarks={data.pages.flatMap((b) => b.bookmarks)}
++          isSearch
+         />
+       ) : (
+         <BookmarksGridSkeleton />
+```
+
+**File**: `apps/web/app/not-found.tsx` (added, +10/-0)
+```diff
+@@ -0,0 +1,10 @@
++import NotFound from "./dashboard/not-found";
++
++// Unmatched URLs anywhere in the app land here, outside the dashboard layout.
++export default function RootNotFound() {
++  return (
++    <div className="flex min-h-dvh p-4">
++      <NotFound />
++    </div>
 +  );
-+  return output
-+    .trim()
-+    .split("\n")
-+    .filter((line) => line.length > 0)
-+    .map((line) => {
-+      const [name, uid, capEff, capBnd, noNewPrivs] = line.split(" ");
-+      return { name, uid, capEff, capBnd, noNewPrivs };
-+    });
 +}
+```
+
+**File**: `apps/web/app/settings/backups/page.tsx` (modified, +13/-5)
+```diff
+@@ -1,11 +1,19 @@
+-"use client";
+-
++import type { Metadata } from "next";
+ import BackupSettings from "@/components/settings/BackupSettings";
+ import { SettingsPage } from "@/components/settings/SettingsPage";
+-import { useTranslation } from "@/lib/i18n/client";
++import { useTranslation } from "@/lib/i18n/server";
 +
-+describe("Docker image privileges", () => {
-+  it("runs the web server and workers with only the capabilities they need", () => {
-+    const processes = inspectAppProcesses();
++export async function generateMetadata(): Promise<Metadata> {
++  // oxlint-disable-next-line rules-of-hooks
++  const { t } = await useTranslation();
++  return {
++    title: `${t("settings.backups.page_title")} | Karakeep`,
++  };
++}
+ 
+-export default function BackupsPage() {
+-  const { t } = useTranslation();
++export default async function BackupsPage() {
++  // oxlint-disable-next-line rules-of-hooks
++  const { t } = await useTranslation();
+   return (
+     <SettingsPage
+       title={t("settings.backups.page_title")}
+```
+
+---
+
+### Incident Patch 2: `ae3223a0` (2026-11-09)
+**Commit Message**: fix(mobile): stop the bookmark list jumping to the top on refetch (#3347)
+
+* fix(mobile): stop the bookmark list jumping to the top on refetch
+
+The home list scrolled to the top whenever a data change put a new item
+first: background refetches, bookmarks saved on another device, undoing
+an archive. It now scrolls only when a create-bookmark mutation from this
+device succeeds, read through react-query's useMutationState, so saves
+from the new-bookmark sheet, clipboard, photos and the share extension
+are covered. Existing bookmarks and oldest-first sorting don't scroll.
+
+The scroll target was also wrong. The inset captured on drag is the raw
+contentInset, which is always 0 under automatic inset adjustment, and
+native scrollTo clamps negative offsets to 0 anyway, so the new card
+landed under the transparent header. It now scrolls to minus the
+navigator's header height with scrollToOverflowEnabled.
+
+* fix(mobile): scroll on re-saves and on saves that finish out of order
+
+Re-saving a link from mobile bumps it to the top, so it should scroll
+like a new save. And track each handled save instead of the highest
+mutation id, so a save that finishes after a later one still scrolls.
+
+**File**: `apps/mobile/app/dashboard/(tabs)/(home)/index.tsx` (modified, +1/-0)
+```diff
+@@ -214,6 +214,7 @@ export default function Home() {
+       <UpdatingBookmarkList
+         header={<ConnectionBanner />}
+         query={{ archived: false }}
++        scrollToTopOnSave
+         emptyState={{
+           title: t("home.empty_title"),
+           subtitle: t("home.empty_subtitle"),
+```
+
+**File**: `apps/mobile/components/bookmarks/BookmarkList.tsx` (modified, +34/-21)
+```diff
+@@ -1,4 +1,4 @@
+-import { useEffect, useRef } from "react";
++import { use, useEffect, useRef } from "react";
+ import {
+   ActivityIndicator,
+   FlatList,
+@@ -11,11 +11,14 @@ import EmptyState from "@/components/ui/EmptyState";
+ import { useTranslation } from "@/lib/i18n/hooks";
+ import { getGridColumns, useContainerWidth } from "@/lib/responsive";
+ import useAppSettings from "@/lib/settings";
++import { useMutationState } from "@tanstack/react-query";
+ import { useScrollToTop } from "expo-router";
++import { HeaderHeightContext } from "expo-router/react-navigation";
+ import type { LucideIcon } from "lucide-react-native";
+ import { Bookmark } from "lucide-react-native";
+ 
+ import type { ZBookmark } from "@karakeep/shared/types/bookmarks";
++import { useTRPC } from "@karakeep/shared-react/trpc";
+ 
+ import BookmarkCard from "./BookmarkCard";
+ 
+@@ -40,6 +43,7 @@ export default function BookmarkList({
+   isFetchingNextPage,
+   isRefreshing,
+   emptyState,
++  scrollToTopOnSave,
+ }: {
+   bookmarks: ZBookmark[];
+   onRefresh: () => void;
+@@ -48,32 +52,42 @@ export default function BookmarkList({
+   header?: React.ReactElement;
+   isFetchingNextPage?: boolean;
+   emptyState?: BookmarkListEmptyState;
++  scrollToTopOnSave?: boolean;
+ }) {
+   const flatListRef = useRef<FlatList<ZBookmark>>(null);
+   const { t } = useTranslation();
+   useScrollToTop(flatListRef);
+   const { settings } = useAppSettings();
+-  // A new item at the top would otherwise land out of sight, leaving people to
+-  // wonder whether it saved.
+-  const firstBookmarkId = bookmarks[0]?.id;
+-  const previousFirstBookmarkId = useRef(firstBookmarkId);
+-  const previousCount = useRef(bookmarks.length);
+-  const topInset = useRef(0);
++  // A bookmark saved from this device lands at the top (re-saving an existing
++  // link bumps it there too), which may be out of sight, leaving people to
++  // wonder whether it saved. Follow their own saves rather than every change
++  // in the data, which also arrives from refetches.
++  const api = useTRPC();
++  const saveIds = useMutationState({
++    filters: {
++      mutationKey: api.bookmarks.createBookmark.mutationKey(),
++      status: "success",
++    },
++    select: (m) => m.mutationId,
++  });
++  // Saves can finish out of order, so remember each one rather than the latest.
++  const handledSaveIds = useRef(new Set(saveIds));
++  // The list scrolls under the transparent header, so its visible top is above
++  // zero.
++  const headerHeight = use(HeaderHeightContext) ?? 0;
+   useEffect(() => {
+-    const addedAtTop =
+-      previousFirstBookmarkId.current !== undefined &&
+-      firstBookmarkId !== previousFirstBookmarkId.current &&
+-      bookmarks.length > previousCount.current;
+-    previousFirstBookmarkId.current = firstBookmarkId;
+-    previousCount.current = bookmarks.length;
+-    if (addedAtTop) {
+-      // The list scrolls under the header, so its visible top is above zero.
++    const newSaveIds = saveIds.filter((id) => !handledSaveIds.current.has(id));
++    if (newSaveIds.length === 0) {
++      return;
++    }
++    newSaveIds.forEach((id) => handledSaveIds.current.add(id));
++    if (scrollToTopOnSave && settings.bookmarkSortOrder === "desc") {
+       flatListRef.current?.scrollToOffset({
+-        offset: -topInset.current,
++        offset: -headerHeight,
+         animated: true,
+       });
+     }
+-  }, [firstBookmarkId, bookmarks.length]);
++  }, [saveIds]);
+   const { width: containerWidth, onLayout } = useContainerWidth();
+   const { numColumns, columnWidth } = getGridColumns({
+     containerWidth,
+@@ -91,6 +105,8 @@ export default function BookmarkList({
+         numColumns={numColumns}
+         columnWrapperStyle={numColumns > 1 ? { gap: GAP } : undefined}
+         contentInsetAdjustmentBehavior="automatic"
++        // Lets scrollToOffset reach the header-adjusted top.
++        scrollToOverflowEnabled
+         ListHeaderComponent={header}
+         contentContainerStyle={{
+           gap: GAP,
+@@ -118,10 +134,7 @@ export default function BookmarkList({
+         data={bookmarks}
+         refreshing={isRefreshing}
+         onRefresh={onRefresh}
+-        onScrollBeginDrag={(event) => {
+-          Keyboard.dismiss();
+-          topInset.current = event.nativeEvent.contentInset?.top ?? 0;
+-        }}
++        onScrollBeginDrag={Keyboard.dismiss}
+         keyExtractor={(b) => b.id}
+         onEndReached={fetchNextPage}
+         ListFooterComponent={
+```
+
+**File**: `apps/mobile/components/bookmarks/UpdatingBookmarkList.tsx` (modified, +3/-0)
+```diff
+@@ -13,10 +13,12 @@ export default function UpdatingBookmarkList({
+   query,
+   header,
+   emptyState,
++  scrollToTopOnSave,
+ }: {
+   query: Omit<ZGetBookmarksRequest, "sortOrder" | "includeContent">; // Sort order is handled by mobile settings
+   header?: React.ReactElement;
+   emptyState?: BookmarkListEmptyState;
++  scrollToTopOnSave?: boolean;
+ }) {
+   const api = useTRPC();
+   const queryClient = useQueryClient();
+@@ -69,6 +71,7 @@ export default function UpdatingBookmarkList({
+         .filter((b) => b.content.type != BookmarkTypes.UNKNOWN)}
+       header={header}
+       emptyState={emptyState}
++      scrollToTopOnSave={scrollToTopOnSave}
+       onRefresh={onRefresh}
+       fetchNextPage={onEndReached}
+       isFetchingNextPage={isFetchingNextPage}
+```
+
+---
+
+### Incident Patch 3: `a55dba2b` (2026-11-09)
+**Commit Message**: feat(web): guided smart list builder in the list dialog (#3340)
+
+* feat(web): guided smart list builder in the list dialog
+
+- Smart lists are built from controls: tags (several, picked by name,
+  including names no tag has yet), favourited, archived, and age. The
+  query string stays the source of truth. Each control rewrites only
+  its own terms, so hand-typed terms next to them are kept.
+- A live preview under the controls shows how many bookmarks match,
+  using lists.previewSmartQuery, and says so when nothing matches yet.
+- The raw query moves into an Advanced section. It opens on its own,
+  and stays open, when the query has something the controls can't
+  show.
+- Query errors are shown while typing and in plain words: an
+  unparseable query, plain words without a qualifier, or no condition.
+- The fields get labels and placeholders (icon, name, parent with a
+  clear button), and the submit button says "Create list" for new
+  lists.
+- TagNamePicker: a multi-pick tag search next to TagAutocomplete.
+- The query explainer tooltip shows the query language help when the
+  query is empty.
+
+* feat(web): lists, title and URL in the smart list builder
+
+- Add a Lists picker next to Tags. 
+
+**File**: `apps/web/components/dashboard/lists/EditListModal.tsx` (modified, +263/-188)
+```diff
+@@ -1,13 +1,19 @@
+ "use client";
+ 
+-import { useEffect, useMemo, useState } from "react";
++import { useEffect, useMemo, useRef, useState } from "react";
+ import dynamic from "next/dynamic";
+ import Link from "next/link";
+ import { useRouter } from "next/navigation";
+ import { ActionButton } from "@/components/ui/action-button";
+-import { Button } from "@/components/ui/button";
++import { Button, ButtonWithTooltip } from "@/components/ui/button";
++import {
++  Collapsible,
++  CollapsibleContent,
++  CollapsibleTrigger,
++} from "@/components/ui/collapsible";
+ import {
+   Dialog,
++  DialogBody,
+   DialogClose,
+   DialogContent,
+   DialogFooter,
+@@ -23,6 +29,8 @@ import {
+   FormItem,
+   FormLabel,
+   FormMessage,
++  setServerFormErrors,
++  useFormErrors,
+ } from "@/components/ui/form";
+ import { Input } from "@/components/ui/input";
+ import {
+@@ -40,7 +48,7 @@ import {
+ import { toast } from "@/components/ui/sonner";
+ import { useTranslation } from "@/lib/i18n/client";
+ import { zodResolver } from "@hookform/resolvers/zod";
+-import { X } from "lucide-react";
++import { ChevronRight, X } from "lucide-react";
+ import { useForm, useWatch } from "react-hook-form";
+ import { z } from "zod";
+ 
+@@ -56,6 +64,9 @@ import {
+ 
+ import QueryExplainerTooltip from "../search/QueryExplainerTooltip";
+ import { BookmarkListSelector } from "./BookmarkListSelector";
++import { SmartListPreview } from "./SmartListPreview";
++import { isQueryRepresentableInBuilder } from "./smartListBuilderQuery";
++import { SmartListQueryBuilder } from "./SmartListQueryBuilder";
+ 
+ // The emoji dataset is large, only load it when the picker is opened.
+ const EmojiPicker = dynamic(
+@@ -95,9 +106,13 @@ export function EditListModal({
+     throw new Error("You must provide both open and setOpen or neither");
+   }
+   const [customOpen, customSetOpen] = useState(false);
++  const [advancedOpen, setAdvancedOpen] = useState(false);
+ 
+   const form = useForm({
+-    resolver: zodResolver(zNewBookmarkListSchema),
++    resolver: zodResolver(
++      zNewBookmarkListSchema,
++      useFormErrors({ query: t("lists.query_required") }),
++    ),
+     defaultValues: {
+       name: list?.name ?? prefill?.name ?? "",
+       description: list?.description ?? prefill?.description ?? "",
+@@ -121,15 +136,39 @@ export function EditListModal({
+       type: list?.type ?? prefill?.type ?? "manual",
+       query: list?.query ?? prefill?.query ?? undefined,
+     });
++    setAdvancedOpen(false);
+   }, [open]);
+ 
+   const query = useWatch({ control: form.control, name: "query" });
++  // A query the builder can't show has to stay on screen. Sticky rather than
++  // derived, so the field doesn't vanish once a query being typed becomes valid.
++  if (!advancedOpen && !isQueryRepresentableInBuilder(query ?? "")) {
++    setAdvancedOpen(true);
++  }
+   const parsedSearchQuery = useMemo(() => {
+     if (!query) {
+       return undefined;
+     }
+     return parseSearchQuery(query);
+   }, [query]);
++  // Mirrors what the server's schema rejects, while they're still typing.
++  const queryError = !parsedSearchQuery
++    ? undefined
++    : parsedSearchQuery.result !== "full"
++      ? t("lists.query_invalid", { text: parsedSearchQuery.text })
++      : parsedSearchQuery.text.length > 0
++        ? t("lists.query_plain_text", { text: parsedSearchQuery.text })
++        : undefined;
 +
-+    expect(processes.map((p) => p.name).sort()).toEqual(["web", "workers"]);
-+    // CHOWN (bit 0), DAC_OVERRIDE (bit 1) and FOWNER (bit 3), see
-+    // docker/root/etc/s6-overlay/scripts/drop-privileges.
-+    const expectedCaps = "000000000000000b";
-+    for (const p of processes) {
-+      expect(p, p.name).toEqual({
-+        name: p.name,
-+        uid: "0",
-+        capEff: expectedCaps,
-+        capBnd: expectedCaps,
-+        noNewPrivs: "1",
++  // "Parent list not found" and "can't be nested under" are the rejected values.
++  const onMutationError = (e: Parameters<typeof setServerFormErrors>[1]) => {
++    if (!setServerFormErrors(form, e, { rejectedField: "parentId" })) {
++      toast({
++        variant: "destructive",
++        title: t("common.something_went_wrong"),
 +      });
 +    }
++  };
+ 
+   const { mutate: createList, isPending: isCreating } = useCreateBookmarkList({
+     onSuccess: (resp) => {
+@@ -140,28 +179,7 @@ export function EditListModal({
+       router.push(`/dashboard/lists/${resp.id}`);
+       form.reset();
+     },
+-    onError: (e) => {
+-      if (e.data?.code == "BAD_REQUEST") {
+-        if (e.data.zodError) {
+-          toast({
+-            variant: "destructive",
+-            description: Object.values(e.data.zodError.fieldErrors)
+-              .flat()
+-              .join("\n"),
+-          });
+-        } else {
+-          toast({
+-            variant: "destructive",
+-            description: e.message,
+-          });
+-        }
+-      } else {
+-        toast({
+-          variant: "destructive",
+-          title: t("common.something_went_wrong"),
+-        });
+-      }
+-    },
++    onError: onMutationError,
+   });
+ 
+   const { mutate: editList, isPending: isEditing } = useEditBookmarkList({
+@@ -172,30 +190,19 @@ export function EditListModal({
+       setOpen(false);
+       form.reset();
+     },
+-    onError: (e) => {
+-      if (e.data?.code == "BAD_REQUEST") {
+-        if (e.data.zodError) {
+-          toast({
+-            variant: "destructive",
+-            description: Object.values(e.data.zodError.fieldErrors)
+-              .flat()
+-     
+```
+
+**File**: `apps/web/components/dashboard/lists/ListNamePicker.tsx` (added, +112/-0)
+```diff
+@@ -0,0 +1,112 @@
++"use client";
++
++import { useState } from "react";
++import {
++  Command,
++  CommandEmpty,
++  CommandGroup,
++  CommandInput,
++  CommandItem,
++  CommandList,
++} from "@/components/ui/command";
++import {
++  Popover,
++  PopoverContent,
++  PopoverTrigger,
++} from "@/components/ui/popover";
++import { selectTriggerClass } from "@/components/ui/select";
++import { useTranslation } from "@/lib/i18n/client";
++import { cn } from "@/lib/utils";
++import { Check, ChevronDown } from "lucide-react";
++
++import { useBookmarkLists } from "@karakeep/shared-react/hooks/lists";
++import { listNameFromPath } from "@karakeep/shared/utils/listUtils";
++
++/**
++ * Picks several of your lists by name, the way `list:` matches them. The popover
++ * stays open between picks and picking a selected list removes it.
++ */
++export function ListNamePicker({
++  id,
++  placeholder,
++  selectedNames,
++  onToggle,
++  excludeListId,
++}: {
++  id?: string;
++  placeholder: string;
++  selectedNames: string[];
++  onToggle: (name: string) => void;
++  excludeListId?: string;
++}) {
++  const { t } = useTranslation();
++  const [open, setOpen] = useState(false);
++  const { data } = useBookmarkLists();
++
++  // `list:` only looks at lists you own
++  const paths = (data?.allPaths ?? []).filter((path) => {
++    const list = path[path.length - 1];
++    return list.userRole === "owner" && list.id !== excludeListId;
++  });
++
++  return (
++    <Popover open={open} onOpenChange={setOpen}>
++      <PopoverTrigger asChild>
++        <button
++          id={id}
++          type="button"
++          role="combobox"
++          aria-expanded={open}
++          className={selectTriggerClass}
++        >
++          <span className="truncate text-muted-foreground/85">
++            {placeholder}
++          </span>
++          <ChevronDown className="size-4 shrink-0 opacity-50" />
++        </button>
++      </PopoverTrigger>
++      <PopoverContent
++        // It sits in the right column, and opens wider than its trigger.
++        align="end"
++        collisionPadding={8}
++        className="w-[--radix-popover-trigger-width] min-w-72 p-0"
++        // The dialog around it would otherwise swallow the scrolling.
++        onWheel={(e) => e.stopPropagation()}
++      >
++        <Command>
++          <CommandInput
++            placeholder={t("lists.builder.lists_search_placeholder")}
++            className="h-9 max-sm:h-11"
++          />
++          <CommandList className="max-h-60">
++            <CommandEmpty>{t("lists.builder.lists_none_found")}</CommandEmpty>
++            <CommandGroup>
++              {paths.map((path) => {
++                const list = path[path.length - 1];
++                return (
++                  <CommandItem
++                    key={list.id}
++                    value={list.id}
++                    keywords={[list.name]}
++                    onSelect={() => onToggle(list.name)}
++                    className="cursor-pointer max-sm:min-h-11"
++                  >
++                    <Check
++                      className={cn(
++                        "size-4",
++                        selectedNames.includes(list.name)
++                          ? "opacity-100"
++                          : "opacity-0",
++                      )}
++                    />
++                    <span className="truncate">{listNameFromPath(path)}</span>
++                  </CommandItem>
++                );
++              })}
++            </CommandGroup>
++          </CommandList>
++        </Command>
++      </PopoverContent>
++    </Popover>
++  );
++}
+```
+
+**File**: `apps/web/components/dashboard/lists/SmartListPreview.tsx` (added, +86/-0)
+```diff
+@@ -0,0 +1,86 @@
++"use client";
++
++import { useTranslation } from "@/lib/i18n/client";
++import { cn } from "@/lib/utils";
++import { keepPreviousData, useQuery } from "@tanstack/react-query";
++
++import { useDebounce } from "@karakeep/shared-react/hooks/use-debounce";
++import { useTRPC } from "@karakeep/shared-react/trpc";
++
++const DEBOUNCE_MS = 400;
++
++/**
++ * What a smart list would hold, before it's created. `query` must be a valid
++ * smart list query, or empty while there's nothing valid to preview yet, in which
++ * case it says what's missing. `invalid` tells a query being fixed from no query.
++ */
++export function SmartListPreview({
++  query,
++  invalid = false,
++}: {
++  query: string;
++  invalid?: boolean;
++}) {
++  const api = useTRPC();
++  const { t } = useTranslation();
++  const debouncedQuery = useDebounce(query, DEBOUNCE_MS);
++  const { data, isError, isFetching } = useQuery(
++    api.lists.previewSmartQuery.queryOptions(
++      { query: debouncedQuery },
++      {
++        enabled: debouncedQuery.length > 0,
++        placeholderData: keepPreviousData,
++        retry: false,
++      },
++    ),
++  );
++
++  if (!query) {
++    return (
++      <p
++        aria-live="polite"
++        className="rounded-md bg-muted px-3 py-2 text-sm text-muted-foreground"
++      >
++        {t(invalid ? "lists.preview.fix_query" : "lists.preview.empty_query")}
++      </p>
++    );
++  }
++
++  return (
++    <div
++      aria-live="polite"
++      className={cn(
++        "rounded-md bg-muted px-3 py-2 text-sm transition-opacity",
++        (isFetching || query !== debouncedQuery) && "opacity-60",
++      )}
++    >
++      {isError ? (
++        <p className="text-muted-foreground">{t("lists.preview.failed")}</p>
++      ) : !data ? (
++        <p className="text-muted-foreground">{t("lists.preview.checking")}</p>
++      ) : data.count === 0 ? (
++        <>
++          <p className="font-medium">{t("lists.preview.no_matches")}</p>
++          <p className="text-muted-foreground">
++            {t("lists.preview.no_matches_description")}
++          </p>
++        </>
++      ) : (
++        <>
++          <p className="font-medium">
++            {t("lists.preview.count", { count: data.count })}
++          </p>
++          {data.sample.length > 0 && (
++            <ul className="mt-1 space-y-0.5 text-xs text-muted-foreground">
++              {data.sample.map((bookmark) => (
++                <li key={bookmark.id} className="truncate">
++                  {bookmark.title ?? t("common.untitled")}
++                </li>
++              ))}
++            </ul>
++          )}
++        </>
++      )}
++    </div>
++  );
++}
+```
+
+**File**: `apps/web/components/dashboard/lists/SmartListQueryBuilder.tsx` (added, +302/-0)
+```diff
+@@ -0,0 +1,302 @@
++"use client";
++
++import { TagNamePicker } from "@/components/dashboard/tags/TagAutocomplete";
++import { Badge } from "@/components/ui/badge";
++import { ButtonWithTooltip } from "@/components/ui/button";
++import { Input } from "@/components/ui/input";
++import { Label } from "@/components/ui/label";
++import {
++  Select,
++  SelectContent,
++  SelectItem,
++  SelectTrigger,
++  SelectValue,
++} from "@/components/ui/select";
++import { useTranslation } from "@/lib/i18n/client";
++import { X } from "lucide-react";
++
++import { useBookmarkLists } from "@karakeep/shared-react/hooks/lists";
++
++import { ListNamePicker } from "./ListNamePicker";
++import {
++  AGE_OPTIONS,
++  ANY,
++  isNegated,
++  tokenize,
++  unquote,
++  withoutNegation,
++} from "./smartListBuilderQuery";
++
++// Translation keys can't contain the comparison signs the query uses
++const AGE_LABEL_KEYS = {
++  "<7d": "last_7_days",
++  "<30d": "last_30_days",
++  "<1y": "last_year",
++  ">30d": "over_30_days",
++  ">1y": "over_a_year",
++} as const;
++
++// Quotes a value unless the query parser reads it as one bare word.
++// A value starting like a qualifier, such as "is:fav", would be read as one.
++const quoteIfNeeded = (value: string) =>
++  /^[^\s()"#!-][^\s()"]*$/.test(value) &&
++  !/^(is|has|url|list|after|before|age|feed|title|tag|source):/.test(value)
++    ? value
++    : `"${value.replaceAll('"', "")}"`;
++
++function qualifierState(tokens: string[], term: string) {
++  const token = tokens.find((tok) => withoutNegation(tok) === term);
++  if (!token) {
++    return ANY;
++  }
++  return isNegated(token) ? "no" : "yes";
++}
++
++/**
++ * Builds the simple cases of a smart list query. The query string stays the
++ * source of truth: every control reads its value from it and only rewrites its
++ * own terms, so anything typed by hand next to them is left alone.
++ */
++export function SmartListQueryBuilder({
++  query,
++  onChange,
++  listId,
++}: {
++  query: string;
++  onChange: (query: string) => void;
++  // The list being edited, which can't be one of its own conditions
++  listId?: string;
++}) {
++  const { t } = useTranslation();
++  const { data: lists } = useBookmarkLists();
++  const tokens = tokenize(query);
++  // The controls rewrite single terms, which would break "or", "and" or
++  // brackets around them, so such a query is only edited as text.
++  const isGrouped = tokens.some(
++    (tok) =>
++      /^(or|and)$/i.test(tok) || /[()]/.test(tok.replace(/"[^"]*"/g, "")),
++  );
++
++  const replaceTokens = (
++    shouldRemove: (token: string) => boolean,
++    added: string[],
++  ) => {
++    onChange(
++      [...tokens.filter((tok) => !shouldRemove(tok)), ...added].join(" "),
++    );
++  };
++
++  const setQualifier = (term: string, value: string) => {
++    replaceTokens(
++      (tok) => withoutNegation(tok) === term,
++      value === ANY ? [] : [value === "no" ? `-${term}` : term],
++    );
++  };
++
++  const namedTerms = (prefix: string) =>
++    tokens
++      .filter((tok) => withoutNegation(tok).startsWith(prefix))
++      .map((tok) => ({
++        token: tok,
++        prefix,
++        name: unquote(withoutNegation(tok).slice(prefix.length)),
++        negated: isNegated(tok),
++      }))
++      .filter((term) => term.name.length > 0);
++  const tags = namedTerms("tag:");
++  const pickedLists = namedTerms("list:");
++
++  const toggleNamed = (prefix: string, name: string) => {
++    const existing = namedTerms(prefix).find((term) => term.name === name);
++    if (existing) {
++      replaceTokens((tok) => tok === existing.token, []);
++    } else {
++      replaceTokens(() => false, [`${prefix}${quoteIfNeeded(name)}`]);
++    }
++  };
++
++  // Edited in place, so the term doesn't jump to the end while it's typed.
++  const textIndex = (prefix: string) =>
++    tokens.findIndex(
++      (tok) =>
++        tok.startsWith(prefix) &&
++        unquote(tok.slice(prefix.length)).trim().length > 0,
++    );
++  const textValue = (prefix: string) => {
++    const index = textIndex(prefix);
++    return index === -1 ? "" : unquote(tokens[index].slice(prefix.length));
++  };
++  const setText = (prefix: string, value: string) => {
++    const index = textIndex(prefix);
++    const next = [...tokens];
++    const term = value.trim()
++      ? `${prefix}${quoteIfNeeded(value.replaceAll('"', ""))}`
++      : undefined;
++    if (index === -1) {
++      if (term) {
++        next.push(term);
++      }
++    } else if (term) {
++      next[index] = term;
++    } else {
++      next.splice(index, 1);
++    }
++    onChange(next.join(" "));
++  };
++
++  const age =
++    tokens
++      .find((tok) => tok.startsWith("age:") && tok.length > "age:".length)
++      ?.slice("age:".length) ?? ANY;
++  const hasPresetAge =
++    age === ANY || (AGE_OPTIONS as readonly string[]).includes(age);
++
++  const listIcon = (name: string) =>
++    lists?.data.find((list) => list.name === name && list.userRole === "owner")
++      ?.icon;
++
++  const stateOptions = (
++    <>
++      <SelectItem value={ANY}>{t("lists.builder.any")}</SelectItem>
++      
+```
+
+**File**: `apps/web/components/dashboard/lists/smartListBuilderQuery.test.ts` (added, +34/-0)
+```diff
+@@ -0,0 +1,34 @@
++import { describe, expect, it } from "vitest";
++
++import { isQueryRepresentableInBuilder } from "./smartListBuilderQuery";
++
++describe("isQueryRepresentableInBuilder", () => {
++  it.each([
++    "",
++    "is:fav",
++    "-is:archived",
++    "is:fav -is:archived tag:docs",
++    '-tag:"two words" tag:docs age:<30d',
++    "age:<2w",
++    'list:"Reading Queue" -list:Archive',
++    'url:example.com title:"release notes"',
++  ])("accepts %s", (query) => {
++    expect(isQueryRepresentableInBuilder(query)).toBe(true);
++  });
++
++  it.each([
++    "free text",
++    "has:notes",
++    "-url:example.com",
++    "title:a title:b",
++    "list:",
++    "is:fav or is:archived",
++    "(is:fav)",
++    "is:fav -is:fav",
++    "age:<7d age:>1y",
++    "-age:<7d",
++    "tag:",
++  ])("rejects %s", (query) => {
++    expect(isQueryRepresentableInBuilder(query)).toBe(false);
 +  });
 +});
 ```
 
----
-
-### Incident Patch 2: `2453aaa4` (2026-11-02)
-**Commit Message**: feat(chrome): opt-in Chrome sandbox, no_new_privs and no setuid binaries (#3280)
-
-* feat(chrome): opt-in Chrome sandbox, no_new_privs and no setuid binaries
-
-- Chrome now runs with no_new_privs set, and the image no longer has any
-  setuid/setgid binaries (including the unused chrome-sandbox helper),
-  so nothing in the container can regain privileges.
-- KARAKEEP_CHROME_SANDBOX=true drops --no-sandbox so Chrome uses its own
-  sandbox. It needs unprivileged user namespaces, which Docker's default
-  seccomp profile blocks, so it stays opt-in; if the sandbox can't start,
-  Chrome exits instead of running without it.
-
-The default behaviour is otherwise unchanged. Bumps the image revision
-to r2.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* docs(chrome): note the host settings that can block the sandbox
-
-Stock Ubuntu 23.10+ restricts unprivileged user namespaces through
-AppArmor, so the Docker snippet alone isn't enough there.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/chrome.yml` (modified, +1/-1)
+**File**: `apps/web/components/dashboard/lists/smartListBuilderQuery.ts` (added, +55/-0)
 ```diff
-@@ -21,7 +21,7 @@ env:
-   IMAGE: ghcr.io/karakeep-app/karakeep-chrome
-   # Google Chrome version (amd64); arm64 images use Debian's Chromium.
-   GOOGLE_CHROME_VERSION: 156.0.8078.47
--  IMAGE_REVISION: r1
-+  IMAGE_REVISION: r2
- 
- jobs:
-   metadata:
+@@ -0,0 +1,55 @@
++export const ANY = "any";
++export const AGE_OPTIONS = ["<7d", "<30d", "<1y", ">30d", ">1y"] as const;
++
++// Splits a query into its space separated terms, keeping quoted values whole.
++export const tokenize = (query: string): string[] =>
++  query.match(/(?:[^\s"]+|"[^"]*")+/g) ?? [];
++
++export const isNegated = (token: string) => /^[-!]/.test(token);
++
++export const withoutNegation = (token: string) => token.replace(/^[-!]/, "");
++
++export const unquote = (value: string) => value.replace(/^"|"$/g, "");
++
++// Qualifiers the builder shows as a list of picked names.
++const NAMED = ["tag:", "list:"];
++// Qualifiers the builder shows as a single "contains" field.
++const TEXT = ["title:", "url:"];
++
++/**
++ * Whether the builder's controls can show all of a query. Anything else, such as
++ * free text, grouping or a second value for one control, needs the raw query.
++ */
++export function isQueryRepresentableInBuilder(query: string) {
++  const seen = new Set<string>();
++  return tokenize(query).every((token) => {
++    const term = withoutNegation(token);
++    const named = NAMED.find((prefix) => term.startsWith(prefix));
++    if (named) {
++      return unquote(term.slice(named.length)).length > 0;
++    }
++    const text = TEXT.find((prefix) => term.startsWith(prefix));
++    if (text) {
++      if (isNegated(token) || seen.has(text)) {
++        return false;
++      }
++      seen.add(text);
++      return unquote(term.slice(text.length)).trim().length > 0;
++    }
++    if (term.startsWith("age:")) {
++      if (isNegated(token) || seen.has("age")) {
++        return false;
++      }
++      seen.add("age");
++      return term.length > "age:".length;
++    }
++    if (term === "is:fav" || term === "is:archived") {
++      if (seen.has(term)) {
++        return false;
++      }
++      seen.add(term);
++      return true;
++    }
++    return false;
++  });
++}
 ```
 
-**File**: `docker/chrome/Dockerfile` (modified, +4/-0)
+**File**: `apps/web/components/dashboard/search/QueryExplainerTooltip.tsx` (modified, +7/-1)
 ```diff
-@@ -47,6 +47,10 @@ RUN apt-get update \
+@@ -257,7 +257,13 @@ export default function QueryExplainerTooltip({
+     return null;
+   }
  
- COPY --chmod=755 docker/chrome/entrypoint.sh /usr/local/bin/chrome-entrypoint.sh
- 
-+# Nothing here needs setuid/setgid binaries (Chrome runs as nobody and doesn't
-+# use the setuid chrome-sandbox helper), so remove every path back to root.
-+RUN find / -xdev -perm /6000 -type f -exec chmod a-s {} +
+-  const body = (
++  // Nothing typed yet, so there's nothing to explain
++  const isEmpty =
++    !header && !parsedSearchQuery.text && !parsedSearchQuery.matcher;
 +
- ENV HOME=/tmp
- USER 65534:65534
- EXPOSE 9222
++  const body = isEmpty ? (
++    t("search.query_language_help")
++  ) : (
+     <>
+       {header}
+       <Table className="[&_tr:hover]:bg-transparent">
 ```
 
-**File**: `docker/chrome/README.md` (modified, +22/-0)
+**File**: `apps/web/components/dashboard/tags/TagAutocomplete.tsx` (modified, +134/-2)
 ```diff
-@@ -10,6 +10,28 @@ Shell: in A/B tests against bot-protected sites, the headless shell was blocked
- far more often (it leaks CDP automation even with a patched client), and so,
- to a lesser extent, was the Chromium build.
+@@ -1,4 +1,4 @@
+-import React, { useState } from "react";
++import React, { useRef, useState } from "react";
+ import { Button } from "@/components/ui/button";
+ import {
+   Command,
+@@ -13,14 +13,17 @@ import {
+   PopoverContent,
+   PopoverTrigger,
+ } from "@/components/ui/popover";
++import { selectTriggerClass } from "@/components/ui/select";
+ import LoadingSpinner from "@/components/ui/spinner";
++import { useTranslation } from "@/lib/i18n/client";
+ import { cn } from "@/lib/utils";
+ import { useQuery } from "@tanstack/react-query";
+-import { Check, ChevronsUpDown, X } from "lucide-react";
++import { Check, ChevronDown, ChevronsUpDown, Plus, X } from "lucide-react";
  
-+## Sandbox
+ import { useTagAutocomplete } from "@karakeep/shared-react/hooks/tags";
+ import { useDebounce } from "@karakeep/shared-react/hooks/use-debounce";
+ import { useTRPC } from "@karakeep/shared-react/trpc";
++import { normalizeTagName } from "@karakeep/shared/utils/tag";
+ 
+ interface TagAutocompleteProps {
+   tagId: string;
+@@ -131,3 +134,132 @@ export function TagAutocomplete({
+     </Popover>
+   );
+ }
 +
-+Chrome runs as `nobody` with `no_new_privs` set, and the image has no setuid or
-+setgid binaries. Chrome's own sandbox (which isolates every renderer) is off by
-+default because it needs unprivileged user namespaces, which Docker's default
-+seccomp profile blocks. To turn it on, set `KARAKEEP_CHROME_SANDBOX=true` and
-+run the container where user namespaces are allowed, e.g. on Docker:
++/**
++ * The same search as `TagAutocomplete`, for several tags picked by name: the
++ * popover stays open between picks and picking a selected tag removes it. A name
++ * that matches no tag can still be picked, it's what a smart list matches on.
++ */
++export function TagNamePicker({
++  id,
++  placeholder,
++  selectedNames,
++  onToggle,
++  getTypedNameLabel,
++}: {
++  id?: string;
++  placeholder: string;
++  selectedNames: string[];
++  onToggle: (name: string) => void;
++  getTypedNameLabel: (name: string) => string;
++}) {
++  const { t } = useTranslation();
++  const [open, setOpen] = useState(false);
++  const [searchQuery, setSearchQuery] = useState("");
++  // Tags are saved without a leading "#", so "#docs" should find "docs".
++  const typedName = normalizeTagName(searchQuery);
++  const searchQueryDebounced = useDebounce(typedName, 200);
++  const inputRef = useRef<HTMLInputElement>(null);
 +
-+```yaml
-+chrome:
-+  environment:
-+    KARAKEEP_CHROME_SANDBOX: "true"
-+  security_opt:
-+    - seccomp=unconfined
-+```
++  const { data: tags } = useTagAutocomplete({
++    nameContains: searchQueryDebounced,
++    select: (data) => data.tags,
++    enabled: open,
++  });
 +
-+Some hosts also restrict user namespaces themselves. Lifting that is a
-+host-wide change: `sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0`
-+on Ubuntu 23.10+, or `kernel.unprivileged_userns_clone=1` on older Debian.
++  const query = typedName.toLowerCase();
++  // The list shows the previous search's results while the new ones load. The
++  // top row gets pre-selected, so Enter shouldn't land on something unrelated.
++  const matches = (tags ?? []).filter((tag) =>
++    tag.name.toLowerCase().includes(query),
++  );
++  const offerTypedName =
++    typedName.length > 0 &&
++    !matches.some((tag) => tag.name.toLowerCase() === query);
 +
-+If the sandbox can't start, Chrome exits instead of running without it.
++  const pick = (name: string) => {
++    onToggle(name);
++    setSearchQuery("");
++    // Clicking a row takes the focus, and the next pick starts with typing.
++    inputRef.current?.focus();
++  };
 +
- ## Testing locally
- 
- Run Karakeep's e2e suite, which builds this image through its Compose file and
-```
-
-**File**: `docker/chrome/entrypoint.sh` (modified, +9/-2)
-```diff
-@@ -6,11 +6,18 @@ set -e
- 
- socat TCP4-LISTEN:9222,fork,reuseaddr TCP4:127.0.0.1:9223 &
- 
-+# Chrome's sandbox needs unprivileged user namespaces, which Docker's default
-+# seccomp profile blocks, so it's opt-in (see README.md).
-+if [ "${KARAKEEP_CHROME_SANDBOX:-false}" != "true" ]; then
-+  set -- --no-sandbox "$@"
-+fi
-+
- # SwiftShader keeps WebGL available without a GPU (even with --disable-gpu);
- # a browser without WebGL is an easy headless tell.
--exec karakeep-chrome \
-+# no_new_privs keeps setuid binaries and file capabilities from granting
-+# Chrome any more privileges.
-+exec setpriv --no-new-privs karakeep-chrome \
-   --headless=new \
--  --no-sandbox \
-   --no-first-run \
-   --no-default-browser-check \
-   --user-data-dir=/tmp/chrome-profile \
-```
-
----
-
-### Incident Patch 3: `46e80093` (2026-11-03)
-**Commit Message**: fix(web): upgrade better-auth to 1.7.16 for the November security release
-
-**File**: `apps/web/package.json` (modified, +1/-1)
-```diff
-@@ -60,7 +60,7 @@
-     "@trpc/client": "^11.9.0",
-     "@trpc/server": "^11.9.0",
-     "@trpc/tanstack-react-query": "^11.9.0",
--    "better-auth": "1.7.10",
-+    "better-auth": "1.7.16",
-     "better-sqlite3": "^13.0.3",
-     "class-variance-authority": "^0.7.0",
-     "clsx": "^2.1.0",
-```
-
-**File**: `pnpm-lock.yaml` (modified, +73/-74)
-```diff
-@@ -707,8 +707,8 @@ importers:
-         specifier: ^11.9.0
-         version: 11.9.0(@tanstack/react-query@5.90.2(react@19.2.3))(@trpc/client@11.9.0(@trpc/server@11.9.0(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.9.0(typescript@5.9.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.9.3)
-       better-auth:
--        specifier: 1.7.10
--        version: 1.7.10(@opentelemetry/api@1.9.0)(drizzle-kit@0.31.10)(drizzle-orm@0.45.4(@opentelemetry/api@1.9.0)(@types/better-sqlite3@7.6.13)(better-sqlite3@13.0.3)(kysely@0.29.6))(next@16.4.1(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.0)(@types/node@26.6.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sass@1.102.0))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@4.1.11(@opentelemetry/api@1.9.0)(@types/node@26.6.1)(jsdom@24.1.3(supports-color@8.1.1))(vite@8.3.0(@types/node@24.10.3)(esbuild@0.28.2)(jiti@2.4.2)(sass@1.102.0)(terser@5.51.2)(tsx@4.23.13)(yaml@2.9.1)))
-+        specifier: 1.7.16
-+        version: 1.7.16(@opentelemetry/api@1.9.0)(drizzle-kit@0.31.10)(drizzle-orm@0.45.4(@opentelemetry/api@1.9.0)(@types/better-sqlite3@7.6.13)(better-sqlite3@13.0.3)(kysely@0.29.6))(next@16.4.1(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.0)(@types/node@26.6.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sass@1.102.0))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@4.1.11(@opentelemetry/api@1.9.0)(@types/node@26.6.1)(jsdom@24.1.3(supports-color@8.1.1))(vite@8.3.0(@types/node@24.10.3)(esbuild@0.28.2)(jiti@2.4.2)(sass@1.102.0)(terser@5.51.2)(tsx@4.23.13)(yaml@2.9.1)))
-       better-sqlite3:
-         specifier: ^13.0.3
-         version: 13.0.3
-@@ -3034,60 +3034,60 @@ packages:
-     resolution: {integrity: sha512-Vj1jF3cPfxg7OAfoI7QnVKLoILlm2JF9pnVHrX8qx7AHMiYWT+NDAA7jChlNgRS4WTLc/fD1lXLmPixluj+3Gg==}
-     engines: {node: '>=6.9.0'}
- 
--  '@better-auth/core@1.7.10':
--    resolution: {integrity: sha512-c5vxtnk7UxWe/iF/X5sKSgmPcN5n6biuwJBs2dMkceMwvMWBHLosue6h/vmvKns9SYKbkBNWsurFe7yIbv13dQ==}
-+  '@better-auth/core@1.7.16':
-+    resolution: {integrity: sha512-dwVAtEAEpjPsCV/TqOKRHreWyuiqvja+TnTTAuVbi3P0afM0+b1+ga+RTXNjVE86Q4HRwRg45Ek3txFrY8/1DA==}
-     peerDependencies:
-       '@better-auth/utils': ^0.4.2 || ^0.5.0
--      '@better-fetch/fetch': 1.3.2
-+      '@better-fetch/fetch': 1.3.3
-       '@opentelemetry/api': ^1.9.0
--      better-call: 1.4.2
-+      better-call: 1.4.5
-       jose: ^6.1.0
-       kysely: ^0.28.5 || ^0.29.0
-       nanostores: ^1.0.1
-     peerDependenciesMeta:
-       '@opentelemetry/api':
-         optional: true
- 
--  '@better-auth/drizzle-adapter@1.7.10':
--    resolution: {integrity: sha512-Uc/Eh9cnvorIWA6J97Hv8zjR8sCVUP6G7M3xHJGTD9qJXC69zoY4ULmNGA73AmGJB1q+VEYs2cRMtJ6fR6HP6g==}
-+  '@better-auth/drizzle-adapter@1.7.16':
-+    resolution: {integrity: sha512-8cgtcWkCmJal+ecrl681Y+SKvMDy5Vg2ydCOPE7X8Mcx1Ud7Mqve3pASG0I2JWMJtrge1m8YbpNmCxhVGh+gpQ==}
-     peerDependencies:
--      '@better-auth/core': ^1.7.10
-+      '@better-auth/core': ^1.7.16
-       '@better-auth/utils': ^0.4.2 || ^0.5.0
-       drizzle-orm: ^0.45.2 || >=1.0.0-rc.1 <2.0.0
-     peerDependenciesMeta:
-       drizzle-orm:
-         optional: true
- 
--  '@better-auth/kysely-adapter@1.7.10':
--    resolution: {integrity: sha512-ZWWc6h5lgcwQMTcqMLNWw+jTEMFfrqJHD+VamiCUdaAxZzVAkjLZzVA2r0vZ5w7xnTY9vWS7wuNVqAKNLRTlYQ==}
-+  '@better-auth/kysely-adapter@1.7.16':
-+    resolution: {integrity: sha512-MkLZwHxhYbVr1QGGDJDZXMT1g54Q5yucDMdLGaz3Y5P8ERRfaqVEe+3MCVCb8XxJ7Rh+VNJKUix4VOBq7vXimg==}
-     peerDependencies:
--      '@better-auth/core': ^1.7.10
-+      '@better-auth/core': ^1.7.16
-       '@better-auth/utils': ^0.4.2 || ^0.5.0
-       kysely: ^0.28.17 || ^0.29.0
-     peerDependenciesMeta:
-       kysely:
-         optional: true
- 
--  '@better-auth/memory-adapter@1.7.10':
--    resolution: {integrity: sha512-3Di7y8BK5I2pCdpRaJ2ggkVliO/Swr6a/J+y9RFdwkbxhEMU1o9WD9IwoG3LFH8dvFF3kVo+GilsZsVNlYD+sw==}
-+  '@better-auth/memory-adapter@1.7.16':
-+    resolution: {integrity: sha512-b0uUE3mhQJDu2QqLDN3XVHhXUhpr6zK+UhjL7IdNteTJJaAMhCcXfpLc7+kpOcNVEEBdRiFXBwsEtxRjcB3rLQ==}
-     peerDependencies:
--      '@better-auth/core': ^1.7.10
-+      '@better-auth/core': ^1.7.16
-       '@better-auth/utils': ^0.4.2 || ^0.5.0
- 
--  '@better-auth/mongo-adapter@1.7.10':
--    resolution: {integrity: sha512-7z48PlXtlSKGvdOXfVmbjZE1vRmYyOQqHiPbeLpw+NvAPSTI9N4r7OO47u2MebA3q25e3GoGEwk5BAEE07u+PQ==}
-+  '@better-auth/mongo-adapter@1.7.16':
-+    resolution: {integrity: sha512-uZG9DhCHv7QcF8HtEIgYEL7Lawu0/1Pcp6ABe4ImYQdLV3HNRaAuQU/PxVxFQFAMSpnCVi4Rwg8+Qk8qVn2YMg==}
-     peerDependencies:
--      '@better-auth/core': ^1.7.10
-+      '@better-auth/core': ^1.7.16
-       '@better-auth/utils': ^0.4.2 || ^0.5.0
-       mongodb: ^6.0.0 || ^7.0.0
-     peerDependenciesMeta:
-       mongodb:
-         optional: true
- 
--  '@better-auth/prisma-adapter@1.7.10':
--    resolution: {integrity: sha512-hNlhn0Kcq/O76SehvqznFsjqfEMdM2m2ctazU/BLv+jT8+hGvvxCIn
-```
-
-**File**: `pnpm-workspace.yaml` (modified, +11/-2)
-```diff
-@@ -62,8 +62,7 @@ patchedDependencies:
- # Docker builds can prune packages that use one of the root patches.
- allowUnusedPatches: true
- 
--minimumReleaseAgeExclude:
--  [
-+minimumReleaseAgeExclude: [
-     "@next/bundle-analyzer@16.4.1",
-     "@next/env@16.4.1",
-     "@next/swc-darwin-arm64@16.4.1",
-@@ -77,6 +76,16 @@ minimumReleaseAgeExclude:
-     next@16.4.1,
-     liteque@0.10.0,
-     "@astrojs/react@6.0.6",
-+    # Better Auth's Nov 3, 2026 security release.
-+    "@better-auth/core@1.7.16",
-+    "@better-auth/drizzle-adapter@1.7.16",
-+    "@better-auth/kysely-adapter@1.7.16",
-+    "@better-auth/memory-adapter@1.7.16",
-+    "@better-auth/mongo-adapter@1.7.16",
-+    "@better-auth/prisma-adapter@1.7.16",
-+    "@better-auth/telemetry@1.7.16",
-+    better-auth@1.7.16,
-+    better-call@1.4.5,
-   ]
- 
- overrides:
++  return (
++    <Popover
++      open={open}
++      onOpenChange={(next) => {
++        setOpen(next);
++        if (!next) {
++          setSearchQuery("");
++        }
++      }}
++    >
++      <PopoverTrigger asChild>
++        <button
++          id={id}
++          type="button"
++          role="combobox"
++          aria-expanded={open}
++          className={selectTriggerClass}
++        >
++          <span className="truncate text-muted-foreground/85">
++            {placeholder}
++          </span>
++          <ChevronDown className="size-4 shrink-0 opacity-50" />
++        </button>
++      </PopoverTrigger>
++      <PopoverContent
++        align="start"
++        collisionPadding={8}
++        className="w-[--radix-popover-trigger-width] min-w-56 p-0"
++        // The dialog around it would otherwise swallow the scrolling.
++        onWheel={(e) => e.stopPropagation()}
++      >
++        <Command shouldFilter={false}>
++          <CommandInput
++            ref={inputRef}
++            placeholder={t("tags.search_placeholder")}
++            value={searchQuery}
++            onValueChange={setSearchQuery}
++            className="h-9 max-sm:h-11"
++          />
++          <CommandList className="max-h-60">
++            {matches.length === 0 && !offerTypedName && (
++              <CommandEmpty>{t("tags.none_found")}</CommandEmpty>
++            )}
++            <CommandGroup>
++              {matches.map((tag) => (
++                <CommandItem
++                  key={tag.id}
++                  value={tag.id}
++                  onSelect={() => pick(tag.name)}
++                  className="cursor-pointer max-sm:min-h-11"
++                >
++                  <Check
++                    className={cn(
++                      "size-4",
++                      selectedNames.includes(tag.name)
++                        ? "opacity-100"
++                        : "opacity-0",
++                    )}
++                  />
++                  {tag.name}
++                </CommandItem>
++              ))}
++              {offerTypedName && (
++                <CommandItem
++                  value={`typed:${typedName}`}
++                  onSelect={() => pick(typedName)}
++                  className="cursor-pointer max-sm:min-h-11"
++               
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3284** (2026-11-02): fix(trpc): hide highlight notes from shared-list collaborators (@MohamedBassem)
-- **PR #3283** (2026-11-02): fix: key rate limits by user id for authed requests instead of ip (@MohamedBassem)
-- **PR #3281** (closed): ci(chrome): keep Chrome and the Debian base image current with Renovate (@MohamedBassem)
-- **PR #3280** (2026-11-02): feat(chrome): opt-in Chrome sandbox, no_new_privs and no setuid binaries (@MohamedBassem)
-- **PR #3279** (2026-11-02): fix(workers): drop credentials when a redirect changes origin (@MohamedBassem)
-- **PR #3278** (2026-11-02): build(docker): stop pnpm reinstalling mid-build (@MohamedBassem)
+- **PR #3349** (2026-11-09): fix(highlights): save highlights whose selection ends on an element (@MohamedBassem)
+- **PR #3348** (2026-11-09): fix(highlights): open the highlight menu when a selection ends outside the text (@MohamedBassem)
+- **PR #3347** (2026-11-09): fix(mobile): stop the bookmark list jumping to the top on refetch (@MohamedBassem)
+- **PR #3346** (2026-11-09): refactor(web): replace the tooltip's global focus tracking with Radix patterns (@MohamedBassem)
+- **PR #3345** (2026-11-09): fix(crawler): preserve offline copies without recrawling the bookmark (@MohamedBassem)
+- **PR #3343** (2026-11-09): fix(highlights): store quote context for highlights made in dock mode (@MohamedBassem)
 
 ---
 
@@ -1252,28 +2002,37 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docker): drop Linux capabilities and set no_new_privs for the app processes (#32
+## X. web): fix bugs found in pre-release QA
 
 **RULE**:
-When implementing operations in `docker/root/etc/s6-overlay/s6-rc.d/init-db-migration/run`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in karakeep-app/karakeep. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/web/app/dashboard/bookmarks/page.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in karakeep-app/karakeep. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1c6aa6c4`: docker): drop Linux capabilities and set no_new_privs for the app processes (#3276). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d1514c25`: web): fix bugs found in pre-release QA. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docker/root/etc/s6-overlay/s6-rc.d/init-db-migration/run`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/web/app/dashboard/bookmarks/page.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-exec /etc/s6-overlay/scripts/drop-privileges node index.js;
+import type { Metadata } from "next";
+import { useTranslation } from "@/lib/i18n/server";
+
+export async function generateMetadata(): Promise<Metadata> {
+  // oxlint-disable-next-line rules-of-hooks
+  const { t } = await useTranslation();
+  return {
+    title: `${t("common.home")} | Karakeep`,
+  };
+}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-exec node index.js;
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1c6aa6c4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d1514c25` are properly handled with clean fallback behavior.

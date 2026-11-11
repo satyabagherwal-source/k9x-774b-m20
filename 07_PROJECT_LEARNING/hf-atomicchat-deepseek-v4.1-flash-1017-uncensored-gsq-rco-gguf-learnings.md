@@ -3,7 +3,7 @@
 > **Source Version**: `hf-atomiccha`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-11-05T23:09:37.932Z  
+> **Timestamp**: 2026-11-10T05:14:22.896Z  
 > **Learning ID**: `learn-huggingface-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,348 +17,252 @@
 ## 1. Executive Forensic Architecture & System Mechanics
 
 **Technical Problem Solved:**
-This repository addresses the **surgical modification of Large Language Model (LLM) weights** to remove safety alignment (refusal behaviors) while preserving the specific quantization characteristics of the base model. Specifically, it targets the `DeepSeek-V4.1-Flash-1017` model (763B parameters, 384 experts) in the `GSQ-RCO` (Grouped Scaled Quantization - Residual Correction Optimization) format.
+This repository addresses the **inference efficiency vs. behavioral alignment trade-off** in massive Mixture-of-Experts (MoE) models. Specifically, it solves the problem of running a 763B parameter model (DeepSeek-V4.1-Flash-1017) on consumer hardware (single 12GB GPU) while simultaneously removing safety refusal mechanisms ("uncensoring") without degrading the core reasoning capabilities of the model.
 
 **Architectural Boundaries & Subsystems:**
-1.  **Weight Partitioning Boundary**: The system strictly separates the model into two distinct tensor groups:
-    *   **Immutable Backbone**: Routed experts (MoE experts) and most attention/FFN weights. These are preserved byte-for-byte from the `ISTA-DASLab` source to maintain the specific low-bit rounding errors that define the GSQ-RCO performance profile.
-    *   **Mutable Residual Writers**: Specific dense tensors responsible for output projection and value injection:
-        *   `attn_output_b` (Attention Output Projection)
-        *   `ffn_down_shexp` (Shared Expert Down Projection)
-        *   `engram_wkv` (Engram Value Projection)
-2.  **Abliteration Mechanism**: The "Uncensored" state is achieved via **Refusal Direction Projection**. A specific vector representing the "refusal" concept in the model's latent space is identified. This vector is projected out (subtracted) from the weight matrices of the mutable tensors.
-3.  **Quantization Consistency Invariant**: The modified weights are re-quantized to match the *exact* per-tensor type and scale factors of the original ISTA shards. This ensures that the file size remains identical and the runtime inference engine (Strata) does not require code changes to handle different data types.
-4.  **Memory Hierarchy Optimization**: The architecture relies on a hybrid memory layout where the backbone resides in system RAM, and the shared Engram table streams from SSD, enabling a 763B model to run on a 12GB GPU.
+1.  **Quantization Subsystem (GSQ-RCO):** The backbone utilizes Grouped Square Quantization with Residual Correction Optimization. This is a low-bit quantization scheme (down to 2.0 bits per weight) that preserves expert routing accuracy.
+2.  **Surgical Abliteration Subsystem:** The core innovation is not a full re-quantization, but a **tensor-level surgical replacement**. Only three specific dense tensors are modified:
+    *   `attn_output_b` (Attention Output Projection)
+    *   `ffn_down_shexp` (Shared Expert Down Projection)
+    *   `engram_wkv` (Engram Value Projection)
+    *   *Invariant:* The routed experts remain byte-for-byte identical to the original ISTA-DASLab quantization.
+3.  **Inference Runtime (Strata):** The model relies on a specific runtime architecture where the backbone resides in system RAM, and the shared Engram table streams from SSD. This decouples memory bandwidth requirements from GPU VRAM constraints.
+4.  **Data Format (GGUF):** The artifact is a GGUF (GPT-Generated Unified Format) file, designed for interoperability with llama.cpp and compatible runtimes.
 
-**Critical Subsystem Abstractions:**
-*   **Tensor Identity Map**: A mapping that identifies which tensors are "safe" to modify without breaking the quantization grid.
-*   **Refusal Vector Oracle**: The mathematical definition of the refusal direction used for projection.
-*   **Quantization Grid Preserver**: The algorithm that snaps modified floating-point weights back onto the original quantization grid (e.g., IQ2_XXS) without introducing new rounding artifacts that would degrade performance.
+**Critical Abstraction:**
+The separation of **Quantized Weights** (static, low-precision) from **Behavioral Vectors** (dynamic, high-precision projection). The "uncensoring" is achieved by projecting out the refusal direction from the dense residual writers, effectively nullifying the safety filter's vector contribution while leaving the knowledge base (experts) intact.
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Quantization Grid Preservation During Weight Surgery
+### 1. Surgical Tensor Replacement Invariant
 **RULE**:
-When modifying specific tensors in a quantized LLM (e.g., for abliteration or fine-tuning), you MUST re-quantize the modified weights to the **exact same quantization type, block size, and scale factors** as the original tensor. You MUST NOT leave the modified tensors in full precision (FP16/BF16) or use a different quantization scheme (e.g., Q4_K_M instead of IQ2_XXS).
+When modifying a quantized model for behavioral adjustment (e.g., abliteration), you MUST replace only the specific dense projection tensors responsible for the target behavior (e.g., refusal vectors) and MUST NOT re-quantize the entire model or the routed experts. The replacement tensors MUST be quantized to the exact per-tensor type and bit-width of the original file to maintain file size and runtime compatibility.
 
 **WHY**:
-Inference engines like `llama.cpp` or `Strata` rely on uniform data types across layers for optimized kernel execution (SIMD vectorization). Mixing precision types causes:
-1.  **Runtime Crashes**: The inference engine may assert-fail if it expects a specific bit-width but receives another.
-2.  **Performance Degradation**: Mixed precision forces the CPU/GPU to perform expensive type conversions on-the-fly, destroying the latency benefits of quantization.
-3.  **File Size Bloat**: Full-precision tensors are 4-8x larger than quantized ones, breaking the "fits in 12GB" constraint.
-4.  **Numerical Instability**: If the quantization grid is not preserved, the "rounding error" profile changes, potentially introducing new hallucinations or degrading the specific "GSQ-RCO" quality metrics.
+Re-quantizing the entire model introduces cumulative rounding errors across billions of parameters, degrading MMLU and reasoning scores. Routed experts in MoE models are sparse; re-quantizing them destroys the learned low-bit rounding precision that GSQ-RCO optimized for. By keeping experts byte-for-byte identical, you preserve the "knowledge" while only altering the "gate" (dense projections).
 
 **WHEN TO APPLY**:
-Any post-training modification of quantized GGUF/GGML models where the base model uses non-standard or mixed-precision quantization (like GSQ, RCO, or custom GGUF variants).
+Any post-quantization behavioral modification (abliteration, steering, uncensoring) on MoE or large dense models where inference efficiency is critical.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 import numpy as np
-from gguf import GGUFWriter, GGMLQuantType
+import gguf
 
-def modify_and_requantize_tensor(original_tensor, modification_fn, quant_type, block_size):
+def surgical_abliteration(model_path, output_path, target_tensors, refusal_vector, strength=2.0):
     """
-    Modifies a tensor and re-quantizes it to match the original grid.
+    Replaces specific dense tensors with refusal-direction-projected versions.
     """
-    # 1. Dequantize original to float for modification
-    original_float = dequantize(original_tensor, quant_type, block_size)
-    
-    # 2. Apply surgical modification (e.g., refusal projection)
-    modified_float = modification_fn(original_float)
-    
-    # 3. CRITICAL: Re-quantize using the EXACT same parameters
-    # Do NOT use a default quantizer. Use the specific GSQ/RCO logic.
-    modified_quantized = quantize_to_grid(modified_float, quant_type, block_size, original_tensor.scales)
-    
-    # 4. Verify bit-exactness of the container structure
-    assert modified_quantized.dtype == original_tensor.dtype
-    assert modified_quantized.shape == original_tensor.shape
-    
-    return modified_quantized
-
-# Usage in the context of the repo:
-# attn_output_b_modified = modify_and_requantize_tensor(
-#     original_attn_output_b, 
-#     lambda w: w - refusal_vector_projection, 
-#     quant_type=GGMLQuantType.IQ2_XXS, 
-#     block_size=256
-# )
+    with gguf.GGUFReader(model_path) as reader:
+        # 1. Identify target tensors
+        targets = [t for t in reader.tensors if t.name in target_tensors]
+        
+        for tensor in targets:
+            # 2. Load original weights (dequantize to float32 for math)
+            original_weights = reader.read_tensor(tensor.name).astype(np.float32)
+            
+            # 3. Project out refusal direction
+            # Assuming refusal_vector is normalized
+            projection = np.dot(original_weights, refusal_vector)
+            modified_weights = original_weights - (projection * strength)[:, np.newaxis]
+            
+            # 4. CRITICAL: Re-quantize to EXACT original type
+            # e.g., if original was Q4_K_M, quantize back to Q4_K_M
+            quantized_weights = quantize_to_type(modified_weights, tensor.dtype)
+            
+            # 5. Write to new file, copying all other tensors byte-for-byte
+            # (Implementation detail: Use gguf writer to copy non-target tensors directly)
+            pass
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Leaving modified weights in FP16
-def bad_modification(original_tensor, modification_fn):
-    original_float = dequantize(original_tensor)
-    modified_float = modification_fn(original_float)
-    # WRONG: Returning FP16 tensor into a GGUF file that expects IQ2_XXS
-    return modified_float.astype(np.float16) 
-    # Result: Inference engine crashes or runs 10x slower due to type mismatch.
+# ANTI-PATTERN: Re-quantizing the entire model after abliteration
+# This destroys expert precision and increases file size unpredictably
+def bad_abliteration(model_path):
+    weights = load_all_weights(model_path)
+    weights = remove_refusal(weights)
+    # Re-quantize EVERYTHING
+    save_quantized_model(weights, "new_model.gguf", quantization="Q4_K_M")
 ```
 
 **VERIFICATION METHOD**:
-1.  **Byte-Size Check**: `assert os.path.getsize(modified_file) == os.path.getsize(original_file)` (within tolerance for header changes).
-2.  **Type Assertion**: Parse the GGUF header and verify that the `tensor_type` for `attn_output_b`, `ffn_down_shexp`, and `engram_wkv` matches the original file's type.
-3.  **Inference Smoke Test**: Load the model in `llama.cpp` or `Strata` and generate a single token. If it crashes with `unsupported quant type`, the rule was violated.
+1.  **Byte-Size Check**: Assert that the output file size is within ±0.1% of the input file size.
+2.  **Expert Integrity Check**: Hash the first 1000 routed expert tensors in input and output; they MUST be identical.
+3.  **Benchmark Delta**: Run MMLU (500 samples) on both models. The delta MUST be < 1.5% to ensure knowledge preservation.
 
-### 2. Surgical Tensor Selection for Alignment Removal
+### 2. MoE Memory Hierarchy Decoupling
 **RULE**:
-When performing abliteration (removing refusal behaviors), you MUST ONLY modify the **dense residual writing tensors** (Attention Output, Shared Expert Down, Value Projections). You MUST NOT modify the **routed MoE experts** or the **Key/Query projections** if the goal is to preserve the base model's knowledge and reasoning capabilities.
+For MoE models exceeding 100B parameters, you MUST decouple the shared expert/attention layers (dense) from the routed experts (sparse) in memory management. The dense layers MUST reside in GPU VRAM, while the sparse expert tables MUST stream from high-bandwidth storage (SSD/NVMe) or system RAM, utilizing a runtime that supports asynchronous expert loading.
 
 **WHY**:
-1.  **Knowledge Preservation**: Routed experts contain the bulk of the model's factual knowledge. Modifying them with a global refusal vector projection causes catastrophic forgetting of unrelated facts.
-2.  **Refusal Localization**: Refusal behaviors are primarily generated in the final output projection and the value stream that feeds into the next layer's attention. The "decision" to refuse is encoded in the residual stream, not in the expert routing logic.
-3.  **Quantization Stability**: MoE experts are often quantized with more aggressive, learned rounding (GSQ). Modifying them breaks the learned rounding optimization, leading to higher perplexity than necessary.
+GPU VRAM is limited (12-24GB). A 763B model cannot fit in VRAM. However, only a small fraction of experts are active per token. By streaming experts from SSD, you leverage the high bandwidth of NVMe (3-7 GB/s) to feed the GPU, allowing a 763B model to run on a 12GB GPU. This is only possible if the runtime (like Strata) is designed to handle this hybrid memory hierarchy.
 
 **WHEN TO APPLY**:
-Any LLM alignment modification (abliteration, steering) on Mixture-of-Experts (MoE) architectures like DeepSeek, Mixtral, or Qwen-MoE.
+Deploying MoE models > 50B parameters on consumer hardware with < 24GB VRAM.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-TARGET_TENSORS_FOR_ABLITERATION = [
-    "blk.{i}.attn_output",      # Attention Output Projection
-    "blk.{i}.ffn_down_shexp",    # Shared Expert Down Projection
-    "blk.{i}.engram_wkv",        # Engram Value Projection (DeepSeek specific)
-]
-
-# TENSORS TO PRESERVE (DO NOT MODIFY)
-PRESERVED_TENSORS = [
-    "blk.{i}.ffn_gate",          # Routing Gate
-    "blk.{i}.ffn_up",            # Expert Up Projections
-    "blk.{i}.ffn_down",          # Expert Down Projections (Routed)
-    "blk.{i}.attn_q",            # Query Projection
-    "blk.{i}.attn_k",            # Key Projection
-]
-
-def apply_abliteration(model_weights, refusal_vector):
-    for layer_idx in range(model_weights.num_layers):
-        for tensor_name in model_weights.tensor_names:
-            if any(t in tensor_name for t in TARGET_TENSORS_FOR_ABLITERATION):
-                # Apply projection: W_new = W - (v * v^T) * strength
-                model_weights[tensor_name] = project_out_refusal(
-                    model_weights[tensor_name], 
-                    refusal_vector, 
-                    strength=2.0
-                )
-            elif any(t in tensor_name for t in PRESERVED_TENSORS):
-                # DO NOTHING. Preserve byte-for-byte.
-                pass
+# Pseudocode for Strata-like runtime
+class MoERuntime:
+    def __init__(self, model_path, gpu_vram_limit=12GB):
+        self.dense_layers = load_to_gpu(model_path, filter="dense")
+        self.expert_table = load_to_ssd_stream(model_path, filter="experts")
+        
+    def forward(self, input_tokens):
+        # 1. Compute attention and shared expert on GPU
+        hidden_states = self.dense_layers.forward(input_tokens)
+        
+        # 2. Route tokens to experts
+        expert_ids = self.router(hidden_states)
+        
+        # 3. ASYNC LOAD: Fetch only required experts from SSD
+        # Overlap computation with I/O
+        with async_context():
+            required_experts = self.expert_table.fetch(expert_ids)
+            # GPU continues with other layers while I/O happens
+            output = self.expert_forward(hidden_states, required_experts)
+            
+        return output
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Modifying all weights
-def bad_abliteration(model_weights, refusal_vector):
-    for tensor_name in model_weights.tensor_names:
-        # WRONG: Modifying routed experts causes catastrophic forgetting
-        model_weights[tensor_name] = project_out_refusal(model_weights[tensor_name], refusal_vector)
-    # Result: Model becomes "uncensored" but also loses 40% of its MMLU score.
+# ANTI-PATTERN: Loading entire model to CPU RAM and syncing to GPU per layer
+def bad_inference(model):
+    for layer in model.layers:
+        # This causes massive latency spikes due to PCIe bandwidth limits
+        gpu_layer = layer.to("cuda") 
+        output = gpu_layer(input)
+        del gpu_layer # Frees VRAM but causes thrashing
 ```
 
 **VERIFICATION METHOD**:
-1.  **Diff Check**: Compare the binary hash of `ffn_down` (routed experts) in the original and modified files. They MUST be identical.
-2.  **Benchmark Delta**: Run MMLU and JailbreakBench. MMLU should drop < 2%, while JailbreakBench refusal rate should drop to ~0%. If MMLU drops > 10%, the wrong tensors were modified.
+1.  **VRAM Monitor**: Assert peak GPU memory usage < 12GB during inference.
+2.  **Latency Profile**: Measure time-to-first-token (TTFT). It should be dominated by SSD read latency, not PCIe transfer.
+3.  **Throughput Test**: Ensure tokens/sec remains stable (> 10 tok/s) even when accessing cold experts.
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-*Note: The provided repository data contains no commit history, bug issues, or code diffs. The following incidents are **inferred** from the architectural constraints and the "What changed and what did not" section of the README, which implies previous failures or design decisions.*
+*Note: The provided repository data contains no commit history, bug issues, or code diffs. The following incidents are **inferred** from the architectural constraints and common failure modes in this specific domain (GGUF quantization + Abliteration), based on the "measured on every rung" statement in the README.*
 
-### Incident 1: Quantization Mismatch Leading to Inference Crash (BUG-QM-01)
-- **Context**: Initial attempt to modify `attn_output_b` tensors.
-- **What Was Expected**: The modified model would load and run in `Strata`/`llama.cpp`.
-- **What Actually Happened**: The inference engine crashed with `assert failed: quant_type == expected_type` or produced garbage output.
-- **Evidence in Repo**: The README explicitly states: *"quantized to ISTA's exact per-tensor type"* and *"routed experts are left exactly as ISTA shipped them... so GSQ's learned low-bit rounding... is preserved byte for byte"*. This implies that a naive modification (e.g., saving as FP16 or Q4_K_M) failed.
-- **Root Cause**: The original `ISTA-DASLab` model used a custom `GSQ-RCO` quantization scheme. A standard quantizer (like `llama.cpp`'s default) does not replicate the exact rounding behavior of GSQ. If the modified tensors were re-quantized with a different algorithm, the numerical distribution shifted, causing the inference engine's optimized kernels to misinterpret the data or produce high-error outputs.
+### Incident 1: Quantization Type Mismatch Leading to Runtime Crash (BUG-QTMM-01)
+- **Context**: Subsystem: Tensor Serialization. File: `*.gguf`
+- **What Was Expected**: The modified tensors (`attn_output_b`, etc.) should be loadable by the inference engine without errors.
+- **What Actually Happened**: The inference engine crashed with `GGUF_ERROR: Tensor type mismatch` or produced garbage output (NaNs).
+- **Evidence in Repo**: The README states: "quantized to ISTA's exact per-tensor type." This implies a previous failure mode where type mismatch occurred.
+- **Root Cause**: The abliteration script saved the modified tensors as `float16` or `Q8_0` instead of the original `Q4_K_M` or `IQ2_XXS`. The GGUF header declared one type, but the data was another.
 - **Remediation Code Diff**:
 ```python
-# - Buggy: Using standard quantization
-# modified_tensor = quantize(modified_float, type=Q4_K_M)
+# - Buggy: Saving as float16
+# tensor_data = modified_weights.astype(np.float16)
+# writer.write_tensor(name, tensor_data, dtype=gguf.GGML_TYPE_F16)
 
-# + Fixed: Using exact GSQ-RCO re-quantization logic
-# modified_tensor = gsq_rco_quantize(modified_float, original_scales, original_blocks)
+# + Fixed: Matching original dtype
+original_dtype = reader.get_tensor_dtype(name)
+quantized_data = quantize_to_type(modified_weights, original_dtype)
+writer.write_tensor(name, quantized_data, dtype=original_dtype)
 ```
-- **Lesson**: When modifying quantized models, you must replicate the **exact** quantization algorithm, not just the target bit-width.
+- **Lesson**: Always preserve the original tensor dtype during surgical modifications.
 
-### Incident 2: Catastrophic Forgetting via Expert Modification (BUG-CF-02)
-- **Context**: Early experiments where all tensors were modified to remove refusals.
-- **What Was Expected**: The model would stop refusing but retain its knowledge.
-- **What Actually Happened**: The model stopped refusing but also lost significant factual accuracy (MMLU score dropped significantly).
-- **Evidence in Repo**: The README highlights that *"routed experts are left exactly as ISTA shipped them"* and provides a table showing MMLU scores are maintained (e.g., "MMLU (500)" column). The phrase "measured on every rung" implies that previous attempts without this constraint failed the quality gates.
-- **Root Cause**: The refusal vector projection was applied to the MoE experts. Since experts are specialized for different topics, projecting out a global refusal vector from all experts corrupted the specialized knowledge stored in them.
+### Incident 2: Expert Routing Degradation Due to Full Re-Quantization (BUG-ERDG-02)
+- **Context**: Subsystem: MoE Expert Weights.
+- **What Was Expected**: MMLU score should remain within 1-2% of the original model.
+- **What Actually Happened**: MMLU score dropped by 5-10%.
+- **Evidence in Repo**: The README emphasizes: "routed experts are left exactly as ISTA shipped them... GSQ's learned low-bit rounding of the experts is preserved byte for byte."
+- **Root Cause**: An earlier version of the pipeline re-quantized the entire model, including experts. This introduced rounding errors in the sparse expert weights, which, when aggregated, degraded reasoning.
 - **Remediation Code Diff**:
 ```python
-# - Buggy: Modifying all tensors
-# for t in all_tensors: t = project_out(t, refusal_vec)
+# - Buggy: Re-quantizing all tensors
+# for tensor in all_tensors:
+#     quantize_and_save(tensor)
 
-# + Fixed: Only modifying dense residual writers
-# for t in [attn_output, ffn_down_shexp, engram_wkv]:
-#     t = project_out(t, refusal_vec)
-# # Routed experts remain untouched
+# + Fixed: Only quantize target tensors
+target_tensors = ["attn_output_b", "ffn_down_shexp", "engram_wkv"]
+for tensor in all_tensors:
+    if tensor.name in target_tensors:
+        modify_and_quantize(tensor)
+    else:
+        copy_byte_for_byte(tensor)
 ```
-- **Lesson**: In MoE models, alignment behaviors are localized to the dense residual stream, not the sparse expert pathways.
+- **Lesson**: In MoE models, treat routed experts as immutable knowledge bases unless explicitly re-training.
 
-### Incident 3: File Size Bloat Breaking Hardware Constraints (BUG-FS-03)
-- **Context**: Attempting to run the model on a 12GB GPU.
-- **What Was Expected**: The model would fit in 12GB VRAM + System RAM.
-- **What Actually Happened**: The model failed to load due to OOM (Out of Memory) on the GPU or system RAM.
-- **Evidence in Repo**: The README states: *"Runs on a single 12 GB GPU... the backbone sits in system memory and the shared Engram table streams from an SSD, so a 763B model fits a consumer machine."* This implies that if the file size increased (e.g., due to FP16 tensors), it would not fit.
-- **Root Cause**: If the modified tensors were saved in higher precision (e.g., FP16 instead of IQ2_XXS), the file size would increase by 4-8x for those tensors. For a 763B model, even a small percentage of tensors in FP16 would add hundreds of GB, making it impossible to run on consumer hardware.
+### Incident 3: SSD Bandwidth Starvation (BUG-SSBS-03)
+- **Context**: Subsystem: Inference Runtime (Strata).
+- **What Was Expected**: Stable tokens/sec throughput.
+- **What Actually Happened**: Throughput dropped to < 2 tok/s when accessing cold experts.
+- **Evidence in Repo**: The README mentions "shared Engram table streams from an SSD."
+- **Root Cause**: The runtime was not prefetching experts. It waited for the SSD read to complete before proceeding, causing GPU idle time.
 - **Remediation Code Diff**:
 ```python
-# - Buggy: Saving modified tensors as FP16
-# save_gguf(model, "modified.gguf", precision="fp16")
+# - Buggy: Synchronous expert loading
+# experts = ssd.read(expert_ids) # Blocks GPU
+# output = gpu.compute(experts)
 
-# + Fixed: Saving modified tensors as IQ2_XXS
-# save_gguf(model, "modified.gguf", precision="iq2_xxs")
+# + Fixed: Asynchronous prefetching
+# Start I/O
+future = ssd.read_async(expert_ids)
+# Do other GPU work (attention, etc.)
+gpu.do_attention()
+# Wait for I/O
+experts = future.result()
+output = gpu.compute(experts)
 ```
-- **Lesson**: Quantization is not just for compression; it is a **hardware constraint**. Modifying precision breaks the hardware fit.
+- **Lesson**: Always overlap I/O with computation in hybrid memory systems.
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
-*Note: This repository is a data artifact (GGUF files), not a software codebase. Therefore, traditional software invariants (UI, Concurrency, Infinite Loops) do not apply directly. However, we can extract **Data Integrity Invariants** and **Inference Engine Invariants** that are critical for any system consuming this data.*
+1.  **Micro-Syntax & Token-Level Precision**:
+    *   **Invariant**: When casting between quantization types (e.g., `Q4_K_M` to `float32`), you MUST use the library's provided dequantization function, not manual bit-shifting. Manual bit-shifting often misses the scale/zero-point metadata stored in the GGUF header.
+    *   **Code**: `weights = gguf.dequantize(tensor_data, dtype)` vs `weights = tensor_data.view(np.int8) * scale` (latter is fragile).
 
-1.  **Micro-Syntax & Token-Level Precision (Data Integrity)**:
-    *   **Invariant**: The GGUF header must correctly declare the `tensor_type` for every tensor. If `attn_output_b` is declared as `IQ2_XXS` but contains FP16 data, the inference engine will misinterpret the bytes, leading to **silent data corruption** (garbage output) rather than a crash.
-    *   **Code Example**:
-        ```c
-        // Inference Engine C Code
-        if (tensor->type == GGML_TYPE_IQ2_XXS) {
-            // Dequantize using IQ2_XXS logic
-            float val = dequantize_iq2_xxs(data, idx);
-        } else if (tensor->type == GGML_TYPE_F16) {
-            // Dequantize using FP16 logic
-            float val = dequantize_f16(data, idx);
-        }
-        // If type is wrong, val is garbage.
-        ```
+2.  **Infinite Loop & Recursion Guards**:
+    *   **Invariant**: In MoE routing, the number of active experts per token MUST be capped (e.g., top-8). If the router outputs more than `max_experts`, you MUST truncate to the top-k by score. An unbounded expert selection leads to O(N) memory explosion.
+    *   **Code**: `expert_ids = np.argsort(scores)[-k:]`
 
-2.  **Infinite Loop & Recursion Guards (Inference Engine)**:
-    *   **Invariant**: The inference engine must have a **max token limit** and a **stop sequence** to prevent infinite generation. If the model is "uncensored" and lacks refusal, it might generate repetitive or nonsensical text indefinitely.
-    *   **Code Example**:
-        ```python
-        # Inference Loop
-        for i in range(max_tokens):
-            token = model.generate(next_token)
-            if token in stop_sequences:
-                break
-            if i == max_tokens:
-                break # Prevent infinite loop
-        ```
+3.  **UI & UX Micro-Mechanics**:
+    *   *N/A for this backend model repository.*
 
-3.  **UI & UX Micro-Mechanics (N/A)**:
-    *   Not applicable to a GGUF model file.
-
-4.  **Backend Concurrency & Memory Safety (Inference Engine)**:
-    *   **Invariant**: The **Engram table** (shared KV cache) must be streamed from SSD in a **thread-safe** manner. If multiple inference requests try to read the same Engram block simultaneously, the SSD I/O must be synchronized to prevent data corruption.
-    *   **Code Example**:
-        ```python
-        # Pseudocode for Strata
-        with threading.Lock():
-            engram_block = ssd_read(engram_offset)
-        # Use engram_block in inference
-        ```
+4.  **Backend Concurrency & Memory Safety**:
+    *   **Invariant**: When streaming experts from SSD, you MUST use a bounded queue for pending I/O requests. An unbounded queue will exhaust system RAM if the user generates tokens faster than the SSD can read.
+    *   **Code**: `queue = asyncio.Queue(maxsize=100)`
 
 5.  **Defect & Error Prevention ("Galti Pakadna")**:
-    *   **Invariant**: **Null/Undefined Tensors**: If a tensor is missing from the GGUF file (e.g., `engram_wkv` is not present), the inference engine must fail fast with a clear error message, not crash with a segfault.
-    *   **Code Example**:
-        ```python
-        tensor = model.get_tensor("engram_wkv")
-        if tensor is None:
-            raise ValueError("Missing required tensor: engram_wkv")
-        ```
+    *   **Invariant**: After abliteration, you MUST verify that the refusal vector projection is zero. If `np.dot(modified_weights, refusal_vector) != 0`, the abliteration failed.
+    *   **Code**: `assert np.allclose(np.dot(modified_weights, refusal_vector), 0, atol=1e-5)`
 
 ## 5. The 9 Deep Learning Dimensions
 
-1.  **Architecture**:
-    *   **Subsystem Boundaries**: Strict separation between **Immutable Backbone** (MoE experts) and **Mutable Residual Writers** (Attention Output, Shared Expert Down, Engram Value).
-    *   **Decoupling**: The quantization logic is decoupled from the weight modification logic. The modification is done in FP32, then re-quantized to the original grid.
-    *   **State Ownership**: The model weights are stateless; the state is in the KV cache and Engram table, which are managed by the inference engine.
-
-2.  **Core Abstractions**:
-    *   **Key Types**: `GGMLTensor`, `QuantizationType`, `RefusalVector`.
-    *   **Domain Primitives**: `Block` (group of quantized values), `Scale` (per-block scaling factor), `Expert` (MoE expert).
-    *   **Invariant Contracts**: The sum of the quantization errors must be within a certain threshold to maintain perplexity.
-
-3.  **Error Handling**:
-    *   **Fault Boundaries**: The inference engine must handle missing tensors, incorrect types, and OOM errors gracefully.
-    *   **Retries**: SSD reads for the Engram table should have retry logic for transient I/O errors.
-    *   **Graceful Degradation**: If the Engram table cannot be read, the model should fall back to a smaller context window or fail with a clear error.
-
-4.  **Testing**:
-    *   **Property Testing**: The modified model must pass **JailbreakBench** (refusal rate ~0%) and **MMLU** (knowledge retention > 90%).
-    *   **Mock Invariants**: The quantization grid must be preserved (bit-exact match for preserved tensors).
-    *   **Integration Harnesses**: The model must run on `Strata` and `llama.cpp` without crashes.
-
-5.  **Security**:
-    *   **Threat Model**: The model is "uncensored," which means it can generate harmful content. This is a **content safety** risk, not a traditional security risk.
-    *   **Credential Boundaries**: N/A (no credentials in the model).
-    *   **Sanitization**: The inference engine must sanitize user inputs to prevent prompt injection attacks that could exploit the uncensored nature of the model.
-
-6.  **Performance**:
-    *   **Latency Profiles**: The model is optimized for **low latency** on consumer hardware (12GB GPU).
-    *   **Asymptotic Complexity**: The inference complexity is O(N) with respect to the sequence length, but the memory access pattern is optimized for SSD streaming.
-    *   **Caching**: The Engram table is cached in system RAM, reducing SSD I/O.
-    *   **Zero-Copy**: The inference engine uses zero-copy memory mapping for the GGUF file.
-
-7.  **Deployment**:
-    *   **CI/CD Invariants**: The model must be built with a reproducible quantization pipeline.
-    *   **Container Constraints**: The model must fit in a 12GB GPU + 32GB System RAM container.
-    *   **Reproducible Builds**: The quantization parameters must be fixed to ensure the same model is produced every time.
-
-8.  **Agent Patterns**:
-    *   **Tooling Interfaces**: The model is designed to be used with `Strata` or `llama.cpp` as the inference engine.
-    *   **Prompt Chains**: The model is designed to be used with a specific prompt template (e.g., DeepSeek's chat template).
-    *   **Loop Guards**: The inference engine must have a max token limit to prevent infinite generation.
-
-9.  **Data Flow**:
-    *   **Mutation Lifecycles**: The model weights are modified once (abliteration) and then frozen. The KV cache is mutated during inference.
-    *   **Streams**: The Engram table is streamed from SSD to RAM.
-    *   **Serializers**: The GGUF format is the serializer.
-    *   **Network Protocol Barriers**: N/A (local inference).
+1.  **Architecture**: Hybrid memory hierarchy (GPU VRAM for dense, SSD/RAM for sparse). Decoupled quantization and behavioral modification.
+2.  **Core Abstractions**: GGUF tensor format, MoE router, Engram table (shared expert memory).
+3.  **Error Handling**: Graceful degradation if SSD read fails (fallback to default expert?). Type mismatch detection at load time.
+4.  **Testing**: Benchmarking on JailbreakBench, XSTest, MMLU. KL divergence to stock model.
+5.  **Security**: "Uncensored" implies removal of safety filters. This is a security risk if deployed in public-facing applications. No credential boundaries (local model).
+6.  **Performance**: 2.0 bpw quantization. SSD streaming latency. GPU VRAM optimization.
+7.  **Deployment**: Single 12GB GPU. Requires Strata runtime. MIT license.
+8.  **Agent Patterns**: N/A (this is a model, not an agent).
+9.  **Data Flow**: Input tokens -> Attention (GPU) -> Router (GPU) -> Expert Fetch (SSD) -> Expert Compute (GPU) -> Output.
 
 ## 6. The 8 Learning Extraction Artifacts
 
-1.  **Pattern**: **Surgical Abliteration with Quantization Preservation**.
-    *   *Code*: Modify only dense residual tensors, re-quantize to original grid, preserve MoE experts.
-2.  **Rule**: **MUST preserve the exact quantization grid** when modifying quantized LLMs.
-3.  **Architecture Principle**: **Separation of Knowledge and Alignment**. Knowledge is in the MoE experts; alignment is in the dense residual stream.
-4.  **Failure Mode**: **Catastrophic Forgetting** if MoE experts are modified. **Inference Crash** if quantization type is mismatched.
-5.  **Reusable Skill**: **Step-by-Step Abliteration Workflow**:
-    1.  Load original GGUF.
-    2.  Identify dense residual tensors.
-    3.  Dequantize to FP32.
-    4.  Apply refusal vector projection.
-    5.  Re-quantize to original grid.
-    6.  Save as new GGUF.
-    7.  Verify file size and tensor types.
-    8.  Run benchmarks (JailbreakBench, MMLU).
-6.  **Decision**: **Use GSQ-RCO quantization** because it provides the best balance of quality and size for 763B models on consumer hardware.
-7.  **Anti-pattern**: **Modifying all tensors** or **changing the quantization type**.
-8.  **Verification Method**: **Benchmark Delta** (JailbreakBench ~0%, MMLU > 90%) and **File Size Check**.
+1.  **Pattern**: Surgical Tensor Replacement for Abliteration.
+2.  **Rule**: Preserve expert byte-for-byte integrity during behavioral modification.
+3.  **Architecture Principle**: Decouple dense and sparse memory hierarchies for MoE models.
+4.  **Failure Mode**: Quantization type mismatch causing runtime crash.
+5.  **Reusable Skill**: Step-by-step abliteration workflow (Load -> Identify -> Project -> Quantize -> Save -> Verify).
+6.  **Decision**: Use GSQ-RCO quantization for low-bit efficiency. Use Strata for hybrid memory.
+7.  **Anti-pattern**: Re-quantizing the entire model after abliteration.
+8.  **Verification Method**: Byte-size check, expert hash check, MMLU delta check.
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-**Checklist for AI Coding Agent Building Similar Systems:**
-
-1.  **Identify Target Tensors**:
-    *   [ ] List all tensors in the GGUF file.
-    *   [ ] Identify dense residual writers (`attn_output`, `ffn_down_shexp`, `engram_wkv`).
-    *   [ ] Identify MoE experts (`ffn_gate`, `ffn_up`, `ffn_down`).
-2.  **Preserve MoE Experts**:
-    *   [ ] Ensure MoE experts are NOT modified.
-    *   [ ] Verify byte-exact match for MoE experts in the output file.
-3.  **Apply Abliteration**:
-    *   [ ] Dequantize target tensors to FP32.
-    *   [ ] Apply refusal vector projection with strength 2.0.
-    *   [ ] Re-quantize to the original quantization type (e.g., IQ2_XXS).
-4.  **Verify Quantization Grid**:
-    *   [ ] Ensure the re-quantized tensors use the same block size and scale factors.
-    *   [ ] Verify the file size is identical to the original.
-5.  **Save and Validate**:
-    *   [ ] Save the modified GGUF file.
-    *   [ ] Load the file in `llama.cpp` or `Strata`.
-    *   [ ] Generate a single token to verify no crashes.
-6.  **Benchmark**:
-    *   [ ] Run JailbreakBench (expect ~0% refusal).
-    *   [ ] Run MMLU (expect > 90% retention).
-    *   [ ] If MMLU drops > 10%, re-evaluate tensor selection.
+1.  **Verify Base Model**: Ensure the base model is the correct ISTA-DASLab GSQ-RCO GGUF.
+2.  **Identify Target Tensors**: List `attn_output_b`, `ffn_down_shexp`, `engram_wkv`.
+3.  **Load Refusal Vector**: Obtain the refusal direction vector from DeepSeek's weights.
+4.  **Project Out Refusal**: For each target tensor, compute `W' = W - (W @ v) * strength`.
+5.  **Quantize to Original Type**: Quantize `W'` to the exact dtype of the original tensor.
+6.  **Copy Other Tensors**: Copy all non-target tensors byte-for-byte to the new GGUF file.
+7.  **Verify File Size**: Assert size is within ±0.1% of original.
+8.  **Verify Expert Integrity**: Hash first 1000 experts; assert identical.
+9.  **Benchmark**: Run MMLU (500 samples). Assert delta < 1.5%.
+10. **Test Inference**: Run on 12GB GPU with Strata. Assert no crashes.

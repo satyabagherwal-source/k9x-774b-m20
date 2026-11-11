@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/fastify-fastify-learnings.md`  
 > **Source**: github ([https://github.com/fastify/fastify](https://github.com/fastify/fastify))  
-> **Source Version**: `8c0f6991`  
+> **Source Version**: `0b076ca5`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T09:25:08.208Z  
+> **Timestamp**: 2026-11-08T01:09:49.329Z  
 > **Learning ID**: `learn-github-fastify-fastify`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/fastify-fastify-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/fastify/fastify](https://github.com/fastify/fastify))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T09:25:07.197Z  
+> **Harvest Timestamp**: 2026-11-08T01:09:48.234Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Fast and low overhead web framework, for Node.js
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 37338 stars
+- **Stars / Engagement**: 37372 stars
 
 ---
 
@@ -1303,244 +1303,305 @@ fastify.listen({ port: 3000 }, (err, address) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b7d8fefc` (2026-11-02)
-**Commit Message**: test: make handlerTimeout ended-but-not-finished test deterministic
+### Incident Patch 1: `0b076ca5` (2026-11-07)
+**Commit Message**: docs: fix TypeScript configuration initialization command (#7195)
 
-The previous version relied on a 64 MiB body exceeding the socket
-buffers so that 'finish' would still be pending when the handlerTimeout
-fired. On Windows the write completes anyway, so the branch was not
-reached and coverage-win failed. Hold back 'finish' explicitly instead.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01Sfj4nDAKoM3WkNLatQvoao
-
-**File**: `test/handler-timeout.test.js` (modified, +30/-23)
+**File**: `docs/Reference/TypeScript.md` (modified, +1/-1)
 ```diff
-@@ -373,48 +373,55 @@ test('handlerTimeout keeps the connection usable when an abort listener sends th
- // A response can be ended (reply.sent === true) while its body is still being
- // flushed to a slow client, so 'finish' has not fired and the timer is still
- // pending. When it fires it must leave the response and request.signal alone.
-+// 'finish' is held back explicitly so the test does not depend on how much
-+// data the OS socket buffers absorb.
- test('handlerTimeout firing after the reply ended but before it finished is a no-op', async t => {
--  t.plan(3)
-+  t.plan(4)
- 
--  const fastify = Fastify({ handlerTimeout: 100 })
--  // Large enough to exceed the socket buffers, so the response cannot finish
--  // while the client is not reading.
--  const size = 64 * 1024 * 1024
--  const big = Buffer.alloc(size, 'a')
-+  const fastify = Fastify({ handlerTimeout: 50 })
- 
-   let signal
--  fastify.get('/big', async (request, reply) => {
-+  fastify.get('/', async (request, reply) => {
-     signal = request.signal
--    reply.type('application/octet-stream')
--    return big
-+    const res = reply.raw
-+    const emit = res.emit
-+    res.emit = function (event, ...args) {
-+      if (event !== 'finish') return emit.call(this, event, ...args)
-+      // Emit 'finish' only well after the handlerTimeout has fired.
-+      setTimeout(() => {
-+        t.assert.strictEqual(reply.sent, true)
-+        t.assert.strictEqual(signal.aborted, false)
-+        emit.call(this, event, ...args)
-+      }, 200)
-+      return true
-+    }
-+    return 'ok'
-   })
- 
-   await fastify.listen({ port: 0 })
-   t.after(() => fastify.close())
- 
-+  // A raw keep-alive connection, so nothing but the timer can abort the
-+  // request while 'finish' is pending.
-   const socket = net.connect(fastify.server.address().port, '127.0.0.1')
-   t.after(() => socket.destroy())
- 
--  let received = 0
--  await new Promise((resolve, reject) => {
-+  const response = await new Promise((resolve, reject) => {
-+    let buffer = ''
-+    socket.setEncoding('utf8')
-     socket.on('connect', () => {
--      socket.write('GET /big HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n')
-+      socket.write('GET / HTTP/1.1\r\nHost: localhost\r\n\r\n')
-     })
--    socket.once('data', () => {
--      // Stop reading until well past the handlerTimeout.
--      socket.pause()
--      setTimeout(() => {
--        t.assert.strictEqual(signal.aborted, false)
--        socket.resume()
--      }, 300)
-+    socket.on('data', (chunk) => {
-+      buffer += chunk
-+      if (buffer.endsWith('ok')) resolve(buffer)
-     })
--    socket.on('data', (chunk) => { received += chunk.length })
--    socket.on('end', resolve)
-     socket.on('error', reject)
-   })
-+  t.assert.strictEqual(response.startsWith('HTTP/1.1 200'), true)
- 
--  // The whole body was delivered and the request was never aborted.
--  t.assert.ok(received > size)
-+  // Wait for the deferred 'finish', then the request must still not be aborted.
-+  await new Promise((resolve) => setTimeout(resolve, 300))
-   t.assert.strictEqual(signal.aborted, false)
- })
- 
+@@ -497,7 +497,7 @@ Fastify Plugin in a TypeScript Project.
+    ```
+ 3. Initialize a TypeScript configuration file:
+    ```bash
+-   npx typescript --init
++   npx tsc --init
+    ```
+    Once the file is generated, enable the `"declaration"` option in the
+    `"compilerOptions"` object.
 ```
 
 ---
 
-### Incident Patch 2: `7608b413` (2026-11-02)
-**Commit Message**: test: restore 100% coverage for handlerTimeout abort paths
+### Incident Patch 2: `72805617` (2026-11-06)
+**Commit Message**: fix(validation): case-normalize header schemas with a registered $id (#7183)
 
-Commit 028b4ef added defensive branches that no test exercised, so the
-coverage check failed on main:
+Fastify lowercases a `headers` schema before compiling it, so header
+names written in canonical case match Node's lowercased
+`request.headers`. The lowercased copy kept the root `$id`. When that
+`$id` had been registered with `addSchema()`, for example when the route
+used `schema: { headers: fastify.getSchema('id') }`,
+`@fastify/ajv-compiler` returned the registered validator instead of
+compiling the copy. Canonical-case assertions were then checked against
+the original names: `required` rejected every request, and
+`dependencies` and value constraints on optional headers were skipped.
+No FSTSEC002 warning was emitted because the schema contains no `$ref`.
 
-- lib/error-handler.js: the fallback error handler aborting the response
-  when headers were already sent, or when writeHead throws
-  ERR_HTTP_HEADERS_SENT.
-- lib/route.js: the handlerTimeout timer firing after the reply has ended
-  but before 'finish' (body still flushing to a slow client).
+This drops the root `$id` from the lowercased copy when the schema has
+no external `$ref`, so the normalized schema is what gets compiled. When
+there is an external `$ref`, the `$id` is kept because the reference may
+resolve against it, and FSTSEC002 still fires. The header-name-case
+section of the validation docs now states which header schemas are
+normalized.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01Sfj4nDAKoM3WkNLatQvoao
-
-**File**: `test/handler-timeout.test.js` (modified, +48/-0)
+**File**: `docs/Reference/Validation-and-Serialization.md` (modified, +10/-0)
 ```diff
-@@ -370,6 +370,54 @@ test('handlerTimeout keeps the connection usable when an abort listener sends th
-   t.assert.strictEqual(second.includes('ok'), true)
- })
+@@ -183,6 +183,16 @@ rewrite a regular expression. Author them to match lowercase (for example
+ written in canonical case will not match, and the assertion it guards will not
+ apply.
  
-+// A response can be ended (reply.sent === true) while its body is still being
-+// flushed to a slow client, so 'finish' has not fired and the timer is still
-+// pending. When it fires it must leave the response and request.signal alone.
-+test('handlerTimeout firing after the reply ended but before it finished is a no-op', async t => {
-+  t.plan(3)
++Normalization applies to the schema object passed as `headers`, including one
++that carries the `$id` of a schema registered with `addSchema()`, such as the
++object returned by `getSchema()`. It does not reach a registered schema that the
++`headers` schema references through an external `$ref` (for example
++`{ $ref: 'shared-headers#' }`), because a registered schema can also be used to
++validate the body, querystring, or params. Fastify emits
++[`FSTSEC002`](./Warnings.md#FSTSEC002) at startup in that case. Pass the schema
++object instead (for example `fastify.getSchema('shared-headers')`), or write
++header names in lowercase.
 +
-+  const fastify = Fastify({ handlerTimeout: 100 })
-+  // Large enough to exceed the socket buffers, so the response cannot finish
-+  // while the client is not reading.
-+  const size = 64 * 1024 * 1024
-+  const big = Buffer.alloc(size, 'a')
-+
-+  let signal
-+  fastify.get('/big', async (request, reply) => {
-+    signal = request.signal
-+    reply.type('application/octet-stream')
-+    return big
-+  })
-+
-+  await fastify.listen({ port: 0 })
-+  t.after(() => fastify.close())
-+
-+  const socket = net.connect(fastify.server.address().port, '127.0.0.1')
-+  t.after(() => socket.destroy())
-+
-+  let received = 0
-+  await new Promise((resolve, reject) => {
-+    socket.on('connect', () => {
-+      socket.write('GET /big HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n')
-+    })
-+    socket.once('data', () => {
-+      // Stop reading until well past the handlerTimeout.
-+      socket.pause()
-+      setTimeout(() => {
-+        t.assert.strictEqual(signal.aborted, false)
-+        socket.resume()
-+      }, 300)
-+    })
-+    socket.on('data', (chunk) => { received += chunk.length })
-+    socket.on('end', resolve)
-+    socket.on('error', reject)
-+  })
-+
-+  // The whole body was delivered and the request was never aborted.
-+  t.assert.ok(received > size)
-+  t.assert.strictEqual(signal.aborted, false)
-+})
-+
- // --- SSE with reply.hijack() ---
- 
- test('reply.hijack() clears timeout timer', async t => {
+ Example:
+ ```js
+ const bodyJsonSchema = {
 ```
 
-**File**: `test/reply-error.test.js` (modified, +53/-0)
+**File**: `lib/validation.js` (modified, +11/-0)
 ```diff
-@@ -877,3 +877,56 @@ test('should catch error when setting invalid header on async onSend hook', asyn
-   app.get('/', async () => ({ ok: true }))
-   await app.inject({ method: 'GET', path: '/' })
+@@ -298,6 +298,17 @@ function compileSchemasForValidation (context, compile, isCustom) {
+       const externalRef = findExternalHeaderRef(headers)
+       if (externalRef !== undefined) {
+         FSTSEC002(method, url, externalRef)
++      } else if (headersSchemaLowerCase.$id !== undefined) {
++        // When a schema's `$id` was registered with `addSchema()`, the default
++        // validator compiler returns the registered validator instead of
++        // compiling the schema it is given. A header schema passed as an
++        // object that carries a registered `$id` (for example the object
++        // returned by `getSchema()`) would therefore be validated without case
++        // normalization. Drop the root `$id` so the normalized copy is
++        // compiled. Without an external `$ref`, nothing resolves against the
++        // root `$id`, so dropping it is safe. With one, the `$id` is kept for
++        // reference resolution and FSTSEC002 applies.
++        delete headersSchemaLowerCase.$id
+       }
+       const propertyNamesRef = findPropertyNamesRef(headers)
+       if (propertyNamesRef !== undefined) {
+```
+
+**File**: `test/schema-validation.test.js` (modified, +103/-0)
+```diff
+@@ -1921,6 +1921,109 @@ test('inline and local $ref header schemas do not emit FSTSEC002', async t => {
+   t.assert.strictEqual(spyData.callCount(), 0)
  })
+ 
++test('header schema object with a registered $id is case-normalized', async t => {
++  const spyData = spyWarning(FSTSEC002)
++  t.after(spyData.restore)
 +
-+// The fallback error handler must not try to write a new response once the
-+// current one has started transmitting: that would raise an uncaught
-+// ERR_HTTP_HEADERS_SENT and terminate the process. It aborts the response.
-+test('fallback error handler aborts the response when headers were already sent', async (t) => {
-+  t.plan(2)
-+
-+  const app = Fastify()
-+  app.addHook('onSend', async (request, reply) => {
-+    if (reply.raw.headersSent === false) {
-+      reply.raw.writeHead(200, { 'content-type': 'text/plain' })
-+      reply.raw.write('partial')
-+    }
-+    throw new Error('kaboom')
++  const fastify = Fastify()
++  fastify.addSchema({
++    $id: 'admin-headers',
++    type: 'object',
++    required: ['X-Api-Key'],
++    properties: {
++      'X-Api-Key': { type: 'string' },
++      'X-Admin': { type: 'string', const: 'true' },
++      'X-Admin-Token': { type: 'string', const: 'server-secret' }
++    },
++    dependencies: { 'X-Admin': ['X-Admin-Token'] }
 +  })
-+  app.get('/', async () => 'ok')
++  // The object returned by getSchema() carries the registered $id. The default
++  // validator compiler would return the registered, non-normalized validator
++  // for that $id, so Fastify must compile the normalized copy instead.
++  fastify.get('/', {
++    schema: { headers: fastify.getSchema('admin-headers') }
++  }, async () => ({ adminAction: true }))
 +
-+  await app.listen({ port: 0 })
-+  t.after(() => app.close())
++  await fastify.ready()
 +
-+  const base = `http://127.0.0.1:${app.server.address().port}`
-+  await t.assert.rejects(async () => {
-+    const res = await fetch(`${base}/`)
-+    await res.text()
++  // The canonical-case `required` matches the lowercased request header.
++  const valid = await fastify.inject({
++    method: 'GET',
++    url: '/',
++    headers: { 'X-Api-Key': 'key', 'X-Admin': 'true', 'X-Admin-Token': 'server-secret' }
 +  })
++  t.assert.strictEqual(valid.statusCode, 200)
++  t.assert.deepStrictEqual(valid.json(), { adminAction: true })
 +
-+  // The server must not have crashed.
-+  t.assert.strictEqual(app.server.listening, true)
++  const missingToken = await fastify.inject({
++    method: 'GET',
++    url: '/',
++    headers: { 'X-Api-Key': 'key', 'X-Admin': 'true' }
++  })
++  t.assert.strictEqual(missingToken.statusCode, 400)
++  t.assert.strictEqual(missingToken.json().code, 'FST_ERR_VALIDATION')
++
++  const wrongToken = await fastify.inject({
++    method: 'GET',
++    url: '/',
++    headers: { 'X-Api-Key': 'key', 'X-Admin': 'true', 'X-Admin-Token': 'wrong' }
++  })
++  t.assert.strictEqual(wrongToken.statusCode, 400)
++  t.assert.strictEqual(wrongToken.json().code, 'FST_ERR_VALIDATION')
++
++  const missingKey = await fastify.inject({ method: 'GET', url: '/' })
++  t.assert.strictEqual(missingKey.statusCode, 400)
++  t.assert.strictEqual(missingKey.json().code, 'FST_ERR_VALIDATION')
++
++  t.assert.strictEqual(spyData.callCount(), 0)
++  // The registered schema is left untouched.
++  t.assert.strictEqual(fastify.getSchema('admin-headers').$id, 'admin-headers')
++  t.assert.deepStrictEqual(fastify.getSchema('admin-headers').required, ['X-Api-Key'])
 +})
 +
-+test('fallback error handler aborts the response when writeHead throws ERR_HTTP_HEADERS_SENT', async (t) => {
-+  t.plan(2)
++test('header schema with an $id and an external $ref keeps the $id for reference resolution', async t => {
++  const spyData = spyWarning(FSTSEC002)
++  t.after(spyData.restore)
 +
-+  const app = Fastify()
-+  app.addHook('onSend', async (request, reply, payload) => {
-+    reply.raw.writeHead = function () {
-+      const err = new Error('Cannot write headers after they are sent to the client')
-+      err.code = 'ERR_HTTP_HEADERS_SENT'
-+      throw err
-+    }
-+    return payload
++  const fastify = Fastify()
++  fastify.addSchema({
++    $id: 'http://example.com/defs',
++    definitions: { token: { type: 'string', const: 'server-secret' } }
 +  })
-+  app.get('/', async () => 'ok')
++  fastify.post('/', {
++    schema: {
++      headers: {
++        $id: 'http://example.com/headers',
++        type: 'object',
++        properties: {
++          // resolved against the root $id: http://example.com/defs
++          'x-admin-token': { $ref: 'defs#/definitions/token' }
++        }
++      }
++    }
++  }, async () => ({ ok: true }))
 +
-+  await app.listen({ port: 0 })
-+  t.after(() => app.close())
++  await fastify.ready()
 +
-+  const base = `http://127.0.0.1:${app.server.address().port}`
-+  await t.assert.rejects(fetch(`${base}/`))
++  t.assert.strictEqual(spyData.callCount(), 1)
++  t.assert.deepStrictEqual(spyData.calls[0].arguments, ['POST', '/', 'defs#/definitions/token'])
 +
-+  // The server must not have crashed.
-+  t.assert.strictEqual(app.server.listening, true)
++  const valid = await fastify.inject({
++    method: 'POST',
++    url: '/',
++    headers: { 'x-admin-token': 'server-secret' }
++  })
++  t.assert.strictEqual(valid.statusCode, 200)
++
++  const invalid = await fastify.inject({
++    method: 'POST',
++    url: '/',
++    headers: { 'x-admin-token': 'wrong' }
++  })
++  t.assert.strictEqual(invalid.statusCode, 400)
++  t.assert.strictEqual(invalid.json().code, 'FST_ERR_VALIDATION')
 +})
++
+ test('header schema with a $ref inside propertyNames emits FSTSEC003 (case-normalization does not reach it)', async t => {
+   const spyData = spyWarning(FSTSEC003)
+   t.after(spyData.restore)
+```
+
+---
+
+### Incident Patch 3: `1b954e56` (2026-11-04)
+**Commit Message**: build(dependabot): restore scope; correct prefix; monthly interval (#6849)
+
+As per [Angular
+convention](https://github.com/angular/angular/blob/22b96b9/CONTRIBUTING.md#type),
+which is the most commonly used style for conventional commits, the
+prefix should be `build` for npm updates and `ci` for github actions.
+
+Likewise, the interval has been increased to monthly, and fastify shared
+workflows have been grouped, so Dependabot will only create one PR for
+them all.
+
+This PR also restores the scope.
+At present it is `chore: update typescript to xxx`, which has no
+indication of whether it is a dependency or dev dependency.
+With the scope included, it'll be `build(deps-dev): update typescript to
+xxx`.
+
+<!--
+Thank you for your pull request. Please provide a description above and
+review
+the requirements below.
+
+Bug fixes and new features should include tests and possibly benchmarks.
+
+Contributors guide:
+https://github.com/fastify/fastify/blob/main/CONTRIBUTING.md
+
+By making a contribution to this project, I certify that:
+
+* (a) The contribution was created in whole or in part by me and I
+  have the right to submit it under the open source license
+  indicated in the file; or
+
+* (b) The con
+
+**File**: `.github/dependabot.yml` (modified, +17/-6)
+```diff
+@@ -3,25 +3,29 @@ updates:
+   - package-ecosystem: "github-actions"
+     directory: "/"
+     commit-message:
+-      # Prefix all commit messages with "chore: "
+-      prefix: "chore"
++      include: "scope"
++      prefix: "ci"
+     schedule:
+-      interval: "weekly"
++      interval: "monthly"
+     cooldown:
+       default-days: 7
+     allow:
+       - dependency-name: "*"
+         update-types:
+           - "version-update:semver-major"
+     open-pull-requests-limit: 10
++    groups:
++      fastify-owned:
++        patterns:
++          - "fastify/*"
+ 
+   - package-ecosystem: "npm"
+     directory: "/"
+     commit-message:
+-      # Prefix all commit messages with "chore: "
+-      prefix: "chore"
++      include: "scope"
++      prefix: "build"
+     schedule:
+-      interval: "weekly"
++      interval: "monthly"
+     cooldown:
+       default-days: 7
+     versioning-strategy: "increase-if-necessary"
+@@ -40,6 +44,8 @@ updates:
+       # Production dependencies with breaking changes
+       dependencies:
+         dependency-type: "production"
++        patterns:
++          - "*"
+       # ESLint related dependencies
+       dev-dependencies-eslint:
+         patterns:
+@@ -57,3 +63,8 @@ updates:
+         patterns:
+           - "ajv"
+           - "ajv-*"
++      # Catch-all development dependencies
++      dev-dependencies:
++        dependency-type: "development"
++        patterns:
++          - "*"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7175** (2026-11-01): docs: join core team (@Tony133)
-- **PR #7160** (2026-10-25): [Backport 5.x] docs: fix syntax errors in code examples (@github-actions[bot])
-- **PR #7159** (2026-10-25): docs: fix syntax errors in code examples (@mayur-dhavan)
-- **PR #7158** (2026-10-25): [Backport 5.x] docs: clarify that maxParamLength does not prevent ReDoS (@github-actions[bot])
-- **PR #7154** (2026-10-24): [Backport 5.x] fix(decorators): evaluate instance getters once in getDecorator (@github-actions[bot])
-- **PR #7153** (2026-10-24): [Backport 5.x] perf(request): hoist port regex to module level (@github-actions[bot])
+- **PR #7195** (2026-11-07): docs: fix TypeScript configuration initialization command (@nagahara-naoki)
+- **PR #7194** (closed): docs: fix instance usage in register options example (@nagahara-naoki)
+- **PR #7192** (closed): docs: correct additional-property inference example (@nagahara-naoki)
+- **PR #7191** (closed): docs: fix body-schema routes in type provider examples (@nagahara-naoki)
+- **PR #7187** (2026-11-06): [Backport 5.x] feat(route): identify generated HEAD routes in onRoute (@github-actions[bot])
+- **PR #7186** (2026-11-06): [Backport 5.x] fix(validation): case-normalize header schemas with a registered $id (@github-actions[bot])
 
 ---
 
@@ -1560,78 +1621,28 @@ Claude-Session: https://claude.ai/code/session_01Sfj4nDAKoM3WkNLatQvoao
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test: make handlerTimeout ended-but-not-finished test deterministic
+## X. docs: fix TypeScript configuration initialization command (#7195)
 
 **RULE**:
-When implementing operations in `test/handler-timeout.test.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fastify/fastify. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/Reference/TypeScript.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fastify/fastify. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b7d8fefc`: test: make handlerTimeout ended-but-not-finished test deterministic. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0b076ca5`: docs: fix TypeScript configuration initialization command (#7195). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `test/handler-timeout.test.js`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/Reference/TypeScript.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-// 'finish' is held back explicitly so the test does not depend on how much
-// data the OS socket buffers absorb.
-  t.plan(4)
-  const fastify = Fastify({ handlerTimeout: 50 })
-  fastify.get('/', async (request, reply) => {
-    const res = reply.raw
-    const emit = res.emit
-    res.emit = function (event, ...args) {
-      if (event !== 'finish') return emit.call(this, event, ...args)
-      // Emit 'finish' only well after the handlerTimeout has fired.
-      setTimeout(() => {
-        t.assert.strictEqual(reply.sent, true)
-        t.assert.strictEqual(signal.aborted, false)
-        emit.call(this, event, ...args)
-      }, 200)
-      return true
-    }
-    return 'ok'
-  // A raw keep-alive connection, so nothing but the timer can abort the
-  // request while 'finish' is pending.
-  const response = await new Promise((resolve, reject) => {
-    let buffer = ''
-    socket.setEncoding('utf8')
-      socket.write('GET / HTTP/1.1\r\nHost: localhost\r\n\r\n')
-    socket.on('data', (chunk) => {
-      buffer += chunk
-      if (buffer.endsWith('ok')) resolve(buffer)
-  t.assert.strictEqual(response.startsWith('HTTP/1.1 200'), true)
-  // Wait for the deferred 'finish', then the request must still n
+   npx tsc --init
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-  t.plan(3)
-  const fastify = Fastify({ handlerTimeout: 100 })
-  // Large enough to exceed the socket buffers, so the response cannot finish
-  // while the client is not reading.
-  const size = 64 * 1024 * 1024
-  const big = Buffer.alloc(size, 'a')
-  fastify.get('/big', async (request, reply) => {
-    reply.type('application/octet-stream')
-    return big
-  let received = 0
-  await new Promise((resolve, reject) => {
-      socket.write('GET /big HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n')
-    socket.once('data', () => {
-      // Stop reading until well past the handlerTimeout.
-      socket.pause()
-      setTimeout(() => {
-        t.assert.strictEqual(signal.aborted, false)
-        socket.resume()
-      }, 300)
-    socket.on('data', (chunk) => { received += chunk.length })
-    socket.on('end', resolve)
-  // The whole body was delivered and the request was never aborted.
-  t.assert.ok(received > size)
+   npx typescript --init
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b7d8fefc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0b076ca5` are properly handled with clean fallback behavior.

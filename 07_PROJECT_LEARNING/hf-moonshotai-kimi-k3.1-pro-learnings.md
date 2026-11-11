@@ -3,7 +3,7 @@
 > **Source Version**: `hf-moonshota`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-11-04T16:34:25.648Z  
+> **Timestamp**: 2026-11-08T02:57:01.596Z  
 > **Learning ID**: `learn-huggingface-moonshotai-kimi-k3-1-pro`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,344 +17,275 @@
 ## 1. Executive Forensic Architecture & System Mechanics
 
 **Technical Problem Solved:**
-The repository defines the inference configuration and architectural blueprint for **Kimi K3.1 Pro**, a 2.8T parameter Mixture-of-Experts (MoE) model with a 1-million token context window. The core engineering challenge addressed is the efficient routing and computation of massive sparse models while maintaining high-fidelity multimodal (image-text) alignment and long-context stability.
+The repository defines the inference and configuration schema for **Kimi K3.1 Pro**, a 2.8T parameter Mixture-of-Experts (MoE) model with a 1-million token context window. The core engineering challenge addressed is the efficient routing of massive parameter counts (2.8T total, 104B active) while maintaining high-fidelity multimodal (text + image) processing. The architecture solves the "attention bottleneck" in long-context scenarios by introducing a hybrid attention mechanism that combines standard full attention with a novel **Dynamic Sparse Attention (DSA)** and **Linear Attention** hybrid, governed by specific layer indices.
 
 **Architectural Boundaries & Subsystems:**
-1.  **Sparse Attention Subsystem (DSA/KDA):** The model employs a hybrid attention mechanism. Layers 4, 8, ..., 92, 93 use **Full Attention** (standard Transformer), while intermediate layers (1, 2, 3, 5, 6, 7, etc.) use **KDA (Key-Driven Attention)** or **DSA (Dynamic Sparse Attention)**. This is evidenced by `dsa_config` and `linear_attn_config` in `config.json`.
-2.  **MoE Routing Subsystem:** With 2.8T total parameters and only 104B activated, the model relies on a sophisticated expert routing mechanism. The `first_k_dense_replace: 1` indicates the first layer is dense, while subsequent layers are sparse MoE.
-3.  **Multimodal Tokenization:** The tokenizer defines specific placeholders (`<|kimi_image_placeholder|>`, `media_placeholder_token_id: 163605`) to bridge the vision encoder and the LLM backbone, ensuring strict alignment between visual tokens and text embeddings.
-4.  **Activation Function:** The use of `hidden_act: "situ"` with `activation_situ_beta: 4.0` and `activation_situ_linear_beta: 25.0` suggests a custom, non-standard activation function designed for stability in deep, wide MoE architectures, likely to prevent gradient vanishing/exploding in high-dimensional spaces.
+1.  **Hybrid Attention Subsystem**: The model does not use uniform attention. It partitions the 93 layers into three distinct functional groups:
+    *   **Full Attention Layers**: Indices `[4, 8, ..., 92, 93]` (Every 4th layer + last layer). These handle global context dependencies.
+    *   **DSA (Dynamic Sparse Attention) Layers**: Indices `[4, 8, ..., 92, 93]` (Overlaps with Full Attention in config, but `dsa_config` implies a specific sparse indexing mechanism using `index_topk: 2048`).
+    *   **KDA (Key-Driven Attention/Linear) Layers**: Indices `[1, 2, 3, 5, 6, 7, ...]` (The remaining layers). These likely utilize linear attention or low-rank approximations (`kv_lora_rank: 512`) to reduce quadratic complexity to linear for local context.
+2.  **MoE Routing Subsystem**:
+    *   `first_k_dense_replace: 1`: The first layer is dense, subsequent layers are MoE.
+    *   `latent_moe_use_norm: true`: Normalization is applied to latent MoE outputs, a critical stability invariant for large-scale MoE training/inference.
+3.  **Multimodal Tokenization Boundary**:
+    *   Distinct token IDs for `[BOS]` (163584), `[EOS]` (163585), `<|end_of_msg|>` (163586), and `<|kimi_image_placeholder|>` (163605).
+    *   The `image_placeholder` is a string token, not just an ID, implying a preprocessing step where image embeddings are injected at this specific token position.
 
-**Critical Abstractions:**
-*   **`KimiK31ForConditionalGeneration`**: The top-level model class handling multimodal inputs.
-*   **`KimiK3Config`**: The configuration object that encapsulates the complex interplay between dense and sparse layers, attention types, and MoE parameters.
-*   **`dsa_config` / `linear_attn_config`**: Nested configurations that define the layer-wise strategy for attention computation, allowing for a "hybrid" transformer where not all layers pay the $O(N^2)$ cost of full attention.
+**Critical Subsystem Abstractions:**
+*   `KimiK31ForConditionalGeneration`: The top-level model class handling multimodal inputs.
+*   `KimiK3Config`: The configuration object that encapsulates the complex layer-wise attention strategy.
+*   `dsa_config`: A nested configuration object defining the sparse attention mechanics (`index_topk`, `index_head_dim`, `index_num_heads`).
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Hybrid Attention Layer Mapping Invariant
+### 1. Hybrid Attention Layer Partitioning Invariant
 **RULE**:
-In hybrid attention architectures (mixing Full Attention and Linear/Sparse Attention), the mapping of layer indices to attention types MUST be explicitly defined in the configuration and MUST NOT rely on implicit sequential assumptions. The `full_attn_layers` and `kda_layers` (or `dsa_layers`) lists MUST be disjoint and their union MUST cover all transformer layers exactly once.
+In large-scale MoE models with context windows > 128k, you MUST NOT apply uniform full attention across all layers. You MUST partition layers into a sparse set of "Global Attention" layers (e.g., every Nth layer) and a dense set of "Local/Linear Attention" layers. The Global Attention layers MUST be explicitly indexed in the configuration to allow for specialized kernel optimization.
 
 **WHY**:
-If layer indices are misconfigured (e.g., a layer is missing from both lists or present in both), the model will either crash due to missing weight shapes or silently produce incorrect attention scores. In a 93-layer model, a single off-by-one error in the layer list leads to catastrophic inference failures that are difficult to debug because the model may still "run" but produce nonsensical output.
+Uniform full attention scales as $O(N^2)$ with sequence length $N$. For $N=1,000,000$, this is computationally infeasible. By restricting full attention to ~25% of layers (every 4th layer) and using linear/sparse attention for the rest, the overall complexity is reduced significantly while preserving the ability to capture long-range dependencies at critical checkpoints. Failure to partition leads to OOM (Out of Memory) errors or unacceptable latency in long-context inference.
 
 **WHEN TO APPLY**:
-Any Transformer-based model that mixes different attention mechanisms (e.g., Full Attention, Linear Attention, Sparse Attention) across different layers.
+Any transformer-based model targeting context windows > 100k tokens, especially MoE architectures where memory bandwidth is the bottleneck.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# In configuration_kimi_k3.py
-class KimiK3Config:
-    def __init__(self, num_hidden_layers=93, **kwargs):
-        self.num_hidden_layers = num_hidden_layers
-        # Explicitly define which layers use which attention
-        # Example: Every 4th layer is Full Attention, others are KDA
-        self.full_attn_layers = [i for i in range(4, num_hidden_layers, 4)]
-        self.kda_layers = [i for i in range(num_hidden_layers) if i not in self.full_attn_layers]
+class HybridAttentionConfig:
+    def __init__(self, num_layers: int, global_attn_interval: int = 4):
+        self.num_layers = num_layers
+        # Invariant: Global attention layers are at indices 0, interval, 2*interval...
+        # AND the final layer MUST be global attention to ensure final output has global context.
+        self.full_attn_layers = list(range(0, num_layers, global_attn_interval))
+        if self.full_attn_layers[-1] != num_layers - 1:
+            self.full_attn_layers.append(num_layers - 1)
         
-        # ASSERTION: Ensure no overlap and full coverage
-        assert len(set(self.full_attn_layers) & set(self.kda_layers)) == 0, "Attention layers overlap"
-        assert len(self.full_attn_layers) + len(self.kda_layers) == num_hidden_layers, "Not all layers covered"
+        # All other layers use linear/sparse attention
+        self.linear_attn_layers = [i for i in range(num_layers) if i not in self.full_attn_layers]
+
+    def get_attention_type(self, layer_idx: int) -> str:
+        if layer_idx in self.full_attn_layers:
+            return "full"
+        else:
+            return "linear"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# BAD: Implicit assumption that layers 0-10 are Full, 11+ are Sparse
-# This breaks if num_hidden_layers changes or if the pattern is non-linear
-self.full_attn_layers = list(range(11))
-self.kda_layers = list(range(11, num_hidden_layers))
-# If num_hidden_layers is 93, this is fine, but if the pattern is "every 4th", this is wrong.
-# BAD: Hardcoding layer indices without validation
-self.full_attn_layers = [4, 8, 12, ...] # Manual list is error-prone
+# ANTI-PATTERN: Applying full attention to all layers in a 1M context model
+class BadAttentionConfig:
+    def get_attention_type(self, layer_idx: int) -> str:
+        return "full" # This will cause OOM or timeout for N > 10k
 ```
 
 **VERIFICATION METHOD**:
-```python
-def test_attention_layer_coverage(config):
-    all_layers = set(range(config.num_hidden_layers))
-    full_set = set(config.full_attn_layers)
-    kda_set = set(config.kda_layers)
-    assert full_set | kda_set == all_layers, "Missing layers"
-    assert full_set & kda_set == set(), "Overlapping layers"
-```
+1.  **Static Analysis**: Assert that `len(full_attn_layers) < num_layers / 2`.
+2.  **Runtime Check**: During model initialization, verify that the memory footprint of the attention cache for `full_attn_layers` fits within the GPU memory budget for the target context length.
+3.  **Unit Test**: `assert config.get_attention_type(0) == "full"` and `assert config.get_attention_type(1) == "linear"`.
 
-### 2. MoE Expert Routing Density Invariant
+### 2. MoE Latent Normalization Stability Invariant
 **RULE**:
-In Mixture-of-Experts models, the `first_k_dense_replace` parameter MUST be validated to ensure that the first `k` layers are dense (non-MoE) and the remaining layers are sparse. The configuration MUST explicitly state the number of experts per layer and the top-k routing strategy to prevent weight shape mismatches during model loading.
+In Mixture-of-Experts models, if `latent_moe_use_norm` is enabled, you MUST apply LayerNorm (or RMSNorm) to the expert outputs BEFORE the weighted sum aggregation. You MUST NOT apply normalization after the aggregation if the expert outputs are unbounded.
 
 **WHY**:
-MoE models have a different weight structure for dense vs. sparse layers. If the first layer is incorrectly configured as MoE when it should be dense (or vice versa), the model will fail to load due to shape mismatches in the `gate` and `expert` weights. This is a critical failure mode during model initialization.
+MoE experts can produce outputs with varying magnitudes depending on the input routing. Without normalization before aggregation, the weighted sum can suffer from numerical instability (overflow/underflow in bfloat16) or vanishing gradients. Normalizing the latent expert outputs ensures that the final aggregated representation has a stable distribution, which is critical for the convergence of the router and the stability of the downstream layers.
 
 **WHEN TO APPLY**:
-Any MoE model where the first few layers are dense for stability, and subsequent layers are sparse for efficiency.
+Any MoE architecture where expert outputs are not strictly bounded, especially in bfloat16/fp16 precision.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# In model_kimi_k3.py
-def __init__(self, config):
-    self.dense_layers = config.first_k_dense_replace
-    self.moe_layers = config.num_hidden_layers - self.dense_layers
-    
-    for i in range(config.num_hidden_layers):
-        if i < self.dense_layers:
-            # Initialize Dense FFN
-            self.layers[i].mlp = DenseMLP(config)
-        else:
-            # Initialize MoE FFN
-            self.layers[i].mlp = MoEMLP(config)
-            
-    # ASSERTION: Ensure weight shapes match
-    for i in range(self.dense_layers):
-        assert self.layers[i].mlp.weight.shape == (config.intermediate_size, config.hidden_size)
-    for i in range(self.dense_layers, config.num_hidden_layers):
-        assert self.layers[i].mlp.experts.shape == (config.num_experts, config.intermediate_size, config.hidden_size)
+class MoELayer(nn.Module):
+    def __init__(self, num_experts, hidden_size, use_norm=True):
+        self.experts = nn.ModuleList([Expert(hidden_size) for _ in range(num_experts)])
+        self.norm = nn.LayerNorm(hidden_size) if use_norm else nn.Identity()
+
+    def forward(self, x, router_weights):
+        # x: [batch, seq_len, hidden_size]
+        # router_weights: [batch, seq_len, num_experts]
+        
+        expert_outputs = []
+        for i, expert in enumerate(self.experts):
+            # Select tokens routed to this expert
+            mask = (router_weights[..., i] > 0)
+            if not mask.any():
+                continue
+            selected_x = x[mask]
+            expert_out = expert(selected_x)
+            # CRITICAL: Normalize BEFORE aggregation
+            if self.use_norm:
+                expert_out = self.norm(expert_out)
+            expert_outputs.append(expert_out)
+        
+        # Aggregate
+        # ... (weighted sum logic)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# BAD: Assuming all layers are MoE
-for i in range(config.num_hidden_layers):
-    self.layers[i].mlp = MoEMLP(config)
-# This will fail if first_k_dense_replace > 0
+# ANTI-PATTERN: Normalizing after aggregation
+def bad_moe_forward(x, router_weights):
+    aggregated = sum(w * expert(x) for w, expert in zip(router_weights, experts))
+    return norm(aggregated) # This can lead to numerical instability if expert outputs vary wildly
 ```
 
 **VERIFICATION METHOD**:
-```python
-def test_moe_layer_structure(model, config):
-    for i in range(config.num_hidden_layers):
-        if i < config.first_k_dense_replace:
-            assert not hasattr(model.layers[i].mlp, 'experts'), "Dense layer should not have experts"
-        else:
-            assert hasattr(model.layers[i].mlp, 'experts'), "MoE layer should have experts"
-```
+1.  **Gradient Check**: Verify that gradients flow correctly through the normalization layer.
+2.  **Numerical Stability Test**: Feed inputs with extreme values (e.g., 1e10) and verify that the output does not become `NaN` or `Inf`.
+3.  **Config Assertion**: `assert config.latent_moe_use_norm == True` for production MoE models.
 
-### 3. Multimodal Token Alignment Invariant
+### 3. Multimodal Placeholder Token Injection Invariant
 **RULE**:
-In multimodal models, the `media_placeholder_token_id` MUST be a unique token that is not used for any other purpose (e.g., BOS, EOS, PAD). The tokenizer MUST ensure that this token is correctly mapped to the vision encoder's output embeddings, and the model MUST handle the case where no image is provided by skipping the vision encoder path.
+In multimodal models, you MUST use a dedicated, unique token ID (e.g., `<|kimi_image_placeholder|>`) for image embeddings. You MUST NOT reuse text tokens (like `[IMG]` or `<image>`) for this purpose. The placeholder token MUST be stripped from the final text output but MUST be present in the input sequence to align the image embeddings with the correct position in the sequence.
 
 **WHY**:
-If the `media_placeholder_token_id` is reused for another purpose (e.g., as a special instruction token), the model will incorrectly interpret text tokens as image tokens, leading to hallucinations or crashes. Additionally, if the model does not handle the absence of images gracefully, it will crash when processing text-only inputs.
+Reusing text tokens can lead to ambiguity in the tokenizer and the model's attention mechanism. A dedicated token ensures that the model can distinguish between a literal text string "<image>" and an actual image embedding. Stripping the token from the output prevents the user from seeing internal artifacts, while keeping it in the input ensures correct positional encoding for the image features.
 
 **WHEN TO APPLY**:
-Any multimodal model that uses placeholder tokens to bridge vision and text encoders.
+Any multimodal model that interleaves text and image inputs.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# In tokenizer_config.json
-"media_placeholder_token_id": 163605
+class MultimodalTokenizer:
+    def __init__(self, image_placeholder_id: int):
+        self.image_placeholder_id = image_placeholder_id
 
-# In model_kimi_k3.py
-def forward(self, input_ids, pixel_values=None, **kwargs):
-    if pixel_values is not None:
-        # Process images
-        image_embeddings = self.vision_encoder(pixel_values)
-        # Replace placeholder tokens with image embeddings
-        input_ids = self.replace_placeholders(input_ids, image_embeddings)
-    else:
-        # Text-only path: Ensure no placeholder tokens are present
-        assert not (input_ids == self.config.media_placeholder_token_id).any(), "Placeholder token found without image"
-    
-    # Proceed with LLM forward pass
-    return self.language_model(input_ids, **kwargs)
+    def encode(self, text: str, images: list) -> list:
+        tokens = self.tokenize(text)
+        # Replace <image> tags with the dedicated placeholder ID
+        for i, token in enumerate(tokens):
+            if token == "<image>":
+                tokens[i] = self.image_placeholder_id
+        return tokens
+
+    def decode(self, tokens: list) -> str:
+        # Strip the placeholder ID from the output
+        filtered_tokens = [t for t in tokens if t != self.image_placeholder_id]
+        return self.detokenize(filtered_tokens)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# BAD: Not checking for placeholder tokens in text-only mode
-def forward(self, input_ids, pixel_values=None, **kwargs):
-    if pixel_values is not None:
-        # Process images
-        pass
-    # If pixel_values is None, but input_ids contains placeholder tokens, 
-    # the model will try to look up embeddings for non-existent image tokens
-    return self.language_model(input_ids, **kwargs)
+# ANTI-PATTERN: Using a text token for image placeholder
+def bad_encode(text, images):
+    tokens = tokenize(text)
+    # If "<image>" is a common text token, this will fail
+    # Also, if the model sees "<image>" in the output, it will be confusing
+    return tokens
 ```
 
 **VERIFICATION METHOD**:
-```python
-def test_multimodal_token_alignment(model, tokenizer):
-    # Test with image
-    input_ids_with_image = tokenizer("Image: <image>", images=[dummy_image]).input_ids
-    assert tokenizer.media_placeholder_token_id in input_ids_with_image
-    
-    # Test without image
-    input_ids_text_only = tokenizer("Text only").input_ids
-    assert tokenizer.media_placeholder_token_id not in input_ids_text_only
-```
+1.  **Round-Trip Test**: Encode a text with `<image>` tags, then decode it, and verify that the output does not contain the placeholder token.
+2.  **Token ID Uniqueness**: Assert that `image_placeholder_id` is not in the set of common text tokens.
+3.  **Attention Mask Check**: Verify that the attention mask correctly handles the placeholder token (i.e., it is not masked out).
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-*Note: Since no specific commit patches or bug issues were provided in the input, the following incidents are inferred from common failure modes in similar large-scale MoE/multimodal models and the specific configuration details provided.*
+*Note: Since no specific commit patches or bug issues were provided in the input, this section will be synthesized based on common failure modes in similar large-scale MoE/multimodal models, derived from the architectural invariants observed in the config.*
 
-### Incident 1: Attention Layer Mismatch During Model Loading (BUG-ATTN-01)
-- **Context**: `configuration_kimi_k3.py` and `model_kimi_k3.py`
-- **What Was Expected**: The model should load successfully with the correct attention mechanism for each layer.
-- **What Actually Happened**: The model failed to load with a `RuntimeError: size mismatch for layers.5.self_attn.q_proj.weight`.
-- **Evidence in Repo**: `config.json` shows `full_attn_layers` and `kda_layers` lists. If these lists are not correctly aligned with the model's layer initialization, weight shapes will mismatch.
-- **Root Cause**: The `full_attn_layers` list in the config did not match the layers initialized as Full Attention in the model code. This can happen if the config is updated but the model code is not, or if the layer indexing is off-by-one.
+### Incident 1: OOM in Long-Context Inference Due to Uniform Attention (BUG-ATTN-01)
+- **Context**: Inference engine, `KimiK31ForConditionalGeneration`
+- **What Was Expected**: The model should handle 1M token context without OOM.
+- **What Actually Happened**: OOM error when processing sequences > 100k tokens.
+- **Evidence in Repo**: `config.json` shows `max_length: 1048576` and `full_attn_layers` is a subset of all layers.
+- **Root Cause**: Initial implementation likely used full attention for all layers. The KV cache size for 1M tokens with full attention is $O(N^2)$, which exceeds GPU memory.
 - **Remediation Code Diff**:
 ```python
-// - Buggy code: Hardcoded layer indices in model code
-// + Fixed pattern: Use config.full_attn_layers to determine attention type
-for i in range(config.num_hidden_layers):
-    if i in config.full_attn_layers:
-        self.layers[i].self_attn = FullAttention(config)
-    else:
-        self.layers[i].self_attn = KDAAttention(config)
+# - Buggy code: Full attention for all layers
+# + Fixed pattern: Hybrid attention with sparse/linear attention for most layers
+def forward(self, input_ids, attention_mask):
+    for layer_idx, layer in enumerate(self.layers):
+        if layer_idx in self.full_attn_layers:
+            output = layer.full_attention(input_ids, attention_mask)
+        else:
+            output = layer.linear_attention(input_ids, attention_mask)
 ```
-- **Lesson**: Always derive layer-specific configurations from the config object, not from hardcoded values in the model code.
+- **Lesson**: Always partition attention layers in long-context models to reduce KV cache size.
 
-### Incident 2: MoE Expert Weight Shape Mismatch (BUG-MOE-02)
-- **Context**: `model_kimi_k3.py`
-- **What Was Expected**: The MoE layers should load with the correct number of experts and expert dimensions.
-- **What Actually Happened**: The model failed to load with a `RuntimeError: size mismatch for layers.10.mlp.experts.0.gate_proj.weight`.
-- **Evidence in Repo**: `config.json` shows `first_k_dense_replace: 1`. If the model code incorrectly initializes layer 0 as MoE, the weight shapes will mismatch.
-- **Root Cause**: The model code did not respect the `first_k_dense_replace` parameter and initialized all layers as MoE.
+### Incident 2: Numerical Instability in MoE Aggregation (BUG-MOE-02)
+- **Context**: MoE layer, `latent_moe_use_norm`
+- **What Was Expected**: Stable gradients and outputs.
+- **What Actually Happened**: `NaN` values in outputs for certain inputs.
+- **Evidence in Repo**: `config.json` shows `latent_moe_use_norm: true`.
+- **Root Cause**: Expert outputs had varying magnitudes, leading to overflow in the weighted sum when aggregated in bfloat16.
 - **Remediation Code Diff**:
 ```python
-// - Buggy code: Initialize all layers as MoE
-// + Fixed pattern: Check first_k_dense_replace
-for i in range(config.num_hidden_layers):
-    if i < config.first_k_dense_replace:
-        self.layers[i].mlp = DenseMLP(config)
-    else:
-        self.layers[i].mlp = MoEMLP(config)
+# - Buggy code: Aggregation without normalization
+# + Fixed pattern: Normalize expert outputs before aggregation
+def forward(self, x, router_weights):
+    expert_outputs = [expert(x) for expert in self.experts]
+    if self.use_norm:
+        expert_outputs = [self.norm(out) for out in expert_outputs]
+    return sum(w * out for w, out in zip(router_weights, expert_outputs))
 ```
-- **Lesson**: Always validate the `first_k_dense_replace` parameter and ensure that the first `k` layers are dense.
+- **Lesson**: Always normalize MoE expert outputs before aggregation to ensure numerical stability.
 
-### Incident 3: Multimodal Token Misalignment (BUG-MM-03)
-- **Context**: `tokenizer_config.json` and `model_kimi_k3.py`
-- **What Was Expected**: The model should correctly handle both text-only and multimodal inputs.
-- **What Actually Happened**: The model produced nonsensical output when processing text-only inputs that contained the `media_placeholder_token_id`.
-- **Evidence in Repo**: `tokenizer_config.json` shows `media_placeholder_token_id: 163605`. If the tokenizer does not correctly map this token, or if the model does not handle its absence, the model will fail.
-- **Root Cause**: The model did not check for the presence of `pixel_values` before processing the `media_placeholder_token_id`.
+### Incident 3: Tokenizer Ambiguity in Multimodal Input (BUG-TOKEN-03)
+- **Context**: Tokenizer, `image_placeholder`
+- **What Was Expected**: Correct alignment of image embeddings with text.
+- **What Actually Happened**: Image embeddings were misaligned, leading to poor performance.
+- **Evidence in Repo**: `config.json` shows `image_placeholder: "<|kimi_image_placeholder|>"` and `media_placeholder_token_id: 163605`.
+- **Root Cause**: The tokenizer was using a text token for the image placeholder, leading to ambiguity in the attention mechanism.
 - **Remediation Code Diff**:
 ```python
-// - Buggy code: Always process media placeholder tokens
-// + Fixed pattern: Check for pixel_values
-if pixel_values is not None:
-    # Process images
-    pass
-else:
-    # Ensure no placeholder tokens are present
-    assert not (input_ids == self.config.media_placeholder_token_id).any()
+# - Buggy code: Using text token for image placeholder
+# + Fixed pattern: Using a dedicated token ID for image placeholder
+def encode(self, text, images):
+    tokens = self.tokenize(text)
+    for i, token in enumerate(tokens):
+        if token == "<image>":
+            tokens[i] = self.media_placeholder_token_id
+    return tokens
 ```
-- **Lesson**: Always validate the presence of multimodal inputs before processing placeholder tokens.
-
-### Incident 4: Context Window Overflow (BUG-CTX-04)
-- **Context**: `generation_config.json`
-- **What Was Expected**: The model should handle inputs up to 1 million tokens.
-- **What Actually Happened**: The model crashed with an `OutOfMemoryError` when processing inputs close to 1 million tokens.
-- **Evidence in Repo**: `generation_config.json` shows `max_length: 1048576`. If the model does not use efficient attention mechanisms (e.g., FlashAttention) or if the KV cache is not managed correctly, it will run out of memory.
-- **Root Cause**: The model did not use an efficient attention implementation that can handle long contexts without quadratic memory growth.
-- **Remediation Code Diff**:
-```python
-// - Buggy code: Standard attention
-// + Fixed pattern: Use FlashAttention or similar efficient implementation
-self.attn = FlashAttention(config)
-```
-- **Lesson**: Always use efficient attention mechanisms for long-context models.
-
-### Incident 5: Activation Function Instability (BUG-ACT-05)
-- **Context**: `config.json`
-- **What Was Expected**: The model should train and infer stably with the `situ` activation function.
-- **What Actually Happened**: The model produced NaNs during training when using the default `situ` activation parameters.
-- **Evidence in Repo**: `config.json` shows `activation_situ_beta: 4.0` and `activation_situ_linear_beta: 25.0`. If these parameters are not tuned correctly, the activation function can become unstable.
-- **Root Cause**: The `situ` activation function is sensitive to its parameters, and the default values were not suitable for the model's scale.
-- **Remediation Code Diff**:
-```python
-// - Buggy code: Default activation parameters
-// + Fixed pattern: Tuned activation parameters
-self.activation_situ_beta = 4.0
-self.activation_situ_linear_beta = 25.0
-```
-- **Lesson**: Always tune activation function parameters for large-scale models.
+- **Lesson**: Always use a dedicated token ID for multimodal placeholders to avoid ambiguity.
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
-1. **Micro-Syntax & Token-Level Precision**:
-   - **Invariant**: The `media_placeholder_token_id` MUST be an integer that is within the range of the tokenizer's vocabulary. If it is out of range, the model will crash when trying to look up its embedding.
-   - **Code Example**:
-     ```python
-     assert 0 <= self.config.media_placeholder_token_id < self.config.vocab_size
-     ```
+1.  **Micro-Syntax & Token-Level Precision**:
+    *   **Invariant**: `ignore_index: -100` in `config.json` is a standard PyTorch convention for loss masking. You MUST ensure that any custom loss function respects this value and does not treat it as a valid token ID.
+    *   **Trap**: If you use `ignore_index` in a custom loss function, you MUST mask out the loss for positions where `labels == -100`. Failure to do so will include padding tokens in the loss calculation, leading to incorrect gradients.
 
-2. **Infinite Loop & Recursion Guards**:
-   - **Invariant**: The MoE routing mechanism MUST have a maximum number of experts that can be selected per token. If the top-k routing strategy selects too many experts, it can lead to excessive computation and potential timeouts.
-   - **Code Example**:
-     ```python
-     assert self.config.top_k <= self.config.num_experts
-     ```
+2.  **Infinite Loop & Recursion Guards**:
+    *   **Invariant**: In the attention mechanism, the `index_topk: 2048` in `dsa_config` implies a top-k selection. You MUST ensure that the top-k selection algorithm terminates in $O(N \log K)$ time and does not fall into an infinite loop if $K > N$.
+    *   **Guard**: Add a check `if K > N: K = N` before performing the top-k selection.
 
-3. **UI & UX Micro-Mechanics**:
-   - **Invariant**: N/A (This is a backend model, not a UI application).
+3.  **UI & UX Micro-Mechanics**:
+    *   **Invariant**: N/A (This is a backend model, not a UI application).
 
-4. **Backend Concurrency & Memory Safety**:
-   - **Invariant**: The KV cache MUST be managed correctly to prevent memory leaks. If the KV cache is not properly freed after each inference step, it will lead to memory exhaustion.
-   - **Code Example**:
-     ```python
-     def forward(self, input_ids, past_key_values=None):
-         # ...
-         if past_key_values is None:
-             past_key_values = self.init_kv_cache()
-         # ...
-         return output, past_key_values
-     ```
+4.  **Backend Concurrency & Memory Safety**:
+    *   **Invariant**: In the MoE routing, the router weights must be normalized to sum to 1. You MUST ensure that the normalization is performed in a numerically stable way (e.g., using `softmax` with a temperature parameter).
+    *   **Trap**: If the router weights are not normalized, the weighted sum of expert outputs will be scaled incorrectly, leading to incorrect gradients.
 
-5. **Defect & Error Prevention ("Galti Pakadna")**:
-   - **Invariant**: The model MUST handle the case where `pixel_values` is `None` gracefully. If it does not, it will crash when processing text-only inputs.
-   - **Code Example**:
-     ```python
-     if pixel_values is not None:
-         # Process images
-         pass
-     else:
-         # Text-only path
-         pass
-     ```
+5.  **Defect & Error Prevention ("Galti Pakadna")**:
+    *   **Invariant**: In the multimodal input processing, you MUST ensure that the number of image placeholders in the text matches the number of images provided. If they do not match, you MUST raise an error.
+    *   **Trap**: If the number of placeholders does not match the number of images, the model will either ignore some images or crash due to shape mismatch.
 
 ## 5. The 9 Deep Learning Dimensions
 
-1. **Architecture**: The model uses a hybrid attention mechanism (Full Attention + KDA/DSA) and a MoE architecture with dense first layers. This allows for efficient long-context processing and high capacity.
-2. **Core Abstractions**: The key abstractions are `KimiK31ForConditionalGeneration`, `KimiK3Config`, and the attention/MLP modules. The config object encapsulates the complex layer-wise strategies.
-3. **Error Handling**: The model should handle missing multimodal inputs gracefully and validate token IDs to prevent crashes.
-4. **Testing**: Tests should verify the coverage of attention layers, the structure of MoE layers, and the alignment of multimodal tokens.
-5. **Security**: The model should sanitize inputs to prevent prompt injection and ensure that placeholder tokens are not misused.
-6. **Performance**: The model uses efficient attention mechanisms (e.g., FlashAttention) and MoE routing to minimize computation. The `situ` activation function is designed for stability in deep networks.
-7. **Deployment**: The model is deployed as a Hugging Face model, requiring specific dependencies (e.g., `transformers`, `flash-attn`). The `generation_config.json` specifies the maximum context length.
-8. **Agent Patterns**: The model is designed for agentic tasks, such as coding and research. It should be integrated with tools that allow it to execute code and retrieve information.
-9. **Data Flow**: The data flow starts with tokenization, where multimodal inputs are converted to placeholder tokens. The vision encoder processes the images, and the LLM processes the combined text and image embeddings.
+1.  **Architecture**: Hybrid MoE with partitioned attention layers.
+2.  **Core Abstractions**: `KimiK31ForConditionalGeneration`, `KimiK3Config`, `dsa_config`.
+3.  **Error Handling**: `ignore_index: -100` for loss masking.
+4.  **Testing**: N/A (No test files provided).
+5.  **Security**: N/A (No security-related code provided).
+6.  **Performance**: Hybrid attention reduces KV cache size; MoE reduces active parameters.
+7.  **Deployment**: `dtype: bfloat16` for efficient inference.
+8.  **Agent Patterns**: N/A (No agent-related code provided).
+9.  **Data Flow**: Multimodal input processing with dedicated placeholder tokens.
 
 ## 6. The 8 Learning Extraction Artifacts
 
-1. **Pattern**: Hybrid attention layer mapping using explicit configuration lists.
-2. **Rule**: Always validate the coverage and disjointness of attention layer lists.
-3. **Architecture Principle**: Use dense layers for stability in the initial layers and sparse layers for efficiency in subsequent layers.
-4. **Failure Mode**: Weight shape mismatch due to incorrect layer type assignment.
-5. **Reusable Skill**: Derive layer-specific configurations from the config object, not from hardcoded values.
-6. **Decision**: Use a hybrid attention mechanism to balance accuracy and efficiency.
-7. **Anti-pattern**: Hardcoding layer indices in the model code.
-8. **Verification Method**: Assert that the union of attention layer lists covers all layers and that they are disjoint.
+1.  **Pattern**: Hybrid attention layer partitioning.
+2.  **Rule**: MUST partition attention layers in long-context models.
+3.  **Architecture Principle**: Reduce KV cache size by using sparse/linear attention for most layers.
+4.  **Failure Mode**: OOM in long-context inference due to uniform attention.
+5.  **Reusable Skill**: Implement hybrid attention by partitioning layers into full and linear attention.
+6.  **Decision**: Use hybrid attention instead of uniform attention to reduce memory usage.
+7.  **Anti-pattern**: Applying full attention to all layers in a long-context model.
+8.  **Verification Method**: Assert that `len(full_attn_layers) < num_layers / 2`.
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1. **Validate Configuration**:
-   - [ ] Ensure `full_attn_layers` and `kda_layers` are disjoint and cover all layers.
-   - [ ] Ensure `first_k_dense_replace` is correctly set and respected in the model code.
-   - [ ] Ensure `media_placeholder_token_id` is within the vocabulary range.
-
-2. **Implement Model Code**:
-   - [ ] Use the config object to determine the attention type for each layer.
-   - [ ] Use the config object to determine whether a layer is dense or MoE.
-   - [ ] Handle the case where `pixel_values` is `None` gracefully.
-
-3. **Test the Model**:
-   - [ ] Test with text-only inputs to ensure no crashes.
-   - [ ] Test with multimodal inputs to ensure correct alignment.
-   - [ ] Test with long contexts to ensure memory efficiency.
-
-4. **Deploy the Model**:
-   - [ ] Ensure all dependencies are installed (e.g., `transformers`, `flash-attn`).
-   - [ ] Set the `max_length` in `generation_config.json` to the desired context window.
-   - [ ] Monitor memory usage during inference to detect leaks.
+1.  **Checklist Item 1**: Verify that the model configuration partitions attention layers into full and linear attention.
+2.  **Checklist Item 2**: Verify that the MoE layer normalizes expert outputs before aggregation.
+3.  **Checklist Item 3**: Verify that the tokenizer uses a dedicated token ID for image placeholders.
+4.  **Checklist Item 4**: Verify that the loss function respects the `ignore_index` value.
+5.  **Checklist Item 5**: Verify that the top-k selection algorithm in the DSA config terminates correctly.

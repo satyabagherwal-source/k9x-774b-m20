@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/paradedb-paradedb-learnings.md`  
 > **Source**: github ([https://github.com/paradedb/paradedb](https://github.com/paradedb/paradedb))  
-> **Source Version**: `f0f9ff86`  
+> **Source Version**: `34441533`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T13:47:56.030Z  
+> **Timestamp**: 2026-11-09T03:42:52.261Z  
 > **Learning ID**: `learn-github-paradedb-paradedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/paradedb-paradedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/paradedb/paradedb](https://github.com/paradedb/paradedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T13:47:56.022Z  
+> **Harvest Timestamp**: 2026-11-09T03:42:52.252Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: One Postgres for your application data, full-text search, vector retrieval, and aggregations. Home of the pg_search extension.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9488 stars
+- **Stars / Engagement**: 9497 stars
 
 ---
 
@@ -883,6 +883,15 @@ impl ScorerIter {
     pub fn set_threshold(&mut self, threshold: Score) {
         self.deferred.set_threshold(threshold);
     }
+
+    /// Returns an upper bound on the number of documents this iterator can yield starting from
+    /// `from_doc` (inclusive) through the end of the segment.
+    pub fn remaining_docs_upper_bound(&self, from_doc: DocId) -> usize {
+        self.segment_reader
+            .max_doc()
+            .saturating_sub(from_doc)
+            .min(self.segment_reader.num_docs()) as usize
+    }
 }
 
 impl Iterator for ScorerIter {
@@ -1452,23 +1461,6 @@ impl MessageQueueReceiver {
         }
     }
 
-    /// Wrap an already-acquired `shm_mq_handle` pointer directly. Used by
-    /// the MPP mesh where `shm_mq_attach` is called from a non-standard
-    /// layout (one `shm_mq_create` up front for every mesh slot, then each
-    /// participant attaches as sender or receiver separately).
-    ///
-    /// # Safety
-    /// `handle` must be a non-null `shm_mq_handle*` returned by a successful
-    /// `shm_mq_attach` call, and ownership of the handle (detach on drop) is
-    /// transferred into the returned receiver.
-    pub unsafe fn from_raw_handle(handle: *mut pg_sys::shm_mq_handle) -> Self {
-        Self {
-            handle: MessageQueueHandle {
-                handle: unsafe { NonNull::new_unchecked(handle) },
-            },
-        }
-    }
-
     pub fn recv(&self) -> Result<Vec<u8>, MessageQueueRecvError> {
         unsafe {
             let mut len = 0usize;
@@ -1534,6 +1526,7 @@ use crate::postgres::customscan::aggregatescan::privdat::{DataFusionTopK, Filter
 use crate::postgres::customscan::bitmap_intersection::BitmapExec;
 use crate::postgres::customscan::joinscan::build::RelNode;
 use crate::postgres::customscan::mpp::glue::MppLaunchTiming;
+use crate::postgres::customscan::mpp::interrupt::PgTokioRuntime;
 use crate::postgres::customscan::mpp::launch::MppLifecycle;
 use crate::postgres::customscan::projections::{PlaceholderColumn, PlaceholderProjection};
 use crate::postgres::customscan::solve_expr::SolvePostgresExpressions;
@@ -1557,6 +1550,24 @@ pub enum ExecutionState {
 
 /// State for the DataFusion aggregate execution backend.
 pub struct DataFusionAggState {
+    /// DataFusion result stream (dropped first, before `physical_plan`, `mpp`, and `runtime`).
+    pub stream: Option<SendableRecordBatchStream>,
+    /// Current batch being consumed row-by-row.
+    pub current_batch: Option<RecordBatch>,
+    /// Row index within current_batch.
+    pub batch_row_idx: usize,
+    /// The executed physical plan, kept so EXPLAIN ANALYZE can merge the worker metrics that
+    /// arrive over `coordinator_channel` into its display.
+    pub physical_plan: Option<std::sync::Arc<dyn datafusion::physical_plan::ExecutionPlan>>,
+    /// Where MPP sits in its launch lifecycle for this scan: marked pending at begin, launched
+    /// on first exec once the built plan's stages are committed (#5667: the plan comes first;
+    /// workers spawn only after it exists). Stays `Inactive` on the serial path.
+    /// Applies only when parallel execution is enabled and the query qualifies (binary join +
+    /// supported aggregate).
+    pub mpp: MppLifecycle,
+    /// Tokio runtime for async DataFusion execution (dropped after `stream`, `physical_plan`,
+    /// and `mpp` so background tasks are quiesced and deferred drops are drained first).
+    pub runtime: Option<PgTokioRuntime>,
     /// The join tree.
     pub plan: RelNode,
     /// GROUP BY columns and aggregate functions.
@@ -1573,17 +1584,6 @@ pub struct DataFusionAggState {
     pub custom_scan_tlist: *mut pg_sys::List,
     /// HAVING clause filter applied after aggregation.
     pub having_filter: Option<FilterExpr>,
-    /// Tokio runtime for async DataFusion execution.
-    pub runtime: Option<tokio::runtime::Runtime>,
-    /// The executed physical plan, kept so EXPLAIN ANALYZE can merge the worker metrics that
-    /// arrive over the mesh into its display.
-    pub physical_plan: Option<std::sync::Arc<dyn datafusion::physical_plan::ExecutionPlan>>,
-    /// DataFusion result stream.
-    pub stream: Option<SendableRecordBatchStream>,
-    /// Current batch being consumed row-by-row.
-    pub current_batch: Option<RecordBatch>,
-    /// Row index within current_batch.
-    pub batch_row_idx: usize,
     /// Mapping from `group_columns[i]` to its 0-based column index in DataFusion's
     /// output RecordBatch. Needed because DataFusion deduplicates grouping
     /// expressions (e.g. metadata.brand).
@@ -1597,12 +1597,6 @@ pub struct DataFusionAggState {
     /// Assembled `pdb.agg()` documents for each row of `current_batch`, which then
     /// holds the SQL-level rows only.
     pub pdb_agg_json: Option<Vec<Vec<serde_json::Value>>>,
-    /// Where MPP sits in its launch lifecycle for this scan: marked pending at begin, launched
-    /// on first exec once the built plan's stages are committed (#5667: the plan comes first;
-    /// workers spawn only after it exists). Stays `Inactive` on the serial path.
-    /// Applies only when parallel execution is enabled and the query qualifies (binary join +
-    /// supported aggregate).
-    pub mpp: MppLifecycle,
     /// Captured from PostgreSQL's statement-wide `PlannerGlobal.parallelModeOK`. When false, this
     /// scan may still use DataFusion, but it must never launch MPP producer workers.
     pub parallel_mode_ok: bool,
@@ -1635,12 +1629,15 @@ pub struct WrappedAggregateProjection {
 
 #[derive(Default)]
 pub struct AggregateScanState {
+    pub state: ExecutionState,
+    /// DataFusion backend state. When `Some`, the DataFusion path is active
+    /// and the Tantivy-specific fields are unused. Declared before `source_manifests`,
+    /// `bitmap_cell`, `bitmap_exec`, and `indexrel` so streams/runtime drop first.
+    pub datafusion_state: Option<DataFusionAggState>,
+
     pub segment_pruning: SegmentPruningEstimate,
     pub visibility_stats: VisibilityStats,
     pub parallelism: Option<AggregateParallelism>,
-    pub state: ExecutionState,
-    pub indexrelid: pg_sys::Oid,
-    pub indexrel: Option<(pg_sys::LOCKMODE, PgSearchRelation)>,
     pub execution_rti: pg_sys::Index,
     pub aggregate_clause: AggregateCSClause,
     pub base_aggregate_clause: Option<AggregateCSClause>,
@@ -1648,15 +1645,6 @@ pub struct AggregateScanState {
     /// Separate from `ps_ExprContext`, which wrapped-aggregate projection resets per row: see the
     /// rules in `solve_expr.rs`. Unused on the DataFusion path.
     pub runtime_context: Option<NonNull<pg_sys::ExprContext>>,
-
-    /// Execution state for the child bitmap scan, if a bitmap intersection source was
-    /// harvested at plan time.
-    pub bitmap_exec: Option<BitmapExec>,
-    pub bitmap_cell: Option<BitmapCell>,
-
-    /// DataFusion backend state. When `Some`, the DataFusion path is active
-    /// and the Tantivy-specific fields above are unused.
-    pub datafusion_state: Option<DataFusionAggState>,
 
     /// Wrapped-aggregate projection state. `Some` only when the targetlist
     /// has aggregates inside `FuncExpr` wrappers that need per-row projection.
@@ -1667,6 +1655,11 @@ pub struct AggregateScanState {
     /// to avoid per-row memory allocation and leaks
     pub scan_slot: Option<*mut pg_sys::TupleTableSlot>,
 
+    /// Execution state for the child bitmap scan, if a bitmap intersection source was
+    /// harvested at plan time.
+    pub bitmap_cell: Option<BitmapCell>,
+    pub bitmap_exec: Option<BitmapExec>,
+
     /// MPP-only: captured source manifests held by the leader. Serves two
     /// purposes (mirrors JoinScan):
     /// 1. Provides segment counts for DSM sizing in `estimate_dsm_custom_scan`
@@ -1675,6 +1668,9 @@ pub struct AggregateScanState {
     ///    background merges don't recycle the canonical segments before
     ///    workers can open them via `MvccSatisfies::ParallelWorker(ids)`.
     pub source_manifests: Vec<SearchIndexManifest>,
+
+    pub indexrelid: pg_sys::Oid,
+    pub indexrel: Option<(pg_sys::LOCKMODE, PgSearchRelation)>,
 
     /// A collection of things needed for result-rewriting decisions that
     /// are expensive to look up.
@@ -1699,18 +1695,7 @@ impl AggregateScanState {
     }
 
     /// Returns true if the DataFusion backend is active.
-    pub fn is_datafusion_backend(&self) -> bool {
-        self.datafusion_state.is_some()
-    }
-
-    pub fn precomputed_index_info(&self) -> Option<&AggIndexInfo> {
-        self.precomputed_index_info.as_ref()
-    }
-}
-
-impl CustomScanState for AggregateScanState {
-    fn init_exec_method(&mut self, _cstate: *mut pg_sys::CustomScanState) {
-        // TODO: Unused currently. See the co
+    pub f
 ```
 
 ### Core Architecture Module: `pg_search/src/postgres/customscan/basescan/projections/score.rs`
@@ -1846,6 +1831,12 @@ use tantivy::snippet::SnippetGenerator;
 
 #[derive(Default)]
 pub struct BaseScanState {
+    // Declared first so any DataFusion stream /PgTokioRuntime / Tantivy scorers inside
+    // `exec_method` drop before `visibility_checker`, `doc_from_heap_state`, `search_reader`,
+    // `bitmap_cell`, `bitmap_exec`, and `heaprel`/`indexrel`.
+    exec_method: UnsafeCell<Box<dyn ExecMethod>>,
+    exec_method_name: String,
+
     pub io_trace: Option<crate::index::reader::io_stats::Trace>,
     /// Process-local EXPLAIN metrics (query counts, per-segment JSON, …).
     pub telemetry: ScanTelemetry,
@@ -1866,6 +1857,8 @@ pub struct BaseScanState {
     /// Separate from `ps_ExprContext`, which `exec_custom_scan` resets per row: see the rules in
     /// `solve_expr.rs`.
     pub runtime_context: Option<NonNull<pg_sys::ExprContext>>,
+    pub visibility_checker: Option<VisibilityChecker>,
+    pub doc_from_heap_state: Option<HeapFetchState>,
     pub search_reader: Option<SearchIndexReader>,
     /// Executor startup before `SearchIndexReader::open`; consumed into the
     /// reader's flat `scan_init_ns` metric on first execution.
@@ -1881,13 +1874,6 @@ pub struct BaseScanState {
 
     pub virtual_tuple_count: usize,
 
-    pub heaprelid: pg_sys::Oid,
-    pub heaprel: Option<PgSearchRelation>,
-    pub indexrel: Option<PgSearchRelation>,
-    pub indexrelid: pg_sys::Oid,
-    pub lockmode: pg_sys::LOCKMODE,
-
-    pub visibility_checker: Option<VisibilityChecker>,
     pub segment_count: usize,
     pub(super) worker_selection_reason: Option<WorkerDecisionReason>,
     pub quals: Option<Qual>,
@@ -1921,17 +1907,18 @@ pub struct BaseScanState {
 
     /// Execution state for the child bitmap scan, if a bitmap intersection source was
     /// harvested at plan time.
-    pub bitmap_exec: Option<BitmapExec>,
     pub bitmap_cell: Option<BitmapCell>,
-
-    pub doc_from_heap_state: Option<HeapFetchState>,
+    pub bitmap_exec: Option<BitmapExec>,
 
     // Window aggregate support
     pub window_aggregates: Vec<WindowAggregateInfo>,
     pub window_aggregate_results: Option<HashMap<usize, pg_sys::Datum>>,
 
-    exec_method: UnsafeCell<Box<dyn ExecMethod>>,
-    exec_method_name: String,
+    pub heaprelid: pg_sys::Oid,
+    pub heaprel: Option<PgSearchRelation>,
+    pub indexrel: Option<PgSearchRelation>,
+    pub indexrelid: pg_sys::Oid,
+    pub lockmode: pg_sys::LOCKMODE,
 }
 
 /// The projection that gives a row its score, snippets and window aggregates, and the placeholder
@@ -2019,15 +2006,7 @@ impl BaseScanState {
         self.exec_method = UnsafeCell::new(Box::new(method));
         self.exec_method_name = std::any::type_name::<T>().to_string();
         if let Some(exec_method_type) = updated_exec_method_type {
-            self.exec_method_type = exec_method_type;
-        }
-    }
-
-    #[inline(always)]
-    pub fn exec_method<'a>(&self) -> &'a dyn ExecMethod {
-        let ptr = self.exec_method.get();
-        assert!(!ptr.is_null());
-        unsafe { ptr.as_ref().
+           
 ```
 
 ### Core Architecture Module: `pg_search/src/postgres/customscan/hook.rs`
@@ -2301,11 +2280,11 @@ static mut PREV_PLANNER_HOOK: pg_sys::planner_hook_type = None;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #7313** (2026-11-08): **JoinScan segfaults when a projected expression contains a scalar subquery**
+  *Symptoms*: ### What happens?  ParadeDB Join Scan crashes the server (segmentation fault) when an expression in the SELECT list contains a scalar subquery, such as `a.q + (SELECT 1)`. Postgres then restarts all connections. A prepared statement parameter in the same place, with a generic plan, fails with ERROR: no value found for parameter 1.  ### To Reproduce  ```sql CREATE EXTENSION IF NOT EXISTS pg_search;  CREATE TABLE a (id int PRIMARY KEY, q int); CREATE TABLE b (id int PRIMARY KEY, a_id int);  INSERT INTO a VALUES (1, 5); INSERT INTO b VALUES (1, 1);  CREATE INDEX a_idx ON a USING paradedb (id, q); CREATE INDEX b_idx ON b USING paradedb (id, a_id);  SELECT a.id, a.q + (SELECT 1) FROM a JOIN b ON b.a_id = a.id WHERE a.id @@@ pdb.all() ORDER BY a.id LIMIT 1; ```  The server crashes with "terminated by signal 11: Segmentation fault". Expected 1 | 6. With SET paradedb.enable_join_custom_scan = off; it returns 1 | 6.  The parameter case:  ```sql SET plan_cache_mode = force_generic_plan; PREPARE s(int) AS   SELECT a.id, a.q + $1 FROM a JOIN b ON b.a_id = a.id   WHERE a.id @@@ pdb.all() ORDER BY a.id LIMIT 1; EXECUTE s(1); ```  Returns ERROR: no value found for parameter 1. Expected 1 | 6.  ### OS:  macOS  ### ParadeDB Version (e.g. output of `SELECT * FROM paradedb.version_info();`):  e80cf37  ### Are you using ParadeDB Docker, Helm, or the extension(s) standalone?  ParadeDB pg_search Extension  ### Full Name:  Niladri Adhikary  ### Affiliation:  N/A  ### Did you include all relevant da
+
 - **Issue #7214** (2026-11-05): **Aggregate Scan returns NULL for an oid grouping key of 0**
   *Symptoms*: The Tantivy backend of Aggregate Scan returns SQL NULL for `0::oid`, even when the grouping column is `NOT NULL`. PostgreSQL returns 0.  ## Reproduce  ```sql CREATE EXTENSION IF NOT EXISTS pg_search CASCADE; BEGIN; SET LOCAL max_parallel_workers_per_gather = 0; SET LOCAL enable_indexscan = off; SET LOCAL paradedb.enable_aggregate_custom_scan = on;  CREATE TABLE oid_groups (id bigint PRIMARY KEY, k oid NOT NULL); INSERT INTO oid_groups VALUES (1, 0), (2, 1); CREATE INDEX oid_groups_idx ON oid_groups USING paradedb (id, k); ANALYZE oid_groups;  EXPLAIN (COSTS OFF) SELECT k, count(*) FROM oid_groups WHERE id @@@ pdb.all() GROUP BY k ORDER BY k; -- Custom Scan (ParadeDB Aggregate Scan), Tantivy terms on k.  SELECT k, count(*) FROM oid_groups WHERE id @@@ pdb.all() GROUP BY k ORDER BY k; -- Actual: NULL | 1 --            1 | 1  SET LOCAL paradedb.enable_aggregate_custom_scan = off; SET LOCAL paradedb.enable_custom_scan = off; SELECT k, count(*) FROM oid_groups GROUP BY k ORDER BY k; -- Expected: 0 | 1 --           1 | 1 ROLLBACK; ```  `TantivyValue::try_into_datum` calls `Oid::from(u32::try_from(self)?).into_datum()` in [types.rs:90](https://github.com/paradedb/paradedb/blob/d0213faa89c9b51998155cec6418e6b3e04aee60/pg_search/src/postgres/types.rs#L90). pgrx returns `None` for OID zero (`Oid::INVALID`), so a valid SQL value becomes NULL. Zero should remain a non-NULL Datum.  Reproduced PG18.1  
-
-- **Issue #7167** (2026-11-03): **Negated boolean heap filter includes NULL rows in a ParadeDB Base Scan**
-  *Symptoms*: ### What happens?  For `body @@@ 'hello' AND NOT flag`, a ParadeDB Base Scan returns a row where `flag IS NULL`. PostgreSQL's three-valued logic excludes that row because `NOT NULL` is still NULL. Disabling the custom scan returns the correct row set.  ### To reproduce  ```sql CREATE EXTENSION IF NOT EXISTS vector; CREATE EXTENSION IF NOT EXISTS pg_search; CREATE TABLE not_null_repro(id integer PRIMARY KEY, body text, flag boolean); INSERT INTO not_null_repro VALUES   (1, 'hello true', true),   (2, 'hello false', false),   (3, 'hello null', NULL),   (4, 'other', false); CREATE INDEX not_null_repro_idx ON not_null_repro USING paradedb (id, body); ANALYZE not_null_repro;  SET paradedb.enable_custom_scan = off; SELECT array_agg(id ORDER BY id) FROM not_null_repro WHERE body @@@ 'hello' AND NOT flag; -- {2}  SET paradedb.enable_custom_scan = on; SET paradedb.enable_filter_pushdown = on; EXPLAIN (COSTS OFF) SELECT id FROM not_null_repro WHERE body @@@ 'hello' AND NOT flag; -- Custom Scan (ParadeDB Base Scan)  SELECT array_agg(id ORDER BY id) FROM not_null_repro WHERE body @@@ 'hello' AND NOT flag; -- {2,3}; expected {2}  SELECT array_agg(id ORDER BY id) FROM not_null_repro WHERE body @@@ 'hello' AND flag IS NOT TRUE; -- {2,3} (control: this expression should include the NULL row)  DROP TABLE not_null_repro; ```  `EXPLAIN` places the `flag` heap filter under a Tantivy `must_not` query. A NULL `flag` does not match the inner filter, so `must_not` retains it, although the SQL `NOT` p
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2322,1024 +2301,529 @@ static mut PREV_PLANNER_HOOK: pg_sys::planner_hook_type = None;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b5cb193f` (2026-11-05)
-**Commit Message**: fix: enforce planner warning modes consistently (#7050)
+### Incident Patch 1: `f3390563` (2026-11-08)
+**Commit Message**: fix: polish RankJoin eligibility, planner warnings, and parameterized score projections (#7305)
 
 ## What
 
-Make `paradedb.planner_warnings` apply consistently to planning,
-execution, and cached plans.
-
-- Visibility-map, sequential-scan, and filter-spill diagnostics raise
-errors in `error` mode and are suppressed in `off` mode.
-- `EXPLAIN ANALYZE` enforces error mode. Plain `EXPLAIN` still reports
-warnings so the fallback plan can be inspected.
-- Changing the setting invalidates cached plans, including when `SET
-LOCAL` is restored on commit or rollback.
+1. Fix a backend crash (`SIGSEGV`) when a `JoinScan` `SELECT` list
+combines `pdb.score()` with a scalar subquery (`InitPlan`) or
+prepared-statement parameter (`$1`).
+2. Emit a planner warning (`WARNING: RankJoinExec not used: ...`) during
+`EXPLAIN` when `paradedb.planner_warnings` is enabled and a
+score-ordered top-K join falls back to `HashJoinExec`.
+3. Keep `RankJoinExec` enabled when one side of a two-sided score join
+has 6 or more `OR` search predicates (for example, searching across many
+text columns on one table), or when a cross-table `OR` contains repeated
+predicates on the same table.
 
 ## Why
 
-Error mode currently permits queries to execute through runtime
-warnings, `EXPLAIN ANALYZE`, and plans cached with warnings disabled.
-Sequential-scan and spill warnings also ignore `off`.
+- Users normalizing or offsetting `pdb.score()` in `SELECT` with a
+scalar subquery or `$1` parameter hit a backend crash during planning or
+execution.
+- When a top-K join ordered by `pdb.score()` was ineligible for
+`RankJoinExec`, it silently fell back to `HashJoinExec` even with
+`paradedb.planner_warnings` turned on, making it hard to diagnose why a
+query was slow.
+- `RankJoinExec` checks that neither side of a two-sided score join
+dominates the combined score by more than 5:1 (
 
-## How
-
-Apply the configured severity before runtime warning deduplication,
-restrict the EXPLAIN exemption to statements without ANALYZE, and
-invalidate saved plans through the GUC assignment hook. Runtime errors
-cannot be suppressed by warning deduplication or by the visibility-map
-warning's leader-only rule.
-
-Update the visibility-map documentation, changelog, and existing
-expectations for warnings disabled with `off`.
-
-## Tests
-
-- PostgreSQL 18: all 20 targeted SQL regression 
-
-**File**: `docs/operate/performance-tuning/reads.mdx` (modified, +1/-1)
-```diff
-@@ -70,7 +70,7 @@ When a table experiences writes (`INSERT`, `UPDATE`, or `DELETE`), Postgres clea
- 
- ### Diagnosing Visibility Map Staleness
- 
--When a scan encounters a significantly stale visibility map (by default, at least `paradedb.visibility_map_warning_threshold = 10000` non-all-visible heap blocks across the table and at least 50% of scanned blocks not all-visible), ParadeDB emits a once-per-query `WARNING` (controlled by `paradedb.planner_warnings`).
-+When a scan encounters a significantly stale visibility map (by default, at least `paradedb.visibility_map_warning_threshold = 10000` non-all-visible heap blocks across the table and at least 50% of scanned blocks not all-visible), ParadeDB emits a once-per-query `WARNING`. Setting `paradedb.planner_warnings = 'off'` suppresses this diagnostic; setting it to `'error'` aborts the query instead, including under `EXPLAIN ANALYZE`.
- 
- You can also inspect `EXPLAIN ANALYZE` output to see how much heap visibility work a query performed:
- 
-```
-
-**File**: `docs/project/changelog/unreleased/7050.bugfix.mdx` (added, +5/-0)
+**File**: `docs/project/changelog/unreleased/7305.bugfix.mdx` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
 +header: stability
 +---
 +
-+- Fixed `paradedb.planner_warnings` so runtime scan, spill, and visibility-map diagnostics honor `off` and `error`, `EXPLAIN ANALYZE` enforces error mode, and changing the setting invalidates cached plans.
++Fixed a crash when a `JoinScan` `SELECT` list combines `pdb.score()` with a scalar subquery or query parameter, kept `RankJoinExec` for joins with many `OR` or constant-score predicates on one side, and added `EXPLAIN` warnings when `RankJoinExec` is not used.
 ```
 
-**File**: `pg_search/src/gucs.rs` (modified, +29/-10)
+**File**: `docs/reference/configuration.mdx` (modified, +17/-17)
 ```diff
-@@ -15,6 +15,7 @@
- // You should have received a copy of the GNU Affero General Public License
- // along with this program. If not, see <http://www.gnu.org/licenses/>.
+@@ -28,23 +28,23 @@ ALTER ROLE app_user SET paradedb.vector_cluster_max_probe = 0.05;
  
-+use pgrx::guc::GucEnum;
- use pgrx::pg_sys::panic::ErrorReport;
- use pgrx::{
-     GucContext, GucFlags, GucRegistry, GucSetting, PgLogLevel, PgSqlErrorCode, function_name,
-@@ -76,6 +77,18 @@ static ENABLE_SEGMENT_PRUNING: GucSetting<bool> = GucSetting::<bool>::new(true);
- static PLANNER_WARNINGS: GucSetting<PlannerWarnings> =
-     GucSetting::<PlannerWarnings>::new(PlannerWarnings::Warning);
+ These settings control whether ParadeDB proposes custom plans for eligible queries.
  
-+/// Recheck saved plans when their diagnostic policy changes, including SET LOCAL rollback.
-+/// PostgreSQL calls assign hooks before updating the GUC's stored value.
-+#[pgrx::pg_guard]
-+unsafe extern "C-unwind" fn assign_planner_warnings(
-+    new_value: std::ffi::c_int,
-+    _extra: *mut std::ffi::c_void,
-+) {
-+    if new_value != PLANNER_WARNINGS.get().to_ordinal() {
-+        unsafe { pg_sys::ResetPlanCache() };
-+    }
-+}
-+
- /// Allows the user to toggle the use of our "ParadeDB Join Scan".
- static ENABLE_JOIN_CUSTOM_SCAN: GucSetting<bool> = GucSetting::<bool>::new(true);
- 
-@@ -438,16 +451,22 @@ pub fn init() {
-         GucFlags::default(),
-     );
- 
--    GucRegistry::define_enum_guc(
--        c"paradedb.planner_warnings",
--        c"Controls the behavior of ParadeDB planner warnings when an optimized scan cannot be used",
--        c"When set to 'warning' (default), logs a warning if a query expected to use an optimized \
--          scan (BaseScan / Top K, AggregateScan, or JoinScan) cannot. When set to 'error', raises \
--          an error instead. When set to 'off', suppresses checks and warnings.",
--        &PLANNER_WARNINGS,
--        GucContext::Userset,
--        GucFlags::default(),
--    );
-+    unsafe {
-+        GucRegistry::define_enum_guc_with_hooks(
-+            c"paradedb.planner_warnings",
-+            c"Controls ParadeDB planning and execution diagnostics",
-+            c"When set to 'warning' (default), logs warnings about scan fallbacks, filter spills, \
-+              and stale visibility maps. When set to 'error', raises an error instead, except \
-+              during EXPLAIN without ANALYZE. When set to 'off', suppresses these diagnostics. \
-+              Changing this setting invalidates cached plans.",
-+            &PLANNER_WARNINGS,
-+            GucContext::Userset,
-+            GucFlags::default(),
-+            None,
-+            Some(assign_planner_warnings),
-+            None,
-+        );
-+    }
- 
-     GucRegistry::define_enum_guc(
-         c"paradedb.disjunction_pruning",
+-| Setting                                             | Default       | Context | Description                                                                                                                 |
+-| --------------------------------------------------- | ------------- | ------- | --------------------------------------------------------------------------------------------------------------------------- |
+-| `paradedb.enable_custom_scan`                       | `on`          | user    | Enables ParadeDB's base custom scan, which replaces table scans with ParadeDB index scans.                                  |
+-| `paradedb.enable_aggregate_custom_scan`             | `on`          | user    | Enables the aggregate custom scan for eligible `pdb.agg` and `GROUP BY` queries.                                            |
+-| `paradedb.enable_join_custom_scan`                  | `on`          | user    | Enables the join custom scan, which pushes eligible joins into the ParadeDB executor.                                       |
+-| `paradedb.enable_rank_join`                         | `on`          | user    | Enables `RankJoinExec` and lazy probe-side top-K execution for eligible joins with `ORDER BY ... LIMIT`.                    |
+-| `paradedb.rank_join_min_rows`                       | `10000`       | user    | Minimum estimated matching rows on join inputs before replacing a one-pass `HashJoinExec` with `RankJoinExec` or lazy sort. |
+-| `paradedb.rank_join_unscored_selectivity_threshold` | `0.08`        | user    | Minimum unscored input selectivity for single-sided `RankJoinExec` before preferring `HashJoinExec` with `InList` pushdown. |
+-| `paradedb.enable_custom_scan_without_operator`      | `off`         | user    | Allows custom scans without a ParadeDB search operator when the whole `WHERE` clause can push down.                         |
+-| `paradedb.enable_filter_pushdown`                   | `on`          | user    | Allows non-indexed predicates to use heap filtering after the ParadeDB scan.                                                |
+-| `paradedb.enable_range_partitioned_join`            | `on`          | user    | Enables range co-partitioned joins and asymmetric range alignment for MPP joins on indexes configured with `partition_by`.  |
+-| `paradedb.enable_segment_pruning`                   | `on`          | user    | Prunes non-matching index segments using per-segment min/max field statistics during planning and scan execution.           |
+-| `paradedb.enable_heuristic_selectivity`             | `on`          | user    | Uses cheap planner selectivity estimates for expensive fuzzy, regex, and range query shapes.                                |
+-| `paradedb.per_tuple_cost`                           | `100000000.0` | user    | Planner cost multiplier that discourages using ParadeDB operators outside a supported index plan.                           |
+-| `paradedb.explain_recursive_estimates`              | `off`         | user    | Shows recursive document-count estimates in `EXPLAIN VERBOSE`; intended for debugging.                                      |
+-| `paradedb.planner_warnings`                         | `warning`     | user    | Controls warnings when an optimized scan cannot be used. Accepts `off`, `warning`, or `error`.                              |
+-| `paradedb.spill_to_disk`                            | `off`         | user    | Allows eligible join and aggregate queries to spill to disk when they exceed `work_mem`.                                    |
++| Setting                                             | Default       | Context | Description                                                                                                                                                                            |
++| --------------------------------------------------- | ------------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
++| `paradedb.enable_custom_scan`                       | `on`          | user    | Enables ParadeDB's base custom scan, which replaces table scans with ParadeDB index scans.                                                                                             |
++| `paradedb.enable_aggregate_custom_scan`             | `on`          | user    | Enables the aggregate custom scan for eligible `pdb.agg` and `GROUP BY` queries.                                                                                                       |
++| `paradedb.enable_join_custom_scan`                  | `on`          | user    | Enables the join custom scan, which pushes eligible joins into the ParadeDB executor.                                
 ```
 
-**File**: `pg_search/src/postgres/planner_warnings.rs` (modified, +95/-17)
+**File**: `pg_search/src/postgres/customscan/datafusion/expr_translators.rs` (modified, +15/-0)
 ```diff
-@@ -193,17 +193,17 @@ pub fn clear_planner_warnings() {
- }
+@@ -38,6 +38,7 @@ use crate::postgres::customscan::datafusion::translator::{
+ };
+ use crate::postgres::customscan::expr_eval::InputVarInfo;
+ use crate::postgres::customscan::pg_expr_udf::{InputDecode, PgExprUdf};
++use crate::postgres::node::NodeExt;
  
- thread_local! {
--    /// Tracks whether the current execution is within an `EXPLAIN` statement.
-+    /// Tracks whether the current execution is within an `EXPLAIN` without `ANALYZE`.
+ const PVC_RECURSE_ALL: i32 = (pg_sys::PVC_RECURSE_AGGREGATES
+     | pg_sys::PVC_RECURSE_WINDOWFUNCS
+@@ -386,6 +387,8 @@ impl<'a> PredicateTranslator<'a> {
+     /// columns, and delegates to `ExecEvalExpr`.
      ///
-     /// When `paradedb.planner_warnings` is set to `error`, queries that cannot use
--    /// accelerated ParadeDB custom scans fail with an `ERROR`. However, running `EXPLAIN`
-+    /// accelerated ParadeDB custom scans fail with an `ERROR`. However, running plain `EXPLAIN`
-     /// on those queries should still succeed so users can inspect the fallback execution plan
-     /// and diagnose optimization issues. When `IN_EXPLAIN` is `true`, `emit_planner_warnings()`
-     /// downgrades errors to `WARNING`s.
-     static IN_EXPLAIN: Cell<bool> = const { Cell::new(false) };
- }
- 
--/// An RAII guard that sets `IN_EXPLAIN` to `true` if `is_explain` is true, and restores
-+/// An RAII guard that sets `IN_EXPLAIN` to `is_explain`, and restores
- /// the previous state when dropped (supporting nested utility statements and clean unwinds).
- pub struct ExplainGuard {
-     prev: bool,
-@@ -213,13 +213,7 @@ impl ExplainGuard {
-     /// Creates a new `ExplainGuard`. If `is_explain` is `true`, marks the thread-local
-     /// state as being inside an `EXPLAIN` query.
-     pub fn new(is_explain: bool) -> Self {
--        let prev = IN_EXPLAIN.with(|cell| {
--            let prev = cell.get();
--            if is_explain {
--                cell.set(true);
--            }
--            prev
--        });
-+        let prev = IN_EXPLAIN.with(|cell| cell.replace(is_explain));
-         Self { prev }
-     }
- }
-@@ -232,11 +226,62 @@ impl Drop for ExplainGuard {
-     }
- }
- 
--/// Returns whether the current thread is currently planning or executing an `EXPLAIN` query.
-+/// Returns whether the current thread is planning an `EXPLAIN` without `ANALYZE`.
- pub fn is_in_explain() -> bool {
-     IN_EXPLAIN.with(|cell| cell.get())
- }
- 
-+// EXPLAIN EXECUTE bypasses ExplainOneQuery_hook. Cover utility statements too,
-+// and invalidate plans built while errors were downgraded before they can execute.
-+static mut PREV_PROCESS_UTILITY_HOOK: pg_sys::ProcessUtility_hook_type = None;
+     /// Returns `None` when the expression can't be wrapped:
++    ///   - the expression contains a parameter (`T_Param`), subplan (`T_SubPlan`),
++    ///     or score function (`pdb.score`),
+     ///   - result type is outside the supported set,
+     ///   - some input Var can't be resolved against `self.sources` / mapper,
+     ///   - `nodeToString` returns null.
+@@ -394,6 +397,18 @@ impl<'a> PredicateTranslator<'a> {
+     /// [`PredicateTranslator::translate`] — any subtree that fails native
+     /// translation is wrapped here.
+     pub(crate) unsafe fn try_wrap_as_udf(&self, node: *mut pg_sys::Node) -> Option<Expr> {
++        if node.contains_param()
++            || node.contains_type(pg_sys::NodeTag::T_SubPlan)
++            || node.contains_functions(&crate::postgres::customscan::score_funcoids())
++        {
++            pgrx::debug1!(
++                "PredicateTranslator: declining UDF wrap for expression containing Param, SubPlan, or score function [{}] | {}",
++                node_tag_debug(node),
++                self.deparse_for_debug(node)
++            );
++            return None;
++        }
 +
-+struct ExplainUtilityGuard {
-+    _explain: ExplainGuard,
-+    invalidate: bool,
-+}
-+
-+crate::impl_safe_drop!(ExplainUtilityGuard, |self| {
-+    if self.invalidate {
-+        unsafe { pg_sys::ResetPlanCache() };
+         let result_type_oid = pg_sys::exprType(node);
+         if PgExprUdf::get_result_type_to_arrow(result_type_oid).is_none() {
+             pgrx::debug1!(
+```
+
+**File**: `pg_search/src/postgres/customscan/datafusion/translator.rs` (modified, +61/-2)
+```diff
+@@ -30,6 +30,9 @@ use crate::postgres::customscan::joinscan::build::{
+     RelationAlias, ScoreColumn, UnnestNode, VectorScoreColumn,
+ };
+ use crate::postgres::customscan::joinscan::privdat::OutputColumnInfo;
++use crate::postgres::customscan::joinscan::window_func::{
++    WINDOW_SENTINEL_VARNO, WindowAggIndex, WindowAggList, rewrite_window_funcs_to_sentinels,
++};
+ use crate::postgres::customscan::pg_expr_udf::InputDecode;
+ use crate::scan::ScanMode;
+ use crate::schema::SearchFieldType;
+@@ -240,17 +243,50 @@ impl<'a> PredicateTranslator<'a> {
+         sources: &'a [&'a JoinSource],
+         node: *mut pg_sys::Node,
+         plan: Option<&'a RelNode>,
++    ) -> bool {
++        Self::can_translate_inner(root, sources, node, plan, None)
 +    }
-+});
 +
-+#[allow(clippy::too_many_arguments)]
-+#[rustfmt::skip]
-+#[pgrx::pg_guard]
-+unsafe extern "C-unwind" fn explain_process_utility_hook(
-+    pstmt: *mut pg_sys::PlannedStmt,
-+    query_string: *const core::ffi::c_char,
-+    read_only_tree: bool,
-+    context: pg_sys::ProcessUtilityContext::Type,
-+    params: pg_sys::ParamListInfo,
-+    query_env: *mut pg_sys::QueryEnvironment,
-+    dest: *mut pg_sys::DestReceiver,
-+    qc: *mut pg_sys::QueryCompletion,
-+) {
-+    let node = (*pstmt).utilityStmt;
-+    let _guard = if !node.is_null() && (*node).type_ == pg_sys::NodeTag::T_ExplainStmt {
-+        let explain = &*node.cast::<pg_sys::ExplainStmt>();
-+        let mut analyze = false;
-+        for option in pgrx::PgList::<pg_sys::DefElem>::from_pg(explain.options).iter_ptr() {
-+            if std::ffi::CStr::from_ptr((*option).defname).to_bytes() == b"analyze" {
-+                analyze = pg_sys::defGetBoolean(option);
++    /// Like [`Self::can_translate`], but also resolves embedded `WindowFunc`
++    /// subtrees against `window_aggs` (rewriting them to sentinel `Var`s with
++    /// placeholder `resno = 0` to match the execution path in
++    /// `translate_child_projection_expr`).
++    pub fn can_translate_with_windows(
++        root: Option<*mut pg_sys::PlannerInfo>,
++        sources: &'a [&'a JoinSource],
++        node: *mut pg_sys::Node,
++        plan: Option<&'a RelNode>,
++        window_aggs: &'a WindowAggList,
++    ) -> bool {
++        Self::can_translate_inner(root, sources, node, plan, Some(window_aggs))
++    }
++
++    fn can_translate_inner(
++        root: Option<*mut pg_sys::PlannerInfo>,
++        sources: &'a [&'a JoinSource],
++        node: *mut pg_sys::Node,
++        plan: Option<&'a RelNode>,
++        window_aggs: Option<&'a WindowAggList>,
+     ) -> bool {
+         struct ValidationMapper<'a> {
+             sources: &'a [&'a JoinSource],
+             plan: Option<&'a RelNode>,
++            window_aggs: Option<&'a WindowAggList>,
+         }
+ 
+         impl<'a> ColumnMapper for ValidationMapper<'a> {
+             /// Just confirm the source exists — field registration hasn't
+             /// happened yet at this planning stage. Column validity is
+             /// covered by all_vars_are_fast_fields_recursive which runs first.
+-            fn map_var(&self, varno: pg_sys::Index, _varattno: pg_sys::AttrNumber) -> Option<Expr> {
++            fn map_var(&self, varno: pg_sys::Index, varattno: pg_sys::AttrNumber) -> Option<Expr> {
++                if varno == WINDOW_SENTINEL_VARNO {
++                    let index = WindowAggIndex::from_sentinel_attno(varattno)?;
++                    let window_agg = self.window_aggs?.get(index)?;
++                    if window_agg.requires_udf_decode() {
++                        return None;
++                    }
++                    return Some(col("placeholder"));
++                }
+                 if let Some(_source) = self.sources.iter().find(|s| s.contains_rti(varno)) {
+                     return Some(col("placeholder"));
+                 }
+@@ -265,9 +301,32 @@ impl<'a> PredicateTranslator<'a> {
+                 }
+                 None
+             }
++
++            fn udf_input(
++                &self,
++                varno: pg_sys::Index,
++                varattno: pg_sys::AttrNumber,
++            ) -> Option<(Expr, InputDecode)> {
++                if varno == WINDOW_SENTINEL_VARNO {
++                    let index = WindowAggIndex::from_sentinel_attno(varattno)?;
++                    let window_agg = self.window_aggs?.get(index)?;
++                    return Some((col("placeholder"), window_agg.udf_input_decode()));
++                }
++                None
++            }
+         }
+ 
+-        let mapper = ValidationMapper { sources, plan };
++        let node = match window_aggs {
++            Some(aggs) if !aggs.is_empty() => unsafe {
++                rewrite_window_funcs_to_sentinels(node, 0, aggs)
++            },
++            _ => node,
++        };
++        let mapper = ValidationMapper {
++            sources,
++            plan,
++            window_aggs,
++        };
+         let mut translator = Self::new(sources).with_mapper(Box::new(mapper));
+         if let Some(r) = root {
+             translator = translator.with_planner_info(r);
+```
+
+**File**: `pg_search/src/postgres/customscan/joinscan/build.rs` (modified, +14/-6)
+```diff
+@@ -2226,17 +2226,25 @@ pub fn assign_tagged_queries<'a>(
+     for source in sources {
+         let alias =
+             RelationAlias::new(source.scan_info.alias.as_deref()).execution(source.plan_position);
+-        let local_queries: Vec<crate::scan::TaggedQuery> = predicates
+-            .iter()
+-            .enumerate()
+-            .filter(|(_, (plan_pos, _))| *plan_pos == source.plan_position)
++        // Deduplicate by `p.query` per source: tag columns resolve by query equality,
++        // so a duplicate is never referenced and scores twice.
++        let mut unique_queries: Vec<(usize, &SearchQueryInput)> = Vec::new();
++        for (global_idx, (plan_pos, p)) in predicates.iter().enumerate() {
++            if *plan_pos == source.plan_position
++                && !unique_queries.iter().any(|(_, q)| *q == &p.query)
++            {
++                unique_queries.push((global_idx, &p.query));
 +            }
 +        }
-+        Some(ExplainUtilityGuard {
-+            _explain: ExplainGuard::new(!analyze),
-+            invalidate: !analyze && crate::gucs::planner_warnings() == crate::gucs::PlannerWarnings::Error,
-+        })
-+    } else {
-+        None
-+    };
-+    if let Some(prev_hook) = PREV_PROCESS_UTILITY_HOOK {
-+        prev_hook(pstmt, query_string, read_only_tree, context, params, query_env, dest, qc);
-+    } else {
-+        pg_sys::standard_ProcessUtility(pstmt, query_string, read_only_tree, context, params, query_env, dest, qc);
++        let local_queries: Vec<crate::scan::TaggedQuery> = unique_queries
++            .into_iter()
+             .enumerate()
+             .map(
+-                |(local_idx, (global_idx, (_, p)))| crate::scan::TaggedQuery {
++                |(local_idx, (global_idx, query))| crate::scan::TaggedQuery {
+                     tag_name: format!("__{alias}_tag_{local_idx}"),
+                     tag_idx: crate::scan::TagIndex(local_idx),
+                     predicate_idx: crate::scan::GlobalPredicateIndex(global_idx),
+-                    query: Box::new(p.query.clone()),
++                    query: Box::new(query.clone()),
+                 },
+             )
+             .collect();
+```
+
+**File**: `pg_search/src/postgres/customscan/joinscan/mod.rs` (modified, +72/-4)
+```diff
+@@ -1270,6 +1270,8 @@ impl CustomScan for JoinScan {
+                 pg_sys::copyObjectImpl(tlist_ptr.cast()).cast(),
+             );
+             // replace pg_projected slots with NULL placeholders, and add their inputs to the tlist.
++            let mut pg_projected_exprs =
++                Vec::with_capacity(private_data.join_clause.pg_projected_resnos.len());
+             for resno in &private_data.join_clause.pg_projected_resnos {
+                 let te = custom_scan_tlist
+                     .get_ptr(((*resno) - 1) as usize)
+@@ -1283,7 +1285,10 @@ impl CustomScan for JoinScan {
+                     pg_sys::exprCollation(expr),
+                 )
+                 .cast();
+-                crate::postgres::utils::add_vars_to_tlist(expr, &mut custom_scan_tlist);
++                pg_projected_exprs.push(expr);
++            }
++            for expr in pg_projected_exprs {
++                add_vars_and_scores_to_tlist(expr, &mut custom_scan_tlist);
+             }
+ 
+             let path_private_full = PgList::<pg_sys::Node>::from_pg((*best_path).custom_private);
+@@ -2093,6 +2098,46 @@ impl CustomScan for JoinScan {
+     }
+ }
+ 
++/// Ensure all non-score `Var` nodes and `pdb.score(...)` subexpressions referenced by
++/// `expr` are present in `tlist` so PostgreSQL's `set_customscan_references` can rewrite
++/// them to `INDEX_VAR` references into the scan slot.
++unsafe fn add_vars_and_scores_to_tlist(
++    expr: *mut pg_sys::Node,
++    tlist: &mut PgList<pg_sys::TargetEntry>,
++) {
++    if expr.is_null() {
++        return;
 +    }
++
++    expr.walk(|node| {
++        if matches!(
++            (*node).type_,
++            pg_sys::NodeTag::T_PlaceHolderVar | pg_sys::NodeTag::T_FuncExpr
++        ) {
++            let stripped = crate::postgres::utils::strip_wrappers(node);
++            if get_score_func_rti(stripped.cast()).is_some() {
++                let already_present = tlist
++                    .iter_ptr()
++                    .any(|te| pg_sys::equal((*te).expr.cast(), node.cast()));
++                if !already_present {
++                    let resno = tlist.len() as pg_sys::AttrNumber + 1;
++                    let new_score = pg_sys::copyObjectImpl(node.cast()).cast::<pg_sys::Expr>();
++                    let te = pg_sys::makeTargetEntry(new_score, resno, std::ptr::null_mut(), true);
++                    tlist.push(te);
++                }
++                return crate::postgres::node::WalkControl::SkipChildren;
++            }
++        }
++
++        if let Some(var_ptr) = nodecast!(Var, T_Var, node) {
++            crate::postgres::utils::push_var_to_tlist_if_absent(var_ptr, tlist);
++            return crate::postgres::node::WalkControl::SkipChildren;
++        }
++
++        crate::postgres::node::WalkControl::Continue
++    });
 +}
 +
- static mut PREV_EXPLAIN_ONE_QUERY_HOOK: pg_sys::ExplainOneQuery_hook_type = None;
- 
- #[allow(clippy::too_many_arguments)]
-@@ -251,7 +296,8 @@ unsafe extern "C-unwind" fn paradedb_explain_one_query_hook(
-     params: pg_sys::ParamListInfo,
-     query_env: *mut pg_sys::QueryEnvironment,
- ) {
--    let _explain_guard = ExplainGuard::new(true);
-+    // ANALYZE executes the query, so it must enforce the same policy as SELECT.
-+    let _explain_guard = ExplainGuard::new(!(*es).analyze);
- 
-     if let Some(prev_hook) = PREV_EXPLAIN_ONE_QUERY_HOOK {
-         prev_hook(query, cursor_options, into, es, query_string, params, query_env);
-@@ -288,8 +334,10 @@ unsafe extern "C-unwind" fn paradedb_explain_one_query_hook(
- /// Register an `ExplainOneQuery_hook` to track when queries are being planned/executed under `EXPLAIN`.
- ///
- /// This allows `emit_planner_warnings()` to downgrade `paradedb.planner_warnings = 'error'`
--/// to warnings during `EXPLAIN`, allowing users to inspect the query plan.
-+/// to warnings during `EXPLAIN` without `ANALYZE`, allowing u
-```
-
-**File**: `pg_search/tests/pg_regress/expected/more_like_this.out` (modified, +0/-4)
-```diff
-@@ -450,16 +450,12 @@ SET enable_indexscan = off;
- SET enable_bitmapscan = off;
- DISCARD PLANS;
- EXECUTE mlt_alias_lookup('source');
--WARNING:  the table is being sequentially scanned for this query, so performance may be slow
--if you are not sure why, please file an issue: https://github.com/paradedb/paradedb/issues/new/choose
-  array_agg 
- -----------
-  {1,2}
- (1 row)
- 
- EXECUTE mlt_alias_lookup('other-b');
--WARNING:  the table is being sequentially scanned for this query, so performance may be slow
--if you are not sure why, please file an issue: https://github.com/paradedb/paradedb/issues/new/choose
-  array_agg 
- -----------
-  {3}
-```
-
-**File**: `pg_search/tests/pg_regress/expected/planner_warning_enforcement.out` (added, +267/-0)
-```diff
-@@ -0,0 +1,267 @@
-+-- Severity applies to planning, execution, EXPLAIN ANALYZE, and saved plans.
-+\i common/common_setup.sql
-+CREATE EXTENSION IF NOT EXISTS pg_search;
-+-- Disable parallel workers to avoid differences in plans
-+SET max_parallel_workers_per_gather = 0;
-+SET enable_indexscan to OFF;
-+SET paradedb.enable_columnar_exec = true;
-+CREATE TABLE warning_policy_docs (
-+    id int PRIMARY KEY,
-+    body text COLLATE "C",
-+    padding text
-+) WITH (autovacuum_enabled = false, fillfactor = 70);
-+INSERT INTO warning_policy_docs
-+SELECT id, 'database ' || id, repeat('x', 600)
-+FROM generate_series(1, 20000) id;
-+CREATE INDEX warning_policy_idx ON warning_policy_docs USING paradedb(id, body)
-+WITH (sort_by = 'ctid ASC NULLS FIRST', mutable_segment_rows = 0,
-+      target_segment_count = 2, layer_sizes = '10TB', background_layer_sizes = '0');
-+WARNING:  only 2 parallel workers were available for index build
-+VACUUM warning_policy_docs;
-+-- Inspecting a plan remains possible; executing it must raise, including after
-+-- an EXPLAIN error unwinds its guard.
-+SET paradedb.planner_warnings = 'error';
-+EXPLAIN (COSTS OFF)
-+SELECT id FROM warning_policy_docs WHERE body ||| 'database' ORDER BY body LIMIT 1;
-+WARNING:  Query has LIMIT 1 but is not using Top K scan (using Normal instead). Reason: ORDER BY columns cannot be pushed down to the index. This may cause poor performance on large datasets. Remedies: Ensure ORDER BY columns are included in the ParadeDB index. Numeric columns are fast by default. For string columns, use pdb.literal tokenizer. To disable this warning: SET paradedb.planner_warnings = 'off' (table: warning_policy_docs)
-+                                                                                                QUERY PLAN                                                                                                 
-+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-+ Limit
-+   ->  Sort
-+         Sort Key: body COLLATE "C"
-+         ->  Custom Scan (ParadeDB Base Scan) on warning_policy_docs
-+               Table: warning_policy_docs
-+               Index: warning_policy_idx
-+               Exec Method: NormalScanExecState
-+               Scores: false
-+               Tantivy Query: {"with_index":{"query":{"match":{"field":"body","value":"database","tokenizer":null,"distance":null,"transposition_cost_one":null,"prefix":null,"conjunction_mode":false}}}}
-+(9 rows)
-+
-+EXPLAIN (ANALYZE, COSTS OFF, TIMING OFF)
-+SELECT id FROM warning_policy_docs WHERE body ||| 'database' ORDER BY body LIMIT 1;
-+ERROR:  Query has LIMIT 1 but is not using Top K scan (using Normal instead). Reason: ORDER BY columns cannot be pushed down to the index. This may cause poor performance on large datasets. Remedies: Ensure ORDER BY columns are included in the ParadeDB index. Numeric columns are fast by default. For string columns, use pdb.literal tokenizer. To disable this warning: SET paradedb.planner_warnings = 'off' (table: warning_policy_docs)
-+SELECT id FROM warning_policy_docs WHERE body ||| 'database' ORDER BY body LIMIT 1;
-+ERROR:  Query has LIMIT 1 but is not using Top K scan (using Normal instead). Reason: ORDER BY columns cannot be pushed down to the index. This may cause poor performance on large datasets. Remedies: Ensure ORDER BY columns are included in the ParadeDB index. Numeric columns are fast by default. For string columns, use pdb.literal tokenizer. To disable this warning: SET paradedb.planner_warnings = 'off' (table: warning_policy_docs)
-+EXPLAIN (COSTS OFF)
-+SELECT id FROM warning_policy_docs WHERE body ||| 'database' ORDER BY body LIMIT 1;
-+WARNING:  Query has LIMIT 1 but is not using Top K scan (using Normal instead). Reason: ORDER BY columns cannot be pushed down to the index. This may cause poor performance on large datasets. Remedies: Ensure ORDER BY columns are included in the ParadeDB index. Numeric columns are fast by default. For string columns, use pdb.literal tokenizer. To disable this warning: SET paradedb.planner_warnings = 'off' (table: warning_policy_docs)
-+                                                                                                QUERY PLAN                                                                                                 
-+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-+ Limit
-+   ->  Sort
-+         Sort Key: body COLLATE "C"
-+         ->  Custom Scan (ParadeDB Base Scan) on warning_policy_docs
-+               Table: warning_policy_docs
-+               Index: warning_policy_idx
-+               Exec Method: NormalScanExecState
-+               Scores: false
-+               Tantivy Query: {"with_index":{"query":{"match":{"field":"body","value":"dat
-```
-
-**File**: `pg_search/tests/pg_regress/expected/sequential_scan.out` (modified, +0/-2)
-```diff
-@@ -223,8 +223,6 @@ FROM sequential_scan_terms t
- JOIN sequential_scan s ON s.body ||| t.term
- WHERE s.keep
- ORDER BY s.id;
--WARNING:  the table is being sequentially scanned for this query, so performance may be slow
--if you are not sure why, please file an issue: https://github.com/paradedb/paradedb/issues/new/choose
-  id 
- ----
-   1
-```
-
-**File**: `pg_search/tests/pg_regress/sql/planner_warning_enforcement.sql` (added, +160/-0)
-```diff
-@@ -0,0 +1,160 @@
-+-- Severity applies to planning, execution, EXPLAIN ANALYZE, and saved plans.
-+\i common/common_setup.sql
-+
-+CREATE TABLE warning_policy_docs (
-+    id int PRIMARY KEY,
-+    body text COLLATE "C",
-+    padding text
-+) WITH (autovacuum_enabled = false, fillfactor = 70);
-+INSERT INTO warning_policy_docs
-+SELECT id, 'database ' || id, repeat('x', 600)
-+FROM generate_series(1, 20000) id;
-+CREATE INDEX warning_policy_idx ON warning_policy_docs USING paradedb(id, body)
-+WITH (sort_by = 'ctid ASC NULLS FIRST', mutable_segment_rows = 0,
-+      target_segment_count = 2, layer_sizes = '10TB', background_layer_sizes = '0');
-+VACUUM warning_policy_docs;
-+
-+-- Inspecting a plan remains possible; executing it must raise, including after
-+-- an EXPLAIN error unwinds its guard.
-+SET paradedb.planner_warnings = 'error';
-+EXPLAIN (COSTS OFF)
-+SELECT id FROM warning_policy_docs WHERE body ||| 'database' ORDER BY body LIMIT 1;
-+EXPLAIN (ANALYZE, COSTS OFF, TIMING OFF)
-+SELECT id FROM warning_policy_docs WHERE body ||| 'database' ORDER BY body LIMIT 1;
-+SELECT id FROM warning_policy_docs WHERE body ||| 'database' ORDER BY body LIMIT 1;
-+EXPLAIN (COSTS OFF)
-+SELECT id FROM warning_policy_docs WHERE body ||| 'database' ORDER BY body LIMIT 1;
-+
-+-- A generic plan compiled with warnings off must be replanned after SET.
-+SET plan_cache_mode = force_generic_plan;
-+SET paradedb.planner_warnings = 'off';
-+PREPARE warning_policy_query AS
-+SELECT id FROM warning_policy_docs WHERE body ||| 'database' ORDER BY body LIMIT 1;
-+EXECUTE warning_policy_query;
-+SET paradedb.planner_warnings = 'error';
-+EXECUTE warning_policy_query;
-+
-+-- Restoring SET LOCAL on commit or rollback must invalidate a permissive plan.
-+BEGIN;
-+SET LOCAL paradedb.planner_warnings = 'off';
-+EXECUTE warning_policy_query;
-+COMMIT;
-+EXECUTE warning_policy_query;
-+BEGIN;
-+SET LOCAL paradedb.planner_warnings = 'off';
-+EXECUTE warning_policy_query;
-+ROLLBACK;
-+EXECUTE warning_policy_query;
-+
-+-- Warning mode also rechecks a plan previously executed with warnings off.
-+SET paradedb.planner_warnings = 'off';
-+EXECUTE warning_policy_query;
-+SET paradedb.planner_warnings = 'warning';
-+EXECUTE warning_policy_query;
-+DEALLOCATE warning_policy_query;
-+RESET plan_cache_mode;
-+
-+-- EXPLAIN EXECUTE must allow inspection without caching a permissive plan.
-+SET plan_cache_mode = force_generic_plan;
-+SET paradedb.planner_warnings = 'off';
-+PREPARE warning_policy_explain AS
-+SELECT id FROM warning_policy_docs WHERE body ||| 'database' ORDER BY body LIMIT 1;
-+EXECUTE warning_policy_explain;
-+SET paradedb.planner_warnings = 'error';
-+SET client_min_messages = error;
-+DO $$
-+DECLARE
-+    errors int := 0;
-+BEGIN
-+    -- Both implicit and explicit false ANALYZE options must allow inspection.
-+    EXECUTE 'EXPLAIN EXECUTE warning_policy_explain';
-+    EXECUTE 'EXPLAIN (ANALYZE FALSE) EXECUTE warning_policy_explain';
-+    BEGIN
-+        EXECUTE 'EXECUTE warning_policy_explain';
-+    EXCEPTION WHEN OTHERS THEN
-+        IF SQLERRM NOT LIKE 'Query has LIMIT 1 but is not using Top K scan%' THEN
-+            RAISE;
-+        END IF;
-+        errors := errors + 1;
-+    END;
-+    BEGIN
-+        EXECUTE 'EXPLAIN ANALYZE EXECUTE warning_policy_explain';
-+    EXCEPTION WHEN OTHERS THEN
-+        IF SQLERRM NOT LIKE 'Query has LIMIT 1 but is not using Top K scan%' THEN
-+            RAISE;
-+        END IF;
-+        errors := errors + 1;
-+    END;
-+    ASSERT errors = 2, 'execution must still enforce error mode after EXPLAIN';
-+END
-+$$;
-+RESET client_min_messages;
-+DEALLOCATE warning_policy_explain;
-+RESET plan_cache_mode;
-+
-+-- Runtime scan and spill warnings honor off, and are errors under error mode.
-+SET paradedb.enable_custom_scan = off;
-+SET enable_bitmapscan = off;
-+SET work_mem = '64kB';
-+SET paradedb.planner_warnings = 'off';
-+SELECT id FROM warning_policy_docs WHERE body ||| 'database' AND id IN (1, 20000) ORDER BY id;
-+SET paradedb.planner_warnings = 'warning';
-+SELECT id FROM warning_policy_docs WHERE body ||| 'database' AND id IN (1, 20000) ORDER BY id;
-+SET paradedb.planner_warnings = 'error';
-+SELECT id FROM warning_policy_docs WHERE body ||| 'database' AND id IN (1, 20000) ORDER BY id;
-+
-+RESET paradedb.enable_custom_scan;
-+RESET enable_bitmapscan;
-+RESET work_mem;
-+
-+-- Stale-visibility-map diagnostics follow the same severity policy.
-+SET paradedb.visibility_map_warning_threshold = 100;
-+UPDATE warning_policy_docs SET padding = 'dirty' WHERE id % 5 = 0;
-+SET paradedb.planner_warnings = 'off';
-+SELECT count(*) FROM warning_policy_docs WHERE body ||| 'database';
-+SET paradedb.planner_warnings = 'warning';
-+SELECT count(*) FROM warning_policy_docs WHERE body ||| 'database';
-+SET paradedb.planner_warnings = 'error';
-+SELECT count(*) FROM warning_policy_docs WHERE body ||| 'database';
-+EXPLAIN (ANALYZE, COSTS OFF, TIMING OFF)
-+SELECT count(*) FROM warning_policy_docs WHERE body ||| 'database';
-+
-+-- Catching a runtime error must not suppress another attempt in the same
-+-- state
-```
-
----
-
-### Incident Patch 2: `2b268254` (2026-11-05)
-**Commit Message**: fix: stop pushing JSONB ? down to an exists query (#7142)
-
-## Summary
-
-`data ? 'k'` was pushed down as an `exists` query on `data.k`, which
-answers a different question than PostgreSQL's `?`. This removes that
-pushdown, so the operator runs as a heap filter inside the custom scan
-and returns what PostgreSQL returns.
-
-## Context
-
-PostgreSQL's `?` checks top-level object keys, or string elements of a
-top-level array, or a top-level string scalar, and compares the key
-literally. The `exists` query on `data.k` only sees indexed values under
-that path. Running the issue's repro with two extra rows, `{"foo":null}`
-(id 9) and `[{"foo":1}]` (id 10), on main:
-
-```
-data ? 'foo'   PostgreSQL {1,3,5,9}   pushdown {3,10}
-data ? 'bar'   PostgreSQL {1,2}       pushdown (none)
-data ? 'a.b'   PostgreSQL {7}         pushdown {7,8}
-```
-
-So the index query has both false negatives (array elements, string
-scalar, a key whose value is `null`) and false positives (arrays of
-objects, dotted keys read as a path). Since it is wrong in both
-directions, no rewrite of the index query alone can make it a safe
-pre-filter with a recheck, especially under `NOT`.
-
-## Changes
-
-- `pushdown.rs`: drop the `?(jsonb,text
-
-**File**: `docs/project/changelog/unreleased/7142.bugfix.mdx` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+header: stability
-+---
-+
-+- The JSONB `?` operator now matches PostgreSQL in a ParadeDB scan, including string elements of a top-level array, a top-level string scalar, keys with a `null` value, and keys that contain a dot.
-```
-
-**File**: `pg_search/src/postgres/customscan/pushdown.rs` (modified, +1/-56)
-```diff
-@@ -21,19 +21,17 @@ use crate::api::{FieldName, fieldname_typoid};
- use crate::nodecast;
- use crate::postgres::catalog::{is_ltree_oid, lookup_procoid, lookup_typoid};
- use crate::postgres::customscan::collation_semantics::collation_supports;
--use crate::postgres::customscan::operator_oid;
- use crate::postgres::customscan::opexpr::{OpExpr, TantivyOperatorExt, lookup_operator};
- use crate::postgres::customscan::qual_inspect::{PlannerContext, Qual};
- use crate::postgres::deparse::deparse_expr;
- use crate::postgres::node::NodeExt;
- use crate::postgres::rel::PgSearchRelation;
- use crate::postgres::types::TantivyValue;
--use crate::postgres::var::{VarContext, find_json_path};
-+use crate::postgres::var::VarContext;
- use crate::schema::{SearchField, SearchFieldType};
- use pgrx::pg_sys::NodeTag::T_Const;
- use pgrx::{FromDatum, IntoDatum, PgList, PgOid, direct_function_call, is_a, pg_sys};
- use std::ffi::CStr;
--use std::sync::OnceLock;
- 
- /// Returns `true` when `opno` is the ltree descendant operator `<@` applied to
- /// ltree operands on both sides, e.g. `path <@ 'Top.Science'::ltree`.
-@@ -241,8 +239,6 @@ impl PushdownField {
-     }
- }
- 
--static JSONB_EXISTS_OPOID: OnceLock<pg_sys::Oid> = OnceLock::new();
--
- /// Take a Postgres [`pg_sys::OpExpr`] pointer that is **not** of our `@@@` operator and try  to
- /// convert it into one that is.
- ///
-@@ -277,11 +273,6 @@ pub unsafe fn try_build_pushdown_qual(
-         return Some(qual);
-     }
- 
--    // JSONB ? operator: construct field path from LHS + RHS key.
--    if opexpr.opno() == *JSONB_EXISTS_OPOID.get_or_init(|| operator_oid("?(jsonb,text)")) {
--        return try_pushdown_jsonb_exists(context, rti, lhs, rhs, indexrel);
--    }
--
-     // ltree descendant operator: `path <@ 'Top.Science'::ltree` lowers to a
-     // Tantivy facet subtree query against the ltree-backed field.
-     if is_ltree_descendant_operator(opexpr.opno(), lhs, rhs) {
-@@ -369,52 +360,6 @@ pub unsafe fn try_build_pushdown_qual(
-     }
- }
- 
--/// Pushdown JSONB `?` (exists) operator to ParadeDB index.
--///
--/// Converts `data ? 'key'` to equivalent of `id @@@ paradedb.exists('data.key')`.
--/// For nested paths like `data->'nested' ? 'key'`, produces `data.nested.key`.
--///
--/// Returns `None` if pushdown not possible (field not indexed, not JSON, or not fast).
--unsafe fn try_pushdown_jsonb_exists(
--    context: &PlannerContext,
--    rti: pg_sys::Index,
--    lhs: *mut pg_sys::Node,
--    rhs: *mut pg_sys::Node,
--    indexrel: &PgSearchRelation,
--) -> Option<Qual> {
--    // Extract the key from RHS (must be a non-null text constant)
--    let rhs_const = nodecast!(Const, T_Const, rhs).filter(|c| !(**c).constisnull)?;
--    let key = String::from_datum((*rhs_const).constvalue, false)?;
--
--    // Build field path: extract JSON path from LHS and append the key
--    let mut path = find_json_path(&context.var_context(), lhs);
--    if path.is_empty() {
--        return None;
--    }
--    path.push(key);
--
--    // Verify the root field is an indexed JSON field with fast=true (required for exists)
--    let field_name = FieldName::from(path.join("."));
--    let search_field = indexrel.schema().ok()?.search_field(field_name.root())?;
--    if !search_field.is_json() || !search_field.is_fast() {
--        return None;
--    }
--
--    // Check if field belongs to this relation or is from a join
--    let varno = (**lhs.collect_nodes::<pg_sys::Var>().first()?).varno as pg_sys::Index;
--    if varno != rti {
--        return Some(Qual::ExternalVar);
--    }
--
--    Some(Qual::PushdownIsNotNull {
--        field: PushdownField {
--            field_name,
--            varno,
--            search_field: Some(search_field),
--        },
--    })
--}
--
- /// Converts trivial bool expressions like `WHERE 1 = 1` to `Qual::All`
- fn try_build_const_bool_qual(node: *mut pg_sys::Node) -> Option<Qual> {
-     if node.is_null() || unsafe { pg_sys::exprType(node) } != pg_sys::BOOLOID || node.is_complex() {
-```
-
-**File**: `pg_search/tests/pg_regress/expected/jsonb_exists_operator.out` (modified, +89/-34)
-```diff
-@@ -1,7 +1,9 @@
- -- =====================================================================
- -- Test JSON ? operator pushsown 
- -- =====================================================================
---- The JSONB ? operator should be equivalent to paradedb.exists()
-+-- The index cannot answer ? exactly, so it runs as a heap filter in the custom scan
-+-- TODO(https://github.com/paradedb/paradedb/issues/7187): push ? down again once fast
-+-- fields store JSON null values and array elements.
- DROP TABLE IF EXISTS jsonb_exists_test;
- CREATE EXTENSION IF NOT EXISTS pg_search;
- CREATE TABLE jsonb_exists_test (
-@@ -17,20 +19,20 @@ INSERT INTO jsonb_exists_test (description, data) VALUES ('CTO', '{"first_name":
- INSERT INTO jsonb_exists_test (description, data) VALUES ('Intern', '{"address": {"city": "New York", "zip": "10001"}}');
- CREATE INDEX idx_jsonb_exists_test ON jsonb_exists_test USING paradedb (id, description, (data::pdb.literal));
- -- Test 1: Basic JSONB ? operator - should return rows where data has 'first_name' key
---- This should be equivalent to: id @@@ paradedb.exists('data.first_name')
- EXPLAIN SELECT * FROM jsonb_exists_test WHERE data ? 'first_name' AND id @@@ pdb.all() ORDER BY id;
--                                                              QUERY PLAN                                                              
----------------------------------------------------------------------------------------------------------------------------------------
-- Sort  (cost=10.07..10.08 rows=3 width=68)
-+                                                                                                       QUERY PLAN                                                                                                        
-+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-+ Sort  (cost=10.02..10.03 rows=1 width=68)
-    Sort Key: id
--   ->  Custom Scan (ParadeDB Base Scan) on jsonb_exists_test  (cost=10.00..10.04 rows=3 width=68)
-+   ->  Custom Scan (ParadeDB Base Scan) on jsonb_exists_test  (cost=10.00..10.01 rows=1 width=68)
-          Table: jsonb_exists_test
-          Index: idx_jsonb_exists_test
-          Segment Count: 1
-          Exec Method: NormalScanExecState
-          Scores: false
--         Tantivy Query: {"boolean":{"must":[{"exists":{"field":"data.first_name"}},{"with_index":{"query":{"all":{"field":"id"}}}}]}}
--(9 rows)
-+         Full Index Scan: true
-+         Tantivy Query: {"boolean":{"must":[{"heap_filter":{"indexed_query":{"boolean":{"must":[{"with_index":{"query":{"all":{"field":"id"}}}}]}},"always_filters":[{"heap_filter":"(data ? 'first_name'::text)"}]}}]}}
-+(10 rows)
- 
- SELECT * FROM jsonb_exists_test WHERE data ? 'first_name' AND id @@@ pdb.all() ORDER BY id;
-  id |    description    |                     data                      
-@@ -42,18 +44,19 @@ SELECT * FROM jsonb_exists_test WHERE data ? 'first_name' AND id @@@ pdb.all() O
- 
- -- Test 2: JSONB ? operator with OR condition
- EXPLAIN SELECT * FROM jsonb_exists_test WHERE data ? 'last_name' OR description ||| 'CEO' ORDER BY id;
--                                                                                                                              QUERY PLAN                                                                                                                              
------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-- Sort  (cost=10.04..10.04 rows=1 width=68)
-+                                                                                                                                                               QUERY PLAN                                                                                                                                                               
-+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-+ Sort  (cost=10.02..10.03 rows=1 width=68)
-    Sort Key: id
--   ->  Custom Scan (ParadeDB Base Scan) on jsonb_exists_test  (cost=10.00..10.03 rows=1 width=68)
-+   ->  Custom Scan (ParadeDB Base Scan) on jsonb_exists_test  (cost=10.00..10.01 rows=1 width=68)
-          Table: jsonb_exists_test
-          Index: idx_jsonb_exists_test
-          Segment Count: 1
-          Exec Method: NormalScanExecState
-          Scores: false
--         Tantivy Query: {"boolean":{"should":[{"exists":{"field":"data.last_name"}},{"with_index":{"query":{"match":{
-```
-
-**File**: `pg_search/tests/pg_regress/sql/jsonb_exists_operator.sql` (modified, +29/-2)
-```diff
-@@ -1,7 +1,9 @@
- -- =====================================================================
- -- Test JSON ? operator pushsown 
- -- =====================================================================
---- The JSONB ? operator should be equivalent to paradedb.exists()
-+-- The index cannot answer ? exactly, so it runs as a heap filter in the custom scan
-+-- TODO(https://github.com/paradedb/paradedb/issues/7187): push ? down again once fast
-+-- fields store JSON null values and array elements.
- 
- DROP TABLE IF EXISTS jsonb_exists_test;
- CREATE EXTENSION IF NOT EXISTS pg_search;
-@@ -22,7 +24,6 @@ INSERT INTO jsonb_exists_test (description, data) VALUES ('Intern', '{"address":
- CREATE INDEX idx_jsonb_exists_test ON jsonb_exists_test USING paradedb (id, description, (data::pdb.literal));
- 
- -- Test 1: Basic JSONB ? operator - should return rows where data has 'first_name' key
---- This should be equivalent to: id @@@ paradedb.exists('data.first_name')
- EXPLAIN SELECT * FROM jsonb_exists_test WHERE data ? 'first_name' AND id @@@ pdb.all() ORDER BY id;
- SELECT * FROM jsonb_exists_test WHERE data ? 'first_name' AND id @@@ pdb.all() ORDER BY id;
- 
-@@ -43,5 +44,31 @@ SELECT * FROM jsonb_exists_test WHERE data->'address' ? 'city' AND id @@@ pdb.al
- EXPLAIN SELECT * FROM jsonb_exists_test WHERE NOT (data ? 'first_name') AND id @@@ pdb.all() ORDER BY id;
- SELECT * FROM jsonb_exists_test WHERE NOT (data ? 'first_name') AND id @@@ pdb.all() ORDER BY id;
- 
-+-- Test 8: ? matches PostgreSQL for arrays, string scalars, dotted keys,
-+-- null values and arrays of objects (#7027)
-+CREATE TABLE jsonb_exists_shapes (id int PRIMARY KEY, body text, data jsonb);
-+INSERT INTO jsonb_exists_shapes VALUES
-+  (1, 'array foo', '["foo","bar"]'),
-+  (2, 'array bar', '["bar"]'),
-+  (3, 'object foo', '{"foo":1,"nested":{"foo":true}}'),
-+  (4, 'object other', '{"other":1}'),
-+  (5, 'scalar foo', '"foo"'),
-+  (6, 'sql null', NULL),
-+  (7, 'literal dot', '{"a.b":1}'),
-+  (8, 'nested dot', '{"a":{"b":1}}'),
-+  (9, 'null value', '{"foo":null}'),
-+  (10, 'array of objects', '[{"foo":1}]');
-+CREATE INDEX jsonb_exists_shapes_idx ON jsonb_exists_shapes USING paradedb (id, body, data)
-+  WITH (json_fields = '{"data": {"fast": true}}');
-+SET paradedb.planner_warnings = 'off';
-+
-+EXPLAIN (COSTS OFF) SELECT id FROM jsonb_exists_shapes WHERE data ? 'foo' AND id @@@ pdb.all();
-+SELECT array_agg(id ORDER BY id) FROM jsonb_exists_shapes WHERE data ? 'foo' AND id @@@ pdb.all();
-+SELECT array_agg(id ORDER BY id) FROM jsonb_exists_shapes WHERE data ? 'bar' AND id @@@ pdb.all();
-+SELECT array_agg(id ORDER BY id) FROM jsonb_exists_shapes WHERE data ? 'a.b' AND id @@@ pdb.all();
-+
-+RESET paradedb.planner_warnings;
-+DROP TABLE jsonb_exists_shapes;
-+
- -- Clean up
- DROP TABLE IF EXISTS jsonb_exists_test;
-```
-
----
-
-### Incident Patch 3: `5a2d3d98` (2026-11-05)
-**Commit Message**: fix: return oid 0 as a value, not NULL, from index reads (#7231)
-
-# Ticket(s) Closed
-
-- Closes #7214
-
-## What
-
-An `oid` value of 0 is now returned as 0 instead of NULL. Before, a
-`0::oid` read back from the index became SQL NULL, even for a NOT NULL
-column
-
-## Why
-
-pgrx's `Oid::into_datum` returns `None` for `Oid::INVALID` (0), and
-`None` means SQL NULL. In Postgres, 0 is a valid `oid` value
-
-The Arrow conversion had the same bug, so this fixes it too. Plain
-`SELECT k` on a columnar scan returned NULL for 0, and `min(k)` returned
-1 instead of 0
-
-## How
-
-The three `oid` conversions now build the datum directly with
-`Some(Datum::from(u32))`, which skips the pgrx check. Real NULLs are
-still handled earlier, so a NULL stays NULL and is not mixed up with 0
-
-## Tests
-
-Added `oid_zero_value`. It covers the Tantivy and DataFusion aggregate
-backends, an aggregate over a join, a columnar scan, and `min`/`max`. It
-also checks that 0 and NULL stay separate groups. The test returned NULL
-for 0 before the fix
-
-Signed-off-by: Niladri Adhikary <[REDACTED_EMAIL]>
-
-**File**: `pg_search/src/postgres/types.rs` (modified, +1/-1)
-```diff
-@@ -87,7 +87,7 @@ impl TantivyValue {
-                     PgBuiltInOids::INT2OID => i16::try_from(self)?.into_datum(),
-                     PgBuiltInOids::INT4OID => i32::try_from(self)?.into_datum(),
-                     PgBuiltInOids::INT8OID => i64::try_from(self)?.into_datum(),
--                    PgBuiltInOids::OIDOID => Oid::from(u32::try_from(self)?).into_datum(),
-+                    PgBuiltInOids::OIDOID => Some(Datum::from(u32::try_from(self)?)),
-                     PgBuiltInOids::FLOAT4OID => f32::try_from(self)?.into_datum(),
-                     PgBuiltInOids::FLOAT8OID => f64::try_from(self)?.into_datum(),
-                     PgBuiltInOids::NUMERICOID => pgrx::AnyNumeric::try_from(self)?.into_datum(),
-```
-
-**File**: `pg_search/src/postgres/types_arrow.rs` (modified, +2/-4)
-```diff
-@@ -210,9 +210,7 @@ pub fn arrow_array_to_datum(
-             match &oid {
-                 PgOid::BuiltIn(PgBuiltInOids::INT8OID) => (val as i64).into_datum(), // Convert u64 to i64 for INT8OID
-                 PgOid::BuiltIn(PgBuiltInOids::FLOAT8OID) => (val as f64).into_datum(),
--                PgOid::BuiltIn(PgBuiltInOids::OIDOID) => {
--                    pgrx::pg_sys::Oid::from(val as u32).into_datum()
--                } // Cast u64 to u32 for OID
-+                PgOid::BuiltIn(PgBuiltInOids::OIDOID) => Some(pg_sys::Datum::from(val as u32)),
-                 PgOid::BuiltIn(PgBuiltInOids::NUMERICOID) => {
-                     let numeric_str = val.to_string();
-                     numeric_str
-@@ -228,7 +226,7 @@ pub fn arrow_array_to_datum(
-             let arr = array.as_primitive::<arrow_array::types::UInt32Type>();
-             let val = arr.value(index);
-             match &oid {
--                PgOid::BuiltIn(PgBuiltInOids::OIDOID) => pgrx::pg_sys::Oid::from(val).into_datum(),
-+                PgOid::BuiltIn(PgBuiltInOids::OIDOID) => Some(pg_sys::Datum::from(val)),
-                 _ => return Err(anyhow!("Unsupported OID for UInt32 Arrow type: {oid:?}")),
-             }
+ /// Walk a target list and classify each entry into the corresponding
+ /// [`privdat::OutputColumnInfo`]: a `Var` resolves to a plan position via the
+ /// join clause, a `paradedb.score()` call becomes a `Score` sentinel, and any
+@@ -2288,19 +2333,42 @@ unsafe fn build_output_projection(
          }
+     }
+ 
++    // `add_vars_to_tlist` / `add_vars_and_scores_to_tlist` may have appended extra `Var` and
++    // `pdb.score()` entries after `scan_target_entries` for `custom_exprs` or `pg_projected_resnos`.
++    // Only extend `output_projection` through the last appended `Score` (so its `col_{idx + 1}`
++    // alias lines up with `output_columns[idx]`): projecting trailing `Var`s would add extra
++    // `NULL AS col_N` columns to DataFusion's `ProjectionExec` and `DISTINCT` `GROUP BY` keys.
++    let num_projected_columns = private_data
++        .output_columns
++        .iter()
++        .rposition(|c| matches!(c, privdat::OutputColumnInfo::Score { .. }))
++        .map_or(scan_target_entries.len(), |last_score_idx| {
++            (last_score_idx + 1).max(scan_target_entries.len())
++        });
++
+     private_data.join_clause.output_projection = Some(
+         private_data
+             .output_columns
+             .iter()
+-            .zip(&resolved_entries)
+-            .zip(&scan_target_entries)
+-            .map(|((info, resolved), te)| {
++            .take(num_projected_columns)
++            .enumerate()
++            .map(|(idx, info)| {
+                 // If this column belongs to a relation pruned from output (e.g. the RHS
+                 // of an Anti Join), do not construct projection expressions referencing
+                 // the pruned source, as it does not exist in the physical scan plan.
+                 if matches!(info, privdat::OutputColumnInfo::Pruned) {
+                     return info.into();
+                 }
++                if idx >= scan_target_entries.len() {
++                    return match info {
++                        privdat::OutputColumnInfo::Score { rti, .. } => {
++                            build::ChildProjection::Score { rti: *rti }
++                        }
++                        _ => (&privdat::OutputColumnInfo::Pruned).into(),
++                  
 ```
 
-**File**: `pg_search/tests/pg_regress/expected/oid_zero_value.out` (added, +182/-0)
+**File**: `pg_search/src/postgres/customscan/joinscan/planning.rs` (modified, +74/-17)
 ```diff
-@@ -0,0 +1,182 @@
-+-- OID 0 is a valid SQL value, not NULL. Every path that reads an oid column back
-+-- from the index must return it as 0, and a real NULL must stay NULL.
-+\i common/common_setup.sql
-+CREATE EXTENSION IF NOT EXISTS pg_search;
-+-- Disable parallel workers to avoid differences in plans
-+SET max_parallel_workers_per_gather = 0;
-+SET enable_indexscan to OFF;
-+SET paradedb.enable_columnar_exec = true;
-+SET paradedb.enable_aggregate_custom_scan TO on;
-+CREATE TABLE oid_zero (id bigint PRIMARY KEY, k oid NOT NULL, n oid);
-+INSERT INTO oid_zero VALUES (1, 0, 0), (2, 1, 1), (3, 0, NULL);
-+CREATE INDEX oid_zero_idx ON oid_zero USING paradedb (id, k, n);
-+ANALYZE oid_zero;
-+-- Tantivy aggregate backend: GROUP BY key
-+EXPLAIN (COSTS OFF, TIMING OFF)
-+SELECT k, count(*) FROM oid_zero WHERE id @@@ pdb.all() GROUP BY k ORDER BY k;
-+                                                       QUERY PLAN                                                       
-+------------------------------------------------------------------------------------------------------------------------
-+ Custom Scan (ParadeDB Aggregate Scan) on oid_zero
-+   Index: oid_zero_idx
-+   Tantivy Query: {"with_index":{"query":{"all":{"field":"id"}}}}
-+     Applies to Aggregates: COUNT(*)
-+     Group By: k
-+     Aggregate Definition: {"grouped":{"terms":{"field":"k","order":{"_key":"asc"},"segment_size":65000,"size":65000}}}
-+(6 rows)
+@@ -30,7 +30,7 @@ use super::build::{
+ };
+ use super::predicate::{all_vars_are_fast_fields_recursive, resolve_join_conditions};
+ use super::privdat::{OutputColumnInfo, PrivateData};
+-use super::window_func::{WindowAgg, WindowAggDef, WindowAggId, extract_window_agg};
++use super::window_func::{WindowAggDef, WindowAggId, WindowAggList, extract_window_agg};
+ use crate::postgres::customscan::datafusion::translator::PredicateTranslator;
+ use crate::postgres::customscan::node::CustomScanNodeExt;
+ use crate::postgres::node::NodeExt;
+@@ -867,26 +867,31 @@ unsafe fn collect_join_sources_join_rel(
+     None
+ }
+ 
++/// Check whether `expr` can be evaluated by PostgreSQL's projection step above the `JoinScan`
++/// (`ResolvedExpr::PgProjected`).
++///
++/// Rejects set-returning expressions, subplans, embedded window functions, system/whole-row
++/// `Var`s, and `Var`s or `pdb.score()` calls referencing relations absent from
++/// `plan.output_rtis()`. Supported `Var`s and `pdb.score()` subexpressions are appended to
++/// `custom_scan_tlist` by `add_vars_and_scores_to_tlist` during `plan_custom_path`.
+ pub unsafe fn can_pg_project(expr: *mut pg_sys::Node, plan: &RelNode) -> Result<(), String> {
+     if pg_sys::expression_returns_set(expr) {
+         pgrx::debug1!("JoinScan declined Postgres projection: expression returns a set");
+         return Err("returns a set".to_string());
+     }
+ 
++    if expr.contains_type(pg_sys::NodeTag::T_SubPlan) {
++        pgrx::debug1!("JoinScan declined Postgres projection: expression contains a SubPlan");
++        return Err("contains a subplan".to_string());
++    }
 +
-+SELECT k, count(*) FROM oid_zero WHERE id @@@ pdb.all() GROUP BY k ORDER BY k;
-+ k | count 
-+---+-------
-+ 0 |     2
-+ 1 |     1
-+(2 rows)
+     let mut deps = ExprDeps {
+         vars: Vec::new(),
+         score_rtis: Vec::new(),
+         window_funcs: Vec::new(),
+     };
+     expr_deps_walker(expr, std::ptr::addr_of_mut!(deps).cast());
+ 
+-    if !deps.score_rtis.is_empty() {
+-        pgrx::debug1!(
+-            "JoinScan declined Postgres projection: expression depends on a score function"
+-        );
+-        return Err("depends on a score function".to_string());
+-    }
+-
+     if !deps.window_funcs.is_empty() {
+         pgrx::debug1!(
+             "JoinScan declined Postgres projection: expression depends on a window function"
+@@ -901,6 +906,19 @@ pub unsafe fn can_pg_project(expr: *mut pg_sys::Node, plan: &RelNode) -> Result<
+         .collect::<Vec<_>>()
+         .join(", ");
+ 
++    let output_rtis = plan.output_rtis();
++    for score_rti in deps.score_rtis {
++        if !output_rtis.contains(&score_rti) {
++            pgrx::debug1!(
++                "JoinScan declined Postgres projection: expression depends on score for relation \
++                 (rti={}) not found in any source (tables: {})",
++                score_rti,
++                tables_str
++            );
++            return Err("score function references a relation outside the join".to_string());
++        }
++    }
 +
-+-- 0 and NULL are separate groups
-+SELECT n, count(*) FROM oid_zero WHERE id @@@ pdb.all() GROUP BY n ORDER BY n NULLS LAST;
-+ n | count 
-+---+-------
-+ 0 |     1
-+ 1 |     1
-+   |     1
-+(3 rows)
-+
-+-- DataFusion aggregate backend
-+SET paradedb.max_term_agg_buckets = 1;
-+EXPLAIN (COSTS OFF, TIMING OFF)
-+SELECT k, count(*) FROM oid_zero WHERE id @@@ pdb.all() GROUP BY k ORDER BY k;
-+                                                            QUERY PLAN                                                             
-+-----------------------------------------------------------------------------------------------------------------------------------
-+ Sort
-+   Sort Key: k
-+   ->  Custom Scan (ParadeDB Aggregate Scan)
-+         Backend: DataFusion
-+         Indexes: oid_zero_idx (oid_zero)
-+         Group By: k
-+         Aggregates: COUNT(*)
-+         DataFusion Physical Plan: 
-+           : AggregateExec: mode=Single, gby=[k@0 as k], aggr=[count(1) as agg_0]
-+           :   CooperativeExec
-+           :     PgSearchScan: table=oid_zero, segments=1, visibility=eager, query={"with_index":{"query":{"all":{"field":"id"}}}}
-+(11 rows)
-+
-+SELECT k, count(*) FROM oid_zero WHERE id @@@ pdb.all() GROUP BY k ORDER BY k;
-+ k | count 
-+---+-------
-+ 0 |     2
-+ 1 |     1
-+(2 rows)
-+
-+SELECT n, count(*) FROM oid_zero WHERE id @@@ pdb.all() GROUP BY n ORDER BY n NULLS LAST;
-+ n | count 
-+---+-------
-+ 0 |     1
-+ 1 |     1
-+   |     1
-+(3 rows)
-+
-+RESET paradedb.max_term_agg_buckets;
-+-- Fast field base scan: a Postgres aggregate over it must see the zeros
-+EXPLAIN (COSTS OFF, TIMING OFF)
-+SELECT min(k), max(k) FROM oid_zero WHERE id @@@ pdb.all();
-+WARNING:  Aggregate Scan not used: unsupported aggregate function: min. To disable this warning: SET paradedb.planner_warnings = 'off' (table: oid_zero)
-+                               QUERY PLAN                               
-+------------------------------------------------------------------------
-+ Aggregate
-+   ->  Custom Scan (ParadeDB Base Scan) on oid_zero
-+         Table: oid_zero
-+         Index: oid_zero_idx
-+         Exec Method: ColumnarExecState
-+         Columnar: k
-+         Scores: false
-+         Full Index Scan: true
-+         Tantivy Query: {"with_index":{"query":{"all":{"field":"id"}}}}
-+(9 rows)
-+
-+SELECT min(k), max(k) FROM oid_zero WHERE id @@@ pdb.all();
-+WARNING:  Aggregate Scan not used: unsupported aggregate function: min. To disable this warning: SET paradedb.planner_warnings = 'off' (table: oid_zero)
-+ min | max 
-+-----+-----
-+   0 |   1
-+(1 row)
-+
-+EXPLAIN (COSTS OFF, TIMING OFF)
-+SELECT k FROM oid_zero WHERE id @@@ pdb.all() ORDER BY k;
-+                               QUERY PLAN                               
-+------------------------------------------------------------------------
-+ Sort
-+   Sort Key: k
-+   ->  Custom Scan (ParadeDB Base Scan) on oid_zero
-+         Table: oid_zero
-+         Index: oid_zero_idx
-+         Exec Method: ColumnarExecState
-+         Columnar: k
-+         Scores: false
-+         Full Index Scan: true
-+         Tantivy Query: {"with_index":{"query":{"all":{"field":"id"}}}}
-+(10 rows)
-+
-+SELECT k FROM oid_zero WHERE id @@@ pdb.all() ORDER BY k;
-+ k 
-+---
-+ 0
-+ 0
-+ 1
-+(3 rows)
-+
-+SELECT n FROM oid_zero WHERE id @@@ pdb.all() ORDER BY n NULLS LAST;
-+ n 
-+---
-+ 0
-+ 1
-+  
-+(3 rows)
-+
-+-- Aggregate over a join
-+SET paradedb.enable_join_custom_scan = on;
-+CREATE TABLE oid_zero_other (id bigint PRIM
+     let mut seen = std::collections::HashSet::new();
+     for var_ptr in deps.vars {
+         let varno = (*var_ptr).varno as pg_sys::Index;
+@@ -921,7 +939,7 @@ pub unsafe fn can_pg_project(expr: *mut pg_sys::Node, plan: &RelNode) -> Result<
+             continue;
+         }
+ 
+-        if !plan.output_rtis().contains(&varno) {
++        if !output_rtis.contains(&varno) {
+             pgrx::debug1!(
+                 "JoinScan declined Postgres projection: expression depends on a relation \
+                  (rti={}) not found in any source (tables: {})",
+@@ -2417,13 +2435,13 @@ pub(crate) enum ResolvedExpr {
+         input_vars: Vec<InputVarInfo>,
+         result_type: pg_sys::Oid,
+         /// Window functions embedded in the expression, in walker visit order
+-        /// (each one's id ordinal is its position in this Vec). They are
++        /// (each one's id ordinal is its position in this list). They are
+         /// computed by the scan's window step and fed to expression
+         /// evaluation as opaque inputs; their argument Vars deliberately do
+         /// NOT appear in `input_vars`. The extracted specs carry a
+         /// placeholder resno of 0 in their `WindowAggId` — the caller that
+         /// records them stamps the owning target entry's resno.
+-        window_deps: Vec<WindowAgg>,
++        window_deps: WindowAggList,
+     },
+     PgProjected,
+     /// A window function, or expression over one, that will return a constant value on all rows
+@@ -2575,11 +2593,13 @@ unsafe extern "C-unwind" fn expr_deps_walker(
+ /// Check if an expression in the target list can be evaluated and projected by JoinScan.
+ ///
+ /// Plain Vars, score functions, and indexed expressions are mapped to their respective
+-/// ResolvedExpr variants. A general expression (or constant) declines on an aggregate. It
+-/// runs inside the scan when every Var it reads is a fast field (score function arguments
+-/// excluded) and its result type is Arrow-convertible; otherwise, volatile functions
+-/// included, Postgres computes it over the scan's rows when `enable_pg_project_fallback`
+-/// is set.
++/// ResolvedE
 ```
 
-**File**: `pg_search/tests/pg_regress/sql/oid_zero_value.sql` (added, +59/-0)
+**File**: `pg_search/src/postgres/customscan/joinscan/scan_state.rs` (modified, +9/-23)
 ```diff
-@@ -0,0 +1,59 @@
-+-- OID 0 is a valid SQL value, not NULL. Every path that reads an oid column back
-+-- from the index must return it as 0, and a real NULL must stay NULL.
-+
-+\i common/common_setup.sql
-+
-+SET paradedb.enable_aggregate_custom_scan TO on;
-+
-+CREATE TABLE oid_zero (id bigint PRIMARY KEY, k oid NOT NULL, n oid);
-+INSERT INTO oid_zero VALUES (1, 0, 0), (2, 1, 1), (3, 0, NULL);
-+CREATE INDEX oid_zero_idx ON oid_zero USING paradedb (id, k, n);
-+ANALYZE oid_zero;
-+
-+-- Tantivy aggregate backend: GROUP BY key
-+EXPLAIN (COSTS OFF, TIMING OFF)
-+SELECT k, count(*) FROM oid_zero WHERE id @@@ pdb.all() GROUP BY k ORDER BY k;
-+SELECT k, count(*) FROM oid_zero WHERE id @@@ pdb.all() GROUP BY k ORDER BY k;
-+
-+-- 0 and NULL are separate groups
-+SELECT n, count(*) FROM oid_zero WHERE id @@@ pdb.all() GROUP BY n ORDER BY n NULLS LAST;
-+
-+-- DataFusion aggregate backend
-+SET paradedb.max_term_agg_buckets = 1;
-+EXPLAIN (COSTS OFF, TIMING OFF)
-+SELECT k, count(*) FROM oid_zero WHERE id @@@ pdb.all() GROUP BY k ORDER BY k;
-+SELECT k, count(*) FROM oid_zero WHERE id @@@ pdb.all() GROUP BY k ORDER BY k;
-+SELECT n, count(*) FROM oid_zero WHERE id @@@ pdb.all() GROUP BY n ORDER BY n NULLS LAST;
-+RESET paradedb.max_term_agg_buckets;
-+
-+-- Fast field base scan: a Postgres aggregate over it must see the zeros
-+EXPLAIN (COSTS OFF, TIMING OFF)
-+SELECT min(k), max(k) FROM oid_zero WHERE id @@@ pdb.all();
-+SELECT min(k), max(k) FROM oid_zero WHERE id @@@ pdb.all();
-+EXPLAIN (COSTS OFF, TIMING OFF)
-+SELECT k FROM oid_zero WHERE id @@@ pdb.all() ORDER BY k;
-+SELECT k FROM oid_zero WHERE id @@@ pdb.all() ORDER BY k;
-+SELECT n FROM oid_zero WHERE id @@@ pdb.all() ORDER BY n NULLS LAST;
-+
-+-- Aggregate over a join
-+SET paradedb.enable_join_custom_scan = on;
-+CREATE TABLE oid_zero_other (id bigint PRIMARY KEY, label text);
-+INSERT INTO oid_zero_other VALUES (1, 'a'), (3, 'a');
-+CREATE INDEX oid_zero_other_idx ON oid_zero_other USING paradedb (id, (label::pdb.literal));
-+ANALYZE oid_zero_other;
-+EXPLAIN (COSTS OFF, TIMING OFF)
-+SELECT z.k, count(*) FROM oid_zero z JOIN oid_zero_other o ON z.id = o.id
-+WHERE z.id @@@ pdb.all() AND o.label === 'a' GROUP BY z.k ORDER BY z.k;
-+SELECT z.k, count(*) FROM oid_zero z JOIN oid_zero_other o ON z.id = o.id
-+WHERE z.id @@@ pdb.all() AND o.label === 'a' GROUP BY z.k ORDER BY z.k;
-+RESET paradedb.enable_join_custom_scan;
-+
-+-- Plain Postgres, for comparison
-+SET paradedb.enable_aggregate_custom_scan TO off;
-+SET paradedb.enable_custom_scan TO off;
-+SELECT k, count(*) FROM oid_zero GROUP BY k ORDER BY k;
-+RESET paradedb.enable_custom_scan;
-+RESET paradedb.enable_aggregate_custom_scan;
-+
-+DROP TABLE oid_zero_other;
-+DROP TABLE oid_zero;
+@@ -112,24 +112,17 @@ fn resolve_var_to_df_col(
+     attno: pg_sys::AttrNumber,
+ ) -> Option<Expr> {
+     // A window-aggregate sentinel Var (from rewrite_window_funcs_to_sentinels)
+-    // resolves to the window step's output column — except for
+-    // numeric-storage aggregates, whose column values are encoded (scaled
+-    // i64, decimal bytes, avg blobs). Native DataFusion math over those
+-    // would be wrong, so refuse here: per-node translation then falls back
+-    // to the PgExprUdf path, whose window inputs decode via
+-    // `JoinClauseMapper::udf_input`.
++    // resolves to the window step's output column — except when the column
++    // holds storage-encoded values (numeric-storage SQL aggregates or `pdb.agg`
++    // JSON text; see `WindowAgg::requires_udf_decode`). Native DataFusion
++    // operations over those would be wrong, so refuse here: per-node
++    // translation then falls back to the PgExprUdf path, whose window inputs
++    // decode via `JoinClauseMapper::udf_input`.
+     if rti == WINDOW_SENTINEL_VARNO {
+         let index = WindowAggIndex::from_sentinel_attno(attno)?;
+         let window_agg = join_clause.window_aggs.get(index)?;
+-        match &window_agg.agg_def {
+-            WindowAggDef::Sql(sql) => {
+-                if sql.arg_field_type().is_some_and(|ft| ft.is_numeric()) {
+-                    return None;
+-                }
+-            }
+-            // The column holds the document as text, which only the
+-            // PgExprUdf path turns back into the jsonb the expression reads.
+-            WindowAggDef::PdbAgg(_) => return None,
++        if window_agg.requires_udf_decode() {
++            return None;
+         }
+         let canonical = join_clause.window_aggs.canonical_index(index);
+         return Some(col(canonical.as_col_name()));
+@@ -227,14 +220,7 @@ impl<'a> ColumnMapper for JoinClauseMapper<'a> {
+             let index = WindowAggIndex::from_sentinel_attno(varattno)?;
+             let window_agg = self.join_clause.window_aggs.get(index)?;
+             let canonical = self.join_clause.window_aggs.canonical_index(index);
+-            let decode = match &window_agg.agg_def {
+-                WindowAggDef::Sql(sql) => InputDecode::StorageEncoded {
+-                    is_avg: matches!(sql.agg_type(), SupportedWindowAggType::Avg),
+-                    field_type: sql.arg_field_type().cloned(),
+-                },
+-                WindowAggDef::PdbAgg(_) => InputDecode::JsonDocument,
+-            };
+-            return Some((col(canonical.as_col_name()), decode));
++            return Some((col(canonical.as_col_name()), window_agg.udf_input_decode()));
+         }
+         let field_type = numeric_fast_field_type(self.join_clause, varno, varattno)?;
+         let expr = resolve_var_to_df_col(self.join_clause, varno, varattno)?;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7257** (2026-11-05): ci: Pin Docker benchmark runner AMIs (@philippemnoel)
-- **PR #7255** (2026-11-05): perf: defer vector scoring setup for unprobed segments (@rebasedming)
-- **PR #7253** (2026-11-04): chore: Generate Dockerfiles for v0.26.5 (@paradedb-github-bot[bot])
-- **PR #7252** (2026-11-04): chore: Generate Dockerfiles for v0.26.5 (@paradedb-github-bot[bot])
-- **PR #7251** (2026-11-04): fix: use system Git for macOS release checkouts (@paradedb-github-bot[bot])
-- **PR #7250** (2026-11-04): ci: backport extension smoke-test runner fix to 0.26.x (@philippemnoel)
+- **PR #7323** (2026-11-08): fix: polish RankJoin eligibility, planner warnings, and parameterized score projections (@paradedb-github-bot[bot])
+- **PR #7310** (2026-11-08): chore: Preserve benchmark cluster GUCs across heap snapshot restores. (@stuhood)
+- **PR #7309** (2026-11-07): chore: Fix conflict between #7108 and #7298. (@stuhood)
+- **PR #7305** (2026-11-08): fix: polish RankJoin eligibility, planner warnings, and parameterized score projections (@stuhood)
+- **PR #7303** (2026-11-07): perf: keep the rank join when a leaf carries a pushed filter such as a row-level security policy (@paradedb-github-bot[bot])
+- **PR #7298** (2026-11-06): perf: keep the rank join when a leaf carries a pushed filter such as a row-level security policy (@mithuncy)
 
 ---
 
@@ -3359,28 +2843,32 @@ Signed-off-by: Niladri Adhikary <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. enforce planner warning modes consistently (#7050)
+## X. polish RankJoin eligibility, planner warnings, and parameterized score projectio
 
 **RULE**:
-When implementing operations in `docs/operate/performance-tuning/reads.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/project/changelog/unreleased/7305.bugfix.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b5cb193f`: enforce planner warning modes consistently (#7050). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f3390563`: polish RankJoin eligibility, planner warnings, and parameterized score projections (#7305). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/operate/performance-tuning/reads.mdx`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/project/changelog/unreleased/7305.bugfix.mdx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-When a scan encounters a significantly stale visibility map (by default, at least `paradedb.visibility_map_warning_threshold = 10000` non-all-visible heap blocks across the table and at least 50% of scanned blocks not all-visible), ParadeDB emits a once-per-query `WARNING`. Setting `paradedb.planner_warnings = 'off'` suppresses this diagnostic; setting it to `'error'` aborts the query instead, including under `EXPLAIN ANALYZE`.
+---
+header: stability
+---
+
+Fixed a crash when a `JoinScan` `SELECT` list combines `pdb.score()` with a scalar subquery or query parameter, kept `RankJoinExec` for joins with many `OR` or constant-score predicates on one side, and added `EXPLAIN` warnings when `RankJoinExec` is not used.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-When a scan encounters a significantly stale visibility map (by default, at least `paradedb.visibility_map_warning_threshold = 10000` non-all-visible heap blocks across the table and at least 50% of scanned blocks not all-visible), ParadeDB emits a once-per-query `WARNING` (controlled by `paradedb.planner_warnings`).
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b5cb193f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f3390563` are properly handled with clean fallback behavior.

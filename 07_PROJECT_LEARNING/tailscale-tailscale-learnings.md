@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `8aa18b51`  
+> **Source Version**: `d566ac8a`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T19:22:22.280Z  
+> **Timestamp**: 2026-11-10T02:24:09.059Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T19:22:22.274Z  
+> **Harvest Timestamp**: 2026-11-10T02:19:08.007Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 38683 stars
+- **Stars / Engagement**: 38854 stars
 
 ---
 
@@ -800,11 +800,11 @@ export const sessionStateStorage: IPNStateStorage = {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #22185** (2026-11-05): **feature/conn25: client.reset() leaves stale address assignments in the send queue**
-  *Symptoms*:  `client.reset()` clears the client's internal state — IP pools, `assignments`, `byConnKey` — but leaves the `addrsCh` send queue untouched. That channel is buffered (64 entries) and is drained asynchronously by `extension.sendLoop`.  So any assignment queued but not yet sent at reset time survives the reset and gets delivered afterwards, describing state that no longer exists.  ### Why it matters  `reset()` is called from `extension.profileStateChange` only when `!sameNode`, i.e. the node switched profiles and identities. After the reset, `sendLoop` keeps draining the stale entries and, for each one: 1. POSTs `/v0/connector/transit-ip` to a connector from the *old* profile, registering a transit IP that this client has already forgotten about. The connector holds that mapping until it expires on its own. 2. Then fails in `addTransitIPForConnector` → `insertTransitConnMapping` with `"transit IP is not already known"`, because the assignment is gone from `c.assignments`. The error is logged by `sendLoop` and nothing else happens.  The send is both useless (step 2 can never succeed) and wrong (step 1 leaks a mapping to a connector under the previous identity). Worst case is one stale POST per buffered entry, up to the channel capacity.
+- **Issue #22259** (2026-11-09): **macOS (App Store, IPNExtension): direct UDP still never re-established after network change on 1.104.5 (follow-up to #22082)**
+  *Symptoms*: ### What is the issue?  Follow-up to #22082, which was closed with the statement that 1.104.5 fixes the problem (https://github.com/tailscale/tailscale/issues/22082#issuecomment-6664887117). **It does not.**  Re-tested on 1.104.5 (2026-11-07) with `tailscale ping` against two peers. Same result for both; output below for one of them. After a network change the connection falls back to DERP and direct UDP is never re-established, **not even after switching back to the original Wi-Fi** where it worked a few minutes earlier. Only quitting and relaunching the Tailscale app restores the direct connection.  **Expected:** after the network change (at the latest after switching back), a direct connection is re-established, as it is immediately after an app relaunch.  **1. Wi-Fi (home), initial state: direct** ``` $ tailscale ping muc-xxx pong from jeff (xxx.xxx.xxx.xxx) via xx.xx.xx.xx:41641 in 29ms ```  **2. Switched to mobile hotspot: DERP only** ``` $ tailscale ping muc-xxx pong from jeff (xxx.xxx.xxx.xxx) via DERP(fra) in 29ms [... 8 more pongs via DERP(fra) ...] pong from jeff (xxx.xxx.xxx.xxx) via DERP(fra) in 45ms 2026/11/07 12:59:36 direct connection not established ```  **3. Switched back to the same home Wi-Fi: still DERP only** ``` $ tailscale ping muc-xxx pong from jeff (xxx.xxx.xxx.xxx) via DERP(fra) in 29ms [... 8 more pongs via DERP(fra) ...] pong from jeff (xxx.xxx.xxx.xxx) via DERP(fra) in 45ms 2026/11/07 13:03:36 direct connection not established ```  **4. Quit Tail
 
-- **Issue #22173** (2026-11-05): **iOS 1.104.5: data plane still stops while app shows Connected; VPN toggle fixes it (follow-up to #19504, #21832)**
-  *Symptoms*: > [!NOTE] > 🤖 **Claude Opus 5.5 responding on behalf of Nick**  ### What is the issue?  On iOS 1.104.5 the iPhone still stops receiving tailnet traffic while the app shows Connected. Toggling the VPN fixes it within a second. This is the same failure as #19504 and #21832. In #21832 I was asked to file a new issue with a bug report if it still happens on 1.104.5, so here it is, with an iPhone report taken during the freeze, before the toggle.  Timeline for 2026-11-04, from the Linux peer bb-1 (UTC). Both devices are on the same home LAN:  | Time | Event | |---|---| | overnight to 11:19:50 | Healthy. A direct LAN path to the iPhone is confirmed repeatedly (`now using 10.10.10.114:41641`). | | 11:21:13 | From here on, only `new contact: peer=[7ATOf] ... via=derp` every 3-6 s, never completing | | 11:21:29 | The peer's watcher fires: `tailscale ping` times out 3/3. Peer report below. | | ~11:21 | On the iPhone, every tailnet host shows "did not answer" | | 11:22:00 | **iPhone bug report filed (still frozen)** | | 11:22:15 | `derp-16 does not know about peer [7ATOf], removing route` | | 11:22:17 | VPN toggled: new disco key, direct on the same LAN endpoint in under 1 s |  The network did not change. The phone was on the same Wi-Fi all night, and the freeze began at about the time it was picked up after sleeping.  ### Steps to reproduce  No deterministic repro. On 1.104.4 and 1.104.5 it happens several times a week: after network transitions (landing and joining cellular, cellular
+- **Issue #22252** (2026-11-09): **util/clientmetric: ts_omit_clientmetrics breaks tsnet builds through syspolicy**
+  *Symptoms*: Building tsnet with client metrics omitted fails to compile:  ```sh go build -tags=ts_omit_clientmetrics ./tsnet ```  `util/syspolicy/internal/metrics` references `clientmetric.Type`, `clientmetric.TypeGauge`, and `clientmetric.TypeCounter`, but those declarations are missing from the disabled clientmetric implementation. The compiler reports undefined identifiers.  Expected: tsnet should build with client metrics disabled.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -821,120 +821,288 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `01fa3caf` (2026-11-05)
-**Commit Message**: ipn/ipnlocal: fix redirect for nested directories in serve (#22118)
+### Incident Patch 1: `d566ac8a` (2026-11-09)
+**Commit Message**: ipn/ipnlocal, feature/acme: fix ts_omit_serve build with acme
 
-ipn/ipnlocal: resolve serve file redirects against the request path
+feature/acme uses LocalBackend.ServeConfig to find hostnames needing
+cert refresh, which broke builds with ts_omit_serve but not
+ts_omit_acme. The serveConfig field it reads exists in all builds, so
+move the method out of the serve-only file rather than making acme
+depend on serve, and skip the refresh loop hook when serve is omitted
+so the linker can drop it.
 
-http.FileServer sends a Location relative to the request URL, such as
-"nested/" or "../file". fixLocationHeaderResponseWriter prefixed that
-value with the mount point, which dropped every directory between the
-mount point and the target. A request for /doc/subdir/nested was
-redirected to /doc/nested/.
+Updates #22283
 
-Resolve the relative Location against the original request path
-instead. Collapse leading slashes in the result so a request path like
-//host/dir cannot produce a protocol-relative Location.
+Change-Id: I2cef6683cd6e6144306ddec95255d606f7a539ae
+Signed-off-by: Brad Fitzpatrick <[REDACTED_EMAIL]>
 
-Fixes #22049
-
-Signed-off-by: Alex Castillo González <[REDACTED_EMAIL]>
-
-**File**: `ipn/ipnlocal/serve.go` (modified, +22/-1)
+**File**: `feature/acme/acme.go` (modified, +5/-1)
 ```diff
-@@ -1363,20 +1363,41 @@ func (b *LocalBackend) serveFileOrDirectory(w http.ResponseWriter, r *http.Reque
- 	fs.ServeHTTP(&fixLocationHeaderResponseWriter{
- 		ResponseWriter: w,
- 		mountPoint:     mountPoint,
-+		reqPath:        r.URL.Path,
- 	}, r)
- }
+@@ -23,6 +23,7 @@ import (
+ 	"time"
  
- // fixLocationHeaderResponseWriter is an http.ResponseWriter wrapper that, upon
--// flushing HTTP headers, prefixes any Location header with the mount point.
-+// flushing HTTP headers, rewrites any Location header to be under the mount
-+// point. http.FileServer sends redirects relative to the (prefix-stripped)
-+// request URL, so a relative Location is resolved against the original request
-+// path.
- type fixLocationHeaderResponseWriter struct {
- 	http.ResponseWriter
- 	mountPoint string
-+	reqPath    string    // original request path, before the mount point is stripped
- 	fixOnce    sync.Once // guards call to fix
- }
- 
- func (w *fixLocationHeaderResponseWriter) fix() {
- 	h := w.ResponseWriter.Header()
- 	if v := h.Get("Location"); v != "" {
-+		if ref, err := url.Parse(v); err == nil && ref.Scheme == "" && ref.Host == "" && !strings.HasPrefix(v, "/") && strings.HasPrefix(w.reqPath, w.mountPoint) {
-+			// Resolve against the original request path, which keeps any
-+			// parent directories below the mount point and removes dot
-+			// segments. The query string, if any, is carried along.
-+			u := (&url.URL{Path: w.reqPath}).ResolveReference(ref)
-+			loc := u.EscapedPath()
-+			if u.RawQuery != "" {
-+				loc += "?" + u.RawQuery
-+			}
-+			// Collapse leading slashes so a request path like "//foo"
-+			// can't produce a protocol-relative Location.
-+			h.Set("Location", "/"+strings.TrimLeft(loc, "/"))
-+			return
-+		}
-+		// Not expected from http.FileServer, which only sends relative
-+		// Locations; kept as a safety net.
- 		h.Set("Location", w.mountPoint+v)
- 	}
- }
+ 	"tailscale.com/feature"
++	"tailscale.com/feature/buildfeatures"
+ 	"tailscale.com/health"
+ 	"tailscale.com/ipn"
+ 	"tailscale.com/ipn/ipnext"
+@@ -48,7 +49,10 @@ func init() {
+ 	ipnlocal.HookGetCertPEM.Set(getCertPEMHook)
+ 	ipnlocal.HookGetACMETLSALPNCert.Set(getACMETLSALPNCertHook)
+ 	ipnlocal.HookGetACMETLSALPNProto.Set(getACMETLSALPNProtoHook)
+-	ipnlocal.HookUpdateCertRefreshLoop.Set(updateCertRefreshLoopHook)
++	if buildfeatures.HasServe {
++		// The refresh loop only renews certs for Serve's hostnames.
++		ipnlocal.HookUpdateCertRefreshLoop.Set(updateCertRefreshLoopHook)
++	}
+ 	ipnlocal.HookShutdownCertRefreshLoop.Set(shutdownCertRefreshLoopHook)
+ 	ipnlocal.HookConfigureCertsForTest.Set(configureCertsForTestHook)
+ 	ipnlocal.HookHandleC2NTLSCertStatus.Set(handleC2NTLSCertStatus)
 ```
 
-**File**: `ipn/ipnlocal/serve_test.go` (modified, +11/-0)
+**File**: `ipn/ipnlocal/local.go` (modified, +12/-0)
 ```diff
-@@ -1424,9 +1424,11 @@ func TestServeFileOrDirectory(t *testing.T) {
- 	writeFile("foo", "this is foo")
- 	writeFile("bar", "this is bar")
- 	os.MkdirAll(filepath.Join(td, "subdir"), 0o700)
-+	os.MkdirAll(filepath.Join(td, "subdir", "nested"), 0o700)
- 	writeFile("subdir/file-a", "this is A")
- 	writeFile("subdir/file-b", "this is B")
- 	writeFile("subdir/file-c", "this is C")
-+	writeFile("subdir/nested/index.html", "this is nested index")
+@@ -1487,6 +1487,18 @@ func (b *LocalBackend) Prefs() ipn.PrefsView {
+ 	return b.sanitizedPrefsLocked()
+ }
  
- 	contains := func(subs ...string) func([]byte, *http.Response) error {
- 		return func(resBody []byte, res *http.Response) error {
-@@ -1478,7 +1480,12 @@ func TestServeFileOrDirectory(t *testing.T) {
- 		{"/bar/inside-file", "/", isStatus(404)},
- 		{"/subdir", "/", isRedirect("/subdir/")},
- 		{"/subdir/", "/", contains("file-a", "file-b", "file-c")},
-+		{"/subdir/nested", "/", isRedirect("/subdir/nested/")},
-+		{"//subdir/nested", "/", isRedirect("/subdir/nested/")},
-+		{"/subdir/nested/index.html", "/", isRedirect("/subdir/nested/")},
-+		{"/subdir/nested?x=1", "/", isRedirect("/subdir/nested/?x=1")},
- 		{"/subdir/file-a", "/", contains("this is A")},
-+		{"/subdir/file-a/", "/", isRedirect("/subdir/file-a")},
- 		{"/subdir/file-z", "/", isStatus(404)},
++// ServeConfig provides a view of the current serve mappings.
++// If serving is not configured, the returned view is not Valid.
++//
++// It is defined even in ts_omit_serve builds, where it always returns
++// an invalid view, so that features like ACME that consult the serve
++// config, but don't require serve, still compile.
++func (b *LocalBackend) ServeConfig() ipn.ServeConfigView {
++	b.mu.Lock()
++	defer b.mu.Unlock()
++	return b.serveConfig
++}
++
+ func (b *LocalBackend) sanitizedPrefsLocked() ipn.PrefsView {
+ 	syncs.RequiresMutex(&b.mu)
+ 	return stripKeysFromPrefs(b.pm.CurrentPrefs())
+```
+
+**File**: `ipn/ipnlocal/serve.go` (modified, +0/-8)
+```diff
+@@ -428,14 +428,6 @@ func (b *LocalBackend) setServeConfigLocked(config *ipn.ServeConfig, etag string
+ 	return nil
+ }
  
- 		{"/doc", "/doc/", isRedirect("/doc/")},
-@@ -1489,7 +1496,11 @@ func TestServeFileOrDirectory(t *testing.T) {
- 		{"/doc/bar/inside-file", "/doc/", isStatus(404)},
- 		{"/doc/subdir", "/doc/", isRedirect("/doc/subdir/")},
- 		{"/doc/subdir/", "/doc/", contains("file-a", "file-b", "file-c")},
-+		{"/doc/subdir/nested", "/doc/", isRedirect("/doc/subdir/nested/")},
-+		{"/doc/subdir/nested/index.html", "/doc/", isRedirect("/doc/subdir/nested/")},
-+		{"/doc/subdir/nested?x=1", "/doc/", isRedirect("/doc/subdir/nested/?x=1")},
- 		{"/doc/subdir/file-a", "/doc/", contains("this is A")},
-+		{"/doc/subdir/file-a/", "/doc/", isRedirect("/doc/subdir/file-a")},
- 		{"/doc/subdir/file-z", "/doc/", isStatus(404)},
- 	}
- 	for _, tt := range tests {
+-// ServeConfig provides a view of the current serve mappings.
+-// If serving is not configured, the returned view is not Valid.
+-func (b *LocalBackend) ServeConfig() ipn.ServeConfigView {
+-	b.mu.Lock()
+-	defer b.mu.Unlock()
+-	return b.serveConfig
+-}
+-
+ // ServeConfigETag provides a view of the current serve mappings and an ETag,
+ // which can later be provided to [LocalBackend.SetServeConfig] to implement
+ // Optimistic Concurrency Control.
+```
+
+---
+
+### Incident Patch 2: `1e2c689b` (2026-11-09)
+**Commit Message**: build(deps): bump @babel/core from 7.23.3 to 7.29.13 in /client/web
+
+Bumps [@babel/core](https://github.com/babel/babel/tree/HEAD/packages/babel-core) from 7.23.3 to 7.29.13.
+- [Release notes](https://github.com/babel/babel/releases)
+- [Changelog](https://github.com/babel/babel/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/babel/babel/commits/v7.29.13/packages/babel-core)
+
+---
+updated-dependencies:
+- dependency-name: "@babel/core"
+  dependency-version: 7.29.7
+  dependency-type: indirect
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+
+**File**: `client/web/yarn.lock` (modified, +213/-63)
+```diff
+@@ -12,42 +12,48 @@
+   resolved "https://registry.yarnpkg.com/@alloc/quick-lru/-/quick-lru-5.2.0.tgz#7bf68b20c0a350f936915fcae06f58e32007ce30"
+   integrity sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==
+ 
+-"@ampproject/remapping@^2.2.0":
+-  version "2.2.1"
+-  resolved "https://registry.yarnpkg.com/@ampproject/remapping/-/remapping-2.2.1.tgz#99e8e11851128b8702cd57c33684f1d0f260b630"
+-  integrity sha512-lFMjJTrFL3j7L9yBxwYfCq2k6qqwHyzuUl/XBnif78PWTJYyL/dfowQHWE3sp6U6ZzqWiiIZnpTMO96zhkjwtg==
+-  dependencies:
+-    "@jridgewell/gen-mapping" "^0.3.0"
+-    "@jridgewell/trace-mapping" "^0.3.9"
+-
+-"@babel/code-frame@^7.0.0", "@babel/code-frame@^7.22.13", "@babel/code-frame@^7.23.4":
++"@babel/code-frame@^7.0.0", "@babel/code-frame@^7.22.13":
+   version "7.23.4"
+   resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.23.4.tgz#03ae5af150be94392cb5c7ccd97db5a19a5da6aa"
+   integrity sha512-r1IONyb6Ia+jYR2vvIDhdWdlTGhqbBoFqLTQidzZ4kepUFH15ejXvFHxCVbtl7BOXIudsIubf4E81xeA3h3IXA==
+   dependencies:
+     "@babel/highlight" "^7.23.4"
+     chalk "^2.4.2"
+ 
++"@babel/code-frame@^7.29.7":
++  version "7.29.7"
++  resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.29.7.tgz#f2fbbfea87c44a21590ec515b778b2c26d8866e7"
++  integrity sha512-Aup7aUOfpbAUg2ROOJN6Iw5f9DMBlzu0mIkm/malLQFN/YQgO48wCj0Kxa3sEHJvPVFg7siR+qRInwXd2qhQKw==
++  dependencies:
++    "@babel/helper-validator-identifier" "^7.29.7"
++    js-tokens "^4.0.0"
++    picocolors "^1.1.1"
++
+ "@babel/compat-data@^7.22.6", "@babel/compat-data@^7.22.9", "@babel/compat-data@^7.23.3":
+   version "7.23.3"
+   resolved "https://registry.yarnpkg.com/@babel/compat-data/-/compat-data-7.23.3.tgz#3febd552541e62b5e883a25eb3effd7c7379db11"
+   integrity sha512-BmR4bWbDIoFJmJ9z2cZ8Gmm2MXgEDgjdWgpKmKWUt54UGFJdlj31ECtbaDvCG/qVdG3AQ1SfpZEs01lUFbzLOQ==
+ 
++"@babel/compat-data@^7.29.7":
++  version "7.29.7"
++  resolved "https://registry.yarnpkg.com/@babel/compat-data/-/compat-data-7.29.7.tgz#6f0237f0f36d2e51c0570a636faed9d2d0efe629"
++  integrity sha512-locTkQyKvwIEgBzVrn8693ebc97F2U8ZHjbXwDXJ5Fn2TCpNwTlKcaKLkdHop5c/icOFE7qt7Q9JC5hnKNa6Gg==
++
+ "@babel/core@^7.16.0", "@babel/core@^7.21.3":
+-  version "7.23.3"
+-  resolved "https://registry.yarnpkg.com/@babel/core/-/core-7.23.3.tgz#5ec09c8803b91f51cc887dedc2654a35852849c9"
+-  integrity sha512-Jg+msLuNuCJDyBvFv5+OKOUjWMZgd85bKjbICd3zWrKAo+bJ49HJufi7CQE0q0uR8NGyO6xkCACScNqyjHSZew==
+-  dependencies:
+-    "@ampproject/remapping" "^2.2.0"
+-    "@babel/code-frame" "^7.22.13"
+-    "@babel/generator" "^7.23.3"
+-    "@babel/helper-compilation-targets" "^7.22.15"
+-    "@babel/helper-module-transforms" "^7.23.3"
+-    "@babel/helpers" "^7.23.2"
+-    "@babel/parser" "^7.23.3"
+-    "@babel/template" "^7.22.15"
+-    "@babel/traverse" "^7.23.3"
+-    "@babel/types" "^7.23.3"
++  version "7.29.13"
++  resolved "https://registry.yarnpkg.com/@babel/core/-/core-7.29.13.tgz#dcfa718e09c1bde8531b72b6d0d1830481397b1d"
++  integrity sha512-j1nvOQCZYSgp7HLmisnCXFTpVvFODiijQ9QHkORfGKWH6YDtskTEeCJS7eV545GZ9UBzrq0e2xsOd5QQ5PjIqw==
++  dependencies:
++    "@babel/code-frame" "^7.29.7"
++    "@babel/generator" "^7.29.13"
++    "@babel/helper-compilation-targets" "^7.29.13"
++    "@babel/helper-module-transforms" "^7.29.13"
++    "@babel/helpers" "^7.29.13"
++    "@babel/parser" "^7.29.13"
++    "@babel/template" "^7.29.7"
++    "@babel/traverse" "^7.29.13"
++    "@babel/types" "^7.29.11"
++    "@jridgewell/remapping" "^2.3.5"
+     convert-source-map "^2.0.0"
+     debug "^4.1.0"
+     gensync "^1.0.0-beta.2"
+@@ -63,15 +69,16 @@
+     eslint-visitor-keys "^2.1.0"
+     semver "^6.3.1"
+ 
+-"@babel/generator@^7.23.3", "@babel/generator@^7.23.4":
+-  version "7.23.4"
+-  resolved "https://registry.yarnpkg.com/@babel/generator/-/generator-7.23.4.tgz#4a41377d8566ec18f807f42962a7f3551de83d1c"
+-  integrity sha512-esuS49Cga3HcThFNebGhlgsrVLkvhqvYDTzgjfFFlHJcIfLe5jFmRRfCQ1KuBfc4Jrtn3ndLgKWAKjBE+IraYQ==
++"@babel/generator@^7.29.13":
++  version "7.29.13"
++  resolved "https://registry.yarnpkg.com/@babel/generator/-/generator-7.29.13.tgz#89bd5d368cde7437920ab3f2e67ef24f0ecfe620"
++  integrity sha512-T5FRo+RzVHvGjWOuF1Ljc44b+NXAOazodHkGUHp4I3zCkQ4/sNVJm56h1S278LMR0bY5xBhztGziSbli8zObIw==
+   dependencies:
+-    "@babel/types" "^7.23.4"
+-    "@jridgewell/gen-mapping" "^0.3.2"
+-    "@jridgewell/trace-mapping" "^0.3.17"
+-    jsesc "^2.5.1"
++    "@babel/parser" "^7.29.13"
++    "@babel/types" "^7.29.11"
++    "@jridgewell/gen-mapping" "^0.3.12"
++    "@jridgewell/trace-mapping" "^0.3.28"
++    jsesc "^3.0.2"
+ 
+ "@babel/helper-annotate-as-pure@^7.22.5":
+   version "7.22.5"
+@@ -98,6 +105,17 @@
+     lru-cache "^5.1.1"
+     semver "^6.3.1"
+ 
++"@babel/helper-compilation-targets@^7.29.13":
++  version "7.29.13"
++  resolved "https://registry.yarnpkg.com/@babel/helper-compilation-targets/-/helper-compilation-targets-7.29.13.tgz#bd48c347d19d5357c6eaf742007a99b2fff5e315"
++  integrity sha512-8WxJ4/Vmes3ghacj8VOJy3NW8eyHiFY/4thU/LSBuBE470+igjR/j1ZTNn8fV5VdNrLx6iXUwig
+```
+
+---
+
+### Incident Patch 3: `f33f3876` (2026-06-21)
+**Commit Message**: build(deps): bump form-data from 4.0.4 to 4.0.6 in /client/web
+
+Bumps [form-data](https://github.com/form-data/form-data) from 4.0.4 to 4.0.6.
+- [Changelog](https://github.com/form-data/form-data/blob/master/CHANGELOG.md)
+- [Commits](https://github.com/form-data/form-data/compare/v4.0.4...v4.0.6)
+
+---
+updated-dependencies:
+- dependency-name: form-data
+  dependency-version: 4.0.6
+  dependency-type: indirect
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+
+**File**: `client/web/yarn.lock` (modified, +13/-6)
+```diff
+@@ -3560,15 +3560,15 @@ for-each@^0.3.3:
+     is-callable "^1.1.3"
+ 
+ form-data@^4.0.0:
+-  version "4.0.4"
+-  resolved "https://registry.yarnpkg.com/form-data/-/form-data-4.0.4.tgz#784cdcce0669a9d68e94d11ac4eea98088edd2c4"
+-  integrity sha512-KrGhL9Q4zjj0kiUt5OO4Mr/A/jlI2jDYs5eHBpYHPcBEVSiipAvn2Ko2HnPe20rmcuuvMHNdZFp+4IlGTMF0Ow==
++  version "4.0.6"
++  resolved "https://registry.yarnpkg.com/form-data/-/form-data-4.0.6.tgz#28e864e1b786dbebb68db1f452f9635278665827"
++  integrity sha512-vKatAh4SlVfgbv+YtmhiRjhEMJsYpsG1Y2rMQtR+SVSbytsSD1YGzDIcrAJmdFec88u/+VoGmxnl+80gL1tRCQ==
+   dependencies:
+     asynckit "^0.4.0"
+     combined-stream "^1.0.8"
+     es-set-tostringtag "^2.1.0"
+-    hasown "^2.0.2"
+-    mime-types "^2.1.12"
++    hasown "^2.0.4"
++    mime-types "^2.1.35"
+ 
+ fraction.js@^4.2.0:
+   version "4.2.0"
+@@ -3828,6 +3828,13 @@ hasown@^2.0.2:
+   dependencies:
+     function-bind "^1.1.2"
+ 
++hasown@^2.0.4:
++  version "2.0.4"
++  resolved "https://registry.yarnpkg.com/hasown/-/hasown-2.0.4.tgz#8c62d8cb90beb2aad5d0a5b67581ad9854c3f003"
++  integrity sha512-T2UbfbBEF32wiepXIsMlTW9+dDYC6wMh/t/vYA4tuOMKqWz/n3vr1NFSxQiyP+zk2mXsoMA/i/7qV6LKut1t1A==
++  dependencies:
++    function-bind "^1.1.2"
++
+ html-encoding-sniffer@^4.0.0:
+   version "4.0.0"
+   resolved "https://registry.yarnpkg.com/html-encoding-sniffer/-/html-encoding-sniffer-4.0.0.tgz#696df529a7cfd82446369dc5193e590a3735b448"
+@@ -4360,7 +4367,7 @@ mime-db@1.52.0:
+   resolved "https://registry.yarnpkg.com/mime-db/-/mime-db-1.52.0.tgz#bbabcdc02859f4987301c856e3387ce5ec43bf70"
+   integrity sha512-sPU4uV7dYlvtWJxwwxHD0PuihVNiE7TyAbQ5SWxDCB9mUYvOgroQOwYQQOKPJ8CIbE+1ETVlOoK1UC2nU3gYvg==
+ 
+-mime-types@^2.1.12:
++mime-types@^2.1.35:
+   version "2.1.35"
+   resolved "https://registry.yarnpkg.com/mime-types/-/mime-types-2.1.35.tgz#381a871b62a734450660ae3deee44813f70d959a"
+   integrity sha512-ZDY+bPm5zTTF+YpCrAU9nK0UgICYPT0QtT1NZWFv4s++TNkcgVaT0g6+4R2uI4MjQjzysHB1zxuWL50hzaeXiw==
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #22186** (2026-11-05): feature/conn25: drain the address assignment queue in client.reset (@mazdakn)
-- **PR #22181** (2026-11-05): Requeue on optimistic lock errors in operator reconcilers (@ChaosInTheCRD)
-- **PR #22180** (2026-11-05): derp/derpserver: reduce setWriteDeadline calls (@mikeodr)
-- **PR #22176** (2026-11-04): derp/derpserver: increase pool size to batch writer flushes (@mikeodr)
-- **PR #22167** (2026-11-04): appc: add test for AppDNSRoutes ignoring subnet mode apps (@tendstofortytwo)
-- **PR #22165** (2026-11-04): feature/conn25: roll back the address assignment when the send queue is full (@mazdakn)
+- **PR #22286** (2026-11-10): ipn/ipnlocal, feature/acme: fix ts_omit_serve build with acme (@bradfitz)
+- **PR #22284** (2026-11-10): util/clientmetric: add NewGaugeFunc and DisableDeltas omit stubs (@bradfitz)
+- **PR #22271** (2026-11-09): go.mod: fix duplicate handshake response in wireguard-go (#22221) (@illotum)
+- **PR #22270** (2026-11-09): wgengine/magicsock: retry UDP reads on EADDRNOTAVAIL (@nbeirne)
+- **PR #22269** (2026-11-09): feature/conn25: shut down the address assignment queue from the sender side (@mazdakn)
+- **PR #22262** (closed): ipn/ipnlocal: prefer a service's IPv4 VIP when dialing it by name (@jean-malo)
 
 ---
 
@@ -954,49 +1122,32 @@ Signed-off-by: Alex Castillo González <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ipn/ipnlocal: fix redirect for nested directories in serve (#22118)
+## X. ipn/ipnlocal, feature/acme: fix ts_omit_serve build with acme
 
 **RULE**:
-When implementing operations in `ipn/ipnlocal/serve.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `feature/acme/acme.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `01fa3caf`: ipn/ipnlocal: fix redirect for nested directories in serve (#22118). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d566ac8a`: ipn/ipnlocal, feature/acme: fix ts_omit_serve build with acme. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `ipn/ipnlocal/serve.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `feature/acme/acme.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		reqPath:        r.URL.Path,
-// flushing HTTP headers, rewrites any Location header to be under the mount
-// point. http.FileServer sends redirects relative to the (prefix-stripped)
-// request URL, so a relative Location is resolved against the original request
-// path.
-	reqPath    string    // original request path, before the mount point is stripped
-		if ref, err := url.Parse(v); err == nil && ref.Scheme == "" && ref.Host == "" && !strings.HasPrefix(v, "/") && strings.HasPrefix(w.reqPath, w.mountPoint) {
-			// Resolve against the original request path, which keeps any
-			// parent directories below the mount point and removes dot
-			// segments. The query string, if any, is carried along.
-			u := (&url.URL{Path: w.reqPath}).ResolveReference(ref)
-			loc := u.EscapedPath()
-			if u.RawQuery != "" {
-				loc += "?" + u.RawQuery
-			}
-			// Collapse leading slashes so a request path like "//foo"
-			// can't produce a protocol-relative Location.
-			h.Set("Location", "/"+strings.TrimLeft(loc, "/"))
-			return
-		}
-		// Not expected from http.FileServer, which only sends relative
-		// Locations; kept as a safety net.
+	"tailscale.com/feature/buildfeatures"
+	if buildfeatures.HasServe {
+		// The refresh loop only renews certs for Serve's hostnames.
+		ipnlocal.HookUpdateCertRefreshLoop.Set(updateCertRefreshLoopHook)
+	}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// flushing HTTP headers, prefixes any Location header with the mount point.
+	ipnlocal.HookUpdateCertRefreshLoop.Set(updateCertRefreshLoopHook)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `01fa3caf` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d566ac8a` are properly handled with clean fallback behavior.

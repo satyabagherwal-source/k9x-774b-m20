@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source**: github ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
-> **Source Version**: `d04aa46b`  
+> **Source Version**: `0297b7e9`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T22:40:11.330Z  
+> **Timestamp**: 2026-11-09T12:29:43.826Z  
 > **Learning ID**: `learn-github-siderolabs-talos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T22:40:11.324Z  
+> **Harvest Timestamp**: 2026-11-09T12:29:43.820Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Talos Linux is a modern Linux distribution built for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11471 stars
+- **Stars / Engagement**: 11490 stars
 
 ---
 
@@ -1920,14 +1920,15 @@ func ValidateMemoryManagerState(raw []byte, cfg MemoryManagerConfig, machine Mac
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #14856** (2026-11-05): **fix: use the image pull returned reference for upgrade**
-  *Symptoms*: Fixes #14829 
+- **Issue #14884** (2026-11-09): **fix: mask the SideroLink join token**
+  *Symptoms*: Previously, as the join token was part of the kernel cmdline, this mattered less. Now, with embedded machine config as the source of the join token (or regular machine config), stop logging join token to the console. 
   **Post-Mortem & Fix Analysis**:
   > /m
 
-- **Issue #14855** (2026-11-05): **feat: disable SELinux categories by default**
-  *Symptoms*: It turns out many custom container runtimes - gvisor, spin, etc. are not compatible.  So we will make this feature opt-in by default. 
+- **Issue #14883** (2026-11-09): **fix: drop architecture constraints from affinity rules**
+  *Symptoms*: Relax affinity rules by droping architecture constraints in CoreDNS and KubeProxy.  Fix https://github.com/siderolabs/talos/issues/14841  Signed-off-by: Mateusz Urbanek <mateusz.urbanek@siderolabs.com> 
   **Post-Mortem & Fix Analysis**:
+  > /m
   > /m
 
 ### D4: Resource Lifecycle & Leak Defenses
@@ -1945,271 +1946,395 @@ func ValidateMemoryManagerState(raw []byte, cfg MemoryManagerConfig, machine Mac
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `26cebd68` (2026-11-05)
-**Commit Message**: fix: avoid data race in block device inotify watcher
+### Incident Patch 1: `0297b7e9` (2026-11-06)
+**Commit Message**: fix(security): let machined kexec into the new kernel
 
-The event loop looked up a watch by descriptor and got back the
-shared *watch, then read its wd and path without the lock. Re-adding
-a watch for a path that was deleted and recreated rewrites the same
-struct under the lock in Add, so the two raced.
+With the memfd_class policy capability, a memfd carries the domain of
+the process that creates it. machined loads the kernel and the
+initramfs it kexecs from its own memfds, which are init_t, while the
+policy only lets it kexec tmpfs_t images: in enforcing mode the kexec
+is denied, and every reboot and upgrade falls back to a full reboot.
 
-In the race-enabled build machined runs as PID 1, so the race report
-killed init and panicked the kernel on a worker during user volume
-tests in integration-qemu-race.
+Allow machined to kexec the images it holds in its own memfds.
 
-Return a copy of the watch from the locked lookup instead.
-
-Signed-off-by: Noel Georgi <[REDACTED_EMAIL]>
-
-**File**: `internal/app/machined/pkg/controllers/block/internal/inotify/inotify.go` (modified, +10/-5)
-```diff
-@@ -61,11 +61,16 @@ func (w *watches) removePath(path string) (uint32, bool) {
- 	return wd, true
- }
- 
--func (w *watches) byWd(wd uint32) *watch {
-+func (w *watches) byWd(wd uint32) (watch, bool) {
- 	w.mu.RLock()
- 	defer w.mu.RUnlock()
- 
--	return w.wd[wd]
-+	existing, ok := w.wd[wd]
-+	if !ok {
-+		return watch{}, false
-+	}
-+
-+	return *existing, true
- }
- 
- func (w *watches) updatePath(path string, f func(*watch) (*watch, error)) error {
-@@ -189,16 +194,16 @@ func (w *Watcher) Run() (<-chan string, <-chan error) {
- 				// doesn't append the filename to the event, but we would like to always fill the
- 				// the "Name" field with a valid filename. We retrieve the path of the watch from
- 				// the "paths" map.
--				watch := w.watches.byWd(uint32(raw.Wd))
-+				watch, ok := w.watches.byWd(uint32(raw.Wd))
- 
- 				// inotify will automatically remove the watch on deletes; just need
- 				// to clean our state here.
--				if watch != nil && mask&unix.IN_DELETE_SELF == unix.IN_DELETE_SELF {
-+				if ok && mask&unix.IN_DELETE_SELF == unix.IN_DELETE_SELF {
- 					w.watches.remove(watch.wd)
- 				}
- 
- 				var name string
--				if watch != nil {
-+				if ok {
- 					name = watch.path
- 				}
- 
-```
-
-**File**: `internal/app/machined/pkg/controllers/block/internal/inotify/inotify_test.go` (modified, +44/-0)
-```diff
-@@ -126,3 +126,47 @@ func TestWatcherDirectory(t *testing.T) {
- 
- 	require.NoError(t, watcher.Close())
- }
-+
-+func TestWatcherReAddDeletedPath(t *testing.T) {
-+	watcher, err := inotify.NewWatcher()
-+	require.NoError(t, err)
-+
-+	path := filepath.Join(t.TempDir(), "dev")
-+
-+	require.NoError(t, os.WriteFile(path, nil, 0o644))
-+	require.NoError(t, watcher.Add(path, unix.IN_CLOSE_WRITE))
-+
-+	watchCh, errCh := watcher.Run()
-+
-+	done := make(chan struct{})
-+	drained := make(chan struct{})
-+
-+	go func() {
-+		defer close(drained)
-+
-+		for {
-+			select {
-+			case <-watchCh:
-+			case <-done:
-+				return
-+			}
-+		}
-+	}()
-+
-+	for range 2000 {
-+		require.NoError(t, os.Remove(path))
-+		require.NoError(t, os.WriteFile(path, nil, 0o644))
-+		require.NoError(t, watcher.Add(path, unix.IN_CLOSE_WRITE))
-+	}
-+
-+	select {
-+	case err = <-errCh:
-+		require.NoError(t, err)
-+	default:
-+	}
-+
-+	close(done)
-+	<-drained
-+
-+	require.NoError(t, watcher.Close())
-+}
-```
-
----
-
-### Incident Patch 2: `45005426` (2026-11-05)
-**Commit Message**: fix: sync unpacked image layers to disk
-
-containerd writes the files of an unpacked layer without fsync but
-commits the snapshot to its metadata store right away. After a power
-loss or a hard reset a committed layer can be left with zero-length
-files, containers then fail with "exec format error", and later pulls
-reuse the broken snapshot, so the node stays broken until the image is
-removed by hand.
-
-syncfs setting makes containerd syncfs each layer after it is
-applied. It works with any pull path - CRI & Talos.
-
-Signed-off-by: Max Makarov <[REDACTED_EMAIL]>
+Signed-off-by: Raphaël DUCOM <[REDACTED_EMAIL]>
 Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
 
-**File**: `hack/cri-plugin.part` (modified, +3/-0)
+**File**: `internal/app/machined/pkg/runtime/v1alpha1/bootloader/kexec/kexec.go` (modified, +2/-0)
 ```diff
-@@ -4,6 +4,9 @@ version = 4
-   discard_unpacked_layers = true
-   use_local_image_pull = true
- 
-+[plugins."io.containerd.service.v1.diff-service"]
-+  sync_fs = true
-+
- [plugins."io.containerd.cri.v1.runtime"]
-   enable_cdi = true
-   cdi_spec_dirs = ["/run/cdi"]
+@@ -67,6 +67,8 @@ func loadSkipReason(err error) string {
+ 		return "kexec support is disabled in the kernel"
+ 	case errors.Is(err, unix.EPERM):
+ 		return "kexec support is disabled via sysctl"
++	case errors.Is(err, unix.EACCES):
++		return "kexec is denied by the security policy"
+ 	case errors.Is(err, unix.EBUSY):
+ 		return "kexec is busy"
+ 	case errors.Is(err, unix.EADDRNOTAVAIL):
 ```
 
-**File**: `hack/release.toml` (modified, +25/-0)
+**File**: `internal/app/machined/pkg/runtime/v1alpha1/bootloader/kexec/kexec_internal_test.go` (modified, +1/-0)
 ```diff
-@@ -1090,6 +1090,31 @@ neighbors:
- ```
+@@ -24,6 +24,7 @@ func TestLoadSkipReason(t *testing.T) {
+ 	}{
+ 		{name: "not in the kernel", err: unix.ENOSYS, skipped: true},
+ 		{name: "disabled via sysctl", err: unix.EPERM, skipped: true},
++		{name: "denied by the security policy", err: unix.EACCES, skipped: true},
+ 		{name: "busy", err: unix.EBUSY, skipped: true},
+ 		{name: "no memory region for the kernel", err: unix.EADDRNOTAVAIL, skipped: true},
+ 		{name: "wrapped", err: fmt.Errorf("kexec_file_load: %w", unix.EADDRNOTAVAIL), skipped: true},
+```
+
+**File**: `internal/integration/provision/upgrade.go` (modified, +17/-2)
+```diff
+@@ -41,6 +41,10 @@ type upgradeSpec struct {
+ 	TargetVersion         string
+ 	TargetK8sVersion      string
+ 	TargetCmdlineContains string
++	// TargetKexecUsed asserts that the upgraded node was booted via kexec (sd-boot only).
++	//
++	// A failed kexec falls back to a firmware reboot, so the upgrade succeeds either way.
++	TargetKexecUsed bool
  
- The password is redacted from the machine configuration output. The `BGPInstanceConfigs` resource is now sensitive: the `os:admin` role reads it in full, while the other roles get it with the password replaced by `REDACTED`.
-+"""
-+
-+    [notes.image_layers_sync_fs]
-+        title = "Image Layers Synced to Disk"
-+        description = """\
-+The CRI containerd now syncs each unpacked image layer to disk (`syncfs`) before committing the snapshot.
-+Previously, a power loss or a hard reset shortly after an image pull could leave a committed layer with zero-length files:
-+containers using the image failed with `exec format error`, and the broken snapshot was reused until the image was removed by hand.
-+
-+This applies to all image layers unpacked by the CRI containerd: images pulled by the kubelet, the `kubelet` and `etcd` images pulled by Talos,
-+and images imported into the CRI containerd with `talosctl image import`.
-+
-+Each synced layer flushes all dirty data of the `EPHEMERAL` filesystem, which can slow down image pulls and add I/O latency on write-heavy nodes.
-+If image pull performance matters more than crash consistency, the sync can be disabled with a machine configuration patch:
-+
-+```yaml
-+apiVersion: v1alpha1
-+kind: CRICustomizationConfig
-+name: disable-sync-fs
-+content: |
-+    [plugins."io.containerd.service.v1.diff-service"]
-+      sync_fs = false
-+```
-+
-+Snapshots already broken by an earlier crash are not repaired: remove the affected image (e.g. `talosctl image rm`) so that it is pulled again.
- """
+ 	SkipKubeletUpgrade bool
  
- [make_deps]
+@@ -180,6 +184,8 @@ func upgradeCurrentToCurrent(useGRUB, useKexec, useEncryption bool) func() upgra
+ 			WorkerNodes:       0,
+ 
+ 			TargetCmdlineContains: "talos.extra_cmdline=extra-super-cmdline",
++			// GRUB always passes the boot partition kernel argument, so kexec can't be told apart from a firmware boot
++			TargetKexecUsed: useKexec && !useGRUB,
+ 
+ 			UpgradeRebootPowercyle: !useKexec,
+ 
+@@ -212,14 +218,16 @@ func upgradeCurrentToCurrentEnforcing() upgradeSpec {
+ 
+ 		VersionContract: config.TalosVersionCurrent.DisableEtcd().DisableKubernetes(),
+ 
+-		TargetInstallerImage: installerImage,
++		// a different target image, so that an upgrade reverted on a failed reboot sequence is detected
++		TargetInstallerImage: installerImage + "-extra-cmdline",
+ 		TargetVersion:        DefaultSettings.CurrentVersion,
+ 		TargetK8sVersion:     currentK8sVersion,
+ 
+ 		ControlplaneNodes: 1,
+ 		WorkerNodes:       0,
+ 
+-		TargetCmdlineContains: "enforcing=1",
++		TargetCmdlineContains: "talos.extra_cmdline=extra-super-cmdline",
++		TargetKexecUsed:       true,
+ 
+ 		WithApplyConfig:              true,
+ 		WithEnforcing:                true,
+@@ -408,6 +416,13 @@ func (suite *UpgradeSuite) TestRolling() {
+ 		}
+ 	}
+ 
++	if suite.spec.TargetKexecUsed {
++		// sd-boot reports the boot partition via an EFI variable, the kernel argument is only set on kexec
++		for _, node := range suite.Cluster.Info().Nodes {
++			suite.assertCmdlineContains(client, node.IPs[0].String(), constants.KernelParamBootPartitionUUID+"=")
++		}
++	}
++
+ 	// run e2e tests on the upgraded cluster
+ 	if !suite.spec.VersionContract.KubernetesDisabled() {
+ 		suite.runE2E(suite.spec.TargetK8sVersion)
+```
+
+**File**: `internal/pkg/selinux/policy/selinux/services/machined.cil` (modified, +3/-1)
+```diff
+@@ -81,7 +81,9 @@
+ 
+ ; reboot & kexec
+ (allow init_t self (capability (sys_boot)))
+-(allow init_t tmpfs_t (system (kexec_image_load kexec_initramfs_load)))
++; machined copies the kernel and the initramfs it kexecs into memfds, which carry its domain
++; with the memfd_class policy capability (kexec_load(2) is disabled in the kernel, only kexec_file_load(2) is checked)
++(allow init_t self (system (kexec_image_load kexec_initramfs_load)))
+ 
+ ; labeling FS
+ (allow init_t any_f (fs_classes (relabelfrom relabelto)))
 ```
 
 ---
 
-### Incident Patch 3: `f5c9f0fc` (2026-11-05)
-**Commit Message**: test: fix finalizer race in storage pool volume outage tests
+### Incident Patch 2: `cb348139` (2026-11-09)
+**Commit Message**: fix: mask the SideroLink join token
 
-The outage tests drop a request or pool behind the controller by
-removing its finalizer and then destroying the resource. During the
-injected outage the controller keeps requeueing, and each pass re-adds
-its finalizer to every running spec and pool it holds. A reconcile
-between the two calls made the destroy fail with pending finalizers.
+Previously, as the join token was part of the kernel cmdline, this
+mattered less. Now, with embedded machine config as the source of the
+join token (or regular machine config), stop logging join token to the
+console.
 
-Repeat the removal and destroy until the destroy succeeds.
+Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
 
-Signed-off-by: Noel Georgi <[REDACTED_EMAIL]>
-
-**File**: `internal/app/machined/pkg/controllers/storage/storage_pool_volume_test.go` (modified, +17/-8)
+**File**: `internal/app/machined/pkg/controllers/siderolink/manager.go` (modified, +2/-1)
 ```diff
-@@ -655,8 +655,7 @@ func (suite *StoragePoolVolumeSuite) TestCompletedCopyOutageFences() {
- 			})
- 		}},
- 		{name: "request-incarnation", change: func(f completedVolumeFixture) {
--			suite.RemoveFinalizer(f.request.Metadata(), volumeFinalizer)
--			suite.Destroy(f.request, state.WithDestroyOwner("hypervisor.VirtualMachineDiskController"))
-+			suite.forceDestroy(f.request.Metadata(), "hypervisor.VirtualMachineDiskController")
- 			replacement := storageres.NewStoragePoolVolumeSpec(storageres.NamespaceName, f.request.Metadata().ID())
- 			*replacement.TypedSpec() = *f.request.TypedSpec()
- 			key, _ := f.request.Metadata().Labels().Get(libvirtstorage.CopyBindingLabel)
-@@ -679,8 +678,7 @@ func (suite *StoragePoolVolumeSuite) TestCompletedCopyOutageFences() {
- 			}, state.WithUpdateOwner("storage.StoragePoolController"))
- 		}},
- 		{name: "pool-incarnation", change: func(f completedVolumeFixture) {
--			suite.RemoveFinalizer(f.pool.Metadata(), volumeFinalizer)
--			suite.Destroy(f.pool, state.WithDestroyOwner("storage.StoragePoolController"))
-+			suite.forceDestroy(f.pool.Metadata(), "storage.StoragePoolController")
+@@ -30,6 +30,7 @@ import (
+ 	"google.golang.org/grpc/credentials/insecure"
  
- 			replacement := storageres.NewStoragePoolStatus(storageres.NamespaceName, f.pool.Metadata().ID())
- 			*replacement.TypedSpec() = *f.pool.TypedSpec()
-@@ -692,8 +690,7 @@ func (suite *StoragePoolVolumeSuite) TestCompletedCopyOutageFences() {
- 			suite.Require().NoError(err)
- 		}},
- 		{name: "missing-pool", change: func(f completedVolumeFixture) {
--			suite.RemoveFinalizer(f.pool.Metadata(), volumeFinalizer)
--			suite.Destroy(f.pool, state.WithDestroyOwner("storage.StoragePoolController"))
-+			suite.forceDestroy(f.pool.Metadata(), "storage.StoragePoolController")
- 		}},
- 		{name: "pool-mutation", change: func(f completedVolumeFixture) {
- 			suite.AddFinalizer(f.pool.Metadata(), "storage.StoragePoolController/mutating/backing")
-@@ -795,8 +792,7 @@ func (suite *StoragePoolVolumeSuite) TestCompletedCopyOutageRequestWithdrawal()
- 				suite.Require().NoError(err)
- 				ctest.AssertNoResource[*storageres.StoragePoolVolumeStatus](suite, f.request.Metadata().ID())
- 			case "missing-request":
--				suite.RemoveFinalizer(f.request.Metadata(), volumeFinalizer)
--				suite.Destroy(f.request, state.WithDestroyOwner("hypervisor.VirtualMachineDiskController"))
-+				suite.forceDestroy(f.request.Metadata(), "hypervisor.VirtualMachineDiskController")
- 				ctest.AssertNoResource[*storageres.StoragePoolVolumeStatus](suite, f.request.Metadata().ID())
- 			}
- 		})
-@@ -2497,6 +2493,19 @@ func (suite *StoragePoolVolumeSuite) changeCopySpec(spec *storageres.StoragePool
- 	}, state.WithUpdateOwner("hypervisor.VirtualMachineDiskController"))
- }
+ 	networkutils "github.com/siderolabs/talos/internal/app/machined/pkg/controllers/network/utils"
++	"github.com/siderolabs/talos/internal/pkg/endpoint"
+ 	"github.com/siderolabs/talos/pkg/httpdefaults"
+ 	"github.com/siderolabs/talos/pkg/machinery/client/dialer"
+ 	"github.com/siderolabs/talos/pkg/machinery/constants"
+@@ -324,7 +325,7 @@ func (ctrl *ManagerController) Run(ctx context.Context, r controller.Runtime, lo
  
-+// forceDestroy destroys a resource behind the controller's back. A controller
-+// retrying through an outage can re-add its finalizer between the removal and
-+// the destroy, so both are repeated until the destroy wins.
-+func (suite *StoragePoolVolumeSuite) forceDestroy(ptr resource.Pointer, owner string) {
-+	suite.Require().EventuallyWithT(func(t *assert.CollectT) {
-+		if !assert.NoError(t, suite.State().RemoveFinalizer(suite.Ctx(), ptr, volumeFinalizer)) {
-+			return
+ 		logger.Info(
+ 			"siderolink connection configured",
+-			zap.String("endpoint", ctrl.pd.apiEndpont),
++			zap.String("endpoint", endpoint.Redact(ctrl.pd.apiEndpont)),
+ 			zap.String("node_uuid", ctrl.pd.nodeUUID),
+ 			zap.String("node_address", nodeAddress.String()),
+ 		)
+```
+
+**File**: `internal/pkg/endpoint/endpoint.go` (modified, +38/-0)
+```diff
+@@ -6,12 +6,21 @@
+ package endpoint
+ 
+ import (
++	"errors"
++	"fmt"
+ 	"net/url"
+ 	"regexp"
++	"strings"
+ )
+ 
+ var urlSchemeMatcher = regexp.MustCompile(`[a-zA-z]+://`)
+ 
++// redactedValue is the replacement for sensitive values in the redacted endpoint.
++const redactedValue = "redacted"
++
++// sensitiveParams is the list of query parameters which carry secrets.
++var sensitiveParams = []string{"jointoken"}
++
+ // Endpoint defines all params parsed from the API endpoint.
+ type Endpoint struct {
+ 	Host     string
+@@ -27,6 +36,11 @@ func Parse(sideroLinkParam string) (Endpoint, error) {
+ 
+ 	u, err := url.Parse(sideroLinkParam)
+ 	if err != nil {
++		// url.Error includes the full URL, which might contain the join token, so strip it
++		if urlErr, ok := errors.AsType[*url.Error](err); ok {
++			return Endpoint{}, fmt.Errorf("failed to parse endpoint %q: %w", Redact(sideroLinkParam), urlErr.Err)
 +		}
 +
-+		assert.NoError(t, suite.State().Destroy(suite.Ctx(), ptr, state.WithDestroyOwner(owner)))
-+	}, 2*time.Second, 10*time.Millisecond)
+ 		return Endpoint{}, err
+ 	}
+ 
+@@ -47,3 +61,27 @@ func Parse(sideroLinkParam string) (Endpoint, error) {
+ func (e *Endpoint) GetParam(name string) string {
+ 	return e.params.Get(name)
+ }
++
++// Redact returns the endpoint with sensitive query parameters (join token) redacted.
++//
++// The result is suitable for logging.
++func Redact(sideroLinkParam string) string {
++	base, rawQuery, found := strings.Cut(sideroLinkParam, "?")
++	if !found {
++		return sideroLinkParam
++	}
++
++	query, err := url.ParseQuery(rawQuery)
++	if err != nil {
++		// failed to parse the query, so redact it completely
++		return base + "?" + redactedValue
++	}
++
++	for _, param := range sensitiveParams {
++		if query.Has(param) {
++			query.Set(param, redactedValue)
++		}
++	}
++
++	return base + "?" + query.Encode()
++}
+```
+
+**File**: `internal/pkg/endpoint/endpoint_test.go` (modified, +58/-0)
+```diff
+@@ -8,6 +8,7 @@ import (
+ 	"testing"
+ 
+ 	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
+ 
+ 	"github.com/siderolabs/talos/internal/pkg/endpoint"
+ )
+@@ -79,3 +80,60 @@ func TestParseEndpoint(t *testing.T) {
+ 		assert.Equal(t, "", endpoint.GetParam("jointoken"))
+ 	})
+ }
++
++func TestParseEndpointErrorRedacted(t *testing.T) {
++	t.Parallel()
++
++	_, err := endpoint.Parse("https://10.5.0.2:3445/\x7f?jointoken=secret")
++	require.Error(t, err)
++
++	assert.NotContains(t, err.Error(), "secret")
++	assert.Contains(t, err.Error(), "jointoken=redacted")
 +}
 +
- func (suite *StoragePoolVolumeSuite) TestCopyBackingChangeRejectsOldCompletion() {
- 	spec, copyCtx, release := suite.heldCopy("backing.raw")
- 	pool, err := safe.StateGetByID[*storageres.StoragePoolStatus](suite.Ctx(), suite.State(), volumePool)
++func TestRedact(t *testing.T) {
++	t.Parallel()
++
++	for _, test := range []struct {
++		name     string
++		input    string
++		expected string
++	}{
++		{
++			name:     "no query",
++			input:    "https://10.5.0.2:3445",
++			expected: "https://10.5.0.2:3445",
++		},
++		{
++			name:     "no scheme",
++			input:    "10.5.0.2:3445?jointoken=secret",
++			expected: "10.5.0.2:3445?jointoken=redacted",
++		},
++		{
++			name:     "omni",
++			input:    "https://instance.siderolink.omni.example.com?jointoken=secret",
++			expected: "https://instance.siderolink.omni.example.com?jointoken=redacted",
++		},
++		{
++			name:     "multiple values",
++			input:    "https://10.5.0.2:3445?jointoken=secret&jointoken=secret2&grpc_tunnel=true",
++			expected: "https://10.5.0.2:3445?grpc_tunnel=true&jointoken=redacted",
++		},
++		{
++			name:     "no token",
++			input:    "grpc://10.5.0.2:3445?grpc_tunnel=true",
++			expected: "grpc://10.5.0.2:3445?grpc_tunnel=true",
++		},
++		{
++			name:     "invalid query",
++			input:    "https://10.5.0.2:3445?jointoken=secret%zz",
++			expected: "https://10.5.0.2:3445?redacted",
++		},
++	} {
++		t.Run(test.name, func(t *testing.T) {
++			t.Parallel()
++
++			assert.Equal(t, test.expected, endpoint.Redact(test.input))
++		})
++	}
++}
+```
+
+---
+
+### Incident Patch 3: `81917ee9` (2026-11-04)
+**Commit Message**: fix: add missing generation flags to machineconfig gen
+
+Register the generation flags in NewConfigCmd and add the gen parent's --force flag to the alias.
+
+Signed-off-by: immanuwell <[REDACTED_EMAIL]>
+
+**File**: `cmd/talosctl/cmd/mgmt/gen/config.go` (modified, +9/-5)
+```diff
+@@ -80,7 +80,7 @@ var genConfigCmdFlags struct {
+ 
+ // NewConfigCmd builds the config generation subcommand with the given name.
+ func NewConfigCmd(name string) *cobra.Command {
+-	return &cobra.Command{
++	cmd := &cobra.Command{
+ 		Use:   fmt.Sprintf("%s <cluster name> <cluster endpoint>", name),
+ 		Short: "Generates a set of configuration files for Talos cluster",
+ 		Long: `The cluster endpoint is the URL for the Kubernetes API. If you decide to use
+@@ -102,6 +102,10 @@ setup, usually involving a load balancer, use the IP and port of the load balanc
+ 			}
+ 		},
+ 	}
++
++	addConfigFlags(cmd)
++
++	return cmd
+ }
+ 
+ func fixControlPlaneEndpoint(u *url.URL) *url.URL {
+@@ -433,9 +437,7 @@ func validateClusterEndpoint(endpoint string) error {
+ 	return nil
+ }
+ 
+-func init() {
+-	genConfigCmd := NewConfigCmd("config")
+-
++func addConfigFlags(genConfigCmd *cobra.Command) {
+ 	genConfigCmd.Flags().StringVar(&genConfigCmdFlags.installDisk, "install-disk", "/dev/sda", "the disk to install to")
+ 	genConfigCmd.Flags().StringVar(&genConfigCmdFlags.installImage, "install-image", helpers.DefaultImage(images.InstallerImageRepository("metal")), "the image used to perform an installation")
+ 	genConfigCmd.Flags().StringSliceVar(&genConfigCmdFlags.additionalSANs, "additional-sans", []string{}, "additional Subject-Alt-Names for the APIServer certificate")
+@@ -461,6 +463,8 @@ func init() {
+ 
+ 	genConfigCmd.Flags().BoolVar(&genConfigCmdFlags.skipK8sEtcd, "skip-k8s-etcd", false, "skip generating etcd & Kubernetes configuration (experimental)")
+ 	genConfigCmd.Flags().MarkHidden("skip-k8s-etcd") //nolint:errcheck
++}
+ 
+-	Cmd.AddCommand(genConfigCmd)
++func init() {
++	Cmd.AddCommand(NewConfigCmd("config"))
+ }
+```
+
+**File**: `cmd/talosctl/cmd/mgmt/machineconfig/gen.go` (modified, +3/-1)
+```diff
+@@ -8,5 +8,7 @@ import "github.com/siderolabs/talos/cmd/talosctl/cmd/mgmt/gen"
+ 
+ func init() {
+ 	// alias for `talosctl gen config`
+-	Cmd.AddCommand(gen.NewConfigCmd("gen"))
++	cmd := gen.NewConfigCmd("gen")
++	cmd.Flags().AddFlagSet(gen.Cmd.PersistentFlags())
++	Cmd.AddCommand(cmd)
+ }
+```
+
+**File**: `website/content/v1.15/reference/cli.md` (modified, +20/-1)
+```diff
+@@ -2994,7 +2994,26 @@ talosctl machineconfig gen <cluster name> <cluster endpoint> [flags]
+ ### Options
+ 
+ ```
+-  -h, --help[=true|false]   help for gen
++      --additional-sans strings                  additional Subject-Alt-Names for the APIServer certificate
++      --config-patch stringArray                 patch generated machineconfigs (applied to all node types), use @file to read a patch from file
++      --config-patch-control-plane stringArray   patch generated machineconfigs (applied to 'init' and 'controlplane' types)
++      --config-patch-worker stringArray          patch generated machineconfigs (applied to 'worker' type)
++      --dns-domain string                        the dns domain to use for cluster (default "cluster.local")
++  -f, --force[=true|false]                       will overwrite existing files
++  -h, --help[=true|false]                        help for gen
++      --install-disk string                      the disk to install to (default "/dev/sda")
++      --install-image string                     the image used to perform an installation (default "factory.talos.dev/metal-installer/376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba:latest")
++      --kubernetes-version string                desired kubernetes version to run (default "1.38.0-beta.0")
++  -o, --output string                            destination to output generated files. when multiple output types are specified, it must be a directory. for a single output type, it must either be a file path, or "-" for stdout
++  -t, --output-types strings                     types of outputs to be generated. valid types are: ["controlplane" "worker" "talosconfig"] (default [controlplane,worker,talosconfig])
++      --registry-mirror strings                  list of registry mirrors to use in format: <registry host>=<mirror URL>
++      --talos-version string                     the desired Talos version to generate config for (backwards compatibility, e.g. v0.8)
++      --version string                           the desired machine config version to generate (default "v1alpha1")
++      --with-cluster-discovery[=true|false]      enable cluster discovery feature (default true)
++      --with-docs[=true|false]                   renders all machine configs adding the documentation for each field (default true)
++      --with-examples[=true|false]               renders all machine configs with the commented examples (default true)
++      --with-kubespan[=true|false]               enable KubeSpan feature
++      --with-secrets string                      use a secrets file generated using 'gen secrets'
+ ```
+ 
+ ### SEE ALSO
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14856** (2026-11-05): fix: use the image pull returned reference for upgrade (@smira)
-- **PR #14855** (2026-11-05): feat: disable SELinux categories by default (@smira)
-- **PR #14853** (2026-11-05): test: fix finalizer race in storage pool volume outage tests (@frezbo)
-- **PR #14852** (2026-11-05): fix: print detected upgrade image to stderr (@frezbo)
-- **PR #14851** (2026-11-05): chore: split unit-test actions (@smira)
-- **PR #14850** (2026-11-05): fix: avoid data race in block device inotify watcher (@frezbo)
+- **PR #14884** (2026-11-09): fix: mask the SideroLink join token (@smira)
+- **PR #14883** (2026-11-09): fix: drop architecture constraints from affinity rules (@shanduur)
+- **PR #14874** (closed): fix(security): let the CRI containerd run the installer of an upgrade (@rducom)
+- **PR #14873** (2026-11-09): fix(security): let machined kexec into the new kernel (@rducom)
+- **PR #14867** (2026-11-06): feat: add KubePrism /readyz check (@smira)
+- **PR #14866** (2026-11-06): chore: drop image pull/list legacy from talosctl (@smira)
 
 ---
 
@@ -2229,41 +2354,29 @@ Signed-off-by: Noel Georgi <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. avoid data race in block device inotify watcher
+## X. security): let machined kexec into the new kernel
 
 **RULE**:
-When implementing operations in `internal/app/machined/pkg/controllers/block/internal/inotify/inotify.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/app/machined/pkg/runtime/v1alpha1/bootloader/kexec/kexec.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `26cebd68`: avoid data race in block device inotify watcher. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0297b7e9`: security): let machined kexec into the new kernel. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/app/machined/pkg/controllers/block/internal/inotify/inotify.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/app/machined/pkg/runtime/v1alpha1/bootloader/kexec/kexec.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-func (w *watches) byWd(wd uint32) (watch, bool) {
-	existing, ok := w.wd[wd]
-	if !ok {
-		return watch{}, false
-	}
-
-	return *existing, true
-				watch, ok := w.watches.byWd(uint32(raw.Wd))
-				if ok && mask&unix.IN_DELETE_SELF == unix.IN_DELETE_SELF {
-				if ok {
+	case errors.Is(err, unix.EACCES):
+		return "kexec is denied by the security policy"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-func (w *watches) byWd(wd uint32) *watch {
-	return w.wd[wd]
-				watch := w.watches.byWd(uint32(raw.Wd))
-				if watch != nil && mask&unix.IN_DELETE_SELF == unix.IN_DELETE_SELF {
-				if watch != nil {
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `26cebd68` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0297b7e9` are properly handled with clean fallback behavior.

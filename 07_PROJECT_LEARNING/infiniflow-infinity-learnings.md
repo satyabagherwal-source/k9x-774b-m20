@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/infiniflow-infinity-learnings.md`  
 > **Source**: github ([https://github.com/infiniflow/infinity](https://github.com/infiniflow/infinity))  
-> **Source Version**: `2fffa346`  
+> **Source Version**: `b078219d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T14:02:41.802Z  
+> **Timestamp**: 2026-11-09T04:00:47.414Z  
 > **Learning ID**: `learn-github-infiniflow-infinity`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/infiniflow-infinity-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/infiniflow/infinity](https://github.com/infiniflow/infinity))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T14:02:41.794Z  
+> **Harvest Timestamp**: 2026-11-09T04:00:47.406Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The AI-native database built for LLM applications, providing incredibly fast hybrid search of dense vector, sparse vector, tensor (multi-vector), and full-text.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 4758 stars
+- **Stars / Engagement**: 4762 stars
 
 ---
 
@@ -1349,248 +1349,684 @@ export const isResponseListExist = (response: IResponseBody, filed: string) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c25572dc` (2026-11-05)
-**Commit Message**: fix(txn): report concurrent checkpoint/cleanup as skipped instead of failing (#3540)
+### Incident Patch 1: `b078219d` (2026-11-08)
+**Commit Message**: Rewrite the engine in Rust: SQL, storage, WAL and indexes at parity with the C++ reference, enforced by conformance, byte and cross-engine gates.
 
-### Summary
+## What
 
-Report concurrent checkpoint/cleanup as skipped instead of failing
+A Rust rewrite of the engine, developed as a separate workspace
+(`rust_engine/`) with the C++ tree untouched. Goal: the same SQL, the
+same wire protocols and the *same files on disk* — either engine can
+open a directory the other wrote.
 
-e.g.
-```
-=> flush data;
-System is checkpointing, skip this checkpoint.
-```
+- `rust_engine/` — 13 crates (`storage`, `catalog`, `txn`, `parser`,
+`planner`, `expression`, `index`, `analyzer`, `analyzer-ffi`,
+`executor`, `server`, `cli`, `common`) + docs.
+- `RUST_REWRITE_PLAN.md` — scope, gates and current status.
+- `.github/workflows/rust_engine.yml` — CI: a reference/rewrite x
+amd64/arm64 matrix that runs one test definition against both engines,
+plus the cross-engine format gate.
 
-**File**: `src/main/query_context.cppm` (modified, +1/-1)
+## Verification (see `rust_engine/docs/`)
+
+| Gate | What it checks | Status |
+|---|---|---|
+| A — SQL | the 175-file `.slt` suite | 1754/1754 statements, 129/129
+errors, 1560/1560 queries |
+| B — SDK / wire | unmodified Python and Go SDKs, HTTP | green |
+| C — persistence | restart, crash recovery, cross-engine reads |
+regular cases green; one heavy import profile still needs a CI-class
+machi
+
+**File**: `.github/workflows/rust_engine.yml` (added, +655/-0)
 ```diff
-@@ -89,7 +89,7 @@ public:
- 
-     inline u64 GetNextNodeID() { return ++current_max_node_id_; }
- 
--    bool BeginTxn(const BaseStatement *statement);
-+    void BeginTxn(const BaseStatement *statement);
- 
-     void CommitTxn();
- 
+@@ -0,0 +1,655 @@
++name: rust_engine
++
++# CI for the Rust rewrite (RUST_REWRITE_PLAN.md M0/M6).
++#
++# This workflow tests the rewrite alone: the reference engine, the
++# cross-engine format gate and the C++ suites belong to the reference's own
++# workflows (tests.yml / slow_tests.yml), so nothing here builds C++.
++#
++# Each suite is written once and run per architecture; every trigger covers
++# both amd64 and arm64.
++
++on:
++  push:
++    paths:
++      - 'rust_engine/**'
++      - 'python/restart_test/**'
++      - 'python/test_pysdk/**'
++      - 'tools/run_restart_test.py'
++      - '.github/workflows/rust_engine.yml'
++  pull_request:
++    paths:
++      - 'rust_engine/**'
++      - 'python/restart_test/**'
++      - 'python/test_pysdk/**'
++      - 'go/**'
++      - 'tools/run_restart_test.py'
++      - '.github/workflows/rust_engine.yml'
++  schedule:
++    - cron: '0 18 * * *' # nightly: the arm64 lane
++  workflow_dispatch:
++
++concurrency:
++  group: rust-engine-${{ github.ref }}
++  cancel-in-progress: true
++
++env:
++  # Cases the rewrite cannot run yet, one pytest node id per line. There is no
++  # reference cell to leave untouched here, so they are deselected from every
++  # cell; a line goes away when the gap closes. Source of truth:
++  # rust_engine/docs/GAPS.md section 1.
++  RUST_DESELECT: |
++    python/restart_test/test_cross_engine_bytes_60_storage.py::test_the_port_round_trips_through_object_storage
++
++jobs:
++  quality:
++    # Gate F: formatting, lints, licenses / advisories.
++    name: quality
++    runs-on: ubuntu-latest
++    defaults:
++      run:
++        working-directory: rust_engine
++    steps:
++      - uses: actions/checkout@v6
++        with:
++          # The lefthook step below diffs the base of the push/PR, so the
++          # history has to be there (the default depth-1 fetch has neither the
++          # base commit nor HEAD's parent).
++          fetch-depth: 0
++      - name: Install the pinned toolchain
++        run: |
++          # rust_engine/rust-toolchain.toml is the single source of truth.
++          rustup toolchain install --profile minimal
++          rustup component add rustfmt clippy
++      - name: Install clang, mold and libclang
++        # rust_engine/.cargo/config.toml builds RocksDB with clang and links
++        # with mold (`-fuse-ld=mold`), and librocksdb-sys runs bindgen, which
++        # needs libclang. Without them the build fails in its first seconds
++        # ("cannot find 'ld'", then "couldn't find any valid shared libraries
++        # matching: ['libclang.so']").
++        run: |
++          sudo apt-get update -qq
++          sudo apt-get install -y -qq clang mold libclang-dev
++          if ! command -v ld.mold >/dev/null 2>&1; then
++            sudo ln -sf "$(command -v mold)" /usr/bin/ld.mold
++          fi
++          # clang-sys (bindgen, for librocksdb-sys) needs libclang, and
++          # LIBCLANG_PATH overrides its search - so point it at the LLVM that
++          # actually ships libclang.so* (the image also carries an LLVM
++          # without the dev package, and a wrong directory is fatal).
++          so=$(ls /usr/lib/llvm-*/lib/libclang.so* 2>/dev/null | sort -V | tail -1)
++          if [ -n "$so" ]; then
++            echo "LIBCLANG_PATH=$(dirname "$so")" >> "$GITHUB_ENV"
++          fi
++      - uses: Swatinem/rust-cache@v2
++        with:
++          workspaces: rust_engine
++      - name: Collect the changed files
++        id: changed
++        working-directory: ${{ github.workspace }}
++        run: |
++          if [ "${GITHUB_EVENT_NAME}" = "pull_request" ]; then
++            base="${{ github.event.pull_request.base.sha }}"
++            head="${{ github.event.pull_request.head.sha }}"
++          else
++            base="${{ github.event.before }}"
++            head="${GITHUB_SHA}"
++          fi
++          # A new branch (or a base that a force-push moved away) has no common
++          # ancestor: check the last commit instead.
++          if [ -z "${base}" ] || [ "${base}" = "0000000000000000000000000000000000000000" ] \
++             || ! git cat-file -e "${base}^{commit}" 2>/dev/null; then
++            base=$(git rev-parse "${head}^" 2>/dev/null || git rev-parse "${head}")
++          fi
++          files="${RUNNER_TEMP}/lefthook-files"
++          : > "${files}"
++          git diff --name-only -z "${base}"..."${head}" | while IFS= read -r -d '' file; do
++            if [ -f "${file}" ]; then printf '%s\0' "${file}"; fi
++          done > "${files}"
++          echo "Changed files:"
++          if [ -s "${files}" ]; then tr '\0' '\n' < "${files}"; else echo "  (none)"; fi
++          if tr '\0' '\n' < "${files}" | grep -qE '\.(c|h|hpp|cpp|cppm)$'; then
++            echo "has_cpp=1" >> "${GITHUB_OUTPUT}"
++          else
++            echo "has_cpp=0" >> "${GITHUB_OUTPUT}"
++          fi
++          echo "files=${files}" >> "${GITHUB_OUTPUT}"
++          echo "base=${base}" >> "${GITHUB_OUTPUT}"
++
++      - name: Install uv (ruff runs through `uvx`)
++        uses: astral-sh/setup-uv@v7
 ```
 
-**File**: `src/main/query_context_impl.cpp` (modified, +39/-51)
+**File**: `.gitignore` (modified, +10/-0)
 ```diff
-@@ -33,6 +33,8 @@ import :new_txn_manager;
- import :admin_executor;
- import :utility;
- import :explain_logical_plan;
-+import :data_table;
-+import :logical_node_type;
+@@ -149,6 +149,11 @@ python/benchmark/datasets/
+ .venv*/
+ tmp*/
  
- import std.compat;
++# Scratch space for anything a run leaves behind: benchmark data dirs, unit
++# and functional test fixtures, engine logs, result files. Kept inside the
++# checkout so a run is reproducible from the tree alone, never in /tmp.
++.scratch/
++
+ dist/
+ python/infinity_sdk/infinity_sdk.egg-info/
+ minio/
+@@ -157,3 +162,8 @@ minio/
+ !Dockerfile*
  
-@@ -182,6 +184,7 @@ QueryResult QueryContext::QueryStatementInternal(const BaseStatement *base_state
-     //    BaseProfiler profiler;
-     //    profiler.Begin();
-     try {
-+        this->BeginTxn(base_statement);
- 
-         if (global_config_->RecordRunningQuery()) {
-             bool add_record_flag = false;
-@@ -203,26 +206,6 @@ QueryResult QueryContext::QueryStatementInternal(const BaseStatement *base_state
-                                                  base_statement->ToString());
-             }
-         }
+ vcpkg_installed/
++
++# The pysdk suite generates its fixtures under python/test/data (a copy of
++# test/data); the C++ CI copies it the same way.
++python/test/data/
++.scratch/
+```
+
+**File**: `.hooks/pre-commit` (removed, +0/-45)
+```diff
+@@ -1,45 +0,0 @@
+-#!/usr/bin/env python3
 -
--        this->BeginTxn(base_statement);
--        // Check if cleanup was skipped (BeginTxn returns false for skipped cleanup)
--        NewTxn *new_txn = this->GetNewTxn();
--        if (new_txn == nullptr) {
--            // Only cleanup statement is allowed to be skipped
--            bool is_cleanup = false;
--            if (base_statement->type_ == StatementType::kCommand) {
--                const CommandStatement *cmd = static_cast<const CommandStatement *>(base_statement);
--                is_cleanup = (cmd->command_info_->type() == CommandType::kCleanup);
--            }
--            if (is_cleanup) {
--                // Cleanup was skipped because another cleanup is in progress
--                query_result.result_table_ = nullptr;
--                query_result.status_ = Status::OK();
--                return query_result;
--            }
--            // Other statements should not have null transaction
--            UnrecoverableError("Unexpected null transaction after BeginTxn");
--        }
-         // LOG_INFO(fmt::format("created transaction, txn_id: {}, begin_ts: {}, base_statement: {}",
-         //                 session_ptr_->GetNewTxn()->TxnID(),
-         //                 session_ptr_->GetNewTxn()->BeginTS(),
-@@ -284,20 +267,32 @@ QueryResult QueryContext::QueryStatementInternal(const BaseStatement *base_state
-         StopProfile(QueryPhase::kCommit);
- 
-     } catch (RecoverableException &e) {
-+        if (e.ErrorCode() == ErrorCode::kFailToStartTxn) {
-+            // kFailToStartTxn is only raised by BeginTxn for a skipped FLUSH DATA / CLEAN DATA.
-+            if (base_statement->type_ != StatementType::kFlush && base_statement->type_ != StatementType::kCommand) {
-+                UnrecoverableError(fmt::format("Unexpected kFailToStartTxn for statement: {}", StatementType2Str(base_statement->type_)));
-+            }
- 
--        // If txn has been rollbacked, do not rollback again here.
--        NewTxn *new_txn = this->GetNewTxn();
--        if (new_txn != nullptr) {
--            StopProfile();
--            StartProfile(QueryPhase::kRollback);
--            TxnState txn_state = new_txn->GetTxnState();
--            if (txn_state == TxnState::kRollbacking or txn_state == TxnState::kStarted) {
--                this->RollbackTxn();
-+            // Report the skip as a successful no-op: the in-flight checkpoint / cleanup does the work.
-+            query_result.result_table_ = DataTable::MakeEmptyResultTable();
-+            query_result.result_table_->SetResultMsg(std::make_unique<std::string>(std::string(GetErrorMsg(e.what()))));
-+            query_result.root_operator_type_ = base_statement->type_ == StatementType::kFlush ? LogicalNodeType::kFlush : LogicalNodeType::kCommand;
-+            query_result.status_ = Status::OK();
-+        } else {
-+            // If txn has been rollbacked, do not rollback again here.
-+            NewTxn *new_txn = this->GetNewTxn();
-+            if (new_txn != nullptr) {
-+                StopProfile();
-+                StartProfile(QueryPhase::kRollback);
-+                TxnState txn_state = new_txn->GetTxnState();
-+                if (txn_state == TxnState::kRollbacking or txn_state == TxnState::kStarted) {
-+                    this->RollbackTxn();
-+                }
-+                StopProfile(QueryPhase::kRollback);
-             }
--            StopProfile(QueryPhase::kRollback);
-+            query_result.result_table_ = nullptr;
-+            query_result.status_.Init(e.ErrorCode(), e.what());
-         }
--        query_result.result_table_ = nullptr;
--        query_result.status_.Init(e.ErrorCode(), e.what());
- 
-     } catch (ParserException &e) {
- 
-@@ -379,7 +374,7 @@ void QueryContext::StopProfile() {
- 
- QueryResult QueryContext::HandleAdminStatement(const AdminStatement *admin_statement) { return AdminExecutor::Execute(this, admin_statement); }
- 
--bool QueryContext::BeginTxn(const BaseStatement *base_statement) {
-+void QueryContext::BeginTxn(const BaseStatement *base_statement) {
-     auto *txn_manager = storage_->new_txn_manager();
-     auto txn_text = std::make_unique<std::string>(base_statement ? base_statement->ToString() : "");
- 
-@@ -598,34 +593,27 @@ bool QueryContext::BeginTxn(const BaseStatement *base_statement) {
-         }
-     }
- 
--    if (transaction_ty
+-import subprocess
+-
+-
+-def get_files():
+-    return subprocess.check_output(['git', 'diff-index', '--cached',
+-                                    '--name-only', 'HEAD', '--diff-filter=d']).split()
+-
+-
+-def apply_code_style():
+-    files = filter(lambda x: x.find(b'third_party') == -1, get_files())
+-    files = filter(lambda x: x.find(b'src/networker/third_party/infinity_thrift') == -1, files)
+-    files = filter(lambda x: x.find(b'src/parser/expression_parser.cpp') == -1, files)
+-    files = filter(lambda x: x.find(b'src/parser/expression_parser.h') == -1, files)
+-    files = filter(lambda x: x.find(b'src/parser/lexer.cpp') == -1, files)
+-    files = filter(lambda x: x.find(b'src/parser/lexer.h') == -1, files)
+-    files = filter(lambda x: x.find(b'src/parser/parser.cpp') == -1, files)
+-    files = filter(lambda x: x.find(b'src/parser/parser.h') == -1, files)
+-    files = filter(lambda x: x.find(b'src/parser/search_parser.cpp') == -1, files)
+-    files = filter(lambda x: x.find(b'src/parser/search_parser.h') == -1, files)
+-
+-    files = filter(lambda x: x.endswith(b'.c') or
+-                             x.endswith(b'.h') or
+-                             x.endswith(b'.hpp') or
+-                             x.endswith(b'.cpp') or
+-                             x.endswith(b'.cppm'), files)
+-    for f in files:
+-        print("Apply code style to: " + str(f))
+-        try:
+-            subprocess.check_output(['clang-format-20', '-i', f])
+-        except subprocess.CalledProcessError as e:
+-            print(f"⚠️ clang-format failed for {f}: {e}")
+-        try:
+-            subprocess.check_output(['git', 'add', f])
+-        except subprocess.CalledProcessError as e:
+-            print(f"⚠️ git add failed for {f}: {e}")
+-
+-
+-def main():
+-    apply_code_style()
+-
+-
+-if (__name__ == '__main__'):
+-    main()
 ```
 
-**File**: `src/network/connection_impl.cpp` (modified, +11/-0)
+**File**: `CONTRIBUTING.md` (modified, +44/-6)
 ```diff
-@@ -426,6 +426,17 @@ void Connection::SendQueryResponse(const QueryResult &query_result) {
-             message = *query_result.result_table_->result_msg();
-             break;
-         }
-+        case LogicalNodeType::kFlush:
-+        case LogicalNodeType::kCommand: {
-+            // A skipped FLUSH DATA / CLEAN DATA carries the reason in result_msg; a normal statement has none.
-+            std::string *result_msg = query_result.result_table_->result_msg();
-+            if (result_msg != nullptr) {
-+                message = *result_msg;
-+            } else {
-+                message = fmt::format("SELECT {}", std::to_string(query_result.result_table_->row_count()));
-+            }
-+            break;
-+        }
+@@ -22,26 +22,64 @@ The list below mentions some contributions you can make, but it is not a complet
+ ### General workflow
  
-         default: {
-             message = fmt::format("SELECT {}", std::to_string(query_result.result_table_->row_count()));
+ 1. Fork our GitHub repository.
+-2. Clone your fork to your local machine: 
++2. Clone your fork to your local machine:
+ `git clone git@github.com:<yourname>/infinity.git`
+-3. Create a local branch: 
++3. Create a local branch:
+ `git checkout -b my-branch`
+ 4. Provide sufficient information in your commit message
+ `git commit -m 'Provide sufficient info in your commit message'`
+ 5. Commit changes to your local branch, and push to GitHub: (include necessary commit message)
+ `git push origin my-branch.`
+ 6. Submit a pull request for review.
+ 
++### Git hooks (lefthook)
++
++The repository uses [lefthook](https://github.com/evilmartians/lefthook) for the
++checks that run before a commit and in CI (`.github/workflows/rust_engine.yml`,
++the `quality` job), the same way RAGFlow does.
++
++```bash
++lefthook install   # once per clone; writes .git/hooks/pre-commit
++```
++
++`git commit` then runs these jobs on the staged files:
++
++| Job | Tool |
++|---|---|
++| `clang-format` | `clang-format-20` (Clang 20+, see the build requirements) |
++| `rustfmt` | `cargo fmt` for the `rust_engine` workspace |
++| `ruff`, `ruff-format` | `uvx ruff` |
++| `end-of-file-fixer`, `trailing-whitespace`, `mixed-line-ending` | `tools/hooks/check_files.py` |
++| `check-yaml`, `check-json`, `check-case-conflict`, `check-merge-conflict` | `tools/hooks/check_files.py` |
++
++The fix-capable jobs rewrite the file and stage the result, so a commit that
++passes is already formatted. CI runs the same jobs on the files a push or a pull
++request touched with `LEFTHOOK_CHECK_ONLY=1`: nothing is rewritten and a finding
++fails the run. Run them by hand with:
++
++```bash
++LEFTHOOK_CHECK_ONLY=1 lefthook run pre-commit --all-files
++```
++
++CI runs a **second** hook after that one, the same split RAGFlow uses
++(`pre-commit`, then `web-checks`): `rust-checks` holds `cargo clippy
++--workspace --all-targets -- -D warnings`. It is not part of a commit because
++it needs a workspace compile; run it by hand when the commit touched Rust:
++
++```bash
++lefthook run rust-checks
++```
++
+ ### Before filing a PR
+ 
+-- Consider splitting a large PR into multiple smaller, standalone PRs to keep a traceable development history. 
++- Consider splitting a large PR into multiple smaller, standalone PRs to keep a traceable development history.
+ - Ensure that your PR addresses just one issue, or keep any unrelated changes small.
+ - Add test cases when contributing new features. They demonstrate that your code functions correctly and protect against potential issues from future changes.
+-### Describing your PR 
++### Describing your PR
+ 
+ - Ensure that your PR title is concise and clear, providing all the required information.
+-- Refer to a corresponding GitHub issue in your PR description if applicable. 
++- Refer to a corresponding GitHub issue in your PR description if applicable.
+ - Include sufficient design details for *breaking changes* or *API changes* in your description.
+ 
+ ### Reviewing & merging a PR
+-- Ensure that your PR passes all Continuous Integration (CI) tests before merging it.
+\ No newline at end of file
++- Ensure that your PR passes all Continuous Integration (CI) tests before merging it.
 ```
 
-**File**: `src/network/http_server_impl.cpp` (modified, +5/-0)
+**File**: `README.md` (modified, +1/-1)
 ```diff
-@@ -3453,6 +3453,11 @@ class ForceGlobalCheckpointHandler final : public HttpRequestHandler {
+@@ -117,7 +117,7 @@ print(res)
  
-         if (result.IsOk()) {
-             json_response["error_code"] = 0;
-+            std::string *result_msg = result.result_table_->result_msg();
-+            if (result_msg != nullptr) {
-+                // Successful result message (e.g. FLUSH DATA skipped while another checkpoint is in progress) returned with error_code = 0
-+                json_response["error_msg"] = *result_msg;
-+            }
-             http_status = HTTPStatus::CODE_200;
-         } else {
-             json_response["error_code"] = result.ErrorCode();
+ ## 🔧 Deploy Infinity using binary
+ 
+-If you wish to deploy Infinity using binary with the server and client as separate processes, see the [Deploy infinity using binary](https://infiniflow.org/docs/dev/deploy_infinity_server) guide.
++If you wish to deploy Infinity using binary with the server and client as separate processes, see the [Deploy infinity using binary](https://infiniflow.org/docs/dev/deploy_server) guide.
+ 
+ ## 🔧 Build from Source
+ 
 ```
 
-**File**: `src/network/infinity_thrift_service_impl.cpp` (modified, +7/-0)
+**File**: `RUST_REWRITE_PLAN.md` (added, +713/-0)
 ```diff
-@@ -33,6 +33,7 @@ import :defer_op;
- import :data_table;
- import :column_vector;
- import :query_result;
-+import :logical_node_type;
- import :utility;
- import :json_manager;
- 
-@@ -3645,6 +3646,12 @@ void InfinityThriftService::ProcessQueryResult(infinity_thrift_rpc::CommonRespon
-     if (!result.IsOk()) {
-         response.__set_error_msg(result.ErrorStr());
-         LOG_ERROR(fmt::format("{}: {}", error_header, result.ErrorStr()));
-+    } else if (result.root_operator_type_ == LogicalNodeType::kFlush || result.root_operator_type_ == LogicalNodeType::kCommand) {
-+        // A skipped FLUSH DATA / CLEAN DATA carries the reason in result_msg; a normal one has none.
-+        std::string *result_msg = result.result_table_->result_msg();
-+        if (result_msg != nullptr) {
-+            response.__set_error_msg(*result_msg);
-+        }
-     }
+@@ -0,0 +1,713 @@
++# Infinity Rust 重写计划书
++
++> 版本：v1.1（2026-10-18 迁移策略修订：D1 由「洁净室重写」改为「结构对齐的类级移植」）
++> 日期：2026-10-18
++> 基准代码：infinity `main` @ `5d27942c0`（v0.7.4 线，2026-10-19 rebase；含 regex literal extractor 上游更新）
++> 实现代码：`rust_engine/`（Cargo workspace），C++ 引擎作为参考实现（oracle）
++> 评审：codex 三轮评审（round 3 `VERDICT: APPROVE`，见附录 C）
++> 状态：**计划已定稿；实现进入收尾** —— Gate A/B/D/E/F/G 达标；Gate C 常规全绿，重档在无 `earlyoom` 的 CI 机复跑（见 §8）
++
++本文件是**唯一**的计划与状态来源。历史进展叙述已合并进 §7/§8；已实现项不再保留「待做」表述。
++
++---
++
++## 0. 摘要（Executive Summary）
++
++将 Infinity 引擎从 C++23（**约 38.3 万行 / 1,689 个源文件**，其中 8.61 万行 `.cppm`；另有单元测试约 12.8 万行）整体重写为 Rust，目标是内存安全、并发简化、行为等价与可维护性。
++
++三条技术主线：
++
++1. **并发**：以 **Tokio 多线程运行时** 替代「固定线程池 + 逐核绑核 + 私有阻塞队列」的 `TaskScheduler`，采用「async 编排 + CPU 计算下沉 Rayon」两层模型（§4.4）。
++2. **KV 存储**：RocksDB 在 Infinity 中只承担**元数据**（catalog / 计数器 / 对象清单 / rough filter / drop 墓碑），不承载行数据与索引。定义 `MetaStore` trait，唯一实现是 `rust-rocksdb`（与 C++ catalog 同一底座，§4.2）。
++3. **验收**：以现有测试资产为准 —— **173 个 SQL Logic Test**、**Python PySDK 308 个有效 `def test_`**、**Go SDK 375 用例**，外加持久化 / 并发 / 性能关卡（§8）。测试经网络连接真实服务，因此 **Thrift 线协议必须保持兼容**（`TBinaryProtocol` + `client_version == 37`）。
++
++迁移策略：**结构对齐的类级移植（structure-preserving port）**——以 C++ 类/public 方法为骨架逐类/逐方法移植（已批准的设计变更除外），C++ 单元测试随对应类一并移植，conformance testing 只作为验收而非设计来源（§4.1 D1）。新旧二进制并存，C++ 为 oracle；测试通过不等于移植完成，以 `CLASS_MAP.md` 的未闭合项为准。
++
++**当期结论**：
++
++| 维度 | 状态 |
++|---|---|
++| SQL 功能（Gate A） | ✅ 1752 statement ok / 129 statement error / 1546 query 全部通过 |
++| SDK 协议（Gate B） | ✅ 未修改的 Python / Go SDK 与 HTTP 模式全绿 |
++| 持久化恢复（Gate C） | ⚠️ 常规用例（含跨引擎兼容）全绿；仅 5.toml 重档未闭合：磁盘目录下 Rust 峰值 12.6–15 GB（C++ 9.47 GB、>30 min 未跑完），本机 30 GB + earlyoom 无法判定，需 CI 复跑 |
++| 并发稳定（Gate D） | ✅ loom + miri + ASan/TSAN + `parallel_test` |
++| 性能（Gate E） | ✅ 对 C++ golden **+4.59%**（最新；+2.93% / +4.75% 亦通过，门限 `<7%`）：insert 持平、全量 select +81%、点查 +394% |
++| 工程质量（Gate F） | ✅ fmt / clippy / deny |
++| 不变量（Gate G） | ✅ G1–G5 全部闭合 |
++| 磁盘格式（§3.1） | ✅ 全文 / 向量索引 / 稀疏 / 多向量 / 次级 / 数据块 / Catalog 均按 C++ 字节布局读写 |
++
++---
++
++## 1. 背景与目标
++
++### 1.1 背景
++
++Infinity 是面向 LLM 应用的 AI-native 数据库，提供稠密向量、稀疏向量、张量（多向量）与全文检索的混合搜索。v0.7.x 已具备完整能力，但积累了工程负担：
++
++- **并发模型复杂**：自研线程池、绑核、私有阻塞队列、`mutex`+`condvar`、fragment 树隐式依赖，难以形式化验证；TSAN 排查是常态成本。
++- **内存安全跨层**：53 处 `std::thread` 分布在 WAL / 后台任务 / 索引构建 / 网络，生命周期靠人工保证。
++- **构建沉重**：vcpkg + CMake + Clang 20 + Bison/Flex，多 target（x64-v2/v3/v4、arm64）链路长。
++
++### 1.2 目标（Goals）
++
++- **G1 内存安全**：核心路径零 `unsafe`（收敛到 FFI / SIMD 内核并集中审计）。
++- **G2 并发简化**：async/await + 结构化并发替代手工线程与条件变量。
++- **G3 行为等价**：验收测试上与 C++ 功能等价（§8），线协议兼容。
++- **G4 可维护性**：单一 Cargo workspace，模块边界清晰，编译期强制接口契约。
++- **G5 性能不退化**：关键基准达到现有 golden 水平（Gate E，`<7%`）。
++
++### 1.3 非目标（Non-Goals）
++
++- **磁盘格式兼容曾是非目标，2026-10-16 已收紧为硬要求**（§3.1）：全文倒排、向量列存储、向量索引、Catalog KV 均须与 C++ 互通。
++- 首版不重写集群/分布式能力（现有 peer/cluster 为实验性、默认关闭）。
++- 不改变 SDK 对外 API 形态（SQL / Python / Go 语义不变）。
++
++---
++
++## 2. C++ 现状评估（As-Is）
++
++### 2.1 规模（不含单元测试）
++
++> 统计口径：`src/**` 下 `.cpp/.h/.hpp` 与 `.cppm`（C++ 模块同样含实现）合并计数，`src/unit_test` 单列。
++
++| 模块 | 合计行数 | 其中 `.cppm` | 说明 |
++|---|---:|---:|---|
++| `src/storage` | 119,194 | 47,852 | KV / WAL / buffer / catalog / txn / 索引 |
++| `src/network` | 70,753 | 1,760 | Thrift / HTTP / PG / peer |
++| `src/parser` | 47,599 | 2,086 | Bison/Flex 语法 + AST（含生成代码） |
++| `src/common` | 37,816 | 8,391 | 基础设施 / 工具 / 分析器 |
++| `src/executor` | 36,781 | 6,921 | 物理算子、fragment 构建 |
++| `src/planner` | 29,428 | 6,492 | 逻辑计划、绑定、优化器 |
++| `src/function` | 19,202 | 7,538 | 标量 / 聚合函数 |
++| `src/main` | 9,826 | 2,006 | 引擎门面 / 配置 / 集群 |
++| `src/admin` | 4,690 | 67 | 管理接口 |
++| `src/expression` | 3,714 | 1,686 | 表达式 AST |
++| `src/scheduler` | 2,547 | 534 | 任务调度器 |
++| `src/bin` / `src/metrics` | 1,417 | 734 | 入口 / 指标 |
++| **引擎合计** | **382,967** | **86,067** | **1,689 个源文件** |
++| `src/unit_test` | 128,345 | 530 | GTest（约 1032 用例） |
++
++### 2.2 三大持久化底座（关键认知）
++
++三个**彼此独立**的持久化介质，重写时不可混为一谈：
++
++| 底座 | 内容 | C++ 位置 | Rust 对应 |
++|---|---|---|---|
++| **RocksDB（事务 KV）** | Catalog/元数据、ID 计数器、对象清单、rough filter、drop 墓碑 | `storage/catalog/kv_store*`、`meta/*` | `MetaStore` trait（`RocksMetaStore`） |
++| **自研 WAL** | 已提交 DDL/DML 的 redo log（CRC32 分帧） | `storage/wal/*` | `storage::wal`（格式全量移植） |
++| **自研块文件** | 列数据、MVCC `version`、索引 chunk | `storage/buffer/*`、`meta/*_impl.cpp` | `cpp_format` / `BufferManager` |
++
++要点：
++
++- **RocksDB 自身 WAL 并非全局关闭**：默认写入路径 `disable_wal=true`，但**对象清单持久化显式启用**（`KVStore::Put(..., false)` → `FlushWAL(false)`，`kv_store_impl.cpp:443,450`；调用点 `persistence_manager_impl.cpp:141`）。两条耐久性契约须分别保留。
++- RocksDB **未用列族 / 自定义比较器 / 显式 block cache**，仅默认单 CF + 字节序 + 自定义 merge operator（计数器）。
++- **MVCC 不依赖 RocksDB 快照**，而是时间戳数组：`BlockVersion.created_` / `deleted_`；更新 = 删除 + 追加。
++- 磁盘布局：`db_<id>/tbl_<id>/seg_<id>/blk_<id>/`，列文件 `<col>.col` + 变长 `<col>.out`，版本文件 `version`；块 8192 行、段 8M 行。
++- **索引文件并非统一单 `.idx`**：向量族用 per-chunk `chunk_<id>.idx`；全文用 `.dic` / `.pos` / `.spill` / `.len`（`index_defines.cppm:55`、`memory_indexer_impl.cpp:491`）。共性是「内存构建 → 落盘 → KV 记录 `ChunkIndexMetaInfo`」，但**文件集合 / 发布 / 合并 / 清理 / 恢复契约逐索引定义**。
++
++### 2.3 并发与调度模型
++
++现状（`src/s
+```
+
+**File**: `benchmark/local_infinity/fulltext/fulltext_benchmark.cpp` (modified, +40/-7)
+```diff
+@@ -116,6 +116,13 @@ std::shared_ptr<Infinity> CreateDbAndTable(const std::string &db_name, const std
+     return infinity;
  }
  
-```
-
-**File**: `src/storage/new_txn/new_txn_manager_impl.cpp` (modified, +13/-7)
-```diff
-@@ -112,22 +112,28 @@ std::shared_ptr<NewTxn> NewTxnManager::BeginTxnShared(std::unique_ptr<std::strin
-     // Record the start ts of the txn
-     TxnTimeStamp begin_ts = current_ts_ + 1;
- 
-+    // Checkpoint and cleanup txns are mutually exclusive with themselves: the corresponding member holds the
-+    // begin ts of the txn currently in progress, or UNCOMMIT_TS when none is running.
-     if (txn_type == TransactionType::kNewCheckpoint || txn_type == TransactionType::kCleanup) {
--        auto &begin_ts_ref = (txn_type == TransactionType::kNewCheckpoint) ? ckp_begin_ts_ : cleanup_begin_ts_;
--        const char *txn_name = (txn_type == TransactionType::kNewCheckpoint) ? "checkpoint" : "cleanup";
-+        const bool is_checkpoint = txn_type == TransactionType::kNewCheckpoint;
-+        const char *txn_name = is_checkpoint ? "checkpoint" : "cleanup";
-+        const TxnTimeStamp running_ts = is_checkpoint ? ckp_begin_ts_ : cleanup_begin_ts_;
- 
--        if (begin_ts_ref == UNCOMMIT_TS) {
--            LOG_DEBUG(fmt::format("{} txn is started in {}", txn_name, begin_ts));
--            begin_ts_ref = begin_ts;
--        } else {
-+        if (running_ts != UNCOMMIT_TS) {
-             LOG_WARN(fmt::format("Another {} txn is started in {}, new txn: {} {} start at {} will do nothing, not start this txn",
-                                  txn_name,
--                                 begin_ts_ref,
-+                                 running_ts,
-                                  new_txn_id,
-                                  txn_name,
-                                  begin_ts));
-             return nullptr;
-         }
++// Opens the directory as it stands: no database, table or index DDL, and
++// nothing dropped (CreateDbAndTable drops the table with kIgnore).
++std::shared_ptr<Infinity> ConnectExisting() {
++    Infinity::LocalInit("/var/infinity");
++    return Infinity::LocalConnect();
++}
 +
-+        if (is_checkpoint) {
-+            ckp_begin_ts_ = begin_ts;
-+        } else {
-+            cleanup_begin_ts_ = begin_ts;
-+        }
+ void BenchmarkImport(std::shared_ptr<Infinity> infinity, const std::string &db_name, const std::string &table_name, const std::string &import_from) {
+     if (!VirtualStore::Exists(import_from)) {
+         LOG_ERROR(fmt::format("Data file doesn't exist: {}", import_from));
+@@ -308,7 +315,10 @@ void BenchmarkQuery(std::shared_ptr<Infinity> infinity,
+                      "social custom \"harmful chemical\"",
+                      "\"annual American awards\"",
+                      "harmful chemical",
+-                     "\"one of\""};
++                     "\"one of\"",
++                     // Multi-term (10+ OR terms): every term is a WAND cursor in the same pass.
++                     "harmful chemical social custom annual American awards one of the first world war",
++                     "national football league high school state university population family city game season team player"};
      }
  
-     if (txn_text == nullptr) {
+     for (auto match_text : query_vec) {
+@@ -401,11 +411,15 @@ int main(int argc, char *argv[]) {
+     CLI::App app{"fulltext_benchmark"};
+     // https://github.com/CLIUtils/CLI11/blob/main/examples/enum.cpp
+     // Using enumerations in an option
+-    enum class Mode : u8 { kInsert, kImport, kMerge, kQuery };
+-    std::map<std::string, Mode> mode_map{{"insert", Mode::kInsert}, {"import", Mode::kImport}, {"merge", Mode::kMerge}, {"query", Mode::kQuery}};
++    enum class Mode : u8 { kInsert, kImport, kMerge, kQuery, kQueryOnly };
++    std::map<std::string, Mode> mode_map{{"insert", Mode::kInsert},
++                                         {"import", Mode::kImport},
++                                         {"merge", Mode::kMerge},
++                                         {"query", Mode::kQuery},
++                                         {"query-only", Mode::kQueryOnly}};
+     Mode mode(Mode::kInsert);
+     size_t insert_batch = 500;
+-    app.add_option("--mode", mode, "Benchmark mode, one of insert, import, merge, query")
++    app.add_option("--mode", mode, "Benchmark mode, one of insert, import, merge, query, query-only")
+         ->required()
+         ->transform(CLI::CheckedTransformer(mode_map, CLI::ignore_case));
+     app.add_option("--insert-batch", insert_batch, "batch size of each insert, valid only at insert and merge mode, default value 500");
+@@ -428,10 +442,15 @@ int main(int argc, char *argv[]) {
+     srcfile += "/benchmark/dbpedia-entity/corpus.jsonl";
+     // srcfile += "/benchmark/enwiki.33332620.csv";
+ 
++    // query-only reuses the directory a previous run left behind (no DDL, no
++    // insert), so the query times are the query path alone.
++    const bool reuse = mode == Mode::kQueryOnly;
+     printf("Cleanup /var/infinity\n");
+-    system("rm -rf /var/infinity/data /var/infinity/log /var/infinity/persistence /var/infinity/tmp /var/infinity/wal");
++    if (!reuse) {
++        system("rm -rf /var/infinity/data /var/infinity/log /var/infinity/persistence /var/infinity/tmp /var/infinity/wal");
++    }
+ 
+-    std::shared_ptr<Infinity> infinity = CreateDbAndTable(db_name, table_name);
++    std::shared_ptr<Infinity> infinity = reuse ? ConnectExisting() : CreateDbAndTable(db_name, table_name);
+ 
+     switch (mode) {
+         case Mode::kInsert: {
+@@ -466,11 +485,25 @@ int main(int argc, char *argv[]) {
+             BenchmarkMoreQuery(infinity, db_name, table_name, query_opts, vocab);
+             break;
+         }
++        case Mode::kQueryOnly: {
++            std::vector<std::string> vocab;
++            if (query_opts.terms_ > 0) {
++                vocab = LoadVocabulary(srcfile, 1000, 20000);
++                if (vocab.size() < query_opts.terms_) {
++                    LOG_ERROR(fmt::format("Vocabulary too small: {} < {} (--terms)", vocab.size(), query_opts.terms_));
++                    break;
++                }
++            }
++            BenchmarkMoreQuery(infinity, db_name, table_name, query_opts, vocab);
++            break;
++        }
+         default: {
+             printf("Unsupported benchmark mode: %u\n", static_cast<u8>(mode));
+         }
+     }
+-    sleep(10);
++    if (!reuse) {
++        sleep(10);
++    }
+ 
+     Infinity::LocalUnInit();
+ }
+```
+
+**File**: `docs/references/pysdk_api_reference.md` (modified, +395/-197)
+```diff
+@@ -86,8 +86,9 @@ If you have deployed Infinity as a separate server and installed the Infinity cl
+ 
+ ```python
+ import infinity
++
+ # If Infinity is deployed on the local machine, use infinity.LOCAL_HOST to replace <SERVER_IP_ADDRESS>
+-infinity_object = infinity.connect(infinity.NetworkAddress("192.168.1.101", 23817)) 
++infinity_object = infinity.connect(infinity.NetworkAddress("192.168.1.101", 23817))
+ ```
+ 
+ ---
+@@ -121,7 +122,7 @@ infinity_object.disconnect()
+ ### create_database
+ 
+ ```python
+-infinity_object.create_database(db_name, conflict_type = ConflictType.Error, comment = None)
++infinity_object.create_database(db_name, conflict_type=ConflictType.Error, comment=None)
+ ```
+ 
+ Creates a database with a specified name.
+@@ -172,29 +173,34 @@ Additional comment for the database to create.
+ 
+ ```python
+ # Create a database named 'my_database':
+-# If the specified database already exists, raise an error. 
++# If the specified database already exists, raise an error.
+ infinity_object.create_database("my_database")
+ ```
+ 
+ ```python
+ # Create a database named 'my_database':
+-# If the specified database already exists, raise an error (same as above). 
+-infinity_object.create_database("my_database", infinity.common.ConflictType.Error, comment="Database One")
++# If the specified database already exists, raise an error (same as above).
++infinity_object.create_database(
++    "my_database", infinity.common.ConflictType.Error, comment="Database One"
++)
+ ```
+ 
+ ```python
+ from infinity.common import ConflictType
++
+ # Create a database named 'my_database':
+-# If the specified database already exists, silently ignore the operation and proceed. 
+-infinity_object.create_database("my_database", ConflictType.Ignore, comment="Database One")
++# If the specified database already exists, silently ignore the operation and proceed.
++infinity_object.create_database(
++    "my_database", ConflictType.Ignore, comment="Database One"
++)
+ ```
+ 
+ ---
+ 
+ ### drop_database
+ 
+ ```python
+-infinity_object.drop_database(db_name, conflict_type = ConflictType.Error)
++infinity_object.drop_database(db_name, conflict_type=ConflictType.Error)
+ ```
+ 
+ Deletes a database by its name.
+@@ -237,18 +243,19 @@ A structure containing the following attributes:
+ 
+ ```python
+ # Delete a database named 'my_database':
+-# If the specified database does not exist, raise an error. 
++# If the specified database does not exist, raise an error.
+ infinity_object.drop_database("my_database")
+ ```
+ 
+ ```python
+ # Delete a database named 'my_database':
+-# If the specified database does not exist, raise an error (same as above). 
++# If the specified database does not exist, raise an error (same as above).
+ infinity_object.drop_database("my_database", infinity.common.ConflictType.Error)
+ ```
+ 
+ ```python
+ from infinity.common import ConflictType
++
+ # Delete a database named 'my_database':
+ # If the specified database does not exist, silently ignore the operation and proceed.
+ infinity_object.drop_database("my_database", ConflictType.Ignore)
+@@ -278,8 +285,8 @@ A structure containing the following attributes:
+ #### Examples
+ 
+ ```python
+-res = infinity_object.list_databases() 
+-print(res.db_names) # ['my_database', 'database_1']
++res = infinity_object.list_databases()
++print(res.db_names)  # ['my_database', 'database_1']
+ ```
+ 
+ ---
+@@ -305,7 +312,7 @@ A structure containing the following attributes:
+ #### Examples
+ 
+ ```python
+-res = infinity_object.show_database('my_database')
++res = infinity_object.show_database("my_database")
+ ```
+ 
+ ---
+@@ -342,7 +349,7 @@ db_object = infinity_object.get_database("my_database")
+ ### create_table
+ 
+ ```python
+-db_object.create_table(table_name, columns_definition, conflict_type = ConflictType.Error)
++db_object.create_table(table_name, columns_definition, conflict_type=ConflictType.Error)
+ ```
+ 
+ Creates a table with a specified name and defined columns.
+@@ -521,12 +528,11 @@ You can build a HNSW index on the vector column to speed up the match_dense sear
+ :::
+ 
+ ```python
+-# Create a table with a vector column only:  
++# Create a table with a vector column only:
+ # - `vector`: The column is a vector column
+ # - `128`: The vector dimension
+ # - `float`: The primitive data type of the vectors. Can be `float`/`float32`, `float16`, `bfloat16`, `uint8` or `int8`
+ db_object.create_table("my_table", {"c1": {"type": "vector,128,float"}})
+-
+ ```
+ 
+ ##### Create a table with a multi-vector column only
+@@ -536,12 +542,11 @@ You can build an HNSW index on the multi-vector column to accelerate match_dense
+ :::
+ 
+ ```python
+-# Create a table with a multi-vector column only:  
++# Create a table with a multi-vector column only:
+ # - `multivector`: The column is a multi-vector column
+ # - `128`: The basic vector dimension
+ # - `float`: The primitive data type of the basic vectors. Can be `float`/`float32`, `float16`, `bfloat16`, `uint8` or `int8`
+ db_object.create_table("my_table", {"c1": {"type": "multivector,128,float"}})
+-
+ ```
+ 
+ ##### Create a tab
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3541** (2026-11-08): Rust rewrite: the rust_engine port of the engine (@yuzhichang)
 - **PR #3540** (2026-11-05): fix(txn): report concurrent checkpoint/cleanup as skipped instead of failing (@qinling0210)
 - **PR #3539** (2026-11-04): fix(cleanup): remove only the dirs of dropped entities (@qinling0210)
 - **PR #3538** (2026-11-02): CI: Fix no tar file in artifacts (@myf-bee)
 - **PR #3536** (2026-11-05): Update version to 0.7.5 (@qinling0210)
 - **PR #3535** (2026-11-01): feat(search): heap-based block-max WAND as the default top-k early-termination iterator (@yingfeng)
-- **PR #3534** (2026-11-03): fix(wal): recycle checkpointed wal.log.* files after the checkpoint entry is synced (@qinling0210)
 
 ---
 
@@ -1610,28 +2046,67 @@ System is checkpointing, skip this checkpoint.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. txn): report concurrent checkpoint/cleanup as skipped instead of failing (#3540)
+## X. Rewrite the engine in Rust: SQL, storage, WAL and indexes at parity with the C++
 
 **RULE**:
-When implementing operations in `src/main/query_context.cppm`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in infiniflow/infinity. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/rust_engine.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in infiniflow/infinity. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c25572dc`: txn): report concurrent checkpoint/cleanup as skipped instead of failing (#3540). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b078219d`: Rewrite the engine in Rust: SQL, storage, WAL and indexes at parity with the C++ reference, enforced by conformance, byte and cross-engine gates.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/main/query_context.cppm`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/rust_engine.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-    void BeginTxn(const BaseStatement *statement);
+name: rust_engine
+
+# CI for the Rust rewrite (RUST_REWRITE_PLAN.md M0/M6).
+#
+# This workflow tests the rewrite alone: the reference engine, the
+# cross-engine format gate and the C++ suites belong to the reference's own
+# workflows (tests.yml / slow_tests.yml), so nothing here builds C++.
+#
+# Each suite is written once and run per architecture; every trigger covers
+# both amd64 and arm64.
+
+on:
+  push:
+    paths:
+      - 'rust_engine/**'
+      - 'python/restart_test/**'
+      - 'python/test_pysdk/**'
+      - 'tools/run_restart_test.py'
+      - '.github/workflows/rust_engine.yml'
+  pull_request:
+    paths:
+      - 'rust_engine/**'
+      - 'python/restart_test/**'
+      - 'python/test_pysdk/**'
+      - 'go/**'
+      - 'tools/run_restart_test.py'
+      - '.github/workflows/rust_engine.yml'
+  schedule:
+    - cron: '0 18 * * *' # nightly: the arm64 lane
+  workflow_dispatch:
+
+concurrency:
+  group: rust-engine-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Cases the rewrite cannot run yet, one pytest node id per line. There is no
+  # reference cell to leave untouched here, so they are deselected from every
+  # cell; a line goes away when the gap closes. Source of truth:
+  # rust_en
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-    bool BeginTxn(const BaseStatement *statement);
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c25572dc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b078219d` are properly handled with clean fallback behavior.

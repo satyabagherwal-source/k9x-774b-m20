@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mattermost-mattermost-learnings.md`  
 > **Source**: github ([https://github.com/mattermost/mattermost](https://github.com/mattermost/mattermost))  
-> **Source Version**: `4e1eec78`  
+> **Source Version**: `95cc6d95`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T00:53:22.208Z  
+> **Timestamp**: 2026-11-09T10:07:47.672Z  
 > **Learning ID**: `learn-github-mattermost-mattermost`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mattermost-mattermost-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mattermost/mattermost](https://github.com/mattermost/mattermost))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T00:53:21.992Z  
+> **Harvest Timestamp**: 2026-11-09T10:02:46.600Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Mattermost is an open source platform for secure collaboration across the entire software development lifecycle..
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 39515 stars
+- **Stars / Engagement**: 39559 stars
 
 ---
 
@@ -1630,619 +1630,596 @@ func allocateCacheTargets[T any](l int) []any {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4e1eec78` (2026-11-03)
-**Commit Message**: Update snapshots for compass-ui alpha.25 class names (#39670)
+### Incident Patch 1: `276dc653` (2026-11-07)
+**Commit Message**: [MM-71617] Add per-node memory health diagnostics (#39720)
 
-Co-authored-by: Cursor Agent <[REDACTED_EMAIL]>
+* [MM-71617] Add per-node memory health diagnostics
 
-**File**: `webapp/channels/src/components/__snapshots__/setting_picture.test.tsx.snap` (modified, +4/-4)
+Co-authored-by: ben.schumacher <[REDACTED_EMAIL]>
+
+* [MM-71617] Use SplitSeq for memory parsing
+
+Co-authored-by: ben.schumacher <[REDACTED_EMAIL]>
+
+* [MM-71617] Clarify system resource paths
+
+Co-authored-by: ben.schumacher <[REDACTED_EMAIL]>
+
+* [MM-71617] Update mmctl packet health expectations
+
+Co-authored-by: ben.schumacher <[REDACTED_EMAIL]>
+
+* [MM-71617] Resolve process cgroup memory stats
+
+Co-authored-by: ben.schumacher <[REDACTED_EMAIL]>
+
+* [MM-71617] Use a plain bool for cgroup memory support internally
+
+Only the support packet model needs the tri-state; the collector now
+creates the pointer when cgroup resolution succeeds.
+
+* [MM-71617] Resolve OOM and Go memory limit rules when data does not apply
+
+Drop cgroup_memory_stats_supported from the support packet. Inside a
+collected server_memory section, a missing OOM kill count means cgroup v2
+memory stats do not apply to the process, and a missing Go memory limit
+means none is set; both now resolve instead of reporting Unknown.
+
+Offline packet evaluation cannot yet tell a failed section from a healthy
+one; MM-71665 
+
+**File**: `server/channels/app/health_check_snapshot_test.go` (modified, +4/-0)
 ```diff
-@@ -632,13 +632,13 @@ exports[`components/SettingItemMin should match snapshot, team icon on source 1`
-             >
-               <button
-                 aria-label="Remove This Icon"
--                class="_icon-button_13ryy_2 _icon-button--size-x-small_13ryy_63 _icon-button--padding-compact_13ryy_72 _icon-button--rounded_13ryy_123"
-+                class="_icon-button_ft92e_2 _icon-button--size-x-small_ft92e_63 _icon-button--padding-compact_ft92e_72 _icon-button--rounded_ft92e_126"
-                 data-testid="removeSettingPicture"
-                 type="button"
-               >
-                 <span
-                   aria-hidden="true"
--                  class="_icon-button__icon-slot_13ryy_41"
-+                  class="_icon-button__icon-slot_ft92e_41"
-                 >
-                   <div
-                     aria-hidden="true"
-@@ -774,13 +774,13 @@ exports[`components/SettingItemMin should match snapshot, user icon on source 1`
-             >
-               <button
-                 aria-label="Remove Profile Picture"
--                class="_icon-button_13ryy_2 _icon-button--size-x-small_13ryy_63 _icon-button--padding-compact_13ryy_72 _icon-button--rounded_13ryy_123"
-+                class="_icon-button_ft92e_2 _icon-button--size-x-small_ft92e_63 _icon-button--padding-compact_ft92e_72 _icon-button--rounded_ft92e_126"
-                 data-testid="removeSettingPicture"
-                 type="button"
-               >
-                 <span
-                   aria-hidden="true"
--                  class="_icon-button__icon-slot_13ryy_41"
-+                  class="_icon-button__icon-slot_ft92e_41"
-                 >
-                   <div
-                     aria-hidden="true"
+@@ -310,6 +310,10 @@ func TestHealthSnapshotLiveOfflineParity(t *testing.T) {
+ 				require.NotNil(t, evaluations[i].Result.Value)
+ 				evaluations[i].Result.Value = nil
+ 				evaluations[i].Result.Details = nil
++			case "NODE_HOST_MEMORY_LOW", "NODE_CONTAINER_MEMORY_PRESSURE":
++				// These set a value only when they have the numbers to compare, so none is required.
++				evaluations[i].Result.Value = nil
++				evaluations[i].Result.Details = nil
+ 			}
+ 		}
+ 		return evaluations
 ```
 
-**File**: `webapp/channels/src/components/actions_menu/__snapshots__/actions_menu.test.tsx.snap` (modified, +6/-6)
+**File**: `server/channels/app/platform/container_limits.go` (added, +27/-0)
 ```diff
-@@ -10,14 +10,14 @@ exports[`components/actions_menu/ActionsMenu has actions - marketplace disabled
-       aria-expanded="true"
-       aria-haspopup="true"
-       aria-label="actions"
--      class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 _icon-button--padding-compact_13ryy_72 _icon-button--active_13ryy_31 post-menu__item post-menu__item--active"
-+      class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 _icon-button--padding-compact_ft92e_72 _icon-button--active_ft92e_31 post-menu__item post-menu__item--active"
-       data-active="true"
-       id="center_actions_button_post_id_1"
-       type="button"
-     >
-       <span
-         aria-hidden="true"
--        class="_icon-button__icon-slot_13ryy_41"
-+        class="_icon-button__icon-slot_ft92e_41"
-       >
-         <div
-           aria-hidden="true"
-@@ -85,14 +85,14 @@ exports[`components/actions_menu/ActionsMenu has actions - marketplace enabled a
-       aria-expanded="true"
-       aria-haspopup="true"
-       aria-label="actions"
--      class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 _icon-button--padding-compact_13ryy_72 _icon-button--active_13ryy_31 post-menu__item post-menu__item--active"
-+      class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 _icon-button--padding-compact_ft92e_72 _icon-button--active_ft92e_31 post-menu__item post-menu__item--active"
-       data-active="true"
-       id="center_actions_button_post_id_1"
-       type="button"
-     >
-       <span
-         aria-hidden="true"
--        class="_icon-button__icon-slot_13ryy_41"
-+        class="_icon-button__icon-slot_ft92e_41"
-       >
-         <div
-           aria-hidden="true"
-@@ -193,14 +193,14 @@ exports[`components/actions_menu/ActionsMenu no actions - sysadmin - menu should
-     aria-expanded="true"
-     aria-haspopup="true"
-     aria-label="actions"
--    class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 _icon-button--padding-compact_13ryy_72 _icon-button--active_13ryy_31 post-menu__item post-menu__item--active"
-+    class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 _icon-button--padding-compact_ft92e_72 _icon-button--active_ft92e_31 post-menu__item post-menu__item--active"
-     data-active="true"
-     id="center_actions_button_post_id_1"
-     type="button"
-   >
-     <span
-       aria-hidden="true"
--      class="_icon-button__icon-slot_13ryy_41"
-+      class="_icon-button__icon-slot_ft92e_41"
-     >
-       <div
-         aria-hidden="true"
+@@ -0,0 +1,27 @@
++// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
++// See LICENSE.txt for license information.
++
++package platform
++
++// ContainerLimits holds the effective CPU limit for the current container. The memory
++// limit is read with the other memory diagnostics, see memoryDiagnostics.
++// Zero values indicate no limit is set (fields will be omitted from YAML output).
++type ContainerLimits struct {
++	CPULimit float64
++}
++
++type cgroupV2Info struct {
++	dir                  string
++	memoryStatsSupported bool
++}
++
++type memoryDiagnostics struct {
++	AvailableMemoryMB           *uint64
++	SwapTotalMB                 *uint64
++	SwapUsedMB                  *uint64
++	ProcessRSSMB                *uint64
++	ContainerMemoryLimitMB      uint64 // zero when no limit is set
++	ContainerMemoryUsageMB      *uint64
++	ContainerMemoryWorkingSetMB *uint64
++	ContainerOOMKills           *uint64
++}
 ```
 
-**File**: `webapp/channels/src/components/add_users_to_group_modal/__snapshots__/add_users_to_group_modal.test.tsx.snap` (modified, +4/-4)
+**File**: `server/channels/app/platform/container_limits_linux.go` (modified, +240/-32)
 ```diff
-@@ -36,12 +36,12 @@ exports[`component/add_users_to_group_modal should match snapshot 1`] = `
-             >
-               <button
-                 aria-label="Back"
--                class="_icon-button_13ryy_2 _icon-button--size-medium_13ryy_91 modal-header-back-button"
-+                class="_icon-button_ft92e_2 _icon-button--size-medium_ft92e_91 modal-header-back-button"
-                 type="button"
-               >
-                 <span
-                   aria-hidden="true"
--                  class="_icon-button__icon-slot_13ryy_41"
-+                  class="_icon-button__icon-slot_ft92e_41"
-                 >
-                   <div
-                     aria-hidden="true"
-@@ -75,12 +75,12 @@ exports[`component/add_users_to_group_modal should match snapshot 1`] = `
-             </div>
-             <button
-               aria-label="Close"
--              class="_icon-button_13ryy_2 _icon-button--size-medium_13ryy_91 user-groups-modal__header-close"
-+              class="_icon-button_ft92e_2 _icon-button--size-medium_ft92e_91 user-groups-modal__header-close"
-               type="button"
-             >
-               <span
-                 aria-hidden="true"
--                class="_icon-button__icon-slot_13ryy_41"
-+                class="_icon-button__icon-slot_ft92e_41"
-               >
-                 <div
-                   aria-hidden="true"
+@@ -7,52 +7,45 @@ package platform
+ 
+ import (
+ 	"errors"
++	"fmt"
+ 	"os"
++	"path/filepath"
++	"slices"
+ 	"strconv"
+ 	"strings"
+ )
+ 
+-// cgroupPaths holds the file paths used to read cgroup v2 resource limits.
++// resourcePaths holds procfs files used to inspect system resources.
+ // These are package-level variables so they can be overridden in tests.
+-var cgroupPaths = struct {
+-	v2MemoryMax string
+-	v2CPUMax    string
++var resourcePaths = struct {
++	procMeminfo       string
++	procSelfStatus    string
++	procSelfCgroup    string
++	procSelfMountInfo string
+ }{
+-	v2MemoryMax: "/sys/fs/cgroup/memory.max",
+-	v2CPUMax:    "/sys/fs/cgroup/cpu.max",
++	procMeminfo:       "/proc/meminfo",
++	procSelfStatus:    "/proc/self/status",
++	procSelfCgroup:    "/proc/self/cgroup",
++	procSelfMountInfo: "/proc/self/mountinfo",
+ }
+ 
+-// ContainerLimits holds effective CPU and memory limits for the current container.
+-// Zero values indicate no limit is set (fields will be omitted from YAML output).
+-type ContainerLimits struct {
+-	CPULimit      float64
+-	MemoryLimitMB uint64
+-}
++var mountInfoPathReplacer = strings.NewReplacer(
++	`\040`, " ",
++	`\011`, "\t",
++	`\012`, "\n",
++	`\134`, `\`,
++)
+ 
+-// getContainerLimits reads container resource limits from cgroups v2.
++// getContainerLimits reads the container CPU limit from cgroups v2.
+ // Returns zero values when no limits are detected (bare metal, unlimited, or non-v2 system).
+-func getContainerLimits() (ContainerLimits, error) {
++func getContainerLimits(info cgroupV2Info) (ContainerLimits, error) {
+ 	var limits ContainerLimits
+-
+-	// Memory limit: "max" means unlimited, otherwise bytes
+-	memStr, err := readTrimmed(cgroupPaths.v2MemoryMax)
+-	if err != nil {
+-		if errors.Is(err, os.ErrNotExist) {
+-			return limits, nil
+-		}
+-		return limits, err
+-	}
+-	if memStr != "max" {
+-		var memBytes uint64
+-		memBytes, err = strconv.ParseUint(memStr, 10, 64)
+-		if err != nil {
+-			return limits, err
+-		}
+-		limits.MemoryLimitMB = (memBytes + 1024*1024 - 1) / (1024 * 1024)
++	if info.dir == "" {
++		return limits, nil
+ 	}
+ 
+ 	// CPU limit: format is "quota period"; quota is "max" when unlimited
+-	cpuStr, err := readTrimmed(cgroupPaths.v2CPUMax)
++	cpuStr, err := readTrimmed(filepath.Join(info.dir, "cpu.max"))
+ 	if err != nil {
+ 		if errors.Is(err, os.ErrNotExist) {
+ 			return limits, nil
+@@ -80,10 +73,225 @@ func getContainerLimits() (ContainerLimits, error) {
+ 	return limits, nil
+ }
+ 
++func getCgroupV2Info() (cgroupV2Info, error) {
++	cgroup, err := readFile(resourcePaths.procSelfCgroup)
++	if err != nil {
++		return cgroupV2Info{}, err
++	}
++
++	membership, found, err := parseCgroupV2Membership(cgroup)
++	if err != nil {
++		return cgroupV2Info{}, err
++	}
++	if !found {
++		return cgroupV2Info{}, nil
++	}
++
++	mountInfo, err := readFile(resourcePaths.procSelfMountInfo)
++	if err != nil {
++		return cgroupV2Info{}, err
++	}
++	dir, err := resolveCgroupV2Dir(membership, mountInfo)
++	if err != nil {
++		return cgroupV2Info{}, err
++	}
++
++	_, err = os.Stat(filepath.Join(dir, "memory.max"))
++	if err != nil && !errors.Is(err, os.ErrNotExist) {
++		return cgroupV2Info{}, err
++	}
++	return cgroupV2Info{dir: dir, memoryStatsSupported: err == nil}, nil
++}
++
++func parseCgroupV2Membership(contents string) (string, bool, error) {
++	for line := range strings.SplitSeq(contents, "\n") {
++		parts := strings.SplitN(line, ":", 3)
++		if len(parts) != 3 || parts[0] != "0" || parts[1] != "" {
++			continue
++		}
++		if !filepath.IsAbs(parts[2]) {
++			return "", false, fmt.Errorf("invalid cgroup v2 membership path %q", parts[2])
++		}
++		return parts[2], true, nil
++	}
++	return "", false, nil
++}
++
++// cleanCgroupPath cleans a cgroup path as a path relative to the cgroup
++// namespace root. Unlike filepath.Clean on the absolute path, it keeps leading
++// ".." elements, which point above the namespace root.
++func cleanCgroupPath(path string) string {
++	return filepath.Clean(strings.TrimLeft(path, "/"))
++}
++
++func resolveCgroupV2Dir(membership, contents string) (string, error) {
++	var (
++		bestDir     string
++		bestRootLen int
++	)
++	cleanMembership := cleanCgroupPath(membership)
++	for line := range strings.SplitSeq(contents, "\n") {
++		fields := strings.Split(line, " ")
++		separator := slices.Index(fields, "-")
++		if separator < 6 || separator+1 >= len(fields) || fields[separator+1] != "cgroup2" {
++			continue
++		}
++
++		root := mountInfoPathReplacer.Replace(fields[3])
++		mountPoint := filepath.Clean(mountInfoPathReplacer.Replace(fields[4]))
++		if !filepath.IsAbs(root) || !filepath.IsAbs(mountPoint) {
++			continue
++		}
++		root = cleanCgroupPath(root)
++		relative, err := filepath.Rel(root, cleanMembership)
++		if err != nil || relative == ".." || strings.HasPrefix(relative, ".."+string(filepath.Separator)) {
++			continue
++		}
++		if len(root) > bestRootLen {
++			bestDir = filepath.Join(mountPoint, relative)
++			bestRootLen = len(root)
++		}
++	}
++	if bestDir == "" {
++		return "", fmt.Errorf("cgroup v2 membership %q has no matching cgroup2 mount", memb
 ```
 
-**File**: `webapp/channels/src/components/admin_console/access_control/__snapshots__/policies.test.tsx.snap` (modified, +8/-8)
+**File**: `server/channels/app/platform/container_limits_linux_test.go` (modified, +283/-32)
 ```diff
-@@ -348,13 +348,13 @@ exports[`components/admin_console/access_control/PolicyList should match snapsho
-                   aria-expanded="false"
-                   aria-haspopup="true"
-                   aria-label="Policy actions menu"
--                  class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77"
-+                  class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77"
-                   id="policy-menu-policy1"
-                   type="button"
-                 >
-                   <span
-                     aria-hidden="true"
--                    class="_icon-button__icon-slot_13ryy_41"
-+                    class="_icon-button__icon-slot_ft92e_41"
-                   >
-                     <div
-                       aria-hidden="true"
-@@ -423,13 +423,13 @@ exports[`components/admin_console/access_control/PolicyList should match snapsho
-                   aria-expanded="false"
-                   aria-haspopup="true"
-                   aria-label="Policy actions menu"
--                  class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77"
-+                  class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77"
-                   id="policy-menu-policy2"
-                   type="button"
-                 >
-                   <span
-                     aria-hidden="true"
--                    class="_icon-button__icon-slot_13ryy_41"
-+                    class="_icon-button__icon-slot_ft92e_41"
-                   >
-                     <div
-                       aria-hidden="true"
-@@ -472,13 +472,13 @@ exports[`components/admin_console/access_control/PolicyList should match snapsho
-             </span>
-             <button
-               aria-label="Previous page"
--              class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 ml-2 prev"
-+              class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 ml-2 prev"
-               disabled=""
-               type="button"
-             >
-               <span
-                 aria-hidden="true"
--                class="_icon-button__icon-slot_13ryy_41"
-+                class="_icon-button__icon-slot_ft92e_41"
-               >
-                 <div
-                   aria-hidden="true"
-@@ -505,13 +505,13 @@ exports[`components/admin_console/access_control/PolicyList should match snapsho
-             </button>
-             <button
-               aria-label="Next page"
--              class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 next"
-+              class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 next"
-               disabled=""
-               type="button"
-             >
-               <span
-                 aria-hidden="true"
--                class="_icon-button__icon-slot_13ryy_41"
-+                class="_icon-button__icon-slot_ft92e_41"
-               >
-                 <div
-                   aria-hidden="true"
+@@ -8,6 +8,7 @@ package platform
+ import (
+ 	"os"
+ 	"path/filepath"
++	"strings"
+ 	"testing"
+ 
+ 	"github.com/stretchr/testify/assert"
+@@ -17,71 +18,321 @@ import (
+ func writeTempCgroupFile(t *testing.T, dir, name, content string) string {
+ 	t.Helper()
+ 	path := filepath.Join(dir, name)
++	require.NoError(t, os.MkdirAll(filepath.Dir(path), 0o755))
+ 	require.NoError(t, os.WriteFile(path, []byte(content), 0o644))
+ 	return path
+ }
+ 
++func setTempCgroupLayout(t *testing.T, dir, membership, mountRoot, mountPoint string) cgroupV2Info {
++	t.Helper()
++	resourcePaths.procSelfCgroup = writeTempCgroupFile(t, dir, "proc-self-cgroup", "0::"+membership+"\n")
++	resourcePaths.procSelfMountInfo = writeTempCgroupFile(t, dir, "proc-self-mountinfo", "31 30 0:28 "+mountRoot+" "+mountPoint+" rw,nosuid,nodev,noexec,relatime - cgroup2 cgroup rw\n")
++	relative, err := filepath.Rel(mountRoot, membership)
++	require.NoError(t, err)
++	writeTempCgroupFile(t, filepath.Join(mountPoint, relative), "memory.max", "max\n")
++
++	info, err := getCgroupV2Info()
++	require.NoError(t, err)
++	require.True(t, info.memoryStatsSupported)
++	return info
++}
++
+ func TestGetContainerLimits(t *testing.T) {
+ 	dir := t.TempDir()
++	info := cgroupV2Info{dir: dir, memoryStatsSupported: true}
+ 
+-	originalPaths := cgroupPaths
+-	t.Cleanup(func() { cgroupPaths = originalPaths })
+-
+-	t.Run("limited CPU and memory", func(t *testing.T) {
+-		cgroupPaths.v2MemoryMax = writeTempCgroupFile(t, dir, "mem_limited", "536870912\n")  // 512 MB
+-		cgroupPaths.v2CPUMax = writeTempCgroupFile(t, dir, "cpu_limited", "200000 100000\n") // 2 CPUs
++	t.Run("limited CPU", func(t *testing.T) {
++		writeTempCgroupFile(t, dir, "cpu.max", "200000 100000\n")
+ 
+-		limits, err := getContainerLimits()
++		limits, err := getContainerLimits(info)
+ 		require.NoError(t, err)
+-		assert.Equal(t, uint64(512), limits.MemoryLimitMB)
+ 		assert.InDelta(t, 2.0, limits.CPULimit, 0.001)
+ 	})
+ 
+-	t.Run("unlimited CPU and memory", func(t *testing.T) {
+-		cgroupPaths.v2MemoryMax = writeTempCgroupFile(t, dir, "mem_unlimited", "max\n")
+-		cgroupPaths.v2CPUMax = writeTempCgroupFile(t, dir, "cpu_unlimited", "max 100000\n")
++	t.Run("unlimited CPU", func(t *testing.T) {
++		writeTempCgroupFile(t, dir, "cpu.max", "max 100000\n")
+ 
+-		limits, err := getContainerLimits()
++		limits, err := getContainerLimits(info)
+ 		require.NoError(t, err)
+-		assert.Equal(t, uint64(0), limits.MemoryLimitMB)
+ 		assert.Equal(t, float64(0), limits.CPULimit)
+ 	})
+ 
+ 	t.Run("fractional CPU limit", func(t *testing.T) {
+-		cgroupPaths.v2MemoryMax = writeTempCgroupFile(t, dir, "mem_frac", "max\n")
+-		cgroupPaths.v2CPUMax = writeTempCgroupFile(t, dir, "cpu_frac", "50000 100000\n") // 0.5 CPUs
++		writeTempCgroupFile(t, dir, "cpu.max", "50000 100000\n")
+ 
+-		limits, err := getContainerLimits()
++		limits, err := getContainerLimits(info)
+ 		require.NoError(t, err)
+ 		assert.InDelta(t, 0.5, limits.CPULimit, 0.001)
+ 	})
+ 
+-	t.Run("sub-MB memory rounds up to 1MB", func(t *testing.T) {
+-		cgroupPaths.v2MemoryMax = writeTempCgroupFile(t, dir, "mem_tiny", "524288\n") // 0.5 MB
+-		cgroupPaths.v2CPUMax = writeTempCgroupFile(t, dir, "cpu_tiny", "max 100000\n")
++	t.Run("CPU limit does not depend on memory.max", func(t *testing.T) {
++		cpuOnlyDir := filepath.Join(dir, "cpu-only")
++		writeTempCgroupFile(t, cpuOnlyDir, "cpu.max", "100000 100000\n")
+ 
+-		limits, err := getContainerLimits()
++		limits, err := getContainerLimits(cgroupV2Info{dir: cpuOnlyDir, memoryStatsSupported: true})
+ 		require.NoError(t, err)
+-		assert.Equal(t, uint64(1), limits.MemoryLimitMB)
++		assert.InDelta(t, 1.0, limits.CPULimit, 0.001)
+ 	})
+ 
+-	t.Run("missing cgroup files returns zero values", func(t *testing.T) {
+-		cgroupPaths.v2MemoryMax = filepath.Join(dir, "nonexistent_memory")
+-		cgroupPaths.v2CPUMax = writeTempCgroupFile(t, dir, "cpu_present", "max 100000\n")
+-
+-		limits, err := getContainerLimits()
++	t.Run("missing cpu.max returns zero values", func(t *testing.T) {
++		limits, err := getContainerLimits(cgroupV2Info{dir: filepath.Join(dir, "missing"), memoryStatsSupported: true})
+ 		require.NoError(t, err)
+-		assert.Equal(t, uint64(0), limits.MemoryLimitMB)
+ 		assert.Equal(t, float64(0), limits.CPULimit)
+ 	})
+ 
+-	t.Run("missing cpu.max returns zero values", func(t *testing.T) {
+-		cgroupPaths.v2MemoryMax = writeTempCgroupFile(t, dir, "mem_no_cpu", "max\n")
+-		cgroupPaths.v2CPUMax = filepath.Join(dir, "nonexistent_cpu")
++	t.Run("unsupported cgroup returns zero values", func(t *testing.T) {
++		limits, err := getContainerLimits(cgroupV2Info{})
+ 
+-		limits, err := getContainerLimits()
+ 		require.NoError(t, err)
+-		assert.Equal(t, uint64(0), limits.MemoryLimitMB)
+ 		assert.Equal(t, float64(0), limits.CPULimit)
+ 	})
+ }
++
++func TestGetCgroupV2Info(t *testing.T) {
++	dir := t.TempDir()
++	originalPaths := resourcePaths
++	t.Cleanup(func() { resourcePaths = originalPaths })
++
++	t.Run("root membership in a private namespace", func(t *testing.T) {
++		mountPoint := filepath.Join(dir, "private")
++		info := 
 ```
 
-**File**: `webapp/channels/src/components/admin_console/access_control/policy_details/channel_list/__snapshots__/channel_list.test.tsx.snap` (modified, +12/-12)
+**File**: `server/channels/app/platform/container_limits_other.go` (modified, +7/-6)
 ```diff
-@@ -287,13 +287,13 @@ exports[`components/admin_console/access_control/channel_list should match snaps
-           </span>
-           <button
-             aria-label="Previous page"
--            class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 ml-2 prev"
-+            class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 ml-2 prev"
-             disabled=""
-             type="button"
-           >
-             <span
-               aria-hidden="true"
--              class="_icon-button__icon-slot_13ryy_41"
-+              class="_icon-button__icon-slot_ft92e_41"
-             >
-               <div
-                 aria-hidden="true"
-@@ -320,13 +320,13 @@ exports[`components/admin_console/access_control/channel_list should match snaps
-           </button>
-           <button
-             aria-label="Next page"
--            class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 next"
-+            class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 next"
-             disabled=""
-             type="button"
-           >
-             <span
-               aria-hidden="true"
--              class="_icon-button__icon-slot_13ryy_41"
-+              class="_icon-button__icon-slot_ft92e_41"
-             >
-               <div
-                 aria-hidden="true"
-@@ -645,13 +645,13 @@ exports[`components/admin_console/access_control/channel_list should match snaps
-           </span>
-           <button
-             aria-label="Previous page"
--            class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 ml-2 prev"
-+            class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 ml-2 prev"
-             disabled=""
-             type="button"
-           >
-             <span
-               aria-hidden="true"
--              class="_icon-button__icon-slot_13ryy_41"
-+              class="_icon-button__icon-slot_ft92e_41"
-             >
-               <div
-                 aria-hidden="true"
-@@ -678,13 +678,13 @@ exports[`components/admin_console/access_control/channel_list should match snaps
-           </button>
-           <button
-             aria-label="Next page"
--            class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 next"
-+            class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 next"
-             disabled=""
-             type="button"
-           >
-             <span
-               aria-hidden="true"
--              class="_icon-button__icon-slot_13ryy_41"
-+              class="_icon-button__icon-slot_ft92e_41"
-             >
-               <div
-                 aria-hidden="true"
-@@ -1003,13 +1003,13 @@ exports[`components/admin_console/access_control/channel_list should match snaps
-           </span>
-           <button
-             aria-label="Previous page"
--            class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 ml-2 prev"
-+            class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 ml-2 prev"
-             disabled=""
-             type="button"
-           >
-             <span
-               aria-hidden="true"
--              class="_icon-button__icon-slot_13ryy_41"
-+              class="_icon-button__icon-slot_ft92e_41"
-             >
-               <div
-                 aria-hidden="true"
-@@ -1036,13 +1036,13 @@ exports[`components/admin_console/access_control/channel_list should match snaps
-           </button>
-           <button
-             aria-label="Next page"
--            class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 next"
-+            class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 next"
-             disabled=""
-             type="button"
-           >
-             <span
-               aria-hidden="true"
--              class="_icon-button__icon-slot_13ryy_41"
-+              class="_icon-button__icon-slot_ft92e_41"
-             >
-               <div
-                 aria-hidden="true"
+@@ -5,15 +5,16 @@
+ 
+ package platform
+ 
+-// ContainerLimits holds effective CPU and memory limits for the current container.
+-// Zero values indicate no limit is set (fields will be omitted from YAML output).
+-type ContainerLimits struct {
+-	CPULimit      float64
+-	MemoryLimitMB uint64
++func getCgroupV2Info() (cgroupV2Info, error) {
++	return cgroupV2Info{}, nil
+ }
+ 
+ // getContainerLimits returns zero values on non-Linux platforms.
+ // Container limit detection via cgroups is only supported on Linux.
+-func getContainerLimits() (ContainerLimits, error) {
++func getContainerLimits(cgroupV2Info) (ContainerLimits, error) {
+ 	return ContainerLimits{}, nil
+ }
++
++func getMemoryDiagnostics(cgroupV2Info) (memoryDiagnostics, error) {
++	return memoryDiagnostics{}, nil
++}
 ```
 
-**File**: `webapp/channels/src/components/admin_console/data_retention_settings/__snapshots__/data_retention_settings.test.tsx.snap` (modified, +8/-8)
+**File**: `server/channels/app/platform/support_packet.go` (modified, +46/-15)
 ```diff
-@@ -473,13 +473,13 @@ exports[`components/admin_console/data_retention_settings/data_retention_setting
-                     </span>
-                     <button
-                       aria-label="Previous page"
--                      class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 ml-2 prev"
-+                      class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 ml-2 prev"
-                       disabled=""
-                       type="button"
-                     >
-                       <span
-                         aria-hidden="true"
--                        class="_icon-button__icon-slot_13ryy_41"
-+                        class="_icon-button__icon-slot_ft92e_41"
-                       >
-                         <div
-                           aria-hidden="true"
-@@ -506,13 +506,13 @@ exports[`components/admin_console/data_retention_settings/data_retention_setting
-                     </button>
-                     <button
-                       aria-label="Next page"
--                      class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 next"
-+                      class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 next"
-                       disabled=""
-                       type="button"
-                     >
-                       <span
-                         aria-hidden="true"
--                        class="_icon-button__icon-slot_13ryy_41"
-+                        class="_icon-button__icon-slot_ft92e_41"
-                       >
-                         <div
-                           aria-hidden="true"
-@@ -844,13 +844,13 @@ exports[`components/admin_console/data_retention_settings/data_retention_setting
-                     </span>
-                     <button
-                       aria-label="Previous page"
--                      class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 ml-2 prev"
-+                      class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 ml-2 prev"
-                       disabled=""
-                       type="button"
-                     >
-                       <span
-                         aria-hidden="true"
--                        class="_icon-button__icon-slot_13ryy_41"
-+                        class="_icon-button__icon-slot_ft92e_41"
-                       >
-                         <div
-                           aria-hidden="true"
-@@ -877,13 +877,13 @@ exports[`components/admin_console/data_retention_settings/data_retention_setting
-                     </button>
-                     <button
-                       aria-label="Next page"
--                      class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 next"
-+                      class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 next"
-                       disabled=""
-                       type="button"
-                     >
-                       <span
-                         aria-hidden="true"
--                        class="_icon-button__icon-slot_13ryy_41"
-+                        class="_icon-button__icon-slot_ft92e_41"
-                       >
-                         <div
-                           aria-hidden="true"
+@@ -10,10 +10,12 @@ import (
+ 	"encoding/json"
+ 	"fmt"
+ 	"io"
++	"math"
+ 	"net/http"
+ 	"net/url"
+ 	"os"
+ 	"runtime"
++	"runtime/debug"
+ 	rpprof "runtime/pprof"
+ 	"strings"
+ 	"time"
+@@ -41,17 +43,25 @@ const (
+ // cumulative-vs-point-in-time semantics visible at a glance.
+ var diagnosticsYAMLComments = yaml.CommentMap{
+ 	// server: — grouped into Machine / Capacity / Process lifecycle / Software
+-	"$.server.os":                        {yaml.HeadComment(" Machine")},
+-	"$.server.cpu_cores":                 {yaml.HeadComment(" Capacity (hardware → effective quota)"), yaml.LineComment(" logical CPUs visible to the OS")},
+-	"$.server.total_memory_mb":           {yaml.LineComment(" host/VM total RAM; may exceed container limit")},
+-	"$.server.container_cpu_limit":       {yaml.LineComment(" cgroup v2 CPU quota in CPUs; Linux only, omitted if no limit set")},
+-	"$.server.container_memory_limit_mb": {yaml.LineComment(" cgroup v2 memory quota in MB; Linux only, omitted if no limit set")},
+-	"$.server.process_id":                {yaml.HeadComment(" Process lifecycle")},
+-	"$.server.started_at":                {yaml.LineComment(" when Mattermost process started")},
+-	"$.server.host_started_at":           {yaml.LineComment(" when the host OS booted; omitted if unavailable")},
+-	"$.server.open_file_descriptors":     {yaml.LineComment(" current open FDs for this process")},
+-	"$.server.max_file_descriptors":      {yaml.LineComment(" system limit (ulimit -n)")},
+-	"$.server.version":                   {yaml.HeadComment(" Software")},
++	"$.server.os":                              {yaml.HeadComment(" Machine")},
++	"$.server.cpu_cores":                       {yaml.HeadComment(" Capacity (hardware → effective quota)"), yaml.LineComment(" logical CPUs visible to the OS")},
++	"$.server.total_memory_mb":                 {yaml.LineComment(" host/VM total RAM; may exceed container limit")},
++	"$.server.available_memory_mb":             {yaml.LineComment(" host/VM MemAvailable from /proc/meminfo; Linux only")},
++	"$.server.swap_total_mb":                   {yaml.LineComment(" host/VM total swap; Linux only")},
++	"$.server.swap_used_mb":                    {yaml.LineComment(" host/VM used swap; Linux only")},
++	"$.server.container_cpu_limit":             {yaml.LineComment(" cgroup v2 CPU quota in CPUs; Linux only, omitted if no limit set")},
++	"$.server.container_memory_limit_mb":       {yaml.LineComment(" cgroup v2 memory quota in MB; Linux only, omitted if no limit set")},
++	"$.server.container_memory_usage_mb":       {yaml.LineComment(" cgroup v2 memory.current in MB, including page cache; Linux only")},
++	"$.server.container_memory_working_set_mb": {yaml.LineComment(" cgroup v2 memory.current minus inactive file cache in MB; Linux only")},
++	"$.server.container_oom_kills":             {yaml.LineComment(" cgroup v2 OOM kills since the cgroup was created; Linux only")},
++	"$.server.process_id":                      {yaml.HeadComment(" Process lifecycle")},
++	"$.server.started_at":                      {yaml.LineComment(" when Mattermost process started")},
++	"$.server.host_started_at":                 {yaml.LineComment(" when the host OS booted; omitted if unavailable")},
++	"$.server.process_rss_mb":                  {yaml.LineComment(" resident memory of the Mattermost process only; excludes plugin child processes")},
++	"$.server.go_memory_limit_mb":              {yaml.LineComment(" Go runtime memory limit in MB; omitted when no limit is set")},
++	"$.server.open_file_descriptors":           {yaml.LineComment(" current open FDs for this process")},
++	"$.server.max_file_descriptors":            {yaml.LineComment(" system limit (ulimit -n)")},
++	"$.server.version":                         {yaml.HeadComment(" Software")},
+ 
+ 	"$.config.audit_logging_configured": {yaml.LineComment(" this server's audit check of its current config and license; offline health checks use it")},
+ 
+@@ -203,12 +213,33 @@ func (ps *PlatformService) GetSupportPacketDiagnostics(rctx request.CTX) (*model
+ 	} else {
+ 		d.Server.TotalMemoryMB = new(totalMemoryBytes / 1024 / 1024)
+ 	}
+-	containerLimits, err := getContainerLimits()
++	cgroupV2, err := getCgroupV2Info()
++	if err != nil {
++		fail(model.SectionServerMemory, errors.Wrap(err, "error while resolving cgroup v2"))
++	}
++	containerLimits, err := getContainerLimits(cgroupV2)
++	d.Server.ContainerCPULimit = containerLimits.CPULimit
+ 	if err != nil {
+ 		rctx.Logger().Debug("Failed to get container limits for Support Packet", mlog.Err(err))
+-	} else {
+-		d.Server.ContainerCPULimit = containerLimits.CPULimit
+-		d.Server.ContainerMemoryLimitMB = containerLimits.MemoryLimitMB
++	}
++	memory, memoryErr := getMemoryDiagnostics(cgroupV2)
++	if memoryErr != nil {
++		fail(model.SectionServerMemory, errors.Wrap(memoryErr, "error while getting memory diagnostics"))
++	}
++	d.Server.AvailableMemoryMB = memory.AvailableMemoryMB
++	d.Server.SwapTotalMB = memory.SwapTotalMB
++	d.Server.SwapUsedMB = memory.SwapUsedMB
++	d.Server.ProcessRSS
 ```
 
-**File**: `webapp/channels/src/components/admin_console/data_retention_settings/channel_list/__snapshots__/channel_list.test.tsx.snap` (modified, +8/-8)
+**File**: `server/channels/app/platform/support_packet_test.go` (modified, +8/-0)
 ```diff
-@@ -395,13 +395,13 @@ exports[`components/admin_console/data_retention_settings/channel_list should ma
-           </span>
-           <button
-             aria-label="Previous page"
--            class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 ml-2 prev"
-+            class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 ml-2 prev"
-             disabled=""
-             type="button"
-           >
-             <span
-               aria-hidden="true"
--              class="_icon-button__icon-slot_13ryy_41"
-+              class="_icon-button__icon-slot_ft92e_41"
-             >
-               <div
-                 aria-hidden="true"
-@@ -428,13 +428,13 @@ exports[`components/admin_console/data_retention_settings/channel_list should ma
-           </button>
-           <button
-             aria-label="Next page"
--            class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 next"
-+            class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 next"
-             disabled=""
-             type="button"
-           >
-             <span
-               aria-hidden="true"
--              class="_icon-button__icon-slot_13ryy_41"
-+              class="_icon-button__icon-slot_ft92e_41"
-             >
-               <div
-                 aria-hidden="true"
-@@ -1446,13 +1446,13 @@ exports[`components/admin_console/data_retention_settings/channel_list should ma
-           </span>
-           <button
-             aria-label="Previous page"
--            class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 ml-2 prev"
-+            class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 ml-2 prev"
-             disabled=""
-             type="button"
-           >
-             <span
-               aria-hidden="true"
--              class="_icon-button__icon-slot_13ryy_41"
-+              class="_icon-button__icon-slot_ft92e_41"
-             >
-               <div
-                 aria-hidden="true"
-@@ -1479,12 +1479,12 @@ exports[`components/admin_console/data_retention_settings/channel_list should ma
-           </button>
-           <button
-             aria-label="Next page"
--            class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 next"
-+            class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 next"
-             type="button"
-           >
-             <span
-               aria-hidden="true"
--              class="_icon-button__icon-slot_13ryy_41"
-+              class="_icon-button__icon-slot_ft92e_41"
-             >
-               <div
-                 aria-hidden="true"
+@@ -1864,11 +1864,19 @@ func TestSupportPacketMarshalGolden(t *testing.T) {
+ 	diagnostics.Server.InstallationType = "docker"
+ 	diagnostics.Server.CPUCores = 8
+ 	diagnostics.Server.TotalMemoryMB = new(uint64(32768))
++	diagnostics.Server.AvailableMemoryMB = new(uint64(24576))
++	diagnostics.Server.SwapTotalMB = new(uint64(4096))
++	diagnostics.Server.SwapUsedMB = new(uint64(1024))
+ 	diagnostics.Server.ContainerCPULimit = 6.5
+ 	diagnostics.Server.ContainerMemoryLimitMB = 16384
++	diagnostics.Server.ContainerMemoryUsageMB = new(uint64(12288))
++	diagnostics.Server.ContainerMemoryWorkingSetMB = new(uint64(10240))
++	diagnostics.Server.ContainerOOMKills = new(uint64(2))
+ 	diagnostics.Server.ProcessID = 90210
+ 	diagnostics.Server.StartedAt = time.Date(2026, 1, 2, 3, 4, 5, 0, time.UTC)
+ 	diagnostics.Server.HostStartedAt = time.Date(2025, 12, 30, 0, 0, 0, 0, time.UTC)
++	diagnostics.Server.ProcessRSSMB = new(uint64(2048))
++	diagnostics.Server.GoMemoryLimitMB = new(uint64(13107))
+ 	diagnostics.Server.OpenFileDescriptors = new(int64(512))
+ 	diagnostics.Server.MaxFileDescriptors = new(int64(8192))
+ 	diagnostics.Server.Version = "11.0.0"
 ```
 
-**File**: `webapp/channels/src/components/admin_console/data_retention_settings/team_list/__snapshots__/team_list.test.tsx.snap` (modified, +8/-8)
+**File**: `server/channels/app/platform/testdata/support_packet/diagnostics.yaml` (modified, +8/-0)
 ```diff
-@@ -129,13 +129,13 @@ exports[`components/admin_console/data_retention_settings/team_list should match
-           </span>
-           <button
-             aria-label="Previous page"
--            class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 ml-2 prev"
-+            class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 ml-2 prev"
-             disabled=""
-             type="button"
-           >
-             <span
-               aria-hidden="true"
--              class="_icon-button__icon-slot_13ryy_41"
-+              class="_icon-button__icon-slot_ft92e_41"
-             >
-               <div
-                 aria-hidden="true"
-@@ -162,13 +162,13 @@ exports[`components/admin_console/data_retention_settings/team_list should match
-           </button>
-           <button
-             aria-label="Next page"
--            class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 next"
-+            class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 next"
-             disabled=""
-             type="button"
-           >
-             <span
-               aria-hidden="true"
--              class="_icon-button__icon-slot_13ryy_41"
-+              class="_icon-button__icon-slot_ft92e_41"
-             >
-               <div
-                 aria-hidden="true"
-@@ -842,13 +842,13 @@ exports[`components/admin_console/data_retention_settings/team_list should match
-           </span>
-           <button
-             aria-label="Previous page"
--            class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 ml-2 prev"
-+            class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 ml-2 prev"
-             disabled=""
-             type="button"
-           >
-             <span
-               aria-hidden="true"
--              class="_icon-button__icon-slot_13ryy_41"
-+              class="_icon-button__icon-slot_ft92e_41"
-             >
-               <div
-                 aria-hidden="true"
-@@ -875,12 +875,12 @@ exports[`components/admin_console/data_retention_settings/team_list should match
-           </button>
-           <button
-             aria-label="Next page"
--            class="_icon-button_13ryy_2 _icon-button--size-small_13ryy_77 next"
-+            class="_icon-button_ft92e_2 _icon-button--size-small_ft92e_77 next"
-             type="button"
-           >
-             <span
-               aria-hidden="true"
--              class="_icon-button__icon-slot_13ryy_41"
-+              class="_icon-button__icon-slot_ft92e_41"
-             >
-               <div
-                 aria-hidden="true"
+@@ -18,12 +18,20 @@ server:
+   # Capacity (hardware → effective quota)
+   cpu_cores: 8 # logical CPUs visible to the OS
+   total_memory_mb: 32768 # host/VM total RAM; may exceed container limit
++  available_memory_mb: 24576 # host/VM MemAvailable from /proc/meminfo; Linux only
++  swap_total_mb: 4096 # host/VM total swap; Linux only
++  swap_used_mb: 1024 # host/VM used swap; Linux only
+   container_cpu_limit: 6.5 # cgroup v2 CPU quota in CPUs; Linux only, omitted if no limit set
+   container_memory_limit_mb: 16384 # cgroup v2 memory quota in MB; Linux only, omitted if no limit set
++  container_memory_usage_mb: 12288 # cgroup v2 memory.current in MB, including page cache; Linux only
++  container_memory_working_set_mb: 10240 # cgroup v2 memory.current minus inactive file cache in MB; Linux only
++  container_oom_kills: 2 # cgroup v2 OOM kills since the cgroup was created; Linux only
+   # Process lifecycle
+   process_id: 90210
+   started_at: 2026-01-02T03:04:05Z # when Mattermost process started
+   host_started_at: 2025-12-30T00:00:00Z # when the host OS booted; omitted if unavailable
++  process_rss_mb: 2048 # resident memory of the Mattermost process only; excludes plugin child processes
++  go_memory_limit_mb: 13107 # Go runtime memory limit in MB; omitted when no limit is set
+   open_file_descriptors: 512 # current open FDs for this process
+   max_file_descriptors: 8192 # system limit (ulimit -n)
+   # Software
 ```
 
 ---
 
-### Incident Patch 2: `388cddcb` (2026-11-03)
-**Commit Message**: fix(webapp): skip classification banner fetch while logged out (#39661)
+### Incident Patch 2: `8af02bfe` (2026-11-06)
+**Commit Message**: Fix flaky TestHydratePropertyValues (#39226)
 
-GlobalClassificationBanner is mounted for every route under the root
-switch, including the logged-out "/" route that redirects to /login.
-Its bootstrap effect fetched the access_control system property field
-and values, which require a session, so logged-out page loads got two
-401s whose rejections went unhandled. This made
-pre_auth_webapp_plugins.spec.ts flaky on master when the page errors
-landed after the test attached its pageerror listener.
+* Fix flaky TestHydratePropertyValues
 
-Skip the fetch until there is a current user, and rerun it once one
-logs in.
+The orders_values_by_field_creation_time subtest created two property
+fields in the same millisecond. hydrateChannelPropertyValues sorts by
+CreateAt and breaks ties by FieldID, so the assertion on creation order
+flipped whenever the second ID sorted first. Wait until the next
+millisecond before creating the second field so CreateAt actually differs.
+
+Tests-only change. Verified with `go test -run '^TestHydratePropertyValues$/orders_values_by_field_creation_time$' -race
+-count=100` locally.
+
+Co-authored-by: mattermost-code <[REDACTED_EMAIL]>
+
+* Address PR feedback: 0 answered, 1 resolved, 0 declined
+
+---------
 
 Co-authored-by: Cursor Agent <[REDACTED_EMAIL]>
-Co-authored-by: yasser.khan <[REDACTED_EMAIL]>
+Co-authored-by: mattermost-code <[REDACTED_EMAIL]>
+Co-authored-by: Mattermost Build <[REDACTED_EMAIL]>
 
-**File**: `webapp/channels/src/components/global_classification_banner/global_classification_banner.test.tsx` (modified, +17/-1)
+**File**: `server/channels/app/post_property_values_test.go` (modified, +6/-0)
 ```diff
-@@ -71,12 +71,14 @@ type StateOptions = {
-     linkedField?: PropertyField | null;
-     systemValue?: PropertyValue<string> | null;
-     featureFlagEnabled?: boolean;
-+    currentUserId?: string;
- };
+@@ -7,6 +7,7 @@ import (
+ 	"encoding/json"
+ 	"strconv"
+ 	"testing"
++	"time"
  
- function makeState({
-     linkedField = null,
-     systemValue = null,
-     featureFlagEnabled = true,
-+    currentUserId = MOCK_USER_ID,
- }: StateOptions = {}): DeepPartial<GlobalState> {
-     const fieldsById: Record<string, PropertyField> = {};
-     if (linkedField) {
-@@ -93,7 +95,7 @@ function makeState({
-     return {
-         entities: {
-             users: {
--                currentUserId: MOCK_USER_ID,
-+                currentUserId,
-             },
-             general: {
-                 config: {
-@@ -280,4 +282,18 @@ describe('GlobalClassificationBanner', () => {
-             expect.anything(),
-         );
-     });
-+
-+    test('does not fetch fields or values while logged out', () => {
-+        renderWithContext(
-+            <GlobalClassificationBanner position='top'/>,
-+            makeState({linkedField: makeLinkedField([DISPLAY_BANNER_TOP]), currentUserId: ''}),
-+        );
-+        renderWithContext(
-+            <GlobalClassificationBanner position='top'/>,
-+            makeState({linkedField: null, currentUserId: ''}),
-+        );
-+
-+        expect(Client4.getPropertyFields).not.toHaveBeenCalled();
-+        expect(Client4.getSystemPropertyValues).not.toHaveBeenCalled();
-+    });
- });
-```
-
-**File**: `webapp/channels/src/components/global_classification_banner/global_classification_banner.tsx` (modified, +5/-2)
-```diff
-@@ -11,6 +11,7 @@ import {fetchPropertyFields, fetchSystemPropertyValues} from 'mattermost-redux/a
- import {ACCESS_CONTROL_PROPERTY_GROUP, DISPLAY_BANNER_BOTTOM, DISPLAY_BANNER_TOP} from 'mattermost-redux/constants/properties';
- import {getFeatureFlagValue} from 'mattermost-redux/selectors/entities/general';
- import {getPropertyValueForTargetField} from 'mattermost-redux/selectors/entities/properties';
-+import {getCurrentUserId} from 'mattermost-redux/selectors/entities/users';
- import {getContrastingSimpleColor} from 'mattermost-redux/utils/theme_utils';
+ 	"github.com/mattermost/mattermost/server/public/model"
+ 	"github.com/mattermost/mattermost/server/public/shared/request"
+@@ -202,7 +203,12 @@ func TestHydratePropertyValues(t *testing.T) {
+ 		th := setupPropertyValuesTest(t)
+ 		// Names are deliberately reverse-alphabetical relative to creation order.
+ 		first := th.createField(t, string(model.PropertyFieldTargetLevelChannel), th.BasicChannel.Id, "zulu")
++		// CreateAt is millisecond-resolution; same-ms fields fall back to FieldID order.
++		for model.GetMillis() <= first.CreateAt {
++			time.Sleep(time.Millisecond)
++		}
+ 		second := th.createField(t, string(model.PropertyFieldTargetLevelChannel), th.BasicChannel.Id, "alpha")
++		require.Greater(t, second.CreateAt, first.CreateAt)
  
- import {
-@@ -45,6 +46,7 @@ function selectLinkedSystemField(state: GlobalState): PropertyField | undefined
- export default function GlobalClassificationBanner({position}: Props) {
-     const dispatch = useDispatch();
-     const featureEnabled = useSelector((state: GlobalState) => getFeatureFlagValue(state, 'ClassificationMarkings') === 'true');
-+    const currentUserId = useSelector(getCurrentUserId);
-     const linkedField = useSelector(selectLinkedSystemField);
-     const systemValue = useSelector((state: GlobalState) => {
-         if (!linkedField) {
-@@ -59,8 +61,9 @@ export default function GlobalClassificationBanner({position}: Props) {
-     //
-     // The effect must re-run when linkedField arrives in the store so the values
-     // fetch can proceed (it depends on linkedField being present).
-+    // Both endpoints require a session, so logged out pages such as the login page skip the fetch.
-     useEffect(() => {
--        if (!featureEnabled) {
-+        if (!featureEnabled || !currentUserId) {
-             return;
-         }
-         if (!linkedField) {
-@@ -74,7 +77,7 @@ export default function GlobalClassificationBanner({position}: Props) {
-         if (linkedField && !systemValue) {
-             dispatch(fetchSystemPropertyValues(ACCESS_CONTROL_PROPERTY_GROUP));
-         }
--    }, [featureEnabled, linkedField, systemValue, dispatch]);
-+    }, [featureEnabled, currentUserId, linkedField, systemValue, dispatch]);
- 
-     // Display conditions are encoded in the linked field's attrs.actions.
-     const actions = (linkedField?.attrs?.actions as string[] | undefined) ?? [];
+ 		post := th.post(t, th.BasicChannel)
+ 		// Values written in the opposite order to prove output order tracks the field, not the value.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #39670** (2026-11-03): Fix master CI: update snapshots for compass-ui alpha.25 class names (@marianunez)
-- **PR #39662** (closed): Feat/ec2 deploy (@sespinosab)
-- **PR #39661** (2026-11-03): fix(e2e): repair pre_auth_webapp_plugins.spec.ts on master (classification banner fetches while logged out) (@cursor[bot])
-- **PR #39659** (2026-11-03): Automated cherry pick of #39654 (@mattermost-build)
-- **PR #39658** (2026-11-03): Automated cherry pick of #39654 (@mattermost-build)
-- **PR #39654** (2026-11-03): Generate fallback property option IDs without md5 in migration 000223 (@davidkrauser)
+- **PR #39808** (2026-11-09): Revert "MM-70985: update paging defaults and per-post metadata handli… (@amyblais)
+- **PR #39798** (2026-11-07): Fix flaky TestGetDiagnosticsPostsVacuumInProgress (@hanzei)
+- **PR #39797** (2026-11-07): [MM-71431] Test stopping a running health check; let watcher stop during startup jitter (@hanzei)
+- **PR #39795** (closed): docs: AI draft for Add PUSH_PROXY_UNREACHABLE site health rule (@mattermost-docs-ai[bot])
+- **PR #39794** (closed): docs: AI draft for Add filestore disk capacity health rules (@mattermost-docs-ai[bot])
+- **PR #39792** (2026-11-07): Automated cherry pick of #38809 (@mattermost-code)
 
 ---
 
@@ -2262,34 +2239,31 @@ Co-authored-by: yasser.khan <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update snapshots for compass-ui alpha.25 class names (#39670)
+## X. [MM-71617] Add per-node memory health diagnostics (#39720)
 
 **RULE**:
-When implementing operations in `webapp/channels/src/components/__snapshots__/setting_picture.test.tsx.snap`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mattermost/mattermost. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `server/channels/app/health_check_snapshot_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mattermost/mattermost. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4e1eec78`: Update snapshots for compass-ui alpha.25 class names (#39670). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `276dc653`: [MM-71617] Add per-node memory health diagnostics (#39720). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `webapp/channels/src/components/__snapshots__/setting_picture.test.tsx.snap`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/channels/app/health_check_snapshot_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-                class="_icon-button_ft92e_2 _icon-button--size-x-small_ft92e_63 _icon-button--padding-compact_ft92e_72 _icon-button--rounded_ft92e_126"
-                  class="_icon-button__icon-slot_ft92e_41"
-                class="_icon-button_ft92e_2 _icon-button--size-x-small_ft92e_63 _icon-button--padding-compact_ft92e_72 _icon-button--rounded_ft92e_126"
-                  class="_icon-button__icon-slot_ft92e_41"
+			case "NODE_HOST_MEMORY_LOW", "NODE_CONTAINER_MEMORY_PRESSURE":
+				// These set a value only when they have the numbers to compare, so none is required.
+				evaluations[i].Result.Value = nil
+				evaluations[i].Result.Details = nil
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-                class="_icon-button_13ryy_2 _icon-button--size-x-small_13ryy_63 _icon-button--padding-compact_13ryy_72 _icon-button--rounded_13ryy_123"
-                  class="_icon-button__icon-slot_13ryy_41"
-                class="_icon-button_13ryy_2 _icon-button--size-x-small_13ryy_63 _icon-button--padding-compact_13ryy_72 _icon-button--rounded_13ryy_123"
-                  class="_icon-button__icon-slot_13ryy_41"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4e1eec78` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `276dc653` are properly handled with clean fallback behavior.

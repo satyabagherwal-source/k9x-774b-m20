@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md`  
 > **Source**: github ([https://github.com/TableProApp/TablePro](https://github.com/TableProApp/TablePro))  
-> **Source Version**: `ea1eb4c2`  
+> **Source Version**: `0e554abd`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T03:27:43.771Z  
+> **Timestamp**: 2026-11-08T04:09:59.975Z  
 > **Learning ID**: `learn-github-tableproapp-tablepro`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,17 +17,17 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/TableProApp/TablePro](https://github.com/TableProApp/TablePro))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T03:27:43.764Z  
+> **Harvest Timestamp**: 2026-11-08T04:09:59.969Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
 ## 1. Context & Architectural Overview
 - **Repository / Resource**: `TableProApp/TablePro`
-- **Description**: Free and open source database client built natively for developers
+- **Description**: Free, open-source native database client for macOS, Linux, iPhone and iPad.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6368 stars
+- **Stars / Engagement**: 6411 stars
 
 ---
 
@@ -318,7 +318,6 @@ let package = Package(
         .library(name: "TableProQuery", targets: ["TableProQuery"]),
         .library(name: "TableProSyncTransport", targets: ["TableProSyncTransport"]),
         .library(name: "TableProSync", targets: ["TableProSync"]),
-        .library(name: "TableProAnalytics", targets: ["TableProAnalytics"]),
         .library(name: "TableProMSSQLCore", targets: ["TableProMSSQLCore"]),
         .library(name: "TableProKerberos", targets: ["TableProKerberos"]),
         .library(name: "TableProTeradataCore", targets: ["TableProTeradataCore"]),
@@ -443,11 +442,6 @@ let package = Package(
             path: "Sources/TableProSync"
         ),
         .target(
-            name: "TableProAnalytics",
-            dependencies: [],
-            path: "Sources/TableProAnalytics"
-        ),
-        .target(
             name: "TableProMSSQLCore",
             dependencies: ["TableProCoreTypes", "TableProSQLGrammar", "TableProSQLQuoting"],
             path: "Sources/TableProMSSQLCore"
@@ -513,6 +507,14 @@ let package = Package(
             name: "TableProInfluxDBCore",
             dependencies: [],
             path: "Sources/TableProInfluxDBCore"
+        ),
+        .target(
+            name: "TableProNeo4jCore",
+            dependencies: ["TableProSQLQuoting"],
+            path: "Sources/TableProNeo4jCore"
+        ),
+        .target(
+            name: "TableProB
 ```
 
 ### Core Architecture Module: `apple/Packages/TableProCore/Sources/CSQLite/include/sqlite3.h`
@@ -995,311 +997,6 @@ int tablepro_sqlite3_set_extension_loading(sqlite3 *db, int enabled, int *isEnab
 
 ```
 
-### Core Architecture Module: `apple/Packages/TableProCore/Sources/TableProAnalytics/AnalyticsEnvironmentProvider.swift`
-```
-//
-//  AnalyticsEnvironmentProvider.swift
-//  TableProAnalytics
-//
-
-import Foundation
-
-/// Protocol that platform-specific apps conform to, providing all environment data for analytics heartbeats.
-///
-/// macOS and iOS each implement this with platform-specific data sources (IOKit vs UIDevice,
-/// DatabaseManager vs AppState, etc.). The heartbeat service reads these properties at send time
-/// to build a fresh payload.
-@MainActor
-public protocol AnalyticsEnvironmentProvider: AnyObject {
-    /// SHA256-hashed machine/device identifier (64 hex chars)
-    var machineId: String { get }
-
-    /// App version string (e.g. "1.2.0") from CFBundleShortVersionString
-    var appVersion: String? { get }
-
-    /// OS version string (e.g. "macOS 15.1.0" or "iOS 18.2.0")
-    var osVersion: String { get }
-
-    /// CPU architecture (e.g. "arm64", "x86_64")
-    var architecture: String { get }
-
-    /// Platform identifier sent to backend ("macos" or "ios")
-    var platform: String { get }
-
-    /// User locale preference (e.g. "en", "vi", "system")
-    var locale: String { get }
-
-    /// Whether the user has opted in to analytics
-    var isAnalyticsEnabled: Bool { get }
-
-    /// Whether the user has a valid license
-    var hasLicense: Bool { get }
-
-    /// Database type identifiers for active connections (e.g. ["mysql", "postgresql"])
-    var activeDatabaseTypes: [String] { get }
-
-    /// Number of active database connections
-    var activeConnectionCount: Int { get }
-
-    /// HMAC-SHA256 shared secret for request signing (from Info.plist build setting)
-    var hmacSecret: String? { get }
-
-    /// Timestamp of the first connection attempt the user made on this device, or nil if never attempted.
-    /// Set once and never overwritten, the heartbeat sends the original value forever.
-    var connectionAttemptedAt: Date? { get }
-
-    /// Timestamp of the first successful connection on this device, or nil if no connection ever succeeded.
-    /// Set once and never overwritten.
-    var connectionSucceededAt: Date? { get }
-
-    /// Timestamp of the first query the user successfully executed on this device, or nil if no query has run.
-    /// Set once and never overwritten.
-    var firstQueryExecutedAt: Date? { get }
-
-    /// How updates install on this device: "automatic", "notify" or "off". Nil where the platform
-    /// has no updater of its own, which is every App Store build.
-    var updateInstallMode: String? { get }
-
-    /// Seconds between scheduled update checks, or nil when checks are off or unavailable.
-    var updateCheckInterval: Int? { get }
-}
-
-public extension AnalyticsEnvironmentProvider {
-    var connectionAttemptedAt: Date? { nil }
-    var connectionSucceededAt: Date? { nil }
-    var firstQueryExecutedAt: Date? { nil }
-    var updateInstallMode: String? { nil }
-    var updateCheckInterval: Int? { nil }
-}
-
-```
-
-### Core Architecture Module: `apple/Packages/TableProCore/Sources/TableProAnalytics/AnalyticsHeartbeatService.swift`
-```
-//
-//  AnalyticsHeartbeatService.swift
-//  TableProAnalytics
-//
-
-import CryptoKit
-import Foundation
-import os
-
-/// Shared heartbeat service for macOS and iOS. Sends anonymous usage data to the analytics API.
-///
-/// Platform-specific data is injected via `AnalyticsEnvironmentProvider`. The service handles:
-/// encoding, HMAC-SHA256 signing, HTTP transport, heartbeat scheduling, and cooldown persistence.
-@MainActor
-public final class AnalyticsHeartbeatService {
-    private static let logger = Logger(subsystem: "com.TablePro", category: "AnalyticsHeartbeat")
-
-    private let provider: AnalyticsEnvironmentProvider
-
-    private let analyticsUrl: URL
-
-    private let heartbeatInterval: TimeInterval
-    private let initialDelay: TimeInterval
-
-    /// Minimum elapsed time before sending another heartbeat.
-    /// Prevents duplicate sends on iOS when the app cycles between foreground/background.
-    private let cooldownInterval: TimeInterval
-
-    private static let lastHeartbeatKey = "com.TablePro.analytics.lastHeartbeatDate"
-
-    /// Injected so a sandboxed run keeps its cooldown stamp out of the real defaults domain.
-    private let defaults: UserDefaults
-
-    private let session: URLSession = {
-        let config = URLSessionConfiguration.default
-        config.timeoutIntervalForRequest = 15
-        config.timeoutIntervalForResource = 30
-        config.waitsForConnectivity = true
-        return URLSession(configuration: config)
-    }()
-
-    private let encoder: JSONEncoder = {
-        let encoder = JSONEncoder()
-        encoder.keyEncodingStrategy = .convertToSnakeCase
-        encoder.dateEncodingStrategy = .iso8601
-        return encoder
-    }()
-
-    public init(
-        provider: AnalyticsEnvironmentProvider,
-        analyticsUrl: URL = URL(string: "https://api.tablepro.app/v1/analytics")!,
-        heartbeatInterval: TimeInterval = 24 * 60 * 60,
-        initialDelay: TimeInterval = 10,
-        cooldownInterval: TimeInterval = 20 * 60 * 60,
-        defaults: UserDefaults = .standard
-    ) {
-        self.provider = provider
-        self.analyticsUrl = analyticsUrl
-        self.heartbeatInterval = heartbeatInterval
-        self.initialDelay = initialDelay
-        self.cooldownInterval = cooldownInterval
-        self.defaults = defaults
-    }
-
-    // MARK: - Public API
-
-    /// Start the periodic heartbeat loop. Returns a cancellable Task.
-    /// The caller owns the Task lifecycle (cancel on deinit or background).
-    public func startPeriodicHeartbeat() -> Task<Void, Never> {
-        Task { [weak self] in
-            guard let delay = self?.initialDelay else { return }
-            try? await Task.sleep(for: .seconds(delay))
-
-            while !Task.isCancelled {
-                guard let target = self else { return }
-                await target.sendHeartbeat()
-                try? await Task.sleep(for: .seconds(target.heartbeatInterval))
-            }
-        }
-    }
-
-    /// Send a single heartbeat. Respects opt-out and cooldown.
-    public func sendHeartbeat() async {
-        guard provider.isAnalyticsEnabled else {
-            Self.logger.trace("Analytics disabled by user, skipping heartbeat")
-            return
-        }
-
-        guard isCooldownElapsed() else {
-            Self.logger.trace("Analytics cooldown not elapsed, skipping heartbeat")
-            return
-        }
-
-        let payload = buildPayload()
-
-        do {
-            var request = URLRequest(url: analyticsUrl)
-            request.httpMethod = "POST"
-            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-            request.httpBody = try encoder.encode(payload)
-
-            if let body = request.httpBody,
-               let secret = provider.hmacSecret, !secret.isEmpty {
-                let key = SymmetricKey(data: Data(secret.utf8))
-                let signature = HMAC<SHA256>.authenticationCode(for: body, using: key)
-                let signatureHex = signature.map { String(format: "%02x", $0) }.joined()
-                request.setValue(signatureHex, forHTTPHeaderField: "X-Signature")
-            }
-
-            let (_, response) = try await session.data(for: request)
-
-            if let httpResponse = response as? HTTPURLResponse {
-                Self.logger.trace("Analytics heartbeat sent, status: \(httpResponse.statusCode)")
-            }
-
-            recordHeartbeatTimestamp()
-        } catch {
-            Self.logger.trace("Analytics heartbeat failed: \(error.localizedDescription)")
-        }
-    }
-
-    // MARK: - Private
-
-    private func buildPayload() -> AnalyticsPayload {
-        let types = provider.activeDatabaseTypes
-        return AnalyticsPayload(
-            machineId: provider.machineId,
-            platform: provider.platform,
-            appVersion: provider.appVersion,
-            osVersion: provider.osVersion,
-            architecture: provider.architecture,
-            locale: provider.locale,
-            databaseTypes: types.isEmpty ? nil : types,
-            connectionCount: provider.activeConnectionCount,
-            hasLicense: provider.hasLicense,
-            connectionAttemptedAt: provider.connectionAttemptedAt,
-            connectionSucceededAt: provider.connectionSucceededAt,
-            firstQueryExecutedAt: provider.firstQueryExecutedAt,
-            updateInstallMode: provider.updateInstallMode,
-            updateCheckInterval: provider.updateCheckInterval
-        )
-    }
-
-    /// Exposed for tests so they can verify the encoded body without touching `sendHeartbeat()`.
-    public func makeEncodedBodyForTesting(payload: AnalyticsPayload) throws -> Data {
-        try encoder.encode(payload)
-    }
-
-    private func isCooldownElapsed() -> Bool {
-        guard let last = defaults.object(forKey: Self.lastHeartbeatKey) as? Date else {
-            return true
-        }
-        return Date().timeIntervalSince(last) >= cooldownInterval
-    }
-
-    private func recordHeartbeatTimestamp() {
-        defaults.set(Date(), forKey: Self.lastHeartbeatKey)
-    }
-}
-
-```
-
-### Core Architecture Module: `apple/Packages/TableProCore/Sources/TableProAnalytics/AnalyticsPayload.swift`
-```
-//
-//  AnalyticsPayload.swift
-//  TableProAnalytics
-//
-
-import Foundation
-
-/// Anonymous heartbeat payload sent to the analytics API every 24 hours.
-/// Encoded with snake_case keys to match backend expectations.
-public struct AnalyticsPayload: Encodable, Sendable {
-    public let machineId: String
-    public let platform: String
-    public let appVersion: String?
-    public let osVersion: String
-    public let architecture: String
-    public let locale: String
-    public let databaseTypes: [String]?
-    public let connectionCount: Int
-    public let hasLicense: Bool
-    public let connectionAttemptedAt: Date?
-    public let connectionSucceededAt: Date?
-    public let firstQueryExecutedAt: Date?
-    public let updateInstallMode: String?
-    public let updateCheckInterval: Int?
-
-    public init(
-        machineId: String,
-        platform: String,
-        appVersion: String?,
-        osVersion: String,
-        architecture: String,
-        locale: String,
-        databaseTypes: [String]?,
-        connectionCount: Int,
-        hasLicense: Bool,
-        connectionAttemptedAt: Date? = nil,
-        connectionSucceededAt: Date? = nil,
-        firstQueryExecutedAt: Date? = nil,
-        updateInstallMode: String? = nil,
-        updateCheckInterval: Int? = nil
-    ) {
-        self.machineId = machineId
-        self.platform = platform
-        self.appVersion = appVersion
-        self.osVersion = osVersion
-        self.architecture = architecture
-        self.locale = locale
-        self.databaseTypes = databaseTypes
-        self.connectionCount = connectionCount
-        self.hasLicense = hasLicense
-        self.connectionAttemptedAt = connectionAttemptedAt
-        self.connectionSucceededAt = connectionSucceededAt
-        self.firstQueryExecutedAt = firstQueryExecutedAt
-        self.updateInstallMode = updateInstallMode
-        self.updateCheckInterval = updateCheckInterval
-    }
-}
-
-```
-
 ### Core Architecture Module: `apple/Packages/TableProCore/Sources/TableProAutocomplete/DerivedTableParser.swift`
 ```
 import Foundation
@@ -1542,6 +1239,567 @@ struct SQLTokenStream {
         min(tokens[open].partner, tokens.count - 1) 
 ```
 
+### Core Architecture Module: `apple/Packages/TableProCore/Sources/TableProAutocomplete/KeywordUppercaseHelper.swift`
+```
+import Foundation
+
+public enum KeywordUppercaseHelper {
+    public static func isWordBoundary(_ string: String) -> Bool {
+        guard (string as NSString).length == 1, let ch = string.unicodeScalars.first else { return false }
+        switch ch {
+        case " ", "\t", "\n", "\r", "(", ")", ",", ";":
+            return true
+        default:
+            return false
+        }
+    }
+
+    /// Checks if a UTF-16 character is part of a SQL identifier (a-z, A-Z, 0-9, _).
+    static func isWordCharacter(_ ch: unichar) -> Bool {
+        (ch >= 0x41 && ch <= 0x5A) || (ch >= 0x61 && ch <= 0x7A) ||
+        (ch >= 0x30 && ch <= 0x39) || ch == 0x5F
+    }
+
+    /// Scans backwards up to 2,000 characters to determine if `position` is inside
+    /// a protected context (string literal, comment, backtick identifier, dollar-quote).
+    /// Keywords inside protected contexts should NOT be uppercased.
+    static func isInsideProtectedContext(_ text: NSString, at position: Int) -> Bool {
+        let scanStart = max(0, position - 2_000)
+        var inSingleQuote = false
+        var inDoubleQuote = false
+        var inBacktick = false
+        var inLineComment = false
+        var inBlockComment = false
+        var inDollarQuote = false
+        var i = scanStart
+
+        while i < position {
+            let ch = text.character(at: i)
+
+            if inBlockComment {
+                if ch == 0x2A && i + 1 < position && text.character(at: i + 1) == 0x2F {
+                    inBlockComment = false
+                    i += 2
+                    continue
+                }
+                i += 1
+                continue
+            }
+            if inLineComment {
+                if ch == 0x0A { inLineComment = false }
+                i += 1
+                continue
+            }
+            if inDollarQuote {
+                if ch == 0x24 && i + 1 < position && text.character(at: i + 1) == 0x24 {
+                    inDollarQuote = false
+                    i += 2
+                    continue
+                }
+                i += 1
+                continue
+            }
+
+            if ch == 0x5C && (inSingleQuote || inDoubleQuote) {
+                i += 2
+                continue
+            }
+
+            switch ch {
+            case 0x27: if !inDoubleQuote && !inBacktick { inSingleQuote.toggle() }
+            case 0x22: if !inSingleQuote && !inBacktick { inDoubleQuote.toggle() }
+            case 0x60: if !inSingleQuote && !inDoubleQuote { inBacktick.toggle() }
+            case 0x23:
+                if !inSingleQuote && !inDoubleQuote && !inBacktick {
+                    inLineComment = true
+                }
+            case 0x2D:
+                if !inSingleQuote && !inDoubleQuote && !inBacktick &&
+                   i + 1 < position && text.character(at: i + 1) == 0x2D {
+                    inLineComment = true
+                    i += 2
+                    continue
+                }
+            case 0x2F:
+                if !inSingleQuote && !inDoubleQuote && !inBacktick &&
+                   i + 1 < position && text.character(at: i + 1) == 0x2A {
+                    inBlockComment = true
+                    i += 2
+                    continue
+                }
+            case 0x24:
+                if !inSingleQuote && !inDoubleQuote && !inBacktick &&
+                   i + 1 < position && text.character(at: i + 1) == 0x24 {
+                    inDollarQuote.toggle()
+                    i += 2
+                    continue
+                }
+            default: break
+            }
+            i += 1
+        }
+
+        return inSingleQuote || inDoubleQuote || inBacktick || inLineComment || inBlockComment || inDollarQuote
+    }
+
+    /// Nil when the word is not a keyword, sits in a protected context, or is already in the target case.
+    public static func keywordBeforePosition(
+        _ text: NSString,
+        at position: Int,
+        uppercase: Bool = true
+    ) -> (word: String, folded: String, range: NSRange)? {
+        var wordStart = position
+        while wordStart > 0 {
+            let ch = text.character(at: wordStart - 1)
+            guard isWordCharacter(ch) else { break }
+            wordStart -= 1
+        }
+
+        let wordLength = position - wordStart
+        guard wordLength > 0 else { return nil }
+
+        let word = text.substring(with: NSRange(location: wordStart, length: wordLength))
+        guard SQLKeywords.keywordSet.contains(word.lowercased()) else { return nil }
+        guard !isInsideProtectedContext(text, at: wordStart) else { return nil }
+
+        let folded = uppercase ? word.uppercased() : word.lowercased()
+        guard folded != word else { return nil }
+
+        return (word: word, folded: folded, range: NSRange(location: wordStart, length: wordLength))
+    }
+}
+
+```
+
+### Core Architecture Module: `apple/Packages/TableProCore/Sources/TableProAutocomplete/Mongo/MongoContextAnalyzer.swift`
+```
+import Foundation
+
+public enum MongoCompletionPosition: Equatable, Sendable {
+    case statementStart
+    case databaseMember
+    case collectionMethod(collection: String)
+    case cursorMethod
+    case filterDocument(collection: String?)
+    case projectionDocument(collection: String?)
+    case updateDocument
+    case updatePipelineStage
+    case plainDocument(collection: String?)
+    case pipelineStage(collection: String?)
+    case stageExpression(collection: String?)
+    case suppressed
+}
+
+public struct MongoContext: Equatable, Sendable {
+    public let position: MongoCompletionPosition
+    public let prefix: String
+    public let prefixRange: NSRange
+}
+
+public enum MongoContextAnalyzer {
+    private static let openParen = UInt16(UnicodeScalar("(").value)
+    private static let closeParen = UInt16(UnicodeScalar(")").value)
+    private static let openBrace = UInt16(UnicodeScalar("{").value)
+    private static let closeBrace = UInt16(UnicodeScalar("}").value)
+    private static let openBracket = UInt16(UnicodeScalar("[").value)
+    private static let closeBracket = UInt16(UnicodeScalar("]").value)
+    private static let comma = UInt16(UnicodeScalar(",").value)
+    private static let dot = UInt16(UnicodeScalar(".").value)
+    private static let dollar = UInt16(UnicodeScalar("$").value)
+    private static let underscore = UInt16(UnicodeScalar("_").value)
+    private static let backslash = UInt16(UnicodeScalar("\\").value)
+    private static let slash = UInt16(UnicodeScalar("/").value)
+    private static let star = UInt16(UnicodeScalar("*").value)
+    private static let newline = UInt16(UnicodeScalar("\n").value)
+    private static let singleQuote = UInt16(UnicodeScalar("'").value)
+    private static let doubleQuote = UInt16(UnicodeScalar("\"").value)
+    private static let backtick = UInt16(UnicodeScalar("`").value)
+
+    private struct Frame {
+        let opener: UInt16
+        let openIndex: Int
+        let callee: String?
+        var argumentIndex: Int
+    }
+
+    private struct ScanState {
+        var frames: [Frame] = []
+        var isInString = false
+        var isInComment = false
+    }
+
+    // The scan reads from the start of the text, so a long script costs a linear pass, run off the main actor.
+    @concurrent
+    public static func analyze(_ text: String, cursor: Int) async -> MongoContext {
+        analyze(text: text as NSString, cursor: cursor)
+    }
+
+    public static func analyze(text: NSString, cursor: Int) -> MongoContext {
+        let bounded = max(0, min(cursor, text.length))
+        let prefixRange = prefixRange(in: text, endingAt: bounded)
+        let prefix = text.substring(with: prefixRange)
+        let state = scan(text: text, upTo: prefixRange.location)
+
+        return MongoContext(
+            position: position(for: state, text: text, tokenStart: prefixRange.location),
+            prefix: prefix,
+            prefixRange: prefixRange
+        )
+    }
+
+    public static func prefixRange(in text: NSString, endingAt offset: Int) -> NSRange {
+        var start = max(0, min(offset, text.length))
+
+        while start > 0 {
+            let character = text.character(at: start - 1)
+            guard isTokenCharacter(character) else { break }
+            start -= 1
+        }
+
+        if start > 0, text.character(at: start - 1) == dollar {
+            start -= 1
+            if start > 0, text.character(at: start - 1) == dollar {
+                start -= 1
+            }
+        }
+
+        return NSRange(location: start, length: offset - start)
+    }
+
+    private static func isTokenCharacter(_ character: UInt16) -> Bool {
+        (character >= 0x41 && character <= 0x5A)
+            || (character >= 0x61 && character <= 0x7A)
+            || (character >= 0x30 && character <= 0x39)
+            || character == underscore
+    }
+
+    private static func isIdentifierStart(_ character: UInt16) -> Bool {
+        (character >= 0x41 && character <= 0x5A) || (character >= 0x61 && character <= 0x7A)
+            || character == underscore || character == dollar
+    }
+
+    private static func scan(text: NSString, upTo end: Int) -> ScanState {
+        var units = [UInt16](repeating: 0, count: end)
+        text.getCharacters(&units, range: NSRange(location: 0, length: end))
+        var state = ScanState()
+        var index = 0
+        var stringDelimiter: UInt16 = 0
+        var isInLineComment = false
+        var isInBlockComment = false
+
+        while index < end {
+            let character = units[index]
+
+            if isInLineComment {
+                if character == newline { isInLineComment = false }
+                index += 1
+                continue
+            }
+
+            if isInBlockComment {
+                if character == star, index + 1 < end, units[index + 1] == slash {
+                    isInBlockComment = false
+                    index += 2
+                    continue
+                }
+                index += 1
+                continue
+            }
+
+            if stringDelimiter != 0 {
+                if character == backslash {
+                    index += 2
+                    continue
+                }
+                if character == stringDelimiter { stringDelimiter = 0 }
+                index += 1
+                continue
+            }
+
+            if character == slash, index + 1 < end {
+                let next = units[index + 1]
+                if next == slash {
+                    isInLineComment = true
+                    index += 2
+                    continue
+                }
+                if next == star {
+                    isInBlockComment = true
+                    index += 2
+                    continue
+                }
+            }
+
+            if character == singleQuote || character == doubleQuote || character == backtick {
+                stringDelimiter = character
+                index += 1
+                continue
+            }
+
+            switch character {
+            case openParen:
+                state.frames.append(
+                    Frame(
+                        opener: openParen,
+                        openIndex: index,
+                        callee: identifier(in: text, endingBefore: index),
+                        argumentIndex: 0
+                    )
+                )
+            case openBrace:
+                state.frames.append(Frame(opener: openBrace, openIndex: index, callee: nil, argumentIndex: 0))
+            case openBracket:
+                state.frames.append(Frame(opener: openBracket, openIndex: index, callee: nil, argumentIndex: 0))
+            case closeParen, closeBrace, closeBracket:
+                if !state.frames.isEmpty { state.frames.removeLast() }
+            case comma:
+                if !state.frames.isEmpty { state.frames[state.frames.count - 1].argumentIndex += 1 }
+            default:
+                break
+            }
+
+            index += 1
+        }
+
+        state.isInString = stringDelimiter != 0
+        state.isInComment = isInLineComment || isInBlockComment
+        return state
+    }
+
+    private static func identifier(in text: NSString, endingBefore index: Int) -> String? {
+        var end = index
+        while end > 0, text.character(at: end - 1) == UInt16(UnicodeScalar(" ").value) {
+            end -= 1
+        }
+        var start = end
+        while start > 0, isTokenCharacter(text.character(at: start - 1)) {
+            start -= 1
+        }
+        guard start < end, isIdentifierStart(text.character(at: start)) else { return nil }
+        return text.substring(with: NSRange(location: start, length: end - start))
+    }
+
+    private static func position(for state: ScanState, text: NSString, tokenStart: Int) -> MongoCompletionPosition {
+        if state.isInComment { return .suppressed }
+
+        if state.frames.isEmpty, !state.isInString {
+            return topLevelPosition(text: text, tokenStart: tokenStart)
+        }
+
+        guard let callFrameIndex = state.frames.lastIndex(where: { $0.opener == openParen }),
+              let callee = state.frames[callFrameIndex].callee else {
+            return state.isInString ? .suppressed : .statementStart
+        }
+
+        let argumentIndex = state.frames[callFrameIndex].argumentIndex
+        let nested = Array(state.frames.suffix(from: callFrameIndex + 1))
+        let collection = collectionName(in: text, endingBefore: state.frames[callFrameIndex].openIndex)
+
+        if state.isInString, nested.isEmpty { return .suppressed }
+
+        switch callee {
+        case "find", "findOne":
+            if argumentIndex == 0 { return .filterDocument(collection: collection) }
+            if argumentIndex == 1 { return .projectionDocument(collection: collection) }
+            return .suppressed
+        case "countDocuments", "deleteOne", "deleteMany", "findOneAndDelete", "distinct":
+            return argumentIndex == 0 || callee == "distinct"
+                ? .filterDocument(collection: collection)
+                : .suppressed
+        case "updateOne", "updateMany", "findOneAndUpdate":
+            if argumentIndex == 0 { return .filterDocument(collection: collection) }
+            if argumentIndex == 1 {
+                return nested.first?.opener == openBracket ? .updatePipelineStage : .updateDocument
+            }
+            return .suppressed
+        case "replaceOne", "findOneAndReplace":
+            if argumentIndex == 0 { return .filterDocument(collection: collection) }
+            if argumentIndex == 1 { return .plainDocument(collection: collection) }
+            return .suppressed
+        case "insertOne", "insertMany":
+            return .plainDocument(collection: collection)
+        case "aggregate":
+            guard nested.first?.opener == openBracket else { return .suppressed }
+            let documentDepth = nested.filter { $0.opener == openBrace }.count
+            return documentDepth <= 1
+                ? .pipelineStage(collection: collection)
+                : .stageExpression(collection: collection)
+        case "createIndex", "createIndexes", "dropI
+```
+
+### Core Architecture Module: `apple/Packages/TableProCore/Sources/TableProAutocomplete/Mongo/MongoVocabulary.swift`
+```
+import Foundation
+
+public enum MongoVocabulary {
+    public static let databaseMethods: [(name: String, detail: String)] = [
+        ("getCollectionNames", "Array of collection and view names"),
+        ("getCollectionInfos", "Collection and view info documents"),
+        ("getCollection", "Collection object for a name that is not a valid identifier"),
+        ("getSiblingDB", "Switch to another database in the same connection"),
+        ("createCollection", "Create a collection or view"),
+        ("createView", "Create a read-only view over a pipeline"),
+        ("aggregate", "Run a collectionless aggregation pipeline"),
+        ("runCommand", "Run a database command"),
+        ("adminCommand", "Run a command against the admin database"),
+        ("stats", "Database storage statistics"),
+        ("dropDatabase", "Drop the current database"),
+        ("version", "Server version"),
+        ("hello", "Server description and topology"),
+        ("hostInfo", "Host machine information"),
+        ("serverStatus", "Server status counters"),
+        ("serverBuildInfo", "Server build information"),
+        ("currentOp", "Operations in progress"),
+        ("killOp", "Terminate an operation by opid"),
+        ("getProfilingStatus", "Current profiling level"),
+        ("setProfilingLevel", "Set the profiling level"),
+        ("getUsers", "Users defined on this database"),
+        ("getRoles", "Roles defined on this database"),
+        ("createUser", "Create a user"),
+        ("dropUser", "Drop a user"),
+        ("createRole", "Create a role"),
+        ("dropRole", "Drop a role"),
+        ("watch", "Open a change stream on the database")
+    ]
+
+    public static let collectionMethods: [(name: String, detail: String)] = [
+        ("find", "Select documents and return a cursor"),
+        ("findOne", "Return one matching document, or null"),
+        ("aggregate", "Run an aggregation pipeline"),
+        ("countDocuments", "Accurate count using an aggregation"),
+        ("estimatedDocumentCount", "Fast approximate count from collection metadata"),
+        ("distinct", "Array of distinct values for a field"),
+        ("insertOne", "Insert one document"),
+        ("insertMany", "Insert an array of documents"),
+        ("updateOne", "Update the first matching document"),
+        ("updateMany", "Update every matching document"),
+        ("replaceOne", "Replace the first matching document"),
+        ("deleteOne", "Delete the first matching document"),
+        ("deleteMany", "Delete every matching document"),
+        ("findOneAndUpdate", "Find one document, update it, return it"),
+        ("findOneAndReplace", "Find one document, replace it, return it"),
+        ("findOneAndDelete", "Find one document, delete it, return it"),
+        ("bulkWrite", "Several write operations in one command"),
+        ("createIndex", "Build an index"),
+        ("createIndexes", "Build one or more indexes"),
+        ("dropIndex", "Drop one index by name or key spec"),
+        ("dropIndexes", "Drop the given indexes"),
+        ("getIndexes", "Documents describing every index"),
+        ("hideIndex", "Hide an index from the query planner"),
+        ("unhideIndex", "Make a hidden index visible again"),
+        ("drop", "Drop the collection and its indexes"),
+        ("renameCollection", "Rename within the same database"),
+        ("stats", "Collection storage statistics"),
+        ("dataSize", "Uncompressed size of the documents, in bytes"),
+        ("storageSize", "Bytes allocated for document storage"),
+        ("totalIndexSize", "Total bytes used by all indexes"),
+        ("totalSize", "Storage size plus total index size"),
+        ("isCapped", "True if the collection is capped"),
+        ("validate", "Validate collection and index integrity"),
+        ("explain", "Return the query plan instead of results")
+    ]
+
+    /// What a cursor answers to, which is what `find()` and `aggregate()` return.
+    public static let cursorMethods: [(name: String, detail: String)] = [
+        ("sort", "Order the results by one or more fields"),
+        ("limit", "Return at most this many documents"),
+        ("skip", "Skip this many documents first"),
+        ("projection", "Choose which fields come back"),
+        ("hint", "Name the index to use"),
+        ("collation", "Language rules for string comparison"),
+        ("maxTimeMS", "Give up after this many milliseconds"),
+        ("batchSize", "Documents per round trip"),
+        ("allowDiskUse", "Let a large sort spill to disk"),
+        ("forEach", "Call a function for every document"),
+        ("map", "Build an array from every document"),
+        ("toArray", "Read every document into an array"),
+        ("hasNext", "True while documents remain"),
+        ("next", "Read the next document"),
+        ("tryNext", "Read the next document, or null"),
+        ("count", "Number of documents matching the query"),
+        ("itcount", "Count by reading the cursor to its end"),
+        ("size", "Documents remaining, after skip and limit"),
+        ("explain", "Return the query plan instead of results"),
+        ("pretty", "Format the documents for reading"),
+        ("close", "Release the cursor"),
+        ("isExhausted", "True once nothing remains"),
+        ("objsLeftInBatch", "Documents left in the current batch")
+    ]
+
+    public static let deprecatedCollectionMethods: Set<String> = [
+        "insert", "update", "remove", "count", "findAndModify", "mapReduce", "reIndex", "ensureIndex"
+    ]
+
+    public static let queryOperators: [(name: String, detail: String)] = [
+        ("$eq", "Matches values equal to a specified value"),
+        ("$ne", "Matches values not equal to a specified value"),
+        ("$gt", "Matches values greater than a specified value"),
+        ("$gte", "Matches values greater than or equal to a specified value"),
+        ("$lt", "Matches values less than a specified value"),
+        ("$lte", "Matches values less than or equal to a specified value"),
+        ("$in", "Matches any of the values in an array"),
+        ("$nin", "Matches none of the values in an array"),
+        ("$and", "Joins query clauses with a logical AND"),
+        ("$or", "Joins query clauses with a logical OR"),
+        ("$nor", "Joins query clauses with a logical NOR"),
+        ("$not", "Inverts the effect of a query expression"),
+        ("$exists", "Matches documents that have the specified field"),
+        ("$type", "Matches documents where a field is of the specified BSON type"),
+        ("$expr", "Allows an aggregation expression inside a query predicate"),
+        ("$jsonSchema", "Validates documents against the given JSON Schema"),
+        ("$mod", "Performs a modulo operation on a field value"),
+        ("$regex", "Selects documents where a value matches a regular expression"),
+        ("$options", "Regular expression options for $regex"),
+        ("$text", "Performs a text search on a text-indexed field"),
+        ("$where", "Matches documents against a JavaScript predicate (deprecated in 8.0)"),
+        ("$all", "Matches arrays containing all the specified elements"),
+        ("$elemMatch", "Matches arrays with at least one element matching all conditions"),
+        ("$size", "Matches arrays with the specified number of elements"),
+        ("$bitsAllClear", "Matches where all the given bit positions are 0"),
+        ("$bitsAllSet", "Matches where all the given bit positions are 1"),
+        ("$bitsAnyClear", "Matches where any of the given bit positions is 0"),
+        ("$bitsAnySet", "Matches where any of the given bit positions is 1"),
+        ("$geoIntersects", "Matches geometries that intersect a GeoJSON geometry"),
+        ("$geoWithin", "Matches geometries within a bounding geometry"),
+        ("$near", "Matches points near a given point, nearest first"),
+        ("$nearSphere", "Matches points near a point on a sphere, nearest first"),
+        ("$geometry", "GeoJSON geometry argument for a geospatial operator"),
+        ("$minDistance", "Minimum distance for $near and $nearSphere"),
+        ("$maxDistance", "Maximum distance for $near and $nearSphere"),
+        ("$box", "Rectangle argument for $geoWithin"),
+        ("$center", "Circle argument for $geoWithin, on a flat plane"),
+        ("$centerSphere", "Circle argument for $geoWithin, on a sphere"),
+        ("$polygon", "Polygon argument for $geoWithin")
+    ]
+
+    public static let updateOperators: [(name: String, detail: String)] = [
+        ("$set", "Sets the value of a field"),
+        ("$unset", "Removes the field from the document"),
+        ("$setOnInsert", "Sets the field only when the update inserts a document"),
+        ("$inc", "Increments the field by the specified amount"),
+        ("$mul", "Multiplies the field by the specified amount"),
+        ("$min", "Updates only if the specified value is less than the current one"),
+        ("$max", "Updates only if the specified value is greater than the current one"),
+        ("$rename", "Renames a field"),
+        ("$currentDate", "Sets the field to the current date or timestamp"),
+        ("$addToSet", "Adds a value to an array only if it is not already present"),
+        ("$push", "Appends a value to an array"),
+        ("$pull", "Removes every array element matching a condition"),
+        ("$pullAll", "Removes every listed value from an array"),
+        ("$pop", "Removes the first (-1) or last (1) element of an array"),
+        ("$each", "Applies a push or addToSet to several values"),
+        ("$position", "Insert position for a $push with $each"),
+        ("$slice", "Limits the array length after a $push with $each"),
+        ("$sort", "Reorders an array after a $push with $each"),
+        ("$bit", "Performs a bitwise and, or, or xor on an integer field")
+    ]
+
+    public static let updatePipelineStages: [(name: String, detail: String)] = [
+        ("$set", "Adds or overwrites fields, as an aggregation stage"),
+        ("$addFields", "Adds or overwrites fields"),
+        ("$unset", "Removes the named fi
+```
+
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1569,1551 +1827,423 @@ struct SQLTokenStream {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `08b88783` (2026-11-04)
-**Commit Message**: fix(ios): stop the iPad app on a Mac crashing when a connection opens (#4032)
+### Incident Patch 1: `fecd3bd2` (2026-11-07)
+**Commit Message**: docs(security): send vulnerability reports to [REDACTED_EMAIL] (#4097)
 
-**File**: `apple/TableProMobile/TableProMobile/Views/ConnectedView.swift` (modified, +5/-1)
+**File**: `SECURITY.md` (modified, +1/-1)
 ```diff
-@@ -33,6 +33,10 @@ struct ConnectedView: View {
-         appState.isConnectionRemoved(connection.id)
-     }
+@@ -2,7 +2,7 @@
  
-+    private var sceneObjects: SceneObjects {
-+        SceneObjects(appState: appState, coordinatorStore: coordinatorStore, presenter: presenter, menuState: menuState)
-+    }
-+
-     private var connectionEditorPresented: Binding<Bool> {
-         Binding(
-             get: { presenter.isEditingConnection(connection.id) },
-@@ -60,7 +64,7 @@ struct ConnectedView: View {
-             Text("This connection no longer exists. It may have been removed from another device.")
-         }
-         .sheet(isPresented: connectionEditorPresented) {
--            ConnectionFormView(editing: liveRecord ?? connection) { _ in
-+            ConnectionFormSheet(connection: liveRecord ?? connection, objects: sceneObjects) { _ in
-                 presenter.dismissConnectionEditor()
-             }
-         }
-```
-
-**File**: `apple/TableProMobile/TableProMobile/Views/ConnectionListView.swift` (modified, +10/-5)
-```diff
-@@ -17,6 +17,7 @@ struct ConnectionListView: View {
-     @Environment(AppLockState.self) private var lockState
-     @Environment(ConnectionCoordinatorStore.self) private var coordinatorStore
-     @Environment(ScenePresenter.self) private var presenter
-+    @Environment(SceneMenuState.self) private var menuState: SceneMenuState?
-     @SceneStorage("lastConnectionId") private var selectedConnectionIdString: String?
+ ## Reporting a vulnerability
  
-     @State private var searchText = ""
-@@ -131,6 +132,10 @@ struct ConnectionListView: View {
-         ]
-     }
+-Report it privately through [Report a vulnerability](https://github.com/TableProApp/TablePro/security/advisories/new), or email **hello@tablepro.app**. Do not open a public issue, discussion or pull request for a vulnerability.
++Report it privately through [Report a vulnerability](https://github.com/TableProApp/TablePro/security/advisories/new), or email **security@tablepro.app**. Do not open a public issue, discussion or pull request for a vulnerability.
  
-+    private var sceneObjects: SceneObjects {
-+        SceneObjects(appState: appState, coordinatorStore: coordinatorStore, presenter: presenter, menuState: menuState)
-+    }
-+
-     var body: some View {
-         @Bindable var presenter = presenter
-         NavigationStack {
-@@ -173,9 +178,9 @@ struct ConnectionListView: View {
-                 }
-         }
-         .fullScreenCover(item: openConnection, onDismiss: connectionCoverDidDismiss) { connection in
--            ConnectedView(connection: connection)
--                .id(connection.id)
--                .onAppear { isConnectionCoverOnScreen = true }
-+            ConnectionCover(connection: connection, objects: sceneObjects) {
-+                isConnectionCoverOnScreen = true
-+            }
-         }
-         .sheet(item: $presenter.sheet, onDismiss: sheetDidDismiss) { sheet in
-             sheetContent(sheet)
-@@ -691,11 +696,11 @@ struct ConnectionListView: View {
-         case .whatsNew(let version):
-             WhatsNewSheet(version: version)
-         case .addConnection:
--            ConnectionFormView { _ in
-+            ConnectionFormSheet(connection: nil, objects: sceneObjects) { _ in
-                 presenter.sheet = nil
-             }
-         case .editConnection(let connection):
--            ConnectionFormView(editing: connection) { _ in
-+            ConnectionFormSheet(connection: connection, objects: sceneObjects) { _ in
-                 presenter.sheet = nil
-             }
-         case .moveConnections(let ids):
+ Include:
+ 
 ```
 
-**File**: `apple/TableProMobile/TableProMobile/Views/SceneObjects.swift` (added, +43/-0)
+---
+
+### Incident Patch 2: `3432d238` (2026-11-06)
+**Commit Message**: fix(linux): lint the release Flatpak manifest with its sandbox exceptions (#4079)
+
+**File**: `.github/workflows/linux-packages.yml` (modified, +3/-1)
 ```diff
-@@ -0,0 +1,43 @@
-+import SwiftUI
-+import TableProModels
-+
-+// macOS 27 evaluates a presented root once without the presenter's environment (scripts/probes/check-presented-root-environment.sh).
-+struct SceneObjects {
-+    let appState: AppState
-+    let coordinatorStore: ConnectionCoordinatorStore
-+    let presenter: ScenePresenter
-+    let menuState: SceneMenuState?
-+}
-+
-+extension View {
-+    func sceneObjects(_ objects: SceneObjects) -> some View {
-+        environment(objects.appState)
-+            .environment(objects.coordinatorStore)
-+            .environment(objects.presenter)
-+            .environment(objects.menuState)
-+    }
-+}
-+
-+struct ConnectionCover: View {
-+    let connection: DatabaseConnection
-+    let objects: SceneObjects
-+    let onAppear: () -> Void
-+
-+    var body: some View {
-+        ConnectedView(connection: connection)
-+            .id(connection.id)
-+            .onAppear(perform: onAppear)
-+            .sceneObjects(objects)
-+    }
-+}
-+
-+struct ConnectionFormSheet: View {
-+    let connection: DatabaseConnection?
-+    let objects: SceneObjects
-+    let onSaved: (UUID) -> Void
-+
-+    var body: some View {
-+        ConnectionFormView(editing: connection, onSaved: onSaved)
-+            .sceneObjects(objects)
-+    }
-+}
+@@ -344,7 +344,9 @@ jobs:
+           if-no-files-found: error
+       - name: Lint the manifest
+         if: runner.arch == 'X64'
+-        run: flatpak-builder-lint manifest linux/build-aux/flatpak/app.tablepro.TablePro.json
++        run: |
++          flatpak-builder-lint --exceptions --user-exceptions linux/build-aux/flatpak/lint-exceptions.json \
++            manifest linux/build-aux/flatpak/app.tablepro.TablePro.json
+ 
+   # Signed with a throwaway key, for http://127.0.0.1:8080, by the same
+   # flatpak-repo.sh release-linux.yml publishes with, on both branches
 ```
 
-**File**: `apple/TableProMobile/TableProMobileTests/Views/SceneObjectsTests.swift` (added, +49/-0)
+**File**: `linux/build-aux/flatpak/lint-exceptions.json` (modified, +4/-0)
 ```diff
-@@ -0,0 +1,49 @@
-+import SwiftUI
-+@testable import TableProMobile
-+import TableProModels
-+import Testing
-+import UIKit
-+
-+// Each root is hosted with no ancestor, as macOS builds a presented root; an object it misses traps the host.
-+@MainActor
-+struct SceneObjectsTests {
-+    private let fixture: AppStateFixture
-+    private let objects: SceneObjects
-+
-+    init() throws {
-+        fixture = try AppStateFixture()
-+        let appState = fixture.makeState(syncEnabled: false)
-+        objects = SceneObjects(
-+            appState: appState,
-+            coordinatorStore: ConnectionCoordinatorStore(connectionManager: appState.connectionManager),
-+            presenter: ScenePresenter(),
-+            menuState: SceneMenuState()
-+        )
-+    }
-+
-+    @Test("The connection cover renders with no environment from its presenter")
-+    func coverRendersOnItsOwn() throws {
-+        let absent = DatabaseConnection(name: "Absent", type: .sqlite, host: "", port: 0, database: "absent.sqlite")
-+        try expectRenders(ConnectionCover(connection: absent, objects: objects) {})
-+    }
-+
-+    @Test("The connection form sheet renders with no environment from its presenter")
-+    func formSheetRendersOnItsOwn() throws {
-+        try expectRenders(ConnectionFormSheet(connection: nil, objects: objects) { _ in })
-+    }
-+
-+    private func expectRenders(_ root: some View) throws {
-+        let scene = try #require(UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }.first)
-+        let window = UIWindow(windowScene: scene)
-+        defer {
-+            window.isHidden = true
-+            window.rootViewController = nil
-+        }
-+        let host = UIHostingController(rootView: root)
-+        window.rootViewController = host
-+        window.makeKeyAndVisible()
-+        window.layoutIfNeeded()
-+
-+        #expect(host.view.window === window)
-+    }
-+}
+@@ -1,4 +1,8 @@
+ {
++    "app.tablepro.TablePro": [
++        "finish-args-home-filesystem-access",
++        "finish-args-has-socket-ssh-auth"
++    ],
+     "app.tablepro.TablePro.Devel": [
+         "finish-args-home-filesystem-access",
+         "finish-args-has-socket-ssh-auth"
 ```
 
-**File**: `apple/changelog.d/4032.fixed.md` (added, +1/-0)
+---
+
+### Incident Patch 3: `15fff061` (2026-11-07)
+**Commit Message**: fix(linux): stop a refused Secret portal request from hanging the connect (#4091)
+
+**File**: `Cargo.lock` (modified, +1/-0)
+```diff
+@@ -7978,6 +7978,7 @@ dependencies = [
+  "thiserror 2.0.20",
+  "tokio",
+  "uuid",
++ "zeroize",
+ ]
+ 
+ [[package]]
+```
+
+**File**: `Cargo.toml` (modified, +1/-1)
+```diff
+@@ -191,7 +191,7 @@ winapi-util = "0.1"
+ tempfile = "3"
+ testcontainers = { version = "0.27", default-features = false, features = ["aws-lc-rs"] }
+ testcontainers-modules = { version = "0.15", default-features = false, features = ["aws-lc-rs"] }
+-oo7 = { version = "0.6", default-features = false, features = ["tokio", "native_crypto"] }
++oo7 = { version = "0.6", default-features = false, features = ["tokio", "native_crypto", "unstable"] }
+ 
+ [workspace.lints.rust]
+ unsafe_op_in_unsafe_fn = "deny"
+```
+
+**File**: `linux/changelog.d/4091.fixed.md` (added, +1/-0)
 ```diff
 @@ -0,0 +1 @@
-+The iPad app on a Mac crashing when you open a connection, or add or edit one.
++Connecting with a saved password in the Flatpak no longer hangs when the keyring is locked or missing.
 ```
 
-**File**: `apple/scripts/probes/check-presented-root-environment.sh` (added, +74/-0)
+**File**: `linux/crates/platform/Cargo.toml` (modified, +3/-2)
 ```diff
-@@ -0,0 +1,74 @@
-+#!/usr/bin/env bash
-+#
-+# Whether SwiftUI on this Mac still builds a presented root once without the presenter's environment.
-+# On macOS 27.0.1 an iPad app on a Mac (and a Catalyst app) evaluates a sheet's or cover's root while
-+# it sets the presentation up, and when that root has a sheet or alert outside a NavigationStack the
-+# evaluation sees an empty environment: a non-optional @Environment(T.self) read traps with
-+# "No Observable object of type T found". The iOS app passes its scene objects to presented content
-+# (TableProMobile/Views/SceneObjects.swift) for that reason. Run this on a new macOS to see whether
-+# that is still needed.
-+#
-+# Builds presented-root-environment-probe.swift as a Catalyst app with the iPad idiom and runs it
-+# twice: once relying on inheritance, once with .environment on the cover's content.
-+#
-+# Exit 0: inheritance misses the first evaluation and injection fixes it (the app's assumption).
-+# Exit 2: inheritance already covers the first evaluation (the workaround can go).
-+# Exit 1: injection does not help, or the probe did not run.
-+
-+set -uo pipefail
-+
-+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-+WORK="$(mktemp -d)"
-+trap 'rm -rf "$WORK"' EXIT
-+
-+APP="$WORK/PresentedRootProbe.app"
-+mkdir -p "$APP/Contents/MacOS"
-+cat > "$APP/Contents/Info.plist" <<'PLIST'
-+<?xml version="1.0" encoding="UTF-8"?>
-+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-+<plist version="1.0">
-+<dict>
-+    <key>CFBundleExecutable</key><string>PresentedRootProbe</string>
-+    <key>CFBundleIdentifier</key><string>com.TablePro.probes.presented-root-environment</string>
-+    <key>CFBundlePackageType</key><string>APPL</string>
-+    <key>CFBundleSupportedPlatforms</key><array><string>MacOSX</string></array>
-+    <key>LSMinimumSystemVersion</key><string>26.0</string>
-+    <key>UIApplicationSceneManifest</key><dict><key>UIApplicationSupportsMultipleScenes</key><true/></dict>
-+    <key>UIDeviceFamily</key><array><integer>2</integer></array>
-+</dict>
-+</plist>
-+PLIST
-+
-+SDK="$(xcrun --sdk macosx --show-sdk-path)"
-+if ! xcrun swiftc -sdk "$SDK" -parse-as-library -swift-version 5 -target arm64-apple-ios26.0-macabi -O \
-+    -Fsystem "$SDK/System/iOSSupport/System/Library/Frameworks" \
-+    -L "$SDK/System/iOSSupport/usr/lib" -L "$SDK/System/iOSSupport/usr/lib/swift" \
-+    "$ROOT/scripts/probes/presented-root-environment-probe.swift" \
-+    -o "$APP/Contents/MacOS/PresentedRootProbe" > "$WORK/build.log" 2>&1; then
-+    tail -40 "$WORK/build.log" >&2
-+    exit 1
-+fi
-+codesign --force --sign - "$APP" > /dev/null 2>&1
-+
-+run() {
-+    PROBE_INJECT="$1" perl -e 'alarm 30; exec @ARGV' "$APP/Contents/MacOS/PresentedRootProbe" 2> /dev/null
-+}
-+
-+sw_vers -productVersion | sed 's/^/macOS /'
-+echo "inherited:"
-+run 0
-+inherited=$?
-+echo "injected on the content:"
-+run 1
-+injected=$?
-+
-+if [ "$injected" -ne 0 ]; then
-+    echo "FAIL: injection on the content did not reach the first evaluation" >&2
-+    exit 1
-+fi
-+if [ "$inherited" -eq 0 ]; then
-+    echo "The first evaluation inherits the presenter's environment on this macOS."
-+    exit 2
-+fi
-+echo "The first evaluation misses the presenter's environment; content needs its objects passed in."
-+exit 0
+@@ -15,12 +15,13 @@ glib.workspace = true
+ oo7.workspace = true
+ secrecy.workspace = true
+ thiserror.workspace = true
+-tokio = { workspace = true, features = ["sync"] }
++tokio = { workspace = true, features = ["io-util", "net", "sync", "time"] }
+ uuid.workspace = true
++zeroize.workspace = true
+ 
+ [dev-dependencies]
+ tempfile.workspace = true
+-tokio = { workspace = true, features = ["rt"] }
++tokio = { workspace = true, features = ["rt", "test-util"] }
+ 
+ [lints]
+ workspace = true
 ```
 
-**File**: `apple/scripts/probes/presented-root-environment-probe.swift` (added, +67/-0)
+**File**: `linux/crates/platform/src/secrets/backend.rs` (added, +134/-0)
 ```diff
-@@ -0,0 +1,67 @@
-+import SwiftUI
-+import UIKit
+@@ -0,0 +1,134 @@
++use std::path::Path;
 +
-+@Observable final class Marker {}
++use oo7::AsAttributes;
++use oo7::file::{Item as FileItem, UnlockedKeyring};
++use tokio::sync::Mutex;
 +
-+@MainActor enum Evaluations {
-+    static var sawMarker: [Bool] = []
++use super::portal;
++
++// Boxed: oo7::Error is large enough that clippy refuses it as an Err variant.
++pub(super) type Result<T> = std::result::Result<T, Box<oo7::Error>>;
++
++// The two backends oo7's Keyring::new picks between. Inside a sandbox the store opens the file keyring
++// itself, since oo7 0.6 gets the portal's key through ashpd's retrieve, which hangs on a refused request.
++pub(super) enum Backend {
++    Service(oo7::Keyring),
++    File {
++        keyring: UnlockedKeyring,
++        // A relabel rewrites the item with the secret it read, so a store landing in between would be
++        // undone. The file is local, so holding this never waits on the user.
++        writes: Mutex<()>,
++    },
 +}
 +
-+@main
-+struct PresentedRootProbe: App {
-+    @State private var marker = Marker()
++impl Backend {
++    pub(super) async fn open() -> Result<Self> {
++        if !oo7::ashpd::is_sandboxed() {
++            return Ok(Self::Service(oo7::Keyring::new().await?));
++        }
++        let secret = portal::retrieve_secret()
++            .await
++            .map_err(|error| file_error(error.into()))?;
++        // The same file and key oo7's Keyring::new opens, so the passwords earlier builds saved still read.
++        let path = oo7::file::api::Keyring::default_path().map_err(file_error)?;
++        Self::open_file(path, secret).await
++    }
 +
-+    var body: some Scene {
-+        WindowGroup {
-+            Presenter()
-+                .environment(marker)
++    pub(super) async fn open_file(path: impl AsRef<Path>, secret: oo7::Secret) -> Result<Self> {
++        Ok(Self::File {
++            keyring: UnlockedKeyring::load(path, secret).await.map_err(file_error)?,
++            writes: Mutex::new(()),
++        })
++    }
++
++    // Unlocking before the read is what turns a silent empty result into a prompt the user can answer.
++    // A file keyring opened with the portal's key is already unlocked.
++    pub(super) async fn unlock(&self) -> Result<()> {
++        if let Self::Service(keyring) = self
++            && keyring.is_locked().await?
++        {
++            keyring.unlock().await?;
++        }
++        Ok(())
++    }
++
++    pub(super) async fn find_secret(&self, attributes: &impl AsAttributes) -> Result<Option<oo7::Secret>> {
++        match self {
++            Self::Service(keyring) => {
++                let Some(item) = keyring.search_items(attributes).await?.into_iter().next() else {
++                    return Ok(None);
++                };
++                // An item can be locked even when the collection is not.
++                if item.is_locked().await? {
++                    item.unlock().await?;
++                }
++                Ok(Some(item.secret().await?))
++            }
++            Self::File { keyring, .. } => match keyring
++                .search_items(attributes)
++                .await
++                .map_err(file_error)?
++                .into_iter()
++                .next()
++            {
++                None => Ok(None),
++                Some(FileItem::Unlocked(item)) => Ok(Some(item.secret())),
++                Some(FileItem::Locked(_)) => Err(file_error(oo7::file::Error::Locked)),
++            },
 +        }
 +    }
-+}
 +
-+struct Item: Identifiable {
-+    let id = 1
-+}
++    pub(super) async fn store(&self, label: &str, attributes: &impl AsAttributes, secret: oo7::Secret) -> Result<()> {
++        match self {
++            Self::Service(keyring) => Ok(keyring.create_item(label, attributes, secret, true).await?),
++            Self::File { keyring, writes } => {
++                let _writing = writes.lock().await;
++                keyring
++                    .create_item(label, attributes, secret, true)
++                    .await
++                    .map_err(file_error)?;
++                Ok(())
++            }
++        }
++    }
 +
-+struct Presenter: View {
-+    @Environment(Marker.self) private var marker
-+    @State private var item: Item?
-+    private let injects = ProcessInfo.processInfo.environment["PROBE_INJECT"] == "1"
-+
-+    var body: some View {
-+        let marker = marker
-+        Text(verbatim: "presenter")
-+            .fullScreenCover(item: $item) { _ in
-+                if injects {
-+                    PresentedRoot().environment(marker)
-+                } else {
-+                    PresentedRoot()
++    pub(super) async fn relabel(&self, attributes: &impl AsAttributes, label: &str) -> Result<()> {
++        match self {
++            Self::Service(keyring) => {
++                for item in keyring.search_items(attributes).await? {
++                    item.set_label(label).await?;
 +                }
 +            }
-+            .task { item = Item() }
-+    }
-+}
-+
-+// ConnectedView's shape: a branch root with an alert and a sheet outside any NavigationStack.
-+struct PresentedRoot: View {
-+    @Environment(Marker.self) private var marker: Marker?
-+    @State private var never = false
-+
-+    var body: some View {
-+        let _ = Evaluations.sawMarker.append(marker != nil)
-+        Group {
-+            if never {
-+                Text(verbatim: "never")
-+            } else {
-+                Text(verbatim: "presented")
++            // As oo7's Item::set_label does for a file item: the keyring is written whole, so the item
++            // is replaced with its new label.
++            Self::File { keyring, writes } => {
++                let _writing = writes.lock().await;
++                for item in keyring.search_items(attributes).await.map_err(file_error)? {
++                    let FileItem::Unlocked(mut item) = item else {
++                        return Err(file_error(oo7::file::Error::Locked));
++                    };
++                    item.set_label(label);
++                    keyring
++                        .create_item(item.label(), item.attributes(), item.secret(), true)
++                        .await
++                        .map_err(file_error)?;
++                }
 +            }
 +        }
-+        .alert("never", isPresented: $never) {}
-+        .sheet(isPresented: $never) { Text(verbatim: "never") }
-+        .task {
-+            try? await Task.sleep(for: .seconds(1))
-+            print("evaluations saw the presenter's object: \(Evaluations.sawMarker)")
-+            exit(Evaluations.sawMarker.first == true ? 0 : 1)
-+        }
++        Ok(())
 +    }
-+}
++
++    pub(super) async fn delete(&self, attributes: &impl AsAttributes) -> Result<()> {
++        match self {
++            Self::Service(keyring)
 ```
 
----
-
-### Incident Patch 2: `9e191470` (2026-11-04)
-**Commit Message**: fix(databend): read statements as the server does in Safe Mode (#4044)
-
-**File**: `apple/Packages/TableProCore/Sources/TableProSQLGrammar/DatabendStatementReadings.swift` (added, +129/-0)
+**File**: `linux/crates/platform/src/secrets/keyring_error.rs` (modified, +41/-1)
 ```diff
-@@ -0,0 +1,129 @@
-+import Foundation
-+
-+/// What a Databend server parses from a text, written out for a gate that reads it with a lexical grammar.
-+///
-+/// The app sends a text one statement at a time, cut where the grammar cuts it, and the server tokenizes each statement
-+/// alone, so each reading of ``DatabendTokenizer/Rules`` gives the tokens of every statement, joined by `;`, and those
-+/// of the whole text. A token is written so the Databend grammar lexes it alone: a hint, a comment or a blank is
-+/// dropped, and a `$` or a quote that would open a literal the server does not read is spelled `_`. A statement opening
-+/// with `SETTINGS` and its optional `( ... )` runs the statement after them, so only that one is written.
-+enum DatabendStatementReadings {
-+    static func texts(of text: String, grammar: SQLLexicalGrammar) -> [String] {
-+        let scalars = Array(text.unicodeScalars)
-+        let statements = SQLStatementScanner.executableStatements(in: text, grammar: grammar)
-+        var seen: Set<String> = [text]
-+        var texts: [String] = []
-+        for rules in DatabendTokenizer.Rules.readings(of: scalars) {
-+            var candidates: [String] = []
-+            if let whole = code(of: scalars, rules: rules) {
-+                candidates.append(whole)
-+            }
-+            if statements.count > 1 {
-+                let pieces = statements.compactMap { code(of: Array($0.sql.unicodeScalars), rules: rules) }
-+                candidates.append(pieces.joined(separator: " ;\n"))
-+            }
-+            for candidate in candidates where seen.insert(candidate).inserted {
-+                texts.append(candidate)
-+            }
-+        }
-+        return texts
-+    }
-+
-+    // Nil when the server refuses the text before it parses anything. A hint the parser takes holds settings, never a
-+    // statement, so it is dropped with the rest.
-+    static func code(of scalars: [Unicode.Scalar], rules: DatabendTokenizer.Rules) -> String? {
-+        let reading = DatabendTokenizer.read(scalars, rules: rules)
-+        let tokens = reading.tokens
-+        guard reading.isComplete || parsesWhatItRead(tokens, scalars: scalars) else { return nil }
-+        var words: [String] = []
-+        var insideHint = false
-+        var statementStart = true
-+        var index = 0
-+        while index < tokens.count {
-+            let token = tokens[index]
-+            let spelling = scalars[token.range]
-+            index += 1
-+            if insideHint {
-+                insideHint = token.kind != .hintSuffix
-+                continue
-+            }
-+            if statementStart, token.kind == .name, String(String.UnicodeScalarView(spelling)).uppercased() == "SETTINGS" {
-+                index = settingsEnd(in: tokens, scalars: scalars, from: index)
-+                continue
-+            }
-+            statementStart = token.kind == .symbol && spelling.elementsEqual([";"])
-+            switch token.kind {
-+            case .hintPrefix:
-+                insideHint = true
-+            case .name:
-+                words.append(word(spelling) { $0 == "$" ? "_" : $0 })
-+            case .variable:
-+                words.append(word(spelling) { $0 == "$" || !isNameScalar($0) ? "_" : $0 })
-+            case .stageName:
-+                words.append("@" + word(spelling.dropFirst()) { isNameScalar($0) && $0.isASCII ? $0 : "_" })
-+            case .quoted, .codeString, .number, .placeholder, .hintSuffix:
-+                words.append(word(spelling) { $0 })
-+            case .symbol:
-+                let symbol = word(spelling) { (0x21...0x7E).contains($0.value) ? $0 : "_" }
-+                // `#` opens a line comment in a reading the grammar keeps in doubt.
-+                words.append(symbol.hasPrefix("#") ? symbol + "\n" : symbol)
-+            }
-+        }
-+        return words.joined(separator: " ")
-+    }
-+
-+    // Planner::parse_sql_inner parses an INSERT, other than INSERT ALL or FIRST, and a REPLACE from the tokens before
-+    // the point the tokenizer stopped, and refuses any other statement it cannot tokenize whole.
-+    private static func parsesWhatItRead(_ tokens: [DatabendTokenizer.Token], scalars: [Unicode.Scalar]) -> Bool {
-+        let words = tokens.prefix(3).map { token in
-+            token.kind == .name ? String(String.UnicodeScalarView(scalars[token.range])).uppercased() : ""
-+        }
-+        switch words.first {
-+        case "REPLACE":
-+            return true
-+        case "INSERT":
-+            return !words.contains("ALL") && !words.contains("FIRST")
-+        default:
-+            return false
-+        }
-+    }
-+
-+    // Past the `( ... )` that may follow `SETTINGS`, whose tokens start at `index`.
-+    private static func settingsEnd(
-+        in tokens: [DatabendTokenizer.Token],
-+        scalars: [Unicode.Scalar],
-+        from index: Int
-+    ) -> Int {
-+        var depth = 0
-+        for position in index..<tokens.count {
-+            let token = tokens[position]
-+            guard t
-```
-
-**File**: `apple/Packages/TableProCore/Sources/TableProSQLGrammar/DatabendTokenizer.swift` (added, +333/-0)
-```diff
-@@ -0,0 +1,333 @@
-+import Foundation
-+
-+/// Databend's tokenizer, `src/query/ast/src/parser/token.rs`, as `Tokenizer::next` hands tokens to the parser: blanks
-+/// and comments dropped, and a hint dropped unless the token before it is a statement word that takes one.
-+///
-+/// The reading stops where the server meets text it cannot tokenize and refuses the statement. A name that starts with
-+/// a non-ASCII scalar runs through any other, and a control character is a token of its own: the server either reads
-+/// them so or refuses, and before 1.2.888 it refuses every non-ASCII scalar outside a literal. A name that starts in
-+/// ASCII ends at its first non-ASCII scalar, where a keyword ends on the server, so `TABLE中` is TABLE and then 中; any
-+/// other ASCII start is read as a name of its own too, which moves no placeholder or hint. ``Rules`` holds each other
-+/// rule a release since 1.2.473 changed.
-+public enum DatabendTokenizer {
-+    public enum Kind: Sendable, Hashable {
-+        case name, variable, quoted, codeString, stageName, number, placeholder, hintPrefix, hintSuffix, symbol
-+    }
-+
-+    public struct Token: Sendable, Hashable {
-+        public let kind: Kind
-+        /// Offsets into the scalars read.
-+        public let range: Range<Int>
-+    }
-+
-+    public struct Reading: Sendable, Hashable {
-+        public let tokens: [Token]
-+        /// False when the server stops before the end and refuses the statement.
-+        public let isComplete: Bool
-+    }
-+
-+    public struct Rules: Sendable, Hashable {
-+        /// Before 1.2.884 a block comment is `/\*[^\+]([^\*]|(\*[^/]))*\*/`, so `**/` and `/**/` leave it open.
-+        public var pairsStarsInBlockComments: Bool
-+        /// A stage name such as `@s` ran on through a comma until October 2025.
-+        public var commaContinuesStageNames: Bool
-+        /// `!*` was an operator until July 2026, so `!*/*` opened a comment.
-+        public var bangStarIsAnOperator: Bool
-+        /// A hint after MERGE was skipped like one in any other wrong place until April 2026.
-+        public var mergeTakesHints: Bool
-+
-+        public static let current = Rules(
-+            pairsStarsInBlockComments: false, commaContinuesStageNames: false, bangStarIsAnOperator: false,
-+            mergeTakesHints: true
-+        )
-+
-+        /// The current rules first, then each older set the text can tell apart.
-+        public static func readings(of scalars: [Unicode.Scalar]) -> [Rules] {
-+            let pairs = zip(scalars, scalars.dropFirst())
-+            var readings = [current]
-+            if pairs.contains(where: { $0 == "/" && $1 == "*" }) {
-+                readings += readings.map { var rules = $0; rules.pairsStarsInBlockComments = true; return rules }
-+            }
-+            if scalars.contains("@") {
-+                readings += readings.map { var rules = $0; rules.commaContinuesStageNames = true; return rules }
-+            }
-+            if pairs.contains(where: { $0 == "!" && $1 == "*" }) {
-+                readings += readings.map { var rules = $0; rules.bangStarIsAnOperator = true; return rules }
-+            }
-+            if zip(pairs, scalars.dropFirst(2)).contains(where: { $0.0 == "/" && $0.1 == "*" && $1 == "+" }) {
-+                readings += readings.map { var rules = $0; rules.mergeTakesHints = false; return rules }
-+            }
-+            return readings
-+        }
-+    }
-+
-+    public static func read(_ scalars: [Unicode.Scalar], rules: Rules = .current) -> Reading {
-+        Reader(scalars: scalars, rules: rules).read()
-+    }
-+
-+    /// Where each `?` the parser reads as a placeholder stands, up to the point the server stops reading.
-+    public static func placeholders(in scalars: [Unicode.Scalar], rules: Rules = .current) -> [Int] {
-+        read(scalars, rules: rules).tokens.compactMap { $0.kind == .placeholder ? $0.range.lowerBound : nil }
-+    }
-+}
-+
-+private struct Reader {
-+    let scalars: [Unicode.Scalar]
-+    let rules: DatabendTokenizer.Rules
-+
-+    private typealias Kind = DatabendTokenizer.Kind
-+
-+    private static let operators: [[Unicode.Scalar]] = [
-+        "!~*", "#>>", "->>", "<+>", "<->", "<=>", "||/",
-+        "!!", "!=", "!~", "#-", "#>", "*/", "->", "//", "::", ":=", "<<", "<=", "<>", "<@", "=>", "==", ">=", ">>",
-+        "?&", "?|", "@>", "@?", "@@", "|/", "||", "~*",
-+    ].map { Array($0.unicodeScalars) }
-+
-+    private static let operatorStarts = Set(operators.compactMap(\.first))
-+
-+    private static let hintTakers: Set<String> = ["INSERT", "SELECT", "REPLACE", "UPDATE", "DELETE", "COPY"]
-+
-+    // Tokenizer::next skips a hint unless the token before it takes one, and a hint skipped inside another takes its
-+    // own `*/`. Every token it reads moves the token before, skipped ones too.
-+    func read() -> DatabendTokenizer.Reading {
-+        var tokens: [DatabendTokenizer.Token] = []
-+        var index = 0
-+        var previousTakesHint = false
-+        var skippedHints = 0
-+        while index < 
-```
-
-**File**: `apple/Packages/TableProCore/Sources/TableProSQLGrammar/SQLLexicalGrammar.swift` (modified, +4/-0)
-```diff
-@@ -149,6 +149,10 @@ public struct SQLLexicalGrammar: OptionSet, Hashable, Sendable {
-     /// PostgreSQL's `quotecontinue` reads it, so `E'x'` + line break + `'\'; ...'` is one literal. Curated only.
-     public static let escapeStringContinuations = SQLLexicalGrammar(rawValue: 1 << 39)
+@@ -1,3 +1,4 @@
++use oo7::ashpd::desktop::ResponseError;
+ use tablepro_core::credentials::SecretError;
  
-+    /// A gate also reads the text the way Databend's own tokenizer does, as ``DatabendStatementReadings`` writes it out,
-+    /// since no other fact here says that a hint's body is tokens or that a stage name keeps a quote. Curated only.
-+    public static let databendTokens = SQLLexicalGrammar(rawValue: 1 << 40)
-+
-     /// Standard SQL: quotes close only on a doubled quote, `--` and flat `/* */` are the only comments.
-     public static let ansi: SQLLexicalGrammar = []
- 
-```
-
-**File**: `apple/Packages/TableProCore/Sources/TableProSQLGrammar/SQLLexicalProfile.swift` (modified, +4/-2)
-```diff
-@@ -187,10 +187,12 @@ public struct SQLLexicalProfile: Sendable, Hashable {
-     ]
- 
-     /// Databend, from its tokenizer: a backslash escapes in `'` and `"`, backticks quote identifiers, `$$` bodies
--    /// are literals, and a form feed ends `--` as a line feed does. Not measured.
-+    /// are literals, and a form feed ends `--` as a line feed does. A hint's body, a stage name and a comment of an
-+    /// older release follow rules no fact here holds, so a gate also reads the server's own tokens, measured on 1.2.880
-+    /// and 1.2.958 by `scripts/probes/check-databend-lexing.sh`.
-     static let databend: SQLLexicalGrammar = [
-         .backslashEscapesInSingleQuotes, .backslashEscapesInDoubleQuotes, .backtickQuotes, .untaggedDollarQuotes,
--        .formFeedEndsLineComments,
-+        .formFeedEndsLineComments, .databendTokens,
-     ]
- 
-     /// CQL for Cassandra and ScyllaDB, from the reference: `$$` bodies are literals, `//` is a comment, and a
-```
-
-**File**: `apple/Packages/TableProCore/Sources/TableProSQLGrammar/SQLLexicalReadings.swift` (modified, +14/-5)
-```diff
-@@ -74,13 +74,22 @@ public struct SQLLexicalReadings: Sendable, Hashable {
+ /// Where in the flow the failure happened. Opening the keyring and using
+@@ -24,7 +25,13 @@ pub(super) fn map_error(error: oo7::Error, stage: Stage) -> SecretError {
+         ) if stage == Stage::Open => SecretError::ServiceUnavailable {
+             detail: error.to_string(),
+         },
+-        // Under Flatpak, Keyring::new asks the Secret portal first, so a
++        // The portal's backend shows the unlock prompt inside the request. Its Response carries no reason,
++        // and GNOME Keyring answers 2 both for a dismissed prompt and for a missing login keyring.
++        oo7::Error::File(oo7::file::Error::Portal(oo7::ashpd::Error::Response(response))) => match response {
++            ResponseError::Cancelled => SecretError::UnlockDismissed,
++            ResponseError::Other => SecretError::Locked,
++        },
++        // Inside a sandbox the store asks the Secret portal first, so a
+         // missing portal surfaces here rather than as a D-Bus failure.
+         oo7::Error::File(error @ oo7::file::Error::Portal(_)) => SecretError::PortalUnavailable {
+             detail: error.to_string(),
+@@ -192,6 +199,39 @@ mod tests {
+         assert!(matches!(mapped, SecretError::PortalUnavailable { .. }), "{mapped:?}");
      }
  
-     /// Every text a gate reads for `text`: under each reading in ``distinct(for:)``, each text a server may run from
--    /// it, as ``SQLExecutableCommentReadings`` gives them. Lazy, so a gate that has its answer stops early. Nil when the
--    /// text sets more versions than a gate reads, which the gate answers as its worst case.
-+    /// it, as ``SQLExecutableCommentReadings`` gives them, and under the first reading of Databend's grammar each text
-+    /// ``DatabendStatementReadings`` writes out. Lazy, so a gate that has its answer stops early. Nil when the text sets
-+    /// more versions than a gate reads, which the gate answers as its worst case.
-     public func lexings(of text: String) -> AnySequence<SQLLexing>? {
--        var readings: [(grammar: SQLLexicalGrammar, texts: SQLExecutableCommentReadings.Texts)] = []
-+        var readings: [(grammar: SQLLexicalGrammar, texts: AnySequence<String>)] = []
-+        var readsDatabendTokens = false
-         for grammar in distinct(for: text) {
-             guard let texts = SQLExecutableCommentReadings.texts(of: text, grammar: grammar) else { return nil }
--            readings.append((grammar, texts))
-+            // The tokens do not depend on the grammar, and the first reading cuts the statements as the app does.
-+            guard grammar.contains(.databendTokens), !readsDatabendTokens else {
-+                readings.append((grammar, AnySequence(texts)))
-+                continue
-+            }
-+            readsDatabendTokens = true
-+            let databend = AnySequence { DatabendStatementReadings.texts(of: text, grammar: grammar).makeIterator() }
-+            readings.append((grammar, AnySequence([AnySequence(texts), databend].joined())))
-         }
-         return AnySequence(readings.lazy.flatMap { reading in
-             reading.texts.lazy.map { SQLLexing(grammar: reading.grammar, text: $0) }
-@@ -129,7 +138,7 @@ enum SQLLexicalRelevance {
-         var facts: SQLLexicalGrammar = [
-             .plsqlBlocks, .delimiterDirective, .unterminatedStatements, .terminatedMergeStatements,
-             .sqlScriptBlocks, .cqlBatches, .atomicRoutineBodies, .triggerBodies, .statementsAsValues,
--            .pipeOperatorChains,
-+            .pipeOperatorChains, .databendTokens,
-         ]
-         var blockCommentOpeners = 0
-         var index = 0
-```
-
-**File**: `apple/Packages/TableProCore/Tests/TableProSQLGrammarTests/DatabendStatementReadingsTests.swift` (added, +103/-0)
-```diff
-@@ -0,0 +1,103 @@
-+import Foundation
-+import TableProSQLGrammar
-+import Testing
-+
-+struct DatabendStatementReadingsTests {
-+    private static let readings = SQLLexicalReadings.resolve(databaseTypeId: "Databend", declared: nil, session: nil)
-+
-+    private static func tier(_ sql: String) -> StatementTier {
-+        SQLStatementClassifier.classify(sql, databaseTypeId: "Databend", readings: readings).tier
-+    }
-+
-+    private static func deletesEveryRow(_ sql: String) -> Bool {
-+        SQLStatementClassifier.deletesEveryRow(sql, databaseTypeId: "Databend", readings: readings)
-+    }
-+
-+    // Measured on 1.2.880 and 1.2.958: each text dropped the table.
-+    @Test("A DROP behind a hint the server skips is destructive", arguments: [
-+        "/*+ ' */ SELECT 1 -- ' */ DROP TABLE customers",
-+        "/*+ @x*/ SELECT 1 */ DROP TABLE customers",
-+        "/*+ $$ */ SELECT $$ */ DROP TABLE customers",
-+        "/*+ /*+ */ SELECT 1 */ DROP TABLE customers",
-+        "/*+ SET_VAR(max_threads=1) */ DROP TABLE customers",
-+        "/*+ @s\\' */ DROP TABLE customers -- ' */ SELECT 1",
-+    ])
-+    func dropBehindASkippedHint(sql: String) {
-+        #expect(Self.tier(sql) == .destructive)
-+    }
-+
-+    // Measured on 1.2.880, which dropped the table; 1.2.958 refused both texts.
-+    @Test("A DROP behind a comment a release before 1.2.884 leaves open is destructive", arguments: [
-+        "/** x **/ SELECT 1 /* */ DROP TABLE customers",
-+        "/**/ SELECT 1 /* */ DROP TABLE customers",
-+    ])
-+    func dropBehindAPairedStarComment(sql: String) {
-+        #expect(Self.tier(sql) == .destructive)
-+    }
-+
-+    // Measured on 1.2.958: the statement replaced table 中 and its rows.
-+    @Test("A keyword the server reads apart from the non-ASCII name after it still tiers the statement")
-+    func keywordBeforeANonASCIIName() {
-+        #expect(Self.tier("CREATE OR REPLACE TABLE\u{4E2D} (id INT)") == .destructive)
-+        #expect(Self.tier("SELECT 1 AS \u{540D}\u{524D} FROM customers") == .safe)
-+    }
-+
-+    // Measured on 1.2.880 and 1.2.958: each text dropped the table.
-+    @Test("A statement under SETTINGS is tiered as itself", arguments: [
-+        "SETTINGS (max_threads=1) DROP TABLE customers",
-+        "SETTINGS DROP TABLE customers",
-+        "settings (max_threads = (1)) /*+ ' */ SELECT 1 -- ' */ DROP TABLE customers",
-+    ])
-+    func settingsWrapperIsTieredByItsStatement(sql: String) {
-+        #expect(Self.tier(sql) == .destructive)
-+    }
-+
-+    @Test("A DELETE under SETTINGS deletes every row")
-+    func deleteUnderSettings() {
-+        #expect(Self.deletesEveryRow("SETTINGS (max_threads=1) DELETE FROM customers"))
-+        #expect(!Self.deletesEveryRow("SETTINGS (max_threads=1) DELETE FROM customers WHERE id = 1"))
-+    }
-+
-+    // Measured on 1.2.880 and 1.2.958: the INSERT ran although the server could not tokenize the text after it, and on
-+    // 1.2.958 the REPLACE too.
-+    @Test("An INSERT before text the server cannot tokenize is still a write")
-+    func insertBeforeUntokenizableText() {
-+        #expect(Self.tier("/*+ ' */ SELECT 1 -- ' */ INSERT INTO customers SELECT 4 'x") == .write)
-+        #expect(Self.tier("/*+ ' */ SELECT 1 -- ' */ REPLACE\u{4E2D} ON (id) SELECT 4 'x") == .write)
-+    }
-+
-+    @Test("A statement one release refuses to tokenize is read only as the releases that run it read it")
-+    func refusedReadingAddsNothing() {
-+        #expect(!Self.deletesEveryRow("DELETE FROM customers /**/ WHERE id = 1"))
-+        #expect(Self.tier("WITH `a``b` AS (SELECT 1) SELECT * FROM `a``b`") == .safe)
-+    }
-+
-+    @Test("A DELETE behind a skipped hint deletes every row")
-+    func deleteBehindASkippedHint() {
-+        #expect(Self.deletesEveryRow("/*+ ' */ SELECT 1 -- ' */ DELETE FROM customers"))
-+        #expect(!Self.deletesEveryRow("/*+ ' */ SELECT 1 -- ' */ DELETE FROM customers WHERE id = 1"))
-+    }
-+
-+    // Read whole, the first hint's quote runs to the second hint and hides the DROP the second statement runs.
-+    @Test("Each statement the app sends is read the way the server reads it alone")
-+    func statementsAreReadAlone() {
-+        #expect(Self.tier("SELECT 1 /*+ ' */; /*+ ' */ SELECT 1 -- ' */ DROP TABLE customers") == .destructive)
-+    }
-+
-+    @Test("A statement run from a code string is read the server's way too")
-+    func codeStringIsReadAlike() {
-+        #expect(Self.tier("EXECUTE IMMEDIATE $$/*+ ' */ SELECT 1 -- ' */ DROP TABLE customers$$") == .destructive)
-+    }
-+
-+    @Test("Hints, stage names and `$$` that hide nothing leave a query safe", arguments: [
-+        "SELECT /*+ SET_VAR(max_threads=1) */ * FROM customers",
-+        "/*+ SET_VAR(max_threads=1) */ SELECT 1",
-+        "SELECT 1 AS a$$, 2 -- $$",
-+        "SELECT * FROM @s/data/ WHERE id = 1",
-+        "/** note **/ SELECT 1",
-+        "SELECT '/*+', $$ */ DROP $$ FROM customers",
-+    ])
-+    func queriesStaySafe(sql: String) {
-+        #expect(Self.tier(sql) == .safe)
-+    }
-+}
-```
-
-**File**: `apple/Packages/TableProCore/Tests/TableProSQLGrammarTests/DatabendTokenizerTests.swift` (added, +114/-0)
-```diff
-@@ -0,0 +1,114 @@
-+import Foundation
-+import TableProSQLGrammar
-+import Testing
-+
-+struct DatabendTokenizerTests {
-+    private static func spellings(_ sql: String, _ rules: DatabendTokenizer.Rules = .current) -> [String] {
-+        let scalars = Array(sql.unicodeScalars)
-+        return DatabendTokenizer.read(scalars, rules: rules).tokens.map {
-+            String(String.UnicodeScalarView(scalars[$0.range]))
-+        }
-+    }
-+
-+    private static func kinds(_ sql: String) -> [DatabendTokenizer.Kind] {
-+        DatabendTokenizer.read(Array(sql.unicodeScalars)).tokens.map(\.kind)
-+    }
-+
-+    private static var pairedStars: DatabendTokenizer.Rules {
-+        var rules = DatabendTokenizer.Rules.current
-+        rules.pairsStarsInBlockComments = true
-+        return rules
-+    }
-+
-+    // Measured on 1.2.880 and 1.2.958: each text dropped the table.
-+    @Test("A hint skipped at the start is read as tokens through the first `*/` outside them", arguments: [
-+        "/*+ ' */ SELECT 1 -- ' */ DROP TABLE t",
-+        "/*+ @x*/ SELECT 1 */ DROP TABLE t",
-+        "/*+ $$ */ SELECT $$ */ DROP TABLE t",
-+        "/*+ /*+ */ SELECT 1 */ DROP TABLE t",
-+        "/*+ SET_VAR(max_threads=1) */ DROP TABLE t",
-+    ])
-+    func skippedHintIsTokens(sql: String) {
-+        #expect(Self.spellings(sql) == ["DROP", "TABLE", "t"])
-+    }
-+
-+    @Test("A hint after a word that takes one stays for the parser, and one after MERGE only on a newer release")
-+    func takenHintStays() {
-+        #expect(Self.kinds("SELECT /*+ SET_VAR(a=1) */ 1") == [
-+            .name, .hintPrefix, .name, .symbol, .name, .symbol, .number, .symbol, .hintSuffix, .number,
-+        ])
-+        #expect(Self.spellings("MERGE /*+ x */ INTO t") == ["MERGE", "/*+", "x", "*/", "INTO", "t"])
-+        var older = DatabendTokenizer.Rules.current
-+        older.mergeTakesHints = false
-+        #expect(Self.spellings("MERGE /*+ x */ INTO t", older) == ["MERGE", "INTO", "t"])
-+    }
-+
-+    // Measured on 1.2.880, which dropped the table, and 1.2.958, which refused the text.
-+    @Test("A release before 1.2.884 pairs a block comment's stars, so `**/` and `/**/` leave it open")
-+    func pairedStarsLeaveACommentOpen() {
-+        let sql = "/** x **/ SELECT 1 /* */ DROP TABLE t"
-+        #expect(Self.spellings(sql) == ["SELECT", "1", "DROP", "TABLE", "t"])
-+        #expect(Self.spellings(sql, Self.pairedStars) == ["DROP", "TABLE", "t"])
-+        #expect(Self.spellings("/**/ SELECT 1 /* */ DROP TABLE t", Self.pairedStars) == ["DROP", "TABLE", "t"])
-+        #expect(Self.spellings("/***/ SELECT 1", Self.pairedStars) == ["SELECT", "1"])
-+        #expect(DatabendTokenizer.Rules.readings(of: Array(sql.unicodeScalars)).contains(Self.pairedStars))
-+    }
-+
-+    // Measured on 1.2.880 and 1.2.958: each text was refused at the token that does not end.
-+    @Test("The reading stops where the server refuses the rest", arguments: [
-+        "SELECT 1 /* x", "SELECT 1 $$x", "SELECT 1 'x", "SELECT 1 `x", "SELECT 1 'a\\\nb'",
-+    ])
-+    func stopsWhereTheServerStops(sql: String) {
-+        let reading = DatabendTokenizer.read(Array(sql.unicodeScalars))
-+        #expect(!reading.isComplete)
-+        #expect(reading.tokens.count == 2)
-+    }
-+
-+    @Test("A stage name keeps a quote or a space after a backslash, and `*/` and `/*` with no space")
-+    func stageNamesKeepEscapedQuotes() {
-+        #expect(Self.spellings("COPY INTO t FROM @s\\' x") == ["COPY", "INTO", "t", "FROM", "@s\\'", "x"])
-+        #expect(Self.spellings("SELECT * FROM @s/*/ x") == ["SELECT", "*", "FROM", "@s/*/", "x"])
-+        #expect(Self.kinds("SELECT a @> b, c @? d") == [.name, .name, .symbol, .name, .symbol, .name, .symbol, .name])
-+    }
-+
-+    // Measured on 1.2.880 and 1.2.958: `a$$` is one name, and `$$` after a number opens a code string.
-+    @Test("A `$$` continues a name and opens a code string after anything else")
-+    func dollarQuotesFollowTokens() {
-+        #expect(Self.spellings("SELECT 1 AS a$$, 2") == ["SELECT", "1", "AS", "a$$", ",", "2"])
-+        #expect(Self.spellings("SELECT 1e5$$ x $$") == ["SELECT", "1e5", "$$ x $$"])
-+        #expect(Self.kinds("SELECT $1, $a, $") == [.name, .variable, .symbol, .variable, .symbol, .symbol])
-+    }
-+
-+    // Measured on 1.2.958: `CREATE OR REPLACE TABLE中 (id INT)` replaced table 中.
-+    @Test("A name that starts in ASCII ends at a non-ASCII scalar, and one that starts there runs on")
-+    func nonASCIIEndsAnASCIIName() {
-+        #expect(Self.spellings("REPLACE\u{4E2D} ON") == ["REPLACE", "\u{4E2D}", "ON"])
-+        #expect(Self.spellings("SELECT \u{E9}t\u{E9}$$, a") == ["SELECT", "\u{E9}t\u{E9}$$", ",", "a"])
-+        #expect(Self.spellings("SELECT $a\u{E9}") == ["SELECT", "$a", "\u{E9}"])
-+    }
-+
-+    @Test("A doubled backtick stays inside a name")
-+    func doubledBacktickStaysInAName() {
-+        #expect(Self.spellings("SELECT `a``b`, ?") == ["SELECT", "`a``b`", ",", "?"])
-+    }
-+
-+    @Test("A form feed ends a line comment and a carriage ret
-```
-
-**File**: `apple/Plugins/MySQLDriverPlugin/DatabendLiteral.swift` (modified, +4/-300)
-```diff
-@@ -5,6 +5,7 @@
- 
- import Foundation
- import TableProPluginKit
-+import TableProSQLGrammar
- 
- internal enum DatabendLiteralError: Error, Equatable {
-     case parameterCountMismatch(placeholders: Int, values: Int)
-@@ -88,9 +89,9 @@ internal enum DatabendLiteral {
-             throw DatabendLiteralError.serverTooOldToBind
-         }
-         let scalars = Array(sql.unicodeScalars)
--        let placeholders = DatabendPlaceholderScanner(scalars: scalars, rules: .current).placeholders()
--        for rules in DatabendTokenizerRules.readings(of: scalars).dropFirst() {
--            guard DatabendPlaceholderScanner(scalars: scalars, rules: rules).placeholders() == placeholders else {
-+        let placeholders = DatabendTokenizer.placeholders(in: scalars)
-+        for rules in DatabendTokenizer.Rules.readings(of: scalars).dropFirst() {
-+            guard DatabendTokenizer.placeholders(in: scalars, rules: rules) == placeholders else {
-                 throw DatabendLiteralError.placeholdersDependOnServerVersion
-             }
-         }
-@@ -108,300 +109,3 @@ internal enum DatabendLiteral {
-         return String(output)
-     }
- }
--
--// The rules of Databend's tokenizer, src/query/ast/src/parser/token.rs, that changed between releases.
--struct DatabendTokenizerRules: Hashable {
--    // Before 1.2.884 a block comment is `/\*[^\+]([^\*]|(\*[^/]))*\*/`, so `**/` and `/**/` leave it open.
--    var pairsStarsInBlockComments: Bool
--    // A stage name such as `@s` ran on through a comma until October 2025.
--    var commaContinuesStageNames: Bool
--    // `!*` was an operator until July 2026, so `!*/*` opened a comment.
--    var bangStarIsAnOperator: Bool
--    // A hint after MERGE was skipped like one in any other wrong place until April 2026.
--    var mergeTakesHints: Bool
--
--    static let current = DatabendTokenizerRules(
--        pairsStarsInBlockComments: false, commaContinuesStageNames: false, bangStarIsAnOperator: false,
--        mergeTakesHints: true
--    )
--
--    // The current rules first, then each older one the text can tell apart.
--    static func readings(of scalars: [Unicode.Scalar]) -> [DatabendTokenizerRules] {
--        let pairs = zip(scalars, scalars.dropFirst())
--        var readings = [current]
--        if pairs.contains(where: { $0 == "/" && $1 == "*" }) {
--            readings += readings.map { var rules = $0; rules.pairsStarsInBlockComments = true; return rules }
--        }
--        if scalars.contains("@") {
--            readings += readings.map { var rules = $0; rules.commaContinuesStageNames = true; return rules }
--        }
--        if pairs.contains(where: { $0 == "!" && $1 == "*" }) {
--            readings += readings.map { var rules = $0; rules.bangStarIsAnOperator = true; return rules }
--        }
--        if zip(pairs, scalars.dropFirst(2)).contains(where: { $0.0 == "/" && $0.1 == "*" && $1 == "+" }) {
--            readings += readings.map { var rules = $0; rules.mergeTakesHints = false; return rules }
--        }
--        return readings
--    }
--}
--
--// Reads tokens as the server does only as far as a `?` needs: a comment, a literal, a stage name, a name or an
--// operator holding one hides it, and so does a hint the server skips. Text the server refuses to tokenize ends the
--// scan, so no later `?` is bound.
--struct DatabendPlaceholderScanner {
--    let scalars: [Unicode.Scalar]
--    let rules: DatabendTokenizerRules
--
--    private static let operators: [[Unicode.Scalar]] = [
--        "!~*", "#>>", "->>", "<+>", "<->", "<=>", "||/",
--        "!!", "!=", "!~", "#-", "#>", "*/", "->", "//", "::", ":=", "<<", "<=", "<>", "<@", "=>", "==", ">=", ">>",
--        "?&", "?|", "@>", "@?", "@@", "|/", "||", "~*",
--    ].map { Array($0.unicodeScalars) }
--
--    private static let operatorStarts = Set(operators.compactMap(\.first))
--
--    private static let hintTakers: Set<String> = ["INSERT", "SELECT", "REPLACE", "UPDATE", "DELETE", "COPY"]
--
--    private enum TokenKind {
--        case skipped, hintPrefix, hintSuffix, placeholder, hintTaker, other
--    }
--
--    // Tokenizer::next skips a hint unless the token before it is one that takes a hint, and a hint skipped inside
--    // another one takes its own `*/`.
--    func placeholders() -> [Int] {
--        var offsets: [Int] = []
--        var index = 0
--        var previousTakesHint = false
--        var skippedHints = 0
--        while index < scalars.count {
--            guard let end = tokenEnd(at: index) else { return offsets }
--            switch kind(from: index, to: end) {
--            case .skipped:
--                break
--            case .hintPrefix where !previousTakesHint:
--                skippedHints += 1
--            case .hintSuffix where skippedHints > 0:
--                skippedHints -= 1
--                previousTakesHint = false
--            case .placeholder:
--                if skippedHints == 0 { offsets.append(index) }
--                previousTakesHint = false
--            case .hintTaker:
--                previousTakesHint = true
-- 
-```
-
----
-
-### Incident Patch 3: `a6887e57` (2026-11-04)
-**Commit Message**: fix(safe-mode): rate pg_background, pg_cron and TimescaleDB calls as writes (#4043)
-
-**File**: `apple/Packages/TableProCore/Sources/TableProSQLGrammar/SQLStateChangingFunctions.swift` (modified, +54/-4)
-```diff
-@@ -9,6 +9,10 @@ public enum SQLStateChangingFunctions {
-         return names.contains(lowered)
-     }
- 
-+    static func isDuckDBCall(_ name: String) -> Bool {
-+        duckDBCalls.contains(name.uppercased().lowercased())
-+    }
-+
-     // SQLite runs a table-valued pragma named as a table source too, so `SELECT * FROM main.pragma_optimize` runs
-     // ANALYZE. A call is the call scanner's; a column or alias of that name runs nothing.
-     static func namesStateChangingTable(in text: NSString, tokens: [TSQLTokens.Token], grammar: SQLLexicalGrammar) -> Bool {
-@@ -72,21 +76,29 @@ public enum SQLStateChangingFunctions {
-         .union(catalogAndStorage)
-         .union(indexMaintenance)
-         .union(sqlTextRunners)
-+        .union(scheduledJobs)
-+        .union(hypertablesAndChunks)
-+        .union(rolesAndGrants)
- 
-     static let serverSignals: Set<String> = [
-         "pg_cancel_backend", "pg_terminate_backend", "pg_reload_conf", "pg_rotate_logfile",
-         "pg_log_backend_memory_contexts"
-     ]
- 
-+    // dblink_close commits the remote transaction dblink_open began, with whatever dblink_exec ran in it, and
-+    // pg_background's cancels stop a worker before it commits.
-     static let sessionControl: Set<String> = [
-         "system$abort_session", "system$cancel_query", "system$cancel_all_queries", "system$abort_transaction",
--        "abortsessions"
-+        "abortsessions", "dblink_cancel_query", "dblink_close", "pg_background_cancel", "pg_background_cancel_v2",
-+        "pg_background_cancel_all", "pg_background_cancel_all_v2", "pg_background_cancel_by_label",
-+        "pg_background_cancel_by_label_v2", "pg_background_cancel_v2_grace"
-     ]
- 
-     static let recoveryAndBackup: Set<String> = [
-         "pg_promote", "pg_wal_replay_pause", "pg_wal_replay_resume", "pg_backup_start", "pg_backup_stop",
-         "pg_switch_wal", "pg_create_restore_point", "pg_log_standby_snapshot", "pg_start_backup", "pg_stop_backup",
--        "pg_switch_xlog", "pg_xlog_replay_pause", "pg_xlog_replay_resume"
-+        "pg_switch_xlog", "pg_xlog_replay_pause", "pg_xlog_replay_resume", "timescaledb_pre_restore",
-+        "timescaledb_post_restore"
-     ]
- 
-     static let replication: Set<String> = [
-@@ -138,10 +150,48 @@ public enum SQLStateChangingFunctions {
- 
-     // SQL Server's OPENQUERY and OPENROWSET hand their last argument to a linked server, or back to this one through
-     // a loopback link, as a batch of its own: a SELECT from either can carry a DELETE, as a SELECT from dblink can.
--    // crosstab, connectby and xpath_table paste their text arguments into the SQL they run.
-+    // crosstab, connectby and xpath_table paste their text arguments into the SQL they run. pg_background runs its
-+    // text in a worker that commits on its own, and pg_cron's schedule, schedule_in_database and alter_job store a
-+    // command its worker runs later; TimescaleDB's alter_job shares the name.
-     static let sqlTextRunners: Set<String> = [
-         "query_to_xml", "query_to_xml_and_xmlschema", "ts_stat", "ts_rewrite", "dblink", "dblink_exec",
-         "dblink_send_query", "dblink_open", "openquery", "openrowset", "crosstab", "crosstab2", "crosstab3", "crosstab4",
--        "connectby", "xpath_table"
-+        "connectby", "xpath_table", "pg_background_launch", "pg_background_launch_v2", "pg_background_submit",
-+        "pg_background_submit_v2", "pg_background_run", "pg_background_run_v2", "pg_background_run_query",
-+        "pg_background_run_query_v2", "schedule", "schedule_in_database", "alter_job", "subscription_exec"
-+    ]
-+
-+    // pg_cron's unschedule, and TimescaleDB's jobs and the policies that add or remove one.
-+    static let scheduledJobs: Set<String> = [
-+        "unschedule", "add_job", "delete_job", "add_retention_policy", "remove_retention_policy", "add_reorder_policy",
-+        "remove_reorder_policy", "add_compaction_policy", "remove_compaction_policy", "add_compression_policy",
-+        "remove_compression_policy", "add_continuous_aggregate_policy", "remove_continuous_aggregate_policy",
-+        "add_policies", "alter_policies", "remove_policies", "remove_all_policies"
-+    ]
-+
-+    // TimescaleDB's functions that change a hypertable, or drop, move or rewrite its chunks. The data node ones are
-+    // gone since 2.14, and set_adaptive_chunking since 2.28, but older servers still have them.
-+    static let hypertablesAndChunks: Set<String> = [
-+        "create_hypertable", "add_dimension", "set_chunk_time_interval", "set_partitioning_interval",
-+        "set_number_partitions", "set_integer_now_func", "set_adaptive_chunking", "enable_chunk_skipping",
-+        "disable_chunk_skipping", "attach_tablespace", "detach_tablespace", "detach_tablespaces", "drop_chunks",
-+        "drop_chunk", "create_chunk", "compress_chunk", "decompress_chunk", "reorder_chunk", "move_chunk",
-+        "block_new_chunks", "allow_new_chunks", "create_distributed_hypertable", "add_data_node", "attach_data_node",
-+        "
-```
-
-**File**: `apple/Packages/TableProCore/Sources/TableProSQLGrammar/SQLStatementClassifier+Surfaces.swift` (modified, +2/-13)
-```diff
-@@ -158,17 +158,6 @@ extension SQLStatementTiering {
-         }
-     }
- 
--    // DuckDB's query() and json_execute_serialized_sql() run the SELECT in their text, which can take a value from a
--    // sequence; the second does so outside a read-only transaction (both measured on 2.0.0). The postgres, mysql and
--    // sqlite extensions' query and execute functions run any statement on an attached database, and dbgen and dsdgen
--    // create and fill tables.
--    static let stateChangingCalls: [String: Set<String>] = [
--        duckDB: [
--            "QUERY", "JSON_EXECUTE_SERIALIZED_SQL", "POSTGRES_QUERY", "POSTGRES_EXECUTE", "MYSQL_QUERY", "MYSQL_EXECUTE",
--            "SQLITE_QUERY", "DBGEN", "DSDGEN",
--        ],
--    ]
--
-     // An EXPLAIN that runs its statement is tiered by that statement's own calls.
-     func stateChangingCallTier(
-         _ code: StatementCode,
-@@ -177,10 +166,10 @@ extension SQLStatementTiering {
-     ) -> StatementTier {
-         guard !SQLExplainStatement.keywords.contains(code.keyword) else { return .safe }
-         if advancesSequence(code) { return .write }
--        let engineCalls = Self.stateChangingCalls[databaseTypeId] ?? []
-         let changesState = calls.contains { call in
-             guard case .named(let name, _) = call.callee else { return true }
--            return SQLStateChangingFunctions.contains(name) || engineCalls.contains(name.uppercased())
-+            return SQLStateChangingFunctions.contains(name)
-+                || (databaseTypeId == Self.duckDB && SQLStateChangingFunctions.isDuckDBCall(name))
-         }
-         guard !changesState else { return .write }
-         let namesTable = SQLStateChangingFunctions.namesStateChangingTable(
-```
-
-**File**: `apple/Packages/TableProCore/Tests/TableProSQLGrammarTests/SQLStateChangingFunctionsTests.swift` (modified, +7/-3)
-```diff
-@@ -25,17 +25,21 @@ struct SQLStateChangingFunctionsTests {
-         "files_and_extensions": SQLStateChangingFunctions.filesAndExtensions,
-         "catalog_and_storage": SQLStateChangingFunctions.catalogAndStorage,
-         "index_maintenance": SQLStateChangingFunctions.indexMaintenance,
--        "sql_text_runners": SQLStateChangingFunctions.sqlTextRunners
-+        "sql_text_runners": SQLStateChangingFunctions.sqlTextRunners,
-+        "scheduled_jobs": SQLStateChangingFunctions.scheduledJobs,
-+        "hypertables_and_chunks": SQLStateChangingFunctions.hypertablesAndChunks,
-+        "roles_and_grants": SQLStateChangingFunctions.rolesAndGrants,
-+        "duckdb_calls": SQLStateChangingFunctions.duckDBCalls
-     ]
- 
-     @Test("Each family lists the names the Linux app lists")
-     func familiesMatchTheSharedNames() throws {
-         let data = try Data(contentsOf: Self.sharedNames)
-         let shared = try JSONDecoder().decode([String: [String]].self, from: data)
-         let sharedFamilies = shared.mapValues { Set($0) }
--        let everyName = Set(shared.values.joined())
-+        let everyEngine = Set(shared.filter { $0.key != "duckdb_calls" }.values.joined())
-         #expect(Self.families == sharedFamilies)
--        #expect(SQLStateChangingFunctions.names == everyName)
-+        #expect(SQLStateChangingFunctions.names == everyEngine)
-     }
- 
-     @Test("A listed name matches in any case, under sys_, and with a letter MariaDB folds", arguments: [
-```
-
-**File**: `apple/Packages/TableProCore/Tests/TableProSQLGrammarTests/SQLStatementClassifierTests.swift` (modified, +33/-0)
-```diff
-@@ -147,6 +147,39 @@ struct SQLStatementClassifierTests {
-         #expect(Self.tier(sql, engine) == .safe)
-     }
- 
-+    @Test("An extension function that runs SQL, changes a job or a chunk, or stops a worker is a write", arguments: [
-+        "SELECT pg_background_launch('SELECT 1')",
-+        "SELECT * FROM pg_background_run_query_v2('SELECT 1') AS r(n int)",
-+        "SELECT pg_background_cancel_all()",
-+        "SELECT pg_background_grant_privileges('app')",
-+        "SELECT cron.schedule('0 3 * * *', 'VACUUM orders')",
-+        "SELECT cron.unschedule('nightly')",
-+        "SELECT drop_chunks('conditions', INTERVAL '3 months')",
-+        "SELECT compress_chunk(c) FROM show_chunks('conditions') c",
-+        "SELECT create_hypertable('conditions', by_range('time'))",
-+        "SELECT add_retention_policy('conditions', INTERVAL '1 year')",
-+        "SELECT alter_job(1000, schedule_interval => INTERVAL '1 day')",
-+        "SELECT timescaledb_experimental.remove_all_policies('conditions')",
-+        "SELECT timescaledb_pre_restore()",
-+        "SELECT dblink_close('app', 'c')",
-+        "SELECT dblink_cancel_query('app')",
-+    ])
-+    func extensionFunctionWrites(sql: String) {
-+        #expect(Self.tier(sql, "PostgreSQL") == .write)
-+    }
-+
-+    @Test("An extension function that only reads stays a read", arguments: [
-+        "SELECT * FROM pg_background_result(123) AS r(n int)",
-+        "SELECT pg_background_detach(123)",
-+        "SELECT show_chunks('conditions')",
-+        "SELECT * FROM cron.job",
-+        "SELECT dblink_connect('app', 'dbname=shop')",
-+        "SELECT schedule FROM jobs",
-+    ])
-+    func extensionReadStaysSafe(sql: String) {
-+        #expect(Self.tier(sql, "PostgreSQL") == .safe)
-+    }
-+
-     @Test("SurrealQL's REMOVE drops what it names, wherever the statement stands", arguments: [
-         "REMOVE TABLE person",
-         "remove table if exists person;",
-```
-
-**File**: `apple/changelog.d/4043.fixed.md` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+Read-Only and Safe Mode treated pg_background, pg_cron and TimescaleDB calls, drop_chunks included, as reads.
-```
-
-**File**: `core/crates/core/src/sql_syntax/state_changing_functions.rs` (modified, +148/-9)
-```diff
-@@ -1,7 +1,9 @@
--//! Built-in functions that change state from inside a SELECT, by family.
-+//! Functions, built in or from a common extension, that change state
-+//! from inside a SELECT, by family, matched by name whatever schema
-+//! qualifies the call.
- //!
--//! A read-only transaction stops none of them on PostgreSQL 15 and
--//! earlier: they signal other sessions, take locks, run SQL text, or
-+//! A read-only transaction stops none of the built-ins on PostgreSQL 15
-+//! and earlier: they signal other sessions, take locks, run SQL text, or
- //! write large objects, files or catalog rows. A function the user wrote
- //! is beyond what the words show. The Apple apps list the same families,
- //! and `tests/fixtures/state_changing_functions.json` holds them for both
-@@ -23,6 +25,17 @@ const SESSION_CONTROL: &[&str] = &[
-     "system$cancel_all_queries",
-     "system$abort_transaction",
-     "abortsessions",
-+    // dblink_close commits the remote transaction dblink_open began, with
-+    // whatever dblink_exec ran in it.
-+    "dblink_cancel_query",
-+    "dblink_close",
-+    "pg_background_cancel",
-+    "pg_background_cancel_v2",
-+    "pg_background_cancel_all",
-+    "pg_background_cancel_all_v2",
-+    "pg_background_cancel_by_label",
-+    "pg_background_cancel_by_label_v2",
-+    "pg_background_cancel_v2_grace",
- ];
- 
- const RECOVERY_AND_BACKUP: &[&str] = &[
-@@ -39,6 +52,8 @@ const RECOVERY_AND_BACKUP: &[&str] = &[
-     "pg_switch_xlog",
-     "pg_xlog_replay_pause",
-     "pg_xlog_replay_resume",
-+    "timescaledb_pre_restore",
-+    "timescaledb_post_restore",
- ];
- 
- const REPLICATION: &[&str] = &[
-@@ -138,7 +153,8 @@ const INDEX_MAINTENANCE: &[&str] = &[
- 
- /// Functions that run SQL text: what that text does is not in the words.
- /// crosstab, connectby and xpath_table paste their text arguments into
--/// the SQL they run.
-+/// the SQL they run. pg_background runs its text in a worker that
-+/// commits on its own, and pg_cron's worker runs a stored command later.
- const SQL_TEXT_RUNNERS: &[&str] = &[
-     "query_to_xml",
-     "query_to_xml_and_xmlschema",
-@@ -156,9 +172,104 @@ const SQL_TEXT_RUNNERS: &[&str] = &[
-     "crosstab4",
-     "connectby",
-     "xpath_table",
-+    "pg_background_launch",
-+    "pg_background_launch_v2",
-+    "pg_background_submit",
-+    "pg_background_submit_v2",
-+    "pg_background_run",
-+    "pg_background_run_v2",
-+    "pg_background_run_query",
-+    "pg_background_run_query_v2",
-+    // TimescaleDB's alter_job shares the name.
-+    "schedule",
-+    "schedule_in_database",
-+    "alter_job",
-+    "subscription_exec",
- ];
- 
--const FAMILIES: [(&str, &[&str]); 12] = [
-+/// pg_cron's unschedule, and TimescaleDB's jobs and the policies that add
-+/// or remove one.
-+const SCHEDULED_JOBS: &[&str] = &[
-+    "unschedule",
-+    "add_job",
-+    "delete_job",
-+    "add_retention_policy",
-+    "remove_retention_policy",
-+    "add_reorder_policy",
-+    "remove_reorder_policy",
-+    "add_compaction_policy",
-+    "remove_compaction_policy",
-+    "add_compression_policy",
-+    "remove_compression_policy",
-+    "add_continuous_aggregate_policy",
-+    "remove_continuous_aggregate_policy",
-+    "add_policies",
-+    "alter_policies",
-+    "remove_policies",
-+    "remove_all_policies",
-+];
-+
-+/// TimescaleDB's functions that change a hypertable, or drop, move or
-+/// rewrite its chunks. The data node ones are gone since 2.14, and
-+/// set_adaptive_chunking since 2.28, but older servers still have them.
-+const HYPERTABLES_AND_CHUNKS: &[&str] = &[
-+    "create_hypertable",
-+    "add_dimension",
-+    "set_chunk_time_interval",
-+    "set_partitioning_interval",
-+    "set_number_partitions",
-+    "set_integer_now_func",
-+    "set_adaptive_chunking",
-+    "enable_chunk_skipping",
-+    "disable_chunk_skipping",
-+    "attach_tablespace",
-+    "detach_tablespace",
-+    "detach_tablespaces",
-+    "drop_chunks",
-+    "drop_chunk",
-+    "create_chunk",
-+    "compress_chunk",
-+    "decompress_chunk",
-+    "reorder_chunk",
-+    "move_chunk",
-+    "block_new_chunks",
-+    "allow_new_chunks",
-+    "create_distributed_hypertable",
-+    "add_data_node",
-+    "attach_data_node",
-+    "detach_data_node",
-+    "delete_data_node",
-+    "alter_data_node",
-+    "set_replication_factor",
-+    "create_distributed_restore_point",
-+];
-+
-+const ROLES_AND_GRANTS: &[&str] = &[
-+    "pg_background_grant_privileges",
-+    "pg_background_revoke_privileges",
-+    "grant_pg_background_privileges",
-+    "revoke_pg_background_privileges",
-+    "pg_background_drop_executor_role",
-+];
-+
-+/// DuckDB's own calls. `query` and `json_execute_serialized_sql` run the
-+/// SELECT in their text, the postgres, mysql and sqlite extensions'
-+/// query and execute functions run any statement on an attached
-+/// database, and dbgen and dsdgen create and fill tables. Elsewhere
-+/// `query` is any function's name.
-+const DUCKDB_CALLS: &[&str] = &[
-+    "query",
-+    "json_execute_serialized_sql",
-+    "postgres_query",
-+    "postgres_execute",
-+    "mysql_q
-```
-
-**File**: `core/crates/core/src/sql_syntax/statement_access.rs` (modified, +46/-10)
-```diff
-@@ -2,7 +2,7 @@ use std::collections::HashMap;
- 
- use crate::sql_syntax::SqlGrammar;
- use crate::sql_syntax::script::{ScriptPlan, ScriptToken, ScriptTokenKind};
--use crate::sql_syntax::state_changing_functions::changes_state;
-+use crate::sql_syntax::state_changing_functions::{changes_state, duckdb_call};
- use crate::unicode_blank::is_blank;
- 
- /// What running a piece of SQL can do, from its own words. Ordered, so
-@@ -467,16 +467,14 @@ fn in_expression(part: &[Code<'_>], index: usize) -> bool {
- fn calls_mutator(part: &[Code<'_>], index: usize, grammar: SqlGrammar) -> bool {
-     let arguments = match decodes_unicode_names(grammar) && spelled_in_escapes(part, index) {
-         true => after_uescape(part, index + 1),
--        false if changes_state(part[index].text) || runs_query_text(&part[index], grammar) => index + 1,
-+        false if changes_state(part[index].text) || runs_duckdb_call(&part[index], grammar) => index + 1,
-         false => return false,
-     };
-     part.get(arguments).is_some_and(|next| next.kind == Kind::Open)
- }
- 
--/// DuckDB's `query('…')` runs the SELECT in its text, which can take a
--/// value from a sequence. Elsewhere `query` is any function's name.
--fn runs_query_text(token: &Code<'_>, grammar: SqlGrammar) -> bool {
--    grammar == SqlGrammar::DuckDb && is(token.text, &["QUERY"])
-+fn runs_duckdb_call(token: &Code<'_>, grammar: SqlGrammar) -> bool {
-+    grammar == SqlGrammar::DuckDb && duckdb_call(token.text)
- }
- 
- /// The grammars whose scanner is PostgreSQL's, which reads `U&"…"`.
-@@ -1561,6 +1559,21 @@ mod tests {
-             "SELECT pg_import_system_collations('public'::regnamespace)",
-             "SELECT heap_force_kill('orders'::regclass, ARRAY['(0,1)']::tid[])",
-             "SELECT pg_file_write('postgresql.auto.conf', 'x', true)",
-+            "SELECT pg_background_launch('SELECT 1')",
-+            "SELECT * FROM pg_background_run_query_v2('SELECT 1') AS r(n int)",
-+            "SELECT pg_background_cancel_all()",
-+            "SELECT pg_background_grant_privileges('app')",
-+            "SELECT cron.schedule('0 3 * * *', 'VACUUM orders')",
-+            "SELECT cron.unschedule('nightly')",
-+            "SELECT drop_chunks('conditions', INTERVAL '3 months')",
-+            "SELECT compress_chunk(c) FROM show_chunks('conditions') c",
-+            "SELECT create_hypertable('conditions', by_range('time'))",
-+            "SELECT add_retention_policy('conditions', INTERVAL '1 year')",
-+            "SELECT alter_job(1000, schedule_interval => INTERVAL '1 day')",
-+            "SELECT timescaledb_experimental.remove_all_policies('conditions')",
-+            "SELECT timescaledb_pre_restore()",
-+            "SELECT dblink_close('app', 'c')",
-+            "SELECT dblink_cancel_query('app')",
-         ] {
-             assert_eq!(access(sql, SqlGrammar::PostgreSql), StatementAccess::Write, "{sql}");
-         }
-@@ -1572,17 +1585,40 @@ mod tests {
-         ] {
-             assert_eq!(access(sql, SqlGrammar::MySql), StatementAccess::Write, "{sql}");
-         }
--        assert_eq!(
--            access("SELECT * FROM query('SELECT nextval(''s'')')", SqlGrammar::DuckDb),
--            StatementAccess::Write
--        );
-+        for sql in [
-+            "SELECT * FROM query('SELECT nextval(''s'')')",
-+            "SELECT * FROM postgres_execute('pg', 'SELECT 1')",
-+            "SELECT * FROM postgres_query('pg', 'SELECT nextval(''s'')')",
-+            "SELECT * FROM mysql_query('my', 'SELECT 1')",
-+            "CALL mysql_execute('my', 'UPDATE orders SET total = 0 WHERE id = 1')",
-+            "SELECT * FROM sqlite_query('lite', 'SELECT 1')",
-+            "SELECT * FROM json_execute_serialized_sql(json_serialize_sql('SELECT nextval(''s'')'))",
-+            "SELECT * FROM dbgen(sf = 0.01)",
-+            "SELECT * FROM DSDGEN(sf = 0.01)",
-+        ] {
-+            assert_eq!(access(sql, SqlGrammar::DuckDb), StatementAccess::Write, "{sql}");
-+        }
-         for sql in [
-             "SELECT dblink_build_sql_insert('t', '1', 1, '{1}', '{2}')",
-             "SELECT dblink FROM links",
-             "SELECT file, url, query(1) FROM downloads",
-+            "SELECT * FROM postgres_execute('pg', 'SELECT 1')",
-+            "SELECT * FROM pg_background_result(123) AS r(n int)",
-+            "SELECT pg_background_detach(123)",
-+            "SELECT show_chunks('conditions')",
-+            "SELECT * FROM cron.job",
-+            "SELECT dblink_connect('app', 'dbname=shop')",
-+            "SELECT schedule FROM jobs",
-         ] {
-             assert_eq!(access(sql, SqlGrammar::PostgreSql), StatementAccess::Read, "{sql}");
-         }
-+        assert_eq!(
-+            access(
-+                "SELECT * FROM postgres_scan('pg', 'public', 'orders')",
-+                SqlGrammar::DuckDb
-+            ),
-+            StatementAccess::Read
++    #[test]
++    fn a_dismissed_portal_request_is_unlock_dismissed() {
++        let mapped = map_error(
++            oo7::file::Error::Portal(oo7::ashpd::Error::Response(ResponseError::Cancelled)).into(),
++            Stage::Open,
 +        );
-     }
- 
++
++        assert_eq!(mapped, SecretError::UnlockDismissed);
++    }
++
++    // GNOME Keyring's answer when its unlock prompt is cancelled.
++    #[test]
++    fn a_refused_portal_request_is_locked() {
++        let mapped = map_error(
++            oo7::file::Error::Portal(oo7::ashpd::Error::Response(ResponseError::Other)).into(),
++            Stage::Open,
++        );
++
++        assert_eq!(mapped, SecretError::Locked);
++        assert!(mapped.is_retryable());
++    }
++
++    #[test]
++    fn a_portal_that_never_answers_is_portal_unavailable() {
++        let timed_out = std::io::Error::new(std::io::ErrorKind::TimedOut, "the Secret portal did not answer");
++        let mapped = map_error(
++            oo7::file::Error::Portal(oo7::ashpd::Error::IO(timed_out)).into(),
++            Stage::Open,
++        );
++
++        assert!(matches!(mapped, SecretError::PortalUnavailable { .. }), "{mapped:?}");
++    }
++
      #[test]
+     fn only_a_wire_error_invalidates_the_handle() {
+         assert!(!invalidates_handle(&oo7::dbus::Error::Dismissed.into()));
 ```
 
-**File**: `core/crates/core/tests/fixtures/state_changing_functions.json` (modified, +92/-1)
+**File**: `linux/crates/platform/src/secrets/mod.rs` (modified, +2/-0)
 ```diff
-@@ -21,6 +21,17 @@
-     "pg_import_system_collations",
-     "pg_truncate_visibility_map"
-   ],
-+  "duckdb_calls": [
-+    "dbgen",
-+    "dsdgen",
-+    "json_execute_serialized_sql",
-+    "mysql_execute",
-+    "mysql_query",
-+    "postgres_execute",
-+    "postgres_query",
-+    "query",
-+    "sqlite_query"
-+  ],
-   "files_and_extensions": [
-     "lo_export",
-     "lo_import",
-@@ -30,6 +41,37 @@
-     "pg_file_write",
-     "writefile"
-   ],
-+  "hypertables_and_chunks": [
-+    "add_data_node",
-+    "add_dimension",
-+    "allow_new_chunks",
-+    "alter_data_node",
-+    "attach_data_node",
-+    "attach_tablespace",
-+    "block_new_chunks",
-+    "compress_chunk",
-+    "create_chunk",
-+    "create_distributed_hypertable",
-+    "create_distributed_restore_point",
-+    "create_hypertable",
-+    "decompress_chunk",
-+    "delete_data_node",
-+    "detach_data_node",
-+    "detach_tablespace",
-+    "detach_tablespaces",
-+    "disable_chunk_skipping",
-+    "drop_chunk",
-+    "drop_chunks",
-+    "enable_chunk_skipping",
-+    "move_chunk",
-+    "reorder_chunk",
-+    "set_adaptive_chunking",
-+    "set_chunk_time_interval",
-+    "set_integer_now_func",
-+    "set_number_partitions",
-+    "set_partitioning_interval",
-+    "set_replication_factor"
-+  ],
-   "index_maintenance": [
-     "brin_desummarize_range",
-     "brin_summarize_new_values",
-@@ -60,7 +102,9 @@
-     "pg_wal_replay_pause",
-     "pg_wal_replay_resume",
-     "pg_xlog_replay_pause",
--    "pg_xlog_replay_resume"
-+    "pg_xlog_replay_resume",
-+    "timescaledb_post_restore",
-+    "timescaledb_pre_restore"
-   ],
-   "replication": [
-     "pg_copy_logical_replication_slot",
-@@ -81,6 +125,32 @@
-     "pg_replication_slot_advance",
-     "pg_sync_replication_slots"
-   ],
-+  "roles_and_grants": [
-+    "grant_pg_background_privileges",
-+    "pg_background_drop_executor_role",
-+    "pg_background_grant_privileges",
-+    "pg_background_revoke_privileges",
-+    "revoke_pg_background_privileges"
-+  ],
-+  "scheduled_jobs": [
-+    "add_compaction_policy",
-+    "add_compression_policy",
-+    "add_continuous_aggregate_policy",
-+    "add_job",
-+    "add_policies",
-+    "add_reorder_policy",
-+    "add_retention_policy",
-+    "alter_policies",
-+    "delete_job",
-+    "remove_all_policies",
-+    "remove_compaction_policy",
-+    "remove_compression_policy",
-+    "remove_continuous_aggregate_policy",
-+    "remove_policies",
-+    "remove_reorder_policy",
-+    "remove_retention_policy",
-+    "unschedule"
-+  ],
-   "sequences": [
-     "nextval",
-     "setval"
-@@ -94,6 +164,15 @@
-   ],
-   "session_control": [
-     "abortsessions",
-+    "dblink_cancel_query",
-+    "dblink_close",
-+    "pg_background_cancel",
-+    "pg_background_cancel_all",
-+    "pg_background_cancel_all_v2",
-+    "pg_background_cancel_by_label",
-+    "pg_background_cancel_by_label_v2",
-+    "pg_background_cancel_v2",
-+    "pg_background_cancel_v2_grace",
-     "system$abort_session",
-     "system$abort_transaction",
-     "system$cancel_all_queries",
-@@ -117,6 +196,7 @@
-     "set_config"
-   ],
-   "sql_text_runners": [
-+    "alter_job",
-     "connectby",
-     "crosstab",
-     "crosstab2",
-@@ -128,8 +208,19 @@
-     "dblink_send_query",
-     "openquery",
-     "openrowset",
-+    "pg_background_launch",
-+    "pg_background_launch_v2",
-+    "pg_background_run",
-+    "pg_background_run_query",
-+    "pg_background_run_query_v2",
-+    "pg_background_run_v2",
-+    "pg_background_submit",
-+    "pg_background_submit_v2",
-     "query_to_xml",
-     "query_to_xml_and_xmlschema",
-+    "schedule",
-+    "schedule_in_database",
-+    "subscription_exec",
-     "ts_rewrite",
-     "ts_stat",
-     "xpath_table"
+@@ -1,4 +1,6 @@
++mod backend;
+ mod keyring_error;
++mod portal;
+ mod secret_attributes;
+ mod secret_store;
+ 
+```
+
+**File**: `linux/crates/platform/src/secrets/portal.rs` (added, +97/-0)
+```diff
+@@ -0,0 +1,97 @@
++use std::time::Duration;
++
++use oo7::ashpd;
++use tokio::io::AsyncReadExt;
++use tokio::net::UnixStream;
++use zeroize::Zeroizing;
++
++// xdg-desktop-portal waits on its backend with no limit, since the backend may be showing an unlock
++// prompt. This only ends a request whose backend never answers; nobody types a password this long.
++const ANSWER_LIMIT: Duration = Duration::from_secs(300);
++// The backend writes the secret before it answers, so the read only drains a local socket. The limit
++// is the one oo7 puts on every Secret Service call.
++const READ_LIMIT: Duration = Duration::from_secs(30);
++
++// ashpd's own secret::retrieve reads the socket without checking the Response, so a refused request
++// leaves it waiting on a socket GNOME Keyring never closes.
++pub(super) async fn retrieve_secret() -> Result<oo7::Secret, ashpd::Error> {
++    let (reader, writer) = UnixStream::pair()?;
++    let answer = tokio::time::timeout(ANSWER_LIMIT, async {
++        let portal = ashpd::desktop::secret::Secret::new().await?;
++        portal.retrieve(&writer, Default::default()).await?.response()
++    })
++    .await
++    .unwrap_or_else(|_| Err(timed_out("the Secret portal did not answer")));
++    drop(writer);
++    read_secret(answer, reader).await
++}
++
++async fn read_secret(answer: Result<(), ashpd::Error>, mut reader: UnixStream) -> Result<oo7::Secret, ashpd::Error> {
++    answer?;
++    let mut secret = Zeroizing::new(Vec::with_capacity(256));
++    tokio::time::timeout(READ_LIMIT, reader.read_to_end(&mut secret))
++        .await
++        .map_err(|_| timed_out("the Secret portal did not close the secret's socket"))??;
++    Ok(oo7::Secret::blob(secret.as_slice()))
++}
++
++fn timed_out(what: &str) -> ashpd::Error {
++    ashpd::Error::IO(std::io::Error::new(std::io::ErrorKind::TimedOut, what))
++}
++
++#[cfg(test)]
++mod tests {
++    use oo7::ashpd::desktop::ResponseError;
++    use tokio::io::AsyncWriteExt;
++
++    use super::*;
++
++    const WAIT: Duration = Duration::from_secs(5);
++
++    #[tokio::test]
++    async fn a_refused_request_returns_without_reading() {
++        let (reader, writer) = UnixStream::pair().expect("a socket pair");
++
++        // GNOME Keyring keeps its copy of the write end open after it fails.
++        let result = tokio::time::timeout(
++            WAIT,
++            read_secret(Err(ashpd::Error::Response(ResponseError::Other)), reader),
++        )
++        .await
++        .expect("a refused request must not wait on the socket");
++
++        assert!(
++            matches!(result, Err(ashpd::Error::Response(ResponseError::Other))),
++            "{result:?}"
++        );
++        drop(writer);
++    }
++
++    #[tokio::test]
++    async fn an_answered_request_reads_the_secret() {
++        let (reader, mut writer) = UnixStream::pair().expect("a socket pair");
++        writer.write_all(&[7; 64]).await.expect("the secret is written");
++        drop(writer);
++
++        let secret = tokio::time::timeout(WAIT, read_secret(Ok(()), reader))
++            .await
++            .expect("the read ends once the writer closes")
++            .expect("the secret");
++
++        assert_eq!(secret.as_bytes(), &[7; 64]);
++    }
++
++    #[tokio::test(start_paused = true)]
++    async fn an_answer_that_keeps_the_socket_open_times_out() {
++        let (reader, mut writer) = UnixStream::pair().expect("a socket pair");
++        writer.write_all(&[7; 64]).await.expect("the secret is written");
++
++        let result = read_secret(Ok(()), reader).await;
++
++        let Err(ashpd::Error::IO(error)) = result else {
++            panic!("expected a timed-out read, got {result:?}");
++        };
++        assert_eq!(error.kind(), std::io::ErrorKind::TimedOut);
++        drop(writer);
++    }
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4045** (2026-11-04): feat(account): TablePro accounts replace license keys on macOS (M16) (@datlechin)
-- **PR #4044** (2026-11-04): fix(databend): read statements as the server does in Safe Mode (@datlechin)
-- **PR #4043** (2026-11-04): fix(safe-mode): rate pg_background, pg_cron and TimescaleDB calls as writes (@datlechin)
-- **PR #4042** (2026-11-04): fix(windows): restore maximized windows in the Native AOT build (@datlechin)
-- **PR #4041** (2026-11-04): fix(databend): keep table names and bound values intact (@datlechin)
-- **PR #4040** (2026-11-04): fix(plugin-firebase): keep a leading combining mark in request paths (@datlechin)
+- **PR #4102** (2026-11-07): docs: bring back the README's Why TablePro for every platform (@datlechin)
+- **PR #4097** (2026-11-07): docs(security): send vulnerability reports to security@tablepro.app (@datlechin)
+- **PR #4096** (2026-11-07): docs: refresh the README and community files for every platform (@datlechin)
+- **PR #4095** (2026-11-07): ci: fit the Rust caches in the 10 GB Actions cache (@datlechin)
+- **PR #4093** (2026-11-07): fix(linux): recreate ostree's empty directories after pulling the Flatpak repository (@datlechin)
+- **PR #4092** (2026-11-07): chore(release): note the keyring fix in linux-v0.1.0-beta.3 (@datlechin)
 
 ---
 
@@ -3133,32 +2263,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ios): stop the iPad app on a Mac crashing when a connection opens (#4032)
+## X. docs(security): send vulnerability reports to [REDACTED_EMAIL] (#4097)
 
 **RULE**:
-When implementing operations in `apple/TableProMobile/TableProMobile/Views/ConnectedView.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TableProApp/TablePro. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `SECURITY.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TableProApp/TablePro. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `08b88783`: ios): stop the iPad app on a Mac crashing when a connection opens (#4032). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fecd3bd2`: docs(security): send vulnerability reports to [REDACTED_EMAIL] (#4097). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `apple/TableProMobile/TableProMobile/Views/ConnectedView.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `SECURITY.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-    private var sceneObjects: SceneObjects {
-        SceneObjects(appState: appState, coordinatorStore: coordinatorStore, presenter: presenter, menuState: menuState)
-    }
-
-            ConnectionFormSheet(connection: liveRecord ?? connection, objects: sceneObjects) { _ in
+Report it privately through [Report a vulnerability](https://github.com/TableProApp/TablePro/security/advisories/new), or email **security@tablepro.app**. Do not open a public issue, discussion or pull request for a vulnerability.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-            ConnectionFormView(editing: liveRecord ?? connection) { _ in
+Report it privately through [Report a vulnerability](https://github.com/TableProApp/TablePro/security/advisories/new), or email **hello@tablepro.app**. Do not open a public issue, discussion or pull request for a vulnerability.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `08b88783` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fecd3bd2` are properly handled with clean fallback behavior.

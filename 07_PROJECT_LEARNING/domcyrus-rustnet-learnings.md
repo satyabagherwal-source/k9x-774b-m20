@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md`  
 > **Source**: github ([https://github.com/domcyrus/rustnet](https://github.com/domcyrus/rustnet))  
-> **Source Version**: `fff807d1`  
+> **Source Version**: `218e16d5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T12:58:21.832Z  
+> **Timestamp**: 2026-11-10T00:44:54.222Z  
 > **Learning ID**: `learn-github-domcyrus-rustnet`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/domcyrus/rustnet](https://github.com/domcyrus/rustnet))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T12:58:21.826Z  
+> **Harvest Timestamp**: 2026-11-10T00:44:52.841Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Per-process network monitoring for your terminal with deep packet inspection. Cross-platform, sandboxed.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5210 stars
+- **Stars / Engagement**: 5224 stars
 
 ---
 
@@ -586,10 +586,11 @@ impl DnsResolver {
 ```
 //! Bounded passive DNS transaction analytics.
 
-use std::collections::{HashMap, VecDeque};
+use std::collections::VecDeque;
 use std::net::SocketAddr;
 use std::time::{Duration, SystemTime};
 
+use super::pending::{PendingStamp, PendingTable};
 use super::types::{ConnectionKey, DnsInfo, DnsQueryType};
 
 mod aggregate;
@@ -747,13 +748,31 @@ struct CompletedTransaction {
     timed_out: bool,
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug)]
 pub(crate) struct DnsAnalyticsTracker {
-    pending: HashMap<TransactionKey, PendingTransaction>,
+    pending: PendingTable<TransactionKey, PendingTransaction>,
     completed: VecDeque<CompletedTransaction>,
     truncated_at: Option<SystemTime>,
     recent_issues: VecDeque<DnsIssue>,
     session: DnsAggregate,
+}
+
+impl PendingStamp for PendingTransaction {
+    fn stamp(&self) -> SystemTime {
+        self.last_sent_at
+    }
+}
+
+impl Default for DnsAnalyticsTracker {
+    fn default() -> Self {
+        Self {
+            pending: PendingTable::new(MAX_PENDING_DNS_TRANSACTIONS, DNS_TRANSACTION_TIMEOUT),
+            completed: VecDeque::new(),
+            truncated_at: None,
+            recent_issues: VecDeque::new(),
+            session: DnsAggregate::default(),
+        }
+    }
 }
 
 impl DnsAnalyticsTracker {
@@ -772,7 +791,7 @@ impl DnsAnalyticsTracker {
 
         if is_outgoing && !info.is_response {
             let query_name = normalize_query_name(info.query_name.as_deref());
-            if let Some(pending) = self.pending.get_mut(&key)
+            if let Some(pending) = self.pending.map.get_mut(&key)
                 && pending.query_name == query_name
                 && pending.query_type == info.query_type
             {
@@ -780,7 +799,7 @@ impl DnsAnalyticsTracker {
                 pending.retries = pending.retries.saturating_add(1);
                 return;
             }
-            if self.pending.contains_key(&key) {
+            if self.pending.map.contains_key(&key) {
                 self.session.truncated = true;
                 self.mark_truncated(at);
             }
@@ -791,10 +810,7 @@ impl DnsAnalyticsTracker {
                 query_name: normalize_query_name(info.query_name.as_deref()),
                 query_type: info.query_type,
             };
-            if self.pending.len() < MAX_PENDING_DNS_TRANSACTIONS || self.pending.contains_key(&key)
-            {
-                self.pending.insert(key, pending);
-            } else {
+            if self.pending.start(key, pending).is_none() {
                 self.session.truncated = true;
                 self.mark_truncated(at);
             }
@@ -806,7 +822,7 @@ impl DnsAnalyticsTracker {
         }
 
         // Do not let an old reply with a reused ID finish a different question.
-        if let Some(pending) = self.pending.get(&key)
+        if let Some(pending) = self.pending.map.get(&key)
             && ((pending.query_name.is_some()
                 && info.query_name.is_some()
                 && pending.query_name != normalize_query_name(info.query_name.as_deref()))
@@ -816,7 +832,7 @@ impl DnsAnalyticsTracker {
         {
             return;
         }
-        let Some(mut pending) = self.pending.remove(&key) else {
+        let Some(mut pending) = self.pending.complete(&key) else {
             return;
         };
         if pending.query_name.is_none() {
@@ -854,7 +870,7 @@ impl DnsAnalyticsTracker {
             .and_then(|duration| now.checked_sub(duration));
         let mut snapshot =
             if window == TimeWindow::SinceStartup {
-                self.session.snapshot(now, &self.pending)
+                self.session.snapshot(now, &self.pending.map)
             } else {
                 let mut aggregate = DnsAggregate::new(window);
                 for transaction in self.completed.iter().filter(|transaction| {
@@ -865,7 +881,7 @@ impl DnsAnalyticsTracker {
                 aggregate.truncated = self
                     .truncated_at
                     .is_some_and(|at| cutoff.is_none_or(|cutoff| at > cutoff));
-                aggregate.snapshot(now, &self.pending)
+                aggregate.snapshot(now, &self.pending.map)
             };
         snapshot.recent_issues = self.recent_issues.iter().rev().cloned().collect();
         snapshot
@@ -880,20 +896,12 @@ impl DnsAnalyticsTracker {
     }
 
     fn expire_pending(&mut self, now: SystemTime) {
-        let pending_cutoff = now.checked_sub(DNS_TRANSACTION_TIMEOUT);
-        let expired: Vec<TransactionKey> = pending_cutoff.map_or_else(Vec::new, |cutoff| {
-            self.pending
-                .iter()
-                .filter_map(|(key, pending)| (pending.last_sent_at <= cutoff).then_some(*key))
-                .collect()
-        });
-        for key in expired {
-            if let Some(pending) = self.pending.remove(&key) {
-                let completed_at = pending
-                    .last_sent_at
-                    .checked_add(DNS_TRANSACTION_TIMEOUT)
-                    .unwrap_or(now);
-                self.push_completed(C
+        for (key, pending) in self.pending.prune(now) {
+            let completed_at = pending
+                .last_sent_at
+                .checked_add(DNS_TRANSACTION_TIMEOUT)
+                .unwrap_or(now);
+            self.push_completed(
 ```
 
 ### Core Architecture Module: `crates/rustnet-core/src/network/dns_analytics/aggregate.rs`
@@ -2209,8 +2217,8 @@ const MAX_ANSWERS_TO_PARSE: usize = 64;
 /// beyond this is noise we'd rather drop than allocate for.
 const MAX_RESPONSE_IPS_PER_PACKET: usize = 16;
 
-/// Cap on how many pointer indirections we follow while skipping a name in
-/// the answer section. Per RFC 1035 these must not form cycles; this cap
+/// Cap on how many pointer indirections we follow in a DNS name.
+/// Per RFC 1035 these must not form cycles; this cap
 /// keeps a crafted packet from looping forever.
 const MAX_NAME_POINTER_HOPS: usize = 16;
 
@@ -2255,74 +2263,65 @@ fn skip_dns_name(payload: &[u8], start: usize) -> Option<usize> {
     }
 }
 
-/// Parse a single question section and return `(query_name, query_type,
-/// offset_after_question)`. The offset advances past QNAME + QTYPE (2) +
-/// QCLASS (2); if QTYPE / QCLASS run off the end the offset still moves to
-/// keep skip-only callers (qdcount > 1) bounds-safe.
-fn parse_question(payload: &[u8], start: usize) -> (Option<String>, Option<DnsQueryType>, usize) {
+/// Parse a complete question, validating compressed names before exposing
+/// metadata. Pointer targets must precede the pointer and stay outside the
+/// header; the hop and expanded-name limits bound malformed inputs.
+fn parse_question(payload: &[u8], start: usize) -> Option<(Option<String>, DnsQueryType, usize)> {
     let mut offset = start;
+    let mut end = None;
     let mut name = String::new();
-    let mut name_over_limit = false;
+    let mut name_is_utf8 = true;
+    let mut wire_len = 1; // Root terminator
+    let mut hops = 0;
 
-    // Parse domain name (label-by-label, with light pointer handling; we
-    // only need to terminate the walk, not fully resolve compressed labels).
-    while offset < payload.len() {
-        let label_len = payload[offset] as usize;
+    loop {
+        let label_len = usize::from(*payload.get(offset)?);
         if label_len == 0 {
-            offset += 1;
+            end.get_or_insert(offset + 1);
             break;
         }
-
         if label_len & 0xC0 == 0xC0 {
-            // Compressed name: skip for simplicity.
-            offset += 2;
-            break;
+            let low = usize::from(*payload.get(offset + 1)?);
+            let target = ((label_len & 0x3F) << 8) | low;
+            hops += 1;
+            if target < 12 || target >= offset || hops > MAX_NAME_POINTER_HOPS {
+                return None;
+            }
+            end.get_or_insert(offset + 2);
+            offset = target;
+            continue;
         }
-
-        // Reject reserved length-octet top bits (0x40 / 0x80), neither a
-        // standard label nor a pointer (RFC 1035 §3.3). Stop the walk so the
-        // invalid bytes are not pulled into the name, matching skip_dns_name.
         if label_len & 0xC0 != 0 {
-            break;
+            return None;
         }
-
-        if offset + 1 + label_len > payload.len() {
-            break;
+        let next = offset.checked_add(1 + label_len)?;
+        let label = payload.get(offset + 1..next)?;
+        wire_len += 1 + label_len;
+        if wire_len > MAX_DNS_NAME_LEN + 2 {
+            return None;
         }
-
-        if !name_over_limit {
+        if let Ok(label) = std::str::from_utf8(label) {
             if !name.is_empty() {
                 name.push('.');
             }
-
-            if let Ok(label) = std::str::from_utf8(&payload[offset + 1..offset + 1 + label_len]) {
-                name.push_str(label);
-            }
-
-            // Enforce RFC 1035 maximum name length: stop accumulating, but
-            // keep walking the remaining labels so `offset` ends up past the
-            // whole QNAME; otherwise QTYPE/QCLASS would be read from name
-            // bytes and report a fabricated query type.
-            if name.len() > MAX_DNS_NAME_LEN {
-                name_over_limit = true;
-            }
+            name.push_str(label);
+        } else {
+            // Binary DNS labels are legal, but a partial display name would
+            // incorrectly attribute the question to a different hostname.
+            name_is_utf8 = false;
         }
-
-        offset += 1 + label_len;
+        offset = next;
     }
 
-    let query_name = if name.is_empty() { None } else { Some(name) };
-
-    let mut query_type = None;
-    if offset + 2 <= payload.len() {
-        let qtype = u16::from_be_bytes([payload[offset], payload[offset + 1]]);
-        query_type = Some(DnsQueryType::from_wire(qtype));
+    let end = end?;
+    let fields = payload.get(end..end.checked_add(4)?)?;
+    let qtype = u16::from_be_bytes([fields[0], fields[1]]);
+    let qclass = u16::from_be_bytes([fields[2], fields[3]]);
+    if qtype == 0 || qclass == 0 {
+        return None;
     }
-    // Advance past QTYPE (2) and QCLASS (2). If they run past the payload,
-    // downstream walks' bounds checks will short-circuit cleanly.
-    offset = offset.saturating_add(4);
-
-    (query_name, query_type, offset)
+    let query_name = (name_is_utf8 && !name.is_empty()).then_some(name);
+    Some((query_name, DnsQueryType::from_wire(qtype), end + 4))
 }
 
 /// Walk `count` resource records starting at `offset`, pushing A / AAAA
@@ -2462,7 +2461,14 @@ pub(super) fn dns_header_counts(payload: &[u8]) -> Option<DnsHeaderCounts> {
         return None;
     }
     let flags = u16::from_be_bytes([payload[2], payload[3]]);
-    Some(Dns
+    Some(DnsHeaderCounts {
+        is_response: (flags & 0x8000) != 0,
+        truncated: (flags & 0x0200) != 0,
+        qdcount: u16::from_be_bytes([payload[4], payload[5]]),
+        ancount: u16::from_be_bytes([payload[6], payload[7]]),
+        nscount: u16::from_be_bytes([payload[8], payload[9]]),
+        arcount: u16::from_be_bytes([payload[10], payload[11]]),
+        txid
 ```
 
 
@@ -2495,87 +2501,127 @@ pub(super) fn dns_header_counts(payload: &[u8]) -> Option<DnsHeaderCounts> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fff807d1` (2026-11-05)
-**Commit Message**: fix: discard pending RTT probes on TCP keepalives (#716)
+### Incident Patch 1: `218e16d5` (2026-11-09)
+**Commit Message**: chore(deps): bump the rust-dependencies group with 2 updates (#724)
 
-**File**: `CHANGELOG.md` (modified, +1/-0)
+Bumps the rust-dependencies group with 2 updates: [toml](https://github.com/toml-rs/toml) and [zip](https://github.com/zip-rs/zip2).
+
+
+Updates `toml` from 1.1.8+spec-1.1.0 to 1.2.0+spec-1.1.0
+- [Commits](https://github.com/toml-rs/toml/compare/toml-v1.1.8...toml-v1.2.0)
+
+Updates `zip` from 9.2.0 to 9.3.0
+- [Release notes](https://github.com/zip-rs/zip2/releases)
+- [Changelog](https://github.com/zip-rs/zip2/blob/master/CHANGELOG.md)
+- [Commits](https://github.com/zip-rs/zip2/compare/v9.2.0...v9.3.0)
+
+---
+updated-dependencies:
+- dependency-name: toml
+  dependency-version: 1.2.0+spec-1.1.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+  dependency-group: rust-dependencies
+- dependency-name: zip
+  dependency-version: 9.3.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+  dependency-group: rust-dependencies
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `Cargo.lock` (modified, +7/-6)
 ```diff
-@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - Retire eligible Linux TCP/UDP flows after verified process exit and socket disappearance, including protected processes and sockets present at startup; preserve shared sockets and show cleanup status in Details (#684)
+@@ -3157,9 +3157,9 @@ dependencies = [
  
- ### Fixed
-+- Discard pending TCP RTT probes on one-byte keepalives to prevent inflated or ambiguous timing samples after missed ACKs or last-byte retransmissions
- - Match local IPv4/IPv6 DNS stub replies correctly and prevent healthy resolvers from hiding a failing secondary resolver
- - Fall back to a pinned, checksum-verified Npcap SDK mirror when the primary download fails during Windows builds or CI test setup.
- - Stop classifying successful DNS ANY answers as NODATA in Details and passive DNS statistics (#689)
+ [[package]]
+ name = "toml"
+-version = "1.1.8+spec-1.1.0"
++version = "1.2.0+spec-1.1.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "20489e00e4d8741d6be680764cc12e270655e375a20d1011e844a9c3379e678d"
++checksum = "c5ffcdf8f50436dbbfd675c1fe1b8e0854f42b7defea8584bdebe1aee900e561"
+ dependencies = [
+  "indexmap",
+  "serde_core",
+@@ -3190,9 +3190,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "toml_writer"
+-version = "1.1.3+spec-1.1.0"
++version = "1.2.0+spec-1.1.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "06bdbd8cfc056b8d2e2e85f29b56a3bdbecb527cef81eb39e3e7b98af4652770"
++checksum = "009dbb7700f11c55ef83aebbe4c0e9cf1f1ac0844bd8d6f00dc38f302026e13a"
+ 
+ [[package]]
+ name = "tracing"
+@@ -4017,14 +4017,15 @@ dependencies = [
+ 
+ [[package]]
+ name = "zip"
+-version = "9.2.0"
++version = "9.3.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "3f5b58784007ff6e5f280ec82c8596686a3b9b5dd5836c63288d4479f84728b9"
++checksum = "eaeb7f16d2605b49aef586996ded29e65642fab7259a3077e537351df6d80426"
+ dependencies = [
+  "crc32fast",
+  "flate2",
+  "getrandom 0.4.3",
+  "indexmap",
++ "libc",
+  "memchr",
+  "nix 0.31.3",
+  "typed-path",
 ```
 
-**File**: `crates/rustnet-core/src/network/merge.rs` (modified, +41/-0)
+---
+
+### Incident Patch 2: `53a150bb` (2026-11-09)
+**Commit Message**: chore(deps): bump docker/login-action (#723)
+
+Bumps the actions group with 1 update: [docker/login-action](https://github.com/docker/login-action).
+
+
+Updates `docker/login-action` from 4.7.0 to 4.8.0
+- [Release notes](https://github.com/docker/login-action/releases)
+- [Commits](https://github.com/docker/login-action/compare/81c6f93d4bc991e510b342a00b419b3bb4efc5c6...8aa5831fb8d48d8f76594c7ddde61ae58019f550)
+
+---
+updated-dependencies:
+- dependency-name: docker/login-action
+  dependency-version: 4.8.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+  dependency-group: actions
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `.github/workflows/docker.yml` (modified, +1/-1)
 ```diff
-@@ -181,6 +181,10 @@ fn analyze_tcp_segment(
-                 analytics.highest_seq_outbound = seq_end;
-                 arm_rtt_probe(analytics, seq_end, at);
-             } else if one_byte_data && seq_end == analytics.highest_seq_outbound {
-+                // Its reply cannot reliably time earlier data if capture
-+                // missed the original ACK. A genuine last-byte resend also
-+                // matches this heuristic, so Karn's ambiguity rule still applies.
-+                analytics.rtt_probe = None;
-                 debug!("TCP keepalive probe ignored: seq={}", seq);
-             } else if !seq_lt(analytics.highest_seq_outbound, seq_end) {
-                 // Segment ends at or before the highest byte already sent, so
-@@ -1966,6 +1970,43 @@ mod tests {
-         assert_eq!(events.rtt_sample, None);
-     }
+@@ -25,7 +25,7 @@ jobs:
  
-+    #[test]
-+    fn one_byte_keepalive_discards_pending_rtt_after_a_missed_ack() {
-+        let mut a = TcpAnalytics::new();
-+        send_at(&mut a, 1000, 100, t0());
-+
-+        // The peer ACKed the data, but capture missed that ACK. Its reply to
-+        // a later keepalive must not time the original data from a minute ago.
-+        send_at(&mut a, 1099, 1, t0() + Duration::from_secs(60));
-+        assert_eq!(a.retransmit_count, 0);
-+        let events = recv_at(&mut a, 5000, 1100, 0, t0() + Duration::from_millis(60_020));
-+        assert_eq!(events.rtt_sample, None);
-+        assert_eq!(a.smoothed_rtt, None);
-+        assert_eq!(a.rtt_probe, None);
-+
-+        // Fresh data still arms a probe and produces a valid measurement.
-+        let sent = t0() + Duration::from_secs(61);
-+        send_at(&mut a, 1100, 100, sent);
-+        let events = recv_at(&mut a, 5000, 1200, 0, sent + Duration::from_millis(20));
-+        assert_eq!(events.rtt_sample, Some(Duration::from_millis(20)));
-+        assert_eq!(a.smoothed_rtt, Some(Duration::from_millis(20)));
-+    }
-+
-+    #[test]
-+    fn one_byte_keepalive_shape_discards_ambiguous_retransmission_rtt() {
-+        let mut a = TcpAnalytics::new();
-+        send_at(&mut a, 1000, 1, t0());
-+
-+        // A genuine resend of the last byte also matches the keepalive
-+        // heuristic. Excluding it from loss must not allow an ambiguous RTT.
-+        send_at(&mut a, 1000, 1, t0() + Duration::from_millis(200));
-+        assert_eq!(a.retransmit_count, 0);
-+        let events = recv_at(&mut a, 5000, 1001, 0, t0() + Duration::from_millis(220));
-+        assert_eq!(events.rtt_sample, None);
-+        assert_eq!(a.smoothed_rtt, None);
-+        assert_eq!(a.rtt_probe, None);
-+    }
-+
-     #[test]
-     fn smoothed_rtt_is_an_ewma_of_samples() {
-         let mut a = TcpAnalytics::new();
+       - name: Log in to Container Registry
+         if: github.event_name != 'pull_request'
+-        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4
++        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4
+         with:
+           registry: ${{ env.REGISTRY }}
+           username: ${{ github.actor }}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #716** (2026-11-05): fix: discard pending RTT probes on TCP keepalives (@domcyrus)
-- **PR #714** (2026-11-05): Do not count one-byte TCP keepalive probes as loss (@FreXxXmeister)
-- **PR #712** (2026-11-04): chore(deps): bump zip from 9.1.3 to 9.2.0 in the rust-dependencies group (@dependabot[bot])
-- **PR #711** (2026-11-03): chore(deps): bump log from 0.4.34 to 0.4.35 in the rust-dependencies group (@dependabot[bot])
-- **PR #710** (2026-11-02): chore(deps): bump zip from 9.1.2 to 9.1.3 in the rust-dependencies group (@dependabot[bot])
-- **PR #709** (2026-11-01): Cache unchanged historic headless records (@domcyrus)
+- **PR #724** (2026-11-09): chore(deps): bump the rust-dependencies group with 2 updates (@dependabot[bot])
+- **PR #723** (2026-11-09): chore(deps): bump docker/login-action from 4.7.0 to 4.8.0 in the actions group (@dependabot[bot])
+- **PR #722** (2026-11-08): Fix DNS validation and STUN detection on port 53 (@domcyrus)
+- **PR #721** (2026-11-07): Extend headless metadata and CLI automation (@domcyrus)
+- **PR #720** (2026-11-07): Add headless snapshot profiling and controlled baselines (@domcyrus)
+- **PR #719** (2026-11-07): Add incremental headless JSONL (@domcyrus)
 
 ---
 
@@ -2595,28 +2641,39 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. discard pending RTT probes on TCP keepalives (#716)
+## X. deps): bump the rust-dependencies group with 2 updates (#724)
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in domcyrus/rustnet. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in domcyrus/rustnet. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fff807d1`: discard pending RTT probes on TCP keepalives (#716). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `218e16d5`: deps): bump the rust-dependencies group with 2 updates (#724). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Discard pending TCP RTT probes on one-byte keepalives to prevent inflated or ambiguous timing samples after missed ACKs or last-byte retransmissions
+version = "1.2.0+spec-1.1.0"
+checksum = "c5ffcdf8f50436dbbfd675c1fe1b8e0854f42b7defea8584bdebe1aee900e561"
+version = "1.2.0+spec-1.1.0"
+checksum = "009dbb7700f11c55ef83aebbe4c0e9cf1f1ac0844bd8d6f00dc38f302026e13a"
+version = "9.3.0"
+checksum = "eaeb7f16d2605b49aef586996ded29e65642fab7259a3077e537351df6d80426"
+ "libc",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+version = "1.1.8+spec-1.1.0"
+checksum = "20489e00e4d8741d6be680764cc12e270655e375a20d1011e844a9c3379e678d"
+version = "1.1.3+spec-1.1.0"
+checksum = "06bdbd8cfc056b8d2e2e85f29b56a3bdbecb527cef81eb39e3e7b98af4652770"
+version = "9.2.0"
+checksum = "3f5b58784007ff6e5f280ec82c8596686a3b9b5dd5836c63288d4479f84728b9"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fff807d1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `218e16d5` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/runanywhereai-runanywhere-sdks-learnings.md`  
 > **Source**: github ([https://github.com/RunanywhereAI/runanywhere-sdks](https://github.com/RunanywhereAI/runanywhere-sdks))  
-> **Source Version**: `a403990b`  
+> **Source Version**: `87865ea8`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T07:33:19.978Z  
+> **Timestamp**: 2026-11-06T22:28:41.990Z  
 > **Learning ID**: `learn-github-runanywhereai-runanywhere-sdks`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/runanywhereai-runanywhere-sdks-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/RunanywhereAI/runanywhere-sdks](https://github.com/RunanywhereAI/runanywhere-sdks))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T07:33:19.966Z  
+> **Harvest Timestamp**: 2026-11-06T22:28:40.737Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Production ready toolkit to run AI locally
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 10333 stars
+- **Stars / Engagement**: 10332 stars
 
 ---
 
@@ -1427,11 +1427,13 @@ internal object QHexRTSkelInstaller {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1204** (2026-11-02): **Web generateStructured should await StructuredOutputProtoAdapter.parseAsync**
-  *Symptoms*: Follow-up from #1136 by @Adityakk9031 — thanks again for that PR!  ## What `bindings/web/packages/core/src/Public/API/Namespaces/llm.ts:320` calls the synchronous `adapter.parse(...)`. `StructuredOutputProtoAdapter.parse` throws when `mustUseLlamaBackendWorker()` is true (see `Adapters/StructuredOutputProtoAdapter.ts:39`), and the adapter already offers `parseAsync`. The call predates #1136, which makes the llama path the default mode.  ## Why it matters With a worker-owned llama model, `generateStructured` generates fine and then throws at the parse step.  ## Suggested approach Call `await adapter.parseAsync(...)` (guarding on the same proto-parse support check) and keep the sync path only where no worker owns the model.  ## Done when - [ ] `generateStructured` returns a parsed result when the llama model is owned by the BackendWorker.  Not blocking #1136. @Adityakk9031, you know this code well now — you're welcome to take this one if you're interested.  _Opened with help from Claude Code and Codex._  _Reviewed with help from Claude Code and Codex._ <!-- oss-pr-review-merge v1 kind=followup-issue head=8b849b3 pr=1136 t=5ce8ce4b84 --> 
+- **Issue #1262** (2026-11-04): **Make rac_classify_null_directory_listing decode UTF-8 paths on Windows**
+  *Symptoms*: Follow-up from #1261 by @mlzerotoheroyoutube - thanks again for that PR!  ## What `rac_directory_probe.h:40` documents `path` as UTF-8, but `core/src/infrastructure/file_management/directory_probe.cpp:25` passes the `const char*` straight to `std::filesystem::status`. On Windows that overload decodes with the ANSI code page, so an existing directory with a non-ASCII name can come back as `RAC_ERROR_FILE_NOT_FOUND` (or an inconclusive read failure).  ## Why it matters The function is now public API, so Windows consumers (Electron, Python, cpp-desktop) can reach it. A wrong `FILE_NOT_FOUND` lets orphan pruning clear registry state for a folder that still exists. Not an issue on Android, which is the only caller today.  ## Suggested approach Under `#if defined(_WIN32)` build the path from `rac_to_wstring(path)` (`core/src/core/internal/platform_compat.h`) inside the existing `try` block, or use the desktop UTF-8 path helper if it fits. Alternatively narrow the header doc to say UTF-8 is guaranteed on POSIX only.  ## Done when - [ ] A non-ASCII directory path is classified correctly on Windows, or the header documents the limitation.  Not blocking #1261. @mlzerotoheroyoutube, you know this code well now - you're welcome to take this one if you're interested.  _Opened with help from Claude Code and Codex._  _Reviewed with help from Claude Code and Codex._ <!-- oss-pr-review-merge v1 kind=followup-issue head=80349e4 pr=1261 t=fa04a838d1 --> 
 
-- **Issue #1200** (2026-11-03): **Clean up registry state when a plugin replace is refused as busy**
-  *Symptoms*: Follow-up from #975 by @shubhamsinnh — thanks again for that PR!  ## What In `core/src/plugin/rac_plugin_registry.cpp` (around line 459-465), `rac_plugin_register` now returns `RAC_ERROR_PLUGIN_BUSY` when the plugin being replaced still has a model lease. That early return leaves the incoming vtable's pending entry in `manifests_by_vtable` (the priority-reject path just below erases it), and the `dl_handles.try_emplace` above it has already run, leaving an empty entry. The try-register helpers in `bindings/electron/native/addon.cpp` (around line 500) and `bindings/python/native/module.cpp` (around line 408) treat only success, duplicate and already-registered as benign, so a busy refusal would be recorded as the backend being unavailable.  ## Why it matters Re-registering a backend while a segmentation model is loaded is rare, but when it happens the registry keeps a stale manifest entry, and a working backend can be reported as missing.  ## Suggested approach Erase `manifests_by_vtable[vtable]` before the busy return, make the `dl_handles` emplace happen after the busy and priority checks, and treat `RAC_ERROR_PLUGIN_BUSY` like `RAC_ERROR_PLUGIN_DUPLICATE` in the two helpers (as `plugin_loader.cpp:272` already does).  ## Done when - [ ] A busy refusal leaves no `manifests_by_vtable` or `dl_handles` residue - [ ] A busy refusal is not recorded as plugin-unavailable by the Electron and Python helpers  Not blocking #975. @shubhamsinnh, you know this code well now — you're welco
+- **Issue #1257** (2026-11-05): **Voice agent initialize path ignores config.vad_config (VAD threshold never applied)**
+  *Symptoms*: Follow-up from #1255 by @ayaangazali - thanks again for that PR!  ## What The standalone voice-agent compose path builds its config in `core/src/features/voice_agent/voice_agent_d7_abi.cpp` (~line 1347) and passes it to `rac_voice_agent_initialize`, which never reads `config.vad_config`. Only `voice_agent_proto_abi.cpp` (~lines 175-181) configures the VAD component, and it discards the return code with `(void)`. So the presence-aware `activation_threshold` that #1255 now preserves in `config_from_proto` (`voice_agent_internal_helpers.cpp:437`) is ignored on the d7 path.  ## Why it matters A caller who sets `vad_config.activation_threshold` (including an explicit 0.0) through the d7 create path gets the VAD component's default instead. The gap predates #1255.  ## Suggested approach Apply `config.vad_config` to the VAD component in the initialize path through a helper shared with `voice_agent_proto_abi.cpp`, and check its return code instead of discarding it.  ## Done when - [ ] A threshold set through the d7 compose path reaches the VAD component. - [ ] The VAD configure result is checked on both paths.  Not blocking #1255. @ayaangazali, you know this code well now - you're welcome to take this one if you're interested.  _Opened with help from Claude Code and Codex._  _Reviewed with help from Claude Code and Codex._ <!-- oss-pr-review-merge v1 kind=followup-issue head=43d6aff pr=1255 t=6943186997 --> 
+  **Post-Mortem & Fix Analysis**:
+  > Thanks, I'll take this one. One thing I noticed while answering the thread: `rac_voice_agent_initialize` drops all of `vad_config` on that path, so sample rate and frame length are lost too, not only the threshold. Electron's `voice_bridge.cpp` and Flutter's `dart_bridge_voice_agent.dart` both create through `rac_voice_agent_component_create_proto`, so they're the callers that hit it. I'll aim for applying it once inside `rac_voice_agent_initialize` so both create paths share it, and check the result there. PR should be up tomorrow. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1448,1255 +1450,1225 @@ internal object QHexRTSkelInstaller {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `40053ed9` (2026-11-03)
-**Commit Message**: fix(commons): reject default tool keys that collide after UTF-8 repair (#1233)
+### Incident Patch 1: `65b3ace3` (2026-11-04)
+**Commit Message**: fix(model-registry): preserve downloads on inconclusive fs probes (#1267)
 
-* fix(commons): reject default tool keys that collide after UTF-8 repair
+* fix(model-registry): preserve downloads on inconclusive fs probes
 
-* fix(commons): close key-collision gaps found in PR review
+Directory listing adapters now return FILE_NOT_FOUND only for confirmed missing or non-directory paths, and FILE_READ_FAILED for denied or inconclusive reads. A failed child type probe aborts the listing instead of being emitted as a regular file.
 
-Reject ambiguous default tool calls wherever the parser could still read them,
-and stop rejecting the ones it cannot.
+Before pruning an incomplete model folder, commons requires a successful exhaustive bounded walk of the whole folder tree, so a readable root companion cannot hide an unreadable nested directory. The locked recheck and atomic commit from #1170 are unchanged.
 
-Guard coverage:
-- Scan every `<tool_call>` envelope, not just the first. With
-  `parallel_tool_calls` later envelopes are dispatched too, and their colliding
-  keys were repaired out of sight before parsing.
-- Decode and scan JSON-encoded `arguments` string values (`arguments`, `args`,
-  `params`, `parameters`, `input`), so an OpenAI-style envelope whose whole
-  argument object lives inside one string token is rejected instead of being
-  dispatched with one silently chosen value. The decode mirrors the parser's
-  own unescape and keeps malformed bytes intact, so repair provenance survives.
-- Skip closed thinking blocks in the generation-boundary check on grammar
-  backends. Those backends strip think blocks before parsing, so a colliding
-  example inside one can never reach a parser or an executor and must not fail
-  the turn. Every other backend still c
+* fix: address review findings for permission-safe pruning
 
-**File**: `core/src/features/llm/tool_calling.cpp` (modified, +20/-0)
+Treat vanished or unprobeable child entries as inconclusive while still listing dangling symlinks as non-directories. Reject partial, saturated, and oversized-name listings instead of returning success.
+
+Walk the whole tree before pruning folders with no finished artifact, include hidden directories in desktop/Web enumeration, and align the desktop adapter with the missing-vs-inconclusive contract.
+
+* fix(web): define FILE_READ_FAILED for listing errors
+
+* fix: complete adapter cont
+
+**File**: `bindings/electron/native/posix_platform_adapter.cpp` (modified, +64/-7)
 ```diff
-@@ -32,6 +32,7 @@
- #include <vector>
+@@ -27,6 +27,7 @@
+ #include "posix_platform_adapter.h"
  
- #include "features/llm/tool_calling_internal.h"
-+#include "features/llm/tool_calling_key_repair_internal.h"
- #include "features/llm/utf8_internal.h"
- #include "rac/core/rac_logger.h"
- #include "rac/features/llm/rac_tool_calling.h"
-@@ -923,13 +924,32 @@ static std::string validation_errors_to_json(const std::vector<std::string>& err
- // JSON NORMALIZATION
- // =============================================================================
+ #include "rac/core/rac_error.h"
++#include "rac/core/rac_logger.h"
+ #include "rac/core/rac_types.h"
  
-+/**
-+ * @brief Normalize a tool-call JSON payload, repairing malformed UTF-8.
-+ *
-+ * Rejects payloads whose distinct raw keys decode to the same key after repair
-+ * (`RAC_ERROR_INVALID_ARGUMENT`), then repairs bytes and re-serializes valid
-+ * JSON, falling back to the unquoted-key normalizer when the fast parse fails.
-+ *
-+ * @param json_str Raw JSON payload (must not be null).
-+ * @param out_normalized Receives the owned normalized string on success.
-+ * @return RAC_SUCCESS (repaired on the fast path, or via the unquoted-key
-+ *         scanner when the fast parser rejects the payload),
-+ *         RAC_ERROR_INVALID_ARGUMENT for ambiguous keys,
-+ *         RAC_ERROR_OUT_OF_MEMORY on allocation failure, or RAC_ERROR_INTERNAL
-+ *         for an unexpected exception.
-+ */
- extern "C" rac_result_t rac_tool_call_normalize_json(const char* json_str,
-                                                        char** out_normalized) try {
-     if (!json_str || !out_normalized) {
-         return RAC_ERROR_INVALID_ARGUMENT;
-     }
-     *out_normalized = nullptr;
+ namespace fs = std::filesystem;
+@@ -37,6 +38,36 @@ namespace {
+ // so the "callbacks may run on any thread" contract holds without locking.
+ std::string g_secure_dir;
  
-+    if (rac::llm::tool_calling::has_repaired_key_collision(json_str)) {
-+        return RAC_ERROR_INVALID_ARGUMENT;
-+    }
++// Distinguish a confirmed missing/non-directory path from a permission or I/O
++// failure. The boolean std::filesystem probes collapse both into false, which
++// lets orphan pruning mistake an unreadable download folder for a vanished one.
++bool is_confirmed_missing(const std::error_code& ec) {
++    return ec == std::errc::no_such_file_or_directory || ec == std::errc::not_a_directory;
++}
 +
-     // Repair before the fast parse as well as unquoted-key normalization, so
-     // malformed model bytes do not make otherwise valid JSON take the scanner path.
-     const std::string sanitized = rac::llm::sanitize_utf8(json_str);
-```
-
-**File**: `core/src/features/llm/tool_calling_generation_internal.h` (modified, +42/-0)
-```diff
-@@ -9,6 +9,7 @@
- #include "features/llm/llm_thinking_directive_internal.h"
- #include "features/llm/llm_thinking_tags_internal.h"
- #include "features/llm/rac_llm_lifecycle_bridge.h"
-+#include "features/llm/tool_calling_key_repair_internal.h"
- #include "features/llm/utf8_internal.h"
- #include "rac/features/llm/rac_llm_service.h"
- #include "rac/features/llm/rac_llm_thinking.h"
-@@ -318,6 +319,24 @@ inline runanywhere::v1::FinishReason finish_reason_from_raw(const rac_llm_result
- }
- #endif
- 
-+/**
-+ * @brief Runs one constrained generation step for the tool-calling loop.
-+ *
-+ * Applies the per-step sampling, grammar dialect, and history overrides on
-+ * @p generation, drives the loaded engine, and either copies the sanitized
-+ * output into @p out_response or reports the failure code through @p out_rc.
-+ * Ambiguous repaired-key collisions are rejected here, before the output is
-+ * copied or measured, so they can never reach a parser or an executor.
-+ *
-+ * @param generation Step options and cached thinking-tag state (in/out).
-+ * @param cancel_binding Handles exposed to rac_*_cancel while generating.
-+ * @param prompt Fully formatted prompt for this step.
-+ * @param out_response Sanitized model output on success (may be null).
-+ * @param out_rc Receives RAC_SUCCESS or the failure code.
-+ * @param agg Optional telemetry accumulator for this loop.
-+ * @param out_finish_reason Optional finish-reason output (protobuf builds).
-+ * @return true on success; false when the step failed (see @p out_rc).
-+ */
- inline bool run_generate_once(GenerationState& generation,
-                               const GenerationCancelBinding& cancel_binding,
-                               const std::string& prompt, std::string* out_response,
-@@ -460,6 +479,29 @@ inline bool run_generate_once(GenerationState& generation,
-         return false;
-     }
- 
-+    if (raw.text) {
-+        // Grammar backends strip closed thinking blocks before parsing, so a
-+        // collision that only exists inside a think block can never reach a
-+        // parser or an executor. Every other backend parses the whole raw
-+        // output, so it keeps the full check.
-+        std::string body;
-+        const std::string full(raw.text);
-+        const std::string* check_text = &full;
-+        if (ref.supports_grammar) {
-+            std::string thinking;
-+            split_display_text_and_thinking(full, &body, &thinking, generation);
-+            check_text = &body;
++// Confirm that `directory` exists and is a directory. Only an affirmative
++// missing/non-directory result maps to FILE_NOT_FOUND; denied or unknown
++// probes stay inconclusive for callers that preserve registry state.
++rac_result_t classify_directory_probe(const fs::path& directory) {
++    std::error_code ec;
++    const fs::file_status status = fs::status(directory, ec);
++    if (is_confirmed_missing(ec)) {
++        return RAC_ERROR_FILE_NOT_FOUND;
++    }
++    if (ec) {
++        return RAC_ERROR_FILE_READ_FAILED;
++    }
++    switch (status.type()) {
++        case fs::file_type::not_found:
++            return RAC_ERROR_FILE_NOT_FOUND;
++        case fs::file_type::none:
++        case fs::file_type::unknown:
++            return RAC_ERROR_FILE_READ_FAILED;
++        default:
++            return fs::is_directory(status) ? RAC_SUCCESS : RAC_ERROR_FILE_NOT_FOUND;
++    }
++}
++
+ const char* level_name(rac_log_level_t lvl) {
+     switch (lvl) {
+         case RAC_LOG_TRACE: return "TRACE";
+@@ -290,28 +321,54 @@ rac_result_t posix_list_dir(const char* dir_path, rac_directory_entry_t* out_ent
+     if (!dir_path || !in_out_count) return RAC_ERROR_INVALID_ARGUMENT;
+     std::error_code ec;
+     fs::path dir(dir_path);
+-    if (!fs::is_directory(dir, ec) || ec) return RAC_ERROR_FILE_NOT_FOUND;
++    const rac_result_t probe_rc = classify_directory_probe(dir);
++    if (probe_rc != RAC_SUCCESS) return probe_rc;
+     const size_t cap = out_entries ? *in_out_count : 0;
+     size_t written = 0, total = 0;
+     for (fs::directory_iterator it(dir, ec), end; !ec && it != end; it.increment(ec)) {
+         ++total;
+         if (!out_entries || written >= cap) continue;
+         std::string name = it->path().filename().string();
+-        if (name.size() + 1 > RAC_DIRECTORY_ENTRY_NAME_MAX) continue;  // skip oversized
++        if (name.size() + 1 > RAC_DIRECTORY_ENTRY_NAME_MAX) {
++            // A skipped name makes this a partial listing; callers must not
++            // mistake it for a complete directory.
++            RAC_LOG_WARNING("PlatformAdapter", "oversized entry in %s", dir_path);
++            return RAC_ERROR_FILE_READ_FAILED;
 +        }
-+        if (default_call_has_repaired_key_collision(*check_text)) {
-+            rac_llm_result_free(&raw);
-+            release_lifecycle_llm(&ref);
-+            if (out_rc) {
-+                *out_rc = RAC_ERROR_INVALID_ARGUMENT;
-+            }
-+            return false;
++        // The type probe decides whether the walk recurses. A failed probe
++        // must stay inconclusive instead of reporting a regular file.
++        std::error_code type_ec;
++        fs::file_status child_status = fs::status(it->path(), type_ec);
++        if (is_confirmed_missing(type_ec)) {
++            // A dangling symlink has a missing target but is still a
++            // non-directory entry; a vanished entry stays inconclusive.
++            type_ec.clear();
++            child_status = fs::symlink_status(it->path(), type_ec);
 +        }
-+    }
-+
-     if (out_response) {
-         // Both orchestration paths serialize model output into ToolParseRequest
-         // string fields before parsing; repair bytes before that strict boundary.
-```
-
-**File**: `core/src/features/llm/tool_calling_key_repair_internal.h` (added, +333/-0)
-```diff
-@@ -0,0 +1,333 @@
-+#ifndef RAC_FEATURES_LLM_TOOL_CALLING_KEY_REPAIR_INTERNAL_H
-+#define RAC_FEATURES_LLM_TOOL_CALLING_KEY_REPAIR_INTERNAL_H
-+
-+#include <cctype>
-+#include <nlohmann/json.hpp>
-+#include <string>
-+#include <unordered_map>
-+#include <vector>
-+
-+#include "features/llm/utf8_internal.h"
-+
-+namespace rac::llm::tool_calling {
-+
-+namespace key_repair_detail {
-+
-+/** Lowercases one ASCII byte. JSON keywords are ASCII, so no locale is needed. */
-+inline char ascii_lower(char ch) {
-+    return (ch >= 'A' && ch <= 'Z') ? static_cast<char>(ch - 'A' + 'a') : ch;
-+}
-+
-+/** Lowercased copy for case-insensitive keyword comparison. */
-+inline std::string ascii_lower(const std::string& value) {
-+    std::string lowered = value;
-+    for (char& ch : lowered) {
-+        ch = ascii_lower(ch);
-+    }
-+    return lowered;
-+}
-+
-+/**
-+ * Keys the parser accepts as the tool-call wrapper (`TOOL_NAME_KEYS` in
-+ * tool_calling.cpp). An object reached through one of these is an envelope the
-+ * parser unwraps, and string-encoded arguments inside it are decoded.
-+ */
-+inline bool is_tool_alias(const std::string& key) {
-+    const std::string lowered = ascii_lower(key);
-+    return lowered == "tool" || lowered == "name" || lowered == "function" || lowered == "func" ||
-+           lowered == "method" || lowered == "action" || lowered == "command";
-+}
-+
-+/**
-+ * Keys the parser decodes as an argument object (`ARGUMENT_KEYS` in
-+ * tool_calling.cpp). The parser matches them case-insensitively, so this must
-+ * too: `"Arguments"` is decoded exactly like `"arguments"`.
-+ */
-+inline bool is_argument_alias(const std::string& key) {
-+    const std::string lowered = ascii_lower(key);
-+    return lowered == "arguments" || lowered == "args" || lowered == "params" ||
-+           lowered == "parameters" || lowered == "input";
-+}
-+
-+/** Appends one code point as UTF-8. */
-+inline void append_utf8(unsigned int codepoint, std::string* out) {
-+    if (codepoint < 0x80) {
-+        out->push_back(static_cast<char>(codepoint));
-+    } else if (codepoint < 0x800) {
-+        out->push_back(static_cast<char>(0xC0 | (codepoint >> 6)));
-+        out->push_back(static_cast<char>(0x80 | (codepoint & 0x3F)));
-+    } else if (codepoint < 0x10000) {
-+        out->push_back(static_cast<char>(0xE0 | (codepoint >> 12)));
-+        out->push_back(static_cast<char>(0x80 | ((codepoint >> 6) & 0x3F)));
-+        out->push_back(static_cast<char>(0x80 | (codepoint & 0x3F)));
-+    } else {
-+        out->push_back(static_cast<char>(0xF0 | (codepoint >> 18)));
-+        out->push_back(static_cast<char>(0x80 | ((codepoint >> 12) & 0x3F)));
-+        out->push_back(static_cast<char>(0x80 | ((codepoint >> 6) & 0x3F)));
-+        out->push_back(static_cast<char>(0x80 | (codepoint & 0x3F)));
-+    }
-+}
-+
-+/** Reads four hex digits at @p pos of @p token. False when they are not hex. */
-+inline bool read_hex4(const std::string& token, size_t pos, unsigned int* out) {
-+    if (pos + 3 >= token.size()) {
-+        return false;
-+    }
-+    unsigned int value = 0;
-+    for (size_t i = 0; i < 4; ++i) {
-+        const char ch = token[pos + i];
-+        unsigned int digit = 0;
-+        if (ch >= '0' && ch <= '9') {
-+            digit = static_cast<unsigned int>(ch - '0');
-+        } else if (ch >= 'a' && ch <= 'f') {
-+            digit = static_cast<unsigned int>(ch - 'a') + 10;
-+        } else if (ch >= 'A' && ch <= 'F') {
-+            digit = static_cast<unsigned int>(ch - 'A') + 10;
++        if (type_ec || child_status.type() == fs::file_type::none ||
++            child_status.type() == fs::file_type::unknown ||
++            child_status.type() == fs::file_type::not_found) {
++            return RAC_ERROR_FILE_READ_FAILED;
++        }
++        const bool is_dir = fs::is_directory(child_status);
+         std::strncpy(out_entries[written].name, name.c_str(), RAC_DIRECTORY_ENTRY_NAME_MAX - 1);
+         out_entries[written].name[RAC_DIRECTORY_ENTRY_NAME_MAX - 1] = '\0';
+-        std::error_code ec2;
+-        bool is_dir = fs::is_directory(it->path(), ec2);
+         out_entries[written].is_dir = is_dir ? RAC_TRUE : RAC_FALSE;
+-        out_entries[written].size_bytes =
+-            is_dir ? 0 : static_cast<int64_t>(fs::file_size(it->path(), ec2));
+-        if (ec2) {
++        if (is_dir) {
+             out_entries[written].size_bytes = 0;
 +        } else {
-+            return false;
-+        }
-+        value = (value << 4) | digit;
++            std::error_code size_ec;
++            const auto size = fs::file_size(it->path(), size_ec);
++            out_entries[written].size_bytes = size_ec ? 0 : static_cast<int64_t>(size);
+         }
+         ++written;
+     }
+     // A failed open/advance is an I/O error, not an empty or shorter listing.
+     if (ec) return RAC_ERROR_FILE_READ_FAILED;
++    if (out_entries && total > cap) {
++        // The caller's buffer was too small: a partial fill is not a listing.
++        return RAC_ERROR_FILE_READ_FAILED;
 +    }
-+    *out = value;
-+    return true;
-+}
-+
-+/**
-+ * Decode one quoted JSON string token into the bytes the parser's JSON layer
-+ * sees. `\uXXXX` escapes are decoded (including surrogate pairs) because the
-+ * default-format envelope is re-serialized by nlohmann before extraction:
-+ * `\u007B` reaches the parser as `{`, so it has to reach the scan as `{` too or
-+ * the encoded object stays invisible. Malformed raw bytes are carried through
-+ * untouched, which is what keeps their repair provenance observable.
-+ *
-+ * @param token Quoted token, quotes included.
-+ */
-+inline std::string decode_json_string_token(const std::string& token) {
-+    std::string decoded;
-+    if (token.size() < 2) {
-+        return decoded;
-+    }
-+    const size_t last = token.size() - 2;  // last content byte
-+    decoded.reserve(last);
-+    for (size_t i = 1; i <= last; ++i) {
-+        const char ch = token[i];
-+        if (ch != '\\' || i + 1 > last) {
-+            decoded += ch;
-+            continue;
-+        }
-+        const char escaped = token[++i];
-+        switch (escaped) {
-+            case 'n':
-+                decoded += '\n';
-+                break;
-+            case 'r':
-+                decoded += '\r';
-+                break;
-+            case 't':
-+                decoded += '\t';
-+                break;
-+            case 'b':
-+                decoded += '\b';
-+                break;
-+            case 'f':
-+   
-```
-
-**File**: `core/tests/test_tool_calling.cpp` (modified, +107/-0)
-```diff
-@@ -122,6 +122,112 @@ int test_parse_default_invalid_utf8() {
-     return 0;
+     *in_out_count = out_entries ? written : total;
+     return RAC_SUCCESS;
  }
- 
-+/** @brief Collisions are rejected at normalization and parse level; valid
-+ *         duplicates and non-key JSON text stay accepted. */
-+int test_default_repaired_key_collisions() {
-+    // Normalization-level rejections. Bare objects carry no tool name, so a
-+    // parse-level assertion on them would hold with or without the guard; the
-+    // parse contract is covered by `call_collisions` below.
-+    const char* normalize_collisions[] = {
-+        "{\"x\xFF\":1,\"x\xFE\":2}",
-+        "{\"nested\":{\"x\xFF\":1,\"x\xFE\":2}}",
-+        "{\"items\":[{\"x\xFF\":1,\"x\xFE\":2}]}",
-+        "{\"x\xFF\":1,\"x\uFFFD\":2}",
-+        "{\"x\uFFFD\":1,\"x\xFF\":2}",
-+        "{\"x\\uFFFD\":1,\"x\xFF\":2}",
-+        "{\"\\u0078\xFF\":1,\"x\xFE\":2}",
-+        "{nested:{\"x\xFF\":1,\"x\xFE\":2}}",
-+        "{\"tool\":\"lookup\",\"arguments\":{\"x\xFF\":1,\"x\xFE\":2}}",
-+        // Wrapper shapes whose string-encoded arguments the parser decodes.
-+        "{\"function\":{\"name\":\"lookup\",\"arguments\":\"{\\\"x\xFF\\\":1,\\\"x\xFE\\\":2}\"}}",
-+        "{\"function\":{\"name\":\"lookup\",\"Arguments\":\"{\\\"x\xFF\\\":1,\\\"x\xFE\\\":2}\"}}",
-+        "{\"function\":{\"name\":\"lookup\",\"arguments\":"
-+        "\"\\u007B\\\"x\xFF\\\":1,\\\"x\xFE\\\":2\\u007D\"}}",
-+        "{\"tool_calls\":[{\"type\":\"function\",\"function\":{\"name\":\"lookup\","
-+        "\"arguments\":\"{\\\"x\xFF\\\":1,\\\"x\xFE\\\":2}\"}}]}",
-+    };
-+    for (const char* input : normalize_collisions) {
-+        char* normalized = nullptr;
-+        ASSERT_EQ_INT(rac_tool_call_normalize_json(input, &normalized), RAC_ERROR_INVALID_ARGUMENT);
-+        ASSERT_TRUE(normalized == nullptr);
-+    }
-+    // The same ambiguity through a full default call must parse to no call.
-+    const char* call_collisions[] = {
-+        "{\"tool\":\"lookup\",\"arguments\":{\"x\xFF\":1,\"x\xFE\":2}}",
-+        "{\"function\":{\"name\":\"lookup\",\"arguments\":\"{\\\"x\xFF\\\":1,\\\"x\xFE\\\":2}\"}}",
-+        "{\"function\":{\"name\":\"lookup\",\"Arguments\":\"{\\\"x\xFF\\\":1,\\\"x\xFE\\\":2}\"}}",
-+        "{\"function\":{\"name\":\"lookup\",\"arguments\":"
-+        "\"\\u007B\\\"x\xFF\\\":1,\\\"x\xFE\\\":2\\u007D\"}}",
-+        "{\"tool_calls\":[{\"type\":\"function\",\"function\":{\"name\":\"lookup\","
-+        "\"arguments\":\"{\\\"x\xFF\\\":1,\\\"x\xFE\\\":2}\"}}]}",
-+    };
-+    for (const char* input : call_collisions) {
-+        const std::string call_text = std::string("<tool_call>") + input + "</tool_call>";
-+        rac_tool_call_t call{};
-+        ASSERT_EQ_INT(rac_tool_call_parse(call_text.c_str(), &call), RAC_SUCCESS);
-+        ASSERT_EQ_INT(call.has_tool_call, RAC_FALSE);
-+        ASSERT_TRUE(call.arguments_json == nullptr);
-+        rac_tool_call_free(&call);
-+    }
-+    // Each allowed case pins its exact normalized output, so a silently wrong
-+    // value cannot pass by only proving normalization succeeded.
-+    struct AllowedCase {
-+        const char* input;
-+        const char* expected;
-+    };
-+    const AllowedCase allowed[] = {
-+        {"{\"x\":1,\"x\":2,\"value\":\"\xFF\"}", "{\"x\":2,\"value\":\"\xEF\xBF\xBD\"}"},
-+        {"{\"x\uFFFD\":1,\"x\uFFFD\":2}", "{\"x\uFFFD\":2}"},
-+        {"{\"a\":{\"x\xFF\":1},\"b\":{\"x\xFE\":2}}",
-+         "{\"a\":{\"x\uFFFD\":1},\"b\":{\"x\uFFFD\":2}}"},
-+        {"{\"items\":[{\"x\xFF\":1},{\"x\xFE\":2}]}",
-+         "{\"items\":[{\"x\uFFFD\":1},{\"x\uFFFD\":2}]}"},
-+        {"{\"x\xFF\":1,\"y\xFE\":2}", "{\"x\uFFFD\":1,\"y\uFFFD\":2}"},
-+        {"{\"path\":\"C:\\\\\",\"x\xFF\":1,\"text\":\"{}\\\"x:\"}",
-+         "{\"path\":\"C:\\\\\",\"x\uFFFD\":1,\"text\":\"{}\\\"x:\"}"},
-+        // Valid duplicate keys keep last-wins, including inside a decoded
-+        // arguments string.
-+        {"{\"function\":{\"name\":\"lookup\",\"arguments\":\"{\\\"x\\\":1,\\\"x\\\":2}\"}}",
-+         "{\"function\":{\"name\":\"lookup\",\"arguments\":\"{\\\"x\\\":1,\\\"x\\\":2}\"}}"},
-+        // A non-arguments string value is data, not keys: never rejected, and
-+        // its bytes are repaired like any other value.
-+        {"{\"note\":\"{\\\"x\xFF\\\":1,\\\"x\xFE\\\":2}\"}",
-+         "{\"note\":\"{\\\"x\xEF\xBF\xBD\\\":1,\\\"x\xEF\xBF\xBD\\\":2}\"}"},
-+        // The parser wraps top-level string arguments as {"input": ...}; it
-+        // never expands them into keys, so this is not ambiguous.
-+        {"{\"tool\":\"lookup\",\"arguments\":\"{\\\"x\xFF\\\":1,\\\"x\xFE\\\":2}\"}",
-+         "{\"tool\":\"lookup\",\"arguments\":\"{\\\"x\xEF\xBF\xBD\\\":1,"
-+         "\\\"x\xEF\xBF\xBD\\\":2}\"}"},
-+        // Object-valued arguments are passed through unchanged, so JSON text in
-+        // ordinary tool data is data, not keys.
-+        {"{\"tool\":\"lookup\",\"arguments\":{\"metadata\":{\"arguments\":"
-+         "\"{\\\"x\xFF\\\":1,\\\"x\xFE\\\":2}\"}}}",
-+         "{\"tool\":\"lookup\",\"arguments\":{\"metadata\":{\"arguments\":"
-+ 
 ```
 
-**File**: `core/tests/test_tool_calling_run_loop.cpp` (modified, +174/-0)
+**File**: `bindings/electron/native/win32_platform_adapter.cpp` (modified, +64/-7)
 ```diff
-@@ -587,6 +587,174 @@ int test_one_tool_call_then_final_text() {
-     return 0;
+@@ -18,6 +18,7 @@
+ #include "win32_platform_adapter.h"
+ 
+ #include "rac/core/rac_error.h"
++#include "rac/core/rac_logger.h"
+ #include "rac/core/rac_types.h"
+ 
+ namespace fs = std::filesystem;
+@@ -28,6 +29,36 @@ namespace {
+ // so the "callbacks may run on any thread" contract holds without locking.
+ std::string g_secure_dir;
+ 
++// Distinguish a confirmed missing/non-directory path from a permission or I/O
++// failure. The boolean std::filesystem probes collapse both into false, which
++// lets orphan pruning mistake an unreadable download folder for a vanished one.
++bool is_confirmed_missing(const std::error_code& ec) {
++    return ec == std::errc::no_such_file_or_directory || ec == std::errc::not_a_directory;
++}
++
++// Confirm that `directory` exists and is a directory. Only an affirmative
++// missing/non-directory result maps to FILE_NOT_FOUND; denied or unknown
++// probes stay inconclusive for callers that preserve registry state.
++rac_result_t classify_directory_probe(const fs::path& directory) {
++    std::error_code ec;
++    const fs::file_status status = fs::status(directory, ec);
++    if (is_confirmed_missing(ec)) {
++        return RAC_ERROR_FILE_NOT_FOUND;
++    }
++    if (ec) {
++        return RAC_ERROR_FILE_READ_FAILED;
++    }
++    switch (status.type()) {
++        case fs::file_type::not_found:
++            return RAC_ERROR_FILE_NOT_FOUND;
++        case fs::file_type::none:
++        case fs::file_type::unknown:
++            return RAC_ERROR_FILE_READ_FAILED;
++        default:
++            return fs::is_directory(status) ? RAC_SUCCESS : RAC_ERROR_FILE_NOT_FOUND;
++    }
++}
++
+ const char* level_name(rac_log_level_t lvl) {
+     switch (lvl) {
+         case RAC_LOG_TRACE: return "TRACE";
+@@ -259,28 +290,54 @@ rac_result_t win_list_dir(const char* dir_path, rac_directory_entry_t* out_entri
+     if (!dir_path || !in_out_count) return RAC_ERROR_INVALID_ARGUMENT;
+     std::error_code ec;
+     fs::path dir = utf8_path(dir_path);
+-    if (!fs::is_directory(dir, ec) || ec) return RAC_ERROR_FILE_NOT_FOUND;
++    const rac_result_t probe_rc = classify_directory_probe(dir);
++    if (probe_rc != RAC_SUCCESS) return probe_rc;
+     const size_t cap = out_entries ? *in_out_count : 0;
+     size_t written = 0, total = 0;
+     for (fs::directory_iterator it(dir, ec), end; !ec && it != end; it.increment(ec)) {
+         ++total;
+         if (!out_entries || written >= cap) continue;
+         std::string name = wide_to_utf8(it->path().filename().wstring());  // UTF-8 contract
+-        if (name.size() + 1 > RAC_DIRECTORY_ENTRY_NAME_MAX) continue;  // skip oversized
++        if (name.size() + 1 > RAC_DIRECTORY_ENTRY_NAME_MAX) {
++            // A skipped name makes this a partial listing; callers must not
++            // mistake it for a complete directory.
++            RAC_LOG_WARNING("PlatformAdapter", "oversized entry in %s", dir_path);
++            return RAC_ERROR_FILE_READ_FAILED;
++        }
++        // The type probe decides whether the walk recurses. A failed probe
++        // must stay inconclusive instead of reporting a regular file.
++        std::error_code type_ec;
++        fs::file_status child_status = fs::status(it->path(), type_ec);
++        if (is_confirmed_missing(type_ec)) {
++            // A dangling symlink has a missing target but is still a
++            // non-directory entry; a vanished entry stays inconclusive.
++            type_ec.clear();
++            child_status = fs::symlink_status(it->path(), type_ec);
++        }
++        if (type_ec || child_status.type() == fs::file_type::none ||
++            child_status.type() == fs::file_type::unknown ||
++            child_status.type() == fs::file_type::not_found) {
++            return RAC_ERROR_FILE_READ_FAILED;
++        }
++        const bool is_dir = fs::is_directory(child_status);
+         std::strncpy(out_entries[written].name, name.c_str(), RAC_DIRECTORY_ENTRY_NAME_MAX - 1);
+         out_entries[written].name[RAC_DIRECTORY_ENTRY_NAME_MAX - 1] = '\0';
+-        std::error_code ec2;
+-        bool is_dir = fs::is_directory(it->path(), ec2);
+         out_entries[written].is_dir = is_dir ? RAC_TRUE : RAC_FALSE;
+-        out_entries[written].size_bytes =
+-            is_dir ? 0 : static_cast<int64_t>(fs::file_size(it->path(), ec2));
+-        if (ec2) {
++        if (is_dir) {
+             out_entries[written].size_bytes = 0;
++        } else {
++            std::error_code size_ec;
++            const auto size = fs::file_size(it->path(), size_ec);
++            out_entries[written].size_bytes = size_ec ? 0 : static_cast<int64_t>(size);
+         }
+         ++written;
+     }
+     // A failed open/advance is an I/O error, not an empty or shorter listing.
+     if (ec) return RAC_ERROR_FILE_READ_FAILED;
++    if (out_entries && total > cap) {
++        // The caller's buffer was too small: a partial fill is not a listing.
++        return RAC_ERROR_FILE_READ_FAILED;
++    }
+     *in_out_count = out_entries ? written : total;
+     return RAC_SUCCESS;
  }
- 
-+int test_default_repaired_key_collision_never_executes() {
-+    if (!load_mock_llm())
-+        return 1;
-+    set_responses({
-+        "<tool_call>{\"tool\":\"get_weather\",\"arguments\":{\"x\xFF\":1,\"x\xFE\":2}}</tool_call>",
-+    });
-+    auto request = make_request("Look up the weather.");
-+    request.mutable_options()->set_validate_calls(false);
-+    std::vector<uint8_t> bytes;
-+    CHECK(serialize(request, &bytes), "collision request serializes");
-+    ExecutorState exec;
-+    rac_proto_buffer_t out{};
-+    rac_proto_buffer_init(&out);
-+    const rac_result_t rc = run_loop(bytes.data(), bytes.size(), executor_callback, &exec, &out);
-+    CHECK(exec.invocation_count == 0, "ambiguous call never reaches executor");
-+    CHECK(generate_calls() == 1, "ambiguous call does not synthesize a result");
-+    CHECK(rc == RAC_ERROR_INVALID_ARGUMENT, "collision returns invalid argument");
-+    runanywhere::v1::ToolCallingResult result;
-+    CHECK(out.data && result.ParseFromArray(out.data, static_cast<int>(out.size)),
-+          "collision error result decodes");
-+    CHECK(result.error_code() == RAC_ERROR_INVALID_ARGUMENT,
-+          "collision reports invalid argument");
-+    rac_proto_buffer_free(&out);
-+    cleanup_environment();
-+    return 0;
-+}
-+
-+/** @brief A collision in a later envelope (parallel_tool_calls) never dispatches. */
-+int test_second_default_envelope_collision_never_executes() {
-+    if (!load_mock_llm())
-+        return 1;
-+    // With parallel_tool_calls every envelope is dispatched, so a colliding key
-+    // in a later envelope must fail the turn exactly like one in the first.
-+    set_responses({
-+        "<tool_call>{\"tool\":\"get_weather\",\"arguments\":{\"location\":\"Paris\"}}</tool_call>"
-+        "<tool_call>{\"tool\":\"get_weather\",\"arguments\":{\"x\xFF\":1,\"x\xFE\":2}}</tool_call>",
-+    });
-+    auto request = make_request("Look up the weather twice.");
-+    request.mutable_options()->set_validate_calls(false);
-+    request.mutable_options()->set_parallel_tool_calls(true);
-+    std::vector<uint8_t> bytes;
-+    CHECK(serialize(request, &bytes), "parallel collision request serializes");
-+    ExecutorState exec;
-+    rac_proto_buffer_t out{};
-+    rac_proto_buffer_init(&out);
-+    const rac_result_t rc = run_loop(bytes.data(), bytes.size(), executor_callback, &exec, &out);
-+    CHECK(exec.invocation_count == 0, "parallel ambiguous call never reaches executor");
-+    CHECK(generate_calls() == 1, "parallel ambiguous call does not synthesize a result");
-+    CHECK(rc == RAC_ERROR_INVALID_ARGUMENT, "parallel collision returns invalid argument");
-+    rac_proto_buffer_free(&out);
-+    cleanup_environment();
-+    return 0;
-+}
-+
-+/** @brief A collision inside encoded function.arguments never dispatches. */
-+int test_envelope_string_arguments_collision_never_executes() {
-+    if (!load_mock_llm())
-+        return 1;
-+    // OpenAI-style envelope: the whole argument object is one JSON-encoded
-+    // string. Its colliding keys must be rejected before dispatch, not repaired
-+    // into a silently last-wins value.
-+    set_responses({
-+        "<tool_call>{\"function\":{\"name\":\"get_weather\",\"arguments\":"
-+        "\"{\\\"x\xFF\\\":1,\\\"x\xFE\\\":2}\"}}</tool_call>",
-+    });
-+    auto request = make_request("Look up the weather.");
-+    request.mutable_options()->set_validate_calls(false);
-+    std::vector<uint8_t> bytes;
-+    CHECK(serialize(request, &bytes), "encoded-arguments collision request serializes");
-+    ExecutorState exec;
-+    rac_proto_buffer_t out{};
-+    rac_proto_buffer_init(&out);
-+    const rac_result_t rc = run_loop(bytes.data(), bytes.size(), executor_callback, &exec, &out);
-+    CHECK(exec.invocation_count == 0, "encoded-arguments collision never reaches executor");
-+    CHECK(generate_calls() == 1, "encoded-arguments collision does not synthesize a result");
-+    CHECK(rc == RAC_ERROR_INVALID_ARGUMENT,
-+          "encoded-arguments collision returns invalid argument");
-+    rac_proto_buffer_free(&out);
-+    cleanup_environment();
-+    return 0;
-+}
-+
-+/** @brief \u-escaped braces must not hide an encoded argument collision. */
-+int test_envelope_unicode_escaped_arguments_collision_never_executes() {
-+    if (!load_mock_llm())
-+        return 1;
-+    // Braces written as \u007B/\u007D survive normalization as real braces, so
-+    // the parser expands this object and would dispatch it last-wins unless the
-+    // scan decodes the escapes first.
-+    set_responses({
-+        "<tool_call>{\"function\":{\"name\":\"get_weather\",\"arguments\":"
-+        "\"\\u007B\\\"x\xFF\\\":1,\\\"x\xFE\\\":2\\u007D\"}}</tool_call>",
-+    });
-+    auto request = make_request("Look up the weather.");
-+    request.mutable_options()->set_validate_calls(false);
-+    std::vector<uint8_t> bytes;
-+    CHECK(serialize(request, &bytes), "escaped-brace collision request serializes");
-+    ExecutorState e
 ```
 
-**File**: `core/tests/test_tool_calling_session_proto.cpp` (modified, +33/-0)
+**File**: `bindings/kotlin/src/main/kotlin/com/runanywhere/sdk/foundation/bridge/extensions/CppBridgePlatformAdapter.kt` (modified, +50/-27)
 ```diff
-@@ -491,6 +491,38 @@ runanywhere::v1::ToolCallingSessionCreateRequest make_request(const std::string&
-     return request;
- }
+@@ -10,6 +10,9 @@
  
-+/** @brief An ambiguous call fails the session with INVALID_ARGUMENT and emits no tool call. */
-+int test_session_repaired_key_collision_never_emits_call() {
-+    if (!load_mock_llm())
-+        return 1;
-+    set_responses({
-+        "<tool_call>{\"tool\":\"get_weather\",\"arguments\":{\"items\":[{\"x\xFF\":1,\"x\xFE\":2}]}"
-+        "}</tool_call>",
-+    });
-+    EventSink sink;
-+    auto request = make_request("Look up the weather.");
-+    request.mutable_options()->set_validate_calls(false);
-+    std::vector<uint8_t> bytes;
-+    CHECK(serialize(request, &bytes), "collision session request serializes");
-+    uint64_t handle = 0;
-+    sink.published_handle = &handle;
-+    const rac_result_t rc = rac_tool_calling_session_create_proto(
-+        bytes.data(), bytes.size(), sink_callback, &sink, capture_session_handle, &handle);
-+    using EvCase = runanywhere::v1::ToolCallingSessionEvent::KindCase;
-+    CHECK(sink.count_kind(EvCase::kToolCall) == 0, "ambiguous session never emits a tool call");
-+    CHECK(rc == RAC_SUCCESS, "ambiguous session create succeeds and reports via events");
-+    CHECK(sink.count_kind(EvCase::kErrorBytes) == 1, "ambiguous session emits exactly one error");
-+    runanywhere::v1::SDKError error;
-+    CHECK(parse_first_error(sink, &error), "ambiguous session error decodes");
-+    CHECK(error.c_abi_code() == RAC_ERROR_INVALID_ARGUMENT,
-+          "ambiguous session error is invalid argument");
-+    if (handle) {
-+        rac_tool_calling_session_destroy_proto(handle);
-+    }
-+    cleanup_environment();
-+    return 0;
-+}
-+
- int test_session_emits_tool_call() {
-     if (!load_mock_llm()) {
-         std::fprintf(stderr, "FAIL: mock LLM load\n");
-@@ -1466,6 +1498,7 @@ int main() {
-         return 0;
- #else
-         test_session_emits_tool_call();
-+        test_session_repaired_key_collision_never_emits_call();
-         test_step_with_result_emits_final();
-         test_step_with_result_emits_final("\xC3\x28", "\xEF\xBF\xBD(");
-         test_auto_execute_unset_defaults_to_true_and_pauses_for_tool_execution();
-```
-
----
-
-### Incident Patch 2: `8916580f` (2026-11-03)
-**Commit Message**: fix(jni): validate cached refs and method ids across registration paths (#1044) (#1070)
-
-* fix(jni): validate cached refs and method ids across registration paths (#1044)
-
-- Validate GetObjectClass before GetMethodID lookups across all registration functions
-- Reject nativeFileManagerRegisterCallbacks leaving globals untouched if any method ID or NewGlobalRef fails
-- Guard all g_fc_* method IDs in jni_fc_* callbacks before Call*Method calls
-- Validate NewGlobalRef in device, telemetry, and download registration paths, ensuring C callbacks are uninstalled/cleared on failure
-- Clear active JNI exceptions on lookup/allocation failures
-
-* fix(jni): preserve existing platform adapter until replacement is validated
-
-- Defer DeleteGlobalRef on existing adapter until replacement method IDs and global ref succeed
-- Resolve optional method IDs into local variables before committing globals
-- Avoid leaving process with null callbacks if new adapter is invalid or refused
-- Register download progress C callback before committing g_download_proto_listener
-
-Signed-off-by: shobhitagnihotri69 <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: shobhitagnihotri69 <[REDACTED_EMAIL]>
-Co-authored-by: shobhit
-
-**File**: `core/src/jni/runanywhere_commons_jni.cpp` (modified, +216/-53)
-```diff
-@@ -1699,6 +1699,13 @@ Java_com_runanywhere_sdk_native_bridge_RunAnywhereBridge_racSetPlatformAdapter(J
-     }
+ package com.runanywhere.sdk.foundation.bridge.extensions
  
-     jclass adapterClass = env->GetObjectClass(adapter);
-+    if (adapterClass == nullptr) {
-+        if (env->ExceptionCheck() == JNI_TRUE) {
-+            env->ExceptionClear();
-+        }
-+        LOGe("racSetPlatformAdapter: failed to get adapter class");
-+        return RAC_ERROR_INVALID_ARGUMENT;
-+    }
++import android.system.ErrnoException
++import android.system.Os
++import android.system.OsConstants
+ import com.runanywhere.sdk.infrastructure.logging.SDKLogger
+ import com.runanywhere.sdk.native.bridge.RunAnywhereBridge
+ import java.io.File
+@@ -27,7 +30,7 @@ import java.io.IOException
+  * @property name UTF-8 entry name (no path component). MUST fit in
+  *                [CppBridgePlatformAdapter.NAME_MAX_BYTES] including the
+  *                trailing NUL byte that the JNI layer appends; oversized
+- *                entries MUST be filtered by the producer (we do this in
++ *                entries MUST make the listing fail (enforced by
+  *                [CppBridgePlatformAdapter.fileListDirectory]).
+  * @property isDir true when the entry is a directory.
+  * @property sizeBytes file size in bytes; 0 for directories or unknown.
+@@ -74,10 +77,8 @@ object CppBridgePlatformAdapter {
+      * returned via [RacDirectoryEntry]. Mirrors
+      * `RAC_DIRECTORY_ENTRY_NAME_MAX` in `rac_platform_adapter.h`.
+      *
+-     * Per the truncation contract on `rac_directory_entry_t::name`,
+-     * oversized entries MUST be skipped rather than truncated so the
+-     * no-error path never returns a half-name that could alias a
+-     * different on-disk artifact.
++     * Per the contract on `rac_directory_entry_t::name`, oversized entries
++     * make the listing inconclusive. They are never skipped or truncated.
+      */
+     const val NAME_MAX_BYTES: Int = 512
  
-     const auto resolve_required = [&](const char* name, const char* sig) -> jmethodID {
-         const jmethodID id = env->GetMethodID(adapterClass, name, sig);
-@@ -1733,6 +1740,9 @@ Java_com_runanywhere_sdk_native_bridge_RunAnywhereBridge_racSetPlatformAdapter(J
- 
-     jobject adapterRef = env->NewGlobalRef(adapter);
-     if (adapterRef == nullptr) {
-+        if (env->ExceptionCheck() == JNI_TRUE) {
-+            env->ExceptionClear();
-+        }
-         LOGe("racSetPlatformAdapter: failed to create a global reference for the adapter");
-         env->DeleteLocalRef(adapterClass);
-         return RAC_ERROR_INITIALIZATION_FAILED;
-@@ -1764,13 +1774,13 @@ Java_com_runanywhere_sdk_native_bridge_RunAnywhereBridge_racSetPlatformAdapter(J
-         env->GetMethodID(adapterClass, "fileListDirectory",
-                          "(Ljava/lang/String;)[Lcom/runanywhere/sdk/foundation/bridge/extensions/"
-                          "RacDirectoryEntry;");
--    if (env->ExceptionCheck()) {
-+    if (env->ExceptionCheck() == JNI_TRUE) {
-         env->ExceptionClear();
-         g_method_file_list_directory = nullptr;
-     }
-     g_method_is_non_empty_directory =
-         env->GetMethodID(adapterClass, "isNonEmptyDirectory", "(Ljava/lang/String;)Z");
--    if (env->ExceptionCheck()) {
-+    if (env->ExceptionCheck() == JNI_TRUE) {
-         env->ExceptionClear();
-         g_method_is_non_empty_directory = nullptr;
-     }
-@@ -3181,35 +3191,77 @@ Java_com_runanywhere_sdk_native_bridge_RunAnywhereBridge_racDeviceManagerSetCall
-         env->DeleteGlobalRef(g_device_jni_state.callback_obj);
-         g_device_jni_state.callback_obj = nullptr;
-     }
-+    g_device_jni_state.get_device_info_method = nullptr;
-+    g_device_jni_state.get_device_id_method = nullptr;
-+    g_device_jni_state.is_registered_method = nullptr;
-+    g_device_jni_state.set_registered_method = nullptr;
-+    g_device_jni_state.http_post_method = nullptr;
- 
-     if (callbacks == nullptr) {
-         LOGw("racDeviceManagerSetCallbacks: null callbacks");
-+        rac_device_manager_clear_callbacks();
-         return RAC_ERROR_INVALID_ARGUMENT;
-     }
- 
--    // Create global reference
--    g_device_jni_state.callback_obj = env->NewGlobalRef(callbacks);
--
-     // Cache method IDs
-     jclass cls = env->GetObjectClass(callbacks);
--    g_device_jni_state.get_device_info_method =
--        env->GetMethodID(cls, "getDeviceInfo", "()Ljava/lang/String;");
--    g_device_jni_state.get_device_id_method =
--        env->GetMethodID(cls, "getDeviceId", "()Ljava/lang/String;");
--    g_device_jni_state.is_registered_method = env->GetMethodID(cls, "isRegistered", "()Z");
--    g_device_jni_state.set_registered_method = env->GetMethodID(cls, "setRegistered", "(Z)V");
--    g_device_jni_state.http_post_method =
--        env->GetMethodID(cls, "httpPost", "(Ljava/lang/String;Ljava/lang/String;Z)I");
-+    if (cls == nullptr) {
-+        if (env->ExceptionCheck() == JNI_TRUE) {
-+            env->ExceptionClear();
-+        }
-+        LOGe("racDeviceManagerSetCallbacks: failed to get class from callbacks object");
-+        rac_device_manager_clear_callbacks();
-+        return RAC_ERROR_INVALID_ARGUMENT;
-+    }
-+
-+    const auto resolve_method = [&](const char* name, const char* sig) -> jmethodID {
-+        const jmethodID id = env->GetMethodID(cls, name, sig);
-+        if (env->ExceptionCheck() == JNI_TRUE) {
-+            env->ExceptionClear();
-+        }
-+        return id;
-+    };
-+
-+    const jmethodID m_get_device_info =
-+        resolve_method("getDeviceInfo", "()Ljava/lang/String;");
-+    const jmethodID m_get_device_id =
-+        resolve_method("getDeviceId", "()Ljava/lang/String;");
-+    const jmethodID m_is_registered =
-+        resolve_method("isRegistered", "()Z");
-+    const jmethodID m_set_registered =
-+        resolve_method("setRegistered", "(Z)V");
-+    const jmethodID m_http_post =
-+        resolve_method("httpPost", "(Ljava/lang/String;Ljava/lang/String;Z)I");
-+
-     env->DeleteLocalRef(cls);
- 
--    // Verify methods found
--    if (!g_device_jni_state.get_device_id_method || !g_device_jni_state.is_registered_method) {
--        LOGe("racDeviceManagerSetCallbacks: required methods not found");
--        env->DeleteGlobalRef(g_device_jni_state.callback_obj);
--        g_device_jni_state.callback_obj = nullptr;
-+    // Verify all five methods found
-+    if (!m_get_device_info || !m_get_device_id || !m_is_registered ||
-+        !m_set_registered || !m_http_post) {
-+        LOGe("racDeviceManagerSetCallbacks: required methods not found "
-+             "(getDeviceInfo/getDev
-```
-
----
-
-### Incident Patch 3: `90001907` (2026-11-03)
-**Commit Message**: fix(qhexrt): restore example catalog architecture eligibility (#1156)
-
-* refactor(qhexrt): use explicit URL registration
-
-* fix(kotlin): preserve model registration failures
-
-* fix(flutter): complete registration metadata types
-
-* style: satisfy Flutter and Kotlin checks
-
-* fix(qhexrt): address registration review feedback
-
-* fix(registration): preserve optional metadata safely
-
-* fix(registration): align Swift metadata and JNI errors
-
-* fix(qhexrt): address architecture registration review
-
-* fix(qhexrt): complete catalog review corrections
-
-* fix: map native proto failures and preserve download size
-
-* fix(flutter): preserve native model registration failures
-
-* fix(kotlin): preserve discovery and JSON failure contracts
-
-* fix(flutter): normalize model registration failures
-
-* docs(qhexrt): correct initialization and registration examples
-
-* fix(qhexrt): improve model registration diagnostics
-
-* fix(qhexrt): document guarded bundle registration
-
-* test(react-native): cover native registration error conversion
-
-* fix(qhexrt): restore example catalog architecture eligibility
-
-* fix(sdk): preserve registration metadata and native failure details
-
-Propagate Kotlin tool serialization 
-
-**File**: `.github/workflows/pr-build.yml` (modified, +8/-0)
-```diff
-@@ -520,6 +520,14 @@ jobs:
-           dart run melos run analyze
-           dart run melos run test
- 
-+      # The example is outside the Melos package workspace.
-+      - name: Test QHexRT example catalog eligibility
-+        working-directory: bindings/flutter/example
-+        run: |
-+          set -euo pipefail
-+          flutter pub get
-+          flutter test --no-pub test/qhexrt_model_catalog_test.dart
-+
-   rn-typecheck:
-     runs-on: ubuntu-22.04
-     steps:
-```
-
-**File**: `bindings/flutter/example/lib/core/services/qhexrt_model_catalog.dart` (modified, +51/-7)
-```diff
-@@ -115,10 +115,13 @@ abstract final class QHexRTModelCatalog {
-   static Set<String> get registeredModelIds =>
-       snapshots.value.registeredModelIds;
- 
--  /// Kept in lockstep with Android's `ModelCatalog.npuCatalog`.
-+  /// Curated public examples, preserving the former native architecture masks.
-+  /// The private kitten_nano_0_8_varlen variant is deliberately not seeded;
-+  /// adding it requires an explicit HF-auth preflight, not just an arch pin.
-   static const List<QHexRTCatalogModel> models = [
-     QHexRTCatalogModel(
-       id: 'qwen3_0_6b',
-+      excludedArchitectures: {HexagonArch.HEXAGON_ARCH_V79},
-       name: 'Qwen3 0.6B (HNPU)',
-       url:
-           'https://huggingface.co/runanywhere/qwen3_0_6b_HNPU/qwen3-0.6b-1024final.json',
-@@ -147,6 +150,7 @@ abstract final class QHexRTModelCatalog {
-     ),
-     QHexRTCatalogModel(
-       id: 'qwen3_5_4b',
-+      excludedArchitectures: {HexagonArch.HEXAGON_ARCH_V75},
-       name: 'Qwen3.5 4B (HNPU)',
-       url:
-           'https://huggingface.co/runanywhere/qwen3_5_4b_HNPU/qwen3.5-4b-1024.json',
-@@ -156,6 +160,7 @@ abstract final class QHexRTModelCatalog {
-     ),
-     QHexRTCatalogModel(
-       id: 'qwen3_vl_2b_text',
-+      pinnedArchitecture: HexagonArch.HEXAGON_ARCH_V81,
-       name: 'Qwen3-VL 2B Text (HNPU)',
-       url:
-           'https://huggingface.co/runanywhere/qwen3_vl_HNPU/qwen3vl-2b-text-512.json',
-@@ -193,6 +198,7 @@ abstract final class QHexRTModelCatalog {
-     ),
-     QHexRTCatalogModel(
-       id: 'llama3_2_1b',
-+      excludedArchitectures: {HexagonArch.HEXAGON_ARCH_V75},
-       name: 'Llama 3.2 1B (HNPU)',
-       url:
-           'https://huggingface.co/runanywhere/llama3_2_1b_HNPU/llama-3.2-1b.json',
-@@ -202,31 +208,33 @@ abstract final class QHexRTModelCatalog {
-     ),
-     QHexRTCatalogModel(
-       id: 'phi_tiny_moe',
-+      excludedArchitectures: {HexagonArch.HEXAGON_ARCH_V75},
-       name: 'Phi Tiny MoE (HNPU)',
-       url: 'https://huggingface.co/runanywhere/phi_tiny_moe_HNPU/phimoe.json',
-       category: _language,
-       memoryBytes: 4721494520,
-     ),
-     QHexRTCatalogModel(
-+      // Preserve the native QAIRT restriction: the v79 bundle needs 2.48.
-       id: 'gemma3n_e4b',
-+      pinnedArchitecture: HexagonArch.HEXAGON_ARCH_V81,
-       name: 'Gemma 3n E4B (HNPU)',
-       url:
-           'https://huggingface.co/runanywhere/gemma3n_e4b_HNPU/gemma-3n-E4B-it.json',
-       category: _language,
-       memoryBytes: 10929816419,
--      // The V79 bundle requires QAIRT 2.48; Android currently ships 2.47.
--      pinnedArchitecture: HexagonArch.HEXAGON_ARCH_V81,
-     ),
-     QHexRTCatalogModel(
-       id: 'gemma4_e2b',
-+      excludedArchitectures: {HexagonArch.HEXAGON_ARCH_V75},
-       name: 'Gemma 4 E2B (HNPU)',
--      url:
--          'https://huggingface.co/runanywhere/gemma4_e2b_HNPU/gemma4-e2b.json',
-+      url: 'https://huggingface.co/runanywhere/gemma4_e2b_HNPU/gemma4-e2b.json',
-       category: _language,
-       memoryBytes: 9252275672,
-     ),
-     QHexRTCatalogModel(
-       id: 'gemma4_e4b',
-+      pinnedArchitecture: HexagonArch.HEXAGON_ARCH_V81,
-       name: 'Gemma 4 E4B (HNPU)',
-       url:
-           'https://huggingface.co/runanywhere/gemma4_e4b_HNPU/gemma-4-E4B.json',
-@@ -235,6 +243,7 @@ abstract final class QHexRTModelCatalog {
-     ),
-     QHexRTCatalogModel(
-       id: 'nemotron_nano_8b',
-+      excludedArchitectures: {HexagonArch.HEXAGON_ARCH_V79},
-       name: 'Llama 3.1 Nemotron Nano 8B (HNPU)',
-       url:
-           'https://huggingface.co/runanywhere/nemotron_nano_8b_HNPU/nemotron-nano-8b.json',
-@@ -243,6 +252,7 @@ abstract final class QHexRTModelCatalog {
-     ),
-     QHexRTCatalogModel(
-       id: 'nemoguard_content_8b',
-+      pinnedArchitecture: HexagonArch.HEXAGON_ARCH_V81,
-       name: 'NemoGuard 8B Content Safety (HNPU)',
-       url:
-           'https://huggingface.co/runanywhere/nemoguard_8b_content_safety_HNPU/nemoguard-content-8b.json',
-@@ -251,6 +261,7 @@ abstract final class QHexRTModelCatalog {
-     ),
-     QHexRTCatalogModel(
-       id: 'nemoguard_topic_8b',
-+      pinnedArchitecture: HexagonArch.HEXAGON_ARCH_V81,
-       name: 'NemoGuard 8B Topic Control (HNPU)',
-       url:
-           'https://huggingface.co/runanywhere/nemoguard_8b_topic_control_HNPU/nemoguard-topic-8b.json',
-@@ -259,6 +270,7 @@ abstract final class QHexRTModelCatalog {
-     ),
-     QHexRTCatalogModel(
-       id: 'ternary_bonsai_1_7b',
-+      excludedArchitectures: {HexagonArch.HEXAGON_ARCH_V79},
-       name: 'Ternary Bonsai 1.7B (HNPU)',
-       url:
-           'https://huggingface.co/runanywhere/ternary_bonsai_1_7b_HNPU/ternary-bonsai-1.7b-1024.json',
-@@ -268,6 +280,7 @@ abstract final class QHexRTModelCatalog {
-     ),
-     QHexRTCatalogModel(
-       id: 'bonsai_1_7b_1bit',
-+      pinnedArchitecture: HexagonArch.HEXAGON_ARCH_V81,
-       name: 'Bonsai-1.7B 1-bit (HNPU, fully-on-NPU)',
-       url:
-           'https://huggingface.co/runanywhere/bonsai_1_7b_1bit_HNPU/bonsai-1.7b-1bit-1024.json',
-@@ -277,6 +290,7 @
-```
-
-**File**: `bindings/flutter/example/test/qhexrt_model_catalog_test.dart` (modified, +269/-34)
-```diff
-@@ -5,6 +5,130 @@ import 'package:runanywhere_ai/core/services/model_catalog_bootstrap.dart';
- import 'package:runanywhere_ai/core/services/qhexrt_model_catalog.dart';
- import 'package:runanywhere_ai/features/models/model_types.dart'
-     show ExampleModelInfoView, ModelSelectionContext;
-+import 'package:runanywhere_qhexrt/runanywhere_qhexrt.dart';
-+
-+// Golden eligible IDs from kModelPolicies at 259521e299bb, intersected with
-+// this app catalog. Kitten nano deliberately selects only its v81 manifest.
-+const _eligibleIdsByArchitecture = <HexagonArch, List<String>>{
-+  HexagonArch.HEXAGON_ARCH_V75: [
-+    'canary_180m_flash',
-+    'canary_1b_flash',
-+    'embeddinggemma_300m',
-+    'internvl3_5_1b',
-+    'kokoro_en',
-+    'lfm2_5_230m',
-+    'lfm2_5_2_6b',
-+    'lfm2_5_350m',
-+    'magpie_tts_357m',
-+    'melotts_en',
-+    'moonshine_base',
-+    'moonshine_tiny',
-+    'nemotron_3_embed_1b',
-+    'nemotron_asr_streaming',
-+    'nemotron_nano_8b',
-+    'nemotron_ocr',
-+    'nemotron_ocr_v1',
-+    'nemotron_parse',
-+    'nv_embedqa_1b',
-+    'nv_rerankqa_1b',
-+    'parakeet_ctc_1_1b',
-+    'parakeet_rnnt_1_1b',
-+    'parakeet_tdt_0_6b_v2',
-+    'parakeet_tdt_0_6b_v3',
-+    'qwen3_0_6b',
-+    'qwen3_5_0_8b',
-+    'qwen3_5_2b',
-+    'qwen3_vl',
-+    'siglip2_base',
-+    'ternary_bonsai_1_7b',
-+    'whisper_base',
-+    'whisper_small',
-+  ],
-+  HexagonArch.HEXAGON_ARCH_V79: [
-+    'cosmos3_edge_diffusion',
-+    'cosmos3_edge_text',
-+    'cosmos3_edge_vlm',
-+    'deepseek_r1_distill_qwen_1_5b',
-+    'embeddinggemma_300m',
-+    'gemma4_e2b',
-+    'gemma4_e2b_vlm',
-+    'internvl3_5_1b',
-+    'lama_dilated',
-+    'lfm2_5_230m',
-+    'lfm2_5_2_6b',
-+    'lfm2_5_350m',
-+    'llama3_2_1b',
-+    'melotts_en',
-+    'moonshine_base',
-+    'moonshine_tiny',
-+    'phi_tiny_moe',
-+    'qwen3_5_0_8b',
-+    'qwen3_5_2b',
-+    'qwen3_5_4b',
-+    'qwen3_vl',
-+    'siglip2_base',
-+    'whisper_base',
-+    'whisper_small',
-+  ],
-+  HexagonArch.HEXAGON_ARCH_V81: [
-+    'bonsai_1_7b_1bit',
-+    'bonsai_27b_1bit',
-+    'bonsai_4b_1bit',
-+    'bonsai_8b_1bit',
-+    'canary_1b_flash',
-+    'canary_qwen_2_5b',
-+    'cosmos3_edge_diffusion',
-+    'cosmos3_edge_text',
-+    'cosmos3_edge_vlm',
-+    'deepseek_r1_distill_qwen_1_5b',
-+    'deepseek_r1_distill_qwen_7b',
-+    'embeddinggemma_300m',
-+    'gemma3n_e4b',
-+    'gemma4_e2b',
-+    'gemma4_e2b_vlm',
-+    'gemma4_e4b',
-+    'gemma4_e4b_vlm',
-+    'internvl3_5_1b',
-+    'kitten_micro_0_8',
-+    'kitten_mini_0_8',
-+    'kitten_nano_0_8',
-+    'kokoro_en',
-+    'lama_dilated',
-+    'lfm2_5_230m',
-+    'lfm2_5_2_6b',
-+    'lfm2_5_350m',
-+    'llama3_2_1b',
-+    'llama_embed_nemotron_8b',
-+    'magpie_tts_357m',
-+    'melotts_en',
-+    'moonshine_base',
-+    'moonshine_tiny',
-+    'nemoguard_content_8b',
-+    'nemoguard_topic_8b',
-+    'nemotron_asr_streaming',
-+    'nemotron_nano_8b',
-+    'nemotron_nano_vl_8b',
-+    'nemotron_ocr',
-+    'nemotron_ocr_v1',
-+    'nemotron_parse',
-+    'nv_embedcode_7b',
-+    'nv_embedqa_1b',
-+    'nv_rerankqa_1b',
-+    'parakeet_rnnt_1_1b',
-+    'parakeet_tdt_0_6b_v2',
-+    'parakeet_tdt_0_6b_v3',
-+    'phi_tiny_moe',
-+    'qwen3_0_6b',
-+    'qwen3_5_0_8b',
-+    'qwen3_5_2b',
-+    'qwen3_5_4b',
-+    'qwen3_vl_2b_text',
-+    'siglip2_base',
-+    'ternary_bonsai_1_7b',
-+    'whisper_base',
-+    'whisper_small',
-+  ],
-+};
- 
- void main() {
-   tearDown(QHexRTModelCatalog.resetForTesting);
-@@ -38,40 +162,34 @@ void main() {
-     }
-   });
- 
--  test(
--    'QHexRT definitions preserve app-owned explicit URL metadata',
--    () {
--      const rows = QHexRTModelCatalog.models;
--
--      expect(rows.map((model) => model.id).toSet(), hasLength(rows.length));
--      for (final model in rows) {
--        final request = model.toRegistrationRequest();
--        expect(request.id, model.id);
--        expect(request.name, model.name);
--        expect(request.url, model.url);
--        expect(
--          request.framework,
--          InferenceFramework.INFERENCE_FRAMEWORK_QHEXRT,
--        );
--        expect(request.category, model.category);
--        expect(request.source, ModelSource.MODEL_SOURCE_REMOTE);
--        expect(request.memoryRequiredBytes.toInt(), model.memoryBytes);
--        expect(
--          request.hasDownloadSizeBytes()
--              ? request.downloadSizeBytes.toInt()
--              : null,
--          model.downloadBytes,
--        );
--        expect(
--          request.hasContextLength() ? request.contextLength : null,
--          model.contextLength,
--        );
--        expect(request.supportsThinking, model.supportsThinking);
--        expect(request.supportsLora, model.supportsLora);
--        expect(model.url, startsWith('https://'));
--      }
--    },
--  );
-+  test('QHexRT definitions preserve app-owned explicit URL metadata', () {
-+    const rows = QHexRTModelCatalog.models;
-+
-+    expect(rows.map((model) => model.id).toSet(), hasLength(rows.length));
-+    for (final model in rows) {
-+      final request = model.toRegistrationRequest();
-+      expect(request.
-```
-
-**File**: `bindings/flutter/packages/runanywhere/lib/native/dart_bridge_proto_utils.dart` (modified, +15/-6)
-```diff
-@@ -55,7 +55,8 @@ class DartBridgeProtoUtils {
-       ffi.Pointer<ffi.Uint8>,
-       int,
-       ffi.Pointer<RacProtoBuffer>,
--    ) invoke,
-+    )
-+    invoke,
-     required T Function(List<int>) decode,
-     required String symbol,
-     bool preserveNativeError = false,
-@@ -68,7 +69,12 @@ class DartBridgeProtoUtils {
-     try {
-       bindings.rac_proto_buffer_init(out);
-       final code = invoke(requestPtr, bytes.length, out);
--      ensureSuccess(out, code, symbol, preserveNativeError: preserveNativeError);
-+      ensureSuccess(
-+        out,
-+        code,
-+        symbol,
-+        preserveNativeError: preserveNativeError,
-+      );
-       return decodeBuffer(out, decode);
-     } finally {
-       bindings.rac_proto_buffer_free(out);
-@@ -85,7 +91,8 @@ class DartBridgeProtoUtils {
-       ffi.Pointer<ffi.Uint8>,
-       int,
-       ffi.Pointer<RacProtoBuffer>,
--    ) invoke,
-+    )
-+    invoke,
-     required T Function(List<int>) decode,
-     required String symbol,
-   }) {
-@@ -123,8 +130,9 @@ class DartBridgeProtoUtils {
-     if (out.ref.data == ffi.nullptr || out.ref.size == 0) {
-       return decode(const <int>[]);
-     }
--    final bytes =
--        out.ref.data.asTypedList(out.ref.size).toList(growable: false);
-+    final bytes = out.ref.data
-+        .asTypedList(out.ref.size)
-+        .toList(growable: false);
-     return decode(bytes);
-   }
- 
-@@ -143,7 +151,8 @@ class DartBridgeProtoUtils {
-       final result = code != RacResultCodes.success ? code : out.ref.status;
-       // The canonical mapper uses callOut's default failure handling.
-       final exception = SDKException.fromResult(result)!;
--      exception.error.message = message;
-+      exception.error.message =
-+          '$symbol failed: ${exception.message} (${protoBufferError(out, code)})';
-       throw exception;
-     }
-     throw SDKException.make(
-```
-
-**File**: `bindings/flutter/packages/runanywhere_qhexrt/CHANGELOG.md` (modified, +11/-0)
-```diff
-@@ -5,6 +5,17 @@ All notable changes to the RunAnywhere QHexRT Backend will be documented in this
- The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
- and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
- 
-+## [Unreleased]
-+
-+### Removed
-+
-+- Breaking: removed `QHexRT.modelSupportsArchitecture`,
-+  `QHexRT.modelRequiresHfAuth`, and `QHexRT.registerModelForDevice`, together
-+  with the native catalog facade. Catalog selection, eligibility, and any
-+  required HF-auth preflight are now the application's responsibility. Probe
-+  device capabilities with `QHexRT.probeNpu()` and register eligible rows via
-+  `RunAnywhere.models.register()`.
-+
- ## [0.20.40] - 2026-10-17
- 
- - Version bump to keep the backend package in lockstep with the SDK release.
-```
-
-**File**: `bindings/flutter/packages/runanywhere_qhexrt/README.md` (modified, +10/-2)
-```diff
-@@ -10,12 +10,18 @@
- 
- ```yaml
- dependencies:
--  runanywhere: 0.20.11
--  runanywhere_qhexrt: 0.20.11
-+  runanywhere: 0.20.37
-+  runanywhere_qhexrt: 0.20.37
- ```
- 
- See the [Flutter SDK README](../../README.md) for Android setup.
- 
-+The examples below target this source tree (SDK `0.20.37`). For changes not yet
-+released, use local SDK packages and Commons native libraries built from the same
-+checkout. The private QHexRT native payload is not in this repository: supply it
-+separately from a compatible authorized build and stage it into the local backend
-+package. A matching version number alone does not include unreleased changes.
-+
- ---
- 
- ## Usage
-@@ -54,6 +60,8 @@ A known architecture pin in the first repository folder, such as `/v79` or `/v79
- 
- Direct `/resolve/` or `/blob/` URLs register a single file and do not receive this bundle-folder check.
- 
-+Catalog eligibility and any required HF-auth preflight remain application-owned.
-+
- ---
- 
- ## Requirements
-```
-
-**File**: `bindings/kotlin/modules/runanywhere-core-qhexrt/README.md` (modified, +35/-3)
-```diff
-@@ -12,11 +12,41 @@ Requires the core SDK. Add both to your app module's `build.gradle.kts`:
- 
- ```kotlin
- dependencies {
--    implementation("io.github.sanchitmonga22:runanywhere-sdk:0.20.11")
--    implementation("io.github.sanchitmonga22:runanywhere-qhexrt-android:0.20.11")
-+    implementation("io.github.sanchitmonga22:runanywhere-sdk:0.20.37")
-+    implementation("io.github.sanchitmonga22:runanywhere-qhexrt-android:0.20.37")
- }
- ```
- 
-+The examples below target this source tree (SDK `0.20.37`). For changes not yet
-+released, use local SDK packages and Commons native libraries built from the same
-+checkout. The private QHexRT native payload is not in this repository: supply it
-+separately from a compatible authorized build. A matching version number alone
-+does not include unreleased changes.
-+
-+For local Kotlin builds, stage the private engine payload under
-+`engines/qhexrt/prebuilt/`, preserving its `versions/` layout and `current`
-+selection. With the matching QAIRT/QNN runtime available and `ANDROID_NDK_HOME`
-+configured, run from the repository root:
-+
-+```bash
-+./scripts/build/build-core-android.sh arm64-v8a
-+```
-+
-+If no private QHexRT prebuilt is selected, the script can complete successfully
-+with QHexRT disabled. A successful build alone does not confirm that the private
-+engine is included.
-+
-+The script validates the selected prebuilt and passes its resolved directory to
-+CMake as `QHEXRT_ROOT`. It stages the backend libraries into
-+`bindings/kotlin/modules/runanywhere-core-qhexrt/src/main/jniLibs/arm64-v8a/`
-+and DSP skels into the module's
-+`src/main/assets/runanywhere/qhexrt/skels/arm64-v8a/`. To package those staged
-+files as a local Maven bundle, run from the repository root:
-+
-+```bash
-+./bindings/kotlin/scripts/package-qhexrt.sh
-+```
-+
- ---
- 
- ## Usage
-@@ -67,6 +97,8 @@ A known architecture pin in the first repository folder, such as `/v79` or `/v79
- 
- Direct `/resolve/` or `/blob/` URLs register a single file and do not receive this bundle-folder check.
- 
-+Catalog eligibility and any required HF-auth preflight remain application-owned.
-+
- ---
- 
- ## Modalities
-@@ -89,7 +121,7 @@ QHexRT does not seed or select models. Register the exact model URL intended for
- - Android `arm64-v8a` only (no `armeabi-v7a` / `x86_64` package)
- - Qualcomm Snapdragon device with Hexagon **V75**, **V79**, or **V81** NPU
- - Matching model manifests for the device Hexagon arch (a V81-only bundle will not run on V75)
--- Core artifact `runanywhere-sdk:0.20.11`
-+- Core artifact `runanywhere-sdk:0.20.37`
- 
- ---
- 
-```
-
-**File**: `bindings/kotlin/src/main/kotlin/com/runanywhere/sdk/foundation/bridge/extensions/CppBridgeModelRegistry.kt` (modified, +8/-0)
-```diff
-@@ -389,6 +389,12 @@ object CppBridgeModelRegistry {
-         return decodeModelInfoList(bytes, "downloaded ModelInfoList")
-     }
+@@ -361,51 +362,73 @@ object CppBridgePlatformAdapter {
+      * JNI confirms missing/non-directory paths with an error-aware native probe
+      * before returning RAC_ERROR_FILE_NOT_FOUND; denied or inconclusive probes
+      * preserve the registered download path. Thrown failures propagate to JNI
+-     * as RAC_ERROR_INTERNAL. A successful empty listing remains an empty array.
+-     *
+-     * Truncation contract (per `rac_directory_entry_t::name`): entries
+-     * whose UTF-8 byte length plus the trailing NUL exceed
+-     * [NAME_MAX_BYTES] MUST be skipped rather than silently truncated. We
+-     * emit a single WARN log per call that summarises how many entries
+-     * were skipped so operators can detect the rare event without flooding
+-     * logcat.
++     * as RAC_ERROR_FILE_READ_FAILED. A successful empty listing remains an
++     * empty array.
++     *
++     * Truncation contract (per `rac_directory_entry_t::name`): an entry whose
++     * UTF-8 byte length plus the trailing NUL exceeds [NAME_MAX_BYTES] makes
++     * the listing inconclusive. We log a WARN and throw instead of returning a
++     * partial listing.
+      */
+     @JvmStatic
+     fun fileListDirectoryCallback(dirPath: String): Array<RacDirectoryEntry>? = readDirectoryEntries(File(dirPath))
  
 +    /**
-+     * Run a native registry refresh and decode its result.
-+     *
-+     * Returns null when the bridge supplies no bytes or decoding fails. Native
-+     * operation failures propagate as [SDKException] before decoding begins.
++     * Probe an entry with stat(2)/lstat(2). A failed probe is inconclusive and
++     * must not be emitted as a regular file; a dangling symlink remains a
++     * non-directory entry. FIFOs, sockets, and device nodes are rejected.
 +     */
-     private fun refreshProto(request: ProtoModelRegistryRefreshRequest): ProtoModelRegistryRefreshResult? {
-         val bytes =
-             withNativeProtoFailure {
-@@ -408,6 +414,7 @@ object CppBridgeModelRegistry {
-     private fun removeProto(modelId: String): Int =
-         RunAnywhereBridge.racModelRegistryRemoveProto(modelId)
++    private fun probeDirectoryEntry(child: File): Pair<Boolean, Long> {
++        val path = child.absolutePath
++        val info =
++            try {
++                Os.stat(path)
++            } catch (error: ErrnoException) {
++                if (error.errno == OsConstants.ENOENT || error.errno == OsConstants.ENOTDIR) {
++                    try {
++                        Os.lstat(path)
++                        return false to 0L
++                    } catch (_: ErrnoException) {
++                        throw IOException("Directory entry vanished while listing: '$path'", error)
++                    }
++                }
++                throw IOException("Unable to probe directory entry '$path'", error)
++            }
++        val isDir = OsConstants.S_ISDIR(info.st_mode)
++        if (!isDir && !OsConstants.S_ISREG(info.st_mode)) {
++            throw IOException("Unsupported directory entry type: '$path'")
++        }
++        return isDir to if (isDir) 0L else info.st_size
++    }
++
+     /**
+      * Read directory entries, preserving probe and enumeration errors for JNI.
++     * The entry probe is separate so host JVM checks can use their filesystem.
+      *
+      * @throws IOException if an existing directory cannot be enumerated
+      * @throws SecurityException if the filesystem denies a probe or listing
+      */
+-    internal fun readDirectoryEntries(dir: File): Array<RacDirectoryEntry>? {
++    internal fun readDirectoryEntries(
++        dir: File,
++        probeEntry: (File) -> Pair<Boolean, Long> = ::probeDirectoryEntry,
++    ): Array<RacDirectoryEntry>? {
+         if (!dir.exists() || !dir.isDirectory) {
+             // JNI rechecks null because Java can hide stat errors behind false.
+             return null
+         }
+         // A null listing means I/O failure, not a successful empty directory.
+         val children = dir.listFiles() ?: throw IOException("Unable to enumerat
+```
+
+**File**: `bindings/kotlin/src/test/kotlin/com/runanywhere/sdk/foundation/bridge/extensions/CppBridgePlatformAdapterDirectoryTest.kt` (modified, +9/-1)
+```diff
+@@ -9,6 +9,8 @@ import org.junit.Rule
+ import org.junit.rules.TemporaryFolder
+ import java.io.File
+ import java.io.IOException
++import java.nio.file.Files
++import java.nio.file.attribute.BasicFileAttributes
+ import kotlin.test.Test
+ import kotlin.test.assertEquals
+ import kotlin.test.assertFailsWith
+@@ -50,7 +52,13 @@ class CppBridgePlatformAdapterDirectoryTest {
+         File(directory, "weights.gguf").writeBytes(ByteArray(42))
+         assertTrue(File(directory, "nested").mkdir())
  
-+    /** Decode a native model record, logging malformed payloads and returning null. */
-     private fun decodeProtoModel(bytes: ByteArray): ProtoModelInfo? =
-         try {
-             ProtoModelInfo.ADAPTER.decode(bytes)
-@@ -416,6 +423,7 @@ object CppBridgeModelRegistry {
-             null
+-        val entries = assertNotNull(CppBridgePlatformAdapter.fileListDirectoryCallback(directory.path)).associateBy { it.name }
++        val entries =
++            assertNotNull(
++                CppBridgePlatformAdapter.readDirectoryEntries(directory) { child ->
++                    val attributes = Files.readAttributes(child.toPath(), BasicFileAttributes::class.java)
++                    attributes.isDirectory to if (attributes.isDirectory) 0L else attributes.size()
++                },
++            ).associateBy { it.name }
+ 
+         assertEquals(setOf("weights.gguf", "nested"), entries.keys)
+         assertEquals(RacDirectoryEntry("weights.gguf", false, 42), entries["weights.gguf"])
+```
+
+**File**: `bindings/python/native/posix_platform_adapter.cpp` (modified, +64/-7)
+```diff
+@@ -27,6 +27,7 @@
+ #include "posix_platform_adapter.h"
+ 
+ #include "rac/core/rac_error.h"
++#include "rac/core/rac_logger.h"
+ #include "rac/core/rac_types.h"
+ 
+ namespace fs = std::filesystem;
+@@ -37,6 +38,36 @@ namespace {
+ // so the "callbacks may run on any thread" contract holds without locking.
+ std::string g_secure_dir;
+ 
++// Distinguish a confirmed missing/non-directory path from a permission or I/O
++// failure. The boolean std::filesystem probes collapse both into false, which
++// lets orphan pruning mistake an unreadable download folder for a vanished one.
++bool is_confirmed_missing(const std::error_code& ec) {
++    return ec == std::errc::no_such_file_or_directory || ec == std::errc::not_a_directory;
++}
++
++// Confirm that `directory` exists and is a directory. Only an affirmative
++// missing/non-directory result maps to FILE_NOT_FOUND; denied or unknown
++// probes stay inconclusive for callers that preserve registry state.
++rac_result_t classify_directory_probe(const fs::path& directory) {
++    std::error_code ec;
++    const fs::file_status status = fs::status(directory, ec);
++    if (is_confirmed_missing(ec)) {
++        return RAC_ERROR_FILE_NOT_FOUND;
++    }
++    if (ec) {
++        return RAC_ERROR_FILE_READ_FAILED;
++    }
++    switch (status.type()) {
++        case fs::file_type::not_found:
++            return RAC_ERROR_FILE_NOT_FOUND;
++        case fs::file_type::none:
++        case fs::file_type::unknown:
++            return RAC_ERROR_FILE_READ_FAILED;
++        default:
++            return fs::is_directory(status) ? RAC_SUCCESS : RAC_ERROR_FILE_NOT_FOUND;
++    }
++}
++
+ const char* level_name(rac_log_level_t lvl) {
+     switch (lvl) {
+         case RAC_LOG_TRACE: return "TRACE";
+@@ -290,28 +321,54 @@ rac_result_t posix_list_dir(const char* dir_path, rac_directory_entry_t* out_ent
+     if (!dir_path || !in_out_count) return RAC_ERROR_INVALID_ARGUMENT;
+     std::error_code ec;
+     fs::path dir(dir_path);
+-    if (!fs::is_directory(dir, ec) || ec) return RAC_ERROR_FILE_NOT_FOUND;
++    const rac_result_t probe_rc = classify_directory_probe(dir);
++    if (probe_rc != RAC_SUCCESS) return probe_rc;
+     const size_t cap = out_entries ? *in_out_count : 0;
+     size_t written = 0, total = 0;
+     for (fs::directory_iterator it(dir, ec), end; !ec && it != end; it.increment(ec)) {
+         ++total;
+         if (!out_entries || written >= cap) continue;
+         std::string name = it->path().filename().string();
+-        if (name.size() + 1 > RAC_DIRECTORY_ENTRY_NAME_MAX) continue;  // skip oversized
++        if (name.size() + 1 > RAC_DIRECTORY_ENTRY_NAME_MAX) {
++            // A skipped name makes this a partial listing; callers must not
++            // mistake it for a complete directory.
++            RAC_LOG_WARNING("PlatformAdapter", "oversized entry in %s", dir_path);
++            return RAC_ERROR_FILE_READ_FAILED;
++        }
++        // The type probe decides whether the walk recurses. A failed probe
++        // must stay inconclusive instead of reporting a regular file.
++        std::error_code type_ec;
++        fs::file_status child_status = fs::status(it->path(), type_ec);
++        if (is_confirmed_missing(type_ec)) {
++            // A dangling symlink has a missing target but is still a
++            // non-directory entry; a vanished entry stays inconclusive.
++            type_ec.clear();
++            child_status = fs::symlink_status(it->path(), type_ec);
++        }
++        if (type_ec || child_status.type() == fs::file_type::none ||
++            child_status.type() == fs::file_type::unknown ||
++            child_status.type() == fs::file_type::not_found) {
++            return RAC_ERROR_FILE_READ_FAILED;
++        }
++        const bool is_dir = fs::is_directory(child_status);
+         std::strncpy(out_entries[written].name, name.c_str(), RAC_DIRECTORY_ENTRY_NAME_MAX - 1);
+         out_entries[written].name[RAC_DIRECTORY_ENTRY_NAME_MAX - 1] = '\0';
+-        std::error_code ec2;
+-        bool is_dir = fs::is_directory(it->path(), ec2);
+         out_entries[written].is_dir = is_dir ? RAC_TRUE : RAC_FALSE;
+-        out_entries[written].size_bytes =
+-            is_dir ? 0 : static_cast<int64_t>(fs::file_size(it->path(), ec2));
+-        if (ec2) {
++        if (is_dir) {
+             out_entries[written].size_bytes = 0;
++        } else {
++            std::error_code size_ec;
++            const auto size = fs::file_size(it->path(), size_ec);
++            out_entries[written].size_bytes = size_ec ? 0 : static_cast<int64_t>(size);
+         }
+         ++written;
+     }
+     // A failed open/advance is an I/O error, not an empty or shorter listing.
+     if (ec) return RAC_ERROR_FILE_READ_FAILED;
++    if (out_entries && total > cap) {
++        // The caller's buffer was too small: a partial fill is not a listing.
++        return RAC_ERROR_FILE_READ_FAILED;
++    }
+     *in_out_count = out_entries ? written : total;
+     return RAC_SUCCESS;
+ }
+```
+
+**File**: `bindings/python/native/win32_platform_adapter.cpp` (modified, +64/-7)
+```diff
+@@ -21,6 +21,7 @@
+ #include "win32_platform_adapter.h"
+ 
+ #include "rac/core/rac_error.h"
++#include "rac/core/rac_logger.h"
+ #include "rac/core/rac_types.h"
+ 
+ namespace fs = std::filesystem;
+@@ -31,6 +32,36 @@ namespace {
+ // so the "callbacks may run on any thread" contract holds without locking.
+ std::string g_secure_dir;
+ 
++// Distinguish a confirmed missing/non-directory path from a permission or I/O
++// failure. The boolean std::filesystem probes collapse both into false, which
++// lets orphan pruning mistake an unreadable download folder for a vanished one.
++bool is_confirmed_missing(const std::error_code& ec) {
++    return ec == std::errc::no_such_file_or_directory || ec == std::errc::not_a_directory;
++}
++
++// Confirm that `directory` exists and is a directory. Only an affirmative
++// missing/non-directory result maps to FILE_NOT_FOUND; denied or unknown
++// probes stay inconclusive for callers that preserve registry state.
++rac_result_t classify_directory_probe(const fs::path& directory) {
++    std::error_code ec;
++    const fs::file_status status = fs::status(directory, ec);
++    if (is_confirmed_missing(ec)) {
++        return RAC_ERROR_FILE_NOT_FOUND;
++    }
++    if (ec) {
++        return RAC_ERROR_FILE_READ_FAILED;
++    }
++    switch (status.type()) {
++        case fs::file_type::not_found:
++            return RAC_ERROR_FILE_NOT_FOUND;
++        case fs::file_type::none:
++        case fs::file_type::unknown:
++            return RAC_ERROR_FILE_READ_FAILED;
++        default:
++            return fs::is_directory(status) ? RAC_SUCCESS : RAC_ERROR_FILE_NOT_FOUND;
++    }
++}
++
+ const char* level_name(rac_log_level_t lvl) {
+     switch (lvl) {
+         case RAC_LOG_TRACE: return "TRACE";
+@@ -245,28 +276,54 @@ rac_result_t win_list_dir(const char* dir_path, rac_directory_entry_t* out_entri
+     if (!dir_path || !in_out_count) return RAC_ERROR_INVALID_ARGUMENT;
+     std::error_code ec;
+     fs::path dir = utf8_path(dir_path);
+-    if (!fs::is_directory(dir, ec) || ec) return RAC_ERROR_FILE_NOT_FOUND;
++    const rac_result_t probe_rc = classify_directory_probe(dir);
++    if (probe_rc != RAC_SUCCESS) return probe_rc;
+     const size_t cap = out_entries ? *in_out_count : 0;
+     size_t written = 0, total = 0;
+     for (fs::directory_iterator it(dir, ec), end; !ec && it != end; it.increment(ec)) {
+         ++total;
+         if (!out_entries || written >= cap) continue;
+         std::string name = wide_to_utf8(it->path().filename().wstring());  // UTF-8 contract
+-        if (name.size() + 1 > RAC_DIRECTORY_ENTRY_NAME_MAX) continue;  // skip oversized
++        if (name.size() + 1 > RAC_DIRECTORY_ENTRY_NAME_MAX) {
++            // A skipped name makes this a partial listing; callers must not
++            // mistake it for a complete directory.
++            RAC_LOG_WARNING("PlatformAdapter", "oversized entry in %s", dir_path);
++            return RAC_ERROR_FILE_READ_FAILED;
++        }
++        // The type probe decides whether the walk recurses. A failed probe
++        // must stay inconclusive instead of reporting a regular file.
++        std::error_code type_ec;
++        fs::file_status child_status = fs::status(it->path(), type_ec);
++        if (is_confirmed_missing(type_ec)) {
++            // A dangling symlink has a missing target but is still a
++            // non-directory entry; a vanished entry stays inconclusive.
++            type_ec.clear();
++            child_status = fs::symlink_status(it->path(), type_ec);
++        }
++        if (type_ec || child_status.type() == fs::file_type::none ||
++            child_status.type() == fs::file_type::unknown ||
++            child_status.type() == fs::file_type::not_found) {
++            return RAC_ERROR_FILE_READ_FAILED;
++        }
++        const bool is_dir = fs::is_directory(child_status);
+         std::strncpy(out_entries[written].name, name.c_str(), RAC_DIRECTORY_ENTRY_NAME_MAX - 1);
+         out_entries[written].name[RAC_DIRECTORY_ENTRY_NAME_MAX - 1] = '\0';
+-        std::error_code ec2;
+-        bool is_dir = fs::is_directory(it->path(), ec2);
+         out_entries[written].is_dir = is_dir ? RAC_TRUE : RAC_FALSE;
+-        out_entries[written].size_bytes =
+-            is_dir ? 0 : static_cast<int64_t>(fs::file_size(it->path(), ec2));
+-        if (ec2) {
++        if (is_dir) {
+             out_entries[written].size_bytes = 0;
++        } else {
++            std::error_code size_ec;
++            const auto size = fs::file_size(it->path(), size_ec);
++            out_entries[written].size_bytes = size_ec ? 0 : static_cast<int64_t>(size);
+         }
+         ++written;
+     }
+     // A failed open/advance is an I/O error, not an empty or shorter listing.
+     if (ec) return RAC_ERROR_FILE_READ_FAILED;
++    if (out_entries && total > cap) {
++        // The caller's buffer was too small: a partial fill is not a listing.
++        return RAC_ERROR_FILE_READ_FAILED;
++    }
+     *in_out_count = out_entries ? written : total;
+     return RAC_SUCCESS;
+ }
+```
+
+**File**: `bindings/react-native/packages/core/android/src/main/java/com/margelo/nitro/runanywhere/PlatformAdapterBridge.kt` (modified, +41/-15)
+```diff
+@@ -19,6 +19,9 @@ import android.os.BatteryManager
+ import android.os.Build
+ import android.os.PowerManager
+ import android.provider.Settings
++import android.system.ErrnoException
++import android.system.Os
++import android.system.OsConstants
+ import android.util.Log
+ import com.margelo.nitro.NitroModules
+ import com.runanywhere.sdk.generated.RADefaults
+@@ -699,20 +702,46 @@ object PlatformAdapterBridge {
+ 
+     /**
+      * Maximum entry name length (incl. NUL) per `RAC_DIRECTORY_ENTRY_NAME_MAX`.
+-     * Oversized entries are skipped per the truncation contract in
+-     * `rac_platform_adapter.h::rac_directory_entry_t::name`.
++     * Oversized entries make the listing inconclusive per the truncation
++     * contract in `rac_platform_adapter.h::rac_directory_entry_t::name`.
+      */
+     private const val DIRECTORY_ENTRY_NAME_MAX = 512
+ 
++    /**
++     * Probe an entry with stat(2)/lstat(2). A failed probe is inconclusive and
++     * must not be emitted as a regular file; a dangling symlink remains a
++     * non-directory entry.
++     */
++    private fun probeDirectoryEntry(child: File): Pair<Boolean, Long> {
++        val path = child.absolutePath
++        val info = try {
++            Os.stat(path)
++        } catch (error: ErrnoException) {
++            if (error.errno == OsConstants.ENOENT || error.errno == OsConstants.ENOTDIR) {
++                try {
++                    Os.lstat(path)
++                    return false to 0L
++                } catch (_: ErrnoException) {
++                    throw IOException("Directory entry vanished while listing: '$path'", error)
++                }
++            }
++            throw IOException("Unable to probe directory entry '$path'", error)
++        }
++        val isDir = OsConstants.S_ISDIR(info.st_mode)
++        if (!isDir && !OsConstants.S_ISREG(info.st_mode)) {
++            throw IOException("Unsupported directory entry type: '$path'")
++        }
++        return isDir to if (isDir) 0L else info.st_size
++    }
++
+     /**
+      * Enumerate directory entries via java.io.File.listFiles().
+      *
+      * @return Array of RacDirectoryEntry or null if the path does not exist /
+-     *         is not a directory. Oversized names (UTF-8 + NUL > 512) are
+-     *         filtered out with a single WARN summary; the C++ layer enforces
+-     *         the same contract defensively.
+-     * @throws IOException if an existing directory cannot be enumerated; the
+-     *         JNI caller reports any thrown failure as RAC_ERROR_INTERNAL.
++     *         is not a directory.
++     * @throws IOException if an existing directory cannot be enumerated or an
++     *         entry name exceeds [DIRECTORY_ENTRY_NAME_MAX]; the JNI caller
++     *         reports any thrown failure as RAC_ERROR_FILE_READ_FAILED.
+      */
+     @JvmStatic
+     fun fileListDirectory(dirPath: String): Array<RacDirectoryEntry>? {
+@@ -723,26 +752,23 @@ object PlatformAdapterBridge {
+         // A null listing means I/O failure, not a successful empty directory.
+         val children = dir.listFiles() ?: throw IOException("Unable to enumerate directory '$dirPath'")
+ 
+-        var skipped = 0
+         val entries = ArrayList<RacDirectoryEntry>(children.size)
+         for (child in children) {
+             val name = child.name
+             val utf8Bytes = name.toByteArray(Charsets.UTF_8)
+             if (utf8Bytes.size + 1 > DIRECTORY_ENTRY_NAME_MAX) {
+-                skipped++
+-                continue
++                Log.w(TAG, "fileListDirectory: oversized entry name in $dirPath")
++                throw IOException("Oversized directory entry name in '$dirPath'")
+             }
++            val (isDir, sizeBytes) = probeDirectoryEntry(child)
+             entries.add(
+                 RacDirectoryEntry(
+                     name = name,
+-                    isDir = child.isDirectory,
+-                    sizeBytes = if (child.isFile) child.length() else 0L,
++                    isDir = isDir,
++                    sizeBytes = sizeBytes,
+                 ),
+             )
+         }
+-        if (skipped > 0) {
+-            Log.w(TAG, "fileListDirectory: skipped $skipped oversized entry name(s) in $dirPath")
+-        }
+         return entries.toTypedArray()
+     }
+ 
+```
+
+**File**: `bindings/react-native/packages/core/cpp/bridges/InitBridge.cpp` (modified, +39/-15)
+```diff
+@@ -12,6 +12,7 @@
+ #include "ExternalConfigGuard.hpp"
+ #include "HTTPBridge.hpp"
+ #include "PlatformDownloadBridge.h"
++#include "rac/core/rac_logger.h"
+ #include "rac/foundation/rac_proto_buffer.h"
+ #include "rac/foundation/rac_sha256.h"
+ #include "rac/infrastructure/device/rac_device_identity.h" // rac_device_get_or_create_persistent_id
+@@ -570,6 +571,10 @@ namespace AndroidBridge {
+         return callStaticString(g_getTimezoneIdentifierMethod, "getTimezoneIdentifier");
+     }
+ 
++    // Directory enumeration via
++    // java.io.File.listFiles(). Two-call semantics matching
++    // rac_file_list_directory_fn. An oversized name makes the listing
++    // inconclusive; Kotlin throws and this layer also defends against one.
+     static rac_result_t classifyNullDirectoryListing(const char* dir_path) {
+         if (!dir_path) {
+             return RAC_ERROR_INVALID_ARGUMENT;
+@@ -586,9 +591,8 @@ namespace AndroidBridge {
+ 
+     // Directory enumeration via
+     // java.io.File.listFiles(). Two-call semantics matching
+-    // rac_file_list_directory_fn. Truncation contract: skip oversized
+-    // names rather than write a half-name that aliases a different
+-    // artifact (Kotlin side already filters; we defend on this side too).
++    // rac_file_list_directory_fn. An oversized name makes the listing
++    // inconclusive; Kotlin throws and this layer also defends against one.
+     rac_result_t fileListDirectory(const char* dir_path,
+                                    rac_directory_entry_t* out_entries,
+                                    size_t* in_out_count) {
+@@ -612,7 +616,7 @@ namespace AndroidBridge {
+         if (env->ExceptionCheck()) {
+             env->ExceptionClear();
+             LOGE("Exception in fileListDirectory");
+-            return RAC_ERROR_INTERNAL;
++            return RAC_ERROR_FILE_READ_FAILED;
+         }
+         // Kotlin returns null when File.exists()/isDirectory() are false, but
+         // those also return false on stat errors. Confirm absence before
+@@ -631,14 +635,19 @@ namespace AndroidBridge {
          }
  
-+    /** Decode a native model list; [label] identifies malformed responses in logs. */
-     private fun decodeModelInfoList(bytes: ByteArray, label: String): ProtoModelInfoList? =
-         try {
-             ProtoModelInfoList.ADAPTER.decode(bytes)
+         const size_t capacity = *in_out_count;
+-        const size_t write_count =
+-            (capacity < static_cast<size_t>(total)) ? capacity : static_cast<size_t>(total);
++        if (static_cast<size_t>(total) > capacity) {
++            // A partial fill is not a complete listing.
++            env->DeleteLocalRef(result);
++            return RAC_ERROR_FILE_READ_FAILED;
++        }
++        const size_t write_count = static_cast<size_t>(total);
+         size_t written = 0;
+ 
+         for (size_t i = 0; i < write_count; ++i) {
+             jobject entryObj = env->GetObjectArrayElement(result, static_cast<jsize>(i));
+             if (!entryObj) {
+-                continue;
++                env->DeleteLocalRef(result);
++                return RAC_ERROR_FILE_READ_FAILED;
+             }
+             jclass entryClass = env->GetObjectClass(entryObj);
+             jfieldID nameField = env->GetFieldID(entryClass, "name", "Ljava/lang/String;");
+@@ -651,17 +660,32 @@ namespace AndroidBridge {
+ 
+             const char* nameChars =
+                 jName ? env->GetStringUTFChars(jName, nullptr) : nullptr;
+-            if (nameChars) {
+-                const size_t nameLen = std::strlen(nameChars);
+-                if (nameLen + 1 <= RAC_DIRECTORY_ENTRY_NAME_MAX) {
+-                    std::memset(out_entries[written].name, 0, RAC_DIRECTORY_ENTRY_NAME_MAX);
+-                    std::memcpy(out_entries[written].name, nameChars, nameLen);
+-                    out_entries[written].is_dir = jIsDir ? RAC_TRUE : RAC_FALSE;
+-                    out_entries[written].size_bytes = static_cast<int64_t>(jSize);
+-                    written++;
++            if (!nameChars) {
++                env->ExceptionClear();
++                if (jName) {
++                    env->DeleteLocalRef(jName);
+                 }
++                env->DeleteLocalRef(entryClass);
++                env->DeleteLocalRef(entryObj);
++                env->DeleteLocalRef(result);
++                return RAC_ERROR_FILE_READ_FAILED;
++            }
++            const size_t nameLen = std::strlen(nameChars);
++            if (nameLen + 1 > RAC_DIRECTORY_ENTRY_NAME_MAX) {
++                RAC_LOG_WARNING("PlatformAdapter", "oversized entry in %s", dir_path);
+                 env->ReleaseStringUTFChars(jName, nameChars);
++                env->DeleteLocalRef(jName);
++                env->DeleteLocalRef(entryClass);
++                env->DeleteLocalRef(entryObj);
++                env->DeleteLocalRef(result);
++                return RAC_ERROR_FILE_READ_FAILED;
+             }
++            std::memset(out_entries[written].name, 0, RAC_DIRECTORY_ENTRY_NAME_MAX);
++            std::memcpy(out_entries[written].name, nameChars, nameLen);
++            out_entries[written].is_dir = jIsDir ? RAC_TRUE : RAC_FALSE;
++            out_entries[written].size_bytes = static_cast<int64_t>(jSize);
++            written++;
++            env->ReleaseStringUT
+```
+
+---
+
+### Incident Patch 2: `7845f05c` (2026-11-04)
+**Commit Message**: fix(android): contain JNI file callback exceptions (#1276)
+
+Every jni_fc_* file callback in runanywhere_commons_jni.cpp now checks and
+clears pending Java exceptions after its NewStringUTF/Call*Method calls, and
+only publishes out-params on a successful call.
+
+- jni_fc_create_directory / jni_fc_delete_path / jni_fc_get_file_size: clear a
+  pending exception from NewStringUTF and from the Call*Method, returning
+  RAC_ERROR_OUT_OF_MEMORY or RAC_ERROR_INTERNAL instead of a stale result.
+- jni_fc_path_exists: zeroes *out_is_directory up front, refuses to run the
+  is_directory probe using a result from an exceptional call, and reports
+  false when the callback throws.
+- jni_fc_get_available_space / jni_fc_get_total_space: return -1 when the
+  callback throws.
+- jni_fc_list_directory: clears exceptions after GetArrayLength,
+  GetObjectArrayElement and GetStringUTFChars, and resets out-params before
+  any early return.
+
+CppBridgeFileManager's FileCallbackProvider wraps listDirectory, pathExists,
+isDirectory, getFileSize, getAvailableSpace and getTotalSpace in try/catch (as
+createDirectory and deletePath already were), so a Kotlin failure becomes a
+sentinel value instead of a pending exce
+
+**File**: `bindings/kotlin/src/main/kotlin/com/runanywhere/sdk/foundation/bridge/extensions/CppBridgeFileManager.kt` (modified, +34/-8)
+```diff
+@@ -174,32 +174,58 @@ object CppBridgeFileManager {
+ 
+         @Suppress("unused") // Called from JNI
+         fun listDirectory(path: String): Array<String>? {
+-            return File(path).list()
++            return try {
++                File(path).list()
++            } catch (_: Exception) {
++                null
++            }
+         }
+ 
+         @Suppress("unused") // Called from JNI
+         fun pathExists(path: String): Boolean {
+-            return File(path).exists()
++            return try {
++                File(path).exists()
++            } catch (_: Exception) {
++                false
++            }
+         }
+ 
+         @Suppress("unused") // Called from JNI
+         fun isDirectory(path: String): Boolean {
+-            return File(path).isDirectory
++            return try {
++                File(path).isDirectory
++            } catch (_: Exception) {
++                false
++            }
+         }
+ 
+         @Suppress("unused") // Called from JNI
+         fun getFileSize(path: String): Long {
+-            val file = File(path)
+-            return if (file.isFile) file.length() else -1L
++            return try {
++                val file = File(path)
++                if (file.isFile) file.length() else -1L
++            } catch (_: Exception) {
++                -1L
++            }
+         }
+ 
+         @Suppress("unused") // Called from JNI
+-        fun getAvailableSpace(): Long = CppBridgeFileManager.availableSpace()
++        fun getAvailableSpace(): Long {
++            return try {
++                CppBridgeFileManager.availableSpace()
++            } catch (_: Exception) {
++                -1L
++            }
++        }
+ 
+         @Suppress("unused") // Called from JNI
+         fun getTotalSpace(): Long {
+-            val baseDir = File(CppBridgeModelPaths.getBaseDirectory())
+-            return baseDir.totalSpace
++            return try {
++                val baseDir = File(CppBridgeModelPaths.getBaseDirectory())
++                baseDir.totalSpace
++            } catch (_: Exception) {
++                -1L
++            }
+         }
+     }
+ }
+```
+
+**File**: `core/src/jni/runanywhere_commons_jni.cpp` (modified, +68/-35)
+```diff
+@@ -4124,62 +4124,80 @@ static void free_directory_entry_copies(char** entries, size_t count) {
+ 
+ // JNI file callback implementations
+ static rac_result_t jni_fc_create_directory(const char* path, int recursive, void* user_data) {
++    if (path == nullptr)
++        return RAC_ERROR_NULL_POINTER;
+     JNIEnv* env = getJNIEnv();
+     if (env == nullptr || g_file_callbacks_obj == nullptr || g_fc_create_directory == nullptr)
+         return RAC_ERROR_NOT_INITIALIZED;
+     jstring jPath = env->NewStringUTF(path);
++    if (jniClearPendingException(env) || jPath == nullptr) {
++        env->DeleteLocalRef(jPath);
++        return RAC_ERROR_OUT_OF_MEMORY;
++    }
+     jint result = env->CallIntMethod(g_file_callbacks_obj, g_fc_create_directory, jPath,
+                                      static_cast<jboolean>(recursive != 0));
++    const bool failed = jniClearPendingException(env);
+     env->DeleteLocalRef(jPath);
+-    return static_cast<rac_result_t>(result);
++    return failed ? RAC_ERROR_INTERNAL : static_cast<rac_result_t>(result);
+ }
+ 
+ static rac_result_t jni_fc_delete_path(const char* path, int recursive, void* user_data) {
++    if (path == nullptr)
++        return RAC_ERROR_NULL_POINTER;
+     JNIEnv* env = getJNIEnv();
+     if (env == nullptr || g_file_callbacks_obj == nullptr || g_fc_delete_path == nullptr)
+         return RAC_ERROR_NOT_INITIALIZED;
+     jstring jPath = env->NewStringUTF(path);
++    if (jniClearPendingException(env) || jPath == nullptr) {
++        env->DeleteLocalRef(jPath);
++        return RAC_ERROR_OUT_OF_MEMORY;
++    }
+     jint result = env->CallIntMethod(g_file_callbacks_obj, g_fc_delete_path, jPath,
+                                      static_cast<jboolean>(recursive != 0));
++    const bool failed = jniClearPendingException(env);
+     env->DeleteLocalRef(jPath);
+-    return static_cast<rac_result_t>(result);
++    return failed ? RAC_ERROR_INTERNAL : static_cast<rac_result_t>(result);
+ }
+ 
+ static rac_result_t jni_fc_list_directory(const char* path, char*** out_entries, size_t* out_count,
+                                           void* user_data) {
++    if (out_entries != nullptr) {
++        *out_entries = nullptr;
++    }
++    if (out_count != nullptr) {
++        *out_count = 0;
++    }
+     if (path == nullptr || out_entries == nullptr || out_count == nullptr) {
+         return RAC_ERROR_NULL_POINTER;
+     }
+-    *out_entries = nullptr;
+-    *out_count = 0;
+ 
+     JNIEnv* env = getJNIEnv();
+     if (env == nullptr || g_file_callbacks_obj == nullptr || g_fc_list_directory == nullptr)
+         return RAC_ERROR_NOT_INITIALIZED;
+ 
+     jstring jPath = env->NewStringUTF(path);
+-    if (jPath == nullptr) {
+-        if (env->ExceptionCheck() == JNI_TRUE) {
+-            env->ExceptionClear();
+-        }
++    if (jniClearPendingException(env) || jPath == nullptr) {
++        env->DeleteLocalRef(jPath);
+         return RAC_ERROR_OUT_OF_MEMORY;
+     }
+     jobjectArray jEntries = static_cast<jobjectArray>(
+         env->CallObjectMethod(g_file_callbacks_obj, g_fc_list_directory, jPath));
++    const bool failed = jniClearPendingException(env);
+     env->DeleteLocalRef(jPath);
+ 
+-    if (env->ExceptionCheck() == JNI_TRUE) {
+-        env->ExceptionClear();
+-        if (jEntries != nullptr) {
+-            env->DeleteLocalRef(jEntries);
+-        }
++    if (failed) {
++        env->DeleteLocalRef(jEntries);
+         return RAC_ERROR_INTERNAL;
+     }
+     if (jEntries == nullptr) {
+         return RAC_ERROR_FILE_NOT_FOUND;
+     }
+ 
+     const jsize count = env->GetArrayLength(jEntries);
++    if (jniClearPendingException(env)) {
++        env->DeleteLocalRef(jEntries);
++        return RAC_ERROR_INTERNAL;
++    }
+     if (count == 0) {
+         env->DeleteLocalRef(jEntries);
+         return RAC_SUCCESS;
+@@ -4197,25 +4215,20 @@ static rac_result_t jni_fc_list_directory(const char* path, char*** out_entries,
+         return RAC_ERROR_OUT_OF_MEMORY;
+     }
+ 
+-    // Copy the entries transactionally: any failed JNI/string allocation
+-    // frees what has already been copied and reports RAC_ERROR_OUT_OF_MEMORY
+-    // instead of returning a partially initialized array or strdup(nullptr).
++    // Publish only a complete listing; any failed copy rolls back the initialized prefix.
+     for (jsize i = 0; i < count; i++) {
+         auto jEntry = static_cast<jstring>(env->GetObjectArrayElement(jEntries, i));
+-        if (jEntry == nullptr) {
+-            const bool has_exception = env->ExceptionCheck() == JNI_TRUE;
+-            if (has_exception) {
+-                env->ExceptionClear();
+-            }
++        const bool entry_failed = jniClearPendingException(env);
++        if (entry_failed || jEntry == nullptr) {
++            env->DeleteLocalRef(jEntry);
+             free_directory_entry_copies(entries, static_cast<size_t>(i));
+             env->DeleteLocalRef(jEntries);
+-            return has_exception ? RAC_ERROR_INTERNAL : RAC_ERROR_INVALID_ARGUMENT;
++            return entry_failed ? RAC_ERROR_INTERNAL : RAC
+```
+
+---
+
+### Incident Patch 3: `f0efd0ec` (2026-11-04)
+**Commit Message**: fix(commons): decode the directory-probe path as UTF-8 on Windows (#1264)
+
+* fix(commons): decode the probe path as UTF-8 on Windows (#1262)
+
+std::filesystem::status(const char*) decodes with the ANSI code page on
+Windows, so an existing directory with a non-ASCII name could be reported
+as FILE_NOT_FOUND and lose its registry state to orphan pruning. Convert
+the UTF-8 path to UTF-16 strictly (MB_ERR_INVALID_CHARS) before probing,
+and treat malformed UTF-8 as inconclusive (READ_FAILED) rather than
+probing a substituted path. POSIX behaviour is unchanged.
+
+Add non-ASCII existing/missing cases to test_jni_directory_probe (all
+platforms) and a malformed-UTF-8 case on Windows; give the test target
+core/src for platform_compat.h; wrap the 103-column assertion.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* refactor(commons): share strict UTF-8 conversion; scope probe docs to Windows
+
+- Move the strict converter into platform_compat.h as rac_to_wstring_strict
+  (next to rac_to_wstring) so other Windows path callers can reuse it.
+- Header: strict decoding and READ_FAILED-on-malformed are Windows-only;
+  POSIX passes bytes through (file names are byte strings there).
+- Test: build e
+
+**File**: `core/include/rac/infrastructure/file_management/rac_directory_probe.h` (modified, +4/-0)
+```diff
+@@ -35,6 +35,10 @@ extern "C" {
+  *   so callers keep any registered path until a later refresh.
+  * - `RAC_ERROR_INVALID_ARGUMENT`: @p path is NULL.
+  *
++ * @p path is UTF-8. On Windows it is strictly converted to UTF-16 before
++ * probing, and malformed UTF-8 is inconclusive (READ_FAILED). On POSIX the
++ * bytes are passed through unchanged, since file names there are byte strings.
++ *
+  * Never throws; safe to call across a JNI boundary.
+  *
+  * @param path Directory path the platform failed to list (UTF-8).
+```
+
+**File**: `core/src/core/internal/platform_compat.h` (modified, +21/-0)
+```diff
+@@ -219,6 +219,27 @@ inline std::wstring rac_to_wstring(const char* s) {
+         return {};
+     return rac_to_wstring(std::string(s));
+ }
++/* Strict variant for paths: rac_to_wstring() replaces malformed bytes with
++ * U+FFFD, which can silently name a different file. This fails instead.
++ * Returns false (and clears *out) on NULL or malformed UTF-8; an empty string
++ * converts to an empty wstring. May throw std::bad_alloc. */
++inline bool rac_to_wstring_strict(const char* s, std::wstring* out) {
++    out->clear();
++    if (!s)
++        return false;
++    if (!*s)
++        return true;
++    int size = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, s, -1, nullptr, 0);
++    if (size <= 0)
++        return false;
++    out->resize(static_cast<size_t>(size));
++    if (MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, s, -1, &(*out)[0], size) != size) {
++        out->clear();
++        return false;
++    }
++    out->resize(static_cast<size_t>(size - 1)); /* drop the terminating NUL */
++    return true;
++}
+ #endif
+ // ONNX Runtime path handling:
+ //   - On Windows, use `std::wstring wp = rac_to_wstring(p); session(env, wp.c_str(), opts);`
+```
+
+**File**: `core/src/infrastructure/file_management/directory_probe.cpp` (modified, +18/-0)
+```diff
+@@ -8,6 +8,13 @@
+ 
+ #include "rac/infrastructure/file_management/rac_directory_probe.h"
+ 
++#if defined(_WIN32)
++#include <string>
++
++// rac_to_wstring_strict; also brings in <windows.h> with the repo's macro guards.
++#include "core/internal/platform_compat.h"
++#endif
++
+ // File.exists()/isDirectory() hide stat errors behind false. After the platform
+ // returns a null listing, confirm absence using a probe that retains its error.
+ // An existing directory is inconclusive too: it may have become accessible
+@@ -19,7 +26,18 @@ extern "C" rac_result_t rac_classify_null_directory_listing(const char* path) {
+     std::error_code error;
+     std::filesystem::file_status status;
+     try {
++#if defined(_WIN32)
++        // The narrow std::filesystem::path constructor uses the ANSI code page
++        // on Windows, so convert the UTF-8 path to UTF-16 first.
++        std::wstring wide;
++        if (!rac_to_wstring_strict(path, &wide)) {
++            // Can't name the path reliably, so don't claim it's missing.
++            return RAC_ERROR_FILE_READ_FAILED;
++        }
++        status = std::filesystem::status(std::filesystem::path(wide), error);
++#else
+         status = std::filesystem::status(path, error);
++#endif
+     } catch (...) {
+         // Path construction can allocate even with the error-code overload.
+         // Keep failures inconclusive instead of letting them escape through JNI.
+```
+
+**File**: `core/tests/CMakeLists.txt` (modified, +2/-0)
+```diff
+@@ -104,6 +104,8 @@ add_executable(test_jni_directory_probe test_jni_directory_probe.cpp
+     ${CMAKE_CURRENT_LIST_DIR}/../src/infrastructure/file_management/directory_probe.cpp)
+ target_include_directories(test_jni_directory_probe PRIVATE
+     ${CMAKE_CURRENT_LIST_DIR}/../include
++    # directory_probe.cpp includes core/internal/platform_compat.h on Windows.
++    ${CMAKE_CURRENT_LIST_DIR}/../src
+ )
+ target_compile_features(test_jni_directory_probe PRIVATE cxx_std_20)
+ add_test(NAME jni_directory_probe_tests COMMAND test_jni_directory_probe)
+```
+
+**File**: `core/tests/test_jni_directory_probe.cpp` (modified, +27/-5)
+```diff
+@@ -7,6 +7,7 @@
+ #include <cstdio>
+ #include <filesystem>
+ #include <fstream>
++#include <string>
+ #include <system_error>
+ 
+ #include "rac/infrastructure/file_management/rac_directory_probe.h"
+@@ -15,6 +16,12 @@ namespace {
+ 
+ namespace fs = std::filesystem;
+ 
++// The probe takes UTF-8. path::string() uses the ANSI code page on Windows.
++std::string to_utf8(const fs::path& p) {
++    const auto u8 = p.u8string();
++    return std::string(u8.begin(), u8.end());
++}
++
+ #define EXPECT_EQ(actual, expected)                                                          \
+     do {                                                                                     \
+         if ((actual) != (expected)) {                                                        \
+@@ -54,15 +61,30 @@ int main() {
+     EXPECT_EQ(fs::is_regular_file(file), true);
+ 
+     EXPECT_EQ(rac_classify_null_directory_listing(nullptr), RAC_ERROR_INVALID_ARGUMENT);
+-    EXPECT_EQ(rac_classify_null_directory_listing(missing.string().c_str()), RAC_ERROR_FILE_NOT_FOUND);
+-    EXPECT_EQ(rac_classify_null_directory_listing(file.string().c_str()), RAC_ERROR_FILE_NOT_FOUND);
++    EXPECT_EQ(rac_classify_null_directory_listing(to_utf8(missing).c_str()),
++              RAC_ERROR_FILE_NOT_FOUND);
++    EXPECT_EQ(rac_classify_null_directory_listing(to_utf8(file).c_str()), RAC_ERROR_FILE_NOT_FOUND);
+     const auto beneath_file = file / "model";
+-    EXPECT_EQ(rac_classify_null_directory_listing(beneath_file.string().c_str()),
++    EXPECT_EQ(rac_classify_null_directory_listing(to_utf8(beneath_file).c_str()),
+               RAC_ERROR_FILE_NOT_FOUND);
+     // A null Java result followed by an existing directory is inconclusive.
+-    EXPECT_EQ(rac_classify_null_directory_listing(fixture.model.string().c_str()),
++    EXPECT_EQ(rac_classify_null_directory_listing(to_utf8(fixture.model).c_str()),
+               RAC_ERROR_FILE_READ_FAILED);
+ 
++    // The path argument is UTF-8 on every platform. On Windows a narrow-path
++    // probe would decode it with the ANSI code page and miss this directory.
++    const auto non_ascii = fixture.root / fs::path(u8"modèle-模型");
++    fs::create_directories(non_ascii);
++    EXPECT_EQ(rac_classify_null_directory_listing(to_utf8(non_ascii).c_str()),
++              RAC_ERROR_FILE_READ_FAILED);
++    EXPECT_EQ(rac_classify_null_directory_listing(to_utf8(non_ascii / u8"缺").c_str()),
++              RAC_ERROR_FILE_NOT_FOUND);
++#if defined(_WIN32)
++    // Malformed UTF-8 cannot name a path reliably, so it must stay inconclusive.
++    const std::string malformed = to_utf8(fixture.root) + "\\bad\xC3\x28name";
++    EXPECT_EQ(rac_classify_null_directory_listing(malformed.c_str()), RAC_ERROR_FILE_READ_FAILED);
++#endif
++
+     std::error_code error;
+     fs::permissions(fixture.blocked, fs::perms::none, error);
+     if (error) {
+@@ -76,7 +98,7 @@ int main() {
+     }
+     // No synthetic File overrides: the existing model cannot be stat'ed
+     // through its denied ancestor, and must not become a missing-download result.
+-    EXPECT_EQ(rac_classify_null_directory_listing(fixture.model.string().c_str()),
++    EXPECT_EQ(rac_classify_null_directory_listing(to_utf8(fixture.model).c_str()),
+               RAC_ERROR_FILE_READ_FAILED);
+     std::puts("JNI directory probe tests passed, including real permission denial");
+     return 0;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1265** (2026-11-04): docs: relabel stale reserved_slot_2..9 comments in plugin entries (@mlzerotoheroyoutube)
-- **PR #1261** (2026-11-04): feat(commons): expose rac_classify_null_directory_listing as public API (@mlzerotoheroyoutube)
-- **PR #1260** (2026-11-04): docs: v14 slot counts in rac_engine_unavailable.h; tidy RN fileListDirectory comment (@mlzerotoheroyoutube)
-- **PR #1256** (2026-11-03): fix(react-native): don't report an unreadable Android model folder as missing (@mlzerotoheroyoutube)
-- **PR #1255** (2026-11-03): fix(vad): let an explicit activation_threshold of 0.0 through the configure path (@ayaangazali)
-- **PR #1250** (2026-11-03): fix(segmentation): validate legacy direct-path buffers (@shubhamsinnh)
+- **PR #1278** (2026-11-05): fix(voice-agent): apply vad_config in rac_voice_agent_initialize and report a rejected config (@ayaangazali)
+- **PR #1276** (2026-11-04): fix(android): contain JNI file callback exceptions (@shubhamsinnh)
+- **PR #1270** (2026-11-04): fix(electron): check seek results and size bounds in win_file_read (#904) (@shubhamsinnh)
+- **PR #1268** (closed): fix(engines): preserve backend state when plugin unregister is refused (@shubhamsinnh)
+- **PR #1267** (2026-11-04): fix(model-registry): preserve downloads on inconclusive fs probes (@shubhamsinnh)
+- **PR #1266** (2026-11-04): fix: make backend unregister honor RAC_ERROR_PLUGIN_BUSY (@Kathircpe)
 
 ---
 
@@ -2716,47 +2688,61 @@ Propagate Kotlin tool serialization
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. commons): reject default tool keys that collide after UTF-8 repair (#1233)
+## X. model-registry): preserve downloads on inconclusive fs probes (#1267)
 
 **RULE**:
-When implementing operations in `core/src/features/llm/tool_calling.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RunanywhereAI/runanywhere-sdks. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `bindings/electron/native/posix_platform_adapter.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RunanywhereAI/runanywhere-sdks. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `40053ed9`: commons): reject default tool keys that collide after UTF-8 repair (#1233). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `65b3ace3`: model-registry): preserve downloads on inconclusive fs probes (#1267). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/src/features/llm/tool_calling.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `bindings/electron/native/posix_platform_adapter.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-#include "features/llm/tool_calling_key_repair_internal.h"
-/**
- * @brief Normalize a tool-call JSON payload, repairing malformed UTF-8.
- *
- * Rejects payloads whose distinct raw keys decode to the same key after repair
- * (`RAC_ERROR_INVALID_ARGUMENT`), then repairs bytes and re-serializes valid
- * JSON, falling back to the unquoted-key normalizer when the fast parse fails.
- *
- * @param json_str Raw JSON payload (must not be null).
- * @param out_normalized Receives the owned normalized string on success.
- * @return RAC_SUCCESS (repaired on the fast path, or via the unquoted-key
- *         scanner when the fast parser rejects the payload),
- *         RAC_ERROR_INVALID_ARGUMENT for ambiguous keys,
- *         RAC_ERROR_OUT_OF_MEMORY on allocation failure, or RAC_ERROR_INTERNAL
- *         for an unexpected exception.
- */
-    if (rac::llm::tool_calling::has_repaired_key_collision(json_str)) {
-        return RAC_ERROR_INVALID_ARGUMENT;
-    }
+#include "rac/core/rac_logger.h"
+// Distinguish a confirmed missing/non-directory path from a permission or I/O
+// failure. The boolean std::filesystem probes collapse both into false, which
+// lets orphan pruning mistake an unreadable download folder for a vanished one.
+bool is_confirmed_missing(const std::error_code& ec) {
+    return ec == std::errc::no_such_file_or_directory || ec == std::errc::not_a_directory;
+}
 
+// Confirm that `directory` exists and is a directory. Only an affirmative
+// missing/non-directory result maps to FILE_NOT_FOUND; denied or unknown
+// probes stay inconclusive for callers that preserve registry state.
+rac_result_t classify_directory_probe(const fs::path& directory) {
+    std::error_code ec;
+    const fs::file_status status = fs::status(directory, ec);
+    if (is_confirmed_missing(ec)) {
+        return RAC_ERROR_FILE_NOT_FOUND;
+    }
+    if (ec) {
+        return RAC_ERROR_FILE_READ_FAILED;
+    }
+    switch (status.type()) {
+        case fs::file_type::not_found:
+            return RAC_ERROR_FILE_NOT_FOUND;
+        case fs::file_type::none:
+        case fs::file_type::unknown:
+            return RAC_ERROR_FILE_READ_FAILED;
+        default:
+            r
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    if (!fs::is_directory(dir, ec) || ec) return RAC_ERROR_FILE_NOT_FOUND;
+        if (name.size() + 1 > RAC_DIRECTORY_ENTRY_NAME_MAX) continue;  // skip oversized
+        std::error_code ec2;
+        bool is_dir = fs::is_directory(it->path(), ec2);
+        out_entries[written].size_bytes =
+            is_dir ? 0 : static_cast<int64_t>(fs::file_size(it->path(), ec2));
+        if (ec2) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `40053ed9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `65b3ace3` are properly handled with clean fallback behavior.

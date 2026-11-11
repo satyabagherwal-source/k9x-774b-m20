@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mikepenz-aboutlibraries-learnings.md`  
 > **Source**: github ([https://github.com/mikepenz/AboutLibraries](https://github.com/mikepenz/AboutLibraries))  
-> **Source Version**: `697e4d15`  
+> **Source Version**: `0eb18c80`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T21:26:14.451Z  
+> **Timestamp**: 2026-11-07T21:10:22.491Z  
 > **Learning ID**: `learn-github-mikepenz-aboutlibraries`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mikepenz-aboutlibraries-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mikepenz/AboutLibraries](https://github.com/mikepenz/AboutLibraries))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T21:26:14.091Z  
+> **Harvest Timestamp**: 2026-11-07T21:10:22.320Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: AboutLibraries automatically collects all dependencies and licenses of any gradle project (Kotlin MultiPlatform), and provides easy to integrate UI components for Android and Compose Multiplatform environments 
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4493 stars
+- **Stars / Engagement**: 4492 stars
 
 ---
 
@@ -504,107 +504,31 @@ data class Organization(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `697e4d15` (2026-11-02)
-**Commit Message**: fix(deps): update dependency com.mikepenz:version-catalog to v0.23.2 (#1489)
-
-* fix(deps): update dependency com.mikepenz:version-catalog to v0.23.2
-
-* fix: support minor compileSdk versions (e.g. 37.2) in sample/shared
-
----------
-
-Co-authored-by: renovate-mike[bot] <274037420+renovate-mike[bot]@users.noreply.github.com>
-Co-authored-by: Mike Penz <[REDACTED_EMAIL]>
-
-**File**: `plugin-build/settings.gradle.kts` (modified, +1/-1)
-```diff
-@@ -26,7 +26,7 @@ dependencyResolutionManagement {
-             from(files("../gradle/libs.versions.toml"))
-         }
-         create("baseLibs") {
--            from("com.mikepenz:version-catalog:0.22.0")
-+            from("com.mikepenz:version-catalog:0.23.2")
-         }
-     }
- }
-\ No newline at end of file
-```
-
-**File**: `sample/shared/build.gradle.kts` (modified, +4/-1)
-```diff
-@@ -34,7 +34,10 @@ kotlin {
- 
-     android {
-         namespace = "com.mikepenz.aboutlibraries.sample.shared"
--        compileSdk = baseLibs.versions.compileSdk.get().toInt()
-+        compileSdk {
-+            val (major, minor) = baseLibs.versions.compileSdk.get().split(".").map { it.toInt() }.let { it[0] to it.getOrElse(1) { 0 } }
-+            version = release(major) { minorApiLevel = minor }
-+        }
-         minSdk = project.readPropertyOrElse("com.mikepenz.android.minSdk", baseLibs.versions.minSdk.get(), null)?.toInt()
-         experimentalProperties["android.experimental.kmp.enableAndroidResources"] = true
-     }
-```
-
-**File**: `settings.gradle.kts` (modified, +1/-1)
-```diff
-@@ -25,7 +25,7 @@ dependencyResolutionManagement {
- 
-     versionCatalogs {
-         create("baseLibs") {
--            from("com.mikepenz:version-catalog:0.22.0")
-+            from("com.mikepenz:version-catalog:0.23.2")
-         }
-     }
- }
-```
-
----
-
-### Incident Patch 2: `20f0c255` (2026-11-02)
-**Commit Message**: fix(deps): update dependency org.jetbrains.kotlinx:kotlinx-serialization-json to v1.12.0 (#1493)
+### Incident Patch 1: `0eb18c80` (2026-11-07)
+**Commit Message**: chore(deps): update mikepenz/release-changelog-builder-action digest to b0db9d1 (#1495)
 
 Co-authored-by: renovate-mike[bot] <274037420+renovate-mike[bot]@users.noreply.github.com>
 
-**File**: `gradle/libs.versions.toml` (modified, +1/-1)
+**File**: `.github/workflows/ci.yml` (modified, +1/-1)
 ```diff
-@@ -1,6 +1,6 @@
- [versions]
- # kotlin
--kotlinxSerialization = "1.11.0"
-+kotlinxSerialization = "1.12.0"
- # androidx
- activity = "1.13.0"
- cardview = "1.0.0"
-```
-
----
-
-### Incident Patch 3: `f49d2035` (2026-11-02)
-**Commit Message**: fix(deps): update dependency com.squareup.okhttp3:okhttp to v5.5.1 (#1492)
-
-Co-authored-by: renovate-mike[bot] <274037420+renovate-mike[bot]@users.noreply.github.com>
-
-**File**: `gradle/libs.versions.toml` (modified, +1/-1)
-```diff
-@@ -18,7 +18,7 @@ itemAnimators = "1.1.0"
- ivy = "2.6.0"
- modelBuilder = "3.10.0"
- materialDrawer = "9.0.2"
--okhttp = "5.5.0"
-+okhttp = "5.5.1"
- dejavu = "0.5.0"
+@@ -245,7 +245,7 @@ jobs:
  
- [plugins]
+       - name: Build Changelog
+         id: github_release
+-        uses: mikepenz/release-changelog-builder-action@aa013739bbc8e7067dbbecd4525ff11aeb51a84b # v6
++        uses: mikepenz/release-changelog-builder-action@b0db9d18b53447ef9f940a46c8f31653c4d9f621 # v6
+         with:
+           configuration: ".github/config/configuration.json"
+           ignorePreReleases: ${{ !contains(github.ref, '-') }}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1495** (2026-11-07): chore(deps): update mikepenz/release-changelog-builder-action digest to b0db9d1 (@renovate-mike[bot])
 - **PR #1493** (2026-11-02): fix(deps): update dependency org.jetbrains.kotlinx:kotlinx-serialization-json to v1.12.0 (@renovate-mike[bot])
 - **PR #1492** (2026-11-02): fix(deps): update dependency com.squareup.okhttp3:okhttp to v5.5.1 (@renovate-mike[bot])
 - **PR #1491** (2026-11-02): chore(deps): update gradle to v9.8.2 (@renovate-mike[bot])
 - **PR #1490** (2026-11-01): chore(deps): update github actions updates (@renovate-mike[bot])
 - **PR #1489** (2026-11-02): fix(deps): update dependency com.mikepenz:version-catalog to v0.23.2 (@renovate-mike[bot])
-- **PR #1487** (2026-10-18): fix(plugin): strip .git suffix from repository url before fetching remote license (@mikepenz)
 
 ---
 
@@ -624,28 +548,28 @@ Co-authored-by: renovate-mike[bot] <274037420+renovate-mike[bot]@users.noreply.g
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): update dependency com.mikepenz:version-catalog to v0.23.2 (#1489)
+## X. deps): update mikepenz/release-changelog-builder-action digest to b0db9d1 (#1495
 
 **RULE**:
-When implementing operations in `plugin-build/settings.gradle.kts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mikepenz/AboutLibraries. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mikepenz/AboutLibraries. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `697e4d15`: deps): update dependency com.mikepenz:version-catalog to v0.23.2 (#1489). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0eb18c80`: deps): update mikepenz/release-changelog-builder-action digest to b0db9d1 (#1495). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `plugin-build/settings.gradle.kts`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-            from("com.mikepenz:version-catalog:0.23.2")
+        uses: mikepenz/release-changelog-builder-action@b0db9d18b53447ef9f940a46c8f31653c4d9f621 # v6
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-            from("com.mikepenz:version-catalog:0.22.0")
+        uses: mikepenz/release-changelog-builder-action@aa013739bbc8e7067dbbecd4525ff11aeb51a84b # v6
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `697e4d15` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0eb18c80` are properly handled with clean fallback behavior.

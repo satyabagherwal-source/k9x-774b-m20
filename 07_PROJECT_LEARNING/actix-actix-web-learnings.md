@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/actix-actix-web-learnings.md`  
 > **Source**: github ([https://github.com/actix/actix-web](https://github.com/actix/actix-web))  
-> **Source Version**: `3396bd83`  
+> **Source Version**: `04649fe7`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T07:27:40.020Z  
+> **Timestamp**: 2026-11-09T12:49:28.684Z  
 > **Learning ID**: `learn-github-actix-actix-web`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/actix-actix-web-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/actix/actix-web](https://github.com/actix/actix-web))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T07:27:40.012Z  
+> **Harvest Timestamp**: 2026-11-09T12:49:26.930Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Actix Web is a powerful, pragmatic, and extremely fast web framework for Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 24911 stars
+- **Stars / Engagement**: 24938 stars
 
 ---
 
@@ -73,12 +73,12 @@ use super::{BodySize, MessageBody};
 pub async fn to_bytes<B: MessageBody>(body: B) -> Result<Bytes, B::Error> {
     to_bytes_limited(body, usize::MAX)
         .await
-        .expect("body should never yield more than usize::MAX bytes")
+        .expect("Body should never yield more than usize::MAX bytes")
 }
 
 /// Error type returned from [`to_bytes_limited`] when body produced exceeds limit.
 #[derive(Debug, Display, Error)]
-#[display("limit exceeded while collecting body bytes")]
+#[display("Limit exceeded while collecting body bytes")]
 #[non_exhaustive]
 pub struct BodyLimitExceeded;
 
@@ -947,11 +947,11 @@ use derive_more::Display;
 pub enum FilesError {
     /// Path is not a directory.
     #[allow(dead_code)]
-    #[display("path is not a directory. Unable to serve static files")]
+    #[display("Path is not a directory. Unable to serve static files")]
     IsNotDirectory,
 
     /// Cannot render directory.
-    #[display("unable to render directory without index file")]
+    #[display("Unable to render directory without index file")]
     IsDirectory,
 }
 
@@ -967,19 +967,19 @@ impl ResponseError for FilesError {
 #[non_exhaustive]
 pub enum UriSegmentError {
     /// Segment started with the wrapped invalid character.
-    #[display("segment started with invalid character: ('{_0}')")]
+    #[display("Segment started with invalid character: ('{_0}')")]
     BadStart(char),
 
     /// Segment contained the wrapped invalid character.
-    #[display("segment contained invalid character ('{_0}')")]
+    #[display("Segment contained invalid character ('{_0}')")]
     BadChar(char),
 
     /// Segment ended with the wrapped invalid character.
-    #[display("segment ended with invalid character: ('{_0}')")]
+    #[display("Segment ended with invalid character: ('{_0}')")]
     BadEnd(char),
 
     /// Path is not a valid UTF-8 string after percent-decoding.
-    #[display("path is not a valid UTF-8 string after percent-decoding")]
+    #[display("Path is not a valid UTF-8 string after percent-decoding")]
     NotValidUtf8,
 }
 
@@ -1332,11 +1332,13 @@ impl Files {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4387** (2026-11-04): **build(deps): bump encoding_rs from 0.8.42 to 0.8.44**
-  *Symptoms*: Bumps [encoding_rs](https://github.com/hsivonen/encoding_rs) from 0.8.42 to 0.8.44. <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/hsivonen/encoding_rs/commit/8e8556af3cf976392b993a9dbe07456a5ef58469"><code>8e8556a</code></a> Increment the version number to 0.8.44</li> <li><a href="https://github.com/hsivonen/encoding_rs/commit/084bb9b18fac2607b9a0df622a17316e82614890"><code>084bb9b</code></a> Update release notes</li> <li><a href="https://github.com/hsivonen/encoding_rs/commit/7f91341d4bcf3fcceabcdeaf2aa29d4fa1649f65"><code>7f91341</code></a> Make convert_latin1_to_utf8_partial not write trailing garbage</li> <li><a href="https://github.com/hsivonen/encoding_rs/commit/4a7b5151586236bd5e03bd42abc662e8dacc4685"><code>4a7b515</code></a> Increment the version number to 0.8.43</li> <li><a href="https://github.com/hsivonen/encoding_rs/commit/c9e3a85663b17c263fe8637c37edbdebde287a62"><code>c9e3a85</code></a> Add defense-in-depth guard to convert_latin1_to_str_partial</li> <li><a href="https://github.com/hsivonen/encoding_rs/commit/73ddf1374f3e09d46f8bf852c948660650d5cc2e"><code>73ddf13</code></a> Fix wrong function name in doc</li> <li><a href="https://github.com/hsivonen/encoding_rs/commit/aaa3056e62e0387617615989e8d8a75af1fe1f33"><code>aaa3056</code></a> Relocate a misplaced doc remark</li> <li><a href="https://github.com/hsivonen/encoding_rs/commit/bdb16ccb8d0b069b674a6eeef9c7d094e41c2b24"><code>bdb16cc</code></a> Make it possible to enable serde witho
+- **Issue #4404** (2026-11-08): **perf(http): copy large HTTP/1 chunks that would cost more to hold**
+  *Symptoms*: <!-- Thanks for considering contributing actix! --> <!-- Please fill out the following to get your PR reviewed quicker. -->  ## PR Type  <!-- What kind of change does this PR make? --> <!-- Bug Fix / Feature / Refactor / Code Style / Other -->  Perf  ## PR Checklist  <!-- Check your PR fulfills the following items. --> <!-- For draft PRs check the boxes as you complete them. -->  - [x] Tests for the changes have been added / updated. - [x] Documentation comments have been added / updated. - [x] A changelog entry has been made for the appropriate packages. - [x] Format code with the latest stable rustfmt. - [x] (Team) Label with affected crates and semver status.  ## Overview  <!-- Describe the current and new behavior. --> <!-- Emphasize any breaking changes. -->  The follow-up I promised on #4302. Holding a large chunk until it's written costs more than copying it in three cases:  - A chunk with spare capacity, like the `String` behind `.json()`, keeps all of it until the client has read the body. It now goes through the write buffer, as before #4302. - A stream without vectored writes, like tokio-openssl's, takes the head and the chunk in two writes. It now copies the chunk too, as hyper does. - The emptied write buffer stays allocated beside a held chunk. It's now released until the chunk is written.  Bytes each connection holds with 200 clients that never read, from a counting allocator in a one-worker server, main at 934f037 against this PR:  | Body | main (KB) | this PR
 
-- **Issue #4386** (2026-11-04): **build(deps): bump brotli from 9.0.0 to 9.1.1**
-  *Symptoms*: Bumps [brotli](https://github.com/dropbox/rust-brotli) from 9.0.0 to 9.1.1. <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/dropbox/rust-brotli/commit/a3cb9311ac6874a379c56b62b61885cc09a5c0d1"><code>a3cb931</code></a> release 9.1.1</li> <li><a href="https://github.com/dropbox/rust-brotli/commit/b47cb223fba21bf7ef201858b3f3d70c0f211b20"><code>b47cb22</code></a> Refactor into a more legible reader</li> <li><a href="https://github.com/dropbox/rust-brotli/commit/e0efe1c557f211a8a03be371e988d02aab94455a"><code>e0efe1c</code></a> BroCatli: hold back trailing header bytes and handle short and chunked streams</li> <li><a href="https://github.com/dropbox/rust-brotli/commit/afa85858854e2b324d880a6610a04e5079033493"><code>afa8585</code></a> BroCatli: keep both header bytes when an empty stream straddles a byte boundary</li> <li><a href="https://github.com/dropbox/rust-brotli/commit/e951e7eb9f757aeb8732662d2c9fc8b7ac5fc706"><code>e951e7e</code></a> brotli CLI: accept -bare and -bytealign with -catable, exit 1 when rejected</li> <li><a href="https://github.com/dropbox/rust-brotli/commit/c550341819cc0f1811ee5d08dd8b9d482500f845"><code>c550341</code></a> Fix index out of bounds under the disallow_large_window_size feature</li> <li><a href="https://github.com/dropbox/rust-brotli/commit/73e6947c2937be7b694ce284d4384388fbe763c2"><code>73e6947</code></a> Release 9.1.0</li> <li><a href="https://github.com/dropbox/rust-brotli/commit/73766fce9859be7e0cd3c1a6d4e49be7c5230e
+- **Issue #4402** (2026-11-08): **feat(http): add infallible body stream constructors**
+  *Symptoms*: ## PR Type  Feature  ## PR Checklist  - [x] Tests for the changes have been added / updated. - [x] Documentation comments have been added / updated. - [x] A changelog entry has been made for the appropriate packages. - [x] (Team) Label with affected crates and semver status.  ## Overview  Add `BodyStream::from_infallible()` and `SizedStream::from_infallible()` constructors for streams of `Bytes` that cannot yield errors. The sized constructor accepts the total byte count. Both constructors skip empty chunks and expose the adapter type as `body::InfallibleStream`.
+  **Post-Mortem & Fix Analysis**:
+  > <!-- code-coverage-overview --> ### Code coverage overview  <b>Languages:</b> Rust <h4>Rust / code-coverage/cargo-llvm-cov</h4>  <table> <tr> <th scope="col"><span id="cc-branch-badge" title="actix/actix-web:main">main</span> <a id="cc-sha-link" href="/actix/actix-web/commit/ba5c8fb9762eb706008ffc02b8c68a82a6fdd65d">ba5c8fb</a></th> <th scope="col"><span id="cc-branch-badge" title="actix/actix-web:t3/from-infallible-todo">t3/from-infallible-t...</span> <a id="cc-sha-link" href="/actix/actix-web/commit/b91ff91b943f63b7b2272d387f2befe6b000318c">b91ff91</a></th> <th scope="col">+/-</th> </tr> <tr> <td>85%</td> <td>85%</td> <td>0%</td> </tr> </table>  <details> <summary>View coverage of the 5 most impacted files.</summary>  <table> <tr> <th scope="col">File</th> <th scope="col"><span id="cc-branch-badge" title="actix/actix-web:main">main</span> <a id="cc-sha-link" href="/actix/actix-web/commit/ba5c8fb9762eb706008ffc02b8c68a82a6fdd65d">ba5c8fb</a></th> <th scope="col"><span id="cc-branch-ba
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1353,444 +1355,387 @@ impl Files {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `41687b5e` (2026-11-04)
-**Commit Message**: build(deps): bump useblacksmith/checkout from 1.8.1 to 1.8.2 (#4382)
+### Incident Patch 1: `9fffe2d3` (2026-11-08)
+**Commit Message**: fix(http): send HTTP/2 GOAWAY during graceful shutdown (#4401)
 
-Bumps [useblacksmith/checkout](https://github.com/useblacksmith/checkout) from 1.8.1 to 1.8.2.
-- [Changelog](https://github.com/useblacksmith/checkout/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/useblacksmith/checkout/compare/v1.8.1...v1.8.2)
+* feat(http): send GOAWAY to HTTP/2 connections on shutdown and max age
 
----
-updated-dependencies:
-- dependency-name: useblacksmith/checkout
-  dependency-version: 1.8.2
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
+The HTTP/2 dispatcher now polls the graceful shutdown signal and calls
+h2's `Connection::graceful_shutdown()`, so in-flight streams finish and
+the connection closes instead of holding workers until the shutdown
+timeout.
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Add an opt-in `h2_max_connection_age` (with +/-10% jitter) on
+`ServiceConfigBuilder`, `HttpServiceBuilder`, and `HttpServer` that
+triggers the same graceful shutdown, so long-lived HTTP/2 clients behind
+layer 4 load balancers reconnect to new instances.
 
-**File**: `.github/workflows/actions.lock` (modified, +10/-10)
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+(cherry picked from commit 5c7cb0e535786ea164b6ec512d0312e9fab73db3)
+
+* fix(http): limit GOAWAY change to graceful server shutdown
+
+* test(http): move GOAWAY regression into server tests
+
+* docs: remove redundant actix-web GOAWAY changelog entry
+
+* test(http): run GOAWAY server on the Tokio test runtime
+
+---------
+
+Co-authored-by: Mohamed Elsharnouby <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `actix-http/CHANGES.md` (modified, +2/-0)
 ```diff
-@@ -4,39 +4,39 @@
- version: 'v0.0.3'
- workflows:
-     '.github/workflows/bench.yml':
--        - 'useblacksmith/checkout@v1.8.1'
-+        - 'useblacksmith/checkout@v1.8.2'
-     '.github/workflows/ci-post-merge.yml':
-         - 'actions-rust-lang/setup-rust-toolchain@v2.0.0'
-         - 'ilammy/setup-nasm@v1.5.2'
-         - 'rui314/setup-mold@v1'
-         - 'taiki-e/install-action@v2.89.0'
--        - 'useblacksmith/checkout@v1.8.1'
-+        - 'useblacksmith/checkout@v1.8.2'
-     '.github/workflows/ci.yml':
-         - 'actions-rust-lang/setup-rust-toolchain@v2.0.0'
-         - 'ilammy/setup-nasm@v1.5.2'
-         - 'rui314/setup-mold@v1'
-         - 'taiki-e/install-action@v2.89.0'
--        - 'useblacksmith/checkout@v1.8.1'
-+        - 'useblacksmith/checkout@v1.8.2'
-     '.github/workflows/coverage.yml':
-         - 'actions-rust-lang/setup-rust-toolchain@v2.0.0'
-         - 'actions/upload-code-coverage@v1.4.4'
-         - 'taiki-e/install-action@v2.89.0'
--        - 'useblacksmith/checkout@v1.8.1'
-+        - 'useblacksmith/checkout@v1.8.2'
-     '.github/workflows/labeler.yml':
-         - 'actions/labeler@v7.0.0'
--        - 'useblacksmith/checkout@v1.8.1'
-+        - 'useblacksmith/checkout@v1.8.2'
-     '.github/workflows/lint.yml':
-         - 'actions-rust-lang/setup-rust-toolchain@v2.0.0'
-         - 'embarkstudios/cargo-deny-action@v2.1.1'
-         - 'giraffate/clippy-action@v1.0.1'
-         - 'taiki-e/cache-cargo-install-action@v3.0.8'
-         - 'taiki-e/install-action@v2.89.0'
--        - 'useblacksmith/checkout@v1.8.1'
-+        - 'useblacksmith/checkout@v1.8.2'
-         - 'zizmorcore/zizmor-action@v0.8.0'
-     '.github/workflows/semver-checks.yml':
-         - 'actions-rust-lang/setup-rust-toolchain@v2.0.0'
-         - 'taiki-e/install-action@v2.89.0'
--        - 'useblacksmith/checkout@v1.8.1'
-+        - 'useblacksmith/checkout@v1.8.2'
- dependencies:
-     'actions-rust-lang/setup-rust-toolchain@v2.0.0':
-         ref: 'v2.0.0'
-@@ -102,9 +102,9 @@ dependencies:
-         commit: 'sha1-1919c4a95903d2c33e4a221102edca87309fc14b'
-         owner_id: 43724913
-         repo_id: 442947557
--    'useblacksmith/checkout@v1.8.1':
--        ref: 'v1.8.1'
--        commit: 'sha1-25227e61ff9dafe400e22fa487b673eac4e4409a'
-+    'useblacksmith/checkout@v1.8.2':
-+        ref: 'v1.8.2'
-+        commit: 'sha1-2b9fe87d796feea153b455ec2f3125b471a7b0e7'
-         owner_id: 156274793
-         repo_id: 1107788336
-     'zizmorcore/zizmor-action@v0.8.0':
+@@ -2,6 +2,8 @@
+ 
+ ## Unreleased
+ 
++- Send GOAWAY to HTTP/2 connections during graceful server shutdown and close them once their in-flight streams finish.
++
+ ## 3.20.4
+ 
+ - Fix HTTP/1 client response framing for informational, 204, and 304 responses to prevent consumption of the next response.
 ```
 
-**File**: `.github/workflows/bench.yml` (modified, +1/-1)
+**File**: `actix-http/src/h2/dispatcher.rs` (modified, +24/-1)
 ```diff
-@@ -18,7 +18,7 @@ jobs:
-     runs-on: blacksmith-2vcpu-ubuntu-2404
+@@ -23,7 +23,7 @@ use tokio::time::{sleep, Sleep};
  
-     steps:
--      - uses: useblacksmith/checkout@v1.8.1
-+      - uses: useblacksmith/checkout@v1.8.2
-         with:
-           persist-credentials: false
+ use crate::{
+     body::{BodySize, BoxBody, MessageBody},
+-    config::ServiceConfig,
++    config::{GracefulShutdownFuture, ServiceConfig},
+     header::{
+         HeaderName, HeaderValue, CONNECTION, CONTENT_LENGTH, DATE, TRANSFER_ENCODING, UPGRADE,
+     },
+@@ -42,6 +42,7 @@ pin_project! {
+         config: ServiceConfig,
+         peer_addr: Option<net::SocketAddr>,
+         ping_pong: Option<H2PingPong>,
++        graceful_shutdown: Option<GracefulShutdownFuture>,
+         _phantom: PhantomData<B>
+     }
+ }
+@@ -70,16 +71,36 @@ where
+             ping_pong: conn.ping_pong().unwrap(),
+         });
  
++        let graceful_shutdown = config.graceful_shutdown();
++
+         Self {
+             flow,
+             config,
+             peer_addr,
+             connection: conn,
+             conn_data: conn_data.0.map(Rc::new),
+             ping_pong,
++            graceful_shutdown,
+             _phantom: PhantomData,
+         }
+     }
++
++    /// Starts a graceful shutdown when the server shutdown signal is ready.
++    fn poll_shutdown(&mut self, cx: &mut Context<'_>) {
++        let shutdown = self
++            .graceful_shutdown
++            .as_mut()
++            .is_some_and(|signal| signal.as_mut().poll(cx).is_ready());
++
++        if shutdown {
++            self.graceful_shutdown = None;
++
++            // Sends GOAWAY, then a second GOAWAY with the last processed stream ID after a PING
++            // round trip. `poll_accept` keeps driving in-flight streams and returns `None` once
++            // they have all finished.
++            self.connection.graceful_shutdown();
++        }
++    }
+ }
+ 
+ struct H2PingPong {
+@@ -110,6 +131,8 @@ where
+     fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
+         let this = self.get_mut();
+ 
++        this.poll_shutdown(cx);
++
+         loop {
+             match Pin::new(&mut this.connection).poll_accept(cx)? {
+                 Poll::Ready(Some((req, tx))) => {
 ```
 
-**File**: `.github/workflows/ci-post-merge.yml` (modified, +2/-2)
+**File**: `actix-http/tests/test_server.rs` (modified, +70/-0)
 ```diff
-@@ -30,7 +30,7 @@ jobs:
-     runs-on: ${{ matrix.target.os }}
+@@ -1129,3 +1129,73 @@ async fn h2_flow_control_window_sizes() {
  
-     steps:
--      - uses: useblacksmith/checkout@v1.8.1
-+      - uses: useblacksmith/checkout@v1.8.2
-         with:
-           persist-credentials: false
- 
-@@ -84,7 +84,7 @@ jobs:
-     runs-on: blacksmith-2vcpu-ubuntu-2404
- 
-     steps:
--      - uses: useblacksmith/checkout@v1.8.1
-+      - uses: useblacksmith/checkout@v1.8.2
-         with:
-           persist-credentials: false
- 
-```
-
-**File**: `.github/workflows/ci.yml` (modified, +2/-2)
-```diff
-@@ -41,7 +41,7 @@ jobs:
-     runs-on: ${{ matrix.target.os }}
- 
-     steps:
--      - uses: useblacksmith/checkout@v1.8.1
-+      - uses: useblacksmith/checkout@v1.8.2
-         with:
-           persist-credentials: false
- 
-@@ -97,7 +97,7 @@ jobs:
-     name: doc tests
-     runs-on: blacksmith-2vcpu-ubuntu-2404
-     steps:
--      - uses: useblacksmith/checkout@v1.8.1
-+      - uses: useblacksmith/checkout@v1.8.2
-         with:
-           persist-credentials: false
- 
-```
-
-**File**: `.github/workflows/coverage.yml` (modified, +1/-1)
-```diff
-@@ -21,7 +21,7 @@ jobs:
-   coverage:
-     runs-on: blacksmith-2vcpu-ubuntu-2404
-     steps:
--      - uses: useblacksmith/checkout@v1.8.1
-+      - uses: useblacksmith/checkout@v1.8.2
-         with:
-           persist-credentials: false
- 
-```
-
-**File**: `.github/workflows/labeler.yml` (modified, +1/-1)
-```diff
-@@ -15,7 +15,7 @@ jobs:
-   labeler:
-     runs-on: ubuntu-slim
-     steps:
--      - uses: useblacksmith/checkout@v1.8.1
-+      - uses: useblacksmith/checkout@v1.8.2
-         with:
-           persist-credentials: false
-       - uses: actions/labeler@v7.0.0
-```
-
-**File**: `.github/workflows/lint.yml` (modified, +6/-6)
-```diff
-@@ -22,7 +22,7 @@ jobs:
-     runs-on: ubuntu-slim
- 
-     steps:
--      - uses: useblacksmith/checkout@v1.8.1
-+      - uses: useblacksmith/checkout@v1.8.2
-         with:
-           persist-credentials: false
- 
-@@ -44,7 +44,7 @@ jobs:
-     runs-on: blacksmith-2vcpu-ubuntu-2404
- 
-     steps:
--      - uses: useblacksmith/checkout@v1.8.1
-+      - uses: useblacksmith/checkout@v1.8.2
-         with:
-           persist-credentials: false
- 
-@@ -54,7 +54,7 @@ jobs:
-   fmt:
-     runs-on: ubuntu-slim
-     steps:
--      - uses: useblacksmith/checkout@v1.8.1
-+      - uses: useblacksmith/checkout@v1.8.2
-         with:
-           persist-credentials: false
- 
-@@ -74,7 +74,7 @@ jobs:
- 
-     runs-on: blacksmith-2vcpu-ubuntu-2404
-     steps:
--      - uses: useblacksmith/checkout@v1.8.1
-+      - uses: useblacksmith/checkout@v1.8.2
-         with:
-           persist-credentials: false
- 
-@@ -95,7 +95,7 @@ jobs:
-   lint-docs:
-     runs-on: blacksmith-2vcpu-ubuntu-2404
-     steps:
--      - uses: useblacksmith/checkout@v1.8.1
-+      - uses: useblacksmith/checkout@v1.8.2
-         with:
-           persist-credentials: false
- 
-@@ -114,7 +114,7 @@ jobs:
-     if: false # rustdoc mismatch currently
-     runs-on: blacksmith-2vcpu-ubuntu-2404
-     steps:
--      - uses: useblacksmith/checkout@v1.8.1
-+      - uses: useblacksmith/checkout@v1.8.2
-         with:
-           persist-credentials: false
- 
-```
-
-**File**: `.github/workflows/semver-checks.yml` (modified, +1/-1)
-```diff
-@@ -12,7 +12,7 @@ jobs:
-     permissions:
-       contents: read
-     steps:
--      - uses: useblacksmith/checkout@v1.8.1
-+      - uses: useblacksmith/checkout@v1.8.2
-         with:
-           fetch-depth: 0
-           persist-credentials: false
+     srv.stop().await;
+ }
++
++#[cfg(feature = "http2")]
++#[tokio::test]
++async fn h2_graceful_shutdown_sends_goaway() {
++    use actix_web::{web, App, HttpResponse, HttpServer};
++    use tokio::sync::Notify;
++
++    let started = Arc::new(Notify::new());
++    let handler_started = started.clone();
++    let listener = net::TcpListener::bind("127.0.0.1:0").unwrap();
++    let addr = listener.local_addr().unwrap();
++
++    let server = HttpServer::new(move || {
++        App::new()
++            .app_data(web::Data::from(handler_started.clone()))
++            .route(
++                "/slow",
++                web::get().to(|started: web::Data<Notify>| async move {
++                    started.notify_one();
++                    sleep(Duration::from_millis(500)).await;
++                    HttpResponse::Ok().finish()
++                }),
++            )
++    })
++    .workers(1)
++    .disable_signals()
++    .shutdown_timeout(30)
++    .listen_auto_h2c(listener)
++    .unwrap()
++    .run();
++
++    let handle = server.handle();
++    let server = tokio::spawn(server);
++    let stream = tokio::net::TcpStream::connect(addr).await.unwrap();
++    let (client, conn) = h2::client::handshake(stream).await.unwrap();
++    let conn = tokio::spawn(conn);
++
++    let mut client = client.ready().await.unwrap();
++    let request = http::Request::get("http://localhost/slow")
++        .body(())
++        .unwrap();
++    let (slow, _) = client.send_request(request, true).unwrap();
++    started.notified().await;
++
++    let stopping = Instant::now();
++    let stop = tokio::spawn(async move { handle.stop(true).await });
++
++    assert_eq!(
++        slow.await.unwrap().status(),
++        200,
++        "in-flight stream failed on shutdown"
++    );
++
++    conn.await.unwrap().unwrap();
++    stop.await.unwrap();
++    let stopped_after = stopping.elapsed();
++
++    assert!(
++        client.ready().await.is_err(),
++        "closed connection accepted a new stream"
++    );
++
++    server.await.unwrap().unwrap();
++
++    // Without GOAWAY the client keeps the connection open and actix waits the full 30s.
++    assert!(
++        stopped_after < Duration::from_secs(5),
++        "shutdown waited for the timeout: {stopped_after:?}"
++    );
++}
 ```
 
 ---
 
-### Incident Patch 2: `45d98582` (2026-11-04)
-**Commit Message**: build(deps): bump taiki-e/install-action from 2.87.31 to 2.89.0 (#4383)
+### Incident Patch 2: `934f0374` (2026-11-08)
+**Commit Message**: fix: enable TCP_NODELAY by default (#4395)
 
-Bumps [taiki-e/install-action](https://github.com/taiki-e/install-action) from 2.87.31 to 2.89.0.
-- [Release notes](https://github.com/taiki-e/install-action/releases)
-- [Changelog](https://github.com/taiki-e/install-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/taiki-e/install-action/compare/v2.87.31...v2.89.0)
-
----
-updated-dependencies:
-- dependency-name: taiki-e/install-action
-  dependency-version: 2.89.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `.github/workflows/actions.lock` (modified, +8/-8)
+**File**: `actix-http/CHANGES.md` (modified, +1/-0)
 ```diff
-@@ -9,18 +9,18 @@ workflows:
-         - 'actions-rust-lang/setup-rust-toolchain@v2.0.0'
-         - 'ilammy/setup-nasm@v1.5.2'
-         - 'rui314/setup-mold@v1'
--        - 'taiki-e/install-action@v2.87.31'
-+        - 'taiki-e/install-action@v2.89.0'
-         - 'useblacksmith/checkout@v1.8.1'
-     '.github/workflows/ci.yml':
-         - 'actions-rust-lang/setup-rust-toolchain@v2.0.0'
-         - 'ilammy/setup-nasm@v1.5.2'
-         - 'rui314/setup-mold@v1'
--        - 'taiki-e/install-action@v2.87.31'
-+        - 'taiki-e/install-action@v2.89.0'
-         - 'useblacksmith/checkout@v1.8.1'
-     '.github/workflows/coverage.yml':
-         - 'actions-rust-lang/setup-rust-toolchain@v2.0.0'
-         - 'actions/upload-code-coverage@v1.4.4'
--        - 'taiki-e/install-action@v2.87.31'
-+        - 'taiki-e/install-action@v2.89.0'
-         - 'useblacksmith/checkout@v1.8.1'
-     '.github/workflows/labeler.yml':
-         - 'actions/labeler@v7.0.0'
-@@ -30,12 +30,12 @@ workflows:
-         - 'embarkstudios/cargo-deny-action@v2.1.1'
-         - 'giraffate/clippy-action@v1.0.1'
-         - 'taiki-e/cache-cargo-install-action@v3.0.8'
--        - 'taiki-e/install-action@v2.87.31'
-+        - 'taiki-e/install-action@v2.89.0'
-         - 'useblacksmith/checkout@v1.8.1'
-         - 'zizmorcore/zizmor-action@v0.8.0'
-     '.github/workflows/semver-checks.yml':
-         - 'actions-rust-lang/setup-rust-toolchain@v2.0.0'
--        - 'taiki-e/install-action@v2.87.31'
-+        - 'taiki-e/install-action@v2.89.0'
-         - 'useblacksmith/checkout@v1.8.1'
- dependencies:
-     'actions-rust-lang/setup-rust-toolchain@v2.0.0':
-@@ -97,9 +97,9 @@ dependencies:
-         repo_id: 588643148
-         uses:
-             - 'actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9'
--    'taiki-e/install-action@v2.87.31':
--        ref: 'v2.87.31'
--        commit: 'sha1-1e29709c0ec63babbe8f266397a465f29a825f91'
-+    'taiki-e/install-action@v2.89.0':
-+        ref: 'v2.89.0'
-+        commit: 'sha1-1919c4a95903d2c33e4a221102edca87309fc14b'
-         owner_id: 43724913
-         repo_id: 442947557
-     'useblacksmith/checkout@v1.8.1':
+@@ -2,6 +2,7 @@
+ 
+ ## Unreleased
+ 
++- Enable `TCP_NODELAY` by default on accepted TCP connections.
+ - Add `BodyStream::from_infallible()` constructor.
+ - Add `SizedStream::from_infallible()` constructor.
+ - Write large fixed-length response bodies from their own buffer instead of copying them into the connection's write buffer, to lower peak memory while they are written.
 ```
 
-**File**: `.github/workflows/ci-post-merge.yml` (modified, +2/-2)
+**File**: `actix-http/src/builder.rs` (modified, +3/-1)
 ```diff
-@@ -57,7 +57,7 @@ jobs:
-           toolchain: ${{ matrix.version.version }}
+@@ -48,7 +48,7 @@ where
+             keep_alive: KeepAlive::default(),
+             client_request_timeout: Duration::from_secs(5),
+             client_disconnect_timeout: Duration::ZERO,
+-            tcp_nodelay: None,
++            tcp_nodelay: Some(true),
+             secure: false,
+             local_addr: None,
+             h1_allow_half_closed: true,
+@@ -135,6 +135,8 @@ where
+     }
  
-       - name: Install just, cargo-hack, cargo-nextest, cargo-ci-cache-clean
--        uses: taiki-e/install-action@v2.87.31
-+        uses: taiki-e/install-action@v2.89.0
-         with:
-           tool: just,cargo-hack,cargo-nextest,cargo-ci-cache-clean
- 
-@@ -97,7 +97,7 @@ jobs:
-           cache-key: feature-powerset-${{ matrix.partition }}
- 
-       - name: Install just, cargo-hack
--        uses: taiki-e/install-action@v2.87.31
-+        uses: taiki-e/install-action@v2.89.0
-         with:
-           tool: just,cargo-hack
- 
+     /// Sets `TCP_NODELAY` value on accepted TCP connections.
++    ///
++    /// Enabled by default.
+     pub fn tcp_nodelay(mut self, nodelay: bool) -> Self {
+         self.tcp_nodelay = Some(nodelay);
+         self
 ```
 
-**File**: `.github/workflows/ci.yml` (modified, +2/-2)
+**File**: `actix-http/src/config.rs` (modified, +4/-2)
 ```diff
-@@ -72,7 +72,7 @@ jobs:
-           toolchain: ${{ matrix.version.version }}
+@@ -106,6 +106,8 @@ impl ServiceConfigBuilder {
+     }
  
-       - name: Install just, cargo-hack, cargo-nextest, cargo-ci-cache-clean
--        uses: taiki-e/install-action@v2.87.31
-+        uses: taiki-e/install-action@v2.89.0
-         with:
-           tool: just,cargo-hack,cargo-nextest,cargo-ci-cache-clean
- 
-@@ -107,7 +107,7 @@ jobs:
-           toolchain: nightly
- 
-       - name: Install just
--        uses: taiki-e/install-action@v2.87.31
-+        uses: taiki-e/install-action@v2.89.0
-         with:
-           tool: just
- 
+     /// Sets `TCP_NODELAY` preference for accepted TCP connections.
++    ///
++    /// Defaults to `Some(true)`. Use `None` to keep the socket setting unchanged.
+     pub fn tcp_nodelay(mut self, nodelay: Option<bool>) -> Self {
+         self.inner.tcp_nodelay = nodelay;
+         self
+@@ -204,7 +206,7 @@ impl Default for Inner {
+             client_disconnect_timeout: Duration::ZERO,
+             secure: false,
+             local_addr: None,
+-            tcp_nodelay: None,
++            tcp_nodelay: Some(true),
+             date_service: DateService::new(),
+             h1_allow_half_closed: true,
+             h1_write_buffer_size: DEFAULT_H1_WRITE_BUFFER_SIZE,
+@@ -230,7 +232,7 @@ impl ServiceConfig {
+             client_disconnect_timeout,
+             secure,
+             local_addr,
+-            tcp_nodelay: None,
++            tcp_nodelay: Some(true),
+             date_service: DateService::new(),
+             h1_allow_half_closed: true,
+             h1_write_buffer_size: DEFAULT_H1_WRITE_BUFFER_SIZE,
 ```
 
-**File**: `.github/workflows/coverage.yml` (modified, +1/-1)
+**File**: `actix-web/CHANGES.md` (modified, +2/-0)
 ```diff
-@@ -32,7 +32,7 @@ jobs:
-           components: llvm-tools
+@@ -2,6 +2,8 @@
  
-       - name: Install just, cargo-llvm-cov, cargo-nextest
--        uses: taiki-e/install-action@v2.87.31
-+        uses: taiki-e/install-action@v2.89.0
-         with:
-           tool: just,cargo-llvm-cov,cargo-nextest
+ ## Unreleased
  
++- Enable `TCP_NODELAY` by default on accepted TCP connections.
++
+ ## 4.18.2
+ 
+ - Increase the default form payload limit to 32 KiB.
 ```
 
-**File**: `.github/workflows/lint.yml` (modified, +1/-1)
+**File**: `actix-web/src/server.rs` (modified, +2/-3)
 ```diff
-@@ -124,7 +124,7 @@ jobs:
-           toolchain: ${{ vars.RUST_VERSION_EXTERNAL_TYPES }}
+@@ -123,7 +123,7 @@ where
+             config: Arc::new(Mutex::new(Config {
+                 host: None,
+                 keep_alive: KeepAlive::default(),
+-                tcp_nodelay: None,
++                tcp_nodelay: Some(true),
+                 client_request_timeout: Duration::from_secs(5),
+                 client_disconnect_timeout: Duration::from_secs(1),
+                 h1_allow_half_closed: true,
+@@ -170,8 +170,7 @@ where
  
-       - name: Install just
--        uses: taiki-e/install-action@v2.87.31
-+        uses: taiki-e/install-action@v2.89.0
-         with:
-           tool: just
- 
+     /// Sets `TCP_NODELAY` value on accepted TCP connections.
+     ///
+-    /// By default, accepted TCP connections keep the OS default.
+-    /// This method overrides that behavior for all accepted TCP connections.
++    /// Enabled by default to send small writes without waiting for an acknowledgement.
+     pub fn tcp_nodelay(self, enabled: bool) -> Self {
+         self.config.lock().unwrap().tcp_nodelay = Some(enabled);
+         self
 ```
 
-**File**: `.github/workflows/semver-checks.yml` (modified, +1/-1)
+**File**: `actix-web/tests/test_httpserver.rs` (modified, +25/-14)
 ```diff
-@@ -23,7 +23,7 @@ jobs:
-           toolchain: stable
+@@ -444,15 +444,15 @@ async fn test_start_ssl() {
+     srv.stop(false).await;
+ }
  
-       - name: Install cargo-semver-checks
--        uses: taiki-e/install-action@v2.87.31
-+        uses: taiki-e/install-action@v2.89.0
-         with:
-           tool: cargo-semver-checks
+-async fn assert_tcp_nodelay_config(nodelay: bool) {
++async fn assert_tcp_nodelay_config(nodelay: Option<bool>) {
+     let addr = actix_test::unused_addr();
+     let (tx, rx) = mpsc::channel();
  
-```
-
----
-
-### Incident Patch 3: `0e930681` (2026-11-04)
-**Commit Message**: build(deps): bump log from 0.4.34 to 0.4.35 (#4385)
-
-Bumps [log](https://github.com/rust-lang/log) from 0.4.34 to 0.4.35.
-- [Release notes](https://github.com/rust-lang/log/releases)
-- [Changelog](https://github.com/rust-lang/log/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/rust-lang/log/compare/0.4.34...v0.4.35)
-
----
-updated-dependencies:
-- dependency-name: log
-  dependency-version: 0.4.35
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `Cargo.lock` (modified, +2/-2)
-```diff
-@@ -2152,9 +2152,9 @@ dependencies = [
+     thread::spawn(move || {
+         actix_rt::System::new()
+             .block_on(async move {
+                 let srv = HttpServer::new(move || {
+-                    let expected = nodelay;
++                    let expected = nodelay.unwrap_or(true);
  
- [[package]]
- name = "log"
--version = "0.4.34"
-+version = "0.4.35"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f9f8bd3e56ce4dfc153cf470fffbfa98c7620958b312ca5c3a4b8d5181fd13c6"
-+checksum = "5d15f86d12da44cd8d4ec3c73984537eb7f4cadcb9776a575a0a8a05ca11005c"
+                     App::new().service(web::resource("/").route(web::to(
+                         move |req: HttpRequest| {
+@@ -469,16 +469,22 @@ async fn assert_tcp_nodelay_config(nodelay: bool) {
+                         },
+                     )))
+                 })
+-                .workers(1)
+-                .tcp_nodelay(nodelay)
+-                .on_connect(move |io, ext| {
+-                    if let Some(io) = io.downcast_ref::<actix_web::rt::net::TcpStream>() {
+-                        ext.insert(io.nodelay().unwrap());
+-                    }
+-                })
+-                .bind(format!("{}", addr))
+-                .unwrap()
+-                .run();
++                .workers(1);
++
++                let srv = match nodelay {
++                    Some(enabled) => srv.tcp_nodelay(enabled),
++                    None => srv,
++                };
++
++                let srv = srv
++                    .on_connect(move |io, ext| {
++                        if let Some(io) = io.downcast_ref::<actix_web::rt::net::TcpStream>() {
++                            ext.insert(io.nodelay().unwrap());
++                        }
++                    })
++                    .bind(format!("{}", addr))
++                    .unwrap()
++                    .run();
  
- [[package]]
- name = "memchr"
+                 tx.send(srv.handle()).unwrap();
+                 srv.await
+@@ -500,12 +506,12 @@ async fn assert_tcp_nodelay_config(nodelay: bool) {
+ 
+ #[actix_rt::test]
+ async fn test_tcp_nodelay_enabled() {
+-    assert_tcp_nodelay_config(true).await;
++    assert_tcp_nodelay_config(Some(true)).await;
+ }
+ 
+ #[actix_rt::test]
+ async fn test_tcp_nodelay_disabled() {
+-    assert_tcp_nodelay_config(false).await;
++    assert_tcp_nodelay_config(Some(false)).await;
+ }
+ 
+ #[actix_rt::test]
+@@ -552,3 +558,8 @@ async fn test_dual_stack_ipv6_on_windows() {
+ 
+     srv.stop(false).await;
+ }
++
++#[actix_rt::test]
++async fn test_tcp_nodelay_default() {
++    assert_tcp_nodelay_config(None).await;
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4387** (2026-11-04): build(deps): bump encoding_rs from 0.8.42 to 0.8.44 (@dependabot[bot])
-- **PR #4386** (2026-11-04): build(deps): bump brotli from 9.0.0 to 9.1.1 (@dependabot[bot])
-- **PR #4385** (2026-11-04): build(deps): bump log from 0.4.34 to 0.4.35 (@dependabot[bot])
-- **PR #4384** (2026-11-04): build(deps): bump local-waker from 0.1.4 to 0.1.5 (@dependabot[bot])
-- **PR #4383** (2026-11-04): build(deps): bump taiki-e/install-action from 2.87.31 to 2.89.0 (@dependabot[bot])
-- **PR #4382** (2026-11-04): build(deps): bump useblacksmith/checkout from 1.8.1 to 1.8.2 (@dependabot[bot])
+- **PR #4404** (2026-11-08): perf(http): copy large HTTP/1 chunks that would cost more to hold (@johncarmack1984)
+- **PR #4402** (2026-11-08): feat(http): add infallible body stream constructors (@robjtede)
+- **PR #4401** (2026-11-08): fix(http): send HTTP/2 GOAWAY during graceful shutdown (@robjtede)
+- **PR #4400** (2026-11-09): feat: enable automatic h2c detection by default (@robjtede)
+- **PR #4399** (2026-11-08): fix(bump): preserve equals in reference version requirements (@robjtede)
+- **PR #4398** (2026-11-08): fix(http): preserve framing after bodiless responses (@robjtede)
 
 ---
 
@@ -1810,46 +1755,29 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump useblacksmith/checkout from 1.8.1 to 1.8.2 (#4382)
+## X. http): send HTTP/2 GOAWAY during graceful shutdown (#4401)
 
 **RULE**:
-When implementing operations in `.github/workflows/actions.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in actix/actix-web. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `actix-http/CHANGES.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in actix/actix-web. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `41687b5e`: build(deps): bump useblacksmith/checkout from 1.8.1 to 1.8.2 (#4382). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9fffe2d3`: http): send HTTP/2 GOAWAY during graceful shutdown (#4401). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/actions.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `actix-http/CHANGES.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        - 'useblacksmith/checkout@v1.8.2'
-        - 'useblacksmith/checkout@v1.8.2'
-        - 'useblacksmith/checkout@v1.8.2'
-        - 'useblacksmith/checkout@v1.8.2'
-        - 'useblacksmith/checkout@v1.8.2'
-        - 'useblacksmith/checkout@v1.8.2'
-        - 'useblacksmith/checkout@v1.8.2'
-    'useblacksmith/checkout@v1.8.2':
-        ref: 'v1.8.2'
-        commit: 'sha1-2b9fe87d796feea153b455ec2f3125b471a7b0e7'
+- Send GOAWAY to HTTP/2 connections during graceful server shutdown and close them once their in-flight streams finish.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        - 'useblacksmith/checkout@v1.8.1'
-        - 'useblacksmith/checkout@v1.8.1'
-        - 'useblacksmith/checkout@v1.8.1'
-        - 'useblacksmith/checkout@v1.8.1'
-        - 'useblacksmith/checkout@v1.8.1'
-        - 'useblacksmith/checkout@v1.8.1'
-        - 'useblacksmith/checkout@v1.8.1'
-    'useblacksmith/checkout@v1.8.1':
-        ref: 'v1.8.1'
-        commit: 'sha1-25227e61ff9dafe400e22fa487b673eac4e4409a'
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `41687b5e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9fffe2d3` are properly handled with clean fallback behavior.

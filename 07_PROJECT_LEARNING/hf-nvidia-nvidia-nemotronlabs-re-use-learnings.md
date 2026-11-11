@@ -3,7 +3,7 @@
 > **Source Version**: `hf-nvidia-nv`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T03:46:19.432Z  
+> **Timestamp**: 2026-11-08T20:31:14.602Z  
 > **Learning ID**: `learn-huggingface-nvidia-nvidia-nemotronlabs-re-use`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotronlabs-re-use-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/nvidia/NVIDIA-NemotronLabs-RE-USE](https://huggingface.co/nvidia/NVIDIA-NemotronLabs-RE-USE))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T03:46:18.606Z  
+> **Harvest Timestamp**: 2026-11-08T20:31:13.860Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: audio-to-audio
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 32309 downloads | 181 likes
+- **Stars / Engagement**: 36607 downloads | 212 likes
 
 ---
 

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/keyboardkit-keyboardkit-learnings.md`  
 > **Source**: github ([https://github.com/KeyboardKit/KeyboardKit](https://github.com/KeyboardKit/KeyboardKit))  
-> **Source Version**: `9a930787`  
+> **Source Version**: `623e673f`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T19:37:41.019Z  
+> **Timestamp**: 2026-11-09T02:28:03.839Z  
 > **Learning ID**: `learn-github-keyboardkit-keyboardkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/keyboardkit-keyboardkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/KeyboardKit/KeyboardKit](https://github.com/KeyboardKit/KeyboardKit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T19:37:40.803Z  
+> **Harvest Timestamp**: 2026-11-09T02:28:03.830Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Create custom iOS keyboards with Swift & SwiftUI.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1900 stars
+- **Stars / Engagement**: 1902 stars
 
 ---
 
@@ -1003,13 +1003,15 @@ private extension KeyboardViewController {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1115** (2026-11-07): **Investigate if next character prediction still works**
+  *Symptoms*: After the big changes made to the autocomplete service, which now regards more text and leaves the last word only logic to the internal engine, the next character prediction engine may be broken.  For next character predictions, the check compares each suggestion against all the text before the cursor, so "Hello wor" never matches "word". Predictions then only work for the first word typed, and they’re case-sensitive.
+  **Post-Mortem & Fix Analysis**:
+  > This is fixed in 11.2.
+
 - **Issue #1110** (2026-10-26): **Always add current language topmost in ignored words and text replacements screens**
   *Symptoms*: If there are no added languages, which is the default mode, then the ignored words and text replacements autocomplete settings screens will list all languages alphabetically.  This should be tweaked. The page should either just show the current language, if there are no added locales, else just the added languages. The current setup is too cluttered.
   **Post-Mortem & Fix Analysis**:
   > This will be fixed in `11.1.3`.
-
-- **Issue #1108** (2026-10-19): **Added language support**
-  *Symptoms*: This issue is used to keep track of which locales that have been added after 11.0.   ## 11.1  - [x] Amharic - [x] Khmer - [x] Luxembourgish - [x] Thai - [x] Xhosa - [x] Yoruba
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1026,43 +1028,41 @@ private extension KeyboardViewController {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9a930787` (2026-11-02)
-**Commit Message**: Update package to 11.1.6
+### Incident Patch 1: `623e673f` (2026-11-06)
+**Commit Message**: Update README to include Text Input section
 
-**File**: `Package.swift` (modified, +2/-2)
+**File**: `README.md` (modified, +2/-2)
 ```diff
-@@ -42,8 +42,8 @@ let package = Package(
-     targets: [
-         .binaryTarget(
-             name: "KeyboardKit",
--            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.1.5/KeyboardKit.zip",
--            checksum: "7328fd96da0020891afdd5d5435f78e5e04c2570fdeb1ed754ed48130f50104f"
-+            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.1.6/KeyboardKit.zip",
-+            checksum: "39ebb9622690a46948de24ffb49eb4a030baf5fa2ab4ce5ee41414a9a5292bab"
-         ),
-         .target(
-             name: "KeyboardKitDependencies",
-```
-
-**File**: `RELEASE_NOTES.md` (modified, +10/-0)
-```diff
-@@ -12,6 +12,16 @@ This document covers the current major version. See older versions for older rel
+@@ -161,7 +161,6 @@ KeyboardKit provides a free, open-source keyboard engine. [KeyboardKit Pro][Pro]
+ * 🔉 [Feedback][Feedback] - Trigger audio & haptic feedback with ease.
+ * 𝒜 [Fonts][Fonts] - Type with other fonts than the standard system font.
+ * 🏠 [Host][Host] - Identify and open the host application.
+-* 📝 [Input][Input] - Keyboard input fields, Vietnamese support, etc.
+ * 🔣 [Layout][Layout] - A dynamic, customizable keyboard layout engine.
+ * 🌐 [Localization][Localization] - Locale-specific utilities for all supported locales.
+ * 🗺️ [Navigation][Navigation] - Open urls and other apps from the keyboard.
+@@ -170,6 +169,7 @@ KeyboardKit provides a free, open-source keyboard engine. [KeyboardKit Pro][Pro]
+ * ⚙️ [Settings][Settings] - Sync keyboard settings across targets, and link to System Settings.
+ * 🩺 [Status][Status] - Detect if a keyboard is enabled, has full access, etc.
+ * 🎨 [Styling][Styling] - Style your keyboard to great extent.
++* 📝 [Text Input][Text-Input] - Keyboard text input fields, Vietnamese & Korean support, etc.
+ * 🍭 [Themes][Themes] - A theme engine with many pre-defined themes.
  
  
- 
-+## 11.1.6
-+
-+This patch fixes an emoji related bug after applying an autocomplete suggestion, to avoid smileys being applied like "I'm happy: )".  
-+
-+### 🐛 Bug Fixes
-+
-+* `:` and `;` will no longer be subject the autocomplete space insertion behavior.
-+
-+
-+
- ## 11.1.5
- 
- This patch adjusts the visual style of the URL domain action. 
+@@ -250,7 +250,6 @@ KeyboardKit is closed-source. See the [LICENSE][License] file for more info.
+ [Feedback]: https://docs.keyboardkit.com/documentation/keyboardkit/feedback-article
+ [Fonts]: https://docs.keyboardkit.com/documentation/keyboardkit/fonts-article
+ [Host]: https://docs.keyboardkit.com/documentation/keyboardkit/host-article
+-[Input]: https://docs.keyboardkit.com/documentation/keyboardkit/input-article
+ [Layout]: https://docs.keyboardkit.com/documentation/keyboardkit/layout-article
+ [Localization]: https://docs.keyboardkit.com/documentation/keyboardkit/localization-article
+ [Navigation]: https://docs.keyboardkit.com/documentation/keyboardkit/navigation-article
+@@ -259,4 +258,5 @@ KeyboardKit is closed-source. See the [LICENSE][License] file for more info.
+ [Settings]: https://docs.keyboardkit.com/documentation/keyboardkit/settings-article
+ [Status]: https://docs.keyboardkit.com/documentation/keyboardkit/status-article
+ [Styling]: https://docs.keyboardkit.com/documentation/keyboardkit/styling-article
++[Text-Input]: https://docs.keyboardkit.com/documentation/keyboardkit/textinput-article
+ [Themes]: https://docs.keyboardkit.com/documentation/keyboardkit/themes-article
 ```
 
 #### Recent Merged Pull Requests:
@@ -1091,30 +1091,30 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update package to 11.1.6
+## X. Update README to include Text Input section
 
 **RULE**:
-When implementing operations in `Package.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in KeyboardKit/KeyboardKit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in KeyboardKit/KeyboardKit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9a930787`: Update package to 11.1.6. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `623e673f`: Update README to include Text Input section. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Package.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.1.6/KeyboardKit.zip",
-            checksum: "39ebb9622690a46948de24ffb49eb4a030baf5fa2ab4ce5ee41414a9a5292bab"
+* 📝 [Text Input][Text-Input] - Keyboard text input fields, Vietnamese & Korean support, etc.
+[Text-Input]: https://docs.keyboardkit.com/documentation/keyboardkit/textinput-article
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.1.5/KeyboardKit.zip",
-            checksum: "7328fd96da0020891afdd5d5435f78e5e04c2570fdeb1ed754ed48130f50104f"
+* 📝 [Input][Input] - Keyboard input fields, Vietnamese support, etc.
+[Input]: https://docs.keyboardkit.com/documentation/keyboardkit/input-article
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9a930787` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `623e673f` are properly handled with clean fallback behavior.

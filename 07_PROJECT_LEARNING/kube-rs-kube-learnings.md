@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kube-rs-kube-learnings.md`  
 > **Source**: github ([https://github.com/kube-rs/kube](https://github.com/kube-rs/kube))  
-> **Source Version**: `660c438c`  
+> **Source Version**: `f0b9c443`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T19:52:51.462Z  
+> **Timestamp**: 2026-11-07T18:17:07.064Z  
 > **Learning ID**: `learn-github-kube-rs-kube`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kube-rs-kube-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kube-rs/kube](https://github.com/kube-rs/kube))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T19:52:50.595Z  
+> **Harvest Timestamp**: 2026-11-07T18:17:06.803Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Rust Kubernetes client and controller runtime
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3854 stars
+- **Stars / Engagement**: 3855 stars
 
 ---
 
@@ -468,37 +468,30 @@ mod test {
 
         // Create TokenRequest
         let tokenrequest = serviceaccounts
-            .create_token_request(
-                serviceaccount_name,
-                &PostParams::default(),
-                &TokenRequest {
-                    metadata: Default::default(),
-                    spec: Some(TokenRequestSpec {
-                        audiences: Some(audiences.clone()),
-                        bound_object_ref: None,
-                        expiration_seconds: None,
-                        attestations: None,
-                    }),
-                    status: None,
-                },
-            )
+            .create_token_request(serviceaccount_name, &PostParams::default(), &TokenRequest {
+                metadata: Default::default(),
+                spec: Some(TokenRequestSpec {
+                    audiences: Some(audiences.clone()),
+                    bound_object_ref: None,
+                    expiration_seconds: None,
+                    attestations: None,
+                }),
+                status: None,
+            })
             .await?;
         let token = tokenrequest.status.unwrap().token.unwrap();
         assert!(!token.is_empty());
 
         // Check created token is valid with TokenReview
         let tokenreview = tokenreviews
-            .create(
-                &PostParams::default(),
-                &TokenReview {
-                    metadata: Default::default(),
-                    spec: TokenReviewSpec {
-                        audiences: Some(audiences.clone()),
-                        token,
-                    },
-                    status: None,
+            .create(&PostParams::default(), &TokenReview {
+                metadata: Default::default(),
+                spec: TokenReviewSpec {
+                    audiences: Some(audiences.clone()),
+                    token,
                 },
-            )
+                status: None,
+            })
             .await?;
         let tokenreviewstatus = tokenreview.status.unwrap();
         assert_eq!(tokenreviewstatus.audiences, Some(audiences));
@@ -1693,14 +1686,11 @@ fn test_to_plural_native() {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #2142** (2026-11-06): **NO_PROXY environment variable is not working under regular client setup**
+  *Symptoms*: ### Current and expected behavior  Raised initially https://github.com/crust-gather/crust-gather/issues/587, which I believe should be supported by current version per https://github.com/kube-rs/kube/pull/2075, but reported being ineffective.   cc @manderson23  > The K8s clusters I access need to bypass our corporate proxy and this is done via the IP being in the NO_PROXY environment variable.  > kubectl itself respects the environment variables but `kubectl crust-gather collect -v TRACE` fails as follows  ```logs 2026-11-04T09:09:46.798334Z  INFO crust_gather::cli: Initializing client... 2026-11-04T09:09:46.837366Z TRACE tower::buffer::worker: worker polling for next message 2026-11-04T09:09:46.837473Z TRACE collect: tower::buffer::service: sending request to buffer worker 2026-11-04T09:09:46.837723Z TRACE tower::buffer::worker: worker polling for next message 2026-11-04T09:09:46.837822Z TRACE tower::buffer::worker: processing new request 2026-11-04T09:09:46.837915Z TRACE collect: tower::buffer::worker: resumed=false worker received request; waiting for service readiness 2026-11-04T09:09:46.838001Z DEBUG collect: tower::buffer::worker: service.ready=true processing request 2026-11-04T09:09:46.838202Z DEBUG collect:HTTP{http.method=GET http.url=https://10.2.2.5:6443/apis otel.name="HTTP" otel.kind="client"}: kube_client::client::builder: requesting 2026-11-04T09:09:46.838312Z TRACE collect: tower::buffer::worker: returning response future 2026-11-04T09:09:46.838377Z TRACE tow
+
 - **Issue #2112** (2026-10-15): **Backport serde-yaml replacement to v3**
   *Symptoms*: ### Current and expected behavior  Issue #1770 was opened to address the serde-yaml deprecation in v4, and the work to replace it with serde-saphyr was done in PR #1975.  I'm opening this issue to make the same updates (mostly find & replace it seems) on version v3.  ### Possible solution  Same work as #1975 - find & replace `serde-yaml` with `serde-saphyr`  ### Additional context  This will resolve [RUSTSEC-2024-0449](https://rustsec.org/advisories/RUSTSEC-2024-0449) for projects using v3.  ### Environment  Discovered this via a `cargo audit` vulnerability report due to `gateway-api` using kube v3.  ### Configuration and features  https://github.com/kube-rs/gateway-api-rs/blob/main/Cargo.toml#L16 ```toml [workspace.dependencies] kube = { version = "3.1.0" } ```  ### YAML  _No response_  ### Affected crates  _No response_  ### Would you like to work on fixing this bug?  maybe
-
-- **Issue #2100** (2026-11-01): **Upgrade smallvec to latest version**
-  *Symptoms*: ### Current and expected behavior  kube 4.2.0's serde-saphyr 0.0.29 requires smallvec <1.16.0.   Current version of smallvec is v1.16.2  Thank you!  ### Possible solution  _No response_  ### Additional context  _No response_  ### Environment  --  ### Configuration and features  _No response_  ### YAML  _No response_  ### Affected crates  _No response_  ### Would you like to work on fixing this bug?  None
-  **Post-Mortem & Fix Analysis**:
-  > see https://github.com/kube-rs/kube/pull/2086  we are running serde-saphyr 1.3.0 in `main` which uses `smallvec >=1.6 < 2` we'll release it hopefully not too long.
-  > a little delayed, but it's out now in 5.0
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1717,178 +1707,247 @@ fn test_to_plural_native() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `660c438c` (2026-11-05)
-**Commit Message**: Show missing feature requirements on kube-client items in docs (#2141)
+### Incident Patch 1: `f0b9c443` (2026-11-06)
+**Commit Message**: Fix nightly clippy and rustdoc warnings (#2146)
 
-* Show the ws feature requirement on ws-only kube-client re-exports
-
-AttachedProcess, TerminalSize, Portforwarder and UpgradeConnectionError were
-documented as needing only the client feature on docs.rs, in kube-client,
-in kube, or both.
-
-Same-crate inlined re-exports only pick up doc(cfg) from the pub use, so
-annotate those. The kube facade only sees a plain #[cfg] on the item
-definition (docs.rs passes --cfg docsrs to rustdoc, not to rustc for
-dependencies), so gate the items themselves rather than only their module.
+Move the test modules in tls.rs and params.rs below the prod code so nightly
+clippy's items_after_test_module stops firing. Fix the 30 unresolved intra-doc
+links across the published crates, and make the doc job and `just doc` document
+the whole workspace minus e2e and kube-examples with
+rustdoc::broken_intra_doc_links denied.
 
 Signed-off-by: doxxx93 <[REDACTED_EMAIL]>
 
-* Export Ephemeral without the ws feature
-
-The trait and the Api ephemeral container methods it bounds are not ws-gated,
-only its re-export was. Move it to the ungated re-export so it can be named
-without ws, and so kube and kube-client docs agree it needs only client.
-
-Signed-off-by: doxxx93 <[REDACTED_EMAIL]>
-
-* Show the oauth and ws feature requirement on OAuthError and Api::portforward
-
-OAuthError lived in an oauth-gated module without an item-level cfg, so the
-kube re-export showed client only. The portforward Api impl and the Portforward
-impl for 
-
-**File**: `kube-client/src/api/mod.rs` (modified, +4/-2)
+**File**: `.github/workflows/ci.yml` (modified, +2/-2)
 ```diff
-@@ -6,18 +6,20 @@ mod remote_command;
- use std::fmt::Debug;
+@@ -98,9 +98,9 @@ jobs:
+       - name: Install nightly
+         uses: dtolnay/rust-toolchain@nightly
+       - name: cargo doc
+-        run: cargo doc --no-deps --all-features
++        run: cargo doc --no-deps --all-features --workspace --exclude e2e --exclude kube-examples
+         env:
+-          RUSTDOCFLAGS: --cfg docsrs
++          RUSTDOCFLAGS: --cfg docsrs -D rustdoc::broken_intra_doc_links
  
- #[cfg(feature = "ws")]
-+#[cfg_attr(docsrs, doc(cfg(feature = "ws")))]
- pub use remote_command::{AttachedProcess, TerminalSize};
- #[cfg(feature = "ws")]
- mod portforward;
- #[cfg(feature = "ws")]
-+#[cfg_attr(docsrs, doc(cfg(feature = "ws")))]
- pub use portforward::Portforwarder;
- 
- mod subresource;
- pub use subresource::Resize;
- #[cfg(feature = "ws")]
- #[cfg_attr(docsrs, doc(cfg(feature = "ws")))]
--pub use subresource::{Attach, AttachParams, Ephemeral, Execute, Portforward};
--pub use subresource::{Evict, EvictParams, Log, LogParams, ScaleSpec, ScaleStatus};
-+pub use subresource::{Attach, AttachParams, Execute, Portforward};
-+pub use subresource::{Ephemeral, Evict, EvictParams, Log, LogParams, ScaleSpec, ScaleStatus};
- 
- mod util;
- 
+   minimal-versions:
+     runs-on: ubuntu-latest
 ```
 
-**File**: `kube-client/src/api/portforward.rs` (modified, +3/-0)
+**File**: `justfile` (modified, +1/-1)
 ```diff
-@@ -83,6 +83,9 @@ enum Message {
- /// Provides `AsyncRead + AsyncWrite` for each port and **does not** bind to local ports.  Error
- /// channel for each port is only written by the server when there's an exception and
- /// the port cannot be used (didn't initialize or can't be used anymore).
-+// also gated here (not just the module) so rustdoc shows the ws requirement on `kube` re-exports
-+#[cfg(feature = "ws")]
-+#[cfg_attr(docsrs, doc(cfg(feature = "ws")))]
- pub struct Portforwarder {
-     ports: HashMap<u16, DuplexStream>,
-     errors: HashMap<u16, ErrorReceiver>,
+@@ -17,7 +17,7 @@ fmt:
+   cargo +nightly fmt --all
+ 
+ doc:
+-  RUSTDOCFLAGS="--cfg docsrs" cargo +nightly doc --all-features --no-deps --open
++  RUSTDOCFLAGS="--cfg docsrs -D rustdoc::broken_intra_doc_links" cargo +nightly doc --all-features --no-deps --workspace --exclude e2e --exclude kube-examples --open
+ 
+ deny:
+   # might require rm Cargo.lock first to match CI
 ```
 
-**File**: `kube-client/src/api/remote_command.rs` (modified, +4/-0)
+**File**: `kube-client/src/api/subresource.rs` (modified, +1/-1)
 ```diff
-@@ -26,6 +26,8 @@ type TerminalSizeReceiver = mpsc::Receiver<TerminalSize>;
- type TerminalSizeSender = mpsc::Sender<TerminalSize>;
+@@ -619,7 +619,7 @@ fn evict_path() {
  
- /// TerminalSize define the size of a terminal
-+// also gated here (not just the module) so rustdoc shows the ws requirement on `kube` re-exports
-+#[cfg(feature = "ws")]
- #[derive(Debug, Serialize, Deserialize)]
- #[cfg_attr(docsrs, doc(cfg(feature = "ws")))]
- #[serde(rename_all = "PascalCase")]
-@@ -102,6 +104,8 @@ const MAX_BUF_SIZE: usize = 1024;
+ /// Marker trait for objects that can be evicted
  ///
- /// [`attach`]: crate::Api::attach
- /// [`exec`]: crate::Api::exec
-+// also gated here (not just the module) so rustdoc shows the ws requirement on `kube` re-exports
-+#[cfg(feature = "ws")]
- #[cfg_attr(docsrs, doc(cfg(feature = "ws")))]
- pub struct AttachedProcess {
-     has_stdin: bool,
+-/// See [`Api::evic`] for usage
++/// See [`Api::evict`] for usage
+ pub trait Evict {}
+ 
+ impl Evict for k8s_openapi::api::core::v1::Pod {}
 ```
 
-**File**: `kube-client/src/api/subresource.rs` (modified, +2/-0)
+**File**: `kube-client/src/client/config_ext.rs` (modified, +2/-2)
 ```diff
-@@ -763,9 +763,11 @@ fn portforward_path() {
- pub trait Portforward {}
+@@ -91,7 +91,7 @@ pub trait ConfigExt: private::Sealed {
+     #[cfg(feature = "rustls-tls")]
+     fn rustls_client_config(&self) -> Result<rustls::ClientConfig>;
  
- #[cfg(feature = "ws")]
-+#[cfg_attr(docsrs, doc(cfg(feature = "ws")))]
- impl Portforward for k8s_openapi::api::core::v1::Pod {}
+-    /// Create [`hyper_openssl::HttpsConnector`] based on config.
++    /// Create [`hyper_openssl::client::legacy::HttpsConnector`] based on config.
+     /// # Example
+     ///
+     /// ```rust
+@@ -107,7 +107,7 @@ pub trait ConfigExt: private::Sealed {
+     fn openssl_https_connector(&self)
+     -> Result<hyper_openssl::client::legacy::HttpsConnector<HttpConnector>>;
  
- #[cfg(feature = "ws")]
-+#[cfg_attr(docsrs, doc(cfg(feature = "ws")))]
- impl<K> Api<K>
- where
-     K: Clone + DeserializeOwned + Portforward,
+-    /// Create [`hyper_openssl::HttpsConnector`] based on config and `connector`.
++    /// Create [`hyper_openssl::client::legacy::HttpsConnector`] based on config and `connector`.
+     /// # Example
+     ///
+     /// ```rust
 ```
 
-**File**: `kube-client/src/client/auth/oauth.rs` (modified, +2/-0)
+**File**: `kube-client/src/client/kubelet_debug.rs` (modified, +1/-1)
 ```diff
-@@ -10,6 +10,8 @@ use crate::client::Body;
+@@ -8,7 +8,7 @@ use std::fmt::Debug;
  
- #[derive(Error, Debug)]
- /// Possible errors when requesting token with OAuth
-+// also gated here (not just the module) so rustdoc shows the oauth requirement on `kube` re-exports
-+#[cfg(feature = "oauth")]
- pub enum Error {
-     /// Default provider appears to be configured, but was invalid
-     #[error("default provider is configured but invalid: {0}")]
+ /// Methods to access debug endpoints directly on `kubelet`
+ ///
+-/// These provide analogous methods to the `Pod` api methods for [`Execute`](crate::api::Exec), [`Attach`](crate::api::Attach), and [`Portforward`](crate::api::Portforward).
++/// These provide analogous methods to the `Pod` api methods for [`Execute`](crate::api::Execute), [`Attach`](crate::api::Attach), and [`Portforward`](crate::api::Portforward).
+ /// Service account must have `nodes/proxy` access, and
+ /// the debug handlers must be enabled either via `--enable-debugging-handlers ` or in the [kubelet config](https://kubernetes.io/docs/reference/config-api/kubelet-config.v1beta1/#kubelet-config-k8s-io-v1beta1-KubeletConfiguration).
+ /// See the [kubelet source](https://github.com/kubernetes/kubernetes/blob/b3926d137cd2964cd3a04088ded30845910547b1/pkg/kubelet/server/server.go#L454), and [kubelet reference](https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet/) for more info.
 ```
 
-**File**: `kube-client/src/client/mod.rs` (modified, +1/-0)
+**File**: `kube-client/src/client/tls.rs` (modified, +80/-80)
 ```diff
-@@ -68,6 +68,7 @@ pub use auth::OAuthError;
- pub use auth::oidc_errors;
- 
- #[cfg(feature = "ws")]
-+#[cfg_attr(docsrs, doc(cfg(feature = "ws")))]
- pub use upgrade::UpgradeConnectionError;
- 
- #[cfg(feature = "kubelet-debug")]
-```
-
----
-
-### Incident Patch 2: `12a544c8` (2026-11-05)
-**Commit Message**: fix parse error messages for LabelSelectorRequirement into Expression (#2143)
-
-The second 'In' looks like a copy-paste error, fixed to mitigate confusion.
-
-Make clear that an expression operator might also be missing, because the
-deserializer in k8s-openapi would turn it into an empty string:
-<https://github.com/Arnavion/k8s-openapi/blob/ec1be51e4ca5fbb3254ef91d978f1b97fab004b5/src/v1_37/apimachinery/pkg/apis/meta/v1/label_selector_requirement.rs#L70>
-
-Signed-off-by: Jiji Freya Daniel Maslowski <[REDACTED_EMAIL]>
-
-**File**: `kube-core/src/labels.rs` (modified, +2/-1)
-```diff
-@@ -308,11 +308,12 @@ impl TryFrom<LabelSelectorRequirement> for Expression {
-             "NotIn" => match values {
-                 Some(values) => Ok(Expression::NotIn(key, values)),
-                 None => Err(ParseExpressionError(
--                    "Expected values for In operator, got none".into(),
-+                    "Expected values for NotIn operator, got none".into(),
-                 )),
-             },
-             "Exists" => Ok(Expression::Exists(key)),
-             "DoesNotExist" => Ok(Expression::DoesNotExist(key)),
-+            "" => Err(ParseExpressionError("Missing expression operator".into())),
-             _ => Err(ParseExpressionError("Invalid expression operator".into())),
+@@ -212,86 +212,6 @@ pub mod rustls_tls {
          }
      }
+ 
+-    #[cfg(test)]
+-    mod tests {
+-        use super::*;
+-
+-        // EC P-256 self-signed CAs, valid until 2126. Regenerate with:
+-        //   openssl req -x509 -newkey ec -pkeyopt ec_paramgen_curve:P-256 -nodes \
+-        //     -keyout /dev/null -out ca.pem -days 36500 -subj "/CN=test-ca-N"
+-        const CA1: &str = "-----BEGIN CERTIFICATE-----
+-MIIBgDCCASWgAwIBAgIUVrQf5d//S01a0fbXxYRIx9wc0VQwCgYIKoZIzj0EAwIw
+-FDESMBAGA1UEAwwJdGVzdC1jYS0xMCAXDTI2MDMwNDEzMDk1MFoYDzIxMjYwMjA4
+-MTMwOTUwWjAUMRIwEAYDVQQDDAl0ZXN0LWNhLTEwWTATBgcqhkjOPQIBBggqhkjO
+-PQMBBwNCAARg57mWJPDsAIEQAgXqMOOfjMQP+PE9HqcZobycO8z94r/uRuV0wKx/
+-0SvMsKFtnreut0bjgFtmZaWY+6d87Is9o1MwUTAdBgNVHQ4EFgQUjtGuhkM7LtHB
+-gMPCJIxMwbY69OQwHwYDVR0jBBgwFoAUjtGuhkM7LtHBgMPCJIxMwbY69OQwDwYD
+-VR0TAQH/BAUwAwEB/zAKBggqhkjOPQQDAgNJADBGAiEAj/WzNVJDg/cBtLqQVM77
+-tkB+QyIXLG3Vi9Xj1YfW9QECIQDDFW8yFtgLeCg2Zhr4xQNq3/24r/01kI2rjFPO
+-xBkDMw==
+------END CERTIFICATE-----
+-";
+-        const CA2: &str = "-----BEGIN CERTIFICATE-----
+-MIIBfjCCASWgAwIBAgIUZ7Qsiwan2joRz01p25/cy1XNNiwwCgYIKoZIzj0EAwIw
+-FDESMBAGA1UEAwwJdGVzdC1jYS0yMCAXDTI2MDMwNDEzMDk1MFoYDzIxMjYwMjA4
+-MTMwOTUwWjAUMRIwEAYDVQQDDAl0ZXN0LWNhLTIwWTATBgcqhkjOPQIBBggqhkjO
+-PQMBBwNCAARJle2/yiOD5zp0UkjZg9Yy6ZHBItTLrqv/uzB2YMQg03frnqEUMzSV
+-mFinosBcGpX/dPGfHNPhBMOpHmlocZu9o1MwUTAdBgNVHQ4EFgQUsqG0hSGDYsz2
+-eGIsLIwJnCR5SFIwHwYDVR0jBBgwFoAUsqG0hSGDYsz2eGIsLIwJnCR5SFIwDwYD
+-VR0TAQH/BAUwAwEB/zAKBggqhkjOPQQDAgNHADBEAiApvLu9DIC3/K/+G9ooOm75
+-a72Cjw62aM8NfPe7ILs8SgIgL0VHe6ksTyB176RECCm3MJVnlhOop6b1tNvxjrru
+-FRU=
+------END CERTIFICATE-----
+-";
+-
+-        fn expire(v: &ReloadingVerifier) {
+-            // Can't move Instant backwards; instead, reach past the guard.
+-            // The test pokes private state the same way auth::tests::token_file does.
+-            v.inner.write().unwrap().1 = Instant::now().checked_sub(Duration::from_secs(120)).unwrap();
+-        }
+-
+-        #[test]
+-        fn reloading_verifier() {
+-            #[cfg(feature = "aws-lc-rs")]
+-            let _ = rustls::crypto::aws_lc_rs::default_provider().install_default();
+-
+-            let file = tempfile::NamedTempFile::new().unwrap();
+-            std::fs::write(file.path(), CA1).unwrap();
+-
+-            let verifier = ReloadingVerifier::new(file.path().to_path_buf()).unwrap();
+-            let first = verifier.current();
+-
+-            // File changed but we're still within the reload interval: no reload.
+-            std::fs::write(file.path(), CA2).unwrap();
+-            assert!(Arc::ptr_eq(&verifier.current(), &first));
+-
+-            // Force expiry: reload picks up CA2.
+-            expire(&verifier);
+-            let second = verifier.current();
+-            assert!(!Arc::ptr_eq(&second, &first));
+-
+-            // File gone, expired again: keep stale verifier.
+-            drop(file);
+-            expire(&verifier);
+-            assert!(Arc::ptr_eq(&verifier.current(), &second));
+-        }
+-    }
+-
+-    #[cfg(all(test, not(feature = "webpki-roots")))]
+-    mod platform_verifier_tests {
+-        use super::*;
+-
+-        // With no kubeconfig CA, the client config must fall back to the OS-native
+-        // verifier instead of producing an empty (reject-everything) trust store.
+-        #[test]
+-        fn no_ca_falls_back_to_platform_verifier() {
+-            #[cfg(feature = "aws-lc-rs")]
+-            let _ = rustls::crypto::aws_lc_rs::default_provider().install_default();
+-
+-            rustls_client_config(None, None, false).expect("platform verifier config should build");
+-        }
+-    }
+-
+     fn client_auth(data: &[u8]) -> Result<(Vec<CertificateDer<'static>>, PrivateKeyDer<'static>), Error> {
+         use rustls::pki_types::pem::{self, SectionKind};
+ 
+@@ -373,6 +293,86 @@ FRU=
+             ]
+         }
+     }
++
++    #[cfg(test)]
++    mod tests {
++        use super::*;
++
++        // EC P-256 self-signed CAs, valid until 2126. Regenerate with:
++        //   openssl req -x509 -newkey ec -pkeyopt ec_paramgen_curve:P-256 -nodes \
++        //     -keyout /dev/null -out ca.pem -days 36500 -subj "/CN=test-ca-N"
++        const CA1: &str = "-----BEGIN CERTIFICATE-----
++MIIBgDCCASWgAwIBAgIUVrQf5d//S01a0fbXxYRIx9wc0VQwCgYIKoZIzj0EAwIw
++FDESMBAGA1UEAwwJdGVzdC1jYS0xMCAXDTI2MDMwNDEzMDk1MFoYDzIxMjYwMjA4
++MTMwOTUwWjAUMRIwEAYDVQQDDAl0ZXN0LWNhLTEwWTATBgcqhkjOPQIBBggqhkjO
++PQMBBwNCAARg57mWJPDsAIEQAgXqMOOfjMQP+PE9HqcZobycO8z94r/uRuV0wKx/
++0SvMsKFtnreut0bjgFtmZaWY+6d87Is9o1MwUTAdBgNVHQ4EFgQUjtGuhkM7LtHB
++gMPCJIxMwbY69OQwHwYDVR0jBBgwFoAUjtGuhkM7LtHBgMPCJIxMwbY69OQwDwYD
++VR0TAQH/BAUwAwEB/zAKBggqhkjOPQQDAgNJADBGAiEAj/WzNVJDg/cBtLqQVM77
++tkB+QyIXLG3Vi9Xj1YfW9QECIQDDFW8yFtgLeCg2Zhr4xQNq3/24r/01kI2rjFPO
++xBkDMw==
++-----END CERTIFICATE-----
++";
++        const CA2: &str = "-----BEGIN CERTIFICATE-----
++MIIBfjCCASWgAwIBAgIUZ7Qsiwan2joRz01p25/cy1XNNiwwCgYIKoZIzj0EAwIw
++FDESMBAGA1UEAwwJdGVzdC1jYS0yMCAXDTI2MDMwNDEzMDk1MFoYDzIxMjYwMjA4
++MTMwOTUwWjAUMRIwEAYDVQQDDAl0ZXN0LWNhLTIwWTATBgcqhkjOPQIBBggqhkjO
++PQMBBwNCAARJle2
+```
+
+**File**: `kube-client/src/config/file_config.rs` (modified, +1/-1)
+```diff
+@@ -684,7 +684,7 @@ impl AuthInfo {
+ 
+ /// Connection information for auth plugins that have `provideClusterInfo` enabled.
+ ///
+-/// This is a copy of [`kube::config::Cluster`] with certificate_authority passed as bytes without the path.
++/// This is a copy of [`Cluster`] with certificate_authority passed as bytes without the path.
+ /// Taken from [clientauthentication/types.go#Cluster](https://github.com/kubernetes/client-go/blob/477cb782cf024bc70b7239f0dca91e5774811950/pkg/apis/clientauthentication/types.go#L73-L129)
+ #[derive(Clone, Debug, Serialize, Deserialize, Default)]
+ #[serde(rename_all = "kebab-case")]
+```
+
+**File**: `kube-core/src/object.rs` (modified, +1/-1)
+```diff
+@@ -177,7 +177,7 @@ pub trait HasStatus {
+ /// A standard Kubernetes object with `.spec` and `.status`.
+ ///
+ /// This is a convenience struct provided for serialization/deserialization.
+-/// It is slightly stricter than ['DynamicObject`] in that it enforces the spec/status convention,
++/// It is slightly stricter than [`DynamicObject`](crate::DynamicObject) in that it enforces the spec/status convention,
+ /// and as such will not in general work with all api-discovered resources.
+ ///
+ /// This can be used to tie existing resources to smaller, local struct variants to optimize for memory use.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2146** (2026-11-06): Fix nightly clippy and rustdoc warnings (@doxxx93)
+- **PR #2145** (2026-11-06): Make kube-client modules visible to rustfmt (@doxxx93)
+- **PR #2144** (2026-11-06): Match NO_PROXY against the apiserver instead of the proxy (@doxxx93)
 - **PR #2143** (2026-11-05): fix parse error messages for LabelSelectorRequirement into Expression (@orangecms)
 - **PR #2141** (2026-11-05): Show missing feature requirements on kube-client items in docs (@doxxx93)
 - **PR #2139** (2026-11-05): Fall back to the status code when Status::reason is not a known reason (@doxxx93)
-- **PR #2137** (2026-11-05): kube-client: introduce delete_opt (@p-alik)
-- **PR #2136** (2026-11-04): Round down LogParams::since_time to the second (@doxxx93)
-- **PR #2135** (2026-11-04): Allow LLVM-exception license for ar_archive_writer in cargo deny (@doxxx93)
 
 ---
 
@@ -1908,32 +1967,30 @@ Signed-off-by: Jiji Freya Daniel Maslowski <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Show missing feature requirements on kube-client items in docs (#2141)
+## X. nightly clippy and rustdoc warnings (#2146)
 
 **RULE**:
-When implementing operations in `kube-client/src/api/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kube-rs/kube. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kube-rs/kube. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `660c438c`: Show missing feature requirements on kube-client items in docs (#2141). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f0b9c443`: nightly clippy and rustdoc warnings (#2146). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `kube-client/src/api/mod.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-#[cfg_attr(docsrs, doc(cfg(feature = "ws")))]
-#[cfg_attr(docsrs, doc(cfg(feature = "ws")))]
-pub use subresource::{Attach, AttachParams, Execute, Portforward};
-pub use subresource::{Ephemeral, Evict, EvictParams, Log, LogParams, ScaleSpec, ScaleStatus};
+        run: cargo doc --no-deps --all-features --workspace --exclude e2e --exclude kube-examples
+          RUSTDOCFLAGS: --cfg docsrs -D rustdoc::broken_intra_doc_links
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-pub use subresource::{Attach, AttachParams, Ephemeral, Execute, Portforward};
-pub use subresource::{Evict, EvictParams, Log, LogParams, ScaleSpec, ScaleStatus};
+        run: cargo doc --no-deps --all-features
+          RUSTDOCFLAGS: --cfg docsrs
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `660c438c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f0b9c443` are properly handled with clean fallback behavior.

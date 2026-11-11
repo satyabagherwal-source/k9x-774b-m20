@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md`  
 > **Source**: github ([https://github.com/RevenueCat/purchases-ios](https://github.com/RevenueCat/purchases-ios))  
-> **Source Version**: `3fe45f53`  
+> **Source Version**: `c9c4ede1`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T13:40:18.936Z  
+> **Timestamp**: 2026-11-08T20:21:36.447Z  
 > **Learning ID**: `learn-github-revenuecat-purchases-ios`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/RevenueCat/purchases-ios](https://github.com/RevenueCat/purchases-ios))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T13:40:17.937Z  
+> **Harvest Timestamp**: 2026-11-08T20:21:36.440Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: In-app purchases and subscriptions made easy. Support for iOS, watchOS, tvOS, macOS, and visionOS.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3092 stars
+- **Stars / Engagement**: 3093 stars
 
 ---
 
@@ -527,1019 +527,580 @@ struct YarnShape: Shape {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f812926c` (2026-11-04)
-**Commit Message**: Fix thread-safe sandbox environment detection (#8202)
+### Incident Patch 1: `cd2ea7ef` (2026-11-05)
+**Commit Message**: fix(paywalls): stop nested Fill stacks from hanging on iOS 17  (#8230)
 
-**File**: `Sources/Misc/SystemInfo.swift` (modified, +10/-5)
-```diff
-@@ -84,6 +84,7 @@ class SystemInfo {
-     private let _finishTransactions: Atomic<Bool>
-     private let _isAppBackgroundedState: Atomic<Bool>
-     private let _bundle: Atomic<Bundle>
-+    private let _isSandbox: Atomic<Bool?> = nil
- 
-     private static let _forceUniversalAppStore: Atomic<Bool> = false
-     private static let _proxyURL: Atomic<URL?> = nil
-@@ -92,12 +93,16 @@ class SystemInfo {
-     static let defaultApiBaseURL = URL(string: "https://api.revenuecat.com")!
-     private static let _apiBaseURL: Atomic<URL> = .init(defaultApiBaseURL)
- 
--    private lazy var _isSandbox: Bool = {
--        return self.sandboxEnvironmentDetector.isSandbox
--    }()
--
-     var isSandbox: Bool {
--        return self._isSandbox
-+        return self._isSandbox.modify { cachedValue in
-+            if let cachedValue {
-+                return cachedValue
-+            }
-+
-+            let isSandbox = self.sandboxEnvironmentDetector.isSandbox
-+            cachedValue = isSandbox
-+            return isSandbox
-+        }
-     }
- 
-     /// Whether remote config lifecycle wiring is enabled. Paywall workflows read entirely through
-```
+* fix(paywalls): stop nested Fill stacks from hanging on iOS 17
 
-**File**: `Tests/UnitTests/Misc/SystemInfoTests.swift` (modified, +53/-0)
+On iOS 17, SwiftUI places a frame's content three times per placement
+whenever an ancestor proposes an unbounded size, as the paywall's root
+ScrollView or ViewThatFits does. Each nested Fill stack multiplies that,
+so a paywall about a dozen stacks deep keeps the main thread busy for
+minutes and never appears.
+
+Fill sizing now goes through a single-child Layout on iOS 17 that sizes
+like the frame did and aligns by size, placing its content once.
+
+
+
+* refactor(paywalls): trim FillLayout to its essentials
+
+Drops the negative-proposal clamp, which SwiftUI never needs, and folds
+the alignment fractions inline. Behavior and test coverage are unchanged.
+
+
+
+* refactor(paywalls): move Layout conformances into extensions
+
+Follows the style guide: stored properties in the declaration, protocol
+conformance in an extension.
+
+
+
+---------
+
+Co-authored-by: Nevyn Bengtsson <[REDACTED_EMAIL]>
+Co-authored-by: Claude <[REDACTED_EMAIL]>
+
+**File**: `RevenueCatUI/Templates/V2/ViewHelpers/SizeModifier.swift` (modified, +62/-2)
 ```diff
-@@ -72,6 +72,38 @@ class SystemInfoTests: TestCase {
-         expect(SystemInfo.withReceiptResult(.appStoreReceipt, sandboxDetector).isSandbox) == false
+@@ -40,7 +40,7 @@ extension View {
+             self
+         case let .fill(minMax):
+             self
+-                .frame(minWidth: 0, maxWidth: .infinity, alignment: alignment)
++                .fill(.horizontal, alignment: alignment)
+                 .applyWidthLimits(minMax, alignment: alignment)
+         case .fixed(let value):
+             self
+@@ -58,7 +58,7 @@ extension View {
+             self
+         case let .fill(minMax):
+             self
+-                .frame(minHeight: 0, maxHeight: .infinity, alignment: alignment)
++                .fill(.vertical, alignment: alignment)
+                 .applyHeightLimits(minMax, alignment: alignment)
+         case .fixed(let value):
+             self
+@@ -69,6 +69,31 @@ extension View {
+         }
      }
  
-+    func testIsSandboxIsComputedOnlyOnceWhenAccessedConcurrently() {
-+        let sandboxDetector = SynchronizingSandboxEnvironmentDetector()
-+        let systemInfo = SystemInfo(
-+            platformInfo: nil,
-+            finishTransactions: false,
-+            sandboxEnvironmentDetector: sandboxDetector,
-+            apiKey: "api_key",
-+            preferredLocalesProvider: .mock()
-+        )
-+        let workersReady = DispatchSemaphore(value: 0)
-+        let startWorkers = DispatchSemaphore(value: 0)
-+        let workersFinished = DispatchGroup()
-+
-+        for _ in 0..<2 {
-+            workersFinished.enter()
-+            DispatchQueue.global().async {
-+                workersReady.signal()
-+                startWorkers.wait()
-+                _ = systemInfo.isSandbox
-+                workersFinished.leave()
-+            }
-+        }
-+
-+        workersReady.wait()
-+        workersReady.wait()
-+        startWorkers.signal()
-+        startWorkers.signal()
-+        workersFinished.wait()
-+
-+        expect(sandboxDetector.callCount) == 1
-+    }
-+
-     func testIsAppleSubscriptionURLWithAnotherURL() {
-         expect(SystemInfo.isAppleSubscription(managementURL: URL(string: "www.google.com")!)) == false
-     }
-@@ -292,6 +324,27 @@ class SystemInfoTests: TestCase {
- 
- }
- 
-+private final class SynchronizingSandboxEnvironmentDetector: SandboxEnvironmentDetector, @unchecked Sendable {
-+
-+    private let calls: Atomic<Int> = .init(0)
-+    private let secondCallStarted = DispatchSemaphore(value: 0)
-+
-+    var callCount: Int { self.calls.value }
-+
-+    var isSandbox: Bool {
-+        let callCount = self.calls.increment()
-+
-+        if callCount == 1 {
-+            _ = self.secondCallStarted.wait(timeout: .now() + 0.25)
++    /// Takes all the space proposed along `axis`, like `.frame(minWidth: 0, maxWidth: .infinity)`.
++    ///
++    /// iOS 17 places a frame's content three times under an unbounded proposal, such as a `ScrollView`'s, and
++    /// every nested Fill stack multiplies that until the paywall hangs. ``FillLayout`` places it once.
++    @ViewBuilder
++    func fill(_ axis: Axis, alignment: Alignment) -> some View {
++        if #available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, *) {
++            self.fillFrame(axis, alignment: alignment)
++        } else if #available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *) {
++            FillLayout(axis: axis, alignment: alignment) { self }
 +        } else {
-+            self.secondCallStarted.signal()
++            self.fillFrame(axis, alignment: alignment)
 +        }
++    }
 +
-+        return true
++    @ViewBuilder
++    private func fillFrame(_ axis: Axis, alignment: Alignment) -> some View {
++        switch axis {
++        case .horizontal:
++            self.frame(minWidth: 0, maxWidth: .infinity, alignment: alignment)
++        case .vertical:
++            self.frame(minHeight: 0, maxHeight: .infinity, alignment: alignment)
++        }
++    }
++
+     @ViewBuilder
+     func applyWidthLimits(_ minMax: MinMax, alignment: Alignment) -> some View {
+         if minMax.hasLimit {
+@@ -97,6 +122,41 @@ extension View {
+ 
+ }
+ 
++/// Lays out its single subview like `.frame(minWidth: 0, maxWidth: .infinity, alignment:)` along `axis`.
++@available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *)
++private struct FillLayout {
++
++    let axis: Axis
++    let alignment: Alignment
++
++}
++
++@available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *)
++extension FillLayout: Layout {
++
++    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
++        let size = subviews.first?.sizeThatFits(proposal) ?? .zero
++        return self.axis == .horizontal
++            ? CGSize(width: proposal.width ?? size.width, height: size.height)
++            : CGSize(width: size.width, height: proposal.height ?? size.height)
++    }
++
++    // By size, not `dimensions(in:)`: a stack's alignment guides lay out its whole subtree again.
++    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
++        guard let subview = subviews.first else { return }
++        let size = subview.sizeThatFits(proposal)
++        let horizontal = self.alignment.horizontal
++        let vertical = self.alignment.vertical
++        let xFraction: CGFloat = horizontal == .leading ? 0 : horizontal == .trailing ? 1 : 0.5
++        let yFraction: CGFloat = vertical == .top ? 0 : vertical == .bottom ? 1 : 0.5
++        subview.place(at: CGPoint(x: bounds.minX + xFraction * (bounds.width - size.width),
++                                  y: bounds.minY + yFraction * (bounds.height - size.height)),
++                      anchor: .topLeading,
++                      proposal: proposal)
 +    }
 +
 +}
 +
- private extension SystemInfo {
+ extension MinMax {
  
-     static func withReceiptResult(
+     fileprivate var hasLimit: Bool {
+```
+
+**File**: `Tests/RevenueCatUITests/PaywallsV2/SizeModifierTests.swift` (modified, +64/-0)
+```diff
+@@ -180,6 +180,35 @@ final class SizeModifierTests: TestCase {
+                        .init(width: 100, height: 600))
+     }
+ 
++    func testNestedFillStacksInsideScrollViewPlaceContentOnce() throws {
++        guard #available(iOS 16.0, *) else { throw XCTSkip("PlacementRecorder needs iOS 16") }
++        let log = PlacementRecorder.Log()
++        var content = AnyView(PlacementRecorder(log: log) { Color.clear.frame(width: 10, height: 10) })
++        for _ in 0..<10 {
++            content = AnyView(VStack { content }.size(.init(width: .fill, height: .fit(nil))))
++        }
++
++        Self.layOut(ScrollView { content }, in: .init(width: 100, height: 600))
++
++        // iOS 17 used to place each level's content three times: 2 * 3^10 placements of this leaf.
++        XCTAssertGreaterThan(log.placements.count, 0)
++        XCTAssertLessThan(log.placements.count, 20)
++    }
++
++    func testFillAlignsContentLikeAFrame() throws {
++        guard #available(iOS 16.0, *) else { throw XCTSkip("PlacementRecorder needs iOS 16") }
++        for (alignment, minX) in [(HorizontalAlignment.leading, 0.0), (.center, 45), (.trailing, 90)] {
++            let log = PlacementRecorder.Log()
++            let view = PlacementRecorder(log: log) { Color.clear.frame(width: 10, height: 10) }
++                .size(.init(width: .fill, height: .fixed(10)),
++                      horizontalAlignment: Alignment(horizontal: alignment, vertical: .center))
++
++            Self.layOut(view.frame(width: 100, height: 10), in: .init(width: 100, height: 10))
++
++            XCTAssertEqual(log.placements.last?.minX, CGFloat(minX))
++        }
++    }
++
+     private static func requireFitScrollAvailability() throws {
+         guard #available(iOS 16.0, *) else {
+             throw XCTSkip("FIT scrolling uses ViewThatFits on iOS 16 and later")
+@@ -190,6 +219,41 @@ final class SizeModifierTests: TestCase {
+         UIHostingController(rootView: view).sizeThatFits(in: proposal)
+     }
+ 
++    private static func layOut<Content: View>(_ view: Content, in size: CGSize) {
++        let controller = UIHostingController(rootView: view)
++        let window = UIWindow(frame: CGRect(origin: .zero, size: size))
++        window.rootViewController = controller
++        window.isHidden = false
++        controller.view.frame = window.bounds
++        controller.view.layoutIfNeeded()
++    }
++
++}
++
++/// Passes its single subview through unchanged, logging the bounds of every placement.
++@available(iOS 16.0, *)
++private struct PlacementRecorder {
++
++    final class Log {
++        var placements: [CGRect] = []
++    }
++
++    let log: Log
++
++}
++
++@available(iOS 16.0, *)
++extension PlacementRecorder: Layout {
++
++    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
++        subviews.first?.sizeThatFits(proposal) ?? .zero
++    }
++
++    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
++        self.log.placements.append(bounds)
++        subviews.first?.place(at: bounds.origin, proposal: proposal)
++    }
++
+ }
+ 
+ #endif
 ```
 
 ---
 
-### Incident Patch 2: `33d2211a` (2026-11-05)
-**Commit Message**: fix: present Test Store UI in the passed presentationContext (#7978)
+### Incident Patch 2: `87417b48` (2026-11-06)
+**Commit Message**: ci: merge gate that tightens once the full suite is approved (#8235)
 
-* fix: respect presentation context in Test Store
+* ci: post a merge gate status that tightens once the full suite is approved
 
-* refactor: keep default presentation context internal
+Adds a ci/all-tests-gate commit status driven from CircleCI. A no-requires
+job posts success at pipeline start, approving the full-suite hold flips
+it to pending, and all-tasks-passed posts success again once every full
+job is green. Release pipelines post it from all-tests-succeeded so
+release PRs are not blocked once the context is required.
 
-* refactor: use generalized presentation context
+The reduced suite needs no gate of its own: its jobs are already required
+individually.
 
-* refactor: simplify presentation platform branches
+* test: find the merge gate by its instance name
 
-* refactor: group simulated store purchase context
+all-tasks-passed is now an instance of the parameterized post-gate-status
+job, so the workflow entry is keyed by the job name and carries name:.
 
-* docs: clarify purchase presentation context support
+* ci: never post the default gate success once the full suite is requested
 
-* fix: cancel dismissed test store sheets
+full-suite-not-requested waits for the reduced suite and checks the
+hold first: approved means halt without posting, so the gate goes from
+unreported straight to pending; anything but on_hold fails the job
+rather than posting success. all-tasks-passed reaches the reduced suite
+through full-suite-started, so it keeps a single list, and the tes
 
-* refactor: unify presentation context declaration
-
-* refactor: require simulated store presentation context argument
-
-* fix: handle unavailable macOS presentation windows
-
-* fix: preserve explicit presentation context failures
-
-* docs: clarify scene purchase presentation behavior
-
-* docs: clarify window purchase presentation behavior
-
-* fix: resolve macOS sheet window from presentation context
-
-**File**: `Sources/FoundationExtensions/UIApplication+RCExtensions.swift` (modified, +16/-3)
+**File**: `.circleci/default_config.yml` (modified, +75/-32)
 ```diff
-@@ -50,13 +50,26 @@ extension UIApplication {
-     @available(watchOSApplicationExtension, unavailable)
-     @MainActor
-     public var currentPresentationViewController: UIViewController? {
--        guard let windowScene = self.currentWindowScene else { return nil }
-+        return self.currentWindowScene?.currentPresentationViewController
-+    }
-+
-+}
-+
-+extension UIWindowScene {
-+
-+    /// The topmost view controller in this window scene.
-+    @available(macCatalyst 13.1, *)
-+    @available(macOS, unavailable)
-+    @available(watchOS, unavailable)
-+    @available(watchOSApplicationExtension, unavailable)
-+    @MainActor
-+    var currentPresentationViewController: UIViewController? {
+@@ -2453,23 +2453,49 @@ jobs:
+           name: Trigger RC App Pipeline
+           command: bundle exec fastlane trigger_bump_sdk_in_rc_mobile_app
  
-         let window: UIWindow?
-         if #available(iOS 15.0, macCatalyst 15.0, tvOS 15.0, *) {
--            window = windowScene.keyWindow
-+            window = self.keyWindow
-         } else {
--            window = windowScene.windows.first { $0.isKeyWindow }
-+            window = self.windows.first { $0.isKeyWindow }
-         }
+-  all-tests-succeeded:
+-    docker:
+-      - image: cimg/base:stable
+-    resource_class: small
+-    steps:
+-      - run:
+-          name: All tests succeeded
+-          command: echo "All tests succeeded"
+-
+-  all-tasks-passed:
++  post-gate-status:
++    parameters:
++      state:
++        type: enum
++        enum: [success, pending]
++      unless_full_suite_approved:
++        type: boolean
++        default: false
+     docker:
+       - image: cimg/base:stable
+     resource_class: small
+     steps:
+-      - run:
+-          name: All tasks passed
+-          command: echo "All tasks passed"
++      - when:
++          condition: << parameters.unless_full_suite_approved >>
++          steps:
++            - run:
++                name: Halt if approve-full-tests was already approved
++                command: |
++                  approval=$(curl --fail --silent --show-error --max-time 30 --retry 5 \
++                    -H "Circle-Token: ${CIRCLECI_API_TOKEN}" \
++                    "https://circleci.com/api/v2/workflow/${CIRCLE_WORKFLOW_ID}/job" \
++                    | jq -r '.items[] | select(.name == "approve-full-tests") | .status')
++                  case "$approval" in
++                    success)
++                      echo "Full suite already requested, leaving the gate to it"
++                      circleci-agent step halt
++                      ;;
++                    on_hold) ;;
++                    *)
++                      echo "Unexpected approve-full-tests status '${approval}', not posting"
++                      exit 1
++                      ;;
++                  esac
++      - run:
++          name: Post ci/all-tests-gate status (<< parameters.state >>)
++          environment:
++            GATE_STATE: << parameters.state >>
++          command: |
++            curl --fail --silent --show-error --output /dev/null --retry 5 \
++              -X POST "https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/statuses/${CIRCLE_SHA1}" \
++              -H "Authorization: Bearer ${GITHUB_TOKEN}" \
++              -H "Accept: application/vnd.github+json" \
++              -d "{\"state\":\"${GATE_STATE}\",\"context\":\"ci/all-tests-gate\",\"target_url\":\"${CIRCLE_BUILD_URL}\"}"
  
-         return window?.rootViewController?.topMostViewController
+ workflows:
+   record-performance-baselines:
+@@ -2585,12 +2611,38 @@ workflows:
+       - revenuecat-ads-tests:
+           context:
+             - slack-secrets
++      - post-gate-status:
++          name: full-suite-not-requested
++          state: success
++          unless_full_suite_approved: true
++          requires:
++            - performance-tests
++            - performance-automation-tests
++            - lint
++            - check-api-changes
++            - run-test-ios-27
++            - build-samplecat
++            - build-purchase-tester
++            - pod-lib-lint
++            - run-revenuecat-ui-ios-27
++            - run-revenuecat-ui-ios-26
++            - emerge_purchases_ui_snapshot_tests
++            - binary_size_analysis
++            - build-tv-watch-mac-and-visionos
++            - revenuecat-admob-tests
++            - revenuecat-ads-tests
+ 
+       # =============================================================
+       # Hold gate for the Full Test Suite
+       # =============================================================
+       - approve-full-tests:
+           type: approval
++      - post-gate-status:
++          name: full-suite-started
++          state: pending
++          requires:
++            - approve-full-tests
++            - full-suite-not-requested
+ 
+       # =============================================================
+       # Full Test Suite: Gated behind approve-full-tests
+@@ -2745,22 +2797,11 @@ workflows:
+       # =============================================================
+       # Summary gate: blocks merge until all jobs pass
+       # =============================================================
+-      - all-tasks-passed:
++      - post-gate-status:
++          name: all-tasks-passed
++          state: success
+           requires:
+-            # Reduced Test Suite
+-            - performance-tests
+-            - performance-automation-tests
+-            - lint
+-            - check-api-changes
+-            - run-test-ios-27
+-            - build-samplecat
+-            - build-purchase-tester
+-            - pod-lib-lint
+-            - run-revenuecat-ui-ios-27
+-            - run-revenuecat-ui-ios-26
+-            - emerge_purchases_ui_snapshot_tests
+-            - binary_size_analysis
+-            - build-tv-watch-mac-and-visionos
++            - full-suite-started
+             # Full Test Suite
+             - backend-integration-tests-SK1
+             - backend-integration-tests-SK2
+@@ -2784,8 +2825,6 @@ workflows:
+             - api-tests
+             - spm-receipt-parser
+             - check-app-extension-safe-api-usage
+-            - revenueca
 ```
 
-**File**: `Sources/Purchasing/PresentationContext.swift` (modified, +49/-7)
+**File**: `.github/workflows/rcgitbot_please_test.yml` (modified, +16/-1)
 ```diff
-@@ -13,35 +13,77 @@
+@@ -17,14 +17,17 @@ jobs:
+       github.event.comment.author_association == 'MEMBER'
+     permissions:
+       pull-requests: write
++      statuses: write
  
- import Foundation
+     steps:
+       # GitHub Actions `issue_comment` workflows always run from the default branch,
+       # so we resolve the PR's head branch to find its CircleCI pipeline and approve
+       # the hold job in the existing workflow.
+       - name: Get PR branch
+         id: get-branch
+-        run: echo "branch=$(gh pr view "$PR_NO" --repo "$REPO" --json headRefName --jq '.headRefName')" >> "$GITHUB_OUTPUT"
++        run: |
++          gh pr view "$PR_NO" --repo "$REPO" --json headRefName,headRefOid \
++            --jq '"branch=\(.headRefName)\nsha=\(.headRefOid)"' >> "$GITHUB_OUTPUT"
+         env:
+           REPO: ${{ github.repository }}
+           PR_NO: ${{ github.event.issue.number }}
+@@ -126,6 +129,18 @@ jobs:
+           fi
  
--#if canImport(UIKit)
-+#if canImport(UIKit) && !os(watchOS)
- import UIKit
--#endif
--
--#if canImport(AppKit)
-+#elseif canImport(AppKit) && !targetEnvironment(macCatalyst)
- import AppKit
- #endif
- 
- /// The platform UI context for presenting SDK-owned UI.
- @_spi(Internal) public struct PresentationContext: Sendable {
- 
-     #if canImport(UIKit) && !os(watchOS)
--
-     let scene: UIScene
- 
-     /// Creates a presentation context anchored to a UIKit scene.
-     @_spi(Internal) public init(scene: UIScene) {
-         self.scene = scene
-     }
--
-     #elseif canImport(AppKit) && !targetEnvironment(macCatalyst)
--
-     let window: NSWindow
- 
-     /// Creates a presentation context anchored to an AppKit window.
-     @_spi(Internal) public init(window: NSWindow) {
-         self.window = window
-     }
-+    #endif
+           echo "Successfully approved '$APPROVAL_JOB_NAME' in workflow '$WORKFLOW_NAME'"
++          echo "approved=true" >> "$GITHUB_OUTPUT"
 +
-+    @MainActor
-+    static func defaultPresentationContext(systemInfo: SystemInfo) -> Self? {
-+        #if canImport(UIKit) && !os(watchOS)
-+        if #available(macCatalyst 13.1, *) {
-+            return systemInfo.sharedUIApplication?.currentWindowScene.map(Self.init(scene:))
-+        }
-+
-+        return nil
-+        #elseif canImport(AppKit) && !targetEnvironment(macCatalyst)
-+        return (NSApplication.shared.keyWindow ?? NSApplication.shared.mainWindow).map(Self.init(window:))
-+        #else
-+        return nil
-+        #endif
-+    }
++      - name: Mark the merge gate pending
++        if: steps.approve.outputs.approved == 'true'
++        env:
++          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
++          REPO: ${{ github.repository }}
++          SHA: ${{ steps.get-branch.outputs.sha }}
++          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
++        run: |
++          gh api "repos/$REPO/statuses/$SHA" \
++            -f state=pending -f context=ci/all-tests-gate -f target_url="$RUN_URL"
  
-+    var isValidForPresentation: Bool {
-+        #if canImport(UIKit) && !os(watchOS)
-+        return self.scene is UIWindowScene
-+        #elseif canImport(AppKit) && !targetEnvironment(macCatalyst)
-+        return true
-+        #else
-+        return false
-+        #endif
-+    }
-+
-+    #if canImport(AppKit) && !targetEnvironment(macCatalyst)
-+    @MainActor
-+    var sheetPresentationWindow: NSWindow? {
-+        var window = self.window
-+        while let attachedSheet = window.attachedSheet {
-+            window = attachedSheet
-+        }
-+
-+        return window.isVisible ? window : nil
-+    }
-+    #endif
-+
-+    #if canImport(UIKit) && !os(watchOS)
-+    @available(macCatalyst 13.1, *)
-+    @available(macOS, unavailable)
-+    @available(watchOS, unavailable)
-+    @available(watchOSApplicationExtension, unavailable)
-+    @MainActor
-+    var presentationViewController: UIViewController? {
-+        return (self.scene as? UIWindowScene)?.currentPresentationViewController
-+    }
-     #endif
- 
- }
+       - name: React to comment
+         if: always()
 ```
 
-**File**: `Sources/Purchasing/Purchases/PurchaseParams.swift` (modified, +4/-2)
+**File**: `fastlane/performance_baseline_helper_test.rb` (modified, +14/-2)
 ```diff
-@@ -167,7 +167,8 @@ import AppKit
-          * Set `confirmInScene`.
-          *
-          * - Parameter confirmInScene: The scene the system uses to show the purchase confirmation UI.
--         * - Note: This value is only used when StoreKit 2 is in use.
-+         * - Note: Used to anchor StoreKit 2 purchase confirmation UI and the Test Store purchase dialog.
-+         *   Ignored when using StoreKit 1.
-          *
-          * Availability: iOS 17.0+, macCatalyst 17.0+, tvOS 17.0+, visionOS 1.0+
-          */
-@@ -188,7 +189,8 @@ import AppKit
-          * Set `confirmInWindow`.
-          *
-          * - Parameter confirmInWindow: The window to show the purchase confirmation UI in proximity to.
--         * - Note: This value is only used when StoreKit 2 is in use.
-+         * - Note: Used to anchor StoreKit 2 purchase confirmation UI and the Test Store purchase dialog.
-+         *   Ignored when using StoreKit 1.
-          *
-          * Availability: macOS 15.2+
-          */
-```
-
-**File**: `Sources/Purchasing/Purchases/PurchasesOrchestrator.swift` (modified, +42/-24)
-```diff
-@@ -600,11 +600,17 @@ final class PurchasesOrchestrator {
-                           quantity: quantity,
-                           completion: completionWithTracking)
-         } else if let simulatedStoreProduct = product.testStoreProduct {
--            self.handlePurchase(simulatedStoreProduct: simulatedStoreProduct,
--                                presentedOfferingContext: package?.presentedOfferingContext,
--                                paywallEvent: paywallEvent,
--                                metadata: metadata,
--                                completion: completionWithTracking)
-+            let context = SimulatedStorePurchaseContext(
-+                presentedOfferingContext: package?.presentedOfferingContext,
-+                paywallEvent: paywallEvent,
-+                metadata: metadata,
-+                presentationContext: presentationContext
-+            )
-+            self.handlePurchase(
-+                simulatedStoreProduct: simulatedStoreProduct,
-+                context: context,
-+                completion: completionWithTracking
-+            )
-         } else {
-             fatalError("Unrecognized product: \(product)")
-         }
-@@ -2269,31 +2275,43 @@ private extension PurchasesOrchestrator {
- 
- // MARK: - Simulated Store Purchases
- 
-+private struct SimulatedStorePurchaseContext {
+@@ -72,8 +72,20 @@ def test_rejects_results_after_branch_changes
+   def test_pr_merge_gate_requires_the_memory_benchmark
+     config = YAML.safe_load(File.read(File.join(ROOT, '.circleci/default_config.yml')), aliases: true)
+     jobs = config.fetch('workflows').fetch('run-all-tests').fetch('jobs')
+-    gate = jobs.find { |job| job.is_a?(Hash) && job.key?('all-tasks-passed') }
+-    assert_includes gate.fetch('all-tasks-passed').fetch('requires'), 'performance-tests'
++    gate = jobs.find { |job| job.is_a?(Hash) && job.values.first['name'] == 'full-suite-not-requested' }
++    assert_includes gate.values.first.fetch('requires'), 'performance-tests'
++  end
 +
-+    let presentedOfferingContext: PresentedOfferingContext?
-+    let paywallEvent: PaywallEvent?
-+    let metadata: [String: String]?
-+    let presentationContext: PresentationContext?
-+
-+}
-+
- private extension PurchasesOrchestrator {
++  def test_merge_gate_posts_pending_after_the_default_success_and_success_last
++    config = YAML.safe_load(File.read(File.join(ROOT, '.circleci/default_config.yml')), aliases: true)
++    jobs = config.fetch('workflows').fetch('run-all-tests').fetch('jobs')
++    gates = jobs.select { |job| job.is_a?(Hash) && job.key?('post-gate-status') }.to_h { |job| [job['post-gate-status']['name'], job['post-gate-status']] }
++    assert_equal 'success', gates.fetch('full-suite-not-requested').fetch('state')
++    assert_equal true, gates.fetch('full-suite-not-requested').fetch('unless_full_suite_approved')
++    assert_equal 'pending', gates.fetch('full-suite-started').fetch('state')
++    assert_equal %w[approve-full-tests full-suite-not-requested], gates.fetch('full-suite-started').fetch('requires').sort
++    assert_equal 'success', gates.fetch('all-tasks-passed').fetch('state')
++    assert_includes gates.fetch('all-tasks-passed').fetch('requires'), 'full-suite-started'
+   end
  
--    func handlePurchase(simulatedStoreProduct: SimulatedStoreProduct,
--                        presentedOfferingContext: PresentedOfferingContext?,
--                        paywallEvent: PaywallEvent?,
--                        metadata: [String: String]?,
--                        completion: @escaping PurchaseCompletedBlock) {
-+    func handlePurchase(
-+        simulatedStoreProduct: SimulatedStoreProduct,
-+        context: SimulatedStorePurchaseContext,
-+        completion: @escaping PurchaseCompletedBlock
-+    ) {
-         if self.systemInfo.isSimulatedStoreAPIKey {
--            self.purchase(simulatedStoreProduct: simulatedStoreProduct,
--                          presentedOfferingContext: presentedOfferingContext,
--                          paywallEvent: paywallEvent,
--                          metadata: metadata,
--                          completion: completion)
-+            self.purchase(
-+                simulatedStoreProduct: simulatedStoreProduct,
-+                context: context,
-+                completion: completion
-+            )
-         } else {
-             self.handleTestProductNotAvailableForPurchase(completion)
-         }
-     }
- 
--    private func purchase(simulatedStoreProduct: SimulatedStoreProduct,
--                          presentedOfferingContext: PresentedOfferingContext?,
--                          paywallEvent: PaywallEvent?,
--                          metadata: [String: String]?,
--                          completion: @escaping PurchaseCompletedBlock) {
-+    private func purchase(
-+        simulatedStoreProduct: SimulatedStoreProduct,
-+        context: SimulatedStorePurchaseContext,
-+        completion: @escaping PurchaseCompletedBlock
-+    ) {
-         Task {
--            let result = await self.simulatedStorePurchaseHandler.purchase(product: simulatedStoreProduct)
-+            let result = await self.simulatedStorePurchaseHandler.purchase(
-+                product: simulatedStoreProduct,
-+                presentationContext: context.presentationContext
-+            )
-             switch result {
-             case .cancel:
-                 let customerInfo = try? await self.customerInfoManager.customerInfo(appUserID: self.appUserID,
-@@ -2304,9 +2322,9 @@ private extension PurchasesOrchestrator {
-             case .success(let transaction):
-                 do {
-                     let customerInfo = try await self.handlePurchasedTransaction(
--                        transaction, .purchase, metadata,
--                        presentedOfferingContext: presentedOfferingContext,
--                        presentedPaywall: paywallEvent
-+                        transaction, .purchase, context.metadata,
-+                        presentedOfferingContext: context.presentedOfferingContext,
-+                        presentedPaywall: context.paywallEvent
-                     )
-                     await completion(transaction, customerInfo, nil, false)
-                 } catch {
-```
-
-**File**: `Sources/Purchasing/SimulatedStore/SimulatedStorePurchaseHandler.swift` (modified, +12/-3)
-```diff
-@@ -17,7 +17,10 @@ enum TestPurchaseResult {
- protocol SimulatedStorePurchaseHandlerType: AnyObject, Sendable {
- 
-     @MainActor
--    func purchase(product: TestStoreProduct) async -> TestPurchaseResult
-+    func purchase(
-+        product: TestStoreProduct,
-+        presentationContext: PresentationContext?
-+    ) async -> TestPurchaseResult
- 
- }
- 
-@@ -45,7 +48,10 @@ actor SimulatedStorePurchaseHandler: SimulatedStorePurchaseHandlerType {
-         self.dateProvider = dateProvider
-     }
- 
--    func purchase(product: TestStoreProduct) async -> TestPurchaseResult {
-+    func purchase(
-+        product: TestStoreProduct,
-+        presentationContext: PresentationContext? = nil
-+    ) async -> TestPurchaseResult {
-         guard !self.purchaseInProgress else {
-             return .failure(ErrorUtils.operationAlreadyInProgressError())
-         }
-@@ -55,7 +61,10 @@ actor SimulatedStorePurchaseHandler: SimulatedStorePurchaseHandlerType {
-                 return .failure(ErrorUtils.unknownError())
-             }
- 
--            let result = await self.purchaseUI.presentPurchaseUI(for: product)
-+            let result = await self.purchaseUI.presentPurchaseUI(
-+                for: product,
-+                presentationContext: presentationContext
-+            )
- 
-             let purchaseResult: TestPurchaseResult
-             switch result {
-```
-
-**File**: `Sources/Purchasing/SimulatedStore/SimulatedStorePurchaseUI.swift` (modified, +133/-82)
-```diff
-@@ -12,12 +12,12 @@
- //  Created by Antonio Pallares on 1/8/25.
- 
- import Foundation
--#if os(iOS) || os(tvOS) || VISION_OS || targetEnvironment(macCatalyst)
--import UIKit
--#elseif os(watchOS)
-+#if os(watchOS)
- import UIKit
- import WatchKit
--#elseif os(macOS)
-+#elseif canImport(UIKit)
-+import UIKit
-+#elseif canImport(AppKit)
- import AppKit
- #endif
- 
-@@ -34,21 +34,53 @@ protocol SimulatedStorePurchaseUI: Sendable {
-     ///
-     /// - Parameters:
-     ///   - product: The product to be purchased.
-+    ///   - presentationContext: The platform UI context where the purchase UI should be presented.
-     /// - Returns: A result indicating the selected outcome of the purchase UI interaction.
--    func presentPurchaseUI(for product: SimulatedStoreProduct) async -> SimulatedStorePurchaseUIResult
-+    func presentPurchaseUI(
-+        for product: SimulatedStoreProduct,
-+        presentationContext: PresentationContext?
-+    ) async -> SimulatedStorePurchaseUIResult
- 
- }
- 
- /// Contains the logic to present a system alert for the confirmation of Simulated Store products purchases.
- struct DefaultSimulatedStorePurchaseUI: SimulatedStorePurchaseUI {
- 
--    private let systemInfo: SystemInfo
-+    #if os(watchOS)
-+
-+    init(systemInfo: SystemInfo) {}
-+
-+    #else
-+
-+    private let defaultPresentationContextProvider: @MainActor @Sendable () -> PresentationContext?
- 
-     init(systemInfo: SystemInfo) {
--        self.systemInfo = systemInfo
-+        self.defaultPresentationContextProvider = {
-+            return PresentationContext.defaultPresentationContext(systemInfo: systemInfo)
-+        }
-+    }
-+
-+    init(
-+        defaultPresentationContextProvider: @escaping @MainActor @Sendable () -> PresentationContext?
-+    ) {
-+        self.defaultPresentationContextProvider = defaultPresentationContextProvider
-     }
- 
--    func presentPurchaseUI(for product: SimulatedStoreProduct) async -> SimulatedStorePurchaseUIResult {
-+    @MainActor
-+    func resolvedPresentationContext(_ context: PresentationContext?) -> PresentationContext? {
-+        guard let context else {
-+            return self.defaultPresentationContextProvider()
-+        }
-+
-+        return context.isValidForPresentation ? context : nil
-+    }
-+
-+    #endif
-+
-+    func presentPurchaseUI(
-+        for product: SimulatedStoreProduct,
-+        presentationContext: PresentationContext?
-+    ) async -> SimulatedStorePurchaseUIResult {
-         await Task { @MainActor in
-             return await withUnsafeContinuation { continuation in
- 
-@@ -74,7 +106,7 @@ struct DefaultSimulatedStorePurchaseUI: SimulatedStorePurchaseUI {
-                     }
-                 )
- 
--                self.showAlert(alert) { (error: PurchasesError) in
-+                self.showAlert(alert, presentationContext: presentationContext) { (error: PurchasesError) in
-                     completion(.error(error))
-                 }
-             }
-@@ -103,7 +135,7 @@ struct DefaultSimulatedStorePurchaseUI: SimulatedStorePurchaseUI {
-                     }
-                 )
- 
--                self.showAlert(alert) { _ in
-+                self.showAlert(alert, presentationContext: nil) { _ in
-                     completion()
-                 }
-             }
-@@ -220,40 +252,20 @@ private extension DefaultSimulatedStorePurchaseUI {
- 
- }
- 
--private extension DefaultSimulatedStorePurchaseUI {
--
--    @MainActor
--    func showAlert(_ alert: Alert, onError: (PurchasesError) -> Void) {
--
--        #if os(iOS) || os(tvOS) || VISION_OS || targetEnvironment(macCatalyst)
--        guard let viewController = self.findTopViewController() else {
--            Logger.warn(Strings.purchase.unable_to_find_root_view_controller_for_simulated_purchase)
--            onError(ErrorUtils.unknownError(
--                message: Strings.purchase.unable_to_find_root_view_controller_for_simulated_purchase.description
--            ))
--            return
--        }
--
--        let alertController = UIAlertController(title: alert.title,
--                                                message: alert.message,
--                                                preferredStyle: .alert)
--
--        alert.actions.forEach { action in
--            let alertAction = UIAlertAction(title: action.title, style: action.style.alertActionStyle) { _ in
--                action.callback(action.title)
--            }
--            alertController.addAction(alertAction)
--        }
--
--        viewController.present(alertController, animated: true)
-+#if os(watchOS)
- 
--        #elseif os(watchOS)
-+extension DefaultSimulatedStorePurchaseUI {
- 
-+    @MainActor
-+    private func showAlert(
-+        _ alert: Alert,
-+        presentationContext: PresentationContext?,
-+        onError: (PurchasesError) -> Void
-+    ) {
-         let actions: [WKAlertAction] = alert.actions.map { action in
-             WKAlertAction(title: action.title, style: action.style.alertActionStyle) {
-                 action.callback(action.title)
-             }
--
-         }
- 
-         WKIn
-```
-
-**File**: `Tests/UnitTests/Mocks/MockTestStorePurchaseHandler.swift` (modified, +7/-2)
-```diff
-@@ -12,18 +12,23 @@
- //  Created by Antonio Pallares on 21/7/25.
- 
- import Foundation
--@testable import RevenueCat
-+@_spi(Internal) @testable import RevenueCat
- 
- actor MockSimulatedStorePurchaseHandler: SimulatedStorePurchaseHandlerType {
- 
-     let stubbedPurchaseResult: Atomic<TestPurchaseResult> = .init(.cancel)
-     let invokedPurchase: Atomic<Bool> = .init(false)
-     let invokedPurchaseProduct: Atomic<TestStoreProduct?> = .init(nil)
-+    let invokedPresentationContext: Atomic<PresentationContext?> = .init(nil)
- 
-     @MainActor
--    func purchase(product: TestStoreProduct) async -> TestPurchaseResult {
-+    func purchase(
-+        product: TestStoreProduct,
-+        presentationContext: PresentationContext?
-+    ) async -> TestPurchaseResult {
-         self.invokedPurchase.value = true
-         self.invokedPurchaseProduct.value = product
-+        self.invokedPresentationContext.value = presentationContext
-         return self.stubbedPurchaseResult.value
-     }
- 
-```
-
-**File**: `Tests/UnitTests/Mocks/MockTestStorePurchaseUI.swift` (modified, +7/-2)
-```diff
-@@ -12,7 +12,7 @@
- //  Created by Antonio Pallares on 1/8/25.
- 
- import Foundation
--@testable import RevenueCat
-+@_spi(Internal) @testable import RevenueCat
- 
- final class MockSimulatedStorePurchaseUI: SimulatedStorePurchaseUI {
- 
-@@ -21,11 +21,16 @@ final class MockSimulatedStorePurchaseUI: SimulatedStorePurchaseUI {
-     let invokedPresentPurchaseUI: Atomic<Bool> = .init(false)
-     let invokedPresentPurchaseUICount: Atomic<Int> = .init(0)
-     let invokedPresentPurchaseUIProduct: Atomic<TestStoreProduct?> = .init(nil)
-+    let invokedPresentationContext: Atomic<PresentationContext?> = .init(nil)
- 
--    func presentPurchaseUI(for product: SimulatedStoreProduct) async -> SimulatedStorePurchaseUIResult {
-+    func presentPurchaseUI(
-+        for product: SimulatedStoreProduct,
-+        presentationContext: PresentationContext?
-+    ) async -> SimulatedStorePurchaseUIResult {
-         self.invokedPresentPurchaseUI.value = true
-         self.invokedPresentPurchaseUICount.value += 1
-         self.invokedPresentPurchaseUIProduct.value = product
-+        self.invokedPresentationContext.value = presentationContext
-         return await self.stubbedPurchaseResult.value()
-     }
- 
+   def test_requested_job_enables_record_and_push_with_boolean_parameters
 ```
 
 ---
 
-### Incident Patch 3: `f4bfee9f` (2026-11-05)
-**Commit Message**: fix: centralize presentation context resolution (#7977)
+### Incident Patch 3: `05faffdd` (2026-11-05)
+**Commit Message**: fix(Paywalls) Package selection resolution on older OSes (#8226)
 
-* refactor: generalize purchase presentation context
-
-* fix: ignore non-window presentation scenes
-
-* test: cover non-window scene filtering
-
-* refactor: generalize presentation context naming
-
-* fix: mark presentation context initializers as SPI
-
-* refactor: use checked Sendable conformance
-
-**File**: `RevenueCat.xcodeproj/project.pbxproj` (modified, +8/-4)
+**File**: `RevenueCatUI/Templates/V2/Components/Button/BottomSheetView.swift` (modified, +2/-2)
 ```diff
-@@ -701,6 +701,7 @@
- 		5721360F28B4602C006C46BE /* Purchases+nonasync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5721360E28B4602C006C46BE /* Purchases+nonasync.swift */; };
- 		572247D127BEC28E00C524A7 /* Array+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 572247D027BEC28E00C524A7 /* Array+Extensions.swift */; };
- 		572247F727BF1ADF00C524A7 /* ArrayExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 572247F627BF1ADF00C524A7 /* ArrayExtensionsTests.swift */; };
-+		A81009B13D10000000000001 /* UIApplicationExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A81009B13D10000000000002 /* UIApplicationExtensionsTests.swift */; };
- 		5722482727C2BD3200C524A7 /* LockTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5722482627C2BD3200C524A7 /* LockTests.swift */; };
- 		5723FBBE28EDE1360003BA16 /* InternalAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5723FBBD28EDE1360003BA16 /* InternalAPI.swift */; };
- 		5733B18E27FF586A00EC2045 /* BackendError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5733B18D27FF586A00EC2045 /* BackendError.swift */; };
-@@ -1628,7 +1629,7 @@
- 		FD6D87632FAE79E700CAF0F2 /* InstallmentsInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD6D87622FAE79E700CAF0F2 /* InstallmentsInfo.swift */; };
- 		FD8C00472DE7A04200224B78 /* VirtualCurrencyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD8C00462DE7A04200224B78 /* VirtualCurrencyManager.swift */; };
- 		FD9BCEBC2DC946C400408A5D /* BottomSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD9BCEBB2DC946C400408A5D /* BottomSheetView.swift */; };
--		FD54F4C42D5A664700C848A2 /* StoreKit2ConfirmInOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD54F4C32D5A664700C848A2 /* StoreKit2ConfirmInOptions.swift */; };
-+		FD54F4C42D5A664700C848A2 /* PresentationContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD54F4C32D5A664700C848A2 /* PresentationContext.swift */; };
- 		FD6186542D1393FA007843DA /* MockCustomerCenterStoreKitUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD6186532D1393FA007843DA /* MockCustomerCenterStoreKitUtilities.swift */; };
- 		FD9F982D2BE28A7F0091A5BF /* MockNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 351B515526D44B2300BD2BD7 /* MockNotificationCenter.swift */; };
- 		FDA6F96F2E035544008BF232 /* VirtualCurrencyStrings.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDA6F96E2E035544008BF232 /* VirtualCurrencyStrings.swift */; };
-@@ -2605,6 +2606,7 @@
- 		5721360E28B4602C006C46BE /* Purchases+nonasync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Purchases+nonasync.swift"; sourceTree = "<group>"; };
- 		572247D027BEC28E00C524A7 /* Array+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Extensions.swift"; sourceTree = "<group>"; };
- 		572247F627BF1ADF00C524A7 /* ArrayExtensionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrayExtensionsTests.swift; sourceTree = "<group>"; };
-+		A81009B13D10000000000002 /* UIApplicationExtensionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplicationExtensionsTests.swift; sourceTree = "<group>"; };
- 		5722482627C2BD3200C524A7 /* LockTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockTests.swift; sourceTree = "<group>"; };
- 		5723FBBD28EDE1360003BA16 /* InternalAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InternalAPI.swift; sourceTree = "<group>"; };
- 		5733B18D27FF586A00EC2045 /* BackendError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendError.swift; sourceTree = "<group>"; };
-@@ -3596,7 +3598,7 @@
- 		FD8C00462DE7A04200224B78 /* VirtualCurrencyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VirtualCurrencyManager.swift; sourceTree = "<group>"; };
- 		FD9BCEBB2DC946C400408A5D /* BottomSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomSheetView.swift; sourceTree = "<group>"; };
- 		FDA6F96E2E035544008BF232 /* VirtualCurrencyStrings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VirtualCurrencyStrings.swift; sourceTree = "<group>"; };
--		FD54F4C32D5A664700C848A2 /* StoreKit2ConfirmInOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreKit2ConfirmInOptions.swift; sourceTree = "<group>"; };
-+		FD54F4C32D5A664700C848A2 /* PresentationContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresentationContext.swift; sourceTree = "<group>"; };
- 		FD6186532D1393FA007843DA /* MockCustomerCenterStoreKitUtilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockCustomerCenterStoreKitUtilities.swift; sourceTree = "<group>"; 
-```
-
-**File**: `Sources/FoundationExtensions/UIApplication+RCExtensions.swift` (modified, +6/-1)
-```diff
-@@ -34,7 +34,12 @@ extension UIApplication {
-         }
-         #endif
- 
--        return scenes.first as? UIWindowScene
-+        return Self.firstWindowScene(in: scenes)
-+    }
-+
-+    @MainActor
-+    static func firstWindowScene<S: Sequence>(in scenes: S) -> UIWindowScene? where S.Element == UIScene {
-+        return scenes.lazy.compactMap { $0 as? UIWindowScene }.first
+@@ -95,9 +95,9 @@ private struct SheetPackageSelectionModifier: ViewModifier {
+         )
      }
  
-     /// The topmost view controller in the current foreground window scene.
+-    private var selectedPackageIsVisible: Bool {
++    private func selectedPackageIsVisible() -> Bool {
+         guard let validator = self.viewModel.packageValidator,
+-              !validator.packages.isEmpty else { return self.inheritedSelectionIsVisible }
++              !validator.packages.isEmpty else { return self.inheritedSelectionIsVisible() }
+         guard let package = self.packageContext.package else { return false }
+         return validator.couldBeRendering(
+             package,
 ```
 
-**File**: `Sources/Purchasing/PresentationContext.swift` (added, +47/-0)
+**File**: `RevenueCatUI/Templates/V2/Components/Tabs/TabsComponentView.swift` (modified, +5/-3)
 ```diff
-@@ -0,0 +1,47 @@
-+//
-+//  Copyright RevenueCat Inc. All Rights Reserved.
-+//
-+//  Licensed under the MIT License (the "License");
-+//  you may not use this file except in compliance with the License.
-+//  You may obtain a copy of the License at
-+//
-+//      https://opensource.org/licenses/MIT
-+//
-+//  PresentationContext.swift
-+//
-+//  Created by Rick van der Linden on 7/10/26.
-+
-+import Foundation
-+
-+#if canImport(UIKit)
-+import UIKit
-+#endif
-+
-+#if canImport(AppKit)
-+import AppKit
-+#endif
-+
-+/// The platform UI context for presenting SDK-owned UI.
-+@_spi(Internal) public struct PresentationContext: Sendable {
-+
-+    #if canImport(UIKit) && !os(watchOS)
-+
-+    let scene: UIScene
-+
-+    /// Creates a presentation context anchored to a UIKit scene.
-+    @_spi(Internal) public init(scene: UIScene) {
-+        self.scene = scene
-+    }
-+
-+    #elseif canImport(AppKit) && !targetEnvironment(macCatalyst)
-+
-+    let window: NSWindow
-+
-+    /// Creates a presentation context anchored to an AppKit window.
-+    @_spi(Internal) public init(window: NSWindow) {
-+        self.window = window
-+    }
-+
-+    #endif
-+
-+}
-```
-
-**File**: `Sources/Purchasing/Purchases/PurchaseParams.swift` (modified, +6/-6)
-```diff
-@@ -56,8 +56,8 @@ import AppKit
- 
-     #endif
- 
--    /// Options for the confirmIn: parameter of the `purchase(confirmIn:options:)` SK2 APIs.
--    let storeKit2ConfirmInOptions: StoreKit2ConfirmInOptions?
-+    /// The platform UI context where purchase-related UI should be presented.
-+    let presentationContext: PresentationContext?
- 
-     private init(with builder: Builder) {
-         self.promotionalOffer = builder.promotionalOffer
-@@ -77,7 +77,7 @@ import AppKit
-         self.promotionalOfferOptions = builder.promotionalOfferOptions
-         #endif
- 
--        self.storeKit2ConfirmInOptions = builder.storeKit2ConfirmInOptions
-+        self.presentationContext = builder.presentationContext
-     }
- 
-     /// The Builder for ```PurchaseParams```.
-@@ -101,7 +101,7 @@ import AppKit
- 
-         #endif
- 
--        private(set) var storeKit2ConfirmInOptions: StoreKit2ConfirmInOptions?
-+        private(set) var presentationContext: PresentationContext?
- 
-         /**
-          * Create a new builder with a ``Package``.
-@@ -173,7 +173,7 @@ import AppKit
-          */
-         @available(iOS 17.0, macCatalyst 17.0, tvOS 17.0, visionOS 1.0, *)
-         public func with(confirmInScene: UIScene) -> Self {
--            self.storeKit2ConfirmInOptions = StoreKit2ConfirmInOptions(confirmInScene: confirmInScene)
-+            self.presentationContext = PresentationContext(scene: confirmInScene)
-             return self
-         }
-         #endif
-@@ -194,7 +194,7 @@ import AppKit
-          */
-         @available(macOS 15.2, *)
-         public func with(confirmInWindow: NSWindow) -> Self {
--            self.storeKit2ConfirmInOptions = StoreKit2ConfirmInOptions(confirmInWindow: confirmInWindow)
-+            self.presentationContext = PresentationContext(window: confirmInWindow)
-             return self
-         }
-         #endif
-```
-
-**File**: `Sources/Purchasing/Purchases/PurchasesOrchestrator.swift` (modified, +9/-9)
-```diff
-@@ -529,7 +529,7 @@ final class PurchasesOrchestrator {
-                  winBackOffer: winBackOffer,
-                  introductoryOfferEligibilityJWS: introductoryOfferEligibilityJWS,
-                  promotionalOfferOptions: promotionalOfferOptions,
--                 storeKit2ConfirmInOptions: params.storeKit2ConfirmInOptions,
-+                 presentationContext: params.presentationContext,
-                  metadata: metadata,
-                  quantity: params.quantity,
-                  trackDiagnostics: trackDiagnostics,
-@@ -543,7 +543,7 @@ final class PurchasesOrchestrator {
-                   winBackOffer: WinBackOffer? = nil,
-                   introductoryOfferEligibilityJWS: String? = nil,
-                   promotionalOfferOptions: StoreKit2PromotionalOfferPurchaseOptions? = nil,
--                  storeKit2ConfirmInOptions: StoreKit2ConfirmInOptions? = nil,
-+                  presentationContext: PresentationContext? = nil,
-                   metadata: [String: String]? = nil,
-                   paywallEvent: PaywallEvent? = nil,
-                   quantity: Int? = nil,
-@@ -594,7 +594,7 @@ final class PurchasesOrchestrator {
-                           introductoryOfferEligibilityJWS: introductoryOfferEligibilityJWS,
-                           billingPlanType: billingPlanType,
-                           promotionalOfferOptions: promotionalOfferOptions,
--                          storeKit2ConfirmInOptions: storeKit2ConfirmInOptions,
-+                          presentationContext: presentationContext,
-                           metadata: metadata,
-                           paywallEvent: paywallEvent,
-                           quantity: quantity,
-@@ -724,7 +724,7 @@ final class PurchasesOrchestrator {
-                   introductoryOfferEligibilityJWS: String?,
-                   billingPlanType: BillingPlanType?,
-                   promotionalOfferOptions: StoreKit2PromotionalOfferPurchaseOptions?,
--                  storeKit2ConfirmInOptions: StoreKit2ConfirmInOptions?,
-+                  presentationContext: PresentationContext?,
-                   metadata: [String: String]? = nil,
-                   paywallEvent: PaywallEvent? = nil,
-                   quantity: Int? = nil,
-@@ -742,7 +742,7 @@ final class PurchasesOrchestrator {
-                     metadata: metadata,
-                     paywallEvent: paywallEvent,
-                     quantity: quantity,
--                    storeKit2ConfirmInOptions: storeKit2ConfirmInOptions
-+                    presentationContext: presentationContext
-                 )
- 
-                 if !result.userCancelled {
-@@ -784,7 +784,7 @@ final class PurchasesOrchestrator {
-                   metadata: [String: String]? = nil,
-                   paywallEvent: PaywallEvent? = nil,
-                   quantity: Int? = nil,
--                  storeKit2ConfirmInOptions: StoreKit2ConfirmInOptions? = nil) async throws -> PurchaseResultData {
-+                  presentationContext: PresentationContext? = nil) async throws -> PurchaseResultData {
-         // Run the purchase + receipt post as a task that a concurrent queue-initiated receipt post for
-         // the same product can await, so the attributed purchase post reaches the backend first. The
-         // task only starts once registered, so a transaction reaching `Transaction.updates`
-@@ -801,7 +801,7 @@ final class PurchasesOrchestrator {
-                 metadata: metadata,
-                 paywallEvent: paywallEvent,
-                 quantity: quantity,
--                storeKit2ConfirmInOptions: storeKit2ConfirmInOptions
-+                presentationContext: presentationContext
+@@ -252,7 +252,7 @@ struct LoadedTabsComponentView: View {
+     private func reconcileSelection(_ context: PackageContext, tabViewModel: TabViewModel) {
+         // A root row can intentionally clear the tab's highlight. Resuming after a sheet
+         // must preserve that manual root choice while it can still render.
+-        if self.selectedPackageIsVisible,
++        if self.selectedPackageIsVisible(),
+            self.selectionState.didUserSelectPackage,
+            self.packageContext.package?.identifier == self.selectionState.parentOwnedPackage?.identifier,
+            TabPackageParentPropagation.shouldSuppressNotifyingParent(
+@@ -368,13 +368,15 @@ struct LoadedTabsComponentView: View {
+             .environmentObject(tierPackageContext)
+             .environment(
+                 \.selectedPackageIsVisible,
+-                tierPackageContext === self.packageContext ? self.selectedPackageIsVisible
+-                    : activeTabViewModel.validatedSelection(
++                {
++                    tierPackageContext === self.packageContext ? self.selectedPackageIsVisible()
++                        : activeTabViewModel.validatedSelection(
+                         tierPackageContext.package,
+                         in: self.packageSelectionContext,
+                         offerEligibilityLoading: self.offerEligibilityLoading,
+                         offerEligibilityAvailability: self.offerEligibilityAvailability
+                     ) != nil
++                }
              )
-         }
- 
-@@ -838,7 +838,7 @@ final class PurchasesOrchestrator {
-         metadata: [String: String]? = nil,
-         paywallEvent: PaywallEvent? = nil,
-         quantity: Int? = nil,
--        storeKit2ConfirmInOptions: StoreKit2ConfirmInOptions? = nil
-+        presentationContext: PresentationContext? = nil
-     ) async throws -> PurchaseResultData {
-         let result: Product.PurchaseResult
-         var options: Set<Product.PurchaseOption> = [.simulatesAskToBuyInSandbox(Purchases.simulatesAskToBuyInSandbox)]
-@@ -938,7 +938,7 @@ final class PurchasesOrchestrator {
-             result = try await self.storeKit2ProductPurchaser.purchase(
-                 product: sk2Product,
-                 options: options,
--                storeKit2ConfirmInOptions: storeKit2ConfirmInOptions
-+                presentationContext: presentationContext
-             )
- 
-             // The `purchase(sk2Product)` call can throw a `StoreKitError.userCancelled` error.
+             .environment(
+                 \.planSelectionDefaultPackage,
 ```
 
-**File**: `Sources/Purchasing/StoreKit2/StoreKit2ConfirmInOptions.swift` (removed, +0/-40)
+**File**: `RevenueCatUI/Templates/V2/EnvironmentObjects/PlanSelectionDefaultPackage.swift` (modified, +4/-3)
 ```diff
-@@ -1,40 +0,0 @@
--//
--//  Copyright RevenueCat Inc. All Rights Reserved.
--//
--//  Licensed under the MIT License (the "License");
--//  you may not use this file except in compliance with the License.
--//  You may obtain a copy of the License at
--//
--//      https://opensource.org/licenses/MIT
--//
--//  StoreKit2ConfirmInOptions.swift
--//
--//  Created by Will Taylor on 2/10/25.
--
--import Foundation
--
--#if canImport(UIKit)
--import UIKit
--#endif
--
--#if canImport(AppKit)
--import AppKit
--#endif
--
--/// Options for configuring the `confirmIn` parameter in StoreKit 2 purchases.
--///
--/// This struct provides platform-specific options for specifying where the purchase confirmation UI should appear.
--///
--/// - When UIKit is available, use `confirmInScene` to specify a `UIScene`.
--/// - When AppKit is available, use `confirmInWindow` to specify an `NSWindow`.
--internal struct StoreKit2ConfirmInOptions {
--    #if canImport(UIKit) && !os(watchOS)
--    /// The scene to show purchase confirmation UI in proximity to.
--    let confirmInScene: UIScene?
--    #endif
--
--    #if canImport(AppKit) && !targetEnvironment(macCatalyst)
--    /// The window to show purchase confirmation UI in proximity to.
--    let confirmInWindow: NSWindow?
--    #endif
--}
-```
-
-**File**: `Sources/Purchasing/StoreKit2/StoreKit2ProductPurchaser.swift` (modified, +5/-5)
-```diff
-@@ -20,7 +20,7 @@ internal protocol StoreKit2ProductPurchaserType {
-     func purchase(
-         product: PurchasableSK2Product,
-         options: Set<StoreKit.Product.PurchaseOption>,
--        storeKit2ConfirmInOptions: StoreKit2ConfirmInOptions?
-+        presentationContext: PresentationContext?
-     ) async throws -> StoreKit.Product.PurchaseResult
+@@ -21,9 +21,10 @@ private struct PlanSelectionDefaultPackageKey: EnvironmentKey {
+     static let defaultValue: Package? = nil
  }
  
-@@ -38,11 +38,11 @@ internal class StoreKit2ProductPurchaser: StoreKit2ProductPurchaserType {
-     func purchase(
-         product: PurchasableSK2Product,
-         options: Set<StoreKit.Product.PurchaseOption>,
--        storeKit2ConfirmInOptions: StoreKit2ConfirmInOptions?
-+        presentationContext: PresentationContext?
-     ) async throws -> StoreKit.Product.PurchaseResult {
- #if VISION_OS
-         let scene: UIScene
--        if let confirmInScene = storeKit2ConfirmInOptions?.confirmInScene {
-+        if let confirmInScene = presentationContext?.scene {
-             scene = confirmInScene
-         } else {
-             scene = try await self.systemInfo.currentWindowScene
-@@ -56,7 +56,7 @@ internal class StoreKit2ProductPurchaser: StoreKit2ProductPurchaserType {
-         // watchOS is excluded here since purchase(confirmIn:options:) isn't supported on watchOS.
- #elseif canImport(UIKit) && compiler(>=5.9.0) && !os(watchOS)
+-/// Whether the selected package has a card that can render in its owning scope.
++/// Checks whether the current selection has a card that can render in its owning scope.
++/// Evaluate lazily because pre-iOS 17 `onChange` closures capture the previous render's environment.
+ private struct SelectedPackageIsVisibleKey: EnvironmentKey {
+-    static let defaultValue = true
++    static let defaultValue: () -> Bool = { true }
+ }
  
--        if let confirmInScene = storeKit2ConfirmInOptions?.confirmInScene,
-+        if let confirmInScene = presentationContext?.scene,
-            #available(iOS 17.0, iOSApplicationExtension 17.0, macCatalyst 17.0, tvOS 17.0, *) {
-             return try await product.purchase(confirmIn: confirmInScene, options: options)
-         } else {
-@@ -67,7 +67,7 @@ internal class StoreKit2ProductPurchaser: StoreKit2ProductPurchaserType {
-         // which shipped with Xcode 16.2 and the Swift 6.0.2 compiler.
- #elseif canImport(AppKit) && compiler(>=6.0.2) && !targetEnvironment(macCatalyst)
+ extension EnvironmentValues {
+@@ -33,7 +34,7 @@ extension EnvironmentValues {
+         set { self[PlanSelectionDefaultPackageKey.self] = newValue }
+     }
  
--        if let confirmInWindow = storeKit2ConfirmInOptions?.confirmInWindow,
-+        if let confirmInWindow = presentationContext?.window,
-            #available(macOS 15.2, *) {
-             return try await product.purchase(confirmIn: confirmInWindow, options: options)
-         } else {
+-    var selectedPackageIsVisible: Bool {
++    var selectedPackageIsVisible: () -> Bool {
+         get { self[SelectedPackageIsVisibleKey.self] }
+         set { self[SelectedPackageIsVisibleKey.self] = newValue }
+     }
 ```
 
-**File**: `Tests/StoreKitUnitTests/PurchasesOrchestratorSK2Tests.swift` (modified, +2/-2)
+**File**: `RevenueCatUI/Templates/V2/PaywallsV2View.swift` (modified, +1/-1)
 ```diff
-@@ -398,7 +398,7 @@ class PurchasesOrchestratorSK2Tests: BasePurchasesOrchestratorTests, PurchasesOr
-         }
- 
-         expect(self.mockStoreKit2ProductPurchaser.invokedPurchaseCount) == 1
--        expect(self.mockStoreKit2ProductPurchaser.receivedStoreKit2ConfirmInOptions?.confirmInScene).to(equal(scene))
-+        expect(self.mockStoreKit2ProductPurchaser.receivedPresentationContext?.scene).to(equal(scene))
+@@ -748,7 +748,7 @@ struct LoadedPaywallsV2View: View {
+         )
      }
-     #endif
  
-@@ -432,7 +432,7 @@ class PurchasesOrchestratorSK2Tests: BasePurchasesOrchestratorTests, PurchasesOr
-         }
+-    private var selectedPackageIsVisible: Bool {
++    private func selectedPackageIsVisible() -> Bool {
+         guard let package = self.selectedPackageContext.package else { return false }
+         return self.paywallState.viewModelFactory.packageValidator.couldBeRendering(
+             package,
+```
+
+**File**: `Tests/RevenueCatUITests/PaywallsV2/RootViewSheetDismissalTests.swift` (modified, +8/-1)
+```diff
+@@ -69,7 +69,12 @@ extension RootViewSheetDismissalTests {
+         try await PackageResolutionTestFixture.settlePresentation()
+         let snapshot = fixture.context.package
+         let variables = fixture.context.variableContext
+-        let tabContext = try XCTUnwrap(fixture.context.tabsState(for: fixture.tabs).contextsByTabId["tab-2"])
++        let tabsState = fixture.context.tabsState(for: fixture.tabs)
++        let tabContext = try XCTUnwrap(tabsState.contextsByTabId["tab-2"])
++        XCTAssertEqual(snapshot?.identifier, rootPackage.identifier)
++        XCTAssertEqual(fixture.context.manuallySelectedPackage?.identifier, rootPackage.identifier)
++        XCTAssertTrue(tabsState.didUserSelectPackage)
++        XCTAssertEqual(tabsState.parentOwnedPackage?.identifier, rootPackage.identifier)
+         XCTAssertNil(tabContext.package)
  
-         expect(self.mockStoreKit2ProductPurchaser.invokedPurchaseCount) == 1
--        expect(self.mockStoreKit2ProductPurchaser.receivedStoreKit2ConfirmInOptions?.confirmInWindow).to(equal(window))
-+        expect(self.mockStoreKit2ProductPurchaser.receivedPresentationContext?.window).to(equal(window))
-     }
-     #endif
+         let sheetValidator = try XCTUnwrap(fixture.state.rootViewModel.stackViewModel.viewModels.compactMap {
+@@ -80,6 +85,8 @@ extension RootViewSheetDismissalTests {
+         try await PackageResolutionTestFixture.settlePresentation()
+         XCTAssertEqual(sheetContext.package?.identifier, "annual_xl")
+         XCTAssertEqual(fixture.context.package?.identifier, "annual_xl")
++        XCTAssertEqual(fixture.context.manuallySelectedPackage?.identifier, rootPackage.identifier)
++        XCTAssertEqual(tabsState.parentOwnedPackage?.identifier, rootPackage.identifier)
  
+         fixture.context.update(
+             package: RootView.restoredPackageAfterSheetDismissal(
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8215** (2026-11-05): Prepare next version: 5.103.0-SNAPSHOT (@RCGitBot)
-- **PR #8214** (2026-11-05): test(storekit): work around iOS 27 active repurchase hang (@rickvdl)
-- **PR #8213** (2026-11-05): test: fix flaky StoreKit 1 receipt retry test (@rickvdl)
-- **PR #8212** (2026-11-05): [AUTOMATIC] Release/5.102.1 (@RCGitBot)
-- **PR #8210** (2026-11-05): WFL-822 | Add Maestro tests for workflow branch routing (@RosieWatson)
-- **PR #8207** (2026-11-05): refactor(paywalls): remove internal paywall components prewarming (@rickvdl)
+- **PR #8237** (2026-11-06): Prepare next version: 5.103.0-SNAPSHOT (@RCGitBot)
+- **PR #8235** (2026-11-06): ci: merge gate that tightens once the full suite is approved (@AlvaroBrey)
+- **PR #8233** (2026-11-06): [AUTOMATIC] Release/5.102.3 (@RCGitBot)
+- **PR #8232** (2026-11-06): feat(checkpoints): gate rewarded ad steps on an earned reward (@peterporfy)
+- **PR #8231** (2026-11-06): Prepare next version: 5.103.0-SNAPSHOT (@RCGitBot)
+- **PR #8230** (2026-11-05): fix(paywalls): stop nested Fill stacks from hanging on iOS 17  (@JZDesign)
 
 ---
 
@@ -1559,41 +1120,52 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. thread-safe sandbox environment detection (#8202)
+## X. paywalls): stop nested Fill stacks from hanging on iOS 17  (#8230)
 
 **RULE**:
-When implementing operations in `Sources/Misc/SystemInfo.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RevenueCat/purchases-ios. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `RevenueCatUI/Templates/V2/ViewHelpers/SizeModifier.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RevenueCat/purchases-ios. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f812926c`: thread-safe sandbox environment detection (#8202). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cd2ea7ef`: paywalls): stop nested Fill stacks from hanging on iOS 17  (#8230). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/Misc/SystemInfo.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `RevenueCatUI/Templates/V2/ViewHelpers/SizeModifier.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-    private let _isSandbox: Atomic<Bool?> = nil
-        return self._isSandbox.modify { cachedValue in
-            if let cachedValue {
-                return cachedValue
-            }
-
-            let isSandbox = self.sandboxEnvironmentDetector.isSandbox
-            cachedValue = isSandbox
-            return isSandbox
+                .fill(.horizontal, alignment: alignment)
+                .fill(.vertical, alignment: alignment)
+    /// Takes all the space proposed along `axis`, like `.frame(minWidth: 0, maxWidth: .infinity)`.
+    ///
+    /// iOS 17 places a frame's content three times under an unbounded proposal, such as a `ScrollView`'s, and
+    /// every nested Fill stack multiplies that until the paywall hangs. ``FillLayout`` places it once.
+    @ViewBuilder
+    func fill(_ axis: Axis, alignment: Alignment) -> some View {
+        if #available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, *) {
+            self.fillFrame(axis, alignment: alignment)
+        } else if #available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *) {
+            FillLayout(axis: axis, alignment: alignment) { self }
+        } else {
+            self.fillFrame(axis, alignment: alignment)
         }
+    }
+
+    @ViewBuilder
+    private func fillFrame(_ axis: Axis, alignment: Alignment) -> some View {
+        switch axis {
+        case .horizontal:
+            self.frame(minWidth: 0, maxWidth: .infinity, alignment: alignment)
+        case .vertical:
+            self.frame(minHeight: 0, maxHeight: .infinity, alignment: al
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-    private lazy var _isSandbox: Bool = {
-        return self.sandboxEnvironmentDetector.isSandbox
-    }()
-
-        return self._isSandbox
+                .frame(minWidth: 0, maxWidth: .infinity, alignment: alignment)
+                .frame(minHeight: 0, maxHeight: .infinity, alignment: alignment)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f812926c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cd2ea7ef` are properly handled with clean fallback behavior.

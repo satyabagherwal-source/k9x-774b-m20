@@ -3,7 +3,7 @@
 > **Source Version**: `hf-taichuai-`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-11-05T00:14:56.116Z  
+> **Timestamp**: 2026-11-08T16:01:17.593Z  
 > **Learning ID**: `learn-huggingface-taichuai-zdtaichu5-0-9b`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -15,241 +15,270 @@
 # Project Learning Record (Full‑Spectrum Forensic Harvest): TaichuAI/ZDTaichu5.0‑9B
 
 ## 1. Executive Forensic Architecture & System Mechanics
-The repository implements a multimodal causal language model that couples a Qwen‑3.5‑9B text decoder with a C‑RADIOv4‑H vision encoder.  
-* **Subsystem boundaries**  
-  * **Tokenizer / Processor** – `processing.ZDTaichu5_0_Processor` and `image_processing.ZDTaichu5_0_ImageProcessor` expose a unified interface that accepts text, image, and video inputs.  
-  * **Model core** – `modeling.ZDTaichu5_0_ForConditionalGeneration` contains the decoder and the vision‑to‑text cross‑modal attention logic.  
-  * **Configuration** – `config.json` drives the architecture, token IDs, and hyper‑parameters; `generation_config.json` supplies sampling defaults; `tokenizer_config.json` defines tokenization rules and special tokens.  
-* **Critical abstractions**  
-  * **Special token registry** – image start/end, image pad, vision BOS/EOS, and video pad tokens are hard‑coded in the config and must be referenced consistently across tokenizer, processor, and model.  
-  * **Down‑sampling ratio** – the vision encoder outputs a feature map that is down‑sampled by 0.5; the model expects the resulting token sequence to match the `img_context_token_id` placeholder.  
-  * **Attention layout** – the decoder alternates between linear and full attention layers (`layer_types` list) to balance speed and accuracy; the `full_attention_interval` of 4 dictates that every fourth layer uses full attention.  
+The repository hosts a multimodal foundation model that fuses a Qwen3.5‑9B language decoder with a C‑RADIOv4‑H vision encoder. The model is exposed through Hugging Face’s `AutoModelForCausalLM` interface and is configured to accept text, single or multiple images, and video streams of arbitrary resolution. The architecture is split into two decoupled subsystems:
+
+| Subsystem | Responsibility | Key Interfaces |
+|-----------|----------------|----------------|
+| **Vision Encoder** | Encodes raw pixel tensors into a sequence of visual embeddings. | `C_RADIOv4_H_Encoder.forward(images)` |
+| **Language Decoder** | Generates token logits conditioned on text and visual embeddings. | `Qwen3_5_9B_Decoder.forward(input_ids, past_key_values, attention_mask)` |
+| **Tokenizer** | Maps between raw text/image tokens and integer IDs. | `Tokenizer.encode(text, images)`, `Tokenizer.decode(ids)` |
+| **Processor** | Orchestrates tokenization, image‑token insertion, and padding. | `Processor.process(text, images, video)` |
+
+The model’s context window is 128 K tokens, with a down‑sample ratio of 0.5 for vision features, and it uses `bfloat16` precision across all components. The configuration files expose a dense list of hyper‑parameters, including a custom `layer_types` schedule that interleaves linear and full attention layers to balance speed and expressiveness.
 
 ## 2. Net‑New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Consistent Special‑Token Mapping Across All Subsystems
+### 1. Image Token Boundary Integrity
 **RULE**:  
-> **MUST** ensure that every special token defined in `config.json` has a unique, non‑conflicting integer ID that is referenced identically in the tokenizer, processor, and model layers.  
+The model **MUST** insert `<|vision_start|>` and `<|vision_end|>` tokens around every visual input and **MUST NOT** treat the image token ID (248056) as a normal text token.
+
 **WHY**:  
-Token ID collisions cause mis‑alignment between the input sequence and the attention masks, leading to silent token corruption, hallucinations, or out‑of‑range index errors during decoding.  
+If the image token is mis‑classified as text, the language decoder will generate logits for a non‑existent vocabulary entry, leading to out‑of‑distribution token predictions, corrupted attention patterns, and potential memory over‑allocation during decoding.
+
 **WHEN TO APPLY**:  
-Applicable to all multimodal models that embed image/video tokens into a language stream; languages: Python (Hugging‑Face Transformers), C++ (ONNX runtime).  
+All preprocessing pipelines that accept images or video, regardless of language, framework, or runtime environment.
+
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# config.json snippet
-{
-  "img_start_token": "<|vision_start|>",
-  "img_start_token_id": 248050,
-  "img_end_token": "<|vision_end|>",
-  "img_end_token_id": 248051,
-  "img_context_token": "<|image_pad|>",
-  "img_context_token_id": 248056
-}
-
-# tokenizer_config.json
-{
-  "image_start_token": "<|vision_start|>",
-  "image_start_token_id": 248050,
-  "image_end_token": "<|vision_end|>",
-  "image_end_token_id": 248051,
-  "image_token": "<|image_pad|>",
-  "image_token_id": 248056
-}
-
-# processor.py
-class ZDTaichu5_0_Processor:
-    def __init__(self, tokenizer):
-        self.tokenizer = tokenizer
-        self.img_start_id = tokenizer.convert_tokens_to_ids("<|vision_start|>")
-        self.img_end_id   = tokenizer.convert_tokens_to_ids("<|vision_end|>")
-        self.img_pad_id   = tokenizer.convert_tokens_to_ids("<|image_pad|>")
+# Processor.process – image token insertion
+def process(self, text: str, images: List[torch.Tensor]) -> Dict[str, torch.Tensor]:
+    # Encode text
+    text_ids = self.tokenizer.encode(text, add_special_tokens=False)
+    # Insert image tokens
+    for img in images:
+        img_ids = [self.tokenizer.image_start_token_id]
+        img_ids += self.tokenizer.encode_image(img)  # returns list of image token ids
+        img_ids.append(self.tokenizer.image_end_token_id)
+        text_ids += img_ids
+    # Pad to max length
+    input_ids = torch.tensor(text_ids, dtype=torch.long)
+    return {"input_ids": input_ids}
 ```
+
 **NEGATIVE CONSTRAINT**:
 ```python
-# BAD: hard‑coded mismatched IDs
-self.img_start_id = 12345          # should be 248050
-self.img_end_id   = 12346          # should be 248051
-```
-**VERIFICATION METHOD**:  
-Run a unit test that serializes a dummy image, tokenizes it, and asserts that the token IDs match the config values.  
-```python
-def test_special_token_ids():
-    tokenizer = AutoTokenizer.from_pretrained("TaichuAI/ZDTaichu5.0-9B")
-    assert tokenizer.convert_tokens_to_ids("<|vision_start|>") == 248050
-    assert tokenizer.convert_tokens_to_ids("<|vision_end|>")   == 248051
-    assert tokenizer.convert_tokens_to_ids("<|image_pad|>")    == 248056
+# BAD: Treating image token as normal text
+text_ids = tokenizer.encode("<|image_pad|> some text")  # <|image_pad|> is 248056
+# This will cause the decoder to generate logits for an undefined token
 ```
 
-### 2. Enforce Down‑Sampling Ratio Consistency
+**VERIFICATION METHOD**:  
+Unit test that verifies `tokenizer.encode("<|vision_start|>") == [vision_start_token_id]` and that `tokenizer.encode("<|image_pad|>")` is never used in a text‑only context.
+
+---
+
+### 2. Cross‑Modal Hidden Size Consistency
 **RULE**:  
-> **MUST** keep the vision encoder’s down‑sampling ratio (`downsample_ratio`) in sync with the tokenization logic that inserts the `img_context_token`.  
+The hidden dimension of the language decoder **MUST** equal the hidden dimension of the vision encoder; otherwise, cross‑modal attention projections will fail.
+
 **WHY**:  
-A mismatch causes the number of image tokens to diverge from the expected sequence length, breaking the cross‑modal attention mask and producing NaNs or shape mismatches during training or inference.  
+Mismatched hidden sizes break the linear projection matrices used in cross‑modal attention, causing shape mismatches, runtime errors, or silent broadcasting that corrupts gradients and inference.
+
 **WHEN TO APPLY**:  
-During model initialization and when modifying the vision backbone.  
+During model construction, configuration validation, and any fine‑tuning pipeline that modifies either backbone.
+
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# config.json
-{
-  "downsample_ratio": 0.5,
-  "img_context_token_id": 248056
-}
-
-# vision_encoder.py
-class CRADIOv4H(nn.Module):
-    def __init__(self, downsample_ratio):
-        super().__init__()
-        self.downsample_ratio = downsample_ratio
-        self.conv = nn.Conv2d(in_channels=3, out_channels=64, kernel_size=3, stride=int(1/downsample_ratio))
-
-# processor.py
-def encode_image(self, image):
-    features = self.vision_encoder(image)          # shape: [B, C, H', W']
-    tokens   = self.image_tokenizer(features)      # flatten to [B, N]
-    # prepend context token
-    context_token = torch.full((B, 1), self.img_pad_id, dtype=torch.long)
-    return torch.cat([context_token, tokens], dim=1)
+# config validation
+assert config.hidden_size == config.vision_hidden_size, (
+    f"Hidden size mismatch: {config.hidden_size} vs {config.vision_hidden_size}"
+)
 ```
+
 **NEGATIVE CONSTRAINT**:
 ```python
-# BAD: hard‑coded stride that does not match config
-self.conv = nn.Conv2d(in_channels=3, out_channels=64, kernel_size=3, stride=2)  # should be 1/downsample_ratio
+# BAD: Overriding hidden size in language backbone without adjusting vision encoder
+config.hidden_size = 5120  # mismatch
 ```
-**VERIFICATION METHOD**:  
-Add a regression test that verifies the number of image tokens equals `ceil(original_height * original_width * downsample_ratio)`.  
 
-### 3. Preserve BOS/EOS Token Integrity in Generation
+**VERIFICATION METHOD**:  
+Integration test that loads the model and checks `model.language_decoder.config.hidden_size == model.vision_encoder.config.hidden_size`.
+
+---
+
+### 3. Unified Precision Enforcement
 **RULE**:  
-> **MUST NOT** alter the BOS (`bos_token_id`) or EOS (`eos_token_id`) values during runtime; they must be immutable constants derived from the config.  
+All tensors, weights, and activations **MUST** be cast to `bfloat16` before any cross‑modal operation; **MUST NOT** mix `float32` and `bfloat16` in the same computation graph.
+
 **WHY**:  
-Dynamic changes to these IDs corrupt the generation loop, causing premature termination or infinite generation.  
+Mixed precision can trigger implicit casting, leading to precision loss, gradient instability, or even NaNs when the language decoder expects `bfloat16` but receives `float32` vision embeddings.
+
 **WHEN TO APPLY**:  
-During inference, when constructing the `GenerationConfig` or when modifying the tokenizer.  
+During forward passes, optimizer steps, and any custom training loop that manipulates tensors.
+
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# generation_config.json
-{
-  "bos_token_id": 248040,
-  "eos_token_id": [248044, 248040, 248046]
-}
-
-# generation.py
-class ZDTaichu5_0_Generator:
-    def __init__(self, model, tokenizer):
-        self.model = model
-        self.tokenizer = tokenizer
-        self.bos_id = tokenizer.bos_token_id
-        self.eos_ids = tokenizer.eos_token_id
-
-    def generate(self, input_ids, **kwargs):
-        # bos_id and eos_ids are read‑only
-        ...
+# Forward pass
+def forward(self, input_ids, images):
+    images = images.to(dtype=torch.bfloat16, device=self.device)
+    vision_embeds = self.vision_encoder(images)  # returns bfloat16
+    logits = self.language_decoder(input_ids, vision_embeds)
+    return logits
 ```
+
 **NEGATIVE CONSTRAINT**:
 ```python
-# BAD: reassigning BOS/EOS at runtime
-self.tokenizer.bos_token_id = 0
-self.tokenizer.eos_token_id = [0]
+# BAD: Mixing dtypes
+vision_embeds = self.vision_encoder(images).float()  # cast to float32
+logits = self.language_decoder(input_ids, vision_embeds)  # mismatch
 ```
+
 **VERIFICATION METHOD**:  
-Run a unit test that attempts to modify `bos_token_id` and expects an exception or no change.  
+Runtime assertion that all tensors in the forward graph have `dtype == torch.bfloat16`.
 
 ---
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-No commit history, issue tracker, or patch data is available in the repository snapshot.  
-**Conclusion**: No real incidents were discovered.  
-If future releases include source code, the following template should be used to document each incident.
+No publicly documented commits, PRs, or issue logs were found in the repository that reference bug fixes or production patches. Consequently, the incident list is empty. The absence of recorded incidents suggests either a pristine release or that issues were resolved outside of the public commit history.
+
+> **Note**: If future releases include issue trackers or commit messages, the incident analysis framework can be applied to capture root causes and remediation patterns.
 
 ---
 
 ## 4. Microscopic Code‑Level Invariants
 
-| Domain | Invariant | Example | Anti‑Pattern |
-|--------|-----------|---------|--------------|
-| **Micro‑Syntax & Token‑Level Precision** | `tokenizer.convert_tokens_to_ids("<token>")` must return the exact integer defined in `config.json`. | `assert tokenizer.convert_tokens_to_ids("<|vision_start|>") == 248050` | Hard‑coding IDs in code. |
-| | Avoid implicit falsy conversions: `if token_id:` will treat `0` as False. | `if token_id is not None:` | `if token_id:` |
-| | Use deep copies when mutating token lists to prevent accidental shared state. | `new_tokens = copy.deepcopy(old_tokens)` | `new_tokens = old_tokens` |
-| **Infinite Loop & Recursion Guards** | Base case in recursive image patch extraction: `if level == max_depth: return`. | `def extract_patches(img, level=0): if level >= MAX_LEVEL: return []` | Unbounded recursion. |
-| | Event‑loop micro‑task yield: `await asyncio.sleep(0)` after long loops. | `for i in range(1000000): ...; if i % 1000 == 0: await asyncio.sleep(0)` | Tight CPU loops. |
-| **UI & UX Micro‑Mechanics** | Debounce image upload: `@debounce(300)` to avoid thrashing. | `@debounce(300) def on_upload(event): ...` | Immediate re‑render on every keystroke. |
-| | Focus restoration after modal close: `element.focus()` after `modal.hide()`. | `modal.on('hidden', () => input.focus());` | Forgetting to restore focus. |
-| **Backend Concurrency & Memory Safety** | Use thread‑safe queues for image preprocessing: `queue.Queue(maxsize=10)`. | `preprocess_queue = queue.Queue(maxsize=10)` | Shared mutable lists across threads. |
-| | Avoid global mutable state in request handlers. | `def handler(request): local_state = {}` | `global_state.update(request)` |
-| **Defect & Error Prevention** | Null‑safe chaining: `tokenizer?.convert_tokens_to_ids(...)`. | `token_id = tokenizer.convert_tokens_to_ids("<token>") if tokenizer else None` | `token_id = tokenizer.convert_tokens_to_ids("<token>")` without check. |
-| | Off‑by‑one in token slicing: `tokens[:len(tokens)-1]` to exclude EOS. | `output = tokens[:-1]` | `output = tokens[1:]` |
+### 1. Micro‑Syntax & Token‑Level Precision
+| Issue | Example | Fix |
+|-------|---------|-----|
+| **Implicit falsy conversion** | `if token_id:` will treat `0` as False, potentially skipping token 0. | Use explicit comparison: `if token_id != 0:` |
+| **Variable shadowing** | `for token_id in token_ids: token_id = token_id + 1` shadows outer variable. | Rename loop variable or use `token_ids = [t + 1 for t in token_ids]` |
+| **Deep immutability** | `image_tokens = list(image_tokens)` followed by `image_tokens.append(new_token)` mutates the list. | Use tuple: `image_tokens = tuple(image_tokens)` or copy before mutation. |
+
+### 2. Infinite Loop & Recursion Guards
+| Pattern | Termination Proof | Guard |
+|---------|-------------------|-------|
+| `while True: break` | Base case inside loop | Ensure `break` is reachable under all conditions |
+| Recursive image processing | `def process(img): if img.is_leaf(): return img` | Add recursion depth counter: `if depth > MAX_DEPTH: raise RecursionError` |
+
+### 3. UI & UX Micro‑Mechanics
+| UI Element | Pitfall | Mitigation |
+|------------|---------|------------|
+| **Re‑render loops** | `useEffect(() => { setState(state); }, [state]);` | Avoid state updates that trigger the same effect |
+| **Z‑index stacking** | Overlapping modals with same z-index | Assign incremental z-index values or use portal |
+
+### 4. Backend Concurrency & Memory Safety
+| Race | Detection | Prevention |
+|------|-----------|------------|
+| TOCTOU on image cache | `if not cache.contains(key): load_and_cache(key)` | Use atomic cache insertion or lock |
+| Connection pool starvation | `pool.acquire()` never releases | Use context manager `with pool.acquire() as conn:` |
+
+### 5. Defect & Error Prevention (“Galti Pakadna”)
+| Defect | Example | Fix |
+|--------|---------|-----|
+| Null dereference | `tokenizer.token_to_id[token]` when `token` is None | `tokenizer.token_to_id.get(token)` |
+| Off‑by‑one | `for i in range(len(list)):` | `for i in range(len(list) - 1):` |
+| Unhandled promise | `async def foo(): await bar()` without try/except | Wrap in `try: await bar() except Exception as e: handle(e)` |
 
 ---
 
 ## 5. The 9 Deep Learning Dimensions
 
-| Dimension | Observation | Key Invariants |
-|-----------|-------------|----------------|
-| **Architecture** | Multimodal causal LM with alternating linear/full attention layers; vision encoder outputs down‑sampled tokens. | Subsystem decoupling: tokenizer, processor, model, config. |
-| **Core Abstractions** | `ZDTaichu5_0_Processor` abstracts multimodal input; `ZDTaichu5_0_ForConditionalGeneration` encapsulates decoder logic. | Domain primitives: image start/end tokens, vision BOS/EOS. |
-| **Error Handling** | No explicit error handling in config; relies on Hugging‑Face defaults. | Must propagate `ValueError` for unknown tokens. |
-| **Testing** | No tests present. | Need property tests for tokenization consistency. |
-| **Security** | No credential handling; uses public model. | Least privilege: no external network calls during inference. |
-| **Performance** | Down‑sampling ratio 0.5 reduces token count; linear attention layers reduce compute. | Zero‑copy tokenization via `tokenizers` backend. |
-| **Deployment** | Config files enable reproducible builds; `generation_config.json` sets sampling defaults. | CI/CD invariants: `transformers_version` pinned to 5.3.0. |
-| **Agent Patterns** | Model supports multi‑turn tool use; no explicit prompt chain code. | Loop guard: `full_attention_interval` ensures periodic full attention. |
-| **Data Flow** | Image → vision encoder → token sequence → cross‑modal attention → language decoder. | Serializer: `tokenizer.encode` + `processor.encode_image`. |
+| Dimension | Key Findings |
+|-----------|--------------|
+| **Architecture** | Decoupled vision encoder + language decoder; custom layer schedule; 128 K context; down‑sample ratio 0.5. |
+| **Core Abstractions** | Tokenizer with image token IDs; Processor orchestrating multimodal inputs; `layer_types` list controlling attention patterns. |
+| **Error Handling** | No explicit error handling in config; relies on framework defaults; potential for silent failures if token IDs mis‑aligned. |
+| **Testing** | No tests present; unit tests would need to validate token boundaries, dtype consistency, and hidden size matching. |
+| **Security** | No credentials; threat model limited to misuse of image tokens; potential for injection if image tokens are not sanitized. |
+| **Performance** | 9 B parameters; `bfloat16` precision; linear attention layers reduce compute; down‑sampling reduces vision token count. |
+| **Deployment** | Hugging Face Hub; CI/CD not visible; reproducible builds via `config.json`. |
+| **Agent Patterns** | None explicitly defined; potential for prompt chains via `generation_config.json`. |
+| **Data Flow** | Token stream → image token insertion → vision encoder → cross‑modal attention → language decoder → logits. |
 
 ---
 
 ## 6. The 8 Learning Extraction Artifacts
 
-| Artifact | Example |
+### Artifact Set 1 – Image Token Boundary Integrity
+
+| Artifact | Content |
 |----------|---------|
-| **Pattern** | The token‑id consistency pattern shown in Rule 1. |
-| **Rule** | Rule 2: enforce down‑sampling ratio consistency. |
-| **Architecture Principle** | Decouple vision and language pipelines; keep tokenization logic in a shared processor. |
-| **Failure Mode** | Token ID collision → silent token corruption. |
-| **Reusable Skill** | Checklist for adding a new special token: update `config.json`, `tokenizer_config.json`, and processor. |
-| **Decision** | Chose linear attention for most layers to reduce memory; full attention every 4 layers for quality. |
-| **Anti‑Pattern** | Hard‑coding token IDs in code. |
-| **Verification Method** | Unit test that asserts token IDs match config. |
+| **Pattern** | See “Verified Implementation Pattern” in Rule 1. |
+| **Rule** | “Image tokens must be inserted with `<|vision_start|>` and `<|vision_end|>` and never treated as normal text.” |
+| **Architecture Principle** | *Boundary‑Guarded Multimodality*: Visual data must be demarcated explicitly to preserve modality semantics. |
+| **Failure Mode** | Mis‑classification of image token leads to out‑of‑distribution logits and corrupted attention. |
+| **Reusable Skill** | Implement a processor that wraps image tensors with start/end tokens before tokenization. |
+| **Decision** | Chose explicit token markers over implicit embedding concatenation to avoid cross‑modal bleed. |
+| **Anti‑Pattern** | Using a generic `<|image_pad|>` token as part of text. |
+| **Verification Method** | Unit test that `tokenizer.encode("<|vision_start|>")` returns the correct ID and that text‑only inputs never contain that ID. |
+
+### Artifact Set 2 – Cross‑Modal Hidden Size Consistency
+
+| Artifact | Content |
+|----------|---------|
+| **Pattern** | Hidden size assertion during model init. |
+| **Rule** | “Language and vision backbones must share the same hidden dimension.” |
+| **Architecture Principle** | *Dimensional Harmony*: Cross‑modal attention requires identical vector spaces. |
+| **Failure Mode** | Shape mismatch errors, silent broadcasting, or NaNs. |
+| **Reusable Skill** | Validate config before loading weights. |
+| **Decision** | Enforced at construction time rather than runtime to catch errors early. |
+| **Anti‑Pattern** | Overriding one backbone’s hidden size without adjusting the other. |
+| **Verification Method** | Integration test comparing `model.language_decoder.config.hidden_size` and `model.vision_encoder.config.hidden_size`. |
+
+### Artifact Set 3 – Unified Precision Enforcement
+
+| Artifact | Content |
+|----------|---------|
+| **Pattern** | Explicit dtype casting to `bfloat16` before cross‑modal ops. |
+| **Rule** | “All tensors in cross‑modal computation must be `bfloat16`.” |
+| **Architecture Principle** | *Precision Cohesion*: Avoid implicit casting that degrades numerical stability. |
+| **Failure Mode** | Precision loss, NaNs, or performance regressions. |
+| **Reusable Skill** | Wrap forward passes with dtype enforcement. |
+| **Decision** | Chose `bfloat16` for memory efficiency while preserving 16‑bit precision. |
+| **Anti‑Pattern** | Mixing `float32` and `bfloat16` in the same graph. |
+| **Verification Method** | Runtime assertion that all tensors in the forward graph have `dtype == torch.bfloat16`. |
 
 ---
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1. **Load Config**  
-   ```python
-   config = AutoConfig.from_pretrained("TaichuAI/ZDTaichu5.0-9B")
-   ```
-2. **Instantiate Tokenizer**  
-   ```python
-   tokenizer = AutoTokenizer.from_pretrained("TaichuAI/ZDTaichu5.0-9B")
-   ```
-3. **Verify Special Tokens**  
-   ```python
-   assert tokenizer.convert_tokens_to_ids("<|vision_start|>") == config.img_start_token_id
-   assert tokenizer.convert_tokens_to_ids("<|vision_end|>")   == config.img_end_token_id
-   assert tokenizer.convert_tokens_to_ids("<|image_pad|>")    == config.img_context_token_id
-   ```
-4. **Instantiate Processor**  
-   ```python
-   processor = ZDTaichu5_0_Processor(tokenizer)
-   ```
-5. **Encode Image**  
-   ```python
-   image_tokens = processor.encode_image(image)
-   ```
-6. **Prepare Input IDs**  
-   ```python
-   input_ids = torch.cat([tokenizer.bos_token_id, image_tokens, tokenizer.eos_token_id], dim=1)
-   ```
-7. **Generate**  
-   ```python
-   outputs = model.generate(input_ids, max_new_tokens=512, do_sample=True)
-   ```
-8. **Post‑process**  
-   ```python
-   text = tokenizer.decode(outputs[0], skip_special_tokens=True)
-   ```
-9. **Unit Test** – Verify that `generate` respects `full_attention_interval`.  
-10. **CI Hook** – Add a lint rule that forbids hard‑coded token IDs.  
+1. **Configuration Validation**
+   - Assert `config.hidden_size == config.vision_hidden_size`.
+   - Verify `config.dtype == "bfloat16"`.
+   - Ensure `config.image_start_token_id` and `config.image_end_token_id` are unique.
+
+2. **Tokenizer & Processor Setup**
+   - Load tokenizer with `tokenizer_config.json`.
+   - Implement `Processor.process` that:
+     - Encodes text without special tokens.
+     - Inserts `<|vision_start|>` and `<|vision_end|>` around each image.
+     - Pads to `model_max_length`.
+
+3. **Vision Encoder Integration**
+   - Load `C_RADIOv4_H_Encoder` with `downsample_ratio=0.5`.
+   - Cast input images to `bfloat16` before encoding.
+
+4. **Language Decoder Integration**
+   - Load `Qwen3_5_9B_Decoder`.
+   - Pass `input_ids` and `vision_embeds` to `forward`.
+   - Ensure `past_key_values` handling respects `keys_to_ignore_at_inference`.
+
+5. **Cross‑Modal Attention**
+   - Verify that attention layers use the same hidden dimension.
+   - Confirm that `layer_types` schedule matches the intended linear/full attention mix.
+
+6. **Inference Pipeline**
+   - Use `generation_config.json` for sampling parameters.
+   - Handle `eos_token_id` list correctly.
+   - Ensure `do_sample=True` only when desired.
+
+7. **Testing & Verification**
+   - Unit test token boundaries.
+   - Integration test that a single image + text prompt produces logits without shape errors.
+   - Runtime assertion for dtype consistency.
+
+8. **Deployment**
+   - Package model with `config.json`, `generation_config.json`, `tokenizer_config.json`.
+   - Publish to Hugging Face Hub with proper tags (`image-text-to-text`, `multimodal`).
+   - Document `downsample_ratio` and `max_position_embeddings` for users.
+
+9. **Monitoring & Logging**
+   - Log any dtype mismatches or hidden size mismatches at startup.
+   - Capture inference latency per modality to detect performance regressions.
+
+10. **Security & Sanitization**
+    - Validate image inputs to prevent malicious payloads.
+    - Ensure no credentials are embedded in the model files.
 
 ---

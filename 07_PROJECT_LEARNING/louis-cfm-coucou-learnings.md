@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/louis-cfm-coucou-learnings.md`  
 > **Source**: github ([https://github.com/Louis-CFM/coucou](https://github.com/Louis-CFM/coucou))  
-> **Source Version**: `74363634`  
+> **Source Version**: `b1bc09de`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T14:13:37.386Z  
+> **Timestamp**: 2026-11-08T20:53:00.196Z  
 > **Learning ID**: `learn-github-louis-cfm-coucou`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/louis-cfm-coucou-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Louis-CFM/coucou](https://github.com/Louis-CFM/coucou))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T14:13:37.228Z  
+> **Harvest Timestamp**: 2026-11-08T20:52:59.978Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A tiny friend in your Mac's notch and on your iPhone that keeps an eye on your AI coding agents: Claude Code, Codex, Cursor, Gemini CLI, Antigravity and more. Approve from the notch or your Lock Screen.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 6975 stars
+- **Stars / Engagement**: 7059 stars
 
 ---
 
@@ -96,6 +96,8 @@ final class AppState: ObservableObject {
 
     // File drag-over state (mailbox morph glow + mouth spring)
     @Published var fileDragOver: Bool = false
+    /// The session a file is dragged over in the island (its task id): dropped, it goes into that session's prompt.
+    @Published var dropSessionTarget: String? = nil
 
     // Sound enabled — persisted
     @Published var soundEnabled: Bool = true {
@@ -245,10 +247,7 @@ final class AppState: ObservableObject {
                 loadingProviderModels.remove(provider)
                 switch result {
                 case .success(let models) where models.isEmpty:
-                    providerModelFetchError[provider] = provider == .ollama
-                        ? "No models yet. Download one in Ollama first."
-                        : "No models yet. Download one in LM Studio first."
-                ca
+                    providerModelFetchError[provider] = provider == .ollam
 ```
 
 ### Core Architecture Module: `NotchBuddy/Sources/App/ApprovalQueue.swift`
@@ -366,6 +365,195 @@ func coucouHooksPresent(inSettings settings: [String: Any]) -> Bool {
             guard let command = hook["command"] as? String else { return false }
             return command.contains("NotchBuddy") || command.contains("coucou")
         } ?? false
+    }
+}
+
+```
+
+### Core Architecture Module: `NotchBuddy/Sources/App/CoucoudoroEngine.swift`
+```
+import Foundation
+
+// MARK: - Coucoudoro clock
+
+/// Work and rest lengths, in seconds. A phase runs until its deadline, then the next one starts.
+struct CoucoudoroConfig: Equatable, Sendable {
+    var work: TimeInterval
+    var rest: TimeInterval
+}
+
+enum CoucoudoroPhase: Equatable, Sendable {
+    case idle, work, rest
+}
+
+/// The moment a phase begins.
+enum CoucoudoroEvent: Equatable, Sendable {
+    case restStarts, workStarts
+}
+
+/// The session, anchored to a deadline so a late tick does not drift.
+struct CoucoudoroSnapshot: Equatable, Sendable {
+    var phase: CoucoudoroPhase
+    var paused: Bool
+    var deadline: Date?
+    /// Seconds left, frozen while paused. The deadline is cleared until resume.
+    var pausedRemaining: TimeInterval?
+    var notice: CoucoudoroEvent?
+
+    static let idle = CoucoudoroSnapshot(phase: .idle, paused: false, deadline: nil,
+                                    pausedRemaining: nil, notice: nil)
+}
+
+/// The countdown. Pure: no clock of its own, no pill, no defaults.
+enum CoucoudoroEngine {
+    /// Lengths under a second are pulled up to one second.
+    static func sanitize(_ raw: CoucoudoroConfig) -> CoucoudoroConfig {
+        CoucoudoroConfig(work: max(raw.work, 1),
+                    rest: max(raw.rest, 1))
+    }
+
+    /// A fresh work phase, from the full work length, whatever came before.
+    static func start(config raw: CoucoudoroConfig, now: Date) -> (CoucoudoroSnapshot, [CoucoudoroEvent]) {
+        let config = sanitize(raw)
+        let deadline = now.addingTimeInterval(config.work)
+        let snap = CoucoudoroSnapshot(phase: .work, paused: false,
+                                 deadline: deadline,
+                                 pausedRemaining: nil, notice: .workStarts)
+        return (snap, [.workStarts])
+    }
+
+    static func stop() -> CoucoudoroSnapshot { .idle }
+
+    static func pause(_ s: CoucoudoroSnapshot, now: Date) -> CoucoudoroSnapshot {
+        guard s.phase != .idle, !s.paused else { return s }
+        var n = s
+        n.paused = true
+        n.pausedRemaining = max(0, s.deadline?.timeIntervalSince(now) ?? 0)
+        n.deadline = nil
+        return n
+    }
+
+    static func resume(_ s: CoucoudoroSnapshot, now: Date) -> CoucoudoroSnapshot {
+        guard s.paused else { return s }
+        var n = s
+        let left = max(0, s.pausedRemaining ?? 0)
+        n.paused = false
+        n.pausedRemaining = nil
+        n.deadline = now.addingTimeInterval(left)
+        return n
+    }
+
+    /// Move the session to `now`. A phase runs until its deadline, then the next one
+    /// starts and is announced once. If the Mac slept, missed phases are not replayed:
+    /// only the phase that contains `now`.
+    static func tick(_ s: CoucoudoroSnapshot, config raw: CoucoudoroConfig, now: Date) -> (CoucoudoroSnapshot, [CoucoudoroEvent]) {
+        guard s.phase != .idle, !s.paused, let deadline = s.deadline else { return (s, []) }
+        guard now >= deadline else { return (s, []) }
+        let config = sanitize(raw)
+        let landed = land(from: s.phase, phaseEnd: deadline, now: now, config: config)
+        var n = s
+        n.phase = landed.phase
+        n.deadline = landed.deadline
+        n.notice = landed.event
+        return (n, [landed.event])
+    }
+
+    static func remaining(_ s: CoucoudoroSnapshot, now: Date) -> TimeInterval? {
+        if s.paused { return s.pausedRemaining }
+        guard s.phase != .idle, let deadline = s.deadline else { return nil }
+        return max(0, deadline.timeIntervalSince(now))
+    }
+
+    /// "25:00". Minutes grow past 99 without a leading zero.
+    static func clock(_ seconds: TimeInterval) -> String {
+        let whole = max(0, Int(seconds.rounded(.down)))
+        let m = whole / 60
+        let s = whole % 60
+        if m >= 100 { return String(format: "%d:%02d", m, s) }
+        return String(format: "%02d:%02d", m, s)
+    }
+
+    // MARK: - Phases
+
+    /// From a phase that ended at `phaseEnd`, the phase that contains `now`.
+    /// The next deadline stays on the original schedule (`phaseEnd` plus whole lengths),
+    /// not `now` plus a length, so a late tick does not stretch the session.
+    private static func land(from phase: CoucoudoroPhase, phaseEnd: Date, now: Date,
+                             config: CoucoudoroConfig) -> (phase: CoucoudoroPhase, deadline: Date, event: CoucoudoroEvent) {
+        let work = max(1, Int(config.work.rounded()))
+        let rest = max(1, Int(config.rest.rounded()))
+        switch phase {
+        case .work:
+            let restEnd = phaseEnd.addingTimeInterval(TimeInterval(rest))
+            if now < restEnd { return (.rest, restEnd, .restStarts) }
+            let over = seconds(now.timeIntervalSince(restEnd))
+            let cycle = work + rest
+            let cycles = over / cycle
+            let into = over % cycle
+            let origin = restEnd.addingTimeInterval(TimeInterval(cycles * cycle))
+            if into < work {
+                return (.work, origin.addingTimeInterval(TimeInterval(work)), .workStarts)
+            }
+            return (.rest, origin.addingTimeInterval(TimeInterval(work + rest)), .restStarts)
+        case .rest:
+            let workEnd = phaseEnd.addingTimeInterval(TimeInterval(work))
+            if now < workEnd { return (.work, workEnd, .workStarts) }
+            let over = seconds(now.timeIntervalSince(workEnd))
+            let cycle = work + rest
+            let cycles = over / cycle
+            let into = over % cycle
+            let origin = workEnd.addingTimeInterval(TimeInterval(cycles * cycle))
+            // After that work, the cycle is rest then work.
+            if into < rest {
+                return (.rest, origin.addingTimeInterval(TimeInterval(rest)), .restStarts)
+            }
+            return (.work, origin.addingTimeInterval(TimeInterval(rest + work)), .workStarts)
+        case .idle:
+            return (.work, phaseEnd.addingTimeInterval(TimeInterval(work)), .workStarts)
+        }
+    }
+
+    private static func seconds(_ interval: TimeInterval) -> Int {
+        max(0, Int(interval.rounded(.down)))
+    }
+}
+
+// MARK: - Stored lengths
+
+/// Minutes in UserDefaults, the same store as the other integration settings.
+enum CoucoudoroSettings {
+    static let pillId = "integration_coucoudoro"
+
+    static let workKey = "coucoudoroWorkMinutes"
+    static let restKey = "coucoudoroRestMinutes"
+
+    static let defaultWork = 25
+    static let defaultRest = 5
+
+    /// Work and rest are each 1…60 minutes. A saved value outside that clamps here.
+    static let workBounds = 1...60
+    static let restBounds = 1...60
+
+    static func clampWork(_ minutes: Int) -> Int {
+        min(max(minutes, workBounds.lowerBound), workBounds.upperBound)
+    }
+
+    static func clampRest(_ minutes: Int) -> Int {
+        min(max(minutes, restBounds.lowerBound), restBounds.upperBound)
+    }
+
+    static var workMinutes: Int { clampWork(storedMinutes(workKey, fallback: defaultWork)) }
+    static var restMinutes: Int { clampRest(storedMinutes(restKey, fallback: defaultRest)) }
+
+    static var config: CoucoudoroConfig {
+        CoucoudoroConfig(work: TimeInterval(workMinutes * 60),
+                    rest: TimeInterval(restMinutes * 60))
+    }
+
+    /// A saved length, or the default when none was saved.
+    private static func storedMinutes(_ key: String, fallback: Int) -> Int {
+        let defaults = UserDefaults.standard
+        return defaults.object(forKey: key) == nil ? fallback : defaults.integer(forKey: key)
     }
 }
 
@@ -705,6 +893,7 @@ final class HookServer: @unchecked Sendable {
         case "agent_copilot": return "Handled in Copilot CLI."
         case "agent_muse":    return "Handled in Muse Code."
         case "agent_hermes":  return "Handled in Hermes."
+        case "agent_antigravity": return "Handled in Antigravity."
         default:              return "Handled in \(claudeHostName(pill: pill))."
         }
     }
@@ -718,6 +907,7 @@ final class HookServer: @unchecked Sendable {
         case "agent_copilot": return "Still waiting in Copilot CLI."
         case "agent_muse":    return "Still waiting in Muse Code."
         case "agent_hermes":  return "Still waiting in Hermes."
+        case "agent_antigravity": return "Still waiting in Antigravity."
         default:              return "Still waiting in \(claudeHostName(pill: pill))."
         }
     }
@@ -822,10 +1012,7 @@ final class HookServer: @unchecked Sendable {
     private func waitingSessions(pill: String) -> [String: BotState] {
         var waiting: [String: BotState] = [:]
         for q in questions.entries where q.pillId == pill { waiting[q.sessionId] = .question }
-        for a in approvals.entries where a.pillId == pill {
-            waiting[Self.boardKey(a.sessionId, pill: pill, cwd: a.cwd)] = .approval
-        }
-
+        for a 
 ```
 
 ### Core Architecture Module: `NotchBuddy/Sources/App/IslandStateMachine.swift`
@@ -1579,273 +1766,6 @@ final class SoundEngine {
 
 ```
 
-### Core Architecture Module: `NotchBuddy/Sources/App/UploadSequenceEngine.swift`
-```
-import Foundation
-import CoreGraphics
-
-// ============================================================
-// CONSTANTS — exact mirror of upload-sequence.html
-// All values in island-coordinate points (island = 640 × 176)
-// ============================================================
-
-enum USC {
-    static let W:     Double = 640
-    static let ISL_H: Double = 176
-    static let CARD_X: Double = 10;  static let CARD_Y: Double = 42
-    static let CARD_W: Double = 620; static let CARD_H: Double = 124; static let CARD_R: Double = 20
-    static let REST_X: Double = 140; static let REST_Y: Double = 104
-    static let D_BOX:  Double = 62
-    static let FOLLOW_MIN: Double = 60    // CARD_X + 50
-    static let FOLLOW_MAX: Double = 580   // CARD_X + CARD_W - 50
-    static let TEXT_X: Double = 196;  static let TEXT_Y: Double = 94
-    static let BAR_X0: Double = 46;   static let BAR_X1: Double = 520;  static let BAR_Y: Double = 118
-    static let CHOOSE_X: Double = 60; static let CHOOSE_Y: Double = 101; static let CHOOSE_D: Double = 62
-    static let LOCK_IN:  Double = 60
-    static let LOCK_OUT: Double = 90
-    static let MOUTH_AJAR: Double = 0.20
-    static let MOUTH_OPEN: Double = 0.42
-    static let MOUTH_MAX:  Double = 0.50
-    // Phase timestamps (t_ref, drop = 1.95)
-    static let T_DROP:       Double = 1.95
-    static let T_SUCK_START: Double = 2.03
-    static let T_SUCK_END:   Double = 2.33
-    static let T_CLOSE_END:  Double = 2.42
-    static let T_CHEW1:      Double = 2.60
-    static let T_CHEW_END:   Double = 2.88
-    static let T_SHRINK_END: Double = 3.23
-    static let T_BAR_IN:     Double = 3.00
-    static let T_PROG_START: Double = 3.25
-    static let DT: Double = 1.0 / 240.0
-    // Entry offset: gives 0.40 s of following before drop
-    static let ENTRY_T_REF: Double = T_DROP - 0.40  // = 1.55
-}
-
-// ============================================================
-// EASING — port of reference E.out / E.in / E.inOut / E.back
-// ============================================================
-
-func usEOut(_ t: Double) -> Double   { 1 - pow(1-t, 3) }
-func usEIn(_ t: Double)  -> Double   { t*t*t }
-func usEInOut(_ t: Double) -> Double { t < 0.5 ? 4*t*t*t : 1 - pow(-2*t+2,3)/2 }
-func usEBack(_ t: Double) -> Double  { let c1=1.70158,c3=c1+1; return 1+c3*pow(t-1,3)+c1*pow(t-1,2) }
-
-func usSeg(_ t: Double, _ a: Double, _ b: Double) -> Double { max(0, min(1,(t-a)/(b-a))) }
-func usLerp(_ a: Double, _ b: Double, _ t: Double) -> Double { a+(b-a)*t }
-
-// Squeeze keyframes for suckEnd→chew1 phase (inline to avoid Swift @escaping issues)
-func usSqueezeY(_ t: Double) -> Double {
-    let t0=USC.T_SUCK_END, t1=t0+0.07, t2=t0+0.20, t3=USC.T_CHEW1
-    if t<=t0 { return 1.06 }
-    if t<=t1 { return usLerp(1.06, 0.82, usEOut(usSeg(t,t0,t1))) }
-    if t<=t2 { return usLerp(0.82, 1.10, usEOut(usSeg(t,t1,t2))) }
-    if t<=t3 { return usLerp(1.10, 1.00, usEInOut(usSeg(t,t2,t3))) }
-    return 1.0
-}
-func usSqueezeX(_ t: Double) -> Double {
-    let t0=USC.T_SUCK_END, t1=t0+0.07, t2=t0+0.20, t3=USC.T_CHEW1
-    if t<=t0 { return 0.97 }
-    if t<=t1 { return usLerp(0.97, 1.14, usEOut(usSeg(t,t0,t1))) }
-    if t<=t2 { return usLerp(1.14, 0.95, usEOut(usSeg(t,t1,t2))) }
-    if t<=t3 { return usLerp(0.95, 1.00, usEInOut(usSeg(t,t2,t3))) }
-    return 1.0
-}
-
-func usProgressCurve(_ u: Double) -> Double {
-    if u < 0.40  { return 0.60 * usEOut(u/0.40) }
-    if u < 0.85  { return 0.60 + 0.32 * usEInOut((u-0.40)/0.45) }
-    return 0.92 + 0.08 * usEIn((u-0.85)/0.15)
-}
-func usProgressAt(_ t: Double, progStart: Double, progEnd: Double) -> Double {
-    t < progStart ? 0 : usProgressCurve(usSeg(t, progStart, progEnd))
-}
-
-// ============================================================
-// SPRING — port of reference spring(s, target, response, damping, dt)
-// ============================================================
-
-struct USSpring {
-    var v:   Double
-    var vel: Double = 0
-    mutating func step(target: Double, response: Double, damping: Double, dt: Double) {
-        let k = pow(2 * .pi / response, 2)
-        let c = 2 * damping * sqrt(k)
-        let a = k*(target-v) - c*vel
-        vel += a*dt; v += vel*dt
-    }
-}
-
-// ============================================================
-// SIMULATION STATE — mirrors reference newSim()
-// ============================================================
-
-struct USSimState {
-    var t:       Double = 0
-    var bx:      USSpring = USSpring(v: USC.REST_X)
-    var by:      USSpring = USSpring(v: USC.REST_Y)
-    var tilt:    Double = 0
-    var mouth:   USSpring = USSpring(v: 0)
-    var locked:  Bool = false
-    var lockAt:  Double = -9
-    var entered: Double = -9  // t_ref of zone entry; -9 = not entered
-    var gulp:    Bool = false
-    var ok:      Bool = false
-    var lastPct: Int = 0
-}
-
-// ============================================================
-// FRAME DATA — output of frame(), read by UploadCanvasView
-// ============================================================
-
-enum USEyeShape { case pill, cup, content }
-
-struct USMouthRect { var x,y,w,h: Double }
-
-struct USFrame {
-    var t: Double = 0
-    var cursorX: Double = 600; var cursorY: Double = 280
-    var morph: Double = 0
-    var x: Double = USC.REST_X; var y: Double = USC.REST_Y; var d: Double = USC.D_BOX
-    var sx: Double = 1; var sy: Double = 1; var tilt: Double = 0; var hop: Double = 0
-    var mouth: Double = 0
-    var mouthRect = USMouthRect(x:0,y:0,w:0,h:0)
-    var eye: USEyeShape = .pill
-    var lookX: Double = 0; var lookY: Double = 0
-    var fileVisible: Bool = true; var suck: Double = 0
-    var zoneOver:    Bool   = false
-    var zoneAlpha:   Double = 1
-    var textAlpha:   Double = 1
-    var barReveal:   Double = 0
-    var barAlpha:    Double = 0
-    var progress:    Double = 0
-    var flash:       Double = 0
-    var check:       Double = 0
-    var greenWash:   Double = 0
-    var chooseAlpha: Double = 0
-    var uploadDuration: Double = 2.4
-    var progEnd:    Double = USC.T_PROG_START + 2.4
-    var growStart:  Double = USC.T_PROG_START + 2.4 + 0.25
-    var growEnd:    Double = USC.T_PROG_START + 2.4 + 0.70
-}
-
-// ============================================================
-// ENGINE
-// ============================================================
-
-@MainActor
-final class UploadSequenceEngine {
-    static let shared = UploadSequenceEngine()
-
-    var uploadDuration: Double = 2.4
-    var progEnd:   Double { USC.T_PROG_START + uploadDuration }
-    var growStart: Double { progEnd + 0.25 }
-    var growEnd:   Double { progEnd + 0.70 }
-
-    private(set) var isActive: Bool = false
-    private var entryWallTime: Double = 0   // Date().timeIntervalSinceReferenceDate at entry
-    private var dropWallTime:  Double? = nil
-
-    private var sim = USSimState()
-
-    // Real cursor in island coords
-    var cursorX: Double = 600
-    var cursorY: Double = 280
-    private var prevCursorX:  Double = 600
-    private var prevCursorY:  Double = 280
-    private var prevCursorTime: Double = 0
-    private var cursorSpeed: Double = 0
-
-    // MARK: - Session lifecycle
-
-    func enterZone(x: CGFloat, y: CGFloat) {
-        let now = Date().timeIntervalSinceReferenceDate
-        cursorX = Double(x); cursorY = Double(y)
-        prevCursorX = cursorX; prevCursorY = cursorY; prevCursorTime = now
-        cursorSpeed = 0
-        sim = USSimState()
-        sim.t       = USC.ENTRY_T_REF
-        sim.entered = USC.ENTRY_T_REF
-        sim.bx      = USSpring(v: USC.REST_X)
-        sim.by      = USSpring(v: USC.REST_Y)
-        entryWallTime = now
-        dropWallTime  = nil
-        isActive      = true
-    }
-
-    func updateCursor(x: CGFloat, y: CGFloat) {
-        let now = Date().timeIntervalSinceReferenceDate
-        let dt = now - prevCursorTime
-        if dt > 0.001 {
-            let dx = Double(x) - prevCursorX, dy = Double(y) - prevCursorY
-            cursorSpeed = hypot(dx, dy) / dt
-        }
-        prevCursorX = Double(x); prevCursorY = Double(y); prevCursorTime = now
-        cursorX = Double(x); cursorY = Double(y)
-    }
-
-    func exitZone() {
-        // Keep engine active — island stays open per spec
-    }
-
-    func performDrop(uploadDuration ud: Double) {
-        uploadDuration = ud
-        let now = Date().timeIntervalSinceReferenceDate
-        dropWallTime = now
-        // Reset sim.t to T_DROP so the canonical post-drop timeline starts correctly,
-        // regardless of how long the user hovered. Spring state (position/velocity) is preserved.
-        sim.t = USC.T_DROP
-    }
-
-    func deactivate() {
-        isActive = false
-        dropWallTime = nil
-    }
-
-    // MARK: - t_ref from wall clock
-
-    func tRef(at date: Date) -> Double {
-        guard isActive else { return 0 }
-        let now = date.timeIntervalSinceReferenceDate
-        if let dw = dropWallTime {
-            return USC.T_DROP + max(0, now - dw)
-        }
-        // No cap — spring keeps stepping as long as user hovers.
-        // computeFrame clamps phase-sensitive outputs to pre-drop state.
-        let elapsed = max(0, now - entryWallTime)
-        return USC.ENTRY_T_REF + elapsed
-    }
-
-    // MARK: - Public entry point
-
-    func frame(at date: Date) -> USFrame {
-        guard isActive else { return USFrame() }
-        let t = tRef(at: date)
-        simulateTo(t)
-        return computeFrame(t: t)
-    }
-
-    // MARK: - Simulation
-
-    private func simulateTo(_ tTarget: Double) {
-        while sim.t < tTarget - 1e-10 {
-            let dt = min(USC.DT, tTarget - sim.t)
-            stepOnce(dt: dt)
-            sim.t += dt
-        }
-    }
-
-    private func stepOnce(dt: Double) {
-        let isDragging = (dropWallTime == nil)
-
-        // Horizontal follow + lock (only while dragging and in zone)
-        if isDragging && sim.entered >= 0 {
-            let dist = hypot(cursorX - sim.bx.v, (cursorY + 14) - sim.by.v)
-            if !sim.locked && dist < USC.LOCK_IN && cursorSpeed < 180 {
-                sim.locked = true; sim.lockAt = sim.t
-            }
-            if sim.locked && dist > USC.LOCK_OUT { sim.locked = false }
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1873,497 +1793,1008 @@ final class UploadSequenceEngine {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d8a93fc3` (2026-11-03)
-**Commit Message**: Fix the Mac and Windows checks: Sendable identity capture, Windows strings shared with the Mac catalog
+### Incident Patch 1: `56a4f76d` (2026-11-06)
+**Commit Message**: 0.6: small fixes on merged pull requests
 
-- AndroidLinkServer: carry the SecIdentity into the @Sendable state handler in an unchecked box (Swift 6 error).
-- The Mac catalog's Android phone texts now carry the exact translations Windows already had for the same English, and extra.json drops those texts (the test forbids both); strings.json and android/i18n/REVIEW.md regenerated. 'Your shortcut' is now Louis's Mac entry (flow.shortcut.title), as the test requires.
+- #991 compiles (var task) and the Hermes plugin keeps the terminal's own bundle id.
+- #1022 keeps one renderer per window (a crash no longer takes all four).
+- #1038 cuts a long PDF's text on a character boundary; its timer-only test goes.
+- #1062 runs herdr only from a path to a program named herdr.
+- #1055 Coucoudoro: one timer at the phase's deadline instead of a half-second tick.
+- #952 "As heard" in the 16 languages.
 
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01LJm3SRL9k3gBPaVtfPhwcT
 
-**File**: `NotchBuddy/Resources/Localizable.xcstrings` (modified, +42/-42)
+**File**: `NotchBuddy/Resources/Localizable.xcstrings` (modified, +144/-0)
 ```diff
-@@ -99100,7 +99100,7 @@
-         "de" : {
+@@ -33411,24 +33411,96 @@
+     "hub.history-heard" : {
+       "extractionState" : "manual",
+       "localizations" : {
++        "ar" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "كما سُمع"
++          }
++        },
++        "bn" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "যেমন শোনা গেছে"
++          }
++        },
++        "de" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Wie gehört"
++          }
++        },
+         "en" : {
            "stringUnit" : {
              "state" : "translated",
--            "value" : "Android-Handy"
-+            "value" : "Android-Telefon"
+             "value" : "As heard"
            }
          },
-         "en" : {
-@@ -99142,13 +99142,13 @@
++        "es" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Tal como se oyó"
++          }
++        },
+         "fr" : {
+           "stringUnit" : {
+             "state" : "translated",
+             "value" : "Tel qu’entendu"
+           }
+         },
++        "hi" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "जैसा सुना गया"
++          }
++        },
++        "id" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Seperti yang terdengar"
++          }
++        },
++        "ja" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "聞き取ったまま"
++          }
++        },
          "ko" : {
            "stringUnit" : {
              "state" : "translated",
--            "value" : "Android 폰"
-+            "value" : "Android 휴대폰"
+             "value" : "들린 그대로"
            }
          },
-         "pt-BR" : {
++        "pt-BR" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Como foi ouvido"
++          }
++        },
++        "ru" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Как услышано"
++          }
++        },
++        "th" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "ตามที่ได้ยิน"
++          }
++        },
++        "tr" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Duyulduğu gibi"
++          }
++        },
++        "zh-Hans" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "听到的原文"
++          }
++        },
+         "zh-Hant" : {
            "stringUnit" : {
              "state" : "translated",
--            "value" : "Telefone Android"
-+            "value" : "Celular Android"
-           }
-         },
-         "ru" : {
-@@ -99388,7 +99388,7 @@
-         "ar" : {
-           "stringUnit" : {
-             "state" : "translated",
--            "value" : "إظهار رمز الإقران"
-+            "value" : "إظهار رمز الاقتران"
-           }
-         },
-         "bn" : {
-@@ -99412,25 +99412,25 @@
-         "es" : {
-           "stringUnit" : {
-             "state" : "translated",
--            "value" : "Mostrar código de vinculación"
-+            "value" : "Mostrar código de emparejamiento"
-           }
-         },
-         "fr" : {
-           "stringUnit" : {
-             "state" : "translated",
--            "value" : "Afficher le code d'appairage"
-+            "value" : "Afficher le code d'association"
-           }
-         },
-         "hi" : {
-           "stringUnit" : {
-             "state" : "translated",
--            "value" : "पेयरिंग कोड दिखाएं"
-+            "value" : "पेयरिंग कोड दिखाएँ"
-           }
-         },
-         "id" : {
-           "stringUnit" : {
-             "state" : "translated",
--            "value" : "Tampilkan kode pemasangan"
-+            "value" : "Tampilkan kode penyandingan"
-           }
-         },
-         "ja" : {
-@@ -99654,7 +99654,7 @@
-         "ru" : {
-           "stringUnit" : {
-             "state" : "translated",
--            "value" : "Копировать ссылку"
-+            "value" : "Скопировать ссылку"
-           }
-         },
-         "th" : {
-@@ -99688,7 +99688,7 @@
-         "ar" : {
-           "stringUnit" : {
-             "state" : "translated",
--            "value" : "إعادة الإقران"
-+            "value" : "إعادة الاقتران"
-           }
-         },
-         "bn" : {
-@@ -99712,13 +99712,13 @@
-         "es" : {
-           "stringUnit" : {
-             "state" : "translated",
--            "value" : "Vincular de nuevo"
-+            "value" : "Emparejar de nuevo"
-           }
-         },
-         "fr" : {
-           "stringUnit" : {
-             "state" : "translated",
--            "value" : "Appairer à nouveau"
-+            "value" : "Associer à nouveau"
-           }
-         },
-         "hi" : {
-@@ -99730,13 +99730,13 @@
-         "id" : {
-           "stringUnit" : {
-             "state" : "translated",
--            "value" : "Pasangkan lagi"
-+            "value" : "Sandingkan ulang"
-           }
-         },
-         "ja" : {
-           "stringUnit" : {
-             "state" : "translated",
--            "value" : "再ペアリング"
-+            "value" : "もう一度ペアリング"
-           }
-         },
-         "ko" : {
-@@ -99748,13 +99748,13 @@
-         "pt-BR" : {
-           "stringUnit" : {
-             "state" : "translated",
--            "value" : "Parear novamente"
-+            "value" : "Parear de novo"
-           }
-         },
-         "ru" : {
-           "stringUnit" : {
-             "state" : "translated",
--            "value" : "Выполнить сопряжение заново"
-+            "value" : "Сопрячь заново"
-           }
-         },
-         "th" : {
-@@ -100288,19 +100288,19 @@
-         "ar" : {
-           "stringUnit" : {
-             "state" : "translated",
--            "value" : "عرض تفاصيل الجلسات على الهاتف"
-+            "value" : "إظهار تفاصيل الجلسة على الهاتف"
-           }
-         },
-         "bn" : {
-           "stringUnit" : {
-             "state" : "translated",
--            "value" : "ফোনে সেশনের বিস্তারিত দেখান"
-+            "value" : "ফোনে সেশনের বিবরণ দেখান"
-           }
-         },
-         "de" : {
-           "stringUnit" : {
-             "state" : "translated",
--            "value" : "Sitzungsdetails auf dem Handy anzeigen"
-+            "value" : "Sitzungsdetails auf dem Telefon anzeigen"
-           }
-         },
+@@ -33440,24 +33512,96 @@
+     "hub.copy-heard" : {
+       "extractionState" : "manual",
+       "localizations" : {
++        "ar" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "نسخ كما سُمع"
++          }
++        },
++        "bn" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "যেমন শোনা গেছে তেমন কপি"
++          }
++        },
++        "de" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Wie gehört kopieren"
++          }
++        },
          "en" : {
-@@ -100312,19 +100312,19 @@
-         "es" : {
            "stringUnit" : {
              "state" : "translated",
--            "value" : "Mostrar los detalles de las sesiones en el teléfono"
-+            "value" : "Mostrar los detalles de la sesión en el teléfono"
+             "value" : "Copy as heard"
            }
          },
++        "es" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Copiar tal como se oyó"
++          }
++        },
          "fr" : {
            "stringUnit" : {
              "state" : "translated",
--            "value" : "Afficher les détails des sessions sur le téléphone"
-+            "value" : "Afficher les détails de la session sur le téléphone"
+             "value" : "Copier tel qu’entendu"
            }
          },
-         "hi" : {
++        "hi" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "जैसा सुना वैसा कॉपी करें"
++          }
++        },
++        "id" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Salin seperti yang terdengar"
++          }
++        },
++        "ja" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "聞き取ったままコピー"
++          }
++        },
+         "ko" : {
            "stringUnit" : {
              "state" : "translated",
--            "value" : "फ़ोन पर सेशन का विवरण दिखाएं"
-+            "value" : "फ़ोन पर सत्र का विवरण दिखाएँ"
+             "value" : "들린 그대로 복사"
            }
          },
++        "pt-BR" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Copiar como foi ouvido"
++          }
++        },
++        "ru" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Скопировать как услышано"
++          }
++        },
++        "th" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "คัดลอกตามที่ได้ยิน"
++          }
++        },
++        "tr" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Duyulduğu gibi kopyala"
++          }
++        },
++        "zh-Hans" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "拷贝听到的原文"
++          }
++        },
+         "zh-Hant" : {
+           "stringUnit" : {
+             "state" : "translated",
 ```
 
-**File**: `NotchBuddy/Sources/App/AndroidLink/AndroidLinkServer.swift` (modified, +9/-1)
+**File**: `NotchBuddy/Sources/App/CoucoudoroController.swift` (modified, +14/-7)
 ```diff
-@@ -115,6 +115,8 @@ final class AndroidLinkServer: @unchecked Sendable {
-         for (k, v) in txt { record[k] = v }
-         made.service = NWListener.Service(name: AndroidLinkProtocol.instanceName(name), type: AndroidLinkProtocol.serviceType,
-                                           domain: nil, txtRecord: record)
-+        // SecIdentity is a CF type without Sendable; it is only read again to retry on another port.
-+        let retryIdentity = AndroidLinkUncheckedBox(identity)
-         made.stateUpdateHandler = { [weak self, weak made] state in
-             guard let self, let made, self.listener === made || self.listener == nil else { return }
-             switch state {
-@@ -125,7 +127,7 @@ final class AndroidLinkServer: @unchecked Sendable {
-                 self.listener = nil
-                 // The default port is busy: take any other.
-                 if port != nil, case .posix(let code) = error, code == .EADDRINUSE {
--                    self.listen(identity: identity, txt: txt, port: nil)
-+                    self.listen(identity: retryIdentity.value, txt: txt, port: nil)
-                 } else {
-                     self.onState?(.failed(error.localizedDescription))
-                 }
-@@ -395,3 +397,9 @@ final class AndroidLinkConnection: @unchecked Sendable {
-         })
+@@ -2,8 +2,8 @@ import Combine
+ import Foundation
+ 
+ /// Coucoudoro: work, then rest, then work again, until the user stops.
+-/// The session is a deadline. A half-second timer only checks that deadline while a
+-/// session is running and the pill is on; the card draws the clock from the deadline itself.
++/// The session is a deadline. One timer fires at that deadline (nothing ticks in between, so
++/// Coucou stays at 0 % CPU while hidden); the card and the pill draw the clock from the deadline.
+ @MainActor
+ final class CoucoudoroController: ObservableObject {
+     static let shared = CoucoudoroController()
+@@ -126,12 +126,18 @@ final class CoucoudoroController: ObservableObject {
+         }
+     }
+ 
++    /// One timer, at the running phase's deadline.
+     private func ensureTimer() {
+-        guard timer == nil else { return }
+-        let t = Timer(timeInterval: 0.5, repeats: true) { _ in
+-            MainActor.assumeIsolated { CoucoudoroController.shared.tick() }
++        timer?.invalidate()
++        timer = nil
++        guard snap.phase != .idle, !snap.paused, let deadline = snap.deadline else { return }
++        let t = Timer(fire: deadline.addingTimeInterval(0.05), interval: 0, repeats: false) { _ in
++            MainActor.assumeIsolated {
++                CoucoudoroController.shared.timer = nil
++                CoucoudoroController.shared.tick()
++            }
+         }
+-        t.tolerance = 0.15
++        t.tolerance = 0.1
+         RunLoop.main.add(t, forMode: .common)
+         timer = t
+     }
+@@ -144,10 +150,11 @@ final class CoucoudoroController: ObservableObject {
+     private func tick() {
+         guard isPillActive else { updatePolling(); return }
+         let (next, events) = CoucoudoroEngine.tick(snap, config: CoucoudoroSettings.config, now: Date())
+-        guard next != snap else { return }
++        guard next != snap else { ensureTimer(); return }
+         snap = next
+         publish()
+         if let last = events.last { surface(last) }
++        ensureTimer()
+     }
+ 
+     private func publish() {
+```
+
+**File**: `NotchBuddy/Sources/App/HookServer.swift` (modified, +2/-2)
+```diff
+@@ -964,7 +964,7 @@ final class HookServer: @unchecked Sendable {
+         } else {
+             color = IslandConst.colorForProject(name)
+         }
+-        let task = AgentTask(id: id, name: name, color: color, state: .idle, steps: [], source: .agent)
++        var task = AgentTask(id: id, name: name, color: color, state: .idle, steps: [], source: .agent)
+         if !bundleId.isEmpty { task.sessionBundleId = bundleId }
+         if let claudeIdx = state.tasks.firstIndex(where: { $0.id == "integration_claude" }) {
+             state.tasks.insert(task, at: claudeIdx + 1)
+@@ -3143,7 +3143,7 @@ def _fire(fields: dict) -> None:
+                 stdout=subprocess.DEVNULL,
+                 stderr=subprocess.DEVNULL,
+                 start_new_session=True,   # detach from process group
+-                env={**os.environ, '__CFBundleIdentifier': 'com.nousresearch.hermes'},
++                env={'__CFBundleIdentifier': 'com.nousresearch.hermes', **os.environ},
+             )
+             p.stdin.write(json.dumps(fields).encode() + b'\\n')
+             p.stdin.close()
+```
+
+**File**: `windows/src-tauri/src/herdr.rs` (modified, +13/-1)
+```diff
+@@ -28,8 +28,12 @@ fn valid_name(value: &str) -> bool {
+         && value.chars().all(|c| c.is_ascii_alphanumeric() || matches!(c, ':' | '.' | '_' | '-'))
+ }
+ 
++/// An absolute path to a program named herdr: Coucou runs it, so nothing else.
+ fn valid_bin(value: &str) -> bool {
+-    value.starts_with('/') && value.len() <= 512 && !value.chars().any(char::is_control)
++    value.starts_with('/')
++        && value.len() <= 512
++        && !value.chars().any(char::is_control)
++        && value.rsplit('/').next() == Some("herdr")
+ }
+ 
+ pub fn from_payload(payload: &Value) -> Option<Pane> {
+@@ -140,6 +144,14 @@ mod tests {
+         assert_eq!(args, ["agent", "focus", "w1:pA"]);
+     }
+ 
++    #[test]
++    fn only_a_program_named_herdr_is_run() {
++        for bin in ["/tmp/evil", "/usr/bin/herdr-x", "/usr/bin/sh", "herdr", "/usr/bin/herdr/"] {
++            assert!(from_payload(&payload("w1:pA", bin, "Ubuntu")).is_none(), "{bin}");
++        }
++        assert!(from_payload(&payload("w1:pA", "/home/me/.cargo/bin/herdr", "Ubuntu")).is_some());
++    }
++
+     #[test]
+     fn the_pane_list_is_capped() {
+         let extra = crate::session_window::MAX_SESSIONS + 3;
+```
+
+**File**: `windows/src-tauri/src/lib.rs` (modified, +1/-1)
+```diff
+@@ -733,7 +733,7 @@ fn shortcuts_suspend(app: AppHandle, shared: State<Shared>, suspended: bool) {
+ /// for the *same* arguments as the island (see `additionalBrowserArgs` in
+ /// tauri.conf.json) — a mismatch makes the second window come up blank, with no
+ /// error anywhere.
+-pub(crate) const BROWSER_ARGS: &str = "--disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection --autoplay-policy=no-user-gesture-required --renderer-process-limit=1";
++pub(crate) const BROWSER_ARGS: &str = "--disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection --autoplay-policy=no-user-gesture-required";
+ 
+ /// In a dev build the pages are served by Vite, so the second window needs the
+ /// absolute dev URL; a bundled build resolves it inside the app bundle.
+```
+
+**File**: `windows/src-tauri/src/openai_compat.rs` (modified, +4/-1)
+```diff
+@@ -278,7 +278,10 @@ fn extract_pdf_text(path: &str) -> Option<String> {
+             }
+         }
+         if full.len() as u64 > MAX_INLINE_TEXT {
+-            full.truncate(MAX_INLINE_TEXT as usize);
++            // On a character boundary: a cut inside an accented letter would panic.
++            let mut cut = MAX_INLINE_TEXT as usize;
++            while !full.is_char_boundary(cut) { cut -= 1; }
++            full.truncate(cut);
+             full.push_str("\n... [truncated]");
+             break;
+         }
+```
+
+**File**: `windows/src-tauri/src/webview_memory.rs` (modified, +1/-1)
+```diff
+@@ -1,4 +1,4 @@
+-// Memory of the webviews that nobody is looking at (this fork).
++// Memory of the webviews that nobody is looking at.
+ //
+ // Coucou keeps four WebView2 windows alive (the island, the Coucou window, the
+ // pill, Mochi on the desktop): windows made later come up blank (see
+```
+
+**File**: `windows/src-tauri/tauri.conf.json` (modified, +1/-1)
+```diff
+@@ -35,7 +35,7 @@
+         "minimizable": false,
+         "closable": false,
+         "dragDropEnabled": false,
+-        "additionalBrowserArgs": "--disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection --autoplay-policy=no-user-gesture-required --renderer-process-limit=1"
++        "additionalBrowserArgs": "--disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection --autoplay-policy=no-user-gesture-required"
+       }
+     ]
+   },
+```
+
+---
+
+### Incident Patch 2: `b1bc09de` (2026-11-06)
+**Commit Message**: Merge #1075: Coucou 0.6 (Mac, Windows, Linux)
+
+Start a session from the notch, drop a file on a session, ⌘⇧2, approvals for Antigravity and OpenCode, and 41 community pull requests. See CHANGELOG.md.
+
+**File**: `.github/workflows/android-release.yml` (modified, +71/-24)
+```diff
+@@ -8,19 +8,27 @@ name: Android release
+ # The release key lives only in two repository secrets: ANDROID_KEYSTORE_BASE64 (the .jks file, base64) and
+ # ANDROID_KEYSTORE_PASSWORD. Keep a backup of the .jks and its password outside GitHub: an app signed with a lost key can never
+ # be updated in place.
++#
++# The key never meets repository code, the same split as the Linux workflow: the apk job builds the unsigned APK
++# from the repo with no secrets at all; the sign job runs nothing but the runner's own build-tools binaries with
++# the keystore; the publish job carries the release token and runs nothing from the repo either.
+ on:
+   push:
+     tags:
+       - 'android-v*'
+   workflow_dispatch:
+ 
+ permissions:
+-  contents: write
++  contents: read
+ 
+ jobs:
+   apk:
+     runs-on: ubuntu-24.04
++    permissions:
++      contents: read
+     defaults: { run: { working-directory: android } }
++    outputs:
++      version: ${{ steps.version.outputs.version }}
+     steps:
+       - uses: actions/checkout@v7
+         with: { persist-credentials: false }
+@@ -41,6 +49,32 @@ jobs:
+             test "$tag" = "$v" || { echo "the tag says $tag but versionName is $v"; exit 1; }
+           fi
+ 
++      - name: Unsigned release APK
++        run: |
++          node scripts/gen-strings.mjs --check
++          ./gradlew assembleRelease --console=plain
++          apk=app/build/outputs/apk/release/app-release-unsigned.apk
++          test -f "$apk" || { echo "no unsigned release APK at $apk"; ls app/build/outputs/apk/release/; exit 1; }
++          mkdir -p ../release-unsigned
++          cp "$apk" ../release-unsigned/
++          cp app/build/outputs/mapping/release/mapping.txt ../release-unsigned/
++
++      - uses: actions/upload-artifact@v7
++        with:
++          name: unsigned-apk
++          path: release-unsigned/
++          retention-days: 3
++
++  sign:
++    needs: apk
++    runs-on: ubuntu-24.04
++    permissions:
++      contents: read
++    steps:
++      - uses: actions/download-artifact@v8
++        with:
++          name: unsigned-apk
++
+       - name: The release key
+         env:
+           KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+@@ -50,36 +84,49 @@ jobs:
+ 
+       - name: Signed release APK
+         env:
+-          COUCOU_KEYSTORE_FILE: ${{ runner.temp }}/release.jks
+-          COUCOU_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+-          COUCOU_KEY_ALIAS: coucou
+-        run: |
+-          test -n "$COUCOU_KEYSTORE_PASSWORD" || { echo "ANDROID_KEYSTORE_PASSWORD is not set"; exit 1; }
+-          node scripts/gen-strings.mjs --check
+-          ./gradlew assembleRelease --console=plain
+-          rm -f "$COUCOU_KEYSTORE_FILE"
+-
+-      - name: Check the signature
++          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
++          VERSION: ${{ needs.apk.outputs.version }}
+         run: |
+-          apksigner="$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)/apksigner"
+-          "$apksigner" verify --print-certs app/build/outputs/apk/release/app-release.apk
+-          v="${{ steps.version.outputs.version }}"
+-          mkdir -p release
+-          cp app/build/outputs/apk/release/app-release.apk "release/Coucou-Android-$v.apk"
+-          (cd release && sha256sum "Coucou-Android-$v.apk" > SHA256SUMS)
++          test -n "$KEYSTORE_PASSWORD" || { echo "ANDROID_KEYSTORE_PASSWORD is not set: refusing to build an unsigned release"; exit 1; }
++          bt="$(find "$ANDROID_HOME"/build-tools -mindepth 1 -maxdepth 1 | sort -V | tail -1)"
++          v="$VERSION"
++          # Nothing from the repository runs in this job: only the runner's own
++          # zipalign and apksigner, over the artifact built by the apk job.
++          "$bt/zipalign" -p -f 4 app-release-unsigned.apk aligned.apk
++          "$bt/apksigner" sign \
++            --ks "$RUNNER_TEMP/release.jks" \
++            --ks-key-alias coucou \
++            --ks-pass env:KEYSTORE_PASSWORD \
++            --key-pass env:KEYSTORE_PASSWORD \
++            --out "Coucou-Android-$v.apk" \
++            aligned.apk
++          rm -f "$RUNNER_TEMP/release.jks" aligned.apk
++          "$bt/apksigner" verify --print-certs "Coucou-Android-$v.apk"
++          sha256sum "Coucou-Android-$v.apk" > SHA256SUMS
+ 
+       - uses: actions/upload-artifact@v7
+         with:
+-          name: Coucou-Android-${{ steps.version.outputs.version }}
++          name: Coucou-Android-${{ needs.apk.outputs.version }}
+           path: |
+-            android/release/
+-            android/app/build/outputs/mapping/release/mapping.txt
++            Coucou-Android-*.apk
++            SHA256SUMS
++            mapping.txt
++
++  publish:
++    needs: [apk, sign]
++    if: startsWith(github.ref, 'refs/tags/android-v')
++    runs-on: ubuntu-24.04
++    permissions:
++      contents: write
++    steps:
++      - uses: actions/download-artifact@v8
++        with:
++          name: Coucou-Android-${{ needs.apk.outputs.version }}
+ 
+       - name: Publish the release
+-        if: startsWith(github.ref, 'ref
+```
+
+**File**: `.github/workflows/build.yml` (modified, +18/-0)
+```diff
+@@ -51,18 +51,27 @@ jobs:
+       - name: Test the chat on your subscription (Claude Code, Antigravity, Gemini, Codex, Cursor, Copilot)
+         run: bash scripts/test-cli-relay.sh
+ 
++      - name: Test a subscription run on stand-in tools (stdin, no thinking, signed out, time limit)
++        run: bash scripts/test-cli-relay-run.sh
++
+       - name: Test Mail triage (rules, banned words, VIPs, search)
+         run: bash scripts/test-mail-triage.sh
+ 
+       - name: Test the settings search (accents, words, labels)
+         run: bash scripts/test-settings-search.sh
+ 
++      - name: Test Antigravity permission rules
++        run: bash scripts/test-agy-permissions.sh
++
+       - name: Test Flow dictation keys
+         run: bash scripts/test-flow-keys.sh
+ 
+       - name: Test Flow text (snippets, dictionary, numbers)
+         run: bash scripts/test-flow-text.sh
+ 
++      - name: Test the work streak (Mochi sleepy after long work, fresh after a break)
++        run: bash scripts/test-work-streak.sh
++
+       - name: Test Notetaker transcript (speakers, echo, summary, Markdown)
+         run: bash scripts/test-notetaker.sh
+ 
+@@ -140,6 +149,12 @@ jobs:
+       - name: Test ask question
+         run: bash scripts/test-ask-question.sh
+ 
++      - name: Test the App Store review moments
++        run: bash scripts/test-review-policy.sh
++
++      - name: Test the new-session launcher
++        run: bash scripts/test-session-launch.sh
++
+       - name: Test the Android link (pairing, framing, admission, approvals, certificate)
+         run: bash scripts/test-android-link.sh
+ 
+@@ -173,6 +188,9 @@ jobs:
+       - name: Conversation context tests
+         run: bash scripts/test-conversation-context.sh
+ 
++      - name: Codex automatic-review filter tests
++        run: bash scripts/test-codex-auto-review.sh
++
+       - name: Build
+         run: |
+           set -o pipefail
+```
+
+**File**: `CHANGELOG.md` (modified, +49/-3)
+```diff
+@@ -1,11 +1,57 @@
+ # Changelog
+ 
+-## Unreleased
+-
+-- **Android phone link (Mac)** — Coucou for Android can now pair with your Mac, the way it already does with Windows and Linux (Settings → Android phone, off by default). Scan the QR code on the same Wi-Fi, see your agent sessions, and allow or deny a permission request from the phone; Allow still needs the phone's fingerprint or screen lock. Optional switches show session details, let the phone answer Claude Code's questions and show your plan usage. Coucou listens on your local network only while the switch is on, the certificate and the pairing code stay in the Keychain, and nothing runs while it is off (GitHub build; not in the App Store build)
++## 0.6.0 — Unreleased
++
++- **Start a Claude Code session from the notch** *(GitHub build)* — the terminal tab in the island's header, or ⌃⌥N: pick the project (the folders your sessions ran in, or any folder), type or dictate what Claude should do, and your terminal opens there with Claude Code and your words. Terminal, iTerm2, Ghostty, kitty, WezTerm and Alacritty; the prompt is never written into a command line
++- **Drop a file on a session** *(GitHub build)* — drag a file over the notch (a ⌘⇧2 thumbnail, a capture, anything from Finder) and let go on one of the sessions listed on the right of the drop card: its terminal comes forward and the file lands in its prompt, as if dropped on the terminal itself
++- **Screenshot of the whole screen, copied** *(GitHub build)* — ⌘⇧2 takes the whole screen the pointer is on, with the Mac's shutter sound. The picture is on the clipboard right away, so ⌘V pastes it into a chat (⌃V in Claude Code's terminal), and a thumbnail shows in the bottom right corner like macOS's own: drag it into a chat, a folder or a mail, click it to open it in Preview, swipe it to the right to put it away. It leaves by itself after a few seconds, and stays while the pointer is on it. Both screenshot shortcuts, the whole screen and a zone (⌘⇧S), now have their own Screenshots box at the top of Settings → Shortcuts, to change or turn each off (GitHub build; not in the App Store build)
++- **Approve Antigravity commands from the notch** *(GitHub build, optional)* — turn on Settings → Antigravity → **Approve commands from the notch**, and a shell command that none of your Antigravity rules covers waits for you on the approval card, as with Claude Code: **Allow**, **Deny**, or **Reply in terminal** for Antigravity's own prompt (and its *Always allow*). Commands your rules allow or deny are left to Antigravity, and with no answer in 2 min, or Coucou closed, Antigravity asks in its terminal as before. Coucou can't see Antigravity's mode, so in Auto mode the notch also asks about commands Antigravity would have run on its own. Install the Antigravity hooks once more, then restart Antigravity: its command hook now waits up to 2 min (#934 by @Brendon20011007)
++- **Android phone link** — Coucou for Android can now pair with your Mac, the way it already does with Windows and Linux (Settings → Android phone, off by default). Scan the QR code on the same Wi-Fi, see your agent sessions, and allow or deny a permission request from the phone; Allow still needs the phone's fingerprint or screen lock. Optional switches show session details, let the phone answer Claude Code's questions and show your plan usage. Coucou listens on your local network only while the switch is on, the certificate and the pairing code stay in the Keychain, and nothing runs while it is off (GitHub build; not in the App Store build)
++- **Coucoudoro** — a work and rest timer in the notch: start, pause and stop from its card, lengths in Settings (#1055 by @PeachyCad)
++- **Flow: one press starts hands-free** — a new setting: a short press of the dictation key starts hands-free, a hold stays push-to-talk (#1063 by @Brezinben, on Windows and Linux too)
++- **Flow on your Claude plan** — with Claude's subscription switch on, clean-up, prompt mode and translation go through your own Claude Code, no API key (#971 by @NikitaBulichev)
++- **Flow hears better on macOS 26** — the Mac's newer speech model when its languages are installed (#968 by @lovyestar); the history keeps what was heard beside the rewrite, with its own copy button (#952 by @lovyestar)
++- **Mochi gets sleepy** after long hours with the agents, and fresh again after a break (#970 by @lovyestar)
++- **Voice speed** — a Speed slider for Coucou's voice (#967 by @BilliamsFluster)
++- **App Store build: a review, once in a while** — after a good moment (a few finished sessions on the Mac, a few decisions sent from the iPhone), never in the first days and once per version, Apple's own review request; macOS and iOS show it at most three times a year
++
++Fixes:
++
++- **Open terminal, ↗, Spotify and Music bring their app forward again on macOS 14+** (#678 by @orrrrli)
++- **No approval card for Codex requests its own automatic reviewer handles** (#767 by @Danielweng0902)
++- **The step ticker keeps mov
+```
+
+**File**: `NotchBuddy/Resources/whats-new.json` (modified, +161/-0)
+```diff
+@@ -1,6 +1,167 @@
+ {
+   "about": "What's new, shown once in the notch after Coucou updates itself (WhatsNew.swift). Every Mac release adds its entry here, in the 16 languages, before release.sh: 1 to 4 items, a short title and one line each, an icon from scripts/test-whats-new.py. python3 scripts/test-whats-new.py checks it.",
+   "releases": [
++    {
++      "version": "0.6.0",
++      "items": [
++        {
++          "icon": "terminal",
++          "title": {
++            "en": "Start a session from the notch",
++            "fr": "Lance une session depuis le notch",
++            "es": "Inicia una sesión desde el notch",
++            "pt-BR": "Inicie uma sessão pelo notch",
++            "ru": "Новая сессия прямо из выреза",
++            "zh-Hans": "从刘海直接开始会话",
++            "hi": "नॉच से सत्र शुरू करें",
++            "ar": "ابدأ جلسة من النوتش",
++            "bn": "নচ থেকে সেশন শুরু করুন",
++            "id": "Mulai sesi dari notch",
++            "de": "Eine Sitzung aus der Notch starten",
++            "tr": "Çentikten oturum başlat",
++            "th": "เริ่มเซสชันจากรอยบาก",
++            "zh-Hant": "從瀏海直接開始工作階段",
++            "ko": "노치에서 세션 시작",
++            "ja": "ノッチからセッションを開始"
++          },
++          "detail": {
++            "en": "Pick a project, say what to do: your terminal opens with Claude Code and your words.",
++            "fr": "Choisis un projet, dis quoi faire : ton terminal s'ouvre avec Claude Code et tes mots.",
++            "es": "Elige un proyecto, di qué hacer: tu terminal se abre con Claude Code y tus palabras.",
++            "pt-BR": "Escolha um projeto, diga o que fazer: o terminal abre com o Claude Code e suas palavras.",
++            "ru": "Выберите проект и скажите, что сделать: терминал откроется с Claude Code и вашими словами.",
++            "zh-Hans": "选个项目，说出要做的事：终端会带着 Claude Code 和你的话打开。",
++            "hi": "प्रोजेक्ट चुनें, बताएँ क्या करना है: टर्मिनल Claude Code और आपके शब्दों के साथ खुलता है।",
++            "ar": "اختر مشروعًا وقل ما المطلوب: تفتح الطرفية مع Claude Code وكلماتك.",
++            "bn": "প্রজেক্ট বেছে কী করতে হবে বলুন: টার্মিনাল Claude Code আর আপনার কথা নিয়ে খোলে।",
++            "id": "Pilih proyek, katakan tugasnya: terminal terbuka dengan Claude Code dan kata-katamu.",
++            "de": "Projekt wählen, Aufgabe sagen: Dein Terminal öffnet sich mit Claude Code und deinen Worten.",
++            "tr": "Bir proje seç, ne yapılacağını söyle: terminal Claude Code ve sözlerinle açılır.",
++            "th": "เลือกโปรเจกต์ บอกสิ่งที่ต้องทำ: เทอร์มินัลเปิดพร้อม Claude Code และคำของคุณ",
++            "zh-Hant": "選個專案，說出要做的事：終端機會帶著 Claude Code 和你的話開啟。",
++            "ko": "프로젝트를 고르고 할 일을 말하면 Claude Code와 함께 터미널이 열립니다.",
++            "ja": "プロジェクトを選んで頼むと、Claude Code とあなたの言葉でターミナルが開きます。"
++          }
++        },
++        {
++          "icon": "download",
++          "title": {
++            "en": "Drop a file on a session",
++            "fr": "Lâche un fichier sur une session",
++            "es": "Suelta un archivo en una sesión",
++            "pt-BR": "Solte um arquivo numa sessão",
++            "ru": "Бросьте файл на сессию",
++            "zh-Hans": "把文件拖到会话上",
++            "hi": "फ़ाइल को सत्र पर छोड़ें",
++            "ar": "أفلت ملفًا على جلسة",
++            "bn": "সেশনের ওপর ফাইল ছাড়ুন",
++            "id": "Jatuhkan file ke sesi",
++            "de": "Eine Datei auf eine Sitzung ziehen",
++            "tr": "Bir dosyayı oturuma bırak",
++            "th": "วางไฟล์ลงในเซสชัน",
++            "zh-Hant": "把檔案拖到工作階段上",
++            "ko": "파일을 세션에 놓기",
++            "ja": "ファイルをセッションにドロップ"
++          },
++          "detail": {
++            "en": "Let go on a session in the drop card: the file lands in its prompt.",
++            "fr": "Lâche-le sur une session de la carte de dépôt : le fichier arrive dans son prompt.",
++            "es": "Suéltalo sobre una sesión en la tarjeta: el archivo llega a su prompt.",
++            "pt-BR": "Solte sobre uma sessão no cartão: o arquivo chega ao prompt dela.",
++            "ru": "Отпустите над сессией в карточке: файл попадёт в её запрос.",
++            "zh-Hans": "在投放卡片上松开到某个会话：文件就进入它的提示里。",
++            "hi": "ड्रॉप कार्ड में किसी सत्र पर छोड़ें: फ़ाइल उसके प्रॉम्प्ट में पहुँचती है।",
++            "ar": "أفلته على جلسة في بطاقة الإفلات: يصل الملف إلى موجّهها.",
++            "bn": "ড্রপ কার্ডে কোনো সেশনের ওপর ছাড়ুন: ফাইলটি তার প্রম্পটে পৌঁছায়।",
++            "id": "Lepaskan di sebuah sesi pada kartu: file masuk ke prompt-nya.",
++            "de": "Auf einer Sitzung der Ablagekarte loslassen: Die Datei landet in ihrem Prompt.",
++            "tr": "Bırakma kartındaki bir oturumun üstüne bırak: dosya onun komutuna girer.",
++            "th": "ปล่อยบนเซสชันในการ์ดวางไฟล์ แล้วไฟล์จะเข้าไปในพรอมต์ของมัน",
++            "zh-Hant": "在投放卡片上放開到某個工作階段：檔案就進入它的提示裡。",
++            "ko": "드롭 카드의 세션 위에 놓으면 파일이 그 프롬프트로 들어갑니다.",
++            "ja": "ドロップカードのセッションで離すと、ファイルがそのプロンプトに入ります。"
++          }
++        },
++        {
++          "icon": "eye",
++          "t
+```
+
+**File**: `NotchBuddy/Sources/App/AgyPermissionRules.swift` (added, +230/-0)
+```diff
+@@ -0,0 +1,230 @@
++import Foundation
++
++// MARK: - AgyPermissionRules
++// Antigravity's own `command(...)` rules, read from its config files, so the notch only asks
++// about the shell commands Antigravity has no rule for (Settings → Antigravity → Approve
++// commands from the notch).
++//
++// This never allows anything. A verdict only decides whether Coucou shows a card:
++// - `.allowed` / `.denied`: no card, the hook answers "ask" and Antigravity applies its rule.
++// - `.unknown`: the card shows, and only a click on Allow lets the command run.
++// Both mistakes are safe: a command wrongly read as allowed gets Antigravity's own prompt,
++// one wrongly read as new gets a card it did not need.
++// Pure Foundation, no AppKit: tested by scripts/test-agy-permissions.sh.
++
++struct AgyPermissionRules: Equatable, Sendable {
++    /// The text inside each `command(...)` rule.
++    private(set) var allow: [String] = []
++    private(set) var deny: [String] = []
++
++    enum Verdict: Equatable, Sendable { case allowed, denied, unknown }
++
++    init(allow: [String] = [], deny: [String] = []) {
++        self.allow = allow
++        self.deny = deny
++    }
++
++    /// Adds the `command(...)` entries of a grants object: `{"allow": [...], "deny": [...]}`.
++    /// Other rule kinds (read_file, mcp, read_url…) do not apply to shell commands.
++    mutating func add(grants: [String: Any]) {
++        allow += Self.commandRules(grants["allow"] as? [String] ?? [])
++        deny += Self.commandRules(grants["deny"] as? [String] ?? [])
++    }
++
++    /// What Antigravity's rules say about `command`.
++    func verdict(for command: String) -> Verdict {
++        guard let parsed = Self.parse(command), !parsed.segments.isEmpty else { return .unknown }
++        let denyRules = deny.compactMap(Self.parse)
++        let allowRules = allow.compactMap(Self.parse)
++        // A deny rule wins: Antigravity blocks the command itself, no card is needed.
++        for rule in denyRules where Self.matches(rule, parsed) { return .denied }
++        // A chained command saved as one rule ("git fetch && git rebase") matches exactly.
++        if allowRules.contains(where: { $0.segments.count > 1 && $0.segments == parsed.segments }) {
++            return .allowed
++        }
++        // A command run inside $(…) or backticks is hidden from the rules below.
++        if parsed.hasSubstitution {
++            return allowRules.contains { $0.segments == parsed.segments } ? .allowed : .unknown
++        }
++        let everyPartAllowed = parsed.segments.allSatisfy { segment in
++            allowRules.contains { $0.segments.count == 1 && Self.hasPrefix(segment, $0.segments[0]) }
++        }
++        return everyPartAllowed ? .allowed : .unknown
++    }
++
++    // MARK: Matching
++
++    /// A rule's words start every part (single-part rule) or match the whole chain.
++    private static func matches(_ rule: Parsed, _ command: Parsed) -> Bool {
++        if rule.segments.count > 1 { return rule.segments == command.segments }
++        guard let words = rule.segments.first else { return false }
++        return command.segments.contains { hasPrefix($0, words) }
++    }
++
++    /// True when `segment` starts with every word of `words`. A rule with no words
++    /// (`command()`, `command(   )`) matches nothing, as in Antigravity.
++    private static func hasPrefix(_ segment: [String], _ words: [String]) -> Bool {
++        !words.isEmpty && segment.count >= words.count && Array(segment.prefix(words.count)) == words
++    }
++
++    /// `["command(git log)", "mcp(x/y)"]` → `["git log"]`.
++    static func commandRules(_ entries: [String]) -> [String] {
++        entries.compactMap { entry in
++            let trimmed = entry.trimmingCharacters(in: .whitespacesAndNewlines)
++            guard trimmed.hasPrefix("command("), trimmed.hasSuffix(")") else { return nil }
++            return String(trimmed.dropFirst("command(".count).dropLast())
++        }
++    }
++
++    // MARK: Shell words
++
++    struct Parsed: Equatable, Sendable {
++        /// Each part of the command line (split on && || ; | & and new lines), as words.
++        var segments: [[String]]
++        /// The line runs another command through $(…) or backticks.
++        var hasSubstitution: Bool
++    }
++
++    /// Splits a command line into parts and words, the way a POSIX shell reads quotes
++    /// and backslashes. Nil when a quote is left open: the line cannot be read reliably.
++    static func parse(_ line: String) -> Parsed? {
++        var segments: [[String]] = []
++        var words: [String] = []
++        var word = ""
++        var inWord = false
++        var substitution = false
++        var quote: Character? = nil
++        var chars = Array(line)
++        chars.append(" ")
++        var i = 0
++
++        func endWord() {
++            if inWord { words.append(word) }
++            word = ""
++            inWord = false
++        }
++        func endSegment() {
++            endWord()
++            if !words.isEmpty { segments.append(word
+```
+
+**File**: `NotchBuddy/Sources/App/AnalyzerDictation.swift` (added, +211/-0)
+```diff
+@@ -0,0 +1,211 @@
++#if !APPSTORE
++import AVFoundation
++import Speech
++
++/// Flow dictation with the Mac's newer speech model (SpeechAnalyzer, macOS 26), when the Mac's
++/// recognizer is chosen and the languages it listens for are installed on this Mac. It is more
++/// accurate than SFSpeechRecognizer, writes the punctuation, and runs on the Mac only.
++///
++/// Like MacDictation, "Automatic" listens in up to three languages at once and keeps the one it
++/// was the most confident about. Nothing is downloaded: a language that isn't installed leaves
++/// Flow on MacDictation.
++@available(macOS 26.0, *)
++final class AnalyzerDictation: @unchecked Sendable {
++    @MainActor private(set) var isRecording = false
++    /// Flow dictation's pill: the microphone's levels by frequency, fed from the same tap.
++    var bands: FlowAudioBands?
++
++    private let locales: [Locale]
++    private let engine = AVAudioEngine()
++    @MainActor private var lanes: [Lane] = []
++
++    /// One language: its transcriber, its analyzer and the audio going in.
++    private final class Lane: @unchecked Sendable {
++        let locale: Locale
++        let transcriber: SpeechTranscriber
++        let analyzer: SpeechAnalyzer
++        let input: AsyncStream<AnalyzerInput>.Continuation
++        private let stream: AsyncStream<AnalyzerInput>
++        private var collecting: Task<Heard, Never>?
++
++        struct Heard {
++            var text = ""
++            /// Mean confidence of the words, 0 when none were heard.
++            var confidence = 0.0
++        }
++
++        init(locale: Locale) {
++            self.locale = locale
++            transcriber = SpeechTranscriber(locale: locale, transcriptionOptions: [], reportingOptions: [],
++                                            attributeOptions: [.transcriptionConfidence])
++            analyzer = SpeechAnalyzer(modules: [transcriber])
++            (stream, input) = AsyncStream<AnalyzerInput>.makeStream()
++        }
++
++        func begin() {
++            let transcriber = transcriber
++            collecting = Task {
++                var heard = Heard()
++                var total = 0.0
++                var count = 0
++                do {
++                    // Final results only: each one is a stretch of speech, in order.
++                    for try await result in transcriber.results {
++                        heard.text = AnalyzerDictation.join(heard.text, String(result.text.characters))
++                        for run in result.text.runs {
++                            if let confidence = run.transcriptionConfidence { total += confidence; count += 1 }
++                        }
++                    }
++                } catch {
++                    appendAppLog("nb.log", "[Flow] SpeechAnalyzer failed: \(error.localizedDescription)")
++                }
++                heard.confidence = count > 0 ? total / Double(count) : 0
++                return heard
++            }
++            let analyzer = analyzer
++            let stream = stream
++            Task { try? await analyzer.start(inputSequence: stream) }
++        }
++
++        /// The words, once the audio sent so far is transcribed (or after a few seconds, never longer).
++        func finish() async -> Heard {
++            input.finish()
++            let analyzer = analyzer
++            let done = Task { try? await analyzer.finalizeAndFinishThroughEndOfInput() }
++            let timeout = Task {
++                try? await Task.sleep(for: .seconds(3))
++                if !Task.isCancelled { await analyzer.cancelAndFinishNow() }
++            }
++            _ = await done.value
++            timeout.cancel()
++            return await collecting?.value ?? Heard()
++        }
++
++        func cancel() {
++            input.finish()
++            collecting?.cancel()
++            let analyzer = analyzer
++            Task { await analyzer.cancelAndFinishNow() }
++        }
++    }
++
++    init(locales: [Locale]) {
++        self.locales = locales
++    }
++
++    /// The languages to listen for with this engine, or nil when one of them can't be (not
++    /// supported, or not installed on this Mac): MacDictation listens then, as before.
++    static func locales(for language: String) async -> [Locale]? {
++        guard SpeechTranscriber.isAvailable else { return nil }
++        let wanted = language == MacDictation.automatic ? MacDictation.automaticLocales() : [Locale(identifier: language)]
++        guard !wanted.isEmpty else { return nil }
++        let installed = Set(await SpeechTranscriber.installedLocales.map { $0.identifier(.bcp47) })
++        var out: [Locale] = []
++        for locale in wanted {
++            guard let match = await SpeechTranscriber.supportedLocale(equivalentTo: locale),
++                  installed.contains(match.identifier(.bcp47)) else { return nil }
++            out.append(match)
++        }
++        return out
++    }
++
++    // MARK: Start / finish
++
++    @MainActor func start() async {
++        guard !isRecording, !locales.isEmpty, awa
+```
+
+**File**: `NotchBuddy/Sources/App/AppDelegate.swift` (modified, +1/-0)
+```diff
+@@ -375,6 +375,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
+         ClaudeDesktopChatWatcher.shared.start()
+         #endif
+         CryptoController.shared.start()
++        CoucoudoroController.shared.start()
+         PortfolioController.shared.start()
      }
  }
+```
+
+**File**: `NotchBuddy/Sources/App/AppReview.swift` (added, +41/-0)
+```diff
+@@ -0,0 +1,41 @@
++import SwiftUI
++#if APPSTORE
++import StoreKit
++#endif
 +
-+/// Carries a value the compiler cannot prove Sendable into a @Sendable closure.
-+private struct AndroidLinkUncheckedBox<T>: @unchecked Sendable {
-+    let value: T
-+    init(_ value: T) { self.value = value }
++/// The App Store build asks for a review after a good moment: a Claude Code session that
++/// finished, the 8th one at least, never in the first three days, once per version
++/// (ReviewPolicy). The request is Apple's own: macOS decides whether it shows, at most three
++/// times a year, and never to someone who turned it off. The GitHub build never asks.
++@MainActor
++enum AppReview {
++    static func noteFinished() {
++        #if APPSTORE
++        guard ReviewPolicy.note(needed: ReviewPolicy.macMoments) else { return }
++        // Once the finished card has had its moment.
++        DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
++            appendAppLog("nb.log", "[Review] asking for an App Store review")
++            NotificationCenter.default.post(name: .askAppReview, object: nil)
++        }
++        #endif
++    }
++}
++
++extension Notification.Name {
++    static let askAppReview = Notification.Name("notchBuddy.askAppReview")
++}
++
++/// On the island's root view: the request needs a SwiftUI view on screen to come from.
++struct AppReviewAsker: ViewModifier {
++    #if APPSTORE
++    @Environment(\.requestReview) private var requestReview
++    #endif
++
++    func body(content: Content) -> some View {
++        #if APPSTORE
++        content.onReceive(NotificationCenter.default.publisher(for: .askAppReview)) { _ in requestReview() }
++        #else
++        content
++        #endif
++    }
 +}
 ```
 
-**File**: `android/i18n/REVIEW.md` (modified, +6/-6)
-```diff
-@@ -12,15 +12,15 @@ Louis's. A fix is a change to the language's file in `i18n/translations/`, then
- 
- ## Español (es)
- 
--381 of 454 strings and 6 plural groups.
-+383 of 454 strings and 6 plural groups.
- 
--`app_name`, `about_credit`, `about_repo`, `licences_title`, `licences_intro`, `about_assets`, `widget_description`, `widget_glance_label`, `widget_solo_label`, `widget_list_label`, `widget_solo_description`, `widget_list_description`, `widget_mochi_description`, `widget_badge_description`, `widget_big_label`, `widget_big_description`, `widget_pill_label`, `widget_pill_description`, `widget_alert_label`, `widget_alert_description`, `widget_ring_description`, `widget_today_label`, `widget_today_description`, `widget_mood_label`, `widget_mood_description`, `widget_today_unit`, `widget_usage_off`, `widget_big_usage_off`, `widget_big_usage_off_line`, `widget_ring_cd`, `widget_today_cd`, `widget_pill_cd`, `widget_initial_title`, `widget_initial_line`, `widget_initial_count`, `widget_btn_home`, `widget_btn_chat_cd`, `widget_btn_settings_cd`, `widget_btn_recent_cd`, `widget_btn_session_cd`, `widget_btn_pair_cd`, `widget_sample_claude`, `widget_sample_claude_short`, `widget_sample_codex`, `widget_sample_gemini`, `widget_sample_approval`, `widget_sample_working`, `widget_sample_finished`, `widget_sample_header`, `widget_sample_one`, `widget_sample_two_waiting`, `widget_sample_ring_pct`, `widget_sample_ring_label`, `widget_sample_pct_a`, `widget_sample_pct_b`, `widget_sample_codex_week`, `widget_sample_today`, `widget_sample_two_agents`, `widget_sample_thinking`, `widget_sample_idle`, `widget_sample_waiting`, `pair_button`, `approval_title`, `action_unpair`, `demo_leave`, `gallery`, `pair_paste_short`, `pairing_headline`, `pairing_help`, `pairing_credit`, `pairing_about`, `paste_title`, `paste_hint`, `approval_later`, `approval_wants`, `approval_too_long`, `approval_on_computer`, `approval_caution`, `approval_show_cmd`, `approval_hide_cmd`, `question_title`, `question_body`, `question_see_answer`, `question_position`, `question_pick_many`, `question_send`, `question_confirm_title`, `question_sent`, `question_not_sent`, `question_see`, `home_running`, `home_empty_title`, `home_empty_hint`, `recent_all`, `status_looking`, `discovery_title`, `discovery_body`, `discovery_enter_address`, `address_title`, `address_hint`, `address_save`, `address_bad`, `chat_off_not_paired_body`, `chat_off_offline_body`, `chat_off_title`, `chat_nomodel_title`, `chat_off_hint`, `chat_go_pair`, `chat_go_settings`, `tab_home`, `tab_home_alert`, `design_note`, `pair_clipboard`, `notif_unlock`, `msg_not_pending`, `msg_bad_link`, `msg_rejected`, `msg_link_error`, `msg_need_lock`, `approval_hint`, `overlay_title`, `overlay_hint`, `msg_overlay_permission`, `settings_sound`, `notify_done`, `notify_done_hint`, `quiet_hours`, `quiet_hint`, `quiet_from`, `history_empty`, `history_note`, `notif_finished`, `notif_error`, `notif_question`, `notif_ratelimit`, `island_answer_on_pc`, `state_ready`, `state_working`, `state_thinking`, `state_searching`, `state_approval`, `state_question`, `state_error`, `state_finished`, `state_ratelimit`, `state_sleeping`, `state_dizzy`, `link_pair`, `link_approval`, `overlay_missing`, `settings_section_computer`, `settings_section_away`, `relay_use`, `relay_use_hint`, `relay_line_none`, `relay_line_off`, `relay_line_direct`, `relay_line_via`, `relay_line_waiting`, `relay_line_access`, `relay_line_taken`, `relay_line_rate`, `relay_line_unreachable`, `relay_line_away`, `channel_link`, `channel_link_description`, `channel_updates_description`, `channel_approvals_quiet`, `channel_approvals_quiet_description`, `channel_approvals`, `channel_approvals_description`, `language_system`, `language_picker_hint`, `settings_theme`, `theme_light`, `theme_dark`, `settings_dynamic`, `settings_dynamic_hint`, `settings_motion`, `motion_on`, `motion_off`, `settings_motion_hint`, `settings_section_notices`, `settings_section_requests`, `settings_no_wake`, `settings_no_wake_hint`, `settings_vibration`, `vibration_standard`, `vibration_short`, `vibration_off`, `settings_requests_note`, `settings_section_more`, `settings_section_about`, `settings_computer_none`, `chat_note`, `chat_empty`, `chat_stop`, `chat_clear_title`, `chat_clear_body`, `chat_model`, `chat_count`, `chat_ref_too_long`, `chat_ref_no_model`, `chat_ref_busy`, `chat_ref_offline`, `chat_err_off`, `chat_err_not_allowed`, `chat_err_busy`, `chat_err_rate`, `chat_err_too_long`, `chat_err_empty`, `chat_err_no_key`, `chat_err_unreachable`, `chat_err_auth`, `chat_err_provider`, `chat_err_canceled`, `chat_err_internal`, `chat_err_connection`, `chat_err_interrupted`, `session_details`, `session_last`, `session_steps`, `session_step_working`, `session_step_done`, `session_no_steps`, `session_hint`, `session_ended`, `session_project`, `scan_button`, `scan_title`, `scan_hint`, `scan_not_pairing`, `scan_why`, `scan_allow`, `scan_blocked`, `scan_paste_instead`, `scan_camera_error`, `pair_confirm_t
-```
+---
 
-**File**: `windows/src/i18n/extra.json` (modified, +0/-120)
-```diff
-@@ -4264,21 +4264,6 @@
-       "ko": "네트워크가 바뀌어도 휴대폰이 이 컴퓨터를 알아서 다시 찾아요. 이 스위치가 켜져 있을 때만 로컬 네트워크에 알려요. 일부 핫스폿이나 게스트 네트워크에선 막힐 수 있어요.",
-       "ja": "ネットワークが変わっても、スマートフォンはこのパソコンを自動で見つけ直します。このスイッチがオンの間だけ、ローカルネットワークに告知されます。一部のホットスポットやゲストネットワークではブロックされます。"
-     },
--    "Let the phone answer Claude Code's questions": {
--      "zh-Hans": "允许手机回答 Claude Code 的提问",
--      "hi": "फ़ोन को Claude Code के सवालों के जवाब देने दें",
--      "es": "Dejar que el teléfono responda a las preguntas de Claude Code",
--      "ar": "السماح للهاتف بالإجابة عن أسئلة Claude Code",
--      "fr": "Laisser le téléphone répondre aux questions de Claude Code",
--      "bn": "ফোনকে Claude Code-এর প্রশ্নের উত্তর দিতে দিন",
--      "pt-BR": "Deixar o celular responder às perguntas do Claude Code",
--      "ru": "Разрешить телефону отвечать на вопросы Claude Code",
--      "id": "Izinkan ponsel menjawab pertanyaan Claude Code",
--      "de": "Fragen von Claude Code auf dem Telefon beantworten",
--      "tr": "Telefon Claude Code'un sorularını yanıtlayabilsin",
--      "ko": "휴대폰에서 Claude Code 질문에 답하기",
--      "ja": "スマートフォンから Claude Code の質問に答える"
--    },
-     "The phone shows each question with its options. Every answer is confirmed with the phone's fingerprint or screen lock.": {
-       "zh-Hans": "手机会显示每个问题及其选项。每个回答都需要用手机的指纹或锁屏来确认。",
-       "hi": "फ़ोन हर सवाल को उसके विकल्पों के साथ दिखाता है। हर जवाब की पुष्टि फ़ोन के फ़िंगरप्रिंट या स्क्रीन लॉक से होती है।",
-@@ -4294,21 +4279,6 @@
-       "ko": "휴대폰에 질문과 선택지가 떠요. 답할 때마다 휴대폰 지문이나 화면 잠금으로 확인해요.",
-       "ja": "スマートフォンに質問と選択肢が表示されます。回答はすべてスマートフォンの指紋認証または画面ロックで確認されます。"
-     },
--    "Android phone": {
--      "zh-Hans": "Android 手机",
--      "hi": "Android फ़ोन",
--      "es": "Teléfono Android",
--      "ar": "هاتف Android",
--      "fr": "Téléphone Android",
--      "bn": "Android ফোন",
--      "pt-BR": "Celular Android",
--      "ru": "Телефон Android",
--      "id": "Ponsel Android",
--      "de": "Android-Telefon",
--      "tr": "Android telefon",
--      "ko": "Android 휴대폰",
--      "ja": "Android スマートフォン"
--    },
-     "Send your agents' sessions to Coucou for Android and answer permission requests from the phone. Off by default; it only listens on your local network.": {
-       "zh-Hans": "把你的智能体会话发送到 Coucou for Android，并在手机上回应权限请求。默认关闭；仅在本地网络中监听。",
-       "hi": "अपने एजेंट के सत्र Coucou for Android को भेजें और फ़ोन से अनुमति के अनुरोधों का जवाब दें। डिफ़ॉल्ट रूप से बंद; यह केवल आपके स्थानीय नेटवर्क पर सुनता है।",
-@@ -4369,21 +4339,6 @@
-       "ko": "켜지 못했어요: {error}",
-       "ja": "オンにできませんでした：{error}"
-     },
--    "Show pairing code": {
--      "zh-Hans": "显示配对码",
--      "hi": "पेयरिंग कोड दिखाएँ",
--      "es": "Mostrar código de emparejamiento",
--      "ar": "إظهار رمز الاقتران",
--      "fr": "Afficher le code d'association",
--      "bn": "পেয়ারিং কোড দেখান",
--      "pt-BR": "Mostrar código de pareamento",
--      "ru": "Показать код сопряжения",
--      "id": "Tampilkan kode penyandingan",
--      "de": "Kopplungscode anzeigen",
--      "tr": "Eşleştirme kodunu göster",
--      "ko": "페어링 코드 보기",
--      "ja": "ペアリングコードを表示"
--    },
-     "Phones connected: {count}": {
-       "zh-Hans": "已连接的手机：{count}",
-       "hi": "जुड़े फ़ोन: {count}",
-@@ -4414,36 +4369,6 @@
-       "ko": "Android용 Coucou에서 카메라로 이 코드를 스캔하거나 링크를 붙여넣어 주세요.",
-       "ja": "Android 版 Coucou で、このコードをカメラで読み取るかリンクを貼り付けてください。"
-     },
--    "Copy link": {
--      "zh-Hans": "复制链接",
--      "hi": "लिंक कॉपी करें",
--      "es": "Copiar enlace",
--      "ar": "نسخ الرابط",
--      "fr": "Copier le lien",
--      "bn": "লিংক কপি করুন",
--      "pt-BR": "Copiar link",
--      "ru": "Скопировать ссылку",
--      "id": "Salin tautan",
--      "de": "Link kopieren",
--      "tr": "Bağlantıyı kopyala",
--      "ko": "링크 복사",
--      "ja": "リンクをコピー"
--    },
--    "Pair again": {
--      "zh-Hans": "重新配对",
--      "hi": "फिर से पेयर करें",
--      "es": "Emparejar de nuevo",
--      "ar": "إعادة الاقتران",
--      "fr": "Associer à nouveau",
--      "bn": "আবার পেয়ার করুন",
--      "pt-BR": "Parear de novo",
--      "ru": "Сопрячь заново",
--      "id": "Sandingkan ulang",
--      "de": "Erneut koppeln",
--      "tr": "Yeniden eşleştir",
--      "ko": "다시 페어링",
--      "ja": "もう一度ペアリング"
--    },
-     "The phone that was paired is disconnected and needs the new code.": {
-       "zh-Hans": "已配对的手机会断开连接，并需要新的配对码。",
-       "hi": "जो फ़ोन पेयर था वह डिस्कनेक्ट हो जाएगा और उसे नया कोड चाहिए।",
-@@ -4579,21 +4504,6 @@
-       "ko": "준비된 제공업체가 없어요. 먼저 API 키를 넣거나 로컬 모델을 연결해 주세요.",
-       "ja": "使えるプロバイダがありません：先に API キーを追加するか、ローカルモデルに接続してください。"
-     },
--    "Show session details on the phone": {
--      "zh-Hans": "在手机上显示会话详情",
--      "hi": "फ़ोन पर सत्र का विवरण दिखाएँ",
--      "es": "Mostrar los detalles de la sesión en el teléfono",
--      "ar": "إظهار تفاصيل الجلسة على الهاتف",
--      "fr": "Afficher les détails de la session sur le téléphone",
--      "bn": "ফোনে সেশনের বিবরণ দেখান",
--      "pt-BR": "Mostrar os detalhes da sessão no celular",
--      "ru": "Показывать детали сессии на телефоне",
+### Incident Patch 3: `cd15b127` (2026-11-06)
+**Commit Message**: CHANGELOG: Windows and Linux 0.6.0 gets the new session and the drop on a session
 
-```
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01LJm3SRL9k3gBPaVtfPhwcT
 
-**File**: `windows/src/i18n/strings.json` (modified, +42/-42)
+**File**: `CHANGELOG.md` (modified, +2/-0)
 ```diff
-@@ -744,12 +744,12 @@
-    "ar": "هاتف Android",
-    "fr": "Téléphone Android",
-    "bn": "Android ফোন",
--   "pt-BR": "Telefone Android",
-+   "pt-BR": "Celular Android",
-    "ru": "Телефон Android",
-    "id": "Ponsel Android",
--   "de": "Android-Handy",
-+   "de": "Android-Telefon",
-    "tr": "Android telefon",
--   "ko": "Android 폰",
-+   "ko": "Android 휴대폰",
-    "ja": "Android スマートフォン"
-   },
-   "Annotate": {
-@@ -2260,7 +2260,7 @@
-    "fr": "Copier le lien",
-    "bn": "লিংক কপি করুন",
-    "pt-BR": "Copiar link",
--   "ru": "Копировать ссылку",
-+   "ru": "Скопировать ссылку",
-    "id": "Salin tautan",
-    "de": "Link kopieren",
-    "tr": "Bağlantıyı kopyala",
-@@ -4804,18 +4804,18 @@
-   },
-   "Let the phone answer Claude Code's questions": {
-    "zh-Hans": "允许手机回答 Claude Code 的提问",
--   "hi": "फ़ोन को Claude Code के सवालों का जवाब देने दें",
--   "es": "Permitir que el teléfono responda a las preguntas de Claude Code",
--   "ar": "السماح للهاتف بالرد على أسئلة Claude Code",
-+   "hi": "फ़ोन को Claude Code के सवालों के जवाब देने दें",
-+   "es": "Dejar que el teléfono responda a las preguntas de Claude Code",
-+   "ar": "السماح للهاتف بالإجابة عن أسئلة Claude Code",
-    "fr": "Laisser le téléphone répondre aux questions de Claude Code",
-    "bn": "ফোনকে Claude Code-এর প্রশ্নের উত্তর দিতে দিন",
--   "pt-BR": "Permitir que o telefone responda às perguntas do Claude Code",
-+   "pt-BR": "Deixar o celular responder às perguntas do Claude Code",
-    "ru": "Разрешить телефону отвечать на вопросы Claude Code",
-    "id": "Izinkan ponsel menjawab pertanyaan Claude Code",
--   "de": "Das Handy Fragen von Claude Code beantworten lassen",
--   "tr": "Telefonun Claude Code sorularını yanıtlamasına izin ver",
--   "ko": "폰에서 Claude Code의 질문에 답하기",
--   "ja": "Claude Code の質問にスマートフォンから回答する"
-+   "de": "Fragen von Claude Code auf dem Telefon beantworten",
-+   "tr": "Telefon Claude Code'un sorularını yanıtlayabilsin",
-+   "ko": "휴대폰에서 Claude Code 질문에 답하기",
-+   "ja": "スマートフォンから Claude Code の質問に答える"
-   },
-   "Lets Coucou for Android, on the same Wi-Fi, see your agent sessions and answer permission requests. Off by default. Coucou listens on your local network only while this is on.": {
-    "zh-Hans": "允许同一 Wi-Fi 下的 Coucou for Android 查看你的智能体会话并回应权限请求。默认关闭。仅在开启时,Coucou 才会监听你的本地网络。",
-@@ -7385,17 +7385,17 @@
-   "Pair again": {
-    "zh-Hans": "重新配对",
-    "hi": "फिर से पेयर करें",
--   "es": "Vincular de nuevo",
--   "ar": "إعادة الإقران",
--   "fr": "Appairer à nouveau",
-+   "es": "Emparejar de nuevo",
-+   "ar": "إعادة الاقتران",
-+   "fr": "Associer à nouveau",
-    "bn": "আবার পেয়ার করুন",
--   "pt-BR": "Parear novamente",
--   "ru": "Выполнить сопряжение заново",
--   "id": "Pasangkan lagi",
-+   "pt-BR": "Parear de novo",
-+   "ru": "Сопрячь заново",
-+   "id": "Sandingkan ulang",
-    "de": "Erneut koppeln",
-    "tr": "Yeniden eşleştir",
-    "ko": "다시 페어링",
--   "ja": "再ペアリング"
-+   "ja": "もう一度ペアリング"
-   },
-   "Pairing again disconnects the phone that was paired.": {
-    "zh-Hans": "重新配对会断开之前已配对的手机。",
-@@ -9304,48 +9304,48 @@
-   },
-   "Show my plan usage on the phone": {
-    "zh-Hans": "在手机上显示我的套餐用量",
--   "hi": "फ़ोन पर मेरे प्लान का उपयोग दिखाएं",
--   "es": "Mostrar el uso de mi plan en el teléfono",
-+   "hi": "फ़ोन पर मेरे प्लान का उपयोग दिखाएँ",
-+   "es": "Mostrar en el teléfono el uso de mi plan",
-    "ar": "عرض استهلاك خطتي على الهاتف",
--   "fr": "Afficher l'utilisation de mon forfait sur le téléphone",
-+   "fr": "Afficher sur le téléphone l'utilisation de mon forfait",
-    "bn": "ফোনে আমার প্ল্যানের ব্যবহার দেখান",
--   "pt-BR": "Mostrar o uso do meu plano no telefone",
--   "ru": "Показывать расход моего тарифа на телефоне",
-+   "pt-BR": "Mostrar no celular o uso do meu plano",
-+   "ru": "Показывать на телефоне использование моего тарифа",
-    "id": "Tampilkan penggunaan paket saya di ponsel",
--   "de": "Meine Plannutzung auf dem Handy anzeigen",
-+   "de": "Meine Plannutzung auf dem Telefon anzeigen",
-    "tr": "Plan kullanımımı telefonda göster",
--   "ko": "폰에 내 플랜 사용량 표시",
--   "ja": "スマートフォンにプランの使用量を表示"
-+   "ko": "휴대폰에서 요금제 사용량 보기",
-+   "ja": "プランの使用状況をスマートフォンに表示"
-   },
-   "Show pairing code": {
-    "zh-Hans": "显示配对码",
--   "hi": "पेयरिंग कोड दिखाएं",
--   "es": "Mostrar código de vinculación",
--   "ar": "إظهار رمز الإقران",
--   "fr": "Afficher le code d'appairage",
-+   "hi": "पेयरिंग कोड दिखाएँ",
-+   "es": "Mostrar código de emparejamiento",
-+   "ar": "إظهار رمز الاقتران",
-+   "fr": "Afficher le code d'association",
-    "bn": "পেয়ারিং কোড দেখান",
-    "pt-BR": "Mostrar código de pareamento",
-    "ru": "Показать код сопряжения",
--   "id": "Tampilkan kode pemasangan",
-+   "id": "Tampilkan kode penyandingan",
-    "de": "Kopplungscode anzeigen",
-    "tr": "Eşleştirme kodunu göster",
-    "ko": "페어링 코드 보기",
-    "ja": "ペアリングコードを表示"
-   },
-   "Show session details on the phone": {
-    "zh-Hans": "在手机上显示会话详情",
--   "hi": "फ़ोन पर सेशन का विवरण दिखाएं",
--   "es": "Mostrar los detalles de las sesiones en el teléfono",
--   "ar": "عرض تفاصيل الجلسات على الهاتف",
--   "f
+@@ -28,6 +28,8 @@ Fixes:
+ 
+ ## Windows and Linux 0.6.0 — Unreleased
+ 
++- **Start a Claude Code session from the island** — the terminal tab in the island's header: pick the project (the folders your sessions ran in, or any folder), say what Claude should do, and your terminal opens there with Claude Code and your words. Windows Terminal or PowerShell on Windows; your own terminal on Linux. The prompt is never written into a command line
++- **Drop a file on a session** — drag a file over the island and let go on one of the sessions listed on the right of the drop card: its window comes forward and the file's path lands in its prompt
+ - **Approve Antigravity commands from the island** *(optional)* — the Mac's setting comes to Windows and Linux: turn on Settings → Agents → Antigravity → **Approve commands from the notch**, and a shell command that none of your Antigravity rules covers waits for you on the approval card: **Allow**, **Deny**, or **Reply in terminal** for Antigravity's own prompt. Commands your rules allow or deny are left to Antigravity, and with no answer in 2 min, or Coucou closed, Antigravity asks in its terminal as before. Reinstall the Antigravity hooks once, then restart Antigravity: its command hook now waits up to 2 min
+ - **Approve OpenCode from the island** — OpenCode's permission requests get Allow and Deny on the island; with no click, OpenCode asks as usual (#442 by @ValentinoMartz)
+ - **A card answered in the terminal goes away** — allow or deny in the terminal (or Claude's app) and the island's card closes by itself (#740 by @arnavaggarwal-dev)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1054** (2026-11-03): Android 0.4.0: the Mac can link with Coucou for Android (@Rhytam23)
-- **PR #1052** (2026-11-03): Flow (Mac): mute while dictating, Copy card, custom shortcut (@Louis-CFM)
-- **PR #1050** (closed): Volume and brightness keys in the notch, with Mochi (GitHub build) Feature/system hud (@CristianMusto)
-- **PR #1048** (2026-11-03): Windows and Linux 0.5.9: the island never disappears, dictation keeps your language, your own key, silence while you speak (@Louis-CFM)
-- **PR #1033** (2026-10-31): Windows and Linux: Claude API models and Flow save errors (#1000, #1003 by @lazarevtill) (@Louis-CFM)
-- **PR #1020** (closed): File shelf: dropped files wait in the notch (@CyberAakash)
+- **PR #1082** (closed): Worktree nexisland plan (@Snzy09)
+- **PR #1075** (2026-11-06): Coucou 0.6 (work in progress) (@Louis-CFM)
+- **PR #1070** (2026-11-06): Windows: WhatsApp's ↗ opens WhatsApp Desktop, at the open chat (@Joshuabarradas234)
+- **PR #1066** (2026-11-06): Mac: ⌘⇧2 takes the whole screen, copied, with a thumbnail to drag (@Louis-CFM)
+- **PR #1063** (2026-11-06): Flow: one press of the key starts hands-free (@Brezinben)
+- **PR #1062** (2026-11-06): Open terminal: select the session's pane in herdr (@Brezinben)
 
 ---
 
@@ -2383,13 +2814,13 @@ Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. the Mac and Windows checks: Sendable identity capture, Windows strings shared wi
+## X. 0.6: small fixes on merged pull requests
 
 **RULE**:
 When implementing operations in `NotchBuddy/Resources/Localizable.xcstrings`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Louis-CFM/coucou. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d8a93fc3`: the Mac and Windows checks: Sendable identity capture, Windows strings shared with the Mac catalog. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `56a4f76d`: 0.6: small fixes on merged pull requests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `NotchBuddy/Resources/Localizable.xcstrings`.
@@ -2397,56 +2828,64 @@ Subsystems managing Swift data structures, boundary deserialization, API parsing
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-            "value" : "Android-Telefon"
-            "value" : "Android 휴대폰"
-            "value" : "Celular Android"
-            "value" : "إظهار رمز الاقتران"
-            "value" : "Mostrar código de emparejamiento"
-            "value" : "Afficher le code d'association"
-            "value" : "पेयरिंग कोड दिखाएँ"
-            "value" : "Tampilkan kode penyandingan"
-            "value" : "Скопировать ссылку"
-            "value" : "إعادة الاقتران"
-            "value" : "Emparejar de nuevo"
-            "value" : "Associer à nouveau"
-            "value" : "Sandingkan ulang"
-            "value" : "もう一度ペアリング"
-            "value" : "Parear de novo"
-            "value" : "Сопрячь заново"
-            "value" : "إظهار تفاصيل الجلسة على الهاتف"
-            "value" : "ফোনে সেশনের বিবরণ দেখান"
-            "value" : "Sitzungsdetails auf dem Telefon anzeigen"
-            "value" : "Mostrar los detalles de la sesión en el teléfono"
-            "value" : "Afficher les détails de la session sur le téléphone"
-            "value" : "फ़ोन पर सत्र का विवरण दिखाएँ"
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "كما سُمع"
+          }
+        },
+        "bn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "যেমন শোনা গেছে"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wie gehört"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tal como se oyó"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "जैसा सुना गया"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seperti yang terdengar"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "聞き取ったまま"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Como foi ouvido"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "tr
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-            "value" : "Android-Handy"
-            "value" : "Android 폰"
-            "value" : "Telefone Android"
-            "value" : "إظهار رمز الإقران"
-            "value" : "Mostrar código de vinculación"
-            "value" : "Afficher le code d'appairage"
-            "value" : "पेयरिंग कोड दिखाएं"
-            "value" : "Tampilkan kode pemasangan"
-            "value" : "Копировать ссылку"
-            "value" : "إعادة الإقران"
-            "value" : "Vincular de nuevo"
-            "value" : "Appairer à nouveau"
-            "value" : "Pasangkan lagi"
-            "value" : "再ペアリング"
-            "value" : "Parear novamente"
-            "value" : "Выполнить сопряжение заново"
-            "value" : "عرض تفاصيل الجلسات على الهاتف"
-            "value" : "ফোনে সেশনের বিস্তারিত দেখান"
-            "value" : "Sitzungsdetails auf dem Handy anzeigen"
-            "value" : "Mostrar los detalles de las sesiones en el teléfono"
-            "value" : "Afficher les détails des sessions sur le téléphone"
-            "value" : "फ़ोन पर सेशन का विवरण दिखाएं"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d8a93fc3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `56a4f76d` are properly handled with clean fallback behavior.

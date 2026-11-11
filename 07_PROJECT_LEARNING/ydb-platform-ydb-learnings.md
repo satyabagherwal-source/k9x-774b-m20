@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md`  
 > **Source**: github ([https://github.com/ydb-platform/ydb](https://github.com/ydb-platform/ydb))  
-> **Source Version**: `c26894aa`  
+> **Source Version**: `f5af00bb`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T23:49:02.550Z  
+> **Timestamp**: 2026-11-09T21:27:03.494Z  
 > **Learning ID**: `learn-github-ydb-platform-ydb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ydb-platform/ydb](https://github.com/ydb-platform/ydb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T23:49:02.542Z  
+> **Harvest Timestamp**: 2026-11-09T21:27:03.132Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: YDB is an open source Distributed SQL Database that combines high availability and scalability with strong consistency and ACID transactions
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4786 stars
+- **Stars / Engagement**: 4787 stars
 
 ---
 
@@ -2067,516 +2067,502 @@ impl Remappable for noncontiguous::NFA {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5da12a8a` (2026-11-05)
-**Commit Message**: fix offsets replication for consumers with availability period (#58279)
+### Incident Patch 1: `0ef48dff` (2026-11-09)
+**Commit Message**: Fix Hive bridge drain recovery and per-DC followers (#56221)
 
-**File**: `ydb/core/persqueue/pqtablet/partition/partition.cpp` (modified, +2/-1)
+Co-authored-by: mregrock <[REDACTED_EMAIL]>
+
+**File**: `ydb/core/mind/hive/bridge_pile_info.h` (modified, +1/-0)
 ```diff
-@@ -4148,7 +4148,7 @@ void TPartition::OnProcessTxsAndUserActsWriteComplete(const TActorContext& ctx)
-     for (auto& user : AffectedUsers) {
-         if (auto* actual = GetPendingUserIfExists(user)) {
-             TUserInfo& userInfo = UsersInfoStorage->GetOrCreate(user, ctx);
--            bool offsetHasChanged = (userInfo.Offset != actual->Offset);
-+            const auto previousOffset = userInfo.Offset;
-             if (userInfo.Type == NKikimrPQ::TPQTabletConfig::CONSUMER_TYPE_REPLICATION
-                 && !actual->Session.empty() && actual->ReadSessionActor
-                 && (userInfo.Session != actual->Session || userInfo.Generation != actual->Generation
-@@ -4181,6 +4181,7 @@ void TPartition::OnProcessTxsAndUserActsWriteComplete(const TActorContext& ctx)
-                 userInfo.Offset = GetStartOffset();
+@@ -10,6 +10,7 @@ struct TBridgePileInfo {
+     bool Drain = false;
+     TVector<TActorId> DrainInitiators; // Currently always empty
+     THiveDrain* DrainActor = nullptr;
++    bool DrainRetry = false;
+ 
+     TBridgePileInfo(const TBridgeInfo::TPile& wardenPileInfo)
+         : Id(wardenPileInfo.BridgePileId)
+```
+
+**File**: `ydb/core/mind/hive/drain.cpp` (modified, +87/-31)
+```diff
+@@ -18,8 +18,7 @@ class THiveDrain : public NActors::TActorBootstrapped<THiveDrain>, public ISubAc
+     ui32 KickInFlight;
+     ui32 Movements;
+     TDrainTarget Target;
+-    const std::unordered_set<TNodeId> Nodes; // nodes of the target at the start of the drain
+-    const std::unordered_set<TNodeId> ReservedNodes; // the ones the drain has added to BalancerNodes
++    const std::unordered_set<TNodeId> Nodes;
+     std::unordered_map<TNodeId, bool> DownBefore;
+     TActorId DomainHivePipeClient;
+     TTabletId DomainHiveId = 0;
+@@ -37,11 +36,8 @@ class THiveDrain : public NActors::TActorBootstrapped<THiveDrain>, public ISubAc
+             NTabletPipe::CloseClient(SelfId(), DomainHivePipeClient);
+         }
+         Hive->RemoveSubActor(this);
+-        // the nodes are released as they were reserved, as the target pile may have changed or even gone meanwhile
+-        for (const TNodeId nodeId : ReservedNodes) {
+-            Hive->BalancerNodes.erase(nodeId);
+-        }
+         for (const TNodeId nodeId : Nodes) {
++            Hive->BalancerNodes.erase(nodeId);
+             if (auto node = Hive->FindNode(nodeId); node && node->DrainActor == this) {
+                 node->DrainActor = nullptr;
              }
- 
-+            const bool offsetHasChanged = userInfo.Offset != previousOffset;
-             if (offsetHasChanged && !userInfo.UpdateTimestampFromCache()) {
-                 userInfo.ActualTimestamps = false;
-                 ReadTimestampForOffset(user, userInfo, ctx);
-```
-
-**File**: `ydb/core/persqueue/ut/partition_ut.cpp` (modified, +79/-0)
-```diff
-@@ -321,6 +321,7 @@ class TPartitionFixture : public NUnitTest::TBaseFixture {
-                        bool strict = false);
-     void SendGetOffset(ui64 cookie,
-                        const TString& clientId);
-+    void TestReplicateOffsetClampedToStart(bool important);
-     void WaitCmdWrite(const TCmdWriteMatcher& matcher = {});
-     void WaitCmdWriteTx(const TCmdWriteTxMatcher& matcher = {});
-     void SendCmdWriteResponse(NMsgBusProxy::EResponseStatus status);
-@@ -3283,6 +3284,84 @@ Y_UNIT_TEST_F(ReplicationDataSentOnlyForSessionStartAndChangedOffsets, TPartitio
-     Ctx->Runtime->SetObserverFunc(TTestActorRuntimeBase::DefaultObserverFunc);
- }
- 
-+void TPartitionFixture::TestReplicateOffsetClampedToStart(bool important)
-+{
-+    const TConfigParams initialConfig{.Version = 1, .Consumers = {
-+        {.Consumer = "reader", .Offset = 5}, {.Consumer = "replication"}}};
-+    auto* partition = CreatePartition({.Partition = TPartitionId{0}, .Begin = 5, .End = 10,
-+        .Config = initialConfig, .FillHead = true}, initialConfig);
-+    Config.SetVersion(2);
-+    GetConsumer(Config, "replication")->SetType(NKikimrPQ::TPQTabletConfig::CONSUMER_TYPE_REPLICATION);
-+    if (important) {
-+        GetConsumer(Config, "reader")->SetImportant(true);
-+    } else {
-+        GetConsumer(Config, "reader")->SetAvailabilityPeriodMs(TDuration::Days(1).MilliSeconds());
-+    }
-+    SendEvent(new TEvPQ::TEvChangePartitionConfig(TopicConverter, Config));
-+    WaitCmdWrite();
-+    SendCmdWriteResponse(NMsgBusProxy::MSTATUS_OK);
-+    WaitPartitionConfigChanged();
-+
-+    TVector<NKikimrPQ::TReplicationDataPayload> payloads;
-+    Ctx->Runtime->SetObserverFunc([&](TAutoPtr<IEventHandle>& event) {
-+        if (event->GetTypeRewrite() == TEvPersQueue::TEvReplicationData::EventType) {
-+            auto& payload = payloads.emplace_back();
-+            UNIT_ASSERT(payload.ParseFromString(event->Get<TEvPersQueue::TEvReplicationData>()->Record.GetPayload()));
-+            return TTestActorRuntimeBase::EEventAction::DROP;
-+        }
-+        return TTestActorRuntimeBase::EEventAction::PROCESS;
-+    });
-+
-+    auto event = MakeHolder<TEvPQ::TEvSetClientInfo>(101, "replication", 0, "replication-session",
-+        1, 1, 1, Ctx->Edge, TEvPQ::TEvSetClientInfo::ESCI_CREATE_SESSION);
-+    event->ReadSessionActor = Ctx->Runtime->AllocateEdgeActor();
-+    SendEvent(event.Release());
-+    WaitCmdWrite();
-+    SendCmdWriteResponse(NMsgBusProxy::MSTATUS_OK);
-+    WaitProxyResponse({.Cookie = 101});
-+    Ctx->Runtime->SimulateSleep(TDuration::MilliSeconds(100));
-+    UNIT_ASSERT_VALUES_EQUAL(payloads.size(), 1);
-+    UNIT_ASSERT_VALUES_EQUAL(payloads.back().GetOffsetsByConsumers().at("reader"), 5);
-+
-+    // Model retention moving the lower boundary past the saved consumer offset.
-+    auto& compactionEncoder = TPartitionTestWrapper::CompactionBlobEncoder(*partition);
-+    auto& encoder = compactionEncoder.IsEmpty()
-+        ? TPartitionTestWrapper::BlobEncoder(*partition) : compactionEncoder;
-+    encoder.StartOffset = 7;
-+    UNIT_ASSERT_VALUES_EQUAL(TPartitionTestWrapper::GetStartOffset(*partition), 7);
-+    UNIT_ASSERT_VALUES_EQUAL(TPartitionTestWrapper::GetUserInfo(*partition, "reader")->Offset, 5);
-+
-+    // Creating a reader session does not change the pending offset. The effective
-+    // offset is raised to StartOffset only when applying the persisted user info.
-+    SendCreateSession(102, "reader", "reader-session", 1, 1);
-+    WaitCmdWrite();
-+    SendCmdWriteResponse(NMsgBusProxy::MSTATUS_OK);
-+    WaitProxyResponse({.Cookie = 102});
-+    Ctx->Runtime->SimulateSleep(TDuration::MilliSeconds(100));
-+    UNIT_ASSERT_VALUES_EQUAL(TPartitionTestWrapper::GetUserInfo(*partition, "reader")->Offset, 7);
-+    UNIT_ASSERT_VALUES_EQUAL(payloads.size(), 2);
-+    UNIT_ASSERT_VALUES_EQUAL(payloads.back().GetOffsetsByConsumers().size(), 1);
-+    UNIT_ASSERT_VALUES_EQUAL(payloads.back().GetOffsetsByConsumers().at("reader"), 7);
-+
-+    SendSetOffset(103, "reader", 7, "reader-session");
-+    WaitCmdWrite();
-+    SendCmdWriteResponse(NMsgBusProxy::MSTATUS_OK);
-+    WaitProxyResponse({.Cookie = 103});
-+    Ctx->Runtime->SimulateSleep(TDuration::MilliSeconds(100));
-+    UNIT_ASSERT_VALUES_EQUAL(payloads.size(), 2);
-+    Ctx->Runtime->SetObserverFunc(TTestActorRuntimeBase::DefaultObserverFunc);
-+}
-+
-+Y_UNIT_TEST_F(ReplicationDataIncludesOffsetClampedForAvailabilityPeriod, TPartitionFixture)
-+{
-+    TestReplicateOffsetClampedToStart(false);
-+}
-+
-+Y_UNIT_TEST_F(ReplicationDataIncludesOffsetClampedForImportantConsumer, TPartitionFixture)
-+{
-+    TestReplicateOffsetClampedToStart(true);
-+}
-+
- void TPartitionFixture::TestRestoreReadSessionActor(bool hasDataRequest)
- {
-     const TString session = "replication-session";
-```
-
----
-
-### Incident Patch 2: `5e498b4f` (2026-11-05)
-**Commit Message**: Fix workload vector fp8 (#58248)
-
-**File**: `ydb/library/workload/vector/ut/file_import_ut.cpp` (modified, +23/-12)
-```diff
-@@ -5,6 +5,7 @@
- #include <contrib/libs/apache/arrow/cpp/src/arrow/array/builder_binary.h>
- #include <contrib/libs/apache/arrow/cpp/src/arrow/array/builder_nested.h>
- #include <contrib/libs/apache/arrow/cpp/src/arrow/array/builder_primitive.h>
-+#include <contrib/libs/apache/arrow/cpp/src/arrow/csv/api.h>
- #include <contrib/libs/apache/arrow/cpp/src/arrow/io/memory.h>
- #include <contrib/libs/apache/arrow/cpp/src/arrow/ipc/dictionary.h>
- #include <contrib/libs/apache/arrow/cpp/src/arrow/ipc/reader.h>
-@@ -50,32 +51,44 @@ namespace {
- 
- Y_UNIT_TEST_SUITE(VectorWorkloadFileImport) {
- 
--    Y_UNIT_TEST_TWIN(CsvFloatListsPreserveLegacyFormat, Directory) {
-+    Y_UNIT_TEST_QUAD(CsvFloatListsUseSelectedFormat, Directory, Tsv) {
-         TTempDir directory;
--        auto file = TTempFileHandle::InDir(directory.Path(), "vectors", "csv");
-+        const char* format = Tsv ? "tsv" : "csv";
-+        auto file = TTempFileHandle::InDir(directory.Path(), "vectors", format);
-         {
-             TFileOutput output(file.Name());
--            output << "1,\"[1 0 2.5]\"\n";
-+            output << (Tsv ? "1\t[1, 0, 2.5]\n" : "1,\"[1 0 2.5]\"\n");
+@@ -72,15 +68,21 @@ class THiveDrain : public NActors::TActorBootstrapped<THiveDrain>, public ISubAc
+             {"selfId", SelfId()},
+             {"movements", Movements});
+         for (auto [nodeId, downBefore] : DownBefore) {
+-            TNodeInfo* nodeInfo = Hive->FindNode(nodeId);
+-            if (nodeInfo != nullptr) {
+-                if (!downBefore) {
+-                    nodeInfo->SetDown(false, EHiveEventReason::DrainFinished);
+-                }
++            if (TNodeInfo* nodeInfo = Hive->FindNode(nodeId); nodeInfo != nullptr && !downBefore) {
++                nodeInfo->SetDown(false, EHiveEventReason::DrainFinished);
+             }
          }
- 
-         for (const auto& vector : VectorCases) {
-             TVectorWorkloadParams params;
-             params.KeyColumns = {"id"};
-             params.EmbeddingColumn = "embedding";
--            params.VectorOpts.VectorType = vector.Type;
--            params.VectorOpts.VectorDimension = 3;
-             TWorkloadVectorFilesDataInitializer initializer(params);
-             NLastGetopt::TOpts opts;
-             initializer.ConfigureOpts(opts);
--            const char* argv[] = {"files", "--input", Directory ? directory.Name().c_str() : file.Name().c_str(), "--format", "csv"};
-+            params.ConfigureOpts(opts, TWorkloadParams::ECommandType::Import, 0);
-+            const char* argv[] = {"files", "--input", Directory ? directory.Name().c_str() : file.Name().c_str(), "--format", format,
-+                "--vector-type", vector.Type, "--vector-dimension", "3"};
-             NLastGetopt::TOptsParseResultException parsed(&opts, Y_ARRAY_SIZE(argv), argv);
-             const auto generators = initializer.GetBulkInitialData();
-             UNIT_ASSERT_VALUES_EQUAL(generators.size(), 1);
-             const auto portions = generators.front()->GenerateDataPortion();
-             UNIT_ASSERT_VALUES_EQUAL(portions.size(), 1);
-             auto* csv = std::get_if<IBulkDataGenerator::TDataPortion::TCsv>(&portions.front()->MutableData());
-             UNIT_ASSERT(csv);
--            UNIT_ASSERT_C(csv->Data.Contains(FloatEmbedding), vector.Type);
-+            const auto input = std::make_shared<arrow::io::BufferReader>(arrow::util::string_view(csv->Data.data(), csv->Data.size()));
-+            auto convertOptions = arrow::csv::ConvertOptions::Defaults();
-+            convertOptions.column_types["embedding"] = arrow::binary();
-+            auto parseOptions = arrow::csv::ParseOptions::Defaults();
-+            parseOptions.newlines_in_values = true;
-+            const auto reader = arrow::csv::TableReader::Make(arrow::io::default_io_context(), input,
-+                arrow::csv::ReadOptions::Defaults(), parseOptions, convertOptions).ValueOrDie();
-+            const auto table = reader->Read().ValueOrDie();
-+            UNIT_ASSERT_VALUES_EQUAL(table->num_rows(), 1);
-+            const auto column = std::static_pointer_cast<arrow::BinaryArray>(table->GetColumnByName("embedding")->chunk(0));
-+            const auto bytes = column->GetView(0);
-+            UNIT_ASSERT_VALUES_EQUAL_C(TStringBuf(bytes.data(), bytes.size()), vector.Bytes, vector.Type);
-             UNIT_ASSERT(generators.front()->GenerateDataPortion().empty());
-         }
-     }
-@@ -114,12 +127,11 @@ Y_UNIT_TEST_SUITE(VectorWorkloadFileImport) {
-             TVectorWorkloadParams params;
-             params.KeyColumns = {"id"};
-             params.EmbeddingColumn = "embedding";
--            params.VectorOpts.VectorType = vector.Type;
--            params.VectorOpts.VectorDimension = 3;
-             TWorkloadVectorFilesDataInitializer initializer(params);
-             NLastGetopt::TOpts opts;
-             initializer.ConfigureOpts(opts);
--            const char* argv[] = {"files", "--input", file.Name().c_str()};
-+            params.ConfigureOpts(opts, TWorkloadParams::ECommandType::Import, 0);
-+            const char* argv[] = {"files", "--input", file.Name().c_str(), "--vector-type", vector.Type, "--vector-dimension", "3"};
-             NLastGetopt::TOptsParseResultException parsed(&opts, Y_ARRAY_SIZE(argv), argv);
-             const auto generators = initializer.GetBulkInitialData();
-             UNIT_ASSERT_VALUES_EQUAL(generators.size(), 1);
-@@ -136,8 +148,7 @@ Y_UNIT_TEST_SUITE(VectorWorkloadFileImport) {
-             const auto column = std::static_pointer_cast<arrow::BinaryArray>(batch->GetColumnByName("embedding"));
-             UNIT_ASSERT(column);
-             const auto bytes = column->GetView(0);
--            cons
-```
-
-**File**: `ydb/library/workload/vector/ut/float8_ut.cpp` (modified, +4/-4)
-```diff
-@@ -48,14 +48,14 @@ Y_UNIT_TEST_SUITE(VectorWorkload) {
-     Y_UNIT_TEST_QUAD(Float8BulkData, E5M2, Prefixed) {
-         using T = std::conditional_t<E5M2, TFloat8E5M2, TFloat8E4M3>;
-         TVectorWorkloadParams params;
--        params.VectorOpts.VectorType = E5M2 ? "float8_e5m2" : "float8_e4m3";
--        params.VectorOpts.VectorDimension = 67;
--        params.KmeansTreePrefixed = Prefixed;
-         params.BulkSize = 3;
-         TWorkloadVectorGenerateDataInitializer initializer(params);
-         NLastGetopt::TOpts opts;
-         initializer.ConfigureOpts(opts);
--        const char* argv[] = {"generator", "--rows", "5", "--prefix-count", "2", "--seed", "42"};
-+        params.ConfigureOpts(opts, TWorkloadParams::ECommandType::Import, 0);
-+        const char* argv[] = {"generator", "--rows", "5", "--prefix-count", "2", "--seed", "42",
-+            "--vector-type", E5M2 ? "float8_e5m2" : "float8_e4m3", "--vector-dimension", "67",
-+            "--kmeans-tree-prefixed", Prefixed ? "1" : "0"};
-         NLastGetopt::TOptsParseResultException parsed(&opts, Y_ARRAY_SIZE(argv), argv);
-         const auto generators = initializer.GetBulkInitialData();
-         UNIT_ASSERT_VALUES_EQUAL(generators.size(), 1);
-```
-
-**File**: `ydb/library/workload/vector/ut/int4_ut.cpp` (modified, +7/-4)
-```diff
-@@ -145,6 +145,7 @@ Y_UNIT_TEST_SUITE(VectorWorkloadInt4) {
-     }
- 
-     Y_UNIT_TEST_QUAD(Int4CsvImport, Signed, Directory) {
-+        using T = NVectorDistance::NPrivate::TInt4<Signed>;
-         TTempDir directory;
-         auto file = TTempFileHandle::InDir(directory.Path(), "int4", "csv");
-         {
-@@ -168,14 +169,15 @@ Y_UNIT_TEST_SUITE(VectorWorkloadInt4) {
-         auto* csv = std::get_if<IBulkDataGenerator::TDataPortion::TCsv>(&portions.front()->MutableData());
-         UNIT_ASSERT(csv);
-         TStringBuilder expected;
--        NKnnVectorSerialization::TSerializer<float> serializer(&expected.Out);
-+        NKnnVectorSerialization::TSerializer<T> serializer(&expected.Out);
-         for (int value : {-9, 0, 19}) { serializer.HandleElement(value); }
-         serializer.Finish();
-         UNIT_ASSERT_STRING_CONTAINS(csv->Data, expected);
-         UNIT_ASSERT(generators.front()->GenerateDataPortion().empty());
-     }
- 
-     Y_UNIT_TEST_TWIN(Int4ParquetImport, Signed) {
-+        using T = NVectorDistance::NPrivate::TInt4<Signed>;
-         auto file = TTempFileHandle::InCurrentDir("int4", "parquet");
-         arrow::UInt64Builder ids;
-         UNIT_ASSERT(ids.Append(1).ok());
-@@ -223,10 +225,11 @@ Y_UNIT_TEST_SUITE(VectorWorkloadInt4) {
-         const auto column = std::static_pointer_cast<arrow::BinaryArray>(batch->GetColumnByName("embedding"));
-         UNIT_ASSERT(column);
-         const auto bytes = column->GetView(0);
--        NKnnVectorSerialization::TDeserializer<float> decoder(TStringBuf(bytes.data(), bytes.size()));
--        const float expected[] = {-9.0f, 0.0f, 19.0f};
-+        CheckInt4Embedding<T>(TStringBuf(bytes.data(), bytes.size()), 3);
-+        NKnnVectorSerialization::TDeserializer<T> decoder(TStringBuf(bytes.data(), bytes.size()));
-+        const int expected[] = {T::MinValue, 0, T::MaxValue};
-         size_t index = 0;
--        decoder.DoDeserialize([&](const float& value) { UNIT_ASSERT_VALUES_EQUAL(value, expected[index++]); });
-+        decoder.DoDeserialize([&](const T& value) { UNIT_ASSERT_VALUES_EQUAL(static_cast<int>(value), expected[index++]); });
-         UNIT_ASSERT_VALUES_EQUAL(index, 3);
-         UNIT_ASSERT(generators.front()->GenerateDataPortion().empty());
-     }
-```
-
-**File**: `ydb/library/workload/vector/vector_data_generator.cpp` (modified, +34/-9)
-```diff
-@@ -40,19 +40,44 @@ class TDataGeneratorWrapper final: public IBulkDataGenerator {
- private:
-     const std::shared_ptr<IBulkDataGenerator> InnerDataGenerator;
-     const TString EmbeddingColumnName;
-+    const TString VectorType;
- 
- private:
--    template <typename TProducer>
-+    template <typename T, typename TProducer>
-     TString SerializeEmbedding(TProducer&& produce) const {
--        // Preserve file-import compatibility: float lists use FloatVector for every
--        // requested vector type, including INT4/UINT4. Binary embeddings are passed through.
-         TStringBuilder buffer;
--        NKnnVectorSerialization::TSerializer<float> serializer(&buffer.Out);
-+        NKnnVectorSerialization::TSerializer<T> serializer(&buffer.Out);
-         produce([&](float value) { serializer.HandleElement(value); });
-         serializer.Finish();
-         return TString(buffer);
-     }
- 
-+    template <typename TProducer>
-+    TString SerializeEmbedding(TProducer&& produce) const {
-+        if (VectorType == "float") {
-+            return SerializeEmbedding<float>(produce);
-+        } else if (VectorType == "float16") {
-+            return SerializeEmbedding<TFloat16>(produce);
-+        } else if (VectorType == "bfloat16") {
-+            return SerializeEmbedding<TBFloat16>(produce);
-+        } else if (VectorType == "float8_e4m3") {
-+            return SerializeEmbedding<TFloat8E4M3>(produce);
-+        } else if (VectorType == "float8_e5m2") {
-+            return SerializeEmbedding<TFloat8E5M2>(produce);
-+        } else if (VectorType == "uint4") {
-+            return SerializeEmbedding<TUint4>(produce);
-+        } else if (VectorType == "int4") {
-+            return SerializeEmbedding<TInt4>(produce);
-+        } else if (VectorType == "uint8") {
-+            return SerializeEmbedding<uint8_t>(produce);
-+        } else if (VectorType == "int8") {
-+            return SerializeEmbedding<int8_t>(produce);
-+        } else if (VectorType == "bit") {
-+            return SerializeEmbedding<bool>(produce);
-+        }
-+        ythrow yexception() << "Unknown vector type: " << VectorType;
+-        Hive->Execute(Hive->CreateSwitchDrainOff(Target, std::move(Settings), status, Movements + DomainMovements));
++        auto* switchDrainOff = Hive->CreateSwitchDrainOff(Target, status, Movements + DomainMovements);
++        // Complete may run synchronously and start another drain.
+         PassAway();
++        Hive->Execute(switchDrainOff);
 +    }
 +
-     static std::pair<std::shared_ptr<arrow::Schema>, std::shared_ptr<arrow::RecordBatch>> DeserializeArrow(TDataPortion::TArrow* data) {
-         arrow::ipc::DictionaryMemo dictionary;
- 
-@@ -247,10 +272,11 @@ class TDataGeneratorWrapper final: public IBulkDataGenerator {
++    bool IsTargetTablet(const TTabletInfo& tablet) const {
++        if (const auto* pileId = std::get_if<TBridgePileId>(&Target)) {
++            return tablet.Node != nullptr && Nodes.contains(tablet.Node->Id) && !tablet.GetNodeFilter().IsAllowedPile(*pileId);
++        }
++        return Nodes.contains(tablet.NodeId);
      }
  
- public:
--    TDataGeneratorWrapper(const std::shared_ptr<IBulkDataGenerator> innerDataGenerator, const TString embeddingColumnName)
-+    TDataGeneratorWrapper(const std::shared_ptr<IBulkDataGenerator> innerDataGenerator, const TString embeddingColumnName, const TString vectorType)
-         : IBulkDataGenerator(innerDataGenerator->GetName(), innerDataGenerator->GetSize())
-         , InnerDataGenerator(innerDataGenerator)
-         , EmbeddingColumnName(embeddingColumnName)
-+        , VectorType(vectorType)
+     bool CanKickNextTablet() const {
+@@ -92,7 +94,7 @@ class THiveDrain : public NActors::TActorBootstrapped<THiveDrain>, public ISubAc
+         while (CanKickNextTablet()) {
+             TFullTabletId tabletId = *NextKick;
+             TTabletInfo* tablet = Hive->FindTablet(tabletId);
+-            if (tablet != nullptr && tablet->IsAlive() && Nodes.contains(tablet->NodeId)) {
++            if (tablet != nullptr && tablet->IsAlive() && IsTargetTablet(*tablet)) {
+                 THive::TBestNodeResult result = Hive->FindBestNode(*tablet);
+                 if (std::holds_alternative<TNodeInfo*>(result)) {
+                     TNodeInfo* node = std::get<TNodeInfo*>(result);
+@@ -219,15 +221,13 @@ class THiveDrain : public NActors::TActorBootstrapped<THiveDrain>, public ISubAc
+         return NKikimrServices::TActivity::HIVE_BALANCER_ACTOR;
+     }
+ 
+-    THiveDrain(THive* hive, TDrainTarget target, TDrainSettings settings, std::unordered_set<TNodeId> nodes,
+-            std::unordered_set<TNodeId> reservedNodes)
++    THiveDrain(THive* hive, TDrainTarget target, TDrainSettings settings, std::unordered_set<TNodeId> nodes)
+         : Hive(hive)
+         , NextKick(Tablets.end())
+         , KickInFlight(0)
+         , Movements(0)
+         , Target(target)
+         , Nodes(std::move(nodes))
+-        , ReservedNodes(std::move(reservedNodes))
+         , Settings(std::move(settings))
      {}
  
-     virtual TDataPortions GenerateDataPortion() override {
-@@ -572,7 +598,7 @@ TBulkDataGeneratorList TWorkloadVectorFilesDataInitializer::DoGetBulkInitialData
-                     VectorParams.GetColumns(),
-                     TDataGenerator::EPortionSizeUnit::Line
-                 );
--                result.push_back(std::make_shared<TDataGeneratorWrapper>(basicDataGenerator, EmbeddingColumnName));
-+                result.push_back(std::make_shared<TDataGeneratorWrapper>(basicDataGenerator, EmbeddingColumnName, VectorParams.VectorOpts.VectorType));
-             }
-         }
-         return result;
-@@ -594,13 +620,12 @@ TBulkDataGeneratorList TWorkloadVectorFilesDataInitializer::DoGetBulkInitialData
-     );
+@@ -299,25 +299,81 @@ class THiveDrain : public NActors::TActorBootstrapped<THiveDrain>, public ISubAc
+ };
  
-     return {
--        std::make_shared<TDataGeneratorWrapper>(basicDataGenerator, EmbeddingColumnName)
-+        std::make_shared<TDataGeneratorWrapper>(basicDataGenerator, EmbeddingColumnName, VectorParams.VectorOpts.VectorType)
-     };
- }
- 
- TWorkloadVectorGenerateDataInitializer::TWorkloadVectorGenerateDataInitializer(const TVectorWorkloadParams& params)
-     : TWorkloadVectorDataInitializerBase("generator", "Generate random vectors and build a vector index", params)
--    , VectorOpts(params.VectorOpts)
- { }
- 
- void TWorkloadVectorGenerateDataInitializer::ConfigureOpts(NLastGetopt::TOpts& opts) {
-@@ -621,7 +646,7 @@ void TWorkloadVectorGenerateDataInitializer::ConfigureOpts(NLastGetopt::TOpts& o
- 
- TBulkDataGeneratorList TWorkloadVectorGenerateDataInitializer::DoGetBulkInitialData() {
-     Cout << "Using random seed: " << RandomSeed << Endl;
--    return {std::make_shared<TRandomDataGenerator>(VectorParams, VectorOpts, RowCount, PrefixCount, RandomSeed, StateProcessor.Get())};
-+    return {std::make_shared<TRandomDataGenerator>(VectorParams, VectorParams.VectorOpts, RowCount, PrefixCount, RandomSeed, StateProcessor.Get())};
- }
- 
- } // namespace NYdbWorkload
+ THiveDrain* THive::StartHiveDrain(TDrainTarget target, TDrainSettings settings) {
+-    TGetNodes getNodes{this};
+-    std::unordered_set<TNodeId> nodes = std::visit(getNodes, target);
+-    std::unordered_set<TNodeId> reservedNodes;
+-    for (const TNodeId nodeId : nodes) {
+-        if (BalancerNodes.emplace(nodeId).second) {
+-            reservedNodes.insert(nodeId);
+-        }
+-    }
+-    if (!reservedNodes.empty()) {
+-        auto* balancer = new THiveDrain(this, target, std::move(settings), std::move(nodes), std::move(reservedNodes));
+-        SubActors.emplace_back(balancer);
+-        RegisterWithSameMailbox(balancer);
+-        return balancer;
+-    } else {
+-        YDB_LOG_WARN("Cannot start drain: target is already busy",
++    std::unordered_set<TNodeId> nodes = std::visit(TGetNodes{this}, target);
++    std::erase_if(nodes, [this](TNodeId nodeId) { return !BalancerNodes.emplace(no
 ```
 
-**File**: `ydb/library/workload/vector/vector_data_generator.h` (modified, +0/-1)
+**File**: `ydb/core/mind/hive/drain.h` (modified, +1/-2)
 ```diff
-@@ -32,7 +32,6 @@ class TWorkloadVectorFilesDataInitializer : public TWorkloadVectorDataInitialize
+@@ -19,11 +19,10 @@ struct TGetNodes {
+         return {nodeId};
+     }
  
- class TWorkloadVectorGenerateDataInitializer : public TWorkloadVectorDataInitializerBase {
- private:
--    const NVector::TVectorOpts& VectorOpts;
-     size_t RowCount = 10000;
-     size_t PrefixCount = 100;
-     uint32_t RandomSeed = 42;
+-    // Scans all nodes: called only to start a pile drain, so the overhead is negligible
+     std::unordered_set<TNodeId> operator()(TBridgePileId pileId) const {
+         std::unordered_set<TNodeId> nodes;
+         for (const auto& [nodeId, node] : Hive->Nodes) {
+-            if (node.BridgePileId == pileId) {
++            if (node.BridgePileId == pileId && !node.Drain) {
+                 nodes.insert(nodeId);
+             }
+         }
+```
+
+**File**: `ydb/core/mind/hive/follower_group.h` (modified, +6/-4)
+```diff
+@@ -35,21 +35,23 @@ struct TFollowerGroup {
+         FollowerCount = followerGroup.GetFollowerCount();
+         AllowLeaderPromotion = followerGroup.GetAllowLeaderPromotion();
+         AllowClientRead = followerGroup.GetAllowClientRead();
+-        RequireAllDataCenters = followerGroup.GetRequireAllDataCenters();
++        SetRequireAllDataCenters(followerGroup.GetRequireAllDataCenters());
+         {
+             const auto& allowedNodes(followerGroup.GetAllowedNodeIDs());
+             std::copy(allowedNodes.begin(), allowedNodes.end(), std::back_inserter(NodeFilter.AllowedNodes));
+         }
+         NodeFilter.AllowedDataCenters.MutableDataCenter()->CopyFrom(followerGroup.GetAllowedDataCenters());
+-        if (RequireAllDataCenters) {
+-            NodeFilter.MustBePrimaryPile = false;
+-        }
+         LocalNodeOnly = followerGroup.GetLocalNodeOnly();
+         RequireDifferentNodes = followerGroup.GetRequireDifferentNodes();
+         FollowerCountPerDataCenter = followerGroup.GetFollowerCountPerDataCenter();
+         return *this;
+     }
+ 
++    void SetRequireAllDataCenters(bool requireAllDataCenters) {
++        RequireAllDataCenters = requireAllDataCenters;
++        NodeFilter.MustBePrimaryPile = !RequireAllDataCenters;
++    }
++
+     ui32 GetRawFollowerCount() const {
+         return FollowerCount;
+     }
+```
+
+**File**: `ydb/core/mind/hive/hive_events.h` (modified, +3/-0)
+```diff
+@@ -43,6 +43,7 @@ struct TEvPrivate {
+         EvReassignInactiveGroupsComplete,
+         EvMoveDataComplete,
+         EvLogHangingRequests,
++        EvProcessPileDrains,
+         EvEnd
+     };
+ 
+@@ -62,6 +63,8 @@ struct TEvPrivate {
+ 
+     struct TEvPostponeProcessBootQueue : TEventLocal<TEvPostponeProcessBootQueue, EvPostponeProcessBootQueue> {};
+ 
++    struct TEvProcessPileDrains : TEventLocal<TEvProcessPileDrains, EvProcessPileDrains> {};
++
+     struct TEvProcessDisconnectNode : TEventLocal<TEvProcessDisconnectNode, EvProcessDisconnectNode> {
+         ui32 NodeId;
+         TActorId Local;
+```
+
+**File**: `ydb/core/mind/hive/hive_impl.cpp` (modified, +2/-0)
+```diff
+@@ -3808,6 +3808,7 @@ void THive::ProcessEvent(std::unique_ptr<IEventHandle> event) {
+         hFunc(TEvInterconnect::TEvNodesInfo, Handle);
+         hFunc(TEvents::TEvUndelivered, Handle);
+         hFunc(TEvPrivate::TEvProcessBootQueue, Handle);
++        hFunc(TEvPrivate::TEvProcessPileDrains, Handle);
+         hFunc(TEvPrivate::TEvPostponeProcessBootQueue, Handle);
+         hFunc(TEvPrivate::TEvProcessPendingOperations, Handle);
+         hFunc(TEvPrivate::TEvProcessDisconnectNode, Handle);
+@@ -3929,6 +3930,7 @@ STFUNC(THive::StateWork) {
+         fFunc(TEvInterconnect::TEvNodesInfo::EventType, EnqueueIncomingEvent);
+         fFunc(TEvents::TEvUndelivered::EventType, EnqueueIncomingEvent);
+         fFunc(TEvPrivate::TEvProcessBootQueue::EventType, EnqueueIncomingEvent);
++        fFunc(TEvPrivate::TEvProcessPileDrains::EventType, EnqueueIncomingEvent);
+         fFunc(TEvPrivate::TEvPostponeProcessBootQueue::EventType, EnqueueIncomingEvent);
+         fFunc(TEvPrivate::TEvProcessPendingOperations::EventType, EnqueueIncomingEvent);
+         fFunc(TEvPrivate::TEvProcessDisconnectNode::EventType, EnqueueIncomingEvent);
+```
+
+**File**: `ydb/core/mind/hive/hive_impl.h` (modified, +6/-1)
+```diff
+@@ -272,6 +272,9 @@ class THive : public TActor<THive>, public TTabletExecutedFlat, public THiveShar
+     void LogBalancerNotStarted(const TString& balancerType, EBalancerSuppressReason reason);
+     bool StartHiveBalancer(TBalancerSettings&& settings);
+     THiveDrain* StartHiveDrain(TDrainTarget target, TDrainSettings settings);
++    void StartPileDrain(TBridgePileInfo& pile);
++    bool HasTabletsToDrain(TBridgePileId pileId) const;
++    void ProcessPileDrains();
+     void StartHiveFill(TNodeId nodeId, const TActorId& initiator);
+     bool StartHiveStorageBalancer(TStorageBalancerSettings settings);
+     // starts a new reassign for every tablet in the list
+@@ -328,7 +331,7 @@ class THive : public TActor<THive>, public TTabletExecutedFlat, public THiveShar
+     ITransaction* CreateReleaseTabletsReply(TEvHive::TEvReleaseTabletsReply::TPtr event);
+     ITransaction* CreateConfigureSubdomain(TEvHive::TEvConfigureHive::TPtr event);
+     ITransaction* CreateSwitchDrainOn(TNodeId nodeId, TDrainSettings settings, const TActorId& initiator, ui64 seqNo = 0, ui64 cookie = 0);
+-    ITransaction* CreateSwitchDrainOff(TDrainTarget target, TDrainSettings settings, NKikimrProto::EReplyStatus status, ui32 movements);
++    ITransaction* CreateSwitchDrainOff(TDrainTarget target, NKikimrProto::EReplyStatus status, ui32 movements);
+     ITransaction* CreateTabletOwnersReply(TEvHive::TEvTabletOwnersReply::TPtr event);
+     ITransaction* CreateRequestTabletOwners(TEvHive::TEvRequestTabletOwners::TPtr event);
+     ITransaction* CreateUpdateTabletsObject(TEvHive::TEvUpdateTabletsObject::TPtr event);
+@@ -417,6 +420,7 @@ class THive : public TActor<THive>, public TTabletExecutedFlat, public THiveShar
+     TBootQueue BootQueue;
+     bool ProcessWaitQueueScheduled = false;
+     bool ProcessBootQueueScheduled = false;
++    bool ProcessPileDrainsScheduled = false;
+     bool ProcessBootQueuePostponed = false;
+     TInstant LastConnect;
+     TInstant ProcessBootQueuePostponedUntil;
+@@ -624,6 +628,7 @@ class THive : public TActor<THive>, public TTabletExecutedFlat, public THiveShar
+     void Handle(TEvPrivate::TEvCheckTabletNodeAlive::TPtr&);
+     void HandleInit(TEvPrivate::TEvProcessBootQueue::TPtr&);
+     void Handle(TEvPrivate::TEvProcessBootQueue::TPtr&);
++    void Handle(TEvPrivate::TEvProcessPileDrains::TPtr&);
+     void Handle(TEvPrivate::TEvPostponeProcessBootQueue::TPtr&);
+     void Handle(TEvPrivate::TEvProcessDisconnectNode::TPtr&);
+     void HandleInit(TEvPrivate::TEvProcessTabletBalancer::TPtr&);
+```
+
+**File**: `ydb/core/mind/hive/hive_ut.cpp` (modified, +681/-87)
+```diff
+@@ -10440,25 +10440,340 @@ Y_UNIT_TEST_SUITE(THiveTest) {
+         });
+     }
+ 
+-    enum class EBridgeHiveRestart {
+-        None,
+-        BeforePromotion,
+-        BeforeDisconnect,
+-        DisconnectBeforeResync,
+-        DisconnectWithDeadNodes,
+-    };
+-
+-    // Not runtime.WaitFor: it aborts the whole binary on timeout
+     bool WaitUntil(TTestBasicRuntime& runtime, const std::function<bool()>& condition) {
+         bool done = condition();
+-        for (ui32 i = 0; i < 100 && !done; ++i) {
++        for (ui32 i = 0; i < 300 && !done; ++i) {
+             runtime.SimulateSleep(TDuration::MilliSeconds(100));
+             done = condition();
+         }
+         return done;
+     }
+ 
+-    void TestBridgeDemotion(EBridgeHiveRestart hiveRestart) {
++    std::optional<bool> ReadPileDrain(TTestActorRuntime& runtime, ui64 hiveTablet, const TActorId& sender, ui32 pile) {
++        auto query = MakeHolder<TEvTablet::TEvLocalMKQL>();
++        query->Record.MutableProgram()->MutableProgram()->SetText(TStringBuilder()
++            << "((let row (SelectRow 'BridgePile '('('Id (Uint32 '" << TBridgePileId::FromPileIndex(pile).GetLocalDb() << "))) '('Drain)))"
++            << "(return (AsList (SetResult 'row row))))");
++        runtime.SendToPipe(hiveTablet, sender, query.Release(), 0, GetPipeConfigWithRetries());
++        TAutoPtr<IEventHandle> handle;
++        auto* response = runtime.GrabEdgeEventRethrow<TEvTablet::TEvLocalMKQLResponse>(handle);
++        UNIT_ASSERT_VALUES_EQUAL_C(response->Record.GetStatus(), NKikimrProto::OK, response->Record.ShortDebugString());
++        const auto& result = response->Record.GetExecutionEngineEvaluatedResponse().GetValue().GetStruct(0);
++        if (!result.HasOptional() || !result.GetOptional().HasOptional()) {
++            return std::nullopt;
++        }
++        const auto& drain = result.GetOptional().GetOptional().GetStruct(0);
++        return drain.HasOptional() && drain.GetOptional().GetBool();
++    }
++
++    bool IsPileDrainPersisted(TTestActorRuntime& runtime, ui64 hiveTablet, const TActorId& sender, ui32 pile) {
++        return ReadPileDrain(runtime, hiveTablet, sender, pile).value_or(false);
++    }
++
++    struct TBridgeDrainTest {
++        TTestBasicRuntime Runtime;
++        TDummyBridge Bridge;
++        const ui64 HiveTablet = MakeDefaultHiveID();
++        const ui64 OwnerTablet = MakeTabletID(false, 1);
++        TActorId Sender;
++
++        explicit TBridgeDrainTest(ui32 nodes = 2)
++            : Runtime(nodes, false)
++            , Bridge(Runtime)
++        {
++            Setup(Runtime, true, 2, [](TAppPrepare& app) {
++                app.HiveConfig.SetDrainInflight(1);
++                app.HiveConfig.SetEnableFastTabletMove(true);
++            });
++            Sender = Runtime.AllocateEdgeActor(0);
++            CreateTestBootstrapper(Runtime, CreateTestTabletInfo(HiveTablet, TTabletTypes::Hive), &CreateDefaultHive);
++            MakeSureTabletIsUp(Runtime, HiveTablet, 0);
++            Bridge.Subscribe(GetHiveActor(Runtime, HiveTablet));
++            Runtime.EnableScheduleForActor(GetHiveActor(Runtime, HiveTablet));
++            UNIT_ASSERT_C(WaitUntil(Runtime, [&] {
++                Runtime.SendToPipe(HiveTablet, Sender, new TEvHive::TEvRequestHiveDomainStats());
++                TAutoPtr<IEventHandle> handle;
++                const auto* response = Runtime.GrabEdgeEventRethrow<TEvHive::TEvResponseHiveDomainStats>(handle);
++                std::unordered_set<ui32> aliveNodes;
++                for (const auto& domain : response->Record.GetDomainStats()) {
++                    aliveNodes.insert(domain.GetNodeIds().begin(), domain.GetNodeIds().end());
++                }
++                return aliveNodes.size() == Runtime.GetNodeCount();
++            }), "Locals did not connect to Hive");
++        }
++
++        ui64 CreateTablet(ui64 index = 0, bool waitForBoot = true) {
++            auto create = MakeHolder<TEvHive::TEvCreateTablet>(OwnerTablet, index, TTabletTypes::Dummy, BINDED_CHANNELS);
++            create->Record.SetBalancerPolicy(NKikimrHive::POLICY_IGNORE);
++            return SendCreateTestTablet(Runtime, HiveTablet, OwnerTablet, std::move(create), 0, waitForBoot);
++        }
++
++        auto TabletInfo(ui64 tabletId) {
++            return GetHiveTabletInfo(Runtime, HiveTablet, tabletId, Sender);
++        }
++
++        void SetDown(ui32 nodeIndex, bool down) {
++            Runtime.SendToPipe(HiveTablet, Sender, new TEvHive::TEvSetDown(Runtime.GetNodeId(nodeIndex), down));
++            TAutoPtr<IEventHandle> handle;
++            const auto* response = Runtime.GrabEdgeEventRethrow<TEvHive::TEvSetDownReply>(handle);
++            UNIT_ASSERT_VALUES_EQUAL(response->Record.GetStatus(), NKikimrProto::OK);
++        }
++
++        bool DrainPending() {
++            return IsPileDrainPersisted(Runtime, HiveTablet, Sender, 0);
++        }
++
++        bool IsRunningInPile(ui64 tabletId, ui32 pile) {
++            const auto info = TabletInfo(tabletId);
++            return info.GetNo
 ```
 
 ---
 
-### Incident Patch 3: `00e6b742` (2026-11-05)
-**Commit Message**: fix incorrect storage pool usage count when topics were ignored (#57650)
+### Incident Patch 2: `39205ea2` (2026-11-09)
+**Commit Message**: Fix possible blob bugs main (#58454)
 
-**File**: `ydb/core/viewer/viewer_tenantinfo.h` (modified, +9/-4)
+**File**: `ydb/core/persqueue/pqtablet/blob/blob_serialization.cpp` (modified, +44/-9)
 ```diff
-@@ -979,20 +979,25 @@ class TJsonTenantInfo : public TViewerPipeClient {
-                         }
+@@ -37,9 +37,14 @@ ui32 GetBatchClientBlobCount(const NKikimrPQ::TBatchHeader& header) {
  
-                         THashMap<NKikimrViewer::TStorageUsage::EType, ui64> tablesStorageByType;
-+                        const auto guessedStorageType = GuessStorageType(domainDescription);
- 
-                         for (const auto& poolUsage : domainDescription.GetDiskSpaceUsage().GetStoragePoolsUsage()) {
-                             auto type = GetStorageType(poolUsage.GetPoolKind());
-                             tablesStorageByType[type] += poolUsage.GetTotalSize();
-                         }
- 
-                         if (tablesStorageByType.empty() && domainDescription.HasDiskSpaceUsage()) {
--                            tablesStorageByType[GuessStorageType(domainDescription)] =
--                                domainDescription.GetDiskSpaceUsage().GetTables().GetTotalSize()
--                                + domainDescription.GetDiskSpaceUsage().GetTopics().GetDataSize();
-+                            tablesStorageByType[guessedStorageType] =
-+                                domainDescription.GetDiskSpaceUsage().GetTables().GetTotalSize();
-+                        }
+ NScheme::TDataRef GetChunk(const char*& data, const char *end)
+ {
+-    ui32 size = ReadUnaligned<ui32>(data);
+-    data += sizeof(ui32) + size;
+     AFL_ENSURE(data <= end);
++    AFL_ENSURE(static_cast<size_t>(end - data) >= sizeof(ui32));
 +
-+                        if (domainDescription.HasDiskSpaceUsage()) {
-+                            tablesStorageByType[guessedStorageType] +=
-+                                domainDescription.GetDiskSpaceUsage().GetTopics().GetDataSize();
-                         }
++    ui32 size = ReadUnaligned<ui32>(data);
++    data += sizeof(ui32);
++    AFL_ENSURE(static_cast<size_t>(end - data) >= size);
++
++    data += size;
+     return NScheme::TDataRef(data - size, size);
+ }
  
-                         if (storageQuotasByType.empty()) {
--                            auto& quotas = storageQuotasByType[GuessStorageType(domainDescription)];
-+                            auto& quotas = storageQuotasByType[guessedStorageType];
-                             quotas.HardQuota = domainDescription.GetDatabaseQuotas().data_size_hard_quota();
-                             quotas.SoftQuota = domainDescription.GetDatabaseQuotas().data_size_soft_quota();
-                         }
-```
-
-**File**: `ydb/core/viewer/viewer_ut.cpp` (modified, +32/-2)
-```diff
-@@ -1258,7 +1258,9 @@ Y_UNIT_TEST_SUITE(Viewer) {
-     }
- 
-     void CheckStorageLimitWithGroupSizeInUnits(bool enforcedSlotSize, bool cluster = false,
--            std::optional<ui64> userChunkPoolSize = {}, bool overflowingQuota = false)
-+            std::optional<ui64> userChunkPoolSize = {}, bool overflowingQuota = false,
-+            ui64 tablesSize = 0, ui64 topicsSize = 0, std::optional<TString> poolUsageKind = "ssd",
-+            TString expectedTablesStorageType = "SSD")
-     {
-         TPortManager tp;
-         auto settings = TServerSettings(tp.GetPort(2134))
-@@ -1297,6 +1299,17 @@ Y_UNIT_TEST_SUITE(Viewer) {
-                         pool->SetName(kind);
-                         pool->SetKind(kind);
-                     }
-+                    if (tablesSize || topicsSize) {
-+                        auto* diskSpaceUsage = domain->MutableDiskSpaceUsage();
-+                        if (poolUsageKind) {
-+                            auto* poolUsage = diskSpaceUsage->AddStoragePoolsUsage();
-+                            poolUsage->SetPoolKind(*poolUsageKind);
-+                            poolUsage->SetTotalSize(tablesSize);
-+                        } else {
-+                            diskSpaceUsage->MutableTables()->SetTotalSize(tablesSize);
-+                        }
-+                        diskSpaceUsage->MutableTopics()->SetDataSize(topicsSize);
-+                    }
-                     break;
-                 }
-                 case NSysView::TEvSysView::EvGetStoragePoolsResponse: {
-@@ -1412,10 +1425,10 @@ Y_UNIT_TEST_SUITE(Viewer) {
-         const auto& tenants = json["TenantInfo"].GetArray();
-         UNIT_ASSERT_VALUES_EQUAL(tenants.size(), 1);
-         const auto& tenant = tenants[0];
-+        const auto& storage = tenant["DatabaseStorage"].GetArray();
-         UNIT_ASSERT_VALUES_EQUAL(tenant["StorageAllocatedLimit"].GetString(),
-             ToString(saturatedQuota ? Max<ui64>() : fixedQuota + (enforcedSlotSize ? 500 : 600)));
-         UNIT_ASSERT_VALUES_EQUAL(tenant["StorageAllocatedSize"].GetString(), "50");
--        const auto& storage = tenant["DatabaseStorage"].GetArray();
-         UNIT_ASSERT_VALUES_EQUAL(storage.size(), 2);
-         for (const auto& usage : storage) {
-             const auto& type = usage["Type"].GetString();
-@@ -1426,6 +1439,12 @@ Y_UNIT_TEST_SUITE(Viewer) {
-             UNIT_ASSERT_VALUES_EQUAL(usage["Limit"].GetString(), expectedLimit);
-             UNIT_ASSERT_VALUES_EQUAL(usage["Size"].GetString(), type == "SSD" ? "20" : "30");
+@@ -347,13 +352,21 @@ void TBatchDeserializer<NKikimrPQ::TBatchHeader::ECompressed>::Unpack(TVector<TC
+         auto chunk = NScheme::IChunkDecoder::ReadChunk(GetChunk(data, dataEnd), &ui32Codecs);
+         auto iter = chunk->MakeIterator();
+         for (ui32 i = 0; i < totalBlobs; ++i) {
+-            pos.push_back(ReadUnaligned<ui32>(iter->Next().Data()));
++            ui32 blobPos = ReadUnaligned<ui32>(iter->Next().Data());
++            AFL_ENSURE(blobPos < totalBlobs);
++            pos.push_back(blobPos);
          }
-+        if (tablesSize || topicsSize) {
-+            const auto& tablesStorage = tenant["TablesStorage"].GetArray();
-+            UNIT_ASSERT_VALUES_EQUAL(tablesStorage.size(), 1);
-+            UNIT_ASSERT_VALUES_EQUAL(tablesStorage[0]["Type"].GetString(), expectedTablesStorageType);
-+            UNIT_ASSERT_VALUES_EQUAL(tablesStorage[0]["Size"].GetString(), ToString(tablesSize + topicsSize));
-+        }
+         sourceIdCount = ReadUnaligned<ui32>(iter->Next().Data());
++        AFL_ENSURE(sourceIdCount > 0 || totalBlobs == 0);
++        AFL_ENSURE(sourceIdCount <= totalBlobs);
+         end.reserve(sourceIdCount);
+         for (ui32 i = 0; i < sourceIdCount; ++i) {
+-            end.push_back(ReadUnaligned<ui32>(iter->Next().Data()));
++            ui32 sourceIdEnd = ReadUnaligned<ui32>(iter->Next().Data());
++            AFL_ENSURE(sourceIdEnd <= totalBlobs);
++            AFL_ENSURE(end.empty() || end.back() < sourceIdEnd);
++            end.push_back(sourceIdEnd);
+         }
++        AFL_ENSURE(end.empty() || end.back() == totalBlobs);
      }
  
-     Y_UNIT_TEST(TenantInfoStorageLimitWithGroupSizeInUnits)
-@@ -1438,6 +1457,17 @@ Y_UNIT_TEST_SUITE(Viewer) {
-         CheckStorageLimitWithGroupSizeInUnits(true);
+     sourceIds.reserve(sourceIdCount);
+@@ -366,6 +379,7 @@ void TBatchDeserializer<NKikimrPQ::TBatchHeader::ECompressed>::Unpack(TVector<TC
+             sourceIds.emplace_back(ref.Data(), ref.Size());
+         }
+     }
++    AFL_ENSURE(sourceIds.size() == end.size());
+     TVector<ui64> seqNo;
+     seqNo.reserve(totalBlobs);
+ 
+@@ -494,6 +508,7 @@ void TBatchDeserializer<NKikimrPQ::TBatchHeader::ECompressed>::Unpack(TVector<TC
+     blobs->resize(totalBlobs);
+     ui32 currentSID = 0;
+     for (ui32 i = 0; i < totalBlobs; ++i) {
++        AFL_ENSURE(currentSID < end.size());
+         TMaybe<TPartData> pd;
+         if (auto it = partData.find(pos[i]); it != partData.end()) {
+             pd = it->second;
+@@ -524,6 +539,7 @@ void TBatchDeserializer<NKikimrPQ::TBatchHeader::ECompressed>::Unpack(TVector<TC
+             ++currentSID;
+         }
+     }
++    AFL_ENSURE(currentSID == sourceIds.size());
+ }
+ 
+ template<>
+@@ -692,17 +708,26 @@ TClientBlob DeserializeClientBlob(const char *data, ui32 size) {
+     AFL_ENSURE(size > TClientBlob::OVERHEAD);
+     ui32 totalSize = ReadUnaligned<ui32>(data);
+     AFL_ENSURE(size >= totalSize);
++    AFL_ENSURE(totalSize >= sizeof(ui32));
+     const char *end = data + totalSize;
+     data += sizeof(ui32);
+ 
++    auto ensureRemaining = [&] (size_t length) {
++        AFL_ENSURE(data <= end);
++        AFL_ENSURE(length <= static_cast<size_t>(end - data));
++    };
++
++    ensureRemaining(sizeof(ui64));
+     ui64 seqNo = ReadUnaligned<ui64>(data);
+     data += sizeof(ui64);
+ 
++    ensureRemaining(sizeof(ui8));
+     TMessageFlags flags(ReadUnaligned<ui8>(data));
+     ++data;
+ 
+     TMaybe<TPartData> partData;
+     if (flags.F.HasPartData) {
++            ensureRemaining(sizeof(ui16) + sizeof(ui16) + sizeof(ui32));
+             ui16 partNo = ReadUnaligned<ui16>(data);
+             data += sizeof(ui16);
+             ui16 totalParts = ReadUnaligned<ui16>(data);
+@@ -715,43 +740,53 @@ TClientBlob DeserializeClientBlob(const char *data, ui32 size) {
+     TString partitionKey;
+     TString explicitHashKey;
+     if (flags.F.HasKinesisData) {
++            ensureRemaining(sizeof(ui8));
+             ui8 keySize = ReadUnaligned<ui8>(data);
+             data += sizeof(ui8);
+-            partitionKey = TString(data, keySize == 0 ? 256 : keySize);
+-            data += partitionKey.size();
++            const size_t partitionKeySize = keySize == 0 ? 256 : keySize;
++            ensureRemaining(partitionKeySize);
++            partitionKey = TString(data, partitionKeySize);
++            data += partitionKeySize;
++
++            ensureRemaining(sizeof(ui8));
+             keySize = ReadUnaligned<ui8>(data);
+             data += sizeof(ui8);
++            ensureRemaining(keySize);
+             explicitHashKey = TString(data, keySize);
+-            data += explicitHashKey.size();
++            data += keySize;
      }
  
-+    Y_UNIT_TEST(TenantInfoTablesStorageIncludesTopicsWithPoolUsage)
-+    {
-+        CheckStorageLimitWithGroupSizeInUnits(false, false, {}, false, 100, 200);
-+    }
-+
-+    Y_UNIT_TEST(TenantInfoTablesStorageIncludesTopicsWithoutPoolUsage)
-+    {
-+        CheckStorageLimitWithGroupSizeInUnits(false, false, {}, false, 0, 200,
-+            std::nullopt);
-+    }
-+
-     Y_UNIT_TEST(ClusterStorageLimitWithGroupSizeInUnits)
-     {
-         CheckStorageLimitWithGroupSizeInUnits(false, true);
+     ui32 logicalMessageCount = 1;
+     bool isBatch = false;
+     if (flags.F.HasBatchInfo) {
++        ensureRemaining(sizeof(ui32));
+         std::tie(logicalMessageCount, isBatch) = UnpackMessageMetadata(ReadUnaligned<ui32>(data));
+         data += sizeof(ui32);
+     }
+ 
+     TInstant writeTimestamp;
+     if (flags.F.HasWriteTimestamp) {
++            ensureRemaining(sizeof(ui64));
+             writeTimestamp = TInst
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #58339** (2026-11-05): Update muted_ya (relwithdebinfo) in stable-26-4-1 (@ydbot)
-- **PR #58329** (2026-11-05): Update muted_ya (relwithdebinfo) in main (@ydbot)
-- **PR #58328** (2026-11-05): Sync branches 261105-2001: stable-26-3-1 to nbs-26-3-1 (@ydbot)
-- **PR #58323** (2026-11-05): Update muted_ya (relwithdebinfo) in main (@ydbot)
-- **PR #58321** (closed): Sync branches 261105-1740: rightlib to main (@ydbot)
-- **PR #58319** (2026-11-05): Update muted_ya (release-asan) in stable-26-4-1 (@ydbot)
+- **PR #58804** (2026-11-09): Update muted_ya (relwithdebinfo) in main (@ydbot)
+- **PR #58803** (2026-11-09): Reduce empty audit test chunks from 564 to 4 (@maximyurchuk)
+- **PR #58799** (2026-11-09): Update muted_ya (relwithdebinfo) in main (@ydbot)
+- **PR #58797** (2026-11-09): Update muted_ya (relwithdebinfo) in stable-26-4-1 (@ydbot)
+- **PR #58790** (2026-11-09): Update muted_ya (release-asan) in main (@ydbot)
+- **PR #58780** (2026-11-09): Update muted_ya (relwithdebinfo) in stable-26-3-1 (@ydbot)
 
 ---
 
@@ -2596,29 +2582,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. offsets replication for consumers with availability period (#58279)
+## X. Hive bridge drain recovery and per-DC followers (#56221)
 
 **RULE**:
-When implementing operations in `ydb/core/persqueue/pqtablet/partition/partition.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ydb/core/mind/hive/bridge_pile_info.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5da12a8a`: offsets replication for consumers with availability period (#58279). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0ef48dff`: Hive bridge drain recovery and per-DC followers (#56221). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ydb/core/persqueue/pqtablet/partition/partition.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ydb/core/mind/hive/bridge_pile_info.h`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-            const auto previousOffset = userInfo.Offset;
-            const bool offsetHasChanged = userInfo.Offset != previousOffset;
+    bool DrainRetry = false;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-            bool offsetHasChanged = (userInfo.Offset != actual->Offset);
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5da12a8a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0ef48dff` are properly handled with clean fallback behavior.

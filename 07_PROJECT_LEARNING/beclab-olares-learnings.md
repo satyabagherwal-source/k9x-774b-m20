@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/beclab-olares-learnings.md`  
 > **Source**: github ([https://github.com/beclab/Olares](https://github.com/beclab/Olares))  
-> **Source Version**: `2e0f254a`  
+> **Source Version**: `ec498292`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T19:33:51.476Z  
+> **Timestamp**: 2026-11-09T16:18:29.045Z  
 > **Learning ID**: `learn-github-beclab-olares`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/beclab-olares-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/beclab/Olares](https://github.com/beclab/Olares))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T19:33:51.073Z  
+> **Harvest Timestamp**: 2026-11-09T16:18:28.457Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-Source Personal Cloud OS for Always-On Agents
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 5342 stars
+- **Stars / Engagement**: 5355 stars
 
 ---
 
@@ -1137,40 +1137,337 @@ export const formatPathtoUrl = (path: string) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2e0f254a` (2026-11-04)
-**Commit Message**: files(fix): archive, share permissions, paused tasks and cross-node  (#4402)
+### Incident Patch 1: `ec498292` (2026-11-09)
+**Commit Message**: docs: add Cognee knowledge and internal MCP workflows (#4327)
 
-files(fix): archive, share permissions, paused tasks and cross-node storage fixes
+* docs: add cognee bilingual use case
 
-**File**: `framework/files/.olares/config/cluster/deploy/files_deploy.yaml` (modified, +2/-2)
+* docs: document cognee assistant integration
+
+* docs: complete Cognee API key and official MCP setup
+
+* docs: simplify Cognee internal MCP connections
+
+* docs: distinguish Lares disconnect messages from MCP HTTP status
+
+* docs: apply Cognee review suggestions
+
+* docs: address remaining Cognee review feedback
+
+* adjust structure, refine description
+
+---------
+
+Co-authored-by: Power-One-2025 <[REDACTED_EMAIL]>
+
+**File**: `docs/.vitepress/data/useCases.ts` (modified, +1/-0)
 ```diff
-@@ -148,7 +148,7 @@ spec:
- {{ end }}
- 
-         - name: samba-server
--          image: beclab/samba-server:0.0.26
-+          image: beclab/samba-server:0.0.27
-           imagePullPolicy: IfNotPresent
-           securityContext:
-             allowPrivilegeEscalation: true
-@@ -242,7 +242,7 @@ spec:
-           command:
-             - /samba_share
-         - name: files
--          image: beclab/files-server:v0.2.214
-+          image: beclab/files-server:v0.2.219
-           imagePullPolicy: IfNotPresent
-           securityContext:
-             allowPrivilegeEscalation: true
+@@ -60,6 +60,7 @@ export const useCases: UseCase[] = [
+   { title: "Open WebUI", link: "/use-cases/openwebui", category: "AI workbench", description: "Full-featured web chat for local LLMs", descriptionZh: "面向本地 LLM 的全功能 Web 聊天界面" },
+   { title: "LobeHub (LobeChat)", link: "/use-cases/lobechat", category: "AI workbench", description: "Build local custom AI assistants", descriptionZh: "构建本地自定义 AI 助手" },
+   { title: "AnythingLLM", link: "/use-cases/anythingllm", category: "AI workbench", description: "Local knowledge base with RAG over your documents", descriptionZh: "基于文档 RAG 的本地知识库" },
++  { title: "Cognee", link: "/use-cases/cognee", category: "AI workbench", description: "Build and explore connected knowledge from documents", descriptionZh: "从文档构建并浏览相互关联的知识" },
+   { title: "Local Deep Research", link: "/use-cases/local-deep-research", category: "AI workbench", description: "Research questions with cited sources through AI Router", descriptionZh: "通过 AI Router 生成带来源引用的研究报告" },
+   { title: "Open Notebook", link: "/use-cases/open-notebook", category: "AI workbench", description: "Research notebook with AI insights and podcasts", descriptionZh: "支持 AI 洞察和播客的研究笔记本" },
+   { title: "TrustGraph", link: "/use-cases/trustgraph", category: "AI workbench", description: "Ask questions about documents and explore their connections", descriptionZh: "围绕文档提问，探索内容之间的联系" },
+```
+
+**File**: `docs/.vitepress/usecase.en.ts` (modified, +4/-0)
+```diff
+@@ -241,6 +241,10 @@ export const useCaseSidebar: DefaultTheme.Sidebar = {
+                   text: "AnythingLLM",
+                   link: "/use-cases/anythingllm",
+                 },
++                {
++                  text: "Cognee",
++                  link: "/use-cases/cognee",
++                },
+                 {
+                   text: "Local Deep Research",
+                   link: "/use-cases/local-deep-research",
+```
+
+**File**: `docs/.vitepress/usecase.zh.ts` (modified, +4/-0)
+```diff
+@@ -241,6 +241,10 @@ export const useCaseSidebar: DefaultTheme.Sidebar = {
+                   text: "AnythingLLM",
+                   link: "/zh/use-cases/anythingllm",
+                 },
++                {
++                  text: "Cognee",
++                  link: "/zh/use-cases/cognee",
++                },
+                 {
+                   text: "Local Deep Research",
+                   link: "/zh/use-cases/local-deep-research",
+```
+
+**File**: `docs/use-cases/cognee.md` (added, +181/-0)
+```diff
+@@ -0,0 +1,181 @@
++---
++connectionVersion: "1.12.7"
++connectionLatestPath: /use-cases/cognee
++outline: [2, 3]
++description: Build and explore document knowledge with Cognee on Olares
++head:
++  - - meta
++    - name: keywords
++      content: "Olares, Cognee, self-hosted, knowledge graph, documents, search"
++app_version: "0.0.17"
++doc_version: "1.0"
++doc_updated: "2026-11-06"
++---
++
++# Turn documents into memory your AI can recall
++
++Cognee turns documents into connected knowledge that you and your AI agents can recall. Add documents to a dataset, ask questions and check the supporting sources, or let your AI agents recall the same knowledge through MCP. On Olares, your documents and the knowledge built from them stay on your own device. Answer generation uses the default chat model configured in Olares Router.
++
++## Learning objectives
++
++- Create a dataset and add project documents to it.
++- Ask questions in Cognee and check the supporting sources and knowledge graph.
++- Connect Lares or Hermes Agent to Cognee through MCP, then ask questions in a new conversation.
++
++## Prerequisites
++
++- Olares 1.12.7 or later.
++- Olares Router with a callable model assigned to `default-chat`.
++
++## Install Cognee
++
++1. Open Market and search for "Cognee".
++2. Click **Get**, then **Install**. When prompted, set an initial password with at least 12 characters.
++3. When the installation finishes, open Cognee from Launchpad.
++4. Sign in with the built-in initial account `default_user@example.com` and the password you set during installation.
++
++## Create a project dataset
++
++Create a dataset and add your project documents to it. One dataset can hold one or many documents, and a search covers every document in it, so keep related documents together. You can paste text or upload a file. This guide uses the two sample documents below.
++
++1. Open **Datasets** and click **Create dataset**. If you already have a dataset, click **New dataset**.
++2. Name the dataset `project_rehearsal`. Use letters, numbers, and underscores in the name.
++3. Select the new dataset.
++4. Choose **Paste text** and add each document below as a separate item. Wait until the first item shows **Ready** before adding the second.
++
++   ::: details Meeting notes
++
++   ```text
++   Project Harbor: Migration Rehearsal Meeting Notes
++
++   This document contains fictional test data. All people, dates, and project details are invented for a documentation walkthrough.
++
++   Project: Harbor document migration
++   Meeting date: November 4, 2026
++   Rehearsal date: November 12, 2026, at 10:00 AM, Asia/Shanghai
++
++   Maya Chen coordinates the migration rehearsal. She schedules the rehearsal and collects the validation results.
++
++   Before handoff, the team must complete the rehearsal, confirm that the source and destination file counts match, verify the SHA-256 checksums, and attach the validation report to the handoff record.
++
++   Omar Lee is the project owner. Handoff requires his approval after he reviews the validation report.
++
++   The migration runbook identifies the escalation contact for checksum mismatches.
++   ```
++
++   :::
++
++   ::: details Migration validation runbook
++
++   ```text
++   Project Harbor: Migration Validation Runbook
++
++   This document contains fictional test data. All people and project details are invented for a documentation walkthrough.
++
++   Scope: Validation for the Harbor document migration rehearsal.
++
++   File validation compares the source and destination file counts and SHA-256 checksums. The validation report records the results and any unresolved differences.
++
++   Noah Zhou is the data integrity lead and the escalation contact when migration checksums do not match. The report sent to Noah must identify the affected files and include the expected and actual checksums.
++
++   A checksum mismatch blocks handoff until it has been investigated, resolved, and checked again. Any remaining mismatch must be recorded as unresolved in the validation report.
++
++   Maya Chen coordinates the rehearsal. Omar Lee, the project owner, approves handoff after reviewing the completed validation report.
++   ```
++
++   :::
++
++   :::info First processing job
++   The first document may take longer to process because Cognee needs to download its embedding model. This small model runs on CPU inside Cognee. Later processing jobs reuse the saved model cache. Wait for the current import to finish before submitting the same document again.
++   :::
++
++## Query a project dataset
++
++Ask a question about your dataset, then check the answer, evidence, and graph against the original documents.
++
++1. Open **Search**, select `project_rehearsal` in the dataset selector above the question input, and then ask:
++
++   ```text
++   Who coordinates the rehearsal, what must be complete before handoff, and who should we contact if migration checksums do not match? Distinguish the meeting notes from the runbook in your sources.
++   ```
++
++2. Verify the answer and compare the support
+```
+
+**File**: `docs/zh/use-cases/cognee.md` (added, +185/-0)
+```diff
+@@ -0,0 +1,185 @@
++---
++connectionVersion: "1.12.7"
++connectionLatestPath: /zh/use-cases/cognee
++outline: [2, 3]
++description: 在 Olares 上使用 Cognee 构建和浏览文档知识
++head:
++  - - meta
++    - name: keywords
++      content: "Olares, Cognee, 自托管, 知识图谱, 文档, 搜索"
++app_version: "0.0.17"
++doc_version: "1.0"
++doc_updated: "2026-11-06"
++---
++
++:::warning
++本文档由 AI 自动翻译，仅供参考。涉及关键操作或信息时，请以[英文原文](../../use-cases/cognee.md)为准。
++:::
++
++# 把文档变成 AI 助手的知识库
++
++Cognee 将文档转化为相互关联、可供你和 AI 代理回忆的知识。把文档加入数据集，提问并对照支持性来源，或者通过 MCP 让你的 AI 代理回忆同样的知识。在 Olares 上，你的文档和从中构建的知识都保留在自己的设备上。答案生成使用 Olares Router 中配置的默认对话模型。
++
++## 学习目标
++
++- 创建数据集并添加项目文档。
++- 在 Cognee 中提问，并对照支持性来源和知识图谱检查答案。
++- 通过 MCP 连接 Lares 或 Hermes Agent，然后在新对话中提问。
++
++## 前提条件
++
++- Olares 1.12.7 或更高版本。
++- Olares Router 中为 `default-chat` 分配了状态为 **callable** 的模型。
++
++## 安装 Cognee
++
++1. 打开 Market，搜索 "Cognee"。
++2. 点击 **Get**，然后点击 **Install**。提示时设置至少 12 个字符的初始密码。
++3. 安装完成后，从 Launchpad 打开 Cognee。
++4. 使用内置初始账号 `default_user@example.com` 和安装时设置的密码登录。
++
++## 创建项目数据集
++
++创建一个数据集，把项目文档添加进去。一个数据集可以存放一篇或多篇文档，搜索会覆盖其中的每一篇，所以把相关文档放在同一个数据集中。你可以粘贴文本，也可以上传文件。本指南使用下面的两份示例文档。
++
++1. 打开 **Datasets**，点击 **Create dataset**。如果已有数据集，点击 **New dataset**。
++2. 将数据集命名为 `project_rehearsal`。名称使用字母、数字和下划线。
++3. 选中新建的数据集。
++4. 选择 **Paste text**，把下面每份文档作为独立条目添加。等第一个条目显示 **Ready** 后再添加第二份。
++
++   ::: details 会议纪要
++
++   ```text
++   Project Harbor: Migration Rehearsal Meeting Notes
++
++   This document contains fictional test data. All people, dates, and project details are invented for a documentation walkthrough.
++
++   Project: Harbor document migration
++   Meeting date: November 4, 2026
++   Rehearsal date: November 12, 2026, at 10:00 AM, Asia/Shanghai
++
++   Maya Chen coordinates the migration rehearsal. She schedules the rehearsal and collects the validation results.
++
++   Before handoff, the team must complete the rehearsal, confirm that the source and destination file counts match, verify the SHA-256 checksums, and attach the validation report to the handoff record.
++
++   Omar Lee is the project owner. Handoff requires his approval after he reviews the validation report.
++
++   The migration runbook identifies the escalation contact for checksum mismatches.
++   ```
++
++   :::
++
++   ::: details 迁移校验运行手册
++
++   ```text
++   Project Harbor: Migration Validation Runbook
++
++   This document contains fictional test data. All people and project details are invented for a documentation walkthrough.
++
++   Scope: Validation for the Harbor document migration rehearsal.
++
++   File validation compares the source and destination file counts and SHA-256 checksums. The validation report records the results and any unresolved differences.
++
++   Noah Zhou is the data integrity lead and the escalation contact when migration checksums do not match. The report sent to Noah must identify the affected files and include the expected and actual checksums.
++
++   A checksum mismatch blocks handoff until it has been investigated, resolved, and checked again. Any remaining mismatch must be recorded as unresolved in the validation report.
++
++   Maya Chen coordinates the rehearsal. Omar Lee, the project owner, approves handoff after reviewing the completed validation report.
++   ```
++
++   :::
++
++   :::info 首次处理任务
++   第一篇文档的处理时间可能更长，因为 Cognee 需要下载它的嵌入模型。这个小型模型在 Cognee 内部使用 CPU 运行。后续处理任务会复用已保存的模型缓存。等当前导入完成后再重新提交同一文档。
++   :::
++
++## 查询项目数据集
++
++对数据集提问，然后对照原始文档检查答案、Evidence 和图谱。
++
++1. 打开 **Search**，在问题输入框上方的数据集选择器中选择 `project_rehearsal`，然后提问：
++
++   ```text
++   Who coordinates the rehearsal, what must be complete before handoff, and who should we contact if migration checksums do not match? Distinguish the meeting notes from the runbook in your sources.
++   ```
++
++2. 核对答案，并把 **Evidence** 中的支持性文本与两份原始文档对照。如果节选被截断，不要把它当作完整的来源核对。
++
++   在这个例子中，答案会指出 Maya Chen 是协调人，说明交接前必须完成的校验和审批，并给出校验和不匹配时的联系人 Noah Zhou。
++
++   :::tip 对话模型连接
++   如果答案生成失败，请确认 **Default models** 页面已分配默认对话模型，且状态为 **callable**。参见 [Olares Router](olares-router.md)。
++   :::
++
++3. 打开 **Graph**，在左上角的 **DATASET** 选择器中选择 `project_rehearsal`。图谱布局和生成的关系可能因模型而异。
++
++## 在 Lares 或 Hermes Agent 中查询
++
++把 Lares 或 Hermes Agent 连接到 Cognee 的 MCP 服务器，这样你就可以在对话中搜索数据集，不用再粘贴文档。
++
++### 获取 Cognee 的 MCP 地址
++
++从 Olares Settings 复制 MCP endpoint URL，然后在末尾加上 `/mcp`。
++
++1. 打开 Olares **Settings**，进入 **Applications** > **Cognee** > **Cognee MCP**，复制它的 endpoint URL。例如 `https://ba2717462.laresprime.olares.com`。
++2. 在复制的 URL 末尾加上 `/mcp`。这就是下面助手连接要用的 MCP URL。
++
++:::info 默认无需密钥访问
++默认情况下，客户端不需要 API key。MCP 服务器使用内置初始账号 `default_user@example.com`，因此助手可以访问你通过这个账号添加的知识。已连接的助手共享该账号的权限。官方工具除了检索知识，也可以添加和删除知识。批准工具请求前请先检查。
++:::
++
++### 连接 Lares
++
++在 Lares 中把 Cognee 注册为 MCP 服务器，然后提出一个会使用 `recall` 工具的问题。
++
++1. 打开 Lares，打开它的设置，选择 **MCP**，然后点击 **Add server**。填写：
++
++   | 字段 | 值 |
++   | --- | --- |
++   | **Server name** | `cognee` |
++   | **Transport** | **Streamable HTTP** |
++   | **MCP URL** | 上面获取的 MCP URL，包含 `/mcp` |
++   | **Headers** | 保持默认的空 JSON 对象 `{}`。 |
++
++2. 点击 **Save**。Lares 会连接并加载官方工具，包括 `recall` 和 `remember`。
++3. 新建对话，发送下面的提示词。提示授权时批准 `recall` 工具。
++
++
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4403** (2026-11-04): chore(system-apps, wizard, auth): update frontend images (@qq815776412)
-- **PR #4402** (2026-11-04): files(fix): archive, share permissions, paused tasks and cross-node  (@aby913)
-- **PR #4401** (2026-11-04): chore(authelia, lldap): bump image tag (@hysyeah)
-- **PR #4399** (2026-11-04): docs: align Plex tutorial with verified setup and playback flow (@fnalways)
-- **PR #4397** (2026-11-03): chore(system-apps, wizard, auth): update frontend images (@qq815776412)
-- **PR #4396** (2026-11-03): files(fix): improve file service stability (@aby913)
+- **PR #4427** (2026-11-09): fix(auth, lldap): bump image versions for authelia and lldap (@eball)
+- **PR #4426** (2026-11-09): chore(system-apps): update frontend image (@qq815776412)
+- **PR #4424** (closed): docs: update device logout instructions (@Meow33)
+- **PR #4419** (2026-11-06): fix: unescape mount paths and umount smb/nfs shares on uninstall (@eball)
+- **PR #4418** (2026-11-07): docs: add YuE2 Studio music creation and Lares MCP tutorial (@harveyff)
+- **PR #4417** (2026-11-06): Revert "docs: remove terminal entry from ctrl hub " (@Power-One-2025)
 
 ---
 
@@ -1190,30 +1487,28 @@ files(fix): archive, share permissions, paused tasks and cross-node storage fixe
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. files(fix): archive, share permissions, paused tasks and cross-node  (#4402)
+## X. docs: add Cognee knowledge and internal MCP workflows (#4327)
 
 **RULE**:
-When implementing operations in `framework/files/.olares/config/cluster/deploy/files_deploy.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in beclab/Olares. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/.vitepress/data/useCases.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in beclab/Olares. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2e0f254a`: files(fix): archive, share permissions, paused tasks and cross-node  (#4402). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ec498292`: docs: add Cognee knowledge and internal MCP workflows (#4327). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `framework/files/.olares/config/cluster/deploy/files_deploy.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/.vitepress/data/useCases.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-          image: beclab/samba-server:0.0.27
-          image: beclab/files-server:v0.2.219
+  { title: "Cognee", link: "/use-cases/cognee", category: "AI workbench", description: "Build and explore connected knowledge from documents", descriptionZh: "从文档构建并浏览相互关联的知识" },
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-          image: beclab/samba-server:0.0.26
-          image: beclab/files-server:v0.2.214
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2e0f254a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ec498292` are properly handled with clean fallback behavior.

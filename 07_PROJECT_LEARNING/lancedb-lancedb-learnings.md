@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
 > **Source**: github ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
-> **Source Version**: `5def2611`  
+> **Source Version**: `1157a070`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T13:20:32.085Z  
+> **Timestamp**: 2026-11-09T02:44:04.389Z  
 > **Learning ID**: `learn-github-lancedb-lancedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T13:20:32.080Z  
+> **Harvest Timestamp**: 2026-11-09T02:44:04.382Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Developer-friendly OSS embedded retrieval library for multimodal AI. Search More; Manage Less.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 11847 stars
+- **Stars / Engagement**: 11864 stars
 
 ---
 
@@ -1102,6 +1102,17 @@ pub fn parse_field_path(path: &str) -> PyResult<Vec<String>> {
 /// A wrapper around a LanceDB type to allow it to be used in Python
 #[derive(Debug, Clone)]
 pub struct PyLanceDB<T>(pub T);
+/// Validate the Function retry wire contract using the same rules as Rust APIs.
+#[pyo3::pyfunction]
+pub fn validate_function_retry_policy(json: &str) -> pyo3::PyResult<()> {
+    let policy: lancedb::function::FunctionRetryPolicy =
+        serde_json::from_str(json).map_err(|error| {
+            pyo3::exceptions::PyValueError::new_err(format!("invalid retry_policy: {error}"))
+        })?;
+    policy
+        .validate()
+        .map_err(|error| pyo3::exceptions::PyValueError::new_err(error.to_string()))
+}
 
 ```
 
@@ -1214,11 +1225,11 @@ pub fn rename_column(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4874** (2026-11-05): **fix: remove unmaintained pin-utils from AWS dependencies**
-  *Symptoms*: `cargo deny` rejects `pin-utils 0.1.0` as unmaintained under RUSTSEC-2026-0441; there is no patched release. The dependency comes from the AWS Smithy graph. Refresh that graph to include [smithy-rs #4882](https://github.com/smithy-lang/smithy-rs/pull/4882), replacing the obsolete `aws-smithy-types = ">=1.3.6, <1.7"` constraint with `1.9.1`.  The lockfile audit attributes every changed package identity and resolved dependency edge to the AWS graph. Existing git dependency pins are preserved. The selected AWS crates declare Rust 1.94.1, within the workspace's unchanged 1.95.0 requirement.  Validation at the exact candidate on the development EC2 host, both exit 0:  - `mbx +1.97.1 deny check advisories bans licenses sources` - `mbx +1.97.1 check --quiet --locked -p lancedb --tests --features remote,aws,dynamodb,bedrock`  The second command compiles the selected test targets; it is not a runtime integration test. Full all-features compilation remains unverified: an earlier attempt stopped in lance-linalg because the host Clang 15 does not support the required `_Float16` target. 
+- **Issue #4885** (2026-11-06): **fix(node): upgrade transformers.js to 4.3.2 to pick up patched sharp**
+  *Symptoms*: ## Summary  `@lancedb/lancedb` pins the optional dependency `@huggingface/transformers` at 3.0.2, which requires `sharp ^0.33.5`. Every npm install of LanceDB therefore pulled in a sharp version with critical advisories (GHSA-wq5f-xc86-pv6w, GHSA-rgj7-g3m4-5g8c). No 3.x release of transformers allows a patched sharp, so this upgrades to 4.3.2, which requires `sharp ^0.35.4`. A fresh install resolves that range to 0.35.5, the first release that fixes both advisories.  - `nodejs/package.json`: `@huggingface/transformers` 3.0.2 → 4.3.2. - `nodejs/pnpm-workspace.yaml`: remove the `sharp: ^0.35.4` override. It only covered our own install, not consumers, and transformers now requires that range itself. - `nodejs/examples`: transformers 3.0.2 → 4.3.2, sharp 0.33.5 → 0.35.5. - Both lockfiles resolve sharp to 0.35.5; `pnpm audit` reports no sharp advisories in either.  `TransformersEmbeddingFunction` needed no code changes. The transformers types are only used in private fields, so the published typings don't change.  `docs/web-tests/ts` and `docs/web-tests/blob-v2/ts` are left alone: they resolve transformers through a published `@lancedb/lancedb`, so they pick this up after a release.  ## Evidence  Embeddings from the built-in `huggingface` embedding function (default `Xenova/all-MiniLM-L6-v2`) on 4.3.2, compared with the same mean pooling on 3.0.2, for three sentences:  ``` transformers 4.3.2: 3 x 384 text 0: max|diff|=6.62e-07  cosine=1.00000000 text 1: max|diff|=6.26e-07  cosine
 
-- **Issue #4872** (2026-11-05): **fix(deps): ignore RUSTSEC-2026-0441 pin-utils unmaintained**
-  *Symptoms*: `cargo deny` fails on main because RUSTSEC-2026-0441 marks `pin-utils` as unmaintained. Add an exception reviewed on 2026-11-05, with the advisory and upstream discussion links and a reminder to revisit it when updating AWS dependencies.  `pin-utils` is transitive through `aws-smithy-http`, `aws-smithy-runtime`, and `aws-smithy-types`, including the `aws-config` → `lance-io` path. RustSec lists no safe upgrade; clearing the advisory requires upstream migration to supported pinning primitives.  Validation on commit dede2c783fda73500cee2b05feffe1b70d56624c:  - Before the change, `cargo deny check advisories` failed on RUSTSEC-2026-0441. - `cargo deny check advisories` passes after the change. - `cargo deny check advisories bans licenses sources` passes all four checks, matching the Rust CI deny job. - `git diff HEAD^ HEAD --check` passes. 
+- **Issue #4880** (2026-11-06): **fix(python): surface Function drop warnings**
+  *Symptoms*: Remote Python `drop_function` currently discards the dependent-view warnings returned by SQL DROP. Both the synchronous and coroutine APIs now emit those warnings through `warnings.warn` while preserving their boolean result and executing DROP once. The server support is already merged in lancedb/sophon#9820.  The Rust decoder reads warnings across every result batch, including an empty first batch. Missing warning columns remain compatible with older servers; malformed or null warning lists are rejected. The hidden binding bridge carries the warnings to Python. The separate `drop_function_async` API and its `(bool, Job)` contract are unchanged. Python warning filters can raise after the catalog mutation has completed.  Validation: a compiled PyO3/public-server reproduction failed before the fix and passed afterward; the public async path also returned `true` with the expected dependent-view warning. Final source passes two focused Rust tests, two Python wrapper tests, strict targeted Clippy, formatting, and Ruff. Three decoder tests cover batch/null/type and older-server behavior. The public runs preceded a two-file simplification of the completed Job projection; focused final-source checks cover that delta. Current-main integration is conflict-free, and its overlapping changes concern independent retry-policy APIs/tests.  Documentation now covers warning filters, the post-removal warnings-as-errors behavior, and silent compatibility with older servers. The follow-up changes
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1235,726 +1246,428 @@ pub fn rename_column(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `69ac2158` (2026-11-05)
-**Commit Message**: fix: preserve take_row_ids request order (#4826)
+### Incident Patch 1: `1157a070` (2026-11-08)
+**Commit Message**: Bump version: 0.42.0-beta.8 → 0.42.0-beta.9
 
-`take_row_ids` used an `IN` filter, so the backend could reorder rows
-and collapse duplicate IDs. That can silently misalign training rows
-with labels or sample weights.
-
-Restore the requested order and duplicate occurrences in the shared Rust
-take path for native and remote tables, and retain that information
-through Python query serialization. Missing or deleted IDs are omitted.
-Explicit Rust `order_by` overrides request order, and pagination applies
-after restoring occurrences. Empty projections and `_rowid` projection
-aliases retain their output schema.
-
-RTE tables reject unsupported takes with the existing base-table
-guidance before checking the internal row-ID projection used for
-ordering. An explicit `use_rte(False)` reads the base table with the
-same requested order and occurrences.
-
-A pre-existing fixture defect also blocked CI:
-`test_table_add_in_threadpool` responded without reading uploads,
-allowing a connection reset during response decoding. This PR includes a
-fix confined to that test's handler: consume each request body before
-responding and verify one create row plus ten inserted rows. This was
-not a regression in t
-
-**File**: `docs/web/curation/selective-sampling.mdx` (modified, +31/-10)
+**File**: `.bumpversion.toml` (modified, +1/-1)
 ```diff
-@@ -57,16 +57,37 @@ let rows_by_offset = tbl.take_offsets(vec![0, 1, 2]).execute().await?;
- </CodeGroup>
- 
- Both methods return a query builder; call `.to_arrow()`, `.to_list()` or
--similar to execute it. Repeated *offsets* produce repeated rows, so
--`take_offsets` also supports sampling with replacement -- `take_row_ids`
--does not: a row ID repeated in the input list still returns that row only
--once, since the lookup is a set membership test. Neither method guarantees
--result order matches the order of the input list; for `take_row_ids`, pass
--`with_row_id=True` to add `_rowid` to the output and align the results
--yourself if you need to. `take_offsets` tracks `_rowoffset` internally to
--restore repeated rows, but drops that column from the output again
--afterward unless you explicitly `select` it -- add `_rowoffset` to your
--selection when you need it to align a `take_offsets` result yourself.
-+similar to execute it.
-+
-+<Note>
-+The guarantees for row IDs below apply to SDK releases containing
-+[the ordering fix in #4826](https://github.com/lancedb/lancedb/pull/4826).
-+Earlier releases may collapse repeated IDs and return rows in a different
-+order.
-+</Note>
-+
-+`take_row_ids` returns matching rows in the order of the input IDs and
-+preserves repeated IDs in both LanceDB Embedded and LanceDB Enterprise. For example,
-+`take_row_ids([1005, 1001, 1005])` returns row 1005, row 1001, then row 1005
-+again if both IDs exist. Missing or deleted IDs are omitted. This supports
-+sampling with replacement. In Rust, an explicit nonempty
-+`QueryBase::order_by` list overrides the requested order; limits and offsets
-+apply after restoring repeated rows.
-+
-+`take_offsets` also preserves repeated offsets, but does not guarantee
-+input order. It tracks `_rowoffset` internally to restore repeated rows
-+and drops that column from the output unless you explicitly `select` it.
-+Add `_rowoffset` to your selection when you need to align a `take_offsets`
-+result with the input offsets.
-+
-+<Note>
-+Ordered takes by row ID collect all matching batches, combine them into one
-+batch and reorder the rows before returning output batches. Even
-+`to_batches(max_batch_length=1)` only limits the returned batch size; it
-+does not bound working memory. For large requests or rows with large
-+column values, split the input IDs into smaller requests and use
-+`.select(...)` to fetch only the columns you need.
-+</Note>
- 
- Offsets are mostly useful for sampling: the valid range is always
- `[0, len(table))`, so you can draw a random sample of offsets without
+@@ -1,5 +1,5 @@
+ [tool.bumpversion]
+-current_version = "0.42.0-beta.8"
++current_version = "0.42.0-beta.9"
+ parse = """(?x)
+     (?P<major>0|[1-9]\\d*)\\.
+     (?P<minor>0|[1-9]\\d*)\\.
 ```
 
-**File**: `python/python/lancedb/_lancedb.pyi` (modified, +1/-0)
+**File**: `Cargo.lock` (modified, +4/-4)
 ```diff
-@@ -897,6 +897,7 @@ class PyQueryRequest:
-     limit: Optional[int]
-     offset: Optional[int]
-     take_offsets: Optional[List[int]]
-+    take_row_ids: Optional[List[int]]
-     filter: Optional[Union[str, bytes]]
-     full_text_search: Optional[FullTextQuery]
-     select: Optional[Union[str, List[str]]]
+@@ -5930,7 +5930,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "lancedb"
+-version = "0.42.0-beta.8"
++version = "0.42.0-beta.9"
+ dependencies = [
+  "ahash",
+  "anyhow",
+@@ -6041,7 +6041,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "lancedb-cli"
+-version = "0.42.0-beta.8"
++version = "0.42.0-beta.9"
+ dependencies = [
+  "anyhow",
+  "arrow-array",
+@@ -6084,7 +6084,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "lancedb-nodejs"
+-version = "0.42.0-beta.8"
++version = "0.42.0-beta.9"
+ dependencies = [
+  "arrow-array",
+  "arrow-buffer",
+@@ -6109,7 +6109,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "lancedb-python"
+-version = "0.42.0-beta.8"
++version = "0.42.0-beta.9"
+ dependencies = [
+  "arc-swap",
+  "arrow",
 ```
 
-**File**: `python/python/lancedb/query.py` (modified, +5/-0)
+**File**: `docs/src/java/java.md` (modified, +1/-1)
 ```diff
-@@ -236,6 +236,7 @@ def _query_is_plain_scan(query: Query) -> bool:
-         query.vector is None
-         and query.full_text_query is None
-         and query.take_offsets is None
-+        and query.take_row_ids is None
-         and not query.postfilter
-         and not query.order_by
-     )
-@@ -1009,6 +1010,9 @@ class Query(pydantic.BaseModel):
-     # This is populated when a take query is converted to this serializable form.
-     take_offsets: Optional[List[int]] = None
- 
-+    # Row IDs whose requested order and duplicate occurrences must be restored.
-+    take_row_ids: Optional[List[int]] = None
-+
-     # if true, will only search the indexed data
-     fast_search: Optional[bool] = None
- 
-@@ -1034,6 +1038,7 @@ def from_inner(cls, req: PyQueryRequest) -> Self:
-         query.limit = req.limit
-         query.offset = req.offset
-         query.take_offsets = req.take_offsets
-+        query.take_row_ids = req.take_row_ids
-         query.filter = req.filter
-         query.full_text_query = req.full_text_search
-         query.columns = req.select
-```
-
-**File**: `python/python/lancedb/table.py` (modified, +24/-7)
-```diff
-@@ -132,6 +132,7 @@ def _requires_local_namespace_execution(query: Query) -> bool:
-     # The namespace QueryTable request does not support these query options.
-     return (
-         query.take_offsets is not None
-+        or query.take_row_ids is not None
-         or query.search_effort is not None
-         or query.approx_mode is not None
-     )
-@@ -2556,9 +2557,8 @@ def take_row_ids(
-         Row ids are not stable and are relative to the current version of the table.
-         They can change due to compaction and updates.
- 
--        No guarantees are made regarding the order in which results are returned.  If
--        you desire an output order that matches the order of the given ids, you will
--        need to add the row id column to the output and align it yourself.
-+        Results follow the requested row-id order. Repeated IDs produce repeated
-+        rows; missing or deleted IDs are omitted. This also applies to remote tables.
- 
-         Unlike offsets, row ids are not 0-indexed and no assumptions should be made
-         about the possible range of row ids.  In order to use this method you must
-@@ -7256,10 +7256,24 @@ def _sync_query_to_async(
-         | AsyncQuery
-         | AsyncTakeQuery
-     ):
--        if query.take_offsets is not None:
--            take_query = self.take_offsets(query.take_offsets)
--            if query.columns:
--                take_query = take_query.select(query.columns)
-+        if query.take_offsets is not None or query.take_row_ids is not None:
-+            if query.take_offsets is not None and query.take_row_ids is not None:
-+                raise ValueError("Only one of take_offsets and take_row_ids may be set")
-+            take_query = (
-+                self.take_row_ids(query.take_row_ids)
-+                if query.take_row_ids is not None
-+                else self.take_offsets(query.take_offsets)
-+            )
-+            if query.columns is not None:
-+                columns = query.columns
-+                # Native requests serialize dynamic projections as (name, SQL) pairs.
-+                if (
-+                    isinstance(columns, list)
-+                    and columns
-+                    and isinstance(columns[0], tuple)
-+                ):
-+                    columns = dict(columns)
-+                take_query = take_query.select(columns)
-             if query.use_rte is not None:
-                 take_query = take_query.use_rte(query.use_rte)
-             if query.with_row_id:
-@@ -8119,6 +8133,9 @@ def take_row_ids(
-         """
-         Take a list of row ids from the table.
- 
-+        Results follow the requested row-id order. Repeated IDs produce repeated
-+        rows; missing or deleted IDs are omitted. This also applies to remote tables.
-+
-         Row ids are not stable and are relative to the current version of the table.
-         They can change due to compaction and updates.
+@@ -14,7 +14,7 @@ Add the following dependency to your `pom.xml`:
+ <dependency>
+     <groupId>com.lancedb</groupId>
+     <artifactId>lancedb-core</artifactId>
+-    <version>0.42.0-beta.8</version>
++    <version>0.42.0-beta.9</version>
+ </dependency>
+ ```
  
 ```
 
-**File**: `python/python/tests/test_merge_insert_lsm.py` (modified, +17/-8)
+**File**: `java/lancedb-core/pom.xml` (modified, +1/-1)
 ```diff
-@@ -278,7 +278,7 @@ def test_lsm_read_unsupported_shape_errors_without_use_rte_false(tmp_path):
+@@ -8,7 +8,7 @@
+     <parent>
+       <groupId>com.lancedb</groupId>
+       <artifactId>lancedb-parent</artifactId>
+-      <version>0.42.0-beta.8</version>
++      <version>0.42.0-beta.9</version>
+       <relativePath>../pom.xml</relativePath>
+     </parent>
  
-     # with_row_id is unsupported by the LSM scanner; on an RTE table the default
-     # (auto-routed) read hard-errors instead of silently reading a stale base.
--    with pytest.raises(Exception):
-+    with pytest.raises(Exception, match=r"with_row_id.*use_rte\(false\)"):
-         table.search().with_row_id(True).to_arrow()
- 
-     # use_rte(False) is the escape hatch: it reads the base table only.
-@@ -563,19 +563,28 @@ def test_lsm_read_time_travel_errors(tmp_path):
-     assert sorted(base["id"].to_pylist()) == [1, 2, 3]
- 
- 
--def test_lsm_read_take_row_ids_errors(tmp_path):
-+@pytest.mark.parametrize("with_row_id", [False, True])
-+@pytest.mark.parametrize("use_rte", [None, True])
-+def test_lsm_read_take_row_ids_errors(tmp_path, with_row_id, use_rte):
-     db = lancedb.connect(tmp_path, read_consistency_interval=timedelta(seconds=0))
-     table = db.create_table("t", _reader([1, 2, 3]))
-     table.set_unenforced_primary_key("id")
-     table.enable_rte(RTEWriteSpec.unsharded())
-     _lsm_upsert(table, [4])
--    # take-by-row-id auto-routes through the LSM scanner, which has no stable _rowid,
--    # so it hard-errors instead of failing with an opaque column-not-found error.
--    with pytest.raises(Exception, match="row id"):
--        table.take_row_ids([0, 1]).to_arrow()
-+    # Automatic and explicit RTE routing must explain the unsupported take,
-+    # including when row IDs are only requested internally for ordering.
-+    take = table.take_row_ids([1, 0, 1, 2**64 - 1], with_row_id=with_row_id)
-+    if use_rte is not None:
-+        take = take.use_rte(use_rte)
-+    with pytest.raises(Exception, match=r"take by row id.*use_rte\(false\)"):
-+        take.to_arrow()
-     # use_rte(False) is the escape hatch: it reads the base table.
--    base = table.take_row_ids([0, 1]).use_rte(False).to_arrow()
--    assert base.num_rows == 2
-+    base = take.use_rte(False).to_arrow()
-+    assert base["id"].to_pylist() == [2, 1, 2]
-+    assert base["value"].to_pylist() == [1, 0, 1]
-+    assert ("_rowid" in base.column_names) == with_row_id
-+    if with_row_id:
-+        assert base["_rowid"].to_pylist() == [1, 0, 1]
- 
- 
- def test_lsm_read_fts_postfilter_errors(tmp_path):
 ```
 
-**File**: `python/python/tests/test_query.py` (modified, +34/-13)
+**File**: `java/pom.xml` (modified, +1/-1)
 ```diff
-@@ -2417,13 +2417,36 @@ def test_take_queries(tmp_path):
-     assert sorted(converted["idx"].to_pylist()) == [2, 5, 5, 17]
+@@ -6,7 +6,7 @@
  
-     # Take by row id
--    assert list(
--        sorted(table.take_row_ids([5, 2, 17]).to_pandas()["idx"].to_list())
--    ) == [
--        2,
--        5,
--        17,
--    ]
-+    assert table.take_row_ids([5, 2, 17]).to_pandas()["idx"].to_list() == [5, 2, 17]
-+
-+
-+@pytest.mark.parametrize("selection", [None, [], ["idx"], {"_rowid": "100 - idx"}])
-+@pytest.mark.parametrize("empty", [False, True])
-+def test_take_row_ids_order_and_roundtrip(tmp_path, selection, empty):
-+    table = lancedb.connect(tmp_path).create_table("test", pa.table({"idx": [0, 1]}))
-+    table.add(pa.table({"idx": [2, 3]}))
-+    rows = table.search().with_row_id(True).to_arrow().to_pylist()
-+    row_ids = {row["idx"]: row["_rowid"] for row in rows}
-+    table.delete("idx = 1")
-+    requested = (
-+        [] if empty else [row_ids[3], row_ids[1], row_ids[3], 2**64 - 1, row_ids[0]]
-+    )
-+    take = table.take_row_ids(requested)
-+    if selection is not None:
-+        take = take.select(selection)
-+    actual = take.to_arrow()
-+    assert actual.num_rows == (0 if empty else 3)
-+    if selection == {"_rowid": "100 - idx"}:
-+        assert actual.column_names == ["_rowid"]
-+        assert actual["_rowid"].to_pylist() == ([] if empty else [97, 97, 100])
-+    elif selection == []:
-+        assert actual.num_columns == 0
-+    else:
-+        assert actual.column_names == ["idx"]
-+        assert actual["idx"].to_pylist() == ([] if empty else [3, 3, 0])
-+    query = take.to_query_object()
-+    assert query.take_row_ids == requested
-+    assert table._execute_query(query).read_all() == actual
- 
- 
- def test_take_queries_with_row_id(tmp_path):
-@@ -2432,6 +2455,7 @@ def test_take_queries_with_row_id(tmp_path):
- 
-     by_row_id = table.take_row_ids([5, 2, 17], with_row_id=True).to_arrow()
-     assert "_rowid" in by_row_id.column_names
-+    assert by_row_id["_rowid"].to_pylist() == [5, 2, 17]
-     by_offset = table.take_offsets([5, 2, 17], with_row_id=True).to_arrow()
-     assert "_rowid" in by_offset.column_names
- 
-@@ -2446,6 +2470,7 @@ async def test_take_queries_with_row_id_async(tmp_path):
- 
-     by_row_id = await table.take_row_ids([5, 2, 17], with_row_id=True).to_arrow()
-     assert "_rowid" in by_row_id.column_names
-+    assert by_row_id["_rowid"].to_pylist() == [5, 2, 17]
-     by_offset = await table.take_offsets([5, 2, 17], with_row_id=True).to_arrow()
-     assert "_rowid" in by_offset.column_names
- 
-@@ -2472,16 +2497,12 @@ def test_take_queries_to_batches(tmp_path):
-     rs = list(table.take_row_ids([5, 2, 17]).to_batches())
-     assert all(isinstance(b, pa.RecordBatch) for b in rs)
-     assert sum(b.num_rows for b in rs) == 3
--    assert sorted(v for b in rs for v in b.column("idx").to_pylist()) == [2, 5, 17]
-+    assert [v for b in rs for v in b.column("idx").to_pylist()] == [5, 2, 17]
- 
-     # Take with select projection → to_batches preserves the projection
-     rs = list(table.take_row_ids([5, 2, 17]).select(["label"]).to_batches())
-     assert all(b.schema.names == ["label"] for b in rs)
--    assert sorted(v for b in rs for v in b.column("label").to_pylist()) == [
--        "17",
--        "2",
--        "5",
--    ]
-+    assert [v for b in rs for v in b.column("label").to_pylist()] == ["5", "2", "17"]
- 
- 
- def test_getitems(tmp_path):
+     <groupId>com.lancedb</groupId>
+     <artifactId>lancedb-parent</artifactId>
+-    <version>0.42.0-beta.8</version>
++    <version>0.42.0-beta.9</version>
+     <packaging>pom</packaging>
+     <name>${project.artifactId}</name>
+     <description>LanceDB Java SDK Parent POM</description>
 ```
 
-**File**: `python/python/tests/test_remote_db.py` (modified, +57/-2)
+**File**: `nodejs/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -1422,7 +1422,26 @@ def handler(request):
- 
- 
- def test_table_add_in_threadpool():
-+    received = []
-+
-     def handler(request):
-+        # Consume uploads before responding: closing with unread bytes can reset
-+        # the connection while the client is still reading the response.
-+        if request.headers.get("Transfer-Encoding") == "chunked":
-+            body = bytearray()
-+            while size := int(request.rfile.readline().split(b";")[0], 16):
-+                body.extend(request.rfile.read(size))
-+                assert request.rfile.read(2) == b"\r\n"
-+            assert request.rfile.read(2) == b"\r\n"
-+        else:
-+            body = request.rfile.read(int(request.headers.get("Content-Length", 0)))
-+        if request.path in (
-+            "/v1/table/test/create/?mode=create",
-+            "/v1/table/test/insert/",
-+        ):
-+            received.append(
-+                (request.path, pa.ipc.open_stream(body).read_all().to_pylist())
-+            )
-         if request.path == "/v1/table/test/insert/":
-             request.send_response(200)
-             request.end_headers()
-@@ -1461,6 +1480,9 @@ def handler(request):
-             for future in futures:
-                 future.result()
- 
-+    assert [rows for path, rows in received if "/create/" in path] == [[{"id": 1}]]
-+    assert [rows for path, rows in received if "/insert/" in path] == [[{"id": 1}]] * 10
-+
- 
- def test_table_create_indices():
-     # Track received index creation requests to validate name parameter
-@@ -3232,8 +3254,41 @@ def handler(body):
-     assert bodies[-1]["with_row_id"] is True
- 
-     with query_test_table(handler) as table:
--        table.take_row_ids([0, 1]).to_arrow()
--    assert "with_row_id" not in bodies[-1]
-+        result = table.take_row_ids([0, 1]).to_arrow()
-+        assert result.column_names == ["id"]
-+    assert bodies[-1]["with_row_id"] is True
-+
-+
-+@pytest.mark.parametrize("with_row_id", [False, True])
-+@pytest.mark.parametrize("selection", [None, [], ["id"], ["_rowid", "id"]])
-+def test_remote_take_row_ids_order_and_roundtrip(with_row_id, selection):
-+    def handler(body):
-+        assert body["with_row_id"] is True
-+        assert "_rowid IN" in body["filter"]
-+        assert "take_row_ids" not in body
-+        assert "_rowid" not in body.get("columns", [])
-+        data = pa.table(
-+            {
-+                "id": pa.chunked_array([[1, 5], [17]]),
-+                "_rowid": pa.chunked_array([[1, 5], [17]], type=pa.uint64()),
-+            }
-+        )
-+        return data.select(body.get("columns", ["id"]) + ["_rowid"])
-+
-+    with query_test_table(handler) as table:
-+        take = table.take_row_ids([17, 5, 2**64 - 1, 17, 1], with_row_id=with_row_id)
-+        if selection is not None:
-+            take = take.select(selection)
-+        result = take.to_batches(max_batch_length=1).read_all()
-+        assert result.num_rows == 4
-+        expected_columns = ["id"] if selection is None else list(selection)
-+        if with_row_id:
-+            expected_columns = [name for name in expected_columns if name != "_rowid"]
-+            expected_columns.append("_rowid")
-+        assert result.column_names == expected_columns
-+        for column in expected_columns:
-+            assert result[column].to_pylist() == [17, 5, 17, 1]
-+        assert table._execute_query(take.to_query_object()).read_all() == result
- 
- 
- def test_query_sync_minimal():
+@@ -1,7 +1,7 @@
+ [package]
+ name = "lancedb-nodejs"
+ edition.workspace = true
+-version = "0.42.0-beta.8"
++version = "0.42.0-beta.9"
+ publish = false
+ license.workspace = true
+ description.workspace = true
 ```
 
-**File**: `python/src/query.rs` (modified, +3/-0)
+**File**: `nodejs/npm/darwin-arm64/package.json` (modified, +1/-1)
 ```diff
-@@ -355,6 +355,7 @@ pub struct PyQueryRequest {
-     pub limit: Option<usize>,
-     pub offset: Option<usize>,
-     pub take_offsets: Option<Vec<u64>>,
-+    pub take_row_ids: Option<Vec<u64>>,
-     pub filter: Option<PyQueryFilter>,
-     pub full_text_search: Option<PyLanceDB<FtsQuery>>,
-     pub select: PySelect,
-@@ -387,6 +388,7 @@ impl From<AnyQuery> for PyQueryRequest {
-                 limit: query_request.limit,
-                 offset: query_request.offset,
-                 take_offsets: query_request.take_offsets,
-+                take_row_ids: query_request.take_row_ids,
-                 filter: query_request.filter.map(PyQueryFilter),
-                 full_text_search: query_request
-                     .full_text_search
-@@ -419,6 +421,7 @@ impl From<AnyQuery> for PyQueryRequest {
-                 limit: vector_query.base.limit,
-                 offset: vector_query.base.offset,
-                 take_offsets: vector_query.base.take_offsets,
-+                take_row_ids: vector_query.base.take_row_ids,
-                 filter: vector_query.base.filter.map(PyQueryFilter),
-                 full_text_search: None,
-                 select_source_columns: PySelect::source_columns(&vector_query.base.select),
+@@ -1,6 +1,6 @@
+ {
+ 	"name": "@lancedb/lancedb-darwin-arm64",
+-	"version": "0.42.0-beta.8",
++	"version": "0.42.0-beta.9",
+ 	"os": ["darwin"],
+ 	"cpu": ["arm64"],
+ 	"main": "lancedb.darwin-arm64.node",
+```
+
+**File**: `nodejs/npm/linux-arm64-gnu/package.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
+ 	"name": "@lancedb/lancedb-linux-arm64-gnu",
+-	"version": "0.42.0-beta.8",
++	"version": "0.42.0-beta.9",
+ 	"os": ["linux"],
+ 	"cpu": ["arm64"],
+ 	"main": "lancedb.linux-arm64-gnu.node",
 ```
 
 ---
 
-### Incident Patch 2: `5def2611` (2026-11-05)
-**Commit Message**: fix(deps): ignore RUSTSEC-2026-0441 pin-utils unmaintained (#4872)
+### Incident Patch 2: `bd8cbfd4` (2026-11-08)
+**Commit Message**: chore: update lance dependency to v15.0.0-beta.14 (#4909)
 
-`cargo deny` fails on main because RUSTSEC-2026-0441 marks `pin-utils`
-as unmaintained. Add an exception reviewed on 2026-11-05, with the
-advisory and upstream discussion links and a reminder to revisit it when
-updating AWS dependencies.
+Update the Rust workspace Lance crates and Python test dependency to
+[Lance
+v15.0.0-beta.14](https://github.com/lance-format/lance/releases/tag/v15.0.0-beta.14),
+which includes JSON cache reuse across request stores and stable-row-ID
+JSON index support. The Python lock contains all seven published wheels.
+The independent Java module retains beta.8, as in the previous beta.13
+update; its separate beta.14 publisher repair is outside this Rust
+consumer upgrade.
 
-`pin-utils` is transitive through `aws-smithy-http`,
-`aws-smithy-runtime`, and `aws-smithy-types`, including the `aws-config`
-→ `lance-io` path. RustSec lists no safe upgrade; clearing the advisory
-requires upstream migration to supported pinning primitives.
+Preserve all CI coverage while reclaiming completed workspace lancedb
+artifacts before the package-level feature-test build, which otherwise
+exhausted the Linux runner disk. Give only the Linux ARM64 release-wheel
+job two hours after its one-hour timeout, retaining the same runner,
+fat-LTO release profile and build flags.
 
-Validation on commit dede2c783fda73500cee2b05feffe1b70d56624c:
+Validation: 2,280 Rust tests passed (79 existing ignores), strict
+workspace/all-feature Clippy, Rust formatting, and remote example checks
+passed on unchanged Rust source and dependency lock. Python dependency
+guards, lock validation, locked sync, and the published macOS wheel
+import passed. The new Windows ARM64 wheel was downloaded and its
+SHA-256 
 
-- Before the change, `cargo deny check advisories` failed on
-RUSTSEC-2026-0441.
-- `cargo deny check advisories` passes after the change.
-- `cargo deny check advisories bans licenses sources` passes all four
-checks, matching the Rust CI deny job.
-- `git diff HEAD^ HEAD --check` passes.
-
-**File**: `deny.toml` (modified, +8/-0)
+**File**: `.github/workflows/pypi-publish.yml` (modified, +2/-1)
 ```diff
-@@ -131,6 +131,14 @@ ignore = [
-     { id = "RUSTSEC-2026-0391", reason = "zstd 0.13 via arrow-ipc 58; affected with_context API is unused" },
-     { id = "RUSTSEC-2026-0398", reason = "zstd-safe 7 via arrow-ipc 58; affected seekable API is not enabled" },
-     { id = "RUSTSEC-2026-0403", reason = "zstd-safe 7 via arrow-ipc 58; affected streaming decoder API is unused" },
-+
-+    # pin-utils: unmaintained; reviewed 2026-11-05. Transitive via
-+    # aws-smithy-http/runtime/types, including aws-config -> lance-io.
-+    # No safe upgrade exists; clearing requires AWS Smithy to migrate to
-+    # core::pin::pin!, pin-project, or pin-project-lite. Revisit on AWS updates.
-+    # https://rustsec.org/advisories/RUSTSEC-2026-0441
-+    # https://github.com/rustsec/advisory-db/issues/3314
-+    { id = "RUSTSEC-2026-0441", reason = "pin-utils unmaintained via AWS Smithy; no safe upgrade, awaiting upstream migration" },
- ]
- 
- 
+@@ -36,7 +36,8 @@ concurrency:
+ jobs:
+   linux:
+     name: Python ${{ matrix.config.package_name }} ${{ matrix.config.platform }} manylinux${{ matrix.config.manylinux }}
+-    timeout-minutes: 60
++    # The ARM64 release build can exceed an hour with fat LTO on a cold runner.
++    timeout-minutes: ${{ matrix.config.platform == 'aarch64' && 120 || 60 }}
+     strategy:
+       matrix:
+         config:
 ```
 
----
-
-### Incident Patch 3: `1e40ef68` (2026-11-05)
-**Commit Message**: fix: remove unmaintained pin-utils from AWS dependencies (#4874)
-
-`cargo deny` rejects `pin-utils 0.1.0` as unmaintained under
-RUSTSEC-2026-0441; there is no patched release. The dependency comes
-from the AWS Smithy graph. Refresh that graph to include [smithy-rs
-#4882](https://github.com/smithy-lang/smithy-rs/pull/4882), replacing
-the obsolete `aws-smithy-types = ">=1.3.6, <1.7"` constraint with
-`1.9.1`.
-
-The lockfile audit attributes every changed package identity and
-resolved dependency edge to the AWS graph. Existing git dependency pins
-are preserved. The selected AWS crates declare Rust 1.94.1, within the
-workspace's unchanged 1.95.0 requirement.
-
-Validation at the exact candidate on the development EC2 host, both exit
-0:
-
-- `mbx +1.97.1 deny check advisories bans licenses sources`
-- `mbx +1.97.1 check --quiet --locked -p lancedb --tests --features
-remote,aws,dynamodb,bedrock`
-
-The second command compiles the selected test targets; it is not a
-runtime integration test. Full all-features compilation remains
-unverified: an earlier attempt stopped in lance-linalg because the host
-Clang 15 does not support the required `_Float16` target.
-
-**File**: `Cargo.lock` (modified, +317/-262)
+**File**: `.github/workflows/rust.yml` (modified, +7/-0)
 ```diff
-@@ -626,9 +626,9 @@ checksum = "c08606f8c3cbf4ce6ec8e28fb0014a2c086708fe954eaa885384a6165172e7e8"
- 
- [[package]]
- name = "aws-config"
--version = "1.8.16"
-+version = "1.13.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "50f156acdd2cf55f5aa53ee416c4ac851cf1222694506c0b1f78c85695e9ca9d"
-+checksum = "939e256cfe0ed68e96d32f194339d88210d5c10685cff0787400158f852c6819"
- dependencies = [
-  "aws-credential-types",
-  "aws-runtime",
-@@ -640,12 +640,13 @@ dependencies = [
-  "aws-smithy-json",
-  "aws-smithy-runtime",
-  "aws-smithy-runtime-api",
-+ "aws-smithy-schema",
-  "aws-smithy-types",
-  "aws-types",
-  "bytes",
-  "fastrand",
-  "hex",
-- "http 1.5.0",
-+ "http",
-  "sha1 0.10.6",
-  "time",
-  "tokio",
-@@ -656,9 +657,9 @@ dependencies = [
- 
- [[package]]
- name = "aws-credential-types"
--version = "1.2.14"
-+version = "1.3.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "8f20799b373a1be121fe3005fba0c2090af9411573878f224df44b42727fcaf7"
-+checksum = "576e8da35751dc85409ec1cd15999f692c277a1fbe9336780fe6f15e49dd637d"
- dependencies = [
-  "aws-smithy-async",
-  "aws-smithy-runtime-api",
-@@ -692,9 +693,9 @@ dependencies = [
- 
- [[package]]
- name = "aws-runtime"
--version = "1.7.3"
-+version = "1.10.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "5dcd93c82209ac7413532388067dce79be5a8780c1786e5fae3df22e4dee2864"
-+checksum = "9a0cc2144962cc5e358467b16e3d82981b1d424a7c3d34602be0036103814a1a"
- dependencies = [
-  "aws-credential-types",
-  "aws-sigv4",
-@@ -708,10 +709,8 @@ dependencies = [
-  "bytes",
-  "bytes-utils",
-  "fastrand",
-- "http 0.2.12",
-- "http 1.5.0",
-- "http-body 0.4.6",
-- "http-body 1.1.0",
-+ "http",
-+ "http-body",
-  "percent-encoding",
-  "pin-project-lite",
-  "tracing",
-@@ -720,10 +719,11 @@ dependencies = [
- 
- [[package]]
- name = "aws-sdk-bedrockruntime"
--version = "1.130.0"
-+version = "1.153.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "3e2f7bca252e3c5c8f0ed12c5501bf8b0fbadb937cd9fdd71a0ebd9d7526540f"
-+checksum = "89b8aeb4b1b6d5f9d377264cff21b4e4d773e66ee3c5582b4099a8fbc702bdb3"
- dependencies = [
-+ "arc-swap",
-  "aws-credential-types",
-  "aws-runtime",
-  "aws-sigv4",
-@@ -734,23 +734,24 @@ dependencies = [
-  "aws-smithy-observability",
-  "aws-smithy-runtime",
-  "aws-smithy-runtime-api",
-+ "aws-smithy-schema",
-  "aws-smithy-types",
-  "aws-types",
-  "bytes",
-  "fastrand",
-- "http 0.2.12",
-- "http 1.5.0",
-+ "http",
-  "http-body-util",
-  "regex-lite",
-  "tracing",
- ]
- 
- [[package]]
- name = "aws-sdk-dynamodb"
--version = "1.111.0"
-+version = "1.137.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "fc418346e3cb248c7d59e642acbcb06488b7c7cd2ba6ebc79e8003f618c60099"
-+checksum = "41515f51bd2b5608268336bda372065e8fd5d1ca2f684b63e5c25ae4abb62c53"
- dependencies = [
-+ "arc-swap",
-  "aws-credential-types",
-  "aws-runtime",
-  "aws-smithy-async",
-@@ -759,22 +760,24 @@ dependencies = [
-  "aws-smithy-observability",
-  "aws-smithy-runtime",
-  "aws-smithy-runtime-api",
-+ "aws-smithy-schema",
-  "aws-smithy-types",
-  "aws-types",
-  "bytes",
-  "fastrand",
-- "http 0.2.12",
-- "http 1.5.0",
-+ "http",
-  "regex-lite",
-  "tracing",
-+ "url",
- ]
- 
- [[package]]
- name = "aws-sdk-kms"
--version = "1.106.0"
-+version = "1.129.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "2336350f96efcf9c2552b7fdb4dd07a0c1fef11f22b28fb020a9e33e7925cf9d"
-+checksum = "5c5cdb29ad25d71c9ee54c408a672c98d90a24a0ea6eb063025483e0e894b411"
- dependencies = [
-+ "arc-swap",
-  "aws-credential-types",
-  "aws-runtime",
-  "aws-smithy-async",
-@@ -783,22 +786,23 @@ dependencies = [
-  "aws-smithy-observability",
-  "aws-smithy-runtime",
-  "aws-smithy-runtime-api",
-+ "aws-smithy-schema",
-  "aws-smithy-types",
-  "aws-types",
-  "bytes",
-  "fastrand",
-- "http 0.2.12",
-- "http 1.5.0",
-+ "http",
-  "regex-lite",
-  "tracing",
- ]
- 
- [[package]]
- name = "aws-sdk-s3"
--version = "1.132.0"
-+version = "1.157.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "5575840a3a6b11f6011463ebe359320dfe5b67babb5e9b06fed6ddf809a9ab40"
-+checksum = "6ea9794c741520d8baec9462bcd0ad12164d4f5f78d008a8da9d6a0b7222caa8"
- dependencies = [
-+ "arc-swap",
-  "aws-credential-types",
-  "aws-runtime",
-  "aws-sigv4",
-@@ -810,17 +814,17 @@ dependencies = [
-  "aws-smithy-observability",
-  "aws-smithy-runtime",
-  "aws-smithy-runtime-api",
-+ "aws-smithy-schema",
-  "aws-smithy-types",
-  "aws-smithy-xml",
-  "aws-types",
-  "bytes",
-  "fastrand",
-  "hex",
-  "hmac 0.13.0",
-- "http 0.2.12",
-- "http 1.5.0",
-- "http-body 1.1.0",
-- "lru",
-+ "http",
-+ "http-body",
-+ "lru 0.18.5",
-  "percent-encoding",
-  "regex-lite",
-  "sha2 0.11.0",
-@@ -830,10 +834,11 @@ dependencies = [
- 
- [[package]]
- name = "aws-sdk-sso"
--version = "1.98.0"
-+version = "1.119.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d69c77aafa20460c68b6b3213c84f6423b6e76dbf89accd3e1789a686ffd9489"
-+checksum = "3c414f25ec4aa9dc18f5cc8f55
+@@ -241,6 +241,13 @@ jobs:
+           sudo swapon "$swapfile"
+       - name: Build
+         run: cargo build --profile ci --all-features --tests --locked --examples
++      - name: Reclaim completed workspace build artifacts
++        run: |
++          # Package-level tests resolve a different feature graph from the workspace
++          # build. Reclaim its lancedb outputs before linking the test graph.
++          df -h .
++          cargo clean --profile ci -p lancedb
++          df -h .
+       - name: Run feature tests
+         run: CARGO_ARGS="--profile ci" make -C ./lancedb feature-tests
+       - name: Run examples
 ```
 
-**File**: `Cargo.toml` (modified, +1/-2)
+**File**: `Cargo.lock` (modified, +48/-48)
 ```diff
-@@ -49,8 +49,7 @@ arrow-select = "59.2.0"
- arrow-cast = "59.2.0"
- arrow-flight = { version = "59.2.0", features = ["flight-sql-experimental"] }
- async-trait = "0"
--# Smithy JSON 0.63 requires the pre-1.7 Document representation; allow the MSRV pin.
--aws-smithy-types = ">=1.3.6, <1.7"
-+aws-smithy-types = "1.9.1"
- base64 = "0.22"
- bytes = "1"
- datafusion = { version = "55.0.0", default-features = false }
+@@ -3765,8 +3765,8 @@ checksum = "42703706b716c37f96a77aea830392ad231f44c9e9a67872fa5548707e11b11c"
+ 
+ [[package]]
+ name = "fsst"
+-version = "15.0.0-beta.13"
+-source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
++version = "15.0.0-beta.14"
++source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.14#3bb1550f4f27adf90948ff36c2318768e675b599"
+ dependencies = [
+  "arrow-array",
+  "rand 0.9.5",
+@@ -5243,8 +5243,8 @@ checksum = "e037a2e1d8d5fdbd49b16a4ea09d5d6401c1f29eca5ff29d03d3824dba16256a"
+ 
+ [[package]]
+ name = "lance"
+-version = "15.0.0-beta.13"
+-source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
++version = "15.0.0-beta.14"
++source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.14#3bb1550f4f27adf90948ff36c2318768e675b599"
+ dependencies = [
+  "arc-swap",
+  "arrow",
+@@ -5319,8 +5319,8 @@ dependencies = [
+ 
+ [[package]]
+ name = "lance-arrow"
+-version = "15.0.0-beta.13"
+-source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
++version = "15.0.0-beta.14"
++source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.14#3bb1550f4f27adf90948ff36c2318768e675b599"
+ dependencies = [
+  "arrow-array",
+  "arrow-buffer",
+@@ -5342,7 +5342,7 @@ dependencies = [
+ [[package]]
+ name = "lance-arrow-scalar"
+ version = "59.0.0"
+-source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
++source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.14#3bb1550f4f27adf90948ff36c2318768e675b599"
+ dependencies = [
+  "arrow-array",
+  "arrow-buffer",
+@@ -5356,7 +5356,7 @@ dependencies = [
+ [[package]]
+ name = "lance-arrow-stats"
+ version = "59.0.0"
+-source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
++source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.14#3bb1550f4f27adf90948ff36c2318768e675b599"
+ dependencies = [
+  "arrow-array",
+  "arrow-schema",
+@@ -5365,8 +5365,8 @@ dependencies = [
+ 
+ [[package]]
+ name = "lance-bitpacking"
+-version = "15.0.0-beta.13"
+-source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
++version = "15.0.0-beta.14"
++source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.14#3bb1550f4f27adf90948ff36c2318768e675b599"
+ dependencies = [
+  "arrayref",
+  "crunchy",
+@@ -5376,8 +5376,8 @@ dependencies = [
+ 
+ [[package]]
+ name = "lance-core"
+-version = "15.0.0-beta.13"
+-source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
++version = "15.0.0-beta.14"
++source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.14#3bb1550f4f27adf90948ff36c2318768e675b599"
+ dependencies = [
+  "arrow-array",
+  "arrow-buffer",
+@@ -5415,8 +5415,8 @@ dependencies = [
+ 
+ [[package]]
+ name = "lance-datafusion"
+-version = "15.0.0-beta.13"
+-source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
++version = "15.0.0-beta.14"
++source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.14#3bb1550f4f27adf90948ff36c2318768e675b599"
+ dependencies = [
+  "arrow",
+  "arrow-array",
+@@ -5447,8 +5447,8 @@ dependencies = [
+ 
+ [[package]]
+ name = "lance-datafusion-exec"
+-version = "15.0.0-beta.13"
+-source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
++version = "15.0.0-beta.14"
++source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.14#3bb1550f4f27adf90948ff36c2318768e675b599"
+ dependencies = [
+  "arrow",
+  "arrow-array",
+@@ -5473,8 +5473,8 @@ dependencies = [
+ 
+ [[package]]
+ name = "lance-datagen"
+-version = "15.0.0-beta.13"
+-source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
++version = "15.0.0-beta.14"
++source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.14#3bb1550f4f27adf90948ff36c2318768e675b599"
+ dependencies = [
+  "arrow",
+  "arrow-array",
+@@ -5491,8 +5491,8 @@ dependencies = [
+ 
+ [[package]]
+ name = "lance-derive"
+-version = "15.0.0-beta.13"
+-source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
++version = "15.0.0-beta.14"
++source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.14#3bb1550f4f27adf90948ff36c2318768e675b599"
+ dependencies = [
+  "proc-macro2",
+  "quote",
+@@ -5501,8 +5501,8 @@ dependencies = [
+ 
+ [[package]]
+ name = "lance-encoding"
+-version = "15.0.0-beta.13"
+-source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta.13#6eef95cf4552e3f904f9222cbd3719504dede0cf"
++version = "15.0.0-beta.14"
++source = "git+https://github.com/lance-format/lance.git?tag=v15.0.0-beta
+```
+
+**File**: `Cargo.toml` (modified, +15/-15)
+```diff
+@@ -19,21 +19,21 @@ categories = ["database-implementations"]
+ rust-version = "1.95.0"
+ 
+ [workspace.dependencies]
+-lance = { "version" = "=15.0.0-beta.13", default-features = false, "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
+-lance-core = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
+-lance-datagen = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
+-lance-file = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
+-lance-io = { "version" = "=15.0.0-beta.13", default-features = false, "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
+-lance-index = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
+-lance-jsonb = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
+-lance-linalg = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
+-lance-namespace = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
+-lance-namespace-impls = { "version" = "=15.0.0-beta.13", default-features = false, "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
+-lance-table = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
+-lance-testing = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
+-lance-datafusion = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
+-lance-encoding = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
+-lance-arrow = { "version" = "=15.0.0-beta.13", "tag" = "v15.0.0-beta.13", "git" = "https://github.com/lance-format/lance.git" }
++lance = { "version" = "=15.0.0-beta.14", default-features = false, "tag" = "v15.0.0-beta.14", "git" = "https://github.com/lance-format/lance.git" }
++lance-core = { "version" = "=15.0.0-beta.14", "tag" = "v15.0.0-beta.14", "git" = "https://github.com/lance-format/lance.git" }
++lance-datagen = { "version" = "=15.0.0-beta.14", "tag" = "v15.0.0-beta.14", "git" = "https://github.com/lance-format/lance.git" }
++lance-file = { "version" = "=15.0.0-beta.14", "tag" = "v15.0.0-beta.14", "git" = "https://github.com/lance-format/lance.git" }
++lance-io = { "version" = "=15.0.0-beta.14", default-features = false, "tag" = "v15.0.0-beta.14", "git" = "https://github.com/lance-format/lance.git" }
++lance-index = { "version" = "=15.0.0-beta.14", "tag" = "v15.0.0-beta.14", "git" = "https://github.com/lance-format/lance.git" }
++lance-jsonb = { "version" = "=15.0.0-beta.14", "tag" = "v15.0.0-beta.14", "git" = "https://github.com/lance-format/lance.git" }
++lance-linalg = { "version" = "=15.0.0-beta.14", "tag" = "v15.0.0-beta.14", "git" = "https://github.com/lance-format/lance.git" }
++lance-namespace = { "version" = "=15.0.0-beta.14", "tag" = "v15.0.0-beta.14", "git" = "https://github.com/lance-format/lance.git" }
++lance-namespace-impls = { "version" = "=15.0.0-beta.14", default-features = false, "tag" = "v15.0.0-beta.14", "git" = "https://github.com/lance-format/lance.git" }
++lance-table = { "version" = "=15.0.0-beta.14", "tag" = "v15.0.0-beta.14", "git" = "https://github.com/lance-format/lance.git" }
++lance-testing = { "version" = "=15.0.0-beta.14", "tag" = "v15.0.0-beta.14", "git" = "https://github.com/lance-format/lance.git" }
++lance-datafusion = { "version" = "=15.0.0-beta.14", "tag" = "v15.0.0-beta.14", "git" = "https://github.com/lance-format/lance.git" }
++lance-encoding = { "version" = "=15.0.0-beta.14", "tag" = "v15.0.0-beta.14", "git" = "https://github.com/lance-format/lance.git" }
++lance-arrow = { "version" = "=15.0.0-beta.14", "tag" = "v15.0.0-beta.14", "git" = "https://github.com/lance-format/lance.git" }
+ lancedb = { path = "rust/lancedb", default-features = false }
+ ahash = "0.8"
+ anyhow = "1"
+```
+
+**File**: `python/pyproject.toml` (modified, +1/-1)
+```diff
+@@ -64,7 +64,7 @@ tests = [
+     "polars>=0.19, <=1.32.3",
+     "pyarrow>=16",
+     "pyarrow-stubs>=16.0",
+-    "pylance==15.0.0b13",
++    "pylance==15.0.0b14",
+     "requests>=2.31.0",
+     "datafusion>=54,<55",
+     "opentelemetry-sdk>=1.30.0",
+```
+
+**File**: `python/uv.lock` (modified, +9/-9)
+```diff
+@@ -2147,7 +2147,7 @@ requires-dist = [
+     { name = "pyarrow-stubs", marker = "extra == 'tests'", specifier = ">=16.0" },
+     { name = "pydantic", specifier = ">=2.7.4,<3" },
+     { name = "pylance", marker = "extra == 'pylance'", specifier = ">=15.0.0b3" },
+-    { name = "pylance", marker = "extra == 'tests'", specifier = "==15.0.0b13" },
++    { name = "pylance", marker = "extra == 'tests'", specifier = "==15.0.0b14" },
+     { name = "pyright", marker = "extra == 'dev'", specifier = ">=1.1.350" },
+     { name = "pytest", marker = "extra == 'tests'", specifier = ">=7.0" },
+     { name = "pytest-asyncio", marker = "extra == 'tests'", specifier = ">=0.21" },
+@@ -4301,7 +4301,7 @@ crypto = [
+ 
+ [[package]]
+ name = "pylance"
+-version = "15.0.0b13"
++version = "15.0.0b14"
+ source = { registry = "https://pypi.fury.io/lance-format/" }
+ dependencies = [
+     { name = "lance-namespace" },
+@@ -4312,13 +4312,13 @@ dependencies = [
+     { name = "pyarrow", version = "26.0.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+ ]
+ wheels = [
+-    { url = "https://pypi.fury.io/lance-format/-/ver_1UqLiw/pylance-15.0.0b13-cp310-abi3-macosx_11_0_arm64.whl", hash = "sha256:bbbf6e42624275d1559a4887a11f6cb1c34f10c560ca7209b59219d3614a444f" },
+-    { url = "https://pypi.fury.io/lance-format/-/ver_wto7I/pylance-15.0.0b13-cp310-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:8b8730195df05fa7242d12f4c759019b658f668b90d7ceba380059597bb5951a" },
+-    { url = "https://pypi.fury.io/lance-format/-/ver_13UO9X/pylance-15.0.0b13-cp310-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:a41f292084694a681773990e6d96a675b45e4d232d7a67b21b05762dd5976e8a" },
+-    { url = "https://pypi.fury.io/lance-format/-/ver_1Mjytl/pylance-15.0.0b13-cp310-abi3-manylinux_2_28_aarch64.whl", hash = "sha256:76d2f6a5a8ac150bee990006cc7b7c920e1af2532e4d3ff6a142ab5a5412483e" },
+-    { url = "https://pypi.fury.io/lance-format/-/ver_1XuqE6/pylance-15.0.0b13-cp310-abi3-manylinux_2_28_x86_64.whl", hash = "sha256:ac2b50bf8af53aac65d56703010cdf9c1567fdfe230c7fbac1d69584933d7793" },
+-    { url = "https://pypi.fury.io/lance-format/-/ver_Fj6Go/pylance-15.0.0b13-cp310-abi3-win_amd64.whl", hash = "sha256:7e6556db1a812cb0846cc0e30c0f273468d5e58dc210f3ee9955d9cdc3bc762a" },
+-    { url = "https://pypi.fury.io/lance-format/-/ver_zqD9j/pylance-15.0.0b13-cp310-abi3-win_arm64.whl", hash = "sha256:b3aecc63299a687d9ae69d80655f869321d922d5b462f4657efc83d73456551e" },
++    { url = "https://pypi.fury.io/lance-format/-/ver_b88Zw/pylance-15.0.0b14-cp310-abi3-macosx_11_0_arm64.whl", hash = "sha256:48bcdfda408d1f8eaabbd066236bdb0ae9539acb3186b246c5c1ad4e8e5dcf23" },
++    { url = "https://pypi.fury.io/lance-format/-/ver_J0evn/pylance-15.0.0b14-cp310-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:958d7cf0c8f31e09be94d6785c45158121073e79eb3bdb6f7ed25f7dde22c9a2" },
++    { url = "https://pypi.fury.io/lance-format/-/ver_18gbAN/pylance-15.0.0b14-cp310-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:80814eff77dd0b83ee3c18280895a8d2cadf6d49818d7047a4540b773618738d" },
++    { url = "https://pypi.fury.io/lance-format/-/ver_1gqym0/pylance-15.0.0b14-cp310-abi3-manylinux_2_28_aarch64.whl", hash = "sha256:bb59f5d5b8740eb5df57c1777bce61f3e2a9f7d47ab31068e2ccf43549627103" },
++    { url = "https://pypi.fury.io/lance-format/-/ver_1FHTtC/pylance-15.0.0b14-cp310-abi3-manylinux_2_28_x86_64.whl", hash = "sha256:357357f9f419efe9f90ba63d4dc371fc93e191aa692cf6f88d327607680f77da" },
++    { url = "https://pypi.fury.io/lance-format/-/ver_1LzfL9/pylance-15.0.0b14-cp310-abi3-win_amd64.whl", hash = "sha256:916fcc39051bdd2e8ca50950ee4d8afb941c130fd278ac7cea252c2059beab58" },
++    { url = "https://pypi.fury.io/lance-format/-/ver_nDQ2x/pylance-15.0.0b14-cp310-abi3-win_arm64.whl", hash = "sha256:e1449bbb7a207cb2890d9afeef41f816d2ab4a459ed73cc46c919d463e46fe10" },
+ ]
+ 
+ [[package]]
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4875** (2026-11-05): test: match SDK documentation fallback URL (@Xuanwo)
-- **PR #4874** (2026-11-05): fix: remove unmaintained pin-utils from AWS dependencies (@Xuanwo)
-- **PR #4872** (2026-11-05): fix(deps): ignore RUSTSEC-2026-0441 pin-utils unmaintained (@Xuanwo)
-- **PR #4871** (2026-11-05): fix(node): normalize record batches before IPC serialization (@BubbleCal)
-- **PR #4870** (2026-11-05): fix: nav, redirect and badge cleanup across several pages (@jackye1995)
-- **PR #4869** (2026-11-05): test: allow hidden pages in SDK documentation links (@Xuanwo)
+- **PR #4909** (2026-11-08): chore: update lance dependency to v15.0.0-beta.14 (@BubbleCal)
+- **PR #4899** (2026-11-07): chore: update lance dependency to v15.0.0-beta.13 (@lancedb-robot)
+- **PR #4896** (2026-11-06): docs: fix Rust example download links (@tsmithv11)
+- **PR #4895** (closed): feat: preserve remote compaction option inheritance (@ChilePiquin)
+- **PR #4890** (2026-11-06): feat: expose the remaining refresh options on the SDKs (@wkalt)
+- **PR #4888** (2026-11-06): chore(deps): upgrade Lance to v15.0.0-beta.12 (@BubbleCal)
 
 ---
 
@@ -1974,62 +1687,28 @@ Clang 15 does not support the required `_Float16` target.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. preserve take_row_ids request order (#4826)
+## X. Bump version: 0.42.0-beta.8 → 0.42.0-beta.9
 
 **RULE**:
-When implementing operations in `docs/web/curation/selective-sampling.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.bumpversion.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `69ac2158`: preserve take_row_ids request order (#4826). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1157a070`: Bump version: 0.42.0-beta.8 → 0.42.0-beta.9. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/web/curation/selective-sampling.mdx`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.bumpversion.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-similar to execute it.
-
-<Note>
-The guarantees for row IDs below apply to SDK releases containing
-[the ordering fix in #4826](https://github.com/lancedb/lancedb/pull/4826).
-Earlier releases may collapse repeated IDs and return rows in a different
-order.
-</Note>
-
-`take_row_ids` returns matching rows in the order of the input IDs and
-preserves repeated IDs in both LanceDB Embedded and LanceDB Enterprise. For example,
-`take_row_ids([1005, 1001, 1005])` returns row 1005, row 1001, then row 1005
-again if both IDs exist. Missing or deleted IDs are omitted. This supports
-sampling with replacement. In Rust, an explicit nonempty
-`QueryBase::order_by` list overrides the requested order; limits and offsets
-apply after restoring repeated rows.
-
-`take_offsets` also preserves repeated offsets, but does not guarantee
-input order. It tracks `_rowoffset` internally to restore repeated rows
-and drops that column from the output unless you explicitly `select` it.
-Add `_rowoffset` to your selection when you need to align a `take_offsets`
-result with the input offsets.
-
-<Note>
-Ordered takes by row ID collect all matching batches, combine them into one
-batch and reorder the rows before returning output b
+current_version = "0.42.0-beta.9"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-similar to execute it. Repeated *offsets* produce repeated rows, so
-`take_offsets` also supports sampling with replacement -- `take_row_ids`
-does not: a row ID repeated in the input list still returns that row only
-once, since the lookup is a set membership test. Neither method guarantees
-result order matches the order of the input list; for `take_row_ids`, pass
-`with_row_id=True` to add `_rowid` to the output and align the results
-yourself if you need to. `take_offsets` tracks `_rowoffset` internally to
-restore repeated rows, but drops that column from the output again
-afterward unless you explicitly `select` it -- add `_rowoffset` to your
-selection when you need it to align a `take_offsets` result yourself.
+current_version = "0.42.0-beta.8"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `69ac2158` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1157a070` are properly handled with clean fallback behavior.

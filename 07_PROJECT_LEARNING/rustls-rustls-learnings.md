@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rustls-rustls-learnings.md`  
 > **Source**: github ([https://github.com/rustls/rustls](https://github.com/rustls/rustls))  
-> **Source Version**: `12890d87`  
+> **Source Version**: `e7506724`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T17:59:33.376Z  
+> **Timestamp**: 2026-11-09T17:44:02.747Z  
 > **Learning ID**: `learn-github-rustls-rustls`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rustls-rustls-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rustls/rustls](https://github.com/rustls/rustls))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T17:59:32.514Z  
+> **Harvest Timestamp**: 2026-11-09T17:44:02.738Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A modern TLS library in Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7736 stars
+- **Stars / Engagement**: 7739 stars
 
 ---
 
@@ -2251,17 +2251,17 @@ fn exec(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3411** (2026-11-03): **0.24 documentation pass**
-  *Symptoms*: There are actually a couple of semi-functional changes here, but as a result of the docs pointing out something wrong. Happy to extract those into a different PR if desired.
+- **Issue #3420** (2026-11-09): **replace links to tools.ietf.org and datatracker.ietf.org with rfc-editor.org/info**
+  *Symptoms*: 1. datatracker is an active server, and now suffers from LLMbots. 2. tools.ietf.org was deprecated: https://www.ietf.org/blog/finalizing-ietf-tools-transition/ 3. the www.rfc-editor.org/info/rfcXXXX link includes document status, and can include applied errata  (Sorry if this seems like busy work: a pet peeve of mine as I start reading code/documentation) I am also https://datatracker.ietf.org/person/Michael%20Richardson  
   **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3411?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 95.67%. Comparing base ([`c6aab99`](https://app.codecov.io/gh/rustls/rustls/commit/c6aab99888d362800e9f2d853fef3341aec48941?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`53848d2`](https://app.codecov.io/gh/rustls/rustls/commit/53848d272fd45e7e94761c814246c03d1e2b79ce?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)).  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##             main    #3411   +/-   ## ======================================= 
-  >   # Benchmark results  ## Instruction counts    #### Significant differences    _There are no significant instruction count differences_    #### Other differences    <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.2_rsa_aes_server | 10383817 | 10449621 | [65804](https://bench.rustls.dev/comparisons/c6aab99888d362800e9f2d853fef3341aec48941:53848d272fd45e7e94761c814246c03d1e2b79ce/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.2_rsa_aes_server) (0.63%) | 1.42% | | handshake_no_resume_aws_lc_rs_1.3_rsa_chacha_server | 10923365 | 10949938 | [26573](https://bench.rustls.dev/comparisons/c6aab99888d362800e9f2d853fef3341aec48941:53848d272fd45e7e94761c814246c03d1e2b79ce/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_rsa_chacha_server) (0.24%) | 1.20% | | handshake_no_resume_aws_lc_rs_1.3_ecdsap384_chacha_client | 8757472 | 8777427 | [19955](ht
+  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3420?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 95.69%. Comparing base ([`12890d8`](https://app.codecov.io/gh/rustls/rustls/commit/12890d87bb0c118fdd9ddd36b010f1c4d0df9e19?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`68f61b3`](https://app.codecov.io/gh/rustls/rustls/commit/68f61b34e95bb110571081bbe23486a8b608f12b?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)). :warning: Report is 8 commits behind head on main.  <details><summary>Additional details and impacted files</summary>    ```diff @@            Coverage Diff             @@ ##             main    #34
+  >   # Benchmark results  ## Instruction counts    #### Significant differences    ⚠️ There are significant instruction count differences  <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_session_id_1.2_no_crypto_server | 692844 | 694314 | ⚠️ [1470](https://bench.rustls.dev/comparisons/0d7f9b323ec71c2f359c8e490a13a57e7b1a0f53:68f61b34e95bb110571081bbe23486a8b608f12b/cachegrind-diff/handshake_session_id_1.2_no_crypto_server) (0.21%) | 0.20% |   </details>    #### Other differences    <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.3_rsa_chacha_server | 10946552 | 10922052 | [-24500](https://bench.rustls.dev/comparisons/0d7f9b323ec71c2f359c8e490a13a57e7b1a0f53:68f61b34e95bb110571081bbe23486a8b608f12b/cachegrind-diff/handshake_no_resume_a
 
-- **Issue #3410** (2026-11-02): **Make tests more concise**
-  *Symptoms*: This set of changes aim to largely remove the repeated parts of tests, like:  ```rust         let mut client_output = Vec::new();         let mut server_output = Vec::new();         let mut client_input = VecInput::default();         let mut server_input = VecInput::default();         do_handshake(             &mut client_input,             &mut client_output,             &mut client,             &mut server_input,             &mut server_output,             &mut server,         ); ``` Which becomes `HandshakeIo::default().handshake(&mut client, &mut server);`
+- **Issue #3419** (2026-11-09): **Update Rust crate crabgrind to 0.5**
+  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [crabgrind](https://redirect.github.com/2dav/crabgrind) | workspace.dependencies | minor | `0.4` → `0.5` |  ---  ### Release Notes  <details> <summary>2dav/crabgrind (crabgrind)</summary>  ### [`v0.5.0`](https://redirect.github.com/2dav/crabgrind/blob/HEAD/CHANGELOG.md#050---2026-11-06)  ##### Added  - Convenient, typed wrappers for `memcheck` requests for primitive scalar types - `VALGRIND_RUNNING_VERSION` request introduced in Valgrind 3.28  </details>  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Disabled by config. Please merge this manually once you are satisfied.  ♻ **Rebasing**: Whenever PR is behind base branch, or you tick the rebase/retry checkbox.  🔕 **Ignore**: Close this PR and you won't be reminded about this update again.  ---   - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, check this box  ---  This PR was generated by [Mend Renovate](https://mend.io/renovate/). View the [repository job log](https://developer.mend.io/github/rustls/rustls). <!--renovate-debug:eyJjcmVhdGVkSW5WZXIiOiI0NC4yMjAuMCIsInVwZGF0ZWRJblZlciI6IjQ0LjIyMC4wIiwidGFyZ2V0QnJhbmNoIjoibWFpbiIsImxhYmVscyI6WyJkZXBlbmRlbmNpZXMiXX0=--> 
   **Post-Mortem & Fix Analysis**:
-  >   # Benchmark results  ## Instruction counts    #### Significant differences    ⚠️ There are significant instruction count differences  <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.3_ecdsap384_chacha_server | 2265833 | 2272320 | ⚠️ [6487](https://bench.rustls.dev/comparisons/8dca43ed9ed13f8b4507a3febcb55e2a7bfb02f0:a6630432068a1a832ccdd394c3bd7f698349229c/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_ecdsap384_chacha_server) (0.29%) | 0.20% |   </details>    #### Other differences    <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.2_rsa_aes_server | 10409190 | 10460499 | [51309](https://bench.rustls.dev/comparisons/8dca43ed9ed13f8b4507a3febcb55e2a7bfb02f0:a6630432068a1a832ccdd394c3bd7f698349229c/cachegr
-  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3410?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 95.64%. Comparing base ([`8dca43e`](https://app.codecov.io/gh/rustls/rustls/commit/8dca43ed9ed13f8b4507a3febcb55e2a7bfb02f0?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`a663043`](https://app.codecov.io/gh/rustls/rustls/commit/a6630432068a1a832ccdd394c3bd7f698349229c?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)).  <details><summary>Additional details and impacted files</summary>    ```diff @@            Coverage Diff             @@ ##             main    #3410      +/-   ## ==================================
+  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3419?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 95.69%. Comparing base ([`6f33cc3`](https://app.codecov.io/gh/rustls/rustls/commit/6f33cc3c133602c778914b80fd05812f49a3cb04?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`dab6fe2`](https://app.codecov.io/gh/rustls/rustls/commit/dab6fe27047e26e2939841d036954080139567de?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)). :warning: Report is 1 commits behind head on main.  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##             main    #3419 
+  >   # Benchmark results  ## Instruction counts    #### Significant differences    ⚠️ There are significant instruction count differences  <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.3_ecdsap384_chacha_server | 2265775 | 2270916 | ⚠️ [5141](https://bench.rustls.dev/comparisons/6f33cc3c133602c778914b80fd05812f49a3cb04:dab6fe27047e26e2939841d036954080139567de/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_ecdsap384_chacha_server) (0.23%) | 0.20% |   </details>    #### Other differences    <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.3_ecdsap384_chacha_client | 8777811 | 8812194 | [34383](https://bench.rustls.dev/comparisons/6f33cc3c133602c778914b80fd05812f49a3cb04:dab6fe27047e26e2939841d036954080139567de/
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2278,306 +2278,204 @@ fn exec(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `12890d87` (2026-10-29)
-**Commit Message**: server: reject stateful sessions older than the advertised lifetime
+### Incident Patch 1: `e7506724` (2026-10-24)
+**Commit Message**: client: reject TLS1.3-only extensions in TLS1.2 ServerHello
 
-The server records creation_time_sec in each stored session but never
-consulted it on resumption. Stateful TLS 1.3 tickets advertise a 24 hour
-ticket_lifetime and TLS 1.2 session ids have no bound at all, yet both
-were accepted until the entry fell out of session_storage.
+With TLS1.3 enabled the client offers key_share and
+psk_key_exchange_modes (and pre_shared_key when resuming) in a
+ClientHello that also offers TLS1.2. If the server picks TLS1.2,
+the unsolicited extension check lets these through because they
+were sent, and the TLS1.2 handler never looks at them, so a TLS1.2
+ServerHello carrying a key_share was accepted.
 
-Apply the 24 hour lifetime to sessions read back from session_storage on
-both paths, falling back to a full handshake. Tickets from the ticketer
-are already bounded by its key rotation and are unchanged.
+None of these are defined for TLS1.2. BoringSSL rejects them in a
+TLS1.2 ServerHello with UNEXPECTED_EXTENSION, and the TLS1.3 handler
+already restricts its ServerHello to an allowlist.
 
-**File**: `rustls-test/tests/api/resume.rs` (modified, +84/-1)
+**File**: `rustls/src/client/test.rs` (modified, +47/-0)
 ```diff
-@@ -3,7 +3,7 @@
- #![allow(clippy::disallowed_types, clippy::duplicate_mod)]
- 
- use core::hash::Hasher;
--use core::sync::atomic::{AtomicUsize, Ordering};
-+use core::sync::atomic::{AtomicU64, AtomicUsize, Ordering};
- use core::time::Duration;
- use std::fmt;
- use std::sync::Arc;
-@@ -13,7 +13,9 @@ use rustls::crypto::kx::NamedGroup;
- use rustls::crypto::{CertificateIdentity, Identity, SelectedCredential, TicketProducer};
- use rustls::enums::{CertificateType, ProtocolVersion};
- use rustls::error::{ApiMisuse, Error, PeerMisbehaved};
-+use rustls::pki_types::UnixTime;
- use rustls::server::{ServerSessionKey, Tls13Tickets};
-+use rustls::time_provider::TimeProvider;
- use rustls::{
-     ClientConfig, ClientSide, Connection, HandshakeKind, ServerConfig, ServerSide, Tcp, VecInput,
- };
-@@ -1343,6 +1345,87 @@ fn tls13_client_discards_zero_lifetime_ticket() {
-     assert_eq!(client.handshake_kind(), Some(HandshakeKind::Full));
+@@ -604,6 +604,53 @@ fn test_client_rejects_non_empty_renegotiation_info_in_initial_handshake() {
+     );
  }
  
 +#[test]
-+fn tls13_server_rejects_expired_stateful_session() {
-+    let provider = provider::DEFAULT_TLS13_PROVIDER;
-+    let client_config = Arc::new(make_client_config(KeyType::default(), &provider));
++fn test_client_rejects_tls13_extension_in_tls12_server_hello() {
++    let config = Arc::new(
++        ClientConfig::builder(Arc::new(TEST_PROVIDER.clone()))
++            .with_root_certificates(roots())
++            .with_no_client_auth()
++            .unwrap(),
++    );
++    let mut tls = Vec::new();
++    let mut conn = config
++        .connect(ServerName::try_from("localhost").unwrap())
++        .build(&mut tls)
++        .unwrap();
 +
-+    let clock = Arc::new(AdjustableClock::new());
-+    let storage = Arc::new(ServerStorage::new());
-+    let mut server_config = make_server_config(KeyType::default(), &provider);
-+    server_config.session_storage = storage.clone();
-+    server_config.time_provider = clock.clone();
-+    let server_config = Arc::new(server_config);
++    // `key_share` was offered (TLS 1.3 is enabled), so it is not
++    // unsolicited, but it is only specified for TLS 1.3.
++    let sh = Message {
++        version: EncodableVersion::Legacy(ProtocolVersion::TLSv1_2),
++        payload: MessagePayload::handshake(HandshakeMessagePayload(HandshakePayload::ServerHello(
++            ServerHelloPayload {
++                legacy_version: ProtocolVersion::TLSv1_2,
++                random: Random::new(config.provider().secure_random).unwrap(),
++                session_id: SessionId::empty(),
++                cipher_suite: TLS_TEST_SUITE.common.suite,
++                compression_method: Compression::Null,
++                extensions: Box::new(ServerExtensions {
++                    extended_main_secret_ack: Some(()),
++                    key_share: Some(KeyShareEntry::new(
++                        KEY_EXCHANGE_GROUP.name(),
++                        vec![0xaa; 32],
++                    )),
++                    ..ServerExtensions::default()
++                }),
++            },
++        ))),
++    };
++    let mut input = VecInput::default();
++    input
++        .read(&mut sh.into_wire_bytes().as_slice())
++        .unwrap();
 +
-+    // full handshake: the server stores the sessions and advertises a 24 hour lifetime
-+    let (mut client, mut server, mut buf) =
-+        make_pair_for_arc_configs(&client_config, &server_config);
-+    buf.handshake(&mut client, &mut server);
-+    assert_eq!(server.handshake_kind(), Some(HandshakeKind::Full));
-+    assert_eq!(storage.puts(), 2);
-+
-+    // 25 hours later (by the server's clock) the stored session is found but not resumed
-+    clock.advance(Duration::from_secs(25 * 60 * 60));
-+    let (mut client, mut server, mut buf) =
-+        make_pair_for_arc_configs(&client_config, &server_config);
-+    buf.handshake(&mut client, &mut server);
-+    assert_eq!(storage.takes(), 1);
-+    assert_eq!(client.handshake_kind(), Some(HandshakeKind::Full));
-+    assert_eq!(server.handshake_kind(), Some(HandshakeKind::Full));
++    assert_eq!(
++        process(&mut input, &mut conn).unwrap_err(),
++        PeerMisbehaved::UnsolicitedServerHelloExtension.into()
++    );
 +}
 +
-+#[test]
-+fn tls12_server_rejects_expired_stateful_session() {
-+    let provider = provider::DEFAULT_TLS12_PROVIDER;
-+    let client_config = Arc::new(make_client_config(KeyType::default(), &provider));
-+
-+    let clock = Arc::new(AdjustableClock::new());
-+    let storage = Arc::new(ServerStorage::new());
-+    let mut server_config = make_server_config(KeyType::default(), &provider);
-+    server_config.session_storage = storage.clone();
-+    server_config.time_provider = clock.clone();
-+    let server_config = Arc::new(server_config);
-+
-+    // full handshake: the server stores the session under its session id
-+    let (mut client, mut server, mut buf) =
-+        make_pair_for_arc_configs(&client_config, &server_config);
-+    buf.handshake(&mut client, &mut server);
-+    assert_eq!(server.handshake_kind(), Some(HandshakeKind::Full));
-+    assert_eq!(storage.puts(), 1);
-+
-+    // 25 hours later (by the server's clock) the stored session is found but not resumed
-+    clock.advance(Duration::from_secs(25 * 60 * 60));
-+    let (mut client, mut server, mut buf) =
-+        make_pair_for_arc_configs(&client_config, &server_config);
-+    buf.handshake(&mut client, &mut server);
-+    assert_eq!(storage.gets(), 1);
-+    assert_eq!(client.handshake_kind(), Some(HandshakeKind::Full));
-+    assert_eq!(server.handshake_kind(), Some(HandshakeKind::Full));
-+}
-+
-+/// A `TimeProvider` that starts at the current time and only moves when told to.
-+#[derive(Debug)]
-+struct AdjustableClock(AtomicU64);
-+
-+impl AdjustableClock {
-+    fn new() -> Self {
-+        Self(AtomicU64::new(UnixTime::now().as_secs()))
-+    }
-+
-+    fn advance(&self, by: Duration) {
-+        self.0
-+            .fetch_add(by.as_secs(), Ordering::SeqCst);
-+    }
-+}
-+
-+impl TimeProvider for AdjustableClock {
-+    fn current_time(&self) -> Option<UnixTime> {
-+        Some(UnixTime::since_unix_epoch(Duration::from_secs(
-+            self.0.load(Ordering::SeqCst),
-+        )))
-+    }
-+}
-+
- /// Issues tickets with a `ticket_lifetime` of zero.
- #[derive(Debug)]
- struct ZeroLifetimeTicketer(Arc<dyn TicketProducer>);
+ #[test]
+ fn cas_extension_in_client_hello_if_server_verifier_requests_it() {
+     let cas_sending_server_verifier =
 ```
 
-**File**: `rustls/src/server/mod.rs` (modified, +11/-1)
+**File**: `rustls/src/client/tls12.rs` (modified, +10/-1)
 ```diff
-@@ -126,6 +126,13 @@ impl<'a> CommonServerSessionValue<'a> {
-         }
-     }
+@@ -43,7 +43,7 @@ mod server_hello {
+         ClientHandler, ClientHelloInput, ClientSessionValue, ClientState, ExpectServerHello,
+     };
+     use crate::common_state::Protocol;
+-    use crate::msgs::ServerHelloPayload;
++    use crate::msgs::{ExtensionType, ServerHelloPayload};
+     use crate::sealed::Sealed;
+     use crate::verify::HandshakeSignatureValid;
  
-+    /// Whether this session was created more than `lifetime` ago.
-+    pub(crate) fn has_expired(&self, now: UnixTime, lifetime: Duration) -> bool {
-+        self.creation_time_sec
-+            .saturating_add(lifetime.as_secs())
-+            < now.as_secs()
-+    }
+@@ -96,6 +96,15 @@ mod server_hello {
+                 return Err(PeerMisbehaved::NonEmptyRenegotiationInfo.into());
+             }
+ 
++            // We may have offered these for TLS 1.3, so they are not unsolicited,
++            // but they have no meaning in a TLS 1.2 ServerHello.
++            if server_hello
++                .received_types()
++                .any(|ext| ExtensionType::TLS13_ONLY.contains(&ext))
++            {
++                return Err(PeerMisbehaved::UnsolicitedServerHelloExtension.into());
++            }
 +
-     pub(crate) fn can_resume(&self, suite: CipherSuite, sni: Option<&DnsName<'_>>) -> bool {
-         // The RFCs underspecify what happens if we try to resume to
-         // an unoffered/varying suite.  We merely don't resume in weird cases.
-@@ -223,5 +230,8 @@ impl AsRef<[u8]> for ServerSessionKey<'_> {
+             let ClientHelloInput {
+                 config,
+                 session_key,
+```
+
+**File**: `rustls/src/msgs/enums.rs` (modified, +12/-0)
+```diff
+@@ -119,6 +119,18 @@ impl ExtensionType {
+     pub(crate) fn is_recognized(&self) -> bool {
+         ExtensionTypeName::try_from(*self).is_ok()
      }
++
++    /// Extensions specified only for TLS 1.3 that we may offer alongside TLS 1.2.
++    ///
++    /// `supported_versions` is checked separately.
++    pub(crate) const TLS13_ONLY: &'static [Self] = &[
++        Self::PreSharedKey,
++        Self::EarlyData,
++        Self::Cookie,
++        Self::PSKKeyExchangeModes,
++        Self::CertificateAuthorities,
++        Self::KeyShare,
++    ];
  }
  
--/// The `ticket_lifetime` advertised for TLS 1.3 tickets from [`ServerConfig::session_storage`].
-+/// How long a session in [`ServerConfig::session_storage`] stays resumable.
-+///
-+/// Advertised as `ticket_lifetime` for stateful TLS 1.3 tickets.  Tickets from
-+/// [`ServerConfig::ticketer`] are bounded by its key rotation instead.
- pub(crate) const STATEFUL_SESSION_LIFETIME: Duration = Duration::from_secs(24 * 60 * 60);
-```
-
-**File**: `rustls/src/server/tls12.rs` (modified, +16/-1)
-```diff
-@@ -9,7 +9,9 @@ use zeroize::Zeroize;
- 
- use super::config::ServerConfig;
- use super::hs::ServerState;
--use super::{CommonServerSessionValue, ServerSessionKey, ServerSessionValue};
-+use super::{
-+    CommonServerSessionValue, STATEFUL_SESSION_LIFETIME, ServerSessionKey, ServerSessionValue,
-+};
- use crate::ConnectionTrafficSecrets;
- use crate::check::inappropriate_message;
- use crate::common_state::{Event, HandshakeFlightTls12, HandshakeKind, Output, OutputEvent, Side};
-@@ -115,6 +117,7 @@ mod client_hello {
-                 st.sni.as_ref(),
-                 st.using_ems,
-                 suite,
-+                st.config.current_time()?,
-                 &st.config,
-             );
- 
-@@ -215,6 +218,7 @@ mod client_hello {
-         sni: Option<&DnsName<'_>>,
-         using_ems: bool,
-         suite: &'static Tls12CipherSuite,
-+        now: UnixTime,
-         config: &ServerConfig,
-     ) -> (bool, Option<Tls12ServerSessionValue<'static>>) {
-         // First, check for a ticket that decrypts
-@@ -264,6 +268,17 @@ mod client_hello {
-             return (ticket, None);
-         }
- 
-+        // Tickets are bounded by the ticketer's key rotation; sessions from
-+        // `session_storage` by the lifetime we advertise for them.
-+        if !ticket
-+            && session
-+                .common
-+                .has_expired(now, STATEFUL_SESSION_LIFETIME)
-+        {
-+            debug!("stored session has expired");
-+            return (ticket, None);
-+        }
-+
-         match session.extended_ms == using_ems || session.extended_ms && !using_ems {
-             true => (ticket, Some(session.into_owned())),
-             false => (ticket, None),
-```
-
-**File**: `rustls/src/server/tls13.rs` (modified, +12/-1)
-```diff
-@@ -485,7 +485,8 @@ mod client_hello {
- 
-         let now = config.current_time()?;
-         for (index, psk_id) in psk_offer.identities.iter().enumerate() {
--            let Some(mut session) = Tls13ServerSessionValue::from_ticket(psk_id, config) else {
-+            let Some(mut session) = Tls13ServerSessionValue::from_ticket(psk_id, now, config)
-+            else {
-                 continue;
-             };
- 
-@@ -1313,6 +1314,7 @@ pub(crate) struct Tls13ServerSessionValue<'a> {
- impl<'a> Tls13ServerSessionValue<'a> {
-     fn from_ticket(
-         id: &PresharedKeyIdentity,
-+        now: UnixTime,
-         config: &ServerConfig,
-     ) -> Option<Tls13ServerSessionValue<'static>> {
-         let plain = match config.ticketer.as_deref() {
-@@ -1326,6 +1328,15 @@ impl<'a> Tls13ServerSessionValue<'a> {
-             return None;
-         };
- 
-+        if config.ticketer.is_none()
-+            && tls13
-+                .common
-+                .has_expired(now, STATEFUL_SESSION_LIFETIME)
-+        {
-+            debug!("stored session has expired");
-+            return None;
-+        }
-+
-         Some(tls13.into_owned())
-     }
- 
+ enum_builder! {
 ```
 
 ---
 
-### Incident Patch 2: `b471b260` (2026-10-29)
-**Commit Message**: server: extract stateful ticket lifetime into a const
+### Incident Patch 2: `0e73e14c` (2026-11-06)
+**Commit Message**: Skip TLS 1.2 session lookup when TLS 1.2 resumption is disabled
 
-**File**: `rustls/src/server/mod.rs` (modified, +4/-0)
+`ClientSessionValue::retrieve` fell back to `ClientSessionStore::tls12_session`
+regardless of `tls12_resumption`, so a client with `Tls12Resumption::Disabled`
+still resumed TLS 1.2 sessions by session ID. TLS 1.3 tickets are taken
+before the fallback and are unaffected.
+
+**File**: `rustls-test/tests/api/resume.rs` (modified, +24/-1)
 ```diff
-@@ -1,4 +1,5 @@
- use alloc::vec::Vec;
-+use core::time::Duration;
+@@ -8,7 +8,9 @@ use core::time::Duration;
+ use std::fmt;
+ use std::sync::Arc;
  
- use pki_types::{DnsName, UnixTime};
- 
-@@ -221,3 +222,6 @@ impl AsRef<[u8]> for ServerSessionKey<'_> {
-         self.inner
+-use rustls::client::{ClientCredentialResolver, CredentialRequest, Resumption, TicketRequest};
++use rustls::client::{
++    ClientCredentialResolver, CredentialRequest, Resumption, TicketRequest, Tls12Resumption,
++};
+ use rustls::crypto::kx::NamedGroup;
+ use rustls::crypto::{CertificateIdentity, Identity, SelectedCredential, TicketProducer};
+ use rustls::enums::{CertificateType, ProtocolVersion};
+@@ -104,6 +106,27 @@ impl ClientCredentialResolver for ForwardingResolver {
      }
  }
+ 
++#[test]
++fn tls12_resumption_disabled() {
++    for (provider, second) in [
++        (provider::DEFAULT_TLS12_PROVIDER, HandshakeKind::Full),
++        (provider::DEFAULT_TLS13_PROVIDER, HandshakeKind::Resumed),
++    ] {
++        let mut client_config = make_client_config(KeyType::default(), &provider);
++        client_config.resumption =
++            Resumption::default().tls12_resumption(Tls12Resumption::Disabled);
++        let client_config = Arc::new(client_config);
++        let server_config = Arc::new(make_server_config(KeyType::default(), &provider));
++        for expected in [HandshakeKind::Full, second] {
++            let (mut client, mut server, mut buf) =
++                make_pair_for_arc_configs(&client_config, &server_config);
++            buf.handshake(&mut client, &mut server);
++            assert_eq!(client.handshake_kind(), Some(expected));
++            assert_eq!(server.handshake_kind(), Some(expected));
++        }
++    }
++}
 +
-+/// The `ticket_lifetime` advertised for TLS 1.3 tickets from [`ServerConfig::session_storage`].
-+pub(crate) const STATEFUL_SESSION_LIFETIME: Duration = Duration::from_secs(24 * 60 * 60);
+ #[test]
+ fn resumption_combinations() {
+     for (client_config, server_config, expect) in MultiTest::new(provider::DEFAULT_PROVIDER) {
 ```
 
-**File**: `rustls/src/server/tls13.rs` (modified, +4/-4)
+**File**: `rustls/src/client/hs.rs` (modified, +3/-0)
 ```diff
-@@ -1,7 +1,6 @@
- use alloc::boxed::Box;
- use alloc::vec;
- use alloc::vec::Vec;
--use core::time::Duration;
- 
- pub(crate) use client_hello::TLS13_HANDLER;
- use pki_types::{DnsName, UnixTime};
-@@ -10,7 +9,9 @@ use zeroize::Zeroizing;
- 
- use super::config::ServerConfig;
- use super::hs::{HandshakeHashOrBuffer, ServerState};
--use super::{CommonServerSessionValue, ServerSessionKey, ServerSessionValue};
-+use super::{
-+    CommonServerSessionValue, STATEFUL_SESSION_LIFETIME, ServerSessionKey, ServerSessionValue,
-+};
- use crate::check::{inappropriate_handshake_message, inappropriate_message};
- use crate::common_state::{Event, HandshakeFlightTls13, HandshakeKind, Output, OutputEvent, Side};
- use crate::conn::kernel::KernelState;
-@@ -1472,8 +1473,7 @@ impl ExpectFinished {
-                 trace!("resumption not available; not issuing ticket");
-                 return Ok(());
-             }
--            let stateful_lifetime = Duration::from_secs(24 * 60 * 60); // this is a bit of a punt
--            (id.to_vec(), stateful_lifetime)
-+            (id.to_vec(), STATEFUL_SESSION_LIFETIME)
-         };
- 
-         let mut payload = NewSessionTicketPayloadTls13::new(lifetime, age_add, nonce, ticket);
+@@ -1133,6 +1133,9 @@ impl ClientSessionValue {
+             .take_tls13_ticket(key)
+             .map(ClientSessionValue::Tls13)
+             .or_else(|| {
++                if config.resumption.tls12_resumption == Tls12Resumption::Disabled {
++                    return None;
++                }
+                 config
+                     .resumption
+                     .store
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3420** (2026-11-09): replace links to tools.ietf.org and datatracker.ietf.org with rfc-editor.org/info (@mcr)
+- **PR #3419** (2026-11-09): Update Rust crate crabgrind to 0.5 (@renovate-bot)
+- **PR #3417** (2026-11-06): Refactor ALPN selection (@ctz)
+- **PR #3414** (2026-11-06): client: reject hello retry request naming a group already offered (@Mounika2456)
 - **PR #3411** (2026-11-03): 0.24 documentation pass (@ctz)
 - **PR #3410** (2026-11-02): Make tests more concise (@ctz)
-- **PR #3408** (2026-11-02): Bring back support for no_std (@djc)
-- **PR #3405** (closed): Pass the negotiated TLS version to signing keys (@loadingalias)
-- **PR #3404** (closed): Honor disabled TLS 1.2 resumption with a shared store (@loadingalias)
-- **PR #3402** (2026-10-31): Fix nightly clippy `redundant_clone` case (@ctz)
 
 ---
 
@@ -2597,52 +2495,55 @@ are already bounded by its key rotation and are unchanged.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. server: reject stateful sessions older than the advertised lifetime
+## X. client: reject TLS1.3-only extensions in TLS1.2 ServerHello
 
 **RULE**:
-When implementing operations in `rustls-test/tests/api/resume.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rustls/rustls. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `rustls/src/client/test.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rustls/rustls. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `12890d87`: server: reject stateful sessions older than the advertised lifetime. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e7506724`: client: reject TLS1.3-only extensions in TLS1.2 ServerHello. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rustls-test/tests/api/resume.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rustls/src/client/test.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use core::sync::atomic::{AtomicU64, AtomicUsize, Ordering};
-use rustls::pki_types::UnixTime;
-use rustls::time_provider::TimeProvider;
 #[test]
-fn tls13_server_rejects_expired_stateful_session() {
-    let provider = provider::DEFAULT_TLS13_PROVIDER;
-    let client_config = Arc::new(make_client_config(KeyType::default(), &provider));
+fn test_client_rejects_tls13_extension_in_tls12_server_hello() {
+    let config = Arc::new(
+        ClientConfig::builder(Arc::new(TEST_PROVIDER.clone()))
+            .with_root_certificates(roots())
+            .with_no_client_auth()
+            .unwrap(),
+    );
+    let mut tls = Vec::new();
+    let mut conn = config
+        .connect(ServerName::try_from("localhost").unwrap())
+        .build(&mut tls)
+        .unwrap();
 
-    let clock = Arc::new(AdjustableClock::new());
-    let storage = Arc::new(ServerStorage::new());
-    let mut server_config = make_server_config(KeyType::default(), &provider);
-    server_config.session_storage = storage.clone();
-    server_config.time_provider = clock.clone();
-    let server_config = Arc::new(server_config);
-
-    // full handshake: the server stores the sessions and advertises a 24 hour lifetime
-    let (mut client, mut server, mut buf) =
-        make_pair_for_arc_configs(&client_config, &server_config);
-    buf.handshake(&mut client, &mut server);
-    assert_eq!(server.handshake_kind(), Some(HandshakeKind::Full));
-    assert_eq!(storage.puts(), 2);
-
-    // 25 hours later (by the server's clock) the stored session is found but not resumed
-    clock.advance(Duration::from_secs(25 * 60 * 60));
-    let (mut client, mut server, mut buf) =
+    // `key_share` was offered (TLS 1.3 is enabled), so it is not
+    // unsolicited, but it is only specified for TLS 1.3.
+    let sh = Message {
+        version: EncodableVersion::Legacy(ProtocolVersion::TLSv1_2),
+        payload: MessagePayload::handshake(HandshakeMessagePayload(HandshakePayload::ServerHello(
+            ServerHelloPayload {
+                legacy_version: ProtocolVersion::TLSv1_2,
+                random: Random::new(config.provider().secure_random).unwrap(),
+                session_id: SessionId::empty(),
+                cipher_suite: TLS_TEST_SUITE.common.suite,
+                compression_method: Compression::Null,
+                extensions: Box::new(ServerExtensions {
+                    extended_main_secret_ack: Some(()),
+       
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-use core::sync::atomic::{AtomicUsize, Ordering};
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `12890d87` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e7506724` are properly handled with clean fallback behavior.

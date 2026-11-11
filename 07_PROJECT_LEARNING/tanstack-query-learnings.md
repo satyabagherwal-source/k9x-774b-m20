@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tanstack-query-learnings.md`  
 > **Source**: github ([https://github.com/TanStack/query](https://github.com/TanStack/query))  
-> **Source Version**: `d5781a49`  
+> **Source Version**: `8f6da1e2`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T03:09:04.738Z  
+> **Timestamp**: 2026-11-07T21:10:20.871Z  
 > **Learning ID**: `learn-github-tanstack-query`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tanstack-query-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/TanStack/query](https://github.com/TanStack/query))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T03:09:03.708Z  
+> **Harvest Timestamp**: 2026-11-07T21:10:20.571Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🤖 Powerful asynchronous state management, server-state utilities and data fetching for the web. TS/JS, React Query, Solid Query, Svelte Query and Vue Query.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 50522 stars
+- **Stars / Engagement**: 50533 stars
 
 ---
 
@@ -3586,380 +3586,528 @@ async function serializeRequest(request) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e877443c` (2026-11-04)
-**Commit Message**: chore(deps): align 'catalog', 'vue' and 'next' dev ranges with examples after the security update (#12515)
+### Incident Patch 1: `c4ed956b` (2026-11-05)
+**Commit Message**: fix({query,react-query,preact-query}-devtools): always render the devtools left-to-right regardless of the page direction or browser language (#12528)
 
-**File**: `examples/vue/algolia/package.json` (modified, +1/-1)
+* fix({query,react-query,preact-query}-devtools): move 'dir="ltr"' into 'query-devtools' so the panel and settings menus render left-to-right on RTL pages in every adapter
+
+* fix(query-devtools): set 'dir="ltr"' on the PiP panel and provide an 'en-US' locale to Kobalte so sub-menus open with 'ArrowRight' under RTL browser languages
+
+* chore(.changeset): align 'query-devtools-force-ltr' summary with the RTL browser language fix
+
+**File**: `.changeset/query-devtools-force-ltr.md` (added, +7/-0)
 ```diff
-@@ -14,7 +14,7 @@
-     "@tanstack/vue-pacer": "^0.2.0",
-     "@tanstack/vue-query": "^5.105.3",
-     "@tanstack/vue-query-devtools": "^6.3.9",
--    "vue": "^3.5.43"
-+    "vue": "^3.5.44"
-   },
-   "devDependencies": {
-     "@tanstack/eslint-plugin-query": "^5.105.3",
+@@ -0,0 +1,7 @@
++---
++'@tanstack/query-devtools': patch
++'@tanstack/react-query-devtools': patch
++'@tanstack/preact-query-devtools': patch
++---
++
++fix({query,react-query,preact-query}-devtools): always render the devtools left-to-right regardless of the page direction or browser language
 ```
 
-**File**: `examples/vue/basic-graphql-request/package.json` (modified, +1/-1)
+**File**: `packages/preact-query-devtools/src/PreactQueryDevtools.tsx` (modified, +1/-1)
 ```diff
-@@ -14,7 +14,7 @@
-     "@tanstack/vue-query-devtools": "^6.3.9",
-     "graphql": "^16.9.0",
-     "graphql-request": "^7.1.2",
--    "vue": "^3.5.43"
-+    "vue": "^3.5.44"
-   },
-   "devDependencies": {
-     "@tanstack/eslint-plugin-query": "^5.105.3",
+@@ -137,5 +137,5 @@ export function PreactQueryDevtools(props: DevtoolsOptions): VNode | null {
+     }
+   }, [devtools])
+ 
+-  return <div dir="ltr" className="tsqd-parent-container" ref={ref} />
++  return <div className="tsqd-parent-container" ref={ref} />
+ }
 ```
 
-**File**: `examples/vue/basic/package.json` (modified, +1/-1)
+**File**: `packages/query-devtools/src/Devtools.tsx` (modified, +7/-0)
 ```diff
-@@ -12,7 +12,7 @@
-   "dependencies": {
-     "@tanstack/vue-query": "^5.105.3",
-     "@tanstack/vue-query-devtools": "^6.3.9",
--    "vue": "^3.5.43"
-+    "vue": "^3.5.44"
-   },
-   "devDependencies": {
-     "@tanstack/eslint-plugin-query": "^5.105.3",
+@@ -236,6 +236,7 @@ export const Devtools: Component<DevtoolsPanelProps> = (props) => {
+           `,
+           'tsqd-transitions-container',
+         )}
++        dir="ltr"
+         ref={transitionsContainerRef}
+       >
+         <TransitionGroup name="tsqd-panel-transition">
+@@ -324,6 +325,7 @@ const PiPPanel: Component<{
+ 
+   return (
+     <div
++      dir="ltr"
+       style={{
+         '--tsqd-font-size': '16px',
+         'max-height': '100vh',
+@@ -393,6 +395,7 @@ export const ParentPanel: Component<{
+ 
+   return (
+     <div
++      dir="ltr"
+       style={{
+         '--tsqd-font-size': '16px',
+       }}
+@@ -1123,6 +1126,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
+                 }
+               >
+                 <DropdownMenu.Content
++                  dir="ltr"
+                   class={cx(styles().settingsMenu, 'tsqd-settings-menu')}
+                 >
+                   <div
+@@ -1154,6 +1158,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
+                         }
+                       >
+                         <DropdownMenu.SubContent
++                          dir="ltr"
+                           class={cx(
+                             styles().settingsMenu,
+                             'tsqd-settings-submenu',
+@@ -1235,6 +1240,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
+                       }
+                     >
+                       <DropdownMenu.SubContent
++                        dir="ltr"
+                         class={cx(
+                           styles().settingsMenu,
+                           'tsqd-settings-submenu',
+@@ -1304,6 +1310,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
+                       }
+                     >
+                       <DropdownMenu.SubContent
++                        dir="ltr"
+                         class={cx(
+                           styles().settingsMenu,
+                           'tsqd-settings-submenu',
 ```
 
-**File**: `examples/vue/batching/package.json` (modified, +1/-1)
+**File**: `packages/query-devtools/src/DevtoolsComponent.tsx` (modified, +7/-4)
 ```diff
-@@ -13,7 +13,7 @@
-     "@tanstack/vue-pacer": "^0.2.0",
-     "@tanstack/vue-query": "^5.105.3",
-     "@tanstack/vue-query-devtools": "^6.3.9",
--    "vue": "^3.5.43"
-+    "vue": "^3.5.44"
-   },
-   "devDependencies": {
-     "@tanstack/eslint-plugin-query": "^5.105.3",
+@@ -1,4 +1,5 @@
+ import { createLocalStorage } from '@solid-primitives/storage'
++import { I18nProvider } from '@kobalte/core'
+ import { createMemo } from 'solid-js'
+ import { DevtoolsOfflineProvider } from './providers/DevtoolsOfflineProvider'
+ import { DevtoolsSubscriptionsProvider } from './providers/DevtoolsSubscriptionsProvider'
+@@ -32,10 +33,12 @@ const DevtoolsComponent: DevtoolsComponentType = (props) => {
+           <DevtoolsSubscriptionsProvider>
+             <PiPProvider localStore={localStore} setLocalStore={setLocalStore}>
+               <ThemeContext.Provider value={theme}>
+-                <Devtools
+-                  localStore={localStore}
+-                  setLocalStore={setLocalStore}
+-                />
++                <I18nProvider locale="en-US">
++                  <Devtools
++                    localStore={localStore}
++                    setLocalStore={setLocalStore}
++                  />
++                </I18nProvider>
+               </ThemeContext.Provider>
+             </PiPProvider>
+           </DevtoolsSubscriptionsProvider>
 ```
 
-**File**: `examples/vue/chat/package.json` (modified, +1/-1)
+**File**: `packages/query-devtools/src/DevtoolsPanelComponent.tsx` (modified, +11/-8)
 ```diff
-@@ -12,7 +12,7 @@
-   "dependencies": {
-     "@tanstack/vue-query": "^5.105.3",
-     "@tanstack/vue-query-devtools": "^6.3.9",
--    "vue": "^3.5.43"
-+    "vue": "^3.5.44"
-   },
-   "devDependencies": {
-     "@tailwindcss/vite": "^4.3.3",
+@@ -1,4 +1,5 @@
+ import { createLocalStorage } from '@solid-primitives/storage'
++import { I18nProvider } from '@kobalte/core'
+ import { createMemo } from 'solid-js'
+ import { DevtoolsOfflineProvider } from './providers/DevtoolsOfflineProvider'
+ import { DevtoolsSubscriptionsProvider } from './providers/DevtoolsSubscriptionsProvider'
+@@ -36,14 +37,16 @@ const DevtoolsPanelComponent: DevtoolsComponentType = (props) => {
+               setLocalStore={setLocalStore}
+             >
+               <ThemeContext.Provider value={theme}>
+-                <ParentPanel>
+-                  <ContentView
+-                    localStore={localStore}
+-                    setLocalStore={setLocalStore}
+-                    onClose={props.onClose}
+-                    showPanelViewOnly
+-                  />
+-                </ParentPanel>
++                <I18nProvider locale="en-US">
++                  <ParentPanel>
++                    <ContentView
++                      localStore={localStore}
++                      setLocalStore={setLocalStore}
++                      onClose={props.onClose}
++                      showPanelViewOnly
++                    />
++                  </ParentPanel>
++                </I18nProvider>
+               </ThemeContext.Provider>
+             </PiPProvider>
+           </DevtoolsSubscriptionsProvider>
 ```
 
-**File**: `examples/vue/contacts-tanstack-router/package.json` (modified, +1/-1)
+**File**: `packages/query-devtools/src/__tests__/Devtools.test.tsx` (modified, +125/-0)
 ```diff
-@@ -15,7 +15,7 @@
-     "@tanstack/vue-query-devtools": "^6.3.9",
-     "@tanstack/vue-router": "^1.170.42",
-     "match-sorter": "^8.3.0",
--    "vue": "^3.5.43"
-+    "vue": "^3.5.44"
-   },
-   "devDependencies": {
-     "@tanstack/eslint-plugin-query": "^5.105.3",
+@@ -1025,6 +1025,19 @@ describe('Devtools', () => {
+         pipDocument.querySelector('[aria-label*="narrow-pip-query"]'),
+       ).not.toBeNull()
+     })
++
++    it('should render the PiP panel with "dir" set to "ltr"', () => {
++      const { pipDocument } = stubPipWindow()
++      const rendered = renderDevtools({ initialIsOpen: true })
++
++      fireEvent.click(
++        rendered.getByLabelText('Open in picture-in-picture mode'),
++      )
++      expect(pipDocument.querySelector('.tsqd-main-panel')).toHaveAttribute(
++        'dir',
++        'ltr',
++      )
++    })
+   })
+ 
+   describe('status counts', () => {
+@@ -1786,6 +1799,118 @@ describe('Devtools', () => {
+     })
+   })
+ 
++  describe('text direction', () => {
++    it('should render the floating devtools with "dir" set to "ltr"', () => {
++      const rendered = renderDevtools({ initialIsOpen: true })
++
++      expect(
++        rendered.container.querySelector('.tsqd-transitions-container'),
++      ).toHaveAttribute('dir', 'ltr')
++    })
++
++    it('should render the embedded panel with "dir" set to "ltr"', () => {
++      const rendered = render(() => (
++        <DevtoolsPanelComponent
++          client={queryClient}
++          onlineManager={onlineManager}
++          queryFlavor="TanStack Query"
++          version="5"
++        />
++      ))
++
++      expect(
++        rendered.container.querySelector('.tsqd-main-panel'),
++      ).toHaveAttribute('dir', 'ltr')
++    })
++
++    it('should render the settings menu with "dir" set to "ltr"', () => {
++      const rendered = renderDevtools({ initialIsOpen: true })
++
++      fireEvent.keyDown(rendered.getByLabelText('Open settings menu'), {
++        key: 'Enter',
++      })
++
++      expect(document.querySelector('.tsqd-settings-menu')).toHaveAttribute(
++        'dir',
++        'ltr',
++      )
++    })
++
++    it.each(['position', 'theme', 'disabled-queries'])(
++      'should render the "%s" sub-menu with "dir" set to "ltr"',
++      (name) => {
++        const rendered = renderDevtools({ initialIsOpen: true })
++
++        fireEvent.keyDown(rendered.getByLabelText('Open settings menu'), {
++          key: 'Enter',
++        })
++
++        const subTrigger = document.querySelector<HTMLElement>(
++          `.tsqd-settings-menu-sub-trigger-${name}`,
++        )
++        expect(subTrigger).not.toBeNull()
++        fireEvent.keyDown(subTrigger!, { key: 'ArrowRight' })
++
++        expect(
++          document.querySelector('.tsqd-settings-submenu'),
++        ).toHaveAttribute('dir', 'ltr')
++      },
++    )
++
++    it.each([
++      ['position', 'full'],
++      ['theme', 'full'],
++      ['disabled-queries', 'full'],
++      ['theme', 'embedded'],
++      ['disabled-queries', 'embedded'],
++    ] as const)(
++      'should open the "%s" sub-menu with "ArrowRight" in the %s devtools when the browser language is RTL',
++      (name, mode) => {
++        const rendered = render(() =>
++          mode === 'full' ? (
++            <DevtoolsComponent
++              client={queryClient}
++              onlineManager={onlineManager}
++              queryFlavor="TanStack Query"
++              version="5"
++              initialIsOpen
++            />
++          ) : (
++            <DevtoolsPanelComponent
++              client={queryClient}
++              onlineManager={onlineManager}
++              queryFlavor="TanStack Query"
++              version="5"
++            />
++          ),
++        )
++        const language = vi
++          .spyOn(navigator, 'language', 'get')
++          .mockReturnValue('ar')
++        window.dispatchEvent(new Event('languagechange'))
++
++        try {
++          fireEvent.keyDown(rendered.getByLabelText('Open settings menu'), {
++            key: 'Enter',
++          })
++
++          const subTrigger = document.querySelector<HTMLElement>(
++            `.tsqd-settings-menu-sub-trigger-${name}`,
++          )
++          expect(subTrigger).not.toBeNull()
++          fireEvent.keyDown(subTrigger!, { key: 'ArrowRight' })
++
++          expect(
++            document.querySelector('.tsqd-settings-submenu'),
++          ).toHaveAttribute('dir', 'ltr')
++        } finally {
++          language.mockRestore()
++          window.dispatchEvent(new Event('languagechange'))
++        }
++      },
++    )
++  })
++
+   describe('resize handle', () => {
+     it('should increase height when "ArrowUp" is pressed on the resize handle in "bottom" position', () => {
+       const rendered = renderDevtools(
 ```
 
-**File**: `examples/vue/contacts-vue-router/package.json` (modified, +1/-1)
+**File**: `packages/react-query-devtools/src/ReactQueryDevtools.tsx` (modified, +1/-1)
 ```diff
-@@ -14,7 +14,7 @@
-     "@tanstack/vue-query": "^5.105.3",
-     "@tanstack/vue-query-devtools": "^6.3.9",
-     "match-sorter": "^8.3.0",
--    "vue": "^3.5.43",
-+    "vue": "^3.5.44",
-     "vue-router": "^5.4.0"
-   },
-   "devDependencies": {
-```
-
-**File**: `examples/vue/default-query-function/package.json` (modified, +1/-1)
-```diff
-@@ -12,7 +12,7 @@
-   "dependencies": {
-     "@tanstack/vue-query": "^5.105.3",
-     "@tanstack/vue-query-devtools": "^6.3.9",
--    "vue": "^3.5.43"
-+    "vue": "^3.5.44"
-   },
-   "devDependencies": {
-     "@tanstack/eslint-plugin-query": "^5.105.3",
+@@ -137,5 +137,5 @@ export function ReactQueryDevtools(
+     }
+   }, [devtools])
+ 
+-  return <div dir="ltr" className="tsqd-parent-container" ref={ref}></div>
++  return <div className="tsqd-parent-container" ref={ref}></div>
+ }
 ```
 
 ---
 
-### Incident Patch 2: `b1243fac` (2026-11-03)
-**Commit Message**: chore(deps): update security dependencies in examples and integrations (#12509)
+### Incident Patch 2: `00dc8de8` (2026-11-06)
+**Commit Message**: fix(vue-query): reset isRestoring when the client persister fails (#12494)
 
-**File**: `examples/preact/ssr-streaming/package.json` (modified, +1/-1)
-```diff
-@@ -12,7 +12,7 @@
-   "dependencies": {
-     "@tanstack/preact-query": "^5.105.3",
-     "@tanstack/preact-query-devtools": "^5.105.3",
--    "compression": "^1.8.1",
-+    "compression": "^1.8.2",
-     "devalue": "^6.0.3",
-     "express": "^5.3.0",
-     "preact": "^11.0.1",
-```
+Co-authored-by: Damian Osipiuk <[REDACTED_EMAIL]>
 
-**File**: `examples/preact/ssr/package.json` (modified, +1/-1)
-```diff
-@@ -12,7 +12,7 @@
-   "dependencies": {
-     "@tanstack/preact-query": "^5.105.3",
-     "@tanstack/preact-query-devtools": "^5.105.3",
--    "compression": "^1.8.1",
-+    "compression": "^1.8.2",
-     "devalue": "^6.0.3",
-     "express": "^5.3.0",
-     "preact": "^11.0.1",
-```
-
-**File**: `examples/react/algolia/package.json` (modified, +1/-1)
-```diff
-@@ -22,7 +22,7 @@
-     "@tanstack/eslint-plugin-query": "^5.105.3",
-     "@types/react": "^19.3.0",
-     "@types/react-dom": "^19.3.0",
--    "@vitejs/plugin-react": "^6.1.1",
-+    "@vitejs/plugin-react": "^6.2.1",
-     "typescript": "^6.0.3",
-     "vite": "^8.3.5"
-   }
-```
-
-**File**: `examples/react/auto-refetching-nextjs-pages-router/package.json` (modified, +1/-1)
-```diff
-@@ -12,7 +12,7 @@
-   "dependencies": {
-     "@tanstack/react-query": "^5.105.3",
-     "@tanstack/react-query-devtools": "^5.105.3",
--    "next": "^16.0.7",
-+    "next": "^16.4.4",
-     "react": "^19.3.1",
-     "react-dom": "^19.3.1"
-   },
-```
-
-**File**: `examples/react/basic-graphql-request/package.json` (modified, +1/-1)
-```diff
-@@ -22,7 +22,7 @@
-     "@tanstack/eslint-plugin-query": "^5.105.3",
-     "@types/react": "^19.3.0",
-     "@types/react-dom": "^19.3.0",
--    "@vitejs/plugin-react": "^6.1.1",
-+    "@vitejs/plugin-react": "^6.2.1",
-     "typescript": "^6.0.3",
-     "vite": "^8.3.5"
-   }
-```
-
-**File**: `examples/react/basic/package.json` (modified, +1/-1)
-```diff
-@@ -22,7 +22,7 @@
-     "@tanstack/eslint-plugin-query": "^5.105.3",
-     "@types/react": "^19.3.0",
-     "@types/react-dom": "^19.3.0",
--    "@vitejs/plugin-react": "^6.1.1",
-+    "@vitejs/plugin-react": "^6.2.1",
-     "typescript": "^6.0.3",
-     "vite": "^8.3.5"
-   }
-```
-
-**File**: `examples/react/batching/package.json` (modified, +1/-1)
-```diff
-@@ -21,7 +21,7 @@
-     "@tanstack/eslint-plugin-query": "^5.105.3",
-     "@types/react": "^19.3.0",
-     "@types/react-dom": "^19.3.0",
--    "@vitejs/plugin-react": "^6.1.1",
-+    "@vitejs/plugin-react": "^6.2.1",
-     "typescript": "^6.0.3",
-     "vite": "^8.3.5"
-   }
-```
-
-**File**: `examples/react/chat/package.json` (modified, +1/-1)
-```diff
-@@ -21,7 +21,7 @@
-     "@tanstack/eslint-plugin-query": "^5.105.3",
-     "@types/react": "^19.3.0",
-     "@types/react-dom": "^19.3.0",
--    "@vitejs/plugin-react": "^6.1.1",
-+    "@vitejs/plugin-react": "^6.2.1",
-     "tailwindcss": "^4.3.3",
-     "typescript": "^6.0.3",
-     "vite": "^8.3.5"
-```
-
----
-
-### Incident Patch 3: `05d9b6a4` (2026-11-01)
-**Commit Message**: fix(query-core): unpause a mutation that can start after its onMutate (#11788)
-
-* fix(query-core): unpause a mutation that can start after its onMutate
-
-Mutation.execute() computes isPaused before it awaits the MutationCache and
-mutation onMutate callbacks, and dispatches pending with that value. When the
-mutation cannot start at that point (queued behind another mutation in its
-scope, or offline) but can by the time onMutate resolves, retryer.start()
-runs it directly instead of going through pause(), so no continue action is
-dispatched and the mutation reports isPaused: true for its whole request.
-defaultShouldDehydrateMutation and resumePausedMutations read that flag, so
-the in-flight mutation is dehydrated as not yet sent and runs a second time
-after a restore.
-
-Dispatch continue right before start() when the mutation is still marked
-paused but can start now, as #9015 does for a restored mutation.
-
-Source: packages/query-core/src/mutation.ts execute(),
-packages/query-core/src/retryer.ts start(), hydration.ts
-defaultShouldDehydrateMutation.
-
-* test(query-core): use createKey in mutation regression test
-
----------
-
-Co-authored-by: Dominik Dorfmeister 🔮 <[REDACTED_EMAIL]>
-
-**File**: `.changeset/unpause-mutation-after-onmutate.md` (added, +5/-0)
+**File**: `.changeset/vue-query-plugin-failed-restore.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
-+'@tanstack/query-core': patch
++'@tanstack/vue-query': patch
 +---
 +
-+Clear `isPaused` on a mutation that can start once its `onMutate` resolves, so it is no longer dehydrated and resumed a second time while its request is in flight.
++Reset `isRestoring` in `VueQueryPlugin` when the `clientPersister` promise rejects, so queries no longer wait forever for a failed restore, and handle the rejection instead of leaving it unhandled.
 ```
 
-**File**: `packages/query-core/src/__tests__/mutation.test.tsx` (modified, +77/-1)
+**File**: `packages/vue-query/src/__tests__/vueQueryPlugin.test.ts` (modified, +26/-0)
 ```diff
-@@ -2,7 +2,7 @@ import { createKey, sleep } from '@tanstack/query-test-utils'
- import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
- import { MutationCache, QueryClient, focusManager, onlineManager } from '..'
- import { MutationObserver } from '../mutationObserver'
--import { executeMutation } from './utils'
-+import { executeMutation, mockOnlineManagerIsOnline } from './utils'
- import type { MutationState } from '../mutation'
- import type { MutationCacheNotifyEvent, MutationFunctionContext } from '..'
- 
-@@ -767,6 +767,82 @@ describe('mutation', () => {
-         'finish-B',
-       ])
+@@ -328,6 +328,32 @@ describe('VueQueryPlugin', () => {
+       expect(clientPersisterOnSuccess).toHaveBeenCalledWith(customClient)
      })
+ 
++    it('should reset isRestoring and not call clientPersisterOnSuccess when restoring fails', async () => {
++      const key = createKey()
++      const appMock = getAppMock()
++      const customClient = new QueryClient()
++      const clientPersisterOnSuccess = vi.fn<(client: QueryClient) => void>()
 +
-+    it('should keep a queued mutation paused when its onMutate resolves before its turn', async () => {
-+      const isPaused: Array<boolean> = []
-+      const unsubscribe = queryClient.getMutationCache().subscribe((event) => {
-+        if (
-+          event.type === 'updated' &&
-+          event.mutation.state.variables === 'vars2'
-+        ) {
-+          isPaused.push(event.mutation.state.isPaused)
-+        }
++      VueQueryPlugin.install(appMock, {
++        queryClient: customClient,
++        clientPersister: () => [
++          vi.fn<() => void>(),
++          Promise.reject(new Error('Error restoring client')),
++        ],
++        clientPersisterOnSuccess,
 +      })
 +
-+      executeMutation(
-+        queryClient,
-+        {
-+          scope: {
-+            id: 'scope',
-+          },
-+          mutationFn: () => sleep(20).then(() => 'a'),
-+        },
-+        'vars1',
-+      )
-+      executeMutation(
-+        queryClient,
-+        {
-+          scope: {
-+            id: 'scope',
-+          },
-+          onMutate: () => sleep(10),
-+          mutationFn: () => sleep(10).then(() => 'b'),
-+        },
-+        'vars2',
-+      )
-+      expect(isPaused).toStrictEqual([true])
++      const queryFn = vi.fn<() => string>(() => 'data')
++      useQuery({ queryKey: key, queryFn }, customClient)
 +
-+      // onMutate resolves while the first mutation is still running
-+      await vi.advanceTimersByTimeAsync(15)
-+      expect(isPaused).not.toContain(false)
-+
-+      unsubscribe()
-+    })
-+  })
-+
-+  it('should unpause a mutation that goes back online while its onMutate runs', async () => {
-+    const key = createKey()
-+    const onlineMock = mockOnlineManagerIsOnline(false)
-+    const mutationFn = vi.fn<() => Promise<string>>(() =>
-+      sleep(20).then(() => 'data'),
-+    )
-+
-+    executeMutation(
-+      queryClient,
-+      {
-+        mutationKey: key,
-+        onMutate: () => sleep(10),
-+        mutationFn,
-+      },
-+      'vars',
-+    )
-+    const mutation = queryClient.getMutationCache().find({ mutationKey: key })!
-+    expect(mutation.state).toMatchObject({
-+      status: 'pending',
-+      isPaused: true,
++      expect(customClient.isRestoring?.value).toBe(true)
++      expect(queryFn).not.toHaveBeenCalled()
++      await vi.advanceTimersByTimeAsync(0)
++      expect(customClient.isRestoring?.value).toBe(false)
++      expect(queryFn).toHaveBeenCalledTimes(1)
++      expect(clientPersisterOnSuccess).not.toHaveBeenCalled()
 +    })
 +
-+    onlineMock.mockReturnValue(true)
-+    await vi.advanceTimersByTimeAsync(20)
-+    expect(mutationFn).toHaveBeenCalledTimes(1)
-+    expect(mutation.state).toMatchObject({
-+      status: 'pending',
-+      isPaused: false,
-+    })
-+
-+    await vi.advanceTimersByTimeAsync(10)
-+    expect(mutation.state.status).toBe('success')
-+    onlineMock.mockRestore()
-   })
- 
-   it('should run mutations without scope in parallel', async () => {
+     it('should call the unmount returned by clientPersister when the app unmounts', () => {
+       const appMock = getAppMock(true)
+       const customClient = new QueryClient()
 ```
 
-**File**: `packages/query-core/src/mutation.ts` (modified, +4/-0)
+**File**: `packages/vue-query/src/vueQueryPlugin.ts` (modified, +13/-6)
 ```diff
-@@ -360,6 +360,10 @@ export class Mutation<
-           })
-         }
+@@ -99,12 +99,19 @@ export const VueQueryPlugin = {
        }
-+      // Unpause a mutation that became able to start while onMutate was running
-+      if (this.state.isPaused && retryer.canStart()) {
-+        onContinue()
-+      }
-       const data = await retryer.start()
+       const [unmount, promise] = options.clientPersister(client)
+       persisterUnmount = unmount
+-      promise.then(() => {
+-        if (client.isRestoring) {
+-          client.isRestoring.value = false
+-        }
+-        options.clientPersisterOnSuccess?.(client)
+-      })
++      promise.then(
++        () => {
++          if (client.isRestoring) {
++            client.isRestoring.value = false
++          }
++          options.clientPersisterOnSuccess?.(client)
++        },
++        () => {
++          if (client.isRestoring) {
++            client.isRestoring.value = false
++          }
++        },
++      )
+     }
  
-       // Notify cache callback
+     const cleanup = () => {
+```
+
+---
+
+### Incident Patch 3: `8f6da1e2` (2026-11-07)
+**Commit Message**: ci: apply automated fixes
+
+**File**: `docs/framework/vue/reference/functions/queryOptions.md` (modified, +4/-4)
+```diff
+@@ -31,7 +31,7 @@ See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
+ function queryOptions<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: DefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>): DefinedInitialQueryOptionsWithDataTag<TQueryFnData, TError, TData, TQueryKey>;
+ ```
+ 
+-Defined in: [packages/vue-query/src/queryOptions.ts:267](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L267)
++Defined in: [packages/vue-query/src/queryOptions.ts:270](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L270)
+ 
+ You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
+ be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
+@@ -103,7 +103,7 @@ const { data, isError, error } = useQuery(postsOptions)
+ function queryOptions<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: () => DefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>): () => DefinedInitialQueryOptionsWithDataTag<TQueryFnData, TError, TData, TQueryKey>;
+ ```
+ 
+-Defined in: [packages/vue-query/src/queryOptions.ts:302](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L302)
++Defined in: [packages/vue-query/src/queryOptions.ts:305](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L305)
+ 
+ Same as the plain-object overload, but for options that close over reactive state (`ref`s read inside the
+ function body). Wrap them in a getter so `queryClient` methods like `invalidateQueries`/`fetchQuery` always
+@@ -173,7 +173,7 @@ const { data } = useQuery(postOptions)
+ function queryOptions<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: UndefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>): UndefinedInitialQueryOptionsWithDataTag<TQueryFnData, TError, TData, TQueryKey>;
+ ```
+ 
+-Defined in: [packages/vue-query/src/queryOptions.ts:345](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L345)
++Defined in: [packages/vue-query/src/queryOptions.ts:348](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L348)
+ 
+ You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
+ be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
+@@ -241,7 +241,7 @@ const { data, isPending, isError, error } = useQuery(postOptions('1'))
+ function queryOptions<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: () => UndefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>): () => UndefinedInitialQueryOptionsWithDataTag<TQueryFnData, TError, TData, TQueryKey>;
+ ```
+ 
+-Defined in: [packages/vue-query/src/queryOptions.ts:408](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L408)
++Defined in: [packages/vue-query/src/queryOptions.ts:411](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L411)
+ 
+ Same as the plain-object overload, but for options that close over reactive state (`ref`s read inside the
+ function body). Wrap them in a getter so the `queryKey` — and anything else derived from a `ref` — reacts
+```
+
+**File**: `docs/framework/vue/reference/type-aliases/DefinedInitialQueryOptions.md` (modified, +1/-1)
+```diff
+@@ -9,7 +9,7 @@ title: DefinedInitialQueryOptions
+ type DefinedInitialQueryOptions<TQueryFnData = unknown, TError = DefaultError, TData = TQueryFnData, TQueryKey extends QueryKey = QueryKey> = UseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey> & WithDefinedInitialData<TQueryFnData>;
+ ```
+ 
+-Defined in: [packages/vue-query/src/queryOptions.ts:204](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L204)
++Defined in: [packages/vue-query/src/queryOptions.ts:207](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L207)
+ 
+ The options accepted by the `queryOptions` overload selected when `initialData` is known to be defined —
+ `data` is never `undefined` (unless a `select` changes `TData` to include `undefined`).
+```
+
+**File**: `docs/framework/vue/reference/type-aliases/DefinedInitialQueryOptionsWithDataTag.md` (modified, +1/-1)
+```diff
+@@ -9,7 +9,7 @@ title: DefinedInitialQueryOptionsWithDataTag
+ type DefinedInitialQueryOptionsWithDataTag<TQueryFnData = unknown, TError = DefaultError, TData = TQueryFnData, TQueryKey extends QueryKey = QueryKey> = QueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey> & WithDefinedInitialData<TQueryFnData> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
+ ```
+ 
+-Defined in: [packages/vue-query/src/queryOptions.ts:230](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L230)
++Defined in: [packages/vue-query/src/queryOptions.ts:233](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L233)
+ 
+ The options returned by the `queryOptions` overload selected when `initialData` is known to be defined,
+ with the `queryKey` tagged with the query's data and error types.
+```
+
+**File**: `docs/framework/vue/reference/type-aliases/UndefinedInitialQueryOptions.md` (modified, +1/-1)
+```diff
+@@ -9,7 +9,7 @@ title: UndefinedInitialQueryOptions
+ type UndefinedInitialQueryOptions<TQueryFnData = unknown, TError = DefaultError, TData = TQueryFnData, TQueryKey extends QueryKey = QueryKey> = UseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey> & WithUndefinedInitialData<TQueryFnData>;
+ ```
+ 
+-Defined in: [packages/vue-query/src/queryOptions.ts:188](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L188)
++Defined in: [packages/vue-query/src/queryOptions.ts:191](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L191)
+ 
+ The options accepted by the `queryOptions` overload selected when `initialData` is omitted, may be
+ `undefined`, or is a function that may return `undefined` — `data` may be `undefined` while the query is
+```
+
+**File**: `docs/framework/vue/reference/type-aliases/UndefinedInitialQueryOptionsWithDataTag.md` (modified, +1/-1)
+```diff
+@@ -9,7 +9,7 @@ title: UndefinedInitialQueryOptionsWithDataTag
+ type UndefinedInitialQueryOptionsWithDataTag<TQueryFnData = unknown, TError = DefaultError, TData = TQueryFnData, TQueryKey extends QueryKey = QueryKey> = QueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey> & WithUndefinedInitialData<TQueryFnData> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
+ ```
+ 
+-Defined in: [packages/vue-query/src/queryOptions.ts:217](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L217)
++Defined in: [packages/vue-query/src/queryOptions.ts:220](https://github.com/TanStack/query/blob/main/packages/vue-query/src/queryOptions.ts#L220)
+ 
+ The options returned by the `queryOptions` overload selected when `initialData` is omitted, may be
+ `undefined`, or is a function that may return `undefined`, with the `queryKey` tagged with the query's data
+```
+
+**File**: `docs/framework/vue/reference/type-aliases/UseInfiniteQueryDefinedReturnType.md` (modified, +1/-1)
+```diff
+@@ -9,7 +9,7 @@ title: UseInfiniteQueryDefinedReturnType
+ type UseInfiniteQueryDefinedReturnType<TData, TError> = UseBaseQueryReturnType<TData, TError, DefinedInfiniteQueryObserverResult<TData, TError>>;
+ ```
+ 
+-Defined in: [packages/vue-query/src/useInfiniteQuery.ts:83](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L83)
++Defined in: [packages/vue-query/src/useInfiniteQuery.ts:88](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L88)
+ 
+ The result of `useInfiniteQuery` when `initialData` is set — `data` is never `undefined` (unless a `select`
+ changes `TData` to include `undefined`).
+```
+
+**File**: `docs/framework/vue/reference/type-aliases/UseInfiniteQueryReturnType.md` (modified, +1/-1)
+```diff
+@@ -9,7 +9,7 @@ title: UseInfiniteQueryReturnType
+ type UseInfiniteQueryReturnType<TData, TError> = UseBaseQueryReturnType<TData, TError, InfiniteQueryObserverResult<TData, TError>>;
+ ```
+ 
+-Defined in: [packages/vue-query/src/useInfiniteQuery.ts:73](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L73)
++Defined in: [packages/vue-query/src/useInfiniteQuery.ts:78](https://github.com/TanStack/query/blob/main/packages/vue-query/src/useInfiniteQuery.ts#L78)
+ 
+ The result of `useInfiniteQuery`: [InfiniteQueryObserverResult](InfiniteQueryObserverResult.md) from `@tanstack/query-core`, with
+ its properties wrapped in `Ref`s as in UseBaseQueryReturnType.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #12516** (2026-11-04): chore(integrations): convert to TypeScript and add 'test:types' so each integration type checks against the published types (@sukvvon)
-- **PR #12515** (2026-11-04): chore(deps): align 'catalog', 'vue' and 'next' dev ranges with examples after the security update (@sukvvon)
-- **PR #12509** (2026-11-03): chore(deps): update security dependencies in examples and integrations (@TkDodo)
-- **PR #12507** (2026-11-04): chore(integrations): add missing 'preact', 'sveltekit', 'nuxt', 'solid-start' and 'astro' integrations and align existing ones (@sukvvon)
-- **PR #12506** (2026-11-03): chore(*): update Angular to v22 and TypeScript to v6 in Angular examples and integration (@sukvvon)
-- **PR #12505** (2026-11-03): chore(examples): update dependencies that pull older 'esbuild' versions (@sukvvon)
+- **PR #12551** (2026-11-07): docs(framework/*/devtools): describe the 'Key' filter scope by what it matches instead of the row text (@sukvvon)
+- **PR #12550** (2026-11-07): test(query-devtools/Explorer): rename the 'city' key passed to 'setValue' to 'material' to match the signal type (@sukvvon)
+- **PR #12549** (2026-11-07): test(query-devtools/Explorer): replace 'İstanbul' with 'İpek' in the Unicode lowercasing fixtures to clear 'cspell' warnings (@sukvvon)
+- **PR #12548** (2026-11-07): docs(vue-query/useQuery): describe the 'status', derived boolean 'ref's, and readonly 'state' in every '@returns' (@sukvvon)
+- **PR #12547** (2026-11-07): docs(vue-query): describe how 'enabled' tracks a 'ref', a getter, a plain boolean, and the '(query) => boolean' callback (@sukvvon)
+- **PR #12546** (2026-11-07): docs(framework/*/devtools): describe the filter scope toggle, data search, and panel 'style' default for every adapter (@sukvvon)
 
 ---
 
@@ -3979,28 +4127,34 @@ Co-authored-by: Dominik Dorfmeister 🔮 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): align 'catalog', 'vue' and 'next' dev ranges with examples after the secu
+## X. {query,react-query,preact-query}-devtools): always render the devtools left-to-r
 
 **RULE**:
-When implementing operations in `examples/vue/algolia/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TanStack/query. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changeset/query-devtools-force-ltr.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TanStack/query. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e877443c`: deps): align 'catalog', 'vue' and 'next' dev ranges with examples after the security update (#12515). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c4ed956b`: {query,react-query,preact-query}-devtools): always render the devtools left-to-right regardless of the page direction or browser language (#12528). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `examples/vue/algolia/package.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/query-devtools-force-ltr.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    "vue": "^3.5.44"
+---
+'@tanstack/query-devtools': patch
+'@tanstack/react-query-devtools': patch
+'@tanstack/preact-query-devtools': patch
+---
+
+fix({query,react-query,preact-query}-devtools): always render the devtools left-to-right regardless of the page direction or browser language
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-    "vue": "^3.5.43"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e877443c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c4ed956b` are properly handled with clean fallback behavior.

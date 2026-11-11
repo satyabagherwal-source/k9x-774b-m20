@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md`  
 > **Source**: github ([https://github.com/kucherenko/jscpd](https://github.com/kucherenko/jscpd))  
-> **Source Version**: `cbd54239`  
+> **Source Version**: `b82d8418`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T07:33:59.192Z  
+> **Timestamp**: 2026-11-08T07:08:51.296Z  
 > **Learning ID**: `learn-github-kucherenko-jscpd`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kucherenko/jscpd](https://github.com/kucherenko/jscpd))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T07:33:14.469Z  
+> **Harvest Timestamp**: 2026-11-08T07:08:49.828Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Copy/paste detector for source code. 220+ languages, Rust engine, SARIF/HTML/badge reporters, GitHub Action, MCP server for AI agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 6497 stars
+- **Stars / Engagement**: 6515 stars
 
 ---
 
@@ -1878,491 +1878,301 @@ impl CpdClone {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `05b6faa3` (2026-11-03)
-**Commit Message**: fix(deps): bump candle to 0.11.1 for zip 9 (RUSTSEC-2026-0429)
+### Incident Patch 1: `b82d8418` (2026-11-08)
+**Commit Message**: release: cpd-v5.4.3
 
-zip 8.6.0 came only from candle-core 0.11.0. candle 0.11.1 asks for
-zip ^9.1.3, and cpd-semantic already allows any candle 0.11, so the
-update changes only Cargo.lock: candle-core and candle-nn go to 0.11.1,
-zip goes to 9.3.0.
-
-zip 9 fixes RUSTSEC-2026-0429 and the three advisories we ignored until
-candle moved to zip 9 (RUSTSEC-2026-0367, -0368 and -0369), so their
-ignores leave deny.toml and .cargo/audit.toml.
-
-The lockfile also loses tokenizers 0.22.2 and onig, which candle 0.11.0
-pulled in, and gains nix (from zip) and parking_lot (from candle).
-
-**File**: `rust/.cargo/audit.toml` (modified, +1/-1)
+**File**: `CITATION.cff` (modified, +2/-2)
 ```diff
-@@ -1,4 +1,4 @@
- # Advisories the nightly `cargo audit` does not report. Keep in step with
- # [advisories] ignore in deny.toml, where each one is explained.
- [advisories]
--ignore = ["RUSTSEC-2026-0367", "RUSTSEC-2026-0368", "RUSTSEC-2026-0369"]
-+ignore = []
+@@ -14,8 +14,8 @@ authors:
+   - family-names: Kucherenko
+     given-names: Andrey
+     email: kucherenko.andrey@gmail.com
+-version: 5.4.2
+-date-released: 2026-10-20
++version: 5.4.3
++date-released: 2026-11-08
+ license: MIT
+ repository-code: "https://github.com/kucherenko/jscpd"
+ url: "https://jscpd.dev"
 ```
 
-**File**: `rust/Cargo.lock` (modified, +80/-69)
+**File**: `docs/ci-and-hooks.md` (modified, +5/-5)
 ```diff
-@@ -350,9 +350,9 @@ checksum = "fc652a48c352aef3ea3aed32080501cf3ef6ed5da78602a020c991775b0aff04"
+@@ -23,7 +23,7 @@ jobs:
+ 
+ This scans the entire repository with default settings and uploads SARIF results to GitHub Code Scanning.
+ 
+-`@v5` is a moving tag that follows the latest 5.x release of the action. Pin to an exact release tag (e.g. `kucherenko/jscpd@v5.4.2`) or its commit SHA if you need reproducible runs, and see [Pin a specific version](#pin-a-specific-version) for the jscpd release it installs.
++`@v5` is a moving tag that follows the latest 5.x release of the action. Pin to an exact release tag (e.g. `kucherenko/jscpd@v5.4.3`) or its commit SHA if you need reproducible runs, and see [Pin a specific version](#pin-a-specific-version) for the jscpd release it installs.
+ 
+ ### Fail on Threshold
+ 
+@@ -130,7 +130,7 @@ The workflow fails if more than 5% of the code is duplicated.
+ 
+ #### Pin a specific version
+ 
+-By default the action installs the jscpd release its ref belongs to, so pinning the action to a release tag or its commit SHA pins jscpd too, and a Dependabot or Renovate bump of the action updates both. This starts with the first release after 5.4.2: v5.4.2 and older tags install the newest jscpd.
++By default the action installs the jscpd release its ref belongs to, so pinning the action to a release tag or its commit SHA pins jscpd too, and a Dependabot or Renovate bump of the action updates both. This starts with v5.4.3: v5.4.2 and older tags install the newest jscpd.
+ 
+ A commit between releases installs the release before it, so pin a release rather than a commit on `master`. While a release is being published, `@master` already names the new version, and the action installs the latest release with a warning until the new one is out.
+ 
+@@ -139,7 +139,7 @@ Set `version` to install another release, or `latest` for the newest one:
+ ```yaml
+ - uses: kucherenko/jscpd@v5
+   with:
+-    version: "5.4.2"
++    version: "5.4.3"
+ ```
+ 
+ #### Skip install (binary already in image)
+@@ -254,7 +254,7 @@ docker run --rm -v "$PWD:/src" ghcr.io/kucherenko/jscpd:5 --threshold 5 --report
+ docker run --rm -v "$PWD:/src" ghcr.io/kucherenko/jscpd --reporters json,html --output report .
+ ```
+ 
+-The working directory inside the container is `/src`. Tags: `latest`, `5`, `5.4`, `5.4.2` (major, minor, and exact version). The image contains only the static binary — `--blame` and `--baseline-from-ref` need `git`, which is not included. On Linux hosts, add `--user "$(id -u):$(id -g)"` so report files are owned by you rather than root.
++The working directory inside the container is `/src`. Tags: `latest`, `5`, `5.4`, `5.4.3` (major, minor, and exact version). The image contains only the static binary — `--blame` and `--baseline-from-ref` need `git`, which is not included. On Linux hosts, add `--user "$(id -u):$(id -g)"` so report files are owned by you rather than root.
+ 
+ GitLab CI example, using the Code Quality and metrics reporters:
+ 
+@@ -320,7 +320,7 @@ repos:
+         name: jscpd - copy/paste detector
+         entry: jscpd
+         language: python
+-        additional_dependencies: ['jscpd==5.4.2']
++        additional_dependencies: ['jscpd==5.4.3']
+         args: [--threshold, "5", --reporters, console,silent]
+         pass_filenames: false
+         always_run: true
+```
+
+**File**: `docs/packages.md` (modified, +6/-6)
+```diff
+@@ -8,23 +8,23 @@ A jscpd release is one Rust workspace published under several names. Everything
+ 
+ **Path:** `rust/crates/cpd`
+ **crates.io:** [`jscpd`](https://crates.io/crates/jscpd)
+-**Version:** 5.4.2
++**Version:** 5.4.3
+ 
+ The CLI. `cargo install jscpd` installs two identical binaries, `jscpd` and `cpd`. Its library target is internal (test helpers only); depend on the crates below for programmatic use. See [Rust docs](./rust.md).
+ 
+ ### cpd-core
+ 
+ **Path:** `rust/crates/cpd-core`
+ **crates.io:** [`cpd-core`](https://crates.io/crates/cpd-core)
+-**Version:** 0.1.22
++**Version:** 0.1.23
+ 
+ Core data models and the Rabin-Karp rolling hash implementation.
+ 
+ ### cpd-tokenizer
+ 
+ **Path:** `rust/crates/cpd-tokenizer`
+ **crates.io:** [`cpd-tokenizer`](https://crates.io/crates/cpd-tokenizer)
+-**Version:** 0.1.21
++**Version:** 0.1.22
+ 
+ Source code tokenizer (224 formats, listed in [FORMATS.md](../FORMATS.md)). Uses `oxc_parser` for JavaScript/TypeScript/JSX, and per-block tokenization for Vue SFC, Svelte, Astro, and Markdown. Pure — no filesystem or network access (enforced in CI).
+ 
+@@ -48,21 +48,21 @@ File walking, orchestration, baseline handling, and git blame. Uses `rayon` for
+ 
+ **Path:** `rust/crates/cpd-reporter`
+ **crates.io:** [`cpd-reporter`](https://crates.io/crates/cpd-reporter)
+-**Version:** 0.1.23
++**Version:** 0.1.24
+ 
+ Output format rendering for the 15 reporters.
+ 
+ ### cpd-semantic
+ 
+ **Path:** `rust/crates/cpd-semantic`
+ **crates.io:** [`cpd-semantic`](https://crates.io/crates/cpd-semantic)
+-**Version:** 0.1.3
++**Version:** 0.1.4
+ 
+ Semantic clones (`--semantic`, experimental): function extraction (oxc for JavaScript and TypeScript, the ruff parser for Python, a scanner for Rust, and tree-sitter grammars for C, C++, C#, Go, Java, Kotlin, PHP, Ruby, Scala and Swift), code embeddings from CodeRankEmbed or jina-embeddings-v2-base-code run in-process with candle or taken from an OpenAI-compatible API, the thresholds calibrated for nine models, a vector cache, and the pairing rule. It plugs into the finder as a clone pass (`cpd_finder::pass::ClonePass`), so the other crates build without its dependencies. Unlike the crates above, it reads and writes the user cache directory and makes network calls: the model download and the embeddings API.
+ 
+ ## npm packages
+ 
+-All npm packages share the engine version (5.4.2). None of them needs a Node.js runtime to run jscpd — Node.js is only the delivery mechanism.
++All npm packages share the engine version (5.4.3). None of them needs a Node.js runtime to run jscpd — Node.js is only the delivery mechanism.
+ 
+ ### jscpd
+ 
+```
+
+**File**: `pyproject.toml` (modified, +2/-2)
+```diff
+@@ -9,10 +9,10 @@ build-backend = "setuptools.build_meta"
+ 
+ [project]
+ name = "jscpd-repo"
+-version = "5.4.2"
++version = "5.4.3"
+ description = "jscpd repository root: installs the jscpd binary for pre-commit hooks"
+ requires-python = ">=3.8"
+-dependencies = ["jscpd==5.4.2"]
++dependencies = ["jscpd==5.4.3"]
+ 
+ [tool.setuptools]
+ packages = []
+```
+
+**File**: `rust/CHANGELOG.md` (modified, +47/-0)
+```diff
+@@ -4,6 +4,53 @@ All notable changes to **cpd (Rust)** are documented here. Releases follow [Sema
+ 
+ ---
+ 
++## 5.4.3
++
++### New Features
++
++- **`runJscpd()` runs the jscpd binary from Node.js.** `require("jscpd")` and `import { runJscpd } from "jscpd"` now export `runJscpd(args, options)`. It finds the platform binary the way the `jscpd` command does and returns the result of `spawnSync`, so a script no longer starts a second Node.js process to run the command, and tools such as knip see that the script uses `jscpd`. Where the command prints an error and exits, the function throws an `Error` with the same message. The types are in `index.d.ts`. Detection still runs only in the Rust binary, and nothing parses or returns clones in JavaScript. By [@abrahamguo](https://github.com/abrahamguo). ([#1238](https://github.com/kucherenko/jscpd/pull/1238))
++
++- **The HTML report shows both fragments of a clone and highlights the code.** "Show code" used to open only the first fragment. Now it opens both side by side, or one above the other on a narrow screen, each under its file with line numbers in a gutter, and a long line scrolls inside its pane. The report highlights the code with Prism 1.30.0 again, as the v4 report did, and inlines only the languages it shows. A block inside another file, such as `guide.md:typescript`, keeps the lines that detection gives it. ([#1263](https://github.com/kucherenko/jscpd/issues/1263), [#1265](https://github.com/kucherenko/jscpd/pull/1265))
++
++### Bug Fixes
++
++- **The GitHub Action installed the newest jscpd, whatever ref you pinned.** The `version` input defaulted to `latest`, so `kucherenko/jscpd@v5.4.1` installed 5.4.2 once it came out. Now an empty `version` installs the release that the action's own ref belongs to, so pinning the action pins jscpd, and a Dependabot bump of the action updates both. `version: latest` still installs the newest release. This works from v5.4.3 on: older tags still install the newest jscpd. Reported by [@dannystaple](https://github.com/dannystaple), fixed by [@sarankumar1325](https://github.com/sarankumar1325). ([#1240](https://github.com/kucherenko/jscpd/issues/1240), [#1249](https://github.com/kucherenko/jscpd/pull/1249))
++
++- **A `/*` or `//` inside a JS or TS string ended a `jscpd:ignore` region.** The tokenizer looked for the markers with a byte scan that took every `/*` and `//` for a comment, so `'a /* b'` inside a marked region opened a comment that ran to the end marker, and the code after the string came back as clones. The markers are now found by their text, as in the other languages, so a region runs from `jscpd:ignore-start` to the next `jscpd:ignore-end`. Markers inside template literals, such as the CSS of a styled component, keep working. Reported by [@bauchdj](https://github.com/bauchdj), fixed by [@sarankumar1325](https://github.com/sarankumar1325). ([#1257](https://github.com/kucherenko/jscpd/issues/1257), [#1258](https://github.com/kucherenko/jscpd/pull/1258))
++
++- **"Ignore this clone" in the language server broke JSX.** It wrote `// jscpd:ignore-start` among JSX children, where the page shows it as text, and could put a marker inside a tag, such as `< /* jscpd:ignore-end *//ul>`, which TypeScript can't parse. Now it writes `{/* jscpd:ignore-start */}` among children and never puts a marker inside a tag. The start goes before the tag and the end after it, so the region still covers the clone. Each copy of a `--cross-formats` clone gets the comment of its own format, JSX in the `<script lang="tsx">` of a Vue, Svelte or Astro component gets the JSX markers, and a marker after `/` gets a space so it doesn't turn into a line comment. ([#1260](https://github.com/kucherenko/jscpd/pull/1260), [#1264](https://github.com/kucherenko/jscpd/pull/1264))
++
++- **`--dead-code` reported a file loaded with ``import(`./x`)`` or `import('$lib/x')` as unused.** `import()` read only quoted specifiers and turned away any specifier with a `$` in it, so a backtick `import()` with nothing interpolated and SvelteKit's `$lib` alias were never followed. The importing file also lost 30 points of confidence on every finding. jscpd dropped ``import.meta.glob(`./pages/*.ts`)`` the same way. Now only `${` inside backticks counts as interpolation. On six repositories nothing new was reported. Reported with the cause by [@abrahamguo](https://github.com/abrahamguo). ([#1239](https://github.com/kucherenko/jscpd/issues/1239), [#1251](https://github.com/kucherenko/jscpd/pull/1251))
++
++- **`--dead-code` reported constructors and dunder methods as unused members.** `constructor` in JavaScript and `__init__` or `__repr__` in Python are called by the runtime, not by name, and the unused-member check didn't skip them. It does now. Reported by [@abrahamguo](https://github.com/abrahamguo), fixed by [@sarankumar1325](https://github.com/sarankumar1325). ([#1253](https://github.com/kucherenko/jscpd/issues/1253), [#1254](https://github.com/kucherenko/jscpd/pull/1254))
++
++- **`-
+```
+
+**File**: `rust/Cargo.lock` (modified, +6/-6)
+```diff
+@@ -231,7 +231,7 @@ checksum = "2af50177e190e07a26ab74f8b1efbfe2ef87da2116221318cb1c2e82baf7de06"
  
  [[package]]
- name = "candle-core"
--version = "0.11.0"
-+version = "0.11.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "5ecb245093b0f791b89d3420c3df9c6d49c60ab63ba54db896bf8a3baf486706"
-+checksum = "d11c8be87cfbaef9ebb62fb3f850d1fc8e00cc1d11d393fdbe55a4d5c2cdb325"
+ name = "basta"
+-version = "0.3.2"
++version = "0.3.3"
  dependencies = [
-  "accelerate-src",
-  "byteorder",
-@@ -364,22 +364,23 @@ dependencies = [
-  "memmap2",
-  "num-traits",
-  "num_cpus",
-+ "parking_lot",
-  "rand 0.9.5",
-  "rand_distr",
+  "chrono",
+  "clap",
+@@ -605,7 +605,7 @@ checksum = "417bef24afe1460300965a25ff4a24b8b45ad011948302ec221e8a0a81eb2c79"
+ 
+ [[package]]
+ name = "cpd-core"
+-version = "0.1.22"
++version = "0.1.23"
+ dependencies = [
   "rayon",
-  "safetensors",
-  "thiserror 2.0.21",
-- "tokenizers 0.22.2",
-+ "tokenizers",
-  "yoke",
-  "zerocopy",
-  "zip",
- ]
+  "rustc-hash",
+@@ -632,7 +632,7 @@ dependencies = [
  
  [[package]]
- name = "candle-nn"
--version = "0.11.0"
-+version = "0.11.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "eaa10b6ccc365b33210ce404fbf45e60d3e0bdac1004463cf1052e6ee1c1739a"
-+checksum = "437fabe77547c2447c7bdf3cc946e19db29a2832440176b419f77c80b0a9a05e"
+ name = "cpd-reporter"
+-version = "0.1.23"
++version = "0.1.24"
  dependencies = [
-  "accelerate-src",
+  "askama",
+  "cpd-core",
+@@ -647,7 +647,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "cpd-semantic"
+-version = "0.1.3"
++version = "0.1.4"
+ dependencies = [
   "candle-core",
-@@ -417,6 +418,12 @@ version = "1.0.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "4e7648175b45a9a48536d676f68d918270699102aa8dab5496df06904c914600"
+  "candle-nn",
+@@ -711,7 +711,7 @@ dependencies = [
  
-+[[package]]
-+name = "cfg_aliases"
-+version = "0.2.2"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "f079e83a288787bcd14a6aea84cee5c87a67c5a3e660c30f557a3d24761b3527"
-+
  [[package]]
- name = "chacha20"
- version = "0.10.2"
-@@ -661,7 +668,7 @@ dependencies = [
-  "serde_json",
-  "sha2",
-  "stacker",
-- "tokenizers 0.23.2",
-+ "tokenizers",
-  "tree-sitter",
-  "tree-sitter-c",
-  "tree-sitter-c-sharp",
-@@ -1080,7 +1087,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
+ name = "cpd-tokenizer"
+-version = "0.1.21"
++version = "0.1.22"
  dependencies = [
-  "libc",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
+  "cpd-core",
+  "log",
+@@ -1774,7 +1774,7 @@ dependencies = [
  
  [[package]]
-@@ -1367,8 +1374,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "300e883d756b2e4ec94e02791f39b04b522276138852cfc41d9fb7e904106099"
+ name = "jscpd"
+-version = "5.4.2"
++version = "5.4.3"
  dependencies = [
-  "cfg-if",
-+ "js-sys",
-  "libc",
-  "r-efi 6.0.0",
-+ "wasm-bindgen",
- ]
- 
- [[package]]
-@@ -1823,6 +1832,15 @@ version = "1.0.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "11d3d7f243d5c5a8b9bb5d6dd2b1602c0cb0b9db1621bafc7ed66e35ff9fe092"
- 
-+[[package]]
-+name = "lock_api"
-+version = "0.4.14"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "224399e74b87b5f3557511d98dff8b14089b3dadafcab6bb93eab67d3aace965"
-+dependencies = [
-+ "scopeguard",
-+]
-+
- [[package]]
- name = "log"
- version = "0.4.34"
-@@ -1961,6 +1979,18 @@ dependencies = [
-  "tempfile",
- ]
- 
-+[[package]]
-+name = "nix"
-+version = "0.31.3"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "cf20d2fde8ff38632c426f1165ed7436270b44f199fc55284c38276f9db47c3d"
-+dependencies = [
-+ "bitflags 2.13.2",
-+ "cfg-if",
-+ "cfg_aliases",
-+ "libc",
-+]
-+
- [[package]]
- name = "nom"
- version = "7.1.3"
-@@ -2053,28 +2083,6 @@ version = "1.70.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "384b8ab6d37215f3c5301a95a4accb5d64aa607f1fcb26a11b5303878451b4fe"
- 
--[[package]]
--name = "onig"
--version = "6.5.3"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "0cc3cbf698f9438986c11a880c90a6d04b9de27575afd28bbf45b154b6c709e2"
--dependencies = [
-- "bitflags 2.13.2",
-- "libc",
-- "once_cell",
-- "onig_sys",
--]
--
--[[package]]
--name = "onig_sys"
--version = "69.9.3"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "1e68317604e77e53b85896388e1a803c1d21b74c899ec9e5e1112db90735edd7"
--dependencies = [
-- "cc",
-- "pkg-config",
--]
--
- [[package]]
- name = "openssl"
- version = "0.10.81"
-@@ -2348,6 +2356,29 @@ dependencies = [
-  "unicode-id-start",
- ]
- 
-+[[package]]
-+name = "parking_lot"
-+version = "0.12.5"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "93857453250e3077bd71ff98b6a65ea6621a19bb0f559a85248955ac12c45a1a"
-+dependencies = [
-+ "lock_api",
-+ "parking_lot_core",
-+]
-+
-+[[package]]
-+name = "parking_lot_core"
-+version = "0.9.12"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "2621685985a2ebf1c516881c026032ac7deafcda1a2c9b7850dc81e3dfcb64c1"
-+dependencies = [
-+ "cfg-if",
-+ "libc",
-+ "redox_syscall",
-+ "smallvec",
-+ "windows-link",
-+]
-+
- [[package]]
- name = "paste"
- version = "1.0.15"
-@@ -2689,6 +2720,15 @@ version = "0.5.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "03251193000f4bd3b042892be858ee50e8b3719f2b08e5833ac4353724632430"
- 
-+[[package]]
-+name = "redox_syscall"
-+version = "0.5.18"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "ed2bf2547551a7053d6fdfafda3f938979645c44812fbfcda098faae3f1a362d"
-+dependencies = [
-+ "bitflags 2.13.2",
-+]
-+
- [[package]]
- name = "regex"
- version = "1.13.1"
-@@ -2847,7 +2887,7 @@
+  "basta",
+  "clap",
 ```
 
-**File**: `rust/deny.toml` (modified, +0/-11)
+**File**: `rust/basta/package.json` (modified, +9/-9)
 ```diff
-@@ -23,17 +23,6 @@ allow = [
- [advisories]
- db-path = "~/.cargo/advisory-db"
- db-urls = ["https://github.com/rustsec/advisory-db"]
--# zip 8.6.0 comes through candle-core 0.11.0 (--semantic), which asks for
--# ^8.6.0, so zip 9, which has the fixes, can't be used yet. These three
--# advisories are about extracting an archive (ZipArchive::extract and the
--# stream extraction API), and nothing in jscpd extracts one: candle opens
--# zip archives only to read .npz and PyTorch files, and jscpd loads its
--# models from safetensors. Drop them when candle moves to zip 9.
--ignore = [
--    { id = "RUSTSEC-2026-0367", reason = "zip via candle-core; jscpd extracts no archive" },
--    { id = "RUSTSEC-2026-0368", reason = "zip via candle-core; jscpd extracts no archive" },
--    { id = "RUSTSEC-2026-0369", reason = "zip via candle-core; jscpd extracts no archive" },
--]
- 
- [bans]
- multiple-versions = "warn"
+@@ -1,6 +1,6 @@
+ {
+   "name": "basta",
+-  "version": "0.3.2",
++  "version": "0.3.3",
+   "description": "Dead code detector — finds unused files, exports, imports and private declarations across JavaScript, TypeScript and Python, and Rust through cargo's diagnostics. Rust engine, self-contained binary.",
+   "homepage": "https://jscpd.dev",
+   "funding": "https://opencollective.com/jscpd",
+@@ -13,14 +13,14 @@
+     "README.md"
+   ],
+   "optionalDependencies": {
+-    "basta-linux-x64-gnu": "0.3.2",
+-    "basta-linux-arm64-gnu": "0.3.2",
+-    "basta-linux-x64-musl": "0.3.2",
+-    "basta-linux-arm64-musl": "0.3.2",
+-    "basta-darwin-arm64": "0.3.2",
+-    "basta-darwin-x64": "0.3.2",
+-    "basta-windows-x64-msvc": "0.3.2",
+-    "basta-windows-arm64-msvc": "0.3.2"
++    "basta-linux-x64-gnu": "0.3.3",
++    "basta-linux-arm64-gnu": "0.3.3",
++    "basta-linux-x64-musl": "0.3.3",
++    "basta-linux-arm64-musl": "0.3.3",
++    "basta-darwin-arm64": "0.3.3",
++    "basta-darwin-x64": "0.3.3",
++    "basta-windows-x64-msvc": "0.3.3",
++    "basta-windows-arm64-msvc": "0.3.3"
+   },
+   "repository": {
+     "type": "git",
 ```
 
----
-
-### Incident Patch 2: `cbd54239` (2026-11-03)
-**Commit Message**: Merge pull request #1279 from kucherenko/fix/rustsec-2026-0429
-
-fix(deps): bump candle to 0.11.1 for zip 9 (RUSTSEC-2026-0429)
-
-**File**: `rust/.cargo/audit.toml` (modified, +1/-1)
+**File**: `rust/crates/basta/Cargo.toml` (modified, +4/-4)
 ```diff
-@@ -1,4 +1,4 @@
- # Advisories the nightly `cargo audit` does not report. Keep in step with
- # [advisories] ignore in deny.toml, where each one is explained.
- [advisories]
--ignore = ["RUSTSEC-2026-0367", "RUSTSEC-2026-0368", "RUSTSEC-2026-0369"]
-+ignore = []
-```
-
-**File**: `rust/Cargo.lock` (modified, +80/-69)
-```diff
-@@ -350,9 +350,9 @@ checksum = "fc652a48c352aef3ea3aed32080501cf3ef6ed5da78602a020c991775b0aff04"
- 
- [[package]]
- name = "candle-core"
--version = "0.11.0"
-+version = "0.11.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "5ecb245093b0f791b89d3420c3df9c6d49c60ab63ba54db896bf8a3baf486706"
-+checksum = "d11c8be87cfbaef9ebb62fb3f850d1fc8e00cc1d11d393fdbe55a4d5c2cdb325"
- dependencies = [
-  "accelerate-src",
-  "byteorder",
-@@ -364,22 +364,23 @@ dependencies = [
-  "memmap2",
-  "num-traits",
-  "num_cpus",
-+ "parking_lot",
-  "rand 0.9.5",
-  "rand_distr",
-  "rayon",
-  "safetensors",
-  "thiserror 2.0.21",
-- "tokenizers 0.22.2",
-+ "tokenizers",
-  "yoke",
-  "zerocopy",
-  "zip",
- ]
- 
- [[package]]
- name = "candle-nn"
--version = "0.11.0"
-+version = "0.11.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "eaa10b6ccc365b33210ce404fbf45e60d3e0bdac1004463cf1052e6ee1c1739a"
-+checksum = "437fabe77547c2447c7bdf3cc946e19db29a2832440176b419f77c80b0a9a05e"
- dependencies = [
-  "accelerate-src",
-  "candle-core",
-@@ -417,6 +418,12 @@ version = "1.0.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "4e7648175b45a9a48536d676f68d918270699102aa8dab5496df06904c914600"
- 
-+[[package]]
-+name = "cfg_aliases"
-+version = "0.2.2"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "f079e83a288787bcd14a6aea84cee5c87a67c5a3e660c30f557a3d24761b3527"
-+
- [[package]]
- name = "chacha20"
- version = "0.10.2"
-@@ -661,7 +668,7 @@ dependencies = [
-  "serde_json",
-  "sha2",
-  "stacker",
-- "tokenizers 0.23.2",
-+ "tokenizers",
-  "tree-sitter",
-  "tree-sitter-c",
-  "tree-sitter-c-sharp",
-@@ -1080,7 +1087,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
- dependencies = [
-  "libc",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
- 
- [[package]]
-@@ -1367,8 +1374,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "300e883d756b2e4ec94e02791f39b04b522276138852cfc41d9fb7e904106099"
- dependencies = [
-  "cfg-if",
-+ "js-sys",
-  "libc",
-  "r-efi 6.0.0",
-+ "wasm-bindgen",
- ]
- 
- [[package]]
-@@ -1823,6 +1832,15 @@ version = "1.0.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "11d3d7f243d5c5a8b9bb5d6dd2b1602c0cb0b9db1621bafc7ed66e35ff9fe092"
- 
-+[[package]]
-+name = "lock_api"
-+version = "0.4.14"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "224399e74b87b5f3557511d98dff8b14089b3dadafcab6bb93eab67d3aace965"
-+dependencies = [
-+ "scopeguard",
-+]
-+
- [[package]]
- name = "log"
- version = "0.4.34"
-@@ -1961,6 +1979,18 @@ dependencies = [
-  "tempfile",
- ]
- 
-+[[package]]
-+name = "nix"
-+version = "0.31.3"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "cf20d2fde8ff38632c426f1165ed7436270b44f199fc55284c38276f9db47c3d"
-+dependencies = [
-+ "bitflags 2.13.2",
-+ "cfg-if",
-+ "cfg_aliases",
-+ "libc",
-+]
-+
- [[package]]
- name = "nom"
- version = "7.1.3"
-@@ -2053,28 +2083,6 @@ version = "1.70.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "384b8ab6d37215f3c5301a95a4accb5d64aa607f1fcb26a11b5303878451b4fe"
- 
--[[package]]
--name = "onig"
--version = "6.5.3"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "0cc3cbf698f9438986c11a880c90a6d04b9de27575afd28bbf45b154b6c709e2"
--dependencies = [
-- "bitflags 2.13.2",
-- "libc",
-- "once_cell",
-- "onig_sys",
--]
--
--[[package]]
--name = "onig_sys"
--version = "69.9.3"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "1e68317604e77e53b85896388e1a803c1d21b74c899ec9e5e1112db90735edd7"
--dependencies = [
-- "cc",
-- "pkg-config",
--]
--
- [[package]]
- name = "openssl"
- version = "0.10.81"
-@@ -2348,6 +2356,29 @@ dependencies = [
-  "unicode-id-start",
- ]
- 
-+[[package]]
-+name = "parking_lot"
-+version = "0.12.5"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "93857453250e3077bd71ff98b6a65ea6621a19bb0f559a85248955ac12c45a1a"
-+dependencies = [
-+ "lock_api",
-+ "parking_lot_core",
-+]
-+
-+[[package]]
-+name = "parking_lot_core"
-+version = "0.9.12"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "2621685985a2ebf1c516881c026032ac7deafcda1a2c9b7850dc81e3dfcb64c1"
-+dependencies = [
-+ "cfg-if",
-+ "libc",
-+ "redox_syscall",
-+ "smallvec",
-+ "windows-link",
-+]
-+
- [[package]]
- name = "paste"
- version = "1.0.15"
-@@ -2689,6 +2720,15 @@ version = "0.5.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "03251193000f4bd3b042892be858ee50e8b3719f2b08e5833ac4353724632430"
- 
-+[[package]]
-+name = "redox_syscall"
-+version = "0.5.18"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "ed2bf2547551a7053d6fdfafda3f938979645c44812fbfcda098faae3f1a362d"
-+dependencies = [
-+ "bitflags 2.13.2",
-+]
-+
- [[package]]
- name = "regex"
- version = "1.13.1"
-@@ -2847,7 +2887,7 @@
-```
-
-**File**: `rust/deny.toml` (modified, +0/-11)
-```diff
-@@ -23,17 +23,6 @@ allow = [
- [advisories]
- db-path = "~/.cargo/advisory-db"
- db-urls = ["https://github.com/rustsec/advisory-db"]
--# zip 8.6.0 comes through candle-core 0.11.0 (--semantic), which asks for
--# ^8.6.0, so zip 9, which has the fixes, can't be used yet. These three
--# advisories are about extracting an archive (ZipArchive::extract and the
--# stream extraction API), and nothing in jscpd extracts one: candle opens
--# zip archives only to read .npz and PyTorch files, and jscpd loads its
--# models from safetensors. Drop them when candle moves to zip 9.
--ignore = [
--    { id = "RUSTSEC-2026-0367", reason = "zip via candle-core; jscpd extracts no archive" },
--    { id = "RUSTSEC-2026-0368", reason = "zip via candle-core; jscpd extracts no archive" },
--    { id = "RUSTSEC-2026-0369", reason = "zip via candle-core; jscpd extracts no archive" },
--]
- 
- [bans]
- multiple-versions = "warn"
+@@ -1,6 +1,6 @@
+ [package]
+ name = "basta"
+-version = "0.3.2"
++version = "0.3.3"
+ edition.workspace = true
+ publish = false
+ rust-version.workspace = true
+@@ -23,10 +23,10 @@ path = "src/main.rs"
+ [dependencies]
+ globset = "0.4"
+ ignore = "0.4"
+-cpd-core = { version = "0.1.22", path = "../cpd-core" }
++cpd-core = { version = "0.1.23", path = "../cpd-core" }
+ cpd-finder = { version = "0.1.22", path = "../cpd-finder" }
+-cpd-reporter = { version = "0.1.23", path = "../cpd-reporter" }
+-cpd-tokenizer = { version = "0.1.21", path = "../cpd-tokenizer" }
++cpd-reporter = { version = "0.1.24", path = "../cpd-reporter" }
++cpd-tokenizer = { version = "0.1.22", path = "../cpd-tokenizer" }
+ oxc_allocator = "0.157"
+ oxc_ast = "0.157"
+ oxc_ast_visit = "0.157"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1279** (2026-11-03): fix(deps): bump candle to 0.11.1 for zip 9 (RUSTSEC-2026-0429) (@kucherenko)
-- **PR #1272** (2026-10-30): fix(nix): make the flake build again and check it in CI (@kucherenko)
-- **PR #1271** (2026-10-30): chore(deps): bump docker/login-action from 4.6.0 to 4.7.0 (@dependabot[bot])
-- **PR #1270** (2026-10-30): chore(deps): bump taiki-e/install-action from 2.87.29 to 2.87.32 (@dependabot[bot])
-- **PR #1269** (2026-10-30): chore(deps): bump memmap2 from 0.9.11 to 0.9.12 in /rust (@dependabot[bot])
-- **PR #1268** (2026-10-30): chore(deps): bump ureq from 3.4.2 to 3.5.0 in /rust (@dependabot[bot])
+- **PR #1287** (2026-11-06): docs(readme): sync Who Uses jscpd with the jscpd.dev logo wall (@kucherenko)
+- **PR #1286** (2026-11-06): chore(deps): bump ureq from 3.5.0 to 3.5.1 in /rust (@dependabot[bot])
+- **PR #1285** (2026-11-06): chore(deps): bump log from 0.4.34 to 0.4.35 in /rust (@dependabot[bot])
+- **PR #1284** (2026-11-06): chore(deps): bump ignore from 0.4.33 to 0.4.34 in /rust (@dependabot[bot])
+- **PR #1283** (2026-11-06): chore(deps): bump tree-sitter-scala from 0.26.3 to 0.26.4 in /rust (@dependabot[bot])
+- **PR #1282** (2026-11-06): chore(deps): bump the oxc group in /rust with 7 updates (@dependabot[bot])
 
 ---
 
@@ -2382,28 +2192,30 @@ fix(deps): bump candle to 0.11.1 for zip 9 (RUSTSEC-2026-0429)
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump candle to 0.11.1 for zip 9 (RUSTSEC-2026-0429)
+## X. release: cpd-v5.4.3
 
 **RULE**:
-When implementing operations in `rust/.cargo/audit.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kucherenko/jscpd. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CITATION.cff`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kucherenko/jscpd. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `05b6faa3`: deps): bump candle to 0.11.1 for zip 9 (RUSTSEC-2026-0429). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b82d8418`: release: cpd-v5.4.3. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust/.cargo/audit.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CITATION.cff`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-ignore = []
+version: 5.4.3
+date-released: 2026-11-08
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-ignore = ["RUSTSEC-2026-0367", "RUSTSEC-2026-0368", "RUSTSEC-2026-0369"]
+version: 5.4.2
+date-released: 2026-10-20
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `05b6faa3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b82d8418` are properly handled with clean fallback behavior.

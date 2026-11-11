@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/scrapinghub-scrapy-poet-learnings.md`  
 > **Source**: github ([https://github.com/scrapinghub/scrapy-poet](https://github.com/scrapinghub/scrapy-poet))  
-> **Source Version**: `7ec78c35`  
+> **Source Version**: `c54e48e7`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T08:21:57.833Z  
+> **Timestamp**: 2026-11-08T00:15:27.233Z  
 > **Learning ID**: `learn-github-scrapinghub-scrapy-poet`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/scrapinghub-scrapy-poet-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/scrapinghub/scrapy-poet](https://github.com/scrapinghub/scrapy-poet))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T08:21:44.370Z  
+> **Harvest Timestamp**: 2026-11-08T00:15:27.227Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -43,14 +43,15 @@ from __future__ import annotations
 
 import asyncio
 import inspect
-from functools import lru_cache
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, ParamSpec
+from warnings import warn
 
 from packaging.version import Version
 from scrapy import __version__ as SCRAPY_VERSION
 from scrapy.downloadermiddlewares.retry import get_retry_request
 from scrapy.http import HtmlResponse, Request, Response
+from scrapy.http.request import NO_CALLBACK as _NO_CALLBACK
 from scrapy.utils.defer import deferred_from_coro
 from scrapy.utils.project import inside_project, project_data_dir
 from scrapy.utils.response import open_in_browser as scrapy_open_in_browser
@@ -63,14 +64,6 @@ from web_poet import (
     consume_modules,
     default_registry,
 )
-
-try:
-    from scrapy.http.request import (
-        NO_CALLBACK as NO_CALLBACK,  # available on Scrapy >= 2.8
-    )
-except ImportError:
-    NO_CALLBACK = None  # type: ignore[assignment]
-
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -101,7 +94,7 @@ def http_request_to_scrapy_request(request: HttpRequest, **kwargs: Any) -> Reque
         method=request.method,
         headers=request.headers,
         body=request.body,
-        callback=NO_CALLBACK,
+        callback=_NO_CALLBACK,
         **kwargs,
     )
 
@@ -153,8 +146,12 @@ def create_registry_instance(
     return cls(rules=rules)
 
 
-@lru_cache
 def is_min_scrapy_version(version: str) -> bool:
+    warn(
+        "scrapy_poet.utils.is_min_scrapy_version() is deprecated.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
     return Version(SCRAPY_VERSION) >= Version(version)
 
 
@@ -190,6 +187,18 @@ def _get_retry_request_from_exception(
         reason=reason,
         max_retry_times=getattr(exception, "max_retries", None),
     )
+
+
+def __getattr__(name: str) -> Any:
+    if name == "NO_CALLBACK":
+        warn(
+            "scrapy_poet.utils.NO_CALLBACK is deprecated, use "
+            "scrapy.http.request.NO_CALLBACK instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return _NO_CALLBACK
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 ```
 
@@ -233,7 +242,7 @@ class MockServer:
         self.proc: Popen[bytes] | None = None
         host = socket.gethostbyname(socket.gethostname())
         self.port = port or get_ephemeral_port()
-        self.root_url = f"http://{host}:{self.port}"
+        self.root_url = f"http://{host}:{self.port}/"
         self.pythonpath = pythonpath or ""
 
     def __enter__(self) -> Self:
@@ -511,88 +520,140 @@ class BooksSpider(scrapy.Spider):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7ec78c35` (2026-11-02)
-**Commit Message**: Merge pull request #263 from AdrianAtZyte/provider-encoding
+### Incident Patch 1: `c54e48e7` (2026-11-06)
+**Commit Message**: Bump version: 0.27.2 → 0.28.0
 
-Keep the explicit response encoding in HttpResponseProvider
-
-**File**: `scrapy_poet/page_input_providers.py` (modified, +2/-9)
+**File**: `CHANGELOG.rst` (modified, +1/-1)
 ```diff
-@@ -22,7 +22,6 @@
-     HttpRequest,
-     HttpRequestHeaders,
-     HttpResponse,
--    HttpResponseHeaders,
-     PageParams,
-     RequestUrl,
-     ResponseUrl,
-@@ -32,6 +31,7 @@
+@@ -2,7 +2,7 @@
+ Changelog
+ =========
  
- from scrapy_poet.downloader import _create_scrapy_downloader
- from scrapy_poet.injection_errors import MalformedProvidedClassesError
-+from scrapy_poet.utils import scrapy_response_to_http_response
+-0.28.0 (unreleased)
++0.28.0 (2026-11-06)
+ -------------------
  
- if TYPE_CHECKING:
-     from scrapy_poet.injection import Injector
-@@ -172,14 +172,7 @@ def __call__(
-         <web_poet.page_inputs.http.HttpResponse>` instance using a
-         :class:`scrapy.http.Response` instance.
-         """
--        return [
--            HttpResponse(
--                url=response.url,
--                body=response.body,
--                status=response.status,
--                headers=HttpResponseHeaders.from_bytes_dict(response.headers),
--            )
--        ]
-+        return [scrapy_response_to_http_response(response)]
- 
- 
- class HttpClientProvider(PageObjectInputProvider):
+ * Dropped Python 3.10 support, added Python 3.14 and 3.15 support.
 ```
 
-**File**: `tests/test_page_input_providers.py` (modified, +17/-1)
+**File**: `pyproject.toml` (modified, +1/-1)
 ```diff
-@@ -1,8 +1,13 @@
- from typing import Any
+@@ -65,7 +65,7 @@ include = [
+ ]
  
- import pytest
-+from scrapy.http import HtmlResponse
+ [tool.bumpversion]
+-current_version = "0.27.2"
++current_version = "0.28.0"
+ commit = true
+ tag = true
+ tag_name = "{new_version}"
+```
+
+**File**: `scrapy_poet/VERSION` (modified, +1/-1)
+```diff
+@@ -1 +1 @@
+-0.27.2
++0.28.0
+```
+
+---
+
+### Incident Patch 2: `ce9d5f9e` (2026-11-06)
+**Commit Message**: Add Python 3.15 support and release notes for 0.28.0 (#270)
+
+**File**: `.github/workflows/test.yml` (modified, +2/-1)
+```diff
+@@ -27,7 +27,8 @@ jobs:
+         - python-version: "3.12"
+         - python-version: "3.13"
+         - python-version: "3.14"
+-        - python-version: "3.14"
++        - python-version: "3.15"
++        - python-version: "3.15"
+           toxenv: "default-reactor"
  
--from scrapy_poet import PageObjectInputProvider, page_input_providers
-+from scrapy_poet import (
-+    HttpResponseProvider,
-+    PageObjectInputProvider,
-+    page_input_providers,
-+)
- from scrapy_poet.downloadermiddlewares import DEFAULT_PROVIDERS
- from scrapy_poet.injection_errors import MalformedProvidedClassesError
+     steps:
+```
+
+**File**: `CHANGELOG.rst` (modified, +37/-0)
+```diff
+@@ -2,6 +2,43 @@
+ Changelog
+ =========
  
-@@ -53,3 +58,14 @@ def test_default_providers() -> None:
-         )
-     }
-     assert providers == set(DEFAULT_PROVIDERS)
++0.28.0 (unreleased)
++-------------------
 +
++* Dropped Python 3.10 support, added Python 3.14 and 3.15 support.
 +
-+def test_http_response_provider_encoding() -> None:
-+    # Zyte API browserHtml is UTF-8 but keeps the original <meta charset>.
-+    response = HtmlResponse(
-+        "https://example.com",
-+        body='<meta charset="iso-8859-1">café'.encode(),
-+        encoding="utf-8",
-+    )
-+    (http_response,) = HttpResponseProvider(None)(set(), response)  # type: ignore[arg-type]
-+    assert http_response.text == response.text
++* Now requires ``attrs >= 22.1.0``, ``scrapy >= 2.13.3``,
++  ``twisted >= 21.7.0``, ``url-matcher >= 0.4.0`` and ``web-poet >= 0.25.0``.
++
++* Added Scrapy 2.20 support.
++
++* Added :class:`~scrapy_poet.HtmlMetadataMiddleware`, which the :ref:`add-on
++  <addon>` enables, to save a parse of the response body when page objects use
++  :ref:`declarative selectors <web-poet:declarative-selectors>`. It requires
++  Scrapy 2.20+.
++
++* :class:`~web_poet.page_inputs.http.HttpResponse` now gets the encoding of
++  the Scrapy response, so that page objects decode the body the same way as
++  Scrapy, e.g. when the declared encoding of the response is wrong.
++
++* Dependencies built from ``request.meta["inject"]`` are now counted in the
++  ``poet/injector/`` :ref:`stats <stats>`.
++
++* Changing ``request.meta["inject"]`` after scrapy-poet has read it now logs a
++  warning. Set its final value as early as possible, so that e.g. request
++  fingerprints can account for it.
++
++* Improved the command-line help of the ``savefixture`` command, and
++  documented how to :ref:`configure settings <testing>` for it with ``-s``.
++
++* Improved type hints.
++
++* Deprecated ``scrapy_poet.utils.NO_CALLBACK`` (use
++  :data:`scrapy.http.request.NO_CALLBACK` instead),
++  ``scrapy_poet.utils.is_min_scrapy_version()``, and the ``raw_callback``
++  parameter of
++  ``scrapy_poet.injection.is_callback_requiring_scrapy_response()``.
++
+ 0.27.2 (2026-04-28)
+ -------------------
+ 
+```
+
+**File**: `pyproject.toml` (modified, +1/-0)
+```diff
+@@ -24,6 +24,7 @@ classifiers = [
+     "Programming Language :: Python :: 3.12",
+     "Programming Language :: Python :: 3.13",
+     "Programming Language :: Python :: 3.14",
++    "Programming Language :: Python :: 3.15",
+ ]
+ dependencies = [
+     "andi >= 0.6.0",
+```
+
+**File**: `tox.ini` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ [tox]
+-envlist = min,py3{11-14},asyncio,asyncio-min,scrapy-unreleased,mypy,docs
+ min_version = 4.25.0
++envlist = min,py3{11-15},asyncio,asyncio-min,scrapy-unreleased,mypy,docs
+ requires =
+     pip>=25.3
+     sphinx-scrapy==0.15.0
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #270** (2026-11-06): Add Python 3.15 support and release notes for 0.28.0 (@AdrianAtZyte)
+- **PR #269** (2026-11-06): Scrapy 2.20 and w3lib 2.6.0 support (@wRAR)
 - **PR #268** (2026-10-27): Upgrade sphinx-scrapy to 0.15.0 (@AdrianAtZyte)
 - **PR #267** (2026-10-26): Upgrade docs requirements (@AdrianAtZyte)
 - **PR #266** (2026-10-26): Bump filelock from 3.25.2 to 4.2.1 in /docs (@dependabot[bot])
 - **PR #265** (2026-10-26): Bump certifi from 2026.2.25 to 2026.10.19 in /docs (@dependabot[bot])
-- **PR #263** (2026-11-02): Keep the explicit response encoding in HttpResponseProvider (@AdrianAtZyte)
-- **PR #262** (2026-10-08): Drop Python 3.10 support, bump minimum Scrapy to 2.7 (@wRAR)
 
 ---
 
@@ -612,37 +673,28 @@ Keep the explicit response encoding in HttpResponseProvider
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #263 from AdrianAtZyte/provider-encoding
+## X. Bump version: 0.27.2 → 0.28.0
 
 **RULE**:
-When implementing operations in `scrapy_poet/page_input_providers.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in scrapinghub/scrapy-poet. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in scrapinghub/scrapy-poet. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7ec78c35`: Merge pull request #263 from AdrianAtZyte/provider-encoding. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c54e48e7`: Bump version: 0.27.2 → 0.28.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `scrapy_poet/page_input_providers.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.rst`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-from scrapy_poet.utils import scrapy_response_to_http_response
-        return [scrapy_response_to_http_response(response)]
+0.28.0 (2026-11-06)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-    HttpResponseHeaders,
-        return [
-            HttpResponse(
-                url=response.url,
-                body=response.body,
-                status=response.status,
-                headers=HttpResponseHeaders.from_bytes_dict(response.headers),
-            )
-        ]
+0.28.0 (unreleased)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7ec78c35` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c54e48e7` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  
 > **Source**: github ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  
-> **Source Version**: `ce49cf62`  
+> **Source Version**: `70a60076`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T18:38:35.603Z  
+> **Timestamp**: 2026-11-09T05:26:06.142Z  
 > **Learning ID**: `learn-github-envoyproxy-envoy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T18:38:35.597Z  
+> **Harvest Timestamp**: 2026-11-09T05:26:06.135Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Cloud-native high-performance edge/middle/service proxy
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: Cargo.toml, go.mod, README.md
-- **Stars / Engagement**: 29185 stars
+- **Stars / Engagement**: 29195 stars
 
 ---
 
@@ -1052,14 +1052,15 @@ public:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #48897** (2026-11-03): **Fix unused variable warnings**
-  *Symptoms*: Example warnings emitted when compiling using clang trunk (triggered by [libc++ update](https://github.com/llvm/llvm-project/pull/203084)):  envoy/src/source/common/common/utility.cc:683:15: error: unused variable 'ret' [-Werror,-Wunused-variable]   683 |   std::string ret;       |               ^~~  envoy/src/source/server/admin/admin_html_util.cc:106:27: error: unused variable 'buf3' [-Werror,-Wunused-variable]   106 |   std::string buf1, buf2, buf3;       |                           ^~~~   envoy/src/mobile/library/common/network/socket_tag_socket_option_impl.cc:50:22: error: unused variable 'name' [-Werror,-Wunused-variable]    50 |   static std::string name = "socket_tag";       |                      ^~~~  envoy/src/test/test_listener.cc:13:17: error: unused variable 'active_singletons' [-Werror,-Wunused-variable]    13 |     std::string active_singletons = Envoy::Test::Globals::describeActiveSingletons();       |                 ^~~~~~~~~~~~~~~~~  envoy/src/test/test_common/environment.cc:352:21: error: unused variable 'effective_workspace' [-Werror,-Wunused-variable]   352 |   const std::string effective_workspace = workspace.empty() ? resolveMainWorkspace() : workspace;       |                     ^~~~~~~~~~~~~~~~~~~  ```
+- **Issue #49003** (2026-11-07): **`connect_grpc_bridge`: update unary HTTP status code mappings to match current Connect spec**
+  *Symptoms*: The `connect_grpc_bridge` filter currently maps gRPC status codes to HTTP status codes using the original Connect protocol specification from when the filter was introduced in #24836  In March 2024, the Connect specification updated the HTTP status mappings for four error codes (https://github.com/connectrpc/connectrpc.com/pull/130):  | Connect Error Code | Current Envoy Mapping | Current Connect Spec | | :--- | :--- | :--- | | `canceled` (1) | `408 Request Timeout` | `499 Client Closed Request` | | `deadline_exceeded` (4) | `408 Request Timeout` | `504 Gateway Timeout` | | `failed_precondition` (9) | `412 Precondition Failed` | `400 Bad Request` | | `unimplemented` (12) | `404 Not Found` | `501 Not Implemented` |  While Connect clients parse the `"code"` field directly from the JSON response body and aren't broken by this, infrastructure and observability tools that rely on raw HTTP status codes (such as access logs, metrics, 5xx alerting rules), and middleware misclassify these responses. Envoy's `connect_grpc_bridge` filter should be updated to match the current specification.  *Repro steps*: 1. Configure an Envoy listener with the `envoy.filters.http.connect_grpc_bridge` HTTP filter enabled in front of an upstream gRPC service. 2. Send a unary Connect request (with header `Connect-Protocol-Version: 1` and `Content-Type: application/proto`). 3. Have the upstream gRPC server respond with `grpc-status: 4` (`DEADLINE_EXCEEDED`), `grpc-status: 1` (`CANCELED`), `grpc-status: 9`
   **Post-Mortem & Fix Analysis**:
-  > Hi, I would like to work on this. Unless @nigham is already fixing it, could it be assigned to me?
-  > I'm not working on this
+  > cc: @jchadwick-buf @mattklein123
 
-- **Issue #48758** (2026-11-05): **Use-after-free (SIGSEGV) at process exit with the QUIC-LB connection ID generator, from `~HotRestartingChild`**
-  *Symptoms*: *Title*: Use-after-free (SIGSEGV) at process exit with the QUIC-LB connection ID generator, from `~HotRestartingChild`  *Description*: An Envoy with a QUIC listener using the `envoy.quic.connection_id_generator.quic_lb` connection ID generator, whose `encryption_parameters` come from SDS, crashes with SIGSEGV every time the process exits, whenever hot restart is enabled (the default). That covers SIGTERM, any normal shutdown, and the parent's shutdown at the end of every hot restart.  The cause is a use-after-free during teardown. `HotRestartingChild` holds the last reference to every UDP listener's config and is destroyed after the server instance. So the QUIC-LB generator's `SdsApi` is destroyed after the objects it uses are gone.  The crashing process has already stopped serving. The harm is to availability, through supervisors that treat the crash as fatal. With `restarter/hot-restarter.py`, the old epoch crashing at the end of a hot restart makes the restarter force-kill the serving new epoch and exit. Every hot restart therefore becomes a full outage at the end of the parent shutdown time (default 900 s), and we hit this in production.  There is no remote or data-plane trigger that I could find, and no confidentiality or integrity impact. Reproduced on 1.39.3, 1.40.0, 1.40.1 and an older 1.36.0-dev.  **Ownership chain** (v1.40.0 line numbers):  1. `ListenerImpl::addSocketFactory` (`source/common/listener_manager/listener_impl.cc:1204`) registers a UDP    listener with t
+- **Issue #48991** (2026-11-05): **http: body_size_limit filter potential excessive logging**
+  *Symptoms*: The HTTP body_size_limit filter currently logs any breach of the limit via the application log at error level. If someone sends HTTP requests with the Content-Length header set to a value larger than the limit, an error-level message is logged. The request can be sent repeatedly, potentially overwhelming the logging infrastructure. 
+  **Post-Mortem & Fix Analysis**:
+  > I think this was just fixed with #48985 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1076,293 +1077,529 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ce49cf62` (2026-11-05)
-**Commit Message**: wuffs_json: rename kMaxPendingBytes to kMaxNumberBytes and enforce on… (#49020)
+### Incident Patch 1: `fbab4cd9` (2026-11-08)
+**Commit Message**: tracing: add configurable B3 and W3C propagation to opentelemetry tracer (#48711)
 
-Found by `decode_fuzz_test`
-([#49005](https://github.com/envoyproxy/envoy/pull/49005)), which checks
-that request decoding in `ai_protocol_manager` is invariant to HTTP body
-fragmentation.
+Adds `incoming_trace_context` and `outgoing_trace_context` to
+`OpenTelemetryConfig`, so the tracer can read and write W3C Trace
+Context, the B3 single header, or B3 multiple headers. Default stays W3C
+only.
 
-[`WuffsJsonCursor::feed()`](https://github.com/envoyproxy/envoy/blob/main/source/common/json/wuffs_json/wuffs_json_cursor.cc#L205-L225)
-caps unread `NUMBER` bytes buffered in `pending_bytes_` on `short_read`
-at [`kMaxPendingBytes` (64
-bytes)](https://github.com/envoyproxy/envoy/blob/main/source/common/json/wuffs_json/wuffs_json_cursor.h#L249-L259),
-but
-[`handleNumberOrLiteralToken()`](https://github.com/envoyproxy/envoy/blob/main/source/common/json/wuffs_json/wuffs_json_cursor.cc#L367-L389)
-did not enforce this limit when a `NUMBER` token finished parsing.
+Additional Description:
+- Extraction tries formats in order; the first valid one wins and
+malformed ones are skipped. If headers are present but none are valid,
+the request is not traced, as with a malformed `traceparent` today.
+- Injection writes every configured format and leaves other headers
+alone.
+- B3 parsing follows the OpenTelemetry B3 spec and the Zipkin tracer's
+leniency. It lives in the OpenTelemetry tracer because Zipkin already
+depends on this library.
+- Out of scope: injecting only the extracted format (#40977), GCP and
+AWS formats, baggage.
 
-As a result, whether a JSON number over 64 bytes was rejected depended
-on where chunk boundaries landed:
-1. **Completed in one chunk**: Accepted by
-`handleNumberOrLiteralToken()` without checking the 64-byte cap.
-2. **Split across chunks**: Rejected on `short_read` only if the
-incomplete prefix in the first chunk exceeded 64 bytes, but accepted if
-the first chunk
+AI disclosure: written with AI assistance (Cursor). I have reviewed and
+understand all of the code.
 
-**File**: `changelogs/current/bug_fixes/ai_protocol_manager__json-number-token-limit.rst` (added, +3/-0)
+Risk Level: Low. Opt-in; the default config is unchanged.
+Testing: New unit, driver, and config tests. All OpenTelemetry and
+Zipkin tracer tests pass locally.
+Docs Changes: Proto docs and a tracing architecture overview entry.
+Release Notes:
+`ch
+
+**File**: `api/envoy/config/trace/v3/opentelemetry.proto` (modified, +54/-1)
 ```diff
-@@ -0,0 +1,3 @@
-+Fixed the streaming JSON parser used by ``ai_protocol_manager`` so the 64-byte number length limit
-+is enforced when a number finishes parsing, rather than only when an incomplete number at the end
-+of a chunk exceeds 64 bytes.
+@@ -10,6 +10,7 @@ import "google/protobuf/wrappers.proto";
+ 
+ import "udpa/annotations/migrate.proto";
+ import "udpa/annotations/status.proto";
++import "validate/validate.proto";
+ 
+ option java_package = "io.envoyproxy.envoy.config.trace.v3";
+ option java_outer_classname = "OpentelemetryProto";
+@@ -21,8 +22,35 @@ option (udpa.annotations.file_status).package_version_status = ACTIVE;
+ 
+ // Configuration for the OpenTelemetry tracer.
+ //  [#extension: envoy.tracers.opentelemetry]
+-// [#next-free-field: 11]
++// [#next-free-field: 13]
+ message OpenTelemetryConfig {
++  // Trace context formats that can be extracted from downstream requests and injected into
++  // upstream requests.
++  enum TraceContextFormat {
++    // W3C Trace Context: the :ref:`traceparent <config_http_conn_man_headers_traceparent>` and
++    // ``tracestate`` headers.
++    // See `W3C Trace Context <https://www.w3.org/TR/trace-context/>`_.
++    TRACE_CONTEXT = 0;
++
++    // B3 single header: the :ref:`b3 <config_http_conn_man_headers_b3>` header.
++    // See `B3 propagation <https://github.com/openzipkin/b3-propagation>`_.
++    //
++    // When extracting, both the single header and the multiple header encodings are accepted, with
++    // the single header taking precedence. When injecting, the single header is written, and any
++    // ``x-b3-*`` headers already on the request are rewritten so that they describe the same span.
++    B3 = 1;
++
++    // B3 multiple headers: the :ref:`x-b3-traceid <config_http_conn_man_headers_x-b3-traceid>`,
++    // ``x-b3-spanid``, ``x-b3-sampled`` and ``x-b3-flags`` headers.
++    // See `B3 propagation <https://github.com/openzipkin/b3-propagation>`_.
++    //
++    // When extracting, both the single header and the multiple header encodings are accepted, with
++    // the single header taking precedence. When injecting, ``x-b3-traceid``, ``x-b3-spanid`` and
++    // ``x-b3-sampled`` are written, and a ``b3`` header already on the request is rewritten so that
++    // it describes the same span.
++    B3_MULTI = 2;
++  }
++
+   // The upstream gRPC cluster that will receive OTLP traces.
+   // Note that the tracer drops traces if the server does not read data fast enough.
+   // This field can be left empty to disable reporting traces to the gRPC service.
+@@ -88,4 +116,29 @@ message OpenTelemetryConfig {
+   // Specifies whether to set the instrumentation scope name ("envoy") and version on emitted traces.
+   // If not specified, the default is to set the instrumentation scope name and version.
+   google.protobuf.BoolValue set_instrumentation_scope = 9;
++
++  // The trace context formats to extract from downstream requests, in order of precedence.
++  // The first format whose headers are present and valid is used as the parent of the span; the
++  // remaining formats are ignored. A format whose headers are malformed is skipped. If headers
++  // were present but none of them could be extracted, the request is not traced.
++  //
++  // B3 trace context without a sampling decision joins the trace, and the span's sampling
++  // decision is made by Envoy as if it were the first span in the trace.
++  //
++  // B3 headers that carry a decision not to sample but no trace context, such as ``b3: 0`` or
++  // ``x-b3-sampled: 0`` without ``x-b3-traceid`` and ``x-b3-spanid``, start a new trace that is
++  // not sampled, regardless of Envoy's tracing decision or the configured sampler. A decision to
++  // sample without trace context is ignored.
++  //
++  // Each format may be listed at most once. If not specified, the default is ``[TRACE_CONTEXT]``.
++  repeated TraceContextFormat incoming_trace_context = 11
++      [(validate.rules).repeated = {items {enum {defined_only: true}}}];
++
++  // The trace context formats to inject into upstream requests. Headers of formats that are not
++  // listed are left unchanged, except that injecting either B3 encoding also rewrites headers of
++  // the other B3 encoding that are already on the request.
++  //
++  // Each format may be listed at most once. If not specified, the default is ``[TRACE_CONTEXT]``.
++  repeated TraceContextFormat outgoing_trace_context = 12
++      [(validate.rules).repeated = {items {enum {defined_only: true}}}];
+ }
 ```
 
-**File**: `source/common/json/wuffs_json/wuffs_json_cursor.cc` (modified, +6/-4)
+**File**: `changelogs/current/new_features/tracing__opentelemetry-b3-propagation.rst` (added, +5/-0)
 ```diff
-@@ -212,11 +212,10 @@ absl::Status WuffsJsonCursor::feed(absl::string_view chunk, bool closed) {
-       // keyword without advancing the cursor at all, so no rewind is needed.
-       if (source_buf.meta.ri < effective_chunk.size()) {
-         // LITERAL is always 4–5 bytes (null/true/false) — completely bounded.
--        // For NUMBER split across chunks: cap pending_bytes_ to kMaxPendingBytes (see its
--        // declaration). Numbers that arrive complete with their terminator in the same chunk
--        // never reach this path and are bounded by the upstream max_body_bytes limit instead.
-+        // For NUMBER split across chunks: cap pending_bytes_ to kMaxNumberBytes (see its
-+        // declaration).
-         const size_t leftover = effective_chunk.size() - source_buf.meta.ri;
--        if (leftover > kMaxPendingBytes) {
-+        if (leftover > kMaxNumberBytes) {
-           return absl::InvalidArgumentError("wuffs json: number token too large");
-         }
-         pending_bytes_.assign(effective_chunk.data() + source_buf.meta.ri, leftover);
-@@ -371,6 +370,9 @@ absl::Status WuffsJsonCursor::handleNumberOrLiteralToken(int64_t token_category,
-                                           ? absl::string_view(key_stack_[depth_])
-                                           : absl::string_view();
-   if (token_category == WUFFS_BASE__TOKEN__VBC__NUMBER) {
-+    if (raw.size() > kMaxNumberBytes) {
-+      return absl::InvalidArgumentError("wuffs json: number token too large");
+@@ -0,0 +1,5 @@
++Added :ref:`incoming_trace_context <envoy_v3_api_field_config.trace.v3.OpenTelemetryConfig.incoming_trace_context>`
++and :ref:`outgoing_trace_context <envoy_v3_api_field_config.trace.v3.OpenTelemetryConfig.outgoing_trace_context>`
++to the OpenTelemetry tracer to configure which trace context formats are extracted from downstream requests
++and injected into upstream requests. In addition to W3C Trace Context, the B3 single header and multiple
++header formats are supported. The default remains W3C Trace Context only.
+```
+
+**File**: `docs/root/intro/arch_overview/observability/tracing.rst` (modified, +16/-0)
+```diff
+@@ -113,6 +113,22 @@ Alternatively the trace context can be manually propagated by the service:
+   This option is disabled by default (``USE_B3``) to maintain backward compatibility, where only
+   B3 headers are used for both extraction and injection.
+ 
++* When using the OpenTelemetry tracer, Envoy relies on the service to propagate the W3C trace
++  context headers (:ref:`traceparent <config_http_conn_man_headers_traceparent>` and
++  :ref:`tracestate <config_http_conn_man_headers_tracestate>`) by default. The tracer can also
++  extract and inject B3 headers, using the single :ref:`config_http_conn_man_headers_b3` header or
++  the multiple ``x-b3-*`` headers. This is controlled by the
++  :ref:`incoming_trace_context <envoy_v3_api_field_config.trace.v3.OpenTelemetryConfig.incoming_trace_context>`
++  and :ref:`outgoing_trace_context <envoy_v3_api_field_config.trace.v3.OpenTelemetryConfig.outgoing_trace_context>`
++  configuration options:
++
++  - For downstream requests: Extract trace context from the first configured format whose headers
++    are present and valid.
++  - For upstream requests: Inject trace context in every configured format.
++
++  Configuring the formats separately supports migrations between formats, for example accepting
++  both W3C and B3 headers while only injecting W3C headers.
++
+ * When using the Datadog tracer, Envoy relies on the service to propagate the
+   Datadog-specific HTTP headers (
+   :ref:`config_http_conn_man_headers_x-datadog-trace-id`,
+```
+
+**File**: `source/extensions/tracers/opentelemetry/BUILD` (modified, +5/-0)
+```diff
+@@ -25,11 +25,13 @@ envoy_cc_extension(
+ envoy_cc_library(
+     name = "opentelemetry_tracer_lib",
+     srcs = [
++        "b3_span_context.cc",
+         "opentelemetry_tracer_impl.cc",
+         "span_context_extractor.cc",
+         "tracer.cc",
+     ],
+     hdrs = [
++        "b3_span_context.h",
+         "opentelemetry_tracer_impl.h",
+         "span_context.h",
+         "span_context_extractor.h",
+@@ -43,9 +45,12 @@ envoy_cc_library(
+     deps = [
+         ":trace_exporter",
+         "//envoy/thread_local:thread_local_interface",
++        "//envoy/tracing:trace_context_interface",
+         "//source/common/config:utility_lib",
+         "//source/common/http:http_service_headers_lib",
++        "//source/common/singleton:const_singleton",
+         "//source/common/tracing:http_tracer_lib",
++        "//source/common/tracing:trace_context_lib",
+         "//source/common/tracing:tracer_config_lib",
+         "//source/extensions/tracers/common:factory_base_lib",
+         "//source/extensions/tracers/opentelemetry/resource_detectors:resource_detector_lib",
+```
+
+**File**: `source/extensions/tracers/opentelemetry/b3_span_context.cc` (added, +205/-0)
+```diff
+@@ -0,0 +1,205 @@
++#include "source/extensions/tracers/opentelemetry/b3_span_context.h"
++
++#include <algorithm>
++#include <vector>
++
++#include "absl/strings/ascii.h"
++#include "absl/strings/str_cat.h"
++#include "absl/strings/str_split.h"
++
++namespace Envoy {
++namespace Extensions {
++namespace Tracers {
++namespace OpenTelemetry {
++namespace {
++
++constexpr size_t kTraceId64HexSize = 16;
++constexpr size_t kTraceId128HexSize = 32;
++constexpr size_t kSpanIdHexSize = 16;
++// {TraceId128}-{SpanId}-{SamplingState}-{ParentSpanId}
++constexpr size_t kMaxSingleHeaderSize =
++    kTraceId128HexSize + 1 + kSpanIdHexSize + 2 + 1 + kSpanIdHexSize;
++
++bool isValidHex(absl::string_view input) {
++  return std::all_of(input.begin(), input.end(),
++                     [](const char& c) { return absl::ascii_isxdigit(c); });
++}
++
++bool isAllZeros(absl::string_view input) {
++  return std::all_of(input.begin(), input.end(), [](const char& c) { return c == '0'; });
++}
++
++bool isValidTraceId(absl::string_view trace_id) {
++  return (trace_id.size() == kTraceId64HexSize || trace_id.size() == kTraceId128HexSize) &&
++         isValidHex(trace_id) && !isAllZeros(trace_id);
++}
++
++bool isValidSpanId(absl::string_view span_id) {
++  return span_id.size() == kSpanIdHexSize && isValidHex(span_id) && !isAllZeros(span_id);
++}
++
++std::string toTraceId128(absl::string_view trace_id) {
++  if (trace_id.size() == kTraceId128HexSize) {
++    return std::string(trace_id);
++  }
++  return absl::StrCat(std::string(kTraceId64HexSize, '0'), trace_id);
++}
++
++// A single header of one character carries only a sampling decision, e.g. "b3: 0".
++bool isSamplingOnly(absl::string_view b3) { return b3.size() == 1; }
++
++// Both ids are required; a lone x-b3-traceid or x-b3-spanid is not treated as trace context.
++bool multipleHeadersPresent(const Tracing::TraceContext& trace_context) {
++  return B3Constants::get().X_B3_TRACE_ID.get(trace_context).has_value() &&
++         B3Constants::get().X_B3_SPAN_ID.get(trace_context).has_value();
++}
++
++// b3: {TraceId}-{SpanId}-{SamplingState}-{ParentSpanId}, where the last two fields are optional.
++absl::StatusOr<B3SpanContext> extractFromSingleHeader(absl::string_view b3) {
++  if (b3.size() > kMaxSingleHeaderSize) {
++    return absl::InvalidArgumentError("Invalid b3 header length");
++  }
++  const std::vector<absl::string_view> fields = absl::StrSplit(b3, absl::MaxSplits('-', 4));
++  if (fields.size() < 2 || fields.size() > 4) {
++    return absl::InvalidArgumentError("Invalid b3 header field count");
++  }
++  if (!isValidTraceId(fields[0])) {
++    return absl::InvalidArgumentError("Invalid b3 trace id");
++  }
++  if (!isValidSpanId(fields[1])) {
++    return absl::InvalidArgumentError("Invalid b3 span id");
++  }
++
++  B3SpanContext span_context{toTraceId128(fields[0]), std::string(fields[1]), std::nullopt};
++  if (fields.size() >= 3) {
++    if (fields[2] == "1" || fields[2] == "d") {
++      span_context.sampled = true;
++    } else if (fields[2] == "0") {
++      span_context.sampled = false;
++    } else {
++      return absl::InvalidArgumentError("Invalid b3 sampling state");
 +    }
-     if (auto s = handler_.onNumber(value_key, raw, depth_, token_start, body_src_pos_); !s.ok()) {
-       return s;
-     }
-```
-
-**File**: `source/common/json/wuffs_json/wuffs_json_cursor.h` (modified, +5/-11)
-```diff
-@@ -246,17 +246,11 @@ class WuffsJsonCursor {
-   // (longest observed ~25B, e.g. "input_audio_transcription") while bounding
-   // per-key allocation and guarding against DoS via unbounded key lengths.
-   static constexpr size_t kMaxKeyBytes = 256;
--  // kMaxPendingBytes is a hard limit against the byte-at-a-time DoS when a NUMBER token is split
--  // across chunk boundaries, NUMBER tokens that arrive complete with their terminator in one chunk
--  // bypass this path entirely — those are bounded by the max_body_bytes limit instead. A legitimate
--  // number is at most ~25 chars (64-bit int ≤ 20 digits; float with sign/decimal/exponent ≤ ~25).
--  // 64 bytes gives generous headroom.
--  // TODO(penguingao): because the cap only fires on split NUMBER tokens, whether an over-long
--  // number is rejected depends on where the body happened to be chunked, not on the payload.
--  // Enforce the same limit on numbers that arrive complete within one chunk so acceptance is
--  // deterministic, and return a distinct error (resource limit exceeded vs. malformed JSON) so
--  // callers can map it to something clearer than a generic invalid-payload rejection.
--  static constexpr size_t kMaxPendingBytes = 64;
-+  // kMaxNumberBytes is a hard limit on NUMBER token length, guarding against the
-+  // byte-at-a-time DoS when a NUMBER token is split across chunk boundaries. A
-+  // legitimate number is at most ~25 chars (64-bit int ≤ 20 digits; float with
-+  // sign/decimal/exponent ≤ ~25). 64 bytes gives generous headroom.
-+  static constexpr size_t kMaxNumberBytes = 64;
-   int depth_{0};
-   bool is_dict_[kMaxTrackedDepth]{};
-   bool expecting_key_[kMaxTrackedDepth]{};
-```
-
-**File**: `test/common/json/wuffs_json/wuffs_json_cursor_fuzz_test.cc` (modified, +3/-4)
-```diff
-@@ -238,10 +238,9 @@ DEFINE_FUZZER(const uint8_t* buf, size_t len) {
-   // boundaries at other offsets within multi-byte tokens.
-   for (const size_t chunk_size : {size_t{1}, size_t{3}, size_t{7}}) {
-     const PassResult chunked = runPass(body, chunk_size, pattern, HandlerBehavior{});
--    // A body that parses only one way is not a mismatch: splitting a number
--    // across chunks routes it through the pending-bytes cap, which rejects
--    // over-long numbers that a single feed accepts.
--    if (reference.status.ok() && chunked.status.ok()) {
-+    RELEASE_ASSERT(reference.status.ok() == chunked.status.ok(),
-+                   absl::StrCat("chunked status diverged at chunk size ", chunk_size));
-+    if (reference.status.ok()) {
-       RELEASE_ASSERT(reference.trace == chunked.trace,
-                      absl::StrCat("chunked parse diverged at chunk size ", chunk_size));
-     }
-```
-
-**File**: `test/common/json/wuffs_json/wuffs_json_cursor_test.cc` (modified, +34/-17)
-```diff
-@@ -763,32 +763,49 @@ TEST(WuffsJsonCursorTest, UnicodeEscapeSplitChunkCorrectValue) {
-   EXPECT_EQ(h.fields[0].str_val, "aAb"); // U+0041 = 'A'
- }
- 
--// A NUMBER token that straddles a chunk boundary causes Wuffs to rewind its
--// read cursor and the cursor to save the unread bytes in pending_bytes_.
--// If those bytes exceed kMaxPendingBytes the cursor must reject immediately.
-+// Number-length enforcement tests
- 
--// A number whose in-flight byte count equals kMaxPendingBytes (64) must not
--// trigger the cap: the next chunk completes it normally.
--TEST(WuffsJsonCursorTest, NumberAtPendingCapAccepted) {
-+// A number at kMaxNumberBytes (64) must be accepted.
-+TEST(WuffsJsonCursorTest, NumberAtMaxBytesAccepted) {
-+  CapturingHandler h;
-+  const std::string num(64, '1');
-+  ASSERT_OK(parse(absl::StrCat("{\"n\":", num, "}"), h));
-+  ASSERT_EQ(h.fields.size(), 1u);
-+  EXPECT_EQ(h.fields[0].raw_val, num);
++  }
++  if (fields.size() == 4 && (fields[3].size() != kSpanIdHexSize || !isValidHex(fields[3]))) {
++    return absl::InvalidArgumentError("Invalid b3 parent span id");
++  }
++  return span_context;
 +}
 +
-+// A number one byte over kMaxNumberBytes (65) must be rejected.
-+TEST(WuffsJsonCursorTest, NumberExceedsMaxBytesRejected) {
-+  CapturingHandler h;
-+  const std::string num(65, '1');
-+  EXPECT_THAT(parse(absl::StrCat("{\"n\":", num, "}"), h), Not(IsOk()));
++absl::StatusOr<B3SpanContext>
++extractFromMultipleHeaders(const Tracing::TraceContext& trace_context) {
++  const auto trace_id = B3Constants::get().X_B3_TRACE_ID.get(trace_context);
++  const auto span_id = B3Constants::get().X_B3_SPAN_ID.get(trace_context);
++  if (!trace_id.has_value() || !span_id.has_value()) {
++    return absl::InvalidArgumentError("Missing x-b3-traceid or x-b3-spanid header");
++  }
++  if (!isValidTraceId(trace_id.value())) {
++    return absl::InvalidArgumentError("Invalid x-b3-traceid header");
++  }
++  if (!isValidSpanId(span_id.value())) {
++    return absl::InvalidArgumentError("Invalid x-b3-spanid header");
++  }
++
++  B3SpanContext span_context{toTraceId128(trace_id.value()), std::string(span_id.value()),
++                             std::nullopt};
++  // The debug flag implies an accept sampling decision.
++  const auto flags = B3Constants::get().X_B3_FLAGS.get(trace_context);
++  if (flags.has_value() && flags.value() == "1") {
++    span_context.sampled = true;
++    return span_context;
++  }
++  // "true" is accepted for compatibility with older Zipkin tracers.
++  const auto sampled = B3Constants::get().X_B3_SAMPLED.get(trace_context);
++  if (sampled.has_value()) {
++    span_context.sampled = sampled.value() == "1" || sampled.value() == "true";
++  }
++  return span_context;
 +}
 +
-+// A 64-byte number split across two chunks must be accepted.
-+TEST(WuffsJsonCursorTest, NumberAtMaxBytesAcceptedSplitAcrossChunks) {
-   CapturingHandler h;
-   WuffsJsonCursor cursor(h);
--  // Feed structure first; no number in flight yet.
--  ASSERT_OK(cursor.feed("{\"n\":", /*closed=*/false));
--  // Feed exactly 64 digit bytes with no terminator — pending_bytes_ = 64, not over cap.
--  ASSERT_OK(cursor.feed(std::string(64, '1'), /*closed=*/false));
--  // Close with '}': Wuffs now sees terminator and completes the NUMBER token.
--  ASSERT_OK(cursor.feed("}", /*closed=*/true));
-+  ASSERT_OK(cursor.feed(absl::StrCat("{\"n\":", std::string(32, '1')), /*closed=*/false));
-+  ASSERT_OK(cursor.feed(absl::StrCat(std::string(32, '1'), "}"), /*closed=*/true));
-   ASSERT_EQ(h.fields.size(), 1u);
-   EXPECT_EQ(h.fields[0].raw_val, std::string(64, '1'));
++bool anyMultipleHeaderPresent(const Tracing::TraceContext& trace_context) {
++  const B3ConstantValues& constants = B3Constants::get();
++  return constants.X_B3_TRACE_ID.get(trace_context).has_value() ||
++         constants.X_B3_SPAN_ID.get(trace_context).has_value() ||
++         constants.X_B3_PARENT_SPAN_ID.get(trace_context).has_value() ||
++         constants.X_
+```
+
+**File**: `source/extensions/tracers/opentelemetry/b3_span_context.h` (added, +83/-0)
+```diff
+@@ -0,0 +1,83 @@
++#pragma once
++
++#include <optional>
++#include <string>
++
++#include "envoy/tracing/trace_context.h"
++
++#include "source/common/singleton/const_singleton.h"
++#include "source/common/tracing/trace_context_impl.h"
++
++#include "absl/status/statusor.h"
++#include "absl/strings/string_view.h"
++
++namespace Envoy {
++namespace Extensions {
++namespace Tracers {
++namespace OpenTelemetry {
++
++class B3ConstantValues {
++public:
++  const Tracing::TraceContextHandler B3{"b3"};
++  const Tracing::TraceContextHandler X_B3_TRACE_ID{"x-b3-traceid"};
++  const Tracing::TraceContextHandler X_B3_SPAN_ID{"x-b3-spanid"};
++  const Tracing::TraceContextHandler X_B3_PARENT_SPAN_ID{"x-b3-parentspanid"};
++  const Tracing::TraceContextHandler X_B3_SAMPLED{"x-b3-sampled"};
++  const Tracing::TraceContextHandler X_B3_FLAGS{"x-b3-flags"};
++};
++
++using B3Constants = ConstSingleton<B3ConstantValues>;
++
++/**
++ * Trace context extracted from B3 headers.
++ * See https://github.com/openzipkin/b3-propagation.
++ */
++struct B3SpanContext {
++  // 128-bit trace id as 32 hex characters. 64-bit trace ids are left-padded with zeros.
++  std::string trace_id;
++  // 64-bit span id as 16 hex characters.
++  std::string span_id;
++  // The sampling decision, or std::nullopt if the sender deferred the decision.
++  std::optional<bool> sampled;
++};
++
++/**
++ * @return true if the trace context carries B3 trace and span ids in either the single header or
++ * the multiple header encoding. A single header that only carries a sampling decision, or only one
++ * of x-b3-traceid and x-b3-spanid, is not considered to be present.
++ */
++bool b3HeadersPresent(const Tracing::TraceContext& trace_context);
++
++/**
++ * Extracts B3 trace context. The single header encoding takes precedence over the multiple header
++ * encoding; if the single header is malformed, the multiple header encoding is tried.
++ * @return the extracted context or an error if no valid B3 trace context is present.
++ */
++absl::StatusOr<B3SpanContext> extractB3SpanContext(const Tracing::TraceContext& trace_context);
++
++/**
++ * Extracts a sampling decision from B3 headers that carry no trace context: a single header that
++ * only carries a sampling decision, or x-b3-sampled or x-b3-flags without both ids. Only meaningful
++ * when b3HeadersPresent() is false.
++ * @return the sampling decision, or std::nullopt if there is none.
++ */
++std::optional<bool> extractB3SamplingDecision(const Tracing::TraceContext& trace_context);
++
++/**
++ * Writes the B3 single header. If any B3 multiple headers are present, they are rewritten too so
++ * that they don't describe a different span.
++ */
++void injectB3SingleHeader(Tracing::TraceContext& trace_context, absl::string_view trace_id,
++                          absl::string_view span_id, bool sampled);
++
++/**
++ * Writes the B3 multiple headers. Any existing x-b3-parentspanid and x-b3-flags headers are
++ * removed, and an existing b3 header is rewritten, because they would describe a different span.
++ */
++void injectB3MultiHeaders(Tracing::TraceContext& trace_context, absl::string_view trace_id,
++                          absl::string_view span_id, bool sampled);
++
++} // namespace OpenTelemetry
++} // namespace Tracers
++} // namespace Extensions
++} // namespace Envoy
+```
+
+**File**: `source/extensions/tracers/opentelemetry/opentelemetry_tracer_impl.cc` (modified, +106/-20)
+```diff
+@@ -1,5 +1,6 @@
+ #include "source/extensions/tracers/opentelemetry/opentelemetry_tracer_impl.h"
+ 
++#include <algorithm>
+ #include <string>
+ 
+ #include "envoy/common/exception.h"
+@@ -12,6 +13,7 @@
+ #include "source/common/http/http_service_headers.h"
+ #include "source/common/tracing/http_tracer_impl.h"
+ #include "source/common/tracing/tracer_config_impl.h"
++#include "source/extensions/tracers/opentelemetry/b3_span_context.h"
+ #include "source/extensions/tracers/opentelemetry/grpc_trace_exporter.h"
+ #include "source/extensions/tracers/opentelemetry/http_trace_exporter.h"
+ #include "source/extensions/tracers/opentelemetry/resource_detectors/resource_detector.h"
+@@ -37,6 +39,8 @@ namespace {
+ // Default max cache size for OpenTelemetry tracer
+ static constexpr uint64_t DEFAULT_MAX_CACHE_SIZE = 1024;
+ 
++constexpr absl::string_view kDefaultVersion = "00";
++
+ SamplerSharedPtr
+ tryCreateSamper(const envoy::config::trace::v3::OpenTelemetryConfig& opentelemetry_config,
+                 Server::Configuration::TracerFactoryContext& context) {
+@@ -66,6 +70,57 @@ OTelSpanKind getSpanKind(const Tracing::Config& config) {
+               : ::opentelemetry::proto::trace::v1::Span::SPAN_KIND_SERVER);
  }
  
--// A number with 65 in-flight bytes (one over kMaxPendingBytes) must be rejected.
--TEST(WuffsJsonCursorTest, NumberOverPendingCapRejected) {
-+// A 65-byte number split across two chunks must be rejected once reassembled.
-+TEST(WuffsJsonCursorTest, NumberExceedsMaxBytesRejectedSplitAcrossChunks) {
-+  CapturingHandler h;
-+  WuffsJsonCursor cursor(h);
-+  ASSERT_OK(cursor.feed(absl::StrCat("{\"n\":", std::string(32, '1')), /*closed=*/false));
-+  EXPECT_THAT(cursor.feed(absl::StrCat(std::string(33, '1'), "}"), /*closed=*/true), Not(IsOk()));
++template <class RepeatedFormats>
++TraceContextFormats toTraceContextFormats(const RepeatedFormats& formats,
++                                          absl::string_view field_name) {
++  if (formats.empty()) {
++    return {envoy::config::trace::v3::OpenTelemetryConfig::TRACE_CONTEXT};
++  }
++  TraceContextFormats result;
++  result.reserve(formats.size());
++  for (const int format : formats) {
++    const auto trace_context_format = static_cast<TraceContextFormat>(format);
++    if (std::find(result.begin(), result.end(), trace_context_format) != result.end()) {
++      throw EnvoyException(fmt::format(
++          "OpenTelemetry tracer {} contains duplicate trace context format: {}", field_name,
++          envoy::config::trace::v3::OpenTelemetryConfig::TraceContextFormat_Name(
++              trace_context_format)));
++    }
++    result.push_back(trace_context_format);
++  }
++  return result;
 +}
 +
-+// An unterminated number chunk that already exceeds kMaxNumberBytes (65) must
-+// be rejected immediately before buffering into pending_bytes_.
-+TEST(WuffsJsonCursorTest, NumberExceedsMaxBytesRejectedInPendingChunk) {
-   CapturingHandler h;
-   WuffsJsonCursor cursor(h);
--  ASSERT_OK(cursor.feed("{\"n\":", /*closed=*/false));
--  // 65 digit bytes with no terminator — leftover = 65 > 64 → error.
--  EXPECT_THAT(cursor.feed(std::string(65, '1'), /*closed=*/false), Not(IsOk()));
-+  EXPECT_THAT(cursor.feed(absl::StrCat("{\"n\":", std::string(65, '1')), /*closed=*/false),
-+              Not(IsOk()));
- }
- 
++// Extracts the parent span context in the given format. Returns std::nullopt if the trace context
++// has no headers for the format. B3 context without a sampling decision uses `traced`.
++std::optional<absl::StatusOr<SpanContext>>
++extractSpanContext(TraceContextFormat format, Tracing::TraceContext& trace_context, bool traced) {
++  switch (format) {
++  case envoy::config::trace::v3::OpenTelemetryConfig::TRACE_CONTEXT: {
++    SpanContextExtractor extractor(trace_context);
++    if (!extractor.propagationHeaderPresent()) {
++      return std::nullopt;
++    }
++    return extractor.extractSpanContext();
++  }
++  case envoy::config::trace::v3::OpenTelemetryConfig::B3:
++  case envoy::config::trace::v3::OpenTelemetryConfig::B3_MULTI: {
++    if (!b3HeadersPresent(trace_context)) {
++      return std::nullopt;
++    }
++    absl::StatusOr<B3SpanContext> b3_context = extractB3SpanContext(trace_context);
++    if (!b3_context.ok()) {
++      return b3_context.status();
++    }
++    return SpanContext(kDefaultVersion, b3_context->trace_id, b3_context->span_id,
++                       b3_context->sampled.value_or(traced), /*tracestate=*/"",
++                       /*is_remote=*/true);
++  }
++  default:
++    PANIC_DUE_TO_CORRUPT_ENUM;
++  }
++}
++
  } // namespace
+ 
+ Driver::Driver(const envoy::config::trace::v3::OpenTelemetryConfig& opentelemetry_config,
+@@ -77,7 +132,9 @@ Driver::Driver(const envoy::config::trace::v3::OpenTelemetryConfig& opentelemetr
+                const ResourceProvider& resource_provider)
+     : tls_slot_ptr_(context.serverFactoryContext().threadLocal().allocateSlot()),
+       tracing_stats_{OPENTELEMETRY_TRACER_STATS(
+-          POOL_COUNTER_PREFIX(context.serverFactoryContext().scope(), "tracing.opentelemetry"))} {
++          POOL_COUNTER_PREFIX(context.serverFactoryContext().scope(), "tracing.opentelemetry"))},
++      incoming_trace_context_(toTraceContextFormats(opentelemetry_config.incoming_trace_context(),
++                                                    "incoming_trace_context")) {
+   auto& factory_context = context.serverFactoryContext();
+ 
+   ResourceProviderOptions options;
+@@ -159,11 +216,14 @@ Driver::Driver(const envoy::config::trace::v3::OpenTelemetryConfig& opentelemetr
+         Http::HttpServiceHeadersApplicator::createOrThrow(*http_service, factory_context);
+   }
+ 
++  const TraceContextFormats outgoing_trace_context = toTraceContextFormats(
++      opentelemetry_config.outgoing_trace_context(), "outgoing_trace_context");
++
+   // Create the tracer in Thread Local Storage.
+   tls_slot_ptr_->set([http_service, max_cache_size, set_instrumentation_scope, &factory_context,
+                       this, resource_ptr, sampler, headers_applicator, grpc_client_factory,
+-                      custom_exporter_factory, shared_unpacked_config,
+-                      worker_factory_context](Event::Dispatcher& dispatcher) {
++              
 ```
 
----
-
-### Incident Patch 2: `36230011` (2026-11-05)
-**Commit Message**: hot restart: release udp listener configs during shutdown (#48782)
-
-Commit Message: Release UDP forwarding's retained listener
-configurations during
-`HotRestartingChild::shutdown()`, after disabling its forwarding event.
-QUIC-LB
-listeners can own SDS providers that depend on the dispatcher and stats
-store.
-Previously those providers could be destroyed with `HotRestartImpl`,
-after the
-server and its resources had already been destroyed.
-
-Additional Description: The fix preserves listener ownership and packet
-forwarding
-during operation, but clears the forwarding registry during the existing
-server
-shutdown path. The regression test relinquishes all other ownership of a
-listener
-config and checks that shutdown destroys it, removes its forwarding
-entry, and can
-be called repeatedly.
-
-Risk Level: Low
-
-Testing: Repository formatting, spelling, proto-format, changelog, and
-code checks
-passed. The macOS hot-restart test target contains zero tests and is not
-counted as
-regression evidence. Linux red/green CI passed:
-https://github.com/gsalisbury/envoy/actions/runs/40528463607
-The shutdown regression failed with an assertion against upstream
-production code.
-With the fixes restored, all 15 
-
-**File**: `changelogs/current/bug_fixes/server__hot_restart_udp_listener_shutdown.rst` (added, +3/-0)
+**File**: `source/extensions/tracers/opentelemetry/opentelemetry_tracer_impl.h` (modified, +1/-0)
 ```diff
-@@ -0,0 +1,3 @@
-+Fixed a crash on process exit when a UDP listener owns server-dependent resources, such as a QUIC-LB
-+connection ID generator using SDS. UDP forwarding now releases its retained listener configurations during server
-+shutdown, before the server resources they depend on are destroyed.
-```
-
-**File**: `source/server/hot_restarting_child.cc` (modified, +6/-1)
-```diff
-@@ -110,7 +110,12 @@ void HotRestartingChild::initialize(Event::Dispatcher& dispatcher) {
-       Event::FileTriggerType::Edge, Event::FileReadyType::Read);
- }
+@@ -49,6 +49,7 @@ class Driver : Logger::Loggable<Logger::Id::tracing>, public Tracing::Driver {
+   const envoy::config::trace::v3::OpenTelemetryConfig opentelemetry_config_;
+   ThreadLocal::SlotSharedPtr tls_slot_ptr_;
+   OpenTelemetryTracerStats tracing_stats_;
++  const TraceContextFormats incoming_trace_context_;
+ };
  
--void HotRestartingChild::shutdown() { socket_event_udp_forwarding_.reset(); }
-+void HotRestartingChild::shutdown() {
-+  socket_event_udp_forwarding_.reset();
-+  // Listener configs can own SDS providers and other server-dependent resources. Release them
-+  // while the server is still alive, rather than when the hot restart implementation is destroyed.
-+  udp_forwarding_context_.clear();
-+}
- 
- void HotRestartingChild::onForwardedUdpPacket(uint32_t worker_index,
-                                               const Network::Address::Instance& listener_address,
-```
-
-**File**: `source/server/hot_restarting_child.h` (modified, +2/-0)
-```diff
-@@ -41,6 +41,8 @@ class HotRestartingChild : public HotRestartingBase,
-     void registerListener(Network::Address::InstanceConstSharedPtr address,
-                           std::shared_ptr<Network::UdpListenerConfig> listener_config);
- 
-+    void clear() { listener_map_.clear(); }
-+
-   private:
-     // Builds the map key for an address string within a network namespace.
-     static std::string key(absl::string_view network_namespace, absl::string_view address);
-```
-
-**File**: `test/server/hot_restarting_child_test.cc` (modified, +16/-0)
-```diff
-@@ -290,6 +290,22 @@ MATCHER_P4(IsUdpWith, local_addr, peer_addr, buffer, timestamp, "") {
-   return local_matched && peer_matched && buffer_matched && timestamp_matched;
- }
- 
-+TEST_F(HotRestartingChildTest, ShutdownReleasesUdpListenerConfigs) {
-+  auto listener_config = std::make_shared<testing::StrictMock<Network::MockUdpListenerConfig>>();
-+  std::weak_ptr<Network::UdpListenerConfig> weak_config = listener_config;
-+  auto listener_addr = *Network::Utility::resolveUrl("udp://127.0.0.1:1234");
-+  HotRestartUdpForwardingTestHelper helper(*hot_restarting_child_);
-+  helper.registerUdpForwardingListener(listener_addr, listener_config);
-+  listener_config.reset();
-+  EXPECT_FALSE(weak_config.expired());
-+
-+  hot_restarting_child_->shutdown();
-+
-+  EXPECT_TRUE(weak_config.expired());
-+  EXPECT_FALSE(helper.getListenerForDestination(*listener_addr).has_value());
-+  hot_restarting_child_->shutdown();
-+}
-+
- TEST_F(HotRestartingChildTest, ForwardsPacketToRegisteredListenerOnMatch) {
-   uint32_t worker_index = 12;
-   uint64_t packet_timestamp = 987654321;
+ } // namespace OpenTelemetry
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #49021** (2026-11-05): dynamic_modules: write HTTP metadata batch and bool entries in place (@agrawroh)
-- **PR #49020** (2026-11-05): wuffs_json: rename kMaxPendingBytes to kMaxNumberBytes and enforce on… (@chentianheng604)
-- **PR #49014** (2026-11-05): Datadog junit upload (@etruong42)
-- **PR #49013** (2026-11-05): dynamic_modules: add a bootstrap cluster writer and run_on_all_worker (@agrawroh)
-- **PR #49004** (2026-11-04): deps: Bump `bazel-compdb` -> 0.0.0-20220906-4086479.envoy.1 (@dependency-envoy[bot])
-- **PR #49001** (closed): network/udp_proxy: store filter chains in vectors instead of lists (@wbpcode)
+- **PR #49079** (2026-11-08): Revert "dfp cluster: create new host rather than update address in place when address updated (#48176)" (@yanavlasov)
+- **PR #49067** (2026-11-06): dynamic_modules: prevent `EnvoyMutBuffer` aliases (@gavinbunney)
+- **PR #49063** (2026-11-06): dynamic_modules: fix `EnvoyBuffer::new` lifetime (@gavinbunney)
+- **PR #49060** (closed): [bp/1.39] CVE/wasmtime stack (@phlax)
+- **PR #49056** (2026-11-06): repo: remove derekargueta from emeritus code owners (@derekargueta)
+- **PR #49055** (2026-11-06): tests/coverage: Don't exec bazel in the coverage shim (@phlax)
 
 ---
 
@@ -1382,30 +1619,50 @@ With the fixes restored, all 15
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. wuffs_json: rename kMaxPendingBytes to kMaxNumberBytes and enforce on… (#49020)
+## X. tracing: add configurable B3 and W3C propagation to opentelemetry tracer (#48711
 
 **RULE**:
-When implementing operations in `changelogs/current/bug_fixes/ai_protocol_manager__json-number-token-limit.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `api/envoy/config/trace/v3/opentelemetry.proto`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ce49cf62`: wuffs_json: rename kMaxPendingBytes to kMaxNumberBytes and enforce on… (#49020). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fbab4cd9`: tracing: add configurable B3 and W3C propagation to opentelemetry tracer (#48711). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelogs/current/bug_fixes/ai_protocol_manager__json-number-token-limit.rst`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `api/envoy/config/trace/v3/opentelemetry.proto`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-Fixed the streaming JSON parser used by ``ai_protocol_manager`` so the 64-byte number length limit
-is enforced when a number finishes parsing, rather than only when an incomplete number at the end
-of a chunk exceeds 64 bytes.
+import "validate/validate.proto";
+// [#next-free-field: 13]
+  // Trace context formats that can be extracted from downstream requests and injected into
+  // upstream requests.
+  enum TraceContextFormat {
+    // W3C Trace Context: the :ref:`traceparent <config_http_conn_man_headers_traceparent>` and
+    // ``tracestate`` headers.
+    // See `W3C Trace Context <https://www.w3.org/TR/trace-context/>`_.
+    TRACE_CONTEXT = 0;
+
+    // B3 single header: the :ref:`b3 <config_http_conn_man_headers_b3>` header.
+    // See `B3 propagation <https://github.com/openzipkin/b3-propagation>`_.
+    //
+    // When extracting, both the single header and the multiple header encodings are accepted, with
+    // the single header taking precedence. When injecting, the single header is written, and any
+    // ``x-b3-*`` headers already on the request are rewritten so that they describe the same span.
+    B3 = 1;
+
+    // B3 multiple headers: the :ref:`x-b3-traceid <config_http_conn_man_headers_x-b3-traceid>`,
+    // ``x-b3-spanid``, ``x-b3-sampled`` and ``x-b3-flags`` headers.
+    // See `B3 propagation <https://github.com/openzipkin/b3-propagation>`_.
+    //
+    // When extracting, both the single header 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// [#next-free-field: 11]
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ce49cf62` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fbab4cd9` are properly handled with clean fallback behavior.

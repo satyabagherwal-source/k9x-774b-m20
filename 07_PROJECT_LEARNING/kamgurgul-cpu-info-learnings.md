@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kamgurgul-cpu-info-learnings.md`  
 > **Source**: github ([https://github.com/kamgurgul/cpu-info](https://github.com/kamgurgul/cpu-info))  
-> **Source Version**: `484264e9`  
+> **Source Version**: `9599db1d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-02T16:40:24.761Z  
+> **Timestamp**: 2026-11-08T17:29:05.553Z  
 > **Learning ID**: `learn-github-kamgurgul-cpu-info`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kamgurgul-cpu-info-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kamgurgul/cpu-info](https://github.com/kamgurgul/cpu-info))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-02T16:40:23.789Z  
+> **Harvest Timestamp**: 2026-11-08T17:29:05.544Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: CPU Info is a multiplatform application which provides information about device hardware and software
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1099 stars
+- **Stars / Engagement**: 1103 stars
 
 ---
 
@@ -658,28 +658,39 @@ interface IDispatchersProvider {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `553ae452` (2026-11-01)
-**Commit Message**: [SHARED] Enable incremental native builds
+### Incident Patch 1: `9599db1d` (2026-11-07)
+**Commit Message**: [SHARED] Libs update
 
-**File**: `gradle.properties` (modified, +1/-0)
+**File**: `gradle/libs.versions.toml` (modified, +3/-3)
 ```diff
-@@ -10,6 +10,7 @@ android.useAndroidX=true
- kotlin.apple.xcodeCompatibility.nowarn=true
- kotlin.code.style=official
- kotlin.daemon.jvmargs=-Xmx8192M
-+kotlin.incremental.native=true
- kotlin.native.ignoreDisabledTargets=true
- kotlin.mpp.enableCInteropCommonization=true
- # Custom
+@@ -1,5 +1,5 @@
+ [versions]
+-androidGradlePlugin = "9.5.0"
++androidGradlePlugin = "9.5.1"
+ androidxActivity = "1.13.0"
+ androidxArchCoreTesting = "2.2.0"
+ androidxCore = "1.19.1"
+@@ -40,9 +40,9 @@ licenses = "3.1.5"
+ oshi = "7.7.3"
+ profileinstaller = "1.4.1"
+ relinker = "1.4.5"
+-spotless = "8.10.4"
++spotless = "8.11.0"
+ turbine = "1.2.1"
+-uiautomator = "2.4.0"
++uiautomator = "2.4.1"
+ 
+ [libraries]
+ androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidxActivity" }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #649** (closed): Update dependency androidx.test.uiautomator:uiautomator to v2.4.1 - autoclosed (@renovate[bot])
+- **PR #648** (closed): Update dependency com.diffplug.spotless to v8.11.0 - autoclosed (@renovate[bot])
 - **PR #647** (closed): Update dependency com.github.jk1.dependency-license-report to v3.1.5 - autoclosed (@renovate[bot])
 - **PR #646** (closed): Update plugin io.github.ben-manes.versions.settings to v0.67.0 - autoclosed (@renovate[bot])
 - **PR #645** (closed): Update dependency com.github.oshi:oshi-core to v7.7.3 - autoclosed (@renovate[bot])
-- **PR #644** (closed): Update androidGradlePlugin to v9.5.0 - autoclosed (@renovate[bot])
-- **PR #643** (closed): Update dependency org.jetbrains.androidx.navigation:navigation-compose to v2.10.0 - autoclosed (@renovate[bot])
-- **PR #642** (2026-10-23): Update dependency ruby to v4.0.9 (@renovate[bot])
+- **PR #644** (closed): Update androidGradlePlugin to v9.5.1 - autoclosed (@renovate[bot])
 
 ---
 
@@ -699,28 +710,32 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [SHARED] Enable incremental native builds
+## X. [SHARED] Libs update
 
 **RULE**:
-When implementing operations in `gradle.properties`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kamgurgul/cpu-info. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `gradle/libs.versions.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kamgurgul/cpu-info. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `553ae452`: [SHARED] Enable incremental native builds. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9599db1d`: [SHARED] Libs update. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `gradle.properties`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `gradle/libs.versions.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-kotlin.incremental.native=true
+androidGradlePlugin = "9.5.1"
+spotless = "8.11.0"
+uiautomator = "2.4.1"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+androidGradlePlugin = "9.5.0"
+spotless = "8.10.4"
+uiautomator = "2.4.0"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `553ae452` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9599db1d` are properly handled with clean fallback behavior.

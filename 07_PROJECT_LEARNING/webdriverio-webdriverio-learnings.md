@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md`  
 > **Source**: github ([https://github.com/webdriverio/webdriverio](https://github.com/webdriverio/webdriverio))  
-> **Source Version**: `a02a5ad8`  
+> **Source Version**: `33a17ec7`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T03:44:09.739Z  
+> **Timestamp**: 2026-11-07T21:55:45.844Z  
 > **Learning ID**: `learn-github-webdriverio-webdriverio`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/webdriverio/webdriverio](https://github.com/webdriverio/webdriverio))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T03:44:09.350Z  
+> **Harvest Timestamp**: 2026-11-07T21:55:45.632Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Next-gen browser and mobile automation test framework for Node.js
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 9869 stars
+- **Stars / Engagement**: 9871 stars
 
 ---
 
@@ -355,14 +355,11 @@ export default {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #16351** (2026-11-03): **docs(website): use new BrowserStack logo in sponsors section**
-  *Symptoms*: Replaces the BrowserStack icon + wordmark in the Sponsors section with the new combined logo (light mode). Dark mode still uses the existing white SVG since the new logo has dark text.  🤖 Generated with [Claude Code](https://claude.com/claude-code)
-  **Post-Mortem & Fix Analysis**:
-  > @AutomatedTester is attempting to deploy a commit to the **WebdriverIO's projects** Team on [Vercel](https://vercel.com).  A member of the Team first needs to [authorize it](https://vercel.com/git/authorize?team=WebdriverIO's%20projects&slug=webdriverios-projects&teamId=team_2ZKoXr3JIX7pHhxkN8qZKeQT&type=github&job=%7B%22headInfo%22%3A%7B%22sha%22%3A%22f326c3b40108505e60f9c8a249b2098601c82338%22%7D%2C%22id%22%3A%22Qmbf6jKNsFSh7h9ExU5Kw2vwQTA8KYf7zniaUXKdwdqGLe%22%2C%22org%22%3A%22webdriverio%22%2C%22prId%22%3A16351%2C%22repo%22%3A%22webdriverio%22%7D).  
-  > <!-- greptile_summary -->  <h2><a href="https://app.greptile.com/api/retrigger?id=94429435"><picture><source media="(prefers-color-scheme: dark)" srcset="https://greptile-static-assets.s3.amazonaws.com/badges/RetriggerDark.svg?v=2"><source media="(prefers-color-scheme: light)" srcset="https://greptile-static-assets.s3.amazonaws.com/badges/Retrigger.svg?v=2"><img alt="Retrigger" src="https://greptile-static-assets.s3.amazonaws.com/badges/Retrigger.svg?v=2" align="right"></picture></a><a href="https://app.greptile.com/-/switch-tenant?tenant=webdriverio&amp;next=%2Fwebdriverio%2Fwebdriverio%2Fpull%2F16351&amp;utm_source=greptile_review&amp;utm_medium=github&amp;utm_campaign=view_in_greptile"><picture><source media="(prefers-color-scheme: dark)" srcset="https://greptile-static-assets.s3.amazonaws.com/badges/ViewInGreptileDark.svg?v=2"><source media="(prefers-color-scheme: light)" srcset="https://greptile-static-assets.s3.amazonaws.com/badges/ViewInGreptile.svg?v=2"><img alt="View in Grepti
+- **Issue #16393** (2026-11-07): **ci: retry the Session apt download without the slow Azure mirror**
+  *Symptoms*: ## Proposed changes  The Session E2E job (30 min limit) was cancelled 11 times since 2026-10-23, for example on main in [run 42202360126](https://github.com/webdriverio/webdriverio/actions/runs/42202360126) (step 11:05–11:35). The cause is the step "Ensure Xvfb and ffmpeg": `apt-get install ffmpeg` downloads 69 MB, and the Azure apt mirror sometimes sends at about 45 kB/s (normally 2.5 MB/s, 28 s).  The runner already has a mirror list (`/etc/apt/apt-mirrors.txt`: Azure, then `archive.ubuntu.com`, then `security.ubuntu.com`), but apt moves to the next mirror only on an error, not when a mirror is slow.  ```diff  sudo apt-get update -sudo apt-get install -y "${missing[@]}" +if ! sudo timeout 240 apt-get install -y --download-only "${missing[@]}"; then +  # warning, remove the Azure line from /etc/apt/apt-mirrors.txt +  sudo apt-get update +  sudo timeout 480 apt-get install -y --download-only "${missing[@]}" +fi +sudo apt-get install -y --no-download "${missing[@]}" ```  - The timeout stops only the download, never `dpkg`. The retry keeps the files that are already downloaded. - The step has `timeout-minutes: 15`, so a bad case fails the step clearly, and does not use all of the job time. - A normal run does not change: no warning, same mirror.  ## How you tested  The exact step text (from the workflow file) in `ubuntu:26.04` (amd64, Docker), with the runner mirror list. Mirror 1 is a local proxy, named like the Azure mirror, that sends `.deb` files at 40 kB/s:  | Case | Resul
 
-- **Issue #16349** (2026-11-03): **test(@wdio/vitest-framework): wait for the JUnit report file, and give the macOS unit job a 4 GB heap**
-  *Symptoms*: Two flakes of the macOS unit job, often in the same job (main run [41523374844](https://github.com/webdriverio/webdriverio/actions/runs/41523374844/job/125554567536), and 4 earlier runs).  | Failure | Cause | Change | |---|---|---| | `reporter.real.test.ts` › "writes a failure for a module that failed on an import error": `TypeError: The "path" argument must be of type string. Received undefined` | `@wdio/reporter` opens its file with `fs.createWriteStream()` (async). The JUnit reporter is synchronised, so `waitForSync()` does not wait for the file. On a loaded runner, the test reads the folder before the file exists. | The test waits (`vi.waitFor`) until the file has the failure. | | Vitest type check: `tsc ... terminated by signal SIGABRT ... JavaScript heap out of memory` (2040 MB) | The macOS runner has 7 GB of RAM, so the default Node heap is ~2 GB. The Linux and Windows runners have 16 GB (~4 GB heap). | `NODE_OPTIONS=--max-old-space-size=4096` on the macOS unit step. |  ## How you tested  | Run | Result | |---|---| | Old test, report file open 300 ms late (`fs.open` delayed) | FAIL, same `TypeError` as CI | | New test, same delay | PASS | | `vitest run --typecheck.only`, heap 1024 MB | `tsc` SIGABRT, heap out of memory | | `vitest run --typecheck.only`, heap 1536 / 2048 / 4096 MB | PASS | | `packages/wdio-vitest-framework` unit tests | 213 passed |  Locally (macOS), `tsc` needs between 1 and 1.5 GB. In CI, it reached the 2 GB limit in some runs only; the 4 GB limit is 
+- **Issue #16392** (2026-11-07): **test(webdriverio): make the waitForEnabled test of a removed element stable (v9, #16083)**
+  *Symptoms*: ## Proposed changes  Backport of #16083 to `v9`. It fixes a flaky test that failed 4 times in v9 CI with `expected 2 to be 1`. Three of these runs:  | Run | Job | |---|---| | [40865503876](https://github.com/webdriverio/webdriverio/actions/runs/40865503876) (#16296) | Unit Test (ubuntu-latest, Node 20) | | [41551696791](https://github.com/webdriverio/webdriverio/actions/runs/41551696791) (push) | Unit Test (ubuntu-latest, Node 22) | | [41827166588](https://github.com/webdriverio/webdriverio/actions/runs/41827166588) (push) | Unit Test (macos-latest, Node 26) |  ``` FAIL staleElement.test.ts > one wait for an element that the page removed > waits once in waitForEnabled, with the error of the element as cause AssertionError: expected 2 to be 1 ```  **Cause:** `waitForEnabled` and the wait for the removed element both use `waitforTimeout` (100 ms in the test). Under load, the first wait for the element ends just after 100 ms, and the outer `waitUntil` still checks again: a second lookup and a second wait.  **Change:** same as #16083. The test uses `waitForEnabled({ timeout: 50 })`, which is shorter than the wait for the element. The test still proves one wait, the `cause`, and the error message.  **Not in this PR:** the same race exists in the product on `main` and `v9`. Under load, a `waitFor*` command on a removed element can take 2 × its timeout. A fix in `waitUntil`/`Timer` is a separate change.  ## How you tested  - `npx vitest run packages/webdriverio/tests/utils/staleElem
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -379,774 +376,577 @@ export default {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `00797d71` (2026-11-02)
-**Commit Message**: ci: build the Void Display Server image from the Fastly mirror (#16341)
+### Incident Patch 1: `c652768f` (2026-11-07)
+**Commit Message**: fix(webdriverio): keep the BiDi context when switchToWindow fails (#16385)
 
-* ci: build the Void Display Server image from the Fastly mirror
+* fix(webdriverio): keep the BiDi context when switchToWindow fails
 
-repo-default sent packages at 370-713 KB/s on 2026-11-01, so the Void
-build took about 13 min and failed at the 6 min step timeout. Use the
-Fastly CDN, and give a slow but progressing build time to finish.
+The context manager sets the BiDi context to the handle of a
+switchToWindow before the command runs. When the switch fails (the
+handle is of a closed tab, or not a window), the driver stays in the
+window it was in, but the context stayed on the failed handle. So
+execute() failed with "no such frame - Context ... not found", and $()
+and url() only worked through their WebDriver Classic fallbacks.
 
-* ci: fall back to repo-default when the Fastly Void mirror fails
+Keep the context from before the switch when it fails. Another switch
+can be in flight at the same time, e.g. one that was not awaited, so
+only the result for the same handle restores it, and only if no newer
+transition changed the context.
 
-* ci: give the Display Server job room for both step limits and the failure logs
+* fix(webdriverio): keep a live BiDi context across overlapping failed switches
 
-**File**: `.github/workflows/test-display-server.yml` (modified, +2/-2)
+Two switchToWindow calls that overlap and both fail restored the
+handle of the first one, which the driver never switched to. A frame
+that was destroyed while a failed switch was pending was restored too.
+
+Track the switches that have no result yet and the context the driver
+is in while they run: the one before them, then the hand
+
+**File**: `e2e/wdio/headless/bidi.e2e.ts` (modified, +33/-0)
 ```diff
-@@ -55,7 +55,7 @@ jobs:
-     runs-on: ubuntu-latest
-     permissions:
-       contents: read
--    timeout-minutes: 30
-+    timeout-minutes: 35 # more than setup + the build and test step limits, so the failure log steps still run
-     env:
-       IMAGE: display-server-test:${{ matrix.distro }}-${{ matrix.version }}-${{ matrix.scenario }}
-     strategy:
-@@ -80,7 +80,7 @@ jobs:
-           filename: webdriverio-build.zip
- 
-       - name: Build test container
--        timeout-minutes: 6 # the slowest build takes about 2.5 min, so 2 builds and the wait fit
-+        timeout-minutes: 15 # a build takes about 2 min, but 13 min on a slow mirror that still sends data
-         shell: bash
-         run: |
-           # Package mirrors and registries have short outages. Retry once, only after a network or server error, with
-```
-
-**File**: `e2e/wdio/display-server/docker/void.dockerfile` (modified, +16/-9)
-```diff
-@@ -16,15 +16,22 @@ ENV CHROMEDRIVER_PATH=/usr/bin/chromedriver
- #   return a non-zero exit code on "already installed" which fails the build.
- # - npm ships inside the `nodejs` package on Void — it is NOT a separate
- #   package and xbps will error with "not found in repository pool".
--RUN xbps-install -Suy xbps && \
--    xbps-install -Sy \
--        bash \
--        curl \
--        shadow \
--        sudo \
--        nodejs \
--        weston \
--        chromium && \
-+# Fastly CDN first: repo-default is one mirror and can be slow (13 min builds). If Fastly fails, install again
-+# from repo-default (the downloaded packages stay in the cache). /etc/xbps.d overrides /usr/share/xbps.d.
-+RUN repo() { echo "repository=https://$1/current" > /etc/xbps.d/00-repository-main.conf; } && \
-+    void_install() { \
-+        xbps-install -Suy xbps && \
-+        xbps-install -Sy \
-+            bash \
-+            curl \
-+            shadow \
-+            sudo \
-+            nodejs \
-+            weston \
-+            chromium; \
-+    } && \
-+    { { repo repo-fastly.voidlinux.org && void_install; } || \
-+      { echo "Fastly mirror failed, use repo-default" && repo repo-default.voidlinux.org && void_install; }; } && \
-     xbps-install -Scc
- 
- RUN npm install -g pnpm@11.27.1
-```
-
----
-
-### Incident Patch 2: `3fb61256` (2026-10-31)
-**Commit Message**: fix: reloadSession state, url() headers mock, spec selection and spec/hook timeouts (#16299)
-
-* fix(webdriverio): restore the mocks on reloadSession() and keep an existing dialog listener working in the new session (#16291)
-
-* fix(webdriverio): match the url of url({ headers | auth }) literally and keep it apart from the mocks of the user (#16292)
-
-* fix(@wdio/config, @wdio/runner): classify each --exclude entry on its own, resolve relative --exclude paths from the cwd, and check a multi-remote wdio:exclude without the CLI selection (#16293)
-
-* fix(@wdio/config): type the capability exclude list as paths
-
-* fix(@wdio/utils, @wdio/cucumber-framework): honor the own timeout of a Jasmine spec/hook and of a Cucumber hook (#16294)
-
-* fix(webdriverio): let a plain spy yield to the headers mock of url(), pass the context to its key, and restore every mock on reloadSession() even when one fails
-
-* fix(@wdio/utils, @wdio/config): leave a shorter Jasmine spec timeout to Jasmine, and keep a relative --exclude path relative to the config when it matches nothing from the cwd
-
-* fix(@wdio/config): resolve a relative --exclude path with a Cucumber line number from the cwd
-
-* fix(webdriverio): lim
-
-**File**: `packages/wdio-config/src/node/ConfigParser.ts` (modified, +81/-31)
-```diff
-@@ -12,6 +12,11 @@ import { SUPPORTED_HOOKS, SUPPORTED_FILE_EXTENSIONS, DEFAULT_CONFIGS, NO_NAMED_C
- import type { PathService } from '../types.js'
- 
- const log = logger('@wdio/config:ConfigParser')
-+
-+/**
-+ * exclude paths already warned about: the config is parsed several times in a process
-+ */
-+const warnedExcludes = new Set<string>()
- const MERGE_DUPLICATION = ['services', 'reporters', 'capabilities'] as const
- 
- type KeyWithMergeDuplication = (typeof MERGE_DUPLICATION)[number]
-@@ -194,6 +199,8 @@ export default class ConfigParser {
-     private merge(object: MergeConfig = {}, addPathToSpecs = true) {
-         const spec = Array.isArray(object.spec) ? object.spec : []
-         const exclude = Array.isArray(object.exclude) ? object.exclude : []
-+        // the exclude list of the config, before the one of the command line replaces it
-+        const ownExclude = this._config.exclude ?? []
- 
-         /**
-          * Add deepmergeCustom to remove array('services', 'reporters', 'capabilities') duplication in the config object
-@@ -253,17 +260,35 @@ export default class ConfigParser {
-             this._config.specs = this.setFilePathToFilterOptions(spec, this._config.specs!, object.group)
-         }
-         /**
--         * At this step function allKeywordsContainPath() allows us to make sure
--         * that all arguments, passed to '--exclude' param, are paths to specs.
--         * So they can be processed in setFilePathToFilterOptions()
--         * Otherwise, the application crashes with an error.
--         * Therefore, if --exclude contains not paths, but keywords, e.g. 'dialog', 'test.component' etc.,
--         * then filtering of excluded specs occurs in the filterSpecs() method
-+         * Every argument of '--exclude' is either a path (or glob) to specs or a keyword,
-+         * e.g. 'dialog', 'test.component'. Only the paths can be processed in
-+         * setFilePathToFilterOptions(), otherwise the application crashes with an error.
-+         * Keywords stay as they are, the filtering of excluded specs for them occurs in the
-+         * filterSpecs() method. A relative path is relative to the current working directory,
-+         * like the one of '--spec'.
-          */
--        if (exclude.length > 0 && allKeywordsContainPath(exclude)) {
--            this._config.exclude = this.setFilePathToFilterOptions(exclude, this._config.exclude!)
--        } else if (exclude.length > 0) {
--            this._config.exclude = exclude
-+        if (exclude.length > 0) {
-+            const excludePaths = exclude.filter(isPathEntry).map((entry) => resolveFromCwd(entry, this._pathService))
-+            const excludeKeywords = exclude.filter((entry) => !isPathEntry(entry))
-+            let excludedFiles: string[] = []
-+            if (excludePaths.length > 0) {
-+                try {
-+                    excludedFiles = this.setFilePathToFilterOptions(excludePaths, ownExclude)
-+                } catch (err) {
-+                    /**
-+                     * paths that match nothing do not keep the keywords next to them from applying
-+                     */
-+                    if (excludeKeywords.length === 0) {
-+                        throw err
-+                    }
-+                    const message = `--exclude path(s) ${exclude.filter(isPathEntry).join(', ')} match no file, excluding by ${excludeKeywords.join(', ')} only`
-+                    if (!warnedExcludes.has(message)) {
-+                        warnedExcludes.add(message)
-+                        log.warn(message)
-+                    }
-+                }
-+            }
-+            this._config.exclude = [...excludedFiles, ...excludeKeywords]
-         }
-     }
- 
-@@ -329,13 +354,14 @@ export default class ConfigParser {
+@@ -752,4 +752,37 @@ describe('bidi e2e test', () => {
              }
-         }
- 
--        let exclude = allKeywordsContainPath(excludeSpecPatterns)
--            ? ConfigParser.getFilePaths(excludeSpecPatterns, this._config.rootDir, this._pathService)
--            : excludeSpecPatterns
-+        let exclude: string[] = [
-+            ...<string[]>ConfigParser.getFilePaths(excludeSpecPatterns.filter(isPathEntry), this._config.rootDir, this._pathService),
-+            ...excludeSpecPatterns.filter((entry) => !isPathEntry(entry))
+         })
+     })
++
++    describe('a switchToWindow that fails', () => {
++        const closedTab = async () => {
++            const { context } = await browser.browsingContextCreate({ type: 'tab' })
++            await browser.browsingContextClose({ context })
++            return context
++        }
++        const handles: [string, () => Promise<string>][] = [
++            ['the handle of a closed tab', closedTab],
++            ['a handle that is not a window', async () => 'not-a-window-handle']
 +        ]
-         const suites = Array.isArray(this._config.suite) ? this._config.suite : []
- 
-         if (Array.isArray(capExclude)) {
--            exclude = [...exclude, ...ConfigParser.getFilePaths(capExclude, this._config.rootDir, this._pathService)]
-+            exclude = [...exclude, ...<string[]>ConfigParser.getFilePaths(capExclude, this._config.rootDir, this._pathService)]
-         }
- 
-         // only use capability specs if (CLI) --spec is not defined
-@@ -538,30 +564,30 @@ export default class ConfigParser {
-      * @return {String[] | String[][]} list of spec files with excludes removed
-      */
-     filterSpecs(specs: Spec[], excludeList: string[]) {
--        // If 'exclude' is array of paths
--        if (allKeywordsContainPath(excludeList)) {
--         
-```
-
-**File**: `packages/wdio-config/tests/node/configparser.test.ts` (modified, +57/-0)
-```diff
-@@ -2,6 +2,7 @@ import url from 'node:url'
- import path from 'node:path'
- 
- import { vi, describe, it, expect, } from 'vitest'
-+import logger from '@wdio/logger'
- 
- import ConfigParser from '../../src/node/ConfigParser.js'
- import type { MockFileContent } from '../lib/MockFileContentBuilder.js'
-@@ -678,6 +679,62 @@ describe('ConfigParser', () => {
-             expect(specs.flat()).not.toContain(path.join(__dirname, 'FileSystemPathService.test.ts'))
-         })
- 
-+        it('should exclude by path and by keyword in the same list', async () => {
-+            const configParser = await ConfigParserForTestWithAllFiles(FIXTURES_CONF)
-+            await configParser.initialize({ exclude: ['FileSystemPathService', __filename] })
 +
-+            const specs = configParser.getSpecs()
-+            expect(specs).not.toContain(__filename)
-+            expect(specs).not.toContain(path.join(__dirname, 'FileSystemPathService.test.ts'))
-+        })
-+
-+        it('should still exclude by keyword when an exclude path next to it matches nothing', async () => {
-+            const configParser = await ConfigParserForTestWithAllFiles(FIXTURES_CONF)
-+            await configParser.initialize({ exclude: ['./not/there.test.ts', 'FileSystemPathService'] })
-+
-+            expect(configParser.getSpecs()).not.toContain(path.join(__dirname, 'FileSystemPathService.test.ts'))
-+        })
-+
-+        it('should warn once about an exclude path that matches nothing, however often the config is parsed', async () => {
-+            const warn = vi.mocked(logger('@wdio/config:ConfigParser').warn)
-+            warn.mockClear()
-+            for (let i = 0; i < 2; i++) {
-+                const configParser = await ConfigParserForTestWithAllFiles(FIXTURES_CONF)
-+                await configParser.initialize({ exclude: ['./not/warned-once.test.ts', 'FileSystemPathService'] })
-+            }
-+
-+            const warnings = warn.mock.calls.filter(([message]) => String(message).includes('warned-once'))
-+            expect(warnings).toEqual([['--exclude path(s) ./not/warned-once.test.ts match no file, excluding by FileSystemPathService only']])
-+        })
-+
-+        it('should fail when every exclude path matches nothing', async () => {
-+            const configParser = await ConfigParserForTestWithAllFiles(FIXTURES_CONF)
-+            await expect(configParser.initialize({ exclude: ['./not/there.test.ts'] })).rejects.toThrow('not found')
-+        })
-+
-+        it('should resolve a relative exclude path from the current working directory', async () => {
-+            const configParser = await ConfigParserForTestWithAllFiles(FIXTURES_CONF)
-+            await configParser.initialize({ exclude: ['FileSystemPathService', path.relative(process.cwd(), __filename).replace(/\\/g, '/')] })
-+
-+            expect(configParser.getSpecs()).not.toContain(__filename)
-+        })
-+
-+        it('should resolve a relative exclude path with a line number from the current working directory', async () => {
-+            const configParser = await ConfigParserForTestWithAllFiles(FIXTURES_CONF)
-+            await configParser.initialize({ exclude: [`${path.relative(process.cwd(), __filename).replace(/\\/g, '/')}:12`] })
-+
-+            expect(configParser.getSpecs()).not.toContain(__filename)
-+        })
-+
-+        it('should get the specs of an instance independent of the CLI selection', async () => {
-+            const configParser = await ConfigParserForTestWithAllFiles(FIXTURES_CONF)
-+            await configParser.initialize({ shard: { current: 2, total: 2 } } as any)
-+
-+            expect(configParser.getInstanceSpecs([INDEX_PATH, __filename], [__filename])).toEqual([INDEX_PATH])
-+            expect(configParser.getInstanceSpecs([__filename], [__filename])).toEqual([])
-+            expect(configParser.getInstanceSpecs([__filename], [INDEX_PATH])).toEqual([__filename])
-+        })
-+
-         it('should exclude/include capability excludes', async () => {
-             const configParser = await ConfigParserForTestWithAllFiles(FIXTURES_CONF)
-             await configParser.initialize()
-```
-
-**File**: `packages/wdio-cucumber-framework/src/index.ts` (modified, +5/-1)
-```diff
-@@ -857,7 +857,11 @@ export class CucumberAdapter {
-                     return fn
-                 }
- 
--                return wrapStep(fn, isStep, config, cid, options, getHookParams, this._cucumberOpts.timeout)
-+                /**
-+                 * the own timeout of a hook wins over `cucumberOpts.timeout`, `-1` turns it off
-+                 */
-+                const timeout = (fn as { hookTimeout?: number }).hookTimeout ?? this._cucumberOpts.timeout
-+                return wrapStep(fn, isStep, config, cid, options, getHookParams, timeout)
-             }
-         )
-     }
-```
-
-**File**: `packages/wdio-cucumber-framework/src/utils.ts` (modified, +10/-1)
-```diff
-@@ -295,7 +295,16 @@ export function setUserHookNames (options: typeof supportCodeLibraryBuilder) {
-                 const userHookFn = function (this: World, ...args: unknown[]) {
-                     return hookFn.apply(this, args)
-                 }
--                testRunHookDefinition.code = (isFunctionAsync(hookFn)) ? userHookAsyncFn : userHookFn
-+                /**
-+                 * Cucumber does not hand the options of a hook to the definition wrapper, so keep the
-+                 * timeout of the hook on its function for the wrapper
-+                 */
-+                const hookTimeout = (testRunHookDefinition.options as { timeout?: unknown } | undefined)?.timeout
-+                const wrappedHook = (isFunctionAsync(hookFn)) ? userHookAsyncFn : userHookFn
-+                if (typeof hookTimeout === 'number') {
-+                    Object.assign(wrappedHook, { hookTimeout })
++        for (const [name, getHandle] of handles) {
++            it(`keeps the BiDi context in the window the driver stays in, for ${name}`, async function () {
++                if (!browser.isBidi) {
++                    return this.skip()
 +                }
-+                testRunHookDefinition.code = wrappedHook
-             }
-         })
-     })
-```
-
-**File**: `packages/wdio-cucumber-framework/tests/adapter.test.ts` (modified, +12/-0)
-```diff
-@@ -1394,6 +1394,18 @@ describe('CucumberAdapter', () => {
-         )
-     })
- 
-+    it('wrapSteps should prefer the own timeout of a hook over cucumberOpts.timeout', async () => {
-+        const adapter = await CucumberAdapter.init!('0-0', {}, ['/foo/bar'], {}, {}, {}, false, 'progress')
-+        adapter.wrapStep = vi.fn()
-+        adapter.wrapSteps()
-+        const wrapper = vi.mocked(Cucumber.setDefinitionFunctionWrapper).mock.calls[0][0]
-+        const hook = Object.assign(function userHookFn () {}, { hookTimeout: -1 })
-+        wrapper(hook)
-+        expect(adapter.wrapStep).toBeCalledWith(
-+            hook, false, undefined, '0-0', { retry: 0 }, expect.any(Function), -1
-+        )
-+    })
 +
-     it('wrapSteps should not wrap wdio hooks', async () => {
-         const adapter = await CucumberAdapter.init!('0-0', {}, ['/foo/bar'], {}, {}, {}, false, 'progress')
-         adapter.wrapStep  = vi.fn()
-```
-
-**File**: `packages/wdio-cucumber-framework/tests/utils.test.ts` (modified, +17/-0)
-```diff
-@@ -21,6 +21,7 @@ import {
-     userRunHooks,
-     testRunHookStart,
-     testRunHookEnd,
-+    setUserHookNames,
- } from '../src/utils.js'
- import type { Feature, Pickle, PickleStep, StepDefinition, TestStepResult } from '@cucumber/messages'
- import { featureWithRules } from './fixtures/features.js'
-@@ -648,3 +649,19 @@ describe('getScenarioResult', () => {
-     })
- })
- 
-+describe('setUserHookNames', () => {
-+    it('keeps the own timeout of a hook on its wrapper', () => {
-+        const withTimeout = { code: async function hook () {}, options: { timeout: -1 } }
-+        const withoutTimeout = { code: function hook () {}, options: {} }
-+        setUserHookNames({
-+            beforeTestRunHookDefinitionConfigs: [],
-+            beforeTestCaseHookDefinitionConfigs: [withTimeout, withoutTimeout],
-+            afterTestCaseHookDefinitionConfigs: [],
-+            afterTestRunHookDefinitionConfigs: []
-+        } as any)
-+        expect(withTimeout.code.name).toBe('userHookAsyncFn')
-+        expect((withTimeout.code as any).hookTimeout).toBe(-1)
-+        expect(withoutTimeout.code.name).toBe('userHookFn')
-+        expect(withoutTimeout.code).not.toHaveProperty('hookTimeout')
++                await browser.url('https://guinea-pig.webdriver.io/')
++                const original = await browser.getWindowHandle()
++                const title = await browser.execute(() => document.title)
++                const handle = await getHandle()
++
++                // geckodriver gives "Unable to locate window"
++                await expect(browser.switchToWindow(handle)).rejects.toThrow(/no such window|Unable to locate window/)
++                try {
++                    expect(await browser.execute(() => document.title)).toBe(title)
++                } finally {
++                    await browser.switchToWindow(original)
++                }
++            })
++        }
 +    })
-+})
+ })
 ```
 
-**File**: `packages/wdio-runner/src/index.ts` (modified, +1/-1)
+**File**: `packages/webdriverio/src/session/context.ts` (modified, +117/-3)
 ```diff
-@@ -111,7 +111,7 @@ export default class Runner extends EventEmitter {
-             ? Object.entries(caps).reduce((filteredCaps, [browserName, browserCaps]) => {
-                 const ex = browserCaps.capabilities['wdio:exclude']
-                 if (ex) {
--                    const sp = this._configParser?.getSpecs(specs, ex)
-+                    const sp = this._configParser?.getInstanceSpecs(specs, ex)
-                     if (sp && sp.length === 0) {
-                         return filteredCaps
-                     }
-```
-
-**File**: `packages/wdio-utils/src/monad.ts` (modified, +7/-2)
-```diff
-@@ -14,7 +14,7 @@ const SCOPE_TYPES: Record<string, Function> = {
-  * @see https://github.com/developit/mitt/issues/191
-  */
- const mitt = _mitt as unknown as typeof _mitt.default
--const EVENTHANDLER_FUNCTIONS = ['on', 'off', 'emit', 'once', 'removeListener', 'removeAllListeners'] as const
-+const EVENTHANDLER_FUNCTIONS = ['on', 'off', 'emit', 'once', 'removeListener', 'removeAllListeners', 'listenerCount'] as const
+@@ -120,6 +120,42 @@ export function getContextManager(browser: WebdriverIO.Browser) {
  
- interface PropertiesObject {
-     [key: string | symbol]: PropertyDescriptor
-@@ -308,7 +308,10 @@ export default function WebDriver(monadOptions: object, modifier?: Function, pro
-                 emitDialogListenerTransition(previousCount)
-                 mittInstance.all.clear()
-             }
--        }
-+        },
-+        listenerCount: (type: string) => (
-+            type === 'dialog' ? dialogListeners.length : (mittInstance.all.get(type)?.length ?? 0)
-+        )
+ export type FlatContextTree = Omit<local.BrowsingContextInfo, 'children'> & { children: string[] }
+ 
++interface WindowSwitches {
++    /**
++     * the `switchToWindow` commands without a result yet, in the order they were sent. A switch
++     * is superseded when one sent after it succeeds, or a newer transition sets the context.
++     */
++    pending: { handle: string, body: unknown, superseded?: boolean }[]
++    /**
++     * the context to go back to when the pending switches fail: the one before the switches
++     * (or that a newer transition set), then the handle of each switch that succeeds, in the
++     * order of the results
++     */
++    context?: string
++}
++
++/**
++ * The context that `switchToWindow` commands give: the target of the last one without a
++ * result yet that is not superseded, or else the context to go back to.
++ */
++function windowSwitchTarget ({ pending, context }: WindowSwitches) {
++    for (let i = pending.length - 1; i >= 0; i--) {
++        if (!pending[i].superseded) {
++            return pending[i].handle
++        }
++    }
++    return context
++}
++
++/**
++ * The pending switch a result is for. The command and the result event of a request share
++ * its body, so a switch to a handle that is pending more than once is still the right one.
++ */
++function findWindowSwitch ({ pending }: WindowSwitches, body: unknown, handle: string) {
++    const index = pending.findIndex((pendingSwitch) => pendingSwitch.body === body)
++    return index > -1 ? index : pending.findIndex((pendingSwitch) => pendingSwitch.handle === handle)
++}
++
+ /**
+  * This class is responsible for managing context in a WebDriver session. Many BiDi commands
+  * require to be executed in a specific context. This class is responsible for keeping track
+@@ -132,6 +168,10 @@ export class ContextManager extends SessionManager {
+     #isNativeContext: boolean
+     #getContextSupport = true
+     #currentWindowHandle?: string
++    /**
++     * the `switchToWindow` commands without a result yet, and the context to go back to when they fail
++     */
++    #windowSwitches?: WindowSwitches
+     #onCommandResultBidiAndClassicListener: (event: { command: string, result: unknown, body: unknown }) => void
+     #onCommandListener: (event: { command: string, body: unknown, endpoint?: string }) => void
+     #onCommandResultMobileListener: (event: { command: string, result: unknown }) => void
+@@ -271,6 +311,16 @@ export class ContextManager extends SessionManager {
      }
  
-     /**
-@@ -514,6 +517,8 @@ export default function WebDriver(monadOptions: object, modifier?: Function, pro
-             case 'removeAllListeners':
-                 eventHandler.removeAllListeners(args[0] as string)
-                 break
-+            case 'listenerCount':
-+                return eventHandler.listenerCount(args[0] as string)
-             }
-             return this
-         })
-```
-
----
-
-### Incident Patch 3: `ce1a3484` (2026-11-01)
-**Commit Message**: fix(@wdio/runner): keep the worker alive on a late rejection that no framework reports, and fail the run (#16331)
-
-* fix(@wdio/runner): keep the worker alive on a late error that no framework reports, and fail the run
-
-Jasmine and Cucumber remove their process error listeners when their run
-ends. A promise without await in the last hook or step (or a timer that
-throws) then rejects with no listener, so Node ends the worker before the
-reporters write their output: the spec reporter prints nothing, the JSON
-file is empty, and no message names the cause.
-
-The runner now adds one uncaughtException listener for the worker. It acts
-only when no other listener exists (Node's domain helper does not count),
-so the framework still handles errors during its run and Mocha keeps its
-behavior. The error is logged and shown as "Unhandled promise rejection
-that no test reports ..." and counts as a failure. _shutdown waits one task
-first, because Node reports the rejection of the last hook after the
-current task. With mochaOpts.allowUncaught the listener is not added, so an
-uncaught error still ends the worker.
-
-* fix(@wdio/runner, @wdio/mocha-framework): let the Mocha adapter own allowUncaught
-
-Th
-
-**File**: `packages/wdio-runner/src/index.ts` (modified, +243/-27)
-```diff
-@@ -1,8 +1,9 @@
- /* eslint-disable @typescript-eslint/no-explicit-any */
- import { EventEmitter } from 'node:events'
-+import util from 'node:util'
- 
- import logger from '@wdio/logger'
--import { initializeWorkerService, initializePlugin, executeHooksWithArgs, TimingTracker } from '@wdio/utils'
-+import { initializeWorkerService, initializePlugin, executeHooksWithArgs, sleep, specFilePath, TimingTracker } from '@wdio/utils'
- import { ConfigParser } from '@wdio/config/node'
- import { _setGlobal } from '@wdio/globals'
- import { expect, setDefaultOptions, getDefaultOptions, wdioCustomMatchers, SnapshotService, SoftAssertionService } from 'expect-webdriverio'
-@@ -27,6 +28,47 @@ function getContextIdPayload(browser: WebdriverIO.Browser) {
-     return typeof contextId === 'string' ? { contextId } : {}
- }
- 
-+/**
-+ * Jasmine and Cucumber keep no error listener after their run: without one, Node ends the worker
-+ * on a late error (e.g. a command without await in the last hook) before the reports are written
-+ */
-+let lateErrorHandler: ((err: unknown, origin: NodeJS.UncaughtExceptionOrigin) => void) | undefined
-+function onLateError (err: unknown, origin: NodeJS.UncaughtExceptionOrigin) {
-+    if (hasFrameworkListener()) {
-+        return
-+    }
-+    // without the parent, the report itself fails (`process.send`) and comes back here: end the worker, as without this listener (Node exits with code 7)
-+    if (process.connected === false) {
-+        throw err
-+    }
-+    lateErrorHandler?.(err, origin)
-+}
-+
-+/**
-+ * a listener other than this one handles the error (Node's domain module adds one that handles nothing)
-+ */
-+function hasFrameworkListener () {
-+    return process.listeners('uncaughtException').some((listener) => (
-+        listener !== onLateError && listener.name !== 'domainUncaughtExceptionClear'
-+    ))
-+}
-+
-+/**
-+ * this runs in an error listener, so a URL that names no path must not throw
-+ */
-+function toPath (spec: string) {
-+    try {
-+        return specFilePath(spec)
-+    } catch {
-+        return spec
-+    }
-+}
-+
-+const LATE_REJECTION_TIMEOUT = 60_000
-+// more messages add no information, and a report that fails again would feed a loop
-+const LATE_ERROR_REPORT_LIMIT = 10
-+const CLOSE_SESSION_TIMEOUT = 5_000
-+
- export default class Runner extends EventEmitter {
-     private _browser?: WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser
-     private _configParser?: ConfigParser
-@@ -42,6 +84,107 @@ export default class Runner extends EventEmitter {
-     private _caps?: Capabilities.RequestedStandaloneCapabilities | Capabilities.RequestedMultiRemoteCapabilities
-     private _sessionInitError?: Error
-     private _timingTracker?: TimingTracker
-+    private _lateErrors = 0
-+    private _lateRejectionSince = 0
-+    private _lateRejectionTimer?: NodeJS.Timeout
-+    private _shutdownStarted = false
-+    private _endWorkerRun?: Promise<number>
-+    private _frameworkFailures = 0
-+    private _testsStarted = false
-+    private _sessionStarting = false
-+    private _runnerStarted = false
-+    private _watch = false
-+    private _sessionReported = false
-+    private _closingSessions?: Promise<void>
-+    private _retries = 0
-+
-+    private _onLateError = (err: unknown, origin: NodeJS.UncaughtExceptionOrigin) => {
-+        const uncaught = origin !== 'unhandledRejection'
-+        // before the tests there is no report to keep, and the run would go on (session, hooks): end as without this listener
-+        if (uncaught && !this._testsStarted) {
-+            throw err
+     async #contextDestroyed(destroyed: local.BrowsingContextInfo) {
++        /**
++         * A `switchToWindow` that fails goes back to the context from before it. If that
++         * context is gone (e.g. the page removed the frame), the next command resolves the
++         * window the driver is in instead.
++         */
++        const switches = this.#windowSwitches
++        if (switches?.context && this.findContext(switches.context, [destroyed], 'byContextId')) {
++            switches.context = undefined
 +        }
-+        this._lateErrors++
-+        if (this._lateErrors <= LATE_ERROR_REPORT_LIMIT) {
-+            const kind = uncaught
-+                ? 'Uncaught error that no test reports, for example of a timer that throws in a hook'
-+                : 'Unhandled promise rejection that no test reports, for example of a command without await in the last hook'
-+            this.#reportLateError(`${kind} (${this.#lateErrorPlace()}): ${err instanceof Error ? err.stack || err.message : util.inspect(err)}`)
-+        }
-+        if (uncaught) {
-+            // the state of the process can be broken after an uncaught exception, so do not go on with the run
-+            void this.#startEndWorker()
-+            return
-+        }
-+        this.#watchLateRejection()
-+    }
 +
-+    /**
-+     * the stack of a command has no test line, so name where the error comes from
-+     */
-+    #lateErrorPlace () {
-+        const specs = (this._specs ?? []).map(toPath)
-+        const last = this._reporter?.lastEndedTitle
-+        return `spec file: ${specs.join(', ')}${last ? `, last test or hook: "${last}"` : ''}`
-+    }
-+
-+    #reportLateError (message: string) {
-+        log.error(message)
-+        this.emit('error', new Error(message))
-+    }
-+
-+    /**
-+     * A hook can wait for the rejected promise and never end: end the worker when no framework
-+     * runs user code and no reporter event came for a while
-+     */
-+    #watchLateRejection () {
-+        if (this._late
-```
-
-**File**: `packages/wdio-runner/src/reporter.ts` (modified, +9/-0)
-```diff
-@@ -15,6 +15,10 @@ const mochaAllHooks = ['"before all" hook', '"after all" hook']
- export default class BaseReporter {
-     private _reporters: Reporters.ReporterInstance[] = []
-     private listeners: ((ev: unknown) => void)[] = []
-+    /** time of the last event, to see that the worker still makes progress */
-+    lastEventTime = 0
-+    /** title of the last test or hook that ended, to name where a late error comes from */
-+    lastEndedTitle?: string
- 
-     constructor(
-         private _config: Options.Testrunner,
-@@ -49,6 +53,7 @@ export default class BaseReporter {
-         uid?: string
-         file?: string
-         title?: string
-+        fullTitle?: string
-         error?: string
-         sessionId?: string
-         config?: unknown
-@@ -59,6 +64,10 @@ export default class BaseReporter {
-         contextId?: string
-     }) {
-         payload.cid = this._cid
-+        this.lastEventTime = Date.now()
-+        if (e === 'test:end' || e === 'hook:end') {
-+            this.lastEndedTitle = payload.fullTitle || payload.title
-+        }
- 
          /**
-          * Send failure message (only once) in case of test or hook failure
+          * no need to do anything if the destroyed context is not the current one
+          */
+@@ -369,11 +419,43 @@ export class ContextManager extends SessionManager {
+          * `switchToWindow` returns null on success, so the handle comes from the request body
+          */
+         if (event.command === 'switchToWindow') {
++            // the result of a wrapper, e.g. of an overwritten `switchToWindow`, has no body
++            const handle = (event.body as { handle?: unknown } | undefined)?.handle
++            if (typeof handle !== 'string') {
++                return
++            }
+             const err = (event.result as { error?: unknown }).error || undefined
+             // Only update current window handle when 'switchToWindow' has no error
+             if (!err) {
+-                const windowHandle = (event.body as { handle?: string }).handle || undefined
+-                this.#currentWindowHandle = windowHandle
++                this.#currentWindowHandle = handle
++            }
++
++            const switches = this.#windowSwitches
++            const index = switches ? findWindowSwitch(switches, event.body, handle) : -1
++            if (switches && index > -1) {
++                // no newer transition changed the context while the switch ran
++                const unchanged = this.#currentContext === windowSwitchTarget(switches)
++                if (!err) {
++                    /**
++                     * The driver is in this window now. The results can come in another order
++                     * than the switches were sent, so a switch sent before this one is not where
++                     * commands go until its own result shows where the driver is.
++                     */
++                    switches.context = handle
++                    switches.pending.slice(0, index).forEach((pending) => { pending.superseded = true })
++                }
 ```
 
-**File**: `packages/wdio-runner/tests/index.test.ts` (modified, +609/-1)
+**File**: `packages/webdriverio/tests/session/context.test.ts` (modified, +204/-1)
 ```diff
-@@ -1,5 +1,6 @@
- import { AsyncLocalStorage } from 'node:async_hooks'
- import path from 'node:path'
-+import url from 'node:url'
+@@ -134,10 +134,200 @@ describe('ContextManager', () => {
+         const resultHandlers = getListeners().result
+         const handler = resultHandlers![0]
+         const error = new Error('no such window')
+-        handler({ command: 'switchToWindow', result: { error } })
++        handler({ command: 'switchToWindow', body: { handle: 'closed-tab' }, result: { error } })
+         expect(getContextManager(browser).getCurrentWindowHandle()).toBeUndefined()
+     })
  
- import logger from '@wdio/logger'
- import { describe, expect, it, vi, afterEach, beforeEach, onTestFinished } from 'vitest'
-@@ -11,6 +12,7 @@ import { _setGlobal } from '@wdio/globals'
- import { setDefaultOptions, SnapshotService, SoftAssertionService } from 'expect-webdriverio'
- 
- import WDIORunner from '../src/index.js'
-+import BaseReporter from '../src/reporter.js'
- import type { CustomStubCommand } from '../src/types.js'
- 
- vi.mock('expect-webdriverio', () => ({
-@@ -575,6 +577,612 @@ describe('wdio-runner', () => {
-                 expect.any(Array)
-             )
-         })
++    describe('a switchToWindow that fails in a BiDi session', () => {
++        const switchToWindow = { command: 'switchToWindow', body: { handle: 'closed-tab' } }
++        const setup = () => {
++            const wid = process.env.WDIO_UNIT_TESTS
++            delete process.env.WDIO_UNIT_TESTS
++            const stub = createBrowserStub({ isBidi: true } as any)
++            const manager = getContextManager(stub.browser)
++            process.env.WDIO_UNIT_TESTS = wid
++            manager.setCurrentContext('context-1')
++            const emit = (event: string, payload: unknown) => stub.getListeners()[event]!.forEach((handler) => handler(payload))
++            return { manager, emit, browser: stub.browser }
++        }
 +
-+        describe('error that no framework reports', () => {
-+            const startWith = (frameworkRun: () => unknown, args: Record<string, unknown> = {}, browser: Record<string, unknown> = {}) => {
-+                const runner = new WDIORunner()
-+                const config: any = { reporters: [], before: [], beforeSession: [], framework: 'late', runner: 'local' }
-+                vi.spyOn(ConfigParser.prototype, 'getConfig').mockReturnValue(config)
-+                vi.mocked(initializePlugin).mockResolvedValueOnce({
-+                    default: { init () { return this }, hasTests: () => true, run: frameworkRun }
-+                } as any)
-+                const stub = { capabilities: {}, options: {}, ...browser }
-+                runner['_initSession'] = vi.fn().mockImplementation(async () => {
-+                    runner['_browser'] = stub as unknown as BrowserObject
-+                    return stub
-+                })
-+                const errors: { message: string }[] = []
-+                const exits: number[] = []
-+                runner.on('error', (err) => errors.push(err))
-+                runner.on('exit', (code) => exits.push(code))
-+                const done = runner.run({ args: { reporters: [], ...args }, cid: '0-0', retries: 0, caps: {}, specs: ['foobar'], configFile: '/foo/bar' })
-+                return { runner, errors, exits, done }
-+            }
-+            const runWith = async (frameworkRun: () => unknown, args: Record<string, unknown> = {}) => {
-+                const { done, ...rest } = startWith(frameworkRun, args)
-+                return { ...rest, failures: await done }
-+            }
-+            const runnerEnds = () => vi.mocked(BaseReporter.prototype.emit).mock.calls.filter(([event]) => event === 'runner:end')
-+            const lateRejection = () => process.emit('uncaughtException', new Error('late rejection'), 'unhandledRejection')
-+            const never = () => new Promise(() => {})
++        it('keeps the context that the driver stays in', async () => {
++            const { manager, emit } = setup()
 +
-+            // Jasmine removes every listener during its run and puts them back after it, so do the same here
-+            const withOnlyRunnerListeners = () => {
-+                const saved = process.listeners('uncaughtException')
-+                process.removeAllListeners('uncaughtException')
-+                onTestFinished(() => {
-+                    process.removeAllListeners('uncaughtException')
-+                    saved.forEach((listener) => process.on('uncaughtException', listener))
-+                })
-+            }
++            emit('command', switchToWindow)
++            emit('result', { ...switchToWindow, result: { error: new Error('no such window') } })
 +
-+            it('keeps the worker alive, shows the error and fails the run', async () => {
-+                withOnlyRunnerListeners()
-+                const log = logger('@wdio/runner')
-+                vi.spyOn(log, 'error').mockImplementation(() => {})
-+                const late = new Error('late rejection')
-+                let listeners = 0
-+                const { errors, exits, failures } = await runWith(() => {
-+                    listeners = process.listenerCount('uncaughtException')
-+                    process.emit('uncaughtException', late, 'unhandledRejection')
-+                    return 0
-+                })
++            expect(await manager.getCurrentContext()).toBe('context-1')
++        })
 +
-+                expect(listeners).toBe(1)
-+                expect(failures).toBe(1)
-+                expect(exits).toEqual([1])
-+                expect(errors).toHaveLength(1)
-+                expect(errors[0].message).toContain('Unhandled promise rejection')
-+                expect(errors[0].message).toContain(late.stack)
-+                expect(log.error).toBeCalledWith(errors[0].message)
++        it('keeps the context of a switch that finished while it was in flight', async () => {
++            const { manager, emit } = setup()
++            // another switch that was not awaited
++            const remaining = { command: 'switchToWindow', body: { handle: 'remaining-window' } }
++
++            emit('command', remaining)
++            emit('command', switchToWindow)
++            emit('result', { ...remaining, result: { value: null } })
++            emit('result', { ...switchToWindow, result: { error: new Error('no such window') } })
++
++            expect(await manager.getCurrentContext()).toBe('remaining-window')
++        })
++
++        it('keeps the context from before overlapping switches that both fail', async () => {
++            const { manager, emit } = setup()
++            // another switch that was not awaited
++            const other = { command: 'switchToWindow', body: { handle: 'other-closed-tab' } }
++
++            emit('command', other)
++            emit('command', switchToWindow)
++            emit('result', { ...other, result: { error: new Error('no such window') } })
++            emit('result', { ...switchToWindow, result: { error: new Error('no such window') } })
++
++            expect(await manager.getCurrentContext()).toBe('context-1')
++        })
++
++        describe('with the results of overlapping switches in reverse order', () => {
++            const other = { command: 'switchToWindow', body: { handle: 'other-window' } }
++
++            it('uses the window of a switch that succeeds after a later one failed', async () => {
++                const { manager, emit } = setup()
++
++                emit('command', other)
++                emit('command', switchToWindow)
++                emit('result', { ...switchToWindow, result: { error: new Error('no such window') } })
++                // the other switch has no result yet, so its window is the context until then
++                expect(await manager.getCurrentContext()).toBe('other-window')
++                emit('result', { ...other, result: { value: null } })
++
++                expect(await manager.getCurrentContext()).toBe('other-window')
 +            })
 +
-+            it('also fails the run when Node\'s domain module adds its own listener', async () => {
-+                withOnlyRunnerListeners()
-+                await import('node:domain')
-+                const log = logger('@wdio/runner')
-+                vi.spyOn(log, 'error').mockImplementation(() => {})
-+                let listeners: string[] = []
-+                const { errors, failures } = await runWith(() => {
-+                    listeners = process.listeners('uncaughtException').map((listener) => listener.name)
-+                    process.emit('uncaughtException', new Error('late rejection'), 'unhandledRejection')
-+                    return 0
-+                })
++            it('keeps the context from before both switches when both fail', async () => {
++                const { manager, emit } = setup()
 +
-+                expect(listeners).toContain(
++                emit('command', other)
++                emit('command', switchToWindow)
++                emit('result', { ...switchToWindow, result: { error: new Error('no such window') } })
++                emit('result', { ...other, result: { error: new Error('no such window') } })
++
++                expect(await manager.getCurrentContext()).toBe('context-1')
++            })
++
++            it('keeps the window of a later switch that succeeds before an earlier one', async () => {
++                const { manager, emit } = setup()
++
++                emit('command', switchToWindow)
++                emit('command', other)
++                emit('result', { ...other, result: { value: null } })
++                // a command after the awaited switch, before the earlier switch has a result
++                expect(await manager.getCurrentContext()).toBe('other-window')
++                emit('result', { ...switchToWindow, result: { error: new Error('no such window') } })
++
++                expect(await manager.getCurrentContext()).toBe('other-window')
++            })
++
++            it('uses the window of an earlier switch th
 ```
 
-**File**: `packages/wdio-runner/tests/reporter.test.ts` (modified, +8/-0)
+---
+
+### Incident Patch 2: `19159e04` (2026-11-06)
+**Commit Message**: docs: add the missing v9 to v10 changes, with small reporter and template fixes (#16369)
+
+* docs: add the missing v9 to v10 changes to the migration guide and skill
+
+The commits since v10.1.0 changed behavior that a v9 project can see, and
+the guide and the skill did not have it. Also add the guide items that had
+no skill row, and correct the pages that omit or contradict Vitest, the
+Cucumber strict default, connectionRetryCount and undici 8.
+
+* docs: correct the review findings and add the smaller doc gaps
+
+Correct the shared store, JSON reporter, Cucumber event, W3C retry and
+--shard text, name expect.assertSoftFailures(), and complete the skill rows.
+Add the smaller gaps: Vitest in the remaining pages, reporter API, html and
+video READMEs, peer dependency notes, --exclude rules, and JSDoc of mock,
+mockRestoreAll and setCookies. Remove the STRICT_SSL text: nothing reads it.
+Source files change in comments only.
+
+* fix(create-wdio, @wdio/video-reporter, @wdio/session): match the strict default and correct two messages
+
+New Cucumber projects get strict: true, so they follow the new default.
+The video reporter warning names its own limit: Allure supports Cucumber
+parallel mode. The 
+
+**File**: `.agents/skills/wdio-v10-migration/SKILL.md` (modified, +26/-2)
 ```diff
-@@ -178,6 +178,14 @@ describe('BaseReporter', () => {
-         expect(process.send).not.toBeCalled()
-     })
+@@ -45,6 +45,8 @@ Do not set `strictSelectors: false` unless the user asks to keep the v9 behavior
+ | `jasmineNodeOpts` | `jasmineOpts`. Setting the old key throws. |
+ | `jasmineOpts.failFast` | `jasmineOpts.stopOnSpecFailure`. A leftover `failFast` is ignored. Cucumber's `failFast` stays. |
+ | `jasmineOpts.stopSpecOnExpectationFailure` | `jasmineOpts.oneFailurePerSpec`. Setting the old key throws. |
++| `expect-webdriverio/jasmine-wdio-expect-async` in `tsconfig.json` `types` | remove it, and add `jasmine`. |
++| `.then()` or `.catch()` on a Jasmine sync matcher, such as `expect(total).toBe(3).then(...)` | call it without them: a sync matcher returns `undefined`. |
+ | `cucumberOpts.tagExpression` | `cucumberOpts.tags`. Setting the old key throws. |
+ | a Cucumber suite with pending steps that passed (no `cucumberOpts.strict`) | `strict` now defaults to `true`, as in Cucumber: set `cucumberOpts.strict: false` to keep the v9 behavior. Values in a Cucumber profile or config file (also a default `cucumber.js` in the working folder) are now used; a value in `cucumberOpts` wins over them. The `require` and `import` lists of the profile are loaded too; its `paths`, `requireModule` and `loader` are not used (use `specs` and `cucumberOpts.requireModule`), and a folder in its `require` / `import` is not loaded (use a glob). Remove an unused Cucumber config file, or set `cucumberOpts.file: false`. |
+ | a report that expects no hook for a Cucumber `BeforeAll` / `AfterAll`, or the commands and logs of an `AfterAll` on the last step | a `BeforeAll` / `AfterAll` is now a hook of the feature, passed or failed, and its commands and logs belong to it. Allure shows a fixture for each one (`disableMochaHooks: true` hides the passed ones), `@wdio/json-reporter` lists it in the feature `hooks`. |
+@@ -53,7 +55,7 @@ Do not set `strictSelectors: false` unless the user asks to keep the v9 behavior
+ | `mochaOpts.compilers` | `mochaOpts.require`. A leftover `compilers` list is ignored. |
+ | a script or report filter that matches `wrappedHook` in a Mocha hook title | the title has the hook description or function name (`"before each" hook: login for "my test"`), or no name for an anonymous hook (`"before each" hook for "my test"`) |
+ | `this.timeout(ms)` in a Mocha test | keep it. WebdriverIO now follows it (v9 ignored `this.timeout()` inside a test), and `mochaOpts.timeout: 0` turns the timeout off. The `retry` argument does not run a test again after a timeout. For `mochaOpts.parallelMode`, see the guide. |
+-| New in v10, no migration needed | [parallel tests in a spec file](https://webdriver.io/docs/parallel-tests.md) with `mochaOpts.parallelMode` or `cucumberOpts.parallelMode`. |
++| New in v10, no migration needed | [parallel tests in a spec file](https://webdriver.io/docs/parallel-tests.md) with `mochaOpts.parallelMode` or `cucumberOpts.parallelMode`, and [`@wdio/vitest-framework`](https://webdriver.io/docs/frameworks.md#using-vitest) with `framework: 'vitest'`. |
+ | `multiremotebrowser` | `multiRemoteBrowser` |
+ | `browser.isMultiremote`, `isMultiremote` | `isMultiRemote` |
+ | `multiremote(` | `multiRemote(` |
+@@ -63,9 +65,11 @@ Do not set `strictSelectors: false` unless the user asks to keep the v9 behavior
+ | Sauce `tunnelIdentifier` / `parentTunnel` | `tunnelName` / `tunnelOwner` |
+ | `import type { Element }` from `webdriverio` | `WebdriverIO.Element` (also `MultiRemoteBrowser`, `MultiRemoteElement`) |
+ | `onAfterCommand` argument `name` | `command` |
++| a custom reporter that ends a Cucumber test in `onTestPass` / `onTestFail`, or counts a retried step in `onTestFail` | finish the work in `onTestEnd`: sequential Cucumber now sends it. A failed step of a retried attempt calls `onTestRetry`. A scenario attempt retried with `scenarioLevelReporter` gets `onTestRetry` and no `onTestEnd`: finish its work there. |
++| a script or filter on the JUnit `classname` or `capabilities` of a multi-remote test | the value now names each instance and its browser. Before, it was empty. See the guide. |
+ | a `beforeCommand` / `afterCommand` hook that expects an element command 2 or 3 times, `[]` as `args`, or an `emit` command | the hooks run once for each element command, with its arguments, and not for `emit`. `beforeCommand` runs before the wait for the element: read the found element in `afterCommand`. |
+ | `wdio-video-reporter` | `@wdio/video-reporter`. Uninstall the old package. `reporters: ['video']` stays. Install ffmpeg on every machine that runs the tests (also CI and Docker), or set `ffmpegPath`: v10 does not install it. Rename JSON Wire Protocol names in `snapshotCommands` (see the guide). `GET` commands (for example `getUrl`) give no frame. |
+-| `wdio-html-nice-reporter`, reporter name `html-nice` | `@wdio/html-reporter`, reporter name `html`. Uninstall the old package. `@rpii/wdio-report-events` can become `ReportEvents` from `@wdio/html-reporter`. `lib/makeReport.js` is `build/makeReport.js`. |
++| `wdio-html-nice-reporter`, reporte
+```
+
+**File**: `README.md` (modified, +1/-0)
+```diff
+@@ -139,6 +139,7 @@ Adapters that bring the WebdriverIO DevTools UI to test suites running outside W
+ - [@wdio/cucumber-framework](https://github.com/webdriverio/webdriverio/tree/main/packages/wdio-cucumber-framework) - Adapter for [Cucumber](https://cucumber.io/) testing framework
+ - [@wdio/jasmine-framework](https://github.com/webdriverio/webdriverio/tree/main/packages/wdio-jasmine-framework) - Adapter for [Jasmine](https://jasmine.github.io/) testing framework
+ - [@wdio/mocha-framework](https://github.com/webdriverio/webdriverio/tree/main/packages/wdio-mocha-framework) - Adapter for [Mocha](https://mochajs.org/) testing framework.
++- [@wdio/vitest-framework](https://github.com/webdriverio/webdriverio/tree/main/packages/wdio-vitest-framework) - Adapter for [Vitest](https://vitest.dev/) testing framework.
  
-+    it('keeps the time of the last event', async () => {
-+        const reporter = new BaseReporter({ reporters: [] } as unknown as WebdriverIO.Config, '0-0', capability)
-+        expect(reporter.lastEventTime).toBe(0)
-+        const before = Date.now()
-+        reporter.emit('client:beforeCommand', {})
-+        expect(reporter.lastEventTime).toBeGreaterThanOrEqual(before)
-+    })
-+
-     it('should send printFailureMessage on `test:fail`', async () => {
-         const reporter = new BaseReporter({
-             outputDir: '/foo/bar',
-```
-
-**File**: `tests/AGENTS.md` (modified, +2/-2)
-```diff
-@@ -40,11 +40,11 @@ Cucumber extras: `cucumberTestrunnerByLineNumber`,
- `cucumberTestrunnerMultipleByLineNumber`, `cucumberFailAmbiguousDefinitions`,
- `cucumberPendingTest`, `cucumberReporter`, `cucumberFileOption`,
- `cucumberSkipTag`, `cucumberGroupedSpecsRandomOrder`,
--`cucumberGroupedSpecsRandomOrderHistory`, `cucumberSameFeatureFileName`
-+`cucumberGroupedSpecsRandomOrderHistory`, `cucumberSameFeatureFileName`, `cucumberLateRejection`
+ ### Others
  
- Jasmine extras: `jasmineSpecFiltering`, `jasmineReporter`, `jasmineTimeout`,
- `jasmineAfterAll`, `jasmineFailingAfterAll`, `jasmineFailSpecWithNoExpectations`,
--`jasmineHooksTestrunner`, `jasmineAfterHookArgsValidation`
-+`jasmineHooksTestrunner`, `jasmineAfterHookArgsValidation`, `jasmineLateRejection`
+```
+
+**File**: `e2e/AGENTS.md` (modified, +1/-1)
+```diff
+@@ -22,7 +22,7 @@ pnpm run test:e2e:display-server # @wdio/display-server
+ pnpm run test:e2e:chromedriver # Chromedriver setup; needs CHROMIUM_130_BINARY (see test-chromedriver.yml)
+ pnpm run test:e2e:cucumberjs-json-reporter # @wdio/cucumberjs-json-reporter in Chrome, with its multiple-cucumber-html-reporter report (local only)
+ pnpm run test:e2e:video-reporter # @wdio/video-reporter + Allure in Chrome; needs ffmpeg on PATH (also in the CI testrunner lane)
+-pnpm run test:e2e:video-reporter-parallel # the same in Mocha parallel mode: one video per test, no frame of another test
++pnpm run test:e2e:video-reporter-parallel # the same in Mocha and Cucumber parallel mode: one video per test, no frame of another test
+ pnpm run test:e2e:html-reporter # @wdio/html-reporter in Chrome (local only)
+ pnpm run test:e2e:html-reporter-parallel # the same in Mocha and Cucumber parallel mode: each log and screenshot under its test (also in the CI testrunner lane)
+ pnpm run test:e2e:cloud        # Sauce — needs credentials, main-branch CI
+```
+
+**File**: `e2e/wdio/reporters/video/colorServer.ts` (modified, +1/-1)
+```diff
+@@ -21,7 +21,7 @@ export function startColorServer () {
+ }
  
- CLI / specs: `mochaSpecGrouping`, `mochaSpecFiltering`, `mochaHooksTestrunner`, `mochaTimeout`,
- `runSpecsWithFlagAllPassed`, `runSpecsWithFlagSeveralPassed`,
+ /**
+- * the 2 colors of each test of `video.parallel.e2e.ts`
++ * the 2 colors of each test of `video.parallel.e2e.ts` and each scenario of `video.parallel.feature`
+  */
+ export const COLORS = {
+     'red test': ['ff0000', '800000'],
 ```
 
-**File**: `tests/cucumber/late-rejection.feature` (added, +4/-0)
+**File**: `e2e/wdio/reporters/video/video.parallel.feature` (added, +24/-0)
 ```diff
-@@ -0,0 +1,4 @@
-+Feature: Promise without await in the last step
+@@ -0,0 +1,24 @@
++Feature: parallel videos
 +
-+    Scenario: Should pass
-+        Given a step that rejects a promise without await
++  Scenario: red test
++    Given I open the page of "red test"
++    When I wait 600 ms
++    And I click the button
++    Then I wait 300 ms
++
++  Scenario: blue test
++    Given I open the page of "blue test"
++    When I wait 100 ms
++    And I click the button
++    Then I wait 300 ms
++
++  Scenario: green test
++    Given I open the page of "green test"
++    When I wait 400 ms
++    And I click the button
++    Then I wait 300 ms
++
++  Scenario: yellow test
++    Given I open the page of "yellow test"
++    When I click the button of "yellow test" in a new tab
++    Then I click the button
 ```
 
-**File**: `tests/cucumber/late-rejection/steps.js` (added, +5/-0)
+**File**: `e2e/wdio/reporters/video/video.parallel.steps.ts` (added, +28/-0)
 ```diff
-@@ -0,0 +1,5 @@
-+import { Given } from '@wdio/cucumber-framework'
+@@ -0,0 +1,28 @@
++import { Given, When } from '@wdio/cucumber-framework'
++import { browser, $ } from '@wdio/globals'
 +
-+Given('a step that rejects a promise without await', function () {
-+    Promise.reject(new Error('late rejection'))
++import { COLORS } from './colorServer.js'
++
++const urlOf = (from: string, to: string) => `${process.env.VIDEO_COLOR_ORIGIN}/${from}?to=${to}`
++const colorsOf = (test: string) => COLORS[test as keyof typeof COLORS]
++
++Given(/^I open the page of "([^"]+)"$/, async (test: string) => {
++    const [from, to] = colorsOf(test)
++    await browser.url(urlOf(from, to))
++})
++
++When(/^I wait (\d+) ms$/, async (ms: string) => {
++    await browser.pause(Number(ms))
++})
++
++When(/^I click the button$/, async () => {
++    await $('#btn').click()
++})
++
++// a tab of the scenario: its frames belong to the scenario
++When(/^I click the button of "([^"]+)" in a new tab$/, async (test: string) => {
++    const [from, to] = colorsOf(test)
++    const tab = await browser.newWindow(urlOf(to, from), { type: 'tab' }) as WebdriverIO.BrowsingContext
++    await tab.$('#btn').click()
++    await tab.closeWindow()
 +})
 ```
 
-**File**: `tests/helpers/cucumber-late-rejection.conf.js` (added, +15/-0)
+**File**: `e2e/wdio/reporters/video/wdio.parallel.cucumber.conf.ts` (added, +22/-0)
 ```diff
-@@ -0,0 +1,15 @@
-+import path from 'node:path'
+@@ -0,0 +1,22 @@
 +import url from 'node:url'
++import path from 'node:path'
 +
-+import { config as baseConfig } from './config.js'
++import { config as mochaConfig } from './wdio.parallel.conf.js'
 +
 +const __dirname = path.dirname(url.fileURLToPath(import.meta.url))
 +
-+// only the step of the feature, so that its rejection comes after the last hook of Cucumber
-+export const config = Object.assign({}, baseConfig, {
++/**
++ * The checks of `wdio.parallel.conf.ts` in Cucumber parallel mode: one video for each
++ * scenario, no frame of another scenario, and each Allure video is the video of its scenario.
++ */
++export const config: WebdriverIO.Config = {
++    ...mochaConfig,
++    specs: [path.join(__dirname, 'video.parallel.feature')],
 +    framework: 'cucumber',
 +    cucumberOpts: {
-+        ...baseConfig.cucumberOpts,
-+        require: [path.resolve(__dirname, '..', 'cucumber', 'late-rejection', 'steps.js')]
++        require: [path.join(__dirname, 'video.parallel.steps.ts')],
++        timeout: 60000,
++        parallelMode: 'contexts',
++        maxParallelContexts: 4
 +    }
-+})
++}
+```
+
+**File**: `package.json` (modified, +1/-1)
+```diff
+@@ -83,7 +83,7 @@
+     "test:e2e:chromedriver": "cd ./e2e && npx wdio run ./wdio/chromedriver/wdio.conf.ts",
+     "test:e2e:cucumberjs-json-reporter": "cd ./e2e && npx wdio run ./wdio/reporters/cucumberjs-json/wdio.conf.ts",
+     "test:e2e:video-reporter": "cd ./e2e && npx wdio run ./wdio/reporters/video/wdio.conf.ts",
+-    "test:e2e:video-reporter-parallel": "cd ./e2e && npx wdio run ./wdio/reporters/video/wdio.parallel.conf.ts",
++    "test:e2e:video-reporter-parallel": "cd ./e2e && npx wdio run ./wdio/reporters/video/wdio.parallel.conf.ts && npx wdio run ./wdio/reporters/video/wdio.parallel.cucumber.conf.ts",
+     "test:e2e:html-reporter": "cd ./e2e && npx wdio run ./wdio/reporters/html/wdio.conf.ts",
+     "test:e2e:html-reporter-parallel": "cd ./e2e && node ./wdio/reporters/html/checkParallel.mjs",
+     "test:e2e": "run-s test:e2e:* ",
+```
+
+---
+
+### Incident Patch 3: `6580f356` (2026-11-05)
+**Commit Message**: fix(shared-store): preserve stored null values (#16360)
+
+Return the stored value directly from getValue and getValueFromPool so null is preserved. Missing keys still return undefined.
+
+Add strict null assertions and falsy-value coverage. Validated with 45 package tests, the sharedStoreServiceTest smoke suite (7 passing), test:changed and Node 24 agent setup/doctor.
+
+Co-authored-by: David Prévost <[REDACTED_EMAIL]>
+
+**File**: `packages/wdio-shared-store-service/src/client.ts` (modified, +2/-2)
+```diff
+@@ -36,7 +36,7 @@ export const getValue = async (key: string): Promise<string | number | boolean |
+         headers
+     }).catch(errHandler)
+     const responseBody = await res.json()
+-    return responseBody.value ?? undefined
++    return responseBody.value
+ }
+ 
+ /**
+@@ -88,7 +88,7 @@ export const getValueFromPool = async (key: string, options?: GetValueOptions) =
+         headers
+     }).catch(errHandler)
+     const responseBody = await res.json()
+-    return responseBody.value ?? undefined
++    return responseBody.value
+ }
+ 
+ /**
+```
+
+**File**: `packages/wdio-shared-store-service/tests/client.test.ts` (modified, +15/-0)
+```diff
+@@ -99,6 +99,16 @@ describe('client', () => {
+             expect(result).toBeUndefined()
+         })
+ 
++        it.each([null, false, 0, ''])('should return a stored %j value as is', async (value) => {
++            vi.mocked(fetch).mockResolvedValueOnce(Response.json({ value }))
++            expect(await getValue('foo')).toBe(value)
++        })
++
++        it('should return undefined if the response has no value', async () => {
++            vi.mocked(fetch).mockResolvedValueOnce(Response.json({}))
++            expect(await getValue('foo')).toBeUndefined()
++        })
++
+         it('should throw an error on get error', async () => {
+             await expect(() => getValue('fail')).rejects.toThrowError('Mock error')
+         })
+@@ -141,6 +151,11 @@ describe('client', () => {
+                 })
+                 expect(result).toEqual('getResult')
+             })
++
++            it.each([null, false, 0, ''])('should return a %j value from the pool as is', async (value) => {
++                vi.mocked(fetch).mockResolvedValueOnce(Response.json({ value }))
++                expect(await getValueFromPool('foo')).toBe(value)
++            })
+         })
+ 
+         describe('and when /pool/get fails', () => {
+```
+
+**File**: `tests/mocha/shared-store-service.js` (modified, +6/-1)
+```diff
+@@ -21,7 +21,7 @@ describe('Shared store service', () => {
+         assert.equal(await browser.sharedStore.get('boolean'), true)
+         assert.equal(await browser.sharedStore.get('number'), 123)
+         assert.equal(await browser.sharedStore.get('string'), 'foobar')
+-        assert.equal(await browser.sharedStore.get('null'), null)
++        assert.strictEqual(await browser.sharedStore.get('null'), null)
+     })
+ 
+     it('should be able to fetch all key/value pairs', async () => {
+@@ -64,4 +64,9 @@ describe('Shared store service', () => {
+             assert.equal(await browser.sharedStore.getValueFromPool(key), `pool value of ${key}`)
+         }
+     })
++
++    it('should return a null value from the resource pool', async () => {
++        await browser.sharedStore.setResourcePool('null-pool', [null])
++        assert.strictEqual(await browser.sharedStore.getValueFromPool('null-pool'), null)
++    })
+ })
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #16351** (2026-11-03): docs(website): use new BrowserStack logo in sponsors section (@AutomatedTester)
-- **PR #16349** (2026-11-03): test(@wdio/vitest-framework): wait for the JUnit report file, and give the macOS unit job a 4 GB heap (@plum117)
-- **PR #16348** (2026-11-03): ci: let a v9 publish survive a Rekor 409 and finish a publish that failed part-way (v9) (@plum117)
-- **PR #16347** (2026-11-02): ci: keep v10 as the latest GitHub release when v9 is released (v9) (@plum117)
-- **PR #16346** (2026-11-02): refactor(@wdio/session): expose snapshot diffing as `snapshot --diff` (@Winify)
-- **PR #16345** (2026-11-02): fix(@wdio/utils): use an installed browser when only its archive cleanup fails (v9, #16008) (@plum117)
+- **PR #16393** (2026-11-07): ci: retry the Session apt download without the slow Azure mirror (@plum117)
+- **PR #16392** (2026-11-07): test(webdriverio): make the waitForEnabled test of a removed element stable (v9, #16083) (@plum117)
+- **PR #16385** (2026-11-07): fix(webdriverio): keep the BiDi context when switchToWindow fails (@DanLambe)
+- **PR #16373** (2026-11-06): chore(deps): bump the minor-deps-updates-main group across 1 directory with 11 updates (@dependabot[bot])
+- **PR #16372** (2026-11-07): chore(deps): bump minimatch from 10.2.5 to 11.0.5 (@dependabot[bot])
+- **PR #16371** (2026-11-06): test: keep the automocks of @wdio/utils and @wdio/local-runner on Vitest 5.1 (@plum117)
 
 ---
 
@@ -1166,30 +966,53 @@ Th
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: build the Void Display Server image from the Fastly mirror (#16341)
+## X. webdriverio): keep the BiDi context when switchToWindow fails (#16385)
 
 **RULE**:
-When implementing operations in `.github/workflows/test-display-server.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in webdriverio/webdriverio. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `e2e/wdio/headless/bidi.e2e.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in webdriverio/webdriverio. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `00797d71`: ci: build the Void Display Server image from the Fastly mirror (#16341). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c652768f`: webdriverio): keep the BiDi context when switchToWindow fails (#16385). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/test-display-server.yml`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `e2e/wdio/headless/bidi.e2e.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    timeout-minutes: 35 # more than setup + the build and test step limits, so the failure log steps still run
-        timeout-minutes: 15 # a build takes about 2 min, but 13 min on a slow mirror that still sends data
+
+    describe('a switchToWindow that fails', () => {
+        const closedTab = async () => {
+            const { context } = await browser.browsingContextCreate({ type: 'tab' })
+            await browser.browsingContextClose({ context })
+            return context
+        }
+        const handles: [string, () => Promise<string>][] = [
+            ['the handle of a closed tab', closedTab],
+            ['a handle that is not a window', async () => 'not-a-window-handle']
+        ]
+
+        for (const [name, getHandle] of handles) {
+            it(`keeps the BiDi context in the window the driver stays in, for ${name}`, async function () {
+                if (!browser.isBidi) {
+                    return this.skip()
+                }
+
+                await browser.url('https://guinea-pig.webdriver.io/')
+                const original = await browser.getWindowHandle()
+                const title = await browser.execute(() => document.title)
+                const handle = await getHandle()
+
+                // geckodriver gives "Unable to locate window"
+                await expect(browser.switchToWindow(handle)).rejects.toThrow(/no such window|Unable to locate window/)
+                try 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-    timeout-minutes: 30
-        timeout-minutes: 6 # the slowest build takes about 2.5 min, so 2 builds and the wait fit
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `00797d71` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c652768f` are properly handled with clean fallback behavior.

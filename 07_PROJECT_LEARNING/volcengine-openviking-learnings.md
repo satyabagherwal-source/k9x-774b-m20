@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source**: github ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
-> **Source Version**: `739e17f9`  
+> **Source Version**: `36354fa6`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T10:16:11.844Z  
+> **Timestamp**: 2026-11-10T02:31:51.293Z  
 > **Learning ID**: `learn-github-volcengine-openviking`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T10:16:11.838Z  
+> **Harvest Timestamp**: 2026-11-10T02:31:50.945Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Self-evolving Context Database for AI Agents. Unify Agent Memory, Knowledge RAG and Skills.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 41587 stars
+- **Stars / Engagement**: 41881 stars
 
 ---
 
@@ -1474,11 +1474,11 @@ class AsyncProgressTracker:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #7219** (2026-11-09): **[Bug]: Markdown directory link rewriting changes literal links in code examples**
+  *Symptoms*: ### Issue Origin  Observed or reproduced in a real environment  ### Bug Description  Directory ingestion adjusts Markdown links when it relocates a document. The relative-link pass also rewrites literal `[example](./linked.md)` text inside fenced blocks and inline code spans. This changes copyable examples in the saved document. Codex found and reproduced this locally.  ### Steps to Reproduce  Run the example below from a source checkout. It uses the same link-rewrite flags as directory parsing and writes through the local artifact store.  ### Expected Behavior  The two code examples keep `./linked.md`. The rendered link is adjusted to `../linked/` after the move.  ### Actual Behavior  The artifact contains `../linked/` in all three places, including the fenced example and the inline code span.  ### Minimal Reproducible Example  ```python import asyncio from pathlib import Path from tempfile import TemporaryDirectory  from openviking.parse.output import LocalParseOutputStore from openviking.parse.parsers.markdown import MarkdownParser  async def main():     with TemporaryDirectory() as tmp:         root = Path(tmp)         (root / "linked.md").write_text("# Linked\n", encoding="utf-8")         source = root / "guide.md"         source.write_text(             "# Guide\n\n\n[example](./linked.md)\n\n\n"             "`[inline](./linked.md)`\n\n[actual](./linked.md)",             encoding="utf-8",         )         output = root / "parsed"         await MarkdownParser().parse(   
+
 - **Issue #6985** (2026-11-04): **[Bug]: auto-commit policy silently truncates fractional and boolean thresholds**
   *Symptoms*: ### Issue Origin  Observed or reproduced in a real environment  ### Bug Description  `AutoCommitPolicy.from_dict()` validates fields described as integers by calling `int(value)` in `_coerce_int()`. A fractional JSON number is silently truncated; e.g. `message_count_threshold: 0.5` becomes `0`, which disables message-count auto-commit. A JSON boolean also becomes an integer (`true` -> `1`). `validate_idle_timeout_input()` has the same truncation behavior. The server configuration validator passes a raw policy dict to these functions, so this can change user-supplied configuration semantics without an error.  ### Steps to Reproduce  1. On main commit `5760af6ff41fdc7b74056a7b408807ee7cdbc9b1`, run the example below against `openviking.session.auto_commit_policy`. 2. Observe that fractional and boolean values are accepted and changed. I executed the current policy module locally in isolation, with only its `InvalidArgumentError` import stubbed; I did not start the full server.  ### Expected Behavior  Reject fractional numbers and booleans for integer policy fields with a clear validation error. Keep the existing documented bounds/clamping for valid integers, if intended. Invalid input must not silently disable or accelerate auto-commit.  ### Actual Behavior  `{"message_count_threshold": 0.5}` becomes `message_count_threshold=0`; `{"idle_timeout_seconds": 300.9}` becomes `300`; `{"message_count_threshold": true}` becomes `1`. There is no error, despite the validation message say
-
-- **Issue #6984** (2026-11-04): **[Bug]: CSV/TSV tool-result synopsis materializes every row before externalization**
-  *Symptoms*: ### Issue Origin  Observed or reproduced in a real environment  ### Bug Description  Large CSV/TSV tool outputs are meant to be externalized, but `openviking/session/tool_result_synopsis.py::_try_table()` calls `list(csv.reader(...))` and then builds a second list of nonempty rows. `ToolOutputExternalizer.prepared_externalized_preview()` calls this synopsis generator before externalizing an oversized tool result. This creates a large transient allocation on the path intended to handle large results.  ### Steps to Reproduce  1. On main commit `5760af6ff41fdc7b74056a7b408807ee7cdbc9b1`, run the example below against `openviking.session.tool_result_synopsis`. 2. Observe peak Python allocations after the CSV string has already been created. I ran the current module in isolation; I did not start the full server.  ### Expected Behavior  Count rows and retain only the header, first data row, and small validation window. Additional peak memory should remain bounded rather than scale with the total parsed table size.  ### Actual Behavior  An 8.69 MB CSV string (100,000 rows, two columns) caused 71.35 MB of additional peak Python allocations under Python 3.11.8 on Windows. The synopsis itself only reports row and column counts and a short sample.  ### Minimal Reproducible Example  ```python import tracemalloc from openviking.session.tool_result_synopsis import generate_tool_result_synopsis  content = "id,value\n" + "".join(f"{i}," + "x" * 80 + "\n" for i in range(100_000)) tracemalloc.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1495,843 +1495,1015 @@ class AsyncProgressTracker:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `739e17f9` (2026-11-05)
-**Commit Message**: fix(magpie): add opt-in sessionless capture and raise recall budget (#7073)
+### Incident Patch 1: `36354fa6` (2026-11-09)
+**Commit Message**: feat(ui): build the file browser module and let its tree resize (#7295)
 
-* fix(magpie): warn on missing capture sessions and raise recall budget
+* feat(ui): add streaming and binary responses to the request client
 
-Log a fixed capture diagnostic once without replacing recall status. Default recall to 2000 ms and show editable 2000/3000 ms recall/host budgets, preserving saved settings.
+The client could only send a JSON request and read its `result` back, so two
+API families had no path through it: `POST /bot/v1/chat/stream` answers with
+`text/event-stream`, and `GET /api/v1/content/download` answers with raw bytes.
+Both were reachable only by bypassing the client and its configuration
+inheritance.
 
-Validation: syntax checks and npm pack dry-run passed; 126 tests passed, 0 failed, 1 Bun-host test skipped (Bun unavailable). Refs #7007.
+`stream()` opens an SSE connection and yields events to a `for await` loop.
+Framing, the `TextDecoderStream` fallback, multi-line `data` joining and
+comment-only heartbeat filtering live in `sse.ts`. Two choices are deliberate:
 
-* feat(magpie): add opt-in capture without host sessions
+- `data` stays raw. OpenViking puts the event type and event id inside the
+  `data` JSON rather than in the SSE `event` / `id` fields, so parsing here
+  would only mean a caller parses it again.
+- `body` accepts any fields. A server-defined switch such as `Attach` — subscribe
+  to an existing session only — then needs no client change when the backend
+  gains it.
 
-Add captureWithoutSession (false by default). Derive capture identity from client scope and the shaped opening message without changing stateless recall. Preserve real session precedence and recheck file opt-in in queued delivery.
+Cancellation is the caller's intent, not a failure: after `abort()` or a
+caller-signal cancellation the iteration ends quietly instead of thro
 
-Validation: 131 tests passed, 0 failed, 1 actual Bun-host test skipped (runtime unavailable); syntax checks, npm pack dry-run and diff checks passed. Refs #7007.
-
-* fix(magpie): retire derived capture queues on native takeover
-
-Resolve derived capture scope before checking native ownership. Parse native-marked history for capture cleanup while preserving recall's existing native-context exclusion. Persist ownership and remove pending snapshot
-
-**File**: `examples/claude-code-memory-plugin/scripts/shared/config-schema.mjs` (modified, +7/-3)
+**File**: `frontend/docs/docs/_demos/file-browser-basic.tsx` (added, +234/-0)
 ```diff
-@@ -138,6 +138,9 @@ export const KNOBS = [
-     workspace: "capture.enabled",
-     capability: "capture",
-   },
-+  // Magpie uses these for capture when its gateway has no session or yields to a native plugin.
-+  { name: "captureWithoutSession", type: "bool", default: false, capability: "capture" },
-+  { name: "nativeAgents", type: "list", default: [], capability: "capture" },
-   { name: "captureMode", type: "enum", values: ["semantic", "keyword"], default: "semantic", env: "OPENVIKING_CAPTURE_MODE", capability: "capture" },
-   { name: "captureMaxLength", type: "int", default: 24000, min: 200, max: 100000, env: "OPENVIKING_CAPTURE_MAX_LENGTH", capability: "capture" },
-   // Tool output is reported verbatim; the server owns truncation via
-@@ -280,9 +283,10 @@ export function harnessKey(harness) {
- }
- 
- /** Both accepted spellings of every harness, for the `plugin` section. */
--export const HARNESS_CONFIG_KEYS = new Set(
--  Object.values(HARNESS_KEYS).flatMap((key) => [key, key.replace(/_/g, "-")]),
--);
-+export const HARNESS_CONFIG_KEYS = new Set([
-+  ...Object.values(HARNESS_KEYS).flatMap((key) => [key, key.replace(/_/g, "-")]),
-+  "magpie", // Magpie supports ovcli.conf only, with no legacy ov.conf section.
-+]);
- 
- export function knobDefault(knob, harness = "") {
-   if (harness && knob.harness && knob.harness[harness] !== undefined) return knob.harness[harness];
-```
-
-**File**: `examples/codex-memory-plugin/scripts/shared/config-schema.mjs` (modified, +7/-3)
-```diff
-@@ -138,6 +138,9 @@ export const KNOBS = [
-     workspace: "capture.enabled",
-     capability: "capture",
-   },
-+  // Magpie uses these for capture when its gateway has no session or yields to a native plugin.
-+  { name: "captureWithoutSession", type: "bool", default: false, capability: "capture" },
-+  { name: "nativeAgents", type: "list", default: [], capability: "capture" },
-   { name: "captureMode", type: "enum", values: ["semantic", "keyword"], default: "semantic", env: "OPENVIKING_CAPTURE_MODE", capability: "capture" },
-   { name: "captureMaxLength", type: "int", default: 24000, min: 200, max: 100000, env: "OPENVIKING_CAPTURE_MAX_LENGTH", capability: "capture" },
-   // Tool output is reported verbatim; the server owns truncation via
-@@ -280,9 +283,10 @@ export function harnessKey(harness) {
- }
- 
- /** Both accepted spellings of every harness, for the `plugin` section. */
--export const HARNESS_CONFIG_KEYS = new Set(
--  Object.values(HARNESS_KEYS).flatMap((key) => [key, key.replace(/_/g, "-")]),
--);
-+export const HARNESS_CONFIG_KEYS = new Set([
-+  ...Object.values(HARNESS_KEYS).flatMap((key) => [key, key.replace(/_/g, "-")]),
-+  "magpie", // Magpie supports ovcli.conf only, with no legacy ov.conf section.
-+]);
- 
- export function knobDefault(knob, harness = "") {
-   if (harness && knob.harness && knob.harness[harness] !== undefined) return knob.harness[harness];
-```
-
-**File**: `examples/magpie-memory-plugin/README.md` (modified, +69/-7)
-```diff
-@@ -50,7 +50,7 @@ environment; editing the file applies to the next operation without restarting.
-       "enabled": true,
-       "autoRecall": true,
-       "autoCapture": true,
--      "recallContextTimeoutMs": 700,
-+      "recallContextTimeoutMs": 2000,
-       "recallMaxTokens": 1600,
-       "recallPeerScope": "all",
-       "mcpEnabled": false
-@@ -85,7 +85,7 @@ to enabled; explicit `autoCapture: false` in host options or client settings is
- preserved. Host options override scoped settings, which override shared settings.
- 
- Magpie's **Options** editor now accepts `autoRecall`, `autoCapture`, `mcpEnabled`,
--`recallMaxTokens`, `recallContextTimeoutMs` and `nativeAgents`. These behavior
-+`captureWithoutSession`, `recallMaxTokens`, `recallContextTimeoutMs` and `nativeAgents`. These behavior
- options override the corresponding file settings for this plugin; connection
- credentials and identity always remain file-owned. `gatewayTimeoutMs` controls
- the host's hook budget. The package supplies an example, not saved defaults;
-@@ -94,6 +94,33 @@ options. Memory tools are disabled by default; set `mcpEnabled: true` to enable
- them. Automatic capture is enabled by default and needs no additional setting;
- set `autoCapture: false` to disable it.
- 
-+`captureWithoutSession` is a Magpie-only boolean, default `false`. If the client
-+cannot send a stable session ID, opt in through Magpie's Options:
+@@ -0,0 +1,234 @@
++import { OpenVikingProvider } from '@openviking/react/client';
++import { FileBrowserEntries } from '@openviking/react/components/file-browser-entries';
++import '@openviking/react/components/file-browser-entries/style.css';
++import { FileBrowser } from '@openviking/react/modules/file-browser';
++import '@openviking/react/modules/file-browser/style.css';
 +
-+```json
-+{
-+  "autoCapture": true,
-+  "captureWithoutSession": true
++/**
++ * 离线运行的文件浏览示例。数据由本文件里的 `offlineFetch` 按原生接口的形状返回，
++ * 不访问网络，也不带任何凭证——示例只用来演示视图与交互。
++ *
++ * 换成真实服务时，删掉 `fetch` 与下面的假数据，改为在 Provider 上传服务地址与
++ * 身份字段；正式接入由宿主从自己的配置与登录态取值。
++ *
++ * An offline file browser demo. `offlineFetch` below answers in the shape of the
++ * native API, so the example touches no network and carries no credential; it
++ * exists only to show the view and its interactions.
++ *
++ * For a real service, drop `fetch` and the fixtures below and pass the address and
++ * identity fields to the Provider; a real host reads them from its own
++ * configuration and sign-in state.
++ */
++
++/** 一条目录项，形状与 `fs/ls` 的返回一致。One directory entry, shaped like `fs/ls`. */
++interface Entry {
++  uri: string;
++  isDir?: boolean;
 +}
-+```
 +
-+It can also be set in `ovcli.conf` under `plugin.magpie` (or shared `plugin`),
-+with the same host → scoped → shared precedence. A real session ID always takes
-+priority. Only capture uses the derived ID; recall remains stateless without a
-+host session. The fallback hashes the agent, working directory, protocol and
-+first user message after the existing capture shaping/filters. Model changes do
-+not change this ID; existing connection/credential isolation still applies.
++const USER = 'viking://user/alice';
++const MEMORIES = `${USER}/memories`;
++const PREFERENCES = `${MEMORIES}/preferences`;
++const ENTITIES = `${MEMORIES}/entities`;
++const RESOURCES = `${USER}/resources`;
++const NOTES = `${RESOURCES}/notes`;
 +
-+This is approximate grouping: independent conversations with identical opening
-+messages in the same client scope may merge. If their histories diverge, capture
-+skips snapshots that conflict with the history already written. Rewriting or
-+removing the opening message can split a conversation or skip unknown history.
-+Start a new conversation after enabling it; existing histories are not backfilled.
-+`autoCapture: false` still disables all automatic capture. For file settings without
-+a host override, turning this option off pauses queued derived-session snapshots;
-+turning it back on lets them resume. Queued snapshots retain their enqueue-time
-+host overrides, just as they do for `autoCapture`.
++/**
++ * 目录内容。故意留几个长名称，用来演示树宽收窄后靠横向滚动而不是省略号。
++ *
++ * Directory contents. A few long names are deliberate: they show the tree
++ * scrolling sideways rather than truncating once its column narrows.
++ */
++const DIRS: Record<string, Entry[]> = {
++  'viking://': [
++    { uri: 'viking://agent', isDir: true },
++    { uri: 'viking://resources', isDir: true },
++    { uri: USER, isDir: true },
++  ],
++  [USER]: [
++    { uri: MEMORIES, isDir: true },
++    { uri: `${USER}/peers`, isDir: true },
++    { uri: `${USER}/privacy`, isDir: true },
++    { uri: RESOURCES, isDir: true },
++    { uri: `${USER}/sessions`, isDir: true },
++    { uri: `${USER}/skills`, isDir: true },
++  ],
++  [MEMORIES]: [
++    { uri: PREFERENCES, isDir: true },
++    { uri: ENTITIES, isDir: true },
++    { uri: `${MEMORIES}/events`, isDir: true },
++    { uri: `${MEMORIES}/experiences`, isDir: true },
++    { uri: `${MEMORIES}/profile.md` },
++    { uri: `${MEMORIES}/identity.md` },
++  ],
++  [PREFERENCES]: [
++    { uri: `${PREFERENCES}/package-manager.md` },
++    { uri: `${PREFERENCES}/code-review-with-a-single-blocking-priority.md` },
++  ],
++  [ENTITIES]: [{ uri: `${ENTITIES}/openviking.md` }],
++  [RESOURCES]: [
++    { uri: NOTES, isDir: true },
++    { uri: `${RESOURCES}/2026-Q4-context-management-retrospective.md` },
++    { uri: `${RESOURCES}/design-system-alignment-notes.md` },
++  ],
++  [NOTES]: [{ uri: `${NOTES}/rollout.md` }],
++};
 +
- File settings `plugin.magpie.bypassSession: true` or `bypassSessionPatterns`
- matching the Magpie session ID or working directory skip automatic recall and
- capture. Existing queued snapshots pause while bypass applies and can resume
-@@ -113,8 +140,17 @@ controlled by `mcpEnabled`.
-   turn. Retries and later turns replay the original snapshot.
- - Only host-classified `local` and `magpie-key` origins receive memory. Shared
-   gateway keys, forwarded traffic and unknown origins are skipped. Without a
--  session ID, new user requests use stateless recall: no persisted ledger, profile
--  replay or conversation capture. Repeated requests may retrieve different context.
-+  session ID, new user requests use stateless recall: no persisted recall ledger or
-+  profile replay. Capture is also skipped unless `captureWithoutSession: true`.
-+  Repeated requests may retrieve different context.
-+  With capture enabled and the fallback off, the first eligible sessionless user request logs
-+  `OpenViking capture: no-session` once per plugin-host process, explaining that
-+  capture is unavailable and suggesting a stable session header or explicit
-+  `captureWithoutSession` opt-in with its grouping limitation. Check Magpie's
-+  plugin-host logs; this warning contains no message text or credentials and does
-+  not replace the recall status. Current Magpie hosts ignore custom `report()`
-+  codes, so a separate capture status in the UI requires host support.
-+  Native-owned, disabled, bypassed and auxiliary requests do not trigger the warning.
-   The file's OV credentials remain the authority.
- - Only a new textual user message triggers retrieval. Tool continuations replay
-   known context without retrieving. Magpie skips its own internal title/classifier
-@@ -141,12 +177,38 @@ controlled by `mcpEnabled`.
-   against every duplicate. Disabling `autoRecall` prevents new searches while
-   replaying known history; disabling the plugin entirely disables both.
- - The shared context builder owns query settings, budgets and result relevance.
--  Default recall timeout is 700 ms inside Magpie's default 1000 ms hook budget.
--  Increasing it requires raising Magpie's `gatewayTimeoutMs` with I/O margin.
--  Cancellation reaches the HTTP request. Query filters use the shared parser.
-+  Default recall timeout is 2000 ms. Set
-```
-
-**File**: `examples/magpie-memory-plugin/README_CN.md` (modified, +51/-5)
-```diff
-@@ -45,7 +45,7 @@ magpie plugin add ./examples/magpie-memory-plugin
-     "enabled": true,
-     "autoRecall": true,
-     "autoCapture": true,
--    "recallContextTimeoutMs": 700,
-+    "recallContextTimeoutMs": 2000,
-     "recallMaxTokens": 1600,
-     "recallPeerScope": "all",
-     "mcpEnabled": false
-@@ -65,10 +65,31 @@ Magpie 的文件读取策略排除环境变量和 workspace 层。
- 工具仍需 `plugin.magpie.mcpEnabled: true` 显式开启。采集默认开启；宿主选项或客户端配置中显式设置的 `autoCapture: false` 仍然生效。优先级为宿主选项、Magpie 专属配置、共享配置。
- 
- Magpie 的“选项”支持 `autoRecall`、`autoCapture`、`mcpEnabled`、`recallMaxTokens`、
--`recallContextTimeoutMs`、`nativeAgents`，优先于本插件的文件行为配置；Hook 和工具使用同一套设置。
-+`recallContextTimeoutMs`、`captureWithoutSession`、`nativeAgents`，优先于本插件的文件行为配置；Hook 和工具使用同一套设置。
- 服务连接、凭据和身份仍只从文件读取。`gatewayTimeoutMs` 控制宿主 Hook 预算。
- 包内示例不会自动保存；未填写的字段继续沿用文件设置或默认值。记忆工具默认关闭，设置 `mcpEnabled: true` 可开启。自动采集默认开启，无需额外配置；如需关闭，设置 `autoCapture: false`。
- 
-+`captureWithoutSession` 是 Magpie 专属的布尔配置，默认 `false`。客户端无法传递稳定会话 ID 时，
-+可在 Magpie“选项”中显式开启：
++/** 文件正文。Body copy of each file. */
++const FILES: Record<string, string> = {
++  [`${MEMORIES}/profile.md`]:
++    '# Profile\n\n- Role: frontend engineer\n- Focus: context database\n',
++  [`${MEMORIES}/identity.md`]:
++    '# Identity\n\nOpenViking, a context database for agents.\n',
++  [`${PREFERENCES}/package-manager.md`]:
++    '# Package manager\n\nUse pnpm for installs and scripts; npm only when a task names it.\n',
++  [`${PREFERENCES}/code-review-with-a-single-blocking-priority.md`]:
++    '# Review priorities\n\nReport one blocking finding at a time, with the evidence that supports it.\n',
++  [`${ENTITIES}/openviking.md`]:
++    '# OpenViking\n\nUnifies agent memory, knowledge RAG and skills behind one API.\n',
++  [`${RESOURCES}/2026-Q4-context-management-retrospective.md`]:
++    '# Q4 retrospective\n\nThe tree moved to lazy loading per directory, which cut the first paint.\n',
++  [`${RESOURCES}/design-system-alignment-notes.md`]:
++    '# Design alignment\n\nColours come from the console theme; components never hard-code them.\n',
++  [`${NOTES}/rollout.md`]:
++    '# Rollout\n\nStage first, then production once the release ticket passes.\n',
++};
 +
-+```json
-+{
-+  "autoCapture": true,
-+  "captureWithoutSession": true
-+}
-+```
++/** 目录的两级摘要。The two summary levels of a directory. */
++const SUMMARIES: Record<string, { l0: string; l1: string }> = {
++  [MEMORIES]: {
++    l0: 'Long-term memory accumulated across sessions: preferences, entities and events.',
++    l1: 'Memory is split by kind. Preferences hold stated habits, entities hold people and projects, events hold dated milestones.',
++  },
++  [PREFERENCES]: {
++    l0: 'Stated preferences of this user.',
++    l1: 'Each file records one preference with the evidence that produced it.',
++  },
++  [RESOURCES]: {
++    l0: 'Private knowledge of this user.',
++    l1: 'Notes and retrospectives imported or written by the user.',
++  },
++};
 +
-+也可在 `ovcli.conf` 的 `plugin.magpie` 或共享 `plugin` 中设置，优先级仍为宿主选项、专属配置、共享配置。
-+有真实会话 ID 时优先使用真实 ID。派生 ID 仅用于采集，无宿主会话时召回仍然无状态。
-+派生输入为 Agent、工作目录、协议和经过现有采集清洗/过滤的首条用户消息；切换模型不会改变 ID，
-+OV 连接和凭据仍按现有规则隔离。
++/** 按查询词在全部条目里做子串匹配，模拟语义检索的返回形状。 */
++/** Substring matching over every entry, in the shape of the semantic search. */
++function search(query: string) {
++  const needle = query.trim().toLowerCase();
++  if (!needle) return {};
++  const hits = Object.values(DIRS)
++    .flat()
++    .filter((entry) => entry.uri.toLowerCase().includes(needle));
++  return {
++    memories: hits.filter((entry) => entry.u
+```
+
+**File**: `frontend/docs/docs/_demos/file-browser-entries-basic.tsx` (added, +22/-0)
+```diff
+@@ -0,0 +1,22 @@
++import { FileBrowserEntries } from '@openviking/react/components/file-browser-entries';
++import '@openviking/react/components/file-browser-entries/style.css';
 +
-+同一客户端作用域内，相同开场的独立对话可能合并。如果两段历史出现分歧，采集会跳过与已写入历史
-+冲突的快照。改写或删除开场消息可能拆分会话，或因历史无法识别而跳过采集。开启后请新建对话，
-+不回填未知的已有历史。
-+`autoCapture: false` 仍关闭所有自动采集。通过文件配置且无宿主覆盖时，关闭本开关会暂停派生会话的
-+待同步队列，重新开启后可恢复。与 `autoCapture` 一样，已入队快照保留入队时的宿主选项覆盖。
-+
- 不会修改文件、合并环境变量中的凭据，或回退读取 `ov.conf`、Root Key、Gateway Token。
- 配置缺失、损坏或服务不可用时，召回跳过，模型请求继续；不会沿用旧配置。
- 
-@@ -83,7 +104,12 @@ Magpie 的“选项”支持 `autoRecall`、`autoCapture`、`mcpEnabled`、`reca
-   资料读取与检索在召回超时预算内并行执行；任一路失败时仍可使用另一路结果。
-   资料遵守 `profileTokenBudget`，且最多占 `recallMaxTokens` 的一半，使用共享的中日韩字符 token 估算器；
-   资料与检索结果合计不超过 `recallMaxTokens`，与首轮决策一起持久化；重试和后续轮次回放原始快照。
--- 仅处理宿主确认为本机的 `local`、`magpie-key` 请求。没有会话 ID 时，新用户请求使用无状态召回：不读写持久化账本、不重放 Profile 快照、不采集对话；重复请求可能获得不同的召回结果。
-+- 仅处理宿主确认为本机的 `local`、`magpie-key` 请求。没有会话 ID 时，新用户请求使用无状态召回：不读写持久化召回账本、不重放 Profile 快照；除非显式设置 `captureWithoutSession: true`，否则不采集对话。重复请求可能获得不同的召回结果。
-+  开启采集但未开启哈希兼容时，首次符合条件却缺少会话 ID 的用户请求，会在 Magpie 插件宿主日志中输出
-+  `OpenViking capture: no-session`，建议客户端传递稳定的会话 ID 请求头，或了解会话误合并限制后显式开启 `captureWithoutSession`。
-+  每个插件宿主进程只提示一次，不含对话正文或凭据，也不覆盖召回状态。
-+  当前 Magpie 会忽略自定义 `report()` 状态码，独立的 UI 采集状态仍需宿主支持。
-+  原生插件接管、关闭、bypass、辅助请求不会触发此提示。
-   共享网关 Key、转发请求或身份缺失时跳过，始终使用文件中配置的 OV 身份。
- - 只有新的文本用户消息触发检索。工具续轮只回放已有记忆；重试复用首次决策，
-   包括无结果和失败的决策。同样的问题出现在后续新轮次时仍可重新检索。
-@@ -99,8 +125,28 @@ Magpie 的“选项”支持 `autoRecall`、`autoCapture`、`mcpEnabled`、`reca
-   Magpie 自身跳过内部标题/分类请求；插件也跳过明确标记的辅助、压缩、标题和子 Agent 请求。
- - `autoRecall: false` 关闭新检索，但仍回放已知历史；插件整体关闭则停止两者。
-   查询过滤、召回参数、预算和结果相关性使用共享模块。
--- 默认 700ms 检索预算。提高超时时也应提高 Magpie 的 `gatewayTimeoutMs`，为状态读写留余量。
--  请求取消会中止检索。Actor 范围需要明确填写 `actor_peer_id`，缺失时跳过。
-+- 默认 2000ms 检索预算，可在 Magpie“选项”或 `plugin.magpie` 中配置
-+  `recallContextTimeoutMs`；已有显式配置继续生效。实际 HTTP 超时还受客户端 `timeout`、
-+  9000ms 上限及宿主预算限制：从宿主预算扣除已耗费的准备时间，并预留 200ms 用于结果组装、
-+  状态读写和序列化。检索与 Profile 共用内部截止信号，一路超时仍可使用另一路已完成的结果。
-+  剩余不足 100ms 时不再发起 HTTP 请求；宿主取消时仍放弃本次注入。
-+  宿主没有提供整个 Hook 链的剩余截止时间，因此预留时间不能保证避开更早的外部取消。
-+  Actor 范围需要明确填写 `actor_peer_id`，缺失时跳过。
-+
-+连接托管或远程服务时，请在 Magpie 的“选项”中同时保存两个预算（合并到已有选项）：
-+
-+```json
-+{
-+  "recallContextTimeoutMs": 2000,
-+  "gatewayTimeoutMs": 3000
-+}
-+```
-+
-+包内选项示例包含这组值，但升级不会重写已保存的选项。未设置 `gatewayTimeoutMs` 时，
-+Magpie 仍默认使用 1000ms 的宿主预算，插件会自动缩短 HTTP 等待以适配该预算。
-+已有安装如需使用完整 2000ms 检索预算，仍须显式提高宿主预算。宿主预算应高于检索预算，
-+为配置和状态读写留余量（Magpie 允许的上限为 10000ms）。如需继续增加检索预算，
-+请同步调整两个值，并确保 `ovcli.conf` 顶层的 `timeout`（秒）足够。召回失败仍会放行模型请求。
- 
- ### 本机回放状态
- 
-```
-
-**File**: `examples/magpie-memory-plugin/capture-worker.mjs` (modified, +6/-2)
-```diff
-@@ -88,7 +88,8 @@ export async function deliverSnapshot(directory, snapshot, { call = request, sig
-     // A worker may outlive file edits. Recheck identity and opt-in immediately
-     // before each non-idempotent operation, without changing its pinned identity.
-     const current = await loadConfig({ OPENVIKING_CLI_CONFIG_FILE: snapshot.configPath }, snapshot.options);
--    if (connectionScope(current, context) !== scope || !current.enabled || !current.autoCapture || bypassedSession(current, context)) return "paused";
-+    if (connectionScope(current, context) !== scope || !current.enabled || !current.autoCapture
-+      || (context.derivedSession && !current.captureWithoutSession) || bypassedSession(current, context)) return "paused";
-     if (current.nativeAgents.includes(context.agent) || await exists(join(root, "native-owner"))) return "native";
-     return withCaptureDecisions(directory, scope, (state) => {
-       if (!Array.isArray(snapshot.turnAnchors) && state.rejected.length) return "rejected";
-@@ -110,7 +111,8 @@ export async function deliverSnapshot(directory, snapshot, { call = request, sig
-     if (status !== "delivered") return status;
-     state = await update((s) => structuredClone(s));
-   }
--  if (state.blocked) return "paused";
-+  // Older workers may have blocked the entire derived scope on one conflict.
-+  if (state.blocked && !(context.derivedSession && state.blocked === "history_changed")) return "paused";
-   let meta;
-   try { meta = await call(cfg, `/api/v1/sessions/${sessionId}`, { signal }); }
-   catch (error) {
-@@ -151,6 +153,8 @@ export async function deliverSnapshot(directory, snapshot, { call = request, sig
-   }
-   if (incoming.length <= state.hashes.length && incoming.every((id, i) => id === state.hashes[i])) return commitCaptured(cfg, sessionId, update, call, signal, stopped);
-   if (!state.hashes.every((id, i) => id === incoming[i])) {
-+    // Separate sessionless conversations can share an opening message.
-+    if (context.derivedSession) return "rejected";
-     await update((s) => { s.blocked = "history_changed"; });
-     return "paused";
-   }
-```
-
-**File**: `examples/magpie-memory-plugin/capture.mjs` (modified, +42/-10)
-```diff
-@@ -10,14 +10,21 @@ import { recallDigest } from "./recall-ledger.mjs";
- 
- export const captureDirectory = (cfg, ctx) => join(dataDirectory(cfg), "capture", connectionScope(cfg, ctx));
- const workers = new Map();
-+let warnedMissingSession = false;
- export async function nativeOwner(cfg, ctx, body) {
-   // Without a session, ownership is request-local: never share a marker
-   // between unrelated conversations from the same client.
-   if (!ctx.session?.trim()) return cfg.nativeAgents.includes(ctx.agent) || hasNativeContext(body, ctx.protocol);
-   const directory = captureDirectory(cfg, ctx);
-   const marker = join(directory, "native-owner");
-   if (cfg.nativeAgents.includes(ctx.agent) || hasNativeContext(body, ctx.protocol)) {
--    await mkdir(directory, { recursive: true, mode: 0o700 });
-+    if (ctx.derivedSession && !cfg.captureWithoutSession) {
-+      // Take over an existing scope without creating state while capture is off.
-+      try { await access(directory); }
-+      catch (error) { if (error.code === "ENOENT") return true; throw error; }
-+    } else {
-+      await mkdir(directory, { recursive: true, mode: 0o700 });
-+    }
-     await chmod(directory, 0o700);
-     const file = await open(marker, "a", 0o600);
-     await file.close();
-@@ -67,8 +74,12 @@ export async function queueCapture(cfg, ctx, messages, { launch = true } = {}) {
-   const user = payloads.findLast((m) => m.message_kind === "user_query");
-   if (!user) return false;
-   const turnKey = user.source_message_ids[0].slice(7);
--  const snapshot = { version: 1, scope, configPath: cfg.path, context: { agent: ctx.agent, session: ctx.session, cwd: ctx.cwd, protocol: ctx.protocol },
--    options: Object.hasOwn(ctx.options || {}, "autoCapture") ? { autoCapture: cfg.autoCapture } : {}, turnKey, messages: payloads, turnAnchors: selected.turnAnchors, turnRevisions: selected.turnRevisions };
-+  const options = {};
-+  if (Object.hasOwn(ctx.options || {}, "autoCapture")) options.autoCapture = cfg.autoCapture;
-+  if (typeof ctx.options?.captureWithoutSession === "boolean") options.captureWithoutSession = cfg.captureWithoutSession;
-+  const snapshot = { version: 1, scope, configPath: cfg.path, context: { agent: ctx.agent, session: ctx.session, cwd: ctx.cwd, protocol: ctx.protocol,
-+    ...(ctx.derivedSession ? { derivedSession: true } : {}) },
-+    options, turnKey, messages: payloads, turnAnchors: selected.turnAnchors, turnRevisions: selected.turnRevisions };
-   const encoded = JSON.stringify(snapshot);
-   if (Buffer.byteLength(encoded) > 3 * 1024 * 1024) return false;
-   const path = join(pending, `${turnKey}.json`);
-@@ -94,20 +105,35 @@ export async function queueCapture(cfg, ctx, messages, { launch = true } = {}) {
- }
- 
- export async function prepareCapture(body, ctx, cfg, options) {
--  if (!cfg.enabled || bypassedSession(cfg, ctx) || !["local", "magpie-key"].includes(ctx.origin) || !ctx.session?.trim()) return;
-+  if (!cfg.enabled || bypassedSession(cfg, ctx) || !["local", "magpie-key"].includes(ctx.origin)) return;
-   if (isAuxiliaryRequest(body, ctx)) return;
-+  const conversation = describeConversation(body, ctx.protocol, { allowNativeContext: true });
-+  const first = conversation && captureMessages([conversation.messages[conversation.users[0]]], ctx.protocol, cfg)?.[0]?.source_message_ids[0];
-+  if (!ctx.session?.trim() && first && (cfg.captureWithoutSession
-+    || cfg.nativeAgents.includes(ctx.agent) || hasNativeContext(body, ctx.protocol))) {
-+    // Keep the host context unchanged: fallback identity belongs only to capture.
-+    ctx = { ...ctx, derivedSession: true, session: `derived-${recallDigest(JSON.stringify([ctx.agent || "", ctx.cwd || "", ctx.protocol, first]))}` };
-+  }
-+  // Resolve the capture scope before yielding so native takeover also retires
-+  // derived queues and remains effective when later requests lose the marker.
-+  if (ctx.derivedSession && bypassedSession(cfg, ctx)) return;
-   if (await nativeOwner(cfg, ctx, body)) { ctx.state && (ctx.state.nativeOwner = true); return; }
--  if (!cfg.autoCapture) return;
--  const conversation = describeConversation(body, ctx.protocol);
--  if (!conversation) return;
-+  if (!cfg.autoCapture || !conversation || !first) return;
-+  if (!ctx.session?.trim()) {
-+    if (conversation.fresh && !warnedMissingSession) {
-+      warnedMissingSession = true;
-+      // Magpie's report() accepts recall codes only; log separately so a
-+      // successful recall cannot overwrite the capture diagnostic.
-+      console.warn("OpenViking capture: no-session — automatic capture unavailable: the host did not provide a session ID. Configure the client to send a stable session header (for example x-session-id), or opt into captureWithoutSession: true (identical opening messages may merge conversations). Stateless recall remains available.");
-+    }
-+    return;
-+  }
-   // Never bind across an earlier assistant/tool exchange, even if only one
-   // human user remains after client-side trimming or an identity s
-```
-
-**File**: `examples/magpie-memory-plugin/config.mjs` (modified, +7/-1)
-```diff
-@@ -70,14 +70,20 @@ export async function loadConfig(env = process.env, options = {}) {
-   if (!Array.isArray(nativeAgents) || nativeAgents.some((agent) => typeof agent !== "string" || !agent.trim())) {
-     throw Object.assign(new Error("OpenViking: invalid"), { code: "invalid" });
-   }
-+  const captureWithoutSession = options.captureWithoutSession ?? scoped?.captureWithoutSession ?? file.plugin?.captureWithoutSession;
-+  if (captureWithoutSession != null && typeof captureWithoutSession !== "boolean") {
-+    throw Object.assign(new Error("OpenViking: invalid"), { code: "invalid" });
-+  }
-   // Host options may tune behavior, never connection credentials or identity.
-   const allowed = ["autoRecall", "autoCapture", "mcpEnabled", "recallMaxTokens", "recallContextTimeoutMs"];
-   const overrides = Object.fromEntries(Object.entries(options || {}).filter(([key]) => allowed.includes(key)));
-+  // Preserve Magpie's strict boolean validation and nullish fallback before resolving the schema default.
-+  if (captureWithoutSession != null) overrides.captureWithoutSession = captureWithoutSession;
-   const settingsFile = { ...file, plugin: { ...file.plugin, magpie: { ...scoped, ...overrides } } };
-   const { settings, configured, sources } = resolveSettings("magpie", { env: {}, cliFile: settingsFile });
-   if (!configured.has("mcpEnabled")) settings.mcpEnabled = false;
-   if (!configured.has("autoCapture")) settings.autoCapture = true;
--  if (!configured.has("recallContextTimeoutMs")) settings.recallContextTimeoutMs = 700;
-+  if (!configured.has("recallContextTimeoutMs")) settings.recallContextTimeoutMs = 2000;
-   const connection = resolveConnection("magpie", { env: { OPENVIKING_CREDENTIAL_SOURCE: "cli" }, files });
-   const peerId = resolvePluginPeerId({ settings, configured, sources, credentials: connection, env: {} });
-   const authorization = clientAuthorization(file);
-```
-
-**File**: `examples/magpie-memory-plugin/conversation.mjs` (modified, +3/-2)
-```diff
-@@ -104,7 +104,7 @@ export function memoryBlock(memory) {
- }
- 
- /** Only full, client-owned histories have replayable message positions. */
--export function describeConversation(body, protocol) {
-+export function describeConversation(body, protocol, { allowNativeContext = false } = {}) {
-   if (!object(body)) return null;
-   const encoded = JSON.stringify(body);
-   if (Buffer.byteLength(encoded) > 2 * 1024 * 1024) return null;
-@@ -122,7 +122,8 @@ export function describeConversation(body, protocol) {
-   if (!Array.isArray(messages) || !messages.length || messages.length > 2000 || !messages.every(object)) return null;
-   // Tool results and assistant quotations may contain docs describing these
-   // markers. They are data, not evidence of an installed memory plugin.
--  if (hasNativeContext(body, protocol)) return null;
-+  // Capture may parse native-owned history solely to resolve its cleanup scope.
-+  if (!allowNativeContext && hasNativeContext(body, protocol)) return null;
-   const exchanges = conversationExchanges(messages, protocol);
-   const users = exchanges.filter((exchange) => !exchange.auxiliary).map((exchange) => exchange.start);
-   if (!users.length) return null;
-```
-
----
-
-### Incident Patch 2: `2fc2f725` (2026-11-05)
-**Commit Message**: refactor(ui): give every public directory an index.ts entry and narrow the root exports (#7066)
-
-* refactor(ui): give every public directory an index.ts entry and narrow the root exports
-
-Each component and module directory now exposes a single `index.ts`
-barrel, and the build, the package exports and the root entry all point
-at it instead of at the same-named implementation file. This makes the
-directory the unit of the public API: renaming an implementation file no
-longer changes the published entry, and the declaration output is
-`dist/<分类>/<目录>/index.d.ts`.
-
-Narrow the root entry at the same time. `@openviking/react` now exports
-each component and its main Props type only — `FileTreeProps`,
-`ScopeSwitcherProps` and so on. Row types, option types, handles and
-label bags are reachable from the `components/<component>` and
-`modules/<module>` subpaths, not from the root, so the root stays a short
-list of the things most consumers reach for.
-
-Record the rule in the package agent guide and in the package README, and
-restate it in both quick-start pages.
-
-* fix(ui): keep FilePreview out of the root entry so the optional peer stays optional
-
-Review follow-up. Adding `FilePreview` to the
-
-**File**: `frontend/AGENTS.md` (modified, +1/-0)
-```diff
-@@ -50,6 +50,7 @@
- 
- - JS/TS 文件（含 JSX、TSX）每个文件最多 200 行，不计空行和纯注释行，由 lint 的 `max-lines` 规则检查。
- - 按变更选择验证：纯文字改动检查格式、链接和差异；类型、实现或构建配置改动运行 workspace 的格式检查、类型检查和完整构建。命令见 README，CI 环境见 [公共构建 action](../.github/actions/build-ui/action.yml)。
-+- 格式化与检查只针对本次改动的文件：在 `frontend/` 下执行 `npm run lint -- <改动文件>` 或 `npx prettier --write <改动文件>`，不要用 `--write .`、`--check .` 等扫描整个目录的写法。仓库根与 `frontend/` 存在同名目录（`docs/`、`README.md`、`AGENTS.md`），从错误的工作目录用相对路径会改到本仓库无关的产品文档；格式化前确认工作目录，并检查 `git status` 里没有出现预期之外的文件。
- - 用户可见的行为或样式改动，在浏览器中运行构建后的文档并实际操作示例，检查相关的主题、窄屏和失败状态；截图后查看图片，构建成功本身不能证明页面可用。
- - 修改包导出、peer dependencies、资源或打包策略时，从真实打包产物验证消费者，包括声明支持的 React 版本，并检查声明、CSS 与 SVG 能在 workspace 外解析；文档开发模式不能代替独立消费验证。
- - 修改部署时，验证合并后主站页面仍存在，并检查 UI 深链及静态资源。线上尚未发布或外部检查尚未结束时，报告实际状态。
-```
-
-**File**: `frontend/docs/docs/en/guide/getting-started.mdx` (modified, +1/-1)
-```diff
-@@ -29,7 +29,7 @@ Keep application-specific workflows and authentication in the application layer.
- 
- ## Public entries
- 
--The root `@openviking/react` entry currently exports `FileTree`, `AgentConnect` and the four business module placeholders. `FilePreview`, `Tui` and `ScopeSwitcher` are available from their `components/<component>` subpaths only. `@openviking/react/icons` provides five file-type icons.
-+The root `@openviking/react` entry currently exports `FileTree`, `Tui`, `ScopeSwitcher`, `AgentConnect`, and the four business module placeholders with their main Props types. `FilePreview` is available from the `components/file-preview` subpath only, because its types depend on the optional `@ark-design/ui`. Subtypes — row types, option types, handles and label bags — always come from the subpaths. `@openviking/react/icons` provides five file-type icons.
- 
- There are no aggregate `components` or `modules` JavaScript entries. Business placeholders use individual `modules/<module>` entries:
- 
-```
-
-**File**: `frontend/docs/docs/en/modules/index.mdx` (modified, +1/-1)
-```diff
-@@ -19,7 +19,7 @@ This example uses the public module entries and the aggregate module stylesheet.
- 
- ## Import and styles
- 
--Import a component and its Props / Labels types from `@openviking/react/modules/<module>`. The four component bodies, their Props and their Labels types are also exported from `@openviking/react`.
-+Import a component and its Props / Labels types from `@openviking/react/modules/<module>`. The four component bodies and their main Props types are also exported from `@openviking/react`; subtypes such as Labels come from the subpath only.
- 
- JavaScript does not load CSS. Import `@openviking/react/modules/<module>/style.css` for one module, `@openviking/react/modules/style.css` for all modules, or `@openviking/react/style.css` for the full library. Each stylesheet works independently. There is no aggregate `@openviking/react/modules` JavaScript entry.
- 
-```
-
-**File**: `frontend/docs/docs/zh/guide/getting-started.mdx` (modified, +1/-1)
-```diff
-@@ -29,7 +29,7 @@ workspace 开发插件会在文档服务器启动前运行 Rslib watch。文档
- 
- ## 公开入口
- 
--根入口 `@openviking/react` 当前导出 `FileTree`、`AgentConnect` 与四个业务模块占位组件；`FilePreview`、`Tui`、`ScopeSwitcher` 只从各自的 `components/<组件>` 子路径导出。`@openviking/react/icons` 提供五种文件类型图标。
-+根入口 `@openviking/react` 当前导出 `FileTree`、`Tui`、`ScopeSwitcher`、`AgentConnect` 与四个业务模块占位组件及其主 Props 类型；`FilePreview` 只从 `components/file-preview` 子路径导出，因为它的类型依赖可选的 `@ark-design/ui`。行类型、选项类型、句柄与文案包等子类型一律从子路径导入。`@openviking/react/icons` 提供五种文件类型图标。
- 
- 没有 `components` 或 `modules` 分类聚合 JavaScript 入口。业务占位组件使用独立的 `modules/<模块>` 入口：
- 
-```
-
-**File**: `frontend/docs/docs/zh/modules/index.mdx` (modified, +1/-1)
-```diff
-@@ -19,7 +19,7 @@
- 
- ## 导入与样式
- 
--从 `@openviking/react/modules/<模块>` 导入组件及其 Props / Labels 类型。四个组件的本体、Props 与 Labels 类型也一并从根入口 `@openviking/react` 导出。
-+从 `@openviking/react/modules/<模块>` 导入组件及其 Props / Labels 类型。四个组件的本体与主 Props 类型也从根入口 `@openviking/react` 导出；Labels 等子类型只从子路径导入。
- 
- JavaScript 不加载 CSS。单模块使用 `@openviking/react/modules/<模块>/style.css`，全部模块使用 `@openviking/react/modules/style.css`，整库使用 `@openviking/react/style.css`，每个样式入口均可独立消费。没有 `@openviking/react/modules` 分类聚合 JavaScript 入口。
- 
-```
-
-**File**: `frontend/packages/react/AGENTS.md` (modified, +8/-0)
-```diff
-@@ -2,6 +2,14 @@
- 
- 适用于 `frontend/packages/react/**`，同时遵循 [Frontend Agent Guide](../../AGENTS.md) 和更深目录的规则。
- 
-+## 公开导出
-+
-+- 目录以 `index.ts` 作为唯一出口，包根入口 `src/index.ts` 只从这里取。
-+- 根入口只导出各组件、各业务模块的组件本体与主 Props 类型（`<组件名>Props`），作为最常用的快捷方式。
-+- 子类型、回调参数类型、行与选项等数据结构、句柄与文案包，一律只从 `components/<组件>`、`modules/<模块>` 子路径导出。根入口不聚合它们。
-+- 依赖可选 peer 的组件不进入根入口：`FilePreview` 的类型引用 `@ark-design/ui`，放进根声明会让该可选 peer 对只用其他根导出的消费者变成必需。
-+- 新增或调整导出时，同步维护 `package.json` 的 `exports`、Rslib 入口与声明路径，并从真实打包产物验证根入口与各子路径都能解析。
-+
- ## useEffect 使用门槛
- 
- - 新增或修改组件、自定义 Hook 时，非必要不使用 `useEffect`。只有需要在渲染提交后，将组件与明确的外部系统保持同步，且更直接的声明式 API、事件处理或已有专用 Hook 无法满足时，才允许使用。
-```
-
-**File**: `frontend/packages/react/README.md` (modified, +1/-1)
-```diff
-@@ -33,7 +33,7 @@ FileTree 已实现目录树视图与交互，FilePreview 已实现页签与纯
- 
- ## 公开入口与样式
- 
--- 根入口导出 `FileTree`、`AgentConnect` 与四个业务模块占位组件及其公开类型；`FilePreview`、`Tui`、`ScopeSwitcher` 只从各自的 `components/<组件>` 子路径导出。具体组件使用 `components/<组件>` 子路径；业务模块使用 `modules/<模块>` 子路径，当前导出占位组件与类型，真实能力迁入后再导出 Hook。不提供 `@openviking/react/components` 或 `@openviking/react/modules` 分类聚合 JS 入口。包导出显式列举，内部文件不开放。
-+- 根入口只导出各组件、各业务模块的组件本体与主 Props 类型（`<组件名>Props`），当前为 `FileTree`、`Tui`、`ScopeSwitcher`、`AgentConnect` 与四个业务模块占位组件；行类型、选项类型、句柄与文案包等子类型只从 `components/<组件>`、`modules/<模块>` 子路径导出。`FilePreview` 不在根入口：它的类型依赖可选的 `@ark-design/ui`，放进根声明会让该 peer 变成必需。不提供 `@openviking/react/components` 或 `@openviking/react/modules` 分类聚合 JS 入口。包导出显式列举，内部文件不开放。
- - 组件只提供明确列出的分层子路径，不保留旧路径别名。
- - JS 入口共享实现，不隐式加载 CSS。整包、组件集合与单模块样式由同一份源码构建，选择所需范围导入即可。
- 
-```
-
-**File**: `frontend/packages/react/package.json` (modified, +9/-9)
-```diff
-@@ -26,49 +26,49 @@
-       "import": "./dist/index.js"
-     },
-     "./components/file-tree": {
--      "types": "./dist/components/file-tree/file-tree.d.ts",
-+      "types": "./dist/components/file-tree/index.d.ts",
-       "import": "./dist/components/file-tree.js"
-     },
-     "./components/file-tree/style.css": "./dist/components/file-tree/style.css",
-     "./components/file-preview": {
--      "types": "./dist/components/file-preview/file-preview.d.ts",
-+      "types": "./dist/components/file-preview/index.d.ts",
-       "import": "./dist/components/file-preview.js"
-     },
-     "./components/file-preview/style.css": "./dist/components/file-preview/style.css",
-     "./components/tui": {
--      "types": "./dist/components/tui/tui.d.ts",
-+      "types": "./dist/components/tui/index.d.ts",
-       "import": "./dist/components/tui.js"
-     },
-     "./components/tui/style.css": "./dist/components/tui/style.css",
-     "./components/scope-switcher": {
--      "types": "./dist/components/scope-switcher/scope-switcher.d.ts",
-+      "types": "./dist/components/scope-switcher/index.d.ts",
-       "import": "./dist/components/scope-switcher.js"
-     },
-     "./components/scope-switcher/style.css": "./dist/components/scope-switcher/style.css",
-     "./components/agent-connect": {
--      "types": "./dist/components/agent-connect/agent-connect.d.ts",
-+      "types": "./dist/components/agent-connect/index.d.ts",
-       "import": "./dist/components/agent-connect.js"
-     },
-     "./components/agent-connect/style.css": "./dist/components/agent-connect/style.css",
-     "./style.css": "./dist/style.css",
-     "./components/style.css": "./dist/components/style.css",
-     "./modules/file-browser": {
--      "types": "./dist/modules/file-browser/file-browser.d.ts",
-+      "types": "./dist/modules/file-browser/index.d.ts",
-       "import": "./dist/modules/file-browser.js"
-     },
-     "./modules/file-browser/style.css": "./dist/modules/file-browser/style.css",
-     "./modules/console": {
--      "types": "./dist/modules/console/console.d.ts",
-+      "types": "./dist/modules/console/index.d.ts",
-       "import": "./dist/modules/console.js"
-     },
-     "./modules/console/style.css": "./dist/modules/console/style.css",
-     "./modules/task-center": {
--      "types": "./dist/modules/task-center/task-center.d.ts",
-+      "types": "./dist/modules/task-center/index.d.ts",
-       "import": "./dist/modules/task-center.js"
-     },
-     "./modules/task-center/style.css": "./dist/modules/task-center/style.css",
-     "./modules/user-usage": {
--      "types": "./dist/modules/user-usage/user-usage.d.ts",
-+      "types": "./dist/modules/user-usage/index.d.ts",
-       "import": "./dist/modules/user-usage.js"
-     },
-     "./modules/user-usage/style.css": "./dist/modules/user-usage/style.css",
-```
-
----
-
-### Incident Patch 3: `425b0d76` (2026-11-05)
-**Commit Message**: refactor(ui): move AgentConnect into components (#7065)
-
-* refactor(ui): move AgentConnect into components
-
-AgentConnect is a pure view: the design has tabs, a list and a detail
-pane, with no input, no form and no data of its own. It belongs with the
-other reusable views rather than with the business modules, which are
-defined as Hook plus composed view that loads its own data.
-
-Move the directory from modules/ to components/ and give it a real
-contract in place of the shared module placeholder:
-
-- `tabs` / `activeTabId` for the top tabs
-- `items` / `selectedId` for the left list
-- `detail` for the right pane: title, description, tags, content and the
-  text the copy control writes
-- `labels` for the instructions heading, copy control and empty state
-- `onTabChange` / `onSelect` / `onCopy` report intent only
-
-Everything the old module owned stays with the host: where the catalog
-comes from, how the body is rendered, permissions, analytics and routing.
-
-Update the package and build entries, the aggregate stylesheets, the
-navigation, the component indexes and the bilingual documentation to the
-new path. The placeholder view is unchanged.
-
-`AgentConnectProps` omits `onCopy` from the d
-
-**File**: `frontend/AGENTS.md` (modified, +1/-1)
-```diff
-@@ -16,7 +16,7 @@
- - 按 [README 的目标目录](./README.md#target-layout) 放置资产。React 包发布名为 `@openviking/react`，Vue 落地后独立交付为 `@openviking/vue`。源码边界可以先在 workspace 内共享，通过子路径提供消费入口。有独立安装、依赖隔离或独立发布节奏的需求时再拆包。
- - 跨框架纯函数、资源类型和数据转换放在 `packages/lib/`。OpenViking 请求与服务适配器放在 `packages/client/`。仅供单个模块使用的工具留在模块内。仅随 React 使用的共享能力随 React 包交付。跨模块公共 Hook 有真实实现后再从 `@openviking/react/hooks` 开放，组件不能使用取数或缓存 Hook。出现独立于框架的消费需求时，再为 `lib` 定义框架无关的公开包入口，并在未安装 React 或 Vue 的项目中验证。
- - 图标的 SVG 源文件、来源与授权放在 `packages/icons/`。React 图标组件放在 `packages/react/src/icons/`，随 React 包从 `@openviking/react/icons` 交付。各框架的封装直接消费同一份 SVG 源文件。构建产物包含图标实现和类型声明，消费者通过 React 包一次安装。
--- React 源码的 `components/` 放独立视图组件，`modules/` 放按业务能力划分的 Hook 与组合视图，不提供完整页面。模块 Hook 暴露可独立消费的数据、状态与操作，组合视图复用 Hook 并组装组件；宿主差异通过服务契约、参数、回调与插槽接入。当前先提供五个模块的占位组件、基础类型与样式入口，便于宿主接入布局；真实业务与 Hook 随后迁入，占位状态和 API 范围须在示例与文档中明确。可独立部署的微应用放在 `apps/`，例如 `apps/workbench-embed/`，消费公开模块与组件，管理挂载、卸载、样式隔离和宿主通信。
-+- React 源码的 `components/` 放独立视图组件，`modules/` 放按业务能力划分的 Hook 与组合视图，不提供完整页面。模块 Hook 暴露可独立消费的数据、状态与操作，组合视图复用 Hook 并组装组件；宿主差异通过服务契约、参数、回调与插槽接入。当前先提供四个模块的占位组件、基础类型与样式入口，便于宿主接入布局；真实业务与 Hook 随后迁入，占位状态和 API 范围须在示例与文档中明确。可独立部署的微应用放在 `apps/`，例如 `apps/workbench-embed/`，消费公开模块与组件，管理挂载、卸载、样式隔离和宿主通信。
- - 每个组件、业务模块或区块独占一个 kebab-case 目录，入口文件与目录同名。实现、CSS Modules、测试及私有子组件就近放置，例如 `components/<模块>/<模块>.tsx` 和同目录的 `<模块>.module.css`。模块私有的 Hook、类型和工具留在模块内，不提前提升到公共目录。
- - 根入口与子路径分别维护公开导出；组件子路径为 `@openviking/react/components/<组件>`，业务模块为 `@openviking/react/modules/<模块>`，从模块入口分别导出 Hook 与组合视图。不提供 `components`、`modules` 分类聚合 JS 入口。包导出显式列举，内部文件不开放；各入口共享实现，避免重复创建 Provider、Context 或状态对象。同步维护 Rslib 入口和声明路径。
- - 目录按实际内容创建，不预建空目录，也不为单个简单模块增加不必要的转发层。
-```
-
-**File**: `frontend/README.md` (modified, +2/-2)
-```diff
-@@ -30,8 +30,8 @@ npm run preview        # Serve the built documentation at /ui/
- ## Layout
- 
- - `packages/react`: `@openviking/react` package, Rslib library build with declaration generation, CSS Modules, and React peer dependencies.
--- `packages/react/src/components/{file-tree,file-preview}`: file-tree interaction and tabbed file-preview views with public props types. See the [module map](./packages/react/README.md#模块目录).
--- `packages/react/src/modules/{file-browser,console,agent-connect,task-center,user-usage}`: importable placeholder components, public Props / Labels types, and styles. Business Hooks and interactions are planned.
-+- `packages/react/src/components/{file-tree,file-preview,tui,scope-switcher,agent-connect}`: reusable views with public props types. file-tree and file-preview are implemented; tui, scope-switcher and agent-connect publish their reviewed contracts with a placeholder view. See the [module map](./packages/react/README.md#模块目录).
-+- `packages/react/src/modules/{file-browser,console,task-center,user-usage}`: importable placeholder components, public Props / Labels types, and styles. Business Hooks and interactions are planned.
- - `packages/react/src/{hooks,utils}`: reserved internal shared code, without public subpaths. Module-private helpers stay within their module.
- - `docs`: Rspress with `@rspress/plugin-preview`, external TSX demos, source viewing/copying, and hand-written props tables.
- - `docs/docs/en` and `docs/docs/zh`: matching English and Simplified Chinese pages, with localized navigation.
-```
-
-**File**: `frontend/docs/docs/_demos/agent-connect-basic.tsx` (added, +12/-0)
-```diff
-@@ -0,0 +1,12 @@
-+import { AgentConnect } from '@openviking/react/components/agent-connect';
-+import '@openviking/react/components/agent-connect/style.css';
-+
-+export default function AgentConnectBasic() {
++export default function FileBrowserEntriesBasic() {
 +  return (
-+    <AgentConnect
-+      tabs={[{ id: 'mainstream', label: 'Mainstream agents' }]}
-+      activeTabId="mainstream"
-+      items={[]}
-+    />
++    <div lang="zh-CN" style={{ width: 352, display: 'grid', gap: 12 }}>
++      <FileBrowserEntries
++        onConnectAgent={() => {}}
++        onImportResources={() => {}}
++        labels={{ connectAgent: '连接 Agent', importResources: '导入资源' }}
++      />
++      <FileBrowserEntries
++        onImportResources={() => {}}
++        labels={{ importResources: '导入资源' }}
++      />
++      <FileBrowserEntries
++        onConnectAgent={() => {}}
++        labels={{ connectAgent: '连接 Agent' }}
++      />
++    </div>
 +  );
 +}
 ```
 
-**File**: `frontend/docs/docs/_demos/agent-connect-placeholder.tsx` (removed, +0/-10)
+**File**: `frontend/docs/docs/_demos/file-browser-placeholder.tsx` (removed, +0/-10)
 ```diff
 @@ -1,10 +0,0 @@
--import { AgentConnect } from '@openviking/react/modules/agent-connect';
--import '@openviking/react/modules/agent-connect/style.css';
+-import { FileBrowser } from '@openviking/react/modules/file-browser';
+-import '@openviking/react/modules/file-browser/style.css';
 -
--export default function AgentConnectPlaceholder() {
+-export default function FileBrowserPlaceholder() {
 -  return (
 -    <div lang="en">
--      <AgentConnect />
+-      <FileBrowser />
 -    </div>
 -  );
 -}
 ```
 
-**File**: `frontend/docs/docs/_demos/modules-basic.tsx` (modified, +0/-2)
+**File**: `frontend/docs/docs/en/components/file-browser-entries.mdx` (added, +48/-0)
 ```diff
-@@ -1,6 +1,5 @@
- import { FileBrowser } from '@openviking/react/modules/file-browser';
- import { Console } from '@openviking/react/modules/console';
--import { AgentConnect } from '@openviking/react/modules/agent-connect';
- import { TaskCenter } from '@openviking/react/modules/task-center';
- import { UserUsage } from '@openviking/react/modules/user-usage';
- import '@openviking/react/modules/style.css';
-@@ -10,7 +9,6 @@ export default function ModulesBasic() {
-     <div className="ov-demo-modules" lang="en">
-       <FileBrowser />
-       <Console />
--      <AgentConnect />
-       <TaskCenter />
-       <UserUsage />
-     </div>
-```
-
-**File**: `frontend/docs/docs/en/components/agent-connect.mdx` (added, +85/-0)
-```diff
-@@ -0,0 +1,85 @@
-+# AgentConnect
+@@ -0,0 +1,48 @@
++# FileBrowserEntries
 +
-+An agent connection view. The host supplies the tabs, the items of the active tab and the detail body; the component renders the list and the detail, and reports switch and copy intent.
++The entry row at the top of the file browsing area: connect an agent, import resources. It is fixed to two entries; the host only decides which appear and what a click does.
 +
-+This is a placeholder component: it renders a fixed-size empty shell and consumes no props, so hosts can integrate against the published package before the view is migrated. The props contract below is the agreed shape; the placeholder implementation will be replaced.
++## The three states
 +
-+## Basic usage
-+
-+```tsx file="../../_demos/agent-connect-basic.tsx" preview
++```tsx file="../../_demos/file-browser-entries-basic.tsx" preview
 +
 +```
 +
-+The placeholder is 960 × 640, matching the full-page view.
++## Basic usage
 +
-+## Structure
++```tsx
++import { FileBrowserEntries } from '@openviking/react/components/file-browser-entries';
++import '@openviking/react/components/file-browser-entries/style.css';
 +
-+The view has three parts:
++<FileBrowserEntries
++  onConnectAgent={openConnectDialog}
++  onImportResources={openImportFlow}
++  labels={{
++    connectAgent: 'Connect agent',
++    importResources: 'Import resources',
++  }}
++/>;
++```
 +
-+- **Tabs** across the top, declared by the host through `tabs` and `activeTabId`.
-+- **List** on the left, the items of the active tab through `items`.
-+- **Detail** on the right, the selected item's body through `detail`.
++## Showing and hiding
 +
-+The component holds no catalog and no body content. Where the items come from, how the body is rendered and what a copy means all belong to the host.
++A callback is the switch: omit `onConnectAgent` to hide the connect entry, omit `onImportResources` to hide the import entry.
++
++With both omitted nothing renders. With a single entry no divider is drawn — a divider separates two neighbours, and there is nothing left to separate.
++
++```tsx
++<FileBrowserEntries onImportResources={openImportFlow} />
++```
 +
 +## Props
 +
-+### AgentConnectProps
++| Property            | Type                       | Default | Description                                               |
++| ------------------- | -------------------------- | ------- | --------------------------------------------------------- |
++| `onConnectAgent`    | `() => void`               | —       | The connect entry was clicked; omit it to hide that entry |
++| `onImportResources` | `() => void`               | —       | The import entry was clicked; omit it to hide that entry  |
++| `labels`            | `FileBrowserEntriesLabels` | —       | The two labels; omitted ones keep their English defaults  |
++| `className`         | `string`                   | —       | Additional container class                                |
 +
-+| Property      | Type                             | Default  | Description                                                                                                                                 |
-+| ------------- | -------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-+| `tabs`        | `readonly AgentConnectTab[]`     | Required | Tabs at the top.                                                                                                                            |
-+| `activeTabId` | `string`                         | Required | Active tab id, owned by the host.                                                                                                           |
-+| `items`       | `readonly AgentConnectItem[]`    | Required | Items of the active tab.                                                                                                                    |
-+| `selectedId`  | `string`                         | —        | Selected item id, owned by the host.                                                                                                        |
-+| `detail`      | `AgentConnectDetail`             | —        | Detail of the selected item; no body when omitted.                                                                                          |
-+| `labels`      | `AgentConnectLabels`             | English  | Replaceable copy.                                                                                                                           |
-+| `onTabChange` | `(tabId: string) => void`        | —        | Invoked when a tab is selected.                                                                                                             |
-+| `onSelect`    | `(item) => void`                 | —        | Invoked when an item is selected.                                                                                                           |
-+| `onCopy`      | `(text: string) => void`         | —        | Invoked after a successful copy, for analytics or extra feedback; the component performs the write. The control still renders when omitted. |
-+| Other props   | `HTMLAttributes<HTMLDivElement>` | —        | Standard div attributes; `children` is excluded.                                                                                            |
++## Relation to the module
 +
-+### AgentConnectTab
++`FileBrowser`'s `toolbarActions` accepts any node. Passing this component there makes the entry row match the rest of the module. Connection dialogs, import flows and onboarding belong to the host.
+```
+
+**File**: `frontend/docs/docs/en/components/file-tree.mdx` (modified, +4/-0)
+```diff
+@@ -34,6 +34,10 @@ The tree never inspects parent/child relationships. The host flattens its own st
+ 
+ Emit only the ones your data source needs. A host that returns all children at once never emits `load-more`.
+ 
++Rows size to their content rather than being squeezed into the container width: names render in full and the container scrolls sideways. Deep indentation gets its space the same way, so deep nodes never squeeze each other. The description is capped at 200px and truncates as needed — it is supplementary, and one long description would drag a row hundreds of pixels wide, making horizontal scrolling harder rather than easier.
 +
-+| Property | Type     | Description     |
-+| -------- | -------- | --------------- |
-+| `id`     | `string` | Unique tab key. |
-+| `label`  | `string` | Tab label.      |
++The name is the only way to tell nodes apart, so it never truncates; a host that wants a tighter column narrows the container rather than asking the component to clip names.
 +
-+### AgentConnectItem
-+
-+| Property      | Type        | Description                               |
-+| ------------- | ----------- | ----------------------------------------- |
-+| `id`          | `string`    | Unique item key.                          |
-+| `name`        | `string`    | Item name.                                |
-+| `description` | `string`    | One-line summary shown in the list.       |
-+| `icon`        | `ReactNode` | Item icon, which can be an image or node. |
-+
-+### AgentConnectDetail
-+
-+| Property      | Type                | Description                                                     |
-+| ------------- | ------------------- | --------------------------------------------------------------- |
-+| `title`       | `string`            | Detail title, usually the selected item's name.                 |
-+| `icon`        | `ReactNode`         | Icon shown next to the title.                                   |
-+| `description` | `string`            | Description under the title.                                    |
-+| `tags`        | `readonly string[]` | Tags under the title, for example "SDK" or "Overseas".          |
-+| `content`     | `ReactNode`         | Body content, 
+ ## Slots and host content
+ 
+ - `slots.toolbar` — search, import sources, refresh. The component does not know what is inside.
 ```
 
 **File**: `frontend/docs/docs/en/components/index.mdx` (modified, +4/-0)
 ```diff
-@@ -20,6 +20,10 @@ The reviewed API for command records, results and input. The current view is a p
+@@ -4,6 +4,10 @@ Reusable views and file-type icons for OpenViking AI applications. Components re
  
- A header scope breadcrumb. The host declares the levels and their options; the component renders the triggers, dropdown panels, option list and search, and reports switch intent.
+ ## Available modules
  
-+### [AgentConnect](./agent-connect)
++### [FileBrowserEntries](./file-browser-entries)
 +
-+An agent connection view. The host supplies the tabs, the items of the active tab and the detail body; the component renders the list and detail, and reports switch and copy intent.
++The entry row at the top of the file browsing area: connect an agent, import resources. Fixed to two entries; the host decides which appear and what a click does, while the icons, copy and divider belong to the component.
 +
- ### [Icons](./icons)
+ ### [FileTree](./file-tree)
  
- Five file-type icons with configurable image dimensions and accessible labels: audio, PDF, presentation, video, and word-processing files.
+ A flattened file tree with row rendering, selection, expansion, keyboard interaction, and pagination intent. The host supplies ordered rows and handles data loading. The current view is a placeholder; see the component page for its scope and limitations.
 ```
 
-**File**: `frontend/docs/docs/en/guide/getting-started.mdx` (modified, +4/-4)
+**File**: `frontend/docs/docs/en/modules/file-browser.mdx` (modified, +63/-37)
 ```diff
-@@ -2,7 +2,7 @@
+@@ -2,11 +2,13 @@
  
- OpenViking UI provides React foundations for building AI application interfaces on OpenViking, the context database for AI agents. The workspace includes Rslib builds, bilingual documentation, layered directory conventions, and scoped styles. Applications provide business UI, data, authentication, and workflow orchestration.
+ Directory navigation, search and content preview as one module. The module loads its own data; the host supplies configuration, the controlled current resource, the toolbar entries and copy.
  
--The package provides FileTree, FilePreview, five file-type icons, and five business module placeholders. See the [component overview](../components/) and [module overview](../modules/) for their current scope. Public business Hooks are not implemented yet.
-+The package provides FileTree, FilePreview, Tui, ScopeSwitcher, AgentConnect, five file-type icons, and four business module placeholders. See the [component overview](../components/) and [module overview](../modules/) for their current scope. Public business Hooks are not implemented yet.
+-The component is a placeholder: it renders the module name and a placeholder message. The props below are settled, so applications can integrate the container and wire their state now; the composite view and `useFileBrowser` follow.
++The component already wires the tree, the search and the preview together: directories expand on demand and page, clicking a file loads the preview, and a search result opens the preview too. `useFileBrowser` can be used on its own to assemble a different view.
  
- ## Run locally
+ ## Basic usage
  
-@@ -21,15 +21,15 @@ The workspace development plugin starts Rslib watch before the documentation ser
- ## Organize application code
+-```tsx file="../../_demos/file-browser-placeholder.tsx" preview
++The example uses fixed data and makes no network request:
++
++```tsx file="../../_demos/file-browser-basic.tsx" preview
  
- - `packages/react/src/components/`: reusable views that receive prepared data through props and report intent through callbacks.
--- `packages/react/src/modules/`: five importable placeholder components; business Hooks and composed interactions will follow.
-+- `packages/react/src/modules/`: four importable placeholder components; business Hooks and composed interactions will follow.
- - `packages/react/src/hooks/` and `utils/`: internal shared logic, without public subpaths.
- - `docs/docs/en/` and `docs/docs/zh/`: corresponding documentation pages; shared runnable examples belong in `docs/docs/_demos/`.
- 
- Keep application-specific workflows and authentication in the application layer. Module Hooks load data through the shared Client; components do not fetch business data or depend on application routing.
- 
- ## Public entries
- 
--The root `@openviking/react` entry exports FileTree, the five business module placeholders, and their public types. FileTree and FilePreview are also available through their `components/<module>` subpaths. `@openviking/react/icons` provides five file-type icons.
-+The root `@openviking/react` entry currently exports `FileTree`, `AgentConnect` and the four business module placeholders. `FilePreview`, `Tui` and `ScopeSwitcher` are available from their `components/<component>` subpaths only. `@openviking/react/icons` provides five file-type icons.
- 
- There are no aggregate `components` or `modules` JavaScript entries. Business placeholders use individual `modules/<module>` entries:
- 
-@@ -40,7 +40,7 @@ import '@openviking/react/modules/file-browser/style.css';
- <FileBrowser />;
  ```
  
--The five placeholders accept `className`, `style`, and replaceable `labels`, and require no Provider. See [Modules](../modules/) for runnable examples and Props types.
-+The four placeholders accept `className`, `style`, and replaceable `labels`, and require no Provider. See [Modules](../modules/) for runnable examples and Props types.
+@@ -16,9 +18,9 @@ The module covers the file tree and the file preview only. The command panel bel
  
- Business modules will combine data-loading Hooks with composed views around focused capabilities. Each module entry will export its Hooks separately from its composed view, so hosts can reuse the logic with their own UI. The shared Client will follow the native OpenViking API paths, parameters, and response types. Authentication, account scope, routing, permissions, and complete page flows remain with the host. Business Hooks and cross-module public Hooks have no implementation or exports yet.
+ ## What the module owns
+ 
+-- Directory, search, current URI and preview loading, coordinated inside the module: clicking a directory node or a search result moves the selection and loads the preview, and switching resources drops stale requests.
++- Directory, search, current URI and preview loading, coordinated inside the module: clicking a directory node or a search result moves the selection and loads the preview, and switching resources drops stale requests. Clicking a directory also expands it and makes it the current resource, with its L1 overview on the right (falling back to the L0 abstract when empty).
+ - Refreshing the affected directory, search results and preview after a save, rename or delete.
+-- The layout of the search, directory and preview area.
++- The layout of the search, directory and preview area, including the draggable divider between the tree and the detail pane. The tree starts at 352px, resizes between 200px and a cap that leaves the detail pane its readable width, and the arrow keys work once the divider has focus.
+ - The search box and refresh control in the toolbar, plus per-row state such as uploading progress, conflicts and retention settings.
+ - The preview tabs. Which tabs a resource has follows from the resource itself, so the host does not supply them.
+ - The search view. Search is a private view inside this module, not a published component or module: it opens from the toolbar or ⌘K, and picking a result moves the tree and loads the preview. Nothing about it is exported, because leaving the tree leaves it without a destination. `console` has its own `@` picker over the same kind of API; that is a separate view, not this one.
+@@ -27,60 +29,84 @@ The module covers the file tree and the file preview only. The command panel bel
+ 
+ - Request configuration through the Provider, overridable per module through `requestOptions`.
+ - Sign-in, account scope, routing and permissions.
+-- The toolbar entries: connect an agent, import resources. Compose them with `FileBrowserToolbarButton` inside `toolbarActions` so they match the module's own buttons. Entries can nest inside a popover or dropdown when a click alone is not enough.
++- The entries in the top row: connect an agent, import resources. Compose them with `FileBrowserEntries` inside `toolbarActions`, which owns the icons, copy and divider. Wrap it in a popover or dropdown when a click alone is not enough.
+ - Connection dialogs, import flows and onboarding. The module embeds none of them.
+ 
+-## Toolbar entries
++## Entries and toolbar
+ 
+-The module renders the search box, the refresh button and the dividers. The host adds its own entries through `toolbarActions` and uses `FileBrowserToolbarButton` so the styling matches:
++The top band holds the host's entries on a tinted background; under it sit the module's own search box and refresh button. The host adds entries through `toolbarActions`, using `FileBrowserEntries` so the styling matches:
+ 
+ ```tsx
+-import {
+-  FileBrowser,
+-  FileBrowserToolbarButton,
+-} from '@openviking/react/modules/file-browser';
++import { FileBrowserEntries } from '@openviking/react/components/file-browser-entries';
++import '@openviking/react/components/file-browser-entries/style.css';
++import { FileBrowser } from '@openviking/react/modules/file-browser';
+ 
+ <FileBrowser
+   toolbarActions={
+-    <>
+-      <FileBrowserToolbarButton icon={<ConnectIcon />} onClick={connect}>
+-        Connect agent
+-      </FileBrowserToolbarButton>
+-      <FileBrowserToolbarButton icon={<UploadIcon />} onClick={openImport}>
+-        Import resources
+-      </FileBrowserToolbarButton>
+-    </>
++    <FileBrowserEntries
++      onConnectAgent={connect}
++      onImportResources={openImport}
++      labels={{
++        connectAgent: 'Connect agent',
++        importResources: 'Import resources',
++      }}
++    />
+   }
+ />;
+ ```
+ 
+-Because `toolbarActions` is a node, an entry that needs a menu wraps its button instead of asking fo
+```
+
+**File**: `frontend/docs/docs/en/modules/index.mdx` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ # Modules
+ 
+-Two placeholder components are available for integrating the personal-terminal layout. Their props are settled — request options, controlled state, callbacks, slots and copy — though each component still renders only a module name and a replaceable placeholder message. Business Hooks, API requests, and module interactions will be added as the implementations land.
++`file-browser` is implemented and wires the directory tree, the search and the preview together; `console` is still a placeholder that renders only a module name and a replaceable message.
+ 
+ Placeholder modules do not carry data props. A module loads its own data through a Hook, so the host supplies configuration and the controlled value, and the module reports changes through callbacks.
+ 
+```
+
+---
+
+### Incident Patch 2: `b271df96` (2026-11-09)
+**Commit Message**: fix(train): keep case and experience links consistent (#6898)
+
+* fix(train): preserve delete replacements through policy plans
+
+* test(train): remove added replacement regression test
+
+* fix(train): cover historical endpoints in policy migration locks
+
+* fix(train): reuse locked snapshots for replacement link migration
+
+* fix(train): keep case and experience links consistent during apply
+
+* fix(train): report link failures and preserve unconfirmed memories
+
+* fix(train): scope shared trajectory case links to training groups
+
+* fix(memory): drop deleted neighbors during link inheritance
+
+* fix(train): isolate apply failures and cover pure-delete links
+
+* refactor(memory): shorten experience replacement prompts
+
+* fix(bot): decode case links and verify rendered experience links
+
+* fix(train): resolve experience URIs before building case links
+
+* fix(memory): render case links when type metadata is absent
+
+**File**: `benchmark/tau2/train/rollout_executor_vikingbot.py` (modified, +3/-2)
+```diff
+@@ -27,6 +27,7 @@
+     _tau2_evaluation as _tau2_evaluation_helper,
+ )
+ from openviking.message import Message, ToolPart
++from openviking.session.memory.utils.link_renderer import LinkRenderer
+ from openviking.session.train import (
+     Case,
+     ExecutionContext,
+@@ -439,7 +440,7 @@ def _linked_experience_uris(content: str, *, source_uri: str) -> list[str]:
+     section = _markdown_section(content, "Linked Experiences")
+     if not section:
+         return []
+-    targets = re.findall(r"\[[^\]]+\]\(([^)\s]+)\)", section)
++    targets = [link.target for link in LinkRenderer.iter_markdown_links(section)]
+     if not targets:
+         targets = [
+             line.lstrip("- ").strip()
+@@ -455,7 +456,7 @@ def _linked_experience_uris(content: str, *, source_uri: str) -> list[str]:
+ 
+ 
+ def _resolve_case_link_uri(target: str, *, source_uri: str) -> str:
+-    target = str(target or "").strip()
++    target = LinkRenderer.normalize_markdown_target(str(target or "")) if target else ""
+     if not target:
+         return ""
+     if "://" in target:
+```
+
+**File**: `bot/tests/test_openviking_api_key_type.py` (modified, +15/-5)
+```diff
+@@ -2758,16 +2758,24 @@ async def test_openviking_request_connection_client_is_closed_after_tool_call(mo
+ @pytest.mark.asyncio
+ async def test_experience_reminder_follows_direct_case_experience_links(monkeypatch, tmp_path):
+     from openviking.session.memory.dataclass import MemoryFile, StoredLink
++    from openviking.session.memory.memory_type_registry import get_default_registry
+     from openviking.session.memory.utils.memory_file_utils import MemoryFileUtils
+ 
+     case_uri = "viking://user/admin/memories/cases/case1.md"
+-    exp_uri = "viking://user/admin/memories/experiences/exp1.md"
++    exp_uri = "viking://user/admin/memories/experiences/exp 10%#(1).md"
+     direct_exp_uri = "viking://user/admin/memories/experiences/direct.md"
+-    MemoryFileUtils.write(
++    case_content = MemoryFileUtils.write(
+         MemoryFile(
+             uri=case_uri,
+-            content="# case1\n\n## Linked Experiences\n- exp1",
++            content="",
+             memory_type="cases",
++            extra_fields={
++                "case_name": "case1",
++                "task_signature": "task",
++                "input": "{}",
++                "rubric": "{}",
++                "evidence": "",
++            },
+             links=[
+                 StoredLink(
+                     from_uri=case_uri,
+@@ -2778,7 +2786,8 @@ async def test_experience_reminder_follows_direct_case_experience_links(monkeypa
+                     description="",
+                 ).model_dump()
+             ],
+-        )
++        ),
++        content_template=get_default_registry().get("cases").content_template,
+     )
+ 
+     class _FakeClient:
+@@ -2802,7 +2811,7 @@ async def search_experiences(self, query, limit=5):
+         async def read_content(self, uri, level="read"):
+             self.read_calls.append((uri, level))
+             if uri == case_uri:
+-                return "# case1\n\n## Linked Experiences\n- [exp1](../experiences/exp1.md)"
++                return case_content
+             if uri == exp_uri:
+                 return "linked exp content"
+             if uri == direct_exp_uri:
+@@ -2836,6 +2845,7 @@ async def _fake_create(**_kwargs):
+     assert fake_client.search_calls == [("hello", "viking://user/admin/memories/cases/", 1)]
+     assert fake_client.search_experience_calls == []
+     assert (case_uri, "read") in fake_client.read_calls
++    assert (exp_uri, "read") in fake_client.read_calls
+     assert "linked exp content" in content
+     assert "direct exp content" not in content
+     assert exp_uri in uris
+```
+
+**File**: `bot/vikingbot/agent/memory.py` (modified, +3/-1)
+```diff
+@@ -9,6 +9,7 @@
+ 
+ from loguru import logger
+ 
++from openviking.session.memory.utils.link_renderer import LinkRenderer
+ from vikingbot.config.loader import load_config
+ from vikingbot.openviking_mount.ov_server import VikingClient
+ from vikingbot.utils.helpers import ensure_dir
+@@ -1210,7 +1211,7 @@ def _extract_linked_experience_uris(cls, content: str, *, source_uri: str = "")
+         if not section:
+             return []
+ 
+-        targets = re.findall(r"\[[^\]]+\]\(([^)\s]+)\)", section)
++        targets = [link.target for link in LinkRenderer.iter_markdown_links(section)]
+         if not targets:
+             targets = [
+                 line.lstrip("- ").strip()
+@@ -1232,6 +1233,7 @@ def _resolve_case_link_uri(target: str, *, source_uri: str) -> str:
+         target = str(target or "").strip()
+         if not target:
+             return ""
++        target = LinkRenderer.normalize_markdown_target(target)
+         if "://" in target:
+             return target
+         if "/" not in target:
+```
+
+**File**: `openviking/session/compressor_v3.py` (modified, +48/-178)
+```diff
+@@ -45,7 +45,7 @@
+ from openviking.session.memory.memory_updater import (
+     ExtractContext,
+     MemoryUpdateError,
+-    write_stored_links,
++    MemoryUpdateResult,
+ )
+ from openviking.session.memory.session_extract_context_provider import (
+     SessionExtractContextProvider,
+@@ -54,7 +54,6 @@
+     MemoryUpdateRequest,
+     get_streaming_memory_updater,
+     make_streaming_memory_updater_key,
+-    merge_link_lists,
+ )
+ from openviking.session.memory.utils.json_parser import JsonUtils
+ from openviking.session.memory.utils.memory_file_utils import MemoryFileUtils
+@@ -1081,11 +1080,20 @@ async def train_from_extracted_cases(
+                 extraction_groups.setdefault(feedback, []).append(rollout)
+ 
+             reported_trajectory_uris: set[str] = set()
++            training_failures = MemoryUpdateResult()
+             for rollouts in extraction_groups.values():
+                 rollout = rollouts[0]
+                 candidates = [candidates_by_name[item.case.name] for item in rollouts]
+                 case_context = replace(analysis_context, case_candidates=candidates)
+-                analysis = await self.rollout_analyzer.analyze(rollout, case_context)
++                try:
++                    analysis = await self.rollout_analyzer.analyze(rollout, case_context)
++                except MemoryUpdateError as exc:
++                    training_failures.errors.extend(exc.result.errors)
++                    training_failures.written_uris.extend(exc.result.written_uris)
++                    training_failures.edited_uris.extend(exc.result.edited_uris)
++                    training_failures.deleted_uris.extend(exc.result.deleted_uris)
++                    logger.warning("Skipping failed trajectory group: %s", exc)
++                    continue
+                 analysis.metadata["case_associations_required"] = len(candidates) > 1
+                 if collect_memory_diff:
+                     # Keep every extracted trajectory, including those with no matching case.
+@@ -1121,7 +1129,17 @@ async def train_from_extracted_cases(
+                             candidates_by_name[item.case.name]["uri"] for item in training_rollouts
+                         }
+                         trajectories = [
+-                            trajectory
++                            replace(
++                                trajectory,
++                                metadata={
++                                    **trajectory.metadata,
++                                    "case_uris": [
++                                        uri
++                                        for uri in trajectory.metadata.get("case_uris", [])
++                                        if uri in case_uris
++                                    ],
++                                },
++                            )
+                             for trajectory in trajectories
+                             if case_uris.intersection(trajectory.metadata.get("case_uris", []))
+                         ]
+@@ -1140,18 +1158,14 @@ async def train_from_extracted_cases(
+                         ctx=ctx,
+                         archive_uri=archive_uri,
+                     )
+-                    for item in training_rollouts:
+-                        case_uri = candidates_by_name[item.case.name]["uri"]
+-                        if case_uri:
+-                            await self._link_case_to_training_outputs(
+-                                analysis=training_analysis,
+-                                case_uri=case_uri,
+-                                plan=exp_training_result.plan,
+-                                apply_result=exp_training_result.apply_result,
+-                                ctx=ctx,
+-                                viking_fs=viking_fs,
+-                            )
+-                    submitted += len(training_rollouts)
++                    apply_result = exp_training_result.apply_result
++                    if apply_result.errors:
++                        for error in apply_result.errors:
++                            training_failures.add_error(exp_root_uri, RuntimeError(error))
++                        training_failures.written_uris.extend(apply_result.written_uris)
++                        training_failures.deleted_uris.extend(apply_result.deleted_uris)
++                    else:
++                        submitted += len(training_rollouts)
+                     if collect_memory_diff:
+                         memory_diff = await self._build_training_memory_diff(
+                             training_result=exp_training_result,
+@@ -1181,6 +1195,8 @@ async def train_from_extracted_cases(
+                                 if uri:
+                                     skill_uris.append(str(uri))
+ 
++            if training_failures.errors and strict_extract_errors:
++                raise MemoryUpdateError(training_failures)
+             tracer.info(
+                 "Submitted commit case memories to streaming train: "
+                 f"case_count={len(
+```
+
+**File**: `openviking/session/memory/agent_experience_context_provider.py` (modified, +1/-1)
+```diff
+@@ -90,7 +90,7 @@ def instruction(self) -> str:
+ The system handles create vs update automatically:
+ - Same `experience_name` as an existing one → updates it in place
+ - New `experience_name` → creates a new experience
+-- `supersedes` set → old experience is deleted and its history is inherited
++- `supersedes` set → proposes a replacement for the final merge to review
+ 
+ ## Rules
+ 
+```
+
+**File**: `openviking/session/memory/memory_updater.py` (modified, +131/-20)
+```diff
+@@ -19,6 +19,7 @@
+     from openviking.session.memory.memory_isolation_handler import MemoryIsolationHandler
+ 
+ from openviking.core.context import ContextLevel
++from openviking.core.namespace import context_type_for_uri
+ from openviking.message import Message
+ from openviking.message.part import TextPart
+ from openviking.pyagfs.exceptions import AGFSConnectionError, AGFSIoError, AGFSTimeoutError
+@@ -31,7 +32,7 @@
+     SkippedMemoryOperation,
+     StoredLink,
+ )
+-from openviking.session.memory.memory_type_registry import MemoryTypeRegistry
++from openviking.session.memory.memory_type_registry import MemoryTypeRegistry, get_default_registry
+ from openviking.session.memory.merge_op import MergeOpFactory
+ from openviking.session.memory.page_id_map import PageIdMap
+ from openviking.session.memory.utils.memory_file_utils import (
+@@ -112,6 +113,8 @@ async def write_stored_links(
+     viking_fs: Any,
+     skip_uris: Optional[set] = None,
+     lease_ref: Any = None,
++    read_file_contents: Optional[Dict[str, MemoryFile]] = None,
++    errors: Optional[List[Tuple[str, Exception]]] = None,
+ ) -> List[str]:
+     """Write StoredLinks to their endpoint files' links/backlinks fields.
+ 
+@@ -120,7 +123,9 @@ async def write_stored_links(
+     Files listed in skip_uris are skipped (caller handles them in the same write).
+     Returns the endpoint URIs that were successfully rewritten.  Callers can
+     use this to avoid reporting link-only edits for files that failed the
+-    read/modify/write step.
++    read/modify/write step. Missing/empty reads are skipped with a warning;
++    other failures are appended to ``errors`` when supplied. Cached endpoint
++    files must have been read under the caller's lease.
+     """
+     from openviking.session.memory.merge_op.link_merge import merge_links
+ 
+@@ -137,10 +142,17 @@ async def write_stored_links(
+     updated_uris: List[str] = []
+     for uri, link_groups in file_links.items():
+         try:
+-            content = await viking_fs.read_file(uri, ctx=ctx)
+-            if not content:
+-                continue
+-            mf = MemoryFileUtils.read(content, uri=uri)
++            mf = (read_file_contents or {}).get(uri)
++            if mf is None:
++                try:
++                    content = await viking_fs.read_file(uri, ctx=ctx)
++                except (NotFoundError, FileNotFoundError) as exc:
++                    logger.warning("Skipping links to missing memory %s: %s", uri, exc)
++                    continue
++                if not content:
++                    logger.warning("Skipping links to empty memory %s", uri)
++                    continue
++                mf = MemoryFileUtils.read(content, uri=uri)
+             if link_groups["links"]:
+                 mf.links = merge_links(mf.links, [l.model_dump() for l in link_groups["links"]])
+             if link_groups["backlinks"]:
+@@ -153,16 +165,28 @@ async def write_stored_links(
+             bump_memory_version(mf)
+             await viking_fs.write_file(
+                 uri,
+-                MemoryFileUtils.write(mf),
++                _write_linked_memory(mf),
+                 ctx=ctx,
+                 lease_ref=lease_ref,
+             )
+             updated_uris.append(uri)
+         except Exception as e:
+             tracer.error(f"Failed to apply links to {uri}: {e}")
++            if errors is not None:
++                errors.append((uri, e))
+     return updated_uris
+ 
+ 
++def _write_linked_memory(memory_file: MemoryFile) -> str:
++    memory_type = memory_file.memory_type
++    if not memory_type and memory_file.uri:
++        memory_type = MemoryUpdater.memory_type_from_uri(memory_file.uri)
++    schema = get_default_registry().get("cases") if memory_type == "cases" else None
++    return MemoryFileUtils.write(
++        memory_file, content_template=schema.content_template if schema else None
++    )
++
++
+ def _remap_link_dict(link: Dict[str, Any], uri_remap: Dict[str, str]) -> Dict[str, Any]:
+     remapped = dict(link or {})
+     remapped["from_uri"] = _resolve_replacement_uri(remapped.get("from_uri"), uri_remap)
+@@ -846,6 +870,7 @@ class MemoryUpdateError(Exception):
+     """Report apply failures without treating a partial write as safe to replay."""
+ 
+     def __init__(self, result: MemoryUpdateResult):
++        self.result = result
+         super().__init__(
+             f"Memory update failed ({result.summary()}): "
+             + "; ".join(f"{uri}: {error}" for uri, error in result.errors)
+@@ -1046,12 +1071,66 @@ async def apply_operations(
+ 
+         uri_remap = dict(getattr(operations, "delete_replacements", {}) or {})
+         split_replacements = detect_split_replacements(operations)
+-        original_links = list(getattr(operations, "resolved_links", []) or [])
++        upsert_uri_keys = {
++            _same_batch_delete_conflict_key(uri) for op in applicable_upserts for uri in op.uris
++        }
++        pure_delete_uris = {
++            file.uri
++            for file in operations.delete_file_contents
++ 
+```
+
+**File**: `openviking/session/memory/patch_merge_context_provider.py` (modified, +8/-0)
+```diff
+@@ -149,6 +149,13 @@ def __init__(
+ 
+     def instruction(self) -> str:
+         output_language = self._output_language
++        supersedes_policy = ""
++        if self.memory_type == "experiences":
++            supersedes_policy = """
++For experiences, treat `supersedes` as a replacement proposal.
++If accepted under the policy above, explicitly delete the old experience with the
++final output as its replacement; otherwise keep it.
++"""
+         return f"""You are a memory patch merge agent.
+ 
+ You are given original memory files and structured memory-file field diffs. Merge them by producing final memory operations that follow the provided JSON schema.
+@@ -161,6 +168,7 @@ def instruction(self) -> str:
+ choosing a canonical file or deleting any proposal:
+ 
+ {MEMORY_MERGE_POLICY}
++{supersedes_policy}
+ 
+ Normalize URI/path variants for directory/filename fields. Treat path segment
+ fields as stable schema identifiers, not free-form labels. Reuse existing
+```
+
+**File**: `openviking/session/memory/streaming_memory_updater.py` (modified, +6/-3)
+```diff
+@@ -271,6 +271,7 @@ async def _apply_post_group_links(
+                         request.ctx,
+                         viking_fs,
+                         lease_ref=lease,
++                        errors=result.apply_result.errors,
+                     )
+                     for uri in dict.fromkeys(updated_uris):
+                         result.apply_result.add_edited(uri)
+@@ -2242,13 +2243,15 @@ def _exclude_tree_covered_paths(exact_paths: set[str], tree_paths: set[str]) ->
+     }
+ 
+ 
+-async def _persisted_replacement_relation_uris(
++async def _persisted_delete_relation_uris(
+     operations: ResolvedOperations,
+     viking_fs: Any,
+     ctx: RequestContext,
+ ) -> set[str]:
+     uris: set[str] = set()
+-    for deleted_uri in dict(operations.delete_replacements or {}):
++    deleted_uris = {file.uri for file in operations.delete_file_contents if file.uri}
++    deleted_uris.update(operations.delete_replacements or {})
++    for deleted_uri in sorted(deleted_uris):
+         try:
+             content = await viking_fs.read_file(deleted_uri, ctx=ctx)
+         except (FileNotFoundError, NotFoundError):
+@@ -2299,7 +2302,7 @@ async def acquire_memory_operation_lease(
+                 timeout_secs=_MEMORY_APPLY_LOCK_TIMEOUT_SECONDS,
+             )
+         try:
+-            relation_uris = await _persisted_replacement_relation_uris(
++            relation_uris = await _persisted_delete_relation_uris(
+                 operations,
+                 viking_fs,
+                 ctx,
+```
+
+---
+
+### Incident Patch 3: `4da66d6b` (2026-11-09)
+**Commit Message**: fix(watch): preserve target path lock scope (#7265)
+
+Avoid widening Watch coordination to unrelated sibling resources while keeping missing-parent deletes free of lock-created directories.
+
+**File**: `openviking/resource/watch_manager.py` (modified, +1/-15)
+```diff
+@@ -48,7 +48,6 @@
+ from openviking.utils.git_auth import GIT_AUTH_FAILED
+ from openviking_cli.exceptions import ConflictError, FailedPreconditionError
+ from openviking_cli.session.user_id import UserIdentifier
+-from openviking_cli.utils import VikingURI
+ from openviking_cli.utils.logger import get_logger
+ 
+ logger = get_logger(__name__)
+@@ -69,19 +68,6 @@ def _context(account_id: str) -> Any:
+ 
+         return RequestContext(user=UserIdentifier(account_id, "default"), role=Role.ROOT)
+ 
+-    async def _existing_path(self, account_id: str, uri: str) -> str:
+-        """Deepest existing ancestor-or-self of *uri*, whose Tree lock covers *uri*.
+-
+-        Locking a missing path materializes it on some PathLock backends.
+-        """
+-        ctx = self._context(account_id)
+-        while not await self._fs.exists(uri, ctx=ctx):
+-            parent = VikingURI(uri).parent
+-            if parent is None:
+-                break
+-            uri = parent.uri
+-        return self._fs._uri_to_path(uri, ctx=ctx)
+-
+     @asynccontextmanager
+     async def tree(
+         self,
+@@ -93,7 +79,7 @@ async def tree(
+     ) -> AsyncIterator[Dict[str, Any]]:
+         agfs = self._fs._async_agfs
+         lease = await agfs.pathlock_acquire_tree(
+-            await self._existing_path(account_id, uri),
++            self._fs._uri_to_path(uri, ctx=self._context(account_id)),
+             timeout_secs=timeout,
+             owner_lease_ref=owner_lease_ref,
+         )
+```
+
+**File**: `openviking/service/fs_service.py` (modified, +20/-24)
+```diff
+@@ -525,7 +525,7 @@ async def mkdir(
+                     f"directory descriptions are not supported for namespace: {directory_uri}"
+                 )
+             async with self._hold_watch_scope(
+-                [await self._existing_tree_lock_request(directory_uri, ctx)], [directory_uri], ctx
++                [self._tree_lock_request(directory_uri, ctx)], [directory_uri], ctx
+             ) as lease:
+                 await viking_fs.mkdir(uri, ctx=ctx, lease_ref=lease)
+                 return
+@@ -539,7 +539,7 @@ async def create():
+             if managed:
+                 await viking_fs._ensure_access(directory_uri, ctx, action=AclAction.WRITE)
+             async with self._hold_watch_scope(
+-                [await self._existing_tree_lock_request(directory_uri, ctx)], [directory_uri], ctx
++                [self._tree_lock_request(directory_uri, ctx)], [directory_uri], ctx
+             ) as lease:
+                 acl_update = (
+                     await viking_fs.prepare_acl_update(directory_uri, acl, ctx)
+@@ -593,19 +593,10 @@ async def initialize(acl_update, lease):
+         else:
+             await create()
+ 
+-    async def _existing_tree_lock_request(self, uri: str, ctx: RequestContext) -> Dict[str, str]:
+-        """Tree-lock the deepest existing ancestor-or-self of *uri*.
+-
+-        Locking a missing path materializes it on some PathLock backends.
+-        """
++    def _tree_lock_request(self, uri: str, ctx: RequestContext) -> Dict[str, str]:
++        """Lock the target subtree, including when the target does not exist."""
+         viking_fs = self._ensure_initialized()
+-        existing = uri
+-        while not await viking_fs.exists(existing, ctx=ctx):
+-            parent = VikingURI(existing).parent
+-            if parent is None:
+-                break
+-            existing = parent.uri
+-        return {"path": viking_fs._uri_to_path(existing, ctx=ctx), "kind": "tree"}
++        return {"path": viking_fs._uri_to_path(uri, ctx=ctx), "kind": "tree"}
+ 
+     @staticmethod
+     def _normalize_directory_description(description: Optional[str]) -> Optional[str]:
+@@ -668,12 +659,19 @@ async def _rm(
+         context_type = context_type_for_uri(uri)
+         refresh_parent_uri = self._semantic_refresh_parent_uri(uri, context_type)
+         memory_overview_uri = self._memory_overview_parent_uri(uri, context_type)
+-        async with self._hold_watch_scope(
+-            [await self._existing_tree_lock_request(uri, ctx)], [uri], ctx
+-        ) as watch_lease:
+-            result = await viking_fs.rm(
+-                uri, recursive=recursive, ctx=delete_ctx, lease_ref=watch_lease
+-            )
++        parent_uri = VikingURI(uri).parent
++        if parent_uri is not None and await viking_fs.exists(parent_uri.uri, ctx=ctx):
++            async with self._hold_watch_scope(
++                [self._tree_lock_request(uri, ctx)], [uri], ctx
++            ) as watch_lease:
++                result = await viking_fs.rm(
++                    uri, recursive=recursive, ctx=delete_ctx, lease_ref=watch_lease
++                )
++                await self._sync_watch_after_rm(
++                    uri, account_id=ctx.account_id, context_type=context_type
++                )
++        else:
++            result = await viking_fs.rm(uri, recursive=recursive, ctx=delete_ctx)
+             await self._sync_watch_after_rm(
+                 uri, account_id=ctx.account_id, context_type=context_type
+             )
+@@ -1267,13 +1265,11 @@ async def _transfer_scope(
+             raise InvalidArgumentError(
+                 f"{operation} destination for a file must include the target file name: {to_uri}"
+             )
+-        # Locking a missing path materializes it on some PathLock backends, so the
+-        # native pre-lock checks run first and only existing paths are locked.
++        # Validate before acquiring the same source and target scopes as the
++        # native transfer, without extending a missing target to its parent.
+         await viking_fs._ensure_transfer_parent_directory(target_path, to_uri, operation=operation)
+         await viking_fs._ensure_transfer_target_type(target_path, to_uri, is_dir=is_dir)
+         if is_dir:
+-            if not await viking_fs.exists(to_uri, ctx=ctx):
+-                target_path = viking_fs._transfer_parent_path(target_path)
+             roots = sorted({source_path, target_path}, key=lambda path: (len(path), path))
+             requests = [
+                 {"path": path, "kind": "tree"}
+```
+
+**File**: `tests/resource/test_watch_manager.py` (modified, +6/-6)
+```diff
+@@ -121,16 +121,16 @@ async def test_create_requires_target_tree_lock(self, watch_manager: WatchManage
+         assert await watch_manager.get_task(task.task_id) is not None
+ 
+     @pytest.mark.asyncio
+-    async def test_create_for_missing_target_locks_existing_ancestor(
++    async def test_create_for_missing_target_does_not_block_sibling(
+         self, watch_manager: WatchManager, watch_vfs, tmp_path
+     ):
+-        await _create(watch_manager, "viking://resources/pending/doc.md")
+-
+-        assert not await watch_vfs.exists("viking://resources/pending")
+-        assert not list((tmp_path / "agfs").rglob("pending"))
+-
+         await watch_vfs.mkdir("viking://resources/held")
+         async with watch_manager.locks.tree(TEST_ACCOUNT_ID, "viking://resources/held"):
++            await _create(watch_manager, "viking://resources/pending")
++
++            assert not await watch_vfs.exists("viking://resources/pending")
++            assert not list((tmp_path / "agfs").rglob("pending"))
++
+             with pytest.raises(ResourceBusyError):
+                 await _create(watch_manager, "viking://resources/held/new/doc.md")
+ 
+```
+
+**File**: `tests/service/test_fs_service.py` (modified, +5/-4)
+```diff
+@@ -115,7 +115,8 @@ async def stat(self, uri, ctx=None, **_kwargs):
+         return {"isDir": self.is_dir}
+ 
+     async def rm(self, uri, recursive=False, ctx=None, lease_ref=None):
+-        assert lease_ref is not None and self._async_agfs.held
++        if lease_ref is not None:
++            assert self._async_agfs.held
+         self.rm_calls.append({"uri": uri, "recursive": recursive, "ctx": ctx})
+         if self.rm_error:
+             raise self.rm_error
+@@ -252,9 +253,9 @@ async def record_vectorization(**kwargs):
+ 
+     assert body_for_preview(viking_fs.abstract_content) == "# shared"
+     assert vectorized == ["# shared"]
+-    # The directory does not exist yet, so its existing parent is locked instead.
++    # Lock the intended directory without extending its scope to the parent.
+     assert viking_fs._async_agfs.requests[0] == [
+-        {"path": "/local/default/resources", "kind": "tree"}
++        {"path": "/local/default/resources/shared", "kind": "tree"}
+     ]
+ 
+ 
+@@ -2216,7 +2217,7 @@ async def test_rm_of_missing_path_does_not_create_it(request_context, local_fs_s
+     service, viking_fs = local_fs_service
+     await viking_fs.mkdir("viking://resources", ctx=request_context)
+ 
+-    await service.rm("viking://resources/gone", ctx=request_context, recursive=True)
++    await service.rm("viking://resources/gone/leaf.md", ctx=request_context, recursive=True)
+     assert not await viking_fs.exists("viking://resources/gone", ctx=request_context)
+ 
  
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7081** (closed): feat(compile): 支持编译产物关系图增量构建与查询 (@hezhang-1216)
-- **PR #7073** (2026-11-05): fix(magpie): add opt-in sessionless capture and raise recall budget (@yufeng201)
-- **PR #7071** (closed): fix(retrieve): use the general VLM for context rewrite, not the intent query planner (@umeGe)
-- **PR #7068** (closed): feat(compile): 保证产物关系图与编译完成及实时编辑一致 (@hezhang-1216)
-- **PR #7067** (2026-11-05): docs(ui): split package and module READMEs into English and Chinese files (@LaamGinghong)
-- **PR #7066** (2026-11-05): refactor(ui): give every public directory an index.ts entry and narrow the root exports (@LaamGinghong)
+- **PR #7297** (2026-11-09): docs(vika): clarify platform scope in release install notes (@openviking-superagent)
+- **PR #7296** (2026-11-09): docs(vika): unify Windows and POSIX installation guides (@openviking-superagent)
+- **PR #7295** (2026-11-09): feat(ui): build the file browser module and let its tree resize (@LaamGinghong)
+- **PR #7294** (2026-11-09): feat(dsh): support client-side recall compression with the host model (@openviking-superagent)
+- **PR #7292** (2026-11-09): ci(vika): give the Windows preview upload 60 minutes (@ZaynJarvis)
+- **PR #7291** (2026-11-09): chore(vika): release 0.5.0-preview and let previews move latest (@ZaynJarvis)
 
 ---
 
@@ -2351,36 +2523,59 @@ new path. The placeholder view is unchanged.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. magpie): add opt-in sessionless capture and raise recall budget (#7073)
+## X. ui): build the file browser module and let its tree resize (#7295)
 
 **RULE**:
-When implementing operations in `examples/claude-code-memory-plugin/scripts/shared/config-schema.mjs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `frontend/docs/docs/_demos/file-browser-basic.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `739e17f9`: magpie): add opt-in sessionless capture and raise recall budget (#7073). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `36354fa6`: ui): build the file browser module and let its tree resize (#7295). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `examples/claude-code-memory-plugin/scripts/shared/config-schema.mjs`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `frontend/docs/docs/_demos/file-browser-basic.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-  // Magpie uses these for capture when its gateway has no session or yields to a native plugin.
-  { name: "captureWithoutSession", type: "bool", default: false, capability: "capture" },
-  { name: "nativeAgents", type: "list", default: [], capability: "capture" },
-export const HARNESS_CONFIG_KEYS = new Set([
-  ...Object.values(HARNESS_KEYS).flatMap((key) => [key, key.replace(/_/g, "-")]),
-  "magpie", // Magpie supports ovcli.conf only, with no legacy ov.conf section.
-]);
+import { OpenVikingProvider } from '@openviking/react/client';
+import { FileBrowserEntries } from '@openviking/react/components/file-browser-entries';
+import '@openviking/react/components/file-browser-entries/style.css';
+import { FileBrowser } from '@openviking/react/modules/file-browser';
+import '@openviking/react/modules/file-browser/style.css';
+
+/**
+ * 离线运行的文件浏览示例。数据由本文件里的 `offlineFetch` 按原生接口的形状返回，
+ * 不访问网络，也不带任何凭证——示例只用来演示视图与交互。
+ *
+ * 换成真实服务时，删掉 `fetch` 与下面的假数据，改为在 Provider 上传服务地址与
+ * 身份字段；正式接入由宿主从自己的配置与登录态取值。
+ *
+ * An offline file browser demo. `offlineFetch` below answers in the shape of the
+ * native API, so the example touches no network and carries no credential; it
+ * exists only to show the view and its interactions.
+ *
+ * For a real service, drop `fetch` and the fixtures below and pass the address and
+ * identity fields to the Provider; a real host reads them from its own
+ * configuration and sign-in state.
+ */
+
+/** 一条目录项，形状与 `fs/ls` 的返回一致。One directory entry, shaped like `fs/ls`. */
+interface Entry {
+  uri: string;
+  isDir?: boolean;
+}
+
+const USER = 'viking://user/alice';
+const MEMORIES = `${USER}/memories`;
+const PREFERENCES = `${MEMORIES}/preferences`;
+const ENTITIE
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-export const HARNESS_CONFIG_KEYS = new Set(
-  Object.values(HARNESS_KEYS).flatMap((key) => [key, key.replace(/_/g, "-")]),
-);
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `739e17f9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `36354fa6` are properly handled with clean fallback behavior.

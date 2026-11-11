@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md`  
 > **Source**: github ([https://github.com/software-mansion/react-native-reanimated](https://github.com/software-mansion/react-native-reanimated))  
-> **Source Version**: `8f38c4e3`  
+> **Source Version**: `b66eb8c7`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T03:57:39.306Z  
+> **Timestamp**: 2026-11-09T16:40:23.704Z  
 > **Learning ID**: `learn-github-software-mansion-react-native-reanimated`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/software-mansion/react-native-reanimated](https://github.com/software-mansion/react-native-reanimated))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T03:57:37.924Z  
+> **Harvest Timestamp**: 2026-11-09T16:40:23.699Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: React Native's Animated library reimplemented
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 11047 stars
+- **Stars / Engagement**: 11063 stars
 
 ---
 
@@ -898,1279 +898,1073 @@ export const getCodeWithOverrides = <C extends object, O extends object>(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `134779bf` (2026-11-01)
-**Commit Message**: perf(Reanimated): destroy the light tree's dropped views off the UI thread (#10996)
+### Incident Patch 1: `97538ca5` (2026-11-07)
+**Commit Message**: fix(Reanimated): keep content drawn over a nested shared element visible during shared element transitions (#11166)
 
 > [!NOTE]
-> This pull request was authored by AI on behalf of @tomekzaw.
+> This pull request was authored by AI on behalf of @bartlomiejbloniarz.
 
 ## Summary
 
-On every props update the light tree replaces a node's previous view,
-which is often the last owner of the props from two commits back, so
-destroying them ran inside `pullTransaction` on the UI thread. This
-collects the replaced views and destroys them with
-`LowPriorityExecutor`, as `MountingCoordinator` does with old revisions.
-React Native keeps that header under `react/utils/platform/android` and
-`platform/ios`, so this adds both directories to the include paths, as
-`RNWorklets.podspec` already does on iOS.
+During a shared element transition, each flying view (the carrier)
+leaves its parent and is inserted at the root of the surface, in the
+order the transitions start. When a shared element contains another
+shared element, both become separate root views. The nested one is
+inserted later, so it is drawn above the whole parent. A plain child of
+the parent that was drawn over the nested element, such as a label over
+a photo, is hidden behind it for the whole flight. This happens with and
+without `fadeContent`, for pushes, pops and the iOS back swipe, on both
+platforms. Reordering the root views cannot fix it, because the parent
+and its label are one native view: the photo can only go entirely above
+it or entirely below it.
+
+```mermaid
+flowchart LR
+  subgraph Screen["On screen"]
+    direction TB
+    S1["card"] --> S2["photo (shared)"] --> S3["label"]
+  end
+  subgraph Main["Flight on main"]
+    direction TB
+    M1["card + label"] --> M2["photo (shared)"]
+  end
+  subgraph PR["Flig
+
+**File**: `apps/common-app/runtime-tests/reanimated/tests/layoutAnimations/sharedTransitionFadeProgress.test.tsx` (modified, +3/-4)
+```diff
+@@ -301,10 +301,6 @@ describe('Nested shared transition content fade during Screen progress', () => {
+         false,
+         false
+       );
+-      await expectEventually(async () => {
+-        const parent = await RuntimeTestObserver!.observeParent(innerSource);
+-        return parent !== null && parent !== originalParent;
+-      }).toBe(true);
+       await RuntimeTestObserver!.emitScreenTransitionProgress(
+         targetScreen,
+         0.5,
+@@ -325,6 +321,9 @@ describe('Nested shared transition content fade during Screen progress', () => {
+           outerTarget?.opacity === 0
+         );
+       }).toBe(true);
++      expect(await RuntimeTestObserver!.observeParent(innerSource)).toBe(
++        originalParent
++      );
+ 
+       if (outcome === 'end') {
+         await RuntimeTestObserver!.emitScreenTransitionProgress(
+```
+
+**File**: `apps/common-app/runtime-tests/reanimated/tests/layoutAnimations/sharedTransitionGesture.test.tsx` (modified, +141/-0)
+```diff
+@@ -77,6 +77,59 @@ function Screens({
+   );
+ }
+ 
++function NestedScreens({ innerMounted = true }: { innerMounted?: boolean }) {
++  const sourceScreen = useTestRef('nestedGestureSourceScreen');
++  const targetScreen = useTestRef('nestedGestureTargetScreen');
++  const outer = useTestRef('nestedGestureOuter');
++  const inner = useTestRef('nestedGestureInner');
++  return (
++    <View style={styles.container}>
++      <Screen
++        ref={targetScreen}
++        onAppear={() => notify('nested-gesture-target-appeared')}
++        enabled
++        activityState={2}
++        style={styles.screen}>
++        <SharedTransitionBoundary isActive={false}>
++          <Animated.View
++            sharedTransitionTag="nested-gesture-outer"
++            sharedTransitionStyle={transition}
++            style={styles.nestedOuterTarget}>
++            <Animated.View
++              sharedTransitionTag="nested-gesture-inner"
++              sharedTransitionStyle={transition}
++              style={styles.nestedInnerTarget}
++            />
++          </Animated.View>
++        </SharedTransitionBoundary>
++      </Screen>
++      <Screen
++        ref={sourceScreen}
++        onAppear={() => notify('nested-gesture-source-appeared')}
++        enabled
++        activityState={2}
++        style={styles.screen}>
++        <SharedTransitionBoundary isActive>
++          <Animated.View
++            ref={outer}
++            sharedTransitionTag="nested-gesture-outer"
++            sharedTransitionStyle={transition}
++            style={styles.nestedOuterSource}>
++            {innerMounted && (
++              <Animated.View
++                ref={inner}
++                sharedTransitionTag="nested-gesture-inner"
++                sharedTransitionStyle={transition}
++                style={styles.source}
++              />
++            )}
++          </Animated.View>
++        </SharedTransitionBoundary>
++      </Screen>
++    </View>
++  );
++}
++
+ describe('Retained source during native Screen progress', () => {
+   const gestureTest = Platform.OS === 'ios' ? test : test.skip;
+ 
+@@ -130,6 +183,81 @@ describe('Retained source during native Screen progress', () => {
+   );
+ });
+ 
++describe('Nested shared view during native Screen progress', () => {
++  const gestureTest = Platform.OS === 'ios' ? test : test.skip;
++
++  gestureTest(
++    'moves a removed nested view to its target on screen',
++    async () => {
++      await render(<NestedScreens />);
++      await waitForNotification('nested-gesture-source-appeared');
++      await waitForNotification('nested-gesture-target-appeared');
++      await expectEventually(
++        async () =>
++          (await getTestComponent('nestedGestureInner').getMountedViewProps())
++            ?.width
++      ).toBe(60, ComparisonMode.PIXEL);
++      const targetScreen = getTestComponent(
++        'nestedGestureTargetScreen'
++      ).getTag();
++      const outer = getTestComponent('nestedGestureOuter').getTag();
++      const inner = getTestComponent('nestedGestureInner').getTag();
++      const originalParent = await observer().observeParent(outer);
++      await observer().emitScreenTransitionProgress(
++        targetScreen,
++        0,
++        false,
++        false
++      );
++      await expectEventually(async () => {
++        const parent = await observer().observeParent(outer);
++        return parent !== null && parent !== originalParent;
++      }).toBe(true);
++      const outerStart = await mountedX(outer);
++      if (outerStart === undefined) {
++        throw new Error('The outer carrier is not mounted');
++      }
++      await observer().emitScreenTransitionProgress(
++        targetScreen,
++        0.5,
++        false,
++        false
++      );
++      await expectEventually(() => mountedX(outer)).toBe(
++        outerStart + 50,
++        ComparisonMode.PIXEL
++      );
++      await render(<NestedScreens innerMounted={false} />);
++      await waitForFrames(3);
++      await observer().emitScreenTransitionProgress(
++        targetScreen,
++        0.75,
++        false,
++        false
++      );
++      // The outer view moves by 100 and the inner view by 20 inside it.
++      await expectEventually(() => mountedX(inner)).toBe(
++        outerStart + 90,
++        ComparisonMode.PIXEL
++      );
++      await observer().emitScreenTransitionProgress(
++        targetScreen,
++        1,
++        false,
++        false
++      );
++      await expectGone(inner);
++    }
++  );
++});
++
++function mountedX(tag: number) {
++  return runOnUIBlocking(() => {
++    'worklet';
++    return global._obtainMountedViewProps(tag, false)?.x;
++  });
++}
++
+ async function startGesture() {
+   await render(<Screens />);
+   await waitForNotification('gesture-source-appeared');
+@@ -208,4 +336,17 @@ const styles = StyleSheet.create({
+   source: { width: 60, height: 60, backgroundColor: '#dd5522' },
+   target: { width: 150, height: 150, backgroundColor: '#2277dd' },
+   child: { width: 20, height: 15, backgroundColor: '#ffffff' },
++  nestedOuterSource: { width: 100, height: 100, backgroun
+```
+
+**File**: `apps/common-app/runtime-tests/reanimated/tests/layoutAnimations/sharedTransitionNested.test.tsx` (modified, +83/-35)
+```diff
+@@ -1,5 +1,5 @@
+ import { useEffect } from 'react';
+-import { StyleSheet, View } from 'react-native';
++import { Platform, StyleSheet, View } from 'react-native';
+ import Animated, {
+   cancelAnimation,
+   FadeOut,
+@@ -70,6 +70,7 @@ function Target({
+   repeatInner,
+   exiting,
+   transitions,
++  wrapperTranslateX,
+ }: {
+   active: boolean;
+   innerSize: number;
+@@ -78,6 +79,7 @@ function Target({
+   repeatInner: boolean;
+   exiting: boolean;
+   transitions: Transitions;
++  wrapperTranslateX: number;
+ }) {
+   const outer = useTestRef('targetOuter');
+   const inner = useTestRef('targetInner');
+@@ -92,6 +94,24 @@ function Target({
+   const innerStyle = useAnimatedStyle(() =>
+     repeatInner ? { opacity: 0.6 + repeat.value * 0.4 } : {}
+   );
++  const innerView = (
++    <Animated.View
++      ref={inner}
++      sharedTransitionTag="inner"
++      sharedTransitionStyle={transitions.inner}
++      exiting={exiting ? targetExiting : undefined}
++      accessibilityLabel={innerLabel}
++      style={[
++        styles.targetInner,
++        {
++          width: innerSize,
++          height: innerSize,
++          backgroundColor: innerColor,
++        },
++        innerStyle,
++      ]}
++    />
++  );
+   return (
+     <SharedTransitionBoundary isActive={active}>
+       <Animated.View
+@@ -100,22 +120,13 @@ function Target({
+         sharedTransitionStyle={transitions.outer}
+         exiting={exiting ? targetExiting : undefined}
+         style={styles.targetOuter}>
+-        <Animated.View
+-          ref={inner}
+-          sharedTransitionTag="inner"
+-          sharedTransitionStyle={transitions.inner}
+-          exiting={exiting ? targetExiting : undefined}
+-          accessibilityLabel={innerLabel}
+-          style={[
+-            styles.targetInner,
+-            {
+-              width: innerSize,
+-              height: innerSize,
+-              backgroundColor: innerColor,
+-            },
+-            innerStyle,
+-          ]}
+-        />
++        {wrapperTranslateX ? (
++          <View style={{ transform: [{ translateX: wrapperTranslateX }] }}>
++            {innerView}
++          </View>
++        ) : (
++          innerView
++        )}
+       </Animated.View>
+     </SharedTransitionBoundary>
+   );
+@@ -132,6 +143,7 @@ function Screens({
+   transitions = innerEndsFirst,
+   removeSource = false,
+   innerWrapped = false,
++  wrapperTranslateX = 0,
+ }: {
+   active: boolean;
+   keepTarget?: boolean;
+@@ -143,6 +155,7 @@ function Screens({
+   transitions?: Transitions;
+   removeSource?: boolean;
+   innerWrapped?: boolean;
++  wrapperTranslateX?: number;
+ }) {
+   const inner = useTestRef('sourceInner');
+   const outer = useTestRef('sourceOuter');
+@@ -159,8 +172,13 @@ function Screens({
+             {/* A collapsable wrapper is flattened, so the inner view changes its native parent. */}
+             <View
+               ref={innerWrapper}
+-              collapsable={!innerWrapped}
+-              style={innerWrapped && styles.innerWrapper}>
++              collapsable={!innerWrapped && !wrapperTranslateX}
++              style={[
++                innerWrapped && styles.innerWrapper,
++                !!wrapperTranslateX && {
++                  transform: [{ translateX: wrapperTranslateX }],
++                },
++              ]}>
+               <Animated.View
+                 ref={inner}
+                 sharedTransitionTag="inner"
+@@ -180,6 +198,7 @@ function Screens({
+           repeatInner={repeatInner}
+           exiting={exitingTarget}
+           transitions={transitions}
++          wrapperTranslateX={wrapperTranslateX}
+         />
+       )}
+     </View>
+@@ -516,7 +535,7 @@ describe('Nested shared transitions', () => {
+     ['inner first', innerEndsFirst, 600, 3000],
+     ['outer first', outerEndsFirst, 300, 1200],
+   ] as const) {
+-    test(`keeps deleted nested carriers independent when they finish ${order}`, async () => {
++    test(`keeps deleted nested carriers until both finish when the ${order.replace(' first', '')} one ends first`, async () => {
+       await mockAnimationTimer({ autoAdvance: false });
+       await render(
+         <Screens active={false} transitions={transitions} removeSource />
+@@ -538,13 +557,7 @@ describe('Nested shared transitions', () => {
+           return global._obtainMountedViewProps(innerTag, false)?.opacity;
+         })
+       ).toBe(1);
+-      if (order === 'outer first') {
+-        await expectEventually(() => isViewMountedNatively(outerTag)).toBe(
+-          false
+-        );
+-      } else {
+-        expect(await isViewMountedNatively(outerTag)).toBe(true);
+-      }
++      expect(await isViewMountedNatively(outerTag)).toBe(true);
+       await advanceAnimationTimer(secondEnd - firstEnd);
+       await waitForNotification(
+         order === 'inner first' ? 'outer-finished' : 'inner-finished'
+@@ -557,7 +570,7 @@ describe('Nested shared transitions', () => {
+   }
+ 
+   test.each([true, false])(
+-    'keeps a waiting inner view on screen when React moves it (wrapped first: %p)',
++    'moves a waiting inner vi
+```
+
+**File**: `apps/common-app/src/apps/reanimated/examples/SharedElementTransitions/NestedZOrder.tsx` (added, +157/-0)
+```diff
+@@ -0,0 +1,157 @@
++import type { NativeStackScreenProps } from '@react-navigation/native-stack';
++import { createNativeStackNavigator } from '@react-navigation/native-stack';
++import React from 'react';
++import { Pressable, StyleSheet, Text, View } from 'react-native';
++import Animated, { SharedTransition } from 'react-native-reanimated';
++
++import { withSharedTransitionBoundary } from './withSharedTransitionBoundary';
++
++const DURATION = 1500;
++
++const VARIANTS = {
++  plain: {
++    card: SharedTransition.duration(DURATION),
++    photo: SharedTransition.duration(DURATION),
++  },
++  fadeContent: {
++    card: SharedTransition.duration(DURATION).fadeContent(),
++    photo: SharedTransition.duration(DURATION),
++  },
++};
++
++type Variant = keyof typeof VARIANTS;
++
++type ParamList = {
++  Cards: undefined;
++  Details: { variant: Variant };
++};
++
++const DESCRIPTION =
++  'The card and the blue photo have their own shared tags. The yellow label is a plain child of the card, drawn above the photo. It should stay above the photo during the transition.';
++
++const Stack = createNativeStackNavigator<ParamList>();
++
++function CardsContent({
++  navigation,
++}: NativeStackScreenProps<ParamList, 'Cards'>) {
++  return (
++    <View style={styles.cards}>
++      <Text style={styles.description}>{DESCRIPTION}</Text>
++      <View style={styles.row}>
++        {(Object.keys(VARIANTS) as Variant[]).map((variant) => (
++          <Pressable
++            key={variant}
++            testID={`card-${variant}`}
++            onPress={() => navigation.navigate('Details', { variant })}>
++            <Animated.View
++              sharedTransitionTag={`zorder-card-${variant}`}
++              sharedTransitionStyle={VARIANTS[variant].card}
++              style={styles.smallCard}>
++              <Animated.View
++                sharedTransitionTag={`zorder-photo-${variant}`}
++                sharedTransitionStyle={VARIANTS[variant].photo}
++                style={styles.smallPhoto}
++              />
++              <View style={styles.smallLabel}>
++                <Text style={styles.smallLabelText}>LABEL</Text>
++              </View>
++            </Animated.View>
++            <Text style={styles.variantName}>{variant}</Text>
++          </Pressable>
++        ))}
++      </View>
++    </View>
++  );
++}
++
++function DetailsContent({
++  route,
++  navigation,
++}: NativeStackScreenProps<ParamList, 'Details'>) {
++  const { variant } = route.params;
++  return (
++    <Pressable
++      testID="details"
++      style={styles.details}
++      onPress={() => navigation.goBack()}>
++      <Animated.View
++        sharedTransitionTag={`zorder-card-${variant}`}
++        sharedTransitionStyle={VARIANTS[variant].card}
++        style={styles.largeCard}>
++        <Animated.View
++          sharedTransitionTag={`zorder-photo-${variant}`}
++          sharedTransitionStyle={VARIANTS[variant].photo}
++          style={styles.largePhoto}
++        />
++        <View style={styles.largeLabel}>
++          <Text style={styles.largeLabelText}>LABEL</Text>
++        </View>
++      </Animated.View>
++      <Text style={styles.description}>Tap anywhere to go back</Text>
++    </Pressable>
++  );
++}
++
++const Cards = withSharedTransitionBoundary(CardsContent);
++const Details = withSharedTransitionBoundary(DetailsContent);
++
++export default function NestedZOrderExample() {
++  return (
++    <Stack.Navigator>
++      <Stack.Screen name="Cards" component={Cards} />
++      <Stack.Screen name="Details" component={Details} />
++    </Stack.Navigator>
++  );
++}
++
++const styles = StyleSheet.create({
++  cards: { flex: 1, padding: 16, paddingTop: 100, backgroundColor: 'white' },
++  description: { fontSize: 15, lineHeight: 21, marginVertical: 16 },
++  row: { flexDirection: 'row', justifyContent: 'space-around' },
++  variantName: { marginTop: 8, textAlign: 'center', fontSize: 15 },
++  smallCard: {
++    width: 150,
++    height: 190,
++    padding: 12,
++    borderRadius: 16,
++    overflow: 'hidden',
++    backgroundColor: '#2b2b2b',
++  },
++  smallPhoto: { width: 126, height: 126, backgroundColor: '#1e6fd9' },
++  smallLabel: {
++    position: 'absolute',
++    left: 12,
++    right: 12,
++    bottom: 12,
++    height: 76,
++    justifyContent: 'center',
++    alignItems: 'center',
++    backgroundColor: '#ffd60a',
++  },
++  smallLabelText: { fontSize: 18, fontWeight: 'bold', color: 'black' },
++  details: {
++    flex: 1,
++    padding: 16,
++    paddingTop: 120,
++    backgroundColor: 'white',
++  },
++  largeCard: {
++    height: 440,
++    padding: 16,
++    borderRadius: 24,
++    overflow: 'hidden',
++    backgroundColor: '#2b2b2b',
++  },
++  largePhoto: { height: 320, backgroundColor: '#1e6fd9' },
++  largeLabel: {
++    position: 'absolute',
++    left: 16,
++    right: 16,
++    bottom: 16,
++    height: 160,
++    justifyContent: 'center',
++    alignItems: 'center',
++    backgroundColor: '#ffd60a',
++  },
++  largeLabelText: { fontSize: 40, fontWeight: 'bold', color: 'black' },
++});
+```
+
+**File**: `apps/common-app/src/apps/reanimated/examples/index.ts` (modified, +13/-0)
+```diff
+@@ -231,6 +231,10 @@ const SynchronousPropsSETExample: React.FC = () =>
+   );
+ const NestedTagsExample: React.FC = () =>
+   React.createElement(require('./SharedElementTransitions/NestedTags').default);
++const NestedZOrderExample: React.FC = () =>
++  React.createElement(
++    require('./SharedElementTransitions/NestedZOrder').default
++  );
+ const NestedStacksExample: React.FC = () =>
+   React.createElement(
+     require('./SharedElementTransitions/NestedStacks').default
+@@ -851,6 +855,15 @@ const ALL_EXAMPLES: Record<string, Example> = {
+       android: true,
+     },
+   },
++  NestedZOrderExample: {
++    title: '[SET] Nested z-order',
++    screen: NestedZOrderExample,
++    disabledPlatforms: [REAPlatform.WEB],
++    shouldWork: {
++      ios: true,
++      android: true,
++    },
++  },
+   NestedStacksExample: {
+     title: '[SET] Nested stacks',
+     screen: NestedStacksExample,
+```
+
+**File**: `docs/docs-reanimated/docs/shared-element-transitions/children-of-shared-views.mdx` (modified, +3/-3)
+```diff
+@@ -20,7 +20,7 @@ By default, the shared view moves together with its own children, and the childr
+ 
+ ## Children with their own tag
+ 
+-A child with its own matching `sharedTransitionTag` moves from its place in the old view to its place in the new view. It does not fade with its parent, also with `fadeContent()`. To see the difference, toggle the **Icon has its own tag** switch in the demo above.
++A child with its own matching `sharedTransitionTag` moves from its place in the old view to its place in the new view. It does not fade with its parent, also with `fadeContent()`. When its target is inside the target of the parent, it moves inside the moving parent: it keeps its place in the drawing order and the clipping of the parent, and the two land together when the slower one ends. To see the difference, toggle the **Icon has its own tag** switch in the demo above.
+ 
+ ```tsx
+ <Animated.View sharedTransitionTag="card" sharedTransitionStyle={transition}>
+@@ -92,9 +92,9 @@ const transition = SharedTransition.duration(450).fadeContent({
+ 
+ ## Remarks
+ 
+-- Only the direct children of the shared views fade. A child that fills the view, for example a background image, fades like the other children.
++- The direct children of the shared views fade. A nested shared view keeps its own opacity. When a direct child holds a nested shared view, that child keeps its opacity and its other children fade instead, down to the nested shared view. A child that fills the view, for example a background image, fades like the other children.
+ - A shared view without children, for example a shared `Image`, has nothing to fade.
+-- A direct child of the target view with an [`entering`](../layout-animations/entering-exiting-animations.mdx) animation plays it after the transition ends, in place of the fade-in. Deeper children play their entering animations during the move.
++- A child of the target view that fades and has an [`entering`](../layout-animations/entering-exiting-animations.mdx) animation plays it after the transition ends, in place of the fade-in. These are the direct children and, on the path down to a nested shared view, the other children at each level. Other deeper children play their entering animations during the move.
+ - The transition uses the builder of the view that it starts from. To fade the content in both directions, give `fadeContent()` to both views.
+ - If the user goes back during the move, the children fade in again while the view returns.
+ - With `.springify()`, the fade-in starts when the spring stops. By default, the fade-in takes half of the spring duration: half of `springify(duration)`, or 250 ms without a duration. To change it without changing the spring, set `fadeIn.duration`.
+```
+
+**File**: `docs/docs-reanimated/docs/shared-element-transitions/limitations.mdx` (modified, +3/-1)
+```diff
+@@ -25,12 +25,14 @@ Check these points:
+ - If the target view changes only its style during the transition, the moving view does not animate to the new style. The new style shows when the transition ends. A shared view that waits for its parent (see below) animates to a new style of its target.
+ - If the target view moves or changes its size during the transition, the moving view goes to the new place. For a timed transition, if this happens just as the transition ends, the view can move again with the full duration.
+ - If React removes the target view during the transition and the source view stays, the view moves to the last place of the target. Then the source view shows in its own place at once. If the same update makes the source screen active again, for example `navigation.goBack()`, the view moves back to the source.
+-- A shared view inside another shared view waits for its parent. If its own transition ends first, it stays at its target until the transition of the parent ends.
++- A shared view inside another shared view moves inside the moving parent when its target is inside the target of the parent. It follows the path of the parent. When the two use different timing, it moves relative to the parent, not along its own path on screen. If its own transition ends first, it waits inside the parent until the transition of the parent ends. If the layout of its target changes while it waits, it moves again with its full duration.
++- A nested shared view moves on its own, above other views, when it is nested on only one of the screens, when its new target after a retarget is outside the target of the parent, or when React moves it out of the parent or removes a view between it and the parent. It keeps its frame on screen when it starts to move on its own.
+ 
+ ## Known issues
+ 
+ - On iOS, a screen that a native stack shows for the first time gets its header size a moment later. A view that flies to such a screen, for example to the first screen of a nested stack, can first move too high and then move down.
+ - On iOS, if the header of a covered screen changes, for example after a theme change, a view that goes back to this screen can stop at the old place and then jump.
++- A nested shared view does not follow a scroll or a layout animation of a view between it and its moving parent. A view between them with `overflow: hidden` clips it to the source bounds of that view.
+ - During development, a Fast Refresh can start a transition between the old and the new version of a view on the same screen. This does not happen in release builds.
+ 
+ ## Videos and media
+```
+
+**File**: `packages/react-native-reanimated/Common/cpp/reanimated/LayoutAnimations/LayoutAnimationsProxy.cpp` (modified, +37/-18)
+```diff
+@@ -171,7 +171,9 @@ std::optional<ShadowView> LayoutAnimationsProxy::reparentLayoutAnimation(
+     animation.parentTag = parentTag;
+     animation.currentView.layoutMetrics.frame.origin += offset;
+     animation.startView.layoutMetrics.frame.origin += offset;
+-    animation.frameOffset += offset;
++    if (animation.type != LayoutAnimationType::SHARED_ELEMENT_TRANSITION_PROGRESS) {
++      animation.frameOffset += offset;
++    }
+     animation.finalView = newView;
+     return animation.currentView;
+   }
+@@ -180,7 +182,9 @@ std::optional<ShadowView> LayoutAnimationsProxy::reparentLayoutAnimation(
+     auto &animation = completedAnimationIt->second.animation;
+     animation.parentTag = parentTag;
+     animation.currentView.layoutMetrics.frame.origin += offset;
+-    animation.frameOffset += offset;
++    if (animation.type != LayoutAnimationType::SHARED_ELEMENT_TRANSITION_PROGRESS) {
++      animation.frameOffset += offset;
++    }
+     animation.finalView = newView;
+     return animation.currentView;
+   }
+@@ -529,7 +533,7 @@ void LayoutAnimationsProxy::updateLightTree(
+         const auto tag = mutation.newChildShadowView.tag;
+         // Without layout configs and animation records, every lookup below finds nothing, so the
+         // update goes through as it is. Checked per mutation, as an Insert can transfer a config.
+-        const bool mayAnimate = !node->isDetached &&
++        const bool mayAnimate = !node->isCarrier() &&
+             (hasLayoutAnimationRecords() || layoutAnimationsManager_->hasLayoutAnimationConfigs(LAYOUT));
+         std::shared_ptr<Serializable> config;
+         auto shouldAnimate = false;
+@@ -554,7 +558,7 @@ void LayoutAnimationsProxy::updateLightTree(
+         }
+         // The shared transition owns the mounted props and frame of its carrier.
+         // attachCarrier mounts React props and synchronous updates from the light node.
+-        if (node->isDetached) {
++        if (node->isCarrier()) {
+           break;
+         }
+         if (!mayAnimate) {
+@@ -644,7 +648,8 @@ void LayoutAnimationsProxy::updateLightTree(
+         if (moved.contains(tag)) {
+           const auto offset = reparentOffset(oldChains.at(tag), ancestorOrigins(parent, {}));
+           node->previous.layoutMetrics.frame.origin += offset;
+-          if (const auto currentView = reparentLayoutAnimation(tag, mutation.parentTag, node->current, offset)) {
++          const auto finalView = node->isNestedCarrier ? movedCarrierTarget(tag, offset) : node->current;
++          if (const auto currentView = reparentLayoutAnimation(tag, mutation.parentTag, finalView, offset)) {
+             filteredMutations.push_back(
+                 ShadowViewMutation::InsertMutation(mutation.parentTag, *currentView, hostIndex));
+           } else if (const auto updatedViewIt = updatedViews.find(tag); updatedViewIt != updatedViews.end() &&
+@@ -857,7 +862,7 @@ void LayoutAnimationsProxy::applySynchronousProps(const UpdatesBatch &updatesBat
+     if (isRoot(node)) {
+       continue;
+     }
+-    if (!trackInLightTree && !node->isDetached) {
++    if (!trackInLightTree && !node->isCarrier()) {
+       staleSynchronousProps_.record(tag, props);
+       continue;
+     }
+@@ -978,6 +983,9 @@ void LayoutAnimationsProxy::handleSubtreeRemoval(const std::shared_ptr<LightNode
+     const {
+   ReanimatedSystraceSection s("handleSubtreeRemoval");
+   if constexpr (StaticFeatureFlags::getFlag("ENABLE_SHARED_ELEMENT_TRANSITIONS")) {
++    if (!transaction.surfaceDropped) {
++      moveNestedCarriersOutOf(node, transaction);
++    }
+     retainRemovedCarriers(node, transaction);
+     if (node->isRetained) {
+       return;
+@@ -1294,6 +1302,11 @@ void LayoutAnimationsProxy::clearSurfaceState() const {
+       layoutAnimationsManager_->clearSharedTransitionContentFade(tag);
+     }
+     releaseUnmappedContentFadeConfigs();
++    for (const auto &[_, element] : sharedElements_) {
++      if (element.run) {
++        element.run->carrier->isNestedCarrier = false;
++      }
++    }
+     layoutAnimationsManager_->clearSharedTransitionConfigs(std::vector<Tag>(
+         deferredSharedTransitionConfigReleases_.begin(), deferredSharedTransitionConfigReleases_.end()));
+     deferredSharedTransitionConfigReleases_.clear();
+@@ -1426,7 +1439,8 @@ bool LayoutAnimationsProxy::isCarrierOfUncoveredRun(
+     const std::vector<std::shared_ptr<LightNode>> &coveringViews) const {
+   return std::ranges::any_of(sharedElements_, [&](const auto &entry) {
+     const auto &run = entry.second.run;
+-    return run && run->carrier->current.tag == tag && !isDescendantOfAny(run->target, coveringViews);
++    return run && run->carrier->current.tag == tag && !isDescendantOfAny(run->target, coveringViews) &&
++        !landsWithOtherRuns(*run);
+   });
+ }
+ 
+@@ -1530,7 +1544,10 @@ void LayoutAnimationsProxy::holdFramesUntilBatchIsQueued(const ShadowViewMutatio
+ // arrives from the JS thread, because that job runs after the frames are in the queue. The attach
+ // also restores the content of the carrier, so the fram
+```
+
+---
+
+### Incident Patch 2: `c40c1163` (2026-11-09)
+**Commit Message**: fix(SET): keep layout animations working after a non-string sharedTransitionTag (#11240)
+
+> [!NOTE]
+> This pull request was authored by AI on behalf of @bartlomiejbloniarz.
+
+## Summary
+
+A numeric `sharedTransitionTag`, such as
+`sharedTransitionTag={item.id}`, made native code throw while
+configuring the batch. The JS update queue was cleared only after the
+native call returned, so the failed item stayed queued and no later
+batch was sent. React's retry of the render then succeeded, so the app
+showed no error, but every later layout animation and shared transition
+config was silently dropped for the rest of the session.
+
+Now the queue is cleared before the native call, so one bad config no
+longer blocks later ones. Native code throws "`sharedTransitionTag` must
+be a string", which shows as a red box in development.
+
+<table>
+<tr><th>Before</th><th>After</th></tr>
+<tr>
+<td>
+
+
+https://github.com/user-attachments/assets/a5db1597-57f7-4a01-b68e-347bef9388c1
+
+</td>
+<td>
+
+
+https://github.com/user-attachments/assets/f933e4e8-27d1-4a80-a5a6-6ebd448f67f4
+
+</td>
+</tr>
+</table>
 
 ## Test plan
 
-- Release `fabric-example` on a Samsung Galaxy A16, Bokeh example with a
-fixed seed (100 views animating `transform` and `backgroundColor`
-through `useAnimatedStyle`), 4 rounds interleaved with `main`, 12 s
-Perfetto captures. `pullTransaction` per frame: 418 → 318 µs (−24%),
-lower in all 4 rounds.
-- Reanimated runtime tests (`ReleaseRuntimeTests`, Pixel 9a): 429
-passed, 3 failed, 1 skipped. The only failures are `a size render …
-keeps every color frame`, which also fail on `main` on this phone
+- `yarn workspace react-native-reanimated jest UpdateLayoutAnimations`:
+the new test fails on `main` an
 
-**File**: `apps/fabric-example/ios/Podfile.lock` (modified, +1/-1)
+**File**: `packages/react-native-reanimated/Common/cpp/reanimated/NativeModules/ReanimatedModuleProxy.cpp` (modified, +3/-0)
 ```diff
-@@ -2601,7 +2601,7 @@ SPEC CHECKSUMS:
-   RNCClipboard: efcb0fcabe40529a32cb0c75fcef4f9c73052c2e
-   RNCMaskedView: 89bb912716973f9715102cfe932f3ca6793b21f9
-   RNGestureHandler: 973d5b5cb7b88aca649eec9aecb783e3de1b9b3f
--  RNReanimated: cbb3ee3f32002440c743e34e00f62b62d404a56f
-+  RNReanimated: 20804e0866504904168c8b7027e323ffa96c1aa3
-   RNScreens: 1b386604ba6e45b594cb15714a078d7dca096211
-   RNSVG: 3dacba6cbd65d6016718d9b2b205e6e09cfc041d
-   RNWorklets: dc52f6581db88fb6d5c25237efbb472ab326f4bc
-```
-
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/LayoutAnimations/LayoutAnimationsProxy.cpp` (modified, +13/-0)
-```diff
-@@ -3,6 +3,7 @@
- #include <react/renderer/mounting/MountingCoordinator.h>
- #include <react/renderer/mounting/ShadowTree.h>
- #include <react/renderer/mounting/ShadowViewMutation.h>
-+#include <react/utils/LowPriorityExecutor.h>
- #include <reanimated/LayoutAnimations/LayoutAnimationsProxy.h>
- #include <reanimated/LayoutAnimations/LayoutAnimationsProxyRegistry.h>
- #include <reanimated/LayoutAnimations/PropsDiffer.h>
-@@ -289,6 +290,7 @@ std::optional<MountingTransaction> LayoutAnimationsProxy::pullTransaction(
-   }
- 
-   react_native_assert(!deletesCreatedTag(filteredMutations) && "Transaction deletes a view that it creates");
-+  releaseDroppedViews();
- #ifdef ANDROID
-   holdFramesUntilBatchIsQueued(filteredMutations);
- #endif
-@@ -682,6 +684,7 @@ void LayoutAnimationsProxy::updateLightNodeProps(
-     const ShadowView &newView) const {
-   const auto currentProps = node->current.props;
-   const auto propsChanged = newView.props != oldView.props;
-+  droppedViews_.push_back(std::move(node->previous));
-   node->previous = oldView;
-   node->current = newView;
-   if (!propsChanged) {
-@@ -777,6 +780,15 @@ void LayoutAnimationsProxy::startSurface(
-   initializeLightTree(mountingCoordinator->getBaseRevision());
- }
- 
-+void LayoutAnimationsProxy::releaseDroppedViews() const {
-+  if (droppedViews_.empty()) {
-+    return;
-+  }
-+  // shared_ptr, because on iOS the executor copies the callable on this thread
-+  LowPriorityExecutor::execute(
-+      [views = std::make_shared<std::vector<ShadowView>>(std::exchange(droppedViews_, {}))]() {});
-+}
-+
- void LayoutAnimationsProxy::initializeLightTree(const ShadowTreeRevision &baseRevision) {
-   ShadowViewMutationList initialMutations;
-   if (baseRevision.rootShadowNode) {
-@@ -805,6 +817,7 @@ void LayoutAnimationsProxy::initializeLightTree(const ShadowTreeRevision &baseRe
+@@ -532,6 +532,9 @@ jsi::Value ReanimatedModuleProxy::configureLayoutAnimationBatch(
      }
-   }
-   pendingTransactions_.clear();
-+  releaseDroppedViews();
-   if constexpr (StaticFeatureFlags::getFlag("ENABLE_SHARED_ELEMENT_TRANSITIONS")) {
-     topScreen_ = findActiveBoundary(lightNodes_.at(surfaceId_));
-   }
+     auto sharedTag = item.getProperty(rt, "sharedTransitionTag");
+     if (!sharedTag.isUndefined()) {
++      if (!sharedTag.isString()) {
++        throw std::runtime_error("[Reanimated] `sharedTransitionTag` must be a string.");
++      }
+       batchItem.sharedTransitionTag = sharedTag.asString(rt).utf8(rt);
+     }
+     if (const auto contentFade = item.getProperty(rt, "sharedTransitionContentFade"); contentFade.isObject()) {
 ```
 
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/LayoutAnimations/LayoutAnimationsProxy.h` (modified, +3/-0)
+**File**: `packages/react-native-reanimated/__tests__/UpdateLayoutAnimations.test.ts` (added, +39/-0)
 ```diff
-@@ -117,6 +117,8 @@ struct LayoutAnimationsProxy : public LayoutAnimationsProxyCommon {
-   mutable std::optional<ProgressTransition> transition_;
-   mutable std::optional<UncommittedScreenPop> uncommittedScreenPop_;
-   mutable std::shared_ptr<LightNode> topScreen_;
-+  // Views the light tree replaced, often the last owners of their props. Destroyed off the UI thread.
-+  mutable std::vector<ShadowView> droppedViews_;
-   // screens that forceScreenSnapshot_ switched to snapshots after updates; React Native Screens never switches them
-   // back
-   mutable std::unordered_set<Tag> snapshottedScreens_;
-@@ -183,6 +185,7 @@ struct LayoutAnimationsProxy : public LayoutAnimationsProxyCommon {
-       const ShadowView &oldView,
-       const ShadowView &newView) const;
-   void resolveLightNodeProps(const std::shared_ptr<LightNode> &node) const;
-+  void releaseDroppedViews() const;
-   void initializeLightTree(const ShadowTreeRevision &baseRevision);
-   bool isLightTreeInitialized() const {
-     return lightNodes_.contains(surfaceId_);
+@@ -0,0 +1,39 @@
++import { LayoutAnimationType } from '../src/commonTypes';
++import { configureLayoutAnimationBatch } from '../src/core';
++import { updateLayoutAnimations } from '../src/UpdateLayoutAnimations.native';
++
++jest.mock('react-native-worklets', () =>
++  jest.requireActual('../../react-native-worklets/src/mock')
++);
++jest.mock('../src/core', () => ({ configureLayoutAnimationBatch: jest.fn() }));
++jest.mock('../src/layoutReanimation/animationsManager', () => ({
++  initializeLayoutAnimationsManager: jest.fn(),
++}));
++
++const configure = configureLayoutAnimationBatch as jest.Mock;
++
++describe('updateLayoutAnimations', () => {
++  test('configures the next update after a rejected one', () => {
++    const error = new Error(
++      '[Reanimated] `sharedTransitionTag` must be a string.'
++    );
++    configure.mockImplementationOnce(() => {
++      throw error;
++    });
++
++    expect(() =>
++      updateLayoutAnimations(
++        1,
++        LayoutAnimationType.SHARED_ELEMENT_TRANSITION,
++        undefined,
++        undefined,
++        7 as unknown as string
++      )
++    ).toThrow(error);
++    updateLayoutAnimations(2, LayoutAnimationType.LAYOUT);
++
++    expect(configure).toHaveBeenLastCalledWith([
++      expect.objectContaining({ viewTag: 2 }),
++    ]);
++  });
++});
 ```
 
-**File**: `packages/react-native-reanimated/RNReanimated.podspec` (modified, +1/-0)
-```diff
-@@ -68,6 +68,7 @@ Pod::Spec.new do |s|
-       '"$(PODS_ROOT)/Headers/Private/React-Core"',
-       '"$(PODS_ROOT)/Headers/Private/Yoga"',
-       '"$(PODS_ROOT)/Headers/Public/RNWorklets"',
-+      '"$(PODS_CONFIGURATION_BUILD_DIR)/React-utils/React_utils.framework/Headers/react/utils/platform/ios"',
-     ].join(' '),
-     "FRAMEWORK_SEARCH_PATHS" => '"${PODS_CONFIGURATION_BUILD_DIR}/React-hermes"',
-     "CLANG_CXX_LANGUAGE_STANDARD" => "c++20",
-```
-
-**File**: `packages/react-native-reanimated/android/CMakeLists.txt` (modified, +1/-0)
-```diff
-@@ -79,6 +79,7 @@ target_include_directories(
-           "${REACT_NATIVE_DIR}/ReactCommon/runtimeexecutor"
-           "${REACT_NATIVE_DIR}/ReactCommon/jsiexecutor"
-           "${REACT_NATIVE_DIR}/ReactCommon/react/renderer/graphics/platform/cxx"
-+          "${REACT_NATIVE_DIR}/ReactCommon/react/utils/platform/android"
- )
- 
- set_target_properties(reanimated PROPERTIES LINKER_LANGUAGE CXX)
-```
-
-**File**: `packages/react-native-reanimated/changelog/light-tree-release-views-off-ui-thread.other.md` (added, +1/-0)
+**File**: `packages/react-native-reanimated/changelog/set-non-string-tag.fix.md` (added, +1/-0)
 ```diff
 @@ -0,0 +1 @@
-+Release the views that layout animations stop tracking off the UI thread.
++Throw an error for a `sharedTransitionTag` that is not a string, and keep configuring layout animations after such an error.
 ```
 
----
-
-### Incident Patch 2: `8f38c4e3` (2026-11-03)
-**Commit Message**: fix(FabricExample): keep runtime-test devices and crash diagnostics on the selected device (#11095)
-
-**File**: `apps/fabric-example/scripts/__tests__/android-device.test.mts` (modified, +166/-5)
+**File**: `packages/react-native-reanimated/src/UpdateLayoutAnimations.native.ts` (modified, +2/-1)
 ```diff
-@@ -10,27 +10,38 @@ type FakeDevice = {
-   avd: string | null;
-   booted: boolean;
-   neverBoots?: boolean;
-+  state?: string;
- };
- 
- type FakeOptions = {
-   devices?: FakeDevice[];
-   avds?: string[];
-   bootsAs?: string | null;
-+  bootExitStatus?: string | null;
-+  onSleep?: (connected: FakeDevice[]) => void;
-   bootTimeoutMs?: number;
-+  exitGraceMs?: number;
- };
- 
- function createFakeAndroid({
-   devices = [],
-   avds = [],
-   bootsAs = null,
-+  bootExitStatus = null,
-+  onSleep = () => {},
-   bootTimeoutMs = 5000,
-+  exitGraceMs = 5000,
- }: FakeOptions) {
-   const connected = devices.map((device) => ({ ...device }));
-   const booted: string[] = [];
-   const queriedAvdNames: string[] = [];
-   const bootChecks: string[] = [];
-   const tools = {
--    listDevices: async () => connected.map((device) => device.serial),
-+    listDevices: async () =>
-+      connected.map((device) => ({
-+        serial: device.serial,
-+        state: device.state ?? 'device',
-+      })),
-     avdName: async (serial: string) => {
-       queriedAvdNames.push(serial);
-       const device = connected.find((d) => d.serial === serial);
-@@ -45,6 +56,7 @@ function createFakeAndroid({
-       if (bootsAs) {
-         connected.push({ serial: bootsAs, avd, booted: false });
+@@ -34,9 +34,10 @@ function createUpdateManager() {
        }
-+      return () => bootExitStatus;
      },
-     isBootCompleted: async (serial: string) => {
-       bootChecks.push(serial);
-@@ -59,10 +71,15 @@ function createFakeAndroid({
-       device.booted = true;
-       return wasBooted;
+     flush(this: void) {
+-      configureLayoutAnimationBatch(animations.concat(deferredAnimations));
++      const batch = animations.concat(deferredAnimations);
+       animations.length = 0;
+       deferredAnimations.length = 0;
++      configureLayoutAnimationBatch(batch);
      },
--    sleep: (ms: number) =>
--      new Promise<void>((resolve) => setTimeout(resolve, Math.min(ms, 1))),
-+    sleep: (ms: number) => {
-+      onSleep(connected);
-+      return new Promise<void>((resolve) =>
-+        setTimeout(resolve, Math.min(ms, 1))
-+      );
-+    },
-     log: () => {},
-     bootTimeoutMs,
-+    exitGraceMs,
    };
-   return { tools, booted, queriedAvdNames, bootChecks };
  }
-@@ -209,12 +226,156 @@ describe('resolveAndroidDevice', () => {
-     ]);
-   });
- 
--  it('uses the first connected device when no target is given', async () => {
--    const fake = createFakeAndroid({ devices: [OTHER_EMULATOR, PHONE] });
-+  it('uses the only connected device when no target is given', async () => {
-+    const fake = createFakeAndroid({ devices: [PHONE] });
-     assert.equal(
-       await resolveAndroidDevice({ serial: null, avd: null }, fake.tools),
-+      'R58M123ABC'
-+    );
-+  });
-+
-+  it('fails when several devices are connected and no target is given', async () => {
-+    const fake = createFakeAndroid({ devices: [OTHER_EMULATOR, PHONE] });
-+    await assert.rejects(
-+      resolveAndroidDevice({ serial: null, avd: null }, fake.tools),
-+      /2 Android devices are connected \(emulator-5554 device, R58M123ABC device\), pass --serial or --avd/
-+    );
-+    assert.deepEqual(fake.queriedAvdNames, []);
-+    assert.deepEqual(fake.booted, []);
-+  });
-+
-+  it('counts an offline emulator when no target is given', async () => {
-+    const fake = createFakeAndroid({
-+      devices: [
-+        {
-+          serial: 'emulator-5554',
-+          avd: 'Mine',
-+          booted: false,
-+          state: 'offline',
-+        },
-+        PHONE,
-+      ],
-+    });
-+    await assert.rejects(
-+      resolveAndroidDevice({ serial: null, avd: null }, fake.tools),
-+      /2 Android devices are connected \(emulator-5554 offline, R58M123ABC device\)/
-+    );
-+  });
-+
-+  it('does not use the only device when it is not ready', async () => {
-+    const fake = createFakeAndroid({
-+      devices: [{ ...PHONE, state: 'unauthorized' }],
-+      avds: ['Mine'],
-+    });
-+    await assert.rejects(
-+      resolveAndroidDevice({ serial: null, avd: null }, fake.tools),
-+      /Android device R58M123ABC is unauthorized/
-+    );
-+    assert.deepEqual(fake.booted, []);
-+  });
-+
-+  it('waits past the exit grace for an offline instance of the AVD', async () => {
-+    let sleeps = 0;
-+    const fake = createFakeAndroid({
-+      devices: [
-+        {
-+          serial: 'emulator-5554',
-+          avd: 'Mine',
-+          booted: false,
-+          state: 'offline',
-+        },
-+      ],
-+      avds: ['Mine'],
-+      bootExitStatus: '1',
-+      exitGraceMs: 0,
-+      onSleep: (connected) => {
-+        sleeps += 1;
-+        if (sleeps === 3) {
-+          connected[0].state = 'device';
-+        }
-+      },
-+    });
-+    assert.equal(
-+      await resolveAndroidDevice({ serial: null, avd: 'Mine' }, fake.tools),
-+      'emulator-5554'
-+    );
-+  });
-+
-+  it('uses an instance of the AVD that was still offline when its duplicate exits', async () => {
-+    let sleeps = 0;
-+    const fake = createFakeAndroid({
-+      devices: [
-+        {
-+          serial: 'emulator-5554',
-+          avd: 'Mine',
-+          booted: false,
-+          state: 'offline',
-+        },
-+      ],
-+      avds: ['Mine'],
-+      bootExitStatus: '1',
-+      onSleep: (connected) => {
-+        sleeps += 1;
-+        if (sleeps === 2) {
-+          connected[0].state = 'device';
-+        }
-+      },
-+    });
-+   
-```
-
-**File**: `apps/fabric-example/scripts/__tests__/runtime-tests-diagnostics.test.mts` (added, +378/-0)
-```diff
-@@ -0,0 +1,378 @@
-+import assert from 'node:assert/strict';
-+import { spawnSync } from 'node:child_process';
-+import fs from 'node:fs';
-+import os from 'node:os';
-+import path from 'node:path';
-+import { afterEach, describe, it } from 'node:test';
-+
-+const SCRIPTS = path.resolve(import.meta.dirname, '..');
-+const NODE_MODULES = path.resolve(
-+  import.meta.dirname,
-+  '..',
-+  '..',
-+  '..',
-+  '..',
-+  'node_modules'
-+);
-+const SELECTED = 'emulator-5554';
-+const HUMAN_PHONE = '5A061JEBF05931';
-+const LAUNCH = ['--launch', '--configuration', 'ReleaseRuntimeTests'];
-+
-+const FAKE_ADB = `#!/bin/sh
-+echo "$*" >> "$FAKE_LOG"
-+if [ "$1" = devices ]; then
-+  echo 'List of devices attached'
-+  for device in $FAKE_DEVICES; do printf '%s\\t%s\\n' "\${device%:*}" "\${device#*:}"; done
-+  exit 0
-+fi
-+if [ "$1" != -s ]; then
-+  echo 'error: more than one device/emulator' >&2
-+  exit 1
-+fi
-+serial=$2
-+shift 2
-+case "$*" in
-+  'logcat -b crash -d') echo 'F libc: Fatal signal 11 (SIGSEGV)' ;;
-+  root) echo 'restarting adbd as root' ;;
-+  'pull -a /data/tombstones '*) mkdir -p "$4/tombstones" && echo '*** *** ***' > "$4/tombstones/tombstone_00" ;;
-+  'shell date +%s') date +%s ;;
-+  'shell getprop sys.boot_completed') [ -f "$FAKE_EMULATOR_PID" ] && echo 1 ;;
-+  'emu avd name')
-+    avd=Fake_AVD
-+    for entry in $FAKE_AVD_NAMES; do [ "\${entry%%=*}" = "$serial" ] && avd=\${entry#*=}; done
-+    echo "$avd"; echo OK ;;
-+  'shell getprop ro.product.cpu.abi') echo arm64-v8a ;;
-+esac
-+`;
-+
-+const FAKE_EMULATOR = `#!/bin/sh
-+echo "emulator $*" >> "$FAKE_LOG"
-+[ "$1" = -list-avds ] && { echo Fake_AVD; exit 0; }
-+[ "$FAKE_EMULATOR_EXIT" = 1 ] && exit 1
-+echo $$ > "$FAKE_EMULATOR_PID"
-+exec sleep 30
-+`;
-+
-+const FAKE_NDK_STACK = `#!/bin/sh
-+echo symbolized
-+`;
-+
-+describe(
-+  'runtime-tests device selection',
-+  { skip: process.platform === 'win32' },
-+  () => {
-+    let workDir = '';
-+
-+    afterEach(() => {
-+      stopFakeEmulator(path.join(workDir, 'emulator.pid'));
-+      fs.rmSync(workDir, { recursive: true, force: true });
-+    });
-+
-+    it('collects server-only crash diagnostics only from --serial', () => {
-+      workDir = createWorkDir();
-+      const result = runDriver(workDir, {
-+        devices: [SELECTED, HUMAN_PHONE],
-+        args: ['--platform', 'android', '--serial', SELECTED],
-+      });
-+
-+      assert.equal(result.status, 1, result.stderr);
-+      assert.match(
-+        result.stderr,
-+        new RegExp(`collecting crash diagnostics from ${SELECTED}`)
-+      );
-+      assert.deepEqual(result.adbCalls, [
-+        'devices',
-+        `-s ${SELECTED} logcat -b crash -d`,
-+        `-s ${SELECTED} logcat -b crash -d`,
-+        `-s ${SELECTED} logcat -b crash -c`,
-+        `-s ${SELECTED} root`,
-+        `-s ${SELECTED} wait-for-device`,
-+        `-s ${SELECTED} pull -a /data/tombstones ${result.tombstonesDir}`,
-+        `-s ${SELECTED} shell date +%s`,
-+        `-s ${SELECTED} shell rm -f /data/tombstones/*`,
-+        `-s ${SELECTED} shell getprop ro.product.cpu.abi`,
-+      ]);
-+      assert.match(result.stderr, /symbolized native stack trace/);
-+    });
-+
-+    it('collects server-only crash diagnostics only from the --avd emulator', () => {
-+      workDir = createWorkDir();
-+      const result = runDriver(workDir, {
-+        devices: ['emulator-5554', 'emulator-5556'],
-+        avdNames: { 'emulator-5556': 'Second_AVD' },
-+        args: ['--platform', 'android', '--avd', 'Second_AVD'],
-+      });
-+
-+      assert.equal(result.status, 1, result.stderr);
-+      assert.match(
-+        result.stderr,
-+        /collecting crash diagnostics from emulator-5556/
-+      );
-+      const deviceCalls = result.adbCalls.filter(
-+        (call) => call !== 'devices' && !call.endsWith(' emu avd name')
-+      );
-+      assert.ok(deviceCalls.length > 0);
-+      assert.ok(
-+        deviceCalls.every((call) => call.startsWith('-s emulator-5556 ')),
-+        deviceCalls.join('\n')
-+      );
-+    });
-+
-+    it('skips server-only crash diagnostics without --serial', () => {
-+      workDir = createWorkDir();
-+      const result = runDriver(workDir, {
-+        devices: [SELECTED, HUMAN_PHONE],
-+        args: ['--platform', 'android'],
-+      });
-+
-+      assert.equal(result.status, 1, result.stderr);
-+      assert.match(
-+        result.stderr,
-+        /no selected Android device available for crash diagnostics/
-+      );
-+      assert.deepEqual(result.adbCalls, []);
-+    });
-+
-+    it('stops when several devices are connected and none is selected', () => {
-+      workDir = createWorkDir();
-+      const result = runDriver(workDir, {
-+        devices: [SELECTED, HUMAN_PHONE],
-+        args: ['--platform', 'android', ...LAUNCH],
-+      });
-+
-+      assert.equal(result.status, 1, result.stderr);
-+      assert.match(
-+        result.stderr,
-+        new RegExp(
-+          `2 Android devices are connected \\(${SELECTED} device, ${HUMAN_PHONE} device\\), pass --serial or --avd`
-+        )
-+      );
-+      assert.deepEqual(result.adbCalls, ['de
-```
-
-**File**: `apps/fabric-example/scripts/android-device.js` (modified, +84/-17)
-```diff
-@@ -1,13 +1,16 @@
-+/** @typedef {{ serial: string; state: string }} AdbDevice */
-+
- /**
-  * @typedef {{
-- *   listDevices: () => Promise<string[]>;
-+ *   listDevices: () => Promise<AdbDevice[]>;
-  *   avdName: (serial: string) => Promise<string | null>;
-  *   listAvds: () => Promise<string[]>;
-- *   bootAvd: (avd: string) => void;
-+ *   bootAvd: (avd: string) => () => string | null;
-  *   isBootCompleted: (serial: string) => Promise<boolean>;
-  *   sleep: (ms: number) => Promise<void>;
-  *   log: (message: string) => void;
-  *   bootTimeoutMs?: number;
-+ *   exitGraceMs?: number;
-  * }} AndroidTools
-  */
- 
-@@ -17,7 +20,8 @@
-  * @returns {Promise<string>}
-  */
- async function resolveAndroidDevice({ serial, avd }, tools) {
--  const serials = await tools.listDevices();
-+  const devices = await tools.listDevices();
-+  const serials = readySerials(devices);
- 
-   if (serial) {
-     if (!serials.includes(serial)) {
-@@ -31,7 +35,7 @@ async function resolveAndroidDevice({ serial, avd }, tools) {
-   if (avd) {
-     const running = await findRunningAvd(avd, serials, tools);
-     if (running) {
--      return waitForBoot(avd, tools);
-+      return waitForBoot(avd, () => null, tools);
-     }
-     const avds = await tools.listAvds();
-     if (!avds.includes(avd)) {
-@@ -42,13 +46,22 @@ async function resolveAndroidDevice({ serial, avd }, tools) {
-     return bootAndWait(avd, tools);
-   }
- 
--  if (serials.length > 0) {
--    if (serials.length > 1) {
--      tools.log(
--        `[runtime-tests] multiple Android devices connected, using ${serials[0]}`
-+  if (devices.length > 1) {
-+    const listed = devices
-+      .map((device) => `${device.serial} ${device.state}`)
-+      .join(', ');
-+    throw new Error(
-+      `${devices.length} Android devices are connected (${listed}), pass --serial or --avd to select one`
-+    );
-+  }
-+  if (devices.length === 1) {
-+    const [device] = devices;
-+    if (device.state !== 'device') {
-+      throw new Error(
-+        `Android device ${device.serial} is ${device.state}, pass --serial or --avd to select a ready one`
-       );
-     }
--    return serials[0];
-+    return device.serial;
-   }
- 
-   const [firstAvd] = await tools.listAvds();
-@@ -83,30 +96,79 @@ async function findRunningAvd(avd, serials, tools) {
-  */
- async function bootAndWait(avd, tools) {
-   tools.log(`[runtime-tests] booting emulator ${avd}`);
--  tools.bootAvd(avd);
--  return waitForBoot(avd, tools);
-+  const exitStatus = tools.bootAvd(avd);
-+  return waitForBoot(avd, exitStatus, tools);
- }
- 
- /**
-  * @param {string} avd
-+ * @param {() => string | null} exitStatus
-  * @param {AndroidTools} tools
-  * @returns {Promise<string>}
-  */
--async function waitForBoot(avd, tools) {
-+async function waitForBoot(avd, exitStatus, tools) {
-   const timeoutMs = tools.bootTimeoutMs ?? 300_000;
-+  const exitGraceMs = tools.exitGraceMs ?? 60_000;
-   const deadline = Date.now() + timeoutMs;
-+  /** @type {number | null} */
-+  let exitedAt = null;
-   while (Date.now() < deadline) {
--    for (const serial of await tools.listDevices()) {
--      const name = await tools.avdName(serial).catch(() => null);
--      if (name === avd && (await tools.isBootCompleted(serial))) {
--        return serial;
-+    const status = exitStatus();
-+    const { booted, starting, unidentified } = await scanForAvd(avd, tools);
-+    if (booted) {
-+      return booted;
-+    }
-+    if (status !== null && !starting) {
-+      exitedAt ??= Date.now();
-+      if (!unidentified || Date.now() - exitedAt >= exitGraceMs) {
-+        throw new Error(`Emulator ${avd} exited (${status}) before it booted`);
-       }
-     }
-     await tools.sleep(2000);
-   }
-   throw new Error(`Emulator ${avd} did not boot within ${timeoutMs / 1000}s`);
- }
- 
-+/**
-+ * @param {string} avd
-+ * @param {AndroidTools} tools
-+ * @returns {Promise<{
-+ *   booted: string | null;
-+ *   starting: boolean;
-+ *   unidentified: boolean;
-+ * }>}
-+ */
-+async function scanForAvd(avd, tools) {
-+  let starting = false;
-+  let unidentified = false;
-+  for (const device of await tools.listDevices()) {
-+    const ready = device.state === 'device';
-+    if (!ready && !device.serial.startsWith('emulator-')) {
-+      continue;
-+    }
-+    const name = await tools.avdName(device.serial).catch(() => null);
-+    if (name !== avd) {
-+      unidentified ||= !ready && name === null;
-+      continue;
-+    }
-+    if (ready && (await tools.isBootCompleted(device.serial))) {
-+      return { booted: device.serial, starting, unidentified };
-+    }
-+    starting = true;
-+  }
-+  return { booted: null, starting, unidentified };
-+}
-+
-+/**
-+ * @param {AdbDevice[]} devices
-+ * @returns {string[]}
-+ */
-+function readySerials(devices) {
-+  return devices
-+    .filter((device) => device.state === 'device')
-+    .map((device) => device.serial);
-+}
-+
- /**
-  * @param {string} output
-  * @returns {string | null}
-@@ -122,4 +184,9 @@ function parseAvdName(output) {
-   return lines[0];
- }
- 
--module.exports = { resolveAndroidDevice, findRunningAvd, parseAvdNa
-```
-
-**File**: `apps/fabric-example/scripts/runtime-tests-server.js` (modified, +61/-14)
-```diff
-@@ -10,6 +10,7 @@ const WebSocket = require('ws');
- const {
-   resolveAndroidDevice: resolveAndroidTarget,
-   findRunningAvd,
-+  readySerials,
-   parseAvdName,
- } = require('./android-device');
- const WebSocketServer = WebSocket.WebSocketServer || WebSocket.Server;
-@@ -155,6 +156,8 @@ let idleTimer = null;
- let metroChild = null;
- /** @type {string | null} */
- let androidSerial = null;
-+/** @type {string | null} */
-+let iosUdid = null;
- /** @type {Promise<void> | null} */
- let crashDiagnosticsPromise = null;
- /** @type {Promise<void>} */
-@@ -542,11 +545,11 @@ wss.on('connection', (socket) => {
-       );
-       if (PLATFORM === 'android') {
-         console.error(
--          '[runtime-tests] The app most likely crashed — collecting crash diagnostics below.'
-+          '[runtime-tests] The app most likely crashed — see the crash diagnostics of the selected Android device below.'
-         );
-       } else {
-         console.error(
--          '[runtime-tests] The app most likely crashed — collecting crash reports below.'
-+          '[runtime-tests] The app most likely crashed — see the crash report search below.'
-         );
-       }
-       console.error(
-@@ -828,23 +831,30 @@ async function dumpIOSCrashDiagnostics() {
-     }
-     return;
-   }
-+  const udid = iosUdid ?? UDID;
-+  if (!udid) {
-+    console.error(
-+      '[runtime-tests] no selected iOS simulator for crash reports (pass --udid to select one)'
-+    );
-+    return;
-+  }
-   const reportsDir = path.join(
-     os.homedir(),
-     'Library',
-     'Logs',
-     'DiagnosticReports'
-   );
-   console.error(
--    `[runtime-tests] looking for FabricExample crash reports in ${reportsDir}…`
-+    `[runtime-tests] looking for FabricExample crash reports of ${udid} in ${reportsDir}…`
-   );
-   /** @type {{ name: string; file: string; mtimeMs: number }[]} */
-   let reports = [];
-   for (let attempt = 0; attempt < 10; attempt++) {
-     await sleep(3000);
--    reports = findFreshIOSCrashReports(reportsDir);
-+    reports = findFreshIOSCrashReports(reportsDir, udid);
-     if (reports.length > 0) {
-       await sleep(3000);
--      reports = findFreshIOSCrashReports(reportsDir);
-+      reports = findFreshIOSCrashReports(reportsDir, udid);
-       break;
-     }
-   }
-@@ -1015,9 +1025,10 @@ function printIOSCrashReports(reports) {
- 
- /**
-  * @param {string} reportsDir
-+ * @param {string} udid
-  * @returns {{ name: string; file: string; mtimeMs: number }[]}
-  */
--function findFreshIOSCrashReports(reportsDir) {
-+function findFreshIOSCrashReports(reportsDir, udid) {
-   let names = [];
-   try {
-     names = fs.readdirSync(reportsDir);
-@@ -1035,11 +1046,25 @@ function findFreshIOSCrashReports(reportsDir) {
-       return { name, file, mtimeMs: fs.statSync(file).mtimeMs };
-     })
-     .filter(
--      (report) => report.mtimeMs >= (runStartedAt || serverStartedAt) - 60_000
-+      (report) =>
-+        report.mtimeMs >= (runStartedAt || serverStartedAt) - 60_000 &&
-+        isCrashReportOfSimulator(report.file, udid)
-     )
-     .sort((a, b) => b.mtimeMs - a.mtimeMs);
- }
- 
-+/**
-+ * @param {string} file
-+ * @param {string} udid
-+ * @returns {boolean}
-+ */
-+function isCrashReportOfSimulator(file, udid) {
-+  return fs
-+    .readFileSync(file, 'utf8')
-+    .replaceAll('\\/', '/')
-+    .includes(`/CoreSimulator/Devices/${udid}/`);
-+}
-+
- /**
-  * @typedef {{
-  *   imageIndex?: number;
-@@ -1121,7 +1146,7 @@ async function dumpAndroidCrashDiagnostics() {
-   const serial = await crashDiagnosticsSerial();
-   if (!serial) {
-     console.error(
--      '[runtime-tests] no adb device available for crash diagnostics'
-+      '[runtime-tests] no selected Android device available for crash diagnostics (pass --serial or --avd to select one)'
-     );
-     return;
-   }
-@@ -1768,14 +1793,15 @@ function sleep(ms) {
-   return new Promise((resolve) => setTimeout(resolve, ms));
- }
- 
-+/** @returns {Promise<import('./android-device').AdbDevice[]>} */
- async function listAndroidDevices() {
-   const { stdout } = await run(ADB, ['devices']);
-   return stdout
-     .split('\n')
-     .slice(1)
-     .map((line) => line.trim().split(/\s+/))
--    .filter((parts) => parts.length >= 2 && parts[1] === 'device')
--    .map((parts) => parts[0]);
-+    .filter((parts) => parts.length >= 2)
-+    .map(([serial, state]) => ({ serial, state }));
- }
- 
- /** @returns {import('./android-device').AndroidTools} */
-@@ -1799,6 +1825,15 @@ function androidTools() {
-         { detached: true, stdio: 'ignore' }
-       );
-       child.unref();
-+      /** @type {string | null} */
-+      let exitStatus = null;
-+      child.on('exit', (code, signal) => {
-+        exitStatus = String(code ?? signal);
-+      });
-+      child.on('error', (error) => {
-+        exitStatus = error.message;
-+      });
-+      return () => exitStatus;
-     },
-     isBootCompleted: async (serial) => {
-       const { stdout } = await adb(serial, [
-@@ -1821,14 +1856,22 @@ async function crashDiagnosticsSerial() {
-   if (androidSerial) {
-     return androidSerial;
-   }
--  const s
 ```
 
 ---
 
-### Incident Patch 3: `da5ce1a9` (2026-11-03)
-**Commit Message**: fix(runtime-tests): target the requested AVD instead of any connected device (#11078)
+### Incident Patch 3: `98d4f83d` (2026-11-09)
+**Commit Message**: fix(SET): move swipe-driven shared elements to a target that moves during the swipe (#11213)
 
-**File**: `apps/fabric-example/scripts/__tests__/android-device.test.mts` (added, +248/-0)
-```diff
-@@ -0,0 +1,248 @@
-+import assert from 'node:assert/strict';
-+import { describe, it } from 'node:test';
-+
-+import androidDevice from '../android-device.js';
-+
-+const { resolveAndroidDevice, parseAvdName } = androidDevice;
-+
-+type FakeDevice = {
-+  serial: string;
-+  avd: string | null;
-+  booted: boolean;
-+  neverBoots?: boolean;
-+};
-+
-+type FakeOptions = {
-+  devices?: FakeDevice[];
-+  avds?: string[];
-+  bootsAs?: string | null;
-+  bootTimeoutMs?: number;
-+};
-+
-+function createFakeAndroid({
-+  devices = [],
-+  avds = [],
-+  bootsAs = null,
-+  bootTimeoutMs = 5000,
-+}: FakeOptions) {
-+  const connected = devices.map((device) => ({ ...device }));
-+  const booted: string[] = [];
-+  const queriedAvdNames: string[] = [];
-+  const bootChecks: string[] = [];
-+  const tools = {
-+    listDevices: async () => connected.map((device) => device.serial),
-+    avdName: async (serial: string) => {
-+      queriedAvdNames.push(serial);
-+      const device = connected.find((d) => d.serial === serial);
-+      if (!device || device.avd === null) {
-+        throw new Error(`error: no emulator detected on ${serial}`);
-+      }
-+      return device.avd;
-+    },
-+    listAvds: async () => avds,
-+    bootAvd: (avd: string) => {
-+      booted.push(avd);
-+      if (bootsAs) {
-+        connected.push({ serial: bootsAs, avd, booted: false });
-+      }
-+    },
-+    isBootCompleted: async (serial: string) => {
-+      bootChecks.push(serial);
-+      const device = connected.find((d) => d.serial === serial);
-+      if (!device) {
-+        return false;
-+      }
-+      if (device.neverBoots) {
-+        return false;
-+      }
-+      const wasBooted = device.booted;
-+      device.booted = true;
-+      return wasBooted;
-+    },
-+    sleep: (ms: number) =>
-+      new Promise<void>((resolve) => setTimeout(resolve, Math.min(ms, 1))),
-+    log: () => {},
-+    bootTimeoutMs,
-+  };
-+  return { tools, booted, queriedAvdNames, bootChecks };
-+}
-+
-+const OTHER_EMULATOR: FakeDevice = {
-+  serial: 'emulator-5554',
-+  avd: 'Other_Agent_AVD',
-+  booted: true,
-+};
-+const PHONE: FakeDevice = { serial: 'R58M123ABC', avd: null, booted: true };
-+
-+describe('resolveAndroidDevice', () => {
-+  it('picks the running emulator of the requested AVD among other devices', async () => {
-+    const fake = createFakeAndroid({
-+      devices: [
-+        OTHER_EMULATOR,
-+        PHONE,
-+        { serial: 'emulator-5556', avd: 'Mine', booted: true },
-+      ],
-+      avds: ['Other_Agent_AVD', 'Mine'],
-+    });
-+    const serial = await resolveAndroidDevice(
-+      { serial: null, avd: 'Mine' },
-+      fake.tools
-+    );
-+    assert.equal(serial, 'emulator-5556');
-+    assert.deepEqual(fake.booted, []);
-+  });
-+
-+  it('waits for a running emulator of the requested AVD to finish booting', async () => {
-+    const fake = createFakeAndroid({
-+      devices: [
-+        OTHER_EMULATOR,
-+        { serial: 'emulator-5556', avd: 'Mine', booted: false },
-+      ],
-+      avds: ['Other_Agent_AVD', 'Mine'],
-+    });
-+    const serial = await resolveAndroidDevice(
-+      { serial: null, avd: 'Mine' },
-+      fake.tools
-+    );
-+    assert.equal(serial, 'emulator-5556');
-+    assert.deepEqual(fake.booted, []);
-+    assert.deepEqual(fake.bootChecks, ['emulator-5556', 'emulator-5556']);
-+  });
-+
-+  it('boots the requested AVD when only other devices are connected', async () => {
-+    const fake = createFakeAndroid({
-+      devices: [OTHER_EMULATOR, PHONE],
-+      avds: ['Other_Agent_AVD', 'Mine'],
-+      bootsAs: 'emulator-5558',
-+    });
-+    const serial = await resolveAndroidDevice(
-+      { serial: null, avd: 'Mine' },
-+      fake.tools
-+    );
-+    assert.equal(serial, 'emulator-5558');
-+    assert.deepEqual(fake.booted, ['Mine']);
-+  });
-+
-+  it('fails without touching other devices when the AVD does not exist', async () => {
-+    const fake = createFakeAndroid({
-+      devices: [OTHER_EMULATOR],
-+      avds: ['Other_Agent_AVD'],
-+    });
-+    await assert.rejects(
-+      resolveAndroidDevice({ serial: null, avd: 'Missing' }, fake.tools),
-+      /AVD Missing/
-+    );
-+    assert.deepEqual(fake.booted, []);
-+  });
-+
-+  it('fails instead of falling back when the requested AVD never comes up', async () => {
-+    const fake = createFakeAndroid({
-+      devices: [OTHER_EMULATOR],
-+      avds: ['Other_Agent_AVD', 'Mine'],
-+      bootsAs: null,
-+      bootTimeoutMs: 100,
-+    });
-+    await assert.rejects(
-+      resolveAndroidDevice({ serial: null, avd: 'Mine' }, fake.tools),
-+      /Emulator Mine did not boot/
-+    );
-+    assert.deepEqual(fake.booted, ['Mine']);
-+  });
-+
-+  it('keeps --serial behaviour and ignores --avd when both are given', async () => {
-+    const fake = createFakeAndroid({
-+      devices: [OTHER_EMULATOR, PHONE],
-+      avds: ['Mine'],
-+    });
-+    assert.equal(
-+      await resolveAndroidDevice(
-+        { serial: 'R58M123ABC', avd: 'Mine' },
-+        fake.tools
-+      ),
-+      'R58M123ABC'
-+    );
-+    await assert.rejects(
-+      resolveAndroidDevice({ serial: 'emul
-```
+> [!NOTE]
+> This pull request was authored by AI on behalf of @bartlomiejbloniarz.
 
-**File**: `apps/fabric-example/scripts/android-device.js` (added, +125/-0)
-```diff
-@@ -0,0 +1,125 @@
-+/**
-+ * @typedef {{
-+ *   listDevices: () => Promise<string[]>;
-+ *   avdName: (serial: string) => Promise<string | null>;
-+ *   listAvds: () => Promise<string[]>;
-+ *   bootAvd: (avd: string) => void;
-+ *   isBootCompleted: (serial: string) => Promise<boolean>;
-+ *   sleep: (ms: number) => Promise<void>;
-+ *   log: (message: string) => void;
-+ *   bootTimeoutMs?: number;
-+ * }} AndroidTools
-+ */
-+
-+/**
-+ * @param {{ serial: string | null; avd: string | null }} target
-+ * @param {AndroidTools} tools
-+ * @returns {Promise<string>}
-+ */
-+async function resolveAndroidDevice({ serial, avd }, tools) {
-+  const serials = await tools.listDevices();
-+
-+  if (serial) {
-+    if (!serials.includes(serial)) {
-+      throw new Error(
-+        `No connected Android device with serial ${serial} (see \`adb devices\`)`
-+      );
-+    }
-+    return serial;
-+  }
-+
-+  if (avd) {
-+    const running = await findRunningAvd(avd, serials, tools);
-+    if (running) {
-+      return waitForBoot(avd, tools);
-+    }
-+    const avds = await tools.listAvds();
-+    if (!avds.includes(avd)) {
-+      throw new Error(
-+        `AVD ${avd} is not running and does not exist (see \`emulator -list-avds\`)`
-+      );
-+    }
-+    return bootAndWait(avd, tools);
-+  }
-+
-+  if (serials.length > 0) {
-+    if (serials.length > 1) {
-+      tools.log(
-+        `[runtime-tests] multiple Android devices connected, using ${serials[0]}`
-+      );
-+    }
-+    return serials[0];
-+  }
-+
-+  const [firstAvd] = await tools.listAvds();
-+  if (!firstAvd) {
-+    throw new Error(
-+      'No Android device connected and no AVDs available (see `emulator -list-avds`)'
-+    );
-+  }
-+  return bootAndWait(firstAvd, tools);
-+}
-+
-+/**
-+ * @param {string} avd
-+ * @param {string[]} serials
-+ * @param {AndroidTools} tools
-+ * @returns {Promise<string | null>}
-+ */
-+async function findRunningAvd(avd, serials, tools) {
-+  for (const serial of serials) {
-+    const name = await tools.avdName(serial).catch(() => null);
-+    if (name === avd) {
-+      return serial;
-+    }
-+  }
-+  return null;
-+}
-+
-+/**
-+ * @param {string} avd
-+ * @param {AndroidTools} tools
-+ * @returns {Promise<string>}
-+ */
-+async function bootAndWait(avd, tools) {
-+  tools.log(`[runtime-tests] booting emulator ${avd}`);
-+  tools.bootAvd(avd);
-+  return waitForBoot(avd, tools);
-+}
-+
-+/**
-+ * @param {string} avd
-+ * @param {AndroidTools} tools
-+ * @returns {Promise<string>}
-+ */
-+async function waitForBoot(avd, tools) {
-+  const timeoutMs = tools.bootTimeoutMs ?? 300_000;
-+  const deadline = Date.now() + timeoutMs;
-+  while (Date.now() < deadline) {
-+    for (const serial of await tools.listDevices()) {
-+      const name = await tools.avdName(serial).catch(() => null);
-+      if (name === avd && (await tools.isBootCompleted(serial))) {
-+        return serial;
-+      }
-+    }
-+    await tools.sleep(2000);
-+  }
-+  throw new Error(`Emulator ${avd} did not boot within ${timeoutMs / 1000}s`);
-+}
-+
-+/**
-+ * @param {string} output
-+ * @returns {string | null}
-+ */
-+function parseAvdName(output) {
-+  const lines = output
-+    .split(/\r?\n/)
-+    .map((line) => line.trim())
-+    .filter(Boolean);
-+  if (lines.length < 2 || lines[lines.length - 1] !== 'OK') {
-+    return null;
-+  }
-+  return lines[0];
-+}
-+
-+module.exports = { resolveAndroidDevice, findRunningAvd, parseAvdName };
-```
+## Summary
 
-**File**: `apps/fabric-example/scripts/runtime-tests-server.js` (modified, +54/-55)
+On iOS, a swipe back collects the target positions of its shared views
+on the first gesture event. react-native-screens can report the
+uncovered screen's new frame later. In `[SET] Change theme`, the header
+of Screen 1 is turned on while Screen 1 is covered, and its frame
+arrives about 50 ms into the swipe. The swipe never re-read its targets,
+so the shared views flew to positions one header height too high and
+snapped down when the swipe ended. A button pop was not affected,
+because it collects its targets after the frame arrives.
+
+Now every React commit during a swipe re-measures the target of each
+swipe-driven shared transition. When a target has moved, or one of its
+animated props such as the transform has changed, the transition's end
+view is updated, and the next progress event uses it. The target
+measurement is shared with the existing retargeting of off-window
+targets. `[SET] Change theme` is marked as working on iOS.
+
+## Test plan
+
+- New runtime tests, `Target moved during native Screen
+
+**File**: `apps/common-app/runtime-tests/reanimated/tests/layoutAnimations/sharedTransitionGesture.test.tsx` (modified, +92/-1)
 ```diff
-@@ -7,6 +7,11 @@ const net = require('net');
- const http = require('http');
- const { spawn, execFile } = require('child_process');
- const WebSocket = require('ws');
-+const {
-+  resolveAndroidDevice: resolveAndroidTarget,
-+  findRunningAvd,
-+  parseAvdName,
-+} = require('./android-device');
- const WebSocketServer = WebSocket.WebSocketServer || WebSocket.Server;
- 
- const LIBRARIES = ['reanimated', 'worklets', 'self-tests'];
-@@ -1113,8 +1118,7 @@ function formatIOSCrashReport(text) {
+@@ -27,9 +27,13 @@ const transition = SharedTransition.duration(30000);
+ function Screens({
+   sourceMounted = true,
+   sourceScreenMounted = true,
++  targetOffset = 0,
++  targetTranslateX = 0,
+ }: {
+   sourceMounted?: boolean;
+   sourceScreenMounted?: boolean;
++  targetOffset?: number;
++  targetTranslateX?: number;
+ }) {
+   const sourceScreen = useTestRef('gestureSourceScreen');
+   const targetScreen = useTestRef('gestureTargetScreen');
+@@ -49,7 +53,13 @@ function Screens({
+             ref={target}
+             sharedTransitionTag="gesture-retained-source"
+             sharedTransitionStyle={transition}
+-            style={styles.target}
++            style={[
++              styles.target,
++              {
++                marginTop: targetOffset,
++                transform: [{ translateX: targetTranslateX }],
++              },
++            ]}
+           />
+         </SharedTransitionBoundary>
+       </Screen>
+@@ -258,6 +268,80 @@ function mountedX(tag: number) {
+   });
  }
  
- async function dumpAndroidCrashDiagnostics() {
--  const serial =
--    androidSerial ?? (await listAndroidDevices().catch(() => []))[0];
-+  const serial = await crashDiagnosticsSerial();
-   if (!serial) {
-     console.error(
-       '[runtime-tests] no adb device available for crash diagnostics'
-@@ -1774,64 +1778,57 @@ async function listAndroidDevices() {
-     .map((parts) => parts[0]);
++describe('Target moved during native Screen progress', () => {
++  const gestureTest = Platform.OS === 'ios' ? test : test.skip;
++
++  gestureTest('moves the carrier toward the new target position', async () => {
++    const tags = await startGesture();
++    await observer().emitScreenTransitionProgress(
++      tags.targetScreen,
++      0.5,
++      false,
++      false
++    );
++    await expectCarrier(tags.source, 105);
++    const before = await carrierY(tags.source);
++    const target = getTestComponent('gestureTarget');
++    const targetY = (await target.getMountedViewProps())!.y;
++
++    await render(<Screens targetOffset={100} />);
++    await expectEventually(
++      async () => (await target.getMountedViewProps())!.y - targetY
++    ).toBe(100, ComparisonMode.PIXEL);
++    await observer().emitScreenTransitionProgress(
++      tags.targetScreen,
++      0.5,
++      false,
++      false
++    );
++    await expectEventually(
++      async () => (await carrierY(tags.source))! - before!
++    ).toBe(50, ComparisonMode.PIXEL);
++
++    await observer().emitScreenTransitionProgress(
++      tags.targetScreen,
++      1,
++      false,
++      false
++    );
++    await expectTargetOpacity(1);
++  });
++
++  gestureTest('moves the carrier toward the new target transform', async () => {
++    const tags = await startGesture();
++    await observer().emitScreenTransitionProgress(
++      tags.targetScreen,
++      0.5,
++      false,
++      false
++    );
++    await expectCarrier(tags.source, 105);
++
++    await render(<Screens targetTranslateX={100} />);
++    const target = getTestComponent('gestureTarget').getTag();
++    await expectEventually(
++      async () => (await observer().observeTransform(target))?.translateX
++    ).toBe(100, ComparisonMode.PIXEL);
++    await observer().emitScreenTransitionProgress(
++      tags.targetScreen,
++      0.5,
++      false,
++      false
++    );
++    await expectEventually(
++      async () => (await observer().observeTransform(tags.source))?.translateX
++    ).toBe(50, ComparisonMode.PIXEL);
++
++    await observer().emitScreenTransitionProgress(
++      tags.targetScreen,
++      1,
++      false,
++      false
++    );
++    await expectTargetOpacity(1);
++  });
++});
++
+ async function startGesture() {
+   await render(<Screens />);
+   await waitForNotification('gesture-source-appeared');
+@@ -295,6 +379,13 @@ async function startGesture() {
+   return tags;
  }
  
--async function resolveAndroidDevice() {
--  const serials = await listAndroidDevices();
--
--  if (SERIAL) {
--    if (!serials.includes(SERIAL)) {
--      throw new Error(
--        `No connected Android device with serial ${SERIAL} (see \`adb devices\`)`
--      );
--    }
--    return SERIAL;
--  }
--
--  if (serials.length > 0) {
--    if (serials.length > 1) {
--      console.log(
--        `[runtime-tests] multiple Android devices connected, using ${serials[0]}`
--      );
--    }
--    return serials[0];
--  }
--
-+/** @returns {import('./android-device').AndroidTools} */
-+function androidTools() {
-   const emulatorBin = sdkTool('emulator', 'emulator');
--  const { stdout } = await run(emulatorBin, ['-list-avds']);
--  const avds = stdout
--    .split('\n')
--    .map((line) => line.trim())
--    .filter((line) => line && !line.startsWith('INFO'));
--  const avd = AVD ?? avds[0];
--  if (!avd) {
--    throw new Error(
--      'No Android device connected and no AVDs available (see `emulator -list-avds`)'
--    );
--  }
--
--  console.log(`[runtime-tests] booting emulator ${avd}`);
--  const child = spawn(
--    emulatorBin,
--    ['-avd', avd, '-no-snapshot-save', '-no-boot-anim', '-no-audio'],
--    { detached: true, stdio: 'ignore' }
--  );
--  child.unref();
--
--  const deadline = Date.now() + 300_000;
--  while (Date.now() < deadline) {
--    const booted = await listAndroidDevices();
--    if (booted.length > 0) {
--      const { stdout: bootCompleted } = await adb(booted[0], [
-+  return {
-+    listDevices: listAndroidDevices,
-+    avdName: async (serial) =>
-+      parseAvdName((await adb(serial, ['emu', 'avd', 'name'])).stdout),
-+    listAvds: async () => {
-+      const { stdout } = await run(emulatorBin, ['-list-avds']);
-+      return stdout
-+        .split('\n')
-+        .map((line) => line.trim())
-+        .filter((line) => line && !/^INFO\s*\|/.test(line));
-+    },
-+    bootAvd: (avd) => {
-+      const child = spawn(
-+        emulatorBin,
-+        ['-avd', avd, '-no-snapshot-save', '-no-boot-anim', '-no-audio'],
-+        { detached: true, stdio: 'ignore' }
-+      );
-+      child.unref();
-+    },
-+    isBootCompleted: async (serial) => {
-+      const { stdout } = await adb(serial, [
-         'shell',
-         'getprop',
-         'sys.boot_completed',
-       ]).catch(() => ({ stdout: '' }));
--      if (bootCompleted.trim() === '1') {
--        return booted[0];
--      }
--    }
--    await sleep(2000);
-+      return stdout.trim() === '1';
-+    },
-+    sleep,
-+    log: (message) => console.log(message),
-+  };
++function carrierY(tag: number) {
++  return runOnUIBlocking(() => {
++    'worklet';
++    return global._obtainMountedViewProps(tag, false)?.y;
++  });
 +}
 +
-+function resolveAndroidDevice() {
-+  return resolveAndroidTarget({ serial: SERIAL, avd: AVD }, androidTools());
-+}
-+
-+async function crashDiagnosticsSerial() {
-+  if (androidSerial) {
-+    return androidSerial;
-+  }
-+  const serials = await listAndroidDevices().catch(() => []);
-+  if (SERIAL) {
-+    return serials.some((serial) => serial === SERIAL) ? SERIAL : null;
-+  }
-+  if (AVD) {
-+    return findRunningAvd(AVD, serials, androidTools());
-   }
--  throw new Error(`Emulator ${avd} did not boot within 300s`);
-+  return serials[0] ?? null;
- }
- 
- /** @param {string} serial */
-@@ -1906,6 +1903,7 @@ if (SHOULD_LAUNCH) {
-     if (PLATFORM === 'android') {
-       const serial = await resolveAndroidDevice();
-       androidSerial = serial;
-+      console.log(`[runtime-tests] using Android device ${serial}`);
-       if (!SKIP_BUILD) {
-         await buildAndroidApp(serial);
-       }
-@@ -1991,7 +1989,8 @@ Target
-   --simulator <name>        iOS simulator to boot. Default: iPhone 17.
-   --udid <udid>             iOS simulator to reuse, instead of --simulator.
-   --serial <serial>         Android device already running (see \`adb devices\`).
--  --avd <name>              Android AVD to boot when no --serial is given.
-+  --avd <name>              Android AVD to use when no --serial is given.
-+                            Reuses its running emulator or boots it.
- 
- Build and run
-   --configuration <name>    Xcode configuration / Gradle build type.
+ function observer() {
+   if (!RuntimeTestObserver) {
+     throw new Error('RuntimeTestObserver requires a runtime-test build');
 ```
 
-**File**: `package.json` (modified, +1/-1)
+**File**: `apps/common-app/src/apps/reanimated/examples/index.ts` (modified, +1/-1)
 ```diff
-@@ -36,7 +36,7 @@
-     "lint:workspaces": "yarn workspaces foreach --all --exclude \"react-native-reanimated-monorepo\" --parallel --topological-dev run lint",
-     "lint:root": "oxlint . --ignore-pattern 'packages/**' --ignore-pattern 'apps/**' --ignore-pattern 'docs/**' && yarn run --top-level oxfmt --check --ignore-path .prettiereslintignore .",
-     "prepare-vscode": "bash ./scripts/prepare-vscode.sh",
--    "test:scripts": "node --experimental-strip-types --test scripts/__tests__/*.test.mts scripts/changelog/__tests__/*.test.mts",
-+    "test:scripts": "node --experimental-strip-types --test scripts/__tests__/*.test.mts scripts/changelog/__tests__/*.test.mts apps/fabric-example/scripts/__tests__/*.test.mts",
-     "toggle-bundle-mode": "bash ./scripts/toggle-bundle-mode.sh"
+@@ -914,7 +914,7 @@ const ALL_EXAMPLES: Record<string, Example> = {
+     screen: ChangeThemeSharedExample,
+     disabledPlatforms: [REAPlatform.WEB],
+     shouldWork: {
+-      ios: false, // s2 -> change theme -> go back (progress) will have wrong target
++      ios: true,
+       android: true,
+     },
    },
-   "devDependencies": {
+```
+
+**File**: `packages/react-native-reanimated/Common/cpp/reanimated/LayoutAnimations/LayoutAnimationsProxy.cpp` (modified, +3/-0)
+```diff
+@@ -227,6 +227,9 @@ std::optional<MountingTransaction> LayoutAnimationsProxy::pullTransaction(
+   } else if (transition_ || uncommittedScreenPop_) {
+     updateLightTree(propsParserContext, mutations, transaction);
+     resolveTransitionLifecycle(transaction, mutations, propsParserContext);
++    if (transition_ && !mutations.empty()) {
++      followProgressTargets(propsParserContext);
++    }
+     activeBoundaryMayHaveChanged_ = true;
+   } else if (!mutations.empty()) {
+     auto root = lightNodes_[surfaceId_];
+```
+
+**File**: `packages/react-native-reanimated/Common/cpp/reanimated/LayoutAnimations/LayoutAnimationsProxy.h` (modified, +1/-0)
+```diff
+@@ -473,6 +473,7 @@ struct LayoutAnimationsProxy : public LayoutAnimationsProxyCommon {
+       const PropsParserContext &propsParserContext) const;
+   ShadowView targetOnScreen(const SharedTransitionRun &run, const PropsParserContext &propsParserContext) const;
+   void followOffWindowTargets(const PropsParserContext &propsParserContext) const;
++  void followProgressTargets(const PropsParserContext &propsParserContext) const;
+   const LayoutAnimation &carrierAnimation(const SharedTransitionRun &run) const;
+   const ShadowView &carrierViewOnScreen(const SharedTransitionRun &run) const;
+   SharedTransitionRun *runOfCarrier(const std::shared_ptr<LightNode> &node) const;
+```
+
+**File**: `packages/react-native-reanimated/Common/cpp/reanimated/LayoutAnimations/SharedTransitions.cpp` (modified, +25/-0)
+```diff
+@@ -2347,6 +2347,31 @@ void LayoutAnimationsProxy::followOffWindowTargets(const PropsParserContext &pro
+   }
+ }
+ 
++// A covered screen can get its native header frame after the gesture that uncovers it has started.
++void LayoutAnimationsProxy::followProgressTargets(const PropsParserContext &propsParserContext) const {
++  for (const auto &run : activeSharedTransitionRuns()) {
++    if (run.driver != SharedTransitionDriver::GESTURE) {
++      continue;
++    }
++    if (!isLightNodeMapped(run.target) || run.target->isExiting() || run.target->isCarrier()) {
++      continue;
++    }
++    const auto carrierTag = run.carrier->current.tag;
++    const auto animationIt = layoutAnimations_.find(carrierTag);
++    if (animationIt == layoutAnimations_.end()) {
++      continue;
++    }
++    const auto after = targetInCarrierSpace(run, targetOnScreen(run, propsParserContext), propsParserContext);
++    const auto carrierAfter = asCarrierView(after, run.carrier, propsParserContext);
++    const auto &finalView = animationIt->second.finalView;
++    if (finalView.layoutMetrics != carrierAfter.layoutMetrics ||
++        SharedTransitionValuesFactory::hasAnimatedChanges(getViewProps(finalView), getViewProps(carrierAfter))) {
++      updateLayoutAnimationTarget(
++          carrierTag, carrierAfter, ownCarrierView(after, run.carrier, propsParserContext).props, run.config);
++    }
++  }
++}
++
+ std::vector<Ancestor> LayoutAnimationsProxy::collectAncestors(
+     const std::shared_ptr<LightNode> &node,
+     const bool useViewsOnScreen) const {
+```
+
+**File**: `packages/react-native-reanimated/changelog/shared-transition-swipe-retarget.fix.md` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++Move shared elements to their final position during an iOS swipe back when the uncovered screen gets its header after the swipe starts.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #11118** (2026-11-03): refactor(Worklets): mark AsyncQueueImpl as final (@tshmieldev)
-- **PR #11109** (2026-11-02): ci: skip CI on draft pull requests (@tjzel)
-- **PR #11102** (2026-11-02): refactor(Worklets): fold the Debug and Release copies of the sync run helpers (@tshmieldev)
-- **PR #11099** (2026-10-30): fix(Reanimated): resolve web-only modules for __tests__ in the Jest resolver (@tomekzaw)
-- **PR #11098** (2026-10-30): docs(Reanimated): keep the Slider example's handle in place until the pointer returns (@bartlomiejbloniarz)
-- **PR #11095** (2026-11-03): fix(FabricExample): keep runtime-test devices and crash diagnostics on the selected device (@pawicao)
+- **PR #11249** (2026-11-09): docs(SET): document navigation requirements and common recipes (@bartlomiejbloniarz)
+- **PR #11248** (2026-11-09): fix(SET): keep the flight going when a list item is tapped twice (@bartlomiejbloniarz)
+- **PR #11247** (2026-11-09): fix(SET): let a shared transition replace its target's entering animation (@bartlomiejbloniarz)
+- **PR #11246** (2026-11-09): fix(SET): place shared views correctly in a scrolled inverted list (@bartlomiejbloniarz)
+- **PR #11245** (2026-11-09): fix(SET): fly back to the shown tab during a back gesture (@bartlomiejbloniarz)
+- **PR #11244** (2026-11-09): fix(SET): fade a transparent background without a gray tint (@bartlomiejbloniarz)
 
 ---
 
@@ -2190,28 +1984,33 @@ keeps every color frame`, which also fail on `main` on this phone
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Reanimated): destroy the light tree's dropped views off the UI thread (#10996)
+## X. Reanimated): keep content drawn over a nested shared element visible during shar
 
 **RULE**:
-When implementing operations in `apps/fabric-example/ios/Podfile.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-reanimated. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/common-app/runtime-tests/reanimated/tests/layoutAnimations/sharedTransitionFadeProgress.test.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-reanimated. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `134779bf`: Reanimated): destroy the light tree's dropped views off the UI thread (#10996). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `97538ca5`: Reanimated): keep content drawn over a nested shared element visible during shared element transitions (#11166). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/fabric-example/ios/Podfile.lock`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/common-app/runtime-tests/reanimated/tests/layoutAnimations/sharedTransitionFadeProgress.test.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  RNReanimated: 20804e0866504904168c8b7027e323ffa96c1aa3
+      expect(await RuntimeTestObserver!.observeParent(innerSource)).toBe(
+        originalParent
+      );
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-  RNReanimated: cbb3ee3f32002440c743e34e00f62b62d404a56f
+      await expectEventually(async () => {
+        const parent = await RuntimeTestObserver!.observeParent(innerSource);
+        return parent !== null && parent !== originalParent;
+      }).toBe(true);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `134779bf` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `97538ca5` are properly handled with clean fallback behavior.

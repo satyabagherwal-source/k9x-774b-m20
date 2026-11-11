@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/matthart1983-netwatch-learnings.md`  
 > **Source**: github ([https://github.com/matthart1983/netwatch](https://github.com/matthart1983/netwatch))  
-> **Source Version**: `ee7d2174`  
+> **Source Version**: `81275065`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T19:55:20.721Z  
+> **Timestamp**: 2026-11-08T19:07:04.901Z  
 > **Learning ID**: `learn-github-matthart1983-netwatch`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,17 +17,17 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/matthart1983-netwatch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/matthart1983/netwatch](https://github.com/matthart1983/netwatch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T19:55:20.365Z  
+> **Harvest Timestamp**: 2026-11-08T19:07:04.367Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
 ## 1. Context & Architectural Overview
 - **Repository / Resource**: `matthart1983/netwatch`
-- **Description**: Real-time network diagnostics in your terminal. One command, zero config, instant visibility.
+- **Description**: Network diagnostics in your terminal. Inspect traffic, connections and network behaviour. Built with Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3571 stars
+- **Stars / Engagement**: 3584 stars
 
 ---
 
@@ -2158,736 +2158,405 @@ fn main() -> Result<()> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0a737c60` (2026-10-30)
-**Commit Message**: fix(config): refuse a config.toml that does not load instead of using defaults (#146)
+### Incident Patch 1: `fc4b48fe` (2026-11-07)
+**Commit Message**: fix(sandbox): accept a denied TCP Fast Open send in the gap test (#196)
 
-NetwatchConfig::load parsed with unwrap_or_default and treated a read
-error as a missing file, so one bad value threw the whole file away
-without a word. With refresh_rate_ms = 'oops' in a file that also set
-sandbox = "strict" and record_uptime = false, the TUI started with a
-best-effort sandbox and recorded uptime.
+Linux 7.2 checks a MSG_FASTOPEN send against Landlock's connect rules
+(33cb713db016, "landlock: Fix TCP Fast Open connection bypass", Cc
+stable). parser_layer_leaves_fast_open_and_autobind_open expected the
+send to get out, so on a fixed kernel it failed with EACCES and stopped
+the Nix build, which runs the test suite.
 
-load now returns Result<NetwatchConfig, ConfigError>, and load_from takes
-a path so tests never set env vars. Nothing at the path still means the
-defaults, and keys a file leaves out keep theirs. A file that cannot be
-read, including a symlink to a file that has gone, is ConfigError::Read.
-Invalid TOML or a value of the wrong type is ConfigError::Parse, which
-keeps toml's error (line, column, quoted line) and the line and column
-on their own. The message names the path and the cause.
+The test, renamed parser_layer_leaves_autobind_open_and_fast_open_to_the_kernel,
+now passes when the send is denied and nothing reaches the listener, or
+when it goes out and the data arrives. The autobind check is unchanged.
+The threat model and the SandboxReport doc scope the Fast Open gap to
+kernels without the fix; Landlock has no erratum for it, so the report
+does not claim it either way.
 
-Each caller handles it before anything starts or is written:
-- netwatch and netwatch daemon: main returns the error, so it is printed
-  on stderr and the exit status is 1, before sandbox directories,
-  logging, the terminal or any collector. App::prepare loads again and
-  now fails too if the file broke
+Fixes #192
 
-**File**: `CHANGELOG.md` (modified, +16/-0)
-```diff
-@@ -83,6 +83,22 @@ All notable changes to NetWatch will be documented in this file.
-   `ConnectionCollector::connections_with_generation`.
- 
- ### Fixed
-+- **One bad value in config.toml no longer throws the whole file away.** A
-+  file that was not valid TOML, or gave a key a value of the wrong type, was
-+  replaced by the defaults without a word. With `refresh_rate_ms = 'oops'` in
-+  a file that also set `sandbox = "strict"` and `record_uptime = false`,
-+  netwatch started with a best-effort sandbox and recorded uptime. A file it
-+  could not read, or a symlink to one that had gone, was treated the same
-+  way. `netwatch` and `netwatch daemon` now print the file, line and column
-+  and exit 1 before anything starts or is written. `diagnose run` exits 3,
-+  its status for no session, and `diagnose coverage` exits 1, with the same
-+  message. `netwatch doctor` names the file, line and column in its `config`
-+  entry, still without quoting the file, and `--check-capture` no longer
-+  opens capture on the defaults in its place. `--generate-config` and the
-+  Settings save no longer overwrite a file that does not load. With no file
-+  at all the defaults apply as before, and keys a file leaves out keep
-+  theirs. In the library, `NetwatchConfig::load` returns a `Result`, and
-+  `load_from` and `save_to` are new.
- - Dense view's connection and process sparklines now use their full width,
-   including on wide terminals. Their time labels reflect the retained history
-   and refresh interval instead of always saying `60s`.
-```
-
-**File**: `docs/REFERENCE.md` (modified, +10/-1)
-```diff
-@@ -444,7 +444,7 @@ The [man page](netwatch.1) carries the same list.
- | `netwatch diagnose export [--since DAYS] [--out FILE] [--dry-run] [DIR]` | A pseudonymised bundle of recent incidents. Nothing is uploaded. |
- | `netwatch uptime [--since 7d] [--json\|--csv] [DIR]` | Outage history: start, end, duration and the hop that failed, with totals. See [Uptime report](#uptime-report). |
- | `netwatch resolver status\|set\|recover` | Inspect, temporarily change (Linux, root, `--unmanaged` files only) or restore the DNS resolver. |
--| `netwatch --generate-config` | Write `config.toml` with every key at its default, then exit. |
-+| `netwatch --generate-config` | Write `config.toml` with every key at its default, then exit. Refuses to replace a `config.toml` that does not load. |
- | `netwatch --version`, `--help` | |
- 
- TUI flags:
-@@ -826,6 +826,15 @@ A hand-edited file can't cost you the tool: missing keys fall back to their defa
- out-of-range numbers are clamped, and an unrecognised value falls back rather than refusing
- to start.
- 
-+A file netwatch cannot read or parse is different. If the TOML is broken, or a key has a value
-+of the wrong type (`refresh_rate_ms = "fast"`), `netwatch` and `netwatch daemon` print the
-+file, line and column and exit 1 without starting. Running on the defaults instead would
-+drop every other setting in the file, `sandbox = "strict"` and `record_uptime = false`
-+included. `diagnose run` exits 3 and `diagnose coverage` exits 1 with the same message.
-+`netwatch doctor` reports it as `config_invalid` or `config_unreadable` without quoting the
-+file. Neither `--generate-config` nor Settings overwrites the file. With no file at all, the
-+defaults apply as before.
-+
- ### Appearance
- 
- | Key | Default | Values | What it does |
-```
-
-**File**: `docs/doctor.md` (modified, +9/-2)
-```diff
-@@ -30,8 +30,15 @@ Before 0.38, every Windows host with a `wpcap.dll` reported `not_checked`
- with `npcap_present_unloaded`, including the two `unavailable` cases above.
- 
- Missing or malformed configuration is reported explicitly; malformed content and
--configured endpoint credentials are not echoed. Configuration defaults are used
--where needed to describe the remaining checks. An enabled feature is not evidence
-+configured endpoint credentials are not echoed. A configuration file that cannot
-+be read or parsed makes `config` `unavailable`, with reason `config_unreadable` or
-+`config_invalid`. Its detail names the file and, for a parse error, the line and
-+column; starting `netwatch` prints the full parse error, which quotes the line.
-+Live sessions refuse to start on such a file, and doctor still completes and exits
-+successfully. Configuration defaults are used where needed to describe the
-+remaining checks, except that `--check-capture` does not open capture: `capture`
-+is `not_checked` with reason `config_not_loaded`, because the defaults could check
-+a weaker sandbox mode than the one configured. An enabled feature is not evidence
- that its backend works.
- 
- ## Optional capture check
-```
-
-**File**: `examples/diagnose_lab.rs` (modified, +4/-6)
-```diff
-@@ -79,13 +79,11 @@ fn main() -> Result<()> {
-         ),
-         None => None,
-     };
--    // `load` falls back to defaults on a parse error, which here would run
--    // the lab without episode recording and pass for the wrong reason.
-+    // Missing, the file would load as the defaults, which here would run the
-+    // lab without episode recording and pass for the wrong reason.
-     let path = NetwatchConfig::path().context("no config directory")?;
--    let text = std::fs::read_to_string(&path)
--        .with_context(|| format!("the lab writes {}", path.display()))?;
--    toml::from_str::<NetwatchConfig>(&text).with_context(|| format!("{}", path.display()))?;
--    let config = NetwatchConfig::load();
-+    ensure!(path.is_file(), "the lab writes {}", path.display());
-+    let config = NetwatchConfig::load_from(&path)?;
- 
-     let _session = netwatch::sandbox::worker::SessionGuard;
-     let mode = netwatch::sandbox::Mode::from_config(&config.sandbox);
-```
-
-**File**: `examples/flood_soak.rs` (modified, +4/-6)
-```diff
-@@ -242,13 +242,11 @@ fn live(opts: &Options) -> Result<()> {
-     )
-     .map_err(anyhow::Error::msg)?;
-     eprintln!("lab home: {}", home.display());
--    // `load` falls back to defaults on a parse error, which would run the
--    // soak on settings the lab did not write.
-+    // Missing, the file would load as the defaults, and the soak would run
-+    // on settings the lab did not write.
-     let path = NetwatchConfig::path().context("no config directory")?;
--    let text = std::fs::read_to_string(&path)
--        .with_context(|| format!("the lab writes {}", path.display()))?;
--    toml::from_str::<NetwatchConfig>(&text).with_context(|| format!("{}", path.display()))?;
--    let mut config = NetwatchConfig::load();
-+    ensure!(path.is_file(), "the lab writes {}", path.display());
-+    let mut config = NetwatchConfig::load_from(&path)?;
-     let interface = opts.interface.clone().unwrap_or_default();
-     config.capture_interface = interface.clone();
-     if let Some(db) = &opts.geoip_db {
-```
-
-**File**: `src/app.rs` (modified, +6/-4)
-```diff
-@@ -581,8 +581,10 @@ pub enum AttributionStatus {
- }
- 
- impl App {
--    fn prepare() -> Self {
--        Self::prepare_with_config(NetwatchConfig::load())
-+    /// Reads the config again after main has. One that stopped loading in
-+    /// between is an error here too, before any worker starts.
-+    fn prepare() -> Result<Self> {
-+        Ok(Self::prepare_with_config(NetwatchConfig::load()?))
-     }
- 
-     /// Construct shared application state without starting workers. Native
-@@ -1668,7 +1670,7 @@ where
-     tokio::pin!(shutdown);
-     #[cfg(unix)]
-     shutdown_deadline();
--    let mut app = App::prepare();
-+    let mut app = App::prepare()?;
-     crate::runtime::bootstrap::start(
-         &mut app,
-         if demo {
-@@ -1925,7 +1927,7 @@ pub async fn run_headless(
- ) -> Result<()> {
-     install_collector_panic_flag();
- 
--    let mut app = App::prepare();
-+    let mut app = App::prepare()?;
-     crate::runtime::bootstrap::start(
-         &mut app,
-         crate::runtime::bootstrap::SessionKind::Daemon,
-```
-
-**File**: `src/config.rs` (modified, +261/-11)
-```diff
-@@ -1,6 +1,6 @@
- use serde::{Deserialize, Serialize};
- use std::fs;
--use std::path::PathBuf;
-+use std::path::{Path, PathBuf};
- 
- /// User-facing persistent configuration, stored as `netwatch/config.toml`
- /// under the platform config directory (`dirs::config_dir()`): `~/.config` on
-@@ -279,6 +279,64 @@ impl Default for AlertConfig {
- 
- // ── Persistence ────────────────────────────────────────────
- 
-+/// Why a config.toml that exists was not loaded. A missing file is not an
-+/// error: it means the defaults.
-+#[derive(Debug)]
-+pub enum ConfigError {
-+    /// The file is there but could not be read: no permission, a directory,
-+    /// a symlink to nothing, or bytes that are not UTF-8.
-+    Read {
-+        path: PathBuf,
-+        source: std::io::Error,
-+    },
-+    /// Not valid TOML, or a value of the wrong type. `source` names the line,
-+    /// column and key and quotes the line. `position` is the 1-based line and
-+    /// column alone, for a report that must not echo the file. Boxed, as
-+    /// toml's error would make every `Result` holding this one large.
-+    Parse {
-+        path: PathBuf,
-+        position: Option<(usize, usize)>,
-+        source: Box<toml::de::Error>,
-+    },
-+}
-+
-+impl ConfigError {
-+    pub fn path(&self) -> &Path {
-+        match self {
-+            ConfigError::Read { path, .. } | ConfigError::Parse { path, .. } => path,
-+        }
-+    }
-+}
-+
-+impl std::fmt::Display for ConfigError {
-+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-+        match self {
-+            ConfigError::Read { path, source } => {
-+                write!(f, "cannot read {}: {source}", path.display())
-+            }
-+            // toml's message ends in a newline.
-+            ConfigError::Parse { path, source, .. } => write!(
-+                f,
-+                "invalid config {}: {}",
-+                path.display(),
-+                source.to_string().trim_end()
-+            ),
-+        }
-+    }
-+}
-+
-+// The message already carries the cause, so `source()` stays `None`: anyhow
-+// would otherwise print it twice.
-+impl std::error::Error for ConfigError {}
-+
-+/// The 1-based line and column of byte `at`, counting characters as toml does.
-+fn line_column(text: &str, at: usize) -> (usize, usize) {
-+    let before = text.get(..at).unwrap_or(text);
-+    let line = before.matches('\n').count() + 1;
-+    let column = before.rsplit('\n').next().unwrap_or("").chars().count() + 1;
-+    (line, column)
-+}
-+
- impl NetwatchConfig {
-     /// Path to `netwatch/config.toml` under the platform config dir
-     /// (`~/.config` on Linux, `~/Library/Application Support` on macOS,
-@@ -287,17 +345,44 @@ impl NetwatchConfig {
-         dirs::config_dir().map(|d| d.join("netwatch").join("config.toml"))
-     }
- 
--    /// Load from disk, falling back to defaults for any missing field.
--    pub fn load() -> Self {
--        let Some(path) = Self::path() else {
--            return Self::default();
--        };
--        let Ok(contents) = fs::read_to_string(&path) else {
--            return Self::default();
-+    /// Load from disk. No file means the defaults, and a key the file leaves
-+    /// out keeps its default. A file that is there but cannot be read or
-+    /// parsed is an error rather than the defaults: falling back would drop
-+    /// every setting in it, `sandbox = "strict"` and `record_uptime = false`
-+    /// included, over one bad value.
-+    pub fn load() -> Result<Self, ConfigError> {
-+        match Self::path() {
-+            Some(path) => Self::load_from(&path),
-+            None => Ok(Self::default()),
-+        }
-+    }
-+
-+    /// [`load`](Self::load) from `path` rather than the platform location.
-+    pub fn load_from(path: &Path) -> Result<Self, ConfigError> {
-+        let contents = match fs::read_to_string(path) {
-+            Ok(contents) => contents,
-+            // Nothing at the path at all. A symlink to a missing file is
-+            // something, and an error.
-+            Err(e)
-+                if e.kind() == std::io::ErrorKind::NotFound
-+                    && fs::symlink_metadata(path).is_err() =>
-+            {
-+                return Ok(Self::default());
-+            }
-+            Err(source) => {
-+                return Err(ConfigError::Read {
-+                    path: path.into(),
-+                    source,
-+                })
-+            }
-         };
--        let mut cfg: Self = toml::from_str(&contents).unwrap_or_default();
-+        let mut cfg: Self = toml::from_str(&contents).map_err(|source| ConfigError::Parse {
-+            path: path.into(),
-+            position: source.span().map(|span| line_column(&contents, span.start)),
-+            source: Box::new(source),
-+        })?;
-         cfg.validate();
--        cfg
-+        Ok(cfg)
-     }
- 
-     /// Clamp and normalise fields that may arrive out of range from a hand-edited
-@@ -333,11 +418,24 @@ impl NetwatchConfig {
-     pub fn save(&self) -> anyhow::Result<()> {
-         let path =
-             Self::path()
-```
-
-**File**: `src/diagnose/coverage.rs` (modified, +1/-1)
-```diff
-@@ -305,7 +305,7 @@ pub fn command(args: &[String]) -> anyhow::Result<()> {
-     let config = NetwatchConfig {
-         insights_enabled: false,
-         diagnose_record_episodes: false,
--        ..NetwatchConfig::load()
-+        ..NetwatchConfig::load()?
-     };
-     super::run::print_threshold_warnings(&config.diagnose_thresholds);
-     if let Some(rule) = &test {
-```
-
----
-
-### Incident Patch 2: `f4905dfa` (2026-10-31)
-**Commit Message**: deps: hold unicode-width at 0.2.2; tokio, uuid, brotli, webpki-roots (#164)
-
-unicode-width 0.2.3 counts a halfwidth katakana sound mark as one cell, which is
-right, but ratatui-core 0.1.2 adds one for each mark on top, having expected 0.
-`ﾊﾟ` then measures 3 where terminals draw 2, so every later column shifts. tmux
-and xterm.js both draw `ﾊﾟﾊﾟ` in 4 columns, and five of our tests caught it in
-Dependabot's #160.
-
-ratatui-core accepts any version from 0.2.0, so a build with no Cargo.lock, such
-as `cargo install netwatch-tui` without --locked, could already resolve 0.2.3.
-The pin in Cargo.toml holds that too. Dependabot ignores the crate until ratatui
-stops adding the cell.
-
-The other four updates from #160 are unchanged.
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `.github/dependabot.yml` (modified, +3/-0)
-```diff
-@@ -11,6 +11,9 @@ updates:
-     groups:
-       cargo-minor:
-         update-types: [minor, patch]
-+    # 0.2.3 breaks ratatui's text widths; see the pin in Cargo.toml.
-+    ignore:
-+      - dependency-name: unicode-width
-     open-pull-requests-limit: 5
-   - package-ecosystem: github-actions
-     directory: /
-```
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 **File**: `CHANGELOG.md` (modified, +9/-0)
 ```diff
-@@ -26,6 +26,15 @@ All notable changes to NetWatch will be documented in this file.
-   reassembled. A ClientHello over 4 KiB in one offloaded frame no longer fails
-   either.
+@@ -2,6 +2,15 @@
  
-+### Dependencies
-+- **`unicode-width` is pinned to 0.2.2.** 0.2.3 counts a halfwidth katakana sound
-+  mark (ﾞ or ﾟ) as one cell, which is correct, but ratatui already adds a cell for
-+  each one, so `ﾊﾟ` measured 3 columns where terminals draw 2, and everything after
-+  such a name in a row shifted right. tmux and xterm.js both draw `ﾊﾟﾊﾟ` in 4. A
-+  `cargo install netwatch-tui` without `--locked` could already pick up 0.2.3; this
-+  stops that from the next release on.
-+- tokio 1.54.1, uuid 1.29.0, brotli 9.1.1 and webpki-roots 1.0.11.
+ All notable changes to NetWatch will be documented in this file.
+ 
++## [Unreleased]
 +
- ## [0.39.0] - 2026-10-31
++### Fixed
++- **The Nix build passes its tests on Linux 7.2.** A sandbox test expected a TCP Fast Open
++  send from a parser thread to get past the Landlock network deny. Linux 7.2 closes that gap,
++  and kernels with the stable backport may too, so the test failed and the build stopped
++  (#192). The test now accepts a denied send, as long as nothing reaches the listener, and
++  the threat model scopes the Fast Open gap to kernels without the fix.
++
+ ## [1.0.0-rc.1] - 2026-11-07
  
  ### Added
 ```
 
-**File**: `Cargo.lock` (modified, +13/-13)
+**File**: `docs/THREAT-MODEL.md` (modified, +9/-6)
 ```diff
-@@ -188,9 +188,9 @@ dependencies = [
- 
- [[package]]
- name = "brotli"
--version = "9.0.0"
-+version = "9.1.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f8b851b75c23ca7873623d612fe49bd1989aeb03d08fb9432187eb253d3d4c6b"
-+checksum = "627b7cfb0578f0eafce087a90fcd40add1231900b69e4d4de2d456260a4f5d81"
- dependencies = [
-  "alloc-no-stdlib",
-  "alloc-stdlib",
-@@ -199,9 +199,9 @@ dependencies = [
- 
- [[package]]
- name = "brotli-decompressor"
--version = "6.0.1"
-+version = "6.2.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "941cd9bd4ddab83cb46fa5a2d428f1c857b24ac78cb876cf7beb710840934bd7"
-+checksum = "34c6783f42c21c952ad7112b354f0ba2f10760e9decea5b1b60523d6e270faaf"
- dependencies = [
-  "alloc-no-stdlib",
-  "alloc-stdlib",
-@@ -613,7 +613,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
- dependencies = [
-  "libc",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
- 
- [[package]]
-@@ -1904,7 +1904,7 @@ dependencies = [
-  "errno 0.3.14",
-  "libc",
-  "linux-raw-sys",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
- 
- [[package]]
-@@ -2081,7 +2081,7 @@ version = "1.4.8"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "c4db69cba1110affc0e9f7bcd48bbf87b3f4fc7c61fc9155afd4c469eb3d6c1b"
- dependencies = [
-- "errno 0.3.14",
-+ "errno 0.2.8",
-  "libc",
- ]
- 
-@@ -2410,9 +2410,9 @@ dependencies = [
- 
- [[package]]
- name = "tokio"
--version = "1.53.3"
-+version = "1.54.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ce3335fa71841cda333a58d7615b03901380ecf09d59b3296d21f8bbac0dde4e"
-+checksum = "b52fd3255258d26fac7264ab5a76b53c13367136dc011d3d6ad4f8ed070396a3"
- dependencies = [
-  "libc",
-  "mio",
-@@ -2671,9 +2671,9 @@ checksum = "06abde3611657adf66d383f00b093d7faecc7fa57071cce2578660c9f1010821"
- 
- [[package]]
- name = "uuid"
--version = "1.28.0"
-+version = "1.29.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "7cc1186384beb7dd8eedea376413fd654937285ea6c9cfbb928dc3043ea4b606"
-+checksum = "4a0e2d11620c50695fe12bbbfde96b3477fe606e7284c22d505c12ce51214514"
- dependencies = [
-  "atomic",
-  "getrandom 0.4.3",
-@@ -2765,9 +2765,9 @@ dependencies = [
- 
- [[package]]
- name = "webpki-roots"
--version = "1.0.10"
-+version = "1.0.11"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "1c1c8e20c8a38fc7d65abfe74eb7280e4aa667e8eec8bc84996d2874810748d9"
-+checksum = "f5f280bbb2b287bc8e7de7e3852945a0ff50d1bbcb5ed42b6c7a568c546df171"
- dependencies = [
-  "rustls-pki-types",
- ]
+@@ -212,12 +212,15 @@ write: /dev/null
+    opened earlier, the filtered ones included, because threads share descriptors
+    (item 1); a test holds a UDP socket opened before the filter to that
+    ([filter tests](../src/sandbox/seccomp.rs#L1)). On a thread with socket(2) open,
+-   two TCP calls get past the deny. A TCP Fast Open send (`sendto` or
+-   `sendmsg` with `MSG_FASTOPEN`) opens a connection and delivers its data
+-   without connect(2), and listen(2) on an unbound socket takes an ephemeral port
+-   on every address without bind(2). Both work from a parser thread on Linux 7.1,
+-   and a test fails if that changes
+-   ([gap tests](../src/sandbox/linux.rs#L1122)). Accepting on a listener bound
++   two TCP calls get past the deny. listen(2) on an unbound socket takes an
++   ephemeral port on every address without bind(2); that works from a parser
++   thread on Linux 7.1, and a test fails if it changes. A TCP Fast Open send
++   (`sendto` or `sendmsg` with `MSG_FASTOPEN`) opens a connection and delivers
++   its data without connect(2) on kernels before 7.2. Linux 7.2 checks it
++   against the connect rules, and the fix is marked for stable kernels, so an
++   older kernel may have it too. Landlock has no erratum for it, so netwatch
++   cannot tell which kernels do, and the report does not claim it; the test
++   accepts either result ([gap tests](../src/sandbox/linux.rs#L1122)). Accepting on a listener bound
+    before entry is not mediated either, which is how the metrics threads serve.
+    Main, the network workers and the proc broker have no network restriction,
+    and a parser running injected code can reach them through shared memory
 ```
 
-**File**: `Cargo.toml` (modified, +7/-1)
+**File**: `src/sandbox/linux.rs` (modified, +18/-7)
 ```diff
-@@ -81,7 +81,13 @@ dirs = "7"
- # report wrapped at 80 columns. The TUI measures with ratatui's own widths in
- # ui::text. Already in the tree as a transitive dep of ratatui, and kept on
- # its major so there is one copy and both measure with the same tables.
--unicode-width = "0.2"
-+#
-+# Pinned because 0.2.3 counts a halfwidth sound mark (ﾞ or ﾟ) as one cell, and
-+# ratatui-core 0.1.2 adds one for each mark on top, having expected 0. `ﾊﾟ` then
-+# measures 3 where terminals draw 2, and every later column shifts. ratatui-core
-+# accepts any version from 0.2.0, so this pin is what holds it for a build without
-+# Cargo.lock too. Drop it once ratatui stops adding the cell.
-+unicode-width = "=0.2.2"
- # ui::text cuts strings between the graphemes ratatui lays out, so a name is
- # never split inside an emoji sequence. Already in the tree through ratatui.
- unicode-segmentation = "1"
+@@ -1429,11 +1429,16 @@ mod tests {
+     }
+ 
+     #[test]
+-    fn parser_layer_leaves_fast_open_and_autobind_open() {
+-        // Landlock checks connect(2) and bind(2). A TCP Fast Open sendto
+-        // connects without the first, and listen(2) on an unbound socket
+-        // takes an ephemeral port on every address without the second. The
+-        // threat model says so; this fails if that changes under it.
++    fn parser_layer_leaves_autobind_open_and_fast_open_to_the_kernel() {
++        // Landlock checks connect(2) and bind(2). listen(2) on an unbound
++        // socket takes an ephemeral port on every address without the second;
++        // the threat model says so, and this fails if that changes under it.
++        // A TCP Fast Open sendto connects without the first on kernels before
++        // Linux 7.2, which checks it against the connect rules (33cb713db016,
++        // "landlock: Fix TCP Fast Open connection bypass", also marked for
++        // stable). Either the send is denied and nothing arrives, or it goes
++        // out. Landlock has no erratum for the fix, so nothing can tell which
++        // ahead of time (#192).
+         use nix::sys::socket::{
+             listen, sendto, socket, AddressFamily, Backlog, MsgFlags, SockFlag, SockType,
+             SockaddrIn,
+@@ -1489,9 +1494,15 @@ mod tests {
+         .join()
+         .unwrap();
+ 
+-        if let Some(sent) = sent {
++        outside.set_nonblocking(true).unwrap();
++        if sent == Some(Err(nix::errno::Errno::EACCES)) {
++            std::thread::sleep(std::time::Duration::from_millis(100));
++            match outside.accept() {
++                Err(e) if e.kind() == std::io::ErrorKind::WouldBlock => {}
++                other => panic!("a denied Fast Open send reached the listener: {other:?}"),
++            }
++        } else if let Some(sent) = sent {
+             assert_eq!(sent, Ok(9));
+-            outside.set_nonblocking(true).unwrap();
+             let deadline = std::time::Instant::now() + std::time::Duration::from_secs(5);
+             let mut accepted = loop {
+                 match outside.accept() {
+```
+
+**File**: `src/sandbox/mod.rs` (modified, +4/-4)
+```diff
+@@ -203,10 +203,10 @@ pub struct PlatformReport {
+     /// when the layer could not be built to ask.
+     pub landlock_availability: Option<&'static str>,
+     /// Linux: connect(2) and bind(2) on TCP sockets denied on this thread by
+-    /// its parser or capture layer. The network stays reachable: UDP, MPTCP,
+-    /// a TCP Fast Open send and listen(2) on an unbound socket all get past
+-    /// it (docs/THREAT-MODEL.md, item 4). Main and the network workers leave
+-    /// this false.
++    /// its parser or capture layer. The network stays reachable: UDP, MPTCP
++    /// and listen(2) on an unbound socket get past it, and so does a TCP Fast
++    /// Open send on kernels without the Linux 7.2 fix (docs/THREAT-MODEL.md,
++    /// item 4). Main and the network workers leave this false.
+     pub landlock_network_blocked: bool,
+     /// Linux: the layer this thread's role stacks on the filesystem one,
+     /// "parser" or "capture", whether or not the kernel enforced it. `None`
 ```
 
 ---
 
-### Incident Patch 3: `82967cff` (2026-11-01)
-**Commit Message**: fix(tui): exit as soon as q is pressed, not a refresh tick later (#176)
+### Incident Patch 2: `81275065` (2026-11-08)
+**Commit Message**: fix(memory): turn transparent huge pages off at startup on Linux (#198)
 
-After q the screen cleared at once, but the process stayed for a refresh tick with no prompt showing, and the terminal thread was still reading keys typed at the shell. It now polls in 50 ms slices. A health probe in flight no longer holds the exit, because it only updates memory. The warning about workers still running at the shutdown limit now reaches the log and names them.
+mimalloc 3 calls madvise(MADV_HUGEPAGE) on its arenas. With THP on
+`madvise` (Fedora, Ubuntu) or `always`, the kernel kept whole 2 MiB
+pages resident after a capture burst, and khugepaged (max_ptes_none 511)
+collapsed ranges mimalloc had released back into huge pages. RSS sat
+80 to 100 MiB above the live heap and rose with each burst, which is the
+flood soak's cycle-to-cycle growth that blocked 1.0.0.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Evidence, three cycles of two-minute steps on the reference machine,
+with a driver that also counted live heap bytes:
+- THP on: RSS after udp-churn 57.7 / 117.2 / 128.5 MiB, live heap
+  11.7 / 18.0 / 21.5, AnonHugePages up to 102 MiB off-peak; mtu-tcp
+  peaks 355.1 / 357.9 / 360.3; 114.5 MiB after the paced steps.
+- MIMALLOC_ALLOW_THP=0: the same step 34.5 / 40.4 / 44.2 MiB, a steady
+  ~23 MiB above the live heap; peaks 327.5 / 334.4 / 335.9; 40.5 after.
+The live heap grows 6.3 then 3.5 MiB as the capped tables fill and drops
+back to 15 MiB once their entries expire, so nothing leaks.
 
-**File**: `CHANGELOG.md` (modified, +6/-0)
+platform::disable_transparent_huge_pages() sets PR_SET_THP_DISABLE. main
+calls it first, and the flood soak driver does too so i
+
+**File**: `CHANGELOG.md` (modified, +7/-0)
 ```diff
-@@ -190,6 +190,12 @@ All notable changes to NetWatch will be documented in this file.
-   was waiting on them. No behaviour changes beyond that wording.
+@@ -19,6 +19,13 @@ All notable changes to NetWatch will be documented in this file.
+   and kernels with the stable backport may too, so the test failed and the build stopped
+   (#192). The test now accepts a denied send, as long as nothing reaches the listener, and
+   the threat model scopes the Fast Open gap to kernels without the fix.
++- **Memory no longer creeps up after capture bursts on Linux.** mimalloc asks for transparent
++  huge pages on its arenas, so after a burst the kernel kept whole 2 MiB pages resident and
++  khugepaged collapsed released ranges back into them. RSS sat 80 to 100 MiB above the bytes
++  live on the heap and rose a little with each burst, which is what failed the flood soak's
++  plateau gate. netwatch now turns transparent huge pages off for itself at startup
++  (`PR_SET_THP_DISABLE`). In a three-cycle soak with two-minute steps, RSS after the cycles
++  fell from 115 to 41 MiB, and the peak under a full stream budget from 360 to 336 MiB.
  
- ### Fixed
-+- **`q` gives your shell back at once.** The screen cleared straight away, but the
-+  process stayed for one refresh tick, 1 second by default and up to 2 with a slower
-+  `refresh_rate_ms`, with no prompt showing. Keys typed in that time could vanish,
-+  because netwatch was still reading them. It now exits in about 50 ms, and a health probe to
-+  a network that isn't answering no longer holds the exit either. The warning about
-+  workers still running at the shutdown limit now reaches the log and names them.
- - **Graphs are readable on the default theme.** `dark` drew upload from
-   `rgb(0, 0, 170)`, which is at best 1.6:1 on a dark terminal, so the lower half of
-   every throughput graph all but vanished. A graph's colours now hold at least 4:1
+ ## [1.0.0-rc.1] - 2026-11-07
+ 
 ```
 
-**File**: `src/collectors/health.rs` (modified, +4/-1)
+**File**: `Cargo.toml` (modified, +3/-0)
 ```diff
-@@ -307,7 +307,10 @@ impl HealthProber {
-             };
-             run_cycle(&Network, cycle, &cancel, &snapshot, &nat_outcome);
-             busy.store(false, Ordering::SeqCst);
--        });
-+        })
-+        // A probe only updates memory, and one to a network that isn't answering
-+        // would otherwise hold the exit for the whole shutdown wait.
-+        .not_waited_for();
-     }
- }
+@@ -205,6 +205,9 @@ nix = { version = "0.31", features = ["term", "signal"] }
+ [target.'cfg(target_os = "linux")'.dependencies]
+ landlock = "0.4.7"
+ caps = "0.5"
++# prctl(PR_SET_THP_DISABLE) at startup (platform::disable_transparent_huge_pages).
++# The same nix as above, so nothing new is compiled.
++nix = { version = "0.31", features = ["process"] }
  
+ [target.'cfg(windows)'.dependencies]
+ windows-sys = { version = "0.61", features = [
 ```
 
-**File**: `src/event.rs` (modified, +15/-5)
+**File**: `docs/PERFORMANCE.md` (modified, +2/-0)
 ```diff
-@@ -2,9 +2,14 @@ use anyhow::Result;
- use crossterm::event::{self, Event, KeyEvent, KeyEventKind, MouseEvent, MouseEventKind};
- use std::sync::atomic::{AtomicU32, Ordering};
- use std::sync::Arc;
--use std::time::Duration;
-+use std::time::{Duration, Instant};
- use tokio::sync::mpsc;
+@@ -39,6 +39,8 @@ The four runs dispatched together read +17.8 to +20.4, v0.40.0 among them. One c
  
-+/// The longest the terminal thread waits for input before checking whether it
-+/// should stop. It polled for a whole tick, so a quit sat waiting for that tick
-+/// with the shell already back, and this thread still reading the keys typed at it.
-+const INPUT_WAIT: Duration = Duration::from_millis(50);
+ One local run of `main` with a third cycle points the wrong way. Its peaks, all in the `mtu-tcp` phase, were 375.7 MiB in cycle 2 and 393.7 MiB in cycle 3, 18 MiB higher. Every other scenario except `bulk` also peaked about 8 to 20 MiB higher in cycle 3. Cycle 1 doesn't count: the machine suspended in the middle of it. That is one run, and runs vary by 7 MiB, but it reads as growth that continues after warm-up. Before 1.0.0, the soak is to compare a third cycle with the second, a 24-hour run is to show whether memory keeps climbing, and the growth is to be found or ruled out. A climb blocks 1.0.0.
+ 
++The growth was transparent huge pages, not a leak. A driver that also counted the bytes live on the heap ran three cycles of two-minute steps on the reference machine, once with huge pages and once without (`MIMALLOC_ALLOW_THP=0`), the two side by side. With them, RSS after `udp-churn` read 57.7, 117.2 and 128.5 MiB in the three cycles while the live heap read 11.7, 18.0 and 21.5 MiB, and outside the `mtu-tcp` peaks up to 102 MiB of RSS was huge pages. mimalloc asks for them on its arenas, and khugepaged collapses ranges it has released back into whole 2 MiB pages. Without them the same step read 34.5, 40.4 and 44.2 MiB, about 23 MiB above the live heap each time, and the `mtu-tcp` peaks were 327.5, 334.4 and 335.9 MiB. The live heap rises a few MiB per cycle as the capped tables fill (6.3, then 3.5), and falls back to 15 MiB in the paced steps once their entries expire. netwatch now turns huge pages off for itself at startup. The tables above are from before that change, and the next full soak replaces them.
 +
- pub enum AppEvent {
-     Key(KeyEvent),
-     Mouse(MouseEvent),
-@@ -32,12 +37,14 @@ impl EventHandler {
-         // crossterm::event::poll() is a blocking call that would tie up
-         // a tokio worker thread permanently.
-         crate::sandbox::worker::spawn("terminal", move || {
-+            let mut last_tick = Instant::now();
-             while !crate::sandbox::worker::stopping() {
-                 // Re-read the tick rate each iteration so the settings popup
-                 // can change refresh_rate_ms at runtime and have it take
-                 // effect on the next poll without a restart.
--                let dur = Duration::from_millis(tick_rate_thread.load(Ordering::Relaxed) as u64);
--                if event::poll(dur).unwrap_or(false) {
-+                let tick = Duration::from_millis(tick_rate_thread.load(Ordering::Relaxed) as u64);
-+                let wait = tick.saturating_sub(last_tick.elapsed()).min(INPUT_WAIT);
-+                if event::poll(wait).unwrap_or(false) {
-                     match event::read() {
-                         Ok(Event::Key(key)) if key.kind == KeyEventKind::Press => {
-                             if tx.send(AppEvent::Key(key)).is_err() {
-@@ -51,8 +58,11 @@ impl EventHandler {
-                         }
-                         _ => {}
-                     }
--                } else if tx.send(AppEvent::Tick).is_err() {
--                    return;
-+                } else if last_tick.elapsed() >= tick {
-+                    if tx.send(AppEvent::Tick).is_err() {
-+                        return;
-+                    }
-+                    last_tick = Instant::now();
-                 }
-             }
-         });
+ ## Flood soak
+ 
+ Each run floods a veth pair in a private network namespace for an hour: two cycles of six scenarios, then paced rates, then ten minutes of the real daemon. A Python AF_PACKET generator sends the traffic, so the soak needs no extra packages. It offers up to about 1.5 million packets a second on the reference machine and about 350,000 on the runner. The harness can use tcpreplay for the replay scenario if asked.
 ```
 
-**File**: `src/main.rs` (modified, +4/-1)
+**File**: `examples/flood_soak.rs` (modified, +2/-0)
 ```diff
-@@ -106,6 +106,9 @@ fn main() -> Result<()> {
-         netwatch::owner_only::create_dir_all(exports)?;
-     }
-     netwatch::sandbox::worker::install(sandbox_mode, sandbox_paths).map_err(anyhow::Error::msg)?;
-+    // Declared before the session guard so it drops after it: the guard's warning
-+    // about workers still running has to reach the log.
-+    let _log_guard;
-     let _worker_session = netwatch::sandbox::worker::SessionGuard;
-     netwatch::sandbox::worker::preflight().map_err(anyhow::Error::msg)?;
-     let runtime = tokio::runtime::Builder::new_current_thread()
-@@ -136,7 +139,7 @@ fn main() -> Result<()> {
-     // non-blocking writer's worker flushes queued records on shutdown.
-     // Installed after CLI flag handling so `--version` / `--help` don't
-     // touch the cache dir.
--    let _log_guard = netwatch::logging::init();
-+    _log_guard = netwatch::logging::init();
-     config.warn_removed_keys();
-     config
-         .load_warnings
+@@ -142,6 +142,8 @@ fn parse() -> Result<Options> {
+ }
+ 
+ fn main() -> Result<()> {
++    // As `main` does, so RSS reads as the binary's.
++    netwatch::platform::disable_transparent_huge_pages();
+     let opts = parse()?;
+     match &opts.replay {
+         Some(dir) => replay(dir, opts.seconds),
 ```
 
-**File**: `src/sandbox/worker.rs` (modified, +26/-1)
+**File**: `src/main.rs` (modified, +2/-0)
 ```diff
-@@ -46,6 +46,14 @@ impl WorkerHandle {
-         let handle = self.0.lock().unwrap().take();
-         handle.map_or(Ok(()), |h| h.join())
-     }
-+    /// Leave this worker out of the session's shutdown wait, for one with
-+    /// nothing to finish.
-+    pub fn not_waited_for(self) {
-+        HANDLES
-+            .lock()
-+            .unwrap()
-+            .retain(|slot| !Arc::ptr_eq(slot, &self.0));
-+    }
- }
- pub fn stopping() -> bool {
-     STOPPING.load(Ordering::SeqCst)
-@@ -84,12 +92,29 @@ pub fn shutdown(timeout: Duration) -> usize {
-         std::thread::sleep(Duration::from_millis(10));
-     }
- }
-+/// The workers [`shutdown`] is still waiting for, by thread name.
-+fn unfinished() -> Vec<String> {
-+    HANDLES
-+        .lock()
-+        .unwrap()
-+        .iter()
-+        .filter_map(|slot| {
-+            let handle = slot.lock().unwrap();
-+            let name = handle.as_ref()?.thread().name()?.to_string();
-+            Some(name)
-+        })
-+        .collect()
+@@ -15,6 +15,8 @@ use std::mem::ManuallyDrop;
+ static GLOBAL: mimalloc::MiMalloc = mimalloc::MiMalloc;
+ 
+ fn main() -> Result<()> {
++    // Before the collectors allocate: see the function for the RSS it saves.
++    netwatch::platform::disable_transparent_huge_pages();
+     let args: Vec<String> = std::env::args().skip(1).collect();
+     let options = match netwatch::cli::parse(&args)? {
+         netwatch::cli::Command::Help => {
+```
+
+**File**: `src/platform/mod.rs` (modified, +33/-0)
+```diff
+@@ -28,6 +28,24 @@ pub mod socket_table;
+ #[cfg(target_os = "windows")]
+ pub mod windows;
+ 
++/// Turns transparent huge pages off for this process on Linux, and does
++/// nothing elsewhere. `main` calls it first, and the flood soak's driver does
++/// the same so its RSS reads as the binary's.
++///
++/// mimalloc asks for huge pages on its arenas (`madvise(MADV_HUGEPAGE)`). With
++/// THP set to `madvise` or `always`, the kernel backs every 2 MiB of an arena
++/// netwatch has touched, and khugepaged collapses ranges mimalloc had released
++/// back into huge pages. After a capture burst that left RSS 80 to 100 MiB
++/// above the bytes live on the heap, and a little higher each time the burst
++/// came back: the flood soak's cycle-to-cycle growth. Without huge pages RSS
++/// stays about 23 MiB above the live heap. The flag also covers the children
++/// netwatch starts, which is harmless for `ss` and `ip`. A kernel without the
++/// prctl (before 3.15) keeps huge pages.
++pub fn disable_transparent_huge_pages() {
++    #[cfg(target_os = "linux")]
++    let _ = nix::sys::prctl::set_thp_disable(true);
 +}
- pub struct SessionGuard;
- impl Drop for SessionGuard {
-     fn drop(&mut self) {
-         let remaining = shutdown(Duration::from_secs(2));
-         if remaining != 0 {
--            tracing::warn!(remaining, "workers still unwinding after shutdown deadline");
-+            tracing::warn!(
-+                remaining,
-+                workers = ?unfinished(),
-+                "workers still unwinding after shutdown deadline"
-+            );
++
+ /// The command the capture error and the Dashboard banner give for capture
+ /// without root on Linux. CAP_BPF and CAP_PERFMON are for eBPF attribution
+ /// (`sandbox/mod.rs`). It restricts the binary to a group before granting it,
+@@ -791,3 +809,18 @@ stat() { case ${3#"$PWD"/} in usr/* | local/* | store/* | profile/*) echo root ;
          }
      }
  }
++
++#[cfg(all(test, target_os = "linux"))]
++mod huge_page_tests {
++    /// The kernel reports the flag back, and `THP_enabled` in
++    /// `/proc/self/status` reads 0, as it would for the binary.
++    #[test]
++    fn transparent_huge_pages_are_off_after_the_call() {
++        super::disable_transparent_huge_pages();
++        assert_eq!(nix::sys::prctl::get_thp_disable(), Ok(true));
++        let status = std::fs::read_to_string("/proc/self/status").unwrap();
++        if let Some(line) = status.lines().find(|l| l.starts_with("THP_enabled:")) {
++            assert_eq!(line.split_whitespace().nth(1), Some("0"), "{line}");
++        }
++    }
++}
 ```
 
-**File**: `tests/tui_signals.rs` (modified, +54/-0)
+---
+
+### Incident Patch 3: `f30ae2e6` (2026-11-07)
+**Commit Message**: fix(release): name pre-release packages as GitHub serves them, and keep :latest off them (#191)
+
+* fix(release): name pre-release packages as GitHub serves them
+
+GitHub turns a `~` in an asset's name into `.`, so 1.0.0-rc.1's SHA256SUMS
+listed netwatch_1.0.0~rc.1-1_amd64.deb while the release served
+netwatch_1.0.0.rc.1-1_amd64.deb, and `sha256sum -c` could not find the four
+packages. The release job now renames them before the sums and
+attestations. install-check's rpm job asks for the served name.
+
+rc.1's SHA256SUMS was replaced by hand with the corrected names; the hashes
+are unchanged.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* fix(release): keep :latest off a pre-release's container image
+
+contains(tag, '-') && '' || format(':latest') yields :latest whatever the
+tag: '' is falsy, so && '' falls through to ||. 1.0.0-rc.1 took :latest
+from 0.40.0. The non-empty value now sits in the && branch.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+---------
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/install-check.yml` (modified, +5/-3)
 ```diff
-@@ -298,6 +298,60 @@ fn ctrl_c_typed_restores_the_terminal_and_exits_0() {
-     stops_cleanly(|pty| pty.master.write_all(b"\x03").unwrap());
- }
+@@ -148,9 +148,11 @@ jobs:
+     steps:
+       - run: |
+           set -euo pipefail
+-          rpm_version=$(tr - '~' <<< "${VERSION}")
+-          curl -fsSLO "https://github.com/${REPO}/releases/download/${TAG}/netwatch-${rpm_version}-1.x86_64.rpm"
+-          dnf install -y "./netwatch-${rpm_version}-1.x86_64.rpm"
++          # The package's version is 1.0.0~rc.1, but GitHub serves a `~` in an
++          # asset's name as `.`.
++          rpm_file="netwatch-$(tr - . <<< "${VERSION}")-1.x86_64.rpm"
++          curl -fsSLO "https://github.com/${REPO}/releases/download/${TAG}/${rpm_file}"
++          dnf install -y "./${rpm_file}"
+           out=$(netwatch --version)
+           echo "$out"
+           grep -qF "${VERSION}" <<< "$out" ||
+```
+
+**File**: `.github/workflows/release.yml` (modified, +16/-1)
+```diff
+@@ -439,6 +439,17 @@ jobs:
+             scripts/static-asset-names.sh
+           fi
  
-+/// A worker that outlives the shutdown deadline is named in the log, which is
-+/// closed last so that the warning reaches it.
-+#[test]
-+fn a_worker_past_the_shutdown_deadline_is_logged() {
-+    let source = include_str!("../src/main.rs");
-+    let guard = source.find("let _worker_session").unwrap();
-+    assert!(source.find("let _log_guard;").unwrap() < guard);
-+}
++      # GitHub replaces a `~` in an asset's name with `.`, so a pre-release's
++      # packages (netwatch_1.0.0~rc.1-1_amd64.deb) were served under names
++      # SHA256SUMS did not list, and `sha256sum -c` could not find them
++      # (1.0.0-rc.1). Renamed first, the sums, the attestations and the
++      # release all use the name GitHub serves. The version inside each
++      # package keeps its tilde.
++      - name: Name pre-release packages as GitHub serves them
++        run: |
++          shopt -s nullglob
++          for f in *~*; do mv -v "$f" "${f//\~/.}"; done
 +
-+/// What the session logged, so a failure can show which worker held the exit.
-+/// macOS keeps its cache under HOME, whatever XDG_CACHE_HOME says.
-+fn logged(fixture: &Fixture) -> String {
-+    ["cache/netwatch", "Library/Caches/netwatch"]
-+        .iter()
-+        .filter_map(|dir| fs::read_dir(fixture.0.join(dir)).ok())
-+        .flatten()
-+        .map(|entry| entry.unwrap().path())
-+        .filter(|path| path.to_string_lossy().contains("netwatch.log"))
-+        .map(|path| fs::read_to_string(path).unwrap())
-+        .collect()
-+}
-+
-+/// `q` gives the shell back without waiting out a refresh tick. The terminal
-+/// thread polled for a whole tick before checking whether to stop, so the exit
-+/// took that tick, up to the 2 seconds the session allows its workers.
-+#[test]
-+fn q_does_not_wait_out_a_refresh_tick() {
-+    let fixture = Fixture::new();
-+    // macOS keeps its config under HOME, whatever XDG_CONFIG_HOME says.
-+    for dir in ["config/netwatch", "Library/Application Support/netwatch"] {
-+        fs::create_dir_all(fixture.0.join(dir)).unwrap();
-+        fs::write(
-+            fixture.0.join(dir).join("config.toml"),
-+            "refresh_rate_ms = 5000\n",
-+        )
-+        .unwrap();
-+    }
-+    let mut cmd = fixture.command();
-+    cmd.arg("--demo");
-+    let mut pty = Pty::spawn(cmd);
-+    assert!(
-+        pty.read_until(Duration::from_secs(20), first_frame),
-+        "no first frame: {:?}",
-+        pty.tail()
-+    );
-+    let pressed = Instant::now();
-+    pty.master.write_all(b"q").unwrap();
-+    let status = pty.wait(Duration::from_secs(10));
-+    assert_eq!(status.code(), Some(0), "{status}");
-+    let took = pressed.elapsed();
-+    let log = logged(&fixture);
-+    assert!(took < Duration::from_millis(1900), "took {took:?}: {log}");
-+}
-+
- /// `netwatch --demo` with the pty as its controlling terminal, the way a
- /// terminal emulator or sshd runs it: closing the master hangs the pty up,
- /// every write fails, and the kernel sends netwatch SIGHUP. Linux only:
+       # Every shipped binary must carry the dependency list `cargo auditable`
+       # embeds. A build step that lost the wrapper still links fine, so
+       # check the artifacts rather than trust the build.
+@@ -574,9 +585,13 @@ jobs:
+           context: packaging/docker
+           platforms: linux/amd64,linux/arm64
+           push: true
++          # `cond && x || y` is the expression language's only conditional,
++          # and it yields y whenever x is falsy. The old form put '' in x, so
++          # it always yielded :latest, and 1.0.0-rc.1 took :latest from
++          # 0.40.0. The non-empty value goes in x.
+           tags: |
+             ghcr.io/${{ github.repository }}:${{ env.RELEASE_TAG }}
+-            ${{ contains(env.RELEASE_TAG, '-') && '' || format('ghcr.io/{0}:latest', github.repository) }}
++            ${{ !contains(env.RELEASE_TAG, '-') && format('ghcr.io/{0}:latest', github.repository) || '' }}
+ 
+       # The image's provenance, pushed to GHCR next to it. Verified with:
+       #   gh attestation verify oci://ghcr.io/matthart1983/netwatch:vX.Y.Z -R matthart1983/netwatch
+```
+
+**File**: `CHANGELOG.md` (modified, +9/-0)
+```diff
+@@ -5,6 +5,15 @@ All notable changes to NetWatch will be documented in this file.
+ ## [Unreleased]
+ 
+ ### Fixed
++- **A pre-release's `SHA256SUMS` names its packages as GitHub serves them.** GitHub turns
++  a `~` in an asset's name into `.`, so 1.0.0-rc.1's sums listed `netwatch_1.0.0~rc.1-1_amd64.deb`
++  while the release served `netwatch_1.0.0.rc.1-1_amd64.deb`, and `sha256sum -c` could not
++  find the four packages. The release workflow renames them before the sums are taken.
++  1.0.0-rc.1's `SHA256SUMS` was replaced with the corrected names; the hashes are unchanged.
++- **A pre-release no longer takes the container image's `:latest`.** The release workflow's
++  condition always added `:latest`, so 1.0.0-rc.1 replaced 0.40.0 there, and
++  `docker run ghcr.io/matthart1983/netwatch` pulled the candidate. `:latest` was put back on
++  0.40.0 by re-running 0.40.0's own container job.
+ - **The Nix build passes its tests on Linux 7.2.** A sandbox test expected a TCP Fast Open
+   send from a parser thread to get past the Landlock network deny. Linux 7.2 closes that gap,
+   and kernels with the stable backport may too, so the test failed and the build stopped
+```
+
+**File**: `docs/PACKAGING.md` (modified, +1/-1)
+```diff
+@@ -103,7 +103,7 @@ What each channel does with a hyphenated tag:
+ | GitHub release | published, marked pre-release; `/releases/latest` stays on the last release |
+ | crates.io | published; `cargo install` and `cargo binstall` take it only when asked for by version |
+ | GHCR | `:v1.0.0-rc.1`, never `:latest` |
+-| `.deb` / `.rpm` assets | `1.0.0~rc.1-1`, which both sort below `1.0.0` |
++| `.deb` / `.rpm` assets | version `1.0.0~rc.1-1`, which both sort below `1.0.0`; the file names say `1.0.0.rc.1`, since GitHub serves no `~` in an asset's name |
+ | apt repository, COPR | skipped: each has one channel that users upgrade from |
+ | Homebrew, Scoop, conda-forge | not picked up; they follow releases |
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #178** (2026-11-03): docs(changelog): file the 0.40 entries under the right headings (@matthart1983)
-- **PR #177** (2026-11-01): docs: publish the 0.40 performance numbers (@matthart1983)
-- **PR #176** (2026-11-01): fix(tui): exit as soon as q is pressed, not a refresh tick later (@matthart1983)
-- **PR #175** (2026-11-01): fix: read config, policy and egress baseline as bounded regular files (@matthart1983)
-- **PR #174** (2026-11-01): docs: write down what 1.0 promises, and hold it in place (@matthart1983)
-- **PR #173** (2026-11-01): feat: settle the config and CLI contract for the freeze (@matthart1983)
+- **PR #198** (2026-11-08): fix(memory): turn transparent huge pages off at startup on Linux (@matthart1983)
+- **PR #196** (2026-11-07): fix(sandbox): accept a denied TCP Fast Open send in the gap test (#192) (@matthart1983)
+- **PR #191** (2026-11-07): fix(release): name pre-release packages as GitHub serves them, and keep :latest off them (@matthart1983)
+- **PR #190** (2026-11-07): docs(performance): record the plateau gate exception for 1.0.0-rc.1 (@matthart1983)
+- **PR #189** (2026-11-07): Record the light demo in the paper theme (@matthart1983)
+- **PR #188** (2026-11-07): README: light-terminal demo at the top; re-record the dark demo on 0.40.0 (@matthart1983)
 
 ---
 
@@ -2907,13 +2576,13 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. config): refuse a config.toml that does not load instead of using defaults (#146
+## X. sandbox): accept a denied TCP Fast Open send in the gap test (#196)
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matthart1983/netwatch. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0a737c60`: config): refuse a config.toml that does not load instead of using defaults (#146). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fc4b48fe`: sandbox): accept a denied TCP Fast Open send in the gap test (#196). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2921,22 +2590,15 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **One bad value in config.toml no longer throws the whole file away.** A
-  file that was not valid TOML, or gave a key a value of the wrong type, was
-  replaced by the defaults without a word. With `refresh_rate_ms = 'oops'` in
-  a file that also set `sandbox = "strict"` and `record_uptime = false`,
-  netwatch started with a best-effort sandbox and recorded uptime. A file it
-  could not read, or a symlink to one that had gone, was treated the same
-  way. `netwatch` and `netwatch daemon` now print the file, line and column
-  and exit 1 before anything starts or is written. `diagnose run` exits 3,
-  its status for no session, and `diagnose coverage` exits 1, with the same
-  message. `netwatch doctor` names the file, line and column in its `config`
-  entry, still without quoting the file, and `--check-capture` no longer
-  opens capture on the defaults in its place. `--generate-config` and the
-  Settings save no longer overwrite a file that does not load. With no file
-  at all the defaults apply as before, and keys a file leaves out keep
-  theirs. In the library, `NetwatchConfig::load` returns a `Result`, and
-  `load_from` and `save_to` are new.
+## [Unreleased]
+
+### Fixed
+- **The Nix build passes its tests on Linux 7.2.** A sandbox test expected a TCP Fast Open
+  send from a parser thread to get past the Landlock network deny. Linux 7.2 closes that gap,
+  and kernels with the stable backport may too, so the test failed and the build stopped
+  (#192). The test now accepts a denied send, as long as nothing reaches the listener, and
+  the threat model scopes the Fast Open gap to kernels without the fix.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2946,4 +2608,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0a737c60` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fc4b48fe` are properly handled with clean fallback behavior.

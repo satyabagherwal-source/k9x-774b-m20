@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/medialab-xan-learnings.md`  
 > **Source**: github ([https://github.com/medialab/xan](https://github.com/medialab/xan))  
-> **Source Version**: `1f0c0fec`  
+> **Source Version**: `6849efff`  
 > **License**: Unlicense  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T18:57:26.187Z  
+> **Timestamp**: 2026-11-10T01:19:17.141Z  
 > **Learning ID**: `learn-github-medialab-xan`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/medialab-xan-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/medialab/xan](https://github.com/medialab/xan))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T18:57:25.898Z  
+> **Harvest Timestamp**: 2026-11-10T01:19:16.718Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The CSV magician
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4548 stars
+- **Stars / Engagement**: 4554 stars
 
 ---
 
@@ -1947,14 +1947,11 @@ impl Args {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1211** (2026-10-21): **xan select incorrectly parses the number of arguments?**
-  *Symptoms*: I'm using `xan select` with `fmt` function to convert the format of an input file:  ``` echo "chrom,pos,variant,Ensembl_geneid,Ensembl_tsid,ESM1b_proteomics_variant_classification,ESM1b_std_variant_classification,ref,alt,chrom2 10,47061,10:47061:G:A,ENSG00000261456,ENST00000568584,Intermediate,Intermediate,G,A,10" \ | xan select -e 'fmt("chr{} {} {} {} {} . . ESM1b_proteomics_variant_classification={};Ensembl_geneid={};Ensembl_tsid={}", chrom2, pos, variant, ref, alt, ESM1b_proteomics_variant_classification, Ensembl_geneid, Ensembl_tsid)' ```  This gives the error:  ``` xan select: got 9 arguments. Cannot exceed 8. ```  If I remove one of the interpolated strings, it works. E.g removing Ensembl_tsid:  ``` echo "chrom,pos,variant,Ensembl_geneid,Ensembl_tsid,ESM1b_proteomics_variant_classification,ESM1b_std_variant_classification,ref,alt,chrom2 10,47061,10:47061:G:A,ENSG00000261456,ENST00000568584,Intermediate,Intermediate,G,A,10" \ | xan select -e 'fmt("chr{} {} {} {} {} . . ESM1b_proteomics_variant_classification={};Ensembl_geneid={};Ensembl_tsid=", chrom2, pos, variant, ref, alt, ESM1b_proteomics_variant_classification, Ensembl_geneid)'  chr10 47061 10:47061:G:A G A . . ESM1b_proteomics_variant_classification=Intermediate;Ensembl_geneid=ENSG00000261456;Ensembl_tsid= ```  Is this a bug or expected?   xan v0.61.0
-  **Post-Mortem & Fix Analysis**:
-  > So, this is not a bug of the `select` bug per-se but a limitation of the evaluation language itself (under the hood, function arguments remain stack allocated and so are limited to 8, which I thought was large enough for most use-cases, but evidently you just showed me that is not the case ;) ). So it's not a bug, it is expected, but we can still discuss the issue.  Now I could do things to improve the situation:  * This fact should be clearly documented (I don't think it is) * The error message should be clearer so people understand it is not the command itself which is the culprit but the expression language * I should be able to mitigate this by unfolding calls to variadic functions like `fmt` when parsing the expression so you can actually use it with more than 8 args. (As a workaround I think fmt is also able to accept a list of arguments as variables to use in the interpolated string `fmt("{}", something)` and `fmt("{}", [something])` are in fact semantically equivalent (albeit n
-  > @dariober a batch of commits made the following changes:  - the fmt function should be more robust - the fmt function should be faster - the fmt function should now accept more than 8 arguments if required - error messages have been made clearer
+- **Issue #1230** (2026-11-07): **xan explode empty check is morally wrong when using -e**
+  *Symptoms*: 
 
-- **Issue #1202** (2026-10-16): **cat rows --intersection has a different behavior depending on file order**
-  *Symptoms*: Hello !  Here is what I get when I use several wildcards (*) with xan cat rows:  `xan cat rows fetch_report_photos_Facebook_Parti_Conservateur_Quebec_20260* fetch_report_photos_elections_Facebook_PLQ_CAQ_PQ_QS_*  --intersection | xan h` 0  activities 1  content_type 2  creation_time 3  id ... 36 multimedia_url 37 original_index 38 resolved_url 39 http_status 40 datetime_utc 41 fetch_error 42 path 43 mimetype 44 encoding 45 body_size  `xan cat rows fetch_report_photos_elections_Facebook_PLQ_CAQ_PQ_QS_* fetch_report_photos_Facebook_Parti_Conservateur_Quebec_20260* --intersection | xan h` 0  activities 1  content_type 2  creation_time 3  id ... 36 multimedia_url 37 year 38 original_index 39 resolved_url 40 http_status 41 datetime_utc 42 fetch_error 43 path 44 mimetype 45 encoding 46 body_size  
+- **Issue #1225** (2026-11-06): **xan search replace does not respect left etc.**
+  *Symptoms*: See if it's actually possible to check if replacement was done without comparing cell before and after.  This can be dealt with by using `replace_all_with`
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1971,62 +1968,364 @@ impl Args {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `471628cd` (2026-11-04)
-**Commit Message**: Fixing xan enum -A
+### Incident Patch 1: `20f37ec5` (2026-11-09)
+**Commit Message**: Fixing xan bivar coordinate system
 
-**File**: `src/cmd/enumerate.rs` (modified, +1/-1)
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -75,7 +75,7 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+@@ -48,6 +48,7 @@
+ * Fixing `xan scrape` not streaming input when using `--paths` & `--docs`.
+ * Fixing performance issues when calling a command with a lot of positional arguments (e.g. 10k paths to `xan scrape`).
+ * Fixing `xan explode --evaluate --drop-empty` semantics.
++* Fixing `xan bivar` to abide by correct coordinates and flip y axis to fit intuition.
  
-     if !conf.no_headers {
-         let column_name = args.flag_column_name.unwrap_or(
--            (if args.flag_byte_offset {
-+            (if args.flag_byte_offset || args.flag_accumulate {
-                 "byte_offset"
-             } else {
-                 "index"
+ *Performance*
+ 
 ```
 
-**File**: `tests/test_enumerate.rs` (modified, +25/-0)
+**File**: `src/cmd/matrix.rs` (modified, +75/-58)
 ```diff
-@@ -96,3 +96,28 @@ fn enumerate_byte_offset() {
+@@ -9,14 +9,14 @@ use crate::moonblade::agg::CovarianceWelford;
+ use crate::select::SelectedColumns;
+ use crate::utils;
+ 
+-struct LabeledMatrix<L, T> {
+-    columns: Vec<L>,
+-    rows: Vec<L>,
++struct LabeledMatrix<T> {
++    columns: ByteRecord,
++    rows: ByteRecord,
+     data: Vec<T>,
+ }
+ 
+-impl<L, T: Default> LabeledMatrix<L, T> {
+-    fn new(columns: Vec<L>, rows: Vec<L>) -> Self {
++impl<T: Default> LabeledMatrix<T> {
++    fn new(columns: ByteRecord, rows: ByteRecord) -> Self {
+         let len = columns.len() * rows.len();
+ 
+         let mut data = Vec::with_capacity(len);
+@@ -33,7 +33,7 @@ impl<L, T: Default> LabeledMatrix<L, T> {
+     }
+ }
+ 
+-impl<L, T> LabeledMatrix<L, T> {
++impl<T> LabeledMatrix<T> {
+     #[inline(always)]
+     fn columns(&self) -> usize {
+         self.columns.len()
+@@ -52,23 +52,23 @@ impl<L, T> LabeledMatrix<L, T> {
+         y * self.columns() + x
+     }
+ 
+-    fn x_labels(&self) -> impl Iterator<Item = &L> {
++    fn x_labels(&self) -> impl Iterator<Item = &[u8]> {
+         self.columns.iter()
+     }
+ 
+-    fn labeled_rows(&self) -> impl Iterator<Item = (&L, &[T])> {
++    fn labeled_rows(&self) -> impl Iterator<Item = (&[u8], &[T])> {
+         self.rows.iter().zip(self.data.chunks_exact(self.columns()))
+     }
+ }
+ 
+-impl<L, T> LabeledMatrix<L, Option<T>> {
++impl<T> LabeledMatrix<Option<T>> {
+     fn set(&mut self, x: usize, y: usize, v: T) {
+         let i = self.flat_index(x, y);
+         self.data[i] = Some(v);
+     }
+ }
+ 
+-impl<L, T> Index<(usize, usize)> for LabeledMatrix<L, T> {
++impl<T> Index<(usize, usize)> for LabeledMatrix<T> {
+     type Output = T;
+ 
+     #[inline(always)]
+@@ -77,7 +77,7 @@ impl<L, T> Index<(usize, usize)> for LabeledMatrix<L, T> {
+     }
+ }
+ 
+-impl<L, T> IndexMut<(usize, usize)> for LabeledMatrix<L, T> {
++impl<T> IndexMut<(usize, usize)> for LabeledMatrix<T> {
+     #[inline(always)]
+     fn index_mut(&mut self, (x, y): (usize, usize)) -> &mut Self::Output {
+         let i = self.flat_index(x, y);
+@@ -120,16 +120,13 @@ impl Axes {
+     }
+ }
+ 
+-impl From<Axes> for LabeledMatrix<Vec<u8>, Option<f64>> {
++impl From<Axes> for LabeledMatrix<Option<f64>> {
+     fn from(value: Axes) -> Self {
+         match value {
+-            Axes::Heterogeneous { x, y } => {
+-                Self::new(x.into_iter().collect(), y.into_iter().collect())
++            Axes::Heterogeneous { x, y } => Self::new(x.iter().collect(), y.iter().collect()),
++            Axes::Homogeneous(labels) => {
++                Self::new(labels.iter().collect(), labels.iter().collect())
+             }
+-            Axes::Homogeneous(labels) => Self::new(
+-                labels.iter().cloned().collect(),
+-                labels.into_iter().collect(),
+-            ),
+         }
+     }
+ }
+@@ -511,64 +508,84 @@ impl Args {
+         let cell_width: f64 = (max_x - min_x) / (nb_cols as f64);
+         let cell_height: f64 = (max_y - min_y) / (nb_rows as f64);
+ 
+-        let mut x_labels = Vec::with_capacity(nb_cols);
++        let mut x_labels = ByteRecord::new();
+         let mut x_lower_bound = min_x;
+         for _ in 0..(nb_cols - 1) {
+-            x_labels.push(format!(
+-                ">= {} < {}",
+-                utils::format_number(x_lower_bound),
+-                utils::format_number(x_lower_bound + cell_width)
+-            ));
++            x_labels.push_field(
++                format!(
++                    ">= {} < {}",
++                    utils::format_number(x_lower_bound),
++                    utils::format_number(x_lower_bound + cell_width)
++                )
++                .as_bytes(),
++            );
+             x_lower_bound += cell_width;
+         }
+-        x_labels.push(format!(
+-            ">= {} <= {}",
+-            utils::format_number(x_lower_bound),
+-            utils::format_number(max_x)
+-        ));
++        x_labels.push_field(
++            format!(
++                ">= {} <= {}",
++                utils::format_number(x_lower_bound),
++                utils::format_number(max_x)
++            )
++            .as_bytes(),
++        );
+ 
+-        let mut y_labels = Vec::with_capacity(nb_rows);
++        let mut y_labels = ByteRecord::new();
+         let mut y_lower_bound = min_y;
+         for _ in 0..(nb_cols - 1) {
+-            y_labels.push(format!(
+-                ">= {} < {}",
+-                utils::format_number(y_lower_bound),
+-                utils::format_number(y_lower_bound + cell_height)
+-            ));
++            y_labels.push_field(
++                format!(
++                    ">= {} < {}",
++                    utils::format_number(y_lower_bound),
++                    utils::format_number(y_lower_bound + cell_height)
++                )
++                .as_bytes(),
++            );
+             y_lower_bound += cell_height;
+         }
+-        y_labels.push(format!(
+-            ">= {} <= {}",
+-            utils::format_number(y_lower_bound),
+-            utils::format_number(max_y)
+-        ));
++        y_labels.push_field(
++            format!(
++          
+```
+
+**File**: `tests/test_matrix.rs` (modified, +330/-29)
+```diff
+@@ -191,19 +191,150 @@ fn matrix_bivar() {
+ 
+     let got: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
+ 
+-    #[rustfmt::skip]
+     let expected = vec![
+-        ["", ">= -277,263 < -237,831", ">= -237,831 < -198,399", ">= -198,399 < -158,966", ">= -158,966 < -119,534", ">= -119,534 < -80,102", ">= -80,102 < -40,670", ">= -40,670 < -1,237.9", ">= -1,237.9 < 38,194", ">= 38,194 < 77,626", ">= 77,626 <= 117,058"],
+-            [">= -279,303 < -235,756", "", "", "", "", "", "1", "1", "", "", ""],
+-            [">= -235,756 < -192,208", "", "", "", "", "", "", "", "", "", ""],
+-            [">= -192,208 < -148,661", "", "", "", "", "", "", "", "1", "", ""],
+-            [">= -148,661 < -105,113", "", "", "", "", "", "", "", "", "", ""],
+-            [">= -105,113 < -61,566", "", "", "", "", "", "", "", "", "", ""],
+-            [">= -61,566 < -18,018", "", "", "", "", "", "", "2", "", "", ""],
+-            [">= -18,018 < 25,528", "", "", "", "", "", "", "", "", "", ""],
+-            [">= 25,528 < 69,076", "1", "", "", "", "", "", "", "", "1", "1"],
+-            [">= 69,076 < 112,623", "", "", "", "", "1", "", "", "1", "", ""],
+-            [">= 112,623 <= 156,171", "1", "", "", "", "", "", "", "", "", ""],
++        [
++            "",
++            ">= -277,263 < -237,831",
++            ">= -237,831 < -198,399",
++            ">= -198,399 < -158,966",
++            ">= -158,966 < -119,534",
++            ">= -119,534 < -80,102",
++            ">= -80,102 < -40,670",
++            ">= -40,670 < -1,237.9",
++            ">= -1,237.9 < 38,194",
++            ">= 38,194 < 77,626",
++            ">= 77,626 <= 117,058",
++        ],
++        [
++            ">= 112,623 <= 156,171",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "1",
++            "",
++            "",
++        ],
++        [
++            ">= 69,076 < 112,623",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "1",
++            "",
++            "",
++        ],
++        [
++            ">= 25,528 < 69,076",
++            "",
++            "",
++            "1",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "1",
++            "",
++        ],
++        [
++            ">= -18,018 < 25,528",
++            "1",
++            "",
++            "",
++            "",
++            "",
++            "2",
++            "",
++            "",
++            "",
++            "",
++        ],
++        [
++            ">= -61,566 < -18,018",
++            "1",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++        ],
++        [
++            ">= -105,113 < -61,566",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "1",
++            "",
++        ],
++        [
++            ">= -148,661 < -105,113",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++        ],
++        [
++            ">= -192,208 < -148,661",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++        ],
++        [
++            ">= -235,756 < -192,208",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++        ],
++        [
++            ">= -279,303 < -235,756",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "",
++            "1",
++            "",
++            "1",
++        ],
      ];
      assert_eq!(got, expected);
  }
-+
-+#[test]
-+fn enumerate_byte_offset_accumulate() {
-+    let wrk = Workdir::new("enumerate_byte_offset_accumulate");
-+    wrk.create(
-+        "data.csv",
-+        vec![
-+            svec!["a"],
-+            svec!["1452"],
-+            svec!["23497694986"],
-+            svec!["34087056085685"],
-+        ],
-+    );
-+    let mut cmd = wrk.command("enum");
-+    cmd.arg("data.csv").arg("-A");
-+
-+    let got: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
-+    let expected = vec![
-+        svec!["byte_offset", "a"],
-+        svec!["14", "1452"],
-+        svec!["22", "23497694986"],
-+        svec!["37", "34087056085685"],
-+    ];
-+    assert_eq!(got, expected);
-+}
+@@ -237,19 +368,150 @@ fn matrix_bivar_weight() {
+ 
+     let got: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
+ 
+-    #[rustfmt::skip]
+     let expected = vec![
+-        ["", ">= -277,263 < -237,831", ">= -237,831 < -198,399", ">= -198,399 < -158,966", ">= -158,966 < -119,534", ">= -119,534 < -80,102", ">= -80,102 < -40,670", ">= -40,670 < -1,237.9", ">= -1,237.9 < 38,194", ">= 38,194 < 77,626", ">= 77,626 <= 117,058"],
+-        [">= -279,303 < -235,756", "", "", "", "", "", "10.616205472750881", "7.486790584554081", "", "", ""],
+-        [">= -235,756 < -192,208", "", "", "", "", "", "", "", "", "", ""],
+-        [">= -192,208 < -148,661", "", "", "", "", "", "", "", "8.834227893525213", "", ""],
+-        [">= -148,661 < -105,113", "", "", "", "", "", "", "", "", "", ""],
+-        [">= -105,113 < -61,566", "", "", "", "", "", "", "", "", "", ""],
+-        [">= -61,566 < -18,018", "", "", "", "", "", "", "6.480093564961779", "", "", ""],
+-        [">= -18,018 < 25,528", "", "", "", "
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1224** (closed): Add a plain aligned table preset to xan view (@mvanhorn)
 - **PR #1223** (2026-11-04): Xml highlight (Issue #1215) (@clothilde-ml)
 - **PR #1222** (closed): Add a plain theme to xan view (@mvanhorn)
 - **PR #1221** (2026-11-03): Fix fractional_days panic on identical points in time (@solesby)
 - **PR #1204** (2026-10-19): Corrected bug #1190 : hist option -m "sum" now obey given scale (@clothilde-ml)
 - **PR #1203** (closed): Fixing xan cat rows -I header intersection (@paoValle)
-- **PR #1199** (2026-10-16): `view` env override  controls (@solesby)
 
 ---
 
@@ -2046,28 +2345,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Fixing xan enum -A
+## X. Fixing xan bivar coordinate system
 
 **RULE**:
-When implementing operations in `src/cmd/enumerate.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in medialab/xan. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in medialab/xan. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `471628cd`: Fixing xan enum -A. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `20f37ec5`: Fixing xan bivar coordinate system. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/cmd/enumerate.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            (if args.flag_byte_offset || args.flag_accumulate {
+* Fixing `xan bivar` to abide by correct coordinates and flip y axis to fit intuition.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-            (if args.flag_byte_offset {
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `471628cd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `20f37ec5` are properly handled with clean fallback behavior.

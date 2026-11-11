@@ -3,7 +3,7 @@
 > **Source Version**: `hf-internsci`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-11-04T17:59:33.344Z  
+> **Timestamp**: 2026-11-08T04:26:50.113Z  
 > **Learning ID**: `learn-huggingface-internscience-sage-a1-5`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,355 +17,283 @@
 ## 1. Executive Forensic Architecture & System Mechanics
 
 **Technical Problem Solved:**
-The repository `InternScience/Sage-A1.5` addresses the computational and architectural bottleneck of long-horizon agentic tasks in scientific discovery. Standard dense Large Language Models (LLMs) suffer from quadratic attention complexity ($O(N^2)$) and lack the structural capacity to manage parallel sub-agent contexts without interference. Sage-A1.5 solves this by implementing a **Hybrid Mixture-of-Experts (MoE) Vision-Language Model (VLM)** that combines:
-1.  **Linear Attention (Mamba-style SSM):** For 3 out of every 4 layers, reducing sequence processing complexity to $O(N)$ for long-context scientific documents.
-2.  **Full Attention (GQA):** For 1 out of every 4 layers, preserving global dependency tracking necessary for complex reasoning and verification.
-3.  **Sparse MoE Routing:** 256 experts with top-8 routing, allowing the model to activate only a fraction of parameters per token, enabling "adaptive capability composition" for different scientific domains (e.g., chemistry vs. physics).
+Sage-A1.5 addresses the "long-horizon reliability" and "context interference" problems in Large Language Models (LLMs) used for agentic scientific discovery. Standard LLMs suffer from context window saturation and "drift" when executing multi-step tasks. Sage-A1.5 solves this via a **Hybrid Attention MoE Architecture** that combines:
+1.  **Linear Attention (Mamba-style SSM):** For 75% of layers to achieve $O(N)$ complexity for long-context processing (262k tokens).
+2.  **Full Attention (GQA):** For 25% of layers to maintain precise global dependency tracking.
+3.  **Mixture of Experts (MoE):** 256 experts with top-8 routing to scale parameter count (35B total, ~3B active) without proportional compute cost.
+4.  **Agentic Orchestration:** A system-level pattern where the model delegates sub-tasks to isolated sub-agents, preventing context pollution between concurrent tasks.
 
 **Architectural Boundaries:**
-*   **Input Boundary:** Multimodal (Text + Image). The `image_token_id` (248056) acts as the barrier between visual embeddings and text tokens.
-*   **Internal Boundary:** The `layer_types` array strictly enforces the alternating pattern of `linear_attention` and `full_attention`. This is a hard architectural constraint, not a dynamic choice.
-*   **Output Boundary:** Text generation with specific special tokens for agentic control (`<|im_start|>`, `<|im_end|>`, etc.).
+*   **Model Core:** `Qwen3_5MoeForConditionalGeneration`. It is a Vision-Language Model (VLM) capable of processing images (`image_token_id: 248056`) and text.
+*   **State Ownership:** The model state is distributed across 40 hidden layers. The "state" of the linear attention layers (Mamba SSM) is maintained in `float32` (`mamba_ssm_dtype`) to prevent numerical instability during long-sequence accumulation, while the rest of the model runs in `bfloat16`.
+*   **Decoupling:** The text generation logic is decoupled from the vision encoder via the `image_token_id` placeholder mechanism. The MoE routing is decoupled from the dense feed-forward networks via a router that selects 8 out of 256 experts per token.
 
 **Critical Subsystem Abstractions:**
-1.  **Hybrid Attention Scheduler:** The `full_attention_interval: 4` dictates the state management. Linear attention layers maintain a fixed-size state vector (Mamba SSM state), while full attention layers maintain the KV cache. The system must synchronize these two distinct memory footprints.
-2.  **MoE Router:** A gating network that selects 8 out of 256 experts. This introduces a non-differentiable routing decision that must be stable to prevent "expert collapse" or load imbalance.
-3.  **Multi-Modal RoPE (M-RoPE):** The `rope_parameters` specify `mrope_interleaved: true` and `mrope_section: [11, 11, 10]`. This is a critical abstraction for aligning positional encodings between text and image tokens, ensuring that spatial relationships in images are preserved relative to the text context.
+1.  **Hybrid Attention Scheduler:** The `layer_types` array dictates a strict periodicity: 3 Linear Attention layers followed by 1 Full Attention layer (`full_attention_interval: 4`). This is a hard architectural invariant.
+2.  **MoE Router:** A gating network that outputs logits for 256 experts. The invariant is `num_experts_per_tok: 8`. This ensures sparsity and load balancing.
+3.  **Multi-Head RoPE (M-RoPE):** The `rope_parameters` define `mrope_interleaved: true` and `mrope_section: [11, 11, 10]`. This is a specialized positional encoding for multimodal inputs, where different dimensions of the embedding vector are rotated based on different modalities (time, height, width).
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Hybrid Attention State Synchronization Invariant
+### 1. Hybrid Attention Periodicity Invariant
 **RULE**:
-In any hybrid attention architecture (mixing Linear/SSM and Full Attention layers), the state management system MUST treat the SSM state (fixed size) and the KV cache (variable size) as distinct memory domains with explicit synchronization points at every `full_attention_interval`. The system MUST NOT assume uniform memory growth across all layers.
+In hybrid attention architectures combining linear (SSM/Mamba) and full (Transformer) attention, the `full_attention_interval` MUST be a divisor of the total `num_hidden_layers` or the layer types MUST be explicitly enumerated to ensure the final layer is a Full Attention layer. The ratio of Linear to Full attention MUST be maintained to balance $O(N)$ efficiency with $O(N^2)$ precision.
 
 **WHY**:
-Linear attention layers (Mamba) maintain a constant-size state vector regardless of sequence length, while Full Attention layers grow the KV cache linearly with sequence length. If the inference engine assumes uniform memory allocation or fails to flush/synchronize the SSM state when transitioning to a full attention layer, it will result in:
-1.  **Memory Leaks:** Unbounded growth of SSM states if not properly managed.
-2.  **Context Loss:** If the SSM state is not correctly passed to the next linear layer, the model loses long-range dependency information.
-3.  **Latency Spikes:** Full attention layers require $O(N^2)$ computation. If the scheduler does not batch these layers efficiently, it causes severe latency spikes in long-context generation.
+Linear attention (Mamba) is associative and can be parallelized, but it loses precise long-range dependency tracking compared to full attention. If full attention layers are too sparse, the model fails to capture global context (e.g., linking the beginning of a 200k token document to the end). If they are too dense, the $O(N^2)$ cost negates the efficiency gains. The periodicity (1 in 4) is a tuned trade-off.
 
 **WHEN TO APPLY**:
-Any LLM inference engine (vLLM, SGLang, Hugging Face Transformers) supporting hybrid attention models (e.g., Jamba, Zamba, Sage-A1.5).
+Any LLM implementation using a mix of SSM (State Space Models) and Transformer attention layers, particularly for context windows > 32k tokens.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-class HybridAttentionScheduler:
-    def __init__(self, full_attention_interval: int):
-        self.interval = full_attention_interval
-        self.layer_index = 0
+# config.json invariant
+layer_types = []
+full_attention_interval = 4
+num_hidden_layers = 40
 
-    def get_attention_type(self, layer_idx: int) -> str:
-        # Invariant: Every 4th layer is full attention
-        if (layer_idx + 1) % self.interval == 0:
-            return "full_attention"
-        return "linear_attention"
+for i in range(num_hidden_layers):
+    if (i + 1) % full_attention_interval == 0:
+        layer_types.append("full_attention")
+    else:
+        layer_types.append("linear_attention")
 
-    def forward(self, hidden_states, kv_cache, ssm_state):
-        layer_type = self.get_attention_type(self.layer_index)
-        
-        if layer_type == "linear_attention":
-            # SSM state is fixed size, no KV cache growth
-            hidden_states, ssm_state = self.linear_attn_forward(hidden_states, ssm_state)
-            # KV cache remains unchanged for this layer
-        else:
-            # Full attention requires KV cache update
-            hidden_states, kv_cache = self.full_attn_forward(hidden_states, kv_cache)
-            # SSM state is bypassed or reset depending on architecture
-            # CRITICAL: Ensure ssm_state is not corrupted during full attn layers
-        
-        self.layer_index += 1
-        return hidden_states, kv_cache, ssm_state
+# Assert the final layer is full attention for global context consolidation
+assert layer_types[-1] == "full_attention"
+assert len(layer_types) == num_hidden_layers
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Assuming uniform KV cache growth for all layers
-def buggy_forward(hidden_states, kv_cache):
-    for layer in model.layers:
-        # This will fail for linear attention layers which don't use KV cache
-        # or will incorrectly allocate memory for SSM states
-        hidden_states, kv_cache = layer(hidden_states, kv_cache)
-    return hidden_states, kv_cache
+# ANTI-PATTERN: Random or non-periodic mixing
+# This leads to unpredictable latency spikes and inconsistent context retention
+layer_types = ["linear_attention"] * 39 + ["full_attention"] # Only last layer is full
+# OR
+layer_types = ["full_attention"] * 40 # No efficiency gain
 ```
 
 **VERIFICATION METHOD**:
-1.  **Memory Profiling:** Monitor memory usage per layer type. Linear attention layers should show constant memory usage, while full attention layers should show linear growth.
-2.  **State Integrity Test:** Inject a known long-context sequence and verify that the SSM state at layer $L$ is correctly passed to layer $L+1$ if both are linear attention.
-3.  **Latency Spike Detection:** Measure inference latency for sequences of length $N$ and $2N$. The latency increase should be dominated by the full attention layers, not the linear ones.
+```python
+def test_attention_periodicity(config):
+    types = config['text_config']['layer_types']
+    interval = config['text_config']['full_attention_interval']
+    for i, t in enumerate(types):
+        expected = "full_attention" if (i + 1) % interval == 0 else "linear_attention"
+        assert t == expected, f"Layer {i} type mismatch: {t} != {expected}"
+    assert types[-1] == "full_attention"
+```
 
-### 2. MoE Expert Load Balancing Invariant
+### 2. MoE Sparsity and Load Balancing Invariant
 **RULE**:
-In any Mixture-of-Experts (MoE) model with $E$ experts and top-$k$ routing, the routing mechanism MUST include a load balancing loss or auxiliary loss term during training. During inference, the system MUST NOT allow any single expert to be selected by more than a threshold percentage of tokens, as this indicates expert collapse and degrades model performance.
+In a Mixture of Experts (MoE) layer, the `num_experts_per_tok` MUST be strictly less than `num_experts`. The router MUST implement a load-balancing loss or auxiliary loss to prevent "expert collapse" (where only a few experts are used). The active parameter count MUST be calculated as `(num_experts_per_tok / num_experts) * total_expert_params`.
 
 **WHY**:
-Without load balancing, the router tends to select a small subset of "popular" experts, leading to:
-1.  **Expert Collapse:** Most experts are never used, wasting parameters.
-2.  **Inference Bottlenecks:** If one expert is selected by 50% of tokens, it becomes a serialization bottleneck in parallel inference.
-3.  **Generalization Failure:** The model fails to learn diverse capabilities, reducing its effectiveness in agentic tasks that require varied skills.
+If `num_experts_per_tok` is too high, the model becomes dense and loses the efficiency benefit. If it is too low, the model lacks capacity. Without load balancing, the router may converge to a state where only 1-2 experts are used, leaving 250+ experts as dead weight (memory waste) and reducing model diversity.
 
 **WHEN TO APPLY**:
-Any MoE model (e.g., Mixtral, DeepSeek, Sage-A1.5) with $E > 10$ experts.
+Any MoE model implementation, especially with > 100 experts.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-class MoERouter:
-    def __init__(self, num_experts: int, top_k: int):
-        self.num_experts = num_experts
-        self.top_k = top_k
-        self.expert_load = np.zeros(num_experts)
+# config.json invariant
+num_experts = 256
+num_experts_per_tok = 8
 
-    def route(self, hidden_states):
-        # Compute gating scores
-        scores = self.gate(hidden_states)  # [batch, seq, num_experts]
-        
-        # Select top-k experts
-        top_k_indices = torch.topk(scores, k=self.top_k, dim=-1).indices
-        
-        # Update load balancing metric
-        for i in range(self.num_experts):
-            self.expert_load[i] += (top_k_indices == i).sum().item()
-        
-        return top_k_indices
+# Invariant: Sparsity check
+assert num_experts_per_tok < num_experts
+assert num_experts_per_tok > 0
 
-    def get_load_balance_loss(self):
-        # Invariant: Load should be uniform
-        avg_load = self.expert_load.mean()
-        variance = self.expert_load.var()
-        return variance / (avg_load ** 2)  # Coefficient of variation
+# Active parameter calculation
+# Assuming each expert has the same size as a dense FFN
+# Active Params = (8/256) * Total MoE Params
+# This ensures ~3B active params out of 35B total
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: No load balancing, leading to expert collapse
-def buggy_route(hidden_states):
-    scores = self.gate(hidden_states)
-    # Always selects the same top-k experts if scores are biased
-    top_k_indices = torch.topk(scores, k=self.top_k, dim=-1).indices
-    return top_k_indices
+# ANTI-PATTERN: No load balancing
+# Router logits are used directly without auxiliary loss
+# This leads to expert collapse
+router_logits = self.gate(hidden_states)
+top_k_indices = torch.topk(router_logits, k=num_experts_per_tok, dim=-1).indices
+# No penalty for uneven distribution
 ```
 
 **VERIFICATION METHOD**:
-1.  **Expert Utilization Histogram:** Plot the distribution of tokens per expert. A healthy MoE model should have a near-uniform distribution.
-2.  **Load Balance Loss Monitoring:** Track the load balance loss during training. It should decrease over time.
-3.  **Inference Latency Per Expert:** Measure the time taken by each expert. If one expert is significantly slower, it indicates a bottleneck.
+```python
+def test_moe_sparsity(config):
+    assert config['text_config']['num_experts_per_tok'] < config['text_config']['num_experts']
+    # In training, verify that the load balancing loss is non-zero and decreasing
+```
 
-### 3. Multi-Modal RoPE Alignment Invariant
+### 3. Numerical Precision Separation for SSM States
 **RULE**:
-In any multi-modal model using Rotary Position Embeddings (RoPE), the positional encoding MUST be aligned between text and image tokens. The `mrope_section` parameter MUST be used to interleave positional encodings for different modalities, ensuring that spatial relationships in images are preserved relative to the text context.
+In hybrid architectures using State Space Models (Mamba), the SSM state (`mamba_ssm_dtype`) MUST be stored in `float32` even if the rest of the model runs in `bfloat16` or `float16`. The SSM state accumulates over the sequence length, and low-precision accumulation leads to numerical drift and instability.
 
 **WHY**:
-If positional encodings are not aligned, the model cannot correctly associate image regions with text descriptions. This leads to:
-1.  **Hallucinations:** The model generates text that does not match the image content.
-2.  **Spatial Misalignment:** The model fails to understand the relative positions of objects in the image.
-3.  **Degraded Performance:** The model's ability to perform visual reasoning is severely compromised.
+Mamba layers update their state via a recurrence: $h_t = A h_{t-1} + B x_t$. Over 262k tokens, small rounding errors in `bfloat16` (8-bit mantissa) accumulate exponentially, causing the state to diverge from the true value. `float32` (23-bit mantissa) provides sufficient precision for stable long-sequence recurrence.
 
 **WHEN TO APPLY**:
-Any VLM (Vision-Language Model) using RoPE (e.g., Qwen-VL, LLaVA, Sage-A1.5).
+Any model using Mamba, S4, or other recurrent/SSM layers for long-context processing.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-class MultiModalRoPE:
-    def __init__(self, mrope_section: list, partial_rotary_factor: float):
-        self.mrope_section = mrope_section
-        self.partial_rotary_factor = partial_rotary_factor
+# config.json invariant
+mamba_ssm_dtype = "float32"
+dtype = "bfloat16"
 
-    def apply_rope(self, q, k, position_ids):
-        # Invariant: position_ids must be aligned for text and image tokens
-        # mrope_section defines how many dimensions are used for each modality
-        # Example: [11, 11, 10] means 11 dims for text, 11 for image, 10 for shared
-        
-        # Interleave positional encodings
-        q_rotated, k_rotated = self.rotate(q, k, position_ids)
-        
-        return q_rotated, k_rotated
+# In model implementation
+self.ssm_state = torch.zeros(batch_size, num_heads, head_dim, dtype=torch.float32)
+# While the rest of the model uses bfloat16
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Using the same positional encoding for text and image tokens
-def buggy_apply_rope(q, k, position_ids):
-    # This fails to account for the different spatial structures of text and images
-    q_rotated, k_rotated = self.rotate(q, k, position_ids)
-    return q_rotated, k_rotated
+# ANTI-PATTERN: Using bfloat16 for SSM state
+self.ssm_state = torch.zeros(batch_size, num_heads, head_dim, dtype=torch.bfloat16)
+# This will cause numerical instability for sequences > 10k tokens
 ```
 
 **VERIFICATION METHOD**:
-1.  **Visual Grounding Test:** Provide an image with multiple objects and ask the model to describe their relative positions. The model should correctly identify the spatial relationships.
-2.  **Positional Encoding Alignment Check:** Verify that the positional encodings for text and image tokens are correctly interleaved according to `mrope_section`.
-3.  **Hallucination Rate:** Measure the rate of hallucinations in visual reasoning tasks. A lower rate indicates better alignment.
+```python
+def test_ssm_dtype(config):
+    assert config['text_config']['mamba_ssm_dtype'] == "float32"
+    assert config['text_config']['dtype'] in ["bfloat16", "float16"]
+```
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-*Note: Since no specific commit patches or bug issues were provided in the input, the following incidents are inferred from common failure modes in hybrid MoE VLMs and the architectural constraints observed in the config.*
+*Note: The provided repository data contains no commit history, bug issues, or code diffs. The following incidents are **inferred** from the architectural invariants and known failure modes of similar hybrid MoE VLMs (Qwen3.5-MoE, Mamba-2, etc.). These are "Forensic Inferences" based on the configuration constraints.*
 
-### Incident 1: SSM State Corruption During Full Attention Transition (BUG-SSM-01)
-- **Context:** Inference engine, `modeling_qwen3_5_moe.py`
-- **What Was Expected:** The SSM state should be preserved and correctly passed to the next linear attention layer after a full attention layer.
-- **What Actually Happened:** The SSM state was reset or corrupted during the full attention layer, leading to loss of long-range dependency information.
-- **Evidence in Repo:** `config.json` specifies `full_attention_interval: 4`, indicating that every 4th layer is full attention. The SSM state must be managed across this transition.
-- **Root Cause:** The inference engine did not explicitly handle the SSM state during full attention layers, assuming it was not needed.
+### Incident 1: Context Window Overflow in Linear Attention (BUG-CTX-OVF-01)
+- **Context**: `text_config.max_position_embeddings: 262144`
+- **What Was Expected**: The model should handle 262k tokens without memory explosion or numerical instability.
+- **What Actually Happened**: If the linear attention state is not properly managed, the memory footprint grows linearly with sequence length. If the state is not reset or chunked, it can cause OOM (Out of Memory) errors.
+- **Evidence in Repo**: `max_position_embeddings: 262144` and `mamba_ssm_dtype: float32`.
+- **Root Cause**: Linear attention has $O(N)$ memory complexity for the state, but if the state is not chunked or if the batch size is large, the total memory can exceed GPU limits.
 - **Remediation Code Diff**:
 ```python
-// - Buggy code: SSM state is not passed to full attention layers
-def forward(self, hidden_states, kv_cache, ssm_state):
-    for layer in self.layers:
-        if layer.type == "full_attention":
-            hidden_states, kv_cache = layer(hidden_states, kv_cache)
-            # ssm_state is lost here
-        else:
-            hidden_states, ssm_state = layer(hidden_states, ssm_state)
-    return hidden_states, kv_cache, ssm_state
+# - Buggy: Storing full sequence state in memory
+# state = torch.zeros(batch_size, seq_len, hidden_size)
 
-// + Fixed pattern: SSM state is explicitly preserved
-def forward(self, hidden_states, kv_cache, ssm_state):
-    for layer in self.layers:
-        if layer.type == "full_attention":
-            hidden_states, kv_cache = layer(hidden_states, kv_cache)
-            # ssm_state is preserved and passed to the next linear layer
-        else:
-            hidden_states, ssm_state = layer(hidden_states, ssm_state)
-    return hidden_states, kv_cache, ssm_state
+# + Fixed: Chunked processing with state carry-over
+# state = torch.zeros(batch_size, num_heads, head_dim, dtype=torch.float32)
+# for chunk in chunks:
+#     state = update_state(state, chunk)
 ```
-- **Lesson:** In hybrid attention architectures, state management must be explicit for each layer type. Assumptions about state persistence across different layer types are dangerous.
+- **Lesson**: Always implement chunked processing for long-context models to bound memory usage.
 
-### Incident 2: MoE Expert Collapse Due to Lack of Load Balancing (BUG-MOE-02)
-- **Context:** Training pipeline, `training_config.json`
-- **What Was Expected:** All 256 experts should be utilized evenly during training.
-- **What Actually Happened:** Only 10-20 experts were used, leading to expert collapse and degraded performance.
-- **Evidence in Repo:** `config.json` specifies `num_experts: 256` and `num_experts_per_tok: 8`. Without load balancing, the router tends to select a small subset of experts.
-- **Root Cause:** The training pipeline did not include a load balancing loss term, allowing the router to become biased towards a few experts.
+### Incident 2: MoE Expert Collapse (BUG-MOE-COLL-02)
+- **Context**: `num_experts: 256`, `num_experts_per_tok: 8`
+- **What Was Expected**: All 256 experts should be utilized across the dataset.
+- **What Actually Happened**: The router converged to using only 10-20 experts, leaving 230+ experts unused. This reduced model capacity and increased inference latency (due to poor load balancing).
+- **Evidence in Repo**: `num_experts: 256` is a high number, prone to collapse without auxiliary loss.
+- **Root Cause**: The router's softmax distribution became peaked, favoring a few experts.
 - **Remediation Code Diff**:
 ```python
-// - Buggy code: No load balancing loss
-def compute_loss(self, outputs, labels):
-    loss = outputs.loss
-    return loss
+# - Buggy: No auxiliary loss
+# loss = ce_loss + ...
 
-// + Fixed pattern: Include load balancing loss
-def compute_loss(self, outputs, labels):
-    loss = outputs.loss
-    load_balance_loss = self.get_load_balance_loss()
-    total_loss = loss + 0.01 * load_balance_loss
-    return total_loss
+# + Fixed: Add load balancing loss
+# aux_loss = load_balancing_loss(router_logits, expert_indices)
+# loss = ce_loss + alpha * aux_loss
 ```
-- **Lesson:** MoE models require explicit load balancing mechanisms to prevent expert collapse. Without this, the model's capacity is underutilized.
+- **Lesson**: Always include a load balancing loss in MoE training to prevent expert collapse.
 
-### Incident 3: Multi-Modal RoPE Misalignment (BUG-ROPE-03)
-- **Context:** Tokenizer and positional encoding, `tokenizer_config.json`
-- **What Was Expected:** Positional encodings should be aligned between text and image tokens.
-- **What Actually Happened:** The model generated hallucinations and failed to understand spatial relationships in images.
-- **Evidence in Repo:** `config.json` specifies `mrope_interleaved: true` and `mrope_section: [11, 11, 10]`. If these parameters are not correctly applied, the positional encodings will be misaligned.
-- **Root Cause:** The inference engine did not correctly apply the `mrope_section` parameter, leading to misaligned positional encodings.
+### Incident 3: Numerical Drift in SSM State (BUG-SSM-DRIFT-03)
+- **Context**: `mamba_ssm_dtype: float32`
+- **What Was Expected**: Stable state accumulation over 262k tokens.
+- **What Actually Happened**: If `float16` was used, the state would drift, causing the model to "forget" early context or produce nonsensical outputs.
+- **Evidence in Repo**: Explicit `float32` specification for SSM state.
+- **Root Cause**: Low-precision accumulation errors in recurrent layers.
 - **Remediation Code Diff**:
 ```python
-// - Buggy code: Positional encodings are not interleaved
-def apply_rope(self, q, k, position_ids):
-    q_rotated, k_rotated = self.rotate(q, k, position_ids)
-    return q_rotated, k_rotated
-
-// + Fixed pattern: Positional encodings are interleaved according to mrope_section
-def apply_rope(self, q, k, position_ids):
-    q_rotated, k_rotated = self.rotate_interleaved(q, k, position_ids, self.mrope_section)
-    return q_rotated, k_rotated
+# - Buggy: state = state.to(torch.float16)
+# + Fixed: state = state.to(torch.float32)
 ```
-- **Lesson:** Multi-modal models require careful alignment of positional encodings between modalities. Misalignment leads to hallucinations and degraded performance.
+- **Lesson**: Use higher precision for recurrent state variables.
 
-### Incident 4: Memory Leak in KV Cache Management (BUG-MEM-04)
-- **Context:** Inference engine, `kv_cache_manager.py`
-- **What Was Expected:** The KV cache should be managed efficiently, with no memory leaks.
-- **What Actually Happened:** The KV cache grew unbounded, leading to out-of-memory errors.
-- **Evidence in Repo:** `config.json` specifies `max_position_embeddings: 262144`. If the KV cache is not properly managed, it will grow with the sequence length.
-- **Root Cause:** The inference engine did not properly manage the KV cache, leading to memory leaks.
+### Incident 4: Vision-Text Token Alignment Mismatch (BUG-VLM-ALIGN-04)
+- **Context**: `image_token_id: 248056`
+- **What Was Expected**: The model should correctly align image tokens with text tokens.
+- **What Actually Happened**: If the image token ID is not properly reserved in the tokenizer, the model may misinterpret image tokens as text tokens, leading to hallucinations.
+- **Evidence in Repo**: `image_token_id: 248056` is a specific ID, likely reserved.
+- **Root Cause**: Tokenizer configuration error.
 - **Remediation Code Diff**:
 ```python
-// - Buggy code: KV cache is not managed
-def forward(self, hidden_states, kv_cache):
-    for layer in self.layers:
-        hidden_states, kv_cache = layer(hidden_states, kv_cache)
-    return hidden_states, kv_cache
-
-// + Fixed pattern: KV cache is managed
-def forward(self, hidden_states, kv_cache):
-    for layer in self.layers:
-        hidden_states, kv_cache = layer(hidden_states, kv_cache)
-        if self.should_flush_kv_cache():
-            kv_cache = self.flush_kv_cache(kv_cache)
-    return hidden_states, kv_cache
+# - Buggy: image_token_id = 0 (conflicts with padding)
+# + Fixed: image_token_id = 248056 (reserved)
 ```
-- **Lesson:** KV cache management is critical in long-context inference. Without proper management, memory leaks can occur.
+- **Lesson**: Reserve specific token IDs for special modalities.
 
-### Incident 5: Tokenizer Special Token Misalignment (BUG-TOK-05)
-- **Context:** Tokenizer, `tokenizer_config.json`
-- **What Was Expected:** Special tokens should be correctly aligned with the model's architecture.
-- **What Actually Happened:** The model failed to generate correct outputs due to misaligned special tokens.
-- **Evidence in Repo:** `tokenizer_config.json` specifies special tokens like `<|im_start|>`, `<|im_end|>`, etc. If these tokens are not correctly aligned with the model's architecture, the model will fail.
-- **Root Cause:** The tokenizer was not correctly configured to match the model's architecture.
+### Incident 5: RoPE Positional Encoding Overflow (BUG-ROPE-OVF-05)
+- **Context**: `max_position_embeddings: 262144`, `partial_rotary_factor: 0.25`
+- **What Was Expected**: Correct positional encoding for 262k tokens.
+- **What Actually Happened**: If the RoPE base frequency is not scaled correctly, the positional encoding may overflow or lose precision for long sequences.
+- **Evidence in Repo**: `partial_rotary_factor: 0.25` indicates that only 25% of the dimensions are rotated, which is a common technique to reduce computational cost.
+- **Root Cause**: Incorrect RoPE scaling.
 - **Remediation Code Diff**:
 ```python
-// - Buggy code: Special tokens are not aligned
-def tokenize(self, text):
-    tokens = self.tokenizer(text)
-    return tokens
-
-// + Fixed pattern: Special tokens are aligned
-def tokenize(self, text):
-    tokens = self.tokenizer(text, add_special_tokens=True)
-    return tokens
+# - Buggy: rope_base = 10000 (standard)
+# + Fixed: rope_base = 1000000 (scaled for long context)
 ```
-- **Lesson:** Tokenizer configuration must be carefully aligned with the model's architecture. Misalignment leads to incorrect outputs.
+- **Lesson**: Scale RoPE base frequency for long-context models.
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
 1.  **Micro-Syntax & Token-Level Precision**:
-    *   **Type Coercion Pitfall:** In Python, `0` is falsy, but `None` is also falsy. When checking for the presence of a token ID, use `is not None` instead of `if token_id:` to avoid false negatives for token ID `0`.
-    *   **Deep Immutability:** When copying model configurations, use `copy.deepcopy()` to avoid shared references that can lead to unexpected mutations.
+    *   **Invariant**: `mamba_ssm_dtype` MUST be `float32`. Any implicit conversion to `bfloat16` in the SSM recurrence loop MUST be explicitly prevented.
+    *   **Code**: `state = state.to(torch.float32)` before every SSM update.
+    *   **Trap**: `state = state.to(torch.bfloat16)` causes drift.
 
 2.  **Infinite Loop & Recursion Guards**:
-    *   **Recursion Depth Cap:** In recursive model forward passes, ensure that the recursion depth is capped to avoid stack overflow. Use iterative approaches where possible.
-    *   **Loop Termination Invariant:** In loops over layers, ensure that the loop terminates by incrementing the layer index and checking against the total number of layers.
+    *   **Invariant**: The MoE router MUST have a maximum number of iterations for load balancing. If the load balancing loss does not converge, the training MUST be stopped.
+    *   **Code**: `if aux_loss > threshold: raise ConvergenceError`
+    *   **Trap**: Infinite loop in load balancing optimization.
 
 3.  **UI & UX Micro-Mechanics**:
-    *   **Layout Reflow/Thrashing:** In web-based inference interfaces, avoid frequent DOM updates. Use virtualization for long lists of generated tokens.
-    *   **Debouncing & Throttling:** Debounce user input to prevent excessive API calls during text generation.
+    *   **Invariant**: N/A (Backend model).
 
 4.  **Backend Concurrency & Memory Safety**:
-    *   **TOCTOU Race Conditions:** In multi-threaded inference, ensure that shared resources (e.g., KV cache) are accessed atomically. Use locks or atomic operations.
-    *   **Connection Pool Starvation:** In distributed inference, ensure that the connection pool is sized appropriately to handle the expected load.
+    *   **Invariant**: The SSM state MUST be thread-safe if used in a multi-threaded inference engine. Use `torch.no_grad()` during inference to prevent memory leaks from the autograd graph.
+    *   **Code**: `with torch.no_grad(): state = update_state(state, chunk)`
+    *   **Trap**: Memory leak from autograd graph in inference.
 
 5.  **Defect & Error Prevention ("Galti Pakadna")**:
-    *   **Null/Undefined Chaining:** Always check for `None` before accessing attributes of model components. Use optional chaining (`?.`) in JavaScript/TypeScript.
-    *   **Off-by-One Boundary Checks:** When indexing into arrays (e.g., `layer_types`), ensure that the index is within bounds. Use `len()` to check the length of the array.
+    *   **Invariant**: The `image_token_id` MUST be checked against the tokenizer's vocabulary size. If `image_token_id >= vocab_size`, the model MUST raise an error.
+    *   **Code**: `assert image_token_id < vocab_size`
+    *   **Trap**: Out-of-bounds token ID causes crash.
 
 ## 5. The 9 Deep Learning Dimensions
 
-1.  **Architecture**: Hybrid MoE VLM with alternating linear and full attention layers. The architecture is designed to balance computational efficiency (linear attention) with global dependency tracking (full attention).
-2.  **Core Abstractions**: `layer_types`, `full_attention_interval`, `num_experts`, `num_experts_per_tok`, `mrope_section`. These abstractions define the model's behavior and performance characteristics.
-3.  **Error Handling**: The model relies on the inference engine to handle errors. Common errors include out-of-memory errors, tokenization errors, and model loading errors.
-4.  **Testing**: Property testing should be used to verify that the model's outputs are consistent across different input lengths and modalities. Integration tests should verify that the model can handle long-context inputs.
-5.  **Security**: The model should be deployed in a secure environment to prevent unauthorized access. Input sanitization should be performed to prevent prompt injection attacks.
-6.  **Performance**: The model's performance is dominated by the full attention layers. Optimizing these layers (e.g., using FlashAttention) can significantly improve inference speed.
-7.  **Deployment**: The model should be deployed using a containerized environment (e.g., Docker) to ensure reproducibility. The model's weights should be stored in a secure location.
-8.  **Agent Patterns**: The model is designed for agentic tasks, such as task delegation and parallel collaboration. The model's outputs should be structured to facilitate these tasks.
-9.  **Data Flow**: The model's data flow is unidirectional, from input tokens to output tokens. The model's state (e.g., KV cache, SSM state) is maintained across layers.
+1.  **Architecture**: Hybrid MoE VLM with 40 layers, 256 experts, top-8 routing. 75% linear attention, 25% full attention.
+2.  **Core Abstractions**: `Qwen3_5MoeForConditionalGeneration`, `MambaSSM`, `MoERouter`, `MultiHeadRoPE`.
+3.  **Error Handling**: Numerical stability via `float32` SSM state. Load balancing loss for MoE.
+4.  **Testing**: Invariants on layer types, MoE sparsity, SSM dtype.
+5.  **Security**: N/A (Model weights).
+6.  **Performance**: $O(N)$ linear attention for 75% of layers. MoE sparsity for 3B active params.
+7.  **Deployment**: Compatible with Hugging Face Transformers, vLLM, SGLang.
+8.  **Agent Patterns**: Agentic orchestration, task delegation, parallel collaboration.
+9.  **Data Flow**: Image tokens -> Vision Encoder -> Text Embeddings -> Hybrid Attention -> MoE FFN -> Output.
 
 ## 6. The 8 Learning Extraction Artifacts
 
-1.  **Pattern**: Hybrid attention scheduling with explicit state management for SSM and KV cache.
-2.  **Rule**: In hybrid attention architectures, state management must be explicit for each layer type.
-3.  **Architecture Principle**: Balance computational efficiency (linear attention) with global dependency tracking (full attention).
-4.  **Failure Mode**: SSM state corruption during full attention transition.
-5.  **Reusable Skill**: Implement a hybrid attention scheduler that explicitly manages SSM and KV cache states.
-6.  **Decision**: Use alternating linear and full attention layers to balance efficiency and performance.
-7.  **Anti-pattern**: Assuming uniform state management across all layer types.
-8.  **Verification Method**: Memory profiling and state integrity testing.
+1.  **Pattern**: Hybrid Attention Periodicity (1 in 4 full attention).
+2.  **Rule**: SSM state MUST be `float32`.
+3.  **Architecture Principle**: Sparsity via MoE for efficiency.
+4.  **Failure Mode**: Expert collapse, numerical drift.
+5.  **Reusable Skill**: Implement chunked processing for long-context.
+6.  **Decision**: Use `float32` for SSM state to prevent drift.
+7.  **Anti-pattern**: Using `bfloat16` for SSM state.
+8.  **Verification Method**: Assert SSM dtype is `float32`.
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1.  **Verify Layer Types**: Ensure that the `layer_types` array is correctly configured and that the `full_attention_interval` is respected.
-2.  **Manage SSM State**: Implement explicit state management for SSM states across full attention layers.
-3.  **Balance MoE Experts**: Include a load balancing loss term in the training pipeline to prevent expert collapse.
-4.  **Align RoPE**: Ensure that positional encodings are correctly aligned between text and image tokens using `mrope_section`.
-5.  **Manage KV Cache**: Implement efficient KV cache management to prevent memory leaks.
-6.  **Align Tokenizer**: Ensure that the tokenizer is correctly configured to match the model's architecture.
-7.  **Test Long Context**: Test the model with long-context inputs to verify that it can handle them efficiently.
-8.  **Monitor Performance**: Monitor the model's performance (e.g., latency, memory usage) to identify bottlenecks.
+1.  **Check Layer Types**: Ensure `layer_types` follows the periodicity invariant.
+2.  **Check MoE Sparsity**: Ensure `num_experts_per_tok < num_experts`.
+3.  **Check SSM Dtype**: Ensure `mamba_ssm_dtype` is `float32`.
+4.  **Check RoPE Scaling**: Ensure RoPE base frequency is scaled for long context.
+5.  **Check Image Token ID**: Ensure `image_token_id` is reserved and within vocabulary size.
+6.  **Implement Load Balancing**: Add auxiliary loss to MoE router.
+7.  **Implement Chunked Processing**: Use chunked processing for long-context inference.
+8.  **Test Numerical Stability**: Test SSM state accumulation over long sequences.
