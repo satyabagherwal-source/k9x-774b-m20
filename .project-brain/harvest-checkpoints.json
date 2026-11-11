@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-11T10:17:43.518Z",
+  "last_updated": "2026-11-11T10:27:16.911Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4176,14 +4176,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rustls-rustls",
-      "content_hash": "94893217a6eefb970bdb257c8f850815874f8d8e3d487fe5c890f2bd8d6520e5",
-      "verified_at": "2026-11-09T17:44:04.854Z",
+      "content_hash": "078a5273fb61c07a4bc54ae5f5da45801a64aaff0379acabe2414768ffa37fbf",
+      "verified_at": "2026-11-11T10:26:52.269Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T17:44:04.854Z"
+      "last_updated": "2026-11-11T10:26:52.269Z"
     },
     "liyupi/yu-ai-agent": {
       "repository": "liyupi/yu-ai-agent",
@@ -9291,14 +9291,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-open-policy-agent-opa",
-      "content_hash": "e98b247f09f98819a09470254d8d4867bcce52cbbab282b404cc85280732dda1",
-      "verified_at": "2026-11-08T07:22:06.193Z",
+      "content_hash": "dd242ff1727d33fbe746c9e3e2a5955f8aa2450a3dd08af0ee708ea21c9b3cbd",
+      "verified_at": "2026-11-11T10:26:49.063Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T07:22:06.193Z"
+      "last_updated": "2026-11-11T10:26:49.063Z"
     },
     "dragonflydb/dragonfly": {
       "repository": "dragonflydb/dragonfly",
@@ -11571,14 +11571,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-google-tcmalloc",
-      "content_hash": "f0ed97f7d5cfaebfddc3960cd0c7488dec0714c1b4299cbe9fe363cef6d2860d",
-      "verified_at": "2026-11-07T22:16:03.687Z",
+      "content_hash": "d8beb555bd540ff702793e29f845cc24c334fbcb60dbcf78dcd747de4cc11027",
+      "verified_at": "2026-11-11T10:27:16.910Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T22:16:03.687Z"
+      "last_updated": "2026-11-11T10:27:16.910Z"
     },
     "russhwolf/multiplatform-settings": {
       "repository": "russhwolf/multiplatform-settings",

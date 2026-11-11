@@ -2693,10 +2693,10 @@
     "repository": "rustls/rustls",
     "platform": "github",
     "sourceUrl": "https://github.com/rustls/rustls",
-    "sourceVersion": "e7506724",
+    "sourceVersion": "c805ecfe",
     "license": "NOASSERTION",
-    "contentHash": "94893217a6eefb970bdb257c8f850815874f8d8e3d487fe5c890f2bd8d6520e5",
-    "lastHarvestedAt": "2026-11-09T17:44:04.845Z",
+    "contentHash": "078a5273fb61c07a4bc54ae5f5da45801a64aaff0379acabe2414768ffa37fbf",
+    "lastHarvestedAt": "2026-11-11T10:26:52.259Z",
     "learningId": "learn-github-rustls-rustls"
   },
   "liyupi-yu-ai-agent": {
@@ -6113,10 +6113,10 @@
     "repository": "open-policy-agent/opa",
     "platform": "github",
     "sourceUrl": "https://github.com/open-policy-agent/opa",
-    "sourceVersion": "bbcac03c",
+    "sourceVersion": "ef171a81",
     "license": "Apache-2.0",
-    "contentHash": "e98b247f09f98819a09470254d8d4867bcce52cbbab282b404cc85280732dda1",
-    "lastHarvestedAt": "2026-11-08T07:22:06.173Z",
+    "contentHash": "dd242ff1727d33fbe746c9e3e2a5955f8aa2450a3dd08af0ee708ea21c9b3cbd",
+    "lastHarvestedAt": "2026-11-11T10:26:49.053Z",
     "learningId": "learn-github-open-policy-agent-opa"
   },
   "dragonflydb-dragonfly": {
@@ -7683,10 +7683,10 @@
     "repository": "google/tcmalloc",
     "platform": "github",
     "sourceUrl": "https://github.com/google/tcmalloc",
-    "sourceVersion": "31549f83",
+    "sourceVersion": "065aed87",
     "license": "Apache-2.0",
-    "contentHash": "f0ed97f7d5cfaebfddc3960cd0c7488dec0714c1b4299cbe9fe363cef6d2860d",
-    "lastHarvestedAt": "2026-11-07T22:16:03.672Z",
+    "contentHash": "d8beb555bd540ff702793e29f845cc24c334fbcb60dbcf78dcd747de4cc11027",
+    "lastHarvestedAt": "2026-11-11T10:27:16.903Z",
     "learningId": "learn-github-google-tcmalloc"
   },
   "russhwolf-multiplatform-settings": {

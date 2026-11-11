@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T10:17:43.513Z",
-  "total_cycles_completed": 8762,
-  "total_learnings_persisted": 8762,
-  "total_rules_promoted": 8626,
+  "last_updated": "2026-11-11T10:27:16.907Z",
+  "total_cycles_completed": 8765,
+  "total_learnings_persisted": 8765,
+  "total_rules_promoted": 8629,
   "history": [
-    {
-      "timestamp": "2026-11-09T13:26:55.265Z",
-      "repository": "LiquidAI/LFM2.5-24B-A2B",
-      "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T13:34:22.921Z",
-      "repository": "streetwriters/notesnook",
-      "learningId": "learn-github-streetwriters-notesnook",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T13:34:27.677Z",
-      "repository": "fishaudio/drama-3",
-      "learningId": "learn-huggingface-fishaudio-drama-3",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T13:34:34.509Z",
       "repository": "dathere/qsv",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-11T10:17:43.513Z",
       "repository": "paradedb/paradedb",
       "learningId": "learn-github-paradedb-paradedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T10:26:49.059Z",
+      "repository": "open-policy-agent/opa",
+      "learningId": "learn-github-open-policy-agent-opa",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T10:26:52.265Z",
+      "repository": "rustls/rustls",
+      "learningId": "learn-github-rustls-rustls",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T10:27:16.907Z",
+      "repository": "google/tcmalloc",
+      "learningId": "learn-github-google-tcmalloc",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

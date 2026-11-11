@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261108-BQH2",
-    "timestamp": "2026-11-08T14:24:42.950Z",
-    "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
-    "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf",
-    "contentHash": "610c888e9f1f2d557a5650aa3cf2ccafda93f606677f05516bfddf3e5948104c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-XNJQ",
-    "timestamp": "2026-11-08T14:41:45.591Z",
-    "repository": "ntex-rs/ntex",
-    "learningId": "learn-github-ntex-rs-ntex",
-    "contentHash": "ba834839433faa76a42aeb050f5514ce54c75068433d28ef12069009ccc86ac6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261108-XOJJ",
-    "timestamp": "2026-11-08T14:41:46.879Z",
-    "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
-    "learningId": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo",
-    "contentHash": "bc4708800f4b3fc6f57c2b22b8ce9250483bdae65903350f312e6078364a479c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261108-6UH7",
     "timestamp": "2026-11-08T14:48:54.475Z",
     "repository": "Xudong-Huang/may",
@@ -7490,6 +7445,51 @@
     "repository": "paradedb/paradedb",
     "learningId": "learn-github-paradedb-paradedb",
     "contentHash": "09cef6d029d39b72c53e4b2d9d0c3170f41390a8ec4763204bd6f5f5660c0a1f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261111-5CNS",
+    "timestamp": "2026-11-11T10:26:49.048Z",
+    "repository": "open-policy-agent/opa",
+    "learningId": "learn-github-open-policy-agent-opa",
+    "contentHash": "dd242ff1727d33fbe746c9e3e2a5955f8aa2450a3dd08af0ee708ea21c9b3cbd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261111-5F4W",
+    "timestamp": "2026-11-11T10:26:52.256Z",
+    "repository": "rustls/rustls",
+    "learningId": "learn-github-rustls-rustls",
+    "contentHash": "078a5273fb61c07a4bc54ae5f5da45801a64aaff0379acabe2414768ffa37fbf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261111-5Y5F",
+    "timestamp": "2026-11-11T10:27:16.899Z",
+    "repository": "google/tcmalloc",
+    "learningId": "learn-github-google-tcmalloc",
+    "contentHash": "d8beb555bd540ff702793e29f845cc24c334fbcb60dbcf78dcd747de4cc11027",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

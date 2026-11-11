@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T10:18:06.341Z",
+  "last_updated": "2026-11-11T10:27:23.216Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4594,6 +4594,33 @@
       "source_repo": "aleo-labs-protocol-snarkos",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-866FF8-merge-pull-request-4661-from-aleo-labs-p.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-EB0150",
+      "directive_title": "Avoid 32-bit shift overflow when computing alignment in ReportCorruptedFree.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "google-tcmalloc",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-EB0150-avoid-32-bit-shift-overflow-when-computi.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-8D0B11",
+      "directive_title": "topdown: fix net.cidr_merge panic on IPv4-mapped IPv6 CIDRs",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "open-policy-agent-opa",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-8D0B11-topdown-fix-net-cidr-merge-panic-on-ipv4.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-728786",
+      "directive_title": "Reject non-empty legacy_session_id in QUIC ClientHello",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "rustls-rustls",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-728786-reject-non-empty-legacy-session-id-in-qu.md",
       "staged_date": "2026-11-11"
     }
   ]

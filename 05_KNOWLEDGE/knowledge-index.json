@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-11T10:17:43.374Z",
+  "last_updated": "2026-11-11T10:27:16.763Z",
   "total_verified_learnings": 1253,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -17685,14 +17685,19 @@
       "slug": "google-tcmalloc",
       "platform": "github",
       "source_url": "https://github.com/google/tcmalloc",
-      "source_version": "31549f83",
-      "content_hash": "f0ed97f7d5cfaebfddc3960cd0c7488dec0714c1b4299cbe9fe363cef6d2860d",
+      "source_version": "065aed87",
+      "content_hash": "d8beb555bd540ff702793e29f845cc24c334fbcb60dbcf78dcd747de4cc11027",
       "dossier_path": "07_PROJECT_LEARNING/google-tcmalloc-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/google-tcmalloc-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "In `Span::BuildFreelist`, populate `batch` directly with sequential object",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Avoid 32-bit shift overflow when computing alignment in ReportCorruptedFree.",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -17766,7 +17771,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T22:16:03.592Z",
+      "verified_at": "2026-11-11T10:27:16.742Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49776,8 +49781,8 @@
       "slug": "open-policy-agent-opa",
       "platform": "github",
       "source_url": "https://github.com/open-policy-agent/opa",
-      "source_version": "bbcac03c",
-      "content_hash": "e98b247f09f98819a09470254d8d4867bcce52cbbab282b404cc85280732dda1",
+      "source_version": "ef171a81",
+      "content_hash": "dd242ff1727d33fbe746c9e3e2a5955f8aa2450a3dd08af0ee708ea21c9b3cbd",
       "dossier_path": "07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
       "promoted_rules": [
@@ -49794,6 +49799,11 @@
         {
           "number": null,
           "title": "ast: Allow keys of empty collections in rules replaced by with",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "topdown: fix net.cidr_merge panic on IPv4-mapped IPv6 CIDRs",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -49872,7 +49882,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T07:22:06.103Z",
+      "verified_at": "2026-11-11T10:26:48.847Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -55999,8 +56009,8 @@
       "slug": "rustls-rustls",
       "platform": "github",
       "source_url": "https://github.com/rustls/rustls",
-      "source_version": "e7506724",
-      "content_hash": "94893217a6eefb970bdb257c8f850815874f8d8e3d487fe5c890f2bd8d6520e5",
+      "source_version": "c805ecfe",
+      "content_hash": "078a5273fb61c07a4bc54ae5f5da45801a64aaff0379acabe2414768ffa37fbf",
       "dossier_path": "07_PROJECT_LEARNING/rustls-rustls-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rustls-rustls-learnings.md",
       "promoted_rules": [
@@ -56017,6 +56027,11 @@
         {
           "number": null,
           "title": "client: reject TLS1.3-only extensions in TLS1.2 ServerHello",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Reject non-empty legacy_session_id in QUIC ClientHello",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -56125,7 +56140,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T17:44:04.691Z",
+      "verified_at": "2026-11-11T10:26:52.086Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

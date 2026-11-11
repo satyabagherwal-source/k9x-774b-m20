@@ -8914,3 +8914,6 @@
 | `CYCLE-20261111-TLXQ` | `2026-11-11T10:17:41.198Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`3d96f5cc...`) |
 | `CYCLE-20261111-TNPP` | `2026-11-11T10:17:43.501Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`09cef6d0...`) |
 | `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T10:18:06.334Z` | `hf-unsloth-qwen3.8-flash-next-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-11562009` [Domain D] | Yes (`b250b613...`) |
+| `CYCLE-20261111-5CNS` | `2026-11-11T10:26:49.048Z` | `open-policy-agent/opa` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`dd242ff1...`) |
+| `CYCLE-20261111-5F4W` | `2026-11-11T10:26:52.256Z` | `rustls/rustls` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`078a5273...`) |
+| `CYCLE-20261111-5Y5F` | `2026-11-11T10:27:16.899Z` | `google/tcmalloc` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`d8beb555...`) |

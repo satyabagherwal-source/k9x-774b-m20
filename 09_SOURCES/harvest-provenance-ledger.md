@@ -8923,3 +8923,6 @@ Every entry in this ledger must capture:
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `b2bfa52b` | Multi-dimensional audit evidence | 2026-11-11T10:17:41.203Z |
 | `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `781cb511` | Multi-dimensional audit evidence | 2026-11-11T10:17:43.506Z |
 | `learn-dom-d-11562009` | `project://hf-unsloth-qwen3.8-flash-next-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-unsloth-qwen3.8-flash-next-gguf-learnings.md` | 2026-11-11T10:18:06.334Z |
+| `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `ef171a81` | Multi-dimensional audit evidence | 2026-11-11T10:26:49.053Z |
+| `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `c805ecfe` | Multi-dimensional audit evidence | 2026-11-11T10:26:52.259Z |
+| `learn-github-google-tcmalloc` | `https://github.com/google/tcmalloc` | `065aed87` | Multi-dimensional audit evidence | 2026-11-11T10:27:16.903Z |

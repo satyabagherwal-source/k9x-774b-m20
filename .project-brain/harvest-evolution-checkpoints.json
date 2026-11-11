@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T10:18:06.342Z",
+  "last_updated": "2026-11-11T10:27:23.217Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-11T07:59:25.580Z",
@@ -151,9 +151,24 @@
       "processed_at": "2026-11-11T10:18:06.342Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "google-tcmalloc-learnings.md": {
+      "processed_at": "2026-11-11T10:27:23.207Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "open-policy-agent-opa-learnings.md": {
+      "processed_at": "2026-11-11T10:27:23.212Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "rustls-rustls-learnings.md": {
+      "processed_at": "2026-11-11T10:27:23.217Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 33,
+  "total_dossiers_evaluated": 36,
   "total_canonical_promoted": 13,
-  "total_staged_for_review": 17
+  "total_staged_for_review": 20
 }
