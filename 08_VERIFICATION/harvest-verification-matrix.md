@@ -9004,3 +9004,6 @@
 | `CYCLE-20261111-15RV` | `2026-11-11T19:15:26.203Z` | `fission/fission` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`051fdbd2...`) |
 | `CYCLE-20261111-1AF6` | `2026-11-11T19:15:32.226Z` | `trailbaseio/trailbase` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`475ff7eb...`) |
 | `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T19:15:52.268Z` | `hf-pika-labs-pika-h3-flex` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-D2E2CA9E` [Domain D] | Yes (`a3bb90be...`) |
+| `CYCLE-20261111-I1XK` | `2026-11-11T19:28:34.376Z` | `scrapy/scrapy` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7e0fac2a...`) |
+| `CYCLE-20261111-I7WD` | `2026-11-11T19:28:42.109Z` | `chaos-mesh/chaos-mesh` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`305cbe11...`) |
+| `CYCLE-20261111-IA5P` | `2026-11-11T19:28:45.037Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5addd544...`) |

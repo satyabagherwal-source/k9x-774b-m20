@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-11T19:15:52.326Z",
+  "updated_at": "2026-11-11T19:28:51.310Z",
   "stats": {
-    "total_discovered": 194,
-    "approved_pending_harvest": 168,
+    "total_discovered": 236,
+    "approved_pending_harvest": 208,
     "harvested_count": 0,
-    "rejected_count": 26,
+    "rejected_count": 28,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 177,
-      "OFFICIAL_DOCUMENTATION": 9,
-      "STANDARDS_AND_SPECIFICATIONS": 7,
+      "COMMUNITY_AND_EXPERT": 214,
+      "OFFICIAL_DOCUMENTATION": 10,
+      "STANDARDS_AND_SPECIFICATIONS": 11,
       "ENGINEERING_BLOGS": 1
     }
   },
@@ -4101,6 +4101,916 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md",
         "fileName": "trailbaseio-trailbase-learnings.md"
+      }
+    },
+    "SRC-E68065C576A9": {
+      "id": "SRC-E68065C576A9",
+      "url": "https://github.com/scrapy/scrapy",
+      "title": "https://github.com/scrapy/scrapy",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:28:51.222Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/scrapy-scrapy-learnings.md",
+        "fileName": "scrapy-scrapy-learnings.md"
+      }
+    },
+    "SRC-24AACBFCC12E": {
+      "id": "SRC-24AACBFCC12E",
+      "url": "https://github.com/scrapy/scrapy/issues/4330",
+      "title": "https://github.com/scrapy/scrapy/issues/4330",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:28:51.225Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/scrapy-scrapy-learnings.md",
+        "fileName": "scrapy-scrapy-learnings.md"
+      }
+    },
+    "SRC-DD53B448A03C": {
+      "id": "SRC-DD53B448A03C",
+      "url": "https://github.com/scrapy/scrapy/issues/3321",
+      "title": "https://github.com/scrapy/scrapy/issues/3321",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:28:51.226Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/scrapy-scrapy-learnings.md",
+        "fileName": "scrapy-scrapy-learnings.md"
+      }
+    },
+    "SRC-EEBDA62D50BD": {
+      "id": "SRC-EEBDA62D50BD",
+      "url": "https://docs.scrapy.org/en/master/contributing.html",
+      "title": "https://docs.scrapy.org/en/master/contributing.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:28:51.228Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/scrapy-scrapy-learnings.md",
+        "fileName": "scrapy-scrapy-learnings.md"
+      }
+    },
+    "SRC-F9B6EA0A27FB": {
+      "id": "SRC-F9B6EA0A27FB",
+      "url": "https://app.codecov.io/gh/scrapy/scrapy/pull/8423?dropdown=coverage&src=pr&el=h1",
+      "title": "https://app.codecov.io/gh/scrapy/scrapy/pull/8423?dropdown=coverage&src=pr&el=h1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:28:51.230Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/scrapy-scrapy-learnings.md",
+        "fileName": "scrapy-scrapy-learnings.md"
+      }
+    },
+    "SRC-E2573E1D05D9": {
+      "id": "SRC-E2573E1D05D9",
+      "url": "https://app.codecov.io/gh/scrapy/scrapy/commit/00ca2a9c07ba3c0423fb95daa46c077de555c595?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/scrapy/scrapy/commit/00ca2a9c07ba3c0423fb95daa46c077de555c595?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:28:51.231Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/scrapy-scrapy-learnings.md",
+        "fileName": "scrapy-scrapy-learnings.md"
+      }
+    },
+    "SRC-20CF15E42619": {
+      "id": "SRC-20CF15E42619",
+      "url": "https://app.codecov.io/gh/scrapy/scrapy/commit/5f39c589a53719dfc53d7d1785bf7029a81ff2f1?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/scrapy/scrapy/commit/5f39c589a53719dfc53d7d1785bf7029a81ff2f1?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:28:51.233Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/scrapy-scrapy-learnings.md",
+        "fileName": "scrapy-scrapy-learnings.md"
+      }
+    },
+    "SRC-07DAA21D4AB0": {
+      "id": "SRC-07DAA21D4AB0",
+      "url": "https://app.codecov.io/gh/scrapy/scrapy/pull/8404?dropdown=coverage&src=pr&el=h1",
+      "title": "https://app.codecov.io/gh/scrapy/scrapy/pull/8404?dropdown=coverage&src=pr&el=h1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:28:51.235Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/scrapy-scrapy-learnings.md",
+        "fileName": "scrapy-scrapy-learnings.md"
+      }
+    },
+    "SRC-C55DEEFCF946": {
+      "id": "SRC-C55DEEFCF946",
+      "url": "https://app.codecov.io/gh/scrapy/scrapy/commit/171ccbedb734c988fd86708fd5e0803029b6c730?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/scrapy/scrapy/commit/171ccbedb734c988fd86708fd5e0803029b6c730?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:28:51.236Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/scrapy-scrapy-learnings.md",
+        "fileName": "scrapy-scrapy-learnings.md"
+      }
+    },
+    "SRC-A8A62302040E": {
+      "id": "SRC-A8A62302040E",
+      "url": "https://app.codecov.io/gh/scrapy/scrapy/commit/30043f7036efedafcccc6f9db118f25e6ac30063?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/scrapy/scrapy/commit/30043f7036efedafcccc6f9db118f25e6ac30063?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:28:51.238Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/scrapy-scrapy-learnings.md",
+        "fileName": "scrapy-scrapy-learnings.md"
+      }
+    },
+    "SRC-43903DE2B590": {
+      "id": "SRC-43903DE2B590",
+      "url": "https://github.com/sphinx-doc/sphinx/issues/10400",
+      "title": "https://github.com/sphinx-doc/sphinx/issues/10400",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:28:51.240Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/scrapy-scrapy-learnings.md",
+        "fileName": "scrapy-scrapy-learnings.md"
+      }
+    },
+    "SRC-016EF9AE3CF6": {
+      "id": "SRC-016EF9AE3CF6",
+      "url": "https://github.com/python/cpython/pull/149374",
+      "title": "https://github.com/python/cpython/pull/149374",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:28:51.241Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/scrapy-scrapy-learnings.md",
+        "fileName": "scrapy-scrapy-learnings.md"
+      }
+    },
+    "SRC-E01C0D6A1890": {
+      "id": "SRC-E01C0D6A1890",
+      "url": "https://github.com/scrapy/w3lib/pull/253",
+      "title": "https://github.com/scrapy/w3lib/pull/253",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:28:51.243Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/scrapy-scrapy-learnings.md",
+        "fileName": "scrapy-scrapy-learnings.md"
+      }
+    },
+    "SRC-3CBAEA5B5BAB": {
+      "id": "SRC-3CBAEA5B5BAB",
+      "url": "http://[::1",
+      "title": "http://[::1",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-11T19:28:51.245Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/scrapy-scrapy-learnings.md",
+        "fileName": "scrapy-scrapy-learnings.md"
+      }
+    },
+    "SRC-9462884E11A5": {
+      "id": "SRC-9462884E11A5",
+      "url": "https://www.rfc-editor.org/rfc/rfc7540",
+      "title": "IETF RFC 7540",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:28:51.247Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/scrapy-scrapy-learnings.md",
+        "fileName": "scrapy-scrapy-learnings.md"
+      }
+    },
+    "SRC-BA13543D58BA": {
+      "id": "SRC-BA13543D58BA",
+      "url": "https://github.com/chaos-mesh/chaos-mesh",
+      "title": "https://github.com/chaos-mesh/chaos-mesh",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:28:51.253Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
+        "fileName": "chaos-mesh-chaos-mesh-learnings.md"
+      }
+    },
+    "SRC-7871C44E1092": {
+      "id": "SRC-7871C44E1092",
+      "url": "https://github.com/chaos-mesh/website",
+      "title": "https://github.com/chaos-mesh/website",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:28:51.255Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
+        "fileName": "chaos-mesh-chaos-mesh-learnings.md"
+      }
+    },
+    "SRC-D3DA39ECC56F": {
+      "id": "SRC-D3DA39ECC56F",
+      "url": "https://app.codecov.io/gh/chaos-mesh/chaos-mesh/pull/5222?dropdown=coverage&src=pr&el=h1",
+      "title": "https://app.codecov.io/gh/chaos-mesh/chaos-mesh/pull/5222?dropdown=coverage&src=pr&el=h1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:28:51.257Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
+        "fileName": "chaos-mesh-chaos-mesh-learnings.md"
+      }
+    },
+    "SRC-12EC69F64B8E": {
+      "id": "SRC-12EC69F64B8E",
+      "url": "https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/1eefe2ef0c1ef5140bff32fbe52925f1c4af25c4?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/1eefe2ef0c1ef5140bff32fbe52925f1c4af25c4?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:28:51.259Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
+        "fileName": "chaos-mesh-chaos-mesh-learnings.md"
+      }
+    },
+    "SRC-662389C7FA7C": {
+      "id": "SRC-662389C7FA7C",
+      "url": "https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/4aa8769cfcca6fc53592495214ab1fd9bcf4bb2d?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/4aa8769cfcca6fc53592495214ab1fd9bcf4bb2d?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:28:51.260Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
+        "fileName": "chaos-mesh-chaos-mesh-learnings.md"
+      }
+    },
+    "SRC-3A929A071680": {
+      "id": "SRC-3A929A071680",
+      "url": "https://app.codecov.io/gh/chaos-mesh/chaos-mesh/pull/52",
+      "title": "https://app.codecov.io/gh/chaos-mesh/chaos-mesh/pull/52",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:28:51.262Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
+        "fileName": "chaos-mesh-chaos-mesh-learnings.md"
+      }
+    },
+    "SRC-09A8B930C8B7": {
+      "id": "SRC-09A8B930C8B7",
+      "url": "https://github.com/",
+      "title": "https://github.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:28:51.264Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
+        "fileName": "chaos-mesh-chaos-mesh-learnings.md"
+      }
+    },
+    "SRC-B714A48CF858": {
+      "id": "SRC-B714A48CF858",
+      "url": "https://github.com/chaos-mesh/chaos-mesh/pull/5222",
+      "title": "https://github.com/chaos-mesh/chaos-mesh/pull/5222",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:28:51.265Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
+        "fileName": "chaos-mesh-chaos-mesh-learnings.md"
+      }
+    },
+    "SRC-48FF78B3B570": {
+      "id": "SRC-48FF78B3B570",
+      "url": "https://github.com/chaos-mesh/chaos-mesh/pull/5215",
+      "title": "https://github.com/chaos-mesh/chaos-mesh/pull/5215",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:28:51.267Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
+        "fileName": "chaos-mesh-chaos-mesh-learnings.md"
+      }
+    },
+    "SRC-35308CD227C2": {
+      "id": "SRC-35308CD227C2",
+      "url": "https://github.com/chaos-mesh/chaos-tproxy/releases/tag/v0.5.7",
+      "title": "https://github.com/chaos-mesh/chaos-tproxy/releases/tag/v0.5.7",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:28:51.270Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
+        "fileName": "chaos-mesh-chaos-mesh-learnings.md"
+      }
+    },
+    "SRC-7EB995CE7B03": {
+      "id": "SRC-7EB995CE7B03",
+      "url": "https://github.com/chaos-mesh/chaos-mesh/pull/5167",
+      "title": "https://github.com/chaos-mesh/chaos-mesh/pull/5167",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:28:51.272Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
+        "fileName": "chaos-mesh-chaos-mesh-learnings.md"
+      }
+    },
+    "SRC-F695ED9B67C9": {
+      "id": "SRC-F695ED9B67C9",
+      "url": "https://github.com/chaos-mesh/chaos-mesh/pull/5162",
+      "title": "https://github.com/chaos-mesh/chaos-mesh/pull/5162",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:28:51.273Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
+        "fileName": "chaos-mesh-chaos-mesh-learnings.md"
+      }
+    },
+    "SRC-D46EA0162DFC": {
+      "id": "SRC-D46EA0162DFC",
+      "url": "https://github.com/chaos-mesh/chaos-mesh/pull/4790",
+      "title": "https://github.com/chaos-mesh/chaos-mesh/pull/4790",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:28:51.275Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
+        "fileName": "chaos-mesh-chaos-mesh-learnings.md"
+      }
+    },
+    "SRC-7A53EB876AE2": {
+      "id": "SRC-7A53EB876AE2",
+      "url": "https://github.com/chaos-mesh/chaos-mesh/pull/4674",
+      "title": "https://github.com/chaos-mesh/chaos-mesh/pull/4674",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:28:51.277Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
+        "fileName": "chaos-mesh-chaos-mesh-learnings.md"
+      }
+    },
+    "SRC-DCF67CA2A9D8": {
+      "id": "SRC-DCF67CA2A9D8",
+      "url": "https://github.com/chaos-mesh/chaos-mesh/pull/5158",
+      "title": "https://github.com/chaos-mesh/chaos-mesh/pull/5158",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:28:51.279Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
+        "fileName": "chaos-mesh-chaos-mesh-learnings.md"
+      }
+    },
+    "SRC-519D991775CD": {
+      "id": "SRC-519D991775CD",
+      "url": "https://github.com/chaos-mesh/chaos-mesh/pull/5076",
+      "title": "https://github.com/chaos-mesh/chaos-mesh/pull/5076",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:28:51.280Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
+        "fileName": "chaos-mesh-chaos-mesh-learnings.md"
+      }
+    },
+    "SRC-615DFD01A178": {
+      "id": "SRC-615DFD01A178",
+      "url": "https://github.com/chaos-mesh/chaos-mesh/pull/5068",
+      "title": "https://github.com/chaos-mesh/chaos-mesh/pull/5068",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:28:51.282Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
+        "fileName": "chaos-mesh-chaos-mesh-learnings.md"
+      }
+    },
+    "SRC-CB03B277A7C5": {
+      "id": "SRC-CB03B277A7C5",
+      "url": "https://github.com/chaos-mesh/chaos-mesh/pull/5054",
+      "title": "https://github.com/chaos-mesh/chaos-mesh/pull/5054",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:28:51.284Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
+        "fileName": "chaos-mesh-chaos-mesh-learnings.md"
+      }
+    },
+    "SRC-216D7F3ECE0B": {
+      "id": "SRC-216D7F3ECE0B",
+      "url": "https://www.rfc-editor.org/rfc/rfc3339",
+      "title": "IETF RFC 3339",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:28:51.285Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
+        "fileName": "chaos-mesh-chaos-mesh-learnings.md"
+      }
+    },
+    "SRC-0CB19841A4A1": {
+      "id": "SRC-0CB19841A4A1",
+      "url": "https://github.com/nolabs-ai/nono",
+      "title": "https://github.com/nolabs-ai/nono",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:28:51.296Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
+        "fileName": "nolabs-ai-nono-learnings.md"
+      }
+    },
+    "SRC-9DF3807F2404": {
+      "id": "SRC-9DF3807F2404",
+      "url": "https://www.rfc-editor.org/rfc/rfc8252",
+      "title": "https://www.rfc-editor.org/rfc/rfc8252",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:28:51.298Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
+        "fileName": "nolabs-ai-nono-learnings.md"
+      }
+    },
+    "SRC-879A32C77D53": {
+      "id": "SRC-879A32C77D53",
+      "url": "http://127.0.0.1:{",
+      "title": "http://127.0.0.1:{",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-11T19:28:51.300Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
+        "fileName": "nolabs-ai-nono-learnings.md"
+      }
+    },
+    "SRC-7F9C9B376303": {
+      "id": "SRC-7F9C9B376303",
+      "url": "https://nono.example.com/",
+      "title": "https://nono.example.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:28:51.302Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
+        "fileName": "nolabs-ai-nono-learnings.md"
+      }
+    },
+    "SRC-841C7F5B01E1": {
+      "id": "SRC-841C7F5B01E1",
+      "url": "https://xkcd.com/3322",
+      "title": "https://xkcd.com/3322",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:28:51.304Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
+        "fileName": "nolabs-ai-nono-learnings.md"
+      }
+    },
+    "SRC-2FD1B520ED56": {
+      "id": "SRC-2FD1B520ED56",
+      "url": "https://127.0.0.1:{",
+      "title": "https://127.0.0.1:{",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:28:51.306Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
+        "fileName": "nolabs-ai-nono-learnings.md"
+      }
+    },
+    "SRC-DE77C52186EA": {
+      "id": "SRC-DE77C52186EA",
+      "url": "https://localhost:{port",
+      "title": "https://localhost:{port",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:28:51.308Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
+        "fileName": "nolabs-ai-nono-learnings.md"
+      }
+    },
+    "SRC-875417F74279": {
+      "id": "SRC-875417F74279",
+      "url": "https://www.rfc-editor.org/rfc/rfc9207",
+      "title": "IETF RFC 9207",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-11T19:28:51.310Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
+        "fileName": "nolabs-ai-nono-learnings.md"
       }
     }
   }

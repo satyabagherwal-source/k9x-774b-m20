@@ -9013,3 +9013,6 @@ Every entry in this ledger must capture:
 | `learn-github-fission-fission` | `https://github.com/fission/fission` | `8152c961` | Multi-dimensional audit evidence | 2026-11-11T19:15:26.207Z |
 | `learn-github-trailbaseio-trailbase` | `https://github.com/trailbaseio/trailbase` | `9e4c4967` | Multi-dimensional audit evidence | 2026-11-11T19:15:32.230Z |
 | `learn-dom-d-d2e2ca9e` | `project://hf-pika-labs-pika-h3-flex` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-pika-labs-pika-h3-flex-learnings.md` | 2026-11-11T19:15:52.268Z |
+| `learn-github-scrapy-scrapy` | `https://github.com/scrapy/scrapy` | `f7b1fd3f` | Multi-dimensional audit evidence | 2026-11-11T19:28:34.380Z |
+| `learn-github-chaos-mesh-chaos-mesh` | `https://github.com/chaos-mesh/chaos-mesh` | `35a006bd` | Multi-dimensional audit evidence | 2026-11-11T19:28:42.115Z |
+| `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `cecd9f55` | Multi-dimensional audit evidence | 2026-11-11T19:28:45.041Z |

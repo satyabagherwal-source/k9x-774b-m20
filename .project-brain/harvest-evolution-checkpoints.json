@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T19:15:52.327Z",
+  "last_updated": "2026-11-11T19:28:51.311Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-11T16:43:08.691Z",
@@ -531,9 +531,24 @@
       "processed_at": "2026-11-11T19:15:52.319Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "scrapy-scrapy-learnings.md": {
+      "processed_at": "2026-11-11T19:28:51.215Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "chaos-mesh-chaos-mesh-learnings.md": {
+      "processed_at": "2026-11-11T19:28:51.251Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "nolabs-ai-nono-learnings.md": {
+      "processed_at": "2026-11-11T19:28:51.294Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 132,
+  "total_dossiers_evaluated": 135,
   "total_canonical_promoted": 19,
-  "total_staged_for_review": 110
+  "total_staged_for_review": 113
 }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-11T19:15:32.120Z",
+  "last_updated": "2026-11-11T19:28:44.885Z",
   "total_verified_learnings": 1255,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7256,8 +7256,8 @@
       "slug": "chaos-mesh-chaos-mesh",
       "platform": "github",
       "source_url": "https://github.com/chaos-mesh/chaos-mesh",
-      "source_version": "1eefe2ef",
-      "content_hash": "c9877c344624fda9dd4061dc718b6738fcb5bcb6fd67fd468f54f74994f2ad09",
+      "source_version": "35a006bd",
+      "content_hash": "305cbe11fbe8908eeea71e796aa4ff4412aa0b9e280c4276d2f393f30b7210bb",
       "dossier_path": "07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
       "promoted_rules": [
@@ -7274,6 +7274,11 @@
         {
           "number": null,
           "title": "ci: separate integration and E2E test triggers (#5219)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "dashboard): add server-side pagination for events (#5222)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -7342,7 +7347,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T13:21:52.164Z",
+      "verified_at": "2026-11-11T19:28:41.905Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47992,8 +47997,8 @@
       "slug": "nolabs-ai-nono",
       "platform": "github",
       "source_url": "https://github.com/nolabs-ai/nono",
-      "source_version": "cd5af882",
-      "content_hash": "2cb563c2eb53a2e70d98707634ab6fae80beb6d7521191e8c613938a1e487341",
+      "source_version": "cecd9f55",
+      "content_hash": "5addd5440ec9a1ad64707f9e64a9b1ec55ce1cf12caded425f0320ff2024cc81",
       "dossier_path": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "promoted_rules": [
@@ -48010,6 +48015,11 @@
         {
           "number": null,
           "title": "deps): upgrade aws-config and remove crypto-bigint audit exception",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "proxy): distinguish credential capture failures in HTTP responses",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -48118,7 +48128,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T11:19:11.822Z",
+      "verified_at": "2026-11-11T19:28:44.844Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -81107,8 +81117,8 @@
       "slug": "scrapy-scrapy",
       "platform": "github",
       "source_url": "https://github.com/scrapy/scrapy",
-      "source_version": "1bc04739",
-      "content_hash": "1419417eaecdc86d1cb175180fe3b6455cfdeb482e8b7c085cdb186b5aa32b0b",
+      "source_version": "f7b1fd3f",
+      "content_hash": "7e0fac2a1484cb00ff99d3ed66df3097c090bd7c3f0cabc950cf48b3a0784f06",
       "dossier_path": "07_PROJECT_LEARNING/scrapy-scrapy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/scrapy-scrapy-learnings.md",
       "promoted_rules": [
@@ -81116,6 +81126,11 @@
         {
           "number": null,
           "title": "Limit memory used by media pipeline and other download_async() requests (#8417)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Support coros in schedulers and dupefilters. (#8479)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -81159,7 +81174,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-06T23:19:54.716Z",
+      "verified_at": "2026-11-11T19:28:34.167Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

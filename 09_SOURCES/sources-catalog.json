@@ -2343,20 +2343,20 @@
     "repository": "chaos-mesh/chaos-mesh",
     "platform": "github",
     "sourceUrl": "https://github.com/chaos-mesh/chaos-mesh",
-    "sourceVersion": "1eefe2ef",
+    "sourceVersion": "35a006bd",
     "license": "Apache-2.0",
-    "contentHash": "c9877c344624fda9dd4061dc718b6738fcb5bcb6fd67fd468f54f74994f2ad09",
-    "lastHarvestedAt": "2026-11-09T13:21:52.292Z",
+    "contentHash": "305cbe11fbe8908eeea71e796aa4ff4412aa0b9e280c4276d2f393f30b7210bb",
+    "lastHarvestedAt": "2026-11-11T19:28:42.115Z",
     "learningId": "learn-github-chaos-mesh-chaos-mesh"
   },
   "nolabs-ai-nono": {
     "repository": "nolabs-ai/nono",
     "platform": "github",
     "sourceUrl": "https://github.com/nolabs-ai/nono",
-    "sourceVersion": "cd5af882",
+    "sourceVersion": "cecd9f55",
     "license": "Apache-2.0",
-    "contentHash": "2cb563c2eb53a2e70d98707634ab6fae80beb6d7521191e8c613938a1e487341",
-    "lastHarvestedAt": "2026-11-11T11:19:12.005Z",
+    "contentHash": "5addd5440ec9a1ad64707f9e64a9b1ec55ce1cf12caded425f0320ff2024cc81",
+    "lastHarvestedAt": "2026-11-11T19:28:45.041Z",
     "learningId": "learn-github-nolabs-ai-nono"
   },
   "dathere-qsv": {
@@ -9083,10 +9083,10 @@
     "repository": "scrapy/scrapy",
     "platform": "github",
     "sourceUrl": "https://github.com/scrapy/scrapy",
-    "sourceVersion": "1bc04739",
+    "sourceVersion": "f7b1fd3f",
     "license": "BSD-3-Clause",
-    "contentHash": "1419417eaecdc86d1cb175180fe3b6455cfdeb482e8b7c085cdb186b5aa32b0b",
-    "lastHarvestedAt": "2026-11-06T23:19:54.865Z",
+    "contentHash": "7e0fac2a1484cb00ff99d3ed66df3097c090bd7c3f0cabc950cf48b3a0784f06",
+    "lastHarvestedAt": "2026-11-11T19:28:34.380Z",
     "learningId": "learn-github-scrapy-scrapy"
   },
   "krzysztofzablocki-inject": {

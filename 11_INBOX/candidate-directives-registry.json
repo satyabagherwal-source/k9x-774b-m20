@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T19:15:52.318Z",
+  "last_updated": "2026-11-11T19:28:51.293Z",
   "directives": [
     {
       "id": "CD-001",
@@ -5475,6 +5475,33 @@
       "source_repo": "trailbaseio-trailbase",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-3EE349-further-simplify-subscription-state-mana.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-7661A1",
+      "directive_title": "Support coros in schedulers and dupefilters. (#8479)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "scrapy-scrapy",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-7661A1-support-coros-in-schedulers-and-dupefilt.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-609B82",
+      "directive_title": "dashboard): add server-side pagination for events (#5222)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "chaos-mesh-chaos-mesh",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-609B82-dashboard-add-server-side-pagination-for.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-BB4BC0",
+      "directive_title": "proxy): distinguish credential capture failures in HTTP responses",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "nolabs-ai-nono",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-BB4BC0-proxy-distinguish-credential-capture-fai.md",
       "staged_date": "2026-11-11"
     }
   ]

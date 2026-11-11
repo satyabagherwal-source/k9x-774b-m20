@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/scrapy-scrapy-learnings.md`  
 > **Source**: github ([https://github.com/scrapy/scrapy](https://github.com/scrapy/scrapy))  
-> **Source Version**: `1bc04739`  
+> **Source Version**: `f7b1fd3f`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T23:19:53.196Z  
+> **Timestamp**: 2026-11-11T19:28:19.508Z  
 > **Learning ID**: `learn-github-scrapy-scrapy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/scrapy-scrapy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/scrapy/scrapy](https://github.com/scrapy/scrapy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T23:19:50.795Z  
+> **Harvest Timestamp**: 2026-11-11T19:28:19.298Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Scrapy, a fast high-level web crawling & scraping framework for Python.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml
-- **Stars / Engagement**: 65248 stars
+- **Stars / Engagement**: 65328 stars
 
 ---
 
@@ -1956,495 +1956,634 @@ class AioftpDownloadHandler(BaseStreamingDownloadHandler[_AioftpResponse]):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a0e3b344` (2026-11-05)
-**Commit Message**: Limit memory used by media pipeline and other download_async() requests (#8417)
+### Incident Patch 1: `f7b1fd3f` (2026-11-10)
+**Commit Message**: Support coros in schedulers and dupefilters. (#8479)
 
-* Apply RESPONSE_MAX_ACTIVE_SIZE to download_async() requests
-
-* Rename the bypass stat, unblock scheduled requests and fix thread safety
-
-* Keep due bypasses, skip rescans while over the limit, discount on loop
-
-* Skip queue scans when a slot holds no scheduled requests
-
-* Mention awaited requests in the size limit docs and make a test robust
-
-* Set the response release hook on the first download
-
-* Say "at least" in the size limit bypass log message
-
-* Keep download_async() working with custom downloaders
-
-* Minor docs refactoring
-
-* Cover scheduled requests at the head of a size-limited slot queue
-
-* Add a release notes entry for CVE-2017-14158
-
-* Extend the size limit bypass to scheduled requests, after gc.collect()
-
-* Run the size-limit stall timer only while requests are scheduled
-
-* Skip the size-limit stall bypass while scraping, deflake an order test
-
-* Assert download order, not callback order, in a size-limit test
-
-**File**: `docs/news.rst` (modified, +16/-0)
+**File**: `docs/topics/coroutines.rst` (modified, +10/-18)
 ```diff
-@@ -6,6 +6,22 @@ Release notes
- Scrapy VERSION (unreleased)
- ---------------------------
+@@ -105,6 +105,16 @@ hence use coroutine syntax (e.g. ``await``, ``async for``, ``async with``):
  
-+Security bug fixes
-+~~~~~~~~~~~~~~~~~~
+       .. versionadded:: 2.20.0
+ 
++-   The ``open()`` and ``close()`` methods of :ref:`custom schedulers
++    <topics-scheduler>` (see :setting:`SCHEDULER`).
 +
-+-   Scrapy now limits by default the memory that responses can take, fixing
-+    `CVE-2017-14158`_.
++    .. versionadded:: VERSION
 +
-+    In previous Scrapy versions, that memory had no limit. For example, when
-+    :ref:`media pipelines <topics-media-pipeline>` downloaded files faster than
-+    they could store them, e.g. to Amazon S3, the downloaded files piled up in
-+    memory, so a crawled website could make Scrapy run out of memory.
++-   The ``open()`` and ``close()`` methods of custom dupefilters (see
++    :setting:`DUPEFILTER_CLASS`).
 +
-+    To change or disable the limit, use the new
-+    :setting:`RESPONSE_MAX_ACTIVE_SIZE` setting.
++    .. versionadded:: VERSION
 +
-+    .. _CVE-2017-14158: https://github.com/advisories/GHSA-h7wm-ph43-c39p
-+
- Backward-incompatible changes
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ Most callables above may also :ref:`await a request <inline-requests>` to send
+ it and get its response.
  
-```
-
-**File**: `docs/topics/api.rst` (modified, +2/-2)
-```diff
-@@ -208,8 +208,8 @@ Engine API
- ==========
+@@ -144,29 +154,11 @@ return coroutines are listed in :ref:`coroutine-support`):
  
- .. autoclass:: scrapy.core.engine.ExecutionEngine()
--   :members: close_spider_async, needs_backout, response_active_size, running,
--      scheduler, state
-+   :members: close_spider_async, download_async, needs_backout,
-+      response_active_size, running, scheduler, state
+     - ``fetch()``
  
- .. autoclass:: scrapy.core.engine.EngineState
-    :members:
-```
-
-**File**: `docs/topics/settings.rst` (modified, +30/-12)
-```diff
-@@ -2042,29 +2042,47 @@ RESPONSE_MAX_ACTIVE_SIZE
- 
- Default: ``5_000_000``
- 
--Soft limit (in bytes) on the total size of responses being kept in memory.
-+Soft limit (in bytes) on the total size of responses being kept in memory. A
-+higher value improves crawl speed at the cost of memory usage. ``0`` disables
-+the limit.
- 
--This counts both the size of response bodies that have passed through
-+It counts the body size of responses that have been downloaded or returned by
- :ref:`downloader middlewares <topics-downloader-middleware>` and remain in
- memory, and the :setting:`rough size <RESPONSE_ROUGH_SIZE>` of requests
--currently being downloaded.
+--   Custom scheduler implementations (see :setting:`SCHEDULER`):
 -
--While the total is above this value, Scrapy pauses sending new requests to the
--downloader. A higher value improves crawl speed at the cost of memory usage.
--``0`` disables the limit.
-+currently being downloaded. While that total is above this value, Scrapy stops
-+taking requests from the scheduler. While the part of it that comes from
-+requests sent with :meth:`~scrapy.core.engine.ExecutionEngine.download_async`,
-+which include :ref:`awaited requests <inline-requests>` and those of
-+:ref:`media pipelines <topics-media-pipeline>`, is above this value, new
-+requests of that kind wait before being downloaded.
-+
-+Requests already being downloaded when the limit is reached still finish: up to
-+:setting:`CONCURRENT_REQUESTS` from the scheduler, and up to this value divided
-+by :setting:`RESPONSE_ROUGH_SIZE` sent with
-+:meth:`~scrapy.core.engine.ExecutionEngine.download_async`. So, in practice,
-+responses can take up to about twice this value, plus the size of the responses
-+to those requests.
-+
-+If requests have been waiting for 5 seconds with none being downloaded and no
-+response released, e.g. because your code keeps responses, Scrapy runs Python's
-+garbage collector, and if that releases no response, lets one request through.
-+Each time that happens, memory use can grow by one more response, and the
-+:stat:`response_max_active_size/bypass_count` stat increases. Scrapy logs a
-+warning the first time it does.
+-    - :meth:`~scrapy.core.scheduler.BaseScheduler.open`
+-
+-    - :meth:`~scrapy.core.scheduler.BaseScheduler.close`
+-
+--   Custom dupefilters (see :setting:`DUPEFILTER_CLASS`):
+-
+-    - ``open()``
+-
+-    - ``close()``
+-
+ In most cases, you can use these APIs in code that otherwise uses coroutines by
+ wrapping a :class:`~twisted.internet.defer.Deferred` object into a
+ :class:`~asyncio.Future` object or vice versa. See :ref:`asyncio-await-dfd` for
+ more information about this.
  
- Scrapy logs an info-level message the first time the limit is reached. To see
--how long request processing was paused because of it over a whole crawl, check
--the :stat:`request_backout_seconds/response_max_active_size` stat.
-+how long Scrapy stopped taking requests from the scheduler because of it over a
-+whole crawl, check the :stat:`request_backout_seconds/response_max_active_size`
-+stat.
+-For example: a custom scheduler needs to define an ``open()`` method that can
+-return a :class:`~twisted.internet.defer.Deferred` object. You can write a
+-method that works with Deferreds and returns one directly, or you can write a
+-coroutine and convert it into a function that returns a Deferred with
+-:func:`~scrapy.utils.defer.deferred_f_from_coro_f`.
+-
  
- .. caution::
+ General usage
+ =============
+```
+
+**File**: `docs/topics/settings.rst` (modified, +2/-2)
+```diff
+@@ -1430,11 +1430,11 @@ interface:
+             return False
  
-     Responses that your code keeps a strong reference to, e.g. in the
-     :attr:`.Request.meta` of a scheduled request or in a component attribute,
-     count toward this limit until that reference is gone, so accumulating them
--    can pause a crawl indefinitely. So do responses in a reference cycle,
--    until Python's garbage collector frees them. To find out whether your
--    crawl keeps responses alive, see :ref:`topics-leaks`.
-+    slows down a crawl. So do responses in a reference cycle, until Python's
-+    garbage collector frees them. To find out whether your crawl keeps
-+    responses alive, see :ref:`topics-leaks`.
+         def open(self):
+-            """Called before the spider opens. It may return a deferred."""
++            """Called before the spider opens. It may be a coroutine function."""
+             pass
  
- .. setting:: RESPONSE_ROUGH_SIZE
+         def close(self, reason):
+-            """Called before the spider closes. It may return a deferred."""
++            """Called before the spider closes. It may be a coroutine function."""
+             pass
+ 
+         def log(self, request, spider):
+```
+
+**File**: `scrapy/core/engine.py` (modified, +9/-6)
+```diff
+@@ -791,10 +791,11 @@ async def open_spider_async(self, *, close_if_idle: bool = True) -> None:
+             # is open.
+             try:
+                 self._start = await self.scraper.spidermw.process_start()
+-                if hasattr(scheduler, "open") and (
+-                    d := scheduler.open(self.crawler.spider)
+-                ):
+-                    await maybe_deferred_to_future(d)
++                if hasattr(scheduler, "open"):
++                    await ensure_awaitable(
++                        scheduler.open(self.crawler.spider),
++                        _warn=global_object_name(scheduler.open),
++                    )
+                 await self.scraper.open_spider_async()
+             except CloseSpider as exc:
+                 await self.close_spider_async(reason=exc.reason, error=exc.error)
+@@ -1009,8 +1010,10 @@ async def close_spider_async(  # noqa: PLR0912, PLR0915
+ 
+         if hasattr(self._slot.scheduler, "close"):
+             try:
+-                if (d := self._slot.scheduler.close(reason)) is not None:
+-                    await maybe_deferred_to_future(d)
++                await ensure_awaitable(
++                    self._slot.scheduler.close(reason),
++                    _warn=global_object_name(self._slot.scheduler.close),
++                )
+             except Exception:
+                 logger.exception("Scheduler close failure", extra={"spider": spider})
  
 ```
 
-**File**: `docs/topics/stats.rst` (modified, +8/-2)
+**File**: `scrapy/core/scheduler.py` (modified, +45/-9)
 ```diff
-@@ -619,8 +619,8 @@ one per actual value of the placeholder.
- .. stat:: request_backout_seconds/response_max_active_size
+@@ -4,16 +4,19 @@
+ import logging
+ from abc import abstractmethod
+ from pathlib import Path
+-from typing import TYPE_CHECKING, Any, Self, cast
++from typing import TYPE_CHECKING, Any, ParamSpec, Self, cast
  
- ``request_backout_seconds/response_max_active_size``
--    Seconds during which sending requests to the downloader was paused because
--    :setting:`RESPONSE_MAX_ACTIVE_SIZE` was reached.
-+    Seconds during which sending requests from the scheduler to the downloader
-+    was paused because :setting:`RESPONSE_MAX_ACTIVE_SIZE` was reached.
+-# working around https://github.com/sphinx-doc/sphinx/issues/10400
+-from twisted.internet.defer import Deferred  # noqa: TC002
++from twisted.internet.defer import Deferred
  
- .. stat:: request_backout_seconds/total
- 
-@@ -644,6 +644,12 @@ one per actual value of the placeholder.
- 
-     Set by :class:`~scrapy.spidermiddlewares.depth.DepthMiddleware`.
- 
-+.. stat:: response_max_active_size/bypass_count
-+
-+``response_max_active_size/bypass_count``
-+    Number of requests that were downloaded despite
-+    :setting:`RESPONSE_MAX_ACTIVE_SIZE`, to keep the crawl from stalling.
-+
- .. stat:: response_received_count
- 
- ``response_received_count``
-```
-
-**File**: `scrapy/commands/shell.py` (modified, +3/-0)
-```diff
-@@ -33,6 +33,9 @@ class Command(ScrapyCommand):
-         "LOGSTATS_INTERVAL": 0,
-         "TELNETCONSOLE_ENABLED": False,
-         "REMOTE_CONTROL_ENABLED": False,
-+        # The shell keeps the previous response while fetch() downloads the
-+        # next one.
-+        "RESPONSE_MAX_ACTIVE_SIZE": 0,
-     }
- 
-     def syntax(self) -> str:
-```
-
-**File**: `scrapy/core/downloader/__init__.py` (modified, +254/-3)
-```diff
-@@ -1,10 +1,12 @@
- from __future__ import annotations
- 
- import asyncio
-+import gc
- import random
- import warnings
- from collections import deque
- from dataclasses import dataclass, field
-+from functools import partial
- from logging import getLogger
- from time import monotonic, perf_counter, time
- from typing import TYPE_CHECKING, Any
-@@ -20,8 +22,10 @@
- from scrapy.utils.asyncio import (
-     AsyncioLoopingCall,
-     CallLaterResult,
-+    _get_running_or_installed_loop,
-     call_later,
-     create_looping_call,
-+    is_asyncio_available,
-     sleep,
- )
- from scrapy.utils.decorators import _warn_spider_arg
-@@ -34,7 +38,7 @@
- from scrapy.utils.misc import build_from_crawler
+ from scrapy.spiders import Spider  # noqa: TC001
+ from scrapy.utils.conf import _job_dir
++from scrapy.utils.defer import ensure_awaitable
+ from scrapy.utils.misc import build_from_crawler, load_object
++from scrapy.utils.python import global_object_name
  
  if TYPE_CHECKING:
--    from collections.abc import Generator
-+    from collections.abc import Callable, Generator, Iterable
++    from collections.abc import Callable, Coroutine
++
+     from queuelib.queue import BaseQueue
  
-     from twisted.internet.task import LoopingCall
+     from scrapy.crawler import Crawler
+@@ -25,6 +28,33 @@
  
-@@ -70,6 +74,14 @@ def _start_delay_countdown(request: Request) -> None:
-     request.meta["delayed"] = [*request.meta.get("delayed", []), delay]
+ logger = logging.getLogger(__name__)
  
- 
-+def _examples(responses: Iterable[Response]) -> str:
-+    held = [str(response) for response in responses]
-+    examples = ", ".join(held[:3])
-+    if len(held) > 3:
-+        examples += f" (+{len(held) - 3} more)"
-+    return examples
++_P = ParamSpec("_P")
 +
 +
- @dataclass(slots=True, eq=False)
- class Slot:
-     """Downloader slot"""
-@@ -85,6 +97,9 @@ class Slot:
-     transferring: set[Request] = field(default_factory=set, init=False, repr=False)
-     lastseen: float = field(default=0, init=False, repr=False)
-     latercall: CallLaterResult | None = field(default=None, init=False, repr=False)
-+    # Number of requests in queue not sent with
-+    # ExecutionEngine.download_async().
-+    _scheduled_queued: int = field(default=0, init=False, repr=False)
- 
-     # Hand-written to accept the deprecated randomize_delay parameter, which
-     # means it also has to initialize the fields above.
-@@ -116,6 +131,7 @@ def __init__(
-         self.transferring = set()
-         self.lastseen = 0
-         self.latercall = None
-+        self._scheduled_queued = 0
- 
-     @property
-     def randomize_delay(self) -> bool:
-@@ -210,6 +226,9 @@ def _slot_jitter(slot_settings: dict[str, Any], default: float) -> float:
- class Downloader:
-     DOWNLOAD_SLOT = "download_slot"
-     _SLOT_GC_INTERVAL: float = 60.0  # seconds
-+    # Seconds that requests held back by RESPONSE_MAX_ACTIVE_SIZE wait for a
-+    # release before one of them is let through.
-+    _SIZE_BYPASS_DELAY: float = 5.0
- 
-     def __init__(self, crawler: Crawler):
-         self.crawler: Crawler = crawler
-@@ -241,6 +260,18 @@ def __init__(self, crawler: Crawler):
-         # (None, None) if not backing out.
-         self._last_backout: tuple[str | None, float | None] = (None, None)
-         self._max_active_size_warned = False
-+        # Whether _next_transfer_index() has held back a request that nothing
-+        # has resumed yet.
-+        self._size_blocked = False
-+        self._unscheduled_transfers = 0
-+        self._size_bypass_call: CallLaterResult | None = None
-+        self._size_bypass_due = False
-+        self._size_bypass_warned = False
-+        # (start_time, total_size): since when RESPONSE_MAX_ACTIVE_SIZE has held
-+        # back scheduled requests with no download in progress, and the total
-+        # active size then, or (None, 0) if it is not holding them back.
-+        self._size_stall: tuple[float | None, int] = (None, 0)
-+        self._size_stall_warned = False
- 
-     @property
-     def randomize_delay(self) -> bool:
-@@ -257,6 +288,23 @@ def randomize_delay(self) -> bool:
-     def fetch(
-         self, request: Request, spider: Spider | None = None
-     ) -> Generator[Deferred[Any], Any, Response | Request]:
-+        # Set on the first download, once there is an event loop or reactor
-+        # for response finalizers, which can run in any thread, to call back
-+        # into. close() unsets it.
-+        if (
-+            self._accepting_requests
-+            and self.middleware._on_unscheduled_response_release is None
-+        ):
-+            call_from_thread: Callable[[Callable[[], None]], object]
-+            if is_asyncio_available():
-+                call_from_thread = _get_running_or_installed_loop().call_soon_threadsafe
-+            else:
-+                from twisted.internet import reactor
++def _call_dupefilter(
++    f: Callable[_P, Coroutine[Any, Any, None] | Deferred[None] | None],
++    *args: _P.args,
++    **kwargs: _P.kwargs,
++) -> Coroutine[Any, Any, None] | None:
++    """Call a method of a custom dupefilter from the default scheduler,
++    warning the correct amount of times."""
++    result = f(*args, **kwargs)
++    if not isinstance(result, Deferred):
++        # happy path
++        return result
 +
-+                call_from_thread = reactor.callFromThread
-+            self.middleware._on_unscheduled_response_release = lambda size: (
-+                call_from_thread(partial(self._on_unscheduled_response_release, size))
-+            )
-         self.active.add(request)
-         self.middleware._count_rough_size(request)
-         try:
-@@ -289,7 +337,7 @@ def needs_backout(self) -> bool:
-         if 0 < self.total_concurrency <= len(self.active):
-             self._record_backout("concurrency")
-             return True
--        if self._exceeds_max_active_size():
-+        if self._exceeds_max_active_size() and not self._size_stall_ended():
-             self._record_backout("resp
++    awaitable = ensure_awaitable(result, _warn=global_object_name(f))
++
++    # This wrapping is needed so that we don't return a deferred directly
++    # (on non-asyncio reactors). Otherwise there will be a second warning from
++    # an ensure_awaitable() call in ExecutionEngine (and that call is needed
++    # for non-default schedulers).
++
++    async def wait() -> None:
++        await awaitable
++
++    return wait()
++
+ 
+ class BaseSchedulerMeta(type):
+     """
+@@ -78,20 +108,26 @@ def from_crawler(cls, crawler: Crawler) -> Self:
+         """
+         return cls()
+ 
+-    def open(self, spider: Spider) -> Deferred[None] | None:
++    def open(self, spider: Spider) -> Coroutine[Any, Any, None] | Deferred[None] | None:
+         """
+         Called when the spider is opened by the engine. It receives the spider
+         instance as argument and it's useful to execute initialization code.
+ 
++        .. versionchanged:: VERSION
++           This method may now be a coroutine function (``async def``).
++
+         :param spider: the spider object for the current crawl
+         :type spider: :class:`~scrapy.spiders.Spider`
+         """
+ 
+-    def close(self, reason: str) -> Deferred[None] | None:
++    def close(self, reason: str) -> Coroutine[Any, Any, None] | Deferred[None] | None:
+         """
+         Called when the spider is closed by the engine. It receives the reason why the crawl
+         finished as argument and it's useful to execute cleaning code.
+ 
++        .. versionchanged:: VERSION
++           This method may now be a coroutine function (``async def``).
++
+         :param reason: a string which describes the reason why the spider was closed
+         :type reason: :class:`str`
+         """
+@@ -361,7 +397,7 @@ def _get_start_queue_cls(
+     def has_pending_requests(self) -> bool:
+         return len(self) > 0
+ 
+-    def open(self, spider: Spider) -> Deferred[None] | None:
++    def open(self, spider: Spider) -> Coroutine[Any, Any, None] | None:
+         """
+         (1) initialize the memory queue
+         (2) initialize the disk queue if the ``jobdir`` argument wasn't empty
+@@ -372,9 +408,9 @@ def open(self, spider: Spider) -> Deferred[None] | None:
+         self.dqs: PriorityQueueProtocol | None = self._dq() if self.dqdir else None
+         self._dqs_changes = 0
+         self._sync_dqs_state()
+-        return self.df.open()
++        return _call_dupefilter(self.df.open)
+ 
+-    def close(self, reason: str) -> Deferred[None] | None:
++    def close(self, reason: str) -> Coroutine[Any, Any, None] | None:
+         """
+         (1) dump pending requests to disk if there is a disk queue
+         (2) return the result of the dupefilter's ``close`` method
+@@ -383,7 +419,7 @@ def close(self, reason: str) -> Deferred[None] | None:
+             state = self.dqs.close()
+             assert isinstance(self.dqdir, str)
+             self._write_dqs_state(self.dqdir, state)
+-        return self.df.close(reason)
++        return _call_dupefilter(self.df.close, reason)
+ 
+     def enqueue_request(self, request: Request) -> bool:
+         """
 ```
 
-**File**: `scrapy/core/downloader/middleware.py` (modified, +17/-2)
+**File**: `scrapy/dupefilters.py` (modified, +4/-4)
 ```diff
-@@ -88,6 +88,12 @@ def __init__(self, *middlewares: Any, crawler: Crawler | None = None) -> None:
-         self._tracked_responses: WeakSet[Response] = WeakSet()
-         self._rough_active_size = 0
-         self._rough_sizes: dict[Request, int] = {}
-+        # Requests sent with ExecutionEngine.download_async(), and the
-+        # responses to them, which the downloader limits separately.
-+        self._unscheduled_requests: WeakSet[Request] = WeakSet()
-+        self._unscheduled_responses: WeakSet[Response] = WeakSet()
-+        self._unscheduled_response_active_size = 0
-+        self._on_unscheduled_response_release: Callable[[int], object] | None = None
-         self._response_exceptions = settings.getbool(
-             "DOWNLOADER_MIDDLEWARE_RESPONSE_EXCEPTIONS"
-         )
-@@ -139,10 +145,19 @@ def _count_response_size(self, response: Response, request: Request) -> None:
-         self._tracked_responses.add(response)
-         size = len(response.body)
-         self._response_active_size += size
--        finalize(response, partial(self._discount_response_size, size))
-+        unscheduled = request in self._unscheduled_requests
-+        if unscheduled:
-+            self._unscheduled_responses.add(response)
-+            self._unscheduled_response_active_size += size
-+        finalize(
-+            response,
-+            partial(self._discount_response_size, size, unscheduled=unscheduled),
-+        )
+@@ -5,7 +5,7 @@
+ from pathlib import Path
+ from shutil import rmtree
+ from tempfile import mkdtemp
+-from typing import TYPE_CHECKING, Self
++from typing import TYPE_CHECKING, Any, Self
+ from warnings import warn
  
--    def _discount_response_size(self, size: int) -> None:
-+    def _discount_response_size(self, size: int, *, unscheduled: bool) -> None:
-         self._response_active_size -= size
-+        if unscheduled and self._on_unscheduled_response_release is not None:
-+            self._on_unscheduled_response_release(size)
+ from scrapy.exceptions import ScrapyDeprecationWarning
+@@ -18,7 +18,7 @@
+ )
  
-     def download(
-         self,
+ if TYPE_CHECKING:
+-    from collections.abc import Iterator
++    from collections.abc import Coroutine, Iterator
+ 
+     from twisted.internet.defer import Deferred
+ 
+@@ -54,10 +54,10 @@ def from_crawler(cls, crawler: Crawler) -> Self:
+     def request_seen(self, request: Request) -> bool:
+         return False
+ 
+-    def open(self) -> Deferred[None] | None:
++    def open(self) -> Coroutine[Any, Any, None] | Deferred[None] | None:
+         pass
+ 
+-    def close(self, reason: str) -> Deferred[None] | None:
++    def close(self, reason: str) -> Coroutine[Any, Any, None] | Deferred[None] | None:
+         pass
+ 
+     def log(self, request: Request, spider: Spider) -> None:
 ```
 
-**File**: `scrapy/core/engine.py` (modified, +5/-2)
+**File**: `tests/test_engine_lifecycle.py` (modified, +2/-2)
 ```diff
-@@ -687,7 +687,7 @@ async def download_async(self, request: Request) -> Response:
-             self._slot.add_request(request)
-             try:
-                 response_or_request = await maybe_deferred_to_future(
--                    self._download(request)
-+                    self._download(request, unscheduled=True)
-                 )
-             finally:
-                 self._slot.remove_request(request)
-@@ -697,11 +697,14 @@ async def download_async(self, request: Request) -> Response:
+@@ -83,9 +83,9 @@ def enqueue_request(self, request: Any) -> bool:
+     def next_request(self) -> Any:
+         return None
  
-     @inlineCallbacks
-     def _download(
--        self, request: Request
-+        self, request: Request, *, unscheduled: bool = False
-     ) -> Generator[Deferred[Any], Any, Response | Request]:
-         assert self._slot is not None  # typing
-         assert self.spider is not None
+-    def close(self, reason: str) -> Deferred[None]:
++    async def close(self, reason: str) -> None:
+         self.entered_close.callback(None)
+-        return self.unblock_close
++        await maybe_deferred_to_future(self.unblock_close)
  
-+        if unscheduled and hasattr(self.downloader, "_add_unscheduled_request"):
-+            self.downloader._add_unscheduled_request(request)
+ 
+ class ClosingPipeline:
+```
+
+**File**: `tests/test_scheduler_base.py` (modified, +123/-10)
+```diff
+@@ -1,21 +1,26 @@
+ from __future__ import annotations
+ 
+ import logging
+-from typing import TYPE_CHECKING, Any
++from typing import TYPE_CHECKING, Any, Self
+ from urllib.parse import urljoin
+ 
+ import pytest
+ from twisted.internet import defer
+ 
+ from scrapy.core.scheduler import BaseScheduler
++from scrapy.dupefilters import BaseDupeFilter
++from scrapy.exceptions import ScrapyDeprecationWarning
+ from scrapy.http import Request
+ from scrapy.spiders import Spider
+ from scrapy.utils.httpobj import urlparse_cached
++from scrapy.utils.python import global_object_name
+ from scrapy.utils.request import fingerprint
++from scrapy.utils.spider import DefaultSpider
+ from scrapy.utils.test import get_crawler
+-from tests.utils.decorators import coroutine_test, inline_callbacks_test
++from tests.utils.decorators import coroutine_test
+ 
+ if TYPE_CHECKING:
++    from scrapy.crawler import Crawler
+     from tests.mockserver.http import MockServer
+ 
+ PATHS = ["/a", "/b", "/c"]
+@@ -44,11 +49,11 @@ def next_request(self) -> Request | None:
+ 
+ 
+ class SimpleScheduler(MinimalScheduler):
+-    def open(self, spider: Spider) -> defer.Deferred[str]:
+-        return defer.succeed("open")
++    async def open(self, spider: Spider) -> str:
++        return "open"
+ 
+-    def close(self, reason: str) -> defer.Deferred[str]:
+-        return defer.succeed("close")
++    async def close(self, reason: str) -> str:
++        return "close"
+ 
+     def __len__(self) -> int:
+         return len(self.requests)
+@@ -123,9 +128,9 @@ class TestSimpleScheduler(InterfaceCheckMixin):
+     def setup_method(self):
+         self.scheduler = SimpleScheduler()
+ 
+-    @inline_callbacks_test
+-    def test_enqueue_dequeue(self):
+-        open_result = yield self.scheduler.open(Spider("foo"))
++    @coroutine_test
++    async def test_enqueue_dequeue(self):
++        open_result = await self.scheduler.open(Spider("foo"))
+         assert open_result == "open"
+         assert not self.scheduler.has_pending_requests()
+ 
+@@ -145,7 +150,7 @@ def test_enqueue_dequeue(self):
+         assert not self.scheduler.has_pending_requests()
+         assert len(self.scheduler) == 0
+ 
+-        close_result = yield self.scheduler.close("")
++        close_result = await self.scheduler.close("")
+         assert close_result == "close"
+ 
+ 
+@@ -169,3 +174,111 @@ async def test_crawl(
+ 
+ class TestSimpleSchedulerCrawl(TestMinimalSchedulerCrawl):
+     scheduler_cls = SimpleScheduler
 +
-         # Lets Request.__await__() find this crawler while the downloader
-         # middlewares run.
-         with _active_crawler_scope(self.crawler):
++
++class CallsSpider(DefaultSpider):
++    def __init__(self, *args: Any, **kwargs: Any):
++        super().__init__(*args, **kwargs)
++        self.calls: list[str] = []
++
++
++class CoroutineScheduler(MinimalScheduler):
++    async def open(self, spider: Spider) -> None:
++        assert isinstance(spider, CallsSpider)
++        self.spider = spider
++        spider.calls.append("open")
++
++    async def close(self, reason: str) -> None:
++        self.spider.calls.append("close")
++
++
++class DeferredScheduler(MinimalScheduler):
++    def open(self, spider: Spider) -> defer.Deferred[None]:
++        assert isinstance(spider, CallsSpider)
++        self.spider = spider
++        spider.calls.append("open")
++        return defer.succeed(None)
++
++    def close(self, reason: str) -> defer.Deferred[None]:
++        self.spider.calls.append("close")
++        return defer.succeed(None)
++
++
++class RecordingDupeFilter(BaseDupeFilter):
++    def __init__(self, crawler: Crawler):
++        self.crawler = crawler
++
++    @classmethod
++    def from_crawler(cls, crawler: Crawler) -> Self:
++        return cls(crawler)
++
++    def record(self, call: str) -> None:
++        assert isinstance(self.crawler.spider, CallsSpider)
++        self.crawler.spider.calls.append(call)
++
++
++class CoroutineDupeFilter(RecordingDupeFilter):
++    async def open(self) -> None:
++        self.record("open")
++
++    async def close(self, reason: str) -> None:
++        self.record("close")
++
++
++class DeferredDupeFilter(RecordingDupeFilter):
++    def open(self) -> defer.Deferred[None]:
++        self.record("open")
++        return defer.succeed(None)
++
++    def close(self, reason: str) -> defer.Deferred[None]:
++        self.record("close")
++        return defer.succeed(None)
++
++
++class TestOpenClose:
++    """Scheduler and dupefilter open() and close() are awaited, and returning
++    a Deferred from them is deprecated."""
++
++    @staticmethod
++    async def crawl(settings: dict[str, Any]) -> list[str]:
++        crawler = get_crawler(CallsSpider, settings)
++        await crawler.crawl_async()
++        assert isinstance(crawler.spider, CallsSpider)
++        return crawler.spider.calls
++
++    @pytest.mark.parametrize(
++        "settings",
++        [
++            {"SCHEDULER": CoroutineScheduler},
++            {"DUPEFILTER_CLASS": CoroutineDupeFilter},
++        ],
++    )
++    @coroutine_test
++    async def test_coroutine(self, settings: dict[str, Any]) -> None:
++        assert await self.crawl(settings) == ["open", "close"]
++
++    @pytest.mark.parametrize(
++        ("setting", "cls"),
 ```
 
 ---
 
-### Incident Patch 2: `36a7e212` (2026-11-05)
-**Commit Message**: Return partial HTTP/2 responses on timeout when fail_on_dataloss is False (#8464)
+### Incident Patch 2: `ad817afb` (2026-11-10)
+**Commit Message**: Remove remnants of w3lib < 2.6 support. (#8474)
 
-**File**: `scrapy/core/_http2/stream.py` (modified, +14/-3)
+**File**: `scrapy/core/downloader/handlers/_base_streaming.py` (modified, +3/-2)
 ```diff
-@@ -183,6 +183,12 @@ def _cancel(self, _: Any) -> None:
-         else:
-             self.close(StreamCloseReason.CANCELLED)
+@@ -19,6 +19,8 @@
+ )
+ from urllib.parse import quote, urlsplit
  
-+    @property
-+    def _cancel_keeps_body(self) -> bool:
-+        """Whether cancelling the stream, e.g. on download timeout, returns
-+        the response received so far as a partial response."""
-+        return not self._fail_on_dataloss and self._response["status"] is not None
++from w3lib.url import add_http_if_no_scheme
 +
-     @property
-     def _log_warnsize(self) -> bool:
-         """Checks if we have received data which exceeds the download warnsize
-@@ -400,9 +406,11 @@ def receive_headers(self, headers: list[tuple[bytes, bytes]]) -> None:
-     def reset_stream(self, reason: StreamCloseReason = StreamCloseReason.RESET) -> None:
-         """Close this stream by sending a RST_FRAME to the remote peer"""
-         # The data received so far is the body of the response built for a
--        # stopped download, otherwise the buffer is cleared early to avoid
--        # keeping data in memory for a long time
--        if reason is not StreamCloseReason.STOP_DOWNLOAD:
-+        # stopped download or a partial response, otherwise the buffer is
-+        # cleared early to avoid keeping data in memory for a long time
-+        if reason is not StreamCloseReason.STOP_DOWNLOAD and not (
-+            reason is StreamCloseReason.CANCELLED and self._cancel_keeps_body
-+        ):
-             self._response["body"].truncate(0)
+ from scrapy import Request, signals
+ from scrapy.exceptions import (
+     DownloadCancelledError,
+@@ -35,7 +37,6 @@
+     normalize_bind_address,
+ )
+ from scrapy.utils.asyncio import is_asyncio_available
+-from scrapy.utils.url import _add_http_if_no_scheme
  
-         self.metadata["stream_closed_local"] = True
-@@ -458,6 +466,9 @@ def close(
-         elif reason in {StreamCloseReason.ENDED, StreamCloseReason.STOP_DOWNLOAD}:
-             self._fire_response_deferred()
+ from ._base_http import BaseHttpDownloadHandler
  
-+        elif reason is StreamCloseReason.CANCELLED and self._cancel_keeps_body:
-+            self._fire_response_deferred(flags=["dataloss"])
-+
-         # Stream was abruptly ended here
-         elif reason is StreamCloseReason.CANCELLED:
-             # Client has cancelled the request. Remove all the data
+@@ -349,7 +350,7 @@ def _extract_proxy(request: Request) -> tuple[str | None, str | None]:
+         proxy: str | None = request.meta.get("proxy")
+         if not proxy:
+             return None, None
+-        proxy = _add_http_if_no_scheme(proxy)
++        proxy = add_http_if_no_scheme(proxy)
+         auth_header: bytes | None = request.headers.get(b"Proxy-Authorization")
+         return proxy, auth_header.decode("ascii") if auth_header else None
+ 
 ```
 
-**File**: `scrapy/core/downloader/handlers/http2.py` (modified, +5/-0)
+**File**: `scrapy/core/downloader/handlers/http11.py` (modified, +2/-2)
 ```diff
-@@ -5,6 +5,8 @@
- from typing import TYPE_CHECKING
- from urllib.parse import urldefrag
+@@ -41,6 +41,7 @@
+ from twisted.web.http import PotentialDataLoss, _DataLoss
+ from twisted.web.http_headers import Headers as TxHeaders
+ from twisted.web.iweb import UNKNOWN_LENGTH, IBodyProducer, IResponse
++from w3lib.url import add_http_if_no_scheme
+ from zope.interface import implementer
  
-+from twisted.python.failure import Failure
-+
- from scrapy.core._http2.agent import H2Agent, H2ConnectionPool
- from scrapy.core.downloader._idna_patch import _install_twisted_idna_fallbacks
- from scrapy.core.downloader.contextfactory import _load_context_factory_from_settings
-@@ -137,5 +139,8 @@ def _cb_timeout(
-             timeout_cl.cancel()
-             return response
+ from scrapy import Request, signals
+@@ -69,7 +70,6 @@
+ from scrapy.utils.defer import maybe_deferred_to_future
+ from scrapy.utils.deprecate import warn_on_deprecated_spider_attribute
+ from scrapy.utils.httpobj import urlparse_cached
+-from scrapy.utils.url import _add_http_if_no_scheme
  
-+        if not isinstance(response, Failure) and "dataloss" in response.flags:
-+            return response
-+
-         url = urldefrag(request.url)[0]
-         raise DownloadTimeoutError(f"Getting {url} took longer than {timeout} seconds.")
+ from ._base_http import BaseHttpDownloadHandler
+ 
+@@ -802,7 +802,7 @@ def _get_agent(self, request: Request, timeout: float) -> Agent:
+         bindaddress = normalize_bind_address(bindaddress)
+         proxy = request.meta.get("proxy")
+         if proxy:
+-            proxy = _add_http_if_no_scheme(proxy)
++            proxy = add_http_if_no_scheme(proxy)
+             proxy_parsed = urlparse_cached(proxy)
+             proxy_host = proxy_parsed.hostname
+             proxy_port = proxy_parsed.port
 ```
 
-**File**: `tests/test_downloader_handler_twisted_http2.py` (modified, +2/-0)
+**File**: `scrapy/utils/_deps_compat.py` (modified, +0/-6)
 ```diff
-@@ -50,6 +50,8 @@
+@@ -5,7 +5,6 @@
+ from parsel import __version__ as PARSEL_VERSION_STRING
+ from twisted import version as TWISTED_VERSION
+ from twisted.python.versions import Version as TxVersion
+-from w3lib import __version__ as W3LIB_VERSION_STRING
  
- 
- class H2DownloadHandlerMixin:
-+    handler_supports_partial_response_on_timeout = True
-+
-     @property
-     def download_handler_cls(self) -> type[DownloadHandlerProtocol]:
-         # the import can fail when H2_ENABLED is False
+ # improved urllib.robotparser, https://github.com/python/cpython/pull/149374
+ STDLIB_IMPROVED_ROBOTFILEPARSER = sys.version_info >= (3, 14, 5) or (
+@@ -25,8 +24,3 @@
+ PYOPENSSL_VERSION = Version(PYOPENSSL_VERSION_STRING)
+ # SSL.Context.set_cipher_list() creates a temporary connection, making the context immutable
+ PYOPENSSL_SET_CIPHER_LIST_TMP_CONN = PYOPENSSL_VERSION < Version("25.2.0")
+-
+-W3LIB_VERSION = Version(W3LIB_VERSION_STRING)
+-# safe_url_string() drops the brackets of an IPv6 address literal in the
+-# netloc, https://github.com/scrapy/w3lib/pull/253
+-W3LIB_STRIPS_IPV6_BRACKETS = Version("2.0.0") <= W3LIB_VERSION < Version("2.4.1")
 ```
 
----
-
-### Incident Patch 3: `373d914c` (2026-11-06)
-**Commit Message**: Fix frostwork and typing-extensions versions in the 2.20.0 release notes
-
-**File**: `docs/news.rst` (modified, +2/-2)
+**File**: `scrapy/utils/url.py` (modified, +8/-16)
 ```diff
-@@ -145,9 +145,9 @@ Modified requirements
+@@ -72,23 +72,15 @@ def url_has_any_extension(
+     return any(lowercase_path.endswith(ext) for ext in extensions)
  
-     - formerly_ >= 0.1.0
  
--    - frostwork_ >= 0.2.0
-+    - frostwork_ >= 0.2.2
+-def _add_http_if_no_scheme(url: str) -> str:
+-    if not re.match(r"^\w+://", url, flags=re.IGNORECASE):
+-        scheme = "http:" if urlparse_cached(url).netloc else "http://"
+-        url = scheme + url
+-    return url
+-
+-
+ def add_http_if_no_scheme(url: str) -> str:
+     """Add http as the default scheme if it is missing from the url."""
+-    if hasattr(w3lib.url, "add_http_if_no_scheme"):
+-        warnings.warn(
+-            "scrapy.utils.url.add_http_if_no_scheme() is deprecated, use "
+-            "w3lib.url.add_http_if_no_scheme() instead.",
+-            ScrapyDeprecationWarning,
+-            stacklevel=2,
+-        )
+-    return _add_http_if_no_scheme(url)
++    warnings.warn(
++        "scrapy.utils.url.add_http_if_no_scheme() is deprecated, use "
++        "w3lib.url.add_http_if_no_scheme() instead.",
++        ScrapyDeprecationWarning,
++        stacklevel=2,
++    )
++    return w3lib.url.add_http_if_no_scheme(url)
  
--    - typing-extensions_ >= 4.6.0 (on Python 3.12 and lower)
-+    - typing-extensions_ >= 4.13.0 (on Python 3.12 and lower)
  
-     (:gh:`7894`, :gh:`8213`, :gh:`8303`, :gh:`8376`, :gh:`8378`, :gh:`8393`)
+ def _is_posix_path(string: str) -> bool:
+@@ -138,7 +130,7 @@ def guess_scheme(url: str) -> str:
+     http:// otherwise."""
+     if _is_filesystem_path(url):
+         return any_to_uri(url)
+-    return _add_http_if_no_scheme(url)
++    return w3lib.url.add_http_if_no_scheme(url)
  
+ 
+ def strip_url(
+```
+
+**File**: `tests/AsyncCrawlerProcess/caching_hostname_resolver_ipv6.py` (modified, +1/-2)
+```diff
+@@ -10,8 +10,7 @@ class CachingHostnameResolverSpider(scrapy.Spider):
+     name = "caching_hostname_resolver_spider"
+ 
+     async def start(self):
+-        # w3lib older than 2.4.1 strips the brackets, making the URL invalid.
+-        yield scrapy.Request("http://[::1]", meta={"verbatim_url": True})
++        yield scrapy.Request("http://[::1]")
+ 
+ 
+ if __name__ == "__main__":
+```
+
+**File**: `tests/AsyncCrawlerProcess/default_name_resolver.py` (modified, +1/-2)
+```diff
+@@ -11,8 +11,7 @@ class IPv6Spider(scrapy.Spider):
+     name = "ipv6_spider"
+ 
+     async def start(self):
+-        # w3lib older than 2.4.1 strips the brackets, making the URL invalid.
+-        yield scrapy.Request("http://[::1]", meta={"verbatim_url": True})
++        yield scrapy.Request("http://[::1]")
+ 
+ 
+ if __name__ == "__main__":
+```
+
+**File**: `tests/CrawlerProcess/caching_hostname_resolver_ipv6.py` (modified, +1/-2)
+```diff
+@@ -10,8 +10,7 @@ class CachingHostnameResolverSpider(scrapy.Spider):
+     name = "caching_hostname_resolver_spider"
+ 
+     async def start(self):
+-        # w3lib older than 2.4.1 strips the brackets, making the URL invalid.
+-        yield scrapy.Request("http://[::1]", meta={"verbatim_url": True})
++        yield scrapy.Request("http://[::1]")
+ 
+ 
+ if __name__ == "__main__":
+```
+
+**File**: `tests/CrawlerProcess/default_name_resolver.py` (modified, +1/-2)
+```diff
+@@ -11,8 +11,7 @@ class IPv6Spider(scrapy.Spider):
+     name = "ipv6_spider"
+ 
+     async def start(self):
+-        # w3lib older than 2.4.1 strips the brackets, making the URL invalid.
+-        yield scrapy.Request("http://[::1]", meta={"verbatim_url": True})
++        yield scrapy.Request("http://[::1]")
+ 
+ 
+ if __name__ == "__main__":
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8471** (closed): Keep feed storage files open with an empty postprocessing list (@Jinyong-Li)
-- **PR #8470** (2026-11-06): Create the X.Y branch in the publish workflow (@AdrianAtZyte)
-- **PR #8469** (2026-11-06): Upgrade CI pins (@scrapy-ci-pins[bot])
-- **PR #8468** (closed): Fix active size checks for body_file requests (@prakashru)
-- **PR #8467** (closed): Treat a per-slot concurrency of 0 as no limit (@enriquealonso01)
-- **PR #8466** (2026-11-06): Do not count body_file requests toward RESPONSE_MAX_ACTIVE_SIZE (@AdrianAtZyte)
+- **PR #8484** (closed): Fix deflate responses losing their last bytes (@WaqarAnwar)
+- **PR #8483** (closed): Support more curl options in Request.from_curl() (@motasimfuad)
+- **PR #8480** (closed): Use native coroutines for FTP file storage (@BrownieCoder)
+- **PR #8479** (2026-11-10): Support coros in schedulers and dupefilters. (@wRAR)
+- **PR #8478** (closed): Avoid scanning every slot on each DownloaderAwarePriorityQueue pop (@patrick-immometrica)
+- **PR #8477** (closed): Look up allow_domains and deny_domains in a set in LxmlLinkExtractor (@patrick-immometrica)
 
 ---
 
@@ -2464,43 +2603,54 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Limit memory used by media pipeline and other download_async() requests (#8417)
+## X. Support coros in schedulers and dupefilters. (#8479)
 
 **RULE**:
-When implementing operations in `docs/news.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in scrapy/scrapy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/topics/coroutines.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in scrapy/scrapy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a0e3b344`: Limit memory used by media pipeline and other download_async() requests (#8417). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f7b1fd3f`: Support coros in schedulers and dupefilters. (#8479). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/news.rst`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/topics/coroutines.rst`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-Security bug fixes
-~~~~~~~~~~~~~~~~~~
+-   The ``open()`` and ``close()`` methods of :ref:`custom schedulers
+    <topics-scheduler>` (see :setting:`SCHEDULER`).
 
--   Scrapy now limits by default the memory that responses can take, fixing
-    `CVE-2017-14158`_.
+    .. versionadded:: VERSION
 
-    In previous Scrapy versions, that memory had no limit. For example, when
-    :ref:`media pipelines <topics-media-pipeline>` downloaded files faster than
-    they could store them, e.g. to Amazon S3, the downloaded files piled up in
-    memory, so a crawled website could make Scrapy run out of memory.
+-   The ``open()`` and ``close()`` methods of custom dupefilters (see
+    :setting:`DUPEFILTER_CLASS`).
 
-    To change or disable the limit, use the new
-    :setting:`RESPONSE_MAX_ACTIVE_SIZE` setting.
-
-    .. _CVE-2017-14158: https://github.com/advisories/GHSA-h7wm-ph43-c39p
+    .. versionadded:: VERSION
 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+-   Custom scheduler implementations (see :setting:`SCHEDULER`):
+
+    - :meth:`~scrapy.core.scheduler.BaseScheduler.open`
+
+    - :meth:`~scrapy.core.scheduler.BaseScheduler.close`
+
+-   Custom dupefilters (see :setting:`DUPEFILTER_CLASS`):
+
+    - ``open()``
+
+    - ``close()``
+
+For example: a custom scheduler needs to define an ``open()`` method that can
+return a :class:`~twisted.internet.defer.Deferred` object. You can write a
+method that works with Deferreds and returns one directly, or you can write a
+coroutine and convert it into a function that returns a Deferred with
+:func:`~scrapy.utils.defer.deferred_f_from_coro_f`.
+
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a0e3b344` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f7b1fd3f` are properly handled with clean fallback behavior.
