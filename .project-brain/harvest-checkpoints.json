@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-11T07:58:40.075Z",
+  "last_updated": "2026-11-11T08:28:21.343Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5046,14 +5046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zama-ai-tfhe-rs",
-      "content_hash": "e72a6f8e19c4173d8fe672797cbd534df5fb1da758a8d12d6d5cd22fa9bc1a0e",
-      "verified_at": "2026-11-10T00:59:47.779Z",
+      "content_hash": "4cd111ae3b52589c0d5001c46ec3ab668dc87647602a94b005614093cef55379",
+      "verified_at": "2026-11-11T08:22:47.076Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-10T00:59:47.779Z"
+      "last_updated": "2026-11-11T08:22:47.076Z"
     },
     "doobidoo/mcp-memory-service": {
       "repository": "doobidoo/mcp-memory-service",
@@ -9486,14 +9486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gkd-kit-gkd",
-      "content_hash": "6aeb66a6b36acf948d25a520a0c52d292d7e825e3056ccead385c24111c5460d",
-      "verified_at": "2026-11-07T18:57:12.980Z",
+      "content_hash": "6c18f2452d34582e43fd75ef053d0aee423101f64eb604bb12070fb6a9729e40",
+      "verified_at": "2026-11-11T08:27:47.289Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T18:57:12.980Z"
+      "last_updated": "2026-11-11T08:27:47.289Z"
     },
     "envoyproxy/envoy": {
       "repository": "envoyproxy/envoy",
@@ -10986,14 +10986,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-alibaba-zvec",
-      "content_hash": "0f7cc7b8a55a30168c92adaec65c00790b1d0c69b5764db75469c791c4b01014",
-      "verified_at": "2026-11-09T02:14:46.336Z",
+      "content_hash": "26e7004d155479ecb88f14066bd49789f11c45b433d4e792f9180835f7e73dc3",
+      "verified_at": "2026-11-11T08:28:21.342Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T02:14:46.336Z"
+      "last_updated": "2026-11-11T08:28:21.342Z"
     },
     "zenbu-labs/terminal-browser": {
       "repository": "zenbu-labs/terminal-browser",
@@ -11721,14 +11721,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zed-industries-zed",
-      "content_hash": "85d6ea3fc03e2d366b5ba62f9e8f5e2f2384fcb921b055e69c5a068c64e725c5",
-      "verified_at": "2026-11-08T21:46:52.305Z",
+      "content_hash": "92287886fee3d837c18d74ffcbc845375b7ad2edd31ba3c9077bc6f2358ea7f2",
+      "verified_at": "2026-11-11T08:28:08.225Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T21:46:52.305Z"
+      "last_updated": "2026-11-11T08:28:08.225Z"
     },
     "MohamedRejeb/compose-rich-editor": {
       "repository": "MohamedRejeb/compose-rich-editor",

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-11T07:59:25.572Z",
-  "total_records": 37,
+  "last_updated": "2026-11-11T08:29:02.043Z",
+  "total_records": 39,
   "domains": {
     "A": {
       "total": 1,
@@ -11,9 +11,10 @@
       ]
     },
     "B": {
-      "total": 1,
+      "total": 2,
       "record_ids": [
-        "DOM-B-44DC921B"
+        "DOM-B-44DC921B",
+        "DOM-B-1CC83E41"
       ]
     },
     "C": {
@@ -60,7 +61,7 @@
       ]
     },
     "H": {
-      "total": 10,
+      "total": 11,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -71,7 +72,8 @@
         "DOM-H-1B2AC6F8",
         "DOM-H-0B5C2EE9",
         "DOM-H-FF5BE5CE",
-        "DOM-H-A79F59EB"
+        "DOM-H-A79F59EB",
+        "DOM-H-32FEBC73"
       ]
     },
     "I": {
@@ -1522,6 +1524,72 @@
       },
       "confidence": 1,
       "created_at": "2026-11-11T07:59:25.571Z"
+    },
+    "DOM-H-32FEBC73": {
+      "record_id": "DOM-H-32FEBC73",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "WASM/JS High-Level API Compact Ciphertext List Proof Serialization Missing Metadata (BUG-TFHE-01)",
+      "content": "WASM boundary interfaces must have automated type-generation pipelines (such as `wasm-bindgen` TypeScript definitions) that prevent out-of-sync parameter signatures across the host/runtime bridge.",
+      "content_hash": "b17bb61a351f4cdd66ecba996bd284cf67748ff6058778070768e8b3aa533dcd",
+      "summary": "The Rust WASM wrapper was updated to accept metadata for Fiat-Shamir transcript binding, but the JavaScript test invocation signatures were  -> WASM boundary interfaces must have automated type-generation pipelines (such as `wasm-bindgen` TypeScript definitions) that prevent out-of-s",
+      "provenance": {
+        "source_uri": "project://zama-ai-tfhe-rs/zama-ai-tfhe-rs-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-11T08:28:26.588Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (zama-ai-tfhe-rs)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit `dff19644`, \"fix(js): pass missing metadata to build_with_proof_packed in test\"."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "created_at": "2026-11-11T08:28:41.356Z"
+    },
+    "DOM-B-1CC83E41": {
+      "record_id": "DOM-B-1CC83E41",
+      "domain_letter": "B",
+      "domain_id": "product",
+      "domain_name": "Product Intelligence",
+      "secondary_domains": [],
+      "title": "C API & High-Level API Signed Division Panic on CUDA Devices (BUG-TFHE-02)",
+      "content": "Heterogeneous backend feature parity must be validated via unified matrix integration tests (`tests/integrations`) that execute all supported operators uniformly across all device backends.",
+      "content_hash": "65f44becdbff1e1d170988c4a30b709cb6fdb0682c2fa28fec6cbda6820f10c6",
+      "summary": "Radix signed division requires non-trivial signed digit extraction, two's-complement negation, and iterative restoring or non-restoring cond -> Heterogeneous backend feature parity must be validated via unified matrix integration tests (`tests/integrations`) that execute all supporte",
+      "provenance": {
+        "source_uri": "project://zama-ai-tfhe-rs/zama-ai-tfhe-rs-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-11T08:28:26.588Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (zama-ai-tfhe-rs)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Closed Issue #2083: \"Signed Division Support on CUDA\"."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "created_at": "2026-11-11T08:29:02.041Z"
     }
   }
 }

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T07:59:25.589Z",
+  "last_updated": "2026-11-11T08:28:26.583Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4428,6 +4428,15 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-E91DAF-models-add-download-user-agent-and-ipv4-.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-8AD331",
+      "directive_title": "markdown: Keep the first rendered block at the top (#66467)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zed-industries-zed",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-8AD331-markdown-keep-the-first-rendered-block-a.md",
       "staged_date": "2026-11-11"
     }
   ]

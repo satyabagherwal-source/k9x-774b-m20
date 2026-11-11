@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T07:58:40.070Z",
-  "total_cycles_completed": 8734,
-  "total_learnings_persisted": 8734,
-  "total_rules_promoted": 8586,
+  "last_updated": "2026-11-11T08:28:21.339Z",
+  "total_cycles_completed": 8738,
+  "total_learnings_persisted": 8738,
+  "total_rules_promoted": 8594,
   "history": [
-    {
-      "timestamp": "2026-11-09T11:04:02.296Z",
-      "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
-      "learningId": "learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T11:16:19.160Z",
-      "repository": "pimalaya/himalaya",
-      "learningId": "learn-github-pimalaya-himalaya",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T11:16:29.769Z",
-      "repository": "rustls/rustls",
-      "learningId": "learn-github-rustls-rustls",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T11:16:31.666Z",
-      "repository": "MaterializeInc/materialize",
-      "learningId": "learn-github-materializeinc-materialize",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T11:16:36.956Z",
       "repository": "facebook/sam3",
@@ -1403,6 +1375,34 @@
       "repository": "oxc-project/oxc",
       "learningId": "learn-github-oxc-project-oxc",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T08:22:47.072Z",
+      "repository": "zama-ai/tfhe-rs",
+      "learningId": "learn-github-zama-ai-tfhe-rs",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T08:27:47.285Z",
+      "repository": "gkd-kit/gkd",
+      "learningId": "learn-github-gkd-kit-gkd",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T08:28:08.220Z",
+      "repository": "zed-industries/zed",
+      "learningId": "learn-github-zed-industries-zed",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T08:28:21.339Z",
+      "repository": "alibaba/zvec",
+      "learningId": "learn-github-alibaba-zvec",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

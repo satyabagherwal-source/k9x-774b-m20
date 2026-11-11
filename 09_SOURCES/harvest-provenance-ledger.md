@@ -8886,3 +8886,9 @@ Every entry in this ledger must capture:
 | `learn-github-oxc-project-oxc` | `https://github.com/oxc-project/oxc` | `523a0639` | Multi-dimensional audit evidence | 2026-11-11T07:58:40.050Z |
 | `learn-dom-h-a79f59eb` | `project://oxc-project-oxc` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oxc-project-oxc-learnings.md` | 2026-11-11T07:59:01.646Z |
 | `learn-dom-k-76c43650` | `project://oxc-project-oxc` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oxc-project-oxc-learnings.md` | 2026-11-11T07:59:25.573Z |
+| `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `dff19644` | Multi-dimensional audit evidence | 2026-11-11T08:22:47.053Z |
+| `learn-github-gkd-kit-gkd` | `https://github.com/gkd-kit/gkd` | `d07357d4` | Multi-dimensional audit evidence | 2026-11-11T08:27:47.280Z |
+| `learn-github-zed-industries-zed` | `https://github.com/zed-industries/zed` | `985bbf42` | Multi-dimensional audit evidence | 2026-11-11T08:28:08.193Z |
+| `learn-github-alibaba-zvec` | `https://github.com/alibaba/zvec` | `d61530f2` | Multi-dimensional audit evidence | 2026-11-11T08:28:21.333Z |
+| `learn-dom-h-32febc73` | `project://zama-ai-tfhe-rs` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md` | 2026-11-11T08:28:41.359Z |
+| `learn-dom-b-1cc83e41` | `project://zama-ai-tfhe-rs` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md` | 2026-11-11T08:29:02.044Z |
