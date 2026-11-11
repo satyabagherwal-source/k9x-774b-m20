@@ -8988,3 +8988,5 @@
 | `CYCLE-20261111-1C0F` | `2026-11-11T17:51:35.439Z` | `nats-io/nats-server` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8b7ef6f1...`) |
 | `CYCLE-20261111-H8KU` | `2026-11-11T18:03:57.486Z` | `rustls/rustls` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`6a8c3347...`) |
 | `CYCLE-20261111-HAK1` | `2026-11-11T18:04:00.049Z` | `risingwavelabs/risingwave` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7a726fba...`) |
+| `CYCLE-20261111-RMES` | `2026-11-11T18:12:01.972Z` | `loft-sh/vcluster` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0bd23d27...`) |
+| `CYCLE-20261111-XZJK` | `2026-11-11T18:16:58.928Z` | `flox/flox` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c1a49d37...`) |

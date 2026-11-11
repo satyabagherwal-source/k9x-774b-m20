@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T18:04:07.389Z",
+  "last_updated": "2026-11-11T18:17:05.129Z",
   "directives": [
     {
       "id": "CD-001",
@@ -5336,6 +5336,33 @@
       "source_repo": "zoontek-react-native-permissions",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-32633D-android-skip-explicit-kotlin-plugin-when.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-09F5A1",
+      "directive_title": "telemetry): keep metrics files out of the current directory on config errors (#4",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "flox-flox",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-09F5A1-telemetry-keep-metrics-files-out-of-the-.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-134332",
+      "directive_title": "CVE fixes (#2594)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "loft-sh-vcluster",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-134332-cve-fixes-2594-.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-0FDA5F",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0FDA5F-editor-add-scoped-ios-account-deletion.md",
       "staged_date": "2026-11-11"
     }
   ]

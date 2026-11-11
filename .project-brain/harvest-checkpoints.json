@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-11T18:04:00.063Z",
+  "last_updated": "2026-11-11T18:16:58.952Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5001,14 +5001,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-flox-flox",
-      "content_hash": "4e9907f4e3e383b10bfb7843e8855f8ad5dd8b7aa35794cca58d138a4b045f67",
-      "verified_at": "2026-11-05T23:09:26.381Z",
+      "content_hash": "c1a49d371356d750113b45122f957825639972d9ee8829ab43a3938301232971",
+      "verified_at": "2026-11-11T18:16:58.951Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T23:09:26.381Z"
+      "last_updated": "2026-11-11T18:16:58.951Z"
     },
     "wix/react-native-navigation": {
       "repository": "wix/react-native-navigation",
@@ -11046,14 +11046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-loft-sh-vcluster",
-      "content_hash": "6c78f38e77fc62c6bd2c099d8eb53f4d8ad6778c18c6aa97c4da482853263fd5",
-      "verified_at": "2026-11-09T12:16:14.589Z",
+      "content_hash": "0bd23d27cb6f4b0285bf21fe065d25c074beb131a2b48c1b5179875b961b7a5a",
+      "verified_at": "2026-11-11T18:12:01.984Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T12:16:14.589Z"
+      "last_updated": "2026-11-11T18:12:01.984Z"
     },
     "arkivanov/Decompose": {
       "repository": "arkivanov/Decompose",

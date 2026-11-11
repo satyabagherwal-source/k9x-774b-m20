@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T18:04:00.059Z",
-  "total_cycles_completed": 8832,
-  "total_learnings_persisted": 8832,
-  "total_rules_promoted": 8692,
+  "last_updated": "2026-11-11T18:16:58.948Z",
+  "total_cycles_completed": 8834,
+  "total_learnings_persisted": 8834,
+  "total_rules_promoted": 8694,
   "history": [
-    {
-      "timestamp": "2026-11-09T21:31:47.973Z",
-      "repository": "fabio-rovai/open-ontologies",
-      "learningId": "learn-github-fabio-rovai-open-ontologies",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T21:57:34.518Z",
-      "repository": "FusionCow/Sulphur-3",
-      "learningId": "learn-huggingface-fusioncow-sulphur-3",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T21:59:31.744Z",
       "repository": "smallstep/cli",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-11T18:04:00.059Z",
       "repository": "risingwavelabs/risingwave",
       "learningId": "learn-github-risingwavelabs-risingwave",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T18:12:01.981Z",
+      "repository": "loft-sh/vcluster",
+      "learningId": "learn-github-loft-sh-vcluster",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T18:16:58.948Z",
+      "repository": "flox/flox",
+      "learningId": "learn-github-flox-flox",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

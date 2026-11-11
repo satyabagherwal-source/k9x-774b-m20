@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-11T18:03:59.772Z",
+  "last_updated": "2026-11-11T18:16:58.814Z",
   "total_verified_learnings": 1255,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -15525,11 +15525,16 @@
       "slug": "flox-flox",
       "platform": "github",
       "source_url": "https://github.com/flox/flox",
-      "source_version": "120bc0ad",
-      "content_hash": "4e9907f4e3e383b10bfb7843e8855f8ad5dd8b7aa35794cca58d138a4b045f67",
+      "source_version": "9a1a9e7c",
+      "content_hash": "c1a49d371356d750113b45122f957825639972d9ee8829ab43a3938301232971",
       "dossier_path": "07_PROJECT_LEARNING/flox-flox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/flox-flox-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "telemetry): keep metrics files out of the current directory on config errors (#4",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1817,
           "title": "buildenv): distinguish expired token from logged-out on empty store-info",
@@ -15566,7 +15571,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T23:09:26.227Z",
+      "verified_at": "2026-11-11T18:16:58.792Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41842,8 +41847,8 @@
       "slug": "loft-sh-vcluster",
       "platform": "github",
       "source_url": "https://github.com/loft-sh/vcluster",
-      "source_version": "d353cc58",
-      "content_hash": "6c78f38e77fc62c6bd2c099d8eb53f4d8ad6778c18c6aa97c4da482853263fd5",
+      "source_version": "c5e9027e",
+      "content_hash": "0bd23d27cb6f4b0285bf21fe065d25c074beb131a2b48c1b5179875b961b7a5a",
       "dossier_path": "07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md",
       "promoted_rules": [
@@ -41866,6 +41871,11 @@
           "number": null,
           "title": "Fully Qualified Container Image Domain Encasement",
           "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "CVE fixes (#2594)",
+          "status": "WITHHELD_REJECT"
         },
         {
           "number": 2425,
@@ -41923,7 +41933,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T12:16:14.435Z",
+      "verified_at": "2026-11-11T18:12:01.821Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
