@@ -2253,10 +2253,10 @@
     "repository": "Automattic/harper",
     "platform": "github",
     "sourceUrl": "https://github.com/Automattic/harper",
-    "sourceVersion": "11f7925c",
+    "sourceVersion": "2fac72e1",
     "license": "Apache-2.0",
-    "contentHash": "cb9a93b5ae374379fb41890d58db5714bbc105c4bd4be6754cbaad3bd2c36f3d",
-    "lastHarvestedAt": "2026-11-09T01:01:20.796Z",
+    "contentHash": "d28c24d2cc1279fc537980790e37189c68aba7022bef0dddf9c165df02955479",
+    "lastHarvestedAt": "2026-11-11T13:22:12.661Z",
     "learningId": "learn-github-automattic-harper"
   },
   "sudheerj-reactjs-interview-questions": {

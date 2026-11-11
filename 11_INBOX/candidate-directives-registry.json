@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T12:53:40.701Z",
+  "last_updated": "2026-11-11T13:22:17.204Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4873,6 +4873,33 @@
       "source_repo": "aquasecurity-trivy-operator",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-1E3FD1-build-deps-bump-ubi9-ubi-minimal-in-buil.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-952484",
+      "directive_title": "desktop): memory leak when the device goes to sleep (#4905)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "automattic-harper",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-952484-desktop-memory-leak-when-the-device-goes.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-6A1D8E",
+      "directive_title": "models): add download User-Agent and IPv4 fallback (#370)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-6A1D8E-models-add-download-user-agent-and-ipv4-.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-B16568",
+      "directive_title": "Forensic Learning Record (Deep Inspection): Zleap-AI/SAG",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zleap-ai-sag",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-B16568-forensic-learning-record-deep-inspection.md",
       "staged_date": "2026-11-11"
     }
   ]

@@ -8953,3 +8953,4 @@ Every entry in this ledger must capture:
 | `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `50e4ffde` | Multi-dimensional audit evidence | 2026-11-11T12:53:28.380Z |
 | `learn-github-aquasecurity-trivy-operator` | `https://github.com/aquasecurity/trivy-operator` | `689215dd` | Multi-dimensional audit evidence | 2026-11-11T12:53:34.234Z |
 | `learn-dom-d-40589951` | `project://xerj-org-xerj` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xerj-org-xerj-learnings.md` | 2026-11-11T12:53:53.499Z |
+| `learn-github-automattic-harper` | `https://github.com/Automattic/harper` | `2fac72e1` | Multi-dimensional audit evidence | 2026-11-11T13:22:12.661Z |

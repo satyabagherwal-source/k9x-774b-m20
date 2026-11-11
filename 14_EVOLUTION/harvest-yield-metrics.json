@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T12:53:34.252Z",
-  "total_cycles_completed": 8790,
-  "total_learnings_persisted": 8790,
-  "total_rules_promoted": 8652,
+  "last_updated": "2026-11-11T13:22:12.667Z",
+  "total_cycles_completed": 8791,
+  "total_learnings_persisted": 8791,
+  "total_rules_promoted": 8653,
   "history": [
-    {
-      "timestamp": "2026-11-09T16:11:00.715Z",
-      "repository": "invertase/react-native-firebase",
-      "learningId": "learn-github-invertase-react-native-firebase",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T16:11:05.816Z",
       "repository": "zama-ai/tfhe-rs",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-11T12:53:34.252Z",
       "repository": "aquasecurity/trivy-operator",
       "learningId": "learn-github-aquasecurity-trivy-operator",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T13:22:12.667Z",
+      "repository": "Automattic/harper",
+      "learningId": "learn-github-automattic-harper",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

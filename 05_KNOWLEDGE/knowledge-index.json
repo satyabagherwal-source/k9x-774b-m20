@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-11T12:53:34.083Z",
+  "last_updated": "2026-11-11T13:22:12.492Z",
   "total_verified_learnings": 1255,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4542,8 +4542,8 @@
       "slug": "automattic-harper",
       "platform": "github",
       "source_url": "https://github.com/Automattic/harper",
-      "source_version": "11f7925c",
-      "content_hash": "cb9a93b5ae374379fb41890d58db5714bbc105c4bd4be6754cbaad3bd2c36f3d",
+      "source_version": "2fac72e1",
+      "content_hash": "d28c24d2cc1279fc537980790e37189c68aba7022bef0dddf9c165df02955479",
       "dossier_path": "07_PROJECT_LEARNING/automattic-harper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/automattic-harper-learnings.md",
       "promoted_rules": [
@@ -4570,6 +4570,11 @@
         {
           "number": null,
           "title": "core): mark \"later\" and \"further\" as adverbs (#4868)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "desktop): memory leak when the device goes to sleep (#4905)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -4648,7 +4653,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T01:01:20.679Z",
+      "verified_at": "2026-11-11T13:22:12.461Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
