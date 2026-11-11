@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-11T11:00:47.459Z",
-  "total_verified_learnings": 1254,
+  "last_updated": "2026-11-11T11:10:40.846Z",
+  "total_verified_learnings": 1255,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -13644,8 +13644,8 @@
       "slug": "envoyproxy-envoy",
       "platform": "github",
       "source_url": "https://github.com/envoyproxy/envoy",
-      "source_version": "70a60076",
-      "content_hash": "d20f15749397f2b0aa13e410818f4c49a9093d6c183a34044eb9edbc3e4fae51",
+      "source_version": "8085a1d8",
+      "content_hash": "5373e8257a96508da4c2f9313878217ccb18969a66669736b9a255e549c952e1",
       "dossier_path": "07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
       "promoted_rules": [
@@ -13677,6 +13677,11 @@
         {
           "number": null,
           "title": "tracing: add configurable B3 and W3C propagation to opentelemetry tracer (#48711",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "[cache_v2] Fix upstream reset crash and stats (#48814)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -13750,7 +13755,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T05:26:07.675Z",
+      "verified_at": "2026-11-11T11:10:40.825Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -190669,6 +190674,33 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-11-11T07:08:07.111Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-comfy-org-relayvsr": {
+      "learning_id": "learn-huggingface-comfy-org-relayvsr",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Comfy-Org/RelayVSR",
+      "repository": "Comfy-Org/RelayVSR",
+      "slug": "hf-comfy-org-relayvsr",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Comfy-Org/RelayVSR",
+      "source_version": "hf-comfy-org-relayvsr",
+      "content_hash": "1fd9414f960dba44905ee7d3858978a365aefafa33ae5ed47db757b932511f81",
+      "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-relayvsr-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-relayvsr-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-11T11:10:16.876Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

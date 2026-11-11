@@ -8930,3 +8930,6 @@
 | `CYCLE-20261111-COFG` | `2026-11-11T11:00:30.508Z` | `rtk-ai/rtk` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`425d71a0...`) |
 | `CYCLE-20261111-CV3Z` | `2026-11-11T11:00:39.167Z` | `temporalio/temporal` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`de9f9ce4...`) |
 | `CYCLE-20261111-D1L2` | `2026-11-11T11:00:47.558Z` | `Ontos-AI/knowhere` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`884f54ad...`) |
+| `CYCLE-20261111-P8YU` | `2026-11-11T11:10:16.998Z` | `Comfy-Org/RelayVSR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-relayvsr-learnings.md` | Yes (`1fd9414f...`) |
+| `CYCLE-20261111-PRFT` | `2026-11-11T11:10:40.937Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5373e825...`) |
+| `CYCLE-2026-11-11-PROJ-EVOLVE` | `2026-11-11T11:10:58.468Z` | `hf-comfy-org-relayvsr` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-00269E5B` [Domain D] | Yes (`8321d1c4...`) |

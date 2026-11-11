@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T11:00:52.995Z",
+  "last_updated": "2026-11-11T11:10:58.476Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4729,6 +4729,24 @@
       "source_repo": "ontos-ai-knowhere",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-C5ED55-merge-pull-request-532-from-ontos-ai-fix.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-0C7355",
+      "directive_title": "[cache_v2] Fix upstream reset crash and stats (#48814)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "envoyproxy-envoy",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0C7355--cache-v2-fix-upstream-reset-crash-and-s.md",
+      "staged_date": "2026-11-11"
+    },
+    {
+      "id": "CD-REV-803435",
+      "directive_title": "export: Fix consent of former subscribers covering private channels.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-803435-export-fix-consent-of-former-subscribers.md",
       "staged_date": "2026-11-11"
     }
   ]

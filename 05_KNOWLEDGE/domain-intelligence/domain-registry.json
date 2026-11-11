@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-11T10:18:06.333Z",
-  "total_records": 46,
+  "last_updated": "2026-11-11T11:10:58.467Z",
+  "total_records": 47,
   "domains": {
     "A": {
       "total": 1,
@@ -24,7 +24,7 @@
       ]
     },
     "D": {
-      "total": 16,
+      "total": 17,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -41,7 +41,8 @@
         "DOM-D-5BF650C7",
         "DOM-D-C4D2B996",
         "DOM-D-CB6BA6DF",
-        "DOM-D-11562009"
+        "DOM-D-11562009",
+        "DOM-D-00269E5B"
       ]
     },
     "E": {
@@ -1844,6 +1845,47 @@
       },
       "confidence": 0.75,
       "created_at": "2026-11-11T10:18:06.331Z"
+    },
+    "DOM-D-00269E5B": {
+      "record_id": "DOM-D-00269E5B",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): Comfy-Org/RelayVSR",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-comfy-org-relayvsr-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/Comfy-Org/RelayVSR](https://huggingface.co/Comfy-Org/RelayVSR))  \n> **Source Version**: `hf-comfy-org`  \n> **License**: Open-Source  \n> **Synthesized By**:",
+      "content_hash": "8321d1c40aa6a69a32fdc957572b5d6c7341c6f24f1928c1658f16cbb8b309de",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-comfy-org-relayvsr-learnings.md`  \n> **Source**: huggingface ([https://huggingfac -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-comfy-org-relayvsr-learnings.md`  \n> **Source**: huggingface ([https://huggingfac",
+      "provenance": {
+        "source_uri": "project://hf-comfy-org-relayvsr/hf-comfy-org-relayvsr-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-11T11:10:45.475Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-comfy-org-relayvsr)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-comfy-org-relayvsr"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.64,
+      "created_at": "2026-11-11T11:10:58.466Z"
     }
   }
 }

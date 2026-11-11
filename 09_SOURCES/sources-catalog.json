@@ -6253,10 +6253,10 @@
     "repository": "envoyproxy/envoy",
     "platform": "github",
     "sourceUrl": "https://github.com/envoyproxy/envoy",
-    "sourceVersion": "70a60076",
+    "sourceVersion": "8085a1d8",
     "license": "Apache-2.0",
-    "contentHash": "d20f15749397f2b0aa13e410818f4c49a9093d6c183a34044eb9edbc3e4fae51",
-    "lastHarvestedAt": "2026-11-09T05:26:07.778Z",
+    "contentHash": "5373e8257a96508da4c2f9313878217ccb18969a66669736b9a255e549c952e1",
+    "lastHarvestedAt": "2026-11-11T11:10:40.940Z",
     "learningId": "learn-github-envoyproxy-envoy"
   },
   "tursodatabase-limbo": {
@@ -12358,5 +12358,15 @@
     "contentHash": "5d8720b6b6b7f59c92ce48711128c77972e5ad34a5e9efc67e3e70abd6b03fb8",
     "lastHarvestedAt": "2026-11-11T10:43:35.158Z",
     "learningId": "learn-github-caviraoss-longmemory"
+  },
+  "hf-comfy-org-relayvsr": {
+    "repository": "Comfy-Org/RelayVSR",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/Comfy-Org/RelayVSR",
+    "sourceVersion": "hf-comfy-org-relayvsr",
+    "license": "Open-Source",
+    "contentHash": "1fd9414f960dba44905ee7d3858978a365aefafa33ae5ed47db757b932511f81",
+    "lastHarvestedAt": "2026-11-11T11:10:17.001Z",
+    "learningId": "learn-huggingface-comfy-org-relayvsr"
   }
 }

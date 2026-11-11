@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-11T11:00:47.583Z",
+  "last_updated": "2026-11-11T11:10:40.963Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9501,14 +9501,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-envoyproxy-envoy",
-      "content_hash": "d20f15749397f2b0aa13e410818f4c49a9093d6c183a34044eb9edbc3e4fae51",
-      "verified_at": "2026-11-09T05:26:07.786Z",
+      "content_hash": "5373e8257a96508da4c2f9313878217ccb18969a66669736b9a255e549c952e1",
+      "verified_at": "2026-11-11T11:10:40.962Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T05:26:07.786Z"
+      "last_updated": "2026-11-11T11:10:40.962Z"
     },
     "tursodatabase/turso": {
       "repository": "tursodatabase/turso",
@@ -18599,6 +18599,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-11T10:43:35.168Z"
+    },
+    "Comfy-Org/RelayVSR": {
+      "repository": "Comfy-Org/RelayVSR",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-comfy-org-relayvsr",
+      "content_hash": "1fd9414f960dba44905ee7d3858978a365aefafa33ae5ed47db757b932511f81",
+      "verified_at": "2026-11-11T11:10:17.010Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-11T11:10:17.010Z"
     }
   },
   "repos": {

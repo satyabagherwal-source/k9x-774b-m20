@@ -5002,3 +5002,7 @@ https://github.com/Marker-Inc-Korea/AutoRAG
 https://huggingface.co/ConwayResearch/Underdog-Woof
 # [HUGGINGFACE-AI-MODELS] Cactus-Compute/mirage (3360 score) - Verified Hugging Face Model: Cactus-Compute/mirage (136 likes, 12844 downloads)
 https://huggingface.co/Cactus-Compute/mirage
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-11T11:10:10.901Z] ---
+# [HUGGINGFACE-AI-MODELS] Comfy-Org/RelayVSR (3360 score) - Verified Hugging Face Model: Comfy-Org/RelayVSR (136 likes, 91134 downloads)
+https://huggingface.co/Comfy-Org/RelayVSR

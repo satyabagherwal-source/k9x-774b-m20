@@ -8939,3 +8939,6 @@ Every entry in this ledger must capture:
 | `learn-github-rtk-ai-rtk` | `https://github.com/rtk-ai/rtk` | `8bc263a9` | Multi-dimensional audit evidence | 2026-11-11T11:00:30.510Z |
 | `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `03ecd1d2` | Multi-dimensional audit evidence | 2026-11-11T11:00:39.189Z |
 | `learn-github-ontos-ai-knowhere` | `https://github.com/Ontos-AI/knowhere` | `d2677dfc` | Multi-dimensional audit evidence | 2026-11-11T11:00:47.576Z |
+| `learn-huggingface-comfy-org-relayvsr` | `https://huggingface.co/Comfy-Org/RelayVSR` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-11T11:10:17.001Z |
+| `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `8085a1d8` | Multi-dimensional audit evidence | 2026-11-11T11:10:40.940Z |
+| `learn-dom-d-00269e5b` | `project://hf-comfy-org-relayvsr` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-comfy-org-relayvsr-learnings.md` | 2026-11-11T11:10:58.468Z |

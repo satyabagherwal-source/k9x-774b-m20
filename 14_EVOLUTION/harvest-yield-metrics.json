@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-11T11:00:47.580Z",
-  "total_cycles_completed": 8778,
-  "total_learnings_persisted": 8778,
-  "total_rules_promoted": 8642,
+  "last_updated": "2026-11-11T11:10:40.959Z",
+  "total_cycles_completed": 8780,
+  "total_learnings_persisted": 8780,
+  "total_rules_promoted": 8643,
   "history": [
-    {
-      "timestamp": "2026-11-09T15:12:39.575Z",
-      "repository": "salvo-rs/salvo",
-      "learningId": "learn-github-salvo-rs-salvo",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-09T15:12:43.955Z",
-      "repository": "openreplay/openreplay",
-      "learningId": "learn-github-openreplay-openreplay",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-09T15:12:49.086Z",
       "repository": "RustCrypto/hashes",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-11T11:00:47.580Z",
       "repository": "Ontos-AI/knowhere",
       "learningId": "learn-github-ontos-ai-knowhere",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T11:10:17.007Z",
+      "repository": "Comfy-Org/RelayVSR",
+      "learningId": "learn-huggingface-comfy-org-relayvsr",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-11T11:10:40.959Z",
+      "repository": "envoyproxy/envoy",
+      "learningId": "learn-github-envoyproxy-envoy",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
